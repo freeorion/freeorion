@@ -21,13 +21,14 @@ BuildingType
             Species name = RootCandidate.Species
             OwnedBy empire = RootCandidate.Owner
         ]
-        Number low = 0 high = 0 condition = Described description = "CONDITION_INTERSPECIES_ACADEMY_SPECIES_ALREADY_EXISTS" condition = And [
-            Planet
-            Enqueued type = Building name = "BLD_INTERSPECIES_ACADEMY"
-            Species name = RootCandidate.Species
-            OwnedBy empire = RootCandidate.Owner
-            Not Object id = RootCandidate.PlanetID
-        ]
+        Number low = 0 high = 0 condition = Described
+            description = "CONDITION_INTERSPECIES_ACADEMY_SPECIES_ALREADY_EXISTS" condition = And [
+                Planet
+                Enqueued type = Building name = "BLD_INTERSPECIES_ACADEMY"
+                Species name = RootCandidate.Species
+                OwnedBy empire = RootCandidate.Owner
+                Not Object id = RootCandidate.PlanetID
+            ]
         Number low = 0 high = 6 condition = And [
             Building name = "BLD_INTERSPECIES_ACADEMY"
             OwnedBy empire = Source.Owner
@@ -70,7 +71,8 @@ BuildingType
             ]
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = SetMaxStockpile value = Value + 10
+            effects = SetMaxStockpile value = Value
+                        + (NamedReal name = "BLD_INTERSPECIES_ACADEMY_MAX_STOCKPILE_FLAT" value = 10)
         
         // Research bonus    
         EffectsGroup
@@ -83,7 +85,8 @@ BuildingType
             ]
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetResearch value = Value + 5
+            effects = SetTargetResearch value = Value
+                        + (NamedReal name = "BLD_INTERSPECIES_ACADEMY_TARGET_RESEARCH_FLAT" value = 5)
             
         // Influence bonus    
         EffectsGroup
@@ -96,7 +99,8 @@ BuildingType
             ]
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetInfluence value = Value + 2
+            effects = SetTargetInfluence value = Value
+                        + (NamedReal name = "BLD_INTERSPECIES_ACADEMY_TARGET_INFLUENCE_FLAT" value = 2)
     ]
     icon = "icons/building/science-institute.png"
 

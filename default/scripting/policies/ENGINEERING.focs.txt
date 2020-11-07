@@ -12,8 +12,8 @@ Policy
                 Ship
                 OwnedBy empire = Source.Owner
             ]
-            effects =
-                SetTargetInfluence value = Value - 0.1
+            effects = SetTargetInfluence value = Value
+                        + (NamedReal name = "PLC_ENGINEERING_TARGET_INFLUENCE_FLAT" value = -0.1)
     ]
     graphic = "icons/policies/engineering.png"
 

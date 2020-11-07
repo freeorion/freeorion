@@ -54,12 +54,14 @@ BuildingType
             ]
             effects = [
                 SetEmpireCapital
-                SetTargetInfluence value = Value + 3
+                SetTargetInfluence value = Value
+                     + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_INFLUENCE_FLAT" value = 3) 
             ]
 
         EffectsGroup
             scope = Source
-            effects = SetEmpireMeter empire = Source.Owner meter = "ECONOMIC_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
+            effects = SetEmpireMeter empire = Source.Owner
+                                     meter = "ECONOMIC_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
 
         EffectsGroup
             scope = And [
@@ -68,8 +70,8 @@ BuildingType
                 OwnedBy empire = Source.ProducedByEmpireID
             ]
             stackinggroup = "IMPERIAL_PALACE_SUPPLY_EFFECT"
-            effects =
-                SetMaxSupply value = Value + 2
+            effects = SetMaxSupply value = Value
+                        + (NamedReal name = "BLD_IMPERIAL_PALACE_MAX_SUPPLY_FLAT" value = 2)
 
         EffectsGroup
             scope = And [
@@ -82,8 +84,8 @@ BuildingType
                 OwnedBy empire = Source.Owner
             ]
             stackinggroup = "IMPERIAL_PALACE_EFFECT"
-            effects =
-                SetTargetConstruction value = Value + 20
+            effects = SetTargetConstruction value = Value
+                        + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_CONSTRUCTION" value = 20)
 
         EffectsGroup
             scope = And [
@@ -100,8 +102,8 @@ BuildingType
                 ]
             ]
             stackinggroup = "IMPERIAL_PALACE_HAPPINESS"
-            effects =
-                SetTargetHappiness value = Value + 5 // min(10, max(0, 10 - Target.DistanceToSource/20))
+            effects = SetTargetHappiness value = Value
+                        + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_HAPPINESS" value = 5) // min(10, max(0, 10 - Target.DistanceToSource/20))
 
         EffectsGroup
             scope = And [
@@ -113,8 +115,10 @@ BuildingType
             accountinglabel = "BLD_IMPERIAL_PALACE"
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
             effects = [
-                SetMaxDefense value = Value + ( 5 * [[PLANET_DEFENSE_FACTOR]] )
-                SetMaxTroops value = Value + 6
+                SetMaxDefense value = Value + (NamedReal name = "BLD_IMPERIAL_PALACE_MAX_DEFENSE"
+                                                         value = (5 * [[PLANET_DEFENSE_FACTOR]]))
+                SetMaxTroops value = Value
+                    + (NamedReal name = "BLD_IMPERIAL_PALACE_MAX_TROOPS" value = 6)
             ]
     ]
     icon = "icons/building/palace.png"

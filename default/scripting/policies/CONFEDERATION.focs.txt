@@ -3,7 +3,8 @@ Policy
     description = "PLC_CONFEDERATION_DESC"
     short_description = "PLC_CONFEDERATION_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
-    adoptioncost = 1.0*floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
+    adoptioncost = 1.0 * floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population
+                                           condition = And [ Planet OwnedBy empire = Source.Owner ])
     exclusions = [ "PLC_CENTRALIZATION" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
@@ -17,7 +18,7 @@ Policy
                 Not ResourceSupplyConnected empire = LocalCandidate.Owner condition = Source
             ]
             effects = SetTargetInfluence value = Value
-                        + (NamedReal name = "PLC_CONFEDERATION_TARGET_INFLUENCE_FLAT" value = 1)
+                        + (NamedRealLookup name = "SUPPLY_DISCONNECTED_INFLUENCE_FLAT")
 
         // makes all planets less stable
         EffectsGroup
@@ -27,10 +28,10 @@ Policy
                 Population low = 0.001
             ]
             effects = [
-                SetTargetHappiness value = Value
-                      + (NamedReal name = "PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT" value = -1)
+                SetTargetHappiness value = Value 
+                    + (NamedReal name = "PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT" value = -1)
                 SetMaxTroops value = Value
-                      + (NamedReal name = "PLC_CONFEDERATION_MAX_TROOPS_FLAT" value = 5)
+                    + (NamedReal name = "PLC_CONFEDERATION_MAX_TROOPS_FLAT" value = 5)
             ]
     ]
     graphic = "icons/policies/confederation.png"

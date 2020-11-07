@@ -5928,7 +5928,7 @@ METER_INDUSTRY_VALUE_DESC
 
 The Industry of a planet can be used for any production projects of [[metertype METER_SUPPLY]] line connected planets. Unallocated Industry gets added to the [[encyclopedia STOCKPILE_TITLE]].
 
-The Target Industry is the stable Industry output level a planet will approach, given the current factors influencing the Industry resources. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Industry value is likely to shift.
+The Target Industry is the stable Industry output level a planet will approach, given the current factors influencing the Industry resources. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, [[encyclopedia ENC_POLICY]] adopted by the empire, and various other game effects. If these factors change, then the Target Industry value is likely to shift.
 
 For information on the interface, see [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
@@ -5939,7 +5939,7 @@ Research
 METER_RESEARCH_VALUE_DESC
 '''The Research (or RP "Research Points") of all planets in the empire is combined to discover new [[encyclopedia ENC_TECH]].
 
-The Target Research is the stable Research output level a planet will approach, given the current factors influencing the Research resources. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Research value is likely to shift.
+The Target Research is the stable Research output level a planet will approach, given the current factors influencing the Research resources. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, [[encyclopedia ENC_POLICY]] adopted by the empire, and various other game effects. If these factors change, then the Target Research value is likely to shift.
 
 Each tech has a minimum number of turns required to research it. For example, if a tech costs 15 RP and has a minimum time of 3 turns, only 5 RP may be allocated to the tech per turn.
 The tech at the top of the queue is given RP first. Any remaining RP are then given to the next tech in the queue, and if there is still more remaining to the next-- and so on. Items can be re-prioritized in the queue by dragging the most important items closer to the top. If any RP are left over after giving to all techs in the queue, they are automatically allocated to the unlocked tech(s) with the fewest remaining RP to completion.
@@ -5950,7 +5950,11 @@ METER_INFLUENCE_VALUE_LABEL
 Influence
 
 METER_INFLUENCE_VALUE_DESC
-[[MAP_INFLUENCE_TEXT]]
+'''The Influence (or IP "Influence Points") of all planets in the empire represents such things as diplomatic influence, back-room dealing, espionage, public relations, propaganda, and cultural influence. It can be used to adopt [[encyclopedia ENC_POLICY]]s, and is needed to pay for the maintenance of colonies. When total IP cost of colony maintenance is greater than total IP output of the empire, the available Influence will decrease and eventually the empire won't be able to maintain all its colonies, unless more planets are set to [[encyclopedia INFLUENCE_FOCUS_TITLE]].
+
+The Target Influence is the stable Influence output level a planet will approach, given the current factors influencing the Influence resources. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, [[encyclopedia ENC_POLICY]] adopted by the empire, and various other game effects. If these factors change, then the Target Research value is likely to shift.
+
+Influence does not require [[metertype METER_SUPPLY]] line connections to be used, but some colonies can have greater influence upkeeps when not connected to the capital.'''
 
 METER_CONSTRUCTION_VALUE_LABEL
 Infrastructure
@@ -6160,11 +6164,17 @@ Industry Focus
 INDUSTRY_FOCUS_TEXT
 Planets focused on Industry will generate more [[metertype METER_INDUSTRY]] output for their empire, which is used for producing ships and buildings, or may be stockpiled for later use. Industry focus increases output more for higher population planets.
 
+RESEARCH_FOCUS_TITLE
+Research Focus
+
+RESEARCH_FOCUS_TEXT
+Planets focused on Research will generate more [[metertype METER_RESEARCH]] output for their empire, which is used for unlocking new technologies. Research focus increases output more for higher population planets.
+
 INFLUENCE_FOCUS_TITLE
 Influence Focus
 
 INFLUENCE_FOCUS_TEXT
-Planets focused on Influence will generate more [[metertype METER_INFLUENCE]] for their empire, which is used to adopt government policies.
+Planets focused on Influence will generate more [[metertype METER_INFLUENCE]] for their empire, which is used to adopt government policies and to pay for colony upkeep.
 
 LOGISTICS_FOCUS_TITLE
 Logistics Focus
@@ -8920,7 +8930,7 @@ COMPUTRONIUM_SPECIAL
 Computronium Moon
 
 COMPUTRONIUM_SPECIAL_DESC
-'''When a planet with a Computronium Moon is focused on [[metertype METER_RESEARCH]], all research focused planets in the empire gain [[value COMPUTRONIUM_TARGET_RESEARCH_PERPOP]] [[metertype METER_TARGET_RESEARCH]] per [[metertype METER_POPULATION]].
+'''When a planet with a Computronium Moon has the [[encyclopedia RESEARCH_FOCUS_TITLE]], all research focused planets in the empire gain [[value COMPUTRONIUM_TARGET_RESEARCH_PERPOP]] [[metertype METER_TARGET_RESEARCH]] per [[metertype METER_POPULATION]].
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 
@@ -11200,7 +11210,7 @@ PLC_CENTRALIZATION
 Centralization
 
 PLC_CENTRALIZATION_DESC
-'''Boosts production output at the capital:
+'''Boosts production output at the capital, regardless of the focus:
 • Increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_CENTRALIZATION_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
 • Increases [[metertype METER_TARGET_INDUSTRY]] by [[value PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP]] per population.
 • Increases [[metertype METER_TARGET_CONSTRUCTION]] by [[value PLC_CENTRALIZATION_TARGET_CONSTRUCTION_FLAT]].
@@ -11347,9 +11357,9 @@ PLC_CHECKPOINTS
 Border Checkpoints
 
 PLC_CHECKPOINTS_DESC
-'''Increases imperial detection strength by up to 20 (increasing over time).
+'''Increases imperial detection strength by 1 per turn up to [[value PLC_CHECKPOINTS_DETECTION_STRENGTH_MAX]].
 
-Reduces imperial supply networth range and influence generation.'''
+Reduces imperial [[metertype METER_SUPPLY]] line range ([[value PLC_CHECKPOINTS_MAX_SUPPLY_FLAT]]) and [[metertype METER_INFLUENCE]] generation ([[value PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT]]).'''
 
 PLC_CHECKPOINTS_SHORT_DESC
 Improves Detection / Hinders Supply
@@ -11378,7 +11388,7 @@ PLC_ENGINEERING
 Engineering Corps
 
 PLC_ENGINEERING_DESC
-Reduces the "upkeep" cost of ships by half, so that the cost of producing more ships does not increase as quickly with fleet size, at the cost of 0.1 IP per turn per ship.
+Reduces the "upkeep" cost of ships by half, so that the cost of producing more ships does not increase as quickly with fleet size, at the cost of [[value PLC_ENGINEERING_TARGET_INFLUENCE_FLAT]] IP per turn per ship.
 
 PLC_ENGINEERING_SHORT_DESC
 Reduces Fleet Upkeep / Costs Influence
@@ -11396,10 +11406,10 @@ PLC_CONFEDERATION
 Confederation
 
 PLC_CONFEDERATION_DESC
-'''Planets are organized in a confederacy of independent system, and do not suffer reduce influence if not connected to the capital, but are slightly less stable in general.
+'''Planets of the empire are organized in a confederacy of independent systems. Colonies do not suffer reduced influence if not connected to the capital, and get a boost to ground troops, but are slightly less stable in general.
 
 Increases max [[metertype METER_TROOPS]] by [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]] but reduces [[metertype METER_TARGET_HAPPINESS]] ([[value PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT]]) in all planets.
-Increases [[metertype METER_TARGET_INFLUENCE]] on colonies disconnected from the capital by [[value PLC_CONFEDERATION_TARGET_INFLUENCE_FLAT]].'''
+Increases [[metertype METER_TARGET_INFLUENCE]] on colonies disconnected from the capital by [[value SUPPLY_DISCONNECTED_INFLUENCE_FLAT]].'''
 
 PLC_CONFEDERATION_SHORT_DESC
 Supports disconnected systems
@@ -11418,11 +11428,12 @@ PLC_RACIAL_PURITY_SHORT_DESC
 Prefers Capital Species
 
 PLC_DIVINE_AUTHORITY
-Devine Authority
+Divine Authority
 
 PLC_DIVINE_AUTHORITY_DESC
-'''
-'''
+'''Increases [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_DIVINE_AUTHORITY_TARGET_HAPPINESS_FLAT]] and [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_DIVINE_AUTHORITY_TARGET_INFLUENCE_FLAT]], but reduces [[metertype METER_TARGET_RESEARCH]] ([[value PLC_DIVINE_AUTHORITY_TARGET_RESEARCH_FLAT]]).
+
+The empire is governed by a teocracy which claims to hold the Gods authority. They deem themselves omnipotent and infallible, and inspire their people with the belief that they are the chosen people. Religious extremism is promoted between the population, boosting confidence of the people in their government's choices and making it easier to manage the populations, but critical thinking and science in general is hampered.'''
 
 PLC_DIVINE_AUTHORITY_SHORT_DESC
 Boosts stability and influence, but impairs research
@@ -13409,7 +13420,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases [[metertype METER_SUPPLY]] line range by 2, [[metertype METER_INFLUENCE]] by 1, [[metertype METER_TARGET_CONSTRUCTION]] by 20, [[metertype METER_DEFENSE]] by 5, and [[metertype METER_TROOPS]] by 6.
+'''Increases [[metertype METER_SUPPLY]] line range by [[value BLD_IMPERIAL_PALACE_MAX_SUPPLY_FLAT]], [[metertype METER_TARGET_INFLUENCE]] by [[value BLD_IMPERIAL_PALACE_TARGET_INFLUENCE_FLAT]], [[metertype METER_TARGET_CONSTRUCTION]] by [[value BLD_IMPERIAL_PALACE_TARGET_CONSTRUCTION_FLAT]], [[metertype METER_DEFENSE]] by [[value BLD_IMPERIAL_PALACE_MAX_DEFENSE_FLAT], and [[metertype METER_TROOPS]] by [[value BLD_IMPERIAL_PALACE_MAX_TROOPS_FLAT]] of the planet it is built on.
 
 Grants 1 economic policy slot.
 
@@ -13575,8 +13586,7 @@ BLD_INTERSPECIES_ACADEMY
 Species InterDesign Academy
 
 BLD_INTERSPECIES_ACADEMY_DESC
-'''Increases the imperial stockpile use limit by increasing the stockpile use capacity on a planet by 10, if that planet has [[encyclopedia STOCKPILE_FOCUS_TITLE]].
-Increases [[metertype METER_RESEARCH]] on its planet by 5, if that planet has research focus.
+'''Increases the imperial stockpile use limit by increasing the stockpile use capacity on this planet by [[value BLD_INTERSPECIES_ACADEMY_MAX_STOCKPILE_FLAT]] when it has [[encyclopedia STOCKPILE_FOCUS_TITLE]], [[metertype METER_TARGET_RESEARCH]] by [[value BLD_INTERSPECIES_ACADEMY_TARGET_RESEARCH_FLAT]] when it has [[encyclopedia RESEARCH_FOCUS_TITLE]], or [[metertype METER_TARGET_INFLUENCE]] by [[value BLD_INTERSPECIES_ACADEMY_TARGET_INFLUENCE_FLAT]] when it has [[encyclopedia INFLUENCE_FOCUS_TITLE]]
 
 Learning to design devices for use by different species is crucial for developing universally usable tools.
 
