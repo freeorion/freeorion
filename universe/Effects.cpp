@@ -41,7 +41,9 @@ namespace {
      * Universe, and and inserts \a ship into it.  Used when a ship has been
      * moved by the MoveTo effect separately from the fleet that previously
      * held it.  All ships need to be within fleets. */
-    std::shared_ptr<Fleet> CreateNewFleet(double x, double y, std::shared_ptr<Ship> ship) {
+    std::shared_ptr<Fleet> CreateNewFleet(double x, double y, std::shared_ptr<Ship> ship,
+                                          FleetAggression aggression = FleetAggression::INVALID_FLEET_AGGRESSION)
+    {
         Universe& universe = GetUniverse();
         if (!ship)
             return nullptr;
@@ -54,8 +56,10 @@ namespace {
         fleet->AddShips({ship->ID()});
         ship->SetFleetID(fleet->ID());
 
-        FleetAggression new_aggr = fleet->HasArmedShips() ?
-            FleetAggression::FLEET_OBSTRUCTIVE : FleetAggression::FLEET_PASSIVE;
+        // if aggression specified, use that, otherwise get from whether ship is armed
+        FleetAggression new_aggr = aggression == FleetAggression::INVALID_FLEET_AGGRESSION ?
+            (ship->IsArmed() ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE) :
+            (aggression);
         fleet->SetAggression(new_aggr);
 
         return fleet;
@@ -66,7 +70,9 @@ namespace {
      * fleet that previously held it.  Also used by CreateShip effect to give
      * the new ship a fleet.  All ships need to be within fleets. */
     std::shared_ptr<Fleet> CreateNewFleet(std::shared_ptr<System> system, std::shared_ptr<Ship> ship,
-                                          ObjectMap& objects) {
+                                          ObjectMap& objects,
+                                          FleetAggression aggression = FleetAggression::INVALID_FLEET_AGGRESSION)
+    {
         if (!system || !ship)
             return nullptr;
 
@@ -80,13 +86,12 @@ namespace {
         }
 
         if (ship->FleetID() != INVALID_OBJECT_ID) {
-            if (auto old_fleet = objects.get<Fleet>(ship->FleetID())) {
+            if (auto old_fleet = objects.get<Fleet>(ship->FleetID()))
                 old_fleet->RemoveShips({ship->ID()});
-            }
         }
 
         // create new fleet for ship, and put it in new system
-        auto fleet = CreateNewFleet(system->X(), system->Y(), std::move(ship));
+        auto fleet = CreateNewFleet(system->X(), system->Y(), std::move(ship), aggression);
         system->Insert(fleet);
 
         return fleet;
@@ -1154,26 +1159,30 @@ void SetOwner::Execute(ScriptingContext& context) const {
     if (auto ship = std::dynamic_pointer_cast<Ship>(context.effect_target)) {
         // assigning ownership of a ship requires updating the containing
         // fleet, or splitting ship off into a new fleet at the same location
-        auto fleet = context.ContextObjects().get<Fleet>(ship->FleetID());
-        if (!fleet)
+        auto old_fleet = context.ContextObjects().get<Fleet>(ship->FleetID());
+        if (!old_fleet)
             return;
-        if (fleet->Owner() == empire_id)
+        if (old_fleet->Owner() == empire_id)
             return;
+
+        // if ship is armed use old fleet's aggression. otherwise use auto-determined aggression
+        auto aggr = ship->IsArmed() ? old_fleet->Aggression() : FleetAggression::INVALID_FLEET_AGGRESSION;
+
 
         // move ship into new fleet
         std::shared_ptr<Fleet> new_fleet;
         if (auto system = context.ContextObjects().get<System>(ship->SystemID()))
-            new_fleet = CreateNewFleet(std::move(system), std::move(ship), context.ContextObjects());
+            new_fleet = CreateNewFleet(std::move(system), std::move(ship), context.ContextObjects(), aggr);
         else
-            new_fleet = CreateNewFleet(ship->X(), ship->Y(), std::move(ship));
+            new_fleet = CreateNewFleet(ship->X(), ship->Y(), std::move(ship), aggr);
 
         if (new_fleet)
-            new_fleet->SetNextAndPreviousSystems(fleet->NextSystemID(), fleet->PreviousSystemID());
+            new_fleet->SetNextAndPreviousSystems(old_fleet->NextSystemID(), old_fleet->PreviousSystemID());
 
         // if old fleet is empty, destroy it.  Don't reassign ownership of fleet
         // in case that would reval something to the recipient that shouldn't be...
-        if (fleet->Empty())
-            GetUniverse().EffectDestroy(fleet->ID(), INVALID_OBJECT_ID);    // no particular source destroyed the fleet in this case
+        if (old_fleet->Empty())
+            GetUniverse().EffectDestroy(old_fleet->ID(), INVALID_OBJECT_ID); // no particular source destroyed the fleet in this case
     }
 }
 
@@ -2408,7 +2417,8 @@ void MoveTo::Execute(ScriptingContext& context) const {
         if (dest_fleet && same_owners) {
             // ship is moving to a different fleet owned by the same empire, so
             // can be inserted into it.
-            old_fleet->RemoveShips({ship->ID()});
+            if (old_fleet)
+                old_fleet->RemoveShips({ship->ID()});
             dest_fleet->AddShips({ship->ID()});
             ship->SetFleetID(dest_fleet->ID());
 
@@ -2424,12 +2434,16 @@ void MoveTo::Execute(ScriptingContext& context) const {
 
         } else {
             // need to create a new fleet for ship
+
+            // if ship is armed use old fleet's aggression. otherwise use auto-determined aggression
+            auto aggr = old_fleet && ship->IsArmed() ? old_fleet->Aggression() : FleetAggression::INVALID_FLEET_AGGRESSION;
+
             if (auto dest_system = context.ContextObjects().get<System>(dest_sys_id)) {
-                CreateNewFleet(dest_system, ship, context.ContextObjects());         // creates new fleet, inserts fleet into system and ship into fleet
-                ExploreSystem(dest_system->ID(), ship);
+                CreateNewFleet(std::move(dest_system), ship, context.ContextObjects(), aggr); // creates new fleet, inserts fleet into system and ship into fleet
+                ExploreSystem(dest_sys_id, std::move(ship));
 
             } else {
-                CreateNewFleet(destination->X(), destination->Y(), ship);   // creates new fleet and inserts ship into fleet
+                CreateNewFleet(destination->X(), destination->Y(), std::move(ship), aggr);    // creates new fleet and inserts ship into fleet
             }
         }
 
@@ -2459,13 +2473,13 @@ void MoveTo::Execute(ScriptingContext& context) const {
         for (auto& building : context.ContextObjects().find<Building>(planet->BuildingIDs())) {
             if (old_sys)
                 old_sys->Remove(building->ID());
-            dest_system->Insert(building);
+            dest_system->Insert(std::move(building));
         }
 
         // buildings planet should be unchanged by move, as should planet's
         // records of its buildings
 
-        ExploreSystem(dest_system->ID(), planet);
+        ExploreSystem(dest_system->ID(), std::move(planet));
 
 
     } else if (auto building = std::dynamic_pointer_cast<Building>(context.effect_target)) {
@@ -2476,9 +2490,8 @@ void MoveTo::Execute(ScriptingContext& context) const {
         auto dest_planet = std::dynamic_pointer_cast<Planet>(destination);
         if (!dest_planet) {
             auto dest_building = std::dynamic_pointer_cast<Building>(destination);
-            if (dest_building) {
+            if (dest_building)
                 dest_planet = context.ContextObjects().get<Planet>(dest_building->PlanetID());
-            }
         }
         if (!dest_planet)
             return;
@@ -2502,7 +2515,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
         building->SetPlanetID(dest_planet->ID());
 
         dest_system->Insert(building);
-        ExploreSystem(dest_system->ID(), building);
+        ExploreSystem(dest_system->ID(), std::move(building));
 
 
     } else if (auto system = std::dynamic_pointer_cast<System>(context.effect_target)) {
@@ -2536,7 +2549,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
         field->SetSystem(INVALID_OBJECT_ID);
         field->MoveTo(destination);
         if (auto dest_system = std::dynamic_pointer_cast<System>(destination))
-            dest_system->Insert(field);
+            dest_system->Insert(std::move(field));
     }
 }
 
@@ -2771,9 +2784,9 @@ void MoveTowards::Execute(ScriptingContext& context) const {
 
     if (auto system = std::dynamic_pointer_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
-        for (auto& obj : context.ContextObjects().find<UniverseObject>(system->ObjectIDs())) {
+        for (auto& obj : context.ContextObjects().find<UniverseObject>(system->ObjectIDs()))
             obj->MoveTo(new_x, new_y);
-        }
+
         // don't need to remove objects from system or insert into it, as all
         // contained objects in system are moved with it, maintaining their
         // containment situation
@@ -2801,11 +2814,17 @@ void MoveTowards::Execute(ScriptingContext& context) const {
         ship->SetSystem(INVALID_OBJECT_ID);
 
         auto old_fleet = context.ContextObjects().get<Fleet>(ship->FleetID());
-        if (old_fleet)
+        FleetAggression old_fleet_aggr = FleetAggression::INVALID_FLEET_AGGRESSION;
+        if (old_fleet) {
+            old_fleet_aggr = old_fleet->Aggression();
             old_fleet->RemoveShips({ship->ID()});
+        }
         ship->SetFleetID(INVALID_OBJECT_ID);
 
-        CreateNewFleet(new_x, new_y, ship); // creates new fleet and inserts ship into fleet
+        // if ship is armed use old fleet's aggression. otherwise use auto-determined aggression
+        auto aggr = ship->IsArmed() ? old_fleet_aggr : FleetAggression::INVALID_FLEET_AGGRESSION;
+
+        CreateNewFleet(new_x, new_y, ship, aggr); // creates new fleet and inserts ship into fleet
         if (old_fleet && old_fleet->Empty()) {
             if (old_sys)
                 old_sys->Remove(old_fleet->ID());
