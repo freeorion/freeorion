@@ -27,7 +27,8 @@ BASE_INFLUENCE_COSTS
                 ]
             ]
             accountinglabel = "CAPITAL_DISCONNECTION_LABEL"
-            effects = SetTargetInfluence value = Value - 1
+            effects = SetTargetInfluence value = Value
+                        - NamedRealLookup name = "SUPPLY_DISCONNECTED_INFLUENCE_MALUS"
 
         EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
             scope = Source

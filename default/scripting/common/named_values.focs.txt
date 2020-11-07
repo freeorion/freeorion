@@ -5,6 +5,8 @@
 // - GRO_CYBORGS_MAX_TROOPS_PERPOP (bonus/malus per population to MaxTroops from tech GRO_CYBORGS)
 
 
+NamedReal name = "SUPPLY_DISCONNECTED_INFLUENCE_MALUS" value = 1
+
 NamedReal name = "ANCIENT_RUINS_TARGET_RESEARCH_PERPOP" value = (5 * [[RESEARCH_PER_POP]])
 
 NamedReal name = "IMPERIAL_GARRISON_MAX_TROOPS_FLAT" value = 6

@@ -59,7 +59,7 @@ Policy
                         (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX" value = -3),
                         (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP" value = -0.2)
                             * JumpsBetween object = Source.ID object = Target.ID)
-        ]
+    ]
     graphic = "icons/policies/centralization.png"
 
 #include "/scripting/common/base_prod.macros"

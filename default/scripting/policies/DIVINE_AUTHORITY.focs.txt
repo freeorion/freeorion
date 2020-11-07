@@ -17,9 +17,12 @@ Policy
             Population low = 0.001
         ]
         effects = [
-            SetTargetHappiness value = Value + 4
-            SetTargetResearch value = Value - 5
-            SetTargetInfluence value = Value + 1
+            SetTargetHappiness value = Value
+                + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_HAPPINESS_FLAT" value = 4)
+            SetTargetResearch value = Value
+                + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_RESEARCH_FLAT" value = -5)
+            SetTargetInfluence value = Value
+                + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_INFLUENCE_FLAT" value = 1)
         ]
     ]
     graphic = "icons/policies/confederation.png"
