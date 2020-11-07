@@ -816,13 +816,12 @@ namespace {
         if (m_design_name_text) {
             const ShipDesign* design = ship->Design();
             auto& design_name = design ? design->Name() : UserString("FW_UNKNOWN_DESIGN_NAME");
-            auto& species_name = UserString(ship->SpeciesName());
-            if (!species_name.empty()) {
+            if (!ship->SpeciesName().empty()) {
                 m_design_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_SPECIES_SHIP_DESIGN_LABEL")) %
                                                            design_name %
-                                                           species_name));
+                                                           UserString(ship->SpeciesName())));
             } else {
-                m_design_name_text->SetText(std::move(design_name));
+                m_design_name_text->SetText(design_name);
             }
         }
 
