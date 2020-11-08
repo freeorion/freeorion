@@ -5,7 +5,6 @@
 #include "CommonWrappers.h"
 
 #include <boost/filesystem.hpp>
-#include <boost/algorithm/string/trim.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
@@ -43,7 +42,6 @@ bool PythonBase::Initialize() {
     DebugLogger() << "Initializing C++ interfaces for Python";
 
     try {
-        m_system_exit = py::import("builtins").attr("SystemExit");
         // get main namespace, needed to run other interpreted code
         py::object py_main = py::import("__main__");
         py::dict py_namespace = py::extract<py::dict>(py_main.attr("__dict__"));
@@ -93,47 +91,9 @@ bool PythonBase::InitCommonImports() {
     return true;
 }
 
-void PythonBase::HandleErrorAlreadySet() {
-    if (!Py_IsInitialized()) {
-        ErrorLogger() << "Python interpreter not initialized and exception handler called.";
-        return;
-    }
-
-    // Matches system exit
-    if (PyErr_ExceptionMatches(m_system_exit.ptr()))
-    {
-        Finalize();
-        ErrorLogger() << "Python interpreter exited with SystemExit(), sys.exit(), exit, quit or some other alias.";
-        return;
-    }
-
-    PyObject *extype, *value, *traceback;
-    PyErr_Fetch(&extype, &value, &traceback);
-    PyErr_NormalizeException(&extype, &value, &traceback);
-    if (extype == nullptr) {
-        ErrorLogger() << "Missing python exception type";
-        return;
-    }
-
-    py::object o_extype(py::handle<>(py::borrowed(extype)));
-    py::object o_value(py::handle<>(py::borrowed(value)));
-    py::object o_traceback = traceback != nullptr ? py::object(py::handle<>(py::borrowed(traceback))) : py::object();
-
-    py::object mod_traceback = py::import("traceback");
-    py::object lines = mod_traceback.attr("format_exception")(o_extype, o_value, o_traceback);
-    for (int i = 0; i < len(lines); ++i) {
-        std::string line = py::extract<std::string>(lines[i])();
-        boost::algorithm::trim_right(line);
-        ErrorLogger() << line;
-    }
-
-    return;
-}
-
 void PythonBase::Finalize() {
     if (Py_IsInitialized()) {
         // cleanup python objects before interpterer shutdown
-        m_system_exit = py::object();
         m_namespace = boost::none;
         if (m_python_module_error != nullptr) {
             (*m_python_module_error) = py::object();
