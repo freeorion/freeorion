@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(EmpireAffiliationTypeParser) {
     CHECK_ENUM_AND_RESULT("AnyEmpire", EmpireAffiliationType::AFFIL_ANY, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
     CHECK_ENUM_AND_RESULT("None", EmpireAffiliationType::AFFIL_NONE, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
     CHECK_ENUM_AND_RESULT("CanSee", EmpireAffiliationType::AFFIL_CAN_SEE, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
-    CHECK_ENUM_AND_RESULT("HUMAN", EmpireAffiliationType::AFFIL_HUMAN, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
+    CHECK_ENUM_AND_RESULT("Human", EmpireAffiliationType::AFFIL_HUMAN, EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
     CHECK_FAILED_ENUM(EmpireAffiliationType, parse::empire_affiliation_enum_grammar);
 }
 
@@ -305,7 +305,7 @@ BOOST_AUTO_TEST_CASE(StatisticTypeParser) {
     CHECK_ENUM_AND_RESULT("Count", ValueRef::StatisticType::COUNT, ValueRef::StatisticType, parse::statistic_enum_grammar);
     CHECK_ENUM_AND_RESULT("Sum", ValueRef::StatisticType::SUM, ValueRef::StatisticType, parse::statistic_enum_grammar);
     CHECK_ENUM_AND_RESULT("Mean", ValueRef::StatisticType::MEAN, ValueRef::StatisticType, parse::statistic_enum_grammar);
-    CHECK_ENUM_AND_RESULT("Rms", ValueRef::StatisticType::RMS, ValueRef::StatisticType, parse::statistic_enum_grammar);
+    CHECK_ENUM_AND_RESULT("RMS", ValueRef::StatisticType::RMS, ValueRef::StatisticType, parse::statistic_enum_grammar);
     CHECK_ENUM_AND_RESULT("Mode", ValueRef::StatisticType::MODE, ValueRef::StatisticType, parse::statistic_enum_grammar);
     CHECK_ENUM_AND_RESULT("Max", ValueRef::StatisticType::MAX, ValueRef::StatisticType, parse::statistic_enum_grammar);
     CHECK_ENUM_AND_RESULT("Min", ValueRef::StatisticType::MIN, ValueRef::StatisticType, parse::statistic_enum_grammar);
