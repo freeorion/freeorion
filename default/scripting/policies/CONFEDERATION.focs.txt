@@ -18,7 +18,7 @@ Policy
                 Not ResourceSupplyConnected empire = LocalCandidate.Owner condition = Source
             ]
             effects = SetTargetInfluence value = Value
-                        + (NamedRealLookup name = "SUPPLY_DISCONNECTED_INFLUENCE_FLAT")
+                        + (NamedReal name = "PLC_CONFEDERATION_SUPPLY_DISCONNECTED_INFLUENCE_FLAT" value = 1)
 
         // makes all planets less stable
         EffectsGroup
