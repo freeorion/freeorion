@@ -1,6 +1,8 @@
 #ifndef __FreeOrion__Util__PythonCommon__
 #define __FreeOrion__Util__PythonCommon__
 
+#include <boost/python.hpp>
+
 #include "Export.h"
 
 class FO_COMMON_API PythonCommon {
@@ -16,6 +18,18 @@ public:
      */
     bool         IsPythonRunning() const;
 
+    /**
+       Handles boost::python::error_already_set.
+       If the error is SystemExit the python interpreter is finalized
+       and no longer available.
+
+       Call PyErr_Print() if the exception is an error.
+
+       HandleErrorAlreadySet is idempotent, calling it multiple times
+       won't crash or hang the process.
+     */
+    void HandleErrorAlreadySet();
+
     bool         Initialize();        // initializes and runs the Python interpreter, prepares the Python environment
 
     virtual bool InitCommonImports(); // initializes Python imports
@@ -27,6 +41,9 @@ private:
     wchar_t*                m_home_dir = nullptr;
     wchar_t*                m_program_name = nullptr;
 #endif
+    // A copy of the systemExit exception to compare with returned
+    // exceptions.  It can't be created in the exception handler.
+    boost::python::object   m_system_exit;
 };
 
 #endif /* defined(__FreeOrion__Util__PythonCommon__) */

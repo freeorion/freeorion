@@ -7,8 +7,10 @@ class PythonCommon;
 
 class FO_PARSE_API PythonParser {
 public:
-    PythonParser(const PythonCommon& python);
+    PythonParser(PythonCommon& _python);
     ~PythonParser();
+private:
+    PythonCommon& python;
 };
 
 #endif

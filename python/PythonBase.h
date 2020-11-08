@@ -15,18 +15,6 @@ public:
     PythonBase();
     virtual ~PythonBase();
 
-    /**
-       Handles boost::python::error_already_set.
-       If the error is SystemExit the python interpreter is finalized
-       and no longer available.
-
-       Call PyErr_Print() if the exception is an error.
-
-       HandleErrorAlreadySet is idempotent, calling it multiple times
-       won't crash or hang the process.
-     */
-    void HandleErrorAlreadySet();
-
     bool         Initialize();                         // initializes and runs the Python interpreter, prepares the Python environment
     virtual bool InitCommonImports() override;         // initializes Python imports, must be implemented by derived classes
     virtual bool InitImports() = 0;                    // initializes Python imports, must be implemented by derived classes
@@ -39,9 +27,6 @@ public:
 
 private:
     void         Finalize();                           // stops Python interpreter and releases its resources
-    // A copy of the systemExit exception to compare with returned
-    // exceptions.  It can't be created in the exception handler.
-    boost::python::object   m_system_exit;
 
     boost::optional<boost::python::dict> m_namespace;           // stores main namespace in optional to be finalized before Python interpreter
     boost::python::object*  m_python_module_error = nullptr;    // used to track if and which Python module contains the "error_report" function ErrorReport should call
