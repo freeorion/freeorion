@@ -28,9 +28,9 @@ XENOPHOBIC_SELF
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [ 
                 SetTargetIndustry value = Value
-                    * (NamedReal name = "XENOPHOBIC_SELF_TARGET_INDUSTRY_SCALING" value = 0.9)
+                    * 0.9
                 SetTargetResearch value = Value
-                    * (NamedReal name = "XENOPHOBIC_SELF_TARGET_RESEARCH_SCALING" value = 0.9)
+                    * 0.9
                 SetTargetHappiness value = Value
                     + (Statistic Count condition = And [
                         PopulationCenter
@@ -42,7 +42,7 @@ XENOPHOBIC_SELF
                         Not Population high = 0
                         Not Contains Building name = "BLD_CONC_CAMP"
                         WithinStarlaneJumps jumps = 5 condition = Source
-                    ]) * (NamedReal name = "XENOPHOBIC_SELF_TARGET_HAPPINESS_COUNT" value = 1.0)
+                    ]) * 1.0
             ]
 
         // Give a pop malus for self-sustaining xenophobic species based on the number of nearby planets with other species
@@ -97,6 +97,5 @@ XENOPHOBIC_OTHER
             accountinglabel = "XENOPHOBIC_LABEL_@1@_OTHER"
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population
-                        * (NamedReal name = "XENOPHOBIC_OTHER_TARGET_INDUSTRY_PERPOP"
-                                     value = -0.5 * [[INDUSTRY_PER_POP]])
+                        * (-0.5 * [[INDUSTRY_PER_POP]])
 '''
