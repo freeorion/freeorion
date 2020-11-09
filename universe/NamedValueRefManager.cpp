@@ -57,7 +57,7 @@ V* const GetValueRefImpl(std::map<NamedValueRefManager::key_type, std::unique_pt
     const auto it = registry.find(name);
     if (it != registry.end())
         return it->second.get();
-    ErrorLogger() << "NamedValueRefManager::GetValueRef found no registered " << label << " valueref for \"" << name << '"';
+    WarnLogger() << "NamedValueRefManager::GetValueRef found no registered " << label << " valueref for \"" << name << "\". This should not happen once \"#3225 Refactor initialisation of invariants in value refs to happen after parsing\" is implemented";
     return nullptr;
 }
 }
