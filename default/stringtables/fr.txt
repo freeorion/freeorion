@@ -11409,7 +11409,7 @@ PLC_CONFEDERATION_DESC
 '''Les planètes de l'empire sont organisées en systèmes indépendants confédérés. Les colonies ne pâtissent pas d'une Influence réduite si non-connectées à la Capitale, profitent d'une meilleure Infanterie, mais sont légèrement moins stables en général.
 
 Augmente de [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]] l'[[metertype METER_TROOPS]] max mais réduit la [[metertype METER_TARGET_HAPPINESS]] ([[value PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT]]) sur toutes les planètes.
-Augmente de [[value PLC_CONFEDERATION_TARGET_INFLUENCE_FLAT]] l'[[metertype METER_TARGET_INFLUENCE]] des colonies non-connectées à la Capitale.'''
+Augmente de [[value PLC_CONFEDERATION_SUPPLY_DISCONNECTED_INFLUENCE_FLAT]] l'[[metertype METER_TARGET_INFLUENCE]] des colonies non-connectées à la Capitale.'''
 
 PLC_CONFEDERATION_SHORT_DESC
 Soutient les systèmes déconnectés
