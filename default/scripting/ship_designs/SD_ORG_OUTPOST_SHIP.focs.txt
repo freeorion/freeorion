@@ -5,8 +5,6 @@ ShipDesign
     hull = "SH_ORGANIC"
     parts = [
         ""
-        ""
-        ""
         "CO_OUTPOST_POD"
     ]
     model = "seed"

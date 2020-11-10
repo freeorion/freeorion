@@ -13252,7 +13252,7 @@ Organic Hull
 SHP_ORG_HULL_DESC
 '''Unless faster ship hulls have already been researched, this tech decreases the time to build a colony building far away from the corresponding species in the empire.
 
-This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle.'''
+This is the most basic type of organic hull: a living hull grown from the most basic unit of life.'''
 
 SHP_ENDOSYMB_HULL
 Endosymbiotic Hull
