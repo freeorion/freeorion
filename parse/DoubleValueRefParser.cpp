@@ -89,7 +89,7 @@ parse::double_parser_rules::double_parser_rules(
 
     using phoenix::new_;
     using phoenix::static_cast_;
-    
+
     qi::_1_type _1;
     qi::_2_type _2;
     qi::_3_type _3;
@@ -132,7 +132,7 @@ parse::double_parser_rules::double_parser_rules(
                 tok.Named_ >> tok.Real_ >> tok.Lookup_
             >>  label(tok.name_) > tok.string
           ) [
-              _val = construct_movable_(new_<ValueRef::NamedRef<double>>(_2, phoenix::val(/*is_lookup_only*/true)))
+             _val = construct_movable_(new_<ValueRef::NamedRef<double>>(_2, phoenix::val(/*is_lookup_only*/true)))
           ]
         ;
 
