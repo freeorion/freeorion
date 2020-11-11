@@ -347,11 +347,17 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
         for (const auto& entry : empire_raw_ptr_map)
             em.m_empire_map[entry.first] = std::shared_ptr<Empire>(entry.second);
         TraceLogger() << "EmpireManager put raw pointers into shared_ptr";
-    } else {
+
+    } else if (Archive::is_loading::value && version < 2) {
         ar  & make_nvp("m_empire_map", em.m_empire_map);
+        TraceLogger() << "EmpireManager serialized " << em.m_empire_map.size() << " empires";
+        ar  & make_nvp("m_empire_diplomatic_statuses", em.m_empire_diplomatic_statuses);
+
+    } else {
+        ar  & make_nvp("m_empire_diplomatic_statuses", em.m_empire_diplomatic_statuses);
+        ar  & make_nvp("m_empire_map", em.m_empire_map);
+        TraceLogger() << "EmpireManager serialized " << em.m_empire_map.size() << " empires";
     }
-    TraceLogger() << "EmpireManager serialized " << em.m_empire_map.size() << " empires";
-    ar  & make_nvp("m_empire_diplomatic_statuses", em.m_empire_diplomatic_statuses);
     ar  & BOOST_SERIALIZATION_NVP(messages);
 
     if (Archive::is_loading::value) {
