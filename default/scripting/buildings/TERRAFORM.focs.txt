@@ -1,7 +1,8 @@
 BuildingType
     name = "BLD_TERRAFORM"
     description = "BLD_TERRAFORM_DESC"
-    buildcost = 100 * (Target.HabitableSize * (1 + Target.DistanceFromOriginalType) ) * [[BUILDING_COST_MULTIPLIER]]
+    buildcost = 100 * (1 - 0.4 * Statistic If condition = EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_TERRAFORMING")
+                    * (Target.HabitableSize * (1 + Target.DistanceFromOriginalType) ) * [[BUILDING_COST_MULTIPLIER]]
                     * (1 + 2 * Statistic If condition = EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_ENVIRONMENTALISM")
     buildtime = 12 - 6 * Statistic If condition = EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_TERRAFORMING"
     location = And [
