@@ -361,7 +361,7 @@ namespace {
         }
         else if (dir_name == "ENC_EMPIRE") {
             for (auto& entry : Empires()) {
-                sorted_entries_list.emplace(UserString(entry.second->Name()),
+                sorted_entries_list.emplace(entry.second->Name(),
                                             std::make_pair(LinkTaggedIDText(VarText::EMPIRE_ID_TAG, entry.first, entry.second->Name()) + "\n",
                                                            std::to_string(entry.first)));
             }
