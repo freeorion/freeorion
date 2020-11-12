@@ -1,6 +1,7 @@
 #ifndef _ValueRefManager_h_
 #define _ValueRefManager_h_
 
+#include <map>
 #include "ValueRef.h"
 
 namespace ValueRef {
@@ -61,7 +62,7 @@ public:
     //! Returns the ValueRef with the name @p name or nullptr if there is nov ValueRef with such a name or of the wrong type
     //! use the free function GetValueRef(...) instead, mainly to save some typing.
     template <typename T>
-    auto GetValueRef(const std::string& name) -> ValueRef::ValueRef<T>* const;
+    auto GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse = false) -> ValueRef::ValueRef<T>* const;
 
     //! Returns the ValueRef with the name @p name; you should use the
     //! free function GetValueRef(...) instead, mainly to save some typing.
@@ -89,12 +90,22 @@ public:
     //! clients and server.
     auto GetCheckSum() const -> unsigned int;
 
+    using NamedValueRefParseMap = std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>>;
+    //! This sets the asynchronous parse, so we can block on that
+    //! when a function needs to access a registry
+    FO_COMMON_API void SetNamedValueRefParse(Pending::Pending<NamedValueRefParseMap>&& future);
+
     //! Register the @p value_ref under the evaluated @p name.
     template <typename T>
     void RegisterValueRef(std::string&& name, std::unique_ptr<ValueRef::ValueRef<T>>&& vref);
 
 private:
     NamedValueRefManager();
+
+    //! Waits for parsing of named_value_refs.focs.txt to finish
+    void CheckPendingNamedValueRefs() const;
+
+    mutable boost::optional<Pending::Pending<NamedValueRefParseMap>> m_pending_named_value_refs_focs_txt = boost::none;
 
     //! Map of ValueRef%s identified by a name and mutexes for those to allow asynchronous registration
     double_container_type m_value_refs_double; // int value refs
@@ -119,7 +130,7 @@ FO_COMMON_API auto GetValueRefBase(const std::string& name) -> ValueRef::ValueRe
 //! Returns the ValueRef object registered with the given
 //! @p name in the registry matching the given type T.  If no such ValueRef exists, nullptr is returned instead.
 template <typename T>
-FO_COMMON_API auto GetValueRef(const std::string& name) -> ValueRef::ValueRef<T>* const;
+FO_COMMON_API auto GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse = false) -> ValueRef::ValueRef<T>* const;
 
 //! Register and take possesion of the ValueRef object @p vref under the given @p name.
 template <typename T>

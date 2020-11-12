@@ -40,9 +40,10 @@ namespace Pending {
     };
 
     /** Wait for the \p pending parse to complete.  Set pending to boost::none
-        and return the parsed T.  Return boost::none on errors.*/
+        and return the parsed T. Destroys the shared state in the wrapped std::future.
+        Return boost::none on errors.*/
     template <typename T>
-    boost::optional<T> WaitForPending(boost::optional<Pending<T>>& pending) {
+    boost::optional<T> WaitForPending(boost::optional<Pending<T>>& pending, bool do_not_care_about_result = false) {
         if (!pending)
             return boost::none;
 
@@ -60,6 +61,12 @@ namespace Pending {
         } while (status != std::future_status::ready);
 
         try {
+            if (do_not_care_about_result) {
+                if (pending && pending->pending->valid()) {
+                    pending->pending->get(); // needs to be called once
+                }
+                return boost::none;
+            }
             auto x = std::move(pending->pending->get());
             pending = boost::none;
             return std::move(x);

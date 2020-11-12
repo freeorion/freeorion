@@ -6,6 +6,7 @@
 #include "EnumValueRefRules.h"
 
 #include "MovableEnvelope.h"
+#include "../universe/NamedValueRefManager.h"
 #include "../universe/ValueRefs.h"
 #include "../universe/ValueRef.h"
 #include "../util/Directories.h"
@@ -43,7 +44,7 @@ namespace parse {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_named_ref_, insert_named_ref, 4)
 
-    using start_rule_payload = std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>>;
+    using start_rule_payload = NamedValueRefManager::NamedValueRefParseMap;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {

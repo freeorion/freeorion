@@ -46,6 +46,23 @@ NamedValueRefManager::NamedValueRefManager() {
     s_instance = this;
 }
 
+void NamedValueRefManager::SetNamedValueRefParse(Pending::Pending<NamedValueRefParseMap>&& future)
+{ m_pending_named_value_refs_focs_txt = std::move(future); }
+
+void NamedValueRefManager::CheckPendingNamedValueRefs() const {
+    // FIXME remove that debug utils
+    // static int the_count = 0; ++the_count;
+    //InfoLogger() << "[NVR] CheckPendingNamedValueRefs start " << the_count;
+    if (!m_pending_named_value_refs_focs_txt)
+        return;
+    //InfoLogger() << "[NVR] CheckPendingNamedValueRefs continue"<< the_count;
+    // we block on the asynchronous parse
+    // throw away the result, the parser already registered the values
+    WaitForPending(m_pending_named_value_refs_focs_txt, /*do not care about result*/true);
+    //InfoLogger() << "[NVR] CheckPendingNamedValueRefs done"<< the_count;
+}
+
+
 namespace {
 // helper function for NamedValueRefManager::GetValueRef
 template <typename V>
@@ -65,19 +82,25 @@ V* const GetValueRefImpl(std::map<NamedValueRefManager::key_type, std::unique_pt
 // default implementation - queries the untyped registry
 // will return nullptr if no such entry in the generic registry exists or if it has a different type than requested
 template <typename T>
-ValueRef::ValueRef<T>* const NamedValueRefManager::GetValueRef(const std::string& name) /*const*/ {
+ValueRef::ValueRef<T>* const NamedValueRefManager::GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse) /*const*/ {
+    if (wait_for_named_value_focs_txt_parse)
+        CheckPendingNamedValueRefs();
     return dynamic_cast<ValueRef::ValueRef<T>*>(GetValueRefImpl(m_value_refs, "generic", name));
 }
 
 // int specialisation - queries the ValueRef<int> registry
 template <>
-ValueRef::ValueRef<int>* const NamedValueRefManager::GetValueRef(const std::string& name) /*const*/ {
+ValueRef::ValueRef<int>* const NamedValueRefManager::GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse) /*const*/ {
+    if (wait_for_named_value_focs_txt_parse)
+        CheckPendingNamedValueRefs();
     return GetValueRefImpl(m_value_refs_int, "int", name);
 }
 
 // double specialisation - queries the ValueRef<double> registry
 template <>
-ValueRef::ValueRef<double>* const NamedValueRefManager::GetValueRef(const std::string& name) /*const*/ {
+ValueRef::ValueRef<double>* const NamedValueRefManager::GetValueRef(const std::string& name,  const bool wait_for_named_value_focs_txt_parse) /*const*/ {
+    if (wait_for_named_value_focs_txt_parse)
+        CheckPendingNamedValueRefs();
     return GetValueRefImpl(m_value_refs_double, "double", name);
 }
 
@@ -90,6 +113,7 @@ ValueRef::ValueRefBase* const NamedValueRefManager::GetValueRefBase(const std::s
     //if (auto* irefp = const_cast<NamedValueRefManager*>(this)->GetValueRef<int>(name)) // TODO C++17
     if (irefp)
         return irefp;
+    CheckPendingNamedValueRefs();
     const auto it = m_value_refs.find(name);
     return it != m_value_refs.end() ? it->second.get() : nullptr;
 }
@@ -103,6 +127,7 @@ NamedValueRefManager& NamedValueRefManager::GetNamedValueRefManager() {
 
 
 unsigned int NamedValueRefManager::GetCheckSum() const {
+    CheckPendingNamedValueRefs();
     unsigned int retval{0};
     for (auto const& name_type_pair : m_value_refs)
         CheckSums::CheckSumCombine(retval, name_type_pair);
@@ -115,8 +140,8 @@ unsigned int NamedValueRefManager::GetCheckSum() const {
     return retval;
 }
 
-
 NamedValueRefManager::any_container_type  NamedValueRefManager::GetItems() const {
+    CheckPendingNamedValueRefs();
     auto base_to_any{[](const entry_type& kv) { return any_entry_type(kv.first, *(kv.second.get())); }};
     auto double_to_any{[](const double_entry_type& kv) { return any_entry_type(kv.first, *(kv.second.get())); }};
     auto int_to_any{[](const int_entry_type& kv) { return any_entry_type(kv.first, *(kv.second.get())); }};
@@ -184,16 +209,16 @@ ValueRef::ValueRefBase* const GetValueRefBase(const std::string& name) {
 }
 
 template <typename T>
-ValueRef::ValueRef<T>* const GetValueRef(const std::string& name)
-{ return GetNamedValueRefManager().GetValueRef<T>(name); }
+ValueRef::ValueRef<T>* const GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse)
+{ return GetNamedValueRefManager().GetValueRef<T>(name, wait_for_named_value_focs_txt_parse); }
 
 template <typename T>
 void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::ValueRef<T>>&& vref)
 { return GetNamedValueRefManager().RegisterValueRef<T>(std::move(name), std::move(vref)); }
 
 // trigger instantiations
-template ValueRef::ValueRef<int>*    const GetValueRef(const std::string& name);
-template ValueRef::ValueRef<double>* const GetValueRef(const std::string& name);
+template ValueRef::ValueRef<int>*    const GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse);
+template ValueRef::ValueRef<double>* const GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse);
 template void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::ValueRef<int>>&& vref);
 template void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::ValueRef<double>>&& vref);
 template void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::ValueRef<PlanetEnvironment>>&& vref);
@@ -225,6 +250,11 @@ bool NamedRef<T>::NamedRefInitInvariants()
         return true;
     auto* vref = GetValueRef();
     if (!vref) {
+        if (!m_is_lookup_only) {
+            ErrorLogger() << "NamedRef<T>::NamedRefInitInvariants() Trying to use invariants without existing value ref (which should exist in this case)";
+            return false;
+        }
+        // there is a chance that this will be initialised, so retry
         std::chrono::milliseconds msecs(200);
         DebugLogger() << "NamedRef<T>::NamedRefInitInvariants() could not find value ref, will sleep a bit and retry.";
         std::this_thread::sleep_for(msecs);
@@ -247,15 +277,11 @@ bool NamedRef<T>::NamedRefInitInvariants()
         ValueRefBase::m_source_invariant = vref->SourceInvariant();
         m_invariants_initialized = true;
         return true;
-    } else {
-        if (m_is_lookup_only) {
-            WarnLogger() << "NamedRef<T>::NamedRefInitInvariants() Trying to use invariants in a Lookup value ref without existing value ref. "
-                         << "Falling back to non-invariance will prevent performance optimisations. This may be a parse race condition.";
-        } else {
-            ErrorLogger() << "NamedRef<T>::NamedRefInitInvariants() Trying to use invariants without existing value ref (which should exist in this case)";
-        }
-        return false;
     }
+    // m_is_lookup_only == true, no vref
+    WarnLogger() << "NamedRef<T>::NamedRefInitInvariants() Trying to use invariants in a Lookup value ref without existing value ref. "
+                 << "Falling back to non-invariance will prevent performance optimisations. This may be a parse race condition.";
+    return false;
 }
 
 template <typename T>
@@ -325,7 +351,7 @@ template <typename T>
 const ValueRef<T>* NamedRef<T>::GetValueRef() const
 {
     TraceLogger() << "NamedRef<T>::GetValueRef() look for registered valueref for \"" << m_value_ref_name << '"';
-    return ::GetValueRef<T>(m_value_ref_name);
+    return ::GetValueRef<T>(m_value_ref_name, m_is_lookup_only);
 }
 
 template <typename T>
