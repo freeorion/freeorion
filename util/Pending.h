@@ -61,10 +61,13 @@ namespace Pending {
         } while (status != std::future_status::ready);
 
         try {
+            // multiple threads might be waiting but not care about the results
             if (do_not_care_about_result) {
                 if (pending && pending->pending->valid()) {
-                    pending->pending->get(); // needs to be called once
+                    DebugLogger() << "Dont care for result of parsing \"" << pending->filename << "\" , throwing it away.";
+                    pending->pending->get(); // needs to be called once to release state
                 }
+                pending = boost::none;
                 return boost::none;
             }
             auto x = std::move(pending->pending->get());
