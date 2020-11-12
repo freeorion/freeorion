@@ -2867,6 +2867,9 @@ sc::result PlayingGame::react(const EliminateSelf& msg) {
 
     server.Networking().Disconnect(player_connection);
 
+    // check conditions for ending this turn
+    post_event(CheckTurnEndConditions());
+
     return discard_event();
 }
 
