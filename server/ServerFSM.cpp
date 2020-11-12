@@ -2873,6 +2873,68 @@ sc::result PlayingGame::react(const EliminateSelf& msg) {
     return discard_event();
 }
 
+sc::result PlayingGame::react(const AutoTurn& msg) {
+    DebugLogger(FSM) << "(ServerFSM) PlayingGame::AutoTurn message received";
+    ServerApp& server = Server();
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+
+    int player_id = player_connection->PlayerID();
+
+    if (player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+        ErrorLogger(FSM) << "PlayingGame::react(AutoTurn&) Only human client can set empire to auto-turn. Got auto-turn issue from " << player_id;
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+        return discard_event();
+    }
+
+    int turns_count = 0;
+
+    try {
+        turns_count = boost::lexical_cast<int>(msg.m_message.Text());
+    } catch (const boost::bad_lexical_cast& ex) {
+        ErrorLogger(FSM) << "PlayingGame::react(AutoTurn&) turns count " << msg.m_message.Text() << " is not a number: " << ex.what();
+        // incorrect turns count. disconnect player with wrong client.
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION")));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
+
+    Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
+    if (!empire) {
+        ErrorLogger(FSM) << "PlayingGame::react(AutoTurn&) couldn't get empire for player with id:" << player_id;
+        player_connection->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
+        return discard_event();
+    }
+
+    int empire_id = empire->EmpireID();
+    if (empire->Eliminated()) {
+        ErrorLogger(FSM) << "PlayingGame::react(AutoTurn&) received orders from player " << empire->PlayerName() << "(id: "
+                         << player_id << ") who controls empire " << empire_id
+                         << " but empire was eliminated";
+        player_connection->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+        return discard_event();
+    }
+
+    empire->SetAutoTurn(turns_count);
+
+    // notify other player that this empire submitted orders
+    for (auto player_it = server.m_networking.established_begin();
+         player_it != server.m_networking.established_end(); ++player_it)
+    {
+        PlayerConnectionPtr player_ctn = *player_it;
+        player_ctn->SendMessage(PlayerStatusMessage(empire->Ready() ?
+                                                    Message::PlayerStatus::WAITING :
+                                                    Message::PlayerStatus::PLAYING_TURN,
+                                                    empire_id));
+    }
+
+    if (empire->Ready()) {
+        // check conditions for ending this turn
+        post_event(CheckTurnEndConditions());
+    }
+
+    return discard_event();
+}
+
 sc::result PlayingGame::react(const Error& msg) {
     auto fatal = HandleErrorMessage(msg, Server());
     if (fatal && !Server().IsHostless()) {
@@ -3076,6 +3138,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
                                      order_set, ui_data, save_state_string,
                                      client_type));
         empire->SetReady(true);
+        empire->SetAutoTurn(0);
 
         // notify other player that this empire submitted orders
         for (auto player_it = server.m_networking.established_begin();
@@ -3200,7 +3263,7 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
         client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
     {
         // store empire orders and resume waiting for more
-        const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
+        Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
         if (!empire) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevokeReadiness&) couldn't get empire for player with id:" << player_id;
             sender->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
@@ -3218,7 +3281,8 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
 
         TraceLogger(FSM) << "WaitingForTurnEnd.RevokeReadiness : Revoke orders from player " << player_id;
 
-        server.RevokeEmpireTurnReadyness(empire_id);
+        empire->SetReady(false);
+        empire->SetAutoTurn(0);
 
         // inform player who just submitted of acknowledge revoking status.
         sender->SendMessage(msg.m_message);
@@ -3359,7 +3423,7 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
             ++recipient_player_it)
         {
             const PlayerConnectionPtr& recipient_player_ctn = *recipient_player_it;
-            recipient_player_ctn->SendMessage(PlayerStatusMessage(empire.second->Eliminated() ?
+            recipient_player_ctn->SendMessage(PlayerStatusMessage(empire.second->Eliminated() || empire.second->Ready() ?
                                                                       Message::PlayerStatus::WAITING :
                                                                       Message::PlayerStatus::PLAYING_TURN,
                                                                   empire.first));
