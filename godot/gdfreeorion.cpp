@@ -57,6 +57,8 @@ void GDFreeOrion::_init() {
 
     CompleteXDGMigration();
 
+    app = std::make_unique<GodotClientApp>();
+
     // Handle the case where the resource.path does not exist anymore
     // gracefully by resetting it to the standard path into the
     // application bundle.  This may happen if a previous installed
@@ -81,7 +83,6 @@ void GDFreeOrion::_init() {
     }
 
     // initialize any variables here
-    app = std::make_unique<GodotClientApp>();
     optionsDB = godot::OptionsDB::_new();
     networking = GodotNetworking::_new();
 
