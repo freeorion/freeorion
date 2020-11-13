@@ -152,7 +152,7 @@ SELF_SUSTAINING_BONUS
 '''     EffectsGroup
             scope = Source
             activation = And [
-                Planet
+                Planet environment = Good
                 HasTag name = "SELF_SUSTAINING"
             ]
             accountinglabel = "SELF_SUSTAINING_LABEL"
