@@ -14,6 +14,7 @@ using namespace godot;
 void GodotNetworking::_register_methods() {
     register_method("_is_connected", &GodotNetworking::_is_connected);
     register_method("_connect_to_server", &GodotNetworking::_connect_to_server);
+    register_method("_auth_response", &GodotNetworking::_auth_response);
 }
 
 GodotNetworking::GodotNetworking()
@@ -50,5 +51,14 @@ bool GodotNetworking::_connect_to_server(String dest, String player_name)
         ErrorLogger() << "App uninitialized";
     }
     return false;
+}
+
+void GodotNetworking::_auth_response(String player_name, String password) {
+    auto* app = GodotClientApp::GetApp();
+    if (app) {
+        std::string player_name8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(player_name.unicode_str());
+        std::string password8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(password.unicode_str());
+        app->Networking().SendMessage(AuthResponseMessage(player_name8, password8));
+    }
 }
 
