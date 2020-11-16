@@ -101,3 +101,6 @@ DerivedData
 .pytest_cache/
 .coverage
 htmlcov
+
+# Godot
+*.import
