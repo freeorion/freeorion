@@ -11215,8 +11215,8 @@ PLC_CENTRALIZATION_DESC
 • Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP]] par Population.
 • Augmente la [[metertype METER_TARGET_CONSTRUCTION]] de [[value PLC_CENTRALIZATION_TARGET_CONSTRUCTION_FLAT]].
 Toutefois, réduit également la portée de l'[[metertype METER_SUPPLY]] ([[value PLC_CENTRALIZATION_MAX_SUPPLY_FLAT]]) ainsi que la [[metertype METER_STOCKPILE]] ([[value PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT]]), et augmente le coût d'[[metertype METER_INFLUENCE]] des colonies de l'empire:
-• les colonies connectées par lignes d'[[metertype METER_SUPPLY]] subissent une pénalité de [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP]] par Voies spatiales les séparant de la Capitale, plafonnée à [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]].
-• les colonies non-connectées par lignes d'[[metertype METER_SUPPLY]] à la Capitale subissent la pénalité maximale ([[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]]).
+• Les colonies connectées par lignes d'[[metertype METER_SUPPLY]] subissent une pénalité de [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP]] par Voies spatiales les séparant de la Capitale, plafonnée à [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]].
+• Les colonies non-connectées par lignes d'[[metertype METER_SUPPLY]] à la Capitale subissent la pénalité maximale ([[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]]).
 
 La logistique de l'ensemble de l'empire vise à accroître la production de la Capitale, en y déroutant l'essentiel des ressources matérielles et sociales. Cela provoque un certain ressentiment dans les colonies, augmentant par conséquent les coûts d'[[metertype METER_INFLUENCE]].'''
 
@@ -13252,7 +13252,7 @@ Coque Organique
 SHP_ORG_HULL_DESC
 '''À moins que la Recherche ait déjà rendu possible la production de coques d'astronefs plus rapides, cette technologie permet de réduire le délai nécessaire à la construction d'une colonie très éloignée de l'espèce correspondante dans l'empire.
 
-La plus basique des coques de type organique: une coque vivante cultivée à partir des constituants les plus basiques de la vie et conçue pour le combat.'''
+La plus basique des coques de type organique: une coque vivante cultivée à partir des constituants les plus basiques de la vie.'''
 
 SHP_ENDOSYMB_HULL
 Coque Endosymbiotique
