@@ -6,9 +6,11 @@
 #include <sstream>
 
 #include "../util/Directories.h"
+#include "../util/GameRules.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
 #include "../client/ClientNetworking.h"
+#include "../combat/CombatLogManager.h"
 
 #include "GodotClientApp.h"
 #include "OptionsDB.h"
@@ -37,6 +39,70 @@ void GDFreeOrion::handle_message(Message&& msg) {
             emit_signal("auth_request", String(player_name.c_str()), String(auth.c_str()));
             break;
         }
+        case Message::MessageType::SET_AUTH_ROLES: {
+            ExtractSetAuthorizationRolesMessage(msg, app->Networking().AuthorizationRoles());
+            break;
+        }
+        case Message::MessageType::JOIN_GAME: {
+            int player_id;
+            boost::uuids::uuid cookie;
+            ExtractJoinAckMessageData(msg, player_id, cookie);
+            app->Networking().SetPlayerID(player_id);
+            break;
+        }
+        case Message::MessageType::HOST_ID: {
+            const std::string& text = msg.Text();
+            int host_id = Networking::INVALID_PLAYER_ID;
+            try {
+                host_id = boost::lexical_cast<int>(text);
+            } catch (const boost::bad_lexical_cast& ex) {
+                ErrorLogger() << "GDFreeOrion::handle_message(HOST_ID) could not convert \"" << text << "\" to host id";
+            }
+
+            app->Networking().SetHostPlayerID(host_id);
+            break;
+        }
+        case Message::MessageType::PLAYER_STATUS: {
+            Message::PlayerStatus status;
+            int about_empire_id;
+            ExtractPlayerStatusMessageData(msg, status, about_empire_id);
+            emit_signal("empire_status", static_cast<int>(status), about_empire_id);
+            break;
+        }
+        case Message::MessageType::GAME_START: {
+            bool loaded_game_data;
+            bool ui_data_available;
+            SaveGameUIData ui_data;
+            bool save_state_string_available;
+            std::string save_state_string; // ignored - used by AI but not by human client
+            OrderSet orders;
+            bool single_player_game = false;
+            int empire_id = ALL_EMPIRES;
+            int current_turn = INVALID_GAME_TURN;
+            app->Orders().Reset();
+            try {
+                ExtractGameStartMessageData(msg,                 single_player_game,             empire_id,
+                                            current_turn,        Empires(),                      GetUniverse(),
+                                            GetSpeciesManager(), GetCombatLogManager(),          GetSupplyManager(),
+                                            app->Players(),      app->Orders(),              loaded_game_data,
+                                            ui_data_available,   ui_data,                        save_state_string_available,
+                                            save_state_string,   app->GetGalaxySetupData());
+            } catch (...) {
+                return;
+            }
+
+            DebugLogger() << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
+
+            //app->SetSinglePlayerGame(single_player_game);
+            app->SetEmpireID(empire_id);
+            app->SetCurrentTurn(current_turn);
+
+            GetGameRules().SetFromStrings(app->GetGalaxySetupData().GetGameRules());
+
+            bool is_new_game = !(loaded_game_data && ui_data_available);
+            emit_signal("start_game", is_new_game);
+            break;
+        }
         default:
             std::ostringstream stream;
             stream << msg.Type();
@@ -53,6 +119,8 @@ void GDFreeOrion::_register_methods() {
     register_method("_exit_tree", &GDFreeOrion::_exit_tree);
     register_signal<GDFreeOrion>("ping", "message", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("auth_request", "player_name", GODOT_VARIANT_TYPE_STRING, "auth", GODOT_VARIANT_TYPE_STRING);
+    register_signal<GDFreeOrion>("empire_status", "status", GODOT_VARIANT_TYPE_INT, "about_empire_id", GODOT_VARIANT_TYPE_INT);
+    register_signal<GDFreeOrion>("start_game", "is_new_game", GODOT_VARIANT_TYPE_BOOL);
     register_property<GDFreeOrion, godot::OptionsDB*>("optionsDB",
         &GDFreeOrion::set_options,
         &GDFreeOrion::get_options,
