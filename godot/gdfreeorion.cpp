@@ -69,6 +69,17 @@ void GDFreeOrion::handle_message(Message&& msg) {
             emit_signal("empire_status", static_cast<int>(status), about_empire_id);
             break;
         }
+        case Message::MessageType::HOST_SP_GAME: {
+            try {
+                int host_id = boost::lexical_cast<int>(msg.Text());
+
+                app->Networking().SetPlayerID(host_id);
+                app->Networking().SetHostPlayerID(host_id);
+            } catch (const boost::bad_lexical_cast& ex) {
+                ErrorLogger() << "GDFreeOrion::handle_message(HOST_ID) Host id " << msg.Text() << " is not a number: " << ex.what();
+            }
+            break;
+        }
         case Message::MessageType::GAME_START: {
             bool loaded_game_data;
             bool ui_data_available;
@@ -93,7 +104,7 @@ void GDFreeOrion::handle_message(Message&& msg) {
 
             DebugLogger() << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
 
-            //app->SetSinglePlayerGame(single_player_game);
+            app->SetSinglePlayerGame(single_player_game);
             app->SetEmpireID(empire_id);
             app->SetCurrentTurn(current_turn);
 
@@ -117,6 +128,7 @@ void GDFreeOrion::handle_message(Message&& msg) {
 void GDFreeOrion::_register_methods() {
     // register_method("_process", &GDCppTest::_process);
     register_method("_exit_tree", &GDFreeOrion::_exit_tree);
+    register_method("_new_single_player_game", &GDFreeOrion::_new_single_player_game);
     register_signal<GDFreeOrion>("ping", "message", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("auth_request", "player_name", GODOT_VARIANT_TYPE_STRING, "auth", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("empire_status", "status", GODOT_VARIANT_TYPE_INT, "about_empire_id", GODOT_VARIANT_TYPE_INT);
@@ -190,6 +202,10 @@ void GDFreeOrion::_exit_tree() {
     optionsDB->free();
 
     ShutdownLoggingSystemFileSink();
+}
+
+void GDFreeOrion::_new_single_player_game(bool quickstart) {
+    app->NewSinglePlayerGame(quickstart);
 }
 
 godot::OptionsDB* GDFreeOrion::get_options() const
