@@ -8,6 +8,7 @@
 
 #include "GodotNetworking.h"
 #include "OptionsDB.h"
+#include "../network/Message.h"
 
 class GodotClientApp;
 
@@ -39,6 +40,8 @@ public:
 
     GodotNetworking* get_networking() const;
     void set_networking(GodotNetworking* ptr);
+
+    void handle_message(Message&& msg); ///< handle messages in thread
 };
 
 }
