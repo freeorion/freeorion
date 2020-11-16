@@ -1,6 +1,7 @@
 #include "gdfreeorion.h"
 #include <chrono>
 #include <atomic>
+#include <exception>
 #include <memory>
 #include <sstream>
 
@@ -19,12 +20,31 @@ std::atomic_bool quit(false);
 void GDFreeOrion::do_the_ping(GDFreeOrion* n) {
     while(!quit) {
         if (auto msg = n->app->Networking().GetMessage()) {
-            std::ostringstream stream;
-            stream << msg->Type();
-            n->emit_signal("ping", String(stream.str().c_str()));
+            n->handle_message(std::move(*msg));
         } else {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+    }
+}
+
+void GDFreeOrion::handle_message(Message&& msg) {
+    try {
+        switch (msg.Type()) {
+        case Message::MessageType::AUTH_REQUEST: {
+            std::string player_name;
+            std::string auth;
+            ExtractAuthRequestMessageData(msg, player_name, auth);
+            emit_signal("auth_request", String(player_name.c_str()), String(auth.c_str()));
+            break;
+        }
+        default:
+            std::ostringstream stream;
+            stream << msg.Type();
+            emit_signal("ping", String(stream.str().c_str()));
+        }
+    } catch (const std::exception& e) {
+        ErrorLogger() << "GDFreeOrion::handle_message : Exception while reacting to message of type \""
+                      << msg.Type() << "\". what: " << e.what();
     }
 }
 
@@ -32,6 +52,7 @@ void GDFreeOrion::_register_methods() {
     // register_method("_process", &GDCppTest::_process);
     register_method("_exit_tree", &GDFreeOrion::_exit_tree);
     register_signal<GDFreeOrion>("ping", "message", GODOT_VARIANT_TYPE_STRING);
+    register_signal<GDFreeOrion>("auth_request", "player_name", GODOT_VARIANT_TYPE_STRING, "auth", GODOT_VARIANT_TYPE_STRING);
     register_property<GDFreeOrion, godot::OptionsDB*>("optionsDB",
         &GDFreeOrion::set_options,
         &GDFreeOrion::get_options,
