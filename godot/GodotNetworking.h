@@ -19,6 +19,7 @@ namespace godot {
 
         bool _is_connected() const;
         bool _connect_to_server(String dest, String player_name);
+        void _auth_response(String player_name, String password);
     };
 }
 
