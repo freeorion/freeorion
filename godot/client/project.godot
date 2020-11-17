@@ -1,0 +1,51 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "NinePatchRect",
+"class": "FOWindow",
+"language": "GDScript",
+"path": "res://FOWindow.gd"
+}, {
+"base": "Button",
+"class": "MainMenuBtn",
+"language": "GDScript",
+"path": "res://MainMenuBtn.gd"
+} ]
+_global_script_class_icons={
+"FOWindow": "",
+"MainMenuBtn": ""
+}
+
+[application]
+
+config/name="FreeOrion Godot Client"
+run/main_scene="res://FreeOrionClient.tscn"
+config/icon="res://assets/image/FO_Icon_256x256.png"
+
+[autoload]
+
+global="*res://global.gd"
+
+[display]
+
+window/size/width=1600
+window/size/height=900
+
+[physics]
+
+3d/active_soft_world=false
+3d/default_gravity=0.0
+3d/default_gravity_vector=Vector3( 0, 0, 0 )
+
+[rendering]
+
+environment/default_clear_color=Color( 0, 0, 0, 1 )
+environment/default_environment="res://default_env.tres"
