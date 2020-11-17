@@ -102,5 +102,9 @@ DerivedData
 .coverage
 htmlcov
 
-# Godot
+# Godot client
+*.*~
 *.import
+/godot/client/.import/
+/godot/client/export/
+/godot/client/bin/

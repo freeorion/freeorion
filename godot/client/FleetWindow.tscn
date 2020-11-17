@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://FOWindow.tscn" type="PackedScene" id=1]
+[ext_resource path="res://FleetWindow.gd" type="Script" id=2]
+
+[node name="FleetWindow" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="Title" parent="." index="0"]
+text = "Fleet Window"
+
+[node name="FleetInfo" type="Label" parent="." index="3"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 30.0
+margin_right = -10.0
+margin_bottom = -10.0
+size_flags_vertical = 1
+autowrap = true
+clip_text = true
+[connection signal="pressed" from="HBoxContainer/CloseWidget" to="." method="_on_CloseWidget_pressed"]
