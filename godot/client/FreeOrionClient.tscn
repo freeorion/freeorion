@@ -1,0 +1,162 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://assets/image/logo.png" type="Texture" id=1]
+[ext_resource path="res://assets/image/splash.png" type="Texture" id=2]
+[ext_resource path="res://assets/image/frames/FOWindowFrame2.png" type="Texture" id=3]
+[ext_resource path="res://resources/FOStdTheme.tres" type="Theme" id=4]
+[ext_resource path="res://FreeOrionClient.gd" type="Script" id=5]
+[ext_resource path="res://MainMenuBtn.tscn" type="PackedScene" id=6]
+[ext_resource path="res://assets/audio/artificial_intelligence_v3.ogg" type="AudioStream" id=7]
+[ext_resource path="res://gdcpptest.gdns" type="Script" id=8]
+
+[node name="GUI" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 4 )
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="BackgroundTex" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LogoTex" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 0.1
+texture = ExtResource( 1 )
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MainMenu" type="NinePatchRect" parent="."]
+anchor_left = 0.65
+anchor_top = 0.2
+anchor_right = 0.65
+anchor_bottom = 0.2
+margin_right = 256.0
+margin_bottom = 536.0
+rect_min_size = Vector2( 256, 256 )
+texture = ExtResource( 3 )
+patch_margin_left = 5
+patch_margin_top = 25
+patch_margin_right = 5
+patch_margin_bottom = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 30.0
+margin_top = 30.0
+margin_right = -30.0
+margin_bottom = -10.0
+custom_constants/separation = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ContinueBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 6 )]
+margin_right = 196.0
+margin_bottom = 40.0
+size_flags_vertical = 3
+Title = "Continue"
+
+[node name="SinglePlayerBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 6 )]
+margin_top = 50.0
+margin_right = 196.0
+margin_bottom = 90.0
+size_flags_vertical = 3
+Title = "Single Player"
+
+[node name="QuickstartBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 6 )]
+margin_top = 100.0
+margin_right = 196.0
+margin_bottom = 140.0
+size_flags_vertical = 3
+Title = "Quickstart"
+
+[node name="MultiplayerBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 6 )]
+margin_top = 150.0
+margin_right = 196.0
+margin_bottom = 190.0
+size_flags_vertical = 3
+Title = "Multiplayer"
+
+[node name="LoadGameBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 6 )]
+margin_top = 200.0
+margin_right = 196.0
+margin_bottom = 240.0
+size_flags_vertical = 3
+Title = "Load Game"
+
+[node name="OptionsBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 6 )]
+margin_top = 250.0
+margin_right = 196.0
+margin_bottom = 290.0
+size_flags_vertical = 3
+Title = "Options"
+
+[node name="PediaBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 6 )]
+margin_top = 300.0
+margin_right = 196.0
+margin_bottom = 340.0
+size_flags_vertical = 3
+Title = "Pedia"
+
+[node name="AboutBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 6 )]
+margin_top = 350.0
+margin_right = 196.0
+margin_bottom = 390.0
+size_flags_vertical = 3
+Title = "About"
+
+[node name="CreditsBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 6 )]
+margin_top = 400.0
+margin_right = 196.0
+margin_bottom = 440.0
+size_flags_vertical = 3
+Title = "Credits"
+
+[node name="QuitBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 6 )]
+margin_top = 450.0
+margin_right = 196.0
+margin_bottom = 489.0
+Title = "Quit"
+
+[node name="Label" type="Label" parent="MainMenu"]
+anchor_right = 1.0
+margin_left = 5.0
+margin_right = -5.0
+margin_bottom = 20.0
+text = "FreeOrion Main Menu"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+autoplay = true
+
+[node name="Popup" type="Popup" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource( 8 )
+[connection signal="pressed" from="MainMenu/VBoxContainer/SinglePlayerBtn" to="." method="_on_SinglePlayerBtn_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer/QuickstartBtn" to="." method="_on_QuickstartBtn_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer/MultiplayerBtn" to="." method="_on_MultiplayerBtn_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer/QuitBtn" to="." method="_on_QuitBtn_pressed"]

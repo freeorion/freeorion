@@ -1,0 +1,42 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://GalaxyMapCamera.gd" type="Script" id=1]
+[ext_resource path="res://GalaxyMap.gd" type="Script" id=2]
+[ext_resource path="res://StarField.gd" type="Script" id=3]
+[ext_resource path="res://Starnames.gd" type="Script" id=4]
+[ext_resource path="res://assets/audio/artificial_intelligence_v3.ogg" type="AudioStream" id=5]
+[ext_resource path="res://StarSystemSelectionMarker.tscn" type="PackedScene" id=6]
+[ext_resource path="res://FleetWindow.tscn" type="PackedScene" id=7]
+
+[sub_resource type="ProceduralSky" id=1]
+
+[sub_resource type="Environment" id=2]
+background_sky = SubResource( 1 )
+
+[node name="GalaxyMap" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 2 )
+
+[node name="GalaxyMapCamera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, 1, 0, -1, -1.62921e-07, 0, 30, 0 )
+current = true
+far = 8192.0
+script = ExtResource( 1 )
+
+[node name="StarField" type="Spatial" parent="."]
+script = ExtResource( 3 )
+
+[node name="StarSystemSelectionMarker" parent="StarField" instance=ExtResource( 6 )]
+visible = false
+
+[node name="Starnames" type="Node2D" parent="."]
+script = ExtResource( 4 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 5 )
+autoplay = true
+
+[node name="FleetWindow" parent="." instance=ExtResource( 7 )]
+visible = false
