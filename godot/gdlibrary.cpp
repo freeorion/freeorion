@@ -1,6 +1,7 @@
 #include "gdfreeorion.h"
 #include "OptionsDB.h"
 #include "GodotNetworking.h"
+#include "GodotSystem.h"
 
 extern "C" void GDN_EXPORT godot_gdnative_init(godot_gdnative_init_options *o) {
     godot::Godot::gdnative_init(o);
@@ -16,4 +17,5 @@ extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
     godot::register_class<godot::GDFreeOrion>();
     godot::register_class<godot::OptionsDB>();
     godot::register_class<godot::GodotNetworking>();
+    godot::register_class<godot::GodotSystem>();
 }
