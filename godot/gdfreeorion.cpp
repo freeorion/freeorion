@@ -9,11 +9,13 @@
 #include "../util/GameRules.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
+#include "../universe/System.h"
 #include "../client/ClientNetworking.h"
 #include "../combat/CombatLogManager.h"
 
 #include "GodotClientApp.h"
 #include "OptionsDB.h"
+#include "GodotSystem.h"
 
 using namespace godot;
 
@@ -129,6 +131,7 @@ void GDFreeOrion::_register_methods() {
     // register_method("_process", &GDCppTest::_process);
     register_method("_exit_tree", &GDFreeOrion::_exit_tree);
     register_method("_new_single_player_game", &GDFreeOrion::_new_single_player_game);
+    register_method("_get_systems", &GDFreeOrion::_get_systems);
     register_signal<GDFreeOrion>("ping", "message", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("auth_request", "player_name", GODOT_VARIANT_TYPE_STRING, "auth", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("empire_status", "status", GODOT_VARIANT_TYPE_INT, "about_empire_id", GODOT_VARIANT_TYPE_INT);
@@ -222,5 +225,13 @@ GodotNetworking* GDFreeOrion::get_networking() const
 void GDFreeOrion::set_networking(GodotNetworking* ptr) {
     // ignore it
     Godot::print(String("Ignore setting networking"));
+}
+
+Dictionary GDFreeOrion::_get_systems() const {
+    Dictionary systems;
+    for (const auto& sys : Objects().all<System>()) {
+        systems[sys->ID()] = GodotSystem::wrap(sys);
+    }
+    return systems;
 }
 
