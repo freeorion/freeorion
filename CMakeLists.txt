@@ -47,7 +47,7 @@ option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_CLIENT_GG "Build GiGi client" ON)
 option(BUILD_CLIENT_GODOT "Build Godot client (experimental)" OFF)
 if(NOT GODOT_CPP_ROOT)
-    set(GODOT_CPP_ROOT "" CACHE STRING "Path to Godot CPP libraries" FORCE)
+    set(GODOT_CPP_ROOT "${CMAKE_SOURCE_DIR}/godot/godot-cpp" CACHE STRING "Path to Godot CPP libraries" FORCE)
 endif()
 option(BUILD_SERVER "Build server" ON)
 option(BUILD_AI "Build AI" ON)
@@ -736,6 +736,16 @@ if(APPLE AND BUILD_CLIENT_GG)
     )
 endif()
 
+if(BUILD_CLIENT_GODOT)
+    add_custom_command(TARGET freeoriongodot POST_BUILD
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorioncommon>" "${CMAKE_SOURCE_DIR}/godot/client/bin/x11"
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionparse>" "${CMAKE_SOURCE_DIR}/godot/client/bin/x11"
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriongodot>" "${CMAKE_SOURCE_DIR}/godot/client/bin/x11"
+    )
+endif()
 
 ##
 ## Recurse into sources.
