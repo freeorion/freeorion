@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/mesh/StarSystemSelectionMarker.gltf" type="PackedScene" id=1]
+[ext_resource path="res://StarSystemSelectionMarker.gd" type="Script" id=2]
+
+[sub_resource type="SpatialMaterial" id=1]
+flags_unshaded = true
+
+[node name="StarSystemSelectionMarker" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="Circle" parent="." index="0"]
+material/0 = SubResource( 1 )

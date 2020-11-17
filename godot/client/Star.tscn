@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="SpatialMaterial" id=1]
+params_specular_mode = 4
+albedo_color = Color( 0, 0, 0, 1 )
+emission_enabled = true
+emission = Color( 0.909804, 0.909804, 0.65098, 1 )
+emission_energy = 1.0
+emission_operator = 0
+emission_on_uv2 = false
+
+[sub_resource type="BoxShape" id=2]
+
+[node name="Star" type="KinematicBody"]
+
+[node name="CSGSphere" type="CSGSphere" parent="."]
+cast_shadow = 0
+radius = 0.2
+radial_segments = 32
+rings = 16
+material = SubResource( 1 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0 )
+shape = SubResource( 2 )
