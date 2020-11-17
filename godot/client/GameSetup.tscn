@@ -1,0 +1,559 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://FOWindow.tscn" type="PackedScene" id=1]
+[ext_resource path="res://GameSetup.gd" type="Script" id=2]
+[ext_resource path="res://resources/FOStdTheme.tres" type="Theme" id=3]
+[ext_resource path="res://assets/image/randomize_clicked.png" type="Texture" id=4]
+[ext_resource path="res://assets/image/randomize_mouseover.png" type="Texture" id=5]
+[ext_resource path="res://assets/image/randomize.png" type="Texture" id=6]
+[ext_resource path="res://GalaxyShapeInput.gd" type="Script" id=7]
+[ext_resource path="res://SeedInput.gd" type="Script" id=9]
+[ext_resource path="res://GalaxyAgeInput.gd" type="Script" id=10]
+[ext_resource path="res://GalaxySetupOptionInput.gd" type="Script" id=11]
+[ext_resource path="res://AIAggressionInput.gd" type="Script" id=12]
+[ext_resource path="res://StartingSpeciesInput.gd" type="Script" id=13]
+
+[node name="GameSetup" instance=ExtResource( 1 )]
+margin_right = 729.0
+margin_bottom = 565.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 730, 570 )
+theme = ExtResource( 3 )
+script = ExtResource( 2 )
+Title = "Game Setup"
+
+[node name="Title" parent="." index="0"]
+text = "Game Setup"
+
+[node name="ToplevelContainer" type="HBoxContainer" parent="." index="3"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 35.0
+margin_right = -20.0
+margin_bottom = -20.0
+rect_clip_content = true
+custom_constants/separation = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LeftContainer" type="VBoxContainer" parent="ToplevelContainer" index="0"]
+margin_right = 345.0
+margin_bottom = 515.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 5
+
+[node name="Seed" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="0"]
+margin_right = 345.0
+margin_bottom = 25.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/Seed" index="0"]
+margin_top = 3.0
+margin_right = 166.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+theme = ExtResource( 3 )
+text = "Seed"
+align = 2
+valign = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineEdit" type="LineEdit" parent="ToplevelContainer/LeftContainer/Seed" index="1"]
+margin_left = 176.0
+margin_right = 309.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.8
+placeholder_text = "0"
+script = ExtResource( 9 )
+
+[node name="RandomSeedBtn" type="TextureButton" parent="ToplevelContainer/LeftContainer/Seed" index="2"]
+margin_left = 319.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.15
+texture_normal = ExtResource( 6 )
+texture_pressed = ExtResource( 4 )
+texture_hover = ExtResource( 5 )
+texture_disabled = ExtResource( 6 )
+texture_focused = ExtResource( 6 )
+expand = true
+stretch_mode = 5
+
+[node name="Systems" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="1"]
+margin_top = 30.0
+margin_right = 345.0
+margin_bottom = 55.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/Systems" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+text = "Systems"
+align = 2
+valign = 3
+
+[node name="SpinBox" type="SpinBox" parent="ToplevelContainer/LeftContainer/Systems" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+max_value = 10000.0
+value = 150.0
+
+[node name="GalaxyShape" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="2"]
+margin_top = 60.0
+margin_right = 345.0
+margin_bottom = 85.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/GalaxyShape" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+text = "Galaxy Shape"
+align = 2
+valign = 3
+
+[node name="OptionButton" type="OptionButton" parent="ToplevelContainer/LeftContainer/GalaxyShape" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+script = ExtResource( 7 )
+
+[node name="GalaxyAge" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="3"]
+margin_top = 90.0
+margin_right = 345.0
+margin_bottom = 115.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/GalaxyAge" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+text = "Galaxy Age"
+align = 2
+valign = 3
+
+[node name="OptionButton" type="OptionButton" parent="ToplevelContainer/LeftContainer/GalaxyAge" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+script = ExtResource( 10 )
+
+[node name="StarlaneFrequency" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="4"]
+margin_top = 120.0
+margin_right = 345.0
+margin_bottom = 145.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/StarlaneFrequency" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+text = "Starlane Frequency"
+align = 2
+valign = 3
+
+[node name="OptionButton" type="OptionButton" parent="ToplevelContainer/LeftContainer/StarlaneFrequency" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+text = "Medium"
+items = [ "Low", null, false, 1, null, "Medium", null, false, 2, null, "High", null, false, 3, null, "Random", null, false, 4, null ]
+selected = 1
+script = ExtResource( 11 )
+
+[node name="PlanetDensity" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="5"]
+margin_top = 150.0
+margin_right = 345.0
+margin_bottom = 175.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/PlanetDensity" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+text = "Planet Density"
+align = 2
+valign = 3
+
+[node name="OptionButton" type="OptionButton" parent="ToplevelContainer/LeftContainer/PlanetDensity" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+text = "Medium"
+items = [ "Low", null, false, 1, null, "Medium", null, false, 2, null, "High", null, false, 3, null, "Random", null, false, 4, null ]
+selected = 1
+script = ExtResource( 11 )
+
+[node name="SpecialsFrequency" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="6"]
+margin_top = 180.0
+margin_right = 345.0
+margin_bottom = 205.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/SpecialsFrequency" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+text = "Specials Frequency"
+align = 2
+valign = 3
+
+[node name="OptionButton" type="OptionButton" parent="ToplevelContainer/LeftContainer/SpecialsFrequency" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+text = "Medium"
+items = [ "None", null, false, 0, null, "Low", null, false, 1, null, "Medium", null, false, 2, null, "High", null, false, 3, null, "Random", null, false, 4, null ]
+selected = 2
+script = ExtResource( 11 )
+WithNoneOption = true
+
+[node name="MonsterFrequency" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="7"]
+margin_top = 210.0
+margin_right = 345.0
+margin_bottom = 235.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/MonsterFrequency" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+text = "Monster Frequency"
+align = 2
+valign = 3
+
+[node name="OptionButton" type="OptionButton" parent="ToplevelContainer/LeftContainer/MonsterFrequency" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+text = "Medium"
+items = [ "None", null, false, 0, null, "Low", null, false, 1, null, "Medium", null, false, 2, null, "High", null, false, 3, null, "Random", null, false, 4, null ]
+selected = 2
+script = ExtResource( 11 )
+WithNoneOption = true
+
+[node name="NativeFrequency" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="8"]
+margin_top = 240.0
+margin_right = 345.0
+margin_bottom = 265.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/NativeFrequency" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+text = "Native Frequency"
+align = 2
+valign = 3
+
+[node name="OptionButton" type="OptionButton" parent="ToplevelContainer/LeftContainer/NativeFrequency" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+text = "Medium"
+items = [ "None", null, false, 0, null, "Low", null, false, 1, null, "Medium", null, false, 2, null, "High", null, false, 3, null, "Random", null, false, 4, null ]
+selected = 2
+script = ExtResource( 11 )
+WithNoneOption = true
+
+[node name="MaxAIAggression" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="9"]
+margin_top = 270.0
+margin_right = 345.0
+margin_bottom = 295.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/MaxAIAggression" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+text = "Max AI Aggression"
+align = 2
+valign = 3
+
+[node name="OptionButton" type="OptionButton" parent="ToplevelContainer/LeftContainer/MaxAIAggression" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+script = ExtResource( 12 )
+
+[node name="PlayerName" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="10"]
+margin_top = 300.0
+margin_right = 345.0
+margin_bottom = 325.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/PlayerName" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+theme = ExtResource( 3 )
+text = "Player Name"
+align = 2
+valign = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineEdit" type="LineEdit" parent="ToplevelContainer/LeftContainer/PlayerName" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+text = "Human_Player"
+placeholder_text = "0"
+
+[node name="EmpireName" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="11"]
+margin_top = 330.0
+margin_right = 345.0
+margin_bottom = 355.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/EmpireName" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+theme = ExtResource( 3 )
+text = "Empire Name"
+align = 2
+valign = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineEdit" type="LineEdit" parent="ToplevelContainer/LeftContainer/EmpireName" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+text = "Terran Imperium"
+placeholder_text = "0"
+
+[node name="EmpireColor" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="12"]
+margin_top = 360.0
+margin_right = 345.0
+margin_bottom = 385.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/EmpireColor" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+theme = ExtResource( 3 )
+text = "Empire Color"
+align = 2
+valign = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorPickerBtn" type="ColorPickerButton" parent="ToplevelContainer/LeftContainer/EmpireColor" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+text = "Terran Imperium"
+color = Color( 0.223529, 0.294118, 0.87451, 1 )
+edit_alpha = false
+
+[node name="StartingSpecies" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="13"]
+margin_top = 390.0
+margin_right = 345.0
+margin_bottom = 415.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/StartingSpecies" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+text = "Starting Species"
+align = 2
+valign = 3
+
+[node name="OptionButton" type="OptionButton" parent="ToplevelContainer/LeftContainer/StartingSpecies" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+expand_icon = true
+script = ExtResource( 13 )
+
+[node name="NumberAIPlayers" type="HBoxContainer" parent="ToplevelContainer/LeftContainer" index="14"]
+margin_top = 420.0
+margin_right = 345.0
+margin_bottom = 445.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/NumberAIPlayers" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+theme = ExtResource( 3 )
+text = "Number of AI Players"
+align = 2
+valign = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SpinBox" type="SpinBox" parent="ToplevelContainer/LeftContainer/NumberAIPlayers" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+max_value = 40.0
+value = 6.0
+
+[node name="MarginContainer" type="MarginContainer" parent="ToplevelContainer/LeftContainer" index="15"]
+margin_top = 450.0
+margin_right = 345.0
+margin_bottom = 509.0
+custom_constants/margin_right = 20
+custom_constants/margin_top = 10
+custom_constants/margin_left = 20
+custom_constants/margin_bottom = 10
+
+[node name="OK_Cancel_Buttons" type="HBoxContainer" parent="ToplevelContainer/LeftContainer/MarginContainer" index="0"]
+margin_left = 20.0
+margin_top = 10.0
+margin_right = 325.0
+margin_bottom = 49.0
+custom_constants/separation = 50
+alignment = 1
+
+[node name="OKBtn" type="Button" parent="ToplevelContainer/LeftContainer/MarginContainer/OK_Cancel_Buttons" index="0"]
+margin_left = 27.0
+margin_right = 127.0
+margin_bottom = 39.0
+rect_min_size = Vector2( 100, 30 )
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/MarginContainer/OK_Cancel_Buttons/OKBtn" index="0"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "OK"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CancelBtn" type="Button" parent="ToplevelContainer/LeftContainer/MarginContainer/OK_Cancel_Buttons" index="1"]
+margin_left = 177.0
+margin_right = 277.0
+margin_bottom = 39.0
+rect_min_size = Vector2( 100, 30 )
+
+[node name="Label" type="Label" parent="ToplevelContainer/LeftContainer/MarginContainer/OK_Cancel_Buttons/CancelBtn" index="0"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "Cancel"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RightContainer" type="VBoxContainer" parent="ToplevelContainer" index="1"]
+margin_left = 355.0
+margin_right = 700.0
+margin_bottom = 515.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 10
+
+[node name="GalaxyShapeTex" type="TextureRect" parent="ToplevelContainer/RightContainer" index="0"]
+margin_right = 345.0
+margin_bottom = 202.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.4
+expand = true
+stretch_mode = 6
+
+[node name="TabContainer" type="TabContainer" parent="ToplevelContainer/RightContainer" index="1"]
+margin_top = 212.0
+margin_right = 345.0
+margin_bottom = 515.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.6
+tab_align = 0
+
+[node name="Tab1" type="Tabs" parent="ToplevelContainer/RightContainer/TabContainer" index="0"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 34.0
+margin_right = -5.0
+margin_bottom = -5.0
+
+[node name="Tab2" type="Tabs" parent="ToplevelContainer/RightContainer/TabContainer" index="1"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 34.0
+margin_right = -5.0
+margin_bottom = -5.0
+
+[node name="Tab3" type="Tabs" parent="ToplevelContainer/RightContainer/TabContainer" index="2"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 34.0
+margin_right = -5.0
+margin_bottom = -5.0
+
+[node name="Tab4" type="Tabs" parent="ToplevelContainer/RightContainer/TabContainer" index="3"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 34.0
+margin_right = -5.0
+margin_bottom = -5.0
+
+[node name="Tab5" type="Tabs" parent="ToplevelContainer/RightContainer/TabContainer" index="4"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 5.0
+margin_top = 34.0
+margin_right = -5.0
+margin_bottom = -5.0
+[connection signal="pressed" from="HBoxContainer/CloseWidget" to="." method="_on_CloseWidget_pressed"]
+[connection signal="pressed" from="ToplevelContainer/LeftContainer/Seed/RandomSeedBtn" to="ToplevelContainer/LeftContainer/Seed/LineEdit" method="_on_RandomSeedBtn_pressed"]
+[connection signal="item_selected" from="ToplevelContainer/LeftContainer/GalaxyShape/OptionButton" to="." method="_on_GalaxyShape_selected"]
+[connection signal="pressed" from="ToplevelContainer/LeftContainer/MarginContainer/OK_Cancel_Buttons/OKBtn" to="." method="_on_OKBtn_pressed"]
+[connection signal="pressed" from="ToplevelContainer/LeftContainer/MarginContainer/OK_Cancel_Buttons/CancelBtn" to="." method="_on_CancelBtn_pressed"]
