@@ -1,14 +1,16 @@
-[entry]
-
-X11.64="res://bin/libfreeoriongodot.so"
-
-[dependencies]
-
-X11.64=[ "res://bin/libfreeorioncommon.so", "res://bin/libfreeorionparse.so" ]
-
 [general]
 
 singleton=false
 load_once=true
 symbol_prefix="godot_"
 reloadable=true
+
+[entry]
+
+OSX.64="res://bin/libfreeoriongodot.dylib"
+X11.64="res://bin/libfreeoriongodot.so"
+
+[dependencies]
+
+OSX.64=[ "res://bin/libfreeorioncommon.dylib", "res://bin/libfreeorionparse.dylib" ]
+X11.64=[ "res://bin/libfreeorioncommon.so", "res://bin/libfreeorionparse.so" ]
