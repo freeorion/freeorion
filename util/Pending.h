@@ -8,6 +8,7 @@
 #include <boost/optional/optional.hpp>
 
 #include <future>
+#include <mutex>
 #include <string>
 
 /** namespace Pending collection classes and functions used for
@@ -37,6 +38,7 @@ namespace Pending {
 
         boost::optional<std::future<T>> pending = boost::none;
         std::string filename;
+        std::mutex m_mutex;
     };
 
     /** Wait for the \p pending parse to complete.  Set pending to boost::none
@@ -64,12 +66,14 @@ namespace Pending {
             // multiple threads might be waiting but not care about the results
             if (do_not_care_about_result) {
                 if (pending && pending->pending->valid()) {
-                    DebugLogger() << "Dont care for result of parsing \"" << pending->filename << "\" , throwing it away.";
+                    DebugLogger() << "Dont care for result of parsing \"" << pending->filename << "\". Have to get() once to release shared state in pending future.";
                     pending->pending->get(); // needs to be called once to release state
                 }
+                DebugLogger() << "Dont care for result of parsing \"" << pending->filename << "\". Was already released.";
                 pending = boost::none;
                 return boost::none;
             }
+            DebugLogger() << "Retrieve result of parsing \"" << pending->filename << "\".";
             auto x = std::move(pending->pending->get());
             pending = boost::none;
             return std::move(x);
@@ -85,24 +89,10 @@ namespace Pending {
         value.  Return the stored value.*/
     template <typename T>
     T& SwapPending(boost::optional<Pending<T>>& pending, T& stored) {
-        if (auto tt = WaitForPending(pending))
-            std::swap(*tt, stored);
-        return stored;
-    }
-
-    /** If there is a pending parse, wait for it and swap it with the stored
-        value.  Return the stored value.
-
-        TODO: remove this function once all of the raw pointer containers are removed.
-    */
-    template <typename T>
-    T& SwapPendingRawPointers(boost::optional<Pending<T>>& pending, T& stored) {
-        if (auto parsed = WaitForPending(pending)) {
-            std::swap(*parsed, stored);
-
-            // Don't leak old types
-            for (auto& entry : *parsed)
-                delete entry.second;
+        if (pending) {
+            const std::lock_guard<std::mutex> lock(pending->m_mutex);
+            if (auto tt = WaitForPending(pending))
+                std::swap(*tt, stored);
         }
         return stored;
     }
