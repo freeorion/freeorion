@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
 
 cmake_policy(SET CMP0042 NEW)
 
@@ -639,6 +639,14 @@ if(BUILD_CLIENT_GG)
 endif()
 
 if(BUILD_CLIENT_GODOT)
+    include(ExternalProject)
+    ExternalProject_Add(godotcpp
+        SOURCE_DIR ${PROJECT_SOURCE_DIR}/godot/godot-cpp
+        BINARY_DIR ${PROJECT_SOURCE_DIR}/godot/godot-cpp/build
+        CMAKE_ARGS -D CMAKE_BUILD_TYPE=$<IF:$<CONFIG:Debug>,Debug,Release>
+        INSTALL_COMMAND ""
+    )
+    
     add_library(freeoriongodot SHARED "")
 
     set_target_properties(freeoriongodot PROPERTIES CXX_VISIBILITY_PRESET default)
@@ -655,18 +663,21 @@ if(BUILD_CLIENT_GODOT)
             ${GODOT_CPP_ROOT}/include/gen
             ${GODOT_CPP_ROOT}/godot_headers
     )
+    
+    add_dependencies(freeoriongodot godotcpp)
 
+    string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME)    
     if(CMAKE_VERSION VERSION_GREATER "3.13")
         target_link_directories(freeoriongodot
             PRIVATE
                 ${GODOT_CPP_ROOT}/bin/
         )
         target_link_libraries(freeoriongodot
-            godot-cpp.linux.$<IF:$<CONFIG:Debug>,debug,release>.$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,64,32>
+            godot-cpp.${SYSTEM_NAME}.$<IF:$<CONFIG:Debug>,debug,release>.$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,64,32>
         )
     else()
         target_link_libraries(freeoriongodot
-            ${GODOT_CPP_ROOT}/bin/libgodot-cpp.linux.$<IF:$<CONFIG:Debug>,debug,release>.$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,64,32>.a
+            ${GODOT_CPP_ROOT}/bin/libgodot-cpp.${SYSTEM_NAME}.$<IF:$<CONFIG:Debug>,debug,release>.$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,64,32>.a
         )
     endif()
 
