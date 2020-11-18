@@ -105,6 +105,7 @@ htmlcov
 # Godot client
 *.*~
 *.import
+/godot/godot-cpp/build/
 /godot/client/.import/
 /godot/client/export/
 /godot/client/bin/
