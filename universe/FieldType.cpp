@@ -79,7 +79,7 @@ unsigned int FieldType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_effects);
     CheckSums::CheckSumCombine(retval, m_graphic);
 
-    DebugLogger() << "FieldTypeManager checksum: " << retval;
+    TraceLogger() << "FieldType checksum: " << retval;
     return retval;
 }
 
@@ -122,6 +122,7 @@ unsigned int FieldTypeManager::GetCheckSum() const {
         CheckSums::CheckSumCombine(retval, name_type_pair);
     CheckSums::CheckSumCombine(retval, m_field_types.size());
 
+    DebugLogger() << "FieldTypeManager checksum: " << retval;
     return retval;
 }
 
