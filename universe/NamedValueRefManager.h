@@ -34,9 +34,9 @@ private:
     //! initialises invariants from registered valueref, waits a bit for registration, use on first access
     bool NamedRefInitInvariants();
 
-    std::string m_value_ref_name;           //! registered name of value ref
+    const std::string m_value_ref_name;           //! registered name of value ref
     bool m_invariants_initialized = false;  //! true if the invariants were initialized from the referenced vale ref
-    bool m_is_lookup_only;                  //! true if created by a *Lookup in FOCS
+    const bool m_is_lookup_only;                  //! true if created by a *Lookup in FOCS
 };
 }
 
