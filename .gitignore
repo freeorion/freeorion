@@ -101,14 +101,3 @@ DerivedData
 .pytest_cache/
 .coverage
 htmlcov
-
-# Godot client
-*.*~
-*.import
-
-/godot/godot-cpp/bin/
-/godot/godot-cpp/build/
-
-/godot/client/.import/
-/godot/client/export/
-/godot/client/bin/
