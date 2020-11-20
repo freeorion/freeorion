@@ -806,6 +806,8 @@ endif()
 if(BUILD_CLIENT_GODOT)
     add_custom_command(TARGET freeoriongodot POST_BUILD
         COMMAND
+           ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/client/bin/
+        COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorioncommon>" "${CMAKE_SOURCE_DIR}/godot/client/bin/"
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionparse>" "${CMAKE_SOURCE_DIR}/godot/client/bin/"
