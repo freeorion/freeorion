@@ -1,0 +1,8 @@
+*.*~
+*.import
+
+/godot-cpp/build/
+
+/client/bin/
+/client/.import/
+/client/export/
