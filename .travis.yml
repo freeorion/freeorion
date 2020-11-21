@@ -33,9 +33,7 @@ _linux_setup_common: &_linux_setup_common
       cppcheck
       doxygen
       python3-pip
-      scons
     - python3 -m pip install flake8==3.7.9
-    - if [[ "$BUILD_GODOT" == "yes" ]]; then pushd .. && git clone --recursive https://github.com/GodotNativeTools/godot-cpp -b 3.2 --depth 1 && cd godot-cpp/ && scons platform=linux generate_bindings=yes target=release -j2 && popd; fi
   before_script:
     - mkdir build
     - cd build
@@ -122,17 +120,6 @@ jobs:
         - CMAKE_BUILD_PARALLEL_LEVEL=2
       script:
         - cmake -DBUILD_CLIENT_GG=OFF -DBUILD_TESTING=ON ..
-        - cmake --build .
-
-    - name: Build FreeOrion Godot client library on Ubunutu 18.04 (Bionic)
-      <<: *_linux_setup_common
-      stage: build
-      env:
-        - CACHE_NAME=linux-godot
-        - CMAKE_BUILD_PARALLEL_LEVEL=2
-        - BUILD_GODOT=yes
-      script:
-        - cmake -DGODOT_CPP_ROOT=`readlink -f ../../godot-cpp/` -DBUILD_CLIENT_GG=OFF -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GODOT=ON -DBUILD_TESTING=ON ..
         - cmake --build .
 
     - name: Build FreeOrion on MacOS
