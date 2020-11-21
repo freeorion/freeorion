@@ -305,10 +305,16 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & BOOST_SERIALIZATION_NVP(m_ready);
     }
 
+    if (Archive::is_loading::value && version < 5) {
+        m_auto_turn_count = 0;
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_auto_turn_count);
+    }
+
     TraceLogger() << "DONE serializing empire " << m_id << ": " << m_name;
 }
 
-BOOST_CLASS_VERSION(Empire, 5)
+BOOST_CLASS_VERSION(Empire, 6)
 
 template void Empire::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);

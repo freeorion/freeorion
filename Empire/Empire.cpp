@@ -1017,6 +1017,18 @@ bool Empire::Ready() const
 void Empire::SetReady(bool ready)
 { m_ready = ready; }
 
+void Empire::AutoTurnSetReady() {
+    if (m_auto_turn_count > 0) {
+        m_auto_turn_count --;
+    }
+    SetReady(m_auto_turn_count != 0);
+}
+
+void Empire::SetAutoTurn(int turns_count) {
+    m_auto_turn_count = turns_count;
+    SetReady(m_auto_turn_count != 0);
+}
+
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     //std::cout << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name() << std::endl;
     m_supply_system_ranges.clear();

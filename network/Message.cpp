@@ -722,6 +722,11 @@ Message PlayerInfoMessage(const std::map<int, PlayerInfo>& players) {
     return Message(Message::MessageType::PLAYER_INFO, os.str());
 }
 
+Message AutoTurnMessage(int turns_count) {
+    return Message(Message::MessageType::AUTO_TURN,
+                   std::to_string(turns_count));
+}
+
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////

@@ -107,6 +107,7 @@ public:
         ((TURN_PARTIAL_ORDERS))    ///< sent to the server by a client that has changes in orders to be stored
         ((TURN_TIMEOUT))           ///< sent by server to client to notify about remaining time before turn advance
         ((PLAYER_INFO))            ///< sent by server to client to notify about changes in the player data
+        ((AUTO_TURN))              ///< sent by client to server to move into auto-turn state
     )
 
     FO_ENUM(
@@ -366,6 +367,10 @@ FO_COMMON_API Message UnreadyMessage();
 
 /** creates a PLAYER_INFO message to notify player about changes in the player list. */
 FO_COMMON_API Message PlayerInfoMessage(const std::map<int, PlayerInfo>& players);
+
+/** creates a AUTO_TURN message to set empire in auto-turn state for \a turns_count turns,
+ *  inifinity turns if -1 or set empire to playing state if 0. */
+FO_COMMON_API Message AutoTurnMessage(int turns_count);
 
 ////////////////////////////////////////////////
 // Message data extractors
