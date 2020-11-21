@@ -10,6 +10,7 @@
 #include "AppInterface.h"
 
 #include <boost/xpressive/xpressive.hpp>
+#include <boost/optional/optional_io.hpp>
 
 #include <functional>
 #include <map>
@@ -201,6 +202,9 @@ namespace {
             // Use the label value. When missing, use the tag submatch as label instead.
             std::string label = match[match[2].matched ? 2 : 1];
 
+            if (tag == "value") {
+                InfoLogger() << "[NVR] VarText expansion for value tag for label: " << label;
+            }
             // look up child
             auto elem = m_variables.find(label);
             if (m_variables.end() == elem) {
@@ -212,6 +216,9 @@ namespace {
             auto substituter = SubstitutionMap().find(tag);
             if (substituter != SubstitutionMap().end()) {
                 if (auto substitution = substituter->second(elem->second)) {
+                    if (tag == "value") {
+                        InfoLogger() << "[NVR] VarText expansion for value tag for label: " << label << "  substitution: " << substitution;
+                    }
                     return *substitution;
                 }
             }

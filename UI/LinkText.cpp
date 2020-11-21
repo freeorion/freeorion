@@ -106,8 +106,11 @@ namespace {
      *  If the tag content is empty or @p add_explanation is true,
      *  the value ref description gets added as explanation instead. */
     std::string ValueRefLinkText(const std::string& text, const bool add_explanation) {
-        if (!boost::contains(text, FOCS_VALUE_TAG_CLOSE))
+        if (!boost::contains(text, FOCS_VALUE_TAG_CLOSE)) {
+            InfoLogger() << "[NVR] ValueRefLinkText not triggered in text: " << text;
             return text;
+        }
+        InfoLogger() << "[NVR] ValueRefLinkText triggered by value tag in text: " << text  << " add_explanation: " << add_explanation;
 
         std::string retval(text);
         auto text_it = retval.begin();
@@ -128,6 +131,7 @@ namespace {
                     : ""};
 
             auto resolved_tooltip = FOCS_VALUE_TAG_OPEN_PRE + " " + value_ref_name + ">" + value_str + explanation_str + FOCS_VALUE_TAG_CLOSE;
+            InfoLogger() << "[NVR] ValueRefLinkText for value ref: " << value_ref_name  << "  resolved: " << resolved_tooltip;
 
             retval.replace(text_it + match.position(), text_it + match.position() + match.length(), resolved_tooltip);
 
@@ -302,6 +306,8 @@ TextLinker::~TextLinker()
 {}
 
 void TextLinker::SetDecorator(const std::string& link_type, LinkDecorator* decorator) {
+    if (link_type == "value")
+        InfoLogger() << "[NVR] TextLinker::SetDecorator(\"value\",ValueRefDecorator)";
     m_decorators[link_type] = std::shared_ptr<LinkDecorator>(decorator);
     MarkLinks();
 }

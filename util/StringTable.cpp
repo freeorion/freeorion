@@ -243,10 +243,13 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                     const std::string substitution =
                         '<' + match[1].str() + ' ' + match[2].str() + '>' + map_lookup_it->second + "</" + match[1].str() + '>';
                     entry.second.replace(position, match.length(), substitution);
+                    if (match[1] == "value") {
+                        InfoLogger() << "[NVR] Resolved optional value reference: " << match[2] << " in: " << m_filename << "  substitution: " << substitution;
+                    }
                     position += substitution.length();
                 } else {
                     if (match[1] == "value") {
-                        InfoLogger() << "Unresolved optional value reference: " << match[2] << " in: " << m_filename << ".";
+                        InfoLogger() << "[NVR] Unresolved optional value reference: " << match[2] << " in: " << m_filename << ".";
                         const std::string substitution = "<value " + match[2].str() + "></value>";
                         entry.second.replace(position, match.length(), substitution);
                         position += substitution.length();
