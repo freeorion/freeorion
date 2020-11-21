@@ -132,6 +132,7 @@ jobs:
       env:
         - CACHE_NAME=macos-full
         - CMAKE_BUILD_PARALLEL_LEVEL=2
+        - HOMEBREW_NO_AUTO_UPDATE=1
       before_install:
         - export PATH="/usr/local/opt/ccache/libexec:$PATH"
         # timeout before Travis kills jobs so that ccache is always at least partially populated
