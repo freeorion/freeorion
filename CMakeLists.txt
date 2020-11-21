@@ -666,18 +666,27 @@ if(BUILD_CLIENT_GODOT)
     
     add_dependencies(freeoriongodot godotcpp)
 
-    string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME)    
+    # Create the correct name (godot.os.build_type.system_bits)
+    # Synchronized with godot-cpp's CMakeLists.txt
+
+    set(BITS 32)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(BITS 64)
+    endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+    string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME)
+    string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
     if(CMAKE_VERSION VERSION_GREATER "3.13")
         target_link_directories(freeoriongodot
             PRIVATE
                 ${GODOT_CPP_ROOT}/bin/
         )
         target_link_libraries(freeoriongodot
-            godot-cpp.${SYSTEM_NAME}.$<IF:$<CONFIG:Debug>,debug,release>.$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,64,32>
+            godot-cpp.${SYSTEM_NAME}.${BUILD_TYPE}.${BITS}
         )
     else()
         target_link_libraries(freeoriongodot
-            ${GODOT_CPP_ROOT}/bin/libgodot-cpp.${SYSTEM_NAME}.$<IF:$<CONFIG:Debug>,debug,release>.$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,64,32>.a
+            ${GODOT_CPP_ROOT}/bin/libgodot-cpp.${SYSTEM_NAME}.${BUILD_TYPE}.${BITS}.a
         )
     endif()
 
