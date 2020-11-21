@@ -50,16 +50,11 @@ void NamedValueRefManager::SetNamedValueRefParse(Pending::Pending<NamedValueRefP
 { m_pending_named_value_refs_focs_txt = std::move(future); }
 
 void NamedValueRefManager::CheckPendingNamedValueRefs() const {
-    // FIXME remove that debug utils
-    // static int the_count = 0; ++the_count;
-    //InfoLogger() << "[NVR] CheckPendingNamedValueRefs start " << the_count;
     if (!m_pending_named_value_refs_focs_txt)
         return;
-    //InfoLogger() << "[NVR] CheckPendingNamedValueRefs continue"<< the_count;
     // we block on the asynchronous parse
     // throw away the result, the parser already registered the values
     WaitForPending(m_pending_named_value_refs_focs_txt, /*do not care about result*/true);
-    //InfoLogger() << "[NVR] CheckPendingNamedValueRefs done"<< the_count;
 }
 
 
