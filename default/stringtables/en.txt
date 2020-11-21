@@ -6243,7 +6243,7 @@ Each [[encyclopedia ENC_SPECIES]] has its own environmental preferences, which d
 
 [[PE_UNINHABITABLE]] < [[PE_HOSTILE]] < [[PE_POOR]] < [[PE_ADEQUATE]] < [[PE_GOOD]]
 
-The planet suitability report can be displayed by right-cliking on a planet in the system sidepanel. A green number following the suitability data indicates the maximum [[metertype METER_POPULATION]] the planet could achieve if colonized by this species, whereas a red number indicates that the colony will be unviable, and Population will decrease over several turns until the Colonists have all died off and the colony is lost.
+The planet suitability report can be displayed by right-clicking on a planet in the system sidepanel. A green number following the suitability data indicates the maximum [[metertype METER_POPULATION]] the planet could achieve if colonized by this species, whereas a red number indicates that the colony will be unviable, and Population will decrease over several turns until the Colonists have all died off and the colony is lost.
 
 When terraforming a planet (by [[metertype METER_RESEARCH]] or if the planet has the [[special GAIA_SPECIAL]] special) in order to better suit the species environmental preferences, the planet's original environment is modified by stages, until it finally reaches the [[PE_GOOD]] suitability for the species who wants to live on the planet. The terraforming stages can be checked on the suitability wheel displayed below.
 
@@ -6291,7 +6291,7 @@ SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Metabolism
 
 SELF_SUSTAINING_SPECIES_TEXT
-[[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their [[metertype METER_TARGET_POPULATION]] is very high. While there are no specials that boost their growth, their Target Population is equal to a species that is provided with all three [[encyclopedia GROWTH_FOCUS_TITLE]] specials.
+[[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their [[metertype METER_TARGET_POPULATION]] is very high. While there are no specials that boost their growth, on planets with [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]] their Target Population is equal to a species that is provided with all three [[encyclopedia GROWTH_FOCUS_TITLE]] specials.
 
 GASEOUS_SPECIES_TITLE
 Gaseous Metabolism
