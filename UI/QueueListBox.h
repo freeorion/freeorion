@@ -45,7 +45,7 @@ public:
     void            Clear();
 
     /** Change the empty list prompt text. */
-    void            SetEmptyPromptText(const std::string prompt);
+    void            SetEmptyPromptText(std::string prompt);
 
     boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;
 

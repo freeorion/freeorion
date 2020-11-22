@@ -219,7 +219,7 @@ protected:
     friend class ObjectMap;
 
     UniverseObject();
-    UniverseObject(const std::string name, double x, double y);
+    UniverseObject(std::string name, double x, double y);
 
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 

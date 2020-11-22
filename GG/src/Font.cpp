@@ -594,7 +594,7 @@ namespace {
         void Clear()
         { m_known_tags.clear(); }
 
-        bool IsKnown(const std::string &tag) const
+        bool IsKnown(const std::string& tag) const
         { return m_known_tags.count(tag); }
 
         // Return a regex bound to \p text using the currently known

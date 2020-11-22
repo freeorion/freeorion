@@ -182,11 +182,11 @@ void QueueListBox::Clear() {
     DragDropLeave();
 }
 
-void QueueListBox::SetEmptyPromptText(const std::string prompt) {
+void QueueListBox::SetEmptyPromptText(std::string prompt) {
     if (m_prompt_str == prompt)
         return;
 
-    m_prompt_str = prompt;
+    m_prompt_str = std::move(prompt);
 
     if (m_showing_prompt)
         ShowPromptSlot();

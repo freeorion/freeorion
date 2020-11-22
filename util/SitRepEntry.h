@@ -74,7 +74,7 @@ SitRepEntry               CreateVictorySitRep(const std::string& reason_string, 
 FO_COMMON_API SitRepEntry CreateSitRep(const std::string& template_string, int turn,
                                        const std::string& icon,
                                        std::vector<std::pair<std::string, std::string>> parameters,
-                                       const std::string label = "", bool stringtable_lookup = true);
+                                       const std::string& label = "", bool stringtable_lookup = true);
 //! @}
 
 template <typename Archive>
