@@ -639,11 +639,17 @@ if(BUILD_CLIENT_GG)
 endif()
 
 if(BUILD_CLIENT_GODOT)
+    if(CMAKE_BUILD_TYPE MATCHES Debug)
+        set(GODOT_CPP_BUILD_TYPE Debug)
+    else()
+        set(GODOT_CPP_BUILD_TYPE Release)
+    endif()
+
     include(ExternalProject)
     ExternalProject_Add(godotcpp
         SOURCE_DIR ${PROJECT_SOURCE_DIR}/godot/godot-cpp
         BINARY_DIR ${PROJECT_SOURCE_DIR}/godot/godot-cpp/build
-        CMAKE_ARGS -D CMAKE_BUILD_TYPE=$<IF:$<CONFIG:Debug>,Debug,Release>
+        CMAKE_ARGS -D CMAKE_BUILD_TYPE=${GODOT_CPP_BUILD_TYPE}
         INSTALL_COMMAND ""
     )
     
@@ -675,7 +681,7 @@ if(BUILD_CLIENT_GODOT)
     endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
     string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME)
-    string(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+    string(TOLOWER ${GODOT_CPP_BUILD_TYPE} BUILD_TYPE)
     if(CMAKE_VERSION VERSION_GREATER "3.13")
         target_link_directories(freeoriongodot
             PRIVATE
