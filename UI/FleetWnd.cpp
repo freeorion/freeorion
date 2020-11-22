@@ -3706,13 +3706,13 @@ int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
 }
 
 namespace {
-    std::string SystemNameNearestToFleet(int client_empire_id, int fleet_id) {
-        auto fleet = Objects().get<Fleet>(fleet_id);
+    std::string SystemNameNearestToFleet(int client_empire_id, int fleet_id, const ObjectMap& objects) {
+        auto fleet = objects.get<Fleet>(fleet_id);
         if (!fleet)
             return "";
 
-        int nearest_system_id(GetPathfinder()->NearestSystemTo(fleet->X(), fleet->Y()));
-        if (auto system = Objects().get<System>(nearest_system_id))
+        int nearest_system_id(GetPathfinder()->NearestSystemTo(fleet->X(), fleet->Y(), objects));
+        if (auto system = objects.get<System>(nearest_system_id))
             return system->ApparentName(client_empire_id);
         return "";
     }
@@ -3738,7 +3738,7 @@ std::string FleetWnd::TitleText() const {
                                  sys_name));
     }
 
-    const std::string sys_name = SystemNameNearestToFleet(client_empire_id, *m_fleet_ids.begin());
+    const std::string sys_name = SystemNameNearestToFleet(client_empire_id, *m_fleet_ids.begin(), Objects());
     if (!sys_name.empty()) {
         return (empire
                 ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_NEAR_SYSTEM")) %

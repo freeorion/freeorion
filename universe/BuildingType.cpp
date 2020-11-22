@@ -120,7 +120,10 @@ bool BuildingType::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float BuildingType::ProductionCost(int empire_id, int location_id) const {
+float BuildingType::ProductionCost(int empire_id, int location_id,
+                                   const ObjectMap& objects,
+                                   const EmpireManager& empires) const
+{
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_cost)
         return 1.0f;
 
@@ -131,23 +134,34 @@ float BuildingType::ProductionCost(int empire_id, int location_id) const {
 
     const auto ARBITRARY_LARGE_COST = 999999.9f;
 
-    auto location = Objects().get(location_id);
+    auto location = objects.get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
-    auto source = Empires().GetSource(empire_id);
+    auto source = empires.GetSource(empire_id);
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
-    ScriptingContext context(source, location);
+    // cost uses target object to represent the location where something is
+    // being produced, and target object is normally mutable, but will not
+    // actually be modified by evaluating the cost ValueRef
+    ScriptingContext context(source, std::const_pointer_cast<UniverseObject>(location), objects);
 
     return m_production_cost->Eval(context);
 }
 
-float BuildingType::PerTurnCost(int empire_id, int location_id) const
-{ return ProductionCost(empire_id, location_id) / std::max(1, ProductionTime(empire_id, location_id)); }
+float BuildingType::PerTurnCost(int empire_id, int location_id,
+                                const ObjectMap& objects,
+                                const EmpireManager& empires) const
+{
+    return ProductionCost(empire_id, location_id, objects, empires) /
+        std::max(1, ProductionTime(empire_id, location_id, objects, empires));
+}
 
-int BuildingType::ProductionTime(int empire_id, int location_id) const {
+int BuildingType::ProductionTime(int empire_id, int location_id,
+                                 const ObjectMap& objects,
+                                 const EmpireManager& empires) const
+{
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_time)
         return 1;
 
@@ -158,47 +172,56 @@ int BuildingType::ProductionTime(int empire_id, int location_id) const {
 
     const int ARBITRARY_LARGE_TURNS = 9999;
 
-    auto location = Objects().get(location_id);
+    auto location = objects.get(location_id);
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    auto source = Empires().GetSource(empire_id);
+    auto source = empires.GetSource(empire_id);
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    ScriptingContext context(source, location);
+    // cost uses target object to represent the location where something is
+    // being produced, and target object is normally mutable, but will not
+    // actually be modified by evaluating the cost ValueRef
+    ScriptingContext context(source, std::const_pointer_cast<UniverseObject>(location), objects);
 
     return m_production_time->Eval(context);
 }
 
-bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
+bool BuildingType::ProductionLocation(int empire_id, int location_id,
+                                      const ObjectMap& objects,
+                                      const EmpireManager& empires) const
+{
     if (!m_location)
         return true;
 
-    auto location = Objects().get(location_id);
+    auto location = objects.get(location_id);
     if (!location)
         return false;
 
-    auto source = Empires().GetSource(empire_id);
+    auto source = empires.GetSource(empire_id);
     if (!source)
         return false;
 
-    return m_location->Eval(ScriptingContext(source), location);
+    return m_location->Eval(ScriptingContext(source, objects), location);
 }
 
-bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
+bool BuildingType::EnqueueLocation(int empire_id, int location_id,
+                                   const ObjectMap& objects,
+                                   const EmpireManager& empires) const
+{
     if (!m_enqueue_location)
         return true;
 
-    auto location = Objects().get(location_id);
+    auto location = objects.get(location_id);
     if (!location)
         return false;
 
-    auto source = Empires().GetSource(empire_id);
+    auto source = empires.GetSource(empire_id);
     if (!source)
         return false;
 
-    return m_enqueue_location->Eval(ScriptingContext(source), location);
+    return m_enqueue_location->Eval(ScriptingContext(source, objects), location);
 }
 
 unsigned int BuildingType::GetCheckSum() const {

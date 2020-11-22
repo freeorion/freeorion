@@ -8,6 +8,8 @@
 #include <vector>
 #include "UniverseObject.h"
 
+class ObjectMap;
+class EmpireManager;
 
 #ifdef FREEORION_WIN32
 // because the linker gets confused about Win32 API functions...
@@ -29,7 +31,7 @@ public:
     /** Returns the straight-line distance between the objects with the given
       * IDs. \throw std::out_of_range This function will throw if either object
       * ID is out of range. */
-    double LinearDistance(int object1_id, int object2_id) const;
+    double LinearDistance(int object1_id, int object2_id, const ObjectMap& objects) const;
 
     /** Returns the number of starlane jumps between the systems with the given
       * IDs. If there is no path between the systems, -1 is returned.
@@ -41,7 +43,7 @@ public:
       * for cases where one or the other are fleets / ships on starlanes between
       * systems. Returns INT_MAX when no path exists, or either object does not
       * exist. */
-    int JumpDistanceBetweenObjects(int object1_id, int object2_id) const;
+    int JumpDistanceBetweenObjects(int object1_id, int object2_id, const ObjectMap& objects) const;
 
     /** Returns the sequence of systems, including \a system1_id and
       * \a system2_id, that defines the shortest path from \a system1 to
@@ -52,7 +54,9 @@ public:
       * visibility if \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
       * is out of range, or if the empire ID is not known. */
-    std::pair<std::list<int>, double> ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
+    std::pair<std::list<int>, double> ShortestPath(int system1_id, int system2_id,
+                                                   int empire_id,
+                                                   const ObjectMap& objects) const;
 
     /** Shortest path known to an empire between two systems, excluding routes
      *  for systems containing objects for @p system_predicate.
@@ -64,13 +68,14 @@ public:
      * 
      * @returns list of System ids, distance between systems */
     std::pair<std::list<int>, double> ShortestPath(int system1_id, int system2_id, int empire_id,
-                                                   const SystemExclusionPredicateType& system_predicate) const;
+                                                   const SystemExclusionPredicateType& system_predicate,
+                                                   const EmpireManager& empires, const ObjectMap& objects) const;
 
     /** Returns the shortest starlane path distance between any two objects, accounting
       * for cases where one or the other are fleets / ships on starlanes between
       * systems. Returns -1 when no path exists, or either object does not
       * exist. */
-    double ShortestPathDistance(int object1_id, int object2_id) const;
+    double ShortestPathDistance(int object1_id, int object2_id, const ObjectMap& objects) const;
 
     /** Returns the sequence of systems, including \a system1 and \a system2,
       * that defines the path with the fewest jumps from \a system1 to
@@ -98,7 +103,7 @@ public:
       * The starlanes considered depend on their visibility for empire
       * \a empire_id, or without regard to visibility if
       * \a empire_id == ALL_EMPIRES. */
-    bool SystemHasVisibleStarlanes(int system_id, int empire_id = ALL_EMPIRES) const;
+    bool SystemHasVisibleStarlanes(int system_id, const ObjectMap& objects) const;
 
     /** Returns the systems that are one starlane hop away from system
       * \a system.  The returned systems are indexed by distance from
@@ -120,23 +125,24 @@ public:
     std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
               std::vector<std::shared_ptr<const UniverseObject>>>
         WithinJumpsOfOthers(
-            int jumps,
+            int jumps, const ObjectMap& objects,
             const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
             const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const;
 
     /** Returns the id of the System object that is closest to the specified
       * (\a x, \a y) location on the map, by direct-line distance. */
-    int NearestSystemTo(double x, double y) const;
+    int NearestSystemTo(double x, double y, const ObjectMap& objects) const;
 
     /** Fills pathfinding data structure and determines least jumps distances
-      * between systems for the empire with id \a for_empire_id or uses the
-      * main / true / visible objects if \a for_empire_id is ALL_EMPIRES*/
-    void InitializeSystemGraph(const std::vector<int>& system_ids, int for_empire_id = ALL_EMPIRES);
+      * between systems. */
+    void InitializeSystemGraph(const ObjectMap& objects, const EmpireManager& empires);
 
     /** Regenerates per-empire system view graphs by filtering the complete
-      * system graph based on empire visibility.  Does not regenerate the base
+      * system graph based on empire visibilities. Does not regenerate the base
       * graph to account for actual system-starlane connectivity changes. */
-    void UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id = ALL_EMPIRES);
+    void UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager& empires, const ObjectMap& objects);
+    void UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager& empires,
+                                                    const std::map<int, ObjectMap>& empire_object_maps);
 
     class PathfinderImpl;
 private:

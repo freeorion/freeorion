@@ -185,11 +185,6 @@ public:
     virtual void    RemoveSpecial(const std::string& name); ///< removes the Special \a name from this object, if it is already present
     void            SetSpecialCapacity(const std::string& name, float capacity);
 
-    /** Performs the movement that this object is responsible for this object's
-      * actions during the movement phase of a turn. */
-    virtual void    MovementPhase()
-    {};
-
     /** Sets current value of max, target and unpaired meters in in this
       * UniverseObject to Meter::DEFAULT_VALUE.  This should be done before any
       * Effects that alter these meter(s) act on the object. */

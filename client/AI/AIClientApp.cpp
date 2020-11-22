@@ -256,7 +256,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
         DebugLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
-        GetUniverse().InitializeSystemGraph(m_empire_id);
+        m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
+        m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(m_empires);
 
         DebugLogger() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
         if (loaded_game_data) {
@@ -335,7 +336,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
                                      m_empires,               m_universe,         GetSpeciesManager(),
                                      GetCombatLogManager(),   GetSupplyManager(), m_player_info);
         //DebugLogger() << "AIClientApp::HandleMessage : generating orders";
-        GetUniverse().InitializeSystemGraph(m_empire_id);
+        GetUniverse().InitializeSystemGraph(m_empires, m_universe.Objects());
+        m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(m_empires);
         m_AI->GenerateOrders();
         //DebugLogger() << "AIClientApp::HandleMessage : done handling turn update message";
         break;

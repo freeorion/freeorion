@@ -2657,7 +2657,8 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("system graph");
     // FIXME: this is actually only needed when there was no mid-turn update
-    universe.InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
+    universe.InitializeSystemGraph(Empires(), objects);
+    universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(Empires());
 
     timer.EnterSection("meter estimates");
     // update effect accounting and meter estimates
@@ -2861,7 +2862,8 @@ void MapWnd::MidTurnUpdate() {
     DebugLogger() << "MapWnd::MidTurnUpdate";
     ScopedTimer timer("MapWnd::MidTurnUpdate", true);
 
-    GetUniverse().InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
+    GetUniverse().InitializeSystemGraph(Empires(), Objects());
+    GetUniverse().UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(Empires());
 
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
@@ -5421,9 +5423,10 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     auto fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
+    const ObjectMap& objects = Objects();
 
     // apply to all selected this-player-owned fleets in currently-active FleetWnd
-    for (const auto& fleet : Objects().find<Fleet>(fleet_ids)) {
+    for (const auto& fleet : objects.find<Fleet>(fleet_ids)) {
         if (!fleet)
             continue;
 
@@ -5447,7 +5450,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             start_system = fleet->NextSystemID();
 
         // get path to destination...
-        std::list<int> route = GetPathfinder()->ShortestPath(start_system, system_id, empire_id).first;
+        std::list<int> route = GetPathfinder()->ShortestPath(start_system, system_id, empire_id, objects).first;
         // Prepend a non-empty old_route to the beginning of route.
         if (append && !fleet->TravelRoute().empty()) {
             std::list<int> old_route(fleet->TravelRoute());
@@ -5458,9 +5461,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
             int begin_id = *route.begin();
-            auto begin_sys = Objects().get<System>(begin_id);
+            auto begin_sys = objects.get<System>(begin_id);
             int end_id = *route.rbegin();
-            auto end_sys = Objects().get<System>(end_id);
+            auto end_sys = objects.get<System>(end_id);
 
             if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
                 !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))
@@ -7322,8 +7325,10 @@ namespace {
 
     /** Get the shortest suitable route from @p start_id to @p destination_id as known to @p empire_id */
     OrderedRouteType GetShortestRoute(int empire_id, int start_id, int destination_id) {
-        auto start_system = Objects().get<System>(start_id);
-        auto dest_system = Objects().get<System>(destination_id);
+        const ObjectMap& objects = Objects();
+        const EmpireManager& empires = Empires();
+        auto start_system = objects.get<System>(start_id);
+        auto dest_system = objects.get<System>(destination_id);
         if (!start_system || !dest_system) {
             WarnLogger() << "Invalid start or destination system";
             return OrderedRouteType();
@@ -7334,9 +7339,9 @@ namespace {
         std::pair<std::list<int>, double> route_distance;
 
         if (ignore_hostile)
-            route_distance = GetPathfinder()->ShortestPath(start_id, destination_id, empire_id);
+            route_distance = GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, objects);
         else
-            route_distance = GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, fleet_pred);
+            route_distance = GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, fleet_pred, empires, objects);
 
         if (!route_distance.first.empty() && route_distance.second > 0.0) {
             RouteListType route(route_distance.first.begin(), route_distance.first.end());

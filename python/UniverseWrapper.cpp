@@ -2,6 +2,7 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
 #include "../universe/BuildingType.h"
 #include "../universe/Condition.h"
@@ -71,7 +72,7 @@ namespace {
     auto ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
         std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(
-            start_sys, end_sys, empire_id);
+            start_sys, end_sys, empire_id, EmpireKnownObjects(empire_id));
         return std::vector<int>{path.first.begin(), path.first.end()};
     }
 
@@ -79,7 +80,7 @@ namespace {
     {
         auto fleet_pred = std::make_shared<HostileVisitor>(empire_id);
         std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(
-            start_sys, end_sys, empire_id, fleet_pred);
+            start_sys, end_sys, empire_id, fleet_pred, Empires(), universe.EmpireKnownObjects(empire_id));
         return std::vector<int>{path.first.begin(), path.first.end()};
     }
 
@@ -299,17 +300,17 @@ namespace FreeOrionPython {
             .def("destroyedObjectIDs",          &Universe::EmpireKnownDestroyedObjectIDs,
                                                 py::return_value_policy<py::return_by_value>())
 
-            .def("systemHasStarlane",           +[](const Universe& universe, int system_id, int empire_id) -> bool { return universe.GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id); },
+            .def("systemHasStarlane",           +[](const Universe& universe, int system_id, int empire_id) -> bool { return universe.GetPathfinder()->SystemHasVisibleStarlanes(system_id, EmpireKnownObjects(empire_id)); },
                                                 py::return_value_policy<py::return_by_value>())
 
             .def("updateMeterEstimates",        &UpdateMetersWrapper)
             .add_property("effectAccounting",   make_function(&Universe::GetEffectAccountingMap,
                                                                                     py::return_value_policy<py::reference_existing_object>()))
 
-            .def("linearDistance",              +[](const Universe& universe, int system1_id, int system2_id) -> double { return universe.GetPathfinder()->LinearDistance(system1_id, system2_id); },
+            .def("linearDistance",              +[](const Universe& universe, int system1_id, int system2_id) -> double { return universe.GetPathfinder()->LinearDistance(system1_id, system2_id, universe.Objects()); },
                                                 py::return_value_policy<py::return_by_value>())
 
-            .def("jumpDistance",                +[](const Universe& universe, int object1_id, int object2_id) -> int { return universe.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id); },
+            .def("jumpDistance",                +[](const Universe& universe, int object1_id, int object2_id) -> int { return universe.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id, universe.Objects()); },
                                                 py::return_value_policy<py::return_by_value>(),
                                                 "If two system ids are passed or both objects are within a system, "
                                                 "return the jump distance between the two systems. If one object "
@@ -326,7 +327,7 @@ namespace FreeOrionPython {
                                                 "System (number2) with no hostile Fleets as determined by visibility "
                                                 "of Empire (number3).  (number3) must be a valid empire.")
 
-            .def("shortestPathDistance",        +[](const Universe& universe, int object1_id, int object2_id) -> double { return universe.GetPathfinder()->ShortestPathDistance(object1_id, object2_id); },
+            .def("shortestPathDistance",        +[](const Universe& universe, int object1_id, int object2_id) -> double { return universe.GetPathfinder()->ShortestPathDistance(object1_id, object2_id, universe.Objects()); },
                                                 py::return_value_policy<py::return_by_value>())
 
             .def("leastJumpsPath",              LeastJumpsPath,

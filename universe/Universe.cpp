@@ -2897,20 +2897,14 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
     m_marked_destroyed[object_id].insert(source_object_id);
 }
 
-void Universe::InitializeSystemGraph(int for_empire_id) {
-    // TODO: don't need the objects here, just their IDs...
-    std::vector<int> system_ids;
-    for (const auto& system : ::EmpireKnownObjects(for_empire_id).all<System>())
-        system_ids.emplace_back(system->ID());
+void Universe::InitializeSystemGraph(const EmpireManager& empires, const ObjectMap& objects)
+{ m_pathfinder->InitializeSystemGraph(objects, empires); }
 
-    m_pathfinder->InitializeSystemGraph(system_ids, for_empire_id);
-}
+void Universe::UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(const EmpireManager& empires)
+{ m_pathfinder->UpdateEmpireVisibilityFilteredSystemGraphs(empires, m_empire_latest_known_objects); }
 
-//TODO Universe::UpdateEmpireVisibilityFilteredSystemGraphs is never
-//used.  Decide if the functionality permanently belongs in Pathfinder
-void Universe::UpdateEmpireVisibilityFilteredSystemGraphs(int empire_id) {
-    m_pathfinder->UpdateEmpireVisibilityFilteredSystemGraphs(empire_id);
-}
+void Universe::UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(const EmpireManager& empires)
+{ m_pathfinder->UpdateEmpireVisibilityFilteredSystemGraphs(empires, m_objects); }
 
 double Universe::UniverseWidth() const
 { return m_universe_width; }

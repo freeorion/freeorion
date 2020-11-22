@@ -21,6 +21,12 @@ class ShipDesign;
 class SitRepEntry;
 class ResourcePool;
 class UniverseObject;
+class ObjectMap;
+ObjectMap& Objects();
+class Universe;
+Universe& GetUniverse();
+class EmpireManager;
+EmpireManager& Empires();
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 FO_COMMON_API extern const int INVALID_GAME_TURN;
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
@@ -76,7 +82,7 @@ public:
     /** Returns an object id that is owned by the empire or INVALID_OBJECT_ID. */
     int                 SourceID() const;
     /** Returns an object that is owned by the empire, or null.*/
-    std::shared_ptr<const UniverseObject> Source() const;
+    std::shared_ptr<const UniverseObject> Source(const ObjectMap& objects = Objects()) const;
 
     std::string         Dump() const;
 
@@ -155,13 +161,21 @@ public:
     std::pair<float, int>   ProductionCostAndTime(const ProductionQueue::Element& element) const;
     std::pair<float, int>   ProductionCostAndTime(const ProductionQueue::ProductionItem& item, int location_id) const;
 
-    bool                    ProducibleItem(BuildType build_type, int location) const;  ///< Returns true iff this empire can produce the specified item at the specified location.
-    bool                    ProducibleItem(BuildType build_type, const std::string& name, int location) const;  ///< Returns true iff this empire can produce the specified item at the specified location.
-    bool                    ProducibleItem(BuildType build_type, int design_id, int location) const;            ///< Returns true iff this empire can produce the specified item at the specified location.
-    bool                    ProducibleItem(const ProductionQueue::ProductionItem& item, int location) const;    ///< Returns true iff this empire can produce the specified item at the specified location.
+    /** Return true iff this empire can produce the specified item at the specified location. */
+    bool                    ProducibleItem(BuildType build_type, int location,
+                                           const ObjectMap& objects = Objects()) const;
+    bool                    ProducibleItem(BuildType build_type, const std::string& name, int location,
+                                           const ObjectMap& objects = Objects()) const;
+    bool                    ProducibleItem(BuildType build_type, int design_id, int location,
+                                           const ObjectMap& objects = Objects()) const;
+    bool                    ProducibleItem(const ProductionQueue::ProductionItem& item, int location,
+                                           const ObjectMap& objects = Objects()) const;
 
-    bool                    EnqueuableItem(BuildType build_type, const std::string& name, int location) const;  ///< Returns true iff this empire can enqueue the specified item at the specified location.
-    bool                    EnqueuableItem(const ProductionQueue::ProductionItem& item, int location) const;    ///< Returns true iff this empire can enqueue the specified item at the specified location.
+    /** Return true iff this empire can enqueue the specified item at the specified location. */
+    bool                    EnqueuableItem(BuildType build_type, const std::string& name, int location,
+                                           const ObjectMap& objects = Objects()) const;
+    bool                    EnqueuableItem(const ProductionQueue::ProductionItem& item, int location,
+                                           const ObjectMap& objects = Objects()) const;
 
     bool                    HasExploredSystem(int ID) const;                            ///< returns  true if the given item is in the appropriate list, false if it is not.
 
@@ -208,7 +222,7 @@ public:
 
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */
-    void SetCapitalID(int id);
+    void SetCapitalID(int id, const ObjectMap& objects = Objects());
 
     /** Adopts the specified policy, assuming its conditions are met. Revokes
       * the policy if \a adopt is false; */
@@ -287,8 +301,9 @@ public:
     int AddShipDesign(ShipDesign* ship_design);     ///< inserts given ShipDesign into the Universe, adds the design's id to the Empire's set of ids, and returns the new design's id, which is INVALID_OBJECT_ID on failure.  If successful, universe takes ownership of passed ShipDesign.
 
     std::string NewShipName();                              ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
-    void Eliminate();                                ///< Marks empire as eliminated and cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
-    void Win(const std::string& reason);             ///< Marks this empire as having won for this reason, and sends the appropriate sitreps
+    void Eliminate(EmpireManager& empires = Empires());         ///< Marks empire as eliminated and cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
+    /** Marks this empire as having won for this reason, and sends the appropriate sitreps */
+    void Win(const std::string& reason, EmpireManager& empires = Empires());
     void SetReady(bool ready);                       ///< Marks this empire with readiness status
     void AutoTurnSetReady();                         ///< Decreases auto-turn counter and set empire ready if not expired or set unready
     void SetAutoTurn(int turns_count);               ///< Set auto-turn counter
@@ -317,21 +332,24 @@ public:
     /** Calculates ranges that systems can send fleet and resource supplies,
       * using the specified st of \a known_objects as the source for supply-
       * producing objects and systems through which it can be propagated. */
-    void UpdateSystemSupplyRanges(const std::set<int>& known_objects);
+    void UpdateSystemSupplyRanges(const std::set<int>& known_objects, const ObjectMap& objects = Objects());
     /** Calculates ranges that systems can send fleet and resource supplies. */
-    void UpdateSystemSupplyRanges();
+    void UpdateSystemSupplyRanges(const Universe& universe = GetUniverse());
     /** Calculates systems that can propagate supply (fleet or resource) using
       * the specified set of \a known_systems */
     void UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems, bool precombat=false);
     /** Calculates systems that can propagate supply using this empire's own /
       * internal list of explored systems. */
     void UpdateSupplyUnobstructedSystems(bool precombat=false);
-    /** Updates fleet ArrivalStarlane to flag fleets of this empire that are not blockaded post-combat
-     *  must be done after *all* noneliminated empires have updated their unobstructed systems* */
+    /** Updates fleet ArrivalStarlane to flag fleets of this empire that are not
+      * blockaded post-combat must be done after *all* noneliminated empires
+      * have updated their unobstructed systems */
     void UpdateUnobstructedFleets();
-    /** Records, in a list of pending updates, the start_system exit lane to the specified destination as accessible to this empire*/
+    /** Records, in a list of pending updates, the start_system exit lane to the
+      * specified destination as accessible to this empire*/
     void RecordPendingLaneUpdate(int start_system_id, int dest_system_id);
-    /** Processes all the pending lane access updates.  This is managed as a two step process to avoid order-of-processing issues. */
+    /** Processes all the pending lane access updates.  This is managed as a two
+      * step process to avoid order-of-processing issues. */
     void UpdatePreservedLanes();
 
     /** Checks for production projects that have been completed, and places them
@@ -340,7 +358,7 @@ public:
       * the production queue (which determines how much PP each project receives
       * but does not actually spend them).  This function spends the PP, removes
       * complete items from the queue and creates the results in the universe. */
-    void CheckProductionProgress();
+    void CheckProductionProgress(Universe& universe = GetUniverse());
     /** Checks for tech projects that have been completed, and returns a vector
       * of the techs that should be added to the known techs list. */
     std::vector<std::string> CheckResearchProgress();
@@ -358,7 +376,7 @@ public:
     /** Determines ResourceCenters that can provide resources for this empire and sets
       * the supply groups used for each ResourcePool as appropriate for each resource.
       * call UpdateResourceSupply before calling this. */
-    void InitResourcePools();
+    void InitResourcePools(const ObjectMap& objects = Objects());
 
     /** Resets production of resources and calculates allocated resources (on
       * each item in queues and overall) for each resource by calling
@@ -386,7 +404,7 @@ public:
     /** Resets empire meters. */
     void ResetMeters();
 
-    void UpdateOwnedObjectCounters();
+    void UpdateOwnedObjectCounters(const ObjectMap& objects = Objects());
 
     void SetAuthenticated(bool authenticated = true);
 

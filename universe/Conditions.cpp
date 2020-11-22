@@ -7563,7 +7563,8 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
         int jump_limit = m_jumps->Eval(parent_context);
         ObjectSet &from_set(search_domain == SearchDomain::MATCHES ? matches : non_matches);
 
-        std::tie(matches, non_matches) = GetPathfinder()->WithinJumpsOfOthers(jump_limit, from_set, subcondition_matches);
+        std::tie(matches, non_matches) = GetPathfinder()->WithinJumpsOfOthers(
+            jump_limit, parent_context.ContextObjects(), from_set, subcondition_matches);
 
     } else {
         // re-evaluate contained objects for each candidate object
@@ -7609,7 +7610,8 @@ bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     ObjectSet near_objs;
 
     std::tie(near_objs, std::ignore) =
-        GetPathfinder()->WithinJumpsOfOthers(jump_limit, candidate_set, subcondition_matches);
+        GetPathfinder()->WithinJumpsOfOthers(jump_limit, local_context.ContextObjects(),
+                                             candidate_set, subcondition_matches);
     return !near_objs.empty();
 }
 

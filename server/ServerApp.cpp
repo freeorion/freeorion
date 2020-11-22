@@ -642,28 +642,30 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
         SendNewGameStartMessages();
 }
 
-void UpdateEmpireSupply(bool precombat=false) {
-    EmpireManager& empires = Empires();
+namespace {
+    void UpdateEmpireSupply(bool precombat = false) {
+        EmpireManager& empires = Empires();
 
-    // Determine initial supply distribution and exchanging and resource pools for empires
-    for (auto& entry : empires) {
-        auto& empire = entry.second;
-        if (empire->Eliminated())
-            continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
+        // Determine initial supply distribution and exchanging and resource pools for empires
+        for (auto& entry : empires) {
+            auto& empire = entry.second;
+            if (empire->Eliminated())
+                continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
-        empire->UpdateSupplyUnobstructedSystems(precombat); // determines which systems can propagate fleet and resource (same for both)
-        empire->UpdateSystemSupplyRanges();                 // sets range systems can propagate fleet and resourse supply (separately)
-    }
+            empire->UpdateSupplyUnobstructedSystems(precombat); // determines which systems can propagate fleet and resource (same for both)
+            empire->UpdateSystemSupplyRanges();                 // sets range systems can propagate fleet and resourse supply (separately)
+        }
 
-    GetSupplyManager().Update();
+        GetSupplyManager().Update();
 
-    for (auto& entry : empires) {
-        auto& empire = entry.second;
-        if (empire->Eliminated())
-            continue;
+        for (auto& entry : empires) {
+            auto& empire = entry.second;
+            if (empire->Eliminated())
+                continue;
 
-        empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
-        empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
+            empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
+            empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
+        }
     }
 }
 
@@ -1376,7 +1378,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
     // the Universe's system graphs for each empire aren't stored when saving
     // so need to be reinitialized when loading based on the gamestate
-    m_universe.InitializeSystemGraph();
+    m_universe.InitializeSystemGraph(Empires(), GetUniverse().Objects());
+    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(Empires());
 
     UpdateEmpireSupply(true);  // precombat type supply update
 
@@ -3205,7 +3208,7 @@ void ServerApp::PreCombatProcessTurns() {
     ScopedTimer timer("ServerApp::PreCombatProcessTurns", true);
 
     m_universe.ResetAllObjectMeters(false, true);   // revert current meter values to initial values prior to update after incrementing turn number during previous post-combat turn processing.
-    m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();
+    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(Empires());
 
     DebugLogger() << "ServerApp::ProcessTurns executing orders";
 
@@ -3464,7 +3467,8 @@ void ServerApp::PostCombatProcessTurns() {
 
     // regenerate system connectivity graph after executing effects, which may
     // have added or removed starlanes.
-    m_universe.InitializeSystemGraph();
+    m_universe.InitializeSystemGraph(empires, objects);
+    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(empires);
 
     TraceLogger(effects) << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
     TraceLogger(effects) << objects.Dump();
@@ -3560,7 +3564,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireStaleObjectKnowledge();
 
     // update empire-visibility filtered graphs after visiblity update
-    m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();
+    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(Empires());
 
     TraceLogger(effects) << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
     TraceLogger(effects) << objects.Dump();

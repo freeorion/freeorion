@@ -1366,7 +1366,7 @@ namespace FreeOrionPython {
 
         py::def("get_universe_width",               +[]() -> double { return GetUniverse().UniverseWidth(); });
         py::def("set_universe_width",               +[](double width) { GetUniverse().SetUniverseWidth(width); });
-        py::def("linear_distance",                  +[](int system1_id, int system2_id) -> double { return GetPathfinder()->LinearDistance(system1_id, system2_id); });
+        py::def("linear_distance",                  +[](int system1_id, int system2_id) -> double { return GetPathfinder()->LinearDistance(system1_id, system2_id, Objects()); });
         py::def("jump_distance",                    +[](int system1_id, int system2_id) -> int { return GetPathfinder()->JumpDistanceBetweenSystems(system1_id, system2_id); });
         py::def("get_all_objects",                  GetAllObjects);
         py::def("get_systems",                      GetSystems);

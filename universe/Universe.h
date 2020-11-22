@@ -20,6 +20,7 @@
 
 
 class Empire;
+class EmpireManager;
 struct UniverseObjectVisitor;
 class XMLElement;
 class ShipDesign;
@@ -67,10 +68,8 @@ namespace boost {
   * relationships to each other.  As well, there are functions that generate
   * and populate new Universe gamestates when new games are started. */
 class FO_COMMON_API Universe {
-private:
-    typedef std::map<int, ObjectMap>                EmpireObjectMap;                ///< Known information each empire had about objects in the Universe; keyed by empire id
-
 public:
+    typedef std::map<int, ObjectMap>                EmpireObjectMap;                ///< Known information each empire had about objects in the Universe; keyed by empire id
     typedef std::map<Visibility, int>               VisibilityTurnMap;              ///< Most recent turn number on which a something, such as a Universe object, was observed at various Visibility ratings or better
 
 private:
@@ -172,7 +171,7 @@ public:
     std::set<std::string> GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
 
     /** Return the Pathfinder */
-    std::shared_ptr<const Pathfinder> GetPathfinder() const {return m_pathfinder;}
+    std::shared_ptr<const Pathfinder> GetPathfinder() const { return m_pathfinder; }
 
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
@@ -291,14 +290,14 @@ public:
     void UpdateEmpireStaleObjectKnowledge();
 
     /** Fills pathfinding data structure and determines least jumps distances
-      * between systems for the empire with id \a for_empire_id or uses the
-      * main / true / visible objects if \a for_empire_id is ALL_EMPIRES*/
-    void InitializeSystemGraph(int for_empire_id = ALL_EMPIRES);
+      * between systems based on the objects in \a objects */
+    void InitializeSystemGraph(const EmpireManager& empires, const ObjectMap& objects);
 
     /** Regenerates per-empire system view graphs by filtering the complete
       * system graph based on empire visibility.  Does not regenerate the base
       * graph to account for actual system-starlane connectivity changes. */
-    void UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id = ALL_EMPIRES);
+    void UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(const EmpireManager& empires);
+    void UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(const EmpireManager& empires);
 
     /** Adds the object ID \a object_id to the set of object ids for the empire
       * with id \a empire_id that the empire knows have been destroyed. */

@@ -6,6 +6,9 @@
 #include "../util/Enum.h"
 #include "../util/Export.h"
 
+class EmpireManager;
+EmpireManager& Empires();
+ObjectMap& Objects();
 
 ////////////////////////////////////////////////
 // MovePathNode
@@ -115,12 +118,17 @@ public:
 
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
-    void MovementPhase() override;
+    /** Moves fleet, its ships, and sets systems as explored for empires. */
+    void MovementPhase(EmpireManager& empires = Empires(), ObjectMap& objects = Objects());
 
     void ResetTargetMaxUnpairedMeters() override;
 
-    void SetRoute(const std::list<int>& route);             ///< sets this fleet to move through the series of systems in the list, in order
-    void CalculateRouteTo(int target_system_id);            ///< sets this fleet to move through the series of systems that makes the shortest path from its current location to target_system_id
+    /** Sets this fleet to move through the series of systems in the list, in order */
+    void SetRoute(const std::list<int>& route);
+
+    /** Sets this fleet to move through the series of systems that makes the
+      * shortest path from its current location to target_system_id */
+    void CalculateRouteTo(int target_system_id, const ObjectMap& objects = Objects());
 
     void SetAggression(FleetAggression aggression);         ///< sets this fleet's aggression level towards other fleets
 
