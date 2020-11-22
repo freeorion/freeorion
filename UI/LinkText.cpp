@@ -106,8 +106,8 @@ namespace {
      *  If the tag content is empty or @p add_explanation is true,
      *  the value ref description gets added as explanation instead. */
     std::string ValueRefLinkText(const std::string& text, const bool add_explanation) {
-        if (!boost::contains(text, FOCS_VALUE_TAG_CLOSE)) {
-            InfoLogger() << "[NVR] ValueRefLinkText not triggered in text: " << text;
+        if (text.find(FOCS_VALUE_TAG_CLOSE) == std::string::npos) {
+            InfoLogger() << "[NVR] ValueRefLinkText not triggered - could not find '" << FOCS_VALUE_TAG_CLOSE << "' in text: '" << text << "'";
             return text;
         }
         InfoLogger() << "[NVR] ValueRefLinkText triggered by value tag in text: " << text  << " add_explanation: " << add_explanation;
