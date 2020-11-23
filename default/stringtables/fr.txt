@@ -6291,7 +6291,7 @@ SELF_SUSTAINING_SPECIES_TITLE
 Métabolisme Autosuffisant
 
 SELF_SUSTAINING_SPECIES_TEXT
-Les espèces de type [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur [[metertype METER_TARGET_POPULATION]] étant de ce fait très élevée. Tandis qu'aucune Particularité n'augmente leur Croissance, leur Projection Population évolue plutôt à la manière d'une espèce profitant simultanément des trois Particularités basées sur le [[encyclopedia GROWTH_FOCUS_TITLE]].
+Les espèces de type [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur [[metertype METER_TARGET_POPULATION]] étant de ce fait très élevée. Aucune Particularité n'augmente leur Croissance, mais si l'[[encyclopedia ENVIRONMENT_TITLE]] d'une planète leur fournit une Habitabilité [[PE_GOOD]], leur Projection Population évolue à la manière d'une espèce profitant simultanément des trois Particularités basées sur le [[encyclopedia GROWTH_FOCUS_TITLE]].
 
 GASEOUS_SPECIES_TITLE
 Métabolisme Gazeux
