@@ -3157,12 +3157,15 @@ std::map<std::string, unsigned int> CheckSumContent() {
     checksums["BuildingTypeManager"] = GetBuildingTypeManager().GetCheckSum();
     checksums["Encyclopedia"] = GetEncyclopedia().GetCheckSum();
     checksums["FieldTypeManager"] = GetFieldTypeManager().GetCheckSum();
-    checksums["NamedValueRefManager"] = GetNamedValueRefManager().GetCheckSum();
     checksums["ShipHullManager"] = GetShipHullManager().GetCheckSum();
     checksums["ShipPartManager"] = GetShipPartManager().GetCheckSum();
     checksums["PredefinedShipDesignManager"] = GetPredefinedShipDesignManager().GetCheckSum();
     checksums["SpeciesManager"] = GetSpeciesManager().GetCheckSum();
+    checksums["SpecialsManager"] = GetSpecialsManager().GetCheckSum();
     checksums["TechManager"] = GetTechManager().GetCheckSum();
+    // NamedValueRefManager cant ensure that parsing is finished for registrations from other content
+    // So it needs to be added last, after all other managers ensured their content finished parsing
+    checksums["NamedValueRefManager"] = GetNamedValueRefManager().GetCheckSum();
 
     return checksums;
 }

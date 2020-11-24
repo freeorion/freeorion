@@ -11409,7 +11409,7 @@ PLC_CONFEDERATION_DESC
 '''Planets of the empire are organized in a confederacy of independent systems. Colonies do not suffer reduced influence if not connected to the capital, and get a boost to ground troops, but are slightly less stable in general.
 
 Increases max [[metertype METER_TROOPS]] by [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]] but reduces [[metertype METER_TARGET_HAPPINESS]] ([[value PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT]]) in all planets.
-Increases [[metertype METER_TARGET_INFLUENCE]] on colonies disconnected from the capital by [[value SUPPLY_DISCONNECTED_INFLUENCE_FLAT]].'''
+Increases [[metertype METER_TARGET_INFLUENCE]] on colonies disconnected from the capital by [[value PLC_CONFEDERATION_SUPPLY_DISCONNECTED_INFLUENCE_FLAT]].'''
 
 PLC_CONFEDERATION_SHORT_DESC
 Supports disconnected systems

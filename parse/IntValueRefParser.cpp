@@ -146,7 +146,7 @@ parse::int_arithmetic_rules::int_arithmetic_rules(
           ] | (     tok.Named_ >> tok.Integer_ >> tok.Lookup_
              >  label(tok.name_) > tok.string
           ) [
-             _val = construct_movable_(new_<ValueRef::NamedRef<int>>(_2))
+             _val = construct_movable_(new_<ValueRef::NamedRef<int>>(_2, phoenix::val(/*is_lookup_only*/true)))
           ]
         ;
 

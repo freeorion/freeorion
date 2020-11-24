@@ -132,7 +132,7 @@ parse::double_parser_rules::double_parser_rules(
                 tok.Named_ >> tok.Real_ >> tok.Lookup_
             >>  label(tok.name_) > tok.string
           ) [
-             _val = construct_movable_(new_<ValueRef::NamedRef<double>>(_2))
+             _val = construct_movable_(new_<ValueRef::NamedRef<double>>(_2, phoenix::val(/*is_lookup_only*/true)))
           ]
         ;
 
