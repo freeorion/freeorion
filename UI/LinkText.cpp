@@ -17,11 +17,27 @@
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <sstream>
+#include <iomanip>
+#include <string>
+#include <cstdint>
+
 // TextLinker static(s)
 const std::string TextLinker::ENCYCLOPEDIA_TAG("encyclopedia");
 const std::string TextLinker::GRAPH_TAG("graph");
 const std::string TextLinker::URL_TAG("url");
 const std::string TextLinker::BROWSE_PATH_TAG("browsepath");
+
+std::string string_to_hex(const std::string& in) {
+    std::stringstream ss;
+
+    ss << std::hex << std::setfill('0');
+    for (size_t i = 0; in.length() > i; ++i) {
+        ss << std::setw(2) << static_cast<unsigned int>(static_cast<unsigned char>(in[i]));
+    }
+
+    return ss.str();
+}
 
 namespace {
     static const bool RENDER_DEBUGGING_LINK_RECTS = false;
@@ -108,10 +124,11 @@ namespace {
     std::string ValueRefLinkText(const std::string& text, const bool add_explanation) {
         if (text.find(FOCS_VALUE_TAG_CLOSE) == std::string::npos) {
             InfoLogger() << "[NVR] ValueRefLinkText not triggered - could not find '" << FOCS_VALUE_TAG_CLOSE << "' in text: '" << text << "'";
+            InfoLogger() << "[NVR] tag  as hex: " << string_to_hex(FOCS_VALUE_TAG_CLOSE);
+            InfoLogger() << "[NVR] text as hex: " << string_to_hex(text);
             return text;
         }
         InfoLogger() << "[NVR] ValueRefLinkText triggered by value tag in text: " << text  << " add_explanation: " << add_explanation;
-
         std::string retval(text);
         auto text_it = retval.begin();
         xpr::smatch match;
