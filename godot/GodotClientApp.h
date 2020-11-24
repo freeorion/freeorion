@@ -24,10 +24,13 @@ public:
 
     void SetSinglePlayerGame(bool sp = true);
 
+#ifndef FREEORION_ANDROID
     void NewSinglePlayerGame(bool quickstart = false);
+#endif
 
     static GodotClientApp* GetApp();
 private:
+#ifndef FREEORION_ANDROID
     /** Starts a server process on localhost.
 
         Throws a runtime_error if the server process can't be started.
@@ -42,7 +45,7 @@ private:
     void FreeServer();
 
     Process m_server_process;   ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
-
+#endif
     bool m_single_player_game = true;   ///< true when this game is a single-player game
 
     /** Filenames of all in progress saves.  There maybe multiple saves in
