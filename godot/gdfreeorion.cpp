@@ -179,6 +179,7 @@ void GDFreeOrion::_init() {
 
     CompleteXDGMigration();
 
+#if !defined(FREEORION_ANDROID)
     // Handle the case where the resource.path does not exist anymore
     // gracefully by resetting it to the standard path into the
     // application bundle.  This may happen if a previous installed
@@ -202,6 +203,7 @@ void GDFreeOrion::_init() {
                                      PathToString(GetResourceDir()) + " : Install may be broken.");
         }
     }
+#endif
 
     // initialize any variables here
     app = std::make_unique<GodotClientApp>();
@@ -223,7 +225,11 @@ void GDFreeOrion::_exit_tree() {
 }
 
 void GDFreeOrion::_new_single_player_game(bool quickstart) {
+#ifdef FREEORION_ANDROID
+    Godot::print(String("No single player game supported"));
+#else
     app->NewSinglePlayerGame(quickstart);
+#endif
 }
 
 godot::OptionsDB* GDFreeOrion::get_options() const

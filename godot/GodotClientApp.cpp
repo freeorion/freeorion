@@ -40,6 +40,7 @@ namespace {
         SetEmptyStringDefaultOption("setup.multiplayer.player.name", player_name);
     }
 
+#ifndef FREEORION_ANDROID
     std::string ServerClientExe() {
 #ifdef FREEORION_WIN32
         return PathToString(GetBinDir() / "freeoriond.exe");
@@ -54,6 +55,7 @@ namespace {
             std::runtime_error("LOCAL_SERVER_ALREADY_RUNNING_ERROR")
         {}
     };
+#endif
 
     void ClearPreviousPendingSaves(std::queue<std::string>& pending_saves) {
         if (pending_saves.empty())
@@ -91,6 +93,7 @@ int GodotClientApp::EffectsProcessingThreads() const
 GodotClientApp* GodotClientApp::GetApp()
 { return static_cast<GodotClientApp*>(s_app); }
 
+#ifndef FREEORION_ANDROID
 void GodotClientApp::StartServer() {
     if (m_networking->PingLocalHostServer(std::chrono::milliseconds(100))) {
         ErrorLogger() << "Can't start local server because a server is already connecting at 127.0.0.0.";
@@ -253,6 +256,7 @@ void GodotClientApp::NewSinglePlayerGame(bool quickstart) {
     m_networking->SendMessage(HostSPGameMessage(setup_data));
     DebugLogger() << "GodotClientApp::NewSinglePlayerGame done";
 }
+#endif
 
 bool GodotClientApp::SinglePlayerGame() const
 { return m_single_player_game; }
