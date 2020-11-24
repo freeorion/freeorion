@@ -95,23 +95,21 @@ namespace {
         return retval;
     }
 
-    const std::string FOCS_VALUE_TAG_OPEN_PRE("<" + VarText::FOCS_VALUE_TAG);
-    const std::string FOCS_VALUE_TAG_CLOSE("</" + VarText::FOCS_VALUE_TAG + ">");
-    const xpr::sregex FOCS_VALUE_SEARCH = FOCS_VALUE_TAG_OPEN_PRE >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> ">" >>
-                                          (xpr::s2 = REGEX_NON_BRACKET) >> FOCS_VALUE_TAG_CLOSE;
-
     /** Parses VarText::FOCS_VALUE_TAG%s within @p text, replacing value ref name%s with
      *  the evaluation result of that value ref.
      *  Given tag content (i.e. the stringtable content for the tag name) gets added as explanation.
      *  If the tag content is empty or @p add_explanation is true,
      *  the value ref description gets added as explanation instead. */
     std::string ValueRefLinkText(const std::string& text, const bool add_explanation) {
+        auto FOCS_VALUE_TAG_CLOSE("</" + VarText::FOCS_VALUE_TAG + ">");
         if (!boost::contains(text, FOCS_VALUE_TAG_CLOSE))
             return text;
 
         std::string retval(text);
         auto text_it = retval.begin();
         xpr::smatch match;
+        const xpr::sregex FOCS_VALUE_SEARCH = ("<" + VarText::FOCS_VALUE_TAG) >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> ">" >>
+                                              (xpr::s2 = REGEX_NON_BRACKET) >> ("</" + VarText::FOCS_VALUE_TAG + ">");
 
         while (true) {
             if (!xpr::regex_search(text_it, retval.end(), match, FOCS_VALUE_SEARCH, xpr::regex_constants::match_default))
@@ -127,7 +125,8 @@ namespace {
                     ? " (" + ((match[2].length()==0 || !UserStringExists(value_ref_name)) ? "" : match[2] + ": ") + value_ref->Description() + ")"
                     : ""};
 
-            auto resolved_tooltip = FOCS_VALUE_TAG_OPEN_PRE + " " + value_ref_name + ">" + value_str + explanation_str + FOCS_VALUE_TAG_CLOSE;
+            auto resolved_tooltip = "<" + VarText::FOCS_VALUE_TAG + " " + value_ref_name + ">"
+                                     + value_str + explanation_str + "</" + VarText::FOCS_VALUE_TAG + ">";
 
             retval.replace(text_it + match.position(), text_it + match.position() + match.length(), resolved_tooltip);
 
