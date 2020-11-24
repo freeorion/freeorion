@@ -23,6 +23,10 @@ private:
     std::unique_ptr<GodotClientApp> app;
     godot::OptionsDB* optionsDB{nullptr};
     GodotNetworking* networking{nullptr};
+
+#if defined(FREEORION_ANDROID)
+    static const godot_gdnative_ext_android_api_struct* s_android_api_struct;
+#endif
 public:
     static void _register_methods();
 
@@ -44,6 +48,10 @@ public:
     void set_networking(GodotNetworking* ptr);
 
     void handle_message(Message&& msg); ///< handle messages in thread
+
+#if defined(FREEORION_ANDROID)
+    static void set_android_api_struct(const godot_gdnative_ext_android_api_struct* android_api_struct);
+#endif
 };
 
 }
