@@ -159,7 +159,19 @@ GDFreeOrion::~GDFreeOrion() {
     // add your cleanup here
 }
 
+#if defined(FREEORION_ANDROID)
+const godot_gdnative_ext_android_api_struct* GDFreeOrion::s_android_api_struct = nullptr;
+
+void GDFreeOrion::set_android_api_struct(const godot_gdnative_ext_android_api_struct *android_api_struct)
+{ s_android_api_struct = android_api_struct; }
+#endif
+
 void GDFreeOrion::_init() {
+#if defined(FREEORION_ANDROID)
+    SetAndroidEnvironment(s_android_api_struct->godot_android_get_env(),
+                          s_android_api_struct->godot_android_get_activity());
+#endif
+
     InitDirs("");
 
     GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
