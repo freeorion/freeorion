@@ -1026,7 +1026,6 @@ void Empire::AutoTurnSetReady() {
 
 void Empire::SetAutoTurn(int turns_count) {
     m_auto_turn_count = turns_count;
-    SetReady(m_auto_turn_count != 0);
 }
 
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
