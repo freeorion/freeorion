@@ -6,6 +6,9 @@
 #include "Enum.h"
 #include "Export.h"
 
+#if defined(FREEORION_ANDROID)
+#  include <jni.h>
+#endif
 
 //! Types of root directories
 FO_ENUM(
@@ -111,6 +114,11 @@ FO_COMMON_API auto GetBinDir() -> boost::filesystem::path const;
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
 //! Returns the Python home directory on platform where Python is embedded.
 FO_COMMON_API auto GetPythonHome() -> boost::filesystem::path const;
+#endif
+
+#if defined(FREEORION_ANDROID)
+//! Sets android environment to access directories
+FO_COMMON_API void SetAndroidEnvironment(JNIEnv* env, jobject activity);
 #endif
 
 //! Returns the full path to the configfile.
