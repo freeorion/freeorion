@@ -291,7 +291,7 @@ public:
     void Win(const std::string& reason);             ///< Marks this empire as having won for this reason, and sends the appropriate sitreps
     void SetReady(bool ready);                       ///< Marks this empire with readiness status
     void AutoTurnSetReady();                         ///< Decreases auto-turn counter and set empire ready if not expired or set unready
-    void SetAutoTurn(int turns_count);               ///< Set auto-turn counter and set empire ready if not expired
+    void SetAutoTurn(int turns_count);               ///< Set auto-turn counter
 
     /** Inserts the given SitRep entry into the empire's sitrep list. */
     void AddSitRepEntry(const SitRepEntry& entry);

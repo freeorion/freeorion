@@ -2915,6 +2915,7 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
     }
 
     empire->SetAutoTurn(turns_count);
+    empire->SetReady(turns_count != 0);
 
     // notify other player that this empire submitted orders
     for (auto player_it = server.m_networking.established_begin();
@@ -3137,8 +3138,8 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         server.SetEmpireSaveGameData(empire_id, std::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
                                      order_set, ui_data, save_state_string,
                                      client_type));
-        empire->SetReady(true);
         empire->SetAutoTurn(0);
+        empire->SetReady(true);
 
         // notify other player that this empire submitted orders
         for (auto player_it = server.m_networking.established_begin();
@@ -3281,8 +3282,8 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
 
         TraceLogger(FSM) << "WaitingForTurnEnd.RevokeReadiness : Revoke orders from player " << player_id;
 
-        empire->SetReady(false);
         empire->SetAutoTurn(0);
+        empire->SetReady(false);
 
         // inform player who just submitted of acknowledge revoking status.
         sender->SendMessage(msg.m_message);
