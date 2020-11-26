@@ -57,7 +57,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
     auto path = FilenameToPath(m_filename);
     std::string file_contents;
 
-    bool read_success = parse::read_file(path, file_contents);
+    bool read_success = ReadFile(path, file_contents);
     if (!read_success) {
         ErrorLogger() << "StringTable::Load failed to read file at path: " << path.string();
         //m_initialized intentionally left false
@@ -173,7 +173,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                     ErrorLogger() << "Positional error in key expansion: " << match[1] << " with length: "
                                   << match[1].length() << "and matchlen: " << match.length();
                 // clear out any keywords that have been fully processed
-                for (auto ref_check_it = cyclic_reference_check.begin(); 
+                for (auto ref_check_it = cyclic_reference_check.begin();
                      ref_check_it != cyclic_reference_check.end(); )
                 {
                     if (ref_check_it->second <= position) {
@@ -234,7 +234,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                 auto map_lookup_it = m_strings.find(match[2]);
                 bool foundmatch = map_lookup_it != m_strings.end();
                 if (!foundmatch && !fallback_lookup_strings.empty()) {
-                    DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << m_filename 
+                    DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << m_filename
                                   << "; checking in fallback file" << fallback_table_file;
                     map_lookup_it = fallback_lookup_strings.find(match[2]);
                     foundmatch = map_lookup_it != fallback_lookup_strings.end();

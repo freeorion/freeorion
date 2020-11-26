@@ -76,7 +76,6 @@ namespace parse {
     FO_PARSE_API std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>> statistics(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::vector<EncyclopediaArticle>> encyclopedia_articles(const boost::filesystem::path& path);
     FO_PARSE_API GameRules game_rules(const boost::filesystem::path& path);
-    FO_PARSE_API bool read_file(const boost::filesystem::path& path, std::string& file_contents);
 
     FO_PARSE_API void file_substitution(std::string& text, const boost::filesystem::path& file_search_path);
     FO_PARSE_API void process_include_substitutions(std::string& text,

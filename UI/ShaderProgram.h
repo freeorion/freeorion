@@ -3,13 +3,9 @@
 
 #include <GG/Base.h>
 
-#include <boost/filesystem/operations.hpp>
-
 #include <memory>
 #include <string>
 #include <vector>
-
-bool ReadFile(const boost::filesystem::path& path, std::string& file_contents);
 
 class ShaderProgram {
 private:

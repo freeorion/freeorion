@@ -1,13 +1,7 @@
 #include "ShaderProgram.h"
 
-#include <cassert>
-#include <functional>
-#include <iostream>
-
 #include "../client/human/HumanClientApp.h"
 #include "../util/Logger.h"
-
-#include <boost/filesystem/fstream.hpp>
 
 
 namespace {
@@ -53,27 +47,6 @@ namespace {
             CHECK_ERROR("GetProgramLog", "glGetProgramInfoLog()");
         }
     }
-}
-
-bool ReadFile(const boost::filesystem::path& path, std::string& file_contents) {
-    boost::filesystem::ifstream ifs(path);
-    if (!ifs)
-        return false;
-
-    // skip byte order mark (BOM)
-    for (int BOM : {0xEF, 0xBB, 0xBF}) {
-        if (BOM != ifs.get()) {
-            // no header set stream back to start of file
-            ifs.seekg(0, std::ios::beg);
-            // and continue
-            break;
-        }
-    }
-
-    std::getline(ifs, file_contents, '\0');
-
-    // no problems?
-    return true;
 }
 
 ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string& fragment_shader) :

@@ -161,4 +161,7 @@ FO_COMMON_API auto GetPath(std::string const& path_string) -> boost::filesystem:
 
 //! Returns true iff path exists and is a regular file
 FO_COMMON_API auto IsExistingFile(boost::filesystem::path const& path) -> bool;
+
+//! Reads text file content from @p path and returs true if success
+FO_COMMON_API auto ReadFile(boost::filesystem::path const& path, std::string& file_contents) -> bool;
 #endif
