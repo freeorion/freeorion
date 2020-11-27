@@ -636,7 +636,6 @@ namespace {
         EmpireViewSystemGraphMap    empire_system_graph_views;    ///< a map of empire IDs to the views of the system graph by those empires
         /** Empire system graphs indexed by object predicate */
         SystemPredicateGraphMap     system_pred_graph_views;
-        std::unordered_set<Pathfinder::SystemExclusionPredicateType> system_predicates;
     };
 
 }
@@ -1509,6 +1508,4 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(int 
             m_graph_impl->empire_system_graph_views[empire_id] = filtered_graph_ptr;
         }
     }
-    for (const auto& prev_pred : m_graph_impl->system_predicates)
-        m_graph_impl->AddSystemPredicate(prev_pred);
 }
