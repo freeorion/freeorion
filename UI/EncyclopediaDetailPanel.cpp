@@ -1085,20 +1085,23 @@ namespace {
 
         for (auto& entry : sorted_entries) {
             const std::string& readable_article_name = entry.first;
-            const std::string& link_text = entry.second.first;
-            const std::string& category_str_key = entry.second.second;
+            std::string& link_text = entry.second.first;
+            std::string& category_str_key = entry.second.second;
 
             // explicitly exclude textures and input directory itself
             if (category_str_key == "ENC_TEXTURES" || category_str_key == dir_name)
                 continue;
-            retval.emplace(std::make_pair(category_str_key, dir_name),
-                           std::make_pair(readable_article_name, link_text));
+
+            // recurse into any sub-sub-directories
+            auto&& temp = GetSubDirs(category_str_key, depth);
+
             DebugLogger() << "GetSubDirs(" << dir_name << ") storing "
                           << category_str_key << ": " << readable_article_name;
 
-            // recurse into any sub-sub-directories
-            for (auto sub_sub_dir : GetSubDirs(category_str_key, depth))
-                retval.emplace(sub_sub_dir);
+            retval.emplace(std::make_pair(std::move(category_str_key), dir_name),
+                           std::make_pair(readable_article_name, std::move(link_text)));
+
+            retval.insert(std::make_move_iterator(temp.begin()), std::make_move_iterator(temp.end())); // TODO: use C++17 map::merge
         }
 
         return retval;
