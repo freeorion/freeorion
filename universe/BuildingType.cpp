@@ -146,6 +146,8 @@ float BuildingType::ProductionCost(int empire_id, int location_id,
     // being produced, and target object is normally mutable, but will not
     // actually be modified by evaluating the cost ValueRef
     ScriptingContext context(source, std::const_pointer_cast<UniverseObject>(location), objects);
+    if (location && !context.effect_target)
+        ErrorLogger() << "Failed to make a context for ProductionCost...";
 
     return m_production_cost->Eval(context);
 }
