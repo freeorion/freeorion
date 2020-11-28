@@ -16,20 +16,20 @@ BuildingType
             ]
         ) / (60
              + 20 * (Statistic If condition = Or [
-                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
-                 OwnerHasTech name = "SHP_ORG_HULL"
-                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+                 And [ Source OwnerHasTech name = "SHP_MIL_ROBO_CONT" ]
+                 And [ Source OwnerHasTech name = "SHP_ORG_HULL" ]
+                 And [ Source OwnerHasTech name = "SHP_QUANT_ENRG_MAG" ]
              ])
              + 20 * (Statistic If condition = Or [
-                 OwnerHasTech name = "SHP_ORG_HULL"
-                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+                 And [ Source OwnerHasTech name = "SHP_ORG_HULL" ]
+                 And [ Source OwnerHasTech name = "SHP_QUANT_ENRG_MAG" ]
              ])
-             + 20 * (Statistic If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
-             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
-             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
-             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
-             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
-             + 10 * (Statistic If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+             + 20 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_QUANT_ENRG_MAG" ])
+             + 10 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS" ])
+             + 10 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX" ])
+             + 10 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE" ])
+             + 10 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_TRANSSPACE_DRIVE" ])
+             + 10 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_INTSTEL_LOG" ])
         )
     )
     tags = [ "SP_MUURSH" ]
