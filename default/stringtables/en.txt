@@ -12527,25 +12527,21 @@ LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on planets with the Research focus, per [[metertype METER_POPULATION]] and depending on the star type:
-* [[STAR_BLACK]] (x[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPOP]])
-* [[STAR_NEUTRON]] (x[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPOP]])
-* [[STAR_BLUE]] or [[STAR_WHITE]] (x[[value LRN_STELLAR_TOMO_BRIGHT_TARGET_RESEARCH_PERPOP]])
-* [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (x[[value LRN_STELLAR_TOMO_DIME_TARGET_RESEARCH_PERPOP]])
+'''Increases [[metertype METER_TARGET_RESEARCH]] on planets with the Research focus, depending on the star type and number of planets with research focus in the system:
+* [[STAR_BLACK]] (+[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPLANET]])
+* [[STAR_NEUTRON]] (+[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPLANET]])
+* [[STAR_BLUE]], [[STAR_WHITE]], [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (+[[value LRN_STELLAR_TOMO_NORMAL_STAR_TARGET_RESEARCH_PERPLANET]])
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
-LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPOP
-per population
+LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPLANET
+per planet
 
-LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPOP
-per population
+LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPLANET
+per planet
 
-LRN_STELLAR_TOMO_BRIGHT_TARGET_RESEARCH_PERPOP
-per population
-
-LRN_STELLAR_TOMO_DIME_TARGET_RESEARCH_PERPOP
-per population
+LRN_STELLAR_TOMO_NORMAL_STAR_TARGET_RESEARCH_PERPLANET
+per planet
 
 LRN_SPATIAL_DISTORT_GEN
 Spatial Distortion

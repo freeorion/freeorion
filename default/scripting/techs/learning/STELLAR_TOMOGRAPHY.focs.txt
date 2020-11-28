@@ -10,51 +10,49 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = And [
-                ProductionCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 Star type = BlackHole
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population
-                        * (NamedReal name = "LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPOP"
-                                     value = (1.0 * [[RESEARCH_PER_POP]]))
+            effects = SetTargetResearch value = Value + Statistic Count condition = And [
+                Planet                
+                OwnedBy empire = Source.Owner
+                InSystem id = Target.SystemID
+                Focus type = "FOCUS_RESEARCH"
+            ] * (NamedReal name = "LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPLANET" value = 3.0)
 
         EffectsGroup
             scope = And [
-                ProductionCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 Star type = Neutron
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population
-                        * (NamedReal name = "LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPOP"
-                                     value = (0.75 * [[RESEARCH_PER_POP]]))
+            effects = SetTargetResearch value = Value + Statistic Count condition = And [
+                Planet                
+                OwnedBy empire = Source.Owner
+                InSystem id = Target.SystemID
+                Focus type = "FOCUS_RESEARCH"
+            ] * (NamedReal name = "LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPLANET" value = 1.0)
 
         EffectsGroup
             scope = And [
-                ProductionCenter
+                Planet
                 OwnedBy empire = Source.Owner
-                Star type = [Blue White]
+                Star type = [Blue White Red Orange Yellow]
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population
-                        * (NamedReal name = "LRN_STELLAR_TOMO_BRIGHT_TARGET_RESEARCH_PERPOP"
-                                     value = (0.5 * [[RESEARCH_PER_POP]]))
+            effects = SetTargetResearch value = Value + Statistic Count condition = And [
+                Planet                
+                OwnedBy empire = Source.Owner
+                InSystem id = Target.SystemID
+                Focus type = "FOCUS_RESEARCH"
+            ] * (NamedReal name = "LRN_STELLAR_TOMO_NORMAL_STAR_TARGET_RESEARCH_PERPLANET" value = 0.2)
 
-        EffectsGroup
-            scope = And [
-                ProductionCenter
-                OwnedBy empire = Source.Owner
-                Star type = [Red Orange Yellow]
-                Focus type = "FOCUS_RESEARCH"
-            ]
-            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetResearch value = Value + Target.Population
-                        * (NamedReal name = "LRN_STELLAR_TOMO_DIME_TARGET_RESEARCH_PERPOP"
-                                     value = (0.25 * [[RESEARCH_PER_POP]]))
     ]
     graphic = "icons/tech/stellar_tomography.png"
 
