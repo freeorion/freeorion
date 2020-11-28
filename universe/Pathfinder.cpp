@@ -1092,6 +1092,8 @@ double Pathfinder::ShortestPathDistance(int object1_id, int object2_id, const Ob
 double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int object2_id,
                                                         const ObjectMap& objects) const
 {
+    ScopedTimer("PathfinderImpl::ShortestPathDistance(" + std::to_string(object1_id) + ", " + std::to_string(object2_id) + ")");
+
     // If one or both objects are (in) a fleet between systems, use the destination system
     // and add the distance from the fleet to the destination system, essentially calculating
     // the distance travelled until both could be in the same system.

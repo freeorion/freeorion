@@ -4,6 +4,7 @@
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"
 #include "../util/Logger.h"
+#include "../util/ScopedTimer.h"
 #include "../Empire/EmpireManager.h"
 #include "Condition.h"
 #include "Effect.h"
@@ -127,6 +128,8 @@ float BuildingType::ProductionCost(int empire_id, int location_id,
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_cost)
         return 1.0f;
 
+    ScopedTimer timer("BuildingType::ProductionCost: " + m_name);
+
     if (m_production_cost->ConstantExpr())
         return m_production_cost->Eval();
     else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
@@ -166,6 +169,8 @@ int BuildingType::ProductionTime(int empire_id, int location_id,
 {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_time)
         return 1;
+
+    ScopedTimer timer("BuildingType::ProductionTime: " + m_name, true);
 
     if (m_production_time->ConstantExpr())
         return m_production_time->Eval();

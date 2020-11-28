@@ -306,6 +306,8 @@ namespace {
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
                                                                   int candidate_object_id, int empire_id)
     {
+        ScopedTimer("ProductionItemRowBrowseWnd: " + item.name);
+
         // get available PP for empire at candidate location
         float local_pp_output = 0.0f;
         float stockpile = 0.0f;
@@ -533,6 +535,8 @@ namespace {
             SetMargin(0);
             SetRowAlignment(GG::ALIGN_NONE);
             SetChildClippingMode(ChildClippingMode::ClipToClient);
+
+            ScopedTimer("ProductionItemRow: " + item.name);
 
             if (m_item.build_type == BuildType::BT_SHIP) {
                 SetDragDropDataType(std::to_string(m_item.design_id));
@@ -963,6 +967,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     if (!empire)
         return;
 
+    SectionedScopedTimer timer("BuildDesignatorWnd::BuildSelector::PopulateList");
+
     // Capture the list scroll state
     // Try to preserve the same queue context with completely new queue items
     std::size_t initial_offset_from_begin = std::distance(m_buildable_items->begin(), m_buildable_items->FirstRowShown());
@@ -974,6 +980,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     auto default_font = ClientUI::GetFont();
     const GG::Pt row_size = m_buildable_items->ListRowSize();
 
+    timer.EnterSection("fixed projects");
     // populate list with fixed projects
     if (BuildableItemVisible(BuildType::BT_STOCKPILE)) {
         auto stockpile_row = GG::Wnd::Create<ProductionItemRow>(
@@ -986,13 +993,14 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     //DebugLogger() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
     if (m_build_types_shown.count(BuildType::BT_BUILDING)) {
         BuildingTypeManager& manager = GetBuildingTypeManager();
-        // craete and insert rows...
+        // create and insert rows...
         std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
         rows.reserve(std::distance(manager.begin(), manager.end()));
         for (const auto& entry : manager) {
             auto& name = entry.first;
             if (!BuildableItemVisible(BuildType::BT_BUILDING, name))
                 continue;
+            timer.EnterSection(name);
             auto item_row = GG::Wnd::Create<ProductionItemRow>(
                 row_size.x, row_size.y, ProductionQueue::ProductionItem(BuildType::BT_BUILDING, name),
                 m_empire_id, m_production_location);
@@ -1024,6 +1032,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             const ShipDesign* ship_design = GetShipDesign(ship_design_id);
             if (!ship_design)
                 continue;
+            timer.EnterSection(ship_design->Name());
             auto item_row = GG::Wnd::Create<ProductionItemRow>(
                 row_size.x, row_size.y, 
                 ProductionQueue::ProductionItem(BuildType::BT_SHIP, ship_design_id),
@@ -1033,6 +1042,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         m_buildable_items->Insert(std::move(rows));
     }
 
+    timer.EnterSection("end bits");
     // resize inserted rows and record first row to show
     for (auto& row : *m_buildable_items)
         row->Resize(row_size);
