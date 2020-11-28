@@ -226,8 +226,8 @@ namespace {
             std::map<std::string, std::string> userstring_tech_names;
             // sort tech names by user-visible name, so names are shown alphabetically in UI
             for (auto& tech_name : GetTechManager().TechNames()) {
-                auto& us_tech_name{UserString(tech_name)};
-                userstring_tech_names.emplace(us_tech_name, std::move(tech_name));
+                auto& us_name{UserString(tech_name)};   // line before moving from tech_name to avoid order of evaluation issues
+                userstring_tech_names.emplace(us_name, std::move(tech_name));
             }
 
             for (auto& tech_name : userstring_tech_names) {
@@ -245,8 +245,10 @@ namespace {
         else if (dir_name == "ENC_POLICY") {
             for (auto& policy_name : GetPolicyManager().PolicyNames()) {
                 std::string&& tagged_text{LinkTaggedText(VarText::POLICY_TAG, policy_name) + "\n"};
-                auto&& str_pair{std::make_pair(std::move(tagged_text), policy_name)};
-                sorted_entries_list.emplace(std::move(policy_name), std::move(str_pair));
+                auto& us_name{UserString(policy_name)}; // line before to avoid order of evaluation issues when moving from policy_name
+                sorted_entries_list.emplace(
+                    us_name,
+                    std::make_pair(std::move(tagged_text), std::move(policy_name)));
             }
 
         }
@@ -264,8 +266,8 @@ namespace {
         }
         else if (dir_name == "ENC_SPECIAL") {
             for (std::string& special_name : SpecialNames()) {
-                auto& us_name{UserString(special_name)};
                 std::string&& tagged_text{LinkTaggedText(VarText::SPECIAL_TAG, special_name) + "\n"};
+                auto& us_name{UserString(special_name)};    // line before to avoid order of operations issues when moving from special_name
                 sorted_entries_list.emplace(
                     us_name,
                     std::make_pair(std::move(tagged_text), std::move(special_name)));
