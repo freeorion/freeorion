@@ -11683,6 +11683,8 @@ Mind of the Void
 LRN_MIND_VOID_DESC
 '''Unlocks [[policy PLC_DESIGN_SIMPLICITY]]
 
+Grants 1 social policy slot.
+
 We are not alone in the cosmos... but why should the search be so limited? Many cultures have myths, legends or fervent belief in a higher consciousness. Whether a loving or malevolent God, or a detached observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.'''
 
 LRN_TIME_MECH
@@ -11901,7 +11903,9 @@ PRO_VOID_PREDICTION_DESC
 For the imperial stockpile service, void prediction is the quintessential tool to deliver the right goods even before the need occurs.
 
 This is an upgrade technology for the [[encyclopedia STOCKPILE_TITLE]]. The [[metertype METER_STOCKPILE]] is increased by 0.2 per [[metertype METER_POPULATION]].
-These improvements are cumulative with those provided by [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].'''
+These improvements are cumulative with those provided by [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] and [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].
+
+Also grants 1 economic policy slot.'''
 
 PRO_MICROGRAV_MAN
 Microgravity Industry
@@ -13264,7 +13268,9 @@ SHP_SENT_HULL
 Sentient Hull
 
 SHP_SENT_HULL_DESC
-This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat.
+'''This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat.
+
+Empires that control at least one ship with this hull also receive an extra military policy slot.'''
 
 SHP_BIOINTERCEPTOR
 Biointerceptors
@@ -15152,7 +15158,9 @@ Organic Growth: Starts with 12 [[metertype METER_STRUCTURE]], grows an additiona
 
 [[LIVING_HULL_AUTO_REGEN]]
 
-[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED]]
+
+Empires that control at least one ship with this hull also receive an extra military policy slot.'''
 
 SH_COMPRESSED_ENERGY
 Compressed Energy Hull

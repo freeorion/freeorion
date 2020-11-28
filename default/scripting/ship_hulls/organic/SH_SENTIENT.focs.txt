@@ -57,6 +57,15 @@ Hull
             ]
 
         EffectsGroup
+            scope = And [
+                Capital
+                OwnedBy empire = Source.Owner
+            ]
+            stackinggroup = "FLAGSHIP_EFFECT_SENTIENT"
+            effects = SetEmpireMeter empire = Source.Owner
+                                     meter = "MILITARY_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1 
+
+        EffectsGroup
             scope = Source
             accountinglabel = "ORGANIC_GROWTH"
             effects = SetMaxStructure value = Value + ( min(Source.Age*1, 45) * [[SHIP_STRUCTURE_FACTOR]] )

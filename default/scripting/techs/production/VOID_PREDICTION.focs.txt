@@ -24,6 +24,11 @@ Tech
             effects = [
                 SetMaxStockpile value = Value + 10 * Target.Population * [[STOCKPILE_PER_POP]] 
             ]
+            
+        EffectsGroup
+            scope = Source
+            effects = SetEmpireMeter empire = Source.Owner
+                                     meter = "ECONOMIC_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1            
     ]
 
 #include "/scripting/species/common/stockpile.macros"
