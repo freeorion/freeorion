@@ -42,14 +42,14 @@ struct ScriptingContext {
 
     explicit ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                               const ObjectMap& const_objects_ = Objects()) :
-        source(source_),
+        source(std::move(source_)),
         objects(Objects()),
         const_objects(const_objects_)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      const ScriptingContext& parent_context) :
-        source(                     source_),
+        source(                     std::move(source_)),
         effect_target(              parent_context.effect_target),
         condition_root_candidate(   parent_context.condition_root_candidate),
         condition_local_candidate(  parent_context.condition_local_candidate),
@@ -61,7 +61,7 @@ struct ScriptingContext {
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      ScriptingCombatInfo& combat_info_) :
-        source(source_),
+        source(std::move(source_)),
         combat_info(combat_info_),
         objects(combat_info_.objects),
         const_objects(combat_info_.objects)
@@ -70,8 +70,8 @@ struct ScriptingContext {
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      std::shared_ptr<UniverseObject> target_,
                      ObjectMap& objects_ = Objects()) :
-        source(source_),
-        effect_target(target_),
+        source(std::move(source_)),
+        effect_target(std::move(target_)),
         objects(objects_),
         const_objects(objects_)
     {}
@@ -80,7 +80,7 @@ struct ScriptingContext {
                      std::shared_ptr<UniverseObject> target_,
                      const boost::any& current_value_) :    // TODO: Rework this so only specific types are accepted
         source(                     parent_context.source),
-        effect_target(              target_),
+        effect_target(              std::move(target_)),
         condition_root_candidate(   parent_context.condition_root_candidate),
         condition_local_candidate(  parent_context.condition_local_candidate),
         current_value(              current_value_),
@@ -121,9 +121,10 @@ struct ScriptingContext {
                      std::shared_ptr<const UniverseObject> condition_root_candidate_ = nullptr,
                      std::shared_ptr<const UniverseObject> condition_local_candidate_ = nullptr,
                      ObjectMap& objects_ = Objects()) :
-        source(source_),
-        condition_root_candidate(condition_root_candidate_),
-        condition_local_candidate(condition_local_candidate_),
+        source(std::move(source_)),
+        effect_target(std::move(target_)),
+        condition_root_candidate(std::move(condition_root_candidate_)),
+        condition_local_candidate(std::move(condition_local_candidate_)),
         current_value(current_value_),
         objects(objects_),
         const_objects(objects_)
