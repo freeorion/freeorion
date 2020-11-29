@@ -11402,6 +11402,15 @@ The empire is governed by a teocracy which claims to hold the Gods authority. Th
 PLC_DIVINE_AUTHORITY_SHORT_DESC
 Boosts stability and influence, but impairs research
 
+PLC_NATIVE_APPROPRIATION
+Native Appropriation
+
+PLC_NATIVE_APPROPRIATION_DESC
+Increasess research on research-focused planets in systems that also contain unowned native-populated planets.
+
+PLC_NATIVE_APPROPRIATION_SHORT_DESC
+Boosts Research
+
 
 ##
 ## Technology categories

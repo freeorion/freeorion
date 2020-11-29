@@ -1,0 +1,42 @@
+Policy
+    name = "PLC_NATIVE_APPROPRIATION"
+    description = "PLC_NATIVE_APPROPRIATION_DESC"
+    short_description = "PLC_NATIVE_APPROPRIATION_SHORT_DESC"
+    category = "SOCIAL_CATEGORY"
+    adoptioncost = 5 + floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population
+                                        condition = And [ Planet OwnedBy empire = Source.Owner ])
+    prerequisites = [ "PLC_DIVERSITY" ]
+    exclusions = [ "PLC_RACIAL_PURITY" ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
+        // research-focused planets in systems with unowned populated planets that are their species homeworld get a bonus
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_RESEARCH"
+                ContainedBy And [
+                    Object id = RootCandidate.SystemID
+                    Contains And [
+                        InSystem id = RootCandidate.SystemID
+                        Planet
+                        Unowned
+                        Species
+                        Homeworld name = LocalCandidate.Species
+                    ]
+                ]
+            ]
+            effects = SetTargetResearch value = Value + (NamedReal name = "PLC_NATIVE_APPROPRIATION_RESEARCH_PERPLANET" value = 5) *
+                Statistic Count condition = And [
+                    InSystem id = Target.SystemID
+                    Planet
+                    Unowned
+                    Species
+                    Homeworld name = LocalCandidate.Species
+                ]
+    ]
+    graphic = "icons/policies/native_appropriation.png"
+
+#include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"
