@@ -3,13 +3,10 @@ Tech
     description = "SHP_FIGHTERS_2_DESC"
     short_description = "SHIP_WEAPON_IMPROVE_SHORT_DESC"
     category = "SHIP_WEAPONS_CATEGORY"
-    researchcost = 20 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 2
+    researchcost = 45 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 9
     tags = [ "PEDIA_FIGHTER_TECHS" ]
-    prerequisites = [
-        "SHP_WEAPON_2_1"
-        "SHP_FIGHTERS_1"
-            ]
+    prerequisites = [ "SHP_FIGHTERS_1" ]
     effectsgroups =
         EffectsGroup
             scope = And [
