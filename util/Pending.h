@@ -41,14 +41,6 @@ namespace Pending {
         std::mutex m_mutex;
     };
 
-    /** Wait for the \p pending parse to complete.  Set pending to boost::none
-        and return the parsed T. Destroys the shared state in the wrapped std::future.
-        Return boost::none on errors.*/
-    template <typename T>
-    boost::optional<T> WaitForPending(boost::optional<Pending<T>>& pending, bool do_not_care_about_result = false) {
-        std::lock_guard<std::mutex> lock(pending->m_mutex);
-        return WaitForPendingUnlocked(std::move(pending), do_not_care_about_result);
-    }
     template <typename T>
     boost::optional<T> WaitForPendingUnlocked(boost::optional<Pending<T>>& pending, bool do_not_care_about_result) {
         if (!pending)
@@ -88,6 +80,14 @@ namespace Pending {
         }
 
         return boost::none;
+    }
+    /** Wait for the \p pending parse to complete.  Set pending to boost::none
+        and return the parsed T. Destroys the shared state in the wrapped std::future.
+        Return boost::none on errors.*/
+    template <typename T>
+    boost::optional<T> WaitForPending(boost::optional<Pending<T>>& pending, bool do_not_care_about_result = false) {
+        std::lock_guard<std::mutex> lock(pending->m_mutex);
+        return WaitForPendingUnlocked(std::move(pending), do_not_care_about_result);
     }
 
     /** If there is a pending parse, wait for it and swap it with the stored
