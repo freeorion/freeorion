@@ -36,6 +36,7 @@ public:
     void _exit_tree();
     void _new_single_player_game(bool quickstart);
     Dictionary _get_systems() const;
+    Dictionary _get_fleets() const;
 
     godot::OptionsDB* get_options() const;
     void set_options(godot::OptionsDB* ptr);
