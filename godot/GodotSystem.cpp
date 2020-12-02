@@ -5,6 +5,7 @@
 using namespace godot;
 
 void GodotSystem::_register_methods() {
+    register_method("_get_starlanes_wormholes", &GodotSystem::get_starlanes_wormholes);
     register_property<GodotSystem, Spatial*>("spatial",
         &GodotSystem::set_spatial,
         &GodotSystem::get_spatial,
@@ -52,4 +53,12 @@ int GodotSystem::get_id() const
 
 String GodotSystem::get_name() const
 { return String(m_impl->Name().c_str()); }
+
+Dictionary GodotSystem::get_starlanes_wormholes() const {
+    Dictionary starlanes_wormholes;
+    for (const auto& sys : m_impl->StarlanesWormholes()) {
+        starlanes_wormholes[sys.first] = sys.second;
+    }
+    return starlanes_wormholes;
+}
 

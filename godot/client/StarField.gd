@@ -41,6 +41,7 @@ func _ready():
         ss.spatial = star
         star.translate(ss.pos)
         add_child(star)
+        
     
     #place_fleets(round(global.gs_map_size / 10))
     
