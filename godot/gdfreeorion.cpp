@@ -5,6 +5,8 @@
 #include <memory>
 #include <sstream>
 
+#include <OS.hpp>
+
 #include "../util/Directories.h"
 #include "../util/GameRules.h"
 #include "../util/OptionsDB.h"
@@ -23,12 +25,12 @@ using namespace godot;
 
 std::atomic_bool quit(false);
 
-void GDFreeOrion::do_the_ping(GDFreeOrion* n) {
+void GDFreeOrion::network_thread() {
     while(!quit) {
-        if (auto msg = n->app->Networking().GetMessage()) {
-            n->handle_message(std::move(*msg));
+        if (auto msg = this->app->Networking().GetMessage()) {
+            this->handle_message(std::move(*msg));
         } else {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            OS::get_singleton()->delay_msec(20);
         }
     }
 }
@@ -135,6 +137,7 @@ void GDFreeOrion::_register_methods() {
     register_method("_new_single_player_game", &GDFreeOrion::_new_single_player_game);
     register_method("_get_systems", &GDFreeOrion::_get_systems);
     register_method("_get_fleets", &GDFreeOrion::_get_fleets);
+    register_method("network_thread", &GDFreeOrion::network_thread);
     register_signal<GDFreeOrion>("ping", "message", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("auth_request", "player_name", GODOT_VARIANT_TYPE_STRING, "auth", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("empire_status", "status", GODOT_VARIANT_TYPE_INT, "about_empire_id", GODOT_VARIANT_TYPE_INT);
@@ -192,8 +195,6 @@ void GDFreeOrion::_init() {
     app = std::make_unique<GodotClientApp>();
     optionsDB = godot::OptionsDB::_new();
     networking = GodotNetworking::_new();
-
-    t = std::thread(do_the_ping, this);
 }
 
 void GDFreeOrion::_process(float delta) {
@@ -201,7 +202,6 @@ void GDFreeOrion::_process(float delta) {
 
 void GDFreeOrion::_exit_tree() {
     quit = true;
-    t.join();
     app.reset();
 
     networking->free();
