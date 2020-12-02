@@ -32,6 +32,7 @@ namespace godot {
         int get_id() const;
         String get_name() const;
         Vector3 get_pos() const;
+        Dictionary get_starlanes_wormholes() const;
     };
 }
 
