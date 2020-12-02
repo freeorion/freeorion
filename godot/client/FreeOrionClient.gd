@@ -46,7 +46,7 @@ func _on_Node_ping(message: String):
     pings += 1
     print("Received message#", pings, " from C++ GDNative library code ", message)
 
-func _on_Node_auth_request(player_name: String, auth: String):
+func _on_Node_auth_request(player_name: String, _auth: String):
     $Node.networking._auth_response(player_name, "1")
 
 func _on_Node_empire_status(status: int, about_empire_id: int):
