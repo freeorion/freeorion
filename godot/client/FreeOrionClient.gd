@@ -3,6 +3,7 @@ extends Control
 
 var game_setup_dlg: Control
 var pings: int = 0
+var thread: Thread
 
 
 # Called when the node enters the scene tree for the first time.
@@ -18,6 +19,11 @@ func _ready():
     $Node.connect("start_game", self, "_on_Node_start_game")
     var systems: int = $Node.optionsDB._get_option_int("setup.star.count")
     print("Systems from optionsDB ", systems)
+    thread = Thread.new()
+    thread.start($Node, "network_thread")
+
+func _exit_tree():
+    thread.wait_to_finish()
 
 
 func _on_QuitBtn_pressed():
