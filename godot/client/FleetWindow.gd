@@ -1,13 +1,12 @@
 extends "res://FOWindow.gd"
 
 
-func set_fleet(fleet: global.Fleet):
+func set_fleet(fleet: Object):
     var info_text = "Fleet#" + str(fleet.id) + "\n\n"
     if fleet.is_stationary():
-        info_text += "Stationed at " + fleet.current_sys.name
+        info_text += "Stationed"
     else:
-        info_text += "In transit from " + fleet.current_sys.name + " to " + fleet.dest_sys.name + "\n"
-        info_text += "Distance travelled: " + str(fleet.dist_travelled)
+        info_text += "In transit"
     
     $FleetInfo.text = info_text
     $FleetInfo.show()
