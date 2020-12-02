@@ -18,9 +18,8 @@ class GDFreeOrion : public Node {
     GODOT_CLASS(GDFreeOrion, Node)
 
 private:
-    static void do_the_ping(GDFreeOrion* n);
+    void network_thread();
 
-    std::thread t;
     std::unique_ptr<GodotClientApp> app;
     godot::OptionsDB* optionsDB{nullptr};
     GodotNetworking* networking{nullptr};
