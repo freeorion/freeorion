@@ -51,7 +51,7 @@ int mainSetupAndRun();
 int mainConfigOptionsSetup(const std::vector<std::string>& args);
 
 
-#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
+#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU)
 int main(int argc, char* argv[]) {
     // copy command line arguments to vector
     std::vector<std::string> args;

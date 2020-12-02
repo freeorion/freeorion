@@ -34,12 +34,12 @@
 #  include <android/log.h>
 #endif
 
-#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
+#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
 #include "binreloc.h"
 #include <unistd.h>
 #include <boost/filesystem/fstream.hpp>
 
-#  ifdef __FreeBSD__
+#  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
 #    include <sys/sysctl.h>
 #  endif
 #  ifdef __HAIKU__
@@ -47,9 +47,9 @@
 #  endif
 #endif
 
-# if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) || defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
+# if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) || defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
 # else
-#  error Neither FREEORION_LINUX, FREEORION_MACOSX, FREEORION_FREEBSD, FREEORION_OPENBSD, FREEORION_WIN32, FREEORION_HAIKU nor FREEORION_ANDROID set
+#  error Neither FREEORION_LINUX, FREEORION_MACOSX, FREEORION_FREEBSD, FREEORION_OPENBSD, FREEORION_NETBSD, FREEORION_DRAGONFLY, FREEORION_WIN32, FREEORION_HAIKU nor FREEORION_ANDROID set
 #endif
 
 
@@ -105,7 +105,7 @@ void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
 }
 #endif
 
-#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
+#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU)
     //! Copy directory from to directory to only to a depth of safe_depth
     void copy_directory_safe(fs::path from, fs::path to, int safe_depth)
     {
@@ -248,7 +248,7 @@ void InitBinDir(std::string const& argv0)
     } catch (const fs::filesystem_error &) {
         bin_dir = fs::initial_path();
     }
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU)
     bool problem = false;
     try {
         // get this executable's path by following link
@@ -257,12 +257,21 @@ void InitBinDir(std::string const& argv0)
 #if defined(FREEORION_LINUX)
         problem = (-1 == readlink("/proc/self/exe", buf, sizeof(buf) - 1));
 #endif
-#if defined(FREEORION_FREEBSD)
+#if defined(FREEORION_FREEBSD) || defined(FREEORION_DRAGONFLY)
         int mib[4];
         mib[0] = CTL_KERN;
         mib[1] = KERN_PROC;
         mib[2] = KERN_PROC_PATHNAME;
         mib[3] = -1;
+        size_t buf_size = sizeof(buf);
+        sysctl(mib, 4, buf, &buf_size, 0, 0);
+#endif
+#if defined(FREEORION_NETBSD)
+        int mib[4];
+        mib[0] = CTL_KERN;
+        mib[1] = KERN_PROC_ARGS;
+        mib[2] = -1;
+        mib[3] = KERN_PROC_PATHNAME;
         size_t buf_size = sizeof(buf);
         sysctl(mib, 4, buf, &buf_size, 0, 0);
 #endif
@@ -371,7 +380,7 @@ void InitDirs(std::string const& argv0)
     // Intentionally do not create the server save dir.
     // The server save dir is publically accessible and should not be
     // automatically created for the user.
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU)
     /* store working dir.  some implimentations get the value of initial_path
      * from the value of current_path the first time initial_path is called,
      * so it is necessary to call initial_path as soon as possible after
@@ -476,7 +485,7 @@ auto GetUserConfigDir() -> fs::path const
 {
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
     return GetUserDataDir();
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU)
     static fs::path p = getenv("XDG_CONFIG_HOME")
         ? fs::path(getenv("XDG_CONFIG_HOME")) / "freeorion"
         : fs::path(getenv("HOME")) / ".config" / "freeorion";
@@ -506,7 +515,7 @@ auto GetUserDataDir() -> fs::path const
     if (!g_initialized)
         InitDirs("");
     return s_user_dir;
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
     static fs::path p = getenv("XDG_DATA_HOME")
         ? fs::path(getenv("XDG_DATA_HOME")) / "freeorion"
         : fs::path(getenv("HOME")) / ".local" / "share" / "freeorion";
@@ -523,7 +532,7 @@ auto GetRootDataDir() -> fs::path const
     if (!g_initialized)
         InitDirs("");
     return s_root_data_dir;
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU)
     if (!g_initialized)
         InitDirs("");
     char* dir_name = br_find_data_dir(SHAREPATH);
@@ -549,7 +558,7 @@ auto GetBinDir() -> fs::path const
     if (!g_initialized)
         InitDirs("");
     return s_bin_dir;
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
     if (!g_initialized)
         InitDirs("");
     return bin_dir;
