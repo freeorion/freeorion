@@ -1,7 +1,7 @@
 extends KinematicBody
 
 
-var fleet: global.Fleet
+var fleet: Object
 
 
 signal clicked(fleet)

@@ -10,12 +10,14 @@
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
 #include "../universe/System.h"
+#include "../universe/Fleet.h"
 #include "../client/ClientNetworking.h"
 #include "../combat/CombatLogManager.h"
 
 #include "GodotClientApp.h"
 #include "OptionsDB.h"
 #include "GodotSystem.h"
+#include "GodotFleet.h"
 
 using namespace godot;
 
@@ -132,6 +134,7 @@ void GDFreeOrion::_register_methods() {
     register_method("_exit_tree", &GDFreeOrion::_exit_tree);
     register_method("_new_single_player_game", &GDFreeOrion::_new_single_player_game);
     register_method("_get_systems", &GDFreeOrion::_get_systems);
+    register_method("_get_fleets", &GDFreeOrion::_get_fleets);
     register_signal<GDFreeOrion>("ping", "message", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("auth_request", "player_name", GODOT_VARIANT_TYPE_STRING, "auth", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("empire_status", "status", GODOT_VARIANT_TYPE_INT, "about_empire_id", GODOT_VARIANT_TYPE_INT);
@@ -233,5 +236,13 @@ Dictionary GDFreeOrion::_get_systems() const {
         systems[sys->ID()] = GodotSystem::wrap(sys);
     }
     return systems;
+}
+
+Dictionary GDFreeOrion::_get_fleets() const {
+    Dictionary fleets;
+    for (const auto& fleet : Objects().all<Fleet>()) {
+        fleets[fleet->ID()] = GodotFleet::wrap(fleet);
+    }
+    return fleets;
 }
 
