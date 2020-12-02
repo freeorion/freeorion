@@ -62,44 +62,6 @@ class Starlane:
     func valid():
         return (source != dest)
 
-class Fleet:
-    var id: int
-    var pos: Vector3
-    var current_sys: Object
-    var dest_sys: Object
-    var dist_travelled: float
-    var spatial: Spatial
-    
-    func _init(a_id: int, at_sys: Object):
-        id = a_id
-        current_sys = at_sys
-        pos = current_sys.pos
-        dest_sys = null
-        dist_travelled = 0.0
-    
-    func set_transit(dest: Object, dist: float):
-        dest_sys = dest
-        dist_travelled = dist
-        update_position()
-    
-    func set_stationary():
-        set_transit(null, 0)
-    
-    func is_stationary():
-        return dist_travelled == 0
-    
-    func update_position():
-        if not spatial:
-            return
-        if dist_travelled:
-            var vec_to_dest = (dest_sys.pos - current_sys.pos).normalized()
-            pos = current_sys.pos + vec_to_dest * dist_travelled
-            spatial.look_at_from_position(current_sys.pos, dest_sys.pos, Vector3(0, 1, 0))
-            spatial.translation = pos
-        else:
-            pos = current_sys.pos
-            spatial.translation = current_sys.pos + Vector3(0, 0.5, 0)
-
 
 class Galaxy extends AStar:
     var systems = {}
@@ -115,6 +77,7 @@ class Galaxy extends AStar:
             for id in starlanes_wormholes.keys():
                 if !starlanes_wormholes[id] && sys.id > id:
                     add_starlane(Starlane.new(sys.id, id))
+        fleets = global.freeorion._get_fleets()
 
     func add_starlane(starlane: Starlane):
         if not ((starlane.source in systems.keys()) and (starlane.dest in systems.keys())):
