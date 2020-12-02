@@ -42,7 +42,7 @@ namespace Pending {
     };
 
     template <typename T>
-    boost::optional<T> WaitForPendingUnlocked(boost::optional<Pending<T>>& pending, bool do_not_care_about_result) {
+    boost::optional<T> WaitForPendingUnlocked(boost::optional<Pending<T>>& pending, bool do_not_care_about_result = false) {
         if (!pending)
             return boost::none;
 
