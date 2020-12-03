@@ -42,10 +42,7 @@ namespace Pending {
     };
 
     template <typename T>
-    boost::optional<T> WaitForPendingUnlocked(boost::optional<Pending<T>>& pending, bool do_not_care_about_result = false) {
-        if (!pending)
-            return boost::none;
-
+    boost::optional<T> WaitForPendingUnlocked(boost::optional<Pending<T>>&& pending, bool do_not_care_about_result = false) {
         std::future_status status;
         do {
             status = pending->pending->wait_for(std::chrono::seconds(1));
@@ -86,6 +83,8 @@ namespace Pending {
         Return boost::none on errors.*/
     template <typename T>
     boost::optional<T> WaitForPending(boost::optional<Pending<T>>& pending, bool do_not_care_about_result = false) {
+        if (!pending)
+            return boost::none;
         std::lock_guard<std::mutex> lock(pending->m_mutex);
         return WaitForPendingUnlocked(std::move(pending), do_not_care_about_result);
     }
@@ -96,7 +95,7 @@ namespace Pending {
     T& SwapPending(boost::optional<Pending<T>>& pending, T& stored) {
         if (pending) {
             std::lock_guard<std::mutex> lock(pending->m_mutex);
-            if (auto tt = WaitForPendingUnlocked(pending))
+            if (auto tt = WaitForPendingUnlocked(std::move(pending)))
                 std::swap(*tt, stored);
         }
         return stored;
