@@ -4239,7 +4239,7 @@ std::string Species::Description(bool negated/* = false*/) const {
 std::string Species::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Species";
     if (m_names.empty()) {
-        // do nothing else
+        retval += "\n";
     } else if (m_names.size() == 1) {
         retval += " name = " + m_names[0]->Dump(ntabs) + "\n";
     } else {
