@@ -13605,7 +13605,7 @@ Solar Orbital Generator
 BLD_SOL_ORB_GEN_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets, per [[metertype METER_POPULATION]] and depending on the star type:
 * [[STAR_BLUE]] or [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
-* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x[[BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
+* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x[[value BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
 * [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus applies.
 
