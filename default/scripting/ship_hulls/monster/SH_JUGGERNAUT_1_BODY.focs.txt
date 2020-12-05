@@ -48,16 +48,12 @@ Hull
         [[MONSTER_SHIELD_REGENERATION]]
 
         EffectsGroup
-            scope = And [
-                Source
-                ContainedBy And [
-                    System 
-                    Contains Planet type = Asteroids
-                ]
-            ]
+            scope = Source
             activation = And [
-                Turn low = max(30, LocalCandidate.LastTurnActiveInBattle + 1)
-                Random probability = LocalCandidate.Age*0.01 - 0.1
+                InSystem
+                Turn low = max(30, Source.LastTurnActiveInBattle + 1)
+                ContainedBy Contains Planet type = Asteroids
+                Random probability = Source.Age*0.01 - 0.1
             ]
             effects = [
                 CreateShip designname = "SM_JUGGERNAUT_2" empire = Source.Owner

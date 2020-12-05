@@ -24,15 +24,11 @@ Hull
         [[MONSTER_SHIELD_REGENERATION]]
 
         EffectsGroup
-            scope = And [
-                Source
-                ContainedBy And [
-                    System 
-                    Contains Planet type = Asteroids
-                ]
-            ]
+            scope = Source
             activation = And [
+                InSystem
                 Turn low = max(60, Source.LastTurnActiveInBattle + 1)
+                ContainedBy Contains Planet type = Asteroids
                 Random probability = Source.Age*0.01 - 0.1
             ]
             effects = [
