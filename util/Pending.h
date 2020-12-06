@@ -42,38 +42,42 @@ namespace Pending {
     };
 
     template <typename T>
-    boost::optional<T> WaitForPendingUnlocked(boost::optional<Pending<T>>&& pending, bool do_not_care_about_result = false) {
+    boost::optional<T> WaitForPendingUnlocked(Pending<T>&& pending, bool do_not_care_about_result = false) {
         std::future_status status;
         do {
-            status = pending->pending->wait_for(std::chrono::seconds(1));
+            DebugLogger() << "WaitForPendingUnlocked"  << &pending;
+            if (!pending.pending->valid()) {
+                DebugLogger() << "WaitForPendingUnlocked not valid"  << &pending;
+                return boost::none;
+            }
+            DebugLogger() << "WaitForPendingUnlocked wait_for "  << &pending;
+            status = pending.pending->wait_for(std::chrono::seconds(1));
             if (status == std::future_status::timeout)
-                DebugLogger() << "Waiting for parse of \"" << pending->filename << "\" to complete.";
+                DebugLogger() << "Waiting for parse of \"" << pending.filename << "\" to complete.";
 
             if (status == std::future_status::deferred) {
                 ErrorLogger() << "Pending parse is unable to handle deferred future.";
                 throw "deferred future not handled";
             }
-
+            DebugLogger() << "WaitForPendingUnlocked another wait_for round "  << &pending;
         } while (status != std::future_status::ready);
-
+        DebugLogger() << "WaitForPendingUnlocked ready "  << &pending;
         try {
             // multiple threads might be waiting but not care about the results
             if (do_not_care_about_result) {
-                if (pending && pending->pending->valid()) {
-                    DebugLogger() << "Dont care for result of parsing \"" << pending->filename << "\". Have to get() once to release shared state in pending future.";
-                    pending->pending->get(); // needs to be called once to release state
+                if (pending.pending->valid()) {
+                    DebugLogger() << "Dont care for result of parsing \"" << pending.filename << "\". Have to get() once to release shared state in pending future.";
+                    pending.pending->get(); // needs to be called once to release state
                 }
-                DebugLogger() << "Dont care for result of parsing \"" << pending->filename << "\". Was already released.";
-                pending = boost::none;
+                DebugLogger() << "Dont care for result of parsing \"" << pending.filename << "\". Was already released.";
                 return boost::none;
             }
-            DebugLogger() << "Retrieve result of parsing \"" << pending->filename << "\".";
-            auto x = std::move(pending->pending->get());
-            pending = boost::none;
+            DebugLogger() << "Retrieve result of parsing \"" << pending.filename << "\".";
+            auto x = std::move(pending.pending->get());
+            DebugLogger() << "Retrieved result of parsing \"" << pending.filename << "\".";
             return std::move(x);
         } catch (const std::exception& e) {
-            ErrorLogger() << "Parsing of \"" << pending->filename << "\" failed with error: " << e.what();
-            pending = boost::none;
+            ErrorLogger() << "Parsing of \"" << pending.filename << "\" failed with error: " << e.what();
         }
 
         return boost::none;
@@ -83,21 +87,44 @@ namespace Pending {
         Return boost::none on errors.*/
     template <typename T>
     boost::optional<T> WaitForPending(boost::optional<Pending<T>>& pending, bool do_not_care_about_result = false) {
+        DebugLogger() << "WaitForPending "  << &pending;
         if (!pending)
             return boost::none;
+        DebugLogger() << "WaitForPending lock "  << &pending;
         std::lock_guard<std::mutex> lock(pending->m_mutex);
-        return WaitForPendingUnlocked(std::move(pending), do_not_care_about_result);
+        if (!pending || !(pending->pending)) {
+            DebugLogger() << "WaitForPending another one successful "  << &pending;
+            return boost::none;
+        }
+        if (auto tt = WaitForPendingUnlocked(std::move(*pending), do_not_care_about_result)) {
+            return tt;
+        } else {
+            pending = boost::none;
+            return boost::none;
+        }
     }
 
     /** If there is a pending parse, wait for it and swap it with the stored
         value.  Return the stored value.*/
     template <typename T>
     T& SwapPending(boost::optional<Pending<T>>& pending, T& stored) {
+        DebugLogger() << "SwapPending "  << &pending;
         if (pending) {
+            DebugLogger() << "SwapPending lock "  << &pending;
             std::lock_guard<std::mutex> lock(pending->m_mutex);
-            if (auto tt = WaitForPendingUnlocked(std::move(pending)))
+            if (!pending) {
+                DebugLogger() << "SwapPending another one successful "  << &pending;
+                return stored;
+            }
+            if (auto tt = WaitForPendingUnlocked(std::move(*pending))) {
+                DebugLogger() << "SwapPending swap "  << &pending;
                 std::swap(*tt, stored);
+            } else {
+                DebugLogger() << "SwapPending pending none"  << &pending;
+                pending = boost::none;
+            }
         }
+        DebugLogger() << "SwapPending done "  << &pending;
         return stored;
     }
 
