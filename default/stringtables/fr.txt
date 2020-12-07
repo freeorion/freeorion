@@ -1118,12 +1118,6 @@ RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC
 Les astronefs coûtent seulement 1 PP et 1 tour de production.
 
 # value ref description
-NUM_COMBAT_ROUNDS
-par combat
-
-NUM_COMBAT_ROUNDS_FIGHTERS
-par combat
-
 RULE_NUM_COMBAT_ROUNDS
 Passes de Combat
 
@@ -8815,9 +8809,6 @@ ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
 
 Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Mais une découverte de grande valeur y a déjà eu lieu.'''
 
-ANCIENT_RUINS_TARGET_RESEARCH_PERPOP
-par Population
-
 ANCIENT_RUINS_SPECIAL
 Ruines Ancestrales
 
@@ -8897,12 +8888,6 @@ TIDAL_LOCK_SPECIAL_DESC
 
 Cette planète est en rotation synchrone lors de son orbite autour de son étoile. Les durées du jour et de l'année sont rigoureusement égales, ce qui signifie qu'une face de la planète est perpétuellement diurne tandis que l'autre est perpétuellement nocturne. La croissance de la Population s'en trouve impactée, mais l'Industrie tire profit des conditions stables à la surface de la planète.'''
 
-TIDAL_LOCK_TARGET_POPULATION_PERSIZE
-par taille de la planète
-
-TIDAL_LOCK_TARGET_INDUSTRY_PERPOP
-par Population
-
 TEMPORAL_ANOMALY_SPECIAL
 Anomalie Temporelle
 
@@ -8911,12 +8896,6 @@ TEMPORAL_ANOMALY_SPECIAL_DESC
 
 L'écoulement du temps sur cette planète est fortement perturbé. Des événements apparemment aléatoires provoquent soit une accélération soit un ralentissement de la vitesse du temps, troublant profondément le rythme biologique de tout être vivant et rendant quasiment impossible toute organisation sociale et productive. Une adaptabilité extrême et de grandes précautions sont requises afin d'établir une colonie sur cette planète.
 Cependant, une anomalie temporelle présente un fort potentiel pour la recherche scientifique, bien au-delà de ce qu'il est possible d'entreprendre sur les planètes conventionnelles.'''
-
-TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP
-par Population
-
-TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE
-par taille de la planète
 
 RESONANT_MOON_SPECIAL
 Lune Synchrone
@@ -8934,9 +8913,6 @@ COMPUTRONIUM_SPECIAL_DESC
 
 Abandonnée par une civilisation dont le souvenir s'est effacé avec le temps, cette lune est en réalité un ordinateur d'une puissance de calcul inouïe. Elle peut effectuer des simulations et résoudre les équations les plus complexes en moins de temps qu'il ne faut pour les lui proposer.'''
 
-COMPUTRONIUM_TARGET_RESEARCH_PERPOP
-par Population
-
 HONEYCOMB_SPECIAL
 Réserve Alvéolaire
 
@@ -8944,9 +8920,6 @@ HONEYCOMB_SPECIAL_DESC
 '''Lorsqu'une planète dotée d'une Réserve Alvéolaire privilégie l'[[metertype METER_INDUSTRY]], toutes les planètes de l'empire réglées sur le même Focus et lui étant reliées par ligne d'[[metertype METER_SUPPLY]], améliorent leur [[metertype METER_TARGET_INDUSTRY]] de [[value HONEYCOMB_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]].
 
 La Réserve Alvéolaire est une planète qui fut utilisée comme telle par les Constructeurs dans les temps ancestraux. Quasiment la totalité des planètes aux alentours furent dépouillées de l'ensemble de leurs ressources puis détruites. Les matériaux récupérés furent triés et stockés séparément dans de gigantesques tubes creusés dans la croûte terrestre. Ces réserves abritent des éléments rares et de grande valeur, des molécules difficiles à synthétiser, et une vaste gamme de sources d'énergie. Ce que les Constructeurs désiraient créer à partir de ce trésor et la raison pour laquelle ils ne l'ont finalement pas utilisé, restent à ce jour un mystère.'''
-
-HONEYCOMB_TARGET_INDUSTRY_PERPOP
-par Population
 
 PHILOSOPHER_SPECIAL
 Planète Métaphysique
@@ -11220,15 +11193,6 @@ Toutefois, réduit également la portée de l'[[metertype METER_SUPPLY]] ([[valu
 
 La logistique de l'ensemble de l'empire vise à accroître la production de la Capitale, en y déroutant l'essentiel des ressources matérielles et sociales. Cela provoque un certain ressentiment dans les colonies, augmentant par conséquent les coûts d'[[metertype METER_INFLUENCE]].'''
 
-PLC_CENTRALIZATION_TARGET_RESEARCH_PERPOP
-par Population
-
-PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP
-par Population
-
-PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP
-par Voies spatiales
-
 PLC_CENTRALIZATION_SHORT_DESC
 Favorise la Capitale
 
@@ -11609,9 +11573,6 @@ LRN_ALGO_ELEGANCE_DESC
 
 Avec une difficulté grandissante des problèmes d'analyse de données, les démarches traditionnelles des performances algorithmiques deviennent moins efficaces, en raison des limitations de la complexité irréductible. À ce stade, de nouvelles formes et fonctions algorithmiques deviennent significatives: esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisée.'''
 
-LRN_ALGO_ELEGANCE_TARGET_RESEARCH_PERPOP
-par Population
-
 LRN_TRANSLING_THT
 Translinguistique
 
@@ -11683,13 +11644,15 @@ Esprit du Vide
 LRN_MIND_VOID_DESC
 '''Débloque la stratégie [[policy PLC_DESIGN_SIMPLICITY]]
 
+Octroie 1 choix de Stratégie sociale.
+
 Nous ne sommes pas seuls dans le cosmos... mais pourquoi la recherche d'autres existences devrait se limiter à un unique paradigme? De nombreuses cultures possèdent des mythes, des légendes ou de ferventes croyances en une plus haute conscience. Que ce soit un Dieu miséricordieux ou malveillant, ou bien un observateur détaché, il est indéniable que quelque chose, peut-être l'univers lui-même à un certain niveau, est vivant, conscient, et observe.'''
 
 LRN_TIME_MECH
 Mécanique Temporelle
 
 LRN_TIME_MECH_DESC
-'''Octroie un choix supplémentaire de Stratégie militaire.
+'''Octroie 1 choix supplémentaire de Stratégie militaire.
 
 Qu'est-ce que "le présent", "le futur" et "le passé"? Le double paradoxe de la relativité ou bien la théorie du "trou de ver", suggèrent les premières formes de "voyage dans le temps". La manipulation directe des flux spatio-temporels permet de contrôler et d'amplifier ces effets. Les incursions temporelles ne peuvent pas modifier d'une manière perceptible le passé de l'univers que nous observons. Cependant, ces manipulations peuvent compresser le temps ou allonger arbitrairement la durée des instants, en vue d'applications limitées seulement par nos ressources, ainsi que notre propre patience...'''
 
@@ -11716,9 +11679,6 @@ LRN_QUANT_NET_DESC
 Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer instantanément des informations entre deux lieux, plutôt que par le système lent et indirect des voies spatiales. Ce progrès facilite grandement la Recherche dans tout l'empire.
 
 Chaque particule est inextricablement liée au niveau quantique à toute particule avec laquelle elle a déjà interagi. Les vieilles idées mécanistes concernant la cause et la conséquence ne sont plus applicables à ce niveau, les particules pouvant "communiquer" instantanément sur de vastes distances. Lorsque la compréhension approfondie de ce phénomène est acquise, certaines actions de petite échelle entre deux lieux distants peuvent être réalisées instantanément, tandis que les limites obsolètes de la vitesse relativiste ne s'appliquent plus au transfert de l'information.'''
-
-LRN_QUANT_NET_TARGET_RESEARCH_PERPOP
-par Population
 
 LRN_COLLAPSER
 Inversion de Trou Noir
@@ -11836,12 +11796,6 @@ Tandis que la transformation d'une population entière en êtres de pure énergi
 
 Le stade ultime du développement physique est justement de transcender le caractère physique des choses. Sans corps, les individus et les sociétés pourraient migrer, croître et exister librement, sans être entravés par des limitations physiques inutiles et des processus métaboliques improductifs, gaspillant l'énergie afin d'assurer l'homéostasie.'''
 
-GRO_ENERGY_META_TARGET_INDUSTRY_PERPOP
-par Population
-
-GRO_ENERGY_META_TARGET_RESEARCH_PERPOP
-par Population
-
 PRO_TRANS_DESIGN
 Design Transcendant
 
@@ -11901,7 +11855,9 @@ PRO_VOID_PREDICTION_DESC
 Pour le service du Stock Impérial, la Prédiction du Vide est l'instrument par excellence permettant de fournir les bons matériaux avant même que le besoin ne se manifeste.
 
 Il s'agit donc d'une technologie d'amélioration du [[encyclopedia STOCKPILE_TITLE]]. La [[metertype METER_STOCKPILE]] augmente de 0.2 par [[metertype METER_POPULATION]].
-Ces améliorations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].'''
+Ces améliorations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].
+
+Octroie également 1 choix de Stratégie économique.'''
 
 PRO_MICROGRAV_MAN
 Production en Microgravité
@@ -11923,9 +11879,6 @@ Robots conçus pour effectuer n'importe quelle tâche, de l'électronique micros
 
 Bien qu'un haut niveau en conception et en configuration d'usine requiert toujours une supervision permanente, la suppression de la main d'œuvre classique des processus de production résout bon nombre de problèmes. Les robots peuvent travailler continuellement, sont bien plus adaptés à des environnements industriels dangereux, et n'ont pas besoin d'un espace habitable hors-site. Ils exécutent parfaitement leurs tâches, toutefois plus ou moins bien selon la qualité des instructions.'''
 
-PRO_ROBOTIC_PROD_TARGET_INDUSTRY_PERPOP
-par Population
-
 PRO_EXOBOTS  # translated
 Exobots
 
@@ -11941,9 +11894,6 @@ PRO_FUSION_GEN_DESC
 Les réacteurs de fusion nucléaire, bien que coûteux à produire et à entretenir, s'avèrent rentables pour les mondes industrialisés à forte consommation énergétique. La dépendance aux réacteurs basés sur la fission nucléaire deviendra peu à peu une relique du passé.
 
 Les réactions thermonucléaires explosives ou incontrôlées sont assez simples à engendrer, d'une échelle allant des petites ogives militaires aux noyaux des supergéantes stellaires. Contrôler, stabiliser et utiliser l'énergie issue d'une réaction de fusion est d'une toute autre difficulté. Le procédé reste cependant très séduisant, compte tenu de l'approvisionnement potentiellement quasi-illimitée en énergie et de la possibilité d'un fonctionnement sans émissions radioactives.'''
-
-PRO_FUSION_GEN_TARGET_INDUSTRY_PERPOP
-par Population
 
 PRO_NANOTECH_PROD
 Production Nanotechnique
@@ -11975,7 +11925,7 @@ Automates Conscients
 PRO_SENTIENT_AUTOMATION_DESC
 '''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PRO_SENTIENT_AUTO_TARGET_INDUSTRY_FLAT]] sur toutes les planètes en Focus Industrie.
 
-Octroie un choix supplémentaire de Stratégie économique.
+Octroie 1 choix supplémentaire de Stratégie économique.
 
 L'évolution naturelle des usines automatisées s'accomplit en attribuant aux consciences artificielles qui dirigent de telles structures, le pouvoir de déduire et décider par elles-mêmes des meilleurs processus afin d'atteindre les buts de leurs propriétaires, avant même que ces derniers n'aient commencé à y réfléchir. Cette amélioration décisionnelle augmente grandement la performance des installations autonomes de production dans tous les systèmes de l'empire se consacrant à la production industrielle.'''
 
@@ -12023,7 +11973,7 @@ Psychologie Architecturale
 CON_ARCH_PSYCH_DESC
 '''La forme d'une structure ou la configuration d'un espace habité ne se définissent pas seulement par les limitations physiques des matériaux qui les composent. L'influence psychologique des habitants, ou d'observateurs extérieurs, peut avoir une incidence bien plus importante sur la réussite et la fonctionnalité d'un design, que la simple robustesse de ses murs ou la profonde solidité de ses fondations.
 
-Octroie un choix supplémentaire de Stratégie sociale.
+Octroie 1 choix supplémentaire de Stratégie sociale.
 '''
 
 CON_ORGANIC_STRC
@@ -12086,7 +12036,7 @@ CON_TRANS_ARCH
 Architecture Transcendantale
 
 CON_TRANS_ARCH_DESC
-'''Octroie un choix supplémentaire de Stratégie sociale.
+'''Octroie 1 choix supplémentaire de Stratégie sociale.
 
 La maîtrise des techniques avancées de construction orbitale permet aux scientifiques d'élaborer des méthodes visant à construire un [[buildingtype BLD_MEGALITH]] d'une majestuosité sans égale.
 
@@ -12473,9 +12423,6 @@ Accroît l'[[metertype METER_TROOPS]] max de [[value CYBORG_MAX_TROOPS_PERPOP]] 
 
 Une fusion hautement polyvalente d'un organisme vivant et d'une machine, capable de s'adapter à un nombre considérable de situations. La génération spontanée d'organes spécialisés ainsi qu'une force bio-mécanique fortement accrue permettent aux cyborgs d'évoluer avec aisance dans quasiment tous les types d'environnement.'''
 
-CYBORG_MAX_TROOPS_PERPOP
-par Population
-
 GRO_GAIA_TRANS
 Transformation Gaia
 
@@ -12512,36 +12459,20 @@ Centralisation Cérébrale
 LRN_DISTRIB_THOUGHT_DESC
 '''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes, quel que soit le Focus choisi.
 
-Octroie un choix supplémentaire de Stratégie militaire.
+Octroie 1 choix supplémentaire de Stratégie militaire.
 
 Le citoyen moyen gaspille littéralement ses capacités cérébrales, pourtant issues d'un des outils de calcul les plus fins de l'univers. En intégrant les cycles cérébraux inactifs d'une population suffisament importante au sein d'un réseau de simples émetteurs-récepteurs cybernétiques, la totalité des centres de recherche d'un empire peuvent accéder à une puissance de calcul considérable et peu coûteuse.'''
-
-LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP
-par Population
 
 LRN_STELLAR_TOMOGRAPHY
 Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes réglées sur le Focus Recherche, par [[metertype METER_POPULATION]] et selon le type d'étoile :
-* [[STAR_BLACK]] (x[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPOP]])
-* [[STAR_NEUTRON]] (x[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPOP]])
-* [[STAR_BLUE]] ou [[STAR_WHITE]] (x[[value LRN_STELLAR_TOMO_BRIGHT_TARGET_RESEARCH_PERPOP]])
-* [[STAR_YELLOW]], [[STAR_ORANGE]] ou [[STAR_RED]] (x[[value LRN_STELLAR_TOMO_DIME_TARGET_RESEARCH_PERPOP]])
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes réglées sur le Focus Recherche, selon le type d'étoile et le nombre de planètes en Focus Recherche au sein du même système :
+* [[STAR_BLACK]] (+[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPLANET]])
+* [[STAR_NEUTRON]] (+[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPLANET]])
+* [[STAR_BLUE]], [[STAR_WHITE]], [[STAR_YELLOW]], [[STAR_ORANGE]] ou [[STAR_RED]] (+[[value LRN_STELLAR_TOMO_NORMAL_STAR_TARGET_RESEARCH_PERPLANET]])
 
 Un réseau de satellites spécialisés peut utiliser des méthodes tomographiques pour cartographier et reconstituer les différentes activités se produisant dans les profondeurs d'une étoile. Ces conditions expérimentales, habituellement coûteuses à mettre en place, sont ici idéales pour une multitude de projets de recherche, les plus grands bénéfices scientifiques découlant de l'étude des types d'étoiles les plus exotiques.'''
-
-LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPOP
-par Population
-
-LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPOP
-par Population
-
-LRN_STELLAR_TOMO_BRIGHT_TARGET_RESEARCH_PERPOP
-par Population
-
-LRN_STELLAR_TOMO_DIME_TARGET_RESEARCH_PERPOP
-par Population
 
 LRN_SPATIAL_DISTORT_GEN
 Distortion Spatiale
@@ -12700,9 +12631,6 @@ DEF_ROOT_DEFENSE_DESC
 
 Le concept d'Auto-défense est à la racine de maints développements technologiques.'''
 
-BASIC_DEFENSE_TROOPS_MAX_TROOPS_PERPOP
-par Population
-
 DEF_GARRISON_1
 Réseau Bunker Planétaire
 
@@ -12715,9 +12643,6 @@ Milice Planétaire Défensive
 DEF_GARRISON_2_DESC
 Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_2_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_2_TROOPREGEN_FLAT]] par tour.
 
-GARRISON_2_MAX_TROOPS_PERPOP
-par Population
-
 DEF_GARRISON_3
 Réseau Fortication Planétaire
 
@@ -12729,9 +12654,6 @@ Armée Planétaire Défensive
 
 DEF_GARRISON_4_DESC
 Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_4_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_4_TROOPREGEN_FLAT]] par tour cumulable avec les bonus du [[DEF_GARRISON_3]] et de la [[DEF_GARRISON_2]].
-
-GARRISON_4_MAX_TROOPS_PERPOP
-par Population
 
 DEF_PLANET_CLOAK
 Camouflage Planétaire
@@ -13134,9 +13056,6 @@ SHP_DEUTERIUM_TANK_EFFECT
 Technologie <i>Carburant Deutérium</i>
 
 # value ref description
-SHP_DEUTERIUM_TANK_EFFECT_MULT
-par réservoir
-
 SHP_ANTIMATTER_TANK
 Carburant Anti-Matière
 
@@ -13147,9 +13066,6 @@ SHP_ANTIMATTER_TANK_EFFECT
 Technologie <i>Carburant Anti-Matière</i>
 
 # value ref description
-SHP_ANTIMATTER_TANK_EFFECT_MULT
-par réservoir
-
 SHP_ZERO_POINT
 Générateur Zero-Point de Carburant
 
@@ -13264,7 +13180,9 @@ SHP_SENT_HULL
 Coque Sensitive
 
 SHP_SENT_HULL_DESC
-Cet astronef amiral doué de conscience dispose de capacités analytiques et mémorielles exceptionnelles, lui permettant ainsi d'intéragir avec les astronefs alliés, en leur fournissant des informations utiles et d'habiles orientations tactiques en situation de combat.
+'''Cet astronef amiral doué de conscience dispose de capacités analytiques et mémorielles exceptionnelles, lui permettant ainsi d'intéragir avec les astronefs alliés, en leur fournissant des informations utiles et d'habiles orientations tactiques en situation de combat.
+
+Les empires contrôlant au moins un astronef équipé de cette coque reçoivent également un choix supplémentaire de Stratégie militaire.'''
 
 SHP_BIOINTERCEPTOR
 Bio-Intercepteurs
@@ -13396,9 +13314,6 @@ BLD_CULTURE_ARCHIVES_DESC
 '''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT]], ainsi que la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]].
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, améliorant différents aspects de la productivité planétaire.'''
-
-BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP
-par Population
 
 BLD_CULTURE_LIBRARY
 Bibliothèque Culturelle
@@ -13573,15 +13488,6 @@ L'amélioration [[tech PRO_INDUSTRY_CENTER_II]] augmente le bonus à [[value BLD
 
 L'amélioration [[tech PRO_INDUSTRY_CENTER_III]] augmente à nouveau le bonus à [[value BLD_INDUSTRY_CENTER_3_TARGET_INDUSTRY_PERPOP]] par Population.'''
 
-BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP
-par Population
-
-BLD_INDUSTRY_CENTER_2_TARGET_INDUSTRY_PERPOP
-par Population
-
-BLD_INDUSTRY_CENTER_3_TARGET_INDUSTRY_PERPOP
-par Population
-
 BLD_INTERSPECIES_ACADEMY
 Académie InterDesign d'Espèce
 
@@ -13647,12 +13553,6 @@ BLD_COLLECTIVE_NET_DESC
 
 En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, résolvant des problèmes et faisant des découvertes qui s'avéreraient hors de portée pour un unique esprit, aussi brillant soit-il.'''
 
-BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP
-par Population
-
-BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP
-par Population
-
 BLD_GATEWAY_VOID
 Portail du Vide
 
@@ -13669,9 +13569,6 @@ BLD_ENCLAVE_VOID_DESC
 Les bonus de plusieurs exemplaires ne s'additionnent pas.
 
 La population entière d'une planète est modifiée génétiquement afin de l'harmoniser avec l'Esprit du Vide, et ainsi diffuser sa sagesse dans tout l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, prophètes d'une pensée supérieure et d'un savoir suprême. Dans tous les domaines de grande importance pour la bonne marche de l'empire, leurs conseils et avis s'avèrent d'une grande valeur. Des émissaires de l'Enclave peuvent donc prendre part à tout projet impérial de Recherche et apporter ainsi une aide précieuse.'''
-
-BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP
-par Population
 
 BLD_ART_BLACK_HOLE
 Trou Noir Artificiel
@@ -13694,13 +13591,7 @@ BLD_HYPER_DAM_DESC
 
 Une déchirure dans le tissu de l'univers, contrôlée et manipulée en toute sécurité. Chaque planète peut construire son propre barrage hyperspatial, mais un seul centre de contrôle est requis pour s'assurer que le continuum de l'espace-temps n'est pas endommagé. Par contre, toutes les planètes ayant recours à un barrage hyperspatial voient leur population souffrir de différents problèmes de santé, à moins que les planètes en question n'orbitent autour d'un [[STAR_BLACK]].
 
-NB: Cette structure n'a aucun effet sur les planètes reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], mais peut s'avérer avantageuse pour les empires inaptes à mettre en place un tel dispositif.'''
-
-BLD_HYPER_DAM_TARGET_INDUSTRY_PERPOP
-par Population
-
-BLD_HYPER_DAM_TARGET_POPULATION_PERSIZE
-par taille de la planète
+Cette structure n'a aucun effet sur les planètes reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], mais peut s'avérer avantageuse pour les empires inaptes à mettre en place un tel dispositif.'''
 
 BLD_SOL_ACCEL
 Accélérateur Solaire
@@ -13714,20 +13605,11 @@ Générateur Orbital Solaire
 BLD_SOL_ORB_GEN_DESC
 '''Augmente la [[metertype METER_TARGET_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par [[metertype METER_POPULATION]] et selon le type d'étoile :
 * [[STAR_BLUE]] ou [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
-* [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x[[BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
+* [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x[[value BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
 * [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] Le meilleur bonus s'applique.
 
 Un puissant générateur situé en orbite stellaire basse, conçu pour puiser directement l'énergie d'une étoile. Étant donné que différents types d'étoiles produisent différentes quantités d'énergie, le bonus industriel à l'échelle du système est tributaire du type d'étoile. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
-
-BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP
-par Population
-
-BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP
-par Population
-
-BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP
-par Population
 
 BLD_CLONING_CENTER
 Centre de Clonage
@@ -13795,9 +13677,6 @@ Si supprimé, des [[buildingtype BLD_CONC_CAMP_REMNANT]] subsistent durant plusi
 
 Purger une planète d'une espèce indésirable permet l'introduction d'une espèce plus adaptée. En créant un réseau planétaire de camps de concentration conçus pour abattre les internés à la tâche, il est possible d'atteindre rapidement et efficacement le but fixé.'''
 
-BLD_CONC_CAMP_TARGET_INDUSTRY_PERPOP
-par Population
-
 BLD_CONC_CAMP_REMNANT
 Vestiges de Camps de Concentration
 
@@ -13813,16 +13692,13 @@ BLD_BLACK_HOLE_POW_GEN_DESC
 
 [[BUILDING_AVAILABLE_ON_OUTPOSTS]], mais doit se trouver dans un système abritant un [[STAR_BLACK]].'''
 
-BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP
-par Population
-
 BLD_PLANET_DRIVE
 Navigateur Planétaire
 
 BLD_PLANET_DRIVE_DESC
 '''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa [[metertype METER_POPULATION]] survivra, qu'un Phare Interstellaire ait été utilisé ou non. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], mais ne peut pas être exploitée à moins que la planète ne soit colonisée.
 
-En raison d'un manque de précision du dispositif de navigation, une [[buildingtype BLD_PLANET_BEACON]], ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]], est nécessaire et doit se trouver à l'arrivée de la Voie spatiale empruntée. L'un comme l'autre s'auto-détruiront une fois utilisés, afin que la planète puisse événtuellement se déplacer vers un autre système si nécessaire.
+Une [[buildingtype BLD_PLANET_BEACON]] ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]], est nécessaire et doit se trouver à l'arrivée de la Voie spatiale empruntée. L'un comme l'autre s'auto-détruiront une fois utilisés, afin que la planète puisse événtuellement se déplacer vers un autre système si nécessaire.
 
 Pour utiliser le Navigateur Planétaire, une [[buildingtype BLD_PLANET_BEACON]] doit être construite dans le système adjacent de destination, ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]] doit s'y trouver, tandis que la planète migrante doit être réglée sur le Focus Navigation Planétaire, afin qu'elle se dirige vers le système de destination. Il est à noter que la balise doit se trouver dans le système de destination depuis au moins un tour: le Navigateur ne fonctionnera donc pas durant le tour où sa construction est achevée, ou durant lequel un astronef équipé du dispositif arrive dans le système de destination. D'autre part, un [[buildingtype BLD_TRANSFORMER]] est en mesure de reproduire les effets d'un Navigateur Planétaire.
 
@@ -15152,7 +15028,9 @@ Sa [[metertype METER_STEALTH]] est très élevée de même que son [[metertype M
 
 [[LIVING_HULL_AUTO_REGEN]]
 
-[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
+[[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED]]
+
+Les empires contrôlant au moins un astronef équipé de cette coque reçoivent également un choix supplémentaire de Stratégie militaire.'''
 
 SH_COMPRESSED_ENERGY
 Coque Énergie Compressée
