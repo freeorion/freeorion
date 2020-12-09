@@ -45,9 +45,9 @@ namespace Pending {
     boost::optional<T> WaitForPendingUnlocked(Pending<T>&& pending, bool do_not_care_about_result = false) {
         std::future_status status;
         do {
-            DebugLogger() << "WaitForPendingUnlocked"  << &pending;
+            DebugLogger() << "WaitForPendingUnlocked"  << &pending  << " " << typeid(T).name();
             if (!pending.pending->valid()) {
-                DebugLogger() << "WaitForPendingUnlocked not valid"  << &pending;
+                DebugLogger() << "WaitForPendingUnlocked not valid "  << &pending << " " << typeid(T).name();;
                 return boost::none;
             }
             DebugLogger() << "WaitForPendingUnlocked wait_for "  << &pending;
@@ -87,16 +87,17 @@ namespace Pending {
         Return boost::none on errors.*/
     template <typename T>
     boost::optional<T> WaitForPending(boost::optional<Pending<T>>& pending, bool do_not_care_about_result = false) {
-        DebugLogger() << "WaitForPending "  << &pending;
+        DebugLogger() << "WaitForPending "  << &pending  << " " << std::this_thread::get_id() << " " << typeid(T).name();
         if (!pending)
             return boost::none;
-        DebugLogger() << "WaitForPending lock "  << &pending;
+        DebugLogger() << "WaitForPending lock "  << &pending  << " " << std::this_thread::get_id() << " " << typeid(T).name();;
         std::lock_guard<std::mutex> lock(pending->m_mutex);
         if (!pending || !(pending->pending)) {
-            DebugLogger() << "WaitForPending another one successful "  << &pending;
+            DebugLogger() << "WaitForPending another one successful "  << &pending << " " << std::this_thread::get_id() << " " << typeid(T).name();
             return boost::none;
         }
         if (auto tt = WaitForPendingUnlocked(std::move(*pending), do_not_care_about_result)) {
+            pending = boost::none; // XXX
             return tt;
         } else {
             pending = boost::none;
@@ -108,7 +109,7 @@ namespace Pending {
         value.  Return the stored value.*/
     template <typename T>
     T& SwapPending(boost::optional<Pending<T>>& pending, T& stored) {
-        DebugLogger() << "SwapPending "  << &pending;
+        DebugLogger() << "SwapPending "  << &pending << " " << typeid(T).name();
         if (pending) {
             DebugLogger() << "SwapPending lock "  << &pending;
             std::lock_guard<std::mutex> lock(pending->m_mutex);
@@ -119,6 +120,8 @@ namespace Pending {
             if (auto tt = WaitForPendingUnlocked(std::move(*pending))) {
                 DebugLogger() << "SwapPending swap "  << &pending;
                 std::swap(*tt, stored);
+                // FIXME always setting to none is probably wrong
+                pending = boost::none;
             } else {
                 DebugLogger() << "SwapPending pending none"  << &pending;
                 pending = boost::none;
