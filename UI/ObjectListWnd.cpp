@@ -1511,20 +1511,20 @@ private:
             AttachChild(m_dot);
         }
 
-        auto obj = Objects().get(m_object_id);
-        auto textures = ObjectTextures(obj);
+        auto textures = ObjectTextures(Objects().get(m_object_id));
+        auto tx_size = textures.size();
 
         m_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(
-            textures, std::vector<GG::Flags<GG::GraphicStyle>>(textures.size(), style));
+            std::move(textures), std::vector<GG::Flags<GG::GraphicStyle>>(tx_size, style));
         AttachChild(m_icon);
 
         for (auto& control : m_controls)
-        { DetachChild(control); }
+            DetachChild(control);
         m_controls.clear();
 
         for (auto& control : GetControls()) {
-            m_controls.emplace_back(control);
-            AttachChild(control);
+            m_controls.push_back(control);
+            AttachChild(std::move(control));
         }
 
         RequirePreRender();
@@ -1537,7 +1537,7 @@ private:
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
             auto control = GG::Wnd::Create<CUILabel>(SortKey(i), GG::FORMAT_LEFT);
             control->Resize(GG::Pt(GG::X(GetColumnWidth(i)), ClientHeight()));
-            retval.emplace_back(std::move(control));
+            retval.push_back(std::move(control));
         }
 
         return retval;
