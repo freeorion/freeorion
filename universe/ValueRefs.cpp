@@ -585,8 +585,8 @@ if (m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE) {      \
             "Variable<" #T ">::Eval(): Value could not be evaluated, " \
             "because no current value was provided.");                 \
     try {                                                              \
-        return boost::any_cast<T>(context.current_value);              \
-    } catch (const boost::bad_any_cast&) {                             \
+        return boost::get<T>(context.current_value);                   \
+    } catch (const boost::bad_get&) {                                  \
         throw std::runtime_error(                                      \
             "Variable<" #T ">::Eval(): Value could not be evaluated, " \
             "because the provided current value is not an " #T ".");   \
@@ -782,7 +782,7 @@ Visibility Variable<Visibility>::Eval(const ScriptingContext& context) const
 template <>
 double Variable<double>::Eval(const ScriptingContext& context) const
 {
-    IF_CURRENT_VALUE(float)
+    IF_CURRENT_VALUE(double)
 
     const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
@@ -913,7 +913,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             // time of a part or hull in a ship design. this should be the id
             // of the design.
             try {
-                return boost::any_cast<int>(context.current_value);
+                return boost::get<int>(context.current_value);
             } catch (...) {
                 ErrorLogger() << "Variable<int>::Eval could get ship design id for property: " << TraceReference(m_property_name, m_ref_type, context);
             }

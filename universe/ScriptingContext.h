@@ -2,7 +2,7 @@
 #define _ScriptingContext_h_
 
 
-#include <boost/any.hpp>
+#include <boost/variant.hpp>
 #include "Universe.h"
 #include "../util/AppInterface.h"
 
@@ -24,6 +24,11 @@ struct FO_COMMON_API ScriptingCombatInfo {
 };
 
 struct ScriptingContext {
+    typedef boost::variant<
+        int, double, PlanetType, PlanetSize, ::PlanetEnvironment, StarType,
+        UniverseObjectType, Visibility, std::string, std::vector<std::string>
+    > CurrentValueVariant;
+
     explicit ScriptingContext() :
         objects(Objects()),
         const_objects(Objects())
@@ -86,7 +91,7 @@ struct ScriptingContext {
 
     ScriptingContext(const ScriptingContext& parent_context,
                      std::shared_ptr<UniverseObject> target_,
-                     const boost::any& current_value_) :    // TODO: Rework this so only specific types are accepted
+                     const CurrentValueVariant& current_value_) :    // TODO: Rework this so only specific types are accepted
         source(                     parent_context.source),
         effect_target(              std::move(target_)),
         condition_root_candidate(   parent_context.condition_root_candidate),
@@ -98,7 +103,7 @@ struct ScriptingContext {
     {}
 
     ScriptingContext(const ScriptingContext& parent_context,
-                     const boost::any& current_value_) :    // TODO: Rework this so only specific types are accepted
+                     const CurrentValueVariant& current_value_) :    // TODO: Rework this so only specific types are accepted
         source(                     parent_context.source),
         effect_target(              parent_context.effect_target),
         condition_root_candidate(   parent_context.condition_root_candidate),
@@ -125,7 +130,7 @@ struct ScriptingContext {
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      std::shared_ptr<UniverseObject> target_,
-                     const boost::any& current_value_,  // TODO: Rework this so only specific types are accepted
+                     const CurrentValueVariant& current_value_,
                      std::shared_ptr<const UniverseObject> condition_root_candidate_ = nullptr,
                      std::shared_ptr<const UniverseObject> condition_local_candidate_ = nullptr,
                      ObjectMap& objects_ = Objects()) :
@@ -145,7 +150,7 @@ struct ScriptingContext {
     std::shared_ptr<UniverseObject>         effect_target;
     std::shared_ptr<const UniverseObject>   condition_root_candidate;
     std::shared_ptr<const UniverseObject>   condition_local_candidate;
-    const boost::any                        current_value;
+    const CurrentValueVariant               current_value;
     const ScriptingCombatInfo&              combat_info = EmptyCombatInfo();
 
 private:
