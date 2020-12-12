@@ -76,6 +76,15 @@ struct ScriptingContext {
         const_objects(objects_)
     {}
 
+    ScriptingContext(std::shared_ptr<const UniverseObject> source_,
+                     std::shared_ptr<UniverseObject> target_,
+                     const ObjectMap& const_objects_) :
+        source(source_),
+        effect_target(target_),
+        objects(Objects()),
+        const_objects(const_objects_)
+    {}
+
     ScriptingContext(const ScriptingContext& parent_context,
                      std::shared_ptr<UniverseObject> target_,
                      const boost::any& current_value_) :    // TODO: Rework this so only specific types are accepted
