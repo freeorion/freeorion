@@ -1408,7 +1408,7 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     cache.examine_row(system_index,
                       boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2),
                       boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
-                                  std::ref(within_jumps), jumps, objects, others, ph::_1, ph::_2));
+                                  std::ref(within_jumps), jumps, std::ref(objects), std::ref(others), ph::_1, ph::_2));
     return within_jumps;
 }
 
