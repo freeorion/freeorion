@@ -608,7 +608,7 @@ namespace {
     {
         GetOptionsDB().OptionChangedSignal(option_name).connect(
             boost::bind(&ConditionalForward<OptionType, PredicateType>,
-                        option_name, slot, ref_val, pred));
+                        std::ref(option_name), slot, ref_val, pred));
     }
 }
 

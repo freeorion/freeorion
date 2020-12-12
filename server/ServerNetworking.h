@@ -308,7 +308,8 @@ private:
     /** Places message to the end of sending queue and start asynchronous write if \a message was
         first in the queue. */
     static void SendMessageImpl(PlayerConnectionPtr self, Message message);
-    static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error, boost::system::error_code error);
+    static void AsyncErrorHandler(PlayerConnectionPtr self, boost::system::error_code handled_error,
+                                  boost::system::error_code error);
 
     boost::asio::io_context&        m_service;
     boost::optional<boost::asio::ip::tcp::socket> m_socket;
