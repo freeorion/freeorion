@@ -691,7 +691,8 @@ void ProductionQueue::Update() {
         return;
     }
 
-    ScopedTimer update_timer("ProductionQueue::Update");
+    SectionedScopedTimer update_timer("ProductionQueue::Update");
+    update_timer.EnterSection("Get PP");
 
     auto industry_resource_pool = empire->GetResourcePool(ResourceType::RE_INDUSTRY);
     auto available_pp = AvailablePP(industry_resource_pool);
@@ -701,6 +702,7 @@ void ProductionQueue::Update() {
     float available_stockpile = std::min(pp_in_stockpile, stockpile_limit);
     TraceLogger() << "========= available_stockpile: " << available_stockpile << " ========";
 
+    update_timer.EnterSection("Queue Items -> Res Groups");
     // determine which resource sharing group each queue item is located in
     std::vector<std::set<int>> queue_element_groups;
     for (const auto& element : m_queue) {
@@ -728,6 +730,7 @@ void ProductionQueue::Update() {
         }
     }
 
+    update_timer.EnterSection("Cacheing Costs");
     // cache producibility, and production item costs and times
     // initialize production queue item completion status to 'never'
     std::map<std::pair<ProductionQueue::ProductionItem, int>,
@@ -752,6 +755,7 @@ void ProductionQueue::Update() {
     for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
         sim_queue_original_indices[i] = i;
 
+    update_timer.EnterSection("Set Spending");
     // allocate pp to queue elements, returning updated available pp and updated
     // allocated pp for each group of resource sharing objects
     float project_transfer_to_stockpile = SetProdQueueElementSpending(
@@ -777,6 +781,7 @@ void ProductionQueue::Update() {
     }
 
     if (!simulate_future) {
+        update_timer.EnterSection("Signal and Finish");
         DebugLogger() << "not enough PP to be worth simulating future turns production.  marking everything as never complete";
         ProductionQueueChangedSignal();
         return;
@@ -789,6 +794,7 @@ void ProductionQueue::Update() {
     const float TOO_LONG_TIME = 0.5f;   // max time in seconds to spend simulating queue
 
 
+    update_timer.EnterSection("Remove Unproducible");
     // remove from simulated queue any paused items and items that can't be built due to not
     // meeting their location conditions; can't feasibly re-check
     // buildability each projected turn as this would require creating a simulated
@@ -818,6 +824,7 @@ void ProductionQueue::Update() {
     std::map<std::set<int>, float>  allocated_stockpile_pp;
     int dummy_int = 0;
 
+    update_timer.EnterSection("Looping over Turns");
     for (int sim_turn = 1; sim_turn <= TOO_MANY_TURNS; sim_turn ++) {
         long sim_time_until_now = (boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()) - sim_time_start).total_microseconds();
         if ((sim_time_until_now * 1e-6) >= TOO_LONG_TIME)
