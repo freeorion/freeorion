@@ -79,8 +79,8 @@ struct ScriptingContext {
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      std::shared_ptr<UniverseObject> target_,
                      const ObjectMap& const_objects_) :
-        source(source_),
-        effect_target(target_),
+        source(std::move(source_)),
+        effect_target(std::move(target_)),
         objects(Objects()),
         const_objects(const_objects_)
     {}

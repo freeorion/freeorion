@@ -2397,9 +2397,11 @@ namespace {
                     continue;
 
                 auto& visible_specials = obj_specials_map[object_id];
+                auto& obj_specials = obj->Specials();
+                ScriptingContext context(std::move(obj), objects);
 
                 // check all object's specials.
-                for (const auto& special_entry : obj->Specials()) {
+                for (const auto& special_entry : obj_specials) {
                     const Special* special = GetSpecial(special_entry.first);
                     if (!special)
                         continue;
@@ -2407,7 +2409,7 @@ namespace {
                     float stealth = 0.0f;
                     const auto special_stealth = special->Stealth();
                     if (special_stealth)
-                        stealth = special_stealth->Eval(ScriptingContext(obj, objects));
+                        stealth = special_stealth->Eval(context);
 
                     // if special is 0 stealth, or has stealth less than empire's detection strength, mark as visible
                     if (stealth <= 0.0f || stealth <= detection_strength) {
@@ -2829,9 +2831,8 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
 
         // remove any starlane connections to this system
         int this_sys_id = obj_system->ID();
-        for (auto& sys : m_objects.all<System>()) {
+        for (auto& sys : m_objects.all<System>())
             sys->RemoveStarlane(this_sys_id);
-        }
 
         // remove fleets / ships moving along destroyed starlane
         std::vector<std::shared_ptr<Fleet>> fleets_to_destroy;
@@ -2932,7 +2933,7 @@ void Universe::UpdateStatRecords() {
                           <<  empire_entry.second->EmpireID();
             continue;
         }
-        empire_sources[empire_entry.first] = source;
+        empire_sources[empire_entry.first] = std::move(source);
     }
 
     // process each stat
@@ -2986,7 +2987,9 @@ void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize,
             if (universe_design_it != m_ship_designs.end())
                 designs_to_serialize[design_id] = universe_design_it->second;
             else
-                ErrorLogger() << "Universe::GetShipDesignsToSerialize empire " << encoding_empire << " should know about design with id " << design_id << " but no such design exists in the Universe!";
+                ErrorLogger() << "Universe::GetShipDesignsToSerialize empire " << encoding_empire
+                              << " should know about design with id " << design_id
+                              << " but no such design exists in the Universe!";
         }
     }
 }

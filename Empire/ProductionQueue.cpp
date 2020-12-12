@@ -370,11 +370,12 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) 
     switch (build_type) {
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
-            auto location_obj = Objects().get(location_id);
             auto c = bt->EnqueueLocation();
             if (!c)
                 return true;
-            return c->Eval(ScriptingContext(location_obj), location_obj);
+            auto location_obj = Objects().get(location_id);
+            ScriptingContext context(location_obj);
+            return c->Eval(context, std::move(location_obj));
         }
         return true;
         break;

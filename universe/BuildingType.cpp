@@ -211,7 +211,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id,
     if (!source)
         return false;
 
-    return m_location->Eval(ScriptingContext(source, objects), location);
+    return m_location->Eval(ScriptingContext(std::move(source), objects), std::move(location));
 }
 
 bool BuildingType::EnqueueLocation(int empire_id, int location_id,
@@ -229,7 +229,7 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id,
     if (!source)
         return false;
 
-    return m_enqueue_location->Eval(ScriptingContext(source, objects), location);
+    return m_enqueue_location->Eval(ScriptingContext(std::move(source), objects), std::move(location));
 }
 
 unsigned int BuildingType::GetCheckSum() const {

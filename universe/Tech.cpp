@@ -247,7 +247,7 @@ float Tech::ResearchCost(int empire_id) const {
         if (!source)
             return ARBITRARY_LARGE_COST;
 
-        return m_research_cost->Eval(ScriptingContext(source));
+        return m_research_cost->Eval(ScriptingContext(std::move(source)));
     }
 }
 
@@ -274,7 +274,7 @@ int Tech::ResearchTime(int empire_id) const {
         if (!source && !m_research_turns->SourceInvariant())
             return ARBITRARY_LARGE_TURNS;
 
-        return m_research_turns->Eval(ScriptingContext(source));
+        return m_research_turns->Eval(ScriptingContext(std::move(source)));
     }
 }
 
