@@ -183,14 +183,15 @@ int BuildingType::ProductionTime(int empire_id, int location_id,
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    auto source = empires.GetSource(empire_id);
+    std::shared_ptr<const UniverseObject> source = empires.GetSource(empire_id);
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 
     // cost uses target object to represent the location where something is
     // being produced, and target object is normally mutable, but will not
     // actually be modified by evaluating the cost ValueRef
-    ScriptingContext context(source, std::const_pointer_cast<UniverseObject>(location), objects);
+    std::shared_ptr<UniverseObject> target = std::const_pointer_cast<UniverseObject>(location);
+    ScriptingContext context(std::move(source), std::move(target), objects);
 
     return m_production_time->Eval(context);
 }
