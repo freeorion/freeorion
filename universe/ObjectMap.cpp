@@ -106,7 +106,7 @@ namespace {
 // class ObjectMap
 /////////////////////////////////////////////
 ObjectMap::ObjectMap()
-{ DebugLogger() << "ObjectMap::ObjectMap"; }
+{}
 
 ObjectMap::~ObjectMap()
 {}
