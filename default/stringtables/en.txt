@@ -8103,7 +8103,7 @@ SP_SLY_DESC
 '''Description:
 The Sly live in gas giants. The gas giants are so foreign to most species in the universe that, for most of their history, they have been overlooked.
 Not being able to build devices, they couldn't leave their homeworld. Recently, they were able to obtain necessary equipment and technology for spacefaring from traders in exchange for their knowledge of history.
-On the right diet, Sly excrete refined fuel. When in system with a gas giant, a Sly-crewed ship will regenerate fuel.
+On the right diet, Sly excrete refined fuel. When in system with a gas giant, a Sly-crewed ship will regenerate fuel. When in a system with a planet populated by friendly Sly, Sly-crewed ships will be refueled and repaired, as if they were in a friendly supply network with [[tech SHP_FLEET_REPAIR]].
 
 Social Structure:
 The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. They are very open and curious towards the galaxy and the other species they are now finally able to encounter.

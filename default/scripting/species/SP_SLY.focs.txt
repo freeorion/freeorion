@@ -61,6 +61,35 @@ Species
             // Update ship_hulls.macros if this number changes
             effects = SetFuel value = Value + 0.1
 
+        // Always repair and resupply at own planets
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem id = Source.SystemID
+                Stationary
+                Species name = ThisSpecies
+                Or [
+                    OwnedBy empire = Source.Owner
+                    And [
+                        // either ally providing repair or owner of ship being repaired must adopt policy to share repairs
+                        Or [
+                            EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_ALLIED_REPAIR"
+                            EmpireHasAdoptedPolicy empire = LocalCandidate.Owner name = "PLC_ALLIED_REPAIR"
+                        ]
+                        OwnedBy affiliation = AllyOf empire = Source.Owner
+                    ]
+                ]
+                Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+                Structure high = LocalCandidate.MaxStructure - 0.001
+                // ResupplyableBy empire = Source.Owner -> intentionally not required
+            ]
+            activation = Planet
+            stackinggroup = "FLEET_REPAIR"
+            effects = [
+                SetStructure value = Value + (Target.MaxStructure/10)
+                SetFuel value = Target.MaxFuel
+                // TODO: have a resupply effect that will also act on part meters without needing to list them all...
+            ]
     ]
 
     environments = [
