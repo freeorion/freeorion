@@ -40,6 +40,27 @@ Species
         [[LARGE_PLANET]]
         [[BROAD_EP]]
         [[STANDARD_SHIP_SHIELDS]]
+        
+        // replenish fuel in suitably coloured star systems
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Stationary
+                InSystem
+                Star type = Blue
+            ]
+            effects = SetFuel value = Value + 1.9   // sums with natural 0.1 per turn to a nice round 2.0 per turn
+            
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Ship
+                Stationary
+                InSystem
+                Star type = White
+            ]
+            effects = SetFuel value = Value + 0.9
     ]
 
     [[OCEAN_BROAD_EP]]

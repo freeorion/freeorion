@@ -8078,6 +8078,7 @@ SP_LAENFA_GAMEPLAY_DESC
 '''<img src="species/preview/laenfa.png"></img>
 Sneaky, telepathic, sentient vines.
 Prefer [[PT_OCEAN]] planets.
+Ships regenerate 1 fuel per turn at white stars, and 2 fuel per turn a blue stars.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
