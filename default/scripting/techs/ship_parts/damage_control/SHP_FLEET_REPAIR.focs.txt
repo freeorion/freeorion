@@ -31,7 +31,7 @@ Tech
                 Structure high = LocalCandidate.MaxStructure - 0.001
                 ResupplyableBy empire = Source.Owner
             ]
-        stackinggroup = "FLEET_REPAIR"
+            stackinggroup = "FLEET_REPAIR"
             effects = SetStructure value = Value + (Target.MaxStructure/10)
     graphic = "icons/tech/fleet_field_repair.png"
 
