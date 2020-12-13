@@ -58,7 +58,7 @@ namespace {
 
         // if aggression specified, use that, otherwise get from whether ship is armed
         FleetAggression new_aggr = aggression == FleetAggression::INVALID_FLEET_AGGRESSION ?
-            (ship->IsArmed() ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE) :
+            (ship->IsArmed() ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_DEFENSIVE) :
             (aggression);
         fleet->SetAggression(new_aggr);
 
@@ -2991,6 +2991,7 @@ std::string SetAggression::Dump(unsigned short ntabs) const {
         switch(aggr) {
         case FleetAggression::FLEET_AGGRESSIVE:  return "SetAggressive";  break;
         case FleetAggression::FLEET_OBSTRUCTIVE: return "SetObstructive"; break;
+        case FleetAggression::FLEET_DEFENSIVE:   return "SetDefensive";   break;
         case FleetAggression::FLEET_PASSIVE:     return "SetPassive";     break;
         default:                                 return "Set???";         break;
         }

@@ -136,7 +136,7 @@ class FO_COMMON_API NewFleetOrder : public Order {
 public:
     NewFleetOrder(int empire, std::string fleet_name,
                   std::vector<int> ship_ids,
-                  bool aggressive, bool passive = false);
+                  bool aggressive, bool passive = false, bool defensive = false);
     NewFleetOrder(int empire, std::string fleet_name,
                   std::vector<int> ship_ids,
                   FleetAggression aggression);

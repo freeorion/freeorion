@@ -33,6 +33,7 @@ FO_ENUM(
     (FleetAggression),
     ((INVALID_FLEET_AGGRESSION, -1))
     ((FLEET_PASSIVE))
+    ((FLEET_DEFENSIVE))
     ((FLEET_OBSTRUCTIVE))
     ((FLEET_AGGRESSIVE))
     ((NUM_FLEET_AGGRESSIONS))
@@ -67,6 +68,7 @@ public:
     int                     LastTurnMoveOrdered() const { return m_last_turn_move_ordered; }
     bool                    Aggressive() const { return m_aggression >= FleetAggression::FLEET_AGGRESSIVE; }
     bool                    Obstructive() const { return m_aggression >= FleetAggression::FLEET_OBSTRUCTIVE; }
+    bool                    Passive() const { return m_aggression <= FleetAggression::FLEET_PASSIVE; }
     FleetAggression         Aggression() const { return m_aggression; }
 
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the

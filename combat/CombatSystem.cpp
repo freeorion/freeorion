@@ -864,9 +864,12 @@ namespace {
         }
     }
 
-    bool ObjectCanAttack(std::shared_ptr<const UniverseObject> obj) {
+    bool ObjectCanAttack(std::shared_ptr<const UniverseObject> obj, const ObjectMap& objects) {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
-            return ship->IsArmed();
+            if (!ship->IsArmed())
+                return false;
+            auto fleet = objects.get<Fleet>(ship->FleetID());
+            return !fleet || fleet->Aggression() > FleetAggression::FLEET_PASSIVE;
         } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
             return obj->GetMeter(MeterType::METER_DEFENSE)->Current() > 0.0f;
         } else if (auto fighter = std::dynamic_pointer_cast<const Fighter>(obj)) {
@@ -1160,7 +1163,7 @@ namespace {
                 }
 
             } else if (target->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-                if (!ObjectCanAttack(target) &&
+                if (!ObjectCanAttack(target, combat_info.objects) &&
                     valid_attacker_object_ids.count(target_id))
                 {
                     DebugLogger(combat) << "!! Target Planet " << target_id << " knocked out, can no longer attack";
@@ -1282,9 +1285,8 @@ namespace {
 
         // Populate lists of things that can attack. List attackers also by empire.
         void PopulateAttackers() {
-            for (const auto& obj : combat_info.objects.all())
-            {
-                bool can_attack{ObjectCanAttack(obj)};
+            for (const auto& obj : combat_info.objects.all()) {
+                bool can_attack{ObjectCanAttack(obj, combat_info.objects)};
                 if (can_attack) {
                     valid_attacker_object_ids.insert(obj->ID());
                     empire_infos[obj->Owner()].attacker_ids.insert(obj->ID());
@@ -1673,7 +1675,7 @@ namespace {
         for (const auto& planet : combat_info.objects.find<Planet>(shuffled_attackers)) {
             if (!planet)
                 continue;
-            if (!ObjectCanAttack(planet)) {
+            if (!ObjectCanAttack(planet, combat_info.objects)) {
                 DebugLogger() << "Planet " << planet->Name() << " could not attack.";
                 continue;
             }
@@ -1695,7 +1697,7 @@ namespace {
             if (attacker->ObjectType() == UniverseObjectType::OBJ_PLANET) {
                 continue;   // planet attacks processed above
             }
-            if (!ObjectCanAttack(attacker)) {
+            if (!ObjectCanAttack(attacker, combat_info.objects)) {
                 DebugLogger() << "Attacker " << attacker->Name() << " could not attack.";
                 continue;
             }
@@ -1721,7 +1723,7 @@ namespace {
             for (const auto& attacker : combat_info.objects.find<Ship>(shuffled_attackers)) {
                 if (!attacker)
                     continue;
-                if (!ObjectCanAttack(attacker)) {
+                if (!ObjectCanAttack(attacker, combat_info.objects)) {
                     DebugLogger() << "Attacker " << attacker->Name() << " could not attack.";
                     continue;
                 }

@@ -120,9 +120,10 @@ void RenameOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 NewFleetOrder::NewFleetOrder(int empire, std::string fleet_name,
                              std::vector<int> ship_ids,
-                             bool aggressive, bool passive) :
+                             bool aggressive, bool passive, bool defensive) :
     NewFleetOrder(empire, std::move(fleet_name), std::move(ship_ids),
                   aggressive ? FleetAggression::FLEET_AGGRESSIVE :
+                  defensive ? FleetAggression::FLEET_DEFENSIVE :
                   passive ? FleetAggression::FLEET_PASSIVE :
                   FleetAggression::FLEET_OBSTRUCTIVE)
 {}
@@ -147,6 +148,7 @@ std::string NewFleetOrder::Dump() const {
     const std::string& aggression_text =
         m_aggression == FleetAggression::FLEET_AGGRESSIVE ? UserString("FLEET_AGGRESSIVE") :
         m_aggression == FleetAggression::FLEET_OBSTRUCTIVE ? UserString("FLEET_OBSTRUCTIVE") :
+        m_aggression == FleetAggression::FLEET_DEFENSIVE ? UserString("FLEET_DEFENSIVE") :
         m_aggression == FleetAggression::FLEET_PASSIVE ? UserString("FLEET_PASSIVE") :
         UserString("INVALID_FLEET_AGGRESSION");
 

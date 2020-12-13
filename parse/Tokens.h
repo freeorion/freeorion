@@ -405,6 +405,7 @@
     (SetConstruction)                           \
     (SetDamage)                                 \
     (SetDefense)                                \
+    (SetDefensive)                              \
     (SetDestination)                            \
     (SetDetection)                              \
     (SetEmpireCapital)                          \

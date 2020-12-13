@@ -85,6 +85,7 @@ namespace parse { namespace detail {
         set_aggression
             =   tok.SetAggressive_  [ _val = construct_movable_(new_<Effect::SetAggression>(FleetAggression::FLEET_AGGRESSIVE)) ]
             |   tok.SetObstructive_ [ _val = construct_movable_(new_<Effect::SetAggression>(FleetAggression::FLEET_OBSTRUCTIVE)) ]
+            |   tok.SetDefensive_   [ _val = construct_movable_(new_<Effect::SetAggression>(FleetAggression::FLEET_DEFENSIVE)) ]
             |   tok.SetPassive_     [ _val = construct_movable_(new_<Effect::SetAggression>(FleetAggression::FLEET_PASSIVE)) ]
             ;
 

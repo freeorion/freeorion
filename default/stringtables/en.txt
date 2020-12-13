@@ -3870,11 +3870,17 @@ FW_OBSTRUCTIVE
 FW_OBSTRUCTIVE_DESC
 Fleet blocks enemy fleet passage through its system but does not initiate combat. It may still participate in combats initiated by other empires or fleets, however.
 
+FW_DEFENSIVE
+[[FLEET_DEFENSIVE]]
+
+FW_DEFENSIVE_DESC
+Fleet will attempt to stay hidden unless combat occurs; it will not blockade enemy fleet passage or initiate combat. It may still participate in combats initiated by other empires or fleets, however.
+
 FW_PASSIVE
 [[FLEET_PASSIVE]]
 
 FW_PASSIVE_DESC
-Fleet will attempt to stay hidden; it will not blockade enemy fleet passage or initiate combat. It may still participate in combats initiated by other empires or fleets, however.
+Fleet will attempt to stay hidden; it will not blockade enemy fleet passage or initiate combat, and will not fire its weapons or launch fighters during combat, even if attacked by other empires during that combat.
 
 FW_AUTO
 Automatic Aggression Selection
@@ -9423,8 +9429,12 @@ FLEET_OBSTRUCTIVE
 Obstruct Passage
 
 # Fleet aggressions
+FLEET_DEFENSIVE
+Defensive Hide
+
+# Fleet aggressions
 FLEET_PASSIVE
-Hide
+Passive Hide
 
 # Meter types
 INVALID_METER_TYPE

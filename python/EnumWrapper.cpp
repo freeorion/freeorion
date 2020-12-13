@@ -136,6 +136,7 @@ namespace FreeOrionPython {
         ;
         py::enum_<FleetAggression>("fleetAggression")
             .value("passive",           FleetAggression::FLEET_PASSIVE)
+            .value("defensive",         FleetAggression::FLEET_DEFENSIVE)
             .value("obstructive",       FleetAggression::FLEET_OBSTRUCTIVE)
             .value("aggressive",        FleetAggression::FLEET_AGGRESSIVE)
         ;

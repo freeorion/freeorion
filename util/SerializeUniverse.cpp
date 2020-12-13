@@ -371,7 +371,7 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
     if (Archive::is_loading::value && version < 5) {
         bool aggressive = false;
         ar  & make_nvp("m_aggressive", aggressive);
-        obj.m_aggression = aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE;
+        obj.m_aggression = aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_DEFENSIVE;
 
     } else {
         ar  & make_nvp("m_aggression", obj.m_aggression);

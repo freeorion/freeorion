@@ -712,7 +712,7 @@ namespace FreeOrionPython {
                 +[](int ship_id, int planet_id) -> int { return Issue<BombardOrder>(ship_id, planet_id); });
 
         py::def("issueAggressionOrder",
-                +[](int object_id, bool aggressive) -> int { return Issue<AggressiveOrder>(object_id, aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_PASSIVE); });
+                +[](int object_id, bool aggressive) -> int { return Issue<AggressiveOrder>(object_id, aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_DEFENSIVE); });
 
         py::def("issueGiveObjectToEmpireOrder",
                 +[](int object_id, int recipient_id) -> int { return Issue<GiveObjectToEmpireOrder>(object_id, recipient_id); });
