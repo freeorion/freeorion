@@ -9,7 +9,7 @@ Hull
     slots = [
         Slot type = Internal position = (0.20, 0.15)
         Slot type = External position = (0.80, 0.15)
-		Slot type = External position = (0.50, 0.50)
+        Slot type = External position = (0.50, 0.50)
         Slot type = External position = (0.20, 0.75)
         Slot type = External position = (0.80, 0.75)
     ]

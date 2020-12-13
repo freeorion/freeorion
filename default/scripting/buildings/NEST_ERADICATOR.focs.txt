@@ -7,11 +7,11 @@ BuildingType
         Planet
         OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_NEST_ERADICATOR"
-	Or [
+    Or [
             HasSpecial name = "JUGGERNAUT_NEST_SPECIAL"
             HasSpecial name = "KRAKEN_NEST_SPECIAL"
             HasSpecial name = "SNOWFLAKE_NEST_SPECIAL"
-	]
+    ]
     ]
     enqueuelocation = Not Enqueued type = Building name = "BLD_NEST_ERADICATOR"
     effectsgroups = [
