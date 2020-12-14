@@ -3870,11 +3870,17 @@ FW_OBSTRUCTIVE
 FW_OBSTRUCTIVE_DESC
 La Flotte bloque le passage des flottes ennemies à travers le système mais n'engage pas le combat. Elle peut toutefois prendre part aux combats engagés par d'autres empires ou flottes.
 
+FW_DEFENSIVE
+[[FLEET_DEFENSIVE]]
+
+FW_DEFENSIVE_DESC
+La Flotte tente de passer inaperçue à moins qu'un combat ne survienne. Elle ne bloquera pas le passage des flottes ennemies et n'engagera aucun combat. Elle peut toutefois prendre part aux combats engagés par d'autres empires ou flottes.
+
 FW_PASSIVE
 [[FLEET_PASSIVE]]
 
 FW_PASSIVE_DESC
-La Flotte tente de passer inaperçue. Elle ne bloquera pas le passage des flottes ennemies et n'engagera aucun combat. Elle peut toutefois prendre part aux combats engagés par d'autres empires ou flottes.
+La Flotte tente de passer inaperçue. Elle ne bloquera pas le passage des flottes ennemies et n'engagera aucun combat. Elle n'utilisera ni son armement ni ne lancera ses chasseurs en combat, même si elle est attaquée par d'autres empires durant ce combat.
 
 FW_AUTO
 Stratégie d'attaque automatique
@@ -6413,7 +6419,7 @@ Pour ordonner à une flotte sélectionnée de se déplacer vers un autre systèm
 
 Les flottes peuvent être composées d'un nombre illimité d'astronefs, divisées en flottes plus petites ou bien fusionnées avec d'autres flottes se trouvant dans le même système. Un glisser-déposer permet également de déplacer un astronef d'une flotte à une autre.
 
-Chaque flotte dispose de deux types de conduite pouvant être activés/désactivés: '[[FW_PASSIVE]]' (symbole Oeil) ou '[[FW_AGGRESSIVE]]' (symbole Poing).
+Chaque flotte a le choix entre se dissimuler (symbole Oeil) ou être agressive (symbole Poing).
 
 Un clic-droit sur une flotte dans la Fenêtre Flottes donne accès aux options additionnelles telles que l'auto-exploration, renommer ou supprimer une flotte.'''
 
@@ -8078,6 +8084,7 @@ SP_LAENFA_GAMEPLAY_DESC
 '''<img src="species/preview/laenfa.png"></img>
 Vignes sentientes, télépathes, et insidieuses.
 Préfèrent les Planètes [[PT_OCEAN]]s.
+Leurs astronefs régénèrent 1 unité de [[metertype METER_FUEL]] par tour à proximité d'une Étoile [[STAR_WHITE]], et 2 unités de [[metertype METER_FUEL]] par tour près d'une Étoile [[STAR_BLUE]].
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
@@ -8103,7 +8110,7 @@ SP_SLY_DESC
 '''Description:
 Les Sly vivent sur les géantes gazeuses. Ces dernières étant si étrangères à la plupart des espèces dans l'univers, l'existence et l'histoire des Sly sont par conséquent peu connues.
 Dans l'incapacité de produire tout dispositif technologique, les Sly ne peuvent quitter leur monde natal. Mais récemment, ils ont pu obtenir de marchands galactiques l'équipement et les technologies nécessaires au voyage spatial en échange de données sur leur espèce et son histoire.
-Sous un régime alimentaire adapté, les Sly excrètent du carburant raffiné. Un astronef à équipage Sly régénère donc son carburant lorsqu'il se trouve dans un système abritant une géante gazeuse.
+Sous un régime alimentaire adapté, les Sly excrètent du carburant raffiné. Un astronef à équipage Sly régénère donc son carburant lorsqu'il se trouve dans un système abritant une géante gazeuse. Dans un système abritant une planète peuplée par des Sly amicaux, les astronefs à équipage Sly seront ravitaillés en Carburant et réparés, de la même manière que s'ils se trouvaient dans un réseau d'Approvisionnement allié doté de la technologie [[tech SHP_FLEET_REPAIR]].
 
 Structure sociale:
 Les Sly ont une espérance de vie très importante et transmettent de génération en génération des chants dans lesquels l'ensemble du savoir culturel de l'espèce est encodé. Les Sly sont très ouverts et extrêmement curieux envers la galaxie et les autres espèces, avec lesquelles ils peuvent enfin entrer en contact.
@@ -9422,8 +9429,12 @@ FLEET_OBSTRUCTIVE
 Bloquer Passage
 
 # Fleet aggressions
+FLEET_DEFENSIVE
+Dissimulation Défensive
+
+# Fleet aggressions
 FLEET_PASSIVE
-Passivité
+Dissimulation Passive
 
 # Meter types
 INVALID_METER_TYPE
@@ -11401,6 +11412,15 @@ L'empire est gouverné par une théocratie qui prétend détenir l'autorité des
 
 PLC_DIVINE_AUTHORITY_SHORT_DESC
 Augmente la Stabilité et l'Influence, mais entrave la Recherche
+
+PLC_NATIVE_APPROPRIATION
+Appropriation Indigène
+
+PLC_NATIVE_APPROPRIATION_DESC
+Augmente la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche au sein des systèmes abritant également des planètes indigènes non-colonisées par l'empire.
+
+PLC_NATIVE_APPROPRIATION_SHORT_DESC
+Augmente la Recherche
 
 
 ##
