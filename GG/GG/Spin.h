@@ -109,8 +109,8 @@ public:
 protected:
     typedef T ValueType;
 
-    const int BORDER_THICK = 2;
-    const int PIXEL_MARGIN = 5;
+    static constexpr int BORDER_THICK = 2;
+    static constexpr int PIXEL_MARGIN = 5;
 
     Button* UpButton() const;   ///< returns a pointer to the Button control used as this control's up button
     Button* DownButton() const; ///< returns a pointer to the Button control used as this control's down button
