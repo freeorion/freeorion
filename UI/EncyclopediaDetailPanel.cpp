@@ -290,7 +290,6 @@ namespace {
             const auto homeworlds{GetSpeciesManager().GetSpeciesHomeworldsMap()};
 
             for (const auto& entry : GetSpeciesManager()) {
-                const auto& species = entry.second;
                 std::set<int> known_homeworlds;
                 std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, entry.first) + " ";
 
@@ -341,7 +340,6 @@ namespace {
             }
             sorted_entries_list.emplace("⃠ ", std::make_pair("\n\n", "  "));
             for (const auto& entry : GetSpeciesManager()) {
-                const auto& species = entry.second;
                 if (!homeworlds.count(entry.first) || homeworlds.at(entry.first).empty()) {
                     std::string species_entry{LinkTaggedText(VarText::SPECIES_TAG, entry.first) + ":  \n" + UserString("NO_HOMEWORLD")};
                     sorted_entries_list.emplace("⃠⃠" + std::string( "⃠ ") + UserString(entry.first),

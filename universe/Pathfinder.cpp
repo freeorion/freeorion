@@ -1446,9 +1446,6 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
     GraphImpl::EdgeWeightPropertyMap edge_weight_map =
         boost::get(boost::edge_weight, new_graph_impl->system_graph);
 
-    const GraphImpl::EdgeWeightPropertyMap& current_edge_weight_map =
-        boost::get(boost::edge_weight, m_graph_impl->system_graph);
-
     // add vertices to graph for all systems
     std::vector<int> system_ids;
     system_ids.reserve(objects.ExistingSystems().size());
