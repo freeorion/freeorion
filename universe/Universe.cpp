@@ -95,6 +95,9 @@ namespace {
         rules.Add<bool>(UserStringNop("RULE_STARLANES_EVERYWHERE"),
                         UserStringNop("RULE_STARLANES_EVERYWHERE_DESC"),
                         "TEST", false, true);
+        rules.Add<bool>(UserStringNop("RULE_ALL_OBJECTS_VISIBLE"),
+                        UserStringNop("RULE_ALL_OBJECTS_VISIBLE_DESC"),
+                        "TEST", false, true);
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 
@@ -2151,12 +2154,11 @@ namespace {
             for (auto& empire_entry : Empires()) {
                 if (empire_entry.second->Eliminated())
                     continue;
-                // objects
-                universe.SetEmpireObjectVisibility(empire_entry.first, obj->ID(), Visibility::VIS_FULL_VISIBILITY);
+                if (universe.GetObjectVisibilityByEmpire(obj->ID(), empire_entry.first) < Visibility::VIS_FULL_VISIBILITY)
+                    universe.SetEmpireObjectVisibility(empire_entry.first, obj->ID(), Visibility::VIS_FULL_VISIBILITY);
                 // specials on objects
-                for (const auto& special_entry : obj->Specials()) {
+                for (const auto& special_entry : obj->Specials())
                     universe.SetEmpireSpecialVisibility(empire_entry.first, obj->ID(), special_entry.first);
-                }
             }
         }
     }
@@ -2492,11 +2494,10 @@ void Universe::UpdateEmpireObjectVisibilities() {
     m_empire_object_visibility.clear();
     m_empire_object_visible_specials.clear();
 
-    if (false) {    // TODO: GameRule
+    if (GetGameRules().Get<bool>("RULE_ALL_OBJECTS_VISIBLE")) {
         SetAllObjectsVisibleToAllEmpires();
         return;
     }
-
 
     SetEmpireOwnedObjectVisibilities();
 

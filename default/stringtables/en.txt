@@ -1220,6 +1220,12 @@ Starlanes Everywhere
 RULE_STARLANES_EVERYWHERE_DESC
 Starlanes are generated between every pair of systems, regardless of geometry. Lanes may still be removed during a game, however. Lanes are also not rendered on the galaxy map.
 
+RULE_ALL_OBJECTS_VISIBLE
+All Objects Visible
+
+RULE_ALL_OBJECTS_VISIBLE_DESC
+All systems, planets, buildings, fleets, ships, and fields can be detected by all empires at at least partial visibility.
+
 RULE_HABITABLE_SIZE_TINY
 Tiny planets Habitable size
 
