@@ -235,12 +235,12 @@ auto PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& ch
             e.player_name = py::extract<std::string>((*it)[1]);
             e.text = py::extract<std::string>((*it)[2]);
             py::tuple color = py::extract<py::tuple>((*it)[3]);
-            e.text_color = std::array<unsigned char, 4>{
+            e.text_color = std::array<unsigned char, 4>{{
                 py::extract<unsigned char>(color[0]),
                 py::extract<unsigned char>(color[1]),
                 py::extract<unsigned char>(color[2]),
                 py::extract<unsigned char>(color[3])
-            };
+            }};
             chat_history.push_back(e);
         }
     }

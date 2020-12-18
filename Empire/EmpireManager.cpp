@@ -385,7 +385,7 @@ inline EmpireColor HexClr(const std::string& hex_colour)
     if ((hex_colour.size() == 7 || hex_colour.size() == 9) &&
             '#' == iss.get() && !(iss >> std::hex >> rgba).fail())
     {
-        EmpireColor retval = EmpireColor{0, 0, 0, 255};
+        EmpireColor retval = EmpireColor{{0, 0, 0, 255}};
 
         if (hex_colour.size() == 7) {
             std::get<0>(retval) = (rgba >> 16) & 0xFF;
@@ -433,8 +433,8 @@ void InitEmpireColors(const boost::filesystem::path& path) {
 const std::vector<EmpireColor>& EmpireColors() {
     auto& colors = EmpireColorsNonConst();
     if (colors.empty()) {
-        colors = {  {  0, 255,   0, 255},    {  0,   0, 255, 255},    {255,   0,   0, 255},
-                    {  0, 255, 255, 255},    {255, 255,   0, 255},    {255,   0, 255, 255}};
+        colors = {{{ 0, 255,   0, 255}}, {{  0,   0, 255, 255}}, {{255,   0,   0, 255}},
+                 {{ 0, 255, 255, 255}},  {{255, 255,   0, 255}}, {{255,   0, 255, 255}}};
     }
     return colors;
 }

@@ -574,7 +574,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
         human_player_setup_data.empire_color = empire_colours[colour_index];
     else
-        human_player_setup_data.empire_color = {GG::CLR_GREEN.r, GG::CLR_GREEN.g, GG::CLR_GREEN.b, GG::CLR_GREEN.a};
+        human_player_setup_data.empire_color = {{GG::CLR_GREEN.r, GG::CLR_GREEN.g, GG::CLR_GREEN.b, GG::CLR_GREEN.a}};
 
     human_player_setup_data.starting_species_name = GetOptionsDB().Get<std::string>("setup.initial.species");
     if (human_player_setup_data.starting_species_name == "1")

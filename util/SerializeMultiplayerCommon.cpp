@@ -119,7 +119,7 @@ void serialize(Archive& ar, SaveGamePreviewData& obj, unsigned int const version
     if (Archive::is_loading::value && version < 5) {
         CompatColor old_color;
         ar & make_nvp("main_player_empire_colour", old_color);
-        obj.main_player_empire_colour = {old_color.r, old_color.g, old_color.b, old_color.a};
+        obj.main_player_empire_colour = {{old_color.r, old_color.g, old_color.b, old_color.a}};
     } else {
         ar & make_nvp("main_player_empire_colour", obj.main_player_empire_colour);
     }
@@ -242,7 +242,7 @@ void serialize(Archive& ar, SaveGameEmpireData& obj, unsigned int const version)
     if (Archive::is_loading::value && version < 3) {
         CompatColor old_color;
         ar & make_nvp("m_color", old_color);
-        obj.color = {old_color.r, old_color.g, old_color.b, old_color.a};
+        obj.color = {{old_color.r, old_color.g, old_color.b, old_color.a}};
     } else {
         ar & make_nvp("m_color", obj.color);
     }

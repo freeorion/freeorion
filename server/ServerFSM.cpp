@@ -36,8 +36,8 @@ CombatLogManager&   GetCombatLogManager();
 namespace {
     DeclareThreadSafeLogger(FSM);
 
-    constexpr EmpireColor CLR_SERVER{255, 255, 255, 255};
-    constexpr EmpireColor CLR_ZERO{0, 0, 0, 0};
+    constexpr EmpireColor CLR_SERVER{{255, 255, 255, 255}};
+    constexpr EmpireColor CLR_ZERO{{0, 0, 0, 0}};
 
     void SendMessageToAllPlayers(const Message& message) {
         ServerApp* server = ServerApp::GetApp();
@@ -194,7 +194,7 @@ namespace {
                                   const std::map<int, SaveGameEmpireData> &sged = std::map<int, SaveGameEmpireData>())
     {
         //DebugLogger(FSM) << "finding colours for empire of player " << player_name;
-        EmpireColor empire_colour{192, 192, 192, 255};
+        EmpireColor empire_colour{{192, 192, 192, 255}};
         for (const EmpireColor& possible_colour : EmpireColors()) {
             //DebugLogger(FSM) << "trying colour " << possible_colour.r << ", " << possible_colour.g << ", " << possible_colour.b;
 
@@ -446,7 +446,7 @@ void ServerFSM::UpdateIngameLobby() {
             player_setup_data.empire_name = empire->Name();
             player_setup_data.empire_color = empire->Color();
         } else {
-            player_setup_data.empire_color = {255, 255, 255, 255};
+            player_setup_data.empire_color = {{255, 255, 255, 255}};
         }
         player_setup_data.authenticated = (*player_it)->IsAuthenticated();
         dummy_lobby_data.players.push_back({player_id, player_setup_data});

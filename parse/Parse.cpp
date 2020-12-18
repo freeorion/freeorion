@@ -422,7 +422,7 @@ namespace parse {
         unsigned char g,
         unsigned char b,
         unsigned char a)
-    { return {r, g, b, a}; }
+    { return {{r, g, b, a}}; }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(ColorType, construct_color_, construct_color, 4)
 

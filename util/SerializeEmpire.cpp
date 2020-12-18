@@ -174,7 +174,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     if (Archive::is_loading::value && version < 5) {
         CompatColor old_color;
         ar & boost::serialization::make_nvp("m_color", old_color);
-        m_color = {old_color.r, old_color.g, old_color.b, old_color.a};
+        m_color = {{old_color.r, old_color.g, old_color.b, old_color.a}};
     } else {
         ar & BOOST_SERIALIZATION_NVP(m_color);
     }

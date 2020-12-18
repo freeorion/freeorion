@@ -353,7 +353,7 @@ namespace {
             DataChangedSignal();
         }
         void ColorChanged(const GG::Clr& clr) {
-            m_player_data.empire_color = {clr.r, clr.g, clr.b, clr.a};
+            m_player_data.empire_color = {{clr.r, clr.g, clr.b, clr.a}};
             DataChangedSignal();
         }
         void SpeciesChanged(const std::string& str) {

@@ -139,7 +139,7 @@ struct FO_COMMON_API TechCategory {
     {}
     std::string name;                       ///< name of category
     std::string graphic;                    ///< icon that represents catetegory
-    std::array<unsigned char, 4> colour{255, 255, 255, 255}; ///< colour associatied with category
+    std::array<unsigned char, 4> colour{{255, 255, 255, 255}}; ///< colour associatied with category
 };
 
 namespace CheckSums {

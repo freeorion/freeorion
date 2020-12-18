@@ -77,7 +77,7 @@ namespace {
         // TODO: refactor this to somewhere that links with the UI code.
         // Hardcoded default color becauses not linked with UI code.
         const Empire* empire = GetEmpire(empire_id);
-        EmpireColor c = (empire ? empire->Color() : EmpireColor{80,255,128,255});
+        EmpireColor c = (empire ? empire->Color() : EmpireColor{{80, 255, 128, 255}});
         return WrapColorTag(text, c);
     }
 
