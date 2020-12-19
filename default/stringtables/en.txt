@@ -12490,7 +12490,7 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with any focus by [[value LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with research focus, dependent on the distance from the planet to the furthest-away ship owned by its empire.
 
 Grants 1 extra military policy slot.
 

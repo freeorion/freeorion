@@ -12,11 +12,17 @@ Tech
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
-                Not Population high = 0
+                Focus type = "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch value = Value + Target.Population
-                        * (NamedReal name = "LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP"
-                                     value = (0.5 * [[RESEARCH_PER_POP]]))
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
+            effects = SetTargetResearch value = Value + max(
+                Target.Construction / 2.0,
+                0.1 * (Statistic Max
+                    value = DirectDistanceBetween object = Target.ID object = LocalCandidate.ID
+                    condition = And [
+                        System
+                        Contains OwnedBy empire = Source.Owner
+                    ] ^ 0.5))
 
         EffectsGroup
             scope = Source
@@ -26,4 +32,4 @@ Tech
     graphic = "icons/tech/distributed_thought.png"
 
 #include "/scripting/common/base_prod.macros"
-
+#include "/scripting/common/priorities.macros"
