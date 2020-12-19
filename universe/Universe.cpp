@@ -98,6 +98,9 @@ namespace {
         rules.Add<bool>(UserStringNop("RULE_ALL_OBJECTS_VISIBLE"),
                         UserStringNop("RULE_ALL_OBJECTS_VISIBLE_DESC"),
                         "TEST", false, true);
+        rules.Add<bool>(UserStringNop("RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE"),
+                        UserStringNop("RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_DESC"),
+                        "TEST", false, true);
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 
@@ -2162,7 +2165,8 @@ namespace {
         }
     }
 
-    /** sets planets in system where an empire owns an object to be basically
+    /** sets planets that an empire has at some time had visibility of, which
+      * are also in system where an empire owns an object, to be basically
       * visible, and those systems to be partially visible */
     void SetSameSystemPlanetsVisible(const ObjectMap& objects) {
         Universe& universe = GetUniverse();
@@ -2178,13 +2182,11 @@ namespace {
         // set system visibility
         for (const auto& empire_entry : empires_systems_with_owned_objects) {
             int empire_id = empire_entry.first;
-
-            for (int system_id : empire_entry.second) {
+            for (int system_id : empire_entry.second)
                 universe.SetEmpireObjectVisibility(empire_id, system_id, Visibility::VIS_PARTIAL_VISIBILITY);
-            }
         }
 
-        // get planets, check their locations...
+        // get planets, check their locations, and whether they have ever been observed by the empire
         for (const auto& planet : objects.all<Planet>()) {
             int system_id = planet->SystemID();
             if (system_id == INVALID_OBJECT_ID)
@@ -2193,11 +2195,20 @@ namespace {
             int planet_id = planet->ID();
             for (const auto& empire_entry : empires_systems_with_owned_objects) {
                 int empire_id = empire_entry.first;
+
+                // does empire own an object in this system?
                 const auto& empire_systems = empire_entry.second;
                 if (!empire_systems.count(system_id))
-                    continue;
-                // ensure planets are at least basicaly visible.  does not
-                // overwrite higher visibility levels
+                    continue;   // no objects, don't grant any visibility
+
+                if (GetGameRules().Get<bool>("RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE")) {
+                    // has the empire ever detected the planet?
+                    auto& turns_seen_by_empire = universe.GetObjectVisibilityTurnMapByEmpire(planet->ID(), empire_id);
+                    if (turns_seen_by_empire.empty())
+                        continue;   // never seen, don't grant any visibility for having an object in the system
+                }
+
+                // ensure planet is at least basicaly visible. does not overwrite higher visibility levels
                 universe.SetEmpireObjectVisibility(empire_id, planet_id, Visibility::VIS_BASIC_VISIBILITY);
             }
         }

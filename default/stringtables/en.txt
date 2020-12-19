@@ -1226,6 +1226,14 @@ All Objects Visible
 RULE_ALL_OBJECTS_VISIBLE_DESC
 All systems, planets, buildings, fleets, ships, and fields can be detected by all empires at at least partial visibility.
 
+RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
+Undetectable Stealthy Planets
+
+RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_DESC
+'''<u>If On</u>: Planets that have more stealth than an empire's detection strength cannot be detected by that empire just by having an object in the same system, unless that empire has previously detected that planet.
+
+<u>If Off</u>: Planets that have more stealth than an empire's detection strength are detectable by that empire if the empire owns another object in the same system.'''
+
 RULE_HABITABLE_SIZE_TINY
 Tiny planets Habitable size
 
@@ -13283,10 +13291,12 @@ SHP_CHAOS_WAVE_DESC
 Unlocks the [[shippart SP_CHAOS_WAVE]] ship part, [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ANY_POP]].
 
 SPY_PLANET_STEALTH_MOD
-Planet Stealth Modifier
+Stealth Modifiers
 
 SPY_PLANET_STEALTH_MOD_DESC
-Increases the natural [[metertype METER_STEALTH]] of all planets to 5, so that there isn't a clash between detection and stealth values.
+'''Increases the natural [[metertype METER_STEALTH]] of all planets by 5.
+
+Reduces the stealth of ships when they are in the same system with other ships of the same empire.'''
 
 BASIC_PLANET_STEALTH
 Universal Basic Stealth
