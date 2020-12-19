@@ -13303,10 +13303,16 @@ Stealth Modifiers
 SPY_PLANET_STEALTH_MOD_DESC
 '''Increases the natural [[metertype METER_STEALTH]] of all planets by 5.
 
-Reduces the stealth of ships when they are in the same system with other ships of the same empire.'''
+Reduces the stealth of ships when they are in the same system with more than [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] ships of the same empire.'''
 
 BASIC_PLANET_STEALTH
 Universal Basic Stealth
+
+FLEET_UNSTEALTHINESS
+Fleet Unstealthiness
+
+FLEET_UNSTEALTHY_SHIPS_THRESHOLD
+Number of ships in a system owned by the same empire, above which ships receive a stealth penalty
 
 
 ##

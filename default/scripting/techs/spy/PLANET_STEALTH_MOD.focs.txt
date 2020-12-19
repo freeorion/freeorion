@@ -7,7 +7,7 @@ Tech
     researchturns = 1
     Unresearchable
     tags = [ "PEDIA_SPY_CATEGORY" ]
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = Or [
                 Building
@@ -16,6 +16,22 @@ Tech
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
             accountinglabel = "BASIC_PLANET_STEALTH"
             effects = SetStealth value = Value + 5
+        
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+            ]
+            accountinglabel = "FLEET_UNSTEALTHINESS"
+            effects = SetStealth value = Value - max(
+                0,
+                Statistic Count condition = And [
+                    Ship
+                    InSystem id = Source.SystemID
+                    OwnedBy empire = Source.Owner
+                ] - (NamedReal name = "FLEET_UNSTEALTHY_SHIPS_THRESHOLD" value = 5)) ^ 0.5
+                // large fleets only start affecting stealth when there are more than the threshold of ships in a single system
+    ]
     graphic = ""
 
 #include "/scripting/common/base_prod.macros"
