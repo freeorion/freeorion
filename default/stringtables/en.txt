@@ -11638,14 +11638,6 @@ While traditional computers have nearly unfathomable intelligence and computatio
 
 Nascent AIs can input all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility. Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.'''
 
-LRN_ARTIF_MINDS
-Artificial Minds
-
-LRN_ARTIF_MINDS_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all Research focused planets by [[value LRN_ARTIF_MINDS_TARGET_RESEARCH_FLAT]].
-
-Artificial minds are the epitome of the research on cognitive sciences. These are not facsimiles of self-awareness, consciousness or sentience, but the true attainment of such qualities within an artificial being. This sentient devices can expand on their own the limits of science and research, identifying by themselves new ways of data processing and deduction of knowledge. Each planet can contain such structures, if properly maintained and assisted by researchers.'''
-
 LRN_XENOARCH
 Xenoarchaeology
 
