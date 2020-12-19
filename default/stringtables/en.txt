@@ -11431,9 +11431,18 @@ PLC_NATIVE_APPROPRIATION
 Native Appropriation
 
 PLC_NATIVE_APPROPRIATION_DESC
-Increasess research on research-focused planets in systems that also contain unowned native-populated planets.
+Increasess [[metertype METER_TARGET_RESEARCH]] on research-focused planets in systems that also contain unowned native-populated planets.
 
 PLC_NATIVE_APPROPRIATION_SHORT_DESC
+Boosts Research
+
+PLC_ALGORITHMIC_RESEARCH
+Algorithmic Research
+
+PLC_ALGORITHMIC_RESEARCH_DESC
+Increases [[metertype METER_TARGET_RESEARCH]] on research-focused planets by [[value LRN_ALGO_RESEARCH_TARGET_RESEARCH_PERCONSTRUCTION]] per the lesser of [[metertype METER_POPULATION]] or [[metertype METER_CONSTRUCTION]].
+
+PLC_ALGORITHMIC_RESEARCH_SHORT_DESC
 Boosts Research
 
 
@@ -11603,9 +11612,7 @@ LRN_ALGO_ELEGANCE
 Algorithmic Elegance
 
 LRN_ALGO_ELEGANCE_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all Research focused planets by [[value LRN_ALGO_ELEGANCE_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
-
-With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity. At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.'''
+'''With greater reliance on data analytics, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity. At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.'''
 
 LRN_TRANSLING_THT
 Translinguistics
