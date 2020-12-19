@@ -2154,8 +2154,7 @@ namespace {
             for (auto& empire_entry : Empires()) {
                 if (empire_entry.second->Eliminated())
                     continue;
-                if (universe.GetObjectVisibilityByEmpire(obj->ID(), empire_entry.first) < Visibility::VIS_FULL_VISIBILITY)
-                    universe.SetEmpireObjectVisibility(empire_entry.first, obj->ID(), Visibility::VIS_FULL_VISIBILITY);
+                universe.SetEmpireObjectVisibility(empire_entry.first, obj->ID(), Visibility::VIS_FULL_VISIBILITY);
                 // specials on objects
                 for (const auto& special_entry : obj->Specials())
                     universe.SetEmpireSpecialVisibility(empire_entry.first, obj->ID(), special_entry.first);
@@ -2208,8 +2207,7 @@ namespace {
                                                Universe::EmpireObjectVisibilityMap& empire_object_visibility)
     {
         // propagate visibility from contained to container objects
-        for (const auto& container_obj : objects.all())
-        {
+        for (const auto& container_obj : objects.all()) {
             if (!container_obj)
                 continue;   // shouldn't be necessary, but I like to be safe...
 
