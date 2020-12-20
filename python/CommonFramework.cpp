@@ -43,6 +43,7 @@ bool PythonBase::Initialize() {
         Py_SetProgramName(m_program_name);
         DebugLogger() << "Python program name set to " << Py_GetProgramFullPath();
 #endif
+
         // allow the "freeorion_logger" C++ module to be imported within Python code
         if (PyImport_AppendInittab("freeorion_logger", &PyInit_freeorion_logger) == -1) {
             ErrorLogger() << "Unable to initialize freeorion_logger import";
@@ -52,6 +53,14 @@ bool PythonBase::Initialize() {
             ErrorLogger() << "Unable to initialize imports";
             return false;
         }
+
+#if defined(MS_WINDOWS)
+        // forces stream encoding to UTF8, which will hopefully fix issues on windows with non-english locale settings
+        const std::string ENCODING{"UTF-8"};    // specifying "C.UTF-8" causes Py_Initialize() call to fail for me -Geoff
+        auto encoding_result = Py_SetStandardStreamEncoding(ENCODING.c_str(), ENCODING.c_str());
+        DebugLogger() << "Python standard stream encoding set to: " << ENCODING << " with result: " << encoding_result;
+#endif
+
         // initializes Python interpreter, allowing Python functions to be called from C++
         Py_Initialize();
         DebugLogger() << "Python initialized";
