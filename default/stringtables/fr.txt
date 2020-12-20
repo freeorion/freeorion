@@ -1220,6 +1220,12 @@ Voies Spatiales Systématiques
 RULE_STARLANES_EVERYWHERE_DESC
 Les Voies spatiales sont générées entre chaque paire de systèmes, indépendamment de toute géométrie. Toutefois, ces Voies peuvent toujours être supprimées durant une partie. Dans ce mode, les Voies ne sont pas affichées sur la carte galactique.
 
+RULE_ALL_OBJECTS_VISIBLE
+Tous les Objets visibles
+
+RULE_ALL_OBJECTS_VISIBLE_DESC
+Tous les systèmes, planètes, structures, flottes, astronefs, et régions interstellaires peuvent être détectés par les empires à au moins un niveau de visibilité partielle.
+
 RULE_HABITABLE_SIZE_TINY
 Zone habitable Minuscules Planètes
 
