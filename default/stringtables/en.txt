@@ -11612,7 +11612,7 @@ LRN_ALGO_ELEGANCE
 Algorithmic Elegance
 
 LRN_ALGO_ELEGANCE_DESC
-'''With greater reliance on data analytics, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity. At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.'''
+With greater reliance on data analytics, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity. At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.
 
 LRN_TRANSLING_THT
 Translinguistics
@@ -16222,6 +16222,12 @@ Homeworld
 
 CAPITAL_LABEL
 Capital
+
+CAPITAL_CONNECTION_LABEL
+Capital Supply Connected
+
+SELF_RELIANCE
+Self-Reliance
 
 BLD_STOCKPILING_CENTER_LABEL
 Imperial Entanglement Center
