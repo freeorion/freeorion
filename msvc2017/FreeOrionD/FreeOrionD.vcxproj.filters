@@ -30,9 +30,6 @@
     <Filter Include="Source Files\server">
       <UniqueIdentifier>{b7b96e1d-6ba0-4b2d-bb2b-9dd040fd6854}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\universe">
-      <UniqueIdentifier>{37e326f0-82d0-41ef-8f37-43edad3c17ad}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\util">
       <UniqueIdentifier>{6b488d5c-6c53-4efb-8316-03dabb85124d}</UniqueIdentifier>
     </Filter>
