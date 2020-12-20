@@ -26,7 +26,7 @@ Species
         [[GOOD_STOCKPILE]]
 
         [[GOOD_POPULATION]]
-        [[AVERAGE_HAPPINESS]]
+        [[INDEPENDENT_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
         [[BAD_OFFENSE_TROOPS]]

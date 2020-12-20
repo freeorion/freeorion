@@ -27,7 +27,7 @@ Species
         [[GOOD_INFLUENCE]]
 
         [[AVERAGE_POPULATION]]
-        [[AVERAGE_HAPPINESS]]
+        [[INDEPENDENT_HAPPINESS]]
         [[VERY_BAD_SUPPLY]]
         [[GREAT_DEFENSE_TROOPS]]
         [[BAD_OFFENSE_TROOPS]]
@@ -41,18 +41,6 @@ Species
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[NARROW_EP]]
         [[STANDARD_SHIP_SHIELDS]]
-
-        // Extra stability if not connected to capital
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Not Unowned
-                Not ResourceSupplyConnected empire = Source.Owner condition = And [ Capital OwnedBy empire = Source.Owner ]
-                Not Capital
-            ]
-            accountinglabel = "SELF_RELIANCE"
-            effects = SetTargetHappiness value = Value + 5
 
         // Extra refueling on gas giants
         EffectsGroup

@@ -16224,7 +16224,10 @@ CAPITAL_LABEL
 Capital
 
 CAPITAL_CONNECTION_LABEL
-Capital Supply Connected
+Good Capital Supply Connection
+
+CAPITAL_POOR_CONNECTION_LABEL
+Weak Capital Supply Connection
 
 SELF_RELIANCE
 Self-Reliance

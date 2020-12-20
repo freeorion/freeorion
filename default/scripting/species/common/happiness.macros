@@ -3,6 +3,17 @@ STABILITY_PER_LIKED_OR_DISLIKED_FOCUS
 
 AVERAGE_HAPPINESS
 '''
+[[COMMON_HAPPINESS_EFFECTS]]
+[[STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY]]
+'''
+
+INDEPENDENT_HAPPINESS
+'''
+[[COMMON_HAPPINESS_EFFECTS]]
+'''
+
+COMMON_HAPPINESS_EFFECTS
+'''
         EffectsGroup    // increase or decrease 1 per turn towards target
             scope = Source
             activation = And [
@@ -14,7 +25,7 @@ AVERAGE_HAPPINESS
                 min(abs(Value(Target.TargetHappiness) - Value), 1) *
                     (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetHappiness))]))
 
-        EffectsGroup
+        EffectsGroup    // more stable on suitable planet for species
             scope = Source
             activation = And [
                 Planet
@@ -26,13 +37,7 @@ AVERAGE_HAPPINESS
                 2*(Statistic If condition = And [Target Planet environment = Adequate]) +
                 4*(Statistic If condition = And [Target Planet environment = Good]))
 
-        EffectsGroup
-            scope = Source
-            activation = Planet
-            accountinglabel = "BASIC_CONTENTEDNESS_LABEL"
-            effects = SetTargetHappiness value = Value + 10   
-
-        EffectsGroup
+        EffectsGroup    // more stable when liked focuses are adopted
             scope = Source
             activation = And [
                 Population low = 0.001
@@ -41,7 +46,7 @@ AVERAGE_HAPPINESS
             accountinglabel = "LIKES_FOCUS_LABEL"
             effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_FOCUS]] * SpeciesContentOpinion species = Target.Species name = Target.Focus
 
-        EffectsGroup
+        EffectsGroup    // less stable when disliked focuses are adopted
             scope = Source
             activation = And [
                 Population low = 0.001
@@ -50,19 +55,19 @@ AVERAGE_HAPPINESS
             accountinglabel = "DISLIKES_FOCUS_LABEL"
             effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_FOCUS]] * SpeciesContentOpinion species = Target.Species name = Target.Focus
 
-        EffectsGroup
+        EffectsGroup    // species on their own homeworld are more stable
             scope = Source
             activation = Homeworld name = Source.Species
             accountinglabel = "HOMEWORLD_BONUS"
             effects = SetTargetHappiness value = Value + 5
 
-        EffectsGroup
+        EffectsGroup    // capital planet is more stable
             scope = Source
             activation = Capital
             accountinglabel = "CAPITAL_LABEL"
-            effects = SetTargetHappiness value = Value + 5
+            effects = SetTargetHappiness value = Value + 10
 
-        EffectsGroup
+        EffectsGroup    // concentration camp nullifies stability
             scope = Source
             activation = Contains Building name = "BLD_CONC_CAMP"
             accountinglabel = "CONCENTRATION_CAMPS_LABEL"
@@ -71,4 +76,66 @@ AVERAGE_HAPPINESS
                     SetHappiness value = 0
                     SetTargetHappiness value = 0
             ]
+'''
+
+STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY
+'''
+        EffectsGroup    // close supply connected to capital planet is more stable
+            scope = Source
+            activation = And [
+                Planet
+                Not Unowned
+                ResourceSupplyConnected empire = Source.Owner condition = And [ Capital OwnedBy empire = Source.Owner ] // this should ensure that there is a capital object owned by this empire for the later Statistic calculation
+                Not Capital
+                (JumpsBetween
+                    object = Source.ID
+                    object = Statistic Min  // "Statistic Min" converts result of applying condition (an object in an object set) to a property of that object (its ID in this case). "Min" statistic is semi-arbitrarily chosen as it will be applied to a set of condition matches that contains just a single object
+                        value = LocalCandidate.ID
+                        condition = And [ Capital OwnedBy empire = Source.Owner ]
+                 < 5
+                )
+                
+            ]
+            accountinglabel = "CAPITAL_CONNECTION_LABEL"
+            effects = SetTargetHappiness value = Value + min(5, 5 - JumpsBetween
+                object = Source.ID
+                object = Statistic Min  // "Statistic Min" converts result of applying condition (an object in an object set) to a property of that object (its ID in this case). "Min" statistic is semi-arbitrarily chosen as it will be applied to a set of condition matches that contains just a single object
+                    value = LocalCandidate.ID
+                    condition = And [ Capital OwnedBy empire = Source.Owner ]
+            )
+
+        EffectsGroup    // far supply connected to capital planet is less
+            scope = Source
+            activation = And [
+                Planet
+                Not Unowned
+                ResourceSupplyConnected empire = Source.Owner condition = And [ Capital OwnedBy empire = Source.Owner ] // this should ensure that there is a capital object owned by this empire for the later Statistic calculation
+                Not Capital
+                (JumpsBetween
+                    object = Source.ID
+                    object = Statistic Min  // "Statistic Min" converts result of applying condition (an object in an object set) to a property of that object (its ID in this case). "Min" statistic is semi-arbitrarily chosen as it will be applied to a set of condition matches that contains just a single object
+                        value = LocalCandidate.ID
+                        condition = And [ Capital OwnedBy empire = Source.Owner ]
+                 > 5
+                )
+                
+            ]
+            accountinglabel = "CAPITAL_POOR_CONNECTION_LABEL"
+            effects = SetTargetHappiness value = Value + max(-5, 5 - JumpsBetween
+                object = Source.ID
+                object = Statistic Min  // "Statistic Min" converts result of applying condition (an object in an object set) to a property of that object (its ID in this case). "Min" statistic is semi-arbitrarily chosen as it will be applied to a set of condition matches that contains just a single object
+                    value = LocalCandidate.ID
+                    condition = And [ Capital OwnedBy empire = Source.Owner ]
+            )
+
+        EffectsGroup    // no connection is much less stable
+            scope = Source
+            activation = And [
+                Planet
+                Not Unowned
+                Not ResourceSupplyConnected empire = Source.Owner condition = And [ Capital OwnedBy empire = Source.Owner ]
+                Not Capital
+            ]
+            accountinglabel = "CAPITAL_DISCONNECTION_LABEL"
+            effects = SetTargetHappiness value = Value - 10
 '''
