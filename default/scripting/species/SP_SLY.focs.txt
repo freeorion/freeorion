@@ -42,6 +42,18 @@ Species
         [[NARROW_EP]]
         [[STANDARD_SHIP_SHIELDS]]
 
+        // Extra stability if not connected to capital
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Unowned
+                Not ResourceSupplyConnected empire = Source.Owner condition = And [ Capital OwnedBy empire = Source.Owner ]
+                Not Capital
+            ]
+            accountinglabel = "SELF_RELIANCE"
+            effects = SetTargetHappiness value = Value + 5
+
         // Extra refueling on gas giants
         EffectsGroup
             description = "GASEOUS_DESC"
