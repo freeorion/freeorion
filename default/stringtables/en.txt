@@ -12043,7 +12043,7 @@ CON_CONTGRAV_ARCH
 Gravitic Architecture
 
 CON_CONTGRAV_ARCH_DESC
-'''Increases the [[metertype METER_SUPPLY]] line range of all colonies and outposts by 1.
+'''Increases the [[metertype METER_SUPPLY]] line range by 1 of colonies set to Logistics focus.
 
 By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
 
