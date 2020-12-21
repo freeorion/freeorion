@@ -18,6 +18,7 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
+                Happiness low = 0
             ]
             activation = Not WithinDistance distance = 200 condition = And [
                 Ship

@@ -17,8 +17,9 @@ BuildingType
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
-                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Happiness low = 0
                 Focus type = "FOCUS_INDUSTRY"
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = And [
                 OwnerHasTech name = "PRO_INDUSTRY_CENTER_I"

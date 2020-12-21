@@ -36,6 +36,7 @@ Species
             scope = And [
                 Source
                 Focus type = "FOCUS_INDUSTRY"
+                Happiness low = 0
                 ContainedBy And [
                     System 
                     Contains And [

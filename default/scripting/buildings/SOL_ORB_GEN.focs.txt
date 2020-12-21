@@ -18,6 +18,7 @@ BuildingType
                 PopulationCenter
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
+                Happiness low = 0
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = Star type = [Blue White]
@@ -32,6 +33,7 @@ BuildingType
                 PopulationCenter
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
+                Happiness low = 0
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = And [
@@ -53,6 +55,7 @@ BuildingType
                 PopulationCenter
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
+                Happiness low = 0
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = And [

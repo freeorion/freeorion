@@ -13,15 +13,14 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Not Population high = 0
-                ContainedBy And [
-                    System 
-                    Contains And [
-                        Planet
-                        Planet type = Asteroids
-                        OwnedBy empire = Source.Owner
-                    ]
-                ]
                 Focus type = "FOCUS_INDUSTRY"
+                Happiness low = 0
+                InSystem
+                ContainedBy Contains And [
+                    Planet
+                    Planet type = Asteroids
+                    OwnedBy empire = Source.Owner
+                ]
             ]
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value

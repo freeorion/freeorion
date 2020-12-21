@@ -13,6 +13,7 @@ Policy
             scope = And [
                 Capital
                 OwnedBy empire = Source.Owner
+                Happiness low = 0
             ]
             effects = [
                 SetTargetIndustry value = Value + Target.Population
