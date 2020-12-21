@@ -99,9 +99,11 @@ BuildingType
                     Object id = Source.PlanetID
                     Planet
                     Species
+                    Capital
                 ]
             ]
             stackinggroup = "IMPERIAL_PALACE_HAPPINESS"
+            accountinglabel = "IMPERIAL_PALACE_SPECIES_HAPPINESS"
             effects = SetTargetHappiness value = Value
                         + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_HAPPINESS_FLAT" value = 5) // min(10, max(0, 10 - Target.DistanceToSource/20))
 
