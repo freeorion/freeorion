@@ -7,13 +7,7 @@ Tech
     researchturns = 7
     tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
     prerequisites = "SHP_INTSTEL_LOG"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            effects = SetMaxSupply value = Value + 1
+    unlock = Item type = Building name = "BLD_REGIONAL_ADMIN"
     graphic = "icons/tech/galactic_infrastructure.png"
 
 #include "/scripting/common/base_prod.macros"

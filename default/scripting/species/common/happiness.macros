@@ -73,8 +73,8 @@ COMMON_HAPPINESS_EFFECTS
             accountinglabel = "CONCENTRATION_CAMPS_LABEL"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [ 
-                    SetHappiness value = 0
-                    SetTargetHappiness value = 0
+                SetHappiness value = 0
+                SetTargetHappiness value = 0
             ]
 '''
 
@@ -85,13 +85,19 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY
             activation = And [
                 Planet
                 Not Unowned
-                ResourceSupplyConnected empire = Source.Owner condition = And [ Capital OwnedBy empire = Source.Owner ] // this should ensure that there is a capital object owned by this empire for the later Statistic calculation
+                ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Or [Capital Building name = "BLD_REGIONAL_ADMIN"]
+                    OwnedBy empire = Source.Owner
+                ] // this should ensure that there is a capital / admin centre object owned by this empire for the later Statistic calculation
                 Not Capital
                 (JumpsBetween
                     object = Source.ID
                     object = Statistic Min  // "Statistic Min" converts result of applying condition (an object in an object set) to a property of that object (its ID in this case). "Min" statistic is semi-arbitrarily chosen as it will be applied to a set of condition matches that contains just a single object
                         value = LocalCandidate.ID
-                        condition = And [ Capital OwnedBy empire = Source.Owner ]
+                        condition = And [
+                            Or [Capital Building name = "BLD_REGIONAL_ADMIN"]
+                            OwnedBy empire = Source.Owner
+                        ]
                  < 5
                 )
                 
@@ -101,7 +107,10 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY
                 object = Source.ID
                 object = Statistic Min  // "Statistic Min" converts result of applying condition (an object in an object set) to a property of that object (its ID in this case). "Min" statistic is semi-arbitrarily chosen as it will be applied to a set of condition matches that contains just a single object
                     value = LocalCandidate.ID
-                    condition = And [ Capital OwnedBy empire = Source.Owner ]
+                    condition = And [
+                        Or [Capital Building name = "BLD_REGIONAL_ADMIN"]
+                        OwnedBy empire = Source.Owner
+                    ]
             )
 
         EffectsGroup    // far supply connected to capital planet is less
@@ -109,13 +118,19 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY
             activation = And [
                 Planet
                 Not Unowned
-                ResourceSupplyConnected empire = Source.Owner condition = And [ Capital OwnedBy empire = Source.Owner ] // this should ensure that there is a capital object owned by this empire for the later Statistic calculation
+                ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Or [Capital Building name = "BLD_REGIONAL_ADMIN"]
+                    OwnedBy empire = Source.Owner
+                ]
                 Not Capital
                 (JumpsBetween
                     object = Source.ID
-                    object = Statistic Min  // "Statistic Min" converts result of applying condition (an object in an object set) to a property of that object (its ID in this case). "Min" statistic is semi-arbitrarily chosen as it will be applied to a set of condition matches that contains just a single object
+                    object = Statistic Min
                         value = LocalCandidate.ID
-                        condition = And [ Capital OwnedBy empire = Source.Owner ]
+                        condition = And [
+                            Or [Capital Building name = "BLD_REGIONAL_ADMIN"]
+                            OwnedBy empire = Source.Owner
+                        ]
                  > 5
                 )
                 
@@ -123,9 +138,12 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY
             accountinglabel = "CAPITAL_POOR_CONNECTION_LABEL"
             effects = SetTargetHappiness value = Value + max(-5, 5 - JumpsBetween
                 object = Source.ID
-                object = Statistic Min  // "Statistic Min" converts result of applying condition (an object in an object set) to a property of that object (its ID in this case). "Min" statistic is semi-arbitrarily chosen as it will be applied to a set of condition matches that contains just a single object
+                object = Statistic Min
                     value = LocalCandidate.ID
-                    condition = And [ Capital OwnedBy empire = Source.Owner ]
+                    condition = And [
+                        Or [Capital Building name = "BLD_REGIONAL_ADMIN"]
+                        OwnedBy empire = Source.Owner
+                    ]
             )
 
         EffectsGroup    // no connection is much less stable
@@ -133,7 +151,10 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY
             activation = And [
                 Planet
                 Not Unowned
-                Not ResourceSupplyConnected empire = Source.Owner condition = And [ Capital OwnedBy empire = Source.Owner ]
+                Not ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Or [Capital Building name = "BLD_REGIONAL_ADMIN"]
+                    OwnedBy empire = Source.Owner
+                ]
                 Not Capital
             ]
             accountinglabel = "CAPITAL_DISCONNECTION_LABEL"

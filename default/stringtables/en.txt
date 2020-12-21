@@ -12053,11 +12053,9 @@ CON_GAL_INFRA
 Galactic Infrastructure
 
 CON_GAL_INFRA_DESC
-'''Increases the [[metertype METER_SUPPLY]] line range of all colonies and outposts by 1.
+'''The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena. By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
 
-The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena. By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
-
-Integration and development of the infrastructures on highly productive worlds into a unified galaxy-spanning network is one of the greatest logistical effort conceivable. When completed, such a system functionally unifies the worlds of which it is composed. Integrated transportation, housing, maintenance, and construction tools may be fluidly deployed wherever needed to optimally alter resource allocations or adjust to changes.'''
+Integration and development of regional administration into a unified galaxy-spanning network is one of the greatest logistical effort conceivable.'''
 
 CON_ART_HEAVENLY
 Artificial Heavenly Bodies
@@ -13389,6 +13387,12 @@ Grants 1 economic policy slot.
 Sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a center of control for the empire's holdings.'''
+
+BLD_REGIONAL_ADMIN
+Imperial Regional Administration
+
+BLD_REGIONAL_ADMIN_DESC
+Acts like an [[buildingtype BLD_IMPERIAL_PALACE]] / imperial capital for purposes of distance-dependent planet stability.
 
 BLD_MILITARY_COMMAND
 Military Command
@@ -16228,6 +16232,9 @@ Good Capital Supply Connection
 
 CAPITAL_POOR_CONNECTION_LABEL
 Weak Capital Supply Connection
+
+IMPERIAL_PALACE_SPECIES_HAPPINESS
+Imperial Capital Species
 
 SELF_RELIANCE
 Self-Reliance
