@@ -8,13 +8,13 @@ STANDARD_METER_GROWTH
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [
-                SetResearch value = Value + min(max(Value(Target.TargetResearch) - Value, -1),
-                                                min(1, Value(Target.Happiness) - 4))
-                SetIndustry value = Value + min(max(Value(Target.TargetIndustry) - Value, -1),
-                                                min(1, Value(Target.Happiness) - 4))
-                SetInfluence value = Value + min(max(Value(Target.TargetInfluence) - Value, -1),
+                SetResearch value = Value + min(max(Value(Target.TargetResearch) - Value, -1.0),
+                                                min(1.0, max(0.0, Value(Target.Happiness) / 5.0)))
+                SetIndustry value = Value + min(max(Value(Target.TargetIndustry) - Value, -1.0),
+                                                min(1.0, max(0.0, Value(Target.Happiness) / 5.0)))
+                SetInfluence value = Value + min(max(Value(Target.TargetInfluence) - Value, -1.0),
                                                  max(sign(Value(Target.TargetInfluence) - Value),
-                                                     min(1, Value(Target.Happiness) - 4)))
+                                                     min(1.0, max(0.0, Value(Target.Happiness) / 5.0))))
             ]
 
         // increase or decrease towards target meter of ships
