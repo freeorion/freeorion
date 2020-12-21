@@ -3,7 +3,7 @@ Policy
     description = "PLC_CONTINUOUS_SCANNING_DESC"
     short_description = "PLC_CONTINUOUS_SCANNING_SHORT_DESC"
     category = "MILITARY_CATEGORY"
-    adoptioncost = 5 + Statistic Count condition = And [Ship OwnedBy empire = Source.Owner]
+    adoptioncost = 5 + floor(Statistic Count condition = And [Ship OwnedBy empire = Source.Owner])
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
