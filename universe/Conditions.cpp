@@ -7447,7 +7447,7 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
                           SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
 {
     bool simple_eval_safe = m_distance->LocalCandidateInvariant() &&
-                   	        (parent_context.condition_root_candidate || RootCandidateInvariant());
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate contained objects and distance once and check for all candidates
         TraceLogger(conditions) << "WithinDistance::Eval simple case";

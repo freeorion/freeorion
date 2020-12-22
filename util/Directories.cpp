@@ -236,7 +236,7 @@ void InitBinDir(std::string const& argv0)
             strncpy(buf, argpath.c_str(), sizeof(buf));
 #endif
 #if defined(FREEORION_HAIKU)
-	problem = (B_OK != find_path(B_APP_IMAGE_SYMBOL, B_FIND_PATH_IMAGE_PATH, NULL, buf, sizeof(buf)));
+        problem = (B_OK != find_path(B_APP_IMAGE_SYMBOL, B_FIND_PATH_IMAGE_PATH, NULL, buf, sizeof(buf)));
 #endif
 
         if (!problem) {
