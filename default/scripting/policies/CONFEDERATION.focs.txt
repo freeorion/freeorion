@@ -33,12 +33,12 @@ Policy
                 SetMaxTroops value = Value
                     + (NamedReal name = "PLC_CONFEDERATION_MAX_TROOPS_FLAT" value = 5)
             ]
-            
+
         // compensates for supply disconnection stability penalty
-        EffectsGroup    
+        EffectsGroup
             scope = And [
                 Planet
-                Not Unowned
+                OwnedBy empire = Source.Owner
                 Not ResourceSupplyConnected empire = Source.Owner condition = And [
                     Or [Capital Building name = "BLD_REGIONAL_ADMIN"]
                     OwnedBy empire = Source.Owner
