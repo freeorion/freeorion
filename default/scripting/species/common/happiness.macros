@@ -158,5 +158,5 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY
                 Not Capital
             ]
             accountinglabel = "CAPITAL_DISCONNECTION_LABEL"
-            effects = SetTargetHappiness value = Value - 10
+            effects = SetTargetHappiness value = Value - (NamedReal name = "DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY" value = 10)
 '''
