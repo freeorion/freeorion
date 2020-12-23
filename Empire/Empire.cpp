@@ -1029,7 +1029,6 @@ void Empire::SetAutoTurn(int turns_count) {
     m_auto_turn_count = turns_count;
 }
 
-
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects, const ObjectMap& objects) {
     //std::cout << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name() << std::endl;
     m_supply_system_ranges.clear();
@@ -2667,9 +2666,8 @@ void Empire::UpdateOwnedObjectCounters(const ObjectMap& objects) {
     for (const auto& elem : m_production_queue) {
         ProductionQueue::ProductionItem item = elem.item;
 
-        if ((item.build_type == BuildType::BT_SHIP) && (elem.progress > 0.0f)) {
+        if ((item.build_type == BuildType::BT_SHIP) && (elem.progress > 0.0f))
             m_ship_designs_in_production[item.design_id] += elem.blocksize;
-        }
     }
 
     // update ship part counts
