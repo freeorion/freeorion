@@ -80,9 +80,9 @@ GOOD_WEAPONS
                 ]
             ]
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 1)
-                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 1)
-                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 1)
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 1.5)
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 1.5)
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 1.5)
             ]
 
         EffectsGroup
@@ -129,9 +129,9 @@ GREAT_WEAPONS
                 ]
             ]
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 2)
-                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 2)
-                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 2)
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 3)
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 3)
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 3)
             ]
 
         EffectsGroup
@@ -178,9 +178,9 @@ ULTIMATE_WEAPONS
                 ]
             ]
             effects = [
-                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 3)
-                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 3)
-                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 3)
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 4.5)
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 4.5)
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + ([[FIGHTER_DAMAGE_FACTOR]] * 4.5)
             ]
 
         EffectsGroup
