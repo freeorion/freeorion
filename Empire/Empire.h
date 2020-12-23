@@ -10,23 +10,15 @@
 #include "ResourcePool.h"
 #include "../universe/EnumsFwd.h"
 #include "../universe/Meter.h"
+#include "../util/AppInterface.h"
 #include "../util/Export.h"
 
 
 struct UnlockableItem;
-class Building;
-class Planet;
-class Ship;
 class ShipDesign;
 class SitRepEntry;
 class ResourcePool;
-class UniverseObject;
-class ObjectMap;
-ObjectMap& Objects();
-class Universe;
-Universe& GetUniverse();
-class EmpireManager;
-EmpireManager& Empires();
+
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 FO_COMMON_API extern const int INVALID_GAME_TURN;
 FO_COMMON_API extern const int INVALID_OBJECT_ID;

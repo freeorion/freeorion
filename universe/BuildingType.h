@@ -3,6 +3,7 @@
 
 
 #include "CommonParams.h"
+#include "../util/AppInterface.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
@@ -19,10 +20,6 @@ namespace ValueRef {
     struct ValueRef;
 }
 
-class ObjectMap;
-ObjectMap& Objects();
-class EmpireManager;
-EmpireManager& Empires();
 
 //! Possible results of a Building being captured by other empires, or an
 //! Planet containing the Building being captured.

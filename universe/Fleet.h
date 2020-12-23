@@ -3,12 +3,10 @@
 
 #include "ObjectMap.h"
 #include "UniverseObject.h"
+#include "../util/AppInterface.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
 
-class EmpireManager;
-EmpireManager& Empires();
-ObjectMap& Objects();
 
 ////////////////////////////////////////////////
 // MovePathNode
