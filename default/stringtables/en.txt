@@ -11424,7 +11424,7 @@ Divine Authority
 PLC_DIVINE_AUTHORITY_DESC
 '''Increases [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_DIVINE_AUTHORITY_TARGET_HAPPINESS_FLAT]] and [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_DIVINE_AUTHORITY_TARGET_INFLUENCE_FLAT]], but reduces [[metertype METER_TARGET_RESEARCH]] ([[value PLC_DIVINE_AUTHORITY_TARGET_RESEARCH_FLAT]]).
 
-The empire is governed by a teocracy which claims to hold the Gods authority. They deem themselves omnipotent and infallible, and inspire their people with the belief that they are the chosen people. Religious extremism is promoted between the population, boosting confidence of the people in their government's choices and making it easier to manage the populations, but critical thinking and science in general is hampered.'''
+The empire is ruled by a theocracy which claims deific authority. They assert omnipotence and infallibility, and inspire the empire with the belief that they are the chosen people. Religious extremism is promoted in the population, boosting confidence in government decree and stabilizing society, but critical thinking and evidence-based science is hampered.'''
 
 PLC_DIVINE_AUTHORITY_SHORT_DESC
 Boosts stability and influence, but impairs research
