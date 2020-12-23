@@ -25,6 +25,6 @@ Policy
                 + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_INFLUENCE_FLAT" value = 1)
         ]
     ]
-    graphic = "icons/policies/confederation.png"
+    graphic = "icons/policies/divine_authority.png"
 
 #include "/scripting/policies/policies.macros"
