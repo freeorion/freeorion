@@ -45,9 +45,12 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 option(BUILD_SHARED_LIBS "Build project as shared libraries." ON)
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_CLIENT_GG "Build GiGi client" ON)
+option(BUILD_CLIENT_GODOT "Build Godot client (experimental)" OFF)
 option(BUILD_SERVER "Build server" ON)
 option(BUILD_AI "Build AI" ON)
 option(BUILD_PARSERS "Build parsers" ON)
+
+set(GODOT_CPP_ROOT "" CACHE STRING "Path to Godot CPP libraries (empty to build internally)" FORCE)
 
 if(BUILD_TESTING)
     message( STATUS "Building Tests")
@@ -646,6 +649,82 @@ if(BUILD_CLIENT_GG)
     target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
 endif()
 
+if(BUILD_CLIENT_GODOT)
+    add_library(freeoriongodot SHARED "")
+
+    if(NOT GODOT_CPP_ROOT)
+        set(GODOT_CPP_ROOT_BUILT "${CMAKE_BINARY_DIR}/godot-cpp")
+
+        if(CMAKE_BUILD_TYPE MATCHES Debug)
+            set(GODOT_CPP_BUILD_TYPE Debug)
+        else()
+            set(GODOT_CPP_BUILD_TYPE Release)
+        endif()
+
+        include(ExternalProject)
+        ExternalProject_Add(godotcpp
+            GIT_REPOSITORY https://github.com/godotengine/godot-cpp
+            GIT_TAG 55c0a2ea03369efefa0f795bdc7f81fbd4568a47
+            SOURCE_DIR ${CMAKE_BINARY_DIR}/godot-cpp
+            BINARY_DIR ${CMAKE_BINARY_DIR}/godot-cpp-build
+            CMAKE_ARGS -D CMAKE_BUILD_TYPE=${GODOT_CPP_BUILD_TYPE}
+            INSTALL_COMMAND ""
+        )
+
+        add_dependencies(freeoriongodot godotcpp)
+    else()
+        set(GODOT_CPP_ROOT_BUILT "${GODOT_CPP_ROOT}")
+    endif()
+    message(STATUS "Godot C++ root ${GODOT_CPP_ROOT_BUILT}")
+
+    # ToDo: remove after fix Godot headers https://github.com/godotengine/godot_headers/pull/81
+    set_target_properties(freeoriongodot PROPERTIES CXX_VISIBILITY_PRESET default)
+
+    target_compile_definitions(freeoriongodot
+        PRIVATE
+            -DFREEORION_BUILD_HUMAN_GODOT
+    )
+
+    target_include_directories(freeoriongodot SYSTEM
+        PRIVATE
+            ${GODOT_CPP_ROOT_BUILT}/include
+            ${GODOT_CPP_ROOT_BUILT}/include/core
+            ${GODOT_CPP_ROOT_BUILT}/include/gen
+            ${GODOT_CPP_ROOT_BUILT}/godot-headers
+    )
+
+    # Create the correct name (godot.os.build_type.system_bits)
+    # Synchronized with godot-cpp's CMakeLists.txt
+
+    set(BITS 32)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(BITS 64)
+    endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+    string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME)
+    string(TOLOWER ${GODOT_CPP_BUILD_TYPE} BUILD_TYPE)
+    if(CMAKE_VERSION VERSION_GREATER "3.13")
+        target_link_directories(freeoriongodot
+            PRIVATE
+                ${GODOT_CPP_ROOT_BUILT}/bin/
+        )
+        target_link_libraries(freeoriongodot
+            godot-cpp.${SYSTEM_NAME}.${BUILD_TYPE}.${BITS}
+        )
+    else()
+        target_link_libraries(freeoriongodot
+            ${GODOT_CPP_ROOT_BUILT}/bin/libgodot-cpp.${SYSTEM_NAME}.${BUILD_TYPE}.${BITS}.a
+        )
+    endif()
+
+    target_link_libraries(freeoriongodot
+        freeorioncommon
+        freeorionparse
+    )
+
+    target_dependencies_copy_to_build(freeoriongodot)
+endif()
+
 if(WIN32 AND BUILD_CLIENT_GG)
     add_custom_command(TARGET freeorion POST_BUILD
         COMMAND
@@ -705,11 +784,24 @@ if(APPLE AND BUILD_CLIENT_GG)
 endif()
 
 
+if(BUILD_CLIENT_GODOT)
+    add_custom_command(TARGET freeoriongodot POST_BUILD
+        COMMAND
+           ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorioncommon>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionparse>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriongodot>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
+    )
+endif()
+
 ##
 ## Recurse into sources.
 ##
 
-if(BUILD_AI OR BUILD_CLIENT_GG)
+if(BUILD_AI OR BUILD_CLIENT_GG OR BUILD_CLIENT_GODOT)
     add_subdirectory(client)
 endif()
 add_subdirectory(combat)
