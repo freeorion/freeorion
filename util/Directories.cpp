@@ -734,3 +734,25 @@ auto IsExistingFile(const fs::path& path) -> bool
 
     return false;
 }
+
+auto ReadFile(boost::filesystem::path const& path, std::string& file_contents) -> bool
+{
+    boost::filesystem::ifstream ifs(path);
+    if (!ifs)
+        return false;
+
+    // skip byte order mark (BOM)
+    for (int BOM : {0xEF, 0xBB, 0xBF}) {
+        if (BOM != ifs.get()) {
+            // no header set stream back to start of file
+            ifs.seekg(0, std::ios::beg);
+            // and continue
+            break;
+        }
+    }
+
+    std::getline(ifs, file_contents, '\0');
+
+    // no problems?
+    return true;
+}
