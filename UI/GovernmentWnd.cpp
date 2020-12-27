@@ -16,7 +16,7 @@
 #include "../util/ScopedTimer.h"
 #include "../Empire/Empire.h"
 #include "../Empire/Government.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -136,7 +136,7 @@ namespace {
         if (!policy)
             return boost::none;
 
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->PolicyAvailable(policy->Name()) : false;
         bool prereqs_exclusions_ok = empire ? empire->PolicyPrereqsAndExclusionsOK(policy->Name()) : false;
@@ -167,7 +167,7 @@ namespace {
     //    PolicyBroseWnd    //
     //////////////////////////
     std::shared_ptr<GG::BrowseInfoWnd> PolicyBroseWnd(const std::string& policy_name) {
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
         const Empire* empire = GetEmpire(empire_id);
         const Policy* policy = GetPolicy(policy_name);
         if (!policy)
@@ -455,7 +455,7 @@ void PoliciesListBox::Populate() {
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
     const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
 
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);  // may be nullptr
 
     m_empire_policies_changed_signal_connection.disconnect();
@@ -950,7 +950,7 @@ void PolicySlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptab
     if (std::distance(first, last) != 1)
         return;
 
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);  // may be nullptr
     if (!empire)
         return;
@@ -1232,7 +1232,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy specified nonexistant slot";
         return;
     }
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     Empire* empire = GetEmpire(empire_id);  // may be nullptr
     if (!empire) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy has no empire to set policies for";
@@ -1254,7 +1254,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     // issue order to adopt or revoke
     auto order = std::make_shared<PolicyOrder>(empire_id, oder_policy_name,
                                                category_name, adopt, order_slot);
-    HumanClientApp::GetApp()->Orders().IssueOrder(std::move(order));
+    GGHumanClientApp::GetApp()->Orders().IssueOrder(std::move(order));
 
     // update UI after policy changes
     empire->UpdateInfluenceSpending();
@@ -1288,7 +1288,7 @@ bool GovernmentWnd::MainPanel::AddPolicyEmptySlot(const Policy* policy, int slot
 int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const {
     if (!policy)
         return -1;
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);
 
     // reject unavailable and already-adopted policies
@@ -1331,7 +1331,7 @@ void GovernmentWnd::MainPanel::Populate() {
     m_slots.clear();
 
     // loop over policy slots the empire's government has, add slot controls
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);  // may be nullptr
     if (!empire)
         return;

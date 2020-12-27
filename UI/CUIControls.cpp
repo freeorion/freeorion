@@ -6,7 +6,7 @@
 #include "IconTextBrowseWnd.h"
 #include "Sound.h"
 #include "Hotkeys.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"

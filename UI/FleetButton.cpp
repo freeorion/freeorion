@@ -8,7 +8,7 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/System.h"
@@ -237,7 +237,7 @@ void FleetButton::Refresh(SizeType size_type) {
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // Scanlines for not currently-visible objects?
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("ui.map.scanlines.shown")) {
         DetachChild(m_scanline_control);
         m_scanline_control.reset();
@@ -336,7 +336,7 @@ void FleetButton::LayoutIcons() {
                 continue;
 
             if (auto target_system = Objects().get<System>(target_system_id.first).get()) {
-                available_exits += "\n" + target_system->ApparentName(HumanClientApp::GetApp()->EmpireID());
+                available_exits += "\n" + target_system->ApparentName(GGHumanClientApp::GetApp()->EmpireID());
                 available_exits_count++;
             }
         }

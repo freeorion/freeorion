@@ -1,6 +1,6 @@
 #include "IntroScreen.h"
 
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 
 #include "About.h"
 #include "ClientUI.h"
@@ -302,7 +302,7 @@ void IntroScreen::CompleteConstruction() {
         needed_height = std::max(needed_height, b->MinUsableSize().y);
     }
     int PAD = Value(needed_width) / 16;
-    bool have_load = HumanClientApp::GetApp()->IsLoadGameAvailable();
+    bool have_load = GGHumanClientApp::GetApp()->IsLoadGameAvailable();
 
     //Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
     //       unsigned int border_margin = 0, unsigned int cell_margin = INVALID_CELL_MARGIN);
@@ -339,23 +339,23 @@ IntroScreen::~IntroScreen()
 {}
 
 void IntroScreen::OnContinue() {
-    HumanClientApp::GetApp()->ContinueSinglePlayerGame();
+    GGHumanClientApp::GetApp()->ContinueSinglePlayerGame();
 }
 
 void IntroScreen::OnSinglePlayer() {
-    HumanClientApp::GetApp()->NewSinglePlayerGame();
+    GGHumanClientApp::GetApp()->NewSinglePlayerGame();
 }
 
 void IntroScreen::OnQuickStart() {
-    HumanClientApp::GetApp()->NewSinglePlayerGame(true);
+    GGHumanClientApp::GetApp()->NewSinglePlayerGame(true);
 }
 
 void IntroScreen::OnMultiPlayer() {
-    HumanClientApp::GetApp()->MultiPlayerGame();
+    GGHumanClientApp::GetApp()->MultiPlayerGame();
 }
 
 void IntroScreen::OnLoadGame() {
-    HumanClientApp::GetApp()->LoadSinglePlayerGame();
+    GGHumanClientApp::GetApp()->LoadSinglePlayerGame();
 }
 
 void IntroScreen::OnOptions() {
@@ -384,7 +384,7 @@ void IntroScreen::OnAbout() {
 }
 
 void IntroScreen::OnWebsite()
-{ HumanClientApp::GetApp()->OpenURL("http://freeorion.org"); }
+{ GGHumanClientApp::GetApp()->OpenURL("http://freeorion.org"); }
 
 void IntroScreen::OnCredits() {
     // only the area between the upper and lower line of the splash screen should be darkend

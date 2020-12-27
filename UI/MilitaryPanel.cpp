@@ -7,7 +7,7 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/Planet.h"
 #include "../universe/Enums.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "MeterBrowseWnd.h"

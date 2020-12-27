@@ -1,7 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-#include "HumanClientApp.h"
+#include "GGHumanClientApp.h"
 
 #include "HumanClientFSM.h"
 #include "../../UI/ChatWnd.h"
@@ -188,9 +188,9 @@ namespace {
     }
 }
 
-void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
-    const int max_width_plus_one = HumanClientApp::MaximumPossibleWidth() + 1;
-    const int max_height_plus_one = HumanClientApp::MaximumPossibleHeight() + 1;
+void GGHumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
+    const int max_width_plus_one = GGHumanClientApp::MaximumPossibleWidth() + 1;
+    const int max_height_plus_one = GGHumanClientApp::MaximumPossibleHeight() + 1;
 
     db.Add("video.fullscreen.width", UserStringNop("OPTIONS_DB_APP_WIDTH"),             DEFAULT_WIDTH,  RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
     db.Add("video.fullscreen.height", UserStringNop("OPTIONS_DB_APP_HEIGHT"),           DEFAULT_HEIGHT, RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
@@ -200,13 +200,13 @@ void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
     db.Add("video.windowed.top", UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),          DEFAULT_TOP,    RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
 }
 
-std::string HumanClientApp::EncodeServerAddressOption(const std::string& server) {
+std::string GGHumanClientApp::EncodeServerAddressOption(const std::string& server) {
     std::string server_encoded = boost::replace_all_copy(server, ".", "_");
     boost::replace_all(server_encoded, ":", "_");
     return "network.known-servers._" + server_encoded;
 }
 
-HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, std::string name,
+GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, std::string name,
                                int x, int y, bool fullscreen, bool fake_mode_change) :
     ClientApp(),
     SDLGUI(width, height, calculate_fps, std::move(name), x, y, fullscreen, fake_mode_change)
@@ -298,9 +298,9 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, std::s
     EnableFPS();
     UpdateFPSLimit();
     GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
-        boost::bind(&HumanClientApp::UpdateFPSLimit, this));
+        boost::bind(&GGHumanClientApp::UpdateFPSLimit, this));
     GetOptionsDB().OptionChangedSignal("video.fps.max").connect(
-        boost::bind(&HumanClientApp::UpdateFPSLimit, this));
+        boost::bind(&GGHumanClientApp::UpdateFPSLimit, this));
 
     auto default_browse_info_wnd{
         GG::Wnd::Create<GG::TextBoxBrowseInfoWnd>(
@@ -322,11 +322,11 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, std::s
 
     namespace ph = boost::placeholders;
 
-    WindowResizedSignal.connect(boost::bind(&HumanClientApp::HandleWindowResize,this, ph::_1, ph::_2));
-    FocusChangedSignal.connect( boost::bind(&HumanClientApp::HandleFocusChange, this, ph::_1));
-    WindowMovedSignal.connect(  boost::bind(&HumanClientApp::HandleWindowMove,  this, ph::_1, ph::_2));
-    WindowClosingSignal.connect(boost::bind(&HumanClientApp::HandleAppQuitting, this));
-    AppQuittingSignal.connect(  boost::bind(&HumanClientApp::HandleAppQuitting, this));
+    WindowResizedSignal.connect(boost::bind(&GGHumanClientApp::HandleWindowResize,this, ph::_1, ph::_2));
+    FocusChangedSignal.connect( boost::bind(&GGHumanClientApp::HandleFocusChange, this, ph::_1));
+    WindowMovedSignal.connect(  boost::bind(&GGHumanClientApp::HandleWindowMove,  this, ph::_1, ph::_2));
+    WindowClosingSignal.connect(boost::bind(&GGHumanClientApp::HandleAppQuitting, this));
+    AppQuittingSignal.connect(  boost::bind(&GGHumanClientApp::HandleAppQuitting, this));
 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
@@ -353,33 +353,33 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, std::s
     // Start parsing content
     StartBackgroundParsing();
     GetOptionsDB().OptionChangedSignal("resource.path").connect(
-        boost::bind(&HumanClientApp::HandleResoureDirChange, this));
+        boost::bind(&GGHumanClientApp::HandleResoureDirChange, this));
 }
 
-void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
+void GGHumanClientApp::ConnectKeyboardAcceleratorSignals() {
     // Add global hotkeys
     HotkeyManager *hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(boost::bind(&HumanClientApp::HandleHotkeyExitApp, this), "exit",
+    hkm->Connect(boost::bind(&GGHumanClientApp::HandleHotkeyExitApp, this), "exit",
                  NoModalWndsOpenCondition);
-    hkm->Connect(boost::bind(&HumanClientApp::HandleHotkeyResetGame, this), "quit",
+    hkm->Connect(boost::bind(&GGHumanClientApp::HandleHotkeyResetGame, this), "quit",
                  NoModalWndsOpenCondition);
-    hkm->Connect(boost::bind(&HumanClientApp::ToggleFullscreen, this), "video.fullscreen",
+    hkm->Connect(boost::bind(&GGHumanClientApp::ToggleFullscreen, this), "video.fullscreen",
                  NoModalWndsOpenCondition);
 
     hkm->RebuildShortcuts();
 }
 
-HumanClientApp::~HumanClientApp() {
+GGHumanClientApp::~GGHumanClientApp() {
     m_networking->DisconnectFromServer();
     m_server_process.RequestTermination();
-    DebugLogger() << "HumanClientApp exited cleanly.";
+    DebugLogger() << "GGHumanClientApp exited cleanly.";
 }
 
-bool HumanClientApp::SinglePlayerGame() const
+bool GGHumanClientApp::SinglePlayerGame() const
 { return m_single_player_game; }
 
-bool HumanClientApp::CanSaveNow() const {
+bool GGHumanClientApp::CanSaveNow() const {
     // only host can save in multiplayer
     if (!SinglePlayerGame() && !Networking().PlayerIsHost(PlayerID()))
         return false;
@@ -397,7 +397,7 @@ bool HumanClientApp::CanSaveNow() const {
     return true;
 }
 
-void HumanClientApp::SetSinglePlayerGame(bool sp/* = true*/)
+void GGHumanClientApp::SetSinglePlayerGame(bool sp/* = true*/)
 { m_single_player_game = sp; }
 
 namespace {
@@ -430,14 +430,14 @@ namespace {
     }
 }
 
-void HumanClientApp::StartServer() {
+void GGHumanClientApp::StartServer() {
     if (m_networking->PingLocalHostServer(std::chrono::milliseconds(100))) {
         ErrorLogger() << "Can't start local server because a server is already connecting at 127.0.0.0.";
         throw LocalServerAlreadyRunningException();
     }
 
     std::string SERVER_CLIENT_EXE = ServerClientExe();
-    DebugLogger() << "HumanClientApp::StartServer: " << SERVER_CLIENT_EXE;
+    DebugLogger() << "GGHumanClientApp::StartServer: " << SERVER_CLIENT_EXE;
 
 #ifdef FREEORION_MACOSX
     // On OSX set environment variable DYLD_LIBRARY_PATH to python framework folder
@@ -484,15 +484,15 @@ void HumanClientApp::StartServer() {
     DebugLogger() << "... finished launching server process.";
 }
 
-void HumanClientApp::FreeServer() {
+void GGHumanClientApp::FreeServer() {
     m_server_process.Free();
     m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
 }
 
-void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
-    TraceLogger() << "HumanClientApp::NewSinglePlayerGame start";
+void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
+    TraceLogger() << "GGHumanClientApp::NewSinglePlayerGame start";
     ClearPreviousPendingSaves(m_game_saves_in_progress);
 
     if (!GetOptionsDB().Get<bool>("network.server.external.force")) {
@@ -503,7 +503,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
             ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
             return;
         } catch (const std::runtime_error& err) {
-            ErrorLogger() << "HumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
+            ErrorLogger() << "GGHumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
             ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
             return;
         }
@@ -533,7 +533,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     }
 
     if (!(quickstart || ended_with_ok)) {
-        ErrorLogger() << "HumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
+        ErrorLogger() << "GGHumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
         ResetToIntro(true);
     }
 
@@ -615,14 +615,14 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     TraceLogger() << "Sending host SP setup message";
     m_networking->SendMessage(HostSPGameMessage(setup_data));
     m_fsm->process_event(HostSPGameRequested());
-    TraceLogger() << "HumanClientApp::NewSinglePlayerGame done";
+    TraceLogger() << "GGHumanClientApp::NewSinglePlayerGame done";
 }
 
-void HumanClientApp::MultiPlayerGame() {
+void GGHumanClientApp::MultiPlayerGame() {
     ClearPreviousPendingSaves(m_game_saves_in_progress);
 
     if (m_networking->IsConnected()) {
-        ErrorLogger() << "HumanClientApp::MultiPlayerGame aborting because already connected to a server";
+        ErrorLogger() << "GGHumanClientApp::MultiPlayerGame aborting because already connected to a server";
         return;
     }
 
@@ -689,13 +689,13 @@ void HumanClientApp::MultiPlayerGame() {
     }
 }
 
-void HumanClientApp::StartMultiPlayerGameFromLobby()
+void GGHumanClientApp::StartMultiPlayerGameFromLobby()
 { m_fsm->process_event(StartMPGameClicked()); }
 
-void HumanClientApp::CancelMultiplayerGameFromLobby()
+void GGHumanClientApp::CancelMultiplayerGameFromLobby()
 { m_fsm->process_event(CancelMPGameClicked()); }
 
-void HumanClientApp::SaveGame(const std::string& filename) {
+void GGHumanClientApp::SaveGame(const std::string& filename) {
     m_game_saves_in_progress.push(filename);
 
     // Start a save if there is not one in progress
@@ -708,7 +708,7 @@ void HumanClientApp::SaveGame(const std::string& filename) {
     DebugLogger() << "Sent save initiate message to server.";
 }
 
-void HumanClientApp::SaveGameCompleted() {
+void GGHumanClientApp::SaveGameCompleted() {
     if (!m_game_saves_in_progress.empty())
         m_game_saves_in_progress.pop();
 
@@ -723,12 +723,12 @@ void HumanClientApp::SaveGameCompleted() {
     }
 }
 
-void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
-    DebugLogger() << "HumanClientApp::LoadSinglePlayerGame";
+void GGHumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
+    DebugLogger() << "GGHumanClientApp::LoadSinglePlayerGame";
 
     if (!filename.empty()) {
         if (!exists(FilenameToPath(filename))) {
-            std::string msg = "HumanClientApp::LoadSinglePlayerGame() given a nonexistent file \""
+            std::string msg = "GGHumanClientApp::LoadSinglePlayerGame() given a nonexistent file \""
                             + filename + "\" to load; aborting.";
             DebugLogger() << msg;
             std::cerr << msg << '\n';
@@ -749,7 +749,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     }
 
     if (filename.empty()) {
-        DebugLogger() << "HumanClientApp::LoadSinglePlayerGame has empty filename. Aborting load.";
+        DebugLogger() << "GGHumanClientApp::LoadSinglePlayerGame has empty filename. Aborting load.";
         return;
     }
 
@@ -759,7 +759,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         // delay to make sure old game is fully cleaned up before attempting to start a new one
         std::this_thread::sleep_for(std::chrono::seconds(3));
     } else {
-        DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
+        DebugLogger() << "GGHumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
     }
 
     if (!GetOptionsDB().Get<bool>("network.server.external.force")) {
@@ -770,15 +770,15 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
             ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
             return;
         } catch (const std::runtime_error& err) {
-            ErrorLogger() << "HumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
+            ErrorLogger() << "GGHumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
             ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
             return;
         }
     } else {
-        DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() assuming external server will be available";
+        DebugLogger() << "GGHumanClientApp::LoadSinglePlayerGame() assuming external server will be available";
     }
 
-    DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Connecting to server";
+    DebugLogger() << "GGHumanClientApp::LoadSinglePlayerGame() Connecting to server";
     m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
         ResetToIntro(true);
@@ -801,13 +801,13 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     m_fsm->process_event(HostSPGameRequested());
 }
 
-void HumanClientApp::RequestSavePreviews(const std::string& relative_directory) {
-    TraceLogger() << "HumanClientApp::RequestSavePreviews directory: " << relative_directory
+void GGHumanClientApp::RequestSavePreviews(const std::string& relative_directory) {
+    TraceLogger() << "GGHumanClientApp::RequestSavePreviews directory: " << relative_directory
                   << " valid UTF-8: " << utf8::is_valid(relative_directory.begin(), relative_directory.end());
 
     std::string generic_directory = relative_directory;
     if (!m_networking->IsConnected()) {
-        DebugLogger() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
+        DebugLogger() << "GGHumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
 
         m_single_player_game = true;
         try {
@@ -816,12 +816,12 @@ void HumanClientApp::RequestSavePreviews(const std::string& relative_directory) 
             ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
             return;
         } catch (const std::runtime_error& err) {
-            ErrorLogger() << "HumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
+            ErrorLogger() << "GGHumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
             ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
             return;
         }
 
-        DebugLogger() << "HumanClientApp::RequestSavePreviews Connecting to server";
+        DebugLogger() << "GGHumanClientApp::RequestSavePreviews Connecting to server";
         m_connected = m_networking->ConnectToLocalHostServer();
         if (!m_connected) {
             ResetToIntro(true);
@@ -833,11 +833,11 @@ void HumanClientApp::RequestSavePreviews(const std::string& relative_directory) 
         // because there is no host client for this temporary server.
         SendLoggingConfigToServer();
     }
-    DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
+    DebugLogger() << "GGHumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
     m_networking->SendMessage(RequestSavePreviewsMessage(std::move(generic_directory)));
 }
 
-std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
+std::pair<int, int> GGHumanClientApp::GetWindowLeftTop() {
     int left(0), top(0);
 
     left = GetOptionsDB().Get<int>("video.windowed.left");
@@ -854,7 +854,7 @@ std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
     return {left, top};
 }
 
-std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
+std::pair<int, int> GGHumanClientApp::GetWindowWidthHeight() {
     int width(800), height(600);
 
     bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
@@ -879,7 +879,7 @@ std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
     return {Value(default_resolution.x), Value(default_resolution.y)};
 }
 
-void HumanClientApp::Reinitialize() {
+void GGHumanClientApp::Reinitialize() {
     bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
     bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");
     std::pair<int, int> size = GetWindowWidthHeight();
@@ -910,11 +910,11 @@ void HumanClientApp::Reinitialize() {
     }
 }
 
-float HumanClientApp::GLVersion() const
+float GGHumanClientApp::GLVersion() const
 { return GetGLVersion(); }
 
-void HumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
-    DebugLogger() << "HumanClientApp::StartTurn";
+void GGHumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
+    DebugLogger() << "GGHumanClientApp::StartTurn";
 
     if (const Empire* empire = GetEmpire(EmpireID())) {
         double RP = empire->ResourceOutput(ResourceType::RE_RESEARCH);
@@ -939,17 +939,17 @@ void HumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
     m_fsm->process_event(TurnEnded());
 }
 
-void HumanClientApp::UnreadyTurn()
+void GGHumanClientApp::UnreadyTurn()
 { m_networking->SendMessage(UnreadyMessage()); }
 
-void HumanClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
+void GGHumanClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
     ClientApp::HandleTurnPhaseUpdate(phase_id);
 
     // Pass updates to message window.
     GetClientUI().GetMessageWnd()->HandleTurnPhaseUpdate(phase_id);
 }
 
-boost::intrusive_ptr<const boost::statechart::event_base> HumanClientApp::GetDeferredPostedEvent() {
+boost::intrusive_ptr<const boost::statechart::event_base> GGHumanClientApp::GetDeferredPostedEvent() {
     boost::mutex::scoped_lock lock(m_event_queue_guard);
     if (m_posted_event_queue.empty())
         return nullptr;
@@ -958,14 +958,14 @@ boost::intrusive_ptr<const boost::statechart::event_base> HumanClientApp::GetDef
     return retval;
 }
 
-void HumanClientApp::PostDeferredEvent(
+void GGHumanClientApp::PostDeferredEvent(
     boost::intrusive_ptr<const boost::statechart::event_base> event)
 {
     boost::mutex::scoped_lock lock(m_event_queue_guard);
     m_posted_event_queue.push_back(std::move(event));
 }
 
-void HumanClientApp::HandleSystemEvents() {
+void GGHumanClientApp::HandleSystemEvents() {
     try {
         SDLGUI::HandleSystemEvents();
     } catch (const utf8::invalid_utf8& e) {
@@ -981,14 +981,14 @@ void HumanClientApp::HandleSystemEvents() {
     }
 }
 
-void HumanClientApp::RenderBegin() {
+void GGHumanClientApp::RenderBegin() {
     SDLGUI::RenderBegin();
     Sound::GetSound().DoFrame();
 }
 
-void HumanClientApp::HandleMessage(Message&& msg) {
+void GGHumanClientApp::HandleMessage(Message&& msg) {
     if (INSTRUMENT_MESSAGE_HANDLING)
-        std::cerr << "HumanClientApp::HandleMessage(" << msg.Type() << ")\n";
+        std::cerr << "GGHumanClientApp::HandleMessage(" << msg.Type() << ")\n";
 
     try {
         switch (msg.Type()) {
@@ -1019,16 +1019,16 @@ void HumanClientApp::HandleMessage(Message&& msg) {
         case Message::MessageType::TURN_TIMEOUT:            m_fsm->process_event(TurnTimeout(msg));             break;
         case Message::MessageType::PLAYER_INFO:             m_fsm->process_event(PlayerInfoMsg(msg));           break;
         default:
-            ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
+            ErrorLogger() << "GGHumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
         }
     } catch (const std::exception& e) {
-        ErrorLogger() << "HumanClientApp::HandleMessage : Exception while reacting to message of type \""
+        ErrorLogger() << "GGHumanClientApp::HandleMessage : Exception while reacting to message of type \""
                       << msg.Type() << "\". what: " << e.what();
     }
 }
 
-void HumanClientApp::UpdateCombatLogs(const Message& msg){
-    ScopedTimer timer("HumanClientApp::UpdateCombatLogs");
+void GGHumanClientApp::UpdateCombatLogs(const Message& msg){
+    ScopedTimer timer("GGHumanClientApp::UpdateCombatLogs");
 
     // Unpack the combat logs from the message
     std::vector<std::pair<int, CombatLog>> logs;
@@ -1039,31 +1039,31 @@ void HumanClientApp::UpdateCombatLogs(const Message& msg){
         GetCombatLogManager().CompleteLog(it->first, it->second);
 }
 
-void HumanClientApp::HandleSaveGamePreviews(const Message& msg) {
+void GGHumanClientApp::HandleSaveGamePreviews(const Message& msg) {
     auto sfd = GetClientUI().GetSaveFileDialog();
     if (!sfd)
         return;
 
     PreviewInformation previews;
     ExtractDispatchSavePreviewsMessageData(msg, previews);
-    DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
+    DebugLogger() << "GGHumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
 
     sfd->SetPreviewList(std::move(previews));
 }
 
-void HumanClientApp::HandleSetAuthRoles(const Message& msg) {
+void GGHumanClientApp::HandleSetAuthRoles(const Message& msg) {
     ExtractSetAuthorizationRolesMessage(msg, m_networking->AuthorizationRoles());
     DebugLogger() << "New roles: " << m_networking->AuthorizationRoles().Text();
 }
 
-void HumanClientApp::ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value) {
+void GGHumanClientApp::ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value) {
     // Update the logger threshold in OptionsDB
     ChangeLoggerThresholdInOptionsDB(option_name, option_value);
 
     SendLoggingConfigToServer();
 }
 
-void HumanClientApp::SendLoggingConfigToServer() {
+void GGHumanClientApp::SendLoggingConfigToServer() {
     // If not host then done.
     if (!m_networking->PlayerIsHost(Networking().PlayerID()))
         return;
@@ -1074,7 +1074,7 @@ void HumanClientApp::SendLoggingConfigToServer() {
     m_networking->SendMessage(LoggerConfigMessage(PlayerID(), sources));
 }
 
-void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
+void GGHumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     if (!Fullscreen()) {
         GetOptionsDB().Set<int>("video.windowed.left", Value(w));
         GetOptionsDB().Set<int>("video.windowed.top", Value(h));
@@ -1082,7 +1082,7 @@ void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     }
 }
 
-void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
+void GGHumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     if (ClientUI* ui = ClientUI::GetClientUI()) {
         if (auto&& map_wnd = ui->GetMapWnd())
             map_wnd->DoLayout();
@@ -1109,8 +1109,8 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     GetOptionsDB().Commit();
 }
 
-void HumanClientApp::HandleFocusChange(bool gained_focus) {
-    DebugLogger() << "HumanClientApp::HandleFocusChange("
+void GGHumanClientApp::HandleFocusChange(bool gained_focus) {
+    DebugLogger() << "GGHumanClientApp::HandleFocusChange("
                   << (gained_focus ? "Gained Focus" : "Lost Focus")
                   << ")";
 
@@ -1140,32 +1140,32 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
     ClearEventState();
 }
 
-void HumanClientApp::HandleAppQuitting() {
-    DebugLogger() << "HumanClientApp::HandleAppQuitting()";
+void GGHumanClientApp::HandleAppQuitting() {
+    DebugLogger() << "GGHumanClientApp::HandleAppQuitting()";
     ExitApp(0);
 }
 
-bool HumanClientApp::HandleHotkeyResetGame() {
-    DebugLogger() << "HumanClientApp::HandleHotkeyResetGame()";
+bool GGHumanClientApp::HandleHotkeyResetGame() {
+    DebugLogger() << "GGHumanClientApp::HandleHotkeyResetGame()";
     ResetToIntro(false);
     return true;
 }
 
-bool HumanClientApp::HandleHotkeyExitApp() {
-    DebugLogger() << "HumanClientApp::HandleHotkeyExitApp()";
+bool GGHumanClientApp::HandleHotkeyExitApp() {
+    DebugLogger() << "GGHumanClientApp::HandleHotkeyExitApp()";
     HandleAppQuitting();
     // Not reached, but required for HotkeyManager::Connect()
     return true;
 }
 
-bool HumanClientApp::ToggleFullscreen() {
+bool GGHumanClientApp::ToggleFullscreen() {
     bool fs = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
     GetOptionsDB().Set<bool>("video.fullscreen.enabled", !fs);
     Reinitialize();
     return true;
 }
 
-void HumanClientApp::StartGame(bool is_new_game) {
+void GGHumanClientApp::StartGame(bool is_new_game) {
     m_game_started = true;
 
     if (auto&& map_wnd = ClientUI::GetClientUI()->GetMapWnd())
@@ -1176,7 +1176,7 @@ void HumanClientApp::StartGame(bool is_new_game) {
     UpdateCombatLogManager();
 }
 
-void HumanClientApp::UpdateCombatLogManager() {
+void GGHumanClientApp::UpdateCombatLogManager() {
     boost::optional<std::vector<int>> incomplete_ids = GetCombatLogManager().IncompleteLogIDs();
     if (incomplete_ids) {
         for (auto it = incomplete_ids->begin(); it != incomplete_ids->end();) {
@@ -1331,7 +1331,7 @@ namespace {
     }
 }
 
-void HumanClientApp::Autosave() {
+void GGHumanClientApp::Autosave() {
     // only host can save in multiplayer
     if (!m_single_player_game && !Networking().PlayerIsHost(PlayerID()))
         return;
@@ -1397,21 +1397,21 @@ void HumanClientApp::Autosave() {
     }
 }
 
-void HumanClientApp::ContinueSinglePlayerGame() {
+void GGHumanClientApp::ContinueSinglePlayerGame() {
     if (const auto file = NewestSinglePlayerSavegame())
         LoadSinglePlayerGame(*file);
 }
 
-bool HumanClientApp::IsLoadGameAvailable() const
+bool GGHumanClientApp::IsLoadGameAvailable() const
 { return bool(NewestSinglePlayerSavegame()); }
 
-std::string HumanClientApp::SelectLoadFile() {
+std::string GGHumanClientApp::SelectLoadFile() {
     return ClientUI::GetClientUI()->GetFilenameWithSaveFileDialog(
         SaveFileDialog::Purpose::Load,
         SaveFileDialog::SaveType::MultiPlayer);
 }
 
-void HumanClientApp::ResetClientData(bool save_connection) {
+void GGHumanClientApp::ResetClientData(bool save_connection) {
     if (!save_connection) {
         m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
         m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
@@ -1426,16 +1426,16 @@ void HumanClientApp::ResetClientData(bool save_connection) {
     ClearPreviousPendingSaves(m_game_saves_in_progress);
 }
 
-void HumanClientApp::ResetToIntro(bool skip_savegame)
+void GGHumanClientApp::ResetToIntro(bool skip_savegame)
 { ResetOrExitApp(true, skip_savegame); }
 
-void HumanClientApp::ExitApp(int exit_code)
+void GGHumanClientApp::ExitApp(int exit_code)
 { ResetOrExitApp(false, false, exit_code); }
 
-void HumanClientApp::ExitSDL(int exit_code)
+void GGHumanClientApp::ExitSDL(int exit_code)
 { SDLGUI::ExitApp(exit_code); }
 
-void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_code /* = 0*/) {
+void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_code /* = 0*/) {
     if (m_exit_handled) {
         static int repeat_count = 0;
         if (repeat_count++ > 2) {
@@ -1446,7 +1446,7 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
         }
     }
     m_exit_handled = true;
-    DebugLogger() << (reset ? "HumanClientApp::ResetToIntro" : "HumanClientApp::ExitApp");
+    DebugLogger() << (reset ? "GGHumanClientApp::ResetToIntro" : "GGHumanClientApp::ExitApp");
 
     auto was_playing = m_game_started;
     m_game_started = false;
@@ -1504,38 +1504,38 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
     // Create an action to reset to intro or quit the app as appropriate.
     std::function<void()> after_server_shutdown_action;
     if (reset)
-        after_server_shutdown_action = boost::bind(&HumanClientApp::ResetClientData, this, false);
+        after_server_shutdown_action = boost::bind(&GGHumanClientApp::ResetClientData, this, false);
     else
         // This throws to exit the GUI
-        after_server_shutdown_action = boost::bind(&HumanClientApp::ExitSDL, this, exit_code);
+        after_server_shutdown_action = boost::bind(&GGHumanClientApp::ExitSDL, this, exit_code);
 
     m_fsm->process_event(StartQuittingGame(m_server_process, std::move(after_server_shutdown_action)));
 
     m_exit_handled = false;
 }
 
-void HumanClientApp::InitAutoTurns(int auto_turns) {
+void GGHumanClientApp::InitAutoTurns(int auto_turns) {
     m_auto_turns = auto_turns;
     if (!m_game_started || m_auto_turns < 0)
         m_auto_turns = 0;
 }
 
-void HumanClientApp::DecAutoTurns(int n)
+void GGHumanClientApp::DecAutoTurns(int n)
 { InitAutoTurns(m_auto_turns - n); }
 
-void HumanClientApp::EliminateSelf()
+void GGHumanClientApp::EliminateSelf()
 { m_networking->SendMessage(EliminateSelfMessage()); }
 
-int HumanClientApp::AutoTurnsLeft() const
+int GGHumanClientApp::AutoTurnsLeft() const
 { return m_auto_turns; }
 
-bool HumanClientApp::HaveWindowFocus() const
+bool GGHumanClientApp::HaveWindowFocus() const
 { return m_have_window_focus; }
 
-int HumanClientApp::EffectsProcessingThreads() const
+int GGHumanClientApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects.ui.threads"); }
 
-void HumanClientApp::UpdateFPSLimit() {
+void GGHumanClientApp::UpdateFPSLimit() {
     if (GetOptionsDB().Get<bool>("video.fps.max.enabled")) {
         double fps = GetOptionsDB().Get<double>("video.fps.max");
         SetMaxFPS(fps);
@@ -1546,7 +1546,7 @@ void HumanClientApp::UpdateFPSLimit() {
     }
 }
 
-void HumanClientApp::HandleResoureDirChange() {
+void GGHumanClientApp::HandleResoureDirChange() {
     if (!m_game_started) {
         DebugLogger() << "Resource directory changed.  Reparsing universe ...";
         StartBackgroundParsing();
@@ -1555,40 +1555,40 @@ void HumanClientApp::HandleResoureDirChange() {
     }
 }
 
-void HumanClientApp::DisconnectedFromServer() {
-    DebugLogger() << "HumanClientApp::DisconnectedFromServer";
+void GGHumanClientApp::DisconnectedFromServer() {
+    DebugLogger() << "GGHumanClientApp::DisconnectedFromServer";
     m_fsm->process_event(Disconnection());
 }
 
-HumanClientApp* HumanClientApp::GetApp()
-{ return dynamic_cast<HumanClientApp*>(GG::GUI::GetGUI()); }
+GGHumanClientApp* GGHumanClientApp::GetApp()
+{ return dynamic_cast<GGHumanClientApp*>(GG::GUI::GetGUI()); }
 
-void HumanClientApp::Initialize()
+void GGHumanClientApp::Initialize()
 {}
 
-void HumanClientApp::OpenURL(const std::string& url) {
+void GGHumanClientApp::OpenURL(const std::string& url) {
     // make sure it's a legit url
     std::string trimmed_url = url;
     boost::algorithm::trim(trimmed_url);
     // shouldn't be excessively long
     if (trimmed_url.size() > 500) { // arbitrary limit
-        ErrorLogger() << "HumanClientApp::OpenURL given bad-looking url (too long): " << trimmed_url;
+        ErrorLogger() << "GGHumanClientApp::OpenURL given bad-looking url (too long): " << trimmed_url;
         return;
     }
     // should start with http:// or https://
     if (trimmed_url.size() < 8) {
-        ErrorLogger() << "HumanClientApp::OpenURL given bad-looking url (too short): " << trimmed_url;
+        ErrorLogger() << "GGHumanClientApp::OpenURL given bad-looking url (too short): " << trimmed_url;
         return;
     }
     if (trimmed_url.find_first_of("http://") != 0 &&
         trimmed_url.find_first_of("https://") != 0)
     {
-        ErrorLogger() << "HumanClientApp::OpenURL given url that doesn't start with http:// :" << trimmed_url;
+        ErrorLogger() << "GGHumanClientApp::OpenURL given url that doesn't start with http:// :" << trimmed_url;
         return;
     }
     // should not have newlines...
     if (trimmed_url.find_first_of("\n") != std::string::npos) {
-        ErrorLogger() << "HumanClientApp::OpenURL given url that contains a newline. rejecting.";
+        ErrorLogger() << "GGHumanClientApp::OpenURL given url that contains a newline. rejecting.";
         return;
     }
 
@@ -1606,10 +1606,10 @@ void HumanClientApp::OpenURL(const std::string& url) {
     // execute open command
     int rv = system(command.c_str());
     if (rv != 0)
-        ErrorLogger() << "HumanClientApp::OpenURL `" << command << "` returned a non-zero exit code: " << rv;
+        ErrorLogger() << "GGHumanClientApp::OpenURL `" << command << "` returned a non-zero exit code: " << rv;
 }
 
-void HumanClientApp::BrowsePath(const boost::filesystem::path& browse_path) {
+void GGHumanClientApp::BrowsePath(const boost::filesystem::path& browse_path) {
     if (browse_path.empty() || browse_path == "/") {
         ErrorLogger() << "Invalid path: " << PathToString(browse_path);
         return;

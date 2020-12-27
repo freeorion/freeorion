@@ -4,7 +4,7 @@
 #include "CUIControls.h"
 #include "CUISpin.h"
 #include "FleetButton.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../client/ClientNetworking.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -1975,7 +1975,7 @@ public:
             return false;
 
         int object_id = obj->ID();
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
         UniverseObjectType type = obj->ObjectType();
 
         if (GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).count(object_id))
@@ -2511,7 +2511,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     int object_id = ObjectInRow(it);
     if (object_id == INVALID_OBJECT_ID)
         return;
-    HumanClientApp* app = HumanClientApp::GetApp();
+    GGHumanClientApp* app = GGHumanClientApp::GetApp();
     ClientNetworking& net = app->Networking();
     bool moderator = false;
     if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)

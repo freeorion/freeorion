@@ -17,7 +17,7 @@
 #include "Hotkeys.h"
 #include "LinkText.h"
 #include "MapWnd.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../combat/CombatLogManager.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -164,7 +164,7 @@ namespace {
                                  true, std::chrono::milliseconds(20));
 
         const Encyclopedia& encyclopedia = GetEncyclopedia();
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         if (dir_name == "ENC_INDEX") {
             // add entries consisting of links to pedia page lists of
@@ -1009,9 +1009,9 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
         } else if (link_type == TextLinker::GRAPH_TAG) {
             this->SetGraph(data);
         } else if (link_type == TextLinker::URL_TAG) {
-            HumanClientApp::GetApp()->OpenURL(data);
+            GGHumanClientApp::GetApp()->OpenURL(data);
         } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
-            HumanClientApp::GetApp()->BrowsePath(FilenameToPath(data));
+            GGHumanClientApp::GetApp()->BrowsePath(FilenameToPath(data));
         }
 
     } catch (const boost::bad_lexical_cast&) {
@@ -1264,7 +1264,7 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find part with name " << item_name;
             return;
         }
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Ship Parts
         name = UserString(item_name);
@@ -1330,7 +1330,7 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find hull with name " << item_name;
             return;
         }
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Ship Hulls
         name = UserString(item_name);
@@ -1404,7 +1404,7 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find tech with name " << item_name;
             return;
         }
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Technologies
         name = UserString(item_name);
@@ -1488,7 +1488,7 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find policy with name " << item_name;
             return;
         }
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Policies
         name = UserString(item_name);
@@ -1538,7 +1538,7 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find building type with name " << item_name;
             return;
         }
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Building types
         name = UserString(item_name);
@@ -1603,7 +1603,7 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find special with name " << item_name;
             return;
         }
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Specials
         name = UserString(item_name);
@@ -1667,7 +1667,7 @@ namespace {
             return;
         }
 
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Capital
         name = empire->Name();
@@ -1755,7 +1755,7 @@ namespace {
 
         // Issued orders this turn
         detailed_description += "\n\n" + UserString("ISSUED_ORDERS") + "\n"
-                             + HumanClientApp::GetApp()->Orders().Dump();
+                             + GGHumanClientApp::GetApp()->Orders().Dump();
 
         // Techs
         auto techs = empire->ResearchedTechs();
@@ -2047,7 +2047,7 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find species with name " << item_name;
             return;
         }
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Species
         name = UserString(item_name);
@@ -2327,7 +2327,7 @@ namespace {
 
         GetUniverse().InhibitUniverseObjectSignals(true);
 
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Ship Designs
         name = design->Name();
@@ -2455,7 +2455,7 @@ namespace {
                                             std::string& specific_type, std::string& detailed_description,
                                             GG::Clr& color, std::weak_ptr<const ShipDesign>& inc_design)
     {
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
 
         auto incomplete_design = inc_design.lock();
@@ -2563,7 +2563,7 @@ namespace {
         int id = boost::lexical_cast<int>(item_name);
         if (id == INVALID_OBJECT_ID)
             return;
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         auto obj = Objects().get(id);
         if (!obj) {
@@ -2583,8 +2583,8 @@ namespace {
     std::unordered_set<std::string> ReportedSpeciesForPlanet(std::shared_ptr<Planet> planet) {
         std::unordered_set<std::string> retval;
 
-        auto empire_id = HumanClientApp::GetApp()->EmpireID();
-        auto empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
+        auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        auto empire = GGHumanClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire) {
             return retval;
         }
@@ -2655,7 +2655,7 @@ namespace {
 
         auto planet_id = planet.ID();
         std::vector<int> planet_id_vec { planet_id };
-        auto empire_id = HumanClientApp::GetApp()->EmpireID();
+        auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         GetUniverse().InhibitUniverseObjectSignals(true);
 

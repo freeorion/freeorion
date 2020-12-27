@@ -3,7 +3,7 @@
 #include "CUIControls.h"
 #include "LinkText.h"
 #include "Sound.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../Empire/Empire.h"
 #include "../util/i18n.h"
 #include "../util/Directories.h"
@@ -90,7 +90,7 @@ namespace {
             } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
                 ClientUI::GetClientUI()->ZoomToEncyclopediaEntry(data);
             } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
-                HumanClientApp::GetApp()->BrowsePath(FilenameToPath(data));
+                GGHumanClientApp::GetApp()->BrowsePath(FilenameToPath(data));
             }
         } catch (const boost::bad_lexical_cast&) {
             ErrorLogger() << "SitrepPanel.cpp HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
@@ -110,7 +110,7 @@ namespace {
     std::set<std::string> EmpireSitRepTemplateStrings(int empire_id) {
         std::set<std::string> template_set;
 
-        Empire *empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
+        Empire *empire = GGHumanClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire)
             return template_set;
 
@@ -581,17 +581,17 @@ void SitRepPanel::CloseClicked()
 { ClosingSignal(); }
 
 void SitRepPanel::PrevClicked() {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID());
+    auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, false));
 }
 
 void SitRepPanel::NextClicked() {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID());
+    auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true));
 }
 
 void SitRepPanel::LastClicked() {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID());
+    auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, CurrentTurn(), false));    // search backwards from current turn for a non-empty sitrep turn
 }
 
@@ -783,7 +783,7 @@ void SitRepPanel::Update() {
     // if this client is an observer or moderator.
     // todo: double check that no-empire players are actually moderator or
     //       observers, instead of just passing the client empire id.
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID());
+    auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
 
     m_showing_turn = GetNextNonEmptySitrepsTurn(turns, m_showing_turn - 1, true);
     auto& current_turn_sitreps = turns[m_showing_turn];
@@ -861,7 +861,7 @@ void SitRepPanel::SetHiddenSitRepTemplates(const std::set<std::string>& template
 }
 
 int SitRepPanel::NumVisibleSitrepsThisTurn() const {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID());
+    auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
     auto& turn = turns[CurrentTurn()];
     turn.remove_if(boost::bind(&SitRepPanel::IsSitRepInvalid, this, boost::placeholders::_1));
     return turn.size();

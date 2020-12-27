@@ -4,7 +4,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../universe/Tech.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "TechTreeLayout.h"
 
 #include <GG/ClrConstants.h>
@@ -81,7 +81,7 @@ public:
         std::set<std::string> highlights;
 
         // We highlight lines that lead to techs that are queued for research
-        if (const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID())) {
+        if (const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID())) {
             const ResearchQueue& queue = empire->GetResearchQueue();
             for (const auto& edge : m_edges_to_show) {
                 auto& tech1 = edge.first;

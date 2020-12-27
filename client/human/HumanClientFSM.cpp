@@ -1,6 +1,6 @@
 #include "HumanClientFSM.h"
 
-#include "HumanClientApp.h"
+#include "GGHumanClientApp.h"
 #include "../../combat/CombatLogManager.h"
 #include "../../Empire/Empire.h"
 #include "../../universe/System.h"
@@ -81,7 +81,7 @@ namespace {
 ////////////////////////////////////////////////////////////
 // HumanClientFSM
 ////////////////////////////////////////////////////////////
-HumanClientFSM::HumanClientFSM(HumanClientApp &human_client) :
+HumanClientFSM::HumanClientFSM(GGHumanClientApp &human_client) :
     m_client(human_client)
 {}
 
@@ -223,7 +223,7 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     ErrorLogger(FSM) << "WaitingForSPHostAck::react(const Error& msg) error: " << problem;
 
     //Note: transit<> frees this pointer so Client() must be called before.
-    HumanClientApp& client = Client();
+    GGHumanClientApp& client = Client();
 
     // See reaction_transition_note.
     auto retval = discard_event();
@@ -302,7 +302,7 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     ErrorLogger(FSM) << "WaitingForMPHostAck::react(const Error& msg) error: " << problem;
 
     //Note: transit<> frees this pointer so Client() must be called before.
-    HumanClientApp& client = Client();
+    GGHumanClientApp& client = Client();
 
     // See reaction_transition_note.
     auto retval = discard_event();
@@ -352,7 +352,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
 
         if (!cookie.is_nil()) {
             try {
-                std::string cookie_option = HumanClientApp::EncodeServerAddressOption(Client().Networking().Destination());
+                std::string cookie_option = GGHumanClientApp::EncodeServerAddressOption(Client().Networking().Destination());
                 if (!GetOptionsDB().OptionExists(cookie_option + ".cookie")) {
                     GetOptionsDB().Add(cookie_option + ".cookie", "OPTIONS_DB_SERVER_COOKIE", boost::uuids::to_string(boost::uuids::nil_uuid()));
                 }
@@ -408,7 +408,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     ErrorLogger(FSM) << "WaitingForMPJoinAck::react(const Error& msg) error: " << problem;
 
     //Note: transit<> frees this pointer so Client() must be called before.
-    HumanClientApp& client = Client();
+    GGHumanClientApp& client = Client();
 
     // See reaction_transition_note.
     auto retval = discard_event();

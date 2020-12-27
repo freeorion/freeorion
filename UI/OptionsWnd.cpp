@@ -1,6 +1,6 @@
 #include "OptionsWnd.h"
 
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -440,7 +440,7 @@ namespace {
                     return;
                 const auto dropdown_row = dynamic_cast<CUISimpleDropDownListRow* const>(it->get());
                 const auto& option_value = dropdown_row->Name();
-                HumanClientApp::GetApp()->ChangeLoggerThreshold(option_name, to_LogLevel(option_value));
+                GGHumanClientApp::GetApp()->ChangeLoggerThreshold(option_name, to_LogLevel(option_value));
             });
     }
 }
@@ -537,7 +537,7 @@ void OptionsWnd::CompleteConstruction() {
         window_reset_button, 0);
     current_page->Insert(row);
     window_reset_button->LeftClickedSignal.connect(
-        HumanClientApp::GetApp()->RepositionWindowsSignal);
+        GGHumanClientApp::GetApp()->RepositionWindowsSignal);
 
     FileOption(current_page, 0, "resource.stringtable.path",    UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
@@ -1352,7 +1352,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
                                           apply_button, indentation_level);
     page->Insert(row);
     apply_button->LeftClickedSignal.connect(
-        boost::bind(&HumanClientApp::Reinitialize, HumanClientApp::GetApp()));
+        boost::bind(&GGHumanClientApp::Reinitialize, GGHumanClientApp::GetApp()));
 
     drop_list->SelChangedSignal.connect(
         [drop_list](GG::ListBox::iterator it) {

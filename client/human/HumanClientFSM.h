@@ -80,22 +80,22 @@ struct WaitingForGameStart;
 struct WaitingForTurnData;
 struct PlayingTurn;
 
-class HumanClientApp;
+class GGHumanClientApp;
 class IntroScreen;
 class MultiPlayerLobbyWnd;
 
-#define CLIENT_ACCESSOR private: HumanClientApp& Client() { return context<HumanClientFSM>().m_client; }
+#define CLIENT_ACCESSOR private: GGHumanClientApp& Client() { return context<HumanClientFSM>().m_client; }
 
 
 /** The finite state machine that represents the human client's operation. */
 struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMenu> {
     typedef boost::statechart::state_machine<HumanClientFSM, IntroMenu> Base;
 
-    HumanClientFSM(HumanClientApp &human_client);
+    HumanClientFSM(GGHumanClientApp &human_client);
 
     void unconsumed_event(const boost::statechart::event_base &event);
 
-    HumanClientApp& m_client;
+    GGHumanClientApp& m_client;
 
 private:
     using Base::post_event; // for synchronous FSM, should only be called within state transitions and constructors...

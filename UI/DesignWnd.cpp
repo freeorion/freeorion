@@ -16,7 +16,7 @@
 #include "../util/ScopedTimer.h"
 #include "../util/Directories.h"
 #include "../Empire/Empire.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../universe/ConditionAll.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
@@ -378,7 +378,7 @@ namespace {
         new_current_design.SetUUID(boost::uuids::random_generator()());
 
         auto order = std::make_shared<ShipDesignOrder>(empire_id, new_current_design);
-        HumanClientApp::GetApp()->Orders().IssueOrder(order);
+        GGHumanClientApp::GetApp()->Orders().IssueOrder(order);
 
         auto& current_manager = GetDisplayedDesignsManager();
         const auto& all_ids = current_manager.AllOrderedIDs();
@@ -399,13 +399,13 @@ namespace {
             return;
         }
 
-        const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+        const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         manager.SetObsolete(design_id, obsolete);
 
         if (obsolete) {
             // make empire forget on the server
-            HumanClientApp::GetApp()->Orders().IssueOrder(
+            GGHumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
         } else {
             const auto design = GetShipDesign(design_id);
@@ -416,7 +416,7 @@ namespace {
             }
 
             //make known to empire on server
-            HumanClientApp::GetApp()->Orders().IssueOrder(
+            GGHumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ShipDesignOrder>(empire_id, design_id));
         }
     }
@@ -425,10 +425,10 @@ namespace {
     void DeleteFromDisplayedDesigns(const int design_id) {
         auto& manager = GetDisplayedDesignsManager();
 
-        const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+        const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
         const auto maybe_obsolete = manager.IsObsolete(design_id);  // purpose of this obsolescence check is unclear... author didn't comment
         if (maybe_obsolete && !*maybe_obsolete)
-            HumanClientApp::GetApp()->Orders().IssueOrder(          // erase design id order : empire should forget this design
+            GGHumanClientApp::GetApp()->Orders().IssueOrder(          // erase design id order : empire should forget this design
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
         manager.Remove(design_id);
     }
@@ -529,7 +529,7 @@ namespace {
 
         // If requested on the first turn copy all of the saved designs to the client empire.
         if (GetOptionsDB().Get<bool>("resource.shipdesign.saved.enabled")) {
-            const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+            const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
             TraceLogger() << "Adding saved designs to empire.";
             // assume the saved designs are preferred by the user: add them to the front.
             // note that this also ensures correct ordering.
@@ -1042,7 +1042,7 @@ namespace {
 
     boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedDesignAvailability(const ShipDesign& design) const {
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipDesignAvailable(design) : true;
 
@@ -1055,7 +1055,7 @@ namespace {
 
     boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedHullAvailability(const std::string& id) const {
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipHullAvailable(id) : true;
 
@@ -1067,7 +1067,7 @@ namespace {
 
     boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedPartAvailability(const std::string& id) const {
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
         const Empire* empire = GetEmpire(empire_id);  // may be nullptr
         bool available = empire ? empire->ShipPartAvailable(id) : true;
 
@@ -1159,7 +1159,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         DebugLogger() << "Remove default designs from empire";
         const auto ids = empire->ShipDesigns();
         for (const auto design_id : ids) {
-            HumanClientApp::GetApp()->Orders().IssueOrder(
+            GGHumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
         }
     }
@@ -1599,7 +1599,7 @@ void PartsListBox::Populate() {
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
     const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
 
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);  // may be nullptr
 
     int cur_col = NUM_COLUMNS;
@@ -2024,7 +2024,7 @@ void DesignWnd::PartPalette::HandleShipPartRightClicked(const ShipPart* part, co
     // create popup menu with a commands in it
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+    const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (empire_id != ALL_EMPIRES)
         popup->AddMenuItem(GG::MenuItem(
                                (is_obsolete
@@ -3066,7 +3066,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
         edit_wnd->Run();
         const std::string& result = edit_wnd->Result();
         if (!result.empty() && result != design->Name()) {
-            HumanClientApp::GetApp()->Orders().IssueOrder(
+            GGHumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, result));
             design_row->SetDisplayName(design->Name());
         }
@@ -3445,7 +3445,7 @@ void DesignWnd::BaseSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void DesignWnd::BaseSelector::Reset() {
     ScopedTimer scoped_timer("BaseSelector::Reset");
 
-    const int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     SetEmpireShown(empire_id, false);
 
     if (auto base_box = dynamic_cast<BasesListBox*>(m_tabs->CurrentWnd()))
@@ -4181,7 +4181,7 @@ boost::optional<int> DesignWnd::MainPanel::GetReplacedDesignID() const
 { return m_replaced_design_id; }
 
 boost::optional<const ShipDesign*> DesignWnd::MainPanel::CurrentDesignIsRegistered() {
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const auto empire = GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "DesignWnd::MainPanel::CurrentDesignIsRegistered couldn't get the current empire.";
@@ -4589,7 +4589,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     m_replace_button->ClearBrowseInfoWnd();
     m_confirm_button->ClearBrowseInfoWnd();
 
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     m_disabled_by_name = false;
     m_disabled_by_part_conflict = false;
 
@@ -4905,12 +4905,12 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
 
         // Otherwise insert into current empire designs
         } else {
-            int empire_id = HumanClientApp::GetApp()->EmpireID();
+            int empire_id = GGHumanClientApp::GetApp()->EmpireID();
             const Empire* empire = GetEmpire(empire_id);
             if (!empire) return {INVALID_DESIGN_ID, boost::uuids::nil_generator()()};
 
             auto order = std::make_shared<ShipDesignOrder>(empire_id, design);
-            HumanClientApp::GetApp()->Orders().IssueOrder(order);
+            GGHumanClientApp::GetApp()->Orders().IssueOrder(order);
             new_design_id = order->DesignID();
 
             auto& manager = GetDisplayedDesignsManager();
@@ -4958,7 +4958,7 @@ void DesignWnd::MainPanel::ReplaceDesign() {
         const auto existing_design = CurrentDesignIsRegistered();
         if (current_maybe_design || existing_design) {
             auto& manager = GetDisplayedDesignsManager();
-            int empire_id = HumanClientApp::GetApp()->EmpireID();
+            int empire_id = GGHumanClientApp::GetApp()->EmpireID();
             int replaced_id = (*(current_maybe_design ? current_maybe_design : existing_design))->ID();
 
             if (new_design_id == INVALID_DESIGN_ID) return;
@@ -4967,7 +4967,7 @@ void DesignWnd::MainPanel::ReplaceDesign() {
             const auto maybe_obsolete = manager.IsObsolete(replaced_id);
             bool is_obsolete = maybe_obsolete && *maybe_obsolete;
             if (!is_obsolete)
-                HumanClientApp::GetApp()->Orders().IssueOrder(
+                GGHumanClientApp::GetApp()->Orders().IssueOrder(
                     std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
 
             // Replace the old id in the manager.
@@ -5007,7 +5007,7 @@ void DesignWnd::CompleteConstruction() {
     m_part_palette = GG::Wnd::Create<PartPalette>(DES_PART_PALETTE_WND_NAME);
     m_base_selector = GG::Wnd::Create<BaseSelector>(DES_BASE_SELECTOR_WND_NAME);
     InitializeWindows();
-    HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+    GGHumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         boost::bind(&DesignWnd::InitializeWindows, this));
 
     AttachChild(m_detail_panel);
