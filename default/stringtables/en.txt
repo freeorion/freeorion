@@ -11713,9 +11713,7 @@ LRN_MIND_VOID
 Mind of the Void
 
 LRN_MIND_VOID_DESC
-'''Unlocks [[policy PLC_DESIGN_SIMPLICITY]]
-
-Grants 1 social policy slot.
+'''Grants 1 social policy slot.
 
 We are not alone in the cosmos... but why should the search be so limited? Many cultures have myths, legends or fervent belief in a higher consciousness. Whether a loving or malevolent God, or a detached observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.'''
 
