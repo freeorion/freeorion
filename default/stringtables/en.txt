@@ -11400,7 +11400,7 @@ PLC_CONFEDERATION_DESC
 • Increases [[metertype METER_TARGET_INFLUENCE]] on colonies disconnected from the capital by [[value PLC_CONFEDERATION_SUPPLY_DISCONNECTED_INFLUENCE_FLAT]]
 • Increases [[metertype METER_TARGET_HAPPINESS]] on colonies disconnected from the capital and regional administrative centres by [[value DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY]]
 • Reduces [[metertype METER_TARGET_HAPPINESS]] ([[value PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT]]) on all planets
-• Increases max [[metertype METER_TROOPS]] by [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]]'''
+• Increases [[metertype METER_MAX_TROOPS]] by [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]]'''
 
 PLC_CONFEDERATION_SHORT_DESC
 Supports disconnected systems
@@ -11446,6 +11446,42 @@ Increases [[metertype METER_TARGET_RESEARCH]] on research-focused planets by [[v
 
 PLC_ALGORITHMIC_RESEARCH_SHORT_DESC
 Boosts Research
+
+PLC_INDOCTRINATION
+Indoctrination
+
+PLC_INDOCTRINATION_DESC
+Increases [[metertype METER_TARGET_HAPPINESS]] on planets over time. The bonus grows up to [[value PLC_INDOCTRINATION_STRENGTH_MAX]] as the policy remains adopted for more turns.
+
+PLC_INDOCTRINATION_SHORT_DESC
+Increases stability over time
+
+PLC_MARTIAL_LAW
+Martial Law
+
+PLC_MARTIAL_LAW_DESC
+Increases populated planets' [[metertype METER_TARGET_HAPPINESS]] and decreases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_MARTIAL_LAW_STABILITY_PER_TROOPS]] per [[metertype METER_MAX_TROOPS]] on planets. Also decreases populated planets' supply range by [[value PLC_MARTIAL_LAW_SUPPLY_PENALTY]].
+
+PLC_MARTIAL_LAW_SHORT_DESC
+Increases stability with troops
+
+PLC_TERROR_SUPPRESSION
+Terror Suppression
+
+PLC_TERROR_SUPPRESSION_DESC
+Increases populated planet [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE]] per ship in the system that is owned by the empire, is armed, and is crewed by the imperial capital planet's species. Makes those ships cost [[value PLC_TERROR_SUPPRESSION_SHIP_INFLUENCE_FLAT]] [[metertype METER_INFLUENCE]].
+
+PLC_TERROR_SUPPRESSION_SHORT_DESC
+Increases stability with armed ships
+
+PLC_DREAM_RECURSION
+Dream Recursion
+
+PLC_DREAM_RECURSION_DESC
+Increases [[metertype METER_TARGET_HAPPINESS]] on populated planets by however much is needed to reach [[value PLC_INDOCTRINATION_STRENGTH_MAX]] and reduces each planet's [[metertype METER_INFLUENCE]] by the same amount as its [[metertype METER_TARGET_HAPPINESS]] is increased.
+
+PLC_DREAM_RECURSION_SHORT_DESC
+Targeted stability boost
 
 
 ##

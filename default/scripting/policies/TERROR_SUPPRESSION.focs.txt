@@ -1,0 +1,56 @@
+Policy
+    name = "PLC_TERROR_SUPPRESSION"
+    description = "PLC_TERROR_SUPPRESSION_DESC"
+    short_description = "PLC_TERROR_SUPPRESSION_SHORT_DESC"
+    category = "MILITARY_CATEGORY"
+    adoptioncost = 10 * floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population
+                                           condition = And [ Planet OwnedBy empire = Source.Owner ])
+    prerequisites = [ "PLC_CENTRALIZATION" "PLC_MARTIAL_LAW" ]
+    exclusions = [ "PLC_CONFEDERATION" ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
+        // makes planets more stable where military has ships crewed by capital species
+        EffectsGroup
+        scope = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species
+            ContainedBy And [
+                Object id = RootCandidate.SystemID
+                Contains And [
+                    InSystem id = RootCandidate.SystemID
+                    Ship
+                    OwnedBy empire = Source.Owner
+                    Armed
+                    Species name = Source.Species
+                ]
+            ]
+        ]
+        effects = [
+            SetTargetHappiness value = Value + (Statistic Count condition = And [
+                InSystem id = Target.SystemID
+                Ship
+                OwnedBy empire = Source.Owner
+                Armed
+                Species name = Source.Species
+            ])
+            * (NamedReal name = "PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE" value = 0.25)
+        ]
+
+        // makes armed ships crewed by imperial capital planet's species cost influence
+        EffectsGroup
+        scope = And [
+            Ship
+            OwnedBy empire = Source.Owner
+            Armed
+            Species name = Source.Species
+        ]
+        effects = [
+            SetTargetInfluence value = Value -
+               (NamedReal name = "PLC_TERROR_SUPPRESSION_SHIP_INFLUENCE_FLAT" value = 0.2)
+        ]
+    ]
+    graphic = "icons/policies/terror_suppression.png"
+
+#include "/scripting/policies/policies.macros"

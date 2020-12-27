@@ -7,6 +7,7 @@ Tech
     researchturns = 5
     tags = [ "PEDIA_BOMBARD_WEAPON_TECHS" ]
     prerequisites = "SHP_ROOT_AGGRESSION"
+    unlock = Item type = Policy name = "PLC_TERROR_SUPPRESSION"
     graphic = ""
 
 #include "/scripting/common/base_prod.macros"

@@ -15,6 +15,7 @@ Tech
     researchturns = 4
     tags = [ "PEDIA_LEARNING_CATEGORY" "THEORY" ]
     prerequisites = "LRN_TRANSLING_THT"
+    unlock = Item type = Policy name = "PLC_INDOCTRINATION"
     graphic = "icons/tech/psionics.png"
 
 #include "/scripting/common/base_prod.macros"

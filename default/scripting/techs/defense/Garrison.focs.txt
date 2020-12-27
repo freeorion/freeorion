@@ -99,6 +99,7 @@ Tech
     researchturns = 9
     tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_GARRISON_3"
+    unlock = Item type = Policy name = "PLC_MARTIAL_LAW"
     effectsgroups = [
         EffectsGroup
             scope = And [
