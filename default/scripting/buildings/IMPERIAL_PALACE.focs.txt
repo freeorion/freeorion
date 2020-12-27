@@ -45,7 +45,8 @@ BuildingType
     ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
-    
+
+        // flat bonus to influence of capital
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -58,11 +59,13 @@ BuildingType
                      + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_INFLUENCE_FLAT" value = 3) 
             ]
 
+        // one economic policy slot
         EffectsGroup
             scope = Source
             effects = SetEmpireMeter empire = Source.Owner
                                      meter = "ECONOMIC_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
 
+        // flat bonus to supply range of capital
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -73,6 +76,7 @@ BuildingType
             effects = SetMaxSupply value = Value
                         + (NamedReal name = "BLD_IMPERIAL_PALACE_MAX_SUPPLY_FLAT" value = 2)
 
+        // flat bonus to capital construction
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -87,6 +91,7 @@ BuildingType
             effects = SetTargetConstruction value = Value
                         + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_CONSTRUCTION_FLAT" value = 20)
 
+        // flat bonus to stability of capital
         EffectsGroup
             scope = And [
                 Planet
@@ -107,6 +112,7 @@ BuildingType
             effects = SetTargetHappiness value = Value
                         + (NamedReal name = "BLD_IMPERIAL_PALACE_TARGET_HAPPINESS_FLAT" value = 5) // min(10, max(0, 10 - Target.DistanceToSource/20))
 
+        // flat bonus to defense and troops
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
