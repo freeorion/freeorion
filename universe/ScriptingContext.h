@@ -29,7 +29,7 @@ struct ScriptingContext {
         UniverseObjectType, Visibility, std::string, std::vector<std::string>
     > CurrentValueVariant;
 
-    explicit ScriptingContext() :
+    ScriptingContext() :
         objects(Objects()),
         const_objects(Objects())
     {}
@@ -156,6 +156,8 @@ struct ScriptingContext {
 private:
     ObjectMap&                              objects;
     const ObjectMap&                        const_objects;
+    //const EmpireObjectVisibilityTurnMap&    const_empire_object_vis_turns;
+    //EmpireManager::container_type&          empires;
 
     static const ScriptingCombatInfo& EmptyCombatInfo() {
         static const ScriptingCombatInfo EMPTY_COMBAT_INFO;
