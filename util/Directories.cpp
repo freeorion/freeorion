@@ -22,7 +22,7 @@
 #  include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
+#if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
 #include "binreloc.h"
 #include <unistd.h>
 #include <boost/filesystem/fstream.hpp>
@@ -35,9 +35,9 @@
 #  endif
 #endif
 
-# if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) || defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
+# if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) || defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
 # else
-#  error Neither FREEORION_LINUX, FREEORION_MACOSX, FREEORION_FREEBSD, FREEORION_OPENBSD, FREEORION_WIN32 nor FREEORION_HAIKU set
+#  error Neither FREEORION_LINUX, FREEORION_MACOSX, FREEORION_FREEBSD, FREEORION_OPENBSD, FREEORION_WIN32, FREEORION_HAIKU nor FREEORION_ANDROID set
 #endif
 
 
@@ -64,6 +64,11 @@ namespace {
     fs::path   s_bin_dir;
     //! pythonhome: FreeOrion.app/Contents/Frameworks/Python.framework/Versions/{PythonMajor}.{PythonMinor}
     fs::path   s_python_home;
+#endif
+
+#if defined(FREEORION_ANDROID)
+    JNIEnv*    s_jni_env;
+    fs::path   s_user_dir;
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
@@ -270,7 +275,7 @@ void InitBinDir(std::string const& argv0)
             bin_dir = p;
         }
     }
-#elif defined(FREEORION_MACOSX)
+#elif defined(FREEORION_MACOSX) || defined(FREEORION_ADROID)
     // no binary directory setup required.
 #endif
 }
@@ -377,6 +382,8 @@ void InitDirs(std::string const& argv0)
     // automatically created for the user.
 
     InitBinDir(argv0);
+#elif defined(FREEORION_ANDROID)
+    // ToDo: Move here directory initialization
 #endif
 
     g_initialized = true;
@@ -384,7 +391,7 @@ void InitDirs(std::string const& argv0)
 
 auto GetUserConfigDir() -> fs::path const
 {
-#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
     return GetUserDataDir();
 #elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
     static fs::path p = getenv("XDG_CONFIG_HOME")
@@ -396,11 +403,11 @@ auto GetUserConfigDir() -> fs::path const
 
 auto GetUserDataDir() -> fs::path const
 {
-#if defined(FREEORION_MACOSX)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_ANDROID)
     if (!g_initialized)
         InitDirs("");
     return s_user_dir;
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
     static fs::path p = getenv("XDG_DATA_HOME")
         ? fs::path(getenv("XDG_DATA_HOME")) / "freeorion"
         : fs::path(getenv("HOME")) / ".local" / "share" / "freeorion";
@@ -430,7 +437,7 @@ auto GetRootDataDir() -> fs::path const
     } else {
         return p;
     }
-#elif defined(FREEORION_WIN32)
+#elif defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
     return fs::initial_path();
 #endif
 }
@@ -441,7 +448,7 @@ auto GetBinDir() -> fs::path const
     if (!g_initialized)
         InitDirs("");
     return s_bin_dir;
-#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
     if (!g_initialized)
         InitDirs("");
     return bin_dir;
@@ -462,6 +469,28 @@ auto GetPythonHome() -> fs::path const
 #elif defined(FREEORION_WIN32)
     return GetBinDir();
 #endif
+}
+#endif
+
+#if defined(FREEORION_ANDROID)
+FO_COMMON_API void SetAndroidEnvironment(JNIEnv* env, jobject activity)
+{
+    s_jni_env = env;
+
+    // ToDo: move actual initialization to InitDirs
+    // ToDo: store activity in weak reference to use in InitDirs
+    jclass activity_cls = env->GetObjectClass(activity);
+
+    jmethodID get_files_dir_mid = env->GetMethodID(activity_cls, "getFilesDir", "()Ljava/io/File;");
+    jobject files_dir = env->CallObjectMethod(activity, get_files_dir_mid);
+
+    jclass file_cls = env->GetObjectClass(files_dir);
+    jmethodID get_absolute_path_mid = env->GetMethodID(file_cls, "getAbsolutePath", "()Ljava/lang/String;");
+    jstring files_dir_path = (jstring)env->CallObjectMethod(files_dir, get_absolute_path_mid);
+
+    const char *files_dir_chars = env->GetStringUTFChars(files_dir_path, NULL);
+    s_user_dir = fs::path(files_dir_chars);
+    env->ReleaseStringUTFChars(files_dir_path, files_dir_chars);
 }
 #endif
 

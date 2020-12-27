@@ -198,6 +198,36 @@ compile jobs check out the the [make jobs](`--jobs`) parameter of
 After the build finished successfully the binaries can be found within
 the `freeorion-project/build` directory.
 
+### Android
+
+Install Android NDK.
+
+Build [Python-For-Android].
+
+Build [Boost-For-Android] with iconv support for boost_locale library
+
+```bash
+./build-android.sh --with-iconv --arch=arm64-v8a --with-python=`readlink -f ../python-install` --layout=system $ANDROID_NDK
+```
+
+Ensure you got `libboost_python<version>.a` and `libboost_locale.a` libraries.
+
+Create a `build` directory aside the _source_directory_ and change into
+this directory. It will contain all compile FreeOrion build artifacs.
+
+```bash
+<android>/cmake/3.10.2.4988404/bin/cmake -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=21 -DANDROID_NDK=<android>/ndk-bundle/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=<android>/ndk-bundle/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=<Boost-for-Android>/build/out/armeabi-v7a/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=<Boost-for-Android>/build/out/armeabi-v7a/lib/ -DBUILD_CLIENT_GODOT=On -DICUI18N_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicui18n.a -DICUUC_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicuuc.a -DICUDATA_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicudata.a -DICONV_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libiconv.so ../freeorion
+```
+
+After successfully creating the Makefiles build the whole project by
+calling:
+
+```bash
+<android>/cmake/3.10.2.4988404/bin/cmake --build . -- -j2 VERBOSE=1
+```
+
+After the build finished successfully the godot libraries can be found within
+the `freeorion-project/build` directory.
 
 [Visual Studio]: https://www.visualstudio.com/de/vs/older-downloads/
 [Xcode]: https://itunes.apple.com/de/app/xcode/id497799835?mt=12
@@ -219,3 +249,5 @@ the `freeorion-project/build` directory.
 [FreeOrionSDK v11]: https://github.com/freeorion/freeorion-sdk/releases/tag/v11
 [FreeOrion Releases]: https://github.com/freeorion/freeorion/releases
 [make jobs]: https://www.gnu.org/software/make/manual/html_node/Parallel.html
+[Python-For-Android]: https://github.com/python-cmake-buildsystem/python-cmake-buildsystem/pull/262
+[Boost-For-Android]: https://github.com/moritz-wundke/Boost-for-Android
