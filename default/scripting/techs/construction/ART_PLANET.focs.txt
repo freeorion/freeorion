@@ -14,7 +14,7 @@ Tech
         Item type = Building name = "BLD_ART_PLANET"
         Item type = Building name = "BLD_ART_FACTORY_PLANET"
         Item type = Building name = "BLD_ART_PARADISE_PLANET"
-        ]
+    ]
     graphic = "icons/tech/artificial_planet.png"
 
 #include "/scripting/common/base_prod.macros"

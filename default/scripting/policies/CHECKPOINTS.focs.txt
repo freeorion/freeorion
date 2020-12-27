@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_CHECKPOINTS_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 5 + floor(Statistic Sum value = LocalCandidate.Population
-                                     condition = And [ Planet OwnedBy empire = Source.Owner ])
+                                           condition = And [ Planet OwnedBy empire = Source.Owner ])
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
