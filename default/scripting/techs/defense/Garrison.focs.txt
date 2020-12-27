@@ -121,7 +121,7 @@ Tech
             stackinggroup = "GARRISON_4_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_4"
             effects = SetMaxTroops value = Value + Target.Population *
-                (NamedReal name = "GARRISON_4_MAX_TROOPS_FLAT" value = 3 * [[TROOPS_PER_POP]])
+                (NamedReal name = "GARRISON_4_MAX_TROOPS_PERPOP" value = 3 * [[TROOPS_PER_POP]])
     ]
     graphic = "icons/tech/troops.png"
 
