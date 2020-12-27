@@ -1,5 +1,5 @@
-#ifndef _HumanClientApp_h_
-#define _HumanClientApp_h_
+#ifndef _GGHumanClientApp_h_
+#define _GGHumanClientApp_h_
 
 #include "../ClientApp.h"
 #include "../../util/Process.h"
