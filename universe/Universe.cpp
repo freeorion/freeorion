@@ -400,6 +400,9 @@ Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) c
     return vis_map_it->second;
 }
 
+const Universe::EmpireObjectVisibilityTurnMap& Universe::GetEmpireObjectVisibilityTurnMap() const
+{ return m_empire_object_visibility_turns; }
+
 const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const {
     static const std::map<Visibility, int> empty_map;
 

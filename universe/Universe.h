@@ -159,6 +159,8 @@ public:
       * UpdateEmpireObjectVisibilities. */
     Visibility GetObjectVisibilityByEmpire(int object_id, int empire_id) const;
 
+    const EmpireObjectVisibilityTurnMap& GetEmpireObjectVisibilityTurnMap() const;
+
     /** Returns the map from Visibility level to turn number on which the empire
       * with id \a empire_id last had the various Visibility levels of the
       * UniverseObject with id \a object_id .  The returned map may be empty or
