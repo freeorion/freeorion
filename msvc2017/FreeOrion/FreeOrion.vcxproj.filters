@@ -403,6 +403,9 @@
     <ClInclude Include="..\..\UI\SDLGUI.h">
       <Filter>Header Files\client\human</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\util\SaveGamePreviewUtils.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\client\human\FreeOrion.ico">
