@@ -1226,6 +1226,14 @@ Tous les Objets visibles
 RULE_ALL_OBJECTS_VISIBLE_DESC
 Tous les systèmes, planètes, structures, flottes, astronefs, et régions interstellaires peuvent être détectés par les empires à au moins un niveau de visibilité partielle.
 
+RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
+Planètes Furtives Indétectables
+
+RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_DESC
+'''<u>Si activé/u>: Les planètes ayant une Furtivité supérieure à la Capacité de Détection d'un empire ne peuvent pas être détectées par cet empire, même si celui-ci possède un objet dans le même système, à moins que l'empire n'ait détecté cette planète précédemment.
+
+<u>Si désactivé</u>: Les planètes ayant une Furtivité supérieure à la Capacité de Détection d'un empire sont détectables par cet empire, si celui-ci possède un autre objet dans le même système.'''
+
 RULE_HABITABLE_SIZE_TINY
 Zone habitable Minuscules Planètes
 
@@ -11387,10 +11395,12 @@ PLC_CONFEDERATION
 Confédération
 
 PLC_CONFEDERATION_DESC
-'''Les planètes de l'empire sont organisées en systèmes indépendants confédérés. Les colonies ne pâtissent pas d'une Influence réduite si non-connectées à la Capitale, profitent d'une meilleure Infanterie, mais sont légèrement moins stables en général.
+'''Les planètes de l'empire sont organisées en systèmes indépendants confédérés. 
 
-Augmente de [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]] l'[[metertype METER_TROOPS]] max mais réduit la [[metertype METER_TARGET_HAPPINESS]] ([[value PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT]]) sur toutes les planètes.
-Augmente de [[value PLC_CONFEDERATION_SUPPLY_DISCONNECTED_INFLUENCE_FLAT]] l'[[metertype METER_TARGET_INFLUENCE]] des colonies non-connectées à la Capitale.'''
+• Augmente de [[value PLC_CONFEDERATION_SUPPLY_DISCONNECTED_INFLUENCE_FLAT]] la [[metertype METER_TARGET_INFLUENCE]] des colonies non-connectées à la Capitale 
+• Augmente de [[value DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY]] la [[metertype METER_TARGET_HAPPINESS]] des colonies non-connectées à la Capitale et aux centres administratifs régionaux
+• Diminue la [[metertype METER_TARGET_HAPPINESS]] ([[value PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT]]) sur toutes les planètes
+• Augmente l'indicateur [[metertype METER_MAX_TROOPS]] de [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]]'''
 
 PLC_CONFEDERATION_SHORT_DESC
 Soutient les systèmes déconnectés
@@ -11414,7 +11424,7 @@ Autorité Divine
 PLC_DIVINE_AUTHORITY_DESC
 '''Augmente la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_DIVINE_AUTHORITY_TARGET_HAPPINESS_FLAT]] et la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_DIVINE_AUTHORITY_TARGET_INFLUENCE_FLAT]], mais diminue la [[metertype METER_TARGET_RESEARCH]] ([[value PLC_DIVINE_AUTHORITY_TARGET_RESEARCH_FLAT]]).
 
-L'empire est gouverné par une théocratie qui prétend détenir l'autorité des dieux eux-mêmes. Ses dirigeants se considèrent comme omnipotents et infaillibles, diffusant la croyance qu'ils représentent le peuple élu. L'extrémisme religieux est encouragé au sein de la population, afin de favoriser une confiance totale envers le gouvernement, facilitant ainsi le contrôle des esprits. La pensée critique et la science s'en trouvent par conséquent fortement entravées.'''
+L'empire est dirigé par une théocratie qui prétend détenir l'autorité des dieux eux-mêmes. Ses dirigeants se revendiquent comme omnipotents et infaillibles, inspirant à tout l'empire la croyance qu'ils représentent le peuple élu. L'extrémisme religieux est encouragé au sein de la population, ce qui renforce la confiance envers la politique gouvernementale, tout en stabilisant la société. La pensée critique et la science par l'expérience s'en trouvent par conséquent fortement entravées.'''
 
 PLC_DIVINE_AUTHORITY_SHORT_DESC
 Augmente la Stabilité et l'Influence, mais entrave la Recherche
@@ -11427,6 +11437,51 @@ Augmente la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Reche
 
 PLC_NATIVE_APPROPRIATION_SHORT_DESC
 Augmente la Recherche
+
+PLC_ALGORITHMIC_RESEARCH
+Recherche Algorithmique
+
+PLC_ALGORITHMIC_RESEARCH_DESC
+Augmente la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche de [[value LRN_ALGO_RESEARCH_TARGET_RESEARCH_PERCONSTRUCTION]] par la valeur la plus faible entre la [[metertype METER_POPULATION]] ou l'[[metertype METER_CONSTRUCTION]].
+
+PLC_ALGORITHMIC_RESEARCH_SHORT_DESC
+Augmente la Recherche
+
+PLC_INDOCTRINATION
+Endoctrinement
+
+PLC_INDOCTRINATION_DESC
+Augmente progressivement la [[metertype METER_TARGET_HAPPINESS]] des planètes. Le bonus croît jusqu'à [[value PLC_INDOCTRINATION_STRENGTH_MAX]] tant que la stratégie est appliquée pour plusieurs tours.
+
+PLC_INDOCTRINATION_SHORT_DESC
+Augmente la Stabilité progressivement
+
+PLC_MARTIAL_LAW
+Loi Martiale
+
+PLC_MARTIAL_LAW_DESC
+Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées et diminue la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_MARTIAL_LAW_STABILITY_PER_TROOPS]] par la valeur de l'indicateur [[metertype METER_MAX_TROOPS]] des planètes. Réduit également la portée de l'[[metertype METER_SUPPLY]] des planètes habitées de [[value PLC_MARTIAL_LAW_SUPPLY_PENALTY]].
+
+PLC_MARTIAL_LAW_SHORT_DESC
+Augmente la Stabilité à l'aide de l'Infanterie
+
+PLC_TERROR_SUPPRESSION
+Suppression du Terrorisme
+
+PLC_TERROR_SUPPRESSION_DESC
+Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de [[value PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE]] par le nombre d'astronefs présents dans le système et appartenant à l'empire, armés, et dont l'équipage est de la même espèce que celle peuplant la Capitale impériale. Ces astronefs coûtent [[value PLC_TERROR_SUPPRESSION_SHIP_INFLUENCE_FLAT]] en [[metertype METER_INFLUENCE]].
+
+PLC_TERROR_SUPPRESSION_SHORT_DESC
+Augmente la Stabilité à l'aide d'astronefs armés
+
+PLC_DREAM_RECURSION
+Récursivité Imaginaire
+
+PLC_DREAM_RECURSION_DESC
+Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de la valeur nécessaire pour atteindre [[value PLC_INDOCTRINATION_STRENGTH_MAX]] et réduit l'[[metertype METER_INFLUENCE]] de chaque planète de la même valeur que leur [[metertype METER_TARGET_HAPPINESS]] est augmentée.
+
+PLC_DREAM_RECURSION_SHORT_DESC
+Augmentation ciblée de la Stabilité
 
 
 ##
@@ -11595,9 +11650,7 @@ LRN_ALGO_ELEGANCE
 Élégance Algorithmique
 
 LRN_ALGO_ELEGANCE_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value LRN_ALGO_ELEGANCE_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche.
-
-Avec une difficulté grandissante des problèmes d'analyse de données, les démarches traditionnelles des performances algorithmiques deviennent moins efficaces, en raison des limitations de la complexité irréductible. À ce stade, de nouvelles formes et fonctions algorithmiques deviennent significatives: esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisée.'''
+Avec une dépendance toujours plus grande à l'analyse de données, les démarches traditionnelles des performances algorithmiques deviennent moins efficaces, en raison des limitations de la complexité irréductible. À ce stade, de nouvelles formes et fonctions algorithmiques deviennent significatives: esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisée.
 
 LRN_TRANSLING_THT
 Translinguistique
@@ -11622,14 +11675,6 @@ LRN_NASCENT_AI_DESC
 Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinies, ils leur manquent cependant une qualité essentielle: la conscience. Bien que la définition complète du concept de conscience reste insaisissable, cette qualité peut être toutefois synthétisée et reproduite de manière plutôt convaincante. Ces recherches peuvent ouvrir de nouvelles voies en matière de sciences cognitives et de métaparadigmes.
 
 Des IA sont à même de compiler toutes les données découvertes par la Recherche en un seul réseau de traitement automatique, ces données pouvant être analysées afin d'en faire émerger de nouvelles, le tout via un centre de recherche entièrement automatisé. Chaque planète peut héberger de telles structures, indépendamment des activités de la population, procurant ainsi un bonus de Recherche dans tout l'empire.'''
-
-LRN_ARTIF_MINDS
-Consciences Artificielles
-
-LRN_ARTIF_MINDS_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value LRN_ARTIF_MINDS_TARGET_RESEARCH_FLAT]] sur toutes les planètes en Focus Recherche.
-
-Les consciences artificielles constituent la quête ultime des recherches en sciences cognitives. Elles dépassent le stade prédéfini des intelligences artificielles, pour atteindre celui de conscience de soi et de sentience au sein d'un être artificiel. Ces systèmes sentients peuvent élargir de leur proche chef les limites de la science et de la recherche, identifiant par eux-mêmes de nouvelles manières de traiter les données et d'en déduire de nouvelles connaissances. Chaque planète peut héberger de telles structures, tant que celles-ci bénéficient de la maintenance et de l'expertise de chercheurs qualifiés.'''
 
 LRN_XENOARCH
 Xénoarchéologie
@@ -11668,9 +11713,7 @@ LRN_MIND_VOID
 Esprit du Vide
 
 LRN_MIND_VOID_DESC
-'''Débloque la stratégie [[policy PLC_DESIGN_SIMPLICITY]]
-
-Octroie 1 choix de Stratégie sociale.
+'''Octroie 1 choix de Stratégie sociale.
 
 Nous ne sommes pas seuls dans le cosmos... mais pourquoi la recherche d'autres existences devrait se limiter à un unique paradigme? De nombreuses cultures possèdent des mythes, des légendes ou de ferventes croyances en une plus haute conscience. Que ce soit un Dieu miséricordieux ou malveillant, ou bien un observateur détaché, il est indéniable que quelque chose, peut-être l'univers lui-même à un certain niveau, est vivant, conscient, et observe.'''
 
@@ -12036,7 +12079,7 @@ CON_CONTGRAV_ARCH
 Architecture Gravitationnelle
 
 CON_CONTGRAV_ARCH_DESC
-'''Augmente de 1 la portée de l'[[metertype METER_SUPPLY]] pour tous les avant-postes et colonies de l'empire.
+'''Augmente de 1 la portée de l'[[metertype METER_SUPPLY]] des colonies en Focus Logistique.
 
 L'installation d'un générateur de gravité nulle au cœur d'une planète rend possible le contrôle binaire "marche/arrêt" de la gravité planétaire, mais seulement sur une zone limitée. L'industrie planétaire profite alors des nombreux bénéfices de la faible gravité et de la gravité zéro (low-G et zero-G), mais sans ses inconvénients. Une gravité inversée peut être également générée, rendant les coûts des lancements spatiaux quasiment inexistants.
 
@@ -12046,11 +12089,9 @@ CON_GAL_INFRA
 Infrastructure Galactique
 
 CON_GAL_INFRA_DESC
-'''Augmente de 1 la portée de l'[[metertype METER_SUPPLY]] de tous les avant-postes et colonies de l'empire.
+'''Le transport efficace et fiable des ressources sur des distances interstellaires requiert une planification fastidieuse, complexifiée par de nombreux facteurs tels que la présence de monstres spatiaux, d'empires ennemis et de dangereux phénomènes astrophysiques. L'utilisation d'une infrastructure galactique intégrée permet un déploiement fluide des ressources entre les colonies avancées et émergentes, tandis que des solutions peuvent être appliquées aux problèmes de logistique particulièrement contraignants.
 
-Le transport efficace et fiable des ressources sur des distances interstellaires requiert une planification fastidieuse, complexifiée par de nombreux facteurs tels que la présence de monstres spatiaux, d'empires ennemis et de dangereux phénomènes astrophysiques. L'utilisation d'une infrastructure galactique intégrée permet un déploiement fluide des ressources entre les colonies avancées et émergentes, tandis que des solutions peuvent être appliquées aux problèmes de logistique particulièrement contraignants.
-
-Le développement et l'intégration des infrastructures des mondes à forte production au sein d'un réseau galactique d'envergure et unifié est un des plus grands progrès imaginables en matière de logistique. Une fois accompli, un tel système unit d'une manière optimale et fonctionnelle tous les mondes qui le composent. Les outils de transport intégré, de stockage, de maintenance, et de construction peuvent être déployés rapidement et efficacement vers le lieu où ils sont requis, afin de gérer avec efficience la disponibilité des ressources ou de s'adapter rapidement à tout changement.'''
+Le développement et l'intégration de l'administration régionale au sein d'un réseau galactique d'envergure et unifié est un des plus grands progrès imaginables en matière de logistique.'''
 
 CON_ART_HEAVENLY
 Astres Artificiels
@@ -12483,7 +12524,7 @@ LRN_DISTRIB_THOUGHT
 Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value LRN_DISTRIB_THOUGHT_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes, quel que soit le Focus choisi.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur toutes les planètes en Focus Recherche, en fonction de la distance entre la planète et l'astronef de l'empire le plus éloigné.
 
 Octroie 1 choix supplémentaire de Stratégie militaire.
 
@@ -13283,13 +13324,21 @@ SHP_CHAOS_WAVE_DESC
 Débloque l'équipement [[shippart SP_CHAOS_WAVE]], [[SHIP_WEAPON_QUICKLY_REDUCE]] [[ENEMY_PLANET_ANY_POP]].
 
 SPY_PLANET_STEALTH_MOD
-Modificateur de Furtivité Planétaire
+Modificateurs de Furtivité
 
 SPY_PLANET_STEALTH_MOD_DESC
-Augmente la [[metertype METER_STEALTH]] naturelle de toutes les planètes à 5, afin d'éviter tout risque de collision entre les valeurs de Détection et de Furtivité.
+'''Augmente la [[metertype METER_STEALTH]] naturelle de toutes les planètes de 5.
+
+Réduit la Furtivité des astronefs lorsqu'ils se trouvent dans un même système abritant plus de [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] astronefs du même empire.'''
 
 BASIC_PLANET_STEALTH
 Furtivité Universelle Initiale
+
+FLEET_UNSTEALTHINESS
+Non-Furtivité des Flottes
+
+FLEET_UNSTEALTHY_SHIPS_THRESHOLD
+Nombre d'astronefs dans un même système et appartenant au même empire, au-dessus duquel les astronefs subissent une pénalité de [[metertype METER_STEALTH]].
 
 
 ##
@@ -13361,13 +13410,25 @@ BLD_IMPERIAL_PALACE
 Palais Impérial
 
 BLD_IMPERIAL_PALACE_DESC
-'''Augmente de [[value BLD_IMPERIAL_PALACE_MAX_SUPPLY_FLAT]] la portée de l'[[metertype METER_SUPPLY]], la [[metertype METER_TARGET_INFLUENCE]] de [[value BLD_IMPERIAL_PALACE_TARGET_INFLUENCE_FLAT]], la [[metertype METER_TARGET_CONSTRUCTION]] de [[value BLD_IMPERIAL_PALACE_TARGET_CONSTRUCTION_FLAT]], la [[metertype METER_DEFENSE]] de [[value BLD_IMPERIAL_PALACE_MAX_DEFENSE_FLAT], et l'[[metertype METER_TROOPS]] de [[value BLD_IMPERIAL_PALACE_MAX_TROOPS_FLAT]] sur la planète où la structure est construite.
+'''Sur la planète où la structure est construite, augmente:
+• la portée de l'[[metertype METER_SUPPLY]] de [[value BLD_IMPERIAL_PALACE_MAX_SUPPLY_FLAT]]
+• la [[metertype METER_TARGET_INFLUENCE]] de [[value BLD_IMPERIAL_PALACE_TARGET_INFLUENCE_FLAT]]
+• la [[metertype METER_TARGET_CONSTRUCTION]] de [[value BLD_IMPERIAL_PALACE_TARGET_CONSTRUCTION_FLAT]]
+• la [[metertype METER_TARGET_HAPPINESS]] de [[value BLD_IMPERIAL_PALACE_TARGET_HAPPINESS_FLAT]]
+• la [[metertype METER_DEFENSE]] de [[value BLD_IMPERIAL_PALACE_MAX_DEFENSE_FLAT]]
+• l'[[metertype METER_TROOPS]] de [[value BLD_IMPERIAL_PALACE_MAX_TROOPS_FLAT]]
 
 Octroie 1 choix de Stratégie économique.
 
 Son emplacement définit la Capitale de l'empire.
 
 Représente le pouvoir et le prestige impérial et remplit la fonction de centre de contrôle pour toutes les possessions de l'empire.'''
+
+BLD_REGIONAL_ADMIN
+Administration Régionale Impériale
+
+BLD_REGIONAL_ADMIN_DESC
+Agit comme un [[buildingtype BLD_IMPERIAL_PALACE]] / Capitale impériale pour les planètes dont la Stabilité est tributaire de leur éloignement important.
 
 BLD_MILITARY_COMMAND
 Commandement Militaire
@@ -16201,6 +16262,18 @@ Planète Natale
 
 CAPITAL_LABEL
 Capitale
+
+CAPITAL_CONNECTION_LABEL
+Bonne Connexion d'Approvisionnement à la Capitale
+
+CAPITAL_POOR_CONNECTION_LABEL
+Faible Connexion d'Approvisionnement à la Capitale
+
+IMPERIAL_PALACE_SPECIES_HAPPINESS
+Espèce Capitale Impériale
+
+SELF_RELIANCE
+Autonomie
 
 BLD_STOCKPILING_CENTER_LABEL
 Centre d'Intrication Impériale
