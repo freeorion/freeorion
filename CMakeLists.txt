@@ -23,6 +23,14 @@ message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 include(UseCompilerCache)
 find_compiler_cache(PROGRAM ccache)
 
+get_cmake_property(vars CACHE_VARIABLES)
+foreach(var ${vars})
+  get_property(currentHelpString CACHE "${var}" PROPERTY HELPSTRING)
+    if("${currentHelpString}" MATCHES "No help, variable specified on the command line." OR "${currentHelpString}" STREQUAL "")
+        list(APPEND CL_ARGS "-D${var}=${${var}}")
+    endif()
+endforeach()
+
 
 ##
 ## Global project configuration
@@ -667,7 +675,12 @@ if(BUILD_CLIENT_GODOT)
             GIT_TAG 55c0a2ea03369efefa0f795bdc7f81fbd4568a47
             SOURCE_DIR ${CMAKE_BINARY_DIR}/godot-cpp
             BINARY_DIR ${CMAKE_BINARY_DIR}/godot-cpp-build
-            CMAKE_ARGS -D CMAKE_BUILD_TYPE=${GODOT_CPP_BUILD_TYPE}
+            CMAKE_ARGS
+                -G ${CMAKE_GENERATOR}
+                -D CMAKE_BUILD_TYPE=${GODOT_CPP_BUILD_TYPE}
+                -D CMAKE_CONFIGURATION_TYPES=${GODOT_CPP_BUILD_TYPE}
+                -D CMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
+                ${CL_ARGS}
             INSTALL_COMMAND ""
         )
 
@@ -703,23 +716,30 @@ if(BUILD_CLIENT_GODOT)
 
     string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME)
     string(TOLOWER ${GODOT_CPP_BUILD_TYPE} BUILD_TYPE)
+
+    if(ANDROID)
+        # Added the android abi after system name
+        set(SYSTEM_NAME ${SYSTEM_NAME}.${ANDROID_ABI})
+    endif()
+
     if(CMAKE_VERSION VERSION_GREATER "3.13")
         target_link_directories(freeoriongodot
             PRIVATE
                 ${GODOT_CPP_ROOT_BUILT}/bin/
         )
         target_link_libraries(freeoriongodot
-            godot-cpp.${SYSTEM_NAME}.${BUILD_TYPE}.${BITS}
+            godot-cpp.${SYSTEM_NAME}.${BUILD_TYPE}$<$<NOT:$<PLATFORM_ID:Android>>:.${BITS}>
         )
     else()
         target_link_libraries(freeoriongodot
-            ${GODOT_CPP_ROOT_BUILT}/bin/libgodot-cpp.${SYSTEM_NAME}.${BUILD_TYPE}.${BITS}.a
+            ${GODOT_CPP_ROOT_BUILT}/bin/libgodot-cpp.${SYSTEM_NAME}.${BUILD_TYPE}$<$<NOT:$<PLATFORM_ID:Android>>:.${BITS}>.a
         )
     endif()
 
     target_link_libraries(freeoriongodot
         freeorioncommon
         freeorionparse
+        ${ICONV_LIBRARY}
     )
 
     target_dependencies_copy_to_build(freeoriongodot)
@@ -789,12 +809,21 @@ if(BUILD_CLIENT_GODOT)
         COMMAND
            ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}
         COMMAND
-           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorioncommon>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
-        COMMAND
-           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionparse>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
-        COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriongodot>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
     )
+    if(ANDROID)
+        add_custom_command(TARGET freeoriongodot POST_BUILD
+            COMMAND
+                ${CMAKE_COMMAND} -E copy_if_different "${ICONV_LIBRARY}" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
+        )
+    else()
+        add_custom_command(TARGET freeoriongodot POST_BUILD
+            COMMAND
+                ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorioncommon>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
+            COMMAND
+                ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionparse>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
+        )
+    endif()
 endif()
 
 ##
