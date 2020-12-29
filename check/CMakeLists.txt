@@ -22,6 +22,22 @@ if(TARGET Flake8::flake8)
         SOURCES "${PROJECT_SOURCE_DIR}/default/python/tox.ini"
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/default/python"
     )
+
+    add_custom_target(check-pep8-focs
+        COMMAND "$<TARGET_FILE:Flake8::flake8>" --builtins=GameRule
+        COMMENT "Check python FreeOrion content scripts for PEP-8 style conformance"
+        VERBATIM
+        SOURCES "${PROJECT_SOURCE_DIR}/default/scripting/tox.ini"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/default/scripting"
+    )
+
+    add_custom_target(check-pep8-focs-test
+        COMMAND "$<TARGET_FILE:Flake8::flake8>" --builtins=GameRule
+        COMMENT "Check python FreeOrion content scripts for PEP-8 style conformance"
+        VERBATIM
+        SOURCES "${PROJECT_SOURCE_DIR}/test-scripting/tox.ini"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/test-scripting"
+    )
 endif()
 
 if(NOT TARGET check)
@@ -36,4 +52,12 @@ endif()
 
 if(TARGET check-pep8)
     add_dependencies(check check-pep8)
+endif()
+
+if(TARGET check-pep8-focs)
+    add_dependencies(check check-pep8-focs)
+endif()
+
+if(TARGET check-pep8-focs-test)
+    add_dependencies(check check-pep8-focs-test)
 endif()
