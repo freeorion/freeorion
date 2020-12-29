@@ -19,14 +19,6 @@
 
 BOOST_FIXTURE_TEST_SUITE(TestScriptParser, ParserAppFixture)
 
-BOOST_AUTO_TEST_CASE(parse_game_rules) {
-    Pending::Pending<GameRules> game_rules_p = Pending::StartAsyncParsing(parse::game_rules, m_scripting_dir / "game_rules.focs.txt");
-    auto game_rules = *Pending::WaitForPendingUnlocked(std::move(game_rules_p));
-    BOOST_REQUIRE(!game_rules.Empty());
-    BOOST_REQUIRE(game_rules.RuleExists("RULE_HABITABLE_SIZE_MEDIUM"));
-    BOOST_REQUIRE(GameRules::Type::TOGGLE == game_rules.GetType("RULE_ENABLE_ALLIED_REPAIR"));
-}
-
 BOOST_AUTO_TEST_CASE(parse_techs) {
     Pending::Pending<TechManager::TechParseTuple> techs_p = Pending::StartAsyncParsing(parse::techs<TechManager::TechParseTuple>, m_scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
