@@ -2,6 +2,7 @@
 #define _Empire_h_
 
 
+#include <array>
 #include <string>
 #include "InfluenceQueue.h"
 #include "PopulationPool.h"
