@@ -66,6 +66,8 @@ jobs:
       script:
         - cmake ..
         - cmake --build . --target check-pep8
+        - cmake --build . --target check-pep8-focs
+        - cmake --build . --target check-pep8-focs-test
 
 
     - name: Lint string tables
