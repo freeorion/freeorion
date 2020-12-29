@@ -3,6 +3,8 @@
 
 #include "Parse.h"
 
+#include <boost/python/dict.hpp>
+
 class PythonCommon;
 
 class FO_PARSE_API PythonParser {
@@ -17,6 +19,10 @@ public:
     const PythonParser& operator=(const PythonParser&) = delete;
 
     PythonParser& operator=(PythonParser&&) = delete;
+
+    bool ParseFileCommon(const boost::filesystem::path& path,
+                         const boost::python::dict& globals,
+                         std::string& filename, std::string& file_contents) const;
 private:
     PythonCommon& python;
 };

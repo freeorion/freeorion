@@ -1,6 +1,7 @@
 #include "AppInterface.h"
 
 #include "../parse/Parse.h"
+#include "../parse/PythonParser.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Government.h"
 #include "../universe/BuildingType.h"
@@ -16,7 +17,6 @@
 #include "Directories.h"
 #include "GameRules.h"
 #include "Pending.h"
-#include "PythonCommon.h"
 
 #include <boost/filesystem.hpp>
 
@@ -119,10 +119,10 @@ void IApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/monster_designs").string();
 
-    if (IsExistingFile(rdir / "scripting/game_rules.focs.txt"))
-        GetGameRules().Add(Pending::StartAsyncParsing(parse::game_rules, rdir / "scripting/game_rules.focs.txt"));
+    if (IsExistingFile(rdir / "scripting/game_rules.focs.py"))
+        GetGameRules().Add(Pending::ParseSynchronously(parse::game_rules, python, rdir / "scripting/game_rules.focs.py"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/game_rules.focs.txt").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/game_rules.focs.py").string();
 
     if (IsExistingDir(rdir / "scripting/techs"))
         GetTechManager().SetTechs(Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));

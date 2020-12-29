@@ -132,3 +132,12 @@ GameRule(
     category="MULTIPLAYER",
     type=bool,
     default=False)
+
+GameRule(
+    name="RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE",
+    description="RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE_DESC",
+    category="BALANCE",
+    type=int,
+    default=3,
+    min=1,
+    max=20)
