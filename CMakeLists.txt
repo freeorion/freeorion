@@ -402,17 +402,11 @@ target_link_libraries(freeorioncommon
         ${ANDROID_LIBRARY}
         ${LOG_LIBRARY}
     PRIVATE
+        # boost::uuid requires the bcrypt Windows API on Windows since boost 1.67
+        # see https://github.com/boostorg/uuid/issues/68
+        $<$<AND:$<PLATFORM_ID:Windows>,$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.66>>:bcrypt>
         ${CORE_FOUNDATION_LIBRARY}
 )
-
-if(WIN32 AND ${Boost_VERSION} GREATER 106699) # boost >= 1.67
-    # fix https://github.com/boostorg/uuid/issues/68
-    find_library(BCRYPT_LIBRARY bcrypt)
-    target_link_libraries(freeorioncommon
-        PRIVATE
-            ${BCRYPT_LIBRARY}
-    )
-endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Haiku")
 	target_link_libraries(freeorioncommon PUBLIC network)
