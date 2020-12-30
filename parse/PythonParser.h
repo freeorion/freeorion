@@ -22,7 +22,7 @@ public:
     PythonParser& operator=(PythonParser&&) = delete;
 
     bool ParseFileCommon(const boost::filesystem::path& path,
-                         const boost::python::dict& globals,
+                         std::function<boost::python::dict()> globals,
                          std::string& filename, std::string& file_contents) const;
 
     boost::python::object type_int;
