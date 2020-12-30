@@ -3,6 +3,7 @@
 #include "OptionsDB.h"
 #include "i18n.h"
 
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -782,6 +783,8 @@ auto ReadFile(boost::filesystem::path const& path, std::string& file_contents) -
 
     std::getline(ifs, file_contents, '\0');
 
+    boost::trim(file_contents);
+
     // no problems?
-    return true;
+    return !file_contents.empty();
 }
