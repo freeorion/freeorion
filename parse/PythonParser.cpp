@@ -13,6 +13,24 @@ PythonParser::PythonParser(PythonCommon& _python)
         ErrorLogger() << "Python parse given non-initialized python!";
         throw std::runtime_error("Python isn't initialized");
     }
+
+    try {
+        type_int = boost::python::eval("int", boost::python::dict());
+        type_float = boost::python::eval("float", boost::python::dict());
+        type_bool = boost::python::eval("bool", boost::python::dict());
+        type_str = boost::python::eval("str", boost::python::dict());
+    } catch (const boost::python::error_already_set& err) {
+        python.HandleErrorAlreadySet();
+        if (!python.IsPythonRunning()) {
+            ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
+            if (python.Initialize()) {
+                ErrorLogger() << "Python interpreter successfully restarted.";
+            } else {
+                ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
+            }
+        }
+        throw std::runtime_error("Python isn't initialized");
+    }
 }
 
 PythonParser::~PythonParser() {

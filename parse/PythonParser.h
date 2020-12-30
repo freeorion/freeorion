@@ -4,6 +4,7 @@
 #include "Parse.h"
 
 #include <boost/python/dict.hpp>
+#include <boost/python/object_fwd.hpp>
 
 class PythonCommon;
 
@@ -23,6 +24,11 @@ public:
     bool ParseFileCommon(const boost::filesystem::path& path,
                          const boost::python::dict& globals,
                          std::string& filename, std::string& file_contents) const;
+
+    boost::python::object type_int;
+    boost::python::object type_float;
+    boost::python::object type_bool;
+    boost::python::object type_str;
 private:
     PythonCommon& python;
 };

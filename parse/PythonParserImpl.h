@@ -13,7 +13,7 @@ namespace py_parse { namespace detail {
         std::string filename;
         std::string file_contents;
 
-        Grammar grammar;
+        Grammar grammar(parser);
 
         return parser.ParseFileCommon(path, grammar(arg1), filename, file_contents);
     }
@@ -25,7 +25,7 @@ namespace py_parse { namespace detail {
         std::string filename;
         std::string file_contents;
 
-        Grammar grammar;
+        Grammar grammar(parser);
 
         return parser.ParseFileCommon(path, grammar(arg1, arg2), filename, file_contents);
     }
