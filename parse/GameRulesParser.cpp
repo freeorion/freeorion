@@ -23,16 +23,9 @@ object insert_rule_(const grammar& g,
                     const dict& kw);
 
 struct grammar {
-    object type_int;
-    object type_float;
-    object type_bool;
-    object type_str;
+    const PythonParser& m_parser;
 
-    grammar() {
-        type_int = eval("int", dict());
-        type_float = eval("float", dict());
-        type_bool = eval("bool", dict());
-        type_str = eval("str", dict());
+    grammar(const PythonParser& parser):m_parser(parser) {
     }
 
     boost::python::dict operator()(GameRules& game_rules) {
@@ -54,7 +47,7 @@ object insert_rule_(const grammar& g,
     auto category = extract<std::string>(kw["category"])();
     auto type_ = kw["type"];
 
-    if (type_ == g.type_int) {
+    if (type_ == g.m_parser.type_int) {
         int default_value = extract<int>(kw["default"])();
         int min = extract<int>(kw["min"])();
         int max = extract<int>(kw["max"])();
@@ -63,7 +56,7 @@ object insert_rule_(const grammar& g,
                       << ", min: " << min << ", max: " << max;
         game_rules.Add<int>(std::move(name), std::move(desc), std::move(category),
                             default_value, false, RangedValidator<int>(min, max));
-    } else if (type_ == g.type_float) {
+    } else if (type_ == g.m_parser.type_float) {
         double default_value = extract<double>(kw["default"])();
         double min = extract<double>(kw["min"])();
         double max = extract<double>(kw["max"])();
@@ -72,13 +65,13 @@ object insert_rule_(const grammar& g,
                       << ", min: " << min << ", max: " << max;
         game_rules.Add<double>(std::move(name), std::move(desc), std::move(category),
                                default_value, false, RangedValidator<double>(min, max));
-    } else if (type_ == g.type_bool) {
+    } else if (type_ == g.m_parser.type_bool) {
         bool default_value = extract<bool>(kw["default"])();
         DebugLogger() << "Adding Boolean game rule with name: " << name
                       << ", desc: " << desc << ", default: " << default_value;
         game_rules.Add<bool>(std::move(name), std::move(desc),
                              std::move(category), default_value, false);
-    } else if (type_ == g.type_str) {
+    } else if (type_ == g.m_parser.type_str) {
         std::string default_value = extract<std::string>(kw["default"])();
         std::set<std::string> allowed = std::set<std::string>(stl_input_iterator<std::string>(kw["allowed"]),
                                                               stl_input_iterator<std::string>());
