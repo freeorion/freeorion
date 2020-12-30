@@ -9,6 +9,7 @@
 #include <boost/python/object_fwd.hpp>
 #include <boost/python/str.hpp>
 #include <boost/python/exec.hpp>
+#include <boost/python/import.hpp>
 #include <boost/python/stl_iterator.hpp>
 #include <functional>
 #include <string>
@@ -28,8 +29,8 @@ struct grammar {
     grammar(const PythonParser& parser):m_parser(parser) {
     }
 
-    boost::python::dict operator()(GameRules& game_rules) {
-        boost::python::dict globals;
+    boost::python::dict operator()(GameRules& game_rules) const {
+        boost::python::dict globals(import("builtins").attr("__dict__"));
         std::function<object(const tuple&, const dict&)> f = [this, &game_rules](const tuple& args,
                   const dict& kw) { return insert_rule_(*this, game_rules, args, kw); };
         globals["GameRule"] = raw_function(f);
