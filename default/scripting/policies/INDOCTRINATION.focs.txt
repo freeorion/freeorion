@@ -2,7 +2,7 @@ Policy
     name = "PLC_INDOCTRINATION"
     description = "PLC_INDOCTRINATION_DESC"
     short_description = "PLC_INDOCTRINATION_SHORT_DESC"
-    category = "MILITARY_CATEGORY"
+    category = "SOCIAL_CATEGORY"
     adoptioncost = 10
     prerequisites = [ "PLC_CENTRALIZATION" ]
     //exclusions = [ "PLC_MERITOCRACY" ]
