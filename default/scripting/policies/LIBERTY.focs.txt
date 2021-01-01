@@ -1,0 +1,29 @@
+Policy
+    name = "PLC_LIBERTY"
+    description = "PLC_LIBERTY_DESC"
+    short_description = "PLC_LIBERTY_SHORT_DESC"
+    category = "SOCIAL_CATEGORY"
+    adoptioncost = 5 + floor(Statistic Sum value = LocalCandidate.Population
+                                           condition = And [ Planet OwnedBy empire = Source.Owner ])
+    exclusions = [ "PLC_MARTIAL_LAW" "PLC_TERROR_SUPPRESSION" "PLC_INDOCTRINATION" "PLC_CONFORMANCE" ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
+        // used in setting stability adjustments for species likes / dislikes
+
+        // increases research but penalizes stability overall
+        EffectsGroup
+        scope = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species
+        ]
+        effects = [
+            SetTargetResearch value = Value + (NamedReal name = "PLC_LIBERTY_RESEARCH_BONUS_FLAT" value = 2.0)
+            SetTargetHappiness value = Value - (NamedReal name = "PLC_LIBERTY_STABILITY_PENALTY_FLAT" value = 2.0)
+            SetTargetInfluence value = Value - (NamedReal name = "PLC_LIBERTY_INFLUENCE_PENALTY_FLAT" value = 1.0)
+        ]
+    ]
+    graphic = "icons/policies/liberty.png"
+
+#include "/scripting/policies/policies.macros"

@@ -1,5 +1,6 @@
 STABILITY_PER_LIKED_OR_DISLIKED_FOCUS
-'''5'''
+'''5.0 * (1.0 + (Statistic If condition = EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_LIBERTY")
+          - 0.5*(Statistic If condition = EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_CONFORMANCE"))'''
 
 AVERAGE_HAPPINESS
 '''

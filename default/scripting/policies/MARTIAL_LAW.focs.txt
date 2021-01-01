@@ -5,6 +5,7 @@ Policy
     category = "MILITARY_CATEGORY"
     adoptioncost = 10
     prerequisites = [ "PLC_CHECKPOINTS" ]
+    exclusions = [ "PLC_LIBERTY" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 

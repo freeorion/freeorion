@@ -10769,12 +10769,29 @@ DESC_EMPIRE_STOCKPILE_VALUE_NOT
 ''' that doesn't belong to an empire with %1% stockpile between %2% and %3%'''
 
 # %1% textual description of the empire.
+# %2% description of visibility level at which object has been detected
 DESC_VISIBLE_TO_EMPIRE
-''' that is visible to the %1% empire'''
+''' that is currently visible to the %1% empire at %2% visibility or better'''
 
 # %1% textual description of the empire.
+# %2% description of visibility level at which object has not been detected
 DESC_VISIBLE_TO_EMPIRE_NOT
-''' that is not visible to the %1% empire'''
+''' that is not currently visible to the %1% empire at %2% visibility or better'''
+
+# %1% textual description of the empire.
+# %2% description of turn since when object has been detected
+# %3% description of visibility level at which object has been detected
+DESC_VISIBLE_TO_EMPIRE_SINCE_TURN
+''' that has been visible to the %1% empire at %3% visibility or better on or after turn %2%'''
+
+# %1% textual description of the empire.
+# %2% description of turn since when object has been detected
+# %3% description of visibility level at which object has been detected
+DESC_VISIBLE_TO_EMPIRE_SINCE_TURN_NOT
+''' that has not been visible to the %1% empire at %3% visibility or better on or after turn %2%'''
+
+DESC_ANY_EMPIRE
+any empire
 
 # %1% distance in universe units.
 # %2% textual description of the target object.
@@ -11147,9 +11164,9 @@ DESC_OWNER_HAS_SHIP_PART
 DESC_OWNER_HAS_SHIP_PART_NOT
 ''' ship part not unlocked for empire'''
 
-# %1% FIXME
-# %2% FIXME
-# %3% FIXME
+# %1% lowest accepted number of matching objects
+# %2% maximum number of mnatching objects
+# %3% description of which objects to count
 DESC_NUMBER
 ''' if there are between %1% and %2% objects%3%'''
 
@@ -11163,14 +11180,6 @@ DESC_HAS_TAG
 # %1% an object tag string.
 DESC_HAS_TAG_NOT
 ''' that is not %1%'''
-
-
-##
-## Policy categories
-##
-
-SOCIOLOGY_CATEGORY
-Sociology
 
 
 ##
@@ -11482,6 +11491,24 @@ Increases [[metertype METER_TARGET_HAPPINESS]] on populated planets by however m
 
 PLC_DREAM_RECURSION_SHORT_DESC
 Targeted stability boost
+
+PLC_CONFORMANCE
+Conformance
+
+PLC_CONFORMANCE_DESC
+Reduces the impact of species likes and dislikes on planet stability.
+
+PLC_CONFORMANCE_SHORT_DESC
+Reduces species opinion effects
+
+PLC_LIBERTY
+Liberty
+
+PLC_LIBERTY_DESC
+Increases the impact of species likes and dislikes on planet stability.
+
+PLC_LIBERTY_SHORT_DESC
+Increases species opinion effects
 
 
 ##

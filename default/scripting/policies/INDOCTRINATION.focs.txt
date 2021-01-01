@@ -4,8 +4,8 @@ Policy
     short_description = "PLC_INDOCTRINATION_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
     adoptioncost = 10
-    prerequisites = [ "PLC_CENTRALIZATION" ]
-    //exclusions = [ "PLC_MERITOCRACY" ]
+    prerequisites = [ "PLC_CENTRALIZATION" "PLC_CONFORMANCE" ]
+    exclusions = [ "PLC_LIBERTY" "PLC_DIVERSITY" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
