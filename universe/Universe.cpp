@@ -384,7 +384,7 @@ const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {
 }
 
 Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) const {
-    if (empire_id == ALL_EMPIRES)   // TODO: GameRule for all objects visible
+    if (empire_id == ALL_EMPIRES)
         return Visibility::VIS_FULL_VISIBILITY;
 
     auto empire_it = m_empire_object_visibility.find(empire_id);
