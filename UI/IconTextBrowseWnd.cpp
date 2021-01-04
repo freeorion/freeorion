@@ -45,7 +45,9 @@ void IconTextBrowseWnd::PreRender() {
     m_title_text_label->Resize(GG::Pt(ICON_BROWSE_TEXT_WIDTH, ROW_HEIGHT));
     m_title_text_label->SetFont(ClientUI::GetBoldFont());
 
-    m_main_text_label = GG::Wnd::Create<CUILabel>(m_main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
+
+    m_main_text_label = GG::Wnd::Create<CUILabel>(ValueRefLinkText(m_main_text,false),
+                                                  GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
     m_main_text_label->MoveTo(GG::Pt(m_icon->Width() + GG::X(EDGE_PAD), ROW_HEIGHT));
     m_main_text_label->Resize(GG::Pt(ICON_BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT));
     m_main_text_label->SetResetMinSize(true);

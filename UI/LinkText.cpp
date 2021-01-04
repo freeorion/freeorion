@@ -95,46 +95,47 @@ namespace {
         return retval;
     }
 
-    /** Parses VarText::FOCS_VALUE_TAG%s within @p text, replacing value ref name%s with
-     *  the evaluation result of that value ref.
-     *  Given tag content (i.e. the stringtable content for the tag name) gets added as explanation.
-     *  If the tag content is empty or @p add_explanation is true,
-     *  the value ref description gets added as explanation instead. */
-    std::string ValueRefLinkText(const std::string& text, const bool add_explanation) {
-        auto FOCS_VALUE_TAG_CLOSE("</" + VarText::FOCS_VALUE_TAG + ">");
-        if (!boost::contains(text, FOCS_VALUE_TAG_CLOSE))
-            return text;
+}
 
-        std::string retval(text);
-        auto text_it = retval.begin();
-        xpr::smatch match;
-        const xpr::sregex FOCS_VALUE_SEARCH = ("<" + VarText::FOCS_VALUE_TAG) >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> ">" >>
-                                              (xpr::s2 = REGEX_NON_BRACKET) >> ("</" + VarText::FOCS_VALUE_TAG + ">");
+/** Parses VarText::FOCS_VALUE_TAG%s within @p text, replacing value ref name%s with
+ *  the evaluation result of that value ref.
+ *  Given tag content (i.e. the stringtable content for the tag name) gets added as explanation.
+ *  If the tag content is empty or @p add_explanation is true,
+ *  the value ref description gets added as explanation instead. */
+std::string ValueRefLinkText(const std::string& text, const bool add_explanation) {
+    auto FOCS_VALUE_TAG_CLOSE("</" + VarText::FOCS_VALUE_TAG + ">");
+    if (!boost::contains(text, FOCS_VALUE_TAG_CLOSE))
+        return text;
 
-        while (true) {
-            if (!xpr::regex_search(text_it, retval.end(), match, FOCS_VALUE_SEARCH, xpr::regex_constants::match_default))
-                break;
+    std::string retval(text);
+    auto text_it = retval.begin();
+    xpr::smatch match;
+    const xpr::sregex FOCS_VALUE_SEARCH = ("<" + VarText::FOCS_VALUE_TAG) >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> ">" >>
+                                          (xpr::s2 = REGEX_NON_BRACKET) >> ("</" + VarText::FOCS_VALUE_TAG + ">");
 
-            std::string value_ref_name{match[1]};
-            auto*       value_ref = GetValueRefBase(value_ref_name);
-            auto        value_str{value_ref ? value_ref->EvalAsString() : value_ref_name};
-            // Explanation: match[2] contains the localized UserString. Result looks like e.g. " (per planet size: 2.5 * 0.2000)"
-            // Using UserStringExists to get rid of lookup errors is kind of redundant. It would be better if UserString substitution had not happened before.
-            std::string explanation_str{
-                (value_ref && add_explanation)
-                    ? " (" + ((match[2].length()==0 || !UserStringExists(value_ref_name)) ? "" : match[2] + ": ") + value_ref->Description() + ")"
-                    : ""};
+    while (true) {
+        if (!xpr::regex_search(text_it, retval.end(), match, FOCS_VALUE_SEARCH, xpr::regex_constants::match_default))
+            break;
 
-            auto resolved_tooltip = "<" + VarText::FOCS_VALUE_TAG + " " + value_ref_name + ">"
-                                     + value_str + explanation_str + "</" + VarText::FOCS_VALUE_TAG + ">";
+        std::string value_ref_name{match[1]};
+        auto*       value_ref = GetValueRefBase(value_ref_name);
+        auto        value_str{value_ref ? value_ref->EvalAsString() : value_ref_name};
+        // Explanation: match[2] contains the localized UserString. Result looks like e.g. " (per planet size: 2.5 * 0.2000)"
+        // Using UserStringExists to get rid of lookup errors is kind of redundant. It would be better if UserString substitution had not happened before.
+        std::string explanation_str{
+            (value_ref && add_explanation)
+            ? " (" + ((match[2].length()==0 || !UserStringExists(value_ref_name)) ? "" : match[2] + ": ") + value_ref->Description() + ")"
+            : ""};
 
-            retval.replace(text_it + match.position(), text_it + match.position() + match.length(), resolved_tooltip);
+        auto resolved_tooltip = "<" + VarText::FOCS_VALUE_TAG + " " + value_ref_name + ">"
+                                + value_str + explanation_str + "</" + VarText::FOCS_VALUE_TAG + ">";
 
-            text_it = retval.end() - match.suffix().length();
-        }
+        retval.replace(text_it + match.position(), text_it + match.position() + match.length(), resolved_tooltip);
 
-        return retval;
+        text_it = retval.end() - match.suffix().length();
     }
+
+    return retval;
 }
 
 ///////////////////////////////////////
@@ -267,11 +268,11 @@ std::string PathTypeDecorator::DecorateRollover(const std::string& path_type, co
 }
 
 std::string ValueRefDecorator::Decorate(const std::string& value_ref_name, const std::string& content) const {
-    return GG::RgbaTag(ClientUI::DefaultTooltipColor()) + ValueRefLinkText(content, false) + LINK_FORMAT_CLOSE;
+    return GG::RgbaTag(ClientUI::DefaultTooltipColor()) + ::ValueRefLinkText(content, false) + LINK_FORMAT_CLOSE;
 }
 
 std::string ValueRefDecorator::DecorateRollover(const std::string& value_ref_name, const std::string& content) const {
-    return GG::RgbaTag(ClientUI::RolloverTooltipColor()) + ValueRefLinkText(content, true) + LINK_FORMAT_CLOSE;
+    return GG::RgbaTag(ClientUI::RolloverTooltipColor()) + ::ValueRefLinkText(content, true) + LINK_FORMAT_CLOSE;
 }
 
 
