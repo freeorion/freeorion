@@ -10769,12 +10769,29 @@ DESC_EMPIRE_STOCKPILE_VALUE_NOT
 ''' n'appartenant pas à un empire possédant un stock de %1% entre %2% and %3%'''
 
 # %1% textual description of the empire.
+# %2% description of visibility level at which object has been detected
 DESC_VISIBLE_TO_EMPIRE
-''' étant visible par l'empire %1%'''
+''' étant visible actuellement par l'empire %1% à une visibilité de %2% ou plus'''
 
 # %1% textual description of the empire.
+# %2% description of visibility level at which object has not been detected
 DESC_VISIBLE_TO_EMPIRE_NOT
-''' n'étant pas visible par l'empire %1%'''
+''' n'étant pas visible actuellement par l'empire %1% à une visibilité de %2% ou plus'''
+
+# %1% textual description of the empire.
+# %2% description of turn since when object has been detected
+# %3% description of visibility level at which object has been detected
+DESC_VISIBLE_TO_EMPIRE_SINCE_TURN
+''' ayant été visible par l'empire %1% à une visibilité de %3% ou plus, à partir du tour %2% ou après'''
+
+# %1% textual description of the empire.
+# %2% description of turn since when object has been detected
+# %3% description of visibility level at which object has been detected
+DESC_VISIBLE_TO_EMPIRE_SINCE_TURN_NOT
+''' n'ayant pas été visible par l'empire %1% à une visibilité de %3% ou plus, à partir du tour %2% ou après'''
+
+DESC_ANY_EMPIRE
+tout empire
 
 # %1% distance in universe units.
 # %2% textual description of the target object.
@@ -11147,9 +11164,9 @@ DESC_OWNER_HAS_SHIP_PART
 DESC_OWNER_HAS_SHIP_PART_NOT
 ''' équipement d'astronef non débloqué pour l'empire'''
 
-# %1% FIXME
-# %2% FIXME
-# %3% FIXME
+# %1% lowest accepted number of matching objects
+# %2% maximum number of mnatching objects
+# %3% description of which objects to count
 DESC_NUMBER
 ''' s'il existe entre %1% et %2% objets%3%'''
 
@@ -11163,14 +11180,6 @@ DESC_HAS_TAG
 # %1% an object tag string.
 DESC_HAS_TAG_NOT
 ''' ce n'est pas %1%'''
-
-
-##
-## Policy categories
-##
-
-SOCIOLOGY_CATEGORY
-Sociologie
 
 
 ##
@@ -11482,6 +11491,24 @@ Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de la v
 
 PLC_DREAM_RECURSION_SHORT_DESC
 Augmentation ciblée de la Stabilité
+
+PLC_CONFORMANCE
+Conformité
+
+PLC_CONFORMANCE_DESC
+Réduit l'impact des préférences d'une espèce (aime ou n'aime pas) sur la Stabilité planétaire.
+
+PLC_CONFORMANCE_SHORT_DESC
+Réduit les effets des opinions d'une espèce
+
+PLC_LIBERTY
+Liberté
+
+PLC_LIBERTY_DESC
+Augmente l'impact des préférences d'une espèce (aime ou n'aime pas) sur la Stabilité planétaire.
+
+PLC_LIBERTY_SHORT_DESC
+Augmente les effets des opinions d'une espèce
 
 
 ##
