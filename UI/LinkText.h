@@ -187,5 +187,7 @@ std::string LinkTaggedPresetText(const std::string& tag, const std::string& stri
 /// XML tags is handled by GG::Font
 void RegisterLinkTags();
 
+/// Helper for resolving <value> to the valueref value
+std::string ValueRefLinkText(const std::string& text, const bool add_explanation);
 
 #endif
