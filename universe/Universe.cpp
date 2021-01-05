@@ -383,6 +383,9 @@ const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {
     return empty_set;
 }
 
+const Universe::EmpireObjectVisibilityMap& Universe::GetEmpireObjectVisibility() const
+{ return m_empire_object_visibility; }
+
 Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) const {
     if (empire_id == ALL_EMPIRES)
         return Visibility::VIS_FULL_VISIBILITY;

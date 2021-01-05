@@ -158,6 +158,10 @@ public:
       * UpdateEmpireObjectVisibilities. */
     Visibility GetObjectVisibilityByEmpire(int object_id, int empire_id) const;
 
+    /* Return the map from empire id to (map from id to that empire's current
+     * visibility of that object) */
+    const EmpireObjectVisibilityMap& GetEmpireObjectVisibility() const;
+
     /* Returns the map from empire id to (map from object id to (map from
      * visibility level to turn number on which the empire last detected that
      * object at that visibility level)). */
