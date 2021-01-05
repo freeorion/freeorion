@@ -2641,9 +2641,8 @@ void Empire::UpdatePopulationGrowth()
 { m_population_pool.Update(); }
 
 void Empire::ResetMeters() {
-    for (auto& entry : m_meters) {
+    for (auto& entry : m_meters)
         entry.second.ResetCurrent();
-    }
 }
 
 void Empire::UpdateOwnedObjectCounters(const ObjectMap& objects) {
@@ -2723,7 +2722,7 @@ int Empire::TotalShipsOwned() const {
     //  ship that has no species...)
     int counter = 0;
     for (const auto& entry : m_ship_designs_owned)
-    { counter += entry.second; }
+        counter += entry.second;
     return counter;
 }
 
@@ -2743,17 +2742,14 @@ void Empire::RecordShipScrapped(const Ship& ship) {
     m_species_ships_scrapped[ship.SpeciesName()]++;
 }
 
-void Empire::RecordBuildingScrapped(const Building& building) {
-    m_building_types_scrapped[building.BuildingTypeName()]++;
-}
+void Empire::RecordBuildingScrapped(const Building& building)
+{ m_building_types_scrapped[building.BuildingTypeName()]++; }
 
-void Empire::RecordPlanetInvaded(const Planet& planet) {
-    m_species_planets_invaded[planet.SpeciesName()]++;
-}
+void Empire::RecordPlanetInvaded(const Planet& planet)
+{ m_species_planets_invaded[planet.SpeciesName()]++; }
 
-void Empire::RecordPlanetDepopulated(const Planet& planet) {
-    m_species_planets_depoped[planet.SpeciesName()]++;
-}
+void Empire::RecordPlanetDepopulated(const Planet& planet)
+{ m_species_planets_depoped[planet.SpeciesName()]++; }
 
 int Empire::TotalShipPartsOwned() const {
     // sum counts of all ship parts owned by this empire
@@ -2769,6 +2765,6 @@ int Empire::TotalBuildingsOwned() const {
     // sum up counts for each building type owned by this empire
     int counter = 0;
     for (const auto& entry : m_building_types_owned)
-    { counter += entry.second; }
+        counter += entry.second;
     return counter;
 }
