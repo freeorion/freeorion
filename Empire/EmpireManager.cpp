@@ -30,6 +30,9 @@ EmpireManager& EmpireManager::operator=(EmpireManager&& other) noexcept {
 EmpireManager::~EmpireManager()
 {}
 
+const EmpireManager::const_container_type& EmpireManager::GetEmpires() const
+{ return m_const_empire_map; }
+
 std::shared_ptr<const Empire> EmpireManager::GetEmpire(int id) const {
     auto it = m_const_empire_map.find(id);
     return it == m_const_empire_map.end() ? nullptr : it->second;
@@ -94,6 +97,9 @@ std::string EmpireManager::DumpDiplomacy() const {
     return retval;
 }
 
+const EmpireManager::container_type& EmpireManager::GetEmpires()
+{ return m_empire_map; }
+
 std::shared_ptr<Empire> EmpireManager::GetEmpire(int id) {
     iterator it = m_empire_map.find(id);
     return it == end() ? nullptr : it->second;
@@ -147,6 +153,9 @@ void EmpireManager::Clear() {
     m_empire_map.clear();
     m_empire_diplomatic_statuses.clear();
 }
+
+const EmpireManager::DiploStatusMap& EmpireManager::GetDiplomaticStatuses() const
+{ return m_empire_diplomatic_statuses; }
 
 DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) const {
     if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES || empire1 == empire2)
