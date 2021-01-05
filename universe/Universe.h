@@ -71,11 +71,10 @@ class FO_COMMON_API Universe {
 public:
     typedef std::map<int, ObjectMap>                EmpireObjectMap;                ///< Known information each empire had about objects in the Universe; keyed by empire id
     typedef std::map<Visibility, int>               VisibilityTurnMap;              ///< Most recent turn number on which a something, such as a Universe object, was observed at various Visibility ratings or better
-
-private:
     typedef std::map<int, VisibilityTurnMap>        ObjectVisibilityTurnMap;        ///< Most recent turn number on which the objects were observed at various Visibility ratings; keyed by object id
     typedef std::map<int, ObjectVisibilityTurnMap>  EmpireObjectVisibilityTurnMap;  ///< Each empire's most recent turns on which object information was known; keyed by empire id
 
+private:
     typedef std::map<int, std::set<int>>            ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
 
     typedef const ValueRef::ValueRef<Visibility>*   VisValRef;
@@ -159,6 +158,9 @@ public:
       * UpdateEmpireObjectVisibilities. */
     Visibility GetObjectVisibilityByEmpire(int object_id, int empire_id) const;
 
+    /* Returns the map from empire id to (map from object id to (map from
+     * visibility level to turn number on which the empire last detected that
+     * object at that visibility level)). */
     const EmpireObjectVisibilityTurnMap& GetEmpireObjectVisibilityTurnMap() const;
 
     /** Returns the map from Visibility level to turn number on which the empire
