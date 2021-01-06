@@ -1,0 +1,131 @@
+name: Build FreeOrion and run unit tests
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  build-linux:
+    name: Build FreeOrion on Ubuntu 18.04 (Bionic)
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        id: build-linux-cache-id
+        with:
+          path: ${{ runner.temp }}/cache-build-linux
+          key: ${{ runner.os }}-cache-key-v1.0
+      - uses: airvzxf/cache-anything-new-action@v1.0
+        with:
+          script: 'install-build.sh'
+          is_cached: ${{ steps.build-linux-cache-id.outputs.cache-hit }}
+          cache: ${{ runner.temp }}/cache-build-linux
+          snapshot: '/'
+          exclude: '/boot /data /dev /mnt /proc /run /sys'
+      - name: Build
+        env:
+          CACHE_NAME: linux
+          CCACHE_DIR: ${{ runner.temp }}/cache-build-linux/ccache
+          CMAKE_BUILD_PARALLEL_LEVEL: 2
+        run: |
+          mkdir build
+          cd build
+          cmake -DBUILD_TESTING=ON ..
+          cmake --build .
+      - name: Test
+        run: |
+          cd build
+          cmake --build . --config Release --target unittest || echo Failure
+  build-linux-headless:
+    name: Build headless FreeOrion on Ubuntu 18.04 (Bionic)
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        id: build-linux-headless-cache-id
+        with:
+          path: ${{ runner.temp }}/cache-build-linux-headless
+          key: ${{ runner.os }}-cache-key-v1.0
+      - uses: airvzxf/cache-anything-new-action@v1.0
+        with:
+          script: 'install-build.sh'
+          is_cached: ${{ steps.build-linux-headless-cache-id.outputs.cache-hit }}
+          cache: ${{ runner.temp }}/cache-build-linux-headless
+          snapshot: '/'
+          exclude: '/boot /data /dev /mnt /proc /run /sys'
+      - name: Build
+        env:
+          CACHE_NAME: linux-headless
+          CCACHE_DIR: ${{ runner.temp }}/cache-build-linux-headless/ccache
+          CMAKE_BUILD_PARALLEL_LEVEL: 2
+        run: |
+          mkdir build
+          cd build
+          cmake -DBUILD_CLIENT_GG=OFF -DBUILD_TESTING=ON ..
+          cmake --build .
+      - name: Test
+        run: |
+          cd build
+          cmake --build . --config Release --target unittest || echo Failure
+  build-macos:
+    name: Build FreeOrion on MacOS
+    runs-on: macos-10.15
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Clean up Mono
+        run: sudo ./.github/workflows/mono-uninstall.sh
+      - name: Cache compilation
+        uses: actions/cache@v2
+        with:
+          path: ~/.ccache
+          key: ccache-macos
+      - name: Build
+        env:
+          CACHE_NAME: macos-full
+          CMAKE_BUILD_PARALLEL_LEVEL: 2
+          HOMEBREW_NO_AUTO_UPDATE: 1
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          brew install ccache
+          ccache --set-config=max_size=500M --set-config=sloppiness=file_macro
+          ccache --zero-stats
+          mkdir build
+          cd build
+          alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
+          cmake -GXcode -DBUILD_TESTING=OFF -DBoost_NO_BOOST_CMAKE=ON -DGLEW_USE_STATIC_LIBS=ON ..
+          cmake --build . --config Release -- -parallelizeTargets
+          ccache --cleanup
+          ccache --show-stats
+  build-windows:
+    name: Build FreeOrion on Windows
+    runs-on: windows-2019
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Download SDK
+        id: download-sdk
+        uses: suisei-cn/actions-download-file@v1
+        with:
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v11/FreeOrionSDK_11_MSVC-v141-Win32.zip
+          target: ../
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+        with:
+          vs-version: '[16.0,16.10)'
+      - name: Build
+        run: |
+          unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
+          cp ..\bin\* .
+          mkdir build
+          pushd build
+          cmake -G "Visual Studio 16 2019" -T v141 -A Win32 -DBUILD_TESTING=On ..
+          cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /verbosity:minimal

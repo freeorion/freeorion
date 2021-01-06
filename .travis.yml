@@ -102,58 +102,6 @@ jobs:
         on:
           branch: master
 
-    - name: Build FreeOrion on Ubunutu 18.04 (Bionic)
-      <<: *_linux_setup_common
-      stage: build
-      env:
-        - CACHE_NAME=linux-full
-        - CMAKE_BUILD_PARALLEL_LEVEL=2
-      script:
-        - cmake -DBUILD_TESTING=ON ..
-        - cmake --build .
-
-    - name: Build headless FreeOrion on Ubunutu 18.04 (Bionic)
-      <<: *_linux_setup_common
-      stage: build
-      env:
-        - CACHE_NAME=linux-headless
-        - CMAKE_BUILD_PARALLEL_LEVEL=2
-      script:
-        - cmake -DBUILD_CLIENT_GG=OFF -DBUILD_TESTING=ON ..
-        - cmake --build .
-
-    - name: Build FreeOrion on MacOS
-      stage: build
-      os: osx
-      osx_image: xcode9.4
-      language: cpp
-      compiler: clang
-      cache: ccache
-      env:
-        - CACHE_NAME=macos-full
-        - CMAKE_BUILD_PARALLEL_LEVEL=2
-        - HOMEBREW_NO_AUTO_UPDATE=1
-      before_install:
-        - export PATH="/usr/local/opt/ccache/libexec:$PATH"
-        # timeout before Travis kills jobs so that ccache is always at least partially populated
-        - >
-          function cmake {
-              /usr/local/bin/gtimeout 40m /usr/local/bin/cmake $@
-          }
-      install:
-        - brew install ccache
-        - ccache --set-config=max_size=500M --set-config=sloppiness=file_macro
-        - ccache --zero-stats
-      before_script:
-        - mkdir build
-        - cd build
-      script:
-        - cmake -GXcode -DBUILD_TESTING=OFF -DBoost_NO_BOOST_CMAKE=ON -DGLEW_USE_STATIC_LIBS=ON ..
-        - cmake --build . --config Release -- -parallelizeTargets
-      before_cache:
-        - ccache --cleanup
-        - ccache --show-stats
-
     - name: Unittest AI with Python 3.5
       <<: *_test_python_common
       python: 3.5
