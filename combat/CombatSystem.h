@@ -12,7 +12,7 @@
 struct CombatInfo : public ScriptingCombatInfo {
 public:
     CombatInfo() = default;
-    CombatInfo(int system_id_, int turn_);  ///< ctor taking system id where combat occurs and game turn on which combat occurs
+    CombatInfo(int system_id_, int turn_, const Universe::EmpireObjectVisibilityMap& vis_);
 
     /** Returns System object in this CombatInfo's objects if one exists with
         id system_id. */

@@ -2391,7 +2391,7 @@ namespace {
         // necessary information about that combat in combats
         for (const auto& sys : GetUniverse().Objects().all<System>()) {
             if (CombatConditionsInSystem(sys->ID()))
-                combats.emplace_back(sys->ID(), CurrentTurn());
+                combats.emplace_back(sys->ID(), CurrentTurn(), GetUniverse().GetEmpireObjectVisibility());
         }
     }
 

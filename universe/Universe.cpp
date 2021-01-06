@@ -956,7 +956,7 @@ namespace {
       * the objects that matched the effects group's scope condition, for each
       * source object, as a separate entry in \a targets_cases_out */
     void StoreTargetsAndCausesOfEffectsGroup(
-        const ObjectMap&                            object_map,
+        const ObjectMap&                            object_map, // TODO: pass in const ScriptingContext& instead of just ObjectMap
         const Effect::EffectsGroup*                 effects_group,
         const Condition::ObjectSet&                 source_objects,
         EffectsCauseType                            effect_cause_type,
@@ -991,7 +991,11 @@ namespace {
         }, std::chrono::milliseconds(10));
 
         source_effects_targets_causes_out.reserve(source_objects.size());
-        ScriptingContext source_context(object_map);
+        ScriptingContext source_context(object_map,
+                                        GetUniverse().GetEmpireObjectVisibility(),
+                                        GetUniverse().GetEmpireObjectVisibilityTurnMap(),   // TODO: use passed-in ScriptingContext to populate this
+                                        Empires().GetEmpires(),
+                                        Empires().GetDiplomaticStatuses());
 
         for (auto& source : source_objects) {
             // assuming input sources objects set was already filtered with activation condition
@@ -1048,7 +1052,7 @@ namespace {
         const Condition::ObjectSet& source_objects,
         const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_groups,
         bool only_meter_effects,
-        const ObjectMap& object_map,
+        const ObjectMap& object_map,    // TODO: pass in const ScriptingContext& instead of just ObjectMap
         const Condition::ObjectSet& potential_targets,
         const std::unordered_set<int>& potential_target_ids,
         std::list<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
@@ -1070,7 +1074,11 @@ namespace {
 
         // evaluate activation conditions of effects_groups on input source objects
         std::vector<Condition::ObjectSet> active_sources{effects_groups.size()};
-        ScriptingContext source_context{object_map};
+        ScriptingContext source_context{object_map,
+                                        GetUniverse().GetEmpireObjectVisibility(),
+                                        GetUniverse().GetEmpireObjectVisibilityTurnMap(),   // TODO: take from to-be-passed-in ScriptingContext
+                                        Empires().GetEmpires(),
+                                        Empires().GetDiplomaticStatuses()};
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
             const auto* effects_group = effects_groups.at(i).get();
             if (only_meter_effects && !effects_group->HasMeterEffects())
@@ -1645,7 +1653,11 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
 
         // construct a source context, which is updated for each entry in sources-effects-targets.
         // execute each effectsgroup on its target set
-        ScriptingContext source_context;
+        ScriptingContext source_context{Objects(),
+                                        GetUniverse().GetEmpireObjectVisibility(),
+                                        GetUniverse().GetEmpireObjectVisibilityTurnMap(),
+                                        Empires().GetEmpires(),
+                                        Empires().GetDiplomaticStatuses()};
         for (std::pair<Effect::SourcedEffectsGroup, Effect::TargetsAndCause>& effect_group_entry : setc) {
             Effect::TargetsAndCause& targets_and_cause{effect_group_entry.second};
             Effect::TargetSet& target_set{targets_and_cause.target_set};
@@ -1791,8 +1803,13 @@ void Universe::ApplyEffectDerivedVisibilities() {
             // evaluate valuerefs and and store visibility of object
             for (auto& source_ref_entry : object_entry.second) {
                 // set up context for executing ValueRef to determine visibility to set
-                auto source = m_objects.get(source_ref_entry.first);
-                ScriptingContext context(source, target, target_initial_vis, nullptr, nullptr, m_objects);
+                auto&& source = m_objects.get(source_ref_entry.first);
+                ScriptingContext context{std::move(source), target, target_initial_vis,
+                                         nullptr, nullptr, m_objects,
+                                         m_empire_object_visibility,
+                                         m_empire_object_visibility_turns,
+                                         Empires().GetEmpires(),
+                                         Empires().GetDiplomaticStatuses()};
 
                 const auto val_ref = source_ref_entry.second;
 

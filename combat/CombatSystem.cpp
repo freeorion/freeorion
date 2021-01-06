@@ -35,7 +35,8 @@ namespace {
 ////////////////////////////////////////////////
 // CombatInfo
 ////////////////////////////////////////////////
-CombatInfo::CombatInfo(int system_id_, int turn_) :
+CombatInfo::CombatInfo(int system_id_, int turn_, const Universe::EmpireObjectVisibilityMap& vis_) :
+    ScriptingCombatInfo(vis_),
     turn(turn_),
     system_id(system_id_)
 {
