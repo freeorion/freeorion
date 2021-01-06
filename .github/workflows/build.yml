@@ -35,14 +35,25 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/cache-build-linux/ccache
           CMAKE_BUILD_PARALLEL_LEVEL: 2
         run: |
-          mkdir build
-          cd build
-          cmake -DBUILD_TESTING=ON ..
-          cmake --build .
           echo "----------------------------------------"
           du -h .
           echo "----------------------------------------"
           du -h ${{ runner.temp }}/cache-build-linux/ccache
+          echo "----------------------------------------"
+          du -h /home/runner/.cache
+          echo "----------------------------------------"
+          mkdir build
+          cd build
+          cmake -DBUILD_TESTING=ON ..
+          cmake --build .
+          cd ..
+          echo "----------------------------------------"
+          du -h .
+          echo "----------------------------------------"
+          du -h ${{ runner.temp }}/cache-build-linux/ccache
+          echo "----------------------------------------"
+          du -h /home/runner/.cache
+          echo "----------------------------------------"
       - name: Test
         run: |
           cd build
@@ -71,14 +82,25 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/cache-build-linux-headless/ccache
           CMAKE_BUILD_PARALLEL_LEVEL: 2
         run: |
-          mkdir build
-          cd build
-          cmake -DBUILD_CLIENT_GG=OFF -DBUILD_TESTING=ON ..
-          cmake --build .
           echo "----------------------------------------"
           du -h .
           echo "----------------------------------------"
           du -h ${{ runner.temp }}/cache-build-linux-headless/ccache
+          echo "----------------------------------------"
+          du -h /home/runner/.cache
+          echo "----------------------------------------"
+          mkdir build
+          cd build
+          cmake -DBUILD_CLIENT_GG=OFF -DBUILD_TESTING=ON ..
+          cmake --build .
+          cd ..
+          echo "----------------------------------------"
+          du -h .
+          echo "----------------------------------------"
+          du -h ${{ runner.temp }}/cache-build-linux-headless/ccache
+          echo "----------------------------------------"
+          du -h /home/runner/.cache
+          echo "----------------------------------------"
       - name: Test
         run: |
           cd build
