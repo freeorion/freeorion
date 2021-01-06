@@ -95,7 +95,7 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/ccache
           CMAKE_BUILD_PARALLEL_LEVEL: 2
         run: |
-          mkdir ${{ runner.temp }}/ccache
+          mkdir -p ${{ runner.temp }}/ccache
           echo "----------------------------------------"
           which g++ gcc || true
           echo "----------------------------------------"
