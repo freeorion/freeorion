@@ -85,21 +85,25 @@ jobs:
       - name: ccache files
         uses: actions/cache@v1.1.0
         with:
-          path: .ccache
+          path: ${{ runner.temp }}/ccache
           key: build-linux-headless-ccache-${{ steps.ccache_timestamp.outputs.timestamp }}
           restore-keys: |
             build-linux-headless-ccache-
       - name: Build
         env:
           CACHE_NAME: linux-headless
-          CCACHE_DIR: ${{ runner.temp }}/cache-build-linux-headless/ccache
+          CCACHE_DIR: ${{ runner.temp }}/ccache
           CMAKE_BUILD_PARALLEL_LEVEL: 2
         run: |
-          mkdir ${{ runner.temp }}/cache-build-linux-headless
+          mkdir ${{ runner.temp }}/ccache
+          echo "----------------------------------------"
+          ccache -s || true
+          echo "----------------------------------------"
+          sudo ccache -s || true
           echo "----------------------------------------"
           sudo du -h . || true
           echo "----------------------------------------"
-          sudo du -h ${{ runner.temp }}/cache-build-linux-headless/ || true
+          sudo du -h ${{ runner.temp }}/ccache || true
           echo "----------------------------------------"
           sudo du -h /home/runner/.cache || true
           echo "----------------------------------------"
@@ -109,9 +113,13 @@ jobs:
           cmake --build .
           cd ..
           echo "----------------------------------------"
+          ccache -s || true
+          echo "----------------------------------------"
+          sudo ccache -s || true
+          echo "----------------------------------------"
           sudo du -h . || true
           echo "----------------------------------------"
-          sudo du -h ${{ runner.temp }}/cache-build-linux-headless/ || true
+          sudo du -h ${{ runner.temp }}/ccache || true
           echo "----------------------------------------"
           sudo du -h /home/runner/.cache || true
           echo "----------------------------------------"
