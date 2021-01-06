@@ -21,7 +21,7 @@ jobs:
         id: build-linux-cache-id
         with:
           path: ${{ runner.temp }}/cache-build-linux
-          key: ${{ runner.os }}-cache-key-v1.0
+          key: build-linux-cache-key-v1.0
       - uses: airvzxf/cache-anything-new-action@v1.0
         with:
           script: 'install-build.sh'
@@ -39,6 +39,10 @@ jobs:
           cd build
           cmake -DBUILD_TESTING=ON ..
           cmake --build .
+          echo "----------------------------------------"
+          du -h .
+          echo "----------------------------------------"
+          du -h ${{ runner.temp }}/cache-build-linux/ccache
       - name: Test
         run: |
           cd build
@@ -53,7 +57,7 @@ jobs:
         id: build-linux-headless-cache-id
         with:
           path: ${{ runner.temp }}/cache-build-linux-headless
-          key: ${{ runner.os }}-cache-key-v1.0
+          key: build-linux-headless-cache-key-v1.0
       - uses: airvzxf/cache-anything-new-action@v1.0
         with:
           script: 'install-build.sh'
@@ -71,6 +75,10 @@ jobs:
           cd build
           cmake -DBUILD_CLIENT_GG=OFF -DBUILD_TESTING=ON ..
           cmake --build .
+          echo "----------------------------------------"
+          du -h .
+          echo "----------------------------------------"
+          du -h ${{ runner.temp }}/cache-build-linux-headless/ccache
       - name: Test
         run: |
           cd build
