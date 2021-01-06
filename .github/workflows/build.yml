@@ -83,11 +83,11 @@ jobs:
           CMAKE_BUILD_PARALLEL_LEVEL: 2
         run: |
           echo "----------------------------------------"
-          du -h .
+          du -h . || true
           echo "----------------------------------------"
-          du -h ${{ runner.temp }}/cache-build-linux-headless/ccache
+          du -h ${{ runner.temp }}/cache-build-linux-headless/ccache || true
           echo "----------------------------------------"
-          du -h /home/runner/.cache
+          du -h /home/runner/.cache || true
           echo "----------------------------------------"
           mkdir build
           cd build
@@ -95,11 +95,11 @@ jobs:
           cmake --build .
           cd ..
           echo "----------------------------------------"
-          du -h .
+          du -h . || true
           echo "----------------------------------------"
-          du -h ${{ runner.temp }}/cache-build-linux-headless/ccache
+          du -h ${{ runner.temp }}/cache-build-linux-headless/ccache || true
           echo "----------------------------------------"
-          du -h /home/runner/.cache
+          du -h /home/runner/.cache || true
           echo "----------------------------------------"
       - name: Test
         run: |
