@@ -235,6 +235,10 @@ struct ScriptingContext {
         auto it = empires.find(id);
         return it == empires.end() ? nullptr : it->second;
     }
+    std::shared_ptr<const Empire> GetEmpire(int id) const {
+        auto it = empires.find(id);
+        return it == empires.end() ? nullptr : it->second;
+    }
 
     std::shared_ptr<const UniverseObject>   source;
     std::shared_ptr<UniverseObject>         effect_target;
