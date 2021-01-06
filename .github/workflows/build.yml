@@ -97,6 +97,8 @@ jobs:
         run: |
           mkdir ${{ runner.temp }}/ccache
           echo "----------------------------------------"
+          which g++ gcc || true
+          echo "----------------------------------------"
           ccache -s || true
           echo "----------------------------------------"
           sudo ccache -s || true
