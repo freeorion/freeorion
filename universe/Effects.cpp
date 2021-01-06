@@ -19,7 +19,6 @@
 #include "UniverseObject.h"
 #include "Universe.h"
 #include "ValueRefs.h"
-#include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
@@ -44,11 +43,10 @@ namespace {
     std::shared_ptr<Fleet> CreateNewFleet(double x, double y, std::shared_ptr<Ship> ship,
                                           FleetAggression aggression = FleetAggression::INVALID_FLEET_AGGRESSION)
     {
-        Universe& universe = GetUniverse();
         if (!ship)
             return nullptr;
 
-        auto fleet = universe.InsertNew<Fleet>("", x, y, ship->Owner());
+        auto fleet = GetUniverse().InsertNew<Fleet>("", x, y, ship->Owner());   // TODO: Avoid GetUniverse call by extending ScriptingContext?
 
         fleet->Rename(fleet->GenerateFleetName());
         fleet->GetMeter(MeterType::METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
@@ -102,10 +100,10 @@ namespace {
       * with the MoveTo effect, as otherwise the system wouldn't get explored,
       * and objects being moved into unexplored systems might disappear for
       * players or confuse the AI. */
-    void ExploreSystem(int system_id, std::shared_ptr<const UniverseObject> target_object) {
-        if (!target_object)
+    void ExploreSystem(int system_id, const std::shared_ptr<const UniverseObject>& target_object, ScriptingContext& context) {
+        if (!target_object || target_object->Unowned())
             return;
-        if (Empire* empire = GetEmpire(target_object->Owner()))
+        if (auto empire = context.GetEmpire(target_object->Owner()))
             empire->AddExploredSystem(system_id);
     }
 
@@ -803,7 +801,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context) const {
     }
 
     int empire_id = m_empire_id->Eval(context);
-    Empire* empire = GetEmpire(empire_id);
+    auto empire = context.GetEmpire(empire_id);
     if (!empire) {
         DebugLogger() << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
         return;
@@ -903,7 +901,7 @@ SetEmpireStockpile::SetEmpireStockpile(std::unique_ptr<ValueRef::ValueRef<int>>&
 void SetEmpireStockpile::Execute(ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 
-    Empire* empire = GetEmpire(empire_id);
+    auto empire = context.GetEmpire(empire_id);
     if (!empire) {
         DebugLogger() << "SetEmpireStockpile::Execute couldn't find an empire with id " << empire_id;
         return;
@@ -961,7 +959,7 @@ SetEmpireCapital::SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& em
 void SetEmpireCapital::Execute(ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 
-    Empire* empire = GetEmpire(empire_id);
+    auto empire = context.GetEmpire(empire_id);
     if (!empire)
         return;
 
@@ -1597,11 +1595,11 @@ void CreateShip::Execute(ScriptingContext& context) const {
     }
 
     int empire_id = ALL_EMPIRES;
-    Empire* empire = nullptr;  // not const Empire* so that empire::NewShipName can be called
+    std::shared_ptr<Empire> empire;
     if (m_empire_id) {
         empire_id = m_empire_id->Eval(context);
         if (empire_id != ALL_EMPIRES) {
-            empire = GetEmpire(empire_id);
+            empire = context.GetEmpire(empire_id);
             if (!empire) {
                 ErrorLogger() << "CreateShip::Execute couldn't get empire with id " << empire_id;
                 return;
@@ -1627,7 +1625,7 @@ void CreateShip::Execute(ScriptingContext& context) const {
     //        fleet = ship->FleetID();
     //// etc.
 
-    auto ship = GetUniverse().InsertNew<Ship>(empire_id, design_id, std::move(species_name),
+    auto ship = GetUniverse().InsertNew<Ship>(empire_id, design_id, std::move(species_name),    // TODO: Avoid GetUniverse() call by including more in ScriptingContext
                                               ALL_EMPIRES);
     system->Insert(ship);
 
@@ -2324,7 +2322,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
                     dest_system->Insert(ship);
                 }
 
-                ExploreSystem(dest_system->ID(), fleet);
+                ExploreSystem(dest_system->ID(), fleet, context);
                 UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID, context.ContextObjects());  // inserted into dest_system, so next and previous systems are invalid objects
             }
 
@@ -2440,7 +2438,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
 
             if (auto dest_system = context.ContextObjects().get<System>(dest_sys_id)) {
                 CreateNewFleet(std::move(dest_system), ship, context.ContextObjects(), aggr); // creates new fleet, inserts fleet into system and ship into fleet
-                ExploreSystem(dest_sys_id, std::move(ship));
+                ExploreSystem(dest_sys_id, ship, context);
 
             } else {
                 CreateNewFleet(destination->X(), destination->Y(), std::move(ship), aggr);    // creates new fleet and inserts ship into fleet
@@ -2479,7 +2477,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
         // buildings planet should be unchanged by move, as should planet's
         // records of its buildings
 
-        ExploreSystem(dest_system->ID(), std::move(planet));
+        ExploreSystem(dest_system->ID(), planet, context);
 
 
     } else if (auto building = std::dynamic_pointer_cast<Building>(context.effect_target)) {
@@ -2515,7 +2513,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
         building->SetPlanetID(dest_planet->ID());
 
         dest_system->Insert(building);
-        ExploreSystem(dest_system->ID(), std::move(building));
+        ExploreSystem(dest_system->ID(), building, context);
 
 
     } else if (auto system = std::dynamic_pointer_cast<System>(context.effect_target)) {
@@ -3021,7 +3019,7 @@ void Victory::Execute(ScriptingContext& context) const {
         ErrorLogger() << "Victory::Execute given no target object";
         return;
     }
-    if (Empire* empire = GetEmpire(context.effect_target->Owner()))
+    if (auto empire = context.GetEmpire(context.effect_target->Owner()))
         empire->Win(m_reason_string);
     else
         ErrorLogger() << "Trying to grant victory to a missing empire!";
@@ -3057,7 +3055,7 @@ SetEmpireTechProgress::SetEmpireTechProgress(std::unique_ptr<ValueRef::ValueRef<
 
 void SetEmpireTechProgress::Execute(ScriptingContext& context) const {
     if (!m_empire_id) return;
-    Empire* empire = GetEmpire(m_empire_id->Eval(context));
+    auto empire = context.GetEmpire(m_empire_id->Eval(context));
     if (!empire) return;
 
     if (!m_tech_name) {
@@ -3126,7 +3124,7 @@ GiveEmpireTech::GiveEmpireTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&
 
 void GiveEmpireTech::Execute(ScriptingContext& context) const {
     if (!m_empire_id) return;
-    Empire* empire = GetEmpire(m_empire_id->Eval(context));
+    auto empire = context.GetEmpire(m_empire_id->Eval(context));
     if (!empire) return;
 
     if (!m_tech_name)
@@ -3261,11 +3259,11 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
 
     case EmpireAffiliationType::AFFIL_ALLY: {
         // add allies of specified empire
-        for (auto& empire_id : Empires()) {
+        for (auto& empire_id : context.empires) {
             if (empire_id.first == recipient_id || recipient_id == ALL_EMPIRES)
                 continue;
 
-            DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, empire_id.first);
+            DiplomaticStatus status = context.ContextDiploStatus(recipient_id, empire_id.first);
             if (status >= DiplomaticStatus::DIPLO_ALLIED)
                 recipient_empire_ids.insert(empire_id.first);
         }
@@ -3274,11 +3272,11 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
 
     case EmpireAffiliationType::AFFIL_PEACE: {
         // add empires at peace with the specified empire
-        for (auto& empire_id : Empires()) {
+        for (auto& empire_id : context.empires) {
             if (empire_id.first == recipient_id || recipient_id == ALL_EMPIRES)
                 continue;
 
-            DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, empire_id.first);
+            DiplomaticStatus status = context.ContextDiploStatus(recipient_id, empire_id.first);
             if (status == DiplomaticStatus::DIPLO_PEACE)
                 recipient_empire_ids.insert(empire_id.first);
         }
@@ -3287,11 +3285,11 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
 
     case EmpireAffiliationType::AFFIL_ENEMY: {
         // add enemies of specified empire
-        for (auto& empire_id : Empires()) {
+        for (auto& empire_id : context.empires) {
             if (empire_id.first == recipient_id || recipient_id == ALL_EMPIRES)
                 continue;
 
-            DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, empire_id.first);
+            DiplomaticStatus status = context.ContextDiploStatus(recipient_id, empire_id.first);
             if (status == DiplomaticStatus::DIPLO_WAR)
                 recipient_empire_ids.insert(empire_id.first);
         }
@@ -3305,10 +3303,10 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
             m_condition->Eval(context, condition_matches);
 
         // add empires that can see any condition-matching object
-        for (auto& empire_entry : Empires()) {
+        for (auto& empire_entry : context.empires) {
             int empire_id = empire_entry.first;
             for (auto& object : condition_matches) {
-                if (object->GetVisibility(empire_id) >= Visibility::VIS_BASIC_VISIBILITY) {
+                if (object->GetVisibility(empire_id) >= Visibility::VIS_BASIC_VISIBILITY) { // TODO use context visibility
                     recipient_empire_ids.insert(empire_id);
                     break;
                 }
@@ -3328,7 +3326,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
     case EmpireAffiliationType::AFFIL_ANY:
     default: {
         // add all empires
-        for (auto& empire_entry : Empires())
+        for (auto& empire_entry : context.empires)
             recipient_empire_ids.insert(empire_entry.first);
         break;
     }
@@ -3338,7 +3336,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
 
     // send to recipient empires
     for (int empire_id : recipient_empire_ids) {
-        Empire* empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire)
             continue;
         empire->AddSitRepEntry(CreateSitRep(m_message_string, sitrep_turn, m_icon,
@@ -3347,7 +3345,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
 
         // also inform of any ship designs recipients should know about
         for (int design_id : ship_design_ids_to_inform_receipits_of)
-            GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
+            GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id); // TODO: put gamestate into ScriptingContext
     }
 }
 
@@ -3357,7 +3355,8 @@ std::string GenerateSitRepMessage::Dump(unsigned short ntabs) const {
     retval += DumpIndent(ntabs+1) + "message = \"" + m_message_string + "\"" + " icon = " + m_icon + "\n";
 
     if (m_message_parameters.size() == 1) {
-        retval += DumpIndent(ntabs+1) + "parameters = tag = " + m_message_parameters[0].first + " data = " + m_message_parameters[0].second->Dump(ntabs+1) + "\n";
+        retval += DumpIndent(ntabs+1) + "parameters = tag = " + m_message_parameters[0].first;
+        retval += " data = " + m_message_parameters[0].second->Dump(ntabs+1) + "\n";
     } else if (!m_message_parameters.empty()) {
         retval += DumpIndent(ntabs+1) + "parameters = [ ";
         for (const auto& entry : m_message_parameters) {
@@ -3389,9 +3388,8 @@ std::string GenerateSitRepMessage::Dump(unsigned short ntabs) const {
 }
 
 void GenerateSitRepMessage::SetTopLevelContent(const std::string& content_name) {
-    for (auto& entry : m_message_parameters) {
+    for (auto& entry : m_message_parameters)
         entry.second->SetTopLevelContent(content_name);
-    }
     if (m_recipient_empire_id)
         m_recipient_empire_id->SetTopLevelContent(content_name);
     if (m_condition)
@@ -3541,11 +3539,11 @@ void SetVisibility::Execute(ScriptingContext& context) const {
 
     case EmpireAffiliationType::AFFIL_ALLY: {
         // add allies of specified empire
-        for (const auto& empire_entry : Empires()) {
+        for (const auto& empire_entry : context.empires) {
             if (empire_entry.first == empire_id || empire_id == ALL_EMPIRES)
                 continue;
 
-            DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, empire_entry.first);
+            DiplomaticStatus status = context.ContextDiploStatus(empire_id, empire_entry.first);
             if (status >= DiplomaticStatus::DIPLO_ALLIED)
                 empire_ids.insert(empire_entry.first);
         }
@@ -3554,11 +3552,11 @@ void SetVisibility::Execute(ScriptingContext& context) const {
 
     case EmpireAffiliationType::AFFIL_PEACE: {
         // add empires at peace with the specified empire
-        for (const auto& empire_entry : Empires()) {
+        for (const auto& empire_entry : context.empires) {
             if (empire_entry.first == empire_id || empire_id == ALL_EMPIRES)
                 continue;
 
-            DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, empire_entry.first);
+            DiplomaticStatus status = context.ContextDiploStatus(empire_id, empire_entry.first);
             if (status == DiplomaticStatus::DIPLO_PEACE)
                 empire_ids.insert(empire_entry.first);
         }
@@ -3567,11 +3565,11 @@ void SetVisibility::Execute(ScriptingContext& context) const {
 
     case EmpireAffiliationType::AFFIL_ENEMY: {
         // add enemies of specified empire
-        for (const auto& empire_entry : Empires()) {
+        for (const auto& empire_entry : context.empires) {
             if (empire_entry.first == empire_id || empire_id == ALL_EMPIRES)
                 continue;
 
-            DiplomaticStatus status = Empires().GetDiplomaticStatus(empire_id, empire_entry.first);
+            DiplomaticStatus status = context.ContextDiploStatus(empire_id, empire_entry.first);
             if (status == DiplomaticStatus::DIPLO_WAR)
                 empire_ids.insert(empire_entry.first);
         }
@@ -3589,7 +3587,7 @@ void SetVisibility::Execute(ScriptingContext& context) const {
     case EmpireAffiliationType::AFFIL_ANY:
     default: {
         // add all empires
-        for (const auto& empire_entry : Empires())
+        for (const auto& empire_entry : context.empires)
             empire_ids.insert(empire_entry.first);
         break;
     }
@@ -3611,12 +3609,12 @@ void SetVisibility::Execute(ScriptingContext& context) const {
         source_id = context.source->ID();
 
     for (int emp_id : empire_ids) {
-        if (!GetEmpire(emp_id))
+        if (!context.GetEmpire(emp_id))
             continue;
         for (int obj_id : object_ids) {
             // store source object id and ValueRef to evaluate to determine
             // what visibility level to set at time of application
-            GetUniverse().SetEffectDerivedVisibility(emp_id, obj_id, source_id, m_vis.get());
+            GetUniverse().SetEffectDerivedVisibility(emp_id, obj_id, source_id, m_vis.get());   // TODO: include in ScriptingContext
         }
     }
 }
