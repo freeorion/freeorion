@@ -82,6 +82,7 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/cache-build-linux-headless/ccache
           CMAKE_BUILD_PARALLEL_LEVEL: 2
         run: |
+          mkdir ${{ runner.temp }}/cache-build-linux-headless
           echo "----------------------------------------"
           du -h . || true
           echo "----------------------------------------"
