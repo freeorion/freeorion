@@ -224,6 +224,18 @@ struct ScriptingContext {
     const ObjectMap&    ContextObjects() const  { return const_objects; }   // immutable container of immutable objects
     ObjectMap&          ContextObjects()        { return objects; }         // mutable container of mutable objects
 
+    DiplomaticStatus    ContextDiploStatus(int empire1, int empire2) const {
+        if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES || empire1 == empire2)
+            return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
+        auto it = diplo_statuses.find(std::make_pair(std::max(empire1, empire2), std::min(empire1, empire2)));
+        return it == diplo_statuses.end() ? DiplomaticStatus::INVALID_DIPLOMATIC_STATUS : it->second;
+    }
+
+    std::shared_ptr<Empire> GetEmpire(int id) {
+        auto it = empires.find(id);
+        return it == empires.end() ? nullptr : it->second;
+    }
+
     std::shared_ptr<const UniverseObject>   source;
     std::shared_ptr<UniverseObject>         effect_target;
     std::shared_ptr<const UniverseObject>   condition_root_candidate;
