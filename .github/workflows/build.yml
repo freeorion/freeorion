@@ -76,6 +76,19 @@ jobs:
           cache: ${{ runner.temp }}/cache-build-linux-headless-install
           snapshot: '/'
           exclude: '/boot /data /dev /mnt /proc /run /sys'
+      - name: Prepare ccache timestamp
+        id: ccache_timestamp
+        shell: cmake -P {0}
+        run: |
+          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+          message("::set-output name=timestamp::${current_date}")
+      - name: ccache files
+        uses: actions/cache@v1.1.0
+        with:
+          path: .ccache
+          key: build-linux-headless-ccache-${{ steps.ccache_timestamp.outputs.timestamp }}
+          restore-keys: |
+            build-linux-headless-ccache-
       - name: Build
         env:
           CACHE_NAME: linux-headless
@@ -84,11 +97,11 @@ jobs:
         run: |
           mkdir ${{ runner.temp }}/cache-build-linux-headless
           echo "----------------------------------------"
-          du -h . || true
+          sudo du -h . || true
           echo "----------------------------------------"
-          du -h ${{ runner.temp }}/cache-build-linux-headless/ || true
+          sudo du -h ${{ runner.temp }}/cache-build-linux-headless/ || true
           echo "----------------------------------------"
-          du -h /home/runner/.cache || true
+          sudo du -h /home/runner/.cache || true
           echo "----------------------------------------"
           mkdir build
           cd build
@@ -96,11 +109,11 @@ jobs:
           cmake --build .
           cd ..
           echo "----------------------------------------"
-          du -h . || true
+          sudo du -h . || true
           echo "----------------------------------------"
-          du -h ${{ runner.temp }}/cache-build-linux-headless/ || true
+          sudo du -h ${{ runner.temp }}/cache-build-linux-headless/ || true
           echo "----------------------------------------"
-          du -h /home/runner/.cache || true
+          sudo du -h /home/runner/.cache || true
           echo "----------------------------------------"
       - name: Test
         run: |
