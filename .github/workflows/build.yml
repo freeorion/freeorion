@@ -95,35 +95,15 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/ccache
           CMAKE_BUILD_PARALLEL_LEVEL: 2
         run: |
-          mkdir -p ${{ runner.temp }}/ccache
-          echo "----------------------------------------"
-          which g++ gcc || true
           echo "----------------------------------------"
           ccache -s || true
-          echo "----------------------------------------"
-          sudo ccache -s || true
-          echo "----------------------------------------"
-          sudo du -h . || true
-          echo "----------------------------------------"
-          sudo du -h ${{ runner.temp }}/ccache || true
-          echo "----------------------------------------"
-          sudo du -h /home/runner/.cache || true
           echo "----------------------------------------"
           mkdir build
           cd build
           cmake -DBUILD_CLIENT_GG=OFF -DBUILD_TESTING=ON ..
           cmake --build .
-          cd ..
           echo "----------------------------------------"
           ccache -s || true
-          echo "----------------------------------------"
-          sudo ccache -s || true
-          echo "----------------------------------------"
-          sudo du -h . || true
-          echo "----------------------------------------"
-          sudo du -h ${{ runner.temp }}/ccache || true
-          echo "----------------------------------------"
-          sudo du -h /home/runner/.cache || true
           echo "----------------------------------------"
       - name: Test
         run: |
