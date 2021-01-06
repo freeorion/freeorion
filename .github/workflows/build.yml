@@ -18,15 +18,15 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - uses: actions/cache@v2
-        id: build-linux-cache-id
+        id: build-linux-install-cache-id
         with:
-          path: ${{ runner.temp }}/cache-build-linux
-          key: build-linux-cache-key-v1.0
+          path: ${{ runner.temp }}/cache-build-linux-install
+          key: build-linux-install-cache-key-v1.0
       - uses: airvzxf/cache-anything-new-action@v1.0
         with:
           script: 'install-build.sh'
-          is_cached: ${{ steps.build-linux-cache-id.outputs.cache-hit }}
-          cache: ${{ runner.temp }}/cache-build-linux
+          is_cached: ${{ steps.build-linux-install-cache-id.outputs.cache-hit }}
+          cache: ${{ runner.temp }}/cache-build-linux-install
           snapshot: '/'
           exclude: '/boot /data /dev /mnt /proc /run /sys'
       - name: Build
@@ -54,15 +54,15 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
       - uses: actions/cache@v2
-        id: build-linux-headless-cache-id
+        id: build-linux-headless-install-cache-id
         with:
-          path: ${{ runner.temp }}/cache-build-linux-headless
-          key: build-linux-headless-cache-key-v1.0
+          path: ${{ runner.temp }}/cache-build-linux-headless-install
+          key: build-linux-headless-install-cache-key-v1.0
       - uses: airvzxf/cache-anything-new-action@v1.0
         with:
           script: 'install-build.sh'
-          is_cached: ${{ steps.build-linux-headless-cache-id.outputs.cache-hit }}
-          cache: ${{ runner.temp }}/cache-build-linux-headless
+          is_cached: ${{ steps.build-linux-headless-install-cache-id.outputs.cache-hit }}
+          cache: ${{ runner.temp }}/cache-build-linux-headless-install
           snapshot: '/'
           exclude: '/boot /data /dev /mnt /proc /run /sys'
       - name: Build
