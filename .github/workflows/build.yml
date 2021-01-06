@@ -86,7 +86,7 @@ jobs:
           echo "----------------------------------------"
           du -h . || true
           echo "----------------------------------------"
-          du -h ${{ runner.temp }}/cache-build-linux-headless/ccache || true
+          du -h ${{ runner.temp }}/cache-build-linux-headless/ || true
           echo "----------------------------------------"
           du -h /home/runner/.cache || true
           echo "----------------------------------------"
@@ -98,7 +98,7 @@ jobs:
           echo "----------------------------------------"
           du -h . || true
           echo "----------------------------------------"
-          du -h ${{ runner.temp }}/cache-build-linux-headless/ccache || true
+          du -h ${{ runner.temp }}/cache-build-linux-headless/ || true
           echo "----------------------------------------"
           du -h /home/runner/.cache || true
           echo "----------------------------------------"
