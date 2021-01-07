@@ -237,7 +237,7 @@ std::string ConditionDescription(const std::vector<const Condition*>& conditions
                                         }   }
 
 ///////////////////////////////////////////////////////////
-// Condition                                         //
+// Condition                                             //
 ///////////////////////////////////////////////////////////
 struct Condition::MatchHelper {
     MatchHelper(const Condition* this_, const ScriptingContext& parent_context) :
@@ -1593,14 +1593,14 @@ namespace {
 
             if (m_names.empty()) {
                 // match homeworlds for any species
-                for (const auto& entry : GetSpeciesManager().GetSpeciesHomeworldsMap()) {
+                for (const auto& entry : GetSpeciesManager().GetSpeciesHomeworldsMap()) {   // TODO: put species info in ScriptingContext
                     if (entry.second.count(planet_id))
                         return true;
                 }
 
             } else {
                 // match any of the species specified
-                const auto homeworlds = GetSpeciesManager().GetSpeciesHomeworldsMap();
+                const auto homeworlds = GetSpeciesManager().GetSpeciesHomeworldsMap();      // TODO: put species info in ScriptingContext
                 for (const std::string& name : m_names) {
                     if (homeworlds.count(name) && homeworlds.at(name).count(planet_id))
                         return true;
@@ -1695,7 +1695,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
     if (planet_id == INVALID_OBJECT_ID)
         return false;
 
-    const SpeciesManager& manager = GetSpeciesManager();
+    const SpeciesManager& manager = GetSpeciesManager();    // TODO: put species info in ScriptingContext
 
     if (m_names.empty()) {
         // match homeworlds for any species
@@ -4390,7 +4390,7 @@ namespace {
                         continue;
                 } else if (!name.empty()) {
                     // ... or accept design by predefined name
-                    const ShipDesign* design = GetShipDesign(element.item.design_id);
+                    const ShipDesign* design = GetShipDesign(element.item.design_id);   // TODO: put ship design info in ScriptingContext
                     if (!design || name != design->Name(false))
                         continue;
                 }
@@ -5457,7 +5457,7 @@ namespace {
                 return false;
             auto* ship = static_cast<const Ship*>(candidate.get());
 
-            const ShipDesign* candidate_design = ship->Design();
+            const ShipDesign* candidate_design = GetUniverse().GetShipDesign(ship->DesignID()); // TODO: Put ship designs in ScriptingContext
             if (!candidate_design)
                 return false;
 
@@ -8582,7 +8582,7 @@ namespace {
                 return false;
             if (m_from_objects.empty())
                 return false;
-            const auto& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);
+            const auto& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);  // TODO: put supply info in ScriptingContext
             if (groups.empty())
                 return false;
 
