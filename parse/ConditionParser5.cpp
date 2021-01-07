@@ -37,9 +37,8 @@ namespace parse { namespace detail {
 
         has_special
             =   (   (tok.HasSpecial_
-                     >>  label(tok.name_)
-                    ) > string_grammar [ _val = construct_movable_(new_<Condition::HasSpecial>(
-                            deconstruct_movable_(_1, _pass))) ]
+                     >>  label(tok.name_)) > string_grammar
+                     [ _val = construct_movable_(new_<Condition::HasSpecial>(deconstruct_movable_(_1, _pass))) ]
                 )
             |   tok.HasSpecial_ [ _val = construct_movable_(new_<Condition::HasSpecial>()) ]
             ;
@@ -47,10 +46,8 @@ namespace parse { namespace detail {
         has_tag
             = (
                 (tok.HasTag_
-                 >>  label(tok.name_))
-                 > string_grammar
-                 [ _val = construct_movable_(new_<Condition::HasTag>(
-                    deconstruct_movable_(_1, _pass))) ]
+                 >>  label(tok.name_)) > string_grammar
+                 [ _val = construct_movable_(new_<Condition::HasTag>(deconstruct_movable_(_1, _pass))) ]
                 )
             |   tok.HasTag_ [ _val = construct_movable_(new_<Condition::HasTag>()) ]
             ;
@@ -58,15 +55,14 @@ namespace parse { namespace detail {
         owner_has_tech
             =   tok.OwnerHasTech_
             >   label(tok.name_) > string_grammar
-            [ _val = construct_movable_(new_<Condition::OwnerHasTech>(
-                deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::OwnerHasTech>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         empire_adopted_policy1
             = (
                 (omit_[tok.EmpireHasAdoptedPolicy_]
-                >>  label(tok.empire_)) >   int_rules.expr
-                >   label(tok.name_)    >   string_grammar
+                >>  label(tok.empire_)) > int_rules.expr
+                >   label(tok.name_)    > string_grammar
               ) [ _val = construct_movable_(new_<Condition::EmpireHasAdoptedPolicy>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass))) ]
@@ -75,9 +71,8 @@ namespace parse { namespace detail {
         empire_adopted_policy2
             = (
                 (omit_[tok.EmpireHasAdoptedPolicy_]
-                >>  label(tok.name_))   >   string_grammar
-                ) [ _val = construct_movable_(new_<Condition::EmpireHasAdoptedPolicy>(
-                    deconstruct_movable_(_1, _pass))) ]
+                >>  label(tok.name_)) > string_grammar
+                ) [ _val = construct_movable_(new_<Condition::EmpireHasAdoptedPolicy>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         empire_adopted_policy
@@ -87,52 +82,50 @@ namespace parse { namespace detail {
 
         design_has_hull
             =   tok.DesignHasHull_
-            >   label(tok.name_) > string_grammar [ _val = construct_movable_(new_<Condition::DesignHasHull>(
-                deconstruct_movable_(_1, _pass))) ]
+            >   label(tok.name_) > string_grammar
+            [ _val = construct_movable_(new_<Condition::DesignHasHull>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         predefined_design
             =   (tok.Design_
-                 >>  label(tok.name_)
-                ) > string_grammar [ _val = construct_movable_(new_<Condition::PredefinedShipDesign>(
-                deconstruct_movable_(_1, _pass))) ]
+                 >>  label(tok.name_)) > string_grammar
+                 [ _val = construct_movable_(new_<Condition::PredefinedShipDesign>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         design_number
             =   (tok.Design_
-                 >>  label(tok.design_)
-                ) > int_rules.expr [ _val = construct_movable_(new_<Condition::NumberedShipDesign>(
-                deconstruct_movable_(_1, _pass))) ]
+                 >>  label(tok.design_)) > int_rules.expr
+                 [ _val = construct_movable_(new_<Condition::NumberedShipDesign>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         produced_by_empire // TODO: Lose "empire" part.
             =   tok.ProducedByEmpire_
-            >   label(tok.empire_) > int_rules.expr [ _val = construct_movable_(new_<Condition::ProducedByEmpire>(
-                deconstruct_movable_(_1, _pass))) ]
+            >   label(tok.empire_) > int_rules.expr
+            [ _val = construct_movable_(new_<Condition::ProducedByEmpire>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         visible_to_empire // TODO: Lose "empire" part.
             =   tok.VisibleToEmpire_
-            >   label(tok.empire_) > int_rules.expr [ _val = construct_movable_(new_<Condition::VisibleToEmpire>(
-                deconstruct_movable_(_1, _pass))) ]
+            >   label(tok.empire_) > int_rules.expr
+            [ _val = construct_movable_(new_<Condition::VisibleToEmpire>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         explored_by_empire // TODO: Lose "empire" part.
             =    tok.ExploredByEmpire_
-            >    label(tok.empire_) > int_rules.expr [ _val = construct_movable_(new_<Condition::ExploredByEmpire>(
-                deconstruct_movable_(_1, _pass))) ]
+            >    label(tok.empire_) > int_rules.expr
+            [ _val = construct_movable_(new_<Condition::ExploredByEmpire>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         resupplyable_by
             =   tok.ResupplyableBy_
-            >   label(tok.empire_) > int_rules.expr [ _val = construct_movable_(new_<Condition::FleetSupplyableByEmpire>(
-                deconstruct_movable_(_1, _pass))) ]
+            >   label(tok.empire_) > int_rules.expr
+            [ _val = construct_movable_(new_<Condition::FleetSupplyableByEmpire>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         object_id
             =   tok.Object_
-            >   label(tok.id_) > int_rules.expr [ _val = construct_movable_(new_<Condition::ObjectID>(
-                deconstruct_movable_(_1, _pass))) ]
+            >   label(tok.id_) > int_rules.expr
+            [ _val = construct_movable_(new_<Condition::ObjectID>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         start
