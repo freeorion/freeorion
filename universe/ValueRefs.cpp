@@ -26,7 +26,6 @@
 #include "UniverseObjectVisitors.h"
 #include "UniverseObject.h"
 #include "Universe.h"
-#include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "../Empire/Supply.h"
 #include "../util/GameRules.h"
@@ -1403,12 +1402,12 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     if (empire_property_string_key) {
         using namespace boost::adaptors;
 
-        Empire* empire{nullptr};
+        std::shared_ptr<const Empire> empire;
         if (m_int_ref1) {
             int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0;
-            empire = GetEmpire(empire_id);
+            empire = context.GetEmpire(empire_id);
         }
 
         std::function<bool (const std::map<std::string, int>::value_type&)> key_filter{nullptr};
@@ -1437,7 +1436,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 return boost::accumulate(empire->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
 
             int sum = 0;
-            for (const auto& empire_entry : Empires())
+            for (const auto& empire_entry : context.empires)
                 sum += boost::accumulate(empire_entry.second->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
             return sum;
         }
@@ -1446,7 +1445,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return boost::accumulate(empire_property_string_key(*empire) | filtered(key_filter) | map_values, 0);
 
         int sum = 0;
-        for (const auto& empire_entry : Empires())
+        for (const auto& empire_entry : context.empires)
             sum += boost::accumulate(empire_property_string_key(*(empire_entry.second)) | filtered(key_filter) | map_values, 0);
         return sum;
     }
@@ -1508,7 +1507,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return boost::accumulate(empire_property_int_key(*empire) | filtered(key_filter) | map_values, 0);
 
         int sum = 0;
-        for (const auto& empire_entry : Empires())
+        for (const auto& empire_entry : context.empires)
             sum += boost::accumulate(empire_property_int_key(*(empire_entry.second)) | filtered(key_filter) | map_values, 0);
         return sum;
     }
@@ -1532,7 +1531,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         auto GetRawPtr = [](const auto& smart_ptr){ return smart_ptr.get(); };
 
         if (!empire) {
-            return boost::accumulate(Empires() | map_values | transformed(GetRawPtr) |
+            return boost::accumulate(context.empires | map_values | transformed(GetRawPtr) |
                                      transformed(empire_property), 0);
         }
 
@@ -1785,13 +1784,13 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     if (empire_property) {
         using namespace boost::adaptors;
 
-        Empire* empire{nullptr};
+        std::shared_ptr<const Empire> empire;
 
         if (m_int_ref1) {
             int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0.0;
-            empire = GetEmpire(empire_id);
+            empire = context.GetEmpire(empire_id);
         }
 
         std::function<bool (const std::map<int, float>::value_type&)> key_filter;
@@ -1804,7 +1803,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             return boost::accumulate(empire_property(*empire) | filtered(key_filter) | map_values, 0.0f);
 
         float sum = 0.0f;
-        for (const auto& empire_entry : Empires())
+        for (const auto& empire_entry : context.empires)
             sum += boost::accumulate(empire_property(*(empire_entry.second)) | filtered(key_filter) | map_values, 0.0f);
         return sum;
     }
