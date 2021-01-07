@@ -141,7 +141,7 @@ float BuildingType::ProductionCost(int empire_id, int location_id,
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
-    auto source = empires.GetSource(empire_id);
+    auto source = empires.GetSource(empire_id, objects);
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
@@ -183,7 +183,7 @@ int BuildingType::ProductionTime(int empire_id, int location_id,
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    std::shared_ptr<const UniverseObject> source = empires.GetSource(empire_id);
+    std::shared_ptr<const UniverseObject> source = empires.GetSource(empire_id, objects);
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 
@@ -225,7 +225,7 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id,
     if (!location)
         return false;
 
-    auto source = empires.GetSource(empire_id);
+    auto source = empires.GetSource(empire_id, objects);
     if (!source)
         return false;
 
