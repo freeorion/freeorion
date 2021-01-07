@@ -1043,6 +1043,9 @@ private:
 /** Matches all objects that are visible to the Empire with id \a empire_id */
 struct FO_COMMON_API VisibleToEmpire final : public Condition {
     explicit VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
+    VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                    std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn,
+                    std::unique_ptr<ValueRef::ValueRef<Visibility>>&& vis);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1056,6 +1059,8 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<int>> m_since_turn;
+    std::unique_ptr<ValueRef::ValueRef<Visibility>> m_vis;
 };
 
 /** Matches all objects that are within \a distance units of at least one

@@ -1200,9 +1200,11 @@ bool EmpireAffiliation::operator==(const Condition& rhs) const {
 
 namespace {
     struct EmpireAffiliationSimpleMatch {
-        EmpireAffiliationSimpleMatch(int empire_id, EmpireAffiliationType affiliation) :
+        EmpireAffiliationSimpleMatch(int empire_id, EmpireAffiliationType affiliation,
+                                     const ScriptingContext& context) :
             m_empire_id(empire_id),
-            m_affiliation(affiliation)
+            m_affiliation(affiliation),
+            m_context(context)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -1219,7 +1221,7 @@ namespace {
                     return true;
                 if (m_empire_id == candidate->Owner())
                     return false;
-                DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());
+                DiplomaticStatus status = m_context.ContextDiploStatus(m_empire_id, candidate->Owner());
                 return (status == DiplomaticStatus::DIPLO_WAR);
                 break;
             }
@@ -1229,7 +1231,7 @@ namespace {
                     return false;
                 if (m_empire_id == candidate->Owner())
                     return false;
-                DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());
+                DiplomaticStatus status = m_context.ContextDiploStatus(m_empire_id, candidate->Owner());
                 return (status == DiplomaticStatus::DIPLO_PEACE);
                 break;
             }
@@ -1239,7 +1241,7 @@ namespace {
                     return false;
                 if (m_empire_id == candidate->Owner())
                     return false;
-                DiplomaticStatus status = Empires().GetDiplomaticStatus(m_empire_id, candidate->Owner());
+                DiplomaticStatus status = m_context.ContextDiploStatus(m_empire_id, candidate->Owner());
                 return (status >= DiplomaticStatus::DIPLO_ALLIED);
                 break;
             }
@@ -1275,6 +1277,7 @@ namespace {
 
         int m_empire_id;
         EmpireAffiliationType m_affiliation;
+        const ScriptingContext& m_context;
     };
 }
 
@@ -1288,7 +1291,8 @@ void EmpireAffiliation::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
         int empire_id = m_empire_id ? m_empire_id->Eval(parent_context) : ALL_EMPIRES;
-        EvalImpl(matches, non_matches, search_domain, EmpireAffiliationSimpleMatch(empire_id, m_affiliation));
+        EvalImpl(matches, non_matches, search_domain, EmpireAffiliationSimpleMatch(empire_id, m_affiliation,
+                                                                                   parent_context));
     } else {
         // re-evaluate empire id for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -1379,7 +1383,7 @@ bool EmpireAffiliation::Match(const ScriptingContext& local_context) const {
 
     int empire_id = m_empire_id ? m_empire_id->Eval(local_context) : ALL_EMPIRES;
 
-    return EmpireAffiliationSimpleMatch(empire_id, m_affiliation)(candidate);
+    return EmpireAffiliationSimpleMatch(empire_id, m_affiliation, local_context)(candidate);
 }
 
 void EmpireAffiliation::SetTopLevelContent(const std::string& content_name) {
@@ -1767,7 +1771,7 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 
     // check if any empire's capital's ID is that candidate object's id.
     // if it is, the candidate object is a capital.
-    for (const auto& entry : Empires())
+    for (const auto& entry : local_context.empires)
         if (entry.second->CapitalID() == candidate_id)
             return true;
     return false;
@@ -4399,13 +4403,14 @@ namespace {
 
     struct EnqueuedSimpleMatch {
         EnqueuedSimpleMatch(BuildType build_type, const std::string& name, int design_id,
-                            int empire_id, int low, int high) :
+                            int empire_id, int low, int high, const ScriptingContext& context) :
             m_build_type(build_type),
             m_name(name),
             m_design_id(design_id),
             m_empire_id(empire_id),
             m_low(low),
-            m_high(high)
+            m_high(high),
+            m_context(context)
         {}
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
             if (!candidate)
@@ -4414,14 +4419,14 @@ namespace {
             int count = 0;
 
             if (m_empire_id == ALL_EMPIRES) {
-                for (auto& item : Empires()) {
+                for (auto& item : m_context.empires) {
                     const auto& empire = item.second;
                     count += NumberOnQueue(empire->GetProductionQueue(), m_build_type,
                                            candidate->ID(), m_name, m_design_id);
                 }
 
             } else {
-                const Empire* empire = GetEmpire(m_empire_id);
+                auto empire = m_context.GetEmpire(m_empire_id);
                 if (!empire) return false;
                 count = NumberOnQueue(empire->GetProductionQueue(), m_build_type,
                                       candidate->ID(), m_name, m_design_id);
@@ -4430,12 +4435,13 @@ namespace {
             return (m_low <= count && count <= m_high);
         }
 
-        BuildType          m_build_type;
-        const std::string& m_name;
-        int                m_design_id;
-        int                m_empire_id;
-        int                m_low;
-        int                m_high;
+        BuildType               m_build_type;
+        const std::string&      m_name;
+        int                     m_design_id;
+        int                     m_empire_id;
+        int                     m_low;
+        int                     m_high;
+        const ScriptingContext& m_context;
     };
 }
 
@@ -4473,7 +4479,8 @@ void Enqueued::Eval(const ScriptingContext& parent_context,
         // need to test each candidate separately using EvalImpl and EnqueuedSimpleMatch
         // because the test checks that something is enqueued at the candidate location
         EvalImpl(matches, non_matches, search_domain, EnqueuedSimpleMatch(m_build_type, name, design_id,
-                                                                          empire_id, low, high));
+                                                                          empire_id, low, high,
+                                                                          parent_context));
     } else {
         // re-evaluate allowed building types range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -4570,7 +4577,7 @@ bool Enqueued::Match(const ScriptingContext& local_context) const {
     int design_id =     (m_design_id ?  m_design_id->Eval(local_context) :  INVALID_DESIGN_ID);
     int low =           (m_low ?        m_low->Eval(local_context) :        0);
     int high =          (m_high ?       m_high->Eval(local_context) :       INT_MAX);
-    return EnqueuedSimpleMatch(m_build_type, name, design_id, empire_id, low, high)(candidate);
+    return EnqueuedSimpleMatch(m_build_type, name, design_id, empire_id, low, high, local_context)(candidate);
 }
 
 void Enqueued::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -6348,7 +6355,7 @@ bool EmpireMeterValue::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    const Empire* empire = GetEmpire(empire_id);
+    auto empire = local_context.GetEmpire(empire_id);
     if (!empire)
         return false;
     const Meter* meter = empire->GetMeter(m_meter);
@@ -6522,7 +6529,7 @@ bool EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    const Empire* empire = GetEmpire(empire_id);
+    auto empire = local_context.GetEmpire(empire_id);
     if (!empire)
          return false;
 
@@ -6674,7 +6681,7 @@ bool EmpireHasAdoptedPolicy::Match(const ScriptingContext& local_context) const 
         return false;
     }
 
-    const Empire* empire = GetEmpire(empire_id);
+    auto empire = local_context.GetEmpire(empire_id);
     if (!empire)
          return false;
 
@@ -6736,9 +6743,10 @@ bool OwnerHasTech::operator==(const Condition& rhs) const {
 
 namespace {
     struct OwnerHasTechSimpleMatch {
-        OwnerHasTechSimpleMatch(int empire_id, const std::string& name) :
+        OwnerHasTechSimpleMatch(int empire_id, const std::string& name, const ScriptingContext& context) :
             m_empire_id(empire_id),
-            m_name(name)
+            m_name(name),
+            m_context(context)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -6752,15 +6760,16 @@ namespace {
                 actual_empire_id = candidate->Owner();
             }
 
-            const Empire* empire = GetEmpire(actual_empire_id);
+            auto empire = m_context.GetEmpire(actual_empire_id);
             if (!empire)
                 return false;
 
             return empire->TechResearched(m_name);
         }
 
-        int                m_empire_id;
-        const std::string& m_name;
+        int                     m_empire_id = ALL_EMPIRES;
+        const std::string&      m_name;
+        const ScriptingContext& m_context;
     };
 }
 
@@ -6776,7 +6785,7 @@ void OwnerHasTech::Eval(const ScriptingContext& parent_context,
         // evaluate number limits once, use to match all candidates
         int empire_id = m_empire_id->Eval(parent_context);   // check above should ensure m_empire_id is non-null
         std::string name = m_name ? m_name->Eval(parent_context) : "";
-        EvalImpl(matches, non_matches, search_domain, OwnerHasTechSimpleMatch(empire_id, name));
+        EvalImpl(matches, non_matches, search_domain, OwnerHasTechSimpleMatch(empire_id, name, parent_context));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -6818,7 +6827,7 @@ bool OwnerHasTech::Match(const ScriptingContext& local_context) const {
         return false;
     std::string name = m_name ? m_name->Eval(local_context) : "";
 
-    return OwnerHasTechSimpleMatch(empire_id, name)(candidate);
+    return OwnerHasTechSimpleMatch(empire_id, name, local_context)(candidate);
 }
 
 void OwnerHasTech::SetTopLevelContent(const std::string& content_name) {
@@ -6880,9 +6889,10 @@ bool OwnerHasBuildingTypeAvailable::operator==(const Condition& rhs) const {
 
 namespace {
     struct OwnerHasBuildingTypeAvailableSimpleMatch {
-        OwnerHasBuildingTypeAvailableSimpleMatch(int empire_id, const std::string& name) :
+        OwnerHasBuildingTypeAvailableSimpleMatch(int empire_id, const std::string& name, const ScriptingContext& context) :
             m_empire_id(empire_id),
-            m_name(name)
+            m_name(name),
+            m_context(context)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -6896,15 +6906,16 @@ namespace {
                 actual_empire_id = candidate->Owner();
             }
 
-            const Empire* empire = GetEmpire(actual_empire_id);
+            auto empire = m_context.GetEmpire(actual_empire_id);
             if (!empire)
                 return false;
 
             return empire->BuildingTypeAvailable(m_name);
         }
 
-        int                m_empire_id;
-        const std::string& m_name;
+        int                     m_empire_id = ALL_EMPIRES;
+        const std::string&      m_name;
+        const ScriptingContext& m_context;
     };
 }
 
@@ -6920,7 +6931,7 @@ void OwnerHasBuildingTypeAvailable::Eval(const ScriptingContext& parent_context,
         // evaluate number limits once, use to match all candidates
         int empire_id = m_empire_id->Eval(parent_context);   // check above should ensure m_empire_id is non-null
         std::string name = m_name ? m_name->Eval(parent_context) : "";
-        EvalImpl(matches, non_matches, search_domain, OwnerHasBuildingTypeAvailableSimpleMatch(empire_id, name));
+        EvalImpl(matches, non_matches, search_domain, OwnerHasBuildingTypeAvailableSimpleMatch(empire_id, name, parent_context));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -6957,7 +6968,7 @@ bool OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context)
         return false;
     std::string name = m_name ? m_name->Eval(local_context) : "";
 
-    return OwnerHasBuildingTypeAvailableSimpleMatch(empire_id, name)(candidate);
+    return OwnerHasBuildingTypeAvailableSimpleMatch(empire_id, name, local_context)(candidate);
 }
 
 void OwnerHasBuildingTypeAvailable::SetTopLevelContent(const std::string& content_name) {
@@ -7018,9 +7029,10 @@ bool OwnerHasShipDesignAvailable::operator==(const Condition& rhs) const {
 
 namespace {
     struct OwnerHasShipDesignAvailableSimpleMatch {
-        OwnerHasShipDesignAvailableSimpleMatch(int empire_id, int design_id) :
+        OwnerHasShipDesignAvailableSimpleMatch(int empire_id, int design_id, const ScriptingContext& context) :
             m_empire_id(empire_id),
-            m_id(design_id)
+            m_id(design_id),
+            m_context(context)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -7034,15 +7046,16 @@ namespace {
                 actual_empire_id = candidate->Owner();
             }
 
-            const Empire* empire = GetEmpire(actual_empire_id);
+            auto empire = m_context.GetEmpire(actual_empire_id);
             if (!empire)
                 return false;
 
             return empire->ShipDesignAvailable(m_id);
         }
 
-        int m_empire_id;
-        int m_id;
+        int                     m_empire_id = ALL_EMPIRES;
+        int                     m_id = INVALID_DESIGN_ID;
+        const ScriptingContext& m_context;
     };
 }
 
@@ -7058,7 +7071,7 @@ void OwnerHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
         // evaluate number limits once, use to match all candidates
         int empire_id = m_empire_id->Eval(parent_context);   // check above should ensure m_empire_id is non-null
         int design_id = m_id ? m_id->Eval(parent_context) : INVALID_DESIGN_ID;
-        EvalImpl(matches, non_matches, search_domain, OwnerHasShipDesignAvailableSimpleMatch(empire_id, design_id));
+        EvalImpl(matches, non_matches, search_domain, OwnerHasShipDesignAvailableSimpleMatch(empire_id, design_id, parent_context));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -7095,7 +7108,7 @@ bool OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) c
         return false;
     int design_id = m_id ? m_id->Eval(local_context) : INVALID_DESIGN_ID;
 
-    return OwnerHasShipDesignAvailableSimpleMatch(empire_id, design_id)(candidate);
+    return OwnerHasShipDesignAvailableSimpleMatch(empire_id, design_id, local_context)(candidate);
 }
 
 void OwnerHasShipDesignAvailable::SetTopLevelContent(const std::string& content_name) {
@@ -7156,9 +7169,10 @@ bool OwnerHasShipPartAvailable::operator==(const Condition& rhs) const {
 
 namespace {
     struct OwnerHasShipPartAvailableSimpleMatch {
-        OwnerHasShipPartAvailableSimpleMatch(int empire_id, const std::string& name) :
+        OwnerHasShipPartAvailableSimpleMatch(int empire_id, const std::string& name, const ScriptingContext& context) :
             m_empire_id(empire_id),
-            m_name(name)
+            m_name(name),
+            m_context(context)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -7172,15 +7186,16 @@ namespace {
                 actual_empire_id = candidate->Owner();
             }
 
-            const Empire* empire = GetEmpire(actual_empire_id);
+            auto empire = m_context.GetEmpire(actual_empire_id);
             if (!empire)
                 return false;
 
             return empire->ShipPartAvailable(m_name);
         }
 
-        int                 m_empire_id;
-        const std::string&  m_name;
+        int                     m_empire_id = ALL_EMPIRES;
+        const std::string&      m_name;
+        const ScriptingContext& m_context;
     };
 }
 
@@ -7196,7 +7211,7 @@ void OwnerHasShipPartAvailable::Eval(const ScriptingContext& parent_context,
         // evaluate number limits once, use to match all candidates
         int empire_id = m_empire_id->Eval(parent_context);   // check above should ensure m_empire_id is non-null
         std::string name = m_name ? m_name->Eval(parent_context) : "";
-        EvalImpl(matches, non_matches, search_domain, OwnerHasShipPartAvailableSimpleMatch(empire_id, name));
+        EvalImpl(matches, non_matches, search_domain, OwnerHasShipPartAvailableSimpleMatch(empire_id, name, parent_context));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -7231,7 +7246,7 @@ bool OwnerHasShipPartAvailable::Match(const ScriptingContext& local_context) con
         return false;
     std::string name = m_name ? m_name->Eval(local_context) : "";
 
-    return OwnerHasShipPartAvailableSimpleMatch(empire_id, name)(candidate);
+    return OwnerHasShipPartAvailableSimpleMatch(empire_id, name, local_context)(candidate);
 }
 
 void OwnerHasShipPartAvailable::SetTopLevelContent(const std::string& content_name) {
@@ -7256,12 +7271,20 @@ unsigned int OwnerHasShipPartAvailable::GetCheckSum() const {
 // VisibleToEmpire                                       //
 ///////////////////////////////////////////////////////////
 VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
-    Condition(),
-    m_empire_id(std::move(empire_id))
+    VisibleToEmpire(std::move(empire_id), nullptr, nullptr)
+{}
+
+VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+                                 std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn,
+                                 std::unique_ptr<ValueRef::ValueRef<Visibility>>&& vis) :
+    m_empire_id(std::move(empire_id)),
+    m_since_turn(std::move(since_turn)),
+    m_vis(std::move(vis))
 {
-    m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
-    m_target_invariant = !m_empire_id || m_empire_id->TargetInvariant();
-    m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
+    std::array<const ValueRef::ValueRefBase*, 3> operands = {{m_empire_id.get(), m_since_turn.get(), m_vis.get()}};
+    m_root_candidate_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
 bool VisibleToEmpire::operator==(const Condition& rhs) const {
@@ -7273,39 +7296,65 @@ bool VisibleToEmpire::operator==(const Condition& rhs) const {
     const VisibleToEmpire& rhs_ = static_cast<const VisibleToEmpire&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
+    CHECK_COND_VREF_MEMBER(m_since_turn)
+    CHECK_COND_VREF_MEMBER(m_vis)
 
     return true;
 }
 
 namespace {
     struct VisibleToEmpireSimpleMatch {
-        VisibleToEmpireSimpleMatch(int empire_id,
-                                   const Universe::EmpireObjectVisibilityMap& vis_map) :
+        VisibleToEmpireSimpleMatch(int empire_id, int since_turn, Visibility vis,
+                                   const ScriptingContext& context) :
             m_empire_id(empire_id),
-            vis_map(vis_map)
+            m_since_turn(since_turn),
+            m_vis(vis == Visibility::INVALID_VISIBILITY ? Visibility::VIS_BASIC_VISIBILITY : vis),
+            m_vis_map(context.empire_object_vis),
+            m_vis_turn_map(context.empire_object_vis_turns)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
-            if (!candidate)
+            if (!candidate || m_empire_id == ALL_EMPIRES)
                 return false;
+            if (m_vis == Visibility::VIS_NO_VISIBILITY)
+                return true;
 
-            // if override is empty, use universe state
-            if (vis_map.empty())
-                return candidate->GetVisibility(m_empire_id) > Visibility::VIS_NO_VISIBILITY;
+            if (m_since_turn == INVALID_GAME_TURN) {
+                // no valid game turn was specified, so use current universe state
 
-            // if override specified, get visibility info from it
-            auto empire_it = vis_map.find(m_empire_id);
-            if (empire_it == vis_map.end())
-                return false;
-            const auto& object_map = empire_it->second;
-            auto object_it = object_map.find(candidate->ID());
-            if (object_it == object_map.end())
-                return false;
-            return object_it->second > Visibility::VIS_NO_VISIBILITY;
+                auto empire_it = m_vis_map.find(m_empire_id);
+                if (empire_it == m_vis_map.end())
+                    return false;
+                const auto& object_map = empire_it->second;
+                auto object_it = object_map.find(candidate->ID());
+                if (object_it == object_map.end())
+                    return false;
+                return object_it->second >= m_vis;
+
+            } else {
+                // if a game turn after which to check is specified, check the
+                // history of when empires saw which objects at which visibility
+                auto empire_it = m_vis_turn_map.find(m_empire_id);
+                if (empire_it == m_vis_turn_map.end())
+                    return false;
+                const auto& object_vis_turns_map = empire_it->second;
+                auto object_it = object_vis_turns_map.find(candidate->ID());
+                if (object_it == object_vis_turns_map.end())
+                    return false;
+                const auto& vis_turns = object_it->second;
+                auto vis_it = vis_turns.find(m_vis);
+                if (vis_it == vis_turns.end())
+                    return false;
+                return vis_it->second >= m_since_turn;
+            }
         }
 
-        int m_empire_id;
-        const Universe::EmpireObjectVisibilityMap& vis_map;
+        int                                             m_empire_id = ALL_EMPIRES;
+        int                                             m_since_turn = BEFORE_FIRST_TURN;
+        Visibility                                      m_vis = Visibility::VIS_BASIC_VISIBILITY;
+        const Universe::EmpireObjectVisibilityMap&      m_vis_map;
+        const Universe::EmpireObjectVisibilityTurnMap&  m_vis_turn_map;
+
     };
 }
 
@@ -7313,16 +7362,20 @@ void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
                            ObjectSet& matches, ObjectSet& non_matches,
                            SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
 {
-    bool simple_eval_safe = m_empire_id->ConstantExpr() ||
-                            (m_empire_id->LocalCandidateInvariant() &&
-                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    bool simple_eval_safe = (!m_empire_id || m_empire_id->LocalCandidateInvariant()) &&
+                            (!m_since_turn || m_since_turn->LocalCandidateInvariant()) &&
+                            (!m_vis || m_vis->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        int empire_id = m_empire_id->Eval(parent_context);
+        int empire_id = m_empire_id ? m_empire_id->Eval(parent_context) : ALL_EMPIRES;
+        int since_turn = m_since_turn ? m_since_turn->Eval(parent_context) : INVALID_GAME_TURN;  // indicates current turn
+        Visibility vis = m_vis ? m_vis->Eval(parent_context) : Visibility::VIS_BASIC_VISIBILITY;
 
         // need to check visibility of each candidate object separately
         EvalImpl(matches, non_matches, search_domain,
-                 VisibleToEmpireSimpleMatch(empire_id, parent_context.combat_info.empire_object_visibility));
+                 VisibleToEmpireSimpleMatch(empire_id, since_turn, vis, parent_context));
     } else {
         // re-evaluate empire id for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -7339,18 +7392,57 @@ std::string VisibleToEmpire::Description(bool negated/* = false*/) const {
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
+    } else {
+        empire_str = UserString("DESC_ANY_EMPIRE");
     }
 
-    return str(FlexibleFormat((!negated)
-        ? UserString("DESC_VISIBLE_TO_EMPIRE")
-        : UserString("DESC_VISIBLE_TO_EMPIRE_NOT"))
-               % empire_str);
+    std::string vis_string;
+    if (m_vis) {
+        if (m_vis->ConstantExpr()) {
+            vis_string = UserString(boost::lexical_cast<std::string>(m_vis->Eval()));
+        } else {
+            vis_string = m_vis->Description();
+        }
+    } else {
+        // default if vis level not specified is any detected visibility level
+        vis_string = UserString(boost::lexical_cast<std::string>(Visibility::VIS_BASIC_VISIBILITY));
+    }
+
+    std::string turn_string;
+    if (m_since_turn) {
+        if (m_since_turn->ConstantExpr()) {
+            int turn = m_since_turn->Eval();
+            if (turn != INVALID_GAME_TURN)
+                turn_string = std::to_string(turn);
+        } else {
+            turn_string = m_since_turn->Description();
+        }
+    }
+
+    if (turn_string.empty()) {
+        return str(FlexibleFormat((!negated)
+            ? UserString("DESC_VISIBLE_TO_EMPIRE")
+            : UserString("DESC_VISIBLE_TO_EMPIRE_NOT"))
+                   % empire_str
+                   % vis_string);
+    } else {
+        return str(FlexibleFormat((!negated)
+            ? UserString("DESC_VISIBLE_TO_EMPIRE_SINCE_TURN")
+            : UserString("DESC_VISIBLE_TO_EMPIRE_SINCE_TURN_NOT"))
+                   % empire_str
+                   % turn_string
+                   % vis_string);
+    }
 }
 
 std::string VisibleToEmpire::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "VisibleToEmpire";
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump(ntabs);
+    if (m_since_turn)
+        retval += " turn = " + m_since_turn->Dump(ntabs);
+    if (m_vis)
+        retval += " vis = " + m_vis->Dump(ntabs);
     retval += "\n";
     return retval;
 }
@@ -7362,13 +7454,19 @@ bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    int empire_id = m_empire_id->Eval(local_context);
-    return VisibleToEmpireSimpleMatch(empire_id, local_context.combat_info.empire_object_visibility)(candidate);
+    int empire_id = m_empire_id ? m_empire_id->Eval(local_context) : ALL_EMPIRES;
+    int since_turn = m_since_turn ? m_since_turn->Eval(local_context) : INVALID_GAME_TURN;  // indicates current turn
+    Visibility vis = m_vis ? m_vis->Eval(local_context) : Visibility::VIS_BASIC_VISIBILITY;
+    return VisibleToEmpireSimpleMatch(empire_id, since_turn, vis, local_context)(candidate);
 }
 
 void VisibleToEmpire::SetTopLevelContent(const std::string& content_name) {
     if (m_empire_id)
         m_empire_id->SetTopLevelContent(content_name);
+    if (m_since_turn)
+        m_since_turn->SetTopLevelContent(content_name);
+    if (m_vis)
+        m_vis->SetTopLevelContent(content_name);
 }
 
 unsigned int VisibleToEmpire::GetCheckSum() const {
@@ -7376,6 +7474,8 @@ unsigned int VisibleToEmpire::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::VisibleToEmpire");
     CheckSums::CheckSumCombine(retval, m_empire_id);
+    CheckSums::CheckSumCombine(retval, m_since_turn);
+    CheckSums::CheckSumCombine(retval, m_vis);
 
     TraceLogger() << "GetCheckSum(VisibleToEmpire): retval: " << retval;
     return retval;
@@ -8110,21 +8210,23 @@ bool ExploredByEmpire::operator==(const Condition& rhs) const {
 
 namespace {
     struct ExploredByEmpireSimpleMatch {
-        ExploredByEmpireSimpleMatch(int empire_id) :
-            m_empire_id(empire_id)
+        ExploredByEmpireSimpleMatch(int empire_id, const ScriptingContext& context) :
+            m_empire_id(empire_id),
+            m_context(context)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
             if (!candidate)
                 return false;
 
-            const Empire* empire = GetEmpire(m_empire_id);
+            auto empire = m_context.GetEmpire(m_empire_id);
             if (!empire)
                 return false;
             return empire->HasExploredSystem(candidate->ID());
         }
 
-        int m_empire_id;
+        int                     m_empire_id = ALL_EMPIRES;
+        const ScriptingContext& m_context;
     };
 }
 
@@ -8140,7 +8242,7 @@ void ExploredByEmpire::Eval(const ScriptingContext& parent_context,
         int empire_id = m_empire_id->Eval(parent_context);
 
         // need to check each candidate separately to test if it has been explored
-        EvalImpl(matches, non_matches, search_domain, ExploredByEmpireSimpleMatch(empire_id));
+        EvalImpl(matches, non_matches, search_domain, ExploredByEmpireSimpleMatch(empire_id, parent_context));
     } else {
         // re-evaluate empire id for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -8175,7 +8277,7 @@ bool ExploredByEmpire::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    return ExploredByEmpireSimpleMatch(m_empire_id->Eval(local_context))(candidate);
+    return ExploredByEmpireSimpleMatch(m_empire_id->Eval(local_context), local_context)(candidate);
 }
 
 void ExploredByEmpire::SetTopLevelContent(const std::string& content_name) {
@@ -8356,11 +8458,7 @@ namespace {
             if (!candidate)
                 return false;
 
-            const Empire* empire = GetEmpire(m_empire_id);
-            if (!empire)
-                return false;
-
-            const SupplyManager& supply = GetSupplyManager();
+            const SupplyManager& supply = GetSupplyManager();   // TODO: Get from ScriptingContext
             const auto& empire_supplyable_systems = supply.FleetSupplyableSystemIDs();
             auto it = empire_supplyable_systems.find(m_empire_id);
             if (it == empire_supplyable_systems.end())
