@@ -2128,9 +2128,7 @@ namespace {
         }
     }
 
-    void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets,
-                                          int empire_id, int system_id)
-    {
+    void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id) {
         visible_fleets.clear();
         auto system = Objects().get<System>(system_id);
         if (!system)
@@ -2391,7 +2389,8 @@ namespace {
         // necessary information about that combat in combats
         for (const auto& sys : GetUniverse().Objects().all<System>()) {
             if (CombatConditionsInSystem(sys->ID()))
-                combats.emplace_back(sys->ID(), CurrentTurn(), GetUniverse().GetEmpireObjectVisibility());
+                combats.emplace_back(sys->ID(), CurrentTurn(), GetUniverse().GetEmpireObjectVisibility(),
+                                     Objects(), Empires().GetEmpires());
         }
     }
 

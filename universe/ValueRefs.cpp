@@ -840,7 +840,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     }
 
     if (property_name == "CombatBout") {
-        return context.combat_info.bout;
+        return context.combat_bout;
 
     } else if (property_name == "CurrentTurn") {
         return CurrentTurn();
@@ -883,7 +883,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
         if (property_name == "CombatBout")
-            return context.combat_info.bout;
+            return context.combat_bout;
         if (property_name == "CurrentTurn")
             return CurrentTurn();
         if (property_name == "GalaxySize")
