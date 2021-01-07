@@ -2,6 +2,7 @@
 #define _ConditionParser5_h_
 
 #include "ConditionParserImpl.h"
+#include "EnumValueRefRules.h"
 
 namespace parse { namespace detail {
     struct condition_parser_rules_5 : public condition_parser_grammar {
@@ -11,6 +12,7 @@ namespace parse { namespace detail {
                                  const value_ref_grammar<std::string>& string_grammar);
 
         parse::int_arithmetic_rules int_rules;
+        visibility_parser_rules     visibility_rules;
         condition_parser_rule       has_special;
         condition_parser_rule       has_tag;
         condition_parser_rule       owner_has_tech;

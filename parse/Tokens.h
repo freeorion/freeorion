@@ -578,6 +578,7 @@
 #define TOKEN_SEQ_17                            \
     (Troops)                                    \
     (Tundra)                                    \
+    (turn)                                      \
     (Turn)                                      \
     (TurnPolicyAdopted)                         \
     (TurnsSinceFocusChange)                     \

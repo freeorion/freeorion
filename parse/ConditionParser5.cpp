@@ -22,10 +22,12 @@ namespace parse { namespace detail {
         const value_ref_grammar<std::string>& string_grammar
     ) :
         condition_parser_rules_5::base_type(start, "condition_parser_rules_5"),
-        int_rules(tok, label, condition_parser, string_grammar)
+        int_rules(tok, label, condition_parser, string_grammar),
+        visibility_rules(tok, label, condition_parser)
     {
         qi::_1_type _1;
         qi::_2_type _2;
+        qi::_3_type _3;
         qi::_val_type _val;
         qi::eps_type eps;
         qi::_pass_type _pass;
@@ -105,9 +107,15 @@ namespace parse { namespace detail {
             ;
 
         visible_to_empire // TODO: Lose "empire" part.
-            =   tok.VisibleToEmpire_
-            >   label(tok.empire_) > int_rules.expr
-            [ _val = construct_movable_(new_<Condition::VisibleToEmpire>(deconstruct_movable_(_1, _pass))) ]
+            =   (
+                     omit_[tok.VisibleToEmpire_]
+                >    label(tok.empire_)     > int_rules.expr
+                >  -(label(tok.turn_)       > int_rules.expr)
+                >  -(label(tok.visibility_) > visibility_rules.expr)
+            ) [ _val = construct_movable_(new_<Condition::VisibleToEmpire>(
+                deconstruct_movable_(_1, _pass),
+                deconstruct_movable_(_2, _pass),
+                deconstruct_movable_(_3, _pass))) ]
             ;
 
         explored_by_empire // TODO: Lose "empire" part.
