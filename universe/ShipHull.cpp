@@ -193,7 +193,7 @@ float ShipHull::ProductionCost(int empire_id, int location_id, int in_design_id)
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
-    auto source = Empires().GetSource(empire_id);
+    auto source = Empires().GetSource(empire_id);   // TODO: pass objects in and on here
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
@@ -216,7 +216,7 @@ int ShipHull::ProductionTime(int empire_id, int location_id, int in_design_id) c
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    auto source = Empires().GetSource(empire_id);
+    auto source = Empires().GetSource(empire_id);   // TODO pass ObjectMap in and on here
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 

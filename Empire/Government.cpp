@@ -114,7 +114,7 @@ float Policy::AdoptionCost(int empire_id) const {
         return arbitrary_large_number;
 
     } else {
-        auto source = Empires().GetSource(empire_id);
+        auto source = Empires().GetSource(empire_id);   // TODO: pass ObjectMap in and on here
         if (!source && !m_adoption_cost->SourceInvariant())
             return arbitrary_large_number;
 
