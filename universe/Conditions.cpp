@@ -7442,7 +7442,7 @@ std::string VisibleToEmpire::Dump(unsigned short ntabs) const {
     if (m_since_turn)
         retval += " turn = " + m_since_turn->Dump(ntabs);
     if (m_vis)
-        retval += " vis = " + m_vis->Dump(ntabs);
+        retval += " visibility = " + m_vis->Dump(ntabs);
     retval += "\n";
     return retval;
 }
