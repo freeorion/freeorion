@@ -3,6 +3,7 @@
 
 #include "Diplomacy.h"
 #include "../universe/EnumsFwd.h"
+#include "../util/AppInterface.h"
 #include "../util/Export.h"
 
 #include <boost/filesystem.hpp>
@@ -33,7 +34,7 @@ public:
     const const_container_type&           GetEmpires() const;
     std::shared_ptr<const Empire>         GetEmpire(int id) const;  //!< Returns the empire whose ID is \a id, or nullptr if none exist
     const std::string&                    GetEmpireName(int id) const;
-    std::shared_ptr<const UniverseObject> GetSource(int id) const;  //!< Return the empire source or nullptr if the empire or source doesn't exist
+    std::shared_ptr<const UniverseObject> GetSource(int id, const ObjectMap& objects = Objects()) const;  //!< Return the empire source or nullptr if the empire or source doesn't exist
 
     int                         NumEmpires() const;
     int                         NumEliminatedEmpires() const;

@@ -207,7 +207,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id,
     if (!location)
         return false;
 
-    auto source = empires.GetSource(empire_id);
+    auto source = empires.GetSource(empire_id, objects);
     if (!source)
         return false;
 
