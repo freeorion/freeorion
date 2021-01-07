@@ -246,9 +246,9 @@ namespace SystemPathing {
         Vertex m_marker;
         Vertex m_stop;
         Vertex m_source;
-        Vertex * m_predecessors;
+        Vertex* m_predecessors;
         int m_levels_remaining;
-        bool m_level_complete;
+        bool m_level_complete = false;
 
     public:
         BFSVisitorImpl(const Vertex& start, const Vertex& stop, Vertex predecessors[], int max_depth)
@@ -256,8 +256,7 @@ namespace SystemPathing {
               m_stop(stop),
               m_source(start),
               m_predecessors(predecessors),
-              m_levels_remaining(max_depth),
-              m_level_complete(false)
+              m_levels_remaining(max_depth)
         {}
 
         void initialize_vertex(const Vertex& v, const Graph& g) {}
@@ -484,8 +483,8 @@ namespace {
     /////////////////////////////////////////////
     struct GraphImpl {
         typedef boost::property<vertex_system_id_t, int,
-                                boost::property<boost::vertex_index_t, int>>   vertex_property_t;  ///< a system graph property map type
-        typedef boost::property<boost::edge_weight_t, double>                   edge_property_t;    ///< a system graph property map type
+                                boost::property<boost::vertex_index_t, int>> vertex_property_t; ///< a system graph property map type
+        typedef boost::property<boost::edge_weight_t, double>                edge_property_t;   ///< a system graph property map type
 
         // declare main graph types, including properties declared above
         // could add boost::disallow_parallel_edge_tag GraphProperty but it doesn't
@@ -573,8 +572,8 @@ namespace {
             }
 
         private:
-            const ObjectMap*    m_objects = nullptr;
-            const SystemGraph*  m_graph = nullptr;
+            const ObjectMap*   m_objects = nullptr;
+            const SystemGraph* m_graph = nullptr;
         };
         typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
         typedef std::map<int, std::shared_ptr<EmpireViewSystemGraph>> EmpireViewSystemGraphMap;
@@ -681,9 +680,9 @@ namespace {
         typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type      ConstEdgeWeightPropertyMap;
         typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type            EdgeWeightPropertyMap;
 
-        SystemGraph                 system_graph;               ///< a graph in which the systems are vertices and the starlanes are edges
-        EmpireViewSystemGraphMap    empire_system_graph_views;  ///< a map of empire IDs to the views of the system graph by those empires
-        SystemPredicateGraphMap     system_pred_graph_views;    ///< Empire system graphs indexed by object predicate
+        SystemGraph              system_graph;              ///< a graph in which the systems are vertices and the starlanes are edges
+        EmpireViewSystemGraphMap empire_system_graph_views; ///< a map of empire IDs to the views of the system graph by those empires
+        SystemPredicateGraphMap  system_pred_graph_views;   ///< Empire system graphs indexed by object predicate
     };
 }
 
