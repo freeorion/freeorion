@@ -36,8 +36,12 @@ namespace {
 // CombatInfo
 ////////////////////////////////////////////////
 CombatInfo::CombatInfo(int system_id_, int turn_, const Universe::EmpireObjectVisibilityMap& vis_,
-                       ObjectMap& objects_, const EmpireManager::container_type& empires_) :
+                       ObjectMap& objects_, const EmpireManager::container_type& empires_,
+                       const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns_,
+                       const EmpireManager::DiploStatusMap& diplo_statuses_) :
     empires(empires_),
+    empire_object_vis_turns(empire_object_vis_turns_),
+    diplo_statuses(diplo_statuses_),
     empire_object_visibility(vis_),
     turn(turn_),
     system_id(system_id_)
@@ -72,9 +76,8 @@ CombatInfo::CombatInfo(int system_id_, int turn_, const Universe::EmpireObjectVi
 
     InitializeObjectVisibility();
 
-    // after battle is simulated, any changes to latest known or actual objects
-    // will be copied back to the main Universe's ObjectMap and the Universe's
-    // empire latest known objects ObjectMap
+    // after battle is simulated, any changes object visibility will be copied
+    // to the main gamestate object visibility.
 }
 
 std::shared_ptr<const System> CombatInfo::GetSystem() const

@@ -2390,7 +2390,9 @@ namespace {
         for (const auto& sys : GetUniverse().Objects().all<System>()) {
             if (CombatConditionsInSystem(sys->ID()))
                 combats.emplace_back(sys->ID(), CurrentTurn(), GetUniverse().GetEmpireObjectVisibility(),
-                                     Objects(), Empires().GetEmpires());
+                                     Objects(), Empires().GetEmpires(),
+                                     GetUniverse().GetEmpireObjectVisibilityTurnMap(),
+                                     Empires().GetDiplomaticStatuses());
         }
     }
 
@@ -2409,13 +2411,15 @@ namespace {
     void DisseminateSystemCombatInfo(const std::vector<CombatInfo>& combats) {
         Universe& universe = GetUniverse();
 
-        // as of this writing, pointers to objects are inserted into combat
-        // ObjectMap, and these pointers refer to the main gamestate objects
-        // therefore, copying the combat result state back into the main
-        // gamestate object map isn't necessary, as these objects have already
-        // been updated by the combat processing. similarly, standard
-        // visibility updating will transfer the results to empires' known
-        // gamestate ObjectMaps.
+        // As of this writing, pointers to objects are inserted into the combat
+        // ObjectMap, and these pointers still refer to the main gamestate
+        // objects. Thus, copying the objects in the main gamestate are already
+        // modified by the combat, and don't need to be copied from the combat
+        // ObjectMap. However, the changes to object visibility during combat
+        // are stored separately, and do need to be copied back to the main
+        // gamestate. Standard visibility updating will then transfer the 
+        // modified objects / combat results to empires' known gamestate
+        // ObjectMaps.
         for (const CombatInfo& combat_info : combats) {
             // update visibilities from combat, in case anything was revealed
             // by shooting during combat

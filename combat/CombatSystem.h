@@ -14,7 +14,9 @@ public:
     CombatInfo(int system_id_, int turn_,
                const Universe::EmpireObjectVisibilityMap& vis_,
                ObjectMap& objects_,
-               const EmpireManager::container_type& empires_);
+               const EmpireManager::container_type& empires_,
+               const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns_,
+               const EmpireManager::DiploStatusMap& diplo_statuses_);
 
     /** Returns System object in this CombatInfo's objects if one exists with
         id system_id. */
@@ -26,9 +28,9 @@ public:
 
     const EmpireManager::container_type&           empires{Empires().GetEmpires()}; // map from ID to empires, may include empires not actually participating in this combat
     const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{GetUniverse().GetEmpireObjectVisibilityTurnMap()};
-    const EmpireManager::DiploStatusMap            diplo_statuses{Empires().GetDiplomaticStatuses()};
+    const EmpireManager::DiploStatusMap&           diplo_statuses{Empires().GetDiplomaticStatuses()};
 
-    ObjectMap                           objects;                       ///< actual state of objects relevant to combat
+    ObjectMap                           objects;                       ///< actual state of objects relevant to combat, filtered and copied for system where combat occurs
     Universe::EmpireObjectVisibilityMap empire_object_visibility;      ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
     int                                 bout = 0;                      ///< current combat bout, used with CombatBout ValueRef for implementing bout dependent targeting. First combat bout is 1
     int                                 turn = INVALID_GAME_TURN;      ///< main game turn
