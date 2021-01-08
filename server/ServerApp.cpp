@@ -2099,28 +2099,32 @@ namespace {
     /** Returns true if \a empire has been eliminated by the applicable
       * definition of elimination.  As of this writing, elimination means
       * having no ships and no population on planets. */
-    bool EmpireEliminated(int empire_id) {
+    bool EmpireEliminated(int empire_id, const ObjectMap& objects = Objects()) {
         // are there any populated planets? if so, not eliminated
         // are there any ships? if so, not eliminated
-        return !Objects().check_if_any<Planet>(PopulatedOwnedVisitor(empire_id)) &&
-               !Objects().check_if_any<Ship>(OwnedVisitor(empire_id));
+        return !objects.check_if_any<Planet>(PopulatedOwnedVisitor(empire_id)) &&
+               !objects.check_if_any<Ship>(OwnedVisitor(empire_id));
     }
 
-    void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id) {
+    void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id,
+                                 const ObjectMap& objects = Objects())
+    {
         empire_fleets.clear();
-        auto system = Objects().get<System>(system_id);
+        auto system = objects.get<System>(system_id);
         if (!system)
             return;
-        for (auto& fleet : Objects().find<const Fleet>(system->FleetIDs()))
+        for (auto& fleet : objects.find<const Fleet>(system->FleetIDs()))
             empire_fleets[fleet->Owner()].emplace(fleet->ID());
     }
 
-    void GetEmpirePlanetsAtSystem(std::map<int, std::set<int>>& empire_planets, int system_id) {
+    void GetEmpirePlanetsAtSystem(std::map<int, std::set<int>>& empire_planets, int system_id,
+                                  const ObjectMap& objects = Objects())
+    {
         empire_planets.clear();
-        auto system = Objects().get<System>(system_id);
+        auto system = objects.get<System>(system_id);
         if (!system)
             return;
-        for (auto& planet : Objects().find<const Planet>(system->PlanetIDs())) {
+        for (auto& planet : objects.find<const Planet>(system->PlanetIDs())) {
             if (!planet->Unowned())
                 empire_planets[planet->Owner()].emplace(planet->ID());
             else if (planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f)
@@ -2128,26 +2132,38 @@ namespace {
         }
     }
 
-    void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id) {
+    void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id,
+                                          const ObjectMap& objects = Objects(),
+                                          const EmpireManager& empires = Empires(),
+                                          const Universe::EmpireObjectVisibilityMap& vis_map =
+                                              GetUniverse().GetEmpireObjectVisibility())
+    {
         visible_fleets.clear();
-        auto system = Objects().get<System>(system_id);
+        auto system = objects.get<System>(system_id);
         if (!system)
             return; // no such system
         const auto& fleet_ids = system->FleetIDs();
         if (fleet_ids.empty())
             return; // no fleets to be seen
-        if (empire_id != ALL_EMPIRES && !GetEmpire(empire_id))
+        if (empire_id != ALL_EMPIRES && !empires.GetEmpire(empire_id))
             return; // no such empire
 
         TraceLogger(combat) << "\t** GetFleetsVisibleToEmpire " << empire_id << " at system " << system->Name();
         // for visible fleets by an empire, check visibility of fleets by that empire
         if (empire_id != ALL_EMPIRES) {
-            for (const auto& fleet : Objects().find<Fleet>(fleet_ids)) {
+            for (const auto& fleet : objects.find<Fleet>(fleet_ids)) {
                 if (!fleet)
                     continue;
                 if (fleet->OwnedBy(empire_id))
                     continue;   // don't care about fleets owned by the same empire for determining combat conditions
-                Visibility fleet_vis = GetUniverse().GetObjectVisibilityByEmpire(fleet->ID(), empire_id);
+
+                Visibility fleet_vis = Visibility::VIS_NO_VISIBILITY;
+                auto emp_it = vis_map.find(empire_id);
+                if (emp_it != vis_map.end()) {
+                    auto obj_it = emp_it->second.find(fleet->ID());
+                    if (obj_it != emp_it->second.end())
+                        fleet_vis = obj_it->second;
+                }
                 TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
                 if (fleet_vis >= Visibility::VIS_BASIC_VISIBILITY)
                     visible_fleets.emplace(fleet->ID());
@@ -2161,7 +2177,7 @@ namespace {
 
         // get best monster detection strength here.  Use monster detection meters for this...
         float monster_detection_strength_here = 0.0f;
-        for (const auto& ship : Objects().find<Ship>(system->ShipIDs())) {
+        for (const auto& ship : objects.find<Ship>(system->ShipIDs())) {
             if (!ship || !ship->Unowned())  // only want unowned / monster ships
                 continue;
             if (ship->GetMeter(MeterType::METER_DETECTION)->Initial() > monster_detection_strength_here)
@@ -2169,7 +2185,7 @@ namespace {
         }
 
         // test each ship in each fleet for visibility by best monster detection here
-        for (const auto& fleet : Objects().find<Fleet>(fleet_ids)) {
+        for (const auto& fleet : objects.find<Fleet>(fleet_ids)) {
             if (!fleet)
                 continue;
             if (fleet->Unowned()) {
@@ -2177,7 +2193,7 @@ namespace {
                 continue;
             }
 
-            for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
+            for (const auto& ship : objects.find<Ship>(fleet->ShipIDs())) {
                 if (!ship)
                     continue;
                 // if a ship is low enough stealth, its fleet can be seen by monsters
@@ -2189,9 +2205,7 @@ namespace {
         }
     }
 
-    void GetPlanetsVisibleToEmpireAtSystem(std::set<int>& visible_planets,
-                                           int empire_id, int system_id)
-    {
+    void GetPlanetsVisibleToEmpireAtSystem(std::set<int>& visible_planets, int empire_id, int system_id) {
         visible_planets.clear();
         auto system = Objects().get<System>(system_id);
         if (!system)
