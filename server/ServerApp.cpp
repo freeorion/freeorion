@@ -2408,9 +2408,7 @@ namespace {
 
     /** Takes contents of CombatInfo struct and puts it into the universe.
       * Used to store results of combat in main universe. */
-    void DisseminateSystemCombatInfo(const std::vector<CombatInfo>& combats) {
-        Universe& universe = GetUniverse();
-
+    void DisseminateSystemCombatInfo(const std::vector<CombatInfo>& combats, Universe& universe) {
         // As of this writing, pointers to objects are inserted into the combat
         // ObjectMap, and these pointers still refer to the main gamestate
         // objects. Thus, copying the objects in the main gamestate are already
@@ -2427,8 +2425,7 @@ namespace {
                 for (const auto& object_vis : empire_vis.second) {
                     if (object_vis.first < 0)
                         continue;   // temporary fighter IDs
-                    if (object_vis.second > GetUniverse().GetObjectVisibilityByEmpire(object_vis.first, empire_vis.first))
-                        universe.SetEmpireObjectVisibility(empire_vis.first, object_vis.first, object_vis.second);
+                    universe.SetEmpireObjectVisibility(empire_vis.first, object_vis.first, object_vis.second);  // does not lower visibility
                 }
             }
 
@@ -2452,7 +2449,7 @@ namespace {
 
                     // record if empire should be informed of potential fleet
                     // destruction (which is checked later)
-                    if (auto ship = Objects().get<Ship>(object_id)) {
+                    if (auto ship = universe.Objects().get<Ship>(object_id)) {
                         if (ship->FleetID() != INVALID_OBJECT_ID)
                             empires_to_update_of_fleet_destruction[ship->FleetID()].emplace(empire_id);
                     }
@@ -2487,12 +2484,12 @@ namespace {
 
             // update system ownership after combat.  may be necessary if the
             // combat caused planets to change ownership.
-            if (auto system = Objects().get<System>(combat_info.system_id)) {
+            if (auto system = universe.Objects().get<System>(combat_info.system_id)) {
                 // ensure all participants get updates on system.  this ensures
                 // that an empire who lose all objects in the system still
                 // knows about a change in system ownership
                 for (int empire_id : combat_info.empire_ids)
-                { universe.EmpireKnownObjects(empire_id).CopyObject(system, ALL_EMPIRES); }
+                    universe.EmpireKnownObjects(empire_id).CopyObject(system, ALL_EMPIRES);
             }
         }
     }
@@ -2526,8 +2523,8 @@ namespace {
                     //} else {
                     //    DebugLogger() << "Object not known to empire";
                     //}
-                    empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(dest_obj_id, combat_info.system_id,
-                                                                             empire_id));
+                    empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(
+                        dest_obj_id, combat_info.system_id, empire_id));
                 }
             }
 
@@ -2578,7 +2575,8 @@ namespace {
                     TraceLogger() << "Kill event: " << event->DebugString();
                 }
             }
-            DebugLogger() << "Combat combat_info system: " << combat_info.system_id  << "  Total Kill Events: " << events_that_killed.size();
+            DebugLogger() << "Combat combat_info system: " << combat_info.system_id
+                          << "  Total Kill Events: " << events_that_killed.size();
 
 
             // If a ship was attacked multiple times during a combat in which it dies, it will get
@@ -2598,9 +2596,11 @@ namespace {
                     continue;
                 Empire* target_empire = GetEmpire(target_ship->Owner());
 
-                DebugLogger() << "Attacker " << attacker->Name() << " (id: " << attacker->ID() << "  empire: " << attacker_empire_id << ")  attacks "
+                DebugLogger() << "Attacker " << attacker->Name() << " (id: " << attacker->ID()
+                              << "  empire: " << attacker_empire_id << ")  attacks "
                               << target_ship->Name() << " (id: " << target_ship->ID() << "  empire: "
-                              << (target_empire ? std::to_string(target_empire->EmpireID()) : "(unowned)") << "  species: " << target_ship->SpeciesName() << ")";
+                              << (target_empire ? std::to_string(target_empire->EmpireID()) : "(unowned)")
+                              << "  species: " << target_ship->SpeciesName() << ")";
 
                 if (attacker_empire)
                     attacker_empire->RecordShipShotDown(*target_ship);
@@ -3374,7 +3374,7 @@ void ServerApp::ProcessCombats() {
 
     UpdateEmpireCombatDestructionInfo(combats);
 
-    DisseminateSystemCombatInfo(combats);
+    DisseminateSystemCombatInfo(combats, m_universe);
     // update visibilities with any new info gleaned during combat
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
     // update stale object info based on any mid- combat glimpses
