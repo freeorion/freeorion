@@ -10,7 +10,7 @@
 #include "../universe/Meter.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/Enums.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "ClientUI.h"
 
 namespace {

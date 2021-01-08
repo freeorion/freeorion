@@ -12,7 +12,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Building.h"
 #include "../universe/Species.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
@@ -94,7 +94,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
     // Set up texture coord and vertex buffers (quads) for the glyphs.
     // Consider extending GG::Font to do similar.
 
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
     auto system = Objects().get<System>(system_id);
     if (!system)
@@ -571,7 +571,7 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
                                               (Value(Width()) < m_tiny_mouseover_indicator->Width());
     // indicate mouseover
     if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
         Empire* this_empire = GetEmpire(client_empire_id);
         bool explored = !this_empire || (this_empire && this_empire->HasExploredSystem(m_system_id)) ||
                 !m_mouseover_unexplored_indicator;

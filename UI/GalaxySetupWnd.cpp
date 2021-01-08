@@ -4,7 +4,7 @@
 #include "CUISpin.h"
 #include "Sound.h"
 #include "../universe/Universe.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/GameRules.h"
@@ -1102,8 +1102,8 @@ void GalaxySetupWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 GG::Rect GalaxySetupWnd::CalculatePosition() const {
-    GG::Pt new_ul((HumanClientApp::GetApp()->AppWidth() - GalSetupWndWidth()) / 2,
-                  (HumanClientApp::GetApp()->AppHeight() - GalSetupWndHeight()) / 2);
+    GG::Pt new_ul((GGHumanClientApp::GetApp()->AppWidth() - GalSetupWndWidth()) / 2,
+                  (GGHumanClientApp::GetApp()->AppHeight() - GalSetupWndHeight()) / 2);
     GG::Pt new_sz(GalSetupWndWidth(), GalSetupWndHeight());
     return GG::Rect(new_ul, new_ul + new_sz);
 }

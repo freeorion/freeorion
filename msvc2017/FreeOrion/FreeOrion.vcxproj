@@ -172,7 +172,7 @@
     <ClInclude Include="..\..\client\ClientFSMEvents.h" />
     <ClInclude Include="..\..\client\ClientNetworking.h" />
     <ClInclude Include="..\..\client\human\chmain.h" />
-    <ClInclude Include="..\..\client\human\HumanClientApp.h" />
+    <ClInclude Include="..\..\client\human\GGHumanClientApp.h" />
     <ClInclude Include="..\..\client\human\HumanClientFSM.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\ResearchQueue.h" />
@@ -294,7 +294,7 @@
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp" />
     <ClCompile Include="..\..\client\ClientNetworking.cpp" />
     <ClCompile Include="..\..\client\human\chmain.cpp" />
-    <ClCompile Include="..\..\client\human\HumanClientApp.cpp" />
+    <ClCompile Include="..\..\client\human\GGHumanClientApp.cpp" />
     <ClCompile Include="..\..\client\human\HumanClientFSM.cpp" />
     <ClCompile Include="..\..\UI\About.cpp" />
     <ClCompile Include="..\..\UI\AccordionPanel.cpp" />

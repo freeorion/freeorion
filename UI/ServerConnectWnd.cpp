@@ -12,7 +12,7 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../client/ClientNetworking.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
@@ -191,7 +191,7 @@ const ServerConnectWnd::Result& ServerConnectWnd::GetResult() const
 
 void ServerConnectWnd::PopulateServerList() {
     m_servers_lb->Clear();
-    const auto server_names = HumanClientApp::GetApp()->Networking().DiscoverLANServerNames();
+    const auto server_names = GGHumanClientApp::GetApp()->Networking().DiscoverLANServerNames();
     for (const auto& server : server_names) {
         auto row = GG::Wnd::Create<GG::ListBox::Row>();
         row->push_back(GG::Wnd::Create<CUILabel>(server));

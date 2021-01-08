@@ -10,7 +10,7 @@
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"
 #include "../util/ScopedTimer.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
@@ -362,7 +362,7 @@ public:
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ResearchQueue ListBox");
 
-        SetEmpire(HumanClientApp::GetApp()->EmpireID());
+        SetEmpire(GGHumanClientApp::GetApp()->EmpireID());
 
         AttachChild(m_queue_lb);
 
@@ -489,7 +489,7 @@ void ResearchWnd::Refresh() {
     // connections of signals emitted from the empire must be remade
     m_empire_connection.disconnect();
 
-    if (Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
+    if (Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID()))
         m_empire_connection = empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
                                 boost::bind(&ResearchWnd::ResearchQueueChangedSlot, this));
     Update();
@@ -545,11 +545,11 @@ void ResearchWnd::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::
     auto direction = original_position < new_position;
     int corrected_new_position = new_position + (direction ? 1 : 0);
 
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(
+    GGHumanClientApp::GetApp()->Orders().IssueOrder(
         std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name,
                                                 static_cast<int>(corrected_new_position)));
 
@@ -588,7 +588,7 @@ void ResearchWnd::UpdateQueue() {
         first_visible_queue_row = 0;
     queue_lb->Clear();
 
-    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
 
@@ -629,12 +629,12 @@ void ResearchWnd::UpdateInfoPanel() {
 void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, int pos) {
     if (!m_enabled)
         return;
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     Empire* empire = GetEmpire(empire_id);
     if (!empire)
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
-    OrderSet& orders = HumanClientApp::GetApp()->Orders();
+    OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
     for (const std::string& tech_name : tech_vec) {
         if (empire->TechResearched(tech_name))
             continue;
@@ -668,8 +668,8 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (!m_enabled || m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0)
         return;
 
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    OrderSet& orders = HumanClientApp::GetApp()->Orders();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
     if (auto queue_row = boost::polymorphic_downcast<QueueRow*>(it->get()))
         orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name));
     if (auto empire = GetEmpire(empire_id))
@@ -701,7 +701,7 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
     if (!m_enabled || m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0)
         return;
 
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     Empire* empire = GetEmpire(client_empire_id);
     if (!empire)
         return;
@@ -709,7 +709,7 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
     // todo: reject action if shown queue is not this client's empire's queue
 
     if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(it->get()))
-        HumanClientApp::GetApp()->Orders().IssueOrder(
+        GGHumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ResearchQueueOrder>(client_empire_id, queue_row->elem.name, pause, -1.0f));
 
     empire->UpdateResearchQueue();

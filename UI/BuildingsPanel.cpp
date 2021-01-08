@@ -12,7 +12,7 @@
 #include "../universe/Effect.h"
 #include "../universe/Planet.h"
 #include "../Empire/Empire.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "CUIControls.h"
 #include "IconTextBrowseWnd.h"
 #include "MapWnd.h"
@@ -44,7 +44,7 @@ namespace {
     }
 
     bool ClientPlayerIsModerator()
-    { return HumanClientApp::GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
+    { return GGHumanClientApp::GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
 }
 
 BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
@@ -105,7 +105,7 @@ void BuildingsPanel::Update() {
 
     const int indicator_size = static_cast<int>(Value(Width() * 1.0 / m_columns));
 
-    int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    int this_client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
     const auto& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
@@ -310,7 +310,7 @@ void BuildingIndicator::Render() {
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 
     // Scanlines for not currently-visible objects?
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         return;
     if (m_building_id == INVALID_OBJECT_ID)
@@ -400,7 +400,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     // verify that this indicator represents an existing building, and not a
     // queued production item, and that the owner of the building is this
     // client's player's empire
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto building = Objects().get<Building>(m_building_id);
     if (!building)
         return;
@@ -414,7 +414,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 
     auto scrap_building_action = [this, empire_id]() {
-        HumanClientApp::GetApp()->Orders().IssueOrder(
+        GGHumanClientApp::GetApp()->Orders().IssueOrder(
         std::make_shared<ScrapOrder>(empire_id, m_building_id));
     };
 
@@ -423,7 +423,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         auto pending_scrap_orders = PendingScrapOrders();
         auto it = pending_scrap_orders.find(building->ID());
         if (it != pending_scrap_orders.end())
-            HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
+            GGHumanClientApp::GetApp()->Orders().RescindOrder(it->second);
     };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);

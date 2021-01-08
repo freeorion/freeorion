@@ -5,7 +5,7 @@
 #include "../universe/ResourceCenter.h"
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "CUIControls.h"
 
 namespace {

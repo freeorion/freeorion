@@ -12,7 +12,7 @@
 #include "../universe/ShipPart.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "ClientUI.h"
 #include "CUIDrawUtil.h"
 #include "CUIControls.h"

@@ -3,7 +3,7 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "OptionsWnd.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../network/Networking.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
@@ -650,7 +650,7 @@ void SaveFileDialog::Init() {
 
     m_name_edit = GG::Wnd::Create<CUIEdit>("");
     if (m_extension != MP_SAVE_FILE_EXTENSION && m_extension != SP_SAVE_FILE_EXTENSION) {
-        std::string savefile_ext = HumanClientApp::GetApp()->SinglePlayerGame() ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
+        std::string savefile_ext = GGHumanClientApp::GetApp()->SinglePlayerGame() ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
         DebugLogger() << "SaveFileDialog passed invalid extension " << m_extension << ", changing to " << savefile_ext;
         m_extension = savefile_ext;
     }
@@ -916,7 +916,7 @@ void SaveFileDialog::UpdatePreviewList() {
     if (!m_server_previews) {
         SetPreviewList(FilenameToPath(GetDirPath()));
     } else {
-        HumanClientApp::GetApp()->RequestSavePreviews(GetDirPath());
+        GGHumanClientApp::GetApp()->RequestSavePreviews(GetDirPath());
     }
 }
 

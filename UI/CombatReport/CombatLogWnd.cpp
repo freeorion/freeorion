@@ -7,7 +7,7 @@
 
 #include "../LinkText.h"
 
-#include "../../client/human/HumanClientApp.h"
+#include "../../client/human/GGHumanClientApp.h"
 #include "../../combat/CombatLogManager.h"
 #include "../../universe/System.h"
 #include "../../universe/UniverseObject.h"
@@ -574,7 +574,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
                                                      );
     m_wnd.SetLayout(layout);
 
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
     // Write Header text
     auto system = Objects().get<System>(log->system_id);

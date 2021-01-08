@@ -34,7 +34,7 @@
 #include "../universe/Enums.h"
 #include "../Empire/Government.h"
 #include "../combat/CombatLogManager.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 
 #include <GG/Clr.h>
 #include <GG/utf8/checked.h>
@@ -636,20 +636,20 @@ ClientUI::ClientUI() :
         boost::bind(&ClientUI::HandleSizeChange, this, false));
     GetOptionsDB().OptionChangedSignal("video.windowed.height").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, false));
-    HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+    GGHumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         boost::bind(&ClientUI::InitializeWindows, this));
-    HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+    GGHumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         &CUIWnd::InvalidateUnusedOptions,
         boost::signals2::at_front);
 
     // Connected at front to make sure CUIWnd::LoadOptions() doesn't overwrite
     // the values we're checking here...
-    HumanClientApp::GetApp()->FullscreenSwitchSignal.connect(
+    GGHumanClientApp::GetApp()->FullscreenSwitchSignal.connect(
         boost::bind(&ClientUI::HandleFullscreenSwitch, this),
         boost::signals2::at_front);
 
     ConditionalConnectOption("ui.reposition.auto.enabled",
-                             HumanClientApp::GetApp()->RepositionWindowsSignal,
+                             GGHumanClientApp::GetApp()->RepositionWindowsSignal,
                              true, std::equal_to<bool>());
 
     // Set the root path for image tags in rich text.
@@ -692,7 +692,7 @@ std::shared_ptr<IntroScreen> ClientUI::GetIntroScreen() {
 
 void ClientUI::ShowIntroScreen() {
     if (m_map_wnd) {
-        HumanClientApp::GetApp()->Remove(m_map_wnd);
+        GGHumanClientApp::GetApp()->Remove(m_map_wnd);
         m_map_wnd->RemoveWindows();
         m_map_wnd->Hide();
     }
@@ -700,23 +700,23 @@ void ClientUI::ShowIntroScreen() {
     // Update intro screen Load & Continue buttons if all savegames are deleted.
     GetIntroScreen()->RequirePreRender();
 
-    HumanClientApp::GetApp()->Register(GetIntroScreen());
-    HumanClientApp::GetApp()->Remove(m_message_wnd);
-    HumanClientApp::GetApp()->Remove(m_player_list_wnd);
-    HumanClientApp::GetApp()->Remove(m_multiplayer_lobby_wnd);
+    GGHumanClientApp::GetApp()->Register(GetIntroScreen());
+    GGHumanClientApp::GetApp()->Remove(m_message_wnd);
+    GGHumanClientApp::GetApp()->Remove(m_player_list_wnd);
+    GGHumanClientApp::GetApp()->Remove(m_multiplayer_lobby_wnd);
 }
 
 void ClientUI::ShowMultiPlayerLobbyWnd() {
     if (m_map_wnd) {
-        HumanClientApp::GetApp()->Remove(m_map_wnd);
+        GGHumanClientApp::GetApp()->Remove(m_map_wnd);
         m_map_wnd->RemoveWindows();
         m_map_wnd->Hide();
     }
 
-    HumanClientApp::GetApp()->Register(GetMultiPlayerLobbyWnd());
-    HumanClientApp::GetApp()->Remove(m_message_wnd);
-    HumanClientApp::GetApp()->Remove(m_player_list_wnd);
-    HumanClientApp::GetApp()->Remove(m_intro_screen);
+    GGHumanClientApp::GetApp()->Register(GetMultiPlayerLobbyWnd());
+    GGHumanClientApp::GetApp()->Remove(m_message_wnd);
+    GGHumanClientApp::GetApp()->Remove(m_player_list_wnd);
+    GGHumanClientApp::GetApp()->Remove(m_intro_screen);
 }
 
 std::shared_ptr<MultiPlayerLobbyWnd> ClientUI::GetMultiPlayerLobbyWnd() {
@@ -1043,7 +1043,7 @@ void ClientUI::HandleFullscreenSwitch() const {
     // the CUIWnd constructor...
     std::string option_name = "ui." + MESSAGE_WND_NAME + window_mode + ".left";
     if (db.Get<int>(option_name) == db.GetDefault<int>(option_name))
-        HumanClientApp::GetApp()->RepositionWindowsSignal();
+        GGHumanClientApp::GetApp()->RepositionWindowsSignal();
 }
 
 std::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir,
@@ -1086,15 +1086,15 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
 std::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/) {
     std::shared_ptr<GG::Texture> retval;
     try {
-        retval = HumanClientApp::GetApp()->GetTexture(path, mipmap);
+        retval = GGHumanClientApp::GetApp()->GetTexture(path, mipmap);
     } catch (const std::exception& e) {
         ErrorLogger() << "Unable to load texture \"" + path.generic_string() + "\"\n"
             "reason: " << e.what();
-        retval = HumanClientApp::GetApp()->GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
+        retval = GGHumanClientApp::GetApp()->GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
     } catch (...) {
         ErrorLogger() << "Unable to load texture \"" + path.generic_string() + "\"\n"
             "reason unknown...?";
-        retval = HumanClientApp::GetApp()->GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
+        retval = GGHumanClientApp::GetApp()->GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
     }
 #ifdef FREEORION_MACOSX
     if (!mipmap)

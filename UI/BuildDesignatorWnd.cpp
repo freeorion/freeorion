@@ -22,7 +22,7 @@
 #include "../universe/ShipPart.h"
 #include "../universe/Conditions.h"
 #include "../universe/ValueRef.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
@@ -1170,7 +1170,7 @@ void BuildDesignatorWnd::CompleteConstruction() {
     m_side_panel = GG::Wnd::Create<SidePanel>(PROD_SIDEPANEL_WND_NAME);
     m_build_selector = GG::Wnd::Create<BuildSelector>(PROD_SELECTOR_WND_NAME);
     InitializeWindows();
-    HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+    GGHumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         boost::bind(&BuildDesignatorWnd::InitializeWindows, this));
 
     m_side_panel->EnableSelection();
@@ -1249,7 +1249,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
 
     const ObjectMap& objects = GetUniverse().Objects();
 
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "BuildDesignatorWnd::CenterOnBuild couldn't get empire with id " << empire_id;
@@ -1265,7 +1265,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
             auto&& map = ClientUI::GetClientUI()->GetMapWnd();
             map->CenterOnObject(system_id);
             if (open) {
-                HumanClientApp::GetApp()->GetClientUI().GetMapWnd()->SelectSystem(system_id);
+                GGHumanClientApp::GetApp()->GetClientUI().GetMapWnd()->SelectSystem(system_id);
                 SelectPlanet(location_id);
             }
         }
@@ -1273,7 +1273,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
 }
 
 void BuildDesignatorWnd::SetBuild(int queue_idx) {
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "BuildDesignatorWnd::SetBuild couldn't get empire with id " << empire_id;
@@ -1320,7 +1320,7 @@ void BuildDesignatorWnd::SelectPlanet(int planet_id) {
 }
 
 void BuildDesignatorWnd::Refresh() {
-    m_build_selector->SetEmpireID(HumanClientApp::GetApp()->EmpireID(), false);
+    m_build_selector->SetEmpireID(GGHumanClientApp::GetApp()->EmpireID(), false);
     Update();
 }
 
@@ -1513,7 +1513,7 @@ int BuildDesignatorWnd::BuildLocation() const
 void BuildDesignatorWnd::BuildItemRequested(const ProductionQueue::ProductionItem& item,
                                             int num_to_build, int pos)
 {
-    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (empire && empire->EnqueuableItem(item, BuildLocation()))
         AddBuildToQueueSignal(item, num_to_build, BuildLocation(), pos);
 }

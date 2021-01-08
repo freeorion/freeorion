@@ -1,6 +1,6 @@
 #include "CUIWnd.h"
 
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "Sound.h"
@@ -188,7 +188,7 @@ void CUIWnd::Init() {
 
     if (!m_config_name.empty()) {
         LoadOptions();
-        HumanClientApp::GetApp()->FullscreenSwitchSignal.connect(
+        GGHumanClientApp::GetApp()->FullscreenSwitchSignal.connect(
             boost::bind(&CUIWnd::LoadOptions, this));
     }
 
@@ -197,10 +197,10 @@ void CUIWnd::Init() {
     // Non-user-dragable windows are given the chance to position themselves on
     // every resize event.
     if (Dragable() || m_resizable)
-        HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+        GGHumanClientApp::GetApp()->RepositionWindowsSignal.connect(
             boost::bind(&CUIWnd::ResetDefaultPosition, this));
     else
-        HumanClientApp::GetApp()->WindowResizedSignal.connect(
+        GGHumanClientApp::GetApp()->WindowResizedSignal.connect(
             boost::bind(&CUIWnd::ResetDefaultPosition, this));
 }
 
@@ -254,12 +254,12 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         if (const auto&& parent = Parent()) {
             // Keep this CUIWnd entirely inside its parent.
             available_size = parent->ClientSize();
-        } else if (const HumanClientApp* app = HumanClientApp::GetApp()) {
+        } else if (const GGHumanClientApp* app = GGHumanClientApp::GetApp()) {
             // Keep this CUIWnd entirely inside the application window.
             available_size = GG::Pt(app->AppWidth(), app->AppHeight());
         } else {
-            available_size = GG::Pt(GG::X(HumanClientApp::MaximumPossibleWidth()),
-                                    GG::Y(HumanClientApp::MaximumPossibleHeight()));
+            available_size = GG::Pt(GG::X(GGHumanClientApp::MaximumPossibleWidth()),
+                                    GG::Y(GGHumanClientApp::MaximumPossibleHeight()));
             ErrorLogger() << "CUIWnd::SizeMove() could not get app instance!";
         }
 
@@ -827,8 +827,8 @@ std::string CUIWnd::AddWindowOptions(const std::string& config_name,
             new_name = config_name;
         }
     } else if (!config_name.empty()) {
-        const int max_width_plus_one = HumanClientApp::MaximumPossibleWidth() + 1;
-        const int max_height_plus_one = HumanClientApp::MaximumPossibleHeight() + 1;
+        const int max_width_plus_one = GGHumanClientApp::MaximumPossibleWidth() + 1;
+        const int max_height_plus_one = GGHumanClientApp::MaximumPossibleHeight() + 1;
 
         db.Add<bool>("ui." + config_name + ".initialized",      UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"),          false,      Validator<bool>(), false);
 

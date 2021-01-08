@@ -4,7 +4,7 @@
 
 #include "../util/i18n.h"
 #include "../client/ClientNetworking.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 
 namespace {
     const GG::X WINDOW_WIDTH(300);
@@ -84,12 +84,12 @@ void PasswordEnterWnd::SetPlayerName(const std::string& player_name) {
 }
 
 void PasswordEnterWnd::OkClicked() {
-    HumanClientApp::GetApp()->Networking().SendMessage(
+    GGHumanClientApp::GetApp()->Networking().SendMessage(
         AuthResponseMessage(*m_player_name_edit, m_password_edit->RawText()));
     // hide window
-    HumanClientApp::GetApp()->Remove(shared_from_this());
+    GGHumanClientApp::GetApp()->Remove(shared_from_this());
 }
 
 void PasswordEnterWnd::CancelClicked()
-{ HumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); }
+{ GGHumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); }
 

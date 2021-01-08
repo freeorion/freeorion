@@ -1,6 +1,6 @@
 
 
-#include "HumanClientApp.h"
+#include "GGHumanClientApp.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/Logger.h"
@@ -249,14 +249,14 @@ int mainSetupAndRun() {
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
     try {
 #endif
-        RegisterOptions(&HumanClientApp::AddWindowSizeOptionsAfterMainStart);
+        RegisterOptions(&GGHumanClientApp::AddWindowSizeOptionsAfterMainStart);
 
         bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
         bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");
 
-        auto width_height = HumanClientApp::GetWindowWidthHeight();
+        auto width_height = GGHumanClientApp::GetWindowWidthHeight();
         int width(width_height.first), height(width_height.second);
-        auto left_top = HumanClientApp::GetWindowLeftTop();
+        auto left_top = GGHumanClientApp::GetWindowLeftTop();
         int left(left_top.first), top(left_top.second);
 
 #ifdef FREEORION_WIN32
@@ -270,7 +270,7 @@ int mainSetupAndRun() {
 #  endif
 #endif
 
-        HumanClientApp app(width, height, true, "FreeOrion " + FreeOrionVersionString(),
+        GGHumanClientApp app(width, height, true, "FreeOrion " + FreeOrionVersionString(),
                            left, top, fullscreen, fake_mode_change);
 
         if (GetOptionsDB().Get<bool>("quickstart")) {

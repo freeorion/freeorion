@@ -8,7 +8,7 @@
 #include "../util/Logger.h"
 #include "../network/Message.h"
 #include "../client/ClientNetworking.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "Hotkeys.h"
 #include "Sound.h"
 
@@ -276,7 +276,7 @@ namespace {
                 at(5)->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                     m_player_data.player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth()));
-                if (HumanClientApp::GetApp()->Networking().PlayerIsHost(m_player_id)) {
+                if (GGHumanClientApp::GetApp()->Networking().PlayerIsHost(m_player_id)) {
                     push_back(GG::Wnd::Create<GG::StaticGraphic>(GetHostTexture(),
                                                                  GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 } else {
@@ -333,7 +333,7 @@ namespace {
             }
 
             // host
-            if (HumanClientApp::GetApp()->Networking().PlayerIsHost(m_player_id)) {
+            if (GGHumanClientApp::GetApp()->Networking().PlayerIsHost(m_player_id)) {
                 push_back(GG::Wnd::Create<GG::StaticGraphic>(GetHostTexture(),
                                                              GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
             } else {
@@ -455,7 +455,7 @@ namespace {
             }
 
             // host
-            if (HumanClientApp::GetApp()->Networking().PlayerIsHost(m_player_id)) {
+            if (GGHumanClientApp::GetApp()->Networking().PlayerIsHost(m_player_id)) {
                 push_back(GG::Wnd::Create<GG::StaticGraphic>(GetHostTexture(),
                                                              GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
             } else {
@@ -802,7 +802,7 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::pt
         player_name = "";
     }
 
-    m_chat_wnd->HandlePlayerChatMessage(msg, player_name, text_color, timestamp, HumanClientApp::GetApp()->PlayerID(), false);  // no pm messages for MP lobby yet
+    m_chat_wnd->HandlePlayerChatMessage(msg, player_name, text_color, timestamp, GGHumanClientApp::GetApp()->PlayerID(), false);  // no pm messages for MP lobby yet
 }
 
 void MultiPlayerLobbyWnd::ChatMessage(const std::string& message_text,
@@ -811,7 +811,7 @@ void MultiPlayerLobbyWnd::ChatMessage(const std::string& message_text,
                                       const boost::posix_time::ptime& timestamp)
 {
     m_chat_wnd->HandlePlayerChatMessage(message_text, player_name, text_color, timestamp,
-                                        HumanClientApp::GetApp()->PlayerID(), false);
+                                        GGHumanClientApp::GetApp()->PlayerID(), false);
 }
 
 void MultiPlayerLobbyWnd::TurnPhaseUpdate(Message::TurnProgressPhase phase_id)
@@ -957,7 +957,7 @@ void MultiPlayerLobbyWnd::GalaxySetupPanelChanged() {
 }
 
 void MultiPlayerLobbyWnd::SaveGameBrowse() {
-    m_lobby_data.save_game = HumanClientApp::GetApp()->SelectLoadFile();
+    m_lobby_data.save_game = GGHumanClientApp::GetApp()->SelectLoadFile();
     m_lobby_data.save_game_empire_data.clear();
     PopulatePlayerList();
     SendUpdate();
@@ -1020,7 +1020,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
         if (m_lobby_data.new_game) {
             bool immutable_row =
                 !HasAuthRole(Networking::RoleType::ROLE_HOST) &&
-                data_player_id != HumanClientApp::GetApp()->PlayerID() &&
+                data_player_id != GGHumanClientApp::GetApp()->PlayerID() &&
                 !(psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER &&
                   HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP));// host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
             auto row = GG::Wnd::Create<NewGamePlayerRow>(psd, data_player_id, immutable_row);
@@ -1031,7 +1031,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
         } else {
             bool immutable_row =
                 (!HasAuthRole(Networking::RoleType::ROLE_HOST) &&
-                    (data_player_id != HumanClientApp::GetApp()->PlayerID()) &&
+                    (data_player_id != GGHumanClientApp::GetApp()->PlayerID()) &&
                     !(psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER &&
                         HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP)))
                 || m_lobby_data.save_game_empire_data.empty();
@@ -1054,7 +1054,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
         }
 
         // checks for ready button
-        if (data_player_id == HumanClientApp::GetApp()->PlayerID())
+        if (data_player_id == GGHumanClientApp::GetApp()->PlayerID())
             is_client_ready = psd.player_ready;
         else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
             psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
@@ -1135,8 +1135,8 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
 }
 
 void MultiPlayerLobbyWnd::SendUpdate() {
-    if (HumanClientApp::GetApp()->PlayerID() != Networking::INVALID_PLAYER_ID)
-        HumanClientApp::GetApp()->Networking().SendMessage(LobbyUpdateMessage(m_lobby_data));
+    if (GGHumanClientApp::GetApp()->PlayerID() != Networking::INVALID_PLAYER_ID)
+        GGHumanClientApp::GetApp()->Networking().SendMessage(LobbyUpdateMessage(m_lobby_data));
 }
 
 bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const {
@@ -1192,7 +1192,7 @@ bool MultiPlayerLobbyWnd::HasAuthRole(Networking::RoleType role) const
 
 void MultiPlayerLobbyWnd::ReadyClicked() {
     for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.players) {
-        if (entry.first == HumanClientApp::GetApp()->PlayerID()) {
+        if (entry.first == GGHumanClientApp::GetApp()->PlayerID()) {
             entry.second.player_ready = (! entry.second.player_ready);
         }
     }
@@ -1203,7 +1203,7 @@ void MultiPlayerLobbyWnd::ReadyClicked() {
 }
 
 void MultiPlayerLobbyWnd::CancelClicked()
-{ HumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); }
+{ GGHumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); }
 
 void MultiPlayerLobbyWnd::AnyCanEdit(bool checked) {
     if (HasAuthRole(Networking::RoleType::ROLE_HOST)) {

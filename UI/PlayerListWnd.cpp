@@ -1,7 +1,7 @@
 #include "PlayerListWnd.h"
 
 #include "CUIControls.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../client/ClientNetworking.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -412,8 +412,8 @@ namespace {
             double empires_production_points = 0.0;
             double empires_research_points = 0.0;
 
-            const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-            const std::set<int>& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(HumanClientApp::GetApp()->EmpireID());
+            const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
+            const std::set<int>& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
 
             if (empire) {
                 for (auto& ship : objects.all<Ship>()) {
@@ -895,7 +895,7 @@ namespace {
         const int client_empire_id, const int clicked_empire_id,
         const std::function<DiplomaticMessage(int, int)>& message)
     {
-        auto& networking = HumanClientApp::GetApp()->Networking();
+        auto& networking = GGHumanClientApp::GetApp()->Networking();
         return boost::bind(&ClientNetworking::SendMessage, &networking,
                            DiplomacyMessage(message(client_empire_id, clicked_empire_id)));
     }

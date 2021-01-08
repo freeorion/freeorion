@@ -2,7 +2,7 @@
 
 #include "CUIControls.h"
 #include "PlayerListWnd.h"
-#include "../client/human/HumanClientApp.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "../client/ClientNetworking.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -521,7 +521,7 @@ namespace {
             ErrorLogger() << "ChatWnd.cpp SendChatMessage couldn't get client app!";
             return;
         }
-        ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+        ClientNetworking& net = GGHumanClientApp::GetApp()->Networking();
         net.SendMessage(PlayerChatMessage(text, recipients, pm));
     }
 
