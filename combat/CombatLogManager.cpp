@@ -69,7 +69,6 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
     turn(combat_info.turn),
     system_id(combat_info.system_id),
     empire_ids(combat_info.empire_ids),
-    object_ids(),
     damaged_object_ids(combat_info.damaged_object_ids),
     destroyed_object_ids(combat_info.destroyed_object_ids),
     combat_events(combat_info.combat_events)
