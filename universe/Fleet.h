@@ -1,7 +1,6 @@
 #ifndef _Fleet_h_
 #define _Fleet_h_
 
-#include "ObjectMap.h"
 #include "UniverseObject.h"
 #include "../util/AppInterface.h"
 #include "../util/Enum.h"
@@ -14,8 +13,17 @@
 /** Contains info about a single notable point on the move path of a fleet or
   * other UniverseObject. */
 struct MovePathNode {
-    MovePathNode(double x_, double y_, bool turn_end_, int eta_, int id_, int lane_start_id_, int lane_end_id_, bool post_blockade_ = false) :
-    x(x_), y(y_), turn_end(turn_end_), eta(eta_), object_id(id_), lane_start_id(lane_start_id_), lane_end_id(lane_end_id_), post_blockade(post_blockade_)
+    MovePathNode(double x_, double y_, bool turn_end_, int eta_,
+                 int id_, int lane_start_id_, int lane_end_id_,
+                 bool post_blockade_ = false) :
+        x(x_),
+        y(y_),
+        turn_end(turn_end_),
+        eta(eta_),
+        object_id(id_),
+        lane_start_id(lane_start_id_),
+        lane_end_id(lane_end_id_),
+        post_blockade(post_blockade_)
     {}
     double  x, y;           ///< location in Universe of node
     bool    turn_end;       ///< true if the fleet will end a turn at this point

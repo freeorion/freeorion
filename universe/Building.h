@@ -3,7 +3,6 @@
 
 
 #include <boost/serialization/access.hpp>
-#include "ObjectMap.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"
 
