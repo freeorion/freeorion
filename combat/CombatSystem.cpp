@@ -171,15 +171,23 @@ namespace {
     // collect detection strengths of all empires (and neutrals) in \a combat_info
     std::map<int, float> GetEmpiresDetectionStrengths(const CombatInfo& combat_info) {
         std::map<int, float> retval;
-        for (auto empire_id : combat_info.empire_ids) {
+        for (auto empire_id : combat_info.empire_ids) { // loop over participating empires
+            retval[empire_id] = 0.0f;   // to be replaced...
+            auto it = combat_info.empires.find(empire_id);
             const auto empire = GetEmpire(empire_id, combat_info);
-            if (!empire)
+            if (!empire) {
+                ErrorLogger() << "GetEmpiresDetectionStrengths(CombatInfo) couldn't find empire with id " << empire_id;
                 continue;
+            }
             const Meter* meter = empire->GetMeter("METER_DETECTION_STRENGTH");
-            float strength = meter ? meter->Current() : 0.0f;
-            retval[empire_id] = strength;
+            if (!meter)
+                ErrorLogger() << "GetEmpiresDetectionStrengths(CombatInfo) found empire with no detection meter?";
+            else
+                retval[empire_id] = meter->Current();
         }
+
         retval[ALL_EMPIRES] =  combat_info.GetMonsterDetection();
+
         return retval;
     }
 
@@ -1517,15 +1525,16 @@ namespace {
         else if (auto attacker_planet = std::dynamic_pointer_cast<Planet>(attacker))
             species_name = attacker_planet->SpeciesName();
 
+        int attacker_owner_id = attacker->Owner();
+        const auto empire = GetEmpire(attacker_owner_id, combat_state.combat_info);
+        const auto& empire_name = (empire ? empire->Name() : UserString("ENC_COMBAT_ROGUE"));
+
+
         for (const auto& weapon : weapons) {
             // skip non-fighter weapons
             // direct fire weapons handled separately
             if (weapon.part_class != ShipPartClass::PC_FIGHTER_BAY)    // passed in weapons container should have already checked for adequate supply of fighters to launch and the available bays, and condensed into a single entry...
                 continue;
-
-            int attacker_owner_id = attacker->Owner();
-            const auto empire = GetEmpire(attacker_owner_id, combat_state.combat_info);
-            const auto& empire_name = (empire ? empire->Name() : UserString("ENC_COMBAT_ROGUE"));
 
             std::string fighter_name = boost::io::str(FlexibleFormat(UserString("ENC_COMBAT_EMPIRE_FIGHTER_NAME"))
                 % empire_name % species_name % weapon.fighter_type_name);

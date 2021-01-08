@@ -24,7 +24,7 @@ public:
         id system_id. */
     std::shared_ptr<System> GetSystem();
 
-    const EmpireManager::container_type&           empires{Empires().GetEmpires()};
+    const EmpireManager::container_type&           empires{Empires().GetEmpires()}; // map from ID to empires, may include empires not actually participating in this combat
     const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{GetUniverse().GetEmpireObjectVisibilityTurnMap()};
     const EmpireManager::DiploStatusMap            diplo_statuses{Empires().GetDiplomaticStatuses()};
 
