@@ -3356,11 +3356,11 @@ void ServerApp::ProcessCombats() {
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
     for (CombatInfo& combat_info : combats) {
-        if (auto system = combat_info.GetSystem())
-            system->SetLastTurnBattleHere(CurrentTurn());
-
         auto combat_system = combat_info.GetSystem();
-        DebugLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
+        if (combat_system)
+            combat_system->SetLastTurnBattleHere(CurrentTurn());
+
+        DebugLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System id: " + std::to_string(combat_info.system_id) + ")");
         TraceLogger(combat) << combat_info.objects.Dump();
 
         AutoResolveCombat(combat_info);
