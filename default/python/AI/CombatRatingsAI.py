@@ -270,19 +270,11 @@ class ShipCombatStats:
         # The fighter rating calculations are heavily based upon the enemy stats.
         # So, for now, we compare at least against a certain standard enemy.
         enemy_stats = enemy_stats or get_aistate().get_standard_enemy()
-
         my_attacks, my_structure, my_shields = self.get_basic_stats()
         # e_avg_attack = 1
         if enemy_stats:
             e_attacks, e_structure, e_shields = enemy_stats.get_basic_stats()
-            if e_attacks:
-                # e_num_attacks = sum(n for n in e_attacks.values())
-                e_total_attack = sum(n*dmg for dmg, n in e_attacks.items())
-                # e_avg_attack = e_total_attack / e_num_attacks
-                e_net_attack = sum(n*max(dmg - my_shields, .001) for dmg, n in e_attacks.items())
-                e_net_attack = max(e_net_attack, .1*e_total_attack)
-                shield_factor = e_total_attack / e_net_attack
-                my_structure *= max(1, shield_factor)
+            my_structure *= self.__calculate_shield_factor(e_attacks, my_shields)
             my_total_attack = sum(n*max(dmg - e_shields, .001) for dmg, n in my_attacks.items())
         else:
             my_total_attack = sum(n*dmg for dmg, n in my_attacks.items())
@@ -290,12 +282,29 @@ class ShipCombatStats:
 
         if ignore_fighters:
             return _rating()
-
         my_total_attack += self.estimate_fighter_damage()
 
         # TODO: Consider enemy fighters
 
         return _rating()
+
+    def __calculate_shield_factor(self, e_attacks: dict, my_shields: float) -> float:
+        """
+        Calculates shield factor based on enemy attacks and our shields.
+
+        It is possible to have e_attacks with number attacks == 0,
+        in that case we consider that there is an issue with the enemy stats and we jut set value to 1.0.
+        """
+        if not e_attacks:
+            return 1.0
+        e_total_attack = sum(n * dmg for dmg, n in e_attacks.items())
+        if e_total_attack:
+            e_net_attack = sum(n * max(dmg - my_shields, .001) for dmg, n in e_attacks.items())
+            e_net_attack = max(e_net_attack, .1 * e_total_attack)
+            shield_factor = e_total_attack / e_net_attack
+            return max(1.0, shield_factor)
+        else:
+            return 1.0
 
     def estimate_fighter_damage(self):
         capacity, launch_rate, fighter_damage = self.get_fighter_stats()
