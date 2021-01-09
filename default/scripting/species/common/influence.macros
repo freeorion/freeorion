@@ -2,7 +2,11 @@
 BASE_INFLUENCE_COSTS
 '''EffectsGroup      // colonies consume influence, proportional to how many planets the empire controls
             scope = Source
-            activation = And [ Planet Not Capital ]
+            activation = And [
+                Planet
+                Not Unowned
+                Not Capital
+            ]
             stackinggroup = "IMPERIAL_PALACE_MANY_PLANETS_INFLUENCE_PENALTY"
             accountinglabel = "COLONY_ADMIN_COSTS_LABEL"
             effects = SetTargetInfluence value = Value - (NamedReal name = "OLONY_ADMIN_COSTS_PER_PLANET" value = 0.2) *
@@ -15,6 +19,7 @@ BASE_INFLUENCE_COSTS
             scope = Source
             activation = And [
                 Planet
+                Not Unowned
                 Not Capital
                 Homeworld name = LocalCandidate.Species
             ]
@@ -25,6 +30,7 @@ BASE_INFLUENCE_COSTS
             scope = Source
             activation = And [
                 Planet
+                Not Unowned
                 Not ResourceSupplyConnected empire = LocalCandidate.Owner condition = And [
                     Planet
                     OwnedBy empire = Source.Owner
@@ -40,6 +46,7 @@ BASE_INFLUENCE_COSTS
             scope = Source
             activation = And [
                 Planet
+                Not Unowned
                 Human     // human player, not human species
                 (GalaxyMaxAIAggression = 0)
             ]
