@@ -746,7 +746,7 @@ void Statistic<T, V>::GetObjectPropertyValues(const ScriptingContext& context,
         // TODO: Can / should this be paralleized?
         object_property_values.reserve(objects.size());
         for (auto& object : objects)
-            object_property_values.emplace_back(m_value_ref->Eval(ScriptingContext(context, object)));
+            object_property_values.push_back(m_value_ref->Eval(ScriptingContext(context, object)));
     }
 }
 
