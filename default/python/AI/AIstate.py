@@ -507,7 +507,7 @@ class AIstate:
             for fid in local_enemy_fleet_ids:
                 fleet = universe.getFleet(fid)  # ensured to exist
                 fleet_rating = CombatRatingsAI.get_fleet_rating(
-                    fid, enemy_stats=CombatRatingsAI.get_empire_standard_fighter())
+                    fid, enemy_stats=CombatRatingsAI.get_empire_standard_military_ship_stats())
                 if fleet.speed == 0:
                     monster_ratings.append(fleet_rating)
                     if verbose:
@@ -912,7 +912,7 @@ class AIstate:
         info(fleet_table)
         # Next string used in charts. Don't modify it!
         debug("Empire Ship Count: %s" % self.shipCount)
-        debug("Empire standard fighter summary: %s", (CombatRatingsAI.get_empire_standard_fighter().get_stats(), ))
+        debug("Empire standard fighter summary: %s", (CombatRatingsAI.get_empire_standard_military_ship_stats().get_stats(),))
         debug("------------------------")
 
     def get_explored_system_ids(self):
