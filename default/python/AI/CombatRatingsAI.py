@@ -27,10 +27,10 @@ def get_allowed_targets(partname: str) -> int:
 
 
 @cache_for_current_turn
-def get_empire_standard_fighter():
-    """Get the current empire standard fighter stats, i.e. the most common shiptype within the empire.
+def get_empire_standard_military_ship_stats():
+    """Get the current empire standard military ship stats, i.e. the most common ship type within the empire.
 
-    :return: Stats of most common fighter in the empire
+    :return: Stats of most common military ship in the empire
     :rtype: ShipCombatStats
     """
     stats_dict = Counter()
