@@ -41,6 +41,7 @@ COMMON_HAPPINESS_EFFECTS
         EffectsGroup    // more stable when liked focuses are adopted
             scope = Source
             activation = And [
+                Not Unowned
                 Population low = 0.001
                 (SpeciesContentOpinion species = LocalCandidate.Species name = LocalCandidate.Focus > 0)
             ]
@@ -50,6 +51,7 @@ COMMON_HAPPINESS_EFFECTS
         EffectsGroup    // less stable when disliked focuses are adopted
             scope = Source
             activation = And [
+                Not Unowned
                 Population low = 0.001
                 (SpeciesContentOpinion species = LocalCandidate.Species name = LocalCandidate.Focus < 0)
             ]
