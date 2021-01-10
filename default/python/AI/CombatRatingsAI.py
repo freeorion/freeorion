@@ -1,5 +1,4 @@
 from collections import Counter
-from functools import reduce
 from logging import warning, error
 
 import freeOrionAIInterface as fo
@@ -9,7 +8,7 @@ from EnumsAI import MissionType
 from freeorion_tools import dict_to_tuple, tuple_to_dict, cache_for_current_turn
 from ShipDesignAI import get_ship_part
 from AIDependencies import INVALID_ID, CombatTarget
-
+from freeorion_tools import combine_ratings
 
 _issued_errors = []
 
@@ -367,10 +366,10 @@ class FleetCombatStats:
         :return: Rating of the fleet
         :rtype: float
         """
-        return combine_ratings_list([x.get_rating(enemy_stats, ignore_fighters) for x in self.__ship_stats])
+        return combine_ratings(x.get_rating(enemy_stats, ignore_fighters) for x in self.__ship_stats)
 
     def get_rating_vs_planets(self):
-        return combine_ratings_list([x.get_rating_vs_planets() for x in self.__ship_stats])
+        return combine_ratings(x.get_rating_vs_planets() for x in self.__ship_stats)
 
     def __get_stats_from_fleet(self):
         """Calculate fleet combat stats (i.e. the stats of all its ships)."""
@@ -419,55 +418,6 @@ def weight_shields(shields, grade):
     """Re-weights shields based on species defense bonus."""
     offset = {'NO': 0, 'BAD': 0, '': 0, 'GOOD': 1.0, 'GREAT': 0, 'ULTIMATE': 0}.get(grade, 0)
     return shields + offset
-
-
-def combine_ratings(rating1, rating2):
-    """ Combines two combat ratings to a total rating.
-
-    The formula takes into account the fact that the combined strength of two ships is more than the
-    sum of its individual ratings. Basic idea as follows:
-
-    We use the following definitions
-
-    r: rating
-    a: attack
-    s: structure
-
-    where we take into account effective values after accounting for e.g. shields effects.
-
-    We generally define the rating of a ship as
-    r_i = a_i*s_i                                                                   (1)
-
-    A natural extension for the combined rating of two ships is
-    r_tot = (a_1+a_2)*(s_1+s_2)                                                     (2)
-
-    Assuming         a_i approx s_i                                                 (3)
-    It follows that  a_i approx sqrt(r_i) approx s_i                                (4)
-    And thus         r_tot = (sqrt(r_1)+sqrt(r_2))^2 = r1 + r2 + 2*sqrt(r1*r2)      (5)
-
-    Note that this function has commutative and associative properties.
-
-    :param rating1:
-    :type rating1: float
-    :param rating2:
-    :type rating2: float
-    :return: combined rating
-    :rtype: float
-    """
-    return rating1 + rating2 + 2 * (rating1 * rating2)**0.5
-
-
-def combine_ratings_list(ratings_list):
-    """ Combine ratings in the list.
-
-    Repetitively calls combine_ratings() until finished.
-
-    :param ratings_list: list of ratings to be combined
-    :type ratings_list: list
-    :return: combined rating
-    :rtype: float
-    """
-    return reduce(combine_ratings, ratings_list, 0)
 
 
 def rating_needed(target, current=0):

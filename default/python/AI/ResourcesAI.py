@@ -18,9 +18,8 @@ from EnumsAI import PriorityType, get_priority_resource_types, FocusType
 import PlanetUtilsAI
 import ColonisationAI
 import AIDependencies
-import CombatRatingsAI
 from common.print_utils import Table, Text
-from freeorion_tools import tech_is_complete, AITimer
+from freeorion_tools import combine_ratings, tech_is_complete, AITimer
 
 resource_timer = AITimer('timer_bucket')
 
@@ -385,9 +384,9 @@ def assess_protection_focus(pinfo):
             local_production_diff > 5))):
         use_protection = False
         reason = "F"
-    elif (regional_threat <= CombatRatingsAI.combine_ratings(local_fleet_rating, adjusted_p_defenses) and
+    elif (regional_threat <= combine_ratings(local_fleet_rating, adjusted_p_defenses) and
           safety_factor * regional_threat <=
-          CombatRatingsAI.combine_ratings_list([my_neighbor_rating, local_fleet_rating, adjusted_p_defenses]) and
+          combine_ratings(my_neighbor_rating, local_fleet_rating, adjusted_p_defenses) and
           local_production_diff > 5):
         use_protection = False
         reason = "G"

@@ -8,6 +8,7 @@ from aistate_interface import get_aistate
 import MilitaryAI
 import MoveUtilsAI
 import CombatRatingsAI
+from freeorion_tools import combine_ratings
 from target import TargetFleet, TargetSystem, TargetPlanet
 
 
@@ -216,9 +217,8 @@ class OrderMove(AIFleetOrder):
                 'myFleetRatingVsPlanets', 0)
             is_military = aistate.get_fleet_role(self.fleet.id) == MissionType.MILITARY
 
-            total_rating = CombatRatingsAI.combine_ratings(my_other_fleet_rating, fleet_rating)
-            total_rating_vs_planets = CombatRatingsAI.combine_ratings(my_other_fleet_rating_vs_planets,
-                                                                      fleet_rating_vs_planets)
+            total_rating = combine_ratings(my_other_fleet_rating, fleet_rating)
+            total_rating_vs_planets = combine_ratings(my_other_fleet_rating_vs_planets, fleet_rating_vs_planets)
             if (my_other_fleet_rating > 3 * safety_factor * threat or
                     (is_military and total_rating_vs_planets > 2.5*p_threat and total_rating > safety_factor * threat)):
                 debug(("\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d"

@@ -16,7 +16,7 @@ from aistate_interface import get_aistate
 from target import TargetSystem, TargetFleet, TargetPlanet
 from EnumsAI import MissionType
 from AIDependencies import INVALID_ID
-from freeorion_tools import get_partial_visibility_turn, assertion_fails
+from freeorion_tools import combine_ratings, get_partial_visibility_turn, assertion_fails
 
 ORDERS_FOR_MISSION = {
     MissionType.EXPLORATION: OrderPause,
@@ -510,7 +510,7 @@ class AIFleetMission:
                     else:  # no orders
                         debug("No Current Orders")
                 else:
-                    potential_threat = CombatRatingsAI.combine_ratings(
+                    potential_threat = combine_ratings(
                         MilitaryAI.get_system_local_threat(last_sys_target),
                         MilitaryAI.get_system_neighbor_threat(last_sys_target)
                     )
@@ -601,7 +601,7 @@ class AIFleetMission:
         system_id = self.target.id
         aistate = get_aistate()
         local_defenses = MilitaryAI.get_my_defense_rating_in_system(system_id)
-        potential_threat = CombatRatingsAI.combine_ratings(
+        potential_threat = combine_ratings(
             MilitaryAI.get_system_local_threat(system_id),
             MilitaryAI.get_system_neighbor_threat(system_id)
         )

@@ -15,7 +15,7 @@ from EnumsAI import MissionType, ShipRoleType
 import CombatRatingsAI
 import MilitaryAI
 import PlanetUtilsAI
-from freeorion_tools import get_partial_visibility_turn
+from freeorion_tools import combine_ratings, get_partial_visibility_turn
 from AIDependencies import INVALID_ID, TECH_NATIVE_SPECIALS
 from character.character_module import create_character, Aggression
 
@@ -496,7 +496,7 @@ class AIstate:
             my_ratings_against_planets_list = []
             for fid in sys_status['myfleets']:
                 my_ratings_against_planets_list.append(self.get_rating(fid, against_planets=True))
-                sys_status['myFleetRatingVsPlanets'] = CombatRatingsAI.combine_ratings_list(
+                sys_status['myFleetRatingVsPlanets'] = combine_ratings(
                     my_ratings_against_planets_list)
 
             # update threats
@@ -522,11 +522,11 @@ class AIstate:
                 else:
                     enemy_ratings.append(fleet_rating)
 
-            enemy_rating = CombatRatingsAI.combine_ratings_list(enemy_ratings)
-            monster_rating = CombatRatingsAI.combine_ratings_list(monster_ratings)
-            mob_rating = CombatRatingsAI.combine_ratings_list(mob_ratings)
+            enemy_rating = combine_ratings(enemy_ratings)
+            monster_rating = combine_ratings(monster_ratings)
+            mob_rating = combine_ratings(mob_ratings)
             lost_fleets = fleetsLostBySystem.get(sys_id, [])
-            lost_fleet_rating = CombatRatingsAI.combine_ratings_list(lost_fleets)
+            lost_fleet_rating = combine_ratings(lost_fleets)
             if lost_fleet_rating:
                 debug("Just lost fleet rating %.1f in system %s", lost_fleet_rating, system)
 
@@ -539,7 +539,7 @@ class AIstate:
                 sys_status.setdefault('local_fleet_threats', set())
                 sys_status['planetThreat'] = 0
                 sys_status['fleetThreat'] = max(
-                    CombatRatingsAI.combine_ratings(enemy_rating, mob_rating),
+                    combine_ratings(enemy_rating, mob_rating),
                     0.98 * sys_status.get('fleetThreat', 0),
                     1.1*lost_fleet_rating - monster_rating)
                 sys_status['monsterThreat'] = max(
@@ -594,7 +594,7 @@ class AIstate:
                 #        "current Turn %d -- basing threat assessment on old info and lost ships") % (
                 #     sys_id, sys_status.get('name', "name unknown"), partial_vis_turn, currentTurn)
                 sys_status['fleetThreat'] = max(
-                    CombatRatingsAI.combine_ratings(enemy_rating, mob_rating),
+                    combine_ratings(enemy_rating, mob_rating),
                     0.98 * sys_status.get('fleetThreat', 0),
                     2.0 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating))
                 sys_status['enemy_threat'] = max(
@@ -605,7 +605,7 @@ class AIstate:
                 # sys_status['totalThreat'] = ((pattack + enemy_attack + monster_attack) ** 0.8)\
                 #                             * ((phealth + enemy_health + monster_health)** 0.6)  # reevaluate this
                 sys_status['totalThreat'] = max(
-                    CombatRatingsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth]),
+                    combine_ratings(enemy_rating, mob_rating, monster_rating, pattack * phealth),
                     2 * lost_fleet_rating,
                     0.98 * sys_status.get('totalThreat', 0))
             else:  # system considered visible
@@ -613,18 +613,18 @@ class AIstate:
                 sys_status['local_fleet_threats'] = set(mobile_fleets)
                 # includes mobile monsters
                 sys_status['fleetThreat'] = max(
-                    CombatRatingsAI.combine_ratings(enemy_rating, mob_rating), 2*lost_fleet_rating - monster_rating)
+                    combine_ratings(enemy_rating, mob_rating), 2 * lost_fleet_rating - monster_rating)
                 if verbose:
                     debug("enemy threat calc parts: enemy rating %.1f, lost fleet rating %.1f, monster_rating %.1f" % (
                         enemy_rating, lost_fleet_rating, monster_rating))
                 # does NOT include mobile monsters
                 sys_status['enemy_threat'] = max(enemy_rating, 2*lost_fleet_rating - monster_rating)
                 sys_status['monsterThreat'] = monster_rating
-                sys_status['totalThreat'] = CombatRatingsAI.combine_ratings_list([
+                sys_status['totalThreat'] = combine_ratings(
                     sys_status['fleetThreat'],
                     sys_status['monsterThreat'],
                     pattack * phealth,
-                ])
+                )
             sys_status['regional_fleet_threats'] = sys_status['local_fleet_threats'].copy()
             sys_status['fleetThreat'] = max(sys_status['fleetThreat'], sys_status.get('nest_threat', 0))
             sys_status['totalThreat'] = max(sys_status['totalThreat'], sys_status.get('nest_threat', 0))
@@ -633,8 +633,8 @@ class AIstate:
             if partial_vis_turn > 0 and sys_id not in supply_unobstructed_systems:
                 sys_status['fleetThreat'] = max(sys_status['fleetThreat'], min_hidden_attack * min_hidden_health)
                 sys_status['totalThreat'] = max(sys_status['totalThreat'],
-                                                CombatRatingsAI.combine_ratings(sys_status.get('planetThreat', 0),
-                                                                                (min_hidden_attack*min_hidden_health)))
+                                                combine_ratings(sys_status.get('planetThreat', 0),
+                                                                (min_hidden_attack * min_hidden_health)))
             if verbose and sys_status['fleetThreat'] > 0:
                 debug("%s intermediate status: %s" % (system, sys_status))
 
@@ -652,10 +652,10 @@ class AIstate:
                 my_ratings_list.append(this_rating)
                 my_ratings_against_planets_list.append(self.get_rating(fid, against_planets=True))
             if sys_id != INVALID_ID:
-                sys_status['myFleetRating'] = CombatRatingsAI.combine_ratings_list(my_ratings_list)
-                sys_status['myFleetRatingVsPlanets'] = CombatRatingsAI.combine_ratings_list(
+                sys_status['myFleetRating'] = combine_ratings(my_ratings_list)
+                sys_status['myFleetRatingVsPlanets'] = combine_ratings(
                     my_ratings_against_planets_list)
-                sys_status['all_local_defenses'] = CombatRatingsAI.combine_ratings(
+                sys_status['all_local_defenses'] = combine_ratings(
                     sys_status['myFleetRating'], sys_status['mydefenses']['overall'])
             sys_status['neighbors'] = set(universe.getImmediateNeighbors(sys_id, self.empireID))
 
@@ -690,8 +690,8 @@ class AIstate:
             sys_status['my_jump3_rating'] = myrating
             # for local system includes both enemies and mobs
             threat_keys = ['fleetThreat', 'neighborThreat', 'jump2_threat']
-            sys_status['regional_threat'] = CombatRatingsAI.combine_ratings_list(
-                [sys_status.get(x, 0) for x in threat_keys])
+            sys_status['regional_threat'] = combine_ratings(
+                sys_status.get(x, 0) for x in threat_keys)
             # TODO: investigate cases where regional_threat has been nonzero but no regional_threat_fleets
             # (probably due to attenuating history of past threats)
             sys_status.setdefault('regional_fleet_threats', set()).update(j1_threats, j2_threats)
@@ -705,8 +705,8 @@ class AIstate:
             # TODO: have distinct treatment for both enemy_threat and fleetThreat, respectively
             fthreat = sys_status.get('enemy_threat', 0)
             max_threat = max(max_threat, fthreat)
-            threat = CombatRatingsAI.combine_ratings(threat, fthreat)
-            myrating = CombatRatingsAI.combine_ratings(myrating, sys_status.get('myFleetRating', 0))
+            threat = combine_ratings(threat, fthreat)
+            myrating = combine_ratings(myrating, sys_status.get('myFleetRating', 0))
             # myrating = FleetUtilsAI.combine_ratings(myrating, sys_status.get('all_local_defenses', 0))
             threat_fleets.update(sys_status.get('local_fleet_threats', []))
         return threat, max_threat, myrating, threat_fleets
