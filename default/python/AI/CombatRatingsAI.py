@@ -35,7 +35,7 @@ def get_empire_standard_fighter():
     """
     stats_dict = Counter()
     for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY):
-        ship_stats = FleetCombatStats(fleet_id, consider_refuel=True).get_ship_combat_stats()
+        ship_stats = FleetCombatStats(fleet_id, max_stats=True).get_ship_combat_stats()
         stats_dict.update(ship_stats)
 
     most_commons = stats_dict.most_common(1)
@@ -145,9 +145,9 @@ class ShipCombatStats:
         def __str__(self):
             return str(self.get_stats())
 
-    def __init__(self, ship_id=INVALID_ID, consider_refuel=False, stats=None):
+    def __init__(self, ship_id=INVALID_ID, max_stats=False, stats=None):
         self.__ship_id = ship_id
-        self._consider_refuel = consider_refuel
+        self._max_stats = max_stats
         if stats:
             self._basic_stats = self.BasicStats(*stats[0:3])  # TODO: Should probably determine size dynamically
             self._fighter_stats = self.FighterStats(*stats[3:6])
@@ -173,7 +173,7 @@ class ShipCombatStats:
         if not ship:
             return  # TODO: Add some estimate for stealthed ships
 
-        if self._consider_refuel:
+        if self._max_stats:
             structure = ship.initialMeterValue(fo.meterType.maxStructure)
             shields = ship.initialMeterValue(fo.meterType.maxShield)
         else:
@@ -189,7 +189,7 @@ class ShipCombatStats:
         damage_vs_planets = 0
         design = ship.design
         if design and (ship.isArmed or ship.hasFighters):
-            meter_choice = fo.meterType.maxCapacity if self._consider_refuel else fo.meterType.capacity
+            meter_choice = fo.meterType.maxCapacity if self._max_stats else fo.meterType.capacity
             for partname in design.parts:
                 if not partname:
                     continue
@@ -337,9 +337,9 @@ class ShipCombatStats:
 
 class FleetCombatStats:
     """Stores combat related stats of the fleet."""
-    def __init__(self, fleet_id=INVALID_ID, consider_refuel=False):
+    def __init__(self, fleet_id=INVALID_ID, max_stats=False):
         self.__fleet_id = fleet_id
-        self._consider_refuel = consider_refuel
+        self._max_stats = max_stats
         self.__ship_stats = []
         self.__get_stats_from_fleet()
 
@@ -379,7 +379,7 @@ class FleetCombatStats:
         if not fleet:
             return
         for ship_id in fleet.shipIDs:
-            self.__ship_stats.append(ShipCombatStats(ship_id, self._consider_refuel))
+            self.__ship_stats.append(ShipCombatStats(ship_id, self._max_stats))
 
 
 def get_fleet_rating(fleet_id, enemy_stats=None):
@@ -392,15 +392,15 @@ def get_fleet_rating(fleet_id, enemy_stats=None):
     :return: Rating
     :rtype: float
     """
-    return FleetCombatStats(fleet_id, consider_refuel=False).get_rating(enemy_stats)
+    return FleetCombatStats(fleet_id, max_stats=False).get_rating(enemy_stats)
 
 
 def get_fleet_rating_against_planets(fleet_id):
-    return FleetCombatStats(fleet_id, consider_refuel=False).get_rating_vs_planets()
+    return FleetCombatStats(fleet_id, max_stats=False).get_rating_vs_planets()
 
 
 def get_ship_rating(ship_id, enemy_stats=None):
-    return ShipCombatStats(ship_id, consider_refuel=False).get_rating(enemy_stats)
+    return ShipCombatStats(ship_id, max_stats=False).get_rating(enemy_stats)
 
 
 def weight_attack_troops(troops, grade):
