@@ -1402,15 +1402,13 @@ namespace {
 
     std::map<std::string, std::set<std::string>> HotkeysBySection() {
         std::map<std::string, std::set<std::string>> retval;
-        for (const auto& entry : Hotkey::DefinedHotkeys()) {
+        for (auto& entry : Hotkey::DefinedHotkeys())
             retval[ValidSectionForHotkey(entry)].insert(entry);
-        }
         return retval;
     }
 }
 
 void OptionsWnd::HotkeysPage() {
-
     GG::ListBox* page = CreatePage(UserString("OPTIONS_PAGE_HOTKEYS"));
     for (const auto& class_hotkeys : HotkeysBySection()) {
         CreateSectionHeader(page, 0, UserString(class_hotkeys.first));
@@ -1480,10 +1478,10 @@ void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int 
 }
 
 void OptionsWnd::SoundOptionsFeedback::SetMusicButton(std::shared_ptr<GG::StateButton> button)
-{ m_music_button = button; }
+{ m_music_button = std::move(button); }
 
 void OptionsWnd::SoundOptionsFeedback::SetEffectsButton(std::shared_ptr<GG::StateButton> button)
-{ m_effects_button = button; }
+{ m_effects_button = std::move(button); }
 
 void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(Sound::InitializationFailureException const &e) {
     GetOptionsDB().Set("audio.effects.enabled", false);
