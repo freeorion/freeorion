@@ -1566,14 +1566,18 @@ namespace {
             }
         }
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
+            if (!building_type->ProductionCostTimeLocationInvariant()) {
+                auto& cost_template{UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")};
+                auto& time_template{UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM")};
+
+                if (building_type->Cost() && !building_type->Cost()->ConstantExpr())
+                    detailed_description += "\n\n" + str(FlexibleFormat(cost_template) % building_type->Cost()->Dump());
+                if (building_type->Time() && !building_type->Time()->ConstantExpr())
+                    detailed_description += "\n\n" + str(FlexibleFormat(time_template) % building_type->Time()->Dump());
+            }
+
             // TODO: Consider using UserString instead of hard-coded english text here...
             // Not a high priority as it's mainly inteded for debugging.
-            if (!building_type->ProductionCostTimeLocationInvariant()) {
-                if (building_type->Cost() && !building_type->Cost()->ConstantExpr())
-                    detailed_description += "\n\nProduction Cost:\n" + building_type->Cost()->Dump();
-                if (building_type->Time() && !building_type->Time()->ConstantExpr())
-                    detailed_description += "\n\n Production Time:\n" + building_type->Time()->Dump();
-            }
             if (building_type->EnqueueLocation())
                 detailed_description += "\n\nEnqueue Requirement:\n" + building_type->EnqueueLocation()->Dump();
             if (building_type->Location())
