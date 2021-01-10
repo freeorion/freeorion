@@ -176,7 +176,6 @@ namespace {
         std::map<int, float> retval;
         for (auto empire_id : combat_info.empire_ids) { // loop over participating empires
             retval[empire_id] = 0.0f;   // to be replaced...
-            auto it = combat_info.empires.find(empire_id);
             const auto empire = GetEmpire(empire_id, combat_info);
             if (!empire) {
                 ErrorLogger() << "GetEmpiresDetectionStrengths(CombatInfo) couldn't find empire with id " << empire_id;
