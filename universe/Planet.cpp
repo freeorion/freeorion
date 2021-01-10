@@ -90,7 +90,7 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     auto visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
-    UniverseObject::Copy(copied_object, vis, visible_specials);
+    UniverseObject::Copy(std::move(copied_object), vis, visible_specials);
     PopCenter::Copy(copied_planet, vis);
     ResourceCenter::Copy(copied_planet, vis);
 

@@ -104,7 +104,7 @@ void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     auto visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
-    UniverseObject::Copy(copied_object, vis, visible_specials);;
+    UniverseObject::Copy(std::move(copied_object), vis, visible_specials);;
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         if (this->m_fleet_id != copied_ship->m_fleet_id) {

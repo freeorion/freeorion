@@ -140,7 +140,7 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source, int emp
         return;
 
     if (auto destination = this->get(source_id)) {
-        destination->Copy(source, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
+        destination->Copy(std::move(source), empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
         insertCore(std::shared_ptr<UniverseObject>(source->Clone()), empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
     }

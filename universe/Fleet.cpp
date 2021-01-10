@@ -112,7 +112,7 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     auto visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
-    UniverseObject::Copy(copied_object, vis, visible_specials);
+    UniverseObject::Copy(std::move(copied_object), vis, visible_specials);
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         m_ships =                         copied_fleet->VisibleContainedObjectIDs(empire_id);
@@ -140,8 +140,8 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
 
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
-                m_ordered_given_to_empire_id =copied_fleet->m_ordered_given_to_empire_id;
-                m_last_turn_move_ordered =copied_fleet->m_last_turn_move_ordered;
+                m_ordered_given_to_empire_id =  copied_fleet->m_ordered_given_to_empire_id;
+                m_last_turn_move_ordered =      copied_fleet->m_last_turn_move_ordered;
             }
         }
     }

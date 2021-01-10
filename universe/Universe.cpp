@@ -437,9 +437,8 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
             return std::set<std::string>();
         // all specials visible
         std::set<std::string> retval;
-        for (const auto& entry : obj->Specials()) {
+        for (const auto& entry : obj->Specials())
             retval.insert(entry.first);
-        }
         return retval;
     }
 }

@@ -2991,14 +2991,14 @@ namespace {
                     planet->Conquer(ALL_EMPIRES);
                     DebugLogger() << "Independents conquer planet";
                     for (const auto& empire_troops : empires_troops)
-                    { DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second; }
+                        DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second;
 
                     // TODO: planet lost to rebels sitrep
                 } else {
-                    // defender held theh planet
+                    // defender held thh planet
                     DebugLogger() << "Defender holds planet";
                     for (const auto& empire_troops : empires_troops)
-                    { DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second; }
+                        DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second;
                 }
 
                 // regardless of whether battle resulted in conquering, it did
@@ -3009,9 +3009,9 @@ namespace {
             } else {
                 // no troops left?
                 if (Meter* meter = planet->GetMeter(MeterType::METER_TROOPS))
-                    meter->SetCurrent(0.0);
+                    meter->SetCurrent(0.0f);
                 if (Meter* meter = planet->GetMeter(MeterType::METER_REBEL_TROOPS))
-                    meter->SetCurrent(0.0);
+                    meter->SetCurrent(0.0f);
             }
 
             planet->BackPropagateMeters();
@@ -3020,7 +3020,7 @@ namespace {
             if (planet_initial_owner_id != ALL_EMPIRES && planet_initial_owner_id != planet->Owner()) {
                 // get empire's knowledge of object
                 ObjectMap& empire_latest_known_objects = EmpireKnownObjects(planet_initial_owner_id);
-                empire_latest_known_objects.CopyObject(planet, planet_initial_owner_id);
+                empire_latest_known_objects.CopyObject(std::move(planet), planet_initial_owner_id);
             }
         }
     }

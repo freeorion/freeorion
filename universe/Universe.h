@@ -442,9 +442,9 @@ private:
         auto obj = std::make_shared<T>(std::forward<Args>(args)...);
         auto uobj = std::dynamic_pointer_cast<UniverseObject>(obj);
         if (!uobj)
-            return std::shared_ptr<T>();
+            return nullptr;
 
-        InsertIDCore(uobj, id);
+        InsertIDCore(std::move(uobj), id);
         return obj;
     }
 
