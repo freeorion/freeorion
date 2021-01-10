@@ -8,7 +8,7 @@ import CombatRatingsAI
 import MoveUtilsAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
-from freeorion_tools import assertion_fails
+from freeorion_tools import assertion_fails, combine_ratings
 from EnumsAI import MissionType, ShipRoleType
 from ShipDesignAI import get_ship_part
 from target import TargetPlanet, TargetFleet, TargetSystem
@@ -171,10 +171,10 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
             fleet_list.append(fleet_id)
 
             this_rating = aistate.get_rating(fleet_id)
-            cur_stats['rating'] = CombatRatingsAI.combine_ratings(cur_stats.get('rating', 0), this_rating)
+            cur_stats['rating'] = combine_ratings(cur_stats.get('rating', 0), this_rating)
             if 'ratingVsPlanets' in target_stats:
-                cur_stats['ratingVsPlanets'] = CombatRatingsAI.combine_ratings(cur_stats.get('ratingVsPlanets', 0),
-                                                                               this_rating_vs_planets)
+                cur_stats['ratingVsPlanets'] = combine_ratings(cur_stats.get('ratingVsPlanets', 0),
+                                                               this_rating_vs_planets)
             if 'troopCapacity' in target_stats:
                 cur_stats['troopCapacity'] = cur_stats.get('troopCapacity', 0) + troop_capacity
             # if we already meet the requirements, we can stop looking for more ships
@@ -293,7 +293,7 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
             continue
         transferred = fo.issueFleetTransferOrder(ship_id, fleet_b_id)
         if transferred:
-            transferred_rating = CombatRatingsAI.combine_ratings(transferred_rating, this_rating)
+            transferred_rating = combine_ratings(transferred_rating, this_rating)
         else:
             debug("  *** transfer of ship %4d, formerly of fleet %4d, into fleet %4d failed; %s" % (
                 ship_id, fleet_a_id, fleet_b_id, (" context is %s" % context) if context else ""))

@@ -11,9 +11,9 @@ import PriorityAI
 import ProductionAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
-from CombatRatingsAI import combine_ratings, combine_ratings_list, rating_difference
+from CombatRatingsAI import rating_difference
 from EnumsAI import MissionType
-from freeorion_tools import cache_by_turn_persistent
+from freeorion_tools import cache_by_turn_persistent, combine_ratings
 from target import TargetSystem
 from turn_state import state
 
@@ -412,7 +412,7 @@ class CapitalDefenseAllocator(Allocator):
     _military_reset_ratio = 0.5
 
     def _minimum_allocation(self, threat):
-        nearby_forces = CombatRatingsAI.combine_ratings(
+        nearby_forces = combine_ratings(
                 self.assigned_rating, self._potential_support())
         return max(
                 CombatRatingsAI.rating_needed(self._regional_threat(), nearby_forces),
@@ -427,7 +427,7 @@ class CapitalDefenseAllocator(Allocator):
         potential_threat = max(self._potential_threat() - self._potential_support(), 0)
         actual_threat = self.safety_factor * (
             2*self.threat_bias +
-            + CombatRatingsAI.combine_ratings(self._local_threat(), self._neighbor_threat()))
+            + combine_ratings(self._local_threat(), self._neighbor_threat()))
         return potential_threat + actual_threat
 
     def _take_any(self):
@@ -456,12 +456,11 @@ class PlanetDefenseAllocator(Allocator):
         return min(super_call, restriction)
 
     def _calculate_threat(self):
-        nearby_forces = CombatRatingsAI.combine_ratings(
+        nearby_forces = combine_ratings(
             self._potential_support(), self.assigned_rating)
         return (
             self.threat_bias +
-            + self.safety_factor * CombatRatingsAI.combine_ratings(self._local_threat(),
-                                                                   self._neighbor_threat()) +
+            + self.safety_factor * combine_ratings(self._local_threat(), self._neighbor_threat()) +
             + max(0., self._potential_threat() + self._jump2_threat() - nearby_forces))
 
     def _take_any(self):
@@ -478,10 +477,10 @@ class TargetAllocator(Allocator):
     def _calculate_threat(self):
         return (
             self.threat_bias +
-            + self.safety_factor * CombatRatingsAI.combine_ratings_list([
+            + self.safety_factor * combine_ratings(
                 self._local_threat(),
                 .75 * self._neighbor_threat(),
-                .5 * self._jump2_threat()])
+                .5 * self._jump2_threat())
             + self._potential_threat())
 
     def _take_any(self):
@@ -530,10 +529,11 @@ class LocalThreatAllocator(Allocator):
     def _calculate_threat(self):
 
         systems_status = get_aistate().systemStatus.get(self.sys_id, {})
-        threat = self.safety_factor * CombatRatingsAI.combine_ratings(systems_status.get('fleetThreat', 0),
-                                                                      systems_status.get('monsterThreat', 0) +
-                                                                      + systems_status.get('planetThreat', 0))
-
+        threat = self.safety_factor * combine_ratings(
+            systems_status.get('fleetThreat', 0),
+            systems_status.get('monsterThreat', 0) +
+            + systems_status.get('planetThreat', 0)
+        )
         return self.threat_bias + threat
 
     def _take_any(self):
@@ -645,7 +645,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
 
     mil_fleets_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
     mil_needing_repair_ids, mil_fleets_ids = avail_mil_needing_repair(mil_fleets_ids, split_ships=True)
-    avail_mil_rating = combine_ratings_list(CombatRatingsAI.get_fleet_rating(x) for x in mil_fleets_ids)
+    avail_mil_rating = combine_ratings(CombatRatingsAI.get_fleet_rating(x) for x in mil_fleets_ids)
 
     if not mil_fleets_ids:
         if "Main" in thisround:
@@ -669,13 +669,13 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         last_sys = ai_fleet_mission.target.get_system().id  # will count this fleet as assigned to last system in target list  # TODO last_sys or target sys?
         this_rating = CombatRatingsAI.get_fleet_rating(fleet_id)
         this_rating_vs_planets = CombatRatingsAI.get_fleet_rating_against_planets(fleet_id)
-        already_assigned_rating[last_sys] = CombatRatingsAI.combine_ratings(
+        already_assigned_rating[last_sys] = combine_ratings(
                 already_assigned_rating.get(last_sys, 0), this_rating)
-        already_assigned_rating_vs_planets[last_sys] = CombatRatingsAI.combine_ratings(
+        already_assigned_rating_vs_planets[last_sys] = combine_ratings(
                 already_assigned_rating_vs_planets.get(last_sys, 0), this_rating_vs_planets)
     for sys_id in universe.systemIDs:
         my_defense_rating = systems_status.get(sys_id, {}).get('mydefenses', {}).get('overall', 0)
-        already_assigned_rating[sys_id] = CombatRatingsAI.combine_ratings(my_defense_rating, already_assigned_rating[sys_id])
+        already_assigned_rating[sys_id] = combine_ratings(my_defense_rating, already_assigned_rating[sys_id])
         if _verbose_mil_reporting and already_assigned_rating[sys_id]:
             debug("\t System %s already assigned rating %.1f" % (
                 universe.getSystem(sys_id), already_assigned_rating[sys_id]))
@@ -991,8 +991,10 @@ def get_concentrated_tot_mil_rating():
     :return: a military rating value
     :rtype: float
     """
-    return CombatRatingsAI.combine_ratings_list([CombatRatingsAI.get_fleet_rating(fleet_id) for fleet_id in
-                                                 FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)])
+    return combine_ratings(
+        CombatRatingsAI.get_fleet_rating(fleet_id) for fleet_id in
+        FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
+    )
 
 
 @cache_by_turn_persistent
