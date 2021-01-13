@@ -391,6 +391,9 @@ namespace {
     std::map<std::string, std::string> object_list_cond_description_map;
 
     const std::string& ConditionClassName(const Condition::Condition* const condition) {
+        if (!condition)
+            return EMPTY_STRING;
+
         if (dynamic_cast<const Condition::All* const>(condition))
             return ALL_CONDITION;
         else if (dynamic_cast<const Condition::EmpireAffiliation* const>(condition))

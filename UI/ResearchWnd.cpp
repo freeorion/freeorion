@@ -198,7 +198,7 @@ namespace {
 
         using boost::io::str;
 
-        double max_spending_per_turn = tech->ResearchCost(m_empire_id) / m_total_turns;
+        double max_spending_per_turn = tech ? tech->ResearchCost(m_empire_id) / m_total_turns : 0.0;
         std::string turns_cost_text = str(FlexibleFormat(UserString("TECH_TURN_COST_STR"))
             % DoubleToString(turn_spending, 3, false)
             % DoubleToString(max_spending_per_turn, 3, false));

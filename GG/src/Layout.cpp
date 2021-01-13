@@ -420,8 +420,8 @@ void Layout::DoLayout(Pt ul, Pt lr)
             wnd_position.first->SizeMove(wnd_ul, wnd_lr);
         } else { // align as appropriate
             Pt available_space = wnd_lr - wnd_ul;
-            Pt min_usable_size = wnd_position.first->MinUsableSize();
-            Pt min_size = wnd_position.first->MinSize();
+            Pt min_usable_size = wnd_position.first ? wnd_position.first->MinUsableSize() : GG::Pt(GG::X1, GG::Y1);
+            Pt min_size = wnd_position.first ? wnd_position.first->MinSize() : min_usable_size;
 
             // HACK! This is put here so that TextControl, which is currently GG's
             // only height-for-width Wnd type, doesn't get vertically squashed
