@@ -29,7 +29,7 @@ SupplyManager& SupplyManager::operator=(const SupplyManager& rhs) {
     return *this;
 }
 
-SupplyManager& SupplyManager::operator=(SupplyManager&& rhs) {
+SupplyManager& SupplyManager::operator=(SupplyManager&& rhs) noexcept {
     if (this != &rhs) {
         m_supply_starlane_traversals =            std::move(rhs.m_supply_starlane_traversals);
         m_supply_starlane_obstructed_traversals = std::move(rhs.m_supply_starlane_obstructed_traversals);
