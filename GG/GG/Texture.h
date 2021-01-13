@@ -203,7 +203,7 @@ private:
     std::shared_ptr<const Texture>  m_texture;
     X                               m_width = GG::X0;
     Y                               m_height = GG::Y0;
-    GLfloat                         m_tex_coords[4];    ///< position of element within containing texture 
+    GLfloat                         m_tex_coords[4] = {0.0f, 0.0f, 1.0f, 1.0f}; ///< position of element within containing texture 
 };
 
 /** \brief A singleton that loads and stores textures for use by GG.

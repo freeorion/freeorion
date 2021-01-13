@@ -978,19 +978,22 @@ void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
     m_lobby_data.players.clear();
     for (auto& row : *m_players_lb) {
         const PlayerRow* player_row = dynamic_cast<const PlayerRow*>(row.get());
+
         if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(player_row)) {
             // empty rows that have been changed to Add AI need to be sent so the server knows to add an AI player.
             if (empty_row->m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-                m_lobby_data.players.push_back({Networking::INVALID_PLAYER_ID, player_row->m_player_data});
+                m_lobby_data.players.emplace_back(Networking::INVALID_PLAYER_ID, player_row->m_player_data);
 
             // empty rows that are still showing no player don't need to be sent to the server.
 
         } else if (const LoadGameEmpireRow* empire_row = dynamic_cast<const LoadGameEmpireRow*>(player_row)) {
             if (empire_row->m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-                m_lobby_data.players.push_back({Networking::INVALID_PLAYER_ID, empire_row->m_player_data});
-        } else {
+                m_lobby_data.players.emplace_back(Networking::INVALID_PLAYER_ID, empire_row->m_player_data);
+        } else if (player_row) {
             // all other row types pass along data directly
-            m_lobby_data.players.push_back({player_row->m_player_id, player_row->m_player_data});
+            m_lobby_data.players.emplace_back(player_row->m_player_id, player_row->m_player_data);
+        } else {
+            ErrorLogger() << "PlayerDataChangedLocally got null player row?";
         }
     }
 

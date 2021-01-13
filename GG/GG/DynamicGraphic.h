@@ -185,7 +185,7 @@ protected:
     struct FrameSet
     {
         std::shared_ptr<const Texture> texture; ///< the texture with the frames in it
-        std::size_t frames;                     ///< the number of frames in this texture
+        std::size_t frames = 0;                 ///< the number of frames in this texture
     };
 
     std::size_t FramesInTexture(const Texture* t) const;///< returns the maximum number of frames that could be stored in \a t given the size of the control and Margin()

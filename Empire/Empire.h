@@ -499,7 +499,7 @@ private:
         should play this empire. */
     bool        m_authenticated = false;
 
-    EmpireColor m_color;
+    EmpireColor m_color = {{128, 255, 255, 255}};
     int         m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
 
     struct PolicyAdoptionInfo {

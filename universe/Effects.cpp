@@ -1650,7 +1650,7 @@ void CreateShip::Execute(ScriptingContext& context) const {
 
     GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
 
-    CreateNewFleet(system, ship, context.ContextObjects());
+    CreateNewFleet(std::move(system), ship, context.ContextObjects());
 
     // apply after-creation effects
     ScriptingContext local_context = context;

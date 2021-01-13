@@ -165,30 +165,30 @@ struct GG::GUIImpl
     bool                m_allow_modal_accelerator_signals = false;  // iff true: keyboard accelerator signals will be output while modal window(s) is open
 
     bool         m_mouse_button_state[3] = {false, false, false};   // the up/down states of the three buttons on the mouse are kept here
-    Pt           m_mouse_pos;           // absolute position of mouse, based on last MOUSEMOVE event
-    Pt           m_mouse_rel;           // relative position of mouse, based on last MOUSEMOVE event
-    Flags<ModKey>m_mod_keys;            // currently-depressed modifier keys, based on last KEYPRESS event
+    Pt           m_mouse_pos{GG::X(-1000), GG::Y(-1000)};           // absolute position of mouse, based on last MOUSEMOVE event
+    Pt           m_mouse_rel{GG::X0, GG::Y0};                       // relative position of mouse, based on last MOUSEMOVE event
+    Flags<ModKey>m_mod_keys;                                        // currently-depressed modifier keys, based on last KEYPRESS event
 
-    int          m_key_press_repeat_delay = 1;      // see note above GUI class definition
-    int          m_key_press_repeat_interval = 1;
-    int          m_last_key_press_repeat_time = 1;  // last time of a simulated key press message
+    int          m_key_press_repeat_delay = 250;            // see note above GUI class definition
+    int          m_key_press_repeat_interval = 66;
+    int          m_last_key_press_repeat_time = 0;          // last time of a simulated key press message
 
-    std::pair<Key, std::uint32_t> m_last_pressed_key_code_point;
+    std::pair<Key, std::uint32_t> m_last_pressed_key_code_point{Key::GGK_NONE, 0u};
 
-    int          m_prev_key_press_time = 0;         // the time of the most recent key press
+    int          m_prev_key_press_time = -1;                // the time of the most recent key press
 
-    int          m_mouse_button_down_repeat_delay = 0;      // see note above GUI class definition
-    int          m_mouse_button_down_repeat_interval = 0;
+    int          m_mouse_button_down_repeat_delay = 250;    // see note above GUI class definition
+    int          m_mouse_button_down_repeat_interval = 66;
     int          m_last_mouse_button_down_repeat_time= 0;   // last time of a simulated button-down message
 
-    int          m_double_click_interval = 0;   // the maximum interval allowed between clicks that is still considered a double-click, in ms
-    int          m_min_drag_time = 0;           // the minimum amount of time that a drag must be in progress before it is considered a drag, in ms
-    int          m_min_drag_distance = 0;       // the minimum distance that a drag must cover before it is considered a drag
+    int          m_double_click_interval = 500; // the maximum interval allowed between clicks that is still considered a double-click, in ms
+    int          m_min_drag_time = 250;         // the minimum amount of time that a drag must be in progress before it is considered a drag, in ms
+    int          m_min_drag_distance = 5;       // the minimum distance that a drag must cover before it is considered a drag
 
-    int                 m_prev_mouse_button_press_time = 0; // the time of the most recent mouse button press
+    int                 m_prev_mouse_button_press_time = -1;// the time of the most recent mouse button press
     Pt                  m_prev_mouse_button_press_pos;      // the location of the most recent mouse button press
     std::weak_ptr<Wnd>  m_prev_wnd_under_cursor;            // GUI window most recently under the input cursor; may be 0
-    int                 m_prev_wnd_under_cursor_time = 0;   // the time at which prev_wnd_under_cursor was initially set to its current value
+    int                 m_prev_wnd_under_cursor_time = -1;  // the time at which prev_wnd_under_cursor was initially set to its current value
     std::weak_ptr<Wnd>  m_curr_wnd_under_cursor;            // GUI window currently under the input cursor; may be 0
     std::weak_ptr<Wnd>  m_drag_wnds[3];                     // GUI window currently being clicked or dragged by each mouse button
     Pt                  m_prev_wnd_drag_position;           // the upper-left corner of the dragged window when the last *Drag message was generated
@@ -197,7 +197,7 @@ struct GG::GUIImpl
     std::shared_ptr<Wnd>m_curr_drag_wnd;                    // nonzero iff m_curr_drag_wnd_dragged is true (that is, we have actually started dragging the Wnd, not just pressed the mouse button); will always be one of m_drag_wnds.
     std::weak_ptr<Wnd>  m_curr_drag_drop_here_wnd;          // the Wnd that most recently received a DragDropEnter or DragDropHere message (0 if DragDropLeave was sent as well, or if none)
     Pt                  m_wnd_resize_offset;                // offset from the cursor of either the upper-left or lower-right corner of the GUI window currently being resized
-    WndRegion           m_wnd_region;                       // window region currently being dragged or clicked; for non-frame windows, this will always be WR_NONE
+    WndRegion           m_wnd_region = WndRegion::WR_NONE;  // window region currently being dragged or clicked; for non-frame windows, this will always be WR_NONE
 
     /** The current browse info window, if any. */
     std::shared_ptr<BrowseInfoWnd> m_browse_info_wnd;
@@ -218,25 +218,25 @@ struct GG::GUIImpl
     /** The signals emitted by the keyboard accelerators. */
     std::map<std::pair<Key, Flags<ModKey>>, std::shared_ptr<GUI::AcceleratorSignalType>> m_accelerator_sigs;
 
-    bool  m_mouse_lr_swap = false; // treat left and right mouse events as each other
+    bool m_mouse_lr_swap = false; // treat left and right mouse events as each other
 
-    bool  m_rendering_drag_drop_wnds = false;
+    bool m_rendering_drag_drop_wnds = false;
 
     //! The most recent calculation of the frames per second rendering speed (-1.0 if calcs are disabled)
     double m_FPS = 0.0;         //! true iff FPS calcs are to be done
     bool m_calc_FPS = false;    //! true iff FPS calcs are to be done
     double m_max_FPS = 60.0;    //! The maximum allowed frames per second rendering speed
     //! The last time an FPS calculation was done.
-    std::chrono::high_resolution_clock::time_point m_last_FPS_time;
+    std::chrono::high_resolution_clock::time_point m_last_FPS_time = std::chrono::high_resolution_clock::now();
     //! The time of the last frame rendered.
-    std::chrono::high_resolution_clock::time_point m_last_frame_time;
+    std::chrono::high_resolution_clock::time_point m_last_frame_time = std::chrono::high_resolution_clock::now();
     //! The number of frames rendered since \a m_last_frame_time.
-    std::size_t  m_frames;
+    std::size_t  m_frames = 0;
 
     Wnd*         m_double_click_wnd = nullptr;  // GUI window most recently clicked
     unsigned int m_double_click_button = 0;     // the index of the mouse button used in the last click
-    int          m_double_click_start_time = 0; // the time from which we started measuring double_click_time, in ms
-    int          m_double_click_time = 0;       // time elapsed since last click, in ms
+    int          m_double_click_start_time = -1;// the time from which we started measuring double_click_time, in ms
+    int          m_double_click_time = -1;      // time elapsed since last click, in ms
 
     std::shared_ptr<StyleFactory>   m_style_factory;
     bool                            m_render_cursor = false;
@@ -251,32 +251,8 @@ struct GG::GUIImpl
 };
 
 GUIImpl::GUIImpl() :
-    m_allow_modal_accelerator_signals(false),
-    m_mouse_pos(X(-1000), Y(-1000)),
-    m_mouse_rel(X(0), Y(0)),
-    m_key_press_repeat_delay(250),
-    m_key_press_repeat_interval(66),
-    m_last_key_press_repeat_time(0),
-    m_last_pressed_key_code_point{Key::GGK_NONE, 0u},
-    m_prev_key_press_time(-1),
-    m_mouse_button_down_repeat_delay(250),
-    m_mouse_button_down_repeat_interval(66),
-    m_last_mouse_button_down_repeat_time(0),
-    m_double_click_interval(500),
-    m_min_drag_time(250),
-    m_min_drag_distance(5),
-    m_prev_mouse_button_press_time(-1),
-    m_prev_wnd_under_cursor(),
-    m_prev_wnd_under_cursor_time(-1),
-    m_wnd_region(WndRegion::WR_NONE),
-    m_browse_info_mode(0),
-    m_FPS(-1.0),
-    m_max_FPS(0.0),
     m_last_FPS_time(std::chrono::high_resolution_clock::now()),
     m_last_frame_time(std::chrono::high_resolution_clock::now()),
-    m_double_click_button(0),
-    m_double_click_start_time(-1),
-    m_double_click_time(-1),
     m_style_factory(new StyleFactory())
 {}
 

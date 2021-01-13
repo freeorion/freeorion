@@ -572,7 +572,8 @@ private:
     int                             m_new_blocksize = INVALID_QUANTITY;
     int                             m_new_index = INVALID_INDEX;
     int                             m_rally_point_id = INVALID_OBJECT_ID;
-    boost::uuids::uuid              m_uuid, m_uuid2;
+    boost::uuids::uuid              m_uuid = boost::uuids::nil_uuid();
+    boost::uuids::uuid              m_uuid2 = boost::uuids::nil_uuid();
     ProdQueueOrderAction            m_action = ProdQueueOrderAction::INVALID_PROD_QUEUE_ACTION;
 
     static const int INVALID_INDEX = -500;
