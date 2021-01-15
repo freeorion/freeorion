@@ -6,7 +6,6 @@
 #include "../universe/ValueRef.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
-#include "../util/AppInterface.h"
 #include "../util/GameRules.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/GameRules.h"
@@ -98,7 +97,7 @@ std::string Policy::Dump(unsigned short ntabs) const {
     return retval;
 }
 
-float Policy::AdoptionCost(int empire_id) const {
+float Policy::AdoptionCost(int empire_id, const ObjectMap& objects) const {
     const auto arbitrary_large_number = 999999.9f;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_POLICIES") || !m_adoption_cost) {
@@ -114,11 +113,11 @@ float Policy::AdoptionCost(int empire_id) const {
         return arbitrary_large_number;
 
     } else {
-        auto source = Empires().GetSource(empire_id);   // TODO: pass ObjectMap in and on here
+        auto source = Empires().GetSource(empire_id, objects);
         if (!source && !m_adoption_cost->SourceInvariant())
             return arbitrary_large_number;
 
-        ScriptingContext context(source);
+        ScriptingContext context(std::move(source));
         return m_adoption_cost->Eval(context);
     }
 }

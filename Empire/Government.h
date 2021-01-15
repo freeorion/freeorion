@@ -2,6 +2,7 @@
 #define _Government_h_
 
 #include "../universe/ValueRef.h"
+#include "../util/AppInterface.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -32,7 +33,7 @@ public:
     const std::string&  ShortDescription() const    { return m_short_description; }
     std::string         Dump(unsigned short ntabs = 0) const;
     const std::string&  Category() const            { return m_category; }
-    float               AdoptionCost(int empire_id) const;
+    float               AdoptionCost(int empire_id, const ObjectMap& objects = Objects()) const;
 
     const std::set<std::string>&    Prerequisites() const { return m_prerequisites; }
     const std::set<std::string>&    Exclusions() const { return m_exclusions; }

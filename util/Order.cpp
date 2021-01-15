@@ -976,7 +976,7 @@ void PolicyOrder::ExecuteImpl() const {
     else
         DebugLogger() << "PolicyOrder revoke " << m_policy_name << " from category " << m_category
                       << " in slot " << m_slot;
-    empire->AdoptPolicy(m_policy_name, m_category, m_adopt, m_slot);
+    empire->AdoptPolicy(m_policy_name, m_category, m_adopt, m_slot, Objects());
 }
 
 ////////////////////////////////////////////////

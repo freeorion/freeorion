@@ -1,6 +1,7 @@
 #ifndef _InfluenceQueue_h_
 #define _InfluenceQueue_h_
 
+#include "../util/AppInterface.h"
 #include "../util/Export.h"
 
 #include <deque>
@@ -80,7 +81,7 @@ struct FO_COMMON_API InfluenceQueue {
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
       * empire->CheckInfluenceProgress() will actually spend PP, remove items from queue and create them
       * in the universe. */
-    void Update();
+    void Update(const ObjectMap& objects = Objects());
 
 
     // STL container-like interface
