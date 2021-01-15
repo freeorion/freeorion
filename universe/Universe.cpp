@@ -1267,7 +1267,9 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     for (auto& obj : potential_targets)
         TraceLogger(effects) << obj->Dump();
 
-    ScriptingContext scripting_context;
+    ScriptingContext scripting_context{m_objects, m_empire_object_visibility,
+                                       m_empire_object_visibility_turns,
+                                       Empires().GetEmpires(), Empires().GetDiplomaticStatuses()};  // TODO: pass EmpireManager in and use here
 
 
     // list, not vector, to avoid invaliding iterators when pushing more items
