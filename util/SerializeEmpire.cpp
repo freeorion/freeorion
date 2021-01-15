@@ -187,7 +187,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     auto encoding_empire = GlobalSerializationEncodingForEmpire();
     bool visible =
         (ALL_EMPIRES == encoding_empire) ||
-        (m_id == encoding_empire); // TODO: GameRule for all objects visible
+        (m_id == encoding_empire); // TODO: GameRule for all empire info known to other empires
     bool allied_visible = visible ||
         Empires().GetDiplomaticStatus(m_id, GlobalSerializationEncodingForEmpire()) ==
             DiplomaticStatus::DIPLO_ALLIED;
