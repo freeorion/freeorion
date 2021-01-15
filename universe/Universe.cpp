@@ -955,7 +955,7 @@ namespace {
       * the objects that matched the effects group's scope condition, for each
       * source object, as a separate entry in \a targets_cases_out */
     void StoreTargetsAndCausesOfEffectsGroup(
-        const ObjectMap&                            object_map, // TODO: pass in const ScriptingContext& instead of just ObjectMap
+        ScriptingContext&                           context,
         const Effect::EffectsGroup*                 effects_group,
         const Condition::ObjectSet&                 source_objects,
         EffectsCauseType                            effect_cause_type,
@@ -990,15 +990,10 @@ namespace {
         }, std::chrono::milliseconds(10));
 
         source_effects_targets_causes_out.reserve(source_objects.size());
-        ScriptingContext source_context(object_map,
-                                        GetUniverse().GetEmpireObjectVisibility(),
-                                        GetUniverse().GetEmpireObjectVisibilityTurnMap(),   // TODO: use passed-in ScriptingContext to populate this
-                                        Empires().GetEmpires(),
-                                        Empires().GetDiplomaticStatuses());
 
         for (auto& source : source_objects) {
             // assuming input sources objects set was already filtered with activation condition
-            source_context.source = source;
+            context.source = source;
             // construct output in-place
 
             // SourcedEffectsGroup {int source_object_id; const EffectsGroup* effects_group;}
@@ -1017,7 +1012,7 @@ namespace {
             // move scope condition matches into output matches
             if (candidate_objects_in.empty()) {
                 // condition default candidates will be tested
-                scope->Eval(source_context, matched_targets);
+                scope->Eval(context, matched_targets);
 
             } else if (scope_is_just_source) {
                 // special case for condition that is just Source when a set of
@@ -1028,7 +1023,7 @@ namespace {
 
             } else {
                 // input candidates will all be tested
-                scope->Eval(source_context, matched_targets, candidate_objects_in);
+                scope->Eval(context, matched_targets, candidate_objects_in);
             }
 
             TraceLogger(effects) << [&]() {
@@ -1051,7 +1046,7 @@ namespace {
         const Condition::ObjectSet& source_objects,
         const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_groups,
         bool only_meter_effects,
-        const ObjectMap& object_map,    // TODO: pass in const ScriptingContext& instead of just ObjectMap
+        ScriptingContext context,
         const Condition::ObjectSet& potential_targets,
         const std::unordered_set<int>& potential_target_ids,
         std::list<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
@@ -1073,11 +1068,7 @@ namespace {
 
         // evaluate activation conditions of effects_groups on input source objects
         std::vector<Condition::ObjectSet> active_sources{effects_groups.size()};
-        ScriptingContext source_context{object_map,
-                                        GetUniverse().GetEmpireObjectVisibility(),
-                                        GetUniverse().GetEmpireObjectVisibilityTurnMap(),   // TODO: take from to-be-passed-in ScriptingContext
-                                        Empires().GetEmpires(),
-                                        Empires().GetDiplomaticStatuses()};
+
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
             const auto* effects_group = effects_groups.at(i).get();
             if (only_meter_effects && !effects_group->HasMeterEffects())
@@ -1109,16 +1100,16 @@ namespace {
                     Condition::ObjectSet rejected;
                     rejected.reserve(source_objects.size());
                     active_sources[i] = source_objects; // copy input source objects set
-                    source_context.source = nullptr;
-                    effects_group->Activation()->Eval(source_context, active_sources[i],
+                    context.source = nullptr;
+                    effects_group->Activation()->Eval(context, active_sources[i],
                                                       rejected, Condition::SearchDomain::MATCHES);
 
                 } else {
                     // need to apply separately to each source object
                     active_sources[i].reserve(source_objects.size());
                     for (auto& obj : source_objects) {
-                        source_context.source = obj;
-                        if (effects_group->Activation()->Eval(source_context, obj))
+                        context.source = obj;
+                        if (effects_group->Activation()->Eval(context, obj))
                             active_sources[i].emplace_back(obj);
                     }
                 }
@@ -1190,7 +1181,7 @@ namespace {
                         // Effect::TargetSets that will be filled later
                         auto& vec_out{source_effects_targets_causes_reorder_buffer_out.back().first};
                         for (auto& source : active_sources[i]) {
-                            source_context.source = source;
+                            context.source = source;
                             vec_out.emplace_back(
                                 Effect::SourcedEffectsGroup{source->ID(), effects_group},
                                 Effect::TargetsAndCause{
@@ -1235,7 +1226,7 @@ namespace {
             boost::asio::post(
                 thread_pool,
                 [
-                    &object_map,
+                    context,
                     effects_group,
                     active_source_objects{active_sources[i]},
                     effect_cause_type,
@@ -1246,7 +1237,7 @@ namespace {
                     n
                 ]() mutable
             {
-                StoreTargetsAndCausesOfEffectsGroup(object_map, effects_group, active_source_objects,
+                StoreTargetsAndCausesOfEffectsGroup(context, effects_group, active_source_objects,
                                                     effect_cause_type, specific_cause_name,
                                                     potential_target_ids, potential_targets_copy,
                                                     source_effects_targets_causes_vec_out, n);
@@ -1275,6 +1266,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "GetEffectsAndTargets input candidate target objects:";
     for (auto& obj : potential_targets)
         TraceLogger(effects) << obj->Dump();
+
+    ScriptingContext scripting_context;
 
 
     // list, not vector, to avoid invaliding iterators when pushing more items
@@ -1340,7 +1333,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_SPECIES, species_name,
                                              source_objects, species->Effects(),
                                              only_meter_effects,
-                                             m_objects, potential_targets,
+                                             scripting_context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1378,7 +1371,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_SPECIAL, special_name,
                                              source_objects, special->Effects(),
                                              only_meter_effects,
-                                             m_objects, potential_targets,
+                                             scripting_context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1408,7 +1401,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_TECH, tech_name,
                                                  source_objects, tech->Effects(),
                                                  only_meter_effects,
-                                                 m_objects, potential_targets,
+                                                 scripting_context, potential_targets,
                                                  potential_ids_set,
                                                  source_effects_targets_causes_reorder_buffer,
                                                  thread_pool, n);
@@ -1436,7 +1429,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_POLICY, policy_name,
                                                  source_objects, policy->Effects(),
                                                  only_meter_effects,
-                                                 m_objects, potential_targets,
+                                                 scripting_context, potential_targets,
                                                  potential_ids_set,
                                                  source_effects_targets_causes_reorder_buffer,
                                                  thread_pool, n);
@@ -1474,7 +1467,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_BUILDING, building_type_name,
                                              source_objects, building_type->Effects(),
                                              only_meter_effects,
-                                             m_objects, potential_targets,
+                                             scripting_context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1529,7 +1522,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_SHIP_HULL, ship_hull_name,
                                              source_objects, ship_hull->Effects(),
                                              only_meter_effects,
-                                             m_objects, potential_targets,
+                                             scripting_context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1548,7 +1541,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_SHIP_PART, ship_part_name,
                                              source_objects, ship_part->Effects(),
                                              only_meter_effects,
-                                             m_objects, potential_targets,
+                                             scripting_context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1587,7 +1580,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_FIELD, field_type_name,
                                              source_objects, field_type->Effects(),
                                              only_meter_effects,
-                                             m_objects, potential_targets,
+                                             scripting_context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1776,7 +1769,7 @@ void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, int sour
     m_effect_specified_empire_object_visibilities[empire_id][object_id].emplace_back(source_id, vis);
 }
 
-void Universe::ApplyEffectDerivedVisibilities() {
+void Universe::ApplyEffectDerivedVisibilities() {   // TODO: pass in EmpireManager
     EmpireObjectVisibilityMap new_empire_object_visibilities;
     // for each empire with a visibility map
     for (auto& empire_entry : m_effect_specified_empire_object_visibilities) {
