@@ -69,9 +69,6 @@
     <ClInclude Include="..\..\client\human\chmain.h">
       <Filter>Header Files\client\human</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\client\human\HumanClientApp.h">
-      <Filter>Header Files\client\human</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Empire\EmpireManager.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
@@ -406,6 +403,9 @@
     <ClInclude Include="..\..\util\SaveGamePreviewUtils.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\client\human\GGHumanClientApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\client\human\FreeOrion.ico">
@@ -421,9 +421,6 @@
     </ClCompile>
     <ClCompile Include="..\..\client\ClientNetworking.cpp">
       <Filter>Source Files\client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\client\human\HumanClientApp.cpp">
-      <Filter>Source Files\client\human</Filter>
     </ClCompile>
     <ClCompile Include="..\..\client\human\chmain.cpp">
       <Filter>Source Files\client\human</Filter>
@@ -617,6 +614,9 @@
     </ClCompile>
     <ClCompile Include="..\..\UI\SDLGUI.cpp">
       <Filter>Source Files\client\human</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\human\GGHumanClientApp.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
