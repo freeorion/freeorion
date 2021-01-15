@@ -5056,6 +5056,9 @@ ENC_NAMED_VALUE_REF_DESC
 The following values show the name, the registration type (int/real/any), the calculated value, (the calculation), 'the stringtable description for the calculation', and the invariance pattern.
 '''
 
+ENC_STRINGS
+[Test - Stringtable Entries]
+
 ENC_SPECIES
 Species
 

@@ -146,7 +146,8 @@ namespace {
             "ENC_METER_TYPE",   "ENC_EMPIRE",       "ENC_SHIP_DESIGN",  "ENC_SHIP",
             "ENC_MONSTER",      "ENC_MONSTER_TYPE", "ENC_FLEET",        "ENC_PLANET",
             "ENC_BUILDING",     "ENC_SYSTEM",       "ENC_FIELD",        "ENC_GRAPH",
-            "ENC_GALAXY_SETUP", "ENC_GAME_RULES",   "ENC_NAMED_VALUE_REF"};
+            "ENC_GALAXY_SETUP", "ENC_GAME_RULES",   "ENC_NAMED_VALUE_REF",
+            "ENC_STRINGS"};
         //  "ENC_HOMEWORLDS" omitted due to weird formatting of article titles
         return dir_names;
     }
@@ -509,8 +510,9 @@ namespace {
 
         }
         else if (dir_name == "ENC_STRINGS") {
-            // TODO: show all stringable keys and values
-            //for (auto str : GetStringTable().
+            // show all stringable keys and values
+            for (auto& str : AllStringtableEntries())
+                sorted_entries_list.emplace(str.first, std::make_pair(str.first + ": " + str.second + "\n", str.first));
 
         }
         else if  (dir_name == "ENC_NAMED_VALUE_REF") {
