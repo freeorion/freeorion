@@ -164,6 +164,9 @@ public:
     inline const std::string& Filename() const
     { return m_filename; }
 
+    inline const std::map<std::string, std::string>& AllStrings() const
+    { return m_strings; }
+
 private:
     //! Loads this StringTable from #m_filename
     //!

@@ -200,6 +200,14 @@ void FlushLoadedStringTables() {
     stringtables.clear();
 }
 
+const std::map<std::string, std::string>& AllStringtableEntries(bool default_table) {
+    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    if (default_table)
+        return GetDevDefaultStringTable().AllStrings();
+    else
+        return GetStringTable().AllStrings();
+}
+
 const std::string& UserString(const std::string& str) {
     std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     if (GetStringTable().StringExists(str))

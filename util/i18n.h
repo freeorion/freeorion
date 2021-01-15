@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -14,6 +15,9 @@ FO_COMMON_API std::locale GetLocale(const std::string& name = std::string(""));
 
 /** Returns a language-specific string for the key-string \a str */
 FO_COMMON_API const std::string& UserString(const std::string& str);
+
+/** Returns all entries in current stringtable */
+FO_COMMON_API const std::map<std::string, std::string>& AllStringtableEntries(bool default_table = false);
 
 /** Returns a language-specific vector of strings for given @a key. */
 FO_COMMON_API std::vector<std::string> UserStringList(const std::string& key);
@@ -62,7 +66,7 @@ boost::format FlexibleFormatList(
     const std::string& empty_header_template,
     const std::string& dual_header_template)
 {
-    const std::string& header_template{[&, sz{words.size()}](){
+    const std::string& header_template{[&, sz{words.size()}]() {
         switch (sz) {
         case 0: return empty_header_template; break;
         case 1: return single_header_template; break;
@@ -98,7 +102,8 @@ boost::format FlexibleFormatList(
 }
 
 template<typename Container>
-boost::format FlexibleFormatList(const Container& words) {
+boost::format FlexibleFormatList(const Container& words)
+{
     return FlexibleFormatList(std::vector<std::string>(), words,
                               UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER"),
                               UserString("FORMAT_LIST_DEFAULT_SINGLE_HEADER"),
@@ -108,23 +113,27 @@ boost::format FlexibleFormatList(const Container& words) {
 
 template<typename Container>
 boost::format FlexibleFormatList(
-    const Container& words, const std::string& all_header) {
+    const Container& words, const std::string& all_header)
+{
     return FlexibleFormatList(std::vector<std::string>(), words, all_header, all_header, all_header, all_header);
 }
 template<typename Container>
 boost::format FlexibleFormatList(
-    const Container& words, const std::string& plural_header, const std::string& single_header) {
+    const Container& words, const std::string& plural_header, const std::string& single_header)
+{
     return FlexibleFormatList(std::vector<std::string>(), words, plural_header, single_header, plural_header, plural_header);
 }
 template<typename Container>
 boost::format FlexibleFormatList(
-    const Container& words, const std::string& plural_header
-    , const std::string& single_header, const std::string& empty_header) {
+    const Container& words, const std::string& plural_header,
+    const std::string& single_header, const std::string& empty_header)
+{
     return FlexibleFormatList(std::vector<std::string>(), words, plural_header, single_header, empty_header, plural_header);
 }
 
 template<typename T1, typename T2>
-boost::format FlexibleFormatList(const T2& header_words, const T1& words) {
+boost::format FlexibleFormatList(const T2& header_words, const T1& words)
+{
     return FlexibleFormatList(header_words, words
                               , UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER")
                               , UserString("FORMAT_LIST_DEFAULT_SINGLE_HEADER")
@@ -134,19 +143,22 @@ boost::format FlexibleFormatList(const T2& header_words, const T1& words) {
 
 template<typename T1, typename T2>
 boost::format FlexibleFormatList(
-    const T2& header_words, const T1& words, const std::string& all_header) {
+    const T2& header_words, const T1& words, const std::string& all_header)
+{
     return FlexibleFormatList(header_words, words, all_header, all_header, all_header, all_header);
 }
 template<typename T1, typename T2>
 boost::format FlexibleFormatList(
-    const T2& header_words, const T1& words, const std::string& plural_header, const std::string& single_header) {
+    const T2& header_words, const T1& words, const std::string& plural_header, const std::string& single_header)
+{
     return FlexibleFormatList(header_words, words, plural_header, single_header, plural_header, plural_header);
 }
 
 template<typename T1, typename T2>
 boost::format FlexibleFormatList(
-    const T2& header_words, const T1& words, const std::string& plural_header
-    , const std::string& single_header, const std::string& empty_header) {
+    const T2& header_words, const T1& words, const std::string& plural_header,
+    const std::string& single_header, const std::string& empty_header)
+{
     return FlexibleFormatList(header_words, words, plural_header, single_header, empty_header, plural_header);
 }
 
