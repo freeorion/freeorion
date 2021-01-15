@@ -163,7 +163,7 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
                           FleetAggression aggression)
 {
     if (ship_ids.empty()) {
-        ErrorLogger() << "Empire attempted to create a new fleet without ships";
+        ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name << ") without ships";
         return false;
     }
 
@@ -172,15 +172,18 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
     for (const auto& ship : Objects().find<Ship>(ship_ids)) {
         // verify that empire is not trying to take ships from somebody else's fleet
         if (!ship) {
-            ErrorLogger() << "Empire attempted to create a new fleet with an invalid ship";
+            ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
+                          << ") with an invalid ship";
             return false;
         }
         if (!ship->OwnedBy(empire)) {
-            ErrorLogger() << "Empire attempted to create a new fleet with ships from another's fleet.";
+            ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
+                          << ") with ships from another's (" << ship->Owner() << ") fleet.";
             return false;
         }
         if (ship->SystemID() == INVALID_OBJECT_ID) {
-            ErrorLogger() << "Empire to create a new fleet with traveling ships.";
+            ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
+                          << ") with ship (" << ship->ID() << ") not in a system";
             return false;
         }
 
@@ -188,18 +191,22 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
             system_id = ship->SystemID();
 
         if (ship->SystemID() != system_id) {
-            ErrorLogger() << "Empire attempted to make a new fleet from ship in the wrong system";
+            ErrorLogger() << "Empire " << empire << " attempted to make a new fleet (" << fleet_name
+                          << ") from ship (" << ship->ID() << ") in the wrong system (" << ship->SystemID()
+                          << " not " << system_id << ")";
             return false;
         }
     }
 
     if (system_id == INVALID_OBJECT_ID) {
-        ErrorLogger() << "Empire attempted to create a new fleet outside a system";
+        ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
+                      << ") outside a system";
         return false;
     }
     auto system = Objects().get<System>(system_id);
     if (!system) {
-        ErrorLogger() << "Empire attempted to create a new fleet in a nonexistant system";
+        ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
+                      << ") in a nonexistant system (" << system_id << ")";
         return false;
     }
 
@@ -549,12 +556,14 @@ std::string ColonizeOrder::Dump() const {
 bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id) {
     auto ship = Objects().get<Ship>(ship_id);
     if (!ship) {
-        ErrorLogger() << "ColonizeOrder::Check() : passed an invalid ship_id " << ship_id;
+        ErrorLogger() << "ColonizeOrder::Check() : empire " << empire_id
+                      << " passed an invalid ship_id: " << ship_id;
         return false;
     }
     auto fleet = Objects().get<Fleet>(ship->FleetID());
     if (!fleet) {
-        ErrorLogger() << "ColonizeOrder::Check() : ship with passed ship_id has invalid fleet_id";
+        ErrorLogger() << "ColonizeOrder::Check() : empire " << empire_id
+                      << " passed ship (" << ship_id << ") with an invalid fleet_id: " << ship->FleetID();
         return false;
     }
 
