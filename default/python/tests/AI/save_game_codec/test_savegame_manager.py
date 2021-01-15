@@ -1,8 +1,5 @@
-from importlib import reload
-
 import pytest
 import savegame_codec
-from pytest import fixture
 
 
 class DummyTestClass(object):
@@ -23,21 +20,17 @@ class DummyTestClass(object):
         pass
 
 
-class TrustedScope(object):
-
-    def __enter__(self):
-        reload(savegame_codec)  # just to be sure
-        savegame_codec._definitions.trusted_classes.update({
-            __name__ + ".DummyTestClass": DummyTestClass,
-            __name__ + ".GetStateTester": GetStateTester,
-            __name__ + ".SetStateTester": SetStateTester,
-        })
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        savegame_codec._definitions.trusted_classes.clear()
-
-    def __del__(self):
-        savegame_codec._definitions.trusted_classes.clear()
+@pytest.fixture()
+def trusted_scope(monkeypatch):
+    test_scope = dict(savegame_codec._decoder.trusted_classes)
+    test_scope.update({
+        __name__ + ".GetStateTester": GetStateTester,
+        __name__ + ".SetStateTester": SetStateTester,
+    })
+    monkeypatch.setattr(savegame_codec._decoder, "trusted_classes", test_scope)
+    monkeypatch.setattr(savegame_codec._definitions, "trusted_classes", test_scope)
+    monkeypatch.setattr(savegame_codec._encoder, "trusted_classes", test_scope)
+    return test_scope
 
 
 class Success(Exception):
@@ -54,11 +47,7 @@ class SetStateTester(object):
         raise Success
 
 
-class OldStyleClass():
-    pass
-
-
-@fixture(
+@pytest.fixture(
     params=[
         int(), float(), str(), bool(),
         1, 1.2, 1.2e4, "TestString", True, False, None,
@@ -102,27 +91,29 @@ def test_encoding_type():
         pytest.fail("Could save untrusted class")
 
 
-def test_class_encoding():
+def test_class_encoding(trusted_scope):
     obj = DummyTestClass()
     with pytest.raises(savegame_codec.CanNotSaveGameException,
                        match="Class test_savegame_manager.DummyTestClass is not trusted"):
         savegame_codec.encode(obj)
         pytest.fail("Could save game even though test module should not be trusted")
 
-    with TrustedScope():
-        retval = savegame_codec.encode(obj)
+    trusted_scope[__name__ + ".DummyTestClass"] = DummyTestClass
+    retval = savegame_codec.encode(obj)
 
-        assert retval
-        assert isinstance(retval, str)
+    assert retval
+    assert isinstance(retval, str)
 
-        loaded_obj = savegame_codec.decode(retval)
-        assert isinstance(loaded_obj, DummyTestClass)
-        assert type(loaded_obj) == type(obj)
+    loaded_obj = savegame_codec.decode(retval)
+    assert isinstance(loaded_obj, DummyTestClass)
+    assert type(loaded_obj) == type(obj)
 
-        original_dict = loaded_obj.__dict__
-        loaded_dict = loaded_obj.__dict__
+    original_dict = loaded_obj.__dict__
+    loaded_dict = loaded_obj.__dict__
 
-        assert loaded_dict == original_dict
+    assert loaded_dict == original_dict
+
+    del trusted_scope[__name__ + ".DummyTestClass"]
 
     with pytest.raises(savegame_codec.InvalidSaveGameException,
                        match="DANGER DANGER - test_savegame_manager.DummyTestClass not trusted"):
@@ -130,18 +121,18 @@ def test_class_encoding():
         pytest.fail("Could load object from untrusted module")
 
 
+@pytest.mark.usefixtures("trusted_scope")
 def test_getstate_call():
-    with TrustedScope():
-        with pytest.raises(Success):
-            savegame_codec.encode(GetStateTester())
-            pytest.fail("__getstate__ was not called during encoding.")
+    with pytest.raises(Success):
+        savegame_codec.encode(GetStateTester())
+        pytest.fail("__getstate__ was not called during encoding.")
 
 
+@pytest.mark.usefixtures("trusted_scope")
 def test_setstate_call():
-    with TrustedScope():
-        with pytest.raises(Success):
-            savegame_codec.decode(savegame_codec.encode(SetStateTester()))
-            pytest.fail("__setstate__ was not called during decoding.")
+    with pytest.raises(Success):
+        savegame_codec.decode(savegame_codec.encode(SetStateTester()))
+        pytest.fail("__setstate__ was not called during decoding.")
 
 
 def test_enums():
