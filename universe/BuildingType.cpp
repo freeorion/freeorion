@@ -5,6 +5,7 @@
 #include "../util/GameRules.h"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
+#include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "Condition.h"
 #include "Effect.h"
@@ -122,8 +123,7 @@ bool BuildingType::ProductionCostTimeLocationInvariant() const {
 }
 
 float BuildingType::ProductionCost(int empire_id, int location_id,
-                                   const ObjectMap& objects,
-                                   const EmpireManager& empires) const
+                                   const ScriptingContext& context) const
 {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_cost)
         return 1.0f;
@@ -137,35 +137,34 @@ float BuildingType::ProductionCost(int empire_id, int location_id,
 
     const auto ARBITRARY_LARGE_COST = 999999.9f;
 
-    auto location = objects.get(location_id);
+    auto location = context.ContextObjects().get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
-    auto source = empires.GetSource(empire_id, objects);
+    auto source_it = context.empires.find(empire_id);
+    auto source = source_it != context.empires.end() ? source_it->second->Source(context.ContextObjects()) : nullptr;
+
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
     // cost uses target object to represent the location where something is
     // being produced, and target object is normally mutable, but will not
     // actually be modified by evaluating the cost ValueRef
-    ScriptingContext context(source, std::const_pointer_cast<UniverseObject>(location), objects);
-    if (location && !context.effect_target)
-        ErrorLogger() << "Failed to make a context for ProductionCost...";
+    ScriptingContext local_context(std::move(source), context);
+    local_context.effect_target = std::const_pointer_cast<UniverseObject>(location);
 
     return m_production_cost->Eval(context);
 }
 
 float BuildingType::PerTurnCost(int empire_id, int location_id,
-                                const ObjectMap& objects,
-                                const EmpireManager& empires) const
+                                const ScriptingContext& context) const
 {
-    return ProductionCost(empire_id, location_id, objects, empires) /
-        std::max(1, ProductionTime(empire_id, location_id, objects, empires));
+    return ProductionCost(empire_id, location_id, context) /
+        std::max(1, ProductionTime(empire_id, location_id, context));
 }
 
 int BuildingType::ProductionTime(int empire_id, int location_id,
-                                 const ObjectMap& objects,
-                                 const EmpireManager& empires) const
+                                 const ScriptingContext& context) const
 {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_time)
         return 1;
@@ -179,19 +178,21 @@ int BuildingType::ProductionTime(int empire_id, int location_id,
 
     const int ARBITRARY_LARGE_TURNS = 9999;
 
-    auto location = objects.get(location_id);
+    auto location = context.ContextObjects().get(location_id);
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    std::shared_ptr<const UniverseObject> source = empires.GetSource(empire_id, objects);
+    auto source_it = context.empires.find(empire_id);
+    auto source = source_it != context.empires.end() ? source_it->second->Source(context.ContextObjects()) : nullptr;
+
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 
     // cost uses target object to represent the location where something is
     // being produced, and target object is normally mutable, but will not
     // actually be modified by evaluating the cost ValueRef
-    std::shared_ptr<UniverseObject> target = std::const_pointer_cast<UniverseObject>(location);
-    ScriptingContext context(std::move(source), std::move(target), objects);
+    ScriptingContext local_context(std::move(source), context);
+    local_context.effect_target = std::const_pointer_cast<UniverseObject>(location);
 
     return m_production_time->Eval(context);
 }

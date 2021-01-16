@@ -3,6 +3,7 @@
 
 
 #include "CommonParams.h"
+#include "ScriptingContext.h"
 #include "../util/AppInterface.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
@@ -64,18 +65,18 @@ public:
 
     //! Returns the number of production points required to build this building
     //! at this location by this empire
-    auto ProductionCost(int empire_id, int location_id, const ObjectMap& objects = Objects(),
-                        const EmpireManager& empires = Empires()) const -> float;
+    auto ProductionCost(int empire_id, int location_id,
+                        const ScriptingContext& context = ScriptingContext()) const -> float;
 
     //! Returns the maximum number of production points per turn that can be
     //! spend on this building
-    auto PerTurnCost(int empire_id, int location_id, const ObjectMap& objects = Objects(),
-                     const EmpireManager& empires = Empires()) const -> float;
+    auto PerTurnCost(int empire_id, int location_id,
+                     const ScriptingContext& context = ScriptingContext()) const -> float;
 
     //! Returns the number of turns required to build this building at this
     //! location by this empire
-    auto ProductionTime(int empire_id, int location_id, const ObjectMap& objects = Objects(),
-                        const EmpireManager& empires = Empires()) const -> int;
+    auto ProductionTime(int empire_id, int location_id,
+                        const ScriptingContext& context = ScriptingContext()) const -> int;
 
     //! Returns the ValueRef that determines ProductionCost()
     auto Cost() const -> const ValueRef::ValueRef<double>*
