@@ -1175,7 +1175,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 
     } else if (property_name == "OwnerName") {
         int owner_empire_id = object->Owner();
-        if (Empire* empire = GetEmpire(owner_empire_id))
+        if (auto empire = context.GetEmpire(owner_empire_id))
             return empire->Name();
         return "";
 
@@ -1198,7 +1198,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         empire_property = &Empire::TopPriorityEnqueuedTech;
 
     if (empire_property) {
-        const Empire* empire = GetEmpire(object->Owner());
+        auto empire = context.GetEmpire(object->Owner());
         if (!empire)
             return "";
         return empire_property(*empire);
@@ -1471,12 +1471,12 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     if (empire_property_int_key) {
         using namespace boost::adaptors;
 
-        Empire* empire{nullptr};
+        std::shared_ptr<const Empire> empire;
         if (m_int_ref1) {
             int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0;
-            empire = GetEmpire(empire_id);
+            empire = context.GetEmpire(empire_id);
         }
 
         std::function<bool (const std::map<int, int>::value_type&)> key_filter{nullptr};
@@ -1514,12 +1514,12 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
     // unindexed empire proprties
     if (variable_name == "OutpostsOwned") {
-        const Empire* empire{nullptr};
+        std::shared_ptr<const Empire> empire;
         if (m_int_ref1) {
             int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0;
-            empire = GetEmpire(empire_id);
+            empire = context.GetEmpire(empire_id);
             if (!empire)
                 return 0;
         }
@@ -1535,7 +1535,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                                      transformed(empire_property), 0);
         }
 
-        return empire_property(empire);
+        return empire_property(empire.get());
     }
 
     // non-empire properties
@@ -1733,7 +1733,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             if (empire_id == ALL_EMPIRES)
                 return 0;
         }
-        const Empire* empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return 0;
 
@@ -1887,14 +1887,14 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1)
             empire_id = m_int_ref1->Eval(context);
-        Empire* empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return 0.0;
 
         std::string empire_meter_name;
         if (m_string_ref1)
             empire_meter_name = m_string_ref1->Eval(context);
-        Meter* meter = empire->GetMeter(empire_meter_name);
+        auto meter = empire->GetMeter(empire_meter_name);
         if (!meter)
             return 0.0;
         return meter->Current();
@@ -2029,30 +2029,32 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 }
 
 namespace {
-    std::vector<std::string> TechsResearchedByEmpire(int empire_id) {
-        const Empire* empire = GetEmpire(empire_id);
+    std::vector<std::string> TechsResearchedByEmpire(int empire_id, const ScriptingContext& context) {
+        auto empire = context.GetEmpire(empire_id);
         if (!empire) return {};
 
         auto researched_techs_range = empire->ResearchedTechs() | boost::adaptors::map_keys;
         return {researched_techs_range.begin(), researched_techs_range.end()};
     }
 
-    std::vector<std::string> TechsResearchableByEmpire(int empire_id) {
-        const Empire* empire = GetEmpire(empire_id);
+    std::vector<std::string> TechsResearchableByEmpire(int empire_id, const ScriptingContext& context) {
+        auto empire = context.GetEmpire(empire_id);
         if (!empire) return {};
 
         std::vector<std::string> retval;
         retval.reserve(GetTechManager().size());
         for (const auto& tech : GetTechManager()) {
             if (tech && empire->ResearchableTech(tech->Name()))
-                retval.emplace_back(tech->Name());
+                retval.push_back(tech->Name());
         }
         return retval;
     }
 
-    std::vector<std::string> TransferrableTechs(int sender_empire_id, int receipient_empire_id) {
-        std::vector<std::string> sender_researched_techs = TechsResearchedByEmpire(sender_empire_id);
-        std::vector<std::string> recepient_researchable = TechsResearchableByEmpire(receipient_empire_id);
+    std::vector<std::string> TransferrableTechs(int sender_empire_id, int receipient_empire_id,
+                                                const ScriptingContext& context)
+    {
+        std::vector<std::string> sender_researched_techs = TechsResearchedByEmpire(sender_empire_id, context);
+        std::vector<std::string> recepient_researchable = TechsResearchableByEmpire(receipient_empire_id, context);
 
         std::vector<std::string> retval;
 
@@ -2118,7 +2120,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
             if (empire_id == ALL_EMPIRES)
                 return "";
         }
-        const Empire* empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return "";
 
@@ -2132,7 +2134,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
             if (empire_id == ALL_EMPIRES)
                 return "";
         }
-        const Empire* empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return "";
         // get all techs on queue, randomly pick one
@@ -2150,11 +2152,11 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
             if (empire_id == ALL_EMPIRES)
                 return "";
         }
-        const Empire* empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return "";
 
-        auto researchable_techs = TechsResearchableByEmpire(empire_id);
+        auto researchable_techs = TechsResearchableByEmpire(empire_id, context);
         if (researchable_techs.empty())
             return "";
         std::size_t idx = RandInt(0, static_cast<int>(researchable_techs.size()) - 1);
@@ -2166,11 +2168,11 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
             if (empire_id == ALL_EMPIRES)
                 return "";
         }
-        const Empire* empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return "";
 
-        auto complete_techs = TechsResearchedByEmpire(empire_id);
+        auto complete_techs = TechsResearchedByEmpire(empire_id, context);
         if (complete_techs.empty())
             return "";
         std::size_t idx = RandInt(0, static_cast<int>(complete_techs.size()) - 1);
@@ -2190,7 +2192,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
                 return "";
         }
 
-        std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id);
+        std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id, context);
         if (sendable_techs.empty())
             return "";
         std::size_t idx = RandInt(0, static_cast<int>(sendable_techs.size()) - 1);
@@ -2211,7 +2213,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
                 return "";
         }
 
-        std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id);
+        std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id, context);
         if (sendable_techs.empty())
             return "";
 
@@ -2243,11 +2245,11 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
             if (empire2_id == ALL_EMPIRES)
                 return "";
         }
-        const Empire* empire2 = GetEmpire(empire2_id);
+        auto empire2 = context.GetEmpire(empire2_id);
         if (!empire2)
             return "";
 
-        std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id);
+        std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id, context);
         if (sendable_techs.empty())
             return "";
 
@@ -2322,7 +2324,7 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
             if (empire_id == ALL_EMPIRES)
                 return {};
         }
-        const Empire* empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return {};
 
@@ -2335,7 +2337,7 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
             if (empire_id == ALL_EMPIRES)
                 return {};
         }
-        const Empire* empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return {};
 
@@ -2638,7 +2640,7 @@ std::string NameLookup::Eval(const ScriptingContext& context) const {
         break;
     }
     case LookupType::EMPIRE_NAME: {
-        const Empire* empire = GetEmpire(m_value_ref->Eval(context));
+        auto empire = context.GetEmpire(m_value_ref->Eval(context));
         return empire ? empire->Name() : "";
         break;
     }
