@@ -4,9 +4,9 @@ from logging import error, warning, debug
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 import AIDependencies
-import CombatRatingsAI
 import MoveUtilsAI
 from AIDependencies import INVALID_ID
+from CombatRatingsAI import get_fleet_rating, get_ship_combat_stats, rating_needed
 from aistate_interface import get_aistate
 from freeorion_tools import assertion_fails, combine_ratings
 from EnumsAI import MissionType, ShipRoleType
@@ -281,14 +281,14 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
         return 0
 
     # TODO: Should this rate against specific enemy?
-    remaining_rating = CombatRatingsAI.get_fleet_rating(fleet_a_id)
+    remaining_rating = get_fleet_rating(fleet_a_id)
     transferred_rating = 0
     for ship_id in fleet_a.shipIDs:
         this_ship = universe.getShip(ship_id)
         if not this_ship:
             continue
-        this_rating = CombatRatingsAI.ShipCombatStats(ship_id).get_rating()
-        remaining_rating = CombatRatingsAI.rating_needed(remaining_rating, this_rating)
+        this_rating = get_ship_combat_stats(ship_id).get_rating()
+        remaining_rating = rating_needed(remaining_rating, this_rating)
         if remaining_rating < leave_rating:  # merging this would leave old fleet under minimum rating, try other ships.
             continue
         transferred = fo.issueFleetTransferOrder(ship_id, fleet_b_id)

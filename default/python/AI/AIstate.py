@@ -166,7 +166,7 @@ class AIstate:
         self.orbital_colonization_manager = ColonisationAI.OrbitalColonizationManager()
         self.qualifyingTroopBaseTargets = {}
         # TODO: track on a per-empire basis
-        self.__empire_standard_enemy = CombatRatingsAI.default_ship_stats().get_stats(hashable=True)
+        self.__empire_standard_enemy = CombatRatingsAI.default_ship_stats()
         self.empire_standard_enemy_rating = 0  # TODO: track on a per-empire basis
         self.character = create_character(aggression, self.empireID)
         self.last_turn_played = 0
@@ -394,7 +394,7 @@ class AIstate:
         empire_id = fo.empireID()
 
         # assess enemy fleets that may have been momentarily visible (start with dummy entries)
-        dummy_stats = CombatRatingsAI.default_ship_stats().get_stats(hashable=True)
+        dummy_stats = CombatRatingsAI.default_ship_stats()
         cur_e_fighters = Counter()  # actual visible enemies
         old_e_fighters = Counter({dummy_stats: 0})  # destroyed enemies TODO: consider seen but out of sight enemies
 
@@ -405,16 +405,16 @@ class AIstate:
                 continue
 
             # track old/dead enemy fighters for rating assessments in case not enough current info
-            ship_stats = CombatRatingsAI.FleetCombatStats(fleet_id).get_ship_stats(hashable=True)
+            ship_stats = CombatRatingsAI.get_ships_stats_for_fleet(fleet_id)
             dead_fleet = fleet_id in universe.destroyedObjectIDs(empire_id)
             e_f_dict = old_e_fighters if dead_fleet else cur_e_fighters
             for stats in ship_stats:
                 # log only ships that are armed
-                if stats[0]:
+                if stats.attacks:
                     e_f_dict[stats] += 1
 
         e_f_dict = cur_e_fighters or old_e_fighters
-        self.__empire_standard_enemy = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
+        self.__empire_standard_enemy = max(e_f_dict, key=e_f_dict.get)
         self.empire_standard_enemy_rating = self.get_standard_enemy().get_rating()
 
     def __update_system_status(self):
@@ -912,7 +912,7 @@ class AIstate:
         info(fleet_table)
         # Next string used in charts. Don't modify it!
         debug("Empire Ship Count: %s" % self.shipCount)
-        debug("Empire standard fighter summary: %s", (CombatRatingsAI.get_empire_standard_military_ship_stats().get_stats(),))
+        debug("Empire standard fighter summary: %s", CombatRatingsAI.get_empire_standard_military_ship_stats())
         debug("------------------------")
 
     def get_explored_system_ids(self):
@@ -1042,4 +1042,4 @@ class AIstate:
         war_declarations.setdefault(log_index, []).append(fo.currentTurn())
 
     def get_standard_enemy(self):
-        return CombatRatingsAI.ShipCombatStats(stats=self.__empire_standard_enemy)
+        return self.__empire_standard_enemy

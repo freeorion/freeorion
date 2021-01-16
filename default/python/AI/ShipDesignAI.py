@@ -51,11 +51,11 @@ from typing import Iterable
 import freeOrionAIInterface as fo
 
 import AIDependencies
-import CombatRatingsAI
 import FleetUtilsAI
 from AIDependencies import INVALID_ID, Tags
+from CombatRatingsAI import ShipCombatStats, get_allowed_targets, weight_attack_troops, weight_shields
 from aistate_interface import get_aistate
-from freeorion_tools import UserString, get_species_tag_grade, tech_is_complete, assertion_fails, cache_for_session
+from freeorion_tools import UserString, get_ship_part, get_species_tag_grade, tech_is_complete, assertion_fails
 from turn_state import state
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
@@ -428,15 +428,13 @@ class AdditionalSpecifications:
         self.enemy = None
         self.update_enemy(get_aistate().get_standard_enemy())
 
-    def update_enemy(self, enemy):
-        """Read out the enemies stats and save them.
-
-        :param enemy:
-        :type enemy: CombatRatingsAI.ShipCombatStats
-        """
+    def update_enemy(self, enemy: "ShipCombatStats"):
+        """Read out the enemies stats and save them."""
         self.enemy = enemy
-        enemy_attack_stats, enemy_structure, self.enemy_shields = enemy.get_basic_stats()
+        self.enemy_shields = enemy.shields
         self.enemy_shields += 1  # add bias against weak weapons to account to allow weapons to stay longer relevant.
+
+        enemy_attack_stats = enemy.attacks
         if enemy_attack_stats:
             self.max_enemy_weapon_strength = max(enemy_attack_stats.keys())
             n = 0
@@ -489,10 +487,18 @@ class DesignStats:
 
     def convert_to_combat_stats(self):
         """Return a tuple as expected by CombatRatingsAI"""
-        return (self.attacks, self.structure, self.shields,
-                self.fighter_capacity, self.fighter_launch_rate, self.fighter_damage,
-                self.flak_shots, self.has_interceptors,
-                self.damage_vs_planets, self.has_bomber)
+        return ShipCombatStats(
+            attacks=self.attacks,
+            structure=self.structure,
+            shields=self.shields,
+            fighter_capacity=self.fighter_capacity,
+            fighter_launch_rate=self.fighter_launch_rate,
+            fighter_damage=self.fighter_damage,
+            flak_shots=self.flak_shots,
+            has_interceptors=self.has_interceptors,
+            damage_vs_planets=self.damage_vs_planets,
+            has_bomber=self.has_bomber
+        )
 
 
 class ShipDesigner:
@@ -688,7 +694,7 @@ class ShipDesigner:
                 self.design_stats.structure += capacity
             elif partclass in WEAPONS:
                 shots = self._calculate_weapon_shots(part)
-                allowed_targets = CombatRatingsAI.get_allowed_targets(part.name)
+                allowed_targets = get_allowed_targets(part.name)
                 if allowed_targets & AIDependencies.CombatTarget.SHIP:
                     self.design_stats.attacks[capacity] = self.design_stats.attacks.get(capacity, 0) + shots
                 if allowed_targets & AIDependencies.CombatTarget.FIGHTER:
@@ -721,7 +727,7 @@ class ShipDesigner:
                     self.design_stats.has_interceptors = False
                     self.design_stats.has_bomber = False
                 else:
-                    allowed_targets = CombatRatingsAI.get_allowed_targets(part.name)
+                    allowed_targets = get_allowed_targets(part.name)
                     self.design_stats.fighter_capacity += self._calculate_hangar_capacity(part)
                     if allowed_targets & AIDependencies.CombatTarget.SHIP:
                         self.design_stats.fighter_damage = self._calculate_hangar_damage(part)
@@ -740,10 +746,10 @@ class ShipDesigner:
 
         if self.species and not ignore_species:
             shields_grade = get_species_tag_grade(self.species, Tags.SHIELDS)
-            self.design_stats.shields = CombatRatingsAI.weight_shields(self.design_stats.shields, shields_grade)
+            self.design_stats.shields = weight_shields(self.design_stats.shields, shields_grade)
             if self.design_stats.troops:
                 troops_grade = get_species_tag_grade(self.species, Tags.ATTACKTROOPS)
-                self.design_stats.troops = CombatRatingsAI.weight_attack_troops(self.design_stats.troops, troops_grade)
+                self.design_stats.troops = weight_attack_troops(self.design_stats.troops, troops_grade)
 
     def _apply_hardcoded_effects(self, ignore_species=False):
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
@@ -1441,8 +1447,7 @@ class ShipDesigner:
         return base + species_modifier + tech_bonus
 
     def _combat_rating(self):
-        combat_stats = CombatRatingsAI.ShipCombatStats(stats=self.design_stats.convert_to_combat_stats())
-        return combat_stats.get_rating(enemy_stats=self.additional_specifications.enemy)
+        return self.design_stats.convert_to_combat_stats().get_rating(enemy_stats=self.additional_specifications.enemy)
 
 
 class MilitaryShipDesignerBaseClass(ShipDesigner):
@@ -2096,22 +2101,6 @@ def _get_design_by_name(design_name, update_invalid=False, looking_for_new_desig
         design = _update_design_by_name_cache(design_name, cache_as_invalid=not looking_for_new_design)
 
     return design
-
-
-@cache_for_session
-def get_ship_part(part_name: str):
-    """Return the shipPart object (fo.getShipPart(part_name)) of the given part_name.
-
-    As the function in late game may be called some thousand times, the results are cached.
-    """
-    if not part_name:
-        return None
-
-    part_type = fo.getShipPart(part_name)
-    if not part_type:
-        warning("Could not find part %s" % part_name)
-
-    return part_type
 
 
 def _build_reference_name(hullname, partlist):
