@@ -25,12 +25,12 @@ struct ScriptingContext {
                               const Universe::EmpireObjectVisibilityTurnMap&
                                   empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
                               const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                              EmpireManager::DiploStatusMap diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
+                              const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
         empire_object_vis(empire_object_vis_),
         const_objects(const_objects_),
         empire_object_vis_turns(empire_object_vis_turns_),
         empires(empires_),
-        diplo_statuses(std::move(diplo_statuses_))
+        diplo_statuses(diplo_statuses_)
     {}
 
     explicit ScriptingContext(ObjectMap& objects_,
@@ -39,13 +39,13 @@ struct ScriptingContext {
                               const Universe::EmpireObjectVisibilityTurnMap&
                                   empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
                               const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                              EmpireManager::DiploStatusMap diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
+                              const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
         empire_object_vis(empire_object_vis_),
         objects(objects_),
         const_objects(objects_),
         empire_object_vis_turns(empire_object_vis_turns_),
         empires(empires_),
-        diplo_statuses(std::move(diplo_statuses_))
+        diplo_statuses(diplo_statuses_)
     {}
 
     explicit ScriptingContext(std::shared_ptr<const UniverseObject> source_,
@@ -55,13 +55,13 @@ struct ScriptingContext {
                               const Universe::EmpireObjectVisibilityTurnMap&
                                   empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
                               const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                              EmpireManager::DiploStatusMap diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
+                              const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
         source(std::move(source_)),
         empire_object_vis(empire_object_vis_),
         const_objects(const_objects_),
         empire_object_vis_turns(empire_object_vis_turns_),
         empires(empires_),
-        diplo_statuses(std::move(diplo_statuses_))
+        diplo_statuses(diplo_statuses_)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
@@ -87,7 +87,7 @@ struct ScriptingContext {
                      const Universe::EmpireObjectVisibilityTurnMap&
                          empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
                      const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                     EmpireManager::DiploStatusMap diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
+                     const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
         source(std::move(source_)),
         effect_target(std::move(target_)),
         empire_object_vis(empire_object_vis_),
@@ -95,7 +95,7 @@ struct ScriptingContext {
         const_objects(objects_),
         empire_object_vis_turns(empire_object_vis_turns_),
         empires(empires_),
-        diplo_statuses(std::move(diplo_statuses_))
+        diplo_statuses(diplo_statuses_)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
@@ -106,14 +106,14 @@ struct ScriptingContext {
                      const Universe::EmpireObjectVisibilityTurnMap&
                          empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
                      const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                     EmpireManager::DiploStatusMap diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
+                     const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
         source(std::move(source_)),
         effect_target(std::move(target_)),
         empire_object_vis(empire_object_vis_),
         const_objects(const_objects_),
         empire_object_vis_turns(empire_object_vis_turns_),
         empires(empires_),
-        diplo_statuses(std::move(diplo_statuses_))
+        diplo_statuses(diplo_statuses_)
     {}
 
     ScriptingContext(const ScriptingContext& parent_context,
@@ -175,7 +175,7 @@ struct ScriptingContext {
                      const Universe::EmpireObjectVisibilityTurnMap&
                          empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
                      const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                     EmpireManager::DiploStatusMap diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
+                     const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
         source(std::move(source_)),
         effect_target(std::move(target_)),
         condition_root_candidate(std::move(condition_root_candidate_)),
@@ -186,7 +186,7 @@ struct ScriptingContext {
         const_objects(objects_),
         empire_object_vis_turns(empire_object_vis_turns_),
         empires(empires_),
-        diplo_statuses(std::move(diplo_statuses_))
+        diplo_statuses(diplo_statuses_)
     {}
 
 
@@ -225,7 +225,7 @@ struct ScriptingContext {
     const ObjectMap&                               const_objects{Objects()};
     const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{GetUniverse().GetEmpireObjectVisibilityTurnMap()}; // immutable container and values
     const EmpireManager::container_type&           empires{Empires().GetEmpires()};                   // immutable container of mutable empires
-    const EmpireManager::DiploStatusMap            diplo_statuses{Empires().GetDiplomaticStatuses()}; // by-value copied at initialization
+    const EmpireManager::DiploStatusMap&           diplo_statuses{Empires().GetDiplomaticStatuses()}; // immutable value reference
 };
 
 
