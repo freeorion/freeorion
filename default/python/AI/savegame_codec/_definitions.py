@@ -4,6 +4,8 @@ import fleet_orders
 import character.character_module
 import AIstate
 import ColonisationAI
+import CombatRatingsAI
+
 trusted_classes = {"%s.%s" % (cls.__module__, cls.__name__): cls for cls in [
     AIFleetMission.AIFleetMission,
     fleet_orders.AIFleetOrder,
@@ -23,6 +25,7 @@ trusted_classes = {"%s.%s" % (cls.__module__, cls.__name__): cls for cls in [
     AIstate.AIstate,
     ColonisationAI.OrbitalColonizationManager,
     ColonisationAI.OrbitalColonizationPlan,
+    CombatRatingsAI.ShipCombatStats
 ]}
 
 # prefixes to encode types not supported by json

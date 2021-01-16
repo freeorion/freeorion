@@ -11,6 +11,7 @@ from functools import wraps
 from logging import debug, error
 from aistate_interface import get_aistate
 from common.configure_logging import FOLogFormatter
+from logging import warning
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -407,3 +408,19 @@ def get_species_tag_grade(species_name, tag_type):
         return ""
 
     return get_ai_tag_grade(species.tags, tag_type)
+
+
+@cache_for_session
+def get_ship_part(part_name: str):
+    """Return the shipPart object (fo.getShipPart(part_name)) of the given part_name.
+
+    As the function in late game may be called some thousand times, the results are cached.
+    """
+    if not part_name:
+        return None
+
+    part_type = fo.getShipPart(part_name)
+    if not part_type:
+        warning("Could not find part %s" % part_name)
+
+    return part_type

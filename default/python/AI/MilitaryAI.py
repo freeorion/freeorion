@@ -11,7 +11,7 @@ import PriorityAI
 import ProductionAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
-from CombatRatingsAI import rating_difference
+from CombatRatingsAI import get_ship_combat_stats, rating_difference
 from EnumsAI import MissionType
 from freeorion_tools import cache_by_turn_persistent, combine_ratings
 from target import TargetSystem
@@ -42,7 +42,7 @@ def cur_best_mil_ship_rating(include_designs=False):
     for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY):
         fleet = universe.getFleet(fleet_id)
         for ship_id in fleet.shipIDs:
-            ship_rating = CombatRatingsAI.ShipCombatStats(ship_id).get_rating(enemy_stats=aistate.get_standard_enemy())
+            ship_rating = get_ship_combat_stats(ship_id).get_rating(enemy_stats=aistate.get_standard_enemy())
             best_rating = max(best_rating, ship_rating)
     _best_ship_rating_cache[current_turn] = best_rating
     if include_designs:

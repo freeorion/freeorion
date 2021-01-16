@@ -8,7 +8,6 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
 import AIstate
 import ColonisationAI
-import CombatRatingsAI
 import FleetUtilsAI
 import MilitaryAI
 import PlanetUtilsAI
@@ -107,7 +106,7 @@ def cur_best_military_design_rating():
         # rating of the design as provided by CombatRatingsAI.
         _, _, _, _, stats = _design_cache[priority][0]
         # TODO: Should this consider enemy stats?
-        rating = CombatRatingsAI.ShipCombatStats(stats=stats.convert_to_combat_stats()).get_rating()
+        rating = stats.convert_to_combat_stats().get_rating()
         _best_military_design_rating_cache[current_turn] = rating
         return max(rating, 0.001)
     return 0.001
