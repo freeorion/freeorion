@@ -15,9 +15,10 @@ Special
                 Source
                 Focus type = "FOCUS_RESEARCH"
             ]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population
                           * (NamedReal name = "TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP"
-                                       value = 25 * [[RESEARCH_PER_POP]])
+                                       value = 15 * [[RESEARCH_PER_POP]])
 
         EffectsGroup
             scope = Object id = Source.PlanetID
