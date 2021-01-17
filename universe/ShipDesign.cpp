@@ -354,15 +354,15 @@ int ShipDesign::PartCount() const {
     return count;
 }
 
-bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
-    Empire* empire = GetEmpire(empire_id);
+bool ShipDesign::ProductionLocation(int empire_id, int location_id) const { // TODO: pass in ScriptingContext
+    Empire* empire = GetEmpire(empire_id); // TODO: get from context
     if (!empire) {
         DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;
     }
 
     // must own the production location...
-    auto location = Objects().get(location_id);
+    auto location = Objects().get(location_id); // TODO: get from context
     if (!location) {
         WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
         return false;

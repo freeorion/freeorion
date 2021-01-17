@@ -501,7 +501,7 @@ bool Planet::Contains(int object_id) const
 bool Planet::ContainedBy(int object_id) const
 { return object_id != INVALID_OBJECT_ID && this->SystemID() == object_id; }
 
-std::vector<std::string> Planet::AvailableFoci() const {
+std::vector<std::string> Planet::AvailableFoci() const {    // TODO: pass ScriptingContext
     std::vector<std::string> retval;
     auto this_planet = std::dynamic_pointer_cast<const Planet>(UniverseObject::shared_from_this());
     if (!this_planet)
@@ -512,7 +512,7 @@ std::vector<std::string> Planet::AvailableFoci() const {
         for (const auto& focus_type : species->Foci()) {
             if (const auto* location = focus_type.Location()) {
                 if (location->Eval(context, this_planet))
-                    retval.emplace_back(focus_type.Name());
+                    retval.push_back(focus_type.Name());
             }
         }
     }

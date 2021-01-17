@@ -357,7 +357,7 @@ void Effect::Execute(ScriptingContext& context, const TargetSet& targets) const 
         return;
 
     // execute effects on targets
-    ScriptingContext local_context = context;
+    ScriptingContext local_context{context};
     for (const auto& target : targets) {
         local_context.effect_target = target;
         Execute(local_context);
@@ -1383,12 +1383,10 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
     planet->Rename(name_str);
 
     // apply after-creation effects
-    ScriptingContext local_context = context;
-    local_context.effect_target = planet;
+    ScriptingContext local_context{context, std::move(planet), ScriptingContext::CurrentValueVariant()};
     for (auto& effect : m_effects_to_apply_after) {
-        if (!effect)
-            continue;
-        effect->Execute(local_context);
+        if (effect)
+            effect->Execute(local_context);
     }
 }
 
@@ -1491,12 +1489,10 @@ void CreateBuilding::Execute(ScriptingContext& context) const {
     }
 
     // apply after-creation effects
-    ScriptingContext local_context = context;
-    local_context.effect_target = building;
+    ScriptingContext local_context{context, std::move(building), ScriptingContext::CurrentValueVariant()};
     for (auto& effect : m_effects_to_apply_after) {
-        if (!effect)
-            continue;
-        effect->Execute(local_context);
+        if (effect)
+            effect->Execute(local_context);
     }
 }
 
@@ -1653,12 +1649,10 @@ void CreateShip::Execute(ScriptingContext& context) const {
     CreateNewFleet(std::move(system), ship, context.ContextObjects());
 
     // apply after-creation effects
-    ScriptingContext local_context = context;
-    local_context.effect_target = std::move(ship);
+    ScriptingContext local_context{context, std::move(ship), ScriptingContext::CurrentValueVariant()};
     for (auto& effect : m_effects_to_apply_after) {
-        if (!effect)
-            continue;
-        effect->Execute(local_context);
+        if (effect)
+            effect->Execute(local_context);
     }
 }
 
@@ -1802,12 +1796,10 @@ void CreateField::Execute(ScriptingContext& context) const {
     field->Rename(name_str);
 
     // apply after-creation effects
-    ScriptingContext local_context = context;
-    local_context.effect_target = field;
+    ScriptingContext local_context{context, std::move(field), ScriptingContext::CurrentValueVariant()};
     for (auto& effect : m_effects_to_apply_after) {
-        if (!effect)
-            continue;
-        effect->Execute(local_context);
+        if (effect)
+            effect->Execute(local_context);
     }
 }
 
@@ -1925,11 +1917,9 @@ void CreateSystem::Execute(ScriptingContext& context) const {
     }
 
     // apply after-creation effects
-    ScriptingContext local_context = context;
-    local_context.effect_target = system;
+    ScriptingContext local_context{context, std::move(system), ScriptingContext::CurrentValueVariant()};
     for (auto& effect : m_effects_to_apply_after) {
-        if (!effect)
-            continue;
+        if (effect)
         effect->Execute(local_context);
     }
 }
