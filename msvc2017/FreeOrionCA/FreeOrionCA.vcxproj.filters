@@ -200,12 +200,6 @@
     <ClInclude Include="..\..\universe\Meter.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\GG\GG\Exception.h">
-      <Filter>Header Files\GG</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GG\GG\Clr.h">
-      <Filter>Header Files\GG</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\ObjectMap.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
