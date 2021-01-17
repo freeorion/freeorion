@@ -155,7 +155,7 @@ public:
     virtual void    Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) = 0;
 
     void            SetID(int id);                      ///< sets the ID number of the object to \a id
-    void            Rename(const std::string& name);    ///< renames this object to \a name
+    void            Rename(const std::string& name);    ///< renames this object to \a name     // TODO: by-value + move instead of const reference
 
     /** moves this object by relative displacements x and y. */
     void            Move(double x, double y);
@@ -183,7 +183,7 @@ public:
     void            SetSystem(int sys);                     ///< assigns this object to a System.  does not actually move object in universe
     virtual void    AddSpecial(const std::string& name, float capacity = 0.0f); ///< adds the Special \a name to this object, if it is not already present
     virtual void    RemoveSpecial(const std::string& name); ///< removes the Special \a name from this object, if it is already present
-    void            SetSpecialCapacity(const std::string& name, float capacity);
+    void            SetSpecialCapacity(const std::string& name, float capacity);    // TODO: pass name by value with move?
 
     /** Sets current value of max, target and unpaired meters in in this
       * UniverseObject to Meter::DEFAULT_VALUE.  This should be done before any

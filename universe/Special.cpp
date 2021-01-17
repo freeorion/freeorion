@@ -153,7 +153,7 @@ float Special::InitialCapacity(int object_id) const {
     if (!m_initial_capacity)
         return 0.0f;
 
-    auto obj = Objects().get(object_id);
+    auto obj = Objects().get(object_id);    // TODO: pass ScriptingContext and use here...
     if (!obj)
         return 0.0f;
 
