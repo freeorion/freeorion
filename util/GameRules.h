@@ -50,7 +50,7 @@ public:
         bool IsInternal() const { return this->storable; }
 
         Type type = Type::INVALID;
-        std::string category = "";
+        std::string category;
     };
 
     using GameRulesTypeMap = std::unordered_map<std::string, Rule>;
