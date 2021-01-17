@@ -69,8 +69,9 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
     bool operator!=(const ValueRef<T>& rhs) const
     { return !(*this == rhs); }
 
-    /** Evaluates the expression tree with an empty context.  Useful for
-      * evaluating expressions that do not depend on context. */
+    /** Evaluates the expression tree with a default context.  Useful for
+      * evaluating expressions that do not depend on source, target, or
+      * candidate objects. */
     T Eval() const
     { return Eval(::ScriptingContext()); }
 
