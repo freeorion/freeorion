@@ -5056,6 +5056,9 @@ ENC_NAMED_VALUE_REF_DESC
 Les valeurs suivantes indiquent le nom, le type d'enregistrement (int/real/any), la valeur calculée, (le calcul), 'la description du calcul dans le fichier langue', et le modèle d'invariance.
 '''
 
+ENC_STRINGS
+[Test - Entrées Fichier Langue]
+
 ENC_SPECIES
 Espèce
 
