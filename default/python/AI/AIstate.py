@@ -5,6 +5,7 @@ from operator import itemgetter
 from time import time
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+from CombatRatingsAI import ShipCombatStats
 from common.print_utils import Table, Text, Float
 
 import AIFleetMission
@@ -76,6 +77,34 @@ def convert_to_version(state, version):
         # Anti-fighter and anti-planet stats were added to CombatRatingAI
         state['_AIstate__empire_standard_enemy'] = state['_AIstate__empire_standard_enemy'] + (0, False) + (0, False)
 
+    if version == 7:
+        # This attribute now contains ShipCombatStats object
+        standard_enemy = state['_AIstate__empire_standard_enemy']
+
+        # Changes were done without update so it is possible that users
+        # have saved game with state 6 but with new object.
+        # So we add addition check that object was not already converted.
+        if not isinstance(standard_enemy, ShipCombatStats):
+            # Old value was a tuple of arguments
+            (
+                attacks, structure, shields,
+                fighter_capacity, fighter_launch_rate, fighter_damage,
+                flak_shots, has_interceptors,
+                damage_vs_planets, has_bomber
+            ) = state['_AIstate__empire_standard_enemy']
+
+            state['_AIstate__empire_standard_enemy'] = ShipCombatStats(
+                attacks=attacks,
+                structure=structure,
+                shields=shields,
+                fighter_capacity=fighter_capacity,
+                fighter_launch_rate=fighter_launch_rate,
+                flak_shots=flak_shots,
+                has_interceptors=has_interceptors,
+                damage_vs_planets=damage_vs_planets,
+                has_bomber=has_bomber
+            )
+
     #   state["some_new_member"] = some_default_value
     #   del state["some_removed_member"]
     #   state["list_changed_to_set"] = set(state["list_changed_to_set"])
@@ -103,7 +132,7 @@ class AIstate:
     via boost. If desiring to store a reference to a UniverseObject store its
     object id instead; for enum values store their int conversion value.
     """
-    version = 6
+    version = 7
 
     def __init__(self, aggression):
         # Do not allow to create AIstate instances with an invalid version number.

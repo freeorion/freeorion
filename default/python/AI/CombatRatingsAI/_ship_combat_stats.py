@@ -1,4 +1,5 @@
 from logging import warning
+from typing import Dict, Tuple
 
 import freeOrionAIInterface as fo
 from AIDependencies import CombatTarget
@@ -11,7 +12,7 @@ class ShipCombatStats:
     """Stores all relevant stats of a ship for combat strength evaluation."""
 
     def __init__(self, *,
-                 attacks=None,
+                 attacks: Tuple[Tuple[float, int]] = None,
                  structure=1.0,
                  shields=0.0,
                  fighter_capacity=0,
@@ -24,7 +25,7 @@ class ShipCombatStats:
 
         self.structure = structure
         self.shields = shields
-        self.attacks = {} if attacks is None else tuple_to_dict(attacks)  # type: dict[float, int]
+        self.attacks = {} if attacks is None else tuple_to_dict(attacks)  # type: Dict[float, int]
 
         self.fighter_capacity = fighter_capacity
         self.fighter_launch_rate = fighter_launch_rate
