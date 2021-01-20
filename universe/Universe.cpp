@@ -1647,9 +1647,9 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
 
         // construct a source context, which is updated for each entry in sources-effects-targets.
         // execute each effectsgroup on its target set
-        ScriptingContext source_context{Objects(),
-                                        GetUniverse().GetEmpireObjectVisibility(),
-                                        GetUniverse().GetEmpireObjectVisibilityTurnMap(),
+        ScriptingContext source_context{m_objects,
+                                        m_empire_object_visibility,
+                                        m_empire_object_visibility_turns,
                                         Empires().GetEmpires(),
                                         Empires().GetDiplomaticStatuses()};
         for (std::pair<Effect::SourcedEffectsGroup, Effect::TargetsAndCause>& effect_group_entry : setc) {
