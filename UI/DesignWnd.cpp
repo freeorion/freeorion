@@ -1451,8 +1451,7 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
     PartGroupsType part_groups;
 
     // loop through all possible parts
-    for (const auto& entry : GetShipPartManager()) {
-        const auto& part = entry.second;
+    for (const auto& [part_name, part] : GetShipPartManager()) {
         if (!part->Producible())
             continue;
 
@@ -1462,7 +1461,7 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
             continue;   // part of this class is not requested to be shown
 
         // Check if part satisfies availability and obsolecense
-        auto shown = m_availabilities_state.DisplayedPartAvailability(part->Name());
+        auto shown = m_availabilities_state.DisplayedPartAvailability(part_name);
         if (!shown)
             continue;
 
@@ -1835,18 +1834,17 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     {
         // are there any parts of this class?
         bool part_of_this_class_exists = false;
-        for (const auto& entry : part_manager) {
-            if (const auto& part = entry.second) {
-                if (part->Class() == part_class) {
-                    part_of_this_class_exists = true;
-                    break;
-                }
+        for (const auto& [part_name, part] : part_manager) {
+            if (part && part->Class() == part_class) {
+                part_of_this_class_exists = true;
+                break;
             }
         }
         if (!part_of_this_class_exists)
             continue;
 
-        m_class_buttons[part_class] = GG::Wnd::Create<CUIStateButton>(UserString(boost::lexical_cast<std::string>(part_class)), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+        m_class_buttons[part_class] = GG::Wnd::Create<CUIStateButton>(UserString(boost::lexical_cast<std::string>(part_class)),
+                                                                      GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
         AttachChild(m_class_buttons[part_class]);
         m_class_buttons[part_class]->CheckedSignal.connect(
             boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
@@ -1940,14 +1938,14 @@ void DesignWnd::PartPalette::DoLayout() {
     // place class buttons
     int col = NUM_CLASS_BUTTONS_PER_ROW;
     int row = -1;
-    for (auto& entry : m_class_buttons) {
+    for (auto& [ignored, button] : m_class_buttons) {
         if (col >= NUM_CLASS_BUTTONS_PER_ROW) {
             col = 0;
             ++row;
         }
         GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
         GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-        entry.second->SizeMove(ul, lr);
+        button->SizeMove(ul, lr);
         ++col;
     }
 
@@ -2048,8 +2046,8 @@ void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::ShowAllClasses(bool refresh_list) {
     m_parts_list->ShowAllClasses(refresh_list);
-    for (auto& entry : m_class_buttons)
-        entry.second->SetCheck();
+    for (auto& [ignored, button] : m_class_buttons)
+        button->SetCheck();
 }
 
 void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_list) {
@@ -2063,8 +2061,8 @@ void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
     m_parts_list->HideAllClasses(refresh_list);
-    for (auto& entry : m_class_buttons)
-        entry.second->SetCheck(false);
+    for (auto& [ignored, button] : m_class_buttons)
+        button->SetCheck(false);
 }
 
 void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_list) {

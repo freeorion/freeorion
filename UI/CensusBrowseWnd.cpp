@@ -164,8 +164,8 @@ void CensusBrowseWnd::CompleteConstruction() {
 
     // put into multimap to sort by population, ascending
     std::multimap<float, std::string> counts_species;
-    for (const auto& entry : m_population_counts)
-        counts_species.emplace(entry.second, entry.first);
+    for (const auto& [name, count] : m_population_counts)
+        counts_species.emplace(count, name);
     m_population_counts.clear();
 
     // add species rows

@@ -100,7 +100,8 @@ public:
     std::map<std::string, int>      TotalPolicySlots() const;
     std::map<std::string, int>      EmptyPolicySlots() const;
 
-    /** Returns the set of Tech names available to this empire. */
+    /** Returns the set of Tech names available to this empire and the turns on
+      * which they were researched. */
     const std::map<std::string, int>&   ResearchedTechs() const;
 
     /** Returns the set of BuildingType names availble to this empire. */

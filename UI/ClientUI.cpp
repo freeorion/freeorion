@@ -886,25 +886,25 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = fa
                 return ZoomToTech(tech->Name());
         }
 
-        for (const auto& entry : GetBuildingTypeManager())
-            if (boost::iequals(name, UserString(entry.first)))
-                return ZoomToBuildingType(entry.first);
+        for (const auto& [building_name, ignored] : GetBuildingTypeManager())
+            if (boost::iequals(name, UserString(building_name)))
+                return ZoomToBuildingType(building_name);
 
         for (const auto& special_name : SpecialNames())
             if (boost::iequals(name, UserString(special_name)))
                 return ZoomToSpecial(special_name);
 
-        for (const auto& entry : GetShipHullManager())
-            if (boost::iequals(name, UserString(entry.first)))
-                return ZoomToShipHull(entry.first);
+        for (const auto& [hull_name, ignored] : GetShipHullManager())
+            if (boost::iequals(name, UserString(hull_name)))
+                return ZoomToShipHull(hull_name);
 
-        for (const auto& entry : GetShipPartManager())
-            if (boost::iequals(name, UserString(entry.first)))
-                return ZoomToShipPart(entry.first);
+        for (const auto& [part_name, ignored] : GetShipPartManager())
+            if (boost::iequals(name, UserString(part_name)))
+                return ZoomToShipPart(part_name);
 
-        for (const auto& entry : GetSpeciesManager())
-            if (boost::iequals(name, UserString(entry.first)))
-                return ZoomToSpecies(entry.first);
+        for (const auto& [species_name, ignored] : GetSpeciesManager())
+            if (boost::iequals(name, UserString(species_name)))
+                return ZoomToSpecies(species_name);
 
         return false;
     } else {

@@ -163,7 +163,7 @@ public:
     void Render() override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
-    static const std::size_t INVALID_COLOR_BUTTON;
+    static constexpr std::size_t INVALID_COLOR_BUTTON{std::numeric_limits<std::size_t>::max()};
 
 private:
     void ColorChanged(HSVClr color);

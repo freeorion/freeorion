@@ -475,7 +475,6 @@ namespace {
 }
 
 std::vector<Clr> ColorDlg::s_custom_colors;
-const std::size_t ColorDlg::INVALID_COLOR_BUTTON = std::numeric_limits<std::size_t>::max();
 
 ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& font,
                    Clr dialog_color, Clr border_color, Clr text_color/* = CLR_BLACK*/) :
@@ -557,7 +556,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
 
     int row = 0;
 
-    for (auto& entry : {
+    for (auto& [color_value, color_min, color_max, color_label]  : {
             std::make_tuple(static_cast<int>(color.r), 0, 255, "R:"),
             std::make_tuple(static_cast<int>(color.g), 0, 255, "G:"),
             std::make_tuple(static_cast<int>(color.b), 0, 255, "B:"),
@@ -567,11 +566,6 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
             std::make_tuple(static_cast<int>(m_current_color.v * 255), 0, 255, "V:")
         })
     {
-        auto& color_value = std::get<0>(entry);
-        auto& color_min =   std::get<1>(entry);
-        auto& color_max =   std::get<2>(entry);
-        auto& color_label = std::get<3>(entry);
-
         m_slider_labels.emplace_back(style->NewTextControl(style->Translate(color_label), font,
                                                            m_text_color, FORMAT_RIGHT));
         m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), row, 0);

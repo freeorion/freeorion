@@ -778,13 +778,12 @@ namespace {
         if (sorting_method == SortingMethod::SORT_MIN) {
             // move (number) objects with smallest sort key (at start of map)
             // from the from_set into the to_set.
-            for (const auto& entry : sort_key_objects) {
-                auto object_to_transfer = entry.second;
+            for (auto& [ignored_float, object_to_transfer] : sort_key_objects) {
                 auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
                     from_set.pop_back();
-                    to_set.emplace_back(object_to_transfer);    // TODO: can I std::move ?
+                    to_set.push_back(std::move(object_to_transfer));
                     number_transferred++;
                     if (number_transferred >= number)
                         return;
@@ -812,14 +811,13 @@ namespace {
         } else if (sorting_method == SortingMethod::SORT_MODE) {
             // compile histogram of of number of times each sort key occurs
             std::map<float, unsigned int> histogram;
-            for (const auto& entry : sort_key_objects) {
-                histogram[entry.first]++;
-            }
+            for (const auto& [key, ignored_object] : sort_key_objects)
+                histogram[key]++;
 
             // invert histogram to index by number of occurances
             std::multimap<unsigned int, float> inv_histogram;
-            for (const auto& entry : histogram)
-                inv_histogram.emplace(entry.second, entry.first);
+            for (const auto& [key, count] : histogram)
+                inv_histogram.emplace(count, key);
 
             // reverse-loop through inverted histogram to find which sort keys
             // occurred most frequently, and transfer objects with those sort
@@ -841,7 +839,7 @@ namespace {
                     if (from_it != from_set.end()) {
                         *from_it = from_set.back();
                         from_set.pop_back();
-                        to_set.emplace_back(object_to_transfer);    // TODO: can I std::move ?
+                        to_set.push_back(object_to_transfer);    // TODO: can I std::move ?
                         number_transferred++;
                         if (number_transferred >= number)
                             return;
@@ -1593,8 +1591,8 @@ namespace {
 
             if (m_names.empty()) {
                 // match homeworlds for any species
-                for (const auto& entry : GetSpeciesManager().GetSpeciesHomeworldsMap()) {   // TODO: put species info in ScriptingContext
-                    if (entry.second.count(planet_id))
+                for (const auto& [ignored_name, ids] : GetSpeciesManager().GetSpeciesHomeworldsMap()) { // TODO: put species info in ScriptingContext
+                    if (ids.count(planet_id))
                         return true;
                 }
 
@@ -1771,8 +1769,8 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 
     // check if any empire's capital's ID is that candidate object's id.
     // if it is, the candidate object is a capital.
-    for (const auto& entry : local_context.empires)
-        if (entry.second->CapitalID() == candidate_id)
+    for (const auto& [ignored_id, empire] : local_context.empires)
+        if (empire->CapitalID() == candidate_id)
             return true;
     return false;
 }

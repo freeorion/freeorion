@@ -996,8 +996,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         // create and insert rows...
         std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
         rows.reserve(std::distance(manager.begin(), manager.end()));
-        for (const auto& entry : manager) {
-            auto& name = entry.first;
+        for (const auto& [name, ignored_type] : manager) {
             if (!BuildableItemVisible(BuildType::BT_BUILDING, name))
                 continue;
             timer.EnterSection(name);

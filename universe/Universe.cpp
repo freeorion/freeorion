@@ -1398,8 +1398,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         tech_sources.emplace_back(1U, source);
         const auto& source_objects = tech_sources.back();
 
-        for (const auto& tech_entry : empire->ResearchedTechs()) {
-            const std::string& tech_name{tech_entry.first};
+        for (const auto& [tech_name, researched_turn] : empire->ResearchedTechs()) {
             const Tech* tech = GetTech(tech_name);
             if (!tech) continue;
 
@@ -1417,8 +1416,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     type_timer.EnterSection("policies");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for POLICIES";
     std::list<Condition::ObjectSet> policy_sources; // for each empire, a set with a single source object for all its policies
-    for (const auto& entry : Empires()) {
-        auto& empire = entry.second;
+    for (const auto& [empire_id, empire] : Empires()) {
         auto source = empire->Source();
         if (!source)
             continue;
@@ -1459,9 +1457,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         buildings_by_type[building_type_name].emplace_back(building);
     }
     // dispatch condition evaluations
-    for (const auto& entry : GetBuildingTypeManager()) {
-        const std::string& building_type_name = entry.first;
-        const BuildingType* building_type = entry.second.get();
+    for (const auto& [building_type_name, building_type] : GetBuildingTypeManager()) {
         auto buildings_by_type_it = buildings_by_type.find(building_type_name);
         if (buildings_by_type_it == buildings_by_type.end())
             continue;
@@ -1514,9 +1510,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     }
 
     // dispatch hull condition evaluations
-    for (const auto& entry : GetShipHullManager()) {
-        const std::string& ship_hull_name = entry.first;
-        const auto& ship_hull = entry.second;
+    for (const auto& [ship_hull_name, ship_hull] : GetShipHullManager()) {
         auto ships_by_hull_it = ships_by_ship_hull.find(ship_hull_name);
         if (ships_by_hull_it == ships_by_ship_hull.end())
             continue;
@@ -1533,9 +1527,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                                              thread_pool, n);
     }
     // dispatch part condition evaluations
-    for (const auto& entry : GetShipPartManager()) {
-        const std::string& ship_part_name = entry.first;
-        const ShipPart* ship_part = entry.second.get();
+    for (const auto& [ship_part_name, ship_part] : GetShipPartManager()) {
         auto ships_by_ship_part_it = ships_by_ship_part.find(ship_part_name);
         if (ships_by_ship_part_it == ships_by_ship_part.end())
             continue;
@@ -1572,9 +1564,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     }
 
     // dispatch field condition evaluations
-    for (const auto& entry : GetFieldTypeManager()) {
-        const std::string& field_type_name = entry.first;
-        const FieldType* field_type = entry.second.get();
+    for (const auto& [field_type_name, field_type] : GetFieldTypeManager()) {
         auto fields_by_type_it = fields_by_type.find(field_type_name);
         if (fields_by_type_it == fields_by_type.end())
             continue;
@@ -1656,11 +1646,10 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
                                         m_empire_object_visibility_turns,
                                         empires.GetEmpires(),
                                         empires.GetDiplomaticStatuses()};
-        for (std::pair<Effect::SourcedEffectsGroup, Effect::TargetsAndCause>& effect_group_entry : setc) {
-            Effect::TargetsAndCause& targets_and_cause{effect_group_entry.second};
+        for (auto& [sourced_effects_group, targets_and_cause] : setc) {
             Effect::TargetSet& target_set{targets_and_cause.target_set};
 
-            const Effect::EffectsGroup* effects_group = effect_group_entry.first.effects_group;
+            const Effect::EffectsGroup* effects_group = sourced_effects_group.effects_group;
 
             if (only_meter_effects && !effects_group->HasMeterEffects())
                 continue;
@@ -1704,7 +1693,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
                                  << " " << effects_group->AccountingLabel() << " " << effects_group->StackingGroup() << ")";
 
             // execute Effects in the EffectsGroup
-            source_context.source = source_context.ContextObjects().get(effect_group_entry.first.source_object_id);
+            source_context.source = source_context.ContextObjects().get(sourced_effects_group.source_object_id);
             effects_group->Execute(source_context,
                                    targets_and_cause,
                                    update_effect_accounting ? &m_effect_accounting_map : nullptr,
@@ -1722,22 +1711,19 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
     // but, do now collect info about source objects for destruction, to sure
     // their info is available even if they are destroyed by the upcoming effect
     // destruction
-    for (auto& entry : m_marked_destroyed) {
-        int obj_id = entry.first;
+    for (auto& [obj_id, destructors] : m_marked_destroyed) {
         auto obj = m_objects.get(obj_id);
         if (!obj)
             continue;
 
         // recording of what species/empire destroyed what other stuff in
         // empire statistics for this destroyed object and any contained objects
-        for (int destructor : entry.second) {
+        for (int destructor : destructors)
             CountDestructionInStats(obj_id, destructor);
-        }
 
         for (int contained_obj_id : obj->ContainedObjectIDs()) {
-            for (int destructor : entry.second) {
+            for (int destructor : destructors)
                 CountDestructionInStats(contained_obj_id, destructor);
-            }
         }
         // not worried about fleets being deleted because all their ships were
         // destroyed...  as of this writing there are no stats tracking

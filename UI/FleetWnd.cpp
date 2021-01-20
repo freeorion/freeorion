@@ -1756,17 +1756,16 @@ void FleetDataPanel::Init() {
             {MeterType::METER_SPEED,          ClientUI::MeterIcon(MeterType::METER_SPEED),     "FW_FLEET_SPEED_SUMMARY"}};
 
         m_stat_icons.reserve(meters_icons_browsetext.size());
-        for (const auto& entry : meters_icons_browsetext) {
-            auto icon = GG::Wnd::Create<StatisticIcon>(std::move(std::get<1>(entry)), 0, 0, false,
-                                                       StatIconSize().x, StatIconSize().y);
-            auto meter_type = std::get<0>(entry);
+        for (auto& [meter_type, icon, text] : meters_icons_browsetext) {
+            auto stat_icon = GG::Wnd::Create<StatisticIcon>(icon, 0, 0, false,
+                                                            StatIconSize().x, StatIconSize().y);
             std::string meter_string = boost::lexical_cast<std::string>(meter_type);
 
-            m_stat_icons.emplace_back(meter_type, icon);
-            icon->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-                std::get<1>(entry), UserString(meter_string), UserString(std::get<2>(entry))));
+            m_stat_icons.emplace_back(meter_type, stat_icon);
+            stat_icon->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
+                std::move(icon), UserString(meter_string), UserString(text)));
 
-            icon->RightClickedSignal.connect([meter_string](const GG::Pt& pt){
+            stat_icon->RightClickedSignal.connect([meter_string](const GG::Pt& pt){
                 auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
 
                 auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
@@ -1777,7 +1776,7 @@ void FleetDataPanel::Init() {
                                                 zoom_article_action));
                 popup->Run();
             });
-            AttachChild(std::move(icon));
+            AttachChild(std::move(stat_icon));
         }
 
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
@@ -2793,7 +2792,7 @@ void FleetWnd::CompleteConstruction() {
     int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
     m_stat_icons.reserve(7);
-    for (auto entry : {
+    for (auto [meter_type, icon, text] : {
             std::make_tuple(MeterType::METER_SIZE,          FleetCountIcon(),   UserStringNop("FW_FLEET_COUNT_SUMMARY")),
             std::make_tuple(MeterType::METER_CAPACITY,      DamageIcon(),       UserStringNop("FW_FLEET_DAMAGE_SUMMARY")),
             std::make_tuple(MeterType::METER_SECONDARY_STAT,FightersIcon(),     UserStringNop("FW_FLEET_FIGHTER_SUMMARY")),
@@ -2803,11 +2802,11 @@ void FleetWnd::CompleteConstruction() {
             std::make_tuple(MeterType::METER_POPULATION,    ColonyIcon(),       UserStringNop("FW_FLEET_COLONY_SUMMARY")),
         })
     {
-        auto icon = GG::Wnd::Create<StatisticIcon>(std::get<1>(entry), 0, 0, false, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.emplace_back(std::get<0>(entry), icon);
-        icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(UserString(std::get<2>(entry)));
-        AttachChild(std::move(icon));
+        auto stat_icon = GG::Wnd::Create<StatisticIcon>(icon, 0, 0, false, StatIconSize().x, StatIconSize().y);
+        m_stat_icons.emplace_back(meter_type, stat_icon);
+        stat_icon->SetBrowseModeTime(tooltip_delay);
+        stat_icon->SetBrowseText(UserString(text));
+        AttachChild(std::move(stat_icon));
     }
 
     namespace ph = boost::placeholders;

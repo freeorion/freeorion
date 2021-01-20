@@ -131,9 +131,9 @@ void MessageWndEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
 
 void MessageWndEdit::FindGameWords() {
      // add player and empire names
-    for (auto& entry : Empires()) {
-        m_game_words.emplace(entry.second->Name());
-        m_game_words.emplace(entry.second->PlayerName());
+    for (auto& [ignored_id, empire] : Empires()) {
+        m_game_words.emplace(empire->Name());
+        m_game_words.emplace(empire->PlayerName());
     }
     // add system names
     for (auto& system : GetUniverse().Objects().all<System>()) {
@@ -157,9 +157,9 @@ void MessageWndEdit::FindGameWords() {
             m_game_words.emplace(UserString(special_name));
     }
      // add species names
-    for (const auto& entry : GetSpeciesManager()) {
-        if (!entry.second->Name().empty())
-            m_game_words.emplace(UserString(entry.second->Name()));
+    for (const auto& [name, species] : GetSpeciesManager()) {
+        if (!name.empty())
+            m_game_words.emplace(UserString(name));
     }
      // add techs names
     for (const std::string& tech_name : GetTechManager().TechNames()) {
@@ -167,9 +167,9 @@ void MessageWndEdit::FindGameWords() {
             m_game_words.emplace(UserString(tech_name));
     }
     // add building type names
-    for (const auto& entry : GetBuildingTypeManager()) {
-        if (!entry.second->Name().empty())
-            m_game_words.emplace(UserString(entry.second->Name()));
+    for (const auto& [name, type] : GetBuildingTypeManager()) {
+        if (!name.empty())
+            m_game_words.emplace(UserString(name));
     }
     // add ship hulls
     for (const auto& design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {

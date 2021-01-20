@@ -242,46 +242,44 @@ void ObjectMap::swap(ObjectMap& rhs) {
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     std::vector<int> result;
     result.reserve(m_existing_objects.size());
-    for (const auto& entry : m_existing_objects)
-        result.emplace_back(entry.first);
+    for (const auto& [id, ignored_obj] : m_existing_objects)
+        result.push_back(id);
     return result;
 }
 
 void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_object_ids) {
     FOR_EACH_EXISTING_MAP(ClearMap);
-    for (const auto& entry : m_objects) {
-        if (!entry.second)
+    for (const auto& [id, obj] : m_objects) {
+        if (!obj || destroyed_object_ids.count(id))
             continue;
-        if (destroyed_object_ids.count(entry.first))
-            continue;
-        auto this_item = this->get(entry.first);
-        m_existing_objects[entry.first] = this_item;
-        switch (entry.second->ObjectType()) {
+        auto this_item = this->get(id);
+        m_existing_objects[id] = this_item;
+        switch (obj->ObjectType()) {
             case UniverseObjectType::OBJ_BUILDING:
-                m_existing_buildings[entry.first] = this_item;
+                m_existing_buildings[id] = std::move(this_item);
                 break;
             case UniverseObjectType::OBJ_FIELD:
-                m_existing_fields[entry.first] = this_item;
+                m_existing_fields[id] = std::move(this_item);
                 break;
             case UniverseObjectType::OBJ_FLEET:
-                m_existing_fleets[entry.first] = this_item;
+                m_existing_fleets[id] = std::move(this_item);
                 break;
             case UniverseObjectType::OBJ_PLANET:
-                m_existing_planets[entry.first] = this_item;
-                m_existing_pop_centers[entry.first] = this_item;
-                m_existing_resource_centers[entry.first] = this_item;
+                m_existing_planets[id] = this_item;
+                m_existing_pop_centers[id] = this_item;
+                m_existing_resource_centers[id] = std::move(this_item);
                 break;
             case UniverseObjectType::OBJ_POP_CENTER:
-                m_existing_pop_centers[entry.first] = this_item;
+                m_existing_pop_centers[id] = std::move(this_item);
                 break;
             case UniverseObjectType::OBJ_PROD_CENTER:
-                m_existing_resource_centers[entry.first] = this_item;
+                m_existing_resource_centers[id] = std::move(this_item);
                 break;
             case UniverseObjectType::OBJ_SHIP:
-                m_existing_ships[entry.first] = this_item;
+                m_existing_ships[id] = std::move(this_item);
                 break;
             case UniverseObjectType::OBJ_SYSTEM:
-                m_existing_systems[entry.first] = this_item;
+                m_existing_systems[id] = std::move(this_item);
                 break;
             case UniverseObjectType::OBJ_FIGHTER:
             default:

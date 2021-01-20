@@ -186,17 +186,17 @@ namespace {
                                    str));
             }
 
-            for (const auto& entry : encyclopedia.Articles()) {
+            for (const auto& [category_name, article_vec] : encyclopedia.Articles()) {
                 // Do not add sub-categories
-                const EncyclopediaArticle& article = encyclopedia.GetArticleByKey(entry.first);
+                const EncyclopediaArticle& article = encyclopedia.GetArticleByKey(category_name);
                 // No article found or specifically a top-level category
                 if (!article.category.empty() && article.category != "ENC_INDEX")
                     continue;
 
                 sorted_entries_list.emplace(
-                    UserString(entry.first),
-                    std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, entry.first) + "\n",
-                                   entry.first));
+                    UserString(category_name),
+                    std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, category_name) + "\n",
+                                   category_name));
             }
 
         }
@@ -370,10 +370,10 @@ namespace {
 
         }
         else if (dir_name == "ENC_EMPIRE") {
-            for (auto& entry : Empires()) {
-                sorted_entries_list.emplace(entry.second->Name(),
-                                            std::make_pair(LinkTaggedIDText(VarText::EMPIRE_ID_TAG, entry.first, entry.second->Name()) + "\n",
-                                                           std::to_string(entry.first)));
+            for (const auto& [id, empire] : Empires()) {
+                sorted_entries_list.emplace(empire->Name(),
+                                            std::make_pair(LinkTaggedIDText(VarText::EMPIRE_ID_TAG, id, empire->Name()) + "\n",
+                                                           std::to_string(id)));
             }
 
         }
