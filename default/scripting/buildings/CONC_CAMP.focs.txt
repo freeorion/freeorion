@@ -25,7 +25,7 @@ BuildingType
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population
                         * (NamedReal name = "BLD_CONC_CAMP_TARGET_INDUSTRY_PERPOP"
-                                     value = 10 * [[INDUSTRY_PER_POP]])
+                                     value = 3.75 * [[INDUSTRY_PER_POP]])
 
         EffectsGroup
             scope = And [
