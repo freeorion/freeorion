@@ -558,8 +558,8 @@ void Universe::ApplyAllEffectsAndUpdateMeters(EmpireManager& empires, bool do_ac
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
     ResetAllObjectMeters(true, true);
-    for (auto& entry : empires)
-        entry.second->ResetMeters();
+    for ([[maybe_unused]] auto& [empire_id, empire] : empires)
+        empire->ResetMeters();
 
     ExecuteEffects(source_effects_targets_causes, empires, do_accounting, false, false, true);
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
@@ -614,20 +614,16 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(EmpireManager& empires, bool do_
     TraceLogger(effects) << "Universe::ApplyMeterEffectsAndUpdateMeters resetting...";
     for (const auto& object : m_objects.all()) {
         TraceLogger(effects) << "object " << object->Name() << " (" << object->ID() << ") before resetting meters: ";
-        for (auto const& meter_pair : object->Meters()) {
-            TraceLogger(effects) << "    meter: " << meter_pair.first
-                                 << "  value: " << meter_pair.second.Current();
-        }
+        for (auto const& [meter_type, meter] : object->Meters())
+            TraceLogger(effects) << "    meter: " << meter_type << "  value: " << meter.Current();
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
         TraceLogger(effects) << "object " << object->Name() << " (" << object->ID() << ") after resetting meters: ";
-        for (auto const& meter_pair : object->Meters()) {
-            TraceLogger(effects) << "    meter: " << meter_pair.first
-                                 << "  value: " << meter_pair.second.Current();
-        }
+        for (auto const& [meter_type, meter] : object->Meters())
+            TraceLogger(effects) << "    meter: " << meter_type << "  value: " << meter.Current();
     }
-    for (auto& entry : empires)
-        entry.second->ResetMeters();
+    for ([[maybe_unused]] auto& [empire_id, empire] : empires)
+        empire->ResetMeters();
     ExecuteEffects(source_effects_targets_causes, empires, do_accounting, true, false, true);
 
     for (const auto& object : m_objects.all())
@@ -703,8 +699,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies(EmpireManager& empires) {
                          << "   and discrepancy map size: " << m_effect_discrepancy_map.size();
 
     // determine meter max discrepancies
-    for (auto& entry : m_effect_accounting_map) {
-        int object_id = entry.first;
+    for (auto& [object_id, account_map] : m_effect_accounting_map) {
         // skip destroyed objects
         if (m_destroyed_object_ids.count(object_id))
             continue;
@@ -717,13 +712,13 @@ void Universe::InitMeterEstimatesAndDiscrepancies(EmpireManager& empires) {
         if (obj->Meters().empty())
             continue;
 
-        TraceLogger(effects) << "... discrepancies for " << obj->Name() << " (" << obj->ID() << "):";
+        TraceLogger(effects) << "... discrepancies for " << obj->Name() << " (" << object_id << "):";
 
-        auto& account_map = entry.second;
         account_map.reserve(obj->Meters().size());
 
         // discrepancies should be empty before this loop, so emplacing / assigning should be fine here (without overwriting existing data)
-        auto dis_map_it = m_effect_discrepancy_map.emplace_hint(m_effect_discrepancy_map.end(), object_id, boost::container::flat_map<MeterType, double>{});
+        auto dis_map_it = m_effect_discrepancy_map.emplace_hint(m_effect_discrepancy_map.end(),
+                                                                object_id, boost::container::flat_map<MeterType, double>{});
         auto& discrep_map = dis_map_it->second;
         discrep_map.reserve(obj->Meters().size());
 
