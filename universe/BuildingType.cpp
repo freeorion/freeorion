@@ -153,7 +153,7 @@ float BuildingType::ProductionCost(int empire_id, int location_id,
     ScriptingContext local_context(std::move(source), context);
     local_context.effect_target = std::const_pointer_cast<UniverseObject>(location);
 
-    return m_production_cost->Eval(context);
+    return m_production_cost->Eval(local_context);
 }
 
 float BuildingType::PerTurnCost(int empire_id, int location_id,
@@ -194,7 +194,7 @@ int BuildingType::ProductionTime(int empire_id, int location_id,
     ScriptingContext local_context(std::move(source), context);
     local_context.effect_target = std::const_pointer_cast<UniverseObject>(location);
 
-    return m_production_time->Eval(context);
+    return m_production_time->Eval(local_context);
 }
 
 bool BuildingType::ProductionLocation(int empire_id, int location_id,
