@@ -2662,7 +2662,7 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("meter estimates");
     // update effect accounting and meter estimates
-    universe.InitMeterEstimatesAndDiscrepancies();
+    universe.InitMeterEstimatesAndDiscrepancies(Empires());
 
     // if we've just loaded the game there may be some unexecuted orders, we
     // should reapply them now, so they are reflected in the UI, but do not
@@ -2671,9 +2671,9 @@ void MapWnd::InitTurn() {
 
     // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
     // population is available for currently uncolonized planets
-    GetUniverse().UpdateMeterEstimates();
+    GetUniverse().UpdateMeterEstimates(Empires());
 
-    GetUniverse().ApplyAppearanceEffects();
+    GetUniverse().ApplyAppearanceEffects(Empires());
 
     timer.EnterSection("rendering");
     // set up system icons, starlanes, galaxy gas rendering
@@ -4366,7 +4366,7 @@ void MapWnd::SelectSystem(int system_id) {
 
     if (system) {
         // ensure meter estimates are up to date, particularly for which ship is selected
-        GetUniverse().UpdateMeterEstimates(system_id, true);
+        GetUniverse().UpdateMeterEstimates(system_id, Empires(), true);
     }
 
 
@@ -6855,7 +6855,7 @@ void MapWnd::RefreshPopulationIndicator() {
 }
 
 void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools() {
-    GetUniverse().UpdateMeterEstimates(SidePanel::SystemID(), true);
+    GetUniverse().UpdateMeterEstimates(SidePanel::SystemID(), Empires(), true);
     UpdateEmpireResourcePools();
 }
 

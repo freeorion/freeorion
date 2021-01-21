@@ -720,7 +720,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // after all game initialization stuff has been created, set current turn to 0 and apply only GenerateSitRep Effects
     // so that a set of SitReps intended as the player's initial greeting will be segregated
     m_current_turn = 0;
-    m_universe.ApplyGenerateSitRepEffects();
+    m_universe.ApplyGenerateSitRepEffects(m_empires);
 
     //can set current turn to 1 for start of game
     m_current_turn = 1;
@@ -1459,8 +1459,6 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 }
 
 void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
-    Universe& universe = GetUniverse();
-
     // Set game UID. Needs to be done first so we can use ClockSeed to
     // prevent reproducible UIDs.
     ClockSeed();
@@ -1494,14 +1492,14 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     DebugLogger() << "GenerateUniverse with seed: " << seed;
 
     // Reset the universe object for a new universe
-    universe.Clear();
+    m_universe.Clear();
     GetSpeciesManager().ClearSpeciesHomeworlds();
 
     // Reset the object id manager for the new empires.
     std::vector<int> empire_ids(player_setup_data.size());
     std::transform(player_setup_data.begin(), player_setup_data.end(), empire_ids.begin(),
                    [](const std::pair<int,PlayerSetupData> ii) { return ii.first; });
-    universe.ResetAllIDAllocation(empire_ids);
+    m_universe.ResetAllIDAllocation(empire_ids);
 
     // Add predefined ship designs to universe
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
@@ -1533,39 +1531,39 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     DebugLogger() << "Applying first turn effects and updating meters";
 
     // Apply effects for 1st turn.
-    universe.ApplyAllEffectsAndUpdateMeters(false);
+    m_universe.ApplyAllEffectsAndUpdateMeters(m_empires, false);
 
-    TraceLogger(effects) << "After First turn meter effect applying: " << universe.Objects().Dump();
+    TraceLogger(effects) << "After First turn meter effect applying: " << m_universe.Objects().Dump();
     // Set active meters to targets or maxes after first meter effects application
-    SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
+    SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
 
-    universe.UpdateMeterEstimates();
-    universe.BackPropagateObjectMeters();
-    SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
-    universe.BackPropagateObjectMeters();
+    m_universe.UpdateMeterEstimates(m_empires);
+    m_universe.BackPropagateObjectMeters();
+    SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
+    m_universe.BackPropagateObjectMeters();
 
-    TraceLogger(effects) << "After First active set to target/max: " << universe.Objects().Dump();
+    TraceLogger(effects) << "After First active set to target/max: " << m_universe.Objects().Dump();
 
-    universe.BackPropagateObjectMeters();
-    Empires().BackPropagateMeters();
+    m_universe.BackPropagateObjectMeters();
+    m_empires.BackPropagateMeters();
 
     DebugLogger() << "Re-applying first turn meter effects and updating meters";
 
     // Re-apply meter effects, so that results depending on meter values can be
     // re-checked after initial setting of those meter values
-    universe.ApplyMeterEffectsAndUpdateMeters(false);
+    m_universe.ApplyMeterEffectsAndUpdateMeters(m_empires, false);
     // Re-set active meters to targets after re-application of effects
-    SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
+    SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
     // Set the population of unowned planets to a random fraction of their target values.
-    SetNativePopulationValues(universe.Objects());
+    SetNativePopulationValues(m_universe.Objects());
 
-    universe.BackPropagateObjectMeters();
-    Empires().BackPropagateMeters();
+    m_universe.BackPropagateObjectMeters();
+    m_empires.BackPropagateMeters();
 
     TraceLogger() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
-    TraceLogger() << universe.Objects().Dump();
+    TraceLogger() << m_universe.Objects().Dump();
 
-    universe.UpdateEmpireObjectVisibilities();
+    m_universe.UpdateEmpireObjectVisibilities(m_empires);
 }
 
 void ServerApp::ExecuteScriptedTurnEvents() {
@@ -3320,9 +3318,9 @@ void ServerApp::PreCombatProcessTurns() {
     }
 
     // post-movement visibility update
-    m_universe.UpdateEmpireObjectVisibilities();
+    m_universe.UpdateEmpireObjectVisibilities(m_empires);
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
-    m_universe.UpdateEmpireStaleObjectKnowledge();
+    m_universe.UpdateEmpireStaleObjectKnowledge(m_empires);
 
     // SitReps for fleets having arrived at destinations
     for (auto& fleet : fleets) {
@@ -3393,7 +3391,7 @@ void ServerApp::ProcessCombats() {
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
     // update stale object info based on any mid- combat glimpses
     // before visibility is totally recalculated in the post combat processing
-    m_universe.UpdateEmpireStaleObjectKnowledge();
+    m_universe.UpdateEmpireStaleObjectKnowledge(m_empires);
 
     CreateCombatSitReps(combats);
 }
@@ -3446,18 +3444,15 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
 void ServerApp::PostCombatProcessTurns() {
     ScopedTimer timer("ServerApp::PostCombatProcessTurns", true);
 
-    EmpireManager& empires = Empires();
-    ObjectMap& objects = m_universe.Objects();
-
     // post-combat visibility update
-    m_universe.UpdateEmpireObjectVisibilities();
+    m_universe.UpdateEmpireObjectVisibilities(Empires());
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 
     // check for loss of empire capitals
-    for (auto& entry : empires) {
+    for (auto& entry : m_empires) {
         int capital_id = entry.second->CapitalID();
-        if (auto capital = Objects().get(capital_id)) {
+        if (auto capital = m_universe.Objects().get(capital_id)) {
             if (!capital->OwnedBy(entry.first))
                 entry.second->SetCapitalID(INVALID_OBJECT_ID);
         } else {
@@ -3473,52 +3468,50 @@ void ServerApp::PostCombatProcessTurns() {
     DebugLogger() << "ServerApp::PostCombatProcessTurns effects and meter updates";
 
     TraceLogger(effects) << "!!!!!!! BEFORE TURN PROCESSING EFFECTS APPLICATION";
-    TraceLogger(effects) << objects.Dump();
+    TraceLogger(effects) << m_universe.Objects().Dump();
 
     // execute all effects and update meters prior to production, research, etc.
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
         static boost::hash<std::string> pcpt_string_hash;
         Seed(static_cast<unsigned int>(CurrentTurn()) + pcpt_string_hash(m_galaxy_setup_data.seed));
     }
-    m_universe.ApplyAllEffectsAndUpdateMeters(false);
+    m_universe.ApplyAllEffectsAndUpdateMeters(m_empires, false);
 
     // regenerate system connectivity graph after executing effects, which may
     // have added or removed starlanes.
-    m_universe.InitializeSystemGraph(empires, objects);
-    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(empires);
+    m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
+    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
 
     TraceLogger(effects) << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
-    TraceLogger(effects) << objects.Dump();
+    TraceLogger(effects) << m_universe.Objects().Dump();
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns empire resources updates";
 
     // now that we've had combat and applied Effects, update visibilities again, prior
     //  to updating system obstructions below.
-    m_universe.UpdateEmpireObjectVisibilities();
+    m_universe.UpdateEmpireObjectVisibilities(m_empires);
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
     UpdateEmpireSupply();
 
     // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
-    for (auto& entry : empires) {
-        if (!entry.second->Eliminated()) {
-            auto& empire = entry.second;
+    for (auto& [empire_id, empire] : m_empires) {
+        if (!empire->Eliminated()) {
             empire->UpdatePreservedLanes();
             empire->UpdateUnobstructedFleets();     // must be done after *all* noneliminated empires have updated their unobstructed systems
         }
     }
 
     TraceLogger(effects) << "!!!!!!! AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
-    TraceLogger(effects) << objects.Dump();
+    TraceLogger(effects) << m_universe.Objects().Dump();
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns queue progress checking";
 
     // Consume distributed resources to planets and on queues, create new
     // objects for completed production and give techs to empires that have
     // researched them
-    for (auto& entry : empires) {
-        auto& empire = entry.second;
+    for (auto& [empire_id, empire] : m_empires) {
         if (empire->Eliminated())
             continue;   // skip eliminated empires
 
@@ -3529,7 +3522,7 @@ void ServerApp::PostCombatProcessTurns() {
     }
 
     TraceLogger(effects) << "!!!!!!! AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
-    TraceLogger(effects) << objects.Dump();
+    TraceLogger(effects) << m_universe.Objects().Dump();
 
     // execute turn events implemented as Python scripts
     ExecuteScriptedTurnEvents();
@@ -3538,26 +3531,26 @@ void ServerApp::PostCombatProcessTurns() {
     // UniverseObjects will have effects applied to them this turn, allowing
     // (for example) ships to have max fuel meters greater than 0 on the turn
     // they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters(false);
+    m_universe.ApplyMeterEffectsAndUpdateMeters(m_empires, false);
 
     TraceLogger(effects) << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
-    TraceLogger(effects) << objects.Dump();
+    TraceLogger(effects) << m_universe.Objects().Dump();
 
     // Planet depopulation, some in-C++ meter modifications
-    for (const auto& obj : objects.all()) {
+    for (const auto& obj : m_universe.Objects().all()) {
         obj->PopGrowthProductionResearchPhase();
         obj->ClampMeters();  // ensures no meters are over MAX.  probably redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
 
     TraceLogger(effects) << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
-    TraceLogger(effects) << objects.Dump();
+    TraceLogger(effects) << m_universe.Objects().Dump();
 
     // store initial values of meters for this turn.
     m_universe.BackPropagateObjectMeters();
-    empires.BackPropagateMeters();
+    m_empires.BackPropagateMeters();
 
     // check for loss of empire capitals
-    for (auto& entry : empires) {
+    for (auto& entry : m_empires) {
         int capital_id = entry.second->CapitalID();
         if (auto capital = Objects().get(capital_id)) {
             if (!capital->OwnedBy(entry.first))
@@ -3576,15 +3569,15 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
     // post-production and meter-effects visibility update
-    m_universe.UpdateEmpireObjectVisibilities();
+    m_universe.UpdateEmpireObjectVisibilities(m_empires);
 
-    m_universe.UpdateEmpireStaleObjectKnowledge();
+    m_universe.UpdateEmpireStaleObjectKnowledge(m_empires);
 
     // update empire-visibility filtered graphs after visiblity update
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(Empires());
 
     TraceLogger(effects) << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
-    TraceLogger(effects) << objects.Dump();
+    TraceLogger(effects) << m_universe.Objects().Dump();
 
     // this has to be here for the sitreps it creates to be in the right turn
     CheckForEmpireElimination();
@@ -3596,27 +3589,26 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // new turn visibility update
-    m_universe.UpdateEmpireObjectVisibilities();
+    m_universe.UpdateEmpireObjectVisibilities(m_empires);
 
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns applying Newly Added Techs";
     // apply new techs
-    for (auto& entry : empires) {
-        auto& empire = entry.second;
+    for (auto& [ignored_id, empire] : m_empires) {
         if (empire && !empire->Eliminated())
             empire->ApplyNewTechs();
     }
 
 
     TraceLogger(effects) << "ServerApp::PostCombatProcessTurns Before Final Meter Estimate Update: ";
-    TraceLogger(effects) << objects.Dump();
+    TraceLogger(effects) << m_universe.Objects().Dump();
 
 
     // redo meter estimates to hopefully be consistent with what happens in clients
-    m_universe.UpdateMeterEstimates(false);
+    m_universe.UpdateMeterEstimates(m_empires, false);
 
     TraceLogger(effects) << "ServerApp::PostCombatProcessTurns After Final Meter Estimate Update: ";
-    TraceLogger(effects) << objects.Dump();
+    TraceLogger(effects) << m_universe.Objects().Dump();
 
 
     // Re-determine supply distribution and exchanging and resource pools for empires
@@ -3628,8 +3620,8 @@ void ServerApp::PostCombatProcessTurns() {
 
     // misc. other updates and records
     m_universe.UpdateStatRecords();
-    for (auto& entry : empires)
-        entry.second->UpdateOwnedObjectCounters();
+    for (auto& [ignored_empire_id, empire] : m_empires)
+        empire->UpdateOwnedObjectCounters();
     GetSpeciesManager().UpdatePopulationCounter();
 
 
@@ -3660,7 +3652,7 @@ void ServerApp::PostCombatProcessTurns() {
     {
         PlayerConnectionPtr player = *player_it;
         int empire_id = PlayerEmpireID(player->PlayerID());
-        const Empire* empire = GetEmpire(empire_id);
+        auto empire = m_empires.GetEmpire(empire_id);
         if (empire ||
             player->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR ||
             player->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)

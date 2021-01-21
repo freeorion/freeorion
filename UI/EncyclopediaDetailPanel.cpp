@@ -2418,14 +2418,14 @@ namespace {
         auto temp = GetUniverse().InsertTemp<Ship>(client_empire_id, design_id, "", client_empire_id);
 
         // apply empty species for 'Generic' entry
-        GetUniverse().UpdateMeterEstimates(temp->ID());
+        GetUniverse().UpdateMeterEstimates(temp->ID(), Empires());
         temp->Resupply();
         detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
         for (std::string& species_name : species_list) {
             temp->SetSpecies(std::move(species_name));
-            GetUniverse().UpdateMeterEstimates(temp->ID());
+            GetUniverse().UpdateMeterEstimates(temp->ID(), Empires());
             temp->Resupply();
             detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
         }
@@ -2539,7 +2539,7 @@ namespace {
                                                    client_empire_id);
 
         // apply empty species for 'Generic' entry
-        GetUniverse().UpdateMeterEstimates(temp->ID());
+        GetUniverse().UpdateMeterEstimates(temp->ID(), Empires());
         temp->Resupply();
         detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(),
                                                                 enemy_DR, enemy_shots, cost));
@@ -2547,7 +2547,7 @@ namespace {
         // apply various species to ship, re-calculating the meter values for each
         for (std::string& species_name : species_list) {
             temp->SetSpecies(std::move(species_name));
-            GetUniverse().UpdateMeterEstimates(temp->ID());
+            GetUniverse().UpdateMeterEstimates(temp->ID(), Empires());
             temp->Resupply();
             detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(),
                                                                     enemy_DR, enemy_shots, cost));
@@ -2674,7 +2674,7 @@ namespace {
             //       results in incorrect estimates for at least effects with a min target population of 0
             planet.SetSpecies(species_name);
             planet.SetOwner(empire_id);
-            GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, false);
+            GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, Empires(), false);
 
             const auto species = GetSpecies(species_name);
             auto planet_environment = PlanetEnvironment::PE_UNINHABITABLE;
@@ -2693,7 +2693,7 @@ namespace {
         planet.GetMeter(MeterType::METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
 
         GetUniverse().InhibitUniverseObjectSignals(false);
-        GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, false);
+        GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, Empires(), false);
 
         return retval;
     }

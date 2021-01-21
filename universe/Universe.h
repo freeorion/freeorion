@@ -121,7 +121,7 @@ public:
     /** Returns IDs of objects that the Empire with id \a empire_id has vision
       * of on the current turn, or objects that at least one empire has vision
       * of on the current turn if \a empire_id = ALL_EMPIRES */
-    std::set<int>           EmpireVisibleObjectIDs(int empire_id = ALL_EMPIRES) const;
+    std::set<int>           EmpireVisibleObjectIDs(int empire_id, const EmpireManager& empires) const;
 
     /** Returns IDs of objects that have been destroyed. */
     const std::set<int>&    DestroyedObjectIds() const;
@@ -217,53 +217,54 @@ public:
       * executes all effects on all objects.  Then clamps meter values so
       * target and max meters are within a reasonable range and any current
       * meters with associated max meters are limited by their max. */
-    void ApplyAllEffectsAndUpdateMeters(bool do_accounting = true);
+    void ApplyAllEffectsAndUpdateMeters(EmpireManager& empires, bool do_accounting = true);
 
     /** Determines all effectsgroups' target sets, then resets meters and
       * executes only SetMeter effects on all objects whose ids are listed in
       * \a object_ids.  Then clamps meter values so target and max meters are
       * within a reasonable range and any current meters with associated max
       * meters are limited by their max. */
-    void ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, bool do_accounting = true);
+    void ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, EmpireManager& empires,
+                                          bool do_accounting = true);
 
     /** Calls above ApplyMeterEffectsAndUpdateMeters() function on all objects.*/
-    void ApplyMeterEffectsAndUpdateMeters(bool do_accounting = true);
+    void ApplyMeterEffectsAndUpdateMeters(EmpireManager& empires, bool do_accounting = true);
 
     /** Executes effects that modify objects' appearance in the human client. */
-    void ApplyAppearanceEffects(const std::vector<int>& object_ids);
+    void ApplyAppearanceEffects(const std::vector<int>& object_ids, EmpireManager& empires);
 
     /** Executes effects that modify objects' apperance for all objects. */
-    void ApplyAppearanceEffects();
+    void ApplyAppearanceEffects(EmpireManager& empires);
 
     /** Executes effects that modify objects' apperance for all objects. */
-    void ApplyGenerateSitRepEffects();
+    void ApplyGenerateSitRepEffects(EmpireManager& empires);
 
     /** For all objects and meters, determines discrepancies between actual meter
       * maxes and what the known universe should produce, and and stores in
       * m_effect_discrepancy_map. */
-    void InitMeterEstimatesAndDiscrepancies();
+    void InitMeterEstimatesAndDiscrepancies(EmpireManager& empires);
 
     /** Based on (known subset of, if in a client) universe and any orders
       * given so far this turn, updates estimated meter maxes for next turn
       * for the objects with ids indicated in \a objects_vec. */
-    void UpdateMeterEstimates(const std::vector<int>& objects_vec);
+    void UpdateMeterEstimates(const std::vector<int>& objects_vec, EmpireManager& empires);
 
     /** Updates indicated object's meters, and if applicable, the
       * meters of objects contained within the indicated object.
       * If \a object_id is INVALID_OBJECT_ID, then all
       * objects' meters are updated. */
-    void UpdateMeterEstimates(int object_id, bool update_contained_objects = false);
+    void UpdateMeterEstimates(int object_id, EmpireManager& empires, bool update_contained_objects = false);
 
     /** Updates all meters for all (known) objects */
-    void UpdateMeterEstimates();
-    void UpdateMeterEstimates(bool do_accounting);
+    void UpdateMeterEstimates(EmpireManager& empires);
+    void UpdateMeterEstimates(EmpireManager& empires, bool do_accounting);
 
     /** Sets all objects' meters' initial values to their current values. */
     void BackPropagateObjectMeters();
 
     /** Determines which empires can see which objects at what visibility
       * level, based on  */
-    void UpdateEmpireObjectVisibilities();
+    void UpdateEmpireObjectVisibilities(EmpireManager& empires);
 
     /** Sets a special record of visibility that overrides the standard
       * empire-object visibility after the latter is processed. */
@@ -271,7 +272,7 @@ public:
                                     const ValueRef::ValueRef<Visibility>* vis);
 
     /** Applies empire-object visibilities set by effects. */
-    void ApplyEffectDerivedVisibilities();
+    void ApplyEffectDerivedVisibilities(EmpireManager& empires);
 
     /** If an \p empire_id can't currently see \p object_id, then remove
      * \p object_id' object from the object map and the set of known objects. */
@@ -295,7 +296,7 @@ public:
       * in cases when the latest known state (stealth and location) suggests
       * that the empire should be able to see the object, but the object can't
       * be seen by the empire, updates the latest known state to note this. */
-    void UpdateEmpireStaleObjectKnowledge();
+    void UpdateEmpireStaleObjectKnowledge(EmpireManager& empires);
 
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems based on the objects in \a objects */
@@ -454,6 +455,7 @@ private:
     /** Clears \a source_effects_targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */
     void GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
+                              EmpireManager& empires,
                               bool only_meter_effects = false) const;
 
     /** Removes entries in \a source_effects_targets_causes about effects groups acting
@@ -462,6 +464,7 @@ private:
       * \a target_objects is empty then default target candidates will be used. */
     void GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                               const std::vector<int>& target_objects,
+                              EmpireManager& empires,
                               bool only_meter_effects = false) const;
 
     void ResetObjectMeters(const std::vector<std::shared_ptr<UniverseObject>>& objects,
@@ -473,6 +476,7 @@ private:
       * values after the rest of effects (including non-meter effects) have
       * been executed. */
     void ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
+                        EmpireManager& empires,
                         bool update_effect_accounting,
                         bool only_meter_effects = false,
                         bool only_appearance_effects = false,
@@ -483,7 +487,7 @@ private:
       * processed objects_vec or whatever they were passed and cleared the
       * relevant effect accounting for those objects and meters. If an empty
       * vector is passed, it will instead update all existing objects. */
-    void UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, bool do_accounting);
+    void UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, EmpireManager& empires, bool do_accounting);
 
     ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
     EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)

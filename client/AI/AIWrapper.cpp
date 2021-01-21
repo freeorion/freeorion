@@ -129,7 +129,7 @@ namespace {
 
     void InitMeterEstimatesAndDiscrepancies() {
         Universe& universe = AIClientApp::GetApp()->GetUniverse();
-        universe.InitMeterEstimatesAndDiscrepancies();
+        universe.InitMeterEstimatesAndDiscrepancies(AIClientApp::GetApp()->Empires());
     }
 
     /** @brief Set ::Universe ::Meter instances to their estimated values as
@@ -170,7 +170,7 @@ namespace {
         }
 
         // update meter estimates with temporary ownership
-        universe.UpdateMeterEstimates();
+        universe.UpdateMeterEstimates(Empires());
 
         if (pretend_to_own_unowned_planets) {
             // remove temporary ownership added above

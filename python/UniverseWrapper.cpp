@@ -66,7 +66,7 @@ namespace {
     {
         py::stl_input_iterator<int> begin(objIter), end;
         std::vector<int> objvec(begin, end);
-        GetUniverse().UpdateMeterEstimates(objvec);
+        GetUniverse().UpdateMeterEstimates(objvec, Empires());
     }
 
     auto ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>

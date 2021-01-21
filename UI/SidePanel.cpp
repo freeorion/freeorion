@@ -1393,7 +1393,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
                         target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
 
                         // temporary meter update with currently set species
-                        GetUniverse().UpdateMeterEstimates(target_planet_id);
+                        GetUniverse().UpdateMeterEstimates(target_planet_id, Empires());
                         planet_capacity = target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current();  // want value after meter update, so check current, not initial value
                     }
                     species_colony_projections[std::move(spec_pair)] = planet_capacity;
@@ -1413,7 +1413,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
         target_planet->SetSpecies(orig_species);
         target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(orig_initial_target_pop,
                                                               orig_initial_target_pop);
-        GetUniverse().UpdateMeterEstimates(target_planet_id);
+        GetUniverse().UpdateMeterEstimates(target_planet_id, Empires());
     }
     GetUniverse().InhibitUniverseObjectSignals(false);
 
@@ -1693,13 +1693,13 @@ void SidePanel::PlanetPanel::Refresh() {
             planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
 
             // temporary meter updates for curently set species
-            GetUniverse().UpdateMeterEstimates(m_planet_id);
+            GetUniverse().UpdateMeterEstimates(m_planet_id, Empires());
             planet_capacity = ((planet_env_for_colony_species == PlanetEnvironment::PE_UNINHABITABLE) ? 0.0 : planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current());   // want target pop after meter update, so check current value of meter
             planet->SetOwner(orig_owner);
             planet->SetSpecies(orig_species);
             planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(
                 orig_initial_target_pop, orig_initial_target_pop);
-            GetUniverse().UpdateMeterEstimates(m_planet_id);
+            GetUniverse().UpdateMeterEstimates(m_planet_id, Empires());
 
             colony_projections[this_pair] = planet_capacity;
             GetUniverse().InhibitUniverseObjectSignals(false);
