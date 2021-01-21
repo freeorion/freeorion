@@ -8,6 +8,7 @@
 #include <boost/signals2/signal.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/optional.hpp>
+#include <boost/uuid/nil_generator.hpp>
 
 #include <functional>
 #include <memory>
