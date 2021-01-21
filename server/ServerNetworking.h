@@ -313,9 +313,9 @@ private:
 
     boost::asio::io_context&        m_service;
     boost::optional<boost::asio::ip::tcp::socket> m_socket;
-    Message::HeaderBuffer           m_incoming_header_buffer;
+    Message::HeaderBuffer           m_incoming_header_buffer = {};
     Message                         m_incoming_message;
-    Message::HeaderBuffer           m_outgoing_header;
+    Message::HeaderBuffer           m_outgoing_header = {};
     std::list<Message>              m_outgoing_messages;
     int                             m_ID = Networking::INVALID_PLAYER_ID;
     std::string                     m_player_name;
@@ -324,7 +324,7 @@ private:
     std::string                     m_client_version_string;
     bool                            m_authenticated = false;
     Networking::AuthRoles           m_roles;
-    boost::uuids::uuid              m_cookie;
+    boost::uuids::uuid              m_cookie = boost::uuids::nil_uuid();
     bool                            m_valid = true;
 
     MessageAndConnectionFn          m_nonplayer_message_callback;

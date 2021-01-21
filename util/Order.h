@@ -177,7 +177,7 @@ private:
     /** m_fleet_id is mutable because ExecuteImpl generates the fleet id. */
     mutable int m_fleet_id = INVALID_OBJECT_ID;
     std::vector<int> m_ship_ids;
-    FleetAggression m_aggression;
+    FleetAggression m_aggression{0};
 
     friend class boost::serialization::access;
     template <typename Archive>

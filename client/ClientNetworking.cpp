@@ -241,8 +241,8 @@ private:
     void SendMessageImpl(Message message);
     void DisconnectFromServerImpl();
 
-    int                             m_player_id;
-    int                             m_host_player_id;
+    int                             m_player_id = Networking::INVALID_PLAYER_ID;
+    int                             m_host_player_id = Networking::INVALID_PLAYER_ID;
     Networking::AuthRoles           m_roles;
 
     boost::asio::io_context         m_io_context;
@@ -254,15 +254,15 @@ private:
     // protected to prevent unpredictable results.
     mutable boost::mutex            m_mutex;
 
-    bool                            m_rx_connected;      // accessed from multiple threads
-    bool                            m_tx_connected;      // accessed from multiple threads
+    bool                            m_rx_connected = false; // accessed from multiple threads
+    bool                            m_tx_connected = false; // accessed from multiple threads
 
-    MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
+    MessageQueue                    m_incoming_messages;    // accessed from multiple threads, but its interface is threadsafe
     std::list<Message>              m_outgoing_messages;
 
-    Message::HeaderBuffer           m_incoming_header;
+    Message::HeaderBuffer           m_incoming_header= {};
     Message                         m_incoming_message;
-    Message::HeaderBuffer           m_outgoing_header;
+    Message::HeaderBuffer           m_outgoing_header= {};
 
     std::string                     m_destination;
 };
@@ -272,12 +272,7 @@ private:
 // ClientNetworking Impl
 ////////////////////////////////////////////////
 ClientNetworking::Impl::Impl() :
-    m_player_id(Networking::INVALID_PLAYER_ID),
-    m_host_player_id(Networking::INVALID_PLAYER_ID),
-    m_io_context(),
     m_socket(m_io_context),
-    m_rx_connected(false),
-    m_tx_connected(false),
     m_incoming_messages(m_mutex)
 {}
 
