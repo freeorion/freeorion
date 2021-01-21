@@ -1045,7 +1045,6 @@ ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empi
     m_new_quantity(number),
     m_new_index(pos),
     m_uuid(boost::uuids::random_generator()()),
-    m_uuid2(boost::uuids::nil_generator()()),
     m_action(action)
 {
     if (action != ProdQueueOrderAction::PLACE_IN_QUEUE)
@@ -1056,7 +1055,6 @@ ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empi
                                            boost::uuids::uuid uuid, int num1, int num2) :
     Order(empire),
     m_uuid(uuid),
-    m_uuid2(boost::uuids::nil_generator()()),
     m_action(action)
 {
     switch(m_action) {
