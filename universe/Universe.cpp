@@ -300,7 +300,7 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireManage
     if (empire_id != ALL_EMPIRES) {
         empire_ids.insert(empire_id);
     } else {
-        for (const auto& [empire_id, empire] : empires)
+        for ([[maybe_unused]] auto& [empire_id, empire] : empires)
             empire_ids.insert(empire_id);
     }
 
