@@ -79,10 +79,10 @@ struct lexer :
     boost::spirit::lex::token_def<boost::spirit::lex::omit> error_token;
     //@}
 
-    static const char* bool_regex;
-    static const char* int_regex;
-    static const char* double_regex;
-    static const char* string_regex;
+    static constexpr char* bool_regex = "(?i:true|false)";
+    static constexpr char* int_regex = "\\d+";
+    static constexpr char* double_regex = "\\d+\\.\\d*|\\d*\\.\\d+";
+    static constexpr char* string_regex = "\\\"[^\\\"]*\\\"";
 
 private:
 };

@@ -19,8 +19,8 @@ struct FO_COMMON_API SaveGamePreviewData {
     bool Valid() const;         /// Checks that this is a valid preview
     void SetBinary(bool bin = true);         /// Sets the description string appropriate for a binary or XML save file header
 
-    static const short  PREVIEW_PRESENT_MARKER = 0xDA;  /// A marker for the presence of the header
-    short               magic_number;                   /// This should always contain PREVIEW_PRESENT_MARKER
+    static constexpr short  PREVIEW_PRESENT_MARKER = 0xDA;          /// A marker for the presence of the header
+    short                   magic_number = PREVIEW_PRESENT_MARKER;  /// This should always contain PREVIEW_PRESENT_MARKER
 
     std::string         description;                    /// Bit of text explaining what this file contains as human-readable text
     std::string         freeorion_version;              /// By what version of FreeOrion was this save generated

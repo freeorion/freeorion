@@ -894,7 +894,7 @@ namespace {
 // SidePanel::PlanetPanel
 ////////////////////////////////////////////////
 namespace {
-    static const bool SHOW_ALL_PLANET_PANELS = false;   //!< toggles whether to show population, resource, military and building info panels on planet panels that this player doesn't control
+    constexpr bool SHOW_ALL_PLANET_PANELS = false;   //!< toggles whether to show population, resource, military and building info panels on planet panels that this player doesn't control
 
     /** How big we want meter icons with respect to the current UI font size.
       * Meters should scale along font size, but not below the size for the
@@ -2178,7 +2178,7 @@ void SidePanel::PlanetPanel::Render() {
     GG::Clr border_colour = (m_selected ? m_empire_colour : ClientUI::WndOuterBorderColor());
 
 
-    static const int OFFSET = 15;   // size of corners cut off sticky-out bit of background around planet render
+    static constexpr int OFFSET = 15;   // size of corners cut off sticky-out bit of background around planet render
 
     GG::GL2DVertexBuffer verts;
     verts.reserve(12);
@@ -2224,7 +2224,7 @@ void SidePanel::PlanetPanel::Render() {
     glLineWidth(1.0f);
 
     // disable greyover
-    static const GG::Clr HALF_GREY(128, 128, 128, 128);
+    constexpr GG::Clr HALF_GREY(128, 128, 128, 128);
     if (Disabled()) {
         glColor(HALF_GREY);
         glDrawArrays(GL_TRIANGLE_FAN, 4, verts.size() - 4);

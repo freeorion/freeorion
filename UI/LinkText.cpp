@@ -24,7 +24,7 @@ const std::string TextLinker::URL_TAG("url");
 const std::string TextLinker::BROWSE_PATH_TAG("browsepath");
 
 namespace {
-    static const bool RENDER_DEBUGGING_LINK_RECTS = false;
+    constexpr bool RENDER_DEBUGGING_LINK_RECTS = false;
 
     // closing format tag
     static const std::string LINK_FORMAT_CLOSE = "</rgba>";

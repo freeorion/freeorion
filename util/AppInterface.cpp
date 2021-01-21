@@ -49,7 +49,7 @@ int IApp::MAX_AI_PLAYERS() {
     // order fiasco, because it is used in more than one compilation
     // unit during static initialization, albeit a the moment in two
     // different threads.
-    static const int max_number_AIs = 40;
+    constexpr int max_number_AIs = 40;
     return max_number_AIs;
 }
 

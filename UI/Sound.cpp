@@ -74,26 +74,26 @@ public:
     void DecDisabledCount();
 
 private:
-    static const int NUM_SOURCES = 16; // The number of sources for OpenAL to create. Should be 2 or more.
-    static const int NUM_MUSIC_BUFFERS = 2; // The number of music buffers.
+    static constexpr int NUM_SOURCES = 16; // The number of sources for OpenAL to create. Should be 2 or more.
+    static constexpr int NUM_MUSIC_BUFFERS = 2; // The number of music buffers.
 
     ALuint                            m_sources[NUM_SOURCES]; ///< OpenAL sound sources. The first one is used for music
-    int                               m_music_loops;          ///< the number of loops of the current music to play (< 0 for loop forever)
+    int                               m_music_loops = 0;      ///< the number of loops of the current music to play (< 0 for loop forever)
     std::string                       m_music_name;           ///< the name of the currently-playing music file
     std::map<std::string, ALuint>     m_buffers;              ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
     ALuint                            m_music_buffers[NUM_MUSIC_BUFFERS];     ///< two additional buffers for music. statically defined as they'll be changed many times.
     OggVorbis_File                    m_ogg_file;             ///< the currently open ogg file
     ALenum                            m_ogg_format;           ///< mono or stereo
     ALsizei                           m_ogg_freq;             ///< sampling frequency
-    unsigned int                      m_temporary_disable_count; ///< Count of the number of times sound was disabled. Sound is enabled when this is zero.
+    unsigned int                      m_temporary_disable_count = 0; ///< Count of the number of times sound was disabled. Sound is enabled when this is zero.
     /** m_initialized indicates if the sound system has been initialized.
         The system will not be initialized if both sound effects and
         music are disabled or if initialization failed. */
-    bool                              m_initialized;
+    bool                              m_initialized = false;
 };
 
 namespace {
-    const int BUFFER_SIZE = 409600; // The size of the buffer we read music data into.
+    constexpr int BUFFER_SIZE = 409600; // The size of the buffer we read music data into.
 
 #ifdef FREEORION_WIN32
     int _fseek64_wrap(FILE *f, ogg_int64_t off, int whence) {

@@ -9,16 +9,14 @@ namespace {
     // Expose interface for redirecting standard output and error to FreeOrion
     // logging.  Can be imported before loading the main FreeOrion AI interface
     // library.
-    static const std::size_t MAX_SINGLE_CHUNK_TEXT_SIZE = 4096;
+    constexpr std::size_t MAX_SINGLE_CHUNK_TEXT_SIZE = 4096;
 
     /** Python streams text as strings which need to be concatenated before
         they are output to the logger.  Each \p input may end with an
         incomplete line that is continued in the next \p input from the python
         executable.  \p ss should be a persistent stringstream per output sink
         to persist the incomplete line of text. \p is a logger associated with
-        the sink that \p ss represents.
-
-*/
+        the sink that \p ss represents. */
     void send_to_log(std::stringstream& ss, const std::string& input, const std::function<void(const std::string&)>& logger) {
         if (input.empty()) return;
         ss <<  ((input.size() < MAX_SINGLE_CHUNK_TEXT_SIZE) ? input : input.substr(0, MAX_SINGLE_CHUNK_TEXT_SIZE));
