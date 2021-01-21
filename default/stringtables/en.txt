@@ -11347,7 +11347,7 @@ PLC_INDUSTRIALISM
 Industrialism
 
 PLC_INDUSTRIALISM_DESC
-'''Industry-focused planets get a boost to [[metertype METER_TARGET_INDUSTRY]] (x[[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_SCALING]]) and a bonus of [[value PLC_INDUSTRIALISM_TARGET_HAPINESS_FLAT]] to [[metertype METER_HAPPINESS]].
+'''Industry-focused planets get a boost to [[metertype METER_TARGET_INDUSTRY]] (x[[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_SCALING]]) and a bonus of [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]] to [[metertype METER_HAPPINESS]].
 
 Also makes some production-boosting generation techs cheaper to research.'''
 

@@ -21,7 +21,7 @@ Policy
                 SetTargetIndustry value = Value
                     * (NamedReal name = "PLC_INDUSTRIALISM_TARGET_INDUSTRY_SCALING" value = 1.25)
                 SetTargetHappiness value = Value
-                    + (NamedReal name = "PLC_INDUSTRIALISM_TARGET_HAPPINESS" value = 10)
+                    + (NamedReal name = "PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT" value = 10)
             ]
     ]
     graphic = "icons/policies/industrialism.png"
