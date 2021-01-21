@@ -1920,7 +1920,7 @@ void CreateSystem::Execute(ScriptingContext& context) const {
     ScriptingContext local_context{context, std::move(system), ScriptingContext::CurrentValueVariant()};
     for (auto& effect : m_effects_to_apply_after) {
         if (effect)
-        effect->Execute(local_context);
+            effect->Execute(local_context);
     }
 }
 
