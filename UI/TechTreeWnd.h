@@ -88,7 +88,7 @@ private:
     /// If m_init_flag is true tech categories are not parsed until the
     /// first time Show() is called.  TechTreeWnd is constructed before the
     /// tech categories are available to be parsed.
-    bool                        m_init_flag;
+    bool m_init_flag = false;
 };
 
 

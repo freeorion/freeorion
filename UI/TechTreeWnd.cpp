@@ -226,7 +226,7 @@ private:
     /** These values are determined when doing button layout, and stored.
       * They are later used when rendering separator lines between the groups
       * of buttons */
-    int m_buttons_per_row;              // number of buttons that can fit into available horizontal space
+    int m_buttons_per_row = 1;          // number of buttons that can fit into available horizontal space
     GG::X m_col_offset;                 // horizontal distance between each column of buttons
     GG::Y m_row_offset;                 // vertical distance between each row of buttons
 
@@ -1532,8 +1532,8 @@ private:
 
     private:
         std::string m_tech;
-        GG::Clr m_background_color;
-        bool m_enqueued;
+        GG::Clr m_background_color = {{0, 0, 0, 128}};
+        bool m_enqueued = false;
     };
 
     void Populate(bool update = true);
@@ -1546,7 +1546,7 @@ private:
     std::set<TechStatus>                                        m_tech_statuses_shown;
     std::unordered_map<std::string, std::shared_ptr<TechRow>>   m_tech_row_cache;
     std::shared_ptr<GG::ListBox::Row>                           m_header_row;
-    size_t                                                      m_previous_sort_col;
+    size_t                                                      m_previous_sort_col = 0;
 };
 
 void TechTreeWnd::TechListBox::TechRow::Render() {
