@@ -180,11 +180,7 @@ std::set<std::tuple<std::string, std::string, LogLevel>> LoggerOptionsLabelsAndL
 
 /** Sets the logger thresholds from a list of options, labels and thresholds. */
 void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>& fulloption_name_and_levels) {
-    for (const auto& fulloption_name_and_level : fulloption_name_and_levels) {
-
-        const auto& full_option = std::get<0>(fulloption_name_and_level);
-        const auto& name = std::get<1>(fulloption_name_and_level);
-        const auto& value = std::get<2>(fulloption_name_and_level);
+    for (const auto& [full_option, name, value] : fulloption_name_and_levels) {
 
         // Update the option in OptionsDB if it already exists.
         if (GetOptionsDB().OptionExists(full_option))
