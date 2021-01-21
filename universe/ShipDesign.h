@@ -10,7 +10,6 @@
 #include "../util/Pending.h"
 
 
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 FO_COMMON_API extern const int ALL_EMPIRES;
 FO_COMMON_API extern const int INVALID_GAME_TURN;
@@ -27,7 +26,7 @@ struct FO_COMMON_API ParsedShipDesign {
 
     std::string                 m_name;
     std::string                 m_description;
-    boost::uuids::uuid          m_uuid;
+    boost::uuids::uuid          m_uuid = boost::uuids::nil_uuid();
 
     int                         m_designed_on_turn = INVALID_GAME_TURN;
     int                         m_designed_by_empire = ALL_EMPIRES;
@@ -191,11 +190,11 @@ private:
 
     void BuildStatCaches();
 
-    int                         m_id = INVALID_OBJECT_ID;
+    int                         m_id = INVALID_DESIGN_ID;
 
     std::string                 m_name;
     std::string                 m_description;
-    boost::uuids::uuid          m_uuid;
+    boost::uuids::uuid          m_uuid = boost::uuids::nil_uuid();
 
     int                         m_designed_on_turn = INVALID_GAME_TURN;
     int                         m_designed_by_empire = ALL_EMPIRES;

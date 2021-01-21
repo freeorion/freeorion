@@ -14,7 +14,6 @@
 
 class ResourcePool;
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
 FO_COMMON_API extern const int ALL_EMPIRES;
 
 

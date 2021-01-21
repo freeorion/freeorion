@@ -53,12 +53,10 @@
 #include "../util/VarText.h"
 
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
-
 using boost::io::str;
 
 namespace {
-    const int DESCRIPTION_PADDING(3);
+    constexpr int DESCRIPTION_PADDING(3);
 
     void AddOptions(OptionsDB& db) {
         db.Add("resource.effects.description.shown", UserStringNop("OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC"), false);

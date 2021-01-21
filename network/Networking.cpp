@@ -19,8 +19,6 @@ namespace Networking {
 #else
     const int SOCKET_LINGER_TIME = 1 << (sizeof(unsigned short) * 8 - 1);
 #endif
-    const int INVALID_PLAYER_ID = -1;
-    const int NO_TEAM_ID = -1;
 
     int DiscoveryPort()
     { return GetOptionsDB().Get<int>("network.discovery.port"); }

@@ -76,10 +76,6 @@ namespace {
 }
 
 
-const int Fleet::ETA_UNKNOWN =      (1 << 30);
-const int Fleet::ETA_OUT_OF_RANGE = (1 << 30) - 1;
-const int Fleet::ETA_NEVER =        (1 << 30) - 2;
-
 Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     UniverseObject(name, x, y),
     m_last_turn_move_ordered(BEFORE_FIRST_TURN)
