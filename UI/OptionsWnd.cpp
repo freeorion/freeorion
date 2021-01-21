@@ -179,14 +179,14 @@ namespace {
 
     // Small window that will grab a unique key press.
     class KeyPressCatcher : public GG::Wnd {
-        GG::Key                 m_key;
-        std::uint32_t           m_code_point;
+        GG::Key                 m_key{GG::Key::GGK_NONE};
+        std::uint32_t           m_code_point{0};
         GG::Flags<GG::ModKey>   m_mods;
 
     public:
         KeyPressCatcher() :
             Wnd(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Flags<GG::WndFlag>(GG::MODAL))
-        {};
+        {}
 
         void Render() override
         {}

@@ -16,7 +16,7 @@ public:
     struct Result {
         std::string player_name;
         std::string server_dest;
-        Networking::ClientType type;
+        Networking::ClientType type{0};
     };
 
     ServerConnectWnd();

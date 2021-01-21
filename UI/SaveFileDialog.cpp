@@ -346,7 +346,7 @@ public:
 protected:
     std::string m_filename;
     std::shared_ptr<std::vector<SaveFileColumn>> m_columns;
-    bool m_initialized;
+    bool m_initialized = false;
 };
 
 class SaveFileHeaderRow: public SaveFileRow {

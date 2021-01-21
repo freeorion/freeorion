@@ -116,7 +116,7 @@ private:
      *
      * The value should be one of Aggression.
      */
-    int m_aggression;
+    int m_aggression = 0;
 };
 
 
