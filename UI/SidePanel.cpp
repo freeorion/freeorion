@@ -80,7 +80,7 @@ namespace {
 
     struct PlanetAtmosphereData {
         struct Atmosphere {
-            Atmosphere() {}
+            Atmosphere() = default;
             Atmosphere(const XMLElement& elem) {
                 if (elem.Tag() != "Atmosphere")
                     throw std::invalid_argument("Attempted to construct an Atmosphere from an XMLElement that had a tag other than \"Atmosphere\"");
@@ -90,17 +90,16 @@ namespace {
             }
 
             std::string filename;
-            int         alpha;
+            int         alpha = 128;
         };
 
-        PlanetAtmosphereData() {}
+        PlanetAtmosphereData() = default;
         PlanetAtmosphereData(const XMLElement& elem) {
             if (elem.Tag() != "PlanetAtmosphereData")
                 throw std::invalid_argument("Attempted to construct a PlanetAtmosphereData from an XMLElement that had a tag other than \"PlanetAtmosphereData\"");
             planet_filename = elem.attributes.at("planet_filename");
-            for (const XMLElement& atmosphere : elem.Child("atmospheres").children) {
+            for (const XMLElement& atmosphere : elem.Child("atmospheres").children)
                 atmospheres.push_back(Atmosphere(atmosphere));
-            }
         }
 
         std::string             planet_filename; ///< the filename of the planet image that this atmosphere image data goes with
@@ -745,19 +744,19 @@ public:
     }
 
 private:
-    int                             m_planet_id;
-    double                          m_rpm;
-    int                             m_diameter;
-    double                          m_axial_tilt;
-    Visibility                      m_visibility;
+    int                             m_planet_id = INVALID_OBJECT_ID;
+    double                          m_rpm = 1.0;
+    int                             m_diameter = 1;
+    double                          m_axial_tilt = 0.0;
+    Visibility                      m_visibility = Visibility::VIS_BASIC_VISIBILITY;
     std::shared_ptr<GG::Texture>    m_surface_texture;
-    double                          m_shininess;
+    double                          m_shininess = 0.0;
     std::shared_ptr<GG::Texture>    m_overlay_texture;
     std::shared_ptr<GG::Texture>    m_atmosphere_texture;
-    int                             m_atmosphere_alpha;
+    int                             m_atmosphere_alpha = 1;
     GG::Rect                        m_atmosphere_planet_rect;
-    double                          m_initial_rotation;
-    StarType                        m_star_type;
+    double                          m_initial_rotation = 0.0;
+    StarType                        m_star_type = StarType::STAR_WHITE;
 
     static ScanlineRenderer         s_scanline_shader;
 };
