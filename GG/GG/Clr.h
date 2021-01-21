@@ -35,7 +35,7 @@ namespace GG {
     (little-endian) or opaque yellow (big-endian).*/
 struct Clr
 {
-    Clr() = default;
+    constexpr Clr() = default;
 
     /** ctor that constructs a Clr from four ints that represent the color channels */
     constexpr Clr(unsigned char r_,
@@ -63,7 +63,7 @@ GG_API std::ostream& operator<<(std::ostream& os, const Clr& pt);
 
 //! Returns the lightened version of color clr.  LightenClr leaves the alpha
 //! channel unchanged, and multiplies the other channels by some factor.
-inline Clr LightenClr(const Clr& clr, float factor = 2.0)
+inline constexpr Clr LightenClr(const Clr& clr, float factor = 2.0)
 {
     return Clr(
         std::min(static_cast<int>(clr.r * factor), 255),
@@ -74,7 +74,7 @@ inline Clr LightenClr(const Clr& clr, float factor = 2.0)
 
 //! Returns the darkened version of color clr.  DarkenClr leaves the alpha
 //! channel unchanged, and divides the other channels by some factor.
-inline Clr DarkenClr(const Clr& clr, float factor = 2.0)
+inline constexpr Clr DarkenClr(const Clr& clr, float factor = 2.0)
 {
     return Clr(
         static_cast<int>(clr.r / factor),
@@ -83,7 +83,7 @@ inline Clr DarkenClr(const Clr& clr, float factor = 2.0)
         clr.a);
 }
 
-inline Clr InvertClr(const Clr& clr)
+inline constexpr Clr InvertClr(const Clr& clr)
 {
     return Clr(255 - clr.r,
                255 - clr.g,
@@ -91,7 +91,7 @@ inline Clr InvertClr(const Clr& clr)
                clr.a);
 }
 
-inline Clr BlendClr(const Clr& src, const Clr& dst, float factor)
+inline constexpr Clr BlendClr(const Clr& src, const Clr& dst, float factor)
 {
     return Clr(static_cast<unsigned char>(src.r * factor + dst.r * (1 - factor)),
                static_cast<unsigned char>(src.g * factor + dst.g * (1 - factor)),
@@ -101,7 +101,7 @@ inline Clr BlendClr(const Clr& src, const Clr& dst, float factor)
 
 /** Named ctor that constructs a Clr from four floats that represent the color
     channels (each must be >= 0.0 and <= 1.0). */
-inline Clr FloatClr(float r, float g, float b, float a)
+inline constexpr Clr FloatClr(float r, float g, float b, float a)
 {
     return Clr(static_cast<unsigned char>(r * 255),
                static_cast<unsigned char>(g * 255),
