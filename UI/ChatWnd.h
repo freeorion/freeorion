@@ -56,11 +56,11 @@ private:
     void            MessageHistoryUpRequested();
     void            MessageHistoryDownRequested();
 
-    std::shared_ptr<GG::MultiEdit>          m_display;
-    std::shared_ptr<MessageWndEdit>         m_edit;
-    int                     m_display_show_time;
-    std::deque<std::string> m_history;
-    int                     m_history_position;
+    std::shared_ptr<GG::MultiEdit>  m_display;
+    std::shared_ptr<MessageWndEdit> m_edit;
+    int                             m_display_show_time = 0;
+    std::deque<std::string>         m_history;
+    int                             m_history_position = 0;
 };
 
 #endif
