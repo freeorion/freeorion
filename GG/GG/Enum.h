@@ -41,7 +41,7 @@ public:
     void Insert(int& default_value, const std::string& entry);
     size_t size() const;
 
-    static const EnumType BAD_VALUE = (EnumType)INT_MIN;
+    static constexpr EnumType BAD_VALUE = (EnumType)INT_MIN;
 private:
     std::map<std::string, EnumType> m_name_to_value_map;
     std::map<EnumType, std::string> m_value_to_name_map;

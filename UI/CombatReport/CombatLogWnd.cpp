@@ -20,6 +20,9 @@
 
 namespace {
     DeclareThreadSafeLogger(combat_log);
+
+    /// The number of pixels to leave between the text and the frame.
+    constexpr int MARGIN = 5;
 }
 
 class CombatLogWnd::Impl {
@@ -235,7 +238,7 @@ namespace {
         std::vector<std::shared_ptr<GG::Wnd>>   details;
 
         // distance between expansion symbol and text
-        static const unsigned int BORDER_MARGIN = 5;
+        static constexpr unsigned int BORDER_MARGIN = 5;
     };
 
     CombatLogAccordionPanel::CombatLogAccordionPanel(GG::X w, CombatLogWnd::Impl& log_,
@@ -308,7 +311,7 @@ namespace {
         std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces;
 
         // distance between expansion symbol and text
-        static const unsigned int BORDER_MARGIN = 5;
+        static constexpr unsigned int BORDER_MARGIN = 5;
     };
 
     EmpireForcesAccordionPanel::EmpireForcesAccordionPanel(GG::X w,

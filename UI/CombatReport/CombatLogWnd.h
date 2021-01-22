@@ -39,11 +39,7 @@ public:
 private:
     friend class Impl;
     std::unique_ptr<Impl> const m_impl;
-
-    /// The number of pixels to leave between the text and the frame.
-    static const int MARGIN = 5;
-
-    };
+};
 
 
 #endif
