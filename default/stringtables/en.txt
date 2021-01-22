@@ -10394,6 +10394,9 @@ DESC_NONE
 DESC_NONE_NOT
 [[DESC_ALL]]
 
+DESC_NOOP
+(NoOp)
+
 # %1% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION_SELF
 ''' that belongs to %1% empire'''

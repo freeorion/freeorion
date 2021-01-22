@@ -15,6 +15,7 @@ namespace parse { namespace detail {
         parse::empire_affiliation_enum_grammar empire_affiliation_type_enum;
         condition_parser_rule                  all;
         condition_parser_rule                  none;
+        condition_parser_rule                  noop;
         condition_parser_rule                  source;
         condition_parser_rule                  root_candidate;
         condition_parser_rule                  target;

@@ -49,6 +49,10 @@ namespace parse { namespace detail {
             =   tok.None_ [ _val = construct_movable_(new_<Condition::None>()) ]
             ;
 
+        noop
+            =   tok.NoOp_ [ _val = construct_movable_(new_<Condition::NoOp>()) ]
+            ;
+
         source
             =   tok.Source_ [ _val = construct_movable_(new_<Condition::Source>()) ]
             ;

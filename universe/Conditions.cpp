@@ -1160,6 +1160,43 @@ unsigned int None::GetCheckSum() const {
 }
 
 ///////////////////////////////////////////////////////////
+// NoOp                                                  //
+///////////////////////////////////////////////////////////
+NoOp::NoOp() :
+    Condition()
+{
+    m_root_candidate_invariant = true;
+    m_target_invariant = true;
+    m_source_invariant = true;
+}
+
+void NoOp::Eval(const ScriptingContext& parent_context,
+                ObjectSet& matches, ObjectSet& non_matches,
+                SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+{
+    // does not modify input ObjectSets
+    DebugLogger() << "NoOp::Eval(" << matches.size() << " input matches, " << non_matches.size() << " input non-matches)";
+}
+
+bool NoOp::operator==(const Condition& rhs) const
+{ return Condition::operator==(rhs); }
+
+std::string NoOp::Description(bool negated/* = false*/) const
+{ return UserString("DESC_NOOP"); }
+
+std::string NoOp::Dump(unsigned short ntabs) const
+{ return DumpIndent(ntabs) + "NoOp\n"; }
+
+unsigned int NoOp::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::NoOp");
+
+    TraceLogger(conditions) << "GetCheckSum(NoOp): retval: " << retval;
+    return retval;
+}
+
+///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
 EmpireAffiliation::EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,

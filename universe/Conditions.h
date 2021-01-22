@@ -166,6 +166,19 @@ struct FO_COMMON_API None final : public Condition {
     unsigned int GetCheckSum() const override;
 };
 
+/** Does not modify the input ObjectSets. */
+struct FO_COMMON_API NoOp final : public Condition {
+    NoOp();
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    std::string Description(bool negated = false) const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
+    unsigned int GetCheckSum() const override;
+};
+
 /** Matches all objects that are owned (if \a exclusive == false) or only owned
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
