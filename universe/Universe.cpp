@@ -2441,7 +2441,7 @@ namespace {
         auto input_eov_copy = empire_object_visibility;
         auto input_eovs_copy = empire_object_visible_specials;
 
-        for (auto& [empire_id, empire] : empires) {
+        for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
             // output maps for this empire
             auto& obj_vis_map = empire_object_visibility[empire_id];
             auto& obj_specials_map = empire_object_visible_specials[empire_id];

@@ -3496,7 +3496,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
-    for (auto& [empire_id, empire] : m_empires) {
+    for ([[maybe_unused]] auto& [empire_id, empire] : m_empires) {
         if (!empire->Eliminated()) {
             empire->UpdatePreservedLanes();
             empire->UpdateUnobstructedFleets();     // must be done after *all* noneliminated empires have updated their unobstructed systems
@@ -3511,7 +3511,7 @@ void ServerApp::PostCombatProcessTurns() {
     // Consume distributed resources to planets and on queues, create new
     // objects for completed production and give techs to empires that have
     // researched them
-    for (auto& [empire_id, empire] : m_empires) {
+    for ([[maybe_unused]] auto& [empire_id, empire] : m_empires) {
         if (empire->Eliminated())
             continue;   // skip eliminated empires
 
