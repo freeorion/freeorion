@@ -199,12 +199,11 @@ namespace {
 
         }
         else if (dir_name == "ENC_SHIP_PART") {
-            for (const auto& entry : GetShipPartManager()) {
-                if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(entry.second->Tags()).empty()) {
+            for ([[maybe_unused]] auto& [part_name, part] : GetShipPartManager()) {
+                if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(part->Tags()).empty()) {
                     sorted_entries_list.emplace(
-                        UserString(entry.first),
-                        std::make_pair(LinkTaggedText(VarText::SHIP_PART_TAG, entry.first) + "\n",
-                                       entry.first));
+                        UserString(part_name),
+                        std::make_pair(LinkTaggedText(VarText::SHIP_PART_TAG, part_name) + "\n", part_name));
                 }
             }
 
@@ -1073,11 +1072,15 @@ namespace {
     std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>>
         GetSubDirs(const std::string& dir_name, bool exclude_custom_categories_from_dir_name = true, int depth = 0)
     {
+        std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>> retval;
+
+        if (dir_name == "ENC_STRINGS")
+            return retval;
+
         ScopedTimer subdir_timer("GetSubDirs(" + dir_name + ", " + std::to_string(exclude_custom_categories_from_dir_name) + ", " + std::to_string(depth) + ")",
                                  true, std::chrono::milliseconds(500));
 
         depth++;
-        std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>> retval;
         // safety check to pre-empt potential infinite loop
         if (depth > 50) {
             WarnLogger() << "Exceeded recursive limit with lookup for pedia category " << dir_name;
@@ -2984,6 +2987,9 @@ namespace {
 }
 
 void EncyclopediaDetailPanel::HandleSearchTextEntered() {
+    SectionedScopedTimer timer("HandleSearchTextEntered");
+    timer.EnterSection("Find words in search text");
+
     // search lists of articles for typed text
     const std::string& search_text = m_search_edit->Text();
     if (search_text.empty())
@@ -3008,15 +3014,20 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     // search through all articles for full or partial matches to search query
     ///
 
-    std::multimap<std::string, std::string> exact_match_report;
-    std::multimap<std::string, std::string> word_match_report;
-    std::multimap<std::string, std::string> partial_match_report;
-    std::multimap<std::string, std::string> article_match_report;
+
+    std::vector<std::pair<std::string, std::string>> exact_match_report;
+    std::vector<std::pair<std::string, std::string>> word_match_report;
+    std::vector<std::pair<std::string, std::string>> partial_match_report;
+    std::vector<std::pair<std::string, std::string>> article_match_report;
 
     bool search_desc = GetOptionsDB().Get<bool>("ui.pedia.search.articles.enabled");
 
+    timer.EnterSection("get subdirs");
+
     // assemble link text to all pedia entries, indexed by name
     for (auto& entry : GetSubDirs("ENC_INDEX", false, 0)) {
+        timer.EnterSection("search subdirs");
+
         const auto& article_key = entry.first.first;
         const auto& article_directory = entry.first.second;
         auto& article_name_link = entry.second;
@@ -3024,7 +3035,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
 
         // search for exact title matches
         if (boost::iequals(article_name, search_text)) {
-            exact_match_report.emplace(std::move(article_name_link));
+            exact_match_report.push_back(std::move(article_name_link));
             continue;
         }
 
@@ -3032,7 +3043,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
         // search for full word matches in titles
         for (const std::string& word : words_in_search_text) {
             if (GG::GUI::GetGUI()->ContainsWord(article_name, word)) {
-                word_match_report.emplace(std::move(article_name_link));
+                word_match_report.push_back(std::move(article_name_link));
                 listed = true;
                 break;
             }
@@ -3047,7 +3058,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
             if (word.size() < 3)
                 continue;
             if (boost::icontains(article_name, word)) {
-                partial_match_report.insert(std::move(article_name_link));
+                partial_match_report.push_back(std::move(article_name_link));
                 listed = true;
                 break;
             }
@@ -3060,7 +3071,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
         if (!article_entry.description.empty()) {
             // article present in pedia directly
             if (boost::icontains(UserString(article_entry.description), search_text))
-                article_match_report.emplace(std::move(article_name_link));
+                article_match_report.push_back(std::move(article_name_link));
 
         } else {
             // article not in pedia. may be generated by GetRefreshDetailPanelInfo
@@ -3081,10 +3092,19 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
                                       dummyD);
 
             if (boost::icontains(detailed_description, search_text))
-                article_match_report.emplace(std::move(article_name_link));
+                article_match_report.push_back(std::move(article_name_link));
         }
     }
 
+    timer.EnterSection("sort");
+    // sort results...
+    std::sort(exact_match_report.begin(), exact_match_report.end());
+    std::sort(word_match_report.begin(), word_match_report.end());
+    std::sort(partial_match_report.begin(), partial_match_report.end());
+    std::sort(article_match_report.begin(), article_match_report.end());
+
+
+    timer.EnterSection("assemble report");
     // compile list of articles into some dynamically generated search report text
     std::string match_report;
     if (!exact_match_report.empty()) {
