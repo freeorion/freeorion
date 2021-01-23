@@ -779,6 +779,7 @@ namespace {
             // move (number) objects with smallest sort key (at start of map)
             // from the from_set into the to_set.
             for ([[maybe_unused]] auto& [ignored_float, object_to_transfer] : sort_key_objects) {
+                (void)ignored_float;    // quiet unused variable warning
                 auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
@@ -811,8 +812,10 @@ namespace {
         } else if (sorting_method == SortingMethod::SORT_MODE) {
             // compile histogram of of number of times each sort key occurs
             std::map<float, unsigned int> histogram;
-            for ([[maybe_unused]] auto& [key, ignored_object] : sort_key_objects)
+            for ([[maybe_unused]] auto& [key, ignored_object] : sort_key_objects) {
+                (void)ignored_object;
                 histogram[key]++;
+            }
 
             // invert histogram to index by number of occurances
             std::multimap<unsigned int, float> inv_histogram;
@@ -1628,7 +1631,9 @@ namespace {
 
             if (m_names.empty()) {
                 // match homeworlds for any species
-                for ([[maybe_unused]] auto& [ignored_name, ids] : GetSpeciesManager().GetSpeciesHomeworldsMap()) { // TODO: put species info in ScriptingContext
+                for ([[maybe_unused]] auto& [ignored_name, ids] : GetSpeciesManager().GetSpeciesHomeworldsMap()) {
+                    // TODO: put species info in ScriptingContext
+                    (void)ignored_name; // quieting unused variable warning
                     if (ids.count(planet_id))
                         return true;
                 }
@@ -1806,9 +1811,11 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 
     // check if any empire's capital's ID is that candidate object's id.
     // if it is, the candidate object is a capital.
-    for ([[maybe_unused]] auto& [ignored_id, empire] : local_context.empires)
+    for ([[maybe_unused]] auto& [ignored_id, empire] : local_context.empires) {
+        (void)ignored_id;
         if (empire->CapitalID() == candidate_id)
             return true;
+    }
     return false;
 }
 

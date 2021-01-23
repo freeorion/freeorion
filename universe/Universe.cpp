@@ -300,8 +300,10 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireManage
     if (empire_id != ALL_EMPIRES) {
         empire_ids.insert(empire_id);
     } else {
-        for ([[maybe_unused]] auto& [empire_id, empire] : empires)
+        for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
+            (void)empire;   // quieting unused variable warning
             empire_ids.insert(empire_id);
+        }
     }
 
     // check each object's visibility against all empires, including the object
@@ -558,8 +560,10 @@ void Universe::ApplyAllEffectsAndUpdateMeters(EmpireManager& empires, bool do_ac
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
     ResetAllObjectMeters(true, true);
-    for ([[maybe_unused]] auto& [empire_id, empire] : empires)
+    for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
+        (void)empire_id;    // quieting unused variable warning
         empire->ResetMeters();
+    }
 
     ExecuteEffects(source_effects_targets_causes, empires, do_accounting, false, false, true);
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
@@ -622,8 +626,10 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(EmpireManager& empires, bool do_
         for (auto const& [meter_type, meter] : object->Meters())
             TraceLogger(effects) << "    meter: " << meter_type << "  value: " << meter.Current();
     }
-    for ([[maybe_unused]] auto& [empire_id, empire] : empires)
+    for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
+        (void)empire_id;    // quieting unused variable warning
         empire->ResetMeters();
+    }
     ExecuteEffects(source_effects_targets_causes, empires, do_accounting, true, false, true);
 
     for (const auto& object : m_objects.all())
@@ -2442,6 +2448,7 @@ namespace {
         auto input_eovs_copy = empire_object_visible_specials;
 
         for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
+            (void)empire;   // quieting unused variable warning
             // output maps for this empire
             auto& obj_vis_map = empire_object_visibility[empire_id];
             auto& obj_specials_map = empire_object_visible_specials[empire_id];
