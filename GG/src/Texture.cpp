@@ -564,24 +564,29 @@ TextureManager::TextureManager()
 {}
 
 const std::map<std::string, std::shared_ptr<Texture>>& TextureManager::Textures() const
-{ return m_textures; }
-
-std::shared_ptr<Texture> TextureManager::StoreTexture(Texture* texture, const std::string& texture_name)
 {
-    std::shared_ptr<Texture> temp(texture);
-    return StoreTexture(temp, texture_name);
+    boost::mutex::scoped_lock lock(m_texture_access_guard);
+    return m_textures;
 }
 
-std::shared_ptr<Texture> TextureManager::StoreTexture(const std::shared_ptr<Texture>& texture, const std::string& texture_name)
-{ return (m_textures[texture_name] = texture); }
+std::shared_ptr<Texture> TextureManager::StoreTexture(Texture* texture, std::string texture_name)
+{ return StoreTexture(std::shared_ptr<Texture>(texture), std::move(texture_name)); }
+
+std::shared_ptr<Texture> TextureManager::StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name)
+{
+    boost::mutex::scoped_lock lock(m_texture_access_guard);
+    m_textures[std::move(texture_name)] = texture;
+    return texture;
+}
 
 std::shared_ptr<Texture> TextureManager::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
 {
-    std::map<std::string, std::shared_ptr<Texture>>::iterator it = m_textures.find(path.generic_string());
+    boost::mutex::scoped_lock lock(m_texture_access_guard);
+    auto it = m_textures.find(path.generic_string());
     if (it == m_textures.end()) { // if no such texture was found, attempt to load it now, using name as the filename
         //std::cout << "TextureManager::GetTexture storing new texture under name: " << path.generic_string();
-        return (m_textures[path.generic_string()] = LoadTexture(path, mipmap));
-    } else { // otherwise, just return the texture we found
+        return LoadTexture(path, mipmap);
+    } else { // otherwise, just return the found texture
         return it->second;
     }
 }
@@ -591,16 +596,19 @@ void TextureManager::FreeTexture(const boost::filesystem::path& path)
 
 void TextureManager::FreeTexture(const std::string& name)
 {
-    std::map<std::string, std::shared_ptr<Texture>>::iterator it = m_textures.find(name);
+    boost::mutex::scoped_lock lock(m_texture_access_guard);
+    auto it = m_textures.find(name);
     if (it != m_textures.end())
         m_textures.erase(it);
 }
 
 std::shared_ptr<Texture> TextureManager::LoadTexture(const boost::filesystem::path& path, bool mipmap)
 {
+    // only called from other TextureManager functions that should already have locked m_texture_access_guard
     auto temp = std::make_shared<Texture>();
     temp->Load(path, mipmap);
-    return (m_textures[path.generic_string()] = temp);
+    m_textures[path.generic_string()] = temp;
+    return temp;
 }
 
 TextureManager& GG::GetTextureManager()
