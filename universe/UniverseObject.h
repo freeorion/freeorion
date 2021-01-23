@@ -29,7 +29,7 @@ FO_COMMON_API extern const int INVALID_GAME_TURN;
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 
 // The ID number assigned to temporary universe objects
-FO_COMMON_API constexpr int TEMPORARY_OBJECT_ID = -2;
+constexpr int TEMPORARY_OBJECT_ID = -2;
 
 
 //! The various major subclasses of UniverseObject
