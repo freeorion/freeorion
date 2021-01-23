@@ -288,6 +288,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::find(const UniverseObjectVisito
     typedef typename std::remove_const<T>::type mutableT;
     result.reserve(size<mutableT>());
     for ([[maybe_unused]] auto& [ignored_id, obj] : Map<mutableT>()) {
+        (void)ignored_id; // suppress unused variable warning
         if (obj->Accept(visitor))
             result.push_back(obj);
     }
@@ -301,6 +302,7 @@ std::vector<std::shared_ptr<T>> ObjectMap::find(const UniverseObjectVisitor& vis
     typedef typename std::remove_const<T>::type mutableT;
     result.reserve(size<mutableT>());
     for ([[maybe_unused]] auto& [ignored_id, obj] : Map<mutableT>()) {
+        (void)ignored_id; // suppress unused variable warning
         if (obj->Accept(visitor))
             result.push_back(obj);
     }
