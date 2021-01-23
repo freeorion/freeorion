@@ -16,11 +16,12 @@ endif()
 
 if(TARGET Flake8::flake8)
     add_custom_target(check-pep8
-        COMMAND "$<TARGET_FILE:Flake8::flake8>"
+        COMMAND "$<TARGET_FILE:Flake8::flake8>" "default/python"
         COMMENT "Check python code for PEP-8 style conformance"
         VERBATIM
         SOURCES "${PROJECT_SOURCE_DIR}/default/python/tox.ini"
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/default/python"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+        USES_TERMINAL
     )
 endif()
 
