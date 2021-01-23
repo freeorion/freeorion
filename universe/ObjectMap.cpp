@@ -242,7 +242,7 @@ void ObjectMap::swap(ObjectMap& rhs) {
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     std::vector<int> result;
     result.reserve(m_existing_objects.size());
-    for (const auto& [id, ignored_obj] : m_existing_objects)
+    for ([[maybe_unused]] auto& [id, ignored_obj] : m_existing_objects)
         result.push_back(id);
     return result;
 }

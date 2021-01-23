@@ -778,7 +778,7 @@ namespace {
         if (sorting_method == SortingMethod::SORT_MIN) {
             // move (number) objects with smallest sort key (at start of map)
             // from the from_set into the to_set.
-            for (auto& [ignored_float, object_to_transfer] : sort_key_objects) {
+            for ([[maybe_unused]] auto& [ignored_float, object_to_transfer] : sort_key_objects) {
                 auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
@@ -811,7 +811,7 @@ namespace {
         } else if (sorting_method == SortingMethod::SORT_MODE) {
             // compile histogram of of number of times each sort key occurs
             std::map<float, unsigned int> histogram;
-            for (const auto& [key, ignored_object] : sort_key_objects)
+            for ([[maybe_unused]] auto& [key, ignored_object] : sort_key_objects)
                 histogram[key]++;
 
             // invert histogram to index by number of occurances
@@ -1628,7 +1628,7 @@ namespace {
 
             if (m_names.empty()) {
                 // match homeworlds for any species
-                for (const auto& [ignored_name, ids] : GetSpeciesManager().GetSpeciesHomeworldsMap()) { // TODO: put species info in ScriptingContext
+                for ([[maybe_unused]] auto& [ignored_name, ids] : GetSpeciesManager().GetSpeciesHomeworldsMap()) { // TODO: put species info in ScriptingContext
                     if (ids.count(planet_id))
                         return true;
                 }
@@ -1806,7 +1806,7 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 
     // check if any empire's capital's ID is that candidate object's id.
     // if it is, the candidate object is a capital.
-    for (const auto& [ignored_id, empire] : local_context.empires)
+    for ([[maybe_unused]] auto& [ignored_id, empire] : local_context.empires)
         if (empire->CapitalID() == candidate_id)
             return true;
     return false;
