@@ -163,6 +163,7 @@ namespace parse { namespace detail {
         start
             %=  all
             |   none
+            |   noop
             |   source
             |   root_candidate
             |   target
