@@ -8,9 +8,6 @@
 #include "../util/AppInterface.h"
 
 
-class UniverseObject;
-
-
 struct ScriptingContext {
     typedef boost::variant<
         int, double, PlanetType, PlanetSize, ::PlanetEnvironment, StarType,
