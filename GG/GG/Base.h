@@ -40,9 +40,10 @@ public:
     ScopedAssign(T& t, T val) :
         m_old_val(t),
         m_t(t)
-        { m_t = val; }
+    { m_t = val; }
+
     ~ScopedAssign()
-        { m_t = m_old_val; }
+    { m_t = m_old_val; }
 
 private:
     T m_old_val;
