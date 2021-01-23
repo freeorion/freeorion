@@ -4,7 +4,9 @@
 
 #include <iterator>
 #include <map>
-#include <set>
+#include <numeric>
+#include <unordered_set>
+#include <unordered_map>
 #include <boost/algorithm/cxx11/all_of.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/format.hpp>
@@ -831,9 +833,9 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 
         case StatisticType::UNIQUE_COUNT: {
             // how many unique values appear
-            std::set<V> observed_values;
-            for (const auto& entry : object_property_values)
-                observed_values.emplace(entry);
+            std::unordered_set<V> observed_values;
+            for (auto entry : object_property_values)
+                observed_values.insert(entry);
 
             return T(observed_values.size());
             break;
@@ -841,9 +843,9 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 
         case StatisticType::HISTO_MAX: {
             // number of times the most common value appears
-            std::map<V, unsigned int> observed_values;
-            for (const auto& entry : object_property_values)
-                observed_values[std::move(entry)]++;
+            std::unordered_map<V, unsigned int> observed_values;
+            for (auto entry : object_property_values)
+                observed_values[entry]++;
 
             auto max = std::max_element(observed_values.begin(), observed_values.end(),
                                         [](auto p1, auto p2) { return p1.second < p2.second; });
@@ -854,8 +856,8 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 
         case StatisticType::HISTO_MIN: {
             // number of times the least common value appears
-            std::map<V, unsigned int> observed_values;
-            for (const auto& entry : object_property_values)
+            std::unordered_map<V, unsigned int> observed_values;
+            for (auto entry : object_property_values)
                 observed_values[entry]++;
 
             auto min = std::min_element(observed_values.begin(), observed_values.end(),
@@ -867,8 +869,8 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 
         case StatisticType::HISTO_SPREAD: {
             // positive difference between the number of times the most and least common values appear
-            std::map<V, unsigned int> observed_values;
-            for (auto& entry : object_property_values)
+            std::unordered_map<V, unsigned int> observed_values;
+            for (auto entry : object_property_values)
                 observed_values[entry]++;
 
             auto minmax = std::minmax_element(observed_values.begin(), observed_values.end(),
@@ -879,26 +881,20 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         }
 
         case StatisticType::SUM: {
-            V accumulator(0);
-            for (const auto& entry : object_property_values)
-                accumulator += entry;
-
-            return static_cast<T>(accumulator);
+            V sum = std::accumulate(object_property_values.begin(), object_property_values.end(), V(0));
+            return static_cast<T>(sum);
             break;
         }
 
         case StatisticType::MEAN: {
-            V accumulator(0);
-            for (const auto& entry : object_property_values)
-                accumulator += entry;
-
-            return static_cast<T>(accumulator) / static_cast<T>(object_property_values.size());
+            V sum = std::accumulate(object_property_values.begin(), object_property_values.end(), V(0));
+            return static_cast<T>(sum) / static_cast<T>(object_property_values.size());
             break;
         }
 
         case StatisticType::RMS: {
             V accumulator(0);
-            for (const auto& entry : object_property_values)
+            for (auto entry : object_property_values)
                 accumulator += (entry * entry);
 
             double tempval = static_cast<double>(accumulator) / object_property_values.size();
@@ -1004,8 +1000,8 @@ T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
 
         case StatisticType::MODE: {
             // value that appears the most often
-            std::map<T, unsigned int> observed_values;
-            for (auto& entry : object_property_values)
+            std::unordered_map<T, unsigned int> observed_values;
+            for (auto entry : object_property_values)
                 observed_values[entry]++;
 
             auto max = std::max_element(observed_values.begin(), observed_values.end(),
@@ -1052,9 +1048,9 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 
         case StatisticType::UNIQUE_COUNT: {
             // how many unique values appear
-            std::set<V> observed_values;
+            std::unordered_set<V> observed_values;
             for (auto& entry : object_property_values)
-                observed_values.emplace(std::move(entry));
+                observed_values.insert(std::move(entry));
 
             return T(observed_values.size());
             break;
@@ -1062,12 +1058,12 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 
         case StatisticType::HISTO_MAX: {
             // number of times the most common value appears
-            std::map<V, unsigned int> observed_values;
+            std::unordered_map<V, unsigned int> observed_values;
             for (auto& entry : object_property_values)
                 observed_values[std::move(entry)]++;
 
             auto max = std::max_element(observed_values.begin(), observed_values.end(),
-                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+                                        [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
 
             return T(max->second);
             break;
@@ -1075,12 +1071,12 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 
         case StatisticType::HISTO_MIN: {
             // number of times the least common value appears
-            std::map<V, unsigned int> observed_values;
+            std::unordered_map<V, unsigned int> observed_values;
             for (auto& entry : object_property_values)
                 observed_values[std::move(entry)]++;
 
             auto min = std::min_element(observed_values.begin(), observed_values.end(),
-                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+                                        [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
 
             return T(min->second);
             break;
@@ -1088,12 +1084,12 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 
         case StatisticType::HISTO_SPREAD: {
             // positive difference between the number of times the most and least common values appear
-            std::map<V, unsigned int> observed_values;
+            std::unordered_map<V, unsigned int> observed_values;
             for (auto& entry : object_property_values)
                 observed_values[std::move(entry)]++;
 
             auto minmax = std::minmax_element(observed_values.begin(), observed_values.end(),
-                                              [](auto p1, auto p2) { return p1.second < p2.second; });
+                                              [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
 
             return T(minmax.second->second - minmax.first->second);
             break;
