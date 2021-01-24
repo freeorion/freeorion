@@ -9,7 +9,6 @@
 #include <type_traits>
 #include <vector>
 #include <boost/range/adaptor/map.hpp>
-#include <boost/range/algorithm/count_if.hpp>
 #include <boost/range/any_range.hpp>
 #include <boost/range/size.hpp>
 #include "../util/Export.h"
@@ -326,15 +325,8 @@ template <typename T>
 int ObjectMap::count(const UniverseObjectVisitor& visitor) const
 {
     typedef typename std::remove_const<T>::type mutableT;
-    // TODO: use std::count_if when switching to C++17
-    return boost::range::count_if(Map<mutableT>(),
-                                  [&visitor](const auto& entry) { return entry.second->Accept(visitor); });
-    /*
-    int retval = 0;
-    for (const auto& entry : Map<mutableT>())
-        retval += (entry.second->Accept(visitor) ? 1 : 0);
-    return retval;
-    */
+    return std::count_if(Map<mutableT>(),
+                         [&visitor](const auto& entry) { return entry.second->Accept(visitor); });
 }
 
 /** Returns true iff no objects match \a visitor */
