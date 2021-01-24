@@ -1263,7 +1263,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         const ShipPart* part = GetShipPart(item_name);
         if (!part) {
@@ -1273,14 +1273,16 @@ namespace {
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Ship Parts
-        name = UserString(item_name);
-        texture = ClientUI::PartIcon(item_name);
-        int default_location_id = DefaultLocationForEmpire(client_empire_id);
-        turns = part->ProductionTime(client_empire_id, default_location_id);
-        cost = part->ProductionCost(client_empire_id, default_location_id);
-        cost_units = UserString("ENC_PP");
-        general_type = UserString("ENC_SHIP_PART");
-        specific_type = UserString(boost::lexical_cast<std::string>(part->Class()));
+        if (!only_description) {
+            name = UserString(item_name);
+            texture = ClientUI::PartIcon(item_name);
+            int default_location_id = DefaultLocationForEmpire(client_empire_id);
+            turns = part->ProductionTime(client_empire_id, default_location_id);
+            cost = part->ProductionCost(client_empire_id, default_location_id);
+            cost_units = UserString("ENC_PP");
+            general_type = UserString("ENC_SHIP_PART");
+            specific_type = UserString(boost::lexical_cast<std::string>(part->Class()));
+        }
 
         detailed_description += UserString(part->Description()) + "\n\n" + part->CapacityDescription();
 
@@ -1329,7 +1331,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         const ShipHull* hull = GetShipHull(item_name);
         if (!hull) {
@@ -1339,13 +1341,15 @@ namespace {
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Ship Hulls
-        name = UserString(item_name);
-        texture = ClientUI::HullTexture(item_name);
-        int default_location_id = DefaultLocationForEmpire(client_empire_id);
-        turns = hull->ProductionTime(client_empire_id, default_location_id);
-        cost = hull->ProductionCost(client_empire_id, default_location_id);
-        cost_units = UserString("ENC_PP");
-        general_type = UserString("ENC_SHIP_HULL");
+        if (!only_description) {
+            name = UserString(item_name);
+            texture = ClientUI::HullTexture(item_name);
+            int default_location_id = DefaultLocationForEmpire(client_empire_id);
+            turns = hull->ProductionTime(client_empire_id, default_location_id);
+            cost = hull->ProductionCost(client_empire_id, default_location_id);
+            cost_units = UserString("ENC_PP");
+            general_type = UserString("ENC_SHIP_HULL");
+        }
 
         std::string slots_list;
         for (auto slot_type : {ShipSlotType::SL_EXTERNAL, ShipSlotType::SL_INTERNAL, ShipSlotType::SL_CORE})
@@ -1403,7 +1407,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         const Tech* tech = GetTech(item_name);
         if (!tech) {
@@ -1413,17 +1417,19 @@ namespace {
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Technologies
-        name = UserString(item_name);
-        texture = ClientUI::TechIcon(item_name);
-        other_texture = ClientUI::CategoryIcon(tech->Category()); 
-        color = ClientUI::CategoryColor(tech->Category());
-        turns = tech->ResearchTime(client_empire_id);
-        cost = tech->ResearchCost(client_empire_id);
-        cost_units = UserString("ENC_RP");
-        general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
-            % UserString(tech->Category())
-            % ""
-            % UserString(tech->ShortDescription()));
+        if (!only_description) {
+            name = UserString(item_name);
+            texture = ClientUI::TechIcon(item_name);
+            other_texture = ClientUI::CategoryIcon(tech->Category()); 
+            color = ClientUI::CategoryColor(tech->Category());
+            turns = tech->ResearchTime(client_empire_id);
+            cost = tech->ResearchCost(client_empire_id);
+            cost_units = UserString("ENC_RP");
+            general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
+                % UserString(tech->Category())
+                % ""
+                % UserString(tech->ShortDescription()));
+        }
 
         const auto& unlocked_techs = tech->UnlockedTechs();
         const auto& unlocked_items = tech->UnlockedItems();
@@ -1469,10 +1475,6 @@ namespace {
 
         detailed_description += UserString(tech->Description());
 
-        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !tech->Effects().empty()) {
-            detailed_description += "\n" + Dump(tech->Effects());
-        }
-
         const auto& unlocked_by_techs = tech->Prerequisites();
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
@@ -1480,6 +1482,9 @@ namespace {
             { detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  "; }
             detailed_description += "\n\n";
         }
+
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !tech->Effects().empty())
+            detailed_description += "\n" + Dump(tech->Effects());
     }
 
     void RefreshDetailPanelPolicyTag(       const std::string& item_type, const std::string& item_name,
@@ -1487,7 +1492,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         const Policy* policy = GetPolicy(item_name);
         if (!policy) {
@@ -1497,15 +1502,16 @@ namespace {
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Policies
-        name = UserString(item_name);
-        texture = ClientUI::PolicyIcon(item_name);
-        cost = policy->AdoptionCost(client_empire_id);
-        cost_units = UserString("ENC_IP");
-        general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
-            % UserString(policy->Category())
-            % ""
-            % UserString(policy->ShortDescription()));
-
+        if (!only_description) {
+            name = UserString(item_name);
+            texture = ClientUI::PolicyIcon(item_name);
+            cost = policy->AdoptionCost(client_empire_id);
+            cost_units = UserString("ENC_IP");
+            general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
+                % UserString(policy->Category())
+                % ""
+                % UserString(policy->ShortDescription()));
+        }
         detailed_description += UserString(policy->Description());
 
         auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_POLICY, item_name));
@@ -1537,7 +1543,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         const BuildingType* building_type = GetBuildingType(item_name);
         if (!building_type) {
@@ -1546,16 +1552,20 @@ namespace {
         }
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
+        int this_location_id = ClientUI::GetClientUI()->GetMapWnd()->SelectedPlanetID();
+        if (this_location_id == INVALID_OBJECT_ID)
+            this_location_id = DefaultLocationForEmpire(client_empire_id);
+
         // Building types
-        name = UserString(item_name);
-        texture = ClientUI::BuildingIcon(item_name);
-        int default_location_id = DefaultLocationForEmpire(client_empire_id);
-        const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        int this_location_id = map_wnd->SelectedPlanetID();
-        turns = building_type->ProductionTime(client_empire_id, default_location_id);
-        cost = building_type->ProductionCost(client_empire_id, default_location_id);
-        cost_units = UserString("ENC_PP");
-        general_type = UserString("ENC_BUILDING_TYPE");
+        if (!only_description) {
+            name = UserString(item_name);
+            texture = ClientUI::BuildingIcon(item_name);
+            turns = building_type->ProductionTime(client_empire_id, this_location_id);
+            cost = building_type->ProductionCost(client_empire_id, this_location_id);
+            cost_units = UserString("ENC_PP");
+            general_type = UserString("ENC_BUILDING_TYPE");
+        }
+
 
         detailed_description += UserString(building_type->Description());
 
@@ -1566,11 +1576,20 @@ namespace {
             if (auto planet = Objects().get<Planet>(this_location_id)) {
                 int local_cost = building_type->ProductionCost(client_empire_id, this_location_id);
                 int local_time = building_type->ProductionTime(client_empire_id, this_location_id);
-                std::string local_name = planet->Name();
+                auto& local_name = planet->Name();
                 detailed_description += str(FlexibleFormat(UserString("ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR")) 
                                         % local_name % local_cost % cost_units % local_time);
             }
         }
+
+        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_BUILDING, item_name));
+        if (!unlocked_by_techs.empty()) {
+            detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
+            for (const std::string& tech_name : unlocked_by_techs)
+            { detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  "; }
+            detailed_description += "\n\n";
+        }
+
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
             if (!building_type->ProductionCostTimeLocationInvariant()) {
                 auto& cost_template{UserString("PRODUCTION_WND_TOOLTIP_PROD_COST")};
@@ -1591,14 +1610,6 @@ namespace {
             if (!building_type->Effects().empty())
                 detailed_description += "\n\nEffects:\n" + Dump(building_type->Effects());
         }
-
-        auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_BUILDING, item_name));
-        if (!unlocked_by_techs.empty()) {
-            detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const std::string& tech_name : unlocked_by_techs)
-            { detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  "; }
-            detailed_description += "\n\n";
-        }
     }
 
     void RefreshDetailPanelSpecialTag(      const std::string& item_type, const std::string& item_name,
@@ -1606,7 +1617,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         const Special* special = GetSpecial(item_name);
         if (!special) {
@@ -1616,10 +1627,12 @@ namespace {
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Specials
-        name = UserString(item_name);
-        texture = ClientUI::SpecialIcon(item_name);
-        detailed_description = special->Description();
-        general_type = UserString("ENC_SPECIAL");
+        if (!only_description) {
+            name = UserString(item_name);
+            texture = ClientUI::SpecialIcon(item_name);
+            detailed_description = special->Description();
+            general_type = UserString("ENC_SPECIAL");
+        }
 
         // objects that have special
         std::vector<std::shared_ptr<const UniverseObject>> objects_with_special;
@@ -1664,7 +1677,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         int empire_id = ALL_EMPIRES;
         try {
@@ -1679,8 +1692,10 @@ namespace {
 
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
+        if (!only_description)
+            name = empire->Name();
+
         // Capital
-        name = empire->Name();
         auto capital = Objects().get<Planet>(empire->CapitalID());
         if (capital)
             detailed_description += UserString("EMPIRE_CAPITAL") +
@@ -2050,7 +2065,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         const Species* species = GetSpecies(item_name);
         if (!species) {
@@ -2059,10 +2074,12 @@ namespace {
         }
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
-        // Species
-        name = UserString(item_name);
-        texture = ClientUI::SpeciesIcon(item_name);
-        general_type = UserString("ENC_SPECIES");
+        if (!only_description) {
+            name = UserString(item_name);
+            texture = ClientUI::SpeciesIcon(item_name);
+            general_type = UserString("ENC_SPECIES");
+        }
+
         detailed_description = species->GameplayDescription();
 
         // inherent species limitations
@@ -2197,7 +2214,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         const FieldType* field_type = GetFieldType(item_name);
         if (!field_type) {
@@ -2206,9 +2223,11 @@ namespace {
         }
 
         // Field types
-        name = UserString(item_name);
-        texture = ClientUI::FieldTexture(item_name);
-        general_type = UserString("ENC_FIELD_TYPE");
+        if (!only_description) {
+            name = UserString(item_name);
+            texture = ClientUI::FieldTexture(item_name);
+            general_type = UserString("ENC_FIELD_TYPE");
+        }
 
         detailed_description += UserString(field_type->Description());
 
@@ -2218,30 +2237,28 @@ namespace {
         }
     }
 
-
     void RefreshDetailPanelMeterTypeTag(    const std::string& item_type, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         MeterType meter_type = MeterType::INVALID_METER_TYPE;
         std::istringstream item_ss(item_name);
         item_ss >> meter_type;
-
-        texture = ClientUI::MeterIcon(meter_type);
-        general_type = UserString("ENC_METER_TYPE");
-
         auto meter_name = MeterValueLabelAndString(meter_type);
 
-        name = meter_name.first;
+        if (!only_description) {
+            texture = ClientUI::MeterIcon(meter_type);
+            general_type = UserString("ENC_METER_TYPE");
+            name = meter_name.first;
+        }
 
         if (UserStringExists(meter_name.second + "_VALUE_DESC"))
             detailed_description += UserString(meter_name.second + "_VALUE_DESC");
         else
             detailed_description += meter_name.first;
-
     }
 
     std::string GetDetailedDescriptionBase( const ShipDesign* design) {
@@ -2320,7 +2337,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         int design_id = INVALID_DESIGN_ID;
         try {
@@ -2340,13 +2357,15 @@ namespace {
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         // Ship Designs
-        name = design->Name();
-        texture = ClientUI::ShipDesignIcon(design_id);
-        int default_location_id = DefaultLocationForEmpire(client_empire_id);
-        turns = design->ProductionTime(client_empire_id, default_location_id);
-        cost = design->ProductionCost(client_empire_id, default_location_id);
-        cost_units = UserString("ENC_PP");
-        general_type = design->IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
+        if (!only_description) {
+            name = design->Name();
+            texture = ClientUI::ShipDesignIcon(design_id);
+            int default_location_id = DefaultLocationForEmpire(client_empire_id);
+            turns = design->ProductionTime(client_empire_id, default_location_id);
+            cost = design->ProductionCost(client_empire_id, default_location_id);
+            cost_units = UserString("ENC_PP");
+            general_type = design->IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
+        }
 
         float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
         float typical_shot = 3 + 27 * tech_level;
@@ -2463,7 +2482,8 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, std::weak_ptr<const ShipDesign>& inc_design)
+                                            GG::Clr& color, std::weak_ptr<const ShipDesign>& inc_design,
+                                            bool only_description = false)
     {
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
@@ -2475,19 +2495,21 @@ namespace {
         GetUniverse().InhibitUniverseObjectSignals(true);
 
 
-        // incomplete design.  not yet in game universe; being created on design screen
-        name = incomplete_design->Name();
+        if (!only_description) {
+            // incomplete design.  not yet in game universe; being created on design screen
+            name = incomplete_design->Name();
 
-        const std::string& design_icon = incomplete_design->Icon();
-        if (design_icon.empty())
-            texture = ClientUI::HullIcon(incomplete_design->Hull());
-        else
-            texture = ClientUI::GetTexture(ClientUI::ArtDir() / design_icon, true);
+            const std::string& design_icon = incomplete_design->Icon();
+            if (design_icon.empty())
+                texture = ClientUI::HullIcon(incomplete_design->Hull());
+            else
+                texture = ClientUI::GetTexture(ClientUI::ArtDir() / design_icon, true);
 
-        int default_location_id = DefaultLocationForEmpire(client_empire_id);
-        turns = incomplete_design->ProductionTime(client_empire_id, default_location_id);
-        cost = incomplete_design->ProductionCost(client_empire_id, default_location_id);
-        cost_units = UserString("ENC_PP");
+            int default_location_id = DefaultLocationForEmpire(client_empire_id);
+            turns = incomplete_design->ProductionTime(client_empire_id, default_location_id);
+            cost = incomplete_design->ProductionCost(client_empire_id, default_location_id);
+            cost_units = UserString("ENC_PP");
+        }
 
         GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design), client_empire_id, TEMPORARY_OBJECT_ID);
 
@@ -2568,7 +2590,7 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr& color, bool only_description = false)
     {
         int id = boost::lexical_cast<int>(item_name);
         if (id == INVALID_OBJECT_ID)
@@ -2582,10 +2604,15 @@ namespace {
         }
 
         detailed_description = obj->Dump();
+
+        if (only_description)
+            return;
+
         name = obj->PublicName(client_empire_id);
         general_type = GeneralTypeOfObject(obj->ObjectType());
         if (general_type.empty()) {
-            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name() << " (" << item_name << ")";
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name()
+                          << " (" << item_name << ")";
             return;
         }
     }
@@ -2878,16 +2905,14 @@ namespace {
         }
     }
 
-    void RefreshDetailPanelSearchResultsTag(const std::string& item_type, const std::string& item_name,
-                                            std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                            float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+    void RefreshDetailPanelSearchResultsTag(std::string item_name,
+                                            std::shared_ptr<GG::Texture>& texture,
+                                            std::string& general_type,
+                                            std::string& detailed_description)
     {
         general_type = UserString("SEARCH_RESULTS");
         texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "search.png");
-        detailed_description = item_name;
+        detailed_description = std::move(item_name);
     }
 
     void GetRefreshDetailPanelInfo(         const std::string& item_type, const std::string& item_name,
@@ -2895,7 +2920,8 @@ namespace {
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, std::weak_ptr<const ShipDesign>& incomplete_design)
+                                            GG::Clr& color, std::weak_ptr<const ShipDesign>& incomplete_design,
+                                            bool only_description = false)
     {
         if (item_type == TextLinker::ENCYCLOPEDIA_TAG) {
             RefreshDetailPanelPediaTag(         item_type, item_name,
@@ -2905,64 +2931,75 @@ namespace {
         else if (item_type == "ENC_SHIP_PART") {
             RefreshDetailPanelShipPartTag(      item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
         }
         else if (item_type == "ENC_SHIP_HULL") {
             RefreshDetailPanelShipHullTag(      item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
         }
         else if (item_type == "ENC_TECH") {
             RefreshDetailPanelTechTag(          item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
         }
         else if (item_type == "ENC_POLICY") {
             RefreshDetailPanelPolicyTag(        item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
         }
         else if (item_type == "ENC_BUILDING_TYPE") {
             RefreshDetailPanelBuildingTypeTag(  item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
         }
         else if (item_type == "ENC_SPECIAL") {
             RefreshDetailPanelSpecialTag(       item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
         }
         else if (item_type == "ENC_EMPIRE") {
             RefreshDetailPanelEmpireTag(        item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
         }
         else if (item_type == "ENC_SPECIES") {
             RefreshDetailPanelSpeciesTag(       item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
         }
         else if (item_type == "ENC_FIELD_TYPE") {
             RefreshDetailPanelFieldTypeTag(     item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
         }
         else if (item_type == "ENC_METER_TYPE") {
             RefreshDetailPanelMeterTypeTag(     item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
 
         }
         else if (item_type == "ENC_SHIP_DESIGN") {
             RefreshDetailPanelShipDesignTag(    item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
         }
         else if (item_type == INCOMPLETE_DESIGN) {
             RefreshDetailPanelIncomplDesignTag( item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
                                                 general_type, specific_type, detailed_description, color,
-                                                incomplete_design);
+                                                incomplete_design, only_description);
         }
         else if (item_type == UNIVERSE_OBJECT         || item_type == "ENC_BUILDING"  ||
                  item_type == "ENC_FIELD"             || item_type == "ENC_FLEET"     ||
@@ -2971,17 +3008,17 @@ namespace {
         {
             RefreshDetailPanelObjectTag(        item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color, only_description);
         }
         else if (item_type == PLANET_SUITABILITY_REPORT) {
             RefreshDetailPanelSuitabilityTag(   item_type, item_name,
                                                 name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+                                                general_type, specific_type, detailed_description,
+                                                color);
         }
         else if (item_type == TEXT_SEARCH_RESULTS) {
-            RefreshDetailPanelSearchResultsTag( item_type, item_name,
-                                                name, texture, other_texture, turns, cost, cost_units,
-                                                general_type, specific_type, detailed_description, color);
+            RefreshDetailPanelSearchResultsTag(item_name, texture, general_type, detailed_description);
         }
         else if (item_type == TextLinker::GRAPH_TAG) {
             // should be handled externally...
@@ -3060,7 +3097,7 @@ namespace {
         GetRefreshDetailPanelInfo(article_directory, article_key,
                                   dummy3, dummy1, dummy2, dummyA, dummyB, dummy4,
                                   dummy5, dummy6, detailed_description, dummyC,
-                                  dummyD);
+                                  dummyD, true);
 
         if (boost::icontains(detailed_description, search_text))
             article_match = std::move(article_name_link);
