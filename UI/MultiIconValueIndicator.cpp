@@ -28,15 +28,15 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
 
 MultiIconValueIndicator::MultiIconValueIndicator(
     GG::X w, int object_id,
-    const std::vector<std::pair<MeterType, MeterType>>& meter_types) :
-    MultiIconValueIndicator(w, std::vector<int>{object_id}, meter_types)
+    std::vector<std::pair<MeterType, MeterType>> meter_types) :
+    MultiIconValueIndicator(w, std::vector<int>{object_id}, std::move(meter_types))
 {}
 
 MultiIconValueIndicator::MultiIconValueIndicator(
     GG::X w, const std::vector<int>& object_ids,
-    const std::vector<std::pair<MeterType, MeterType>>& meter_types) :
+    std::vector<std::pair<MeterType, MeterType>> meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
-    m_meter_types(meter_types),
+    m_meter_types(std::move(meter_types)),
     m_object_ids(object_ids)
 {}
 
@@ -58,7 +58,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
                 texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
 
-        m_icons.emplace_back(GG::Wnd::Create<StatisticIcon>(texture, 0.0, 3, false,
+        m_icons.emplace_back(GG::Wnd::Create<StatisticIcon>(std::move(texture), 0.0, 3, false,
                                                             IconWidth(), IconHeight()));
         GG::Pt icon_ul(x, GG::Y(EDGE_PAD));
         GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
