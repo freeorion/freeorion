@@ -56,7 +56,7 @@ from AIDependencies import INVALID_ID, Tags
 from CombatRatingsAI import ShipCombatStats, get_allowed_targets, weight_attack_troops, weight_shields
 from aistate_interface import get_aistate
 from freeorion_tools import UserString, get_ship_part, get_species_tag_grade, tech_is_complete, assertion_fails
-from turn_state import state
+from turn_state import get_inhabited_planets
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
 ARMOUR = frozenset({fo.shipPartClass.armour})
@@ -283,7 +283,7 @@ class ShipDesignCache:
             hulls_to_update.update(hullnames)
 
         # no need to update items we already cached in this turn
-        pids = list(state.get_inhabited_planets())
+        pids = list(get_inhabited_planets())
         if self.production_cost and pids:
             cached_items = set(self.production_cost[pids[0]].keys())
             parts_to_update -= cached_items
@@ -373,7 +373,7 @@ class ShipDesignCache:
         all_hulls = list(empire.availableShipHulls)
         all_parts = list(empire.availableShipParts)
 
-        for pid in state.get_inhabited_planets():
+        for pid in get_inhabited_planets():
             for hull_name in all_hulls:
                 hull = fo.getShipHull(hull_name)
                 if assertion_fails(hull is not None):
@@ -924,7 +924,7 @@ class ShipDesigner:
         :type consider_fleet_count: bool
         """
         if loc is None:
-            planets = state.get_inhabited_planets()
+            planets = get_inhabited_planets()
         elif isinstance(loc, int):
             planets = [loc]
         elif isinstance(loc, list):

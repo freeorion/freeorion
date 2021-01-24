@@ -8,7 +8,7 @@ import PlanetUtilsAI
 import pathfinding
 from AIDependencies import INVALID_ID, DRYDOCK_HAPPINESS_THRESHOLD
 from target import TargetSystem
-from turn_state import state
+from turn_state import get_empire_drydocks, get_system_supply
 
 
 def create_move_orders_to_system(fleet, target):
@@ -57,7 +57,7 @@ def can_travel_to_system(fleet_id, start, target, ensure_return=False):
         return [TargetSystem(start.id)]
 
     debug("Requesting path for fleet %s from %s to %s" % (fo.getUniverse().getFleet(fleet_id), start, target))
-    target_distance_from_supply = -min(state.get_system_supply(target.id), 0)
+    target_distance_from_supply = -min(get_system_supply(target.id), 0)
 
     # low-aggression AIs may not travel far from supply
     if not get_aistate().character.may_travel_beyond_supply(target_distance_from_supply):
@@ -121,7 +121,7 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
     universe = fo.getUniverse()
     start_system = TargetSystem(start_system_id)
     drydock_system_ids = set()
-    for sys_id, pids in state.get_empire_drydocks().items():
+    for sys_id, pids in get_empire_drydocks().items():
         if sys_id == INVALID_ID:
             warning("get_best_drydock_system_id passed bad drydock sys_id.")
             continue

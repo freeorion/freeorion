@@ -14,7 +14,10 @@ from aistate_interface import get_aistate
 import ShipDesignAI
 import TechsListsAI
 from freeorion_tools import chat_human, get_species_tag_grade, tech_is_complete
-from turn_state import state
+from turn_state import (
+    get_empire_planets_by_species, have_asteroids, have_gas_giant, have_nest, have_ruins,
+    population_with_industry_focus, population_with_research_focus,
+)
 
 inProgressTechs = {}
 
@@ -353,19 +356,19 @@ def init():
     ]
 
     tech_handlers = (
-        (Dep.PRO_MICROGRAV_MAN, conditional_priority(3.5, LOW, state.have_asteroids)),
-        (Dep.PRO_ORBITAL_GEN, conditional_priority(3.0, LOW, state.have_gas_giant)),
+        (Dep.PRO_MICROGRAV_MAN, conditional_priority(3.5, LOW, have_asteroids())),
+        (Dep.PRO_ORBITAL_GEN, conditional_priority(3.0, LOW, have_gas_giant())),
         (Dep.PRO_SINGULAR_GEN, conditional_priority(3.0, LOW, partial(has_star, fo.starType.blackHole))),
         (Dep.GRO_XENO_GENETICS, get_xeno_genetics_priority),
-        (Dep.LRN_XENOARCH, conditional_priority(LOW, conditional_priority(5.0, LOW, state.have_ruins), has_low_aggression)),
+        (Dep.LRN_XENOARCH, conditional_priority(LOW, conditional_priority(5.0, LOW, have_ruins()), has_low_aggression)),
         (Dep.LRN_ART_BLACK_HOLE, get_artificial_black_hole_priority),
         (Dep.GRO_GENOME_BANK, LOW),
         (Dep.CON_CONC_CAMP, ZERO),
-        (Dep.NEST_DOMESTICATION_TECH, conditional_priority(ZERO, conditional_priority(3.0, LOW, state.have_nest), has_low_aggression)),
+        (Dep.NEST_DOMESTICATION_TECH, conditional_priority(ZERO, conditional_priority(3.0, LOW, have_nest()), has_low_aggression)),
         (Dep.UNRESEARCHABLE_TECHS, -1.0),
         (Dep.UNUSED_TECHS, ZERO),
         (Dep.THEORY_TECHS, ZERO),
-        (Dep.PRODUCTION_BOOST_TECHS, conditional_priority(1.5, 0.6, state.population_with_industry_focus())),
+        (Dep.PRODUCTION_BOOST_TECHS, conditional_priority(1.5, 0.6, population_with_industry_focus())),
         (Dep.RESEARCH_BOOST_TECHS, if_tech_target(get_initial_research_target(), 2.1, 2.5)),
         (Dep.PRODUCTION_AND_RESEARCH_BOOST_TECHS, 2.5),
         (Dep.POPULATION_BOOST_TECHS, get_population_boost_priority),
@@ -427,9 +430,9 @@ def generate_research_orders():
     completed_techs = get_completed_techs()
     debug("Research Queue Management on turn %d:", fo.currentTurn())
     debug("ColonisationAI survey:")
-    debug('  have asteroids: %s', state.have_asteroids)
-    debug('  have gas giant: %s', state.have_gas_giant)
-    debug('  have ruins: %s', state.have_ruins)
+    debug('  have asteroids: %s', have_asteroids())
+    debug('  have gas giant: %s', have_gas_giant())
+    debug('  have ruins: %s', have_ruins())
 
     resource_production = empire.resourceProduction(fo.resourceType.research)
     debug("\nTotal Current Research Points: %.2f\n", resource_production)
@@ -753,7 +756,7 @@ def generate_classic_research_orders():
     nest_tech = Dep.NEST_DOMESTICATION_TECH
     artif_minds = Dep.LRN_ARTIF_MINDS_1
 
-    if state.have_nest and not tech_is_complete(nest_tech):
+    if have_nest() and not tech_is_complete(nest_tech):
         if artif_minds in research_queue_list:
             insert_idx = 1 + research_queue_list.index(artif_minds)
         else:
@@ -835,7 +838,7 @@ def generate_classic_research_orders():
     #
     # check to accelerate xeno_arch
     if True:  # just to help with cold-folding /  organization
-        if (state.have_ruins and not tech_is_complete("LRN_XENOARCH")
+        if (have_ruins() and not tech_is_complete("LRN_XENOARCH")
                 and aistate.character.may_research_tech_classic("LRN_XENOARCH")):
             if artif_minds in research_queue_list:
                 insert_idx = 7 + research_queue_list.index(artif_minds)
@@ -889,7 +892,7 @@ def generate_classic_research_orders():
     #
     # check to accelerate asteroid or GG tech
     if True:  # just to help with cold-folding / organization
-        if state.have_asteroids:
+        if have_asteroids():
             insert_idx = num_techs_accelerated if "GRO_SYMBIOTIC_BIO" not in research_queue_list else research_queue_list.index("GRO_SYMBIOTIC_BIO")
             ast_tech = "PRO_MICROGRAV_MAN"
             if not (tech_is_complete(ast_tech) or ast_tech in research_queue_list[:(1 + insert_idx)]):
@@ -913,7 +916,7 @@ def generate_classic_research_orders():
                         if report_adjustments:
                             chat_human(msg)
                 research_queue_list = get_research_queue_techs()
-        if state.have_gas_giant and not tech_is_complete("PRO_ORBITAL_GEN"):
+        if have_gas_giant() and not tech_is_complete("PRO_ORBITAL_GEN"):
             fusion_idx = 0 if "PRO_FUSION_GEN" not in research_queue_list else (1 + research_queue_list.index("PRO_FUSION_GEN"))
             forcefields_idx = 0 if "LRN_FORCE_FIELD" not in research_queue_list else (1 + research_queue_list.index("LRN_FORCE_FIELD"))
             insert_idx = max(fusion_idx, forcefields_idx) if enemies_sighted else fusion_idx
@@ -956,7 +959,7 @@ def generate_classic_research_orders():
     if True:  # just to help with cold-folding / organization
         if not tech_is_complete("LRN_DISTRIB_THOUGHT"):
             got_telepathy = False
-            for specName in state.get_empire_planets_by_species():
+            for specName in get_empire_planets_by_species():
                 this_spec = fo.getSpecies(specName)
                 if this_spec and ("TELEPATHIC" in list(this_spec.tags)):
                     got_telepathy = True
@@ -980,7 +983,7 @@ def generate_classic_research_orders():
     #
     # check to accelerate quant net
     if False:  # disabled for now, otherwise just to help with cold-folding / organization
-        if aistate.character.may_research_tech_classic("LRN_QUANT_NET") and (state.population_with_research_focus() >= 40):
+        if aistate.character.may_research_tech_classic("LRN_QUANT_NET") and (population_with_research_focus() >= 40):
             if not tech_is_complete("LRN_QUANT_NET"):
                 insert_idx = num_techs_accelerated  # TODO determine min target slot if reenabling
                 for qnTech in ["LRN_NDIM_SUBSPACE", "LRN_QUANT_NET"]:

@@ -15,7 +15,6 @@ import ProductionAI
 import MilitaryAI
 from aistate_interface import get_aistate
 from target import TargetPlanet
-from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
 from freeorion_tools import (tech_is_complete, get_species_tag_grade, cache_by_turn_persistent,
                              AITimer, get_partial_visibility_turn, cache_for_current_turn, cache_for_session)
@@ -23,6 +22,12 @@ from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
                             POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
                             Tags)
 from ShipDesignAI import get_ship_part
+from turn_state import (
+    best_pilot_rating, get_colonized_planets_in_system, get_empire_outposts, get_empire_planets_by_species,
+    get_inhabited_planets, get_number_of_colonies, get_owned_planets, get_owned_planets_in_system, get_system_supply,
+    get_unowned_empty_planets, have_computronium, population_with_industry_focus, population_with_research_focus,
+    set_best_pilot_rating, set_have_asteroids, set_have_gas_giant, set_have_nest, set_medium_pilot_rating,
+)
 
 colonization_timer = AITimer('getColonyFleets()')
 
@@ -73,11 +78,11 @@ def colony_pod_cost_turns():
         base_cost = 0
         build_turns = 0
         debug("no available colony parts with capacity > 0")
-    return (base_cost * (1 + state.get_number_of_colonies() * AIDependencies.COLONY_POD_UPKEEP), build_turns)
+    return (base_cost * (1 + get_number_of_colonies() * AIDependencies.COLONY_POD_UPKEEP), build_turns)
 
 
 def outpod_pod_cost():
-    return AIDependencies.OUTPOST_POD_COST * (1 + state.get_number_of_colonies()*AIDependencies.COLONY_POD_UPKEEP)
+    return AIDependencies.OUTPOST_POD_COST * (1 + get_number_of_colonies()*AIDependencies.COLONY_POD_UPKEEP)
 
 
 def calc_max_pop(planet, species, detail):
@@ -321,7 +326,7 @@ def survey_universe():
 
                 for special in planet.specials:
                     if special in NEST_VAL_MAP:
-                        state.set_have_nest()
+                        set_have_nest()
                     if special in AIDependencies.metabolismBoosts:
                         available_growth_specials.setdefault(special, []).append(pid)
                         if planet.focus == FocusType.FOCUS_GROWTH:
@@ -332,11 +337,11 @@ def survey_universe():
 
         if empire_has_qualifying_planet:
             if local_ast:
-                state.set_have_asteroids()
+                set_have_asteroids()
             elif local_gg:
-                state.set_have_gas_giant()
+                set_have_gas_giant()
 
-        if sys_id in state.get_empire_planets_by_system():
+        if sys_id in get_owned_planets():
             AIstate.empireStars.setdefault(system.starType, []).append(sys_id)
             sys_status = aistate.systemStatus.setdefault(sys_id, {})
             if sys_status.get('fleetThreat', 0) > 0:
@@ -348,11 +353,11 @@ def survey_universe():
 
     if pilot_ratings:
         rating_list = sorted(pilot_ratings.values(), reverse=True)
-        state.set_best_pilot_rating(rating_list[0])
+        set_best_pilot_rating(rating_list[0])
         if len(pilot_ratings) == 1:
-            state.set_medium_pilot_rating(rating_list[0])
+            set_medium_pilot_rating(rating_list[0])
         else:
-            state.set_medium_pilot_rating(rating_list[1 + int(len(rating_list) // 5)])
+            set_medium_pilot_rating(rating_list[1 + int(len(rating_list) // 5)])
     # the idea behind this was to note systems that the empire has claimed-- either has a current colony or has targeted
     # for making/invading a colony
     # claimedStars = {}
@@ -407,7 +412,7 @@ def get_colony_fleets():
     for p_set in available_pp:
         avail_pp_by_sys.update([(sys_id, available_pp[p_set]) for sys_id in set(PlanetUtilsAI.get_systems(p_set))])
 
-    evaluated_colony_planet_ids = list(state.get_unowned_empty_planets().union(state.get_empire_outposts()) - set(
+    evaluated_colony_planet_ids = list(get_unowned_empty_planets().union(get_empire_outposts()) - set(
         colony_targeted_planet_ids))  # places for possible colonyBase
 
     aistate = get_aistate()
@@ -418,7 +423,7 @@ def get_colony_fleets():
         if not planet:
             continue
         sys_id = planet.systemID
-        for pid2 in state.get_empire_planets_by_system(sys_id, include_outposts=False):
+        for pid2 in get_colonized_planets_in_system(sys_id):
             planet2 = universe.getPlanet(pid2)
             if not (planet2 and planet2.speciesName in empire_colonizers):
                 continue
@@ -432,7 +437,7 @@ def get_colony_fleets():
     outpost_base_manager.build_bases()
     colonization_timer.start('Evaluate Primary Colony Opportunities')
 
-    evaluated_outpost_planet_ids = list(state.get_unowned_empty_planets() - set(outpost_targeted_planet_ids) - set(
+    evaluated_outpost_planet_ids = list(get_unowned_empty_planets() - set(outpost_targeted_planet_ids) - set(
             colony_targeted_planet_ids) - set(reserved_outpost_base_targets))
 
     evaluated_colony_planets = assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None)
@@ -626,7 +631,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
     pilot_val = pilot_rating = 0
     if species and species.canProduceShips:
         pilot_val = pilot_rating = rate_piloting_tag(spec_name)
-        if pilot_val > state.best_pilot_rating:
+        if pilot_val > best_pilot_rating():
             pilot_val *= 2
         if pilot_val > 2:
             retval += discount_multiplier * 5 * pilot_val
@@ -669,14 +674,14 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
     # only count existing presence if not target planet
     # TODO: consider neighboring sytems for smaller contribution, and bigger contributions for
     # local colonies versus local outposts
-    locally_owned_planets = [lpid for lpid in state.get_empire_planets_by_system(this_sysid) if lpid != planet_id]
-    planets_with_species = state.get_inhabited_planets()
+    locally_owned_planets = [lpid for lpid in get_owned_planets_in_system(this_sysid) if lpid != planet_id]
+    planets_with_species = get_inhabited_planets()
     locally_owned_pop_ctrs = [lpid for lpid in locally_owned_planets if lpid in planets_with_species]
     # triple count pop_ctrs
     existing_presence = len(locally_owned_planets) + 2 * len(locally_owned_pop_ctrs)
     system = universe.getSystem(this_sysid)
 
-    sys_supply = state.get_system_supply(this_sysid)
+    sys_supply = get_system_supply(this_sysid)
     planet_supply = AIDependencies.supply_by_size.get(planet.size, 0)
     bld_types = set(universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs).intersection(
         AIDependencies.building_supply)
@@ -722,9 +727,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
     fixed_ind = 0
     fixed_res = 0
     if system:
-        already_got_this_one = this_sysid in state.get_empire_planets_by_system()
+        already_got_this_one = this_sysid in get_owned_planets()
         # TODO: Should probably consider pilot rating also for Phototropic species
-        if "PHOTOTROPHIC" not in tag_list and pilot_rating >= state.best_pilot_rating:
+        if "PHOTOTROPHIC" not in tag_list and pilot_rating >= best_pilot_rating():
             if system.starType == fo.starType.red and tech_is_complete("LRN_STELLAR_TOMOGRAPHY"):
                 star_bonus += 40 * discount_multiplier  # can be used for artif'l black hole and solar hull
                 detail.append("Red Star for Art Black Hole for solar hull %.1f" % (40 * discount_multiplier))
@@ -766,7 +771,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
         if tech_is_complete(AIDependencies.PRO_SOL_ORB_GEN):  # start valuing as soon as PRO_SOL_ORB_GEN done
             if system.starType in [fo.starType.blackHole]:
                 # pretty rare planets, good for generator
-                this_val = 0.5 * max(state.population_with_industry_focus(), 20) * discount_multiplier
+                this_val = 0.5 * max(population_with_industry_focus(), 20) * discount_multiplier
                 if not claimed_stars.get(fo.starType.blackHole, []):
                     star_bonus += this_val
                     detail.append("PRO_SINGULAR_GEN %.1f" % this_val)
@@ -825,7 +830,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
                 detail.append("%s %.1f" % (special, fort_val))
             elif special == "HONEYCOMB_SPECIAL":
                 honey_val = 0.3 * (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
-                                   state.population_with_industry_focus() * discount_multiplier)
+                                   population_with_industry_focus() * discount_multiplier)
                 retval += honey_val
                 detail.append("%s %.1f" % (special, honey_val))
         if planet.size == fo.planetSize.asteroids:
@@ -944,7 +949,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
             detail.append("Undepleted Ruins %.1f" % discount_multiplier * 50)
         if "HONEYCOMB_SPECIAL" in planet.specials:
             honey_val = (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
-                         state.population_with_industry_focus() * discount_multiplier)
+                         population_with_industry_focus() * discount_multiplier)
             if FocusType.FOCUS_INDUSTRY not in species_foci:
                 honey_val *= -0.3  # discourage settlement by colonizers not able to use Industry Focus
             retval += honey_val
@@ -1087,9 +1092,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
                 detail.append("Temporal Anomaly Research")
             if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
                 comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *
-                              AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * state.population_with_research_focus() *
+                              AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * population_with_research_focus() *
                               discount_multiplier)
-                if state.have_computronium:
+                if have_computronium():
                     comp_bonus *= backup_factor
                 research_bonus += comp_bonus
                 detail.append(AIDependencies.COMPUTRONIUM_SPECIAL)
@@ -1301,7 +1306,7 @@ def _print_empire_species_roster():
     header.extend(Text(v) for v in grade_tags.values())
     header.append(Sequence('Tags'))
     species_table = Table(header, table_name="Empire species roster Turn %d" % fo.currentTurn())
-    for species_name, planet_ids in state.get_empire_planets_by_species().items():
+    for species_name, planet_ids in get_empire_planets_by_species().items():
         species_tags = fo.getSpecies(species_name).tags
         is_colonizer = species_name in empire_colonizers
         number_of_shipyards = len(empire_ship_builders.get(species_name, []))
@@ -1641,7 +1646,7 @@ def test_calc_max_pop():
     from freeorion_tools import chat_human
     chat_human("Verifying calculation of ColonisationAI.calc_max_pop()")
     universe = fo.getUniverse()
-    for spec_name, planets in state.get_empire_planets_by_species().items():
+    for spec_name, planets in get_empire_planets_by_species().items():
         species = fo.getSpecies(spec_name)
         for pid in planets:
             planet = universe.getPlanet(pid)

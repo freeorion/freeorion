@@ -15,7 +15,10 @@ from CombatRatingsAI import get_ship_combat_stats, rating_difference
 from EnumsAI import MissionType
 from freeorion_tools import cache_by_turn_persistent, combine_ratings
 from target import TargetSystem
-from turn_state import state
+from turn_state import (
+    get_distance_to_enemy_supply, get_owned_planets, get_owned_planets_in_system,
+    get_systems_by_supply_tier,
+)
 
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
 _military_allocations = []
@@ -757,7 +760,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         # TODO blockade enemy systems
 
         # interior systems
-        targetable_ids = set(state.get_systems_by_supply_tier(0))
+        targetable_ids = set(get_systems_by_supply_tier(0))
         current_mil_systems = [sid for sid, _, _, _, _ in allocation_helper.allocations]
         interior_targets1 = targetable_ids.difference(current_mil_systems)
         interior_targets = [sid for sid in interior_targets1 if (
@@ -910,7 +913,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
             fleet_mission.clear_target()
             if sys_id in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs):
                 mission_type = MissionType.SECURE
-            elif state.get_empire_planets_by_system(sys_id):
+            elif get_owned_planets_in_system(sys_id):
                 mission_type = MissionType.PROTECT_REGION
             else:
                 mission_type = MissionType.MILITARY
@@ -950,13 +953,13 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
                 elif get_system_jump2_threat(_sys_id):
                     weight = 1
                 else:
-                    weight = 1 / max(.5, float(state.get_distance_to_enemy_supply(_sys_id)))**1.25
+                    weight = 1 / max(.5, float(get_distance_to_enemy_supply(_sys_id)))**1.25
                 return float(weight) / (jump_distance+1)
 
             for fid in avail_mil_fleet_ids:
                 fleet = universe.getFleet(fid)
                 FleetUtilsAI.get_fleet_system(fleet)
-                systems = state.get_empire_planets_by_system().keys()
+                systems = get_owned_planets().keys()
                 if not systems:
                     continue
                 sys_id = max(systems, key=lambda x: system_score(fid, x))
