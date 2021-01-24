@@ -736,9 +736,8 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
 
         // attempt removing lanes, but don't do so if it would make the systems
         // the lane connects too far apart
-        for (auto& sys_lanes_pair : potential_system_lanes) {
-            auto sys1_id = sys_lanes_pair.first;
-            for (auto& sys2_id : sys_lanes_pair.second) {
+        for (const auto& [sys1_id, sys1_lanes] : potential_system_lanes) {
+            for (auto& sys2_id : sys1_lanes) {
                 // TODO: skip cases where sys2 < sys1 since these should already
                 //       have been handled by previous loop iterations, since
                 //       all lanes should exist in both directions

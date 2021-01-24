@@ -2844,9 +2844,9 @@ namespace {
 
         void UpdateImpl(std::size_t mode, const GG::Wnd* target) override {
             const GG::Y row_height(RowHeight());
-            for (const auto& label_pair : m_labels_and_amounts) {
-                DetachChild(label_pair.first);
-                DetachChild(label_pair.second);
+            for (const auto& [first, second] : m_labels_and_amounts) {
+                DetachChild(first);
+                DetachChild(second);
             }
             m_labels_and_amounts.clear();
 
@@ -2905,7 +2905,7 @@ namespace {
         MeterType m_meter_type;
         int m_system_id;
         std::vector<std::pair<std::shared_ptr<GG::Label>,
-                    std::shared_ptr<GG::Label>>> m_labels_and_amounts;
+                              std::shared_ptr<GG::Label>>> m_labels_and_amounts;
     };
 }
 

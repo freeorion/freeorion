@@ -211,9 +211,9 @@ void MultiMeterStatusBar::Update() {
 
     int num_bars = 0;   // count number of valid bars' data added
 
-    for (auto& meter_types_pair : m_meter_types) {
-        const Meter* actual_meter = obj->GetMeter(meter_types_pair.first);
-        const Meter* target_max_meter = obj->GetMeter(meter_types_pair.second);
+    for (auto& [actual_meter_type, target_max_meter_type] : m_meter_types) {
+        const Meter* actual_meter = obj->GetMeter(actual_meter_type);
+        const Meter* target_max_meter = obj->GetMeter(target_max_meter_type);
 
         if (actual_meter || target_max_meter) {
             float initial = actual_meter ? actual_meter->Initial() : Meter::INVALID_VALUE;
@@ -225,7 +225,7 @@ void MultiMeterStatusBar::Update() {
             m_initial_values.push_back(initial);
             m_projected_values.push_back(projected);
             m_target_max_values.push_back(target);
-            m_bar_colours.push_back(MeterColor(meter_types_pair.first));
+            m_bar_colours.push_back(MeterColor(actual_meter_type));
         }
     }
 

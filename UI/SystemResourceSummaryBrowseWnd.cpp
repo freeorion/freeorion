@@ -169,9 +169,9 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     // adds pairs of labels for ResourceCenter name and production of resource starting at vertical position \a top
     // and updates \a top to the vertical position after the last entry
-    for (const auto& label_pair : m_production_labels_and_amounts) {
-        DetachChild(label_pair.first);
-        DetachChild(label_pair.second);
+    for (const auto& [first, second] : m_production_labels_and_amounts) {
+        DetachChild(first);
+        DetachChild(second);
     }
     m_production_labels_and_amounts.clear();
 
@@ -260,9 +260,9 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     // adds pairs of labels for allocation of resources in system, starting at vertical position \a top and
     // updates \a top to be the vertical position after the last entry
-    for (const auto& label_pair : m_allocation_labels_and_amounts) {
-        DetachChild(label_pair.first);
-        DetachChild(label_pair.second);
+    for (const auto& [first, second] : m_allocation_labels_and_amounts) {
+        DetachChild(first);
+        DetachChild(second);
     }
     m_allocation_labels_and_amounts.clear();
 
@@ -441,21 +441,21 @@ void SystemResourceSummaryBrowseWnd::Clear() {
     DetachChildAndReset(m_allocation_label);
     DetachChildAndReset(m_import_export_label);
 
-    for (const auto& label_pair : m_production_labels_and_amounts) {
-        DetachChild(label_pair.first);
-        DetachChild(label_pair.second);
+    for (const auto& [first, second] : m_production_labels_and_amounts) {
+        DetachChild(first);
+        DetachChild(second);
     }
     m_production_labels_and_amounts.clear();
 
-    for (const auto& label_pair : m_allocation_labels_and_amounts) {
-        DetachChild(label_pair.first);
-        DetachChild(label_pair.second);
+    for (const auto& [first, second] : m_allocation_labels_and_amounts) {
+        DetachChild(first);
+        DetachChild(second);
     }
     m_allocation_labels_and_amounts.clear();
 
-    for (const auto& label_pair : m_import_export_labels_and_amounts) {
-        DetachChild(label_pair.first);
-        DetachChild(label_pair.second);
+    for (const auto& [first, second] : m_import_export_labels_and_amounts) {
+        DetachChild(first);
+        DetachChild(second);
     }
     m_import_export_labels_and_amounts.clear();
 }

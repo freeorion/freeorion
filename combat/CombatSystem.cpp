@@ -1677,20 +1677,20 @@ namespace {
             ships_fighters_to_add_back[fighter->LaunchedFrom()]++;
         }
         DebugLogger() << "Fighters left at end of combat:";
-        for (auto ship_fighter_count_pair : ships_fighters_to_add_back)
-            DebugLogger() << " ... from ship id " << ship_fighter_count_pair.first << " : " << ship_fighter_count_pair.second;
+        for (auto [ship_id, fighter_count] : ships_fighters_to_add_back)
+            DebugLogger() << " ... from ship id " << ship_id << " : " << fighter_count;
 
 
         DebugLogger() << "Returning fighters to ships:";
-        for (auto& entry : ships_fighters_to_add_back) {
-            auto ship = combat_info.objects.get<Ship>(entry.first);
+        for (auto [ship_id, fighter_count] : ships_fighters_to_add_back) {
+            auto ship = combat_info.objects.get<Ship>(ship_id);
             if (!ship) {
-                ErrorLogger(combat) << "Couldn't get ship with id " << entry.first << " for fighter to return to...";
+                ErrorLogger(combat) << "Couldn't get ship with id " << ship_id << " for fighter to return to...";
                 continue;
             }
-            IncreaseStoredFighterCount(ship, entry.second);
+            IncreaseStoredFighterCount(ship, fighter_count);
             // launching negative ships indicates recovery of them
-            CombatEventPtr launch_event = std::make_shared<FighterLaunchEvent>(bout, entry.first, ship->Owner(), -entry.second);
+            CombatEventPtr launch_event = std::make_shared<FighterLaunchEvent>(bout, ship_id, ship->Owner(), -fighter_count);
             launches_event->AddEvent(launch_event);
         }
     }
