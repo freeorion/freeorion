@@ -3195,9 +3195,11 @@ namespace {
 
     /** Check validity of adopted policies, overwrite initial adopted
       * policies with those currently adopted, update adopted turns counters. */
-    void UpdateEmpirePolicies() {
-        for (auto id_empire_pair : Empires())
-            id_empire_pair.second->UpdatePolicies();
+    void UpdateEmpirePolicies(EmpireManager& empires) {
+        for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
+            (void)empire_id;    // quieting unused variable warning
+            empire->UpdatePolicies();
+        }
     }
 
     /** Deletes empty fleets. */
@@ -3210,8 +3212,7 @@ namespace {
         }
 
         for (auto& fleet : empty_fleets) {
-            auto sys = Objects().get<System>(fleet->SystemID());
-            if (sys)
+            if (auto sys = Objects().get<System>(fleet->SystemID()))
                 sys->Remove(fleet->ID());
 
             GetUniverse().RecursiveDestroy(fleet->ID());
@@ -3258,7 +3259,7 @@ void ServerApp::PreCombatProcessTurns() {
     // validate adopted policies, and update Empire Policy history
     // actual policy adoption and influence consumption occurrs during order
     // execution above
-    UpdateEmpirePolicies();
+    UpdateEmpirePolicies(m_empires);
 
     // clean up empty fleets that empires didn't order deleted
     CleanEmptyFleets();
@@ -3497,6 +3498,7 @@ void ServerApp::PostCombatProcessTurns() {
     // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
     for ([[maybe_unused]] auto& [empire_id, empire] : m_empires) {
+        (void)empire_id;    // quieting unused variable warning
         if (!empire->Eliminated()) {
             empire->UpdatePreservedLanes();
             empire->UpdateUnobstructedFleets();     // must be done after *all* noneliminated empires have updated their unobstructed systems
@@ -3512,6 +3514,7 @@ void ServerApp::PostCombatProcessTurns() {
     // objects for completed production and give techs to empires that have
     // researched them
     for ([[maybe_unused]] auto& [empire_id, empire] : m_empires) {
+        (void)empire_id;    // unused variable warning
         if (empire->Eliminated())
             continue;   // skip eliminated empires
 
