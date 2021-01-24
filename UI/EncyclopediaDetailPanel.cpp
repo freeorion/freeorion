@@ -2219,12 +2219,12 @@ namespace {
     }
 
 
-    void RefreshDetailPanelMeterTypeTag(const std::string& item_type, const std::string& item_name,
-                                        std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                        std::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                        float& cost, std::string& cost_units, std::string& general_type,
-                                        std::string& specific_type, std::string& detailed_description,
-                                        GG::Clr& color)
+    void RefreshDetailPanelMeterTypeTag(    const std::string& item_type, const std::string& item_name,
+                                            std::string& name, std::shared_ptr<GG::Texture>& texture,
+                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::string& specific_type, std::string& detailed_description,
+                                            GG::Clr& color)
     {
         MeterType meter_type = MeterType::INVALID_METER_TYPE;
         std::istringstream item_ss(item_name);
@@ -2244,7 +2244,7 @@ namespace {
 
     }
 
-    std::string GetDetailedDescriptionBase(const ShipDesign* design) {
+    std::string GetDetailedDescriptionBase( const ShipDesign* design) {
         std::string hull_link;
         if (!design->Hull().empty())
             hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, design->Hull());
@@ -3058,9 +3058,9 @@ namespace {
 
         //std::cout << "cat: " << article_category << "  key: " << article_key << "\n";
         GetRefreshDetailPanelInfo(article_directory, article_key,
-                                    dummy3, dummy1, dummy2, dummyA, dummyB, dummy4,
-                                    dummy5, dummy6, detailed_description, dummyC,
-                                    dummyD);
+                                  dummy3, dummy1, dummy2, dummyA, dummyB, dummy4,
+                                  dummy5, dummy6, detailed_description, dummyC,
+                                  dummyD);
 
         if (boost::icontains(detailed_description, search_text))
             article_match = std::move(article_name_link);
