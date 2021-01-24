@@ -1105,7 +1105,7 @@ namespace {
             // recurse into any sub-sub-directories
             auto&& temp = GetSubDirs(category_str_key, exclude_custom_categories_from_dir_name, depth);
 
-            DebugLogger() << "GetSubDirs(" << dir_name << ") storing "
+            TraceLogger() << "GetSubDirs(" << dir_name << ") storing "
                           << category_str_key << ": " << readable_article_name;
 
             retval.emplace(std::make_pair(std::move(category_str_key), dir_name),
