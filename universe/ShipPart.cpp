@@ -455,13 +455,11 @@ void ShipPartManager::CheckPendingShipParts() const {
     Pending::SwapPending(m_pending_ship_parts, m_parts);
 
     TraceLogger() << [this]() {
-            std::string retval("Part Types:");
-            for (const auto& pair : m_parts) {
-                const auto& part = pair.second;
-                retval.append("\n\t" + part->Name() + " class: " + boost::lexical_cast<std::string>(part->Class()));
-            }
-            return retval;
-        }();
+        std::string retval("Part Types:");
+        for (const auto& [part_name, part] : m_parts)
+            retval.append("\n\t" + part_name + " class: " + boost::lexical_cast<std::string>(part->Class()));
+        return retval;
+    }();
 }
 
 ShipPartManager& GetShipPartManager()
