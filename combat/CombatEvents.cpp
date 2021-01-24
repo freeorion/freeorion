@@ -182,7 +182,7 @@ SimultaneousEvents::SimultaneousEvents() :
     events()
 {}
 
-void SimultaneousEvents::AddEvent(const CombatEventPtr& event)
+void SimultaneousEvents::AddEvent(const CombatEventPtr& event)  // TODO: make not const and move
 { events.emplace_back(event); }
 
 std::string SimultaneousEvents::DebugString() const {
