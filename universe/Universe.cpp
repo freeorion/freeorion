@@ -1418,6 +1418,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for POLICIES";
     std::list<Condition::ObjectSet> policy_sources; // for each empire, a set with a single source object for all its policies
     for (const auto& [empire_id, empire] : Empires()) {
+        (void)empire_id;    // quiet unused varianle warning
         auto source = empire->Source();
         if (!source)
             continue;

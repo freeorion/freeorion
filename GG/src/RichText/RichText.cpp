@@ -245,8 +245,10 @@ namespace {
     std::set<T> MapKeys(const std::map<T, V>& arg_map)
     {
         std::set<T> keys;
-        for ([[maybe_unused]] auto& [key, val] : arg_map)
+        for ([[maybe_unused]] auto& [key, val] : arg_map) {
+            (void)val;  // quiet unused varianle warning
             keys.insert(key);
+        }
         return keys;
     }
 }

@@ -886,25 +886,33 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = fa
                 return ZoomToTech(tech->Name());
         }
 
-        for ([[maybe_unused]] auto& [building_name, ignored] : GetBuildingTypeManager())
+        for ([[maybe_unused]] auto& [building_name, ignored] : GetBuildingTypeManager()) {
+            (void)ignored;  // quiet unused variable warning
             if (boost::iequals(name, UserString(building_name)))
                 return ZoomToBuildingType(building_name);
+        }
 
         for (const auto& special_name : SpecialNames())
             if (boost::iequals(name, UserString(special_name)))
                 return ZoomToSpecial(special_name);
 
-        for ([[maybe_unused]] auto& [hull_name, ignored] : GetShipHullManager())
+        for ([[maybe_unused]] auto& [hull_name, ignored] : GetShipHullManager()) {
+            (void)ignored;  // quiet unused variable warning
             if (boost::iequals(name, UserString(hull_name)))
                 return ZoomToShipHull(hull_name);
+        }
 
-        for ([[maybe_unused]] auto& [part_name, ignored] : GetShipPartManager())
+        for ([[maybe_unused]] auto& [part_name, ignored] : GetShipPartManager()) {
+            (void)ignored;  // quiet unused variable warning
             if (boost::iequals(name, UserString(part_name)))
                 return ZoomToShipPart(part_name);
+        }
 
-        for ([[maybe_unused]] auto& [species_name, ignored] : GetSpeciesManager())
+        for ([[maybe_unused]] auto& [species_name, ignored] : GetSpeciesManager()) {
+            (void)ignored;  // quiet unused variable warning
             if (boost::iequals(name, UserString(species_name)))
                 return ZoomToSpecies(species_name);
+        }
 
         return false;
     } else {

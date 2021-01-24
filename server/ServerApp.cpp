@@ -3598,6 +3598,7 @@ void ServerApp::PostCombatProcessTurns() {
     DebugLogger() << "ServerApp::PostCombatProcessTurns applying Newly Added Techs";
     // apply new techs
     for ([[maybe_unused]] auto& [ignored_id, empire] : m_empires) {
+        (void)ignored_id;   // quiet unused variable warning
         if (empire && !empire->Eliminated())
             empire->ApplyNewTechs();
     }
@@ -3623,8 +3624,10 @@ void ServerApp::PostCombatProcessTurns() {
 
     // misc. other updates and records
     m_universe.UpdateStatRecords();
-    for ([[maybe_unused]] auto& [ignored_empire_id, empire] : m_empires)
+    for ([[maybe_unused]] auto& [ignored_empire_id, empire] : m_empires) {
+        (void)ignored_empire_id;    // quiet unused variable warning
         empire->UpdateOwnedObjectCounters();
+    }
     GetSpeciesManager().UpdatePopulationCounter();
 
 

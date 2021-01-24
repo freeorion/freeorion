@@ -1834,7 +1834,8 @@ void DesignWnd::PartPalette::CompleteConstruction() {
     {
         // are there any parts of this class?
         bool part_of_this_class_exists = false;
-        for (const auto& [part_name, part] : part_manager) {
+        for ([[maybe_unused]] auto& [ignored_part_name, part] : part_manager) {
+            (void)ignored_part_name;
             if (part && part->Class() == part_class) {
                 part_of_this_class_exists = true;
                 break;
@@ -1939,6 +1940,7 @@ void DesignWnd::PartPalette::DoLayout() {
     int col = NUM_CLASS_BUTTONS_PER_ROW;
     int row = -1;
     for ([[maybe_unused]] auto& [ignored, button] : m_class_buttons) {
+        (void)ignored;  // quiet unused variable warnings
         if (col >= NUM_CLASS_BUTTONS_PER_ROW) {
             col = 0;
             ++row;
@@ -2046,8 +2048,10 @@ void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::ShowAllClasses(bool refresh_list) {
     m_parts_list->ShowAllClasses(refresh_list);
-    for ([[maybe_unused]] auto& [ignored, button] : m_class_buttons)
+    for ([[maybe_unused]] auto& [ignored, button] : m_class_buttons) {
+        (void)ignored;  // quiet unused variable warnings
         button->SetCheck();
+    }
 }
 
 void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_list) {
@@ -2061,8 +2065,10 @@ void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
     m_parts_list->HideAllClasses(refresh_list);
-    for ([[maybe_unused]] auto& [ignored, button] : m_class_buttons)
+    for ([[maybe_unused]] auto& [ignored, button] : m_class_buttons) {
+        (void)ignored;  // quiet unused variable warnings
         button->SetCheck(false);
+    }
 }
 
 void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_list) {

@@ -3046,7 +3046,6 @@ namespace {
             return;
         }
 
-        bool listed = false;
         // search for full word matches in titles
         for (const std::string& word : words_in_search_text) {
             if (GG::GUI::GetGUI()->ContainsWord(article_name, word)) {

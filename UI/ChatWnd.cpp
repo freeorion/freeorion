@@ -132,6 +132,7 @@ void MessageWndEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
 void MessageWndEdit::FindGameWords() {
      // add player and empire names
     for ([[maybe_unused]] auto& [ignored_id, empire] : Empires()) {
+        (void)ignored_id;   // quiet unused variable warning
         m_game_words.emplace(empire->Name());
         m_game_words.emplace(empire->PlayerName());
     }

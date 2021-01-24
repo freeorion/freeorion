@@ -997,6 +997,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
         rows.reserve(std::distance(manager.begin(), manager.end()));
         for (const auto& [name, ignored_type] : manager) {
+            (void)ignored_type; // quiet unused variable warning
             if (!BuildableItemVisible(BuildType::BT_BUILDING, name))
                 continue;
             timer.EnterSection(name);
