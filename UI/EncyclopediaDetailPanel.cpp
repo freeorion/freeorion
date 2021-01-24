@@ -1118,6 +1118,9 @@ namespace {
     }
 
     int DefaultLocationForEmpire(int empire_id) {
+        if (empire_id == ALL_EMPIRES)
+            return INVALID_OBJECT_ID;
+
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             DebugLogger() << "DefaultLocationForEmpire: Unable to get empire with ID: " << empire_id;
