@@ -3330,21 +3330,22 @@ void SidePanel::RefreshImpl() {
     }
 
     // Resource meters; show only for player planets
-    const std::vector<std::pair<MeterType, MeterType>> resource_meters =    // TODO: constexpr when possible...
-       {{MeterType::METER_INDUSTRY,  MeterType::METER_TARGET_INDUSTRY},
-        {MeterType::METER_RESEARCH,  MeterType::METER_TARGET_RESEARCH},
-        {MeterType::METER_INFLUENCE, MeterType::METER_TARGET_INFLUENCE},
-        {MeterType::METER_STOCKPILE, MeterType::METER_MAX_STOCKPILE}};
+    constexpr std::array<std::pair<MeterType, MeterType>, 4> resource_meters =
+        {{{MeterType::METER_INDUSTRY,  MeterType::METER_TARGET_INDUSTRY},
+          {MeterType::METER_RESEARCH,  MeterType::METER_TARGET_RESEARCH},
+          {MeterType::METER_INFLUENCE, MeterType::METER_TARGET_INFLUENCE},
+          {MeterType::METER_STOCKPILE, MeterType::METER_MAX_STOCKPILE}}};
     // general meters; show only if all planets are owned by same empire
-    const std::vector<std::pair<MeterType, MeterType>> general_meters =     // TODO: constexpr when possible...
-       {{MeterType::METER_SHIELD,  MeterType::METER_MAX_SHIELD},
-        {MeterType::METER_DEFENSE, MeterType::METER_MAX_DEFENSE},
-        {MeterType::METER_TROOPS,  MeterType::METER_MAX_TROOPS},
-        {MeterType::METER_SUPPLY,  MeterType::METER_MAX_SUPPLY}};
-    std::vector<std::pair<MeterType, MeterType>> meter_types;   // TODO: reserve
+    constexpr std::array<std::pair<MeterType, MeterType>, 4> general_meters =
+        {{{MeterType::METER_SHIELD,  MeterType::METER_MAX_SHIELD},
+          {MeterType::METER_DEFENSE, MeterType::METER_MAX_DEFENSE},
+          {MeterType::METER_TROOPS,  MeterType::METER_MAX_TROOPS},
+          {MeterType::METER_SUPPLY,  MeterType::METER_MAX_SUPPLY}}};
+
+    std::vector<std::pair<MeterType, MeterType>> meter_types;
+    meter_types.reserve(8);
     if (!player_planets.empty())
         meter_types.insert(meter_types.end(), resource_meters.begin(), resource_meters.end());
-
     if (all_planets_share_owner)
         meter_types.insert(meter_types.end(), general_meters.begin(), general_meters.end());
 
@@ -3353,7 +3354,7 @@ void SidePanel::RefreshImpl() {
     m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(
         Width() - MaxPlanetDiameter() - 8,
         all_planets_share_owner ? all_planets : player_planets,
-        meter_types);
+        std::move(meter_types));
     m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4),
                                              140 - m_system_resource_summary->Height()));
     AttachChild(m_system_resource_summary);
