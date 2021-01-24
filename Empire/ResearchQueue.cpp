@@ -84,7 +84,7 @@ std::string ResearchQueue::Element::Dump() const {
 
 bool ResearchQueue::InQueue(const std::string& tech_name) const {
     return std::count_if(m_queue.begin(), m_queue.end(),
-                       [tech_name](const Element& e){ return e.name == tech_name; });
+                         [tech_name](const Element& e){ return e.name == tech_name; });
 }
 
 bool ResearchQueue::Paused(const std::string& tech_name) const {
