@@ -46,24 +46,6 @@ class EffectCause:
         ...
 
 
-class GGColor:
-    @property
-    def a(self)-> int:
-        ...
-
-    @property
-    def b(self)-> int:
-        ...
-
-    @property
-    def g(self)-> int:
-        ...
-
-    @property
-    def r(self)-> int:
-        ...
-
-
 class GalaxySetupData:
     @property
     def age(self)-> galaxySetupOption:
@@ -200,6 +182,26 @@ class IntFltMap:
         ...
 
 
+class IntIntDblMapMap:
+    def __contains__(self, obj: object) -> bool:
+        ...
+
+    def __delitem__(self, obj: object) -> None:
+        ...
+
+    def __getitem__(self, obj: object) -> object:
+        ...
+
+    def __iter__(self) -> object:
+        ...
+
+    def __len__(self) -> int:
+        ...
+
+    def __setitem__(self, obj1: object, obj2: object) -> None:
+        ...
+
+
 class IntIntMap:
     def __contains__(self, obj: object) -> bool:
         ...
@@ -283,6 +285,26 @@ class IntSetSet:
         ...
 
     def size(self) -> int:
+        ...
+
+
+class IntStringMap:
+    def __contains__(self, obj: object) -> bool:
+        ...
+
+    def __delitem__(self, obj: object) -> None:
+        ...
+
+    def __getitem__(self, obj: object) -> object:
+        ...
+
+    def __iter__(self) -> object:
+        ...
+
+    def __len__(self) -> int:
+        ...
+
+    def __setitem__(self, obj1: object, obj2: object) -> None:
         ...
 
 
@@ -462,6 +484,46 @@ class ShipSlotVec:
         ...
 
 
+class StatRecordsMap:
+    def __contains__(self, obj: object) -> bool:
+        ...
+
+    def __delitem__(self, obj: object) -> None:
+        ...
+
+    def __getitem__(self, obj: object) -> object:
+        ...
+
+    def __iter__(self) -> object:
+        ...
+
+    def __len__(self) -> int:
+        ...
+
+    def __setitem__(self, obj1: object, obj2: object) -> None:
+        ...
+
+
+class StringIntMap:
+    def __contains__(self, obj: object) -> bool:
+        ...
+
+    def __delitem__(self, obj: object) -> None:
+        ...
+
+    def __getitem__(self, obj: object) -> object:
+        ...
+
+    def __iter__(self) -> object:
+        ...
+
+    def __len__(self) -> int:
+        ...
+
+    def __setitem__(self, obj1: object, obj2: object) -> None:
+        ...
+
+
 class StringSet:
     def __contains__(self, string: str) -> bool:
         ...
@@ -505,6 +567,26 @@ class StringVec:
         ...
 
     def extend(self, obj: object) -> None:
+        ...
+
+
+class String_IntStringMap_Map:
+    def __contains__(self, obj: object) -> bool:
+        ...
+
+    def __delitem__(self, obj: object) -> None:
+        ...
+
+    def __getitem__(self, obj: object) -> object:
+        ...
+
+    def __iter__(self) -> object:
+        ...
+
+    def __len__(self) -> int:
+        ...
+
+    def __setitem__(self, obj1: object, obj2: object) -> None:
         ...
 
 
@@ -671,11 +753,19 @@ class diplomaticStatusUpdate:
 
 class empire:
     @property
+    def adoptedPolicies(self)-> StringVec:
+        ...
+
+    @property
     def allShipDesigns(self)-> IntSet:
         ...
 
     @property
     def availableBuildingTypes(self)-> StringSet:
+        ...
+
+    @property
+    def availablePolicies(self)-> StringSet:
         ...
 
     @property
@@ -699,7 +789,11 @@ class empire:
         ...
 
     @property
-    def colour(self)-> GGColor:
+    def categoriesSlotPolicies(self)-> String_IntStringMap_Map:
+        ...
+
+    @property
+    def colour(self)-> tuple:
         ...
 
     @property
@@ -708,6 +802,10 @@ class empire:
 
     @property
     def empireID(self)-> int:
+        ...
+
+    @property
+    def emptyPolicySlots(self)-> StringIntMap:
         ...
 
     @property
@@ -759,6 +857,14 @@ class empire:
         ...
 
     @property
+    def totalPolicySlots(self)-> StringIntMap:
+        ...
+
+    @property
+    def turnsPoliciesAdopted(self)-> StringIntMap:
+        ...
+
+    @property
     def won(self)-> bool:
         ...
 
@@ -791,6 +897,12 @@ class empire:
     def obstructedStarlanes(self) -> IntPairVec:
         ...
 
+    def policyAdopted(self, string: str) -> bool:
+        ...
+
+    def policyAvailable(self, string: str) -> bool:
+        ...
+
     def population(self) -> float:
         ...
 
@@ -815,10 +927,16 @@ class empire:
     def shipDesignAvailable(self, number: int) -> bool:
         ...
 
+    def slotPolicyAdoptedIn(self, string: str) -> int:
+        ...
+
     def supplyProjections(self) -> Dict[int, int]:
         ...
 
     def techResearched(self, string: str) -> bool:
+        ...
+
+    def turnPolicyAdopted(self, string: str) -> int:
         ...
 
 
@@ -837,58 +955,54 @@ class fieldType:
         """
 
 
-class shipHull:
+class influenceQueue:
     @property
-    def costTimeLocationInvariant(self)-> bool:
-        ...
-
-    @property
-    def fuel(self)-> float:
+    def allocatedStockpileIP(self):
         ...
 
     @property
-    def name(self)-> str:
+    def empireID(self):
         ...
 
     @property
-    def numSlots(self)-> int:
+    def empty(self):
         ...
 
     @property
-    def slots(self)-> ShipSlotVec:
+    def expectedNewStockpile(self):
         ...
 
     @property
-    def speed(self)-> float:
+    def size(self):
         ...
 
     @property
-    def starlaneSpeed(self)-> float:
+    def totalSpent(self):
+        ...
+
+    def __contains__(self, arg: influenceQueueElement) -> bool:
+        ...
+
+    def __getitem__(self, number: int) -> influenceQueueElement:
+        ...
+
+    def __iter__(self) -> object:
+        ...
+
+    def __len__(self) -> int:
+        ...
+
+    def inQueue(self, string: str) -> bool:
+        ...
+
+
+class influenceQueueElement:
+    @property
+    def allocation(self):
         ...
 
     @property
-    def stealth(self)-> float:
-        ...
-
-    @property
-    def structure(self)-> float:
-        ...
-
-    def hasTag(self, string: str) -> bool:
-        ...
-
-    def numSlotsOfSlotType(self, ship_slot_type: shipSlotType) -> int:
-        ...
-
-    def productionCost(self, number1: int, number2: int, number3: int) -> float:
-        ...
-
-    def productionLocation(self, number: int) -> bool:
-        """
-        Returns the result of Location condition (bool) in passed location_id (int)
-        """
-
-    def productionTime(self, number1: int, number2: int, number3: int) -> int:
+    def name(self):
         ...
 
 
@@ -905,6 +1019,27 @@ class meter:
         """
         Returns string with debug information, use '0' as argument.
         """
+
+
+class policy:
+    @property
+    def category(self):
+        ...
+
+    @property
+    def description(self):
+        ...
+
+    @property
+    def name(self):
+        ...
+
+    @property
+    def shortDescription(self):
+        ...
+
+    def adoptionCost(self, number: int) -> float:
+        ...
 
 
 class popCenter:
@@ -1139,15 +1274,15 @@ class shipDesign:
         ...
 
     @property
-    def hull_type(self)-> hullType:
-        ...
-
-    @property
     def id(self)-> int:
         ...
 
     @property
     def industryGeneration(self)-> float:
+        ...
+
+    @property
+    def influenceGeneration(self)-> float:
         ...
 
     @property
@@ -1163,10 +1298,6 @@ class shipDesign:
         ...
 
     @property
-    def ship_hull(self) -> ship_hull:
-        ...
-
-    @property
     def parts(self)-> StringVec:
         ...
 
@@ -1179,6 +1310,10 @@ class shipDesign:
         ...
 
     @property
+    def ship_hull(self)-> shipHull:
+        ...
+
+    @property
     def speed(self)-> float:
         ...
 
@@ -1188,10 +1323,6 @@ class shipDesign:
 
     @property
     def structure(self)-> float:
-        ...
-
-    @property
-    def tradeGeneration(self)-> float:
         ...
 
     @property
@@ -1213,6 +1344,61 @@ class shipDesign:
         ...
 
     def productionTime(self, number1: int, number2: int) -> int:
+        ...
+
+
+class shipHull:
+    @property
+    def costTimeLocationInvariant(self)-> bool:
+        ...
+
+    @property
+    def fuel(self)-> float:
+        ...
+
+    @property
+    def name(self)-> str:
+        ...
+
+    @property
+    def numSlots(self)-> int:
+        ...
+
+    @property
+    def slots(self)-> ShipSlotVec:
+        ...
+
+    @property
+    def speed(self)-> float:
+        ...
+
+    @property
+    def starlaneSpeed(self)-> float:
+        ...
+
+    @property
+    def stealth(self)-> float:
+        ...
+
+    @property
+    def structure(self)-> float:
+        ...
+
+    def hasTag(self, string: str) -> bool:
+        ...
+
+    def numSlotsOfSlotType(self, ship_slot_type: shipSlotType) -> int:
+        ...
+
+    def productionCost(self, number1: int, number2: int, number3: int) -> float:
+        ...
+
+    def productionLocation(self, number: int) -> bool:
+        """
+        Returns the result of Location condition (bool) in passed location_id (int)
+        """
+
+    def productionTime(self, number1: int, number2: int, number3: int) -> int:
         ...
 
 
@@ -1329,6 +1515,14 @@ class species:
 
     @property
     def preferredFocus(self)-> str:
+        ...
+
+    @property
+    def spawnlimit(self)-> int:
+        ...
+
+    @property
+    def spawnrate(self)-> float:
         ...
 
     @property
@@ -1485,6 +1679,11 @@ class universe:
     def shortestPathDistance(self, number1: int, number2: int) -> float:
         ...
 
+    def statRecords(self) -> StatRecordsMap:
+        """
+        Empire statistics recorded by the server each turn. Indexed first by staistic name (string), then by empire id (int), then by turn number (int), pointing to the statisic value (double).
+        """
+
     def systemHasStarlane(self, number1: int, number2: int) -> bool:
         ...
 
@@ -1628,6 +1827,10 @@ class field(universeObject):
 
 class fleet(universeObject):
     @property
+    def aggression(self)-> fleetAggression:
+        ...
+
+    @property
     def aggressive(self)-> bool:
         ...
 
@@ -1681,6 +1884,10 @@ class fleet(universeObject):
 
     @property
     def numShips(self)-> int:
+        ...
+
+    @property
+    def obstructive(self)-> bool:
         ...
 
     @property
@@ -1919,514 +2126,542 @@ class aggression(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    invalid = None  # aggression(invalid, "invalid")
-    beginner = None  # aggression(beginner, "beginner")
-    turtle = None  # aggression(turtle, "turtle")
-    cautious = None  # aggression(cautious, "cautious")
-    typical = None  # aggression(typical, "typical")
-    aggressive = None  # aggression(aggressive, "aggressive")
-    maniacal = None  # aggression(maniacal, "maniacal")
+    invalid = None  # aggression(-1, "invalid")
+    beginner = None  # aggression(0, "beginner")
+    turtle = None  # aggression(1, "turtle")
+    cautious = None  # aggression(2, "cautious")
+    typical = None  # aggression(3, "typical")
+    aggressive = None  # aggression(4, "aggressive")
+    maniacal = None  # aggression(5, "maniacal")
 
 
-aggression.invalid = aggression(invalid, "invalid")
-aggression.beginner = aggression(beginner, "beginner")
-aggression.turtle = aggression(turtle, "turtle")
-aggression.cautious = aggression(cautious, "cautious")
-aggression.typical = aggression(typical, "typical")
-aggression.aggressive = aggression(aggressive, "aggressive")
-aggression.maniacal = aggression(maniacal, "maniacal")
+aggression.invalid = aggression(-1, "invalid")
+aggression.beginner = aggression(0, "beginner")
+aggression.turtle = aggression(1, "turtle")
+aggression.cautious = aggression(2, "cautious")
+aggression.typical = aggression(3, "typical")
+aggression.aggressive = aggression(4, "aggressive")
+aggression.maniacal = aggression(5, "maniacal")
 
 
 class buildType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    BT_BUILDING = None  # buildType(BT_BUILDING, "BT_BUILDING")
-    BT_SHIP = None  # buildType(BT_SHIP, "BT_SHIP")
-    BT_STOCKPILE = None  # buildType(BT_STOCKPILE, "BT_STOCKPILE")
+    INVALID_BUILD_TYPE = None  # buildType(-1, "INVALID_BUILD_TYPE")
+    BT_NOT_BUILDING = None  # buildType(0, "BT_NOT_BUILDING")
+    BT_BUILDING = None  # buildType(1, "BT_BUILDING")
+    BT_SHIP = None  # buildType(2, "BT_SHIP")
+    BT_PROJECT = None  # buildType(3, "BT_PROJECT")
+    BT_STOCKPILE = None  # buildType(4, "BT_STOCKPILE")
+    NUM_BUILD_TYPES = None  # buildType(5, "NUM_BUILD_TYPES")
 
 
-buildType.BT_BUILDING = buildType(BT_BUILDING, "BT_BUILDING")
-buildType.BT_SHIP = buildType(BT_SHIP, "BT_SHIP")
-buildType.BT_STOCKPILE = buildType(BT_STOCKPILE, "BT_STOCKPILE")
+buildType.INVALID_BUILD_TYPE = buildType(-1, "INVALID_BUILD_TYPE")
+buildType.BT_NOT_BUILDING = buildType(0, "BT_NOT_BUILDING")
+buildType.BT_BUILDING = buildType(1, "BT_BUILDING")
+buildType.BT_SHIP = buildType(2, "BT_SHIP")
+buildType.BT_PROJECT = buildType(3, "BT_PROJECT")
+buildType.BT_STOCKPILE = buildType(4, "BT_STOCKPILE")
+buildType.NUM_BUILD_TYPES = buildType(5, "NUM_BUILD_TYPES")
 
 
 class captureResult(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    capture = None  # captureResult(capture, "capture")
-    destroy = None  # captureResult(destroy, "destroy")
-    retain = None  # captureResult(retain, "retain")
+    capture = None  # captureResult(0, "capture")
+    destroy = None  # captureResult(1, "destroy")
+    retain = None  # captureResult(2, "retain")
 
 
-captureResult.capture = captureResult(capture, "capture")
-captureResult.destroy = captureResult(destroy, "destroy")
-captureResult.retain = captureResult(retain, "retain")
+captureResult.capture = captureResult(0, "capture")
+captureResult.destroy = captureResult(1, "destroy")
+captureResult.retain = captureResult(2, "retain")
 
 
 class diplomaticMessageType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    noMessage = None  # diplomaticMessageType(noMessage, "noMessage")
-    warDeclaration = None  # diplomaticMessageType(warDeclaration, "warDeclaration")
-    peaceProposal = None  # diplomaticMessageType(peaceProposal, "peaceProposal")
-    acceptPeaceProposal = None  # diplomaticMessageType(acceptPeaceProposal, "acceptPeaceProposal")
-    alliesProposal = None  # diplomaticMessageType(alliesProposal, "alliesProposal")
-    acceptAlliesProposal = None  # diplomaticMessageType(acceptAlliesProposal, "acceptAlliesProposal")
-    endAllies = None  # diplomaticMessageType(endAllies, "endAllies")
-    cancelProposal = None  # diplomaticMessageType(cancelProposal, "cancelProposal")
-    rejectProposal = None  # diplomaticMessageType(rejectProposal, "rejectProposal")
+    noMessage = None  # diplomaticMessageType(-1, "noMessage")
+    warDeclaration = None  # diplomaticMessageType(0, "warDeclaration")
+    peaceProposal = None  # diplomaticMessageType(1, "peaceProposal")
+    acceptPeaceProposal = None  # diplomaticMessageType(2, "acceptPeaceProposal")
+    alliesProposal = None  # diplomaticMessageType(3, "alliesProposal")
+    acceptAlliesProposal = None  # diplomaticMessageType(4, "acceptAlliesProposal")
+    endAllies = None  # diplomaticMessageType(5, "endAllies")
+    cancelProposal = None  # diplomaticMessageType(6, "cancelProposal")
+    rejectProposal = None  # diplomaticMessageType(7, "rejectProposal")
 
 
-diplomaticMessageType.noMessage = diplomaticMessageType(noMessage, "noMessage")
-diplomaticMessageType.warDeclaration = diplomaticMessageType(warDeclaration, "warDeclaration")
-diplomaticMessageType.peaceProposal = diplomaticMessageType(peaceProposal, "peaceProposal")
-diplomaticMessageType.acceptPeaceProposal = diplomaticMessageType(acceptPeaceProposal, "acceptPeaceProposal")
-diplomaticMessageType.alliesProposal = diplomaticMessageType(alliesProposal, "alliesProposal")
-diplomaticMessageType.acceptAlliesProposal = diplomaticMessageType(acceptAlliesProposal, "acceptAlliesProposal")
-diplomaticMessageType.endAllies = diplomaticMessageType(endAllies, "endAllies")
-diplomaticMessageType.cancelProposal = diplomaticMessageType(cancelProposal, "cancelProposal")
-diplomaticMessageType.rejectProposal = diplomaticMessageType(rejectProposal, "rejectProposal")
+diplomaticMessageType.noMessage = diplomaticMessageType(-1, "noMessage")
+diplomaticMessageType.warDeclaration = diplomaticMessageType(0, "warDeclaration")
+diplomaticMessageType.peaceProposal = diplomaticMessageType(1, "peaceProposal")
+diplomaticMessageType.acceptPeaceProposal = diplomaticMessageType(2, "acceptPeaceProposal")
+diplomaticMessageType.alliesProposal = diplomaticMessageType(3, "alliesProposal")
+diplomaticMessageType.acceptAlliesProposal = diplomaticMessageType(4, "acceptAlliesProposal")
+diplomaticMessageType.endAllies = diplomaticMessageType(5, "endAllies")
+diplomaticMessageType.cancelProposal = diplomaticMessageType(6, "cancelProposal")
+diplomaticMessageType.rejectProposal = diplomaticMessageType(7, "rejectProposal")
 
 
 class diplomaticStatus(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    war = None  # diplomaticStatus(war, "war")
-    peace = None  # diplomaticStatus(peace, "peace")
-    allied = None  # diplomaticStatus(allied, "allied")
+    war = None  # diplomaticStatus(0, "war")
+    peace = None  # diplomaticStatus(1, "peace")
+    allied = None  # diplomaticStatus(2, "allied")
 
 
-diplomaticStatus.war = diplomaticStatus(war, "war")
-diplomaticStatus.peace = diplomaticStatus(peace, "peace")
-diplomaticStatus.allied = diplomaticStatus(allied, "allied")
+diplomaticStatus.war = diplomaticStatus(0, "war")
+diplomaticStatus.peace = diplomaticStatus(1, "peace")
+diplomaticStatus.allied = diplomaticStatus(2, "allied")
 
 
 class effectsCauseType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    invalid = None  # effectsCauseType(invalid, "invalid")
-    unknown = None  # effectsCauseType(unknown, "unknown")
-    inherent = None  # effectsCauseType(inherent, "inherent")
-    tech = None  # effectsCauseType(tech, "tech")
-    building = None  # effectsCauseType(building, "building")
-    field = None  # effectsCauseType(field, "field")
-    special = None  # effectsCauseType(special, "special")
-    species = None  # effectsCauseType(species, "species")
-    shipPart = None  # effectsCauseType(shipPart, "shipPart")
-    shipHull = None  # effectsCauseType(shipHull, "shipHull")
+    invalid = None  # effectsCauseType(-1, "invalid")
+    unknown = None  # effectsCauseType(0, "unknown")
+    inherent = None  # effectsCauseType(1, "inherent")
+    tech = None  # effectsCauseType(2, "tech")
+    building = None  # effectsCauseType(3, "building")
+    field = None  # effectsCauseType(4, "field")
+    special = None  # effectsCauseType(5, "special")
+    species = None  # effectsCauseType(6, "species")
+    shipPart = None  # effectsCauseType(7, "shipPart")
+    shipHull = None  # effectsCauseType(8, "shipHull")
+    policy = None  # effectsCauseType(9, "policy")
 
 
-effectsCauseType.invalid = effectsCauseType(invalid, "invalid")
-effectsCauseType.unknown = effectsCauseType(unknown, "unknown")
-effectsCauseType.inherent = effectsCauseType(inherent, "inherent")
-effectsCauseType.tech = effectsCauseType(tech, "tech")
-effectsCauseType.building = effectsCauseType(building, "building")
-effectsCauseType.field = effectsCauseType(field, "field")
-effectsCauseType.special = effectsCauseType(special, "special")
-effectsCauseType.species = effectsCauseType(species, "species")
-effectsCauseType.shipPart = effectsCauseType(shipPart, "shipPart")
-effectsCauseType.shipHull = effectsCauseType(shipHull, "shipHull")
+effectsCauseType.invalid = effectsCauseType(-1, "invalid")
+effectsCauseType.unknown = effectsCauseType(0, "unknown")
+effectsCauseType.inherent = effectsCauseType(1, "inherent")
+effectsCauseType.tech = effectsCauseType(2, "tech")
+effectsCauseType.building = effectsCauseType(3, "building")
+effectsCauseType.field = effectsCauseType(4, "field")
+effectsCauseType.special = effectsCauseType(5, "special")
+effectsCauseType.species = effectsCauseType(6, "species")
+effectsCauseType.shipPart = effectsCauseType(7, "shipPart")
+effectsCauseType.shipHull = effectsCauseType(8, "shipHull")
+effectsCauseType.policy = effectsCauseType(9, "policy")
+
+
+class fleetAggression(Enum):
+    def __init__(self, numerator, name):
+        self.name = name
+
+    passive = None  # fleetAggression(0, "passive")
+    defensive = None  # fleetAggression(1, "defensive")
+    obstructive = None  # fleetAggression(2, "obstructive")
+    aggressive = None  # fleetAggression(3, "aggressive")
+
+
+fleetAggression.passive = fleetAggression(0, "passive")
+fleetAggression.defensive = fleetAggression(1, "defensive")
+fleetAggression.obstructive = fleetAggression(2, "obstructive")
+fleetAggression.aggressive = fleetAggression(3, "aggressive")
 
 
 class galaxySetupOption(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    invalid = None  # galaxySetupOption(invalid, "invalid")
-    none = None  # galaxySetupOption(none, "none")
-    low = None  # galaxySetupOption(low, "low")
-    medium = None  # galaxySetupOption(medium, "medium")
-    high = None  # galaxySetupOption(high, "high")
-    random = None  # galaxySetupOption(random, "random")
+    invalid = None  # galaxySetupOption(-1, "invalid")
+    none = None  # galaxySetupOption(0, "none")
+    low = None  # galaxySetupOption(1, "low")
+    medium = None  # galaxySetupOption(2, "medium")
+    high = None  # galaxySetupOption(3, "high")
+    random = None  # galaxySetupOption(4, "random")
 
 
-galaxySetupOption.invalid = galaxySetupOption(invalid, "invalid")
-galaxySetupOption.none = galaxySetupOption(none, "none")
-galaxySetupOption.low = galaxySetupOption(low, "low")
-galaxySetupOption.medium = galaxySetupOption(medium, "medium")
-galaxySetupOption.high = galaxySetupOption(high, "high")
-galaxySetupOption.random = galaxySetupOption(random, "random")
+galaxySetupOption.invalid = galaxySetupOption(-1, "invalid")
+galaxySetupOption.none = galaxySetupOption(0, "none")
+galaxySetupOption.low = galaxySetupOption(1, "low")
+galaxySetupOption.medium = galaxySetupOption(2, "medium")
+galaxySetupOption.high = galaxySetupOption(3, "high")
+galaxySetupOption.random = galaxySetupOption(4, "random")
 
 
 class galaxyShape(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    invalid = None  # galaxyShape(invalid, "invalid")
-    spiral2 = None  # galaxyShape(spiral2, "spiral2")
-    spiral3 = None  # galaxyShape(spiral3, "spiral3")
-    spiral4 = None  # galaxyShape(spiral4, "spiral4")
-    cluster = None  # galaxyShape(cluster, "cluster")
-    elliptical = None  # galaxyShape(elliptical, "elliptical")
-    disc = None  # galaxyShape(disc, "disc")
-    box = None  # galaxyShape(box, "box")
-    irregular = None  # galaxyShape(irregular, "irregular")
-    ring = None  # galaxyShape(ring, "ring")
-    random = None  # galaxyShape(random, "random")
+    invalid = None  # galaxyShape(-1, "invalid")
+    spiral2 = None  # galaxyShape(0, "spiral2")
+    spiral3 = None  # galaxyShape(1, "spiral3")
+    spiral4 = None  # galaxyShape(2, "spiral4")
+    cluster = None  # galaxyShape(3, "cluster")
+    elliptical = None  # galaxyShape(4, "elliptical")
+    disc = None  # galaxyShape(5, "disc")
+    box = None  # galaxyShape(6, "box")
+    irregular = None  # galaxyShape(7, "irregular")
+    ring = None  # galaxyShape(8, "ring")
+    random = None  # galaxyShape(9, "random")
 
 
-galaxyShape.invalid = galaxyShape(invalid, "invalid")
-galaxyShape.spiral2 = galaxyShape(spiral2, "spiral2")
-galaxyShape.spiral3 = galaxyShape(spiral3, "spiral3")
-galaxyShape.spiral4 = galaxyShape(spiral4, "spiral4")
-galaxyShape.cluster = galaxyShape(cluster, "cluster")
-galaxyShape.elliptical = galaxyShape(elliptical, "elliptical")
-galaxyShape.disc = galaxyShape(disc, "disc")
-galaxyShape.box = galaxyShape(box, "box")
-galaxyShape.irregular = galaxyShape(irregular, "irregular")
-galaxyShape.ring = galaxyShape(ring, "ring")
-galaxyShape.random = galaxyShape(random, "random")
+galaxyShape.invalid = galaxyShape(-1, "invalid")
+galaxyShape.spiral2 = galaxyShape(0, "spiral2")
+galaxyShape.spiral3 = galaxyShape(1, "spiral3")
+galaxyShape.spiral4 = galaxyShape(2, "spiral4")
+galaxyShape.cluster = galaxyShape(3, "cluster")
+galaxyShape.elliptical = galaxyShape(4, "elliptical")
+galaxyShape.disc = galaxyShape(5, "disc")
+galaxyShape.box = galaxyShape(6, "box")
+galaxyShape.irregular = galaxyShape(7, "irregular")
+galaxyShape.ring = galaxyShape(8, "ring")
+galaxyShape.random = galaxyShape(9, "random")
 
 
 class meterType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    targetPopulation = None  # meterType(targetPopulation, "targetPopulation")
-    targetIndustry = None  # meterType(targetIndustry, "targetIndustry")
-    targetResearch = None  # meterType(targetResearch, "targetResearch")
-    targetTrade = None  # meterType(targetTrade, "targetTrade")
-    targetConstruction = None  # meterType(targetConstruction, "targetConstruction")
-    targetHappiness = None  # meterType(targetHappiness, "targetHappiness")
-    maxCapacity = None  # meterType(maxCapacity, "maxCapacity")
-    maxDamage = None  # meterType(maxDamage, "maxDamage")
-    maxSecondaryStat = None  # meterType(maxSecondaryStat, "maxSecondaryStat")
-    maxFuel = None  # meterType(maxFuel, "maxFuel")
-    maxShield = None  # meterType(maxShield, "maxShield")
-    maxStructure = None  # meterType(maxStructure, "maxStructure")
-    maxDefense = None  # meterType(maxDefense, "maxDefense")
-    maxSupply = None  # meterType(maxSupply, "maxSupply")
-    maxStockpile = None  # meterType(maxStockpile, "maxStockpile")
-    maxTroops = None  # meterType(maxTroops, "maxTroops")
-    population = None  # meterType(population, "population")
-    industry = None  # meterType(industry, "industry")
-    research = None  # meterType(research, "research")
-    trade = None  # meterType(trade, "trade")
-    construction = None  # meterType(construction, "construction")
-    happiness = None  # meterType(happiness, "happiness")
-    capacity = None  # meterType(capacity, "capacity")
-    damage = None  # meterType(damage, "damage")
-    secondaryStat = None  # meterType(secondaryStat, "secondaryStat")
-    fuel = None  # meterType(fuel, "fuel")
-    shield = None  # meterType(shield, "shield")
-    structure = None  # meterType(structure, "structure")
-    defense = None  # meterType(defense, "defense")
-    supply = None  # meterType(supply, "supply")
-    stockpile = None  # meterType(stockpile, "stockpile")
-    troops = None  # meterType(troops, "troops")
-    rebels = None  # meterType(rebels, "rebels")
-    size = None  # meterType(size, "size")
-    stealth = None  # meterType(stealth, "stealth")
-    detection = None  # meterType(detection, "detection")
-    speed = None  # meterType(speed, "speed")
+    targetPopulation = None  # meterType(0, "targetPopulation")
+    targetIndustry = None  # meterType(1, "targetIndustry")
+    targetResearch = None  # meterType(2, "targetResearch")
+    targetInfluence = None  # meterType(3, "targetInfluence")
+    targetConstruction = None  # meterType(4, "targetConstruction")
+    targetHappiness = None  # meterType(5, "targetHappiness")
+    maxCapacity = None  # meterType(6, "maxCapacity")
+    maxDamage = None  # meterType(6, "maxDamage")
+    maxSecondaryStat = None  # meterType(7, "maxSecondaryStat")
+    maxFuel = None  # meterType(8, "maxFuel")
+    maxShield = None  # meterType(9, "maxShield")
+    maxStructure = None  # meterType(10, "maxStructure")
+    maxDefense = None  # meterType(11, "maxDefense")
+    maxSupply = None  # meterType(12, "maxSupply")
+    maxStockpile = None  # meterType(13, "maxStockpile")
+    maxTroops = None  # meterType(14, "maxTroops")
+    population = None  # meterType(15, "population")
+    industry = None  # meterType(16, "industry")
+    research = None  # meterType(17, "research")
+    influence = None  # meterType(18, "influence")
+    construction = None  # meterType(19, "construction")
+    happiness = None  # meterType(20, "happiness")
+    capacity = None  # meterType(21, "capacity")
+    damage = None  # meterType(21, "damage")
+    secondaryStat = None  # meterType(22, "secondaryStat")
+    fuel = None  # meterType(23, "fuel")
+    shield = None  # meterType(24, "shield")
+    structure = None  # meterType(25, "structure")
+    defense = None  # meterType(26, "defense")
+    supply = None  # meterType(27, "supply")
+    stockpile = None  # meterType(28, "stockpile")
+    troops = None  # meterType(29, "troops")
+    rebels = None  # meterType(30, "rebels")
+    size = None  # meterType(31, "size")
+    stealth = None  # meterType(32, "stealth")
+    detection = None  # meterType(33, "detection")
+    speed = None  # meterType(34, "speed")
 
 
-meterType.targetPopulation = meterType(targetPopulation, "targetPopulation")
-meterType.targetIndustry = meterType(targetIndustry, "targetIndustry")
-meterType.targetResearch = meterType(targetResearch, "targetResearch")
-meterType.targetTrade = meterType(targetTrade, "targetTrade")
-meterType.targetConstruction = meterType(targetConstruction, "targetConstruction")
-meterType.targetHappiness = meterType(targetHappiness, "targetHappiness")
-meterType.maxCapacity = meterType(maxCapacity, "maxCapacity")
-meterType.maxDamage = meterType(maxDamage, "maxDamage")
-meterType.maxSecondaryStat = meterType(maxSecondaryStat, "maxSecondaryStat")
-meterType.maxFuel = meterType(maxFuel, "maxFuel")
-meterType.maxShield = meterType(maxShield, "maxShield")
-meterType.maxStructure = meterType(maxStructure, "maxStructure")
-meterType.maxDefense = meterType(maxDefense, "maxDefense")
-meterType.maxSupply = meterType(maxSupply, "maxSupply")
-meterType.maxStockpile = meterType(maxStockpile, "maxStockpile")
-meterType.maxTroops = meterType(maxTroops, "maxTroops")
-meterType.population = meterType(population, "population")
-meterType.industry = meterType(industry, "industry")
-meterType.research = meterType(research, "research")
-meterType.trade = meterType(trade, "trade")
-meterType.construction = meterType(construction, "construction")
-meterType.happiness = meterType(happiness, "happiness")
-meterType.capacity = meterType(capacity, "capacity")
-meterType.damage = meterType(damage, "damage")
-meterType.secondaryStat = meterType(secondaryStat, "secondaryStat")
-meterType.fuel = meterType(fuel, "fuel")
-meterType.shield = meterType(shield, "shield")
-meterType.structure = meterType(structure, "structure")
-meterType.defense = meterType(defense, "defense")
-meterType.supply = meterType(supply, "supply")
-meterType.stockpile = meterType(stockpile, "stockpile")
-meterType.troops = meterType(troops, "troops")
-meterType.rebels = meterType(rebels, "rebels")
-meterType.size = meterType(size, "size")
-meterType.stealth = meterType(stealth, "stealth")
-meterType.detection = meterType(detection, "detection")
-meterType.speed = meterType(speed, "speed")
+meterType.targetPopulation = meterType(0, "targetPopulation")
+meterType.targetIndustry = meterType(1, "targetIndustry")
+meterType.targetResearch = meterType(2, "targetResearch")
+meterType.targetInfluence = meterType(3, "targetInfluence")
+meterType.targetConstruction = meterType(4, "targetConstruction")
+meterType.targetHappiness = meterType(5, "targetHappiness")
+meterType.maxCapacity = meterType(6, "maxCapacity")
+meterType.maxDamage = meterType(6, "maxDamage")
+meterType.maxSecondaryStat = meterType(7, "maxSecondaryStat")
+meterType.maxFuel = meterType(8, "maxFuel")
+meterType.maxShield = meterType(9, "maxShield")
+meterType.maxStructure = meterType(10, "maxStructure")
+meterType.maxDefense = meterType(11, "maxDefense")
+meterType.maxSupply = meterType(12, "maxSupply")
+meterType.maxStockpile = meterType(13, "maxStockpile")
+meterType.maxTroops = meterType(14, "maxTroops")
+meterType.population = meterType(15, "population")
+meterType.industry = meterType(16, "industry")
+meterType.research = meterType(17, "research")
+meterType.influence = meterType(18, "influence")
+meterType.construction = meterType(19, "construction")
+meterType.happiness = meterType(20, "happiness")
+meterType.capacity = meterType(21, "capacity")
+meterType.damage = meterType(21, "damage")
+meterType.secondaryStat = meterType(22, "secondaryStat")
+meterType.fuel = meterType(23, "fuel")
+meterType.shield = meterType(24, "shield")
+meterType.structure = meterType(25, "structure")
+meterType.defense = meterType(26, "defense")
+meterType.supply = meterType(27, "supply")
+meterType.stockpile = meterType(28, "stockpile")
+meterType.troops = meterType(29, "troops")
+meterType.rebels = meterType(30, "rebels")
+meterType.size = meterType(31, "size")
+meterType.stealth = meterType(32, "stealth")
+meterType.detection = meterType(33, "detection")
+meterType.speed = meterType(34, "speed")
 
 
 class planetEnvironment(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    uninhabitable = None  # planetEnvironment(uninhabitable, "uninhabitable")
-    hostile = None  # planetEnvironment(hostile, "hostile")
-    poor = None  # planetEnvironment(poor, "poor")
-    adequate = None  # planetEnvironment(adequate, "adequate")
-    good = None  # planetEnvironment(good, "good")
+    uninhabitable = None  # planetEnvironment(0, "uninhabitable")
+    hostile = None  # planetEnvironment(1, "hostile")
+    poor = None  # planetEnvironment(2, "poor")
+    adequate = None  # planetEnvironment(3, "adequate")
+    good = None  # planetEnvironment(4, "good")
 
 
-planetEnvironment.uninhabitable = planetEnvironment(uninhabitable, "uninhabitable")
-planetEnvironment.hostile = planetEnvironment(hostile, "hostile")
-planetEnvironment.poor = planetEnvironment(poor, "poor")
-planetEnvironment.adequate = planetEnvironment(adequate, "adequate")
-planetEnvironment.good = planetEnvironment(good, "good")
+planetEnvironment.uninhabitable = planetEnvironment(0, "uninhabitable")
+planetEnvironment.hostile = planetEnvironment(1, "hostile")
+planetEnvironment.poor = planetEnvironment(2, "poor")
+planetEnvironment.adequate = planetEnvironment(3, "adequate")
+planetEnvironment.good = planetEnvironment(4, "good")
 
 
 class planetSize(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    unknown = None  # planetSize(unknown, "unknown")
-    noWorld = None  # planetSize(noWorld, "noWorld")
-    tiny = None  # planetSize(tiny, "tiny")
-    small = None  # planetSize(small, "small")
-    medium = None  # planetSize(medium, "medium")
-    large = None  # planetSize(large, "large")
-    huge = None  # planetSize(huge, "huge")
-    asteroids = None  # planetSize(asteroids, "asteroids")
-    gasGiant = None  # planetSize(gasGiant, "gasGiant")
+    unknown = None  # planetSize(-1, "unknown")
+    noWorld = None  # planetSize(0, "noWorld")
+    tiny = None  # planetSize(1, "tiny")
+    small = None  # planetSize(2, "small")
+    medium = None  # planetSize(3, "medium")
+    large = None  # planetSize(4, "large")
+    huge = None  # planetSize(5, "huge")
+    asteroids = None  # planetSize(6, "asteroids")
+    gasGiant = None  # planetSize(7, "gasGiant")
 
 
-planetSize.unknown = planetSize(unknown, "unknown")
-planetSize.noWorld = planetSize(noWorld, "noWorld")
-planetSize.tiny = planetSize(tiny, "tiny")
-planetSize.small = planetSize(small, "small")
-planetSize.medium = planetSize(medium, "medium")
-planetSize.large = planetSize(large, "large")
-planetSize.huge = planetSize(huge, "huge")
-planetSize.asteroids = planetSize(asteroids, "asteroids")
-planetSize.gasGiant = planetSize(gasGiant, "gasGiant")
+planetSize.unknown = planetSize(-1, "unknown")
+planetSize.noWorld = planetSize(0, "noWorld")
+planetSize.tiny = planetSize(1, "tiny")
+planetSize.small = planetSize(2, "small")
+planetSize.medium = planetSize(3, "medium")
+planetSize.large = planetSize(4, "large")
+planetSize.huge = planetSize(5, "huge")
+planetSize.asteroids = planetSize(6, "asteroids")
+planetSize.gasGiant = planetSize(7, "gasGiant")
 
 
 class planetType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    unknown = None  # planetType(unknown, "unknown")
-    swamp = None  # planetType(swamp, "swamp")
-    toxic = None  # planetType(toxic, "toxic")
-    inferno = None  # planetType(inferno, "inferno")
-    radiated = None  # planetType(radiated, "radiated")
-    barren = None  # planetType(barren, "barren")
-    tundra = None  # planetType(tundra, "tundra")
-    desert = None  # planetType(desert, "desert")
-    terran = None  # planetType(terran, "terran")
-    ocean = None  # planetType(ocean, "ocean")
-    asteroids = None  # planetType(asteroids, "asteroids")
-    gasGiant = None  # planetType(gasGiant, "gasGiant")
+    unknown = None  # planetType(-1, "unknown")
+    swamp = None  # planetType(0, "swamp")
+    toxic = None  # planetType(1, "toxic")
+    inferno = None  # planetType(2, "inferno")
+    radiated = None  # planetType(3, "radiated")
+    barren = None  # planetType(4, "barren")
+    tundra = None  # planetType(5, "tundra")
+    desert = None  # planetType(6, "desert")
+    terran = None  # planetType(7, "terran")
+    ocean = None  # planetType(8, "ocean")
+    asteroids = None  # planetType(9, "asteroids")
+    gasGiant = None  # planetType(10, "gasGiant")
 
 
-planetType.unknown = planetType(unknown, "unknown")
-planetType.swamp = planetType(swamp, "swamp")
-planetType.toxic = planetType(toxic, "toxic")
-planetType.inferno = planetType(inferno, "inferno")
-planetType.radiated = planetType(radiated, "radiated")
-planetType.barren = planetType(barren, "barren")
-planetType.tundra = planetType(tundra, "tundra")
-planetType.desert = planetType(desert, "desert")
-planetType.terran = planetType(terran, "terran")
-planetType.ocean = planetType(ocean, "ocean")
-planetType.asteroids = planetType(asteroids, "asteroids")
-planetType.gasGiant = planetType(gasGiant, "gasGiant")
+planetType.unknown = planetType(-1, "unknown")
+planetType.swamp = planetType(0, "swamp")
+planetType.toxic = planetType(1, "toxic")
+planetType.inferno = planetType(2, "inferno")
+planetType.radiated = planetType(3, "radiated")
+planetType.barren = planetType(4, "barren")
+planetType.tundra = planetType(5, "tundra")
+planetType.desert = planetType(6, "desert")
+planetType.terran = planetType(7, "terran")
+planetType.ocean = planetType(8, "ocean")
+planetType.asteroids = planetType(9, "asteroids")
+planetType.gasGiant = planetType(10, "gasGiant")
 
 
 class resourceType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    industry = None  # resourceType(industry, "industry")
-    trade = None  # resourceType(trade, "trade")
-    research = None  # resourceType(research, "research")
-    stockpile = None  # resourceType(stockpile, "stockpile")
+    industry = None  # resourceType(0, "industry")
+    influence = None  # resourceType(1, "influence")
+    research = None  # resourceType(2, "research")
+    stockpile = None  # resourceType(3, "stockpile")
 
 
-resourceType.industry = resourceType(industry, "industry")
-resourceType.trade = resourceType(trade, "trade")
-resourceType.research = resourceType(research, "research")
-resourceType.stockpile = resourceType(stockpile, "stockpile")
+resourceType.industry = resourceType(0, "industry")
+resourceType.influence = resourceType(1, "influence")
+resourceType.research = resourceType(2, "research")
+resourceType.stockpile = resourceType(3, "stockpile")
 
 
 class roleType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    host = None  # roleType(host, "host")
-    clientTypeModerator = None  # roleType(clientTypeModerator, "clientTypeModerator")
-    clientTypePlayer = None  # roleType(clientTypePlayer, "clientTypePlayer")
-    clientTypeObserver = None  # roleType(clientTypeObserver, "clientTypeObserver")
-    galaxySetup = None  # roleType(galaxySetup, "galaxySetup")
+    host = None  # roleType(0, "host")
+    clientTypeModerator = None  # roleType(1, "clientTypeModerator")
+    clientTypePlayer = None  # roleType(2, "clientTypePlayer")
+    clientTypeObserver = None  # roleType(3, "clientTypeObserver")
+    galaxySetup = None  # roleType(4, "galaxySetup")
 
 
-roleType.host = roleType(host, "host")
-roleType.clientTypeModerator = roleType(clientTypeModerator, "clientTypeModerator")
-roleType.clientTypePlayer = roleType(clientTypePlayer, "clientTypePlayer")
-roleType.clientTypeObserver = roleType(clientTypeObserver, "clientTypeObserver")
-roleType.galaxySetup = roleType(galaxySetup, "galaxySetup")
+roleType.host = roleType(0, "host")
+roleType.clientTypeModerator = roleType(1, "clientTypeModerator")
+roleType.clientTypePlayer = roleType(2, "clientTypePlayer")
+roleType.clientTypeObserver = roleType(3, "clientTypeObserver")
+roleType.galaxySetup = roleType(4, "galaxySetup")
 
 
 class ruleType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    invalid = None  # ruleType(invalid, "invalid")
-    toggle = None  # ruleType(toggle, "toggle")
-    int = None  # ruleType(int, "int")
-    double = None  # ruleType(double, "double")
-    string = None  # ruleType(string, "string")
+    invalid = None  # ruleType(-1, "invalid")
+    toggle = None  # ruleType(0, "toggle")
+    int = None  # ruleType(1, "int")
+    double = None  # ruleType(2, "double")
+    string = None  # ruleType(3, "string")
 
 
-ruleType.invalid = ruleType(invalid, "invalid")
-ruleType.toggle = ruleType(toggle, "toggle")
-ruleType.int = ruleType(int, "int")
-ruleType.double = ruleType(double, "double")
-ruleType.string = ruleType(string, "string")
+ruleType.invalid = ruleType(-1, "invalid")
+ruleType.toggle = ruleType(0, "toggle")
+ruleType.int = ruleType(1, "int")
+ruleType.double = ruleType(2, "double")
+ruleType.string = ruleType(3, "string")
 
 
 class shipPartClass(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    shortRange = None  # shipPartClass(shortRange, "shortRange")
-    fighterBay = None  # shipPartClass(fighterBay, "fighterBay")
-    fighterHangar = None  # shipPartClass(fighterHangar, "fighterHangar")
-    shields = None  # shipPartClass(shields, "shields")
-    armour = None  # shipPartClass(armour, "armour")
-    troops = None  # shipPartClass(troops, "troops")
-    detection = None  # shipPartClass(detection, "detection")
-    stealth = None  # shipPartClass(stealth, "stealth")
-    fuel = None  # shipPartClass(fuel, "fuel")
-    colony = None  # shipPartClass(colony, "colony")
-    speed = None  # shipPartClass(speed, "speed")
-    general = None  # shipPartClass(general, "general")
-    bombard = None  # shipPartClass(bombard, "bombard")
-    industry = None  # shipPartClass(industry, "industry")
-    research = None  # shipPartClass(research, "research")
-    trade = None  # shipPartClass(trade, "trade")
-    productionLocation = None  # shipPartClass(productionLocation, "productionLocation")
+    shortRange = None  # shipPartClass(0, "shortRange")
+    fighterBay = None  # shipPartClass(1, "fighterBay")
+    fighterHangar = None  # shipPartClass(2, "fighterHangar")
+    shields = None  # shipPartClass(3, "shields")
+    armour = None  # shipPartClass(4, "armour")
+    troops = None  # shipPartClass(5, "troops")
+    detection = None  # shipPartClass(6, "detection")
+    stealth = None  # shipPartClass(7, "stealth")
+    fuel = None  # shipPartClass(8, "fuel")
+    colony = None  # shipPartClass(9, "colony")
+    speed = None  # shipPartClass(10, "speed")
+    general = None  # shipPartClass(11, "general")
+    bombard = None  # shipPartClass(12, "bombard")
+    industry = None  # shipPartClass(13, "industry")
+    research = None  # shipPartClass(14, "research")
+    influence = None  # shipPartClass(15, "influence")
+    productionLocation = None  # shipPartClass(16, "productionLocation")
 
 
-shipPartClass.shortRange = shipPartClass(shortRange, "shortRange")
-shipPartClass.fighterBay = shipPartClass(fighterBay, "fighterBay")
-shipPartClass.fighterHangar = shipPartClass(fighterHangar, "fighterHangar")
-shipPartClass.shields = shipPartClass(shields, "shields")
-shipPartClass.armour = shipPartClass(armour, "armour")
-shipPartClass.troops = shipPartClass(troops, "troops")
-shipPartClass.detection = shipPartClass(detection, "detection")
-shipPartClass.stealth = shipPartClass(stealth, "stealth")
-shipPartClass.fuel = shipPartClass(fuel, "fuel")
-shipPartClass.colony = shipPartClass(colony, "colony")
-shipPartClass.speed = shipPartClass(speed, "speed")
-shipPartClass.general = shipPartClass(general, "general")
-shipPartClass.bombard = shipPartClass(bombard, "bombard")
-shipPartClass.industry = shipPartClass(industry, "industry")
-shipPartClass.research = shipPartClass(research, "research")
-shipPartClass.trade = shipPartClass(trade, "trade")
-shipPartClass.productionLocation = shipPartClass(productionLocation, "productionLocation")
+shipPartClass.shortRange = shipPartClass(0, "shortRange")
+shipPartClass.fighterBay = shipPartClass(1, "fighterBay")
+shipPartClass.fighterHangar = shipPartClass(2, "fighterHangar")
+shipPartClass.shields = shipPartClass(3, "shields")
+shipPartClass.armour = shipPartClass(4, "armour")
+shipPartClass.troops = shipPartClass(5, "troops")
+shipPartClass.detection = shipPartClass(6, "detection")
+shipPartClass.stealth = shipPartClass(7, "stealth")
+shipPartClass.fuel = shipPartClass(8, "fuel")
+shipPartClass.colony = shipPartClass(9, "colony")
+shipPartClass.speed = shipPartClass(10, "speed")
+shipPartClass.general = shipPartClass(11, "general")
+shipPartClass.bombard = shipPartClass(12, "bombard")
+shipPartClass.industry = shipPartClass(13, "industry")
+shipPartClass.research = shipPartClass(14, "research")
+shipPartClass.influence = shipPartClass(15, "influence")
+shipPartClass.productionLocation = shipPartClass(16, "productionLocation")
 
 
 class shipSlotType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    external = None  # shipSlotType(external, "external")
-    internal = None  # shipSlotType(internal, "internal")
-    core = None  # shipSlotType(core, "core")
+    external = None  # shipSlotType(0, "external")
+    internal = None  # shipSlotType(1, "internal")
+    core = None  # shipSlotType(2, "core")
 
 
-shipSlotType.external = shipSlotType(external, "external")
-shipSlotType.internal = shipSlotType(internal, "internal")
-shipSlotType.core = shipSlotType(core, "core")
+shipSlotType.external = shipSlotType(0, "external")
+shipSlotType.internal = shipSlotType(1, "internal")
+shipSlotType.core = shipSlotType(2, "core")
 
 
 class starType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    unknown = None  # starType(unknown, "unknown")
-    blue = None  # starType(blue, "blue")
-    white = None  # starType(white, "white")
-    yellow = None  # starType(yellow, "yellow")
-    orange = None  # starType(orange, "orange")
-    red = None  # starType(red, "red")
-    neutron = None  # starType(neutron, "neutron")
-    blackHole = None  # starType(blackHole, "blackHole")
-    noStar = None  # starType(noStar, "noStar")
+    unknown = None  # starType(-1, "unknown")
+    blue = None  # starType(0, "blue")
+    white = None  # starType(1, "white")
+    yellow = None  # starType(2, "yellow")
+    orange = None  # starType(3, "orange")
+    red = None  # starType(4, "red")
+    neutron = None  # starType(5, "neutron")
+    blackHole = None  # starType(6, "blackHole")
+    noStar = None  # starType(7, "noStar")
 
 
-starType.unknown = starType(unknown, "unknown")
-starType.blue = starType(blue, "blue")
-starType.white = starType(white, "white")
-starType.yellow = starType(yellow, "yellow")
-starType.orange = starType(orange, "orange")
-starType.red = starType(red, "red")
-starType.neutron = starType(neutron, "neutron")
-starType.blackHole = starType(blackHole, "blackHole")
-starType.noStar = starType(noStar, "noStar")
+starType.unknown = starType(-1, "unknown")
+starType.blue = starType(0, "blue")
+starType.white = starType(1, "white")
+starType.yellow = starType(2, "yellow")
+starType.orange = starType(3, "orange")
+starType.red = starType(4, "red")
+starType.neutron = starType(5, "neutron")
+starType.blackHole = starType(6, "blackHole")
+starType.noStar = starType(7, "noStar")
 
 
 class techStatus(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    unresearchable = None  # techStatus(unresearchable, "unresearchable")
-    partiallyUnlocked = None  # techStatus(partiallyUnlocked, "partiallyUnlocked")
-    researchable = None  # techStatus(researchable, "researchable")
-    complete = None  # techStatus(complete, "complete")
+    unresearchable = None  # techStatus(0, "unresearchable")
+    partiallyUnlocked = None  # techStatus(1, "partiallyUnlocked")
+    researchable = None  # techStatus(2, "researchable")
+    complete = None  # techStatus(3, "complete")
 
 
-techStatus.unresearchable = techStatus(unresearchable, "unresearchable")
-techStatus.partiallyUnlocked = techStatus(partiallyUnlocked, "partiallyUnlocked")
-techStatus.researchable = techStatus(researchable, "researchable")
-techStatus.complete = techStatus(complete, "complete")
+techStatus.unresearchable = techStatus(0, "unresearchable")
+techStatus.partiallyUnlocked = techStatus(1, "partiallyUnlocked")
+techStatus.researchable = techStatus(2, "researchable")
+techStatus.complete = techStatus(3, "complete")
 
 
 class unlockableItemType(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    invalid = None  # unlockableItemType(invalid, "invalid")
-    building = None  # unlockableItemType(building, "building")
-    shipPart = None  # unlockableItemType(shipPart, "shipPart")
-    shipHull = None  # unlockableItemType(shipHull, "shipHull")
-    shipDesign = None  # unlockableItemType(shipDesign, "shipDesign")
-    tech = None  # unlockableItemType(tech, "tech")
+    invalid = None  # unlockableItemType(-1, "invalid")
+    building = None  # unlockableItemType(0, "building")
+    shipPart = None  # unlockableItemType(1, "shipPart")
+    shipHull = None  # unlockableItemType(2, "shipHull")
+    shipDesign = None  # unlockableItemType(3, "shipDesign")
+    tech = None  # unlockableItemType(4, "tech")
+    policy = None  # unlockableItemType(5, "policy")
 
 
-unlockableItemType.invalid = unlockableItemType(invalid, "invalid")
-unlockableItemType.building = unlockableItemType(building, "building")
-unlockableItemType.shipPart = unlockableItemType(shipPart, "shipPart")
-unlockableItemType.shipHull = unlockableItemType(shipHull, "shipHull")
-unlockableItemType.shipDesign = unlockableItemType(shipDesign, "shipDesign")
-unlockableItemType.tech = unlockableItemType(tech, "tech")
+unlockableItemType.invalid = unlockableItemType(-1, "invalid")
+unlockableItemType.building = unlockableItemType(0, "building")
+unlockableItemType.shipPart = unlockableItemType(1, "shipPart")
+unlockableItemType.shipHull = unlockableItemType(2, "shipHull")
+unlockableItemType.shipDesign = unlockableItemType(3, "shipDesign")
+unlockableItemType.tech = unlockableItemType(4, "tech")
+unlockableItemType.policy = unlockableItemType(5, "policy")
 
 
 class visibility(Enum):
     def __init__(self, numerator, name):
         self.name = name
 
-    invalid = None  # visibility(invalid, "invalid")
-    none = None  # visibility(none, "none")
-    basic = None  # visibility(basic, "basic")
-    partial = None  # visibility(partial, "partial")
-    full = None  # visibility(full, "full")
+    invalid = None  # visibility(-1, "invalid")
+    none = None  # visibility(0, "none")
+    basic = None  # visibility(1, "basic")
+    partial = None  # visibility(2, "partial")
+    full = None  # visibility(3, "full")
 
 
-visibility.invalid = visibility(invalid, "invalid")
-visibility.none = visibility(none, "none")
-visibility.basic = visibility(basic, "basic")
-visibility.partial = visibility(partial, "partial")
-visibility.full = visibility(full, "full")
+visibility.invalid = visibility(-1, "invalid")
+visibility.none = visibility(0, "none")
+visibility.basic = visibility(1, "basic")
+visibility.partial = visibility(2, "partial")
+visibility.full = visibility(3, "full")
 
 
 def allEmpireIDs()  -> IntVec:
@@ -2496,12 +2731,6 @@ def getGameRules()  -> GameRules:
     """
 
 
-def getShipHull(string: str)  -> shipHull:
-    """
-    Returns the ship hull (shipHull) with the indicated name (string).
-    """
-
-
 def getOptionsDBOptionBool(string: str)  -> object:
     """
     Returns the bool value of option in OptionsDB or None if the option does not exist.
@@ -2532,6 +2761,18 @@ def getOrders()  -> OrderSet:
     """
 
 
+def getPolicy(string: str)  -> policy:
+    """
+    Returns the policy (Policy) with the indicated name (string).
+    """
+
+
+def getPolicyCategories(obj: object)  -> StringSet:
+    """
+    Returns the names of all policy categories (StringVec).
+    """
+
+
 def getPredefinedShipDesign(string: str)  -> shipDesign:
     """
     Returns the ship design (ShipDesign) with the indicated name (string).
@@ -2547,6 +2788,12 @@ def getSaveStateString()  -> str:
 def getShipDesign(number: int)  -> shipDesign:
     """
     Returns the ship design (ShipDesign) with the indicated id number (int).
+    """
+
+
+def getShipHull(string: str)  -> shipHull:
+    """
+    Returns the ship hull with the indicated name (string).
     """
 
 
@@ -2602,6 +2849,12 @@ def initMeterEstimatesDiscrepancies()  -> None:
     ...
 
 
+def issueAdoptPolicyOrder(string1: str, string2: str, number: int)  -> int:
+    """
+    Orders the policy with name policyName (string) to be adopted by the empire in the category categoryName (string) and slot slot (int). Returns 1 (int) on success or 0 (int) on failure if the indicated policy can't be found. Will return 1 (int) but do nothing if the indicated policy can't be enqueued by this player's empire in the requested category and slot.
+    """
+
+
 def issueAggressionOrder(number: int, boolean: bool)  -> int:
     ...
 
@@ -2635,6 +2888,12 @@ def issueColonizeOrder(number1: int, number2: int)  -> int:
 def issueCreateShipDesignOrder(string1: str, string2: str, string3: str, item_list: list, string4: str, string5: str, boolean: bool)  -> int:
     """
     Orders the creation of a new ship design with the name (string), description (string), hull (string), parts vector partsVec (StringVec), graphic (string) and model (string). model should be left as an empty string as of this writing. There is currently no easy way to find the id of the new design, though the client's empire should have the new design after this order is issued successfully. Returns 1 (int) on success or 0 (int) on failure if any of the name, description, hull or graphic are empty strings, if the design is invalid (due to not following number and type of slot requirements for the hull) or if creating the design fails for some reason.
+    """
+
+
+def issueDeadoptPolicyOrder(string: str)  -> int:
+    """
+    Orders the policy with name policyName (string) to be de-adopted by the empire. Returns 1 (int) on success or 0 (int) on failure if the indicated policy was not already adopted.
     """
 
 
@@ -2749,6 +3008,18 @@ def playerName(number: int)  -> str:
     """
 
 
+def policies()  -> StringVec:
+    """
+    Returns the names of all policies (StringVec).
+    """
+
+
+def policiesInCategory(string: str)  -> StringVec:
+    """
+    Returns the names of all policies (StringVec) in the indicated policy category name (string).
+    """
+
+
 def sendChatMessage(number: int, string: str)  -> None:
     """
     Sends the indicated message (string) to the player with the indicated recipientID (int) or to all players if recipientID is -1.
@@ -2766,11 +3037,15 @@ def setSaveStateString(string: str)  -> None:
 
 
 def techs()  -> StringVec:
-    ...
+    """
+    Returns the names of all techs (StringVec).
+    """
 
 
 def techsInCategory(string: str)  -> StringVec:
-    ...
+    """
+    Returns the names of all techs (StringVec) in the indicated tech category name (string).
+    """
 
 
 def updateMeterEstimates(boolean: bool)  -> None:
@@ -2801,7 +3076,7 @@ def userStringList(string: str)  -> list:
     ...
 
 
-def validShipDesign(string: str, string_list: StringVec)  -> bool:
+def validShipDesign(ship_design: shipDesign, string: str, string_list: StringVec)  -> bool:
     """
     Returns true (boolean) if the passed hull (string) and parts (StringVec) make up a valid ship design, and false (boolean) otherwise. Valid ship designs don't have any parts in slots that can't accept that type of part, and contain only hulls and parts that exist (and may also need to contain the correct number of parts - this needs to be verified).
     """

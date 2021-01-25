@@ -1,6 +1,7 @@
 import os
 from inspect import getdoc, isroutine
 from logging import warning, error, debug
+from typing import Any
 
 from stub_generator.constants import TYPE, NAME, ATTRS, DOC, PARENTS, CLASS_NAME, ENUM_PAIRS
 
@@ -86,7 +87,7 @@ def _inspect_type(name, obj):
     return {
         TYPE: "enum",
         NAME: name,
-        ENUM_PAIRS: [(v, k) for k, v in obj.names.items()],
+        ENUM_PAIRS: [(v.numerator, k) for k, v in obj.names.items()],
     }
 
 
@@ -98,6 +99,16 @@ _SWITCHER = {
 
 _NAMES_TO_IGNORE = {'__doc__', '__package__', '__name__', 'INVALID_GAME_TURN', 'to_str', '__loader__', }
 _INVALID_CLASSES = {"method"}
+
+
+def is_built_in(instance: Any) -> bool:
+    """
+    Return is instance is one of built in type.
+
+    Inherited classes from built in return False.
+    """
+    built_in_types = {str, float, int, tuple, tuple, list, dict, set}
+    return type(instance) in built_in_types
 
 
 def get_module_info(obj, instances, dump=False):
@@ -112,12 +123,12 @@ def get_module_info(obj, instances, dump=False):
         else:
             warning("Unknown: '%s' of type '%s': %s" % (name, type(member), member))
 
-    for i, instance in enumerate(instances, start=2):
-        if isinstance(instance, (str, float, int)):
-            warning("Argument number %s(counting start from 1) is builtin python instance: (%s) %s", i, type(instance), instance)
+    for i, instance in enumerate(instances):
+        if is_built_in(instance):
+            warning("Argument at index %s(0-based) is builtin python instance: (%s) %s", i, type(instance), instance)
             continue
         if instance.__class__.__name__ in _INVALID_CLASSES:
-            warning("Argument number %s(counting start from 1) is not allowed: (%s) %s", i, type(instance),
+            warning("Argument at index %s(0-based) is not allowed: (%s) %s", i, type(instance),
                     instance)
             continue
         try:
