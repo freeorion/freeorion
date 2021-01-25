@@ -114,6 +114,8 @@ public:
     //! strucures.
     void EnterSection(const std::string& section_name);
 
+    std::chrono::nanoseconds Elapsed() const;
+
 private:
     class Impl;
 

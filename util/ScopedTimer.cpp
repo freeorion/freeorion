@@ -282,6 +282,9 @@ public:
         m_sections->Accumulate(now, section_name);
     }
 
+    std::chrono::nanoseconds Elapsed() const
+    { return std::chrono::high_resolution_clock::now() - m_start; }
+
 private:
     /** CreateSections allow m_sections to only be initialized if it is used.*/
     Sections* CreateSections(const std::chrono::high_resolution_clock::time_point& now) {
@@ -307,6 +310,9 @@ SectionedScopedTimer::SectionedScopedTimer(std::string timed_name,
 // ~SectionedScopedTimer is required because Impl is defined here.
 SectionedScopedTimer::~SectionedScopedTimer()
 {}
+
+std::chrono::nanoseconds SectionedScopedTimer::Elapsed() const
+{ return m_impl->Elapsed(); }
 
 void SectionedScopedTimer::EnterSection(const std::string& section_name)
 { m_impl->EnterSection(section_name); }
