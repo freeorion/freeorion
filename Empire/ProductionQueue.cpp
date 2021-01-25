@@ -320,9 +320,6 @@ namespace {
 }
 
 
-ProductionQueue::ProductionItem::ProductionItem()
-{}
-
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_) :
     build_type(build_type_)
 {
@@ -366,7 +363,31 @@ bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant() const 
     return false;
 }
 
-bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) const {
+std::pair<float, int> ProductionQueue::ProductionItem::ProductionCostAndTime(
+    int empire_id, int location_id, const ScriptingContext& context) const
+{
+    if (build_type == BuildType::BT_BUILDING) {
+        const BuildingType* type = GetBuildingType(name);
+        if (!type)
+            return {-1.0, -1};
+        return {type->ProductionCost(empire_id, location_id, context),
+                type->ProductionTime(empire_id, location_id, context)};
+
+    } else if (build_type == BuildType::BT_SHIP) {
+        const ShipDesign* design = GetShipDesign(design_id);
+        if (design)
+            return {design->ProductionCost(empire_id, location_id),
+                    design->ProductionTime(empire_id, location_id)};
+        return {-1.0, -1};
+
+    } else if (build_type == BuildType::BT_STOCKPILE) {
+        return {1.0, 1};
+    }
+    ErrorLogger() << "Empire::ProductionCostAndTime was passed a ProductionItem with an invalid BuildType";
+    return {-1.0, -1};
+}
+
+bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) const { // TODO: Pass ScriptingContext...
     switch (build_type) {
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
@@ -401,7 +422,7 @@ bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const
 }
 
 std::map<std::string, std::map<int, float>>
-ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) const {
+ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) const {  // TODO: pass ScriptingContext
     std::map<std::string, std::map<int, float>> retval;
 
     switch (build_type) {
@@ -532,10 +553,6 @@ std::string ProductionQueue::ProductionItem::Dump() const {
 //////////////////////////////
 // ProductionQueue::Element //
 //////////////////////////////
-ProductionQueue::Element::Element() :
-     uuid(boost::uuids::nil_generator()())
-{}
-
 ProductionQueue::Element::Element(ProductionItem item_, int empire_id_,
                                   boost::uuids::uuid uuid_, int ordered_,
                                   int remaining_, int blocksize_, int location_, bool paused_,
@@ -551,6 +568,9 @@ ProductionQueue::Element::Element(ProductionItem item_, int empire_id_,
     allowed_imperial_stockpile_use(allowed_imperial_stockpile_use_),
     uuid(uuid_)
 {}
+
+std::pair<float, int> ProductionQueue::Element::ProductionCostAndTime(const ScriptingContext& context) const
+{ return item.ProductionCostAndTime(empire_id, location, context); }
 
 std::string ProductionQueue::Element::Dump() const {
     std::string retval = "ProductionQueue::Element (" + item.Dump() + ") (" +
@@ -711,9 +731,7 @@ void ProductionQueue::Update() {
         int location_id = element.location;
 
         // search through groups to find object
-        for (auto groups_it = available_pp.begin();
-             true; ++groups_it)
-        {
+        for (auto groups_it = available_pp.begin(); true; ++groups_it) {
             if (groups_it == available_pp.end()) {
                 // didn't find a group containing this object, so add an empty group as this element's queue element group
                 queue_element_groups.emplace_back();
@@ -744,7 +762,7 @@ void ProductionQueue::Update() {
         std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
 
         if (!queue_item_costs_and_times.count(key))
-            queue_item_costs_and_times[key] = empire->ProductionCostAndTime(elem);
+            queue_item_costs_and_times[key] = elem.ProductionCostAndTime();
 
         elem.turns_left_to_next_item = -1;
         elem.turns_left_to_completion = -1;

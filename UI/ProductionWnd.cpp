@@ -333,13 +333,10 @@ namespace {
             elem(elem_)
         {
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
-            const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
-            float total_cost(1.0f);
-            int minimum_turns(1);
-            if (empire)
-                std::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(elem);
+            auto [total_cost, minimum_turns] = elem.ProductionCostAndTime();
             total_cost *= elem.blocksize;
 
+            const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
             float pp_accumulated = empire ? empire->ProductionStatus(queue_index) : 0.0f; // returns as PP
             if (pp_accumulated == -1.0f)
                 pp_accumulated = 0.0f;

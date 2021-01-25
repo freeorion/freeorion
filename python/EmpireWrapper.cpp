@@ -241,7 +241,7 @@ namespace FreeOrionPython {
             .add_property("availableShipParts",     make_function(&Empire::AvailableShipParts,      py::return_value_policy<py::copy_const_reference>()))
             .add_property("availableShipHulls",     make_function(&Empire::AvailableShipHulls,      py::return_value_policy<py::copy_const_reference>()))
             .add_property("productionQueue",        make_function(&Empire::GetProductionQueue,      py::return_internal_reference<>()))
-            .def("productionCostAndTime",           +[](const Empire& empire, const ProductionQueue::Element& element) -> std::pair<float, int> { return empire.ProductionCostAndTime(element); },
+            .def("productionCostAndTime",           +[](const Empire& empire, const ProductionQueue::Element& element) -> std::pair<float, int> { return element.ProductionCostAndTime(); },
                                                     py::return_value_policy<py::return_by_value>())
             .add_property("planetsWithAvailablePP", make_function(
                                                         PlanetsWithAvailablePP,

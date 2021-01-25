@@ -190,11 +190,7 @@ namespace {
                 stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
                 stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity();
 
-                std::pair<double, int> cost_time = empire->ProductionCostAndTime(m_item, m_location_id);
-                //cost_text = DoubleToString(cost_time.first, 3, false);
-
-                float total_cost = static_cast<float>(cost_time.first);
-                int minimum_production_time = cost_time.second;
+                auto [total_cost, minimum_production_time] = m_item.ProductionCostAndTime(m_empire_id, m_location_id);
 
                 int production_time = ProductionTurns(total_cost, minimum_production_time,
                                                       local_pp_output, stockpile,

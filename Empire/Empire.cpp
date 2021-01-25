@@ -789,37 +789,8 @@ float Empire::ProductionStatus(int i) const {
     if (0 > i || i >= static_cast<int>(m_production_queue.size()))
         return -1.0f;
     float item_progress = m_production_queue[i].progress;
-    float item_cost;
-    int item_time;
-    std::tie(item_cost, item_time) = this->ProductionCostAndTime(m_production_queue[i]);
+    auto [item_cost, item_time] = m_production_queue[i].ProductionCostAndTime();
     return item_progress * item_cost * m_production_queue[i].blocksize;
-}
-
-std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::Element& element) const
-{ return ProductionCostAndTime(element.item, element.location); }
-
-std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::ProductionItem& item,
-                                                    int location_id) const
-{
-    if (item.build_type == BuildType::BT_BUILDING) {
-        const BuildingType* type = GetBuildingType(item.name);
-        if (!type)
-            return std::make_pair(-1.0, -1);
-        return std::make_pair(type->ProductionCost(m_id, location_id),
-                              type->ProductionTime(m_id, location_id));
-
-    } else if (item.build_type == BuildType::BT_SHIP) {
-        const ShipDesign* design = GetShipDesign(item.design_id);
-        if (design)
-            return std::make_pair(design->ProductionCost(m_id, location_id),
-                                  design->ProductionTime(m_id, location_id));
-        return std::make_pair(-1.0, -1);
-
-    } else if (item.build_type == BuildType::BT_STOCKPILE) {
-        return std::make_pair(1.0, 1);
-    }
-    ErrorLogger() << "Empire::ProductionCostAndTime was passed a ProductionItem with an invalid BuildType";
-    return std::make_pair(-1.0, -1);
 }
 
 bool Empire::HasExploredSystem(int ID) const
@@ -2122,7 +2093,7 @@ std::vector<std::string> Empire::CheckResearchProgress() {
     return to_erase_from_queue_and_grant_next_turn;
 }
 
-void Empire::CheckProductionProgress(Universe& universe) {
+void Empire::CheckProductionProgress(Universe& universe) {  // or pass full ScriptingContext?
     DebugLogger() << "========Empire::CheckProductionProgress=======";
     // following commented line should be redundant, as previous call to
     // UpdateResourcePools should have generated necessary info
@@ -2143,13 +2114,18 @@ void Empire::CheckProductionProgress(Universe& universe) {
     // cost and result in it not being finished that turn.
     std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int>>
         queue_item_costs_and_times;
+
+    ScriptingContext context{objects,
+                             universe.GetEmpireObjectVisibility(),
+                             universe.GetEmpireObjectVisibilityTurnMap()};  // Pass and use EmpireManager?
+
     for (auto& elem : m_production_queue) {
         // for items that don't depend on location, only store cost/time once
         int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
         auto key = std::make_pair(elem.item, location_id);
 
         if (!queue_item_costs_and_times.count(key))
-            queue_item_costs_and_times[key] = ProductionCostAndTime(elem);
+            queue_item_costs_and_times[key] = elem.ProductionCostAndTime(context);
     }
 
     //for (auto& entry : queue_item_costs_and_times)

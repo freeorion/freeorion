@@ -4,6 +4,7 @@
 #include "Effects.h"
 #include "Enums.h"
 #include "ValueRefs.h"
+#include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/GameRules.h"
 
@@ -178,50 +179,58 @@ bool ShipHull::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float ShipHull::ProductionCost(int empire_id, int location_id, int in_design_id) const {    // TODO: pass in ScriptingContext
+float ShipHull::ProductionCost(int empire_id, int location_id,
+                               const ScriptingContext& parent_context, int in_design_id) const
+{
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
         return 1.0f;
 
-    if (m_production_cost->ConstantExpr()) {
+    if (m_production_cost->ConstantExpr())
         return static_cast<float>(m_production_cost->Eval());
-    } else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant()) {
-        ScriptingContext context(nullptr, nullptr, in_design_id);
-        return static_cast<float>(m_production_cost->Eval(context));
-    }
 
-    auto location = Objects().get(location_id);
+    ScriptingContext design_context(parent_context, in_design_id);
+    if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
+        return static_cast<float>(m_production_cost->Eval(design_context));
+
+    auto location = design_context.ContextObjects().get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
-    auto source = Empires().GetSource(empire_id);   // TODO: pass objects in and on here
+    auto source_it = design_context.empires.find(empire_id);
+    auto source = source_it != design_context.empires.end() ? source_it->second->Source(design_context.ContextObjects()) : nullptr;
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
-    ScriptingContext context(std::move(source), std::move(location), in_design_id);
-    return static_cast<float>(m_production_cost->Eval(context));
+    design_context.source = std::move(source);
+    design_context.effect_target = std::move(location);
+    return static_cast<float>(m_production_cost->Eval(design_context));
 }
 
-int ShipHull::ProductionTime(int empire_id, int location_id, int in_design_id) const {  // TODO: pass in ScriptingContext
+int ShipHull::ProductionTime(int empire_id, int location_id,
+                               const ScriptingContext& parent_context, int in_design_id) const
+{
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
         return 1;
 
-    if (m_production_time->ConstantExpr()) {
+    if (m_production_time->ConstantExpr())
         return m_production_time->Eval();
-    } else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant()) {
-        ScriptingContext context(nullptr, nullptr, in_design_id);
-        return m_production_time->Eval(context);
-    }
 
-    auto location = Objects().get(location_id);
+    ScriptingContext design_context(parent_context, in_design_id);
+    if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
+        return m_production_time->Eval(design_context);
+
+    auto location = design_context.ContextObjects().get(location_id);
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    auto source = Empires().GetSource(empire_id);   // TODO pass ObjectMap in and on here
+    auto source_it = design_context.empires.find(empire_id);
+    auto source = source_it != design_context.empires.end() ? source_it->second->Source(design_context.ContextObjects()) : nullptr;
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    ScriptingContext context(std::move(source), std::move(location), in_design_id);
-    return m_production_time->Eval(context);
+    design_context.source = std::move(source);
+    design_context.effect_target = std::move(location);
+    return m_production_time->Eval(design_context);
 }
 
 unsigned int ShipHull::GetCheckSum() const {

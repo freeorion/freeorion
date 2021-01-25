@@ -142,13 +142,11 @@ void BuildingsPanel::Update() {
         if (elem.item.build_type != BuildType::BT_BUILDING) continue;   // don't show in-progress ships in BuildingsPanel...
         if (elem.location != m_planet_id) continue;                     // don't show buildings located elsewhere
 
-        double total_cost;
-        int total_turns;
         double turn_spending = elem.allocated_pp;
-        std::tie(total_cost, total_turns) = empire->ProductionCostAndTime(elem);
+        auto [total_cost, total_turns] = elem.ProductionCostAndTime();
 
         double progress = std::max(0.0f, empire->ProductionStatus(queue_index));
-        double turns_completed = progress / std::max(total_cost, 1.0);
+        double turns_completed = progress / std::max(total_cost, 1.0f);
         auto ind = GG::Wnd::Create<BuildingIndicator>(GG::X(indicator_size), elem.item.name,
                                                       turns_completed, total_turns, total_cost,
                                                       turn_spending);

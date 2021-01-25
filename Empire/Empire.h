@@ -149,12 +149,6 @@ public:
 
     float       ProductionStatus(int i) const;                          ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
 
-    /** Returns the total cost per item (blocksize 1) and the minimum number of
-      * turns required to produce the indicated item, or (-1.0, -1) if the item
-      * is unknown, unavailable, or invalid. */
-    std::pair<float, int>   ProductionCostAndTime(const ProductionQueue::Element& element) const;
-    std::pair<float, int>   ProductionCostAndTime(const ProductionQueue::ProductionItem& item, int location_id) const;
-
     /** Return true iff this empire can produce the specified item at the specified location. */
     bool                    ProducibleItem(BuildType build_type, int location,
                                            const ObjectMap& objects = Objects()) const;

@@ -197,12 +197,12 @@ float ShipDesign::ProductionCost(int empire_id, int location_id) const {
 
     float cost_accumulator = 0.0f;
     if (const ShipHull* hull = GetShipHull(m_hull))
-        cost_accumulator += hull->ProductionCost(empire_id, location_id, m_id);
+        cost_accumulator += hull->ProductionCost(empire_id, location_id, ScriptingContext(), m_id);
 
     int part_count = 0;
     for (const std::string& part_name : m_parts) {
         if (const ShipPart* part = GetShipPart(part_name)) {
-            cost_accumulator += part->ProductionCost(empire_id, location_id, m_id);
+            cost_accumulator += part->ProductionCost(empire_id, location_id, /*ScriptingContext(),*/ m_id);
             part_count++;
         }
     }
