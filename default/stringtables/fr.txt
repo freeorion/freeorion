@@ -10394,6 +10394,9 @@ DESC_NONE  # translated
 DESC_NONE_NOT  # translated
 [[DESC_ALL]]
 
+DESC_NOOP  # translated
+(NoOp)
+
 # %1% name of the empire this condition applies to.
 DESC_EMPIRE_AFFILIATION_SELF
 ''' appartenant à l'empire %1%'''
@@ -11347,7 +11350,7 @@ PLC_INDUSTRIALISM
 Industrialisme
 
 PLC_INDUSTRIALISM_DESC
-'''Les planètes en Focus Industrie améliorent leur [[metertype METER_TARGET_INDUSTRY]] (x[[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_SCALING]]) et leur [[metertype METER_HAPPINESS]] augmente de [[value PLC_INDUSTRIALISM_TARGET_HAPINESS_FLAT]].
+'''Les planètes en Focus Industrie améliorent leur [[metertype METER_TARGET_INDUSTRY]] (x[[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_SCALING]]) et leur [[metertype METER_HAPPINESS]] augmente de [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]].
 
 Diminue le coût de recherche de certaines technologies de Génération améliorant la production.'''
 
