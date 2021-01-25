@@ -10,7 +10,11 @@ Tech
         "CON_ORGANIC_STRC"
         "CON_NDIM_STRC"
     ]
-    unlock = Item type = Building name = "BLD_MEGALITH"
+    unlock = 
+    unlock = [
+        Item type = Building name = "BLD_MEGALITH"
+        Item type = Policy name = "PLC_DIVINE_AUTHORITY"
+    ]
     effectsgroups = EffectsGroup
         scope = Source
         effects = SetEmpireMeter empire = Source.Owner meter = "SOCIAL_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
