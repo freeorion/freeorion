@@ -2921,8 +2921,8 @@ void SetDestination::Execute(ScriptingContext& context) const {
         return;
 
     // check destination validity: disallow movement that's out of range
-    std::pair<int, int> eta = target_fleet->ETA(target_fleet->MovePath(route_list));
-    if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_OUT_OF_RANGE)
+    const auto eta_final = target_fleet->ETA(target_fleet->MovePath(route_list, false, context)).first;
+    if (eta_final == Fleet::ETA_NEVER || eta_final == Fleet::ETA_OUT_OF_RANGE)
         return;
 
     try {

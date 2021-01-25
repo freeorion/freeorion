@@ -1078,7 +1078,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     }
     else if (property_name == "ETA") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
-            return fleet->ETA().first;
+            return fleet->ETA(context).first;
         return 0;
 
     }

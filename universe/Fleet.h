@@ -2,6 +2,7 @@
 #define _Fleet_h_
 
 #include "UniverseObject.h"
+#include "ScriptingContext.h"
 #include "../util/AppInterface.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
@@ -80,10 +81,13 @@ public:
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
         location, however the fleet's current location will not be on the list, even if it is currently in a system. */
-    std::list<MovePathNode> MovePath(const std::list<int>& route, bool flag_blockades = false) const;
-    std::list<MovePathNode> MovePath(bool flag_blockades = false) const;            ///< Returns MovePath for fleet's current TravelRoute
-    std::pair<int, int>     ETA() const;                                            ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
-    std::pair<int, int>     ETA(const std::list<MovePathNode>& move_path) const;    ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
+    std::list<MovePathNode> MovePath(const std::list<int>& route, bool flag_blockades = false,
+                                     const ScriptingContext& context = ScriptingContext()) const;
+    std::list<MovePathNode> MovePath(bool flag_blockades = false,
+                                     const ScriptingContext& context = ScriptingContext()) const;   ///< Returns MovePath for fleet's current TravelRoute
+
+    std::pair<int, int>     ETA(const ScriptingContext& context) const;         ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
+    std::pair<int, int>     ETA(const std::list<MovePathNode>& move_path) const;///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
 
     float   Damage() const;                     ///< Returns total amount of damage this fleet has, which is the sum of the ships' damage
     float   Structure() const;                  ///< Returns total amount of structure this fleet has, which is the sum of the ships' structure
@@ -127,16 +131,16 @@ public:
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     /** Moves fleet, its ships, and sets systems as explored for empires. */
-    void MovementPhase(EmpireManager& empires = Empires(), ObjectMap& objects = Objects());
+    void MovementPhase(EmpireManager& empires = Empires(), ObjectMap& objects = Objects()); // TODO: pass ScriptingContext
 
     void ResetTargetMaxUnpairedMeters() override;
 
     /** Sets this fleet to move through the series of systems in the list, in order */
-    void SetRoute(const std::list<int>& route);
+    void SetRoute(const std::list<int>& route); // TODO: pass ScriptingContext
 
     /** Sets this fleet to move through the series of systems that makes the
       * shortest path from its current location to target_system_id */
-    void CalculateRouteTo(int target_system_id, const ObjectMap& objects = Objects());
+    void CalculateRouteTo(int target_system_id, const ObjectMap& objects = Objects());  // TODO: pass ScriptingContext
 
     void SetAggression(FleetAggression aggression);         ///< sets this fleet's aggression level towards other fleets
 

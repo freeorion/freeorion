@@ -4542,7 +4542,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
 
     // create and store line
     auto route(fleet->TravelRoute());
-    auto path = fleet->MovePath(route, true);
+    auto path = fleet->MovePath(route, true, ScriptingContext());
     auto route_it = route.begin();
     if (!route.empty() && (++route_it) != route.end()) {
         //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" checking for blockade at system "<< route.front() <<
@@ -4582,7 +4582,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
     const Empire* empire = GetEmpire(fleet->Owner());
 
     // get move path to show.  if there isn't one, show nothing
-    auto path = fleet->MovePath(travel_route, true);
+    auto path = fleet->MovePath(travel_route, true, ScriptingContext());
 
 
 
@@ -7303,7 +7303,7 @@ namespace {
     bool FleetRouteInRange(const std::shared_ptr<Fleet>& fleet, const RouteListType& route) {
         std::list<int> route_list{route.begin(), route.end()};
 
-        auto eta = fleet->ETA(fleet->MovePath(route_list));
+        auto eta = fleet->ETA(fleet->MovePath(route_list, false, ScriptingContext()));
         if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_UNKNOWN || eta.first == Fleet::ETA_OUT_OF_RANGE)
             return false;
 
@@ -7615,7 +7615,7 @@ namespace {
 
 void MapWnd::DispatchFleetsExploring() {
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const Empire *empire = GetEmpire(empire_id);
+    const Empire *empire = GetEmpire(empire_id);    // TODO: shared_ptr
     if (!empire) {
         WarnLogger() << "Invalid empire";
         return;
@@ -7635,7 +7635,7 @@ void MapWnd::DispatchFleetsExploring() {
         if (destroyed_objects.count(fleet->ID())) {
             m_fleets_exploring.erase(fleet->ID()); //this fleet can't explore anymore
         } else {
-             if (fleet->MovePath().empty())
+             if (fleet->MovePath(false, ScriptingContext()).empty())
                 idle_fleets.insert(fleet->ID());
             else
                 systems_being_explored.emplace(fleet->FinalDestinationID(), fleet->ID());

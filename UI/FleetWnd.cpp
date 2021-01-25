@@ -90,19 +90,19 @@ namespace {
     std::shared_ptr<GG::Texture> InfluenceIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "influence.png"); }
 
-    std::string FleetDestinationText(int fleet_id) {
-        std::string retval = "";
-        auto fleet = Objects().get<Fleet>(fleet_id);
+    std::string FleetDestinationText(int fleet_id, const ScriptingContext& context) {
+        std::string retval;
+        auto fleet = context.ContextObjects().get<Fleet>(fleet_id);
         if (!fleet)
             return retval;
 
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
-        const auto dest_sys = Objects().get<System>(fleet->FinalDestinationID());
-        const auto cur_sys = Objects().get<System>(fleet->SystemID());
+        const auto dest_sys = context.ContextObjects().get<System>(fleet->FinalDestinationID());
+        const auto cur_sys = context.ContextObjects().get<System>(fleet->SystemID());
         bool returning_to_current_system = (dest_sys == cur_sys) && !fleet->TravelRoute().empty();
         if (dest_sys && (dest_sys != cur_sys || returning_to_current_system)) {
-            std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
+            const auto [eta_final, eta_next] = fleet->ETA(context);
 
             // name of final destination
             std::string dest_name = dest_sys->ApparentName(client_empire_id);
@@ -111,25 +111,25 @@ namespace {
 
             // next system on path
             std::string next_eta_text;
-            if (eta.second == Fleet::ETA_UNKNOWN)
+            if (eta_next == Fleet::ETA_UNKNOWN)
                 next_eta_text = UserString("FW_FLEET_ETA_UNKNOWN");
-            else if (eta.second == Fleet::ETA_NEVER)
+            else if (eta_next == Fleet::ETA_NEVER)
                 next_eta_text = UserString("FW_FLEET_ETA_NEVER");
-            else if (eta.second == Fleet::ETA_OUT_OF_RANGE)
+            else if (eta_next == Fleet::ETA_OUT_OF_RANGE)
                 next_eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
             else
-                next_eta_text = std::to_string(eta.second);
+                next_eta_text = std::to_string(eta_next);
 
             // final destination
             std::string final_eta_text;
-            if (eta.first == Fleet::ETA_UNKNOWN)
+            if (eta_final == Fleet::ETA_UNKNOWN)
                 final_eta_text = UserString("FW_FLEET_ETA_UNKNOWN");
-            else if (eta.first == Fleet::ETA_NEVER)
+            else if (eta_final == Fleet::ETA_NEVER)
                 final_eta_text = UserString("FW_FLEET_ETA_NEVER");
-            else if (eta.first == Fleet::ETA_OUT_OF_RANGE)
+            else if (eta_final == Fleet::ETA_OUT_OF_RANGE)
                 final_eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
             else
-                final_eta_text = std::to_string(eta.first);
+                final_eta_text = std::to_string(eta_final);
 
             if (ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()))
                 retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_TO")) %
@@ -1401,7 +1401,7 @@ void FleetDataPanel::Refresh() {
                 public_fleet_name = public_fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             m_fleet_name_text->SetText(std::move(public_fleet_name));
         }
-        m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
+        m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id, ScriptingContext()));
 
         // set icons
         std::vector<std::shared_ptr<GG::Texture>> icons{

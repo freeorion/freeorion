@@ -406,7 +406,7 @@ void FleetMoveOrder::ExecuteImpl() const {
     }
 
     // check destination validity: disallow movement that's out of range
-    auto eta = fleet->ETA(fleet->MovePath(route_list));
+    auto eta = fleet->ETA(fleet->MovePath(route_list, false, ScriptingContext()));
     if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_OUT_OF_RANGE) {
         DebugLogger() << "FleetMoveOrder::ExecuteImpl rejected out of range move order";
         return;

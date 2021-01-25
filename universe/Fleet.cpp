@@ -221,10 +221,12 @@ int Fleet::MaxShipAgeInTurns() const {
 const std::list<int>& Fleet::TravelRoute() const
 { return m_travel_route; }
 
-std::list<MovePathNode> Fleet::MovePath(bool flag_blockades /*= false*/) const
-{ return MovePath(TravelRoute(), flag_blockades); }
+std::list<MovePathNode> Fleet::MovePath(bool flag_blockades, const ScriptingContext& context) const
+{ return MovePath(TravelRoute(), flag_blockades, context); }
 
-std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_blockades /*= false*/) const {
+std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_blockades,
+                                        const ScriptingContext& context) const
+{
     std::list<MovePathNode> retval;
 
     if (route.empty())
@@ -327,7 +329,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                         false);
 
 
-    const int       TOO_LONG =              100;            // limit on turns to simulate.  99 turns max keeps ETA to two digits, making UI work better
+    constexpr int   TOO_LONG =              100;            // limit on turns to simulate.  99 turns max keeps ETA to two digits, making UI work better
     int             turns_taken =           1;
     double          turn_dist_remaining =   this->Speed();  // additional distance that can be travelled in current turn of fleet movement being simulated
     double          cur_x =                 this->X();
@@ -546,8 +548,8 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     return retval;
 }
 
-std::pair<int, int> Fleet::ETA() const
-{ return ETA(MovePath()); }
+std::pair<int, int> Fleet::ETA(const ScriptingContext& context) const
+{ return ETA(MovePath(false, context)); }
 
 std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const {
     // check that path exists.  if empty, there was no valid route or some other problem prevented pathing
@@ -837,7 +839,7 @@ void Fleet::MovementPhase(EmpireManager& empires, ObjectMap& objects) {
 
     auto current_system = objects.get<System>(SystemID());
     auto initial_system = current_system;
-    auto move_path = MovePath();
+    auto move_path = MovePath(false, ScriptingContext());   // TODO: use passed-in Scriptingcontext
 
     if (!move_path.empty()) {
         DebugLogger() << "Fleet::MovementPhase " << this->Name() << " (" << this->ID()
@@ -882,7 +884,7 @@ void Fleet::MovementPhase(EmpireManager& empires, ObjectMap& objects) {
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception in Fleet MovementPhase shorentning route: " << e.what();
         }
-        move_path = MovePath();
+        move_path = MovePath(false, ScriptingContext());    // TODO: use passed-in ScriptingContext
     }
 
     auto it = move_path.begin();
