@@ -3207,6 +3207,11 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     if (match_report.empty())
         match_report = UserString("ENC_SEARCH_NOTHING_FOUND");
 
+    auto duration = timer.Elapsed();
+    auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    match_report += "\n\n" + boost::io::str(FlexibleFormat(UserString("ENC_SEARCH_TOOK"))
+                                            % search_text % (std::to_string(duration_ms) + " ms"));
+
     AddItem(TEXT_SEARCH_RESULTS, match_report);
 }
 

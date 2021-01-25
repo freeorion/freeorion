@@ -5313,6 +5313,11 @@ Article Content Matches
 ENC_SEARCH_NOTHING_FOUND
 No Matches Found
 
+# %1% search string entered eg. "species"
+# %2% duration search took to complete eg. "643 ms"
+ENC_SEARCH_TOOK
+Search for "%1%" took %2%
+
 # %1% specialized type description of the thing described in the encyclopedia
 #     (e.g. for a ship part it would be the ship part class).
 # %2% general type description of the thing described in the encyclopedia.
