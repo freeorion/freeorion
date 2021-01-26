@@ -137,7 +137,7 @@ namespace {
     }
 
     std::string EmpireIdToText(int empire_id) {
-        if (const Empire* empire = GetEmpire(empire_id))
+        if (const auto empire = GetEmpire(empire_id))
             return GG::RgbaTag(empire->Color()) + "<" + VarText::EMPIRE_ID_TAG + " " +
                    std::to_string(empire->EmpireID()) + ">" + empire->Name() + "</" +
                    VarText::EMPIRE_ID_TAG + ">" + "</rgba>";
