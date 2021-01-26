@@ -186,7 +186,7 @@ public:
         }
     }
 
-    GG::Pt GetSideBarSize(const Empire* empire ) const
+    GG::Pt GetSideBarSize(const Empire* empire) const
     { return GetSideBarSize( empire ? empire->EmpireID() : ALL_EMPIRES ); }
 
     void SetAvailableSize(GG::Pt size) {
@@ -239,13 +239,13 @@ private:
 
     const CombatSummaryMap& m_summaries;
 
-    GG::Pt GetSideBarSize( int empire_id ) const {
+    GG::Pt GetSideBarSize(int empire_id) const {
         // The client (participant bar) height of this side bar.
         GG::Y calculated_height(GG::Y0);
 
         auto summary_it = m_summaries.find(empire_id);
 
-        if ( Get(TOGGLE_GRAPH_HEIGHT_PROPORTIONAL) && summary_it != m_summaries.end() ) {
+        if (Get(TOGGLE_GRAPH_HEIGHT_PROPORTIONAL) && summary_it != m_summaries.end()) {
             calculated_height = m_available_participant_bar_height * summary_it->second.max_max_health / m_sum_of_max_max_healths;
         } else {
             calculated_height = m_available_participant_bar_height / static_cast<int>(m_summaries.size());
