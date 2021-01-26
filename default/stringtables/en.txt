@@ -5469,7 +5469,7 @@ Combat at %1% on turn %2%:
 #     acted).
 # %5% the draw number (a draw is the acting of a single combat unit).
 ENC_COMBAT_ATTACK_STR
-%1% attacks %2% and does %3% damage
+%1% attacks %2% for %3% damage
 
 # %1% link to a ship part description.
 # %2% potential damage done by the weapon.
