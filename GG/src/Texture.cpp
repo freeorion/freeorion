@@ -563,10 +563,10 @@ void SubTexture::Clear()
 TextureManager::TextureManager()
 {}
 
-const std::map<std::string, std::shared_ptr<Texture>>& TextureManager::Textures() const
+std::map<std::string, std::shared_ptr<const Texture>> TextureManager::Textures() const
 {
     boost::mutex::scoped_lock lock(m_texture_access_guard);
-    return m_textures;
+    return {m_textures.begin(), m_textures.end()};
 }
 
 std::shared_ptr<Texture> TextureManager::StoreTexture(Texture* texture, std::string texture_name)

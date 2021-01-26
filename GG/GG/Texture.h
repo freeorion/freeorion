@@ -218,7 +218,7 @@ private:
 class GG_API TextureManager
 {
 public:
-    const std::map<std::string, std::shared_ptr<Texture>>& Textures() const;
+    std::map<std::string, std::shared_ptr<const Texture>> Textures() const;
 
     /** Stores a pre-existing GG::Texture in the manager's texture pool, and
         returns a shared_ptr to it. \warning Calling code <b>must not</b>
