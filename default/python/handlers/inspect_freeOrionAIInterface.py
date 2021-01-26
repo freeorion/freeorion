@@ -32,46 +32,45 @@ def inspect_ai_interface():
 
     building = list(planet.buildingIDs)[0]
 
-    color = empire.colour
-
     part_meters = ship.partMeters
 
     meter = planet.getMeter(fo.meterType.population)
 
+    instances = [
+        meter,
+        part_meters,
+        universe,
+        fleet,
+        planet,
+        universe.getSystem(planet.systemID),
+        ship,
+        empire,
+        design,
+        tech,
+        tech_spec,
+        fo.getFieldType('FLD_ION_STORM'),
+        fo.getBuildingType('BLD_SHIPYARD_BASE'),
+        fo.getGalaxySetupData(),
+        fo.getShipHull('SH_XENTRONIUM'),
+        fo.getShipPart('SR_WEAPON_1_1'),
+        fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL'),
+        fo.getSpecies('SP_ABADDONI'),
+        fo.getTech('SHP_WEAPON_4_1'),
+        fo.diplomaticMessage(1, 2, fo.diplomaticMessageType.acceptPeaceProposal),
+        fleets_int_vector,
+        ship_part,
+        prod_queue,
+        prod_queue.allocatedPP,
+        prod_queue[0],
+        research_queue,
+        research_queue[0],
+        empire.getSitRep(0),
+        universe.getBuilding(building)
+    ]
+
     generate_stub(
         fo,
-        instances=[
-            meter,
-            part_meters,
-            color,
-            universe,
-            fleet,
-            planet,
-            universe.getSystem(planet.systemID),
-            ship,
-            empire,
-            design,
-            tech,
-            tech_spec,
-            fo.getFieldType('FLD_ION_STORM'),
-            fo.getBuildingType('BLD_SHIPYARD_BASE'),
-            fo.getGalaxySetupData(),
-            fo.getShipHull('SH_XENTRONIUM'),
-            fo.getShipPart('SR_WEAPON_1_1'),
-            fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL'),
-            fo.getSpecies('SP_ABADDONI'),
-            fo.getTech('SHP_WEAPON_4_1'),
-            fo.diplomaticMessage(1, 2, fo.diplomaticMessageType.acceptPeaceProposal),
-            fleets_int_vector,
-            ship_part,
-            prod_queue,
-            prod_queue.allocatedPP,
-            prod_queue[0],
-            research_queue,
-            research_queue[0],
-            empire.getSitRep(0),
-            universe.getBuilding(building)
-        ],
+        instances=instances,
         classes_to_ignore=(
             'IntSet', 'StringSet', 'IntIntMap', 'ShipSlotVec', 'VisibilityIntMap', 'IntDblMap',
             'IntBoolMap', 'UnlockableItemVec', 'PairIntInt_IntMap', 'IntSetSet', 'StringVec',
