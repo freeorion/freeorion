@@ -489,9 +489,9 @@ namespace FreeOrionPython {
             .add_property("hasFighters",        make_function(&ShipDesign::HasFighters,     py::return_value_policy<py::return_by_value>()))
             .add_property("hasDirectWeapons",   make_function(&ShipDesign::HasDirectWeapons,py::return_value_policy<py::return_by_value>()))
             .add_property("isMonster",          make_function(&ShipDesign::IsMonster,       py::return_value_policy<py::return_by_value>()))
-            .def("productionCost",              &ShipDesign::ProductionCost)
-            .def("productionTime",              &ShipDesign::ProductionTime)
-            .def("perTurnCost",                 &ShipDesign::PerTurnCost)
+            .def("productionCost",              +[](const ShipDesign& ship_design, int empire_id, int location_id) -> float { return ship_design.ProductionCost(empire_id, location_id); })
+            .def("productionTime",              +[](const ShipDesign& ship_design, int empire_id, int location_id) -> int { return ship_design.ProductionTime(empire_id, location_id); })
+            .def("perTurnCost",                 +[](const ShipDesign& ship_design, int empire_id, int location_id) -> float { return ship_design.PerTurnCost(empire_id, location_id); })
             .add_property("costTimeLocationInvariant",
                                                 &ShipDesign::ProductionCostTimeLocationInvariant)
             .add_property("hull",               make_function(&ShipDesign::Hull,            py::return_value_policy<py::return_by_value>()))
@@ -529,14 +529,14 @@ namespace FreeOrionPython {
             .add_property("capacity",           &ShipPart::Capacity)
             .add_property("secondaryStat",      &ShipPart::SecondaryStat)
             .add_property("mountableSlotTypes", make_function(&ShipPart::MountableSlotTypes,py::return_value_policy<py::return_by_value>()))
-            .def("productionCost",              &ShipPart::ProductionCost)
-            .def("productionTime",              &ShipPart::ProductionTime)
+            .def("productionCost",              +[](const ShipPart& ship_part, int empire_id, int location_id, int design_id) -> float { return ship_part.ProductionCost(empire_id, location_id, design_id); })
+            .def("productionTime",              +[](const ShipPart& ship_part, int empire_id, int location_id, int design_id) -> int { return ship_part.ProductionTime(empire_id, location_id, design_id); })
             .def("canMountInSlotType",          &ShipPart::CanMountInSlotType)
             .add_property("costTimeLocationInvariant",
                                                 &ShipPart::ProductionCostTimeLocationInvariant)
             .def("productionLocation",          &ShipPartProductionLocation, "Returns the result of Location condition (bool) in passed location_id (int)")
         ;
-        py::def("getShipPart",                      &GetShipPart,                               py::return_value_policy<py::reference_existing_object>(), "Returns the ShipPart with the indicated name (string).");
+        py::def("getShipPart",                  &GetShipPart,                               py::return_value_policy<py::reference_existing_object>(), "Returns the ShipPart with the indicated name (string).");
 
         py::class_<ShipHull, boost::noncopyable>("shipHull", py::no_init)
             .add_property("name",               make_function(&ShipHull::Name,              py::return_value_policy<py::copy_const_reference>()))
@@ -554,14 +554,14 @@ namespace FreeOrionPython {
                                                     HullSlots,
                                                     py::return_value_policy<py::return_by_value>()
                                                 ))
-            .def("productionCost",              &ShipHull::ProductionCost)
-            .def("productionTime",              &ShipHull::ProductionTime)
+            .def("productionCost",              +[](const ShipHull& ship_hull, int empire_id, int location_id, int design_id) -> float { return ship_hull.ProductionCost(empire_id, location_id, ScriptingContext(), design_id); })
+            .def("productionTime",              +[](const ShipHull& ship_hull, int empire_id, int location_id, int design_id) -> int { return ship_hull.ProductionTime(empire_id, location_id, ScriptingContext(), design_id); })
             .add_property("costTimeLocationInvariant",
                                                 &ShipHull::ProductionCostTimeLocationInvariant)
             .def("hasTag",                      &ShipHull::HasTag)
             .def("productionLocation",          &HullProductionLocation, "Returns the result of Location condition (bool) in passed location_id (int)")
         ;
-        py::def("getShipHull",                      &GetShipHull,                               py::return_value_policy<py::reference_existing_object>(), "Returns the ship hull with the indicated name (string).");
+        py::def("getShipHull",                  &GetShipHull,                               py::return_value_policy<py::reference_existing_object>(), "Returns the ship hull with the indicated name (string).");
 
         //////////////////
         //   Building   //
