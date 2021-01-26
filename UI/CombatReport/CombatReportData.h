@@ -3,6 +3,7 @@
 
 
 #include <GG/Clr.h>
+#include "../util/Export.h"
 
 #include <memory>
 #include <vector>
@@ -13,18 +14,18 @@ struct CombatParticipantState;
 class Empire;
 class UniverseObject;
 
+FO_COMMON_API extern const int INVALID_OBJECT_ID;
+FO_COMMON_API extern const int ALL_EMPIRES;
+
 // Data on what happened on single object in the combat
 struct ParticipantSummary {
-    int                         object_id;
-    int                         empire_id;
-    // These appear to be never used
-    /* std::vector<WeaponFireEvent*>   attacks; */
-    /* std::vector<WeaponFireEvent*>   attacks_against; */
-    float                       current_health;
-    float                       max_health;
+    int     object_id = INVALID_OBJECT_ID;
+    int     empire_id = ALL_EMPIRES;
+    float   current_health = 0.0f;
+    float   max_health = 0.0f;
 
-    ParticipantSummary();
-    ParticipantSummary(int object_id, int empire_id, const CombatParticipantState& state);
+    ParticipantSummary() = default;
+    ParticipantSummary(int object_id_, int empire_id_, const CombatParticipantState& state);
 };
 
 // A summary of what happened to a side in the combat (an empire or neutral)
@@ -37,14 +38,14 @@ public:
     // therefore we store them with pointers
     typedef std::vector<ParticipantSummaryPtr> UnitSummaries;
 
-    Empire*         empire;
+    Empire*         empire = nullptr;
     UnitSummaries   unit_summaries;
-    float           total_current_health;
-    float           total_max_health;
-    float           max_max_health;
-    float           max_current_health;
+    float           total_current_health = 0.0f;
+    float           total_max_health = 0.0f;
+    float           max_max_health = 0.0f;
+    float           max_current_health = 0.0f;
 
-    CombatSummary();
+    CombatSummary() = default;
     CombatSummary(int empire_id);
 
     GG::Clr         SideColor() const;
