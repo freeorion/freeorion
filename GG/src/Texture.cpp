@@ -45,7 +45,6 @@ namespace {
             value *= 2;
         return value;
     }
-
 }
 
 ///////////////////////////////////////
@@ -565,7 +564,7 @@ TextureManager::TextureManager()
 
 std::map<std::string, std::shared_ptr<const Texture>> TextureManager::Textures() const
 {
-    boost::mutex::scoped_lock lock(m_texture_access_guard);
+    std::scoped_lock lock(m_texture_access_guard);
     return {m_textures.begin(), m_textures.end()};
 }
 
@@ -574,14 +573,14 @@ std::shared_ptr<Texture> TextureManager::StoreTexture(Texture* texture, std::str
 
 std::shared_ptr<Texture> TextureManager::StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name)
 {
-    boost::mutex::scoped_lock lock(m_texture_access_guard);
+    std::scoped_lock lock(m_texture_access_guard);
     m_textures[std::move(texture_name)] = texture;
     return texture;
 }
 
 std::shared_ptr<Texture> TextureManager::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
 {
-    boost::mutex::scoped_lock lock(m_texture_access_guard);
+    std::scoped_lock lock(m_texture_access_guard);
     auto it = m_textures.find(path.generic_string());
     if (it == m_textures.end()) { // if no such texture was found, attempt to load it now, using name as the filename
         //std::cout << "TextureManager::GetTexture storing new texture under name: " << path.generic_string();
@@ -596,7 +595,7 @@ void TextureManager::FreeTexture(const boost::filesystem::path& path)
 
 void TextureManager::FreeTexture(const std::string& name)
 {
-    boost::mutex::scoped_lock lock(m_texture_access_guard);
+    std::scoped_lock lock(m_texture_access_guard);
     auto it = m_textures.find(name);
     if (it != m_textures.end())
         m_textures.erase(it);

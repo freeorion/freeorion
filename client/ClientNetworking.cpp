@@ -252,7 +252,7 @@ private:
     // the networking thread and read by the main thread to check incoming messages and connection
     // status. As those read and write operations are not atomic, shared access has to be
     // protected to prevent unpredictable results.
-    mutable boost::mutex            m_mutex;
+    mutable std::mutex              m_mutex;
 
     bool                            m_rx_connected = false; // accessed from multiple threads
     bool                            m_tx_connected = false; // accessed from multiple threads
@@ -277,17 +277,17 @@ ClientNetworking::Impl::Impl() :
 {}
 
 bool ClientNetworking::Impl::IsConnected() const {
-    boost::mutex::scoped_lock lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
     return m_rx_connected && m_tx_connected;
 }
 
 bool ClientNetworking::Impl::IsRxConnected() const {
-    boost::mutex::scoped_lock lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
     return m_rx_connected;
 }
 
 bool ClientNetworking::Impl::IsTxConnected() const {
-    boost::mutex::scoped_lock lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
     return m_tx_connected;
 }
 
@@ -442,7 +442,7 @@ void ClientNetworking::Impl::DisconnectFromServer() {
     bool is_open(false);
 
     { // Create a scope for the mutex
-        boost::mutex::scoped_lock lock(m_mutex);
+        std::scoped_lock lock(m_mutex);
         is_open = m_rx_connected || m_tx_connected;
     }
 
@@ -492,7 +492,7 @@ void ClientNetworking::Impl::HandleConnection(tcp::resolver::iterator* it,
     } else {
         TraceLogger(network) << "ClientNetworking::HandleConnection : connected";
 
-        boost::mutex::scoped_lock lock(m_mutex);
+        std::scoped_lock lock(m_mutex);
         m_rx_connected = true;
         m_tx_connected = true;
     }
@@ -527,7 +527,7 @@ void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const Client
     m_outgoing_messages.clear();
     m_io_context.reset();
     { // Mutex scope
-        boost::mutex::scoped_lock lock(m_mutex);
+        std::scoped_lock lock(m_mutex);
         m_rx_connected = false;
         m_tx_connected = false;
     }
@@ -599,7 +599,7 @@ void ClientNetworking::Impl::HandleMessageWrite(boost::system::error_code error,
     else {
         bool should_shutdown(false);
         { // Scope for the mutex
-            boost::mutex::scoped_lock lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
             should_shutdown = !m_tx_connected;
         }
         if (should_shutdown) {
@@ -648,7 +648,7 @@ void ClientNetworking::Impl::DisconnectFromServerImpl() {
 
     // Stop sending new packets
     { // Scope for the mutex
-        boost::mutex::scoped_lock lock(m_mutex);
+        std::scoped_lock lock(m_mutex);
         m_tx_connected = false;
         m_rx_connected = m_socket.is_open();
     }

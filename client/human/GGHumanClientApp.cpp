@@ -950,7 +950,7 @@ void GGHumanClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id
 }
 
 boost::intrusive_ptr<const boost::statechart::event_base> GGHumanClientApp::GetDeferredPostedEvent() {
-    boost::mutex::scoped_lock lock(m_event_queue_guard);
+    std::scoped_lock lock(m_event_queue_guard);
     if (m_posted_event_queue.empty())
         return nullptr;
     auto retval = m_posted_event_queue.front();
@@ -961,7 +961,7 @@ boost::intrusive_ptr<const boost::statechart::event_base> GGHumanClientApp::GetD
 void GGHumanClientApp::PostDeferredEvent(
     boost::intrusive_ptr<const boost::statechart::event_base> event)
 {
-    boost::mutex::scoped_lock lock(m_event_queue_guard);
+    std::scoped_lock lock(m_event_queue_guard);
     m_posted_event_queue.push_back(std::move(event));
 }
 

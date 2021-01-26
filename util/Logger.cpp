@@ -176,7 +176,7 @@ namespace {
         void AddOrReplaceLoggerName(const std::string& channel_name,
                                     boost::shared_ptr<LoggerTextFileSinkFrontend> front_end = nullptr)
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
 
             // Remove the old front end if it is different.
             const auto& name_and_old_frontend = m_names_to_front_ends.find(channel_name);
@@ -204,7 +204,7 @@ namespace {
         void StoreConfigurerWithLoggerName(const std::string& channel_name,
                                            const LoggerFileSinkFrontEndConfigurer& configure_front_end)
         {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
 
             // Remove the old front end if it is different.
             m_names_to_front_end_configurers.erase(channel_name);
@@ -218,7 +218,7 @@ namespace {
         }
 
         std::vector<std::string> LoggersNames() {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
 
             std::vector<std::string> retval;
             retval.reserve(m_names_to_front_ends.size());
@@ -228,7 +228,7 @@ namespace {
         }
 
         void ShutdownFileSinks() {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
 
             for (const auto& name_and_frontend : m_names_to_front_ends)
                 logging::core::get()->remove_sink(name_and_frontend.second);
@@ -297,7 +297,7 @@ namespace {
         public:
         // Set the logger threshold and return the logger name and threshold used.
         std::pair<std::string, LogLevel> SetThreshold(const std::string& source, LogLevel threshold) {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::scoped_lock lock(m_mutex);
 
             auto used_threshold = ForcedThreshold() ? *ForcedThreshold() : threshold;
             m_min_channel_severity[source] = used_threshold;

@@ -514,7 +514,7 @@ namespace {
     fs::path res_dir;
 
     void RefreshResDir() {
-        std::lock_guard<std::mutex> res_dir_lock(res_dir_mutex);
+        std::scoped_lock res_dir_lock(res_dir_mutex);
         // if resource dir option has been set, use specified location. otherwise,
         // use default location
         res_dir = FilenameToPath(GetOptionsDB().Get<std::string>("resource.path"));
@@ -526,7 +526,7 @@ namespace {
 
 auto GetResourceDir() -> fs::path const
 {
-    std::lock_guard<std::mutex> res_dir_lock(res_dir_mutex);
+    std::scoped_lock res_dir_lock(res_dir_mutex);
     if (init) {
         init = false;
         res_dir = FilenameToPath(GetOptionsDB().Get<std::string>("resource.path"));

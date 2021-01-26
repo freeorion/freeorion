@@ -19,7 +19,6 @@
 #include "../../UI/MapWnd.h"
 
 #include <boost/format.hpp>
-#include <boost/thread/mutex.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <thread>

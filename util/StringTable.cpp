@@ -29,12 +29,12 @@ StringTable::~StringTable()
 {}
 
 bool StringTable::StringExists(const std::string& key) const {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
     return m_strings.count(key);
 }
 
 const std::string& StringTable::operator[] (const std::string& key) const {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
 
     auto it = m_strings.find(key);
     if (it != m_strings.end())
@@ -45,7 +45,7 @@ const std::string& StringTable::operator[] (const std::string& key) const {
 }
 
 void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::scoped_lock lock(m_mutex);
 
     if (fallback && !fallback->m_initialized) {
         // this prevents deadlock if two stringtables were to be loaded
@@ -71,7 +71,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
     std::map<std::string, std::string> fallback_lookup_strings;
     std::string fallback_table_file;
     if (fallback) {
-        std::lock_guard<std::mutex> fallback_lock(fallback->m_mutex);
+        std::scoped_lock fallback_lock(fallback->m_mutex);
         fallback_table_file = fallback->Filename();
         fallback_lookup_strings.insert(fallback->m_strings.begin(), fallback->m_strings.end());
     }
