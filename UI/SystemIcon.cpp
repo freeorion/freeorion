@@ -79,8 +79,8 @@ namespace {
         }
     }
 
-    const double        PI = 3.1415926535;
-    const unsigned int  MAX_TRIES = 128;     // most allowed unique fleetbutton locations
+    constexpr double       PI = 3.1415926535;
+    constexpr unsigned int MAX_TRIES = 128;     // most allowed unique fleetbutton locations
 }
 
 ////////////////////////////////////////////////
@@ -398,7 +398,7 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
         unsigned int offset_steps = button_number_in_shell - 1;
         // is button at a higher or lower angle than 45 degree place of first button in each shell?
         if (offset_steps == 0) {
-             button_angle = first_fb_angle;
+            button_angle = first_fb_angle;
         } else if (offset_steps % 2 == 0) {
             button_angle = first_fb_angle + half_fb_arc_angle*(offset_steps);
         } else {

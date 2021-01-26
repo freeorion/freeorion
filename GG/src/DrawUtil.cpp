@@ -18,8 +18,8 @@ using namespace GG;
 
 namespace {
 
-const double   PI = 3.14159426;
-const double   SQRT2OVER2 = std::sqrt(2.0) / 2.0;
+constexpr double PI = 3.141594; // probably intentionally slightly more than Pi
+constexpr float SQRT2OVER2 = 0.70710678118654757274f; //std::sqrt(2.0) / 2.0;
 
 /// a stack of the currently-active clipping rects, in GG coordinates, not OpenGL scissor coordinates
 std::vector<Rect> g_scissor_clipping_rects;
@@ -246,8 +246,8 @@ void BubbleArc(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, double theta1, 
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(0, 0);
     // point on circle at angle theta1
-    double x = cos(-theta1),
-        y = sin(-theta1);
+    double x = cos(-theta1);
+    double y = sin(-theta1);
     double color_scale_factor = (SQRT2OVER2 * (x + y) + 1) / 2;
     Clr clr = BlendClr(color2, color3, color_scale_factor);
     glColor4ub(clr.r, clr.g, clr.b, clr.a);
@@ -379,8 +379,8 @@ void RoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_col
 
     int rad = static_cast<int>(corner_radius);
 
-    double color_scale_factor = (SQRT2OVER2 * (0 + 1) + 1) / 2;
-    Clr clr = BlendClr(border_color1, border_color2, color_scale_factor);
+    constexpr float color_scale_factor1 = (SQRT2OVER2 * (0 + 1) + 1) / 2;
+    Clr clr = BlendClr(border_color1, border_color2, color_scale_factor1);
     // top
     vert_buf.store(lr.x - rad,      ul.y);
     vert_buf.store(ul.x + rad,      ul.y);
@@ -395,8 +395,8 @@ void RoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_col
         colour_buf.store(clr);
 
 
-    color_scale_factor = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
-    clr = BlendClr(border_color1, border_color2, color_scale_factor);
+    constexpr float color_scale_factor2 = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
+    clr = BlendClr(border_color1, border_color2, color_scale_factor2);
     // right
     vert_buf.store(lr.x,            ul.y + rad);
     vert_buf.store(lr.x - thick,    ul.y + rad);
@@ -456,8 +456,8 @@ void BubbleRectangle(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, unsigned 
     int rad = static_cast<int>(corner_radius);
 
     // top
-    double color_scale_factor = (SQRT2OVER2 * (0 + 1) + 1) / 2;
-    Clr scaled_color = BlendClr(color2, color3, color_scale_factor);
+    constexpr float color_scale_factor1 = (SQRT2OVER2 * (0 + 1) + 1) / 2;
+    Clr scaled_color = BlendClr(color2, color3, color_scale_factor1);
 
     GL2DVertexBuffer verts;
     verts.reserve(20);
@@ -484,8 +484,8 @@ void BubbleRectangle(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, unsigned 
     verts.store(ul.x + rad, ul.y + rad);
 
     // right
-    color_scale_factor = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
-    scaled_color = BlendClr(color2, color3, color_scale_factor);
+    constexpr float color_scale_factor2 = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
+    scaled_color = BlendClr(color2, color3, color_scale_factor2);
     colours.store(color1);
     colours.store(color1);
     verts.store(lr.x - rad, ul.y + rad);

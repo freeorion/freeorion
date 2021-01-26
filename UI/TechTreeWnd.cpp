@@ -67,21 +67,35 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    GG::X   TechPanelWidth()
+    GG::X TechPanelWidth()
     { return GG::X(ClientUI::Pts()*38); }
-    GG::Y   TechPanelHeight()
+    GG::Y TechPanelHeight()
     { return GG::Y(ClientUI::Pts()*6); }
 
-    const double ZOOM_STEP_SIZE = 1.12;
-    const double MIN_SCALE = std::pow(ZOOM_STEP_SIZE, -25.0);
-    const double MAX_SCALE = std::pow(ZOOM_STEP_SIZE, 10.0);
-    const double INITIAL_SCALE = std::pow(ZOOM_STEP_SIZE, -5.0);
+    constexpr double ConstExprPow(double base, int pow) {
+        bool invert_at_end = false;
+        if (pow == 0) {
+            return 1.0;
+        } else if (pow < 0) {
+            invert_at_end = true;
+            pow = -pow;
+        }
+        double retval = base;
+        while (--pow)
+            retval *= base;
+        return invert_at_end ? 1.0/retval : retval;
+    }
 
-    const double PI = 3.1415926535897932384626433;
+    constexpr double ZOOM_STEP_SIZE = 1.12;
+    constexpr double MIN_SCALE = ConstExprPow(ZOOM_STEP_SIZE, -25);
+    constexpr double MAX_SCALE = ConstExprPow(ZOOM_STEP_SIZE, 10);
+    constexpr double INITIAL_SCALE = ConstExprPow(ZOOM_STEP_SIZE, -5);
 
-    bool    TechVisible(const std::string& tech_name,
-                        const std::set<std::string>& categories_shown,
-                        const std::set<TechStatus>& statuses_shown)
+    constexpr double PI = 3.1415926535897932384626433;
+
+    bool TechVisible(const std::string& tech_name,
+                     const std::set<std::string>& categories_shown,
+                     const std::set<TechStatus>& statuses_shown)
     {
         const Tech* tech = GetTech(tech_name);
         if (!tech)
