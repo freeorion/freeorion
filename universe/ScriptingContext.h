@@ -217,6 +217,7 @@ struct ScriptingContext {
 
     // general gamestate info
     int                                            combat_bout = 0;
+    const GalaxySetupData&                         galaxy_setup_data{GetGalaxySetupData()};
     const Universe::EmpireObjectVisibilityMap&     empire_object_vis{GetUniverse().GetEmpireObjectVisibility()}; // immutable container and values
     ObjectMap&                                     objects{Objects()};
     const ObjectMap&                               const_objects{Objects()};

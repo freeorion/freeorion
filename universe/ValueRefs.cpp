@@ -887,23 +887,23 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         if (property_name == "CurrentTurn")
             return CurrentTurn();
         if (property_name == "GalaxySize")
-            return GetGalaxySetupData().GetSize();
+            return context.galaxy_setup_data.GetSize();
         if (property_name == "GalaxyShape")
-            return static_cast<int>(GetGalaxySetupData().GetShape());
+            return static_cast<int>(context.galaxy_setup_data.GetShape());
         if (property_name == "GalaxyAge")
-            return static_cast<int>(GetGalaxySetupData().GetAge());
+            return static_cast<int>(context.galaxy_setup_data.GetAge());
         if (property_name == "GalaxyStarlaneFrequency")
-            return static_cast<int>(GetGalaxySetupData().GetStarlaneFreq());
+            return static_cast<int>(context.galaxy_setup_data.GetStarlaneFreq());
         if (property_name == "GalaxyPlanetDensity")
-            return static_cast<int>(GetGalaxySetupData().GetPlanetDensity());
+            return static_cast<int>(context.galaxy_setup_data.GetPlanetDensity());
         if (property_name == "GalaxySpecialFrequency")
-            return static_cast<int>(GetGalaxySetupData().GetSpecialsFreq());
+            return static_cast<int>(context.galaxy_setup_data.GetSpecialsFreq());
         if (property_name == "GalaxyMonsterFrequency")
-            return static_cast<int>(GetGalaxySetupData().GetMonsterFreq());
+            return static_cast<int>(context.galaxy_setup_data.GetMonsterFreq());
         if (property_name == "GalaxyNativeFrequency")
-            return static_cast<int>(GetGalaxySetupData().GetNativeFreq());
+            return static_cast<int>(context.galaxy_setup_data.GetNativeFreq());
         if (property_name == "GalaxyMaxAIAggression")
-            return static_cast<int>(GetGalaxySetupData().GetAggression());
+            return static_cast<int>(context.galaxy_setup_data.GetAggression());
 
         // non-object values passed by abuse of context.current_value
         if (property_name == "UsedInDesignID") {
@@ -1154,7 +1154,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
         if (property_name == "GalaxySeed")
-            return GetGalaxySetupData().GetSeed();
+            return context.galaxy_setup_data.GetSeed();
 
         // add more non-object reference string functions here
         LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(std::string)
