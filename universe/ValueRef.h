@@ -2,6 +2,7 @@
 #define _ValueRef_h_
 
 #include "ScriptingContext.h"
+#include "../util/Enum.h"
 #include "../util/Export.h"
 #include <type_traits>
 
@@ -89,26 +90,28 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
     { return FlexibleToString(Eval()); }
 };
 
-enum StatisticType : int {
-    INVALID_STATISTIC_TYPE = -1,
-    IF,     // returns T(1) if anything matches the condition, or T(0) otherwise
+FO_ENUM(
+    (StatisticType),
+    ((INVALID_STATISTIC_TYPE, -1))
 
-    COUNT,          // returns the number of objects matching the condition
-    UNIQUE_COUNT,   // returns the number of distinct property values of objects matching the condition. eg. if 3 objects have the property value "small", and two have "big", then this value is 2, as there are 2 unique property values.
-    HISTO_MAX,      // returns the maximum number of times a unique property value appears in the property values. eg. if 5 objects have values 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the histo max is 3.
-    HISTO_MIN,      // returns the maximum number of times a unique property value appears in the property values. eg. if 5 objects have values 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the histo min is 1.
-    HISTO_SPREAD,   // returns the (positive) difference between the maximum and minimum numbers of distinct property values. eg. if 5 objects have values, 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the Histo Spread is 3-1 = 2.
+    ((IF))          // returns T(1) if anything matches the condition, or T(0) otherwise
 
-    SUM,    // returns the sum of the property values of all objects matching the condition
-    MEAN,   // returns the mean of the property values of all objects matching the condition
-    RMS,    // returns the sqrt of the mean of the squares of the property values of all objects matching the condition
-    MODE,   // returns the most common property value of objects matching the condition.  supported for non-numeric types such as enums.
-    MAX,    // returns the maximum value of the property amongst objects matching the condition
-    MIN,    // returns the minimum value of the property amongst objects matching the condition
-    SPREAD, // returns the (positive) difference between the maximum and minimum values of the property amongst objects matching the condition
-    STDEV,  // returns the standard deviation of the property values of all objects matching the condition
-    PRODUCT // returns the product of the property values of all objects matching the condition
-};
+    ((COUNT))       // returns the number of objects matching the condition
+    ((UNIQUE_COUNT))// returns the number of distinct property values of objects matching the condition. eg. if 3 objects have the property value "small", and two have "big", then this value is 2, as there are 2 unique property values.
+    ((HISTO_MAX))   // returns the maximum number of times a unique property value appears in the property values. eg. if 5 objects have values 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the histo max is 3.
+    ((HISTO_MIN))   // returns the maximum number of times a unique property value appears in the property values. eg. if 5 objects have values 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the histo min is 1.
+    ((HISTO_SPREAD))// returns the (positive) difference between the maximum and minimum numbers of distinct property values. eg. if 5 objects have values, 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the Histo Spread is 3-1 = 2.
+
+    ((SUM))         // returns the sum of the property values of all objects matching the condition
+    ((MEAN))        // returns the mean of the property values of all objects matching the condition
+    ((RMS))         // returns the sqrt of the mean of the squares of the property values of all objects matching the condition
+    ((MODE))        // returns the most common property value of objects matching the condition.  supported for non-numeric types such as enums.
+    ((MAX))         // returns the maximum value of the property amongst objects matching the condition
+    ((MIN))         // returns the minimum value of the property amongst objects matching the condition
+    ((SPREAD))      // returns the (positive) difference between the maximum and minimum values of the property amongst objects matching the condition
+    ((STDEV))       // returns the standard deviation of the property values of all objects matching the condition
+    ((PRODUCT))     // returns the product of the property values of all objects matching the condition
+)
 
 }
 

@@ -167,8 +167,8 @@ namespace parse { namespace detail {
 
         statistic_collection_expr
             =   (tok.Statistic_
-                 >> (   tok.Count_  [ _b = ValueRef::COUNT ]
-                    |   tok.If_     [ _b = ValueRef::IF ]
+                 >> (   tok.Count_  [ _b = ValueRef::StatisticType::COUNT ]
+                    |   tok.If_     [ _b = ValueRef::StatisticType::IF ]
                     )
                 )
             >   label(tok.condition_) > condition_parser

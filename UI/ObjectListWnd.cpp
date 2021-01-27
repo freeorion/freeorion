@@ -91,8 +91,8 @@ namespace {
         return std::make_unique<ValueRef::Operation<T>>(  // evaluates and returns value_ref if contained Statistic returns a non-empty string
             ValueRef::OpType::TIMES,
             std::make_unique<ValueRef::Statistic<T>>(     // returns non-empty string if the source object matches the object type condition
-                nullptr,                                    // property value value ref not used for IF statistic
-                ValueRef::IF,
+                nullptr,                                  // property value value ref not used for IF statistic
+                ValueRef::StatisticType::IF,
                 std::make_unique<Condition::And>(         // want this statistic to return true only if the source object has the specified object type, if there exists any object of that type in the universe
                     std::make_unique<Condition::Source>(),
                     ConditionForObjectTypes(object_types)

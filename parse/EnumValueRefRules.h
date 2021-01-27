@@ -68,7 +68,7 @@ namespace parse {
                  >   label(tok.condition_) >     condition_parser)
             [ _val = construct_movable_(new_<ValueRef::Statistic<T>>(
                 deconstruct_movable_(_1, _pass),
-                ValueRef::MODE,
+                ValueRef::StatisticType::MODE,
                 deconstruct_movable_(_2, _pass))) ]
             ;
     }
