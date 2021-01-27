@@ -3249,6 +3249,9 @@ Effects processing threads (AIs)
 OPTIONS_EFFECTS_THREADS_SERVER
 Effects processing threads (server)
 
+OPTIONS_DB_UI_EFFECTS_MOVE_TEST
+Test / internal engine switch: Use pointer moves, not casts of containers of pointers, when evaluating conditions.
+
 OPTIONS_ADD_SAVED_DESIGNS
 Add All Saved Ship Designs at Game Start
 

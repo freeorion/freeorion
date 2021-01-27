@@ -41,7 +41,7 @@ bool UserStringExists(const std::string& str);
 
 namespace {
     void AddOptions(OptionsDB& db)
-    { db.Add<bool>("effects.move.test", "", false); }
+    { db.Add<bool>("effects.move.test", UserStringNop("OPTIONS_DB_UI_EFFECTS_MOVE_TEST"), false); }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     const std::string EMPTY_STRING;
@@ -292,11 +292,11 @@ void Condition::Eval(const ScriptingContext& parent_context,
         std::transform(std::make_move_iterator(matches_as_objectset.begin()),
                        std::make_move_iterator(matches_as_objectset.end()),
                        std::back_inserter(matches),
-                       std::const_pointer_cast<UniverseObject, const UniverseObject>);
+                       [](auto&& o) { return std::const_pointer_cast<UniverseObject>(std::move(o)); });
         std::transform(std::make_move_iterator(non_matches_as_objectset.begin()),
                        std::make_move_iterator(non_matches_as_objectset.end()),
                        std::back_inserter(non_matches),
-                       std::const_pointer_cast<UniverseObject, const UniverseObject>);
+                       [](auto&& o) { return std::const_pointer_cast<UniverseObject>(std::move(o)); });
     }
 }
 
@@ -331,7 +331,7 @@ void Condition::Eval(const ScriptingContext& parent_context,
         std::transform(std::make_move_iterator(matches_as_objectset.begin()),
                        std::make_move_iterator(matches_as_objectset.end()),
                        std::back_inserter(matches),
-                       std::const_pointer_cast<UniverseObject, const UniverseObject>);
+                       [](auto&& o) { return std::const_pointer_cast<UniverseObject>(std::move(o)); });
     }
 }
 
