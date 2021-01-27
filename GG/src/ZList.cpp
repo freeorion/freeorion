@@ -16,7 +16,7 @@ using namespace GG;
 namespace {
 
 std::shared_ptr<Wnd> PickWithinWindow(const Pt& pt, std::shared_ptr<Wnd> wnd,
-                                        const std::set<Wnd*>* ignore)
+                                      const std::set<Wnd*>* ignore)
 {
     // look through all the children of wnd, and determine whether pt lies in
     // any of them (or their children)
@@ -26,12 +26,12 @@ std::shared_ptr<Wnd> PickWithinWindow(const Pt& pt, std::shared_ptr<Wnd> wnd,
             continue;
         if (!(*it)->InWindow(pt))
             continue;
-        if (auto temp = PickWithinWindow(pt, std::move(*it), ignore))
+        if (auto temp = PickWithinWindow(pt, *it, ignore))
             return temp;
     }
 
     // if wnd is visible and clickable, return it if no child windows also catch pt
-    if (!wnd->Visible() || !wnd->Interactive()  || (ignore && ignore->count(wnd.get())))
+    if (!wnd->Visible() || !wnd->Interactive() || (ignore && ignore->count(wnd.get())))
         return nullptr;
 
     return wnd;
