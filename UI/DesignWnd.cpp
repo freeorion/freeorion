@@ -1079,10 +1079,7 @@ namespace {
 
     boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedXAvailability(bool available, bool obsolete) const {
-        // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
-        const bool showing_obsolete = std::get<Availability::Obsolete>(m_availabilities);
-        const bool showing_available = std::get<Availability::Available>(m_availabilities);
-        const bool showing_future = std::get<Availability::Future>(m_availabilities);
+        const auto& [showing_obsolete, showing_available, showing_future] = m_availabilities;
 
         auto show = (
             (showing_obsolete && obsolete && showing_available && available)
@@ -1844,35 +1841,39 @@ void DesignWnd::PartPalette::CompleteConstruction() {
         if (!part_of_this_class_exists)
             continue;
 
-        m_class_buttons[part_class] = GG::Wnd::Create<CUIStateButton>(UserString(boost::lexical_cast<std::string>(part_class)),
-                                                                      GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+        m_class_buttons[part_class] = GG::Wnd::Create<CUIStateButton>(
+            UserString(boost::lexical_cast<std::string>(part_class)), GG::FORMAT_CENTER,
+            std::make_shared<CUILabelButtonRepresenter>());
         AttachChild(m_class_buttons[part_class]);
         m_class_buttons[part_class]->CheckedSignal.connect(
             boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
+
     // availability buttons
-    // TODO: C++17, Collect and replace with structured binding auto [a, b, c] = m_availabilities;
-    auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
-    m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_obsolete_button);
-    m_obsolete_button->CheckedSignal.connect(
+    auto& [obsolete_button, available_button, unavailable_button] = m_availabilities_buttons;
+
+    obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"),
+                                                      GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(obsolete_button);
+    obsolete_button->CheckedSignal.connect(
         boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Obsolete));
-    m_obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
+    obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
 
-    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
-    m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_available_button);
-    m_available_button->CheckedSignal.connect(
+    available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"),
+                                                       GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(available_button);
+    available_button->CheckedSignal.connect(
         boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Available));
-    m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
+    available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
 
-    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
-    m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_unavailable_button);
-    m_unavailable_button->CheckedSignal.connect(
+    unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"),
+                                                         GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(unavailable_button);
+    unavailable_button->CheckedSignal.connect(
         boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, Availability::Future));
-    m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
+    unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
+
 
     // superfluous parts button
     m_superfluous_parts_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
@@ -1986,14 +1987,10 @@ void DesignWnd::PartPalette::DoLayout() {
         };
 
     //place availability buttons
-    // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
-    auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
-    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
-    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
-
-    place_avail_button_adjacent(m_obsolete_button.get());
-    place_avail_button_adjacent(m_available_button.get());
-    place_avail_button_adjacent(m_unavailable_button.get());
+    auto& [obsolete_button, available_button, unavailable_button] = m_availabilities_buttons;
+    place_avail_button_adjacent(obsolete_button.get());
+    place_avail_button_adjacent(available_button.get());
+    place_avail_button_adjacent(unavailable_button.get());
 }
 
 void DesignWnd::PartPalette::HandleShipPartClicked(const ShipPart* part, GG::Flags<GG::ModKey> modkeys) {
@@ -3369,30 +3366,29 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
 {}
 
 void DesignWnd::BaseSelector::CompleteConstruction() {
-    // TODO: C++17, Collect and replace with structured binding auto [a, b, c] = m_availabilities;
-    auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
-    m_obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"),
-                                                        GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_obsolete_button);
-    m_obsolete_button->CheckedSignal.connect(
+    auto& [obsolete_button, available_button, unavailable_button] = m_availabilities_buttons;
+
+    obsolete_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"),
+                                                      GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(obsolete_button);
+    obsolete_button->CheckedSignal.connect(
         boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Obsolete));
-    m_obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
+    obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
 
-    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
-    m_available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"),
-                                                         GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_available_button);
-    m_available_button->CheckedSignal.connect(
+    available_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"),
+                                                       GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(available_button);
+    available_button->CheckedSignal.connect(
         boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Available));
-    m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
+    available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
 
-    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
-    m_unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"),
-                                                           GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_unavailable_button);
-    m_unavailable_button->CheckedSignal.connect(
+    unavailable_button = GG::Wnd::Create<CUIStateButton>(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"),
+                                                         GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(unavailable_button);
+    unavailable_button->CheckedSignal.connect(
         boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Future));
-    m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
+    unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
+
 
     m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(),
                                          ClientUI::WndColor(), ClientUI::TextColor());
@@ -3523,16 +3519,12 @@ void DesignWnd::BaseSelector::DoLayout() {
     GG::Y top(TOP_PAD);
     GG::X left(LEFT_PAD);
 
-    // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
-    auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
-    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
-    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
-
-    m_obsolete_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
+    auto& [obsolete_button, available_button, unavailable_button] = m_availabilities_buttons;
+    obsolete_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
     left = left + BUTTON_WIDTH + BUTTON_SEPARATION;
-    m_available_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
+    available_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
     left = left + BUTTON_WIDTH + BUTTON_SEPARATION;
-    m_unavailable_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
+    unavailable_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
     left = LEFT_PAD;
     top = top + BUTTON_HEIGHT + BUTTON_SEPARATION;
 

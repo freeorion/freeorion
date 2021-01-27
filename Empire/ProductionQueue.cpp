@@ -594,7 +594,7 @@ float ProductionQueue::TotalPPsSpent() const {
     // add up allocated PP from all resource sharing object groups
     float retval = 0.0f;
     for (const auto& entry : m_object_group_allocated_pp)
-    { retval += entry.second; }
+        retval += entry.second;
     return retval;
 }
 
