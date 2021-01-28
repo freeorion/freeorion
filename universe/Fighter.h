@@ -14,9 +14,9 @@
   * can be stored in the same container as other combat objects. */
 class FO_COMMON_API Fighter : public UniverseObject {
 public:
-    Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, const ::Condition::Condition* combat_targets);
+    Fighter(int empire_id, int launched_from_id, const std::string& species_name,
+            float damage, const ::Condition::Condition* combat_targets);
     Fighter();
-    ~Fighter();
 
     bool HostileToEmpire(int empire_id) const override;
     UniverseObjectType ObjectType() const override;
@@ -34,10 +34,10 @@ protected:
     Fighter* Clone(int empire_id = ALL_EMPIRES) const override;
 
 private:
-    float       m_damage = 0.0f;                        // strength of fighter's attack
-    bool        m_destroyed = false;                    // was attacked by anything -> destroyed
-    int         m_launched_from_id = INVALID_OBJECT_ID; // from what object (ship?) was this fighter launched
-    std::string m_species_name;
+    float               m_damage = 0.0f;                        // strength of fighter's attack
+    bool                m_destroyed = false;                    // was attacked by anything -> destroyed
+    int                 m_launched_from_id = INVALID_OBJECT_ID; // from what object (ship?) was this fighter launched
+    const std::string&  m_species_name;
     const ::Condition::Condition* m_combat_targets = nullptr;
 };
 

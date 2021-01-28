@@ -6,10 +6,17 @@
 #include "../util/Logger.h"
 
 
-Fighter::Fighter()
+namespace {
+    static const std::string EMPTY_STRING;
+}
+
+Fighter::Fighter() :
+    UniverseObject(),
+    m_species_name{EMPTY_STRING}
 {}
 
-Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage, const ::Condition::Condition* combat_targets) :
+Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name,
+                 float damage, const ::Condition::Condition* combat_targets) :
     UniverseObject(),
     m_damage(damage),
     m_launched_from_id(launched_from_id),
@@ -19,9 +26,6 @@ Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species
     this->SetOwner(empire_id);
     UniverseObject::Init();
 }
-
-Fighter::~Fighter()
-{}
 
 bool Fighter::HostileToEmpire(int empire_id) const {
     if (OwnedBy(empire_id))
