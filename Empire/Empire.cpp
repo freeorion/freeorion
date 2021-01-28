@@ -1090,7 +1090,7 @@ void Empire::UpdateSupplyUnobstructedSystems(bool precombat /*=false*/) {
     UpdateSupplyUnobstructedSystems(known_systems_set, precombat);
 }
 
-void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems, bool precombat /*=false*/) {
+void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems, bool precombat) {  // TODO: pass and use ScriptingContext
     TraceLogger(supply) << "UpdateSupplyUnobstructedSystems (allowing supply propagation) for empire " << m_id;
     m_supply_unobstructed_systems.clear();
 
