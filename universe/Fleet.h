@@ -167,13 +167,13 @@ protected:
     friend class ObjectMap;
 
 public:
-    Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
+    Fleet(std::string name, double x, double y, int owner);
 
 protected:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
-    ~Fleet() {}
+    ~Fleet() = default;
 
 protected:
     /** Returns new copy of this Fleet. */

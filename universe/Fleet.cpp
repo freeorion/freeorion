@@ -76,8 +76,8 @@ namespace {
 }
 
 
-Fleet::Fleet(const std::string& name, double x, double y, int owner) :
-    UniverseObject(name, x, y),
+Fleet::Fleet(std::string name, double x, double y, int owner) :
+    UniverseObject(std::move(name), x, y),
     m_last_turn_move_ordered(BEFORE_FIRST_TURN)
 {
     UniverseObject::Init();
