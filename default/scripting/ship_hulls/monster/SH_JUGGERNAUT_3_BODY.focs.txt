@@ -25,8 +25,8 @@ Hull
          EffectsGroup
             scope = Source
             effects = [
-                SetMaxCapacity partname = "SR_JAWS" value = Value + min(Source.Age*0.2, 8)
-                SetCapacity partname = "SR_JAWS" value = Value + min(Source.Age*0.2, 8)
+                SetMaxCapacity partname = "SR_JAWS" value = Value + ( min(Source.Age*0.1, 8) * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetCapacity partname = "SR_JAWS" value = Value + ( min(Source.Age*0.1, 8) * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
             ]
         [[EXCELLENT_VISION]]
     ]
@@ -36,3 +36,4 @@ Hull
 #include "monster.macros"
 
 #include "../ship_hulls.macros"
+#include "/scripting/common/misc.macros"
