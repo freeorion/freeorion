@@ -1,45 +1,21 @@
 from common.listeners import register_post_handler
+from handlers.shared_instances_code import classes_to_exclude_from_universe, get_item_with_location, get_common_instances
 from stub_generator import generate_stub
 
 
 def inspect_universe_generation_interface(*args, **kwargs):
     import freeorion as fo
-    tech = fo.getTech('LRN_NASCENT_AI')
     universe = fo.get_universe()
-    empire = fo.get_empire(1)
-    rules = fo.getGameRules()
-    ship_hull = fo.getShipHull('SH_XENTRONIUM')
-    species = fo.getSpecies('SP_ABADDONI')
+
+    # this field should be visible to AI
+    empire_of_first_ai = fo.get_empire(2)  # first AI
+    fo.create_field_in_system("FLD_NEBULA_1", 100, universe.getPlanet(empire_of_first_ai.capitalID).systemID)
+    instances = list(get_item_with_location(get_common_instances()))
+
     generate_stub(
         fo,
-        instances=[
-            fo.getFieldType('FLD_ION_STORM'),
-            fo.getBuildingType('BLD_SHIPYARD_BASE'),
-            ship_hull,
-            ship_hull.slots,
-            fo.getShipPart('SR_WEAPON_1_1'),
-            fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL'),
-            species,
-            fo.diplomaticMessage(1, 2, fo.diplomaticMessageType.acceptPeaceProposal),
-            rules,
-            tech,
-            tech.unlockedItems,
-            universe,
-            universe.effectAccounting,
-            universe.buildingIDs,
-            fo.get_galaxy_setup_data(),
-            empire,
-            empire.colour,
-            empire.productionQueue,
-            empire.researchQueue,
-
-        ],
-        classes_to_ignore=(
-            'IntBoolMap', 'IntDblMap', 'IntFltMap', 'IntIntMap', 'IntPairVec', 'IntSetSet',
-            'MeterTypeAccountingInfoVecMap', 'MeterTypeMeterMap', 'MeterTypeStringPair', 'MonsterFleetPlan',
-            'PairIntInt_IntMap', 'RuleValueStringStringPair', 'ShipPartMeterMap', 'VisibilityIntMap',
-            'AccountingInfoVec', 'IntSet', 'StringSet', 'StringVec',
-        ),
+        instances=instances,
+        classes_to_ignore=classes_to_exclude_from_universe,
         path=".",
         dump=False,
     )

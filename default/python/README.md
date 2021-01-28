@@ -23,6 +23,30 @@ editing options.py and universe_tables.py, both of which have more information
 in comments over there. The latter, specifically, controls which star types,
 planet types, planet sizes, and also other content get placed.
 
+# Generating skeletons
+API to fetch data/read content is created in runtime using C++, 
+in order to have autocomplete in IDE skeletons (*.pyi) were generated.
+
+Skeletons can be generated in runtime environment only.  
+
+It is highly recomended to configure game to use AI script from the repo
+https://www.freeorion.org/index.php/Python_Development#Deploying_code
+
+```sh
+freeorion --ai-config freeorion\default\python\handlers\inspect_interface_config.ini 
+```
+`freeorion` is a path to the game binary (freeorion.exe on Windows).
+`freeorion\default\python\handlers\inspect_interface_config.ini` path to file in this repository
+
+Starting new game and wait until it exits to main menu with an error.
+
+Generated files will be saved to AI folder:
+- freeorion\default\python\freeorion.pyi
+- freeorion\default\python\AI\freeOrionAIInterface.pyi
+You can check full paths in AI_1.log and freeoriond.log after `Skeleton written to`.  
+
+Copy them to repository with replace, commit.
+
 # Code style check
 Each PR will be checked automatically, but you still can run checks manually.
 Fixing all issues are mandatory before merging PR.

@@ -1,6 +1,6 @@
 from logging import error
 import re
-
+from typing import Iterable
 
 normalization_dict = {
     'empire': 'empire_object',
@@ -64,6 +64,7 @@ normalization_dict = {
     'special': 'special',
     'IntFltMap': 'int_flt_map',
     'ruleType': 'rule_type',
+    'influenceQueueElement': 'influence_queue_element'
 }
 
 
@@ -73,7 +74,7 @@ def normalize_name(tp):
         return provided_name
 
     if argument_type not in normalization_dict:
-        error("Can't find proper name for: %s\n" % argument_type)
+        error("Can't find proper name for: %s, please add it to name mapping \n" % argument_type)
         normalization_dict[argument_type] = 'arg'
     return normalization_dict[argument_type]
 
@@ -110,6 +111,14 @@ def parse_name(txt):
     return [x[0] for x in args], return_type
 
 
+def _get_duplicated_arguments_message(name, raw_arg_types) -> Iterable[str]:
+    yield ""
+    yield "Cannot merge different set of arguments for a callable: %s" % name
+    args = (', '.join('%s:%s' % (name, tp) for tp, name in arg_set) for arg_set in raw_arg_types)
+    yield from ("   %s:  %s" % (i, args_line) for i, args_line in enumerate(args, start=1))
+    yield ""
+
+
 def merge_args(name, raw_arg_types, is_class):
     """
     Merge multiple set of arguments together.
@@ -138,9 +147,9 @@ def merge_args(name, raw_arg_types, is_class):
         names, types = get_argument_names(next(filter(None, arg_types)), is_class)  # pylint: disable=filter-builtin-not-iterating
         use_keyword = True
     else:
-        error('[%s] Cannot merge, use first argument group from:\n    %s\n',
-              name,
-              '\n    '.join(', '.join('(%s)%s' % (tp, name) for tp, name in arg_set) for arg_set in raw_arg_types))
+
+        error("\n".join(_get_duplicated_arguments_message(name, raw_arg_types)))
+
         names, types = get_argument_names(raw_arg_types[0], is_class)
         use_keyword = False
     return ['%s=None' % arg_name for arg_name in names] if use_keyword else names, list(zip(names, types))
