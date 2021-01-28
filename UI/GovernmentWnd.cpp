@@ -146,10 +146,7 @@ namespace {
 
     boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedXAvailability(bool available, bool restricted) const {
-        // TODO: C++17, Replace with structured binding auto [a, b, c] = m_availabilities;
-        const bool showing_restricted = std::get<int(Availability::Enum::Restricted)>(m_availabilities);
-        const bool showing_available = std::get<int(Availability::Enum::Available)>(m_availabilities);
-        const bool showing_future = std::get<int(Availability::Enum::Future)>(m_availabilities);
+        const auto [showing_restricted, showing_available, showing_future] = m_availabilities;
 
         bool res = showing_restricted && available && restricted;
         bool now = showing_available  && available && !restricted;
