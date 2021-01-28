@@ -158,8 +158,6 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
                   % e, exc_info=True)
     _pre_game_start(fo.getEmpire().empireID, aistate)
 
-    debug('Size of already issued orders: ' + str(fo.getOrders().size))
-
 
 @error_handler
 def prepareForSave():  # pylint: disable=invalid-name
@@ -355,8 +353,6 @@ def generateOrders():  # pylint: disable=invalid-name
             error("Exception %s while trying to %s" % (e, action.__name__), exc_info=True)
     main_timer.stop_print_and_clear()
     turn_timer.stop_print_and_clear()
-
-    debug('Size of issued orders: ' + str(fo.getOrders().size))
 
     turn_timer.start("Server_Processing")
 

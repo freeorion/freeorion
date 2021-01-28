@@ -13,7 +13,6 @@
 #include "../../util/i18n.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
-#include "../../util/OrderSet.h"
 #include "../../util/Order.h"
 #include "../../Empire/Empire.h"
 #include "../../Empire/EmpireManager.h"
@@ -736,21 +735,6 @@ namespace FreeOrionPython {
         py::def("issuePauseProductionOrder",            IssuePauseProductionOrder, "Orders the item on the production queue at index queueIndex (int) to be paused (or unpaused). Returns 1 (int) on success or 0 (int) on failure if the queue index is less than 0 or greater than the largest indexed item on the queue.");
         py::def("issueAllowStockpileProductionOrder",   IssueAllowStockpileProductionOrder, "Orders the item on the production queue at index queueIndex (int) to be enabled (or disabled) to use the imperial stockpile. Returns 1 (int) on success or 0 (int) on failure if the queue index is less than 0 or greater than the largest indexed item on the queue.");
         py::def("issueCreateShipDesignOrder",           IssueCreateShipDesignOrder, "Orders the creation of a new ship design with the name (string), description (string), hull (string), parts vector partsVec (StringVec), graphic (string) and model (string). model should be left as an empty string as of this writing. There is currently no easy way to find the id of the new design, though the client's empire should have the new design after this order is issued successfully. Returns 1 (int) on success or 0 (int) on failure if any of the name, description, hull or graphic are empty strings, if the design is invalid (due to not following number and type of slot requirements for the hull) or if creating the design fails for some reason.");
-
-        py::class_<OrderSet, boost::noncopyable>("OrderSet", py::no_init)
-            .def(py::map_indexing_suite<OrderSet>())
-            .add_property("size",       &OrderSet::size)
-        ;
-
-        py::class_<Order, boost::noncopyable>("Order", py::no_init)
-            .add_property("empireID",   &Order::EmpireID)
-            .add_property("executed",   &Order::Executed)
-        ;
-
-        py::def("getOrders",
-                +[]() -> OrderSet& { return AIClientApp::GetApp()->Orders(); },
-                py::return_value_policy<py::reference_existing_object>(),
-                "Returns the orders the client empire has issued (OrderSet).");
 
         py::def("sendChatMessage",
                 +[](int recipient, const std::string& message) { AIClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(message, {recipient}, false)); },
