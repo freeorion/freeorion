@@ -731,8 +731,8 @@ namespace {
         int i = 0;
         for (auto it = from_set.begin(); it != from_set.end(); ++i) {
             if (transfer_flags[i]) {
-                to_set.emplace_back(*it);   // TODO: can I std::move ?
-                *it = from_set.back();
+                to_set.push_back(std::move(*it));
+                *it = std::move(from_set.back());
                 from_set.pop_back();
             } else {
                 ++it;
@@ -765,7 +765,7 @@ namespace {
         std::multimap<float, std::shared_ptr<const UniverseObject>> sort_key_objects;
         for (auto& from : from_set) {
             float sort_value = sort_key->Eval(ScriptingContext(context, from));
-            sort_key_objects.emplace(sort_value, from); // TODO: can I std::move ?
+            sort_key_objects.emplace(sort_value, from);
         }
 
         // how many objects to select?
@@ -782,7 +782,7 @@ namespace {
                 (void)ignored_float;    // quiet unused variable warning
                 auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
-                    *from_it = from_set.back();
+                    *from_it = std::move(from_set.back());
                     from_set.pop_back();
                     to_set.push_back(std::move(object_to_transfer));
                     number_transferred++;
@@ -797,12 +797,12 @@ namespace {
             for (auto sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
                  sorted_it != sort_key_objects.rend(); ++sorted_it)
             {
-                auto object_to_transfer = sorted_it->second;
+                auto& object_to_transfer = sorted_it->second;
                 auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
-                    *from_it = from_set.back();
+                    *from_it = std::move(from_set.back());
                     from_set.pop_back();
-                    to_set.emplace_back(object_to_transfer);    // TODO: can I std::move ?
+                    to_set.push_back(std::move(object_to_transfer));
                     number_transferred++;
                     if (number_transferred >= number)
                         return;
@@ -837,12 +837,12 @@ namespace {
                 for (auto sorted_it = key_range.first;
                      sorted_it != key_range.second; ++sorted_it)
                 {
-                    auto object_to_transfer = sorted_it->second;
+                    auto& object_to_transfer = sorted_it->second;
                     auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                     if (from_it != from_set.end()) {
                         *from_it = from_set.back();
                         from_set.pop_back();
-                        to_set.push_back(object_to_transfer);    // TODO: can I std::move ?
+                        to_set.push_back(std::move(object_to_transfer));
                         number_transferred++;
                         if (number_transferred >= number)
                             return;
