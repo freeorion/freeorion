@@ -160,12 +160,9 @@ public:
     /** moves this object by relative displacements x and y. */
     void            Move(double x, double y);
 
-    /** calls MoveTo(std::shared_ptr<const UniverseObject>) with the object
-        pointed to by \a object_id. */
-    void            MoveTo(int object_id);
-
     /** moves this object to exact map coordinates of specified \a object. */
-    void            MoveTo(std::shared_ptr<UniverseObject> object);
+    void            MoveTo(const std::shared_ptr<const UniverseObject>& object);
+    void            MoveTo(const std::shared_ptr<UniverseObject>& object);
 
     /** moves this object to map coordinates (x, y). */
     void            MoveTo(double x, double y);

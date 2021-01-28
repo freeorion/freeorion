@@ -276,10 +276,15 @@ void UniverseObject::Rename(const std::string& name) {
 void UniverseObject::Move(double x, double y)
 { MoveTo(m_x + x, m_y + y); }
 
-void UniverseObject::MoveTo(int object_id)  // TODO: pass ObjectMap and use
-{ MoveTo(Objects().get(object_id)); }
+void UniverseObject::MoveTo(const std::shared_ptr<const UniverseObject>& object) {
+    if (!object) {
+        ErrorLogger() << "UniverseObject::MoveTo : attempted to move to a null object.";
+        return;
+    }
+    MoveTo(object->X(), object->Y());
+}
 
-void UniverseObject::MoveTo(std::shared_ptr<UniverseObject> object) {
+void UniverseObject::MoveTo(const std::shared_ptr<UniverseObject>& object) {
     if (!object) {
         ErrorLogger() << "UniverseObject::MoveTo : attempted to move to a null object.";
         return;
