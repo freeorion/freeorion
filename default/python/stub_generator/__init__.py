@@ -17,9 +17,13 @@ def generate_stub(obj, instances, classes_to_ignore, path, dump=False):
                               but have no methods, to get their instances.
     :param path: relative path from python folder
     """
+    debug("=" * 20)
     debug("\n\nStart generating skeleton for %s\n\n" % obj.__name__)
+    debug("=" * 20)
     python_folder_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
     result_folder = os.path.join(python_folder_path, path)
     result_path = os.path.join(result_folder, '%s.pyi' % obj.__name__)
     make_stub(get_module_info(obj, instances, dump=dump), result_path, classes_to_ignore)
+    debug("=" * 20)
     debug("Skeleton written to %s" % result_path)
+    debug("=" * 20)

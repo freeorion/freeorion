@@ -326,7 +326,7 @@ class IntVec:
     def __getitem__(self, obj: object) -> object:
         ...
 
-    def __iter__(self) -> object:
+    def __iter__(self) -> iter:
         ...
 
     def __len__(self) -> int:
@@ -645,11 +645,11 @@ class TargetIDAccountingMapMap:
 
 class UnlockableItem:
     @property
-    def name(self):
+    def name(self)-> str:
         ...
 
     @property
-    def type(self):
+    def type(self)-> unlockableItemType:
         ...
 
 
@@ -993,7 +993,7 @@ class influenceQueue:
     def totalSpent(self):
         ...
 
-    def __contains__(self, arg: influenceQueueElement) -> bool:
+    def __contains__(self, influence_queue_element: influenceQueueElement) -> bool:
         ...
 
     def __getitem__(self, number: int) -> influenceQueueElement:
@@ -1021,11 +1021,11 @@ class influenceQueueElement:
 
 class meter:
     @property
-    def current(self):
+    def current(self)-> float:
         ...
 
     @property
-    def initial(self):
+    def initial(self)-> float:
         ...
 
     def dump(self, number: int) -> str:
@@ -1231,115 +1231,115 @@ class resourceCenter:
 
 class shipDesign:
     @property
-    def attack(self):
+    def attack(self)-> float:
         ...
 
     @property
-    def attackStats(self):
+    def attackStats(self)-> IntVec:
         ...
 
     @property
-    def canColonize(self):
+    def canColonize(self)-> bool:
         ...
 
     @property
-    def canInvade(self):
+    def canInvade(self)-> bool:
         ...
 
     @property
-    def colonyCapacity(self):
+    def colonyCapacity(self)-> float:
         ...
 
     @property
-    def costTimeLocationInvariant(self):
+    def costTimeLocationInvariant(self)-> bool:
         ...
 
     @property
-    def defense(self):
+    def defense(self)-> float:
         ...
 
     @property
-    def description(self):
+    def description(self)-> str:
         ...
 
     @property
-    def designedOnTurn(self):
+    def designedOnTurn(self)-> int:
         ...
 
     @property
-    def detection(self):
+    def detection(self)-> float:
         ...
 
     @property
-    def fuel(self):
+    def fuel(self)-> float:
         ...
 
     @property
-    def hasDirectWeapons(self):
+    def hasDirectWeapons(self)-> bool:
         ...
 
     @property
-    def hasFighters(self):
+    def hasFighters(self)-> bool:
         ...
 
     @property
-    def hull(self):
+    def hull(self)-> str:
         ...
 
     @property
-    def id(self):
+    def id(self)-> int:
         ...
 
     @property
-    def industryGeneration(self):
+    def industryGeneration(self)-> float:
         ...
 
     @property
-    def influenceGeneration(self):
+    def influenceGeneration(self)-> float:
         ...
 
     @property
-    def isArmed(self):
+    def isArmed(self)-> bool:
         ...
 
     @property
-    def isMonster(self):
+    def isMonster(self)-> bool:
         ...
 
     @property
-    def name(self):
+    def name(self)-> str:
         ...
 
     @property
-    def parts(self):
+    def parts(self)-> StringVec:
         ...
 
     @property
-    def researchGeneration(self):
+    def researchGeneration(self)-> float:
         ...
 
     @property
-    def shields(self):
+    def shields(self)-> float:
         ...
 
     @property
-    def ship_hull(self):
+    def ship_hull(self)-> shipHull:
         ...
 
     @property
-    def speed(self):
+    def speed(self)-> float:
         ...
 
     @property
-    def stealth(self):
+    def stealth(self)-> float:
         ...
 
     @property
-    def structure(self):
+    def structure(self)-> float:
         ...
 
     @property
-    def troopCapacity(self):
+    def troopCapacity(self)-> float:
         ...
 
     def dump(self, number: int) -> str:
@@ -1461,7 +1461,7 @@ class sitrep:
         ...
 
     @property
-    def getTurn(self):
+    def getTurn(self)-> int:
         ...
 
     @property
@@ -1813,25 +1813,25 @@ class AccountingInfo(EffectCause):
 
 class building(universeObject):
     @property
-    def buildingTypeName(self):
+    def buildingTypeName(self)-> str:
         ...
 
     @property
-    def orderedScrapped(self):
+    def orderedScrapped(self)-> bool:
         ...
 
     @property
-    def planetID(self):
+    def planetID(self)-> int:
         ...
 
     @property
-    def producedByEmpireID(self):
+    def producedByEmpireID(self)-> int:
         ...
 
 
 class field(universeObject):
     @property
-    def fieldTypeName(self):
+    def fieldTypeName(self)-> str:
         ...
 
     def inField(self, base_object: universeObject) -> bool:
@@ -1840,165 +1840,165 @@ class field(universeObject):
 
 class fleet(universeObject):
     @property
-    def aggression(self):
+    def aggression(self)-> fleetAggression:
         ...
 
     @property
-    def aggressive(self):
+    def aggressive(self)-> bool:
         ...
 
     @property
-    def canChangeDirectionEnRoute(self):
+    def canChangeDirectionEnRoute(self)-> bool:
         ...
 
     @property
-    def empty(self):
+    def empty(self)-> bool:
         ...
 
     @property
-    def finalDestinationID(self):
+    def finalDestinationID(self)-> int:
         ...
 
     @property
-    def fuel(self):
+    def fuel(self)-> float:
         ...
 
     @property
-    def hasArmedShips(self):
+    def hasArmedShips(self)-> bool:
         ...
 
     @property
-    def hasColonyShips(self):
+    def hasColonyShips(self)-> bool:
         ...
 
     @property
-    def hasFighterShips(self):
+    def hasFighterShips(self)-> bool:
         ...
 
     @property
-    def hasMonsters(self):
+    def hasMonsters(self)-> bool:
         ...
 
     @property
-    def hasOutpostShips(self):
+    def hasOutpostShips(self)-> bool:
         ...
 
     @property
-    def hasTroopShips(self):
+    def hasTroopShips(self)-> bool:
         ...
 
     @property
-    def maxFuel(self):
+    def maxFuel(self)-> float:
         ...
 
     @property
-    def nextSystemID(self):
+    def nextSystemID(self)-> int:
         ...
 
     @property
-    def numShips(self):
+    def numShips(self)-> int:
         ...
 
     @property
-    def obstructive(self):
+    def obstructive(self)-> bool:
         ...
 
     @property
-    def previousSystemID(self):
+    def previousSystemID(self)-> int:
         ...
 
     @property
-    def shipIDs(self):
+    def shipIDs(self)-> IntSet:
         ...
 
     @property
-    def speed(self):
+    def speed(self)-> float:
         ...
 
 
 class ship(universeObject):
     @property
-    def arrivedOnTurn(self):
+    def arrivedOnTurn(self)-> int:
         ...
 
     @property
-    def canBombard(self):
+    def canBombard(self)-> bool:
         ...
 
     @property
-    def canColonize(self):
+    def canColonize(self)-> bool:
         ...
 
     @property
-    def canInvade(self):
+    def canInvade(self)-> bool:
         ...
 
     @property
-    def colonyCapacity(self):
+    def colonyCapacity(self)-> float:
         ...
 
     @property
-    def design(self):
+    def design(self)-> shipDesign:
         ...
 
     @property
-    def designID(self):
+    def designID(self)-> int:
         ...
 
     @property
-    def fleetID(self):
+    def fleetID(self)-> int:
         ...
 
     @property
-    def hasFighters(self):
+    def hasFighters(self)-> bool:
         ...
 
     @property
-    def isArmed(self):
+    def isArmed(self)-> bool:
         ...
 
     @property
-    def isMonster(self):
+    def isMonster(self)-> bool:
         ...
 
     @property
-    def lastResuppliedOnTurn(self):
+    def lastResuppliedOnTurn(self)-> int:
         ...
 
     @property
-    def lastTurnActiveInCombat(self):
+    def lastTurnActiveInCombat(self)-> int:
         ...
 
     @property
-    def orderedColonizePlanet(self):
+    def orderedColonizePlanet(self)-> int:
         ...
 
     @property
-    def orderedInvadePlanet(self):
+    def orderedInvadePlanet(self)-> int:
         ...
 
     @property
-    def orderedScrapped(self):
+    def orderedScrapped(self)-> bool:
         ...
 
     @property
-    def partMeters(self):
+    def partMeters(self)-> ShipPartMeterMap:
         ...
 
     @property
-    def producedByEmpireID(self):
+    def producedByEmpireID(self)-> int:
         ...
 
     @property
-    def speciesName(self):
+    def speciesName(self)-> str:
         ...
 
     @property
-    def speed(self):
+    def speed(self)-> float:
         ...
 
     @property
-    def troopCapacity(self):
+    def troopCapacity(self)-> float:
         ...
 
     def currentPartMeterValue(self, meter_type: meterType, string: str) -> float:
@@ -2010,43 +2010,43 @@ class ship(universeObject):
 
 class system(universeObject):
     @property
-    def buildingIDs(self):
+    def buildingIDs(self)-> IntSet:
         ...
 
     @property
-    def fieldIDs(self):
+    def fieldIDs(self)-> IntSet:
         ...
 
     @property
-    def fleetIDs(self):
+    def fleetIDs(self)-> IntSet:
         ...
 
     @property
-    def lastTurnBattleHere(self):
+    def lastTurnBattleHere(self)-> int:
         ...
 
     @property
-    def numStarlanes(self):
+    def numStarlanes(self)-> int:
         ...
 
     @property
-    def numWormholes(self):
+    def numWormholes(self)-> int:
         ...
 
     @property
-    def planetIDs(self):
+    def planetIDs(self)-> IntSet:
         ...
 
     @property
-    def shipIDs(self):
+    def shipIDs(self)-> IntSet:
         ...
 
     @property
-    def starType(self):
+    def starType(self)-> starType:
         ...
 
     @property
-    def starlanesWormholes(self):
+    def starlanesWormholes(self)-> IntBoolMap:
         ...
 
     def HasStarlaneToSystemID(self, number: int) -> bool:
@@ -2060,63 +2060,63 @@ class system(universeObject):
 
 class planet(universeObject, popCenter, resourceCenter):
     @property
-    def InitialOrbitalPosition(self):
+    def InitialOrbitalPosition(self)-> float:
         ...
 
     @property
-    def LastTurnAttackedByShip(self):
+    def LastTurnAttackedByShip(self)-> int:
         ...
 
     @property
-    def LastTurnConquered(self):
+    def LastTurnConquered(self)-> int:
         ...
 
     @property
-    def OrbitalPeriod(self):
+    def OrbitalPeriod(self)-> float:
         ...
 
     @property
-    def RotationalPeriod(self):
+    def RotationalPeriod(self)-> float:
         ...
 
     @property
-    def buildingIDs(self):
+    def buildingIDs(self)-> IntSet:
         ...
 
     @property
-    def clockwiseNextPlanetType(self):
+    def clockwiseNextPlanetType(self)-> planetType:
         ...
 
     @property
-    def counterClockwiseNextPlanetType(self):
+    def counterClockwiseNextPlanetType(self)-> planetType:
         ...
 
     @property
-    def distanceFromOriginalType(self):
+    def distanceFromOriginalType(self)-> int:
         ...
 
     @property
-    def habitableSize(self):
+    def habitableSize(self)-> int:
         ...
 
     @property
-    def nextLargerPlanetSize(self):
+    def nextLargerPlanetSize(self)-> planetSize:
         ...
 
     @property
-    def nextSmallerPlanetSize(self):
+    def nextSmallerPlanetSize(self)-> planetSize:
         ...
 
     @property
-    def originalType(self):
+    def originalType(self)-> planetType:
         ...
 
     @property
-    def size(self):
+    def size(self)-> planetSize:
         ...
 
     @property
-    def type(self):
+    def type(self)-> planetType:
         ...
 
     def OrbitalPositionOnTurn(self, number: int) -> float:

@@ -94,7 +94,7 @@ class GalaxySetupData:
 
 class GameRules:
     @property
-    def empty(self):
+    def empty(self)-> bool:
         ...
 
     def getDescription(self, string: str) -> str:
@@ -528,7 +528,7 @@ class StringSet:
     def __contains__(self, string: str) -> bool:
         ...
 
-    def __iter__(self) -> iter:
+    def __iter__(self) -> object:
         ...
 
     def __len__(self) -> int:
@@ -650,7 +650,7 @@ class UnlockableItemVec:
     def __getitem__(self, obj: object) -> object:
         ...
 
-    def __iter__(self) -> iter:
+    def __iter__(self) -> object:
         ...
 
     def __len__(self) -> int:
@@ -980,7 +980,7 @@ class influenceQueue:
     def totalSpent(self):
         ...
 
-    def __contains__(self, arg: influenceQueueElement) -> bool:
+    def __contains__(self, influence_queue_element: influenceQueueElement) -> bool:
         ...
 
     def __getitem__(self, number: int) -> influenceQueueElement:
@@ -1818,7 +1818,7 @@ class building(universeObject):
 
 class field(universeObject):
     @property
-    def fieldTypeName(self):
+    def fieldTypeName(self)-> str:
         ...
 
     def inField(self, base_object: universeObject) -> bool:
