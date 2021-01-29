@@ -984,13 +984,14 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
 
     // Compose a vector of the requested ids and logs
     std::vector<std::pair<int, const CombatLog>> logs;
+    logs.reserve(ids.size());
     for (auto it = ids.begin(); it != ids.end(); ++it) {
-        boost::optional<const CombatLog&> log = GetCombatLogManager().GetLog(*it);
+        auto log = GetCombatLogManager().GetLog(*it);
         if (!log) {
             ErrorLogger() << "UpdateCombatLogs can't fetch log with id = "<< *it << " ... skipping.";
             continue;
         }
-        logs.push_back({*it, *log});
+        logs.emplace_back(*it, *log);
     }
 
     // Return them to the client
@@ -1067,8 +1068,8 @@ void ServerApp::PushChatMessage(const std::string& text,
 
     if (!success) {
         ErrorLogger() << "Python scripted chat failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
-                                                                      false));
+        ServerApp::GetApp()->Networking().SendMessageAll(
+            ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
 }
 
@@ -1189,7 +1190,7 @@ namespace {
         // safety check: setup data has valid empire assigned
         if (psd.save_game_empire_id == ALL_EMPIRES) {
             ErrorLogger() << "ServerApp::LoadMPGameInit got player setup data for AI player "
-                                    << "with no empire assigned...";
+                          << "with no empire assigned...";
             return;
         }
 
@@ -1201,8 +1202,8 @@ namespace {
         }
 
         DebugLogger() << "ServerApp::LoadMPGameInit matched player named " << psd.player_name
-                               << " to setup data player id " << player_id
-                               << " with setup data empire id " << psd.save_game_empire_id;
+                      << " to setup data player id " << player_id
+                      << " with setup data empire id " << psd.save_game_empire_id;
 
         // determine and store save game data index for this player
         int index = VectorIndexForPlayerSaveGameDataForEmpireID(player_save_game_data, psd.save_game_empire_id);
@@ -1210,7 +1211,7 @@ namespace {
             player_id_to_save_game_data_index.push_back({player_id, index});
         } else {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
-                                   << "human player with assigned empire id: " << psd.save_game_empire_id;
+                          << "human player with assigned empire id: " << psd.save_game_empire_id;
         }
     }
 }
@@ -1297,9 +1298,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         {
             ErrorLogger() << "ServerApp::LoadGameInit found player connection with unsupported client type.";
         }
-        if (player_connection->PlayerName().empty()) {
+        if (player_connection->PlayerName().empty())
             ErrorLogger() << "ServerApp::LoadGameInit found player connection with empty name!";
-        }
     }
 
 
@@ -1401,15 +1401,13 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         if (save_data_it != player_id_save_game_data.end()) {
             psgd = save_data_it->second;
         }
-        if (!psgd.orders) {
+        if (!psgd.orders)
             psgd.orders.reset(new OrderSet());    // need an empty order set pointed to for serialization in case no data is loaded but the game start message wants orders to send
-        }
 
         // get empire ID for player. safety check on it.
         int empire_id = PlayerEmpireID(player_id);
-        if (empire_id != psgd.empire_id) {
+        if (empire_id != psgd.empire_id)
             ErrorLogger() << "LoadGameInit got inconsistent empire ids between player save game data and result of PlayerEmpireID";
-        }
 
         // Revoke readiness only for online players so they can redo orders for the current turn.
         // Without doing it, server would immediatly advance the turn because saves are made when
@@ -1439,7 +1437,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
-                                                            GetSupplyManager(),  player_info_map, *orders,
+                                                            GetSupplyManager(), player_info_map, *orders,
                                                             psgd.ui_data.get(), m_galaxy_setup_data,
                                                             use_binary_serialization));
 
@@ -1506,7 +1504,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     // Initialize empire objects for each player
     InitEmpires(player_setup_data);
 
-    bool success(false);
+    bool success{false};
     try {
         // Set Python current work directory to directory containing
         // the universe generation Python scripts
