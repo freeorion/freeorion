@@ -25,14 +25,12 @@ namespace parse { namespace detail {
 
 namespace parse {
     struct conditions_parser_grammar : public detail::condition_parser_grammar {
-        conditions_parser_grammar(
-            const parse::lexer& tok,
-            detail::Labeller& label);
+        conditions_parser_grammar(const parse::lexer& tok, detail::Labeller& label);
         ~conditions_parser_grammar();
 
         detail::condition_parser_rule start;
 
-        private:
+    private:
         struct Impl;
         std::unique_ptr<Impl> m_impl;
     };

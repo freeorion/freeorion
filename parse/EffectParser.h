@@ -30,7 +30,7 @@ namespace parse {
 
         detail::effect_parser_rule start;
 
-        private:
+    private:
         struct Impl;
         std::unique_ptr<Impl> m_impl;
     };
