@@ -5600,7 +5600,6 @@ ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 ENC_METER_TYPE
 Meter Type
 
-
 ##
 ## Combat report
 ##
@@ -14266,6 +14265,9 @@ Krill Swarm
 FT_BAY_KRILL_DESC
 When Krill swarms are big enough, single Krill leave the swarm to attack ships the swarm encounters.
 
+CLOSE_RANGE_COMBAT_ROUND
+'''3'''
+
 SR_WEAPON_0_1
 Flak Cannon
 
@@ -14336,7 +14338,9 @@ SR_JAWS
 Jaws
 
 SR_JAWS_DESC
-Jaws of a space monster, can damage ships. Huge space monsters are even capable of eating entire fleets.
+'''Jaws of a space monster, can damage ships and planets. Huge space monsters are even capable of eating entire fleets.
+
+Jaws can inflict [[encyclopedia DAMAGE_TITLE]] starting from combat round [[CLOSE_RANGE_COMBAT_ROUND]] as the targets are too far away in earlier rounds.'''
 
 SR_SPINES
 Spines

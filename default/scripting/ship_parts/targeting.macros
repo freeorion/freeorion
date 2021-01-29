@@ -14,6 +14,15 @@ COMBAT_TARGETS_VISIBLE_ENEMY
         ]
 '''
 
+// note this gets used by monsters. VisibleToEmpire is always true for unowned attackers
+COMBAT_TARGETS_VISIBLE_EMPIRE
+'''        And [   // target owned by an empire
+                OwnedBy affiliation = AnyEmpire
+                VisibleToEmpire empire = Source.Owner
+            ]
+        ]
+'''
+
 COMBAT_TARGETS_NOT_DESTROYED_SHIP
 '''        And [
             Ship
