@@ -122,10 +122,11 @@ public:
     /** Returns true iff this fleet arrived at its current System this turn. */
     bool ArrivedThisTurn() const { return m_arrived_this_turn; }
 
-    /** Has two primary uses: orientation in tactical combat, and determination of starlane blockade restrictions.
-     * Returns the ID of the starlane that this fleet arrived on, if it arrived into a blockade which is not yet broken.
-     * If in a system and not blockaded, the value is the current system ID. The blockade intent is that you can't
-     * break a blockade unless you beat the blockaders (via combat or they retreat).**/
+    /** Returns the ID of the starlane that this fleet arrived on, if it arrived
+      * into a blockade which is not yet broken. If in a system and not
+      * blockaded, the value is the current system ID. The blockade intent is
+      * that you can't break a blockade unless you beat the blockaders
+      * (via combat or they retreat). **/
     int ArrivalStarlane() const { return m_arrival_starlane; }
 
     void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
