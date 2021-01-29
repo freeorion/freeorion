@@ -174,13 +174,27 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
 
     int system_id = INVALID_OBJECT_ID;
 
+    std::set<int> arrival_starlane_ids;
     for (const auto& ship : context.ContextObjects().find<Ship>(ship_ids)) {
-        // verify that empire is not trying to take ships from somebody else's fleet
         if (!ship) {
             ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
                           << ") with an invalid ship";
             return false;
         }
+
+        auto ship_fleet = context.ContextObjects().get<Fleet>(ship->FleetID());
+        if (!ship_fleet)
+            continue;   // OK
+        arrival_starlane_ids.insert(ship_fleet->ArrivalStarlane());
+    }
+    if (arrival_starlane_ids.size() > 1) {
+        ErrorLogger() << "Empire " << empire << " attempted to create a new fleet with ships from multiple arrival starlanes";
+        return false;
+    }
+
+
+    for (const auto& ship : context.ContextObjects().find<Ship>(ship_ids)) {
+        // verify that empire is not trying to take ships from somebody else's fleet
         if (!ship->OwnedBy(empire)) {
             ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
                           << ") with ships from another's (" << ship->Owner() << ") fleet.";
@@ -477,7 +491,7 @@ bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vect
         return false;
     }
 
-    bool invalid_ships {false};
+    bool invalid_ships{false};
 
     for (auto ship : objects.find<Ship>(ship_ids)) {
         if (!ship) {
@@ -502,6 +516,24 @@ bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vect
             ErrorLogger() << "IssueFleetTransferOrder : passed ship is not in the same system as the target fleet";
             invalid_ships = true;
             break;
+        }
+
+        if (ship->FleetID() == dest_fleet_id) {
+            ErrorLogger() << "IssueFleetTransferOrder : passed ship that is already in the target fleet";
+            invalid_ships = true;
+            break;
+        }
+
+        if (auto original_fleet = context.ContextObjects().get<Fleet>(ship->FleetID())) {
+            if (original_fleet->ArrivalStarlane() != fleet->ArrivalStarlane()) {
+                ErrorLogger() << "IssueFleetTransferOrder : passed ship " << ship->ID()
+                              << " that is in a fleet " << original_fleet->ID()
+                              << " that has a different arrival starlane " << original_fleet->ArrivalStarlane()
+                              << " than the destination fleet " << fleet->ID()
+                              << " with arrival starlane " << fleet->ArrivalStarlane();
+                invalid_ships = true;
+                break;
+            }
         }
     }
 
