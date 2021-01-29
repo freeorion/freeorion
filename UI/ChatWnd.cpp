@@ -161,6 +161,7 @@ void MessageWndEdit::FindGameWords() {
     for (const auto& [name, species] : GetSpeciesManager()) {
         if (!name.empty())
             m_game_words.emplace(UserString(name));
+        (void)species; // quiet unused variable warning
     }
      // add techs names
     for (const std::string& tech_name : GetTechManager().TechNames()) {
@@ -171,6 +172,7 @@ void MessageWndEdit::FindGameWords() {
     for (const auto& [name, type] : GetBuildingTypeManager()) {
         if (!name.empty())
             m_game_words.emplace(UserString(name));
+        (void)type; // quiet unused variable warning
     }
     // add ship hulls
     for (const auto& design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {

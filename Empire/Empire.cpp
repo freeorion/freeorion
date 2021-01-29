@@ -789,7 +789,8 @@ float Empire::ProductionStatus(int i) const {
     if (0 > i || i >= static_cast<int>(m_production_queue.size()))
         return -1.0f;
     float item_progress = m_production_queue[i].progress;
-    auto [item_cost, item_time] = m_production_queue[i].ProductionCostAndTime();
+    [[maybe_unused]] auto [item_cost, item_time] = m_production_queue[i].ProductionCostAndTime(); // TODO: pass and use ScriptingContext
+    (void)item_time; // quiet unused variable warning
     return item_progress * item_cost * m_production_queue[i].blocksize;
 }
 

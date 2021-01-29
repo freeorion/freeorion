@@ -184,12 +184,13 @@ namespace {
                                    str));
             }
 
-            for (const auto& [category_name, article_vec] : encyclopedia.Articles()) {
+            for ([[maybe_unused]] const auto& [category_name, article_vec] : encyclopedia.Articles()) {
                 // Do not add sub-categories
                 const EncyclopediaArticle& article = encyclopedia.GetArticleByKey(category_name);
                 // No article found or specifically a top-level category
                 if (!article.category.empty() && article.category != "ENC_INDEX")
                     continue;
+                (void)article_vec; // quiet unused variable warning
 
                 sorted_entries_list.emplace(
                     UserString(category_name),
