@@ -912,7 +912,7 @@ namespace {
         // check if system exists and get system
         auto system = Objects().get<System>(system_id);
         if (!system) {
-            ErrorLogger() << "CreateFieldInSystem: couldn't get system with ID" << system_id;
+            ErrorLogger() << "CreateFieldInSystem: couldn't get system with ID " << system_id;
             return INVALID_OBJECT_ID;
         }
         // create the field with the coordinates of the system
