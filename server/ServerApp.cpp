@@ -1811,7 +1811,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     }
 
     // test for colonies count
-    auto planets = Objects().find<Planet>(OwnedVisitor(empire_id));
+    auto planets = m_universe.Objects().find<Planet>(OwnedVisitor(empire_id));
     if (planets.size() > static_cast<size_t>(GetGameRules().Get<int>("RULE_CONCEDE_COLONIES_THRESHOLD"))) {
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CONCEDE_EXCEED_COLONIES"), false));
         return false;
@@ -1821,12 +1821,12 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     empire->Eliminate();
 
     // destroy owned ships
-    for (auto& obj : Objects().find<Ship>(OwnedVisitor(empire_id))) {
+    for (auto& obj : m_universe.Objects().find<Ship>(OwnedVisitor(empire_id))) {
         obj->SetOwner(ALL_EMPIRES);
         GetUniverse().RecursiveDestroy(obj->ID());
     }
     // destroy owned buildings
-    for (auto& obj : Objects().find<Building>(OwnedVisitor(empire_id))) {
+    for (auto& obj : m_universe.Objects().find<Building>(OwnedVisitor(empire_id))) {
         obj->SetOwner(ALL_EMPIRES);
         GetUniverse().RecursiveDestroy(obj->ID());
     }
@@ -2257,7 +2257,7 @@ namespace {
 
     /** Returns true iff there is an appropriate combination of objects in the
       * system with id \a system_id for a combat to occur. */
-    bool CombatConditionsInSystem(int system_id) {
+    bool CombatConditionsInSystem(int system_id, const ObjectMap& objects) {
         // combats occur if:
         // 1) empires A and B are at war, and
         // 2) a) empires A and B both have fleets in a system, or
@@ -2275,13 +2275,13 @@ namespace {
         if (empire_fleets_here.empty())
             return false;
 
-        auto this_system = Objects().get<System>(system_id);
+        auto this_system = objects.get<System>(system_id);
         DebugLogger(combat) << "CombatConditionsInSystem() for system (" << system_id << ") " << this_system->Name();
         // which empires have aggressive ships here? (including monsters as id ALL_EMPIRES)
         std::set<int> empires_with_aggressive_fleets_here;
         for (auto& empire_fleets : empire_fleets_here) {
             int empire_id = empire_fleets.first;
-            for (const auto& fleet : Objects().find<Fleet>(empire_fleets.second)) {
+            for (const auto& fleet : objects.find<Fleet>(empire_fleets.second)) {
                 if (!fleet)
                     continue;
                 // an unarmed Monster will not trigger combat
@@ -2348,7 +2348,7 @@ namespace {
             GetPlanetsVisibleToEmpireAtSystem(aggressive_empire_visible_planets, aggressive_empire_id, system_id);
 
             // is any planet owned by an empire at war with aggressive empire?
-            for (const auto& planet : Objects().find<Planet>(aggressive_empire_visible_planets)) {
+            for (const auto& planet : objects.find<Planet>(aggressive_empire_visible_planets)) {
                 if (!planet)
                     continue;
                 int visible_planet_empire_id = planet->Owner();
@@ -2375,7 +2375,7 @@ namespace {
             GetFleetsVisibleToEmpireAtSystem(aggressive_empire_visible_fleets, aggressive_empire_id, system_id);
 
             // is any fleet owned by an empire at war with aggressive empire?
-            for (const auto& fleet : Objects().find<Fleet>(aggressive_empire_visible_fleets)) {
+            for (const auto& fleet : objects.find<Fleet>(aggressive_empire_visible_fleets)) {
                 if (!fleet)
                     continue;
                 int visible_fleet_empire_id = fleet->Owner();
@@ -2395,16 +2395,16 @@ namespace {
 
     /** Clears and refills \a combats with CombatInfo structs for
       * every system where a combat should occur this turn. */
-    void AssembleSystemCombatInfo(std::vector<CombatInfo>& combats) {
+    void AssembleSystemCombatInfo(std::vector<CombatInfo>& combats, const ScriptingContext& context) {
         combats.clear();
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in combats
-        for (const auto& sys : GetUniverse().Objects().all<System>()) {
-            if (CombatConditionsInSystem(sys->ID()))
-                combats.emplace_back(sys->ID(), CurrentTurn(), GetUniverse().GetEmpireObjectVisibility(),
-                                     Objects(), Empires().GetEmpires(),
-                                     GetUniverse().GetEmpireObjectVisibilityTurnMap(),
-                                     Empires().GetDiplomaticStatuses());
+        for (const auto& sys : context.const_objects.all<System>()) {
+            if (CombatConditionsInSystem(sys->ID(), context.ContextObjects()))
+                combats.emplace_back(sys->ID(), CurrentTurn(), context.empire_object_vis,
+                                     context.objects, context.empires,
+                                     context.empire_object_vis_turns,
+                                     context.diplo_statuses);
         }
     }
 
@@ -3368,7 +3368,9 @@ void ServerApp::ProcessCombats() {
 
 
     // collect data about locations where combat is to occur
-    AssembleSystemCombatInfo(combats);
+    AssembleSystemCombatInfo(combats, ScriptingContext(m_universe.Objects(), m_universe.GetEmpireObjectVisibility(),
+                                                       m_universe.GetEmpireObjectVisibilityTurnMap(),
+                                                       m_empires.GetEmpires(), m_empires.GetDiplomaticStatuses()));
 
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
@@ -3555,7 +3557,7 @@ void ServerApp::PostCombatProcessTurns() {
     // check for loss of empire capitals
     for (auto& entry : m_empires) {
         int capital_id = entry.second->CapitalID();
-        if (auto capital = Objects().get(capital_id)) {
+        if (auto capital = m_universe.Objects().get(capital_id)) {
             if (!capital->OwnedBy(entry.first))
                 entry.second->SetCapitalID(INVALID_OBJECT_ID);
         } else {
@@ -3681,7 +3683,7 @@ void ServerApp::CheckForEmpireElimination() {
     for (auto& entry : Empires()) {
         if (entry.second->Eliminated())
             continue;   // don't double-eliminate an empire
-        else if (EmpireEliminated(entry.first)) {
+        else if (EmpireEliminated(entry.first, m_universe.Objects())) {
             entry.second->Eliminate();
             RemoveEmpireTurn(entry.first);
         } else {
