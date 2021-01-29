@@ -1073,6 +1073,7 @@ ProductionQueueOrder::ProductionQueueOrder(ProdQueueOrderAction action, int empi
         break;
     case ProdQueueOrderAction::MOVE_ITEM_TO_INDEX:
         m_new_index = num1;
+        break;
     case ProdQueueOrderAction::SET_RALLY_POINT:
         m_rally_point_id = num1;
         break;
