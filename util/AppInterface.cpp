@@ -18,7 +18,6 @@
 #include "../util/Pending.h"
 
 #include <boost/filesystem.hpp>
-#include <boost/optional.hpp>
 
 #include <future>
 
