@@ -1058,15 +1058,12 @@ void Empire::UpdateSystemSupplyRanges(const Universe& universe) {
     UpdateSystemSupplyRanges(known_objects_set, empire_known_objects);
 }
 
-void Empire::UpdateUnobstructedFleets() {
-    const std::set<int>& known_destroyed_objects =
-        GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
-
-    for (const auto& system : Objects().find<System>(m_supply_unobstructed_systems)) {
+void Empire::UpdateUnobstructedFleets(ObjectMap& objects, const std::set<int>& known_destroyed_objects) {
+    for (const auto& system : objects.find<System>(m_supply_unobstructed_systems)) {
         if (!system)
             continue;
 
-        for (auto& fleet : Objects().find<Fleet>(system->FleetIDs())) {
+        for (auto& fleet : objects.find<Fleet>(system->FleetIDs())) {
             if (known_destroyed_objects.count(fleet->ID()))
                 continue;
             if (fleet->OwnedBy(m_id))

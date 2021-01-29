@@ -3497,11 +3497,11 @@ void ServerApp::PostCombatProcessTurns() {
 
     // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
-    for ([[maybe_unused]] auto& [empire_id, empire] : m_empires) {
-        (void)empire_id;    // quieting unused variable warning
+    for (auto& [empire_id, empire] : m_empires) {
         if (!empire->Eliminated()) {
             empire->UpdatePreservedLanes();
-            empire->UpdateUnobstructedFleets();     // must be done after *all* noneliminated empires have updated their unobstructed systems
+            empire->UpdateUnobstructedFleets(
+                m_universe.Objects(), m_universe.EmpireKnownDestroyedObjectIDs(empire_id)); // must be done after *all* noneliminated empires have updated their unobstructed systems
         }
     }
 
