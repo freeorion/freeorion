@@ -141,7 +141,7 @@ namespace parse { namespace detail {
               >> string_comparison_operator
               >> string_grammar
               >> string_comparison_operator
-              >>  string_grammar // if already seen (string) (operator) (string) (operator) can expect to see another (string)
+              >> string_grammar // if already seen (string) (operator) (string) (operator) can expect to see another (string)
              ) >  ')'
             ) [ _val = construct_movable_(
                 new_<Condition::ValueTest>(

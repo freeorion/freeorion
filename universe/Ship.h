@@ -17,7 +17,7 @@ class ShipDesign;
 /** a class representing a single FreeOrion ship */
 class FO_COMMON_API Ship : public UniverseObject {
 public:
-    typedef std::map<std::pair<MeterType, std::string>, Meter>          PartMeterMap;
+    typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeterMap;
 
     bool HostileToEmpire(int empire_id) const override;
     std::set<std::string> Tags() const override;

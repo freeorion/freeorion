@@ -1379,7 +1379,7 @@ void FleetDataPanel::Refresh() {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
         m_fleet_destination_text->Clear();
 
-        std::shared_ptr<GG::Texture> new_fleet_texture = ClientUI::GetTexture(
+        auto new_fleet_texture = ClientUI::GetTexture(
             ClientUI::ArtDir() / "icons" / "buttons" / "new_fleet.png", true);
         m_fleet_icon = GG::Wnd::Create<GG::StaticGraphic>(
             std::move(new_fleet_texture), DataPanelIconStyle());
@@ -1498,7 +1498,7 @@ void FleetDataPanel::RefreshStateChangedSignals() {
     for (auto& connection : m_ship_connections)
         connection.disconnect();
 
-    auto fleet = Objects().get<Fleet>(m_fleet_id).get();
+    auto fleet = Objects().get<Fleet>(m_fleet_id);
     if (!fleet)
         return;
 
