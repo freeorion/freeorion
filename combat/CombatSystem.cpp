@@ -1937,6 +1937,6 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
     DebugLogger(combat) << "combat event log start:";
     for (auto event : combat_info.combat_events)
-        DebugLogger(combat) << event->DebugString();
+        DebugLogger(combat) << event->DebugString(ObjectMap());
     DebugLogger(combat) << "combat event log end:";
 }
