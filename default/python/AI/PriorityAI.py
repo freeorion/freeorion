@@ -18,7 +18,7 @@ import ResearchAI
 from AIDependencies import INVALID_ID
 from EnumsAI import EmpireProductionTypes, MissionType, PriorityType, ShipRoleType, get_priority_production_types
 from freeorion_tools import AITimer, tech_is_complete
-from turn_state import state
+from turn_state import get_number_of_colonies, get_owned_planets, have_asteroids, have_gas_giant
 
 prioritiees_timer = AITimer('calculate_priorities()')
 
@@ -119,9 +119,9 @@ def _calculate_research_priority():
     total_pp = empire.productionPoints
     total_rp = empire.resourceProduction(fo.resourceType.research)
     industry_surge = (aistate.character.may_surge_industry(total_pp, total_rp) and
-                      (((orb_gen_tech in research_queue_list[:2] or got_orb_gen) and state.have_gas_giant) or
-                       ((mgrav_prod_tech in research_queue_list[:2] or got_mgrav_prod) and state.have_asteroids)) and
-                      (state.get_number_of_colonies() < 12))
+                      (((orb_gen_tech in research_queue_list[:2] or got_orb_gen) and have_gas_giant()) or
+                       ((mgrav_prod_tech in research_queue_list[:2] or got_mgrav_prod) and have_asteroids())) and
+                      (get_number_of_colonies() < 12))
     # get current industry production & Target
     owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
     planets = (universe.getPlanet(x) for x in owned_planet_ids)
@@ -223,7 +223,7 @@ def _calculate_colonisation_priority():
     enemies_sighted = aistate.misc.get('enemies_sighted', {})
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     total_pp = fo.getEmpire().productionPoints
-    num_colonies = state.get_number_of_colonies()
+    num_colonies = get_number_of_colonies()
     colony_growth_barrier = aistate.character.max_number_colonies()
     if num_colonies > colony_growth_barrier:
         return 0.0
@@ -291,7 +291,7 @@ def _calculate_outpost_priority():
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     total_pp = fo.getEmpire().productionPoints
     colony_growth_barrier = aistate.character.max_number_colonies()
-    if state.get_number_of_colonies() > colony_growth_barrier:
+    if get_number_of_colonies() > colony_growth_barrier:
         return 0.0
     mil_prio = aistate.get_priority(PriorityType.PRODUCTION_MILITARY)
 
@@ -346,7 +346,7 @@ def _calculate_invasion_priority():
     enemies_sighted = aistate.misc.get('enemies_sighted', {})
     multiplier = 1
     colony_growth_barrier = aistate.character.max_number_colonies()
-    if state.get_number_of_colonies() > colony_growth_barrier:
+    if get_number_of_colonies() > colony_growth_barrier:
         return 0.0
 
     if len(aistate.colonisablePlanetIDs) > 0:
@@ -432,7 +432,7 @@ def _calculate_military_priority():
                          [pid for pid, pscore in list(aistate.colonisablePlanetIDs.items())[:allottedColonyTargets]] +
                          [pid for pid, pscore in list(aistate.colonisableOutpostIDs.items())[:allottedColonyTargets]])
 
-    my_systems = set(state.get_empire_planets_by_system())
+    my_systems = set(get_owned_planets())
     target_systems = set(PlanetUtilsAI.get_systems(target_planet_ids))
 
     cur_ship_rating = ProductionAI.cur_best_military_design_rating()

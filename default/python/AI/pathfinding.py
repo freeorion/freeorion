@@ -8,8 +8,8 @@ import PlanetUtilsAI
 
 from AIDependencies import INVALID_ID
 from EnumsAI import MissionType
-from turn_state import state
 from freeorion_tools import cache_for_current_turn, chat_human, get_partial_visibility_turn
+from turn_state import get_system_supply
 
 _DEBUG_CHAT = False
 _ACCEPTABLE_DETOUR_LENGTH = 2000
@@ -95,7 +95,7 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0, m
     # supply graph suggests. For example, we could have recently refueled
     # in a system that is now blockaded by an enemy or we have found
     # the refuel special.
-    target_distance_from_supply = -min(state.get_system_supply(target), 0)
+    target_distance_from_supply = -min(get_system_supply(target), 0)
     if (fleet.maxFuel + 1 < (target_distance_from_supply + minimum_fuel_at_target) and
             universe.jumpDistance(start, target) > (start_fuel - minimum_fuel_at_target)):
         # can't possibly reach this system with the required fuel
