@@ -1,19 +1,14 @@
 # This Python file uses the following encoding: utf-8
-from collections.abc import Mapping
-from io import StringIO
-
-import cProfile
 import logging
-import pstats
 import re
 import traceback
+from collections.abc import Mapping
 from functools import wraps
-from logging import debug, error
-from aistate_interface import get_aistate
-from common.configure_logging import FOLogFormatter
-from logging import warning
+from logging import debug, error, warning
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+from aistate_interface import get_aistate
+from common.configure_logging import FOLogFormatter
 
 # color wrappers for chat:
 RED = '<rgba 255 0 0 255>%s</rgba>'
@@ -234,24 +229,6 @@ def tuple_to_dict(tup):
         except:  # noqa: E722
             error("Can't convert tuple_list to dict: %s", tup)
             return {}
-
-
-def profile(func):
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        pr = cProfile.Profile()
-        pr.enable()
-        retval = func(*args, **kwargs)
-        pr.disable()
-        s = StringIO()
-        sortby = 'cumulative'
-        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-        ps.print_stats()
-        debug(s.getvalue())
-        return retval
-
-    return wrapper
 
 
 @cache_for_current_turn
