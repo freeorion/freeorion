@@ -1,4 +1,5 @@
 from logging import error, warning
+from typing import List, Optional, Union
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
@@ -14,14 +15,12 @@ def default_empire_detection_strength():
 
 
 @cache_for_current_turn
-def get_empire_detection(empire_id):
+def get_empire_detection(empire_id: int) -> float:
     """
     Returns the detection strength for the provided empire ID.
 
     If passed the ALL_EMPIRES ID, then it returns the max detection strength across
     all empires except for the current AI's empire.
-
-    :rtype: float
     """
     if empire_id == ALL_EMPIRES:
         return get_max_empire_detection(fo.allEmpireIDs())
@@ -34,14 +33,12 @@ def get_empire_detection(empire_id):
         return default_empire_detection_strength()
 
 
-def get_max_empire_detection(empire_list):
+def get_max_empire_detection(empire_list: Union[List[int], "fo.IntVec"]) -> float:
     """
     Returns the max detection strength across all empires except for the current AI's empire.
 
     :param empire_list: list of empire IDs
-    :type empire_list: list[int] | fo.IntVec
     :return: max detection strength of provided empires, excluding the current self empire
-    :rtype: float
     """
     max_detection = 0
     for this_empire_id in empire_list:
@@ -50,8 +47,13 @@ def get_max_empire_detection(empire_list):
     return max_detection
 
 
-def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES, future_stealth_bonus=0,
-                                default_result=True):
+def colony_detectable_by_empire(
+        planet_id: int,
+        species_name: Optional[str] = None,
+        empire: Union[int, List[int]] = ALL_EMPIRES,
+        future_stealth_bonus: int = 0,
+        default_result: bool = True
+) -> bool:
     """
     Predicts if a planet/colony is/will-be detectable by an empire.
 
@@ -65,17 +67,12 @@ def colony_detectable_by_empire(planet_id, species_name=None, empire=ALL_EMPIRES
     for a planet we already own.
 
     :param planet_id: required, the planet of concern
-    :type planet_id: int
     :param species_name: will override the existing planet species if provided
-    :type species_name: str
     :param empire: empire ID (or list of empire IDs) whose detection ability is of concern
-    :type empire: int | list[int]
     :param future_stealth_bonus: can specify a projected future stealth bonus, such as from a stealth tech
-    :type future_stealth_bonus: int
     :param default_result: generally for offensive assessments should be False, for defensive should be True
-    :type default_result: bool
     :return: whether the planet is predicted to be detectable
-    :rtype: bool
+
     """
     # The future_stealth_bonus can be used if the AI knows it has researched techs that would grant a stealth bonus to
     # the planet once it was colonized/captured

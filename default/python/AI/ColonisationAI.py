@@ -1,27 +1,31 @@
-from logging import debug, warning, error, info
+from logging import debug, error, info, warning
 from operator import itemgetter
+from typing import List
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
-
-from common.print_utils import Table, Text, Sequence, Bool, Float
 import AIDependencies
 import AIstate
 import EspionageAI
 import FleetUtilsAI
+import freeOrionAIInterface as fo  # pylint: disable=import-error
 import InvasionAI
+import MilitaryAI
 import PlanetUtilsAI
 import PriorityAI
 import ProductionAI
-import MilitaryAI
+from AIDependencies import (
+    INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
+    POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
+    Tags,
+)
 from aistate_interface import get_aistate
-from target import TargetPlanet
-from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
-from freeorion_tools import (tech_is_complete, get_species_tag_grade, cache_by_turn_persistent,
-                             AITimer, get_partial_visibility_turn, cache_for_current_turn, cache_for_session)
-from AIDependencies import (INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
-                            POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
-                            Tags)
+from common.print_utils import Bool, Float, Sequence, Table, Text
+from EnumsAI import EmpireProductionTypes, FocusType, MissionType, PriorityType, ShipRoleType
+from freeorion_tools import (
+    AITimer, cache_by_turn_persistent, cache_for_current_turn, cache_for_session, get_partial_visibility_turn,
+    get_species_tag_grade, tech_is_complete,
+)
 from ShipDesignAI import get_ship_part
+from target import TargetPlanet
 from turn_state import (
     best_pilot_rating, get_colonized_planets_in_system, get_empire_outposts, get_empire_planets_by_species,
     get_inhabited_planets, get_number_of_colonies, get_owned_planets, get_owned_planets_in_system, get_system_supply,
@@ -592,12 +596,10 @@ def get_base_colony_defense_value():
     return result
 
 
-def get_defense_value(species_name):
+def get_defense_value(species_name: str) -> float:
     """
     :param species_name:
-    :type species_name: str
     :return: planet defenses contribution towards planet evaluations
-    :rtype: float
     """
     # TODO: assess species defense characteristics
     if species_name:
@@ -1112,7 +1114,12 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
     return retval
 
 
-def revise_threat_factor(threat_factor, planet_value, system_id, min_planet_value=MINIMUM_COLONY_SCORE):
+def revise_threat_factor(
+        threat_factor: float,
+        planet_value: float,
+        system_id: int,
+        min_planet_value: float = MINIMUM_COLONY_SCORE,
+) -> float:
     """
     Check if the threat_factor should be made less severe.
 
@@ -1123,15 +1130,10 @@ def revise_threat_factor(threat_factor, planet_value, system_id, min_planet_valu
     defended but still obtainable target even if it has no softer locations available.
 
     :param threat_factor: the base threat factor
-    :type threat_factor: float
     :param planet_value: the planet score
-    :type planet_value: float
     :param system_id: the system ID of subject planet
-    :type system_id: int
     :param min_planet_value: a floor planet value if the AI has enough military to secure the system
-    :type min_planet_value: float
     :return: the (potentially) revised threat_factor
-    :rtype: float
     """
 
     # the default value below for fleetThreat shouldn't come in to play, but is just to be absolutely sure we don't
@@ -1381,15 +1383,13 @@ class OrbitalColonizationPlan:
         self.__score = 0
         self.__last_score_update = -1
 
-    def assign_base(self, fleet_id):
+    def assign_base(self, fleet_id: int) -> bool:
         """
         Assign an outpost base fleet to execute the plan.
 
         It is expected that the fleet consists of only that one outpost base.
 
-        :type fleet_id: int
         :return: True on success, False on failure
-        :rtype: bool
         """
         if self.base_assigned:
             warning("Assigned a base to a plan that was already assigned a base to.")
@@ -1401,12 +1401,11 @@ class OrbitalColonizationPlan:
         self.fleet_id = fleet_id
         return True
 
-    def enqueue_base(self):
+    def enqueue_base(self) -> bool:
         """
         Enqueue the base according to the plan.
 
         :return: True on success, False on failure
-        :rtype: bool
         """
         if self.base_enqueued:
             warning("Tried to enqueue a base eventhough already done that.")
@@ -1464,14 +1463,12 @@ class OrbitalColonizationPlan:
         self.__last_score_update = fo.currentTurn()
         self.__score = planet_score
 
-    def is_valid(self):
+    def is_valid(self) -> bool:
         """
         Check the colonization plan for validity, i.e. if it could be executed in the future.
 
         The plan is valid if it is possible to outpust the target planet
         and if the planet envisioned to build the outpost bases can still do so.
-
-        :rtype: bool
         """
         universe = fo.getUniverse()
 
@@ -1500,22 +1497,18 @@ class OrbitalColonizationManager:
         self._colonization_plans = {}
         self.num_enqueued_bases = 0
 
-    def get_targets(self):
+    def get_targets(self) -> List[int]:
         """
         Return all planets for which an orbital colonization plan exists.
-
-        :rtype: list[int]
         """
         return list(self._colonization_plans.keys())
 
-    def create_new_plan(self, target_id, source_id):
+    def create_new_plan(self, target_id: int, source_id: int):
         """
         Create and keep track of a new colonization plan for a target planet.
 
         :param target_id: id of the target planet
-        :type target_id: int
         :param source_id: id of the planet which is supposed to build the base
-        :type source_id: int
         """
         if target_id in self._colonization_plans:
             warning("Already have a colonization plan for this planet. Doing nothing.")

@@ -23,7 +23,7 @@ def create_new_aistate(*args, **kwargs):
     return _aistate
 
 
-def load_aistate(savegame_string):
+def load_aistate(savegame_string: str):
     import savegame_codec
     global _aistate
     _aistate = savegame_codec.load_savegame_string(savegame_string)
