@@ -838,12 +838,24 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
                                  bool& ui_data_available, SaveGameUIData& ui_data, bool& save_state_string_available,
                                  std::string& save_state_string, GalaxySetupData& galaxy_setup_data)
 {
+    ExtractGameStartMessageData(msg.Text(), single_player_game, empire_id, current_turn, empires, universe,
+                                species, combat_logs, supply, players, orders, loaded_game_data, ui_data_available,
+                                ui_data, save_state_string_available, save_state_string, galaxy_setup_data);
+}
+
+void ExtractGameStartMessageData(std::string text, bool& single_player_game, int& empire_id, int& current_turn,
+                                 EmpireManager& empires, Universe& universe, SpeciesManager& species,
+                                 CombatLogManager& combat_logs, SupplyManager& supply,
+                                 std::map<int, PlayerInfo>& players, OrderSet& orders, bool& loaded_game_data,
+                                 bool& ui_data_available, SaveGameUIData& ui_data, bool& save_state_string_available,
+                                 std::string& save_state_string, GalaxySetupData& galaxy_setup_data)
+{
     try {
         bool try_xml = false;
-        if (strncmp(msg.Data(), "<?xml", 5)) {
+        if (strncmp(text.c_str(), "<?xml", 5)) {
             try {
                 // first attempt binary deserialziation
-                std::istringstream is(msg.Text());
+                std::istringstream is(text);
 
                 freeorion_bin_iarchive ia(is);
                 ia >> BOOST_SERIALIZATION_NVP(single_player_game)
@@ -888,7 +900,7 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
         }
         if (try_xml) {
             // if binary deserialization failed, try more-portable XML deserialization
-            std::istringstream is(msg.Text());
+            std::istringstream is(text);
 
             freeorion_xml_iarchive ia(is);
             ia >> BOOST_SERIALIZATION_NVP(single_player_game)
@@ -936,7 +948,7 @@ void ExtractGameStartMessageData(const Message& msg, bool& single_player_game, i
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractGameStartMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
-        TraceLogger() << "Message: " << msg.Text();
+        TraceLogger() << "Message: " << text;
         throw err;
     }
 }
@@ -982,11 +994,8 @@ void ExtractJoinAckMessageData(const Message& msg, int& player_id,
     }
 }
 
-void ExtractTurnOrdersMessageData(const Message& msg,
-                                  OrderSet& orders,
-                                  bool& ui_data_available,
-                                  SaveGameUIData& ui_data,
-                                  bool& save_state_string_available,
+void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
+                                  SaveGameUIData& ui_data, bool& save_state_string_available,
                                   std::string& save_state_string)
 {
     try {
@@ -1033,8 +1042,7 @@ void ExtractTurnUpdateMessageData(const Message& msg, int empire_id, int& curren
                                   SupplyManager& supply, std::map<int, PlayerInfo>& players)
 {
     ExtractTurnUpdateMessageData(msg.Text(), empire_id, current_turn, empires,
-                                 universe, species, combat_logs,
-                                 supply, players);
+                                 universe, species, combat_logs, supply, players);
 }
 
 void ExtractTurnUpdateMessageData(std::string text, int empire_id, int& current_turn, EmpireManager& empires,
@@ -1132,9 +1140,7 @@ void ExtractTurnProgressMessageData(const Message& msg, Message::TurnProgressPha
     }
 }
 
-void ExtractPlayerStatusMessageData(const Message& msg,
-                                    Message::PlayerStatus& status,
-                                    int& about_empire_id) {
+void ExtractPlayerStatusMessageData(const Message& msg, Message::PlayerStatus& status, int& about_empire_id) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
@@ -1302,8 +1308,8 @@ FO_COMMON_API void ExtractDispatchCombatLogsMessageData(
     }
 }
 
-FO_COMMON_API void ExtractLoggerConfigMessageData(
-    const Message& msg, std::set<std::tuple<std::string, std::string, LogLevel>>& options)
+FO_COMMON_API void ExtractLoggerConfigMessageData(const Message& msg,
+                                                  std::set<std::tuple<std::string, std::string, LogLevel>>& options)
 {
     try {
         std::istringstream is(msg.Text());
@@ -1328,9 +1334,7 @@ FO_COMMON_API void ExtractLoggerConfigMessageData(
 
 }
 
-void ExtractContentCheckSumMessageData(
-    const Message& msg, std::map<std::string, unsigned int>& checksums)
-{
+void ExtractContentCheckSumMessageData(const Message& msg, std::map<std::string, unsigned int>& checksums) {
     checksums.clear();
     try {
         std::istringstream is(msg.Text());

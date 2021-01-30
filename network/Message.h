@@ -400,6 +400,15 @@ FO_COMMON_API void ExtractGameStartMessageData(const Message& msg, bool& single_
                                                SaveGameUIData& ui_data, bool& save_state_string_available,
                                                std::string& save_state_string, GalaxySetupData& galaxy_setup_data);
 
+FO_COMMON_API void ExtractGameStartMessageData(std::string text, bool& single_player_game, int& empire_id,
+                                               int& current_turn, EmpireManager& empires, Universe& universe,
+                                               SpeciesManager& species, CombatLogManager& combat_logs,
+                                               SupplyManager& supply,
+                                               std::map<int, PlayerInfo>& players, OrderSet& orders,
+                                               bool& loaded_game_data, bool& ui_data_available,
+                                               SaveGameUIData& ui_data, bool& save_state_string_available,
+                                               std::string& save_state_string, GalaxySetupData& galaxy_setup_data);
+
 FO_COMMON_API void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
                                               Networking::ClientType& client_type,
                                               std::string& version_string,
@@ -408,11 +417,8 @@ FO_COMMON_API void ExtractJoinGameMessageData(const Message& msg, std::string& p
 FO_COMMON_API void ExtractJoinAckMessageData(const Message& msg, int& player_id,
                                              boost::uuids::uuid& cookie);
 
-FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg,
-                                                OrderSet& orders,
-                                                bool& ui_data_available,
-                                                SaveGameUIData& ui_data,
-                                                bool& save_state_string_available,
+FO_COMMON_API void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
+                                                SaveGameUIData& ui_data, bool& save_state_string_available,
                                                 std::string& save_state_string);
 
 FO_COMMON_API void ExtractTurnPartialOrdersMessageData(const Message& msg, OrderSet& added, std::set<int>& deleted);
