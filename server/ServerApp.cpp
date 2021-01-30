@@ -1359,15 +1359,14 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         m_player_empire_ids[player_id] = empire_id;
 
         // set actual authentication status
-        if (Empire* empire = GetEmpire(empire_id)) {
+        if (auto empire = m_empires.GetEmpire(empire_id))
             empire->SetAuthenticated(player_connection->IsAuthenticated());
-        }
     }
 
     for (const auto& psgd : player_save_game_data) {
         int empire_id = psgd.empire_id;
         // add empires to turn processing, and restore saved orders and UI data or save state data
-        if (Empire* empire = GetEmpire(empire_id)) {
+        if (auto empire = m_empires.GetEmpire(empire_id)) {
             if (!empire->Eliminated())
                 AddEmpireTurn(empire_id, psgd);
         } else {
@@ -1378,8 +1377,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
     // the Universe's system graphs for each empire aren't stored when saving
     // so need to be reinitialized when loading based on the gamestate
-    m_universe.InitializeSystemGraph(Empires(), GetUniverse().Objects());
-    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(Empires());
+    m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
+    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
 
     UpdateEmpireSupply(true);  // precombat type supply update
 
@@ -2561,7 +2560,7 @@ namespace {
     }
 
     /** Records info in Empires about what they destroyed or had destroyed during combat. */
-    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats) {
+    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats, const ObjectMap& objects) {
         for (const CombatInfo& combat_info : combats) {
             std::vector<ConstCombatEventPtr> flat_events;
             for (auto event : combat_info.combat_events) {
@@ -2582,7 +2581,7 @@ namespace {
                 auto fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(event);
                 if (fire_event && combat_info.destroyed_object_ids.count(fire_event->target_id)) {
                     events_that_killed.push_back(fire_event);
-                    TraceLogger() << "Kill event: " << event->DebugString();
+                    TraceLogger() << "Kill event: " << event->DebugString(objects);
                 }
             }
             DebugLogger() << "Combat combat_info system: " << combat_info.system_id
@@ -3385,7 +3384,7 @@ void ServerApp::ProcessCombats() {
 
     BackProjectSystemCombatInfoObjectMeters(combats);
 
-    UpdateEmpireCombatDestructionInfo(combats);
+    UpdateEmpireCombatDestructionInfo(combats, m_universe.Objects());
 
     DisseminateSystemCombatInfo(combats, m_universe);
     // update visibilities with any new info gleaned during combat
