@@ -9,7 +9,7 @@ import MilitaryAI
 import MoveUtilsAI
 import CombatRatingsAI
 from freeorion_tools import combine_ratings
-from target import TargetFleet, TargetSystem, TargetPlanet
+from target import Target, TargetFleet, TargetSystem, TargetPlanet
 
 
 def trooper_move_reqs_met(main_fleet_mission, order, verbose):
@@ -68,15 +68,11 @@ class AIFleetOrder:
     """Stores information about orders which can be executed."""
     TARGET_TYPE = None
     ORDER_NAME = ''
-    fleet = None  # type: target.TargetFleet
-    target = None  # type: target.Target
 
-    def __init__(self, fleet, target):
+    def __init__(self, fleet: TargetFleet, target: Target):
         """
         :param fleet: fleet to execute order
-        :type fleet: target.TargetFleet
         :param target: fleet target, depends of order type
-        :type target: target.Target
         """
         if not isinstance(fleet, TargetFleet):
             error("Order required fleet got %s" % type(fleet))
