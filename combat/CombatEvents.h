@@ -162,7 +162,7 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     typedef std::shared_ptr<WeaponFireEvent> WeaponFireEventPtr;
     typedef std::shared_ptr<const WeaponFireEvent> ConstWeaponFireEventPtr;
 
-    explicit WeaponFireEvent();
+    WeaponFireEvent() = default;
 
     /** WeaponFireEvent encodes a single attack in \p bout, \p round by \p
         attacker_id owned by \p attacker_owner_id on \p target_id with \p
@@ -171,10 +171,9 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
         If \p shield is negative that implies the weapon is shield piercing.
 
         The use of tuple in the constructor is to keep the number of parameters below 10 which
-        is the maximum that some compilers that emulate variadic templates support.
-     */
-    WeaponFireEvent(int bout, int round, int attacker_id, int target_id, const std::string &weapon_name,
-                    const std::tuple<float, float, float> &power_shield_damage,
+        is the maximum that some compilers that emulate variadic templates support. */
+    WeaponFireEvent(int bout, int round, int attacker_id, int target_id, std::string weapon_name_,
+                    const std::tuple<float, float, float>& power_shield_damage,
                     int attacker_owner_id_, int target_owner_id_);
     std::string DebugString(const ObjectMap& objects) const override;
     std::string CombatLogDescription(int viewing_empire_id, const ObjectMap& objects) const override;
@@ -182,8 +181,8 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     bool AreDetailsEmpty(int viewing_empire_id) const override { return false; }
     boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
 
-    int bout = 0;
-    int round = 0;
+    int bout = -1;
+    int round = -1;
     int attacker_id = INVALID_OBJECT_ID;
     int target_id = INVALID_OBJECT_ID;
     std::string weapon_name;

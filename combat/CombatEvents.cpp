@@ -390,29 +390,15 @@ std::vector<ConstCombatEventPtr> StealthChangeEvent::SubEvents(int viewing_empir
 //////////////////////////////////////////
 ///////// Attack Event////////////////////
 //////////////////////////////////////////
-
-WeaponFireEvent::WeaponFireEvent() :
-    bout(-1),
-    round(-1),
-    attacker_id(INVALID_OBJECT_ID),
-    target_id(INVALID_OBJECT_ID),
-    weapon_name(),
-    power(0.0f),
-    shield(0.0f),
-    damage(0.0f),
-    attacker_owner_id(ALL_EMPIRES),
-    target_owner_id(INVALID_OBJECT_ID)
-{}
-
 WeaponFireEvent::WeaponFireEvent(
-    int bout_, int round_, int attacker_id_, int target_id_, const std::string& weapon_name_,
+    int bout_, int round_, int attacker_id_, int target_id_, std::string weapon_name_,
     const std::tuple<float, float, float>& power_shield_damage,
     int attacker_owner_id_, int target_owner_id_) :
     bout(bout_),
     round(round_),
     attacker_id(attacker_id_),
-    target_id( target_id_),
-    weapon_name(weapon_name_),
+    target_id(target_id_),
+    weapon_name(std::move(weapon_name_)),
     attacker_owner_id(attacker_owner_id_),
     target_owner_id(target_owner_id_)
 { std::tie(power, shield, damage) = power_shield_damage; }
@@ -456,9 +442,8 @@ std::string WeaponFireEvent::CombatLogDetails(int viewing_empire_id) const {
                    % damage);
 }
 
-boost::optional<int> WeaponFireEvent::PrincipalFaction(int viewing_empire_id) const {
-    return attacker_id;
-}
+boost::optional<int> WeaponFireEvent::PrincipalFaction(int viewing_empire_id) const
+{ return attacker_id; }
 
 
 //////////////////////////////////////////
