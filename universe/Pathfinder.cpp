@@ -1490,15 +1490,15 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
                 } else {                        // if this is a starlane
                     edge_weight_map[add_edge_result.first] = LinearDistance(system1_id, lane_dest_id, objects);
                 }
-                }
             }
         }
-
-        new_graph_impl.swap(m_graph_impl);
-        // clear jumps distance cache
-        // NOTE: re-filling the cache is O(#vertices * (#vertices + #edges)) in the worst case!
-        m_system_jumps.resize(system_ids.size());
     }
+
+    new_graph_impl.swap(m_graph_impl);
+    // clear jumps distance cache
+    // NOTE: re-filling the cache is O(#vertices * (#vertices + #edges)) in the worst case!
+    m_system_jumps.resize(system_ids.size());
+}
 
 void Pathfinder::UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager& empires, const ObjectMap& objects)
 { pimpl->UpdateEmpireVisibilityFilteredSystemGraphs(empires, objects); }
