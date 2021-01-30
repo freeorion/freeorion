@@ -301,14 +301,28 @@ struct PlayingGame : boost::statechart::state<PlayingGame, HumanClientFSM, Waiti
 struct WaitingForGameStart : boost::statechart::state<WaitingForGameStart, PlayingGame> {
     typedef boost::statechart::state<WaitingForGameStart, PlayingGame> Base;
 
+    struct GameStartDataUnpackedNotification : public boost::statechart::event<GameStartDataUnpackedNotification> {
+        struct UnpackedData;
+        GameStartDataUnpackedNotification() = default;
+        explicit GameStartDataUnpackedNotification(std::shared_ptr<UnpackedData> unpacked_) :
+            unpacked(std::move(unpacked_))
+        {}
+        std::shared_ptr<UnpackedData> unpacked;
+    };
+    struct UnpackFailedNotification : public boost::statechart::event<UnpackFailedNotification> {};
+
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<GameStart>
+        boost::statechart::custom_reaction<GameStart>,
+        boost::statechart::custom_reaction<GameStartDataUnpackedNotification>,
+        boost::statechart::custom_reaction<UnpackFailedNotification>
     > reactions;
 
     WaitingForGameStart(my_context ctx);
     ~WaitingForGameStart();
 
     boost::statechart::result react(const GameStart& msg);
+    boost::statechart::result react(const GameStartDataUnpackedNotification& data);
+    boost::statechart::result react(const UnpackFailedNotification&);
 
     CLIENT_ACCESSOR
 };
@@ -319,20 +333,20 @@ struct WaitingForGameStart : boost::statechart::state<WaitingForGameStart, Playi
 struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, PlayingGame> {
     typedef boost::statechart::state<WaitingForTurnData, PlayingGame> Base;
 
-    struct TurnDataUnpackedNotification :
-        public boost::statechart::event<WaitingForTurnData::TurnDataUnpackedNotification>
-    {
+    struct TurnDataUnpackedNotification : public boost::statechart::event<TurnDataUnpackedNotification> {
         struct UnpackedData;
-        TurnDataUnpackedNotification();
-        explicit TurnDataUnpackedNotification(std::shared_ptr<UnpackedData> unpacked_);
-
+        explicit TurnDataUnpackedNotification(std::shared_ptr<UnpackedData> unpacked_) :
+            unpacked(std::move(unpacked_))
+        {}
         std::shared_ptr<UnpackedData> unpacked;
     };
+    struct UnpackFailedNotification : public boost::statechart::event<UnpackFailedNotification> {};
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<SaveGameComplete>,
         boost::statechart::custom_reaction<TurnUpdate>,
         boost::statechart::custom_reaction<TurnDataUnpackedNotification>,
+        boost::statechart::custom_reaction<UnpackFailedNotification>,
         boost::statechart::custom_reaction<TurnRevoked>,
         boost::statechart::custom_reaction<DispatchCombatLogs>
     > reactions;
@@ -343,6 +357,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
     boost::statechart::result react(const SaveGameComplete& d);
     boost::statechart::result react(const TurnUpdate& msg);
     boost::statechart::result react(const TurnDataUnpackedNotification& data);
+    boost::statechart::result react(const UnpackFailedNotification&);
     boost::statechart::result react(const TurnRevoked& msg);
     boost::statechart::result react(const DispatchCombatLogs& msg);
 

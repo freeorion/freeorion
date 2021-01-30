@@ -835,16 +835,47 @@ boost::statechart::result PlayingGame::react(const PlayerInfoMsg& msg) {
     return discard_event();
 }
 
+
 ////////////////////////////////////////////////////////////
 // WaitingForGameStart
 ////////////////////////////////////////////////////////////
+struct WaitingForGameStart::GameStartDataUnpackedNotification::UnpackedData {
+    UnpackedData(std::string message) {
+        ExtractGameStartMessageData(std::move(message), single_player_game, empire_id,
+                                    current_turn,       empires,            universe,
+                                    species,            combat_logs,        supply,
+                                    player_info,        orders,             loaded_game_data,
+                                    ui_data_available,  ui_data,            save_state_string_available,
+                                    save_state_string,  galaxy_setup_data);
+    }
+
+    EmpireManager empires;
+    Universe universe;
+    SpeciesManager species;
+    CombatLogManager combat_logs;
+    SupplyManager supply;
+    std::map<int, PlayerInfo> player_info;
+
+    bool loaded_game_data = false;
+    bool ui_data_available = false;
+    bool save_state_string_available = false;
+    bool single_player_game = false;
+
+    int empire_id = ALL_EMPIRES;
+    int current_turn = INVALID_GAME_TURN;
+
+    std::string save_state_string; // ignored - used by AI but not by human client
+
+    GalaxySetupData galaxy_setup_data;
+    SaveGameUIData ui_data;
+    OrderSet orders;
+};
+
 WaitingForGameStart::WaitingForGameStart(my_context ctx) :
     Base(ctx)
 {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart";
-
     Client().Register(Client().GetClientUI().GetPlayerListWnd());
-
     Client().GetClientUI().GetMapWnd()->EnableOrderIssuing(false);
 }
 
@@ -853,61 +884,112 @@ WaitingForGameStart::~WaitingForGameStart()
 
 boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart.GameStart";
-
-    bool loaded_game_data;
-    bool ui_data_available;
-    SaveGameUIData ui_data;
-    bool save_state_string_available;
-    std::string save_state_string; // ignored - used by AI but not by human client
-    OrderSet orders;
-    bool single_player_game = false;
-    int empire_id = ALL_EMPIRES;
-    int current_turn = INVALID_GAME_TURN;
+    Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
     Client().Orders().Reset();
 
+    auto unpack_action = [message{msg.m_message.Text()}, &client{Client()}]() mutable -> void {
+        TraceLogger(FSM) << "Unpacking TurnUpdate...";
+
+        try {
+            auto unpacked_data = std::make_shared<GameStartDataUnpackedNotification::UnpackedData>(std::move(message));
+            auto unpacking_finished_event =
+                boost::intrusive_ptr<const GameStartDataUnpackedNotification>(
+                    new GameStartDataUnpackedNotification(unpacked_data), true);
+
+            unpacked_data->universe.InitializeSystemGraph(unpacked_data->empires, unpacked_data->universe.Objects());
+            unpacked_data->universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(unpacked_data->empires);
+
+            // TODO: meter updates? applying orders?
+
+            client.PostDeferredEvent(std::move(unpacking_finished_event));
+
+        } catch (const std::exception& e) {
+            ErrorLogger(FSM) << "WaitingForGameStart::react(const GameStart& msg) unpacking failed: " << e.what();
+            client.GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
+            boost::intrusive_ptr<const UnpackFailedNotification> unpacking_failed_event{
+                new UnpackFailedNotification(), true};
+            client.PostDeferredEvent(std::move(unpacking_failed_event));
+        }
+    };
+
+    std::thread(unpack_action).detach();
+    return discard_event();
+}
+
+boost::statechart::result WaitingForGameStart::react(const GameStartDataUnpackedNotification& data) {
+    if (!data.unpacked)
+        return transit<IntroMenu>();
+
     try {
-        ExtractGameStartMessageData(msg.m_message,       single_player_game,             empire_id,
-                                    current_turn,        Empires(),                      GetUniverse(),
-                                    GetSpeciesManager(), GetCombatLogManager(),          GetSupplyManager(),
-                                    Client().Players(),  Client().Orders(),              loaded_game_data,
-                                    ui_data_available,   ui_data,                        save_state_string_available,
-                                    save_state_string,   Client().GetGalaxySetupData());
-    } catch (...) {
+        GameStartDataUnpackedNotification::UnpackedData& unpacked{*data.unpacked};
+
+        DebugLogger(FSM) << "Extracted GameStart message for game start on turn: " << unpacked.current_turn
+                         << " with empire: " << unpacked.empire_id;
+
+        Client().SetCurrentTurn(unpacked.current_turn);
+        Client().SetEmpireID(unpacked.empire_id);
+        Client().SetSinglePlayerGame(unpacked.single_player_game);
+
+        Client().GetGalaxySetupData() = std::move(unpacked.galaxy_setup_data);
+        GetGameRules().SetFromStrings(Client().GetGalaxySetupData().GetGameRules());
+
+        Empires() = std::move(unpacked.empires);
+        GetUniverse() = std::move(unpacked.universe);
+        GetSpeciesManager() = std::move(unpacked.species);
+        GetCombatLogManager() = std::move(unpacked.combat_logs);
+        GetSupplyManager() = std::move(unpacked.supply);
+        Client().Players() = std::move(unpacked.player_info);
+        Client().Orders() = std::move(unpacked.orders);
+
+        bool is_new_game = !(unpacked.loaded_game_data && unpacked.ui_data_available);
+        Client().StartGame(is_new_game);
+
+        TraceLogger(FSM) << "Restoring UI data from save data...";
+
+        if (!is_new_game)
+            Client().GetClientUI().RestoreFromSaveData(unpacked.ui_data);
+
+        TraceLogger(FSM) << "UI data from save data restored";
+
+        // if I am the host on the first turn, do an autosave.
+        if (is_new_game && Client().Networking().PlayerIsHost(Client().PlayerID()))
+            Client().Autosave();
+
+        Client().GetClientUI().GetPlayerListWnd()->Refresh();
+        Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
+
+    } catch (const std::exception& e) {
+        ErrorLogger(FSM) << "WaitingForGameStart::react(const GameStartDataUnpackedNotification& data) failed: " << e.what();
         return transit<IntroMenu>();
     }
 
-    DebugLogger(FSM) << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
-
-    Client().SetSinglePlayerGame(single_player_game);
-    Client().SetEmpireID(empire_id);
-    Client().SetCurrentTurn(current_turn);
-
-    GetGameRules().SetFromStrings(Client().GetGalaxySetupData().GetGameRules());
-
-    bool is_new_game = !(loaded_game_data && ui_data_available);
-    Client().StartGame(is_new_game);
-
-    TraceLogger(FSM) << "Restoring UI data from save data...";
-
-    if (!is_new_game)
-        Client().GetClientUI().RestoreFromSaveData(ui_data);
-
-    TraceLogger(FSM) << "UI data from save data restored";
-
-    // if I am the host on the first turn, do an autosave.
-    if (is_new_game && Client().Networking().PlayerIsHost(Client().PlayerID()))
-        Client().Autosave();
-
-    Client().GetClientUI().GetPlayerListWnd()->Refresh();
-    Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
-
     return transit<PlayingTurn>();
 }
+
+boost::statechart::result WaitingForGameStart::react(const UnpackFailedNotification&)
+{ return transit<IntroMenu>(); }
 
 
 ////////////////////////////////////////////////////////////
 // WaitingForTurnData
 ////////////////////////////////////////////////////////////
+struct WaitingForTurnData::TurnDataUnpackedNotification::UnpackedData {
+    UnpackedData(std::string message, const int client_empire_id) {
+        ExtractTurnUpdateMessageData(std::move(message), client_empire_id, current_turn,
+                                     empires, universe, species, combat_logs, supply,
+                                     player_info);
+    }
+
+    EmpireManager empires;
+    Universe universe;
+    SpeciesManager species;
+    CombatLogManager combat_logs;
+    SupplyManager supply;
+    std::map<int, PlayerInfo> player_info;
+
+    int current_turn = INVALID_GAME_TURN;
+};
+
 WaitingForTurnData::WaitingForTurnData(my_context ctx) :
     Base(ctx)
 {
@@ -933,73 +1015,67 @@ boost::statechart::result WaitingForTurnData::react(const SaveGameComplete& msg)
     return discard_event();
 }
 
-struct WaitingForTurnData::TurnDataUnpackedNotification::UnpackedData {
-    int current_turn = INVALID_GAME_TURN;
-    EmpireManager empires;
-    Universe universe;
-    SpeciesManager species;
-    CombatLogManager combat_logs;
-    SupplyManager supply;
-    std::map<int, PlayerInfo> player_info;
-};
-
-WaitingForTurnData::TurnDataUnpackedNotification::TurnDataUnpackedNotification() :
-    unpacked(std::make_shared<UnpackedData>())
-{}
-
-WaitingForTurnData::TurnDataUnpackedNotification::TurnDataUnpackedNotification(
-    std::shared_ptr<UnpackedData> unpacked_) :
-    unpacked(std::move(unpacked_))
-{}
-
 boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnUpdate";
 
     Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
     Client().Orders().Reset();
 
-    auto& client{Client()};
-    auto unpack_action = [message{msg.m_message.Text()}, &client]() -> void {
+    auto unpack_action = [message{msg.m_message.Text()}, &client{Client()}]() mutable -> void {
         TraceLogger(FSM) << "Unpacking TurnUpdate...";
-        auto unpacked_data = std::make_shared<TurnDataUnpackedNotification::UnpackedData>();
-        auto unpacking_finished_event{
-            boost::intrusive_ptr<const TurnDataUnpackedNotification>(
-                new TurnDataUnpackedNotification(unpacked_data), true)};
-
         try {
-            ExtractTurnUpdateMessageData(
-                std::move(message), client.EmpireID(),
-                unpacked_data->current_turn, unpacked_data->empires,
-                unpacked_data->universe, unpacked_data->species,
-                unpacked_data->combat_logs, unpacked_data->supply,
-                unpacked_data->player_info);
-        }
-        catch (...) {
-            client.GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
-            return;
-        }
+            auto unpacked_data = std::make_shared<TurnDataUnpackedNotification::UnpackedData>(
+                std::move(message), client.EmpireID());
+            boost::intrusive_ptr<const TurnDataUnpackedNotification> unpacking_finished_event{
+                new TurnDataUnpackedNotification(unpacked_data), true};
 
-        client.PostDeferredEvent(std::move(unpacking_finished_event));
+            unpacked_data->universe.InitializeSystemGraph(unpacked_data->empires, unpacked_data->universe.Objects());
+            unpacked_data->universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(unpacked_data->empires);
+
+            // TODO: meter updates? applying orders?
+
+            client.PostDeferredEvent(std::move(unpacking_finished_event));
+
+        } catch (const std::exception& e) {
+            ErrorLogger(FSM) << "WaitingForTurnData::react(const TurnUpdate& msg) unpacking failed: " << e.what();
+            client.GetClientUI().GetMessageWnd()->HandleLogMessage(UserString("ERROR_PROCESSING_SERVER_MESSAGE") + "\n");
+            boost::intrusive_ptr<const UnpackFailedNotification> unpacking_failed_event{
+                new UnpackFailedNotification(), true};
+            client.PostDeferredEvent(std::move(unpacking_failed_event));
+        }
     };
+
     std::thread(unpack_action).detach();
     return discard_event();
 }
 
 boost::statechart::result WaitingForTurnData::react(const TurnDataUnpackedNotification& data) {
-    TurnDataUnpackedNotification::UnpackedData& unpacked{*data.unpacked};
+    if (!data.unpacked)
+        return discard_event();
 
-    DebugLogger(FSM) << "Extracted TurnUpdate message for turn: " << unpacked.current_turn;
+    try {
+        TurnDataUnpackedNotification::UnpackedData& unpacked{*data.unpacked};
 
-    Client().SetCurrentTurn(unpacked.current_turn);
-    Empires() = std::move(unpacked.empires);
-    GetUniverse() = std::move(unpacked.universe);
-    GetSpeciesManager() = std::move(unpacked.species);
-    GetCombatLogManager() = std::move(unpacked.combat_logs);
-    GetSupplyManager() = std::move(unpacked.supply);
-    Client().Players() = std::move(unpacked.player_info);
+        DebugLogger(FSM) << "Extracted TurnUpdate message for turn: " << unpacked.current_turn;
 
-    return transit<PlayingTurn>();
+        Client().SetCurrentTurn(unpacked.current_turn);
+        Empires() = std::move(unpacked.empires);
+        GetUniverse() = std::move(unpacked.universe);
+        GetSpeciesManager() = std::move(unpacked.species);
+        GetCombatLogManager() = std::move(unpacked.combat_logs);
+        GetSupplyManager() = std::move(unpacked.supply);
+        Client().Players() = std::move(unpacked.player_info);
+
+        return transit<PlayingTurn>();
+
+    } catch (const std::exception& e) {
+        ErrorLogger(FSM) << "WaitingForTurnData::react(const TurnDataUnpackedNotification& data) failed: " << e.what();
+        return discard_event();
+    }
 }
+
+boost::statechart::result WaitingForTurnData::react(const UnpackFailedNotification&)
+{ return discard_event(); }
 
 boost::statechart::result WaitingForTurnData::react(const TurnRevoked& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnRevoked";
@@ -1026,7 +1102,6 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     // if I am the host, do autosave
     if (Client().Networking().PlayerIsHost(Client().PlayerID()))
         Client().Autosave();
-
 
     Client().UpdateCombatLogManager();
 
@@ -1214,8 +1289,9 @@ boost::statechart::result QuittingGame::react(const ShutdownServer& u) {
     return discard_event();
 }
 
-const auto QUITTING_TIMEOUT          = std::chrono::milliseconds(5000);
-const auto QUITTING_POLLING_INTERVAL = std::chrono::milliseconds(10);
+constexpr auto QUITTING_TIMEOUT =          std::chrono::milliseconds(5000);
+constexpr auto QUITTING_POLLING_INTERVAL = std::chrono::milliseconds(10);
+
 boost::statechart::result QuittingGame::react(const WaitForDisconnect& u) {
     TraceLogger(FSM) << "(HumanClientFSM) QuittingGame.WaitForDisconnect";
 

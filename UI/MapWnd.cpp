@@ -2655,27 +2655,24 @@ void MapWnd::InitTurn() {
     for (auto obj : objects.all())
         TraceLogger(effects) << obj->Dump();
 
-    timer.EnterSection("system graph");
-    // FIXME: this is actually only needed when there was no mid-turn update
-    universe.InitializeSystemGraph(Empires(), objects);
-    universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(Empires());
-
     timer.EnterSection("meter estimates");
     // update effect accounting and meter estimates
     universe.InitMeterEstimatesAndDiscrepancies(Empires());
 
+    timer.EnterSection("orders");
     // if we've just loaded the game there may be some unexecuted orders, we
     // should reapply them now, so they are reflected in the UI, but do not
     // influence current meters or their discrepancies for this turn
     GGHumanClientApp::GetApp()->Orders().ApplyOrders();
 
+    timer.EnterSection("meter estimates");
     // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
     // population is available for currently uncolonized planets
     GetUniverse().UpdateMeterEstimates(Empires());
 
     GetUniverse().ApplyAppearanceEffects(Empires());
 
-    timer.EnterSection("rendering");
+    timer.EnterSection("init rendering");
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
 
