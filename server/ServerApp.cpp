@@ -2644,8 +2644,10 @@ namespace {
     }
 
     /** Does colonization, with safety checks */
-    bool ColonizePlanet(int ship_id, int planet_id) {
-        auto ship = Objects().get<Ship>(ship_id);
+    bool ColonizePlanet(int ship_id, int planet_id, Universe& universe) {
+        auto& objects = universe.Objects();
+
+        auto ship = objects.get<Ship>(ship_id);
         if (!ship) {
             ErrorLogger() << "ColonizePlanet couldn't get ship with id " << ship_id;
             return false;
@@ -2689,30 +2691,32 @@ namespace {
         auto system = Objects().get<System>(ship->SystemID());
 
         // destroy colonizing ship, and its fleet if now empty
-        auto fleet = Objects().get<Fleet>(ship->FleetID());
+        auto fleet = objects.get<Fleet>(ship->FleetID());
         if (fleet) {
             fleet->RemoveShips({ship->ID()});
             if (fleet->Empty()) {
                 if (system)
                     system->Remove(fleet->ID());
-                GetUniverse().Destroy(fleet->ID());
+                universe.Destroy(fleet->ID());
             }
         }
 
         if (system)
             system->Remove(ship->ID());
-        GetUniverse().RecursiveDestroy(ship->ID()); // does not count as a loss of a ship for the species / empire
+        universe.RecursiveDestroy(ship->ID()); // does not count as a loss of a ship for the species / empire
 
         return true;
     }
 
     /** Determines which ships ordered to colonize planet succeed, does
       * appropriate colonization, and cleans up after colonization orders */
-    void HandleColonization() {
+    void HandleColonization(Universe& universe, EmpireManager& empires) {
+        auto& objects = universe.Objects();
+
         // collect, for each planet, what ships have been ordered to colonize it
         std::map<int, std::map<int, std::set<int>>> planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
 
-        for (auto& ship : GetUniverse().Objects().all<Ship>()) {
+        for (auto& ship : objects.all<Ship>()) {
             if (ship->Unowned())
                 continue;
             int owner_empire_id = ship->Owner();
@@ -2726,7 +2730,7 @@ namespace {
 
             ship->SetColonizePlanet(INVALID_OBJECT_ID); // reset so failed colonization doesn't leave ship with hanging colonization order set
 
-            auto planet = Objects().get<Planet>(colonize_planet_id);
+            auto planet = objects.get<Planet>(colonize_planet_id);
             if (!planet)
                 continue;
 
@@ -2757,13 +2761,13 @@ namespace {
             int colonizing_ship_id = *empire_ships_colonizing.begin();
 
             int planet_id = planet_colonization.first;
-            auto planet = Objects().get<Planet>(planet_id);
+            auto planet = objects.get<Planet>(planet_id);
             if (!planet) {
                 ErrorLogger() << "HandleColonization couldn't get planet with id " << planet_id;
                 continue;
             }
             int system_id = planet->SystemID();
-            auto system = Objects().get<System>(system_id);
+            auto system = objects.get<System>(system_id);
             if (!system) {
                 ErrorLogger() << "HandleColonization couldn't get system with id " << system_id;
                 continue;
@@ -2771,7 +2775,7 @@ namespace {
 
             // find which empires have obstructive armed ships in system
             std::set<int> empires_with_armed_ships_in_system;
-            for (auto& fleet : Objects().find<const Fleet>(system->FleetIDs())) {
+            for (auto& fleet : objects.find<const Fleet>(system->FleetIDs())) {
                 if (fleet->Obstructive() && fleet->HasArmedShips())
                     empires_with_armed_ships_in_system.insert(fleet->Owner());  // may include ALL_EMPIRES, which is fine; this makes monsters prevent colonization
             }
@@ -2782,7 +2786,7 @@ namespace {
                 if (armed_ship_empire_id == colonizing_empire_id)
                     continue;
                 if (armed_ship_empire_id == ALL_EMPIRES ||
-                    Empires().GetDiplomaticStatus(colonizing_empire_id, armed_ship_empire_id) == DiplomaticStatus::DIPLO_WAR)
+                    empires.GetDiplomaticStatus(colonizing_empire_id, armed_ship_empire_id) == DiplomaticStatus::DIPLO_WAR)
                 {
                     colonize_blocked = true;
                     break;
@@ -2793,7 +2797,7 @@ namespace {
                 continue;
 
             // before actual colonization, which deletes the colony ship, store ship info for later use with sitrep generation
-            auto ship = Objects().get<Ship>(colonizing_ship_id);
+            auto ship = objects.get<Ship>(colonizing_ship_id);
             if (!ship)
                 ErrorLogger() << "HandleColonization couldn't get ship with id " << colonizing_ship_id;
             const auto& species_name = ship ? ship->SpeciesName() : "";
@@ -2801,14 +2805,14 @@ namespace {
 
 
             // do colonization
-            if (!ColonizePlanet(colonizing_ship_id, planet_id))
+            if (!ColonizePlanet(colonizing_ship_id, planet_id, universe))
                 continue;   // skip sitrep if colonization failed
 
             // record successful colonization
             newly_colonize_planet_ids.push_back(planet_id);
 
             // sitrep about colonization / outposting
-            Empire* empire = GetEmpire(colonizing_empire_id);
+            auto empire = empires.GetEmpire(colonizing_empire_id);
             if (!empire) {
                 ErrorLogger() << "HandleColonization couldn't get empire with id " << colonizing_empire_id;
             } else {
@@ -3272,7 +3276,7 @@ void ServerApp::PreCombatProcessTurns() {
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::COLONIZE_AND_SCRAP));
 
     DebugLogger() << "ServerApp::ProcessTurns colonization";
-    HandleColonization();
+    HandleColonization(m_universe, m_empires);
 
     DebugLogger() << "ServerApp::ProcessTurns invasion";
     HandleInvasion();
