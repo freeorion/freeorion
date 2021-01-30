@@ -166,8 +166,6 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
 { filtered_empire_object_visibility = this->empire_object_visibility; }
 
 namespace {
-    const std::string EMPTY_STRING;
-
     std::shared_ptr<const Empire> GetEmpire(int id, const CombatInfo& combat_info) {
         auto it = combat_info.empires.find(id);
         return it == combat_info.empires.end() ? nullptr : it->second;
@@ -424,12 +422,12 @@ namespace {
         {}
 
         ShipPartClass                 part_class = ShipPartClass::INVALID_SHIP_PART_CLASS;
-        const std::string&            ship_part_name = EMPTY_STRING;
+        const std::string             ship_part_name;
         float                         part_attack = 0.0f;    // for direct damage parts
         const ::Condition::Condition* combat_targets = nullptr;
         int                           fighters_launched = 0; // for fighter bays, input value should be limited by ship available fighters to launch
         float                         fighter_damage = 0.0f; // for fighter bays, input value should be determined by ship fighter weapon setup
-        const std::string&            fighter_type_name = EMPTY_STRING;
+        const std::string             fighter_type_name;
     };
 
     void AttackShipShip(const std::shared_ptr<Ship>& attacker, const PartAttackInfo& weapon,
@@ -756,7 +754,7 @@ namespace {
             bout, round, attacker->ID(), target->ID(), weapon.ship_part_name,
             std::tie(power, pierced_shield_value, damage),
             attacker->Owner(), target->Owner());
-        attacks_event->AddEvent(attack_event);
+        attacks_event->AddEvent(std::move(attack_event));
         target->SetLastTurnActiveInCombat(combat_info.turn);
     }
 
@@ -907,7 +905,7 @@ namespace {
         }
     }
 
-    std::vector<PartAttackInfo> ShipWeaponsStrengths(std::shared_ptr<const Ship> ship) {
+    std::vector<PartAttackInfo> ShipWeaponsStrengths(const std::shared_ptr<const Ship>& ship) {
         std::vector<PartAttackInfo> retval;
         if (!ship)
             return retval;
@@ -1321,7 +1319,7 @@ namespace {
         }
     };
 
-    std::vector<PartAttackInfo> GetWeapons(std::shared_ptr<UniverseObject> attacker) {
+    std::vector<PartAttackInfo> GetWeapons(const std::shared_ptr<UniverseObject>& attacker) {
         // Loop over weapons of attacking object. Each gets a shot at a
         // randomly selected target object, from the objects in the combat
         // that match the weapon's targetting condition.
@@ -1389,7 +1387,7 @@ namespace {
 
     }
 
-    void ShootAllWeapons(std::shared_ptr<UniverseObject> attacker,
+    void ShootAllWeapons(const std::shared_ptr<UniverseObject>& attacker,
                          AutoresolveInfo& combat_state, int round,
                          AttacksEventPtr& attacks_event,
                          WeaponsPlatformEvent::WeaponsPlatformEventPtr& platform_event,
@@ -1726,7 +1724,7 @@ namespace {
         bout_event->AddEvent(fighter_on_fighter_event);
 
         int round = 1;  // counter of events during the current combat bout
-
+        const int NUM_COMBAT_ROUNDS = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
 
         // todo: cache results of GetWeapons(attacker) to avoid re-calling multiple times per combat.
         // todo: and pass into ShootAllWeapons which also calls that function
@@ -1757,14 +1755,16 @@ namespace {
         for (const auto& attacker : combat_info.objects.find(shuffled_attackers)) {
             if (!attacker)
                 continue;
-            if (attacker->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            if (attacker->ObjectType() == UniverseObjectType::OBJ_PLANET)
                 continue;   // planet attacks processed above
-            }
+
             if (!ObjectCanAttack(attacker, combat_info.objects)) {
-                DebugLogger() << "Attacker " << attacker->Name() << " could not attack.";
+                DebugLogger() << "Attacker " << attacker->ObjectType() << " : "
+                              << attacker->Name() << " (" << attacker->ID() << ") could not attack.";
                 continue;
             }
-            DebugLogger(combat) << "Attacker: " << attacker->Name();
+            DebugLogger(combat) << "Attacker: " << attacker->ObjectType() << " : "
+                                << attacker->Name() << " (" << attacker->ID() << ")";
 
             auto platform_event = std::make_shared<WeaponsPlatformEvent>(
                 combat_info.bout, attacker->ID(), attacker->Owner());
@@ -1781,7 +1781,7 @@ namespace {
         // Launch fighters (which can attack in any subsequent combat bouts).
         // There is no point to launching fighters during the last bout, since
         // they won't get any chance to attack during this combat
-        if (combat_info.bout < GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS")) {
+        if (combat_info.bout < NUM_COMBAT_ROUNDS) {
             auto launches_event = std::make_shared<FighterLaunchesEvent>();
             for (const auto& attacker : combat_info.objects.find<Ship>(shuffled_attackers)) {
                 if (!attacker)
@@ -1834,12 +1834,12 @@ namespace {
             // Generate attack events
             std::vector<std::shared_ptr<const WeaponFireEvent>> weapon_fire_events;
             if (auto naked_fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(this_event)) {
-                weapon_fire_events.emplace_back(std::move(naked_fire_event));
+                weapon_fire_events.push_back(std::move(naked_fire_event));
 
             } else if (auto weapons_platform = std::dynamic_pointer_cast<const WeaponsPlatformEvent>(this_event)) {
                 for (auto more_event : weapons_platform->SubEvents(ALL_EMPIRES)) {
                     if (auto this_attack = std::dynamic_pointer_cast<const WeaponFireEvent>(more_event))
-                        weapon_fire_events.emplace_back(std::move(this_attack));
+                        weapon_fire_events.push_back(std::move(this_attack));
                 }
             }
 
