@@ -24,7 +24,7 @@ namespace {
                         std::string& desc, std::string& category,
                         bool default_value) const
         {
-            DebugLogger() << "Adding Boolean game rule with name: " << name
+            TraceLogger() << "Adding Boolean game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value;
             game_rules.Add<bool>(std::move(name), std::move(desc),
                                  std::move(category), default_value, false);
@@ -34,7 +34,7 @@ namespace {
                         std::string& desc, std::string& category,
                         int default_value, int min, int max) const
         {
-            DebugLogger() << "Adding Integer game rule with name: " << name
+            TraceLogger() << "Adding Integer game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
             game_rules.Add<int>(std::move(name), std::move(desc), std::move(category),
@@ -45,7 +45,7 @@ namespace {
                         std::string& desc, std::string& category,
                         double default_value, double min, double max) const
         {
-            DebugLogger() << "Adding Double game rule with name: " << name
+            TraceLogger() << "Adding Double game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
             game_rules.Add<double>(std::move(name), std::move(desc), std::move(category),
@@ -57,7 +57,7 @@ namespace {
                         std::string& default_value,
                         std::set<std::string>& allowed) const
         {
-            DebugLogger() << "Adding String game rule with name: " << name
+            TraceLogger() << "Adding String game rule with name: " << name
                           << ", desc: " << desc << ", default: \"" << default_value
                           << "\", allowed: " << [&allowed](){
                 std::string retval;
