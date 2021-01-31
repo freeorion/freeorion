@@ -610,12 +610,12 @@ class AIstate:
                 debug("In system %s: Ignoring lost fleets since known threats could cause it.", system)
                 lost_fleet_rating = 0
 
-            # TODO use sitrep combat info rather than estimating stealthed enemies by fleets lost to them
             # TODO also only consider past stealthed fleet threat to still be present if the system is still obstructed
             # TODO: track visibility across turns in order to distinguish the blip of visibility in (losing) combat,
             #       which FO currently treats as being for the previous turn,
             #       partially superseding the previous visibility for that turn
 
+            # Estimating stealthed enemies by fleets lost to them
             if not partial_vis_turn == current_turn:
                 sys_status.setdefault('local_fleet_threats', set())
                 sys_status['currently_visible'] = False
