@@ -10,7 +10,6 @@ Tech
         "CON_ORGANIC_STRC"
         "CON_NDIM_STRC"
     ]
-    unlock = 
     unlock = [
         Item type = Building name = "BLD_MEGALITH"
         Item type = Policy name = "PLC_DIVINE_AUTHORITY"
