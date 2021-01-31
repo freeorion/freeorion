@@ -887,7 +887,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
     Client().Orders().Reset();
 
-    auto unpack_action = [message{msg.m_message.Text()}, &client{Client()}]() mutable -> void {
+    auto unpack_action = [message = msg.m_message.Text(), &client = Client()]() mutable -> void {
         TraceLogger(FSM) << "Unpacking TurnUpdate...";
 
         try {
@@ -1021,7 +1021,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
     Client().Orders().Reset();
 
-    auto unpack_action = [message{msg.m_message.Text()}, &client{Client()}]() mutable -> void {
+    auto unpack_action = [message = msg.m_message.Text(), &client = Client()]() mutable -> void {
         TraceLogger(FSM) << "Unpacking TurnUpdate...";
         try {
             auto unpacked_data = std::make_shared<TurnDataUnpackedNotification::UnpackedData>(
