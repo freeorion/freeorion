@@ -143,28 +143,29 @@ void GameRules::Add(Pending::Pending<GameRules>&& future)
 void GameRules::SetFromStrings(const std::map<std::string, std::string>& names_values) {
     CheckPendingGameRules();
     DebugLogger() << "Setting Rules from Strings:";
-    for (const auto& entry : names_values)
-        DebugLogger() << "  " << entry.first << " : " << entry.second;
+    for (auto& [name, value] : names_values)
+        DebugLogger() << "  " << name << " : " << value;
 
     ResetToDefaults();
-    for (auto& entry : names_values) {
-        auto rule_it = m_game_rules.find(entry.first);
+    for (auto& [name, value] : names_values) {
+        auto rule_it = m_game_rules.find(name);
         if (rule_it == m_game_rules.end()) {
-            InfoLogger() << "GameRules::serialize received unrecognized rule: " << entry.first;
+            InfoLogger() << "GameRules::serialize received unrecognized rule: " << name;
             continue;
         }
         try {
-            rule_it->second.SetFromString(entry.second);
+            rule_it->second.SetFromString(value);
         } catch (const boost::bad_lexical_cast& e) {
-            ErrorLogger() << "Unable to set rule: " << entry.first << " to value: " << entry.second << " - couldn't cast string to allowed value for this option";
+            ErrorLogger() << "Unable to set rule: " << name << " to value: " << value
+                          << " - couldn't cast string to allowed value for this option";
         } catch (...) {
-            ErrorLogger() << "Unable to set rule: " << entry.first << " to value: " << entry.second;
+            ErrorLogger() << "Unable to set rule: " << name << " to value: " << value;
         }
     }
 
     DebugLogger() << "After Setting Rules:";
-    for (const auto& entry : m_game_rules)
-        DebugLogger() << "  " << entry.first << " : " << entry.second.ValueToString();
+    for (auto& [name, value] : m_game_rules)
+        DebugLogger() << "  " << name << " : " << value.ValueToString();
 }
 
 void GameRules::CheckPendingGameRules() const {
@@ -176,16 +177,15 @@ void GameRules::CheckPendingGameRules() const {
         return;
 
     auto new_rules = std::move(*parsed);
-    for (const auto& rule : new_rules) {
-        const auto& name = rule.first;
+    for (auto& [name, value] : new_rules) {
         if (m_game_rules.count(name)) {
             ErrorLogger() << "GameRules::Add<>() : Rule " << name << " was added twice. Skipping ...";
             continue;
         }
-        m_game_rules[name] = rule.second;
+        m_game_rules[name] = value;
     }
 
     DebugLogger() << "Registered and Parsed Game Rules:";
-    for (const auto& entry : GetRulesAsStrings())
-        DebugLogger() << " ... " << entry.first << " : " << entry.second;
+    for (auto& [name, value] : GetRulesAsStrings())
+        DebugLogger() << " ... " << name << " : " << value;
 }
