@@ -22,13 +22,10 @@ import json
 import zlib
 
 import EnumsAI
-from freeorion_tools import profile
-
 from ._definitions import (CanNotSaveGameException, ENUM_PREFIX, FALSE, FLOAT_PREFIX, INT_PREFIX, NONE, PLACEHOLDER,
                            SET_PREFIX, TRUE, TUPLE_PREFIX, trusted_classes, )
 
 
-@profile
 def build_savegame_string() -> bytes:
     """Encode the AIstate and compress the resulting string with zlib.
 

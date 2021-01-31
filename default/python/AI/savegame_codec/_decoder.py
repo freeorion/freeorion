@@ -17,7 +17,6 @@ from typing import Union
 
 import EnumsAI
 from AIstate import AIstate
-from freeorion_tools import profile
 
 from ._definitions import (ENUM_PREFIX, FALSE, FLOAT_PREFIX, INT_PREFIX, InvalidSaveGameException, NONE, PLACEHOLDER,
                            SET_PREFIX, TRUE, TUPLE_PREFIX, trusted_classes, )
@@ -30,7 +29,6 @@ class SaveDecompressException(Exception):
     pass
 
 
-@profile
 def load_savegame_string(string: Union[str, bytes]) -> AIstate:
     """
     :raises: SaveDecompressException, InvalidSaveGameException
