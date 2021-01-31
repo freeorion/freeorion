@@ -1399,7 +1399,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         tech_sources.emplace_back(1U, source);
         const auto& source_objects = tech_sources.back();
 
-        for ([[maybe_unused]] const auto& [tech_name, researched_turn] : empire->ResearchedTechs()) {
+        for ([[maybe_unused]] auto& [tech_name, researched_turn] : empire->ResearchedTechs()) {
             const Tech* tech = GetTech(tech_name);
             if (!tech) continue;
             (void)researched_turn;  // quiet unused variable warning

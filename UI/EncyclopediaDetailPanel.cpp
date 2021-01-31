@@ -184,7 +184,7 @@ namespace {
                                    str));
             }
 
-            for ([[maybe_unused]] const auto& [category_name, article_vec] : encyclopedia.Articles()) {
+            for ([[maybe_unused]] auto& [category_name, article_vec] : encyclopedia.Articles()) {
                 // Do not add sub-categories
                 const EncyclopediaArticle& article = encyclopedia.GetArticleByKey(category_name);
                 // No article found or specifically a top-level category
