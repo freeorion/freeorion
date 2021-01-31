@@ -6,7 +6,7 @@ from EnumsAI import MissionType
 import MoveUtilsAI
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID
-from freeorion_tools import get_partial_visibility_turn
+from freeorion_tools import get_fleet_position, get_partial_visibility_turn
 from aistate_interface import get_aistate
 from target import TargetSystem
 
@@ -98,8 +98,7 @@ def assign_scouts_to_explore_systems():
     options = []
     available_scouts = set(available_scouts)
     for fleet_id in available_scouts:
-        fleet_mission = aistate.get_fleet_mission(fleet_id)
-        start = fleet_mission.get_location_target()
+        start = TargetSystem(get_fleet_position(fleet_id))
         for sys_id in needs_coverage:
             target = TargetSystem(sys_id)
             path = MoveUtilsAI.can_travel_to_system(fleet_id, start, target, ensure_return=True)

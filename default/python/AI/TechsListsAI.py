@@ -4,7 +4,7 @@ various technologies to help the AI decide which technologies should be
 researched next.
 """
 from logging import warning, debug
-from typing import List
+from typing import List, Union
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies as Dep
@@ -61,17 +61,14 @@ class TechGroup:
         self._add_remaining()
         return list(self._tech_queue)
 
-    def enqueue(self, *tech_lists):
+    def enqueue(self, *tech_lists: Union[List[str], str]):
         """
         Pop first entry in the list or take entry if it is string and add it to research orders.
 
         Note that the passed list is modified within this function!
         If the list is already empty, the exception is caught and stored in self.__errors.
         Errors may be queried via get_errors()
-
-        :type tech_lists: list[list | str]
         """
-
         for step, this_list in enumerate(tech_lists, start=1):
             if isinstance(this_list, str):
                 tech_name = this_list

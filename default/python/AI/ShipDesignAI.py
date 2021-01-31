@@ -197,11 +197,10 @@ class ShipDesignCache:
             for slot in self.parts_for_planets[pid]:
                 debug("    %s: %s" % (slot, self.parts_for_planets[pid][slot]))
 
-    def print_best_designs(self, print_diff_only=True):
+    def print_best_designs(self, print_diff_only: bool = True):
         """Print the best designs that were previously found.
 
         :param print_diff_only: Print only changes to cache since last print
-        :type print_diff_only: bool
         """
         debug("Currently cached best designs:")
         if print_diff_only:
@@ -611,37 +610,31 @@ class ShipDesigner:
                     return AIDependencies.HULL_TAG_EFFECTS[tag][AIDependencies.FUEL_EFFICIENCY]
         return AIDependencies.DEFAULT_FUEL_EFFICIENCY
 
-    def update_hull(self, hullname):
-        """Set hull of the design.
-
-        :param hullname:
-        :type hullname: str
+    def update_hull(self, hullname: str):
+        """
+        Set hull of the design.
         """
         self.hull = fo.getShipHull(hullname)
 
-    def update_parts(self, partname_list):
-        """Set both partnames and parts attributes.
-
-        :param partname_list: contains partnames as strings
-        :type partname_list: list"""
+    def update_parts(self, partname_list: Iterable[str]):
+        """
+        Set both partnames and parts attributes.
+        """
         self.partnames = partname_list
         self.parts = [get_ship_part(part) for part in partname_list if part]
 
-    def update_species(self, species):
-        """Set the piloting species.
-
-        :param species:
-        :type species: str
+    def update_species(self, species: str):
+        """
+        Set the piloting species.
         """
         self.species = species
 
-    def update_stats(self, ignore_species=False):
-        """Calculate and update all stats of the design.
+    def update_stats(self, ignore_species: bool = False):
+        """
+        Calculate and update all stats of the design.
 
         Default stats if no hull in design.
-
         :param ignore_species: toggles whether species piloting grades are considered in the stats.
-        :type ignore_species: bool
         """
         self._set_stats_to_default()
 

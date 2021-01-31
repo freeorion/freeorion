@@ -16,7 +16,7 @@ from aistate_interface import get_aistate
 from target import Target, TargetSystem, TargetFleet, TargetPlanet
 from EnumsAI import MissionType
 from AIDependencies import INVALID_ID
-from freeorion_tools import combine_ratings, get_partial_visibility_turn, assertion_fails
+from freeorion_tools import combine_ratings, get_fleet_position, get_partial_visibility_turn, assertion_fails
 
 ORDERS_FOR_MISSION = {
     MissionType.EXPLORATION: OrderPause,
@@ -56,7 +56,7 @@ class AIFleetMission:
     :type target: target.Target | None
     """
 
-    def __init__(self, fleet_id):
+    def __init__(self, fleet_id: int):
         self.orders = []
         self.fleet = TargetFleet(fleet_id)
         self.type = None
@@ -88,12 +88,9 @@ class AIFleetMission:
 
         return retval
 
-    def set_target(self, mission_type, target):
+    def set_target(self, mission_type: MissionType, target: Target):
         """
         Set mission and target for this fleet.
-
-        :type mission_type: MissionType
-        :type target: target.Target
         """
         if self.type == mission_type and self.target == target:
             return
@@ -626,7 +623,6 @@ class AIFleetMission:
         # TODO: priority
         self.clear_fleet_orders()
         system_id = fleet.systemID
-        start_sys_id = [fleet.nextSystemID, system_id][system_id >= 0]
         # if fleet doesn't have any mission,
         # then repair if needed or resupply if is current location not in supplyable system
         empire = fo.getEmpire()
@@ -636,13 +632,13 @@ class AIFleetMission:
                                                      AIstate.outpostTargetedSystemIDs +
                                                      AIstate.invasionTargetedSystemIDs)):
             if self._need_repair():
-                repair_fleet_order = MoveUtilsAI.get_repair_fleet_order(self.fleet, start_sys_id)
+                repair_fleet_order = MoveUtilsAI.get_repair_fleet_order(self.fleet)
                 if repair_fleet_order and repair_fleet_order.is_valid():
                     self.orders.append(repair_fleet_order)
             cur_fighter_capacity, max_fighter_capacity = FleetUtilsAI.get_fighter_capacity_of_fleet(fleet_id)
             if (fleet.fuel < fleet.maxFuel or cur_fighter_capacity < max_fighter_capacity
-                    and self.get_location_target().id not in fleet_supplyable_system_ids):
-                resupply_fleet_order = MoveUtilsAI.get_resupply_fleet_order(self.fleet, self.get_location_target())
+                    and get_fleet_position(self.fleet.id) not in fleet_supplyable_system_ids):
+                resupply_fleet_order = MoveUtilsAI.get_resupply_fleet_order(self.fleet)
                 if resupply_fleet_order.is_valid():
                     self.orders.append(resupply_fleet_order)
             return  # no targets
@@ -691,15 +687,9 @@ class AIFleetMission:
         ships_cur_health, ships_max_health = FleetUtilsAI.get_current_and_max_structure(fleet_id)
         return ships_cur_health < repair_limit * ships_max_health
 
-    def get_location_target(self):
-        """system AITarget where fleet is or will be"""
+    def get_location_target(self) -> TargetSystem:
         # TODO add parameter turn
-        fleet = fo.getUniverse().getFleet(self.fleet.id)
-        system_id = fleet.systemID
-        if system_id >= 0:
-            return TargetSystem(system_id)
-        else:  # in starlane, so return next system
-            return TargetSystem(fleet.nextSystemID)
+        return TargetSystem(get_fleet_position(self.fleet.id))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.fleet == other.target

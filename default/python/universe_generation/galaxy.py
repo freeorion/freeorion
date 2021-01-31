@@ -2,6 +2,7 @@ import sys
 from collections import defaultdict
 from math import acos, ceil, cos, floor, pi, sin, sqrt
 from random import gauss, randint, random, uniform
+from typing import List, Tuple
 
 import freeorion as fo
 
@@ -519,13 +520,9 @@ def disc_galaxy_calc_positions(positions, adjacency_grid, size, width):
                   " position sufficiently far from other systems".format(i))
 
 
-def cluster_galaxy_calc_positions(positions, adjacency_grid, size, width):
+def cluster_galaxy_calc_positions(positions: List[Tuple[int, int]], adjacency_grid: AdjacencyGrid, size: int, width: float):
     """
-    Calculate positions for the cluster galaxy shape.
-    :type positions: list
-    :type adjacency_grid: AdjacencyGrid
-    :type size: int
-    :type width: float
+    Calculate positions for the cluster galaxy shape and add them to positions.
     """
     if size < 1:
         print("Cluster galaxy requested for less than 1 star", file=sys.stderr)

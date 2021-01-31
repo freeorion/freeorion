@@ -70,14 +70,9 @@ def find_best_designs_this_turn():
     design_timer.stop_print_and_clear()
 
 
-def get_design_cost(design, pid):  # TODO: Use new framework
-    """Find and return the design_cost of the specified design on the specified planet.
-
-    :param design:
-    :type design: fo.shipDesign
-    :param pid: planet id
-    :type pid: int
-    :return: cost of the design
+def get_design_cost(design: "fo.shipDesign", pid: int) -> float:  # TODO: Use new framework
+    """
+    Find and return the design_cost of the specified design on the specified planet.
     """
     cur_turn = fo.currentTurn()
     if cur_turn in _design_cost_cache:
@@ -94,10 +89,9 @@ def get_design_cost(design, pid):  # TODO: Use new framework
     return cost_cache.setdefault((design.id, loc), design.productionCost(fo.empireID(), pid))
 
 
-def cur_best_military_design_rating():
-    """Find and return the default combat rating of our best military design.
-
-    :return: float: rating of the best military design
+def cur_best_military_design_rating() -> float:
+    """
+    Find and return the default combat rating of our best military design.
     """
     current_turn = fo.currentTurn()
     if current_turn in _best_military_design_rating_cache:
