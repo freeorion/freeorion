@@ -41,12 +41,8 @@ class Enum(metaclass=EnumMeta):
         return sorted(result)
 
     @classmethod
-    def has_item(cls, item):
-        """Return True if specified item is a member of the enum
-
-        :type item: EnumItem
-        :rtype: bool
-        """
+    def has_item(cls, item: EnumItem) -> bool:
+        """Return True if specified item is a member of the enum."""
         return hasattr(cls, item.name) and isinstance(getattr(cls, item.name), EnumItem)
 
 

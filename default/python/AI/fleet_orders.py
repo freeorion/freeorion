@@ -9,74 +9,18 @@ import MilitaryAI
 import MoveUtilsAI
 import CombatRatingsAI
 from freeorion_tools import combine_ratings
-from target import TargetFleet, TargetSystem, TargetPlanet
-
-
-def trooper_move_reqs_met(main_fleet_mission, order, verbose):
-    """
-    Indicates whether or not move requirements specific to invasion troopers are met for the provided mission and order.
-    :type main_fleet_mission: AIFleetMission.AIFleetMission
-    :type order: OrderMove
-    :param verbose: whether to print verbose decision details
-    :type verbose: bool
-    :rtype: bool
-    """
-    # Don't advance outside of our fleet-supply zone unless the target either has no shields at all or there
-    # is already a military fleet assigned to secure the target, and don't take final jump unless the planet is
-    # (to the AI's knowledge) down to zero shields.  Additional checks will also be done by the later
-    # generic movement code
-    invasion_target = main_fleet_mission.target
-    invasion_planet = invasion_target.get_object()
-    invasion_system = invasion_target.get_system()
-    supplied_systems = fo.getEmpire().fleetSupplyableSystemIDs
-    # if about to leave supply lines
-    if order.target.id not in supplied_systems or fo.getUniverse().jumpDistance(order.fleet.id, invasion_system.id) < 5:
-        if invasion_planet.currentMeterValue(fo.meterType.maxShield):
-            military_support_fleets = MilitaryAI.get_military_fleets_with_target_system(invasion_system.id)
-            if not military_support_fleets:
-                if verbose:
-                    debug("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
-                          "because target (%s) has nonzero max shields and there is not yet a military fleet "
-                          "assigned to secure the target system." % (order.fleet.id, invasion_planet))
-                return False
-
-            # if there is a threat in the enemy system, do give military ships at least 1 turn to clear it
-            delay_to_move_troops = 1 if MilitaryAI.get_system_local_threat(order.target.id) else 0
-
-            def eta(fleet_id):
-                return FleetUtilsAI.calculate_estimated_time_of_arrival(fleet_id, invasion_system.id)
-
-            eta_this_fleet = eta(order.fleet.id)
-            if all(((eta_this_fleet - delay_to_move_troops) <= eta(fid) and eta(fid))
-                   for fid in military_support_fleets):
-                if verbose:
-                    debug("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
-                          "because target (%s) has nonzero max shields and no assigned military fleet would arrive"
-                          "at least %d turn earlier than the invasion fleet" % (order.fleet.id, invasion_planet,
-                                                                                delay_to_move_troops))
-                return False
-
-        if verbose:
-            debug("trooper_move_reqs_met() allowing Invasion fleet %d to leave supply "
-                  "because target (%s) has zero max shields or there is a military fleet assigned to secure "
-                  "the target system which will arrive at least 1 turn before the invasion fleet.",
-                  order.fleet.id, invasion_planet)
-    return True
+from target import Target, TargetFleet, TargetSystem, TargetPlanet
 
 
 class AIFleetOrder:
     """Stores information about orders which can be executed."""
     TARGET_TYPE = None
     ORDER_NAME = ''
-    fleet = None  # type: target.TargetFleet
-    target = None  # type: target.Target
 
-    def __init__(self, fleet, target):
+    def __init__(self, fleet: TargetFleet, target: Target):
         """
         :param fleet: fleet to execute order
-        :type fleet: target.TargetFleet
         :param target: fleet target, depends of order type
-        :type target: target.Target
         """
         if not isinstance(fleet, TargetFleet):
             error("Order required fleet got %s" % type(fleet))
@@ -199,7 +143,7 @@ class OrderMove(AIFleetOrder):
         threat = f_threat + m_threat + p_threat
         safety_factor = aistate.character.military_safety_factor()
         universe = fo.getUniverse()
-        if main_fleet_mission.type == MissionType.INVASION and not trooper_move_reqs_met(main_fleet_mission,
+        if main_fleet_mission.type == MissionType.INVASION and not trooper_move_reqs_met(main_fleet_mission.target,
                                                                                          self, verbose):
             return False
         if fleet_rating >= safety_factor * threat and fleet_rating_vs_planets >= p_threat:
@@ -601,3 +545,51 @@ class OrderRepair(AIFleetOrder):
         ships_cur_health, ships_max_health = FleetUtilsAI.get_current_and_max_structure(fleet_id)
         self.executed = (ships_cur_health == ships_max_health)
         return True
+
+
+def trooper_move_reqs_met(invasion_target: Target, order: OrderMove, verbose: bool) -> bool:
+    """
+    Indicates whether or not move requirements specific to invasion troopers are met for the provided mission and order.
+
+    :param verbose: whether to print verbose decision details
+    """
+    # Don't advance outside of our fleet-supply zone unless the target either has no shields at all or there
+    # is already a military fleet assigned to secure the target, and don't take final jump unless the planet is
+    # (to the AI's knowledge) down to zero shields.  Additional checks will also be done by the later
+    # generic movement code
+    invasion_planet = invasion_target.get_object()
+    invasion_system = invasion_target.get_system()
+    supplied_systems = fo.getEmpire().fleetSupplyableSystemIDs
+    # if about to leave supply lines
+    if order.target.id not in supplied_systems or fo.getUniverse().jumpDistance(order.fleet.id, invasion_system.id) < 5:
+        if invasion_planet.currentMeterValue(fo.meterType.maxShield):
+            military_support_fleets = MilitaryAI.get_military_fleets_with_target_system(invasion_system.id)
+            if not military_support_fleets:
+                if verbose:
+                    debug("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
+                          "because target (%s) has nonzero max shields and there is not yet a military fleet "
+                          "assigned to secure the target system." % (order.fleet.id, invasion_planet))
+                return False
+
+            # if there is a threat in the enemy system, do give military ships at least 1 turn to clear it
+            delay_to_move_troops = 1 if MilitaryAI.get_system_local_threat(order.target.id) else 0
+
+            def eta(fleet_id):
+                return FleetUtilsAI.calculate_estimated_time_of_arrival(fleet_id, invasion_system.id)
+
+            eta_this_fleet = eta(order.fleet.id)
+            if all(((eta_this_fleet - delay_to_move_troops) <= eta(fid) and eta(fid))
+                   for fid in military_support_fleets):
+                if verbose:
+                    debug("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
+                          "because target (%s) has nonzero max shields and no assigned military fleet would arrive"
+                          "at least %d turn earlier than the invasion fleet" % (order.fleet.id, invasion_planet,
+                                                                                delay_to_move_troops))
+                return False
+
+        if verbose:
+            debug("trooper_move_reqs_met() allowing Invasion fleet %d to leave supply "
+                  "because target (%s) has zero max shields or there is a military fleet assigned to secure "
+                  "the target system which will arrive at least 1 turn before the invasion fleet.",
+                  order.fleet.id, invasion_planet)
+    return True

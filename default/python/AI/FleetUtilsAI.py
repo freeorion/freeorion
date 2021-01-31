@@ -1,5 +1,6 @@
 import math
 from logging import error, warning, debug
+from typing import List, Set, Tuple, Union
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -14,15 +15,13 @@ from ShipDesignAI import get_ship_part
 from target import TargetPlanet, TargetFleet, TargetSystem
 
 
-def stats_meet_reqs(stats, requirements):
-    """Check if (fleet) stats meet requirements.
+def stats_meet_reqs(stats: dict, requirements: dict) -> bool:
+    """
+    Check if (fleet) stats meet requirements.
 
     :param stats: Stats (of fleet)
-    :type stats: dict
     :param requirements: Requirements
-    :type requirements: dict
     :return: True if requirements are met.
-    :rtype: bool
     """
     for key in requirements:
         if key not in stats:  # skip requirements not related to stats
@@ -34,18 +33,18 @@ def stats_meet_reqs(stats, requirements):
     return True
 
 
-def count_troops_in_fleet(fleet_id):
-    """Get the number of troops in the fleet.
+def count_troops_in_fleet(fleet_id: int) -> float:
+    """
+    Get the number of troops in the fleet.
 
     :param fleet_id: fleet to be queried
-    :type fleet_id: int
     :return: total troopCapacity of the fleet
     """
     universe = fo.getUniverse()
     fleet = universe.getFleet(fleet_id)
     if not fleet:
-        return 0
-    fleet_troop_capacity = 0
+        return 0.0
+    fleet_troop_capacity = 0.0
     for ship_id in fleet.shipIDs:
         ship = universe.getShip(ship_id)
         if ship:
@@ -53,15 +52,12 @@ def count_troops_in_fleet(fleet_id):
     return fleet_troop_capacity
 
 
-def get_targeted_planet_ids(planet_ids, mission_type):
+def get_targeted_planet_ids(planet_ids: List[int], mission_type: MissionType) -> List[int]:
     """Find the planets that are targets of the specified mission type.
 
     :param planet_ids: planets to be queried
-    :type planet_ids: list[int]
     :param mission_type:
-    :type mission_type: MissionType
     :return: Subset of *planet_ids* targeted by *mission_type*
-    :rtype: list[int]
     """
     selected_fleet_missions = get_aistate().get_fleet_missions_with_any_mission_types([mission_type])
     targeted_planets = []
@@ -76,8 +72,16 @@ def get_targeted_planet_ids(planet_ids, mission_type):
 
 # TODO: Avoid mutable arguments and use return values instead
 # TODO: Use Dijkstra's algorithm instead of BFS to consider starlane length
-def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
-                           fleet_pool_set, fleet_list, species="", ensure_return=False):
+def get_fleets_for_mission(
+        target_stats: dict,
+        min_stats: dict,
+        cur_stats: dict,
+        starting_system: int,
+        fleet_pool_set: Set[int],
+        fleet_list: List[int],
+        species: str = "",
+        ensure_return: bool = False,
+) -> List[int]:
     """Get fleets for a mission.
 
     Implements breadth-first search through systems starting at the **starting_sytem**.
@@ -89,22 +93,14 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
     an emergency use of the found fleets in fleet_list; if not to be used they should be added back to the main pool.
 
     :param target_stats: stats the fleet should ideally meet
-    :type target_stats: dict
     :param min_stats: minimum stats the final fleet must meet to be accepted
-    :type min_stats: dict
     :param cur_stats: (**mutated**) stat summary of selected fleets
-    :type cur_stats: dict
     :param starting_system: system_id where breadth-first-search is centered
-    :type starting_system: int
     :param fleet_pool_set: (**mutated**) fleets allowed to be selected. Split fleed_ids are added, used ones removed.
-    :type: fleet_pool_set: set[int]
     :param fleet_list: (**mutated**) fleets that are selected for the mission. Gets filled during the call.
-    :type fleet_list: list[int]
     :param species: species for colonization mission
-    :type species: str
     :param bool ensure_return: If true, fleet must have sufficient fuel to return into supply after mission
     :return: List of selected fleet_ids or empty list if couldn't meet minimum requirements.
-    :rtype: list[int]
     """
     universe = fo.getUniverse()
     colonization_roles = (ShipRoleType.CIVILIAN_COLONISATION, ShipRoleType.BASE_COLONISATION)
@@ -197,13 +193,11 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
         return []
 
 
-def split_fleet(fleet_id):
+def split_fleet(fleet_id: int) -> List[int]:
     """Split a fleet into its ships.
 
     :param fleet_id: fleet to be split.
-    :type fleet_id: int
     :return: New fleets. Empty if couldn't split.
-    :rtype: list[int]
     """
     universe = fo.getUniverse()
     empire_id = fo.empireID()
@@ -637,25 +631,21 @@ def get_fighter_capacity_of_fleet(fleet_id):
     return cur_capacity, max_capacity
 
 
-def get_fuel(fleet_id):
+def get_fuel(fleet_id: int) -> float:
     """Get fuel of fleet.
 
     :param fleet_id: Queried fleet
-    :type fleet_id: int
     :return: fuel of fleet
-    :rtype: float
     """
     fleet = fo.getUniverse().getFleet(fleet_id)
     return fleet and fleet.fuel or 0.0
 
 
-def get_max_fuel(fleet_id):
+def get_max_fuel(fleet_id: int) -> float:
     """Get maximum fuel capacity of fleet.
 
     :param fleet_id: Queried fleet
-    :type fleet_id: int
     :return: max fuel of fleet
-    :rtype: float
     """
     fleet = fo.getUniverse().getFleet(fleet_id)
     return fleet and fleet.maxFuel or 0.0
@@ -675,34 +665,19 @@ def calculate_estimated_time_of_arrival(fleet_id, target_system_id):
     return math.ceil(float(distance) / fleet.speed)
 
 
-def get_fleet_system(fleet):
-    """Return the current fleet location or the target system if currently on starlane.
-
-    :param fleet:
-    :type fleet: UniverseObject.TargetFleet | int
-    :return: current system_id or target system_id if currently on starlane
-    :rtype: int
-    """
+def get_fleet_system(fleet: Union[TargetFleet, int]) -> int:
+    """Return the current fleet location or the target system if currently on starlane."""
     if isinstance(fleet, int):
         fleet = fo.getUniverse().getFleet(fleet)
     return fleet.systemID if fleet.systemID != INVALID_ID else fleet.nextSystemID
 
 
-def get_current_and_max_structure(fleet):
-    """Return a 2-tuple of the sums of structure and maxStructure meters of all ships in the fleet
-
-    :param fleet:
-    :type fleet: int | target.TargetFleet | fo.Fleet
-    :return: tuple of sums of structure and maxStructure meters of all ships in the fleet
-    :rtype: (float, float)
-    """
+def get_current_and_max_structure(fleet: int) -> Tuple[float, float]:
+    """Return a 2-tuple of the sums of structure and maxStructure meters of all ships in the fleet."""
 
     universe = fo.getUniverse()
     destroyed_ids = universe.destroyedObjectIDs(fo.empireID())
-    if isinstance(fleet, int):
-        fleet = universe.getFleet(fleet)
-    elif isinstance(fleet, TargetFleet):
-        fleet = fleet.get_object()
+    fleet = universe.getFleet(fleet)
     if not fleet:
         return (0.0, 0.0)
     ships_cur_health = 0
