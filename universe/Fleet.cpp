@@ -1091,7 +1091,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const ObjectMap& objects) {
 
         std::pair<std::list<int>, double> path;
         try {
-            path = GetPathfinder()->ShortestPath(m_prev_system, target_system_id, this->Owner(), objects);
+            path = GetUniverse().GetPathfinder()->ShortestPath(m_prev_system, target_system_id, this->Owner(), objects);
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's previous: " << m_prev_system << " or moving to: " << target_system_id;
@@ -1110,7 +1110,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const ObjectMap& objects) {
     if (this->CanChangeDirectionEnRoute()) {
         std::pair<std::list<int>, double> path1;
         try {
-            path1 = GetPathfinder()->ShortestPath(m_next_system, dest_system_id, this->Owner(), objects);
+            path1 = GetUniverse().GetPathfinder()->ShortestPath(m_next_system, dest_system_id, this->Owner(), objects);
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;
@@ -1131,7 +1131,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const ObjectMap& objects) {
 
         std::pair<std::list<int>, double> path2;
         try {
-            path2 = GetPathfinder()->ShortestPath(m_prev_system, dest_system_id, this->Owner(), objects);
+            path2 = GetUniverse().GetPathfinder()->ShortestPath(m_prev_system, dest_system_id, this->Owner(), objects);
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's previous: " << m_prev_system << " or destination: " << dest_system_id;
@@ -1165,7 +1165,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const ObjectMap& objects) {
         // Cannot change direction. Must go to the end of the current starlane
         std::pair<std::list<int>, double> path;
         try {
-            path = GetPathfinder()->ShortestPath(m_next_system, dest_system_id, this->Owner(), objects);
+            path = GetUniverse().GetPathfinder()->ShortestPath(m_next_system, dest_system_id, this->Owner(), objects);
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;

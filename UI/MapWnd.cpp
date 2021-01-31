@@ -5450,7 +5450,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             start_system = fleet->NextSystemID();
 
         // get path to destination...
-        std::list<int> route = GetPathfinder()->ShortestPath(start_system, system_id, empire_id, objects).first;
+        std::list<int> route = GetUniverse().GetPathfinder()->ShortestPath(start_system, system_id, empire_id, objects).first;
         // Prepend a non-empty old_route to the beginning of route.
         if (append && !fleet->TravelRoute().empty()) {
             std::list<int> old_route(fleet->TravelRoute());
@@ -7339,9 +7339,9 @@ namespace {
         std::pair<std::list<int>, double> route_distance;
 
         if (ignore_hostile)
-            route_distance = GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, objects);
+            route_distance = GetUniverse().GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, objects);
         else
-            route_distance = GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, fleet_pred, empires, objects);
+            route_distance = GetUniverse().GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, fleet_pred, empires, objects);
 
         if (!route_distance.first.empty() && route_distance.second > 0.0) {
             RouteListType route(route_distance.first.begin(), route_distance.first.end());

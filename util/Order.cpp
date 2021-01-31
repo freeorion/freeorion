@@ -305,7 +305,7 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
     if (!Check(empire_id, fleet_id, dest_system_id))
         return;
 
-    auto fleet = Objects().get<Fleet>(FleetID());
+    auto fleet = GetUniverse().Objects().get<Fleet>(FleetID()); // TODO: Get from passed-in stuff
 
     int start_system = fleet->SystemID();
     if (start_system == INVALID_OBJECT_ID)
@@ -313,7 +313,7 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
     if (append && !fleet->TravelRoute().empty())
         start_system = fleet->TravelRoute().back();
 
-    auto short_path = GetPathfinder()->ShortestPath(start_system, m_dest_system, EmpireID(), Objects());
+    auto short_path = GetUniverse().GetPathfinder()->ShortestPath(start_system, m_dest_system, EmpireID(), Objects()); // TODO: Get PathFinder from passed-in stuff
     if (short_path.first.empty()) {
         ErrorLogger() << "FleetMoveOrder generated empty shortest path between system " << start_system
                       << " and " << m_dest_system << " for empire " << EmpireID() << " with fleet " << fleet_id;

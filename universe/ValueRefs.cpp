@@ -1047,7 +1047,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "NearestSystemID") {
         if (object->SystemID() != INVALID_OBJECT_ID)
             return object->SystemID();
-        return GetPathfinder()->NearestSystemTo(object->X(), object->Y(), context.ContextObjects());
+        return GetUniverse().GetPathfinder()->NearestSystemTo(object->X(), object->Y(), context.ContextObjects());  // TODO: Get PathFinder from ScriptingContext
 
     }
     else if (property_name == "NumShips") {
@@ -1645,7 +1645,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (m_int_ref2)
             object2_id = m_int_ref2->Eval(context);
 
-        int retval = GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id, context.ContextObjects());
+        int retval = GetUniverse().GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id, context.ContextObjects()); // TODO: Get PathFinder from ScriptingContext
         if (retval == INT_MAX)
             return -1;
         return retval;
@@ -1665,7 +1665,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         //if (m_int_ref3)
         //    empire_id = m_int_ref3->Eval(context);
 
-        int retval = GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id, context.ContextObjects());
+        int retval = GetUniverse().GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id, context.ContextObjects()); // TODO: Get PathFinder from ScriptingContext
         if (retval == INT_MAX)
             return -1;
         return retval;
@@ -1928,7 +1928,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (m_int_ref2)
             object2_id = m_int_ref2->Eval(context);
 
-        return GetPathfinder()->ShortestPathDistance(object1_id, object2_id, context.ContextObjects());
+        return GetUniverse().GetPathfinder()->ShortestPathDistance(object1_id, object2_id, context.ContextObjects()); // TODO: Get PathFinder from ScriptingContext
 
     }
     else if (variable_name == "SpeciesContentOpinion") {

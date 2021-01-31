@@ -175,7 +175,7 @@ std::string UniverseObject::Dump(unsigned short ntabs) const {
             os << "  at: " << sys_name;
     } else {
         os << "  at: (" << this->X() << ", " << this->Y() << ")";
-        int near_id = GetPathfinder()->NearestSystemTo(this->X(), this->Y(), Objects());
+        int near_id = GetUniverse().GetPathfinder()->NearestSystemTo(this->X(), this->Y(), Objects()); // Get Objects() and PathFinder from passed in stuff?
         auto near_system = Objects().get<System>(near_id);
         if (near_system) {
             const std::string& sys_name = near_system->Name();

@@ -139,8 +139,8 @@ namespace {
 
         int dest_system = fleet->FinalDestinationID();
 
-        std::pair<std::list<int>, double> route_pair =
-            GetPathfinder()->ShortestPath(start_system, dest_system, fleet->Owner(), objects);
+        std::pair<std::list<int>, double> route_pair =  // TODO: Get PathFinder from ScrptingContext
+            GetUniverse().GetPathfinder()->ShortestPath(start_system, dest_system, fleet->Owner(), objects);
 
         // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
         // to the next system that it was just set to move to anyway.
@@ -2884,8 +2884,6 @@ void SetDestination::Execute(ScriptingContext& context) const {
         return;
     }
 
-    Universe& universe = GetUniverse();
-
     Condition::ObjectSet valid_locations;
     // apply location condition to determine valid location to move target to
     m_location_condition->Eval(context, valid_locations);
@@ -2912,7 +2910,7 @@ void SetDestination::Execute(ScriptingContext& context) const {
         return;
 
     // find shortest path for fleet's owner
-    std::pair<std::list<int>, double> short_path = universe.GetPathfinder()->ShortestPath(
+    std::pair<std::list<int>, double> short_path = GetUniverse().GetPathfinder()->ShortestPath(  // TODO: Get PathFinder from ScriptingContext
         start_system_id, destination_system_id, target_fleet->Owner(), context.ContextObjects());
     const std::list<int>& route_list = short_path.first;
 
