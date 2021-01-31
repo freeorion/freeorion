@@ -1,4 +1,5 @@
 from logging import warning, debug
+from typing import List, Optional
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from aistate_interface import get_aistate
@@ -7,20 +8,17 @@ import fleet_orders
 import PlanetUtilsAI
 import pathfinding
 from AIDependencies import INVALID_ID, DRYDOCK_HAPPINESS_THRESHOLD
-from target import TargetSystem
+from target import TargetFleet, TargetSystem
 from turn_state import get_empire_drydocks, get_system_supply
 
 
-def create_move_orders_to_system(fleet, target):
+def create_move_orders_to_system(fleet: TargetFleet, target: TargetSystem) -> List["fleet_orders.OrderMove"]:
     """
     Create a list of move orders from the fleet's current system to the target system.
 
     :param fleet: Fleet to be moved
-    :type fleet: target.TargetFleet
     :param target: target system
-    :type target: target.TargetSystem
     :return: list of move orders
-    :rtype: list[fleet_orders.OrdersMove]
     """
     # TODO: use Graph Theory to construct move orders
     # TODO: add priority
@@ -38,20 +36,11 @@ def create_move_orders_to_system(fleet, target):
     return result
 
 
-def can_travel_to_system(fleet_id, start, target, ensure_return=False):
+def can_travel_to_system(
+        fleet_id: int, start: TargetSystem, target: TargetSystem, ensure_return: bool = False
+) -> List[TargetSystem]:
     """
     Return list systems to be visited.
-
-    :param fleet_id:
-    :type fleet_id: int
-    :param start:
-    :type start: target.TargetSystem
-    :param target:
-    :type target:  target.TargetSystem
-    :param ensure_return:
-    :type ensure_return: bool
-    :return:
-    :rtype: list
     """
     if start == target:
         return [TargetSystem(start.id)]
@@ -95,7 +84,7 @@ def get_nearest_supplied_system(start_system_id):
         return TargetSystem(supply_system_id)
 
 
-def get_best_drydock_system_id(start_system_id, fleet_id):
+def get_best_drydock_system_id(start_system_id: int, fleet_id: int) -> Optional[int]:
     """
 
     Get system_id of best drydock capable of repair, where best is nearest drydock
@@ -104,11 +93,8 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
     acceptable losses.
 
     :param start_system_id: current location of fleet - used to find closest target
-    :type start_system_id: int
     :param fleet_id: fleet that needs path to drydock
-    :type: int
     :return: most suitable system id where the fleet should be repaired.
-    :rtype: int
     """
     if start_system_id == INVALID_ID:
         warning("get_best_drydock_system_id passed bad system id.")

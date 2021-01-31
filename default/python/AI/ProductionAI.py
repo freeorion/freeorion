@@ -2,6 +2,7 @@ import math
 import random
 from logging import debug, error, info, warning
 from operator import itemgetter
+from typing import Iterable, List, Tuple
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -146,7 +147,7 @@ def get_best_ship_info(priority, loc=None):
         return None, None, None  # must be missing a Shipyard or other orbital (or missing tech)
 
 
-def get_best_ship_ratings(planet_ids):
+def get_best_ship_ratings(planet_ids: Iterable[int]) -> List[Tuple[float, int, int, "fo.shipDesign"]]:
     """
     Returns list of [partition, pid, designID, design] sublists, currently only for military ships.
 
@@ -164,8 +165,6 @@ def get_best_ship_ratings(planet_ids):
     used to select the chosen design/loc.
 
     :param planet_ids: list of planets ids.
-    :type planet_ids: list|set|tuple
-    :rtype: list
     """
     priority = PriorityType.PRODUCTION_MILITARY
     planet_ids = set(planet_ids).intersection(ColonisationAI.empire_shipyards)
@@ -1476,9 +1475,9 @@ def update_stockpile_use():
             planets_in_stockpile_enabled_group.update(group)
 
 
-def empire_has_colony_bld_species(building_name):
-    """Checks if this building is a colony building for which this empire has the required source species available.
-    :rtype: bool
+def empire_has_colony_bld_species(building_name: str) -> bool:
+    """
+    Checks if this building is a colony building for which this empire has the required source species available.
     """
     if not building_name.startswith('BLD_COL_'):
         return False
@@ -1486,9 +1485,9 @@ def empire_has_colony_bld_species(building_name):
     return species_name in ColonisationAI.empire_colonizers
 
 
-def already_has_completed_colony_building(planet_id):
-    """Checks if a planet has an already-completed (but not yet 'hatched') colony building.
-    :rtype: bool
+def already_has_completed_colony_building(planet_id) -> bool:
+    """
+    Checks if a planet has an already-completed (but not yet 'hatched') colony building.
     """
     universe = fo.getUniverse()
     planet = universe.getPlanet(planet_id)
@@ -1575,12 +1574,11 @@ def _print_production_queue(after_turn=False):
     info(prod_queue_table)
 
 
-def find_automatic_historic_analyzer_candidates():
+def find_automatic_historic_analyzer_candidates() -> List[int]:
     """
     Find possible locations for the BLD_AUTO_HISTORY_ANALYSER building and return a subset of chosen building locations.
 
     :return: Random possible locations up to max queueable amount. Empty if no location found or can't queue another one
-    :rtype: list
     """
     empire = fo.getEmpire()
     universe = fo.getUniverse()
@@ -1628,10 +1626,9 @@ def find_automatic_historic_analyzer_candidates():
     return chosen_locations
 
 
-def get_number_of_queued_outpost_and_colony_ships():
-    """Get the total number of queued outpost/colony ships/bases.
-
-    :rtype: int
+def get_number_of_queued_outpost_and_colony_ships() -> int:
+    """
+    Get the total number of queued outpost/colony ships/bases.
     """
     num_ships = 0
     considered_ship_roles = (ShipRoleType.CIVILIAN_OUTPOST, ShipRoleType.BASE_OUTPOST,
@@ -1643,10 +1640,9 @@ def get_number_of_queued_outpost_and_colony_ships():
     return num_ships
 
 
-def get_number_of_existing_outpost_and_colony_ships():
-    """Get the total number of existing outpost/colony ships/bases.
-
-    :rtype: int
+def get_number_of_existing_outpost_and_colony_ships() -> int:
+    """
+    Get the total number of existing outpost/colony ships/bases.
     """
     num_colony_fleets = len(FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION))
     num_outpost_fleets = len(FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST))

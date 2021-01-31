@@ -1,4 +1,5 @@
 from logging import error, debug
+from typing import Iterable, List, Union
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import ColonisationAI
@@ -11,25 +12,22 @@ def safe_name(univ_object):
     return (univ_object and univ_object.name) or "?"
 
 
-def sys_name_ids(sys_ids):
+def sys_name_ids(sys_ids: Iterable[int]) -> str:
     """
     Get a string representation of a list with system_ids.
 
     The returned string is of the form "[S_id<name>, ...]"
 
-    :param sys_ids: list of system ids
-    :rtype: string
     :return: string representation of the systems in the list
     """
     universe = fo.getUniverse()
     return ppstring([str(universe.getSystem(sys_id)) for sys_id in sys_ids])
 
 
-def planet_string(planet_ids):
+def planet_string(planet_ids: Union[int, List[int]]) -> str:
     """
     Get a string representation of the passed planets
     :param planet_ids: list of planet ids or single id
-    :rtype: str
     """
 
     def _safe_planet_name(planet_id):
@@ -41,12 +39,12 @@ def planet_string(planet_ids):
     return ppstring([_safe_planet_name(pid) for pid in planet_ids])
 
 
-def get_capital():
+def get_capital() -> int:
     """
     Return current empire capital id.
+
     If no current capital returns planet with biggest population in first not empty group.
     First check all planets with coloniser species, after that with ship builders and at last all inhabited planets.
-    :return: id
     """
     universe = fo.getUniverse()
     empire = fo.getEmpire()

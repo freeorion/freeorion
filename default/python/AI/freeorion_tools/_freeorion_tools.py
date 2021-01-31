@@ -232,12 +232,10 @@ def tuple_to_dict(tup):
 
 
 @cache_for_current_turn
-def get_partial_visibility_turn(obj_id):
+def get_partial_visibility_turn(obj_id: int) -> int:
     """Return the last turn an object had at least partial visibility.
 
-    :type obj_id: int
     :return: Last turn an object had at least partial visibility, -9999 if never
-    :rtype: int
     """
     visibility_turns_map = fo.getUniverse().getVisibilityTurnsMap(obj_id, fo.empireID())
     return visibility_turns_map.get(fo.visibility.partial, -9999)
