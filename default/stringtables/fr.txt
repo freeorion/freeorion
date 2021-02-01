@@ -3249,6 +3249,9 @@ Threads de rendu d'effets (IAs)
 OPTIONS_EFFECTS_THREADS_SERVER
 Threads de rendu d'effets (serveur)
 
+OPTIONS_DB_UI_EFFECTS_MOVE_TEST
+Test / modificateur moteur interne: Utilise des redirections de pointeurs, au lieu d'appels de conteneurs de pointeurs, lors de l'évaluation des conditions.
+
 OPTIONS_ADD_SAVED_DESIGNS
 Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 
@@ -5313,6 +5316,11 @@ Correspondances contenu articles
 ENC_SEARCH_NOTHING_FOUND
 Aucun résultat trouvé
 
+# %1% search string entered eg. "species"
+# %2% duration search took to complete eg. "643 ms"
+ENC_SEARCH_TOOK
+La recherche pour "%1%" a pris %2%
+
 # %1% specialized type description of the thing described in the encyclopedia
 #     (e.g. for a ship part it would be the ship part class).
 # %2% general type description of the thing described in the encyclopedia.
@@ -5464,7 +5472,7 @@ Combat dans %1% au Tour %2% :
 #     acted).
 # %5% the draw number (a draw is the acting of a single combat unit).
 ENC_COMBAT_ATTACK_STR
-%1% attaque %2% et inflige %3% de dommages
+%1% attaque %2% pour %3% de dommages
 
 # %1% link to a ship part description.
 # %2% potential damage done by the weapon.
