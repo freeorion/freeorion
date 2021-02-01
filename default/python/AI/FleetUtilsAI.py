@@ -608,12 +608,9 @@ def _print_systems_and_supply(system_ids):
             'supplied' if system_id in fleet_supplyable_system_ids else ''))
 
 
-def get_fighter_capacity_of_fleet(fleet_id):
-    """Return current and max fighter capacity
-
-    :param fleet_id:
-    :type fleet_id: int
-    :return: current and max fighter capacity
+def get_fighter_capacity_of_fleet(fleet_id: int) -> Tuple[int, int]:
+    """
+    Return current and max fighter capacity.
     """
     universe = fo.getUniverse()
     fleet = universe.getFleet(fleet_id)

@@ -3,7 +3,7 @@ from itertools import chain
 from typing import Iterable, Union
 
 
-def _combine_ratings(rating1, rating2):
+def _combine_ratings(rating1: float, rating2: float) -> float:
     """ Combines two combat ratings to a total rating.
 
     The formula takes into account the fact that the combined strength of two ships is more than the
@@ -28,13 +28,6 @@ def _combine_ratings(rating1, rating2):
     And thus         r_tot = (sqrt(r_1)+sqrt(r_2))^2 = r1 + r2 + 2*sqrt(r1*r2)      (5)
 
     Note that this function has commutative and associative properties.
-
-    :param rating1:
-    :type rating1: float
-    :param rating2:
-    :type rating2: float
-    :return: combined rating
-    :rtype: float
     """
     return rating1 + rating2 + 2 * (rating1 * rating2)**0.5
 

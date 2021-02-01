@@ -1,4 +1,5 @@
 from logging import warning
+from typing import Optional
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from AIDependencies import INVALID_ID
@@ -28,10 +29,7 @@ class Target:
             target = "inaccessible %s_%s<>" % (self.object_name, self.id)
         return str(target)
 
-    def get_object(self):
-        """
-        :rtype:  fo.universeObject | None
-        """
+    def get_object(self) -> Optional["fo.universeObject"]:
         return None
 
     def __bool__(self):
@@ -39,10 +37,9 @@ class Target:
 
     __nonzero__ = __bool__
 
-    def get_system(self):
+    def get_system(self) -> Optional["TargetSystem"]:
         """
         Returns the system that contains this object, or None.
-        :rtype: TargetSystem | None
         """
         raise NotImplementedError()
 
@@ -50,10 +47,9 @@ class Target:
 class TargetPlanet(Target):
     object_name = 'planet'
 
-    def get_system(self):
+    def get_system(self) -> Optional["TargetSystem"]:
         """
         Returns the system that contains this object, or None.
-        :rtype: TargetSystem | None
         """
         universe = fo.getUniverse()
         planet = universe.getPlanet(self.id)
@@ -69,10 +65,9 @@ class TargetPlanet(Target):
 class TargetSystem(Target):
     object_name = 'system'
 
-    def get_system(self):
+    def get_system(self) -> "TargetSystem":
         """
         Returns this object.
-        :rtype: TargetSystem
         """
         return self
 
@@ -86,18 +81,15 @@ class TargetFleet(Target):
     def get_current_system_id(self):
         """
         Get current systemID (or INVALID_ID if on a starlane).
-
-        :rtype: int
         """
         universe = fo.getUniverse()
         fleet = universe.getFleet(self.id)
         # will also return INVALID_ID if somehow the fleet cannot be retrieved
         return fleet.systemID if fleet else INVALID_ID
 
-    def get_system(self):
+    def get_system(self) -> Optional[TargetSystem]:
         """
         Get current fleet location or target system if currently on starlane.
-        :rtype: TargetSystem | None
         """
         universe = fo.getUniverse()
         fleet = universe.getFleet(self.id)
@@ -106,8 +98,5 @@ class TargetFleet(Target):
             system_id = fleet.systemID
         return TargetSystem(system_id)
 
-    def get_object(self):
-        """
-        :rtype fo.fleet:
-        """
+    def get_object(self) -> "fo.fleet":
         return fo.getUniverse().getFleet(self.id)

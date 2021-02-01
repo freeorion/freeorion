@@ -1,6 +1,6 @@
 from logging import error
 import re
-from typing import Iterable
+from typing import Iterable, List, Tuple
 
 normalization_dict = {
     'empire': 'empire_object',
@@ -118,18 +118,13 @@ def _get_duplicated_arguments_message(name, raw_arg_types) -> Iterable[str]:
     yield ""
 
 
-def merge_args(name, raw_arg_types, is_class):
+def merge_args(name: str, raw_arg_types: List[tuple], is_class: bool) -> Tuple[List[str], List[Tuple[str, str]]]:
     """
     Merge multiple set of arguments together.
 
     Single argument set is used as is.
     If we have two unique argument sets, and on of them is empty, use keywords.
     In other cases log error and use first one.
-
-    :param str name:
-    :param list[tuple] raw_arg_types:
-    :param bool is_class:
-    :rtype: (list[str], list[(str, str)])
     """
     # If wrapper define functions that have same name, and same arguments but different return types,
     # it will come here with len(arg_types) >= 2, where all arguments set are the same.

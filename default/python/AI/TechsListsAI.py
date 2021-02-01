@@ -4,6 +4,7 @@ various technologies to help the AI decide which technologies should be
 researched next.
 """
 from logging import warning, debug
+from typing import List, Union
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies as Dep
@@ -52,26 +53,22 @@ class TechGroup:
         remaining_techs = list(all_needed_techs - set(self._tech_queue))
         self._tech_queue.extend(remaining_techs)
 
-    def get_techs(self):
+    def get_techs(self) -> List:
         """Get the ordered list of techs defining research order.
 
         :return: Research order
-        :rtype: list
         """
         self._add_remaining()
         return list(self._tech_queue)
 
-    def enqueue(self, *tech_lists):
+    def enqueue(self, *tech_lists: Union[List[str], str]):
         """
         Pop first entry in the list or take entry if it is string and add it to research orders.
 
         Note that the passed list is modified within this function!
         If the list is already empty, the exception is caught and stored in self.__errors.
         Errors may be queried via get_errors()
-
-        :type tech_lists: list[list | str]
         """
-
         for step, this_list in enumerate(tech_lists, start=1):
             if isinstance(this_list, str):
                 tech_name = this_list
@@ -90,10 +87,9 @@ class TechGroup:
             else:
                 self._tech_queue.append(tech_name)
 
-    def get_errors(self):
-        """Return a list of occured exceptions.
-
-        :rtype: list[Exception]
+    def get_errors(self) -> List[Exception]:
+        """
+        Return a list of occured exceptions.
         """
         retval = list(self._errors)
         self._errors = []

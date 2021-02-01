@@ -1,6 +1,7 @@
 from heapq import heappush, heappop
 from collections import namedtuple
 from logging import warning, error
+from typing import Callable, Optional
 
 from aistate_interface import get_aistate
 import freeOrionAIInterface as fo
@@ -13,7 +14,7 @@ from turn_state import get_system_supply
 
 _DEBUG_CHAT = False
 _ACCEPTABLE_DETOUR_LENGTH = 2000
-path_information = namedtuple('path_information', ['distance', 'fuel', 'path'])
+PathInformation = namedtuple('PathInformation', ['distance', 'fuel', 'path'])
 
 
 # cache this so that boost python does not need to make a new copy every time this info is needed in a turn.
@@ -61,23 +62,23 @@ _STARLANE_TRAVEL_FUNC_MAP = {
 }
 
 
-def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0, mission_type_override=None):
+def find_path_with_resupply(
+        start: int,
+        target: int,
+        fleet_id: int,
+        minimum_fuel_at_target: int = 0,
+        mission_type_override: Optional[MissionType] = None
+) -> PathInformation:
     """
     :param start: start system id
-    :type start: int
     :param target:  target system id
-    :type target: int
     :param fleet_id: fleet to find the path for
-    :type fleet_id: int
     :param minimum_fuel_at_target: optional - if specified, only accept paths that leave the
                                    fleet with at least this much fuel left at the target system
-    :type minimum_fuel_at_target: int
     :param mission_type_override: optional - use the specified mission type, rather than the fleet's
                                   current mission type, for pathfinding routing choices
-    :type mission_type_override: MissionType
     :return: shortest possible path including resupply-detours in the form of system ids
              including both start and target system
-    :rtype: path_information
     """
 
     universe = fo.getUniverse()
@@ -146,10 +147,16 @@ def find_path_with_resupply(start, target, fleet_id, minimum_fuel_at_target=0, m
 #    - For large graphs, check existence of a path on a simplified graph (use single node to represent supply clusters)
 #    - For large graphs, check if there are any must-visit nodes (e.g. only possible resupplying system),
 #      then try to find the shortest path between those and start/target.
-def find_path_with_resupply_generic(start, target, start_fuel, max_fuel, system_suppliable_func,
-                                    minimum_fuel_at_target=0,
-                                    may_travel_system_func=None,
-                                    may_travel_starlane_func=None):
+def find_path_with_resupply_generic(
+        start: int,
+        target: int,
+        start_fuel: float,
+        max_fuel: float,
+        system_suppliable_func: Callable[[int], bool],
+        minimum_fuel_at_target=0,
+        may_travel_system_func: Optional[Callable[[int], bool]] = None,
+        may_travel_starlane_func: Optional[Callable[[int, int], bool]] = None
+) -> Optional[PathInformation]:
     """Find the shortest possible path between two systems that complies with FreeOrion fuel mechanics.
 
      If the fleet can travel the shortest possible path between start and target system, then return that path.
@@ -161,27 +168,18 @@ def find_path_with_resupply_generic(start, target, start_fuel, max_fuel, system_
      level at a given system, then that path is considered as possible detour for refueling and added to the queue.
 
     :param start: start system id
-    :type start: int
     :param target:  target system id
-    :type target: int
     :param start_fuel: starting fuel of the fleet
-    :type start_fuel: float
     :param max_fuel: max fuel of the fleet
-    :type max_fuel: float
     :param system_suppliable_func: boolean function with one int param s, specifying if a system s provides fleet supply
-    :type system_suppliable_func: (int) -> bool
     :param minimum_fuel_at_target: optional - if specified, only accept paths that leave the
                                    fleet with at least this much fuel left at the target system
-    :type minimum_fuel_at_target: int
     :param may_travel_system_func: optional - boolean function with one int param, s, specifying if
                                    a system s is OK to travel through
-    :type may_travel_system_func: (int) -> bool
     :param may_travel_starlane_func: optional - boolean function with 2 int params c, d, specifying if
                                      a starlane from c to d is OK to travel through
-    :type may_travel_starlane_func: (int, int) -> bool
     :return: shortest possible path including resupply-detours in the form of system ids
              including both start and target system
-    :rtype: path_information
     """
 
     universe = fo.getUniverse()
@@ -216,7 +214,7 @@ def find_path_with_resupply_generic(start, target, start_fuel, max_fuel, system_
     queue = []
 
     # add starting system to queue
-    heappush(queue, (shortest_possible_path_distance, path_information(distance=0, fuel=start_fuel, path=(start,))))
+    heappush(queue, (shortest_possible_path_distance, PathInformation(distance=0, fuel=start_fuel, path=(start,))))
 
     while queue:
         # get next system with path information
@@ -265,7 +263,7 @@ def find_path_with_resupply_generic(start, target, start_fuel, max_fuel, system_
                 continue
 
             # All checks passed, consider this path for further pathfinding
-            heappush(queue, (predicted_distance, path_information(new_dist, new_fuel, path_info.path + (neighbor,))))
+            heappush(queue, (predicted_distance, PathInformation(new_dist, new_fuel, path_info.path + (neighbor,))))
 
     # no path exists, not even if we refuel on the way
     return None

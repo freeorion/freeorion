@@ -665,7 +665,7 @@ def create_character(aggression=fo.aggression.maniacal, empire_id=0):
     return Character([Aggression(bypassed_aggression), EmpireIDTrait(bypassed_empire_id, bypassed_aggression)])
 
 
-def get_trait_bypass_value(name, default, sentinel):
+def get_trait_bypass_value(name: str, default: int, sentinel: int) -> int:
     """Fetch a bypassed trait value or return the default from OptionsDB.
 
     In OptionsDB a section ai.config.trait can contain default trait
@@ -721,14 +721,9 @@ def get_trait_bypass_value(name, default, sentinel):
     </ai>
 
     :param name: Name of the trait.
-    :type name: string
     :param default: Default value of the trait.
-    :type default: int
     :param sentinel: A value indicating no valid value.
-    :type sentinel: int
     :return: The trait
-    :rtype: Trait
-
     """
 
     force_option = "ai.trait.%s.force.enabled" % (name.lower(),)

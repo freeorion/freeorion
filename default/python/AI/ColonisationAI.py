@@ -522,10 +522,9 @@ def assign_colonisation_values(planet_ids, mission_type, species, detail=None, r
     return planet_values
 
 
-def next_turn_pop_change(cur_pop, target_pop):
-    """Population change calc taken from PopCenter.cpp.
-    :type cur_pop: float
-    :type target_pop: float
+def next_turn_pop_change(cur_pop: float, target_pop: float):
+    """
+    Population change calc taken from PopCenter.cpp.
     """
     if target_pop > cur_pop:
         pop_change = cur_pop * (target_pop + 1 - cur_pop) / 100
@@ -537,7 +536,7 @@ def next_turn_pop_change(cur_pop, target_pop):
 
 @cache_for_session
 def project_ind_val(init_pop, max_pop_size, init_industry, max_ind_factor, flat_industry, discount_multiplier):
-    """returns a discouted value for a projected industry stream over time with changing population"""
+    """Return a discouted value for a projected industry stream over time with changing population."""
     discount_factor = 0.95
     if discount_multiplier > 1.0:
         discount_factor = 1.0 - 1.0 / discount_multiplier
@@ -1369,12 +1368,10 @@ def __print_candidate_table(candidates, mission, show_detail=False):
 
 
 class OrbitalColonizationPlan:
-    def __init__(self, target_id, source_id):
+    def __init__(self, target_id: int, source_id: int):
         """
         :param target_id: id of the target planet to colonize
-        :type target_id: int
         :param source_id: id of the planet which should build the colony base
-        :type source_id: int
         """
         self.target = target_id
         self.source = source_id
