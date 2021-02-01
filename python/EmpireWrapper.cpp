@@ -10,7 +10,6 @@
 #include "../universe/Tech.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
-#include "../util/SitRepEntry.h"
 #include "SetWrapper.h"
 
 #include <boost/mpl/vector.hpp>
@@ -37,15 +36,6 @@ namespace {
     typedef PairToTupleConverter<int, int> IntIntPairConverter;
 
     typedef PairToTupleConverter<float, int> FloatIntPairConverter;
-
-
-    auto GetSitRep(const Empire& empire, int index) -> const SitRepEntry&
-    {
-        static SitRepEntry EMPTY_ENTRY;
-        if (index < 0 || index >= empire.NumSitRepEntries())
-            return EMPTY_ENTRY;
-        return *std::next(empire.SitRepBegin(), index);
-    }
 
     auto obstructedStarlanes(const Empire& empire) -> std::vector<std::pair<int, int>>
     {
@@ -301,9 +291,6 @@ namespace FreeOrionPython {
             .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   py::return_internal_reference<>()))
             .add_property("systemSupplyRanges",         make_function(&Empire::SystemSupplyRanges,          py::return_internal_reference<>()))
 
-            .def("numSitReps",                      &Empire::NumSitRepEntries)
-            .def("getSitRep",                       GetSitRep,
-                                                    py::return_internal_reference<>())
             .def("obstructedStarlanes",             obstructedStarlanes,
                                                     py::return_value_policy<py::return_by_value>())
             .def("supplyProjections",               jumpsToSuppliedSystem,
@@ -462,18 +449,6 @@ namespace FreeOrionPython {
                 py::return_value_policy<py::return_by_value>(),
                 "Returns the names of all policies (StringVec) in the"
                 " indicated policy category name (string).");
-
-        ///////////////////
-        //  SitRepEntry  //
-        ///////////////////
-        py::class_<SitRepEntry, boost::noncopyable>("sitrep", py::no_init)
-            .add_property("typeString",         make_function(&SitRepEntry::GetTemplateString,  py::return_value_policy<py::copy_const_reference>()))
-            .def("getDataString",               &SitRepEntry::GetDataString,
-                                                py::return_value_policy<py::copy_const_reference>())
-            .def("getDataIDNumber",             &SitRepEntry::GetDataIDNumber)
-            .add_property("getTags",            make_function(&SitRepEntry::GetVariableTags,    py::return_value_policy<py::return_by_value>()))
-            .add_property("getTurn",            &SitRepEntry::GetTurn)
-        ;
 
         ///////////////////////
         // DiplomaticMessage //

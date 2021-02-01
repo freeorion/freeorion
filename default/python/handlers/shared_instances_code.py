@@ -48,8 +48,6 @@ def get_common_instances() -> Generator:
     planet = universe.getPlanet(empire_of_first_ai.capitalID)
     yield planet
 
-    yield empire_of_first_ai.getSitRep(0)
-
     yield universe.getSystem(planet.systemID)
 
     tech = fo.getTech('SHP_WEAPON_2_1')

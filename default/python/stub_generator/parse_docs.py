@@ -31,7 +31,6 @@ normalization_dict = {
     'resPool': 'res_pool',
     'researchQueueElement': 'research_queue_element',
     'shipSlotType': 'ship_slot_type',
-    'sitrep': 'sitrep_object',
     'IntIntMap': 'int_int_map',
     'IntPairVec': 'int_pair_list',
     'IntSet': 'int_set',
