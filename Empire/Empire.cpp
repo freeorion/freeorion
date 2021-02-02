@@ -1001,12 +1001,11 @@ void Empire::AutoTurnSetReady() {
     SetReady(m_auto_turn_count != 0);
 }
 
-void Empire::SetAutoTurn(int turns_count) {
-    m_auto_turn_count = turns_count;
-}
+void Empire::SetAutoTurn(int turns_count)
+{ m_auto_turn_count = turns_count; }
 
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects, const ObjectMap& objects) {
-    //std::cout << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name() << std::endl;
+    TraceLogger(supply) << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name();
     m_supply_system_ranges.clear();
 
     // as of this writing, only planets can generate supply propagation
