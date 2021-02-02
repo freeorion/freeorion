@@ -196,7 +196,6 @@ void AIClientApp::HandlePythonAICrash() {
         ErrorMessage(str(FlexibleFormat(UserString("ERROR_PYTHON_AI_CRASHED")) % PlayerName()) , true));
 }
 
-
 void AIClientApp::HandleMessage(const Message& msg) {
     //DebugLogger() << "AIClientApp::HandleMessage " << msg.Type();
     switch (msg.Type()) {
@@ -249,7 +248,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
         ExtractGameStartMessageData(msg,                     single_player_game,     m_empire_id,
                                     m_current_turn,          m_empires,              m_universe,
-                                    GetSpeciesManager(),     GetCombatLogManager(),  GetSupplyManager(),
+                                    m_species_manager,       GetCombatLogManager(),  m_supply_manager,
                                     m_player_info,           m_orders,               loaded_game_data,
                                     ui_data_available,       ui_data,                state_string_available,
                                     save_state_string,       m_galaxy_setup_data);
