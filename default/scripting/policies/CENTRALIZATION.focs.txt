@@ -25,9 +25,7 @@ Policy
                 SetTargetConstruction value = Value
                     + (NamedReal name = "PLC_CENTRALIZATION_TARGET_CONSTRUCTION_FLAT" value = 10)
                 SetMaxSupply value = Value
-                    + (NamedReal name = "PLC_CENTRALIZATION_MAX_SUPPLY_FLAT" value = -2)
-                SetMaxStockpile value = Value
-                    + (NamedReal name = "PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT" value = -2)
+                    + (NamedReal name = "PLC_CENTRALIZATION_CAPITAL_MAX_SUPPLY_FLAT" value = 1)
             ]
 
         EffectsGroup
@@ -42,24 +40,19 @@ Policy
                 ]
             ]
             effects = SetTargetInfluence value = Value
-                        + (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_FLAT" value = -3)
+                        + (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_FLAT" value = -2)
 
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Population low = 0.001
-                ResourceSupplyConnected empire = LocalCandidate.Owner condition = And [
-                    Planet
-                    OwnedBy empire = Source.Owner
-                    Capital
-                ]
                 Not Capital
             ]
-            effects = SetTargetInfluence value = Value + max(
-                        (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX" value = -3),
-                        (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP" value = -0.2)
-                            * JumpsBetween object = Source.ID object = Target.ID)
+            effects = [
+                SetMaxSupply value = Value + (NamedReal name = "PLC_CENTRALIZATION_MAX_SUPPLY_FLAT" value = -1)
+                SetMaxStockpile value = Value + (NamedReal name = "PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT" value = -1)
+            ]
     ]
     graphic = "icons/policies/centralization.png"
 

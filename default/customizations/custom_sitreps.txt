@@ -5,16 +5,12 @@
 // a suitable place to start is http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
 
 
-// Important, the following line "effectsgroups = [" is functional and important, do not change it
-effectsgroups = [
-
-
 // normally, for a custom sitrep the player will write their own message here, and label, and not look them up in the Stringtable.  For this first custom sitrep,
 // however, since it is the primary way we introduce the custom sitrep capability to players, we use stringtable references so that the message and label may be more 
 // readily translated into multiple languages as part of our standard distribution.
 
-
-EffectsGroup
+CUSTOM_SITREPS
+'''EffectsGroup
     scope = Source
     activation = Turn low = 0 high = 0
     effects =
@@ -160,7 +156,7 @@ EffectsGroup
                 Unowned
             ]
             VisibleToEmpire empire = Source.Owner
-            Turn low = [[ETA_NEXT_TURN]] high = [[ETA_NEXT_TURN]]
+            Turn low = (CurrentTurn + LocalCandidate.ETA - 1) high = (CurrentTurn + LocalCandidate.ETA - 1)
             (RootCandidate.ID = LocalCandidate.NextSystemID)
         ]
         effects = GenerateSitRepMessage
@@ -171,9 +167,6 @@ EffectsGroup
                 tag = "system"  data = Target.ID
             ]
             empire = Source.Owner
-
-ETA_NEXT_TURN
-'''(CurrentTurn + LocalCandidate.ETA - 1)'''
 
 
 //*********************************************************************************************************************************************************
@@ -313,8 +306,6 @@ EffectsGroup
             ]
             empire = Source.Owner
     ]
-
-// Note, the "]" on the following line is functional and important; it must be present and all EffectsGroups must be above it.
-]
+'''
 
 #include "/scripting/common/priorities.macros"
