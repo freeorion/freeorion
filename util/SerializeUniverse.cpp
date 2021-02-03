@@ -65,11 +65,12 @@ void serialize(Archive& ar, ObjectMap& objmap, unsigned int const version)
 }
 
 template <typename Archive>
-void serialize(Archive& ar, Universe& obj, unsigned int const version)
+void serialize(Archive& ar, Universe& u, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ObjectMap                                 objects;
+    std::unique_ptr<ObjectMap>                objects_ptr = std::make_unique<ObjectMap>();
+    ObjectMap& objects =                     *objects_ptr;
     std::set<int>                             destroyed_object_ids;
     Universe::EmpireObjectMap                 empire_latest_known_objects;
     Universe::EmpireObjectVisibilityMap       empire_object_visibility;
@@ -87,33 +88,33 @@ void serialize(Archive& ar, Universe& obj, unsigned int const version)
     if (Archive::is_saving::value) {
         DebugLogger() << "Universe::serialize : Getting gamestate data";
         timer.EnterSection("collecting data");
-        obj.GetObjectsToSerialize(              objects,                            GlobalSerializationEncodingForEmpire());
-        obj.GetDestroyedObjectsToSerialize(     destroyed_object_ids,               GlobalSerializationEncodingForEmpire());
-        obj.GetEmpireKnownObjectsToSerialize(   empire_latest_known_objects,        GlobalSerializationEncodingForEmpire());
-        obj.GetEmpireObjectVisibilityMap(       empire_object_visibility,           GlobalSerializationEncodingForEmpire());
-        obj.GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     GlobalSerializationEncodingForEmpire());
-        obj.GetEmpireKnownDestroyedObjects(     empire_known_destroyed_object_ids,  GlobalSerializationEncodingForEmpire());
-        obj.GetEmpireStaleKnowledgeObjects(     empire_stale_knowledge_object_ids,  GlobalSerializationEncodingForEmpire());
-        obj.GetShipDesignsToSerialize(          ship_designs,                       GlobalSerializationEncodingForEmpire());
+        u.GetObjectsToSerialize(              objects,                            GlobalSerializationEncodingForEmpire());
+        u.GetDestroyedObjectsToSerialize(     destroyed_object_ids,               GlobalSerializationEncodingForEmpire());
+        u.GetEmpireKnownObjectsToSerialize(   empire_latest_known_objects,        GlobalSerializationEncodingForEmpire());
+        u.GetEmpireObjectVisibilityMap(       empire_object_visibility,           GlobalSerializationEncodingForEmpire());
+        u.GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     GlobalSerializationEncodingForEmpire());
+        u.GetEmpireKnownDestroyedObjects(     empire_known_destroyed_object_ids,  GlobalSerializationEncodingForEmpire());
+        u.GetEmpireStaleKnowledgeObjects(     empire_stale_knowledge_object_ids,  GlobalSerializationEncodingForEmpire());
+        u.GetShipDesignsToSerialize(          ship_designs,                       GlobalSerializationEncodingForEmpire());
         timer.EnterSection("");
     }
 
     if (Archive::is_loading::value) {
         // clean up any existing dynamically allocated contents before replacing
         // containers with deserialized data.
-        obj.Clear();
+        u.Clear();
     }
 
-    ar  & make_nvp("m_universe_width", obj.m_universe_width);
-    DebugLogger() << "Universe::serialize : " << serializing_label << " universe width: " << obj.m_universe_width;
+    ar  & make_nvp("m_universe_width", u.m_universe_width);
+    DebugLogger() << "Universe::serialize : " << serializing_label << " universe width: " << u.m_universe_width;
 
     timer.EnterSection("designs");
     ar  & make_nvp("ship_designs", ship_designs);
     if (Archive::is_loading::value)
-        obj.m_ship_designs.swap(ship_designs);
+        u.m_ship_designs.swap(ship_designs);
     DebugLogger() << "Universe::serialize : " << serializing_label << " " << ship_designs.size() << " ship designs";
 
-    ar  & make_nvp("m_empire_known_ship_design_ids", obj.m_empire_known_ship_design_ids);
+    ar  & make_nvp("m_empire_known_ship_design_ids", u.m_empire_known_ship_design_ids);
 
     timer.EnterSection("vis / known");
     ar  & make_nvp("empire_object_visibility", empire_object_visibility);
@@ -128,40 +129,40 @@ void serialize(Archive& ar, Universe& obj, unsigned int const version)
     timer.EnterSection("");
     if (Archive::is_loading::value) {
         timer.EnterSection("load swap");
-        obj.m_empire_object_visibility.swap(empire_object_visibility);
-        obj.m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
-        obj.m_empire_known_destroyed_object_ids.swap(empire_known_destroyed_object_ids);
-        obj.m_empire_stale_knowledge_object_ids.swap(empire_stale_knowledge_object_ids);
+        u.m_empire_object_visibility.swap(empire_object_visibility);
+        u.m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
+        u.m_empire_known_destroyed_object_ids.swap(empire_known_destroyed_object_ids);
+        u.m_empire_stale_knowledge_object_ids.swap(empire_stale_knowledge_object_ids);
         timer.EnterSection("");
     }
 
     timer.EnterSection("objects");
     ar  & make_nvp("objects", objects);
-    DebugLogger() << "Universe::serialize : " << serializing_label << " " << objects.size() << " objects";
     if (Archive::is_loading::value) {
-        obj.m_objects.swap(objects);
+        u.m_objects.swap(objects_ptr);
     }
+    DebugLogger() << "Universe::" << serializing_label << " " << u.m_objects->size() << " objects";
 
     timer.EnterSection("destroyed ids");
     ar  & make_nvp("destroyed_object_ids", destroyed_object_ids);
     DebugLogger() << "Universe::serialize : " << serializing_label << " " << destroyed_object_ids.size() << " destroyed object ids";
     if (Archive::is_loading::value) {
-        obj.m_destroyed_object_ids.swap(destroyed_object_ids);
-        obj.m_objects.UpdateCurrentDestroyedObjects(obj.m_destroyed_object_ids);
+        u.m_destroyed_object_ids.swap(destroyed_object_ids);
+        u.m_objects->UpdateCurrentDestroyedObjects(u.m_destroyed_object_ids);
     }
 
     timer.EnterSection("latest known objects");
     ar  & make_nvp("empire_latest_known_objects", empire_latest_known_objects);
     DebugLogger() << "Universe::serialize : " << serializing_label << " empire known objects for " << empire_latest_known_objects.size() << " empires";
     if (Archive::is_loading::value) {
-        obj.m_empire_latest_known_objects.swap(empire_latest_known_objects);
+        u.m_empire_latest_known_objects.swap(empire_latest_known_objects);
     }
 
     timer.EnterSection("id allocator");
     if (version >= 1) {
         DebugLogger() << "Universe::serialize : " << serializing_label << " id allocator version = " << version;
-        obj.m_object_id_allocator->SerializeForEmpire(ar, version, GlobalSerializationEncodingForEmpire());
-        obj.m_design_id_allocator->SerializeForEmpire(ar, version, GlobalSerializationEncodingForEmpire());
+        u.m_object_id_allocator->SerializeForEmpire(ar, version, GlobalSerializationEncodingForEmpire());
+        u.m_design_id_allocator->SerializeForEmpire(ar, version, GlobalSerializationEncodingForEmpire());
     } else {
         if (Archive::is_loading::value) {
             int dummy_last_allocated_object_id;
@@ -174,12 +175,12 @@ void serialize(Archive& ar, Universe& obj, unsigned int const version)
             DebugLogger() << "Universe::serialize : " << serializing_label << " legacy id allocator";
             // For legacy loads pre-dating the use of the IDAllocator the server
             // allocators need to be initialized with a list of the empires.
-            std::vector<int> allocating_empire_ids(obj.m_empire_latest_known_objects.size());
-            std::transform(obj.m_empire_latest_known_objects.begin(), obj.m_empire_latest_known_objects.end(),
+            std::vector<int> allocating_empire_ids(u.m_empire_latest_known_objects.size());
+            std::transform(u.m_empire_latest_known_objects.begin(), u.m_empire_latest_known_objects.end(),
                            allocating_empire_ids.begin(),
                            [](const std::pair<int, ObjectMap> ii) { return ii.first; });
 
-            obj.ResetAllIDAllocation(allocating_empire_ids);
+            u.ResetAllIDAllocation(allocating_empire_ids);
         }
     }
 
@@ -188,26 +189,18 @@ void serialize(Archive& ar, Universe& obj, unsigned int const version)
         std::map<std::string, std::map<int, std::map<int, double>>> dummy_stat_records;
         ar  & boost::serialization::make_nvp("m_stat_records", dummy_stat_records);
     } else {
-        ar  & make_nvp("m_stat_records", obj.m_stat_records);
-        DebugLogger() << "Universe::serialize : " << serializing_label << " " << obj.m_stat_records.size() << " types of statistic";
+        ar  & make_nvp("m_stat_records", u.m_stat_records);
+        DebugLogger() << "Universe::serialize : " << serializing_label << " " << u.m_stat_records.size() << " types of statistic";
     }
     timer.EnterSection("");
-
-    if (Archive::is_saving::value) {
-        DebugLogger() << "Universe::serialize : Cleaning up temporary data";
-        // clean up temporary objects in temporary ObjectMaps.
-        objects.clear();
-        for (auto& elko : empire_latest_known_objects)
-        { elko.second.clear(); }
-    }
 
     if (Archive::is_loading::value) {
         DebugLogger() << "Universe::serialize : updating empires' latest known object destruction states";
         // update known destroyed objects state in each empire's latest known
         // objects.
-        for (auto& elko : obj.m_empire_latest_known_objects) {
-            auto destroyed_ids_it = obj.m_empire_known_destroyed_object_ids.find(elko.first);
-            if (destroyed_ids_it != obj.m_empire_known_destroyed_object_ids.end())
+        for (auto& elko : u.m_empire_latest_known_objects) {
+            auto destroyed_ids_it = u.m_empire_known_destroyed_object_ids.find(elko.first);
+            if (destroyed_ids_it != u.m_empire_known_destroyed_object_ids.end())
                 elko.second.UpdateCurrentDestroyedObjects(destroyed_ids_it->second);
         }
     }

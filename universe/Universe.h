@@ -108,8 +108,8 @@ public:
 
 
     /** Returns objects in this Universe. */
-    const ObjectMap&        Objects() const { return m_objects; }
-    ObjectMap&              Objects()       { return m_objects; }
+    const ObjectMap&        Objects() const { return *m_objects; }
+    ObjectMap&              Objects()       { return *m_objects; }
 
     /** Returns latest known state of objects for the Empire with
       * id \a empire_id or the true / complete state of all objects in this
@@ -489,7 +489,7 @@ private:
       * vector is passed, it will instead update all existing objects. */
     void UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, EmpireManager& empires, bool do_accounting);
 
-    ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
+    std::unique_ptr<ObjectMap>      m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
     EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
 
     std::set<int>                   m_destroyed_object_ids;             ///< all ids of objects that have been destroyed (on server) or that a player knows were destroyed (on clients)
