@@ -30,7 +30,7 @@ public:
     const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{GetUniverse().GetEmpireObjectVisibilityTurnMap()};
     const EmpireManager::DiploStatusMap&           diplo_statuses{Empires().GetDiplomaticStatuses()};
 
-    ObjectMap                           objects;                       ///< actual state of objects relevant to combat, filtered and copied for system where combat occurs
+    std::unique_ptr<ObjectMap>          objects;                       ///< actual state of objects relevant to combat, filtered and copied for system where combat occurs
     Universe::EmpireObjectVisibilityMap empire_object_visibility;      ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
     int                                 bout = 0;                      ///< current combat bout, used with CombatBout ValueRef for implementing bout dependent targeting. First combat bout is 1
     int                                 turn = INVALID_GAME_TURN;      ///< main game turn

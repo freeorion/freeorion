@@ -381,12 +381,13 @@ template void SerializeIncompleteLogs<freeorion_xml_iarchive>(freeorion_xml_iarc
 
 
 template <typename Archive>
-void serialize(Archive & ar, CombatInfo& obj, const unsigned int version)
+void serialize(Archive & ar, CombatInfo& info, const unsigned int version)
 {
     using namespace boost::serialization;
 
     std::set<int>                       filtered_empire_ids;
-    ObjectMap                           filtered_objects;
+    std::unique_ptr<ObjectMap>          filtered_objects_ptr = std::make_unique<ObjectMap>();
+    ObjectMap&                          filtered_objects = *filtered_objects_ptr;
     std::set<int>                       filtered_damaged_object_ids;
     std::set<int>                       filtered_destroyed_object_ids;
     std::map<int, std::set<int>>        filtered_destroyed_object_knowers;
@@ -394,17 +395,17 @@ void serialize(Archive & ar, CombatInfo& obj, const unsigned int version)
     std::vector<CombatEventPtr>         filtered_combat_events;
 
     if (Archive::is_saving::value) {
-        obj.GetEmpireIdsToSerialize(             filtered_empire_ids,               GlobalSerializationEncodingForEmpire());
-        obj.GetObjectsToSerialize(               filtered_objects,                  GlobalSerializationEncodingForEmpire());
-        obj.GetDamagedObjectsToSerialize(        filtered_damaged_object_ids,       GlobalSerializationEncodingForEmpire());
-        obj.GetDestroyedObjectsToSerialize(      filtered_destroyed_object_ids,     GlobalSerializationEncodingForEmpire());
-        obj.GetDestroyedObjectKnowersToSerialize(filtered_destroyed_object_knowers, GlobalSerializationEncodingForEmpire());
-        obj.GetEmpireObjectVisibilityToSerialize(filtered_empire_object_visibility, GlobalSerializationEncodingForEmpire());
-        obj.GetCombatEventsToSerialize(          filtered_combat_events,            GlobalSerializationEncodingForEmpire());
+        info.GetEmpireIdsToSerialize(             filtered_empire_ids,               GlobalSerializationEncodingForEmpire());
+        info.GetObjectsToSerialize(               filtered_objects,                  GlobalSerializationEncodingForEmpire());
+        info.GetDamagedObjectsToSerialize(        filtered_damaged_object_ids,       GlobalSerializationEncodingForEmpire());
+        info.GetDestroyedObjectsToSerialize(      filtered_destroyed_object_ids,     GlobalSerializationEncodingForEmpire());
+        info.GetDestroyedObjectKnowersToSerialize(filtered_destroyed_object_knowers, GlobalSerializationEncodingForEmpire());
+        info.GetEmpireObjectVisibilityToSerialize(filtered_empire_object_visibility, GlobalSerializationEncodingForEmpire());
+        info.GetCombatEventsToSerialize(          filtered_combat_events,            GlobalSerializationEncodingForEmpire());
     }
 
-    ar  & make_nvp("turn", obj.turn)
-        & make_nvp("system_id", obj.system_id)
+    ar  & make_nvp("turn", info.turn)
+        & make_nvp("system_id", info.system_id)
         & BOOST_SERIALIZATION_NVP(filtered_empire_ids)
         & BOOST_SERIALIZATION_NVP(filtered_objects)
         & BOOST_SERIALIZATION_NVP(filtered_damaged_object_ids)
@@ -414,12 +415,12 @@ void serialize(Archive & ar, CombatInfo& obj, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(filtered_combat_events);
 
     if (Archive::is_loading::value) {
-        obj.empire_ids.swap(              filtered_empire_ids);
-        obj.objects.swap(                 filtered_objects);
-        obj.damaged_object_ids.swap(      filtered_damaged_object_ids);
-        obj.destroyed_object_ids.swap(    filtered_destroyed_object_ids);
-        obj.destroyed_object_knowers.swap(filtered_destroyed_object_knowers);
-        obj.empire_object_visibility.swap(filtered_empire_object_visibility);
-        obj.combat_events.swap(           filtered_combat_events);
+        info.empire_ids.swap(              filtered_empire_ids);
+        info.objects.swap(                 filtered_objects_ptr);
+        info.damaged_object_ids.swap(      filtered_damaged_object_ids);
+        info.destroyed_object_ids.swap(    filtered_destroyed_object_ids);
+        info.destroyed_object_knowers.swap(filtered_destroyed_object_knowers);
+        info.empire_object_visibility.swap(filtered_empire_object_visibility);
+        info.combat_events.swap(           filtered_combat_events);
     }
 }

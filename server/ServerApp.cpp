@@ -841,7 +841,7 @@ void ServerApp::SendNewGameStartMessages() {
 
     // send new game start messages
     DebugLogger() << "SendGameStartMessages: Sending GameStartMessages to players";
-    for (auto player_connection_it = m_networking.established_begin();
+    for (auto player_connection_it = m_networking.established_begin();  // can't easily use range for loop due to non-standard begin and end
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
@@ -2410,7 +2410,7 @@ namespace {
       * updating after combat. */
     void BackProjectSystemCombatInfoObjectMeters(std::vector<CombatInfo>& combats) {
         for (CombatInfo& combat : combats) {
-            for (const auto& object : combat.objects.all())
+            for (const auto& object : combat.objects->all())
                 object->BackPropagateMeters();
         }
     }
@@ -3381,7 +3381,7 @@ void ServerApp::ProcessCombats() {
             combat_system->SetLastTurnBattleHere(CurrentTurn());
 
         DebugLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System id: " + std::to_string(combat_info.system_id) + ")");
-        TraceLogger(combat) << combat_info.objects.Dump();
+        TraceLogger(combat) << combat_info.objects->Dump();
 
         AutoResolveCombat(combat_info);
     }
