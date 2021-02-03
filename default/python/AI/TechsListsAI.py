@@ -3,11 +3,12 @@ The TechsListAI module provides functions that describes dependencies between
 various technologies to help the AI decide which technologies should be
 researched next.
 """
-from logging import warning, debug
-from typing import List, Union
+from itertools import zip_longest
+from logging import debug, warning
+from typing import Iterator, List, Union
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies as Dep
+import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 
 def unusable_techs():
@@ -46,12 +47,24 @@ class TechGroup:
         self._tech_queue = []    # defines the research order - forced to contain all techs.
         self._errors = []          # exceptions that occured when trying to pop from already empty lists
 
+    @staticmethod
+    def _iterate_over_remaining_techs(list_of_tech_lists: List[List[str]]) -> Iterator[str]:
+        """
+        Iterate over items in a stable way.
+
+        Take 0 item from all list, after take 1 items, etc. Missed values ignored.
+
+        >>> list(TechGroup._iterate_over_remaining_techs([["a", "b"], ["x", "y", "z"]]))
+        ["a", "x", "b", "y", "z"]
+        """
+        return (tech for level in zip_longest(*list_of_tech_lists) for tech in level if tech)
+
     def _add_remaining(self):
         """Add all remaining techs in the tech group to self._tech_queue if not already contained."""
-        all_needed_techs = set(self.economy + self.weapon + self.armor
-                               + self.misc + self.defense + self.hull)
-        remaining_techs = list(all_needed_techs - set(self._tech_queue))
-        self._tech_queue.extend(remaining_techs)
+        all_lists = [self.economy, self.weapon, self.armor, self.misc, self.defense, self.hull]
+        for tech in self._iterate_over_remaining_techs(all_lists):
+            if tech not in self._tech_queue:
+                self._tech_queue.append(tech)
 
     def get_techs(self) -> List:
         """Get the ordered list of techs defining research order.
