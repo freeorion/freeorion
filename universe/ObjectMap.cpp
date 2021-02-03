@@ -223,21 +223,6 @@ void ObjectMap::clear() {
     FOR_EACH_EXISTING_MAP(ClearMap);
 }
 
-void ObjectMap::swap(ObjectMap& rhs) {
-    // SwapMap uses ObjectMap::Map<T> but this function isn't available for the existing maps,
-    // so the FOR_EACH_EXISTING_MAP macro doesn't work with with SwapMap
-    // and it is instead necessary to write them out explicitly.
-    m_existing_objects.swap(rhs.m_existing_objects);
-    m_existing_buildings.swap(rhs.m_existing_buildings);
-    m_existing_fields.swap(rhs.m_existing_fields);
-    m_existing_fleets.swap(rhs.m_existing_fleets);
-    m_existing_ships.swap(rhs.m_existing_ships);
-    m_existing_planets.swap(rhs.m_existing_planets);
-    m_existing_pop_centers.swap(rhs.m_existing_pop_centers);
-    m_existing_resource_centers.swap(rhs.m_existing_resource_centers);
-    m_existing_systems.swap(rhs.m_existing_systems);
-    FOR_EACH_MAP(SwapMap, rhs);
-}
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     std::vector<int> result;

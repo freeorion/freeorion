@@ -180,9 +180,8 @@ public:
     /** Empties map, removing shared ownership by this map of all
       * previously contained objects. */
     void clear();
-
-    /** Swaps the contents of *this with \a rhs. */
-    void swap(ObjectMap& rhs);
+    ///** Swaps the contents of *this with \a rhs. */
+    //void swap(ObjectMap& rhs);
 
     /** */
     void UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_object_ids);
