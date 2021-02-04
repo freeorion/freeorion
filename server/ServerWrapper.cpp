@@ -1276,26 +1276,10 @@ namespace {
         return py::object(planet->CardinalSuffix());
     }
 
-    auto PlayerEmpireColor(const PlayerSetupData* psd) -> py::tuple
-    {
-        EmpireColor color = psd->empire_color;
-        return py::make_tuple(
-            std::get<0>(color),
-            std::get<1>(color),
-            std::get<2>(color),
-            std::get<3>(color));
-    }
 }
 
 namespace FreeOrionPython {
     void WrapServer() {
-        py::class_<PlayerSetupData>("PlayerSetupData")
-            .def_readwrite("player_name",        &PlayerSetupData::player_name)
-            .def_readwrite("empire_name",        &PlayerSetupData::empire_name)
-            .add_property("empire_color",        PlayerEmpireColor)
-            .def_readwrite("starting_species",   &PlayerSetupData::starting_species_name)
-            .def_readwrite("starting_team",      &PlayerSetupData::starting_team);
-
         py::class_<FleetPlanWrapper>("FleetPlan", py::init<const std::string&, const py::list&>())
             .def("name",                        &FleetPlanWrapper::Name)
             .def("ship_designs",                &FleetPlanWrapper::ShipDesigns);
