@@ -160,7 +160,7 @@ namespace {
             return false;
         }
         ScriptingContext location_as_source_context(location, location);
-        return hull.Location()->Eval(location_as_source_context, location);
+        return hull.Location()->Eval(location_as_source_context, std::move(location));
     }
 
     auto ShipPartProductionLocation(const ShipPart& part_type, int location_id) -> bool
@@ -171,7 +171,7 @@ namespace {
             return false;
         }
         ScriptingContext location_as_source_context(location, location);
-        return part_type.Location()->Eval(location_as_source_context, location);
+        return part_type.Location()->Eval(location_as_source_context, std::move(location));
     }
 }
 
