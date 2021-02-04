@@ -492,62 +492,28 @@ namespace {
         typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
                                       vertex_property_t, edge_property_t> SystemGraph;
 
-        //struct EdgeVisibilityFilter {
-        //    EdgeVisibilityFilter() :
-        //        graph(empty_graph),
-        //        objects(Objects())
-        //    {}
-
-        //    EdgeVisibilityFilter(const SystemGraph& graph_, const ObjectMap& objects_) :
-        //        graph(graph),
-        //        objects(objects_)
-        //    {}
-
-        //    template <typename EdgeDescriptor>
-        //    bool operator()(const EdgeDescriptor& edge) const
-        //    {
-        //        // get system ids from graph indices
-        //        ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph); // for reverse-lookup System universe ID from graph index
-        //        int sys_graph_index_1 = boost::source(edge, graph);
-        //        int sys_id_1 = sys_id_property_map[sys_graph_index_1];
-        //        int sys_graph_index_2 = boost::target(edge, graph);
-        //        int sys_id_2 = sys_id_property_map[sys_graph_index_2];
-
-        //        // look up lane between systems
-        //        auto system1 = objects.get<System>(sys_id_1);
-        //        if (!system1) {
-        //            ErrorLogger() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
-        //            return false;
-        //        }
-        //        if (system1->HasStarlaneTo(sys_id_2))
-        //            return true;
-
-        //        // lane not found
-        //        return false;
-        //    }
-
-        //private:
-        //    static SystemGraph empty_graph;
-        //    const SystemGraph& graph;
-        //    const ObjectMap& objects;
-        //};
         struct EdgeVisibilityFilter {
             EdgeVisibilityFilter() = default;
 
-            EdgeVisibilityFilter(const SystemGraph* graph, const ObjectMap* objects) :
-                m_objects(objects),
+            EdgeVisibilityFilter(const SystemGraph* graph, const ObjectMap& objects) :
                 m_graph(graph)
             {
                 if (!m_graph)
                     ErrorLogger() << "EdgeVisibilityFilter passed null graph pointer";
-                if (!m_objects)
-                    ErrorLogger() << "EdgeVisibilityFilter passed null objectmap pointer";
+
+                // record all edges in objects
+                for (auto sys : objects.all<System>()) {
+                    for (auto [lane_id, is_wormhole] : sys->StarlanesWormholes()) {
+                        (void)is_wormhole; // quiet unused variable_warning
+                        edges.emplace(std::min(sys->ID(), lane_id), std::max(sys->ID(), lane_id));
+                    }
+                }
             }
 
             template <typename EdgeDescriptor>
             bool operator()(const EdgeDescriptor& edge) const
             {
-                if (!m_graph || !m_objects)
+                if (!m_graph)
                     return false;
 
                 // get system ids from graph indices
@@ -558,21 +524,12 @@ namespace {
                 int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
                 // look up lane between systems
-                auto system1 = m_objects->get<System>(sys_id_1);
-                if (!system1) {
-                    ErrorLogger() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
-                    return false;
-                }
-                if (system1->HasStarlaneTo(sys_id_2))
-                    return true;
-
-                // lane not found
-                return false;
+                return edges.count({std::min(sys_id_1, sys_id_2), std::max(sys_id_1, sys_id_2)});
             }
 
         private:
-            const ObjectMap*   m_objects = nullptr;
             const SystemGraph* m_graph = nullptr;
+            std::unordered_set<std::pair<int, int>, boost::hash<std::pair<int, int>>> edges;
         };
         typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
         typedef std::map<int, std::shared_ptr<EmpireViewSystemGraph>> EmpireViewSystemGraphMap;
@@ -583,7 +540,7 @@ namespace {
         {
             for (auto empire : empires) {
                 auto empire_id = empire.first;
-                SystemPredicateFilter sys_pred_filter(&system_graph, empire_id, &objects, pred);
+                SystemPredicateFilter sys_pred_filter(&system_graph, &objects, pred);
                 auto sys_pred_filtered_graph_ptr = std::make_shared<SystemPredicateGraph>(
                     system_graph, sys_pred_filter);
 
@@ -603,11 +560,10 @@ namespace {
         struct SystemPredicateFilter {
             SystemPredicateFilter() = default;
 
-            SystemPredicateFilter(const SystemGraph* graph, int empire_id, const ObjectMap* objects,
+            SystemPredicateFilter(const SystemGraph* graph, const ObjectMap* objects,
                                   const Pathfinder::SystemExclusionPredicateType& pred) :
                 m_objects(objects),
                 m_graph(graph),
-                //m_empire_id(empire_id),
                 m_pred(pred)
             {
                 if (!graph)
@@ -662,9 +618,8 @@ namespace {
             }
 
         private:
-            const ObjectMap*    m_objects = nullptr;
-            const SystemGraph* m_graph = nullptr;
-            //int                 m_empire_id = ALL_EMPIRES;
+            const ObjectMap*                         m_objects = nullptr;
+            const SystemGraph*                       m_graph = nullptr;
             Pathfinder::SystemExclusionPredicateType m_pred;
         };
         typedef boost::filtered_graph<SystemGraph, SystemPredicateFilter> SystemPredicateGraph;
@@ -828,8 +783,8 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
 
         size_t system1_index = m_system_id_to_graph_index.at(system1_id);
         size_t system2_index = m_system_id_to_graph_index.at(system2_id);
-        size_t smaller_index = (std::min)(system1_index, system2_index);
-        size_t other_index   = (std::max)(system1_index, system2_index);
+        size_t smaller_index = std::min(system1_index, system2_index);
+        size_t other_index   = std::max(system1_index, system2_index);
 
         namespace ph = boost::placeholders;
 
@@ -840,6 +795,7 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
         if (jumps == SHRT_MAX)  // value returned for no valid path
             return -1;
         return jumps;
+
     } catch (const std::out_of_range&) {
         ErrorLogger() << "PathfinderImpl::JumpDistanceBetweenSystems passed invalid system id(s): "
                       << system1_id << " & " << system2_id;
@@ -1513,7 +1469,7 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(
     m_graph_impl->system_pred_graph_views.clear();
 
     // empires all use the same filtered graph
-    GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, &objects);
+    GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, objects);
     auto filtered_graph_ptr = std::make_shared<GraphImpl::EmpireViewSystemGraph>(
         m_graph_impl->system_graph, filter);
 
@@ -1537,8 +1493,8 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(
             ErrorLogger() << "UpdateEmpireVisibilityFilteredSystemGraphs can't find object map for empire with id " << empire_id;
             continue;
         }
-        auto& empire_objects = map_it->second;
-        GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, &empire_objects);
+        const auto& empire_objects = map_it->second;
+        GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, empire_objects);
         auto filtered_graph_ptr = std::make_shared<GraphImpl::EmpireViewSystemGraph>(
             m_graph_impl->system_graph, filter);
         m_graph_impl->empire_system_graph_views[empire_id] = std::move(filtered_graph_ptr);
