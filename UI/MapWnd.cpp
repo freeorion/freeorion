@@ -2649,7 +2649,8 @@ void MapWnd::InitTurn() {
     //DebugLogger() << GetSupplyManager().Dump();
 
     Universe& universe = GetUniverse();
-    ObjectMap& objects = Objects();
+    ObjectMap& objects = universe.Objects(); // TODO: Get from universe directly
+    EmpireManager& empires = Empires();
 
     TraceLogger(effects) << "MapWnd::InitTurn initial:";
     for (auto obj : objects.all())
@@ -2657,7 +2658,7 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("meter estimates");
     // update effect accounting and meter estimates
-    universe.InitMeterEstimatesAndDiscrepancies(Empires());
+    universe.InitMeterEstimatesAndDiscrepancies(empires);
 
     timer.EnterSection("orders");
     // if we've just loaded the game there may be some unexecuted orders, we
@@ -2668,9 +2669,9 @@ void MapWnd::InitTurn() {
     timer.EnterSection("meter estimates");
     // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
     // population is available for currently uncolonized planets
-    GetUniverse().UpdateMeterEstimates(Empires());
+    GetUniverse().UpdateMeterEstimates(empires);
 
-    GetUniverse().ApplyAppearanceEffects(Empires());
+    GetUniverse().ApplyAppearanceEffects(empires);
 
     timer.EnterSection("init rendering");
     // set up system icons, starlanes, galaxy gas rendering
@@ -2788,7 +2789,7 @@ void MapWnd::InitTurn() {
 
 
     timer.EnterSection("update resource pools");
-    for (auto& entry : Empires())
+    for (auto& entry : empires)
         entry.second->UpdateResourcePools();
 
     timer.EnterSection("refresh government");
