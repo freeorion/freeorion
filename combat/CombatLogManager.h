@@ -16,7 +16,7 @@ struct FO_COMMON_API CombatParticipantState {
     float current_health = 0.0f;
     float max_health = 0.0f;
 
-    CombatParticipantState();
+    CombatParticipantState() = default;
     CombatParticipantState(const UniverseObject& object);
 };
 
