@@ -789,7 +789,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         if ((property_name == "UniverseCentreX") |
             (property_name == "UniverseCentreY"))
         {
-            return GetUniverse().UniverseWidth() / 2;
+            return GetUniverse().UniverseWidth() / 2;   // TODO: get Universe from ScriptingContext
         } else if (property_name == "UniverseWidth") {
             return GetUniverse().UniverseWidth();
         }
@@ -843,7 +843,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return context.combat_bout;
 
     } else if (property_name == "CurrentTurn") {
-        return CurrentTurn();
+        return CurrentTurn(); // TODO: should this also be in ScriptingContext?
 
     } else if (property_name == "Attack") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
@@ -855,14 +855,14 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
 
     } else if (property_name == "PropagatedSupplyRange") {
-        const auto& ranges = GetSupplyManager().PropagatedSupplyRanges();
+        const auto& ranges = GetSupplyManager().PropagatedSupplyRanges();   // TODO: Get from Context..
         auto range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
             return 0.0;
         return range_it->second;
 
     } else if (property_name == "PropagatedSupplyDistance") {
-        const auto& ranges = GetSupplyManager().PropagatedSupplyDistances();
+        const auto& ranges = GetSupplyManager().PropagatedSupplyDistances(); // TODO: get from context
         auto range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
             return 0.0;
@@ -946,7 +946,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     }
     else if (property_name == "SupplyingEmpire") {
-        return GetSupplyManager().EmpireThatCanSupplyAt(object->SystemID());
+        return GetSupplyManager().EmpireThatCanSupplyAt(object->SystemID()); // TODO: Get SupplyManager from Context
     }
     else if (property_name == "ID") {
         return object->ID();
