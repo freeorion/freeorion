@@ -128,10 +128,10 @@ namespace {
         return forces;
     }
 
-    bool IsShip(std::shared_ptr<UniverseObject> object)
+    bool IsShip(const std::shared_ptr<UniverseObject>& object)
     { return object->ObjectType() == UniverseObjectType::OBJ_SHIP; }
 
-    bool HasPopulation(std::shared_ptr<UniverseObject> object) {
+    bool HasPopulation(const std::shared_ptr<UniverseObject>& object) {
         const auto* m = object->GetMeter(MeterType::METER_POPULATION);
         return m && m->Initial() > 0.0f;
     }
@@ -247,8 +247,7 @@ namespace {
         log(log_),
         viewing_empire_id(viewing_empire_id_),
         event(event_),
-        title(log.DecorateLinkText(event->CombatLogDescription(viewing_empire_id, ObjectMap()))),
-        details()
+        title(log.DecorateLinkText(event->CombatLogDescription(viewing_empire_id, GetUniverse().Objects())))
     {}
 
     void CombatLogAccordionPanel::CompleteConstruction() {
@@ -543,7 +542,7 @@ std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(
         return new_logs;
     }
 
-    std::string title = event->CombatLogDescription(viewing_empire_id, ObjectMap());
+    std::string title = event->CombatLogDescription(viewing_empire_id, GetUniverse().Objects());
     if (!(event->FlattenSubEvents() && title.empty()))
         new_logs.emplace_back(DecorateLinkText(title));
 
@@ -608,7 +607,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
 
     // Write Logs
     for (CombatEventPtr event : log->combat_events) {
-        DebugLogger(combat_log) << "event debug info: " << event->DebugString(ObjectMap());
+        DebugLogger(combat_log) << "event debug info: " << event->DebugString(GetUniverse().Objects());
         for (auto&& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event))
             AddRow(std::move(wnd));
     }
