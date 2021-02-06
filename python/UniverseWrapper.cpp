@@ -239,12 +239,10 @@ namespace FreeOrionPython {
         ///////////////////////////
         //   Effect Accounting   //
         ///////////////////////////
-        py::class_<Effect::EffectCause>("EffectCause")
+        py::class_<Effect::AccountingInfo>("AccountingInfo")
             .add_property("causeType",          &Effect::AccountingInfo::cause_type)
             .def_readonly("specificCause",      &Effect::AccountingInfo::specific_cause)
             .def_readonly("customLabel",        &Effect::AccountingInfo::custom_label)
-        ;
-        py::class_<Effect::AccountingInfo, py::bases<Effect::EffectCause>>("AccountingInfo")
             .add_property("sourceID",           &Effect::AccountingInfo::source_id)
             .add_property("meterChange",        &Effect::AccountingInfo::meter_change)
             .add_property("meterRunningTotal",  &Effect::AccountingInfo::running_meter_total)
@@ -252,8 +250,18 @@ namespace FreeOrionPython {
         py::class_<std::vector<Effect::AccountingInfo>>("AccountingInfoVec")
             .def(py::vector_indexing_suite<std::vector<Effect::AccountingInfo>, true>())
         ;
-        py::class_<std::map<MeterType, std::vector<Effect::AccountingInfo>>>("MeterTypeAccountingInfoVecMap")
-            .def(py::map_indexing_suite<std::map<MeterType, std::vector<Effect::AccountingInfo>>, true>())
+
+        py::class_<Effect::AccountingMap::mapped_type::value_type>("MeterTypeAccountingInfoVecPair")
+            .add_property("meterType",          &Effect::AccountingMap::mapped_type::value_type::first)
+            .add_property("accountingInfo",     &Effect::AccountingMap::mapped_type::value_type::second)
+        ;
+        py::class_<Effect::AccountingMap::mapped_type>("MeterTypeAccountingInfoVecMap")
+            .def(py::map_indexing_suite<Effect::AccountingMap::mapped_type, true>())
+        ;
+
+        py::class_<Effect::AccountingMap::value_type>("IntMeterTypeAccountingInfoVecMapPair")
+            .add_property("targetID",           &Effect::AccountingMap::value_type::first)
+            .add_property("meterAccounting",    &Effect::AccountingMap::value_type::second)
         ;
         py::class_<Effect::AccountingMap>("TargetIDAccountingMapMap")
             .def(py::map_indexing_suite<Effect::AccountingMap, true>())
@@ -305,7 +313,7 @@ namespace FreeOrionPython {
 
             .def("updateMeterEstimates",        &UpdateMetersWrapper)
             .add_property("effectAccounting",   make_function(&Universe::GetEffectAccountingMap,
-                                                                                    py::return_value_policy<py::reference_existing_object>()))
+                                                                                        py::return_value_policy<py::reference_existing_object>()))
 
             .def("linearDistance",              +[](const Universe& universe, int system1_id, int system2_id) -> double { return universe.GetPathfinder()->LinearDistance(system1_id, system2_id, universe.Objects()); },
                                                 py::return_value_policy<py::return_by_value>())
@@ -583,8 +591,8 @@ namespace FreeOrionPython {
             .def("productionTime",              +[](const BuildingType& bt, int empire_id, int location_id) -> int { return bt.ProductionTime(empire_id, location_id); })
             .def("perTurnCost",                 +[](const BuildingType& bt, int empire_id, int location_id) -> float { return bt.PerTurnCost(empire_id, location_id); })
             .def("captureResult",               &BuildingType::GetCaptureResult)
-            .def("canBeProduced",               +[](const BuildingType& building_type, int empire_id, int loc_id) -> bool { return building_type.ProductionLocation(empire_id, loc_id); })
-            .def("canBeEnqueued",               +[](const BuildingType& building_type, int empire_id, int loc_id) -> bool { return building_type.EnqueueLocation(empire_id, loc_id); })
+            .def("canBeProduced",               +[](const BuildingType& building_type, int empire_id, int loc_id) -> bool { return building_type.ProductionLocation(empire_id, loc_id, ScriptingContext()); })
+            .def("canBeEnqueued",               +[](const BuildingType& building_type, int empire_id, int loc_id) -> bool { return building_type.EnqueueLocation(empire_id, loc_id, ScriptingContext()); })
             .add_property("costTimeLocationInvariant",
                                                 &BuildingType::ProductionCostTimeLocationInvariant)
             .def("dump",                        &BuildingType::Dump,                        py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
@@ -665,7 +673,7 @@ namespace FreeOrionPython {
             .add_property("description",        make_function(&FieldType::Description,      py::return_value_policy<py::copy_const_reference>()))
             .def("dump",                        &FieldType::Dump,                           py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
-        py::def("getFieldType",                     &GetFieldType,                           py::return_value_policy<py::reference_existing_object>());
+        py::def("getFieldType",                 &GetFieldType,                              py::return_value_policy<py::reference_existing_object>());
 
 
         /////////////////
@@ -679,7 +687,7 @@ namespace FreeOrionPython {
             .def("dump",                        &Special::Dump,                         py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
             .def("initialCapacity",             +[](const Special& special, int obj_id) -> float { return special.InitialCapacity(obj_id); })
         ;
-        py::def("getSpecial",                       &GetSpecial,                            py::return_value_policy<py::reference_existing_object>(), "Returns the special (Special) with the indicated name (string).");
+        py::def("getSpecial",                   &GetSpecial,                            py::return_value_policy<py::reference_existing_object>(), "Returns the special (Special) with the indicated name (string).");
 
         /////////////////
         //   Species   //
