@@ -63,7 +63,6 @@ normalization_dict = {
     'special': 'special',
     'IntFltMap': 'int_flt_map',
     'ruleType': 'rule_type',
-    'influenceQueueElement': 'influence_queue_element'
 }
 
 

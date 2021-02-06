@@ -968,57 +968,6 @@ class fieldType:
         """
 
 
-class influenceQueue:
-    @property
-    def allocatedStockpileIP(self):
-        ...
-
-    @property
-    def empireID(self):
-        ...
-
-    @property
-    def empty(self):
-        ...
-
-    @property
-    def expectedNewStockpile(self):
-        ...
-
-    @property
-    def size(self):
-        ...
-
-    @property
-    def totalSpent(self):
-        ...
-
-    def __contains__(self, influence_queue_element: influenceQueueElement) -> bool:
-        ...
-
-    def __getitem__(self, number: int) -> influenceQueueElement:
-        ...
-
-    def __iter__(self) -> object:
-        ...
-
-    def __len__(self) -> int:
-        ...
-
-    def inQueue(self, string: str) -> bool:
-        ...
-
-
-class influenceQueueElement:
-    @property
-    def allocation(self):
-        ...
-
-    @property
-    def name(self):
-        ...
-
-
 class meter:
     @property
     def current(self)-> float:
