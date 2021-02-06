@@ -6,7 +6,6 @@
 #include "../universe/Building.h"
 #include "../universe/BuildingType.h"
 #include "../universe/Condition.h"
-#include "../universe/Effect.h"
 #include "../universe/Field.h"
 #include "../universe/FieldType.h"
 #include "../universe/Fleet.h"
@@ -236,29 +235,6 @@ namespace FreeOrionPython {
             .def(py::map_indexing_suite<std::map<int, std::map<int, double>>, true>())
         ;
 
-        ///////////////////////////
-        //   Effect Accounting   //
-        ///////////////////////////
-        py::class_<Effect::EffectCause>("EffectCause")
-            .add_property("causeType",          &Effect::AccountingInfo::cause_type)
-            .def_readonly("specificCause",      &Effect::AccountingInfo::specific_cause)
-            .def_readonly("customLabel",        &Effect::AccountingInfo::custom_label)
-        ;
-        py::class_<Effect::AccountingInfo, py::bases<Effect::EffectCause>>("AccountingInfo")
-            .add_property("sourceID",           &Effect::AccountingInfo::source_id)
-            .add_property("meterChange",        &Effect::AccountingInfo::meter_change)
-            .add_property("meterRunningTotal",  &Effect::AccountingInfo::running_meter_total)
-        ;
-        py::class_<std::vector<Effect::AccountingInfo>>("AccountingInfoVec")
-            .def(py::vector_indexing_suite<std::vector<Effect::AccountingInfo>, true>())
-        ;
-        py::class_<std::map<MeterType, std::vector<Effect::AccountingInfo>>>("MeterTypeAccountingInfoVecMap")
-            .def(py::map_indexing_suite<std::map<MeterType, std::vector<Effect::AccountingInfo>>, true>())
-        ;
-        py::class_<Effect::AccountingMap>("TargetIDAccountingMapMap")
-            .def(py::map_indexing_suite<Effect::AccountingMap, true>())
-        ;
-
         ///////////////
         //   Meter   //
         ///////////////
@@ -304,9 +280,6 @@ namespace FreeOrionPython {
                                                 py::return_value_policy<py::return_by_value>())
 
             .def("updateMeterEstimates",        &UpdateMetersWrapper)
-            .add_property("effectAccounting",   make_function(&Universe::GetEffectAccountingMap,
-                                                                                    py::return_value_policy<py::reference_existing_object>()))
-
             .def("linearDistance",              +[](const Universe& universe, int system1_id, int system2_id) -> double { return universe.GetPathfinder()->LinearDistance(system1_id, system2_id, universe.Objects()); },
                                                 py::return_value_policy<py::return_by_value>())
 

@@ -32,20 +32,6 @@ class AccountingInfoVec:
         ...
 
 
-class EffectCause:
-    @property
-    def causeType(self):
-        ...
-
-    @property
-    def customLabel(self):
-        ...
-
-    @property
-    def specificCause(self):
-        ...
-
-
 class FleetPlan:
     def name(self) -> object:
         ...
@@ -1603,10 +1589,6 @@ class universe:
         ...
 
     @property
-    def effectAccounting(self)-> TargetIDAccountingMapMap:
-        ...
-
-    @property
     def fieldIDs(self)-> IntVec:
         ...
 
@@ -1794,20 +1776,6 @@ class universeObject:
         ...
 
     def specialAddedOnTurn(self, string: str) -> int:
-        ...
-
-
-class AccountingInfo(EffectCause):
-    @property
-    def meterChange(self):
-        ...
-
-    @property
-    def meterRunningTotal(self):
-        ...
-
-    @property
-    def sourceID(self):
         ...
 
 
@@ -2231,36 +2199,6 @@ class diplomaticStatus(Enum):
 diplomaticStatus.war = diplomaticStatus(0, "war")
 diplomaticStatus.peace = diplomaticStatus(1, "peace")
 diplomaticStatus.allied = diplomaticStatus(2, "allied")
-
-
-class effectsCauseType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    invalid = None  # effectsCauseType(-1, "invalid")
-    unknown = None  # effectsCauseType(0, "unknown")
-    inherent = None  # effectsCauseType(1, "inherent")
-    tech = None  # effectsCauseType(2, "tech")
-    building = None  # effectsCauseType(3, "building")
-    field = None  # effectsCauseType(4, "field")
-    special = None  # effectsCauseType(5, "special")
-    species = None  # effectsCauseType(6, "species")
-    shipPart = None  # effectsCauseType(7, "shipPart")
-    shipHull = None  # effectsCauseType(8, "shipHull")
-    policy = None  # effectsCauseType(9, "policy")
-
-
-effectsCauseType.invalid = effectsCauseType(-1, "invalid")
-effectsCauseType.unknown = effectsCauseType(0, "unknown")
-effectsCauseType.inherent = effectsCauseType(1, "inherent")
-effectsCauseType.tech = effectsCauseType(2, "tech")
-effectsCauseType.building = effectsCauseType(3, "building")
-effectsCauseType.field = effectsCauseType(4, "field")
-effectsCauseType.special = effectsCauseType(5, "special")
-effectsCauseType.species = effectsCauseType(6, "species")
-effectsCauseType.shipPart = effectsCauseType(7, "shipPart")
-effectsCauseType.shipHull = effectsCauseType(8, "shipHull")
-effectsCauseType.policy = effectsCauseType(9, "policy")
 
 
 class fleetAggression(Enum):
