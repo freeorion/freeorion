@@ -13,12 +13,12 @@ from aistate_interface import get_aistate
 import InvasionAI
 import MilitaryAI
 import PlanetUtilsAI
-import ProductionAI
 import ResearchAI
 from AIDependencies import INVALID_ID
 from EnumsAI import EmpireProductionTypes, MissionType, PriorityType, ShipRoleType, get_priority_production_types
 from freeorion_tools import AITimer, tech_is_complete
 from turn_state import get_number_of_colonies, get_owned_planets, have_asteroids, have_gas_giant
+from turn_state.design import cur_best_military_design_rating, get_best_ship_info
 
 prioritiees_timer = AITimer('calculate_priorities()')
 
@@ -376,7 +376,7 @@ def _calculate_invasion_priority():
                                                            ShipRoleType.BASE_INVASION]:
                 design = fo.getShipDesign(element.designID)
                 queued_troop_capacity += element.remaining * element.blocksize * design.troopCapacity
-    _, best_design, _ = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_INVASION)
+    _, best_design, _ = get_best_ship_info(PriorityType.PRODUCTION_INVASION)
     if best_design:
         troops_per_best_ship = best_design.troopCapacity
     else:
@@ -435,7 +435,7 @@ def _calculate_military_priority():
     my_systems = set(get_owned_planets())
     target_systems = set(PlanetUtilsAI.get_systems(target_planet_ids))
 
-    cur_ship_rating = ProductionAI.cur_best_military_design_rating()
+    cur_ship_rating = cur_best_military_design_rating()
     current_turn = fo.currentTurn()
     ships_needed = 0
     defense_ships_needed = 0

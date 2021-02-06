@@ -32,6 +32,7 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
+import ShipDesignAI
 import TechsListsAI
 from aistate_interface import create_new_aistate, load_aistate, get_aistate
 from AIDependencies import INVALID_ID
@@ -329,7 +330,7 @@ def generateOrders():  # pylint: disable=invalid-name
     debug("Calling AI Modules")
     # call AI modules
     action_list = [ColonisationAI.survey_universe,
-                   ProductionAI.find_best_designs_this_turn,
+                   ShipDesignAI.Cache.update_for_new_turn,
                    PriorityAI.calculate_priorities,
                    ExplorationAI.assign_scouts_to_explore_systems,
                    ColonisationAI.assign_colony_fleets_to_colonise,
