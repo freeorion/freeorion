@@ -7,6 +7,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../util/AppInterface.h"
 
+struct CombatInfo;
 
 struct ScriptingContext {
     typedef boost::variant<
@@ -16,196 +17,182 @@ struct ScriptingContext {
 
     ScriptingContext() = default;
 
-    explicit ScriptingContext(const ObjectMap& const_objects_,
-                              const Universe::EmpireObjectVisibilityMap&
-                                  empire_object_vis_ = GetUniverse().GetEmpireObjectVisibility(),
-                              const Universe::EmpireObjectVisibilityTurnMap&
-                                  empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
-                              const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                              const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
-        empire_object_vis(empire_object_vis_),
-        const_objects(const_objects_),
-        empire_object_vis_turns(empire_object_vis_turns_),
-        empires(empires_),
-        diplo_statuses(diplo_statuses_)
+    ScriptingContext(const ScriptingContext& parent_context,
+                     std::shared_ptr<const UniverseObject> condition_local_candidate_) :
+        source(                   parent_context.source),
+        effect_target(            parent_context.effect_target),
+        condition_root_candidate( parent_context.condition_root_candidate),
+        condition_local_candidate(std::move(condition_local_candidate_)),
+        current_value(            parent_context.current_value),
+        galaxy_setup_data(        parent_context.galaxy_setup_data),
+        species(                  parent_context.species),
+        supply(                   parent_context.supply),
+        universe(                 parent_context.universe),
+        const_universe(           parent_context.const_universe),
+        objects(                  parent_context.objects),
+        const_objects(            parent_context.const_objects),
+        empire_object_vis(        parent_context.empire_object_vis),
+        empire_object_vis_turns(  parent_context.empire_object_vis_turns),
+        empires(                  parent_context.empires),
+        const_empires(            parent_context.const_empires),
+        diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    explicit ScriptingContext(ObjectMap& objects_,
-                              const Universe::EmpireObjectVisibilityMap&
-                                  empire_object_vis_ = GetUniverse().GetEmpireObjectVisibility(),
-                              const Universe::EmpireObjectVisibilityTurnMap&
-                                  empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
-                              const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                              const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
-        empire_object_vis(empire_object_vis_),
-        objects(objects_),
-        const_objects(objects_),
-        empire_object_vis_turns(empire_object_vis_turns_),
-        empires(empires_),
-        diplo_statuses(diplo_statuses_)
-    {}
-
-    explicit ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                              const ObjectMap& const_objects_ = Objects(),
-                              const Universe::EmpireObjectVisibilityMap&
-                                  empire_object_vis_ = GetUniverse().GetEmpireObjectVisibility(),
-                              const Universe::EmpireObjectVisibilityTurnMap&
-                                  empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
-                              const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                              const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
-        source(std::move(source_)),
-        empire_object_vis(empire_object_vis_),
-        const_objects(const_objects_),
-        empire_object_vis_turns(empire_object_vis_turns_),
-        empires(empires_),
-        diplo_statuses(diplo_statuses_)
+    ScriptingContext(std::shared_ptr<const UniverseObject> source_) :
+        source(std::move(source_))
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      const ScriptingContext& parent_context) :
-        source(                     std::move(source_)),
-        effect_target(              parent_context.effect_target),
-        condition_root_candidate(   parent_context.condition_root_candidate),
-        condition_local_candidate(  parent_context.condition_local_candidate),
-        current_value(              parent_context.current_value),
-        empire_object_vis(          parent_context.empire_object_vis),
-        objects(                    parent_context.objects),
-        const_objects(              parent_context.const_objects),
-        empire_object_vis_turns(    parent_context.empire_object_vis_turns),
-        empires(                    parent_context.empires),
-        diplo_statuses(             parent_context.diplo_statuses)
+        source(                   std::move(source_)),
+        effect_target(            parent_context.effect_target),
+        condition_root_candidate( parent_context.condition_root_candidate),
+        condition_local_candidate(parent_context.condition_local_candidate),
+        current_value(            parent_context.current_value),
+        galaxy_setup_data(        parent_context.galaxy_setup_data),
+        species(                  parent_context.species),
+        supply(                   parent_context.supply),
+        universe(                 parent_context.universe),
+        const_universe(           parent_context.const_universe),
+        objects(                  parent_context.objects),
+        const_objects(            parent_context.const_objects),
+        empire_object_vis(        parent_context.empire_object_vis),
+        empire_object_vis_turns(  parent_context.empire_object_vis_turns),
+        empires(                  parent_context.empires),
+        const_empires(            parent_context.const_empires),
+        diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                     std::shared_ptr<UniverseObject> target_,
-                     ObjectMap& objects_ = Objects(),
-                     const Universe::EmpireObjectVisibilityMap&
-                         empire_object_vis_ = GetUniverse().GetEmpireObjectVisibility(),
-                     const Universe::EmpireObjectVisibilityTurnMap&
-                         empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
-                     const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                     const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
-        source(std::move(source_)),
-        effect_target(std::move(target_)),
-        empire_object_vis(empire_object_vis_),
-        objects(objects_),
-        const_objects(objects_),
-        empire_object_vis_turns(empire_object_vis_turns_),
-        empires(empires_),
-        diplo_statuses(diplo_statuses_)
-    {}
-
-    ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                     std::shared_ptr<UniverseObject> target_,
-                     const ObjectMap& const_objects_,
-                     const Universe::EmpireObjectVisibilityMap&
-                         empire_object_vis_ = GetUniverse().GetEmpireObjectVisibility(),
-                     const Universe::EmpireObjectVisibilityTurnMap&
-                         empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
-                     const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                     const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
-        source(std::move(source_)),
-        effect_target(std::move(target_)),
-        empire_object_vis(empire_object_vis_),
-        const_objects(const_objects_),
-        empire_object_vis_turns(empire_object_vis_turns_),
-        empires(empires_),
-        diplo_statuses(diplo_statuses_)
+    ScriptingContext(const ScriptingContext& parent_context,
+                     const CurrentValueVariant& current_value_) :
+        source(                   parent_context.source),
+        effect_target(            parent_context.effect_target),
+        condition_root_candidate( parent_context.condition_root_candidate),
+        condition_local_candidate(parent_context.condition_local_candidate),
+        current_value(            current_value_),
+        galaxy_setup_data(        parent_context.galaxy_setup_data),
+        species(                  parent_context.species),
+        supply(                   parent_context.supply),
+        universe(                 parent_context.universe),
+        const_universe(           parent_context.const_universe),
+        objects(                  parent_context.objects),
+        const_objects(            parent_context.const_objects),
+        empire_object_vis(        parent_context.empire_object_vis),
+        empire_object_vis_turns(  parent_context.empire_object_vis_turns),
+        empires(                  parent_context.empires),
+        const_empires(            parent_context.const_empires),
+        diplo_statuses(           parent_context.diplo_statuses)
     {}
 
     ScriptingContext(const ScriptingContext& parent_context,
                      std::shared_ptr<UniverseObject> target_,
                      const CurrentValueVariant& current_value_) :
-        source(                     parent_context.source),
-        effect_target(              std::move(target_)),
-        condition_root_candidate(   parent_context.condition_root_candidate),
-        condition_local_candidate(  parent_context.condition_local_candidate),
-        current_value(              current_value_),
-        empire_object_vis(          parent_context.empire_object_vis),
-        objects(                    parent_context.objects),
-        const_objects(              parent_context.const_objects),
-        empire_object_vis_turns(    parent_context.empire_object_vis_turns),
-        empires(                    parent_context.empires),
-        diplo_statuses(             parent_context.diplo_statuses)
-    {}
-
-    ScriptingContext(const ScriptingContext& parent_context,
-                     const CurrentValueVariant& current_value_) :
-        source(                     parent_context.source),
-        effect_target(              parent_context.effect_target),
-        condition_root_candidate(   parent_context.condition_root_candidate),
-        condition_local_candidate(  parent_context.condition_local_candidate),
-        current_value(              current_value_),
-        empire_object_vis(          parent_context.empire_object_vis),
-        objects(                    parent_context.objects),
-        const_objects(              parent_context.const_objects),
-        empire_object_vis_turns(    parent_context.empire_object_vis_turns),
-        empires(                    parent_context.empires),
-        diplo_statuses(             parent_context.diplo_statuses)
-    {}
-
-    ScriptingContext(const ScriptingContext& parent_context,
-                     std::shared_ptr<const UniverseObject> condition_local_candidate_) :
-        source(                     parent_context.source),
-        effect_target(              parent_context.effect_target),
-        condition_root_candidate(   parent_context.condition_root_candidate ?
-                                        parent_context.condition_root_candidate :
-                                        condition_local_candidate_),// if parent context doesn't already have a root candidate, the new local candidate is the root
-        condition_local_candidate(  condition_local_candidate_),    // new local candidate
-        current_value(              parent_context.current_value),
-        empire_object_vis(          parent_context.empire_object_vis),
-        objects(                    parent_context.objects),
-        const_objects(              parent_context.const_objects),
-        empire_object_vis_turns(    parent_context.empire_object_vis_turns),
-        empires(                    parent_context.empires),
-        diplo_statuses(             parent_context.diplo_statuses)
+        source(                   parent_context.source),
+        effect_target(            std::move(target_)),
+        condition_root_candidate( parent_context.condition_root_candidate),
+        condition_local_candidate(parent_context.condition_local_candidate),
+        current_value(            current_value_),
+        galaxy_setup_data(        parent_context.galaxy_setup_data),
+        species(                  parent_context.species),
+        supply(                   parent_context.supply),
+        universe(                 parent_context.universe),
+        const_universe(           parent_context.const_universe),
+        objects(                  parent_context.objects),
+        const_objects(            parent_context.const_objects),
+        empire_object_vis(        parent_context.empire_object_vis),
+        empire_object_vis_turns(  parent_context.empire_object_vis_turns),
+        empires(                  parent_context.empires),
+        const_empires(            parent_context.const_empires),
+        diplo_statuses(           parent_context.diplo_statuses)
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                     std::shared_ptr<UniverseObject> target_,
-                     const CurrentValueVariant& current_value_,
-                     std::shared_ptr<const UniverseObject> condition_root_candidate_ = nullptr,
-                     std::shared_ptr<const UniverseObject> condition_local_candidate_ = nullptr,
-                     ObjectMap& objects_ = Objects(),
-                     const Universe::EmpireObjectVisibilityMap&
-                         empire_object_vis_ = GetUniverse().GetEmpireObjectVisibility(),
-                     const Universe::EmpireObjectVisibilityTurnMap&
-                         empire_object_vis_turns_ = GetUniverse().GetEmpireObjectVisibilityTurnMap(),
-                     const EmpireManager::container_type& empires_ = Empires().GetEmpires(),
-                     const EmpireManager::DiploStatusMap& diplo_statuses_ = Empires().GetDiplomaticStatuses()) :
+                     std::shared_ptr<UniverseObject> target_) :
         source(std::move(source_)),
-        effect_target(std::move(target_)),
-        condition_root_candidate(std::move(condition_root_candidate_)),
-        condition_local_candidate(std::move(condition_local_candidate_)),
-        current_value(current_value_),
-        empire_object_vis(empire_object_vis_),
-        objects(objects_),
-        const_objects(objects_),
-        empire_object_vis_turns(empire_object_vis_turns_),
-        empires(empires_),
-        diplo_statuses(diplo_statuses_)
+        effect_target(std::move(target_))
     {}
+
+    ScriptingContext(Universe& universe, EmpireManager& empires_,
+                     const GalaxySetupData& galaxy_setup_data_ = GetGalaxySetupData(),
+                     const SpeciesManager& species_ = GetSpeciesManager(),
+                     const SupplyManager& supply_ = GetSupplyManager()) :
+        galaxy_setup_data(galaxy_setup_data_),
+        species(          species_),
+        supply(           supply_),
+        universe(         &universe),
+        const_universe(   universe),
+        empires(          &(empires_.GetEmpires())),
+        const_empires(    const_cast<const EmpireManager&>(empires_).GetEmpires()),
+        diplo_statuses(   empires_.GetDiplomaticStatuses())
+    {}
+
+    explicit ScriptingContext(CombatInfo& info, // in CombatSystem.cpp
+                              std::shared_ptr<UniverseObject> attacker = nullptr);
+
+    ScriptingContext(const Universe& universe, const EmpireManager& empires_,
+                     std::shared_ptr<const UniverseObject> source_ = nullptr,
+                     std::shared_ptr<UniverseObject> target_ = nullptr,
+                     const CurrentValueVariant& current_value_ = CurrentValueVariant()) :
+        source(        std::move(source_)),
+        effect_target( std::move(target_)),
+        current_value( current_value_),
+        universe(       nullptr),
+        const_universe( universe),
+        empires(        nullptr),
+        const_empires(  empires_.GetEmpires()),
+        diplo_statuses( empires_.GetDiplomaticStatuses())
+    {}
+
 
 
     // helper functions for accessing state in this context
-    const ObjectMap&    ContextObjects() const  { return const_objects; } // immutable container of immutable objects
-    ObjectMap&          ContextObjects()        { return objects; }       // mutable container of mutable objects
 
-    DiplomaticStatus    ContextDiploStatus(int empire1, int empire2) const {
+    // immutable container of immutable objects
+    const Universe& ContextUniverse() const { return const_universe; }
+
+    // mutable container of mutable objects, not thread safe to modify
+    Universe& ContextUniverse() {
+        if (universe)
+            return *universe;
+        ErrorLogger() << "ScriptingContext::ContextUniverse() asked for undefined mutable Universe";
+        throw std::runtime_error("ScriptingContext::ContextUniverse() asked for undefined mutable Universe");
+    }
+
+    // immutable container of immutable objects
+    const ObjectMap& ContextObjects() const { return const_objects; }
+
+    // mutable container of mutable objects, not thread safe to modify
+    ObjectMap& ContextObjects() {
+        if (objects)
+            return *objects;
+        ErrorLogger() << "ScriptingContext::ContextUniverse() asked for undefined mutable ObjectMap";
+        throw std::runtime_error("ScriptingContext::ContextUniverse() asked for undefined mutable objects");
+    }
+
+    DiplomaticStatus ContextDiploStatus(int empire1, int empire2) const {
         if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES || empire1 == empire2)
             return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
         auto it = diplo_statuses.find(std::make_pair(std::max(empire1, empire2), std::min(empire1, empire2)));
         return it == diplo_statuses.end() ? DiplomaticStatus::INVALID_DIPLOMATIC_STATUS : it->second;
     }
 
+    // mutable empire not thread safe to modify
     std::shared_ptr<Empire> GetEmpire(int id) {
-        auto it = empires.find(id);
-        return it == empires.end() ? nullptr : it->second;
+        if (!empires) {
+            ErrorLogger() << "ScriptingContext::GetEmpire() asked for unavailable mutable Empire";
+            return nullptr;
+        }
+        auto it = empires->find(id);
+        return it == empires->end() ? nullptr : it->second;
     }
+
     std::shared_ptr<const Empire> GetEmpire(int id) const {
-        auto it = empires.find(id);
-        return it == empires.end() ? nullptr : it->second;
+        auto it = const_empires.find(id);
+        return it == const_empires.end() ? nullptr : it->second;
     }
+
+    const EmpireManager::const_container_type& Empires() const
+    { return const_empires; }
 
 
     // script evaluation local state, some of which may vary during evaluation of an expression
@@ -218,12 +205,21 @@ struct ScriptingContext {
     // general gamestate info
     int                                            combat_bout = 0;
     const GalaxySetupData&                         galaxy_setup_data{GetGalaxySetupData()};
-    const Universe::EmpireObjectVisibilityMap&     empire_object_vis{GetUniverse().GetEmpireObjectVisibility()}; // immutable container and values
-    ObjectMap&                                     objects{Objects()};
-    const ObjectMap&                               const_objects{Objects()};
-    const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{GetUniverse().GetEmpireObjectVisibilityTurnMap()}; // immutable container and values
-    const EmpireManager::container_type&           empires{Empires().GetEmpires()};                   // immutable container of mutable empires
-    const EmpireManager::DiploStatusMap&           diplo_statuses{Empires().GetDiplomaticStatuses()}; // immutable value reference
+    const SpeciesManager&                          species{GetSpeciesManager()};
+    const SupplyManager&                           supply{GetSupplyManager()};
+private: // Universe and ObjectMap getters select one of these based on constness
+    Universe*                                      universe = nullptr;
+    const Universe&                                const_universe{universe ? *universe : GetUniverse()};
+    ObjectMap*                                     objects = universe ? &(universe->Objects()) : nullptr;
+    const ObjectMap&                               const_objects{objects ? *objects : const_universe.Objects()};
+public:
+    const Universe::EmpireObjectVisibilityMap&     empire_object_vis{const_universe.GetEmpireObjectVisibility()};
+    const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{const_universe.GetEmpireObjectVisibilityTurnMap()};
+private:
+    const EmpireManager::container_type*           empires = nullptr;
+    const EmpireManager::const_container_type&     const_empires{const_cast<const EmpireManager&>(::Empires()).GetEmpires()};
+public:
+    const EmpireManager::DiploStatusMap&           diplo_statuses{::Empires().GetDiplomaticStatuses()};
 };
 
 

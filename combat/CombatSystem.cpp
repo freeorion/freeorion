@@ -35,25 +35,31 @@ namespace {
 ////////////////////////////////////////////////
 // CombatInfo
 ////////////////////////////////////////////////
-CombatInfo::CombatInfo(int system_id_, int turn_, const Universe::EmpireObjectVisibilityMap& vis_,
-                       ObjectMap& objects_, const EmpireManager::container_type& empires_,
-                       const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns_,
-                       const EmpireManager::DiploStatusMap& diplo_statuses_) :
-    empires(empires_),
-    empire_object_vis_turns(empire_object_vis_turns_),
-    diplo_statuses(diplo_statuses_),
+CombatInfo::CombatInfo(int system_id_, int turn_,
+                       Universe& universe_mutable_in,
+                       const EmpireManager& empires_,
+                       const GalaxySetupData& galaxy_setup_data_,
+                       const SpeciesManager& species_,
+                       const SupplyManager& supply_) :
+    universe(universe_mutable_in),
+    empires(empires_.GetEmpires()),
+    empire_object_vis_turns(universe_mutable_in.GetEmpireObjectVisibilityTurnMap()),
+    diplo_statuses(empires_.GetDiplomaticStatuses()),
+    galaxy_setup_data(galaxy_setup_data_),
+    species(species_),
+    supply(supply_),
     objects(std::make_unique<ObjectMap>()),
-    empire_object_visibility(vis_),
+    empire_object_visibility(universe_mutable_in.GetEmpireObjectVisibility()),
     turn(turn_),
     system_id(system_id_)
 {
-    auto&& system = objects_.get<System>(system_id);
+    auto&& system = universe_mutable_in.Objects().get<System>(system_id);
     if (!system) {
         ErrorLogger() << "CombatInfo constructed with invalid system id: " << system_id;
         return;
     }
-    auto ships = objects_.find<Ship>(system->ShipIDs());
-    auto planets = objects_.find<Planet>(system->PlanetIDs());
+    auto ships = universe_mutable_in.Objects().find<Ship>(system->ShipIDs());
+    auto planets = universe_mutable_in.Objects().find<Planet>(system->PlanetIDs());
 
 
     // add system to objects in combat
@@ -109,12 +115,14 @@ void CombatInfo::GetEmpireIdsToSerialize(std::set<int>& filtered_empire_ids, int
 }
 
 void CombatInfo::GetObjectsToSerialize(ObjectMap& filtered_objects, int encoding_empire) const {
-    if (&filtered_objects == &*this->objects)
+    if (&filtered_objects == this->objects.get())
         return;
 
     filtered_objects.clear();
     filtered_objects.Copy(*this->objects);  // temporary... copy everything in combat info
     // TODO: Actually filter based on the encoding empire and what visibility it has of objects
+
+    DebugLogger() << "CombatInfo::GetObjectsToSerialize: input: " << this->objects->size() << "  copied: " << filtered_objects.size();
 }
 
 void CombatInfo::GetDamagedObjectsToSerialize(std::set<int>& filtered_damaged_objects,
@@ -271,6 +279,25 @@ void CombatInfo::InitializeObjectVisibility() {
         }
     }
 }
+
+
+ScriptingContext::ScriptingContext(CombatInfo& info,
+                                   std::shared_ptr<UniverseObject> attacker) :
+    source(                 std::move(attacker)),
+    combat_bout(            info.bout),
+    galaxy_setup_data(      info.galaxy_setup_data),
+    species(                info.species),
+    supply(                 info.supply),
+    universe(               nullptr),
+    const_universe(         info.universe),
+    objects(                info.objects.get()), // not taken from Universe!
+    const_objects(          *info.objects),
+    empire_object_vis(      info.empire_object_visibility),
+    empire_object_vis_turns(info.empire_object_vis_turns),
+    empires(                nullptr),
+    const_empires(          info.empires),
+    diplo_statuses(         info.diplo_statuses)
+{}
 
 
 ////////////////////////////////////////////////
@@ -1405,16 +1432,19 @@ namespace {
         // use combat-specific gamestate info for the ScriptingContext with which
         // to evaluate targetting conditions.
         // attacker is source object for condition evaluation.
-        ScriptingContext context(attacker, *combat_state.combat_info.objects,
-                                 combat_state.combat_info.empire_object_visibility,
-                                 combat_state.combat_info.empire_object_vis_turns,
-                                 combat_state.combat_info.empires,
-                                 combat_state.combat_info.diplo_statuses);
-        context.combat_bout = combat_state.combat_info.bout;
-        TraceLogger(combat) << "Set up context in ShootAllWeapons: objects: " << context.objects.size()
-                            << "  const objects: " << context.const_objects.size()
+        //const Universe& universe,
+        //             ObjectMap& objects_,
+        //             const EmpireManager& empires_,
+        //             const GalaxySetupData& galaxy_setup_data_,
+        //             const SpeciesManager& species_,
+        //             const SupplyManager& supply_) 
+
+        ScriptingContext context(combat_state.combat_info, attacker);
+
+        TraceLogger(combat) << "Set up context in ShootAllWeapons: objects: " << context.ContextObjects().size()
+                            << "  const objects: " << context.ContextObjects().size()
                             << "  visible objects: empires: " << context.empire_object_vis.size() << "  see: "
-                            << [atk_id{attacker->ID()}, objs{context.const_objects}, eov{context.empire_object_vis}]()
+                            << [atk_id{attacker->ID()}, objs{context.ContextObjects()}, eov{context.empire_object_vis}]()
         {
             std::stringstream ss;
 
@@ -1429,7 +1459,7 @@ namespace {
 
             return ss.str();
         }()
-                            << "  empires: " << context.empires.size()
+                            << "  empires: " << context.Empires().size()
                             << "  diplostatus: " << [ds{context.diplo_statuses}]()
         {
             std::stringstream ss;

@@ -196,8 +196,8 @@ float ShipHull::ProductionCost(int empire_id, int location_id,
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
-    auto source_it = design_context.empires.find(empire_id);
-    auto source = source_it != design_context.empires.end() ? source_it->second->Source(design_context.ContextObjects()) : nullptr;
+    auto empire = design_context.GetEmpire(empire_id);
+    std::shared_ptr<const UniverseObject> source = empire ? empire->Source(design_context.ContextObjects()) : nullptr;
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
@@ -223,8 +223,8 @@ int ShipHull::ProductionTime(int empire_id, int location_id,
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    auto source_it = design_context.empires.find(empire_id);
-    auto source = source_it != design_context.empires.end() ? source_it->second->Source(design_context.ContextObjects()) : nullptr;
+    auto empire = design_context.GetEmpire(empire_id);
+    std::shared_ptr<const UniverseObject> source = empire ? empire->Source(design_context.ContextObjects()) : nullptr;
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 

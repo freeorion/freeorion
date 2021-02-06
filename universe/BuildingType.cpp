@@ -141,8 +141,8 @@ float BuildingType::ProductionCost(int empire_id, int location_id,
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
-    auto source_it = context.empires.find(empire_id);
-    auto source = source_it != context.empires.end() ? source_it->second->Source(context.ContextObjects()) : nullptr;
+    auto empire = context.GetEmpire(empire_id);
+    std::shared_ptr<const UniverseObject> source = empire ? empire->Source(context.ContextObjects()) : nullptr;
 
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
@@ -182,8 +182,8 @@ int BuildingType::ProductionTime(int empire_id, int location_id,
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    auto source_it = context.empires.find(empire_id);
-    auto source = source_it != context.empires.end() ? source_it->second->Source(context.ContextObjects()) : nullptr;
+    auto empire = context.GetEmpire(empire_id);
+    std::shared_ptr<const UniverseObject> source = empire ? empire->Source(context.ContextObjects()) : nullptr;
 
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
@@ -197,40 +197,36 @@ int BuildingType::ProductionTime(int empire_id, int location_id,
     return m_production_time->Eval(local_context);
 }
 
-bool BuildingType::ProductionLocation(int empire_id, int location_id,
-                                      const ObjectMap& objects,
-                                      const EmpireManager& empires) const
-{
+bool BuildingType::ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const {
     if (!m_location)
         return true;
 
-    auto location = objects.get(location_id);
+    auto location = context.ContextObjects().get(location_id);
     if (!location)
         return false;
 
-    auto source = empires.GetSource(empire_id, objects);
+    auto empire = context.GetEmpire(empire_id);
+    std::shared_ptr<const UniverseObject> source = empire ? empire->Source(context.ContextObjects()) : nullptr;
     if (!source)
         return false;
 
-    return m_location->Eval(ScriptingContext(std::move(source), objects), std::move(location));
+    return m_location->Eval(ScriptingContext(std::move(source), context), std::move(location));
 }
 
-bool BuildingType::EnqueueLocation(int empire_id, int location_id,
-                                   const ObjectMap& objects,
-                                   const EmpireManager& empires) const
-{
+bool BuildingType::EnqueueLocation(int empire_id, int location_id, const ScriptingContext& context) const {
     if (!m_enqueue_location)
         return true;
 
-    auto location = objects.get(location_id);
+    auto location = context.ContextObjects().get(location_id);
     if (!location)
         return false;
 
-    auto source = empires.GetSource(empire_id, objects);
+    auto empire = context.GetEmpire(empire_id);
+    std::shared_ptr<const UniverseObject> source = empire ? empire->Source(context.ContextObjects()) : nullptr;
     if (!source)
         return false;
 
-    return m_enqueue_location->Eval(ScriptingContext(std::move(source), objects), std::move(location));
+    return m_enqueue_location->Eval(ScriptingContext(std::move(source), context), std::move(location));
 }
 
 unsigned int BuildingType::GetCheckSum() const {

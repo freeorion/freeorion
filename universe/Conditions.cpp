@@ -1811,7 +1811,7 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 
     // check if any empire's capital's ID is that candidate object's id.
     // if it is, the candidate object is a capital.
-    for ([[maybe_unused]] auto& [ignored_id, empire] : local_context.empires) {
+    for ([[maybe_unused]] auto& [ignored_id, empire] : local_context.Empires()) {
         (void)ignored_id;
         if (empire->CapitalID() == candidate_id)
             return true;
@@ -4461,8 +4461,8 @@ namespace {
             int count = 0;
 
             if (m_empire_id == ALL_EMPIRES) {
-                for (auto& item : m_context.empires) {
-                    const auto& empire = item.second;
+                for ([[maybe_unused]] auto& [ignored_empire_id, empire] : m_context.Empires()) {
+                    (void)ignored_empire_id; // quiet unused variable warning
                     count += NumberOnQueue(empire->GetProductionQueue(), m_build_type,
                                            candidate->ID(), m_name, m_design_id);
                 }

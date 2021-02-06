@@ -338,8 +338,8 @@ float ShipPart::ProductionCost(int empire_id, int location_id, int in_design_id)
     if (m_production_cost->ConstantExpr()) {
         return static_cast<float>(m_production_cost->Eval());
     } else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant()) {
-        ScriptingContext context(nullptr, nullptr, in_design_id);
-        return static_cast<float>(m_production_cost->Eval(context));
+        ScriptingContext temp_context; // TODO: replace with passed-in context
+        return static_cast<float>(m_production_cost->Eval(ScriptingContext(temp_context, in_design_id)));
     }
 
     auto location = Objects().get(location_id);
@@ -361,8 +361,8 @@ int ShipPart::ProductionTime(int empire_id, int location_id, int in_design_id) c
     if (m_production_time->ConstantExpr()) {
         return m_production_time->Eval();
     } else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant()) {
-        ScriptingContext context(nullptr, nullptr, in_design_id);
-        return m_production_time->Eval(context);
+        ScriptingContext temp_context; // TODO: replace with passed in context
+        return m_production_time->Eval(ScriptingContext(temp_context, in_design_id));
     }
 
     auto location = Objects().get(location_id);

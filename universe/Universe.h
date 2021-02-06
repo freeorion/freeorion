@@ -184,7 +184,7 @@ public:
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
       * were applied to the meter. */
-    const Effect::AccountingMap& GetEffectAccountingMap() const {return m_effect_accounting_map;}
+    const Effect::AccountingMap& GetEffectAccountingMap() const { return m_effect_accounting_map; }
 
     const std::map<std::string, std::map<int, std::map<int, double>>>&
     GetStatRecords() const { return m_stat_records; }
@@ -355,7 +355,7 @@ public:
       * is true, and (re)enables UniverseObjectSignals if \a inhibit is false. */
     void InhibitUniverseObjectSignals(bool inhibit = true);
 
-    void UpdateStatRecords();
+    void UpdateStatRecords(EmpireManager& empires);
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
     const bool& UniverseObjectSignalsInhibited();
@@ -455,7 +455,7 @@ private:
     /** Clears \a source_effects_targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */
     void GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
-                              EmpireManager& empires,
+                              const EmpireManager& empires,
                               bool only_meter_effects = false) const;
 
     /** Removes entries in \a source_effects_targets_causes about effects groups acting
@@ -464,7 +464,7 @@ private:
       * \a target_objects is empty then default target candidates will be used. */
     void GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                               const std::vector<int>& target_objects,
-                              EmpireManager& empires,
+                              const EmpireManager& empires,
                               bool only_meter_effects = false) const;
 
     void ResetObjectMeters(const std::vector<std::shared_ptr<UniverseObject>>& objects,

@@ -1254,7 +1254,7 @@ namespace {
 }
 
 void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
-                                    EmpireManager& empires,
+                                    const EmpireManager& empires,
                                     bool only_meter_effects) const
 {
     source_effects_targets_causes.clear();
@@ -1263,7 +1263,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
 
 void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                                     const std::vector<int>& target_object_ids,
-                                    EmpireManager& empires,
+                                    const EmpireManager& empires,
                                     bool only_meter_effects) const
 {
     SectionedScopedTimer type_timer("Effect TargetSets Evaluation", std::chrono::microseconds(0));
@@ -1276,9 +1276,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     for (auto& obj : potential_targets)
         TraceLogger(effects) << obj->Dump();
 
-    ScriptingContext scripting_context{*m_objects, m_empire_object_visibility,
-                                       m_empire_object_visibility_turns,
-                                       empires.GetEmpires(), empires.GetDiplomaticStatuses()};
+    ScriptingContext scripting_context{*this, empires};
 
 
     // list, not vector, to avoid invaliding iterators when pushing more items
@@ -1649,11 +1647,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
 
         // construct a source context, which is updated for each entry in sources-effects-targets.
         // execute each effectsgroup on its target set
-        ScriptingContext source_context{*m_objects,
-                                        m_empire_object_visibility,
-                                        m_empire_object_visibility_turns,
-                                        empires.GetEmpires(),
-                                        empires.GetDiplomaticStatuses()};
+        ScriptingContext source_context{*this, empires};
         for (auto& [sourced_effects_group, targets_and_cause] : setc) {
             Effect::TargetSet& target_set{targets_and_cause.target_set};
 
@@ -1795,13 +1789,9 @@ void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
             // evaluate valuerefs and and store visibility of object
             for (auto& source_ref_entry : object_entry.second) {
                 // set up context for executing ValueRef to determine visibility to set
-                ScriptingContext context{m_objects->get(source_ref_entry.first),
-                                         target, target_initial_vis,
-                                         nullptr, nullptr, *m_objects,
-                                         m_empire_object_visibility,
-                                         m_empire_object_visibility_turns,
-                                         empires.GetEmpires(),
-                                         empires.GetDiplomaticStatuses()};
+                ScriptingContext context{*this, empires,
+                                         m_objects->get(source_ref_entry.first),
+                                         target, target_initial_vis};
 
                 const auto val_ref = source_ref_entry.second;
 
@@ -2388,7 +2378,7 @@ namespace {
         }
     }
 
-    void SetEmpireSpecialVisibilities(ObjectMap& objects,
+    void SetEmpireSpecialVisibilities(const ScriptingContext& input_context,
                                       Universe::EmpireObjectVisibilityMap& empire_object_visibility,
                                       Universe::EmpireObjectSpecialsMap& empire_object_visible_specials)
     {
@@ -2411,16 +2401,13 @@ namespace {
                     continue;
 
                 int object_id = obj_entry.first;
-                auto obj = objects.get(object_id);
-                if (!obj)
-                    continue;
-
-                if (obj->Specials().empty())
+                auto obj = input_context.ContextObjects().get(object_id);
+                if (!obj || obj->Specials().empty())
                     continue;
 
                 auto& visible_specials = obj_specials_map[object_id];
                 auto& obj_specials = obj->Specials();
-                ScriptingContext context(std::move(obj), objects);
+                ScriptingContext context(std::move(obj), input_context);
 
                 // check all object's specials.
                 for (const auto& special_entry : obj_specials) {
@@ -2542,7 +2529,7 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
 
     SetTravelledStarlaneEndpointsVisible(*m_objects, m_empire_object_visibility);
 
-    SetEmpireSpecialVisibilities(*m_objects, m_empire_object_visibility, m_empire_object_visible_specials);
+    SetEmpireSpecialVisibilities(ScriptingContext{*this, empires}, m_empire_object_visibility, m_empire_object_visible_specials);
 
     ShareVisbilitiesBetweenAllies(*this, empires, m_empire_object_visibility, m_empire_object_visible_specials);
 }
@@ -2936,7 +2923,9 @@ const bool& Universe::UniverseObjectSignalsInhibited()
 void Universe::InhibitUniverseObjectSignals(bool inhibit)
 { m_inhibit_universe_object_signals = inhibit; }
 
-void Universe::UpdateStatRecords() {
+void Universe::UpdateStatRecords(EmpireManager& empires) {
+    ScriptingContext context{*this, empires};
+
     int current_turn = CurrentTurn();
     if (current_turn == INVALID_GAME_TURN)
         return;
@@ -2944,36 +2933,30 @@ void Universe::UpdateStatRecords() {
         m_stat_records.clear();
 
     std::map<int, std::shared_ptr<const UniverseObject>> empire_sources;
-    for (const auto& empire_entry : Empires()) {
-        if (empire_entry.second->Eliminated())
+    for (auto& [empire_id, empire] : context.Empires()) {
+        if (empire->Eliminated())
             continue;
-        auto source = empire_entry.second->Source();
+        auto source = empire->Source(context.ContextObjects());
         if (!source) {
             ErrorLogger() << "Universe::UpdateStatRecords() unable to find source for empire, id = "
-                          <<  empire_entry.second->EmpireID();
+                          <<  empire->EmpireID();
             continue;
         }
-        empire_sources[empire_entry.first] = std::move(source);
+        empire_sources[empire_id] = std::move(source);
     }
 
     // process each stat
-    for (const auto& stat_entry : EmpireStats()) {
-        const std::string& stat_name = stat_entry.first;
-
-        const auto& value_ref = stat_entry.second;
+    for (auto& [stat_name, value_ref] : EmpireStats()) {
         if (!value_ref)
             continue;
-
         auto& stat_records = m_stat_records[stat_name];
 
         // calculate stat for each empire, store in records for current turn
-        for (const auto& entry : empire_sources) {
-            int empire_id = entry.first;
-
+        for (auto& [empire_id, empire_source] : empire_sources) {
             if (value_ref->SourceInvariant()) {
                 stat_records[empire_id][current_turn] = value_ref->Eval();
-            } else if (entry.second) {
-                stat_records[empire_id][current_turn] = value_ref->Eval(ScriptingContext(entry.second, *m_objects));
+            } else if (empire_source) {
+                stat_records[empire_id][current_turn] = value_ref->Eval(ScriptingContext(empire_source, context));
             }
         }
     }
@@ -3015,7 +2998,7 @@ void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize,
 }
 
 void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const {
-    if (&objects == &*m_objects)
+    if (&objects == m_objects.get())
         return;
 
     objects.clear();

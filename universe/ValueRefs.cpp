@@ -1436,8 +1436,10 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 return boost::accumulate(empire->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
 
             int sum = 0;
-            for (const auto& empire_entry : context.empires)
-                sum += boost::accumulate(empire_entry.second->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
+            for ([[maybe_unused]] auto& [ignored_id, empire] : context.Empires()) {
+                (void)ignored_id; // quiet unused variable warning
+                sum += boost::accumulate(empire->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
+            }
             return sum;
         }
 
@@ -1445,8 +1447,10 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return boost::accumulate(empire_property_string_key(*empire) | filtered(key_filter) | map_values, 0);
 
         int sum = 0;
-        for (const auto& empire_entry : context.empires)
-            sum += boost::accumulate(empire_property_string_key(*(empire_entry.second)) | filtered(key_filter) | map_values, 0);
+        for ([[maybe_unused]] auto& [ignored_id, empire] : context.Empires()) {
+            (void)ignored_id; // quiet unused variable warning
+            sum += boost::accumulate(empire_property_string_key(*empire) | filtered(key_filter) | map_values, 0);
+        }
         return sum;
     }
 
@@ -1507,8 +1511,10 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return boost::accumulate(empire_property_int_key(*empire) | filtered(key_filter) | map_values, 0);
 
         int sum = 0;
-        for (const auto& empire_entry : context.empires)
-            sum += boost::accumulate(empire_property_int_key(*(empire_entry.second)) | filtered(key_filter) | map_values, 0);
+        for ([[maybe_unused]] auto& [ignored_id, empire] : context.Empires()) {
+            (void)ignored_id; // quiet unused variable warning
+            sum += boost::accumulate(empire_property_int_key(*empire) | filtered(key_filter) | map_values, 0);
+        }
         return sum;
     }
 
@@ -1531,7 +1537,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         auto GetRawPtr = [](const auto& smart_ptr){ return smart_ptr.get(); };
 
         if (!empire) {
-            return boost::accumulate(context.empires | map_values | transformed(GetRawPtr) |
+            return boost::accumulate(context.Empires() | map_values | transformed(GetRawPtr) |
                                      transformed(empire_property), 0);
         }
 
@@ -1645,7 +1651,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (m_int_ref2)
             object2_id = m_int_ref2->Eval(context);
 
-        int retval = GetUniverse().GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id, context.ContextObjects()); // TODO: Get PathFinder from ScriptingContext
+        int retval = context.ContextUniverse().GetPathfinder()->JumpDistanceBetweenObjects(
+            object1_id, object2_id, context.ContextObjects());
         if (retval == INT_MAX)
             return -1;
         return retval;
@@ -1665,7 +1672,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         //if (m_int_ref3)
         //    empire_id = m_int_ref3->Eval(context);
 
-        int retval = GetUniverse().GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id, context.ContextObjects()); // TODO: Get PathFinder from ScriptingContext
+        int retval = context.ContextUniverse().GetPathfinder()->JumpDistanceBetweenObjects(
+            object1_id, object2_id, context.ContextObjects());
         if (retval == INT_MAX)
             return -1;
         return retval;
@@ -1803,8 +1811,10 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             return boost::accumulate(empire_property(*empire) | filtered(key_filter) | map_values, 0.0f);
 
         float sum = 0.0f;
-        for (const auto& empire_entry : context.empires)
-            sum += boost::accumulate(empire_property(*(empire_entry.second)) | filtered(key_filter) | map_values, 0.0f);
+        for ([[maybe_unused]] auto& [unused_id, loop_empire] : context.Empires()) {
+            (void)unused_id; // quiet unused variable warning
+            sum += boost::accumulate(empire_property(*loop_empire) | filtered(key_filter) | map_values, 0.0f);
+        }
         return sum;
     }
 

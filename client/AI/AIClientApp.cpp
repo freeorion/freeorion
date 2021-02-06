@@ -335,7 +335,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
                                      m_empires,               m_universe,         GetSpeciesManager(),
                                      GetCombatLogManager(),   GetSupplyManager(), m_player_info);
         //DebugLogger() << "AIClientApp::HandleMessage : generating orders";
-        GetUniverse().InitializeSystemGraph(m_empires, m_universe.Objects());
+        m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
         m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(m_empires);
         m_AI->GenerateOrders();
         //DebugLogger() << "AIClientApp::HandleMessage : done handling turn update message";

@@ -728,16 +728,15 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // record empires for each active player. Note: active_empire_id_setup_data
     // contains only data of players who control an empire; observers and
     // moderators are not included.
-    for (const auto& player_id_and_setup : active_empire_id_setup_data) {
-        int empire_id = player_id_and_setup.first;
-        if (player_id_and_setup.second.player_id != Networking::INVALID_PLAYER_ID)
-            m_player_empire_ids[player_id_and_setup.second.player_id] = empire_id;
+    for (auto& [empire_id, player_setup_data] : active_empire_id_setup_data) {
+        if (player_setup_data.player_id != Networking::INVALID_PLAYER_ID)
+            m_player_empire_ids[player_setup_data.player_id] = empire_id;
 
         // add empires to turn processing
-        if (auto *empire = GetEmpire(empire_id)) {
-            AddEmpireTurn(empire_id, PlayerSaveGameData(player_id_and_setup.second.player_name, empire_id,
+        if (auto empire = m_empires.GetEmpire(empire_id)) {
+            AddEmpireTurn(empire_id, PlayerSaveGameData(player_setup_data.player_name, empire_id,
                                                         nullptr, nullptr, std::string(),
-                                                        player_id_and_setup.second.client_type));
+                                                        player_setup_data.client_type));
             empire->SetReady(false);
         }
     }
@@ -747,12 +746,11 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
     // initialize empire owned object counters
-    EmpireManager& empires = Empires();
-    for (auto& entry : empires)
+    for (auto& entry : m_empires)
         entry.second->UpdateOwnedObjectCounters();
 
     UpdateEmpireSupply();
-    m_universe.UpdateStatRecords();
+    m_universe.UpdateStatRecords(m_empires);
 }
 
 bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& player_setup_data) {
@@ -2392,16 +2390,20 @@ namespace {
 
     /** Clears and refills \a combats with CombatInfo structs for
       * every system where a combat should occur this turn. */
-    void AssembleSystemCombatInfo(std::vector<CombatInfo>& combats, const ScriptingContext& context) {
+    void AssembleSystemCombatInfo(std::vector<CombatInfo>& combats,
+                                  Universe& universe,
+                                  const EmpireManager& empires,
+                                  const GalaxySetupData& setup_data,
+                                  const SpeciesManager& species,
+                                  const SupplyManager& supply)
+    {
         combats.clear();
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in combats
-        for (const auto& sys : context.const_objects.all<System>()) {
-            if (CombatConditionsInSystem(sys->ID(), context.ContextObjects()))
-                combats.emplace_back(sys->ID(), CurrentTurn(), context.empire_object_vis,
-                                     context.objects, context.empires,
-                                     context.empire_object_vis_turns,
-                                     context.diplo_statuses);
+        for (const auto& sys : universe.Objects().all<System>()) {
+            if (CombatConditionsInSystem(sys->ID(), universe.Objects()))
+                combats.emplace_back(sys->ID(), CurrentTurn(), universe,
+                                     empires, setup_data, species, supply);
         }
     }
 
@@ -3369,9 +3371,7 @@ void ServerApp::ProcessCombats() {
 
 
     // collect data about locations where combat is to occur
-    AssembleSystemCombatInfo(combats, ScriptingContext(m_universe.Objects(), m_universe.GetEmpireObjectVisibility(),
-                                                       m_universe.GetEmpireObjectVisibilityTurnMap(),
-                                                       m_empires.GetEmpires(), m_empires.GetDiplomaticStatuses()));
+    AssembleSystemCombatInfo(combats, m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager);
 
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
@@ -3626,7 +3626,7 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // misc. other updates and records
-    m_universe.UpdateStatRecords();
+    m_universe.UpdateStatRecords(m_empires);
     for ([[maybe_unused]] auto& [ignored_empire_id, empire] : m_empires) {
         (void)ignored_empire_id;    // quiet unused variable warning
         empire->UpdateOwnedObjectCounters();

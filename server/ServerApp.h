@@ -90,7 +90,7 @@ public:
 
     bool IsHaveWinner() const;
 
-    void    operator()();               ///< external interface to Run()
+    void operator()(); ///< external interface to Run()
 
     void StartBackgroundParsing() override;
 

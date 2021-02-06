@@ -125,14 +125,12 @@ public:
 
     //! Returns true iff the empire with ID empire_id can produce this building
     //! at the location with location_id
-    auto ProductionLocation(int empire_id, int location_id, const ObjectMap& objects = Objects(),
-                            const EmpireManager& empires = Empires()) const -> bool;
+    auto ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const -> bool;
 
     //! Returns true iff the empire with ID empire_id meets the requirements of
     //! the EnqueueLocation() UI filter method for this building at the
     //! location with location_id
-    auto EnqueueLocation(int empire_id, int location_id, const ObjectMap& objects = Objects(),
-                         const EmpireManager& empires = Empires()) const -> bool;
+    auto EnqueueLocation(int empire_id, int location_id, const ScriptingContext& context) const -> bool;
 
     //! Returns CaptureResult for empire with ID @p to_empire_id capturing from
     //! empire with IDs @p from_empire_id the planet (or other UniverseObject)

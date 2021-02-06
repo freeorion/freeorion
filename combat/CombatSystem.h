@@ -6,31 +6,33 @@
 #include "CombatEvent.h"
 
 
-/** Contains information about the state of a combat before or after the combat
-  * occurs. */
+/** Contains information about the state of a combat before or after the combat occurs. */
 struct CombatInfo {
 public:
     CombatInfo() = default;
     CombatInfo(int system_id_, int turn_,
-               const Universe::EmpireObjectVisibilityMap& vis_,
-               ObjectMap& objects_,
-               const EmpireManager::container_type& empires_,
-               const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns_,
-               const EmpireManager::DiploStatusMap& diplo_statuses_);
+               Universe& universe_,
+               const EmpireManager& empires_,
+               const GalaxySetupData& galaxy_setup_data_,
+               const SpeciesManager& species_,
+               const SupplyManager& supply_);
+    // TODO: Constructor taking ObjectMap override?
 
-    /** Returns System object in this CombatInfo's objects if one exists with
-        id system_id. */
+    /** Returns System object in this CombatInfo's objects if one exists with id system_id. */
     std::shared_ptr<const System> GetSystem() const;
 
-    /** Returns System object in this CombatInfo's objects if one exists with
-        id system_id. */
+    /** Returns System object in this CombatInfo's objects if one exists with id system_id. */
     std::shared_ptr<System> GetSystem();
 
-    const EmpireManager::container_type&           empires{Empires().GetEmpires()}; // map from ID to empires, may include empires not actually participating in this combat
+    const Universe&                                universe{GetUniverse()}; // universe in which combat occurs, used for general info getting, but not object state info
+    const EmpireManager::const_container_type&     empires{const_cast<const EmpireManager&>(::Empires()).GetEmpires()}; // map from ID to empires, may include empires not actually participating in this combat
     const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{GetUniverse().GetEmpireObjectVisibilityTurnMap()};
     const EmpireManager::DiploStatusMap&           diplo_statuses{Empires().GetDiplomaticStatuses()};
+    const GalaxySetupData&                         galaxy_setup_data{GetGalaxySetupData()};
+    const SpeciesManager&                          species{GetSpeciesManager()};
+    const SupplyManager&                           supply{GetSupplyManager()};
 
-    std::unique_ptr<ObjectMap>          objects;                       ///< actual state of objects relevant to combat, filtered and copied for system where combat occurs
+    std::unique_ptr<ObjectMap>          objects;                       ///< actual state of objects relevant to combat, filtered and copied for system where combat occurs, not necessarily consistent with contents of universe's ObjectMap
     Universe::EmpireObjectVisibilityMap empire_object_visibility;      ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
     int                                 bout = 0;                      ///< current combat bout, used with CombatBout ValueRef for implementing bout dependent targeting. First combat bout is 1
     int                                 turn = INVALID_GAME_TURN;      ///< main game turn
