@@ -188,22 +188,22 @@ float ShipHull::ProductionCost(int empire_id, int location_id,
     if (m_production_cost->ConstantExpr())
         return static_cast<float>(m_production_cost->Eval());
 
-    ScriptingContext design_context(parent_context, in_design_id);
     if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
-        return static_cast<float>(m_production_cost->Eval(design_context));
+        return static_cast<float>(m_production_cost->Eval(ScriptingContext{parent_context, in_design_id}));
 
-    auto location = design_context.ContextObjects().get(location_id);
+    auto location = parent_context.ContextObjects().get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
-    auto empire = design_context.GetEmpire(empire_id);
-    std::shared_ptr<const UniverseObject> source = empire ? empire->Source(design_context.ContextObjects()) : nullptr;
+    auto empire = parent_context.GetEmpire(empire_id);
+    std::shared_ptr<const UniverseObject> source = empire ? empire->Source(parent_context.ContextObjects()) : nullptr;
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
-    design_context.source = std::move(source);
-    design_context.effect_target = std::move(location);
-    return static_cast<float>(m_production_cost->Eval(design_context));
+    ScriptingContext local_context{parent_context, in_design_id};
+    local_context.source = std::move(source);
+    local_context.effect_target = std::const_pointer_cast<UniverseObject>(location); // not actually modified by evaluating a ValueRef
+    return static_cast<float>(m_production_cost->Eval(local_context));
 }
 
 int ShipHull::ProductionTime(int empire_id, int location_id,
@@ -215,22 +215,22 @@ int ShipHull::ProductionTime(int empire_id, int location_id,
     if (m_production_time->ConstantExpr())
         return m_production_time->Eval();
 
-    ScriptingContext design_context(parent_context, in_design_id);
     if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
-        return m_production_time->Eval(design_context);
+        return m_production_time->Eval(ScriptingContext{parent_context, in_design_id});
 
-    auto location = design_context.ContextObjects().get(location_id);
+    auto location = parent_context.ContextObjects().get(location_id);
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    auto empire = design_context.GetEmpire(empire_id);
-    std::shared_ptr<const UniverseObject> source = empire ? empire->Source(design_context.ContextObjects()) : nullptr;
+    auto empire = parent_context.GetEmpire(empire_id);
+    std::shared_ptr<const UniverseObject> source = empire ? empire->Source(parent_context.ContextObjects()) : nullptr;
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    design_context.source = std::move(source);
-    design_context.effect_target = std::move(location);
-    return m_production_time->Eval(design_context);
+    ScriptingContext local_context{parent_context, in_design_id};
+    local_context.source = std::move(source);
+    local_context.effect_target = std::const_pointer_cast<UniverseObject>(location); // not actually modified by evaluating a ValueRef
+    return m_production_time->Eval(local_context);
 }
 
 unsigned int ShipHull::GetCheckSum() const {
