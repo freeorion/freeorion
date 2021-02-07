@@ -843,7 +843,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return context.combat_bout;
 
     } else if (property_name == "CurrentTurn") {
-        return CurrentTurn(); // TODO: should this also be in ScriptingContext?
+        return context.current_turn;
 
     } else if (property_name == "Attack") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
@@ -885,7 +885,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         if (property_name == "CombatBout")
             return context.combat_bout;
         if (property_name == "CurrentTurn")
-            return CurrentTurn();
+            return context.current_turn;
         if (property_name == "GalaxySize")
             return context.galaxy_setup_data.GetSize();
         if (property_name == "GalaxyShape")

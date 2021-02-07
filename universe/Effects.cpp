@@ -3325,7 +3325,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
     }
     }
 
-    int sitrep_turn = CurrentTurn() + 1;
+    int sitrep_turn = context.current_turn + 1;
 
     // send to recipient empires
     for (int empire_id : recipient_empire_ids) {

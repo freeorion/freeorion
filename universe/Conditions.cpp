@@ -640,7 +640,7 @@ std::string Turn::Dump(unsigned short ntabs) const {
 bool Turn::Match(const ScriptingContext& local_context) const {
     int low =  (m_low ?  std::max(BEFORE_FIRST_TURN,           m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
     int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) :      IMPOSSIBLY_LARGE_TURN);
-    int turn = CurrentTurn();
+    int turn = local_context.current_turn;
     return (low <= turn && turn <= high);
 }
 

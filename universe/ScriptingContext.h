@@ -24,6 +24,8 @@ struct ScriptingContext {
         condition_root_candidate( parent_context.condition_root_candidate),
         condition_local_candidate(std::move(condition_local_candidate_)),
         current_value(            parent_context.current_value),
+        combat_bout(              parent_context.combat_bout),
+        current_turn(             parent_context.current_turn),
         galaxy_setup_data(        parent_context.galaxy_setup_data),
         species(                  parent_context.species),
         supply(                   parent_context.supply),
@@ -49,6 +51,8 @@ struct ScriptingContext {
         condition_root_candidate( parent_context.condition_root_candidate),
         condition_local_candidate(parent_context.condition_local_candidate),
         current_value(            parent_context.current_value),
+        combat_bout(              parent_context.combat_bout),
+        current_turn(             parent_context.current_turn),
         galaxy_setup_data(        parent_context.galaxy_setup_data),
         species(                  parent_context.species),
         supply(                   parent_context.supply),
@@ -70,6 +74,8 @@ struct ScriptingContext {
         condition_root_candidate( parent_context.condition_root_candidate),
         condition_local_candidate(parent_context.condition_local_candidate),
         current_value(            current_value_),
+        combat_bout(              parent_context.combat_bout),
+        current_turn(             parent_context.current_turn),
         galaxy_setup_data(        parent_context.galaxy_setup_data),
         species(                  parent_context.species),
         supply(                   parent_context.supply),
@@ -92,6 +98,8 @@ struct ScriptingContext {
         condition_root_candidate( parent_context.condition_root_candidate),
         condition_local_candidate(parent_context.condition_local_candidate),
         current_value(            current_value_),
+        combat_bout(              parent_context.combat_bout),
+        current_turn(             parent_context.current_turn),
         galaxy_setup_data(        parent_context.galaxy_setup_data),
         species(                  parent_context.species),
         supply(                   parent_context.supply),
@@ -204,6 +212,7 @@ struct ScriptingContext {
 
     // general gamestate info
     int                                            combat_bout = 0;
+    int                                            current_turn = CurrentTurn();
     const GalaxySetupData&                         galaxy_setup_data{GetGalaxySetupData()};
     const SpeciesManager&                          species{GetSpeciesManager()};
     const SupplyManager&                           supply{GetSupplyManager()};
