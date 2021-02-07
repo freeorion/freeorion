@@ -170,11 +170,12 @@ struct FO_COMMON_API ProductionQueue {
     const_iterator  find(boost::uuids::uuid uuid) const;
     int             IndexOfUUID(boost::uuids::uuid uuid) const;
 
-    /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
-      * determines the number of projects in progress, and the industry consumed by projects
-      * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
-      * empire->CheckProductionProgress() will actually spend PP, remove items from queue and create them
-      * in the universe. */
+    /** Recalculates the PPs spent on and number of turns left for each project
+      * in the queue.  Also determines the number of projects in progress, and
+      * the industry consumed by projects in each resource-sharing group of
+      * systems.  Does not actually "spend" the PP; a later call to
+      * empire->CheckProductionProgress(...) will actually spend PP, remove
+      * items from queue and create them in the universe. */
     void        Update();
 
     // STL container-like interface
