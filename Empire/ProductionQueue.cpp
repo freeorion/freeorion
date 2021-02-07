@@ -488,7 +488,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
 }
 
 std::map<MeterType, std::map<int, float>>
-ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) const {
+ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) const { // TODO: pass ScriptingContext in
     std::map<MeterType, std::map<int, float>> retval;
 
     switch (build_type) {

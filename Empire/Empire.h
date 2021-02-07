@@ -347,10 +347,12 @@ public:
       * the production queue (which determines how much PP each project receives
       * but does not actually spend them).  This function spends the PP, removes
       * complete items from the queue and creates the results in the universe. */
-    void CheckProductionProgress(ScriptingContext& context = ScriptingContext());
+    void CheckProductionProgress(ScriptingContext& context);
+
     /** Checks for tech projects that have been completed, and returns a vector
       * of the techs that should be added to the known techs list. */
     std::vector<std::string> CheckResearchProgress();
+
     /** Eventually : Will check for social projects that have been completed and
       * / or process ongoing social projects, and update the empire's influence
       * stockpile to account for influence production and expenditures.*/
