@@ -263,9 +263,9 @@ MeterType NameToMeter(const std::string& name) {
 }
 
 const std::string& MeterToName(MeterType meter) {
-    for (const auto& entry : GetMeterNameMap()) {
-        if (entry.second == meter)
-            return entry.first;
+    for (auto& [name, type] : GetMeterNameMap()) {
+        if (type == meter)
+            return name;
     }
     return EMPTY_STRING;
 }
@@ -786,12 +786,12 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     const std::string& property_name = m_property_name.empty() ? "" : m_property_name.back();
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
-        if ((property_name == "UniverseCentreX") |
+        if ((property_name == "UniverseCentreX") ||
             (property_name == "UniverseCentreY"))
         {
-            return GetUniverse().UniverseWidth() / 2;   // TODO: get Universe from ScriptingContext
+            return context.ContextUniverse().UniverseWidth() / 2;   // TODO: get Universe from ScriptingContext
         } else if (property_name == "UniverseWidth") {
-            return GetUniverse().UniverseWidth();
+            return context.ContextUniverse().UniverseWidth();
         }
 
         // add more non-object reference double functions here
