@@ -590,11 +590,26 @@ namespace FreeOrionPython {
             .def("dump",                        &BuildingType::Dump,                        py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         py::def("getBuildingType",                  &GetBuildingType,                           py::return_value_policy<py::reference_existing_object>(), "Returns the building type (BuildingType) with the indicated name (string).");
+        ////////////////////
+        // ResourceCenter //
+        ////////////////////
+        py::class_<ResourceCenter, boost::noncopyable>("resourceCenter", py::no_init)
+            .add_property("focus",                  make_function(&ResourceCenter::Focus,   py::return_value_policy<py::copy_const_reference>()))
+            .add_property("turnsSinceFocusChange" , &ResourceCenter::TurnsSinceFocusChange)
+            .add_property("availableFoci",          &ResourceCenter::AvailableFoci)
+        ;
+
+        ///////////////////
+        //   PopCenter   //
+        ///////////////////
+        py::class_<PopCenter, boost::noncopyable>("popCenter", py::no_init)
+            .add_property("speciesName",        make_function(&PopCenter::SpeciesName,      py::return_value_policy<py::copy_const_reference>()))
+        ;
 
         //////////////////
         //    Planet    //
         //////////////////
-        py::class_<Planet, py::bases<UniverseObject>, boost::noncopyable>("planet", py::no_init)
+        py::class_<Planet, py::bases<UniverseObject, PopCenter, ResourceCenter>, boost::noncopyable>("planet", py::no_init)
             .add_property("size",                           &Planet::Size)
             .add_property("type",                           &Planet::Type)
             .add_property("originalType",                   &Planet::OriginalType)
@@ -613,10 +628,6 @@ namespace FreeOrionPython {
             .add_property("LastTurnConquered",              &Planet::LastTurnConquered)
             .add_property("buildingIDs",                    make_function(&Planet::BuildingIDs,     py::return_internal_reference<>()))
             .add_property("habitableSize",                  &Planet::HabitableSize)
-            .add_property("focus",                          make_function(&ResourceCenter::Focus,   py::return_value_policy<py::copy_const_reference>()))
-            .add_property("turnsSinceFocusChange",          &ResourceCenter::TurnsSinceFocusChange)
-            .add_property("availableFoci",                  &ResourceCenter::AvailableFoci)   
-            .add_property("speciesName",                    make_function(&PopCenter::SpeciesName,      py::return_value_policy<py::copy_const_reference>()))
         ;
 
         //////////////////
