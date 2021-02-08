@@ -764,7 +764,6 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
 
     DebugLogger() << "Initializing System Graph";
     GetUniverse().InitializeSystemGraph(Empires(), Objects());
-    GetUniverse().UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(Empires());
 }
 
 void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
