@@ -78,7 +78,6 @@ def get_common_instances() -> Generator:
     yield fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL')
     yield fo.getShipHull('SH_XENTRONIUM')
 
-    yield universe.effectAccounting
     yield universe.buildingIDs
 
     ship = universe.getShip(list(universe.shipIDs)[0])

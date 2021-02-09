@@ -170,20 +170,6 @@ class captureResult(object):
     retain = 2
 
 
-class effectsCauseType(object):
-    """EffectsCauseType enumeration."""
-    invalid = -1
-    unknown = 0
-    inherent = 1
-    tech = 2
-    building = 3
-    field = 4
-    special = 5
-    species = 6
-    shipPart = 7
-    shipHull = 8
-
-
 class shipSlotType(object):
     """ShipSlotType enumeration."""
     external = 0
