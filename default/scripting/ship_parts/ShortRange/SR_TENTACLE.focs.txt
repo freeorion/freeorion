@@ -3,6 +3,30 @@ Part
     description = "SR_TENTACLE_DESC"
     class = ShortRange
     damage = 5
+    shots = 2
+    combatTargets = And [
+        (CombatBout > 1)
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        OrderedAlternativesOf [
+           And [
+               // Attack fighters in bout 2
+               (CombatBout = 2)
+               [[COMBAT_TARGETS_VISIBLE_ENEMY]] Fighter
+           ]
+           And [
+               (CombatBout > 2) // Ships are also in reach starting from bout 3
+               [[COMBAT_TARGETS_VISIBLE_ENEMY]] [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+           ]
+           And [
+               (CombatBout > 2) // if no ships, fighters and planets are fair game
+               [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+               Or [
+                    Fighter
+                    [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
+               ]
+           ]
+        ]
+    ]
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 2
@@ -13,3 +37,4 @@ Part
 #include "shortrange.macros"
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/ship_parts/targeting.macros"
