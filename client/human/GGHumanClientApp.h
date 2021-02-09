@@ -7,8 +7,8 @@
 #include "../../UI/ClientUI.h"
 #include "../../util/OptionsDB.h"
 #include <boost/statechart/event_base.hpp>
-#include <boost/thread/mutex.hpp>
 #include <memory>
+#include <mutex>
 #include <queue>
 #include <string>
 
@@ -143,7 +143,7 @@ private:
     void FreeServer();
 
 
-    boost::mutex m_event_queue_guard;
+    std::mutex m_event_queue_guard;
     std::list<boost::intrusive_ptr<const boost::statechart::event_base>> m_posted_event_queue;
 
     void HandleSystemEvents() override;

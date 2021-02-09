@@ -115,7 +115,7 @@ namespace {
     // get currently set stringtable filename option value, or the default value
     // if the currenty value is empty
     std::string GetStringTableFileName() {
-        std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+        std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
         // initialize option value and default on first call
         if (!stringtable_filename_init)
             InitStringtableFileName();
@@ -128,7 +128,7 @@ namespace {
     }
 
     const StringTable& GetStringTable(boost::filesystem::path stringtable_path) {
-        std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+        std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
 
         if (!stringtable_filename_init)
             InitStringtableFileName();
@@ -196,12 +196,12 @@ std::locale GetLocale(const std::string& name) {
 }
 
 void FlushLoadedStringTables() {
-    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     stringtables.clear();
 }
 
 const std::map<std::string, std::string>& AllStringtableEntries(bool default_table) {
-    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     if (default_table)
         return GetDevDefaultStringTable().AllStrings();
     else
@@ -209,14 +209,14 @@ const std::map<std::string, std::string>& AllStringtableEntries(bool default_tab
 }
 
 const std::string& UserString(const std::string& str) {
-    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     if (GetStringTable().StringExists(str))
         return GetStringTable()[str];
     return GetDevDefaultStringTable()[str];
 }
 
 std::vector<std::string> UserStringList(const std::string& key) {
-    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     std::vector<std::string> result;
     std::istringstream template_stream(UserString(key));
     std::string item;
@@ -226,7 +226,7 @@ std::vector<std::string> UserStringList(const std::string& key) {
 }
 
 bool UserStringExists(const std::string& str) {
-    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     return GetStringTable().StringExists(str) || GetDevDefaultStringTable().StringExists(str);
 }
 
@@ -244,7 +244,7 @@ boost::format FlexibleFormat(const std::string &string_to_format) {
 }
 
 const std::string& Language() {
-    std::lock_guard<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     return GetStringTable().Language();
 }
 

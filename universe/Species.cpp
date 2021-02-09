@@ -375,12 +375,12 @@ namespace {
 }
 
 void SpeciesManager::SetSpeciesTypes(Pending::Pending<std::pair<SpeciesTypeMap, CensusOrder>>&& future) {
-    std::lock_guard<std::mutex> lock(species_mutex);
+    std::scoped_lock lock(species_mutex);
     s_pending_types = std::move(future);
 }
 
 void SpeciesManager::CheckPendingSpeciesTypes() {
-    std::lock_guard<std::mutex> lock(species_mutex);
+    std::scoped_lock lock(species_mutex);
 
     if (!s_pending_types) {
         if (s_species.empty())

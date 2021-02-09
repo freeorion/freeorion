@@ -125,7 +125,7 @@ jobs:
     - name: Build FreeOrion on MacOS
       stage: build
       os: osx
-      osx_image: xcode9.4
+      osx_image: xcode10.1
       language: cpp
       compiler: clang
       cache: ccache

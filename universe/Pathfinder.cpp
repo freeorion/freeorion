@@ -2,13 +2,12 @@
 
 #include <algorithm>
 #include <limits>
+#include <shared_mutex>
 #include <stdexcept>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/filtered_graph.hpp>
-#include <boost/thread/locks.hpp>
-#include <boost/thread/shared_mutex.hpp>
 #include <boost/variant/variant.hpp>
 #include "Field.h"
 #include "Fleet.h"
@@ -57,15 +56,15 @@ namespace {
             m_data.resize(a_size);
             m_row_mutexes.resize(a_size);
             for (auto &row_mutex : m_row_mutexes)
-                row_mutex = std::make_shared<boost::shared_mutex>();
+                row_mutex = std::make_shared<std::shared_mutex>();
         }
 
         /**N x N table of hop distances in row column form.*/
         std::vector< std::vector<T>> m_data;
         /**Per row mutexes.*/
-        std::vector< std::shared_ptr<boost::shared_mutex>> m_row_mutexes;
+        std::vector< std::shared_ptr<std::shared_mutex>> m_row_mutexes;
         /**Table mutex*/
-        boost::shared_mutex m_mutex;
+        std::shared_mutex m_mutex;
     };
 
 
@@ -88,12 +87,12 @@ namespace {
         distance_matrix_cache(Storage& the_storage) : m_storage(the_storage) {}
         /**Read lock the table and return the size N.*/
         size_t size() {
-            boost::shared_lock<boost::shared_mutex> guard(m_storage.m_mutex);
+            std::shared_lock<std::shared_mutex> guard(m_storage.m_mutex);
             return m_storage.size();
         }
         /**Write lock the table and resize to N = \p a_size.*/
         void resize(size_t a_size) {
-            boost::unique_lock<boost::shared_mutex> guard(m_storage.m_mutex);
+            std::unique_lock<std::shared_mutex> guard(m_storage.m_mutex);
             m_storage.resize(a_size);
         }
 
@@ -117,7 +116,7 @@ namespace {
           * does not fill the row  on a cache miss.
           */
         T get_T(size_t ii, size_t jj, cache_miss_handler fill_row) const {
-            boost::shared_lock<boost::shared_mutex> guard(m_storage.m_mutex);
+            std::shared_lock<std::shared_mutex> guard(m_storage.m_mutex);
 
             size_t NN = m_storage.size();
             if ((ii >= NN) || (jj >= NN)) {
@@ -126,21 +125,21 @@ namespace {
                 throw std::out_of_range("row and/or column index is invalid.");
             }
             {
-                boost::shared_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
+                std::shared_lock<std::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
                 const Row &row_data = m_storage.m_data[ii];
 
                 if (NN == row_data.size())
                     return row_data[jj];
             }
             {
-                boost::shared_lock<boost::shared_mutex> column_guard(*m_storage.m_row_mutexes[jj]);
+                std::shared_lock<std::shared_mutex> column_guard(*m_storage.m_row_mutexes[jj]);
                 const Row &column_data = m_storage.m_data[jj];
 
                 if (NN == column_data.size())
                     return column_data[ii];
             }
             {
-                boost::unique_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
+                std::unique_lock<std::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
                 Row &row_data = m_storage.m_data[ii];
 
                 if (NN == row_data.size()) {
@@ -168,7 +167,7 @@ namespace {
           * does not fill the row  on a cache miss.
           */
         void examine_row(size_t ii, cache_miss_handler fill_row, cache_hit_handler use_row) const {
-            boost::shared_lock<boost::shared_mutex> guard(m_storage.m_mutex);
+            std::shared_lock<std::shared_mutex> guard(m_storage.m_mutex);
 
             size_t NN = m_storage.size();
             if (ii >= NN) {
@@ -177,14 +176,14 @@ namespace {
                 throw std::out_of_range("row index is invalid.");
             }
             {
-                boost::shared_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
+                std::shared_lock<std::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
                 const Row &row_data = m_storage.m_data[ii];
 
                 if (NN == row_data.size())
                     return use_row(ii, row_data);
             }
             {
-                boost::unique_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
+                std::unique_lock<std::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
                 Row &row_data = m_storage.m_data[ii];
 
                 if (NN == row_data.size()) {

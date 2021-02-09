@@ -2,10 +2,10 @@
 #define _MessageQueue_h_
 
 #include <boost/thread/condition.hpp>
-#include <boost/thread/mutex.hpp>
 #include <boost/optional/optional_fwd.hpp>
 
 #include <list>
+#include <mutex>
 
 #include "../util/Export.h"
 
@@ -16,7 +16,7 @@ class Message;
 class FO_COMMON_API MessageQueue
 {
 public:
-    MessageQueue(boost::mutex& monitor);
+    MessageQueue(std::mutex& monitor);
 
     /** Returns true iff the queue is empty. */
     bool Empty() const;
@@ -35,7 +35,7 @@ public:
 
 private:
     std::list<Message> m_queue;
-    boost::mutex&      m_monitor;
+    std::mutex&        m_monitor;
 };
 
 

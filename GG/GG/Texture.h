@@ -19,9 +19,9 @@
 
 
 #include <boost/filesystem/path.hpp>
-#include <boost/thread/mutex.hpp>
 #include <GG/Base.h>
 #include <GG/Exception.h>
+#include <mutex>
 
 
 namespace GG {
@@ -255,7 +255,7 @@ private:
         name and not loaded from a path. */
     std::map<std::string, std::shared_ptr<Texture>> m_textures;
 
-    mutable boost::mutex m_texture_access_guard;
+    mutable std::mutex m_texture_access_guard;
 
     friend GG_API TextureManager& GetTextureManager();
 };

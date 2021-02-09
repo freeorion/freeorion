@@ -87,7 +87,7 @@ namespace Pending {
     boost::optional<T> WaitForPending(boost::optional<Pending<T>>& pending, bool do_not_care_about_result = false) {
         if (!pending)
             return boost::none;
-        std::lock_guard<std::mutex> lock(pending->m_mutex);
+        std::scoped_lock lock(pending->m_mutex);
         if (!pending || !(pending->pending)) {
             // another thread in the meantime transferred the pending to stored
             return boost::none;
@@ -106,7 +106,7 @@ namespace Pending {
     template <typename T>
     T& SwapPending(boost::optional<Pending<T>>& pending, T& stored) {
         if (pending) {
-            std::lock_guard<std::mutex> lock(pending->m_mutex);
+            std::scoped_lock lock(pending->m_mutex);
             if (!pending) {
                 // another thread in the meantime transferred the pending to stored
                 return stored;
@@ -114,7 +114,7 @@ namespace Pending {
             if (auto tt = WaitForPendingUnlocked(std::move(*pending))) {
                 std::swap(*tt, stored);
             }
-	    pending = boost::none;
+        pending = boost::none;
         }
         return stored;
     }
