@@ -4920,7 +4920,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
 
         return std::make_pair(new_design_id, new_uuid);
 
-    } catch (std::invalid_argument&) {
+    } catch (const std::invalid_argument&) {
         ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
         return {INVALID_DESIGN_ID, boost::uuids::nil_generator()()};
     }

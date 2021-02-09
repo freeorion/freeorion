@@ -236,7 +236,7 @@ CUIWnd::~CUIWnd() {
     try {
         if (!m_config_name.empty() && GetOptionsDB().OptionExists("ui." + m_config_name + ".initialized"))
             GetOptionsDB().Remove("ui." + m_config_name + ".initialized");
-    } catch (std::exception& e) { // catch std::runtime_error, boost::bad_any_cast
+    } catch (const std::exception& e) { // catch std::runtime_error, boost::bad_any_cast
         ErrorLogger() << "CUIWnd::~CUIWnd() : caught exception while removing \"ui." << m_config_name
                       << ".initialized\": " << e.what();
     }

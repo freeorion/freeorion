@@ -146,7 +146,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
         it = end - matches.suffix().length();
 
         well_formed = it == end;
-    } catch (std::exception& e) {
+    } catch (const std::exception& e) {
         ErrorLogger() << "Exception caught regex parsing Stringtable: " << e.what();
         ErrorLogger() << "Last and prior keys matched: " << key << ", " << prev_key;
         std::cerr << "Exception caught regex parsing Stringtable: " << e.what() << std::endl;

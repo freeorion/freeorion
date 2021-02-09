@@ -43,7 +43,7 @@ namespace {
     bool is_valid_uuid(const std::string& uuid_string) {
         try {
             boost::lexical_cast<boost::uuids::uuid>(uuid_string);
-        } catch (boost::bad_lexical_cast&) {
+        } catch (const boost::bad_lexical_cast&) {
             ErrorLogger() << uuid_string << " is not a valid UUID.  A valid UUID looks like 01234567-89ab-cdef-0123-456789abcdef";
             return false;
         }
@@ -57,7 +57,7 @@ namespace {
     boost::uuids::uuid parse_uuid(const std::string& uuid_string) {
         try {
             return boost::lexical_cast<boost::uuids::uuid>(uuid_string);
-        } catch (boost::bad_lexical_cast&) {
+        } catch (const boost::bad_lexical_cast&) {
             // This should never happen because the previous is_valid should short circuit.
             ErrorLogger() << uuid_string << " is not a valid UUID.  A valid UUID looks like 01234567-89ab-cdef-0123-456789abcdef";
             return boost::uuids::nil_generator()();

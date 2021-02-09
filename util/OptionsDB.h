@@ -231,7 +231,7 @@ public:
                 try {
                     // This option was previously specified externally but was not recognized at the time, attempt to parse the value found there
                     value = validator.Validate(it->second.ValueToString());
-                } catch (boost::bad_lexical_cast&) {
+                } catch (const boost::bad_lexical_cast&) {
                     ErrorLogger() << "OptionsDB::Add<>() : Option " << name << " was given the value \"" << it->second.ValueToString() << "\" from the command line or a config file but that value couldn't be converted to the correct type, using default value instead.";
                 }
             }
@@ -261,7 +261,7 @@ public:
                 try {
                     // This option was previously specified externally but was not recognized at the time, attempt to parse the value found there
                     value = validator.Validate(it->second.ValueToString());
-                } catch (boost::bad_lexical_cast&) {
+                } catch (const boost::bad_lexical_cast&) {
                     ErrorLogger() << "OptionsDB::Add<>() : Option " << name << " was given the value from the command line or a config file that cannot be converted to the correct type. Using default value instead.";
                 }
             }

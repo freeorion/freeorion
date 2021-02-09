@@ -126,7 +126,7 @@ void ExtractParameters(const std::string& params_string,
             // Pass space.
             pass_space(it, end);
         }
-    } catch (std::exception& ex) {
+    } catch (const std::exception& ex) {
         // Store error in special parameter.
         tag_params["GG_ERROR"] = ex.what();
     }

@@ -426,7 +426,7 @@ void Spin<T>::ValueUpdated(const std::string& val_text)
 {
     try {
         SetValueImpl(boost::lexical_cast<T>(val_text), true);
-    } catch (boost::bad_lexical_cast) {
+    } catch (const boost::bad_lexical_cast&) {
         SetValueImpl(m_min_value, true);
     }
 }

@@ -202,7 +202,7 @@ struct OrValidator : public Validator<T>
 
         try {
             result = m_validator_a->Validate(str);
-        } catch (boost::bad_lexical_cast&) {
+        } catch (const boost::bad_lexical_cast&) {
             result = m_validator_b->Validate(str);
         }
 
