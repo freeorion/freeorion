@@ -14265,6 +14265,9 @@ Krill Swarm
 FT_BAY_KRILL_DESC
 When Krill swarms are big enough, single Krill leave the swarm to attack ships the swarm encounters.
 
+SHORT_RANGE_COMBAT_ROUND
+'''2'''
+
 CLOSE_RANGE_COMBAT_ROUND
 '''3'''
 
@@ -14333,6 +14336,14 @@ Spinal Antimatter Cannon
 
 SR_SPINAL_ANTIMATTER_DESC
 A huge spinal mount mass driver firing heavy projectiles made of antimatter. Attacks ships and planets.
+
+SR_GRAV_PULSE
+Graviton Pulsar
+
+SR_GRAV_PULSE_DESC
+'''Graviton pulse causing damage to hull integrity to every target caught in the blast. While still deadly to fighters if the blast is spread, it causes only minor damage to ships or planet defenses.
+
+Graviton pulse inflicts [[encyclopedia DAMAGE_TITLE]] only once in combat, in combat round [[SHORT_RANGE_COMBAT_ROUND]].'''
 
 SR_JAWS
 Jaws
