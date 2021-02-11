@@ -14266,10 +14266,10 @@ FT_BAY_KRILL_DESC
 When Krill swarms are big enough, single Krill leave the swarm to attack ships the swarm encounters.
 
 SHORT_RANGE_COMBAT_ROUND
-'''2'''
+2
 
 CLOSE_RANGE_COMBAT_ROUND
-'''3'''
+3
 
 SR_WEAPON_0_1
 Flak Cannon
