@@ -25,6 +25,12 @@ Hull
         [[INFINITE_FUEL]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetMaxSecondaryStat partname = "SR_TENTACLE" value = Value + 6
+                SetSecondaryStat partname = "SR_TENTACLE" value = Value + 6
+            ]
     ]
     icon = ""
     graphic = "icons/monsters/kraken-4.png"
