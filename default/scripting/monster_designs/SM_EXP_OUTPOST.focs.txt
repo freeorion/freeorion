@@ -4,7 +4,7 @@ ShipDesign
     description = "SM_EXP_OUTPOST_DESC"
     hull = "SH_EXP_OUTPOST_HULL"
     parts = [
-        ""
+        "SR_GRAV_PULSE"
         "SH_BLACK"
     ]
     icon = "icons/monsters/experiment0.png"
