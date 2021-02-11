@@ -4,7 +4,7 @@ ShipDesign
     description = "SM_GUARD_3_DESC"
     hull = "SH_GUARD_3_BODY"
     parts = [
-        "SR_WEAPON_0_1"
+        "SR_ARC_DISRUPTOR"
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
