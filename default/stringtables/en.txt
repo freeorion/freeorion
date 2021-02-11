@@ -14369,6 +14369,14 @@ SR_TENTACLE_DESC
 
 Tentacles can inflict [[encyclopedia DAMAGE_TITLE]] to ships starting from combat round [[CLOSE_RANGE_COMBAT_ROUND]] as the targets are too far away in earlier rounds. Tentacles start to destroy fighters when they come in range in [[SHORT_RANGE_COMBAT_ROUND]]. Tentacles only attack fighters or planets if there are no ships to target.'''
 
+SR_THRASHING_BODY
+Thrashing Body
+
+SR_THRASHING_BODY_DESC
+'''The fast moving body of a space monster, crushes fighters and low structure ships in its way.
+
+A thrashing body can inflict [[encyclopedia DAMAGE_TITLE]] starting from combat round [[CLOSE_RANGE_COMBAT_ROUND]] as the targets are too far away in earlier rounds.'''
+
 SR_PLASMA_DISCHARGE
 Plasma Discharge
 

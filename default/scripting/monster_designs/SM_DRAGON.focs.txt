@@ -6,7 +6,7 @@ ShipDesign
     parts = [
         "SR_PLASMA_DISCHARGE"
         "SP_DEATH_SPORE"
-        ""
+        "SR_THRASHING_BODY"
         "AR_CRYSTAL_PLATE"
         "FU_ZERO_FUEL"
     ]
