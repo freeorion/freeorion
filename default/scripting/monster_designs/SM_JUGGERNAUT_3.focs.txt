@@ -7,6 +7,7 @@ ShipDesign
         "SP_EMO"
         "SR_JAWS"
         "SR_SPINES"
+        "SR_GRAV_PULSE"
         "SH_PLASMA"
         ]
     icon = "icons/monsters/juggernaut-3.png"

@@ -7,6 +7,7 @@ ShipDesign
         ""
         "SR_JAWS"
         ""
+        "SR_GRAV_PULSE"
         "SH_DEFENSE_GRID"
         ]
     icon = "icons/monsters/juggernaut-1.png"
