@@ -8,6 +8,7 @@ Hull
     structure = 25
     slots = [
         Slot type = External position = (0.20, 0.67)
+        Slot type = External position = (0.74, 0.17)
         Slot type = External position = (0.74, 0.42)
         Slot type = Internal position = (0.50, 0.35)
     ]
