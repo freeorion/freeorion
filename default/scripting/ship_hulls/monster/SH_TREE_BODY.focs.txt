@@ -39,7 +39,7 @@ Hull
         EffectsGroup    // regeneration
             scope = Source
             activation = Turn low = LocalCandidate.System.LastTurnBattleHere + 1
-            effects = SetStructure value = Value + 7
+            effects = SetStructure value = Value + 7 * [[SHIP_STRUCTURE_FACTOR]]
 
         EffectsGroup    // krill swarm (re)growth
             scope = Source
