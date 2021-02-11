@@ -10,6 +10,7 @@ Hull
         Slot type = External position = (0.35, 0.70)
         Slot type = External position = (0.65, 0.75)
         Slot type = External position = (0.95, 0.65)
+        Slot type = External position = (0.20, 0.50)
         Slot type = External position = (0.18, 0.30)
         Slot type = External position = (0.78, 0.35)
         Slot type = Internal position = (0.37, 0.40)
@@ -27,6 +28,12 @@ Hull
         [[INFINITE_FUEL]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
+        EffectsGroup // Upgrade fighter defense
+            scope = Source
+            effects = [
+                SetMaxSecondaryStat partname = "SR_GRAV_PULSE" value = Value + 12
+                SetSecondaryStat partname = "SR_GRAV_PULSE" value = Value + 12
+            ]
     ]
     icon = ""
     graphic = "icons/monsters/juggernaut-4.png"
