@@ -5600,6 +5600,7 @@ ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 ENC_METER_TYPE
 Meter Type
 
+
 ##
 ## Combat report
 ##
