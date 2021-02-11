@@ -14357,7 +14357,9 @@ SR_SPINES
 Spines
 
 SR_SPINES_DESC
-Spines of a space monster, a powerful strike of the space monster can deal big damage to a ship.
+'''Spines of a space monster, a powerful strike of the space monster can deal big damage to a ship.
+
+Spines inflict [[encyclopedia DAMAGE_TITLE]] starting from combat round [[CLOSE_RANGE_COMBAT_ROUND]] as the targets are too far away in earlier rounds.'''
 
 SR_TENTACLE
 Tentacle

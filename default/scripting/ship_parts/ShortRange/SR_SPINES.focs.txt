@@ -2,7 +2,15 @@ Part
     name = "SR_SPINES"
     description = "SR_SPINES_DESC"
     class = ShortRange
-    damage = 20
+    damage = 40
+    combatTargets = And [
+        (CombatBout > 2)
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Or [
+           [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+           [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
+        ]
+    ]
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 3
@@ -13,3 +21,4 @@ Part
 #include "shortrange.macros"
 
 #include "/scripting/common/upkeep.macros"
+#include "/scripting/ship_parts/targeting.macros"
