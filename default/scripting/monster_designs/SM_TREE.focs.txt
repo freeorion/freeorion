@@ -3,6 +3,10 @@ ShipDesign
     uuid = "08a58b08-0929-496d-84fc-fba91424ca10"
     description = "SM_TREE_DESC"
     hull = "SH_TREE_BODY"
-    parts = "SR_WEAPON_1_1"
+    parts = [
+        "SR_WEAPON_1_1"
+        "FT_BAY_KRILL"
+        "FT_HANGAR_KRILL"
+    ]
     icon = "icons/monsters/tree.png"
     model = "seed"
