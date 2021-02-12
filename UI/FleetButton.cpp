@@ -337,7 +337,7 @@ void FleetButton::LayoutIcons() {
             if (fleet->BlockadedAtSystem(fleet->SystemID(), target_system_id.first, context))
                 continue;
 
-            if (auto target_system = context.ContextObjects().get<System>(target_system_id.first).get()) {
+            if (auto target_system = context.ContextObjects().get<System>(target_system_id.first)) {
                 available_exits += "\n" + target_system->ApparentName(GGHumanClientApp::GetApp()->EmpireID());
                 available_exits_count++;
             }
