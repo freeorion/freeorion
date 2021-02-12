@@ -19,7 +19,7 @@ class FO_COMMON_API Ship : public UniverseObject {
 public:
     typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeterMap;
 
-    bool HostileToEmpire(int empire_id) const override;
+    bool HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
     std::set<std::string> Tags() const override;
     bool HasTag(const std::string& name) const override;
     UniverseObjectType ObjectType() const override;
@@ -29,7 +29,7 @@ public:
     { return m_fleet_id; }
 
     bool ContainedBy(int object_id) const override;
-    const std::string& PublicName(int empire_id) const override;
+    const std::string& PublicName(int empire_id, const ObjectMap& objects) const override;
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** Back propagates part meters (which UniverseObject equivalent doesn't). */

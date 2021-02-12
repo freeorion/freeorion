@@ -128,8 +128,7 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
     }
 }
 
-bool Planet::HostileToEmpire(int empire_id) const
-{
+bool Planet::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
     if (OwnedBy(empire_id))
         return false;
 
@@ -143,7 +142,7 @@ bool Planet::HostileToEmpire(int empire_id) const
         return pop_meter && (pop_meter->Current() != 0.0f);
 
     // both empires are normal empires
-    return Empires().GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
+    return empires.GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
 std::set<std::string> Planet::Tags() const {

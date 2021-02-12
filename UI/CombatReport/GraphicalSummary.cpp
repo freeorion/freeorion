@@ -268,9 +268,10 @@ public:
         m_sizer(sizer),
         m_hovered(false)
     {
-        auto object = Objects().get(participant.object_id);
+        const ObjectMap& objects = Objects();
+        auto object = objects.get(participant.object_id);
         if (object) {
-            SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID()) + " " +
+            SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID(), objects) + " " +
                           DoubleToString(participant.current_health, 3, false) + "/" +
                           DoubleToString(participant.max_health, 3, false)
             );

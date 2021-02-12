@@ -643,28 +643,28 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
 }
 
 namespace {
-    void UpdateEmpireSupply(bool precombat = false) {
-        EmpireManager& empires = Empires();
-
+    void UpdateEmpireSupply(const ScriptingContext& context, EmpireManager& empires,
+                            SupplyManager& supply, bool precombat = false)
+    {
         // Determine initial supply distribution and exchanging and resource pools for empires
-        for (auto& entry : empires) {
-            auto& empire = entry.second;
+        for ([[maybe_unused]] auto& [ignored_id, empire] : empires) {
+            (void)ignored_id; // quiet unused variable warning
             if (empire->Eliminated())
                 continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
-            empire->UpdateSupplyUnobstructedSystems(precombat); // determines which systems can propagate fleet and resource (same for both)
-            empire->UpdateSystemSupplyRanges();                 // sets range systems can propagate fleet and resourse supply (separately)
+            empire->UpdateSupplyUnobstructedSystems(context, precombat); // determines which systems can propagate fleet and resource (same for both)
+            empire->UpdateSystemSupplyRanges();                          // sets range systems can propagate fleet and resourse supply (separately)
         }
 
-        GetSupplyManager().Update();
+        supply.Update();
 
-        for (auto& entry : empires) {
-            auto& empire = entry.second;
+        for ([[maybe_unused]] auto& [ignored_id, empire] : empires) {
+            (void)ignored_id; // quiet unused variable warning
             if (empire->Eliminated())
                 continue;
 
-            empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
-            empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
+            empire->InitResourcePools();   // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
+            empire->UpdateResourcePools(); // determines how much of each resources is available in each resource sharing group
         }
     }
 }
@@ -749,7 +749,8 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     for (auto& entry : m_empires)
         entry.second->UpdateOwnedObjectCounters();
 
-    UpdateEmpireSupply();
+    UpdateEmpireSupply(ScriptingContext{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager},
+                       m_empires, m_supply_manager);
     m_universe.UpdateStatRecords(m_empires);
 }
 
@@ -1378,7 +1379,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
 
-    UpdateEmpireSupply(true);  // precombat type supply update
+    UpdateEmpireSupply(ScriptingContext{m_universe, m_empires, m_galaxy_setup_data, m_species_manager,m_supply_manager},
+                       m_empires, m_supply_manager, true);  // precombat supply update
 
     std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
 
@@ -2281,7 +2283,7 @@ namespace {
                     continue;
                 // an unarmed Monster will not trigger combat
                 if (  (fleet->Aggressive() || fleet->Unowned())  &&
-                      (fleet->HasArmedShips() || !fleet->Unowned())  )
+                      (fleet->HasArmedShips(objects) || !fleet->Unowned())  )
                 {
                     if (!empires_with_aggressive_fleets_here.count(empire_id))
                         DebugLogger(combat) << "\t Empire " << empire_id << " has at least one aggressive fleet present";
@@ -2778,7 +2780,7 @@ namespace {
             // find which empires have obstructive armed ships in system
             std::set<int> empires_with_armed_ships_in_system;
             for (auto& fleet : objects.find<const Fleet>(system->FleetIDs())) {
-                if (fleet->Obstructive() && fleet->HasArmedShips())
+                if (fleet->Obstructive() && fleet->HasArmedShips(objects))
                     empires_with_armed_ships_in_system.insert(fleet->Owner());  // may include ALL_EMPIRES, which is fine; this makes monsters prevent colonization
             }
 
@@ -3294,17 +3296,19 @@ void ServerApp::PreCombatProcessTurns() {
     // player notifications
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::FLEET_MOVEMENT));
 
+    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
+
     // Update system-obstruction after orders, colonization, invasion, gifting, scrapping
-    for (auto& entry : Empires()) {
+    for (auto& entry : m_empires) {
         auto& empire = entry.second;
         if (empire->Eliminated())
             continue;
-        empire->UpdateSupplyUnobstructedSystems(true);
+        empire->UpdateSupplyUnobstructedSystems(context, true);
     }
 
 
     // fleet movement
-    auto fleets = Objects().all<Fleet>();
+    auto fleets = m_universe.Objects().all<Fleet>();
     for (auto& fleet : fleets) {
         if (fleet)
             fleet->ClearArrivalFlag();
@@ -3313,12 +3317,12 @@ void ServerApp::PreCombatProcessTurns() {
     // blockade them before they move
     for (auto& fleet : fleets) {
         if (fleet && fleet->Unowned())
-            fleet->MovementPhase();
+            fleet->MovementPhase(context);
     }
     for (auto& fleet : fleets) {
         // save for possible SitRep generation after moving...
         if (fleet && !fleet->Unowned())
-            fleet->MovementPhase();
+            fleet->MovementPhase(context);
     }
 
     // post-movement visibility update
@@ -3419,7 +3423,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
             // before you, or be in cahoots with someone who did.
             bool unrestricted = ((fleet->ArrivalStarlane() == system->ID())
                                  && fleet->Obstructive()
-                                 && fleet->HasArmedShips());
+                                 && fleet->HasArmedShips(m_universe.Objects()));
             if (fleet->Unowned()) {
                 monsters.push_back(std::move(fleet));
                 if (unrestricted)
@@ -3496,7 +3500,8 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireObjectVisibilities(m_empires);
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
-    UpdateEmpireSupply();
+    UpdateEmpireSupply(ScriptingContext{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager},
+                       m_empires, m_supply_manager);
 
     // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
@@ -3621,7 +3626,8 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // Re-determine supply distribution and exchanging and resource pools for empires
-    UpdateEmpireSupply(true);
+    UpdateEmpireSupply(ScriptingContext{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager},
+                       m_empires, m_supply_manager, true);
 
     // copy latest visible gamestate to each empire's known object state
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();

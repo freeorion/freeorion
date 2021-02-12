@@ -176,7 +176,7 @@ void FleetButton::Refresh(SizeType size_type) {
     for (const auto& fleet : fleets) {
         if (fleet) {
             num_ships += fleet->NumShips();
-            if (!m_fleet_blockaded && fleet->Blockaded())
+            if (!m_fleet_blockaded && fleet->Blockaded(ScriptingContext{}))
                 m_fleet_blockaded = true;
         }
     }
@@ -331,11 +331,12 @@ void FleetButton::LayoutIcons() {
         else
             return;
 
-        for (const auto& target_system_id : Objects().get<System>(fleet->SystemID())->StarlanesWormholes()) {
-            if (fleet->BlockadedAtSystem(fleet->SystemID(), target_system_id.first))
+        ScriptingContext context;
+        for (const auto& target_system_id : context.ContextObjects().get<System>(fleet->SystemID())->StarlanesWormholes()) {
+            if (fleet->BlockadedAtSystem(fleet->SystemID(), target_system_id.first, context))
                 continue;
 
-            if (auto target_system = Objects().get<System>(target_system_id.first).get()) {
+            if (auto target_system = context.ContextObjects().get<System>(target_system_id.first).get()) {
                 available_exits += "\n" + target_system->ApparentName(GGHumanClientApp::GetApp()->EmpireID());
                 available_exits_count++;
             }
@@ -434,11 +435,11 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(
         if (!fleet)
             continue;
 
-        hasColonyShips  = hasColonyShips  || fleet->HasColonyShips();
-        hasOutpostShips = hasOutpostShips || fleet->HasOutpostShips();
-        hasTroopShips   = hasTroopShips   || fleet->HasTroopShips();
-        hasMonsters     = hasMonsters     || fleet->HasMonsters();
-        hasArmedShips   = hasArmedShips   || fleet->HasArmedShips() || fleet->HasFighterShips();
+        hasColonyShips  = hasColonyShips  || fleet->HasColonyShips(Objects());
+        hasOutpostShips = hasOutpostShips || fleet->HasOutpostShips(Objects());
+        hasTroopShips   = hasTroopShips   || fleet->HasTroopShips(Objects());
+        hasMonsters     = hasMonsters     || fleet->HasMonsters(Objects());
+        hasArmedShips   = hasArmedShips   || fleet->HasArmedShips(Objects()) || fleet->HasFighterShips(Objects());
     }
 
     // get file name main part depending on type of fleet

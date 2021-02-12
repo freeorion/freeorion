@@ -326,10 +326,11 @@ public:
     void UpdateSystemSupplyRanges(const Universe& universe = GetUniverse());
     /** Calculates systems that can propagate supply (fleet or resource) using
       * the specified set of \a known_systems */
-    void UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems, bool precombat=false);
+    void UpdateSupplyUnobstructedSystems(const ScriptingContext& context, const std::set<int>& known_systems,
+                                         bool precombat = false);
     /** Calculates systems that can propagate supply using this empire's own /
       * internal list of explored systems. */
-    void UpdateSupplyUnobstructedSystems(bool precombat=false);
+    void UpdateSupplyUnobstructedSystems(const ScriptingContext& context, bool precombat = false);
     /** Updates fleet ArrivalStarlane to flag fleets of this empire that are not
       * blockaded post-combat must be done after *all* noneliminated empires
       * have updated their unobstructed systems */

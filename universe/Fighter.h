@@ -18,7 +18,7 @@ public:
             float damage, const ::Condition::Condition* combat_targets);
     Fighter();
 
-    bool HostileToEmpire(int empire_id) const override;
+    bool HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
     UniverseObjectType ObjectType() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;

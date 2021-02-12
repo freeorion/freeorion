@@ -82,7 +82,7 @@ HostileVisitor::~HostileVisitor() = default;
 
 auto HostileVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
 {
-    if (obj->HostileToEmpire(viewing_empire_id))
+    if (obj->HostileToEmpire(viewing_empire_id, Empires())) // TODO: get from parameter or member...
         return obj;
     return nullptr;
 }

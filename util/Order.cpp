@@ -271,7 +271,7 @@ void NewFleetOrder::ExecuteImpl() const {
     fleet->SetMoveOrderedTurn(ordered_moved_turn);
 
     if (m_fleet_name.empty())
-        fleet->Rename(fleet->GenerateFleetName());
+        fleet->Rename(fleet->GenerateFleetName(Objects()));
 
     GetUniverse().InhibitUniverseObjectSignals(false);
 
@@ -413,7 +413,7 @@ void FleetMoveOrder::ExecuteImpl() const {
     }
 
     try {
-        fleet->SetRoute(route_list);
+        fleet->SetRoute(route_list, Objects());
         fleet->SetMoveOrderedTurn(CurrentTurn());
         // todo: set last turn ordered moved
     } catch (const std::exception& e) {

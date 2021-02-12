@@ -20,6 +20,8 @@ using boost::container::flat_map;
 
 class System;
 class SitRepEntry;
+class EmpireManager;
+class ObjectMap;
 struct UniverseObjectVisitor;
 FO_COMMON_API extern const int ALL_EMPIRES;
 FO_COMMON_API extern const int INVALID_GAME_TURN;
@@ -95,7 +97,7 @@ public:
     bool                        Unowned() const;                    ///< returns true iff there are no owners of this object
     bool                        OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire owns this object; unowned objects always return false;
     /** Object owner is at war with empire @p empire_id */
-    virtual bool                HostileToEmpire(int empire_id) const;
+    virtual bool                HostileToEmpire(int empire_id, const EmpireManager& empires) const;
 
     virtual int                 SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
 
@@ -139,7 +141,7 @@ public:
     Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
 
     /** Returns the name of this objectas it appears to empire \a empire_id .*/
-    virtual const std::string&  PublicName(int empire_id) const;
+    virtual const std::string&  PublicName(int empire_id, const ObjectMap& objects) const;
 
     /** Accepts a visitor object \see UniverseObjectVisitor */
     virtual std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const;

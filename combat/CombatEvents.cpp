@@ -86,7 +86,7 @@ namespace {
     /// Returns UserString("ENC_COMBAT_UNKNOWN_OBJECT") if object_id is not found.
     std::string PublicNameLink(int empire_id, int object_id, const ObjectMap& objects) {
         if (auto object = objects.get(object_id)) {
-            const auto& name = object->PublicName(empire_id);
+            const auto& name = object->PublicName(empire_id, objects);
             const auto& tag = LinkTag(object->ObjectType());
             return WrapWithTagAndId(name, tag, object_id);
         } else {

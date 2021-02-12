@@ -847,7 +847,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 
     } else if (property_name == "Attack") {
         if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
-            return fleet->Damage();
+            return fleet->Damage(context.ContextObjects());
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->TotalWeaponsDamage();
         if (auto fighter = std::dynamic_pointer_cast<const Fighter>(object))

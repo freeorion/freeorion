@@ -10,7 +10,7 @@
 /** A Building UniverseObject type. */
 class FO_COMMON_API Building : public UniverseObject {
 public:
-    bool                    HostileToEmpire(int empire_id) const override;
+    bool                    HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
     std::set<std::string>   Tags() const override;
     bool                    HasTag(const std::string& name) const override;
     UniverseObjectType      ObjectType() const override;

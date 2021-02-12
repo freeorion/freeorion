@@ -732,9 +732,10 @@ namespace {
             if (build_type == BuildType::BT_SHIP) {
                 // for ships, add a set rally point command
                 if (auto system = Objects().get<System>(SidePanel::SystemID())) {
-                    std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(GGHumanClientApp::GetApp()->EmpireID()));
-                    popup->AddMenuItem(GG::MenuItem(std::move(rally_prompt), disabled, false,
-                                                    rally_to_action));
+                    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+                    std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM"))
+                                                              % system->PublicName(empire_id, Objects()));
+                    popup->AddMenuItem(GG::MenuItem(std::move(rally_prompt), disabled, false, rally_to_action));
                 }
             }
 

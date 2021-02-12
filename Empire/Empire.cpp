@@ -1079,8 +1079,8 @@ void Empire::UpdateUnobstructedFleets(ObjectMap& objects, const std::set<int>& k
     }
 }
 
-void Empire::UpdateSupplyUnobstructedSystems(bool precombat /*=false*/) {
-    Universe& universe = GetUniverse();
+void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context, bool precombat /*=false*/) {
+    const Universe& universe = context.ContextUniverse();
 
     // get ids of systems partially or better visible to this empire.
     // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
@@ -1089,30 +1089,33 @@ void Empire::UpdateSupplyUnobstructedSystems(bool precombat /*=false*/) {
     std::set<int> known_systems_set;
 
     // exclude systems known to have been destroyed (or rather, include ones that aren't known to be destroyed)
-    for (const auto& sys : EmpireKnownObjects(this->EmpireID()).all<System>())
+    for (const auto& sys : universe.EmpireKnownObjects(this->EmpireID()).all<System>())
         if (!known_destroyed_objects.count(sys->ID()))
             known_systems_set.emplace(sys->ID());
-    UpdateSupplyUnobstructedSystems(known_systems_set, precombat);
+    UpdateSupplyUnobstructedSystems(context, known_systems_set, precombat);
 }
 
-void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems, bool precombat) {  // TODO: pass and use ScriptingContext
+void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
+                                             const std::set<int>& known_systems,
+                                             bool precombat)
+{
     TraceLogger(supply) << "UpdateSupplyUnobstructedSystems (allowing supply propagation) for empire " << m_id;
     m_supply_unobstructed_systems.clear();
 
     // get systems with historically at least partial visibility
     std::set<int> systems_with_at_least_partial_visibility_at_some_point;
     for (int system_id : known_systems) {
-        const auto& vis_turns = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system_id, m_id);
+        const auto& vis_turns = context.ContextUniverse().GetObjectVisibilityTurnMapByEmpire(system_id, m_id);
         if (vis_turns.count(Visibility::VIS_PARTIAL_VISIBILITY))
             systems_with_at_least_partial_visibility_at_some_point.emplace(system_id);
     }
 
     // get all fleets, or just those visible to this client's empire
-    const auto& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto& known_destroyed_objects = context.ContextUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     // get empire supply ranges
     std::map<int, std::map<int, float>> empire_system_supply_ranges;
-    for (const auto& entry : Empires()) {
+    for (const auto& entry : context.Empires()) {
         const auto& empire = entry.second;
         empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
     }
@@ -1132,7 +1135,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
     std::set<int> unrestricted_friendly_systems;
     std::set<int> systems_containing_obstructing_objects;
     std::set<int> unrestricted_obstruction_systems;
-    for (auto& fleet : GetUniverse().Objects().all<Fleet>()) {
+    for (auto& fleet : context.ContextObjects().all<Fleet>()) {
         int system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
             continue;   // not in a system, so can't affect system obstruction
@@ -1143,9 +1146,9 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
         TraceLogger(supply) << "Fleet " << fleet->ID() << " is in system " << system_id
                             << " with next system " << fleet->NextSystemID()
                             << " and is owned by " << fleet->Owner()
-                            << " armed: " << fleet->HasArmedShips()
+                            << " armed: " << fleet->HasArmedShips(context.ContextObjects())
                             << " and obstructive: " << fleet->Obstructive();
-        if (fleet->HasArmedShips() && fleet->Obstructive()) {
+        if (fleet->HasArmedShips(context.ContextObjects()) && fleet->Obstructive()) {
             if (fleet->OwnedBy(m_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                     systems_containing_friendly_fleets.insert(system_id);
@@ -1156,7 +1159,8 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
                 }
             } else if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                 int fleet_owner = fleet->Owner();
-                bool fleet_at_war = fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DiplomaticStatus::DIPLO_WAR;
+                bool fleet_at_war = fleet_owner == ALL_EMPIRES ||
+                                    context.ContextDiploStatus(m_id, fleet_owner) == DiplomaticStatus::DIPLO_WAR;
                 // newly created ships are not allowed to block supply since they have not even potentially gone
                 // through a combat round at the present location.  Potential sources for such new ships are monsters
                 // created via Effect.  (Ships/fleets constructed by empires are currently created at a later stage of
@@ -1202,7 +1206,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems,
 
 
     // check each potential supplyable system for whether it can propagate supply.
-    for (const auto& sys : Objects().find<System>(known_systems)) {
+    for (const auto& sys : context.ContextObjects().find<System>(known_systems)) {
         if (!sys)
             continue;
 
@@ -2492,17 +2496,17 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
                 for (auto& next_fleet : fleets) {
                     // rename fleet, given its id and the ship that is in it
-                    next_fleet->Rename(next_fleet->GenerateFleetName());
-                    FleetAggression new_aggr = next_fleet->HasArmedShips() ?
+                    next_fleet->Rename(next_fleet->GenerateFleetName(context.ContextObjects()));
+                    FleetAggression new_aggr = next_fleet->HasArmedShips(context.ContextObjects()) ?
                         FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_DEFENSIVE;
                     next_fleet->SetAggression(new_aggr);
 
                     if (rally_point_id != INVALID_OBJECT_ID) {
                         if (context.ContextObjects().get<System>(rally_point_id)) {
-                            next_fleet->CalculateRouteTo(rally_point_id);
+                            next_fleet->CalculateRouteTo(rally_point_id, context.ContextUniverse());
                         } else if (auto rally_obj = context.ContextObjects().get(rally_point_id)) {
                             if (context.ContextObjects().get<System>(rally_obj->SystemID()))
-                                next_fleet->CalculateRouteTo(rally_obj->SystemID());
+                                next_fleet->CalculateRouteTo(rally_obj->SystemID(), context.ContextUniverse());
                         } else {
                             ErrorLogger() << "Unable to find system to route to with rally point id: " << rally_point_id;
                         }

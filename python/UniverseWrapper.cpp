@@ -395,7 +395,7 @@ namespace FreeOrionPython {
             .add_property("tags",               make_function(&UniverseObject::Tags,        py::return_value_policy<py::return_by_value>()))
             .def("hasTag",                      &UniverseObject::HasTag)
             .add_property("meters",             make_function(
-                                                    +[](const UniverseObject& object) -> std::map<MeterType, Meter> { return std::map<MeterType, Meter>{object.Meters().begin(), object.Meters().end()}; },
+                                                    +[](const UniverseObject& object) -> std::map<MeterType, Meter> { return {object.Meters().begin(), object.Meters().end()}; },
                                                     py::return_value_policy<py::return_by_value>()
                                                 ))
             .def("getMeter",                    +[](const UniverseObject& object, MeterType type) -> const Meter* { return object.GetMeter(type); },
@@ -409,25 +409,25 @@ namespace FreeOrionPython {
         //     Fleet     //
         ///////////////////
         py::class_<Fleet, py::bases<UniverseObject>, boost::noncopyable>("fleet", py::no_init)
-            .add_property("fuel",                       &Fleet::Fuel)
-            .add_property("maxFuel",                    &Fleet::MaxFuel)
-            .add_property("finalDestinationID",         &Fleet::FinalDestinationID)
-            .add_property("previousSystemID",           &Fleet::PreviousSystemID)
-            .add_property("nextSystemID",               &Fleet::NextSystemID)
-            .add_property("aggressive",                 &Fleet::Aggressive)
-            .add_property("obstructive",                &Fleet::Obstructive)
-            .add_property("aggression",                 &Fleet::Aggression)
-            .add_property("speed",                      &Fleet::Speed)
-            .add_property("canChangeDirectionEnRoute",  &Fleet::CanChangeDirectionEnRoute)
-            .add_property("hasMonsters",                &Fleet::HasMonsters)
-            .add_property("hasArmedShips",              &Fleet::HasArmedShips)
-            .add_property("hasFighterShips",            &Fleet::HasFighterShips)
-            .add_property("hasColonyShips",             &Fleet::HasColonyShips)
-            .add_property("hasOutpostShips",            &Fleet::HasOutpostShips)
-            .add_property("hasTroopShips",              &Fleet::HasTroopShips)
-            .add_property("numShips",                   &Fleet::NumShips)
-            .add_property("empty",                      &Fleet::Empty)
-            .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      py::return_internal_reference<>()))
+            .add_property("fuel",                      +[](const Fleet& fleet) -> float { return fleet.Fuel(Objects()); })
+            .add_property("maxFuel",                   +[](const Fleet& fleet) -> float { return fleet.MaxFuel(Objects()); })
+            .add_property("finalDestinationID",        &Fleet::FinalDestinationID)
+            .add_property("previousSystemID",          &Fleet::PreviousSystemID)
+            .add_property("nextSystemID",              &Fleet::NextSystemID)
+            .add_property("aggressive",                &Fleet::Aggressive)
+            .add_property("obstructive",               &Fleet::Obstructive)
+            .add_property("aggression",                &Fleet::Aggression)
+            .add_property("speed",                     +[](const Fleet& fleet) -> float { return fleet.Speed(Objects()); })
+            .add_property("canChangeDirectionEnRoute", &Fleet::CanChangeDirectionEnRoute)
+            .add_property("hasMonsters",               +[](const Fleet& fleet) -> bool { return fleet.HasMonsters(Objects()); })
+            .add_property("hasArmedShips",             +[](const Fleet& fleet) -> bool { return fleet.HasArmedShips(Objects()); })
+            .add_property("hasFighterShips",           +[](const Fleet& fleet) -> bool { return fleet.HasFighterShips(Objects()); })
+            .add_property("hasColonyShips",            +[](const Fleet& fleet) -> bool { return fleet.HasColonyShips(Objects()); })
+            .add_property("hasOutpostShips",           +[](const Fleet& fleet) -> bool { return fleet.HasOutpostShips(Objects()); })
+            .add_property("hasTroopShips",             +[](const Fleet& fleet) -> bool { return fleet.HasTroopShips(Objects()); })
+            .add_property("numShips",                  &Fleet::NumShips)
+            .add_property("empty",                     &Fleet::Empty)
+            .add_property("shipIDs",                   make_function(&Fleet::ShipIDs,      py::return_internal_reference<>()))
         ;
 
         //////////////////

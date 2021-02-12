@@ -48,7 +48,7 @@ namespace {
 
         auto fleet = GetUniverse().InsertNew<Fleet>("", x, y, ship->Owner());   // TODO: Avoid GetUniverse call by extending ScriptingContext?
 
-        fleet->Rename(fleet->GenerateFleetName());
+        fleet->Rename(fleet->GenerateFleetName(Objects()));
         fleet->GetMeter(MeterType::METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
         fleet->AddShips({ship->ID()});
@@ -150,7 +150,7 @@ namespace {
 
         // set fleet with newly recalculated route
         try {
-            fleet->SetRoute(route_pair.first);
+            fleet->SetRoute(route_pair.first, objects);
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception updating fleet route in effect code: " << e.what();
         }
@@ -2924,7 +2924,7 @@ void SetDestination::Execute(ScriptingContext& context) const {
         return;
 
     try {
-        target_fleet->SetRoute(route_list);
+        target_fleet->SetRoute(route_list, context.ContextObjects());
     } catch (const std::exception& e) {
         ErrorLogger() << "Caught exception in Effect::SetDestination setting fleet route: " << e.what();
     }

@@ -75,7 +75,7 @@ public:
     PlanetSize          Size() const                        { return m_size; }
     int                 HabitableSize() const;
 
-    bool                HostileToEmpire(int empire_id) const override;
+    bool                HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
 
     PlanetEnvironment   EnvironmentForSpecies(const std::string& species_name = "") const;
     PlanetType          NextBetterPlanetTypeForSpecies(const std::string& species_name = "") const;

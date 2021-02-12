@@ -200,8 +200,14 @@ struct ScriptingContext {
     }
 
     const EmpireManager::const_container_type& Empires() const
-    { return const_empires; }
+    { return const_empires; } // const container of const empires
 
+    const EmpireManager::container_type& Empires() { // const container of mutable empires
+        if (empires)
+            return *empires;
+        ErrorLogger() << "ScriptingContext::ContextUniverse() asked for undefined mutable empires";
+        throw std::runtime_error("ScriptingContext::ContextUniverse() asked for undefined mutable empires");
+    }
 
     // script evaluation local state, some of which may vary during evaluation of an expression
     std::shared_ptr<const UniverseObject> source;

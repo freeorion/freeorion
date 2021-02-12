@@ -24,7 +24,7 @@ public:
     int                 ContainerObjectID() const override;
     bool                ContainedBy(int object_id) const override;
 
-    const std::string&  PublicName(int empire_id) const override;
+    const std::string&  PublicName(int empire_id, const ObjectMap&) const override;
     const std::string&  FieldTypeName() const { return m_type_name; }
 
     /* Field is (presently) the only distributed UniverseObject that isn't just

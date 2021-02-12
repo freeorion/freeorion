@@ -164,6 +164,7 @@ namespace {
 
         const Encyclopedia& encyclopedia = GetEncyclopedia();
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const ObjectMap& objects = Objects();
 
         if (dir_name == "ENC_INDEX") {
             // add entries consisting of links to pedia page lists of
@@ -301,11 +302,11 @@ namespace {
                     std::string homeworld_info;
                     species_entry += "(" + std::to_string(this_species_homeworlds.size()) + "):  ";
                     for (int homeworld_id : this_species_homeworlds) {
-                        if (auto homeworld = Objects().get<Planet>(homeworld_id)) {
+                        if (auto homeworld = objects.get<Planet>(homeworld_id)) {
                             known_homeworlds.emplace(homeworld_id);
                             // if known, add to beginning
                             homeworld_info = LinkTaggedIDText(VarText::PLANET_ID_TAG, homeworld_id,
-                                                              homeworld->PublicName(client_empire_id))
+                                                              homeworld->PublicName(client_empire_id, objects))
                                 + "   " + homeworld_info;
                         } else { 
                             // add to end
@@ -317,7 +318,7 @@ namespace {
 
                 // occupied planets
                 std::vector<const Planet*> species_occupied_planets;
-                for (const auto& planet : Objects().all<Planet>()) {
+                for (const auto& planet : objects.all<Planet>()) {
                     if ((planet->SpeciesName() == entry.first) && !known_homeworlds.count(planet->ID()))
                         species_occupied_planets.emplace_back(planet.get());
                 }
@@ -329,7 +330,7 @@ namespace {
                         species_entry += "  |   " + UserString("OCCUPIED_PLANETS") + ":  ";
                         for (auto& planet : species_occupied_planets) {
                             species_entry += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(),
-                                                              planet->PublicName(client_empire_id))
+                                                              planet->PublicName(client_empire_id, objects))
                                           + "   ";
                         }
                     }
@@ -389,8 +390,8 @@ namespace {
 
         }
         else if (dir_name == "ENC_SHIP") {
-            for (auto& ship : Objects().all<Ship>()) {
-                const std::string& ship_name = ship->PublicName(client_empire_id);
+            for (auto& ship : objects.all<Ship>()) {
+                const std::string& ship_name = ship->PublicName(client_empire_id, objects);
                 sorted_entries_list.emplace(
                     ship_name,
                     std::make_pair(LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ",
@@ -399,10 +400,10 @@ namespace {
 
         }
         else if (dir_name == "ENC_MONSTER") {
-            for (auto& ship : Objects().all<Ship>()) {
+            for (auto& ship : objects.all<Ship>()) {
                 if (!ship->IsMonster())
                     continue;
-                const std::string& ship_name = ship->PublicName(client_empire_id);
+                const std::string& ship_name = ship->PublicName(client_empire_id, objects);
                 sorted_entries_list.emplace(
                     ship_name,
                     std::make_pair(LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ",
@@ -423,8 +424,8 @@ namespace {
 
         }
         else if (dir_name == "ENC_FLEET") {
-            for (auto& fleet : Objects().all<Fleet>()) {
-                const std::string& flt_name = fleet->PublicName(client_empire_id);
+            for (auto& fleet : objects.all<Fleet>()) {
+                const std::string& flt_name = fleet->PublicName(client_empire_id, objects);
                 sorted_entries_list.emplace(
                     flt_name,
                     std::make_pair(LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name) + "  ",
@@ -433,8 +434,8 @@ namespace {
 
         }
         else if (dir_name == "ENC_PLANET") {
-            for (auto& planet : Objects().all<Planet>()) {
-                const std::string& plt_name = planet->PublicName(client_empire_id);
+            for (auto& planet : objects.all<Planet>()) {
+                const std::string& plt_name = planet->PublicName(client_empire_id, objects);
                 sorted_entries_list.emplace(
                     plt_name,
                     std::make_pair(LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name) + "  ",
@@ -443,8 +444,8 @@ namespace {
 
         }
         else if (dir_name == "ENC_BUILDING") {
-            for (auto& building : Objects().all<Building>()) {
-                const std::string& bld_name = building->PublicName(client_empire_id);
+            for (auto& building : objects.all<Building>()) {
+                const std::string& bld_name = building->PublicName(client_empire_id, objects);
                 sorted_entries_list.emplace(
                     bld_name,
                     std::make_pair(LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name) + "  ",
@@ -453,7 +454,7 @@ namespace {
 
         }
         else if (dir_name == "ENC_SYSTEM") {
-            for (auto& system : Objects().all<System>()) {
+            for (auto& system : objects.all<System>()) {
                 const std::string& sys_name = system->ApparentName(client_empire_id);
                 sorted_entries_list.emplace(
                     sys_name,
@@ -463,7 +464,7 @@ namespace {
 
         }
         else if (dir_name == "ENC_FIELD") {
-            for (auto& field : Objects().all<Field>()) {
+            for (auto& field : objects.all<Field>()) {
                 const std::string& field_name = field->Name();
                 sorted_entries_list.emplace(
                     field_name,
@@ -1626,6 +1627,8 @@ namespace {
             return;
         }
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const ObjectMap& objects = Objects();
+
 
         // Specials
         if (!only_description) {
@@ -1637,8 +1640,8 @@ namespace {
 
         // objects that have special
         std::vector<std::shared_ptr<const UniverseObject>> objects_with_special;
-        objects_with_special.reserve(Objects().size());
-        for (const auto& obj : Objects().all())
+        objects_with_special.reserve(objects.size());
+        for (const auto& obj : objects.all())
             if (obj->Specials().count(item_name))
                 objects_with_special.push_back(obj);
 
@@ -1658,9 +1661,9 @@ namespace {
 
                 if (!TEXT_TAG.empty())
                     detailed_description += LinkTaggedIDText(
-                        TEXT_TAG, obj->ID(), obj->PublicName(client_empire_id)) + "  ";
+                        TEXT_TAG, obj->ID(), obj->PublicName(client_empire_id, objects)) + "  ";
                 else
-                    detailed_description += obj->PublicName(client_empire_id) + "  ";
+                    detailed_description += obj->PublicName(client_empire_id, objects) + "  ";
             }
             detailed_description += "\n";
         }
@@ -1692,12 +1695,13 @@ namespace {
         }
 
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const ObjectMap& objects = Objects();
 
         if (!only_description)
             name = empire->Name();
 
         // Capital
-        auto capital = Objects().get<Planet>(empire->CapitalID());
+        auto capital = objects.get<Planet>(empire->CapitalID());
         if (capital)
             detailed_description += UserString("EMPIRE_CAPITAL") +
                 LinkTaggedIDText(VarText::PLANET_ID_TAG, capital->ID(), capital->Name());
@@ -1741,12 +1745,12 @@ namespace {
 
 
         // Planets
-        auto empire_planets = Objects().find<Planet>(OwnedVisitor(empire_id));
+        auto empire_planets = objects.find<Planet>(OwnedVisitor(empire_id));
         if (!empire_planets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_PLANETS");
             for (auto& obj : empire_planets) {
                 detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, obj->ID(),
-                                                         obj->PublicName(client_empire_id)) + "  ";
+                                                         obj->PublicName(client_empire_id, objects)) + "  ";
             }
         } else {
             detailed_description += "\n\n" + UserString("NO_OWNED_PLANETS_KNOWN");
@@ -1754,7 +1758,7 @@ namespace {
 
         // Fleets
         std::vector<const Fleet*> nonempty_empire_fleets;
-        auto&& empire_owned_fleets{Objects().find<Fleet>(OwnedVisitor(empire_id))};
+        auto&& empire_owned_fleets{objects.find<Fleet>(OwnedVisitor(empire_id))};
         nonempty_empire_fleets.reserve(empire_owned_fleets.size());
         for (const auto& fleet : empire_owned_fleets) {
             if (!fleet->Empty())
@@ -1764,8 +1768,8 @@ namespace {
             detailed_description += "\n\n" + UserString("OWNED_FLEETS") + "\n";
             for (auto* obj : nonempty_empire_fleets) {
                 auto&& fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(),
-                                                     obj->PublicName(client_empire_id));
-                if (auto system = Objects().get<System>(obj->SystemID()).get()) {
+                                                     obj->PublicName(client_empire_id, objects));
+                if (auto system = objects.get<System>(obj->SystemID()).get()) {
                     auto& sys_name = system->ApparentName(client_empire_id);
                     auto&& system_link = LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name);
                     detailed_description += str(FlexibleFormat(UserString("OWNED_FLEET_AT_SYSTEM"))
@@ -2074,6 +2078,7 @@ namespace {
             return;
         }
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const ObjectMap& objects = Objects();
 
         if (!only_description) {
             name = UserString(item_name);
@@ -2140,9 +2145,9 @@ namespace {
         } else {
             detailed_description += UserString("HOMEWORLD") + "\n";
             for (int hw_id : homeworlds.at(species->Name())) {
-                if (auto homeworld = Objects().get<Planet>(hw_id))
+                if (auto homeworld = objects.get<Planet>(hw_id))
                     detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, hw_id,
-                                                             homeworld->PublicName(client_empire_id)) + "\n";
+                                                             homeworld->PublicName(client_empire_id, objects)) + "\n";
                 else
                     detailed_description += UserString("UNKNOWN_PLANET") + "\n";
             }
@@ -2156,7 +2161,7 @@ namespace {
         if (sp_op_it != species_object_populations.end()) {
             const auto& object_pops = sp_op_it->second;
             for (const auto& object_pop : object_pops) {
-                auto plt = Objects().get<Planet>(object_pop.first);
+                auto plt = objects.get<Planet>(object_pop.first);
                 if (!plt)
                     continue;
                 if (plt->SpeciesName() != item_name) {
@@ -2171,7 +2176,7 @@ namespace {
             detailed_description += "\n" + UserString("OCCUPIED_PLANETS") + "\n";
             for (auto& planet : species_occupied_planets) {
                 detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(),
-                                                         planet->PublicName(client_empire_id)) + "  ";
+                                                         planet->PublicName(client_empire_id, objects)) + "  ";
             }
             detailed_description += "\n";
         }
@@ -2353,9 +2358,12 @@ namespace {
             return;
         }
 
-        GetUniverse().InhibitUniverseObjectSignals(true);
-
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        Universe& universe = GetUniverse();
+        const ObjectMap& objects = universe.Objects();
+
+        universe.InhibitUniverseObjectSignals(true);
+
 
         // Ship Designs
         if (!only_description) {
@@ -2381,7 +2389,7 @@ namespace {
 
         std::set<std::string> additional_species; // from currently selected planet and fleets, if any
         const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if (const auto planet = Objects().get<Planet>(map_wnd->SelectedPlanetID()).get()) {
+        if (const auto planet = objects.get<Planet>(map_wnd->SelectedPlanetID()).get()) {
             if (!planet->SpeciesName().empty())
                 additional_species.emplace(planet->SpeciesName());
         }
@@ -2401,7 +2409,7 @@ namespace {
                     selected_fleet_id = *selected_fleets.begin();
                 else if (fleet_wnd->FleetIDs().size() > 0)
                     selected_fleet_id = *fleet_wnd->FleetIDs().begin();
-                if (auto selected_fleet = Objects().get<Fleet>(selected_fleet_id))
+                if (auto selected_fleet = objects.get<Fleet>(selected_fleet_id))
                     if (!selected_fleet->ShipIDs().empty())
                         selected_ship = *selected_fleet->ShipIDs().begin();
             }
@@ -2409,7 +2417,7 @@ namespace {
 
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
-            if (const auto this_ship = Objects().get<Ship>(selected_ship)) {
+            if (const auto this_ship = objects.get<Ship>(selected_ship)) {
                 if (!this_ship->SpeciesName().empty())
                     additional_species.emplace(this_ship->SpeciesName());
                 if (!this_ship->OwnedBy(client_empire_id)) {
@@ -2423,13 +2431,13 @@ namespace {
                 }
             }
         } else if (fleet_manager.ActiveFleetWnd()) {
-            for (const auto& fleet : Objects().find<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
+            for (const auto& fleet : objects.find<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
                 if (!fleet)
                     continue;
                 chosen_ships.insert(fleet->ShipIDs().begin(), fleet->ShipIDs().end());
             }
         }
-        for (const auto& this_ship : Objects().find<Ship>(chosen_ships)) {
+        for (const auto& this_ship : objects.find<Ship>(chosen_ships)) {
             if (!this_ship || !this_ship->SpeciesName().empty())
                 continue;
             additional_species.emplace(this_ship->SpeciesName());
@@ -2439,30 +2447,30 @@ namespace {
 
 
         // temporary ship to use for estimating design's meter values
-        auto temp = GetUniverse().InsertTemp<Ship>(client_empire_id, design_id, "", client_empire_id);
+        auto temp = universe.InsertTemp<Ship>(client_empire_id, design_id, "", client_empire_id);
 
         // apply empty species for 'Generic' entry
-        GetUniverse().UpdateMeterEstimates(temp->ID(), Empires());
+        universe.UpdateMeterEstimates(temp->ID(), Empires());
         temp->Resupply();
         detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
         for (std::string& species_name : species_list) {
             temp->SetSpecies(std::move(species_name));
-            GetUniverse().UpdateMeterEstimates(temp->ID(), Empires());
+            universe.UpdateMeterEstimates(temp->ID(), Empires());
             temp->Resupply();
             detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
         }
 
-        GetUniverse().Delete(temp->ID());
-        GetUniverse().InhibitUniverseObjectSignals(false);
+        universe.Delete(temp->ID());
+        universe.InhibitUniverseObjectSignals(false);
 
 
 
         // ships of this design
         std::vector<const Ship*> design_ships;
-        design_ships.reserve(Objects().ExistingShips().size());
-        for (const auto& entry : Objects().ExistingShips()) {
+        design_ships.reserve(objects.ExistingShips().size());
+        for (const auto& entry : objects.ExistingShips()) {
             auto ship = static_cast<const Ship*>(entry.second.get());
             if (ship && ship->DesignID() == design_id)
                 design_ships.emplace_back(ship);
@@ -2471,7 +2479,7 @@ namespace {
             detailed_description += "\n\n" + UserString("SHIPS_OF_DESIGN");
             for (auto& ship : design_ships) {
                 detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(),
-                                                         ship->PublicName(client_empire_id)) + "  ";
+                                                         ship->PublicName(client_empire_id, objects)) + "  ";
             }
         } else {
             detailed_description += "\n\n" + UserString("NO_SHIPS_OF_DESIGN");
@@ -2609,7 +2617,7 @@ namespace {
         if (only_description)
             return;
 
-        name = obj->PublicName(client_empire_id);
+        name = obj->PublicName(client_empire_id, Objects());
         general_type = GeneralTypeOfObject(obj->ObjectType());
         if (general_type.empty()) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name()
@@ -2847,7 +2855,7 @@ namespace {
             detailed_description.append(env_img_tag);
         }
 
-        name = planet->PublicName(planet_id);
+        name = planet->PublicName(planet_id, Objects());
 
         auto species_names = ReportedSpeciesForPlanet(planet);
         auto target_population_species = SpeciesEnvByTargetPop(*planet.get(), species_names);
@@ -2864,7 +2872,7 @@ namespace {
             if (it->first > 0) {
                 if (!positive_header_placed) {
                     auto pos_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER"))
-                                          % planet->PublicName(planet_id));
+                                          % planet->PublicName(planet_id, Objects()));
                     TraceLogger() << "Suitability report positive header \"" << pos_header << "\"";
                     detailed_description.append(pos_header);
                     positive_header_placed = true;
@@ -2883,7 +2891,7 @@ namespace {
                         detailed_description += "\n\n";
 
                     auto neg_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_NEGATIVE_HEADER"))
-                                          % planet->PublicName(planet_id));
+                                          % planet->PublicName(planet_id, Objects()));
                     TraceLogger() << "Suitability report regative header \"" << neg_header << "\"";
                     detailed_description.append(neg_header);
                     negative_header_placed = true;

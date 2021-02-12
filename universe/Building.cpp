@@ -64,11 +64,11 @@ void Building::Copy(std::shared_ptr<const UniverseObject> copied_object, int emp
     }
 }
 
-bool Building::HostileToEmpire(int empire_id) const {
+bool Building::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
     if (OwnedBy(empire_id))
         return false;
     return empire_id == ALL_EMPIRES || Unowned() ||
-           Empires().GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
+        empires.GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
 std::set<std::string> Building::Tags() const {

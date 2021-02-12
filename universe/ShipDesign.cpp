@@ -293,7 +293,7 @@ float ShipDesign::AdjustedAttack(float shield) const {
     int fighter_shots = std::min(available_fighters, fighter_launch_capacity);  // how many fighters launched in bout 1
     available_fighters -= fighter_shots;
     int launched_fighters = fighter_shots;
-    int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
+    int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS"); // TODO: get from ScriptingContext?
     int remaining_bouts = num_bouts - 2;  // no attack for first round, second round already added
     while (remaining_bouts > 0) {
         int fighters_launched_this_bout = std::min(available_fighters, fighter_launch_capacity);

@@ -161,8 +161,9 @@ namespace {
         bool operator()(const std::shared_ptr<UniverseObject>& lhs,
                         const std::shared_ptr<UniverseObject>& rhs)
         {
-            const auto& lhs_public_name = lhs->PublicName(viewing_empire_id);
-            const auto& rhs_public_name = rhs->PublicName(viewing_empire_id);
+            const ObjectMap& objects = Objects();
+            const auto& lhs_public_name = lhs->PublicName(viewing_empire_id, objects);
+            const auto& rhs_public_name = rhs->PublicName(viewing_empire_id, objects);
             if (lhs_public_name != rhs_public_name) {
 #if defined(FREEORION_MACOSX)
                 // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α
@@ -188,6 +189,7 @@ namespace {
         const std::string& category_delimiter = "\n-\n")
     {
         std::stringstream ss;
+        const ObjectMap& objects = Objects();
 
         bool first_category = true;
         for (const auto& category : forces) {
@@ -204,7 +206,7 @@ namespace {
                     first_in_category = false;
                 else
                     ss << delimiter;
-                ss << WrapWithTagAndId(object->PublicName(viewing_empire_id),
+                ss << WrapWithTagAndId(object->PublicName(viewing_empire_id, objects),
                                        LinkTag(object->ObjectType()), object->ID());
             }
         }
@@ -577,10 +579,11 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     m_wnd.SetLayout(layout);
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const ObjectMap& objects = Objects();
 
     // Write Header text
-    auto system = Objects().get<System>(log->system_id);
-    const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
+    auto system = objects.get<System>(log->system_id);
+    const std::string& sys_name = (system ? system->PublicName(client_empire_id, objects) : UserString("ERROR"));
     DebugLogger(combat_log) << "Showing combat log #" << log_id << " at " << sys_name << " (" << log->system_id
                             << ") with " << log->combat_events.size() << " events";
 
@@ -607,7 +610,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
 
     // Write Logs
     for (CombatEventPtr event : log->combat_events) {
-        DebugLogger(combat_log) << "event debug info: " << event->DebugString(GetUniverse().Objects());
+        DebugLogger(combat_log) << "event debug info: " << event->DebugString(objects);
         for (auto&& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event))
             AddRow(std::move(wnd));
     }
