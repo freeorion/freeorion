@@ -33,6 +33,16 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
 
+#if BOOST_VERSION >= 106500
+// define needed on Windows due to conflict with windows.h and std::min and std::max
+#  define NOMINMAX
+
+// define needed in GCC
+//#  define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED
+#define _GNU_SOURCE
+
+#  include <boost/stacktrace.hpp>
+#endif
 
 std::string DoubleToString(double val, int digits, bool always_show_sign);
 bool UserStringExists(const std::string& str);
@@ -40,6 +50,16 @@ bool UserStringExists(const std::string& str);
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 namespace {
+    auto StackTrace() {
+#if BOOST_VERSION >= 106500
+        std::stringstream ss;
+        ss << "stacktrace:\n" << boost::stacktrace::stacktrace();
+        return ss.str();
+#else
+        return "";
+#endif
+    }
+
     std::shared_ptr<const UniverseObject> FollowReference(
         std::vector<std::string>::const_iterator first,
         std::vector<std::string>::const_iterator last,
@@ -66,16 +86,18 @@ namespace {
             default:                                                           type_string = "LocalCandidate"; break;
             }
             ErrorLogger() << "FollowReference : top level object (" << type_string << ") not defined in scripting context. "
-                          << "  strings: " << [it=first, last]() mutable -> std::string {
-                std::string retval;
-                for (; it != last; ++it)
-                    retval += *it + " ";
-                return retval;
-            }()           << " source: " << (context.source ? context.source->Name() : "0")
+                          << "  strings: " << [it=first, last]() mutable -> std::string
+                            {
+                                std::string retval;
+                                for (; it != last; ++it)
+                                    retval += *it + " ";
+                                return retval;
+                            }()
+                          << " source: " << (context.source ? context.source->Name() : "0")
                           << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
                           << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
-                          << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
-
+                          << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0")
+                          << "  " << StackTrace();
             return nullptr;
         }
 
