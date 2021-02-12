@@ -46,11 +46,6 @@ namespace {
         ValueRef::ReferenceType ref_type,
         const ScriptingContext& context)
     {
-        //DebugLogger() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
-        //              << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
-        //              << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
-        //              << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
-
         std::shared_ptr<const UniverseObject> obj;
         switch (ref_type) {
         case ValueRef::ReferenceType::NON_OBJECT_REFERENCE:                return context.condition_local_candidate;   break;
@@ -70,7 +65,17 @@ namespace {
             case ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE:
             default:                                                           type_string = "LocalCandidate"; break;
             }
-            ErrorLogger() << "FollowReference : top level object (" << type_string << ") not defined in scripting context";
+            ErrorLogger() << "FollowReference : top level object (" << type_string << ") not defined in scripting context. "
+                          << "  strings: " << [it=first, last]() mutable -> std::string {
+                std::string retval;
+                for (; it != last; ++it)
+                    retval += *it + " ";
+                return retval;
+            }()           << " source: " << (context.source ? context.source->Name() : "0")
+                          << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
+                          << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
+                          << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
+
             return nullptr;
         }
 
