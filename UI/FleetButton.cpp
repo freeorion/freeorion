@@ -302,6 +302,8 @@ void FleetButton::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void FleetButton::LayoutIcons() {
+    const ScriptingContext context;
+
     GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
     for (auto& graphic : m_icons) {
         GG::SubTexture subtexture = graphic->GetTexture();
@@ -321,17 +323,16 @@ void FleetButton::LayoutIcons() {
 
     // refresh fleet button tooltip
     if (m_fleet_blockaded) {
-        std::shared_ptr<Fleet> fleet;
+        std::shared_ptr<const Fleet> fleet;
         std::string available_exits;
         int available_exits_count = 0;
 
         if (!m_fleets.empty())
             // can just pick first fleet because all fleets in system should have same exits
-            fleet = Objects().get<Fleet>(*m_fleets.begin());
+            fleet = context.ContextObjects().get<Fleet>(*m_fleets.begin());
         else
             return;
 
-        ScriptingContext context;
         for (const auto& target_system_id : context.ContextObjects().get<System>(fleet->SystemID())->StarlanesWormholes()) {
             if (fleet->BlockadedAtSystem(fleet->SystemID(), target_system_id.first, context))
                 continue;

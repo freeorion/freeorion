@@ -505,7 +505,7 @@ std::vector<std::string> Planet::AvailableFoci() const {    // TODO: pass Script
     auto this_planet = std::dynamic_pointer_cast<const Planet>(UniverseObject::shared_from_this());
     if (!this_planet)
         return retval;
-    ScriptingContext context(this_planet);
+    const ScriptingContext context(this_planet);
     if (const auto* species = GetSpecies(this_planet->SpeciesName())) {
         retval.reserve(species->Foci().size());
         for (const auto& focus_type : species->Foci()) {

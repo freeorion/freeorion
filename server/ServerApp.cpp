@@ -3528,8 +3528,7 @@ void ServerApp::PostCombatProcessTurns() {
 
         for (const auto& tech : empire->CheckResearchProgress())
             empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(tech);
-        ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
-                                 m_species_manager, m_supply_manager};
+        ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
         empire->CheckProductionProgress(context);
         empire->CheckInfluenceProgress();
     }

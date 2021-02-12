@@ -117,7 +117,7 @@ float Policy::AdoptionCost(int empire_id, const ObjectMap& objects) const {
         if (!source && !m_adoption_cost->SourceInvariant())
             return arbitrary_large_number;
 
-        ScriptingContext context(std::move(source));
+        const ScriptingContext context(std::move(source));
         return m_adoption_cost->Eval(context);
     }
 }

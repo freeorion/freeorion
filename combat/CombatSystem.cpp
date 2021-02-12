@@ -1439,7 +1439,7 @@ namespace {
         //             const SpeciesManager& species_,
         //             const SupplyManager& supply_) 
 
-        ScriptingContext context(combat_state.combat_info, attacker);
+        const ScriptingContext context(combat_state.combat_info, attacker);
 
         TraceLogger(combat) << "Set up context in ShootAllWeapons: objects: " << context.ContextObjects().size()
                             << "  const objects: " << context.ContextObjects().size()

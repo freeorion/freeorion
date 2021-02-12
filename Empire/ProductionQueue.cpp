@@ -395,7 +395,7 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) 
             if (!c)
                 return true;
             auto location_obj = Objects().get(location_id);
-            ScriptingContext context(location_obj);
+            const ScriptingContext context(location_obj);
             return c->Eval(context, std::move(location_obj));
         }
         return true;
@@ -429,7 +429,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto location_obj = Objects().get(location_id);
-            ScriptingContext context(location_obj);
+            ScriptingContext context(location_obj); // non-const but should be OK as only passed below to function taking const ScriptingContext&
 
             for (const auto& psc : bt->ProductionSpecialConsumption()) {
                 if (!psc.second.first)
@@ -455,7 +455,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
     case BuildType::BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
             auto location_obj = Objects().get(location_id);
-            ScriptingContext context(location_obj);
+            const ScriptingContext context(location_obj);
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& psc : ship_hull->ProductionSpecialConsumption()) {
@@ -495,7 +495,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto obj = Objects().get(location_id);
-            ScriptingContext context(obj);
+            const ScriptingContext context(obj);
 
             for (const auto& pmc : bt->ProductionMeterConsumption()) {
                 if (!pmc.second.first)
@@ -508,7 +508,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
     case BuildType::BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
             auto obj = Objects().get(location_id);
-            ScriptingContext context(obj);
+            const ScriptingContext context(obj);
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& pmc : ship_hull->ProductionMeterConsumption()) {

@@ -4574,17 +4574,17 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
-    ScriptingContext context;
+    const ScriptingContext context;
 
     // ensure passed fleet exists
-    auto fleet = Objects().get<Fleet>(fleet_id);
+    auto fleet = context.ContextObjects().get<Fleet>(fleet_id);
     if (!fleet) {
         ErrorLogger() << "MapWnd::SetProjectedFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
     }
 
     //std::cout << "creating projected fleet movement line for fleet at (" << fleet->X() << ", " << fleet->Y() << ")" << std::endl;
-    const Empire* empire = GetEmpire(fleet->Owner());
+    auto empire = context.GetEmpire(fleet->Owner());
 
     // get move path to show.  if there isn't one, show nothing
     auto path = fleet->MovePath(travel_route, true, context);

@@ -1789,9 +1789,8 @@ void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
             // evaluate valuerefs and and store visibility of object
             for (auto& source_ref_entry : object_entry.second) {
                 // set up context for executing ValueRef to determine visibility to set
-                ScriptingContext context{*this, empires,
-                                         m_objects->get(source_ref_entry.first),
-                                         target, target_initial_vis};
+                const ScriptingContext context{*this, empires, m_objects->get(source_ref_entry.first),
+                                               target, target_initial_vis};
 
                 const auto val_ref = source_ref_entry.second;
 
@@ -2407,7 +2406,7 @@ namespace {
 
                 auto& visible_specials = obj_specials_map[object_id];
                 auto& obj_specials = obj->Specials();
-                ScriptingContext context(std::move(obj), input_context);
+                const ScriptingContext context(std::move(obj), input_context);
 
                 // check all object's specials.
                 for (const auto& special_entry : obj_specials) {
@@ -2924,8 +2923,6 @@ void Universe::InhibitUniverseObjectSignals(bool inhibit)
 { m_inhibit_universe_object_signals = inhibit; }
 
 void Universe::UpdateStatRecords(EmpireManager& empires) {
-    ScriptingContext context{*this, empires};
-
     int current_turn = CurrentTurn();
     if (current_turn == INVALID_GAME_TURN)
         return;
@@ -2933,10 +2930,10 @@ void Universe::UpdateStatRecords(EmpireManager& empires) {
         m_stat_records.clear();
 
     std::map<int, std::shared_ptr<const UniverseObject>> empire_sources;
-    for (auto& [empire_id, empire] : context.Empires()) {
+    for (auto& [empire_id, empire] : empires) {
         if (empire->Eliminated())
             continue;
-        auto source = empire->Source(context.ContextObjects());
+        auto source = empire->Source(*m_objects);
         if (!source) {
             ErrorLogger() << "Universe::UpdateStatRecords() unable to find source for empire, id = "
                           <<  empire->EmpireID();
@@ -2946,6 +2943,7 @@ void Universe::UpdateStatRecords(EmpireManager& empires) {
     }
 
     // process each stat
+    const ScriptingContext context{*this, empires};
     for (auto& [stat_name, value_ref] : EmpireStats()) {
         if (!value_ref)
             continue;
