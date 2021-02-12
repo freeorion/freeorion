@@ -838,14 +838,14 @@ public:
         element->text = Substring(m_text,
                                   std::next(m_text.begin(), begin),
                                   std::next(m_text.begin(), end));
-        m_text_elements.emplace_back(std::move(element));
+        m_text_elements.push_back(std::move(element));
     }
 
     /** Add a newline element.*/
     void AddNewline()
     {
         m_are_widths_calculated = false;
-        m_text_elements.emplace_back(std::make_shared<Font::TextElement>(false, true));
+        m_text_elements.push_back(std::make_shared<Font::TextElement>(false, true));
     }
 
     /** Add open color tag.*/
