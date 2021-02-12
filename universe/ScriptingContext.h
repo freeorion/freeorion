@@ -21,7 +21,9 @@ struct ScriptingContext {
                      std::shared_ptr<const UniverseObject> condition_local_candidate_) :
         source(                   parent_context.source),
         effect_target(            parent_context.effect_target),
-        condition_root_candidate( parent_context.condition_root_candidate),
+        condition_root_candidate( parent_context.condition_root_candidate ?
+                                      parent_context.condition_root_candidate :
+                                      condition_local_candidate_), // if parent context doesn't already have a root candidate, the new local candidate is the root
         condition_local_candidate(std::move(condition_local_candidate_)),
         current_value(            parent_context.current_value),
         combat_bout(              parent_context.combat_bout),
