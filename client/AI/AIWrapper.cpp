@@ -553,22 +553,18 @@ namespace {
         const auto uuid = boost::uuids::random_generator()();
 
         // create design from stuff chosen in UI
-        ShipDesign* design;
         try {
-            design = new ShipDesign(std::invalid_argument(""), name, description, current_turn,
-                                    ClientApp::GetApp()->EmpireID(), hull, parts, icon, model,
-                                    name_desc_in_stringtable, false, uuid);
+            auto design = std::make_unique<ShipDesign>(std::invalid_argument(""), name, description, current_turn,
+                                                       ClientApp::GetApp()->EmpireID(), hull, parts, icon, model,
+                                                       name_desc_in_stringtable, false, uuid);
+            AIClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(empire_id, *design));
+            return 1;
 
         } catch (const std::invalid_argument&) {
             ErrorLogger() << "IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";
             return 0;
         }
-
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ShipDesignOrder>(empire_id, *design));
-        delete design;
-
-        return 1;
     }
 
     void SendDiplomaticMessage(const DiplomaticMessage& diplo_message) {

@@ -217,7 +217,7 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
 #ifdef FREEORION_MACOSX
     SDL_SetHint(SDL_HINT_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK, "1");
 #endif
-    m_fsm.reset(new HumanClientFSM(*this));
+    m_fsm = std::make_unique<HumanClientFSM>(*this);
 
     // Force the log file if requested.
     if (GetOptionsDB().Get<std::string>("log-file").empty()) {
@@ -293,7 +293,7 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
         inform_user_sound_failed = true;
     }
 
-    m_ui.reset(new ClientUI());
+    m_ui = std::make_unique<ClientUI>();
 
     EnableFPS();
     UpdateFPSLimit();

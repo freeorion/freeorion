@@ -668,7 +668,7 @@ void ClientNetworking::Impl::DisconnectFromServerImpl() {
 // ClientNetworking
 ////////////////////////////////////////////////
 ClientNetworking::ClientNetworking() :
-    m_impl(new ClientNetworking::Impl())
+    m_impl(std::make_unique<ClientNetworking::Impl>())
 {}
 
 ClientNetworking::~ClientNetworking() = default;

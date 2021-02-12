@@ -178,7 +178,7 @@ void AIClientApp::ConnectToServer() {
 }
 
 void AIClientApp::StartPythonAI() {
-    m_AI.reset(new PythonAI());
+    m_AI = std::make_unique<PythonAI>();
     if (!(m_AI.get())->Initialize()) {
         HandlePythonAICrash();
         throw std::runtime_error("PythonAI failed to initialize.");

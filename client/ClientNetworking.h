@@ -41,7 +41,6 @@ public:
     /** The type of list returned by a call to DiscoverLANServers(). */
     using ServerNames =  std::vector<std::string>;
 
-protected:
     ClientNetworking();
 public:
     ~ClientNetworking();
