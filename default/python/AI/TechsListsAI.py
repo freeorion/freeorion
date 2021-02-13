@@ -392,7 +392,6 @@ class TechGroup3(TechGroup):
             "GRO_GENETIC_ENG",
             "GRO_GENETIC_MED",
             "GRO_XENO_GENETICS",
-            Dep.LRN_ARTIF_MINDS_2,
             "LRN_QUANT_NET",
             "PRO_SOL_ORB_GEN",
             Dep.PRO_AUTO_2,
@@ -822,7 +821,6 @@ def primary_meta_techs(index=0):
 # "GRO_XENO_GENETICS",
 # "GRO_XENO_HYBRIDS",
 # "LRN_ALGO_ELEGANCE",
-# "LRN_ARTIF_MINDS", Dep.LRN_ARTIF_MINDS_2
 # "LRN_ART_BLACK_HOLE",
 # "LRN_DISTRIB_THOUGHT",
 # "LRN_ENCLAVE_VOID",
