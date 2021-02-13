@@ -6,4 +6,28 @@ Tech
     researchcost = 1
     researchturns = 1
     tags = [ "PEDIA_SPY_CATEGORY" ]
+    effectsgroups = [
+        [[CUSTOM_SITREPS]]
+
+        EffectsGroup      // colonies consume influence proportional to how many planets the empire controls
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
+                Not Capital
+            ]
+            stackinggroup = "IMPERIAL_PALACE_MANY_PLANETS_INFLUENCE_PENALTY"
+            accountinglabel = "COLONY_ADMIN_COSTS_LABEL"
+            effects = SetTargetInfluence value = Value
+                + Statistic If condition = Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_CENTRALIZATION"
+                    * (NamedReal name = "TARGET_INFLUENCE_PER_COLONY" value = -0.2)
+                    * (Statistic Count condition = And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                    ])^0.5
+                + Statistic If condition = Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_CONFEDERATION"
+                    * (NamedReal name = "TARGET_INFLUENCE_PER_JUMP" value = -0.2)
+                    * JumpsBetween object = Source.ID object = Target.ID
+    ]
+
 #include "/customizations/custom_sitreps.txt"
