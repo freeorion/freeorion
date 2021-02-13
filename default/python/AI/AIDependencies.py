@@ -842,7 +842,7 @@ class CombatTarget:
         "SR_JAWS": SHIP | PLANET,
         "SR_PLASMA_DISCHARGE": ANY,
         "SR_SPINES": SHIP | PLANET,
-        "SR_TENTACLE": ANY, # note that SHIPs are primary targets
+        "SR_TENTACLE": ANY,  # note that SHIPs are primary targets
         "SR_THRASHING_BODY": SHIP | FIGHTER,
         "FT_HANGAR_KRILL": SHIP | FIGHTER,
     }
