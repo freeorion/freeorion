@@ -2138,9 +2138,6 @@ Kasvu
 LRN_PHYS_BRAIN
 Aivojen rakenne
 
-LRN_ARTIF_MINDS
-Keinotekoiset mielet
-
 LRN_EVERYTHING
 Kaiken teoria
 
