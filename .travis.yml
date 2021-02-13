@@ -150,7 +150,8 @@ jobs:
       env:
         - CACHE_NAME=linux-full
         - CMAKE_BUILD_PARALLEL_LEVEL=2
-        - CPPFLAGS="${CPPFLAGS} -I/usr/include/SDL2"
+        - CPPFLAGS="${CPPFLAGS} -I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/"
+        - CFLAGS="${CFLAGS} -I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/"
       script:
         - cmake -DBUILD_TESTING=ON ..
         - cmake --build .
