@@ -2361,6 +2361,7 @@ namespace {
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
         Universe& universe = GetUniverse();
         const ObjectMap& objects = universe.Objects();
+        ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
 
         universe.InhibitUniverseObjectSignals(true);
 
@@ -2450,14 +2451,14 @@ namespace {
         auto temp = universe.InsertTemp<Ship>(client_empire_id, design_id, "", client_empire_id);
 
         // apply empty species for 'Generic' entry
-        universe.UpdateMeterEstimates(temp->ID(), Empires());
+        universe.UpdateMeterEstimates(temp->ID(), context);
         temp->Resupply();
         detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
         for (std::string& species_name : species_list) {
             temp->SetSpecies(std::move(species_name));
-            universe.UpdateMeterEstimates(temp->ID(), Empires());
+            universe.UpdateMeterEstimates(temp->ID(), context);
             temp->Resupply();
             detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
         }
@@ -2501,6 +2502,11 @@ namespace {
         if (!incomplete_design)
             return;
 
+        Universe& universe = GetUniverse();
+        ObjectMap& objects = universe.Objects();
+        EmpireManager& empires = Empires();
+        ScriptingContext context{universe, empires, GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+
         GetUniverse().InhibitUniverseObjectSignals(true);
 
 
@@ -2530,7 +2536,7 @@ namespace {
         enemy_shots.insert(typical_shot);
         std::set<std::string> additional_species; // TODO: from currently selected planet and ship, if any
         const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if (const auto planet = Objects().get<Planet>(map_wnd->SelectedPlanetID())) {
+        if (const auto planet = objects.get<Planet>(map_wnd->SelectedPlanetID())) {
             if (!planet->SpeciesName().empty())
                 additional_species.insert(planet->SpeciesName());
         }
@@ -2539,7 +2545,7 @@ namespace {
         int selected_ship = fleet_manager.SelectedShipID();
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
-            if (const auto this_ship = Objects().get<Ship>(selected_ship).get()) {
+            if (const auto this_ship = objects.get<Ship>(selected_ship).get()) {
                 if (!additional_species.empty() && (
                         (this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial() > 0) ||
                          !this_ship->OwnedBy(client_empire_id)))
@@ -2554,13 +2560,13 @@ namespace {
                 }
             }
         } else if (fleet_manager.ActiveFleetWnd()) {
-            for (const auto& fleet : Objects().find<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
+            for (const auto& fleet : objects.find<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
                 if (!fleet)
                     continue;
                 chosen_ships.insert(fleet->ShipIDs().begin(), fleet->ShipIDs().end());
             }
         }
-        for (const auto& this_ship : Objects().find<Ship>(chosen_ships)) {
+        for (const auto& this_ship : objects.find<Ship>(chosen_ships)) {
             if (!this_ship || !this_ship->SpeciesName().empty())
                 continue;
             additional_species.insert(this_ship->SpeciesName());
@@ -2574,7 +2580,7 @@ namespace {
                                                    client_empire_id);
 
         // apply empty species for 'Generic' entry
-        GetUniverse().UpdateMeterEstimates(temp->ID(), Empires());
+        universe.UpdateMeterEstimates(temp->ID(), context);
         temp->Resupply();
         detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(),
                                                                 enemy_DR, enemy_shots, cost));
@@ -2582,16 +2588,16 @@ namespace {
         // apply various species to ship, re-calculating the meter values for each
         for (std::string& species_name : species_list) {
             temp->SetSpecies(std::move(species_name));
-            GetUniverse().UpdateMeterEstimates(temp->ID(), Empires());
+            GetUniverse().UpdateMeterEstimates(temp->ID(), context);
             temp->Resupply();
             detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(),
                                                                     enemy_DR, enemy_shots, cost));
         }
 
 
-        GetUniverse().Delete(temp->ID());
-        GetUniverse().DeleteShipDesign(TEMPORARY_OBJECT_ID);
-        GetUniverse().InhibitUniverseObjectSignals(false);
+        universe.Delete(temp->ID());
+        universe.DeleteShipDesign(TEMPORARY_OBJECT_ID);
+        universe.InhibitUniverseObjectSignals(false);
     }
 
     void RefreshDetailPanelObjectTag(       const std::string& item_type, const std::string& item_name,
@@ -2703,7 +2709,9 @@ namespace {
         std::vector<int> planet_id_vec { planet_id };
         auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
-        GetUniverse().InhibitUniverseObjectSignals(true);
+        Universe& universe = GetUniverse();
+        ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+        universe.InhibitUniverseObjectSignals(true);
 
         for (const auto& species_name : species_names) {
             // Setting the planet's species allows all of it meters to reflect
@@ -2714,9 +2722,9 @@ namespace {
             //       results in incorrect estimates for at least effects with a min target population of 0
             planet.SetSpecies(species_name);
             planet.SetOwner(empire_id);
-            GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, Empires(), false);
+            universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
 
-            const auto species = GetSpecies(species_name);
+            const auto species = context.species.GetSpecies(species_name);
             auto planet_environment = PlanetEnvironment::PE_UNINHABITABLE;
             if (species)
                 planet_environment = species->GetPlanetEnvironment(planet.Type());
@@ -2724,7 +2732,7 @@ namespace {
             float planet_capacity = ((planet_environment == PlanetEnvironment::PE_UNINHABITABLE) ?
                                      0.0f : planet.GetMeter(MeterType::METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
 
-            retval.emplace(planet_capacity, std::make_pair(species_name, planet_environment));
+            retval.emplace(planet_capacity, std::pair{species_name, planet_environment});
         }
 
         // restore planet to original state
@@ -2732,8 +2740,8 @@ namespace {
         planet.SetOwner(original_owner_id);
         planet.GetMeter(MeterType::METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
 
-        GetUniverse().InhibitUniverseObjectSignals(false);
-        GetUniverse().ApplyMeterEffectsAndUpdateMeters(planet_id_vec, Empires(), false);
+        universe.InhibitUniverseObjectSignals(false);
+        universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
 
         return retval;
     }

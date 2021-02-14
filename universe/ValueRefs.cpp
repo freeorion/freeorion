@@ -1974,7 +1974,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         std::string opinionated_species_name;
         if (m_string_ref1)
             opinionated_species_name = m_string_ref1->Eval(context);
-        const auto species = GetSpecies(opinionated_species_name);
+        const auto species = context.species.GetSpecies(opinionated_species_name);
         if (!species)
             return 0.0;
 
@@ -2000,7 +2000,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (m_string_ref1)
             species_name = m_string_ref1->Eval(context);
 
-        return GetSpeciesManager().SpeciesEmpireOpinion(species_name, empire_id);
+        return context.species.SpeciesEmpireOpinion(species_name, empire_id);
 
     }
     else if (variable_name == "SpeciesSpeciesOpinion") {
@@ -2012,7 +2012,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (m_string_ref2)
             rated_species_name = m_string_ref2->Eval(context);
 
-        return GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+        return context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
 
     }
     else if (variable_name == "SpecialCapacity") {

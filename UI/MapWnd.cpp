@@ -2648,9 +2648,11 @@ void MapWnd::InitTurn() {
 
     //DebugLogger() << GetSupplyManager().Dump();
 
-    Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects(); // TODO: Get from universe directly
     EmpireManager& empires = Empires();
+    Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
+    ScriptingContext context{universe, empires, GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+
 
     TraceLogger(effects) << "MapWnd::InitTurn initial:";
     for (auto obj : objects.all())
@@ -2658,20 +2660,20 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("meter estimates");
     // update effect accounting and meter estimates
-    universe.InitMeterEstimatesAndDiscrepancies(empires);
+    universe.InitMeterEstimatesAndDiscrepancies(context);
 
     timer.EnterSection("orders");
     // if we've just loaded the game there may be some unexecuted orders, we
     // should reapply them now, so they are reflected in the UI, but do not
     // influence current meters or their discrepancies for this turn
-    GGHumanClientApp::GetApp()->Orders().ApplyOrders();
+    GGHumanClientApp::GetApp()->Orders().ApplyOrders(); // TODO: pass Universe?
 
     timer.EnterSection("meter estimates");
     // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
     // population is available for currently uncolonized planets
-    GetUniverse().UpdateMeterEstimates(empires);
+    GetUniverse().UpdateMeterEstimates(context);
 
-    GetUniverse().ApplyAppearanceEffects(empires);
+    GetUniverse().ApplyAppearanceEffects(context);
 
     timer.EnterSection("init rendering");
     // set up system icons, starlanes, galaxy gas rendering
@@ -2708,7 +2710,7 @@ void MapWnd::InitTurn() {
 
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
-    for (const auto& fleet : Objects().all<Fleet>()) {
+    for (const auto& fleet : objects.all<Fleet>()) {
         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
             boost::bind(&MapWnd::RefreshFleetButtons, this, true));
     }
@@ -2763,7 +2765,7 @@ void MapWnd::InitTurn() {
     // empire is recreated each turn based on turn update from server, so
     // connections of signals emitted from the empire must be remade each turn
     // (unlike connections to signals from the sidepanel)
-    Empire* this_client_empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    auto this_client_empire = empires.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (this_client_empire) {
         this_client_empire->GetResourcePool(ResourceType::RE_INFLUENCE)->ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshInfluenceResourceIndicator, this));
@@ -4364,7 +4366,8 @@ void MapWnd::SelectSystem(int system_id) {
 
     if (system) {
         // ensure meter estimates are up to date, particularly for which ship is selected
-        GetUniverse().UpdateMeterEstimates(system_id, Empires(), true);
+        ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+        GetUniverse().UpdateMeterEstimates(system_id, context, true);
     }
 
 
@@ -6863,7 +6866,8 @@ void MapWnd::RefreshPopulationIndicator() {
 }
 
 void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools() {
-    GetUniverse().UpdateMeterEstimates(SidePanel::SystemID(), Empires(), true);
+    ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+    GetUniverse().UpdateMeterEstimates(SidePanel::SystemID(), context, true);
     UpdateEmpireResourcePools();
 }
 
@@ -7311,7 +7315,7 @@ namespace {
     bool FleetRouteInRange(const std::shared_ptr<Fleet>& fleet, const RouteListType& route) {
         std::list<int> route_list{route.begin(), route.end()};
 
-        auto eta = fleet->ETA(fleet->MovePath(route_list, false, ScriptingContext()));
+        auto eta = fleet->ETA(fleet->MovePath(route_list, false, ScriptingContext{}));
         if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_UNKNOWN || eta.first == Fleet::ETA_OUT_OF_RANGE)
             return false;
 
@@ -7643,7 +7647,7 @@ void MapWnd::DispatchFleetsExploring() {
         if (destroyed_objects.count(fleet->ID())) {
             m_fleets_exploring.erase(fleet->ID()); //this fleet can't explore anymore
         } else {
-             if (fleet->MovePath(false, ScriptingContext()).empty())
+             if (fleet->MovePath(false, ScriptingContext{}).empty())
                 idle_fleets.insert(fleet->ID());
             else
                 systems_being_explored.emplace(fleet->FinalDestinationID(), fleet->ID());

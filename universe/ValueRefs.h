@@ -1733,7 +1733,7 @@ void Operation<T>::CacheConstValue()
 {
     if (!m_constant_expr)
         return;
-    m_cached_const_value = this->EvalImpl(ScriptingContext());
+    m_cached_const_value = this->EvalImpl(ScriptingContext{});
 }
 
 template <typename T>

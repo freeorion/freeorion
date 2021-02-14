@@ -1,5 +1,3 @@
-
-
 #include "GGHumanClientApp.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"

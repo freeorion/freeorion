@@ -720,7 +720,8 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // after all game initialization stuff has been created, set current turn to 0 and apply only GenerateSitRep Effects
     // so that a set of SitReps intended as the player's initial greeting will be segregated
     m_current_turn = 0;
-    m_universe.ApplyGenerateSitRepEffects(m_empires);
+    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
+    m_universe.ApplyGenerateSitRepEffects(context);
 
     //can set current turn to 1 for start of game
     m_current_turn = 1;
@@ -749,8 +750,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     for (auto& entry : m_empires)
         entry.second->UpdateOwnedObjectCounters();
 
-    UpdateEmpireSupply(ScriptingContext{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager},
-                       m_empires, m_supply_manager);
+    UpdateEmpireSupply(context, m_empires, m_supply_manager);
     m_universe.UpdateStatRecords(m_empires);
 }
 
@@ -1460,20 +1460,20 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     // prevent reproducible UIDs.
     ClockSeed();
     if (GetOptionsDB().Get<std::string>("setup.game.uid").empty())
-        GetGalaxySetupData().SetGameUID(boost::uuids::to_string(boost::uuids::random_generator()()));
+        m_galaxy_setup_data.SetGameUID(boost::uuids::to_string(boost::uuids::random_generator()()));
 
     // Initialize RNG with provided seed to get reproducible universes
     int seed = 0;
     try {
-        seed = boost::lexical_cast<unsigned int>(GetGalaxySetupData().seed);
+        seed = boost::lexical_cast<unsigned int>(m_galaxy_setup_data.seed);
     } catch (...) {
         try {
             boost::hash<std::string> string_hash;
-            std::size_t h = string_hash(GetGalaxySetupData().seed);
+            std::size_t h = string_hash(m_galaxy_setup_data.seed);
             seed = static_cast<unsigned int>(h);
         } catch (...) {}
     }
-    if (GetGalaxySetupData().GetSeed().empty() || GetGalaxySetupData().GetSeed() == "RANDOM") {
+    if (m_galaxy_setup_data.GetSeed().empty() || m_galaxy_setup_data.GetSeed() == "RANDOM") {
         //ClockSeed();
         // replicate ClockSeed code here so can log the seed used
         boost::posix_time::ptime ltime = boost::posix_time::microsec_clock::local_time();
@@ -1483,14 +1483,14 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
         DebugLogger() << "GenerateUniverse using clock for seed:" << new_seed;
         seed = static_cast<unsigned int>(h);
         // store seed in galaxy setup data
-        ServerApp::GetApp()->GetGalaxySetupData().SetSeed(std::to_string(seed));
+        m_galaxy_setup_data.SetSeed(std::to_string(seed));
     }
     Seed(seed);
     DebugLogger() << "GenerateUniverse with seed: " << seed;
 
     // Reset the universe object for a new universe
     m_universe.Clear();
-    GetSpeciesManager().ClearSpeciesHomeworlds();
+    m_species_manager.ClearSpeciesHomeworlds();
 
     // Reset the object id manager for the new empires.
     std::vector<int> empire_ids(player_setup_data.size());
@@ -1499,7 +1499,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     m_universe.ResetAllIDAllocation(empire_ids);
 
     // Add predefined ship designs to universe
-    GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
+    GetPredefinedShipDesignManager().AddShipDesignsToUniverse(); // TODO: pass in m_universe
     // Initialize empire objects for each player
     InitEmpires(player_setup_data);
 
@@ -1522,19 +1522,21 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     if (!success)
         ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_UNIVERSE_GENERATION_ERRORS"), false));
 
-    for (auto& empire : Empires())
+    for (auto& empire : m_empires)
         empire.second->ApplyNewTechs();
 
     DebugLogger() << "Applying first turn effects and updating meters";
 
+    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
+
     // Apply effects for 1st turn.
-    m_universe.ApplyAllEffectsAndUpdateMeters(m_empires, false);
+    m_universe.ApplyAllEffectsAndUpdateMeters(context, false);
 
     TraceLogger(effects) << "After First turn meter effect applying: " << m_universe.Objects().Dump();
     // Set active meters to targets or maxes after first meter effects application
     SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
 
-    m_universe.UpdateMeterEstimates(m_empires);
+    m_universe.UpdateMeterEstimates(context);
     m_universe.BackPropagateObjectMeters();
     SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
     m_universe.BackPropagateObjectMeters();
@@ -1548,7 +1550,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 
     // Re-apply meter effects, so that results depending on meter values can be
     // re-checked after initial setting of those meter values
-    m_universe.ApplyMeterEffectsAndUpdateMeters(m_empires, false);
+    m_universe.ApplyMeterEffectsAndUpdateMeters(context, false);
     // Re-set active meters to targets after re-application of effects
     SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
     // Set the population of unowned planets to a random fraction of their target values.
@@ -2396,7 +2398,7 @@ namespace {
                                   Universe& universe,
                                   const EmpireManager& empires,
                                   const GalaxySetupData& setup_data,
-                                  const SpeciesManager& species,
+                                  SpeciesManager& species,
                                   const SupplyManager& supply)
     {
         combats.clear();
@@ -3478,12 +3480,14 @@ void ServerApp::PostCombatProcessTurns() {
     TraceLogger(effects) << "!!!!!!! BEFORE TURN PROCESSING EFFECTS APPLICATION";
     TraceLogger(effects) << m_universe.Objects().Dump();
 
+    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
+
     // execute all effects and update meters prior to production, research, etc.
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
         static boost::hash<std::string> pcpt_string_hash;
         Seed(static_cast<unsigned int>(CurrentTurn()) + pcpt_string_hash(m_galaxy_setup_data.seed));
     }
-    m_universe.ApplyAllEffectsAndUpdateMeters(m_empires, false);
+    m_universe.ApplyAllEffectsAndUpdateMeters(context, false);
 
     // regenerate system connectivity graph after executing effects, which may
     // have added or removed starlanes.
@@ -3528,7 +3532,6 @@ void ServerApp::PostCombatProcessTurns() {
 
         for (const auto& tech : empire->CheckResearchProgress())
             empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(tech);
-        ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
         empire->CheckProductionProgress(context);
         empire->CheckInfluenceProgress();
     }
@@ -3543,7 +3546,7 @@ void ServerApp::PostCombatProcessTurns() {
     // UniverseObjects will have effects applied to them this turn, allowing
     // (for example) ships to have max fuel meters greater than 0 on the turn
     // they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters(m_empires, false);
+    m_universe.ApplyMeterEffectsAndUpdateMeters(context, false);
 
     TraceLogger(effects) << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
     TraceLogger(effects) << m_universe.Objects().Dump();
@@ -3618,15 +3621,14 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // redo meter estimates to hopefully be consistent with what happens in clients
-    m_universe.UpdateMeterEstimates(m_empires, false);
+    m_universe.UpdateMeterEstimates(context, false);
 
     TraceLogger(effects) << "ServerApp::PostCombatProcessTurns After Final Meter Estimate Update: ";
     TraceLogger(effects) << m_universe.Objects().Dump();
 
 
     // Re-determine supply distribution and exchanging and resource pools for empires
-    UpdateEmpireSupply(ScriptingContext{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager},
-                       m_empires, m_supply_manager, true);
+    UpdateEmpireSupply(context, m_empires, m_supply_manager, true);
 
     // copy latest visible gamestate to each empire's known object state
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();

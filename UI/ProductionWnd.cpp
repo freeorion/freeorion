@@ -248,10 +248,10 @@ namespace {
 
             item_name = UserString(elem.item.name);
             //available = empire->BuildingTypeAvailable(elem.item.name);
-            location_ok = building_type->ProductionLocation(elem.empire_id, elem.location, ScriptingContext());
+            location_ok = building_type->ProductionLocation(elem.empire_id, elem.location, ScriptingContext{});
             //min_turns = building_type->ProductionTime(elem.empire_id, elem.location);
-            total_cost = building_type->ProductionCost(elem.empire_id, elem.location, ScriptingContext());
-            max_allocation = building_type->PerTurnCost(elem.empire_id, elem.location, ScriptingContext());
+            total_cost = building_type->ProductionCost(elem.empire_id, elem.location, ScriptingContext{});
+            max_allocation = building_type->PerTurnCost(elem.empire_id, elem.location, ScriptingContext{});
             icon = ClientUI::BuildingIcon(elem.item.name);
 
         } else if (elem.item.build_type == BuildType::BT_SHIP) {

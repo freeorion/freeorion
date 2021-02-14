@@ -1358,6 +1358,8 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     float best_capacity = -999;
     bool changed_planet = false;
 
+    ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+
     GetUniverse().InhibitUniverseObjectSignals(true);
     for (auto& ship : capable_and_available_colony_ships) {
         if (!ship)
@@ -1392,7 +1394,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
                         target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
 
                         // temporary meter update with currently set species
-                        GetUniverse().UpdateMeterEstimates(target_planet_id, Empires());
+                        GetUniverse().UpdateMeterEstimates(target_planet_id, context);
                         planet_capacity = target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current();  // want value after meter update, so check current, not initial value
                     }
                     species_colony_projections[std::move(spec_pair)] = planet_capacity;
@@ -1411,8 +1413,8 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
         target_planet->SetOwner(orig_owner);
         target_planet->SetSpecies(orig_species);
         target_planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(orig_initial_target_pop,
-                                                              orig_initial_target_pop);
-        GetUniverse().UpdateMeterEstimates(target_planet_id, Empires());
+                                                                         orig_initial_target_pop);
+        GetUniverse().UpdateMeterEstimates(target_planet_id, context);
     }
     GetUniverse().InhibitUniverseObjectSignals(false);
 
@@ -1666,6 +1668,9 @@ void SidePanel::PlanetPanel::Refresh() {
     }
 
     if (can_colonize) {
+        ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(),
+                                 GetSpeciesManager(), GetSupplyManager()};
+
         // show colonize button; in case the chosen colony ship is not actually
         // selected, but has been chosen by AutomaticallyChosenColonyShip,
         // determine what population capacity to put on the conolnize buttone by
@@ -1692,13 +1697,13 @@ void SidePanel::PlanetPanel::Refresh() {
             planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
 
             // temporary meter updates for curently set species
-            GetUniverse().UpdateMeterEstimates(m_planet_id, Empires());
+            GetUniverse().UpdateMeterEstimates(m_planet_id, context);
             planet_capacity = ((planet_env_for_colony_species == PlanetEnvironment::PE_UNINHABITABLE) ? 0.0 : planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current());   // want target pop after meter update, so check current value of meter
             planet->SetOwner(orig_owner);
             planet->SetSpecies(orig_species);
             planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(
                 orig_initial_target_pop, orig_initial_target_pop);
-            GetUniverse().UpdateMeterEstimates(m_planet_id, Empires());
+            GetUniverse().UpdateMeterEstimates(m_planet_id, context);
 
             colony_projections[this_pair] = planet_capacity;
             GetUniverse().InhibitUniverseObjectSignals(false);

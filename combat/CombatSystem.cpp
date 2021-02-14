@@ -39,7 +39,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
                        Universe& universe_mutable_in,
                        const EmpireManager& empires_,
                        const GalaxySetupData& galaxy_setup_data_,
-                       const SpeciesManager& species_,
+                       SpeciesManager& species_,
                        const SupplyManager& supply_) :
     universe(universe_mutable_in),
     empires(empires_.GetEmpires()),

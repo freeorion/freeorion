@@ -82,9 +82,9 @@ public:
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
         location, however the fleet's current location will not be on the list, even if it is currently in a system. */
     std::list<MovePathNode> MovePath(const std::list<int>& route, bool flag_blockades = false,
-                                     const ScriptingContext& context = ScriptingContext()) const;
+                                     const ScriptingContext& context = ScriptingContext{}) const;
     std::list<MovePathNode> MovePath(bool flag_blockades = false,
-                                     const ScriptingContext& context = ScriptingContext()) const;   ///< Returns MovePath for fleet's current TravelRoute
+                                     const ScriptingContext& context = ScriptingContext{}) const;   ///< Returns MovePath for fleet's current TravelRoute
 
     std::pair<int, int>     ETA(const ScriptingContext& context) const;         ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
     std::pair<int, int>     ETA(const std::list<MovePathNode>& move_path) const;///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path

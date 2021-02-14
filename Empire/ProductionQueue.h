@@ -55,7 +55,7 @@ struct FO_COMMON_API ProductionQueue {
           * turns required to produce the indicated item, or (-1.0, -1) if the item
           * is unknown, unavailable, or invalid. */
         std::pair<float, int> ProductionCostAndTime(int empire_id, int location_id,
-                                                    const ScriptingContext& context = ScriptingContext()) const;
+                                                    const ScriptingContext& context = ScriptingContext{}) const;
 
         bool operator<(const ProductionItem& rhs) const;
 
@@ -90,7 +90,7 @@ struct FO_COMMON_API ProductionQueue {
         /** Returns the total cost per item (blocksize 1) and the minimum number of
           * turns required to produce the indicated item, or (-1.0, -1) if the item
           * is unknown, unavailable, or invalid. */
-        std::pair<float, int> ProductionCostAndTime(const ScriptingContext& context = ScriptingContext()) const;
+        std::pair<float, int> ProductionCostAndTime(const ScriptingContext& context = ScriptingContext{}) const;
 
 
         ProductionItem      item;

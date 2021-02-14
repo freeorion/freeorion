@@ -14,7 +14,7 @@ public:
                Universe& universe_,
                const EmpireManager& empires_,
                const GalaxySetupData& galaxy_setup_data_,
-               const SpeciesManager& species_,
+               SpeciesManager& species_,
                const SupplyManager& supply_);
     // TODO: Constructor taking ObjectMap override?
 
@@ -29,7 +29,7 @@ public:
     const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{GetUniverse().GetEmpireObjectVisibilityTurnMap()};
     const EmpireManager::DiploStatusMap&           diplo_statuses{Empires().GetDiplomaticStatuses()};
     const GalaxySetupData&                         galaxy_setup_data{GetGalaxySetupData()};
-    const SpeciesManager&                          species{GetSpeciesManager()};
+    SpeciesManager&                                species{GetSpeciesManager()};
     const SupplyManager&                           supply{GetSupplyManager()};
 
     std::unique_ptr<ObjectMap>          objects;                       ///< actual state of objects relevant to combat, filtered and copied for system where combat occurs, not necessarily consistent with contents of universe's ObjectMap

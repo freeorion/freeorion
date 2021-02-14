@@ -74,7 +74,7 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
       * evaluating expressions that do not depend on source, target, or
       * candidate objects. */
     T Eval() const
-    { return Eval(::ScriptingContext()); }
+    { return Eval(::ScriptingContext{}); }
 
     /** Evaluates the expression tree and return the results; \a context
       * is used to fill in any instances of the "Value" variable or references
