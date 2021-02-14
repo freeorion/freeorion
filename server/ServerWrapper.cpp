@@ -185,9 +185,12 @@ namespace {
     //Checks the condition against many objects at once.
     //Checking many systems is more efficient because for example monster fleet plans
     //typically uses WithinStarLaneJumps to exclude placement near empires.
-    auto FilterIDsWithCondition(const Condition::Condition* cond, const py::list &obj_ids) -> py::list
+    auto FilterIDsWithCondition(const Condition::Condition* cond, const py::list& obj_ids) -> py::list
     {
         py::list permitted_ids;
+
+        if (!cond)
+            DebugLogger() << "FilterIDsWithCondition passed null condition";
 
         Condition::ObjectSet objs;
         py::stl_input_iterator<int> end;
@@ -207,13 +210,12 @@ namespace {
         // get location condition and evaluate it with the specified universe object
         // if no location condition has been defined, all objects matches
         if (cond && cond->SourceInvariant())
-            cond->Eval(ScriptingContext(), permitted_objs, objs);
+            cond->Eval(ScriptingContext{}, permitted_objs, objs);
         else
             permitted_objs = std::move(objs);
 
-        for (auto &obj : permitted_objs) {
+        for (auto &obj : permitted_objs)
             permitted_ids.append(obj->ID());
-        }
 
         return permitted_ids;
     }

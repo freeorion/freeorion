@@ -151,19 +151,19 @@ public:
 
     /** Return true iff this empire can produce the specified item at the specified location. */
     bool                    ProducibleItem(BuildType build_type, int location,
-                                           const ScriptingContext& context = ScriptingContext()) const;
+                                           const ScriptingContext& context = ScriptingContext{}) const;
     bool                    ProducibleItem(BuildType build_type, const std::string& name, int location,
-                                           const ScriptingContext& context = ScriptingContext()) const;
+                                           const ScriptingContext& context = ScriptingContext{}) const;
     bool                    ProducibleItem(BuildType build_type, int design_id, int location,
-                                           const ScriptingContext& context = ScriptingContext()) const;
+                                           const ScriptingContext& context = ScriptingContext{}) const;
     bool                    ProducibleItem(const ProductionQueue::ProductionItem& item, int location,
-                                           const ScriptingContext& context = ScriptingContext()) const;
+                                           const ScriptingContext& context = ScriptingContext{}) const;
 
     /** Return true iff this empire can enqueue the specified item at the specified location. */
     bool                    EnqueuableItem(BuildType build_type, const std::string& name, int location,
-                                           const ScriptingContext& context = ScriptingContext()) const;
+                                           const ScriptingContext& context = ScriptingContext{}) const;
     bool                    EnqueuableItem(const ProductionQueue::ProductionItem& item, int location,
-                                           const ScriptingContext& context = ScriptingContext()) const;
+                                           const ScriptingContext& context = ScriptingContext{}) const;
 
     bool                    HasExploredSystem(int ID) const;                            ///< returns  true if the given item is in the appropriate list, false if it is not.
 

@@ -557,7 +557,7 @@ void Universe::ResetObjectMeters(const std::vector<std::shared_ptr<UniverseObjec
     }
 }
 
-void Universe::ApplyAllEffectsAndUpdateMeters(EmpireManager& empires, bool do_accounting) {
+void Universe::ApplyAllEffectsAndUpdateMeters(ScriptingContext& context, bool do_accounting) {
     ScopedTimer timer("Universe::ApplyAllEffectsAndUpdateMeters");
 
     if (do_accounting) {
@@ -571,7 +571,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(EmpireManager& empires, bool do_ac
     // Effects, since the application of these Effects may affect the activation
     // and scoping evaluations
     std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
-    GetEffectsAndTargets(source_effects_targets_causes, empires, false);
+    GetEffectsAndTargets(source_effects_targets_causes, context, false);
 
     // revert all current meter values (which are modified by effects) to
     // their initial state for this turn, so that max/target/unpaired meter
@@ -579,19 +579,19 @@ void Universe::ApplyAllEffectsAndUpdateMeters(EmpireManager& empires, bool do_ac
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
     ResetAllObjectMeters(true, true);
-    for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
+    for ([[maybe_unused]] auto& [empire_id, empire] : context.Empires()) {
         (void)empire_id;    // quieting unused variable warning
         empire->ResetMeters();
     }
 
-    ExecuteEffects(source_effects_targets_causes, empires, do_accounting, false, false, true);
+    ExecuteEffects(source_effects_targets_causes, context, do_accounting, false, false, true);
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
-    for (const auto& object : m_objects->all())
+    for (const auto& object : context.ContextObjects().all())
         object->ClampMeters();
 }
 
-void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, EmpireManager& empires,
+void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, ScriptingContext& context,
                                                 bool do_accounting)
 {
     if (object_ids.empty())
@@ -604,9 +604,9 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
-    GetEffectsAndTargets(source_effects_targets_causes, object_ids, empires, true);
+    GetEffectsAndTargets(source_effects_targets_causes, object_ids, context, true);
 
-    std::vector<std::shared_ptr<UniverseObject>> objects = m_objects->find(object_ids);
+    std::vector<std::shared_ptr<UniverseObject>> objects = context.ContextObjects().find(object_ids);
 
     // revert all current meter values (which are modified by effects) to
     // their initial state for this turn, so meter
@@ -618,13 +618,13 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     // recalculated, some targets that lead to empire meters being modified may
     // be missed, and estimated empire meters would be inaccurate
 
-    ExecuteEffects(source_effects_targets_causes, empires, do_accounting, true);
+    ExecuteEffects(source_effects_targets_causes, context, do_accounting, true);
 
     for (auto& object : objects)
         object->ClampMeters();
 }
 
-void Universe::ApplyMeterEffectsAndUpdateMeters(EmpireManager& empires, bool do_accounting) {
+void Universe::ApplyMeterEffectsAndUpdateMeters(ScriptingContext& context, bool do_accounting) {
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
     if (do_accounting) {
         // override if disabled
@@ -632,10 +632,10 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(EmpireManager& empires, bool do_
     }
 
     std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
-    GetEffectsAndTargets(source_effects_targets_causes, empires, true);
+    GetEffectsAndTargets(source_effects_targets_causes, context, true);
 
     TraceLogger(effects) << "Universe::ApplyMeterEffectsAndUpdateMeters resetting...";
-    for (const auto& object : m_objects->all()) {
+    for (const auto& object : context.ContextObjects().all()) {
         TraceLogger(effects) << "object " << object->Name() << " (" << object->ID() << ") before resetting meters: ";
         for (auto const& [meter_type, meter] : object->Meters())
             TraceLogger(effects) << "    meter: " << meter_type << "  value: " << meter.Current();
@@ -645,17 +645,17 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(EmpireManager& empires, bool do_
         for (auto const& [meter_type, meter] : object->Meters())
             TraceLogger(effects) << "    meter: " << meter_type << "  value: " << meter.Current();
     }
-    for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
+    for ([[maybe_unused]] auto& [empire_id, empire] : context.Empires()) {
         (void)empire_id;    // quieting unused variable warning
         empire->ResetMeters();
     }
-    ExecuteEffects(source_effects_targets_causes, empires, do_accounting, true, false, true);
+    ExecuteEffects(source_effects_targets_causes, context, do_accounting, true, false, true);
 
-    for (const auto& object : m_objects->all())
+    for (const auto& object : context.ContextObjects().all())
         object->ClampMeters();
 }
 
-void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids, EmpireManager& empires) {
+void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids, ScriptingContext& context) {
     if (object_ids.empty())
         return;
     ScopedTimer timer("Universe::ApplyAppearanceEffects on " + std::to_string(object_ids.size()) + " objects");
@@ -664,33 +664,33 @@ void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids, Empire
     // Effects, since the application of these Effects may affect the
     // activation and scoping evaluations
     std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
-    GetEffectsAndTargets(source_effects_targets_causes, object_ids, empires, false);
-    ExecuteEffects(source_effects_targets_causes, empires, false, false, true);
+    GetEffectsAndTargets(source_effects_targets_causes, object_ids, context, false);
+    ExecuteEffects(source_effects_targets_causes, context, false, false, true);
 }
 
-void Universe::ApplyAppearanceEffects(EmpireManager& empires) {
+void Universe::ApplyAppearanceEffects(ScriptingContext& context) {
     ScopedTimer timer("Universe::ApplyAppearanceEffects on all objects");
 
     // cache all activation and scoping condition results before applying
     // Effects, since the application of Effects in general (even if not these
     // particular Effects) may affect the activation and scoping evaluations
     std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
-    GetEffectsAndTargets(source_effects_targets_causes, empires, false);
-    ExecuteEffects(source_effects_targets_causes, empires, false, false, true);
+    GetEffectsAndTargets(source_effects_targets_causes, context, false);
+    ExecuteEffects(source_effects_targets_causes, context, false, false, true);
 }
 
-void Universe::ApplyGenerateSitRepEffects(EmpireManager& empires) {
+void Universe::ApplyGenerateSitRepEffects(ScriptingContext& context) {
     ScopedTimer timer("Universe::ApplyGenerateSitRepEffects on all objects");
 
     // cache all activation and scoping condition results before applying
     // Effects, since the application of Effects in general (even if not these
     // particular Effects) may affect the activation and scoping evaluations
     std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
-    GetEffectsAndTargets(source_effects_targets_causes, empires, false);
-    ExecuteEffects(source_effects_targets_causes, empires, false, false, false, false, true);
+    GetEffectsAndTargets(source_effects_targets_causes, context, false);
+    ExecuteEffects(source_effects_targets_causes, context, false, false, false, false, true);
 }
 
-void Universe::InitMeterEstimatesAndDiscrepancies(EmpireManager& empires) {
+void Universe::InitMeterEstimatesAndDiscrepancies(ScriptingContext& context) {
     DebugLogger(effects) << "Universe::InitMeterEstimatesAndDiscrepancies";
     ScopedTimer timer("Universe::InitMeterEstimatesAndDiscrepancies", true, std::chrono::microseconds(1));
 
@@ -716,7 +716,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies(EmpireManager& empires) {
 
 
     // generate new estimates (normally uses discrepancies, but in this case will find none)
-    UpdateMeterEstimates(empires);
+    UpdateMeterEstimates(context);
 
 
     TraceLogger(effects) << "IMEAD: determining discrepancies";
@@ -783,24 +783,24 @@ void Universe::InitMeterEstimatesAndDiscrepancies(EmpireManager& empires) {
     }
 }
 
-void Universe::UpdateMeterEstimates(EmpireManager& empires)
-{ UpdateMeterEstimates(empires, GetOptionsDB().Get<bool>("effects.accounting.enabled")); }
+void Universe::UpdateMeterEstimates(ScriptingContext& context)
+{ UpdateMeterEstimates(context, GetOptionsDB().Get<bool>("effects.accounting.enabled")); }
 
-void Universe::UpdateMeterEstimates(EmpireManager& empires, bool do_accounting) {
+void Universe::UpdateMeterEstimates(ScriptingContext& context, bool do_accounting) {
     for (int obj_id : m_objects->FindExistingObjectIDs())
         m_effect_accounting_map[obj_id].clear();
     // update meters for all objects.
-    UpdateMeterEstimatesImpl(std::vector<int>(), empires, do_accounting);
+    UpdateMeterEstimatesImpl(std::vector<int>(), context, do_accounting);
 }
 
-void Universe::UpdateMeterEstimates(int object_id, EmpireManager& empires, bool update_contained_objects) {
+void Universe::UpdateMeterEstimates(int object_id, ScriptingContext& context, bool update_contained_objects) {
     // ids of the object and all valid contained objects
     std::unordered_set<int> collected_ids;
 
     // Collect objects ids to update meter for.  This may be a single object, a
     // group of related objects. Return true if all collected ids are valid.
     std::function<bool (int, int)> collect_ids =
-        [this, &empires, &collected_ids, update_contained_objects, &collect_ids]
+        [this, &context, &collected_ids, update_contained_objects, &collect_ids]
         (int cur_id, int container_id)
     {
         // Ignore if already in the set
@@ -812,7 +812,7 @@ void Universe::UpdateMeterEstimates(int object_id, EmpireManager& empires, bool 
             ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object for id " << cur_id
                           << " in container " << container_id
                           << ". All meter estimates will be updated.";
-            UpdateMeterEstimates(empires);
+            UpdateMeterEstimates(context);
             return false;
         }
 
@@ -841,10 +841,10 @@ void Universe::UpdateMeterEstimates(int object_id, EmpireManager& empires, bool 
     std::vector<int> objects_vec;
     objects_vec.reserve(collected_ids.size());
     std::copy(collected_ids.begin(), collected_ids.end(), std::back_inserter(objects_vec));
-    UpdateMeterEstimatesImpl(objects_vec, empires, GetOptionsDB().Get<bool>("effects.accounting.enabled"));
+    UpdateMeterEstimatesImpl(objects_vec, context, GetOptionsDB().Get<bool>("effects.accounting.enabled"));
 }
 
-void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, EmpireManager& empires) {
+void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, ScriptingContext& context) {
     std::set<int> objects_set;  // ensures no duplicates
 
     for (int object_id : objects_vec) {
@@ -858,11 +858,14 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, EmpireM
     final_objects_vec.reserve(objects_set.size());
     std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(final_objects_vec));
     if (!final_objects_vec.empty())
-        UpdateMeterEstimatesImpl(final_objects_vec, empires, GetOptionsDB().Get<bool>("effects.accounting.enabled"));
+        UpdateMeterEstimatesImpl(final_objects_vec, context, GetOptionsDB().Get<bool>("effects.accounting.enabled"));
 }
 
-void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, EmpireManager& empires, bool do_accounting) {
-    auto number_text = std::to_string(objects_vec.empty() ? m_objects->ExistingObjects().size() : objects_vec.size());
+void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
+                                        ScriptingContext& context, bool do_accounting)
+{
+    auto number_text = std::to_string(objects_vec.empty() ?
+                                      context.ContextObjects().ExistingObjects().size() : objects_vec.size());
     ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + number_text + " objects", true);
 
     // get all pointers to objects once, to avoid having to do so repeatedly
@@ -870,11 +873,13 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Emp
     auto object_ptrs = m_objects->find(objects_vec);
     if (objects_vec.empty()) {
         object_ptrs.reserve(m_objects->ExistingObjects().size());
-        std::transform(m_objects->ExistingObjects().begin(), m_objects->ExistingObjects().end(),
+        std::transform(context.ContextObjects().ExistingObjects().begin(), context.ContextObjects().ExistingObjects().end(),
                        std::back_inserter(object_ptrs), [](const auto& p) {
             return std::const_pointer_cast<UniverseObject>(p.second);
         });
     }
+
+    auto& accounting_map = context.ContextUniverse().GetEffectAccountingMap();
 
     for (auto& obj : object_ptrs) {
         // Reset max meters to DEFAULT_VALUE and current meters to initial value
@@ -886,7 +891,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Emp
             continue;
 
         auto& meters = obj->Meters();
-        auto& account_map = m_effect_accounting_map[obj->ID()];
+        auto& account_map = accounting_map[obj->ID()];
         account_map.clear();    // remove any old accounting info. this should be redundant here.
         account_map.reserve(meters.size());
 
@@ -907,10 +912,10 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Emp
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
-    GetEffectsAndTargets(source_effects_targets_causes, objects_vec, empires, true);
+    GetEffectsAndTargets(source_effects_targets_causes, objects_vec, context, true);
 
     // Apply and record effect meter adjustments
-    ExecuteEffects(source_effects_targets_causes, empires, do_accounting, true, false, false, false);
+    ExecuteEffects(source_effects_targets_causes, context, do_accounting, true, false, false, false);
 
     TraceLogger(effects) << "UpdateMeterEstimatesImpl after executing effects objects:";
     for (auto& obj : object_ptrs)
@@ -919,14 +924,15 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Emp
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
     // max at the start of the turn
-    if (!m_effect_discrepancy_map.empty() && do_accounting) {
+    auto& discrepancy_map = context.ContextUniverse().m_effect_discrepancy_map;
+    if (!discrepancy_map.empty() && do_accounting) {
         for (auto& obj : object_ptrs) {
             // check if this object has any discrepancies
-            auto dis_it = m_effect_discrepancy_map.find(obj->ID());
-            if (dis_it == m_effect_discrepancy_map.end())
+            auto dis_it = discrepancy_map.find(obj->ID());
+            if (dis_it == discrepancy_map.end())
                 continue;   // no discrepancy, so skip to next object
 
-            auto& account_map = m_effect_accounting_map[obj->ID()]; // reserving space now should be redundant with previous manipulations
+            auto& account_map = accounting_map[obj->ID()]; // reserving space now should be redundant with previous manipulations
 
             // apply all meters' discrepancies
             for (auto& entry : dis_it->second) {
@@ -1268,30 +1274,27 @@ namespace {
 }
 
 void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
-                                    const EmpireManager& empires,
+                                    const ScriptingContext& context,
                                     bool only_meter_effects) const
 {
     source_effects_targets_causes.clear();
-    GetEffectsAndTargets(source_effects_targets_causes, std::vector<int>(), empires, only_meter_effects);
+    GetEffectsAndTargets(source_effects_targets_causes, std::vector<int>(), context, only_meter_effects);
 }
 
 void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                                     const std::vector<int>& target_object_ids,
-                                    const EmpireManager& empires,
+                                    const ScriptingContext& context,
                                     bool only_meter_effects) const
 {
     SectionedScopedTimer type_timer("Effect TargetSets Evaluation", std::chrono::microseconds(0));
 
     // assemble target objects from input vector of IDs
-    auto potential_targets{m_objects->find<const UniverseObject>(target_object_ids)};
+    auto potential_targets{context.ContextObjects().find<const UniverseObject>(target_object_ids)};
     std::unordered_set<int> potential_ids_set{target_object_ids.begin(), target_object_ids.end()};
 
     TraceLogger(effects) << "GetEffectsAndTargets input candidate target objects:";
     for (auto& obj : potential_targets)
         TraceLogger(effects) << obj->Dump();
-
-    ScriptingContext scripting_context{*this, empires};
-
 
     // list, not vector, to avoid invaliding iterators when pushing more items
     // onto list due to vector reallocation.
@@ -1315,8 +1318,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for SPECIES";
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> species_objects;
     // find each species planets in single pass, maintaining object map order per-species
-    for (auto& planet : m_objects->all<Planet>()) {
-        if (m_destroyed_object_ids.count(planet->ID()))
+    for (auto& planet : context.ContextObjects().all<Planet>()) {
+        if (context.ContextUniverse().DestroyedObjectIds().count(planet->ID()))
             continue;
         const std::string& species_name = planet->SpeciesName();
         if (species_name.empty())
@@ -1326,11 +1329,11 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             ErrorLogger() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
         }
-        species_objects[species_name].emplace_back(planet);
+        species_objects[species_name].push_back(planet);
     }
     // find each species ships in single pass, maintaining object map order per-species
-    for (auto& ship : m_objects->all<Ship>()) {
-        if (m_destroyed_object_ids.count(ship->ID()))
+    for (auto& ship : context.ContextObjects().all<Ship>()) {
+        if (context.ContextUniverse().DestroyedObjectIds().count(ship->ID()))
             continue;
         const std::string& species_name = ship->SpeciesName();
         if (species_name.empty())
@@ -1340,12 +1343,10 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             ErrorLogger() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
         }
-        species_objects[species_name].emplace_back(ship);
+        species_objects[species_name].push_back(ship);
     }
     // allocate storage for target sets and dispatch condition evaluations
-    for (const auto& entry : GetSpeciesManager()) {
-        const std::string& species_name = entry.first;
-        const auto& species = entry.second;
+    for ([[maybe_unused]] auto& [species_name, species] : context.species) {
         auto species_objects_it = species_objects.find(species_name);
         if (species_objects_it == species_objects.end())
             continue;
@@ -1356,7 +1357,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_SPECIES, species_name,
                                              source_objects, species->Effects(),
                                              only_meter_effects,
-                                             scripting_context, potential_targets,
+                                             context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1368,8 +1369,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for SPECIALS";
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> specials_objects;
     // determine objects with specials in a single pass
-    for (const auto& obj : m_objects->all()) {
-        if (m_destroyed_object_ids.count(obj->ID()))
+    for (const auto& obj : context.ContextObjects().all()) {
+        if (context.ContextUniverse().DestroyedObjectIds().count(obj->ID()))
             continue;
         for (const auto& entry : obj->Specials()) {
             const std::string& special_name = entry.first;
@@ -1378,7 +1379,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                 ErrorLogger() << "GetEffectsAndTargets couldn't get Special " << special_name;
                 continue;
             }
-            specials_objects[special_name].emplace_back(obj);
+            specials_objects[special_name].push_back(obj);
         }
     }
     // dispatch condition evaluations
@@ -1394,7 +1395,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_SPECIAL, special_name,
                                              source_objects, special->Effects(),
                                              only_meter_effects,
-                                             scripting_context, potential_targets,
+                                             context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1424,7 +1425,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_TECH, tech_name,
                                                  source_objects, tech->Effects(),
                                                  only_meter_effects,
-                                                 scripting_context, potential_targets,
+                                                 context, potential_targets,
                                                  potential_ids_set,
                                                  source_effects_targets_causes_reorder_buffer,
                                                  thread_pool, n);
@@ -1435,7 +1436,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     type_timer.EnterSection("policies");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for POLICIES";
     std::list<Condition::ObjectSet> policy_sources; // for each empire, a set with a single source object for all its policies
-    for (const auto& [empire_id, empire] : Empires()) {
+    for (const auto& [empire_id, empire] : context.Empires()) {
         (void)empire_id;    // quiet unused varianle warning
         auto source = empire->Source();
         if (!source)
@@ -1452,7 +1453,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_POLICY, policy_name,
                                                  source_objects, policy->Effects(),
                                                  only_meter_effects,
-                                                 scripting_context, potential_targets,
+                                                 context, potential_targets,
                                                  potential_ids_set,
                                                  source_effects_targets_causes_reorder_buffer,
                                                  thread_pool, n);
@@ -1464,8 +1465,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for BUILDINGS";
     // determine buildings of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> buildings_by_type;
-    for (const auto& building : m_objects->all<Building>()) {
-        if (m_destroyed_object_ids.count(building->ID()))
+    for (const auto& building : context.ContextObjects().all<Building>()) {
+        if (context.ContextUniverse().DestroyedObjectIds().count(building->ID()))
             continue;
         const std::string& building_type_name = building->BuildingTypeName();
         const BuildingType* building_type = GetBuildingType(building_type_name);
@@ -1488,7 +1489,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_BUILDING, building_type_name,
                                              source_objects, building_type->Effects(),
                                              only_meter_effects,
-                                             scripting_context, potential_targets,
+                                             context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1504,8 +1505,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_ship_hull;
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_ship_part;
 
-    for (const auto& ship : m_objects->all<Ship>()) {
-        if (m_destroyed_object_ids.count(ship->ID()))
+    for (const auto& ship : context.ContextObjects().all<Ship>()) {
+        if (context.ContextUniverse().DestroyedObjectIds().count(ship->ID()))
             continue;
         const ShipDesign* ship_design = ship->Design();
         if (!ship_design)
@@ -1515,7 +1516,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             ErrorLogger() << "GetEffectsAndTargets couldn't get ShipHull";
             continue;
         }
-        ships_by_ship_hull[ship_hull->Name()].emplace_back(ship);
+        ships_by_ship_hull[ship_hull->Name()].push_back(ship);
 
         for (const std::string& part : ship_design->Parts()) {
             if (part.empty())
@@ -1525,7 +1526,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                 ErrorLogger() << "GetEffectsAndTargets couldn't get ShipPart " << part;
                 continue;
             }
-            ships_by_ship_part[part].emplace_back(ship);
+            ships_by_ship_part[part].push_back(ship);
         }
     }
 
@@ -1541,7 +1542,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_SHIP_HULL, ship_hull_name,
                                              source_objects, ship_hull->Effects(),
                                              only_meter_effects,
-                                             scripting_context, potential_targets,
+                                             context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1558,7 +1559,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_SHIP_PART, ship_part_name,
                                              source_objects, ship_part->Effects(),
                                              only_meter_effects,
-                                             scripting_context, potential_targets,
+                                             context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1570,8 +1571,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for FIELDS";
     // determine fields of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> fields_by_type;
-    for (const auto& field : m_objects->all<Field>()) {
-        if (m_destroyed_object_ids.count(field->ID()))
+    for (const auto& field : context.ContextObjects().all<Field>()) {
+        if (context.ContextUniverse().DestroyedObjectIds().count(field->ID()))
             continue;
         const std::string& field_type_name = field->FieldTypeName();
         const FieldType* field_type = GetFieldType(field_type_name);
@@ -1595,7 +1596,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_FIELD, field_type_name,
                                              source_objects, field_type->Effects(),
                                              only_meter_effects,
-                                             scripting_context, potential_targets,
+                                             context, potential_targets,
                                              potential_ids_set,
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
@@ -1641,7 +1642,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
 }
 
 void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
-                              EmpireManager& empires,
+                              ScriptingContext& context,
                               bool update_effect_accounting,
                               bool only_meter_effects/* = false*/,
                               bool only_appearance_effects/* = false*/,
@@ -1650,7 +1651,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
 {
     ScopedTimer timer("Universe::ExecuteEffects", true);
 
-    m_marked_destroyed.clear();
+    context.ContextUniverse().m_marked_destroyed.clear();
     std::map<std::string, std::set<int>> executed_nonstacking_effects;  // for each stacking group, which objects have had effects executed on them
 
 
@@ -1661,7 +1662,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
 
         // construct a source context, which is updated for each entry in sources-effects-targets.
         // execute each effectsgroup on its target set
-        ScriptingContext source_context{*this, empires};
+        ScriptingContext source_context{const_cast<const ScriptingContext&>(context)};
         for (auto& [sourced_effects_group, targets_and_cause] : setc) {
             Effect::TargetSet& target_set{targets_and_cause.target_set};
 
@@ -1727,7 +1728,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
     // but, do now collect info about source objects for destruction, to sure
     // their info is available even if they are destroyed by the upcoming effect
     // destruction
-    for (auto& [obj_id, destructors] : m_marked_destroyed) {
+    for (auto& [obj_id, destructors] : context.ContextUniverse().m_marked_destroyed) {
         auto obj = m_objects->get(obj_id);
         if (!obj)
             continue;
@@ -1735,11 +1736,11 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
         // recording of what species/empire destroyed what other stuff in
         // empire statistics for this destroyed object and any contained objects
         for (int destructor : destructors)
-            CountDestructionInStats(obj_id, destructor);
+            CountDestructionInStats(obj_id, destructor, context);
 
         for (int contained_obj_id : obj->ContainedObjectIDs()) {
             for (int destructor : destructors)
-                CountDestructionInStats(contained_obj_id, destructor);
+                CountDestructionInStats(contained_obj_id, destructor, context);
         }
         // not worried about fleets being deleted because all their ships were
         // destroyed...  as of this writing there are no stats tracking
@@ -1750,17 +1751,17 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
     }
 }
 
-void Universe::CountDestructionInStats(int object_id, int source_object_id) {
-    auto obj = m_objects->get(object_id);
+void Universe::CountDestructionInStats(int object_id, int source_object_id, ScriptingContext& context) {
+    auto obj = context.ContextObjects().get(object_id);
     if (!obj)
         return;
-    auto source = m_objects->get(source_object_id);
+    auto source = context.ContextObjects().get(source_object_id);
     if (!source)
         return;
     if (auto shp = std::dynamic_pointer_cast<const Ship>(obj)) {
-        if (auto source_empire = GetEmpire(source->Owner()))
+        if (auto source_empire = context.GetEmpire(source->Owner()))
             source_empire->RecordShipShotDown(*shp);
-        if (auto obj_empire = GetEmpire(obj->Owner()))
+        if (auto obj_empire = context.GetEmpire(obj->Owner()))
             obj_empire->RecordShipLost(*shp);
     }
 }

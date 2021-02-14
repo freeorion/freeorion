@@ -349,7 +349,7 @@ bool Condition::Eval(std::shared_ptr<const UniverseObject> candidate) const {
     if (!candidate)
         return false;
     ObjectSet non_matches{std::move(candidate)}, matches;
-    Eval(ScriptingContext(), matches, non_matches);
+    Eval(ScriptingContext{}, matches, non_matches);
     return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
 }
 
@@ -1610,9 +1610,11 @@ bool Homeworld::operator==(const Condition& rhs) const {
 
 namespace {
     struct HomeworldSimpleMatch {
-        HomeworldSimpleMatch(const std::vector<std::string>& names, const ObjectMap& objects) :
-            m_names(names),
-            m_objects(objects)
+        HomeworldSimpleMatch(std::vector<std::string> names, const ObjectMap& objects,
+                             const SpeciesManager& species) :
+            m_names(std::move(names)),
+            m_objects(objects),
+            m_species_homeworlds(species.GetSpeciesHomeworldsMap())
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -1631,8 +1633,7 @@ namespace {
 
             if (m_names.empty()) {
                 // match homeworlds for any species
-                for ([[maybe_unused]] auto& [ignored_name, ids] : GetSpeciesManager().GetSpeciesHomeworldsMap()) {
-                    // TODO: put species info in ScriptingContext
+                for ([[maybe_unused]] auto& [ignored_name, ids] : m_species_homeworlds) {
                     (void)ignored_name; // quieting unused variable warning
                     if (ids.count(planet_id))
                         return true;
@@ -1640,9 +1641,13 @@ namespace {
 
             } else {
                 // match any of the species specified
-                const auto homeworlds = GetSpeciesManager().GetSpeciesHomeworldsMap();      // TODO: put species info in ScriptingContext
                 for (const std::string& name : m_names) {
-                    if (homeworlds.count(name) && homeworlds.at(name).count(planet_id))
+                    auto it = m_species_homeworlds.find(name);
+                    if (it == m_species_homeworlds.end())
+                        continue;
+                    const auto& planet_ids = it->second;
+                    auto planet_count = planet_ids.count(planet_id);
+                    if (planet_count > 0)
                         return true;
                 }
             }
@@ -1650,8 +1655,9 @@ namespace {
             return false;
         }
 
-        const std::vector<std::string>& m_names;
+        const std::vector<std::string> m_names;
         const ObjectMap& m_objects;
+        const std::map<std::string, std::set<int>> m_species_homeworlds;
     };
 }
 
@@ -1676,7 +1682,8 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
         // get all names from valuerefs
         for (auto& name : m_names)
             names.emplace_back(name->Eval(parent_context));
-        EvalImpl(matches, non_matches, search_domain, HomeworldSimpleMatch(names, parent_context.ContextObjects()));
+        HomeworldSimpleMatch hsm{std::move(names), parent_context.ContextObjects(), parent_context.species};
+        EvalImpl(matches, non_matches, search_domain, hsm);
     } else {
         // re-evaluate allowed names for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -1735,18 +1742,16 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
     if (planet_id == INVALID_OBJECT_ID)
         return false;
 
-    const SpeciesManager& manager = GetSpeciesManager();    // TODO: put species info in ScriptingContext
-
     if (m_names.empty()) {
         // match homeworlds for any species
-        for (const auto& entry : manager.GetSpeciesHomeworldsMap()) {
+        for (const auto& entry : local_context.species.GetSpeciesHomeworldsMap()) {
             if (entry.second.count(planet_id))
                 return true;
         }
 
     } else {
         // match any of the species specified
-        const auto homeworlds = manager.GetSpeciesHomeworldsMap();
+        const auto homeworlds = local_context.species.GetSpeciesHomeworldsMap();
         for (const auto& name_ref : m_names) {
             const auto species_name = name_ref->Eval(local_context);
             if (homeworlds.count(species_name) && homeworlds.at(species_name).count(planet_id))

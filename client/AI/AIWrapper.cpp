@@ -127,8 +127,10 @@ namespace {
     }
 
     void InitMeterEstimatesAndDiscrepancies() {
-        Universe& universe = AIClientApp::GetApp()->GetUniverse();
-        universe.InitMeterEstimatesAndDiscrepancies(AIClientApp::GetApp()->Empires());
+        Universe& universe = GetUniverse();
+        EmpireManager& empires = Empires();
+        ScriptingContext context{universe, empires, GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+        universe.InitMeterEstimatesAndDiscrepancies(context);
     }
 
     /** @brief Set ::Universe ::Meter instances to their estimated values as
@@ -169,7 +171,8 @@ namespace {
         }
 
         // update meter estimates with temporary ownership
-        universe.UpdateMeterEstimates(Empires());
+        ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+        universe.UpdateMeterEstimates(context);
 
         if (pretend_to_own_unowned_planets) {
             // remove temporary ownership added above

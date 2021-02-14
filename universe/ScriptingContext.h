@@ -124,7 +124,7 @@ struct ScriptingContext {
 
     ScriptingContext(Universe& universe, EmpireManager& empires_,
                      const GalaxySetupData& galaxy_setup_data_ = GetGalaxySetupData(),
-                     const SpeciesManager& species_ = GetSpeciesManager(),
+                     SpeciesManager& species_ = GetSpeciesManager(),
                      const SupplyManager& supply_ = GetSupplyManager()) :
         galaxy_setup_data(galaxy_setup_data_),
         species(          species_),
@@ -222,7 +222,7 @@ struct ScriptingContext {
     int                                            combat_bout = 0;
     int                                            current_turn = CurrentTurn();
     const GalaxySetupData&                         galaxy_setup_data{GetGalaxySetupData()};
-    const SpeciesManager&                          species{GetSpeciesManager()};
+    SpeciesManager&                                species{GetSpeciesManager()};
     const SupplyManager&                           supply{GetSupplyManager()};
 private: // Universe and ObjectMap getters select one of these based on constness
     Universe*                                      universe = nullptr;

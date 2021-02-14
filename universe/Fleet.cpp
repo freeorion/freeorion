@@ -884,7 +884,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception in Fleet MovementPhase shorentning route: " << e.what();
         }
-        move_path = MovePath(false, ScriptingContext());    // TODO: use passed-in ScriptingContext
+        move_path = MovePath(false, ScriptingContext{});    // TODO: use passed-in ScriptingContext
     }
 
     auto it = move_path.begin();

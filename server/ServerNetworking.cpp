@@ -97,22 +97,22 @@ private:
         try {
             if (parse::int_free_variable(message)) {
                 auto value_ref = std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
-                reply = std::to_string(value_ref->Eval(ScriptingContext()));
+                reply = std::to_string(value_ref->Eval(ScriptingContext{}));
                 DebugLogger(network) << "DiscoveryServer evaluated expression as integer with result: " << reply;
 
             } else if (parse::double_free_variable(message)) {
                 auto value_ref = std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
-                reply = std::to_string(value_ref->Eval(ScriptingContext()));
+                reply = std::to_string(value_ref->Eval(ScriptingContext{}));
                 DebugLogger(network) << "DiscoveryServer evaluated expression as double with result: " << reply;
 
             } else if (parse::string_free_variable(message)) {
                 auto value_ref = std::make_unique<ValueRef::Variable<std::string>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
-                reply = value_ref->Eval(ScriptingContext());
+                reply = value_ref->Eval(ScriptingContext{});
                 DebugLogger(network) << "DiscoveryServer evaluated expression as string with result: " << reply;
 
             //} else {
             //    auto value_ref = std::make_unique<ValueRef::Variable<std::vector<std::string>>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
-            //    auto result = value_ref->Eval(ScriptingContext());
+            //    auto result = value_ref->Eval(ScriptingContext{});
             //    for (auto entry : result)
             //        reply += entry + "\n";
             //    DebugLogger(network) << "DiscoveryServer evaluated expression as string vector with result: " << reply;

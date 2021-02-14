@@ -1230,10 +1230,10 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
     if (species_name.empty())
         return;
 
-    double initial_opinion = GetSpeciesManager().SpeciesEmpireOpinion(species_name, empire_id); // TODO: get SpeciesManager from ScriptingContext
+    double initial_opinion = context.species.SpeciesEmpireOpinion(species_name, empire_id); // TODO: get SpeciesManager from ScriptingContext
     double opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
 
-    GetSpeciesManager().SetSpeciesEmpireOpinion(species_name, empire_id, opinion);
+    context.species.SetSpeciesEmpireOpinion(species_name, empire_id, opinion);
 }
 
 std::string SetSpeciesEmpireOpinion::Dump(unsigned short ntabs) const
@@ -1288,10 +1288,10 @@ void SetSpeciesSpeciesOpinion::Execute(ScriptingContext& context) const {
     if (rated_species_name.empty())
         return;
 
-    float initial_opinion = GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+    float initial_opinion = context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
     float opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
 
-    GetSpeciesManager().SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion);
+    context.species.SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion);
 }
 
 std::string SetSpeciesSpeciesOpinion::Dump(unsigned short ntabs) const

@@ -1256,7 +1256,8 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     // update UI after policy changes
     empire->UpdateInfluenceSpending();
     Populate();
-    GetUniverse().UpdateMeterEstimates(Empires());
+    ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+    GetUniverse().UpdateMeterEstimates(context);
     SidePanel::Refresh();
     FleetUIManager::GetFleetUIManager().RefreshAll();
 }
