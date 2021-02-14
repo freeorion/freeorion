@@ -42,6 +42,9 @@ jobs:
           restore-keys: |
             build-linux-ccache-
       - name: Show ccache statistics before build
+        env:
+          CACHE_NAME: linux
+          CCACHE_DIR: ${{ runner.temp }}/ccache
         run: |
           ccache --show-stats || true
       - name: Build
@@ -55,6 +58,9 @@ jobs:
           cmake -DBUILD_TESTING=ON ..
           cmake --build .
       - name: Show ccache statistics after build
+        env:
+          CACHE_NAME: linux
+          CCACHE_DIR: ${{ runner.temp }}/ccache
         run: |
           ccache --show-stats || true
       - name: Test
@@ -93,6 +99,9 @@ jobs:
           restore-keys: |
             build-linux-ccache-
       - name: Show ccache statistics before build
+        env:
+          CACHE_NAME: linux
+          CCACHE_DIR: ${{ runner.temp }}/ccache
         run: |
           ccache --show-stats || true
       - name: Build
@@ -106,6 +115,9 @@ jobs:
           cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=OFF ..
           cmake --build .
       - name: Show ccache statistics after build
+        env:
+          CACHE_NAME: linux
+          CCACHE_DIR: ${{ runner.temp }}/ccache
         run: |
           ccache --show-stats || true
       - name: Test
