@@ -35,11 +35,13 @@
 
 #if BOOST_VERSION >= 106500
 // define needed on Windows due to conflict with windows.h and std::min and std::max
-#  define NOMINMAX
-
+#  ifndef NOMINMAX
+#    define NOMINMAX
+#  endif
 // define needed in GCC
-//#  define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED
-#define _GNU_SOURCE
+#  ifndef _GNU_SOURCE
+#    define _GNU_SOURCE
+#  endif
 
 #  include <boost/stacktrace.hpp>
 #endif

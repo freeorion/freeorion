@@ -22,7 +22,7 @@ class Application::Impl {
         void Run(std::shared_ptr<GG::Wnd> wnd);
 
     private:
-        class Application* const m_front;
+        [[maybe_unused]] class Application* const m_front;
         class MinimalGGApp* m_app;
 };
 
@@ -206,7 +206,7 @@ void MinimalGGApp::GLInit() {
     glMultMatrixf(&projection[0][0]);
 
     // set up camera in -5.0 z offset from origin looking at origin
-    GLfloat view[4][4] = { 0.0 };
+    GLfloat view[4][4] = {{0.0}};
     view[0][0] = -1.0;
     view[1][1] = -1.0;
     view[2][2] = 1.0;
