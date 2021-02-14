@@ -63,7 +63,7 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/ccache
         run: |
           ccache --show-stats || true
-      - name: Test
+      - name: Run C++ unit tests
         run: |
           cd build
           cmake --build . --config Release --target unittest || echo Failure
@@ -120,7 +120,7 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/ccache
         run: |
           ccache --show-stats || true
-      - name: Test
+      - name: Run C++ unit tests
         run: |
           cd build
           cmake --build . --config Release --target unittest || echo Failure
