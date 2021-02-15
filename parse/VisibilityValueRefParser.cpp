@@ -64,7 +64,7 @@ namespace parse { namespace detail {
 
         qi::_val_type _val;
         const boost::phoenix::function<parse::detail::construct_movable> construct_movable_;
-        const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
+        //const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
         // variable_name left empty, as no direct object properties are
         // available that return a visibility

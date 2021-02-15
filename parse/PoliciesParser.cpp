@@ -140,7 +140,7 @@ namespace {
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::eps_type eps;
-            const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
+            //const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
 
             policy
                 = (  tok.Policy_                                            // _1
