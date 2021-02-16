@@ -387,16 +387,16 @@ std::pair<float, int> ProductionQueue::ProductionItem::ProductionCostAndTime(
     return {-1.0, -1};
 }
 
-bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id) const { // TODO: Pass ScriptingContext...
+bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id, const ScriptingContext& context) const {
     switch (build_type) {
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto c = bt->EnqueueLocation();
             if (!c)
                 return true;
-            auto location_obj = Objects().get(location_id);
-            const ScriptingContext context(location_obj);
-            return c->Eval(context, std::move(location_obj));
+            auto location_obj = context.ContextObjects().get(location_id);
+            const ScriptingContext location_context(location_obj, context);
+            return c->Eval(location_context, std::move(location_obj));
         }
         return true;
         break;

@@ -716,7 +716,9 @@ namespace {
             if (queue_row) {
                 ProductionQueue::Element elem = queue_row->elem;
                 remaining = elem.remaining;
-                location_passes = elem.item.EnqueueConditionPassedAt(elem.location);
+                ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(),
+                                         GetSpeciesManager(), GetSupplyManager()};
+                location_passes = elem.item.EnqueueConditionPassedAt(elem.location, context);
             }
 
             // Check if build type is ok. If not bail out. Note that DeleteAction does make sense in this case.
