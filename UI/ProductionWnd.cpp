@@ -336,8 +336,10 @@ namespace {
             auto [total_cost, minimum_turns] = elem.ProductionCostAndTime();
             total_cost *= elem.blocksize;
 
-            const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
-            float pp_accumulated = empire ? empire->ProductionStatus(queue_index) : 0.0f; // returns as PP
+            const ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(),
+                                           GetSpeciesManager(), GetSupplyManager()};
+            auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+            float pp_accumulated = empire ? empire->ProductionStatus(queue_index, context) : 0.0f; // returns as PP
             if (pp_accumulated == -1.0f)
                 pp_accumulated = 0.0f;
 

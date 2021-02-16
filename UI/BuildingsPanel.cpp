@@ -108,6 +108,7 @@ void BuildingsPanel::Update() {
     int this_client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
     const auto& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
+    const ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
 
     // get existing / finished buildings and use them to create building indicators
     for (int object_id : planet->BuildingIDs()) {
@@ -119,7 +120,8 @@ void BuildingsPanel::Update() {
 
         auto building = Objects().get<Building>(object_id);
         if (!building) {
-            ErrorLogger() << "BuildingsPanel::Update couldn't get building with id: " << object_id << " on planet " << planet->Name();
+            ErrorLogger() << "BuildingsPanel::Update couldn't get building with id: " << object_id
+                          << " on planet " << planet->Name();
             continue;
         }
 
@@ -143,9 +145,9 @@ void BuildingsPanel::Update() {
         if (elem.location != m_planet_id) continue;                     // don't show buildings located elsewhere
 
         double turn_spending = elem.allocated_pp;
-        auto [total_cost, total_turns] = elem.ProductionCostAndTime();
+        auto [total_cost, total_turns] = elem.ProductionCostAndTime(context);
 
-        double progress = std::max(0.0f, empire->ProductionStatus(queue_index));
+        double progress = std::max(0.0f, empire->ProductionStatus(queue_index, context));
         double turns_completed = progress / std::max(total_cost, 1.0f);
         auto ind = GG::Wnd::Create<BuildingIndicator>(GG::X(indicator_size), elem.item.name,
                                                       turns_completed, total_turns, total_cost,
