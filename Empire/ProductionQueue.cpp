@@ -422,14 +422,14 @@ bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const
 }
 
 std::map<std::string, std::map<int, float>>
-ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) const {  // TODO: pass ScriptingContext
+ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, const ScriptingContext& context) const {
     std::map<std::string, std::map<int, float>> retval;
 
     switch (build_type) {
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
-            auto location_obj = Objects().get(location_id);
-            ScriptingContext context(location_obj); // non-const but should be OK as only passed below to function taking const ScriptingContext&
+            auto location_obj = context.ContextObjects().get(location_id);
+            ScriptingContext location_target_context(location_obj, context); // non-const but should be OK as only passed below to function taking const ScriptingContext&
 
             for (const auto& psc : bt->ProductionSpecialConsumption()) {
                 if (!psc.second.first)
@@ -438,15 +438,15 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
                 // if a condition selecting where to take resources from was specified, use it.
                 // Otherwise take from the production location
                 if (psc.second.second) {
-                    psc.second.second->Eval(context, matches);
+                    psc.second.second->Eval(location_target_context, matches);
                 } else {
-                    matches.emplace_back(location_obj);
+                    matches.push_back(location_obj);
                 }
 
                 // determine how much to take from each matched object
                 for (auto& object : matches) {
-                    context.effect_target = std::const_pointer_cast<UniverseObject>(object);
-                    retval[psc.first][object->ID()] += psc.second.first->Eval(context);
+                    location_target_context.effect_target = std::const_pointer_cast<UniverseObject>(object); // call to ValueRef cannot modify the pointed-to object
+                    retval[psc.first][object->ID()] += psc.second.first->Eval(location_target_context);
                 }
             }
         }
@@ -454,14 +454,14 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
     }
     case BuildType::BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
-            auto location_obj = Objects().get(location_id);
-            const ScriptingContext context(location_obj);
+            auto location_obj = context.ContextObjects().get(location_id);
+            const ScriptingContext location_target_context(location_obj, context);
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
-                for (const auto& psc : ship_hull->ProductionSpecialConsumption()) {
+                for (const auto& psc : ship_hull->ProductionSpecialConsumption()) { // TODO: pass location_target_context
                     if (!psc.second.first)
                         continue;
-                    retval[psc.first][location_id] += psc.second.first->Eval(context);
+                    retval[psc.first][location_id] += psc.second.first->Eval(location_target_context);
                 }
             }
 
@@ -469,10 +469,10 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) c
                 const ShipPart* part = GetShipPart(part_name);
                 if (!part)
                     continue;
-                for (const auto& psc : part->ProductionSpecialConsumption()) {
+                for (const auto& psc : part->ProductionSpecialConsumption()) { // TODO: pass location_target_context
                     if (!psc.second.first)
                         continue;
-                    retval[psc.first][location_id] += psc.second.first->Eval(context);
+                    retval[psc.first][location_id] += psc.second.first->Eval(location_target_context);
                 }
             }
         }

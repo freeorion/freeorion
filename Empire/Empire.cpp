@@ -2217,7 +2217,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
         // only if consumed resources are available, then item can be completd
         bool consumption_impossible = false;
-        std::map<std::string, std::map<int, float>> sc = elem.item.CompletionSpecialConsumption(elem.location); // TODO: pass context
+        std::map<std::string, std::map<int, float>> sc = elem.item.CompletionSpecialConsumption(elem.location, context);
         for (auto& special_type : sc) {
             if (consumption_impossible)
                 break;
