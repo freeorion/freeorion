@@ -169,7 +169,7 @@ int BuildingType::ProductionTime(int empire_id, int location_id,
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_time)
         return 1;
 
-    ScopedTimer timer("BuildingType::ProductionTime: " + m_name, true);
+    ScopedTimer timer("BuildingType::ProductionTime: " + m_name, true, std::chrono::milliseconds(20));
 
     if (m_production_time->ConstantExpr())
         return m_production_time->Eval();
