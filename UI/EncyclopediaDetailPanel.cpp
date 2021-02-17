@@ -52,6 +52,18 @@
 #include "../util/ScopedTimer.h"
 #include "../util/VarText.h"
 
+#if BOOST_VERSION >= 106600
+#  include <boost/asio/thread_pool.hpp>
+#  include <boost/asio/post.hpp>
+#else
+namespace boost { namespace asio {
+    struct thread_pool {
+        thread_pool(int) {}
+        void join() {}
+    };
+    void post(thread_pool, std::function<void()> func) { func(); }
+ } }
+#endif
 
 using boost::io::str;
 
@@ -1080,7 +1092,7 @@ namespace {
             return retval;
 
         ScopedTimer subdir_timer("GetSubDirs(" + dir_name + ", " + std::to_string(exclude_custom_categories_from_dir_name) + ", " + std::to_string(depth) + ")",
-                                 true, std::chrono::milliseconds(500));
+                                 true, std::chrono::milliseconds(10));
 
         depth++;
         // safety check to pre-empt potential infinite loop
@@ -1110,8 +1122,8 @@ namespace {
             TraceLogger() << "GetSubDirs(" << dir_name << ") storing "
                           << category_str_key << ": " << readable_article_name;
 
-            retval.emplace(std::make_pair(std::move(category_str_key), dir_name),
-                           std::make_pair(readable_article_name, std::move(link_text)));
+            retval.emplace(std::pair{std::move(category_str_key), dir_name},
+                           std::pair{readable_article_name, std::move(link_text)});
 
             retval.insert(std::make_move_iterator(temp.begin()), std::make_move_iterator(temp.end())); // TODO: use C++17 map::merge
         }
@@ -2360,8 +2372,7 @@ namespace {
 
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
         Universe& universe = GetUniverse();
-        const ObjectMap& objects = universe.Objects();
-        ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+        ObjectMap& objects = universe.Objects();
 
         universe.InhibitUniverseObjectSignals(true);
 
@@ -2390,7 +2401,7 @@ namespace {
 
         std::set<std::string> additional_species; // from currently selected planet and fleets, if any
         const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if (const auto planet = objects.get<Planet>(map_wnd->SelectedPlanetID()).get()) {
+        if (const auto planet = objects.get<Planet>(map_wnd->SelectedPlanetID())) {
             if (!planet->SpeciesName().empty())
                 additional_species.emplace(planet->SpeciesName());
         }
@@ -2447,25 +2458,27 @@ namespace {
         detailed_description = GetDetailedDescriptionBase(design);
 
 
-        // temporary ship to use for estimating design's meter values
-        auto temp = universe.InsertTemp<Ship>(client_empire_id, design_id, "", client_empire_id);
+        if (!only_description) { // don't generate detailed stat description involving adding / removing temporary ship from universe
+            // temporary ship to use for estimating design's meter values
+            auto temp = universe.InsertTemp<Ship>(client_empire_id, design_id, "", client_empire_id);
 
-        // apply empty species for 'Generic' entry
-        universe.UpdateMeterEstimates(temp->ID(), context);
-        temp->Resupply();
-        detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
-
-        // apply various species to ship, re-calculating the meter values for each
-        for (std::string& species_name : species_list) {
-            temp->SetSpecies(std::move(species_name));
+            // apply empty species for 'Generic' entry
+            ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
             universe.UpdateMeterEstimates(temp->ID(), context);
             temp->Resupply();
             detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
+
+            // apply various species to ship, re-calculating the meter values for each
+            for (std::string& species_name : species_list) {
+                temp->SetSpecies(std::move(species_name));
+                universe.UpdateMeterEstimates(temp->ID(), context);
+                temp->Resupply();
+                detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
+            }
+
+            universe.Delete(temp->ID());
+            universe.InhibitUniverseObjectSignals(false);
         }
-
-        universe.Delete(temp->ID());
-        universe.InhibitUniverseObjectSignals(false);
-
 
 
         // ships of this design
@@ -2502,6 +2515,11 @@ namespace {
         if (!incomplete_design)
             return;
 
+        if (only_description) {
+            detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
+            return;
+        }
+
         Universe& universe = GetUniverse();
         ObjectMap& objects = universe.Objects();
         EmpireManager& empires = Empires();
@@ -2510,23 +2528,23 @@ namespace {
         GetUniverse().InhibitUniverseObjectSignals(true);
 
 
-        if (!only_description) {
-            // incomplete design.  not yet in game universe; being created on design screen
-            name = incomplete_design->Name();
+        // incomplete design.  not yet in game universe; being created on design screen
+        name = incomplete_design->Name();
 
-            const std::string& design_icon = incomplete_design->Icon();
-            if (design_icon.empty())
-                texture = ClientUI::HullIcon(incomplete_design->Hull());
-            else
-                texture = ClientUI::GetTexture(ClientUI::ArtDir() / design_icon, true);
+        const std::string& design_icon = incomplete_design->Icon();
+        if (design_icon.empty())
+            texture = ClientUI::HullIcon(incomplete_design->Hull());
+        else
+            texture = ClientUI::GetTexture(ClientUI::ArtDir() / design_icon, true);
 
-            int default_location_id = DefaultLocationForEmpire(client_empire_id);
-            turns = incomplete_design->ProductionTime(client_empire_id, default_location_id);
-            cost = incomplete_design->ProductionCost(client_empire_id, default_location_id);
-            cost_units = UserString("ENC_PP");
-        }
+        int default_location_id = DefaultLocationForEmpire(client_empire_id);
+        turns = incomplete_design->ProductionTime(client_empire_id, default_location_id);
+        cost = incomplete_design->ProductionCost(client_empire_id, default_location_id);
+        cost_units = UserString("ENC_PP");
+
 
         GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design), client_empire_id, TEMPORARY_OBJECT_ID);
+        detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
 
         float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
         float typical_shot = 3 + 27 * tech_level;
@@ -2545,7 +2563,7 @@ namespace {
         int selected_ship = fleet_manager.SelectedShipID();
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
-            if (const auto this_ship = objects.get<Ship>(selected_ship).get()) {
+            if (auto this_ship = objects.get<const Ship>(selected_ship)) {
                 if (!additional_species.empty() && (
                         (this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial() > 0) ||
                          !this_ship->OwnedBy(client_empire_id)))
@@ -2560,24 +2578,23 @@ namespace {
                 }
             }
         } else if (fleet_manager.ActiveFleetWnd()) {
-            for (const auto& fleet : objects.find<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
+            for (const auto& fleet : objects.find<const Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
                 if (!fleet)
                     continue;
                 chosen_ships.insert(fleet->ShipIDs().begin(), fleet->ShipIDs().end());
             }
         }
-        for (const auto& this_ship : objects.find<Ship>(chosen_ships)) {
+        for (const auto& this_ship : objects.find<const Ship>(chosen_ships)) {
             if (!this_ship || !this_ship->SpeciesName().empty())
                 continue;
             additional_species.insert(this_ship->SpeciesName());
         }
+
         std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
-        detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
 
 
         // temporary ship to use for estimating design's meter values
-        auto temp = GetUniverse().InsertTemp<Ship>(client_empire_id, TEMPORARY_OBJECT_ID, "",
-                                                   client_empire_id);
+        auto temp = universe.InsertTemp<Ship>(client_empire_id, TEMPORARY_OBJECT_ID, "", client_empire_id);
 
         // apply empty species for 'Generic' entry
         universe.UpdateMeterEstimates(temp->ID(), context);
@@ -2593,7 +2610,6 @@ namespace {
             detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(),
                                                                     enemy_DR, enemy_shots, cost));
         }
-
 
         universe.Delete(temp->ID());
         universe.DeleteShipDesign(TEMPORARY_OBJECT_ID);
@@ -3127,7 +3143,7 @@ namespace {
             std::string word(search_text.begin() + Value(word_range.first), search_text.begin() + Value(word_range.second));
             if (word.empty())
                 continue;
-            words_in_search_text.emplace(std::move(word));
+            words_in_search_text.insert(std::move(word));
         }
         return words_in_search_text;
     }
@@ -3136,6 +3152,9 @@ namespace {
 void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     SectionedScopedTimer timer("HandleSearchTextEntered");
     timer.EnterSection("Find words in search text");
+
+    const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
+    boost::asio::thread_pool thread_pool(num_threads);
 
     // search lists of articles for typed text
     const std::string& search_text = m_search_edit->Text();
@@ -3170,18 +3189,33 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     for (auto& [article_key_directory, article_name_link] : pedia_entries) {
         idx++;
 
-        SearchPediaArticlesForWords(article_key_directory.first,
-                                    article_key_directory.second,
-                                    std::move(article_name_link),
-                                    exact_match_report[idx],
-                                    word_match_report[idx],
-                                    partial_match_report[idx],
-                                    article_match_report[idx],
-                                    search_text,
-                                    words_in_search_text,
-                                    idx,
-                                    search_desc);
+        boost::asio::post(
+            thread_pool, [
+                &article_key{article_key_directory.first},
+                &article_dir{article_key_directory.second},
+                &article_name_link{article_name_link},
+                &emr{exact_match_report[idx]},
+                &wmr{word_match_report[idx]},
+                &pmr{partial_match_report[idx]},
+                &amr{article_match_report[idx]},
+                &search_text,
+                &words_in_search_text,
+                idx,
+                search_desc
+            ]() mutable {
+                SearchPediaArticlesForWords(article_key,
+                                            article_dir,
+                                            std::move(article_name_link),
+                                            emr, wmr, pmr, amr,
+                                            search_text,
+                                            words_in_search_text,
+                                            idx,
+                                            search_desc);
+            });
     }
+
+    timer.EnterSection("search subdirs eval waiting");
+    thread_pool.join();
 
 
     timer.EnterSection("sort");
