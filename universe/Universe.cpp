@@ -1656,13 +1656,9 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
 
 
     // within each priority group, execute effects in dispatch order
-    for (auto& priority_group : source_effects_targets_causes) {
-        //int priority = priority_group.first;
-        Effect::SourcesEffectsTargetsAndCausesVec& setc{priority_group.second};
+    for (auto& [priority, setc] : source_effects_targets_causes) {
+        (void)priority; // quiet unused variable warning
 
-        // construct a source context, which is updated for each entry in sources-effects-targets.
-        // execute each effectsgroup on its target set
-        ScriptingContext source_context{const_cast<const ScriptingContext&>(context)};
         for (auto& [sourced_effects_group, targets_and_cause] : setc) {
             Effect::TargetSet& target_set{targets_and_cause.target_set};
 
@@ -1710,7 +1706,10 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
                                  << " " << effects_group->AccountingLabel() << " " << effects_group->StackingGroup() << ")";
 
             // execute Effects in the EffectsGroup
-            source_context.source = source_context.ContextObjects().get(sourced_effects_group.source_object_id);
+            auto source = context.ContextObjects().get(sourced_effects_group.source_object_id);
+            if (!source)
+                WarnLogger() << "No source found for ID: " << sourced_effects_group.source_object_id;
+            ScriptingContext source_context(std::move(source), context);
             effects_group->Execute(source_context,
                                    targets_and_cause,
                                    update_effect_accounting ? &m_effect_accounting_map : nullptr,
