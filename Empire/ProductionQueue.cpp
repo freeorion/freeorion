@@ -458,7 +458,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
             const ScriptingContext location_target_context(location_obj, context);
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
-                for (const auto& psc : ship_hull->ProductionSpecialConsumption()) { // TODO: pass location_target_context
+                for (const auto& psc : ship_hull->ProductionSpecialConsumption()) {
                     if (!psc.second.first)
                         continue;
                     retval[psc.first][location_id] += psc.second.first->Eval(location_target_context);
@@ -469,7 +469,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
                 const ShipPart* part = GetShipPart(part_name);
                 if (!part)
                     continue;
-                for (const auto& psc : part->ProductionSpecialConsumption()) { // TODO: pass location_target_context
+                for (const auto& psc : part->ProductionSpecialConsumption()) {
                     if (!psc.second.first)
                         continue;
                     retval[psc.first][location_id] += psc.second.first->Eval(location_target_context);
@@ -488,13 +488,13 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
 }
 
 std::map<MeterType, std::map<int, float>>
-ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) const { // TODO: pass ScriptingContext in
+ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id, const ScriptingContext& context) const {
     std::map<MeterType, std::map<int, float>> retval;
 
     switch (build_type) {
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
-            auto obj = Objects().get(location_id);
+            auto obj = context.ContextObjects().get(location_id);
             const ScriptingContext context(obj);
 
             for (const auto& pmc : bt->ProductionMeterConsumption()) {
@@ -507,14 +507,14 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
     }
     case BuildType::BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
-            auto obj = Objects().get(location_id);
-            const ScriptingContext context(obj);
+            auto obj = context.ContextObjects().get(location_id);
+            const ScriptingContext location_context(obj, context);
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& pmc : ship_hull->ProductionMeterConsumption()) {
                     if (!pmc.second.first)
                         continue;
-                    retval[pmc.first][location_id] += pmc.second.first->Eval(context);
+                    retval[pmc.first][location_id] += pmc.second.first->Eval(location_context);
                 }
             }
 
@@ -525,7 +525,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) con
                 for (const auto& pmc : pt->ProductionMeterConsumption()) {
                     if (!pmc.second.first)
                         continue;
-                    retval[pmc.first][location_id] += pmc.second.first->Eval(context);
+                    retval[pmc.first][location_id] += pmc.second.first->Eval(location_context);
                 }
             }
         }
