@@ -3186,18 +3186,21 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     timer.EnterSection("search subdirs dispatch");
     // assemble link text to all pedia entries, indexed by name
     std::size_t idx = -1;
-    for (auto& [article_key_directory, article_name_link] : pedia_entries) {
+    for (auto& entry : pedia_entries) {
+        const auto& article_key_directory = entry.first;
+        auto& article_name_link = entry.second;
         idx++;
+        auto& emr{exact_match_report[idx]};
+        auto& wmr{word_match_report[idx]};
+        auto& pmr{partial_match_report[idx]};
+        auto& amr{article_match_report[idx]};
 
         boost::asio::post(
             thread_pool, [
-                &article_key{article_key_directory.first},
-                &article_dir{article_key_directory.second},
-                &article_name_link{article_name_link},
-                &emr{exact_match_report[idx]},
-                &wmr{word_match_report[idx]},
-                &pmr{partial_match_report[idx]},
-                &amr{article_match_report[idx]},
+                article_key{article_key_directory.first},
+                article_dir{article_key_directory.second},
+                article_name_link{std::move(article_name_link)},
+                &emr, &wmr, &pmr, &amr,
                 &search_text,
                 &words_in_search_text,
                 idx,
