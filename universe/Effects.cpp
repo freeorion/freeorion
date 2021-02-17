@@ -445,7 +445,7 @@ void SetMeter::Execute(ScriptingContext& context,
         info.cause_type =     effect_cause.cause_type;
         info.specific_cause = effect_cause.specific_cause;
         info.custom_label =   (m_accounting_label.empty() ? effect_cause.custom_label : m_accounting_label);
-        info.source_id =      context.source->ID();
+        info.source_id =      context.source ? context.source->ID() : INVALID_OBJECT_ID;
 
         // process each target separately in order to do effect accounting for each
         for (auto& target : targets) {
@@ -468,7 +468,7 @@ void SetMeter::Execute(ScriptingContext& context,
             info.running_meter_total = meter->Current();
 
             // add accounting for this effect to end of vector
-            (*accounting_map)[target->ID()][m_meter].emplace_back(info);    // not moving as local is reused
+            (*accounting_map)[target->ID()][m_meter].push_back(info); // not moving as local is reused
         }
     }
 
