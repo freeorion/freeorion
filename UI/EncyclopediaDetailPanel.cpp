@@ -2391,7 +2391,7 @@ namespace {
         float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
         float typical_shot = 3 + 27 * tech_level;
         float enemy_DR = 20 * tech_level;
-        DebugLogger() << "RefreshDetailPanelShipDesignTag default enemy stats:: tech_level: "
+        TraceLogger() << "RefreshDetailPanelShipDesignTag default enemy stats:: tech_level: "
                       << tech_level << "   DR: " << enemy_DR << "   attack: " << typical_shot;
         std::set<float> enemy_shots;
         enemy_shots.insert(typical_shot);
