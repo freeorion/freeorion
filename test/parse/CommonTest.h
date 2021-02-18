@@ -16,4 +16,4 @@ namespace std {
 
 void print_expectation_failure(const boost::spirit::qi::expectation_failure<parse::token_iterator>& ex);
 
-#endif 
+#endif
