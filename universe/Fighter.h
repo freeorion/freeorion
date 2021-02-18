@@ -37,7 +37,7 @@ private:
     float               m_damage = 0.0f;                        // strength of fighter's attack
     bool                m_destroyed = false;                    // was attacked by anything -> destroyed
     int                 m_launched_from_id = INVALID_OBJECT_ID; // from what object (ship?) was this fighter launched
-    const std::string&  m_species_name;
+    std::string  m_species_name;
     const ::Condition::Condition* m_combat_targets = nullptr;
 };
 
