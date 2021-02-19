@@ -15,7 +15,10 @@ struct ScriptingContext {
         UniverseObjectType, Visibility, std::string, std::vector<std::string>
     > CurrentValueVariant;
 
-    ScriptingContext() = default;
+    ScriptingContext() :
+        ScriptingContext(GetUniverse(), ::Empires(), GetGalaxySetupData(),
+                         GetSpeciesManager(), GetSupplyManager())
+    {}
 
     ScriptingContext(const ScriptingContext& parent_context,
                      std::shared_ptr<const UniverseObject> condition_local_candidate_) :
@@ -43,7 +46,15 @@ struct ScriptingContext {
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_) :
-        source(std::move(source_))
+        source(           std::move(source_)),
+        galaxy_setup_data(GetGalaxySetupData()),
+        species(          GetSpeciesManager()),
+        supply(           GetSupplyManager()),
+        universe(         &GetUniverse()),
+        const_universe(   GetUniverse()),
+        empires(          &(::Empires().GetEmpires())),
+        const_empires(    const_cast<const EmpireManager&>(::Empires()).GetEmpires()),
+        diplo_statuses(   ::Empires().GetDiplomaticStatuses())
     {}
 
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
@@ -119,7 +130,15 @@ struct ScriptingContext {
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      std::shared_ptr<UniverseObject> target_) :
         source(std::move(source_)),
-        effect_target(std::move(target_))
+        effect_target(std::move(target_)),
+        galaxy_setup_data(GetGalaxySetupData()),
+        species(          GetSpeciesManager()),
+        supply(           GetSupplyManager()),
+        universe(         &GetUniverse()),
+        const_universe(   GetUniverse()),
+        empires(          &(::Empires().GetEmpires())),
+        const_empires(    const_cast<const EmpireManager&>(::Empires()).GetEmpires()),
+        diplo_statuses(   ::Empires().GetDiplomaticStatuses())
     {}
 
     ScriptingContext(Universe& universe, EmpireManager& empires_,
@@ -146,11 +165,11 @@ struct ScriptingContext {
         source(        std::move(source_)),
         effect_target( std::move(target_)),
         current_value( current_value_),
-        universe(       nullptr),
-        const_universe( universe),
-        empires(        nullptr),
-        const_empires(  empires_.GetEmpires()),
-        diplo_statuses( empires_.GetDiplomaticStatuses())
+        universe(      nullptr),
+        const_universe(universe),
+        empires(       nullptr),
+        const_empires( empires_.GetEmpires()),
+        diplo_statuses(empires_.GetDiplomaticStatuses())
     {}
 
 
