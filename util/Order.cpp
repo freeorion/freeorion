@@ -360,7 +360,7 @@ bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id, bool
     return true;
 }
 
-void FleetMoveOrder::ExecuteImpl() const {
+void FleetMoveOrder::ExecuteImpl() const { // TODO: pass in ScriptingContext?
     GetValidatedEmpire();
 
     if (!Check(EmpireID(), m_fleet, m_dest_system))
@@ -406,7 +406,8 @@ void FleetMoveOrder::ExecuteImpl() const {
     }
 
     // check destination validity: disallow movement that's out of range
-    auto eta = fleet->ETA(fleet->MovePath(route_list, false, ScriptingContext{}));
+    ScriptingContext context;
+    auto eta = fleet->ETA(fleet->MovePath(route_list, false, context));
     if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_OUT_OF_RANGE) {
         DebugLogger() << "FleetMoveOrder::ExecuteImpl rejected out of range move order";
         return;

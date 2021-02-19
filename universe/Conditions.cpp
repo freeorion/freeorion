@@ -349,7 +349,9 @@ bool Condition::Eval(std::shared_ptr<const UniverseObject> candidate) const {
     if (!candidate)
         return false;
     ObjectSet non_matches{std::move(candidate)}, matches;
-    Eval(ScriptingContext{}, matches, non_matches);
+
+    ScriptingContext context; // TODO: pass in and use instead of creating?
+    Eval(context, matches, non_matches);
     return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
 }
 
@@ -1681,7 +1683,7 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
         names.reserve(m_names.size());
         // get all names from valuerefs
         for (auto& name : m_names)
-            names.emplace_back(name->Eval(parent_context));
+            names.push_back(name->Eval(parent_context));
         HomeworldSimpleMatch hsm{std::move(names), parent_context.ContextObjects(), parent_context.species};
         EvalImpl(matches, non_matches, search_domain, hsm);
     } else {

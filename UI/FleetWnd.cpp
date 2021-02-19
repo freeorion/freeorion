@@ -1401,7 +1401,8 @@ void FleetDataPanel::Refresh() {
                 public_fleet_name = public_fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             m_fleet_name_text->SetText(std::move(public_fleet_name));
         }
-        m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id, ScriptingContext{}));
+        ScriptingContext context;
+        m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id, context));
 
         // set icons
         std::vector<std::shared_ptr<GG::Texture>> icons{

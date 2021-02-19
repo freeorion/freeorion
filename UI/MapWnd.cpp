@@ -7315,7 +7315,8 @@ namespace {
     bool FleetRouteInRange(const std::shared_ptr<Fleet>& fleet, const RouteListType& route) {
         std::list<int> route_list{route.begin(), route.end()};
 
-        auto eta = fleet->ETA(fleet->MovePath(route_list, false, ScriptingContext{}));
+        ScriptingContext context;
+        auto eta = fleet->ETA(fleet->MovePath(route_list, false, context));
         if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_UNKNOWN || eta.first == Fleet::ETA_OUT_OF_RANGE)
             return false;
 
@@ -7647,7 +7648,8 @@ void MapWnd::DispatchFleetsExploring() {
         if (destroyed_objects.count(fleet->ID())) {
             m_fleets_exploring.erase(fleet->ID()); //this fleet can't explore anymore
         } else {
-             if (fleet->MovePath(false, ScriptingContext{}).empty())
+            ScriptingContext context;
+            if (fleet->MovePath(false, context).empty())
                 idle_fleets.insert(fleet->ID());
             else
                 systems_being_explored.emplace(fleet->FinalDestinationID(), fleet->ID());
