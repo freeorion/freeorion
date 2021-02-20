@@ -1150,7 +1150,8 @@ void SetOwner::Execute(ScriptingContext& context) const {
         return;
     int initial_owner = context.effect_target->Owner();
 
-    int empire_id = m_empire_id->Eval(ScriptingContext(context, initial_owner));
+    ScriptingContext owner_context{context, initial_owner};
+    int empire_id = m_empire_id->Eval(owner_context);
     if (initial_owner == empire_id)
         return;
 
@@ -1232,8 +1233,9 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
     if (species_name.empty())
         return;
 
-    double initial_opinion = context.species.SpeciesEmpireOpinion(species_name, empire_id); // TODO: get SpeciesManager from ScriptingContext
-    double opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
+    double initial_opinion = context.species.SpeciesEmpireOpinion(species_name, empire_id);
+    ScriptingContext opinion_context{context, initial_opinion};
+    double opinion = m_opinion->Eval(opinion_context);
 
     context.species.SetSpeciesEmpireOpinion(species_name, empire_id, opinion);
 }
@@ -1291,7 +1293,8 @@ void SetSpeciesSpeciesOpinion::Execute(ScriptingContext& context) const {
         return;
 
     float initial_opinion = context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
-    float opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
+    ScriptingContext opinion_context{context, initial_opinion};
+    float opinion = m_opinion->Eval(opinion_context);
 
     context.species.SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion);
 }
@@ -1352,8 +1355,10 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
         target_type = location_planet->Type();
     }
 
-    PlanetSize size = m_size->Eval(ScriptingContext(context, target_size));
-    PlanetType type = m_type->Eval(ScriptingContext(context, target_type));
+    ScriptingContext size_context{context, target_size};
+    PlanetSize size = m_size->Eval(size_context);
+    ScriptingContext type_context{context, target_type};
+    PlanetType type = m_type->Eval(type_context);
     if (size == PlanetSize::INVALID_PLANET_SIZE || type == PlanetType::INVALID_PLANET_TYPE) {
         ErrorLogger() << "CreatePlanet::Execute got invalid size or type of planet to create...";
         return;
@@ -2026,7 +2031,11 @@ void AddSpecial::Execute(ScriptingContext& context) const {
     std::string name = (m_name ? m_name->Eval(context) : "");
 
     float initial_capacity = context.effect_target->SpecialCapacity(name);  // returns 0.0f if no such special yet present
-    float capacity = (m_capacity ? m_capacity->Eval(ScriptingContext(context, initial_capacity)) : initial_capacity);
+    float capacity = initial_capacity;
+    if (m_capacity) {
+        ScriptingContext capacity_context{context, initial_capacity};
+        capacity = m_capacity->Eval(capacity_context);
+    }
 
     context.effect_target->SetSpecialCapacity(name, capacity);
 }
@@ -2242,10 +2251,12 @@ void SetStarType::Execute(ScriptingContext& context) const {
         ErrorLogger() << "SetStarType::Execute given no target object";
         return;
     }
-    if (auto s = std::dynamic_pointer_cast<System>(context.effect_target))
-        s->SetStarType(m_type->Eval(ScriptingContext(context, s->GetStarType())));
-    else
+    if (auto s = std::dynamic_pointer_cast<System>(context.effect_target)) {
+        ScriptingContext type_context{context, s->GetStarType()};
+        s->SetStarType(m_type->Eval(type_context));
+    } else {
         ErrorLogger() << "SetStarType::Execute given a non-system target";
+    }
 }
 
 std::string SetStarType::Dump(unsigned short ntabs) const
@@ -2587,10 +2598,14 @@ void MoveInOrbit::Execute(ScriptingContext& context) const {
     auto target = context.effect_target;
 
     double focus_x = 0.0, focus_y = 0.0, speed = 1.0;
-    if (m_focus_x)
-        focus_x = m_focus_x->Eval(ScriptingContext(context, target->X()));
-    if (m_focus_y)
-        focus_y = m_focus_y->Eval(ScriptingContext(context, target->Y()));
+    if (m_focus_x) {
+        ScriptingContext x_context{context, target->X()};
+        focus_x = m_focus_x->Eval(x_context);
+    }
+    if (m_focus_y) {
+        ScriptingContext y_context{context, target->Y()};
+        focus_y = m_focus_y->Eval(y_context);
+    }
     if (m_speed)
         speed = m_speed->Eval(context);
     if (speed == 0.0)
@@ -2600,7 +2615,7 @@ void MoveInOrbit::Execute(ScriptingContext& context) const {
         m_focal_point_condition->Eval(context, matches);
         if (matches.empty())
             return;
-        std::shared_ptr<const UniverseObject> focus_object = *matches.begin();
+        auto focus_object = *matches.begin();
         focus_x = focus_object->X();
         focus_y = focus_object->Y();
     }
@@ -2731,10 +2746,14 @@ void MoveTowards::Execute(ScriptingContext& context) const {
     auto target = context.effect_target;
 
     double dest_x = 0.0, dest_y = 0.0, speed = 1.0;
-    if (m_dest_x)
-        dest_x = m_dest_x->Eval(ScriptingContext(context, target->X()));
-    if (m_dest_y)
-        dest_y = m_dest_y->Eval(ScriptingContext(context, target->Y()));
+    if (m_dest_x) {
+        ScriptingContext x_context{context, target->X()};
+        dest_x = m_dest_x->Eval(x_context);
+    }
+    if (m_dest_y) {
+        ScriptingContext y_context{context, target->Y()};
+        dest_y = m_dest_y->Eval(y_context);
+    }
     if (m_speed)
         speed = m_speed->Eval(context);
     if (speed == 0.0)
@@ -3062,9 +3081,8 @@ void SetEmpireTechProgress::Execute(ScriptingContext& context) const {
         return;
     }
 
-    float initial_progress = empire->ResearchProgress(tech_name);
-    double value = m_research_progress->Eval(ScriptingContext(context, initial_progress));
-    empire->SetTechResearchProgress(tech_name, value);
+    ScriptingContext progress_context{context, empire->ResearchProgress(tech_name)};
+    empire->SetTechResearchProgress(tech_name, m_research_progress->Eval(progress_context));
 }
 
 std::string SetEmpireTechProgress::Dump(unsigned short ntabs) const {
