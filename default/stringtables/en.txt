@@ -5036,10 +5036,10 @@ ENC_POLICY_DESC
 Improved or situational effects that can be adopted by empires.
 
 ENC_POICY_EXCLUSIONS
-'''Cannot be in adopted with: '''
+'''Cannot be adopted with: '''
 
 ENC_POICY_PREREQUISITES
-'''Cannot be in adopted without: '''
+'''Cannot be adopted without: '''
 
 ENC_SPECIAL
 Special
