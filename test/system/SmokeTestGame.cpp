@@ -55,10 +55,12 @@ BOOST_AUTO_TEST_CASE(host_server) {
     setenv("DYLD_LIBRARY_PATH", GetPythonHome().string().c_str(), 1);
 #endif
 
-    std::vector<std::string> args;
-    args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
-    args.push_back("--singleplayer");
-    args.push_back("--testing");
+    std::vector<std::string> args{
+        "\"" + SERVER_CLIENT_EXE + "\"",
+        "--singleplayer",
+        "--testing",
+        "--log-level", "info"
+    };
 
 #ifdef FREEORION_LINUX
     // Dirty hack to output log to console.

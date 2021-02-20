@@ -115,14 +115,14 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         setenv("DYLD_LIBRARY_PATH", GetPythonHome().string().c_str(), 1);
 #endif
 
-        std::vector<std::string> args;
-        args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
-        args.push_back("--hostless");
-        args.push_back("--save.auto.hostless.enabled");
-        args.push_back(save_game ? "1" : "0");
-        args.push_back("--setup.ai.player.count");
-        args.push_back("0");
-        args.push_back("--testing");
+        std::vector<std::string> args {
+            "\"" + SERVER_CLIENT_EXE + "\"",
+            "--hostless",
+            "--save.auto.hostless.enabled", save_game ? "1" : "0",
+            "--setup.ai.player.count", "0",
+            "--testing",
+            "--log-level", "info"
+        };
 
 #ifdef FREEORION_LINUX
         // Dirty hack to output log to console.
