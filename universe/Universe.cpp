@@ -2542,7 +2542,8 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
 
     SetTravelledStarlaneEndpointsVisible(*m_objects, m_empire_object_visibility);
 
-    SetEmpireSpecialVisibilities(ScriptingContext{*this, empires}, m_empire_object_visibility, m_empire_object_visible_specials);
+    ScriptingContext context{*this, empires};
+    SetEmpireSpecialVisibilities(context, m_empire_object_visibility, m_empire_object_visible_specials);
 
     ShareVisbilitiesBetweenAllies(*this, empires, m_empire_object_visibility, m_empire_object_visible_specials);
 }
@@ -2968,15 +2969,14 @@ void Universe::UpdateStatRecords(EmpireManager& empires) {
             if (value_ref->SourceInvariant()) {
                 stat_records[empire_id][current_turn] = value_ref->Eval();
             } else if (empire_source) {
-                stat_records[empire_id][current_turn] = value_ref->Eval(ScriptingContext(empire_source, context));
+                ScriptingContext source_context{empire_source, context};
+                stat_records[empire_id][current_turn] = value_ref->Eval(source_context);
             }
         }
     }
 }
 
-void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize,
-                                         int encoding_empire) const
-{
+void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const {
     if (encoding_empire == ALL_EMPIRES) {
         designs_to_serialize = m_ship_designs;
     } else {

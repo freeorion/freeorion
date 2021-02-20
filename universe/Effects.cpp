@@ -414,8 +414,8 @@ void SetMeter::Execute(ScriptingContext& context) const {
     Meter* m = context.effect_target->GetMeter(m_meter);
     if (!m) return;
 
-    float val = m_value->Eval(ScriptingContext(context, m->Current()));
-    m->SetCurrent(val);
+    ScriptingContext meter_context{context, m->Current()};
+    m->SetCurrent(m_value->Eval(meter_context));
 }
 
 void SetMeter::Execute(ScriptingContext& context,
@@ -460,8 +460,8 @@ void SetMeter::Execute(ScriptingContext& context,
             info.running_meter_total =  meter->Current();
 
             // actually execute effect to modify meter
-            float val = m_value->Eval(ScriptingContext(context, target, meter->Current()));
-            meter->SetCurrent(val);
+            ScriptingContext target_meter_context{context, target, meter->Current()};
+            meter->SetCurrent(m_value->Eval(target_meter_context));
 
             // update for meter change and new total
             info.meter_change = meter->Current() - info.running_meter_total;
@@ -630,7 +630,8 @@ void SetShipPartMeter::Execute(ScriptingContext& context) const {
     if (!meter)
         return;
 
-    double val = m_value->Eval(ScriptingContext(context, meter->Current()));
+    ScriptingContext meter_current_context{context, meter->Current()};
+    double val = m_value->Eval(meter_current_context);
     meter->SetCurrent(val);
 }
 
@@ -813,9 +814,8 @@ void SetEmpireMeter::Execute(ScriptingContext& context) const {
         return;
     }
 
-    double&& value = m_value->Eval(ScriptingContext(context, meter->Current()));
-
-    meter->SetCurrent(value);
+    ScriptingContext meter_context{context, meter->Current()};
+    meter->SetCurrent(m_value->Eval(meter_context));
 }
 
 void SetEmpireMeter::Execute(ScriptingContext& context,
@@ -907,8 +907,8 @@ void SetEmpireStockpile::Execute(ScriptingContext& context) const {
         return;
     }
 
-    double value = m_value->Eval(ScriptingContext(context, empire->ResourceStockpile(m_stockpile)));
-    empire->SetResourceStockpile(m_stockpile, value);
+    ScriptingContext stockpile_context{context, empire->ResourceStockpile(m_stockpile)};
+    empire->SetResourceStockpile(m_stockpile, m_value->Eval(stockpile_context));
 }
 
 std::string SetEmpireStockpile::Dump(unsigned short ntabs) const {
@@ -998,7 +998,8 @@ SetPlanetType::SetPlanetType(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& t
 
 void SetPlanetType::Execute(ScriptingContext& context) const {
     if (auto p = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
-        PlanetType type = m_type->Eval(ScriptingContext(context, p->Type()));
+        ScriptingContext type_context{context, p->Type()};
+        PlanetType type = m_type->Eval(type_context);
         p->SetType(type);
         if (type == PlanetType::PT_ASTEROIDS)
             p->SetSize(PlanetSize::SZ_ASTEROIDS);
@@ -1039,7 +1040,8 @@ SetPlanetSize::SetPlanetSize(std::unique_ptr<ValueRef::ValueRef<PlanetSize>>&& s
 
 void SetPlanetSize::Execute(ScriptingContext& context) const {
     if (auto p = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
-        PlanetSize size = m_size->Eval(ScriptingContext(context, p->Size()));
+        ScriptingContext size_context{context, p->Size()};
+        PlanetSize size = m_size->Eval(size_context);
         p->SetSize(size);
         if (size == PlanetSize::SZ_ASTEROIDS)
             p->SetType(PlanetType::PT_ASTEROIDS);
@@ -1078,8 +1080,8 @@ SetSpecies::SetSpecies(std::unique_ptr<ValueRef::ValueRef<std::string>>&& specie
 
 void SetSpecies::Execute(ScriptingContext& context) const {
     if (auto planet = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
-        std::string&& species_name = m_species_name->Eval(ScriptingContext(context, planet->SpeciesName()));
-        planet->SetSpecies(std::move(species_name));
+        ScriptingContext name_context{context, planet->SpeciesName()};
+        planet->SetSpecies(m_species_name->Eval(name_context));
 
         // ensure non-empty and permissible focus setting for new species
         auto& initial_focus = planet->Focus();
@@ -1112,8 +1114,8 @@ void SetSpecies::Execute(ScriptingContext& context) const {
         }
 
     } else if (auto ship = std::dynamic_pointer_cast<Ship>(context.effect_target)) {
-        std::string&& species_name = m_species_name->Eval(ScriptingContext(context, ship->SpeciesName()));
-        ship->SetSpecies(std::move(species_name));
+        ScriptingContext name_context{context, ship->SpeciesName()};
+        ship->SetSpecies(m_species_name->Eval(name_context));
     }
 }
 

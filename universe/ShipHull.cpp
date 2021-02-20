@@ -188,8 +188,10 @@ float ShipHull::ProductionCost(int empire_id, int location_id,
     if (m_production_cost->ConstantExpr())
         return static_cast<float>(m_production_cost->Eval());
 
-    if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant())
-        return static_cast<float>(m_production_cost->Eval(ScriptingContext{parent_context, in_design_id}));
+    if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant()) {
+        ScriptingContext design_context{parent_context, in_design_id};
+        return static_cast<float>(m_production_cost->Eval(design_context));
+    }
 
     auto location = parent_context.ContextObjects().get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
@@ -215,8 +217,9 @@ int ShipHull::ProductionTime(int empire_id, int location_id,
     if (m_production_time->ConstantExpr())
         return m_production_time->Eval();
 
+    ScriptingContext design_context{parent_context, in_design_id};
     if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
-        return m_production_time->Eval(ScriptingContext{parent_context, in_design_id});
+        return m_production_time->Eval(design_context);
 
     auto location = parent_context.ContextObjects().get(location_id);
     if (!location && !m_production_time->TargetInvariant())
@@ -227,10 +230,9 @@ int ShipHull::ProductionTime(int empire_id, int location_id,
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    ScriptingContext local_context{parent_context, in_design_id};
-    local_context.source = std::move(source);
-    local_context.effect_target = std::const_pointer_cast<UniverseObject>(location); // not actually modified by evaluating a ValueRef
-    return m_production_time->Eval(local_context);
+    design_context.source = std::move(source);
+    design_context.effect_target = std::const_pointer_cast<UniverseObject>(location); // not actually modified by evaluating a ValueRef
+    return m_production_time->Eval(design_context);
 }
 
 unsigned int ShipHull::GetCheckSum() const {

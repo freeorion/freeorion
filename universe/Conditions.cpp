@@ -179,9 +179,8 @@ std::string ConditionFailedDescription(const std::vector<const Condition*>& cond
     std::string retval;
 
     // test candidate against all input conditions, and store descriptions of each
-    for (const auto& result : ConditionDescriptionAndTest(
-        conditions, ScriptingContext(std::move(source_object)), std::move(candidate_object)))
-    {
+    ScriptingContext context{std::move(source_object)};
+    for (const auto& result : ConditionDescriptionAndTest(conditions, context, std::move(candidate_object))) {
         if (!result.second)
              retval += UserString("FAILED") + " <rgba 255 0 0 255>" + result.first +"</rgba>\n";
     }
@@ -200,8 +199,9 @@ std::string ConditionDescription(const std::vector<const Condition*>& conditions
         return UserString("NONE");
 
     // test candidate against all input conditions, and store descriptions of each
+    ScriptingContext context{std::move(source_object)};
     auto condition_description_and_test_results =
-        ConditionDescriptionAndTest(conditions, ScriptingContext(std::move(source_object)), std::move(candidate_object));
+        ConditionDescriptionAndTest(conditions, context, std::move(candidate_object));
 
     bool all_conditions_match_candidate = true, at_least_one_condition_matches_candidate = false;
     for (const auto& result : condition_description_and_test_results) {
@@ -245,8 +245,10 @@ struct Condition::MatchHelper {
         m_parent_context(parent_context)
     {}
 
-    bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const
-    { return m_this->Match(ScriptingContext(m_parent_context, candidate)); }
+    bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
+        ScriptingContext context{m_parent_context, candidate};
+        return m_this->Match(context);
+    }
 
     const Condition* m_this = nullptr;
     const ScriptingContext& m_parent_context;
@@ -766,7 +768,8 @@ namespace {
         // get sort key values for all objects in from_set, and sort by inserting into map
         std::multimap<float, std::shared_ptr<const UniverseObject>> sort_key_objects;
         for (auto& from : from_set) {
-            float sort_value = sort_key->Eval(ScriptingContext(context, from));
+            ScriptingContext source_context{context, from};
+            float sort_value = sort_key->Eval(source_context);
             sort_key_objects.emplace(sort_value, from);
         }
 
