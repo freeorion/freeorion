@@ -56,6 +56,9 @@ _test_python_common: &_test_python_common
 
 
 jobs:
+  allow_failures:
+    dist: focal
+
   include:
     - name: Lint AI with Python 3.5
       <<: *_linux_setup_common
