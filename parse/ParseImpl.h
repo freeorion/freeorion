@@ -168,7 +168,7 @@ namespace parse { namespace detail {
 
     template <typename Grammar, typename Arg1>
     bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1) {
-        ScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::milliseconds(10));
+        ScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::milliseconds(100));
 
         std::string filename;
         std::string file_contents;
