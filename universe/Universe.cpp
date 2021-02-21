@@ -43,12 +43,26 @@
 #  include <boost/asio/thread_pool.hpp>
 #  include <boost/asio/post.hpp>
 #else
+#  include <boost/asio/io_service.hpp>
+#  include <boost/thread/thread.hpp>
 namespace boost { namespace asio {
     struct thread_pool {
-        thread_pool(int) {}
-        void join() {}
+        thread_pool(int num_threads) {
+            boost::asio::io_service::work work(m_io_service);
+            for (auto i = 0; i < num_threads; ++i) {
+                m_thread_pool.create_thread(
+                    boost::bind(&boost::asio::io_service::run, &m_io_service));
+            }
+        }
+        void join() { m_thread_pool.join_all(); }
+        void post(std::function<void()> func) { m_io_service.post(std::move(func)); }
+
+    private:
+        boost::asio::io_service m_io_service;
+        boost::thread_group m_thread_pool;
     };
-    void post(thread_pool, std::function<void()> func) { func(); }
+
+    void post(thread_pool& tp, std::function<void()> func) { tp.post(std::move(func)); }
  } }
 #endif
 
