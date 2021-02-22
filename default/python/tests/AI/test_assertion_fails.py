@@ -14,12 +14,3 @@ def test_message_argument():
     assert assertion_fails(False, "Some message")
     assert not assertion_fails(True, "")
     assert not assertion_fails(True, "Some message")
-
-
-def test_logger_argument():
-    import logging
-    loggers = [logging.debug, logging.info, logging.warning, logging.error]
-    for logger in loggers:
-        assert assertion_fails(False, logger=logger)
-        assert assertion_fails(False, "Some message", logger=logger)
-        assert not assertion_fails(True, logger=logger)

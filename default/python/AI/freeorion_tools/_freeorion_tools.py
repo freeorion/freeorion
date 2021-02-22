@@ -1,5 +1,7 @@
 # This Python file uses the following encoding: utf-8
+import inspect
 import logging
+import pprint
 import re
 import traceback
 from collections.abc import Mapping
@@ -349,28 +351,31 @@ def with_log_level(log_level):
     return decorator
 
 
-def assertion_fails(cond, msg="", logger=logging.error):
+def assertion_fails(cond: bool, msg: str = "") -> bool:
     """
     Check if condition fails and if so, log a traceback but raise no Exception.
 
+    Return False is condition True and True if condition is False.
+
     This is a useful functions for generic sanity checks and may be used to
     replace manual error logging with more context provided by the traceback.
-
-    :param bool cond: condition to be asserted
-    :param str msg: additional info to be logged
-    :param func logger: may be used to override default log level (error)
-    :return: True if assertion failed, otherwise false.
     """
     if cond:
         return False
 
     if msg:
-        header = "Assertion failed: %s." % msg
+        header = "AI raised a warning: %s. See more detailed description in logs." % msg
     else:
-        header = "Assertion failed!"
+        header = "AI raised a warning. See more detailed description in logs."
+
+    warning("\n===")
+    error(header)
     stack = traceback.extract_stack()[:-1]  # do not log this function
-    logger("%s Traceback (most recent call last): %s", header,
-           ''.join(traceback.format_list(stack)))
+    warning("Stack trace (most recent call last): %s", ''.join(traceback.format_list(stack)))
+    frame = inspect.currentframe().f_back
+    local_vars = pprint.pformat(frame.f_locals)
+    warning("Locals inside the {}\n{}".format(frame.f_code.co_name, local_vars))
+    warning("===\n")
     return True
 
 
