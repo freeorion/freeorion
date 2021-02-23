@@ -18,6 +18,7 @@
 #include "../Empire/EmpireManager.h"
 
 #include "../util/Logger.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
 #include "../util/i18n.h"
 
@@ -1918,17 +1919,16 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     DebugLogger(combat) << "AutoResolveCombat objects before resolution: " << combat_info.objects->Dump();
 
     // reasonably unpredictable but reproducible random seeding
-    int base_seed = 0;
+    int base_seed = 123454321; // arbitrary number
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
-        //static boost::hash<std::string> cs_string_hash;
-        // TODO: salt further with galaxy setup seed
-        base_seed = (*combat_info.objects->all().begin())->ID() + combat_info.turn;
+        base_seed += std::hash<std::string>{}(combat_info.galaxy_setup_data.GetSeed()); // probably not consistent across different platforms, but that's OK for this use
+        base_seed += (*combat_info.objects->all().begin())->ID() + combat_info.turn;
     }
 
     // compile list of valid objects to attack or be attacked in this combat
     AutoresolveInfo combat_state(combat_info);
 
-    combat_info.combat_events.emplace_back(
+    combat_info.combat_events.push_back(
         std::make_shared<InitialStealthEvent>(
             combat_state.ReportInvisibleObjects()));
 
