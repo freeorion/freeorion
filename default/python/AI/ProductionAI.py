@@ -727,7 +727,6 @@ def generate_production_orders():
                             debug("Requeueing %s to front of build queue, with result %d", building_name, res)
                     except:  # noqa: E722
                         debug("problem queueing BLD_SOL_ORB_GEN at planet %s of system", use_loc, use_sys)
-                        pass
 
     building_name = "BLD_ART_BLACK_HOLE"
     if (
@@ -812,7 +811,6 @@ def generate_production_orders():
                         debug("Requeueing %s to front of build queue, with result %d" % (building_name, res))
                 except:  # noqa: E722
                     warning("problem queueing BLD_BLACK_HOLE_POW_GEN at planet %s of system %s", use_loc, use_sys)
-                    pass
 
     building_name = "BLD_ENCLAVE_VOID"
     if empire.buildingTypeAvailable(building_name):
@@ -891,7 +889,6 @@ def generate_production_orders():
                         debug("Requeueing %s to front of build queue, with result %d", building_name, res)
                 except:  # noqa: E722
                     warning("problem queueing BLD_NEUTRONIUM_EXTRACTOR at planet %s of system %s" % (use_loc, use_sys))
-                    pass
 
     bld_name = "BLD_SHIPYARD_CON_GEOINT"
     build_ship_facilities(bld_name, best_pilot_facilities)
@@ -952,7 +949,7 @@ def generate_production_orders():
         elif aistate.character.may_build_building(building_name) and can_build_camp and (t_pop >= 36):
             if (planet.focus == FocusType.FOCUS_GROWTH) or (AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials) or (pid == capital_id):
                 continue
-                # pass  # now that focus setting takes these into account, probably works ok to have conc camp, but let's not push it
+                # now that focus setting takes these into account, probably works ok to have conc camp, but let's not push it
             queued_building_locs = [element.locationID for element in production_queue if (element.name == building_name)]
             if c_pop < 0.95 * t_pop:
                 if verbose_camp:
