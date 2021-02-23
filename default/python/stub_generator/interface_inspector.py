@@ -153,6 +153,5 @@ def get_module_info(obj, instances, dump=False):
         with open(dump_path, 'w') as f:
             import json
             json.dump(sorted(data, key=lambda x: (x.get(NAME, '') or x[CLASS_NAME], x.get(TYPE, ''))), f, indent=4, sort_keys=True)
-            pass
         debug("File with interface info is dumped: %s" % dump_path)
     return data
