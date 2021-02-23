@@ -430,8 +430,6 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     secure_targets = [system_id] + list(this_system.planetIDs)
     system_secured = False
     for mission in secure_fleet_missions:
-        if system_secured:
-            break
         secure_fleet_id = mission.fleet.id
         s_fleet = universe.getFleet(secure_fleet_id)
         if not s_fleet or s_fleet.systemID != system_id:
