@@ -28,7 +28,6 @@ def execute_turn_events():
     if random() < max(0.00015 * radius, 0.03):
         field_type = choice(field_types)
         size = 5.0
-        x = y = radius
         dist_from_center = uniform(0.35, 1.0) * radius
         angle = random() * 2.0 * pi
         x = radius + (dist_from_center * sin(angle))
