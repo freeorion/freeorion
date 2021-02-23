@@ -57,7 +57,7 @@ Settings for it located in the `tox.ini`.
 ## Install dependencies
 
 ```sh
-pip install flake8==3.7.9
+pip isntall -r default/python/requirements-dev.txt
 ```
 
 ## Run checks

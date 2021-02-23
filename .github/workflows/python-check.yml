@@ -1,0 +1,35 @@
+name: AI and string tables checks
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.6', '3.9']
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install development dependencies
+        run: |
+          pip install -r default/python/requirements-dev.txt
+      - name: Lint with flake8
+        run: |
+          flake8 default/python --config=default/python/tox.ini --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
+      - name: Test with pytest
+        run: |
+           pytest -v default/python/tests
+      - name: Check string tables formatting
+        run: |
+          diff -u default/stringtables/en.txt <(check/st-tool.py format default/stringtables/en.txt) || { echo "String table is not properly formatted"; exit 1; }
+      - name: Validate string tables
+        run: |
+          ./check/st-tool.py check --reference default/stringtables/en.txt default/stringtables/*.txt
