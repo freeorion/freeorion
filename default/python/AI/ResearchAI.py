@@ -196,9 +196,7 @@ def get_ship_tech_usefulness(tech, ship_designer):
         # AI is likely defeated; don't bother with logging error message
         return 0
     old_rating, old_pid, old_design_id, old_cost, old_stats = old_designs[0]
-    old_rating = old_rating
     new_rating, new_pid, new_design_id, new_cost, new_stats = new_designs[0]
-    new_rating = new_rating
     if new_rating > old_rating:
         ratio = (new_rating - old_rating) / (new_rating + old_rating)
         return ratio * 1.5 + 0.5
