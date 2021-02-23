@@ -1,4 +1,7 @@
 extraction:
+  python:
+    python_setup:
+      version: "3"
   cpp:
     prepare:
       packages:
@@ -14,6 +17,3 @@ extraction:
       build_command:
       - "cd build"
       - "make"
-  python:
-    python_setup:
-      version: "3"
