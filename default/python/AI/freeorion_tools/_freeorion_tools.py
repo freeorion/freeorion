@@ -1,12 +1,11 @@
 # This Python file uses the following encoding: utf-8
 import inspect
-import logging
 import pprint
 import re
 import traceback
 from collections.abc import Mapping
 from functools import wraps
-from logging import debug, error, warning
+from logging import debug, error, ERROR, getLogger, Handler, warning
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from aistate_interface import get_aistate
@@ -105,7 +104,7 @@ def ppstring(foo):
         return str(foo)
 
 
-class ConsoleLogHandler(logging.Handler):
+class ConsoleLogHandler(Handler):
     """A log handler to send errors to the console. """
     def emit(self, record):
         """Emit a record.
@@ -133,9 +132,9 @@ console_handler.setFormatter(
     FOLogFormatter(RED % ('%s : %%(filename)s:%%(funcName)s():%%(lineno)d  - %%(message)s'
                           % fo.userString('AI_ERROR_MSG'))))
 
-console_handler.setLevel(logging.ERROR)
+console_handler.setLevel(ERROR)
 
-logging.getLogger().addHandler(console_handler)
+getLogger().addHandler(console_handler)
 
 
 def remove_tags(message):
@@ -319,11 +318,11 @@ class LogLevelSwitcher:
         self.old_log_level = 0
 
     def __enter__(self):
-        self.old_log_level = logging.getLogger().level
-        logging.getLogger().setLevel(self.target_log_level)
+        self.old_log_level = getLogger().level
+        getLogger().setLevel(self.target_log_level)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        logging.getLogger().setLevel(self.old_log_level)
+        getLogger().setLevel(self.old_log_level)
 
 
 def with_log_level(log_level):
