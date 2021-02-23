@@ -9,7 +9,7 @@ BASE_INFLUENCE_COSTS
             ]
             stackinggroup = "IMPERIAL_PALACE_MANY_PLANETS_INFLUENCE_PENALTY"
             accountinglabel = "COLONY_ADMIN_COSTS_LABEL"
-            effects = SetTargetInfluence value = Value - (NamedReal name = "OLONY_ADMIN_COSTS_PER_PLANET" value = 0.2) *
+            effects = SetTargetInfluence value = Value - (NamedReal name = "COLONY_ADMIN_COSTS_PER_PLANET" value = 0.2) *
                 Statistic Count condition = And [
                     Planet
                     OwnedBy empire = Source.Owner
