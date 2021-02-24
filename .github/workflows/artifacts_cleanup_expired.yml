@@ -1,0 +1,12 @@
+name: 'Purge expired artifacts'
+on:
+  schedule:
+    - cron: '0 * * * *'
+jobs:
+  purge-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: LKP-RnD/purge-expired-artifacts-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repo_to_purge: "freeorion/freeorion"
