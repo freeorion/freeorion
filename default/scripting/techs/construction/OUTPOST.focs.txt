@@ -5,6 +5,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 1
     researchturns = 1
+    unlock = Item type = Building name = "BLD_ABANDON_OUTPOST"
     tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
 
     // Effects for outposts

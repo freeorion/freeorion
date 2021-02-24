@@ -6149,7 +6149,7 @@ OUTPOSTS_TITLE
 Outpost
 
 OUTPOSTS_TEXT
-Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no [[metertype METER_POPULATION]], and normally produce no resources. But they create [[metertype METER_SUPPLY]] (with the right tech) and provide fuel and vision. Colonies can be founded on planets that already have an Outpost. Building an Outpost requires a ship with an [[shippart CO_OUTPOST_POD]]. Outposts are also formed when the Population of a colony drops to zero for any reason.
+Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no [[metertype METER_POPULATION]], and normally produce no resources. But they create [[metertype METER_SUPPLY]] (with the right tech) and provide fuel and vision. Colonies can be founded on planets that already have an Outpost. Building an Outpost requires a ship with an [[shippart CO_OUTPOST_POD]]. Outposts are also formed when the Population of a colony drops to zero for any reason. You can abandon an outpost by building a [[building BLD_ABANDON_OUTPOST]].
 
 HOMEWORLDS_TITLE
 Homeworld
@@ -7238,6 +7238,21 @@ SITREP_PLANET_OUTPOSTED
 
 SITREP_PLANET_OUTPOSTED_LABEL
 Planet Outposted
+
+SITREP_OUTPOST_ABANDONED_PREPARATION
+Outpost on %planet% prepares to be abandoned in turn %rawtext%.
+
+SITREP_OUTPOST_ABADONED_PREPARATION_LABEL
+Outpost Prepare Abandon
+
+SITREP_OUTPOST_ABANDONED_PREVENTED_BY_BATTLE
+Outpost on %planet% can't be abandoned as long as there is battle in the system %system%.
+
+SITREP_OUTPOST_ABANDONED
+Outpost on %planet% was abandoned.  %rawtext%.
+
+SITREP_OUTPOST_ABADONED_LABEL
+Outpost Abandoned
 
 SITREP_NEW_COLONY_ESTABLISHED
 On %planet%: A new %species% colony has been established.
@@ -13414,6 +13429,12 @@ Evacuation System
 
 BLD_EVACUATION_DESC
 Remove [[metertype METER_POPULATION]] from this planet over several turns according to an [[encyclopedia EVACUATION_TITLE]]. If a suitable alternate planets are available, with the same species and sufficient extra capacity, Population will move there.
+
+BLD_ABANDON_OUTPOST
+Abandon System
+
+BLD_ABANDON_OUTPOST_DESC
+Abandon the outpost on this planet. The Abandon System building needs two turns to prepare dismantling the outpost. If it is prepared, it needs an uninterupted turn without battles happening to completely abandon the outpost. The building gets used up in the process and the planet will be unowned afterwards.
 
 BLD_OBSERVATORY
 Observatory
