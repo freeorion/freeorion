@@ -13,7 +13,7 @@ Part
             [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
         ]
     ]
-    mountableSlotTypes = External
+    mountableSlotTypes = [ Internal External ]
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
