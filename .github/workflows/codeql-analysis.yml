@@ -59,7 +59,8 @@ jobs:
        cd build
        cmake -DBUILD_SHARED_LIBS=OFF \
              -DBUILD_TESTING=OFF -DBUILD_CLIENT_GG=OFF \
-             -DBUILD_SERVER=OFF -DBUILD_AI=OFF ..
+             -DBUILD_SERVER=OFF -DBUILD_AI=OFF \
+             _DBUILD_PARSERS=OFF ..
        df
        cmake --build . --config Release
        df
