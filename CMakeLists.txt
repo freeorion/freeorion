@@ -372,6 +372,7 @@ target_compile_definitions(freeorioncommon
         -DFREEORION_PYTHON_VERSION=\"${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}\"
 )
 
+
 target_link_libraries(freeorioncommon
     PUBLIC
         Boost::boost
@@ -443,20 +444,20 @@ if(BUILD_PARSERS AND MSVC)
 endif()
 
 if(BUILD_PARSERS)
-target_compile_options(freeorionparseobj
-    PRIVATE
-        $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
-        $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
-        $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:GNU>>:-O3>
-)
+    target_compile_options(freeorionparseobj
+        PRIVATE
+            $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
+            $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
+            $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:GNU>>:-O3>
+    )
 
-target_compile_definitions(freeorionparseobj
-    PUBLIC
-        $<$<NOT:$<PLATFORM_ID:Android>>:BOOST_ALL_DYN_LINK>
-    PRIVATE
-        -DNDEBUG
-        -DFREEORION_BUILD_PARSE
-)
+    target_compile_definitions(freeorionparseobj
+        PUBLIC
+            $<$<NOT:$<PLATFORM_ID:Android>>:BOOST_ALL_DYN_LINK>
+        PRIVATE
+            -DNDEBUG
+            -DFREEORION_BUILD_PARSE
+    )
 endif()
 
 if(BUILD_PARSERS AND NOT WIN32 AND NOT ANDROID)
@@ -502,13 +503,15 @@ if(BUILD_PARSERS AND APPLE)
 endif()
 
 if(BUILD_SERVER)
-    add_executable(freeoriond "")
+    if(BUILD_PARSERS)
+        add_executable(freeoriond "")
     
-    if(WIN32)
-        set_property(TARGET freeoriond
-            PROPERTY
-                OUTPUT_NAME FreeOrionD
-        )
+        if(WIN32)
+            set_property(TARGET freeoriond
+                PROPERTY
+                    OUTPUT_NAME FreeOrionD
+            )
+        endif()
     endif()
     
     target_compile_definitions(freeoriond
@@ -521,26 +524,31 @@ if(BUILD_SERVER)
             ${PYTHON_INCLUDE_PATH}
     )
     
-    target_link_libraries(freeoriond
-        PRIVATE
-            freeorioncommon
-            freeorionparse
-            Boost::python${Boost_PYTHON_SUFFIX}
-            ${PYTHON_LIBRARIES}
-    )
+    if(BUILD_PARSERS)
+        target_link_libraries(freeoriond
+            PRIVATE
+                freeorioncommon
+                freeorionparse
+                Boost::python${Boost_PYTHON_SUFFIX}
+                ${PYTHON_LIBRARIES}
+        )
     
-    target_dependencies_copy_to_build(freeoriond)
-    target_dependent_data_symlink_to_build(freeoriond ${PROJECT_SOURCE_DIR}/default)
+    
+        target_dependencies_copy_to_build(freeoriond)
+        target_dependent_data_symlink_to_build(freeoriond ${PROJECT_SOURCE_DIR}/default)
+    endif()
 endif()
 
 if(BUILD_AI)
-    add_executable(freeorionca "")
+    if(BUILD_PARSERS)
+        add_executable(freeorionca "")
     
-    if(WIN32)
-        set_property(TARGET freeorionca
-            PROPERTY
-                OUTPUT_NAME FreeOrionCA
-        )
+        if(WIN32)
+            set_property(TARGET freeorionca
+                PROPERTY
+                    OUTPUT_NAME FreeOrionCA
+            )
+        endif()
     endif()
     
     target_compile_definitions(freeorionca
@@ -553,43 +561,48 @@ if(BUILD_AI)
             ${PYTHON_INCLUDE_PATH}
     )
     
-    target_link_libraries(freeorionca
-        freeorioncommon
-        freeorionparse
-        Boost::python${Boost_PYTHON_SUFFIX}
-        ${PYTHON_LIBRARIES}
-    )
+    if(BUILD_PARSERS)
+        target_link_libraries(freeorionca
+            freeorioncommon
+            freeorionparse
+            Boost::python${Boost_PYTHON_SUFFIX}
+            ${PYTHON_LIBRARIES}
+        )
     
-    target_dependencies_copy_to_build(freeorionca)
-    target_dependent_data_symlink_to_build(freeorionca ${PROJECT_SOURCE_DIR}/default)
+        target_dependencies_copy_to_build(freeorionca)
+        target_dependent_data_symlink_to_build(freeorionca ${PROJECT_SOURCE_DIR}/default)
+    endif()
 endif()
 
 if(BUILD_CLIENT_GG)
-    add_executable(freeorion "")
+    if(BUILD_PARSERS)
+        add_executable(freeorion "")
 
-    if(WIN32)
-        set_property(TARGET freeorion
-            PROPERTY
-                OUTPUT_NAME FreeOrion
-        )
-        if(MSVC AND (CMAKE_VERSION VERSION_GREATER "3.6"))
-            set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        if(WIN32)
+            set_property(TARGET freeorion
                 PROPERTY
-                    VS_STARTUP_PROJECT freeorion
+                    OUTPUT_NAME FreeOrion
             )
+            if(MSVC AND (CMAKE_VERSION VERSION_GREATER "3.6"))
+                set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+                    PROPERTY
+                        VS_STARTUP_PROJECT freeorion
+                )
+            endif()
         endif()
-    endif()
 
-    if(APPLE)
-        set_property(TARGET freeorion
-            PROPERTY
-                OUTPUT_NAME FreeOrion
-        )
+        if(APPLE)
+            set_property(TARGET freeorion
+                PROPERTY
+                    OUTPUT_NAME FreeOrion
+            )
 
-        list(APPEND FREEORION_ASSETS
-            Changelog.md
-            default
-        )
+            list(APPEND FREEORION_ASSETS
+                Changelog.md
+                default
+            )
+	endif()
+	
         target_sources(freeorion
             PRIVATE
                 ${FREEORION_ASSETS}
@@ -633,17 +646,19 @@ if(BUILD_CLIENT_GG)
             ${FREETYPE_INCLUDE_DIRS}
     )
 
-    target_link_libraries(freeorion
-        freeorioncommon
-        freeorionparse
-        GiGi::GiGi
-        ${SDL_LIBRARIES}
-        ${OPENGL_gl_LIBRARY}
-        ${OPENAL_LIBRARY}
-        ${OGG_LIBRARIES}
-        ${VORBIS_LIBRARIES}
-        ${ICONV_LIBRARY}
-    )
+    if(BUILD_PARSERS)
+        target_link_libraries(freeorion
+            freeorioncommon
+            freeorionparse
+            GiGi::GiGi
+            ${SDL_LIBRARIES}
+            ${OPENGL_gl_LIBRARY}
+            ${OPENAL_LIBRARY}
+            ${OGG_LIBRARIES}
+            ${VORBIS_LIBRARIES}
+            ${ICONV_LIBRARY}
+        )
+    endif()
 
     target_dependencies_copy_to_build(freeorion)
     target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
