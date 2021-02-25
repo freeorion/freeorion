@@ -47,10 +47,10 @@ option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_CLIENT_GG "Build GiGi client" ON)
 option(BUILD_SERVER "Build server" ON)
 option(BUILD_AI "Build AI" ON)
-option(BUILD_PARSERS "Build parsers" ON)
+option(BUILD_PARSERS "Build parsers" OFF)
 
 if(BUILD_TESTING)
-    message( STATUS "Building Tests")
+    message( STATUS "Building Tests" )
     enable_testing()
     enable_coverage()
 
