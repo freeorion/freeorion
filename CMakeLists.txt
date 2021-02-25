@@ -47,6 +47,7 @@ option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_CLIENT_GG "Build GiGi client" ON)
 option(BUILD_SERVER "Build server" ON)
 option(BUILD_AI "Build AI" ON)
+option(BUILD_PARSERS "Build parsers" ON)
 
 if(BUILD_TESTING)
     message( STATUS "Building Tests")
@@ -402,33 +403,34 @@ if(WIN32 AND ${Boost_VERSION} GREATER 106699) # boost >= 1.67
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Haiku")
-	target_link_libraries(freeorioncommon PUBLIC network)
+    target_link_libraries(freeorioncommon PUBLIC network)
 endif()
 
 add_dependencies(freeorioncommon freeorionversion)
 
+if(BUILD_PARSERS)
+    add_library(freeorionparseobj OBJECT "")
 
-add_library(freeorionparseobj OBJECT "")
+    # Object libraries only understand the modern CMake approach of defining
+    # dependencies via imported targets and target_link_libraries starting 3.12.
+    # For now manually unpack the compiler definitions and include directories.
+    target_compile_definitions(freeorionparseobj
+        PUBLIC
+            $<TARGET_PROPERTY:Boost::boost,INTERFACE_COMPILE_DEFINITIONS>
+    )
 
-# Object libraries only understand the modern CMake approach of defining
-# dependencies via imported targets and target_link_libraries starting 3.12.
-# For now manually unpack the compiler definitions and include directories.
-target_compile_definitions(freeorionparseobj
-    PUBLIC
-        $<TARGET_PROPERTY:Boost::boost,INTERFACE_COMPILE_DEFINITIONS>
-)
+    target_include_directories(freeorionparseobj
+        PUBLIC
+            $<TARGET_PROPERTY:Boost::boost,INTERFACE_INCLUDE_DIRECTORIES>
+    )
 
-target_include_directories(freeorionparseobj
-    PUBLIC
-        $<TARGET_PROPERTY:Boost::boost,INTERFACE_INCLUDE_DIRECTORIES>
-)
+    set_property(TARGET freeorionparseobj
+        PROPERTY
+        POSITION_INDEPENDENT_CODE ON
+    )
+endif()
 
-set_property(TARGET freeorionparseobj
-    PROPERTY
-    POSITION_INDEPENDENT_CODE ON
-)
-
-if(MSVC)
+if(BUILD_PARSERS AND MSVC)
     # The debug information produced in this project is over the MSVC linking limit, remove it
     get_target_property(PARSEOBJ_COMPILE_OPTIONS freeorionparseobj COMPILE_OPTIONS)
     list(REMOVE_ITEM PARSEOBJ_COMPILE_OPTIONS 
@@ -440,6 +442,7 @@ if(MSVC)
     )
 endif()
 
+if(BUILD_PARSERS)
 target_compile_options(freeorionparseobj
     PRIVATE
         $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
@@ -454,12 +457,13 @@ target_compile_definitions(freeorionparseobj
         -DNDEBUG
         -DFREEORION_BUILD_PARSE
 )
+endif()
 
-if(NOT WIN32 AND NOT ANDROID)
+if(BUILD_PARSERS AND NOT WIN32 AND NOT ANDROID)
     add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
 endif()
 
-if(WIN32 OR ANDROID)
+if(BUILD_PARSERS AND (WIN32 OR ANDROID))
     add_library(freeorionparse STATIC $<TARGET_OBJECTS:freeorionparseobj>)
 
     set_property(TARGET freeorionparse
@@ -468,7 +472,7 @@ if(WIN32 OR ANDROID)
     )
 endif()
 
-if(MSVC)
+if(BUILD_PARSERS AND MSVC)
     # The debug information produced in this project is over the MSVC linking limit, remove it
     get_target_property(PARSE_COMPILE_OPTIONS freeorionparse COMPILE_OPTIONS)
     list(REMOVE_ITEM PARSE_COMPILE_OPTIONS 
@@ -480,7 +484,7 @@ if(MSVC)
     )
 endif()
 
-if(APPLE)
+if(BUILD_PARSERS AND APPLE)
     # Xcode doesn't build freeorionparse because it doesn't have any
     # source code files associated and only links the freeorionparselib
     # objects into a shared library.  Adding an empty file fixes this.
