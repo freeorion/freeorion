@@ -751,10 +751,18 @@ if(UNIX AND BUILD_CLIENT_GG)
 endif()
 
 if(UNIX AND NOT APPLE AND NOT ANDROID)
+    if(BUILD_PARSERS)
+        install(
+            TARGETS
+                freeorionparse
+            LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        )
+    endif()
+    
     install(
         TARGETS
             freeorioncommon
-            freeorionparse
         LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
