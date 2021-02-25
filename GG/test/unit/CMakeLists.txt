@@ -20,9 +20,11 @@ target_link_libraries(gg_unittest
     Boost::unit_test_framework
 )
 
-add_coverage(fo_unittest_parse
-    unittest
-)
+if(BUILD_PARSERS)
+    add_coverage(fo_unittest_parse
+        unittest
+    )
+endif()
 
 add_dependencies(unittest
     gg_unittest
