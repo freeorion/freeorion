@@ -13431,10 +13431,10 @@ BLD_EVACUATION_DESC
 Remove [[metertype METER_POPULATION]] from this planet over several turns according to an [[encyclopedia EVACUATION_TITLE]]. If a suitable alternate planets are available, with the same species and sufficient extra capacity, Population will move there.
 
 BLD_ABANDON_OUTPOST
-Abandon System
+Abandon
 
 BLD_ABANDON_OUTPOST_DESC
-Abandon the outpost on this planet. The Abandon System building needs two turns to prepare dismantling the outpost. If it is prepared, it needs an uninterupted turn without battles happening to completely abandon the outpost. The building gets used up in the process and the planet will be unowned afterwards.
+Abandon the outpost on this planet. The building needs two turns to prepare dismantling the outpost. If dismantling is prepared, it takes an uninterupted turn without battles happening to completely abandon the outpost. The building gets used up in the process and the planet will be unowned afterwards.
 
 BLD_OBSERVATORY
 Observatory
