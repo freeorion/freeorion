@@ -151,6 +151,8 @@ set_source_files_properties(
 )
 
 
+message(STATUS "Python include path: ${PYTHON_INCLUDE_PATH}")
+
 
 add_library(freeorioncommon STATIC "")
 target_compile_options(freeorioncommon
