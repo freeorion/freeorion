@@ -3,14 +3,8 @@ cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
 cmake_policy(SET CMP0042 NEW)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
-set(CMAKE_OSX_DEPLOYMENT_TARGET 10.12 CACHE STRING "Set the minimum OSX deployment target version")
-set(CMAKE_OSX_ARCHITECTURES x86_64 CACHE STRING "Set the architecture the universal binaries for OSX should be built for")
 
-IF(CMAKE_GENERATOR STREQUAL "Xcode")
-  set(CMAKE_CONFIGURATION_TYPES Release)
-ELSE()
-  set(CMAKE_CONFIGURATION_TYPES Debug RelWithDebInfo Release)
-ENDIF()
+set(CMAKE_CONFIGURATION_TYPES Debug RelWithDebInfo Release)
 IF(NOT CMAKE_BUILD_TYPE)
   MESSAGE(STATUS "Setting build type to 'Release' as none was specified.")
   SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
@@ -46,9 +40,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-set(FreeOrion_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/freeorion")
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${FreeOrion_INSTALL_LIBDIR}")
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+#set(FreeOrion_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/freeorion")
+#set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${FreeOrion_INSTALL_LIBDIR}")
+#set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 
 add_compile_options(
@@ -78,7 +72,7 @@ include(TestForBug2795)
 ##
 
 set(MINIMUM_PYTHON_VERSION 3.5)
-set(MINIMUM_BOOST_VERSION 1.60.0)
+set(MINIMUM_BOOST_VERSION 1.62.0)
 
 find_package(Threads)
 find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
@@ -102,19 +96,37 @@ set(Boost_PYTHON_SUFFIX "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 
 find_package(ZLIB REQUIRED)
 set(SDL_NO_MAIN true)
-    find_package(SDL REQUIRED)
-    find_package(Freetype REQUIRED)
-    find_package(OpenGL REQUIRED)
-    find_package(OpenAL REQUIRED)
-    find_package(Ogg REQUIRED)
-    find_package(Vorbis REQUIRED)
+find_package(SDL REQUIRED)
+find_package(Freetype REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(OpenAL REQUIRED)
+find_package(Ogg REQUIRED)
+find_package(Vorbis REQUIRED)
 
-    set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
-    set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
-    set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
-    add_subdirectory(GG)
-    set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
-    unset(_ORIG_CMAKE_INSTALL_LIBDIR)
+set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
+set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
+set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
+add_subdirectory(GG)
+set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
+unset(_ORIG_CMAKE_INSTALL_LIBDIR)
+
+set_property(DIRECTORY APPEND
+    PROPERTY COMPILE_DEFINITIONS
+        # with boost 1.61 some boost::optional internals were changed. However
+        # boost::spirit relies on some API the old implementation provided.
+        # This define enables the usage of the old boost::optional
+        # implementation.  Boost upstream tracks this bug as #12349
+        $<$<AND:$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.60>,$<VERSION_LESS:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.67>>:BOOST_OPTIONAL_CONFIG_USE_OLD_IMPLEMENTATION_OF_OPTIONAL>
+
+        # We don't need localized output of Boost date_time and not setting
+        # the define causes the inclusion of code, which contains std::tolower.
+        # This however causes a macro substitutions caused by the libpython
+        # headers, which in turn breaks the build.  Python 2.7.13 should have
+        # fixed this with python bug #10910
+        $<$<PLATFORM_ID:Darwin>:BOOST_DATE_TIME_NO_LOCALE>
+        $<$<PLATFORM_ID:FreeBSD>:BOOST_DATE_TIME_NO_LOCALE>
+)
+
 
 
 
