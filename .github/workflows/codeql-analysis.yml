@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp' ]  # , 'python'
+        language: [ 'cpp' ]
 
     steps:
     - name: Checkout repository
@@ -57,10 +57,7 @@ jobs:
        df
        mkdir build
        cd build
-       cmake -DBUILD_SHARED_LIBS=ON \
-             -DBUILD_TESTING=OFF -DBUILD_CLIENT_GG=ON \
-             -DBUILD_SERVER=ON -DBUILD_AI=ON \
-             _DBUILD_PARSERS=OFF ..
+       cmake ..
        df
        cmake --build . --config Release
        df
