@@ -13425,7 +13425,7 @@ Additional experience and facilities improvements further extend the size of ind
 ##
 
 BLD_EVACUATION
-Evacuation System
+Evacuation
 
 BLD_EVACUATION_DESC
 Remove [[metertype METER_POPULATION]] from this planet over several turns according to an [[encyclopedia EVACUATION_TITLE]]. If a suitable alternate planets are available, with the same species and sufficient extra capacity, Population will move there.
