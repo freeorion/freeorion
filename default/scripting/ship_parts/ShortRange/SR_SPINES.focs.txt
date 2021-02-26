@@ -4,7 +4,7 @@ Part
     class = ShortRange
     damage = 40
     combatTargets = And [
-        (CombatBout > 2)
+        (CombatBout >= NamedIntegerLookup name = "FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE")
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
         Or [
            [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]

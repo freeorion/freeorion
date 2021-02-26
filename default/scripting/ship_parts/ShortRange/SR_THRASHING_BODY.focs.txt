@@ -5,7 +5,7 @@ Part
     damage = 1
     shots = 10
     combatTargets = And [
-        (CombatBout > 2)
+        (CombatBout >= NamedIntegerLookup name = "FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE")
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
         Or [
            Fighter

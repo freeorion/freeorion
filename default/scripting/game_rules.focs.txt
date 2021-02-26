@@ -133,3 +133,12 @@ GameRule
     category = "MULTIPLAYER"
     type = Toggle
     default = Off
+
+GameRule
+    name = "RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE"
+    description = "RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE_DESC"
+    category = "BALANCE"
+    type = Integer
+    default = 3
+    min = 1
+    max = 20
