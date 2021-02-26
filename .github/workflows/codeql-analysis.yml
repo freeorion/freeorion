@@ -45,6 +45,7 @@ jobs:
             libopenal-dev \
             zlibc \
             libpython3.6 \
+            libpython3.6-dev \
             libfreetype6-dev \
             libpng-dev \
             libogg-dev \
