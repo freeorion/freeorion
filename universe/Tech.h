@@ -95,6 +95,9 @@ public:
     const std::vector<UnlockableItem>&    UnlockedItems() const
     { return m_unlocked_items; }
 
+    const ValueRef::ValueRef<double>* ResearchCostRef() const { return m_research_cost.get(); } //!< return value ref of research cost
+    const ValueRef::ValueRef<int>*    ResearchTurnsRef() const { return m_research_turns.get(); } //!< return value ref of research turns
+
     const std::set<std::string>&    UnlockedTechs() const { return m_unlocked_techs; }  //!< returns the set of names of all techs for which this one is a prerequisite
 
     /** Returns a number, calculated from the contained data, which should be
