@@ -51,9 +51,9 @@ namespace {
             // where a single element always corresponds to a single glyph
             std::vector<utf8::uint32_t> name;
             utf8::utf8to32(name_o.begin(), name_o.end(), std::back_inserter(name));
-            const unsigned owner_count = owner_empire_ids.size();
-            const unsigned piece_length = name.size() / owner_count;
-            unsigned extra = name.size() - owner_count*piece_length; // letters that would be left over
+            const auto owner_count = owner_empire_ids.size();
+            const auto piece_length = name.size() / owner_count;
+            auto extra = name.size() - owner_count*piece_length; // letters that would be left over
             std::string retval;
             int start = 0;
 
@@ -68,8 +68,7 @@ namespace {
                 utf8::utf32to8(name.begin() + start, name.begin() + start + current_length, std::back_inserter(piece));
 
                 GG::Clr empire_clr = ClientUI::TextColor();
-                const Empire* empire = GetEmpire(empire_id);
-                if (empire)
+                if (auto empire = empires.GetEmpire(empire_id))
                     empire_clr = empire->Color();
 
                 retval += ColorTag(piece, empire_clr);

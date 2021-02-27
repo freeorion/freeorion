@@ -1993,7 +1993,7 @@ void MapWnd::RenderSystems() {
                     std::map<int, int> colony_count_by_empire_id;
                     const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
 
-                    for (auto& planet : Objects().find<const Planet>(system->PlanetIDs())) {
+                    for (const auto& planet : Objects().find<const Planet>(system->PlanetIDs())) {
                         if (known_destroyed_object_ids.count(planet->ID()) > 0)
                             continue;
 
@@ -2001,7 +2001,7 @@ void MapWnd::RenderSystems() {
                         if (!planet->Unowned()) {
                             has_empire_planet = true;
 
-                            std::map<int, int>::iterator it = colony_count_by_empire_id.find(planet->Owner()) ;
+                            auto it = colony_count_by_empire_id.find(planet->Owner()) ;
                             if (it != colony_count_by_empire_id.end())
                                 it->second++;
                             else
@@ -2029,8 +2029,9 @@ void MapWnd::RenderSystems() {
                             glColor(empire->Color());
                         else
                             ErrorLogger() << "MapWnd::RenderSystems(): could not load empire with id " << supply_empire_id;
-                    } else
+                    } else {
                         glColor(GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color"));
+                    }
 
                     glLineWidth(outer_circle_width);
                     CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
@@ -2055,19 +2056,24 @@ void MapWnd::RenderSystems() {
                     int colonised_planets = 0;
                     int position = 0;
 
-                    for (std::pair<int, int> it : colony_count_by_empire_id)
-                        colonised_planets += it.second;
+                    for (auto& [empire_id, colony_count] : colony_count_by_empire_id) {
+                        (void)empire_id; // quiet unused variable warning
+                        colonised_planets += colony_count;
+                    }
 
-                    float segment = static_cast<float>(TWO_PI) / colonised_planets;
+                    const double segment = TWO_PI / std::max(colonised_planets, 1);
 
-                    for (std::pair<int, int> it : colony_count_by_empire_id) {
-                        if (const Empire* empire = GetEmpire(it.first))
+                    for (auto& [empire_id, colony_count] : colony_count_by_empire_id) {
+                        if (const Empire* empire = GetEmpire(empire_id))
                             glColor(empire->Color());
                         else
                             glColor(ClientUI::TextColor());
 
-                        CircleArc(inner_circle_ul, inner_circle_lr, position * segment, (it.second + position) * segment, false);
-                        position += it.second;
+                        CircleArc(inner_circle_ul,
+                                  inner_circle_lr,
+                                  position * segment,
+                                  (colony_count + position) * segment, false);
+                        position += colony_count;
                     }
                 }
             }
