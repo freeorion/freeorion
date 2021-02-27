@@ -373,8 +373,10 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
     GetLoggersToSinkFrontEnds().ConfigureFrontEnds(file_sink_backend);
 
     // Print setup message.
+    char mbstr[100] = {};
     auto date_time = std::time(nullptr);
-    InfoLogger(log) << "Logger initialized at " << std::ctime(&date_time);
+    std::strftime(mbstr, sizeof(mbstr), "%c", std::localtime(&date_time)); // %c writes standard date and time string, e.g. Sun Oct 17 04:41:13 2010 (locale dependent)
+    InfoLogger(log) << "Logger initialized at " << mbstr;
 }
 
 void ShutdownLoggingSystemFileSink() {
