@@ -38,7 +38,7 @@ namespace {
 
         if (!known_techs.count((*it)->Name()) && it != end_it) {
             std::vector<const Tech*> stack;
-            stack.emplace_back(it->get());
+            stack.push_back(it->get());
             while (!stack.empty()) {
                 const Tech* current_tech = stack.back();
                 unsigned int starting_stack_size = stack.size();
@@ -49,13 +49,13 @@ namespace {
                     if (prereq_unknown)
                         all_prereqs_known = false;
                     if (!checked_techs.count(prereq_tech) && prereq_unknown)
-                        stack.emplace_back(prereq_tech);
+                        stack.push_back(prereq_tech);
                 }
                 if (starting_stack_size == stack.size()) {
                     stack.pop_back();
-                    checked_techs.emplace(current_tech);
+                    checked_techs.insert(current_tech);
                     if (all_prereqs_known)
-                        retval.emplace_back(current_tech);
+                        retval.push_back(current_tech);
                 }
             }
         }
