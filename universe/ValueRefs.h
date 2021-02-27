@@ -429,6 +429,7 @@ bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
+
     return true;
 }
 
@@ -1745,17 +1746,25 @@ bool Operation<T>::operator==(const ValueRef<T>& rhs) const
         return false;
     const Operation<T>& rhs_ = static_cast<const Operation<T>&>(rhs);
 
-    if (m_operands == rhs_.m_operands)
-        return true;
-
+    if (m_op_type != rhs_.m_op_type)
+        return false;
     if (m_operands.size() != rhs_.m_operands.size())
         return false;
 
-    for (unsigned int i = 0; i < m_operands.size(); ++i) {
-        if (m_operands[i] != rhs_.m_operands[i])
-            return false;
-        if (m_operands[i] && *(m_operands[i]) != *(rhs_.m_operands[i]))
-            return false;
+    try {
+        for (std::size_t idx = 0; idx < m_operands.size(); ++idx) {
+            const auto& my_op = m_operands.at(idx);
+            const auto& rhs_op = rhs_.m_operands.at(idx);
+
+            if (my_op == rhs_op)
+                continue;
+            if (!my_op || !rhs_op)
+                return false;
+            if (*my_op != *rhs_op)
+                return false;
+        }
+    } catch (...) {
+        return false;
     }
 
     // should be redundant...
