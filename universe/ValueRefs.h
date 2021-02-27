@@ -87,9 +87,10 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     explicit Variable(ReferenceType ref_type,
              bool return_immediate_value = false);
 
+    template <typename S>
     Variable(ReferenceType ref_type,
              boost::optional<std::string>&& container_name,
-             std::string&& property_name,
+             S&& property_name,
              bool return_immediate_value = false);
 
     Variable(ReferenceType ref_type, std::vector<std::string>&& property_name,
@@ -566,24 +567,25 @@ Variable<T>::Variable(ReferenceType ref_type, S&& property_name,
                       bool return_immediate_value) :
     ValueRef<T>(),
     m_ref_type(ref_type),
+    m_property_name{std::forward<S>(property_name)},
     m_return_immediate_value(return_immediate_value)
 {
-    m_property_name.emplace_back(std::move(property_name));
     InitInvariants();
 }
 
 template <typename T>
+template <typename S>
 Variable<T>::Variable(ReferenceType ref_type,
                       boost::optional<std::string>&& container_name,
-                      std::string&& property_name,
+                      S&& property_name,
                       bool return_immediate_value) :
     ValueRef<T>(),
     m_ref_type(ref_type),
     m_return_immediate_value(return_immediate_value)
 {
     if (container_name)
-        m_property_name.emplace_back(std::move(*container_name));
-    m_property_name.emplace_back(std::move(property_name));
+        m_property_name.push_back(std::move(*container_name));
+    m_property_name.push_back(std::forward<S>(property_name));
 
     InitInvariants();
 }
