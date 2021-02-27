@@ -55,20 +55,18 @@ jobs:
 
     - name: Build C++
       run: |
-       export CPLUS_INCLUDE_PATH=/usr/include/python3.6
-       df
        mkdir build
        cd build
        cmake -DBUILD_SHARED_LIBS=ON \
              -DBUILD_TESTING=OFF -DBUILD_CLIENT_GG=ON \
              -DBUILD_SERVER=ON -DBUILD_AI=ON \
              -DBUILD_PARSERS=OFF ..
-       df
+
        cmake --build . --config Release
        df
        cd ..
        rm -rf build
-       df
-   
+
+
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
