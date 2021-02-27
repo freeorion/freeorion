@@ -711,16 +711,21 @@ bool Statistic<T, V>::operator==(const ValueRef<T>& rhs) const
 
     if (m_stat_type != rhs_.m_stat_type)
         return false;
-    if (this->m_value_ref != rhs_.m_value_ref)
+
+    if (m_value_ref == rhs_.m_value_ref) { // both unique_ptr could be nullptr
+        // check next member
+    } else if (!m_value_ref || !rhs_.m_value_ref) {
         return false;
+    } else if (*m_value_ref != *(rhs_.m_value_ref)) {
+        return false;
+    }
 
     if (m_sampling_condition == rhs_.m_sampling_condition) {
         // check next member
     } else if (!m_sampling_condition || !rhs_.m_sampling_condition) {
         return false;
-    } else {
-        if (*m_sampling_condition != *(rhs_.m_sampling_condition))
-            return false;
+    } else if (*m_sampling_condition != *(rhs_.m_sampling_condition)) {
+        return false;
     }
 
     return true;
