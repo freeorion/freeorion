@@ -1,0 +1,74 @@
+name: "CodeQL C++"
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ master ]
+
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'cpp' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: ${{ matrix.language }}
+        # If you wish to specify custom queries, you can do so here or in a config file.
+        # By default, queries listed here will override any specified in a config file.
+        # Prefix the list here with "+" to use these queries and those in the config file.
+        # queries: ./path/to/local/query, your-org/your-repo/queries@main
+
+    - name: Update repository metadata
+      run: |
+        sudo apt-get update
+        
+    - name: Install dependencies
+      run: |
+        # sudo apt-get -qq -y --no-install-recommends install \
+        sudo apt-get install --assume-yes \
+            libboost1.62-all-dev \
+            libglew-dev \
+            libopenal-dev \
+            zlibc \
+            libpython3.6 \
+            libpython3.6-dev \
+            libfreetype6-dev \
+            libpng-dev \
+            libogg-dev \
+            libvorbis-dev \
+            libsdl2-dev \
+            cppcheck \
+
+    - name: Build C++
+      run: |
+       export CPLUS_INCLUDE_PATH=/usr/include/python3.6
+       df
+       mkdir build
+       cd build
+       cmake -DBUILD_SHARED_LIBS=ON \
+             -DBUILD_TESTING=OFF -DBUILD_CLIENT_GG=ON \
+             -DBUILD_SERVER=ON -DBUILD_AI=ON \
+             -DBUILD_PARSERS=OFF ..
+       df
+       cmake --build . --config Release
+       df
+       cd ..
+       rm -rf build
+       df
+   
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
