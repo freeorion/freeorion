@@ -9929,7 +9929,7 @@ unsigned int And::GetCheckSum() const {
 std::vector<const Condition*> And::Operands() const {
     std::vector<const Condition*> retval;
     retval.reserve(m_operands.size());
-    std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
+    std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
                    [](const std::unique_ptr<Condition>& xx) {return xx.get();});
     return retval;
 }
@@ -10393,7 +10393,7 @@ unsigned int OrderedAlternativesOf::GetCheckSum() const {
 std::vector<const Condition*> OrderedAlternativesOf::Operands() const {
     std::vector<const Condition*> retval;
     retval.reserve(m_operands.size());
-    std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
+    std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
                    [](const std::unique_ptr<Condition>& xx) {return xx.get();});
     return retval;
 }
