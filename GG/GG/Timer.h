@@ -60,7 +60,7 @@ private:
     typedef std::map<Wnd*, boost::signals2::connection> ConnectionMap;
 
     Timer();
-    Timer(const Timer&); // disabled
+    Timer(const Timer&) = delete;
 
     ConnectionMap  m_wnd_connections;
     unsigned int   m_interval;

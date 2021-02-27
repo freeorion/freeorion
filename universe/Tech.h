@@ -106,8 +106,8 @@ public:
     unsigned int                    GetCheckSum() const;
 
 private:
-    Tech(const Tech&);                  // disabled
-    const Tech& operator=(const Tech&); // disabled
+    Tech(const Tech&) = delete;
+    Tech& operator=(const Tech&) = delete;
     void Init();
 
     std::string                     m_name;

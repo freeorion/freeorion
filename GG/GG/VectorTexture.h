@@ -52,8 +52,8 @@ public:
     GG_CONCRETE_EXCEPTION(BadFile, GG::VectorTexture, Exception);
 
 private:
-    VectorTexture(const VectorTexture& rhs);            ///< disabled
-    VectorTexture& operator=(const VectorTexture& rhs); ///< disabled
+    VectorTexture(const VectorTexture& rhs) = delete;
+    VectorTexture& operator=(const VectorTexture& rhs) = delete;
 
     boost::filesystem::path             m_path;         ///< file path from which this VectorTexture was constructed
     std::shared_ptr<VectorTextureImpl>  m_impl;

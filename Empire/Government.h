@@ -54,8 +54,8 @@ public:
     unsigned int GetCheckSum() const;
 
 private:
-    Policy(const Policy&);                  // disabled
-    const Policy& operator=(const Policy&); // disabled
+    Policy(const Policy&) = delete;
+    Policy& operator=(const Policy&) = delete;
 
     std::string                                         m_name;
     std::string                                         m_description;

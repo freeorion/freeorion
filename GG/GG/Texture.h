@@ -120,8 +120,9 @@ public:
     GG_CONCRETE_EXCEPTION(InsufficientResources, GG::Texture, Exception);
 
 private:
-    Texture(const Texture& rhs);             ///< disabled
-    Texture& operator=(const Texture& rhs);  ///< disabled
+    Texture(const Texture& rhs) = delete;
+    Texture& operator=(const Texture& rhs) = delete;
+
     void InitFromRawData(X width, Y height, const unsigned char* image, GLenum format, GLenum type,
                          unsigned int bytes_per_pixel, bool mipmap);
     unsigned char* GetRawBytes();
