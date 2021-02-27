@@ -60,8 +60,6 @@ const ShipDesign* GetShipDesign(int ship_design_id)
 ////////////////////////////////////////////////
 // CommonParams
 ////////////////////////////////////////////////
-CommonParams::CommonParams() {}
-
 CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& production_cost_,
                            std::unique_ptr<ValueRef::ValueRef<int>>&& production_time_,
                            bool producible_,

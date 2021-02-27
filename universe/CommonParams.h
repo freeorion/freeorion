@@ -31,7 +31,7 @@ using ConsumptionMap = std::map<T, std::pair<std::unique_ptr<ValueRef::ValueRef<
 //! Used as temporary storage for parsing to reduce number of sub-items parsed
 //! per item.
 struct FO_COMMON_API CommonParams {
-    CommonParams();
+    CommonParams() = default;
     CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& production_cost_,
                  std::unique_ptr<ValueRef::ValueRef<int>>&& production_time_,
                  bool producible_,
@@ -41,7 +41,7 @@ struct FO_COMMON_API CommonParams {
                  ConsumptionMap<MeterType>&& production_meter_consumption_,
                  ConsumptionMap<std::string>&& production_special_consumption_,
                  std::unique_ptr<Condition::Condition>&& enqueue_location_);
-    ~CommonParams();
+    ~CommonParams(); // needed due to forward-declared Condition held in unique_ptr
 
     std::unique_ptr<ValueRef::ValueRef<double>>         production_cost;
     std::unique_ptr<ValueRef::ValueRef<int>>            production_time;

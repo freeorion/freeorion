@@ -38,10 +38,7 @@ public:
 protected:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
-public:
-    ~Building() {}
 
-protected:
     /** Returns new copy of this Building. */
     Building* Clone(int empire_id = ALL_EMPIRES) const override;
 

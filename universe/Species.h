@@ -50,8 +50,7 @@ public:
     FocusType(std::string& name, std::string& description,
               std::unique_ptr<Condition::Condition>&& location,
               std::string& graphic);
-
-    ~FocusType();
+    ~FocusType(); // needed due to forward-declared Condition held in unique_ptr
 
     const std::string&          Name() const        { return m_name; }          ///< returns the name for this focus type
     const std::string&          Description() const { return m_description; }   ///< returns a text description of this focus type
@@ -70,7 +69,7 @@ public:
 private:
     std::string                                 m_name;
     std::string                                 m_description;
-    std::shared_ptr<const Condition::Condition> m_location;
+    std::shared_ptr<const Condition::Condition> m_location; // TODO: make unique_ptr - requires tweaking SpeciesParser to not require copies
     std::string                                 m_graphic;
 };
 
