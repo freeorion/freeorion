@@ -339,7 +339,9 @@
     <ClCompile Include="..\..\util\SerializeModeratorAction.cpp" />
     <ClCompile Include="..\..\util\SerializeMultiplayerCommon.cpp" />
     <ClCompile Include="..\..\util\SerializeOrderSet.cpp" />
-    <ClCompile Include="..\..\util\SerializeUniverse.cpp" />
+    <ClCompile Include="..\..\util\SerializeUniverse.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4172;4308;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="..\..\util\SitRepEntry.cpp" />
     <ClCompile Include="..\..\util\XMLDoc.cpp" />
     <ClCompile Include="..\..\util\VarText.cpp" />
