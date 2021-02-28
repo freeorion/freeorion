@@ -2540,7 +2540,7 @@ namespace {
         combats.reserve(context.ContextObjects().size());
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in combats
-        for (const auto& sys : context.ContextObjects().all<System>()) {
+        for (const auto& sys : context.ContextObjects().allRaw<System>()) {
             if (CombatConditionsInSystem(sys->ID(), context))
                 combats.emplace_back(sys->ID(), context.current_turn, context.ContextUniverse(),
                                      context.Empires(), context.diplo_statuses,
@@ -2555,7 +2555,7 @@ namespace {
       * updating after combat. */
     void BackProjectSystemCombatInfoObjectMeters(std::vector<CombatInfo>& combats) {
         for (CombatInfo& combat : combats) {
-            for (const auto& object : combat.objects.all())
+            for (const auto& object : combat.objects.allRaw())
                 object->BackPropagateMeters();
         }
     }
@@ -2889,7 +2889,7 @@ namespace {
         // collect, for each planet, what ships have been ordered to colonize it
         std::map<int, std::map<int, std::set<int>>> planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
 
-        for (auto& ship : objects.all<Ship>()) {
+        for (auto* ship : objects.allRaw<Ship>()) {
             if (ship->Unowned())
                 continue;
             int owner_empire_id = ship->Owner();
@@ -2903,7 +2903,7 @@ namespace {
 
             ship->SetColonizePlanet(INVALID_OBJECT_ID); // reset so failed colonization doesn't leave ship with hanging colonization order set
 
-            auto planet = objects.get<Planet>(colonize_planet_id);
+            auto planet = objects.getRaw<Planet>(colonize_planet_id);
             if (!planet)
                 continue;
 
@@ -3002,12 +3002,12 @@ namespace {
       * ground combat resolution */
     void HandleInvasion(EmpireManager& empires, Universe& universe) {
         std::map<int, std::map<int, double>> planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
-        std::vector<std::shared_ptr<Ship>> invade_ships;
+        std::vector<Ship*> invade_ships;
         ObjectMap& objects = universe.Objects();
         auto empire_ids = empires.EmpireIDs();
 
         // collect ships that are invading and the troops they carry
-        for (auto& ship : objects.all<Ship>()) {
+        for (auto* ship : objects.allRaw<Ship>()) {
             if (!ship->HasTroops(universe))     // can't invade without troops
                 continue;
             if (ship->SystemID() == INVALID_OBJECT_ID)
@@ -3037,10 +3037,10 @@ namespace {
 
         // delete ships that invaded something
         for (auto& ship : invade_ships) {
-            auto system = objects.get<System>(ship->SystemID());
+            auto system = objects.getRaw<System>(ship->SystemID());
 
             // destroy invading ships and their fleets if now empty
-            if (auto fleet = objects.get<Fleet>(ship->FleetID())) {
+            if (auto fleet = objects.getRaw<Fleet>(ship->FleetID())) {
                 fleet->RemoveShips({ship->ID()});
                 if (fleet->Empty()) {
                     if (system)
@@ -3058,7 +3058,7 @@ namespace {
         UpdateEmpireInvasionInfo(planet_empire_troops, empires, objects);
 
         // check each planet invading or other troops, such as due to empire troops, native troops, or rebel troops
-        for (const auto& planet : objects.all<Planet>()) {
+        for (const auto& planet : objects.allRaw<Planet>()) {
             planet_empire_troops[planet->ID()].merge(planet->EmpireGroundCombatForces());
             //auto empire_forces = planet->EmpireGroundCombatForces();
             //if (!empire_forces.empty())
@@ -3168,10 +3168,10 @@ namespace {
     /** Determines which fleets or planets ordered given to other empires,
       * and sets their new ownership */
     void HandleGifting(EmpireManager& empires, ObjectMap& objects) {
-        std::map<int, std::vector<std::shared_ptr<UniverseObject>>> empire_gifted_objects;
+        std::map<int, std::vector<UniverseObject*>> empire_gifted_objects;
 
         // collect fleets ordered to be given
-        for (auto& fleet : objects.all<Fleet>()) {
+        for (auto* fleet : objects.allRaw<Fleet>()) {
             int ordered_given_to_empire_id = fleet->OrderedGivenToEmpire();
             if (ordered_given_to_empire_id == ALL_EMPIRES)
                 continue;
@@ -3186,14 +3186,14 @@ namespace {
         }
 
         // collect planets ordered to be given
-        for (auto& planet : objects.all<Planet>()) {
+        for (auto* planet : objects.allRaw<Planet>()) {
             int ordered_given_to_empire_id = planet->OrderedGivenToEmpire();
             if (ordered_given_to_empire_id == ALL_EMPIRES)
                 continue;
             planet->ClearGiveToEmpire(); // in case things fail, to avoid potential inconsistent state
 
             if (planet->Unowned() || planet->OwnedBy(ordered_given_to_empire_id))
-            { continue; }
+                continue;
 
             empire_gifted_objects[ordered_given_to_empire_id].push_back(planet);
         }
@@ -3246,8 +3246,8 @@ namespace {
         // do transfers of ownership of gifted stuff without further checks
         for (auto& [initial_recipient_ids, gifted_objects] : filtered_empire_gifted_objects) {
             const auto& [initial_owner_empire_id, recipient_empire_id] = initial_recipient_ids;
-            for (auto& gifted_obj : gifted_objects) {
-                for (auto& contained_obj : objects.find<UniverseObject>(gifted_obj->ContainedObjectIDs())) {
+            for (auto* gifted_obj : gifted_objects) {
+                for (auto* contained_obj : objects.findRaw<UniverseObject>(gifted_obj->ContainedObjectIDs())) {
                     if (contained_obj->OwnedBy(initial_owner_empire_id))
                         contained_obj->SetOwner(recipient_empire_id);
                 }
@@ -3267,11 +3267,11 @@ namespace {
 
     /** Destroys suitable objects that have been ordered scrapped.*/
     void HandleScrapping(Universe& universe, EmpireManager& empires) {
-        std::vector<std::shared_ptr<Ship>> scrapped_ships;
+        std::vector<Ship*> scrapped_ships;
         ObjectMap& objects{universe.Objects()};
         auto empire_ids = empires.EmpireIDs();
 
-        for (auto& ship : objects.all<Ship>()) {
+        for (auto* ship : objects.allRaw<Ship>()) {
             if (ship->OrderedScrapped())
                 scrapped_ships.push_back(ship);
         }
@@ -3279,11 +3279,11 @@ namespace {
         for (auto& ship : scrapped_ships) {
             DebugLogger() << "... ship: " << ship->ID() << " ordered scrapped";
 
-            auto system = objects.get<System>(ship->SystemID());
+            auto* system = objects.getRaw<System>(ship->SystemID());
             if (system)
                 system->Remove(ship->ID());
 
-            auto fleet = objects.get<Fleet>(ship->FleetID());
+            auto* fleet = objects.getRaw<Fleet>(ship->FleetID());
             if (fleet) {
                 fleet->RemoveShips({ship->ID()});
                 if (fleet->Empty()) {
@@ -3302,8 +3302,8 @@ namespace {
             universe.Destroy(ship->ID(), empire_ids);
         }
 
-        std::vector<std::shared_ptr<Building>> scrapped_buildings;
-        for (auto& building : objects.all<Building>()) {
+        std::vector<Building*> scrapped_buildings;
+        for (auto* building : objects.allRaw<Building>()) {
             if (building->OrderedScrapped())
                 scrapped_buildings.push_back(building);
         }
@@ -3328,9 +3328,9 @@ namespace {
     /** Removes bombardment state info from objects. Actual effects of
       * bombardment are handled during */
     void CleanUpBombardmentStateInfo(ObjectMap& objects) {
-        for (auto& ship : objects.all<Ship>())
+        for (auto* ship : objects.allRaw<Ship>())
             ship->ClearBombardPlanet();
-        for (auto& planet : objects.all<Planet>()) {
+        for (auto* planet : objects.allRaw<Planet>()) {
             if (planet->IsAboutToBeBombarded()) {
                 //DebugLogger() << "CleanUpBombardmentStateInfo: " << planet->Name() << " was about to be bombarded";
                 planet->ResetIsAboutToBeBombarded();
@@ -3340,7 +3340,7 @@ namespace {
 
     /** Causes ResourceCenters (Planets) to update their focus records */
     void UpdateResourceCenterFocusHistoryInfo(ObjectMap& objects) {
-        for (auto& planet : objects.all<Planet>())
+        for (auto* planet : objects.allRaw<Planet>())
             planet->UpdateFocusHistory();
     }
 
@@ -3357,18 +3357,18 @@ namespace {
 
     /** Deletes empty fleets. */
     void CleanEmptyFleets(ScriptingContext& context) {
-        std::vector<std::shared_ptr<Fleet>> empty_fleets;
+        std::vector<Fleet*> empty_fleets;
         Universe& universe{context.ContextUniverse()};
         ObjectMap& objects{context.ContextObjects()};
         auto empire_ids = context.EmpireIDs();
 
-        for (auto& fleet : objects.all<Fleet>()) {
+        for (auto* fleet : objects.allRaw<Fleet>()) {
             if (fleet->Empty())
                 empty_fleets.push_back(fleet);
         }
 
         for (auto& fleet : empty_fleets) {
-            if (auto sys = objects.get<System>(fleet->SystemID()))
+            if (auto* sys = objects.getRaw<System>(fleet->SystemID()))
                 sys->Remove(fleet->ID());
 
             universe.RecursiveDestroy(fleet->ID(), empire_ids);

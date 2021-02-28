@@ -481,7 +481,7 @@ float ShipPart::ProductionCost(int empire_id, int location_id, const ScriptingCo
 
 
     const ObjectMap& objects{context.ContextObjects()};
-    auto location = objects.get(location_id);
+    auto location = objects.getRaw(location_id);
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
@@ -492,8 +492,8 @@ float ShipPart::ProductionCost(int empire_id, int location_id, const ScriptingCo
 
 
     const ScriptingContext design_id_context{
-        context, std::move(source),
-        std::const_pointer_cast<UniverseObject>(location), // won't be modified when evaluating a ValueRef, but needs to be a pointer to mutable to be passed as the target object
+        context, source.get(),
+        const_cast<UniverseObject*>(location), // won't be modified when evaluating a ValueRef, but needs to be a pointer to mutable to be passed as the target object
         in_design_id, PRODUCTION_BLOCK_SIZE};
 
     return static_cast<float>(m_production_cost->Eval(design_id_context));
@@ -516,7 +516,7 @@ int ShipPart::ProductionTime(int empire_id, int location_id, const ScriptingCont
     }
 
     const ObjectMap& objects{context.ContextObjects()};
-    auto location = objects.get(location_id);
+    auto location = objects.getRaw(location_id);
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
@@ -527,8 +527,8 @@ int ShipPart::ProductionTime(int empire_id, int location_id, const ScriptingCont
         return ARBITRARY_LARGE_TURNS;
 
     const ScriptingContext design_id_context{
-        context, std::move(source),
-        std::const_pointer_cast<UniverseObject>(location), // won't be modified when evaluating a ValueRef, but needs to be a pointer to mutable to be passed as the target object
+        context, source.get(),
+        const_cast<UniverseObject*>(location), // won't be modified when evaluating a ValueRef, but needs to be a pointer to mutable to be passed as the target object
         in_design_id, PRODUCTION_BLOCK_SIZE};
     return m_production_time->Eval(design_id_context);
 }

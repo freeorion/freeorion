@@ -930,7 +930,7 @@ private:
 
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
-            for (auto& obj : objects.all()) {
+            for (auto* obj : objects.allRaw()) {
                 auto tags = obj->Tags(context);
                 all_tags.insert(tags.first.begin(), tags.first.end());
                 all_tags.insert(tags.second.begin(), tags.second.end());
@@ -1022,7 +1022,7 @@ private:
 
             // collect all valid foci on any object in universe
             std::set<std::string> all_foci;
-            for (auto& planet : objects.all<Planet>()) {
+            for (auto* planet : objects.allRaw<Planet>()) {
                 auto obj_foci = planet->AvailableFoci();
                 std::copy(std::make_move_iterator(obj_foci.begin()),
                           std::make_move_iterator(obj_foci.end()),
@@ -1426,7 +1426,7 @@ public:
             return it->second;
 
         auto ref = GetColumnValueRef(column);
-        std::string val = ref ? ref->Eval(ScriptingContext{Objects().get(m_object_id)}) : "";
+        std::string val = ref ? ref->Eval(ScriptingContext{Objects().getRaw(m_object_id)}) : "";
         m_column_val_cache[column] = val;
         return val;
     }
@@ -2033,7 +2033,7 @@ public:
         m_object_change_connections.clear(); // should disconnect scoped connections
     }
 
-    bool ObjectShown(const std::shared_ptr<const UniverseObject>& obj,
+    bool ObjectShown(const UniverseObject* obj,
                      const ScriptingContext& context,
                      bool assume_visible_without_checking = false)
     {
@@ -2055,6 +2055,12 @@ public:
 
         return m_visibilities[type].count(VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE);
     }
+
+    template <typename T>
+    bool ObjectShown(const std::shared_ptr<T>& obj,
+                     const ScriptingContext& context,
+                     bool assume_visible_without_checking = false)
+    { return ObjectShown(obj.get(), context, assume_visible_without_checking); }
 
     void Refresh() {
         SectionedScopedTimer timer("ObjectListBox::Refresh");

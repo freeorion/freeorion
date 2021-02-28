@@ -516,15 +516,12 @@ bool Planet::ContainedBy(int object_id) const
 
 std::vector<std::string> Planet::AvailableFoci() const {    // TODO: pass ScriptingContext
     std::vector<std::string> retval;
-    auto this_planet = std::dynamic_pointer_cast<const Planet>(UniverseObject::shared_from_this());
-    if (!this_planet)
-        return retval;
-    const ScriptingContext context{this_planet};
-    if (const auto* species = GetSpecies(this_planet->SpeciesName())) {
+    const ScriptingContext context{this};
+    if (const auto* species = GetSpecies(this->SpeciesName())) {
         retval.reserve(species->Foci().size());
         for (const auto& focus_type : species->Foci()) {
             if (const auto* location = focus_type.Location()) {
-                if (location->Eval(context, this_planet))
+                if (location->Eval(context, this))
                     retval.push_back(focus_type.Name());
             }
         }

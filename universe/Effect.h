@@ -42,10 +42,10 @@ namespace Effect {
     struct AccountingInfo;
     class EffectsGroup;
 
-    typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
+    using TargetSet = std::vector<UniverseObject*>;
     /** Effect accounting information for all meters of all objects that are
       * acted on by effects. */
-    typedef std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
+    using AccountingMap= std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>>;
 
     /** Description of cause of an effect: the general cause type, and the
       * specific cause.  eg. Building and a particular BuildingType. */

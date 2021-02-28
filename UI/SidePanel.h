@@ -122,10 +122,10 @@ private:
     void PlanetClickedSlot(int planet_id, const ObjectMap& objects);
 
     /** Responds to insertion fleets into system during a turn.  may update colonize buttons. */
-    static void FleetsInserted(const std::vector<std::shared_ptr<Fleet>>& fleets);
+    static void FleetsInserted(const std::vector<const Fleet*>& fleets);
 
     /** Responds to removal fleets from system during a turn.  may update colonize buttons. */
-    static void FleetsRemoved(const std::vector<std::shared_ptr<Fleet>>& fleets);
+    static void FleetsRemoved(const std::vector<const Fleet*>& fleets);
 
     class SystemNameDropDownList;
     std::shared_ptr<SystemNameDropDownList>     m_system_name;

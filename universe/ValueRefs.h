@@ -452,8 +452,11 @@ private:
     T                                           m_cached_const_value = T();
 };
 
+/* Convert between names and MeterType. Names are scripting token, like Population
+ * and not the MeterType string representations like METER_POPULATION */
 [[nodiscard]] FO_COMMON_API MeterType          NameToMeter(const std::string& name);
 [[nodiscard]] FO_COMMON_API const std::string& MeterToName(MeterType meter);
+
 [[nodiscard]] FO_COMMON_API std::string_view   PlanetTypeToString(PlanetType type);
 [[nodiscard]] FO_COMMON_API std::string_view   PlanetEnvironmentToString(PlanetEnvironment env);
 [[nodiscard]] FO_COMMON_API std::string        ReconstructName(const std::vector<std::string>& property_name,

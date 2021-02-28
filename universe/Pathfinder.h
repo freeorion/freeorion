@@ -10,6 +10,9 @@
 
 class ObjectMap;
 class EmpireManager;
+namespace Condition {
+    using ObjectSet = std::vector<const UniverseObject*>;
+}
 
 #ifdef FREEORION_WIN32
 // because the linker gets confused about Win32 API functions...
@@ -122,12 +125,11 @@ public:
 
     /** Returns the partition (near, far) of the \p candidate objects into two sets,
         those that are within \p jumps of the \p stationary objects and that are not.*/
-    std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
-              std::vector<std::shared_ptr<const UniverseObject>>>
+    std::pair<Condition::ObjectSet, Condition::ObjectSet>
         WithinJumpsOfOthers(
             int jumps, const ObjectMap& objects,
-            const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
-            const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const;
+            const Condition::ObjectSet& candidates,
+            const Condition::ObjectSet& stationary) const;
 
     /** Returns the id of the System object that is closest to the specified
       * (\a x, \a y) location on the map, by direct-line distance. */

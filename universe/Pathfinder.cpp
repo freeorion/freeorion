@@ -677,17 +677,16 @@ public:
         std::vector<int>& result, size_t jump_limit,
         size_t ii, const std::vector<short>& row) const;
 
-    std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
-              std::vector<std::shared_ptr<const UniverseObject>>>
+    std::pair<Condition::ObjectSet, Condition::ObjectSet>
     WithinJumpsOfOthers(
         int jumps, const ObjectMap& objects,
-        const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
-        const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const;
+        const Condition::ObjectSet& candidates,
+        const Condition::ObjectSet& stationary) const;
 
     /** Return true if \p system_id is within \p jumps of any of \p others */
     bool WithinJumpsOfOthers(
         int jumps, int system_id, const ObjectMap& objects,
-        const std::vector<std::shared_ptr<const UniverseObject>>& others) const;
+        const Condition::ObjectSet& others) const;
 
     /** If any of \p others are within \p jumps of \p ii return true in \p answer.
 
@@ -696,7 +695,7 @@ public:
      */
     void WithinJumpsOfOthersCacheHit(
         bool& answer, int jumps, const ObjectMap& objects,
-        const std::vector<std::shared_ptr<const UniverseObject>>& others,
+        const Condition::ObjectSet& others,
         size_t ii, distance_matrix_storage<short>::row_ref row) const;
 
     int NearestSystemTo(double x, double y, const ObjectMap& objects) const;
@@ -727,13 +726,11 @@ Pathfinder::Pathfinder() :
 Pathfinder::~Pathfinder() = default;
 
 namespace {
-    std::shared_ptr<const Fleet> FleetFromObject(const std::shared_ptr<const UniverseObject>& obj,
-                                                 const ObjectMap& objects)
-    {
-        auto retval = std::dynamic_pointer_cast<const Fleet>(obj);
+    const Fleet* FleetFromObject(const UniverseObject* obj, const ObjectMap& objects) {
+        auto retval = dynamic_cast<const Fleet*>(obj);
         if (!retval) {
-            if (auto ship = std::dynamic_pointer_cast<const Ship>(obj))
-                retval = objects.get<Fleet>(ship->FleetID());
+            if (auto ship = dynamic_cast<const Ship*>(obj))
+                retval = objects.getRaw<Fleet>(ship->FleetID());
         }
         return retval;
     }
@@ -823,7 +820,7 @@ namespace {
     typedef boost::variant<std::nullptr_t, int, std::pair<int, int>> GeneralizedLocationType;
 
     /** Return the location of \p obj.*/
-    GeneralizedLocationType GeneralizedLocation(const std::shared_ptr<const UniverseObject>& obj,
+    GeneralizedLocationType GeneralizedLocation(const UniverseObject* obj,
                                                 const ObjectMap& objects)
     {
         if (!obj)
@@ -847,7 +844,7 @@ namespace {
             return fleet_sys_pair;
         }
 
-        if (std::dynamic_pointer_cast<const Field>(obj))
+        if (dynamic_cast<const Field*>(obj))
             return nullptr;
 
         // Don't generate an error message for temporary objects.
@@ -860,7 +857,7 @@ namespace {
 
     /** Return the location of the object with id \p object_id.*/
     GeneralizedLocationType GeneralizedLocation(int object_id, const ObjectMap& objects)
-    { return GeneralizedLocation(objects.get(object_id), objects); }
+    { return GeneralizedLocation(objects.getRaw(object_id), objects); }
 }
 
 /** JumpDistanceSys1Visitor and JumpDistanceSys2Visitor are variant visitors
@@ -1057,37 +1054,37 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
     // If one or both objects are (in) a fleet between systems, use the destination system
     // and add the distance from the fleet to the destination system, essentially calculating
     // the distance travelled until both could be in the same system.
-    const auto obj1 = objects.get(object1_id);
+    const auto obj1 = objects.getRaw(object1_id);
     if (!obj1)
         return -1.0;
 
-    const auto obj2 = objects.get(object2_id);
+    const auto obj2 = objects.getRaw(object2_id);
     if (!obj2)
         return -1.0;
 
     double dist{0.0};
 
-    auto&& system_one = obj1->ObjectType() == UniverseObjectType::OBJ_SYSTEM ?
-        std::static_pointer_cast<const System>(obj1) : objects.get<System>(obj1->SystemID());
+    auto* system_one = obj1->ObjectType() == UniverseObjectType::OBJ_SYSTEM ?
+        static_cast<const System*>(obj1) : objects.getRaw<System>(obj1->SystemID());
     if (!system_one) {
         auto fleet = FleetFromObject(obj1, objects);
         if (!fleet)
             return -1.0;
-        if (auto next_sys = objects.get<System>(fleet->NextSystemID())) {
+        if (auto next_sys = objects.getRaw<System>(fleet->NextSystemID())) {
             dist = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
-            system_one = std::move(next_sys);
+            system_one = next_sys;
         }
     }
 
-    auto&& system_two = obj2->ObjectType() == UniverseObjectType::OBJ_SYSTEM ?
-        std::static_pointer_cast<const System>(obj2) : objects.get<System>(obj2->SystemID());
+    auto* system_two = obj2->ObjectType() == UniverseObjectType::OBJ_SYSTEM ?
+        static_cast<const System*>(obj2) : objects.getRaw<System>(obj2->SystemID());
     if (!system_two) {
         auto fleet = FleetFromObject(obj2, objects);
         if (!fleet)
             return -1.0;
-        if (auto next_sys = objects.get<System>(fleet->NextSystemID())) {
+        if (auto next_sys = objects.getRaw<System>(fleet->NextSystemID())) {
             dist += std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
-            system_two = std::move(next_sys);
+            system_two = next_sys;
         }
     }
 
@@ -1279,7 +1276,7 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
     WithinJumpsOfOthersObjectVisitor(const Pathfinder::PathfinderImpl& _pf,
                                      int _jumps,
                                      const ObjectMap& _objects,
-                                     const std::vector<std::shared_ptr<const UniverseObject>>& _others) :
+                                     const Condition::ObjectSet& _others) :
         pf(_pf),
         jumps(_jumps),
         objects(_objects),
@@ -1287,10 +1284,8 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
     {}
 
     bool operator()(std::nullptr_t) const { return false; }
-    bool operator()(int sys_id) const {
-        bool retval = pf.WithinJumpsOfOthers(jumps, sys_id, objects, others);
-        return retval;
-    }
+    bool operator()(int sys_id) const
+    { return pf.WithinJumpsOfOthers(jumps, sys_id, objects, others); }
     bool operator()(std::pair<int, int> prev_next) const {
         return pf.WithinJumpsOfOthers(jumps, prev_next.first, objects, others)
             || pf.WithinJumpsOfOthers(jumps, prev_next.second, objects, others);
@@ -1298,7 +1293,7 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
     const Pathfinder::PathfinderImpl& pf;
     int jumps;
     const ObjectMap& objects;
-    const std::vector<std::shared_ptr<const UniverseObject>>& others;
+    const Condition::ObjectSet& others;
 };
 
 /** Examine a single other in the cache to see if any of its locations
@@ -1339,7 +1334,7 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
 void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     bool& answer, int jumps,
     const ObjectMap& objects,
-    const std::vector<std::shared_ptr<const UniverseObject>>& others,
+    const Condition::ObjectSet& others,
     size_t ii, distance_matrix_storage<short>::row_ref row) const
 {
     // Check if any of the others are within jumps of candidate, by looping
@@ -1355,34 +1350,31 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     }
 }
 
-std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
-          std::vector<std::shared_ptr<const UniverseObject>>>
+std::pair<Condition::ObjectSet, Condition::ObjectSet>
 Pathfinder::WithinJumpsOfOthers(
     int jumps, const ObjectMap& objects,
-    const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
-    const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const
+    const Condition::ObjectSet& candidates,
+    const Condition::ObjectSet& stationary) const
 {
     return pimpl->WithinJumpsOfOthers(jumps, objects, candidates, stationary);
 }
 
-std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
-          std::vector<std::shared_ptr<const UniverseObject>>>
+std::pair<Condition::ObjectSet, Condition::ObjectSet>
 Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     int jumps, const ObjectMap& objects,
-    const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
-    const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const
+    const Condition::ObjectSet& candidates,
+    const Condition::ObjectSet& stationary) const
 {
     // Examine each candidate and copy those within jumps of the
     // others into near and the rest into far.
     WithinJumpsOfOthersObjectVisitor visitor(*this, jumps, objects, stationary);
 
-    std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
-              std::vector<std::shared_ptr<const UniverseObject>>> retval;
+    std::pair<Condition::ObjectSet, Condition::ObjectSet> retval;
     auto& [near, far] = retval;
     near.reserve(candidates.size());
     far.reserve(candidates.size());
 
-    for (const auto& candidate : candidates) {
+    for (const auto* candidate : candidates) {
         GeneralizedLocationType candidate_systems = GeneralizedLocation(candidate, objects);
         bool is_near = boost::apply_visitor(visitor, candidate_systems);
 
@@ -1398,7 +1390,7 @@ Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
 bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     int jumps, int system_id,
     const ObjectMap& objects,
-    const std::vector<std::shared_ptr<const UniverseObject>>& others) const
+    const Condition::ObjectSet& others) const
 {
     if (others.empty())
         return false;
@@ -1430,7 +1422,7 @@ int Pathfinder::PathfinderImpl::NearestSystemTo(double x, double y, const Object
     double min_dist2 = std::numeric_limits<double>::max();
     int min_dist2_sys_id = INVALID_OBJECT_ID;
 
-    for (auto const& system : objects.all<System>()) {
+    for (auto const& system : objects.allRaw<System>()) {
         double xs = system->X();
         double ys = system->Y();
         double dist2 = (xs-x)*(xs-x) + (ys-y)*(ys-y);

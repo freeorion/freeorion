@@ -561,7 +561,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_effect_labels_and_values.clear();
 
     // get object and meter, aborting if not valid
-    auto ship = Objects().get<Ship>(m_object_id);
+    auto ship = Objects().getRaw<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "ShipDamageBrowseWnd::UpdateEffectLabelsAndValues couldn't get ship with id " << m_object_id;
         return;

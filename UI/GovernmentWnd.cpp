@@ -129,7 +129,7 @@ namespace {
         auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return true;
-        context.source = empire->Source(context.ContextObjects());
+        context.source = empire->Source(context.ContextObjects()).get();
 
         bool policy_adopted = empire->PolicyAdopted(policy->Name());
         bool policy_affordable = empire->PolicyAffordable(policy->Name(), context);

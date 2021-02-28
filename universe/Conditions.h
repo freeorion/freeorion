@@ -55,8 +55,8 @@ enum class ContentType : unsigned char {
 /** Same as ConditionDescription, but returns a string only with conditions that have not been met. */
 [[nodiscard]] FO_COMMON_API std::string ConditionFailedDescription(
     const std::vector<const Condition*>& conditions,
-    std::shared_ptr<const UniverseObject> candidate_object = nullptr,
-    std::shared_ptr<const UniverseObject> source_object = nullptr);
+    const UniverseObject* candidate_object = nullptr,
+    const UniverseObject* source_object = nullptr);
 
 /** Returns a single string which describes a vector of Conditions. If multiple
   * conditions are passed, they are treated as if they were contained by an And
@@ -69,8 +69,8 @@ enum class ContentType : unsigned char {
   * of conditions matches the object. */
 [[nodiscard]] FO_COMMON_API std::string ConditionDescription(
     const std::vector<const Condition*>& conditions,
-    std::shared_ptr<const UniverseObject> candidate_object = nullptr,
-    std::shared_ptr<const UniverseObject> source_object = nullptr);
+    const UniverseObject* candidate_object = nullptr,
+    const UniverseObject* source_object = nullptr);
 
 /** Matches all objects if the number of objects that match Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may

@@ -12,12 +12,12 @@ class UniverseObject;
 struct ScriptingContext;
 
 namespace Effect {
-    typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
+    using TargetSet = std::vector<UniverseObject*>;
 }
 
 namespace Condition {
 
-typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
+using ObjectSet = std::vector<const UniverseObject*>;
 
 enum class SearchDomain : char {
     NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
@@ -49,8 +49,7 @@ struct FO_COMMON_API Condition {
     void Eval(const ScriptingContext& parent_context, Effect::TargetSet& matches) const;
 
     /** Tests single candidate object, returning true iff it matches condition. */
-    bool Eval(const ScriptingContext& parent_context,
-              std::shared_ptr<const UniverseObject> candidate) const;
+    bool Eval(const ScriptingContext& parent_context, const UniverseObject* candidate) const;
 
     virtual void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                    ObjectSet& condition_non_targets) const;

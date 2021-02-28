@@ -359,7 +359,7 @@ float Tech::ResearchCost(int empire_id, const ScriptingContext& context) const {
         auto source = empire->Source(context.ContextObjects());
         if (!source)
             return ARBITRARY_LARGE_COST;
-        ScriptingContext source_context{std::move(source), context};
+        const ScriptingContext source_context{source.get(), context};
         return m_research_cost->Eval(source_context);
     }
 }
@@ -389,9 +389,9 @@ int Tech::ResearchTime(int empire_id, const ScriptingContext& context) const {
         auto source = empire->Source(context.ContextObjects());
         if (!source)
             return ARBITRARY_LARGE_TURNS;
-        ScriptingContext source_context{context, std::move(source)};
+        ScriptingContext source_context{source.get(), context};
 
-        return m_research_turns->Eval(ScriptingContext(std::move(source)));
+        return m_research_turns->Eval(source_context);
     }
 }
 

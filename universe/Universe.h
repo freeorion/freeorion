@@ -36,7 +36,7 @@ struct ScriptingContext;
 
 namespace Condition {
     struct Condition;
-    typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
+    using ObjectSet = std::vector<const UniverseObject*>;
 }
 
 namespace Effect {
@@ -44,7 +44,7 @@ namespace Effect {
     struct TargetsAndCause;     // struct TargetsAndCause { TargetSet target_set; EffectCause effect_cause; };
     struct SourcedEffectsGroup; // struct SourcedEffectsGroup { int source_object_id; const EffectsGroup* effects_group; };
     class EffectsGroup;
-    using TargetSet = std::vector<std::shared_ptr<UniverseObject>>;
+    using TargetSet = std::vector<UniverseObject*>;
     using AccountingMap = std::unordered_map<int, boost::container::flat_map<MeterType, std::vector<AccountingInfo>>>;
     using SourcesEffectsTargetsAndCause = std::pair<SourcedEffectsGroup, TargetsAndCause>;
     using SourcesEffectsTargetsAndCausesVec = std::vector<SourcesEffectsTargetsAndCause>;

@@ -242,14 +242,14 @@ namespace {
 
         ScriptingContext context;
         const auto& objects = context.ContextObjects();
-        std::shared_ptr<const UniverseObject> source;
+        const UniverseObject* source = nullptr;
         if (auto empire = context.GetEmpire(empire_id))
-            source = empire->Source(objects);
+            source = empire->Source(objects).get();
 
         if (only_failed_conditions)
-            return ConditionFailedDescription(enqueue_conditions, objects.get(candidate_object_id), std::move(source));
+            return ConditionFailedDescription(enqueue_conditions, objects.getRaw(candidate_object_id), source);
         else
-            return ConditionDescription(enqueue_conditions, objects.get(candidate_object_id), std::move(source));
+            return ConditionDescription(enqueue_conditions, objects.getRaw(candidate_object_id), source);
     }
 
     std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
@@ -280,14 +280,14 @@ namespace {
             }
         }
 
-        std::shared_ptr<const UniverseObject> source;
+        const UniverseObject* source = nullptr;
         if (auto empire = context.GetEmpire(empire_id))
-            source = empire->Source(objects);
+            source = empire->Source(objects).get();
 
         if (only_failed_conditions)
-            return ConditionFailedDescription(location_conditions, objects.get(candidate_object_id), std::move(source));
+            return ConditionFailedDescription(location_conditions, objects.getRaw(candidate_object_id), source);
         else
-            return ConditionDescription(location_conditions, objects.get(candidate_object_id), std::move(source));
+            return ConditionDescription(location_conditions, objects.getRaw(candidate_object_id), source);
     }
 
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
@@ -310,7 +310,7 @@ namespace {
             stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
         }
 
-        auto obj = Objects().get(candidate_object_id);
+        auto obj = Objects().getRaw(candidate_object_id);
         std::string candidate_name = obj ? obj->Name() : "";
         if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
             candidate_name += " (" + std::to_string(candidate_object_id) + ")";

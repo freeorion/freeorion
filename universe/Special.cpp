@@ -216,11 +216,14 @@ float Special::InitialCapacity(int object_id) const {
     if (!m_initial_capacity)
         return 0.0f;
 
-    auto obj = Objects().get(object_id);    // TODO: pass ScriptingContext and use here...
+    const ScriptingContext context; // TODO: pass ScriptingContext and use here...
+
+    auto obj = context.ContextObjects().getRaw(object_id);
     if (!obj)
         return 0.0f;
 
-    return m_initial_capacity->Eval(ScriptingContext(std::move(obj)));
+    const ScriptingContext local_context{obj, context};
+    return m_initial_capacity->Eval(local_context);
 }
 
 unsigned int Special::GetCheckSum() const {

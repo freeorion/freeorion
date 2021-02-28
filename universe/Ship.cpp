@@ -484,7 +484,7 @@ float Ship::WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& c
         float part_shots = CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part->Name());
         float target_shield = 0.0f;
         if (context.effect_target) {
-            const Ship* target = static_cast<const Ship*>(context.effect_target.get());
+            const Ship* target = static_cast<const Ship*>(context.effect_target);
             target_shield = target->GetMeter(MeterType::METER_SHIELD)->Current();
         }
         if (part_attack > target_shield) {

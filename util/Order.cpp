@@ -175,7 +175,7 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
     int system_id = INVALID_OBJECT_ID;
 
     std::set<int> arrival_starlane_ids;
-    for (const auto& ship : context.ContextObjects().find<Ship>(ship_ids)) {
+    for (const auto& ship : context.ContextObjects().findRaw<Ship>(ship_ids)) {
         if (!ship) {
             ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
                           << ") with an invalid ship";
@@ -196,7 +196,7 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
     }
 
 
-    for (const auto& ship : context.ContextObjects().find<Ship>(ship_ids)) {
+    for (const auto& ship : context.ContextObjects().findRaw<Ship>(ship_ids)) {
         // verify that empire is not trying to take ships from somebody else's fleet
         if (!ship->OwnedBy(empire)) {
             ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
@@ -248,7 +248,7 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
     u.InhibitUniverseObjectSignals(true);
 
     // validate specified ships
-    auto validated_ships = o.find<Ship>(m_ship_ids);
+    auto validated_ships = o.findRaw<Ship>(m_ship_ids);
 
     int system_id = validated_ships[0]->SystemID();
     auto system = o.get<System>(system_id);
@@ -303,7 +303,7 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
 
     u.InhibitUniverseObjectSignals(false);
 
-    std::vector<std::shared_ptr<Fleet>> created_fleets{fleet};
+    std::vector<const Fleet*> created_fleets{fleet.get()};
     system->FleetsInsertedSignal(created_fleets);
     system->StateChangedSignal();
 
@@ -559,7 +559,7 @@ void FleetTransferOrder::ExecuteImpl(ScriptingContext& context) const {
     auto target_fleet = context.ContextObjects().get<Fleet>(m_dest_fleet);
 
     // check that all ships are in the same system
-    auto ships = context.ContextObjects().find<Ship>(m_add_ships);
+    auto ships = context.ContextObjects().findRaw<Ship>(m_add_ships);
 
     context.ContextUniverse().InhibitUniverseObjectSignals(true);
 
@@ -1632,7 +1632,7 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
         return false;
     }
 
-    auto system_objects = objects.find<const UniverseObject>(system->ObjectIDs());
+    auto system_objects = objects.findRaw<const UniverseObject>(system->ObjectIDs());
     if (!std::any_of(system_objects.begin(), system_objects.end(),
                      [recipient_empire_id](const auto& o){ return o->Owner() == recipient_empire_id; }))
     {

@@ -511,7 +511,7 @@ namespace {
             const SpeciesManager& sm = context.species;
 
             const auto& destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(m_empire_id);
-            for (auto& ship : objects.all<Ship>()) {
+            for (auto* ship : objects.allRaw<Ship>()) {
                 if (!ship->OwnedBy(m_empire_id) || destroyed_objects.count(ship->ID()))
                     continue;
                 m_values[FLEET_DETAIL_SHIP_COUNT]++;
@@ -705,12 +705,12 @@ public:
 
         // get selected fleet speeds and detection ranges
         std::set<double> fixed_distances;
-        for (const auto& fleet : Objects().find<Fleet>(fleet_ids)) {
+        for (const auto& fleet : Objects().findRaw<Fleet>(fleet_ids)) {
             if (!fleet)
                 continue;
             if (fleet->Speed(Objects()) > 20)
                 fixed_distances.insert(fleet->Speed(Objects()));
-            for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
+            for (const auto& ship : Objects().findRaw<Ship>(fleet->ShipIDs())) {
                 if (!ship)
                     continue;
                 const float ship_range = ship->GetMeter(MeterType::METER_DETECTION)->Initial();
@@ -723,7 +723,7 @@ public:
         }
         // get detection ranges for planets in the selected system (if any)
         if (const auto system = Objects().get<System>(sel_system_id).get()) {
-            for (const auto& planet : Objects().find<Planet>(system->PlanetIDs())) {
+            for (const auto& planet : Objects().findRaw<Planet>(system->PlanetIDs())) {
                 if (!planet)
                     continue;
                 const float planet_range = planet->GetMeter(MeterType::METER_DETECTION)->Initial();
@@ -2034,7 +2034,7 @@ void MapWnd::RenderSystems() {
                 colony_count_by_empire_id.emplace_back(col_empire_id, 1);
         };
 
-        for (const auto& planet : objects.find<const Planet>(system->PlanetIDs())) {
+        for (const auto& planet : objects.findRaw<const Planet>(system->PlanetIDs())) {
             if (known_destroyed_object_ids.count(planet->ID()) > 0)
                 continue;
 
@@ -2408,9 +2408,9 @@ namespace {
         GetFleetFutureTurnDetectionRangeCircles(const ScriptingContext& context, const std::set<int>& fleet_ids) {
         std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt>>> retval;
 
-        for (const auto& fleet : context.ContextObjects().find<Fleet>(fleet_ids)) {
+        for (const auto& fleet : context.ContextObjects().findRaw<Fleet>(fleet_ids)) {
             float fleet_detection_range = 0.0f;
-            for (const auto& ship : context.ContextObjects().find<Ship>(fleet->ShipIDs())) {
+            for (const auto& ship : context.ContextObjects().findRaw<Ship>(fleet->ShipIDs())) {
                 if (const Meter* detection_meter = ship->GetMeter(MeterType::METER_DETECTION))
                     fleet_detection_range = std::max(fleet_detection_range, detection_meter->Current());
             }
@@ -2764,7 +2764,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
 
 
     TraceLogger(effects) << "MapWnd::InitTurn initial:";
-    for (auto obj : objects.all())
+    for (auto obj : objects.allRaw())
         TraceLogger(effects) << obj->Dump();
 
     timer.EnterSection("meter estimates");
@@ -2787,20 +2787,20 @@ void MapWnd::InitTurn(ScriptingContext& context) {
 
     timer.EnterSection("fleet signals");
     // connect system fleet add and remove signals
-    for (auto& system : objects.all<System>()) {
+    for (auto system : objects.allRaw<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].emplace_back(system->FleetsInsertedSignal.connect(
-            [this](const std::vector<std::shared_ptr<Fleet>>& fleets) {
+            [this](const std::vector<const Fleet*>& fleets) {
                 RefreshFleetButtons(true);
-                for (auto& fleet : fleets) {
+                for (auto fleet : fleets) {
                     if (!m_fleet_state_change_signals.count(fleet->ID()))
                         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
                             boost::bind(&MapWnd::RefreshFleetButtons, this, true));
                 }
             }));
         m_system_fleet_insert_remove_signals[system->ID()].emplace_back(system->FleetsRemovedSignal.connect(
-            [this](const std::vector<std::shared_ptr<Fleet>>& fleets) {
+            [this](const std::vector<const Fleet*>& fleets) {
                 RefreshFleetButtons(true);
-                for (auto& fleet : fleets) {
+                for (auto fleet : fleets) {
                     auto found_signal = m_fleet_state_change_signals.find(fleet->ID());
                     if (found_signal != m_fleet_state_change_signals.end()) {
                         found_signal->second.disconnect();
@@ -2814,7 +2814,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
 
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
-    for (const auto& fleet : objects.all<Fleet>()) {
+    for (const auto fleet : objects.allRaw<Fleet>()) {
         m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
             boost::bind(&MapWnd::RefreshFleetButtons, this, true));
     }
@@ -3012,7 +3012,7 @@ void MapWnd::InitTurnRendering() {
     m_system_icons.clear();
 
     // create system icons
-    for (auto& sys : objects.all<System>()) {
+    for (auto* sys : objects.allRaw<System>()) {
         int sys_id = sys->ID();
 
         // skip known destroyed objects
@@ -3055,7 +3055,7 @@ void MapWnd::InitTurnRendering() {
     m_field_icons.clear();
 
     // create field icons
-    for (auto& field : objects.all<Field>()) {
+    for (auto* field : objects.allRaw<Field>()) {
         int fld_id = field->ID();
 
         // skip known destroyed and stale fields
@@ -4495,7 +4495,7 @@ void MapWnd::ReselectLastFleet() {
 
     // search through stored selected fleets' ids and remove ids of missing fleets
     std::set<int> missing_fleets;
-    for (const auto& fleet : objects.find<Fleet>(m_selected_fleet_ids)) {
+    for (const auto& fleet : objects.findRaw<Fleet>(m_selected_fleet_ids)) {
         if (fleet)
             missing_fleets.insert(fleet->ID());
     }
@@ -5118,7 +5118,7 @@ void MapWnd::CreateFleetButtonsOfType(FleetButtonMap& type_fleet_buttons,
 
         // sort fleets by position
         std::map<std::pair<double, double>, std::vector<int>> fleet_positions_ids;
-        for (const auto& fleet : Objects().find<Fleet>(fleet_IDs)) {
+        for (const auto& fleet : Objects().findRaw<Fleet>(fleet_IDs)) {
             if (!fleet)
                 continue;
             fleet_positions_ids[{fleet->X(), fleet->Y()}].emplace_back(fleet->ID());
@@ -5401,7 +5401,7 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags<GG::ModKey> mod_keys) {
             if (!system)
                 return;
 
-            for (auto& obj : Objects().find<const UniverseObject>(system->ContainedObjectIDs())) {
+            for (auto& obj : Objects().findRaw<const UniverseObject>(system->ContainedObjectIDs())) {
                 UniverseObjectType obj_type = obj->ObjectType();
                 if (obj_type >= UniverseObjectType::OBJ_BUILDING && obj_type < UniverseObjectType::OBJ_SYSTEM) {
                     net.SendMessage(ModeratorActionMessage(
@@ -5521,7 +5521,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
     const Universe& universe{context.ContextUniverse()};
 
     // apply to all selected this-player-owned fleets in currently-active FleetWnd
-    for (const auto& fleet : objects.find<Fleet>(fleet_ids)) {
+    for (const auto& fleet : objects.findRaw<Fleet>(fleet_ids)) {
         if (!fleet)
             continue;
 
@@ -5776,7 +5776,7 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
     std::vector<int> sensor_ghosts;
 
     // find sensor ghosts
-    for (const auto& fleet : Objects().find<Fleet>(fleet_ids)) {
+    for (const auto& fleet : Objects().findRaw<Fleet>(fleet_ids)) {
         if (!fleet)
             continue;
         if (fleet->OwnedBy(empire_id))
@@ -6787,7 +6787,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
     const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 
     int total_fleet_count = 0;
-    for (auto& ship : Objects().all<Ship>()) {
+    for (auto* ship : Objects().allRaw<Ship>()) {
         if (ship->OwnedBy(empire_id) && !this_client_known_destroyed_objects.count(ship->ID()))
             total_fleet_count++;
     }
@@ -6953,7 +6953,7 @@ void MapWnd::RefreshPopulationIndicator() {
     const ObjectMap& objects = Objects();
 
     //tally up all species population counts
-    for (const auto& pc : objects.find<PopCenter>(pop_center_ids)) {
+    for (const auto& pc : objects.findRaw<PopCenter>(pop_center_ids)) {
         if (!pc)
             continue;
 
@@ -7024,7 +7024,7 @@ namespace {
     std::set<std::pair<std::string, int>, CustomRowCmp> GetSystemNamesIDs() {
         // get systems, store alphabetized
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
-        for (auto& system : Objects().all<System>())
+        for (auto* system : Objects().allRaw<System>())
             system_names_ids.emplace(system->Name(), system->ID());
         return system_names_ids;
     }
@@ -7039,7 +7039,7 @@ namespace {
 
         // store systems, sorted alphabetically
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
-        for (const auto& sys : Objects().find<System>(system_ids)) {
+        for (const auto& sys : Objects().findRaw<System>(system_ids)) {
             if (sys)
                 system_names_ids.emplace(sys->Name(), sys->ID());
         }
@@ -7251,7 +7251,7 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
     if (obj_group.empty())
         return false; // shouldn't happen?
     for (const auto& obj_ids : wasted_PP_objects) {
-        for (const auto& obj : Objects().find<UniverseObject>(obj_ids)) {
+        for (const auto& obj : Objects().findRaw<UniverseObject>(obj_ids)) {
             if (obj && obj->SystemID() != INVALID_OBJECT_ID) {
                 // found object with wasted PP that is in a system.  zoom there.
                 CenterOnObject(obj->SystemID());
@@ -7427,7 +7427,7 @@ namespace {
     }
 
     /** If @p fleet can determine an eta for @p route */
-    bool FleetRouteInRange(const std::shared_ptr<const Fleet>& fleet, const RouteListType& route,
+    bool FleetRouteInRange(const Fleet* fleet, const RouteListType& route,
                            const ScriptingContext& context)
     {
         auto eta = fleet->ETA(fleet->MovePath(route, false, context));
@@ -7478,8 +7478,8 @@ namespace {
     }
 
     /** Route from @p fleet current location to @p destination */
-    OrderedFleetRouteType GetOrderedFleetRoute(const std::shared_ptr<const Fleet>& fleet,
-                                               const std::shared_ptr<const System>& destination,
+    OrderedFleetRouteType GetOrderedFleetRoute(const Fleet* fleet,
+                                               const System* destination,
                                                const ScriptingContext& context)
     {
         const ObjectMap& objects{context.ContextObjects()};
@@ -7574,7 +7574,7 @@ namespace {
     }
 
     /** If @p fleet would be able to reach a system with supply after completing @p route */
-    bool CanResupplyAfterDestination(const std::shared_ptr<const Fleet>& fleet, const RouteListType& route,
+    bool CanResupplyAfterDestination(const Fleet* fleet, const RouteListType& route,
                                      const ScriptingContext& context)
     {
         const ObjectMap& objects{context.ContextObjects()};
@@ -7597,7 +7597,7 @@ namespace {
         }
 
         auto dest_nearest_supply = GetNearestSupplyRoute(
-            empire, *route.rbegin(), max_jumps, context);
+            empire, route.back(), max_jumps, context);
         auto dest_nearest_supply_jumps = JumpsForRoute(dest_nearest_supply.second);
         auto dest_jumps = JumpsForRoute(route);
         int total_jumps = dest_jumps + dest_nearest_supply_jumps;
@@ -7613,7 +7613,7 @@ namespace {
     }
 
     /** Route from current system of @p fleet to nearest system with supply as determined by owning empire of @p fleet  */
-    OrderedRouteType ExploringFleetResupplyRoute(const std::shared_ptr<Fleet>& fleet,
+    OrderedRouteType ExploringFleetResupplyRoute(const Fleet* fleet,
                                                  const ScriptingContext& context)
     {
         auto empire = context.GetEmpire(fleet->Owner());
@@ -7632,7 +7632,7 @@ namespace {
     }
 
     /** Issue an order for @p fleet to move to nearest system with supply */
-    bool IssueFleetResupplyOrder(const std::shared_ptr<Fleet>& fleet, ScriptingContext& context) {
+    bool IssueFleetResupplyOrder(const Fleet* fleet, ScriptingContext& context) {
         if (!fleet) {
             WarnLogger() << "Invalid fleet";
             return false;
@@ -7676,7 +7676,7 @@ namespace {
     }
 
     /** Issue order for @p fleet to move using @p route */
-    bool IssueFleetExploreOrder(const std::shared_ptr<Fleet>& fleet, const RouteListType& route,
+    bool IssueFleetExploreOrder(const Fleet* fleet, const RouteListType& route,
                                 ScriptingContext& context)
     {
         if (!fleet || route.empty()) {
@@ -7685,20 +7685,20 @@ namespace {
         }
         if (!FleetRouteInRange(fleet, route, context)) {
             TraceLogger() << "Fleet " << std::to_string(fleet->ID())
-                          << " has no eta for route to " << std::to_string(*route.crbegin());
+                          << " has no eta for route to " << std::to_string(route.back());
             return false;
         }
 
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<FleetMoveOrder>(fleet->Owner(), fleet->ID(),
-                                             *route.crbegin(), false, context),
+                                             route.back(), false, context),
             context);
-        if (fleet->FinalDestinationID() == *route.crbegin()) {
-            TraceLogger() << "Sending fleet " << fleet->ID() << " to explore system " << *route.crbegin();
+        if (fleet->FinalDestinationID() == route.back()) {
+            TraceLogger() << "Sending fleet " << fleet->ID() << " to explore system " << route.back();
             return true;
         }
 
-        TraceLogger() << "Fleet move order failed fleet:" << fleet->ID() << " dest:" << *route.crbegin();
+        TraceLogger() << "Fleet move order failed fleet:" << fleet->ID() << " dest:" << route.back();
         return false;
     }
 
@@ -7721,8 +7721,8 @@ namespace {
             return;
         }
 
-        if (systems_being_explored.count(*route.crbegin())) {
-            TraceLogger() << "System " << std::to_string(*route.crbegin()) << " already being explored";
+        if (systems_being_explored.count(route.back())) {
+            TraceLogger() << "System " << std::to_string(route.back()) << " already being explored";
             return;
         }
 
@@ -7732,7 +7732,7 @@ namespace {
             TraceLogger() << "Fleet " << std::to_string(fleet_id) << " not idle";
             return;
         }
-        auto fleet = objects.get<Fleet>(fleet_id);
+        auto fleet = objects.getRaw<Fleet>(fleet_id);
         if (!fleet) {
             ErrorLogger() << "No valid fleet with id " << fleet_id;
             idle_fleets.erase(idle_fleet_it);
@@ -7783,7 +7783,7 @@ void MapWnd::DispatchFleetsExploring() {
 
     // clean the fleet list by removing non-existing fleet, and extract the
     // fleets waiting for orders
-    for (const auto& fleet : objects.find<Fleet>(m_fleets_exploring)) {
+    for (const auto& fleet : objects.findRaw<Fleet>(m_fleets_exploring)) {
         if (!fleet)
             continue;
         if (destroyed_objects.count(fleet->ID())) {
@@ -7813,7 +7813,7 @@ void MapWnd::DispatchFleetsExploring() {
 
     // Populate list of unexplored systems
     SystemIDListType unexplored_systems;
-    for (const auto& system : objects.find<System>(candidates_unknown_systems)) {
+    for (const auto& system : objects.findRaw<System>(candidates_unknown_systems)) {
         if (!system)
             continue;
         if (!empire->HasExploredSystem(system->ID()) &&
@@ -7837,7 +7837,7 @@ void MapWnd::DispatchFleetsExploring() {
 
     // Determine fleet routes for each unexplored system
     std::unordered_map<int, int> fleet_route_count;
-    for (const auto& unexplored_system : objects.find<System>(unexplored_systems)) {
+    for (const auto& unexplored_system : objects.findRaw<System>(unexplored_systems)) {
         if (!unexplored_system)
             continue;
 
@@ -7846,7 +7846,7 @@ void MapWnd::DispatchFleetsExploring() {
                 fleet_route_count[unexplored_system->ID()] > max_routes_per_system)
             { break; }
 
-            auto fleet = objects.get<Fleet>(fleet_id);
+            auto fleet = objects.getRaw<Fleet>(fleet_id);
             if (!fleet) {
                 WarnLogger() << "Invalid fleet " << fleet_id;
                 continue;
@@ -7857,7 +7857,7 @@ void MapWnd::DispatchFleetsExploring() {
             auto route = GetOrderedFleetRoute(fleet, unexplored_system, context);
             if (route.first > 0.0) {
                 ++fleet_route_count[unexplored_system->ID()];
-                fleet_routes.emplace(std::move(route));
+                fleet_routes.insert(std::move(route));
             }
         }
     }

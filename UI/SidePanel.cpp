@@ -3554,8 +3554,8 @@ void SidePanel::PlanetClickedSlot(int planet_id, const ObjectMap& objects) {
         SelectPlanet(planet_id, objects);
 }
 
-void SidePanel::FleetsInserted(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    for (auto& fleet : fleets) {
+void SidePanel::FleetsInserted(const std::vector<const Fleet*>& fleets) {
+    for (auto* fleet : fleets) {
         s_fleet_state_change_signals[fleet->ID()].disconnect();  // in case already present
         s_fleet_state_change_signals[fleet->ID()] =
             fleet->StateChangedSignal.connect(&SidePanel::Update);
@@ -3563,8 +3563,8 @@ void SidePanel::FleetsInserted(const std::vector<std::shared_ptr<Fleet>>& fleets
     SidePanel::Update();
 }
 
-void SidePanel::FleetsRemoved(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    for (auto& fleet : fleets) {
+void SidePanel::FleetsRemoved(const std::vector<const Fleet*>& fleets) {
+    for (auto* fleet : fleets) {
         auto signal_it = s_fleet_state_change_signals.find(fleet->ID());
         if (signal_it != s_fleet_state_change_signals.end()) {
             signal_it->second.disconnect();

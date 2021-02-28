@@ -153,15 +153,14 @@ void ResourcePool::Update(const ObjectMap& objects) {
 
     // temporary storage: indexed by group of systems, which objects
     // are located in that system group?
-    std::map<std::set<int>, std::set<std::shared_ptr<const UniverseObject>>>
-        system_groups_to_object_groups;
+    std::map<std::set<int>, std::set<const UniverseObject*>> system_groups_to_object_groups;
 
 
     // for every object, find if a connected system group contains the object's
     // system.  If a group does, place the object into that system group's set
     // of objects.  If no group contains the object, place the object in its own
     // single-object group.
-    for (auto& obj : objects.find<const UniverseObject>(m_object_ids)) {
+    for (auto* obj : objects.findRaw<const UniverseObject>(m_object_ids)) {
         int object_id = obj->ID();
         int object_system_id = obj->SystemID();
         // can't generate resources when not in a system
@@ -193,7 +192,7 @@ void ResourcePool::Update(const ObjectMap& objects) {
         } else {
             // if resource center's system is in a system group, record which system
             // group that is for later
-            system_groups_to_object_groups[std::move(object_system_group)].insert(std::move(obj));
+            system_groups_to_object_groups[std::move(object_system_group)].insert(obj);
         }
     }
 
@@ -204,7 +203,7 @@ void ResourcePool::Update(const ObjectMap& objects) {
         std::set<int> object_group_ids;
         float total_group_output = 0.0f;
         float total_group_target_output = 0.0f;
-        for (auto& obj : object_group) {
+        for (auto* obj : object_group) {
             if (const auto* m = obj->GetMeter(meter_type))
                 total_group_output += m->Current();
             if (const auto* m = obj->GetMeter(target_meter_type))

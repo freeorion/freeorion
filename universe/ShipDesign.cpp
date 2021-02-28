@@ -353,7 +353,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const { // T
     }
 
     // must own the production location...
-    auto location = Objects().get(location_id); // TODO: get from context
+    auto location = Objects().getRaw(location_id); // TODO: get from context
     if (!location) {
         WarnLogger() << "ShipDesign::ProductionLocation unable to get location object with id " << location_id;
         return false;
@@ -361,10 +361,10 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const { // T
     if (!location->OwnedBy(empire_id))
         return false;
 
-    auto planet = std::dynamic_pointer_cast<const Planet>(location);
-    std::shared_ptr<const Ship> ship;
+    auto planet = dynamic_cast<const Planet*>(location);
+    const Ship* ship = nullptr;
     if (!planet)
-        ship = std::dynamic_pointer_cast<const Ship>(location);
+        ship = dynamic_cast<const Ship*>(location);
     if (!planet && !ship)
         return false;
 

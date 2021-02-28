@@ -194,7 +194,7 @@ namespace {
         Condition::ObjectSet objs;
         py::stl_input_iterator<int> end;
         for (py::stl_input_iterator<int> id(obj_ids); id != end; ++id) {
-            if (auto obj = Objects().get(*id))
+            if (auto obj = Objects().getRaw(*id))
                 objs.push_back(obj);
             else
                 ErrorLogger() << "FilterIDsWithCondition:: Passed an invalid universe object id " << *id;

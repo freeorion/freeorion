@@ -424,7 +424,7 @@ namespace {
             const std::set<int>& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
 
             if (empire) {
-                for (auto& ship : objects.all<Ship>()) {
+                for (auto* ship : objects.allRaw<Ship>()) {
                     if (ship->Owner() == empire->EmpireID()
                         && !this_client_known_destroyed_objects.count(ship->ID())
                         && !this_client_stale_object_info.count(ship->ID())) {
@@ -432,7 +432,7 @@ namespace {
                     }
                 }
 
-                for (auto& planet : objects.all<Planet>()) {
+                for (auto* planet : objects.allRaw<Planet>()) {
                     if (planet->Owner() == empire->EmpireID()) {
                         empires_planet_count      += 1;
                         empires_production_points += planet->GetMeter(MeterType::METER_INDUSTRY)->Initial();

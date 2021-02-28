@@ -398,9 +398,9 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id, 
             auto c = bt->EnqueueLocation();
             if (!c)
                 return true;
-            auto location_obj = context.ContextObjects().get(location_id);
+            auto location_obj = context.ContextObjects().getRaw(location_id);
             const ScriptingContext location_context(location_obj, context);
-            return c->Eval(location_context, std::move(location_obj));
+            return c->Eval(location_context, location_obj);
         }
         return true;
         break;
@@ -432,7 +432,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
     switch (build_type) {
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
-            auto location_obj = context.ContextObjects().get(location_id);
+            auto location_obj = context.ContextObjects().getRaw(location_id);
             ScriptingContext location_target_context{location_obj, context}; // non-const but should be OK as only passed below to function taking const ScriptingContext&
 
             for (const auto& [special_name, consumption] : bt->ProductionSpecialConsumption()) {
@@ -450,7 +450,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
 
                 // determine how much to take from each matched object
                 for (auto& object : matches) {
-                    location_target_context.effect_target = std::const_pointer_cast<UniverseObject>(object); // call to ValueRef cannot modify the pointed-to object
+                    location_target_context.effect_target = const_cast<UniverseObject*>(object); // call to ValueRef cannot modify the pointed-to object
                     retval[special_name][object->ID()] += static_cast<float>(amount->Eval(location_target_context));
                 }
             }
@@ -459,8 +459,8 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
     }
     case BuildType::BT_SHIP: {
         if (const ShipDesign* sd = context.ContextUniverse().GetShipDesign(design_id)) {
-            auto location_obj = context.ContextObjects().get(location_id);
-            const ScriptingContext location_target_context{std::move(location_obj), context};
+            auto location_obj = context.ContextObjects().getRaw(location_id);
+            const ScriptingContext location_target_context{location_obj, context};
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& [special_name, consumption] : ship_hull->ProductionSpecialConsumption()) {
@@ -500,7 +500,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(
 {
     std::map<MeterType, std::map<int, float>> retval;
 
-    const ScriptingContext location_context{context.ContextObjects().get(location_id), context};
+    const ScriptingContext location_context{context.ContextObjects().getRaw(location_id), context};
 
     switch (build_type) {
     case BuildType::BT_BUILDING: {

@@ -1102,7 +1102,7 @@ void Empire::UpdateSystemSupplyRanges(const Universe& universe) {
     std::set<int> known_objects_set;
 
     // exclude objects known to have been destroyed (or rather, include ones that aren't known by this empire to be destroyed)
-    for (const auto& obj : empire_known_objects.all())
+    for (const auto& obj : empire_known_objects.allRaw())
         if (!known_destroyed_objects.count(obj->ID()))
             known_objects_set.insert(obj->ID());
     UpdateSystemSupplyRanges(known_objects_set, empire_known_objects);
@@ -1132,7 +1132,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context, bo
     std::set<int> known_systems_set;
 
     // exclude systems known to have been destroyed (or rather, include ones that aren't known to be destroyed)
-    for (const auto& sys : universe.EmpireKnownObjects(this->EmpireID()).all<System>())
+    for (const auto& sys : universe.EmpireKnownObjects(this->EmpireID()).allRaw<System>())
         if (!known_destroyed_objects.count(sys->ID()))
             known_systems_set.insert(sys->ID());
     UpdateSupplyUnobstructedSystems(context, known_systems_set, precombat);
@@ -1181,7 +1181,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
     std::set<int> unrestricted_friendly_systems;
     std::set<int> systems_containing_obstructing_objects;
     std::set<int> unrestricted_obstruction_systems;
-    for (auto& fleet : objects.all<Fleet>()) {
+    for (auto* fleet : objects.allRaw<Fleet>()) {
         int system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
             continue;   // not in a system, so can't affect system obstruction
@@ -1354,7 +1354,7 @@ std::map<int, std::set<int>> Empire::KnownStarlanes(const Universe& universe) co
     TraceLogger(supply) << "Empire::KnownStarlanes for empire " << m_id;
 
     auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    for (const auto& sys : universe.Objects().all<System>()) {
+    for (const auto& sys : universe.Objects().allRaw<System>()) {
         int start_id = sys->ID();
         TraceLogger(supply) << "system " << start_id << " has up to " << sys->StarlanesWormholes().size() << " lanes / wormholes";
 
@@ -1385,7 +1385,7 @@ std::map<int, std::set<int>> Empire::VisibleStarlanes(const Universe& universe) 
 
     const ObjectMap& objects = universe.Objects();
 
-    for (const auto& sys : objects.all<System>()) {
+    for (const auto& sys : objects.allRaw<System>()) {
         int start_id = sys->ID();
 
         // is system visible to this empire?

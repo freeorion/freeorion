@@ -137,12 +137,12 @@ void MessageWndEdit::FindGameWords() {
         m_game_words.insert(empire->PlayerName());
     }
     // add system names
-    for (auto& system : GetUniverse().Objects().all<System>()) {
+    for (auto system : GetUniverse().Objects().allRaw<System>()) {
         if (!system->Name().empty())
             m_game_words.insert(system->Name());
     }
      // add ship names
-    for (auto& ship : GetUniverse().Objects().all<Ship>()) {
+    for (auto ship : GetUniverse().Objects().allRaw<Ship>()) {
         if (!ship->Name().empty())
             m_game_words.insert(ship->Name());
     }

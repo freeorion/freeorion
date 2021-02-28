@@ -22,7 +22,7 @@ struct ScriptingContext {
     {}
 
     ScriptingContext(const ScriptingContext& parent_context,
-                     std::shared_ptr<const UniverseObject> condition_local_candidate_) :
+                     const UniverseObject* condition_local_candidate_) :
         source(                   parent_context.source),
         effect_target(            parent_context.effect_target),
         condition_root_candidate( parent_context.condition_root_candidate ?
@@ -48,8 +48,8 @@ struct ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    explicit ScriptingContext(std::shared_ptr<const UniverseObject> source_) :
-        source(           std::move(source_)),
+    explicit ScriptingContext(const UniverseObject* source_) :
+        source(           source_),
         galaxy_setup_data(GetGalaxySetupData()),
         species(          GetSpeciesManager()),
         supply(           GetSupplyManager()),
@@ -60,9 +60,9 @@ struct ScriptingContext {
         diplo_statuses(   ::Empires().GetDiplomaticStatuses())
     {}
 
-    ScriptingContext(std::shared_ptr<const UniverseObject> source_,
+    ScriptingContext(const UniverseObject* source_,
                      const ScriptingContext& parent_context) :
-        source(                   std::move(source_)),
+        source(                   source_),
         effect_target(            parent_context.effect_target),
         condition_root_candidate( parent_context.condition_root_candidate),
         condition_local_candidate(parent_context.condition_local_candidate),
@@ -88,10 +88,10 @@ struct ScriptingContext {
     ScriptingContext(const ScriptingContext& parent_context,
                      const Universe::EmpireObjectVisibilityMap& vis,
                      const Universe::EmpireObjectVisibilityTurnMap& vis_turns,
-                     std::shared_ptr<const UniverseObject> source_ = nullptr,
-                     std::shared_ptr<UniverseObject> target_ = nullptr) :
-        source(                   std::move(source_)),
-        effect_target(            std::move(target_)),
+                     const UniverseObject* source_ = nullptr,
+                     UniverseObject* target_ = nullptr) :
+        source(                   source_),
+        effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
         condition_local_candidate(parent_context.condition_local_candidate),
         current_value(            parent_context.current_value),
@@ -187,11 +187,11 @@ struct ScriptingContext {
 
 
     ScriptingContext(const ScriptingContext& parent_context,
-                     std::shared_ptr<const UniverseObject> source_,
-                     std::shared_ptr<UniverseObject> target_,
+                     const UniverseObject* source_,
+                     UniverseObject* target_,
                      int in_design_id_, int production_block_size_) :
-        source(                   std::move(source_)),
-        effect_target(            std::move(target_)),
+        source(                   source_),
+        effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
         condition_local_candidate(parent_context.condition_local_candidate),
         current_value(            parent_context.current_value),
@@ -214,10 +214,10 @@ struct ScriptingContext {
     {}
 
     ScriptingContext(const ScriptingContext& parent_context,
-                     std::shared_ptr<UniverseObject> target_,
+                     UniverseObject* target_,
                      const CurrentValueVariant& current_value_) :
         source(                   parent_context.source),
-        effect_target(            std::move(target_)),
+        effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
         condition_local_candidate(parent_context.condition_local_candidate),
         current_value(            current_value_),
@@ -240,12 +240,12 @@ struct ScriptingContext {
     {}
 
     ScriptingContext(ScriptingContext&& parent_context,
-                     std::shared_ptr<UniverseObject> target_,
+                     UniverseObject* target_,
                      const CurrentValueVariant& current_value_) :
-        source(                   std::move(parent_context.source)),
-        effect_target(            std::move(target_)),
-        condition_root_candidate( std::move(parent_context.condition_root_candidate)),
-        condition_local_candidate(std::move(parent_context.condition_local_candidate)),
+        source(                   parent_context.source),
+        effect_target(            target_),
+        condition_root_candidate( parent_context.condition_root_candidate),
+        condition_local_candidate(parent_context.condition_local_candidate),
         current_value(            current_value_),
         combat_bout(              parent_context.combat_bout),
         current_turn(             parent_context.current_turn),
@@ -267,31 +267,30 @@ struct ScriptingContext {
 
 
     // disable implicit conversions to CurrentValueVariant
-    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, int) = delete;
-    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, int) = delete;
-    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, double) = delete;
-    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, double) = delete;
-    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, PlanetType) = delete;
-    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, PlanetType) = delete;
-    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, PlanetSize) = delete;
-    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, PlanetSize) = delete;
-    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, ::PlanetEnvironment) = delete;
-    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, ::PlanetEnvironment) = delete;
-    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, StarType) = delete;
-    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, StarType) = delete;
-    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, UniverseObjectType) = delete;
-    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, UniverseObjectType) = delete;
-    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, Visibility) = delete;
-    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, Visibility) = delete;
-    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, std::string) = delete;
-    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, std::string) = delete;
-    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, std::vector<std::string>) = delete;
-    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, std::vector<std::string>) = delete;
+    ScriptingContext(const ScriptingContext&, UniverseObject*, int) = delete;
+    ScriptingContext(ScriptingContext&&, UniverseObject*, int) = delete;
+    ScriptingContext(const ScriptingContext&, UniverseObject*, double) = delete;
+    ScriptingContext(ScriptingContext&&, UniverseObject*, double) = delete;
+    ScriptingContext(ScriptingContext&&, UniverseObject*, PlanetType) = delete;
+    ScriptingContext(const ScriptingContext&, UniverseObject*, PlanetType) = delete;
+    ScriptingContext(ScriptingContext&&, UniverseObject*, PlanetSize) = delete;
+    ScriptingContext(const ScriptingContext&, UniverseObject*, PlanetSize) = delete;
+    ScriptingContext(ScriptingContext&&, UniverseObject*, ::PlanetEnvironment) = delete;
+    ScriptingContext(const ScriptingContext&, UniverseObject*, ::PlanetEnvironment) = delete;
+    ScriptingContext(ScriptingContext&&, UniverseObject*, StarType) = delete;
+    ScriptingContext(const ScriptingContext&, UniverseObject*, StarType) = delete;
+    ScriptingContext(ScriptingContext&&, UniverseObject*, UniverseObjectType) = delete;
+    ScriptingContext(const ScriptingContext&, UniverseObject*, UniverseObjectType) = delete;
+    ScriptingContext(ScriptingContext&&, UniverseObject*, Visibility) = delete;
+    ScriptingContext(const ScriptingContext&, UniverseObject*, Visibility) = delete;
+    ScriptingContext(ScriptingContext&&, UniverseObject*, std::string) = delete;
+    ScriptingContext(const ScriptingContext&, UniverseObject*, std::string) = delete;
+    ScriptingContext(ScriptingContext&&, UniverseObject*, std::vector<std::string>) = delete;
+    ScriptingContext(const ScriptingContext&, UniverseObject*, std::vector<std::string>) = delete;
 
-    ScriptingContext(std::shared_ptr<const UniverseObject> source_,
-                     std::shared_ptr<UniverseObject> target_) :
-        source(std::move(source_)),
-        effect_target(std::move(target_)),
+    ScriptingContext(const UniverseObject* source_, UniverseObject* target_) :
+        source(           source_),
+        effect_target(    target_),
         galaxy_setup_data(GetGalaxySetupData()),
         species(          GetSpeciesManager()),
         supply(           GetSupplyManager()),
@@ -317,14 +316,14 @@ struct ScriptingContext {
     {}
 
     explicit ScriptingContext(CombatInfo& info, // in CombatSystem.cpp
-                              std::shared_ptr<const UniverseObject> attacker_as_source = nullptr);
+                              UniverseObject* attacker_as_source = nullptr);
 
     ScriptingContext(const Universe& universe, const EmpireManager& empires_,
-                     std::shared_ptr<const UniverseObject> source_ = nullptr,
-                     std::shared_ptr<UniverseObject> target_ = nullptr,
+                     const UniverseObject* source_ = nullptr,
+                     UniverseObject* target_ = nullptr,
                      const CurrentValueVariant& current_value_ = DEFAULT_CURRENT_VALUE) :
-        source(        std::move(source_)),
-        effect_target( std::move(target_)),
+        source(        source_),
+        effect_target( target_),
         current_value( current_value_),
         universe(      nullptr),
         const_universe(universe),
@@ -415,11 +414,11 @@ struct ScriptingContext {
     }
 
     // script evaluation local state, some of which may vary during evaluation of an expression
-    std::shared_ptr<const UniverseObject> source;
-    std::shared_ptr<UniverseObject>       effect_target;
-    std::shared_ptr<const UniverseObject> condition_root_candidate;
-    std::shared_ptr<const UniverseObject> condition_local_candidate;
-    const CurrentValueVariant&            current_value = DEFAULT_CURRENT_VALUE;
+    const UniverseObject*      source = nullptr;
+    UniverseObject*            effect_target = nullptr;
+    const UniverseObject*      condition_root_candidate = nullptr;
+    const UniverseObject*      condition_local_candidate = nullptr;
+    const CurrentValueVariant& current_value = DEFAULT_CURRENT_VALUE;
 
     // general gamestate info
     int                                            combat_bout = 0; // first round of battle is combat_bout == 1

@@ -41,7 +41,7 @@ namespace {
     {
         std::vector<int> result;
         result.reserve(universe.Objects().size<T>());
-        for (const auto& obj : universe.Objects().all<T>())
+        for (const auto& obj : universe.Objects().allRaw<T>())
             result.push_back(obj->ID());
         return result;
     }
@@ -195,24 +195,24 @@ namespace {
 
     auto HullProductionLocation(const ShipHull& hull, int location_id) -> bool
     {
-        auto location = Objects().get(location_id);
+        auto location = Objects().getRaw(location_id);
         if (!location) {
             ErrorLogger() << "UniverseWrapper::HullProductionLocation Could not find location with id " << location_id;
             return false;
         }
         ScriptingContext location_as_source_context{location, location};
-        return hull.Location()->Eval(location_as_source_context, std::move(location));
+        return hull.Location()->Eval(location_as_source_context, location);
     }
 
     auto ShipPartProductionLocation(const ShipPart& part_type, int location_id) -> bool
     {
-        auto location = Objects().get(location_id);
+        auto location = Objects().getRaw(location_id);
         if (!location) {
             ErrorLogger() << "UniverseWrapper::PartTypeProductionLocation Could not find location with id " << location_id;
             return false;
         }
         ScriptingContext location_as_source_context{location, location};
-        return part_type.Location()->Eval(location_as_source_context, std::move(location));
+        return part_type.Location()->Eval(location_as_source_context, location);
     }
 
     template <typename X>

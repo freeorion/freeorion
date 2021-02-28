@@ -787,13 +787,13 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
 
 bool ClientUI::ZoomToObject(const std::string& name) {
     // try first by finding the object by name
-    for (auto& obj : GetUniverse().Objects().all<UniverseObject>())
+    for (auto obj : GetUniverse().Objects().allRaw<UniverseObject>())
         if (boost::iequals(obj->Name(), name))
             return ZoomToObject(obj->ID());
 
     // try again by converting string to an ID
     try {
-        return ZoomToObject(std::stoi(name));
+        return ZoomToObject(std::stoi(name)); // TODO: probably a better way to cast string to int
     } catch (...) {
     }
 

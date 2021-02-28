@@ -8,7 +8,7 @@
 
 
 namespace Condition {
-    typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
+    using ObjectSet = std::vector<const UniverseObject*>;
 }
 
 namespace ValueRef {

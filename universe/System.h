@@ -111,9 +111,9 @@ public:
     [[nodiscard]] double                  OverlaySize() const         { return m_overlay_size; }  ///< size in universe units
 
     /** fleets are inserted into system */
-    mutable boost::signals2::signal<void (const std::vector<std::shared_ptr<Fleet>>&)> FleetsInsertedSignal;
+    mutable boost::signals2::signal<void (const std::vector<const Fleet*>&)> FleetsInsertedSignal;
     /** fleets are removed from system */
-    mutable boost::signals2::signal<void (const std::vector<std::shared_ptr<Fleet>>&)> FleetsRemovedSignal;
+    mutable boost::signals2::signal<void (const std::vector<const Fleet*>&)> FleetsRemovedSignal;
 
     void Copy(std::shared_ptr<const UniverseObject> copied_object,
               const Universe& universe, int empire_id = ALL_EMPIRES) override;
@@ -125,6 +125,7 @@ public:
 
     /** adds an object to this system. */
     void Insert(std::shared_ptr<UniverseObject> obj, int orbit = -1);
+    void Insert(UniverseObject* obj, int orbit = -1);
 
     /** removes the object with ID number \a id from this system. */
     void Remove(int id);
