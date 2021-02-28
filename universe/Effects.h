@@ -152,6 +152,8 @@ public:
                        ResourceType stockpile,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
+    bool operator==(const Effect& rhs) const override;
+
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;

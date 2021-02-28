@@ -1018,6 +1018,23 @@ SetEmpireStockpile::SetEmpireStockpile(std::unique_ptr<ValueRef::ValueRef<int>>&
     m_value(std::move(value))
 {}
 
+bool SetEmpireStockpile::operator==(const Effect& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const SetEmpireStockpile& rhs_ = static_cast<const SetEmpireStockpile&>(rhs);
+
+    if (m_stockpile != rhs_.m_stockpile)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+    CHECK_COND_VREF_MEMBER(m_value)
+
+    return true;
+}
+
 void SetEmpireStockpile::Execute(ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 
