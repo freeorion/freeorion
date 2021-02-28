@@ -422,7 +422,7 @@ private:
   * other effects are present when they execute. */
 class FO_COMMON_API Destroy final : public Effect {
 public:
-    Destroy();
+    Destroy() = default;
 
     void Execute(ScriptingContext& context) const override;
     std::string Dump(unsigned short ntabs = 0) const override;

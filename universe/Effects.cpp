@@ -2129,9 +2129,6 @@ unsigned int CreateSystem::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // Destroy                                               //
 ///////////////////////////////////////////////////////////
-Destroy::Destroy()
-{}
-
 void Destroy::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
         ErrorLogger() << "Destroy::Execute passed no target object";
