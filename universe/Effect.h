@@ -106,6 +106,10 @@ namespace Effect {
                              bool include_empire_meter_effects = false,
                              bool only_generate_sitrep_effects = false) const;
 
+        virtual bool operator==(const Effect& rhs) const;
+        bool operator!=(const Effect& rhs) const
+        { return !(*this == rhs); }
+
         virtual std::string     Dump(unsigned short ntabs = 0) const = 0;
 
         virtual bool            IsMeterEffect() const { return false; }

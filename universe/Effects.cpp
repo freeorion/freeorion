@@ -242,8 +242,8 @@ bool EffectsGroup::operator==(const EffectsGroup& rhs) const {
                 continue;
             if (!my_op || !rhs_op)
                 return false;
-            //if (*my_op != *rhs_op) // TODO: implement Effect::operator==
-            //    return false;
+            if (*my_op != *rhs_op)
+                return false;
         }
     } catch (...) {
         return false;
@@ -383,6 +383,16 @@ std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_group
 ///////////////////////////////////////////////////////////
 Effect::~Effect()
 {}
+
+bool Effect::operator==(const Effect& rhs) const {
+    if (this == &rhs)
+        return true;
+
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    return true;
+}
 
 void Effect::Execute(ScriptingContext& context,
                      const TargetSet& targets,
