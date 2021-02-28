@@ -53,56 +53,56 @@ namespace {
     void AddAllObjectsSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingObjects().size());
         for (const auto& obj : objects.ExistingObjects())
-            condition_non_targets.emplace_back(obj.second);
+            condition_non_targets.push_back(obj.second);
         // in my tests, this range for loop with emplace_back was about 5% faster than std::transform with std::back_inserter and a lambda returning the .second of the map entries
     }
 
     void AddBuildingSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingBuildings().size());
         for (const auto& obj : objects.ExistingBuildings())
-            condition_non_targets.emplace_back(obj.second);
+            condition_non_targets.push_back(obj.second);
     }
 
     void AddFieldSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingFields().size());
         for (const auto& obj : objects.ExistingFields())
-            condition_non_targets.emplace_back(obj.second);
+            condition_non_targets.push_back(obj.second);
     }
 
     void AddFleetSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingFleets().size());
         for (const auto& obj : objects.ExistingFleets())
-            condition_non_targets.emplace_back(obj.second);
+            condition_non_targets.push_back(obj.second);
     }
 
     void AddPlanetSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingPlanets().size());
         for (const auto& obj : objects.ExistingPlanets())
-            condition_non_targets.emplace_back(obj.second);
+            condition_non_targets.push_back(obj.second);
     }
 
     void AddPopCenterSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingPopCenters().size());
         for (const auto& obj : objects.ExistingPopCenters())
-            condition_non_targets.emplace_back(obj.second);
+            condition_non_targets.push_back(obj.second);
     }
 
     void AddResCenterSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingResourceCenters().size());
         for (const auto& obj : objects.ExistingResourceCenters())
-            condition_non_targets.emplace_back(obj.second);
+            condition_non_targets.push_back(obj.second);
     }
 
     void AddShipSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingShips().size());
         for (const auto& obj : objects.ExistingShips())
-            condition_non_targets.emplace_back(obj.second);
+            condition_non_targets.push_back(obj.second);
     }
 
     void AddSystemSet(const ObjectMap& objects, Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + objects.ExistingSystems().size());
         for (const auto& obj : objects.ExistingSystems())
-            condition_non_targets.emplace_back(obj.second);
+            condition_non_targets.push_back(obj.second);
     }
 
     /** Used by 4-parameter Condition::Eval function, and some of its
