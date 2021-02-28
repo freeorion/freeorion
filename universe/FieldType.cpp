@@ -50,6 +50,38 @@ FieldType::FieldType(std::string&& name, std::string&& description,
         effect->SetTopLevelContent(m_name);
 }
 
+bool FieldType::operator==(const FieldType& rhs) const {
+    if (&rhs == this)
+        return true;
+
+    if (m_name != rhs.m_name ||
+        m_description != rhs.m_description ||
+        m_stealth != rhs.m_stealth ||
+        m_tags != rhs.m_tags ||
+        m_graphic != rhs.m_graphic)
+    { return false; }
+
+    if (m_effects.size() != rhs.m_effects.size())
+        return false;
+    try {
+        for (std::size_t idx = 0; idx < m_effects.size(); ++idx) {
+            const auto& my_op = m_effects.at(idx);
+            const auto& rhs_op = rhs.m_effects.at(idx);
+
+            if (my_op == rhs_op) // could both be nullptr
+                continue;
+            if (!my_op || !rhs_op)
+                return false;
+            if (*my_op != *rhs_op)
+                return false;
+        }
+    } catch (...) {
+        return false;
+    }
+
+    return true;
+}
+
 std::string FieldType::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "FieldType\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";

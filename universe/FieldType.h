@@ -23,6 +23,10 @@ public:
               std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
               std::string&& graphic);
 
+    bool operator==(const FieldType& rhs) const;
+    bool operator!=(const FieldType& rhs) const
+    { return !(*this == rhs); }
+
     //! Returns the unique name for this type of field
     auto Name() const -> const std::string&
     { return m_name; }
