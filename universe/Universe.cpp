@@ -115,6 +115,9 @@ namespace {
         rules.Add<bool>(UserStringNop("RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE"),
                         UserStringNop("RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_DESC"),
                         "TEST", false, true);
+        rules.Add<bool>(UserStringNop("RULE_ALL_SYSTEMS_VISIBLE"),
+                        UserStringNop("RULE_ALL_SYSTEMS_VISIBLE_DESC"),
+                        "TEST", false, true);
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 
@@ -2179,6 +2182,17 @@ namespace {
         }
     }
 
+    /** sets all systems basically visible to all empires */
+    void SetAllSystemsBasicallyVisibleToAllEmpires(Universe& universe) {
+        for (const auto& obj : universe.Objects().all<System>()) {
+            for (auto& empire_entry : Empires()) {
+                if (empire_entry.second->Eliminated())
+                    continue;
+                universe.SetEmpireObjectVisibility(empire_entry.first, obj->ID(), Visibility::VIS_BASIC_VISIBILITY);
+            }
+        }
+    }
+
     /** sets planets that an empire has at some time had visibility of, which
       * are also in system where an empire owns an object, to be basically
       * visible, and those systems to be partially visible */
@@ -2519,6 +2533,8 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
     if (GetGameRules().Get<bool>("RULE_ALL_OBJECTS_VISIBLE")) {
         SetAllObjectsVisibleToAllEmpires(*this);
         return;
+    } else if (GetGameRules().Get<bool>("RULE_ALL_SYSTEMS_VISIBLE")) {
+        SetAllSystemsBasicallyVisibleToAllEmpires(*this);
     }
 
     SetEmpireOwnedObjectVisibilities(*this);

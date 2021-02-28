@@ -1226,6 +1226,12 @@ All Objects Visible
 RULE_ALL_OBJECTS_VISIBLE_DESC
 All systems, planets, buildings, fleets, ships, and fields can be detected by all empires at at least partial visibility.
 
+RULE_ALL_SYSTEMS_VISIBLE
+All Systems Visible
+
+RULE_ALL_SYSTEMS_VISIBLE_DESC
+All system locations are known by all empires.
+
 RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
 Undetectable Stealthy Planets
 
