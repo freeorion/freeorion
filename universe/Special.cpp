@@ -13,6 +13,15 @@
 #include "../util/i18n.h"
 
 
+#define CHECK_COND_VREF_MEMBER(m_ptr) { if (m_ptr == rhs.m_ptr) {           \
+                                            /* check next member */         \
+                                        } else if (!m_ptr || !rhs.m_ptr) {  \
+                                            return false;                   \
+                                        } else {                            \
+                                            if (*m_ptr != *(rhs.m_ptr))     \
+                                                return false;               \
+                                        }   }
+
 SpecialsManager::SpecialsManager()
 {}
 
@@ -79,13 +88,49 @@ Special::Special(std::string&& name, std::string&& description,
     m_graphic(graphic)
 {
     for (auto&& effect : effects)
-        m_effects.emplace_back(std::move(effect));
+        m_effects.push_back(std::move(effect));
 
     Init();
 }
 
 Special::~Special()
 {}
+
+bool Special::operator==(const Special& rhs) const {
+    if (&rhs == this)
+        return true;
+
+    if (m_name != rhs.m_name ||
+        m_description != rhs.m_description ||
+        m_spawn_rate != rhs.m_spawn_rate ||
+        m_spawn_limit != rhs.m_spawn_limit ||
+        m_graphic != rhs.m_graphic)
+    { return false; }
+
+    CHECK_COND_VREF_MEMBER(m_stealth)
+    CHECK_COND_VREF_MEMBER(m_initial_capacity)
+    CHECK_COND_VREF_MEMBER(m_location)
+
+    if (m_effects.size() != rhs.m_effects.size())
+        return false;
+    try {
+        for (std::size_t idx = 0; idx < m_effects.size(); ++idx) {
+            const auto& my_op = m_effects.at(idx);
+            const auto& rhs_op = rhs.m_effects.at(idx);
+
+            if (my_op == rhs_op)
+                continue;
+            if (!my_op || !rhs_op)
+                return false;
+            if (*my_op != *rhs_op)
+                return false;
+        }
+    } catch (...) {
+        return false;
+    }
+
+    return true;
+}
 
 std::string Special::Description() const {
     std::stringstream result;
