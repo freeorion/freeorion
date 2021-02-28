@@ -51,7 +51,7 @@ namespace Effect {
     /** Description of cause of an effect: the general cause type, and the
       * specific cause.  eg. Building and a particular BuildingType. */
     struct FO_COMMON_API EffectCause {
-        explicit EffectCause() = default;
+        EffectCause() = default;
         EffectCause(EffectsCauseType cause_type_, std::string specific_cause_,
                     std::string custom_label_ = "");
         EffectsCauseType    cause_type = EffectsCauseType::INVALID_EFFECTS_GROUP_CAUSE_TYPE;  ///< general type of effect cause, eg. tech, building, special...
@@ -61,7 +61,7 @@ namespace Effect {
 
     /** Combination of targets and cause for an effects group. */
     struct TargetsAndCause {
-        explicit TargetsAndCause() = default;
+        TargetsAndCause() = default;
         TargetsAndCause(TargetSet target_set_, EffectCause effect_cause_);
         TargetSet target_set;
         EffectCause effect_cause;
@@ -69,7 +69,7 @@ namespace Effect {
 
     /** Combination of an EffectsGroup and the id of a source object. */
     struct SourcedEffectsGroup {
-        explicit SourcedEffectsGroup() = default;
+        SourcedEffectsGroup() = default;
         SourcedEffectsGroup(int source_object_id_, const EffectsGroup* effects_group_);
         bool operator<(const SourcedEffectsGroup& right) const;
         int source_object_id = INVALID_OBJECT_ID;
@@ -127,7 +127,7 @@ namespace Effect {
     /** Accounting information about what the causes are and changes produced
       * by effects groups acting on meters of objects. */
     struct FO_COMMON_API AccountingInfo : public EffectCause {
-        explicit AccountingInfo() = default;
+        AccountingInfo() = default;
         AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
                        float running_meter_total_, std::string&& specific_cause_ = "",
                        std::string&& custom_label_ = "");
