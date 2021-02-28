@@ -179,6 +179,61 @@ void Tech::Init() {
         effect->SetTopLevelContent(m_name);
 }
 
+bool Tech::operator==(const Tech& rhs) const {
+    if (&rhs == this)
+        return true;
+
+    if (m_name != rhs.m_name ||
+        m_description != rhs.m_description ||
+        m_short_description != rhs.m_short_description ||
+        m_category != rhs.m_category ||
+        m_researchable != rhs.m_researchable ||
+        m_tags != rhs.m_tags ||
+        m_prerequisites != rhs.m_prerequisites ||
+        m_unlocked_items != rhs.m_unlocked_items ||
+        m_graphic != rhs.m_graphic ||
+        m_unlocked_techs != rhs.m_unlocked_techs)
+    { return false; }
+
+    if (m_research_cost == rhs.m_research_cost) { // could be nullptr
+        // check next member
+    } else if (!m_research_cost || !rhs.m_research_cost) {
+        return false;
+    } else {
+        if (*m_research_cost != *(rhs.m_research_cost))
+            return false;
+    }
+
+    if (m_research_turns == rhs.m_research_turns) { // could be nullptr
+        // check next member
+    } else if (!m_research_turns || !rhs.m_research_turns) {
+        return false;
+    } else {
+        if (*m_research_turns != *(rhs.m_research_turns))
+            return false;
+    }
+
+    if (m_effects.size() != rhs.m_effects.size())
+        return false;
+    try {
+        for (std::size_t idx = 0; idx < m_effects.size(); ++idx) {
+            const auto& my_op = m_effects.at(idx);
+            const auto& rhs_op = rhs.m_effects.at(idx);
+
+            if (my_op == rhs_op)
+                continue;
+            if (!my_op || !rhs_op)
+                return false;
+            //if (*my_op != *rhs_op) TODO: implement EffectsGroup::operator==
+            //    return false;
+        }
+    } catch (...) {
+        return false;
+    }
+
+    return true;
+}
+
 std::string Tech::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Tech\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";

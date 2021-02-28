@@ -70,6 +70,10 @@ public:
 
     ~Tech();
 
+    bool operator==(const Tech& rhs) const;
+    bool operator!=(const Tech& rhs) const
+    { return !(*this == rhs); }
+
     const std::string&  Name() const                { return m_name; }              //!< returns name of this tech
     const std::string&  Description() const         { return m_description; }       //!< Returns the text description of this tech
     const std::string&  ShortDescription() const    { return m_short_description; } //!< Returns the single-line short text description of this tech
