@@ -288,9 +288,10 @@ void EffectsGroup::Execute(ScriptingContext& context,
     }
 }
 
-const std::vector<Effect*>  EffectsGroup::EffectsList() const {
-    std::vector<Effect*> retval(m_effects.size());
-    std::transform(m_effects.begin(), m_effects.end(), retval.begin(),
+const std::vector<Effect*> EffectsGroup::EffectsList() const {
+    std::vector<Effect*> retval;
+    retval.reserve(m_effects.size());
+    std::transform(m_effects.begin(), m_effects.end(), std::back_inserter(retval),
                    [](const std::unique_ptr<Effect>& xx) {return xx.get();});
     return retval;
 }
@@ -3547,8 +3548,9 @@ unsigned int GenerateSitRepMessage::GetCheckSum() const {
 
 std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>*>>
 GenerateSitRepMessage::MessageParameters() const {
-    std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>*>> retval(m_message_parameters.size());
-    std::transform(m_message_parameters.begin(), m_message_parameters.end(), retval.begin(),
+    std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>*>> retval;
+    retval.reserve(m_message_parameters.size());
+    std::transform(m_message_parameters.begin(), m_message_parameters.end(), std::back_inserter(retval),
                    [](const std::pair<std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>& xx) {
                        return std::make_pair(xx.first, xx.second.get());
                    });

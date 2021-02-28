@@ -175,9 +175,10 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
             DebugLogger() << "Universe::serialize : " << serializing_label << " legacy id allocator";
             // For legacy loads pre-dating the use of the IDAllocator the server
             // allocators need to be initialized with a list of the empires.
-            std::vector<int> allocating_empire_ids(u.m_empire_latest_known_objects.size());
+            std::vector<int> allocating_empire_ids;
+            allocating_empire_ids.reserve(u.m_empire_latest_known_objects.size());
             std::transform(u.m_empire_latest_known_objects.begin(), u.m_empire_latest_known_objects.end(),
-                           allocating_empire_ids.begin(),
+                           std::back_inserter(allocating_empire_ids),
                            [](const std::pair<int, ObjectMap> ii) { return ii.first; });
 
             u.ResetAllIDAllocation(allocating_empire_ids);

@@ -1790,7 +1790,11 @@ const ValueRef<T>* Operation<T>::LHS() const
 {
     if (m_operands.empty())
         return nullptr;
-    return m_operands[0].get();
+    try {
+        return m_operands.at(0).get();
+    } catch (...) {
+        return nullptr;
+    }
 }
 
 template <typename T>
@@ -1798,14 +1802,19 @@ const ValueRef<T>* Operation<T>::RHS() const
 {
     if (m_operands.size() < 2)
         return nullptr;
-    return m_operands[1].get();
+    try {
+        return m_operands.at(1).get();
+    } catch (...) {
+        return nullptr;
+    }
 }
 
 template <typename T>
 const std::vector<ValueRef<T>*> Operation<T>::Operands() const
 {
-    std::vector<ValueRef<T>*> retval(m_operands.size());
-    std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
+    std::vector<ValueRef<T>*> retval;
+    retval.reserve(m_operands.size());
+    std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
                    [](const auto& xx){ return xx.get(); });
     return retval;
 }
