@@ -690,6 +690,23 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
     m_value(std::move(value))
 {}
 
+bool SetShipPartMeter::operator==(const Effect& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const SetShipPartMeter& rhs_ = static_cast<const SetShipPartMeter&>(rhs);
+
+    if (m_meter != rhs_.m_meter)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_part_name)
+    CHECK_COND_VREF_MEMBER(m_value)
+
+    return true;
+}
+
 void SetShipPartMeter::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
         DebugLogger() << "SetShipPartMeter::Execute passed null target pointer";
