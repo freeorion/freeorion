@@ -893,6 +893,23 @@ SetEmpireMeter::SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire
     m_value(std::move(value))
 {}
 
+bool SetEmpireMeter::operator==(const Effect& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const SetEmpireMeter& rhs_ = static_cast<const SetEmpireMeter&>(rhs);
+
+    if (m_meter != rhs_.m_meter)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+    CHECK_COND_VREF_MEMBER(m_value)
+
+    return true;
+}
+
 void SetEmpireMeter::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
         DebugLogger() << "SetEmpireMeter::Execute passed null target pointer";

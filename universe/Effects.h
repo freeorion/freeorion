@@ -117,6 +117,8 @@ public:
     SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, std::string& meter,
                    std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
+    bool operator==(const Effect& rhs) const override;
+
     void Execute(ScriptingContext& context) const override;
     void Execute(ScriptingContext& context, const TargetSet& targets) const override;
     void Execute(ScriptingContext& context,
