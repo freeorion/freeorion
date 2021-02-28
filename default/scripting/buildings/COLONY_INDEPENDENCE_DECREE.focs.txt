@@ -1,0 +1,83 @@
+BuildingType
+    name = "BLD_COLONY_INDEPENDENCE_DECREE"
+    description = "BLD_COLONY_INDEPENDENCE_DECREE_DESC"
+    buildcost = 20
+    buildtime = 1
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population
+    ]
+
+    effectsgroups = [
+         // TODO: implement SetFocus effect
+         // switch independent colony focus to defense so the independent colony can have the highest defense values
+         //EffectsGroup
+         //   scope = And [
+         //       Object id = Source.PlanetID
+         //       Planet
+         //   ]
+         //   activation = Location type=Focus name = Source.Species name = "FOCUS_DEFENSE"
+         //   priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
+         //   effects = SetFocus name = "FOCUS_DEFENSE"
+
+         // make colony independent (unowned)
+         EffectsGroup
+            scope = And [
+                (LocalCandidate.PlanetID == Source.PlanetID)
+                Building
+                Not Building name = ThisBuilding
+            ]
+            activation = (Source.Age == 1)
+            priority = [[METER_OVERRIDE_PRIORITY]]
+            effects = SetOwner empire = [[UNOWNED_EMPIRE_ID]]
+         EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = (Source.Age == 1)
+            // calculation of the Max* values must be finished before declaring independence
+            priority = [[METER_OVERRIDE_PRIORITY]]
+            effects = [
+                SetSpecialCapacity name = "INDEPENDENT_COLONY_SHIELD_SPECIAL" capacity = Value(Target.MaxShield)
+                SetSpecialCapacity name = "INDEPENDENT_COLONY_DEFENSE_SPECIAL" capacity = Value(Target.MaxDefense)
+                SetSpecialCapacity name = "INDEPENDENT_COLONY_TROOPS_SPECIAL" capacity = Value(Target.MaxTroops)
+                SetSpecialCapacity name = "INDEPENDENT_COLONY_POPULATION_SPECIAL" capacity = Value(Target.TargetPopulation)
+                SetOwner empire = [[UNOWNED_EMPIRE_ID]]
+                GenerateSitRepMessage
+                    message = "SITREP_COLONY_INDEPENDENT"
+                    label = "SITREP_COLONY_INDEPENDENT_LABEL"
+                    icon = "icons/sitrep/planet_captured.png"
+                    parameters =  [
+                        tag = "planet" data = Target.ID
+                        tag = "species" data = Target.Species
+                    ]
+                    empire = Source.Owner
+            ]
+
+         EffectsGroup
+            scope =  Or [
+                Source
+                Object id = Source.PlanetID
+            ]
+            activation = Source
+            priority = [[END_CLEANUP_PRIORITY]]
+            effects = [
+                SetVisibility empire = Source.ProducedByEmpireID visibility = Max(Partial, Value)
+                SetVisibility affiliation = AllyOf empire = Source.ProducedByEmpireID visibility = Max(Partial, Value)
+            ]
+
+         EffectsGroup
+            scope = Source
+            activation = (Source.Age > 1)
+            priority = [[END_CLEANUP_PRIORITY]]
+            effects = [
+                Destroy
+            ]
+
+    ]
+    icon = "icons/sitrep/planet_captured.png"
+
+#include "/scripting/common/priorities.macros"
+#include "/scripting/common/misc.macros"

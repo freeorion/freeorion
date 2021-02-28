@@ -7254,6 +7254,12 @@ Outpost on %planet% was abandoned.  %rawtext%.
 SITREP_OUTPOST_ABADONED_LABEL
 Outpost Abandoned
 
+SITREP_COLONY_INDEPENDENT
+On %planet%: The %species% colony became independent.
+
+SITREP_COLONY_INDEPENDENT_LABEL
+Colony Independence
+
 SITREP_NEW_COLONY_ESTABLISHED
 On %planet%: A new %species% colony has been established.
 
@@ -8813,6 +8819,30 @@ SP_SUPER_TEST_DESC
 ##
 ## Specials
 ##
+
+INDEPENDENT_COLONY_SHIELD_SPECIAL
+Independent Planetary Shield
+
+INDEPENDENT_COLONY_SHIELD_SPECIAL_DESC
+This ensures that the [[metertype METER_MAX_SHIELD]] of this planet is at least as high as the special's capacity as long as the planet is independent and populated. Gets removed on invasion or depopulation.
+
+INDEPENDENT_COLONY_DEFENSE_SPECIAL
+Independent Planetary Defense
+
+INDEPENDENT_COLONY_DEFENSE_SPECIAL_DESC
+This ensures that the [[metertype METER_MAX_DEFENSE]] of this planet is at least as high as the special's capacity as long as the planet is independent and populated. Gets removed on invasion or depopulation.
+
+INDEPENDENT_COLONY_TROOPS_SPECIAL
+Independent Planetary Troops
+
+INDEPENDENT_COLONY_TROOPS_SPECIAL_DESC
+This ensures that the [[metertype METER_MAX_TROOPS]] of this planet is at least as high as the special's capacity as long as the planet is independent and populated. Gets removed on invasion or depopulation.
+
+INDEPENDENT_COLONY_POPULATION_SPECIAL
+Independent Population
+
+INDEPENDENT_COLONY_POPULATION_SPECIAL_DESC
+This ensures that the [[metertype METER_TARGET_POPULATION]] of this planet is at least as high as the special's capacity as long as the planet is independent and populated. Gets removed on invasion or depopulation.
 
 MODERATE_TECH_NATIVES_SPECIAL
 Moderate Tech Natives
@@ -13429,6 +13459,12 @@ Evacuate Planet
 
 BLD_EVACUATION_DESC
 Remove [[metertype METER_POPULATION]] from this planet over several turns according to an [[encyclopedia EVACUATION_TITLE]]. If a suitable alternate planets are available, with the same species and sufficient extra capacity, Population will move there.
+
+BLD_COLONY_INDEPENDENCE_DECREE
+Planet Independence Decree
+
+BLD_COLONY_INDEPENDENCE_DECREE_DESC
+Grant freedom to the colony on this planet. The independent colony retains its old [[metertype METER_TARGET_POPULATION]], [[metertype METER_MAX_SHIELD]], [[metertype METER_MAX_DEFENSE]] and [[metertype METER_MAX_TROOPS]]. The building gets used up in the process.
 
 BLD_ABANDON_OUTPOST
 Abandon Outpost
