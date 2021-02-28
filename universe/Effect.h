@@ -157,6 +157,10 @@ namespace Effect {
                      std::string content_name = "");
         virtual ~EffectsGroup();
 
+        bool operator==(const EffectsGroup& rhs) const;
+        bool operator!=(const EffectsGroup& rhs) const
+        { return !(*this == rhs); }
+
         /** execute all effects in group */
         void Execute(ScriptingContext& source_context,
                      const TargetsAndCause& targets_cause,

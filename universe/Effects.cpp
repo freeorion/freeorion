@@ -201,6 +201,57 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
 EffectsGroup::~EffectsGroup()
 {}
 
+bool EffectsGroup::operator==(const EffectsGroup& rhs) const {
+    if (&rhs == this)
+        return true;
+
+    if (m_stacking_group != rhs.m_stacking_group ||
+        m_description != rhs.m_description ||
+        m_accounting_label != rhs.m_accounting_label ||
+        m_description != rhs.m_description ||
+        m_content_name != rhs.m_content_name ||
+        m_priority != rhs.m_priority)
+    { return false; }
+
+    if (m_scope == rhs.m_scope) { // could be nullptr
+        // check next member
+    } else if (!m_scope || !rhs.m_scope) {
+        return false;
+    } else {
+        if (*m_scope != *(rhs.m_scope))
+            return false;
+    }
+
+    if (m_activation == rhs.m_activation) { // could be nullptr
+        // check next member
+    } else if (!m_activation || !rhs.m_activation) {
+        return false;
+    } else {
+        if (*m_activation != *(rhs.m_activation))
+            return false;
+    }
+
+    if (m_effects.size() != rhs.m_effects.size())
+        return false;
+    try {
+        for (std::size_t idx = 0; idx < m_effects.size(); ++idx) {
+            const auto& my_op = m_effects.at(idx);
+            const auto& rhs_op = rhs.m_effects.at(idx);
+
+            if (my_op == rhs_op)
+                continue;
+            if (!my_op || !rhs_op)
+                return false;
+            //if (*my_op != *rhs_op) // TODO: implement Effect::operator==
+            //    return false;
+        }
+    } catch (...) {
+        return false;
+    }
+
+    return true;
+}
+
 void EffectsGroup::Execute(ScriptingContext& context,
                            const TargetsAndCause& targets_cause,
                            AccountingMap* accounting_map,

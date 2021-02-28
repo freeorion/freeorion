@@ -224,8 +224,8 @@ bool Tech::operator==(const Tech& rhs) const {
                 continue;
             if (!my_op || !rhs_op)
                 return false;
-            //if (*my_op != *rhs_op) TODO: implement EffectsGroup::operator==
-            //    return false;
+            if (*my_op != *rhs_op)
+                return false;
         }
     } catch (...) {
         return false;
