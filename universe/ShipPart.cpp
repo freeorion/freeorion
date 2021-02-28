@@ -10,6 +10,14 @@
 #include "../util/CheckSums.h"
 #include "../util/GameRules.h"
 
+#define CHECK_COND_VREF_MEMBER(m_ptr) { if (m_ptr == rhs.m_ptr) {           \
+                                            /* check next member */         \
+                                        } else if (!m_ptr || !rhs.m_ptr) {  \
+                                            return false;                   \
+                                        } else {                            \
+                                            if (*m_ptr != *(rhs.m_ptr))     \
+                                                return false;               \
+                                        }   }
 
 namespace {
     const int ARBITRARY_LARGE_TURNS = 999999;
@@ -253,6 +261,95 @@ void ShipPart::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
 
 ShipPart::~ShipPart()
 {}
+
+bool ShipPart::operator==(const ShipPart& rhs) const {
+    if (&rhs == this)
+        return true;
+
+    if (m_name != rhs.m_name ||
+        m_description != rhs.m_description ||
+        m_class != rhs.m_class ||
+        m_capacity != rhs.m_capacity ||
+        m_secondary_stat != rhs.m_secondary_stat ||
+        m_producible != rhs.m_producible ||
+        m_mountable_slot_types != rhs.m_mountable_slot_types ||
+        m_tags != rhs.m_tags ||
+        m_exclusions != rhs.m_exclusions ||
+        m_icon != rhs.m_icon ||
+        m_add_standard_capacity_effect != rhs.m_add_standard_capacity_effect)
+    { return false; }
+
+    CHECK_COND_VREF_MEMBER(m_production_cost)
+    CHECK_COND_VREF_MEMBER(m_production_time)
+    CHECK_COND_VREF_MEMBER(m_location)
+    CHECK_COND_VREF_MEMBER(m_combat_targets)
+
+    if (m_effects.size() != rhs.m_effects.size())
+        return false;
+    try {
+        for (std::size_t idx = 0; idx < m_effects.size(); ++idx) {
+            const auto& my_op = m_effects.at(idx);
+            const auto& rhs_op = rhs.m_effects.at(idx);
+
+            if (my_op == rhs_op) // could both be nullptr
+                continue;
+            if (!my_op || !rhs_op)
+                return false;
+            if (*my_op != *rhs_op)
+                return false;
+        }
+    } catch (...) {
+        return false;
+    }
+
+    if (m_production_meter_consumption.size() != rhs.m_production_meter_consumption.size())
+        return false;
+    try {
+        for (auto& [meter_type, my_refs_cond_pair] : m_production_meter_consumption) {
+            auto& [my_ref, my_cond] = my_refs_cond_pair;
+            const auto& rhs_refs_cond_pair{rhs.m_production_meter_consumption.at(meter_type)};
+            auto& [rhs_ref, rhs_cond] = rhs_refs_cond_pair;
+
+            if (!my_ref && !rhs_ref && !my_cond && !rhs_cond)
+                continue;
+            if ((my_ref && !rhs_ref) || (!my_ref && rhs_ref))
+                return false;
+            if (*my_ref != *rhs_ref)
+                return false;
+            if ((my_cond && !rhs_cond) || (!my_cond && rhs_cond))
+                return false;
+            if (*my_cond != *rhs_cond)
+                return false;
+        }
+    } catch (...) {
+        return false;
+    }
+
+    if (m_production_meter_consumption.size() != rhs.m_production_meter_consumption.size())
+        return false;
+    try {
+        for (auto& [meter_type, my_refs_cond_pair] : m_production_special_consumption) {
+            auto& [my_ref, my_cond] = my_refs_cond_pair;
+            const auto& rhs_refs_cond_pair{rhs.m_production_special_consumption.at(meter_type)};
+            auto& [rhs_ref, rhs_cond] = rhs_refs_cond_pair;
+
+            if (!my_ref && !rhs_ref && !my_cond && !rhs_cond)
+                continue;
+            if ((my_ref && !rhs_ref) || (!my_ref && rhs_ref))
+                return false;
+            if (*my_ref != *rhs_ref)
+                return false;
+            if ((my_cond && !rhs_cond) || (!my_cond && rhs_cond))
+                return false;
+            if (*my_cond != *rhs_cond)
+                return false;
+        }
+    } catch (...) {
+        return false;
+    }
+
+    return true;
+}
 
 float ShipPart::Capacity() const {
     switch (m_class) {

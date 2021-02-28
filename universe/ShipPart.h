@@ -49,6 +49,10 @@ public:
 
     ~ShipPart();
 
+    bool operator==(const ShipPart& rhs) const;
+    bool operator!=(const ShipPart& rhs) const
+    { return !(*this == rhs); }
+
     //! Returns name of part
     auto Name() const -> const std::string&
     { return m_name; }
