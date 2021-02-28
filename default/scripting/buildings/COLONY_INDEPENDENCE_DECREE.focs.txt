@@ -1,0 +1,42 @@
+BuildingType
+    name = "BLD_COLONY_INDEPENDENCE_DECREE"
+    description = "BLD_COLONY_INDEPENDENCE_DECREE_DESC"
+    buildcost = 20
+    buildtime = 1
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population
+    ]
+
+    effectsgroups = [
+         // make colony independent (unowned)
+         EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Source
+            priority = [[COLONY_INDEPENDENCE_PRIORITY]]
+            effects = [
+                SetOwner empire = [[UNOWNED_EMPIRE_ID]]
+                GenerateSitRepMessage
+                    message = "SITREP_COLONY_INDEPENDENT"
+                    label = "SITREP_COLONY_INDEPENDENT_LABEL"
+                    icon = "icons/sitrep/planet_captured.png"
+                    parameters =  [
+                        tag = "planet" data = Target.ID
+                        tag = "species" data = Target.Species
+                    ]
+                    empire = Source.Owner
+            ]
+
+         EffectsGroup
+            scope = Source
+            priority = [[END_CLEANUP_PRIORITY]]
+            effects = Destroy
+    ]
+    icon = "icons/sitrep/planet_captured.png"
+
+#include "/scripting/common/priorities.macros"
+#include "/scripting/common/misc.macros"

@@ -7254,6 +7254,12 @@ Outpost on %planet% was abandoned.  %rawtext%.
 SITREP_OUTPOST_ABADONED_LABEL
 Outpost Abandoned
 
+SITREP_COLONY_INDEPENDENT
+On %planet%: The %species% colony became independent.
+
+SITREP_COLONY_INDEPENDENT_LABEL
+Colony Independence
+
 SITREP_NEW_COLONY_ESTABLISHED
 On %planet%: A new %species% colony has been established.
 
@@ -13429,6 +13435,12 @@ Evacuate Planet
 
 BLD_EVACUATION_DESC
 Remove [[metertype METER_POPULATION]] from this planet over several turns according to an [[encyclopedia EVACUATION_TITLE]]. If a suitable alternate planets are available, with the same species and sufficient extra capacity, Population will move there.
+
+BLD_COLONY_INDEPENDENCE_DECREE
+Planet Independence Decree
+
+BLD_COLONY_INDEPENDENCE_DECREE_DESC
+Grant freedom to the colony on this planet. The building gets used up in the process.
 
 BLD_ABANDON_OUTPOST
 Abandon Outpost
