@@ -35,6 +35,16 @@ using boost::io::str;
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
+#define CHECK_COND_VREF_MEMBER(m_ptr) { if (m_ptr == rhs_.m_ptr) {              \
+                                            /* check next member */             \
+                                        } else if (!m_ptr || !rhs_.m_ptr) {     \
+                                            return false;                       \
+                                        } else {                                \
+                                            if (*m_ptr != *(rhs_.m_ptr))        \
+                                                return false;                   \
+                                        }   }
+
+
 namespace {
     /** creates a new fleet at a specified \a x and \a y location within the
      * Universe, and and inserts \a ship into it.  Used when a ship has been
@@ -438,9 +448,6 @@ unsigned int Effect::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // NoOp                                                  //
 ///////////////////////////////////////////////////////////
-NoOp::NoOp()
-{}
-
 void NoOp::Execute(ScriptingContext& context) const
 {}
 
@@ -468,6 +475,23 @@ SetMeter::SetMeter(MeterType meter,
 {
     if (accounting_label)
         m_accounting_label = std::move(*accounting_label);
+}
+
+bool SetMeter::operator==(const Effect& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const SetMeter& rhs_ = static_cast<const SetMeter&>(rhs);
+
+    if (m_meter != rhs_.m_meter ||
+        m_accounting_label != rhs_.m_accounting_label)
+    { return false; }
+
+    CHECK_COND_VREF_MEMBER(m_value)
+
+    return true;
 }
 
 void SetMeter::Execute(ScriptingContext& context) const {

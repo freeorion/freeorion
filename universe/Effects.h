@@ -21,7 +21,7 @@ namespace Effect {
   * execution without modifying the gamestate. */
 class FO_COMMON_API NoOp final : public Effect {
 public:
-    NoOp();
+    NoOp() = default;
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
@@ -38,6 +38,8 @@ public:
     SetMeter(MeterType meter,
              std::unique_ptr<ValueRef::ValueRef<double>>&& value,
              boost::optional<std::string> accounting_label = boost::none);
+
+    bool operator==(const Effect& rhs) const override;
 
     void Execute(ScriptingContext& context) const override;
 
