@@ -1093,6 +1093,19 @@ SetEmpireCapital::SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& em
     m_empire_id(std::move(empire_id))
 {}
 
+bool SetEmpireCapital::operator==(const Effect& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const SetEmpireCapital& rhs_ = static_cast<const SetEmpireCapital&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+
+    return true;
+}
+
 void SetEmpireCapital::Execute(ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 

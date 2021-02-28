@@ -170,8 +170,10 @@ private:
   * the effect does nothing. */
 class FO_COMMON_API SetEmpireCapital final : public Effect {
 public:
-    explicit SetEmpireCapital();
+    SetEmpireCapital();
     explicit SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
+
+    bool operator==(const Effect& rhs) const override;
 
     void            Execute(ScriptingContext& context) const override;
     std::string     Dump(unsigned short ntabs = 0) const override;
