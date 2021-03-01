@@ -1,6 +1,7 @@
 #include <array>
 #include <boost/test/tools/old/interface.hpp>
 #include <boost/test/unit_test.hpp>
+#include <memory>
 
 #include "parse/Parse.h"
 #include "universe/Condition.h"
@@ -8,6 +9,7 @@
 #include "universe/Effect.h"
 #include "universe/Tech.h"
 #include "universe/UnlockableItem.h"
+#include "universe/ValueRefs.h"
 #include "util/Directories.h"
 #include "util/GameRules.h"
 #include "util/Pending.h"
@@ -72,6 +74,31 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
         BOOST_REQUIRE_EQUAL(1, tech_items.size());
         BOOST_REQUIRE_EQUAL(UnlockableItemType::UIT_POLICY, tech_items[0].type);
         BOOST_REQUIRE_EQUAL("PLC_ALGORITHMIC_RESEARCH", tech_items[0].name);
+
+        Tech tech{
+            "LRN_ALGO_ELEGANCE",
+            "LRN_ALGO_ELEGANCE_DESC",
+            "RESEARCH_SHORT_DESC",
+            "LEARNING_CATEGORY",
+            std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
+                std::make_unique<ValueRef::Constant<double>>(10),
+                std::make_unique<ValueRef::ComplexVariable<double>>(
+                    "GameRule",
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    std::make_unique<ValueRef::Constant<std::string>>(std::string("RULE_TECH_COST_FACTOR")),
+                    nullptr
+                )),
+            std::make_unique<ValueRef::Constant<int>>(3),
+            true,
+            {"PEDIA_LEARNING_CATEGORY"},
+            {},
+            {},
+            {UnlockableItem{UnlockableItemType::UIT_POLICY, "PLC_ALGORITHMIC_RESEARCH"}},
+            "icons/tech/algorithmic_elegance.png"
+        };
+        BOOST_REQUIRE(tech == (**tech_it));
     }
 
     {
@@ -92,7 +119,6 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
         BOOST_REQUIRE_EQUAL(true, tech_effect_scope->TargetInvariant());
         BOOST_REQUIRE_EQUAL(false, tech_effect_scope->SourceInvariant());
 
-        BOOST_WARN_EQUAL("", typeid(*tech_effect_scope).name());
         Condition::And *tech_effect_scope_and = dynamic_cast<Condition::And*>(tech_effect_scope);
         BOOST_REQUIRE(tech_effect_scope_and != nullptr);
         BOOST_REQUIRE_EQUAL(2, tech_effect_scope_and->Operands().size());
