@@ -1226,6 +1226,12 @@ Tous les Objets visibles
 RULE_ALL_OBJECTS_VISIBLE_DESC
 Tous les systèmes, planètes, structures, flottes, astronefs, et régions interstellaires peuvent être détectés par les empires à au moins un niveau de visibilité partielle.
 
+RULE_ALL_SYSTEMS_VISIBLE
+Tous les Systèmes visibles
+
+RULE_ALL_SYSTEMS_VISIBLE_DESC
+Tous les emplacements des systèmes sont connus de tous les empires.
+
 RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
 Planètes Furtives Indétectables
 
@@ -6149,7 +6155,7 @@ OUTPOSTS_TITLE
 Avant-Poste
 
 OUTPOSTS_TEXT
-Les Avant-Postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de [[metertype METER_POPULATION]] et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[metertype METER_SUPPLY]] de l'empire (à l'aide de la technologie appropriée), augmenter sa zone de détection et fournir du carburant. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-Poste. Pour construire un Avant-Poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-Postes sont également créés lorsque la Population d'une colonie tombe à zéro, quelle qu'en soit la raison.
+Les Avant-Postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de [[metertype METER_POPULATION]] et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[metertype METER_SUPPLY]] de l'empire (à l'aide de la technologie appropriée), augmenter sa zone de détection et fournir du carburant. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-Poste. Pour construire un Avant-Poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-Postes sont également créés lorsque la Population d'une colonie tombe à zéro, quelle qu'en soit la raison. Il est possible d'abandonner un Avant-Poste en construisant la structure [[buildingtype BLD_ABANDON_OUTPOST]].
 
 HOMEWORLDS_TITLE
 Planète Natale
@@ -6348,8 +6354,8 @@ EVACUATION_TITLE
 Plan d'Évacuation
 
 EVACUATION_TEXT
-'''La construction d'un [[buildingtype BLD_EVACUATION]] retire toute la [[metertype METER_POPULATION]] d'une planète. À chaque tour, une partie de la Population est évacuée. S'il existe des planètes de l'empire colonisées par la même espèce, ayant de l'espace libre et étant connectées aux lignes d'[[metertype METER_SUPPLY]], l'une d'entre elles sera choisie au hasard et la Population y sera déplacée. Si aucune planète appropriée n'est disponible, la Population évacuée disparaîtra dans l'espace infini.
-Durant une évacuation, la production tombe à zéro. Quand une colonie est vidée de toute Population, elle retourne à l'état d'[[encyclopedia OUTPOSTS_TITLE]]. L'empire en est toujours propriétaire, et peut lancer une nouvelle colonisation dès que le [[buildingtype BLD_EVACUATION]] est automatiquement détruit.'''
+'''La construction de la structure [[buildingtype BLD_EVACUATION]] retire toute la [[metertype METER_POPULATION]] d'une planète. À chaque tour, une partie de la Population est évacuée. S'il existe des planètes de l'empire colonisées par la même espèce, ayant de l'espace libre et étant connectées aux lignes d'[[metertype METER_SUPPLY]], l'une d'entre elles sera choisie au hasard et la Population y sera déplacée. Si aucune planète appropriée n'est disponible, la Population évacuée disparaîtra dans l'espace infini.
+Durant une évacuation, la production tombe à zéro. Quand une colonie est vidée de toute Population, elle retourne à l'état d'[[encyclopedia OUTPOSTS_TITLE]]. L'empire en est toujours propriétaire, et peut lancer une nouvelle colonisation dès que la structure [[buildingtype BLD_EVACUATION]] est détruite automatiquement.'''
 
 AI_LEVELS_TITLE
 Niveaux d'Agressivité de l'IA
@@ -7238,6 +7244,21 @@ La planète %planet% dispose à présent d'un avant-poste.
 
 SITREP_PLANET_OUTPOSTED_LABEL
 Planète Avant-Poste
+
+SITREP_OUTPOST_ABANDONED_PREPARATION
+L'avant-poste de la planète %planet% se prépare à être abandonné au tour %rawtext%.
+
+SITREP_OUTPOST_ABADONED_PREPARATION_LABEL
+Préparation abandon Avant-Poste
+
+SITREP_OUTPOST_ABANDONED_PREVENTED_BY_BATTLE
+L'avant-poste de la planète %planet% ne peut pas être abandonné tant qu'une bataille se déroule dans le système %system%.
+
+SITREP_OUTPOST_ABANDONED
+L'avant-poste de la planète %planet% a été abandonné.  %rawtext%.
+
+SITREP_OUTPOST_ABADONED_LABEL
+Avant-Poste abandonné
 
 SITREP_NEW_COLONY_ESTABLISHED
 Sur %planet% : une nouvelle colonie %species% s'est établie.
@@ -13410,10 +13431,16 @@ Des expérimentations ingénieuses conjuguées au perfectionnement des infrastru
 ##
 
 BLD_EVACUATION
-Système d'Évacuation
+Évacuation Planétaire
 
 BLD_EVACUATION_DESC
 Extrait la [[metertype METER_POPULATION]] de cette planète sur plusieurs tours selon un [[encyclopedia EVACUATION_TITLE]] prédéfini. Si une planète de remplacement avec un [[encyclopedia ENVIRONMENT_TITLE]] approprié est disponible et déjà peuplée par la même espèce, tout en disposant de suffisamment de place libre, la Population y sera transférée.
+
+BLD_ABANDON_OUTPOST
+Abandon Avant-Poste
+
+BLD_ABANDON_OUTPOST_DESC
+Abandonne l'Avant-Poste sur cette planète. La structure requiert deux tours pour préparer le démantèlement de l'avant-poste. Si la préparation du démantèlement est finalisée, abandonner complètement l'avant-poste nécessite un tour complet sans batailles au sein du système. La structure est détruite une fois le processus achevé et la planète n'aura plus de propriétaire.
 
 BLD_OBSERVATORY
 Observatoire
