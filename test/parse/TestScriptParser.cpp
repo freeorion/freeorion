@@ -7,6 +7,7 @@
 #include "universe/Condition.h"
 #include "universe/Conditions.h"
 #include "universe/Effect.h"
+#include "universe/Effects.h"
 #include "universe/Tech.h"
 #include "universe/UnlockableItem.h"
 #include "universe/ValueRefs.h"
@@ -134,6 +135,58 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
 
         BOOST_REQUIRE_EQUAL(1, (*tech_it)->Prerequisites().size());
         BOOST_REQUIRE_EQUAL(1, (*tech_it)->Prerequisites().count("PRO_MICROGRAV_MAN"));
+
+        std::vector<std::unique_ptr<Effect::Effect>> effects;
+        effects.push_back(std::make_unique<Effect::SetMeter>(MeterType::METER_TARGET_POPULATION,
+                        std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::PLUS,
+                            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+                            std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
+                                std::make_unique<ValueRef::Constant<double>>(1),
+                                std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "HabitableSize"))
+                        ),
+                        std::string("ORBITAL_HAB_LABEL")));
+
+        std::shared_ptr<Effect::EffectsGroup> effect_group = std::shared_ptr<Effect::EffectsGroup>(new Effect::EffectsGroup(
+                std::make_unique<Condition::And>(
+                    std::make_unique<Condition::Species>(),
+                    std::make_unique<Condition::EmpireAffiliation>(
+                        std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")
+                    )
+                ),
+                nullptr,
+                std::move(effects),
+                "",
+                "",
+                17,
+                "",
+                ""
+        ));
+
+        Tech tech{
+            "CON_ORBITAL_HAB",
+            "CON_ORBITAL_HAB_DESC",
+            "POPULATION_SHORT_DESC",
+            "GROWTH_CATEGORY",
+            std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
+                std::make_unique<ValueRef::Constant<double>>(250),
+                std::make_unique<ValueRef::ComplexVariable<double>>(
+                    "GameRule",
+                    nullptr,
+                    nullptr,
+                    nullptr,
+                    std::make_unique<ValueRef::Constant<std::string>>(std::string("RULE_TECH_COST_FACTOR")),
+                    nullptr
+                )),
+            std::make_unique<ValueRef::Constant<int>>(7),
+            true,
+            {"PEDIA_GROWTH_CATEGORY"},
+            {effect_group},
+            {"PRO_MICROGRAV_MAN"},
+            {},
+            "icons/tech/orbital_gardens.png"
+        };
+        BOOST_REQUIRE(tech == (**tech_it));
+
     }
 
     // test it last
