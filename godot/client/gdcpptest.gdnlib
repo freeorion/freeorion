@@ -18,7 +18,7 @@ Server.32="res://bin/linux.32/libfreeoriongodot.so"
 
 Android.armeabi-v7a=[ "res://bin/android.armeabi-v7a.32/libiconv.so" ]
 OSX.64=[ "res://bin/libfreeorioncommon.dylib", "res://bin/libfreeorionparse.dylib" ]
-X11.64=[ "res://bin/linux.64/libfreeorioncommon.so", "res://bin/linux.64/libfreeorionparse.so" ]
-X11.32=[ "res://bin/linux.32/libfreeorioncommon.so", "res://bin/linux.32/libfreeorionparse.so" ]
-Server.64=[ "res://bin/linux.64/libfreeorioncommon.so", "res://bin/linux.64/libfreeorionparse.so" ]
-Server.32=[ "res://bin/linux.32/libfreeorioncommon.so", "res://bin/linux.32/libfreeorionparse.so" ]
+X11.64=[ ]
+X11.32=[ ]
+Server.64=[ ]
+Server.32=[ ]
