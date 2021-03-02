@@ -29,10 +29,7 @@ BOOST_AUTO_TEST_CASE(parse_game_rules) {
 
 BOOST_AUTO_TEST_CASE(parse_techs) {
     Pending::Pending<TechManager::TechParseTuple> techs_p = Pending::StartParsing(parse::techs<TechManager::TechParseTuple>, m_scrpiting_dir / "techs");
-    auto techs_tuple = *Pending::WaitForPendingUnlocked(std::move(techs_p));
-    auto techs = std::get<0>(std::move(techs_tuple));
-    auto tech_categories = std::get<1>(std::move(techs_tuple));
-    auto categories_seen = std::get<2>(std::move(techs_tuple));
+    auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
     BOOST_REQUIRE(!techs.empty());
     BOOST_REQUIRE(!tech_categories.empty());
     BOOST_REQUIRE(!categories_seen.empty());
