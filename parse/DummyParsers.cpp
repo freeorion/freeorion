@@ -65,7 +65,7 @@ namespace parse {
     std::map<std::string, std::vector<EncyclopediaArticle>> encyclopedia_articles(const boost::filesystem::path& path)
     { return {}; }
 
-    GameRules game_rules(const boost::filesystem::path& path)
+    GameRules game_rules(const PythonParser& parser, const boost::filesystem::path& path)
     { return {}; }
 
     void file_substitution(std::string& text, const boost::filesystem::path& file_search_path, const std::string& filename)
