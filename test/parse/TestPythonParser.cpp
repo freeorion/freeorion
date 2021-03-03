@@ -4,14 +4,12 @@
 #include "util/Directories.h"
 #include "util/PythonCommon.h"
 
-BOOST_FIXTURE_TEST_SUITE(TestPythonParser, PythonCommon)
+#include "ParserAppFixture.h"
+
+BOOST_FIXTURE_TEST_SUITE(TestPythonParser, ParserAppFixture)
 
 BOOST_AUTO_TEST_CASE(parse0) {
-    InitDirs("");
-
-    BOOST_REQUIRE(Initialize());
-
-    PythonParser parser(*this);
+    PythonParser parser(m_python);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
