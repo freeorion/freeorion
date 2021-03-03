@@ -171,6 +171,10 @@ FO_COMMON_API auto RelativePath(boost::filesystem::path const& from, boost::file
 //! otherwise.
 FO_COMMON_API auto IsFOCScript(boost::filesystem::path const& path) -> bool;
 
+//! Returns true if the given @p path referrs to a FO content Python script and false
+//! otherwise.
+FO_COMMON_API auto IsFOCPyScript(boost::filesystem::path const& path) -> bool;
+
 //! Returns a vector of pathes within @p path including a recursive search
 //! though sub-dirs.
 //!

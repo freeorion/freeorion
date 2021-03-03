@@ -45,7 +45,7 @@ set(FO_TEST_PARSE
     #TestValueRefIntParser
     #TestValueRefStringParser
     #TestValueRefUniverseObjectTypeParser
-    TestScriptParser
+    #TestScriptParser
     TestPythonParser
 )
 
