@@ -3,6 +3,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUI
 add_executable(fo_unittest_parse
     main.cpp
     CommonTest.cpp
+    ParserAppFixture.cpp
     $<TARGET_OBJECTS:freeorionparseobj>
 )
 
@@ -26,6 +27,8 @@ target_link_libraries(fo_unittest_parse
 )
 
 target_dependencies_copy_to_build(fo_unittest_parse)
+target_dependent_data_symlink_to_build(fo_unittest_parse ${PROJECT_SOURCE_DIR}/test-scripting)
+target_dependent_data_symlink_to_build(fo_unittest_parse ${PROJECT_SOURCE_DIR}/default)
 
 add_coverage(fo_unittest_parse
     unittest
@@ -41,6 +44,7 @@ set(FO_TEST_PARSE
     #TestValueRefIntParser
     #TestValueRefStringParser
     #TestValueRefUniverseObjectTypeParser
+    TestScriptParser
 )
 
 foreach(_TEST ${FO_TEST_PARSE})

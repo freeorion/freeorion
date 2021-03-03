@@ -170,6 +170,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\test\parse\CommonTest.h" />
+    <ClInclude Include="..\..\test\parse\ParserAppFixture.h" />
     <ClInclude Include="..\..\test\system\ClientAppFixture.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
@@ -178,7 +179,9 @@
     <ClCompile Include="..\..\client\ClientNetworking.cpp" />
     <ClCompile Include="..\..\test\parse\CommonTest.cpp" />
     <ClCompile Include="..\..\test\parse\main.cpp" />
+    <ClCompile Include="..\..\test\parse\ParserAppFixture.cpp" />
     <ClCompile Include="..\..\test\parse\TestEnumParser.cpp" />
+    <ClCompile Include="..\..\test\parse\TestScriptParser.cpp" />
     <ClCompile Include="..\..\test\system\ClientAppFixture.cpp" />
     <ClCompile Include="..\..\test\system\SmokeTestGame.cpp" />
     <ClCompile Include="..\..\test\system\SmokeTestHostless.cpp" />
