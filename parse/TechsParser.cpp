@@ -216,7 +216,7 @@ namespace parse {
     const lexer tech_lexer;
 
     template <typename T>
-    T techs(const boost::filesystem::path& path) {
+    T techs(const PythonParser& parser, const boost::filesystem::path& path) {
         TechManager::TechContainer techs_;
         std::map<std::string, std::unique_ptr<TechCategory>> categories;
         std::set<std::string> categories_seen;
@@ -238,4 +238,4 @@ namespace parse {
 // explicitly instantiate techs.
 // This allows Tech.h to only be included in this .cpp file and not Parse.h
 // which recompiles all parsers if Tech.h changes.
-template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const boost::filesystem::path& path);
+template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const boost::filesystem::path& path);
