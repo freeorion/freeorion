@@ -20,7 +20,7 @@
 BOOST_FIXTURE_TEST_SUITE(TestScriptParser, ParserAppFixture)
 
 BOOST_AUTO_TEST_CASE(parse_game_rules) {
-    Pending::Pending<GameRules> game_rules_p = Pending::StartParsing(parse::game_rules, m_scrpiting_dir / "game_rules.focs.txt");
+    Pending::Pending<GameRules> game_rules_p = Pending::StartParsing(parse::game_rules, m_scripting_dir / "game_rules.focs.txt");
     auto game_rules = *Pending::WaitForPendingUnlocked(std::move(game_rules_p));
     BOOST_REQUIRE(!game_rules.Empty());
     BOOST_REQUIRE(game_rules.RuleExists("RULE_HABITABLE_SIZE_MEDIUM"));
@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(parse_game_rules) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_techs) {
-    Pending::Pending<TechManager::TechParseTuple> techs_p = Pending::StartParsing(parse::techs<TechManager::TechParseTuple>, m_scrpiting_dir / "techs");
+    Pending::Pending<TechManager::TechParseTuple> techs_p = Pending::StartParsing(parse::techs<TechManager::TechParseTuple>, m_scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
     BOOST_REQUIRE(!techs.empty());
     BOOST_REQUIRE(!tech_categories.empty());

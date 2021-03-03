@@ -47,7 +47,7 @@ public:
 
     int EffectsProcessingThreads() const override;
 protected:
-    boost::filesystem::path m_scrpiting_dir;
+    boost::filesystem::path m_scripting_dir;
 
     // Gamestate...
     Universe                    m_universe;

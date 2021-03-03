@@ -8,9 +8,11 @@ namespace fs = boost::filesystem;
 ParserAppFixture::ParserAppFixture() {
     InitDirs("");
 
-    m_scrpiting_dir = GetBinDir() / "default-test" / "scripting";
-    BOOST_REQUIRE(fs::exists(m_scrpiting_dir));
-    BOOST_REQUIRE(fs::is_directory(m_scrpiting_dir));
+    m_scripting_dir = GetBinDir() / "default-test" / "scripting";
+    BOOST_TEST_MESSAGE("Test scripting directory: " << m_scripting_dir);
+    BOOST_REQUIRE(m_scripting_dir.is_absolute());
+    BOOST_REQUIRE(fs::exists(m_scripting_dir));
+    BOOST_REQUIRE(fs::is_directory(m_scripting_dir));
 }
 
 int ParserAppFixture::CurrentTurn() const
