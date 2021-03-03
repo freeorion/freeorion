@@ -53,13 +53,6 @@ namespace ValueRef {
     struct ValueRef;
 }
 
-#if defined(_MSC_VER)
-#  if (_MSC_VER == 1900)
-namespace boost {
-    FO_COMMON_API const volatile Universe* get_pointer(const volatile Universe* p);
-}
-#  endif
-#endif
 
 /** The Universe class contains the majority of FreeOrion gamestate: All the
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
