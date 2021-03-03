@@ -240,12 +240,10 @@ set(MINIMUM_BOOST_VERSION 1.60.0)
 
 find_package(Threads)
 find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
-if(BUILD_AI OR BUILD_SERVER)
-    find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
-    message(STATUS "Python library version detected ${PYTHONLIBS_VERSION_STRING}")
-    string(REGEX REPLACE "^([0-9]+)\\.([0-9]+)\\..*" "\\1\\2" Boost_PYTHON_SUFFIX "${PYTHONLIBS_VERSION_STRING}")
-    message(STATUS "Boost python version ${Boost_PYTHON_SUFFIX}")
-endif()
+find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
+message(STATUS "Python library version detected ${PYTHONLIBS_VERSION_STRING}")
+string(REGEX REPLACE "^([0-9]+)\\.([0-9]+)\\..*" "\\1\\2" Boost_PYTHON_SUFFIX "${PYTHONLIBS_VERSION_STRING}")
+message(STATUS "Boost python version ${Boost_PYTHON_SUFFIX}")
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
         filesystem
@@ -390,7 +388,11 @@ target_compile_definitions(freeorioncommon
         $<$<NOT:$<PLATFORM_ID:Android>>:BOOST_ALL_DYN_LINK>
     PRIVATE
         -DFREEORION_BUILD_COMMON
-        -DFREEORION_PYTHON_VERSION=\"${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}\"
+)
+
+target_include_directories(freeorioncommon SYSTEM
+    PUBLIC
+        ${PYTHON_INCLUDE_PATH}
 )
 
 target_link_libraries(freeorioncommon
@@ -410,6 +412,7 @@ target_link_libraries(freeorioncommon
         ${ICUI18N_LIBRARY}
         ${ICUUC_LIBRARY}
         ${ICUDATA_LIBRARY}
+        ${PYTHON_LIBRARIES}
         ${ANDROID_LIBRARY}
         ${LOG_LIBRARY}
     PRIVATE
@@ -531,17 +534,11 @@ if(BUILD_SERVER)
             -DFREEORION_BUILD_SERVER
     )
     
-    target_include_directories(freeoriond SYSTEM
-        PRIVATE
-            ${PYTHON_INCLUDE_PATH}
-    )
-    
     target_link_libraries(freeoriond
         PRIVATE
             freeorioncommon
             freeorionparse
             Boost::python${Boost_PYTHON_SUFFIX}
-            ${PYTHON_LIBRARIES}
     )
     
     target_dependencies_copy_to_build(freeoriond)
@@ -563,16 +560,10 @@ if(BUILD_AI)
             -DFREEORION_BUILD_AI
     )
     
-    target_include_directories(freeorionca SYSTEM
-        PRIVATE
-            ${PYTHON_INCLUDE_PATH}
-    )
-    
     target_link_libraries(freeorionca
         freeorioncommon
         freeorionparse
         Boost::python${Boost_PYTHON_SUFFIX}
-        ${PYTHON_LIBRARIES}
     )
     
     target_dependencies_copy_to_build(freeorionca)
