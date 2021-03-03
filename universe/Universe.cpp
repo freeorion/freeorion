@@ -45,25 +45,14 @@
 #else
 #  include <boost/asio/io_service.hpp>
 #  include <boost/thread/thread.hpp>
-namespace boost { namespace asio {
+namespace boost::asio {
+    // dummy implementation of thread_pool and post that just immediately executes the passed-in function
     struct thread_pool {
-        thread_pool(int num_threads) {
-            boost::asio::io_service::work work(m_io_service);
-            for (auto i = 0; i < num_threads; ++i) {
-                m_thread_pool.create_thread(
-                    boost::bind(&boost::asio::io_service::run, &m_io_service));
-            }
-        }
-        void join() { m_thread_pool.join_all(); }
-        void post(std::function<void()> func) { m_io_service.post(std::move(func)); }
-
-    private:
-        boost::asio::io_service m_io_service;
-        boost::thread_group m_thread_pool;
+        thread_pool(int) {}
+        void join() {}
     };
-
-    void post(thread_pool& tp, std::function<void()> func) { tp.post(std::move(func)); }
- } }
+    void post(const thread_pool&, std::function<void()> func) { func(); }
+}
 #endif
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
@@ -990,12 +979,20 @@ namespace {
         TraceLogger(effects) << [&]() -> std::string {
             return "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
                 + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
-                + "  specific cause: " + specific_cause_name + " )";
+                + "  specific cause: " + specific_cause_name
+                + "  sources (" + std::to_string(source_objects.size())  + ")"
+                + "  candidate ids (" + std::to_string(candidate_object_ids.size()) + ")"
+                + "  candidate objects (" + std::to_string(candidate_objects_in.size()) + ")";
         }();
 
-        auto scope = effects_group->Scope();
-        if (!scope)
+        auto scope = effects_group ? effects_group->Scope() : nullptr;
+        if (!scope) {
+            if (!effects_group)
+                ErrorLogger(effects) << "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " > has null effects_group !?";
+            else
+                ErrorLogger(effects) << "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " > has no scope !?";
             return;
+        }
         bool scope_is_just_source = dynamic_cast<Condition::Source*>(scope);
 
         ScopedTimer timer(
@@ -1041,16 +1038,16 @@ namespace {
                 // candidates is specified: only need to put the source in if
                 // it is in the candidates
                 if (candidate_object_ids.count(source->ID()))
-                    matched_targets.emplace_back(std::const_pointer_cast<UniverseObject>(source));
+                    matched_targets.push_back(std::const_pointer_cast<UniverseObject>(source));
 
             } else {
                 // input candidates will all be tested
                 scope->Eval(context, matched_targets, candidate_objects_in);
             }
 
-            TraceLogger(effects) << [&]() {
+            TraceLogger(effects) << [&]() -> std::string {
                 std::stringstream ss;
-                ss << "Scope Results " << n << "  source: " << source->ID() << "  matches: ";
+                ss << "Scope Results <" << n << ">  source: " << source->ID() << "  matches: ";
                 for (auto& obj : matched_targets)
                     ss << obj->ID() << ", ";
                 return ss.str();
