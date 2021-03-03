@@ -27,7 +27,7 @@ target_link_libraries(fo_unittest_parse
 )
 
 target_dependencies_copy_to_build(fo_unittest_parse)
-target_dependent_data_symlink_to_build(fo_unittest_parse ${PROJECT_SOURCE_DIR}/default-test)
+target_dependent_data_symlink_to_build(fo_unittest_parse ${PROJECT_SOURCE_DIR}/test-scripting)
 target_dependent_data_symlink_to_build(fo_unittest_parse ${PROJECT_SOURCE_DIR}/default)
 
 add_coverage(fo_unittest_parse

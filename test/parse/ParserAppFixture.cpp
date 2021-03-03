@@ -8,7 +8,7 @@ namespace fs = boost::filesystem;
 ParserAppFixture::ParserAppFixture() {
     InitDirs(boost::unit_test::framework::master_test_suite().argv[0]);
 
-    m_scripting_dir = fs::system_complete(GetBinDir() / "default-test" / "scripting");
+    m_scripting_dir = fs::system_complete(GetBinDir() / "test-scripting");
     BOOST_TEST_MESSAGE("Test scripting directory: " << m_scripting_dir);
     BOOST_REQUIRE(m_scripting_dir.is_absolute());
     BOOST_REQUIRE(fs::exists(m_scripting_dir));
