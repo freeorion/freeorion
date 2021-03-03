@@ -40,12 +40,12 @@ jobs:
       run: |
         # sudo apt-get -qq -y --no-install-recommends install \
         sudo apt-get install --assume-yes \
-            libboost1.62-all-dev \
+            libboost1.71-all-dev \
             libglew-dev \
             libopenal-dev \
             zlibc \
-            libpython3.6 \
-            libpython3.6-dev \
+            python3.8 \
+            python3-dev \
             libfreetype6-dev \
             libpng-dev \
             libogg-dev \
