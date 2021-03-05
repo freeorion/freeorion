@@ -386,7 +386,7 @@ public:
 
     /** The invalid button position index that there is no currently-checked
         button. */
-    static const std::size_t NO_BUTTON;
+    static constexpr std::size_t NO_BUTTON = std::numeric_limits<std::size_t>::max();
 
 protected:
     /** \brief Encapsulates all data pertaining ot a single button in a

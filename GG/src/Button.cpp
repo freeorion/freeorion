@@ -558,10 +558,6 @@ RadioButtonGroup::ButtonSlot::ButtonSlot(std::shared_ptr<StateButton> button_) :
     button(std::move(button_))
 {}
 
-// RadioButtonGroup
-// static(s)
-const std::size_t RadioButtonGroup::NO_BUTTON = std::numeric_limits<std::size_t>::max();
-
 RadioButtonGroup::RadioButtonGroup(Orientation orientation) :
     Control(X0, Y0, X1, Y1),
     m_orientation(orientation),
@@ -814,8 +810,7 @@ void RadioButtonGroup::SetCheckImpl(std::size_t index, bool signal)
 
 void RadioButtonGroup::Reconnect()
 {
-    for (ButtonSlot& button_slot : m_button_slots) {
+    for (ButtonSlot& button_slot : m_button_slots)
         button_slot.connection.disconnect();
-    }
     ConnectSignals();
 }
