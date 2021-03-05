@@ -245,22 +245,22 @@ const std::vector<UnlockableItem>& Universe::InitiallyUnlockedBuildings() const
 void Universe::SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>&& future)
 { m_pending_fleet_plans = std::move(future);}
 
-const std::vector<FleetPlan*> Universe::InitiallyUnlockedFleetPlans() const {
+std::vector<const FleetPlan*> Universe::InitiallyUnlockedFleetPlans() const {
     Pending::SwapPending(m_pending_fleet_plans, m_unlocked_fleet_plans);
-    std::vector<FleetPlan*> retval;
+    std::vector<const FleetPlan*> retval;
     for (const auto& plan : m_unlocked_fleet_plans)
-        retval.emplace_back(plan.get());
+        retval.push_back(plan.get());
     return retval;
 }
 
 void Universe::SetMonsterFleetPlans(Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>&& future)
 { m_pending_monster_fleet_plans = std::move(future); }
 
-const std::vector<MonsterFleetPlan*> Universe::MonsterFleetPlans() const {
+std::vector<const MonsterFleetPlan*> Universe::MonsterFleetPlans() const {
     Pending::SwapPending(m_pending_monster_fleet_plans, m_monster_fleet_plans);
-    std::vector<MonsterFleetPlan*> retval;
+    std::vector<const MonsterFleetPlan*> retval;
     for (const auto& plan : m_monster_fleet_plans)
-        retval.emplace_back(plan.get());
+        retval.push_back(plan.get());
     return retval;
 }
 

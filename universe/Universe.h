@@ -399,12 +399,12 @@ public:
     /** Set fleets unlocked before turn 1 from \p future.*/
     void SetInitiallyUnlockedFleetPlans(Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>&& future);
     /** Fleets unlocked before turn 1.*/
-    const std::vector<FleetPlan*> InitiallyUnlockedFleetPlans() const;
+    std::vector<const FleetPlan*> InitiallyUnlockedFleetPlans() const;
 
     /** Set items unlocked before turn 1 from \p future..*/
     void SetMonsterFleetPlans(Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>&& future);
     /** Items unlocked before turn 1.*/
-    const std::vector<MonsterFleetPlan*> MonsterFleetPlans() const;
+    std::vector<const MonsterFleetPlan*> MonsterFleetPlans() const;
 
     /** Set the empire stats from \p future. */
     using EmpireStatsMap = std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>>;

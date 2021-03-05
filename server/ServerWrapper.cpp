@@ -423,16 +423,14 @@ namespace {
     class FleetPlanWrapper {
     public:
         // name ctors
-        FleetPlanWrapper(FleetPlan* fleet_plan) :
-            m_fleet_plan(std::make_shared<FleetPlan>(*fleet_plan))
+        FleetPlanWrapper(FleetPlan&& fleet_plan) :
+            m_fleet_plan(std::make_shared<FleetPlan>(std::move(fleet_plan)))
         {}
 
-        FleetPlanWrapper(const std::string& fleet_name, const py::list& py_designs)
-        {
+        FleetPlanWrapper(const std::string& fleet_name, const py::list& py_designs) {
             std::vector<std::string> designs;
-            for (int i = 0; i < len(py_designs); i++) {
+            for (int i = 0; i < len(py_designs); i++)
                 designs.push_back(py::extract<std::string>(py_designs[i]));
-            }
             m_fleet_plan = std::make_shared<FleetPlan>(fleet_name, designs, false);
         }
 
@@ -453,16 +451,14 @@ namespace {
 
     private:
         // Use shared_ptr insead of unique_ptr because boost::python requires a deleter
-        std::shared_ptr<FleetPlan> m_fleet_plan;
+        std::shared_ptr<const FleetPlan> m_fleet_plan;
     };
 
-    auto LoadFleetPlanList() -> py::list
-    {
+    auto LoadFleetPlanList() -> py::list {
         py::list py_fleet_plans;
         auto&& fleet_plans = GetUniverse().InitiallyUnlockedFleetPlans();
-        for (FleetPlan* fleet_plan : fleet_plans) {
-            py_fleet_plans.append(FleetPlanWrapper(fleet_plan));
-        }
+        for (auto fleet_plan : fleet_plans)
+            py_fleet_plans.append(FleetPlanWrapper(FleetPlan(*fleet_plan)));
         return py_fleet_plans;
     }
 
@@ -470,8 +466,8 @@ namespace {
     class MonsterFleetPlanWrapper {
     public:
         // name ctors
-        MonsterFleetPlanWrapper(MonsterFleetPlan* monster_fleet_plan) :
-            m_monster_fleet_plan(std::make_shared<MonsterFleetPlan>(*monster_fleet_plan))
+        MonsterFleetPlanWrapper(MonsterFleetPlan&& monster_fleet_plan) :
+            m_monster_fleet_plan(std::make_shared<MonsterFleetPlan>(std::move(monster_fleet_plan)))
         {}
 
         MonsterFleetPlanWrapper(const std::string& fleet_name, const py::list& py_designs,
@@ -492,9 +488,8 @@ namespace {
 
         py::list ShipDesigns() {
             py::list py_designs;
-            for (const auto& design_name : m_monster_fleet_plan->ShipDesigns()) {
+            for (const auto& design_name : m_monster_fleet_plan->ShipDesigns())
                 py_designs.append(py::object(design_name));
-            }
             return py::list(py_designs);
         }
 
@@ -504,24 +499,23 @@ namespace {
         int SpawnLimit()
         { return m_monster_fleet_plan->SpawnLimit(); }
 
-        py::list Locations(py::list systems) {
-            return FilterIDsWithCondition(m_monster_fleet_plan->Location(), systems);
-        }
+        py::list Locations(py::list systems)
+        { return FilterIDsWithCondition(m_monster_fleet_plan->Location(), systems); }
 
         const MonsterFleetPlan& GetMonsterFleetPlan()
         { return *m_monster_fleet_plan; }
 
     private:
         // Use shared_ptr insead of unique_ptr because boost::python requires a deleter
-        std::shared_ptr<MonsterFleetPlan> m_monster_fleet_plan;
+        std::shared_ptr<const MonsterFleetPlan> m_monster_fleet_plan;
     };
 
     auto LoadMonsterFleetPlanList() -> py::list
     {
         py::list py_monster_fleet_plans;
         auto&& monster_fleet_plans = GetUniverse().MonsterFleetPlans();
-        for (auto* fleet_plan : monster_fleet_plans)
-            py_monster_fleet_plans.append(MonsterFleetPlanWrapper(fleet_plan));
+        for (auto fleet_plan : monster_fleet_plans)
+            py_monster_fleet_plans.append(MonsterFleetPlanWrapper(MonsterFleetPlan(*fleet_plan)));
 
         return py_monster_fleet_plans;
     }

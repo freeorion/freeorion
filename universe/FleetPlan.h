@@ -25,11 +25,7 @@ public:
         m_name_in_stringtable(lookup_name_userstring)
     {}
 
-    FleetPlan() :
-        m_name(""),
-        m_ship_designs(),
-        m_name_in_stringtable(false)
-    {}
+    FleetPlan() = default;
 
     auto Name() const -> const std::string&;
 
@@ -39,7 +35,7 @@ public:
 protected:
     std::string              m_name;
     std::vector<std::string> m_ship_designs;
-    bool                     m_name_in_stringtable;
+    bool                     m_name_in_stringtable = false;
 };
 
 
@@ -56,9 +52,7 @@ public:
         m_location(std::move(location))
     {}
 
-    MonsterFleetPlan() :
-        FleetPlan()
-    {}
+    MonsterFleetPlan() = default;
 
     auto SpawnRate() const -> auto
     { return m_spawn_rate; }
