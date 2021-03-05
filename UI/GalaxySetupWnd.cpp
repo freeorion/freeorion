@@ -536,9 +536,8 @@ void GameRulesPanel::StringRuleChanged(const GG::DropDownList* drop,
 ////////////////////////////////////////////////
 // GalaxySetupPanel
 ////////////////////////////////////////////////
-const GG::X GalaxySetupPanel::DefaultWidth() {
-    return GG::X(FontBasedUpscale(305));
-}
+const GG::X GalaxySetupPanel::DefaultWidth()
+{ return GG::X(FontBasedUpscale(305)); }
 
 GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS)
