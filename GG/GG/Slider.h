@@ -58,17 +58,17 @@ public:
 
     Pt MinUsableSize() const override;
 
-    T                    Posn() const;           ///< returns the current tab position
-    std::pair<T, T>      SliderRange() const;    ///< returns the defined possible range of control
+    T               Posn() const;           ///< returns the current tab position
+    std::pair<T, T> SliderRange() const;    ///< returns the defined possible range of control
 
     /** Returns the current page size, or the amount that the slider
         increments/decrements when a click occurs off of the tab.  If not set,
         this defaults to 10% of the slider's range. */
-    T                    PageSize() const;
+    T PageSize() const;
 
-    Orientation          GetOrientation() const; ///< returns the orientation of the slider (VERTICAL or HORIZONTAL)
-    unsigned int         TabWidth() const;       ///< returns the width of the slider's tab, in pixels
-    unsigned int         LineWidth() const;      ///< returns the width of the line along which the tab slides, in pixels
+    Orientation  GetOrientation() const; ///< returns the orientation of the slider (VERTICAL or HORIZONTAL)
+    unsigned int TabWidth() const;       ///< returns the width of the slider's tab, in pixels
+    unsigned int LineWidth() const;      ///< returns the width of the line along which the tab slides, in pixels
 
     mutable SlidSignalType           SlidSignal;           ///< returns the slid signal object for this Slider
     mutable SlidAndStoppedSignalType SlidAndStoppedSignal; ///< returns the slid-and-stopped signal object for this Slider
@@ -78,18 +78,18 @@ public:
     void Disable(bool b = true) override;
     void SetColor(Clr c) override;
 
-    void           SizeSlider(T min, T max); ///< sets the logical range of the control; \a min must not equal \a max
-    void           SetMax(T max);            ///< sets the maximum value of the control
-    void           SetMin(T min);            ///< sets the minimum value of the control
-    void           SlideTo(T p);             ///< slides the control to a certain spot
+    void SizeSlider(T min, T max); ///< sets the logical range of the control; \a min must not equal \a max
+    void SetMax(T max);            ///< sets the maximum value of the control
+    void SetMin(T min);            ///< sets the minimum value of the control
+    void SlideTo(T p);             ///< slides the control to a certain spot
 
     /** Sets the size of a "page", or the amount that the slider
         increments/decrements when a click occurs off of the tab.  If not set,
         this defaults to 10% of the slider's range.  To disable clicks off the
         tab, set the page size to 0. */
-    void           SetPageSize(T size);
+    void SetPageSize(T size);
 
-    static const T INVALID_PAGE_SIZE;
+    static constexpr T INVALID_PAGE_SIZE = std::numeric_limits<T>::max();
 
 protected:
     Button* Tab() const;                  ///< returns a pointer to the Button used as this control's sliding tab
@@ -123,10 +123,6 @@ private:
     std::shared_ptr<Button>   m_tab;
     bool                      m_dragging_tab;
 };
-
-
-template <typename T>
-const T Slider<T>::INVALID_PAGE_SIZE = std::numeric_limits<T>::max();
 
 template <typename T>
 Slider<T>::Slider(T min, T max, Orientation orientation,
