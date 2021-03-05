@@ -227,8 +227,8 @@ private:
     std::shared_ptr<GG::Button> m_ok_bn;
     std::shared_ptr<GG::Button> m_cancel_bn;
 
-    static constexpr GG::X CUIEditWnd::BUTTON_WIDTH{75};
-    static constexpr int CUIEditWnd::CONTROL_MARGIN = 5;
+    static constexpr GG::X BUTTON_WIDTH{75};
+    static constexpr int CONTROL_MARGIN = 5;
 };
 
 
