@@ -193,17 +193,16 @@ protected:
     GG::GL2DVertexBuffer                                m_vertex_buffer;
     std::vector<std::pair<std::size_t, std::size_t>>    m_buffer_indices;
 
-    static const GG::Y      BUTTON_TOP_OFFSET;
-    static const GG::X      BUTTON_RIGHT_OFFSET;
-    static const GG::X      MINIMIZED_WND_WIDTH;
-    static const GG::X      BORDER_LEFT;
-    static const GG::X      BORDER_RIGHT;
-    static const GG::Y      BORDER_BOTTOM;
-    static const int        OUTER_EDGE_ANGLE_OFFSET;
-    static const int        INNER_BORDER_ANGLE_OFFSET;
-    static const int        TITLE_OFFSET;
-    static const int        RESIZE_HASHMARK1_OFFSET;
-    static const int        RESIZE_HASHMARK2_OFFSET;
+    static constexpr GG::Y BUTTON_TOP_OFFSET{3};
+    static constexpr GG::X MINIMIZED_WND_WIDTH{50};
+    static constexpr GG::X BORDER_LEFT{5};
+    static constexpr GG::X BORDER_RIGHT{5};
+    static constexpr GG::Y BORDER_BOTTOM{5};
+    static constexpr int OUTER_EDGE_ANGLE_OFFSET = 8;
+    static constexpr int INNER_BORDER_ANGLE_OFFSET = 15;
+    static constexpr int TITLE_OFFSET = 2;
+    static constexpr int RESIZE_HASHMARK1_OFFSET = 9;
+    static constexpr int RESIZE_HASHMARK2_OFFSET = 4;
 };
 
 
@@ -228,8 +227,8 @@ private:
     std::shared_ptr<GG::Button> m_ok_bn;
     std::shared_ptr<GG::Button> m_cancel_bn;
 
-    static const GG::X BUTTON_WIDTH;
-    static const int CONTROL_MARGIN;
+    static constexpr GG::X CUIEditWnd::BUTTON_WIDTH{75};
+    static constexpr int CUIEditWnd::CONTROL_MARGIN = 5;
 };
 
 

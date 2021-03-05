@@ -36,21 +36,21 @@
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 namespace {
-    const GG::Pt        DataPanelIconSpace()
+    const GG::Pt DataPanelIconSpace()
     { return GG::Pt(GG::X(ClientUI::Pts()*3), GG::Y(ClientUI::Pts()*2.5)); }
-    GG::X               FLEET_WND_WIDTH = GG::X(360);
-    GG::Y               FLEET_WND_HEIGHT = GG::Y(400);
+    constexpr GG::X FLEET_WND_WIDTH = GG::X(360);
+    constexpr GG::Y FLEET_WND_HEIGHT = GG::Y(400);
 
     // how should ship and fleet icons be scaled and/or positioned in the reserved space
     const GG::Flags<GG::GraphicStyle>   DataPanelIconStyle()
     { return GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE; }
 
-    const GG::X         DATA_PANEL_TEXT_PAD = GG::X(4); // padding on the left and right of fleet/ship description
-    const int           DATA_PANEL_BORDER = 1;          // how thick should the border around ship or fleet panel be
-    const int           PAD = 4;
-    const std::string   SHIP_DROP_TYPE_STRING = "FleetWnd ShipRow";
-    const std::string   FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
-    const std::string   FLEET_WND_NAME = "map.fleet";
+    constexpr GG::X   DATA_PANEL_TEXT_PAD{4}; // padding on the left and right of fleet/ship description
+    constexpr int     DATA_PANEL_BORDER = 1;  // how thick should the border around ship or fleet panel be
+    constexpr int     PAD = 4;
+    const std::string SHIP_DROP_TYPE_STRING = "FleetWnd ShipRow";
+    const std::string FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
+    const std::string FLEET_WND_NAME = "map.fleet";
 
     GG::Y LabelHeight()
     { return GG::Y(ClientUI::Pts()*3/2); }
@@ -3156,7 +3156,7 @@ void FleetWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
 void FleetWnd::DoLayout() {
     const GG::X TOTAL_WIDTH(ClientWidth());
-    const GG::X LEFT(GG::X0);
+    constexpr GG::X LEFT{0};
     const GG::X RIGHT(TOTAL_WIDTH);
 
     const GG::Y TOTAL_HEIGHT(ClientHeight());

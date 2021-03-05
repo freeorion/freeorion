@@ -583,9 +583,9 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const GG::Y PANEL_HEIGHT(160); // Also formerly "UI.chat-panel-height" default
-    const GG::X MESSAGE_PANEL_WIDTH(345); // Formerly "UI.chat-panel-width" default
-    const GG::X PLAYER_LIST_PANEL_WIDTH(445);
+    constexpr GG::Y PANEL_HEIGHT{160};
+    constexpr GG::X MESSAGE_PANEL_WIDTH{345};
+    constexpr GG::X PLAYER_LIST_PANEL_WIDTH{445};
 
     const std::string MESSAGE_WND_NAME = "map.messages";
     const std::string PLAYER_LIST_WND_NAME = "map.empires";

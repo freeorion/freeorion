@@ -19,18 +19,18 @@
 
 
 namespace {
-    const GG::X CONTROL_MARGIN(5);
-    const GG::Y CONTROL_VMARGIN(5);
-    const GG::Y CONTROL_HEIGHT(30);
-    const GG::Y PANEL_CONTROL_SPACING(33);
-    const GG::X INDENTATION(20);
-    const GG::X SPIN_WIDTH(128);
-    const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 10);
+    constexpr GG::X CONTROL_MARGIN{5};
+    constexpr GG::Y CONTROL_VMARGIN{5};
+    constexpr GG::Y CONTROL_HEIGHT{30};
+    constexpr GG::Y PANEL_CONTROL_SPACING{33};
+    constexpr GG::X INDENTATION{20};
+    constexpr GG::X SPIN_WIDTH{128};
+    constexpr GG::Y GAL_SETUP_PANEL_HT{Value(PANEL_CONTROL_SPACING) * 10};
     const GG::X GalSetupWndWidth()
-    { return GG::X(445 + FontBasedUpscale(300)); }
+    { return GG::X{445 + FontBasedUpscale(300)}; }
     const GG::Y GalSetupWndHeight()
-    { return GG::Y(FontBasedUpscale(29) + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT); }
-    const GG::Pt PREVIEW_SZ(GG::X(400), GG::Y(222));
+    { return GG::Y{FontBasedUpscale(29) + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT}; }
+    constexpr GG::Pt PREVIEW_SZ{GG::X{400}, GG::Y{222}};
 
     class RowContentsWnd : public GG::Control {
     public:

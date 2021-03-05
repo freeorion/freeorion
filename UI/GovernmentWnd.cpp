@@ -37,11 +37,11 @@ struct Availability {
 namespace {
     const std::string   POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
     const std::string   EMPTY_STRING;
-    const GG::X         POLICY_CONTROL_WIDTH(54);
-    const GG::Y         POLICY_CONTROL_HEIGHT(54);
-    const GG::X         SLOT_CONTROL_WIDTH(60);
-    const GG::Y         SLOT_CONTROL_HEIGHT(60);
-    const int           PAD(3);
+    constexpr GG::X     POLICY_CONTROL_WIDTH{54};
+    constexpr GG::Y     POLICY_CONTROL_HEIGHT{54};
+    constexpr GG::X     SLOT_CONTROL_WIDTH{60};
+    constexpr GG::Y     SLOT_CONTROL_HEIGHT{60};
+    constexpr int       PAD{3};
 
     /** Returns texture with which to render a PolicySlotControl, depending on
       * \a category */
@@ -645,20 +645,20 @@ void GovernmentWnd::PolicyPalette::SizeMove(const GG::Pt& ul, const GG::Pt& lr) 
 }
 
 void GovernmentWnd::PolicyPalette::DoLayout() {
-    const int PTS = ClientUI::Pts();
-    const GG::X PTS_WIDE(PTS/2);         // guess at how wide per character the font needs
-    const GG::Y  BUTTON_HEIGHT(PTS*3/2);
-    const int BUTTON_SEPARATION = 3;    // vertical or horizontal sepration between adjacent buttons
-    const int BUTTON_EDGE_PAD = 2;      // distance from edges of control to buttons
-    const GG::X RIGHT_EDGE_PAD(8);       // to account for border of CUIWnd
+    const int     PTS = ClientUI::Pts();
+    const GG::X   PTS_WIDE{PTS/2};        // guess at how wide per character the font needs
+    const GG::Y   BUTTON_HEIGHT{PTS*3/2};
+    constexpr int BUTTON_SEPARATION = 3;  // vertical or horizontal sepration between adjacent buttons
+    constexpr int BUTTON_EDGE_PAD = 2;    // distance from edges of control to buttons
+    constexpr GG::X RIGHT_EDGE_PAD{8};    // to account for border of CUIWnd
 
     const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);// space in which to fit buttons
-    const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 14;                       // rough guesstimate... avoid overly long policy class names
+    constexpr int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 14; // rough guesstimate... avoid overly long policy class names
     const GG::X MIN_BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL;
     const int MAX_BUTTONS_PER_ROW = std::max(Value(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION)), 1);
 
     const int NUM_CATEGORY_BUTTONS = std::max(1, static_cast<int>(m_category_buttons.size()));
-    const int NUM_AVAILABILITY_BUTTONS = 2;
+    constexpr int NUM_AVAILABILITY_BUTTONS = 2;
     const int TOTAL_BUTTONS = NUM_CATEGORY_BUTTONS + NUM_AVAILABILITY_BUTTONS;
 
     // determine whether to put non-class buttons (availability)
@@ -1371,8 +1371,8 @@ void GovernmentWnd::MainPanel::DoLayout() {
     const int PTS = ClientUI::Pts();
     const GG::X PTS_WIDE(PTS / 2);           // guess at how wide per character the font needs
     const GG::Y BUTTON_HEIGHT(PTS * 2);
-    const int PAD = 6;
-    const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT = 25;    // rough guesstimate... avoid overly long policy class names
+    constexpr int PAD = 6;
+    constexpr int GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT = 25;    // rough guesstimate... avoid overly long policy class names
     const GG::X BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
 
     GG::Pt lr = ClientSize() + GG::Pt(-GG::X(PAD), -GG::Y(PAD));

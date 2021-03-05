@@ -16,7 +16,7 @@
 #include <algorithm>
 
 namespace {
-    const int DATA_PANEL_BORDER = 1;
+    constexpr int DATA_PANEL_BORDER = 1;
 
     std::shared_ptr<GG::Texture> AIIcon() {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ai.png");
@@ -475,7 +475,7 @@ namespace {
             GG::X left(DATA_PANEL_BORDER);
             GG::Y top(DATA_PANEL_BORDER);
             GG::Y bottom(ClientHeight());
-            GG::X PAD(3);
+            constexpr GG::X PAD{3};
 
             int diplo_status_width = (Empires().NumEmpires() - Empires().NumEliminatedEmpires() + 1) * (IconSize() + Value(PAD));
 

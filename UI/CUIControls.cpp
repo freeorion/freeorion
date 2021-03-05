@@ -1632,7 +1632,7 @@ const std::string& SpeciesSelector::CurrentSpeciesName() const {
 // class EmpireColorSelector
 ///////////////////////////////////////
 namespace {
-    const GG::X COLOR_SELECTOR_WIDTH(75);
+    constexpr GG::X COLOR_SELECTOR_WIDTH{75};
 
     // row type used in the EmpireColorSelector
     struct ColorRow : public GG::ListBox::Row {
@@ -1641,7 +1641,7 @@ namespace {
                 GG::Control(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH - 40, h, GG::NO_WND_FLAGS)
             {
                 SetColor(color);
-                SetMinSize(GG::Pt(COLOR_SELECTOR_WIDTH - 40, GG::Y(1)));
+                SetMinSize(GG::Pt(COLOR_SELECTOR_WIDTH - 40, GG::Y1));
             }
 
             void Render() override
@@ -1995,11 +1995,11 @@ void ResourceInfoPanel::Clear() {
 
 void ResourceInfoPanel::DoLayout() {
     const int STAT_TEXT_PTS = ClientUI::Pts();
-    const int CENTERLINE_GAP = 4;
+    constexpr int CENTERLINE_GAP = 4;
     const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 7 / 16 ;
     const GG::X VALUE_TEXT_WIDTH = ((Width() - 4 - CENTERLINE_GAP) - LABEL_TEXT_WIDTH) / 2;
 
-    const GG::X LEFT_TEXT_X(0);
+    constexpr GG::X LEFT_TEXT_X{0};
     const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
     const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
     const GG::X DOUBLE_LEFT_TEXT_X = P_LABEL_X + 30 + 4;
@@ -2011,7 +2011,7 @@ void ResourceInfoPanel::DoLayout() {
     const GG::Pt VALUE_TEXT_SIZE(VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4));
     const GG::Pt P_LABEL_SIZE(Width() - 7 - DOUBLE_P_LABEL_X, GG::Y(STAT_TEXT_PTS + 4));
 
-    GG::Y row_offset(4);
+    GG::Y row_offset{4};
 
     // first row: column labels
     m_empire_column_label->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));

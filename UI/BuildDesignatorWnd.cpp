@@ -657,8 +657,8 @@ public:
     mutable boost::signals2::signal<void ()>                    ShowPediaSignal;
 
 private:
-    static const GG::X TEXT_MARGIN_X;
-    static const GG::Y TEXT_MARGIN_Y;
+    static constexpr GG::X TEXT_MARGIN_X{3};
+    static constexpr GG::Y TEXT_MARGIN_Y{3};
 
     void DoLayout();
 
@@ -690,8 +690,6 @@ private:
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
 };
-const GG::X BuildDesignatorWnd::BuildSelector::TEXT_MARGIN_X(3);
-const GG::Y BuildDesignatorWnd::BuildSelector::TEXT_MARGIN_Y(3);
 
 BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name) :
     CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"),
@@ -1330,7 +1328,7 @@ void BuildDesignatorWnd::InitializeWindows() {
     GG::X queue_width(GetOptionsDB().Get<int>("ui.queue.width"));
 
     const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("ui.map.sidepanel.width"));
-    const GG::Y PANEL_HEIGHT    = GG::Y(240);
+    constexpr GG::Y PANEL_HEIGHT{240};
 
     const GG::Pt pedia_ul(queue_width, GG::Y0);
     const GG::Pt pedia_wh(Width() - SIDEPANEL_WIDTH - queue_width, PANEL_HEIGHT);

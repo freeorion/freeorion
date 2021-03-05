@@ -37,8 +37,8 @@ namespace {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "icons/host.png");
     }
 
-    const GG::X EMPIRE_NAME_WIDTH(150);
-    const GG::X BROWSE_BTN_WIDTH(50);
+    constexpr GG::X EMPIRE_NAME_WIDTH(150);
+    constexpr GG::X BROWSE_BTN_WIDTH(50);
 
     // Shows information about a single player in the mulitplayer lobby.
     // This inclues whether the player is a human or AI player, or an observer,
@@ -574,33 +574,33 @@ namespace {
         }
     };
 
-    const GG::X     LOBBY_WND_WIDTH(960);
-    const GG::Y     LOBBY_WND_HEIGHT(720);
-    const int       CONTROL_MARGIN = 5; // gap to leave between controls in the window
-    const GG::X     GALAXY_SETUP_PANEL_WIDTH(250);
-    const GG::Y     GALAXY_SETUP_PANEL_HEIGHT(340);
-    const int       GALAXY_SETUP_PANEL_MARGIN = 45;
-    const GG::Y     SAVED_GAMES_LIST_ROW_HEIGHT(22);
-    const GG::Y     SAVED_GAMES_LIST_DROP_HEIGHT(10 * SAVED_GAMES_LIST_ROW_HEIGHT);
-    const GG::X     CHAT_WIDTH(350);
-    GG::Pt          g_preview_ul;
-    const int       PREVIEW_WIDTH = 248;
-    const GG::Pt    PREVIEW_SZ(GG::X(PREVIEW_WIDTH), GG::Y(186));
-    const int       PREVIEW_MARGIN = 3;
+    constexpr GG::X     LOBBY_WND_WIDTH(960);
+    constexpr GG::Y     LOBBY_WND_HEIGHT(720);
+    constexpr int       CONTROL_MARGIN = 5; // gap to leave between controls in the window
+    constexpr GG::X     GALAXY_SETUP_PANEL_WIDTH(250);
+    constexpr GG::Y     GALAXY_SETUP_PANEL_HEIGHT(340);
+    constexpr int       GALAXY_SETUP_PANEL_MARGIN = 45;
+    constexpr GG::Y     SAVED_GAMES_LIST_ROW_HEIGHT(22);
+    constexpr GG::Y     SAVED_GAMES_LIST_DROP_HEIGHT(10 * Value(SAVED_GAMES_LIST_ROW_HEIGHT));
+    constexpr GG::X     CHAT_WIDTH(350);
+    GG::Pt              g_preview_ul;
+    constexpr int       PREVIEW_WIDTH = 248;
+    constexpr GG::Pt    PREVIEW_SZ(GG::X{PREVIEW_WIDTH}, GG::Y{186});
+    constexpr int       PREVIEW_MARGIN = 3;
 
-    std::vector<GG::X> PlayerRowColWidths(GG::X width = GG::X(600)) {
-        std::vector<GG::X> retval;
-        GG::X color_width(75);
-        GG::X ready_width((ClientUI::Pts() / 2) * 5);
-        GG::X prop_width = ((width - color_width - 2 * ready_width) / 4) - CONTROL_MARGIN;
-        retval.push_back(prop_width); // type
-        retval.push_back(prop_width); // player name
-        retval.push_back(prop_width); // empire name
-        retval.push_back(color_width); // color
-        retval.push_back(prop_width); // species/original player
-        retval.push_back(ready_width); // player ready
-        retval.push_back(ready_width); // host
-        return retval;
+    std::vector<GG::X> PlayerRowColWidths(GG::X width = GG::X{600}) {
+        constexpr GG::X color_width{75};
+        const GG::X ready_width((ClientUI::Pts() / 2) * 5);
+        const GG::X prop_width = ((width - color_width - 2 * ready_width) / 4) - CONTROL_MARGIN;
+        return {
+            prop_width,  // type
+            prop_width,  // player name
+            prop_width,  // empire name
+            color_width, // color
+            prop_width,  // species/original player
+            ready_width, // player ready
+            ready_width  // host
+        };
     }
 }
 

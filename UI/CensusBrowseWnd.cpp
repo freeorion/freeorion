@@ -19,13 +19,11 @@ namespace {
         return ClientUI::Pts()*3/2;
     }
 
-    const int       EDGE_PAD(3);
+    constexpr int   EDGE_PAD(3);
+    constexpr GG::Y ICON_BROWSE_ICON_HEIGHT(64);
 
-    const GG::Y     ICON_BROWSE_ICON_HEIGHT(64);
-
-    const GG::X BrowseTextWidth() {
-        return GG::X(FontBasedUpscale(200));
-    }
+    const GG::X BrowseTextWidth()
+    { return GG::X(FontBasedUpscale(200)); }
 }
 
 class CensusRowPanel : public GG::Control {

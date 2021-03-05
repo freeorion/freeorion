@@ -73,9 +73,9 @@ void About::ShowVision()
 { m_info->SetText(UserString("FREEORION_VISION")); }
 
 void About::DoLayout() {
-    const GG::X BUTTONS_HORIZONTAL_SPACING(5);
-    const GG::Y CONTENT_GROUPS_VERTICAL_SPACING(5);
-    const GG::Pt BORDERS_SIZE { GG::X {5}, GG::Y {5} };
+    constexpr GG::X BUTTONS_HORIZONTAL_SPACING{5};
+    constexpr GG::Y CONTENT_GROUPS_VERTICAL_SPACING{5};
+    constexpr GG::Pt BORDERS_SIZE{ GG::X{5}, GG::Y{5} };
     const GG::Pt BUTTON_SIZE {
         std::max({ m_vision->MinUsableSize().x, m_license->MinUsableSize().x, m_done->MinUsableSize().x }),
         std::max({ m_vision->MinUsableSize().y, m_license->MinUsableSize().y, m_done->MinUsableSize().y }),

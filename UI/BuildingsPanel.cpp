@@ -184,7 +184,7 @@ void BuildingsPanel::DoLayout() {
 
     int row = 0;
     int column = 0;
-    const int padding = 5;      // space around and between adjacent indicators
+    constexpr int padding = 5; // space around and between adjacent indicators
     const GG::X effective_width = Width() - padding * (m_columns + 1);  // padding on either side and between
     const int indicator_size = static_cast<int>(Value(effective_width * 1.0 / m_columns));
     GG::Y height;

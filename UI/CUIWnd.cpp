@@ -30,9 +30,9 @@ namespace {
 
     const double BUTTON_DIMMING_SCALE_FACTOR = 0.75;
 
-    const GG::X::value_type INVALID_POS = std::numeric_limits<GG::X::value_type>::min();
-    const GG::X INVALID_X = GG::X(INVALID_POS);
-    const GG::Y INVALID_Y = GG::Y(INVALID_POS);
+    constexpr GG::X::value_type INVALID_POS = std::numeric_limits<GG::X::value_type>::min();
+    constexpr GG::X INVALID_X = GG::X(INVALID_POS);
+    constexpr GG::Y INVALID_Y = GG::Y(INVALID_POS);
 }
 
 ////////////////////////////////////////////////
@@ -132,16 +132,6 @@ namespace {
     }
 }
 
-const GG::Y CUIWnd::BUTTON_TOP_OFFSET(3);
-const GG::X CUIWnd::MINIMIZED_WND_WIDTH(50);
-const GG::X CUIWnd::BORDER_LEFT(5);
-const GG::X CUIWnd::BORDER_RIGHT(5);
-const GG::Y CUIWnd::BORDER_BOTTOM(5);
-const int CUIWnd::OUTER_EDGE_ANGLE_OFFSET = 8;
-const int CUIWnd::INNER_BORDER_ANGLE_OFFSET = 15;
-const int CUIWnd::TITLE_OFFSET = 2;
-const int CUIWnd::RESIZE_HASHMARK1_OFFSET = 9;
-const int CUIWnd::RESIZE_HASHMARK2_OFFSET = 4;
 
 CUIWnd::CUIWnd(std::string wnd_name,
                GG::X x, GG::Y y,
@@ -920,9 +910,6 @@ void CUIWnd::SetParent(std::shared_ptr<GG::Wnd> wnd) {
 ///////////////////////////////////////
 // class CUIEditWnd
 ///////////////////////////////////////
-const GG::X CUIEditWnd::BUTTON_WIDTH(75);
-const int CUIEditWnd::CONTROL_MARGIN = 5;
-
 CUIEditWnd::CUIEditWnd(GG::X w, std::string prompt_text, std::string edit_text,
                        GG::Flags<GG::WndFlag> flags/* = Wnd::MODAL*/) :
     CUIWnd(std::move(prompt_text), GG::X0, GG::Y0, w, GG::Y1, flags)
