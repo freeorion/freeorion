@@ -24,51 +24,51 @@
 namespace GG {
 
 /** Overload of Value() for int. */
-inline int Value(int i)
+inline constexpr int Value(int i)
 { return i; }
 
 /** Overload of Value() for double. */
-inline double Value(double d)
+inline constexpr double Value(double d)
 { return d; }
 
 /** Overload of Value() for std::size_t. */
-inline std::size_t Value(std::size_t s)
+inline constexpr std::size_t Value(std::size_t s)
 { return s; }
 
 }
 
 #define GG_MEMBER_BOOL_OP_SELF_TYPE(op, rhs_type) \
-    inline bool operator op (rhs_type rhs) const  \
+    inline constexpr bool operator op (rhs_type rhs) const \
     { return m_value op rhs.m_value; }
 
 #define GG_MEMBER_BOOL_OP_OTHER_TYPE(op, rhs_type) \
-    inline bool operator op (rhs_type rhs) const   \
+    inline constexpr bool operator op (rhs_type rhs) const \
     { return m_value op Value(rhs); }
 
-#define GG_MEMBER_NEG_INCR_DECR(this_type)      \
-    inline this_type operator-() const          \
-    { return this_type(-m_value); }             \
-    inline this_type& operator++()              \
-    {                                           \
-        ++m_value;                              \
-        return *this;                           \
-    }                                           \
-    inline this_type& operator--()              \
-    {                                           \
-        --m_value;                              \
-        return *this;                           \
-    }                                           \
-    inline this_type operator++(int)            \
-    {                                           \
-        this_type retval(m_value);              \
-        ++m_value;                              \
-        return retval;                          \
-    }                                           \
-    inline this_type operator--(int)            \
-    {                                           \
-        this_type retval(m_value);              \
-        --m_value;                              \
-        return retval;                          \
+#define GG_MEMBER_NEG_INCR_DECR(this_type)       \
+    inline constexpr this_type operator-() const \
+    { return this_type(-m_value); }              \
+    inline this_type& operator++()               \
+    {                                            \
+        ++m_value;                               \
+        return *this;                            \
+    }                                            \
+    inline this_type& operator--()               \
+    {                                            \
+        --m_value;                               \
+        return *this;                            \
+    }                                            \
+    inline this_type operator++(int)             \
+    {                                            \
+        this_type retval(m_value);               \
+        ++m_value;                               \
+        return retval;                           \
+    }                                            \
+    inline this_type operator--(int)             \
+    {                                            \
+        this_type retval(m_value);               \
+        --m_value;                               \
+        return retval;                           \
     }
 
 #define GG_MEMBER_ASSIGN_OP_SELF_TYPE(op, rhs_type)     \
@@ -171,8 +171,8 @@ inline std::size_t Value(std::size_t s)
 #define GG_STRONG_DOUBLE_TYPEDEF(name, type)                            \
     class name;                                                         \
     class name ## _d;                                                   \
-    type Value(name x);                                                 \
-    double Value(name ## _d x);                                         \
+    constexpr type Value(name x);                                       \
+    constexpr double Value(name ## _d x);                               \
                                                                         \
     class name ## _d                                                    \
     {                                                                   \
@@ -182,8 +182,8 @@ inline std::size_t Value(std::size_t s)
     public:                                                             \
         typedef double value_type;                                      \
                                                                         \
-        name ## _d() : m_value(0.0) {}                                  \
-        explicit name ## _d(double t) : m_value(t) {}                   \
+        constexpr name ## _d() = default;                               \
+        explicit constexpr name ## _d(double t) : m_value(t) {}         \
                                                                         \
         GG_MEMBER_SELF_COMPARATORS(name ## _d);                         \
                                                                         \
@@ -204,9 +204,9 @@ inline std::size_t Value(std::size_t s)
         GG_MEMBER_ASSIGN_OP_OTHER_TYPE_DECL(/, name ## _d, name);       \
                                                                         \
     private:                                                            \
-        double m_value;                                                 \
+        double m_value = 0.0;                                           \
                                                                         \
-        friend double Value(name ## _d x);                              \
+        friend constexpr double Value(name ## _d x);                    \
     };                                                                  \
                                                                         \
     GG_NONMEMBER_ARITH_OPS_SELF_TYPE(name ## _d);                       \
@@ -217,7 +217,7 @@ inline std::size_t Value(std::size_t s)
                                                                         \
     GG_NONMEMBER_REVERSED_ARITH_OP_SET(double, name ## _d);             \
                                                                         \
-    inline double Value(name ## _d x)                                   \
+    inline constexpr double Value(name ## _d x)                         \
     { return x.m_value; }                                               \
                                                                         \
     inline std::ostream& operator<<(std::ostream& os, name ## _d x)     \
@@ -244,7 +244,7 @@ inline std::size_t Value(std::size_t s)
 #define GG_STRONG_INTEGRAL_TYPEDEF(name, type)                          \
     GG_STRONG_DOUBLE_TYPEDEF(name, type);                               \
                                                                         \
-    type Value(name x);                                                 \
+    constexpr type Value(name x);                                       \
                                                                         \
     class name                                                          \
     {                                                                   \
@@ -257,9 +257,9 @@ inline std::size_t Value(std::size_t s)
                                                                         \
         typedef type value_type;                                        \
                                                                         \
-        name() : m_value(0) {}                                          \
-        explicit name(type t) : m_value(t) {}                           \
-        explicit name(name ## _d t) :                                   \
+        constexpr name() = default;                                     \
+        explicit constexpr name(type t) : m_value(t) {}                 \
+        explicit constexpr name(name ## _d t) :                         \
             m_value(static_cast<type>(Value(t)))                        \
         {}                                                              \
                                                                         \
@@ -272,7 +272,7 @@ inline std::size_t Value(std::size_t s)
         GG_MEMBER_OTHER_COMPARATORS(name ## _d);                        \
         GG_MEMBER_OTHER_COMPARATORS(double);                            \
                                                                         \
-        operator int ConvertibleToBoolDummy::* () const                 \
+        constexpr operator int ConvertibleToBoolDummy::* () const       \
         { return m_value ? &ConvertibleToBoolDummy::_ : 0; }            \
                                                                         \
         GG_MEMBER_NEG_INCR_DECR(name);                                  \
@@ -287,10 +287,10 @@ inline std::size_t Value(std::size_t s)
         GG_MEMBER_ARITH_ASSIGN_OPS_OTHER_TYPE(name, double);            \
                                                                         \
     private:                                                            \
-        type m_value;                                                   \
+        type m_value = 0;                                               \
                                                                         \
         friend class name ## _d;                                        \
-        friend type Value(name x);                                      \
+        friend constexpr type Value(name x);                            \
     };                                                                  \
                                                                         \
     GG_NONMEMBER_ARITH_OPS_SELF_TYPE(name);                             \
@@ -321,7 +321,7 @@ inline std::size_t Value(std::size_t s)
     inline name ## _d operator*(double x, name y)                       \
     { return x * name ## _d(Value(y)); }                                \
                                                                         \
-    inline type Value(name x)                                           \
+    inline constexpr type Value(name x)                                 \
     { return x.m_value; }                                               \
                                                                         \
     inline std::ostream& operator<<(std::ostream& os, name x)           \
@@ -359,7 +359,7 @@ inline std::size_t Value(std::size_t s)
     interarithemtic with and comparable to objects of type std::size_t. */
 #define GG_STRONG_SIZE_TYPEDEF(name)                                    \
     class name;                                                         \
-    std::size_t Value(name x);                                          \
+    constexpr std::size_t Value(name x);                                \
                                                                         \
     class name                                                          \
     {                                                                   \
@@ -369,14 +369,14 @@ inline std::size_t Value(std::size_t s)
     public:                                                             \
         typedef std::size_t value_type;                                 \
                                                                         \
-        name() : m_value(0) {}                                          \
-        explicit name(std::size_t t) : m_value(t) {}                    \
+        constexpr name() = default;                                     \
+        explicit constexpr name(std::size_t t) : m_value(t) {}          \
                                                                         \
         GG_MEMBER_SELF_COMPARATORS(name);                               \
                                                                         \
         GG_MEMBER_OTHER_COMPARATORS(std::size_t);                       \
                                                                         \
-        operator int ConvertibleToBoolDummy::* () const                 \
+        constexpr operator int ConvertibleToBoolDummy::* () const       \
         { return m_value ? &ConvertibleToBoolDummy::_ : 0; }            \
                                                                         \
         GG_MEMBER_NEG_INCR_DECR(name);                                  \
@@ -388,10 +388,10 @@ inline std::size_t Value(std::size_t s)
         GG_MEMBER_ASSIGN_OP_OTHER_TYPE(%, name, std::size_t);           \
                                                                         \
     private:                                                            \
-        std::size_t m_value;                                            \
+        std::size_t m_value = 0;                                        \
                                                                         \
         friend class name ## _d;                                        \
-        friend std::size_t Value(name x);                               \
+        friend constexpr std::size_t Value(name x);                     \
     };                                                                  \
                                                                         \
     GG_NONMEMBER_ARITH_OPS_SELF_TYPE(name);                             \
@@ -404,7 +404,7 @@ inline std::size_t Value(std::size_t s)
                                                                         \
     GG_NONMEMBER_REVERSED_ARITH_OP_SET(std::size_t, name);              \
                                                                         \
-    inline std::size_t Value(name x)                                    \
+    inline constexpr std::size_t Value(name x)                          \
     { return x.m_value; }                                               \
                                                                         \
     inline std::ostream& operator<<(std::ostream& os, name x)           \

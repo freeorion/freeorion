@@ -35,70 +35,54 @@ GG_STRONG_INTEGRAL_TYPEDEF(X, int);
 GG_STRONG_INTEGRAL_TYPEDEF(Y, int);
 
 // some useful coordinate constants
-extern GG_API const X X0;
-extern GG_API const X X1;
-extern GG_API const Y Y0;
-extern GG_API const Y Y1;
+constexpr X X0{0};
+constexpr X X1{1};
+constexpr Y Y0{0};
+constexpr Y Y1{1};
 
 /** \brief A GG screen coordinate class. */
 struct GG_API Pt
 {
-    Pt();
+    constexpr Pt() = default;
 
-    Pt(X x_, Y y_);     ///< Ctor that creates a Pt ( \a _x , \a y ).
-    Pt(X_d x_, Y y_);   ///< Ctor that creates a Pt ( \a _x , \a y ).
-    Pt(X x_, Y_d y_);   ///< Ctor that creates a Pt ( \a _x , \a y ).
-    Pt(X_d x_, Y_d y_); ///< Ctor that creates a Pt ( \a _x , \a y ).
+    constexpr Pt(X x_, Y y_) :
+        x(x_),
+        y(y_)
+    {}
+
+    constexpr Pt(X_d x_, Y y_) :
+        x(x_),
+        y(y_)
+    {}
+
+    constexpr Pt(X x_, Y_d y_) :
+        x(x_),
+        y(y_)
+    {}
+
+    constexpr Pt(X_d x_, Y_d y_) :
+        x(x_),
+        y(y_)
+    {}
 
     /** Returns true if x < \a rhs.x or returns true if x == \a rhs.x and y
         <\a rhs.y.  This is useful for sorting Pts in STL containers and
         algorithms. */
-    bool Less(const Pt& rhs) const
-        { return x < rhs.x ? true : (x == rhs.x ? (y < rhs.y ? true : false) : false); }
+    constexpr bool Less(const Pt& rhs) const
+    { return x < rhs.x ? true : (x == rhs.x ? (y < rhs.y ? true : false) : false); }
 
-    void  operator+=(const Pt& rhs)     { x += rhs.x; y += rhs.y; }     ///< Adds \a rhs to Pt.
-    void  operator-=(const Pt& rhs)     { x -= rhs.x; y -= rhs.y; }     ///< Subtracts \a rhs from Pt.
-    Pt    operator-() const             { return Pt(-x, -y); }          ///< Negates Pt.
-    Pt    operator/=(const double rhs)  { return Pt(x / rhs, y / rhs); }///< Devides components of Pt by \a rhs
-    Pt    operator*=(const double rhs)  { return Pt(x * rhs, y * rhs); }///< Devides components of Pt by \a rhs
+    constexpr Pt operator-() const            { return Pt(-x, -y); }          ///< Negates Pt.
 
-    X x; ///< The x component.
-    Y y; ///< The y component.
+    void         operator+=(const Pt& rhs)    { x += rhs.x; y += rhs.y; }     ///< Adds \a rhs to Pt.
+    void         operator-=(const Pt& rhs)    { x -= rhs.x; y -= rhs.y; }     ///< Subtracts \a rhs from Pt.
+    Pt           operator/=(const double rhs) { return Pt(x / rhs, y / rhs); }///< Devides components of Pt by \a rhs
+    Pt           operator*=(const double rhs) { return Pt(x * rhs, y * rhs); }///< Devides components of Pt by \a rhs
+
+    X x = GG::X0;
+    Y y = GG::Y0;
 };
 
 GG_API std::ostream& operator<<(std::ostream& os, const Pt& pt);
-
-
-/** \brief A GG rectangle class.
-
-    This is essentially just two points that bound the rectangle. */
-struct GG_API Rect
-{
-    Rect();
-
-    Rect(const Pt& pt1, const Pt& pt2);    ///< ctor that constructs a Rect from two corners; any two opposing corners will do
-    Rect(X x1, Y y1, X x2, Y y2);  ///< ctor that constructs a Rect from its left, upper, right, and bottom boundaries
-
-    X   Left() const        { return ul.x; }            ///< returns the left boundary of the Rect
-    X   Right() const       { return lr.x; }            ///< returns the right boundary of the Rect
-    Y   Top() const         { return ul.y; }            ///< returns the top boundary of the Rect
-    Y   Bottom() const      { return lr.y; }            ///< returns the bottom boundary of the Rect
-    Pt  UpperLeft() const   { return ul; }              ///< returns the upper-left corner of the Rect
-    Pt  LowerRight() const  { return lr; }              ///< returns the lower-right corner of the Rect
-    X   Width() const       { return lr.x - ul.x; }     ///< returns the width of the Rect
-    Y   Height() const      { return lr.y - ul.y; }     ///< returns the height of the Rect
-    X   MidX() const        { return (lr.x + ul.x)/2; } ///< returns the horizontal mid-point of the Rect
-    Y   MidY() const        { return (lr.y + ul.y)/2; } ///< returns the vertical mid-point of the Rect
-
-
-    bool  Contains(const Pt& pt) const; ///< returns true iff \a pt falls inside the Rect
-
-    void operator+=(const Pt& pt)      { ul += pt; lr += pt; } ///< shifts the Rect by adding \a pt to each corner
-    void operator-=(const Pt& pt)      { ul -= pt; lr -= pt; } ///< shifts the Rect by subtracting \a pt from each corner
-
-    Pt ul; ///< the upper-left corner of the Rect
-    Pt lr; ///< the lower-right corner of the Rect
-};
 
 GG_API inline bool operator==(const Pt& lhs, const Pt& rhs) { return lhs.x == rhs.x && lhs.y == rhs.y; } ///< returns true if \a lhs is identical to \a rhs
 GG_API inline bool operator!=(const Pt& lhs, const Pt& rhs) { return !(lhs == rhs); }                    ///< returns true if \a lhs differs from \a rhs
@@ -110,6 +94,43 @@ GG_API inline Pt   operator+(const Pt& lhs, const Pt& rhs)  { return Pt(lhs.x + 
 GG_API inline Pt   operator-(const Pt& lhs, const Pt& rhs)  { return Pt(lhs.x - rhs.x, lhs.y - rhs.y); } ///< returns the vector difference of \a lhs and \a rhs
 GG_API inline Pt   operator*(const Pt& lhs, double rhs)     { return Pt(lhs.x * rhs, lhs.y * rhs); }     ///< returns the vector with components multiplied by \a rhs
 GG_API inline Pt   operator/(const Pt& lhs, double rhs)     { return Pt(lhs.x / rhs, lhs.y / rhs); }     ///< returns the vector with components divided by \a rhs
+
+/** \brief A GG rectangle class.
+
+    This is essentially just two points that bound the rectangle. */
+struct GG_API Rect
+{
+    constexpr Rect() = default;
+
+    constexpr Rect(const Pt& pt1, const Pt& pt2) :
+        ul{std::min(pt1.x, pt2.x), std::min(pt1.y, pt2.y)},
+        lr{std::max(pt1.x, pt2.x), std::max(pt1.y, pt2.y)}
+    {}
+
+    constexpr Rect(X x1, Y y1, X x2, Y y2) :
+        ul{x1, y1},
+        lr{x2, y2}
+    {}
+
+    constexpr X  Left() const       { return ul.x; }            ///< returns the left boundary of the Rect
+    constexpr X  Right() const      { return lr.x; }            ///< returns the right boundary of the Rect
+    constexpr Y  Top() const        { return ul.y; }            ///< returns the top boundary of the Rect
+    constexpr Y  Bottom() const     { return lr.y; }            ///< returns the bottom boundary of the Rect
+    constexpr Pt UpperLeft() const  { return ul; }              ///< returns the upper-left corner of the Rect
+    constexpr Pt LowerRight() const { return lr; }              ///< returns the lower-right corner of the Rect
+    X  Width() const                { return lr.x - ul.x; }     ///< returns the width of the Rect
+    Y  Height() const               { return lr.y - ul.y; }     ///< returns the height of the Rect
+    X  MidX() const                 { return (lr.x + ul.x)/2; } ///< returns the horizontal mid-point of the Rect
+    Y  MidY() const                 { return (lr.y + ul.y)/2; } ///< returns the vertical mid-point of the Rect
+
+    bool Contains(const Pt& pt) const { return ul <= pt && pt < lr; }
+
+    void operator+=(const Pt& pt) { ul += pt; lr += pt; } ///< shifts the Rect by adding \a pt to each corner
+    void operator-=(const Pt& pt) { ul -= pt; lr -= pt; } ///< shifts the Rect by subtracting \a pt from each corner
+
+    Pt ul; ///< the upper-left corner of the Rect
+    Pt lr; ///< the lower-right corner of the Rect
+};
 
 GG_API std::ostream& operator<<(std::ostream& os, const Pt& pt); ///< Pt stream-output operator for debug output
 
