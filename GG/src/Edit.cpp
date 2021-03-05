@@ -17,47 +17,35 @@
 using namespace GG;
 
 namespace {
+    struct EditedEcho
+    {
+        EditedEcho(const std::string& name) : m_name(name) {}
+        void operator()(const std::string& str)
+        { std::cerr << "GG SIGNAL : " << m_name << "(str=" << str << ")" << std::endl; }
+        std::string m_name;
+    };
 
-struct EditedEcho
-{
-    EditedEcho(const std::string& name) : m_name(name) {}
-    void operator()(const std::string& str)
-    { std::cerr << "GG SIGNAL : " << m_name << "(str=" << str << ")" << std::endl; }
-    std::string m_name;
-};
+    struct InRange
+    {
+        InRange(CPSize value) : m_value(value) {}
+        bool operator()(const std::pair<CPSize, CPSize>& p) const
+        { return p.first < m_value && m_value < p.second; }
+        const CPSize m_value;
+    };
 
-struct InRange
-{
-    InRange(CPSize value) : m_value(value) {}
-    bool operator()(const std::pair<CPSize, CPSize>& p) const
-    { return p.first < m_value && m_value < p.second; }
-    const CPSize m_value;
-};
-
-Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin)
-{  return font->Height() + 2 * static_cast<int>(pixel_margin); }
-
+    Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin)
+    {  return font->Height() + 2 * static_cast<int>(pixel_margin); }
 }
 
 ////////////////////////////////////////////////
 // GG::Edit
 ////////////////////////////////////////////////
-// static(s)
-const int Edit::PIXEL_MARGIN = 5;
 
-Edit::Edit(std::string str, const std::shared_ptr<Font>& font, Clr color,
-           Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
+Edit::Edit(std::string str, const std::shared_ptr<Font>& font,
+           Clr color, Clr text_color, Clr interior) :
     TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), std::move(str), font, text_color,
                 FORMAT_LEFT | FORMAT_IGNORETAGS, INTERACTIVE | REPEAT_KEY_PRESS),
-    m_cursor_pos(CP0, CP0),
-    m_last_button_down_time(0),
-    m_in_double_click_mode(false),
-    m_double_click_cursor_pos(CP0, CP0),
-    m_first_char_shown(CP0),
-    m_int_color(interior),
-    m_hilite_color(CLR_SHADOW),
-    m_sel_text_color(CLR_WHITE),
-    m_recently_edited(false)
+    m_int_color(interior)
 {
     SetColor(color);
 

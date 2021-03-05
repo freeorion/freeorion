@@ -120,9 +120,8 @@ public:
     /** Replaces selected text with, or inserts at cursor, the text in \a text. */
     virtual void AcceptPastedText(const std::string& text);
 
-    /** The number of pixels to leave between the text and the control's
-        frame. */
-    static const int PIXEL_MARGIN;
+    /** The number of pixels to leave between the text and the control's frame. */
+    static constexpr int PIXEL_MARGIN = 5;
 
 protected:
     /** Returns true if >= 1 characters selected. */
@@ -198,22 +197,21 @@ protected:
     /** If .first == .second, the caret is drawn before character at
         m_cursor_pos.first; otherwise, the range is selected (when range is
         selected, caret is considered at .second) */
-    std::pair<CPSize, CPSize>   m_cursor_pos;
-
-    unsigned int                m_last_button_down_time;
-    bool                        m_in_double_click_mode;
-    std::pair<CPSize, CPSize>   m_double_click_cursor_pos;
+    std::pair<CPSize, CPSize> m_cursor_pos = {CP0, CP0};
+    unsigned int              m_last_button_down_time = 0;
+    bool                      m_in_double_click_mode = false;
+    std::pair<CPSize, CPSize> m_double_click_cursor_pos = {CP0, CP0};
 
 private:
     void ClearSelected(); ///< Clears (deletes) selected characters, as when a del, backspace, or character is entered
     void AdjustView();    ///< Makes sure the caret ends up in view after an arbitrary move
 
-    CPSize       m_first_char_shown; ///< Index of the first character on the left end of the control's viewable area
-    Clr          m_int_color;        ///< Color of background inside text box
-    Clr          m_hilite_color;     ///< Color behind selected range
-    Clr          m_sel_text_color;   ///< Color of selected text
+    CPSize m_first_char_shown = CP0;    ///< Index of the first character on the left end of the control's viewable area
+    Clr    m_int_color;                 ///< Color of background inside text box
+    Clr    m_hilite_color = CLR_SHADOW; ///< Color behind selected range
+    Clr    m_sel_text_color = CLR_WHITE;///< Color of selected text
 
-    bool         m_recently_edited;  ///< The contents when the focus was last gained
+    bool   m_recently_edited = false; ///< The contents when the focus was last gained
 };
 
 void GG_API GetTranslatedCodePoint(Key key,
