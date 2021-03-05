@@ -40,10 +40,10 @@ SupplyManager& SupplyManager::operator=(SupplyManager&& rhs) noexcept {
 }
 
 namespace {
-    static const std::set<int> EMPTY_INT_SET;
-    static const std::set<std::set<int>> EMPTY_INT_SET_SET;
-    static const std::set<std::pair<int, int>> EMPTY_INT_PAIR_SET;
-    static const std::map<int, float> EMPTY_INT_FLOAT_MAP;
+    const std::set<int> EMPTY_INT_SET;
+    const std::set<std::set<int>> EMPTY_INT_SET_SET;
+    const std::set<std::pair<int, int>> EMPTY_INT_PAIR_SET;
+    const std::map<int, float> EMPTY_INT_FLOAT_MAP;
 }
 
 const std::map<int, std::set<std::pair<int, int>>>& SupplyManager::SupplyStarlaneTraversals() const
