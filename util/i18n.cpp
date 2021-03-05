@@ -280,9 +280,9 @@ std::string RomanNumber(unsigned int n) {
 }
 
 namespace {
-    const double SMALL_UI_DISPLAY_VALUE = 1.0e-6;
-    const double LARGE_UI_DISPLAY_VALUE = 9.99999999e+9;
-    const double UNKNOWN_UI_DISPLAY_VALUE = std::numeric_limits<double>::infinity();
+    constexpr double SMALL_UI_DISPLAY_VALUE = 1.0e-6;
+    constexpr double LARGE_UI_DISPLAY_VALUE = 9.99999999e+9;
+    constexpr double UNKNOWN_UI_DISPLAY_VALUE = std::numeric_limits<double>::infinity();
 
     double RoundMagnitude(double mag, int digits) {
         // power of 10 of highest valued digit in number
