@@ -361,7 +361,7 @@ private:
 struct CUISimpleDropDownListRow : public GG::ListBox::Row {
     CUISimpleDropDownListRow(std::string row_text, GG::Y row_height = DEFAULT_ROW_HEIGHT);
     void CompleteConstruction() override;
-    static const GG::Y DEFAULT_ROW_HEIGHT;
+    static constexpr GG::Y DEFAULT_ROW_HEIGHT{22};
 private:
     std::shared_ptr<CUILabel> m_row_label;
 };

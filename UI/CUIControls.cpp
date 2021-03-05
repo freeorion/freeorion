@@ -1291,11 +1291,7 @@ void CUILinkTextMultiEdit::SetLinkedText(std::string str) {
 ///////////////////////////////////////
 // class CUISimpleDropDownListRow
 ///////////////////////////////////////
-// static(s)
-const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
-
-CUISimpleDropDownListRow::CUISimpleDropDownListRow(std::string row_text,
-                                                   GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
+CUISimpleDropDownListRow::CUISimpleDropDownListRow(std::string row_text, GG::Y row_height) :
     GG::ListBox::Row(GG::X1, row_height),
     m_row_label(GG::Wnd::Create<CUILabel>(std::move(row_text), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP))
 {}
@@ -1520,7 +1516,7 @@ void CUIToolBar::Render() {
 // class SpeciesSelector
 ///////////////////////////////////////
 namespace {
-    static const std::string EMPTY_STRING;
+    const std::string EMPTY_STRING;
 
     // row type used in the SpeciesSelector
     struct SpeciesRow : public GG::ListBox::Row {
