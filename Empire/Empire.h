@@ -507,8 +507,8 @@ private:
         PolicyAdoptionInfo() = default;
         PolicyAdoptionInfo(int turn, const std::string& cat, int slot) :
             adoption_turn(turn),
-            category(cat),
-            slot_in_category(slot)
+            slot_in_category(slot),
+            category(cat)
         {}
 
         int adoption_turn = INVALID_GAME_TURN;
