@@ -65,14 +65,14 @@
 
 
 namespace {
-    const double    ZOOM_STEP_SIZE = std::pow(2.0, 1.0/4.0);
-    const double    ZOOM_IN_MAX_STEPS = 12.0;
-    const double    ZOOM_IN_MIN_STEPS = -10.0;//-7.0;   // negative zoom steps indicates zooming out
-    const double    ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
-    const double    ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
+    const double     ZOOM_STEP_SIZE = std::pow(2.0, 1.0/4.0);
+    constexpr double ZOOM_IN_MAX_STEPS = 12.0;
+    constexpr double ZOOM_IN_MIN_STEPS = -10.0;//-7.0;   // negative zoom steps indicates zooming out
+    const double     ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
+    const double     ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
 
-    const GG::X     SITREP_PANEL_WIDTH(400);
-    const GG::Y     SITREP_PANEL_HEIGHT(200);
+    constexpr GG::X  SITREP_PANEL_WIDTH{400};
+    constexpr GG::Y  SITREP_PANEL_HEIGHT{200};
 
     const std::string SITREP_WND_NAME = "map.sitrep";
     const std::string MAP_PEDIA_WND_NAME = "map.pedia";
@@ -82,20 +82,20 @@ namespace {
     const std::string MAP_SIDEPANEL_WND_NAME = "map.sidepanel";
     const std::string GOVERNMENT_WND_NAME = "map.government";
 
-    const GG::Y ZOOM_SLIDER_HEIGHT(200);
-    const GG::Y SCALE_LINE_HEIGHT(20);
-    const GG::X SCALE_LINE_MAX_WIDTH(240);
-    const int   MIN_SYSTEM_NAME_SIZE = 10;
-    const int   LAYOUT_MARGIN = 5;
-    const GG::Y TOOLBAR_HEIGHT(32);
+    constexpr GG::Y ZOOM_SLIDER_HEIGHT{200};
+    constexpr GG::Y SCALE_LINE_HEIGHT{20};
+    constexpr GG::X SCALE_LINE_MAX_WIDTH{240};
+    constexpr int   MIN_SYSTEM_NAME_SIZE = 10;
+    constexpr int   LAYOUT_MARGIN = 5;
+    constexpr GG::Y TOOLBAR_HEIGHT{32};
 
     constexpr double TWO_PI = 2.0*3.1415926536;
 
-    const GG::X ICON_SINGLE_WIDTH(40);
-    const GG::X ICON_DUAL_WIDTH(64);
-    const GG::X ICON_WIDTH(24);
-    const GG::Pt ICON_SIZE{GG::X{24}, GG::Y{24}};
-    const GG::Pt MENU_ICON_SIZE{GG::X{32}, GG::Y{32}};
+    constexpr GG::X ICON_SINGLE_WIDTH{40};
+    constexpr GG::X ICON_DUAL_WIDTH{64};
+    constexpr GG::X ICON_WIDTH{24};
+    constexpr GG::Pt ICON_SIZE{GG::X{24}, GG::Y{24}};
+    constexpr GG::Pt MENU_ICON_SIZE{GG::X{32}, GG::Y{32}};
 
 
     DeclareThreadSafeLogger(effects);
@@ -387,7 +387,7 @@ namespace {
 
         void DoLayout() {
             const GG::Y row_height{ClientUI::Pts()};
-            const GG::Y offset{32};
+            constexpr GG::Y offset{32};
             const GG::X descr_width{m_col_widths.at(0) - (m_margin * 2)};
             const GG::X value_width{m_col_widths.at(1) - (m_margin * 3)};
 

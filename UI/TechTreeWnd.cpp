@@ -1619,7 +1619,6 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
 { SetDragDropDataType("TechListBox::TechRow"); }
 
 void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
-
     CUIListBox::Row::CompleteConstruction();
 
     const Tech* this_row_tech = ::GetTech(m_tech);
@@ -1627,7 +1626,7 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
         return;
 
     std::vector<GG::X> col_widths = ColWidths(Width());
-    const GG::X GRAPHIC_WIDTH =   col_widths[0];
+    const GG::X GRAPHIC_WIDTH = col_widths[0];
     const GG::Y ICON_HEIGHT(std::min(Value(Height()) - 12, std::max(ClientUI::Pts(), Value(GRAPHIC_WIDTH) - 6)));
     // TODO replace string padding with new TextFormat flag
     std::string just_pad = "    ";
@@ -1636,38 +1635,38 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
                                                       GG::GRAPHIC_VCENTER | GG::GRAPHIC_CENTER | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     graphic->Resize(GG::Pt(GRAPHIC_WIDTH, ICON_HEIGHT));
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
-    push_back(graphic);
+    push_back(std::move(graphic));
 
     auto text = GG::Wnd::Create<CUILabel>(just_pad + UserString(m_tech), GG::FORMAT_LEFT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
-    push_back(text);
+    push_back(std::move(text));
 
     std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(GGHumanClientApp::GetApp()->EmpireID())));
     text = GG::Wnd::Create<CUILabel>(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
-    push_back(text);
+    push_back(std::move(text));
 
     std::string time_str = std::to_string(this_row_tech->ResearchTime(GGHumanClientApp::GetApp()->EmpireID()));
     text = GG::Wnd::Create<CUILabel>(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
-    push_back(text);
+    push_back(std::move(text));
 
     text = GG::Wnd::Create<CUILabel>(just_pad + UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
-    push_back(text);
+    push_back(std::move(text));
 
     text = GG::Wnd::Create<CUILabel>(just_pad + UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);
     text->ClipText(true);
     text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
-    push_back(text);
+    push_back(std::move(text));
 }
 
 void TechTreeWnd::TechListBox::TechRow::Update() {

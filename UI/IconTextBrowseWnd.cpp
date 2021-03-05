@@ -6,15 +6,14 @@
 #include "CUIControls.h"
 
 namespace {
-    const int EDGE_PAD(3);
-
     /** Returns height of rows of text in InfoTextBrowseWnd. */
     int IconTextBrowseWndRowHeight()
     { return ClientUI::Pts()*3/2; }
 
-    const GG::X ICON_BROWSE_TEXT_WIDTH(400);
-    const GG::X ICON_BROWSE_ICON_WIDTH(64);
-    const GG::Y ICON_BROWSE_ICON_HEIGHT(64);
+    constexpr int   EDGE_PAD = 3;
+    constexpr GG::X ICON_BROWSE_TEXT_WIDTH{400};
+    constexpr GG::X ICON_BROWSE_ICON_WIDTH{64};
+    constexpr GG::Y ICON_BROWSE_ICON_HEIGHT{64};
 }
 
 IconTextBrowseWnd::IconTextBrowseWnd(std::shared_ptr<GG::Texture> texture,

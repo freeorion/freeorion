@@ -26,8 +26,8 @@
 #include <string>
 
 namespace {
-    const GG::X MAIN_MENU_WIDTH(200);
-    const GG::Y MAIN_MENU_HEIGHT(450);
+    constexpr GG::X MAIN_MENU_WIDTH{200};
+    constexpr GG::Y MAIN_MENU_HEIGHT{450};
 
     void Options(OptionsDB& db) {
         db.AddFlag("network.server.external.force", UserStringNop("OPTIONS_DB_FORCE_EXTERNAL_SERVER"),  false);

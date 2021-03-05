@@ -17,10 +17,10 @@
 
 
 namespace {
-    const GG::X CONTROL_WIDTH(32);
-    const GG::Y CONTROL_HEIGHT(32);
-    const GG::X DROP_WIDTH(96);
-    const int   PAD(3);
+    constexpr GG::X CONTROL_WIDTH{32};
+    constexpr GG::Y CONTROL_HEIGHT{32};
+    constexpr GG::X DROP_WIDTH{96};
+    constexpr int   PAD = 3;
 }
 
 ////////////////////////////////////////////////

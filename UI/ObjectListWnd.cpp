@@ -463,7 +463,9 @@ namespace {
 ////////////////////////////////////////////////
 // ConditionWidget
 ////////////////////////////////////////////////
-const GG::X CONDITION_WIDGET_WIDTH(380);
+namespace {
+    constexpr GG::X CONDITION_WIDGET_WIDTH{380};
+}
 
 class ConditionWidget : public GG::Control {
 public:
@@ -1355,7 +1357,7 @@ namespace {
         return retval;
     }
 
-    const GG::X PAD(3);
+    constexpr GG::X PAD{3};
 }
 
 ////////////////////////////////////////////////

@@ -12,10 +12,9 @@
 #include "IconTextBrowseWnd.h"
 
 namespace {
-    const int       EDGE_PAD(3);
-
-    const GG::X     SPECIAL_ICON_WIDTH(24);
-    const GG::Y     SPECIAL_ICON_HEIGHT(24);
+    constexpr int   EDGE_PAD = 3;
+    constexpr GG::X SPECIAL_ICON_WIDTH{24};
+    constexpr GG::Y SPECIAL_ICON_HEIGHT{24};
 }
 
 SpecialsPanel::SpecialsPanel(GG::X w, int object_id) :

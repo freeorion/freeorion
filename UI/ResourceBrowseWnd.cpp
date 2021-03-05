@@ -74,10 +74,10 @@ void ResourceBrowseWnd::CompleteConstruction() {
 
     // info controls layout
     const int STAT_TEXT_PTS = ClientUI::Pts();
-    const int CENTERLINE_GAP = 4;
+    constexpr int CENTERLINE_GAP = 4;
     const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 2 / 3;
     const GG::X VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
-    const GG::X LEFT_TEXT_X(0);
+    constexpr GG::X LEFT_TEXT_X{GG::X0};
     const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
     const GG::X P_LABEL_X = RIGHT_TEXT_X + FontBasedUpscale(40);
 
@@ -308,10 +308,10 @@ void WastedStockpiledResourceBrowseWnd::CompleteConstruction() {
 
     // info controls layout
     const int STAT_TEXT_PTS = ClientUI::Pts();
-    const int CENTERLINE_GAP = 4;
+    constexpr int CENTERLINE_GAP = 4;
     const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 2 / 3;
     const GG::X VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
-    const GG::X LEFT_TEXT_X(0);
+    constexpr GG::X LEFT_TEXT_X{GG::X0};
     const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
     const GG::X P_LABEL_X = RIGHT_TEXT_X + FontBasedUpscale(40);
 

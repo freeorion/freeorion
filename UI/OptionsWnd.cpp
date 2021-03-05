@@ -28,13 +28,13 @@
 namespace fs = boost::filesystem;
 
 namespace {
-    const GG::X PAGE_WIDTH(400);
-    const GG::Y PAGE_HEIGHT(520);
-    const GG::X INDENTATION(20);
-    const GG::X ROW_WIDTH(PAGE_WIDTH - 4 - 14 - 5);
-    const GG::X COLOR_SELECTOR_WIDTH(75);
-    const GG::X SPIN_WIDTH(92);
-    const int LAYOUT_MARGIN = 5;
+    constexpr GG::X PAGE_WIDTH{400};
+    constexpr GG::Y PAGE_HEIGHT{520};
+    constexpr GG::X INDENTATION{20};
+    constexpr GG::X ROW_WIDTH{Value(PAGE_WIDTH) - 4 - 14 - 5};
+    constexpr GG::X COLOR_SELECTOR_WIDTH{75};
+    constexpr GG::X SPIN_WIDTH{92};
+    constexpr int LAYOUT_MARGIN = 5;
 
     const std::string OPTIONS_WND_NAME = "options";
 
@@ -820,7 +820,7 @@ void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void OptionsWnd::DoLayout() {
-    const GG::X BUTTON_WIDTH(75);
+    constexpr GG::X BUTTON_WIDTH{75};
     const GG::Y BUTTON_HEIGHT(ClientUI::GetFont()->Lineskip() + 6);
 
     GG::Pt done_button_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN));
