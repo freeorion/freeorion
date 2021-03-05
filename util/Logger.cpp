@@ -22,7 +22,11 @@
 
 #include <boost/optional.hpp>
 
-#include <ctime>
+#ifdef _MSC_VER
+#  include <ctime>
+#else
+#  include <time.h>
+#endif
 #include <mutex>
 #include <regex>
 #include <unordered_map>
@@ -373,11 +377,24 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
     // Create sink front ends for all previously created loggers.
     GetLoggersToSinkFrontEnds().ConfigureFrontEnds(file_sink_backend);
 
-    // Print setup message.
-    char mbstr[100] = {};
-    auto date_time = std::time(nullptr);
-    std::strftime(mbstr, sizeof(mbstr), "%c", std::localtime(&date_time)); // %c writes standard date and time string, e.g. Sun Oct 17 04:41:13 2010 (locale dependent)
-    InfoLogger(log) << "Logger initialized at " << mbstr;
+    {
+        // Log setup message with timestamp. Doing all the following because it
+        // correctly handles time zones with daylight saving time adjustment for
+        // me, but the simpler-to-use boost equivalents for formatting time are
+        // off by 1 hour. Also can't use just std::datetime because it is not
+        // always implemented thread-safe.
+        auto date_time = std::time(nullptr);
+        std::tm temp_tm;
+        #ifdef _MSC_VER
+            localtime_s(&temp_tm, &date_time);
+        #else
+            localtime_r(&date_time, &temp_tm);
+        #endif
+
+        char time_as_string_buf[100] = {};
+        std::strftime(time_as_string_buf, sizeof(time_as_string_buf), "%c", &temp_tm);
+        InfoLogger(log) << "Logger initialized at " << time_as_string_buf;
+    }
 }
 
 void ShutdownLoggingSystemFileSink() {
