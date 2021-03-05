@@ -109,10 +109,6 @@ public:
     /** Thrown when the initial directory for the dialog is bad. */
     GG_CONCRETE_EXCEPTION(BadInitialDirectory, GG::FileDlg, Exception);
 
-protected:
-    static const X DEFAULT_WIDTH;  ///< default width for the dialog
-    static const Y DEFAULT_HEIGHT; ///< default height for the dialog
-
 private:
     void DoLayout();
     void AttachSignalChildren();

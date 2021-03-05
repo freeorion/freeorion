@@ -117,8 +117,10 @@ bool WindowsRoot(const std::string& root_name)
 bool Win32Paths()
 { return WindowsRoot(boost::filesystem::initial_path().root_name().string()); }
 
-const X H_SPACING(10);
-const Y V_SPACING(10);
+constexpr X H_SPACING{10};
+constexpr Y V_SPACING{10};
+constexpr X DEFAULT_WIDTH{500};  ///< default width for the dialog
+constexpr Y DEFAULT_HEIGHT{450}; ///< default height for the dialog
 
 }
 
@@ -126,8 +128,6 @@ namespace fs = boost::filesystem;
 
 // static member definition(s)
 fs::path FileDlg::s_working_dir = fs::current_path();
-const X FileDlg::DEFAULT_WIDTH(500);
-const Y FileDlg::DEFAULT_HEIGHT(450);
 
 
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
