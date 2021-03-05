@@ -33,12 +33,8 @@ Y TabHeightFromFont(const std::shared_ptr<Font>& font)
 ////////////////////////////////////////////////
 // GG::OverlayWnd
 ////////////////////////////////////////////////
-// static(s)
-const std::size_t OverlayWnd::NO_WND = std::numeric_limits<std::size_t>::max();
-
 OverlayWnd::OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags) :
-    Wnd(x, y, w, h, flags),
-    m_current_wnd_index(NO_WND)
+    Wnd(x, y, w, h, flags)
 {}
 
 void OverlayWnd::CompleteConstruction()
@@ -132,8 +128,8 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
 
         // Toggle the size to force layout to relayout even though size
         // has not changed.
-        SizeMove(UpperLeft(), LowerRight() - GG::Pt(GG::X(1), GG::Y(1)));
-        SizeMove(UpperLeft(), LowerRight() + GG::Pt(GG::X(1), GG::Y(1)));
+        SizeMove(UpperLeft(), LowerRight() - GG::Pt(GG::X1, GG::Y1));
+        SizeMove(UpperLeft(), LowerRight() + GG::Pt(GG::X1, GG::Y1));
     }
 }
 
@@ -141,9 +137,6 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
 ////////////////////////////////////////////////
 // GG::TabWnd
 ////////////////////////////////////////////////
-// static(s)
-const std::size_t TabWnd::NO_WND = std::numeric_limits<std::size_t>::max();
-
 TabWnd::TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color,
                Clr text_color/* = CLR_BLACK*/) :
     Wnd(x, y, w, h, INTERACTIVE),
@@ -240,8 +233,6 @@ void TabWnd::TabChanged(std::size_t index, bool signal)
 ////////////////////////////////////////////////
 // GG::TabBar
 ////////////////////////////////////////////////
-// static(s)
-const std::size_t TabBar::NO_TAB = TabWnd::NO_WND;
 TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, TabHeightFromFont(font), flags),

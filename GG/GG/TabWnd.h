@@ -73,11 +73,11 @@ public:
 
     /** The invalid Wnd position index that there is no currently-selected
         Wnd. */
-    static const std::size_t NO_WND;
+    static constexpr std::size_t NO_WND = std::numeric_limits<std::size_t>::max();
 
 private:
     std::vector<std::shared_ptr<Wnd>> m_wnds;
-    std::size_t       m_current_wnd_index;
+    std::size_t                       m_current_wnd_index = NO_WND;
 };
 
 
@@ -135,7 +135,7 @@ public:
 
     /** The invalid Wnd position index that there is no currently-selected
         Wnd. */
-    static const std::size_t NO_WND;
+    static constexpr std::size_t NO_WND = std::numeric_limits<std::size_t>::max();
 
 protected:
     /** Returns the set of Wnds currently controlled by this TabWnd, indexed
@@ -143,10 +143,10 @@ protected:
     const std::map<std::string, Wnd*>&  WndNames() const;
 
 private:
-    void    TabChanged(std::size_t tab_index, bool signal);
+    void TabChanged(std::size_t tab_index, bool signal);
 
-    std::shared_ptr<TabBar>                     m_tab_bar;
-    std::shared_ptr<OverlayWnd>                 m_overlay;
+    std::shared_ptr<TabBar>     m_tab_bar;
+    std::shared_ptr<OverlayWnd> m_overlay;
     std::map<std::string, Wnd*> m_named_wnds;
 };
 
@@ -172,18 +172,18 @@ public:
     Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
-    bool            Empty() const;
+    bool Empty() const;
 
     /** Returns the number of tabs currently in this TabWnd. */
-    std::size_t     NumTabs() const;
+    std::size_t NumTabs() const;
 
     /** Returns the index into the sequence of tabs in this TabBar of the tab
         currently selected.  NO_TAB is returned if there is no tab currently
         selected. */
-    std::size_t     CurrentTabIndex() const;
+    std::size_t CurrentTabIndex() const;
 
     /** Returns the color used to render the text in this TabBar. */
-    Clr             TextColor() const;
+    Clr TextColor() const;
 
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     void SizeMove(const Pt& ul, const Pt& lr) override;
@@ -214,7 +214,7 @@ public:
 
     /** The invalid tab position index that there is no currently-selected
         tab. */
-    static const std::size_t NO_TAB;
+    static constexpr std::size_t NO_TAB = TabWnd::NO_WND;
 
 protected:
     /** The default width to use for the left and right buttons. */
