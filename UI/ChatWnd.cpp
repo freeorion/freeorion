@@ -371,7 +371,7 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
 {
     std::string filtered_message = StringtableTextSubstitute(text);
     std::string wrapped_text = RgbaTag(text_color);
-    std::string pm_text = "";
+    std::string pm_text;
     if (pm)
         pm_text = UserString("MESSAGES_WHISPER");
     const std::string&& formatted_timestamp = ClientUI::FormatTimestamp(timestamp);

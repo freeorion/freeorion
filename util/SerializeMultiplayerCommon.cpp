@@ -42,7 +42,7 @@ void serialize(Archive& ar, GalaxySetupData& obj, unsigned int const version)
     using namespace boost::serialization;
 
     if (Archive::is_saving::value && obj.encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
-        std::string dummy = "";
+        std::string dummy;
         ar  & make_nvp("m_seed", dummy);
     } else {
         ar  & make_nvp("m_seed", obj.seed);

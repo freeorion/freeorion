@@ -36,7 +36,7 @@ struct Availability {
 
 namespace {
     const std::string   POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
-    const std::string   EMPTY_STRING = "";
+    const std::string   EMPTY_STRING;
     const GG::X         POLICY_CONTROL_WIDTH(54);
     const GG::Y         POLICY_CONTROL_HEIGHT(54);
     const GG::X         SLOT_CONTROL_WIDTH(60);
@@ -883,7 +883,7 @@ protected:
 
 private:
     bool                                m_highlighted = false;
-    std::string                         m_slot_category = "";
+    std::string                         m_slot_category;
     int                                 m_category_index = -1;
     unsigned int                        m_slot_index = 0;
     std::shared_ptr<PolicyControl>      m_policy_control = nullptr;

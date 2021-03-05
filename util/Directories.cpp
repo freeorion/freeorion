@@ -48,7 +48,7 @@ namespace {
     bool g_initialized = false;
     fs::path bin_dir = fs::initial_path();
 
-    const std::string EMPTY_STRING = "";
+    const std::string EMPTY_STRING;
     const std::string PATH_BINARY_STR = "PATH_BINARY";
     const std::string PATH_RESOURCE_STR = "PATH_RESOURCE";
     const std::string PATH_DATA_ROOT_STR = "PATH_DATA_ROOT";

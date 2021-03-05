@@ -42,9 +42,9 @@ protected:
     void PopCenterPopGrowthProductionResearchPhase();
 
 private:
-    virtual void            AddMeter(MeterType meter_type) = 0; ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
+    virtual void AddMeter(MeterType meter_type) = 0;///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
 
-    std::string m_species_name = "";                            ///< the name of the species that occupies this planet
+    std::string m_species_name;                     ///< the name of the species that occupies this planet
 
     template <typename Archive>
     friend void serialize(Archive&, PopCenter&, unsigned int const);

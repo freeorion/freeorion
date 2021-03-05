@@ -236,7 +236,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
 
     // set production label
-    std::string resource_text = "";
+    std::string resource_text;
     switch (m_resource_type) {
     case ResourceType::RE_INDUSTRY:
         resource_text = UserString("INDUSTRY_PRODUCTION");  break;

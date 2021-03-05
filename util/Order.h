@@ -450,7 +450,7 @@ private:
     void ExecuteImpl() const override;
 
     int m_planet = INVALID_OBJECT_ID;
-    std::string m_focus = "";
+    std::string m_focus;
 
     friend class boost::serialization::access;
     template <class Archive>

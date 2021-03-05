@@ -443,7 +443,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
     int selected_fleet_id/* = INVALID_OBJECT_ID*/,
     GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
 {
-    std::string config_name = "";
+    std::string config_name;
     if (!GetOptionsDB().Get<bool>("ui.fleet.multiple.enabled")) {
         CloseAll();
         // Only write to OptionsDB if in single fleet window mode.

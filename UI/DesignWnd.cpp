@@ -58,7 +58,7 @@ namespace {
     const std::string   HULL_PARTS_ROW_DROP_TYPE_STRING = "Hull and Parts Row";
     const std::string   COMPLETE_DESIGN_ROW_DROP_STRING = "Complete Design Row";
     const std::string   SAVED_DESIGN_ROW_DROP_STRING = "Saved Design Row";
-    const std::string   EMPTY_STRING = "";
+    const std::string   EMPTY_STRING;
     const std::string   DES_PEDIA_WND_NAME = "design.pedia";
     const std::string   DES_MAIN_WND_NAME = "design.edit";
     const std::string   DES_BASE_SELECTOR_WND_NAME = "design.selector";

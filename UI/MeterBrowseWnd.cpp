@@ -37,7 +37,7 @@ namespace {
 
     /** Cast int to string, prepend sign if requested */
     std::string IntToString(int number, bool prepend = false) {
-        std::string prepend_text = "";
+        std::string prepend_text;
         if (prepend) {
             if (number >= 0)
                 prepend_text = "+";

@@ -414,7 +414,7 @@ const Meter* Planet::GetMeter(MeterType type) const
 { return UniverseObject::GetMeter(type); }
 
 std::string Planet::CardinalSuffix() const {
-    std::string retval = "";
+    std::string retval;
     // Early return for invalid ID
     if (ID() == INVALID_OBJECT_ID) {
         WarnLogger() << "Planet " << Name() << " has invalid ID";

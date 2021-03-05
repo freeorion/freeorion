@@ -148,8 +148,8 @@ namespace {
             }
 
             // generate tooltip text
-            std::string tooltip_title = "";
-            std::string tooltip_text = "";
+            std::string tooltip_title;
+            std::string tooltip_text;
 
             switch (m_diplo_status) {
             case DiplomaticStatus::DIPLO_WAR:

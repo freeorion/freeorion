@@ -1112,7 +1112,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
         return;
     const ProductionQueue::ProductionItem& item = item_row->Item();
 
-    std::string item_name = "";
+    std::string item_name;
     if (item.build_type == BuildType::BT_BUILDING) {
         item_name = item.name;
     } else if (item.build_type == BuildType::BT_SHIP) {
