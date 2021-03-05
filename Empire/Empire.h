@@ -501,12 +501,19 @@ private:
     EmpireColor m_color = {{128, 255, 255, 255}};
     int         m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
 
+    static constexpr int INVALID_SLOT_INDEX = -1;
+
     struct PolicyAdoptionInfo {
-        PolicyAdoptionInfo();
-        PolicyAdoptionInfo(int turn, const std::string& cat, int slot);
-        int         adoption_turn = -1;
-        std::string category = "";
-        int         slot_in_category = -1;
+        PolicyAdoptionInfo() = default;
+        PolicyAdoptionInfo(int turn, const std::string& cat, int slot) :
+            adoption_turn(turn),
+            category(cat),
+            slot_in_category(slot)
+        {}
+
+        int adoption_turn = INVALID_GAME_TURN;
+        int slot_in_category = INVALID_SLOT_INDEX;
+        std::string category;
 
         friend class boost::serialization::access;
         template <class Archive>

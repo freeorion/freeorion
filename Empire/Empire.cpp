@@ -26,9 +26,8 @@
 
 
 namespace {
-    const float EPSILON = 0.01f;
+    constexpr float EPSILON = 0.01f;
     const std::string EMPTY_STRING;
-    const int INVALID_SLOT_INDEX = -1;
 
     std::vector<std::pair<std::string, std::string>> PolicyCategoriesSlotsMeters() {
         std::vector<std::pair<std::string, std::string>> retval;
@@ -36,27 +35,13 @@ namespace {
         // derive meters from PolicyManager parsed policies' categories
         for (auto& cat : GetPolicyManager().PolicyCategories()) {
             std::string&& slots_string{cat + "_NUM_POLICY_SLOTS"};
-            retval.emplace_back(std::move(cat), std::move(slots_string));
+            retval.emplace_back(cat, std::move(slots_string));
         }
         return retval;
     }
 
     DeclareThreadSafeLogger(supply);
 }
-
-////////////////////////////////
-// Empire::PolicyAdoptionInfo //
-////////////////////////////////
-Empire::PolicyAdoptionInfo::PolicyAdoptionInfo() :
-    PolicyAdoptionInfo(INVALID_GAME_TURN, EMPTY_STRING, INVALID_SLOT_INDEX)
-{}
-
-Empire::PolicyAdoptionInfo::PolicyAdoptionInfo(int turn, const std::string& cat, int slot) :
-    adoption_turn(turn),
-    category(cat),
-    slot_in_category(slot)
-{}
-
 
 ////////////
 // Empire //
