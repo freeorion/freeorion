@@ -384,7 +384,7 @@ void SpeciesManager::CheckPendingSpeciesTypes() {
 
     if (!s_pending_types) {
         if (s_species.empty())
-            throw;
+            ErrorLogger() << "CheckPendingSpeciesTypes() has no pending species but also no already-parsed species";
         return;
     }
 
