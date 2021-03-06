@@ -630,8 +630,9 @@ auto FilenameTimestamp() -> std::string
     std::replace(retval.begin(), retval.end(), ' ', '_');
     std::replace(retval.begin(), retval.end(), ':', '-');
 
-    // filter non-filename-safe characters that are valid single-byte UTF-8 characters, in case the default locale for this system has weird chars in the time-date format
-    auto do_remove = [](char c) -> bool { return !std::isalnum(c) && c <= 127 && c != '_' && c != '-'; };
+    // filter non-filename-safe characters that are valid single-byte UTF-8 characters,
+    // in case the default locale for this system has weird chars in the time-date format
+    auto do_remove = [](char c) -> bool { return !std::isalnum(c) && c != '_' && c != '-'; };
     retval.erase(std::remove_if(retval.begin(), retval.end(), do_remove), retval.end());
     TraceLogger() << "Filename filtered timestamp: " << retval;
 
