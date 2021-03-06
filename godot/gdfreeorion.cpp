@@ -4,6 +4,7 @@
 #include <exception>
 #include <memory>
 #include <sstream>
+#include <codecvt>
 
 #include <OS.hpp>
 
@@ -132,7 +133,6 @@ void GDFreeOrion::handle_message(Message&& msg) {
 }
 
 void GDFreeOrion::_register_methods() {
-    // register_method("_process", &GDCppTest::_process);
     register_method("_exit_tree", &GDFreeOrion::_exit_tree);
     register_method("_new_single_player_game", &GDFreeOrion::_new_single_player_game);
     register_method("_get_systems", &GDFreeOrion::_get_systems);
@@ -172,7 +172,7 @@ void GDFreeOrion::_init() {
                           s_android_api_struct->godot_android_get_activity());
 #endif
 
-    InitDirs("");
+    InitDirs(std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(OS::get_singleton()->get_executable_path().unicode_str()));
 
     GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
     GetOptionsDB().SetFromFile(GetPersistentConfigPath());
@@ -188,7 +188,7 @@ void GDFreeOrion::_init() {
         !boost::filesystem::exists(GetResourceDir() / "credits.xml") ||
         !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
     {
-        DebugLogger() << "Resources directory from config.xml missing or does not contain expected files. Resetting to default.";
+        DebugLogger() << "Resources directory " << PathToString(GetResourceDir()) << " from config.xml missing or does not contain expected files. Resetting to default.";
 
         // GetOptionsDB().Set<std::string>("resource.path", "");
         GetOptionsDB().Set<std::string>("resource.path", PathToString(boost::filesystem::canonical("../../default"))); // Temporary default for Godot client prototype development
