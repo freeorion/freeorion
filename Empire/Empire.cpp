@@ -1269,7 +1269,7 @@ const std::map<int, float>& Empire::SystemSupplyRanges() const
 const std::set<int>& Empire::SupplyUnobstructedSystems() const
 { return m_supply_unobstructed_systems; }
 
-const bool Empire::PreservedLaneTravel(int start_system_id, int dest_system_id) const {
+bool Empire::PreservedLaneTravel(int start_system_id, int dest_system_id) const {
     auto find_it = m_preserved_system_exit_lanes.find(start_system_id);
     return find_it != m_preserved_system_exit_lanes.end()
             && find_it->second.count(dest_system_id);
