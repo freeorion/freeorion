@@ -3954,6 +3954,7 @@ std::string Conditional::Dump(unsigned short ntabs) const {
     }
 
     if (m_false_effects.empty()) {
+        // output nothing
     } else if (m_false_effects.size() == 1) {
         retval += DumpIndent(ntabs+1) + "else =\n";
         retval += m_false_effects[0]->Dump(ntabs+2);
