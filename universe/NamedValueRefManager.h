@@ -15,8 +15,8 @@ class NamedValueRefManager;
 FO_COMMON_API auto GetNamedValueRefManager() -> NamedValueRefManager&;
 
 template <typename T>
-FO_COMMON_API ValueRef::ValueRef<T>* const GetValueRef(const std::string& name,
-                                                       const bool wait_for_named_value_focs_txt_parse = false);
+FO_COMMON_API const ValueRef::ValueRef<T>* GetValueRef(const std::string& name,
+                                                       bool wait_for_named_value_focs_txt_parse = false);
 
 namespace ValueRef {
 
@@ -33,22 +33,22 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
     }
 
     bool RootCandidateInvariant() const override
-    { return (const_cast<NamedRef<T>*>(this))->NamedRefInitInvariants() ? ValueRefBase::m_root_candidate_invariant : false; }
+    { return NamedRefInitInvariants() ? m_root_candidate_invariant_local : false; }
 
     bool LocalCandidateInvariant() const override
-    { return (const_cast<NamedRef<T>*>(this))->NamedRefInitInvariants() ? ValueRefBase::m_local_candidate_invariant : false; }
+    { return NamedRefInitInvariants() ? m_local_candidate_invariant_local : false; }
 
     bool TargetInvariant() const override
-    { return (const_cast<NamedRef<T>*>(this))->NamedRefInitInvariants() ? ValueRefBase::m_target_invariant : false; }
+    { return NamedRefInitInvariants() ? m_target_invariant_local : false; }
 
     bool SourceInvariant() const override
-    { return (const_cast<NamedRef<T>*>(this))->NamedRefInitInvariants() ? ValueRefBase::m_source_invariant : false; }
+    { return NamedRefInitInvariants() ? m_source_invariant_local : false; }
 
     bool SimpleIncrement() const override
-    { return (const_cast<NamedRef<T>*>(this))->NamedRefInitInvariants() ? GetValueRef()->SimpleIncrement() : false; }
+    { return NamedRefInitInvariants() ? GetValueRef()->SimpleIncrement() : false; }
 
     bool ConstantExpr() const override
-    { return (const_cast<NamedRef<T>*>(this))->NamedRefInitInvariants() ? GetValueRef()->ConstantExpr() : false; }
+    { return NamedRefInitInvariants() ? GetValueRef()->ConstantExpr() : false; }
 
     bool operator==(const ValueRef<T>& rhs) const override {
         if (&rhs == this)
@@ -61,40 +61,28 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
 
     T Eval(const ScriptingContext& context) const override {
         TraceLogger() << "NamedRef<" << typeid(T).name() << ">::Eval()";
-        auto value_ref = ::GetValueRef<T>(m_value_ref_name);
-        if (!value_ref) {
+        auto ref = GetValueRef();
+        if (!ref) {
             ErrorLogger() << "NamedRef<" << typeid(T).name() << ">::Eval did not find " << m_value_ref_name;
             throw std::runtime_error(std::string("NamedValueLookup referenced unknown ValueRef<") + typeid(T).name() + "> named '" + m_value_ref_name + "'");
         }
 
-        auto retval = value_ref->Eval(context);
+        auto retval = ref->Eval(context);
         TraceLogger() << "NamedRef<" << typeid(T).name() << "> name: " << m_value_ref_name << "  retval: " << retval;
         return retval;
     }
 
-    std::string Description() const override
-    { return GetValueRef() ? GetValueRef()->Description() : UserString("NAMED_REF_UNKNOWN"); }
-
-    std::string Dump(unsigned short ntabs = 0) const override
-    { return GetValueRef() ? GetValueRef()->Dump() : "NAMED_REF_UNKNOWN"; }
-
-    void SetTopLevelContent(const std::string& content_name) override {
-        if (m_is_lookup_only) {
-            TraceLogger() << "Ignored call of SetTopLevelContent(" << content_name
-                          << ") on a Lookup NamedRef for value ref " << m_value_ref_name;
-            return;
-        }
-        // only supposed to work for named-in-the-middle-case, SetTopLevelContent checks that
-        if (GetValueRef()) {
-            const_cast<ValueRef<T>*>(GetValueRef())->SetTopLevelContent(content_name);
-        } else {
-            const char* named_ref_kind = ( content_name == "THERE_IS_NO_TOP_LEVEL_CONTENT" ? "top-level" : "named-in-the-middle" );
-            ErrorLogger() << "Unexpected call of SetTopLevelContent(" << content_name
-                          << ") on a " << named_ref_kind
-                          << " NamedRef - unexpected because no value ref " << m_value_ref_name
-                          << " registered yet. Should not happen";
-        }
+    std::string Description() const override {
+        auto ref = GetValueRef();
+        return ref ? ref->Description() : UserString("NAMED_REF_UNKNOWN");
     }
+
+    std::string Dump(unsigned short ntabs = 0) const override {
+        auto ref = GetValueRef();
+        return ref ? ref->Dump() : "NAMED_REF_UNKNOWN";
+    }
+
+    void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRef<T>* GetValueRef() const {
         TraceLogger() << "NamedRef<T>::GetValueRef() look for registered valueref for \"" << m_value_ref_name << '"';
@@ -109,54 +97,71 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
         return retval;
     }
 
-    std::unique_ptr<ValueRef<T>> Clone() const override {
-        return std::make_unique<NamedRef<T>>(m_value_ref_name, m_is_lookup_only);
-    }
+    std::unique_ptr<ValueRef<T>> Clone() const override
+    { return std::make_unique<NamedRef<T>>(m_value_ref_name, m_is_lookup_only); }
 
 private:
-    //! initialises invariants from registered valueref, waits a bit for registration, use on first access
-    bool NamedRefInitInvariants() {
-        if (m_invariants_initialized)
-            return true;
+    //! ensures invariants are initialized from registered valueref
+    bool NamedRefInitInvariants() const {
+        {
+            std::scoped_lock invariants_lock(m_invariants_mutex);
+            if (m_invariants_initialized)
+                return true;
+        }
+
         auto* vref = GetValueRef();
-        if (!vref) {
-            if (!m_is_lookup_only) {
-                ErrorLogger() << "NamedRef<T>::NamedRefInitInvariants() Trying to use invariants without existing value ref (which should exist in this case)";
-                return false;
-            }
-            // there is a chance that this will be initialised, so retry
-            std::chrono::milliseconds msecs(200);
+        if (!vref && !m_is_lookup_only) {
+            ErrorLogger() << "NamedRef<T>::NamedRefInitInvariants() Trying to use invariants without existing value ref (which should exist in this case)";
+            return false;
+        } else if (!vref) {
             DebugLogger() << "NamedRef<T>::NamedRefInitInvariants() could not find value ref, will sleep a bit and retry.";
-            std::this_thread::sleep_for(msecs);
-            vref = GetValueRef();
-            int tries = 5;
-            for (int i = 2; i < tries; i++) {
-                if (!vref) {
-                    TraceLogger() << "NamedRef<T>::NamedRefInitInvariants() still could not find value ref (tried " << i << "times), will sleep a bit longer and retry.";
-                    std::this_thread::sleep_for(i * msecs);
-                    vref = GetValueRef();
-                }
+        }
+
+        constexpr int MAX_TRIES = 5;
+        for (int try_num = 1; try_num <= MAX_TRIES; ++try_num) {
+            if (vref) {
+                std::scoped_lock invariants_lock(m_invariants_mutex);
+
+                // initialize invariants and return
+                m_root_candidate_invariant_local = vref->RootCandidateInvariant();
+                m_local_candidate_invariant_local = vref->LocalCandidateInvariant();
+                m_target_invariant_local = vref->TargetInvariant();
+                m_source_invariant_local = vref->SourceInvariant();
+                m_invariants_initialized = true;
+                return true;
+
+            } else if (try_num == MAX_TRIES) {
+                ErrorLogger() << "NamedRef<T>::NamedRefInitInvariants() still could not find value ref after trying "
+                              << try_num << " times. Giving up.";
+
+            } else {
+                // wait a while for parsing...
+                int msecs_count = 200 * try_num;
+                std::chrono::milliseconds msecs(msecs_count);
+                TraceLogger() << "NamedRef<T>::NamedRefInitInvariants() after try " << try_num
+                              << " sleeping for " << msecs_count << " ms before retry.";
+                std::this_thread::sleep_for(msecs);
+
+                // try again to get value ref
+                vref = GetValueRef();
             }
-            if (!vref)
-                ErrorLogger() << "NamedRef<T>::NamedRefInitInvariants() still could not find value ref after trying " << tries << " times. Giving up.";
         }
-        if (vref) {
-            ValueRefBase::m_root_candidate_invariant = vref->RootCandidateInvariant();
-            ValueRefBase::m_local_candidate_invariant = vref->LocalCandidateInvariant();
-            ValueRefBase::m_target_invariant = vref->TargetInvariant();
-            ValueRefBase::m_source_invariant = vref->SourceInvariant();
-            m_invariants_initialized = true;
-            return true;
-        }
-        // m_is_lookup_only == true, no vref
+
         WarnLogger() << "NamedRef<T>::NamedRefInitInvariants() Trying to use invariants in a Lookup value ref without existing value ref. "
                      << "Falling back to non-invariance will prevent performance optimisations. This may be a parse race condition.";
         return false;
     }
 
-    const std::string m_value_ref_name;                 //! registered name of value ref
-    bool              m_invariants_initialized = false; //! true if the invariants were initialized from the referenced vale ref
-    const bool        m_is_lookup_only;                 //! true if created by a *Lookup in FOCS
+    const std::string  m_value_ref_name;                 //! registered name of value ref
+
+    mutable bool       m_invariants_initialized = false; //! true if the invariants were initialized from the referenced vale ref
+    mutable bool       m_root_candidate_invariant_local = false;
+    mutable bool       m_local_candidate_invariant_local = false;
+    mutable bool       m_target_invariant_local = false;
+    mutable bool       m_source_invariant_local = false;
+    mutable std::mutex m_invariants_mutex;
+
+    const bool         m_is_lookup_only;                 //! true if created by a *Lookup in FOCS
 };
 
 }
@@ -182,10 +187,10 @@ public:
 
     //! Returns the ValueRef with the name @p name or nullptr if there is no
     //! ValueRef with such a name or of the wrong type use the free function
-    //!  GetValueRef(...) instead, mainly to save some typing.
+    //! GetValueRef(...) instead, mainly to save some typing.
     template <typename T>
-    ValueRef::ValueRef<T>* const GetValueRef(const std::string& name,
-                                             const bool wait_for_named_value_focs_txt_parse = false)
+    const ValueRef::ValueRef<T>* GetValueRef(const std::string& name,
+                                             bool wait_for_named_value_focs_txt_parse = false) const
     {
         if (wait_for_named_value_focs_txt_parse)
             CheckPendingNamedValueRefs();
@@ -194,16 +199,14 @@ public:
 
     //! Returns the ValueRef with the name @p name; you should use the
     //! free function GetValueRef(...) instead, mainly to save some typing.
-    auto GetValueRefBase(const std::string& name) const -> ValueRef::ValueRefBase* const;
+    auto GetValueRefBase(const std::string& name) const -> const ValueRef::ValueRefBase*;
 
     /** returns a map with all named value refs */
     auto GetItems() const -> any_container_type;
 
     // Singleton
     NamedValueRefManager& operator=(NamedValueRefManager const&) = delete; // no copy via assignment
-
     NamedValueRefManager(NamedValueRefManager const&) = delete;            // no copies via construction
-
     ~NamedValueRefManager() = default;
 
     //! Returns the instance of this singleton class; you should use the free
@@ -231,9 +234,22 @@ public:
 private:
     NamedValueRefManager();
 
+    template <typename T>
+    friend void ValueRef::NamedRef<T>::SetTopLevelContent(const std::string& content_name);
+
+    // getter of mutable ValueRef<T>* that can be modified within SetTopLevelContext functions
+    template <typename T>
+    ValueRef::ValueRef<T>* GetMutableValueRef(const std::string& name,
+                                              bool wait_for_named_value_focs_txt_parse = false)
+    {
+        if (wait_for_named_value_focs_txt_parse)
+            CheckPendingNamedValueRefs();
+        return dynamic_cast<ValueRef::ValueRef<T>*>(GetValueRefImpl(m_value_refs, "generic", name));
+    }
+
     template <typename V>
-    V* const GetValueRefImpl(std::map<NamedValueRefManager::key_type, std::unique_ptr<V>>& registry,
-                             const std::string& label, const std::string& name)
+    V* GetValueRefImpl(const std::map<NamedValueRefManager::key_type, std::unique_ptr<V>>& registry,
+                       const std::string& label, const std::string& name) const
     {
         TraceLogger() << "NamedValueRefManager::GetValueRef look for registered " << label << " valueref for \"" << name << '"';
         TraceLogger() << "Number of registered " << label << " ValueRefs: " << registry.size();
@@ -269,28 +285,64 @@ private:
 };
 
 
+// Template Implementations
+///////////////////////////////////////////////////////////
+// NamedValueRefManager                                  //
+///////////////////////////////////////////////////////////
 template<>
-FO_COMMON_API void NamedValueRefManager::RegisterValueRef(std::string&& name, std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& vref);
+FO_COMMON_API void NamedValueRefManager::RegisterValueRef(std::string&& name,
+                                                          std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& vref);
 
 template<>
-FO_COMMON_API void NamedValueRefManager::RegisterValueRef(std::string&& name, std::unique_ptr<ValueRef::ValueRef<PlanetEnvironment>>&& vref);
+FO_COMMON_API void NamedValueRefManager::RegisterValueRef(std::string&& name,
+                                                          std::unique_ptr<ValueRef::ValueRef<PlanetEnvironment>>&& vref);
 
 template<>
-FO_COMMON_API ValueRef::ValueRef<int>* const NamedValueRefManager::GetValueRef(const std::string&, const bool);
+FO_COMMON_API const ValueRef::ValueRef<int>* NamedValueRefManager::GetValueRef(const std::string&, bool) const;
 
 template<>
-FO_COMMON_API ValueRef::ValueRef<double>* const NamedValueRefManager::GetValueRef(const std::string&, const bool);
+FO_COMMON_API const ValueRef::ValueRef<double>* NamedValueRefManager::GetValueRef(const std::string&, bool) const;
+
+template<>
+ValueRef::ValueRef<int>* NamedValueRefManager::GetMutableValueRef(const std::string&, bool);
+
+template<>
+ValueRef::ValueRef<double>* NamedValueRefManager::GetMutableValueRef(const std::string&, bool);
+
+
+///////////////////////////////////////////////////////////
+// NamedRef                                              //
+///////////////////////////////////////////////////////////
+template <typename T>
+void ::ValueRef::NamedRef<T>::SetTopLevelContent(const std::string& content_name)
+{
+    if (m_is_lookup_only) {
+        TraceLogger() << "Ignored call of SetTopLevelContent(" << content_name
+                      << ") on a Lookup NamedRef for value ref " << m_value_ref_name;
+        return;
+    }
+    // only supposed to work for named-in-the-middle-case, SetTopLevelContent checks that
+    if (auto ref = GetNamedValueRefManager().GetMutableValueRef<T>(m_value_ref_name, m_is_lookup_only)) {
+        ref->SetTopLevelContent(content_name);
+    } else {
+        const char* named_ref_kind = ( content_name == "THERE_IS_NO_TOP_LEVEL_CONTENT" ? "top-level" : "named-in-the-middle" );
+        ErrorLogger() << "Unexpected call of SetTopLevelContent(" << content_name
+                      << ") on a " << named_ref_kind
+                      << " NamedRef - unexpected because no value ref " << m_value_ref_name
+                      << " registered yet. Should not happen";
+    }
+}
 
 
 //! Returns the ValueRef object registered with the given
 //! @p name.  If no such ValueRef exists, nullptr is returned instead.
-FO_COMMON_API auto GetValueRefBase(const std::string& name) -> ValueRef::ValueRefBase* const;
+FO_COMMON_API const ValueRef::ValueRefBase* GetValueRefBase(const std::string& name);
 
 //! Returns the ValueRef object registered with the given
 //! @p name in the registry matching the given type T.  If no such ValueRef exists, nullptr is returned instead.
 template <typename T>
-FO_COMMON_API ValueRef::ValueRef<T>* const GetValueRef(const std::string& name,
-                                                       const bool wait_for_named_value_focs_txt_parse)
+FO_COMMON_API const ValueRef::ValueRef<T>* GetValueRef(const std::string& name,
+                                                       bool wait_for_named_value_focs_txt_parse)
 { return GetNamedValueRefManager().GetValueRef<T>(name, wait_for_named_value_focs_txt_parse); }
 
 //! Register and take possesion of the ValueRef object @p vref under the given @p name.
