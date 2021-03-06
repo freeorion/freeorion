@@ -294,7 +294,7 @@ MeterType NameToMeter(const std::string& name) {
 const std::string& MeterToName(MeterType meter) {
     for (auto& [name, type] : GetMeterNameMap()) {
         if (type == meter)
-            return name;
+            return name; // CodeQL reports "Returning stack-allocated memory", but the name structured binding should be a reference as far as I can tell
     }
     return EMPTY_STRING;
 }
