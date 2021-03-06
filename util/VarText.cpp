@@ -1,5 +1,6 @@
 #include "VarText.h"
 
+#include "../universe/NamedValueRefManager.h"
 #include "../universe/ValueRefs.h"
 #include "../universe/Universe.h"
 #include "../universe/ShipDesign.h"
@@ -32,7 +33,6 @@ const Species*      GetSpeciesConst(const std::string& name) { return GetSpecies
 const FieldType*    GetFieldType(const std::string& name);
 const ShipHull*     GetShipHull(const std::string& name);
 const ShipPart*     GetShipPart(const std::string& name);
-ValueRef::ValueRefBase* const  GetValueRefBase(const std::string& name);
 
 namespace {
     //! Return @p content surrounded by the given @p tags.

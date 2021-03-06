@@ -47,35 +47,54 @@ NamedValueRefManager::NamedValueRefManager() {
 }
 
 template <>
-ValueRef::ValueRef<int>* const NamedValueRefManager::GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse) /*const*/ {
+const ValueRef::ValueRef<int>* NamedValueRefManager::GetValueRef(const std::string& name,
+                                                                 bool wait_for_named_value_focs_txt_parse) const
+{
     if (wait_for_named_value_focs_txt_parse)
         CheckPendingNamedValueRefs();
     return GetValueRefImpl(m_value_refs_int, "int", name);
 }
 
 template <>
-ValueRef::ValueRef<double>* const NamedValueRefManager::GetValueRef(const std::string& name,  const bool wait_for_named_value_focs_txt_parse) /*const*/ {
+const ValueRef::ValueRef<double>* NamedValueRefManager::GetValueRef(const std::string& name,
+                                                                    bool wait_for_named_value_focs_txt_parse) const
+{
     if (wait_for_named_value_focs_txt_parse)
         CheckPendingNamedValueRefs();
     return GetValueRefImpl(m_value_refs_double, "double", name);
 }
 
-template ValueRef::ValueRef<PlanetEnvironment>* const NamedValueRefManager::GetValueRef(const std::string&, const bool);
-template ValueRef::ValueRef<PlanetType>* const NamedValueRefManager::GetValueRef(const std::string&, const bool);
-template ValueRef::ValueRef<Visibility>* const NamedValueRefManager::GetValueRef(const std::string&, const bool);
-template ValueRef::ValueRef<PlanetSize>* const NamedValueRefManager::GetValueRef(const std::string&, const bool);
-template ValueRef::ValueRef<UniverseObjectType>* const NamedValueRefManager::GetValueRef(const std::string&, const bool);
-template ValueRef::ValueRef<StarType>* const NamedValueRefManager::GetValueRef(const std::string&, const bool);
+template <>
+ValueRef::ValueRef<int>* NamedValueRefManager::GetMutableValueRef(const std::string& name,
+                                                                  bool wait_for_named_value_focs_txt_parse)
+{
+    if (wait_for_named_value_focs_txt_parse)
+        CheckPendingNamedValueRefs();
+    return GetValueRefImpl(m_value_refs_int, "int", name);
+}
+
+template <>
+ValueRef::ValueRef<double>* NamedValueRefManager::GetMutableValueRef(const std::string& name,
+                                                                     bool wait_for_named_value_focs_txt_parse)
+{
+    if (wait_for_named_value_focs_txt_parse)
+        CheckPendingNamedValueRefs();
+    return GetValueRefImpl(m_value_refs_double, "double", name);
+}
 
 
-ValueRef::ValueRefBase* const NamedValueRefManager::GetValueRefBase(const std::string& name) const {
-    auto* drefp = const_cast<NamedValueRefManager*>(this)->GetValueRef<double>(name);
-    //if (auto* drefp = const_cast<NamedValueRefManager*>(this)->GetValueRef<double>(name)) // TODO C++17
-    if (drefp)
+template const ValueRef::ValueRef<PlanetEnvironment>* NamedValueRefManager::GetValueRef(const std::string&, bool) const;
+template const ValueRef::ValueRef<PlanetType>* NamedValueRefManager::GetValueRef(const std::string&, bool) const;
+template const ValueRef::ValueRef<Visibility>* NamedValueRefManager::GetValueRef(const std::string&, bool) const;
+template const ValueRef::ValueRef<PlanetSize>* NamedValueRefManager::GetValueRef(const std::string&, bool) const;
+template const ValueRef::ValueRef<UniverseObjectType>* NamedValueRefManager::GetValueRef(const std::string&, bool) const;
+template const ValueRef::ValueRef<StarType>* NamedValueRefManager::GetValueRef(const std::string&, bool) const;
+
+
+const ValueRef::ValueRefBase* NamedValueRefManager::GetValueRefBase(const std::string& name) const {
+    if (auto* drefp = GetValueRef<double>(name))
         return drefp;
-    auto* irefp = const_cast<NamedValueRefManager*>(this)->GetValueRef<int>(name);
-    //if (auto* irefp = const_cast<NamedValueRefManager*>(this)->GetValueRef<int>(name)) // TODO C++17
-    if (irefp)
+    if (auto* irefp = GetValueRef<int>(name))
         return irefp;
     CheckPendingNamedValueRefs();
     const auto it = m_value_refs.find(name);
@@ -84,7 +103,7 @@ ValueRef::ValueRefBase* const NamedValueRefManager::GetValueRefBase(const std::s
 
 NamedValueRefManager& NamedValueRefManager::GetNamedValueRefManager() {
     TraceLogger() << "NamedValueRefManager::GetNamedValueRefManager starts (check the thread)";
-    static NamedValueRefManager manager; // function local 
+    static NamedValueRefManager manager; // function local
     TraceLogger() << "NamedValueRefManager::GetNamedValueRefManager at " << &manager;
     return manager;
 }
@@ -171,7 +190,7 @@ void NamedValueRefManager::RegisterValueRef(std::string&& valueref_name,
 NamedValueRefManager& GetNamedValueRefManager()
 { return NamedValueRefManager::GetNamedValueRefManager(); }
 
-ValueRef::ValueRefBase* const GetValueRefBase(const std::string& name) {
+const ValueRef::ValueRefBase* GetValueRefBase(const std::string& name) {
     TraceLogger() << "NamedValueRefManager::GetValueRefBase look for registered valueref for \"" << name << '"';
     auto* vref = GetNamedValueRefManager().GetValueRefBase(name);
     if (vref)
@@ -182,8 +201,8 @@ ValueRef::ValueRefBase* const GetValueRefBase(const std::string& name) {
 
 
 // trigger instantiations
-template ValueRef::ValueRef<int>*    const GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse);
-template ValueRef::ValueRef<double>* const GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse);
+template const ValueRef::ValueRef<int>* GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse);
+template const ValueRef::ValueRef<double>* GetValueRef(const std::string& name, const bool wait_for_named_value_focs_txt_parse);
 template void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::ValueRef<int>>&& vref);
 template void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::ValueRef<double>>&& vref);
 template void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::ValueRef<PlanetEnvironment>>&& vref);
