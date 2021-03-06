@@ -491,25 +491,22 @@ std::map<MeterType, std::map<int, float>>
 ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id, const ScriptingContext& context) const {
     std::map<MeterType, std::map<int, float>> retval;
 
+    auto obj = context.ContextObjects().get(location_id);
+    const ScriptingContext location_context(obj, context);
+
     switch (build_type) {
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
-            auto obj = context.ContextObjects().get(location_id);
-            const ScriptingContext context(obj);
-
             for (const auto& pmc : bt->ProductionMeterConsumption()) {
                 if (!pmc.second.first)
                     continue;
-                retval[pmc.first][location_id] = pmc.second.first->Eval(context);
+                retval[pmc.first][location_id] = pmc.second.first->Eval(location_context);
             }
         }
         break;
     }
     case BuildType::BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
-            auto obj = context.ContextObjects().get(location_id);
-            const ScriptingContext location_context(obj, context);
-
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& pmc : ship_hull->ProductionMeterConsumption()) {
                     if (!pmc.second.first)
