@@ -19,6 +19,7 @@ target_include_directories(fo_unittest_parse
 
 target_link_libraries(fo_unittest_parse
     freeorioncommon
+    freeorionparse
     Threads::Threads
     Boost::boost
     Boost::disable_autolinking
