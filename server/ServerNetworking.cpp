@@ -487,8 +487,8 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
             {
                 ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
                                      << "too big message " << msg_size << " bytes ";
-                boost::system::error_code error;
-                m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+                boost::system::error_code ignored_error;
+                m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_error);
                 m_socket->close();
                 return;
             }
@@ -498,8 +498,8 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
                 ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
                                      << "caught exception resizing message buffer to size "
                                      << msg_size << " : " << e.what();
-                boost::system::error_code error;
-                m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+                boost::system::error_code ignored_error;
+                m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, ignored_error);
                 m_socket->close();
                 return;
             }
