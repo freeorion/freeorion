@@ -93,6 +93,9 @@ struct FO_COMMON_API Condition {
     virtual unsigned int GetCheckSum() const
     { return 0; }
 
+    //! Makes a clone of this Condition in a new owning pointer. Required for Boost.Python, which
+    //! doesn't supports move semantics for returned values.
+    [[nodiscard]] virtual std::unique_ptr<Condition> Clone() const = 0;
 protected:
     bool m_root_candidate_invariant = false;
     bool m_target_invariant = false;

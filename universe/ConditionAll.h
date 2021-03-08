@@ -22,6 +22,8 @@ struct FO_COMMON_API All final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override
     {}
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 };
 
 }

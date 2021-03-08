@@ -109,6 +109,9 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
         return retval;
     }
 
+    std::unique_ptr<ValueRef<T>> Clone() const override {
+        return std::make_unique<NamedRef<T>>(m_value_ref_name, m_is_lookup_only);
+    }
 
 private:
     //! initialises invariants from registered valueref, waits a bit for registration, use on first access

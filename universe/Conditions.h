@@ -84,6 +84,8 @@ struct FO_COMMON_API Number final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -104,6 +106,8 @@ struct FO_COMMON_API Turn final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -142,6 +146,8 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_number;
     std::unique_ptr<ValueRef::ValueRef<double>> m_sort_key;
@@ -164,6 +170,8 @@ struct FO_COMMON_API None final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override
     {}
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 };
 
 /** Does not modify the input ObjectSets. */
@@ -177,6 +185,8 @@ struct FO_COMMON_API NoOp final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override
     {}
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 };
 
 /** Matches all objects that are owned (if \a exclusive == false) or only owned
@@ -195,6 +205,8 @@ struct FO_COMMON_API EmpireAffiliation final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -218,6 +230,8 @@ struct FO_COMMON_API RootCandidate final : public Condition {
     {}
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 };
@@ -236,6 +250,8 @@ struct FO_COMMON_API Target final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override
     {}
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -258,6 +274,8 @@ struct FO_COMMON_API Homeworld final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -276,6 +294,8 @@ struct FO_COMMON_API Capital final : public Condition {
     {}
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 };
@@ -292,6 +312,8 @@ struct FO_COMMON_API Monster final : public Condition {
     {}
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 };
@@ -305,6 +327,8 @@ struct FO_COMMON_API Armed final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override
     {}
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -324,6 +348,8 @@ struct FO_COMMON_API Type final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -345,6 +371,8 @@ struct FO_COMMON_API Building final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -372,6 +400,8 @@ struct FO_COMMON_API HasSpecial final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -396,6 +426,8 @@ struct FO_COMMON_API HasTag final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -414,6 +446,8 @@ struct FO_COMMON_API CreatedOnTurn final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -437,6 +471,8 @@ struct FO_COMMON_API Contains final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -457,6 +493,8 @@ struct FO_COMMON_API ContainedBy final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -480,6 +518,8 @@ struct FO_COMMON_API InOrIsSystem final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -502,6 +542,8 @@ struct FO_COMMON_API OnPlanet final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -521,6 +563,8 @@ struct FO_COMMON_API ObjectID final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -544,6 +588,8 @@ struct FO_COMMON_API PlanetType final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -565,6 +611,8 @@ struct FO_COMMON_API PlanetSize final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -589,6 +637,8 @@ struct FO_COMMON_API PlanetEnvironment final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -612,6 +662,8 @@ struct FO_COMMON_API Species final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -643,6 +695,8 @@ struct FO_COMMON_API Enqueued final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -668,6 +722,8 @@ struct FO_COMMON_API FocusType final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -686,6 +742,8 @@ struct FO_COMMON_API StarType final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -706,6 +764,8 @@ struct FO_COMMON_API DesignHasHull final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -729,6 +789,8 @@ struct FO_COMMON_API DesignHasPart final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -755,6 +817,8 @@ struct FO_COMMON_API DesignHasPartClass final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -776,6 +840,8 @@ struct FO_COMMON_API PredefinedShipDesign final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -793,6 +859,8 @@ struct FO_COMMON_API NumberedShipDesign final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -812,6 +880,8 @@ struct FO_COMMON_API ProducedByEmpire final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -829,6 +899,8 @@ struct FO_COMMON_API Chance final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -850,6 +922,8 @@ struct FO_COMMON_API MeterValue final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -874,6 +948,8 @@ struct FO_COMMON_API ShipPartMeterValue final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -903,6 +979,8 @@ struct FO_COMMON_API EmpireMeterValue final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -930,6 +1008,8 @@ struct FO_COMMON_API EmpireStockpileValue final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -959,6 +1039,8 @@ struct FO_COMMON_API EmpireHasAdoptedPolicy final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -979,6 +1061,8 @@ struct FO_COMMON_API OwnerHasTech final : public Condition {
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1002,6 +1086,8 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable final : public Condition {
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1023,6 +1109,8 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable final : public Condition {
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1046,6 +1134,8 @@ struct FO_COMMON_API OwnerHasShipPartAvailable final : public Condition {
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1067,6 +1157,8 @@ struct FO_COMMON_API VisibleToEmpire final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1092,6 +1184,8 @@ struct FO_COMMON_API WithinDistance final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1114,6 +1208,8 @@ struct FO_COMMON_API WithinStarlaneJumps final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1139,6 +1235,8 @@ struct FO_COMMON_API CanAddStarlaneConnection : Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1158,6 +1256,8 @@ struct FO_COMMON_API ExploredByEmpire final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1176,6 +1276,8 @@ struct FO_COMMON_API Stationary final : public Condition {
     {}
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 };
@@ -1191,6 +1293,8 @@ struct FO_COMMON_API Aggressive final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override {}
     bool GetAggressive() const { return m_aggressive; }
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1210,6 +1314,8 @@ struct FO_COMMON_API FleetSupplyableByEmpire final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1232,6 +1338,8 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1250,6 +1358,8 @@ struct FO_COMMON_API CanColonize final : public Condition {
     {}
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 };
@@ -1264,6 +1374,8 @@ struct FO_COMMON_API CanProduceShips final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override
     {}
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1281,6 +1393,8 @@ struct FO_COMMON_API OrderedBombarded final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     virtual void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1317,6 +1431,8 @@ struct FO_COMMON_API ValueTest final : public Condition {
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1350,6 +1466,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1372,6 +1490,8 @@ public:
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1399,6 +1519,8 @@ struct FO_COMMON_API And final : public Condition {
     std::vector<const Condition*> Operands() const;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     std::vector<std::unique_ptr<Condition>> m_operands;
 };
@@ -1421,6 +1543,8 @@ struct FO_COMMON_API Or final : public Condition {
     virtual void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     std::vector<std::unique_ptr<Condition>> m_operands;
 };
@@ -1436,6 +1560,8 @@ struct FO_COMMON_API Not final : public Condition {
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     std::unique_ptr<Condition> m_operand;
@@ -1457,6 +1583,8 @@ struct FO_COMMON_API OrderedAlternativesOf final : public Condition {
     std::vector<const Condition*> Operands() const;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     std::vector<std::unique_ptr<Condition>> m_operands;
 };
@@ -1474,6 +1602,8 @@ struct FO_COMMON_API Described final : public Condition {
     { return m_condition ? m_condition->Dump(ntabs) : ""; }
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
 
 private:
     std::unique_ptr<Condition> m_condition;
