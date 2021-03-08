@@ -1859,8 +1859,6 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     int empire_id = ALL_EMPIRES;
     std::list<std::string> delegation = GetPlayerDelegation(player_connection->PlayerName());
     if (target_empire_id == ALL_EMPIRES) {
-        if (!delegation.empty())
-            return ALL_EMPIRES;
         // search empire by player name
         for (auto& e : Empires()) {
             if (e.second->PlayerName() == player_connection->PlayerName()) {
@@ -1868,6 +1866,20 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
                 empire = e.second;
                 break;
             }
+        }
+        // Assign player to empire if he doesn't have own empire and delegates signle
+        if (delegation.size() == 1 && empire == nullptr) {
+            for (auto e : Empires()) {
+                if (e.second->PlayerName() == delegation.front()) {
+                    empire_id = e.first;
+                    empire = e.second;
+                    break;
+                }
+            }
+        }
+        if (!delegation.empty()) {
+            DebugLogger() << "ServerApp::AddPlayerIntoGame(...): Player should choose between delegates.";
+            return ALL_EMPIRES;
         }
     } else {
         // use provided empire and test if it's player himself or one of delegated
@@ -2430,7 +2442,7 @@ namespace {
         // modified by the combat, and don't need to be copied from the combat
         // ObjectMap. However, the changes to object visibility during combat
         // are stored separately, and do need to be copied back to the main
-        // gamestate. Standard visibility updating will then transfer the 
+        // gamestate. Standard visibility updating will then transfer the
         // modified objects / combat results to empires' known gamestate
         // ObjectMaps.
         for (const CombatInfo& combat_info : combats) {

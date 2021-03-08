@@ -1158,7 +1158,8 @@ sc::result MPLobby::react(const JoinGame& msg) {
         if (authenticated)
             player_connection->SetAuthenticated();
     } else {
-        if (client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
+        const bool relaxed_auth = player_connection->IsLocalConnection() && client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
+        if (!relaxed_auth && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
             // send authentication request
             player_connection->AwaitPlayer(client_type, client_version_string);
             player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
@@ -1187,7 +1188,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
         {
             collision = false;
             roles.Clear();
-            if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
+            if (!server.IsAvailableName(new_player_name) || (!relaxed_auth && server.IsAuthRequiredOrFillRoles(new_player_name, roles))) {
                 collision = true;
             } else {
                 for (auto& plr : m_lobby_data->players) {
@@ -2712,7 +2713,8 @@ void PlayingGame::EstablishPlayer(const PlayerConnectionPtr& player_connection,
             {
                 // send playing game
                 server.AddObserverPlayerIntoGame(player_connection);
-            } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+            } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
+                       client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
                 // previous connection was dropped
                 // set empire link to new connection by name
                 // send playing game
@@ -2761,7 +2763,8 @@ sc::result PlayingGame::react(const JoinGame& msg) {
         if (authenticated)
             player_connection->SetAuthenticated();
     } else {
-        if (server.IsAuthRequiredOrFillRoles(player_name, roles)) {
+        const bool relaxed_auth = player_connection->IsLocalConnection() && client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
+        if (!relaxed_auth && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
             // send authentication request
             player_connection->AwaitPlayer(client_type, client_version_string);
             player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
@@ -2771,8 +2774,10 @@ sc::result PlayingGame::react(const JoinGame& msg) {
         std::string original_player_name = player_name;
         // Remove AI prefix to distinguish Human from AI.
         std::string ai_prefix = UserString("AI_PLAYER") + "_";
-        while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
-            player_name.erase(0, ai_prefix.size());
+        if (client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
+            while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
+                player_name.erase(0, ai_prefix.size());
+        }
         if (player_name.empty())
             player_name = "_";
 
@@ -2785,7 +2790,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
         {
             collision = false;
             roles.Clear();
-            if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
+            if (!server.IsAvailableName(new_player_name) || (!relaxed_auth && server.IsAuthRequiredOrFillRoles(new_player_name, roles))) {
                 collision = true;
             } else {
                 for (auto& plr : server.Empires() ) {
