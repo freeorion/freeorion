@@ -2,6 +2,8 @@
 
 #include "ClientAppFixture.h"
 #include "Empire/Empire.h"
+#include "universe/Planet.h"
+#include "universe/UniverseObjectVisitors.h"
 #include "util/Directories.h"
 #include "util/Process.h"
 #include "util/SitRepEntry.h"
@@ -138,11 +140,13 @@ BOOST_AUTO_TEST_CASE(host_server) {
         m_turn_done = false;
         m_ai_waiting = m_ai_empires;
 
-        BOOST_TEST_MESSAGE("Turn done. Waiting server for update...");
+        BOOST_TEST_MESSAGE("Turn done. Waiting server for update... " << m_current_turn);
         start_time = boost::posix_time::microsec_clock::local_time();
         while (!m_turn_done) {
             BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
         }
+
+        BOOST_TEST_MESSAGE("Turn updated " << m_current_turn);
 
         // output sitreps
         const auto& my_empire = m_empires.GetEmpire(m_empire_id);
@@ -151,6 +155,21 @@ BOOST_AUTO_TEST_CASE(host_server) {
             if (sitrep_it->GetTurn() == m_current_turn) {
                 BOOST_TEST_MESSAGE("Sitrep: " << sitrep_it->Dump());
             }
+        }
+
+        if (m_current_turn == 2) {
+            // check home planet meters
+            bool found_planet = false;
+            for (const auto& planet : Objects().find<Planet>(OwnedVisitor(m_empire_id))) {
+                BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_POPULATION)->Current());
+                BOOST_TEST_MESSAGE("Population: " << planet->GetMeter(MeterType::METER_POPULATION)->Current());
+                BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_INDUSTRY)->Current());
+                BOOST_TEST_MESSAGE("Industry: " << planet->GetMeter(MeterType::METER_INDUSTRY)->Current());
+                BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_RESEARCH)->Current());
+                BOOST_TEST_MESSAGE("Research: " << planet->GetMeter(MeterType::METER_RESEARCH)->Current());
+                found_planet = true;
+            }
+            BOOST_REQUIRE(found_planet);
         }
 
         if (my_empire->Eliminated()) {
@@ -188,7 +207,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
     BOOST_TEST_MESSAGE("Terminating server...");
 
-    BOOST_REQUIRE(server.Terminate());
+    BOOST_WARN(server.Terminate());
 
     BOOST_TEST_MESSAGE("Server terminated");
 }
