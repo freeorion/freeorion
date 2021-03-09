@@ -27,6 +27,8 @@ public:
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override {}
     unsigned int    GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 };
 
 /** Sets the meter of the given kind to \a value.  The max value of the meter
@@ -60,6 +62,8 @@ public:
     MeterType           GetMeterType() const { return m_meter; };
     const std::string&  AccountingLabel() const { return m_accounting_label; }
     unsigned int        GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     MeterType m_meter;
@@ -101,6 +105,8 @@ public:
     MeterType       GetMeterType() const { return m_meter; }
     unsigned int    GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_part_name;
     MeterType                                           m_meter;
@@ -136,6 +142,8 @@ public:
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
     std::string                                 m_meter;
@@ -159,6 +167,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<int>>    m_empire_id;
     ResourceType                                m_stockpile;
@@ -180,6 +190,8 @@ public:
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 };
@@ -196,6 +208,8 @@ public:
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<PlanetType>> m_type;
@@ -215,6 +229,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<PlanetSize>> m_size;
 };
@@ -230,6 +246,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_species_name;
 };
@@ -244,6 +262,8 @@ public:
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
@@ -261,6 +281,8 @@ public:
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_species_name;
@@ -280,6 +302,8 @@ public:
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_opinionated_species_name;
@@ -301,6 +325,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<PlanetType>>     m_type;
     std::unique_ptr<ValueRef::ValueRef<PlanetSize>>     m_size;
@@ -319,6 +345,8 @@ public:
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_building_type_name;
@@ -347,6 +375,8 @@ public:
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_design_name;
@@ -378,6 +408,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_field_type_name;
     std::unique_ptr<ValueRef::ValueRef<double>>         m_x;
@@ -407,6 +439,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef< ::StarType>>    m_type;
     std::unique_ptr<ValueRef::ValueRef<double>>         m_x;
@@ -428,6 +462,8 @@ public:
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override {}
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 };
 
 /** Adds the Special with the name \a name to the target object. */
@@ -443,6 +479,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
     const ValueRef::ValueRef<std::string>* GetSpecialName() const { return m_name.get(); }
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
@@ -461,6 +499,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
 };
@@ -475,6 +515,8 @@ public:
     std::string Dump(unsigned short ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<Condition::Condition> m_other_lane_endpoint_condition;
@@ -491,6 +533,8 @@ public:
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<Condition::Condition> m_other_lane_endpoint_condition;
 };
@@ -505,6 +549,8 @@ public:
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<StarType>> m_type;
@@ -522,6 +568,8 @@ public:
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<Condition::Condition> m_location_condition;
@@ -542,6 +590,8 @@ public:
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<double>> m_speed;
@@ -565,6 +615,8 @@ public:
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<double>> m_speed;
     std::unique_ptr<Condition::Condition>       m_dest_condition;
@@ -585,6 +637,8 @@ public:
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<Condition::Condition> m_location_condition;
 };
@@ -598,6 +652,8 @@ public:
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override {}
     unsigned int    GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     FleetAggression m_aggression;
@@ -613,6 +669,8 @@ public:
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override {}
     unsigned int    GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::string m_reason_string;
@@ -631,6 +689,8 @@ public:
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_tech_name;
     std::unique_ptr<ValueRef::ValueRef<double>>         m_research_progress;
@@ -646,6 +706,8 @@ public:
     std::string     Dump(unsigned short ntabs = 0) const override;
     void            SetTopLevelContent(const std::string& content_name) override;
     unsigned int    GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<std::string>>    m_tech_name;
@@ -695,6 +757,8 @@ public:
     EmpireAffiliationType           Affiliation() const     { return m_affiliation; }
     unsigned int                    GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::string             m_message_string;
     std::string             m_icon;
@@ -721,6 +785,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Effect> Clone() const override;
+
 private:
     std::string m_texture;
     std::unique_ptr<ValueRef::ValueRef<double>> m_size;
@@ -737,6 +803,8 @@ public:
     bool IsAppearanceEffect() const override { return true; }
     void SetTopLevelContent(const std::string& content_name) override {}
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::string m_texture;
@@ -768,6 +836,8 @@ public:
     { return m_condition.get(); }
 
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<ValueRef::ValueRef<Visibility>> m_vis;
@@ -809,6 +879,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
 
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Effect> Clone() const override;
 
 private:
     std::unique_ptr<Condition::Condition> m_target_condition; // condition to apply to each target object to determine which effects to execute
