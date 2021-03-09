@@ -314,7 +314,7 @@ private:
     std::map<int, int>      m_player_empire_ids;                ///< map from player id to empire id that the player controls.
     int                     m_current_turn = INVALID_GAME_TURN; ///< current turn number
     bool                    m_turn_expired = false;             ///< true when turn exceeds its timeout
-    std::vector<Process>    m_ai_client_processes;              ///< AI client child processes
+    std::map<std::string, Process> m_ai_client_processes;       ///< AI client child processes indexed by player name
     bool                    m_single_player_game = false;       ///< true when the game being played is single-player
     GalaxySetupData         m_galaxy_setup_data;                ///< stored setup data for the game currently being played
     boost::circular_buffer<ChatHistoryEntity> m_chat_history;   ///< Stored last chat messages.

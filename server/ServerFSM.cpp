@@ -308,11 +308,24 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         if (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
             // AI could safely disconnect only if empire was eliminated
             const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
-            if (empire && !empire->Eliminated()) {
-                must_quit = true;
-                // AI abnormally disconnected during a regular game
-                ErrorLogger(FSM) << "AI Player #" << id << ", named \""
-                                 << player_connection->PlayerName() << "\"quit before empire was eliminated.";
+            if (empire) {
+                if (!empire->Eliminated()) {
+                    must_quit = true;
+                    // AI abnormally disconnected during a regular game
+                    ErrorLogger(FSM) << "AI Player #" << id << ", named \""
+                                     << player_connection->PlayerName() << "\" quit before empire #"
+                                     << empire->EmpireID() << " "
+                                     << empire->Name() << " of player "
+                                     << empire->PlayerName() << " was eliminated.";
+                } else {
+                    InfoLogger(FSM) << "AI Player #" << id << ", named \""
+                                    << player_connection->PlayerName() << "\" killed after empire #"
+                                    << empire->EmpireID() << " "
+                                    << empire->Name() << " of player "
+                                    << empire->PlayerName() << " was eliminated.";
+                    // detach player from empire
+                    m_server.DropPlayerEmpireLink(id);
+                }
             }
         } else if (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
             const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
@@ -3537,8 +3550,8 @@ sc::result ShuttingDownServer::react(const CheckEndConditions& u) {
         DebugLogger(FSM) << "All " << server.m_ai_client_processes.size() << " AIs acknowledged shutdown request.";
 
         // Free the processes so that they can complete their shutdown.
-        for (Process& process : server.m_ai_client_processes)
-        { process.Free(); }
+        for (auto& process : server.m_ai_client_processes)
+            process.second.Free();
 
         post_event(DisconnectClients());
     }
