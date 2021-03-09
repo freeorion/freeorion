@@ -57,6 +57,11 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
     T Value() const;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<ValueRef<T>> Clone() const override {
+        auto retval = std::make_unique<Constant>(m_value);
+        retval->m_top_level_content = m_top_level_content;
+        return retval;
+    }
 private:
     T           m_value;
     std::string m_top_level_content;    // in the special case that T is std::string and m_value is "CurrentContent", return this instead
@@ -108,6 +113,10 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     bool ReturnImmediateValue() const;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<ValueRef<T>> Clone() const override {
+        return std::make_unique<Variable<T>>(m_ref_type, m_property_name, m_return_immediate_value);
+    }
+
 protected:
     void InitInvariants();
 
@@ -144,6 +153,12 @@ struct FO_COMMON_API Statistic final : public Variable<T>
     { return m_value_ref.get(); }
 
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<ValueRef<T>> Clone() const override {
+	    return std::make_unique<Statistic<T, V>>(CloneUnique(m_value_ref),
+                                                 m_stat_type,
+                                                 m_sampling_condition ? m_sampling_condition->Clone() : nullptr);
+    }
 
 protected:
     /** Gets the set of objects in the Universe that match the sampling condition. */
@@ -196,6 +211,14 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
     const ValueRef<std::string>* StringRef2() const;
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<ValueRef<T>> Clone() const override {
+        return std::make_unique<ComplexVariable<T>>(Variable<T>::PropertyName()[0],
+                                                    CloneUnique(m_int_ref1),
+                                                    CloneUnique(m_int_ref2),
+                                                    CloneUnique(m_int_ref3),
+                                                    CloneUnique(m_string_ref1),
+                                                    CloneUnique(m_string_ref2));
+    }
 protected:
     void InitInvariants();
 
@@ -233,6 +256,10 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
 
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<ValueRef<ToType>> Clone() const override {
+        return std::make_unique<StaticCast<FromType, ToType>>(CloneUnique(m_value_ref));
+    }
+
 private:
     std::unique_ptr<ValueRef<FromType>> m_value_ref;
 };
@@ -256,6 +283,10 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
 
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<ValueRef<std::string>> Clone() const override {
+        return std::make_unique<StringCast<FromType>>(CloneUnique(m_value_ref));
+    }
+
 private:
     std::unique_ptr<ValueRef<FromType>> m_value_ref;
 };
@@ -276,6 +307,10 @@ struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
     { return m_value_ref; }
 
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<ValueRef<std::string>> Clone() const override {
+        return std::make_unique<UserStringLookup<FromType>>(CloneUnique(m_value_ref));
+    }
 
 private:
     std::unique_ptr<ValueRef<FromType>> m_value_ref;
@@ -305,6 +340,11 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
     { return m_lookup_type; }
 
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<ValueRef<std::string>> Clone() const override {
+        return std::make_unique<NameLookup>(CloneUnique(m_value_ref),
+                                            m_lookup_type);
+    }
 
 private:
     std::unique_ptr<ValueRef<int>> m_value_ref;
@@ -376,6 +416,10 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     const std::vector<ValueRef<T>*> Operands() const;
 
     unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<ValueRef<T>> Clone() const override {
+        return std::make_unique<Operation<T>>(m_op_type, CloneUnique(m_operands));
+    }
 
 private:
     void    InitConstInvariants();

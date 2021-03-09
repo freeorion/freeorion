@@ -23,6 +23,8 @@ struct FO_COMMON_API Source final : public Condition {
     {}
     unsigned int GetCheckSum() const override;
 
+    std::unique_ptr<Condition> Clone() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 };

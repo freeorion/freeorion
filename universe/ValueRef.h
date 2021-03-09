@@ -88,6 +88,10 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
       * See ValueRefs.cpp for specialisation implementations. */
     std::string EvalAsString() const final
     { return FlexibleToString(Eval()); }
+
+    /** Makes a clone of this ValueRef in a new owning pointer. Required for Boost.Python, which
+      * doesn't supports move semantics for returned values. */
+    [[nodiscard]] virtual std::unique_ptr<ValueRef<T>> Clone() const = 0;
 };
 
 FO_ENUM(
@@ -112,6 +116,21 @@ FO_ENUM(
     ((STDEV))       // returns the standard deviation of the property values of all objects matching the condition
     ((PRODUCT))     // returns the product of the property values of all objects matching the condition
 )
+
+template<typename T>
+[[nodiscard]] inline std::unique_ptr<T> CloneUnique(const std::unique_ptr<T>& ptr) {
+    return ptr ? ptr->Clone() : nullptr;
+}
+
+template<typename T>
+[[nodiscard]] inline std::vector<std::unique_ptr<T>> CloneUnique(const std::vector<std::unique_ptr<T>>& vec) {
+    std::vector<std::unique_ptr<T>> retval;
+    retval.reserve(vec.size());
+    for (const auto& val : vec) {
+        retval.push_back(CloneUnique(val));
+    }
+    return retval;
+}
 
 }
 
