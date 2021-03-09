@@ -97,6 +97,9 @@ struct FO_COMMON_API Condition {
     //! doesn't supports move semantics for returned values.
     [[nodiscard]] virtual std::unique_ptr<Condition> Clone() const = 0;
 protected:
+    //! Copies invariants from other Condition
+    Condition(const Condition& rhs) = default;
+
     bool m_root_candidate_invariant = false;
     bool m_target_invariant = false;
     bool m_source_invariant = false;

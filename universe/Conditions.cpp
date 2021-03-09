@@ -2419,16 +2419,13 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
 }
 
 HasSpecial::HasSpecial(const HasSpecial& rhs) :
-    Condition(),
+    Condition(rhs),
     m_name(ValueRef::CloneUnique(rhs.m_name)),
     m_capacity_low(ValueRef::CloneUnique(rhs.m_capacity_low)),
     m_capacity_high(ValueRef::CloneUnique(rhs.m_capacity_high)),
     m_since_turn_low(ValueRef::CloneUnique(rhs.m_since_turn_low)),
     m_since_turn_high(ValueRef::CloneUnique(rhs.m_since_turn_high))
 {
-    m_root_candidate_invariant = rhs.m_root_candidate_invariant;
-    m_target_invariant = rhs.m_target_invariant;
-    m_source_invariant = rhs.m_source_invariant;
 }
 
 bool HasSpecial::operator==(const Condition& rhs) const {
@@ -4538,7 +4535,7 @@ Enqueued::Enqueued(BuildType build_type,
 }
 
 Enqueued::Enqueued(const Enqueued& rhs) :
-    Condition(),
+    Condition(rhs),
     m_build_type(rhs.m_build_type),
     m_name(ValueRef::CloneUnique(rhs.m_name)),
     m_design_id(ValueRef::CloneUnique(rhs.m_design_id)),
@@ -4546,9 +4543,6 @@ Enqueued::Enqueued(const Enqueued& rhs) :
     m_low(ValueRef::CloneUnique(rhs.m_low)),
     m_high(ValueRef::CloneUnique(rhs.m_high))
 {
-    m_root_candidate_invariant = rhs.m_root_candidate_invariant;
-    m_source_invariant = rhs.m_source_invariant;
-    m_target_invariant = rhs.m_target_invariant;
 }
 
 bool Enqueued::operator==(const Condition& rhs) const {
@@ -9456,7 +9450,7 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
 }
 
 ValueTest::ValueTest(const ValueTest& rhs) :
-    Condition(),
+    Condition(rhs),
     m_value_ref1(ValueRef::CloneUnique(rhs.m_value_ref1)),
     m_value_ref2(ValueRef::CloneUnique(rhs.m_value_ref2)),
     m_value_ref3(ValueRef::CloneUnique(rhs.m_value_ref3)),
@@ -9469,9 +9463,6 @@ ValueTest::ValueTest(const ValueTest& rhs) :
     m_compare_type1(rhs.m_compare_type1),
     m_compare_type2(rhs.m_compare_type2)
 {
-    m_root_candidate_invariant = rhs.m_root_candidate_invariant;
-    m_target_invariant = rhs.m_target_invariant;
-    m_source_invariant = rhs.m_source_invariant;
 }
 
 bool ValueTest::operator==(const Condition& rhs) const {
