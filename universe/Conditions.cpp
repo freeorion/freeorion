@@ -2164,7 +2164,7 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
                 AddSystemSet(parent_context.ContextObjects(), condition_non_targets);
                 break;
             case UniverseObjectType::OBJ_FIGHTER:   // shouldn't exist outside of combat as a separate object
-            default: 
+            default:
                 found_type = false;
                 break;
         }
@@ -2418,6 +2418,19 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
+HasSpecial::HasSpecial(const HasSpecial& rhs) :
+    Condition(),
+    m_name(ValueRef::CloneUnique(rhs.m_name)),
+    m_capacity_low(ValueRef::CloneUnique(rhs.m_capacity_low)),
+    m_capacity_high(ValueRef::CloneUnique(rhs.m_capacity_high)),
+    m_since_turn_low(ValueRef::CloneUnique(rhs.m_since_turn_low)),
+    m_since_turn_high(ValueRef::CloneUnique(rhs.m_since_turn_high))
+{
+    m_root_candidate_invariant = rhs.m_root_candidate_invariant;
+    m_target_invariant = rhs.m_target_invariant;
+    m_source_invariant = rhs.m_source_invariant;
+}
+
 bool HasSpecial::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
@@ -2608,15 +2621,7 @@ unsigned int HasSpecial::GetCheckSum() const {
 }
 
 std::unique_ptr<Condition> HasSpecial::Clone() const {
-    auto retval = std::make_unique<HasSpecial>(ValueRef::CloneUnique(m_name),
-                                               ValueRef::CloneUnique(m_since_turn_low),
-                                               ValueRef::CloneUnique(m_since_turn_high));
-    retval->m_capacity_low = ValueRef::CloneUnique(m_capacity_low);
-    retval->m_capacity_high = ValueRef::CloneUnique(m_capacity_high);
-    retval->m_root_candidate_invariant = m_root_candidate_invariant;
-    retval->m_target_invariant = m_target_invariant;
-    retval->m_source_invariant = m_source_invariant;
-    return retval;
+    return std::make_unique<HasSpecial>(*this);
 }
 
 ///////////////////////////////////////////////////////////
@@ -2908,13 +2913,13 @@ namespace {
         ContainsSimpleMatch(const ObjectSet& subcondition_matches) :
             m_subcondition_matches_ids()
         {
-            // We need a sorted container for efficiently intersecting 
+            // We need a sorted container for efficiently intersecting
             // subcondition_matches with the set of objects contained in some
             // candidate object.
             // We only need ids, not objects, so we can do that conversion
             // here as well, simplifying later code.
-            // Note that this constructor is called only once per 
-            // Contains::Eval(), its work cannot help performance when executed 
+            // Note that this constructor is called only once per
+            // Contains::Eval(), its work cannot help performance when executed
             // for each candidate.
             m_subcondition_matches_ids.reserve(subcondition_matches.size());
             // gather the ids
@@ -4532,6 +4537,20 @@ Enqueued::Enqueued(BuildType build_type,
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
+Enqueued::Enqueued(const Enqueued& rhs) :
+    Condition(),
+    m_build_type(rhs.m_build_type),
+    m_name(ValueRef::CloneUnique(rhs.m_name)),
+    m_design_id(ValueRef::CloneUnique(rhs.m_design_id)),
+    m_empire_id(ValueRef::CloneUnique(rhs.m_empire_id)),
+    m_low(ValueRef::CloneUnique(rhs.m_low)),
+    m_high(ValueRef::CloneUnique(rhs.m_high))
+{
+    m_root_candidate_invariant = rhs.m_root_candidate_invariant;
+    m_source_invariant = rhs.m_source_invariant;
+    m_target_invariant = rhs.m_target_invariant;
+}
+
 bool Enqueued::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
@@ -4798,16 +4817,7 @@ unsigned int Enqueued::GetCheckSum() const {
 }
 
 std::unique_ptr<Condition> Enqueued::Clone() const {
-    auto retval = std::make_unique<Enqueued>(m_build_type,
-                                             ValueRef::CloneUnique(m_name),
-                                             ValueRef::CloneUnique(m_empire_id),
-                                             ValueRef::CloneUnique(m_low),
-                                             ValueRef::CloneUnique(m_high));
-    retval->m_design_id = ValueRef::CloneUnique(m_design_id);
-    retval->m_root_candidate_invariant = m_root_candidate_invariant;
-    retval->m_target_invariant = m_target_invariant;
-    retval->m_source_invariant = m_source_invariant;
-    return retval;
+    return std::make_unique<Enqueued>(*this);
 }
 
 ///////////////////////////////////////////////////////////
@@ -9445,6 +9455,25 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
     m_source_invariant = boost::algorithm::all_of(operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
+ValueTest::ValueTest(const ValueTest& rhs) :
+    Condition(),
+    m_value_ref1(ValueRef::CloneUnique(rhs.m_value_ref1)),
+    m_value_ref2(ValueRef::CloneUnique(rhs.m_value_ref2)),
+    m_value_ref3(ValueRef::CloneUnique(rhs.m_value_ref3)),
+    m_string_value_ref1(ValueRef::CloneUnique(rhs.m_string_value_ref1)),
+    m_string_value_ref2(ValueRef::CloneUnique(rhs.m_string_value_ref2)),
+    m_string_value_ref3(ValueRef::CloneUnique(rhs.m_string_value_ref3)),
+    m_int_value_ref1(ValueRef::CloneUnique(rhs.m_int_value_ref1)),
+    m_int_value_ref2(ValueRef::CloneUnique(rhs.m_int_value_ref2)),
+    m_int_value_ref3(ValueRef::CloneUnique(rhs.m_int_value_ref3)),
+    m_compare_type1(rhs.m_compare_type1),
+    m_compare_type2(rhs.m_compare_type2)
+{
+    m_root_candidate_invariant = rhs.m_root_candidate_invariant;
+    m_target_invariant = rhs.m_target_invariant;
+    m_source_invariant = rhs.m_source_invariant;
+}
+
 bool ValueTest::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
@@ -9676,21 +9705,7 @@ unsigned int ValueTest::GetCheckSum() const {
 }
 
 std::unique_ptr<Condition> ValueTest::Clone() const {
-    auto retval = std::make_unique<ValueTest>(ValueRef::CloneUnique(m_value_ref1),
-                                              m_compare_type1,
-                                              ValueRef::CloneUnique(m_value_ref2),
-                                              m_compare_type2,
-                                              ValueRef::CloneUnique(m_value_ref3));
-    retval->m_string_value_ref1 = CloneUnique(m_string_value_ref1);
-    retval->m_string_value_ref2 = CloneUnique(m_string_value_ref2);
-    retval->m_string_value_ref3 = CloneUnique(m_string_value_ref3);
-    retval->m_int_value_ref1 = CloneUnique(m_int_value_ref1);
-    retval->m_int_value_ref2 = CloneUnique(m_int_value_ref2);
-    retval->m_int_value_ref3 = CloneUnique(m_int_value_ref3);
-    retval->m_root_candidate_invariant = m_root_candidate_invariant;
-    retval->m_target_invariant = m_target_invariant;
-    retval->m_source_invariant = m_source_invariant;
-    return retval;
+    return std::make_unique<ValueTest>(*this);
 }
 
 ///////////////////////////////////////////////////////////
@@ -10343,7 +10358,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         ObjectSet partly_checked_matches;
         partly_checked_matches.reserve(matches.size());
 
-        // move items in matches set the fail the first operand condition into 
+        // move items in matches set the fail the first operand condition into
         // partly_checked_matches set
         m_operands[0]->Eval(parent_context, matches, partly_checked_matches, SearchDomain::MATCHES);
 
@@ -10357,7 +10372,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         non_matches.insert(non_matches.end(), partly_checked_matches.begin(), partly_checked_matches.end());
 
         // items already in non_matches set are not checked and remain in
-        // non_matches set even if they pass one or more of the operand 
+        // non_matches set even if they pass one or more of the operand
         // conditions
     }
 }

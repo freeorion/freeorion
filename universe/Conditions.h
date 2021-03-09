@@ -391,6 +391,7 @@ struct FO_COMMON_API HasSpecial final : public Condition {
     HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_low,
                std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_high = nullptr);
+    explicit HasSpecial(const HasSpecial& rhs);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -684,6 +685,7 @@ struct FO_COMMON_API Enqueued final : public Condition {
                       std::unique_ptr<ValueRef::ValueRef<int>>&& low = nullptr,
                       std::unique_ptr<ValueRef::ValueRef<int>>&& high = nullptr);
     Enqueued();
+    Enqueued(const Enqueued& rhs);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1422,6 +1424,7 @@ struct FO_COMMON_API ValueTest final : public Condition {
               std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref2,
               ComparisonType comp2 = ComparisonType::INVALID_COMPARISON,
               std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref3 = nullptr);
+    explicit ValueTest(const ValueTest& rhs);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
