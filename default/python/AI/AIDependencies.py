@@ -837,11 +837,13 @@ class CombatTarget:
         "FT_HANGAR_4": SHIP | PLANET,
         # monster weapons
         "SR_ARC_DISRUPTOR": ANY,
+        "SR_GRAV_PULSE": ANY,
         "SR_ICE_BEAM": ANY,
-        "SR_JAWS": ANY,
+        "SR_JAWS": SHIP | PLANET,
         "SR_PLASMA_DISCHARGE": ANY,
-        "SR_SPINES": ANY,
-        "SR_TENTACLE": ANY,
+        "SR_SPINES": SHIP | PLANET,
+        "SR_TENTACLE": ANY,  # note that SHIPs are primary targets
+        "SR_THRASHING_BODY": SHIP | FIGHTER,
         "FT_HANGAR_KRILL": SHIP | FIGHTER,
     }
 # </editor-fold>

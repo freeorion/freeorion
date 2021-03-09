@@ -30,7 +30,7 @@ Hull
                 CreateBuilding type = "BLD_EXPERIMENTOR_OUTPOST"
             ]
 
-            EffectsGroup // Render most shields and most of the weapons useless
+        EffectsGroup // Render most shields and most of the weapons useless
             scope = And [
                 Ship
                 OwnedBy affiliation = AnyEmpire
@@ -54,6 +54,13 @@ Hull
                 SetDamage partname = "SR_WEAPON_4_2" value = Value - (6 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
                 SetDamage partname = "SR_WEAPON_4_3" value = Value - (8 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
                 SetDamage partname = "SR_WEAPON_4_4" value = Value - (10 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+            ]
+
+        EffectsGroup // Upgrade fighter defense
+            scope = Source
+            effects = [
+                SetMaxSecondaryStat partname = "SR_GRAV_PULSE" value = 60
+                SetSecondaryStat partname = "SR_GRAV_PULSE" value = 60
             ]
     ]
     icon = ""

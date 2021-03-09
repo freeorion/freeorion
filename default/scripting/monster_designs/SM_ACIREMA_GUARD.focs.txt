@@ -6,7 +6,7 @@ ShipDesign
     parts = [
         "SR_WEAPON_3_1"
         "DT_DETECTOR_3"
-        ""
+        "SR_WEAPON_0_1"
         ""
         "SH_DEFENSE_GRID"
     ]

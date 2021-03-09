@@ -642,7 +642,7 @@ SM_TREE
 Dyson Forest
 
 SM_TREE_DESC
-A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. If not destroyed, they will periodically send out a seed through the starlanes to colonize other star systems. A [[SM_TREE]] seed is known as a [[predefinedshipdesign SM_FLOATER]], and may be difficult to detect.
+A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. If not destroyed, they will periodically send out a seed through the starlanes to colonize other star systems. A [[SM_TREE]] seed is known as a [[predefinedshipdesign SM_FLOATER]], and may be difficult to detect. When a Dyson Forest grows, Space Krill often start nesting inbetween the trees.
 
 SM_FLOATER
 Floater
@@ -1123,6 +1123,12 @@ Combat Rounds
 
 RULE_NUM_COMBAT_ROUNDS_DESC
 How many rounds of combat occur each turn.
+
+RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE
+Close Range Targeting Combat Round
+
+RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE_DESC
+The first combat round in which close range weapons are able to shoot at targets.
 
 RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE
 Aggressive Ships Combat Visible
@@ -14359,23 +14365,45 @@ Spinal Antimatter Cannon
 SR_SPINAL_ANTIMATTER_DESC
 A huge spinal mount mass driver firing heavy projectiles made of antimatter. Attacks ships and planets.
 
+SR_GRAV_PULSE
+Graviton Pulsar
+
+SR_GRAV_PULSE_DESC
+'''Graviton pulse causing damage to hull integrity to every target caught in the blast. While still deadly to fighters if the blast is spread, it causes only minor damage to ships or planet defenses.
+
+Graviton pulse inflicts [[encyclopedia DAMAGE_TITLE]] only once in combat, in combat round 2.'''
+
 SR_JAWS
 Jaws
 
 SR_JAWS_DESC
-Jaws of a space monster, can damage ships. Huge space monsters are even capable of eating entire fleets.
+'''Jaws of a space monster, can damage ships and planets. Huge space monsters are even capable of eating entire fleets.
+
+Jaws can inflict [[encyclopedia DAMAGE_TITLE]] starting from combat round [[value FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE]] as the targets are too far away in earlier rounds.'''
 
 SR_SPINES
 Spines
 
 SR_SPINES_DESC
-Spines of a space monster, a powerful strike of the space monster can deal big damage to a ship.
+'''Spines of a space monster, a powerful strike of the space monster can deal big damage to a ship.
+
+Spines inflict [[encyclopedia DAMAGE_TITLE]] starting from combat round [[value FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE]] as the targets are too far away in earlier rounds.'''
 
 SR_TENTACLE
 Tentacle
 
 SR_TENTACLE_DESC
-Tentacle of a kraken, can damage ships.
+'''Tentacle of a kraken, primarily do damage to ships. Is also able to attack fighters and planets.
+
+Tentacles can inflict [[encyclopedia DAMAGE_TITLE]] to ships starting from combat round [[value FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE]] as the targets are too far away in earlier rounds. Tentacles start to destroy fighters when they come in range in combat round 2. Tentacles only attack fighters or planets if there are no ships to target.'''
+
+SR_THRASHING_BODY
+Thrashing Body
+
+SR_THRASHING_BODY_DESC
+'''The fast moving body of a space monster, crushes fighters and low structure ships in its way.
+
+A thrashing body can inflict [[encyclopedia DAMAGE_TITLE]] starting from combat round [[value FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE]] as the targets are too far away in earlier rounds.'''
 
 SR_PLASMA_DISCHARGE
 Plasma Discharge

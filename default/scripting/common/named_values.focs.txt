@@ -14,5 +14,7 @@ NamedInteger name = "NUM_COMBAT_ROUNDS" value = (GameRule name = "RULE_NUM_COMBA
 
 NamedInteger name = "NUM_COMBAT_ROUNDS_FIGHTERS" value = (GameRule name = "RULE_NUM_COMBAT_ROUNDS") - 1
 
+NamedInteger name = "FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE" value = (GameRule name = "RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE")
+
 #include "/scripting/common/misc.macros"
 #include "/scripting/common/base_prod.macros"

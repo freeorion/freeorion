@@ -4,8 +4,9 @@ ShipDesign
     description = "SM_GUARD_0_DESC"
     hull = "SH_GUARD_0_BODY"
     parts = [
-        "SR_WEAPON_1_1"
+        "SR_ARC_DISRUPTOR"
         "AR_PRECURSOR_PLATE"
+        "SR_ARC_DISRUPTOR"
         "SH_DEFENSE_GRID"
     ]
     icon = "icons/monsters/maintenance_ship.png"

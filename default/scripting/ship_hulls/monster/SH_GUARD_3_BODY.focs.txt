@@ -27,10 +27,10 @@ Hull
         EffectsGroup
             scope = Source
             effects = [
-                SetMaxDamage partname = "SR_WEAPON_0_1" value = Value + 3
-                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + 15
-                SetDamage partname = "SR_WEAPON_0_1" value = Value + 3
-                SetDamage partname = "SR_WEAPON_4_1" value = Value + 15
+                SetMaxSecondaryStat partname = "SR_ARC_DISRUPTOR" value = Value + 3
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + (15 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
+                SetSecondaryStat partname = "SR_ARC_DISRUPTOR" value = Value + 3
+                SetDamage partname = "SR_WEAPON_4_1" value = Value + (15 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
             ]
     ]
     icon = ""
@@ -38,3 +38,4 @@ Hull
 
 #include "../ship_hulls.macros"
 #include "monster.macros"
+#include "/scripting/common/misc.macros"

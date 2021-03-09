@@ -6,7 +6,11 @@ Hull
     NoDefaultFuelEffect
     stealth = 5
     structure = 5
-    slots = Slot type = External position = (0.30, 0.15)
+    slots = [
+        Slot type = External position = (0.30, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = Internal position = (0.45, 0.5)
+    ]
     buildcost = 1
     buildtime = 2
     Unproducible
@@ -24,15 +28,22 @@ Hull
                 Destroy
             ]
 
-        EffectsGroup    // grow larger / stronger with age
+        EffectsGroup    // grow larger / stronger / more krill capacity with age
             scope = Source
             accountinglabel = "AGE_BONUS"
-            effects = SetMaxStructure value = Value + Source.Age * 3 * [[SHIP_STRUCTURE_FACTOR]]
+            effects = [
+                SetMaxStructure value = Value + Source.Age * 3 * [[SHIP_STRUCTURE_FACTOR]]
+                SetMaxCapacity partname = "FT_HANGAR_KRILL" value = Source.Age
+            ]
 
         EffectsGroup    // regeneration
             scope = Source
             activation = Turn low = LocalCandidate.System.LastTurnBattleHere + 1
-            effects = SetStructure value = Value + 7
+            effects = SetStructure value = Value + 7 * [[SHIP_STRUCTURE_FACTOR]]
+
+        EffectsGroup    // krill swarm (re)growth
+            scope = Source
+            effects = SetCapacity partname = "FT_HANGAR_KRILL" value = Value + 1
 
         EffectsGroup    // spawn floaters to reproduce
             scope = Source
@@ -45,7 +56,7 @@ Hull
                 Object id = Source.FleetID
                 Fleet
             ]
-            effects = SetAggressive
+            effects = SetObstructive
     ]
     icon = ""
     graphic = "icons/monsters/tree.png"

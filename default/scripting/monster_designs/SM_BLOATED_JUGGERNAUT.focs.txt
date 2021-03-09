@@ -7,6 +7,7 @@ ShipDesign
         "SP_CHAOS_WAVE"
         "SR_PLASMA_DISCHARGE"
         "SR_SPINES"
+        "SR_GRAV_PULSE"
         "SR_SPINES"
         "SR_SPINES"
         "SH_PLASMA"

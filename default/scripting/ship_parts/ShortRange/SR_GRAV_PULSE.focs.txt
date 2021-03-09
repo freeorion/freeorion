@@ -1,24 +1,25 @@
 Part
-    name = "SR_JAWS"
-    description = "SR_JAWS_DESC"
+    name = "SR_GRAV_PULSE"
+    description = "SR_GRAV_PULSE_DESC"
     class = ShortRange
-    damage = 10
+    damage = 1
+    shots = 12
     combatTargets = And [
-        (CombatBout >= NamedIntegerLookup name = "FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE")
+        (CombatBout = 2)
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
         Or [
-           [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
-           [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
+            Fighter
+            [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+            [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
         ]
     ]
-    mountableSlotTypes = External
+    mountableSlotTypes = [ Internal External ]
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/teeth.png"
+    icon = "icons/ship_parts/gravitic_pulse.png"
 
 #include "shortrange.macros"
-
 #include "/scripting/common/upkeep.macros"
 #include "/scripting/ship_parts/targeting.macros"
