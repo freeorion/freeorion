@@ -113,9 +113,8 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     bool ReturnImmediateValue() const;
     unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<T>> Clone() const override {
-        return std::make_unique<Variable<T>>(m_ref_type, m_property_name, m_return_immediate_value);
-    }
+    std::unique_ptr<ValueRef<T>> Clone() const override
+    { return std::make_unique<Variable<T>>(m_ref_type, m_property_name, m_return_immediate_value); }
 
 protected:
     void InitInvariants();
@@ -155,9 +154,9 @@ struct FO_COMMON_API Statistic final : public Variable<T>
     unsigned int GetCheckSum() const override;
 
     std::unique_ptr<ValueRef<T>> Clone() const override {
-	    return std::make_unique<Statistic<T, V>>(CloneUnique(m_value_ref),
+        return std::make_unique<Statistic<T, V>>(CloneUnique(m_value_ref),
                                                  m_stat_type,
-                                                 m_sampling_condition ? m_sampling_condition->Clone() : nullptr);
+                                                 CloneUnique(m_sampling_condition));
     }
 
 protected:
@@ -199,6 +198,8 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
                              std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
                              bool return_immediate_value = false);
 
+    explicit ComplexVariable(const ComplexVariable<T>& rhs);
+
     bool operator==(const ValueRef<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
     std::string Description() const override;
@@ -211,14 +212,9 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
     const ValueRef<std::string>* StringRef2() const;
     unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<T>> Clone() const override {
-        return std::make_unique<ComplexVariable<T>>(Variable<T>::PropertyName()[0],
-                                                    CloneUnique(m_int_ref1),
-                                                    CloneUnique(m_int_ref2),
-                                                    CloneUnique(m_int_ref3),
-                                                    CloneUnique(m_string_ref1),
-                                                    CloneUnique(m_string_ref2));
-    }
+    std::unique_ptr<ValueRef<T>> Clone() const override
+    { return std::make_unique<ComplexVariable<T>>(*this); }
+
 protected:
     void InitInvariants();
 
@@ -256,9 +252,8 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
 
     unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<ToType>> Clone() const override {
-        return std::make_unique<StaticCast<FromType, ToType>>(CloneUnique(m_value_ref));
-    }
+    std::unique_ptr<ValueRef<ToType>> Clone() const override
+    { return std::make_unique<StaticCast<FromType, ToType>>(CloneUnique(m_value_ref)); }
 
 private:
     std::unique_ptr<ValueRef<FromType>> m_value_ref;
@@ -283,9 +278,8 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
 
     unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<std::string>> Clone() const override {
-        return std::make_unique<StringCast<FromType>>(CloneUnique(m_value_ref));
-    }
+    std::unique_ptr<ValueRef<std::string>> Clone() const override
+    { return std::make_unique<StringCast<FromType>>(CloneUnique(m_value_ref)); }
 
 private:
     std::unique_ptr<ValueRef<FromType>> m_value_ref;
@@ -308,9 +302,8 @@ struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
 
     unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<std::string>> Clone() const override {
-        return std::make_unique<UserStringLookup<FromType>>(CloneUnique(m_value_ref));
-    }
+    std::unique_ptr<ValueRef<std::string>> Clone() const override
+    { return std::make_unique<UserStringLookup<FromType>>(CloneUnique(m_value_ref)); }
 
 private:
     std::unique_ptr<ValueRef<FromType>> m_value_ref;
@@ -341,10 +334,8 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
 
     unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<std::string>> Clone() const override {
-        return std::make_unique<NameLookup>(CloneUnique(m_value_ref),
-                                            m_lookup_type);
-    }
+    std::unique_ptr<ValueRef<std::string>> Clone() const override
+    { return std::make_unique<NameLookup>(CloneUnique(m_value_ref), m_lookup_type); }
 
 private:
     std::unique_ptr<ValueRef<int>> m_value_ref;
@@ -397,6 +388,8 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     /* N-ary operation ctor. */
     Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands);
 
+    Operation(const Operation<T>& rhs);
+
     bool operator==(const ValueRef<T>& rhs) const override;
     T Eval(const ScriptingContext& context) const override;
     bool SimpleIncrement() const override { return m_simple_increment; }
@@ -417,9 +410,8 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
 
     unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<T>> Clone() const override {
-        return std::make_unique<Operation<T>>(m_op_type, CloneUnique(m_operands));
-    }
+    std::unique_ptr<ValueRef<T>> Clone() const override
+    { return std::make_unique<Operation<T>>(*this); }
 
 private:
     void    InitConstInvariants();
@@ -613,9 +605,7 @@ Variable<T>::Variable(ReferenceType ref_type, S&& property_name,
     m_ref_type(ref_type),
     m_property_name{std::forward<S>(property_name)},
     m_return_immediate_value(return_immediate_value)
-{
-    InitInvariants();
-}
+{ InitInvariants(); }
 
 template <typename T>
 template <typename S>
@@ -1231,6 +1221,21 @@ ComplexVariable<T>::ComplexVariable(const char* variable_name,
 { InitInvariants(); }
 
 template <typename T>
+ComplexVariable<T>::ComplexVariable(const ComplexVariable<T>& rhs) :
+    Variable<T>(rhs.m_ref_type, rhs.m_property_name, rhs.m_return_immediate_value),
+    m_int_ref1(CloneUnique(m_int_ref1)),
+    m_int_ref2(CloneUnique(m_int_ref2)),
+    m_int_ref3(CloneUnique(m_int_ref3)),
+    m_string_ref1(CloneUnique(m_string_ref1)),
+    m_string_ref2(CloneUnique(m_string_ref2))
+{
+    this->m_root_candidate_invariant = rhs.m_root_candidate_invariant;
+    this->m_local_candidate_invariant = rhs.m_local_candidate_invariant;
+    this->m_target_invariant = rhs.m_target_invariant;
+    this->m_source_invariant = rhs.m_source_invariant;
+}
+
+template <typename T>
 void ComplexVariable<T>::InitInvariants()
 {
     std::initializer_list<ValueRefBase*> refs =
@@ -1731,6 +1736,20 @@ Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>
 {
     InitConstInvariants();
     CacheConstValue();
+}
+
+template <typename T>
+Operation<T>::Operation(const Operation<T>& rhs) :
+    m_op_type(rhs.m_op_type),
+    m_operands(CloneUnique(rhs.m_operands)),
+    m_constant_expr(rhs.m_constant_expr),
+    m_simple_increment(rhs.m_simple_increment),
+    m_cached_const_value(rhs.m_cached_const_value)
+{
+    this->m_root_candidate_invariant = rhs.m_root_candidate_invariant;
+    this->m_local_candidate_invariant = rhs.m_local_candidate_invariant;
+    this->m_target_invariant = rhs.m_target_invariant;
+    this->m_source_invariant = rhs.m_source_invariant;
 }
 
 template <typename T>
