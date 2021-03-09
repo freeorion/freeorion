@@ -143,9 +143,11 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
 
         BOOST_REQUIRE(ConnectToServer("localhost"));
 
+        BOOST_TEST_MESSAGE("Joining game...");
         JoinGame();
         boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
         start_time = boost::posix_time::microsec_clock::local_time();
+        BOOST_TEST_MESSAGE("Waiting for lobby update...");
         while (!m_lobby_updated) {
             BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
         }
@@ -155,18 +157,21 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             // if first game lobby should be empty
             BOOST_REQUIRE_EQUAL(GetLobbyAICount(), 0);
 
+            BOOST_TEST_MESSAGE("Filling lobby with " << num_AIs << "AIs.");
             // fill lobby with AIs
             for (unsigned int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
                 PlayerSetupData ai_plr;
                 ai_plr.client_type = Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
-                m_lobby_data.players.push_back({Networking::INVALID_PLAYER_ID, ai_plr});
+                m_lobby_data.players.emplace_back(Networking::INVALID_PLAYER_ID, ai_plr);
                 // publish changes
                 UpdateLobby();
                 start_time = boost::posix_time::microsec_clock::local_time();
+                BOOST_TEST_MESSAGE("Waiting for lobby update after adding AI " << ai_i);
                 while (!m_lobby_updated) {
                     BOOST_REQUIRE(ProcessMessages(start_time, MAX_WAITING_SEC));
                 }
             }
+            BOOST_TEST_MESSAGE("Lobby filling done.");
         }
         // after filling first game there should be corrent number of AIs
         // and other game should retain number of AIs from previous game
