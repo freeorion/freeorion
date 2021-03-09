@@ -10,6 +10,7 @@
 #include <boost/format.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/test/unit_test.hpp>
 
 ClientAppFixture::ClientAppFixture() :
     m_game_started(false),
@@ -108,20 +109,24 @@ void ClientAppFixture::JoinGame() {
 
 bool ClientAppFixture::ProcessMessages(const boost::posix_time::ptime& start_time, int max_seconds) {
     bool to_process = true;
+    BOOST_TEST_MESSAGE("Processing Messages for at most " << max_seconds << " s");
     while ((boost::posix_time::microsec_clock::local_time() - start_time).total_seconds() < max_seconds) {
         if (!m_networking->IsConnected()) {
             ErrorLogger() << "Disconnected";
+            BOOST_TEST_MESSAGE("Disconnected!");
             return false;
         }
         auto opt_msg = m_networking->GetMessage();
         if (opt_msg) {
             Message msg = *opt_msg;
-            if (! HandleMessage(msg)) {
+            if (!HandleMessage(msg)) {
+                BOOST_TEST_MESSAGE("failed to handle message!");
                 return false;
             }
             to_process = true;
         } else {
             if (to_process) {
+                BOOST_TEST_MESSAGE("... waiting 1000 ms for messages...");
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 to_process = false;
             } else {
@@ -135,11 +140,15 @@ bool ClientAppFixture::ProcessMessages(const boost::posix_time::ptime& start_tim
 
 bool ClientAppFixture::HandleMessage(Message& msg) {
     InfoLogger() << "Handle message " << msg.Type();
+    BOOST_TEST_MESSAGE("Handling message: " << boost::lexical_cast<std::string>(msg.Type()));
+
     switch (msg.Type()) {
     case Message::MessageType::CHECKSUM: {
         bool result = VerifyCheckSum(msg);
-        if (!result)
+        if (!result) {
             ErrorLogger() << "Wrong checksum";
+            BOOST_TEST_MESSAGE("Message had wrong checksum");
+        }
         return result;
     }
     case Message::MessageType::SET_AUTH_ROLES:
@@ -153,6 +162,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
             return true;
         } catch (const boost::bad_lexical_cast& ex) {
             ErrorLogger() << "Host id " << msg.Text() << " is not a number: " << ex.what();
+            BOOST_TEST_MESSAGE("Couldn't cast host ID: " << msg.Text());
             return false;
         }
     case Message::MessageType::TURN_PROGRESS: {
@@ -193,20 +203,21 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
     case Message::MessageType::CHAT_HISTORY:
     case Message::MessageType::TURN_TIMEOUT:
     case Message::MessageType::PLAYER_INFO:
+        BOOST_TEST_MESSAGE("...ignored message...");
         return true; // ignore
     case Message::MessageType::PLAYER_STATUS: {
         int about_empire_id;
         Message::PlayerStatus status;
         ExtractPlayerStatusMessageData(msg, status, about_empire_id);
         SetEmpireStatus(about_empire_id, status);
-
-        if (status == Message::PlayerStatus::WAITING) {
+        if (status == Message::PlayerStatus::WAITING)
             m_ai_waiting.erase(about_empire_id);
-        }
+        BOOST_TEST_MESSAGE("Updated empire " << about_empire_id << " status: " << boost::lexical_cast<std::string>(status));
         return true;
     }
     case Message::MessageType::TURN_PARTIAL_UPDATE: {
         ExtractTurnPartialUpdateMessageData(msg, EmpireID(), GetUniverse());
+        BOOST_TEST_MESSAGE("Partial turn update unpacked");
         return true;
     }
     case Message::MessageType::TURN_UPDATE: {
@@ -214,6 +225,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
                                      Empires(),             GetUniverse(),      GetSpeciesManager(),
                                      GetCombatLogManager(), GetSupplyManager(), Players());
         m_turn_done = true;
+        BOOST_TEST_MESSAGE("Full turn update unpacked");
         return true;
     }
     case Message::MessageType::SAVE_GAME_COMPLETE:
@@ -230,8 +242,10 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         try {
             host_id = boost::lexical_cast<int>(msg.Text());
             m_networking->SetHostPlayerID(host_id);
+            BOOST_TEST_MESSAGE("Set Host Player ID to: " << host_id);
         } catch (const boost::bad_lexical_cast& ex) {
             ErrorLogger() << "HOST_ID: Could not convert \"" << msg.Text() << "\" to host id";
+            BOOST_TEST_MESSAGE("Couldn't get host ID: " << msg.Text());
             return false;
         }
         return true;
@@ -239,6 +253,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
     case Message::MessageType::LOBBY_UPDATE:
         m_lobby_updated = true;
         ExtractLobbyUpdateMessageData(msg, m_lobby_data);
+        BOOST_TEST_MESSAGE("Lobby Updated");
         return true;
     case Message::MessageType::ERROR_MSG: {
             int player_id;
@@ -246,10 +261,12 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
             bool fatal;
             ExtractErrorMessageData(msg, player_id, problem, fatal);
             ErrorLogger() << "Catch " << (fatal ? "fatal " : "") << "error " << problem << " from player " << player_id;
+            BOOST_TEST_MESSAGE("Received " << (fatal ? "fatal " : "") << " error message: " << problem);
         }
         return false;
     default:
         ErrorLogger() << "Unknown message type: " << msg.Type();
+        BOOST_TEST_MESSAGE("Unhandled unknown message type!");
         return false;
     }
 }
