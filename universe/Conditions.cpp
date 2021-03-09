@@ -530,7 +530,6 @@ std::unique_ptr<Condition> Number::Clone() const {
                                     ValueRef::CloneUnique(m_condition));
 }
 
-
 ///////////////////////////////////////////////////////////
 // Turn                                                  //
 ///////////////////////////////////////////////////////////
@@ -1142,10 +1141,8 @@ unsigned int All::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> All::Clone() const {
-    return std::make_unique<All>();
-}
-
+std::unique_ptr<Condition> All::Clone() const
+{ return std::make_unique<All>(); }
 
 ///////////////////////////////////////////////////////////
 // None                                                  //
@@ -1191,9 +1188,8 @@ unsigned int None::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> None::Clone() const {
-    return std::make_unique<None>();
-}
+std::unique_ptr<Condition> None::Clone() const
+{ return std::make_unique<None>(); }
 
 ///////////////////////////////////////////////////////////
 // NoOp                                                  //
@@ -1232,9 +1228,8 @@ unsigned int NoOp::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> NoOp::Clone() const {
-    return std::make_unique<NoOp>();
-}
+std::unique_ptr<Condition> NoOp::Clone() const
+{ return std::make_unique<NoOp>(); }
 
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
@@ -1527,10 +1522,8 @@ unsigned int Source::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Source::Clone() const {
-    return std::make_unique<Source>();
-}
-
+std::unique_ptr<Condition> Source::Clone() const
+{ return std::make_unique<Source>(); }
 
 ///////////////////////////////////////////////////////////
 // RootCandidate                                         //
@@ -1577,9 +1570,8 @@ unsigned int RootCandidate::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> RootCandidate::Clone() const {
-    return std::make_unique<RootCandidate>();
-}
+std::unique_ptr<Condition> RootCandidate::Clone() const
+{ return std::make_unique<RootCandidate>(); }
 
 ///////////////////////////////////////////////////////////
 // Target                                                //
@@ -1626,9 +1618,8 @@ unsigned int Target::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Target::Clone() const {
-    return std::unique_ptr<Target>();
-}
+std::unique_ptr<Condition> Target::Clone() const
+{ return std::unique_ptr<Target>(); }
 
 ///////////////////////////////////////////////////////////
 // Homeworld                                             //
@@ -1838,9 +1829,8 @@ unsigned int Homeworld::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Homeworld::Clone() const {
-    return std::make_unique<Homeworld>(ValueRef::CloneUnique(m_names));
-}
+std::unique_ptr<Condition> Homeworld::Clone() const
+{ return std::make_unique<Homeworld>(ValueRef::CloneUnique(m_names)); }
 
 ///////////////////////////////////////////////////////////
 // Capital                                               //
@@ -1896,9 +1886,8 @@ unsigned int Capital::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Capital::Clone() const {
-    return std::make_unique<Capital>();
-}
+std::unique_ptr<Condition> Capital::Clone() const
+{ return std::make_unique<Capital>(); }
 
 ///////////////////////////////////////////////////////////
 // Monster                                               //
@@ -1952,9 +1941,8 @@ unsigned int Monster::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Monster::Clone() const {
-    return std::make_unique<Monster>();
-}
+std::unique_ptr<Condition> Monster::Clone() const
+{ return std::make_unique<Monster>(); }
 
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
@@ -2004,9 +1992,8 @@ unsigned int Armed::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Armed::Clone() const {
-    return std::make_unique<Armed>();
-}
+std::unique_ptr<Condition> Armed::Clone() const
+{ return std::make_unique<Armed>(); }
 
 ///////////////////////////////////////////////////////////
 // Type                                                  //
@@ -2195,9 +2182,8 @@ unsigned int Type::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Type::Clone() const {
-    return std::make_unique<Type>(ValueRef::CloneUnique(m_type));
-}
+std::unique_ptr<Condition> Type::Clone() const
+{ return std::make_unique<Type>(ValueRef::CloneUnique(m_type)); }
 
 ///////////////////////////////////////////////////////////
 // Building                                              //
@@ -2363,9 +2349,8 @@ unsigned int Building::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Building::Clone() const {
-    return std::make_unique<Building>(ValueRef::CloneUnique(m_names));
-}
+std::unique_ptr<Condition> Building::Clone() const
+{ return std::make_unique<Building>(ValueRef::CloneUnique(m_names)); }
 
 ///////////////////////////////////////////////////////////
 // HasSpecial                                            //
@@ -2425,8 +2410,7 @@ HasSpecial::HasSpecial(const HasSpecial& rhs) :
     m_capacity_high(ValueRef::CloneUnique(rhs.m_capacity_high)),
     m_since_turn_low(ValueRef::CloneUnique(rhs.m_since_turn_low)),
     m_since_turn_high(ValueRef::CloneUnique(rhs.m_since_turn_high))
-{
-}
+{}
 
 bool HasSpecial::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -2617,9 +2601,8 @@ unsigned int HasSpecial::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> HasSpecial::Clone() const {
-    return std::make_unique<HasSpecial>(*this);
-}
+std::unique_ptr<Condition> HasSpecial::Clone() const
+{ return std::make_unique<HasSpecial>(*this); }
 
 ///////////////////////////////////////////////////////////
 // HasTag                                                //
@@ -2751,9 +2734,8 @@ unsigned int HasTag::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> HasTag::Clone() const {
-    return std::make_unique<HasTag>(ValueRef::CloneUnique(m_name));
-}
+std::unique_ptr<Condition> HasTag::Clone() const
+{ return std::make_unique<HasTag>(ValueRef::CloneUnique(m_name)); }
 
 ///////////////////////////////////////////////////////////
 // CreatedOnTurn                                         //
@@ -3080,9 +3062,8 @@ unsigned int Contains::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Contains::Clone() const {
-    return std::make_unique<Contains>(ValueRef::CloneUnique(m_condition));
-}
+std::unique_ptr<Condition> Contains::Clone() const
+{ return std::make_unique<Contains>(ValueRef::CloneUnique(m_condition)); }
 
 ///////////////////////////////////////////////////////////
 // ContainedBy                                           //
@@ -3301,9 +3282,8 @@ unsigned int ContainedBy::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> ContainedBy::Clone() const {
-    return std::make_unique<ContainedBy>(ValueRef::CloneUnique(m_condition));
-}
+std::unique_ptr<Condition> ContainedBy::Clone() const
+{ return std::make_unique<ContainedBy>(ValueRef::CloneUnique(m_condition)); }
 
 ///////////////////////////////////////////////////////////
 // InOrIsSystem                                          //
@@ -3459,9 +3439,8 @@ unsigned int InOrIsSystem::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> InOrIsSystem::Clone() const {
-    return std::make_unique<InOrIsSystem>(ValueRef::CloneUnique(m_system_id));
-}
+std::unique_ptr<Condition> InOrIsSystem::Clone() const
+{ return std::make_unique<InOrIsSystem>(ValueRef::CloneUnique(m_system_id)); }
 
 ///////////////////////////////////////////////////////////
 // OnPlanet                                              //
@@ -3613,9 +3592,8 @@ unsigned int OnPlanet::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> OnPlanet::Clone() const {
-    return std::make_unique<OnPlanet>(ValueRef::CloneUnique(m_planet_id));
-}
+std::unique_ptr<Condition> OnPlanet::Clone() const
+{ return std::make_unique<OnPlanet>(ValueRef::CloneUnique(m_planet_id)); }
 
 ///////////////////////////////////////////////////////////
 // ObjectID                                              //
@@ -3745,9 +3723,8 @@ unsigned int ObjectID::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> ObjectID::Clone() const {
-    return std::make_unique<ObjectID>(ValueRef::CloneUnique(m_object_id));
-}
+std::unique_ptr<Condition> ObjectID::Clone() const
+{ return std::make_unique<ObjectID>(ValueRef::CloneUnique(m_object_id)); }
 
 ///////////////////////////////////////////////////////////
 // PlanetType                                            //
@@ -3914,9 +3891,8 @@ unsigned int PlanetType::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> PlanetType::Clone() const {
-    return std::make_unique<PlanetType>(ValueRef::CloneUnique(m_types));
-}
+std::unique_ptr<Condition> PlanetType::Clone() const
+{ return std::make_unique<PlanetType>(ValueRef::CloneUnique(m_types)); }
 
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
@@ -4086,9 +4062,8 @@ unsigned int PlanetSize::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> PlanetSize::Clone() const {
-    return std::make_unique<PlanetSize>(ValueRef::CloneUnique(m_sizes));
-}
+std::unique_ptr<Condition> PlanetSize::Clone() const
+{ return std::make_unique<PlanetSize>(ValueRef::CloneUnique(m_sizes)); }
 
 ///////////////////////////////////////////////////////////
 // PlanetEnvironment                                     //
@@ -4486,9 +4461,8 @@ unsigned int Species::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Species::Clone() const {
-    return std::make_unique<Species>(ValueRef::CloneUnique(m_names));
-}
+std::unique_ptr<Condition> Species::Clone() const
+{ return std::make_unique<Species>(ValueRef::CloneUnique(m_names)); }
 
 ///////////////////////////////////////////////////////////
 // Enqueued                                              //
@@ -4810,9 +4784,8 @@ unsigned int Enqueued::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Enqueued::Clone() const {
-    return std::make_unique<Enqueued>(*this);
-}
+std::unique_ptr<Condition> Enqueued::Clone() const
+{ return std::make_unique<Enqueued>(*this); }
 
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
@@ -4989,9 +4962,8 @@ unsigned int FocusType::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> FocusType::Clone() const {
-    return std::make_unique<FocusType>(ValueRef::CloneUnique(m_names));
-}
+std::unique_ptr<Condition> FocusType::Clone() const
+{ return std::make_unique<FocusType>(ValueRef::CloneUnique(m_names)); }
 
 ///////////////////////////////////////////////////////////
 // StarType                                              //
@@ -5153,9 +5125,8 @@ unsigned int StarType::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> StarType::Clone() const {
-    return std::make_unique<StarType>(ValueRef::CloneUnique(m_types));
-}
+std::unique_ptr<Condition> StarType::Clone() const
+{ return std::make_unique<StarType>(ValueRef::CloneUnique(m_types)); }
 
 ///////////////////////////////////////////////////////////
 // DesignHasHull                                         //
@@ -5282,9 +5253,8 @@ unsigned int DesignHasHull::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> DesignHasHull::Clone() const {
-    return std::make_unique<DesignHasHull>(ValueRef::CloneUnique(m_name));
-}
+std::unique_ptr<Condition> DesignHasHull::Clone() const
+{ return std::make_unique<DesignHasHull>(ValueRef::CloneUnique(m_name)); }
 
 ///////////////////////////////////////////////////////////
 // DesignHasPart                                         //
@@ -5774,9 +5744,8 @@ unsigned int PredefinedShipDesign::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> PredefinedShipDesign::Clone() const {
-    return std::make_unique<PredefinedShipDesign>(ValueRef::CloneUnique(m_name));
-}
+std::unique_ptr<Condition> PredefinedShipDesign::Clone() const
+{ return std::make_unique<PredefinedShipDesign>(ValueRef::CloneUnique(m_name)); }
 
 ///////////////////////////////////////////////////////////
 // NumberedShipDesign                                    //
@@ -5881,9 +5850,8 @@ unsigned int NumberedShipDesign::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> NumberedShipDesign::Clone() const {
-    return std::make_unique<NumberedShipDesign>(ValueRef::CloneUnique(m_design_id));
-}
+std::unique_ptr<Condition> NumberedShipDesign::Clone() const
+{ return std::make_unique<NumberedShipDesign>(ValueRef::CloneUnique(m_design_id)); }
 
 ///////////////////////////////////////////////////////////
 // ProducedByEmpire                                      //
@@ -5994,9 +5962,8 @@ unsigned int ProducedByEmpire::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> ProducedByEmpire::Clone() const {
-    return std::make_unique<ProducedByEmpire>(ValueRef::CloneUnique(m_empire_id));
-}
+std::unique_ptr<Condition> ProducedByEmpire::Clone() const
+{ return std::make_unique<ProducedByEmpire>(ValueRef::CloneUnique(m_empire_id)); }
 
 ///////////////////////////////////////////////////////////
 // Chance                                                //
@@ -6091,9 +6058,8 @@ unsigned int Chance::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Chance::Clone() const {
-    return std::make_unique<Chance>(ValueRef::CloneUnique(m_chance));
-}
+std::unique_ptr<Condition> Chance::Clone() const
+{ return std::make_unique<Chance>(ValueRef::CloneUnique(m_chance)); }
 
 ///////////////////////////////////////////////////////////
 // MeterValue                                            //
@@ -8610,9 +8576,8 @@ unsigned int ExploredByEmpire::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> ExploredByEmpire::Clone() const {
-    return std::make_unique<ExploredByEmpire>(ValueRef::CloneUnique(m_empire_id));
-}
+std::unique_ptr<Condition> ExploredByEmpire::Clone() const
+{ return std::make_unique<ExploredByEmpire>(ValueRef::CloneUnique(m_empire_id)); }
 
 ///////////////////////////////////////////////////////////
 // Stationary                                            //
@@ -8675,9 +8640,8 @@ unsigned int Stationary::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Stationary::Clone() const {
-    return std::make_unique<Stationary>();
-}
+std::unique_ptr<Condition> Stationary::Clone() const
+{ return std::make_unique<Stationary>(); }
 
 ///////////////////////////////////////////////////////////
 // Aggressive                                            //
@@ -8746,9 +8710,8 @@ unsigned int Aggressive::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Aggressive::Clone() const {
-    return std::make_unique<Aggressive>(m_aggressive);
-}
+std::unique_ptr<Condition> Aggressive::Clone() const
+{ return std::make_unique<Aggressive>(m_aggressive); }
 
 ///////////////////////////////////////////////////////////
 // FleetSupplyableByEmpire                               //
@@ -8862,9 +8825,8 @@ unsigned int FleetSupplyableByEmpire::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> FleetSupplyableByEmpire::Clone() const {
-    return std::make_unique<FleetSupplyableByEmpire>(ValueRef::CloneUnique(m_empire_id));
-}
+std::unique_ptr<Condition> FleetSupplyableByEmpire::Clone() const
+{ return std::make_unique<FleetSupplyableByEmpire>(ValueRef::CloneUnique(m_empire_id)); }
 
 ///////////////////////////////////////////////////////////
 // ResourceSupplyConnectedByEmpire                       //
@@ -9141,9 +9103,8 @@ unsigned int CanColonize::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> CanColonize::Clone() const {
-    return std::make_unique<CanColonize>();
-}
+std::unique_ptr<Condition> CanColonize::Clone() const
+{ return std::make_unique<CanColonize>(); }
 
 ///////////////////////////////////////////////////////////
 // CanProduceShips                                       //
@@ -9226,9 +9187,8 @@ unsigned int CanProduceShips::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> CanProduceShips::Clone() const {
-    return std::make_unique<CanProduceShips>();
-}
+std::unique_ptr<Condition> CanProduceShips::Clone() const
+{ return std::make_unique<CanProduceShips>(); }
 
 ///////////////////////////////////////////////////////////
 // OrderedBombarded                                      //
@@ -9350,9 +9310,8 @@ unsigned int OrderedBombarded::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> OrderedBombarded::Clone() const {
-    return std::make_unique<OrderedBombarded>(ValueRef::CloneUnique(m_by_object_condition));
-}
+std::unique_ptr<Condition> OrderedBombarded::Clone() const
+{ return std::make_unique<OrderedBombarded>(ValueRef::CloneUnique(m_by_object_condition)); }
 
 ///////////////////////////////////////////////////////////
 // ValueTest                                             //
@@ -9695,9 +9654,8 @@ unsigned int ValueTest::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> ValueTest::Clone() const {
-    return std::make_unique<ValueTest>(*this);
-}
+std::unique_ptr<Condition> ValueTest::Clone() const
+{ return std::make_unique<ValueTest>(*this); }
 
 ///////////////////////////////////////////////////////////
 // Location                                              //
@@ -10264,9 +10222,8 @@ std::vector<const Condition*> And::Operands() const {
     return retval;
 }
 
-std::unique_ptr<Condition> And::Clone() const {
-    return std::make_unique<And>(ValueRef::CloneUnique(m_operands));
-}
+std::unique_ptr<Condition> And::Clone() const
+{ return std::make_unique<And>(ValueRef::CloneUnique(m_operands)); }
 
 ///////////////////////////////////////////////////////////
 // Or                                                    //
@@ -10463,9 +10420,8 @@ unsigned int Or::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Or::Clone() const {
-    return std::make_unique<Or>(ValueRef::CloneUnique(m_operands));
-}
+std::unique_ptr<Condition> Or::Clone() const
+{ return std::make_unique<Or>(ValueRef::CloneUnique(m_operands)); }
 
 ///////////////////////////////////////////////////////////
 // Not                                                   //
@@ -10535,9 +10491,8 @@ unsigned int Not::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Not::Clone() const {
-    return std::make_unique<Not>(ValueRef::CloneUnique(m_operand));
-}
+std::unique_ptr<Condition> Not::Clone() const
+{ return std::make_unique<Not>(ValueRef::CloneUnique(m_operand)); }
 
 ///////////////////////////////////////////////////////////
 // OrderedAlternativesOf
@@ -10740,9 +10695,8 @@ std::vector<const Condition*> OrderedAlternativesOf::Operands() const {
     return retval;
 }
 
-std::unique_ptr<Condition> OrderedAlternativesOf::Clone() const {
-    return std::make_unique<OrderedAlternativesOf>(ValueRef::CloneUnique(m_operands));
-}
+std::unique_ptr<Condition> OrderedAlternativesOf::Clone() const
+{ return std::make_unique<OrderedAlternativesOf>(ValueRef::CloneUnique(m_operands)); }
 
 ///////////////////////////////////////////////////////////
 // Described                                             //
@@ -10811,4 +10765,5 @@ std::unique_ptr<Condition> Described::Clone() const {
     return std::make_unique<Described>(ValueRef::CloneUnique(m_condition),
                                        m_desc_stringtable_key);
 }
+
 }
