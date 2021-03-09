@@ -1,4 +1,5 @@
 name: freeorion
+base: core20
 summary: turn-based space empire and galactic conquest (4X) computer game
 description: |
   FreeOrion is a free, open source, turn-based space empire and galactic
@@ -7,64 +8,159 @@ description: |
   not a clone or remake of that series or any other game.
 confinement: strict
 adopt-info: freeorion
-
+architectures:
+- build-on: amd64
 apps:
-    freeorion:
-        command: desktop-launch freeorion -S $SNAP_USER_COMMON/save
-        plugs: [home, pulseaudio, opengl, network, screen-inhibit-control, browser-support, x11]
-        desktop: share/applications/freeorion.desktop
-        environment:
-            LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/lib/freeorion
-            LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
+  freeorion:
+    command: usr/local/bin/freeorion -S $SNAP_USER_COMMON/save
+    plugs:
+    - desktop
+    - desktop-legacy
+    - gsettings
+    - opengl
+    - wayland
+    - x11
+    - home
+    - pulseaudio
+    - network
+    - screen-inhibit-control
+    - browser-support
+    desktop: usr/local/share/applications/org.freeorion.FreeOrion.desktop
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/local/lib/freeorion
+      LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
+    command-chain:
+    - snap/command-chain/desktop-launch
+  freeoriond:
+    command: usr/local/bin/freeoriond
+    plugs:
+    - home
+    - network
+    - network-bind
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/local/lib/freeorion
+  freeoriond-dedicated:
+    command: usr/local/bin/freeoriond --hostless --network.server.unconn-human-empire-players.max
+      0 --network.server.conn-human-empire-players.min 0
+    plugs:
+    - home
+    - network
+    - network-bind
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/local/lib/freeorion
 parts:
-    freeorion:
-        source: .
-        override-build: |
-            sed -i.bak -e 's|Icon=freeorion$|Icon=${SNAP}/meta/gui/icon.png|g' ../src/packaging/freeorion.desktop
-            snapcraftctl build
-        plugin: cmake
-        override-pull: |
-            snapcraftctl pull
-            version="$(git describe --tags --always --dirty)"
-            case $version in
-                v*) version=$(echo $version | tail -c +2) ;;
-                *)  version=$(echo $version | head -c 32) ;;
-            esac
-            [ -n "$(echo $version | grep '-')" ] && grade=devel || grade=stable
-            snapcraftctl set-version "$version"
-            snapcraftctl set-grade "$grade"
-        override-prime: |
-            snapcraftctl prime
-            mkdir -p ${SNAPCRAFT_PRIME}/meta/gui
-            cp ${SNAPCRAFT_PART_SRC}/default/data/art/icons/FO_Icon_256x256.png ${SNAPCRAFT_PRIME}/meta/gui/icon.png
-        build-packages:
-            - cmake
-            - debhelper
-            - dpkg-dev
-            - libalut-dev
-            - libboost-all-dev
-            - libfreetype6-dev
-            - libgl1-mesa-dev
-            - libglew-dev
-            - libjpeg-dev
-            - libogg-dev
-            - libopenal-dev
-            - libpng-dev
-            - libsdl2-dev
-            - libtiff-dev
-            - libvorbis-dev
-            - pkg-config
-            - python
-        stage-packages:
-            - mesa-utils
-            - libgl1-mesa-dri
-            - python
-        after: [ desktop-glib-only ]
-    desktop-glib-only:
-        source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-        source-subdir: glib-only
-        plugin: make
-        build-packages:
-          - libglib2.0-dev
-        stage-packages:
-          - libglib2.0-bin
+  freeorion:
+    source: .
+    override-build: |
+      sed -i.bak -e 's|Icon=freeorion$|Icon=${SNAP}/meta/gui/icon.png|g' ../src/packaging/org.freeorion.FreeOrion.desktop
+      snapcraftctl build
+    plugin: cmake
+    override-pull: |
+      snapcraftctl pull
+      # this versioning works for e.g. weekly-test-builds
+      branchn="$(git rev-parse --abbrev-ref HEAD)"
+      version="$(git log -n1 --date=short --format='%cd.%h' freeorion/$branchn)"
+      case $version in
+        v*) version=$(echo $version | tail -c +2) ;;
+        *)  version=$(echo $version | head -c 32) ;;
+      esac
+      [ -n "$(echo $version | grep '-')" ] && grade=devel || grade=stable
+      snapcraftctl set-version "$version"
+      snapcraftctl set-grade "$grade"
+    override-prime: |
+      snapcraftctl prime
+      mkdir -p ${SNAPCRAFT_PRIME}/meta/gui
+      cp ${SNAPCRAFT_PART_SRC}/default/data/art/icons/FO_Icon_256x256.png ${SNAPCRAFT_PRIME}/meta/gui/icon.png
+    build-packages:
+    - cmake
+    - debhelper
+    - dpkg-dev
+    - git
+    - libalut-dev
+    - libboost1.67-all-dev
+    - libfreetype6-dev
+    - libgl1-mesa-dev
+    - libglew-dev
+    - libjpeg-dev
+    - libogg-dev
+    - libopenal-dev
+    - libpng-dev
+    - libsdl2-dev
+    - libtiff-dev
+    - libvorbis-dev
+    - pkg-config
+    stage-packages:
+    - mesa-utils
+    - libgl1-mesa-dri
+    - libboost-date-time1.67.0
+    - libboost-filesystem1.67.0
+    - libboost-iostreams1.67.0
+    - libboost-locale1.67.0
+    - libboost-log1.67.0
+    - libboost-python1.67.0
+    - libboost-regex1.67.0
+    - libboost-serialization1.67.0
+    - libboost-system1.67.0
+    - libboost-thread1.67.0
+    - libboost-test1.67.0
+    - libglew2.1
+    - libglu1-mesa
+    - libopenal1
+    - libsdl2-2.0-0
+    - libvorbis0a
+    - libvorbisfile3
+    - libpng16-16
+    - libfreetype6
+    build-environment:
+    - PATH: /snap/gnome-3-38-2004-sdk/current/usr/bin:$PATH
+    - XDG_DATA_DIRS: $SNAPCRAFT_STAGE/usr/share:/snap/gnome-3-38-2004-sdk/current/usr/share:/usr/share:$XDG_DATA_DIRS
+    - LD_LIBRARY_PATH: /snap/gnome-3-38-2004-sdk/current/lib/$SNAPCRAFT_ARCH_TRIPLET:/snap/gnome-3-38-2004-sdk/current/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:/snap/gnome-3-38-2004-sdk/current/usr/lib:/snap/gnome-3-38-2004-sdk/current/usr/lib/vala-current:/snap/gnome-3-38-2004-sdk/current/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    - PKG_CONFIG_PATH: /snap/gnome-3-38-2004-sdk/current/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pkgconfig:/snap/gnome-3-38-2004-sdk/current/usr/lib/pkgconfig:/snap/gnome-3-38-2004-sdk/current/usr/share/pkgconfig:$PKG_CONFIG_PATH
+    - GETTEXTDATADIRS: /snap/gnome-3-38-2004-sdk/current/usr/share/gettext-current:$GETTEXTDATADIRS
+    - GDK_PIXBUF_MODULE_FILE: /snap/gnome-3-38-2004-sdk/current/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gdk-pixbuf-current/loaders.cache
+    - ACLOCAL_PATH: /snap/gnome-3-38-2004-sdk/current/usr/share/aclocal${ACLOCAL_PATH:+:$ACLOCAL_PATH}
+    - PYTHONPATH: /snap/gnome-3-38-2004-sdk/current/usr/lib/python3.8:/snap/gnome-3-38-2004-sdk/current/usr/lib/python3/dist-packages${PYTHONPATH:+:$PYTHONPATH}
+  gnome-3-38-extension:
+    build-packages:
+    - gcc
+    build-snaps:
+    - gnome-3-38-2004-sdk/latest/stable
+    make-parameters:
+    - WITH_PYTHON=3.8
+    - PLATFORM_PLUG=gnome-3-38-2004
+    plugin: make
+    source: $SNAPCRAFT_EXTENSIONS_DIR/desktop
+    source-subdir: gnome
+assumes:
+- snapd2.43
+plugs:
+  gnome-3-38-2004:
+    default-provider: gnome-3-38-2004
+    interface: content
+    target: $SNAP/gnome-platform
+  gtk-3-themes:
+    default-provider: gtk-common-themes
+    interface: content
+    target: $SNAP/data-dir/themes
+  icon-themes:
+    default-provider: gtk-common-themes
+    interface: content
+    target: $SNAP/data-dir/icons
+  sound-themes:
+    default-provider: gtk-common-themes
+    interface: content
+    target: $SNAP/data-dir/sounds
+environment:
+  GTK_USE_PORTAL: '1'
+  SNAP_DESKTOP_RUNTIME: $SNAP/gnome-platform
+hooks:
+  configure:
+    command-chain:
+    - snap/command-chain/hooks-configure-desktop
+    plugs:
+    - desktop
+layout:
+  /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/webkit2gtk-4.0:
+    bind: $SNAP/gnome-platform/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/webkit2gtk-4.0
+  /usr/share/xml/iso-codes:
+    bind: $SNAP/gnome-platform/usr/share/xml/iso-codes
