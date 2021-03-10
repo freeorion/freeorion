@@ -137,7 +137,7 @@ template<typename T>
     std::vector<std::pair<std::string, std::unique_ptr<T>>> retval;
     retval.reserve(vec.size());
     for (const auto& val : vec) {
-        retval.push_back(std::make_pair(val.first, CloneUnique(val.second)));
+        retval.emplace_back(val.first, CloneUnique(val.second));
     }
     return retval;
 }
