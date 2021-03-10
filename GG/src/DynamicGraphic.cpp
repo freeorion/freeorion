@@ -28,13 +28,9 @@ struct SignalEcho
     std::string m_name;
 };
 
-const double DEFAULT_FPS = 15.0;
+constexpr double DEFAULT_FPS = 15.0;
 
 }
-
-const std::size_t DynamicGraphic::ALL_FRAMES = std::numeric_limits<std::size_t>::max();
-const std::size_t DynamicGraphic::INVALID_INDEX = std::numeric_limits<std::size_t>::max();
-const unsigned int DynamicGraphic::INVALID_TIME = std::numeric_limits<unsigned int>::max();
 
 DynamicGraphic::DynamicGraphic(X x, Y y, X w, Y h, bool loop, X frame_width, Y frame_height,
                                unsigned int margin, std::vector<std::shared_ptr<Texture>> textures,

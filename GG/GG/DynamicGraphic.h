@@ -177,9 +177,9 @@ public:
         a texture smaller than a single frame. */
     GG_CONCRETE_EXCEPTION(CannotAddFrame, GG::DynamicGraphic, Exception);
 
-    static const std::size_t  ALL_FRAMES;
-    static const std::size_t  INVALID_INDEX;
-    static const unsigned int INVALID_TIME;
+    static constexpr std::size_t  ALL_FRAMES = std::numeric_limits<std::size_t>::max();
+    static constexpr std::size_t  INVALID_INDEX = std::numeric_limits<std::size_t>::max();
+    static constexpr unsigned int INVALID_TIME = std::numeric_limits<unsigned int>::max();
 
 protected:
     struct FrameSet
