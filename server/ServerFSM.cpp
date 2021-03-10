@@ -531,6 +531,11 @@ bool ServerFSM::EstablishPlayer(const PlayerConnectionPtr& player_connection,
     }
 
     if (client_type == Networking::ClientType::INVALID_CLIENT_TYPE) {
+        InfoLogger() << "ServerFSM::EstablishPlayer player " << player_name
+                     << " has client type " << client_type
+                     << " version string: " << client_version_string
+                     << " and roles: " << roles.Text()
+                     << " and is to be disconnected due to the invalid client type";
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
         to_disconnect.push_back(player_connection);
     } else {
@@ -2376,6 +2381,11 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
                 client_type = Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR;
             else {
                 player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
+                InfoLogger() << "WaitingForMPGameJoiners::react(const JoinGame& msg) player " << player_name
+                             << " has client type " << client_type
+                             << " version string: " << client_version_string
+                             << " and roles: " << roles.Text()
+                             << " and is to be disconnected due to the invalid client type";
                 server.Networking().Disconnect(player_connection);
                 return discard_event();
             }
@@ -2443,6 +2453,10 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
                 client_type = Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR;
             else {
                 player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_CLIENT_TYPE_NOT_ALLOWED"), true));
+                InfoLogger() << "WaitingForMPGameJoiners::react(const AuthResponse& msg) player " << player_name
+                             << " has client type " << client_type
+                             << " and roles: " << roles.Text()
+                             << " and is to be disconnected due to the invalid client type";
                 server.Networking().Disconnect(player_connection);
                 return discard_event();
             }
