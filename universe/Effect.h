@@ -122,6 +122,10 @@ namespace Effect {
 
         virtual void            SetTopLevelContent(const std::string& content_name) = 0;
         virtual unsigned int    GetCheckSum() const;
+
+        //! Makes a clone of this Effect in a new owning pointer. Required for Boost.Python, which
+        //! doesn't supports move semantics for returned values.
+        [[nodiscard]] virtual std::unique_ptr<Effect> Clone() const = 0;
     };
 
     /** Accounting information about what the causes are and changes produced
