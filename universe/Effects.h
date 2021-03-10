@@ -750,27 +750,25 @@ public:
     const std::string&  MessageString() const               { return m_message_string; }
     const std::string&  Icon() const                        { return m_icon; }
 
-    std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>* >> MessageParameters() const;
+    std::vector<std::pair<std::string, const ValueRef::ValueRef<std::string>*>> MessageParameters() const;
 
-    ValueRef::ValueRef<int>*    RecipientID() const     { return m_recipient_empire_id.get(); }
-    Condition::Condition*       GetCondition() const    { return m_condition.get(); }
-    EmpireAffiliationType           Affiliation() const     { return m_affiliation; }
-    unsigned int                    GetCheckSum() const override;
+    ValueRef::ValueRef<int>* RecipientID() const  { return m_recipient_empire_id.get(); }
+    Condition::Condition*    GetCondition() const { return m_condition.get(); }
+    EmpireAffiliationType    Affiliation() const  { return m_affiliation; }
+    unsigned int             GetCheckSum() const override;
 
     std::unique_ptr<Effect> Clone() const override;
 
 private:
-    std::string             m_message_string;
-    std::string             m_icon;
+    std::string                              m_message_string;
+    std::string                              m_icon;
     std::vector<std::pair<std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>>
-                            m_message_parameters;
-    std::unique_ptr<ValueRef::ValueRef<int>>
-                            m_recipient_empire_id;
-    std::unique_ptr<Condition::Condition>
-                            m_condition;
-    EmpireAffiliationType   m_affiliation;
-    std::string             m_label;
-    bool                    m_stringtable_lookup;
+                                             m_message_parameters;
+    std::unique_ptr<ValueRef::ValueRef<int>> m_recipient_empire_id;
+    std::unique_ptr<Condition::Condition>    m_condition;
+    EmpireAffiliationType                    m_affiliation;
+    std::string                              m_label;
+    bool                                     m_stringtable_lookup;
 };
 
 /** Applies an overlay texture to Systems. */

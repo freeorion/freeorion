@@ -464,9 +464,8 @@ unsigned int NoOp::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> NoOp::Clone() const {
-    return std::make_unique<NoOp>();
-}
+std::unique_ptr<Effect> NoOp::Clone() const
+{ return std::make_unique<NoOp>(); }
 
 
 ///////////////////////////////////////////////////////////
@@ -1167,9 +1166,8 @@ unsigned int SetEmpireCapital::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> SetEmpireCapital::Clone() const {
-    return std::make_unique<SetEmpireCapital>(ValueRef::CloneUnique(m_empire_id));
-}
+std::unique_ptr<Effect> SetEmpireCapital::Clone() const
+{ return std::make_unique<SetEmpireCapital>(ValueRef::CloneUnique(m_empire_id)); }
 
 
 ///////////////////////////////////////////////////////////
@@ -1213,9 +1211,8 @@ unsigned int SetPlanetType::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> SetPlanetType::Clone() const {
-    return std::make_unique<SetPlanetType>(ValueRef::CloneUnique(m_type));
-}
+std::unique_ptr<Effect> SetPlanetType::Clone() const
+{ return std::make_unique<SetPlanetType>(ValueRef::CloneUnique(m_type)); }
 
 
 ///////////////////////////////////////////////////////////
@@ -1257,9 +1254,8 @@ unsigned int SetPlanetSize::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> SetPlanetSize::Clone() const {
-    return std::make_unique<SetPlanetSize>(ValueRef::CloneUnique(m_size));
-}
+std::unique_ptr<Effect> SetPlanetSize::Clone() const
+{ return std::make_unique<SetPlanetSize>(ValueRef::CloneUnique(m_size)); }
 
 
 ///////////////////////////////////////////////////////////
@@ -1328,9 +1324,8 @@ unsigned int SetSpecies::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> SetSpecies::Clone() const {
-    return std::make_unique<SetSpecies>(ValueRef::CloneUnique(m_species_name));
-}
+std::unique_ptr<Effect> SetSpecies::Clone() const
+{ return std::make_unique<SetSpecies>(ValueRef::CloneUnique(m_species_name)); }
 
 
 ///////////////////////////////////////////////////////////
@@ -1400,9 +1395,8 @@ unsigned int SetOwner::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> SetOwner::Clone() const {
-    return std::make_unique<SetOwner>(ValueRef::CloneUnique(m_empire_id));
-}
+std::unique_ptr<Effect> SetOwner::Clone() const
+{ return std::make_unique<SetOwner>(ValueRef::CloneUnique(m_empire_id)); }
 
 
 ///////////////////////////////////////////////////////////
@@ -2253,9 +2247,8 @@ unsigned int Destroy::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> Destroy::Clone() const {
-    return std::make_unique<Destroy>();
-}
+std::unique_ptr<Effect> Destroy::Clone() const
+{ return std::make_unique<Destroy>(); }
 
 
 ///////////////////////////////////////////////////////////
@@ -2359,9 +2352,8 @@ unsigned int RemoveSpecial::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> RemoveSpecial::Clone() const {
-    return std::make_unique<RemoveSpecial>(ValueRef::CloneUnique(m_name));
-}
+std::unique_ptr<Effect> RemoveSpecial::Clone() const
+{ return std::make_unique<RemoveSpecial>(ValueRef::CloneUnique(m_name)); }
 
 
 ///////////////////////////////////////////////////////////
@@ -2429,9 +2421,8 @@ unsigned int AddStarlanes::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> AddStarlanes::Clone() const {
-    return std::make_unique<AddStarlanes>(ValueRef::CloneUnique(m_other_lane_endpoint_condition));
-}
+std::unique_ptr<Effect> AddStarlanes::Clone() const
+{ return std::make_unique<AddStarlanes>(ValueRef::CloneUnique(m_other_lane_endpoint_condition)); }
 
 
 ///////////////////////////////////////////////////////////
@@ -2501,9 +2492,8 @@ unsigned int RemoveStarlanes::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> RemoveStarlanes::Clone() const {
-    return std::make_unique<RemoveStarlanes>(ValueRef::CloneUnique(m_other_lane_endpoint_condition));
-}
+std::unique_ptr<Effect> RemoveStarlanes::Clone() const
+{ return std::make_unique<RemoveStarlanes>(ValueRef::CloneUnique(m_other_lane_endpoint_condition)); }
 
 
 ///////////////////////////////////////////////////////////
@@ -2544,9 +2534,8 @@ unsigned int SetStarType::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> SetStarType::Clone() const {
-    return std::make_unique<SetStarType>(ValueRef::CloneUnique(m_type));
-}
+std::unique_ptr<Effect> SetStarType::Clone() const
+{ return std::make_unique<SetStarType>(ValueRef::CloneUnique(m_type)); }
 
 
 ///////////////////////////////////////////////////////////
@@ -2843,9 +2832,8 @@ unsigned int MoveTo::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> MoveTo::Clone() const {
-    return std::make_unique<MoveTo>(ValueRef::CloneUnique(m_location_condition));
-}
+std::unique_ptr<Effect> MoveTo::Clone() const
+{ return std::make_unique<MoveTo>(ValueRef::CloneUnique(m_location_condition)); }
 
 
 ///////////////////////////////////////////////////////////
@@ -3260,9 +3248,8 @@ unsigned int SetDestination::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> SetDestination::Clone() const {
-    return std::make_unique<SetDestination>(ValueRef::CloneUnique(m_location_condition));
-}
+std::unique_ptr<Effect> SetDestination::Clone() const
+{ return std::make_unique<SetDestination>(ValueRef::CloneUnique(m_location_condition)); }
 
 
 ///////////////////////////////////////////////////////////
@@ -3310,9 +3297,8 @@ unsigned int SetAggression::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> SetAggression::Clone() const {
-    return std::make_unique<SetAggression>(m_aggression);
-}
+std::unique_ptr<Effect> SetAggression::Clone() const
+{ return std::make_unique<SetAggression>(m_aggression); }
 
 
 ///////////////////////////////////////////////////////////
@@ -3741,27 +3727,22 @@ unsigned int GenerateSitRepMessage::GetCheckSum() const {
     return retval;
 }
 
-std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>*>>
+std::vector<std::pair<std::string, const ValueRef::ValueRef<std::string>*>>
 GenerateSitRepMessage::MessageParameters() const {
-    std::vector<std::pair<std::string, ValueRef::ValueRef<std::string>*>> retval;
+    std::vector<std::pair<std::string, const ValueRef::ValueRef<std::string>*>> retval;
     retval.reserve(m_message_parameters.size());
     std::transform(m_message_parameters.begin(), m_message_parameters.end(), std::back_inserter(retval),
-                   [](const std::pair<std::string, std::unique_ptr<ValueRef::ValueRef<std::string>>>& xx) {
-                       return std::make_pair(xx.first, xx.second.get());
-                   });
+                   [](const auto& xx) { return std::make_pair(xx.first, xx.second.get()); });
     return retval;
 }
 
 std::unique_ptr<Effect> GenerateSitRepMessage::Clone() const {
     auto message_string = m_message_string;
     auto icon = m_icon;
-    auto retval = std::make_unique<GenerateSitRepMessage>(message_string,
-                                                   icon,
-                                                   ValueRef::CloneUnique(m_message_parameters),
-                                                   ValueRef::CloneUnique(m_recipient_empire_id),
-                                                   m_affiliation,
-                                                   m_label,
-                                                   m_stringtable_lookup);
+    auto retval = std::make_unique<GenerateSitRepMessage>(
+        message_string, icon, ValueRef::CloneUnique(m_message_parameters),
+        ValueRef::CloneUnique(m_recipient_empire_id), m_affiliation,
+        m_label, m_stringtable_lookup);
     retval->m_condition = ValueRef::CloneUnique(m_condition);
     return retval;
 }
@@ -3853,7 +3834,6 @@ std::unique_ptr<Effect> SetTexture::Clone() const {
     auto texture = m_texture;
     return std::make_unique<SetTexture>(texture);
 }
-
 
 
 ///////////////////////////////////////////////////////////
