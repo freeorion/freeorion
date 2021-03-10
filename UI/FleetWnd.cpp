@@ -819,7 +819,7 @@ namespace {
 
         if (m_design_name_text) {
             const ShipDesign* design = ship->Design();
-            auto& design_name = design ? design->Name() : UserString("FW_UNKNOWN_DESIGN_NAME");
+            const auto& design_name = design ? design->Name() : UserString("FW_UNKNOWN_DESIGN_NAME");
             if (!ship->SpeciesName().empty()) {
                 m_design_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_SPECIES_SHIP_DESIGN_LABEL")) %
                                                            design_name %
@@ -830,34 +830,31 @@ namespace {
         }
 
         // update stat icon values and browse wnds
-        for (auto& entry : m_stat_icons) {
-            entry.second->SetValue(StatValue(entry.first));
+        for (auto& [meter_type, icon] : m_stat_icons) {
+            icon->SetValue(StatValue(meter_type));
 
-            entry.second->ClearBrowseInfoWnd();
-            if (entry.first == MeterType::METER_CAPACITY) {  // refers to damage
-                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipDamageBrowseWnd>(
-                                               m_ship_id, entry.first));
+            icon->ClearBrowseInfoWnd();
+            if (meter_type == MeterType::METER_CAPACITY) {  // refers to damage
+                icon->SetBrowseInfoWnd(GG::Wnd::Create<ShipDamageBrowseWnd>(m_ship_id, meter_type));
 
-            } else if (entry.first == MeterType::METER_TROOPS) {
-                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-                                                   TroopIcon(), UserString("SHIP_TROOPS_TITLE"),
-                                                   UserString("SHIP_TROOPS_STAT")));
+            } else if (meter_type == MeterType::METER_TROOPS) {
+                icon->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
+                    TroopIcon(), UserString("SHIP_TROOPS_TITLE"),
+                    UserString("SHIP_TROOPS_STAT")));
 
-            } else if (entry.first == MeterType::METER_SECONDARY_STAT) {
-                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
-                                                   m_ship_id, entry.first));
-                entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.extended.delay"), 1);
-                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
-                                                   m_ship_id, entry.first, true), 1);
+            } else if (meter_type == MeterType::METER_SECONDARY_STAT) {
+                icon->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(m_ship_id, meter_type));
+                icon->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.extended.delay"), 1);
+                icon->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(m_ship_id, meter_type, true), 1);
 
-            } else if (entry.first == MeterType::METER_POPULATION) {
-                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-                                                   ColonyIcon(), UserString("SHIP_COLONY_TITLE"),
-                                                   UserString("SHIP_COLONY_STAT")));
+            } else if (meter_type == MeterType::METER_POPULATION) {
+                icon->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
+                    ColonyIcon(), UserString("SHIP_COLONY_TITLE"),
+                    UserString("SHIP_COLONY_STAT")));
 
             } else {
-                entry.second->SetBrowseInfoWnd(GG::Wnd::Create<MeterBrowseWnd>(
-                                                   m_ship_id, entry.first, AssociatedMeterType(entry.first)));
+                icon->SetBrowseInfoWnd(GG::Wnd::Create<MeterBrowseWnd>(
+                    m_ship_id, meter_type, AssociatedMeterType(meter_type)));
             }
         }
     }
