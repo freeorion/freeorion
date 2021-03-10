@@ -1223,11 +1223,11 @@ ComplexVariable<T>::ComplexVariable(const char* variable_name,
 template <typename T>
 ComplexVariable<T>::ComplexVariable(const ComplexVariable<T>& rhs) :
     Variable<T>(rhs.m_ref_type, rhs.m_property_name, rhs.m_return_immediate_value),
-    m_int_ref1(CloneUnique(m_int_ref1)),
-    m_int_ref2(CloneUnique(m_int_ref2)),
-    m_int_ref3(CloneUnique(m_int_ref3)),
-    m_string_ref1(CloneUnique(m_string_ref1)),
-    m_string_ref2(CloneUnique(m_string_ref2))
+    m_int_ref1(CloneUnique(rhs.m_int_ref1)),
+    m_int_ref2(CloneUnique(rhs.m_int_ref2)),
+    m_int_ref3(CloneUnique(rhs.m_int_ref3)),
+    m_string_ref1(CloneUnique(rhs.m_string_ref1)),
+    m_string_ref2(CloneUnique(rhs.m_string_ref2))
 {
     this->m_root_candidate_invariant = rhs.m_root_candidate_invariant;
     this->m_local_candidate_invariant = rhs.m_local_candidate_invariant;
