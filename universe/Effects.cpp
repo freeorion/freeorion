@@ -122,12 +122,14 @@ namespace {
      * the MoveTo effect, as its previous route was assigned based on its
      * previous location, and may not be valid for its new location. */
     void UpdateFleetRoute(const std::shared_ptr<Fleet>& fleet, int new_next_system,
-                          int new_previous_system, const ObjectMap& objects)
+                          int new_previous_system, const ScriptingContext& context)
     {
         if (!fleet) {
             ErrorLogger() << "UpdateFleetRoute passed a null fleet pointer";
             return;
         }
+
+        const ObjectMap& objects = context.ContextObjects();
 
         auto next_system = objects.get<System>(new_next_system);
         if (!next_system) {
@@ -149,8 +151,8 @@ namespace {
 
         int dest_system = fleet->FinalDestinationID();
 
-        std::pair<std::list<int>, double> route_pair =  // TODO: Get PathFinder from ScrptingContext
-            GetUniverse().GetPathfinder()->ShortestPath(start_system, dest_system, fleet->Owner(), objects);
+        std::pair<std::list<int>, double> route_pair =
+            context.ContextUniverse().GetPathfinder()->ShortestPath(start_system, dest_system, fleet->Owner(), objects);
 
         // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
         // to the next system that it was just set to move to anyway.
@@ -2586,7 +2588,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
                 }
 
                 ExploreSystem(dest_system->ID(), fleet, context);
-                UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID, context.ContextObjects());  // inserted into dest_system, so next and previous systems are invalid objects
+                UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID, context);  // inserted into dest_system, so next and previous systems are invalid objects
             }
 
             // if old and new systems are the same, and destination is that
@@ -2626,7 +2628,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
                 if (auto dest_ship = std::dynamic_pointer_cast<const Ship>(destination))
                     dest_fleet = context.ContextObjects().get<Fleet>(dest_ship->FleetID());
             if (dest_fleet) {
-                UpdateFleetRoute(fleet, dest_fleet->NextSystemID(), dest_fleet->PreviousSystemID(), context.ContextObjects());
+                UpdateFleetRoute(fleet, dest_fleet->NextSystemID(), dest_fleet->PreviousSystemID(), context);
 
             } else {
                 // TODO: need to do something else to get updated previous/next
@@ -2911,7 +2913,7 @@ void MoveInOrbit::Execute(ScriptingContext& context) const {
             old_sys->Remove(fleet->ID());
         fleet->SetSystem(INVALID_OBJECT_ID);
         fleet->MoveTo(new_x, new_y);
-        UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID, context.ContextObjects());
+        UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID, context);
 
         for (auto& ship : context.ContextObjects().find<Ship>(fleet->ShipIDs())) {
             if (old_sys)
@@ -3085,7 +3087,7 @@ void MoveTowards::Execute(ScriptingContext& context) const {
         }
 
         // todo: is fleet now close enough to fall into a system?
-        UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID, context.ContextObjects());
+        UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID, context);
 
     } else if (auto ship = std::dynamic_pointer_cast<Ship>(target)) {
         auto old_sys = context.ContextObjects().get<System>(ship->SystemID());
@@ -3210,9 +3212,9 @@ void SetDestination::Execute(ScriptingContext& context) const {
         return;
 
     // find shortest path for fleet's owner
-    std::pair<std::list<int>, double> short_path = GetUniverse().GetPathfinder()->ShortestPath(  // TODO: Get PathFinder from ScriptingContext
+    auto [route_list, ignored_length] = context.ContextUniverse().GetPathfinder()->ShortestPath(
         start_system_id, destination_system_id, target_fleet->Owner(), context.ContextObjects());
-    const std::list<int>& route_list = short_path.first;
+    (void)ignored_length; // suppress ignored variable warning
 
     // reject empty move paths (no path exists).
     if (route_list.empty())
@@ -3545,14 +3547,15 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
     // evaluate all parameter valuerefs so they can be substituted into sitrep template
     std::vector<std::pair<std::string, std::string>> parameter_tag_values;
     parameter_tag_values.reserve(m_message_parameters.size());
-    for (const auto& entry : m_message_parameters) {
-        parameter_tag_values.emplace_back(entry.first, entry.second->Eval(context));
+    for (auto& [param_tag, param_ref] : m_message_parameters) {
+        auto param_val = param_ref->Eval(context);
+        parameter_tag_values.emplace_back(param_tag, param_val);
 
         // special case for ship designs: make sure sitrep recipient knows about the design
         // so the sitrep won't have errors about unknown designs being referenced
-        if (entry.first == VarText::PREDEFINED_DESIGN_TAG) {
-            if (const ShipDesign* design = GetPredefinedShipDesign(entry.second->Eval(context)))
-                ship_design_ids_to_inform_receipits_of.emplace(design->ID());
+        if (param_tag == VarText::PREDEFINED_DESIGN_TAG) {
+            if (const ShipDesign* design = GetPredefinedShipDesign(param_val))
+                ship_design_ids_to_inform_receipits_of.insert(design->ID());
         }
     }
 
@@ -3659,7 +3662,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
 
         // also inform of any ship designs recipients should know about
         for (int design_id : ship_design_ids_to_inform_receipits_of)
-            GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id); // TODO: put gamestate into ScriptingContext
+            context.ContextUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
     }
 }
 
@@ -3732,7 +3735,7 @@ GenerateSitRepMessage::MessageParameters() const {
     std::vector<std::pair<std::string, const ValueRef::ValueRef<std::string>*>> retval;
     retval.reserve(m_message_parameters.size());
     std::transform(m_message_parameters.begin(), m_message_parameters.end(), std::back_inserter(retval),
-                   [](const auto& xx) { return std::make_pair(xx.first, xx.second.get()); });
+                   [](const auto& xx) { return std::pair(xx.first, xx.second.get()); });
     return retval;
 }
 
