@@ -4,8 +4,8 @@
 #include "CUIControls.h"
 
 namespace {
-    const int   EDGE_PAD(3);
-    const GG::Y ICON_BROWSE_ICON_HEIGHT(64);
+    constexpr int   EDGE_PAD(3);
+    constexpr GG::Y ICON_BROWSE_ICON_HEIGHT(64);
 
     const GG::X BrowseTextWidth()
     { return GG::X(FontBasedUpscale(200)); }

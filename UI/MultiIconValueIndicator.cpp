@@ -12,13 +12,13 @@
 #include "CUIControls.h"
 
 namespace {
-    const int   EDGE_PAD(3);
+    constexpr int EDGE_PAD(3);
 
-    int         IconSpacing()
+    int IconSpacing()
     { return ClientUI::Pts(); }
-    GG::X       IconWidth()
+    GG::X IconWidth()
     { return GG::X(IconSpacing()*2); }
-    GG::Y       IconHeight()
+    GG::Y IconHeight()
     { return GG::Y(IconSpacing()*2); }
 }
 

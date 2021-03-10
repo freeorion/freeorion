@@ -20,10 +20,10 @@
 
 
 namespace {
-    const int sitrep_row_margin(1);
-    const int sitrep_edge_to_outline_spacing(2);
-    const int sitrep_edge_to_content_spacing(sitrep_edge_to_outline_spacing + 1 + 2);
-    const int sitrep_spacing(2);
+    constexpr int sitrep_row_margin(1);
+    constexpr int sitrep_edge_to_outline_spacing(2);
+    constexpr int sitrep_edge_to_content_spacing(sitrep_edge_to_outline_spacing + 1 + 2);
+    constexpr int sitrep_spacing(2);
 
     /** Adds options related to SitRepPanel to Options DB. */
     void AddOptions(OptionsDB& db) {

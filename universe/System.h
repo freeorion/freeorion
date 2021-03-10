@@ -13,7 +13,7 @@ class ObjectMap;
 
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 namespace {
-    const int SYSTEM_ORBITS = 7;
+    constexpr int SYSTEM_ORBITS = 7;
 }
 struct UniverseObjectVisitor;
 

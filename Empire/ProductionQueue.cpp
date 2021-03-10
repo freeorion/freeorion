@@ -806,8 +806,8 @@ void ProductionQueue::Update() {
     // there are enough PP available in at least one group to make it worthwhile to simulate the future.
     DebugLogger() << "ProductionQueue::Update: Simulating future turns of production queue";
 
-    const int TOO_MANY_TURNS = 500;     // stop counting turns to completion after this long, to prevent seemingly endless loops
-    const float TOO_LONG_TIME = 0.5f;   // max time in seconds to spend simulating queue
+    constexpr int TOO_MANY_TURNS = 500;   // stop counting turns to completion after this long, to prevent seemingly endless loops
+    constexpr float TOO_LONG_TIME = 0.5f; // max time in seconds to spend simulating queue
 
 
     update_timer.EnterSection("Remove Unproducible");

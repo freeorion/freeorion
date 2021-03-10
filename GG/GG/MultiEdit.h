@@ -95,14 +95,6 @@ public:
 
     void AcceptPastedText(const std::string& text) override;
 
-    /** A sentinel value that indicates that there is no limit on the number
-        of lines of history are to be stored.  \see MaxLinesOfHistory() \see
-        SetMaxLinesOfHistory() */
-    static const std::size_t ALL_LINES;
-
-    /** The thickness with which to render the border of the control. */
-    static const unsigned int BORDER_THICK;
-
 protected:
     /** Returns true if >= 1 characters are selected. */
     bool MultiSelected() const override;
@@ -194,10 +186,6 @@ protected:
     void PreserveTextPositionOnNextSetText();
 
     std::pair<CPSize, CPSize> GetDoubleButtonDownWordIndices(CPSize char_index) override;
-
-    /** The width used to create the control's vertical and horizontal
-        Scrolls. */
-    static const unsigned int SCROLL_WIDTH;
 
 private:
     void    ValidateStyle();

@@ -48,9 +48,9 @@
 class RotatingPlanetControl;
 
 namespace {
-    const int EDGE_PAD(3);
-    std::map<std::pair<int,int>,float>          colony_projections;
-    std::map<std::pair<std::string,int>,float>  species_colony_projections;
+    constexpr int EDGE_PAD(3);
+    std::map<std::pair<int, int>, float>         colony_projections;
+    std::map<std::pair<std::string, int>, float> species_colony_projections;
 
     /** @content_tag{CTRL_ALWAYS_BOMBARD} Select this ship during automatic ship selection for bombard, regardless of any tags **/
     const std::string TAG_BOMBARD_ALWAYS = "CTRL_ALWAYS_BOMBARD";

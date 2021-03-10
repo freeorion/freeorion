@@ -76,19 +76,17 @@ bool RegisterMultiEditStyles()
 }
 bool dummy = RegisterMultiEditStyles();
 
+constexpr unsigned int SCROLL_WIDTH = 14;
+constexpr std::size_t ALL_LINES = std::numeric_limits<std::size_t>::max();
+constexpr unsigned int BORDER_THICK = 2;
 }
 
-const Flags<MultiEditStyle> GG::MULTI_NO_SCROLL (MULTI_NO_VSCROLL | MULTI_NO_HSCROLL);
+const Flags<MultiEditStyle> GG::MULTI_NO_SCROLL{MULTI_NO_VSCROLL | MULTI_NO_HSCROLL};
 
 
 ////////////////////////////////////////////////
 // GG::MultiEdit
 ////////////////////////////////////////////////
-// static(s)
-const std::size_t MultiEdit::ALL_LINES = std::numeric_limits<std::size_t>::max();
-const unsigned int MultiEdit::SCROLL_WIDTH = 14;
-const unsigned int MultiEdit::BORDER_THICK = 2;
-
 MultiEdit::MultiEdit(std::string str, const std::shared_ptr<Font>& font, Clr color,
                      Flags<MultiEditStyle> style/* = MULTI_LINEWRAP*/,
                      Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
@@ -97,9 +95,7 @@ MultiEdit::MultiEdit(std::string str, const std::shared_ptr<Font>& font, Clr col
     m_cursor_begin(0, CP0),
     m_cursor_end(0, CP0),
     m_max_lines_history(ALL_LINES)
-{
-    SetColor(color);
-}
+{ SetColor(color); }
 
  void MultiEdit::CompleteConstruction()
 {

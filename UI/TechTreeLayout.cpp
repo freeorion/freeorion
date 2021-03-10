@@ -6,8 +6,8 @@
 #include <cmath>
 
 namespace  {
-    const int NODE_CELL_HEIGHT = 2;
-    const int LINE_CELL_HEIGHT = 1;
+    constexpr int NODE_CELL_HEIGHT = 2;
+    constexpr int LINE_CELL_HEIGHT = 1;
 }
 
 

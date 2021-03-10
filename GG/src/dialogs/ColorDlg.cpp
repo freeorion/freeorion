@@ -144,9 +144,9 @@ HueSaturationPicker::HueSaturationPicker(X x, Y y, X w, Y h) :
     m_hue(0.0),
     m_saturation(0.0)
 {
-    const int SAMPLES = 100;
-    const double INCREMENT = 1.0 / (SAMPLES + 1);
-    const double VALUE = 1.0;
+    constexpr int SAMPLES = 100;
+    constexpr double INCREMENT = 1.0 / (SAMPLES + 1);
+    constexpr double VALUE = 1.0;
     m_vertices.resize(SAMPLES, std::vector<std::pair<double, double>>(2 * (SAMPLES + 1)));
     m_colors.resize(SAMPLES, std::vector<Clr>(2 * (SAMPLES + 1)));
     for (int col = 0; col < SAMPLES; ++col) {
@@ -490,8 +490,8 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
 
     const auto& style = GetStyleFactory();
 
-    const int COLOR_BUTTON_ROWS = 4;
-    const int COLOR_BUTTON_COLS = 5;
+    constexpr int COLOR_BUTTON_ROWS = 4;
+    constexpr int COLOR_BUTTON_COLS = 5;
     if (s_custom_colors.empty()) {
         s_custom_colors = { GG::CLR_WHITE,      GG::CLR_LIGHT_GRAY, GG::CLR_GRAY,       GG::CLR_DARK_GRAY,  GG::CLR_BLACK,
                             GG::CLR_PINK,       GG::CLR_RED,        GG::CLR_DARK_RED,   GG::CLR_MAGENTA,    GG::CLR_PURPLE,
@@ -507,7 +507,7 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_value_picker = Wnd::Create<ValuePicker>(X(320), Y(10), X(25), Y(300), m_text_color);
     m_value_picker->SetHueSaturation(m_current_color.h, m_current_color.s);
     m_value_picker->SetValue(m_current_color.v);
-    const int HUE_SATURATION_PICKER_SIZE = 200;
+    constexpr int HUE_SATURATION_PICKER_SIZE = 200;
     m_pickers_layout = Wnd::Create<Layout>(X0, Y0, X(HUE_SATURATION_PICKER_SIZE + 30),
                                            Y(HUE_SATURATION_PICKER_SIZE),
                                            1, 2, 0, 5);

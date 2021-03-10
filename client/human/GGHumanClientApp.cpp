@@ -119,12 +119,12 @@ namespace {
     /** These options can only be validated after the graphics system (SDL) is initialized,
         so that display size can be detected
      */
-    const int DEFAULT_WIDTH = 1024;
-    const int DEFAULT_HEIGHT = 768;
-    const int DEFAULT_LEFT = static_cast<int>(SDL_WINDOWPOS_CENTERED);
-    const int DEFAULT_TOP = 50;
-    const int MIN_WIDTH = 800;
-    const int MIN_HEIGHT = 600;
+    constexpr int DEFAULT_WIDTH = 1024;
+    constexpr int DEFAULT_HEIGHT = 768;
+    constexpr int DEFAULT_LEFT = static_cast<int>(SDL_WINDOWPOS_CENTERED);
+    constexpr int DEFAULT_TOP = 50;
+    constexpr int MIN_WIDTH = 800;
+    constexpr int MIN_HEIGHT = 600;
 
     /** Sets the default and current values for the string option @p option_name to @p option_value if initially empty */
     void SetEmptyStringDefaultOption(const std::string& option_name, const std::string& option_value) {

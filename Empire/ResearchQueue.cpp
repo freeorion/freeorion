@@ -175,7 +175,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         return;    // nothing more to do...
     }
 
-    const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
+    constexpr int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
 
     // initialize status of everything to never getting done
     for (Element& element : m_queue)
@@ -209,7 +209,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     // finished in simulation by turn TOO_MANY_TURNS will be left marked as never to be finished
     std::vector<int> dpsimulation_results(m_queue.size(), -1);
 
-    const int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
+    constexpr int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
 
     std::map<std::string, std::set<std::string>> waiting_for_prereqs;
     std::set<int> dp_researchable_techs;

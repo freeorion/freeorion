@@ -4,13 +4,9 @@
 
 namespace {
     /** Returns height of rows of text in InfoTextBrowseWnd. */
-    int IconTextBrowseWndRowHeight() {
-        return ClientUI::Pts()*3/2;
-    }
-
-    const int       EDGE_PAD(3);
-
-    const GG::Y     ICON_BROWSE_ICON_HEIGHT(64);
+    int IconTextBrowseWndRowHeight() { return ClientUI::Pts()*3/2; }
+    constexpr int   EDGE_PAD(3);
+    constexpr GG::Y ICON_BROWSE_ICON_HEIGHT(64);
 }
 
 TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& main_text, GG::X w /* = GG::X(200) */) :

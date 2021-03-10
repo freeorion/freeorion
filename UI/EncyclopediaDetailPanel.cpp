@@ -769,8 +769,8 @@ EncyclopediaDetailPanel::~EncyclopediaDetailPanel()
 {}
 
 namespace {
-    const int BTN_WIDTH = 36;
-    const int PAD = 2;
+    constexpr int BTN_WIDTH = 36;
+    constexpr int PAD = 2;
 
     int IconSize() {
         const int NAME_PTS = ClientUI::TitlePts();

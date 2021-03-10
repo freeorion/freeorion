@@ -368,7 +368,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     m_row_offset = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
     m_buttons_per_row = std::max(Value(USABLE_WIDTH / (m_col_offset)), 1);
 
-    const int NUM_NON_CATEGORY_BUTTONS = 6;  //  ALL, Locked, Partial, Unlocked, Complete, ViewType
+    constexpr int NUM_NON_CATEGORY_BUTTONS = 6;  //  ALL, Locked, Partial, Unlocked, Complete, ViewType
 
     // place category buttons: fill each row completely before starting next row
     int row = 0, col = -1;
@@ -727,7 +727,7 @@ bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const {
 void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
     GG::Wnd::PreRender();
 
-    const int PAD = 8;
+    constexpr int PAD = 8;
     GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
     GG::Y text_top(0);
     GG::X text_width(TechPanelWidth() - text_left);
@@ -777,7 +777,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::Render() {
-    const int PAD = 8;
+    constexpr int PAD = 8;
     GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
     GG::Y text_top(0);
     GG::X text_width(TechPanelWidth() - text_left);
@@ -964,7 +964,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
         }
 
         if (m_unlock_icons.empty()) {
-            const int PAD = 8;
+            constexpr int PAD = 8;
             GG::X icon_left(GG::X(Value(TechPanelHeight())) + PAD*3/2);
             GG::Y icon_height = TechPanelHeight()/2;
             GG::X icon_width = GG::X(Value(icon_height));

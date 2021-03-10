@@ -323,9 +323,9 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow
     //////////////////////////////////////////////////
-    const int MARGIN = 2;
-    const GG::X X_MARGIN = GG::X(MARGIN);
-    const GG::Y Y_MARGIN = GG::Y(MARGIN);
+    constexpr int MARGIN = 2;
+    constexpr GG::X X_MARGIN = GG::X(MARGIN);
+    constexpr GG::Y Y_MARGIN = GG::Y(MARGIN);
 
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ProductionQueue::Element& elem_, int queue_index_) :
@@ -645,7 +645,7 @@ namespace {
     }
 
     void QueueProductionItemPanel::Draw(GG::Clr clr, bool fill) {
-        const int CORNER_RADIUS = 7;
+        constexpr int CORNER_RADIUS = 7;
         glColor(clr);
         GG::Pt LINE_WIDTH(GG::X(3), GG::Y0);
         PartlyRoundedRect(UpperLeft(), LowerRight() - LINE_WIDTH, CORNER_RADIUS, true, false, true, false, fill);

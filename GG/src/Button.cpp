@@ -455,7 +455,7 @@ BeveledCheckBoxRepresenter::BeveledCheckBoxRepresenter(Clr interior/* = CLR_ZERO
 
 void BeveledCheckBoxRepresenter::Render(const GG::StateButton& button) const
 {
-    const int BEVEL = 2;
+    constexpr int BEVEL = 2;
 
     // draw button
     Pt cl_ul = button.ClientUpperLeft();
@@ -491,7 +491,7 @@ BeveledRadioRepresenter::BeveledRadioRepresenter(Clr interior/* = CLR_ZERO*/):
 
 void BeveledRadioRepresenter::Render(const GG::StateButton& button) const
 {
-    const int BEVEL = 2;
+    constexpr int BEVEL = 2;
 
     // draw button
     Pt cl_ul = button.ClientUpperLeft();
@@ -526,7 +526,7 @@ Pt BeveledTabRepresenter::MinUsableSize(const StateButton& button) const
 ////////////////////////////////////////////////
 void BeveledTabRepresenter::Render(const StateButton& button) const
 {
-    const int BEVEL = 2;
+    constexpr int BEVEL = 2;
 
     // draw button
     Pt cl_ul = button.ClientUpperLeft();

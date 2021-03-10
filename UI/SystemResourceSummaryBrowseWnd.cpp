@@ -79,7 +79,8 @@ namespace {
         return 0.0;
     }
 
-    const int       EDGE_PAD(3);
+    constexpr int EDGE_PAD(3);
+
     GG::X LabelWidth()
     { return GG::X(ClientUI::Pts()*18); }
 

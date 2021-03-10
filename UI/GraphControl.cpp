@@ -183,7 +183,7 @@ void GraphControl::Render() {
     if (!m_show_lines && !m_show_points)
         return;
 
-    const int PAD = 1;
+    constexpr int PAD = 1;
     const int WIDTH = Value(Width()) - 2*PAD;
     const int HEIGHT = Value(Height()) - 2*PAD;
 
@@ -237,7 +237,7 @@ void GraphControl::Render() {
 }
 
 void GraphControl::DoLayout() {
-    const int PAD = 1;
+    constexpr int PAD = 1;
     const int WIDTH = Value(Width()) - 2*PAD;
     const int HEIGHT = Value(Height()) - 2*PAD;
     m_vert_buf.clear();

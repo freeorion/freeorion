@@ -124,7 +124,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
-    const int MARGIN = 2;
+    constexpr int MARGIN = 2;
 
     QueueTechPanel::QueueTechPanel(GG::X x, GG::Y y, GG::X w, const std::string& tech_name, double turn_spending,
                                    int turns_left, double turns_completed, int empire_id, bool paused) :
@@ -246,7 +246,7 @@ namespace {
     }
 
     void QueueTechPanel::Draw(GG::Clr clr, bool fill) {
-        const int CORNER_RADIUS = 7;
+        constexpr int CORNER_RADIUS = 7;
         glColor(clr);
         GG::Pt LINE_WIDTH(GG::X(3), GG::Y0);
         PartlyRoundedRect(UpperLeft(), LowerRight() - LINE_WIDTH, CORNER_RADIUS, true, false, true, false, fill);

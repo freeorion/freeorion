@@ -38,7 +38,7 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, std::string msg, const std::shared_ptr<
     else if (3 < buttons)
         buttons = 3;
 
-    const int SPACING = 10;
+    constexpr int SPACING = 10;
     const Y BUTTON_HEIGHT = font->Height() + 10;
 
     auto button_layout = Wnd::Create<Layout>(X0, Y0, X1, Y1, 1, buttons, 0, 10);

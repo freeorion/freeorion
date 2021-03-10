@@ -61,9 +61,9 @@ namespace {
         "number_of_empires", "number_of_humans"
     };
 
-    const unsigned int VALID_PREVIEW_COLUMN_COUNT = sizeof(VALID_PREVIEW_COLUMNS) / sizeof(std::string);
+    constexpr unsigned int VALID_PREVIEW_COLUMN_COUNT = sizeof(VALID_PREVIEW_COLUMNS) / sizeof(std::string);
 
-    const int WHEEL_INCREMENT = 80;
+    constexpr int WHEEL_INCREMENT = 80;
 
     // command-line options
     void AddOptions(OptionsDB& db) {
