@@ -50,12 +50,6 @@ namespace {
     }
 }
 
-////////////////////////////////////////////////
-// Free Functions                             //
-////////////////////////////////////////////////
-const ShipDesign* GetShipDesign(int ship_design_id)
-{ return GetUniverse().GetShipDesign(ship_design_id); }
-
 
 ////////////////////////////////////////////////
 // CommonParams
@@ -86,7 +80,7 @@ CommonParams::~CommonParams() {}
 
 
 /////////////////////////////////////
-// ParsedShipDesign     //
+//       ParsedShipDesign          //
 /////////////////////////////////////
 ParsedShipDesign::ParsedShipDesign(
     std::string&& name, std::string&& description, int designed_on_turn,
@@ -959,8 +953,6 @@ void PredefinedShipDesignManager::CheckPendingDesignsTypes() const {
 PredefinedShipDesignManager& GetPredefinedShipDesignManager()
 { return PredefinedShipDesignManager::GetPredefinedShipDesignManager(); }
 
-const ShipDesign* GetPredefinedShipDesign(const std::string& name)
-{ return GetUniverse().GetGenericShipDesign(name); }
 
 std::tuple<
     bool,

@@ -235,12 +235,8 @@ private:
 };
 
 ///< Returns true if the two designs have the same hull and parts.
-FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second);
+FO_COMMON_API bool operator==(const ShipDesign& first, const ShipDesign& second);
 
-/** Returns the ShipDesign specification object with id \a ship_design_id.  If
-  * no such ShipDesign is present in the Universe (because it doesn't exist,
-  * or isn't know to this client), 0 is returned instead. */
-FO_COMMON_API const ShipDesign* GetShipDesign(int ship_design_id);
 
 class FO_COMMON_API PredefinedShipDesignManager {
 public:
@@ -311,10 +307,6 @@ private:
 
 /** returns the singleton predefined ship design manager type manager */
 FO_COMMON_API PredefinedShipDesignManager& GetPredefinedShipDesignManager();
-
-/** Returns the predefined ShipDesign with the name \a name.  If no such
-  * ship design exists, 0 is returned instead. */
-FO_COMMON_API const ShipDesign* GetPredefinedShipDesign(const std::string& name);
 
 
 /** Load all ship designs in \p parsed and return a tuple is_error, the map
