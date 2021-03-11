@@ -275,23 +275,23 @@ namespace {
         for (auto latitude : boost::irange<size_t>(0, elevation.size() - 1)) {
             glBegin(GL_QUAD_STRIP);
             for (auto longitude : boost::irange<size_t>(0, azimuth.size())) {
-                glNormal3f(static_cast<GLfloat>(azimuth[longitude].sin * elevation[latitude+1].sin),
-                           static_cast<GLfloat>(azimuth[longitude].cos * elevation[latitude+1].sin),
-                           static_cast<GLfloat>(elevation[latitude+1].cos));
-                glTexCoord2f(1 - static_cast<GLfloat>(longitude / (azimuth.size() - 1)),
-                             1 - static_cast<GLfloat>((latitude+1) / (elevation.size() - 1)));
-                glVertex3f(static_cast<GLfloat>(azimuth[longitude].sin * elevation[latitude+1].sin * radius),
-                           static_cast<GLfloat>(azimuth[longitude].cos * elevation[latitude+1].sin * radius),
-                           static_cast<GLfloat>(elevation[latitude+1].cos * radius));
+                glNormal3f(azimuth[longitude].sin * elevation[latitude+1].sin,
+                           azimuth[longitude].cos * elevation[latitude+1].sin,
+                           elevation[latitude+1].cos);
+                glTexCoord2f(1 - (float)(longitude) / (azimuth.size() - 1),
+                             1 - (float)(latitude+1) / (elevation.size() - 1));
+                glVertex3f(azimuth[longitude].sin * elevation[latitude+1].sin * radius,
+                           azimuth[longitude].cos * elevation[latitude+1].sin * radius,
+                           elevation[latitude+1].cos * radius);
 
-                glNormal3f(static_cast<GLfloat>(azimuth[longitude].sin * elevation[latitude].sin),
-                           static_cast<GLfloat>(azimuth[longitude].cos * elevation[latitude].sin),
-                           static_cast<GLfloat>(elevation[latitude].cos));
-                glTexCoord2f(1 - static_cast<GLfloat>(longitude / (azimuth.size() - 1)),
-                             1 - static_cast<GLfloat>(latitude / (elevation.size() - 1)));
-                glVertex3f(static_cast<GLfloat>(azimuth[longitude].sin * elevation[latitude].sin * radius),
-                           static_cast<GLfloat>(azimuth[longitude].cos * elevation[latitude].sin * radius),
-                           static_cast<GLfloat>(elevation[latitude].cos * radius));
+                glNormal3f(azimuth[longitude].sin * elevation[latitude].sin,
+                           azimuth[longitude].cos * elevation[latitude].sin,
+                           elevation[latitude].cos);
+                glTexCoord2f(1 - (float)(longitude) / (azimuth.size() - 1),
+                             1 - (float)(latitude) / (elevation.size() - 1));
+                glVertex3f(azimuth[longitude].sin * elevation[latitude].sin * radius,
+                           azimuth[longitude].cos * elevation[latitude].sin * radius,
+                           elevation[latitude].cos * radius);
             }
             glEnd();
         }
