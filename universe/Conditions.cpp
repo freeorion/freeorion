@@ -4561,7 +4561,7 @@ namespace {
                         continue;
                 } else if (!name.empty()) {
                     // ... or accept design by predefined name
-                    const ShipDesign* design = GetShipDesign(element.item.design_id);   // TODO: put ship design info in ScriptingContext
+                    const ShipDesign* design = GetUniverse().GetShipDesign(element.item.design_id);   // TODO: put ship design info in ScriptingContext
                     if (!design || name != design->Name(false))
                         continue;
                 }
@@ -7938,7 +7938,7 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
         int jump_limit = m_jumps->Eval(parent_context);
         ObjectSet &from_set(search_domain == SearchDomain::MATCHES ? matches : non_matches);
 
-        std::tie(matches, non_matches) = GetUniverse().GetPathfinder()->WithinJumpsOfOthers(  // TODO: put PathFinder in ScriptingContext
+        std::tie(matches, non_matches) = parent_context.ContextUniverse().GetPathfinder()->WithinJumpsOfOthers(
             jump_limit, parent_context.ContextObjects(), from_set, subcondition_matches);
 
     } else {
@@ -7985,8 +7985,8 @@ bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     ObjectSet near_objs;
 
     std::tie(near_objs, std::ignore) =
-        GetUniverse().GetPathfinder()->WithinJumpsOfOthers(jump_limit, local_context.ContextObjects(),
-                                                           candidate_set, subcondition_matches); // TODO: get PathFinder from ScriptingContext
+        local_context.ContextUniverse().GetPathfinder()->WithinJumpsOfOthers(
+            jump_limit, local_context.ContextObjects(), candidate_set, subcondition_matches);
     return !near_objs.empty();
 }
 
