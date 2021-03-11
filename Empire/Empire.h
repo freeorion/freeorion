@@ -286,11 +286,11 @@ public:
     void AddExploredSystem(int ID);                  ///< Inserts the given ID into the Empire's list of explored systems.
 
     /** inserts given design id into the empire's set of designs in front of next design */
-    void AddShipDesign(int ship_design_id, int next_design_id = INVALID_DESIGN_ID);
-    int AddShipDesign(ShipDesign* ship_design);     ///< inserts given ShipDesign into the Universe, adds the design's id to the Empire's set of ids, and returns the new design's id, which is INVALID_OBJECT_ID on failure.  If successful, universe takes ownership of passed ShipDesign.
+    void AddShipDesign(int ship_design_id, const Universe& universe, int next_design_id = INVALID_DESIGN_ID);
+    int AddShipDesign(ShipDesign* ship_design, Universe& universe); ///< inserts given ShipDesign into the Universe, adds the design's id to the Empire's set of ids, and returns the new design's id, which is INVALID_OBJECT_ID on failure.  If successful, universe takes ownership of passed ShipDesign.
 
-    std::string NewShipName();                              ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
-    void Eliminate(EmpireManager& empires = Empires());         ///< Marks empire as eliminated and cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
+    std::string NewShipName();                                      ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
+    void Eliminate(EmpireManager& empires = Empires());             ///< Marks empire as eliminated and cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
     /** Marks this empire as having won for this reason, and sends the appropriate sitreps */
     void Win(const std::string& reason, EmpireManager& empires = Empires());
     void SetReady(bool ready);                       ///< Marks this empire with readiness status

@@ -1322,7 +1322,7 @@ void ShipDesignOrder::ExecuteImpl() const {
         }
 
         universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());
-        empire->AddShipDesign(m_design_id);
+        empire->AddShipDesign(m_design_id, universe);
 
     } else if (m_update_name_or_description) {
         // player is ordering empire to rename a design
@@ -1364,7 +1364,7 @@ void ShipDesignOrder::ExecuteImpl() const {
         // check if the empire can see any objects that have this design (thus enabling it to be copied)
         const std::set<int>& empire_known_design_ids = universe.EmpireKnownShipDesignIDs(EmpireID());
         if (empire_known_design_ids.count(m_design_id)) {
-            empire->AddShipDesign(m_design_id);
+            empire->AddShipDesign(m_design_id, universe);
         } else {
             ErrorLogger() << "Empire, " << EmpireID() << ", tried to remember a ShipDesign id = " << m_design_id
                           << " that this empire hasn't seen";

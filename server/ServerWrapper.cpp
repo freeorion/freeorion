@@ -326,7 +326,7 @@ namespace {
         }
 
         universe.SetEmpireKnowledgeOfShipDesign(ship_design->ID(), empire_id);
-        empire->AddShipDesign(ship_design->ID());
+        empire->AddShipDesign(ship_design->ID(), universe);
     }
 
     // Wrapper for preunlocked items
