@@ -40,7 +40,7 @@ namespace {
         std::vector<int> result;
         result.reserve(universe.Objects().size<T>());
         for (const auto& obj : universe.Objects().all<T>())
-            result.emplace_back(obj->ID());
+            result.push_back(obj->ID());
         return result;
     }
 
@@ -49,7 +49,7 @@ namespace {
         std::vector<std::string> retval;
         retval.reserve(species.Foci().size());
         for (const FocusType& focus : species.Foci())
-            retval.emplace_back(focus.Name());
+            retval.push_back(focus.Name());
         return retval;
     }
 
@@ -115,7 +115,7 @@ namespace {
         std::vector<std::string> retval;
         retval.reserve(object.Specials().size());
         for (const auto& special : object.Specials())
-            retval.emplace_back(special.first);
+            retval.push_back(special.first);
         return retval;
     }
 
