@@ -1919,6 +1919,30 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     m_player_empire_ids[player_connection->PlayerID()] = empire_id;
     empire->SetAuthenticated(player_connection->IsAuthenticated());
 
+    // drop previous connection to that empire
+    int previous_player_id = EmpirePlayerID(empire_id);
+    if (previous_player_id != Networking::INVALID_PLAYER_ID) {
+        WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
+                     << " previous player " << previous_player_id
+                     << " was kicked.";
+        DropPlayerEmpireLink(previous_player_id);
+        auto previous_it = m_networking.GetPlayer(previous_player_id);
+        if (previous_it != m_networking.established_end()) {
+            const Networking::ClientType previous_client_type = (*previous_it)->GetClientType();
+            const std::string previous_player_name = (*previous_it)->PlayerName();
+            m_networking.Disconnect(previous_player_id);
+            if (previous_client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
+                auto it = m_ai_client_processes.find(previous_player_name);
+                if (it != m_ai_client_processes.end()) {
+                    it->second.Kill();
+                    m_ai_client_processes.erase(it);
+                }
+            }
+        }
+    }
+
+    InfoLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id << " connected to " << player_connection->PlayerID();
+
     const OrderSet dummy;
     const OrderSet& orders = orders_it->second && orders_it->second->orders ? *(orders_it->second->orders) : dummy;
     const SaveGameUIData* ui_data = orders_it->second ? orders_it->second->ui_data.get() : nullptr;
