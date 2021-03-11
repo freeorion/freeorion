@@ -75,9 +75,23 @@ namespace {
         return WithTags(GetVisibleObjectName(obj), tag, data);
     }
 
+    //! Returns substitution string for an in-Universe ship design tag
+    boost::optional<std::string> ShipDesignString(const std::string& data) {
+        int id = INVALID_DESIGN_ID;
+        try {
+            id = boost::lexical_cast<int>(data);
+        } catch (...) {
+            return boost::none;
+        }
+        if (const auto design = GetUniverse().GetShipDesign(id))
+            return WithTags(design->Name(), VarText::DESIGN_ID_TAG, data);
+
+        return UserString("FW_UNKNOWN_DESIGN_NAME");
+    }
+
     //! Returns substitution string for a predefined ship design tag
     boost::optional<std::string> PredefinedShipDesignString(const std::string& data) {
-        const ShipDesign* design = GetPredefinedShipDesign(data);
+        const ShipDesign* design = GetUniverse().GetGenericShipDesign(data);
         if (!design)
             return boost::none;
 
@@ -100,24 +114,18 @@ namespace {
         return retval;
     }
 
-    //! Returns substitution string for a ship design tag
-    template <typename T,T* (*GetByID)(int)>
-    boost::optional<std::string> IDString(const std::string& data, const std::string& tag) {
-        int id{};
+    //! Returns substitution string for an empire
+    boost::optional<std::string> EmpireString(const std::string& data) {
+        int id = ALL_EMPIRES;
         try {
             id = boost::lexical_cast<int>(data);
         } catch (...) {
             return boost::none;
         }
-        T* object = GetByID(id);
-        if (!object) {
-            if (std::is_same<T, const ShipDesign>::value)
-                return UserString("FW_UNKNOWN_DESIGN_NAME");
-            else
-                return boost::none;
-        }
+        if (const auto empire = GetEmpire(id))
+            return WithTags(empire->Name(), VarText::EMPIRE_ID_TAG, data);
 
-        return WithTags(object->Name(), tag, data);
+        return boost::none;
     }
 
     //! Returns substitution string for an empire tag
@@ -169,17 +177,16 @@ namespace {
             {VarText::FIELD_TYPE_TAG, [](const std::string& data)
                 { return NameString<FieldType, GetFieldType>(data, VarText::FIELD_TYPE_TAG); }},
             {VarText::METER_TYPE_TAG, MeterTypeString},
-            {VarText::DESIGN_ID_TAG, [](const std::string& data)
-                { return IDString<const ShipDesign, GetShipDesign>(data, VarText::DESIGN_ID_TAG); }},
+            {VarText::DESIGN_ID_TAG, ShipDesignString},
             {VarText::PREDEFINED_DESIGN_TAG, PredefinedShipDesignString},
-            {VarText::EMPIRE_ID_TAG, [](const std::string& data)
-                { return IDString<Empire, GetEmpire>(data, VarText::EMPIRE_ID_TAG); }},
+            {VarText::EMPIRE_ID_TAG, EmpireString},
             {VarText::FOCS_VALUE_TAG, [](const std::string& data) -> boost::optional<std::string>
-             { const ValueRef::ValueRefBase* vr = GetValueRefBase(data);
-               if (vr) {
-                   return WithTags(UserString(data), VarText::FOCS_VALUE_TAG, vr->EvalAsString());
-               } else
-                   return WithTags(data, VarText::FOCS_VALUE_TAG, UserString("UNKNOWN_VALUE_REF_NAME")); }},
+                {
+                    if (const ValueRef::ValueRefBase* vr = GetValueRefBase(data))
+                        return WithTags(UserString(data), VarText::FOCS_VALUE_TAG, vr->EvalAsString());
+                    else
+                        return WithTags(data, VarText::FOCS_VALUE_TAG, UserString("UNKNOWN_VALUE_REF_NAME"));
+                }},
         };
 
         return substitute_map;
@@ -189,8 +196,7 @@ namespace {
     //! Looks up the given match in the Universe and returns the Universe
     //! entities value.
     struct Substitute {
-        Substitute(const std::map<std::string, std::string>& variables,
-                   bool& valid) :
+        Substitute(const std::map<std::string, std::string>& variables, bool& valid) :
             m_variables(variables),
             m_valid(valid)
         {}
