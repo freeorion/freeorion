@@ -929,11 +929,11 @@ namespace {
         }
     }
 
-    std::vector<PartAttackInfo> ShipWeaponsStrengths(const std::shared_ptr<const Ship>& ship) {
+    std::vector<PartAttackInfo> ShipWeaponsStrengths(const std::shared_ptr<const Ship>& ship, const Universe& universe) {
         std::vector<PartAttackInfo> retval;
         if (!ship)
             return retval;
-        const ShipDesign* design = GetShipDesign(ship->DesignID()); // TODO: Get from ScriptingContext / CombatInfo ?
+        const ShipDesign* design = universe.GetShipDesign(ship->DesignID());
         if (!design)
             return retval;
 
@@ -1034,7 +1034,7 @@ namespace {
                 if (combat_info.destroyed_object_ids.count(ship->ID()))
                     continue;   // destroyed objects can't launch fighters
 
-                auto weapons = ShipWeaponsStrengths(ship);
+                auto weapons = ShipWeaponsStrengths(ship, combat_info.universe);
                 for (const PartAttackInfo& weapon : weapons) {
                     if (weapon.part_class == ShipPartClass::PC_FIGHTER_BAY &&
                         weapon.fighters_launched > 0 &&
@@ -1342,7 +1342,7 @@ namespace {
         }
     };
 
-    std::vector<PartAttackInfo> GetWeapons(const std::shared_ptr<UniverseObject>& attacker) {
+    std::vector<PartAttackInfo> GetWeapons(const std::shared_ptr<UniverseObject>& attacker, const Universe& universe) {
         // Loop over weapons of attacking object. Each gets a shot at a
         // randomly selected target object, from the objects in the combat
         // that match the weapon's targetting condition.
@@ -1353,7 +1353,7 @@ namespace {
         auto attack_fighter = std::dynamic_pointer_cast<Fighter>(attacker);
 
         if (attack_ship) {
-            weapons = ShipWeaponsStrengths(attack_ship);    // includes info about fighter launches with ShipPartClass::PC_FIGHTER_BAY part class, and direct fire weapons with ShipPartClass::PC_DIRECT_WEAPON part class
+            weapons = ShipWeaponsStrengths(attack_ship, universe); // includes info about fighter launches with ShipPartClass::PC_FIGHTER_BAY part class, and direct fire weapons with ShipPartClass::PC_DIRECT_WEAPON part class
             for (PartAttackInfo& part : weapons) {
                 if (part.part_class == ShipPartClass::PC_DIRECT_WEAPON) {
                     DebugLogger(combat) << "Attacker Ship has direct weapon: " << part.ship_part_name
@@ -1382,18 +1382,18 @@ namespace {
     }
 
     const Condition::Condition* SpeciesTargettingCondition(
-        const std::shared_ptr<UniverseObject>& attacker)
+        const std::shared_ptr<UniverseObject>& attacker, const SpeciesManager& species_manager)
     {
         if (!attacker)
             return if_source_is_planet_then_ships_else_all.get();
 
         const Species* species = nullptr;
         if (auto attack_ship = std::dynamic_pointer_cast<Ship>(attacker))
-            species = GetSpecies(attack_ship->SpeciesName());
+            species = species_manager.GetSpecies(attack_ship->SpeciesName());
         else if (auto attack_planet = std::dynamic_pointer_cast<Planet>(attacker))
-            species = GetSpecies(attack_planet->SpeciesName());
+            species = species_manager.GetSpecies(attack_planet->SpeciesName());
         else if (auto attack_fighter = std::dynamic_pointer_cast<Fighter>(attacker))
-            species = GetSpecies(attack_fighter->SpeciesName());
+            species = species_manager.GetSpecies(attack_fighter->SpeciesName());
 
         if (!species || !species->CombatTargets())
             return if_source_is_planet_then_ships_else_all.get();
@@ -1416,14 +1416,14 @@ namespace {
                          WeaponsPlatformEvent::WeaponsPlatformEventPtr& platform_event,
                          std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
-        auto weapons = GetWeapons(attacker);
+        auto weapons = GetWeapons(attacker, combat_state.combat_info.universe);
         if (weapons.empty()) {
             DebugLogger(combat) << "Attacker " << attacker->Name() << " ("
                                 << attacker->ID() << ") has no weapons, so can't attack";
             return;   // no ability to attack!
         }
 
-        const auto* species_targetting_condition = SpeciesTargettingCondition(attacker);
+        const auto* species_targetting_condition = SpeciesTargettingCondition(attacker, combat_state.combat_info.species);
         if (!species_targetting_condition) {
             ErrorLogger(combat) << "Null Species Targetting Condition...!?";
             return;
@@ -1816,10 +1816,9 @@ namespace {
                     DebugLogger() << "Attacker " << attacker->Name() << " could not attack.";
                     continue;
                 }
-                auto weapons = GetWeapons(attacker);  // includes info about fighter launches with ShipPartClass::PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with ShipPartClass::PC_DIRECT_WEAPON part class
+                auto weapons = GetWeapons(attacker, combat_info.universe); // includes info about fighter launches with ShipPartClass::PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with ShipPartClass::PC_DIRECT_WEAPON part class
 
-                LaunchFighters(attacker, weapons, combat_state, round++,
-                               launches_event);
+                LaunchFighters(attacker, weapons, combat_state, round++, launches_event);
 
                 DebugLogger(combat) << "Attacker: " << attacker->Name();
 
