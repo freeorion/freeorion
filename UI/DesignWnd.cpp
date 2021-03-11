@@ -341,7 +341,7 @@ namespace {
 
         const auto& current_ids = GetDisplayedDesignsManager().AllOrderedIDs();
         const auto is_same_design = [&design](const int id) {
-            auto current_design = GetShipDesign(id);
+            auto current_design = GetUniverse().GetShipDesign(id);
             return current_design && *current_design == *design;
         };
 
@@ -408,7 +408,7 @@ namespace {
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
         } else {
-            const auto design = GetShipDesign(design_id);
+            const auto design = GetUniverse().GetShipDesign(design_id);
             if (!design) {
                 ErrorLogger() << "Attempted to toggle obsolete state of design id "
                               << design_id << " which is unknown to the server";
@@ -788,7 +788,7 @@ namespace {
         if (it_id == m_id_to_obsolete_and_loc.end())
             return boost::none;
 
-        const auto design = GetShipDesign(id);
+        const auto design = GetUniverse().GetShipDesign(id);
         if (!design) {
             ErrorLogger() << "DisplayedShipDesignManager::IsObsolete design id "
                           << id << " is unknown to the server";
@@ -2648,7 +2648,7 @@ void CompletedDesignsListBox::PopulateCore() {
         const auto& manager = GetDisplayedDesignsManager();
         for (int design_id : manager.AllOrderedIDs()) {
             try {
-                const ShipDesign* design = GetShipDesign(design_id);
+                const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
                 if (!design)
                     continue;
 
@@ -2777,7 +2777,7 @@ std::shared_ptr<BasesListBox::Row> CompletedDesignsListBox::ChildrenDraggedAwayC
         return nullptr;
 
     int design_id = design_row->DesignID();
-    const ShipDesign* design = GetShipDesign(design_id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
     if (!design) {
         ErrorLogger() << "Missing design with id " << design_id;
         return nullptr;
@@ -2819,7 +2819,7 @@ std::shared_ptr<BasesListBox::Row> MonstersListBox::ChildrenDraggedAwayCore(cons
         return nullptr;
 
     int design_id = design_row->DesignID();
-    const ShipDesign* design = GetShipDesign(design_id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
     if (!design) {
         ErrorLogger() << "Missing design with id " << design_id;
         return nullptr;
@@ -2837,7 +2837,7 @@ std::shared_ptr<BasesListBox::Row> AllDesignsListBox::ChildrenDraggedAwayCore(co
         return nullptr;
 
     int design_id = design_row->DesignID();
-    const ShipDesign* design = GetShipDesign(design_id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
     if (!design) {
         ErrorLogger() << "Missing design with id " << design_id;
         return nullptr;
@@ -2933,7 +2933,7 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG
     if (!design_row)
         return;
     int id = design_row->DesignID();
-    const ShipDesign* design = GetShipDesign(id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(id);
     if (!design)
         return;
 
@@ -2974,7 +2974,7 @@ void MonstersListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt
     if (!design_row)
         return;
     int id = design_row->DesignID();
-    const ShipDesign* design = GetShipDesign(id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(id);
     if (!design)
         return;
 
@@ -2988,7 +2988,7 @@ void AllDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (!design_row)
         return;
     int id = design_row->DesignID();
-    const ShipDesign* design = GetShipDesign(id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(id);
     if (!design)
         return;
 
@@ -3033,7 +3033,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
         return;
 
     const auto design_id = design_row->DesignID();
-    const auto design = GetShipDesign(design_id);
+    const auto design = GetUniverse().GetShipDesign(design_id);
     if (!design)
         return;
 
@@ -4101,7 +4101,7 @@ boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingCurrentDesign() 
     if (!m_replaced_design_id || !GetDisplayedDesignsManager().IsKnown(*m_replaced_design_id))
         return boost::none;
 
-    const auto maybe_design = GetShipDesign(*m_replaced_design_id);
+    const auto maybe_design = GetUniverse().GetShipDesign(*m_replaced_design_id);
     if (!maybe_design)
         return boost::none;
     return maybe_design;
@@ -4186,7 +4186,7 @@ boost::optional<const ShipDesign*> DesignWnd::MainPanel::CurrentDesignIsRegister
 
     if (const auto& cur_design = GetIncompleteDesign()) {
         for (const auto design_id : empire->ShipDesigns()) {
-            const auto ship_design = GetShipDesign(design_id);
+            const auto ship_design = GetUniverse().GetShipDesign(design_id);
             if (*ship_design == *cur_design.get())
                 return ship_design;
         }
@@ -4450,7 +4450,7 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
 }
 
 void DesignWnd::MainPanel::SetDesign(int design_id)
-{ SetDesign(GetShipDesign(design_id)); }
+{ SetDesign(GetUniverse().GetShipDesign(design_id)); }
 
 void DesignWnd::MainPanel::SetDesign(const boost::uuids::uuid& uuid)
 { SetDesign(GetSavedDesignsManager().GetDesign(uuid)); }
@@ -4847,7 +4847,9 @@ void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first, DropsAccep
         first->second = true;
 }
 
-void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) {
+void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+                                       GG::Flags<GG::ModKey> mod_keys)
+{
     if (wnds.size() != 1)
         ErrorLogger() << "DesignWnd::MainPanel::AcceptDrops given multiple wnds unexpectedly...";
 
@@ -4856,7 +4858,7 @@ void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, std::vector<std::shared
         return;
 
     if (const auto completed_design_row = dynamic_cast<const BasesListBox::CompletedDesignListBoxRow*>(wnd.get())) {
-        SetDesign(GetShipDesign(completed_design_row->DesignID()));
+        SetDesign(GetUniverse().GetShipDesign(completed_design_row->DesignID()));
     }
     else if (const auto hullandparts_row = dynamic_cast<const BasesListBox::HullAndPartsListBoxRow*>(wnd.get())) {
         const std::string& hull = hullandparts_row->Hull();

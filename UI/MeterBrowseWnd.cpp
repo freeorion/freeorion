@@ -527,7 +527,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         return;
     }
 
-    const ShipDesign* design = GetShipDesign(ship->DesignID());
+    const ShipDesign* design = GetUniverse().GetShipDesign(ship->DesignID());
     if (!design)
         return;
 
@@ -764,7 +764,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;
     }
-    const ShipDesign* design = GetShipDesign(ship->DesignID());
+    const ShipDesign* design = GetUniverse().GetShipDesign(ship->DesignID());
     if (!design)
         return;
     const std::vector<std::string>& parts = design->Parts();

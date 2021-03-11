@@ -161,7 +161,7 @@ namespace {
             case BuildType::BT_SHIP: {
                 texture = ClientUI::ShipDesignIcon(m_item.design_id);
                 desc_text = UserString("BT_SHIP");
-                const ShipDesign* design = GetShipDesign(m_item.design_id);
+                const ShipDesign* design = GetUniverse().GetShipDesign(m_item.design_id);
                 if (design)
                     name_text = design->Name(true);
                 break;
@@ -281,7 +281,7 @@ namespace {
         static const std::shared_ptr<Condition::Condition> can_colonize_cond =
             std::make_shared<Condition::CanColonize>();
 
-        if (const ShipDesign* ship_design = GetShipDesign(ship_design_id)) {
+        if (const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id)) {
             if (ship_design->CanColonize())
                 location_conditions.push_back(can_colonize_cond.get());
             if (const ShipHull* ship_hull = GetShipHull(ship_design->Hull()))
@@ -400,7 +400,7 @@ namespace {
 
         // production item is a ship
         if (item.build_type == BuildType::BT_SHIP) {
-            const ShipDesign* design = GetShipDesign(item.design_id);
+            const ShipDesign* design = GetUniverse().GetShipDesign(item.design_id);
             if (!design)
                 return nullptr;
 
@@ -940,7 +940,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!m_build_types_shown.count(build_type))
         return false;
 
-    const ShipDesign* design = GetShipDesign(design_id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
     if (!design || !design->Producible())
         return false;
 
@@ -1023,7 +1023,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         for (int ship_design_id : design_ids) {
             if (!BuildableItemVisible(BuildType::BT_SHIP, ship_design_id))
                 continue;
-            const ShipDesign* ship_design = GetShipDesign(ship_design_id);
+            const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
             if (!ship_design)
                 continue;
             timer.EnterSection(ship_design->Name());
@@ -1079,7 +1079,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterat
         DisplayBuildingTypeSignal(building_type);
 
     } else if (build_type == BuildType::BT_SHIP) {
-        const ShipDesign* design = GetShipDesign(item.design_id);
+        const ShipDesign* design = GetUniverse().GetShipDesign(item.design_id);
         if (!design) {
             ErrorLogger() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to find design with id " << item.design_id;
             return;
@@ -1114,7 +1114,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
     if (item.build_type == BuildType::BT_BUILDING) {
         item_name = item.name;
     } else if (item.build_type == BuildType::BT_SHIP) {
-        item_name = GetShipDesign(item.design_id)->Name(false);
+        item_name = GetUniverse().GetShipDesign(item.design_id)->Name(false);
     } else if (item.build_type == BuildType::BT_STOCKPILE) {
         item_name = UserStringNop("PROJECT_BT_STOCKPILE");
     } else {
@@ -1281,7 +1281,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
             assert(building_type);
             m_build_selector->DisplayBuildingTypeSignal(building_type);
         } else if (buildType == BuildType::BT_SHIP) {
-            const ShipDesign* design = GetShipDesign(queue[queue_idx].item.design_id);
+            const ShipDesign* design = GetUniverse().GetShipDesign(queue[queue_idx].item.design_id);
             assert(design);
             m_build_selector->DisplayShipDesignSignal(design);
         } else if (buildType == BuildType::BT_STOCKPILE) {

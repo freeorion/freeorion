@@ -1529,7 +1529,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             int key_int = -1;
             if (boost::istarts_with(variable_name, "ShipDesign")) {
                 // look up ship design id corresponding to specified predefined ship design name
-                const ShipDesign* design = GetPredefinedShipDesign(key_string);
+                const ShipDesign* design = context.ContextUniverse().GetGenericShipDesign(key_string);
                 if (design)
                     key_int = design->ID();
             }
@@ -1618,7 +1618,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (m_string_ref1)
             ship_part_name = m_string_ref1->Eval(context);
 
-        const ShipDesign* design = GetShipDesign(design_id);
+        const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
         if (!design)
             return 0;
 
@@ -1642,7 +1642,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return 0;
         }
 
-        const ShipDesign* design = GetShipDesign(design_id);
+        const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
         if (!design)
             return 0;
 
@@ -1729,7 +1729,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return 0;
         }
 
-        const ShipDesign* design = GetShipDesign(design_id);
+        const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
         if (!design)
             return 0;
 
@@ -1907,7 +1907,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (m_int_ref1)
             design_id = m_int_ref1->Eval(context);
 
-        const ShipDesign* design = GetShipDesign(design_id);
+        const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
         if (!design)
             return 0.0;
 
@@ -2684,7 +2684,7 @@ std::string NameLookup::Eval(const ScriptingContext& context) const {
         break;
     }
     case LookupType::SHIP_DESIGN_NAME: {
-        const ShipDesign* design = GetShipDesign(m_value_ref->Eval(context));
+        const ShipDesign* design = context.ContextUniverse().GetShipDesign(m_value_ref->Eval(context));
         return design ? design->Name() : "";
         break;
     }

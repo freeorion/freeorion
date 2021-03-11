@@ -727,7 +727,7 @@ std::set<int> Empire::AvailableShipDesigns() const {
 }
 
 bool Empire::ShipDesignAvailable(int ship_design_id) const {
-    const ShipDesign* design = GetShipDesign(ship_design_id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(ship_design_id); // TODO get from ScriptingContext
     return design ? ShipDesignAvailable(*design) : false;
 }
 
@@ -861,7 +861,7 @@ bool Empire::ProducibleItem(BuildType build_type, int design_id, int location,
         return false;
 
     // design must be known to this empire
-    const ShipDesign* ship_design = GetShipDesign(design_id);
+    const ShipDesign* ship_design = context.ContextUniverse().GetShipDesign(design_id);
     if (!ship_design || !ship_design->Producible())
         return false;
 
@@ -1848,7 +1848,7 @@ void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
     if (ship_design_id == next_design_id)
         return;
 
-    const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
+    const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id); // TODO: Get from context or parameter
     if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
         // design is valid, so just add the id to empire's set of ids that it knows about
         if (!m_known_ship_designs.count(ship_design_id)) {
@@ -2318,7 +2318,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
             // else give up...
             if (species_name.empty()) {
                 // only really a problem for colony ships, which need to have a species to function
-                const auto* design = GetShipDesign(elem.item.design_id);
+                const auto* design = context.ContextUniverse().GetShipDesign(elem.item.design_id);
                 if (!design) {
                     ErrorLogger() << "Couldn't get ShipDesign with id: " << elem.item.design_id;
                     break;
@@ -2354,7 +2354,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                 // everything that is traced with an associated max meter.
                 ship->SetShipMetersToMax();
                 // set ship speed so that it can be affected by non-zero speed checks
-                if (auto* design = GetShipDesign(elem.item.design_id))
+                if (auto* design = context.ContextUniverse().GetShipDesign(elem.item.design_id))
                     ship->GetMeter(MeterType::METER_SPEED)->Set(design->Speed(), design->Speed());
                 ship->BackPropagateMeters();
 
@@ -2641,7 +2641,7 @@ void Empire::UpdateOwnedObjectCounters(const ObjectMap& objects) {
     m_ship_parts_owned.clear();
     m_ship_part_class_owned.clear();
     for (const auto& design_count : m_ship_designs_owned) {
-        const ShipDesign* design = GetShipDesign(design_count.first);
+        const ShipDesign* design = GetUniverse().GetShipDesign(design_count.first); // TODO: pass in universe
         if (!design)
             continue;
 

@@ -344,7 +344,7 @@ std::shared_ptr<GG::Texture> ClientUI::HullIcon(const std::string& hull_name) {
 }
 
 std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
-    if (const ShipDesign* design = GetShipDesign(design_id)) {
+    if (const ShipDesign* design = GetUniverse().GetShipDesign(design_id)) {
         const std::string& icon_name = design->Icon();
         if (icon_name.empty())
             return ClientUI::HullIcon(design->Hull());
@@ -984,7 +984,7 @@ bool ClientUI::ZoomToFieldType(const std::string& field_type_name) {
 }
 
 bool ClientUI::ZoomToShipDesign(int design_id) {
-    if (!GetShipDesign(design_id))
+    if (!GetUniverse().GetShipDesign(design_id))
         return false;
     GetMapWnd()->ShowShipDesign(design_id);
     return true;

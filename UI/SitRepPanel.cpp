@@ -68,7 +68,7 @@ namespace {
             } else if (link_type == VarText::DESIGN_ID_TAG) {
                 ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(data));
             } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
-                if (const ShipDesign* design = GetPredefinedShipDesign(data))
+                if (const ShipDesign* design = GetUniverse().GetGenericShipDesign(data))
                     ClientUI::GetClientUI()->ZoomToShipDesign(design->ID());
 
             } else if (link_type == VarText::TECH_TAG) {

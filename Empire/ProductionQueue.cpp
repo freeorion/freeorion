@@ -337,7 +337,7 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int desig
     design_id(design_id_)
 {
     if (build_type == BuildType::BT_SHIP) {
-        if (const ShipDesign* ship_design = GetShipDesign(design_id))
+        if (const ShipDesign* ship_design = GetUniverse().GetShipDesign(design_id))
             name = ship_design->Name();
         else
             ErrorLogger() << "ProductionItem::ProductionItem couldn't get ship design with id: " << design_id;
@@ -352,7 +352,7 @@ bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant() const 
         return type->ProductionCostTimeLocationInvariant();
 
     } else if (build_type == BuildType::BT_SHIP) {
-        const ShipDesign* design = GetShipDesign(design_id);
+        const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
         if (!design)
             return true;
         return design->ProductionCostTimeLocationInvariant();
@@ -374,7 +374,7 @@ std::pair<float, int> ProductionQueue::ProductionItem::ProductionCostAndTime(
                 type->ProductionTime(empire_id, location_id, context)};
 
     } else if (build_type == BuildType::BT_SHIP) {
-        const ShipDesign* design = GetShipDesign(design_id);
+        const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
         if (design)
             return {design->ProductionCost(empire_id, location_id),
                     design->ProductionTime(empire_id, location_id)};
@@ -453,7 +453,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
         break;
     }
     case BuildType::BT_SHIP: {
-        if (const ShipDesign* sd = GetShipDesign(design_id)) {
+        if (const ShipDesign* sd = context.ContextUniverse().GetShipDesign(design_id)) {
             auto location_obj = context.ContextObjects().get(location_id);
             const ScriptingContext location_target_context(location_obj, context);
 
@@ -506,7 +506,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id, con
         break;
     }
     case BuildType::BT_SHIP: {
-        if (const ShipDesign* sd = GetShipDesign(design_id)) {
+        if (const ShipDesign* sd = context.ContextUniverse().GetShipDesign(design_id)) {
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& pmc : ship_hull->ProductionMeterConsumption()) {
                     if (!pmc.second.first)

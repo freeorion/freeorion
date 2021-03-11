@@ -997,7 +997,7 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
         } else if (link_type == VarText::DESIGN_ID_TAG) {
             this->SetDesign(lexical_cast<int>(data));
         } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
-            if (const ShipDesign* design = GetPredefinedShipDesign(data))
+            if (const ShipDesign* design = GetUniverse().GetGenericShipDesign(data))
                 this->SetDesign(design->ID());
 
         } else if (link_type == VarText::TECH_TAG) {
@@ -1052,7 +1052,7 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
         } else if (link_type == VarText::DESIGN_ID_TAG) {
             ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(data));
         } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
-            if (const ShipDesign* design = GetPredefinedShipDesign(data))
+            if (const ShipDesign* design = GetUniverse().GetGenericShipDesign(data))
                 ClientUI::GetClientUI()->ZoomToShipDesign(design->ID());
 
         } else if (link_type == VarText::TECH_TAG) {
@@ -1879,7 +1879,7 @@ namespace {
             detailed_description += "\n\n" + UserString("SHIP_DESIGNS_DESTROYED");
         for (const auto& entry : empire_designs_destroyed) {
             std::string num_str = std::to_string(entry.second);
-            const ShipDesign* design = GetShipDesign(entry.first);
+            const ShipDesign* design = GetUniverse().GetShipDesign(entry.first);
             std::string design_name;
             if (design)
                 design_name = design->Name();
@@ -1941,7 +1941,7 @@ namespace {
             detailed_description += "\n\n" + UserString("SHIP_DESIGNS_PRODUCED");
         for (const auto& entry : ship_designs_produced) {
             std::string num_str = std::to_string(entry.second);
-            const ShipDesign* design = GetShipDesign(entry.first);
+            const ShipDesign* design = GetUniverse().GetShipDesign(entry.first);
             std::string design_name;
             if (design)
                 design_name = design->Name();
@@ -1973,7 +1973,7 @@ namespace {
             detailed_description += "\n\n" + UserString("SHIP_DESIGNS_LOST");
         for (const auto& entry : ship_designs_lost) {
             std::string num_str = std::to_string(entry.second);
-            const ShipDesign* design = GetShipDesign(entry.first);
+            const ShipDesign* design = GetUniverse().GetShipDesign(entry.first);
             std::string design_name;
             if (design)
                 design_name = design->Name();
@@ -2005,7 +2005,7 @@ namespace {
             detailed_description += "\n\n" + UserString("SHIP_DESIGNS_SCRAPPED");
         for (const auto& entry : ship_designs_scrapped) {
             std::string num_str = std::to_string(entry.second);
-            const ShipDesign* design = GetShipDesign(entry.first);
+            const ShipDesign* design = GetUniverse().GetShipDesign(entry.first);
             std::string design_name;
             if (design)
                 design_name = design->Name();
@@ -2365,7 +2365,7 @@ namespace {
             ErrorLogger() << "RefreshDetailPanelShipDesignTag couldn't convert name to design ID: " << item_name;
             return;
         }
-        const ShipDesign* design = GetShipDesign(design_id);
+        const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
         if (!design) {
             ErrorLogger() << "RefreshDetailPanelShipDesignTag couldn't find ShipDesign with id " << item_name;
             return;

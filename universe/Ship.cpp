@@ -23,7 +23,7 @@ Ship::Ship(int empire_id, int design_id, std::string species_name, int produced_
     m_arrived_on_turn(CurrentTurn()),
     m_last_resupplied_on_turn(CurrentTurn())
 {
-    if (!GetShipDesign(design_id))
+    if (!GetUniverse().GetShipDesign(design_id)) // TODO: pass in ScriptingContext
         throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
 
     if (!m_species_name.empty() && !GetSpecies(m_species_name))
@@ -145,7 +145,7 @@ bool Ship::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
 }
 
 std::set<std::string> Ship::Tags() const {
-    const ShipDesign* design = GetShipDesign(m_design_id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id); // TODO: pass in ScriptingContext
     if (!design)
         return {};
 
@@ -169,7 +169,7 @@ std::set<std::string> Ship::Tags() const {
 }
 
 bool Ship::HasTag(const std::string& name) const {
-    const ShipDesign* design = GetShipDesign(m_design_id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id); // TODO: pass in ScriptingContext
     if (design) {
         // check hull for tag
         const ShipHull* hull = ::GetShipHull(design->Hull());
@@ -222,9 +222,9 @@ std::string Ship::Dump(unsigned short ntabs) const {
 }
 
 const ShipDesign* Ship::Design() const
-{ return GetShipDesign(m_design_id); }
+{ return GetUniverse().GetShipDesign(m_design_id); } // TODO: pass in ScriptingContext
 
-bool Ship::IsMonster() const {
+bool Ship::IsMonster() const { // TODO: pass in ScriptingContext
     const ShipDesign* design = Design();
     if (design)
         return design->IsMonster();
@@ -370,7 +370,7 @@ float Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) 
 float Ship::SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class) const {
     float retval = 0.0f;
 
-    const ShipDesign* design = GetShipDesign(m_design_id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id); // TODO: pass in ScriptingContext
     if (!design)
         return retval;
 
@@ -509,7 +509,7 @@ namespace {
 std::vector<float> Ship::AllWeaponsDamage(float shield_DR, bool include_fighters) const {
     std::vector<float> retval;
 
-    const ShipDesign* design = GetShipDesign(m_design_id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id); // TODO: pass in ScriptingContext
     if (!design)
         return retval;
 
@@ -519,7 +519,7 @@ std::vector<float> Ship::AllWeaponsDamage(float shield_DR, bool include_fighters
 std::vector<float> Ship::AllWeaponsMaxDamage(float shield_DR , bool include_fighters) const {
     std::vector<float> retval;
 
-    const ShipDesign* design = GetShipDesign(m_design_id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id); // TODO: pass in Scriptingcontext
     if (!design)
         return retval;
 

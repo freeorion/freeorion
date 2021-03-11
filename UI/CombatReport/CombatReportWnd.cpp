@@ -1,10 +1,12 @@
 #include "CombatReportWnd.h"
 #include "../ClientUI.h"
 #include "../CUIControls.h"
+#include "../../util/AppInterface.h"
 #include "../../util/i18n.h"
 #include "../../util/Logger.h"
 #include "../../util/VarText.h"
 #include "../../universe/ShipDesign.h"
+#include "../../universe/Universe.h"
 
 #include "CombatReportData.h"
 #include "GraphicalSummary.h"
@@ -13,7 +15,6 @@
 #include <GG/Layout.h>
 #include <GG/ScrollPanel.h>
 #include <GG/TabWnd.h>
-
 
 // The implementation class for CombatReportWnd
 class CombatReportWnd::Impl {
@@ -102,7 +103,7 @@ public:
             } else if (link_type == VarText::DESIGN_ID_TAG) {
                 ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(data));
             } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
-                if (const ShipDesign* design = GetPredefinedShipDesign(data))
+                if (const ShipDesign* design = GetUniverse().GetGenericShipDesign(data))
                     ClientUI::GetClientUI()->ZoomToShipDesign(design->ID());
 
             } else if (link_type == VarText::TECH_TAG) {

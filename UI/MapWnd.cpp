@@ -549,7 +549,7 @@ namespace {
                 GG::Y height{ ClientUI::Pts() };
                 // center format for title label
                 m_ship_design_labels.emplace_back(
-                    GG::Wnd::Create<CUILabel>(GetShipDesign(entry.first)->Name(),
+                    GG::Wnd::Create<CUILabel>(GetUniverse().GetShipDesign(entry.first)->Name(),
                         GG::FORMAT_RIGHT,
                         GG::NO_WND_FLAGS, GG::X0, GG::Y0,
                         m_col_widths.at(0) - (m_margin * 2), height

@@ -2598,7 +2598,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         return;
     }
 
-    const ShipDesign* design = GetShipDesign(ship->DesignID()); // may be null
+    const ShipDesign* design = GetUniverse().GetShipDesign(ship->DesignID()); // may be null
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);

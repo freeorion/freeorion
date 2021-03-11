@@ -528,9 +528,12 @@ namespace FreeOrionPython {
                 " that can't accept that type of part, and contain only hulls"
                 " and parts that exist (and may also need to contain the"
                 " correct number of parts - this needs to be verified).");
-        py::def("getShipDesign",                    &GetShipDesign,                             py::return_value_policy<py::reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated id number (int).");
-        py::def("getPredefinedShipDesign",          &GetPredefinedShipDesign,                   py::return_value_policy<py::reference_existing_object>(), "Returns the ship design (ShipDesign) with the indicated name (string).");
-
+        py::def("getShipDesign",                +[](int id) -> const ShipDesign* { return GetUniverse().GetShipDesign(id); },
+                py::return_value_policy<py::reference_existing_object>(),
+                "Returns the ship design (ShipDesign) with the indicated id number (int).");
+        py::def("getPredefinedShipDesign",      +[](const std::string& name) -> const ShipDesign* { return GetUniverse().GetGenericShipDesign(name); },
+                py::return_value_policy<py::reference_existing_object>(),
+                "Returns the ship design (ShipDesign) with the indicated name (string).");
 
         py::class_<ShipPart, boost::noncopyable>("shipPart", py::no_init)
             .add_property("name",               make_function(&ShipPart::Name,              py::return_value_policy<py::copy_const_reference>()))

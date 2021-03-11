@@ -37,7 +37,7 @@ std::vector<std::string> SpecialNames();
 namespace {
     using id_range = boost::any_range<int, boost::forward_traversal_tag>;
 
-    const unsigned int NUM_COLUMNS(12u);
+    constexpr unsigned int NUM_COLUMNS(12u);
 
     void AddOptions(OptionsDB& db) {
         std::vector<std::pair<std::string, int>> default_columns_widths = {
@@ -2643,7 +2643,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             auto produce_ship_action_bottom = std::bind(produce_ship_action, -1);
 
             std::stringstream out;
-            out << GetShipDesign(design_it->first)->Name() << " (" << design_it->second << ")";
+            out << GetUniverse().GetShipDesign(design_it->first)->Name() << " (" << design_it->second << ")";
             ship_menu_item_top.next_level.emplace_back(out.str(), false, false, produce_ship_action_top);
             ship_menu_item.next_level.emplace_back(out.str(), false, false, produce_ship_action_bottom);
         }

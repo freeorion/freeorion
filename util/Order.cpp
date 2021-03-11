@@ -1333,7 +1333,7 @@ void ShipDesignOrder::ExecuteImpl() const {
                           << " that this empire hasn't seen";
             return;
         }
-        const ShipDesign* design = GetShipDesign(*design_it);
+        const ShipDesign* design = universe.GetShipDesign(*design_it);
         if (!design) {
             ErrorLogger() << "Empire, " << EmpireID() << ", tried to rename/redescribe a ShipDesign id = " << m_design_id
                           << " that doesn't exist (but this empire has seen it)!";
