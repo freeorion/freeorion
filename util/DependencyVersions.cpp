@@ -17,6 +17,7 @@
 #   include <ft2build.h>
 #   include FT_FREETYPE_H
 #   include <vorbis/codec.h>
+#   include <GL/glew.h>
 #endif
 
 
@@ -54,6 +55,13 @@ namespace {
 
     std::string PNGVersionString()
     { return PNG_LIBPNG_VER_STRING; }
+
+    std::string GLEWVersionString() {
+        const GLubyte* retval = glewGetString(GLEW_VERSION);
+        std::stringstream ss;
+        ss << retval;
+        return ss.str();
+    }
 #endif
 }
 
@@ -72,6 +80,7 @@ std::map<std::string, std::string> DependencyVersions() {
     retval["FreeType"] =    FreeTypeVersionString();
     retval["PNG"] =         PNGVersionString();
     retval["libvorbis"] =   VorbisVersionString();
+    retval["GLEW"] =        GLEWVersionString();
 #endif
 
     return retval;
