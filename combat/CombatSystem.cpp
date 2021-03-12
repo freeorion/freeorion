@@ -586,7 +586,7 @@ namespace {
     {
         float power = weapon.part_attack;
 
-        if (attacker->TotalWeaponsDamage(0.0f, false) > 0.0f) {
+        if (power > 0.0f) {
             // any damage is enough to kill any fighter
             DebugLogger(combat) << "COMBAT: " << attacker->Name() << " of empire " << attacker->Owner()
                                 << " (" << attacker->ID() << ") does " << power
