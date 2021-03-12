@@ -43,7 +43,9 @@ public:
              std::string&& description, std::set<std::string>&& exclusions,
              std::vector<ShipSlotType> mountable_slot_types,
              std::string&& icon, bool add_standard_capacity_effect = true,
-             std::unique_ptr<Condition::Condition>&& combat_targets = nullptr);
+             std::unique_ptr<Condition::Condition>&& combat_targets = nullptr,
+             std::unique_ptr<ValueRef::ValueRef<double>>&& total_fighter_damage = nullptr,
+             std::unique_ptr<ValueRef::ValueRef<double>>&& total_ship_damage = nullptr);
 
     ~ShipPart();
 
@@ -73,6 +75,16 @@ public:
 
     //! Returns true if this part can be placed in a slot of the indicated type
     auto CanMountInSlotType(ShipSlotType slot_type) const -> bool;
+
+    //! Returns the value ref estimating maximum damage against fighters in a combat.
+    //! may be nullptr if no value ref was specified
+    auto TotalFighterDamage() const -> const ValueRef::ValueRef<double>*
+    { return m_total_fighter_damage.get(); }
+
+    //! Returns the value ref estimating maximum damage against ships in a combat.
+    //! may be nullptr if no value ref was specified
+    auto TotalShipDamage() const -> const ValueRef::ValueRef<double>*
+    { return m_total_ship_damage.get(); }
 
     //! Returns the condition for possible targets. may be nullptr if no
     //! condition was specified.
@@ -156,6 +168,8 @@ private:
     std::string                                         m_icon;
     bool                                                m_add_standard_capacity_effect = false;
     std::unique_ptr<Condition::Condition>               m_combat_targets;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_total_fighter_damage;
+    std::unique_ptr<ValueRef::ValueRef<double>>         m_total_ship_damage;
 };
 
 

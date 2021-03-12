@@ -574,6 +574,8 @@
     (TopPriorityEnqueuedTech)                   \
     (TopPriorityResearchableTech)               \
     (TopPriorityTransferrableTech)              \
+    (totalFighterDamageEstimation)              \
+    (totalShipDamageEstimation)                 \
     (Toxic)                                     \
     (Trade)
 

@@ -3,6 +3,11 @@ Part
     description = "SR_JAWS_DESC"
     class = ShortRange
     damage = 10
+    totalFighterDamageEstimation = 0
+    totalShipDamageEstimation =
+        max(0,ShipPartMeter part = "SR_JAWS" meter = Capacity object = Source.ID - Value(Target.Shield))
+        * ShipPartMeter part = "SR_JAWS" meter = SecondaryStat object = Source.ID
+        * NamedRealLookup name = "NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE"
     combatTargets = And [
         (CombatBout >= NamedIntegerLookup name = "FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE")
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
@@ -20,5 +25,6 @@ Part
 
 #include "shortrange.macros"
 
+#include "/scripting/common/misc.macros"
 #include "/scripting/common/upkeep.macros"
 #include "/scripting/ship_parts/targeting.macros"

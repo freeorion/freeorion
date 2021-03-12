@@ -856,7 +856,7 @@ namespace {
     double ShipDataPanel::StatValue(MeterType stat_name) const {
         if (auto ship = Objects().get<Ship>(m_ship_id)) {
             if (stat_name == MeterType::METER_CAPACITY)
-                return ship->TotalWeaponsDamage(0.0f, false);
+                return ship->TotalWeaponsShipDamage(0.0f, false); // FIXME TotalWeaponsFighterDamage
             else if (stat_name == MeterType::METER_TROOPS)
                 return ship->TroopCapacity();
             else if (stat_name == MeterType::METER_SECONDARY_STAT)
@@ -1537,7 +1537,7 @@ void FleetDataPanel::SetStatIconValues() {
 
         if (ship->Design()) {
             ship_count++;
-            damage_tally += ship->TotalWeaponsDamage(0.0f, false);
+            damage_tally += ship->TotalWeaponsShipDamage(0.0f, false); // FIXME TotalWeaponsFighterDamage 
             fighters_tally += ship->FighterCount();
             troops_tally += ship->TroopCapacity();
             colony_tally += ship->ColonyCapacity();
@@ -2902,7 +2902,7 @@ void FleetWnd::SetStatIconValues() {
 
             if (ship->Design()) {
                 ship_count++;
-                damage_tally += ship->TotalWeaponsDamage(0.0f, false);
+                damage_tally += ship->TotalWeaponsShipDamage(0.0f, false); // FIXME TotalWeaponsFighterDamage 
                 fighters_tally += ship->FighterCount();
                 structure_tally += ship->GetMeter(MeterType::METER_STRUCTURE)->Initial();
                 shield_tally += ship->GetMeter(MeterType::METER_SHIELD)->Initial();

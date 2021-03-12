@@ -4,6 +4,7 @@
 
 #include "Meter.h"
 #include "ConstantsFwd.h"
+#include "ScriptingContext.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"
 
@@ -74,11 +75,11 @@ public:
     /** Returns sum of current value for part meter @p type of all parts with ShipPartClass @p part_class */
     float                       SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class) const;
 
-    float                       TotalWeaponsDamage(float shield_DR = 0.0f, bool include_fighters = true) const; ///< versus an enemy with a given shields DR
+    float                       TotalWeaponsShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const; ///< versus an enemy with a given shields DR
     float                       FighterCount() const;
     float                       FighterMax() const;
-    std::vector<float>          AllWeaponsDamage(float shield_DR = 0.0f, bool include_fighters = true) const;   ///< any nonzero weapons strengths after adjustment versus an enemy with a given shields DR
-    std::vector<float>          AllWeaponsMaxDamage(float shield_DR = 0.0f, bool include_fighters = true) const;///< any nonzero weapons strengths, assuming the ship has been refueled recently, after adjustment versus an enemy with a given shields DR
+    std::vector<float>          AllWeaponsShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;   ///< any nonzero weapons strengths after adjustment versus an enemy with a given shields DR
+    std::vector<float>          AllWeaponsMaxShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;///< any nonzero weapons strengths, assuming the ship has been refueled recently, after adjustment versus an enemy with a given shields DR
 
     void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
     void            SetArrivedOnTurn(int turn);

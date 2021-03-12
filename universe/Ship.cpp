@@ -7,6 +7,7 @@
 #include "Species.h"
 #include "UniverseObjectVisitor.h"
 #include "Universe.h"
+#include "ValueRef.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "../util/AppInterface.h"
@@ -233,9 +234,9 @@ bool Ship::IsMonster() const { // TODO: pass in ScriptingContext
 }
 
 bool Ship::IsArmed() const {
-    if (TotalWeaponsDamage(0.0f, false) > 0.0f)
+    if (TotalWeaponsShipDamage(0.0f, false) > 0.0f) // FIXME FighterDamage ?
         return true;    // has non-fighter weapons
-    if (HasFighters() && (TotalWeaponsDamage(0.0f, true) > 0.0f))
+    if (HasFighters() && (TotalWeaponsShipDamage(0.0f, true) > 0.0f))
         return true;    // has no non-fighter weapons but has launchable fighters that do damage
     return false;
 }
@@ -427,17 +428,17 @@ float Ship::FighterMax() const {
     return retval;
 }
 
-float Ship::TotalWeaponsDamage(float shield_DR, bool include_fighters) const {
+float Ship::TotalWeaponsShipDamage(float shield_DR, bool include_fighters) const {
     // sum up all individual weapons' attack strengths
     float total_attack = 0.0f;
-    auto all_weapons_damage = AllWeaponsDamage(shield_DR, include_fighters);
+    auto all_weapons_damage = AllWeaponsShipDamage(shield_DR, include_fighters);
     for (float attack : all_weapons_damage)
         total_attack += attack;
     return total_attack;
 }
 
 namespace {
-    std::vector<float> WeaponDamageImpl(const Ship* ship, const ShipDesign* design,
+    std::vector<float> WeaponShipDamageImpl(std::shared_ptr<const Ship> ship, const ShipDesign* design,
                                         float DR, bool max, bool include_fighters)
     {
         std::vector<float> retval;
@@ -456,6 +457,8 @@ namespace {
         int available_fighters = 0;
 
         retval.reserve(parts.size() + 1);
+        const ScriptingContext context(ship);
+        int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
         // for each weapon part, get its damage meter value
         for (const auto& part_name : parts) {
             const ShipPart* part = GetShipPart(part_name);
@@ -464,7 +467,11 @@ namespace {
             ShipPartClass part_class = part->Class();
 
             // get the attack power for each weapon part.
-            if (part_class == ShipPartClass::PC_DIRECT_WEAPON) {
+            if (part->TotalShipDamage()) { // FIXME TotalFighterDamage
+                // there is a special computation. overrides the default one
+                double estimation = part->TotalShipDamage()->Eval(context);
+                retval.emplace_back(estimation / num_bouts);  // divide by bouts because direct fire estimates for one attack
+            } else if (part_class == ShipPartClass::PC_DIRECT_WEAPON) {
                 float part_attack = ship->CurrentPartMeterValue(METER, part_name);  // used within loop that updates meters, so need current, not initial values
                 float part_shots = ship->CurrentPartMeterValue(SECONDARY_METER, part_name);
                 if (part_attack > DR)
@@ -487,7 +494,6 @@ namespace {
         int fighter_shots = std::min(available_fighters, fighter_launch_capacity);  // how many fighters launched in bout 1
         available_fighters -= fighter_shots;
         int launched_fighters = fighter_shots;
-        int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
         int remaining_bouts = num_bouts - 2;  // no attack for first round, second round already added
         while (remaining_bouts > 0) {
             int fighters_launched_this_bout = std::min(available_fighters, fighter_launch_capacity);
@@ -500,30 +506,30 @@ namespace {
         // how much damage does a fighter shot do?
         fighter_damage = std::max(0.0f, fighter_damage);
 
-        retval.emplace_back(fighter_damage * fighter_shots / num_bouts); // divide by bouts because fighter calculation is for a full combat, but direct firefor one attack
+        retval.emplace_back(fighter_damage * fighter_shots / num_bouts); // divide by bouts because fighter calculation is for a full combat, but direct fire for one attack
 
         return retval;
     }
 }
 
-std::vector<float> Ship::AllWeaponsDamage(float shield_DR, bool include_fighters) const {
+std::vector<float> Ship::AllWeaponsShipDamage(float shield_DR, bool include_fighters) const {
     std::vector<float> retval;
 
     const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id); // TODO: pass in ScriptingContext
     if (!design)
         return retval;
 
-    return WeaponDamageImpl(this, design, shield_DR, false, include_fighters);
+    return WeaponShipDamageImpl(std::static_pointer_cast<const Ship>(shared_from_this()), design, shield_DR, false, include_fighters);
 }
 
-std::vector<float> Ship::AllWeaponsMaxDamage(float shield_DR , bool include_fighters) const {
+std::vector<float> Ship::AllWeaponsMaxShipDamage(float shield_DR , bool include_fighters) const {
     std::vector<float> retval;
 
     const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id); // TODO: pass in Scriptingcontext
     if (!design)
         return retval;
 
-    return WeaponDamageImpl(this, design, shield_DR, true, include_fighters);
+    return WeaponShipDamageImpl(std::static_pointer_cast<const Ship>(shared_from_this()), design, shield_DR, true, include_fighters);
 }
 
 void Ship::SetFleetID(int fleet_id) {

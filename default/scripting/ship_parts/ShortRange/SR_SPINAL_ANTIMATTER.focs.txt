@@ -3,6 +3,7 @@ Part
     description = "SR_SPINAL_ANTIMATTER_DESC"
     class = ShortRange
     damage = 100
+    totalFighterDamageEstimation = 0
     combatTargets = And [
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
         Or [
