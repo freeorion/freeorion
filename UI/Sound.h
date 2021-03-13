@@ -6,16 +6,14 @@
 #include <memory>
 
 
-class Sound
-{
+class Sound {
 public:
     /** Temporarily disables UI sound effects, saving the old state (on or off), for later restoration upon object
-        destruction.  TempUISoundDisablers should be created at the beginning of any function in which Controls that
-        emit sounds are to be programmatically altered, e.g. the ctor of a window class that contains a ListBox with an
-        initially-selected item.  If this were not done, the list-select sound would be played when the window was
-        constructed, which would make the sound seem to be malfunctioning. */
-    struct TempUISoundDisabler
-    {
+      * destruction.  TempUISoundDisablers should be created at the beginning of any function in which Controls that
+      * emit sounds are to be programmatically altered, e.g. the ctor of a window class that contains a ListBox with an
+      * initially-selected item.  If this were not done, the list-select sound would be played when the window was
+      * constructed, which would make the sound seem to be malfunctioning. */
+    struct TempUISoundDisabler {
         TempUISoundDisabler();
         ~TempUISoundDisabler();
     };
@@ -67,11 +65,9 @@ public:
 
 private:
     class Impl;
-
     std::unique_ptr<Impl> const m_impl;
 
     Sound();
-
     ~Sound();
 };
 
