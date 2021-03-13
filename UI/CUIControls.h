@@ -55,13 +55,11 @@ public:
 
     bool InWindow(const GG::Pt& pt) const override;
 
-    void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
 protected:
+    void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
     void RenderPressed() override;
-
     void RenderRollover() override;
-
     void RenderUnpressed() override;
 };
 
