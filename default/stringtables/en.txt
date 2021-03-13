@@ -1515,6 +1515,9 @@ Limit of client message size in bytes.
 OPTIONS_DB_DROP_EMPIRE_READY
 Drop empire's readiness on joining to the playing game.
 
+OPTIONS_DB_TAKE_OVER_AI
+Server option to allow human players to take control of AI empires.
+
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
 

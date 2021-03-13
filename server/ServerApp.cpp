@@ -1858,6 +1858,15 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     std::shared_ptr<Empire> empire;
     int empire_id = ALL_EMPIRES;
     std::list<std::string> delegation = GetPlayerDelegation(player_connection->PlayerName());
+    if (GetOptionsDB().Get<bool>("network.server.take-over-ai")) {
+        for (auto& e : Empires()) {
+            if (!e.second->Eliminated() &&
+                GetEmpireClientType(e.first) == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
+            {
+                delegation.push_back(e.second->PlayerName());
+            }
+        }
+    }
     if (target_empire_id == ALL_EMPIRES) {
         // search empire by player name
         for (auto& e : Empires()) {
@@ -1932,6 +1941,10 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
             const std::string previous_player_name = (*previous_it)->PlayerName();
             m_networking.Disconnect(previous_player_id);
             if (previous_client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
+                // change empire's player so after reload the player still could connect
+                // to the empire
+                empire->SetPlayerName(player_connection->PlayerName());
+                // kill unneeded AI process
                 auto it = m_ai_client_processes.find(previous_player_name);
                 if (it != m_ai_client_processes.end()) {
                     it->second.Kill();
