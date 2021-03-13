@@ -265,33 +265,26 @@ void Sound::Impl::Disable() {
 }
 
 /// Initialize OpenAl and return true on success.
-// TODO rewrite with std::unique_ptr and custom deleter to remove long
-// chain of "destructor" code.
+// TODO rewrite with std::unique_ptr and custom deleter to remove long chain of "destructor" code.
 void Sound::Impl::InitOpenAL() {
-    ALCcontext *context;
-    ALCdevice *device;
-    ALenum error_code;
-    ALboolean status;
-
-    device = alcOpenDevice(nullptr);
-
+    ALCdevice* device = alcOpenDevice(nullptr);
     if (!device) {
         ErrorLogger() << "Unable to initialise default OpenAL device.";
         m_initialized = false;
         return;
     }
 
-    context = alcCreateContext(device, nullptr);
+    ALCcontext* context = alcCreateContext(device, nullptr);
     if (!context) {
-        error_code = alGetError();
+        ALenum error_code = alGetError();
         ErrorLogger() << "Unable to create OpenAL context: " << alGetString(error_code) << "\n";
         alcCloseDevice(device);
         m_initialized = false;
         return;
     }
 
-    status = alcMakeContextCurrent(context);
-    error_code = alGetError();
+    ALboolean status = alcMakeContextCurrent(context);
+    ALenum error_code = alGetError();
     if (status != AL_TRUE || error_code != AL_NO_ERROR) {
         ErrorLogger() << "Unable to make OpenAL context current: " << alGetString(error_code) << "\n";
         alcDestroyContext(context);
@@ -303,7 +296,8 @@ void Sound::Impl::InitOpenAL() {
     alListenerf(AL_GAIN, 1.0);
     error_code = alGetError();
     if (error_code != AL_NO_ERROR) {
-        ErrorLogger() << "Unable to create OpenAL listener: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+        ErrorLogger() << "Unable to create OpenAL listener: " << alGetString(error_code) << "\n"
+                      << "Disabling OpenAL sound system!\n";
         alcMakeContextCurrent(nullptr);
         alcDestroyContext(context);
         alcCloseDevice(device);
@@ -314,7 +308,8 @@ void Sound::Impl::InitOpenAL() {
     alGenSources(NUM_SOURCES, m_sources);
     error_code = alGetError();
     if (error_code != AL_NO_ERROR) {
-        ErrorLogger() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+        ErrorLogger() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n"
+                      << "Disabling OpenAL sound system!\n";
         alcMakeContextCurrent(nullptr);
         alcDestroyContext(context);
         alcCloseDevice(device);
@@ -325,7 +320,8 @@ void Sound::Impl::InitOpenAL() {
     alGenBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
     error_code = alGetError();
     if (error_code != AL_NO_ERROR) {
-        ErrorLogger() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+        ErrorLogger() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n"
+                      << "Disabling OpenAL sound system!\n";
         alDeleteSources(NUM_SOURCES, m_sources);
         alcMakeContextCurrent(nullptr);
         alcDestroyContext(context);
@@ -338,7 +334,8 @@ void Sound::Impl::InitOpenAL() {
         alSourcei(m_sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
         error_code = alGetError();
         if (error_code != AL_NO_ERROR) {
-            ErrorLogger() << "Unable to set OpenAL source to relative: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+            ErrorLogger() << "Unable to set OpenAL source to relative: " << alGetString(error_code) << "\n"
+                          << "Disabling OpenAL sound system!\n";
             alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
             alDeleteSources(NUM_SOURCES, m_sources);
             alcMakeContextCurrent(nullptr);
@@ -348,38 +345,101 @@ void Sound::Impl::InitOpenAL() {
             return;
         }
     }
-    DebugLogger() << "OpenAL initialized. Version "
-                  << alGetString(AL_VERSION)
-                  << " Renderer "
-                  << alGetString(AL_RENDERER)
-                  << " Vendor "
-                  << alGetString(AL_VENDOR) << "\n"
-                  << " Extensions: "
-                  << alGetString(AL_EXTENSIONS) << "\n";
+    DebugLogger() << "OpenAL initialized. Version " << alGetString(AL_VERSION)
+                  << " Renderer " << alGetString(AL_RENDERER)
+                  << " Vendor " << alGetString(AL_VENDOR) << "\n"
+                  << " Extensions: " << alGetString(AL_EXTENSIONS) << "\n";
     m_initialized = true;
 }
 
 void Sound::Impl::ShutdownOpenAL() {
     ALCcontext* context = alcGetCurrentContext();
 
-    if (context) {
-        alDeleteSources(NUM_SOURCES, m_sources); // Automatically stops currently playing sources
+    if (!context)
+        return;
 
-        alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
-        for (auto& buffer : m_buffers)
-            alDeleteBuffers(1, &(buffer.second));
+    alDeleteSources(NUM_SOURCES, m_sources); // Automatically stops currently playing sources
 
-        ALCdevice* device = alcGetContextsDevice(context);
+    alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
+    for (auto& buffer : m_buffers)
+        alDeleteBuffers(1, &(buffer.second));
 
-        alcMakeContextCurrent(nullptr);
+    ALCdevice* device = alcGetContextsDevice(context);
 
-        alcDestroyContext(context);
+    alcMakeContextCurrent(nullptr);
+    alcDestroyContext(context);
 
-        if (device)
-            alcCloseDevice(device);
-    }
+    if (device)
+        alcCloseDevice(device);
 }
 
+namespace {
+#ifdef FREEORION_WIN32
+    ov_callbacks callbacks = {
+        (size_t (*)(void *, size_t, size_t, void *)) fread,
+        (int (*)(void *, ogg_int64_t, int))          _fseek64_wrap,
+        (int (*)(void *))                            fclose,
+        (long (*)(void *))                           ftell
+    };
+#endif
+
+    std::pair<ALuint, bool> GetSoundBuffer(std::map<std::string, ALuint>& buffers, const std::string& filename) {
+        // Check if the sound data of the file we want to play is already buffered
+        auto it = buffers.find(filename);
+        if (it != buffers.end())
+            return {it->second, true};
+
+        auto file = fopen(filename.c_str(), "rb");
+        if (!file)
+            return {0, false};
+
+        OggVorbis_File ogg_file;
+#ifdef FREEORION_WIN32
+        auto file_bad = ov_test_callbacks(file, &ogg_file, nullptr, 0, callbacks);
+#else
+        auto file_bad = ov_test(file, &ogg_file, nullptr, 0);
+#endif
+        if (file_bad) {
+            ErrorLogger() << "GetSoundBuffer: unable to open file " << filename << " : Too big to buffer. Aborting\n";
+            return {0, false};
+        }
+
+        // file is OK, so now fully open the file
+        ov_test_open(&ogg_file); 
+
+        // now we need to take some info we will need later
+        ALenum ogg_format;
+        auto vorbis_info_ptr = ov_info(&ogg_file, -1);
+        if (vorbis_info_ptr->channels == 1)
+            ogg_format = AL_FORMAT_MONO16;
+        else
+            ogg_format = AL_FORMAT_STEREO16;
+
+        ALsizei ogg_freq = vorbis_info_ptr->rate;
+        ogg_int64_t byte_size = ov_pcm_total(&ogg_file, -1) * vorbis_info_ptr->channels * 2;
+
+        // check that size of file isn't too huge
+        constexpr ogg_int64_t MAX_BUFFER_SIZE = 1024 * 1024 * 1024;
+        if (byte_size > MAX_BUFFER_SIZE) {
+            ErrorLogger() << "PlaySound: unable to open file " << filename << " : Possibly not a .ogg vorbis file. Aborting\n";
+            return {0, false};
+        }
+
+        // fill up the buffers and queue them up for the first time
+        ALuint sound_handle;
+        alGenBuffers(1, &sound_handle);
+
+        int loop = 0;
+        RefillBuffer(&ogg_file, ogg_format, ogg_freq, sound_handle, byte_size, loop);
+
+        // create new buffer for this sound. should be no pre-existing buffer
+        // stored under that filename due to check above
+        buffers.emplace(filename, sound_handle);
+
+        ov_clear(&ogg_file);
+        return {sound_handle, true};
+    }
+}
 
 void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
     if (!m_initialized)
@@ -390,15 +450,6 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
     FILE* m_f = nullptr;
     vorbis_info* vorbis_info_ptr;
     m_music_loops = 0;
-
-#ifdef FREEORION_WIN32
-    ov_callbacks callbacks = {
-        (size_t (*)(void *, size_t, size_t, void *)) fread,
-        (int (*)(void *, ogg_int64_t, int))          _fseek64_wrap,
-        (int (*)(void *))                            fclose,
-        (long (*)(void *))                           ftell
-    };
-#endif
 
     if (alcGetCurrentContext()) {
         if (m_music_name.size() > 0)
@@ -467,83 +518,15 @@ void Sound::Impl::ResumeMusic() {
 void Sound::Impl::StopMusic() {
     if (!m_initialized)
         return;
+    if (!alcGetCurrentContext())
+        return;
 
-    if (alcGetCurrentContext()) {
-        alSourceStop(m_sources[0]);
-        if (m_music_name.size() > 0) {
-            m_music_name.clear();  // do this to avoid music being re-started by other functions
-            ov_clear(&m_ogg_file); // and unload the file for good measure. the file itself is closed now, don't re-close it again
-        }
-        alSourcei(m_sources[0], AL_BUFFER, 0);
+    alSourceStop(m_sources[0]);
+    if (m_music_name.size() > 0) {
+        m_music_name.clear();  // do this to avoid music being re-started by other functions
+        ov_clear(&m_ogg_file); // and unload the file for good measure. the file itself is closed now, don't re-close it again
     }
-}
-
-namespace {
-#ifdef FREEORION_WIN32
-    ov_callbacks callbacks = {
-        (size_t (*)(void *, size_t, size_t, void *)) fread,
-        (int (*)(void *, ogg_int64_t, int))          _fseek64_wrap,
-        (int (*)(void *))                            fclose,
-        (long (*)(void *))                           ftell
-    };
-#endif
-
-    std::pair<ALuint, bool> GetSoundBuffer(std::map<std::string, ALuint>& buffers, const std::string& filename) {
-        // Check if the sound data of the file we want to play is already buffered
-        auto it = buffers.find(filename);
-        if (it != buffers.end())
-            return {it->second, true};
-
-        auto file = fopen(filename.c_str(), "rb");
-        if (!file)
-            return {0, false};
-
-        OggVorbis_File ogg_file;
-#ifdef FREEORION_WIN32
-        auto file_bad = ov_test_callbacks(file, &ogg_file, nullptr, 0, callbacks);
-#else
-        auto file_bad = ov_test(file, &ogg_file, nullptr, 0);
-#endif
-        if (file_bad) {
-            ErrorLogger() << "PlaySound: unable to open file " << filename << " : Too big to buffer. Aborting\n";
-            return {0, false};
-        }
-
-        // file is OK, so now fully open the file
-        ov_test_open(&ogg_file); 
-
-        // now we need to take some info we will need later
-        ALenum ogg_format;
-        auto vorbis_info_ptr = ov_info(&ogg_file, -1);
-        if (vorbis_info_ptr->channels == 1)
-            ogg_format = AL_FORMAT_MONO16;
-        else
-            ogg_format = AL_FORMAT_STEREO16;
-
-        ALsizei ogg_freq = vorbis_info_ptr->rate;
-        ogg_int64_t byte_size = ov_pcm_total(&ogg_file, -1) * vorbis_info_ptr->channels * 2;
-
-        // check that size of file isn't too huge
-        constexpr ogg_int64_t MAX_BUFFER_SIZE = 1024 * 1024 * 1024;
-        if (byte_size > MAX_BUFFER_SIZE) {
-            ErrorLogger() << "PlaySound: unable to open file " << filename << " : Possibly not a .ogg vorbis file. Aborting\n";
-            return {0, false};
-        }
-
-        // fill up the buffers and queue them up for the first time
-        ALuint sound_handle;
-        alGenBuffers(1, &sound_handle);
-
-        int loop = 0;
-        RefillBuffer(&ogg_file, ogg_format, ogg_freq, sound_handle, byte_size, loop);
-
-        // create new buffer for this sound. should be no pre-existing buffer
-        // stored under that filename due to check above
-        buffers.emplace(filename, sound_handle);
-
-        ov_clear(&ogg_file);
-        return {sound_handle, true};
-    }
+    alSourcei(m_sources[0], AL_BUFFER, 0);
 }
 
 void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound) {
@@ -588,19 +571,17 @@ void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_soun
 void Sound::Impl::FreeSound(const boost::filesystem::path& path) {
     if (!m_initialized)
         return;
-
-    ALenum m_openal_error;
     std::string filename = PathToString(path);
-    std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
 
+    auto it = m_buffers.find(filename);
     if (it != m_buffers.end()) {
         alDeleteBuffers(1, &(it->second));
-        m_openal_error = alGetError();
-        if (m_openal_error != AL_NONE)
-            ErrorLogger() << "FreeSound: OpenAL ERROR: " << alGetString(m_openal_error);
+        ALenum openal_error = alGetError();
+        // don't erase if there was an error, as the buffer may not have been removed - potential memory leak
+        if (openal_error != AL_NONE)
+            ErrorLogger() << "FreeSound: OpenAL ERROR: " << alGetString(openal_error);
         else
-            m_buffers.erase(it); /* we don't erase if there was an error, as the buffer may not have been
-                                    removed - potential memory leak */
+            m_buffers.erase(it);
     }
 }
 
@@ -608,18 +589,14 @@ void Sound::Impl::FreeAllSounds() {
     if (!m_initialized)
         return;
 
-    ALenum m_openal_error;
-
-    for (std::map<std::string, ALuint>::iterator it = m_buffers.begin();
-         it != m_buffers.end();)
-    {
+    for (auto it = m_buffers.begin(); it != m_buffers.end();) {
         alDeleteBuffers(1, &(it->second));
-        m_openal_error = alGetError();
-        if (m_openal_error != AL_NONE) {
-            ErrorLogger() << "FreeAllSounds: OpenAL ERROR: " << alGetString(m_openal_error);
+        ALenum openal_error = alGetError();
+        if (openal_error != AL_NONE) {
+            ErrorLogger() << "FreeAllSounds: OpenAL ERROR: " << alGetString(openal_error);
             ++it;
         } else {
-            std::map<std::string, ALuint>::iterator temp = it;
+            auto temp = it;
             ++it;
             m_buffers.erase(temp);  // invalidates erased iterator only
         }
@@ -630,65 +607,66 @@ void Sound::Impl::SetMusicVolume(int vol) {
     if (!m_initialized)
         return;
 
-    ALenum m_openal_error;
-
-    /* normalize value, then apply to all sound sources */
+    // normalize value, then apply to all sound sources
     vol = std::max(0, std::min(vol, 255));
     GetOptionsDB().Set<int>("audio.music.volume", vol);
-    if (alcGetCurrentContext())
-    {
-        alSourcef(m_sources[0], AL_GAIN, ((ALfloat) vol)/255.0);
-        /* it is highly unlikely that we'll get an error here but better safe than sorry */
-        m_openal_error = alGetError();
-        if (m_openal_error != AL_NONE)
-            ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(m_openal_error);
-    }
+
+    if (!alcGetCurrentContext())
+        return;
+
+    alSourcef(m_sources[0], AL_GAIN, ((ALfloat) vol)/255.0);
+    // it is highly unlikely that we'll get an error here, but better safe than sorry
+    ALenum openal_error = alGetError();
+    if (openal_error != AL_NONE)
+        ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(openal_error);
 }
 
 void Sound::Impl::SetUISoundsVolume(int vol) {
     if (!m_initialized)
         return;
 
-    ALenum m_openal_error;
-
-    /* normalize value, then apply to all sound sources */
+    // normalize value, then apply to all sound sources
     vol = std::max(0, std::min(vol, 255));
     GetOptionsDB().Set<int>("audio.effects.volume", vol);
-    if (alcGetCurrentContext()) {
-        for (int it = 1; it < NUM_SOURCES; ++it)
-            alSourcef(m_sources[it], AL_GAIN, ((ALfloat) vol)/255.0);
-        /* it is highly unlikely that we'll get an error here but better safe than sorry */
-        m_openal_error = alGetError();
-        if (m_openal_error != AL_NONE)
-            ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(m_openal_error);
-    }
+    if (!alcGetCurrentContext())
+        return;
+
+    for (int it = 1; it < NUM_SOURCES; ++it)
+            alSourcef(m_sources[it], AL_GAIN, ((ALfloat) vol)/255.0f);
+        // it is highly unlikely that we'll get an error here, but better safe than sorry
+    ALenum openal_error = alGetError();
+    if (openal_error != AL_NONE)
+        ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(openal_error);
 }
 
 void Sound::Impl::DoFrame() {
     if (!m_initialized)
         return;
+    if (m_music_name.empty())
+        return;
+    if (!alcGetCurrentContext())
+        return;
 
-    ALint    state;
-    int      num_buffers_processed;
-
-    if (alcGetCurrentContext() && (m_music_name.size() > 0)) {
-        alGetSourcei(m_sources[0], AL_BUFFERS_PROCESSED, &num_buffers_processed);
-        while (num_buffers_processed > 0) {
-            ALuint buffer_name_yay;
-            alSourceUnqueueBuffers (m_sources[0], 1, &buffer_name_yay);
-            if (RefillBuffer(&m_ogg_file, m_ogg_format, m_ogg_freq, buffer_name_yay, BUFFER_SIZE, m_music_loops))
-            {
-                m_music_name.clear();  // m_music_name.clear() must always be called before ov_clear. Otherwise
-                break; /// this happens if RefillBuffer returns 1, meaning it encountered EOF and the file shouldn't be repeated
-            }
-            alSourceQueueBuffers(m_sources[0], 1, &buffer_name_yay);
-            num_buffers_processed--;
+    int num_buffers_processed = 0;
+    alGetSourcei(m_sources[0], AL_BUFFERS_PROCESSED, &num_buffers_processed);
+    while (num_buffers_processed > 0) {
+        ALuint buffer_name_yay;
+        alSourceUnqueueBuffers (m_sources[0], 1, &buffer_name_yay);
+        if (RefillBuffer(&m_ogg_file, m_ogg_format, m_ogg_freq,
+                            buffer_name_yay, BUFFER_SIZE, m_music_loops))
+        {
+            m_music_name.clear();  // m_music_name.clear() must always be called before ov_clear. Otherwise
+            break; // this happens if RefillBuffer returns 1, meaning it encountered EOF and the file shouldn't be repeated
         }
-        alGetSourcei(m_sources[0], AL_SOURCE_STATE, &state);
-        if (state == AL_STOPPED)  /// this may happen if the source plays all its buffers before we manage to refill them
-            alSourcePlay(m_sources[0]);
+        alSourceQueueBuffers(m_sources[0], 1, &buffer_name_yay);
+        num_buffers_processed--;
     }
-} 
+
+    ALint state;
+    alGetSourcei(m_sources[0], AL_SOURCE_STATE, &state);
+    if (state == AL_STOPPED)  /// this may happen if the source plays all its buffers before we manage to refill them
+        alSourcePlay(m_sources[0]);
+}
 
 bool Sound::Impl::UISoundsTemporarilyDisabled() const
 { return m_temporary_disable_count > 0; }
