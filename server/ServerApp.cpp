@@ -1941,6 +1941,10 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
             const std::string previous_player_name = (*previous_it)->PlayerName();
             m_networking.Disconnect(previous_player_id);
             if (previous_client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
+                // change empire's player so after reload the player still could connect
+                // to the empire
+                empire->SetPlayerName(player_connection->PlayerName());
+                // kill unneeded AI process
                 auto it = m_ai_client_processes.find(previous_player_name);
                 if (it != m_ai_client_processes.end()) {
                     it->second.Kill();
