@@ -81,9 +81,9 @@ private:
     std::map<std::string, ALuint> m_sound_buffers;                          ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
 
     ALuint                        m_music_buffers[NUM_MUSIC_BUFFERS] = {0}; ///< additional buffers for music.
-    OggVorbis_File                m_ogg_file = {};                          ///< the currently open music ogg file
-    ALenum                        m_ogg_format = 0;                         ///< mono or stereo for current music
-    ALsizei                       m_ogg_freq = 0;                           ///< sampling frequency for current music
+    OggVorbis_File                m_music_ogg_file = {};                    ///< the currently open music ogg file
+    ALenum                        m_music_ogg_format = 0;                   ///< mono or stereo for current music
+    ALsizei                       m_music_ogg_freq = 0;                     ///< sampling frequency for current music
 
     unsigned int                  m_temporary_disable_count = 0;            ///< Count of the number of times sound was disabled. Sound is enabled when this is zero.
 
@@ -109,7 +109,7 @@ namespace {
     {
         int endian = 0; /// 0 for little-endian (x86), 1 for big-endian (ppc)
         int bytes = 0;
-        std::unique_ptr<char[]> array(new char[buffer_size]);
+        std::unique_ptr<char[]> array(new char[buffer_size]); // heap allocate buffer
 
         if (!alcGetCurrentContext())
             return 1;
@@ -459,32 +459,32 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
 
     if (m_f != nullptr) { // make sure we CAN open it
 #ifdef FREEORION_WIN32
-        if (!(ov_test_callbacks(m_f, &m_ogg_file, nullptr, 0, callbacks))) // check if it's a proper ogg
+        if (!(ov_test_callbacks(m_f, &m_music_ogg_file, nullptr, 0, callbacks))) // check if it's a proper ogg
 #else
-        if (!(ov_test(m_f, &m_ogg_file, nullptr, 0))) // check if it's a proper ogg
+        if (!(ov_test(m_f, &m_music_ogg_file, nullptr, 0))) // check if it's a proper ogg
 #endif
         {
-            ov_test_open(&m_ogg_file); // it is, now fully open the file
+            ov_test_open(&m_music_ogg_file); // it is, now fully open the file
 
             // take some info needed later...
-            auto vorbis_info_ptr = ov_info(&m_ogg_file, -1);
+            auto vorbis_info_ptr = ov_info(&m_music_ogg_file, -1);
             if (vorbis_info_ptr->channels == 1)
-                m_ogg_format = AL_FORMAT_MONO16;
+                m_music_ogg_format = AL_FORMAT_MONO16;
             else
-                m_ogg_format = AL_FORMAT_STEREO16;
-            m_ogg_freq = vorbis_info_ptr->rate;
+                m_music_ogg_format = AL_FORMAT_STEREO16;
+            m_music_ogg_freq = vorbis_info_ptr->rate;
             m_music_loops = loops;
 
 
             // fill up the buffers and queue them up for the first time
-            auto refill_failed = RefillBuffer(&m_ogg_file, m_ogg_format, m_ogg_freq,
+            auto refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
                                               m_music_buffers[0], BUFFER_SIZE, m_music_loops);
 
             if (!refill_failed) {
                 alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[0]); // queue up the buffer if we manage to fill it
 
 
-                refill_failed = RefillBuffer(&m_ogg_file, m_ogg_format, m_ogg_freq,
+                refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
                                              m_music_buffers[1], BUFFER_SIZE, m_music_loops);
                 if (!refill_failed) {
                     alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[1]);
@@ -501,7 +501,7 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
             ErrorLogger() << "PlayMusic: unable to open file " << filename
                           << " possibly not a .ogg vorbis file. Aborting\n";
             m_music_name.clear();
-            ov_clear(&m_ogg_file);
+            ov_clear(&m_music_ogg_file);
         }
     } else {
         ErrorLogger() << "PlayMusic: unable to open file " << filename << " I/O Error. Aborting\n";
@@ -535,7 +535,7 @@ void Sound::Impl::StopMusic() {
     alSourceStop(m_sources[0]);
     if (m_music_name.size() > 0) {
         m_music_name.clear();  // do this to avoid music being re-started by other functions
-        ov_clear(&m_ogg_file); // and unload the file for good measure. the file itself is closed now, don't re-close it again
+        ov_clear(&m_music_ogg_file); // and unload the music file for good measure. the file itself is closed now, don't re-close it again
     }
     alSourcei(m_sources[0], AL_BUFFER, 0);
 }
@@ -663,7 +663,7 @@ void Sound::Impl::DoFrame() {
     while (num_buffers_processed > 0) {
         ALuint buffer_name_yay;
         alSourceUnqueueBuffers (m_sources[0], 1, &buffer_name_yay);
-        if (RefillBuffer(&m_ogg_file, m_ogg_format, m_ogg_freq,
+        if (RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
                          buffer_name_yay, BUFFER_SIZE, m_music_loops))
         {
             m_music_name.clear();  // m_music_name.clear() must always be called before ov_clear. Otherwise
