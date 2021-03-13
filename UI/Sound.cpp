@@ -75,15 +75,15 @@ private:
     static constexpr int NUM_SOURCES = 16; // The number of sources for OpenAL to create. Should be 2 or more.
     static constexpr int NUM_MUSIC_BUFFERS = 2; // The number of music buffers.
 
-    ALuint                        m_sources[NUM_SOURCES]; ///< OpenAL sound sources. The first one is used for music
-    int                           m_music_loops = 0;      ///< the number of loops of the current music to play (< 0 for loop forever)
-    std::string                   m_music_name;           ///< the name of the currently-playing music file
-    std::map<std::string, ALuint> m_buffers;              ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
-    ALuint                        m_music_buffers[NUM_MUSIC_BUFFERS]; ///< two additional buffers for music. statically defined as they'll be changed many times.
-    OggVorbis_File                m_ogg_file;             ///< the currently open ogg file
-    ALenum                        m_ogg_format;           ///< mono or stereo
-    ALsizei                       m_ogg_freq;             ///< sampling frequency
-    unsigned int                  m_temporary_disable_count = 0; ///< Count of the number of times sound was disabled. Sound is enabled when this is zero.
+    ALuint                        m_sources[NUM_SOURCES] = {0};             ///< OpenAL sound sources. The first one is used for music
+    int                           m_music_loops = 0;                        ///< the number of loops of the current music to play (< 0 for loop forever)
+    std::string                   m_music_name;                             ///< the name of the currently-playing music file
+    std::map<std::string, ALuint> m_buffers;                                ///< the currently-cached (and possibly playing) sounds, if any; keyed on filename
+    ALuint                        m_music_buffers[NUM_MUSIC_BUFFERS] = {0}; ///< two additional buffers for music. statically defined as they'll be changed many times.
+    OggVorbis_File                m_ogg_file;                               ///< the currently open ogg file
+    ALenum                        m_ogg_format = 0;                         ///< mono or stereo
+    ALsizei                       m_ogg_freq = 0;                           ///< sampling frequency
+    unsigned int                  m_temporary_disable_count = 0;            ///< Count of the number of times sound was disabled. Sound is enabled when this is zero.
     /** m_initialized indicates if the sound system has been initialized.
         The system will not be initialized if both sound effects and
         music are disabled or if initialization failed. */
@@ -462,7 +462,8 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
 #endif
             {
                 ov_test_open(&m_ogg_file); // it is, now fully open the file
-                /* now we need to take some info we will need later */
+
+                // take some info needed later...
                 vorbis_info_ptr = ov_info(&m_ogg_file, -1);
                 if (vorbis_info_ptr->channels == 1)
                     m_ogg_format = AL_FORMAT_MONO16;
@@ -470,7 +471,7 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
                     m_ogg_format = AL_FORMAT_STEREO16;
                 m_ogg_freq = vorbis_info_ptr->rate;
                 m_music_loops = loops;
-                /* fill up the buffers and queue them up for the first time */
+                // fill up the buffers and queue them up for the first time
                 if (!RefillBuffer(&m_ogg_file, m_ogg_format, m_ogg_freq,
                                   m_music_buffers[0], BUFFER_SIZE, m_music_loops))
                 {
