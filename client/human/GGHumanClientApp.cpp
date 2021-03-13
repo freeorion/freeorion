@@ -207,7 +207,7 @@ std::string GGHumanClientApp::EncodeServerAddressOption(const std::string& serve
 }
 
 GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, std::string name,
-                               int x, int y, bool fullscreen, bool fake_mode_change) :
+                                   int x, int y, bool fullscreen, bool fake_mode_change) :
     ClientApp(),
     SDLGUI(width, height, calculate_fps, std::move(name), x, y, fullscreen, fake_mode_change)
 {
@@ -283,10 +283,6 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
     try {
         if (GetOptionsDB().Get<bool>("audio.effects.enabled") || GetOptionsDB().Get<bool>("audio.music.enabled"))
             Sound::GetSound().Enable();
-
-        if ((GetOptionsDB().Get<bool>("audio.music.enabled")))
-            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.path"), -1);
-
         Sound::GetSound().SetMusicVolume(GetOptionsDB().Get<int>("audio.music.volume"));
         Sound::GetSound().SetUISoundsVolume(GetOptionsDB().Get<int>("audio.effects.volume"));
     } catch (const Sound::InitializationFailureException&) {

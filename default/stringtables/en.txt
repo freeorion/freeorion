@@ -1375,8 +1375,11 @@ Enables sound in the game.
 OPTIONS_DB_MUSIC_ON
 Enables music in the game.
 
+OPTIONS_DB_TITLE_MUSIC
+Sets the title screen music track to play.
+
 OPTIONS_DB_BG_MUSIC
-Sets the background track to play.
+Sets the background music track to play.
 
 OPTIONS_DB_FULLSCREEN
 Start the game in fullscreen. Clicking Apply may cause this to take effect, or may require a restart.
@@ -2190,7 +2193,7 @@ OPTIONS_DB_SECTION_AUDIO
 Audio
 
 OPTIONS_DB_SECTION_AUDIO_MUSIC
-Background music
+Music
 
 OPTIONS_DB_SECTION_AUDIO_EFFECTS
 Sound effects
@@ -3039,8 +3042,11 @@ Music
 OPTIONS_UI_SOUNDS
 UI sounds
 
+OPTIONS_TITLE_MUSIC
+Title Screen Music
+
 OPTIONS_BACKGROUND_MUSIC
-Music
+Background Music
 
 OPTIONS_SOUNDS
 Sounds

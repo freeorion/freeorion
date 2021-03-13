@@ -492,7 +492,8 @@ namespace {
         db.Add("video.fps.unfocused",                                   UserStringNop("OPTIONS_DB_MAX_FPS_NO_FOCUS"),               15.0,                           RangedStepValidator<double>(0.125, 0.125, 30.0));
 
         // sound and music
-        db.Add<std::string>("audio.music.path",                         UserStringNop("OPTIONS_DB_BG_MUSIC"),                       (GetRootDataDir() / "default" / "data" / "sound" / "artificial_intelligence_v3.ogg").string());
+        db.Add<std::string>("audio.music.title.path",                   UserStringNop("OPTIONS_DB_TITLE_MUSIC"),                    (GetRootDataDir() / "default" / "data" / "sound" / "artificial_intelligence_v3.ogg").string());
+        db.Add<std::string>("audio.music.ambiance.path",                UserStringNop("OPTIONS_DB_BG_MUSIC"),                       (GetRootDataDir() / "default" / "data" / "sound" / "artificial_intelligence_v3.ogg").string());
         db.Add("audio.music.volume",                                    UserStringNop("OPTIONS_DB_MUSIC_VOLUME"),                   127,                            RangedValidator<int>(1, 255));
         db.Add("audio.effects.volume",                                  UserStringNop("OPTIONS_DB_UI_SOUND_VOLUME"),                255,                            RangedValidator<int>(0, 255));
         db.Add<std::string>("ui.button.rollover.sound.path",            UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER"),       (GetRootDataDir() / "default" / "data" / "sound" / "button_rollover.ogg").string());

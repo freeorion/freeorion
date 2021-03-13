@@ -484,7 +484,10 @@ void OptionsWnd::CompleteConstruction() {
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_VOLUME_AND_MUSIC"));
     MusicVolumeOption(current_page, 0, m_sound_feedback);
     VolumeOption(current_page, 0, "audio.effects.enabled", "audio.effects.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
-    FileOption(current_page, 0, "audio.music.path", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
+    FileOption(current_page, 0, "audio.music.title.path", UserString("OPTIONS_TITLE_MUSIC"), ClientUI::SoundDir(),
+               {UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX},
+               ValidMusicFile);
+    FileOption(current_page, 0, "audio.music.ambiance.path", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
                {UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX},
                ValidMusicFile);
 
@@ -1454,7 +1457,7 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
         try {
             Sound::GetSound().Enable();
             GetOptionsDB().Set("audio.music.enabled", true);
-            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.path"), -1);
+            Sound::GetSound().ResumeMusic();
         } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
