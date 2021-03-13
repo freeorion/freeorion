@@ -1858,6 +1858,15 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     std::shared_ptr<Empire> empire;
     int empire_id = ALL_EMPIRES;
     std::list<std::string> delegation = GetPlayerDelegation(player_connection->PlayerName());
+    if (GetOptionsDB().Get<bool>("network.server.take-over-ai")) {
+        for (auto& e : Empires()) {
+            if (!e.second->Eliminated() &&
+                GetEmpireClientType(e.first) == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
+            {
+                delegation.push_back(e.second->PlayerName());
+            }
+        }
+    }
     if (target_empire_id == ALL_EMPIRES) {
         // search empire by player name
         for (auto& e : Empires()) {
