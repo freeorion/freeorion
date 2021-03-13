@@ -113,12 +113,10 @@ bool CUIButton::InWindow(const GG::Pt& pt) const {
     return InAngledCornerRect(pt, ul, lr, CUIBUTTON_ANGLE_OFFSET);
 }
 
-void CUIButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    if (!Disabled()) {
-        if (State() != ButtonState::BN_ROLLOVER)
-            PlayButtonRolloverSound();
-        SetState(ButtonState::BN_ROLLOVER);
-    }
+void CUIButton::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    Button::MouseEnter(pt, mod_keys);
+    if (!Disabled())
+         PlayButtonRolloverSound();
 }
 
 GG::Pt CUIButton::MinUsableSize() const {
