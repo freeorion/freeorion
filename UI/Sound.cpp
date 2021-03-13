@@ -13,6 +13,7 @@
 
 #include <vorbis/vorbisfile.h>
 
+#include <atomic>
 #include <map>
 
 class Sound::Impl {
@@ -85,7 +86,7 @@ private:
     ALenum                        m_music_ogg_format = 0;                   ///< mono or stereo for current music
     ALsizei                       m_music_ogg_freq = 0;                     ///< sampling frequency for current music
 
-    unsigned int                  m_temporary_disable_count = 0;            ///< Count of the number of times sound was disabled. Sound is enabled when this is zero.
+    std::atomic<unsigned int>     m_temporary_disable_count = 0;            ///< Count of the number of times sound was disabled. Sound is enabled when this is zero.
 
     /** The system will not be initialized if both sound effects and
         music are disabled, or if initialization failed. */
@@ -266,9 +267,9 @@ void Sound::Impl::Disable() {
     DebugLogger() << "Audio " << (m_initialized ? "enabled." : "disabled.");
 }
 
-/// Initialize OpenAl and return true on success.
-// TODO rewrite with std::unique_ptr and custom deleter to remove long chain of "destructor" code.
 void Sound::Impl::InitOpenAL() {
+    // TODO: Rewrite with std::unique_ptr and custom deleter to remove long chain of "destructor" code.
+
     ALCdevice* device = alcOpenDevice(nullptr);
     if (!device) {
         ErrorLogger() << "Unable to initialise default OpenAL device.";
@@ -347,6 +348,7 @@ void Sound::Impl::InitOpenAL() {
             return;
         }
     }
+
     DebugLogger() << "OpenAL initialized. Version " << alGetString(AL_VERSION)
                   << " Renderer " << alGetString(AL_RENDERER)
                   << " Vendor " << alGetString(AL_VENDOR) << "\n"
@@ -666,7 +668,7 @@ void Sound::Impl::DoFrame() {
         if (RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
                          buffer_name_yay, BUFFER_SIZE, m_music_loops))
         {
-            m_music_name.clear();  // m_music_name.clear() must always be called before ov_clear. Otherwise
+            m_music_name.clear();  // m_music_name.clear() must always be called before ov_clear
             break; // this happens if RefillBuffer returns 1, meaning it encountered EOF and the file shouldn't be repeated
         }
         alSourceQueueBuffers(m_sources[0], 1, &buffer_name_yay);
