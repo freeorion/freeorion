@@ -432,6 +432,9 @@ namespace {
         // fill up the buffers and queue them up for the first time
         ALuint sound_handle;
         alGenBuffers(1, &sound_handle);
+        ALenum openal_error = alGetError();
+        if (openal_error != AL_NONE)
+            ErrorLogger() << "RefillBuffer: OpenAL ERROR: " << alGetString(openal_error);
 
         int loop = 0;
         RefillBuffer(&ogg_file, ogg_format, ogg_freq, sound_handle, byte_size, loop);
@@ -627,8 +630,8 @@ void Sound::Impl::SetMusicVolume(int vol) {
     if (!alcGetCurrentContext())
         return;
 
-    alSourcef(m_sources[0], AL_GAIN, ((ALfloat) vol)/255.0);
-    // it is highly unlikely that we'll get an error here, but better safe than sorry
+    alSourcef(m_sources[0], AL_GAIN, static_cast<ALfloat>(vol) / 255.0f);
+    // it is highly unlikely to get an error here, but better safe than sorry
     ALenum openal_error = alGetError();
     if (openal_error != AL_NONE)
         ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(openal_error);
@@ -644,9 +647,9 @@ void Sound::Impl::SetUISoundsVolume(int vol) {
     if (!alcGetCurrentContext())
         return;
 
-    for (int it = 1; it < NUM_SOURCES; ++it)
-            alSourcef(m_sources[it], AL_GAIN, ((ALfloat) vol)/255.0f);
-        // it is highly unlikely that we'll get an error here, but better safe than sorry
+    for (int it = 1; it < NUM_SOURCES; ++it) // skip source 0, which is music
+        alSourcef(m_sources[it], AL_GAIN, static_cast<ALfloat>(vol) / 255.0f);
+    // it is highly unlikely to get an error here, but better safe than sorry
     ALenum openal_error = alGetError();
     if (openal_error != AL_NONE)
         ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(openal_error);
