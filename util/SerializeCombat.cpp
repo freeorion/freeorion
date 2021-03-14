@@ -5,6 +5,10 @@
 #include "../combat/CombatLogManager.h"
 
 
+namespace {
+    DeclareThreadSafeLogger(combat_log);
+}
+
 template<typename Archive>
 void serialize(Archive&, CombatEvent&, unsigned int const)
 {}
@@ -338,9 +342,8 @@ void serialize(Archive& ar, CombatLogManager& obj, const unsigned int version)
     std::map<int, CombatLog> logs;
 
     if (Archive::is_saving::value) {
+        logs.insert(obj.m_logs.begin(), obj.m_logs.end());
         // TODO: filter logs by who should have access to them
-        for (auto it = obj.m_logs.begin(); it != obj.m_logs.end(); ++it)
-            logs.insert({it->first, it->second});
     }
 
     ar  & make_nvp("logs", logs)
@@ -348,8 +351,7 @@ void serialize(Archive& ar, CombatLogManager& obj, const unsigned int version)
 
     if (Archive::is_loading::value) {
         // copy new logs, but don't erase old ones
-        for (auto& log : logs)
-            obj.m_logs[log.first] = log.second;
+        obj.m_logs.insert(std::make_move_iterator(logs.begin()), std::make_move_iterator(logs.end()));
     }
 }
 
@@ -366,6 +368,7 @@ void SerializeIncompleteLogs(Archive& ar, CombatLogManager& obj, const unsigned 
 
     int old_latest_log_id = obj.m_latest_log_id;
     ar & make_nvp("m_latest_log_id", obj.m_latest_log_id);
+    DebugLogger(combat_log) << "SerializeIncompleteLogs latest log id: " << obj.m_latest_log_id << " and old latest log id: " << old_latest_log_id;
 
     // If the new m_latest_log_id is greater than the old one then add all
     // of the new ids to the incomplete log set.
