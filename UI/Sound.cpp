@@ -408,7 +408,8 @@ namespace {
         OggVorbis_File ogg_file;
         int file_bad = FileIsBad(ogg_file, file);
         if (file_bad > 0) {
-            ErrorLogger() << "GetSoundBuffer: unable to open file " << filename << ". Aborting\n";
+            ErrorLogger() << "GetSoundBuffer: unable to open file " << filename
+                          << " possibly not a .ogg vorbis file. Aborting\n";
             return {0, false};
         }
 
@@ -470,51 +471,53 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
         return;
     }
 
-#ifdef FREEORION_WIN32
-    if (!(ov_test_callbacks(file, &m_music_ogg_file, nullptr, 0, callbacks))) // check if it's a proper ogg
-#else
-    if (!(ov_test(file, &m_music_ogg_file, nullptr, 0))) // check if it's a proper ogg
-#endif
-    {
-        ov_test_open(&m_music_ogg_file); // it is, now fully open the file
-
-        // take some info needed later...
-        auto vorbis_info_ptr = ov_info(&m_music_ogg_file, -1);
-        if (vorbis_info_ptr->channels == 1)
-            m_music_ogg_format = AL_FORMAT_MONO16;
-        else
-            m_music_ogg_format = AL_FORMAT_STEREO16;
-        m_music_ogg_freq = vorbis_info_ptr->rate;
-        m_music_loops = loops;
-
-
-        // fill up the buffers and queue them up for the first time
-        auto refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
-                                          m_music_buffers[0], BUFFER_SIZE, m_music_loops);
-
-        if (!refill_failed) {
-            alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[0]); // queue up the buffer if we manage to fill it
-
-
-            refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
-                                         m_music_buffers[1], BUFFER_SIZE, m_music_loops);
-            if (!refill_failed) {
-                alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[1]);
-                m_music_name = filename; //playing something that takes up more than 2 buffers
-            }
-
-            alSourcePlay(m_sources[0]); // play if at least one buffer is queued
-        }
-
-        if (refill_failed)
-            m_music_name.clear();
-
-    } else {
+    int file_bad = FileIsBad(m_music_ogg_file, file);
+    if (file_bad > 0) {
         ErrorLogger() << "PlayMusic: unable to open file " << filename
                       << " possibly not a .ogg vorbis file. Aborting\n";
         m_music_name.clear();
         ov_clear(&m_music_ogg_file);
+        return;
     }
+
+    // file is OK, so now fully open the file
+    ov_test_open(&m_music_ogg_file);
+
+    // take some info needed later...
+    auto vorbis_info_ptr = ov_info(&m_music_ogg_file, -1);
+    if (vorbis_info_ptr->channels == 1)
+        m_music_ogg_format = AL_FORMAT_MONO16;
+    else
+        m_music_ogg_format = AL_FORMAT_STEREO16;
+    m_music_ogg_freq = vorbis_info_ptr->rate;
+    m_music_loops = loops;
+
+    // fill up the buffers and queue them up for the first time
+    auto refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
+                                      m_music_buffers[0], BUFFER_SIZE, m_music_loops);
+
+    if (refill_failed == 0) {
+        alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[0]); // queue up the buffer if we manage to fill it
+        auto openal_error = alGetError();
+        if (openal_error != AL_NONE)
+            ErrorLogger() << "PlayMusic: OpenAL ERROR: " << alGetString(openal_error);
+
+        refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
+                                     m_music_buffers[1], BUFFER_SIZE, m_music_loops);
+        if (refill_failed == 0) {
+            alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[1]);
+            m_music_name = filename; //playing something that takes up more than 2 buffers
+        } else {
+            openal_error = alGetError();
+            if (openal_error != AL_NONE)
+                ErrorLogger() << "PlayMusic: OpenAL ERROR: " << alGetString(openal_error);
+        }
+
+        alSourcePlay(m_sources[0]); // play if at least one buffer is queued
+    }
+
+    if (refill_failed != 0)
+        m_music_name.clear();
 
     auto openal_error = alGetError();
     if (openal_error != AL_NONE)
