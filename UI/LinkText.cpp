@@ -118,8 +118,8 @@ std::string ValueRefLinkText(const std::string& text, const bool add_explanation
             break;
 
         std::string value_ref_name{match[1]};
-        auto*       value_ref = GetValueRefBase(value_ref_name);
-        auto        value_str{value_ref ? value_ref->EvalAsString() : value_ref_name};
+        auto* value_ref = GetValueRefBase(value_ref_name);
+        auto value_str{value_ref ? value_ref->EvalAsString() : value_ref_name};
         // Explanation: match[2] contains the localized UserString. Result looks like e.g. " (per planet size: 2.5 * 0.2000)"
         // Using UserStringExists to get rid of lookup errors is kind of redundant. It would be better if UserString substitution had not happened before.
         std::string explanation_str{
