@@ -58,7 +58,10 @@ std::map<std::string, Hotkey>* Hotkey::s_hotkeys = nullptr;
 void Hotkey::AddHotkey(const std::string& name, const std::string& description, GG::Key key, GG::Flags<GG::ModKey> mod) {
     if (!s_hotkeys)
         s_hotkeys = new std::map<std::string, Hotkey>;
-    s_hotkeys->insert({name, Hotkey(name, description, key, mod)});
+    auto [it, inserted] = s_hotkeys->emplace(name, Hotkey(name, description, key, mod));
+    (void)it; // suppress unused variable warning
+    if (!inserted)
+        InfoLogger() << "Hotkey::AddHotkey skipped creating a new hotkey with name " << name;
 }
 
 std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {

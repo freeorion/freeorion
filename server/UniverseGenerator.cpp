@@ -318,9 +318,6 @@ namespace {
         // "depth" level in tree of system currently being investigated
         int curDepth;
 
-        // iterators to set of starlanes, in graph, for the current system
-        std::set<int>::iterator curSysLanesSetIter, curSysLanesSetEnd;
-
         // check for simple cases for quick termination
         if (system1 == system2) return true; // system is always connected to itself
         if (0 == maxLaneJumps) return false; // no system is connected to any other system by less than 1 jump
@@ -334,7 +331,7 @@ namespace {
 
         // add starting system to list and set of accessible systems
         accessibleSystemsList.push_back(system1);
-        accessibleSystemsMap.insert({system1, 0});
+        accessibleSystemsMap.emplace(system1, 0);
 
         // loop through visited systems
         sysListIter = accessibleSystemsList.begin();
@@ -349,8 +346,8 @@ namespace {
             if (curDepth >= maxLaneJumps) return false;
 
             // get set of starlanes for this system
-            curSysLanesSetIter = system_lanes.at(cur_sys_id).begin();
-            curSysLanesSetEnd = system_lanes.at(cur_sys_id).end();
+            auto curSysLanesSetIter = system_lanes.at(cur_sys_id).begin();
+            auto curSysLanesSetEnd = system_lanes.at(cur_sys_id).end();
 
             // add starlanes accessible from this system to list and set of accessible starlanes
             // (and check for the goal starlane)
@@ -364,7 +361,7 @@ namespace {
 
                     // add curLaneDest to accessible systems list and map
                     accessibleSystemsList.push_back(curLaneDest);
-                    accessibleSystemsMap.insert({curLaneDest, curDepth + 1});
+                    accessibleSystemsMap.emplace(curLaneDest, curDepth + 1);
                 }
                 ++curSysLanesSetIter;
             }
@@ -424,7 +421,7 @@ namespace {
                 vectY1 /= mag1;
 
                 // store lane in map of lane vectors
-                laneVectsMap.insert({dest1, {{vectX1, vectY1}, mag1}});
+                laneVectsMap.emplace(dest1, VectAndMagTypeQQ{{vectX1, vectY1}, mag1});
 
                 ++laneSetIter1;
             }
@@ -585,7 +582,7 @@ namespace {
                                   << std::sqrt(lane_length2)
                                   << " between systems with ids: "
                                   << cur_sys_id << " and " << dest_sys_id;
-                    lanes_to_remove.insert({lane_length2, lane});
+                    lanes_to_remove.emplace(lane_length2, lane);
                 }
 
                 ++lane_it;

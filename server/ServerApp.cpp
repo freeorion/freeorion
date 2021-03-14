@@ -2887,7 +2887,7 @@ namespace {
 
         std::multimap<double, int> inverted_empires_troops;
         for (const auto& entry : empires_troops)
-            inverted_empires_troops.insert({entry.second, entry.first});
+            inverted_empires_troops.emplace(entry.second, entry.first);
 
         // everyone but victor loses all troops.  victor's troops remaining are
         // what the victor started with minus what the second-largest troop

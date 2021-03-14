@@ -597,7 +597,7 @@ void SupplyManager::Update() {
                     }
                     if (lane.second == sys->ID()) {
                         lane_traversals.erase({lane.first, sys->ID()});
-                        obstructed_traversals.insert({lane.first, sys->ID()});
+                        obstructed_traversals.emplace(lane.first, sys->ID());
                     }
                 }
 
@@ -658,7 +658,7 @@ void SupplyManager::Update() {
                     if (!unobstructed_systems.count(lane_end_sys_id)) {
                         // propagation obstructed!
                         TraceLogger(supply) << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to not being on unobstructed systems";
-                        m_supply_starlane_obstructed_traversals[empire_id].insert({system_id, lane_end_sys_id});
+                        m_supply_starlane_obstructed_traversals[empire_id].emplace(system_id, lane_end_sys_id);
                         continue;
                     }
                     // propagation not obstructed.
@@ -680,7 +680,7 @@ void SupplyManager::Update() {
 
                     // if so, add a blocked traversal and continue
                     if (range_after_one_more_jump <= other_empire_biggest_range) {
-                        m_supply_starlane_obstructed_traversals[empire_id].insert({system_id, lane_end_sys_id});
+                        m_supply_starlane_obstructed_traversals[empire_id].emplace(system_id, lane_end_sys_id);
                         TraceLogger(supply) << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to other empire biggest range being " << other_empire_biggest_range;
                         continue;
                     }
@@ -714,7 +714,7 @@ void SupplyManager::Update() {
                         }
                     }
                     // always record a traversal, so connectivity is calculated properly
-                    m_supply_starlane_traversals[empire_id].insert({system_id, lane_end_sys_id});
+                    m_supply_starlane_traversals[empire_id].emplace(system_id, lane_end_sys_id);
                     TraceLogger(supply) << "Added traversal from " << system_id << " to " << lane_end_sys_id;
 
                     // erase any previous obstructed traversal that just succeeded
@@ -799,8 +799,8 @@ void SupplyManager::Update() {
             for (auto const& empire_trav : empire_obstructed_traversals) {
                 for (auto const& ally_trav : ally_obstructed_traversals) {
                     if (empire_trav.first == ally_trav.second && empire_trav.second == ally_trav.first) {
-                        empire_supply_traversals.insert({empire_trav.first, empire_trav.second});
-                        empire_supply_traversals.insert({empire_trav.second, empire_trav.first});
+                        empire_supply_traversals.emplace(empire_trav.first, empire_trav.second);
+                        empire_supply_traversals.emplace(empire_trav.second, empire_trav.first);
                     }
                 }
             }

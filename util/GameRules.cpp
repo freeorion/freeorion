@@ -132,8 +132,8 @@ void GameRules::ResetToDefaults() {
 std::map<std::string, std::string> GameRules::GetRulesAsStrings() const {
     CheckPendingGameRules();
     std::map<std::string, std::string> retval;
-    for (const auto& rule : m_game_rules)
-        retval.insert({rule.first, rule.second.ValueToString()});
+    for (auto& [rule_name, rule_value] : m_game_rules)
+        retval.emplace(rule_name, rule_value.ValueToString());
     return retval;
 }
 

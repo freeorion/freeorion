@@ -193,7 +193,7 @@ namespace {
                 m_names_to_front_ends.erase(name_and_old_frontend);
             }
 
-            m_names_to_front_ends.insert({channel_name, front_end});
+            m_names_to_front_ends.emplace(channel_name, front_end);
 
             // Add the new frontend if it is non null.
             if (!front_end)
@@ -212,7 +212,7 @@ namespace {
 
             // Remove the old front end if it is different.
             m_names_to_front_end_configurers.erase(channel_name);
-            m_names_to_front_end_configurers.insert({channel_name, configure_front_end});
+            m_names_to_front_end_configurers.emplace(channel_name, configure_front_end);
         }
 
         /** Configure front ends for any logger with stored configuration functions. */
