@@ -100,6 +100,9 @@ struct FO_COMMON_API Condition {
 protected:
     //! Copies invariants from other Condition
     Condition(const Condition& rhs) = default;
+    Condition(Condition&& rhs) = delete;
+    Condition& operator=(const Condition& rhs) = delete;
+    Condition& operator=(Condition&& rhs) = delete;
 
     bool m_root_candidate_invariant = false;
     bool m_target_invariant = false;
