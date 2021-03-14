@@ -1169,17 +1169,16 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(
     return std::multimap<double, int>();
 }
 
-
 void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
     std::unordered_set<int>* result, size_t jump_limit,
     size_t ii, distance_matrix_storage<short>::row_ref row) const
 {
     // Scan the LUT of system ids and add any result from the row within
     // the neighborhood range to the results.
-    for (auto system_id_and_ii : m_system_id_to_graph_index) {
-        size_t hops = row[system_id_and_ii.second];
+    for (auto& [sys_id, sys_idx] : m_system_id_to_graph_index) {
+        size_t hops = row[sys_idx];
         if (hops <= jump_limit)
-            result->insert(system_id_and_ii.first);
+            result->insert(sys_id);
     }
 }
 
@@ -1190,7 +1189,7 @@ std::unordered_set<int> Pathfinder::PathfinderImpl::WithinJumps(
     size_t jumps, const std::vector<int>& candidates) const
 {
     std::unordered_set<int> near;
-    distance_matrix_cache< distance_matrix_storage<short>> cache(m_system_jumps);
+    distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
     for (auto candidate : candidates) {
         size_t system_index;
         try {
