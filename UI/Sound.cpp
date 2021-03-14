@@ -391,7 +391,7 @@ namespace {
 #ifdef FREEORION_WIN32
         return ov_test_callbacks(file, &ogg_file, nullptr, 0, callbacks);
 #else
-        return = ov_test(file, &ogg_file, nullptr, 0);
+        return ov_test(file, &ogg_file, nullptr, 0);
 #endif
     }
 
