@@ -387,6 +387,14 @@ namespace {
     };
 #endif
 
+    int FileIsBad(OggVorbis_File& ogg_file, FILE* file) {
+#ifdef FREEORION_WIN32
+        return ov_test_callbacks(file, &ogg_file, nullptr, 0, callbacks);
+#else
+        return = ov_test(file, &ogg_file, nullptr, 0);
+#endif
+    }
+
     std::pair<ALuint, bool> GetSoundBuffer(std::map<std::string, ALuint>& buffers, const std::string& filename) {
         // Check if the sound data of the file we want to play is already buffered
         auto it = buffers.find(filename);
@@ -398,18 +406,14 @@ namespace {
             return {0, false};
 
         OggVorbis_File ogg_file;
-#ifdef FREEORION_WIN32
-        auto file_bad = ov_test_callbacks(file, &ogg_file, nullptr, 0, callbacks);
-#else
-        auto file_bad = ov_test(file, &ogg_file, nullptr, 0);
-#endif
-        if (file_bad) {
+        int file_bad = FileIsBad(ogg_file, file);
+        if (file_bad > 0) {
             ErrorLogger() << "GetSoundBuffer: unable to open file " << filename << ". Aborting\n";
             return {0, false};
         }
 
         // file is OK, so now fully open the file
-        ov_test_open(&ogg_file); 
+        ov_test_open(&ogg_file);
 
         // take some info needed later...
         ALenum ogg_format;
@@ -460,56 +464,56 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
     if (m_music_name.size() > 0)
         StopMusic();
 
-    FILE* m_f = fopen(filename.c_str(), "rb");
+    FILE* file = fopen(filename.c_str(), "rb");
+    if (!file) {
+        ErrorLogger() << "PlayMusic: unable to open file " << filename << " I/O Error. Aborting\n";
+        return;
+    }
 
-    if (m_f != nullptr) { // make sure we CAN open it
 #ifdef FREEORION_WIN32
-        if (!(ov_test_callbacks(m_f, &m_music_ogg_file, nullptr, 0, callbacks))) // check if it's a proper ogg
+    if (!(ov_test_callbacks(file, &m_music_ogg_file, nullptr, 0, callbacks))) // check if it's a proper ogg
 #else
-        if (!(ov_test(m_f, &m_music_ogg_file, nullptr, 0))) // check if it's a proper ogg
+    if (!(ov_test(file, &m_music_ogg_file, nullptr, 0))) // check if it's a proper ogg
 #endif
-        {
-            ov_test_open(&m_music_ogg_file); // it is, now fully open the file
+    {
+        ov_test_open(&m_music_ogg_file); // it is, now fully open the file
 
-            // take some info needed later...
-            auto vorbis_info_ptr = ov_info(&m_music_ogg_file, -1);
-            if (vorbis_info_ptr->channels == 1)
-                m_music_ogg_format = AL_FORMAT_MONO16;
-            else
-                m_music_ogg_format = AL_FORMAT_STEREO16;
-            m_music_ogg_freq = vorbis_info_ptr->rate;
-            m_music_loops = loops;
+        // take some info needed later...
+        auto vorbis_info_ptr = ov_info(&m_music_ogg_file, -1);
+        if (vorbis_info_ptr->channels == 1)
+            m_music_ogg_format = AL_FORMAT_MONO16;
+        else
+            m_music_ogg_format = AL_FORMAT_STEREO16;
+        m_music_ogg_freq = vorbis_info_ptr->rate;
+        m_music_loops = loops;
 
 
-            // fill up the buffers and queue them up for the first time
-            auto refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
-                                              m_music_buffers[0], BUFFER_SIZE, m_music_loops);
+        // fill up the buffers and queue them up for the first time
+        auto refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
+                                          m_music_buffers[0], BUFFER_SIZE, m_music_loops);
 
+        if (!refill_failed) {
+            alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[0]); // queue up the buffer if we manage to fill it
+
+
+            refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
+                                         m_music_buffers[1], BUFFER_SIZE, m_music_loops);
             if (!refill_failed) {
-                alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[0]); // queue up the buffer if we manage to fill it
-
-
-                refill_failed = RefillBuffer(&m_music_ogg_file, m_music_ogg_format, m_music_ogg_freq,
-                                             m_music_buffers[1], BUFFER_SIZE, m_music_loops);
-                if (!refill_failed) {
-                    alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[1]);
-                    m_music_name = filename; //playing something that takes up more than 2 buffers
-                }
-
-                alSourcePlay(m_sources[0]); // play if at least one buffer is queued
+                alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[1]);
+                m_music_name = filename; //playing something that takes up more than 2 buffers
             }
 
-            if (refill_failed)
-                m_music_name.clear();
-
-        } else {
-            ErrorLogger() << "PlayMusic: unable to open file " << filename
-                          << " possibly not a .ogg vorbis file. Aborting\n";
-            m_music_name.clear();
-            ov_clear(&m_music_ogg_file);
+            alSourcePlay(m_sources[0]); // play if at least one buffer is queued
         }
+
+        if (refill_failed)
+            m_music_name.clear();
+
     } else {
-        ErrorLogger() << "PlayMusic: unable to open file " << filename << " I/O Error. Aborting\n";
+        ErrorLogger() << "PlayMusic: unable to open file " << filename
+                      << " possibly not a .ogg vorbis file. Aborting\n";
+        m_music_name.clear();
+        ov_clear(&m_music_ogg_file);
     }
 
     auto openal_error = alGetError();
