@@ -41,7 +41,7 @@ public:
     CombatLogManager() = default;
 
     /** Return the requested combat log or boost::none.*/
-    boost::optional<const CombatLog&>  GetLog(int log_id) const;
+    boost::optional<const CombatLog&> GetLog(int log_id) const;
 
     /** Return the ids of all incomplete logs or boost::none if they are all complete.*/
     boost::optional<std::vector<int>> IncompleteLogIDs() const;

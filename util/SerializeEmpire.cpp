@@ -374,7 +374,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
 
         // erase invalid empire diplomatic statuses
         std::vector<std::pair<int, int>> to_erase;
-        for (auto r : em.m_empire_diplomatic_statuses) {
+        for (auto& r : em.m_empire_diplomatic_statuses) {
             const auto& e1 = r.first.first;
             const auto& e2 = r.first.second;
             if (em.m_empire_map.count(e1) < 1 || em.m_empire_map.count(e2) < 1) {
@@ -393,7 +393,8 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
                 auto dk = DiploKey(e1.first, e2.first);
                 if (em.m_empire_diplomatic_statuses.count(dk) < 1) {
                     em.m_empire_diplomatic_statuses[dk] = DiplomaticStatus::DIPLO_WAR;
-                    ErrorLogger() << "Added missing diplomatic status (default WAR) between empires " << e1.first << " and " << e2.first;
+                    ErrorLogger() << "Added missing diplomatic status (default WAR) between empires "
+                                  << e1.first << " and " << e2.first;
                 }
             }
         }
