@@ -7,7 +7,9 @@
 
 
 namespace {
-    static float MaxHealth(const UniverseObject& object) {
+    DeclareThreadSafeLogger(combat_log);
+
+    float MaxHealth(const UniverseObject& object) {
         if (object.ObjectType() == UniverseObjectType::OBJ_SHIP) {
             return object.GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
 
@@ -29,7 +31,7 @@ namespace {
         return 0.0f;
     }
 
-    static float CurrentHealth(const UniverseObject& object) {
+    float CurrentHealth(const UniverseObject& object) {
         if (object.ObjectType() == UniverseObjectType::OBJ_SHIP) {
             return object.GetMeter(MeterType::METER_STRUCTURE)->Current();
 
@@ -51,7 +53,7 @@ namespace {
         return 0.0f;
     }
 
-    static void FillState(CombatParticipantState& state, const UniverseObject& object) {
+    void FillState(CombatParticipantState& state, const UniverseObject& object) {
         state.current_health = CurrentHealth(object);
         state.max_health = MaxHealth(object);
     };
@@ -99,17 +101,20 @@ int CombatLogManager::AddNewLog(const CombatLog& log) {
 void CombatLogManager::CompleteLog(int id, const CombatLog& log) {
     auto incomplete_it = m_incomplete_logs.find(id);
     if (incomplete_it == m_incomplete_logs.end()) {
-        ErrorLogger() << "CombatLogManager::CompleteLog id = " << id << " is not an incomplete log, so log is being discarded.";
-        return;
+        DebugLogger(combat_log) << "CombatLogManager::CompleteLog id = " << id << " is not a known incomplete log";
+        auto complete_it = m_logs.find(id);
+        if (complete_it != m_logs.end())
+            DebugLogger(combat_log) << "... rather, it is already a complete log";
+    } else {
+        m_incomplete_logs.erase(incomplete_it);
     }
-    m_incomplete_logs.erase(incomplete_it);
     m_logs[id] = log;
 
     if (id > m_latest_log_id) {
-        for (++m_latest_log_id; m_latest_log_id <= id; ++m_latest_log_id) {
+        for (++m_latest_log_id; m_latest_log_id <= id; ++m_latest_log_id)
             m_incomplete_logs.insert(m_latest_log_id);
-        }
-        ErrorLogger() << "CombatLogManager::CompleteLog id = " << id << " is greater than m_latest_log_id, m_latest_log_id was increased and intervening logs will be requested.";
+        ErrorLogger(combat_log) << "CombatLogManager::CompleteLog id = " << id
+                                << " is greater than m_latest_log_id, m_latest_log_id was increased and intervening logs will be requested.";
     }
 }
 
