@@ -642,7 +642,7 @@ SM_TREE
 Forêt Dyson
 
 SM_TREE_DESC
-Une Forêt Dyson est composée de nombreux "arbres" spatiaux à branches filamenteuses. Ces arbres se multiplient et s'organisent en bulle autour de leur étoile hôte. Les Forêts Dyson constituent un risque pour la navigation interstellaire et s'étendent au fil du temps, devenant de plus en plus difficiles à éradiquer. Si elles ne sont pas détruites, ces forêts relâchent périodiquement des graines le long des Voies spatiales afin de coloniser d'autres systèmes stellaires. Une graine de [[SM_TREE]] est répertoriée sous l'appellation de [[predefinedshipdesign SM_FLOATER]], et peut s'avérer difficile à détecter.
+Une Forêt Dyson est composée de nombreux "arbres" spatiaux à branches filamenteuses. Ces arbres se multiplient et s'organisent en bulle autour de leur étoile hôte. Les Forêts Dyson constituent un risque pour la navigation interstellaire et s'étendent au fil du temps, devenant de plus en plus difficiles à éradiquer. Si elles ne sont pas détruites, ces forêts relâchent périodiquement des graines le long des Voies spatiales afin de coloniser d'autres systèmes stellaires. Une graine de [[SM_TREE]] est répertoriée sous l'appellation de [[predefinedshipdesign SM_FLOATER]], et peut s'avérer difficile à détecter. Lorsqu'une Forêt Dyson s'étend, des nids de Krill Spatial commencent souvent à se former entre les arbres.
 
 SM_FLOATER
 Flotteur
@@ -1124,6 +1124,12 @@ Passes de Combat
 RULE_NUM_COMBAT_ROUNDS_DESC
 Nombre de passes de combat se déroulant à chaque tour.
 
+RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE
+Passe de Combat pour Ciblage Courte Portée
+
+RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE_DESC
+La première passe de combat durant laquelle l'armement de courte portée est apte à faire feu sur les cibles ennemies.
+
 RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE
 Visibilité astronefs en mode Agression
 
@@ -1508,6 +1514,9 @@ Limite de taille en octets des messages client.
 
 OPTIONS_DB_DROP_EMPIRE_READY
 Annuler la lecture du statut de l'empire en rejoignant une partie en cours.
+
+OPTIONS_DB_TAKE_OVER_AI
+Option de serveur permettant aux joueurs humains de prendre le contrôle des empires dirigés par l'IA.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position horizontale du centre du menu principal de l'écran d'introduction, en pourcentage de la largeur totale de la fenêtre de jeu ou du plein écran.
@@ -12362,7 +12371,7 @@ SHP_KRILL_SPAWN
 Génération de Krill
 
 SHP_KRILL_SPAWN_DESC
-Débloque l'équipement [[shippart SP_KRILL_SPAWNER]] pour les astronefs, qui provoque l'apparition de krill sauvage dans les systèmes abritant des Ceintures d'Astéroïdes.
+Débloque l'équipement [[shippart SP_KRILL_SPAWNER]] pour les astronefs, qui provoque l'apparition de Krill Spatial dans les systèmes abritant des Ceintures d'Astéroïdes.
 
 SPY_ROOT_DECEPTION
 Tromperie
@@ -14359,23 +14368,45 @@ Canon Anti-Matière
 SR_SPINAL_ANTIMATTER_DESC
 Un gigantesque canon automatique propulsant de lourdes charges explosives faites d'anti-matière. Attaque astronefs et planètes.
 
+SR_GRAV_PULSE
+Pulsar Graviton
+
+SR_GRAV_PULSE_DESC
+'''Décharge gravitonique endommageant l'intégrité de la coque de chaque cible se trouvant dans le rayon de déflagration. Bien que très efficace contre les chasseurs pris dans la déflagration, celle-ci ne cause que des dommages mineurs aux astronefs et défenses planétaires.
+
+La décharge gravitonique inflige des [[encyclopedia DAMAGE_TITLE]] une seule fois par combat, lors de la 2ème passe de combat.'''
+
 SR_JAWS
 Mâchoires
 
 SR_JAWS_DESC
-Mâchoires provenant d'un monstre spatial et en mesure d'endommager les astronefs. Les monstres spatiaux de très grande taille sont même capables de dévorer des flottes entières.
+'''Mâchoires provenant d'un monstre spatial et en mesure d'endommager les astronefs et les planètes. Les monstres spatiaux de très grande taille sont même capables de dévorer des flottes entières.
+
+Les Mâchoires peuvent infliger des [[encyclopedia DAMAGE_TITLE]] à partir de la passe de combat [[value FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE]], les cibles étant trop éloignées durant les premières passes de combat.'''
 
 SR_SPINES
 Épines
 
 SR_SPINES_DESC
-Épines provenant d'un monstre spatial, à l'aide desquelles une frappe puissante peut sérieusement endommager un astronef.
+'''Épines provenant d'un monstre spatial, lesquelles avec une frappe puissante peuvent sérieusement endommager un astronef.
+
+Les Épines infligent des [[encyclopedia DAMAGE_TITLE]] à partir de la passe de combat [[value FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE]], les cibles étant trop éloignées durant les premières passes de combat.'''
 
 SR_TENTACLE
 Tentacule
 
 SR_TENTACLE_DESC
-Tentacule provenant d'un Kraken et en mesure d'endommager les astronefs.
+'''Tentacule de Kraken, dont la fonction première est d'endommager les astronefs. Peut également attaquer les chasseurs et les planètes.
+
+Les Tentacules peuvent infliger des [[encyclopedia DAMAGE_TITLE]] aux astronefs à partir de la passe de combat [[value FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE]], les cibles étant trop éloignées durant les premières passes de combat. Les Tentacules commencent à détruire les chasseurs lorsque ceux-ci arrivent à portée durant la 2ème passe de combat. Les Tentacules attaquent les chasseurs et planètes seulement si nul autre astronef ne peut être ciblé.'''
+
+SR_THRASHING_BODY
+Corps Broyeur
+
+SR_THRASHING_BODY_DESC
+'''Corps provenant d'un monstre spatial, se déplaçant à très grande vitesse et réduisant en miettes les chasseurs et astronefs de faible résistance se trouvant sur son chemin.
+
+Un Corps Broyeur peut infliger des [[encyclopedia DAMAGE_TITLE]] à partir de la passe de combat [[value FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE]], les cibles étant trop éloignées durant les premières passes de combat.'''
 
 SR_PLASMA_DISCHARGE
 Décharge Plasma
