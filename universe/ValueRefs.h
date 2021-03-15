@@ -414,6 +414,10 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     { return std::make_unique<Operation<T>>(*this); }
 
 private:
+    Operation(Operation<T>&& rhs) = delete;
+    Operation& operator=(const Operation<T>& rhs) = delete;
+    Operation& operator=(Operation<T>&& rhs) = delete;
+
     void    InitConstInvariants();
     void    CacheConstValue();
     T       EvalImpl(const ScriptingContext& context) const;
