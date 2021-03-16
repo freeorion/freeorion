@@ -58,7 +58,6 @@ namespace {
 }
 
 void Hotkey::AddHotkey(const std::string& name, const std::string& description, GG::Key key, GG::Flags<GG::ModKey> mod) {
-    std::cout << "adding hotkey named: " << name << " desc: " << description << std::endl;
     auto [it, inserted] = hotkeys.emplace(name, Hotkey(name, description, key, mod));
     (void)it; // suppress unused variable warning
     if (!inserted)
