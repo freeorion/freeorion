@@ -883,7 +883,7 @@ GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level
 }
 
 namespace {
-    void HandleSetHotkeyOption(const std::string & hk_name, GG::Button* button) {
+    void HandleSetHotkeyOption(const std::string& hk_name, GG::Button* button) {
         std::pair<GG::Key, GG::Flags<GG::ModKey>> kp = KeyPressCatcher::GetKeypress();
 
         // abort of escape was pressed...
@@ -906,7 +906,7 @@ namespace {
         HotkeyManager::GetManager()->RebuildShortcuts();
     }
 
-    void HandleResetHotkeyOption(const std::string & hk_name, GG::Button* button) {
+    void HandleResetHotkeyOption(const std::string& hk_name, GG::Button* button) {
         const Hotkey& hotkey = Hotkey::NamedHotkey(hk_name);
         if (hotkey.IsDefault())
             hotkey.ClearHotkey(hotkey);
@@ -922,21 +922,22 @@ namespace {
 }
 
 void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const std::string& hotkey_name) {
-    const Hotkey & hk = Hotkey::NamedHotkey(hotkey_name);
-    std::string text = UserString(hk.GetDescription());
+    const Hotkey& hk = Hotkey::NamedHotkey(hotkey_name);
+    const std::string& text = UserString(hk.GetDescription());
     auto text_control = GG::Wnd::Create<CUILabel>(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto button = Wnd::Create<CUIButton>(hk.PrettyPrint());
 
-    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y),
+    auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, ROW_WIDTH, std::max(button->MinUsableSize().y,
+                                                                                  text_control->MinUsableSize().y),
                                               1, 2, 0, 5);
-    layout->Add(text_control,   0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
-    layout->Add(button,         0, 1, GG::ALIGN_VCENTER | GG::ALIGN_RIGHT);
+    layout->Add(text_control, 0, 0, GG::ALIGN_VCENTER | GG::ALIGN_LEFT);
+    layout->Add(button,       0, 1, GG::ALIGN_VCENTER | GG::ALIGN_RIGHT);
 
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y) + 6,
                                                layout, indentation_level);
 
-    button->LeftClickedSignal.connect(boost::bind(HandleSetHotkeyOption, std::ref(hotkey_name), button.get()));
-    button->RightClickedSignal.connect(boost::bind(HandleResetHotkeyOption, std::ref(hotkey_name), button.get()));
+    button->LeftClickedSignal.connect(boost::bind(HandleSetHotkeyOption, hotkey_name, button.get()));
+    button->RightClickedSignal.connect(boost::bind(HandleResetHotkeyOption, hotkey_name, button.get()));
 
     page->Insert(row);
 }
@@ -1387,7 +1388,7 @@ namespace {
             std::sregex_token_iterator()
         };
 
-        std::string current_node { "" };
+        std::string current_node;
         for (const auto& node : nodes) {
             if (current_node == name)
                 break;
@@ -1400,19 +1401,21 @@ namespace {
         return retval;
     }
 
-    std::map<std::string, std::set<std::string>> HotkeysBySection() {
-        std::map<std::string, std::set<std::string>> retval;
-        for (auto& entry : Hotkey::DefinedHotkeys())
-            retval[ValidSectionForHotkey(entry)].insert(entry);
+    std::map<std::string, std::vector<std::string>> HotkeysBySection() {
+        std::map<std::string, std::vector<std::string>> retval;
+        for (auto& entry : Hotkey::DefinedHotkeys()) {
+            auto section = ValidSectionForHotkey(entry);
+            retval[std::move(section)].push_back(std::move(entry));
+        }
         return retval;
     }
 }
 
 void OptionsWnd::HotkeysPage() {
     GG::ListBox* page = CreatePage(UserString("OPTIONS_PAGE_HOTKEYS"));
-    for (const auto& class_hotkeys : HotkeysBySection()) {
+    for (auto& class_hotkeys : HotkeysBySection()) {
         CreateSectionHeader(page, 0, UserString(class_hotkeys.first));
-        for (const std::string& hotkey : class_hotkeys.second)
+        for (std::string& hotkey : class_hotkeys.second)
             HotkeyOption(page, 0, hotkey);
     }
     m_tabs->SetCurrentWnd(0);

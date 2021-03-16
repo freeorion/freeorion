@@ -32,9 +32,6 @@ class OptionsDB;
 /// A single hotkey, ie just a combination key+modifier that has been
 /// given a certain name.
 class Hotkey {
-    /// The global hotkey storage
-    static std::map<std::string, Hotkey>* s_hotkeys;
-
     Hotkey(const std::string& name, const std::string& description,
            GG::Key key, GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
 
@@ -58,7 +55,7 @@ public:
                           GG::Key key, GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE);
 
     /// Returns the name of all defined hotkeys
-    static std::set<std::string> DefinedHotkeys();
+    static std::vector<std::string> DefinedHotkeys();
 
     /// Returns the Hotkey of the given name, or raises an exception
     /// if there is no such hotkey.
@@ -107,10 +104,10 @@ public:
     bool IsTypingSafe() const;  /// Is the hotkey safe to recognize while typing text?
     bool IsDefault() const;     /// Is the hotkey set to its default value ?
 
-    GG::Key                 m_key;
-    GG::Key                 m_key_default;
-    GG::Flags<GG::ModKey>   m_mod_keys;
-    GG::Flags<GG::ModKey>   m_mod_keys_default;
+    GG::Key               m_key;
+    GG::Key               m_key_default;
+    GG::Flags<GG::ModKey> m_mod_keys;
+    GG::Flags<GG::ModKey> m_mod_keys_default;
 };
 
 

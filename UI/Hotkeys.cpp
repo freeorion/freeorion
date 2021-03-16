@@ -53,12 +53,13 @@ struct HotkeyManager::ConditionalConnection {
 /////////////////////////////////////////////////////////
 // Hotkey
 /////////////////////////////////////////////////////////
-std::map<std::string, Hotkey>* Hotkey::s_hotkeys = nullptr;
+namespace {
+    std::map<std::string, Hotkey> hotkeys;
+}
 
 void Hotkey::AddHotkey(const std::string& name, const std::string& description, GG::Key key, GG::Flags<GG::ModKey> mod) {
-    if (!s_hotkeys)
-        s_hotkeys = new std::map<std::string, Hotkey>;
-    auto [it, inserted] = s_hotkeys->emplace(name, Hotkey(name, description, key, mod));
+    std::cout << "adding hotkey named: " << name << " desc: " << description << std::endl;
+    auto [it, inserted] = hotkeys.emplace(name, Hotkey(name, description, key, mod));
     (void)it; // suppress unused variable warning
     if (!inserted)
         InfoLogger() << "Hotkey::AddHotkey skipped creating a new hotkey with name " << name;
@@ -76,12 +77,11 @@ std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
     return s.str();
 }
 
-std::set<std::string> Hotkey::DefinedHotkeys() {
-    std::set<std::string> retval;
-    if (s_hotkeys) {
-        for (const auto& entry : *s_hotkeys)
-            retval.emplace(entry.first);
-    }
+std::vector<std::string> Hotkey::DefinedHotkeys() {
+    std::vector<std::string> retval;
+    retval.reserve(hotkeys.size());
+    for (const auto& entry : hotkeys)
+        retval.push_back(entry.first);
     return retval;
 }
 
@@ -138,9 +138,7 @@ void Hotkey::SetFromString(const std::string& str) {
 }
 
 void Hotkey::AddOptions(OptionsDB& db) {
-    if (!s_hotkeys)
-        return;
-    for (const auto& entry : *s_hotkeys) {
+    for (const auto& entry : hotkeys) {
         const Hotkey& hotkey = entry.second;
         std::string n = hotkey.m_name + ".hotkey";
         db.Add(n, hotkey.GetDescription(), hotkey.ToString());
@@ -188,7 +186,7 @@ std::string Hotkey::PrettyPrint() const
 { return PrettyPrint(m_key, m_mod_keys); }
 
 void Hotkey::ReadFromOptions(OptionsDB& db) {
-    for (auto& entry : *s_hotkeys) {
+    for (auto& entry : hotkeys) {
         Hotkey& hotkey = entry.second;
 
         std::string options_db_name = hotkey.m_name + ".hotkey";
@@ -241,11 +239,8 @@ std::string Hotkey::GetDescription() const
 Hotkey& Hotkey::PrivateNamedHotkey(const std::string& name) {
     std::string error_msg = "Hotkey::PrivateNamedHotkey error: no hotkey named: " + name;
 
-    if (!s_hotkeys)
-        throw std::runtime_error("Hotkey::PrivateNamedHotkey error: couldn't get hotkeys container.");
-
-    auto i = s_hotkeys->find(name);
-    if (i == s_hotkeys->end())
+    auto i = hotkeys.find(name);
+    if (i == hotkeys.end())
         throw std::invalid_argument(error_msg.c_str());
 
     return i->second;
