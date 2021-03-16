@@ -3132,6 +3132,12 @@ Default links
 OPTIONS_ROLLOVER_LINK_COLOR
 Rollover links
 
+OPTIONS_DEFAULT_TOOLTIP_COLOR
+Default tooltips
+
+OPTIONS_ROLLOVER_TOOLTIP_COLOR
+Rollover tooltips
+
 OPTIONS_HIGHLIGHT_COLOR
 Selection highlighting
 
