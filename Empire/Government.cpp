@@ -4,6 +4,7 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/ObjectMap.h"
 #include "../universe/ValueRef.h"
+#include "../universe/UnlockableItem.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/GameRules.h"
@@ -35,6 +36,7 @@ Policy::Policy(std::string name, std::string description,
                std::set<std::string>&& prerequisites,
                std::set<std::string>&& exclusions,
                std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+               std::vector<UnlockableItem>&& unlocked_items,
                std::string graphic) :
     m_name(std::move(name)),
     m_description(std::move(description)),
@@ -43,6 +45,7 @@ Policy::Policy(std::string name, std::string description,
     m_adoption_cost(std::move(adoption_cost)),
     m_prerequisites(std::move(prerequisites)),
     m_exclusions(std::move(exclusions)),
+    m_unlocked_items(std::move(unlocked_items)),
     m_graphic(std::move(graphic))
 {
     for (auto&& effect : effects)
@@ -78,6 +81,18 @@ std::string Policy::Dump(unsigned short ntabs) const {
         retval += DumpIndent(ntabs+1) + "exclusions = [\n";
         for (const std::string& exclusion : m_exclusions)
             retval += DumpIndent(ntabs+2) + "\"" + exclusion + "\"\n";
+        retval += DumpIndent(ntabs+1) + "]\n";
+    }
+
+    retval += DumpIndent(ntabs+1) + "unlock = ";
+    if (m_unlocked_items.empty()) {
+        retval += "[]\n";
+    } else if (m_unlocked_items.size() == 1) {
+        retval += m_unlocked_items[0].Dump();
+    } else {
+        retval += "[\n";
+        for (const UnlockableItem& unlocked_item : m_unlocked_items)
+            retval += DumpIndent(ntabs+2) + unlocked_item.Dump();
         retval += DumpIndent(ntabs+1) + "]\n";
     }
 

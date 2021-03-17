@@ -1,10 +1,10 @@
 #include "Parse.h"
 
 #include "EffectParser.h"
-
-#include "../universe/ValueRef.h"
 #include "../universe/Condition.h"
 #include "../universe/Effect.h"
+#include "../universe/ValueRef.h"
+#include "../universe/UnlockableItem.h"
 #include "../Empire/Government.h"
 #include "../util/Directories.h"
 
@@ -24,24 +24,39 @@ namespace std {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
+    struct PolicyStrings {
+        PolicyStrings() = default;
+        PolicyStrings(std::string& name_, std::string& desc_,
+                      std::string& short_desc_, std::string& cat_) :
+            name(std::move(name_)),
+            desc(std::move(desc_)),
+            short_desc(std::move(short_desc_)),
+            cat(std::move(cat_))
+        {}
+
+        std::string name;
+        std::string desc;
+        std::string short_desc;
+        std::string cat;
+    };
+
     struct policy_pod {
-        policy_pod(std::string& name_,
-                   std::string& description_,
-                   std::string& short_description_,
-                   std::string& category_,
+        policy_pod(PolicyStrings& strings_,
                    const boost::optional<parse::detail::value_ref_payload<double>>& adoption_cost_,
                    std::set<std::string>& prerequisites_,
                    std::set<std::string>& exclusions_,
                    const boost::optional<parse::effects_group_payload>& effects_,
+                   boost::optional<std::vector<UnlockableItem>>& unlocked_items_,
                    const std::string& graphic_) :
-            name(std::move(name_)),
-            description(std::move(description_)),
-            short_description(std::move(short_description_)),
-            category(std::move(category_)),
+            name(std::move(strings_.name)),
+            description(std::move(strings_.desc)),
+            short_description(std::move(strings_.short_desc)),
+            category(std::move(strings_.cat)),
             exclusions(std::move(exclusions_)),
             prerequisites(std::move(prerequisites_)),
             adoption_cost(adoption_cost_),
             effects(effects_),
+            unlocked_items(std::move(unlocked_items_)),
             graphic(graphic_)
         {}
 
@@ -53,6 +68,7 @@ namespace {
         std::set<std::string>   prerequisites;
         const boost::optional<parse::detail::value_ref_payload<double>> adoption_cost;
         const boost::optional<parse::effects_group_payload>&            effects;
+        boost::optional<std::vector<UnlockableItem>>                    unlocked_items;
         const std::string&      graphic;
     };
 
@@ -66,6 +82,7 @@ namespace {
             std::move(policy_.prerequisites),
             std::move(policy_.exclusions),
             (policy_.effects ? OpenEnvelopes(*policy_.effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
+            (policy_.unlocked_items ? std::move(*policy_.unlocked_items) : std::vector<UnlockableItem>{}),
             policy_.graphic);
 
         auto& policy_name = policy_ptr->Name();
@@ -122,10 +139,14 @@ namespace {
             double_rules(tok, label, condition_parser, string_grammar),
             prerequisites(tok, label),
             exclusions(tok, label),
-            effects_group_grammar(tok, label, condition_parser, string_grammar)
+            effects_group_grammar(tok, label, condition_parser, string_grammar),
+            unlockable_item_parser(tok, label),
+            one_or_more_unlockable_items(unlockable_item_parser)
         {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
+
+            using phoenix::construct;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -134,28 +155,36 @@ namespace {
             qi::_5_type _5;
             qi::_6_type _6;
             qi::_7_type _7;
-            qi::_8_type _8;
-            qi::_9_type _9;
-            phoenix::actor<boost::spirit::argument<9>> _10; // qi::_10_type is not predefined
             qi::_pass_type _pass;
             qi::_r1_type _r1;
+            qi::_val_type _val;
             qi::eps_type eps;
-            //const boost::phoenix::function<parse::detail::deconstruct_movable> deconstruct_movable_;
+            qi::omit_type omit_;
 
-            policy
+            policy_strings
                 = (  tok.Policy_                                            // _1
                 >    label(tok.name_)               > tok.string            // _2
                 >    label(tok.description_)        > tok.string            // _3
                 >    label(tok.short_description_)  > tok.string            // _4
                 >    label(tok.category_)           > tok.string            // _5
-                >    label(tok.adoptioncost_)       > double_rules.expr     // _6
-                >    prerequisites                                          // _7
-                >    exclusions                                             // _8
-                >  -(label(tok.effectsgroups_)      > effects_group_grammar)// _9
-                >    label(tok.graphic_)            > tok.string)           // _10
-                [  _pass = is_unique_(_r1, _1, _2),
-                   insert_policy_(_r1, phoenix::construct<policy_pod>(
-                       _2, _3, _4, _5, _6, _7, _8, _9, _10), _pass) ]
+                  ) [   _pass = is_unique_(_r1, _1, _2),
+                        _val = construct<PolicyStrings>(_2, _3, _4, _5) ]
+                ;
+
+            policy
+                = (  policy_strings(_r1)                                            // _1
+                >    label(tok.adoptioncost_)       > double_rules.expr             // _2
+                >    prerequisites                                                  // _3
+                >    exclusions                                                     // _4
+                >  -(label(tok.unlock_)             > one_or_more_unlockable_items) // _5
+                >  -(label(tok.effectsgroups_)      > effects_group_grammar)        // _6
+                >    label(tok.graphic_)            > tok.string)                   // _7
+                [   insert_policy_(
+                        _r1,
+                        phoenix::construct<policy_pod>(
+                            _1, _2, _3, _4, _6, _5, _7),
+                        _pass
+                    ) ]
                 ;
 
             start
@@ -177,16 +206,22 @@ namespace {
 
         using policy_rule = parse::detail::rule<void (start_rule_payload&)>;
         using start_rule = parse::detail::rule<start_rule_signature>;
+        using unlocks_rule = parse::detail::rule<std::vector<UnlockableItem> ()>;
+        using policy_strings_rule = parse::detail::rule<PolicyStrings (const start_rule_payload&)>;
+        using unlockable_items = parse::detail::single_or_bracketed_repeat<parse::detail::unlockable_item_grammar>;
 
-        parse::detail::Labeller             label;
-        parse::conditions_parser_grammar    condition_parser;
-        const parse::string_parser_grammar  string_grammar;
-        parse::double_parser_rules          double_rules;
-        prereqs_grammar                     prerequisites;
-        exclusions_grammar                  exclusions;
-        parse::effects_group_grammar        effects_group_grammar;
-        policy_rule                         policy;
-        start_rule                          start;
+        parse::detail::Labeller                 label;
+        parse::conditions_parser_grammar        condition_parser;
+        const parse::string_parser_grammar      string_grammar;
+        parse::double_parser_rules              double_rules;
+        prereqs_grammar                         prerequisites;
+        exclusions_grammar                      exclusions;
+        parse::effects_group_grammar            effects_group_grammar;
+        parse::detail::unlockable_item_grammar  unlockable_item_parser;
+        unlockable_items                        one_or_more_unlockable_items;
+        policy_strings_rule                     policy_strings;
+        policy_rule                             policy;
+        start_rule                              start;
     };
 }
 
