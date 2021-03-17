@@ -146,13 +146,13 @@ namespace {
                 ;
 
             prerequisites
-                %=   label(tok.prerequisites_)
-                >  one_or_more_string_tokens
+                %=  label(tok.prerequisites_)
+                >   one_or_more_string_tokens
                 ;
 
             unlocks
-                %=   label(tok.unlock_)
-                >  one_or_more_unlockable_items
+                %=  label(tok.unlock_)
+                >   one_or_more_unlockable_items
                 ;
 
             tech
@@ -167,9 +167,9 @@ namespace {
 
             category
                 = ( tok.Category_
-                    >   label(tok.name_)    > tok.string
-                    >   label(tok.graphic_) > tok.string
-                    >   label(tok.colour_)  > color_parser
+                >   label(tok.name_)    > tok.string
+                >   label(tok.graphic_) > tok.string
+                >   label(tok.colour_)  > color_parser
                   ) [ _pass = is_unique_(_r1, _1, _2),
                       insert_category_(_r1, _2, _3, _4) ]
                 ;
@@ -231,9 +231,10 @@ namespace {
 }
 
 namespace parse {
+    const lexer tech_lexer;
+
     template <typename T>
     T techs(const boost::filesystem::path& path) {
-        const lexer lexer;
         TechManager::TechContainer techs_;
         std::map<std::string, std::unique_ptr<TechCategory>> categories;
         std::set<std::string> categories_seen;
@@ -243,10 +244,10 @@ namespace parse {
 
         ScopedTimer timer("Techs Parsing", true);
 
-        detail::parse_file<grammar, TechManager::TechContainer>(lexer, path / "Categories.inf", techs_);
+        detail::parse_file<grammar, TechManager::TechContainer>(tech_lexer, path / "Categories.inf", techs_);
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, TechManager::TechContainer>(lexer, file, techs_);
+            detail::parse_file<grammar, TechManager::TechContainer>(tech_lexer, file, techs_);
 
         return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
     }
