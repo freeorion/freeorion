@@ -55,19 +55,19 @@ namespace {
 }
 
 namespace parse {
+    const lexer item_building_lexer;
+
     start_rule_payload items(const boost::filesystem::path& path) {
-        const lexer lexer;
         start_rule_payload items_;
         items_.reserve(128);    // should be more than enough as of this writing
-        detail::parse_file<grammar, start_rule_payload>(lexer, path, items_);
+        detail::parse_file<grammar, start_rule_payload>(item_building_lexer, path, items_);
         return items_;
     }
 
     start_rule_payload starting_buildings(const boost::filesystem::path& path) {
-        const lexer lexer;
         start_rule_payload starting_buildings_;
         starting_buildings_.reserve(32); // should be more than enough as of this writing...
-        detail::parse_file<grammar, start_rule_payload>(lexer, path, starting_buildings_);
+        detail::parse_file<grammar, start_rule_payload>(item_building_lexer, path, starting_buildings_);
         return starting_buildings_;
     }
 }

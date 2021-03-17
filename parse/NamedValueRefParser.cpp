@@ -122,14 +122,15 @@ namespace parse {
 }
 
 namespace parse {
+    const lexer named_ref_lexer;
+
     start_rule_payload named_value_refs(const boost::filesystem::path& path) {
-        const lexer lexer;
         start_rule_payload named_value_refs;
 
         ScopedTimer timer("Named ValueRef Parsing", true);
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, start_rule_payload>(lexer, file, named_value_refs);
+            detail::parse_file<grammar, start_rule_payload>(named_ref_lexer, file, named_value_refs);
 
         for (auto& k_v : named_value_refs)
             ErrorLogger() << "Should have not returned anything: named_value_refs : " << k_v.first;
