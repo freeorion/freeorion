@@ -146,7 +146,7 @@ namespace parse {
         start_rule_payload specials_;
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, specials_);
+            detail::parse_file<grammar, start_rule_payload>(lexer, file, specials_);
 
         return specials_;
     }

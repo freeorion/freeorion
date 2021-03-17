@@ -212,7 +212,7 @@ namespace parse {
         start_rule_payload hulls;
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, hulls);
+            detail::parse_file<grammar, start_rule_payload>(lexer, file, hulls);
 
         return hulls;
     }

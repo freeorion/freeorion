@@ -147,7 +147,7 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
         }
 
-        using  ship_part_rule = parse::detail::rule<void (start_rule_payload&)>;
+        using ship_part_rule = parse::detail::rule<void (start_rule_payload&)>;
         using start_rule = parse::detail::rule<start_rule_signature>;
 
         parse::detail::Labeller                 label;
@@ -171,7 +171,7 @@ namespace parse {
         start_rule_payload parts;
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            /*auto success =*/ detail::parse_file<grammar, start_rule_payload>(lexer, file, parts);
+            detail::parse_file<grammar, start_rule_payload>(lexer, file, parts);
 
         return parts;
     }
