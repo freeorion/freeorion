@@ -31,7 +31,7 @@ class FO_COMMON_API Tech {
 public:
     /** Helper struct for parsing tech definitions */
     struct TechInfo {
-        TechInfo();
+        TechInfo() = default;
         TechInfo(std::string& name_, std::string& description_,
                  std::string& short_description_, std::string& category_,
                  std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost_,
