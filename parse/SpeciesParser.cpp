@@ -255,10 +255,10 @@ namespace {
                 ;
 
             species_strings
-                =  ( tok.Species_
-                >    label(tok.name_)                   > tok.string
-                >    label(tok.description_)            > tok.string
-                >    label(tok.gameplay_description_)   > tok.string
+                =  ( tok.Species_                                       // _1
+                >    label(tok.name_)                   > tok.string    // _2
+                >    label(tok.description_)            > tok.string    // _3
+                >    label(tok.gameplay_description_)   > tok.string    // _4
                    ) [ _pass = is_unique_(_r1, _1, _2),
                        _val = construct<SpeciesStrings>(_2, _3, _4) ]
                 ;
