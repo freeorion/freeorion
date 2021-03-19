@@ -1178,6 +1178,26 @@ namespace {
         return retval;
     }
 
+    std::vector<std::string> PoliciesThatUnlockItem(const UnlockableItem& item) {
+        std::vector<std::string> retval;
+
+        for (auto& [policy_name, policy] : GetPolicyManager()) {
+            if (!policy) continue;
+
+            bool found_item = false;
+            for (const UnlockableItem& unlocked_item : policy->UnlockedItems()) {
+                if (unlocked_item == item) {
+                    found_item = true;
+                    break;
+                }
+            }
+            if (found_item)
+                retval.push_back(policy_name);
+        }
+
+        return retval;
+    }
+
     const std::string& GeneralTypeOfObject(UniverseObjectType obj_type) {
         switch (obj_type) {
         case UniverseObjectType::OBJ_SHIP:          return UserString("ENC_SHIP");          break;
@@ -1330,10 +1350,17 @@ namespace {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
                 detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  ";
-            detailed_description += "\n\n";
+        }
+
+        auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_PART, item_name));
+        if (!unlocked_by_policies.empty()) {
+            detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
+            for (const auto& policy_name : unlocked_by_techs)
+                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
         }
 
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
+            detailed_description += "\n\n";
             if (part->Location())
                 detailed_description += "\n" + part->Location()->Dump();
             if (!part->Effects().empty())
@@ -1409,7 +1436,15 @@ namespace {
             detailed_description += "\n\n";
         }
 
+        auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_HULL, item_name));
+        if (!unlocked_by_policies.empty()) {
+            detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
+            for (const auto& policy_name : unlocked_by_techs)
+                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
+        }
+
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
+            detailed_description += "\n\n";
             if (hull->Location())
                 detailed_description += "\n" + hull->Location()->Dump();
             if (!hull->Effects().empty())
@@ -1529,11 +1564,41 @@ namespace {
         }
         detailed_description += UserString(policy->Description());
 
+        const auto& unlocked_items = policy->UnlockedItems();
+        if (!unlocked_items.empty()) {
+            detailed_description += "\n\n" + UserString("ENC_UNLOCKS");
+            for (const UnlockableItem& item : unlocked_items) {
+                std::string TAG;
+                switch (item.type) {
+                case UnlockableItemType::UIT_BUILDING:    TAG = VarText::BUILDING_TYPE_TAG;     break;
+                case UnlockableItemType::UIT_SHIP_PART:   TAG = VarText::SHIP_PART_TAG;         break;
+                case UnlockableItemType::UIT_SHIP_HULL:   TAG = VarText::SHIP_HULL_TAG;         break;
+                case UnlockableItemType::UIT_SHIP_DESIGN: TAG = VarText::PREDEFINED_DESIGN_TAG; break;
+                case UnlockableItemType::UIT_TECH:        TAG = VarText::TECH_TAG;              break;
+                case UnlockableItemType::UIT_POLICY:      TAG = VarText::POLICY_TAG;            break;
+                default: break;
+                }
+
+                std::string link_text = TAG.empty() ? UserString(item.name) : LinkTaggedText(TAG, item.name);
+
+                detailed_description += str(FlexibleFormat(UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
+                    % UserString(boost::lexical_cast<std::string>(item.type))
+                    % link_text);
+            }
+        }
+
         auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_POLICY, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
                 detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  ";
+        }
+
+        auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_POLICY, item_name));
+        if (!unlocked_by_policies.empty()) {
+            detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
+            for (const auto& policy_name : unlocked_by_techs)
+                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
         }
 
         if (!policy->Prerequisites().empty()) {
@@ -1603,6 +1668,13 @@ namespace {
             for (const std::string& tech_name : unlocked_by_techs)
             { detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  "; }
             detailed_description += "\n\n";
+        }
+
+        auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_BUILDING, item_name));
+        if (!unlocked_by_policies.empty()) {
+            detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
+            for (const auto& policy_name : unlocked_by_techs)
+                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
         }
 
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
