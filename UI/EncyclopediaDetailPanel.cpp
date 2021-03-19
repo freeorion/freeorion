@@ -2486,14 +2486,15 @@ namespace {
         auto& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
         float structure = ship->GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
         float shield = ship->GetMeter(MeterType::METER_MAX_SHIELD)->Current();
-        float attack = ship->TotalWeaponsShipDamage(); // FIXME TotalWeaponsFighterDamage 
+        float attack = ship->TotalWeaponsShipDamage();
+        float destruction = ship->TotalWeaponsFighterDamage();
         float strength = std::pow(attack * structure, 0.6f);
         float typical_shot = *std::max_element(enemy_shots.begin(), enemy_shots.end());
         float typical_strength = std::pow(ship->TotalWeaponsShipDamage(enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f); // FIXME TotalWeaponsFighterDamage 
         return (FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR"))
             % species
             % attack
-            % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_MAX_SECONDARY_STAT, ShipPartClass::PC_DIRECT_WEAPON)
+            % destruction
             % structure
             % shield
             % ship->GetMeter(MeterType::METER_DETECTION)->Current()
