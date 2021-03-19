@@ -67,6 +67,9 @@ namespace {
     std::shared_ptr<GG::Texture> DamageIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "damage.png", true); }
 
+    std::shared_ptr<GG::Texture> DestroyIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "ammo.png", true); }
+
     std::shared_ptr<GG::Texture> TroopIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "troops.png", true); }
 
@@ -828,7 +831,8 @@ namespace {
             icon->SetValue(StatValue(meter_type));
 
             icon->ClearBrowseInfoWnd();
-            if (meter_type == MeterType::METER_CAPACITY) {  // refers to damage
+            if (meter_type == MeterType::METER_CAPACITY             // refers to damage
+                || meter_type == MeterType::METER_MAX_CAPACITY ) {  // refers to fighters destroyed
                 icon->SetBrowseInfoWnd(GG::Wnd::Create<ShipDamageBrowseWnd>(m_ship_id, meter_type));
 
             } else if (meter_type == MeterType::METER_TROOPS) {
@@ -856,7 +860,9 @@ namespace {
     double ShipDataPanel::StatValue(MeterType stat_name) const {
         if (auto ship = Objects().get<Ship>(m_ship_id)) {
             if (stat_name == MeterType::METER_CAPACITY)
-                return ship->TotalWeaponsShipDamage(0.0f, false); // FIXME TotalWeaponsFighterDamage
+                return ship->TotalWeaponsShipDamage(0.0f, false);
+            else if (stat_name == MeterType::METER_MAX_CAPACITY) // number of fighters shot down
+                return ship->TotalWeaponsFighterDamage(false); // XXX include fighters?
             else if (stat_name == MeterType::METER_TROOPS)
                 return ship->TroopCapacity();
             else if (stat_name == MeterType::METER_SECONDARY_STAT)
@@ -930,8 +936,10 @@ namespace {
         std::vector<std::pair<MeterType, std::shared_ptr<GG::Texture>>> meters_icons;
         meters_icons.reserve(13);
         meters_icons.emplace_back(MeterType::METER_STRUCTURE,          ClientUI::MeterIcon(MeterType::METER_STRUCTURE));
-        if (ship->IsArmed())
+        if (ship->IsArmed()) {
             meters_icons.emplace_back(MeterType::METER_CAPACITY,       DamageIcon());
+            meters_icons.emplace_back(MeterType::METER_MAX_CAPACITY,   DestroyIcon()); // number of fighters shot down
+        }
         if (ship->HasFighters())
             meters_icons.emplace_back(MeterType::METER_SECONDARY_STAT, FightersIcon());
         if (ship->HasTroops())
@@ -1512,7 +1520,8 @@ void FleetDataPanel::SetStatIconValues() {
     const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
     const std::set<int>& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
     int ship_count =        0;
-    float damage_tally =    0.0f;
+    float damage_tally  =   0.0f;
+    float destroy_tally =   0.0f;
     float fighters_tally  = 0.0f;
     float structure_tally = 0.0f;
     float shield_tally =    0.0f;
@@ -1537,7 +1546,8 @@ void FleetDataPanel::SetStatIconValues() {
 
         if (ship->Design()) {
             ship_count++;
-            damage_tally += ship->TotalWeaponsShipDamage(0.0f, false); // FIXME TotalWeaponsFighterDamage 
+            damage_tally += ship->TotalWeaponsShipDamage(0.0f, false);
+            destroy_tally += ship->TotalWeaponsFighterDamage(false);// XXX include fighters?
             fighters_tally += ship->FighterCount();
             troops_tally += ship->TroopCapacity();
             colony_tally += ship->ColonyCapacity();
@@ -1561,6 +1571,11 @@ void FleetDataPanel::SetStatIconValues() {
             break;
         case MeterType::METER_CAPACITY:
             icon->SetValue(damage_tally);
+            if (fleet->HasArmedShips(objects))
+                AttachChild(icon);
+            break;
+        case MeterType::METER_MAX_CAPACITY:
+            icon->SetValue(destroy_tally);
             if (fleet->HasArmedShips(objects))
                 AttachChild(icon);
             break;
@@ -1737,6 +1752,7 @@ void FleetDataPanel::Init() {
         std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext{
             {MeterType::METER_SIZE,           FleetCountIcon(),                                "FW_FLEET_COUNT_SUMMARY"},
             {MeterType::METER_CAPACITY,       DamageIcon(),                                    "FW_FLEET_DAMAGE_SUMMARY"},
+            {MeterType::METER_MAX_CAPACITY,   DestroyIcon(), /* number of destroyed fighters */"FW_FLEET_DESTROY_SUMMARY"},
             {MeterType::METER_SECONDARY_STAT, FightersIcon(),                                  "FW_FLEET_FIGHTER_SUMMARY"},
             {MeterType::METER_TROOPS,         TroopIcon(),                                     "FW_FLEET_TROOP_SUMMARY"},
             {MeterType::METER_POPULATION,     ColonyIcon(),                                    "FW_FLEET_COLONY_SUMMARY"},
@@ -2788,6 +2804,7 @@ void FleetWnd::CompleteConstruction() {
     for (auto [meter_type, icon, text] : {
             std::make_tuple(MeterType::METER_SIZE,          FleetCountIcon(),   UserStringNop("FW_FLEET_COUNT_SUMMARY")),
             std::make_tuple(MeterType::METER_CAPACITY,      DamageIcon(),       UserStringNop("FW_FLEET_DAMAGE_SUMMARY")),
+            std::make_tuple(MeterType::METER_MAX_CAPACITY,  DestroyIcon(),      UserStringNop("FW_FLEET_DESTROY_SUMMARY")),
             std::make_tuple(MeterType::METER_SECONDARY_STAT,FightersIcon(),     UserStringNop("FW_FLEET_FIGHTER_SUMMARY")),
             std::make_tuple(MeterType::METER_STRUCTURE,     ClientUI::MeterIcon(MeterType::METER_STRUCTURE),    UserStringNop("FW_FLEET_STRUCTURE_SUMMARY")),
             std::make_tuple(MeterType::METER_SHIELD,        ClientUI::MeterIcon(MeterType::METER_SHIELD),       UserStringNop("FW_FLEET_SHIELD_SUMMARY")),
@@ -2881,6 +2898,7 @@ void FleetWnd::SetStatIconValues() {
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
     int ship_count =        0;
     float damage_tally =    0.0f;
+    float destroy_tally   = 0.0f; // number of destroyed fighters
     float fighters_tally  = 0.0f;
     float structure_tally = 0.0f;
     float shield_tally =    0.0f;
@@ -2902,7 +2920,8 @@ void FleetWnd::SetStatIconValues() {
 
             if (ship->Design()) {
                 ship_count++;
-                damage_tally += ship->TotalWeaponsShipDamage(0.0f, false); // FIXME TotalWeaponsFighterDamage 
+                damage_tally += ship->TotalWeaponsShipDamage(0.0f, false);
+                destroy_tally += ship->TotalWeaponsFighterDamage(true); // XXX inconsistent to count fighters killing fighters here?
                 fighters_tally += ship->FighterCount();
                 structure_tally += ship->GetMeter(MeterType::METER_STRUCTURE)->Initial();
                 shield_tally += ship->GetMeter(MeterType::METER_SHIELD)->Initial();
@@ -2919,7 +2938,9 @@ void FleetWnd::SetStatIconValues() {
         else if (stat_name == MeterType::METER_STRUCTURE)
             entry.second->SetValue(structure_tally);
         else if (stat_name == MeterType::METER_CAPACITY)
-            entry.second->SetValue(damage_tally);
+            entry.second->SetValue(damage_tally); // FIXME show fighters_shot_tally somewhere
+        else if (stat_name == MeterType::METER_MAX_CAPACITY)
+            entry.second->SetValue(destroy_tally);
         else if (stat_name == MeterType::METER_SECONDARY_STAT)
             entry.second->SetValue(fighters_tally);
         else if (stat_name == MeterType::METER_POPULATION)

@@ -9,6 +9,7 @@
 #include "../util/Export.h"
 
 class ShipDesign;
+class ShipPart;
 
 /** a class representing a single FreeOrion ship */
 class FO_COMMON_API Ship : public UniverseObject {
@@ -75,9 +76,13 @@ public:
     /** Returns sum of current value for part meter @p type of all parts with ShipPartClass @p part_class */
     float                       SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class) const;
 
-    float                       TotalWeaponsShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const; ///< versus an enemy with a given shields DR
+    float                       WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext& context) const; ///< versus fighter enemies
+    float                       WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& context) const; ///< versus an enemy context.effect_target ship with a given shields meter
+    float                       TotalWeaponsFighterDamage(bool include_fighters = true) const; ///< versus an fighter enemy
+    float                       TotalWeaponsShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const; ///< versus an enemy ship with a given shields DR
     float                       FighterCount() const;
     float                       FighterMax() const;
+    std::vector<float>          AllWeaponsFighterDamage(bool include_fighters = true) const;   ///< any shots against enemy fighters
     std::vector<float>          AllWeaponsShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;   ///< any nonzero weapons strengths after adjustment versus an enemy with a given shields DR
     std::vector<float>          AllWeaponsMaxShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;///< any nonzero weapons strengths, assuming the ship has been refueled recently, after adjustment versus an enemy with a given shields DR
 

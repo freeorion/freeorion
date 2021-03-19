@@ -501,15 +501,17 @@ void ShipDamageBrowseWnd::UpdateSummary() {
         return;
 
     // unpaired meter total for breakdown summary
-    float breakdown_total = ship->TotalWeaponsShipDamage(0.0f, false); // FIXME do something with ship->TotalWeaponsFighterDamage
+    float breakdown_total = ship->TotalWeaponsShipDamage(0.0f, false);
+    float breakdown_total_augmentation = ship->TotalWeaponsFighterDamage(false);
     std::string breakdown_meter_name = UserString("SHIP_DAMAGE_STAT_TITLE");
 
 
     // set accounting breakdown total / summary
     if (m_meter_title)
-        m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY")) %
+        m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_AUGMENTED_SUMMARY")) %
                                               breakdown_meter_name %
-                                              DoubleToString(breakdown_total, 3, false)));
+                                              DoubleToString(breakdown_total, 3, false) %
+                                              DoubleToString(breakdown_total_augmentation, 1, false)));
 }
 
 void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
@@ -544,18 +546,20 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             continue;
 
         // get the attack power for each weapon part
-        float part_attack = ship->CurrentPartMeterValue(MeterType::METER_CAPACITY, part_name) *
-                            ship->CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part_name);
+        const ScriptingContext context(ship);
+        float part_attack = ship->WeaponPartShipDamage(part, context);
+        float part_fighters_shot = ship->WeaponPartFighterDamage(part, context);
+
         auto text = boost::io::str(FlexibleFormat(label_template) % name % UserString(part_name));
 
         auto label = GG::Wnd::Create<CUILabel>(std::move(text), GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
-        label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
+        label->Resize(GG::Pt(MeterBrowseLabelWidth() - MeterBrowseValueWidth(), m_row_height));
         AttachChild(label);
 
-        auto value = GG::Wnd::Create<CUILabel>(ColouredNumber(part_attack));
-        value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
-        value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
+        auto value = GG::Wnd::Create<CUILabel>(ColouredNumber(part_attack) + " / " + ColouredNumber(part_fighters_shot, 0));
+        value->MoveTo(GG::Pt(MeterBrowseLabelWidth() - MeterBrowseValueWidth(), top));
+        value->Resize(GG::Pt(2*MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
         m_effect_labels_and_values.emplace_back(std::move(label), std::move(value));
 
