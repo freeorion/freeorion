@@ -47,7 +47,7 @@ namespace {
                    std::set<std::string>& exclusions_,
                    const boost::optional<parse::effects_group_payload>& effects_,
                    boost::optional<std::vector<UnlockableItem>>& unlocked_items_,
-                   const std::string& graphic_) :
+                   std::string& graphic_) :
             name(std::move(strings_.name)),
             description(std::move(strings_.desc)),
             short_description(std::move(strings_.short_desc)),
@@ -57,7 +57,7 @@ namespace {
             adoption_cost(adoption_cost_),
             effects(effects_),
             unlocked_items(std::move(unlocked_items_)),
-            graphic(graphic_)
+            graphic(std::move(graphic_))
         {}
 
         std::string             name;
@@ -68,8 +68,8 @@ namespace {
         std::set<std::string>   prerequisites;
         const boost::optional<parse::detail::value_ref_payload<double>> adoption_cost;
         const boost::optional<parse::effects_group_payload>&            effects;
-        boost::optional<std::vector<UnlockableItem>>                    unlocked_items;
-        const std::string&      graphic;
+        boost::optional<std::vector<UnlockableItem>>              unlocked_items;
+        std::string             graphic;
     };
 
     void insert_policy(PolicyManager::PoliciesTypeMap& policies, policy_pod policy_, bool& pass) {
@@ -81,9 +81,9 @@ namespace {
             (policy_.adoption_cost ? policy_.adoption_cost->OpenEnvelope(pass) : nullptr),
             std::move(policy_.prerequisites),
             std::move(policy_.exclusions),
-            (policy_.effects ? OpenEnvelopes(*policy_.effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>()),
+            (policy_.effects ? OpenEnvelopes(*policy_.effects, pass) : std::vector<std::unique_ptr<Effect::EffectsGroup>>{}),
             (policy_.unlocked_items ? std::move(*policy_.unlocked_items) : std::vector<UnlockableItem>{}),
-            policy_.graphic);
+            std::move(policy_.graphic));
 
         auto& policy_name = policy_ptr->Name();
         policies.emplace(policy_name, std::move(policy_ptr));
