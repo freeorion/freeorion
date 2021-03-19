@@ -46,7 +46,7 @@ Policy::Policy(std::string name, std::string description,
     m_graphic(std::move(graphic))
 {
     for (auto&& effect : effects)
-        m_effects.emplace_back(std::move(effect));
+        m_effects.push_back(std::move(effect)); // need to separately move from each input unique_ptr
 
     if (m_adoption_cost)
         m_adoption_cost->SetTopLevelContent(m_name);

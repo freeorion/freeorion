@@ -15,12 +15,11 @@
 namespace Condition {
     struct Condition;
 }
-
 namespace Effect {
     class Effect;
 }
 
-namespace parse { namespace detail {
+namespace parse::detail {
     /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
     struct is_unique {
         typedef bool result_type;
@@ -214,6 +213,6 @@ namespace parse { namespace detail {
         return parse_file_end_of_file_warnings(path, success, file_contents, first, last);
     }
 
-} }
+}
 
 #endif
