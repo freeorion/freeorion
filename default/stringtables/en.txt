@@ -11585,11 +11585,12 @@ PLC_PLANETARY_INFRA
 Planetary Infrastructure
 
 PLC_PLANETARY_INFRA_DESC
-
-PLC_PLANETARY_INFRA_SHORT_DESC
 '''Grants 2 additional economic policy slots.
 
 Increases [[metertype METER_TARGET_CONSTRUCTION]] on populated planets by 5.'''
+
+PLC_PLANETARY_INFRA_SHORT_DESC
+Grants policy slots
 
 PLC_SYSTEM_INFRA
 System Infrastructure
@@ -12172,8 +12173,7 @@ Architectural Psychology
 CON_ARCH_PSYCH_DESC
 '''The form of a structure or inhabited space is not merely guided by the physical limitations of the materials from which it is constructed. Psychological effects on the inhabitants within, or observers outside can have a far greater influence on the success of a design than the strength of a wall or sturdiness of a foundation.
 
-Grants 1 extra social policy slot.
-'''
+Grants 1 extra social policy slot.'''
 
 CON_ORGANIC_STRC
 Organic Structures
