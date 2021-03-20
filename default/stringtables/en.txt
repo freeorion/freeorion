@@ -11572,6 +11572,47 @@ Increases the impact of species likes and dislikes on planet stability.
 PLC_LIBERTY_SHORT_DESC
 Increases species opinion effects
 
+PLC_TRAFFIC_CONTROL
+Traffic Control
+
+PLC_TRAFFIC_CONTROL_DESC
+Increases [[metertype METER_SPEED]] of ships by 20 when they are within 50 uu of a controlled planet.
+
+PLC_TRAFFIC_CONTROL_SHORT_DESC
+Speeds ships near empire planets
+
+PLC_PLANETARY_INFRA
+Planetary Infrastructure
+
+PLC_PLANETARY_INFRA_DESC
+
+PLC_PLANETARY_INFRA_SHORT_DESC
+'''Grants 2 additional economic policy slots.
+
+Increases [[metertype METER_TARGET_CONSTRUCTION]] on populated planets by 5.'''
+
+PLC_SYSTEM_INFRA
+System Infrastructure
+
+PLC_SYSTEM_INFRA_DESC
+'''Grants 2 additional economic policy slots.
+
+Increases [[metertype METER_TARGET_CONSTRUCTION]] by 5 on populated planets in systems with at least 2 planets owned by the empire that adopted this policy.'''
+
+PLC_SYSTEM_INFRA_SHORT_DESC
+Grants policy slots
+
+PLC_INTERSTELLAR_INFRA
+Interstellar Infrastructure
+
+PLC_INTERSTELLAR_INFRA_DESC
+'''Grants 2 additional economic policy slots.
+
+Increases [[metertype METER_TARGET_CONSTRUCTION]] by 5 on populated planets that are resource supply connected to planets in other systems owned by the empire that adopted this policy.'''
+
+PLC_INTERSTELLAR_INFRA_SHORT_DESC
+Grants policy slots
+
 
 ##
 ## Technology categories
@@ -12227,8 +12268,6 @@ Interstellar Logistics
 
 SHP_INTSTEL_LOG_DESC
 '''Unlocks the Logistics focus setting, which increases the [[metertype METER_SUPPLY]] of planets by 3.
-
-Increases [[metertype METER_SPEED]] of ships by 20 when they are within 50 uu of a controlled planet.
 
 [[COLONY_BUILDING_TIME_DECREASE]]
 

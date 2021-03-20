@@ -7,7 +7,7 @@ Tech
     researchturns = 8
     tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
     prerequisites = [
-        "CON_CONTGRAV_ARCH"
+        "GRO_SYMBIOTIC_BIO"
         "CON_FRC_ENRG_STRC"
     ]
     unlock = Item type = Building name = "BLD_TRANSFORMER"
