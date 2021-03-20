@@ -268,8 +268,9 @@ public:
     void AllowUseImperialPP(int index, bool allow=true);     ///< Allows or disallows the use of the imperial stockpile for production
 
     void AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& name);    ///< Inserts the given Tech into the Empire's list of innovations. Call ApplyAddedTech to make it effective.
-    void ApplyNewTechs();                            ///< Moves all Techs from the Empire's list of innovations into the Empire's list of available technologies.
-    void AddPolicy(const std::string& name);         ///< Inserts the given Policy into the Empire's list of available policies
+    void ApplyNewTechs();                           ///< Moves all Techs from the Empire's list of innovations into the Empire's list of available technologies.
+    void AddPolicy(const std::string& name);        ///< Inserts the given Policy into the Empire's list of available policies
+    void ApplyPolicies();                           ///< Unlocks anything unlocked by adopted policies
 
     //! Adds a given producible item (Building, Ship Hull, Ship part) to the
     //! list of available items.

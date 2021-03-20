@@ -1721,7 +1721,7 @@ void Empire::AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& n
 }
 
 void Empire::ApplyNewTechs() {
-    for (auto new_tech : m_newly_researched_techs) {
+    for (const auto& new_tech : m_newly_researched_techs) {
         const Tech* tech = GetTech(new_tech);
         if (!tech) {
             ErrorLogger() << "Empire::ApplyNewTech has an invalid entry in m_newly_researched_techs: " << new_tech;
@@ -1749,6 +1749,21 @@ void Empire::AddPolicy(const std::string& name) {
     if (m_available_policies.find(name) == m_available_policies.end()) {
         AddSitRepEntry(CreatePolicyUnlockedSitRep(name));
         m_available_policies.insert(name);
+    }
+}
+
+void Empire::ApplyPolicies() {
+    for (auto& [policy_name, adoption_info] : m_adopted_policies) {
+        if (adoption_info.adoption_turn >= CurrentTurn())
+            continue; // policy unlock take effect one turn after adoption
+
+        const Policy* policy = GetPolicy(policy_name);
+        if (!policy) {
+            ErrorLogger() << "Empire::ApplyPolicies couldn't find policy with name  " << policy_name;
+            continue;
+        }
+        for (const UnlockableItem& item : policy->UnlockedItems())
+            UnlockItem(item);
     }
 }
 
