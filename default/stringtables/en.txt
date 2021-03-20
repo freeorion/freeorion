@@ -12215,14 +12215,6 @@ By installing a massive null gravity generator at a planet's core, it becomes po
 
 By fully controlling the orientation and strength of gravitational forces acting upon and existent within a structure, designs may simultaneously exhibit the freedom of weightlessness and the utility of having a defined up and down. The structure itself, and the local environments it seeks to provide, may take any shape in space, extending to great lengths, looping about itself, and making arbitrary interconnections. Simultaneously, local environments within may be infused with a useful tug, which may vary from or be entirely different from immediately adjacent areas. Such versatility permits great new functional designs for social, manufacturing or other uses.'''
 
-CON_GAL_INFRA
-Galactic Infrastructure
-
-CON_GAL_INFRA_DESC
-'''The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena. By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
-
-Integration and development of regional administration into a unified galaxy-spanning network is one of the greatest logistical effort conceivable.'''
-
 CON_ART_HEAVENLY
 Artificial Heavenly Bodies
 

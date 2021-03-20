@@ -5413,16 +5413,6 @@ By installing a massive null gravity generator at a planet's core, it becomes po
 
 Durch die perfekte Kontrolle der Orientierung und Stärke der Gravitationskraft, die auf und innerhalb eines Gebäudes wirken, können Bauten so gestaltet werden, dass sie gleichzeitig die Freiheiten der Schwerelosigkeit und den Nutzen eines definierten Oben und Unten besitzen. Das Gebäude selbst und seine Räume können jede Form im Raum einnehmen, sich über große Längen erstrecken, um sich selbst winden und willkürliche Verbindungen herstellen. Die Räume können einen nützlichen direktionalen Drift enthalten, der sich etwas oder auch völlig von den direkt angrenzender Bereichen unterscheiden kann. Eine solche Vielseitigkeit bietet ganz neue Möglichkeiten für soziale, produktive oder anderweitige Zwecke.'''
 
-CON_GAL_INFRA
-Galaktische Infrastruktur
-
-CON_GAL_INFRA_DESC
-'''Erhöht die Reichweite der [[metertype METER_SUPPLY]] auf allen Kolonien und Außenposten um 1.
-
-The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena. By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
-
-Der Zusammenschluss und die Entwicklung der Infrastrukturen sehr produktiver Welten in ein vereintes, Galaxis-weites Netzwerk ist eine der größten logistischen Herausforderungen überhaupt. Das fertige System schliesst die verbundenen Welten zu einer Einheit zusammen. Gemeinsame Transport-, Wohnwesen-, Instandhaltungs- und Bauwerkzeuge können dort, wo sie optimal zur Rohstoffverwertung oder Adaption eingesetzt werden können, zur Verfügung gestellt werden.'''
-
 CON_ART_HEAVENLY
 Künstliche Himmelskörper
 
