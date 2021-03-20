@@ -386,9 +386,8 @@ namespace {
 }
 
 namespace parse {
-    const lexer species_lexer;
-
     start_rule_payload species(const boost::filesystem::path& path) {
+        const lexer lexer;
         start_rule_payload retval;
         auto& [species_, ordering] = retval;
 
@@ -402,13 +401,13 @@ namespace parse {
                 continue;
             }
 
-            detail::parse_file<grammar, start_rule_payload::first_type>(species_lexer, file, species_);
+            detail::parse_file<grammar, start_rule_payload::first_type>(lexer, file, species_);
         }
 
         if (!manifest_file.empty()) {
             try {
                 detail::parse_file<manifest_grammar, start_rule_payload::second_type>(
-                    species_lexer, manifest_file, ordering);
+                    lexer, manifest_file, ordering);
 
             } catch (const std::runtime_error& e) {
                 ErrorLogger() << "Failed to species census manifest in " << manifest_file << " from " << path

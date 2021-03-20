@@ -166,13 +166,12 @@ namespace {
 }
 
 namespace parse {
-    const lexer part_lexer;
-
     start_rule_payload ship_parts(const boost::filesystem::path& path) {
+        const lexer lexer;
         start_rule_payload parts;
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, start_rule_payload>(part_lexer, file, parts);
+            detail::parse_file<grammar, start_rule_payload>(lexer, file, parts);
 
         return parts;
     }
