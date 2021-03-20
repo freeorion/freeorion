@@ -615,6 +615,8 @@ void OptionsWnd::CompleteConstruction() {
     DoubleOption(current_page, 0, "ui.map.fleet.button.tiny.zoom.threshold",    UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption(current_page, 0, "ui.map.fleet.button.small.zoom.threshold",   UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption(current_page, 0, "ui.map.fleet.button.medium.zoom.threshold",  UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption(current_page, 0, "ui.map.fleet.button.big.zoom.threshold",     UserString("OPTIONS_UI_BIG_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption(current_page, 0, "ui.map.fleet.button.size",                   UserString("OPTIONS_UI_FLEET_BUTTON_SIZE"));
     DoubleOption(current_page, 0, "ui.map.fleet.select.indicator.size",         UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
 
     CreateSectionHeader(current_page, 0,                                UserString("OPTIONS_STARLANES"));

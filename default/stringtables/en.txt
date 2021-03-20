@@ -1767,6 +1767,9 @@ Show a different MapWindow mouseover overlay for systems that the player's empir
 OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
 Sets color of unowned system names on the galaxy map.
 
+OPTIONS_DB_UI_BIG_FLEET_BUTTON_MIN_ZOOM
+Sets minimum zoom level at which big fleet icons are shown on the galaxy map.
+
 OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
 Sets minimum zoom level at which medium fleet icons are shown on the galaxy map.
 
@@ -1778,6 +1781,9 @@ Sets minimum zoom level at which tiny fleet icons are shown on the galaxy map. A
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Sets size of fleet selection indicator, relative to fleet icon size.
+
+OPTIONS_DB_UI_FLEET_BUTTON_SIZE
+Sets relative size of fleet buttons.
 
 OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR
 Sets the color of the scan-line shading over ship/fleet graphics on the fleet window.
@@ -2964,8 +2970,14 @@ Small fleet icon minimum zoom
 OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
 Medium fleet icon minimum zoom
 
+OPTIONS_UI_BIG_FLEET_BUTTON_MIN_ZOOM
+Big fleet icon minimum zoom
+
 OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE
 Fleet selection indicator relative size
+
+OPTIONS_UI_FLEET_BUTTON_SIZE
+Fleet button relative size
 
 OPTIONS_GALAXY_MAP_GENERAL
 General

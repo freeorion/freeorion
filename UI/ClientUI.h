@@ -176,6 +176,7 @@ public:
     static double   TinyFleetButtonZoomThreshold();     //!< the minimum zoom level of the map at which to show tiny (any) fleet icons
     static double   SmallFleetButtonZoomThreshold();    //!< the minimum zoom level of the map at which to show small fleet icons
     static double   MediumFleetButtonZoomThreshold();   //!< the minimum zoom level of the map at which to show medium fleet icons
+    static double   BigFleetButtonZoomThreshold();      //!< the minimum zoom level of the map at which to show big fleet icons
     static bool     DisplayTimestamp();                 //!< Will be timestamp shown in the chats.
 
     // Content Texture Getters

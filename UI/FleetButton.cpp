@@ -59,11 +59,14 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("ui.map.fleet.select.indicator.size", UserStringNop("OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE"), 1.625, RangedStepValidator<double>(0.125, 0.5, 5));
+        db.Add("ui.map.fleet.select.indicator.size", UserStringNop("OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE"), 1.625, RangedStepValidator<double>(0.125, 0.5,  5.0));
+        db.Add("ui.map.fleet.button.size",           UserStringNop("OPTIONS_DB_UI_FLEET_BUTTON_SIZE"),              1.0,   RangedStepValidator<double>(0.125, 0.25, 4.0));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const float TWO_PI = 2.0*3.14159f;
+    constexpr float TWO_PI = 2.0*3.14159f;
+
+    float FleetButtonScaling() { return GetOptionsDB().Get<double>("ui.map.fleet.button.size"); }
 }
 
 ///////////////////////////
@@ -190,34 +193,39 @@ void FleetButton::Refresh(SizeType size_type) {
 
     if (m_fleet_blockaded) {
         if (auto texture = FleetBlockadedIcon(size_type)) {
+            GG::Pt tx_sz{texture->DefaultWidth(), texture->DefaultHeight()};
             auto icon = GG::Wnd::Create<GG::StaticGraphic>(
                 std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            icon->Resize(tx_sz * FleetButtonScaling());
             GG::Clr opposite_clr(255 - this->Color().r, 255 - this->Color().g,
                                  255 - this->Color().b, this->Color().a);
             icon->SetColor(opposite_clr);
-            m_icons.emplace_back(std::move(icon));
+            m_icons.push_back(std::move(icon));
         }
     }
 
     if (auto texture = FleetSizeIcon(num_ships, size_type)) {
         GG::Pt sz{texture->DefaultWidth(), texture->DefaultHeight()};
+        sz *= FleetButtonScaling();
         auto icon = GG::Wnd::Create<RotatingGraphic>(
             std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         icon->SetPhaseOffset(pointing_angle);
         icon->SetRPM(0.0f);
         icon->SetColor(this->Color());
-        m_icons.emplace_back(std::move(icon));
+        icon->Resize(sz);
+        m_icons.push_back(std::move(icon));
         Resize(sz);
     }
 
     for (auto& texture : FleetHeadIcons(fleets, size_type)) {
         GG::Pt sz{texture->DefaultWidth(), texture->DefaultHeight()};
+        sz *= FleetButtonScaling();
         auto icon = GG::Wnd::Create<RotatingGraphic>(
             std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         icon->SetPhaseOffset(pointing_angle);
         icon->SetRPM(0.0f);
         icon->SetColor(this->Color());
-        m_icons.emplace_back(std::move(icon));
+        m_icons.push_back(std::move(icon));
         if (Width() < sz.x)
             Resize(sz);
     }
@@ -309,13 +317,12 @@ void FleetButton::LayoutIcons() {
     for (auto& graphic : m_icons) {
         GG::SubTexture subtexture = graphic->GetTexture();
         GG::Pt subtexture_sz = GG::Pt(subtexture.Width(), subtexture.Height());
+        subtexture_sz *= FleetButtonScaling();
         GG::Pt graphic_ul = middle - GG::Pt(subtexture_sz.x / 2, subtexture_sz.y / 2);
         graphic->SizeMove(graphic_ul, graphic_ul + subtexture_sz);
     }
 
     if (m_selection_indicator) {
-        //GG::SubTexture subtexture = m_selection_indicator->GetTexture();
-        //GG::Pt subtexture_sz = GG::Pt(subtexture.Width(), subtexture.Height());
         double sel_ind_scale = GetOptionsDB().Get<double>("ui.map.fleet.select.indicator.size");
         GG::Pt subtexture_sz = Size() * sel_ind_scale;
         GG::Pt graphic_ul = middle - subtexture_sz / 2;
@@ -324,15 +331,14 @@ void FleetButton::LayoutIcons() {
 
     // refresh fleet button tooltip
     if (m_fleet_blockaded) {
-        std::shared_ptr<const Fleet> fleet;
+        if (m_fleets.empty())
+            return;
+
+        // can just pick first fleet because all fleets in system should have same exits
+        auto fleet = context.ContextObjects().get<Fleet>(*m_fleets.begin());
+
         std::string available_exits;
         int available_exits_count = 0;
-
-        if (!m_fleets.empty())
-            // can just pick first fleet because all fleets in system should have same exits
-            fleet = context.ContextObjects().get<Fleet>(*m_fleets.begin());
-        else
-            return;
 
         for (const auto& target_system_id : context.ContextObjects().get<System>(fleet->SystemID())->StarlanesWormholes()) {
             if (fleet->BlockadedAtSystem(fleet->SystemID(), target_system_id.first, context))

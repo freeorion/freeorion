@@ -120,6 +120,7 @@ GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().
 double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("ui.map.fleet.button.tiny.zoom.threshold"); }
 double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("ui.map.fleet.button.small.zoom.threshold"); }
 double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("ui.map.fleet.button.medium.zoom.threshold"); }
+double      ClientUI::BigFleetButtonZoomThreshold()     { return GetOptionsDB().Get<double>("ui.map.fleet.button.big.zoom.threshold"); }
 
 bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().Get<bool>("ui.map.messages.timestamp.shown"); }
 
