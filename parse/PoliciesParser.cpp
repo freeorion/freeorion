@@ -68,7 +68,7 @@ namespace {
         std::set<std::string>   prerequisites;
         const boost::optional<parse::detail::value_ref_payload<double>> adoption_cost;
         const boost::optional<parse::effects_group_payload>&            effects;
-        boost::optional<std::vector<UnlockableItem>>              unlocked_items;
+        boost::optional<std::vector<UnlockableItem>>                    unlocked_items;
         std::string             graphic;
     };
 
