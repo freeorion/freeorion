@@ -803,16 +803,6 @@ def generate_classic_research_orders():
                             chat_human(msg)
                         else:
                             debug(msg)
-            elif not tech_is_complete("CON_GAL_INFRA"):
-                num_techs_accelerated += 1
-                if ("CON_GAL_INFRA" not in research_queue_list[:1+num_techs_accelerated]) and (
-                        tech_is_complete("PRO_SINGULAR_GEN")):
-                    res = fo.issueEnqueueTechOrder("CON_GAL_INFRA", num_techs_accelerated)
-                    msg = "Empire has poor colony/outpost prospects, so attempted to fast-track %s, got result %d" % ("CON_GAL_INFRA", res)
-                    if report_adjustments:
-                        chat_human(msg)
-                    else:
-                        debug(msg)
             else:
                 pass
             research_queue_list = get_research_queue_techs()
