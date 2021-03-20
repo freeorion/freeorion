@@ -71,12 +71,11 @@ struct GG_API Pt
     constexpr bool Less(const Pt& rhs) const
     { return x < rhs.x ? true : (x == rhs.x ? (y < rhs.y ? true : false) : false); }
 
-    constexpr Pt operator-() const            { return Pt(-x, -y); }          ///< Negates Pt.
-
-    void         operator+=(const Pt& rhs)    { x += rhs.x; y += rhs.y; }     ///< Adds \a rhs to Pt.
-    void         operator-=(const Pt& rhs)    { x -= rhs.x; y -= rhs.y; }     ///< Subtracts \a rhs from Pt.
-    Pt           operator/=(const double rhs) { return Pt(x / rhs, y / rhs); }///< Devides components of Pt by \a rhs
-    Pt           operator*=(const double rhs) { return Pt(x * rhs, y * rhs); }///< Devides components of Pt by \a rhs
+    constexpr Pt operator-() const            { return Pt(-x, -y); }                    ///< Negates Pt.
+    Pt&          operator+=(const Pt& rhs)    { x += rhs.x; y += rhs.y; return *this; } ///< Adds \a rhs to Pt.
+    Pt&          operator-=(const Pt& rhs)    { x -= rhs.x; y -= rhs.y; return *this; } ///< Subtracts \a rhs from Pt.
+    Pt&          operator/=(const double rhs) { x /= rhs;   y /= rhs;   return *this; } ///< Devides components of Pt by \a rhs
+    Pt&          operator*=(const double rhs) { x *= rhs;   y *= rhs;   return *this; } ///< Multiplies components of Pt by \a rhs
 
     X x = GG::X0;
     Y y = GG::Y0;
