@@ -27,6 +27,7 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
+                
             ]
             // has to happen after e.g. FORCE_ENERGY_STRC effects which also happens at AFTER_ALL_TARGET_MAX_METERS_PRIORITY
             priority = [[METER_OVERRIDE_PRIORITY]]
