@@ -1,6 +1,6 @@
 
 BASE_INFLUENCE_COSTS
-'''EffectsGroup      // colonies consume influence, proportional to how many planets the empire controls
+'''EffectsGroup      // colonies consume influence, proportional to square-root of how many populated planets and non-populated outposts the empire controls
             scope = Source
             activation = And [
                 Planet
@@ -9,11 +9,21 @@ BASE_INFLUENCE_COSTS
             ]
             stackinggroup = "IMPERIAL_PALACE_MANY_PLANETS_INFLUENCE_PENALTY"
             accountinglabel = "COLONY_ADMIN_COSTS_LABEL"
-            effects = SetTargetInfluence value = Value - (NamedReal name = "COLONY_ADMIN_COSTS_PER_PLANET" value = 0.2) *
-                Statistic Count condition = And [
-                    Planet
-                    OwnedBy empire = Source.Owner
-                ]
+            effects = SetTargetInfluence value = Value -
+                (NamedReal name = "COLONY_ADMIN_COSTS_PER_PLANET" value = 0.4) * ((
+                    Statistic Count condition = And [
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Species
+                    ] +
+                    ((NamedReal name = "OUTPOST_RELATIVE_ADMIN_COUNT" value = 0.25) *
+                        (Statistic Count condition = And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                            Not Species
+                        ])                
+                    )
+                )^0.5)
 
         EffectsGroup      // species homeworlds consume more influence
             scope = Source
