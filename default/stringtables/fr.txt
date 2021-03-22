@@ -1767,17 +1767,23 @@ Affiche un calque différent de survol de souris pour les systèmes encore non-e
 OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
 Définit la couleur sur la carte galactique des noms des systèmes stellaires qu'aucun empire ne contrôle.
 
+OPTIONS_DB_UI_BIG_FLEET_BUTTON_MIN_ZOOM
+Fixe le niveau minimal de zoom auquel apparaissent les icônes de grande taille des flottes sur la carte galactique.
+
 OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
-Fixe le niveau minimal de zoom auquel les icônes de taille moyenne des flottes apparaissent sur la carte galactique.
+Fixe le niveau minimal de zoom auquel apparaissent les icônes de taille moyenne des flottes sur la carte galactique.
 
 OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
-Fixe le niveau minimal de zoom auquel les icônes de petite taille des flottes apparaissent sur la carte galactique.
+Fixe le niveau minimal de zoom auquel apparaissent  les icônes de petite taille des flottes sur la carte galactique.
 
 OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
-Fixe le niveau minimal de zoom auquel les icônes de taille minimum des flottes apparaissent sur la carte galactique. À un niveau de zoom inférieur, aucune icône de flotte n'est visible sur la carte galactique.
+Fixe le niveau minimal de zoom auquel apparaissent  les icônes de taille minimum des flottes sur la carte galactique. À un niveau de zoom inférieur, aucune icône de flotte n'est visible sur la carte galactique.
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique de l'indicateur de sélection d'une flotte, relativement à la taille des icônes de flotte.
+
+OPTIONS_DB_UI_FLEET_BUTTON_SIZE
+Fixe la taille relative des boutons de flotte.
 
 OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR
 Définit la couleur des rayures horizontales (brouillard de guerre) sur les astronefs/flottes non-visibles dans la Fenêtre Flottes.
@@ -1798,10 +1804,10 @@ OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Fixe la taille des icônes de système stellaire au-dessous de laquelle les icônes minimales de taille fixe seront affichées.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
-Fixe le délai d'apparition dans l'interface utilisateur des bulles d'information, en millisecondes.
+Fixe le délai d'apparition dans l'interface utilisateur des infobulles, en millisecondes.
 
 OPTIONS_DB_UI_TOOLTIP_LONG_DELAY
-Fixe le délai d'apparition dans l'interface utilisateur des bulles d'information alternatives, en millisecondes.
+Fixe le délai d'apparition dans l'interface utilisateur des infobulles alternatives, en millisecondes.
 
 OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
 Lors d'une recherche dans l'Encyclopédie, vérifier les correspondances dans le contenu des articles. La recherche sera plus lente, mais peut retourner davantage de résultats.
@@ -2964,8 +2970,14 @@ Zoom minimal petite icône d'une flotte
 OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
 Zoom minimal icône moyenne d'une flotte
 
+OPTIONS_UI_BIG_FLEET_BUTTON_MIN_ZOOM
+Zoom minimal grande icône d'une flotte
+
 OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE
-Taille relative du sélecteur de flottes
+Taille relative sélecteur de flottes
+
+OPTIONS_UI_FLEET_BUTTON_SIZE
+Taille relative bouton de flottes
 
 OPTIONS_GALAXY_MAP_GENERAL
 Général
@@ -3131,6 +3143,12 @@ Liens
 
 OPTIONS_ROLLOVER_LINK_COLOR
 Survol des liens
+
+OPTIONS_DEFAULT_TOOLTIP_COLOR
+Infobulles par défaut
+
+OPTIONS_ROLLOVER_TOOLTIP_COLOR
+Survol infobulles
 
 OPTIONS_HIGHLIGHT_COLOR
 Surbrillance de sélection
@@ -4466,7 +4484,7 @@ Les objets peuvent être ajoutés à la File d'Attente de Production comme Comma
 Pour chaque objet, une colonne indique le coût total et le temps minimum de production.
 Les PP maximum pouvant être alloués à une Commande de Production correspondent à la formule: (coût / temps) x quantité.
 Exemple: la production d'un objet d'un coût total de 30 PP et un temps minimum de 3 tours pourra progresser de 10 PP par objet, par tour.
-Les objets indisponibles, si affichés, permettront par un survol de souris d'accéder à une bulle d'information listant en rouge les raisons pour lesquelles ils ne peuvent pas être produits par l'empire.
+Les objets indisponibles, si affichés, permettront par un survol de souris d'accéder à une infobulle listant en rouge les raisons pour lesquelles ils ne peuvent pas être produits par l'empire.
 
 <u>Panneau File d'Attente de Production</u>
 
@@ -6563,7 +6581,7 @@ Rechercher et débloquer de nouveaux objets
 
 RESEARCH_TECH_GUIDE_TEXT
 '''Compléter la [[metertype METER_RESEARCH]] d'une technologie débloquant un objet donnera uniquement à l'empire la connaissance des modalités de production de cet objet. La production effective d'un objet peut être soumise à d'autres conditions, tel l'accès à certaines ressources.
-Si un objet a été débloqué mais ne peut pas être produit, les conditions additionnelles de production peuvent être consultées en affichant la bulle d'aide de l'objet en question dans la liste de la Fenêtre Production (survol souris + filtre "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" activé).
+Si un objet a été débloqué mais ne peut pas être produit, les conditions additionnelles de production peuvent être consultées en affichant l'infobulle de l'objet en question dans la liste de la Fenêtre Production (survol souris + filtre "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" activé).
 
 En général, la disponibilité ou l'activation des objets débloqués par la [[METER_RESEARCH]] des différentes [[encyclopedia ENC_TECH]] ne nécessite pas de connection aux lignes d'[[metertype METER_SUPPLY]] (par exemple une structure ou une amélioration d'un indicateur planétaire). Toutefois, si une technologie améliorant un équipement d'astronef est recherchée puis assimilée (par exemple un armement), les astronefs déjà existants doivent se trouver dans une zone d'approvisionnement, être stationnaires et pas en situation de combat, afin de pouvoir recevoir l'amélioration à tout moment.'''
 
