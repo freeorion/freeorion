@@ -21,8 +21,8 @@ Required Software Dependencies
 
 FreeOrion depends on the following software to build:
 
-  * [Visual Studio] - 2017 for Windows Desktop ; Windows only
-  * [Xcode] - 8.3 or later ; Mac OS X only
+  * [Visual Studio] - 2017 or 2019 for Windows Desktop ; Windows only
+  * [Xcode] - 9.4 or later ; Mac OS X only
   * [CMake] - 3.4 (Mac OS X) ; 3.1 or later (Other non-Windows)
   * A C++17 compliant compiler - Other Operating Systems
     * [GNU GCC] - 8.0 or later
@@ -113,12 +113,14 @@ maintained Visual Studio Project is used for building.
 ### Windows (Visual Studio)
 
 To build FreeOrion open the `FreeOrion.sln` project solution within
-`_source directory_\msvc2017` with Visual Studio.  Now compile the whole
-project by selecting the `Build` -> `Build Solution` menu entry.
+`_source directory_\msvc2017` or `_source directory_\msvc2019` with
+Visual Studio.  Now compile the whole project by selecting the
+`Build` -> `Build Solution` menu entry.
 
 After the build finished successfully the binaries can be found within
 the `freeorion-project/FreeOrion` directory.
 
+I
 
 ### Windows (CMake; work in progress)
 
@@ -229,7 +231,7 @@ calling:
 After the build finished successfully the godot libraries can be found within
 the `freeorion-project/build` directory.
 
-[Visual Studio]: https://www.visualstudio.com/de/vs/older-downloads/
+[Visual Studio]: https://visualstudio.microsoft.com/vs/older-downloads/
 [Xcode]: https://itunes.apple.com/de/app/xcode/id497799835?mt=12
 [CMake]: https://cmake.org/download/
 [GNU GCC]: https://gcc.gnu.org/releases.html
