@@ -61,7 +61,7 @@ NO_INFLUENCE
 '''
 
 BASIC_INFLUENCE
-'''        EffectsGroup
+'''        EffectsGroup     // influence focus generates influence from planets, proportional to population
             scope = Source
             activation = And [
                 Planet
@@ -69,7 +69,9 @@ BASIC_INFLUENCE
             ]
             accountinglabel = "FOCUS_INFLUENCE_LABEL"
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
-            effects = SetTargetInfluence value = Value + min(4, Target.Population / 5)
+            effects = SetTargetInfluence value = Value + Target.Population *
+                (NamedReal name = "FOCUS_INFLUENCE_INFLUENCE_PERPOP" value = [[INFLUENCE_PER_POP]])
+
 [[BASE_INFLUENCE_COSTS]]
 '''
 
