@@ -5,7 +5,7 @@ Policy
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 1.0 * floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population
                                           condition = And [ Planet OwnedBy empire = Source.Owner ])
-    exclusions = [ "PLC_CONFEDERATION" ]
+    exclusions = [ "PLC_CONFEDERATION" "PLC_COLONIZATION" ]
     unlock = Item type = Building name = "BLD_REGIONAL_ADMIN"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
@@ -19,10 +19,10 @@ Policy
             effects = [
                 SetTargetIndustry value = Value + Target.Population
                     * (NamedReal name = "PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP"
-                                 value = 1.0 * [[INDUSTRY_PER_POP]])
+                                 value = 0.5 * [[INDUSTRY_PER_POP]])
                 SetTargetResearch value = Value + Target.Population
                     * (NamedReal name = "PLC_CENTRALIZATION_TARGET_RESEARCH_PERPOP"
-                                 value = 1.0 * [[RESEARCH_PER_POP]])
+                                 value = 0.5 * [[RESEARCH_PER_POP]])
                 SetTargetConstruction value = Value
                     + (NamedReal name = "PLC_CENTRALIZATION_TARGET_CONSTRUCTION_FLAT" value = 10)
                 SetMaxSupply value = Value
