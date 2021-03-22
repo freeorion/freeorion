@@ -69,7 +69,7 @@ BASIC_INFLUENCE
             ]
             accountinglabel = "FOCUS_INFLUENCE_LABEL"
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
-            effects = SetTargetInfluence value = Value + 4
+            effects = SetTargetInfluence value = Value + min(4, Target.Population / 5)
 [[BASE_INFLUENCE_COSTS]]
 '''
 
