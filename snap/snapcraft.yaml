@@ -54,6 +54,11 @@ parts:
     override-build: |
       sed -i.bak -e 's|Icon=freeorion$|Icon=${SNAP}/meta/gui/icon.png|g' ../src/packaging/org.freeorion.FreeOrion.desktop
       sed -i.bak -e 's|="res://bin/linux.*/libfreeoriongodot.so"|="/usr/local/lib/freeorion/libfreeoriongodot.so"|g' ../src/godot/client/gdcpptest.gdnlib
+      # godot-headless wants a writable homedir, simulate it
+      mkdir -p home/
+      mkdir -p ${SNAPCRAFT_PART_INSTALL}/usr/local/share/freeorion/
+      # Note: we use godot3-headless really
+      HOME=$(pwd)/home godot3-server --path ../src/godot/client --export-pack "Linux/X11" ${SNAPCRAFT_PART_INSTALL}/usr/local/share/freeorion/freeorion.pck
       snapcraftctl build
     plugin: cmake
     cmake-parameters:
