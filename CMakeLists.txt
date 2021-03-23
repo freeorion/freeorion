@@ -680,6 +680,7 @@ if(BUILD_CLIENT_GODOT)
 
     if(NOT GODOT_CPP_ROOT)
         set(GODOT_CPP_ROOT_BUILT "${CMAKE_BINARY_DIR}/godot-cpp")
+        set(GODOT_CPP_GEN_INCLUDE_DIRS "${CMAKE_BINARY_DIR}/godot-cpp-build/include/gen")
 
         include(ExternalProject)
         ExternalProject_Add(godotcpp
@@ -699,6 +700,7 @@ if(BUILD_CLIENT_GODOT)
         add_dependencies(freeoriongodot godotcpp)
     else()
         set(GODOT_CPP_ROOT_BUILT "${GODOT_CPP_ROOT}")
+        set(GODOT_CPP_GEN_INCLUDE_DIRS "${GODOT_CPP_ROOT_BUILT}/include/gen")
     endif()
     message(STATUS "Godot C++ root ${GODOT_CPP_ROOT_BUILT}")
 
@@ -714,7 +716,7 @@ if(BUILD_CLIENT_GODOT)
         PRIVATE
             ${GODOT_CPP_ROOT_BUILT}/include
             ${GODOT_CPP_ROOT_BUILT}/include/core
-            ${GODOT_CPP_ROOT_BUILT}/include/gen
+            ${GODOT_CPP_GEN_INCLUDE_DIRS}
             ${GODOT_CPP_ROOT_BUILT}/godot-headers
     )
 
