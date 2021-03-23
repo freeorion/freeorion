@@ -1,0 +1,27 @@
+BuildingType
+    name = "BLD_REGIONAL_ADMIN"
+    description = "BLD_REGIONAL_ADMIN_DESC"
+    captureresult = Destroy
+    buildcost = 12 * [[BUILDING_COST_MULTIPLIER]] * (Statistic Count condition = And [Planet OwnedBy empire = Source.Owner])
+    buildtime = 6
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_IMPERIAL_PALACE"
+        Not Contains Building name = "BLD_REGIONAL_ADMIN"
+        TargetPopulation low = 1
+        Happiness low = 5
+        Not WithinStarlaneJumps jumps = 5 condition = Or [
+            Building name = "BLD_IMPERIAL_PALACE"
+            Building name = "BLD_REGIONAL_ADMIN"
+        ]
+    ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    ]
+    icon = "icons/building/regional_administration.png"
+
+#include "/scripting/common/priorities.macros"
+#include "/scripting/common/base_prod.macros"
+#include "/scripting/common/misc.macros"
+#include "/scripting/buildings/buildings.macros"
