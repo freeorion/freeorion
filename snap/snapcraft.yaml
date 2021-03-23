@@ -53,6 +53,7 @@ parts:
     source: .
     override-build: |
       sed -i.bak -e 's|Icon=freeorion$|Icon=${SNAP}/meta/gui/icon.png|g' ../src/packaging/org.freeorion.FreeOrion.desktop
+      sed -i.bak -e 's|="res://bin/linux.*/libfreeoriongodot.so"|="/usr/local/lib/freeorion/libfreeoriongodot.so"|g' ../src/godot/client/gdcpptest.gdnlib
       snapcraftctl build
     plugin: cmake
     cmake-parameters:
@@ -168,3 +169,5 @@ layout:
     bind: $SNAP/gnome-platform/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/webkit2gtk-4.0
   /usr/share/xml/iso-codes:
     bind: $SNAP/gnome-platform/usr/share/xml/iso-codes
+  /usr/local/lib/freeorion/libfreeoriongodot.so:
+    bind-file: $SNAP/usr/local/lib/freeorion/libfreeoriongodot.so
