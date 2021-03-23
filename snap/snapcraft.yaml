@@ -59,7 +59,7 @@ parts:
       snapcraftctl pull
       # this versioning works for e.g. weekly-test-builds
       branchn="$(git rev-parse --abbrev-ref HEAD)"
-      version="$(git log -n1 --date=short --format='%cd.%h' freeorion/$branchn)"
+      version="$(git log -n1 --date=short --format='%cd.%h' $branchn)"
       case $version in
         v*) version=$(echo $version | tail -c +2) ;;
         *)  version=$(echo $version | head -c 32) ;;

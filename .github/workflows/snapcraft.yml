@@ -1,0 +1,16 @@
+name: "Snapcraft build"
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Build snap package
+      uses: snapcore/action-build@v1
+      id: snapcraft
+    - name: Install built snap package
+      run: |
+        sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }}
