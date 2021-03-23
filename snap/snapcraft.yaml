@@ -91,6 +91,7 @@ parts:
     - libtiff-dev
     - libvorbis-dev
     - pkg-config
+    - godot3-server
     stage-packages:
     - mesa-utils
     - libgl1-mesa-dri
@@ -113,6 +114,7 @@ parts:
     - libvorbisfile3
     - libpng16-16
     - libfreetype6
+    - godot3-runner
     build-environment:
     - PATH: /snap/gnome-3-38-2004-sdk/current/usr/bin:$PATH
     - XDG_DATA_DIRS: $SNAPCRAFT_STAGE/usr/share:/snap/gnome-3-38-2004-sdk/current/usr/share:/usr/share:$XDG_DATA_DIRS
