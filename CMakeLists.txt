@@ -672,14 +672,14 @@ endif()
 if(BUILD_CLIENT_GODOT)
     add_library(freeoriongodot SHARED "")
 
+    if(CMAKE_BUILD_TYPE MATCHES Debug)
+        set(GODOT_CPP_BUILD_TYPE Debug)
+    else()
+        set(GODOT_CPP_BUILD_TYPE Release)
+    endif()
+
     if(NOT GODOT_CPP_ROOT)
         set(GODOT_CPP_ROOT_BUILT "${CMAKE_BINARY_DIR}/godot-cpp")
-
-        if(CMAKE_BUILD_TYPE MATCHES Debug)
-            set(GODOT_CPP_BUILD_TYPE Debug)
-        else()
-            set(GODOT_CPP_BUILD_TYPE Release)
-        endif()
 
         include(ExternalProject)
         ExternalProject_Add(godotcpp
