@@ -9,7 +9,7 @@ Tech
     prerequisites = [
         "SHP_MASSPROP_SPEC"
         "SHP_TRANSSPACE_DRIVE"
-        "CON_GAL_INFRA"
+        "SHP_INTSTEL_LOG"
     ]
     unlock = [
         Item type = ShipHull name = "SH_LOGISTICS_FACILITATOR"

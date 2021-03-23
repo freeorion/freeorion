@@ -6,7 +6,10 @@ Tech
     researchcost = 250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
-    prerequisites = "CON_GAL_INFRA"
+    prerequisites = [
+        "LRN_MIND_VOID"
+        "LRN_SPATIAL_DISTORT_GEN"
+    ]
     unlock = [
         Item type = Building name = "BLD_STARGATE"
     ]

@@ -76,12 +76,12 @@ namespace {
                 ;
 
             building_type
-                = ( tok.BuildingType_
-                >   label(tok.name_)        > tok.string
-                >   label(tok.description_) > tok.string
-                >   capture
-                >   common_rules.common
-                >   label(tok.icon_)        > tok.string)
+                = ( tok.BuildingType_                       // _1
+                >   label(tok.name_)        > tok.string    // _2
+                >   label(tok.description_) > tok.string    // _3
+                >   capture                                 // _4
+                >   common_rules.common                     // _5
+                >   label(tok.icon_)        > tok.string)   // _6
                 [ _pass = is_unique_(_r1, _1, _2),
                   insert_building_(_r1, _2, _3, _5, _4, _6, _pass) ]
                 ;

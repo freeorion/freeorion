@@ -91,9 +91,6 @@ namespace CheckSums {
 ///////////////////////////////////////////////////////////
 // Tech Info                                             //
 ///////////////////////////////////////////////////////////
-Tech::TechInfo::TechInfo()
-{}
-
 Tech::TechInfo::TechInfo(std::string& name_, std::string& description_,
                          std::string& short_description_, std::string& category_,
                          std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost_,

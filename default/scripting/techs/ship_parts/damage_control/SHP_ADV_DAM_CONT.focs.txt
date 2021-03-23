@@ -6,10 +6,7 @@ Tech
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
-    prerequisites = [
-        "SHP_FLEET_REPAIR"
-        "CON_GAL_INFRA"
-        ]
+    prerequisites = [ "SHP_FLEET_REPAIR" ]
     effectsgroups =
         EffectsGroup
             scope = And [

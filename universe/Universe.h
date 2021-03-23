@@ -14,6 +14,7 @@
 #include <boost/thread/shared_mutex.hpp>
 #include "EnumsFwd.h"
 #include "ObjectMap.h"
+#include "UnlockableItem.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"
 #include "../util/Pending.h"
@@ -27,7 +28,6 @@ class ShipDesign;
 class System;
 class Pathfinder;
 class IDAllocator;
-struct UnlockableItem;
 class FleetPlan;
 class MonsterFleetPlan;
 struct ScriptingContext;

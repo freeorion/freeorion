@@ -7,7 +7,7 @@ Tech
     researchturns = 5
     tags = [ "PEDIA_LEARNING_CATEGORY" ]
     prerequisites = [
-        "LRN_MIND_VOID"
+        "CON_STARGATE"
         "LRN_NDIM_SUBSPACE"
     ]
     unlock = Item type = Building name = "BLD_GATEWAY_VOID"

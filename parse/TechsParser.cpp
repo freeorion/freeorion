@@ -145,21 +145,11 @@ namespace {
                     deconstruct_movable_(_6, _pass), _7, _8)) ]
                 ;
 
-            prerequisites
-                %=   label(tok.prerequisites_)
-                >  one_or_more_string_tokens
-                ;
-
-            unlocks
-                %=   label(tok.unlock_)
-                >  one_or_more_unlockable_items
-                ;
-
             tech
                 = ( omit_[tok.Tech_]
                 >   tech_info
-                >  -prerequisites
-                >  -unlocks
+                >  -(label(tok.prerequisites_) > one_or_more_string_tokens)
+                >  -(label(tok.unlock_)        > one_or_more_unlockable_items)
                 >  -(label(tok.effectsgroups_) > effects_group_grammar)
                 >  -as_string_[(label(tok.graphic_) > tok.string)]
                   ) [ insert_tech_(_r1, _1, _4, _2, _3, _5, _pass) ]
@@ -167,9 +157,9 @@ namespace {
 
             category
                 = ( tok.Category_
-                    >   label(tok.name_)    > tok.string
-                    >   label(tok.graphic_) > tok.string
-                    >   label(tok.colour_)  > color_parser
+                >   label(tok.name_)    > tok.string
+                >   label(tok.graphic_) > tok.string
+                >   label(tok.colour_)  > color_parser
                   ) [ _pass = is_unique_(_r1, _1, _2),
                       insert_category_(_r1, _2, _3, _4) ]
                 ;
@@ -182,8 +172,6 @@ namespace {
 
             researchable.name("Researchable");
             tech_info.name("Tech info");
-            prerequisites.name("Prerequisites");
-            unlocks.name("Unlock");
             tech.name("Tech");
             category.name("Category");
             start.name("start");
@@ -191,8 +179,6 @@ namespace {
 #if DEBUG_PARSERS
             debug(tech_info_name_desc);
             debug(tech_info);
-            debug(prerequisites);
-            debug(unlocks);
             debug(tech);
             debug(category);
 #endif
@@ -201,8 +187,6 @@ namespace {
         }
 
         using tech_info_rule = parse::detail::rule<parse::detail::MovableEnvelope<Tech::TechInfo> ()>;
-        using prerequisites_rule = parse::detail::rule<std::set<std::string> ()>;
-        using unlocks_rule = parse::detail::rule<std::vector<UnlockableItem> ()>;
         using tech_rule = parse::detail::rule<void (TechManager::TechContainer&)>;
         using category_rule = parse::detail::rule<void (std::map<std::string, std::unique_ptr<TechCategory>>&)>;
         using start_rule = parse::detail::rule<void (TechManager::TechContainer&)>;
@@ -222,8 +206,6 @@ namespace {
         parse::detail::color_parser_grammar     color_parser;
         parse::detail::rule<bool()>             researchable;
         tech_info_rule                          tech_info;
-        prerequisites_rule                      prerequisites;
-        unlocks_rule                            unlocks;
         tech_rule                               tech;
         category_rule                           category;
         start_rule                              start;
@@ -231,9 +213,10 @@ namespace {
 }
 
 namespace parse {
+    const lexer tech_lexer;
+
     template <typename T>
     T techs(const boost::filesystem::path& path) {
-        const lexer lexer;
         TechManager::TechContainer techs_;
         std::map<std::string, std::unique_ptr<TechCategory>> categories;
         std::set<std::string> categories_seen;
@@ -243,10 +226,10 @@ namespace parse {
 
         ScopedTimer timer("Techs Parsing", true);
 
-        detail::parse_file<grammar, TechManager::TechContainer>(lexer, path / "Categories.inf", techs_);
+        detail::parse_file<grammar, TechManager::TechContainer>(tech_lexer, path / "Categories.inf", techs_);
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, TechManager::TechContainer>(lexer, file, techs_);
+            detail::parse_file<grammar, TechManager::TechContainer>(tech_lexer, file, techs_);
 
         return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
     }

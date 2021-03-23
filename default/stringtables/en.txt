@@ -11287,7 +11287,9 @@ However, it also reduces [[metertype METER_SUPPLY]] range ([[value PLC_CENTRALIZ
 • [[metertype METER_SUPPLY]] connected colonies get a penalization of [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP]] per jump distance to the capital, capped at [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]].
 • Colonies not [[metertype METER_SUPPLY]] connected to the capital gets the maximum penalization ([[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]]).
 
-Logistics of the whole empire are focused into boosting the capital's production, by diverting there most of the social and material resources. This causes some resentment in the colonies, which increases [[metertype METER_INFLUENCE]] costs.'''
+Logistics of the whole empire are focused into boosting the capital's production, by diverting there most of the social and material resources. This causes some resentment in the colonies, which increases [[metertype METER_INFLUENCE]] costs.
+
+The cost of colonization ship parts is also increased by 50%.'''
 
 PLC_CENTRALIZATION_SHORT_DESC
 Boosts Capital
@@ -11571,6 +11573,48 @@ Increases the impact of species likes and dislikes on planet stability.
 
 PLC_LIBERTY_SHORT_DESC
 Increases species opinion effects
+
+PLC_TRAFFIC_CONTROL
+Traffic Control
+
+PLC_TRAFFIC_CONTROL_DESC
+Increases [[metertype METER_SPEED]] of ships by 20 when they are within 50 uu of a controlled planet.
+
+PLC_TRAFFIC_CONTROL_SHORT_DESC
+Speeds ships near empire planets
+
+PLC_PLANETARY_INFRA
+Planetary Infrastructure
+
+PLC_PLANETARY_INFRA_DESC
+'''Grants 2 additional economic policy slots.
+
+Increases [[metertype METER_TARGET_CONSTRUCTION]] on populated planets by 5.'''
+
+PLC_PLANETARY_INFRA_SHORT_DESC
+Grants policy slots
+
+PLC_SYSTEM_INFRA
+System Infrastructure
+
+PLC_SYSTEM_INFRA_DESC
+'''Grants 2 additional economic policy slots.
+
+Increases [[metertype METER_TARGET_CONSTRUCTION]] by 5 on populated planets in systems with at least 2 planets owned by the empire that adopted this policy.'''
+
+PLC_SYSTEM_INFRA_SHORT_DESC
+Grants policy slots
+
+PLC_INTERSTELLAR_INFRA
+Interstellar Infrastructure
+
+PLC_INTERSTELLAR_INFRA_DESC
+'''Grants 2 additional economic policy slots.
+
+Increases [[metertype METER_TARGET_CONSTRUCTION]] by 5 on populated planets that are resource supply connected to planets in other systems owned by the empire that adopted this policy.'''
+
+PLC_INTERSTELLAR_INFRA_SHORT_DESC
+Grants policy slots
 
 
 ##
@@ -12131,8 +12175,7 @@ Architectural Psychology
 CON_ARCH_PSYCH_DESC
 '''The form of a structure or inhabited space is not merely guided by the physical limitations of the materials from which it is constructed. Psychological effects on the inhabitants within, or observers outside can have a far greater influence on the success of a design than the strength of a wall or sturdiness of a foundation.
 
-Grants 1 extra social policy slot.
-'''
+Grants 1 extra social policy slot.'''
 
 CON_ORGANIC_STRC
 Organic Structures
@@ -12173,14 +12216,6 @@ CON_CONTGRAV_ARCH_DESC
 By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
 
 By fully controlling the orientation and strength of gravitational forces acting upon and existent within a structure, designs may simultaneously exhibit the freedom of weightlessness and the utility of having a defined up and down. The structure itself, and the local environments it seeks to provide, may take any shape in space, extending to great lengths, looping about itself, and making arbitrary interconnections. Simultaneously, local environments within may be infused with a useful tug, which may vary from or be entirely different from immediately adjacent areas. Such versatility permits great new functional designs for social, manufacturing or other uses.'''
-
-CON_GAL_INFRA
-Galactic Infrastructure
-
-CON_GAL_INFRA_DESC
-'''The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena. By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
-
-Integration and development of regional administration into a unified galaxy-spanning network is one of the greatest logistical effort conceivable.'''
 
 CON_ART_HEAVENLY
 Artificial Heavenly Bodies
@@ -12227,8 +12262,6 @@ Interstellar Logistics
 
 SHP_INTSTEL_LOG_DESC
 '''Unlocks the Logistics focus setting, which increases the [[metertype METER_SUPPLY]] of planets by 3.
-
-Increases [[metertype METER_SPEED]] of ships by 20 when they are within 50 uu of a controlled planet.
 
 [[COLONY_BUILDING_TIME_DECREASE]]
 

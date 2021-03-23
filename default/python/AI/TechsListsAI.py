@@ -777,7 +777,6 @@ def primary_meta_techs(index=0):
 # "CON_CONTGRAV_ARCH",
 # "CON_FRC_ENRG_CAMO",
 # "CON_FRC_ENRG_STRC",
-# "CON_GAL_INFRA",
 # "CON_NDIM_STRC",
 # "CON_ORBITAL_CON",
 # "CON_ORBITAL_HAB",

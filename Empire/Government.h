@@ -26,6 +26,7 @@ public:
            std::set<std::string>&& prerequisites,
            std::set<std::string>&& exclusions,
            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
+           std::vector<UnlockableItem>&& unlocked_items,
            std::string graphic);
 
     const std::string&  Name() const                { return m_name; }
@@ -40,10 +41,9 @@ public:
 
     //! returns the effects that are applied to the discovering empire's capital
     //! when this policy is adopted.
-    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
-    { return m_effects; }
-
-    const std::string&  Graphic() const             { return m_graphic; }
+    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const { return m_effects; }
+    const std::string& Graphic() const { return m_graphic; }
+    const std::vector<UnlockableItem>& UnlockedItems() const { return m_unlocked_items; }
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
@@ -65,6 +65,7 @@ private:
     std::set<std::string>                               m_prerequisites;
     std::set<std::string>                               m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
+    std::vector<UnlockableItem>                         m_unlocked_items;
     std::string                                         m_graphic;
 
     friend class PolicyManager;

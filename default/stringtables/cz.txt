@@ -1463,9 +1463,6 @@ Silnoenergetické struktury
 CON_CONTGRAV_ARCH
 Architektura kontrolované gravitace\n
 
-CON_GAL_INFRA
-Galaktická infrastruktura
-
 CON_ART_HEAVENLY
 Umělá nebeská tělesa
 

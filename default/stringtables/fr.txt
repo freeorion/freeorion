@@ -12174,14 +12174,6 @@ L'installation d'un générateur de gravité nulle au cœur d'une planète rend 
 
 Le contrôle total de l'orientation et de la puissance des forces gravitationnelles s'exerçant sur ou à l'intérieur d'une structure, permet l'émergence de designs jouissant simultanément de la liberté de l'impesanteur et de la nécessité de définir les directions haut et bas. La structure elle-même, et l'environnement qu'elle fournit, peut prendre n'importe quelle forme dans l'espace, s'étirant sur de grandes distances, formant une boucle sur elle-même, et effectuant des interconnections à volonté. Simultanément, les environnements internes à ces structures reproduisent les mêmes modifications et adaptations, et peuvent présenter quelques similitudes ou être entièrements différents d'une zone adjacente à une autre. Une telle souplesse rend possible de nouveaux designs innovants et fonctionnels pour la société, l'industrie et bien d'autres domaines.'''
 
-CON_GAL_INFRA
-Infrastructure Galactique
-
-CON_GAL_INFRA_DESC
-'''Le transport efficace et fiable des ressources sur des distances interstellaires requiert une planification fastidieuse, complexifiée par de nombreux facteurs tels que la présence de monstres spatiaux, d'empires ennemis et de dangereux phénomènes astrophysiques. L'utilisation d'une infrastructure galactique intégrée permet un déploiement fluide des ressources entre les colonies avancées et émergentes, tandis que des solutions peuvent être appliquées aux problèmes de logistique particulièrement contraignants.
-
-Le développement et l'intégration de l'administration régionale au sein d'un réseau galactique d'envergure et unifié est un des plus grands progrès imaginables en matière de logistique.'''
-
 CON_ART_HEAVENLY
 Astres Artificiels
 

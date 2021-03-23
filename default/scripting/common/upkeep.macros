@@ -26,7 +26,10 @@ SHIP_PART_COST_MULTIPLIER
 '''(GameRule name = "RULE_SHIP_PART_COST_FACTOR") * [[DESIGN_SIMPLICITY_POLICY_MULTIPLIER]]'''
 
 COLONIZATION_POLICY_MULTIPLIER
-'''(1 - 0.3*(Statistic If condition = EmpireHasAdoptedPolicy name = "PLC_COLONIZATION"))'''
+'''(1
+    - 0.3*(Statistic If condition = EmpireHasAdoptedPolicy name = "PLC_COLONIZATION")
+    + 0.5*(Statistic If condition = EmpireHasAdoptedPolicy name = "PLC_CENTRALIZATION")
+   )'''
 
 MARINE_RECRUITMENT_POLICY_MULTIPLIER
 '''(1 - 0.5*(Statistic If condition = EmpireHasAdoptedPolicy name = "PLC_MARINE_RECRUITMENT"))'''

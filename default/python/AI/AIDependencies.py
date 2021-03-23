@@ -310,8 +310,7 @@ OUTPOSTING_TECH = "SHP_GAL_EXPLO"
 # <editor-fold desc="Supply techs">
 supply_range_techs = {
     "CON_ORBITAL_CON": 1,
-    "CON_CONTGRAV_ARCH": 1,
-    "CON_GAL_INFRA": 1,
+    "CON_CONTGRAV_ARCH": 1
 }
 # </editor-fold>
 
@@ -534,7 +533,6 @@ POPULATION_BOOST_TECHS = (
 SUPPLY_BOOST_TECHS = (
     "CON_ORBITAL_CON",
     "CON_ARCH_MONOFILS",
-    "CON_GAL_INFRA",
     "CON_CONTGRAV_ARCH",
 )
 METER_CHANGE_BOOST_TECHS = (
