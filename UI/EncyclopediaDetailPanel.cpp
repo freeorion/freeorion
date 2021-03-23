@@ -1355,7 +1355,7 @@ namespace {
         auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_PART, item_name));
         if (!unlocked_by_policies.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const auto& policy_name : unlocked_by_techs)
+            for (const auto& policy_name : unlocked_by_policies)
                 detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
         }
 
@@ -1439,7 +1439,7 @@ namespace {
         auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_HULL, item_name));
         if (!unlocked_by_policies.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const auto& policy_name : unlocked_by_techs)
+            for (const auto& policy_name : unlocked_by_policies)
                 detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
         }
 
@@ -1597,7 +1597,7 @@ namespace {
         auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_POLICY, item_name));
         if (!unlocked_by_policies.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const auto& policy_name : unlocked_by_techs)
+            for (const auto& policy_name : unlocked_by_policies)
                 detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
         }
 
@@ -1673,7 +1673,7 @@ namespace {
         auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_BUILDING, item_name));
         if (!unlocked_by_policies.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const auto& policy_name : unlocked_by_techs)
+            for (const auto& policy_name : unlocked_by_policies)
                 detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
         }
 
