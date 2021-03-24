@@ -1475,10 +1475,8 @@ namespace {
             turns = tech->ResearchTime(client_empire_id);
             cost = tech->ResearchCost(client_empire_id);
             cost_units = UserString("ENC_RP");
-            general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
-                % UserString(tech->Category())
-                % ""
-                % UserString(tech->ShortDescription()));
+            general_type = UserString(tech->ShortDescription());
+            specific_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR")) % UserString(tech->Category()));
         }
 
         const auto& unlocked_techs = tech->UnlockedTechs();
@@ -1557,10 +1555,8 @@ namespace {
             texture = ClientUI::PolicyIcon(item_name);
             cost = policy->AdoptionCost(client_empire_id);
             cost_units = UserString("ENC_IP");
-            general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
-                % UserString(policy->Category())
-                % ""
-                % UserString(policy->ShortDescription()));
+            general_type = UserString(policy->ShortDescription());
+            specific_type = str(FlexibleFormat(UserString("ENC_POLICY_DETAIL_TYPE_STR")) % UserString(policy->Category()));
         }
         detailed_description += UserString(policy->Description());
 

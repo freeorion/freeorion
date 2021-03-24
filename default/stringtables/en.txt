@@ -5497,10 +5497,12 @@ ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 '''
 
 # %1% category of the technology.
-# %2% UNUSED
-# %3% short description of the technology.
 ENC_TECH_DETAIL_TYPE_STR
-%3%
+%1% Tech -
+
+# %1% category of the policy.
+ENC_POLICY_DETAIL_TYPE_STR
+%1% Policy -
 
 # %1% object, technology or other content that should be looked up in the
 #     encyclopedia.
