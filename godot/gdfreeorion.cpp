@@ -138,6 +138,8 @@ void GDFreeOrion::_register_methods() {
     register_method("_get_systems", &GDFreeOrion::_get_systems);
     register_method("_get_fleets", &GDFreeOrion::_get_fleets);
     register_method("network_thread", &GDFreeOrion::network_thread);
+    register_method("_send_partial_orders", &GDFreeOrion::_send_partial_orders);
+    register_method("_start_turn", &GDFreeOrion::_start_turn);
     register_signal<GDFreeOrion>("ping", "message", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("auth_request", "player_name", GODOT_VARIANT_TYPE_STRING, "auth", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("empire_status", "status", GODOT_VARIANT_TYPE_INT, "about_empire_id", GODOT_VARIANT_TYPE_INT);
@@ -274,5 +276,14 @@ Dictionary GDFreeOrion::_get_fleets() const {
         fleets[fleet->ID()] = GodotFleet::wrap(fleet);
     }
     return fleets;
+}
+
+void GDFreeOrion::_send_partial_orders() {
+    app->SendPartialOrders();
+}
+
+void GDFreeOrion::_start_turn() {
+    SaveGameUIData ui_data;
+    app->StartTurn(ui_data);
 }
 

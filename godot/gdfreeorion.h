@@ -40,6 +40,8 @@ public:
     void _new_single_player_game(bool quickstart);
     Dictionary _get_systems() const;
     Dictionary _get_fleets() const;
+    void _send_partial_orders();
+    void _start_turn();
 
     godot::OptionsDB* get_options() const;
     void set_options(godot::OptionsDB* ptr);
