@@ -177,6 +177,18 @@ void GDFreeOrion::_init() {
     GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
     GetOptionsDB().SetFromFile(GetPersistentConfigPath());
 
+#if !defined(FREEORION_ANDROID)
+    std::vector<std::string> args;
+    const PoolStringArray wargs = OS::get_singleton()->get_cmdline_args();
+    const PoolStringArray::Read wargs_read = wargs.read();
+    for (int i = 0; i < wargs.size(); ++ i) {
+        args.emplace_back(std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(wargs_read[i].unicode_str()));
+    }
+
+    // override previously-saved and default options with command line parameters and flags
+    GetOptionsDB().SetFromCommandLine(args);
+#endif
+
     CompleteXDGMigration();
 
 #if !defined(FREEORION_ANDROID)
