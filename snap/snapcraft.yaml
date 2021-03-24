@@ -31,6 +31,26 @@ apps:
       LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
     command-chain:
     - snap/command-chain/desktop-launch
+  freeorion-godot:
+    command: usr/bin/godot3-runner --main-pack $SNAP/usr/local/share/freeorion/freeorion.pck --resource.path $SNAP/usr/local/share/freeorion/default/ -S $SNAP_USER_COMMON/save
+    plugs:
+    - desktop
+    - desktop-legacy
+    - gsettings
+    - opengl
+    - wayland
+    - x11
+    - home
+    - pulseaudio
+    - network
+    - screen-inhibit-control
+    - browser-support
+    desktop: usr/local/share/applications/org.freeorion.FreeOrion.desktop
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/local/lib/freeorion
+      LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
+    command-chain:
+    - snap/command-chain/desktop-launch
   freeoriond:
     command: usr/bin/freeoriond
     plugs:
