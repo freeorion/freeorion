@@ -26,7 +26,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_ON_PLANET]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
 
-        // species dislike building on the same
+        // species dislike building on the same planet
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
