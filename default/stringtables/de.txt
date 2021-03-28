@@ -8478,5 +8478,5 @@ Ewiger September
 #[[SHIP_NAME_UNSORTED_MYTHOLOGY]]
 #[[SHIP_NAME_DEVS]]'''
 
-#include "../content_specific_parameters.txt"
+#include "content_specific_parameters.txt"
 #include "../customizations/common_user_customizations.txt"

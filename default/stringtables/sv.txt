@@ -1357,5 +1357,5 @@ Imperiepalats
 ## Name lists
 ##
 
-#include "../content_specific_parameters.txt"
+#include "content_specific_parameters.txt"
 #include "../customizations/common_user_customizations.txt"
