@@ -11665,6 +11665,7 @@ Planets with a luxury resource special and that is set to influence focus will e
 PLC_CAPITAL_MARKETS_SHORT_DESC
 Boosts stability with resource export
 
+
 ##
 ## Technology categories
 ##
