@@ -70,6 +70,8 @@ pre-built.  **This file and at least one entry are required.**
 and at least one entry are required.**
 * empire_colors.xml  -  Color options available for empires to select from. 
 **This file containing at least one GG::Clr node is required.**
+* custom_sitreps.txt  -  Edit this to generate sitreps as useful reminders. The
+file itself has more in-depth information.
 
 ## filename guidelines
 
