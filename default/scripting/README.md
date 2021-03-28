@@ -23,6 +23,10 @@ If you need to reference a macro in a separate file, use an #include statement.
 These files are specifically targetted and may not be broken up or renamed.
 inf files will not normally be included.
 
+## empire_colors.xml file
+
+This file contains color options available for empires to select from.
+
 ## includes
 
 Work as normal, however all of the script files in each section are loaded.
@@ -64,7 +68,8 @@ file and at least one entry are required.**
 pre-built.  **This file and at least one entry are required.**
 * starting_unlocks/fleets.inf  -  Fleets each player starts with.  **This file
 and at least one entry are required.**
-
+* empire_colors.xml  -  Color options available for empires to select from. 
+**This file containing at least one GG::Clr node is required.**
 
 ## filename guidelines
 
