@@ -1,0 +1,18 @@
+Special
+    name = "SHIMMER_SILK_SPECIAL"
+    description = "SHIMMER_SILK_SPECIAL_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0.4
+    spawnlimit = 3
+    location = And [
+        Planet
+        Planet type = [Inferno Toxic Swamp]
+    ]
+    effectsgroups = [
+        [[SPECIAL_INFLUENCE_RESOURCE_EXPORT]]
+    
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS(SILK)]]
+    ]
+    graphic = "icons/specials_huge/silk.png"
+
+#include "/scripting/specials/specials.macros.txt"

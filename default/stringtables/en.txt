@@ -9231,6 +9231,12 @@ Fractal Geodes
 FRACTAL_GEODES_SPECIAL_DESC
 The planet is scattered with irridescent fractal geodes that can be collected and exported.
 
+SHIMMER_SILK_SPECIAL
+Shimmer Silk
+
+SHIMMER_SILK_SPECIAL_SPECIAL_DESC
+This planet extrudes sheets of delicate and shimmering silk-like material that can be collected and exported.
+
 
 ##
 ## Enumeration values
