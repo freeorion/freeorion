@@ -9243,6 +9243,12 @@ Spark Fossils
 SPARK_FOSSILS_SPECIAL_DESC
 This planet's outer crust is spotted with clear crystal fossilized creatures that sparkle with electric discharges when touched, and which can be extracted and exported.
 
+MIMETIC_ALLOY_SPECIAL
+Mimetic Alloy
+
+MIMETIC_ALLOY_SPECIAL_DESC
+This planet has pools of mimetic alloy on its surface, which morphs to resemble the shape of an object placed nearby, and which may be bottled and exported.
+
 
 ##
 ## Enumeration values

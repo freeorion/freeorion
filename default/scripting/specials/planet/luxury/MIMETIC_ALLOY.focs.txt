@@ -1,0 +1,18 @@
+Special
+    name = "MIMETIC_ALLOY_SPECIAL"
+    description = "MIMETIC_ALLOY_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0.5
+    spawnlimit = 3
+    location = And [
+        Planet
+        Planet type = [Radiated Inferno]
+    ]
+    effectsgroups = [
+        [[SPECIAL_INFLUENCE_RESOURCE_EXPORT]]
+    
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS(MIMETIC_ALLOY)]]
+    ]
+    graphic = "icons/specials_huge/mimetic_alloy.png"
+
+#include "/scripting/specials/specials.macros.txt"
