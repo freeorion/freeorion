@@ -2,7 +2,7 @@ Special
     name = "GAIA_SPECIAL"
     description = "GAIA_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 1.0
+    spawnrate = 0.2
     spawnlimit = 12
     location = And [
         Planet

@@ -2,7 +2,7 @@ Special
     name = "TIDAL_LOCK_SPECIAL"
     description = "TIDAL_LOCK_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 1.0
+    spawnrate = 0.2
     spawnlimit = 9999
     location = And [
         Planet

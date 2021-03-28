@@ -2,7 +2,7 @@ Special
     name = "TEMPORAL_ANOMALY_SPECIAL"
     description = "TEMPORAL_ANOMALY_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 0.3
+    spawnrate = 0.2
     spawnlimit = 9999
     location = And [
         Planet

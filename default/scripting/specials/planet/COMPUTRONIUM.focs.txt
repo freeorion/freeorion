@@ -2,7 +2,7 @@ Special
     name = "COMPUTRONIUM_SPECIAL"
     description = "COMPUTRONIUM_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 1.0
+    spawnrate = 0.2
     spawnlimit = 9999
     location = And [
         Planet

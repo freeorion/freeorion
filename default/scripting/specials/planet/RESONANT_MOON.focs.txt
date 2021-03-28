@@ -2,7 +2,7 @@ Special
     name = "RESONANT_MOON_SPECIAL"
     description = "RESONANT_MOON_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 1.0
+    spawnrate = 0.2
     spawnlimit = 9999
     location = And [
         Planet

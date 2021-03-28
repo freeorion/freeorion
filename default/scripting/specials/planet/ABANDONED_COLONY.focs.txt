@@ -2,7 +2,7 @@ Special
     name = "ABANDONED_COLONY_SPECIAL"
     description = "ABANDONED_COLONY_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 0.4
+    spawnrate = 0.2
     spawnlimit = 9999
     location = And [
         Planet

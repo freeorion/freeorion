@@ -2,7 +2,7 @@ Special
     name = "ANCIENT_RUINS_SPECIAL"
     description = "ANCIENT_RUINS_SPECIAL_DESCRIPTION"
     stealth = 0
-    spawnrate = 0.7
+    spawnrate = 0.5
     spawnlimit = 9999
     location = And [
         Or [
