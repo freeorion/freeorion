@@ -9225,6 +9225,12 @@ Succulent Barnacles
 SUCCULENT_BARNACLES_SPECIAL_DESC
 The planet hosts a colony of succulent barnacles that can be harvested and exported.
 
+FRACTAL_GEODES_SPECIAL
+Fractal Geodes
+
+FRACTAL_GEODES_SPECIAL_DESC
+The planet is scattered with irridescent fractal geodes that can be collected and exported.
+
 
 ##
 ## Enumeration values
