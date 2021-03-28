@@ -829,6 +829,20 @@ if(BUILD_CLIENT_GODOT)
         add_custom_command(TARGET freeoriongodot POST_BUILD
             COMMAND
                 ${CMAKE_COMMAND} -E copy_if_different "${ICONV_LIBRARY}" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
+            COMMAND
+                ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/client/default/
+            COMMAND
+                ${CMAKE_COMMAND}
+                -DMODE=DATA_LINK
+                "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/client/default/"
+                "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/scripting"
+                -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
+            COMMAND
+                ${CMAKE_COMMAND}
+                -DMODE=DATA_LINK
+                "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/client/default/"
+                "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/stringtables"
+                -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
         )
     endif()
 endif()

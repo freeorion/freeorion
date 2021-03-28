@@ -229,7 +229,17 @@ calling:
 ```
 
 After the build finished successfully the godot libraries can be found within
-the `freeorion-project/build` directory.
+the `freeorion-project/build` directory and copied to `godot/client/bin/`.
+
+Call `strip` on those libraries to clean debug symbols.
+
+Export [Godot-Export-Android] with additional `default/*` resources.
+
+To get logs run:
+
+```bash
+adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-godot.log
+```
 
 [Visual Studio]: https://visualstudio.microsoft.com/vs/older-downloads/
 [Xcode]: https://itunes.apple.com/de/app/xcode/id497799835?mt=12
@@ -253,3 +263,4 @@ the `freeorion-project/build` directory.
 [make jobs]: https://www.gnu.org/software/make/manual/html_node/Parallel.html
 [Python-For-Android]: https://github.com/python-cmake-buildsystem/python-cmake-buildsystem/pull/262
 [Boost-For-Android]: https://github.com/moritz-wundke/Boost-for-Android
+[Godot-Export-Android]: https://docs.godotengine.org/en/stable/getting_started/workflow/export/exporting_for_android.html
