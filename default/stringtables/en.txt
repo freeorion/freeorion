@@ -20457,4 +20457,4 @@ MONSTER_NAMES
 [[SHIP_NAME_DEVS]]'''
 
 #include "content_specific_parameters.txt"
-#include "../customizations/common_user_customizations.txt"
+#include "common_user_customizations.txt"

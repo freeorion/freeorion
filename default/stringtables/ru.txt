@@ -14431,4 +14431,4 @@ SHIP_NAME_OTHER
 # Newline separated list of developer name based ship names
 
 #include "content_specific_parameters.txt"
-#include "../customizations/common_user_customizations.txt"
+#include "common_user_customizations.txt"
