@@ -1,0 +1,18 @@
+Special
+    name = "SPARK_FOSSILS_SPECIAL"
+    description = "SPARK_FOSSILS_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0.5
+    spawnlimit = 3
+    location = And [
+        Planet
+        Planet type = [Radiated Inferno]
+    ]
+    effectsgroups = [
+        [[SPECIAL_INFLUENCE_RESOURCE_EXPORT]]
+    
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS(FOSSILS)]]
+    ]
+    graphic = "icons/specials_huge/fossils.png"
+
+#include "/scripting/specials/specials.macros.txt"

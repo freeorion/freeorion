@@ -9237,6 +9237,12 @@ Shimmer Silk
 SHIMMER_SILK_SPECIAL_SPECIAL_DESC
 This planet extrudes sheets of delicate and shimmering silk-like material that can be collected and exported.
 
+SPARK_FOSSILS_SPECIAL
+Spark Fossils
+
+SPARK_FOSSILS_SPECIAL_DESC
+This planet's outer crust is spotted with clear crystal fossilized creatures that sparkle with electric discharges when touched, and which can be extracted and exported.
+
 
 ##
 ## Enumeration values
