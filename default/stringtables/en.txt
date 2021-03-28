@@ -9219,6 +9219,12 @@ Native Elerium
 ELERIUM_SPECIAL_DESC
 This planet has a rich natural deposit of pure elerium, boosting production or Lithic growth significantly.
 
+SUCCULENT_BARNACLES_SPECIAL
+Succulent Barnacles
+
+SUCCULENT_BARNACLES_SPECIAL_DESC
+The planet hosts a colony of succulent barnacles that can be harvested and exported.
+
 
 ##
 ## Enumeration values
@@ -11632,6 +11638,14 @@ Increases [[metertype METER_TARGET_CONSTRUCTION]] by 5 on populated planets that
 PLC_INTERSTELLAR_INFRA_SHORT_DESC
 Grants policy slots
 
+PLC_CAPITAL_MARKETS
+Capital Markets
+
+PLC_CAPITAL_MARKETS_DESC
+Planets with a luxury resource special and that is set to influence focus will export the resource to supply-connected planets, boosting the stability of planets with species that like the resource.
+
+PLC_CAPITAL_MARKETS_SHORT_DESC
+Boosts stability with resource export
 
 ##
 ## Technology categories

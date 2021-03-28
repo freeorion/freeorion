@@ -1,0 +1,18 @@
+Special
+    name = "SUCCULENT_BARNACLES_SPECIAL"
+    description = "SUCCULENT_BARNACLES_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0.4
+    spawnlimit = 3
+    location = And [
+        Planet
+        Planet type = [Terran Ocean Swamp]
+    ]
+    effectsgroups = [
+        [[SPECIAL_INFLUENCE_RESOURCE_EXPORT]]
+    
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS(BARNACLES)]]
+    ]
+    graphic = "icons/specials_huge/barnacles.png"
+
+#include "/scripting/specials/specials.macros.txt"

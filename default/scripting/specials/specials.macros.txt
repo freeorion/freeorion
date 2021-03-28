@@ -1,0 +1,95 @@
+// sets stability (happiness) on planets in empire that, if those planets' species like or dislike the special
+
+SPECIAL_LIKE_DISLIKE_SCALING
+'''1.0'''
+
+STABILITY_PER_LIKED_OR_DISLIKED_SPECIAL_ON_PLANET
+'''3.0 * [[SPECIAL_LIKE_DISLIKE_SCALING]]'''
+
+STABILITY_PER_LIKED_OR_DISLIKED_SPECIAL_IN_SYSTEM
+'''1.0 * [[SPECIAL_LIKE_DISLIKE_SCALING]]'''
+
+STABILITY_PER_LIKED_OR_DISLIKED_EXPORTED_SPECIAL_IN_EMPIRE
+'''2.0 * [[SPECIAL_LIKE_DISLIKE_SCALING]]'''
+
+SPECIAL_INFLUENCE_RESOURCE_EXPORT
+'''
+        // influence specials on a planet set to influence focus generate influence on that planet, regardless of species
+        EffectsGroup
+            scope = Source
+            activation = And [
+                OwnedBy affiliation = AnyEmpire
+                Focus type = "FOCUS_INFLUENCE"
+            ]
+            effects =
+                SetTargetInfluence value = Value + 3
+
+        // stability bonus to connected planets that like this special when running capital markets
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Population low = 0.001
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial > 0)
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                // TODO: check for other empires with border checkpoints or free trade or somesuch...
+            ]
+            activation = And [
+                OwnedBy affiliation = AnyEmpire
+                Focus type = "FOCUS_INFLUENCE"
+                EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_CAPITAL_MARKETS"
+            ]
+            stackinggroup = "@1@_STACK"
+            effects =
+                SetTargetHappiness value = Value + 1
+'''
+
+SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS
+'''
+        // species like special on the same planet
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Population low = 0.001
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial > 0)
+            ]
+            accountinglabel = "LIKES_SPECIAL_LABEL"
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_SPECIAL_ON_PLANET]] * SpeciesContentOpinion species = Target.Species name = ThisSpecial
+
+        // species dislike special on the same planet
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Population low = 0.001
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial < 0)
+            ]
+            accountinglabel = "DISLIKES_SPECIAL_LABEL"
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_SPECIAL_ON_PLANET]] * SpeciesContentOpinion species = Target.Species name = ThisSpecial
+                
+        // species like special in the same system
+        EffectsGroup
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Population low = 0.001
+                Not Object id = Source.PlanetID // but not on same planet, which is covered by above case
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial < 0)
+            ]
+            accountinglabel = "DISLIKES_SPECIAL_LABEL"
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_SPECIAL_IN_SYSTEM]] * SpeciesContentOpinion species = Target.Species name = ThisSpecial
+
+        // species dislike special in the same system
+        EffectsGroup
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Population low = 0.001
+                Not Object id = Source.PlanetID // but not on same planet, which is covered by above case
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial > 0)
+            ]
+            accountinglabel = "LIKES_SPECIAL_LABEL"
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_SPECIAL_IN_SYSTEM]] * SpeciesContentOpinion species = Target.Species name = ThisSpecial
+'''
