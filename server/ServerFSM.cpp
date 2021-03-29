@@ -3050,8 +3050,10 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
 
     auto& playing_game = context<PlayingGame>();
 
-    // reset turn timer if there no fixed interval
-    if (!GetOptionsDB().Get<bool>("network.server.turn-timeout.fixed-interval")) {
+    // reset turn timer if there no fixed interval and no first turn time set
+    if (!GetOptionsDB().Get<bool>("network.server.turn-timeout.fixed-interval")
+        && GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time").empty())
+    {
         playing_game.m_turn_timeout.cancel();
         if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 && !Server().IsHaveWinner()) {
             playing_game.m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
@@ -3059,6 +3061,9 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
                                                                &playing_game,
                                                                boost::asio::placeholders::error));
         }
+    } else {
+        // Cleanup time of first turn so it won't be applied second time
+        GetOptionsDB().Set<std::string>("network.server.turn-timeout.first-turn-time", "");
     }
 
     if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 && !Server().IsHaveWinner()) {
