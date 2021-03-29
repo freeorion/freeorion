@@ -793,9 +793,35 @@ auto IsExistingFile(const fs::path& path) -> bool
 #endif
 }
 
+auto IsExistingDir(boost::filesystem::path const& path) -> bool
+{
+#if defined(FREEORION_ANDROID)
+    DebugLogger() << "IsExistingDir: check file " << path.string();
+    AAssetDir* asset_dir = AAssetManager_openDir(s_asset_manager, PathToString(path).c_str());
+    if (asset_dir != nullptr)  {
+        const char* first_file_name = AAssetDir_getNextFileName(asset_dir);
+        AAssetDir_close(asset_dir);
+        if (first_file_name != nullptr) {
+            return true;
+        }
+    }
+
+    // Check assets with JNI to get subdirectories
+    jmethodID list_mid = s_jni_env->GetMethodID(s_jni_env->GetObjectClass(s_jni_asset_manager), "list", "(Ljava/lang/String;)[Ljava/lang/String;");
+    jstring path_object = s_jni_env->NewStringUTF(PathToString(path).c_str());
+    jobjectArray list_object = reinterpret_cast<jobjectArray>(s_jni_env->CallObjectMethod(s_jni_asset_manager, list_mid, path_object));
+    s_jni_env->DeleteLocalRef(path_object);
+    auto length = s_jni_env->GetArrayLength(list_object);
+    return length > 0;
+#else
+    return fs::exists(path) && fs::is_directory(path);
+#endif
+}
+
 auto ReadFile(boost::filesystem::path const& path, std::string& file_contents) -> bool
 {
 #if defined(FREEORION_ANDROID)
+    DebugLogger() << "ReadFile: check file " << path.string();
     AAsset* asset = AAssetManager_open(s_asset_manager, PathToString(path).c_str(), AASSET_MODE_BUFFER);
     if (asset == nullptr) {
         return false;

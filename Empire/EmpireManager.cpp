@@ -419,10 +419,9 @@ void InitEmpireColors(const boost::filesystem::path& path) {
 
     XMLDoc doc;
 
-    boost::filesystem::ifstream ifs(path);
-    if (ifs) {
-        doc.ReadDoc(ifs);
-        ifs.close();
+    std::string empire_colors_content;
+    if (ReadFile(path, empire_colors_content)) {
+        doc.ReadDoc(empire_colors_content);
     } else {
         ErrorLogger() << "Unable to open data file " << path.filename();
         return;

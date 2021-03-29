@@ -206,7 +206,7 @@ namespace parse {
      * @param[in] file_search_path base path of content
      */
     void file_substitution(std::string& text, const boost::filesystem::path& file_search_path) {
-        if (!boost::filesystem::is_directory(file_search_path)) {
+        if (!IsExistingDir(file_search_path)) {
             ErrorLogger() << "File parsing include substitution given search path that is not a directory: "
                           << file_search_path.string();
             return;
