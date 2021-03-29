@@ -24,6 +24,7 @@
 #endif
 
 #if defined(FREEORION_ANDROID)
+#  include <forward_list>
 #  include <android/asset_manager.h>
 #  include <android/asset_manager_jni.h>
 #endif
@@ -73,11 +74,12 @@ namespace {
 #endif
 
 #if defined(FREEORION_ANDROID)
-    JNIEnv*        s_jni_env;
+    thread_local JNIEnv* s_jni_env = nullptr;
     fs::path       s_user_dir;
     jweak          s_activity;
     AAssetManager* s_asset_manager;
     jobject        s_jni_asset_manager;
+    JavaVM*        s_java_vm;
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
@@ -392,25 +394,36 @@ void InitDirs(std::string const& argv0)
 
     InitBinDir(argv0);
 #elif defined(FREEORION_ANDROID)
-    jobject activity = s_jni_env->NewLocalRef(s_activity);
+    JNIEnv *env;
+    if (s_jni_env != nullptr) {
+        env = s_jni_env;
+    } else {
+        s_java_vm->AttachCurrentThreadAsDaemon(&env, nullptr);
+    }
 
-    jclass activity_cls = s_jni_env->GetObjectClass(activity);
+    jobject activity = env->NewLocalRef(s_activity);
 
-    jmethodID get_files_dir_mid = s_jni_env->GetMethodID(activity_cls, "getFilesDir", "()Ljava/io/File;");
-    jobject files_dir = s_jni_env->CallObjectMethod(activity, get_files_dir_mid);
+    jclass activity_cls = env->GetObjectClass(activity);
 
-    jclass file_cls = s_jni_env->GetObjectClass(files_dir);
-    jmethodID get_absolute_path_mid = s_jni_env->GetMethodID(file_cls, "getAbsolutePath", "()Ljava/lang/String;");
-    jstring files_dir_path = reinterpret_cast<jstring>(s_jni_env->CallObjectMethod(files_dir, get_absolute_path_mid));
+    jmethodID get_files_dir_mid = env->GetMethodID(activity_cls, "getFilesDir", "()Ljava/io/File;");
+    jobject files_dir = env->CallObjectMethod(activity, get_files_dir_mid);
 
-    const char *files_dir_chars = s_jni_env->GetStringUTFChars(files_dir_path, NULL);
+    jclass file_cls = env->GetObjectClass(files_dir);
+    jmethodID get_absolute_path_mid = env->GetMethodID(file_cls, "getAbsolutePath", "()Ljava/lang/String;");
+    jstring files_dir_path = reinterpret_cast<jstring>(env->CallObjectMethod(files_dir, get_absolute_path_mid));
+
+    const char *files_dir_chars = env->GetStringUTFChars(files_dir_path, NULL);
     s_user_dir = fs::path(files_dir_chars);
-    s_jni_env->ReleaseStringUTFChars(files_dir_path, files_dir_chars);
+    env->ReleaseStringUTFChars(files_dir_path, files_dir_chars);
 
-    jmethodID get_assets_mid = s_jni_env->GetMethodID(activity_cls, "getAssets", "()Landroid/content/res/AssetManager;");
-    jobject asset_manager = s_jni_env->CallObjectMethod(activity, get_assets_mid);
-    s_jni_asset_manager = s_jni_env->NewGlobalRef(asset_manager);
-    s_asset_manager = AAssetManager_fromJava(s_jni_env, s_jni_asset_manager);
+    jmethodID get_assets_mid = env->GetMethodID(activity_cls, "getAssets", "()Landroid/content/res/AssetManager;");
+    jobject asset_manager = env->CallObjectMethod(activity, get_assets_mid);
+    s_jni_asset_manager = env->NewGlobalRef(asset_manager);
+    s_asset_manager = AAssetManager_fromJava(env, s_jni_asset_manager);
+
+    if (s_jni_env == nullptr) {
+        s_java_vm->DetachCurrentThread();
+    }
 #endif
 
     g_initialized = true;
@@ -505,6 +518,7 @@ auto GetPythonHome() -> fs::path const
 FO_COMMON_API void SetAndroidEnvironment(JNIEnv* env, jobject activity)
 {
     s_jni_env = env;
+    s_jni_env->GetJavaVM(&s_java_vm);
     s_activity = env->NewWeakGlobalRef(activity);
 }
 #endif
@@ -654,12 +668,65 @@ auto FilenameTimestamp() -> std::string
 }
 
 auto IsFOCScript(const fs::path& path) -> bool
-{ return fs::is_regular_file(path) && ".txt" == path.extension() && path.stem().extension() == ".focs"; }
+{ return IsExistingFile(path) && ".txt" == path.extension() && path.stem().extension() == ".focs"; }
 
 auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predicate) -> std::vector<fs::path>
 {
     std::vector<fs::path> retval;
+#if defined(FREEORION_ANDROID)
+    DebugLogger() << "ListDir: list directory " << path.string();
+    std::forward_list<fs::path> directories;
+    directories.push_front(path);
 
+    // ToDo: Register thread once after moving to single backgroung parsing thread for Python
+    JNIEnv *env;
+    if (s_jni_env != nullptr) {
+        env = s_jni_env;
+    } else {
+        s_java_vm->AttachCurrentThreadAsDaemon(&env, nullptr);
+    }
+
+    jmethodID list_mid = env->GetMethodID(env->GetObjectClass(s_jni_asset_manager), "list", "(Ljava/lang/String;)[Ljava/lang/String;");
+    while (!directories.empty()) {
+        fs::path dir = directories.front();
+        directories.pop_front();
+        DebugLogger() << "ListDir: recursively list directory " << dir.string();
+        // Check assets with JNI to get subdirectories
+        jstring path_object = env->NewStringUTF(PathToString(dir).c_str());
+        jobjectArray list_object = reinterpret_cast<jobjectArray>(env->CallObjectMethod(s_jni_asset_manager, list_mid, path_object));
+        env->DeleteLocalRef(path_object);
+        if (list_object == nullptr) {
+            DebugLogger() << "ListDir: no directory " << dir.string();
+            continue;
+        }
+        auto length = env->GetArrayLength(list_object);
+        if (length == 0) {
+            DebugLogger() << "ListDir: empty directory " << dir.string();
+            continue;
+        }
+        for (int i = 0; i < length; ++i) {
+            jstring jstr = reinterpret_cast<jstring>(env->GetObjectArrayElement(list_object, i));
+            if (jstr == nullptr) {
+                continue;
+            }
+            const char* filename = env->GetStringUTFChars(jstr, nullptr);
+            if (filename != nullptr) {
+                fs::path file = dir / filename;
+                DebugLogger() << "ListDir: found file " << file.string();
+                env->ReleaseStringUTFChars(jstr, filename);
+                if (predicate(file)) {
+                    retval.emplace_back(file);
+                }
+
+                directories.push_front(std::move(file));
+            }
+            env->DeleteLocalRef(jstr);
+        }
+    }
+    if (s_jni_env == nullptr) {
+        s_java_vm->DetachCurrentThread();
+    }
+#else
     if (!predicate)
         predicate = static_cast<bool (*)(const fs::path&)>(fs::is_regular_file);
 
@@ -678,6 +745,7 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
                 TraceLogger() << "ListDir: Discarding non-matching path: " << PathToString(dir_it->path());
         }
     }
+#endif
 
     if (retval.empty()) {
         DebugLogger() << "ListDir: No paths found for " << path.string();
@@ -806,12 +874,28 @@ auto IsExistingDir(boost::filesystem::path const& path) -> bool
         }
     }
 
+    JNIEnv *env;
+    if (s_jni_env != nullptr) {
+        env = s_jni_env;
+    } else {
+        s_java_vm->AttachCurrentThreadAsDaemon(&env, nullptr);
+    }
+
     // Check assets with JNI to get subdirectories
-    jmethodID list_mid = s_jni_env->GetMethodID(s_jni_env->GetObjectClass(s_jni_asset_manager), "list", "(Ljava/lang/String;)[Ljava/lang/String;");
-    jstring path_object = s_jni_env->NewStringUTF(PathToString(path).c_str());
-    jobjectArray list_object = reinterpret_cast<jobjectArray>(s_jni_env->CallObjectMethod(s_jni_asset_manager, list_mid, path_object));
-    s_jni_env->DeleteLocalRef(path_object);
-    auto length = s_jni_env->GetArrayLength(list_object);
+    jmethodID list_mid = env->GetMethodID(env->GetObjectClass(s_jni_asset_manager), "list", "(Ljava/lang/String;)[Ljava/lang/String;");
+    jstring path_object = env->NewStringUTF(PathToString(path).c_str());
+    jobjectArray list_object = reinterpret_cast<jobjectArray>(env->CallObjectMethod(s_jni_asset_manager, list_mid, path_object));
+    env->DeleteLocalRef(path_object);
+    if (list_object == nullptr) {
+        if (s_jni_env == nullptr) {
+            s_java_vm->DetachCurrentThread();
+        }
+        return false;
+    }
+    auto length = env->GetArrayLength(list_object);
+    if (s_jni_env == nullptr) {
+        s_java_vm->DetachCurrentThread();
+    }
     return length > 0;
 #else
     return fs::exists(path) && fs::is_directory(path);
