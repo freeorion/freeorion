@@ -861,7 +861,7 @@ FLD_ION_STORM
 Tempête Ionique
 
 FLD_ION_STORM_DESC
-Vortex magnétique de particules relativistes chargées, pouvant perturber les capteurs et masquer tout objet s'y trouvant. Tout objet au sein de la tempête voit sa [[metertype METER_STEALTH]] augmenter de 40, mais son [[metertype METER_DETECTION]] diminuer de 40.
+Vortex magnétique de particules relativistes chargées, pouvant perturber les capteurs et masquer tout objet se trouvant dans son périmètre. Tout objet au sein de la tempête voit sa [[metertype METER_STEALTH]] augmenter de 40, mais son [[metertype METER_DETECTION]] diminuer de 40.
 
 FLD_MOLECULAR_CLOUD
 Nuage Moléculaire
@@ -1774,10 +1774,10 @@ OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
 Fixe le niveau minimal de zoom auquel apparaissent les icônes de taille moyenne des flottes sur la carte galactique.
 
 OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
-Fixe le niveau minimal de zoom auquel apparaissent  les icônes de petite taille des flottes sur la carte galactique.
+Fixe le niveau minimal de zoom auquel apparaissent les icônes de petite taille des flottes sur la carte galactique.
 
 OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
-Fixe le niveau minimal de zoom auquel apparaissent  les icônes de taille minimum des flottes sur la carte galactique. À un niveau de zoom inférieur, aucune icône de flotte n'est visible sur la carte galactique.
+Fixe le niveau minimal de zoom auquel apparaissent les icônes de taille minimum des flottes sur la carte galactique. À un niveau de zoom inférieur, aucune icône de flotte n'est visible sur la carte galactique.
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique de l'indicateur de sélection d'une flotte, relativement à la taille des icônes de flotte.
@@ -1908,7 +1908,7 @@ OPTIONS_DB_GAMESETUP_PLANET_DENSITY
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
 '''Le nombre de Voies spatiales dans la galaxie.
 
-Si réglé sur Bas, la plupart des systèmes disposeront d'une à deux voies spatiales. Si réglé sur Haut, la plupart des systèmes seront reliés entre eux dans un périmètre de 120uu.'''
+Si réglé sur Bas, la plupart des systèmes disposeront d'une à deux voies spatiales. Si réglé sur Haut, la plupart des systèmes seront reliés entre eux dans un périmètre de 120 uu.'''
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 '''La proportion des planètes et systèmes présentant une Particularité.
@@ -6136,7 +6136,7 @@ METER_DETECTION_VALUE_LABEL
 Champ de Détection
 
 METER_DETECTION_VALUE_DESC
-'''L'indicateur 'Champ de Détection' indique, en nombre d'uus, la portée des capteurs. Un empire ne peut voir que les objets ayant une [[metertype METER_STEALTH]] inférieure ou égale à sa [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le Champ de Détection d'un astronef ou d'une planète qu'il contrôle.
+'''L'indicateur 'Champ de Détection' indique, en nombre d'uus (unité universelle), la portée des capteurs. Un empire ne peut voir que les objets ayant une [[metertype METER_STEALTH]] inférieure ou égale à sa [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le Champ de Détection d'un astronef ou d'une planète qu'il contrôle.
 
 Les astronefs et les planètes ont un indicateur 'Champ de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Champs de Détection. Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Champ de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné. Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.
 
@@ -6204,7 +6204,7 @@ DISTORTION_FOCUS_TITLE
 Focus Distortion Spatiale
 
 DISTORTION_FOCUS_TEXT
-Manipule les Voies spatiales menant à la planète, ralentissant la progression des astronefs ennemis de 40uu par tour. Les astronefs les plus lents peuvent même être repoussés à l'extrémité opposée de la Voie spatiale empruntée. Disponible après avoir construit un [[buildingtype BLD_SPATIAL_DISTORT_GEN]].
+Manipule les Voies spatiales menant à la planète, ralentissant la progression des astronefs ennemis de 40 uu par tour. Les astronefs les plus lents peuvent même être repoussés à l'extrémité opposée de la Voie spatiale empruntée. Disponible après avoir construit un [[buildingtype BLD_SPATIAL_DISTORT_GEN]].
 
 GROWTH_FOCUS_TITLE
 Focus Croissance
@@ -9047,7 +9047,7 @@ Tête Empalée
 HEAD_ON_A_SPIKE_SPECIAL_DESC
 '''La tête d'un ancien empereur est empalée à la vue de tous, inspirant une profonde terreur aux ennemis de l'empire.
 
-Toutes les flottes n'appartenant pas à l'empire, qu'elles soient ennemies ou alliées, se trouvant dans une zone de 100uu, verront leurs [[metertype METER_SHIELD]], [[metertype METER_STRUCTURE]] et puissance de feu légèrement affaiblis.
+Toutes les flottes n'appartenant pas à l'empire, qu'elles soient ennemies ou alliées, se trouvant dans un périmètre de 100 uu, verront leurs [[metertype METER_SHIELD]], [[metertype METER_STRUCTURE]] et puissance de feu légèrement affaiblis.
 '''
 
 HEAD_ON_A_SPIKE_SPECIAL_EFFECT
@@ -11287,7 +11287,9 @@ Toutefois, réduit également la portée de l'[[metertype METER_SUPPLY]] ([[valu
 • Les colonies connectées par lignes d'[[metertype METER_SUPPLY]] subissent une pénalité de [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP]] par Voies spatiales les séparant de la Capitale, plafonnée à [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]].
 • Les colonies non-connectées par lignes d'[[metertype METER_SUPPLY]] à la Capitale subissent la pénalité maximale ([[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]]).
 
-La logistique de l'ensemble de l'empire vise à accroître la production de la Capitale, en y déroutant l'essentiel des ressources matérielles et sociales. Cela provoque un certain ressentiment dans les colonies, augmentant par conséquent les coûts d'[[metertype METER_INFLUENCE]].'''
+La logistique de l'ensemble de l'empire vise à accroître la production de la Capitale, en y déroutant l'essentiel des ressources matérielles et sociales. Cela provoque un certain ressentiment dans les colonies, augmentant par conséquent les coûts d'[[metertype METER_INFLUENCE]].
+
+Le coût des équipements de colonisation pour astronefs augmente également de 50%.'''
 
 PLC_CENTRALIZATION_SHORT_DESC
 Favorise la Capitale
@@ -11571,6 +11573,48 @@ Augmente l'impact des préférences d'une espèce (aime ou n'aime pas) sur la St
 
 PLC_LIBERTY_SHORT_DESC
 Augmente les effets des opinions d'une espèce
+
+PLC_TRAFFIC_CONTROL
+Gestion du Trafic
+
+PLC_TRAFFIC_CONTROL_DESC
+Augmente de 20 la [[metertype METER_SPEED]] des astronefs lorsque ces derniers se trouvent à moins de 50 uu d'une planète appartenant à l'empire.
+
+PLC_TRAFFIC_CONTROL_SHORT_DESC
+Vitesse des astronefs à proximité des planètes de l'empire
+
+PLC_PLANETARY_INFRA
+Infrastructure Planétaire
+
+PLC_PLANETARY_INFRA_DESC
+'''Octroie 2 choix supplémentaires de Stratégie économique.
+
+Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées.'''
+
+PLC_PLANETARY_INFRA_SHORT_DESC
+Octroie des choix de Stratégie
+
+PLC_SYSTEM_INFRA
+Infrastructure Systémique
+
+PLC_SYSTEM_INFRA_DESC
+'''Octroie 2 choix supplémentaires de Stratégie économique.
+
+Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées au sein des systèmes abritant au moins 2 planètes appartenant à l'empire appliquant cette Stratégie.'''
+
+PLC_SYSTEM_INFRA_SHORT_DESC
+Octroie des choix de Stratégie
+
+PLC_INTERSTELLAR_INFRA
+Infrastructure Interstellaire
+
+PLC_INTERSTELLAR_INFRA_DESC
+'''Octroie 2 choix supplémentaires de Stratégie économique.
+
+Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées étant connectées aux ressources d'approvisionnement de planètes situées dans d'autres systèmes, et appartenant à l'empire appliquant cette stratégie.'''
+
+PLC_INTERSTELLAR_INFRA_SHORT_DESC
+Octroie des choix de Stratégie
 
 
 ##
@@ -12131,8 +12175,7 @@ Psychologie Architecturale
 CON_ARCH_PSYCH_DESC
 '''La forme d'une structure ou la configuration d'un espace habité ne se définissent pas seulement par les limitations physiques des matériaux qui les composent. L'influence psychologique des habitants, ou d'observateurs extérieurs, peut avoir une incidence bien plus importante sur la réussite et la fonctionnalité d'un design, que la simple robustesse de ses murs ou la profonde solidité de ses fondations.
 
-Octroie 1 choix supplémentaire de Stratégie sociale.
-'''
+Octroie 1 choix supplémentaire de Stratégie sociale.'''
 
 CON_ORGANIC_STRC
 Structures Organiques
@@ -12219,8 +12262,6 @@ Logistique Interstellaire
 
 SHP_INTSTEL_LOG_DESC
 '''Débloque le Focus Logistique, augmentant l'[[metertype METER_SUPPLY]] de 3 sur toutes les planètes.
-
-Augmente de 20 la [[metertype METER_SPEED]] de tous les astronefs lorsque ces derniers se trouvent à moins de 50 uu d'une planète appartenant à l'empire.
 
 [[COLONY_BUILDING_TIME_DECREASE]]
 
@@ -13641,7 +13682,7 @@ BLD_LIGHTHOUSE
 Phare Interstellaire
 
 BLD_LIGHTHOUSE_DESC
-Diminue de 30 la [[metertype METER_STEALTH]] de tous les objets situés dans le même système et augmente de 20 la [[metertype METER_SPEED]] des astronefs alliés se trouvant dans un périmètre de 50 uu au début du tour. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] et peut rendre optimale l'utilisation d'un [[buildingtype BLD_PLANET_DRIVE]].
+Diminue de 30 la [[metertype METER_STEALTH]] de tous les objets situés dans le même système et augmente de 20 la [[metertype METER_SPEED]] des astronefs alliés se trouvant à moins de 50 uu au début du tour. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] et peut rendre optimale l'utilisation d'un [[buildingtype BLD_PLANET_DRIVE]].
 
 BLD_SCANNING_FACILITY
 Complexe de Détection
@@ -13876,7 +13917,7 @@ Une [[buildingtype BLD_PLANET_BEACON]] ou bien un astronef équipé d'une [[ship
 
 Pour utiliser le Navigateur Planétaire, une [[buildingtype BLD_PLANET_BEACON]] doit être construite dans le système adjacent de destination, ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]] doit s'y trouver, tandis que la planète migrante doit être réglée sur le Focus Navigation Planétaire, afin qu'elle se dirige vers le système de destination. Il est à noter que la balise doit se trouver dans le système de destination depuis au moins un tour: le Navigateur ne fonctionnera donc pas durant le tour où sa construction est achevée, ou durant lequel un astronef équipé du dispositif arrive dans le système de destination. D'autre part, un [[buildingtype BLD_TRANSFORMER]] est en mesure de reproduire les effets d'un Navigateur Planétaire.
 
-Une [[buildingtype BLD_PLANET_BEACON]] ne peut être construite qu'au sein de systèmes abritant moins de 7 planètes (Géantes Gazeuses et Astéroides compris). Si le [[BLD_PLANET_DRIVE]] est utilisé pour déplacer une planète vers un système dépassant cette limite, la planète restera saine et sauve dans son système d'origine à condition qu'un [[buildingtype BLD_LIGHTHOUSE]] soit présent à une distance de 200uu au plus. Dans le cas contraire, la planète a 50% de chance d'être détruite en tentant d'atteindre le système de destination déjà complet.
+Une [[buildingtype BLD_PLANET_BEACON]] ne peut être construite qu'au sein de systèmes abritant moins de 7 planètes (Géantes Gazeuses et Astéroides compris). Si le [[BLD_PLANET_DRIVE]] est utilisé pour déplacer une planète vers un système dépassant cette limite, la planète restera saine et sauve dans son système d'origine à condition qu'un [[buildingtype BLD_LIGHTHOUSE]] soit présent à une distance de 200 uu au plus. Dans le cas contraire, la planète a 50% de chance d'être détruite en tentant d'atteindre le système de destination déjà complet.
 '''
 
 BLD_PLANET_BEACON
@@ -13939,7 +13980,7 @@ BLD_SPATIAL_DISTORT_GEN
 Générateur de Distortion Spatiale
 
 BLD_SPATIAL_DISTORT_GEN_DESC
-Manipule les propriétés dimensionnelles des Voies spatiales attenantes. Tout astronef ennemi se dirigeant vers le système abritant cette structure sera repoussé à une distance de 40uu sur la même route qu'il a emprunté, tant que l'astronef en question ne parcourt pas la distance suffisante pour compléter son voyage et ainsi atteindre le système visé. Le Générateur s'active si la planète sur laquelle il est construit est réglée sur le Focus Distortion Spatiale.
+Manipule les propriétés dimensionnelles des Voies spatiales attenantes. Tout astronef ennemi se dirigeant vers le système abritant cette structure sera repoussé à une distance de 40 uu sur la même route qu'il a emprunté, tant que l'astronef en question ne parcourt pas la distance suffisante pour compléter son voyage et ainsi atteindre le système visé. Le Générateur s'active si la planète sur laquelle il est construit est réglée sur le Focus Distortion Spatiale.
 
 BLD_STARGATE  # translated
 Stargate
