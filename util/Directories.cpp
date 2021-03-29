@@ -672,6 +672,9 @@ auto IsFOCScript(const fs::path& path) -> bool
 
 auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predicate) -> std::vector<fs::path>
 {
+    if (!predicate)
+        predicate = static_cast<bool (*)(const fs::path&)>(IsExistingFile);
+
     std::vector<fs::path> retval;
 #if defined(FREEORION_ANDROID)
     DebugLogger() << "ListDir: list directory " << path.string();
@@ -699,7 +702,7 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
             DebugLogger() << "ListDir: no directory " << dir.string();
             continue;
         }
-        auto length = env->GetArrayLength(list_object);
+        const auto length = env->GetArrayLength(list_object);
         if (length == 0) {
             DebugLogger() << "ListDir: empty directory " << dir.string();
             continue;
@@ -727,9 +730,6 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
         s_java_vm->DetachCurrentThread();
     }
 #else
-    if (!predicate)
-        predicate = static_cast<bool (*)(const fs::path&)>(fs::is_regular_file);
-
     bool is_rel = path.is_relative();
     if (!is_rel && (fs::is_empty(path) || !fs::is_directory(path))) {
         DebugLogger() << "ListDir: File " << PathToString(path) << " was not included as it is empty or not a directoy";
