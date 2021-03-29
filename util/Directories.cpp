@@ -644,6 +644,7 @@ auto PathToString(fs::path const& path) -> std::string
 #endif // defined(FREEORION_WIN32)
 }
 
+#if !defined(FREEORION_ANDROID)
 auto FilenameTimestamp() -> std::string
 {
     boost::posix_time::time_facet* facet = new boost::posix_time::time_facet("%Y%m%d_%H%M%S");
@@ -666,6 +667,7 @@ auto FilenameTimestamp() -> std::string
 
     return retval;
 }
+#endif
 
 auto IsFOCScript(const fs::path& path) -> bool
 { return IsExistingFile(path) && ".txt" == path.extension() && path.stem().extension() == ".focs"; }
