@@ -26,7 +26,9 @@ namespace {
     boost::filesystem::path GetDefaultStringTableFileName() {
         std::string lang;
 
-#if !defined(FREEORION_ANDROID)
+#if defined(FREEORION_ANDROID)
+        lang = GetAndroidLand();
+#else
         // early return when unable to get locale language string
         try {
             lang = std::use_facet<boost::locale::info>(GetLocale()).language();

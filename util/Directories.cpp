@@ -515,11 +515,40 @@ auto GetPythonHome() -> fs::path const
 #endif
 
 #if defined(FREEORION_ANDROID)
-FO_COMMON_API void SetAndroidEnvironment(JNIEnv* env, jobject activity)
+void SetAndroidEnvironment(JNIEnv* env, jobject activity)
 {
     s_jni_env = env;
     s_jni_env->GetJavaVM(&s_java_vm);
     s_activity = env->NewWeakGlobalRef(activity);
+}
+
+std::string GetAndroidLang()
+{
+    std::string retval;
+
+    JNIEnv *env;
+    if (s_jni_env != nullptr) {
+        env = s_jni_env;
+    } else {
+        s_java_vm->AttachCurrentThreadAsDaemon(&env, nullptr);
+    }
+
+    jclass locale_class = env->FindClass("java/util/Locale");
+    jmethodID get_default_mid = env->GetStaticMethodID(locale_class, "getDefault", "()Ljava/util/Locale;");
+    jobject locale = env->CallStaticObjectMethod(locale_class, get_default_mid);
+
+    jmethodID get_language_mid = env->GetMethodID(locale_class, "getLanguage", "()Ljava/lang/String;");
+    jstring language = reinterpret_cast<jstring>(env->CallObjectMethod(locale, get_language_mid));
+
+    const char *language_chars = env->GetStringUTFChars(language, nullptr);
+    retval = std::string(language_chars);
+    env->ReleaseStringUTFChars(language, language_chars);
+
+    if (s_jni_env == nullptr) {
+        s_java_vm->DetachCurrentThread();
+    }
+
+    return retval;
 }
 #endif
 

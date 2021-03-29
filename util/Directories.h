@@ -119,6 +119,9 @@ FO_COMMON_API auto GetPythonHome() -> boost::filesystem::path const;
 #if defined(FREEORION_ANDROID)
 //! Sets android environment to access directories
 FO_COMMON_API void SetAndroidEnvironment(JNIEnv* env, jobject activity);
+
+//! Gets locale language from android anvironment
+FO_COMMON_API std::string GetAndroidLang();
 #endif
 
 //! Returns the full path to the configfile.
