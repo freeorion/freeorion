@@ -14,6 +14,7 @@
 #include "../universe/Tech.h"
 #include "../universe/UnlockableItem.h"
 #include "../universe/ValueRef.h"
+#include "PythonParser.h"
 
 namespace parse {
     std::map<std::string, std::unique_ptr<BuildingType>> buildings(const boost::filesystem::path& path)
@@ -82,4 +83,12 @@ namespace parse {
 }
 
 template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const boost::filesystem::path& path);
+
+PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir) 
+    : m_python(_python)
+    , m_scripting_dir(scripting_dir)
+{ }
+
+PythonParser::~PythonParser()
+{ }
 

@@ -17,7 +17,7 @@
 BOOST_FIXTURE_TEST_SUITE(TestPythonParser, ParserAppFixture)
 
 BOOST_AUTO_TEST_CASE(parse_game_rules) {
-    PythonParser parser(m_python);
+    PythonParser parser(m_python, m_scripting_dir);
 
     Pending::Pending<GameRules> game_rules_p = Pending::ParseSynchronously(parse::game_rules, parser,  m_scripting_dir / "game_rules.focs.py");
     auto game_rules = *Pending::WaitForPendingUnlocked(std::move(game_rules_p));
@@ -27,18 +27,13 @@ BOOST_AUTO_TEST_CASE(parse_game_rules) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_techs) {
-    PythonParser parser(m_python);
+    PythonParser parser(m_python, m_scripting_dir);
 
     Pending::Pending<TechManager::TechParseTuple> techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, m_scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
-    BOOST_REQUIRE(!techs.empty());
     BOOST_REQUIRE(!tech_categories.empty());
-    BOOST_REQUIRE(!categories_seen.empty());
 
-    BOOST_REQUIRE_EQUAL(0, categories_seen.count("PRODUCTION_CATEGORY"));
     BOOST_REQUIRE_EQUAL(1, tech_categories.count("PRODUCTION_CATEGORY"));
-
-    BOOST_REQUIRE_EQUAL(1, categories_seen.count("GROWTH_CATEGORY"));
     BOOST_REQUIRE_EQUAL(1, tech_categories.count("GROWTH_CATEGORY"));
 
     const auto cat_it = tech_categories.find("CONSTRUCTION_CATEGORY");
@@ -48,6 +43,12 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
     BOOST_REQUIRE_EQUAL("construction.png", cat_it->second->graphic);
     const std::array<unsigned char, 4> test_colour{241, 233, 87, 255};
     BOOST_REQUIRE(test_colour == cat_it->second->colour);
+
+    BOOST_REQUIRE(!techs.empty());
+    BOOST_REQUIRE(!categories_seen.empty());
+
+    BOOST_REQUIRE_EQUAL(0, categories_seen.count("PRODUCTION_CATEGORY"));
+    BOOST_REQUIRE_EQUAL(1, categories_seen.count("GROWTH_CATEGORY"));
 
     {
         const auto tech_it = techs.get<TechManager::NameIndex>().find("LRN_ALGO_ELEGANCE");
@@ -194,7 +195,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_techs_full) {
-    PythonParser parser(m_python);
+    PythonParser parser(m_python, m_scripting_dir);
 
     auto scripting_dir = boost::filesystem::system_complete(GetBinDir() / "default/scripting");
     BOOST_REQUIRE(scripting_dir.is_absolute());
@@ -203,6 +204,7 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
 
     Pending::Pending<TechManager::TechParseTuple> techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
+
     BOOST_REQUIRE(!techs.empty());
     BOOST_REQUIRE(!tech_categories.empty());
     BOOST_REQUIRE(!categories_seen.empty());

@@ -7,6 +7,15 @@
 #include "MovableEnvelope.h"
 
 #include "PythonParserImpl.h"
+#include "ValueRefPythonParser.h"
+#include "ConditionPythonParser.h"
+#include "EffectPythonParser.h"
+#include "EnumPythonParser.h"
+#include "SourcePythonParser.h"
+
+#include "../universe/Conditions.h"
+#include "../universe/Effects.h"
+#include "../universe/ValueRefs.h"
 
 #include "../universe/Effect.h"
 #include "../universe/Species.h"
@@ -36,6 +45,9 @@ namespace std {
 #endif
 
 namespace {
+    struct py_grammar_techs;
+    boost::python::object insert_game_rule_(const py_grammar_techs& g, const boost::python::tuple& args, const boost::python::dict& kw);
+
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
     std::set<std::string>* g_categories_seen = nullptr;
@@ -230,6 +242,215 @@ namespace {
             return globals;
         }
     };
+
+    condition_wrapper insert_owned_by_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        EmpireAffiliationType affiliation = EmpireAffiliationType::AFFIL_SELF;
+
+        if (kw.has_key("empire")) {
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check()) {
+                empire = ValueRef::CloneUnique(empire_args().value_ref);
+            } else {
+                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            }
+        }
+
+        if (kw.has_key("affiliation")) {
+            throw std::runtime_error(std::string("Not implemented ") + __func__);
+        }
+
+        return condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(std::move(empire), affiliation));
+    }
+
+    unlockable_item_wrapper insert_item_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto type = boost::python::extract<enum_wrapper<UnlockableItemType>>(kw["type"])();
+        auto name = boost::python::extract<std::string>(kw["name"])();
+        return unlockable_item_wrapper(UnlockableItem(type.value, std::move(name)));
+    }
+
+    effect_group_wrapper insert_effects_group_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto scope = boost::python::extract<condition_wrapper>(kw["scope"])();
+        auto priority = boost::python::extract<int>(kw["priority"])();
+
+        std::vector<std::unique_ptr<Effect::Effect>> effects;
+        auto effects_args = boost::python::extract<boost::python::list>(kw["effects"]);
+        if (effects_args.check()) {
+            boost::python::stl_input_iterator<effect_wrapper> effects_begin(effects_args), effects_end;
+            for (auto it = effects_begin; it != effects_end; ++ it) {
+                effects.push_back(ValueRef::CloneUnique(it->effect));
+            }
+        } else {
+            effects.push_back(ValueRef::CloneUnique(boost::python::extract<effect_wrapper>(kw["effects"])().effect));
+        }
+        // ToDo: implement other arguments later
+
+        return effect_group_wrapper(std::make_shared<Effect::EffectsGroup>(ValueRef::CloneUnique(scope.condition),
+                                                      nullptr,
+                                                      std::move(effects),
+                                                      "",
+                                                      "",
+                                                      priority,
+                                                      "",
+                                                      ""));
+    }
+
+    effect_wrapper insert_set_target_population_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto value = boost::python::extract<value_ref_wrapper<double>>(kw["value"])();
+
+        boost::optional<std::string> accountinglabel = boost::none;
+        if (kw.has_key("accountinglabel")) {
+            accountinglabel = boost::python::extract<std::string>(kw["accountinglabel"])();
+        }
+        return effect_wrapper(std::make_shared<Effect::SetMeter>(MeterType::METER_TARGET_POPULATION,
+                                                                 ValueRef::CloneUnique(value.value_ref),
+                                                                 accountinglabel));
+    }
+
+    boost::python::object py_insert_tech_(TechManager::TechContainer& techs, const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto name = boost::python::extract<std::string>(kw["name"])();
+        auto description = boost::python::extract<std::string>(kw["description"])();
+        auto short_description = boost::python::extract<std::string>(kw["short_description"])();
+        auto category = boost::python::extract<std::string>(kw["category"])();
+
+        std::unique_ptr<ValueRef::ValueRef<double>> researchcost;
+        auto researchcost_args = boost::python::extract<value_ref_wrapper<double>>(kw["researchcost"]);
+        if (researchcost_args.check()) {
+            researchcost = ValueRef::CloneUnique(researchcost_args().value_ref);
+        } else {
+            researchcost = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["researchcost"])());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> researchturns;
+        auto researchturns_args = boost::python::extract<value_ref_wrapper<int>>(kw["researchturns"]);
+        if (researchturns_args.check()) {
+            researchturns = ValueRef::CloneUnique(researchturns_args().value_ref);
+        } else {
+            researchturns = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["researchturns"])());
+        }
+
+        bool researchable = true;
+
+        std::set<std::string> tags;
+        auto tags_args = boost::python::extract<boost::python::list>(kw["tags"])();
+        boost::python::stl_input_iterator<std::string> tags_begin(tags_args), tags_end;
+        for (auto it = tags_begin; it != tags_end; ++ it) {
+            tags.insert(*it);
+        }
+
+        std::vector<std::shared_ptr<Effect::EffectsGroup>> effectsgroups;
+        if (kw.has_key("effectsgroups")) {
+            auto effectsgroups_args = boost::python::extract<boost::python::list>(kw["effectsgroups"])();
+            boost::python::stl_input_iterator<effect_group_wrapper> effectsgroups_begin(effectsgroups_args), effectsgroups_end;
+            for (auto it = effectsgroups_begin; it != effectsgroups_end; ++ it) {
+                effectsgroups.push_back(it->effects_group);
+            }
+        }
+
+        std::set<std::string> prerequisites;
+        if (kw.has_key("prerequisites")) {
+            auto prerequisites_args = boost::python::extract<boost::python::list>(kw["prerequisites"]);
+            if (prerequisites_args.check()) {
+                boost::python::stl_input_iterator<std::string> prerequisites_begin(prerequisites_args()), prerequisites_end;
+                for (auto it = prerequisites_begin; it != prerequisites_end; ++ it) {
+                    prerequisites.insert(*it);
+                }
+            } else {
+                prerequisites.insert(boost::python::extract<std::string>(kw["prerequisites"])());
+            }
+        }
+
+        std::vector<UnlockableItem> unlock;
+        if (kw.has_key("unlock")) {
+            auto unlock_args = boost::python::extract<boost::python::list>(kw["unlock"]);
+            if (unlock_args.check()) {
+                boost::python::stl_input_iterator<unlockable_item_wrapper> unlock_begin(unlock_args()), unlock_end;
+                for (auto it = unlock_begin; it != unlock_end; ++ it) {
+                    unlock.push_back(it->item);
+                }
+            } else {
+                unlock.push_back(boost::python::extract<unlockable_item_wrapper>(kw["unlock"])().item);
+            }
+        }
+
+        std::string graphic;
+        if (kw.has_key("graphic")) {
+            graphic = boost::python::extract<std::string>(kw["graphic"])();
+        }
+
+        auto tech_ptr = std::make_unique<Tech>(std::move(name), std::move(description),
+                                               std::move(short_description), std::move(category),
+                                               std::move(researchcost),
+                                               std::move(researchturns),
+                                               researchable,
+                                               std::move(tags),
+                                               std::move(effectsgroups),
+                                               std::move(prerequisites),
+                                               std::move(unlock),
+                                               std::move(graphic));
+
+        if (check_tech(techs, tech_ptr)) {
+            g_categories_seen->emplace(tech_ptr->Category());
+            techs.emplace(std::move(tech_ptr));
+        }
+
+        return boost::python::object();
+    }
+
+    struct py_grammar_techs {
+        const PythonParser& m_parser;
+
+        py_grammar_techs(const PythonParser& parser):m_parser(parser) {
+        }
+
+        boost::python::dict operator()(TechManager::TechContainer& techs) const {
+            boost::python::dict globals(boost::python::import("builtins").attr("__dict__"));
+            std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_game_rule = [this](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(*this, args, kw); };
+            globals["GameRule"] = boost::python::raw_function(f_insert_game_rule);
+            std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_tech = [&techs](const boost::python::tuple& args, const boost::python::dict& kw) { return py_insert_tech_(techs, args, kw); };
+            globals["Tech"] = boost::python::raw_function(f_insert_tech);
+            globals["EffectsGroup"] = boost::python::raw_function(insert_effects_group_);
+            globals["Item"] = boost::python::raw_function(insert_item_);
+            globals["Policy"] = enum_wrapper<UnlockableItemType>(UnlockableItemType::UIT_POLICY);
+            globals["Species"] = condition_wrapper(std::make_shared<Condition::Species>());
+            globals["OwnedBy"] = boost::python::raw_function(insert_owned_by_);
+            globals["Source"] = source_wrapper();
+            globals["SetTargetPopulation"] = boost::python::raw_function(insert_set_target_population_);
+            globals["Value"] = value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE));
+            globals["Target"] = target_wrapper();
+            return globals;
+        }
+
+    };
+
+    boost::python::object insert_game_rule_(const py_grammar_techs& g, const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto name = boost::python::extract<std::string>(kw["name"])();
+        auto type_ = kw["type"];
+
+        if (type_ == g.m_parser.type_int) {
+            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
+                "GameRule",
+                nullptr,
+                nullptr,
+                nullptr,
+                std::make_unique<ValueRef::Constant<std::string>>(name),
+                nullptr)));
+        } else if (type_ == g.m_parser.type_float) {
+            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
+                "GameRule",
+                nullptr,
+                nullptr,
+                nullptr,
+                std::make_unique<ValueRef::Constant<std::string>>(name),
+                nullptr)));
+        } else {
+            ErrorLogger() << "Unsupported type for rule " << name << ": " << boost::python::extract<std::string>(boost::python::str(type_))();
+
+            throw std::runtime_error(std::string("Not implemented ") + __func__);
+        }
+
+        return boost::python::object();
+    }
 }
 
 namespace parse {
@@ -250,6 +471,8 @@ namespace parse {
 
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, TechManager::TechContainer>(tech_lexer, file, techs_);
+        for (const auto& file : ListDir(path, IsFOCPyScript))
+            py_parse::detail::parse_file<py_grammar_techs, TechManager::TechContainer>(parser, file, techs_);
 
         return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
     }
