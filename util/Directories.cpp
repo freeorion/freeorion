@@ -32,6 +32,7 @@
 #  include <android/asset_manager.h>
 #  include <android/asset_manager_jni.h>
 #  include <android/log.h>
+#  include <patchlevel.h>
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
@@ -87,6 +88,7 @@ namespace {
     AAssetManager* s_asset_manager;
     jobject        s_jni_asset_manager;
     JavaVM*        s_java_vm;
+    fs::path       s_python_home;
 
 void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
 {
@@ -469,6 +471,37 @@ void InitDirs(std::string const& argv0)
 
     RedirectOutputLogAndroid(ANDROID_LOG_ERROR, "stderr", 2);
     RedirectOutputLogAndroid(ANDROID_LOG_INFO, "stdout", 1);
+
+    s_python_home = s_user_dir / "python";
+
+    std::string python_library_name = std::string("python") + BOOST_PP_STRINGIZE(BOOST_PP_CAT(PY_MAJOR_VERSION, PY_MINOR_VERSION)) + ".zip";
+
+    fs::path python_library_zip = s_python_home / python_library_name;
+
+    if (fs::exists(python_library_zip) && fs::is_regular_file(python_library_zip)) {
+        g_initialized = true;
+        return;
+    }
+
+    fs::create_directories(s_python_home);
+
+    AAsset* asset = AAssetManager_open(s_asset_manager, ("default/" + python_library_name).c_str(), AASSET_MODE_STREAMING);
+    if (asset == nullptr) {
+        return;
+    }
+    off64_t asset_length = AAsset_getLength64(asset);
+    if (asset_length <= 0) {
+        AAsset_close(asset);
+        return;
+    }
+
+    char buf[4096];
+    int nb_read = 0;
+    fs::ofstream ofs(python_library_zip, std::ios::binary);
+    while ((nb_read = AAsset_read(asset, buf, 4096)) > 0) {
+        ofs.write(buf, nb_read);
+    }
+    ofs.close();
 #endif
 
     g_initialized = true;
@@ -562,10 +595,10 @@ auto GetBinDir() -> fs::path const
 #endif
 }
 
-#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
 auto GetPythonHome() -> fs::path const
 {
-#if defined(FREEORION_MACOSX)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_ANDROID)
     if (!g_initialized)
         InitDirs("");
     return s_python_home;
