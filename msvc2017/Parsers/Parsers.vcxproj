@@ -262,7 +262,9 @@
     <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\VisibilityValueRefParser.cpp" />
-    <ClCompile Include="..\..\parse\PythonParser.cpp" />
+    <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp" />
+    <ClCompile Include="..\..\parse\ConditionPythonParser.cpp" />
+    <ClCompile Include="..\..\parse\SourcePythonParser.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -298,6 +300,11 @@
     <ClInclude Include="..\..\parse\Tokens.h" />
     <ClInclude Include="..\..\parse\ValueRefParser.h" />
     <ClInclude Include="..\..\parse\PythonParser.h" />
+    <ClInclude Include="..\..\parse\ValueRefPythonParser.h" />
+    <ClInclude Include="..\..\parse\ConditionPythonParser.h" />
+    <ClInclude Include="..\..\parse\EffectPythonParser.h" />
+    <ClInclude Include="..\..\parse\EnumPythonParser.h" />
+    <ClInclude Include="..\..\parse\SourcePythonParser.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -35,7 +35,7 @@ ClientAppFixture::ClientAppFixture() :
         DebugLogger() << "Started background parser thread";
         PythonCommon python;
         python.Initialize();
-        StartBackgroundParsing(PythonParser(python), std::move(b));
+        StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"), std::move(b));
     }, std::move(barrier));
     background.detach();
     barrier_future.wait();

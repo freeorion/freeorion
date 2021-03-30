@@ -3,14 +3,18 @@
 
 #include "Parse.h"
 
+#include <boost/optional.hpp>
 #include <boost/python/dict.hpp>
 #include <boost/python/object_fwd.hpp>
+#include <boost/filesystem/path.hpp>
 
 class PythonCommon;
 
+struct module_spec;
+
 class FO_PARSE_API PythonParser {
 public:
-    PythonParser(PythonCommon& _python);
+    PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir);
     ~PythonParser();
 
     PythonParser(const PythonParser&) = delete;
@@ -30,7 +34,14 @@ public:
     boost::python::object type_bool;
     boost::python::object type_str;
 private:
-    PythonCommon& python;
+    boost::python::object find_spec(const std::string& fullname, const boost::python::object& path, const boost::python::object& target) const;
+    boost::python::object create_module(const module_spec& spec);
+    boost::python::object exec_module(const boost::python::object& module);
+
+    PythonCommon&                  m_python;
+    const boost::filesystem::path& m_scripting_dir;
+    boost::python::list            m_meta_path;
+    mutable boost::optional<std::function<boost::python::dict()>> m_current_globals;
 };
 
 #endif

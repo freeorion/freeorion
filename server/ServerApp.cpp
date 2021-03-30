@@ -122,7 +122,7 @@ ServerApp::ServerApp() :
     // to have data initialized before autostart execution
     std::promise<void> barrier;
     std::future<void> barrier_future = barrier.get_future();
-    StartBackgroundParsing(PythonParser(m_python_server), std::move(barrier));
+    StartBackgroundParsing(PythonParser(m_python_server, GetResourceDir() / "scripting"), std::move(barrier));
     barrier_future.wait();
 
     m_fsm->initiate();
