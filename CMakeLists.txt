@@ -407,11 +407,11 @@ target_link_libraries(freeorioncommon
         Boost::python${Boost_PYTHON_SUFFIX}
         Boost::thread
         Boost::serialization
+        ${PYTHON_LIBRARIES}
         ZLIB::ZLIB
         ${ICUI18N_LIBRARY}
         ${ICUUC_LIBRARY}
         ${ICUDATA_LIBRARY}
-        ${PYTHON_LIBRARIES}
         ${ANDROID_LIBRARY}
         ${LOG_LIBRARY}
     PRIVATE

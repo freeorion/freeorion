@@ -206,7 +206,7 @@ Install Android NDK.
 
 Build [Python-For-Android].
 
-Build [Boost-For-Android] with iconv support for boost_locale library
+Build [Boost-For-Android] with iconv support for boost_locale library and python support.
 
 ```bash
 ./build-android.sh --with-iconv --arch=arm64-v8a --with-python=`readlink -f ../python-install` --layout=system $ANDROID_NDK
@@ -218,7 +218,7 @@ Create a `build` directory aside the _source_directory_ and change into
 this directory. It will contain all compile FreeOrion build artifacs.
 
 ```bash
-<android>/cmake/3.10.2.4988404/bin/cmake -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=21 -DANDROID_NDK=<android>/ndk-bundle/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=<android>/ndk-bundle/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=<Boost-for-Android>/build/out/armeabi-v7a/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=<Boost-for-Android>/build/out/armeabi-v7a/lib/ -DBUILD_CLIENT_GODOT=On -DICUI18N_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicui18n.a -DICUUC_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicuuc.a -DICUDATA_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicudata.a -DICONV_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libiconv.so ../freeorion
+<android>/cmake/3.10.2.4988404/bin/cmake -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=21 -DANDROID_NDK=<android>/ndk-bundle/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=<android>/ndk-bundle/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=<Boost-for-Android>/build/out/armeabi-v7a/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=<Boost-for-Android>/build/out/armeabi-v7a/lib/ -DBUILD_CLIENT_GODOT=On -DICUI18N_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicui18n.a -DICUUC_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicuuc.a -DICUDATA_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicudata.a -DICONV_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libiconv.so -DPYTHON_LIBRARY=<Python-for-Android>/lib/libpython3.6m.a -DPYTHON_INCLUDE_DIR=<Python-for-Android>/include/python3.6m/ ../freeorion
 ```
 
 After successfully creating the Makefiles build the whole project by
