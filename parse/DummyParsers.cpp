@@ -35,7 +35,7 @@ namespace parse {
     { return {}; }
 
     template <>
-    TechManager::TechParseTuple techs(const boost::filesystem::path& path)
+    TechManager::TechParseTuple techs(const PythonParser& parser, const boost::filesystem::path& path)
     { return TechManager::TechParseTuple{}; }
 
     std::vector<UnlockableItem> items(const boost::filesystem::path& path)
@@ -81,5 +81,5 @@ namespace parse {
     bool string_free_variable(std::string& text) { return false; }
 }
 
-template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const boost::filesystem::path& path);
+template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const boost::filesystem::path& path);
 
