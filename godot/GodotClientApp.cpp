@@ -2,12 +2,14 @@
 #include "GodotClientApp.h"
 
 #include "../Empire/Empire.h"
+#include "../parse/PythonParser.h"
 #include "../util/Directories.h"
 #include "../util/GameRules.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/LoggerWithOptionsDB.h"
 #include "../util/OptionsDB.h"
+#include "../util/PythonCommon.h"
 #include "../util/Version.h"
 #include "../client/ClientNetworking.h"
 
@@ -85,7 +87,9 @@ GodotClientApp::GodotClientApp() {
     std::future<void> barrier_future = barrier.get_future();
     std::thread background([this] (auto b) {
         DebugLogger() << "Started background parser thread";
-        StartBackgroundParsing(std::move(b));
+        PythonCommon python;
+        python.Initialize();
+        StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"), std::move(b));
     }, std::move(barrier));
     background.detach();
     barrier_future.wait();
