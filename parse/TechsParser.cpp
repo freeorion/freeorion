@@ -6,6 +6,8 @@
 #include "ValueRefParser.h"
 #include "MovableEnvelope.h"
 
+#include "PythonParserImpl.h"
+
 #include "../universe/Effect.h"
 #include "../universe/Species.h"
 #include "../universe/Tech.h"
@@ -16,6 +18,10 @@
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/include/qi_as.hpp>
 
+#include <boost/python/extract.hpp>
+#include <boost/python/import.hpp>
+#include <boost/python/raw_function.hpp>
+#include <boost/python/stl_iterator.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -78,9 +84,6 @@ namespace {
         auto category_ptr = std::make_unique<TechCategory>(name, std::move(graphic), color);
         categories.emplace(std::move(name), std::move(category_ptr));
     }
-
-    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_category_, insert_category, 4)
-
 
     using start_rule_signature = void(TechManager::TechContainer&);
 
@@ -155,32 +158,18 @@ namespace {
                   ) [ insert_tech_(_r1, _1, _4, _2, _3, _5, _pass) ]
                 ;
 
-            category
-                = ( tok.Category_
-                >   label(tok.name_)    > tok.string
-                >   label(tok.graphic_) > tok.string
-                >   label(tok.colour_)  > color_parser
-                  ) [ _pass = is_unique_(_r1, _1, _2),
-                      insert_category_(_r1, _2, _3, _4) ]
-                ;
-
             start
-                = +(tech(_r1)
-                |   category(phoenix::ref(*g_categories)) // TODO: Using _r2 here as I would like to do seems to give GCC 4.6 fits.
-                   )
-                ;
+                = +(tech(_r1));
 
             researchable.name("Researchable");
             tech_info.name("Tech info");
             tech.name("Tech");
-            category.name("Category");
             start.name("start");
 
 #if DEBUG_PARSERS
             debug(tech_info_name_desc);
             debug(tech_info);
             debug(tech);
-            debug(category);
 #endif
 
             qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
@@ -207,8 +196,39 @@ namespace {
         parse::detail::rule<bool()>             researchable;
         tech_info_rule                          tech_info;
         tech_rule                               tech;
-        category_rule                           category;
         start_rule                              start;
+    };
+
+    boost::python::object insert_category_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto name = boost::python::extract<std::string>(kw["name"])();
+        auto graphic = boost::python::extract<std::string>(kw["graphic"])();
+        auto colour = boost::python::extract<boost::python::tuple>(kw["colour"])();
+
+        std::array<unsigned char, 4> color{0};
+
+        boost::python::stl_input_iterator<unsigned char> colour_begin(colour), colour_end;
+        int colour_index = 0;
+        for (auto& it = colour_begin; it != colour_end; ++ it) {
+            if (colour_index < 4) {
+                color[colour_index] = *it;
+                ++ colour_index;
+            }
+        }
+
+        insert_category(*g_categories, name, graphic, color);
+
+        return boost::python::object();
+    }
+
+    struct py_grammar_category {
+        py_grammar_category(const PythonParser& parser) {
+        }
+
+        boost::python::dict operator()(TechManager::TechContainer& techs) const {
+            boost::python::dict globals(boost::python::import("builtins").attr("__dict__"));
+            globals["Category"] = boost::python::raw_function(insert_category_);
+            return globals;
+        }
     };
 }
 
@@ -226,7 +246,7 @@ namespace parse {
 
         ScopedTimer timer("Techs Parsing", true);
 
-        detail::parse_file<grammar, TechManager::TechContainer>(tech_lexer, path / "Categories.inf", techs_);
+        py_parse::detail::parse_file<py_grammar_category, TechManager::TechContainer>(parser, path / "Categories.inf.py", techs_);
 
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, TechManager::TechContainer>(tech_lexer, file, techs_);
