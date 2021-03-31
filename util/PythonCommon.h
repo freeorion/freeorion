@@ -40,7 +40,6 @@ private:
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
     wchar_t*                m_home_dir = nullptr;
     wchar_t*                m_program_name = nullptr;
-    wchar_t*                m_path = nullptr;
 #endif
     // A copy of the systemExit exception to compare with returned
     // exceptions.  It can't be created in the exception handler.

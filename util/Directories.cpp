@@ -29,6 +29,7 @@
 #if defined(FREEORION_ANDROID)
 #  include <thread>
 #  include <forward_list>
+#  include <android/log.h>
 #  include <android/asset_manager.h>
 #  include <android/asset_manager_jni.h>
 #  include <android/log.h>
@@ -319,6 +320,45 @@ void InitBinDir(std::string const& argv0)
 #endif
 }
 
+#if defined(FREEORION_ANDROID)
+void CopyInitialResourceAndroid(const std::string& rel_path)
+{
+    AAsset* asset = AAssetManager_open(s_asset_manager, ("default/python/" + rel_path).c_str(), AASSET_MODE_STREAMING);
+    if (asset == nullptr) {
+        return;
+    }
+    off64_t asset_length = AAsset_getLength64(asset);
+    if (asset_length <= 0) {
+        AAsset_close(asset);
+        return;
+    }
+
+    char buf[4096];
+    int nb_read = 0;
+    fs::ofstream ofs(s_python_home / rel_path, std::ios::binary);
+    while ((nb_read = AAsset_read(asset, buf, 4096)) > 0) {
+        ofs.write(buf, nb_read);
+    }
+    ofs.close();
+}
+
+void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
+{
+    std::thread background([priority, tag, fd]() {
+        int pipes[2];
+        pipe(pipes);
+        dup2(pipes[1], fd);
+        FILE *inputFile = fdopen(pipes[0], "r");
+        char readBuffer[256];
+        while (true) {
+            fgets(readBuffer, sizeof(readBuffer), inputFile);
+            __android_log_write(priority, tag, readBuffer);
+        }
+    });
+    background.detach();
+}
+#endif
+
 void InitDirs(std::string const& argv0)
 {
     if (g_initialized)
@@ -472,36 +512,12 @@ void InitDirs(std::string const& argv0)
     RedirectOutputLogAndroid(ANDROID_LOG_ERROR, "stderr", 2);
     RedirectOutputLogAndroid(ANDROID_LOG_INFO, "stdout", 1);
 
+
     s_python_home = s_user_dir / "python";
 
-    std::string python_library_name = std::string("python") + BOOST_PP_STRINGIZE(BOOST_PP_CAT(PY_MAJOR_VERSION, PY_MINOR_VERSION)) + ".zip";
+    fs::create_directories(s_python_home / "lib");
 
-    fs::path python_library_zip = s_python_home / python_library_name;
-
-    if (fs::exists(python_library_zip) && fs::is_regular_file(python_library_zip)) {
-        g_initialized = true;
-        return;
-    }
-
-    fs::create_directories(s_python_home);
-
-    AAsset* asset = AAssetManager_open(s_asset_manager, ("default/" + python_library_name).c_str(), AASSET_MODE_STREAMING);
-    if (asset == nullptr) {
-        return;
-    }
-    off64_t asset_length = AAsset_getLength64(asset);
-    if (asset_length <= 0) {
-        AAsset_close(asset);
-        return;
-    }
-
-    char buf[4096];
-    int nb_read = 0;
-    fs::ofstream ofs(python_library_zip, std::ios::binary);
-    while ((nb_read = AAsset_read(asset, buf, 4096)) > 0) {
-        ofs.write(buf, nb_read);
-    }
-    ofs.close();
+    CopyInitialResourceAndroid("lib/python36.zip");
 #endif
 
     g_initialized = true;

@@ -32,9 +32,10 @@ bool PythonCommon::Initialize() {
         m_program_name = Py_DecodeLocale((GetPythonHome() / "Python").string().c_str(), nullptr);
         Py_SetProgramName(m_program_name);
         DebugLogger() << "Python program name set to " << Py_GetProgramFullPath();
-        m_path = Py_DecodeLocale((GetPythonHome() / "python36.zip").string().c_str(), nullptr);
-        Py_SetPath(m_path);
-        DebugLogger() << "Python path set to " << Py_GetPath();
+#endif
+
+#if defined(FREEORION_ANDROID)
+        Py_NoSiteFlag = 1;
 #endif
         if (!InitCommonImports()) {
             ErrorLogger() << "Unable to initialize imports";
@@ -120,10 +121,6 @@ void PythonCommon::Finalize() {
             if (m_program_name != nullptr) {
                 PyMem_RawFree(m_program_name);
                 m_program_name = nullptr;
-            }
-            if (m_path != nullptr) {
-                PyMem_RawFree(m_path);
-                m_path = nullptr;
             }
 #endif
         } catch (const std::exception& e) {
