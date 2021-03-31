@@ -24,9 +24,11 @@
 #endif
 
 #if defined(FREEORION_ANDROID)
+#  include <thread>
 #  include <forward_list>
 #  include <android/asset_manager.h>
 #  include <android/asset_manager_jni.h>
+#  include <android/log.h>
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
@@ -80,6 +82,22 @@ namespace {
     AAssetManager* s_asset_manager;
     jobject        s_jni_asset_manager;
     JavaVM*        s_java_vm;
+
+void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
+{
+    std::thread background([priority, tag, fd]() {
+        int pipes[2];
+        pipe(pipes);
+        dup2(pipes[1], fd);
+        FILE *inputFile = fdopen(pipes[0], "r");
+        char readBuffer[256];
+        while (true) {
+            fgets(readBuffer, sizeof(readBuffer), inputFile);
+            __android_log_write(priority, tag, readBuffer);
+        }
+    });
+    background.detach();
+}
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
@@ -424,6 +442,9 @@ void InitDirs(std::string const& argv0)
     if (s_jni_env == nullptr) {
         s_java_vm->DetachCurrentThread();
     }
+
+    RedirectOutputLogAndroid(ANDROID_LOG_ERROR, "stderr", 2);
+    RedirectOutputLogAndroid(ANDROID_LOG_INFO, "stdout", 1);
 #endif
 
     g_initialized = true;

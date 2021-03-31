@@ -278,6 +278,7 @@ if(ANDROID)
     find_library(ICUDATA_LIBRARY icudata) # Symbol icudt62_dat
     find_library(ICONV_LIBRARY iconv) # Symbol libiconv_open
     find_library(ANDROID_LIBRARY android) # Asset Manager
+    find_library(LOG_LIBRARY log) # Android logging
 endif()
 
 if(BUILD_TESTING)
@@ -399,6 +400,7 @@ target_link_libraries(freeorioncommon
         ${ICUUC_LIBRARY}
         ${ICUDATA_LIBRARY}
         ${ANDROID_LIBRARY}
+        ${LOG_LIBRARY}
     PRIVATE
         ${CORE_FOUNDATION_LIBRARY}
 )
