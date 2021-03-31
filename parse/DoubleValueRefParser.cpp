@@ -116,6 +116,10 @@ parse::double_parser_rules::double_parser_rules(
         =   int_rules.statistic_expr [ _val = construct_movable_(new_<ValueRef::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
         ;
 
+    int_total_fighter_shots_cast
+        =   int_rules.total_fighter_shots [ _val = construct_movable_(new_<ValueRef::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
+        ;
+
     int_complex_variable_cast
         =   int_complex_grammar [ _val = construct_movable_(new_<ValueRef::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
         ;
@@ -150,6 +154,7 @@ parse::double_parser_rules::double_parser_rules(
         |    int_free_variable_cast
         |    int_bound_variable_cast
         |    int_complex_variable_cast
+        |    int_total_fighter_shots_cast
         |    named_real_valueref
         ;
 
@@ -157,6 +162,7 @@ parse::double_parser_rules::double_parser_rules(
     int_bound_variable_cast.name("integer bound variable");
     int_statistic_cast.name("integer statistic");
     int_complex_variable_cast.name("integer complex variable");
+    int_total_fighter_shots_cast.name("integer TotalFighterShots");
     named_real_valueref.name("named real valueref");
 
 #if DEBUG_VALUEREF_PARSERS
@@ -165,6 +171,7 @@ parse::double_parser_rules::double_parser_rules(
     debug(int_bound_variable_cast);
     debug(int_statistic_cast);
     debug(int_complex_variable_cast);
+    debug(int_total_fighter_shots_cast);
     debug(double_complex_variable);
     debug(named_real_valueref);
 #endif
