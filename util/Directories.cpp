@@ -814,7 +814,7 @@ auto IsFOCScript(const fs::path& path) -> bool
 { return IsExistingFile(path) && ".txt" == path.extension() && path.stem().extension() == ".focs"; }
 
 auto IsFOCPyScript(const fs::path& path) -> bool
-{ return fs::is_regular_file(path) && ".py" == path.extension() && path.stem().extension() == ".focs"; }
+{ return IsExistingFile(path) && ".py" == path.extension() && path.stem().extension() == ".focs"; }
 
 auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predicate) -> std::vector<fs::path>
 {
