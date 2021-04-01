@@ -18,6 +18,8 @@ struct condition_wrapper {
 };
 
 condition_wrapper operator&(const condition_wrapper&, const condition_wrapper&);
+condition_wrapper operator|(const condition_wrapper&, const condition_wrapper&);
+condition_wrapper operator~(const condition_wrapper&);
 
 #endif // _ConditionPythonParser_h_
 

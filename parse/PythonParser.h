@@ -36,7 +36,7 @@ public:
 private:
     boost::python::object find_spec(const std::string& fullname, const boost::python::object& path, const boost::python::object& target) const;
     boost::python::object create_module(const module_spec& spec);
-    boost::python::object exec_module(const boost::python::object& module);
+    boost::python::object exec_module(boost::python::object& module);
 
     PythonCommon&                  m_python;
     const boost::filesystem::path& m_scripting_dir;

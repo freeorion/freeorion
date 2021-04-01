@@ -4,6 +4,9 @@
 #include "PythonParser.h"
 #include "../util/ScopedTimer.h"
 
+#include <boost/python/stl_iterator.hpp>
+#include <boost/python/extract.hpp>
+
 namespace py_parse { namespace detail {
 
     template <typename Grammar, typename Arg1>
@@ -28,6 +31,21 @@ namespace py_parse { namespace detail {
         Grammar grammar(parser);
 
         return parser.ParseFileCommon(path, [grammar, &arg1, &arg2]() { return grammar(arg1, arg2); }, filename, file_contents);
+    }
+
+    template <typename T, typename F, typename V>
+    void flatten_list(const boost::python::object& l,
+                      const F& f,
+                      V& retval) {
+        auto args = boost::python::extract<boost::python::list>(l);
+        if (args.check()) {
+            boost::python::stl_input_iterator<boost::python::object> args_begin(args), args_end;
+            for (auto it = args_begin; it != args_end; ++ it) {
+                flatten_list<T, F, V>(*it, f, retval);
+            }
+        } else {
+            f(boost::python::extract<T>(l)(), retval);
+        }
     }
 
 } }
