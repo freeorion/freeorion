@@ -195,12 +195,12 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_techs_full) {
-    PythonParser parser(m_python, m_scripting_dir);
-
     auto scripting_dir = boost::filesystem::system_complete(GetBinDir() / "default/scripting");
     BOOST_REQUIRE(scripting_dir.is_absolute());
     BOOST_REQUIRE(boost::filesystem::exists(scripting_dir));
     BOOST_REQUIRE(boost::filesystem::is_directory(scripting_dir));
+
+    PythonParser parser(m_python, scripting_dir);
 
     Pending::Pending<TechManager::TechParseTuple> techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));

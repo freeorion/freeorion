@@ -39,13 +39,15 @@ namespace {
 }
 
 struct module_spec {
-    module_spec(const std::string& name, const PythonParser& parser_)
+    module_spec(const std::string& name, const std::string& parent_, const PythonParser& parser_)
         : fullname(name)
+        , parent(parent_)
         , parser(parser_)
     { }
 
     py::list path;
     std::string fullname;
+    std::string parent;
     const PythonParser& parser;
 };
 
@@ -76,23 +78,45 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .add_static_property("loader", py::make_getter(*this, py::return_value_policy<py::reference_existing_object>()))
             .def_readonly("submodule_search_locations", &module_spec::path)
             .def_readonly("has_location", false)
-            .def_readonly("cached", false);
+            .def_readonly("cached", false)
+            .def_readonly("parent", &module_spec::parent);
 
         // Use wrappers to not collide with types in server and AI
-        py::class_<value_ref_wrapper<int>>("ValueRefInt", py::no_init);
+        py::class_<value_ref_wrapper<int>>("ValueRefInt", py::no_init)
+            .def(py::self_ns::self < py::self_ns::self)
+            .def(py::self_ns::self == py::self_ns::self);
         py::class_<value_ref_wrapper<double>>("ValueRefDouble", py::no_init)
+            .def("__call__", &value_ref_wrapper<double>::call)
             .def(int() * py::self_ns::self)
-            .def(py::self_ns::self + py::self_ns::self);
+            .def(py::self_ns::self + int())
+            .def(py::self_ns::self + double())
+            .def(py::self_ns::self + py::self_ns::self)
+            .def(py::self_ns::self - py::self_ns::self);
+        py::class_<value_ref_wrapper<std::string>>("ValueRefString", py::no_init);
         py::class_<condition_wrapper>("Condition", py::no_init)
-            .def(py::self_ns::self & py::self_ns::self);
+            .def(py::self_ns::self & py::self_ns::self)
+            .def(py::self_ns::self | py::self_ns::self)
+            .def(~py::self_ns::self);
         py::class_<effect_wrapper>("Effect", py::no_init);
         py::class_<effect_group_wrapper>("EffectsGroup", py::no_init);
         py::class_<enum_wrapper<UnlockableItemType>>("UnlockableItemType", py::no_init);
+        py::class_<enum_wrapper<EmpireAffiliationType>>("EmpireAffiliationType", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
         py::class_<source_wrapper>("__Source", py::no_init)
             .def_readonly("Owner", &source_wrapper::owner);
         py::class_<target_wrapper>("__Target", py::no_init)
-            .def_readonly("HabitableSize", &target_wrapper::habitable_size);
+            .def_readonly("HabitableSize", &target_wrapper::habitable_size)
+            .def_readonly("MaxShield", &target_wrapper::max_shield)
+            .def_readonly("MaxDefense", &target_wrapper::max_defense)
+            .def_readonly("MaxTroops", &target_wrapper::max_troops)
+            .def_readonly("ID", &target_wrapper::id)
+            .def_readonly("Owner", &target_wrapper::owner)
+            .def_readonly("SystemID", &target_wrapper::system_id)
+            .def_readonly("DesignID", &target_wrapper::design_id);
+        py::class_<local_candidate_wrapper>("__LocalCandidate", py::no_init)
+            .def_readonly("LastTurnAttackedByShip", &local_candidate_wrapper::last_turn_attacked_by_ship)
+            .def_readonly("LastTurnConquered", &local_candidate_wrapper::last_turn_conquered)
+            .def_readonly("LastTurnColonized", &local_candidate_wrapper::last_turn_colonized);
 
         m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"));
         m_meta_path.append(boost::cref(*this));
@@ -154,20 +178,30 @@ bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
 
 py::object PythonParser::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
     auto module_path(m_scripting_dir);
+    std::string parent = "";
+    std::string current = "";
     for (boost::algorithm::split_iterator<std::string::const_iterator> it
          = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
          it != boost::algorithm::split_iterator<std::string::const_iterator>();
          ++ it)
     {
         module_path = module_path / boost::copy_range<std::string>(*it);
+        if (!current.empty()) {
+            if (parent.empty()) {
+                parent = std::move(current);
+            } else {
+                parent = parent + "." + current;
+            }
+        }
+        current = boost::copy_range<std::string>(*it);
     }
 
     if (boost::filesystem::exists(module_path) && boost::filesystem::is_directory(module_path)) {
-        return py::object(module_spec(fullname, *this));
+        return py::object(module_spec(fullname, parent, *this));
     } else {
         module_path.replace_extension("py");
         if (boost::filesystem::exists(module_path) && boost::filesystem::is_regular_file(module_path)) {
-            return py::object(module_spec(fullname, *this));
+            return py::object(module_spec(fullname, parent, *this));
         } else {
             return py::object();
         }
@@ -178,8 +212,10 @@ py::object PythonParser::create_module(const module_spec& spec) {
     return py::object();
 }
 
-py::object PythonParser::exec_module(const py::object& module) {
+py::object PythonParser::exec_module(py::object& module) {
     std::string fullname = py::extract<std::string>(module.attr("__name__"));
+
+    py::dict m_dict = py::extract<py::dict>(module.attr("__dict__"));
 
     auto module_path(m_scripting_dir);
     for (boost::algorithm::split_iterator<std::string::iterator> it
@@ -202,10 +238,21 @@ py::object PythonParser::exec_module(const py::object& module) {
                 throw import_error("Unreadable module");
             }
 
+            // store globals content in module namespace
+            // it is required so functions in the same module will see each other
+            // and still import will work
+            py::dict globals = m_current_globals ? (*m_current_globals)() : py::dict();
+            py::stl_input_iterator<py::object> g_begin(globals.keys()), g_end;
+            for (auto it = g_begin; it != g_end; ++ it) {
+                if (!m_dict.has_key(*it)) {
+                    m_dict[*it] = globals[*it];
+                }
+            }
+
             try {
                 py::exec(file_contents.c_str(),
-                         m_current_globals ? (*m_current_globals)() : py::object(),
-                         module.attr("__dict__"));
+                         m_dict,
+                         m_dict);
             } catch (const boost::python::error_already_set& err) {
                 m_python.HandleErrorAlreadySet();
                 if (!m_python.IsPythonRunning()) {
