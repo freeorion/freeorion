@@ -569,13 +569,14 @@ namespace {
 
     struct py_grammar_techs {
         const PythonParser& m_parser;
+        TechManager::TechContainer& m_techs;
+        boost::python::dict globals;
 
-        py_grammar_techs(const PythonParser& parser):m_parser(parser) {
-        }
-
-        boost::python::dict operator()(TechManager::TechContainer& techs) const {
-            boost::python::dict globals(boost::python::import("builtins").attr("__dict__"));
-            std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_game_rule = [this](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(*this, args, kw); };
+        py_grammar_techs(const PythonParser& parser, TechManager::TechContainer& techs):m_parser(parser)
+            ,m_techs(techs)
+            ,globals(boost::python::import("builtins").attr("__dict__"))
+        {
+std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_game_rule = [this](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(*this, args, kw); };
             globals["GameRule"] = boost::python::raw_function(f_insert_game_rule);
             std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_tech = [&techs](const boost::python::tuple& args, const boost::python::dict& kw) { return py_insert_tech_(techs, args, kw); };
             globals["Tech"] = boost::python::raw_function(f_insert_tech);
@@ -615,6 +616,9 @@ namespace {
             globals["Destroy"] = effect_wrapper(std::make_shared<Effect::Destroy>());
             globals["VisibleToEmpire"] = boost::python::raw_function(insert_visible_to_empire_);
             globals["GenerateSitRepMessage"] = boost::python::raw_function(insert_generate_sit_rep_message_);
+        }
+
+        boost::python::dict operator()() const {
             return globals;
         }
 
@@ -701,12 +705,12 @@ namespace parse {
 
         py_parse::detail::parse_file<py_grammar_category, TechManager::TechContainer>(parser, path / "Categories.inf.py", py_grammar_category(), techs_);
 
-        py_grammar_techs p = py_grammar_techs(parser);
+        py_grammar_techs p = py_grammar_techs(parser, techs_);
 
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, TechManager::TechContainer>(tech_lexer, file, techs_);
         for (const auto& file : ListDir(path, IsFOCPyScript))
-            py_parse::detail::parse_file<py_grammar_techs, TechManager::TechContainer>(parser, file, p, techs_);
+            py_parse::detail::parse_file<py_grammar_techs>(parser, file, p);
 
         return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
     }
