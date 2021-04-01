@@ -18,7 +18,7 @@ namespace py_parse { namespace detail {
 
         Grammar grammar(parser);
 
-        return parser.ParseFileCommon(path, [grammar, &arg1]() { return grammar(arg1); }, filename, file_contents);
+        return parser.ParseFileCommon(path, grammar(arg1), filename, file_contents);
     }
 
     template <typename Grammar, typename Arg1, typename Arg2>
@@ -30,7 +30,7 @@ namespace py_parse { namespace detail {
 
         Grammar grammar(parser);
 
-        return parser.ParseFileCommon(path, [grammar, &arg1, &arg2]() { return grammar(arg1, arg2); }, filename, file_contents);
+        return parser.ParseFileCommon(path, grammar(arg1, arg2), filename, file_contents);
     }
 
     template <typename T, typename F, typename V>

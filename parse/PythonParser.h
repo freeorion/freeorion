@@ -26,7 +26,7 @@ public:
     PythonParser& operator=(PythonParser&&) = delete;
 
     bool ParseFileCommon(const boost::filesystem::path& path,
-                         std::function<boost::python::dict()> globals,
+                         const boost::python::dict& globals,
                          std::string& filename, std::string& file_contents) const;
 
     boost::python::object type_int;
@@ -41,7 +41,7 @@ private:
     PythonCommon&                  m_python;
     const boost::filesystem::path& m_scripting_dir;
     boost::python::list            m_meta_path;
-    mutable boost::optional<std::function<boost::python::dict()>> m_current_globals;
+    mutable boost::optional<boost::python::dict> m_current_globals;
 };
 
 #endif
