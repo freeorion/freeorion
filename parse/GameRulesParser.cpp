@@ -103,7 +103,7 @@ object insert_rule_(const grammar& g,
 namespace parse {
     GameRules game_rules(const PythonParser& parser, const boost::filesystem::path& path) {
         GameRules game_rules;
-        /*auto success =*/ py_parse::detail::parse_file<grammar, GameRules>(parser, path, game_rules);
+        /*auto success =*/ py_parse::detail::parse_file<grammar, GameRules>(parser, path, grammar(parser), game_rules);
         return game_rules;
     }
 }

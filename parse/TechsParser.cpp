@@ -235,9 +235,6 @@ namespace {
     }
 
     struct py_grammar_category {
-        py_grammar_category(const PythonParser& parser) {
-        }
-
         boost::python::dict operator()(TechManager::TechContainer& techs) const {
             boost::python::dict globals(boost::python::import("builtins").attr("__dict__"));
             globals["Category"] = boost::python::raw_function(insert_category_);
@@ -702,12 +699,14 @@ namespace parse {
 
         ScopedTimer timer("Techs Parsing", true);
 
-        py_parse::detail::parse_file<py_grammar_category, TechManager::TechContainer>(parser, path / "Categories.inf.py", techs_);
+        py_parse::detail::parse_file<py_grammar_category, TechManager::TechContainer>(parser, path / "Categories.inf.py", py_grammar_category(), techs_);
+
+        py_grammar_techs p = py_grammar_techs(parser);
 
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, TechManager::TechContainer>(tech_lexer, file, techs_);
         for (const auto& file : ListDir(path, IsFOCPyScript))
-            py_parse::detail::parse_file<py_grammar_techs, TechManager::TechContainer>(parser, file, techs_);
+            py_parse::detail::parse_file<py_grammar_techs, TechManager::TechContainer>(parser, file, p, techs_);
 
         return std::make_tuple(std::move(techs_), std::move(categories), categories_seen);
     }
