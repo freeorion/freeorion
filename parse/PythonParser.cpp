@@ -141,7 +141,7 @@ PythonParser::~PythonParser() {
 }
 
 bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
-                                   std::function<boost::python::dict()> globals,
+                                   const boost::python::dict& globals,
                                    std::string& filename, std::string& file_contents) const
 {
     filename = path.string();
@@ -154,7 +154,7 @@ bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
 
     try {
         m_current_globals = globals;
-        py::exec(file_contents.c_str(), globals());
+        py::exec(file_contents.c_str(), globals);
         m_current_globals = boost::none;
     } catch (const boost::python::error_already_set& err) {
         m_current_globals = boost::none;
@@ -241,7 +241,7 @@ py::object PythonParser::exec_module(py::object& module) {
             // store globals content in module namespace
             // it is required so functions in the same module will see each other
             // and still import will work
-            py::dict globals = m_current_globals ? (*m_current_globals)() : py::dict();
+            py::dict globals = m_current_globals ? (*m_current_globals) : py::dict();
             py::stl_input_iterator<py::object> g_begin(globals.keys()), g_end;
             for (auto it = g_begin; it != g_end; ++ it) {
                 if (!m_dict.has_key(*it)) {
