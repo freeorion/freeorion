@@ -424,7 +424,7 @@ void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG
 }
 
 namespace {
-    const double TWO_PI = 2.0 * 3.14159;
+    constexpr double TWO_PI = 2.0 * 3.14159;
 }
 
 class ScanlineRenderer::Impl {

@@ -77,19 +77,15 @@ MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id, const std::vect
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_bar_shading_texture(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png")),
     m_meter_types(meter_types),
-    m_initial_values(),
-    m_projected_values(),
-    m_target_max_values(),
-    m_object_id(object_id),
-    m_bar_colours()
+    m_object_id(object_id)
 {
     SetName("MultiMeterStatusBar");
     Update();
 }
 
 void MultiMeterStatusBar::Render() {
-    GG::Clr DARY_GREY = GG::Clr(44, 44, 44, 255);
-    GG::Clr HALF_GREY = GG::Clr(128, 128, 128, 128);
+    constexpr GG::Clr DARY_GREY = GG::Clr(44, 44, 44, 255);
+    constexpr GG::Clr HALF_GREY = GG::Clr(128, 128, 128, 128);
 
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();

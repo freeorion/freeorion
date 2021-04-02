@@ -545,7 +545,7 @@ void glColor(const Clr& clr)
 Clr GG::DisabledColor(Clr clr)
 {
     Clr retval = clr;
-    const double gray_factor = 0.75; // amount to move clr in the direction of gray
+    constexpr double gray_factor = 0.75; // amount to move clr in the direction of gray
     retval.r = static_cast<int>(retval.r + (CLR_GRAY.r - retval.r) * gray_factor);
     retval.g = static_cast<int>(retval.g + (CLR_GRAY.g - retval.g) * gray_factor);
     retval.b = static_cast<int>(retval.b + (CLR_GRAY.b - retval.b) * gray_factor);

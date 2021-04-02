@@ -28,7 +28,7 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const double BUTTON_DIMMING_SCALE_FACTOR = 0.75;
+    constexpr double BUTTON_DIMMING_SCALE_FACTOR = 0.75;
 
     constexpr GG::X::value_type INVALID_POS = std::numeric_limits<GG::X::value_type>::min();
     constexpr GG::X INVALID_X = GG::X(INVALID_POS);

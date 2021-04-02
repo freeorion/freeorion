@@ -21,7 +21,7 @@ using namespace GG;
 
 namespace {
 
-const double EPSILON = 0.0001;
+constexpr double EPSILON = 0.0001;
 
 HSVClr Convert(const Clr& color)
 {

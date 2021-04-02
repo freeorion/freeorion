@@ -1342,7 +1342,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     const double NODE_SEP = Value(TechPanelHeight()) * GetOptionsDB().Get<double>("ui.research.tree.spacing.vertical");
     const double WIDTH = Value(TechPanelWidth());
     const double HEIGHT = Value(TechPanelHeight());
-    const double X_MARGIN(12);
+    constexpr double X_MARGIN{12};
 
     // view state initial data
     int initial_hscroll_pos = m_hscroll->PosnRange().first;
@@ -2123,8 +2123,8 @@ void TechTreeWnd::Reset() {
 }
 
 void TechTreeWnd::InitializeWindows() {
-    const GG::Pt pedia_ul(GG::X0,  GG::Y0);
-    const GG::Pt pedia_wh(GG::X(480), GG::Y(240));
+    constexpr GG::Pt pedia_ul(GG::X0,  GG::Y0);
+    constexpr GG::Pt pedia_wh(GG::X(480), GG::Y(240));
 
     // Don't know this wnd's height in advance so place it off the bottom edge,
     // it subclasses CUIWnd so it will reposition itself to be visible.

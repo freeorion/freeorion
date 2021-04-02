@@ -11,7 +11,7 @@
 
 
 namespace {
-    const double MINIMUM_POP_CENTER_POPULATION = 0.01001;  // rounds up to 0.1 when showing 2 digits, down to 0.05 or 50.0 when showing 3
+    constexpr double MINIMUM_POP_CENTER_POPULATION = 0.01001;  // rounds up to 0.1 when showing 2 digits, down to 0.05 or 50.0 when showing 3
 }
 
 PopCenter::PopCenter(const std::string& species_name) :

@@ -576,7 +576,7 @@ namespace {
         ShipFightersBrowseRow(std::string label, int qty, double value, double base_value = 0.0f) :
             GG::ListBox::Row(FighterBrowseListWidth(), MeterBrowseRowHeight())
         {
-            const GG::Clr QTY_COLOR = GG::CLR_GRAY;
+            constexpr GG::Clr QTY_COLOR = GG::CLR_GRAY;
 
             m_label_control = GG::Wnd::Create<CUILabel>(std::move(label), GG::FORMAT_RIGHT);
 
@@ -772,9 +772,9 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         return;
 
     // colors used, these could be moved to OptionsDB if other controls utilize similar value types
-    const GG::Clr DAMAGE_COLOR = GG::CLR_ORANGE;
-    const GG::Clr BAY_COLOR = GG::Clr(0, 160, 255, 255);
-    const GG::Clr HANGAR_COLOR = GG::CLR_YELLOW;
+    constexpr GG::Clr DAMAGE_COLOR = GG::CLR_ORANGE;
+    constexpr GG::Clr BAY_COLOR = GG::Clr(0, 160, 255, 255);
+    constexpr GG::Clr HANGAR_COLOR = GG::CLR_YELLOW;
 
     const GG::X LABEL_WIDTH = FighterBrowseLabelWidth();
     const GG::X QTY_WIDTH = MeterBrowseQtyWidth();

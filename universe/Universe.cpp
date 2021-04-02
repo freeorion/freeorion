@@ -105,7 +105,7 @@ namespace {
 
     // the effective distance for ships travelling along a wormhole, for
     // determining how much of their speed is consumed by the jump
-    // unused variable const double    WORMHOLE_TRAVEL_DISTANCE = 0.1;
+    // unused variable consexprt double WORMHOLE_TRAVEL_DISTANCE = 0.1;
 
     template <typename Key, typename Value>
     struct constant_property

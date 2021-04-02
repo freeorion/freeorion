@@ -20,8 +20,8 @@
 
 
 namespace {
-    const GG::X WINDOW_WIDTH(400);
-    const GG::Y WINDOW_HEIGHT(535);
+    constexpr GG::X WINDOW_WIDTH(400);
+    constexpr GG::Y WINDOW_HEIGHT(535);
 
     bool NameOK(const std::string& name) {
         for (const auto& character : name) {

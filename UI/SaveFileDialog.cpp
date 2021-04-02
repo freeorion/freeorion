@@ -31,21 +31,21 @@ using std::vector;
 using std::string;
 
 namespace {
-    const GG::X SAVE_FILE_DIALOG_WIDTH(600);
-    const GG::Y SAVE_FILE_DIALOG_HEIGHT(400);
-    const GG::X SAVE_FILE_DIALOG_MIN_WIDTH(160);
-    const GG::Y SAVE_FILE_DIALOG_MIN_HEIGHT(100);
+    constexpr GG::X SAVE_FILE_DIALOG_WIDTH(600);
+    constexpr GG::Y SAVE_FILE_DIALOG_HEIGHT(400);
+    constexpr GG::X SAVE_FILE_DIALOG_MIN_WIDTH(160);
+    constexpr GG::Y SAVE_FILE_DIALOG_MIN_HEIGHT(100);
 
     const std::string SAVE_FILE_WND_NAME = "dialog.save";
 
-    const GG::X PROMT_WIDTH(200);
-    const GG::Y PROMPT_HEIGHT(75);
+    constexpr GG::X PROMT_WIDTH(200);
+    constexpr GG::Y PROMPT_HEIGHT(75);
 
-    const double DEFAULT_STRETCH = 1.0;
+    constexpr double DEFAULT_STRETCH = 1.0;
 
-    const GG::X SAVE_FILE_BUTTON_MARGIN ( 10 );
-    const unsigned int SAVE_FILE_CELL_MARGIN = 2;
-    const unsigned int ROW_MARGIN = 2;
+    constexpr GG::X SAVE_FILE_BUTTON_MARGIN{10};
+    constexpr unsigned int SAVE_FILE_CELL_MARGIN = 2;
+    constexpr unsigned int ROW_MARGIN = 2;
 
     const std::string PATH_DELIM_BEGIN = "[";
     const std::string PATH_DELIM_END = "]";

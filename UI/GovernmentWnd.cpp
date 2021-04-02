@@ -1471,7 +1471,7 @@ void GovernmentWnd::Refresh() {
 }
 
 void GovernmentWnd::DoLayout() {
-    const GG::Pt palette_ul(GG::X0, GG::Y0);
+    constexpr GG::Pt palette_ul(GG::X0, GG::Y0);
     const GG::Pt palette_lr(palette_ul + GG::Pt(ClientWidth(), ClientHeight() / 2));
 
     const GG::Pt main_ul(palette_ul + GG::Pt(GG::X0, ClientHeight() / 2));

@@ -7,8 +7,8 @@
 #include "../client/human/GGHumanClientApp.h"
 
 namespace {
-    const GG::X WINDOW_WIDTH(300);
-    const GG::Y WINDOW_HEIGHT(250);
+    constexpr GG::X WINDOW_WIDTH(300);
+    constexpr GG::Y WINDOW_HEIGHT(250);
 }
 
 PasswordEnterWnd::PasswordEnterWnd() :

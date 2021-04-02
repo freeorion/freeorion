@@ -59,8 +59,8 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     ResourceCenter::Init();
     Planet::Init();
 
-    const double SPIN_STD_DEV = 0.1;
-    const double REVERSE_SPIN_CHANCE = 0.06;
+    constexpr double SPIN_STD_DEV = 0.1;
+    constexpr double REVERSE_SPIN_CHANCE = 0.06;
     m_rotational_period = RandGaussian(1.0, SPIN_STD_DEV) / SizeRotationFactor(m_size);
     if (RandZeroToOne() < REVERSE_SPIN_CHANCE)
         m_rotational_period = -m_rotational_period;
@@ -560,7 +560,7 @@ void Planet::SetRotationalPeriod(float days)
 { m_rotational_period = days; }
 
 void Planet::SetHighAxialTilt() {
-    const double MAX_TILT = 90.0;
+    constexpr double MAX_TILT = 90.0;
     m_axial_tilt = HIGH_TILT_THERESHOLD + RandZeroToOne() * (MAX_TILT - HIGH_TILT_THERESHOLD);
 }
 

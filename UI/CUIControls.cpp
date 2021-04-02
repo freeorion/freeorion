@@ -51,8 +51,8 @@ namespace {
     void PlayTextTypingSound(const std::string&)
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.input.keyboard.sound.path"), true); }
 
-    const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
-    const double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;
+    constexpr double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
+    constexpr double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;
 }
 
 

@@ -225,7 +225,7 @@ void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data, A
     }
 }
 
-const double ITALICS_SLANT_ANGLE = 12; // degrees
+constexpr double ITALICS_SLANT_ANGLE = 12; // degrees
 const double ITALICS_FACTOR = 1.0 / tan((90 - ITALICS_SLANT_ANGLE) * 3.1415926 / 180.0); // factor used to shear glyphs ITALICS_SLANT_ANGLE degrees CW from straight up
 
 const std::vector<std::pair<std::uint32_t, std::uint32_t>> PRINTABLE_ASCII_ALPHA_RANGES{

@@ -19,8 +19,8 @@
 #include <boost/filesystem/operations.hpp>
 
 namespace {
-    const GG::X IN_GAME_OPTIONS_WIDTH(150);
-    const GG::Y IN_GAME_OPTIONS_HEIGHT(310);
+    constexpr GG::X IN_GAME_OPTIONS_WIDTH(150);
+    constexpr GG::Y IN_GAME_OPTIONS_HEIGHT(310);
 }
 
 InGameMenu::InGameMenu():
@@ -116,7 +116,7 @@ GG::X InGameMenu::ButtonWidth() const {
 }
 
 GG::Y InGameMenu::ButtonCellHeight() const {
-    const GG::Y MIN_BUTTON_HEIGHT(40);
+    constexpr GG::Y MIN_BUTTON_HEIGHT(40);
     return std::max(MIN_BUTTON_HEIGHT, m_done_btn->MinUsableSize().y);
 }
 
