@@ -127,6 +127,41 @@ namespace Pending {
         return Pending<decltype(parser(path))>(
             std::async(std::launch::async, parser, path), path.filename().string());
     }
+
+    template <typename Func>
+    struct Parsing {
+        Func parser;
+        std::promise<void> barrier;
+
+        Parsing(Func _parser, std::promise<void>&& _barrier) :
+            parser(_parser),
+            barrier(std::move(_barrier))
+        { }
+
+        auto operator()(const boost::filesystem::path& path)
+            -> decltype(parser(path))
+        {
+            auto ret = parser(path);
+            barrier.set_value();
+            return ret;
+        }
+    };
+
+    /** Return a Pending<T> constructed with \p parser and \p path
+     * and notify \p barrier*/
+    template <typename Func>
+    auto StartParsing(Func parser,
+                      const boost::filesystem::path& path,
+                      std::promise<void>&& barrier)
+        -> Pending<decltype(parser(path))>
+    {
+        return Pending<decltype(parser(path))>(
+            std::async(std::launch::async,
+                       Parsing<Func>(parser, std::move(barrier)),
+                       path),
+            path.filename().string());
+    }
+
 }
 
 

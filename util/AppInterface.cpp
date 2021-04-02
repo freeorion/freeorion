@@ -19,7 +19,9 @@
 
 #include <boost/filesystem.hpp>
 
+#include <exception>
 #include <future>
+#include <stdexcept>
 
 extern template TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const boost::filesystem::path& path);
 
@@ -50,19 +52,21 @@ int IApp::MAX_AI_PLAYERS() {
 
 void IApp::StartBackgroundParsing(std::promise<void>&& barrier) {
     namespace fs = boost::filesystem;
-    barrier.set_value();
 
     const auto& rdir = GetResourceDir();
     if (!IsExistingDir(rdir)) {
         ErrorLogger() << "Background parse given non-existant resources directory: " << rdir.string() ;
+        barrier.set_exception(std::make_exception_ptr(std::runtime_error("non-existant resources directory")));
         return;
     }
 
     // named value ref parsing can be done in parallel as the referencing happens after parsing
     if (IsExistingDir(rdir / "scripting/common"))
-        GetNamedValueRefManager().SetNamedValueRefParse(Pending::StartParsing(parse::named_value_refs, rdir / "scripting/common"));
-    else
+        GetNamedValueRefManager().SetNamedValueRefParse(Pending::StartParsing(parse::named_value_refs, rdir / "scripting/common", std::move(barrier)));
+    else {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/common").string();
+        barrier.set_value();
+    }
 
     if (IsExistingDir(rdir / "scripting/buildings"))
         GetBuildingTypeManager().SetBuildingTypes(Pending::StartParsing(parse::buildings, rdir / "scripting/buildings"));
