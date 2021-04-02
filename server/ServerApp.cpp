@@ -119,7 +119,10 @@ ServerApp::ServerApp() :
 
     // Start parsing content before FSM initialization
     // to have data initialized before autostart execution
-    StartBackgroundParsing();
+    std::promise<void> barrier;
+    std::future<void> barrier_future = barrier.get_future();
+    StartBackgroundParsing(std::move(barrier));
+    barrier_future.wait();
 
     m_fsm->initiate();
 
@@ -168,8 +171,8 @@ namespace {
 #include <stdlib.h>
 #endif
 
-void ServerApp::StartBackgroundParsing() {
-    IApp::StartBackgroundParsing();
+void ServerApp::StartBackgroundParsing(std::promise<void>&& barrier) {
+    IApp::StartBackgroundParsing(std::move(barrier));
     const auto& rdir = GetResourceDir();
 
     if (fs::exists(rdir / "scripting/starting_unlocks/items.inf"))

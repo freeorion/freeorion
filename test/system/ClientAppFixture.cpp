@@ -27,7 +27,10 @@ ClientAppFixture::ClientAppFixture() :
     InfoLogger() << FreeOrionVersionString();
     DebugLogger() << "Test client initialized";
 
-    StartBackgroundParsing();
+    std::promise<void> barrier;
+    std::future<void> barrier_future = barrier.get_future();
+    StartBackgroundParsing(std::move(barrier));
+    barrier_future.wait();
 }
 
 int ClientAppFixture::EffectsProcessingThreads() const

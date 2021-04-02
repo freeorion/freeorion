@@ -13,9 +13,9 @@
 #include "../universe/ShipPart.h"
 #include "../universe/ShipHull.h"
 #include "../universe/Tech.h"
-#include "../util/Directories.h"
-#include "../util/GameRules.h"
-#include "../util/Pending.h"
+#include "Directories.h"
+#include "GameRules.h"
+#include "Pending.h"
 
 #include <boost/filesystem.hpp>
 
@@ -48,8 +48,9 @@ int IApp::MAX_AI_PLAYERS() {
     return max_number_AIs;
 }
 
-void IApp::StartBackgroundParsing() {
+void IApp::StartBackgroundParsing(std::promise<void>&& barrier) {
     namespace fs = boost::filesystem;
+    barrier.set_value();
 
     const auto& rdir = GetResourceDir();
     if (!IsExistingDir(rdir)) {

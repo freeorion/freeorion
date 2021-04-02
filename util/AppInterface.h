@@ -48,8 +48,9 @@ public:
     //! known universe of this application.
     virtual Universe& GetUniverse() = 0;
 
-    /** Start parsing universe object types on a separate thread. */
-    virtual void StartBackgroundParsing();
+    /** Start parsing universe object types on a separate thread.
+      * Uses \a barrier to notify a main thread about completion named values. */
+    virtual void StartBackgroundParsing(std::promise<void>&& barrier);
 
     /** Returns the set of known Empires for this application. */
     virtual EmpireManager& Empires() = 0;

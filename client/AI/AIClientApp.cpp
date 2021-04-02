@@ -141,7 +141,10 @@ void AIClientApp::Run() {
                                                  boost::uuids::nil_uuid()));
 
         // Start parsing content
-        StartBackgroundParsing();
+        std::promise<void> barrier;
+        std::future<void> barrier_future = barrier.get_future();
+        StartBackgroundParsing(std::move(barrier));
+        barrier_future.wait();
 
         // respond to messages until disconnected
         while (1) {
