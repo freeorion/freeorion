@@ -1926,12 +1926,13 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
         return ALL_EMPIRES;
     }
 
+    int previous_player_id = EmpirePlayerID(empire_id);
+
     // make a link to new connection
     m_player_empire_ids[player_connection->PlayerID()] = empire_id;
     empire->SetAuthenticated(player_connection->IsAuthenticated());
 
     // drop previous connection to that empire
-    int previous_player_id = EmpirePlayerID(empire_id);
     if (previous_player_id != Networking::INVALID_PLAYER_ID) {
         WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
                      << " previous player " << previous_player_id
