@@ -4,7 +4,7 @@
 #include "CUIControls.h"
 
 namespace {
-    const int EXPAND_BUTTON_SIZE = 20;
+    constexpr int EXPAND_BUTTON_SIZE = 20;
 }
 
 AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left) :

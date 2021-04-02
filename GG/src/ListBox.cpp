@@ -61,7 +61,9 @@ struct ListSignalEcho
     std::string m_name;
 };
 
-const int SCROLL_WIDTH = 14;
+namespace {
+    constexpr int SCROLL_WIDTH = 14;
+}
 
 class RowSorter // used to sort rows by a certain column (which may contain some empty cells)
 {

@@ -22,7 +22,7 @@
 
 namespace {
     // high tilt is arbitrarily taken to mean 45 degrees or more
-    const float HIGH_TILT_THERESHOLD = 45.0f;
+    constexpr float HIGH_TILT_THERESHOLD = 45.0f;
 
     float SizeRotationFactor(PlanetSize size) {
         switch (size) {

@@ -67,12 +67,10 @@ namespace {
         //Influence GG::Clr(255, 0, 255, 255);
     }
 
-    const int       EDGE_PAD(3);
-
-    const int       BAR_PAD(1);
-    const GG::Y     BAR_HEIGHT(10);
-
-    const double    MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT = 100.0;
+    constexpr int    EDGE_PAD(3);
+    constexpr int    BAR_PAD(1);
+    constexpr GG::Y  BAR_HEIGHT(10);
+    constexpr double MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT = 100.0;
 }
 
 MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType>>& meter_types) :

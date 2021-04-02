@@ -20,7 +20,7 @@
 
 
 namespace {
-    const float EPSILON = 0.001f;
+    constexpr float EPSILON = 0.001f;
 
     void AddRules(GameRules& rules) {
         // limits amount of PP per turn that can be imported into the stockpile

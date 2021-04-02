@@ -38,8 +38,8 @@ namespace {
     { db.Add("ui." + PROD_PEDIA_WND_NAME + ".hidden.enabled", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false); }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const int MAX_PRODUCTION_TURNS = 200;
-    const float EPSILON = 0.001f;
+    constexpr int MAX_PRODUCTION_TURNS = 200;
+    constexpr float EPSILON = 0.001f;
 
     int ProductionTurns(float total_cost, int minimum_production_time, float local_pp_output,
                         float stockpile, float stockpile_limit_per_turn)

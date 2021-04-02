@@ -31,7 +31,7 @@ namespace {
     bool temp_bool = RegisterGameRules(&AddRules);
 
     const std::string EMPTY_STRING;
-    const float ARBITRARY_LARGE_COST = 999999.9f;
+    constexpr float ARBITRARY_LARGE_COST = 999999.9f;
 
     bool DesignsTheSame(const ShipDesign& one, const ShipDesign& two) {
         return (

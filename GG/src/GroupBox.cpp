@@ -17,19 +17,16 @@
 using namespace GG;
 
 namespace {
+    Y TopOfFrame(bool label, const std::shared_ptr<Font>& font)
+    { return label ? font->Lineskip() / 2 - 1 : Y0; }
 
-Y TopOfFrame(bool label, const std::shared_ptr<Font>& font)
-{ return label ? font->Lineskip() / 2 - 1 : Y0; }
-
+    constexpr int FRAME_THICK = 2;
+    constexpr int PIXEL_MARGIN = 4;
 }
 
 ////////////////////////////////////////////////
 // GG::GroupBox
 ////////////////////////////////////////////////
-// static(s)
-const int GroupBox::FRAME_THICK = 2;
-const int GroupBox::PIXEL_MARGIN = 4;
-
 GroupBox::GroupBox()
 {}
 

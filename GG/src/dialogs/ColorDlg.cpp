@@ -189,7 +189,7 @@ void HueSaturationPicker::Render()
                       static_cast<Y>(ul.y + size.y * (1.0 - m_saturation)));
     glColor(CLR_SHADOW);
 
-    const float GAP(3.0f);
+    constexpr float GAP(3.0f);
 
     GL2DVertexBuffer lines_verts;
     lines_verts.reserve(16);
@@ -403,7 +403,7 @@ ColorDlg::ColorDisplay::ColorDisplay(Clr color) :
 void ColorDlg::ColorDisplay::Render()
 {
     Pt ul = UpperLeft(), lr = LowerRight();
-    const int SQUARE_SIZE = 7;
+    constexpr int SQUARE_SIZE = 7;
 
     GL2DVertexBuffer    vert_buf;
     GLRGBAColorBuffer   colour_buf;

@@ -18,9 +18,7 @@
 using namespace GG;
 
 namespace {
-
-const int BORDER_THICKNESS = 1; // thickness with which to draw menu borders
-
+    constexpr int BORDER_THICKNESS = 1; // thickness with which to draw menu borders
 }
 
 

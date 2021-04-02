@@ -5,7 +5,7 @@
 #include "../util/AppInterface.h"
 
 namespace {
-    const float EPSILON = 0.01f;
+    constexpr float EPSILON = 0.01f;
 
     /** sets the .allocated_rp, value for each Tech in the queue.  Only sets
       * nonzero funding to a Tech if it is researchable this turn.  Also

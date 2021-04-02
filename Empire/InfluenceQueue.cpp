@@ -12,7 +12,7 @@
 
 
 namespace {
-    //const float EPSILON = 0.01f;
+    //constexpr float EPSILON = 0.01f;
 
     //void AddRules(GameRules& rules)
     //{}

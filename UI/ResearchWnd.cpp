@@ -22,7 +22,7 @@
 
 
 namespace {
-    const float OUTER_LINE_THICKNESS = 2.0f;
+    constexpr float OUTER_LINE_THICKNESS = 2.0f;
 
     void AddOptions(OptionsDB& db) {
         // queue width used also on production screen. prevent double-adding...

@@ -34,8 +34,8 @@ namespace {
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 
-    const float ARBITRARY_LARGE_COST = 999999.9f;
-    const int ARBITRARY_LARGE_TURNS = 999999;
+    constexpr float ARBITRARY_LARGE_COST = 999999.9f;
+    constexpr int ARBITRARY_LARGE_TURNS = 999999;
 
     // create effectsgroup that increases the value of \a meter_type
     // by the result of evalulating \a increase_vr

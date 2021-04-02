@@ -88,7 +88,7 @@ void Scroll::CompleteConstruction()
 Pt Scroll::MinUsableSize() const
 {
     Pt retval;
-    const int MIN_DRAGABLE_SIZE = 2;
+    constexpr int MIN_DRAGABLE_SIZE = 2;
     if (m_orientation == Orientation::VERTICAL) {
         retval.x = X(MIN_DRAGABLE_SIZE);
         Y decr_y = m_decr ? m_decr->MinUsableSize().y : Y0;

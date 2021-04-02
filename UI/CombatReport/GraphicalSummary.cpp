@@ -18,33 +18,33 @@
 namespace {
     // These margins determine how we avoid drawing children on top of the
     // bevel in the lower right corner.
-    GG::X BEVEL_MARGIN_X(6);
-    GG::Y BEVEL_MARGIN_Y(12);
+    constexpr GG::X BEVEL_MARGIN_X(6);
+    constexpr GG::Y BEVEL_MARGIN_Y(12);
 
     // The height of the space where the display option buttons are put
     GG::Y OPTION_BAR_HEIGHT(25);
     // The height of option buttons
-    GG::Y OPTION_BUTTON_HEIGHT(20);
-    GG::X OPTION_BUTTON_PADDING(8);
+    constexpr GG::Y OPTION_BUTTON_HEIGHT(20);
+    constexpr GG::X OPTION_BUTTON_PADDING(8);
 
     // How much space to leave for the y axis
-    GG::X AXIS_WIDTH(10);
+    constexpr GG::X AXIS_WIDTH(10);
     // How much space to leave for the x axis
     // at the top of a SideBar
-    GG::Y AXIS_HEIGHT(10);
+    constexpr GG::Y AXIS_HEIGHT(10);
 
     // Space around the labels of the axes
-    GG::X Y_AXIS_LABEL_MARGIN(3);
-    GG::Y X_AXIS_LABEL_MARGIN(8);
+    constexpr GG::X Y_AXIS_LABEL_MARGIN(3);
+    constexpr GG::Y X_AXIS_LABEL_MARGIN(8);
 
     // Margin between x-axis label and whatever is above the side bars top
-    GG::Y SIDE_BAR_UP_MARGIN(5);
+    constexpr GG::Y SIDE_BAR_UP_MARGIN(5);
 
     // Space between side boxes
-    GG::Y SIDE_BOX_MARGIN(8);
+    constexpr GG::Y SIDE_BOX_MARGIN(8);
 
-    int MIN_SIDE_BAR_WIDTH = 100;
-    int MIN_SIDE_BAR_HEIGHT = 40;
+    constexpr int MIN_SIDE_BAR_WIDTH = 100;
+    constexpr int MIN_SIDE_BAR_HEIGHT = 40;
 
     // The participant bar height when its parent side bar height is
     // MIN_SIDE_BAR_HEIGHT.
@@ -53,7 +53,7 @@ namespace {
                                      Value(X_AXIS_LABEL_MARGIN) -
                                      Value(SIDE_BAR_UP_MARGIN);
 
-    const float EPSILON = 0.00001f;
+    constexpr float EPSILON = 0.00001f;
 
     const std::string OPTIONS_ROOT = "ui.combat.summary.graph.";
 

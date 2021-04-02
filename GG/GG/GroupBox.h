@@ -60,13 +60,6 @@ public:
 protected:
     GroupBox();
 
-    /** The thickness with which to render the frame. */
-    static const int FRAME_THICK;
-
-    /** The number of pixels to leave between the client area and the
-        frame. */
-    static const int PIXEL_MARGIN;
-
 private:
     Clr                             m_color;      ///< Color of box frame
     Clr                             m_text_color; ///< Color of label text

@@ -90,8 +90,8 @@ struct WndVerticalLess
         {return lhs->Top() < rhs->Top();}
 };
 
-const int DEFAULT_LAYOUT_BORDER_MARGIN = 0;
-const int DEFAULT_LAYOUT_CELL_MARGIN = 5;
+constexpr int DEFAULT_LAYOUT_BORDER_MARGIN = 0;
+constexpr int DEFAULT_LAYOUT_CELL_MARGIN = 5;
 
 struct ForwardToParentException {};
 

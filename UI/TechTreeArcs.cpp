@@ -14,7 +14,7 @@
 #include <boost/graph/graph_concepts.hpp>
 
 namespace {
-    const float ARC_THICKNESS = 3.0;
+    constexpr float ARC_THICKNESS = 3.0;
 }
 
 
