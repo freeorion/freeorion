@@ -124,7 +124,7 @@ void IApp::StartBackgroundParsing(std::promise<void>&& barrier) {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/game_rules.focs.txt").string();
 
     if (IsExistingDir(rdir / "scripting/techs"))
-        GetTechManager().SetTechs(Pending::StartParsing(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));
+        GetTechManager().SetTechs(Pending::Parsed(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/techs").string();
 

@@ -162,6 +162,17 @@ namespace Pending {
             path.filename().string());
     }
 
+    /** Return a Pending<T> constructed with \p parser and \p path which parses in same thread. */
+    template <typename Func>
+    auto Parsed(const Func& parser, const boost::filesystem::path& path)
+        -> Pending<decltype(parser(path))>
+    {
+        auto result = parser(path);
+        auto promise = std::promise<decltype(parser(path))>();
+        promise.set_value(std::move(result));
+        return Pending<decltype(parser(path))>(promise.get_future(), path.filename().string());
+    }
+
 }
 
 
