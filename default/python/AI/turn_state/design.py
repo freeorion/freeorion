@@ -11,15 +11,15 @@ from turn_state._planet_state import get_inhabited_planets
 
 
 @cache_for_current_turn
-def _fill_design_cache() -> Dict[PriorityType, Tuple[float, int, int, float]]:
+def get_design_repository() -> Dict[PriorityType, Tuple[float, int, int, float]]:
     """Calculate the best designs for each ship class available at this turn."""
 
-    design_cache = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating and indexed by priority type
+    design_repository = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating and indexed by priority type
 
     design_timer = AITimer('ShipDesigner')
     design_timer.start('Updating cache for new turn')
 
-    # TODO Dont use PriorityType but introduce more reasonable Enum
+    # TODO Don't use PriorityType but introduce more reasonable Enum
     designers = [
         ('Orbital Invasion', PriorityType.PRODUCTION_ORBITAL_INVASION, ShipDesignAI.OrbitalTroopShipDesigner),
         ('Invasion', PriorityType.PRODUCTION_INVASION, ShipDesignAI.StandardTroopShipDesigner),
@@ -34,19 +34,19 @@ def _fill_design_cache() -> Dict[PriorityType, Tuple[float, int, int, float]]:
 
     for timer_name, priority_type, designer in designers:
         design_timer.start(timer_name)
-        design_cache[priority_type] = designer().optimize_design()
+        design_repository[priority_type] = designer().optimize_design()
     best_military_stats = ShipDesignAI.WarShipDesigner().optimize_design()
     best_carrier_stats = ShipDesignAI.CarrierShipDesigner().optimize_design()
     best_stats = best_military_stats + best_carrier_stats if random.random() < .8 else best_military_stats
     best_stats.sort(reverse=True)
-    design_cache[PriorityType.PRODUCTION_MILITARY] = best_stats
+    design_repository[PriorityType.PRODUCTION_MILITARY] = best_stats
     design_timer.start('Krill Spawner')
     ShipDesignAI.KrillSpawnerShipDesigner().optimize_design()  # just designing it, building+mission not supported yet
     if fo.currentTurn() % 10 == 0:
         design_timer.start('Printing')
         ShipDesignAI.Cache.print_best_designs()
     design_timer.stop_print_and_clear()
-    return design_cache
+    return design_repository
 
 
 @cache_for_current_turn
@@ -54,16 +54,16 @@ def cur_best_military_design_rating() -> float:
     """
     Find and return the default combat rating of our best military design.
     """
-    design_cache = _fill_design_cache()
+    design_repository = get_design_repository()
 
     priority = PriorityType.PRODUCTION_MILITARY
-    if design_cache.get(priority, None) and design_cache[priority][0]:
+    if design_repository.get(priority, None) and design_repository[priority][0]:
         # the rating provided by the ShipDesigner does not
         # reflect the rating used in threat considerations
         # but takes additional factors (such as cost) into
         # account. Therefore, we want to calculate the actual
         # rating of the design as provided by CombatRatingsAI.
-        _, _, _, _, stats = design_cache[priority][0]
+        _, _, _, _, stats = design_repository[priority][0]
         # TODO: Should this consider enemy stats?
         rating = stats.convert_to_combat_stats().get_rating()
         return max(rating, 0.001)
@@ -91,10 +91,10 @@ def _get_best_ship_info(
         priority: PriorityType,
         planet_ids: Tuple[int]
 ) -> Tuple[Optional[int], Optional["fo.shipDesign"], Optional[List[int]]]:
-    design_cache = _fill_design_cache()
+    design_repository = get_design_repository()
 
-    if priority in design_cache:
-        best_designs = design_cache[priority]
+    if priority in design_repository:
+        best_designs = design_repository[priority]
         if not best_designs:
             return None, None, None
 
@@ -135,14 +135,14 @@ def get_best_ship_ratings(planet_ids: Tuple[int]) -> List[Tuple[float, int, int,
 
 @cache_for_current_turn
 def _get_best_ship_ratings(planet_ids: Tuple[int]) -> Iterator[Tuple[float, int, int, "fo.shipDesign"]]:
-    _design_cache = _fill_design_cache()
+    design_repository = get_design_repository()
     priority = PriorityType.PRODUCTION_MILITARY
     planet_ids = set(planet_ids).intersection(ColonisationAI.empire_shipyards)
 
-    if priority not in _design_cache:
+    if priority not in design_repository:
         return
 
-    build_choices = _design_cache[priority]
+    build_choices = design_repository[priority]
     loc_choices = [[rating, pid, design_id, fo.getShipDesign(design_id)]
                    for (rating, pid, design_id, cost, stats) in build_choices if pid in planet_ids]
     if not loc_choices:
