@@ -3,7 +3,6 @@
 #include "../Empire/Supply.h"
 #include "../Empire/Diplomacy.h"
 #include "../Empire/Government.h"
-#include "../Empire/InfluenceQueue.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/UnlockableItem.h"
 #include "../universe/Planet.h"
@@ -399,30 +398,6 @@ namespace FreeOrionPython {
         py::class_<UnlockableItem>("UnlockableItem", py::init<UnlockableItemType, const std::string&>())
             .add_property("type",               &UnlockableItem::type)
             .add_property("name",               &UnlockableItem::name)
-        ;
-
-        ///////////////////////
-        //  Influence Queue  //
-        ///////////////////////
-        py::class_<InfluenceQueue::Element>("influenceQueueElement", py::no_init)
-            .def_readonly("name",                   &InfluenceQueue::Element::name)
-            .def_readonly("allocation",             &InfluenceQueue::Element::allocated_ip)
-        ;
-        py::class_<InfluenceQueue, boost::noncopyable>("influenceQueue", py::no_init)
-            .def("__iter__",                        py::iterator<InfluenceQueue>())  // InfluenceQueue provides STL container-like interface to contained queue
-            .def("__getitem__",                     +[](const InfluenceQueue& queue, int index) -> const InfluenceQueue::Element& { return queue[index]; },
-                                                    py::return_internal_reference<>())
-            .def("__len__",                         &InfluenceQueue::size)
-            .add_property("size",                   &InfluenceQueue::size)
-            .add_property("empty",                  &InfluenceQueue::empty)
-            .def("inQueue",                         &InfluenceQueue::InQueue)
-            .def("__contains__",                    +[](const InfluenceQueue* queue, const InfluenceQueue::Element& element) -> bool { return queue->InQueue(element.name); },
-                                                    py::return_value_policy<py::return_by_value>())
-            .add_property("totalSpent",             &InfluenceQueue::TotalIPsSpent)
-            .add_property("empireID",               &InfluenceQueue::EmpireID)
-
-            .add_property("allocatedStockpileIP",   &InfluenceQueue::AllocatedStockpileIP)
-            .add_property("expectedNewStockpile",   &InfluenceQueue::ExpectedNewStockpileAmount)
         ;
 
         //////////////////
