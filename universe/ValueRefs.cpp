@@ -1776,6 +1776,42 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
         return empire->TurnPolicyAdopted(policy_name);
     }
+    else if (variable_name == "NumPoliciesAdopted") {
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1) {
+            empire_id = m_int_ref1->Eval(context);
+            if (empire_id == ALL_EMPIRES)
+                return 0;
+        }
+        auto empire = context.GetEmpire(empire_id);
+        if (!empire)
+            return 0;
+
+        std::string policy_category_name;
+        if (m_string_ref1)
+            policy_category_name = m_string_ref1->Eval();
+
+        int count = 0;
+        if (policy_category_name.empty()) {
+            for (auto& p : empire->AdoptedPolicies()) {
+                if (!p.empty())
+                    ++count;
+            }
+            return count;
+
+        } else {
+            for (auto& [cat_name, policy_names_turns] : empire->CategoriesSlotsPoliciesAdopted()) {
+                if (cat_name == policy_category_name) {
+                    for (auto& [ignored_turn, policy_name] : policy_names_turns) {
+                        (void)ignored_turn;
+                        if (!policy_name.empty())
+                            ++count;
+                    }
+                }
+            }
+            return count;
+        }
+    }
 
     return 0;
 }

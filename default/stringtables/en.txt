@@ -4915,6 +4915,9 @@ Planets
 COLONIES_COUNT
 Colonies
 
+POLICIES_ADOPTED
+Policies Adopted
+
 BATTLESHIP_COUNT
 Armed Ships
 

@@ -62,10 +62,13 @@ namespace parse {
                     |   tok.SpeciesShipsScrapped_
                     |   tok.TurnTechResearched_
                     |   tok.TurnPolicyAdopted_
+                    |   tok.NumPoliciesAdopted_
                     )
                 >  -(   label(tok.empire_) > int_rules.expr)
                 >  -(   label(tok.name_) >   string_grammar)
-                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, deconstruct_movable_(_3, _pass), nullptr)) ]
+                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
+                        _1, deconstruct_movable_(_2, _pass), nullptr, nullptr, deconstruct_movable_(_3, _pass), nullptr))
+                  ]
             ;
 
         empire_ships_destroyed

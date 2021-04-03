@@ -301,8 +301,9 @@
     (number)                                    \
     (Number)                                    \
     (NumberOf)                                  \
+    (NumPoliciesAdopted)                        \
     (NumShips)                                  \
-    (NumStarlanes)                              \
+    (NumStarlanes)
 
 #define TOKEN_SEQ_8                             \
     (object)                                    \
@@ -520,7 +521,7 @@
     (SpeciesShipsProduced)                      \
     (SpeciesShipsScrapped)                      \
     (speed)                                     \
-    (Speed)                                 \
+    (Speed)                                     \
     (Spread)                                    \
     (stackinggroup)                             \
     (Star)                                      \

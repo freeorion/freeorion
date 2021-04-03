@@ -1,3 +1,6 @@
+Statistic name = "POLICIES_ADOPTED" value =
+    NumPoliciesAdopted empire = Source.Owner
+
 Statistic name = "BUILDINGS_PRODUCED" value =
     BuildingTypesProduced empire = Source.Owner
 
