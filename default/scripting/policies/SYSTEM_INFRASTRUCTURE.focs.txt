@@ -5,7 +5,10 @@ Policy
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 60
     prerequisites = [ "PLC_PLANETARY_INFRA" ]
-    unlock = Item type = Policy name = "PLC_CAPITAL_MARKETS"
+    unlock = [
+        Item type = Policy name = "PLC_CAPITAL_MARKETS"
+        Item type = Policy name = "PLC_INTERSTELLAR_INFRA"
+    ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
