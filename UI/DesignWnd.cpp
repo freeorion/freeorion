@@ -3832,7 +3832,7 @@ public:
 
     /** I18nString stores a string that might be in the stringtable. */
     class I18nString {
-        public:
+    public:
         I18nString (bool is_in_stringtable, const std::string& text) :
             m_is_in_stringtable(is_in_stringtable), m_text(text)
         {}
@@ -3851,7 +3851,7 @@ public:
         bool IsInStringtable() const
         { return m_is_in_stringtable; }
 
-        private:
+    private:
         const bool m_is_in_stringtable;
         const std::string m_text;
     };
