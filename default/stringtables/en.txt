@@ -8340,7 +8340,7 @@ Industrious Flying Monkeys.
 
 SP_PHINNERT_DESC
 '''Description:
-Phinnerts are tree-dwelling mammals with size varying from 1 to 2 meters tall. They have long arms, with a wingspan of about twice their height. They have hairy, retractable flaps of skin that stretch from wrist to ankle and allow for fully functional flight in low gravity. They are very agile fliers and can catch flying bug-like creatures with a fully prehensile nose appendage. Like bats they can use echo-location, this sense is not highly developed though.
+Phinnerts are tree-dwelling mammals with size varying from 1 to 2 meters tall. They have long arms, with a wingspan of about twice their height. They have hairy, retractable flaps of skin that stretch from wrist to ankle and allow for fully functional flight in low gravity. They are very agile fliers and can catch flying bug-like creatures with a fully prehensile nose appendage. Like bats they can use echo-location, although this sense is not highly developed.
 
 Social Structure:
 Life is much shorter for Phinnerts than for most other sentient life, owing to the many dangers of the swamp. All Phinnerts are generally treated as extended family by each other and grudges do not last long. There is no central authority, there's only a vague hierarchy. The balance of power can change very quickly with the high mortality rate. Society is far less individualistic, and more focused on the group.
@@ -8361,7 +8361,7 @@ Prefer [[PT_RADIATED]] planets.
 
 SP_REPLICON_DESC
 '''Description:
-The Replicons look like a 3m tall robotic spider with wings. The wings are actually highly efficient solar panels that fold out to a relatively large area, the 'abdomen' is actually the 'industrial processing center' where replacement parts and new Replicons are forged.
+The Replicons look like a 3 m tall robotic spider with wings. The wings are actually highly efficient solar panels that fold out to a relatively large area, the 'abdomen' is actually the 'industrial processing center' where replacement parts and new Replicons are forged.
 
 Social Structure:
 Replicons have a relatively primitive social structure. They have a planetary government, because a few feudal lords discovered space travel as a convenient way of attacking people really far away. Their government is effectively feudal, due to some unusual effects that allowed them to reach space flight before achieving the nationstate/industrial revolution stage of development. Because of the wide variety of self-replicating machines on Cisarruj, most needs that are met by industry on other worlds are met by 'agriculture' or 'breeding' by Replicons. They end up without any actual 'Industrial Base' or even much of an understanding of technology other than what various 'natural' parts and products can be used for. This means that their society is highly illiterate, most people passing on knowledge that their pappies taught them on how to skin a "creature's" titanium coat, just enough so that it could grow it back or how much uranium ore to feed a reprocessing reactor if it was giving bad aluminum. Most things that normal 'developed' societies would expect are only present in the lord's estates, the remainder of society looks like something out of a post-apocalyptic novel.
@@ -11670,6 +11670,15 @@ Planets with a luxury resource special and that is set to influence focus will e
 
 PLC_CAPITAL_MARKETS_SHORT_DESC
 Boosts stability with resource export
+
+PLC_ARTISAN_WORKSHOPS
+Artisan Workshops
+
+PLC_ARTISAN_WORKSHOPS_DESC
+Planets with [[ARTISTIC]] species that are set to influence focus will export aesthetically pleasing crafts to supply-connected planets, boosting the stability of planets with species that like (or don't dislike) the artistic species.
+
+PLC_ARTISAN_WORKSHOPS_SHORT_DESC
+Artistic species produce luxuries
 
 
 ##
@@ -16641,6 +16650,9 @@ Antiquated
 
 STYLISH
 Stylish
+
+ARTISTIC
+Artistic
 
 ORGANIC
 Organic
