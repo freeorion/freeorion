@@ -60,10 +60,8 @@ FO_COMMON_API extern const int INVALID_DESIGN_ID;
 namespace {
     DeclareThreadSafeLogger(effects);
     DeclareThreadSafeLogger(conditions);
-}
 
-namespace {
-    const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
+    constexpr bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true; // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 
     void AddOptions(OptionsDB& db) {
         auto HardwareThreads = []() -> int {
@@ -3020,7 +3018,7 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
         // streamlined option
         objects.CopyForSerialize(*m_objects);
 
-    } else if (!ENABLE_VISIBILITY_EMPIRE_MEMORY) {
+    } else if constexpr (!ENABLE_VISIBILITY_EMPIRE_MEMORY) {
         // if encoding without memory, copy all info visible to specified empire
         objects.Copy(*m_objects, encoding_empire);
 
@@ -3075,7 +3073,7 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
 
     empire_latest_known_objects.clear();
 
-    if (!ENABLE_VISIBILITY_EMPIRE_MEMORY)
+    if constexpr (!ENABLE_VISIBILITY_EMPIRE_MEMORY)
         return;
 
     if (encoding_empire == ALL_EMPIRES) {
