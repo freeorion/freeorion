@@ -27,7 +27,8 @@ SPECIAL_INFLUENCE_RESOURCE_EXPORT
         // stability bonus to connected planets that like this special when running capital markets
         EffectsGroup
             scope = And [
-                Object id = Source.PlanetID
+                Planet
+                Not Source
                 Population low = 0.001
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial > 0)
                 ResourceSupplyConnected empire = Source.Owner condition = Source
@@ -39,8 +40,8 @@ SPECIAL_INFLUENCE_RESOURCE_EXPORT
                 EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_CAPITAL_MARKETS"
             ]
             stackinggroup = "@1@_STACK"
-            effects =
-                SetTargetHappiness value = Value + 1
+            accountinglabel = "@1@_IMPORTS"
+            effects = SetTargetHappiness value = Value + 1
 '''
 
 SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS
@@ -66,19 +67,6 @@ SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS
             accountinglabel = "DISLIKES_SPECIAL_LABEL"
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_SPECIAL_ON_PLANET]] * SpeciesContentOpinion species = Target.Species name = ThisSpecial
-                
-        // species like special in the same system
-        EffectsGroup
-            scope = And [
-                Planet
-                InSystem id = Source.SystemID
-                Population low = 0.001
-                Not Object id = Source.PlanetID // but not on same planet, which is covered by above case
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial < 0)
-            ]
-            accountinglabel = "DISLIKES_SPECIAL_LABEL"
-            effects =
-                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_SPECIAL_IN_SYSTEM]] * SpeciesContentOpinion species = Target.Species name = ThisSpecial
 
         // species dislike special in the same system
         EffectsGroup

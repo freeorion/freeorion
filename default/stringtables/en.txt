@@ -9225,11 +9225,17 @@ Succulent Barnacles
 SUCCULENT_BARNACLES_SPECIAL_DESC
 The planet hosts a colony of succulent barnacles that can be harvested and exported.
 
+SUCCULENT_BARNACLES_SPECIAL_IMPORTS
+Imported [[SUCCULENT_BARNACLES_SPECIAL]]
+
 FRACTAL_GEODES_SPECIAL
 Fractal Geodes
 
 FRACTAL_GEODES_SPECIAL_DESC
 The planet is scattered with irridescent fractal geodes that can be collected and exported.
+
+FRACTAL_GEODES_SPECIAL_IMPORTS
+Imported [[FRACTAL_GEODES_SPECIAL]]
 
 SHIMMER_SILK_SPECIAL
 Shimmer Silk
@@ -9237,17 +9243,26 @@ Shimmer Silk
 SHIMMER_SILK_SPECIAL_SPECIAL_DESC
 This planet extrudes sheets of delicate and shimmering silk-like material that can be collected and exported.
 
+SHIMMER_SILK_SPECIAL_IMPORTS
+Imported [[SHIMMER_SILK_SPECIAL]]
+
 SPARK_FOSSILS_SPECIAL
 Spark Fossils
 
 SPARK_FOSSILS_SPECIAL_DESC
 This planet's outer crust is spotted with clear crystal fossilized creatures that sparkle with electric discharges when touched, and which can be extracted and exported.
 
+SPARK_FOSSILS_SPECIAL_IMPORTS
+Imported [[SPARK_FOSSILS_SPECIAL]]
+
 MIMETIC_ALLOY_SPECIAL
 Mimetic Alloy
 
 MIMETIC_ALLOY_SPECIAL_DESC
 This planet has pools of mimetic alloy on its surface, which morphs to resemble the shape of an object placed nearby, and which may be bottled and exported.
+
+MIMETIC_ALLOY_SPECIAL_IMPORTS
+Imported [[MIMETIC_ALLOY_SPECIAL]]
 
 
 ##
@@ -16143,14 +16158,24 @@ DISLIKES_BUILDING_LABEL
 Dislikes %1% building %2%
 
 # %1% name of planet
-# %2% name of species on planet
+# %2% name of species on planet (not the focus!)
 LIKES_FOCUS_LABEL
 Likes %1% focus
 
 # %1% name of planet
-# %2% name of species on planet
+# %2% name of species on planet (not the focus!)
 DISLIKES_FOCUS_LABEL
 Dislikes %1% focus
+
+# %1% name of planet
+# %2% name of special
+LIKES_SPECIAL_LABEL
+Likes %1% %2%
+
+# %1% name of planet
+# %2% name of special
+DISLIKES_SPECIAL_LABEL
+Dislikes %1% %2%
 
 # %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
