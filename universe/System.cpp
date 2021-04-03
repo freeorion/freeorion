@@ -48,7 +48,7 @@ System* System::Clone(int empire_id) const {
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    System* retval = new System(m_star, m_name, X(), Y());
+    System* retval = new System(StarType::INVALID_STAR_TYPE, "", X(), Y());
     retval->Copy(shared_from_this(), empire_id);
     return retval;
 }
@@ -72,7 +72,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
         // add any visible lanes, without removing existing entries
         std::map<int, bool> visible_lanes_holes = copied_system->VisibleStarlanesWormholes(empire_id);
         for (const auto& entry : visible_lanes_holes)
-        { this->m_starlanes_wormholes[entry.first] = entry.second; }
+           this->m_starlanes_wormholes[entry.first] = entry.second;
 
         // copy visible info of visible contained objects
         this->m_objects = copied_system->VisibleContainedObjectIDs(empire_id);
