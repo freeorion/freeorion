@@ -4909,6 +4909,9 @@ Production Output
 RP_OUTPUT
 Research Output
 
+IP_OUTPUT
+Net Influence Output
+
 PLANET_COUNT
 Planets
 
