@@ -46,7 +46,7 @@ import copy
 import math
 from collections import Counter, defaultdict
 from logging import debug, error, info, warning
-from typing import Dict, Iterable, KT, List, VT
+from typing import Dict, Iterable, KT, List, Optional, Sequence, Tuple, Union, VT
 
 import freeOrionAIInterface as fo
 
@@ -752,14 +752,12 @@ class ShipDesigner:
         method to read out all stats.
         """
 
-        def parse_complex_tokens(tup):
+        def parse_complex_tokens(tup: Tuple) -> float:
             """Parse complex tokens which have a value dependent on another value
 
             Example usage:
             Repair by 10% of max structure per turn. {REPAIR_PER_TURN: (STRUCTURE, 0.1)}
             :param tup: (dependency, fraction_of_value)
-            :type tup: tuple
-            :return: float
             """
             dependency, value = tup
             dep_val = 0
@@ -771,13 +769,11 @@ class ShipDesigner:
                 warning("Can't parse dependent token:" + str(tup))
             return dep_val * value
 
-        def parse_tokens(tokendict, is_hull=False):
+        def parse_tokens(tokendict: dict, is_hull: bool = False):
             """Adjust design stats according to the token dict key-value pairs.
 
             :param tokendict: tokens and values
-            :type tokendict: dict
             :param is_hull: tokendict is related to hull
-            :type is_hull: bool
             """
             for token, value in tokendict.items():
                 if isinstance(value, tuple) and token is not AIDependencies.ORGANIC_GROWTH:
@@ -849,12 +845,8 @@ class ShipDesigner:
         else:
             self.design_stats.fuel = (self.design_stats.fuel - self.hull.fuel) * self._hull_fuel_efficiency() + self.hull.fuel
 
-    def add_design(self, verbose=True):
-        """Add a real (i.e. gameobject) ship design of the current configuration.
-
-        :param verbose: toggles detailed debugging output
-        :type verbose: bool
-        """
+    def add_design(self, verbose: bool = True):
+        """Add a real (i.e. gameobject) ship design of the current configuration."""
         # First build a name. We want to have a safe way to reference the design
         # And to find out whether it is a duplicate of an existing one.
         # Therefore, we build a reference name using the hullname and all parts.
@@ -899,22 +891,23 @@ class ShipDesigner:
         """
         pass
 
-    def optimize_design(self, additional_parts=(), additional_hulls=(),
-                        loc=None, verbose=False, consider_fleet_count=True):
-        """Try to find the optimimum designs for the shipclass for each planet and add it as gameobject.
+    def optimize_design(self,
+                        additional_parts=(),
+                        additional_hulls: Sequence = (),
+                        loc: Optional[Union[int, List[int]]] = None,
+                        verbose: bool = False,
+                        consider_fleet_count: bool = True
+                        ) -> List[Tuple[float, int, int, float, DesignStats]]:
+        """Try to find the optimum designs for the ship class for each planet and add it as game object.
 
         Only designs with a positive rating (i.e. matching the minimum requirements) will be returned.
+        Return list of (rating, planet_id, design_id, cost, design_stats) tuples, i.e. best available design for each planet
 
-        :return: list of (rating, planet_id, design_id, cost, design_stats) tuples, i.e. best available design for each planet
-        :param loc: int or list of ints (optional) - planet ids where the designs are to be built. Default: All planets.
-        :param verbose: Toggles detailed logging for debugging.
-        :type verbose: bool
-        :param additional_hulls: additional unavailable hulls to consider in the design process
-        :type additional_hulls: list
         :param additional_parts: additional unavailable parts to consider in the design process
-        :type additional_parts: list
+        :param additional_hulls: additional unavailable hulls to consider in the design process
+        :param loc: planet ids where the designs are to be built. Default: All planets.
+        :param verbose: Toggles detailed logging for debugging.
         :param consider_fleet_count: Toggles whether fleet upkeep should be reflected in the rating.
-        :type consider_fleet_count: bool
         """
         if loc is None:
             planets = get_inhabited_planets()
@@ -1046,7 +1039,7 @@ class ShipDesigner:
         sorted_design_list = sorted(best_design_list, key=lambda x: x[0], reverse=True)
         return sorted_design_list
 
-    def _filter_parts(self, partname_dict, verbose=False):
+    def _filter_parts(self, partname_dict: dict, verbose: bool = False):
         """Filter the partname_dict.
 
         This function filters a list of parts according to the following criteria:
@@ -1060,7 +1053,6 @@ class ShipDesigner:
 
         :param partname_dict: keys: slottype, values: list of partnames. MODIFIED INSIDE THIS FUNCTION!
         :param verbose: toggles verbose logging
-        :type verbose: bool
         """
         empire_id = fo.empireID()
         if verbose:
@@ -1992,30 +1984,29 @@ class KrillSpawnerShipDesigner(ShipDesigner):
         return ret_val
 
 
-def _create_ship_design(design_name, hull_name, part_names, model="fighter",
-                        description="", icon="", name_desc_in_string_table=False,
-                        verbose=False):
+def _create_ship_design(
+        design_name: str,
+        hull_name: str,
+        part_names: list,
+        model: str = "fighter",
+        description: str = "",
+        icon: str = "",
+        name_desc_in_string_table: bool = False,
+        verbose: bool = False
+) -> bool:
     """This is basically a wrapper around fo.issueCreateShipDesignOrder to
     also update the cache.
 
-    :param design_name: the name of the design
-    :type design_name: str
-    :param description: a human readable description of the design
-    :type description: str
-    :param hull_name: the name of the hull to use
-    :type hull_name: str
-    :param part_names: list of partnames (string)
-    :type part_names: list
-    :param icon: an icon that is shown (for instance in the Production dialog)
-    :type icon: str
-    :param model: a modelname
-    :type model: str
-    :param name_desc_in_string_table: lookup the name in the stringstable
-    :type name_desc_in_string_table: bool
-    :param verbose: write some debugging output
-    :type verbose: bool
+     Return True if design is created.
 
-    :returns: bool (True on success False on error)
+    :param design_name: the name of the design
+    :param hull_name: the name of the hull to use
+    :param part_names: list of partnames (string)
+    :param model: a modelname
+    :param description: a human readable description of the design
+    :param icon: an icon that is shown (for instance in the Production dialog)
+    :param name_desc_in_string_table: lookup the name in the stringstable
+    :param verbose: write some debugging output
     """
 
     res = bool(fo.issueCreateShipDesignOrder(design_name, description,
@@ -2037,15 +2028,13 @@ def _create_ship_design(design_name, hull_name, part_names, model="fighter",
     return res
 
 
-def _update_design_by_name_cache(design_name, verbose=False, cache_as_invalid=True):
+def _update_design_by_name_cache(
+        design_name: str, verbose: bool = False, cache_as_invalid: bool = True
+) -> Optional[fo.shipDesign]:
     """Updates the design by name cache
 
     :param design_name: the name of the design that needs updating
-    :type design_name: str
     :param verbose: write some debugging output
-    :type verbose: bool
-
-    :return: shipDesign object or None
     """
 
     design = None
@@ -2059,7 +2048,7 @@ def _update_design_by_name_cache(design_name, verbose=False, cache_as_invalid=Tr
         Cache.design_id_by_name[design_name] = design.id
     elif cache_as_invalid:
         # invalid design
-        debug("Shipdesign %s seems not to exist: Caching as invalid design." % design_name)
+        debug("Ship design %s seems not to exist: Caching as invalid design." % design_name)
         Cache.design_id_by_name[design_name] = INVALID_ID
     return design
 
