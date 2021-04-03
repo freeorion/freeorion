@@ -11,7 +11,19 @@
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
+#include "../util/GameRules.h"
 #include "../util/i18n.h"
+
+
+namespace {
+    void AddRules(GameRules& rules) {
+        // makes all PRNG be reseeded frequently
+        rules.Add<bool>(UserStringNop("RULE_BASIC_VIS_SYSTEM_INFO_SHOWN"),
+                        UserStringNop("RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC"),
+                        "", false, true);
+    }
+    bool temp_bool = RegisterGameRules(&AddRules);
+}
 
 
 System::System(StarType star, const std::string& name, double x, double y) :
@@ -69,10 +81,15 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
     UniverseObject::Copy(std::move(copied_object), vis, visible_specials);
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
+        if (GetGameRules().Get<bool>("RULE_BASIC_VIS_SYSTEM_INFO_SHOWN")) {
+            this->m_name = copied_system->m_name;
+            this->m_star = copied_system->m_star;
+        }
+
         // add any visible lanes, without removing existing entries
         std::map<int, bool> visible_lanes_holes = copied_system->VisibleStarlanesWormholes(empire_id);
         for (const auto& entry : visible_lanes_holes)
-           this->m_starlanes_wormholes[entry.first] = entry.second;
+            this->m_starlanes_wormholes[entry.first] = entry.second;
 
         // copy visible info of visible contained objects
         this->m_objects = copied_system->VisibleContainedObjectIDs(empire_id);

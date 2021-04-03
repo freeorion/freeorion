@@ -1246,6 +1246,14 @@ RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_DESC
 
 <u>If Off</u>: Planets that have more stealth than an empire's detection strength are detectable by that empire if the empire owns another object in the same system.'''
 
+RULE_BASIC_VIS_SYSTEM_INFO_SHOWN
+Basic System Info Visible
+
+RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
+'''<u>If On</u>: Systems that are detected by an empire at only basic visibility have their name and star type revealed to that empire.
+
+<u>If Off</u>: Basic level visible systems that have never been detected at higher visiblity have unknown name and star type.'''
+
 RULE_HABITABLE_SIZE_TINY
 Tiny planets Habitable size
 
