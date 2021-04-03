@@ -9,9 +9,9 @@ Special
         Planet type = [Radiated Inferno]
     ]
     effectsgroups = [
-        [[SPECIAL_INFLUENCE_RESOURCE_EXPORT]]
+        [[SPECIAL_INFLUENCE_RESOURCE_EXPORT(MIMETIC_ALLOY_SPECIAL)]]
     
-        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS(MIMETIC_ALLOY)]]
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/mimetic_alloy.png"
 
