@@ -2353,7 +2353,6 @@ namespace {
                 }
             }
         }
-
     }
 
     void SetTravelledStarlaneEndpointsVisible(const ObjectMap& objects,
@@ -2377,20 +2376,16 @@ namespace {
             auto& vis_map = empire_object_visibility[fleet->Owner()];
 
             auto system_vis_it = vis_map.find(prev);
-            if (system_vis_it == vis_map.end()) {
+            if (system_vis_it == vis_map.end())
                 vis_map[prev] = Visibility::VIS_BASIC_VISIBILITY;
-            } else {
-                if (system_vis_it->second < Visibility::VIS_BASIC_VISIBILITY)
-                    system_vis_it->second = Visibility::VIS_BASIC_VISIBILITY;
-            }
+            else if (system_vis_it->second < Visibility::VIS_BASIC_VISIBILITY)
+                system_vis_it->second = Visibility::VIS_BASIC_VISIBILITY;
 
             system_vis_it = vis_map.find(next);
-            if (system_vis_it == vis_map.end()) {
+            if (system_vis_it == vis_map.end())
                 vis_map[next] = Visibility::VIS_BASIC_VISIBILITY;
-            } else {
-                if (system_vis_it->second < Visibility::VIS_BASIC_VISIBILITY)
-                    system_vis_it->second = Visibility::VIS_BASIC_VISIBILITY;
-            }
+            else if (system_vis_it->second < Visibility::VIS_BASIC_VISIBILITY)
+                system_vis_it->second = Visibility::VIS_BASIC_VISIBILITY;
         }
     }
 
