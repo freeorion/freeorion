@@ -451,7 +451,7 @@ unsigned int Effect::GetCheckSum() const {
 // NoOp                                                  //
 ///////////////////////////////////////////////////////////
 void NoOp::Execute(ScriptingContext& context) const
-{}
+{ TraceLogger() << "Effect::NoOp::Execute: src: " << context.source << "  tgt: " << context.effect_target; }
 
 std::string NoOp::Dump(unsigned short ntabs) const
 { return DumpIndent(ntabs) + "NoOp\n"; }
