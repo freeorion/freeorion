@@ -49,7 +49,7 @@ namespace gil = boost::gil;
 
 namespace {
 
-const bool INSTRUMENT_GET_WINDOW_UNDER = false;
+constexpr bool INSTRUMENT_GET_WINDOW_UNDER = false;
 
 struct AcceleratorEcho
 {
@@ -961,7 +961,7 @@ std::shared_ptr<Wnd> GUI::NextFocusInteractiveWnd() const
 std::shared_ptr<Wnd> GUI::GetWindowUnder(const Pt& pt) const
 {
     auto wnd{m_impl->m_zlist.Pick(pt, ModalWindow())};
-    if (INSTRUMENT_GET_WINDOW_UNDER && wnd)
+    if constexpr (INSTRUMENT_GET_WINDOW_UNDER && wnd)
         std::cerr << "GUI::GetWindowUnder() : " << wnd->Name() << " @ " << wnd << std::endl;
     return wnd;
 }

@@ -35,16 +35,16 @@ unroll and hide the stack trace, print a message and still crash anyways. */
 // installed version of FO is run with the command-line flag added in as
 // appropriate.
 #ifdef FREEORION_WIN32
-const bool STORE_FULLSCREEN_FLAG = false;
+constexpr bool STORE_FULLSCREEN_FLAG = false;
 // Windows keeps good care of the resolution state itself,
 // so there is no reason to default to not touching it.
-const bool FAKE_MODE_CHANGE_FLAG = false;
+constexpr bool FAKE_MODE_CHANGE_FLAG = false;
 #else
-const bool  STORE_FULLSCREEN_FLAG = true;
+constexpr bool  STORE_FULLSCREEN_FLAG = true;
 // The X window system does not always work
 // well with resolution changes, so we avoid them
 // by default
-const bool FAKE_MODE_CHANGE_FLAG = true;
+constexpr bool FAKE_MODE_CHANGE_FLAG = true;
 #endif
 
 int mainSetupAndRun();

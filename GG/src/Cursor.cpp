@@ -14,9 +14,7 @@
 using namespace GG;
 
 namespace {
-
-const bool OUTLINE_CURSOR = false;
-
+    constexpr bool OUTLINE_CURSOR = false;
 }
 
 Cursor::Cursor()
@@ -44,7 +42,7 @@ void TextureCursor::Render(const Pt& pt)
 {
     assert(m_texture);
     Pt ul = pt - m_hotspot;
-    if (OUTLINE_CURSOR) {
+    if constexpr (OUTLINE_CURSOR) {
         Pt lr = ul + Pt(m_texture->DefaultWidth(), m_texture->DefaultHeight());
         int verts[8] = {
             Value(lr.x), Value(ul.y),
