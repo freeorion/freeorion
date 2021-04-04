@@ -1,58 +1,13 @@
 from collections import defaultdict
 from enum import Enum
-from inspect import getdoc, isroutine
 from logging import error, warning
 from typing import Any, List, Tuple
 
-from stub_generator.constants import ATTRS, CLASS_NAME, DOC, ENUM_PAIRS, NAME, PARENTS
+from stub_generator.constants import ATTRS, CLASS_NAME, PARENTS
+from stub_generator.interface_inspector.class_processor import ClassInfo, inspect_class
 from stub_generator.interface_inspector.enum_processor import EnumInfo, inspect_enum
 from stub_generator.interface_inspector.function_processor import FunctionInfo, inspect_function
-
-
-def _get_member_info(name, member):
-    type_ = str(type(member))
-
-    info = {
-        'type': type_,
-    }
-    if isinstance(member, property):
-        info['getter'] = getdoc(member.fget)
-    elif isroutine(member):
-        info['routine'] = (member.__name__, getdoc(member))
-    elif isinstance(member, (int, str, float, list, tuple, dict, set, frozenset)):
-        pass  # we don't need any
-    elif 'freeOrionAIInterface' in type_ or "freeorion" in type_:
-        pass  # TODO we got some instance here, probably we should inspect it too.
-    else:
-        # instance properties will be already resolved
-        warning('[%s] Unexpected member "%s"(%s)', name, type(member), member)
-    return info
-
-
-def _getmembers(obj, predicate=None):
-    """Return all members of an object as (name, value) pairs sorted by name.
-    Optionally, only return members that satisfy a given predicate."""
-    results = []
-    for key in dir(obj):
-        try:
-            value = getattr(obj, key)
-        except AttributeError:
-            continue
-        except Exception as e:
-            message = [
-                "-" * 20,
-                'Error in "%s.%s" with error' % (obj.__class__.__name__, key),
-                "..." * 20,
-                "Error info:",
-                str(e),
-                "..." * 20,
-            ]
-            error('\n'.join(message))
-            continue
-        if not predicate or predicate(value):
-            results.append((key, value))
-    results.sort()
-    return results
+from stub_generator.interface_inspector.inspection_helpers import _get_member_info, _getmembers
 
 
 def _inspect_instance(instance, location):
@@ -68,22 +23,6 @@ def _inspect_instance(instance, location):
     for attr_name, member in _getmembers(instance):
         if attr_name not in parent_attrs + ['__module__']:
             info[ATTRS][attr_name] = _get_member_info('%s.%s' % (instance.__class__.__name__, attr_name), member)
-    return info
-
-
-def _inspect_class(class_name, obj):
-    parents = obj.mro()[1:-2]
-    parent_attrs = sum((dir(parent) for parent in obj.mro()[1:]), [])
-
-    info = {
-        NAME: class_name,
-        ATTRS: {},
-        DOC: getdoc(obj),
-        PARENTS: [str(parent.__name__) for parent in parents]
-    }
-    for attr_name, member in _getmembers(obj):
-        if attr_name not in parent_attrs + ['__module__', '__instance_size__']:
-            info[ATTRS][attr_name] = _get_member_info('%s.%s' % (class_name, attr_name), member)
     return info
 
 
@@ -108,7 +47,7 @@ def get_type(member):
 
 _OBJECT_HANDLERS = {
     MemberType.ENUM: inspect_enum,
-    MemberType.CLASS: _inspect_class,
+    MemberType.CLASS: inspect_class,
     MemberType.FUNCTION: inspect_function,
 }
 
@@ -156,7 +95,7 @@ def inspect_instances(instances):
             error("Error inspecting: '%s' with '%s': %s", type(instance), type(e), e, exc_info=True)
 
 
-def get_module_info(obj, instances) -> Tuple[Any, List[EnumInfo], List[FunctionInfo], Any]:
+def get_module_info(obj, instances) -> Tuple[List[ClassInfo], List[EnumInfo], List[FunctionInfo], Any]:
     module_members = get_module_members(obj)
     return (
         module_members[MemberType.CLASS],
