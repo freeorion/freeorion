@@ -13,7 +13,6 @@ from turn_state._planet_state import get_inhabited_planets
 @cache_for_current_turn
 def get_design_repository() -> Dict[PriorityType, Tuple[float, int, int, float]]:
     """Calculate the best designs for each ship class available at this turn."""
-
     design_repository = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating and indexed by priority type
 
     design_timer = AITimer('ShipDesigner')
@@ -84,6 +83,8 @@ def get_best_ship_info(
 ) -> Tuple[Optional[int], Optional["fo.shipDesign"], Optional[List[int]]]:
     """Returns 3 item tuple: designID, design, buildLocList."""
     planet_ids = _get_locations(loc)
+    if not planet_ids:
+        return None, None, None
     return _get_best_ship_info(priority, tuple(planet_ids))
 
 
