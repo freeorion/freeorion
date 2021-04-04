@@ -36,7 +36,7 @@ FO_COMMON_API ResourceType MeterToResource(MeterType type);
   * of a particular resource (eg. research, industry). */
 class FO_COMMON_API ResourcePool {
 public:
-    ResourcePool(ResourceType type);
+    explicit ResourcePool(ResourceType type);
 
     const std::vector<int>&         ObjectIDs() const;                      ///< returns UniverseObject IDs in this ResourcePool
     float                           Stockpile() const;                      ///< returns current stockpiled amount of resource
@@ -60,14 +60,14 @@ public:
       * that stockpile and change need to be refreshed. */
     mutable boost::signals2::signal<void ()> ChangedSignal;
 
-    void        SetObjects(const std::vector<int>& object_ids);
+    void SetObjects(const std::vector<int>& object_ids);
     /** specifies which sets systems can share resources.  any two sets should
       * have no common systems. */
-    void        SetConnectedSupplyGroups(const std::set<std::set<int>>& connected_system_groups);
+    void SetConnectedSupplyGroups(const std::set<std::set<int>>& connected_system_groups);
 
-    void        SetStockpile(float d);      ///< sets current sockpiled amount of resource
+    void SetStockpile(float d);      ///< sets current sockpiled amount of resource
 
-    void        Update();                   ///< recalculates total resource production
+    void Update();                   ///< recalculates total resource production
 
 private:
     ResourcePool(); ///< default ctor needed for serialization
