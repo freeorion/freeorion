@@ -5,6 +5,7 @@ from logging import error, warning
 from typing import Any
 
 from stub_generator.constants import ATTRS, CLASS_NAME, DOC, ENUM_PAIRS, NAME, PARENTS
+from stub_generator.interface_inspector.enum_parser import inspect_enum
 
 
 def _get_member_info(name, member):
@@ -92,13 +93,6 @@ def _inspect_function(name, value):
     }
 
 
-def _inspect_enum(name, obj):
-    return {
-        NAME: name,
-        ENUM_PAIRS: [(v.numerator, k) for k, v in obj.names.items()],
-    }
-
-
 class MemberType(Enum):
     ENUM = 1
     CLASS = 2
@@ -119,7 +113,7 @@ def get_type(member):
 
 
 _OBJECT_HANDLERS = {
-    MemberType.ENUM: _inspect_enum,
+    MemberType.ENUM: inspect_enum,
     MemberType.CLASS: _inspect_class,
     MemberType.FUNCTION: _inspect_function,
 }
@@ -170,4 +164,9 @@ def inspect_instances(instances):
 
 def get_module_info(obj, instances):
     module_members = get_module_members(obj)
-    return module_members[MemberType.CLASS],  module_members[MemberType.ENUM], module_members[MemberType.FUNCTION], list(inspect_instances(instances))
+    return (
+        module_members[MemberType.CLASS],
+        module_members[MemberType.ENUM],
+        module_members[MemberType.FUNCTION],
+        list(inspect_instances(instances))
+    )

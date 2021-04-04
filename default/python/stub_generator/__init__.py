@@ -1,7 +1,6 @@
 import os
 from logging import debug
 
-from stub_generator.constants import NAME, ATTRS, DOC, PARENTS, CLASS_NAME, ENUM_PAIRS
 from stub_generator.generate_stub import make_stub
 from stub_generator.interface_inspector import get_module_info
 

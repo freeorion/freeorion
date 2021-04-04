@@ -1,8 +1,10 @@
 from logging import error, warning
-from operator import itemgetter
+from operator import attrgetter, itemgetter
+from typing import List
 
 from common.print_utils import Table, Text
 from stub_generator.constants import ATTRS, CLASS_NAME, DOC, ENUM_PAIRS, NAME, PARENTS
+from stub_generator.interface_inspector import EnumInfo
 from stub_generator.parse_docs import Docs
 
 
@@ -95,21 +97,21 @@ ENUM_STUB = ('class Enum(int):\n'
              '        return super(Enum, cls).__new__(cls, args[0])')
 
 
-def _handle_enum(info):
-    name = info[NAME]
-    enum_items = info[ENUM_PAIRS]
+def _handle_enum(info: EnumInfo):
+    name = info.name
+    pairs = sorted(info.attributes.items(), key=itemgetter(1))
     result = ['class %s(Enum):' % name,
               '    def __init__(self, numerator, name):',
               '        self.name = name',
               ''
               ]
-    pairs = sorted(enum_items)
-    for value, text in pairs:
+
+    for text, value in pairs:
         result.append('    %s = None  # %s(%s, "%s")' % (text, name, value, text))
     result.append('')
     result.append('')  # two empty lines between enum and its items declaration
 
-    for value, text in pairs:
+    for text, value in pairs:
         result.append('%s.%s = %s(%s, "%s")' % (name, text, name, value, text))
     return '\n'.join(result)
 
@@ -135,7 +137,7 @@ def _report_classes_without_instances(classes_map, instance_names, classes_to_ig
     warning(table.get_table())
 
 
-def make_stub(classes, enums, functions, instances, result_path, classes_to_ignore: set):
+def make_stub(classes, enums: List[EnumInfo], functions, instances, result_path, classes_to_ignore: set):
 
     # exclude technical Map classes that are prefixed with map_indexing_suite_ classes
     classes = [x for x in classes if not x[NAME].startswith('map_indexing_suite_')]
@@ -146,8 +148,8 @@ def make_stub(classes, enums, functions, instances, result_path, classes_to_igno
         {instance[CLASS_NAME] for instance in instances},
         classes_to_ignore)
 
-    enums = sorted(enums, key=itemgetter(NAME))
-    enums_names = [x[NAME] for x in enums]
+
+    enums_names = {x.name for x in enums}
 
     # enrich class data with the instance data
     # class properties does not provide any useful info, so we use instance to find return type of the properties
@@ -198,7 +200,7 @@ def make_stub(classes, enums, functions, instances, result_path, classes_to_igno
 
     res.append(ENUM_STUB)
 
-    for enum in sorted(enums, key=itemgetter(NAME)):
+    for enum in sorted(enums, key=attrgetter("name")):
         res.append(_handle_enum(enum))
 
     for function in sorted(functions, key=itemgetter(NAME)):
