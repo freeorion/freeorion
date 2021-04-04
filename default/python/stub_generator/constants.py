@@ -1,5 +1,4 @@
 # Transfer format
-TYPE = 'type___'
 NAME = 'name___'
 ATTRS = 'attrs___'
 DOC = 'doc___'

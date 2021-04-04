@@ -2,7 +2,7 @@ from logging import error, warning
 from operator import itemgetter
 
 from common.print_utils import Table, Text
-from stub_generator.constants import ATTRS, CLASS_NAME, DOC, ENUM_PAIRS, NAME, PARENTS, TYPE
+from stub_generator.constants import ATTRS, CLASS_NAME, DOC, ENUM_PAIRS, NAME, PARENTS
 from stub_generator.parse_docs import Docs
 
 
@@ -114,25 +114,6 @@ def _handle_enum(info):
     return '\n'.join(result)
 
 
-_KNOWN_TYPES = {
-    'boost_class',
-    'enum',
-    'function',
-    'instance',
-}
-
-
-def _sort_by_type(data):
-    groups = {}
-    for info in data:
-        if info[TYPE] in _KNOWN_TYPES:
-            groups.setdefault(info[TYPE], []).append(info)
-        else:
-            error('Unknown type "%s" in "%s' % (info[TYPE], info))
-
-    return tuple(groups.get(name, []) for name in ('boost_class', 'enum', 'instance', 'function'))
-
-
 def _report_classes_without_instances(classes_map, instance_names, classes_to_ignore: set):
     missed_instances = instance_names.symmetric_difference(classes_map).difference(classes_to_ignore)
 
@@ -154,8 +135,8 @@ def _report_classes_without_instances(classes_map, instance_names, classes_to_ig
     warning(table.get_table())
 
 
-def make_stub(data, result_path, classes_to_ignore: set):
-    classes, enums, instances, functions = _sort_by_type(data)
+def make_stub(classes, enums, functions, instances, result_path, classes_to_ignore: set):
+
     # exclude technical Map classes that are prefixed with map_indexing_suite_ classes
     classes = [x for x in classes if not x[NAME].startswith('map_indexing_suite_')]
     classes_map = {x[NAME]: x for x in classes}

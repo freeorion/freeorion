@@ -1,14 +1,17 @@
-import os
+from collections import defaultdict
+from enum import Enum
 from inspect import getdoc, isroutine
-from logging import warning, error, debug
+from logging import error, warning
 from typing import Any
 
-from stub_generator.constants import TYPE, NAME, ATTRS, DOC, PARENTS, CLASS_NAME, ENUM_PAIRS
+from stub_generator.constants import ATTRS, CLASS_NAME, DOC, ENUM_PAIRS, NAME, PARENTS
 
 
 def _get_member_info(name, member):
+    type_ = str(type(member))
+
     info = {
-        'type': str(type(member)),
+        'type': type_,
     }
     if isinstance(member, property):
         info['getter'] = getdoc(member.fget)
@@ -16,7 +19,7 @@ def _get_member_info(name, member):
         info['routine'] = (member.__name__, getdoc(member))
     elif isinstance(member, (int, str, float, list, tuple, dict, set, frozenset)):
         pass  # we don't need any
-    elif 'freeOrionAIInterface' in info['type'] or "freeorion" in info['type']:
+    elif 'freeOrionAIInterface' in type_ or "freeorion" in type_:
         pass  # TODO we got some instance here, probably we should inspect it too.
     else:
         # instance properties will be already resolved
@@ -56,23 +59,21 @@ def _inspect_instance(instance, location):
 
     info = {
         CLASS_NAME: instance.__class__.__name__,
-        TYPE: 'instance',
         ATTRS: {},
         PARENTS: [str(parent.__name__) for parent in parents],
         "location": location,
     }
     for attr_name, member in _getmembers(instance):
         if attr_name not in parent_attrs + ['__module__']:
-            info['attrs___'][attr_name] = _get_member_info('%s.%s' % (instance.__class__.__name__, attr_name), member)
+            info[ATTRS][attr_name] = _get_member_info('%s.%s' % (instance.__class__.__name__, attr_name), member)
     return info
 
 
-def _inspect_boost_class(class_name, obj):
+def _inspect_class(class_name, obj):
     parents = obj.mro()[1:-2]
     parent_attrs = sum((dir(parent) for parent in obj.mro()[1:]), [])
 
     info = {
-        TYPE: "boost_class",
         NAME: class_name,
         ATTRS: {},
         DOC: getdoc(obj),
@@ -84,26 +85,43 @@ def _inspect_boost_class(class_name, obj):
     return info
 
 
-def _inspect_boost_function(name, value):
+def _inspect_function(name, value):
     return {
-        TYPE: 'function',
         NAME: name,
         DOC: getdoc(value)
     }
 
 
-def _inspect_type(name, obj):
+def _inspect_enum(name, obj):
     return {
-        TYPE: "enum",
         NAME: name,
         ENUM_PAIRS: [(v.numerator, k) for k, v in obj.names.items()],
     }
 
 
-_SWITCHER = {
-    "<class 'type'>": _inspect_type,
-    "<class 'Boost.Python.class'>": _inspect_boost_class,
-    "<class 'Boost.Python.function'>": _inspect_boost_function,
+class MemberType(Enum):
+    ENUM = 1
+    CLASS = 2
+    FUNCTION = 3
+    UNKNOWN = -1
+
+
+def get_type(member):
+    type_ = str(type(member))
+    if type_ == "<class 'type'>":
+        return MemberType.ENUM
+    elif type_ == "<class 'Boost.Python.class'>":
+        return MemberType.CLASS
+    elif type_ == "<class 'Boost.Python.function'>":
+        return MemberType.FUNCTION
+    else:
+        return MemberType.UNKNOWN
+
+
+_OBJECT_HANDLERS = {
+    MemberType.ENUM: _inspect_enum,
+    MemberType.CLASS: _inspect_class,
+    MemberType.FUNCTION: _inspect_function,
 }
 
 _NAMES_TO_IGNORE = {'__doc__', '__package__', '__name__', 'INVALID_GAME_TURN', 'to_str', '__loader__', '__spec__'}
@@ -120,18 +138,22 @@ def is_built_in(instance: Any) -> bool:
     return type(instance) in built_in_types
 
 
-def get_module_info(obj, instances, dump=False):
-    data = []
+def get_module_members(obj):
+    module_members = defaultdict(list)
+
     for name, member in _getmembers(obj):
         if name in _NAMES_TO_IGNORE:
             continue
-
-        object_handler = _SWITCHER.get(str(type(member)), None)
-        if object_handler:
-            data.append(object_handler(name, member))
-        else:
+        type_key = get_type(member)
+        if type_key == MemberType.UNKNOWN:
             warning("Unknown: '%s' of type '%s': %s" % (name, type(member), member))
+        else:
+            type_inspector = _OBJECT_HANDLERS[type_key]
+            module_members[type_key].append(type_inspector(name, member))
+    return module_members
 
+
+def inspect_instances(instances):
     for location, instance in instances:
         if is_built_in(instance):
             warning("Argument at %s is builtin python instance: (%s) %s", location, type(instance), instance)
@@ -141,17 +163,11 @@ def get_module_info(obj, instances, dump=False):
                     instance)
             continue
         try:
-
-            # TODO add isntances location some where
-
-            data.append((_inspect_instance(instance, location)))
+            yield _inspect_instance(instance, location)
         except Exception as e:
             error("Error inspecting: '%s' with '%s': %s", type(instance), type(e), e, exc_info=True)
-    if dump:
 
-        dump_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '%s_info.json' % obj.__name__)
-        with open(dump_path, 'w') as f:
-            import json
-            json.dump(sorted(data, key=lambda x: (x.get(NAME, '') or x[CLASS_NAME], x.get(TYPE, ''))), f, indent=4, sort_keys=True)
-        debug("File with interface info is dumped: %s" % dump_path)
-    return data
+
+def get_module_info(obj, instances):
+    module_members = get_module_members(obj)
+    return module_members[MemberType.CLASS],  module_members[MemberType.ENUM], module_members[MemberType.FUNCTION], list(inspect_instances(instances))
