@@ -576,6 +576,9 @@ namespace {
             ,m_techs(techs)
             ,globals(boost::python::import("builtins").attr("__dict__"))
         {
+#if PY_VERSION_HEX < 0x03080000
+            globals["__builtins__"] = boost::python::import("builtins");
+#endif
 std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_game_rule = [this](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(*this, args, kw); };
             globals["GameRule"] = boost::python::raw_function(f_insert_game_rule);
             std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_tech = [&techs](const boost::python::tuple& args, const boost::python::dict& kw) { return py_insert_tech_(techs, args, kw); };
