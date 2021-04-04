@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
 
     BOOST_REQUIRE_EQUAL("CONSTRUCTION_CATEGORY", cat_it->second->name);
     BOOST_REQUIRE_EQUAL("construction.png", cat_it->second->graphic);
-    const std::array<unsigned char, 4> test_colour{241, 233, 87, 255};
+    constexpr std::array<unsigned char, 4> test_colour{241, 233, 87, 255};
     BOOST_REQUIRE(test_colour == cat_it->second->colour);
 
     {

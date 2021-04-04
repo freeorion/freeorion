@@ -477,7 +477,7 @@ namespace {
 
             std::string message_text = "Loading " + std::to_string(retval.size()) + " Unicode charsets: ";
             for (const GG::UnicodeCharset& cs : retval)
-            { message_text += cs.m_script_name + ", "; }
+                message_text += cs.m_script_name + ", ";
 
             DebugLogger() << message_text;
         }
@@ -1017,10 +1017,10 @@ void ClientUI::DumpObject(int object_id) {
 
 void ClientUI::InitializeWindows() {
     const GG::Pt message_ul(GG::X0, GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT);
-    const GG::Pt message_wh(MESSAGE_PANEL_WIDTH, PANEL_HEIGHT);
+    constexpr GG::Pt message_wh(MESSAGE_PANEL_WIDTH, PANEL_HEIGHT);
 
     const GG::Pt player_list_ul(MESSAGE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT);
-    const GG::Pt player_list_wh(PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT);
+    constexpr GG::Pt player_list_wh(PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT);
 
     GetMessageWnd()->InitSizeMove(message_ul, message_ul + message_wh);
     GetPlayerListWnd()->InitSizeMove(player_list_ul, player_list_ul + player_list_wh);

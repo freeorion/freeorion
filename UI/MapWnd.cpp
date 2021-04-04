@@ -1360,8 +1360,8 @@ void MapWnd::CompleteConstruction() {
     m_scale_line->Hide();
 
     // Zoom slider
-    const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
-              ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
+    constexpr int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
+                  ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
     m_zoom_slider = GG::Wnd::Create<CUISlider<double>>(ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX,
                                                        GG::Orientation::VERTICAL,
                                                        GG::INTERACTIVE | GG::ONTOP);
@@ -2142,7 +2142,7 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
 namespace {
     GG::GL2DVertexBuffer dot_vertices_buffer;
     GG::GLTexCoordBuffer dot_star_texture_coords;
-    const unsigned int BUFFER_CAPACITY(512);    // should be long enough for most plausible fleet move lines
+    constexpr unsigned int BUFFER_CAPACITY(512); // should be long enough for most plausible fleet move lines
 
     std::shared_ptr<GG::Texture> MoveLineDotTexture() {
         auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");

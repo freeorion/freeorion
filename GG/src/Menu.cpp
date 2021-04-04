@@ -52,7 +52,7 @@ MenuItem::MenuItem(std::string&& str, bool disable, bool check,
 ////////////////////////////////////////////////
 namespace {
     // distance to leave between edge of PopupMenuClassic contents and the control's border
-    const X HORIZONTAL_MARGIN(3);
+    constexpr X HORIZONTAL_MARGIN(3);
 }
 
 const std::size_t PopupMenu::INVALID_CARET = std::numeric_limits<std::size_t>::max();

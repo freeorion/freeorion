@@ -113,10 +113,10 @@ std::string Policy::Dump(unsigned short ntabs) const {
 }
 
 float Policy::AdoptionCost(int empire_id, const ObjectMap& objects) const {
-    const auto arbitrary_large_number = 999999.9f;
+    constexpr auto arbitrary_large_number = 999999.9f;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_POLICIES") || !m_adoption_cost) {
-        return 1.0;
+        return 1.0f;
 
     } else if (m_adoption_cost->ConstantExpr()) {
         return m_adoption_cost->Eval();

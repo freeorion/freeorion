@@ -188,7 +188,7 @@ std::string parse::report_error_::get_lines_before(
     }
     //DebugLogger() << "get_lines_before line " << target_line;
 
-    const unsigned int NUM_LINES = 5;
+    constexpr unsigned int NUM_LINES = 5;
     unsigned int retval_first_line = 1;
     unsigned int retval_last_line = target_line - 1;
     if (retval_last_line > NUM_LINES)
@@ -217,7 +217,7 @@ std::string parse::report_error_::get_lines_after(
     }
     //DebugLogger() << "get_lines_after line " << target_line;
 
-    const unsigned int NUM_LINES = 5;
+    constexpr unsigned int NUM_LINES = 5;
     unsigned int retval_first_line = target_line + 1;
     unsigned int retval_last_line = all_line_starts.size();
     if (retval_first_line + NUM_LINES < all_line_starts.size())
