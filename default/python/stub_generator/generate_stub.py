@@ -70,7 +70,6 @@ def _handle_class(info: ClassInfo):
 
 
 def _handle_function(fun: FunctionInfo):
-    name = fun.name
     function = Docs(fun.doc, 1)
     return_annotation = ' -> %s' % function.rtype if function.rtype else ''
     docstring = function.get_doc_string()
@@ -79,7 +78,7 @@ def _handle_function(fun: FunctionInfo):
         end = ''
     else:
         end = '\n    ...'
-    res = 'def %s(%s) %s:%s%s' % (name, function.get_argument_string(), return_annotation, docstring, end)
+    res = 'def %s(%s) %s:%s%s' % (fun.name, function.get_argument_string(), return_annotation, docstring, end)
     return res
 
 
@@ -90,21 +89,20 @@ ENUM_STUB = ('class Enum(int):\n'
 
 
 def _handle_enum(info: EnumInfo):
-    name = info.name
     pairs = sorted(info.attributes.items(), key=itemgetter(1))
-    result = ['class %s(Enum):' % name,
+    result = ['class %s(Enum):' % info.name,
               '    def __init__(self, numerator, name):',
               '        self.name = name',
               ''
               ]
 
     for text, value in pairs:
-        result.append('    %s = None  # %s(%s, "%s")' % (text, name, value, text))
+        result.append('    %s = None  # %s(%s, "%s")' % (text, (info.name), value, text))
     result.append('')
     result.append('')  # two empty lines between enum and its items declaration
 
     for text, value in pairs:
-        result.append('%s.%s = %s(%s, "%s")' % (name, text, name, value, text))
+        result.append('%s.%s = %s(%s, "%s")' % ((info.name), text, (info.name), value, text))
     return '\n'.join(result)
 
 
@@ -129,8 +127,8 @@ def _report_classes_without_instances(classes_map: Iterable[str], instance_names
     warning(table.get_table())
 
 
-def make_stub(classes: List[ClassInfo], enums: List[EnumInfo], functions: List[FunctionInfo], instances: List[InstanceInfo], result_path, classes_to_ignore: set):
-
+def make_stub(classes: List[ClassInfo], enums: List[EnumInfo], functions: List[FunctionInfo],
+              instances: List[InstanceInfo], result_path, classes_to_ignore: set):
     # exclude technical Map classes that are prefixed with map_indexing_suite_ classes
     classes = [x for x in classes if not x.name.startswith('map_indexing_suite_')]
     classes_map = {x.name: x for x in classes}
@@ -139,7 +137,6 @@ def make_stub(classes: List[ClassInfo], enums: List[EnumInfo], functions: List[F
         classes_map.keys(),
         {instance.class_name for instance in instances},
         classes_to_ignore)
-
 
     enums_names = {x.name for x in enums}
 

@@ -6,7 +6,6 @@ from stub_generator.interface_inspector.inspection_helpers import _get_member_in
 _INVALID_CLASSES = {"method"}
 
 
-
 class InstanceInfo:
     def __init__(
             self,
