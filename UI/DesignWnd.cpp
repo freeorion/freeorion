@@ -445,7 +445,7 @@ namespace {
     std::vector<int> SavedDesignsManager::OrderedIDs() const {
         CheckPendingDesigns();
         std::vector<int> retval;
-        for (const auto uuid: m_ordered_uuids) {
+        for (const auto& uuid : m_ordered_uuids) {
             const auto& it = m_saved_designs.find(uuid);
             if (it == m_saved_designs.end())
                 continue;
@@ -560,7 +560,7 @@ namespace {
 
         std::stringstream ss;
         ss << DESIGN_MANIFEST_PREFIX << "\n";
-        for (const auto uuid: m_ordered_uuids)
+        for (const auto& uuid : m_ordered_uuids)
             ss << "    uuid = \"" << uuid << "\"\n";
         WriteToFile(file, ss.str());
     }
