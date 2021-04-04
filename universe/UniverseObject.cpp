@@ -13,8 +13,6 @@
 #include "../util/Logger.h"
 #include "../util/i18n.h"
 
-const int INVALID_OBJECT_ID = -1;
-
 UniverseObject::UniverseObject() :
     StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(
         GetUniverse().UniverseObjectSignalsInhibited())),

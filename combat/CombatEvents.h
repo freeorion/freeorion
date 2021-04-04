@@ -9,12 +9,10 @@
 #include <tuple>
 
 #include "../util/Export.h"
+#include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
 
 #include "CombatEvent.h"
-
-FO_COMMON_API extern const int ALL_EMPIRES;
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
 
 
 /// Generated when a new bout begins in the battle

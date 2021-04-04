@@ -119,9 +119,6 @@ namespace boost {
     const Value& get(const constant_property<Key, Value>& pmap, const Key&) { return pmap.m_value; }
 }
 
-
-extern FO_COMMON_API const int ALL_EMPIRES = -1;
-
 /////////////////////////////////////////////
 // class Universe
 /////////////////////////////////////////////

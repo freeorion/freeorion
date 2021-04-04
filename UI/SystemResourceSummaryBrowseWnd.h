@@ -4,11 +4,9 @@
 #include <GG/GGFwd.h>
 #include <GG/BrowseInfoWnd.h>
 
+#include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
 #include "../util/Export.h"
-
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
-FO_COMMON_API extern const int ALL_EMPIRES;
 
 /** Gives information about inporting and exporting of resources to and from this system when mousing
   * over the system resource production summary. */

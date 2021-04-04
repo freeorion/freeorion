@@ -1,6 +1,7 @@
 #ifndef _ResearchQueue_h_
 #define _ResearchQueue_h_
 
+#include "../universe/ConstantsFwd.h"
 #include "../util/Export.h"
 
 #include <deque>
@@ -9,8 +10,6 @@
 #include <vector>
 #include <boost/serialization/access.hpp>
 #include <boost/signals2/signal.hpp>
-
-FO_COMMON_API extern const int ALL_EMPIRES;
 
 struct FO_COMMON_API ResearchQueue {
     /** The type of a single element in the research queue. */

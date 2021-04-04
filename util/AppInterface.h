@@ -155,12 +155,4 @@ inline Networking::ClientType GetPlayerClientType(int player_id)
 inline int EffectsProcessingThreads()
 { return IApp::GetApp()->EffectsProcessingThreads(); }
 
-
-// sentinel values returned by CurrentTurn().  Can't be an enum since
-// CurrentGameTurn() needs to return an integer game turn number
-FO_COMMON_API extern const int INVALID_GAME_TURN;     ///< returned by CurrentGameTurn if a game is not currently in progress or being set up.
-FO_COMMON_API extern const int BEFORE_FIRST_TURN;     ///< returned by CurrentGameTurn if the galaxy is currently being set up
-FO_COMMON_API extern const int IMPOSSIBLY_LARGE_TURN; ///< a number that's almost assuredly larger than any real turn number that might come up
-
-
 #endif

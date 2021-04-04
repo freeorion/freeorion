@@ -1,9 +1,8 @@
 #include "Diplomacy.h"
 
+#include "../universe/ConstantsFwd.h"
 #include "../util/GameRules.h"
 #include "../util/i18n.h"
-
-FO_COMMON_API extern const int ALL_EMPIRES;
 
 namespace {
     void AddRules(GameRules& rules) {

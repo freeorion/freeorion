@@ -3,11 +3,9 @@
 
 
 #include "CommonParams.h"
+#include "ConstantsFwd.h"
 #include "../util/Enum.h"
 #include "../util/Pending.h"
-
-
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 
 //! Classifies ShipParts by general function.

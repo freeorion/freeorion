@@ -3,14 +3,10 @@
 
 
 #include "Meter.h"
+#include "ConstantsFwd.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"
 
-
-FO_COMMON_API extern const int ALL_EMPIRES;
-FO_COMMON_API extern const int INVALID_GAME_TURN;
-FO_COMMON_API extern const int BEFORE_FIRST_TURN;
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
 class ShipDesign;
 
 /** a class representing a single FreeOrion ship */

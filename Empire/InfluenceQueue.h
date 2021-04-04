@@ -1,6 +1,7 @@
 #ifndef _InfluenceQueue_h_
 #define _InfluenceQueue_h_
 
+#include "../universe/ConstantsFwd.h"
 #include "../util/AppInterface.h"
 #include "../util/Export.h"
 
@@ -13,8 +14,6 @@
 #include <boost/signals2/signal.hpp>
 
 class ResourcePool;
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
-FO_COMMON_API extern const int ALL_EMPIRES;
 
 
 struct FO_COMMON_API InfluenceQueue {

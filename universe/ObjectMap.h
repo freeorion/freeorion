@@ -11,6 +11,7 @@
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/any_range.hpp>
 #include <boost/range/size.hpp>
+#include "ConstantsFwd.h"
 #include "../util/Export.h"
 
 
@@ -25,9 +26,6 @@ class Planet;
 class System;
 class Building;
 class Field;
-
-FO_COMMON_API extern const int ALL_EMPIRES;
-
 
 /** Contains a set of objects that make up a (known or complete) Universe. */
 class FO_COMMON_API ObjectMap {

@@ -8,12 +8,11 @@
 #include <unordered_map>
 #include <vector>
 #include <boost/container/flat_map.hpp>
+#include "ConstantsFwd.h"
 #include "EnumsFwd.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
 
-
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
 
 class UniverseObject;
 struct ScriptingContext;

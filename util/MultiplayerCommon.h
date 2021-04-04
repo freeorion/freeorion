@@ -1,6 +1,7 @@
 #ifndef _MultiplayerCommon_h_
 #define _MultiplayerCommon_h_
 
+#include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
 #include "../network/Networking.h"
 #include "Enum.h"
@@ -19,9 +20,6 @@
 
 FO_COMMON_API extern const std::string MP_SAVE_FILE_EXTENSION;
 FO_COMMON_API extern const std::string SP_SAVE_FILE_EXTENSION;
-FO_COMMON_API extern const int ALL_EMPIRES;
-FO_COMMON_API extern const int INVALID_GAME_TURN;
-
 
 //! Types of universe shapes during galaxy generation
 FO_ENUM(

@@ -3,10 +3,7 @@
 
 
 #include "UniverseObjectVisitor.h"
-
-
-FO_COMMON_API extern const int ALL_EMPIRES;
-
+#include "ConstantsFwd.h"
 
 //! Returns obj iff @a obj is a Fleet belonging to the given empire that is
 //! parked at a System, not under orders to move.

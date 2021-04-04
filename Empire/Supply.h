@@ -5,10 +5,9 @@
 #include <set>
 #include <string>
 #include <boost/serialization/access.hpp>
+#include "../universe/ConstantsFwd.h"
 #include "../util/Export.h"
 
-
-FO_COMMON_API extern const int ALL_EMPIRES;
 
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {

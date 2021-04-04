@@ -8,9 +8,6 @@
 #include "../util/Pending.h"
 
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
-
-
 //! Types of slots in ShipHull%s
 //! Parts may be restricted to only certain slot types
 FO_ENUM(

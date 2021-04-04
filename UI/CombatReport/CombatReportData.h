@@ -3,6 +3,7 @@
 
 
 #include <GG/Clr.h>
+#include "../universe/ConstantsFwd.h"
 #include "../util/Export.h"
 
 #include <memory>
@@ -13,9 +14,6 @@ struct WeaponFireEvent;
 struct CombatParticipantState;
 class Empire;
 class UniverseObject;
-
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
-FO_COMMON_API extern const int ALL_EMPIRES;
 
 // Data on what happened on single object in the combat
 struct ParticipantSummary {

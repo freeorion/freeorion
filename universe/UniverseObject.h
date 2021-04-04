@@ -9,6 +9,7 @@
 #include <boost/python/detail/destroy.hpp>
 #include <boost/signals2/optional_last_value.hpp>
 #include <boost/signals2/signal.hpp>
+#include "ConstantsFwd.h"
 #include "EnumsFwd.h"
 #include "Meter.h"
 #include "../util/blocking_combiner.h"
@@ -23,12 +24,6 @@ class SitRepEntry;
 class EmpireManager;
 class ObjectMap;
 struct UniverseObjectVisitor;
-FO_COMMON_API extern const int ALL_EMPIRES;
-FO_COMMON_API extern const int INVALID_GAME_TURN;
-
-// The ID number assigned to a UniverseObject upon construction;
-// It is assigned an ID later when it is placed in the universe
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
 
 // The ID number assigned to temporary universe objects
 constexpr int TEMPORARY_OBJECT_ID = -2;

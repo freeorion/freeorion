@@ -24,8 +24,6 @@ namespace {
     constexpr double WORMHOLE_TRAVEL_DISTANCE = 0.1; // the effective distance for ships travelling along a wormhole, for determining how much of their speed is consumed by the jump
 }
 
-FO_COMMON_API extern const int ALL_EMPIRES;
-
 namespace {
     /** distance_matrix_storage implements the storage and the mutexes
         for distance in number of hops from system to system.

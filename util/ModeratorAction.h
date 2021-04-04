@@ -1,6 +1,7 @@
 #ifndef _Moderator_Action_h_
 #define _Moderator_Action_h_
 
+#include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
 #include "Export.h"
 
@@ -9,9 +10,6 @@
 
 #include <map>
 #include <string>
-
-FO_COMMON_API extern const int ALL_EMPIRES;
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
 
 namespace Moderator {
 

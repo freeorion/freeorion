@@ -10,6 +10,7 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/optional/optional.hpp>
+#include "ConstantsFwd.h"
 #include "EnumsFwd.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
@@ -22,8 +23,6 @@ namespace Condition {
 namespace Effect {
     class EffectsGroup;
 }
-
-FO_COMMON_API extern const int ALL_EMPIRES;
 
 //! Environmental suitability of planets for a particular Species
 FO_ENUM(

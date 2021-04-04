@@ -11,7 +11,6 @@
 class Fleet;
 class ObjectMap;
 
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
 namespace {
     constexpr int SYSTEM_ORBITS = 7;
 }

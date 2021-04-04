@@ -12,9 +12,6 @@
 #include <boost/optional/optional.hpp>
 #include <boost/lexical_cast.hpp>
 
-
-FO_COMMON_API extern const int ALL_EMPIRES;
-
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS

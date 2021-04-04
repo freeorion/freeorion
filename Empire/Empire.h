@@ -20,11 +20,6 @@ class ShipDesign;
 class SitRepEntry;
 class ResourcePool;
 
-FO_COMMON_API extern const int INVALID_GAME_TURN;
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
-FO_COMMON_API extern const int ALL_EMPIRES;
-
-
 typedef std::array<unsigned char, 4> EmpireColor;
 
 

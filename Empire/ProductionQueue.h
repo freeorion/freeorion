@@ -2,6 +2,7 @@
 #define _ProductionQueue_h_
 
 #include "../util/Export.h"
+#include "../universe/ConstantsFwd.h"
 #include "../universe/Enums.h"
 #include "../universe/ScriptingContext.h"
 
@@ -16,10 +17,6 @@
 #include <boost/uuid/nil_generator.hpp>
 
 class ResourcePool;
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
-FO_COMMON_API extern const int ALL_EMPIRES;
-
 
 //! The general type of production being done at a ProdCenter.  Within each
 //! valid type, a specific kind of item is being built, e.g. under BT_BUILDING
