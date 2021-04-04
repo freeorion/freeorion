@@ -2,6 +2,7 @@ import math
 import random
 from functools import partial
 from logging import warning, debug
+from typing import Callable, Union
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from common.print_utils import print_in_columns
@@ -69,15 +70,15 @@ def has_low_aggression():
     return get_aistate().character.prefer_research_low_aggression()
 
 
-def conditional_priority(func_if_true, func_if_false, cond_func):
+def conditional_priority(
+        func_if_true: Union[Callable, float],
+        func_if_false: Union[Callable, float],
+        cond_func: Callable[[], bool]
+) -> Callable[[str], float]:
     """
-    returns a priority dependent on a condition, either a function or an object attribute
-    :type func_if_true: ()
-    :type func_if_false: ()
-    :type cond_func:(str) -> bool
-    :rtype float
+    Return a priority dependent on a condition, either a function or an object attribute.
     """
-    def get_conditial_priority(tech_name=""):
+    def get_conditial_priority(tech_name: str = "") -> float:
         if cond_func():
             return execute(func_if_true, tech_name=tech_name)
         else:
