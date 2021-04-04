@@ -548,7 +548,7 @@ namespace {
         int const num_parts = py::len(parts_list);
         parts.reserve(num_parts);
         for (int i = 0; i < num_parts; i++)
-            parts.emplace_back(py::extract<std::string>(parts_list[i]));
+            parts.push_back(py::extract<std::string>(parts_list[i]));
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
         int current_turn = CurrentTurn();

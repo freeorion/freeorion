@@ -130,7 +130,7 @@ void BuildingsPanel::Update() {
 
         auto ind = GG::Wnd::Create<BuildingIndicator>(GG::X(indicator_size), object_id);
         ind->RightClickedSignal.connect(BuildingRightClickedSignal);
-        m_building_indicators.emplace_back(std::move(ind));
+        m_building_indicators.push_back(std::move(ind));
     }
 
     // get in-progress buildings
@@ -152,7 +152,7 @@ void BuildingsPanel::Update() {
         auto ind = GG::Wnd::Create<BuildingIndicator>(GG::X(indicator_size), elem.item.name,
                                                       turns_completed, total_turns, total_cost,
                                                       turn_spending);
-        m_building_indicators.emplace_back(std::move(ind));
+        m_building_indicators.push_back(std::move(ind));
     }
 }
 

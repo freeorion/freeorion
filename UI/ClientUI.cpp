@@ -1183,7 +1183,7 @@ std::vector<std::shared_ptr<GG::Texture>> ClientUI::GetPrefixedTextures(
             if (fs::exists(*it) &&
                 !fs::is_directory(*it)
                 && boost::algorithm::starts_with(it->path().filename().string(), prefix))
-            { textures.emplace_back(ClientUI::GetTexture(*it, mipmap)); }
+            { textures.push_back(ClientUI::GetTexture(*it, mipmap)); }
         } catch (const fs::filesystem_error& e) {
             // ignore files for which permission is denied, and rethrow other exceptions
             if (e.code() != boost::system::errc::permission_denied)

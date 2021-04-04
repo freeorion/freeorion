@@ -586,7 +586,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
                 {
                     PlayerSetupData new_psd = psd;
                     new_psd.player_id = player_id;
-                    psds.emplace_back(std::move(new_psd));
+                    psds.push_back(std::move(new_psd));
                     found_matched_id_connection = true;
                     break;
                 }
@@ -620,7 +620,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
                     int player_id = player_connection->PlayerID();
                     PlayerSetupData new_psd = psd;
                     new_psd.player_id = player_id;
-                    psds.emplace_back(std::move(new_psd));
+                    psds.push_back(std::move(new_psd));
                     found_matched_name_connection = true;
                     break;
                 }

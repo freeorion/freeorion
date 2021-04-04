@@ -514,7 +514,7 @@ void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
                                               ConstCombatEventPtr& event, std::string&& details)
 {
     if (!details.empty())
-        new_logs.emplace_back(DecorateLinkText(std::move(details)));
+        new_logs.push_back(DecorateLinkText(std::move(details)));
 
     if (!event->AreSubEventsEmpty(viewing_empire_id)) {
         for (auto& sub_event : event->SubEvents(viewing_empire_id)) {
@@ -535,18 +535,18 @@ std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(
     // details and sub events.
 
     if (!event->FlattenSubEvents() && !event->AreSubEventsEmpty(viewing_empire_id) ) {
-        new_logs.emplace_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
+        new_logs.push_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
         return new_logs;
     }
 
     if (!event->FlattenSubEvents() && !event->AreDetailsEmpty(viewing_empire_id)) {
-        new_logs.emplace_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
+        new_logs.push_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, event));
         return new_logs;
     }
 
     std::string title = event->CombatLogDescription(viewing_empire_id, GetUniverse().Objects());
     if (!(event->FlattenSubEvents() && title.empty()))
-        new_logs.emplace_back(DecorateLinkText(title));
+        new_logs.push_back(DecorateLinkText(title));
 
     std::string details = event->CombatLogDetails(viewing_empire_id);
     PopulateWithFlatLogs(w, viewing_empire_id, new_logs, event, std::move(details));

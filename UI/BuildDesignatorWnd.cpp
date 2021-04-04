@@ -998,7 +998,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
             auto item_row = GG::Wnd::Create<ProductionItemRow>(
                 row_size.x, row_size.y, ProductionQueue::ProductionItem(BuildType::BT_BUILDING, name),
                 m_empire_id, m_production_location);
-            rows.emplace_back(std::move(item_row));
+            rows.push_back(std::move(item_row));
         }
         m_buildable_items->Insert(std::move(rows));
     }
@@ -1031,7 +1031,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
                 row_size.x, row_size.y, 
                 ProductionQueue::ProductionItem(BuildType::BT_SHIP, ship_design_id),
                 m_empire_id, m_production_location);
-            rows.emplace_back(std::move(item_row));
+            rows.push_back(std::move(item_row));
         }
         m_buildable_items->Insert(std::move(rows));
     }

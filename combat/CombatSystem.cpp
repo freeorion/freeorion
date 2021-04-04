@@ -963,8 +963,7 @@ namespace {
 
                     // attack for each shot...
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
-                        retval.emplace_back(part_class, part_name, part_attack,
-                                            part_combat_targets);
+                        retval.emplace_back(part_class, part_name, part_attack, part_combat_targets);
                 } else {
                     TraceLogger(combat) << "ShipWeaponsStrengths for ship " << ship->Name() << " (" << ship->ID() << ") "
                                         << " direct weapon part " << part->Name() << " has no shots / zero attack, so is skipped";
@@ -1090,7 +1089,7 @@ namespace {
                     break;
                 }
 
-                retval.emplace_back(fighter_ptr->ID());
+                retval.push_back(fighter_ptr->ID());
 
                 // add fighter to attackers (if it can attack)
                 if (damage > 0.0f) {
@@ -1148,7 +1147,7 @@ namespace {
                     at_least_one_fighter_destroyed = true;
                     // delete actual fighter object so that it can't be targeted
                     // again next round (ships have a minimal structure test instead)
-                    delete_list.emplace_back(obj->ID());
+                    delete_list.push_back(obj->ID());
                 } else {
                     CombatEventPtr incap_event = std::make_shared<IncapacitationEvent>(
                         bout, obj->ID(), obj->Owner());
@@ -1726,7 +1725,7 @@ namespace {
         CombatInfo& combat_info = combat_state.combat_info;
 
         auto bout_event = std::make_shared<BoutEvent>(combat_info.bout);
-        combat_info.combat_events.emplace_back(bout_event);
+        combat_info.combat_events.push_back(bout_event);
         if (combat_state.valid_attacker_object_ids.empty()) {
             DebugLogger(combat) << "Combat bout " << combat_info.bout << " aborted due to no remaining attackers.";
             return;
@@ -1894,7 +1893,7 @@ namespace {
         }
 
         if (!stealth_change_event->AreSubEventsEmpty(ALL_EMPIRES))
-            combat_info.combat_events.emplace_back(std::move(stealth_change_event));
+            combat_info.combat_events.push_back(std::move(stealth_change_event));
 
         /// Remove all who died in the bout
         combat_state.CullTheDead(combat_info.bout, bout_event);
@@ -1954,7 +1953,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     } // end for over combat arounds
 
     auto launches_event = std::make_shared<FighterLaunchesEvent>();
-    combat_info.combat_events.emplace_back(launches_event);
+    combat_info.combat_events.push_back(launches_event);
 
     RecoverFighters(combat_info, last_bout, launches_event);
 

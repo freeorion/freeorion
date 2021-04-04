@@ -2241,7 +2241,7 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     m_expected_ai_player_names.clear();
 
     for (std::pair<int, PlayerSetupData>& psd : m_lobby_data->players) {
-        player_setup_data.emplace_back(psd.second);
+        player_setup_data.push_back(psd.second);
         if (psd.second.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
             m_expected_ai_player_names.emplace(psd.second.player_name);
     }
