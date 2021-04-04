@@ -204,15 +204,15 @@ namespace {
         auto graphic = boost::python::extract<std::string>(kw["graphic"])();
         auto colour = boost::python::extract<boost::python::tuple>(kw["colour"])();
 
-        std::array<unsigned char, 4> color{0};
+        std::array<unsigned char, 4> color{0, 0, 0, 255};
 
         boost::python::stl_input_iterator<unsigned char> colour_begin(colour), colour_end;
         int colour_index = 0;
-        for (auto& it = colour_begin; it != colour_end; ++ it) {
+        for (auto it = colour_begin; it != colour_end; ++ it) {
             if (colour_index < 4) {
                 color[colour_index] = *it;
-                ++ colour_index;
             }
+            ++ colour_index;
         }
 
         insert_category(*g_categories, name, graphic, color);
