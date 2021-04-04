@@ -3,7 +3,7 @@
 
 #include "ConditionParserImpl.h"
 
-namespace parse { namespace detail {
+namespace parse::detail {
     struct condition_parser_rules_2 : public condition_parser_grammar {
         condition_parser_rules_2(const parse::lexer& tok,
                                  Labeller& label,
@@ -25,8 +25,6 @@ namespace parse { namespace detail {
         condition_parser_rule               on_planet;
         condition_parser_rule               start;
     };
-
-    }
 }
 
 
