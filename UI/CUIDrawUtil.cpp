@@ -41,6 +41,7 @@ namespace {
             break;
         default:
             ErrorLogger() << "FindIsoscelesTriangleVertices passed invalid orientation";
+            [[fallthrough]];
         case ShapeOrientation::RIGHT:
             x1_ = Value(ul.x);
             y1_ = Value(ul.y);
