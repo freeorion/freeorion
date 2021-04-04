@@ -2030,7 +2030,7 @@ def _create_ship_design(
 
 def _update_design_by_name_cache(
         design_name: str, verbose: bool = False, cache_as_invalid: bool = True
-) -> Optional[fo.shipDesign]:
+) -> Optional["fo.shipDesign"]:
     """Updates the design by name cache
 
     :param design_name: the name of the design that needs updating
