@@ -33,8 +33,6 @@ namespace {
 
 using boost::io::str;
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
-
 #define CHECK_COND_VREF_MEMBER(m_ptr) { if (m_ptr == rhs_.m_ptr) {              \
                                             /* check next member */             \
                                         } else if (!m_ptr || !rhs_.m_ptr) {     \

@@ -17,10 +17,6 @@
 #include "../util/i18n.h"
 
 
-const int INVALID_DESIGN_ID = -1;
-
-//using boost::io::str;
-
 namespace {
     void AddRules(GameRules& rules) {
         // makes all ships cost 1 PP and take 1 turn to produce

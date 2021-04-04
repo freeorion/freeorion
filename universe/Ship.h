@@ -8,7 +8,6 @@
 
 
 FO_COMMON_API extern const int ALL_EMPIRES;
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
 FO_COMMON_API extern const int INVALID_GAME_TURN;
 FO_COMMON_API extern const int BEFORE_FIRST_TURN;
 FO_COMMON_API extern const int INVALID_OBJECT_ID;

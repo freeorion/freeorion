@@ -49,8 +49,6 @@
 std::string DoubleToString(double val, int digits, bool always_show_sign);
 bool UserStringExists(const std::string& str);
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
-
 namespace {
     auto StackTrace() {
 #if BOOST_VERSION >= 106500

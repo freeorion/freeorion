@@ -40,8 +40,6 @@
 #include <unordered_map>
 #include <functional>
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
-
 struct Availability {
     // Declaring an enum inside a struct makes the syntax when using the enum 
     // with tuples simpler, without polluting the global namespace with 3

@@ -33,8 +33,6 @@
 #include <unordered_set>
 
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
-
 namespace {
     const GG::Pt DataPanelIconSpace()
     { return GG::Pt(GG::X(ClientUI::Pts()*3), GG::Y(ClientUI::Pts()*2.5)); }
@@ -715,7 +713,7 @@ namespace {
         m_selected = b;
 
         const GG::Clr& unselected_text_color = ClientUI::TextColor();
-        const GG::Clr& selected_text_color = GG::CLR_BLACK;
+        constexpr GG::Clr selected_text_color = GG::CLR_BLACK;
 
         GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
 
@@ -1795,7 +1793,7 @@ void FleetDataPanel::Init() {
 
 void FleetDataPanel::ColorTextForSelect() {
     const GG::Clr& unselected_text_color = ClientUI::TextColor();
-    const GG::Clr& selected_text_color = GG::CLR_BLACK;
+    constexpr GG::Clr selected_text_color = GG::CLR_BLACK;
 
     GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
 

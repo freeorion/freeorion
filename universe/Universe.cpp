@@ -55,8 +55,6 @@ namespace boost::asio {
 }
 #endif
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
-
 namespace {
     DeclareThreadSafeLogger(effects);
     DeclareThreadSafeLogger(conditions);

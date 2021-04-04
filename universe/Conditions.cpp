@@ -35,8 +35,6 @@
 
 using boost::io::str;
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
-
 bool UserStringExists(const std::string& str);
 
 namespace {

@@ -55,8 +55,6 @@
 namespace py = boost::python;
 
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
-
 // Helper stuff (classes, functions etc.) exposed to the
 // server side Python scripts
 namespace {

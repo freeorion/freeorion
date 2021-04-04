@@ -10,7 +10,7 @@
 #include "../util/Pending.h"
 
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
+constexpr int INVALID_DESIGN_ID = -1;
 FO_COMMON_API extern const int ALL_EMPIRES;
 FO_COMMON_API extern const int INVALID_GAME_TURN;
 
