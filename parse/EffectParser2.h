@@ -59,6 +59,7 @@ namespace parse { namespace detail {
         parse::empire_affiliation_enum_grammar      empire_affiliation_type_enum;
         parse::set_non_ship_part_meter_enum_grammar set_non_ship_part_meter_type_enum;
         parse::set_ship_part_meter_enum_grammar     set_ship_part_meter_type_enum;
+        parse::resource_type_grammar                resource_type_enum;
     };
 
     }

@@ -26,7 +26,8 @@ namespace parse { namespace detail {
         planet_size_rules(tok, label, condition_parser),
         empire_affiliation_type_enum(tok),
         set_non_ship_part_meter_type_enum(tok),
-        set_ship_part_meter_type_enum(tok)
+        set_ship_part_meter_type_enum(tok),
+        resource_type_enum(tok)
     {
         qi::_1_type _1;
         qi::_2_type _2;
@@ -59,8 +60,9 @@ namespace parse { namespace detail {
             ;
 
         set_ship_part_meter
-            = ((set_ship_part_meter_type_enum  >>   label(tok.partname_))   > string_grammar
-               >    label(tok.value_)      > double_rules.expr
+            = ((    set_ship_part_meter_type_enum
+               >>   label(tok.partname_)) > string_grammar
+                >   label(tok.value_)     > double_rules.expr
               ) [ _val = construct_movable_(new_<Effect::SetShipPartMeter>(
                   _1,
                   deconstruct_movable_(_2, _pass),
@@ -68,19 +70,20 @@ namespace parse { namespace detail {
             ;
 
         set_empire_stockpile
-            =   tok.SetEmpireStockpile_ [ _a = ResourceType::RE_INDUSTRY ]
+            =   tok.SetEmpireStockpile_
+            >   label(tok.resource_) > resource_type_enum [ _a = _1 ]
             >   (
                 (   label(tok.empire_) > int_rules.expr [ _b = _1 ]
-                    >   label(tok.value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
+                >   label(tok.value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
                         deconstruct_movable_(_b, _pass),
                         _a,
                         deconstruct_movable_(_1, _pass))) ]
                 )
                 |  (label(tok.value_)  > double_rules.expr [ _val = construct_movable_(new_<Effect::SetEmpireStockpile>(
-                            _a,
-                            deconstruct_movable_(_1, _pass))) ]
-                       )
-            )
+                        _a,
+                        deconstruct_movable_(_1, _pass))) ]
+                   )
+                )
             ;
 
         set_empire_capital
