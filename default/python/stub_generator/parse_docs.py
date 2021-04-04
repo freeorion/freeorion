@@ -1,5 +1,5 @@
-from logging import error
 import re
+from logging import error
 from typing import Iterable, List, Tuple
 
 normalization_dict = {
@@ -137,8 +137,10 @@ def merge_args(name: str, raw_arg_types: List[tuple], is_class: bool) -> Tuple[L
         names, types = get_argument_names(arg_types[0], is_class)
         use_keyword = False
     elif len(arg_types) == 2 and any(not x for x in arg_types):
-
-        names, types = get_argument_names(next(filter(None, arg_types)), is_class)  # pylint: disable=filter-builtin-not-iterating
+        names, types = get_argument_names(
+            next(filter(None, arg_types)),
+            is_class
+        )
         use_keyword = True
     else:
 

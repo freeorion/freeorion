@@ -34,7 +34,6 @@ def inspect_ai_interface():
         instances=instances,
         classes_to_ignore=classes_to_exclude_from_ai,
         path='AI',
-        dump=False
     )
     exit(1)  # exit game to main menu, gameplay may be broken due to invasive instance generation.
 

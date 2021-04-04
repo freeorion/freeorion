@@ -17,7 +17,6 @@ def inspect_universe_generation_interface(*args, **kwargs):
         instances=instances,
         classes_to_ignore=classes_to_exclude_from_universe,
         path=".",
-        dump=False,
     )
 
 

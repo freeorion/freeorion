@@ -1,12 +1,11 @@
 import os
 from logging import debug
 
-from stub_generator.constants import TYPE, NAME, ATTRS, DOC, PARENTS, CLASS_NAME, ENUM_PAIRS
 from stub_generator.generate_stub import make_stub
 from stub_generator.interface_inspector import get_module_info
 
 
-def generate_stub(obj, instances, classes_to_ignore, path, dump=False):
+def generate_stub(obj, instances, classes_to_ignore, path):
     """
     Inspect interface and generate stub. Writes its logs to freeoriond.log.
 
@@ -23,7 +22,8 @@ def generate_stub(obj, instances, classes_to_ignore, path, dump=False):
     python_folder_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
     result_folder = os.path.join(python_folder_path, path)
     result_path = os.path.join(result_folder, '%s.pyi' % obj.__name__)
-    make_stub(get_module_info(obj, instances, dump=dump), result_path, classes_to_ignore)
+    classes, enums, functions, instances = get_module_info(obj, instances)
+    make_stub(classes, enums, functions, instances, result_path, classes_to_ignore)
     debug("=" * 20)
     debug("Skeleton written to %s" % result_path)
     debug("=" * 20)
