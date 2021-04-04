@@ -9,7 +9,7 @@
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
-namespace parse { namespace detail {
+namespace parse::detail {
     condition_parser_rules_3::condition_parser_rules_3(
         const parse::lexer& tok,
         Labeller& label,
@@ -19,7 +19,8 @@ namespace parse { namespace detail {
         condition_parser_rules_3::base_type(start, "condition_parser_rules_3"),
         int_rules(tok, label, condition_parser, string_grammar),
         castable_int_rules(tok, label, condition_parser, string_grammar),
-        double_rules(tok, label, condition_parser, string_grammar)
+        double_rules(tok, label, condition_parser, string_grammar),
+        resource_type_enum(tok)
     {
         qi::_1_type _1;
         qi::_2_type _2;
@@ -36,10 +37,10 @@ namespace parse { namespace detail {
         using phoenix::construct;
 
         has_special_capacity
-            = (omit_[tok.HasSpecialCapacity_]
-               >   label(tok.name_) >  string_grammar
-               > -(label(tok.low_)  >  double_rules.expr)
-               > -(label(tok.high_) >  double_rules.expr)
+            = ( omit_[tok.HasSpecialCapacity_]
+            >   label(tok.name_) >  string_grammar
+            > -(label(tok.low_)  >  double_rules.expr)
+            > -(label(tok.high_) >  double_rules.expr)
               ) [ _val = construct_movable_(new_<Condition::HasSpecial>(
                     deconstruct_movable_(_1, _pass),
                     deconstruct_movable_(_2, _pass),
@@ -182,142 +183,142 @@ namespace parse { namespace detail {
                     deconstruct_movable_(_5, _pass))) ]
             ;
 
-            turn
-                = ( omit_[tok.Turn_]
-                > -(label(tok.low_)  > (castable_int_rules.flexible_int ))
-                > -(label(tok.high_) > (castable_int_rules.flexible_int )))
-                [ _val = construct_movable_(new_<Condition::Turn>(
-                        deconstruct_movable_(_1, _pass),
-                        deconstruct_movable_(_2, _pass))) ]
-                ;
+        turn
+            = ( omit_[tok.Turn_]
+            > -(label(tok.low_)  > (castable_int_rules.flexible_int ))
+            > -(label(tok.high_) > (castable_int_rules.flexible_int )))
+            [ _val = construct_movable_(new_<Condition::Turn>(
+                deconstruct_movable_(_1, _pass),
+                deconstruct_movable_(_2, _pass))) ]
+            ;
 
-            created_on_turn
-                = ( omit_[tok.CreatedOnTurn_]
-                > -(label(tok.low_)  > castable_int_rules.flexible_int )
-                > -(label(tok.high_) > castable_int_rules.flexible_int ))
-                [ _val = construct_movable_(new_<Condition::CreatedOnTurn>(
-                        deconstruct_movable_(_1, _pass),
-                        deconstruct_movable_(_2, _pass))) ]
-                ;
+        created_on_turn
+            = ( omit_[tok.CreatedOnTurn_]
+            > -(label(tok.low_)  > castable_int_rules.flexible_int )
+            > -(label(tok.high_) > castable_int_rules.flexible_int ))
+            [ _val = construct_movable_(new_<Condition::CreatedOnTurn>(
+                deconstruct_movable_(_1, _pass),
+                deconstruct_movable_(_2, _pass))) ]
+            ;
 
-            sorting_operator =
-                    tok.MaximumNumberOf_ [ _val = Condition::SortingMethod::SORT_MAX ]
-                |   tok.MinimumNumberOf_ [ _val = Condition::SortingMethod::SORT_MIN ]
-                |   tok.ModeNumberOf_    [ _val = Condition::SortingMethod::SORT_MODE ];
+        sorting_operator =
+                tok.MaximumNumberOf_ [ _val = Condition::SortingMethod::SORT_MAX ]
+            |   tok.MinimumNumberOf_ [ _val = Condition::SortingMethod::SORT_MIN ]
+            |   tok.ModeNumberOf_    [ _val = Condition::SortingMethod::SORT_MODE ];
 
-            number_of1
-                = ( omit_[tok.NumberOf_]
-                >   label(tok.number_)    > castable_int_rules.flexible_int
-                >   label(tok.condition_) > condition_parser)
-                [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
-                        deconstruct_movable_(_1, _pass),
-                        deconstruct_movable_(_2, _pass))) ]
-                ;
+        number_of1
+            = ( omit_[tok.NumberOf_]
+            >   label(tok.number_)    > castable_int_rules.flexible_int
+            >   label(tok.condition_) > condition_parser)
+            [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
+                deconstruct_movable_(_1, _pass),
+                deconstruct_movable_(_2, _pass))) ]
+            ;
 
-            number_of2
-                =  (sorting_operator
-                >   label(tok.number_)    > castable_int_rules.flexible_int
-                >   label(tok.sortkey_)   > double_rules.expr
-                >   label(tok.condition_) > condition_parser)
-                [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
-                        deconstruct_movable_(_2, _pass),
-                        deconstruct_movable_(_3, _pass),
-                        _1,
-                        deconstruct_movable_(_4, _pass))) ]
-                ;
+        number_of2
+            =  (sorting_operator
+            >   label(tok.number_)    > castable_int_rules.flexible_int
+            >   label(tok.sortkey_)   > double_rules.expr
+            >   label(tok.condition_) > condition_parser)
+            [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
+                deconstruct_movable_(_2, _pass),
+                deconstruct_movable_(_3, _pass),
+                _1,
+                deconstruct_movable_(_4, _pass))) ]
+            ;
 
-            number_of
-                =   number_of1
-                |   number_of2
-                ;
+        number_of
+            =   number_of1
+            |   number_of2
+            ;
 
-            random
-                =   tok.Random_
-                >   label(tok.probability_) > double_rules.expr
-                [ _val = construct_movable_(new_<Condition::Chance>(deconstruct_movable_(_1, _pass))) ]
-                ;
+        random
+            =   tok.Random_
+            >   label(tok.probability_) > double_rules.expr
+            [ _val = construct_movable_(new_<Condition::Chance>(deconstruct_movable_(_1, _pass))) ]
+            ;
 
-            stockpile
-                = ( omit_[tok.EmpireStockpile_]
-                >   label(tok.low_)  > double_rules.expr
-                >   label(tok.high_) > double_rules.expr)
-                [ _val = construct_movable_(new_<Condition::EmpireStockpileValue>(
-                        ResourceType::RE_INDUSTRY,
-                        deconstruct_movable_(_1, _pass),
-                        deconstruct_movable_(_2, _pass))) ]
-                ;
+        stockpile
+            = ( omit_[tok.EmpireStockpile_]
+            >   label(tok.resource_) >  resource_type_enum
+            > -(label(tok.low_)      >  double_rules.expr)
+            > -(label(tok.high_)     >  double_rules.expr)
+              ) [ _val = construct_movable_(new_<Condition::EmpireStockpileValue>(
+                    _1,
+                    deconstruct_movable_(_2, _pass),
+                    deconstruct_movable_(_3, _pass))) ]
+            ;
 
-            resource_supply_connected
-                = ( omit_[tok.ResourceSupplyConnected_]
-                    > label(tok.empire_)    > int_rules.expr
-                    > label(tok.condition_) > condition_parser)
-                [ _val = construct_movable_(new_<Condition::ResourceSupplyConnectedByEmpire>(
-                        deconstruct_movable_(_1, _pass),
-                        deconstruct_movable_(_2, _pass))) ]
-                ;
+        resource_supply_connected
+            = ( omit_[tok.ResourceSupplyConnected_]
+            >   label(tok.empire_)    > int_rules.expr
+            >   label(tok.condition_) > condition_parser)
+            [ _val = construct_movable_(new_<Condition::ResourceSupplyConnectedByEmpire>(
+                deconstruct_movable_(_1, _pass),
+                deconstruct_movable_(_2, _pass))) ]
+            ;
 
-            can_add_starlane
-                = ( omit_[tok.CanAddStarlanesTo_]
-                >   label(tok.condition_) > condition_parser)
-                [ _val = construct_movable_(new_<Condition::CanAddStarlaneConnection>(
-                        deconstruct_movable_(_1, _pass))) ]
-                ;
+        can_add_starlane
+            = ( omit_[tok.CanAddStarlanesTo_]
+            >   label(tok.condition_) > condition_parser)
+            [ _val = construct_movable_(new_<Condition::CanAddStarlaneConnection>(
+                deconstruct_movable_(_1, _pass))) ]
+            ;
 
-            start
-                %=  has_special_capacity
-                |   within_distance
-                |   within_starlane_jumps
-                |   number
-                |   comparison_trinary_int      // more complicated format that is strict extension of comparison_binary_int format, so needs to be tested before it
-                |   comparison_binary_int       //  first int ...
-                |   comparison_trinary_double   // more complicated format that is strict extension of comparison_binary_double format, so needs to be tested before it
-                |   comparison_binary_double    //  ... then double (which may include int(s) casted to double(s))...
-                |   comparison_trinary_string   // more complicated format that is strict extension of comparison_binary_string format, so needs to be tested before it
-                |   comparison_binary_string    //  ... then string
-                |   turn
-                |   created_on_turn
-                |   number_of
-                |   random
-                |   stockpile
-                |   resource_supply_connected
-                |   can_add_starlane
-                ;
+        start
+            %=  has_special_capacity
+            |   within_distance
+            |   within_starlane_jumps
+            |   number
+            |   comparison_trinary_int      // more complicated format that is strict extension of comparison_binary_int format, so needs to be tested before it
+            |   comparison_binary_int       //  first int ...
+            |   comparison_trinary_double   // more complicated format that is strict extension of comparison_binary_double format, so needs to be tested before it
+            |   comparison_binary_double    //  ... then double (which may include int(s) casted to double(s))...
+            |   comparison_trinary_string   // more complicated format that is strict extension of comparison_binary_string format, so needs to be tested before it
+            |   comparison_binary_string    //  ... then string
+            |   turn
+            |   created_on_turn
+            |   number_of
+            |   random
+            |   stockpile
+            |   resource_supply_connected
+            |   can_add_starlane
+            ;
 
-            has_special_capacity.name("HasSpecialCapacity");
-            within_distance.name("WithinDistance");
-            within_starlane_jumps.name("WithinStarlaneJumps");
-            number.name("Number");
-            comparison_operator.name("comparison operator");
-            string_comparison_operator.name("string comparison operator");
-            comparison_operator.name("comparison operator");
-            comparison_binary_double.name("ValueTest Binary dou ble");
-            comparison_trinary_double.name("ValueTest Trinary double");
-            comparison_binary_string.name("ValueTest Binary string");
-            comparison_trinary_string.name("ValueTest Trinary string");
-            comparison_binary_int.name("ValueTest Binary int");
-            comparison_trinary_int.name("ValueTest Trinary int");
-            turn.name("Turn");
-            created_on_turn.name("CreatedOnTurn");
-            sorting_operator.name("sorting operator");
-            number_of.name("NumberOf");
-            random.name("Random");
-            stockpile.name("EmpireStockpile");
-            resource_supply_connected.name("ResourceSupplyConnected");
-            can_add_starlane.name("CanAddStarlanesTo");
+        has_special_capacity.name("HasSpecialCapacity");
+        within_distance.name("WithinDistance");
+        within_starlane_jumps.name("WithinStarlaneJumps");
+        number.name("Number");
+        comparison_operator.name("comparison operator");
+        string_comparison_operator.name("string comparison operator");
+        comparison_operator.name("comparison operator");
+        comparison_binary_double.name("ValueTest Binary dou ble");
+        comparison_trinary_double.name("ValueTest Trinary double");
+        comparison_binary_string.name("ValueTest Binary string");
+        comparison_trinary_string.name("ValueTest Trinary string");
+        comparison_binary_int.name("ValueTest Binary int");
+        comparison_trinary_int.name("ValueTest Trinary int");
+        turn.name("Turn");
+        created_on_turn.name("CreatedOnTurn");
+        sorting_operator.name("sorting operator");
+        number_of.name("NumberOf");
+        random.name("Random");
+        stockpile.name("EmpireStockpile");
+        resource_supply_connected.name("ResourceSupplyConnected");
+        can_add_starlane.name("CanAddStarlanesTo");
 
 #if DEBUG_CONDITION_PARSERS
-            debug(has_special_capacity);
-            debug(within_distance);
-            debug(within_starlane_jumps);
-            debug(number);
-            debug(turn);
-            debug(created_on_turn);
-            debug(number_of);
-            debug(random);
-            debug(stockpile);
-            debug(resource_supply_connected);
-            debug(can_add_starlane);
+        debug(has_special_capacity);
+        debug(within_distance);
+        debug(within_starlane_jumps);
+        debug(number);
+        debug(turn);
+        debug(created_on_turn);
+        debug(number_of);
+        debug(random);
+        debug(stockpile);
+        debug(resource_supply_connected);
+        debug(can_add_starlane);
 #endif
-        }
-
-} }
+    }
+}

@@ -391,6 +391,7 @@
     (Researchable)                              \
     (researchcost)                              \
     (researchturns)                             \
+    (resource)                                  \
     (ResourceSupplyConnected)                   \
     (ResupplyableBy)                            \
     (Retain)                                    \

@@ -16,6 +16,7 @@ namespace parse { namespace detail {
         parse::int_arithmetic_rules         int_rules;
         parse::castable_as_int_parser_rules castable_int_rules;
         parse::double_parser_rules          double_rules;
+        parse::resource_type_grammar        resource_type_enum;
         condition_parser_rule               has_special_capacity;
         condition_parser_rule               within_distance;
         condition_parser_rule               within_starlane_jumps;
