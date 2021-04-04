@@ -365,8 +365,7 @@ void PoliciesListBox::PoliciesListBoxRow::ChildrenDraggedAway(
         return;
 
     auto new_policy_control = GG::Wnd::Create<PolicyControl>(policy_type);
-    const auto parent = dynamic_cast<const PoliciesListBox*>(Parent().get());
-    if (parent) {
+    if (auto parent = std::dynamic_pointer_cast<const PoliciesListBox>(Parent())) {
         new_policy_control->ClickedSignal.connect(parent->PolicyClickedSignal);
         new_policy_control->DoubleClickedSignal.connect(parent->PolicyDoubleClickedSignal);
         new_policy_control->RightClickedSignal.connect(parent->PolicyRightClickedSignal);
@@ -415,7 +414,7 @@ void PoliciesListBox::AcceptDrops(const GG::Pt& pt,
     if (wnds.empty())
         return;
 
-    auto* control = boost::polymorphic_downcast<const PolicyControl*>(wnds.begin()->get());
+    auto control = std::dynamic_pointer_cast<const PolicyControl>(*wnds.begin());
     const Policy* policy_type = control ? control->GetPolicy() : nullptr;
     if (!policy_type)
         return;
@@ -428,8 +427,8 @@ PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire* empire) const {
     std::map<std::string, std::vector<const Policy*>> policies_categorized;
 
     // loop through all possible policies
-    for (const auto& entry : GetPolicyManager()) {
-        const auto& policy = entry.second;
+    for (auto& [policy_name, policy] : GetPolicyManager()) {
+        (void)policy_name; // quiet warning
         const auto& category = policy->Category();
 
         // check whether this policy should be shown in list
@@ -469,11 +468,10 @@ void PoliciesListBox::Populate() {
 
     // filter policies by availability and current designation of categories
     // for display
-    for (const auto& cat : GroupAvailableDisplayablePolicies(empire)) {
-        //std::cout << "  cat: " << cat.first << std::endl;
+    for (auto& [category_name, policies_vec] : GroupAvailableDisplayablePolicies(empire)) {
+        (void)category_name; // quiet warning
         // take the sorted policies and make UI element rows for the PoliciesListBox
-        for (const auto* policy: cat.second) {
-            //std::cout << "   ... policy: " << policy->Name() << std::endl;
+        for (const auto policy : policies_vec) {
             // check if current row is full, and make a new row if necessary
             if (cur_col >= NUM_COLUMNS) {
                 if (cur_row)
@@ -503,8 +501,7 @@ void PoliciesListBox::Populate() {
 
     // If there are no policies add a prompt to suggest a solution.
     if (num_policies == 0)
-        Insert(GG::Wnd::Create<PromptRow>(TOTAL_WIDTH,
-                                          UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT")),
+        Insert(GG::Wnd::Create<PromptRow>(TOTAL_WIDTH, UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT")),
                begin(), false);
 }
 
