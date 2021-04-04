@@ -4,7 +4,7 @@ from typing import List
 
 from common.print_utils import Table, Text
 from stub_generator.constants import ATTRS, CLASS_NAME, DOC, ENUM_PAIRS, NAME, PARENTS
-from stub_generator.interface_inspector import EnumInfo
+from stub_generator.interface_inspector import EnumInfo, FunctionInfo
 from stub_generator.parse_docs import Docs
 
 
@@ -77,17 +77,17 @@ def _handle_class(info):
     return '\n'.join(result)
 
 
-def _handle_function(doc):
-    name = doc[NAME]
-    doc = Docs(doc[DOC], 1)
-    return_annotation = ' -> %s' % doc.rtype if doc.rtype else ''
-    docstring = doc.get_doc_string()
+def _handle_function(fun: FunctionInfo):
+    name = fun.name
+    function = Docs(fun.doc, 1)
+    return_annotation = ' -> %s' % function.rtype if function.rtype else ''
+    docstring = function.get_doc_string()
     if docstring:
         docstring = '\n' + docstring
         end = ''
     else:
         end = '\n    ...'
-    res = 'def %s(%s) %s:%s%s' % (name, doc.get_argument_string(), return_annotation, docstring, end)
+    res = 'def %s(%s) %s:%s%s' % (name, function.get_argument_string(), return_annotation, docstring, end)
     return res
 
 
@@ -137,7 +137,7 @@ def _report_classes_without_instances(classes_map, instance_names, classes_to_ig
     warning(table.get_table())
 
 
-def make_stub(classes, enums: List[EnumInfo], functions, instances, result_path, classes_to_ignore: set):
+def make_stub(classes, enums: List[EnumInfo], functions: List[FunctionInfo], instances, result_path, classes_to_ignore: set):
 
     # exclude technical Map classes that are prefixed with map_indexing_suite_ classes
     classes = [x for x in classes if not x[NAME].startswith('map_indexing_suite_')]
@@ -203,7 +203,7 @@ def make_stub(classes, enums: List[EnumInfo], functions, instances, result_path,
     for enum in sorted(enums, key=attrgetter("name")):
         res.append(_handle_enum(enum))
 
-    for function in sorted(functions, key=itemgetter(NAME)):
+    for function in sorted(functions, key=attrgetter("name")):
         res.append(_handle_function(function))
 
     with open(result_path, 'w') as f:

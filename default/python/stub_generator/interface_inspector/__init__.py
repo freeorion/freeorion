@@ -1,2 +1,3 @@
 from stub_generator.interface_inspector.module_inspector import get_module_info
-from stub_generator.interface_inspector.enum_parser import EnumInfo
+from stub_generator.interface_inspector.enum_processor import EnumInfo
+from stub_generator.interface_inspector.function_processor import FunctionInfo

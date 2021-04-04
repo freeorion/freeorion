@@ -2,10 +2,11 @@ from collections import defaultdict
 from enum import Enum
 from inspect import getdoc, isroutine
 from logging import error, warning
-from typing import Any
+from typing import Any, List, Tuple
 
 from stub_generator.constants import ATTRS, CLASS_NAME, DOC, ENUM_PAIRS, NAME, PARENTS
-from stub_generator.interface_inspector.enum_parser import inspect_enum
+from stub_generator.interface_inspector.enum_processor import EnumInfo, inspect_enum
+from stub_generator.interface_inspector.function_processor import FunctionInfo, inspect_function
 
 
 def _get_member_info(name, member):
@@ -86,13 +87,6 @@ def _inspect_class(class_name, obj):
     return info
 
 
-def _inspect_function(name, value):
-    return {
-        NAME: name,
-        DOC: getdoc(value)
-    }
-
-
 class MemberType(Enum):
     ENUM = 1
     CLASS = 2
@@ -115,7 +109,7 @@ def get_type(member):
 _OBJECT_HANDLERS = {
     MemberType.ENUM: inspect_enum,
     MemberType.CLASS: _inspect_class,
-    MemberType.FUNCTION: _inspect_function,
+    MemberType.FUNCTION: inspect_function,
 }
 
 _NAMES_TO_IGNORE = {'__doc__', '__package__', '__name__', 'INVALID_GAME_TURN', 'to_str', '__loader__', '__spec__'}
@@ -162,7 +156,7 @@ def inspect_instances(instances):
             error("Error inspecting: '%s' with '%s': %s", type(instance), type(e), e, exc_info=True)
 
 
-def get_module_info(obj, instances):
+def get_module_info(obj, instances) -> Tuple[Any, List[EnumInfo], List[FunctionInfo], Any]:
     module_members = get_module_members(obj)
     return (
         module_members[MemberType.CLASS],
