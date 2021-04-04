@@ -25,6 +25,9 @@
 #include <boost/cast.hpp>
 #include <boost/algorithm/string.hpp>
 
+using boost::placeholders::_1;
+using boost::placeholders::_2;
+
 struct Availability {
     // duplicated from DesignWnd
     enum class Enum {
@@ -157,9 +160,8 @@ namespace {
 
         return boost::none;
     }
-}
 
-namespace {
+
     //////////////////////////
     //    PolicyBroseWnd    //
     //////////////////////////
@@ -190,6 +192,8 @@ namespace {
             ClientUI::PolicyIcon(policy_name), UserString(policy_name), main_text);
     }
 }
+
+
 //////////////////////////////////////////////////
 // PolicyControl                                //
 //////////////////////////////////////////////////
@@ -531,8 +535,6 @@ void PoliciesListBox::HideAllCategories(bool refresh_list) {
         Populate();
 }
 
-using boost::placeholders::_1;
-using boost::placeholders::_2;
 
 //////////////////////////////////////////////////
 // GovernmentWnd::PolicyPalette                 //
@@ -1105,6 +1107,7 @@ void PoliciesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptable
     }
 }
 
+
 //////////////////////////////////////////////////
 // GovernmentWnd::MainPanel                     //
 //////////////////////////////////////////////////
@@ -1373,17 +1376,17 @@ void GovernmentWnd::MainPanel::DoLayout() {
     GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
     m_clear_button->SizeMove(ul, lr);
 
+    if (m_slots.empty())
+        return;
+
     // place background image of government
-    ul.x = GG::X0;
-    ul.y = GG::Y0;
+    ul = m_slots.front()->Size() * 5/4;
     GG::Rect background_rect = GG::Rect(ul, ClientLowerRight());
 
     // arrange policy slots
     int count = 0;
     for (auto& slot : m_slots) {
-        count++;
-        ul.x = (count + 1)*slot->Width() * 5/4;
-        ul.y = (count/5 + 1)*slot->Height() * 5/4;
+        ul += {slot->Width()*5/4, GG::Y0};
         slot->MoveTo(ul);
     }
 }
@@ -1468,7 +1471,7 @@ void GovernmentWnd::DoLayout() {
     m_policy_palette->SizeMove(palette_ul, palette_lr);
 }
 
-void GovernmentWnd::EnableOrderIssuing(bool enable/* = true*/)
+void GovernmentWnd::EnableOrderIssuing(bool enable)
 {}
 
 void GovernmentWnd::CloseClicked()
