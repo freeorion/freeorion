@@ -439,7 +439,7 @@ PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire* empire) const {
         // Check if part satisfies availability
         auto shown = m_availabilities_state.DisplayedPolicyAvailability(policy.get());
         if (shown)
-            policies_categorized[category].emplace_back(policy.get());
+            policies_categorized[category].push_back(policy.get());
     }
     return policies_categorized;
 }
@@ -1148,7 +1148,6 @@ private:
     int FindEmptySlotForPolicy(const Policy* policy) const;
 
     std::vector<std::shared_ptr<PolicySlotControl>> m_slots;
-    std::shared_ptr<GG::StaticGraphic>              m_background_image;
     std::shared_ptr<GG::Button>                     m_clear_button;
 };
 
@@ -1176,7 +1175,7 @@ std::vector<std::string> GovernmentWnd::MainPanel::Policies() const {
     for (const auto& slot : m_slots) {
         const Policy* policy_type = slot->GetPolicy();
         if (policy_type)
-            retval.emplace_back(policy_type->Name());
+            retval.push_back(policy_type->Name());
         else
             retval.emplace_back();
     }
@@ -1343,7 +1342,7 @@ void GovernmentWnd::MainPanel::Populate() {
         const std::string& category_name = cat_slot.first;
         int category_index = cat_slot.second;
         auto slot_control = GG::Wnd::Create<PolicySlotControl>(category_name, category_index, n);
-        m_slots.emplace_back(slot_control);
+        m_slots.push_back(slot_control);
         AttachChild(slot_control);
 
         // assign policy controls to slots that correspond to adopted policies
@@ -1366,8 +1365,6 @@ void GovernmentWnd::MainPanel::Populate() {
 }
 
 void GovernmentWnd::MainPanel::DoLayout() {
-    // position labels and text edit boxes for name and description and buttons to clear and confirm design
-
     const int PTS = ClientUI::Pts();
     const GG::X PTS_WIDE(PTS / 2);           // guess at how wide per character the font needs
     const GG::Y BUTTON_HEIGHT(PTS * 2);
@@ -1384,14 +1381,7 @@ void GovernmentWnd::MainPanel::DoLayout() {
     ul.y = GG::Y0;
     GG::Rect background_rect = GG::Rect(ul, ClientLowerRight());
 
-    if (m_background_image) {
-        GG::Pt bg_ul = background_rect.UpperLeft();
-        GG::Pt bg_lr = ClientSize();
-        m_background_image->SizeMove(bg_ul, bg_lr);
-        background_rect = m_background_image->RenderedArea();
-    }
-
-    // place slot controls over image of hull
+    // arrange policy slots
     int count = 0;
     for (auto& slot : m_slots) {
         count++;
