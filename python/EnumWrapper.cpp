@@ -97,7 +97,6 @@ namespace FreeOrionPython {
             .value("targetConstruction",MeterType::METER_TARGET_CONSTRUCTION)
             .value("targetHappiness",   MeterType::METER_TARGET_HAPPINESS)
 
-            .value("maxDamage",         MeterType::METER_MAX_CAPACITY)
             .value("maxCapacity",       MeterType::METER_MAX_CAPACITY)
             .value("maxSecondaryStat",  MeterType::METER_MAX_SECONDARY_STAT)
 
@@ -116,7 +115,6 @@ namespace FreeOrionPython {
             .value("construction",      MeterType::METER_CONSTRUCTION)
             .value("happiness",         MeterType::METER_HAPPINESS)
 
-            .value("damage",            MeterType::METER_CAPACITY)
             .value("capacity",          MeterType::METER_CAPACITY)
             .value("secondaryStat",     MeterType::METER_SECONDARY_STAT)
 
