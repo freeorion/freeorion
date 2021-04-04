@@ -5,6 +5,7 @@
 #include "../universe/ShipHull.h"
 #include "../universe/ShipPart.h"
 #include "../universe/UnlockableItem.h"
+#include "../Empire/ResourcePool.h"
 
 #include <boost/phoenix/object/dynamic_cast.hpp>
 #include <boost/phoenix/operator/self.hpp>
@@ -30,7 +31,7 @@ namespace parse {
             |   tok.None_       [ _val = EmpireAffiliationType::AFFIL_NONE ]
             |   tok.CanSee_     [ _val = EmpireAffiliationType::AFFIL_CAN_SEE ]
             |   tok.Human_      [ _val = EmpireAffiliationType::AFFIL_HUMAN ]
-            ;
+        ;
     }
 
     unlockable_item_enum_grammar::unlockable_item_enum_grammar(const parse::lexer& tok) :
@@ -43,7 +44,7 @@ namespace parse {
             |   tok.ShipDesign_     [ _val = UnlockableItemType::UIT_SHIP_DESIGN ]
             |   tok.Tech_           [ _val = UnlockableItemType::UIT_TECH ]
             |   tok.Policy_         [ _val = UnlockableItemType::UIT_POLICY ]
-            ;
+        ;
     }
 
     ship_slot_enum_grammar::ship_slot_enum_grammar(const parse::lexer& tok) :
@@ -53,7 +54,7 @@ namespace parse {
             =   tok.External_   [ _val = ShipSlotType::SL_EXTERNAL ]
             |   tok.Internal_   [ _val = ShipSlotType::SL_INTERNAL ]
             |   tok.Core_       [ _val = ShipSlotType::SL_CORE ]
-            ;
+        ;
     }
 
     ship_part_class_enum_grammar::ship_part_class_enum_grammar(const parse::lexer& tok) :
@@ -77,7 +78,7 @@ namespace parse {
             |   tok.Industry_           [ _val = ShipPartClass::PC_INDUSTRY ]
             |   tok.Influence_          [ _val = ShipPartClass::PC_INFLUENCE ]
             |   tok.ProductionLocation_ [ _val = ShipPartClass::PC_PRODUCTION_LOCATION ]
-            ;
+        ;
     }
 
     capture_result_enum_grammar::capture_result_enum_grammar(const parse::lexer& tok) :
@@ -87,7 +88,7 @@ namespace parse {
             =   tok.Capture_            [ _val = CaptureResult::CR_CAPTURE ]
             |   tok.Retain_             [ _val = CaptureResult::CR_RETAIN ]
             |   tok.Destroy_            [ _val = CaptureResult::CR_DESTROY ]
-            ;
+        ;
     }
 
     statistic_enum_grammar::statistic_enum_grammar(const parse::lexer& tok) :
@@ -109,7 +110,17 @@ namespace parse {
             |   tok.Spread_         [ _val = ValueRef::StatisticType::SPREAD ]
             |   tok.StDev_          [ _val = ValueRef::StatisticType::STDEV ]
             |   tok.Product_        [ _val = ValueRef::StatisticType::PRODUCT ]
-            ;
+        ;
+    }
+
+    resource_type_grammar::resource_type_grammar(const parse::lexer& tok) :
+        resource_type_grammar::base_type(rule, "resource_type_enum_grammar")
+    {
+        rule
+            =   tok.Research_       [ _val = ResourceType::RE_RESEARCH ]
+            |   tok.Industry_       [ _val = ResourceType::RE_INDUSTRY ]
+            |   tok.Influence_      [ _val = ResourceType::RE_INFLUENCE ]
+        ;
     }
 
     non_ship_part_meter_enum_grammar::non_ship_part_meter_enum_grammar(const parse::lexer& tok) :
@@ -151,7 +162,7 @@ namespace parse {
             |   tok.Speed_                  [ _val = MeterType::METER_SPEED ]
 
             |   tok.Size_                   [ _val = MeterType::METER_SIZE ]
-            ;
+        ;
     }
 
     ship_part_meter_enum_grammar::ship_part_meter_enum_grammar(const parse::lexer& tok) :
@@ -164,7 +175,7 @@ namespace parse {
             |   tok.Damage_                 [ _val = MeterType::METER_CAPACITY ]
             |   tok.SecondaryStat_          [ _val = MeterType::METER_SECONDARY_STAT ]
             |   tok.MaxSecondaryStat_       [ _val = MeterType::METER_MAX_SECONDARY_STAT ]
-            ;
+        ;
     }
 
     set_non_ship_part_meter_enum_grammar::set_non_ship_part_meter_enum_grammar(const parse::lexer& tok) :
@@ -207,7 +218,7 @@ namespace parse {
             |   tok.SetSpeed_               [ _val = MeterType::METER_SPEED ]
 
             |   tok.SetSize_                [ _val = MeterType::METER_SIZE ]
-            ;
+        ;
     }
 
     set_ship_part_meter_enum_grammar::set_ship_part_meter_enum_grammar(const parse::lexer& tok) :
@@ -220,6 +231,6 @@ namespace parse {
             |   tok.SetCapacity_            [ _val = MeterType::METER_CAPACITY ]
             |   tok.SetDamage_              [ _val = MeterType::METER_CAPACITY ]
             |   tok.SetSecondaryStat_       [ _val = MeterType::METER_SECONDARY_STAT ]
-            ;
+        ;
     }
 }

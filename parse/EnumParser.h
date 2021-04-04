@@ -42,6 +42,11 @@ namespace parse {
         detail::enum_rule<ValueRef::StatisticType> rule;
     };
 
+    struct resource_type_grammar : public detail::enum_grammar<ResourceType> {
+        resource_type_grammar(const parse::lexer& tok);
+        detail::enum_rule<ResourceType> rule;
+    };
+
     struct non_ship_part_meter_enum_grammar : public detail::enum_grammar<MeterType> {
         non_ship_part_meter_enum_grammar(const parse::lexer& tok);
         detail::enum_rule<MeterType> rule;
