@@ -6,4 +6,4 @@ Tech
     researchcost = 1
     researchturns = 1
     tags = [ "PEDIA_SPY_CATEGORY" ]
-#include "/customizations/custom_sitreps.txt"
+#include "/scripting/custom_sitreps.txt"

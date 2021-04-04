@@ -34,12 +34,13 @@ events.
 * stringtables/  -  Language translations.  The only required file is
 **en.txt**, which is also a fallback for any other translations.  Any
 corrections to translations, or updates for omitted languages are welcome.
-* content_specific_parameters.txt  -  **This file and the contained entries are
+* stringtables/content_specific_parameters.txt  -  **This file and the contained entries are
 required by FreeOrion**, the entries should be modified to reflect related
 content changes.  See file for details.
+* stringtables/common_user_customizations.txt  -  File that controls the interface.
+See the contents for more information.
 * COPYING  -  License info related to any content in this directory.
 **Required file and content.**
 * credits.xml  -  Acknowledgments of those who have made FreeOrion possible. 
 **Required file and content.**
-* empire_colors.xml  -  Color options available for empires to select from. 
-**This file containing at least one GG::Clr node is required.**
+
