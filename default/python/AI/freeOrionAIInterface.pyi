@@ -6,6 +6,32 @@
 from typing import Dict
 
 
+class AccountingInfo:
+    @property
+    def causeType(self):
+        ...
+
+    @property
+    def customLabel(self):
+        ...
+
+    @property
+    def meterChange(self):
+        ...
+
+    @property
+    def meterRunningTotal(self):
+        ...
+
+    @property
+    def sourceID(self):
+        ...
+
+    @property
+    def specificCause(self):
+        ...
+
+
 class AccountingInfoVec:
     def __contains__(self, obj: object) -> bool:
         ...
@@ -29,20 +55,6 @@ class AccountingInfoVec:
         ...
 
     def extend(self, obj: object) -> None:
-        ...
-
-
-class EffectCause:
-    @property
-    def causeType(self):
-        ...
-
-    @property
-    def customLabel(self):
-        ...
-
-    @property
-    def specificCause(self):
         ...
 
 
@@ -222,6 +234,16 @@ class IntIntMap:
         ...
 
 
+class IntMeterTypeAccountingInfoVecMapPair:
+    @property
+    def meterAccounting(self):
+        ...
+
+    @property
+    def targetID(self):
+        ...
+
+
 class IntPairVec:
     def __contains__(self, obj: object) -> bool:
         ...
@@ -354,6 +376,16 @@ class MeterTypeAccountingInfoVecMap:
         ...
 
 
+class MeterTypeAccountingInfoVecPair:
+    @property
+    def accountingInfo(self):
+        ...
+
+    @property
+    def meterType(self):
+        ...
+
+
 class MeterTypeMeterMap:
     def __contains__(self, obj: object) -> bool:
         ...
@@ -381,40 +413,6 @@ class MeterTypeStringPair:
 
     @property
     def string(self):
-        ...
-
-
-class Order:
-    @property
-    def empireID(self):
-        ...
-
-    @property
-    def executed(self):
-        ...
-
-
-class OrderSet:
-    @property
-    def size(self):
-        ...
-
-    def __contains__(self, obj: object) -> bool:
-        ...
-
-    def __delitem__(self, obj: object) -> None:
-        ...
-
-    def __getitem__(self, obj: object) -> object:
-        ...
-
-    def __iter__(self) -> object:
-        ...
-
-    def __len__(self) -> int:
-        ...
-
-    def __setitem__(self, obj1: object, obj2: object) -> None:
         ...
 
 
@@ -882,16 +880,10 @@ class empire:
     def getResourcePool(self, resource_type: resourceType) -> resPool:
         ...
 
-    def getSitRep(self, number: int) -> sitrep:
-        ...
-
     def getTechStatus(self, string: str) -> techStatus:
         ...
 
     def hasExploredSystem(self, number: int) -> bool:
-        ...
-
-    def numSitReps(self, number: int) -> int:
         ...
 
     def obstructedStarlanes(self) -> IntPairVec:
@@ -1038,7 +1030,7 @@ class policy:
     def shortDescription(self):
         ...
 
-    def adoptionCost(self, number: int) -> float:
+    def adoptionCost(self, number: int, obj: object) -> float:
         ...
 
 
@@ -1442,26 +1434,6 @@ class shipPart:
         ...
 
 
-class sitrep:
-    @property
-    def getTags(self):
-        ...
-
-    @property
-    def getTurn(self)-> int:
-        ...
-
-    @property
-    def typeString(self):
-        ...
-
-    def getDataIDNumber(self, string: str) -> int:
-        ...
-
-    def getDataString(self, string: str) -> str:
-        ...
-
-
 class special:
     @property
     def description(self)-> str:
@@ -1781,20 +1753,6 @@ class universeObject:
         ...
 
     def specialAddedOnTurn(self, string: str) -> int:
-        ...
-
-
-class AccountingInfo(EffectCause):
-    @property
-    def meterChange(self):
-        ...
-
-    @property
-    def meterRunningTotal(self):
-        ...
-
-    @property
-    def sourceID(self):
         ...
 
 
@@ -2752,12 +2710,6 @@ def getOptionsDBOptionInt(string: str)  -> object:
 def getOptionsDBOptionStr(string: str)  -> object:
     """
     Returns the string value of option in OptionsDB or None if the option does not exist.
-    """
-
-
-def getOrders()  -> OrderSet:
-    """
-    Returns the orders the client empire has issued (OrderSet).
     """
 
 

@@ -6,6 +6,32 @@
 from typing import Dict
 
 
+class AccountingInfo:
+    @property
+    def causeType(self):
+        ...
+
+    @property
+    def customLabel(self):
+        ...
+
+    @property
+    def meterChange(self):
+        ...
+
+    @property
+    def meterRunningTotal(self):
+        ...
+
+    @property
+    def sourceID(self):
+        ...
+
+    @property
+    def specificCause(self):
+        ...
+
+
 class AccountingInfoVec:
     def __contains__(self, obj: object) -> bool:
         ...
@@ -29,20 +55,6 @@ class AccountingInfoVec:
         ...
 
     def extend(self, obj: object) -> None:
-        ...
-
-
-class EffectCause:
-    @property
-    def causeType(self):
-        ...
-
-    @property
-    def customLabel(self):
-        ...
-
-    @property
-    def specificCause(self):
         ...
 
 
@@ -230,6 +242,16 @@ class IntIntMap:
         ...
 
 
+class IntMeterTypeAccountingInfoVecMapPair:
+    @property
+    def meterAccounting(self):
+        ...
+
+    @property
+    def targetID(self):
+        ...
+
+
 class IntPairVec:
     def __contains__(self, obj: object) -> bool:
         ...
@@ -359,6 +381,16 @@ class MeterTypeAccountingInfoVecMap:
         ...
 
     def __setitem__(self, obj1: object, obj2: object) -> None:
+        ...
+
+
+class MeterTypeAccountingInfoVecPair:
+    @property
+    def accountingInfo(self):
+        ...
+
+    @property
+    def meterType(self):
         ...
 
 
@@ -895,16 +927,10 @@ class empire:
     def getResourcePool(self, resource_type: resourceType) -> resPool:
         ...
 
-    def getSitRep(self, number: int) -> sitrep:
-        ...
-
     def getTechStatus(self, string: str) -> techStatus:
         ...
 
     def hasExploredSystem(self, number: int) -> bool:
-        ...
-
-    def numSitReps(self, number: int) -> int:
         ...
 
     def obstructedStarlanes(self) -> IntPairVec:
@@ -1051,7 +1077,7 @@ class policy:
     def shortDescription(self):
         ...
 
-    def adoptionCost(self, number: int) -> float:
+    def adoptionCost(self, number: int, obj: object) -> float:
         ...
 
 
@@ -1455,26 +1481,6 @@ class shipPart:
         ...
 
 
-class sitrep:
-    @property
-    def getTags(self):
-        ...
-
-    @property
-    def getTurn(self)-> int:
-        ...
-
-    @property
-    def typeString(self):
-        ...
-
-    def getDataIDNumber(self, string: str) -> int:
-        ...
-
-    def getDataString(self, string: str) -> str:
-        ...
-
-
 class special:
     @property
     def description(self)-> str:
@@ -1794,20 +1800,6 @@ class universeObject:
         ...
 
     def specialAddedOnTurn(self, string: str) -> int:
-        ...
-
-
-class AccountingInfo(EffectCause):
-    @property
-    def meterChange(self):
-        ...
-
-    @property
-    def meterRunningTotal(self):
-        ...
-
-    @property
-    def sourceID(self):
         ...
 
 
