@@ -15,6 +15,7 @@ Policy
                 Planet
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
+                Happiness low = 8
             ]
             effects = [
                 SetTargetResearch value = Value - 2 + 0.5 * Statistic CountUnique

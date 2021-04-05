@@ -17,6 +17,7 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
+                Happiness low = 10
             ]
             stackinggroup = "BLD_ENCLAVE_VOID_STACK"
             effects = SetTargetResearch value = Value + Target.Population

@@ -14,7 +14,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 Not Population high = 0
                 Focus type = "FOCUS_INDUSTRY"
-                Happiness low = 0
+                Happiness low = 10
                 InSystem
                 ContainedBy Contains And [
                     Planet

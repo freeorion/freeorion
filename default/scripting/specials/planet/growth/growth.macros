@@ -22,6 +22,7 @@ ANCIENT_RUINS_DEPLETED_CONTENT
             scope = And [
                 Source
                 Focus type = "FOCUS_RESEARCH"
+                Happiness low = 16
             ]
             effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
         ]

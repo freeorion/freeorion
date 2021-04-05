@@ -20,6 +20,7 @@ BuildingType
                 Planet
                 Not Population high = 0
                 OwnedBy empire = Source.Owner
+                Happiness low = 0
             ]
             activation = And [
                 ContainedBy And [

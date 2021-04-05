@@ -7,6 +7,7 @@ BASIC_RESEARCH
             activation = And [
                 Planet
                 Focus type = "FOCUS_RESEARCH"
+                Happiness low = 0
             ]
             accountinglabel = "FOCUS_RESEARCH_LABEL"
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
@@ -33,6 +34,7 @@ VERY_BAD_RESEARCH
             activation = And [
                 Planet
                 Focus type = "FOCUS_RESEARCH"
+                Happiness low = 8
             ]
             accountinglabel = "VERY_BAD_RESEARCH_LABEL"
             effects = SetTargetResearch value = Value*[[VERY_BAD_MULTIPLIER]]
@@ -47,6 +49,7 @@ BAD_RESEARCH
             activation = And [
                 Planet
                 Focus type = "FOCUS_RESEARCH"
+                Happiness low = 6
             ]
             accountinglabel = "BAD_RESEARCH_LABEL"
             effects = SetTargetResearch value = Value*[[BAD_MULTIPLIER]]
@@ -65,6 +68,7 @@ GOOD_RESEARCH
             activation = And [
                 Planet
                 Focus type = "FOCUS_RESEARCH"
+                Happiness low = 2
             ]
             accountinglabel = "GOOD_RESEARCH_LABEL"
             effects = SetTargetResearch value = Value*[[GOOD_MULTIPLIER]]
@@ -79,6 +83,7 @@ GREAT_RESEARCH
             activation = And [
                 Planet
                 Focus type = "FOCUS_RESEARCH"
+                Happiness low = 0
             ]
             accountinglabel = "GREAT_RESEARCH_LABEL"
             effects = SetTargetResearch value = Value*[[GREAT_MULTIPLIER]]

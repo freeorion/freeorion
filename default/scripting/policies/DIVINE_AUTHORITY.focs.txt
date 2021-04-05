@@ -15,6 +15,7 @@ Policy
             Planet
             OwnedBy empire = Source.Owner
             Population low = 0.001
+            Happiness low = 10
         ]
         effects = [
             SetTargetHappiness value = Value

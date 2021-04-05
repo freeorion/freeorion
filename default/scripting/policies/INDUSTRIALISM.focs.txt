@@ -15,14 +15,23 @@ Policy
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
                 Population low = 0.001
+                Happiness low = 15
             ]
             priority = [[TARGET_2ND_SCALING_PRIORITY]]
-            effects = [
+            effects =
                 SetTargetIndustry value = Value
                     * (NamedReal name = "PLC_INDUSTRIALISM_TARGET_INDUSTRY_SCALING" value = 1.25)
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INDUSTRY"
+                Population low = 0.001
+            ]
+            effects =
                 SetTargetHappiness value = Value
                     + (NamedReal name = "PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT" value = 10)
-            ]
     ]
     graphic = "icons/policies/industrialism.png"
 

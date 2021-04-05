@@ -17,7 +17,7 @@ BuildingType
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
-                Happiness low = 0
+                Happiness low = 8
                 Focus type = "FOCUS_INDUSTRY"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
@@ -34,6 +34,7 @@ BuildingType
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
+                Happiness low = 10
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Focus type = "FOCUS_INDUSTRY"
             ]
@@ -50,6 +51,7 @@ BuildingType
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
+                Happiness low = 12
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Focus type = "FOCUS_INDUSTRY"
             ]

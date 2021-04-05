@@ -82,6 +82,7 @@ BuildingType
                 Focus type = "FOCUS_RESEARCH"
                 OwnedBy empire = Source.Owner
                 Species
+                Happiness low = 12
             ]
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]

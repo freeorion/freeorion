@@ -23,6 +23,7 @@ Tech
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
+                Happiness low = 0
             ]
             stackinggroup = "DEFENSE_NET_STACK_GM"
             accountinglabel = "GRO_ENERGY_META"
@@ -35,6 +36,7 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
+                Happiness low = 0
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_GEM"
             accountinglabel = "GRO_ENERGY_META"
@@ -48,7 +50,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
-                Happiness low = 0
+                Happiness low = 20
             ]
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population
@@ -60,6 +62,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
+                Happiness low = 20
             ]
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value  + Target.Population

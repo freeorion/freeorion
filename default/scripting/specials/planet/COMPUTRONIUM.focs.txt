@@ -25,6 +25,7 @@ Special
                 Planet
                 Focus type = "FOCUS_RESEARCH"
                 OwnedBy empire = Source.Owner
+                Happiness low = 18
             ]
             activation = Focus type = "FOCUS_RESEARCH"
             stackinggroup = "COMPUTRONIUM_STACK"

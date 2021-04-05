@@ -37,6 +37,7 @@ Special
                 Planet
                 Not Population high = 0
                 InSystem id = Source.SystemID
+                Happiness low = 10
             ]
             activation = Unowned
             stackinggroup = "PHILOSOPHER_STACK"

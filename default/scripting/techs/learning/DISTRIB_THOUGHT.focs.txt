@@ -13,6 +13,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
+                Happiness low = 10
             ]
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value + max(
