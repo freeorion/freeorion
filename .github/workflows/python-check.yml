@@ -32,4 +32,4 @@ jobs:
           diff -u default/stringtables/en.txt <(check/st-tool.py format default/stringtables/en.txt) || { echo "String table is not properly formatted"; exit 1; }
       - name: Validate string tables
         run: |
-          ./check/st-tool.py check --reference default/stringtables/en.txt default/stringtables/*.txt
+          ./check/st-tool.py check --reference default/stringtables/en.txt default/stringtables/??.txt
