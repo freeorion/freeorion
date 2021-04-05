@@ -70,6 +70,39 @@ NO_INFLUENCE
 [[BASE_INFLUENCE_COSTS]]
 '''
 
+ARTISANS_INFLUENCE_STABILITY
+'''        EffectsGroup     // artistic species generate influence when artisans workshops policy adopted
+            scope = Source
+            activation = And [
+                HasTag name = "ARTISTIC"
+                Happiness low = 15
+                EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_ARTISAN_WORKSHOPS"
+            ]
+            accountinglabel = "PLC_ARTISAN_WORKSHOPS"
+            effects = SetTargetInfluence value = Value + Target.Population * [[INFLUENCE_PER_POP]]
+
+        EffectsGroup        // artistic species make planets that like them or are also artistic and that are in their system more stable when set to influence focus
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Not Source
+                Species
+                Not Species name = Source.Species
+                //Or [  // TODO: implement once species-species opinions are working...
+                    HasTag name = "ARTISTIC"
+                //    (SpeciesSpeciesOpinion species = LocalCandidate.Species species = Source.Species > 0)
+                //]
+            ]
+            activation = And [
+                Species
+                HasTag name = "ARTISTIC"
+                Happiness low = 10
+                Focus type = "FOCUS_INFLUENCE"
+            ]
+            accountinglabel = "ARTISAN_APPRECIATION"
+            effects = SetTargetHappiness value = Value + 1.0
+'''
+
 BASIC_INFLUENCE
 '''        EffectsGroup     // influence focus generates influence from planets, proportional to population
             scope = Source
@@ -83,6 +116,8 @@ BASIC_INFLUENCE
                 (NamedReal name = "FOCUS_INFLUENCE_INFLUENCE_PERPOP" value = [[INFLUENCE_PER_POP]])
 
 [[BASE_INFLUENCE_COSTS]]
+
+[[ARTISANS_INFLUENCE_STABILITY]]
 '''
 
 VERY_BAD_INFLUENCE

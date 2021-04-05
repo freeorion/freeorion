@@ -11690,7 +11690,7 @@ PLC_ARTISAN_WORKSHOPS
 Artisan Workshops
 
 PLC_ARTISAN_WORKSHOPS_DESC
-Planets with [[ARTISTIC]] species that are set to influence focus will export aesthetically pleasing crafts to supply-connected planets, boosting the stability of planets with species that like (or don't dislike) the artistic species.
+Planets with [[ARTISTIC]] species that are set to influence focus will generate influence and will export aesthetically pleasing crafts to planets in their system, boosting the stability of those planets.
 
 PLC_ARTISAN_WORKSHOPS_SHORT_DESC
 Artistic species produce luxuries
@@ -16136,6 +16136,9 @@ Homeworld Independence Movement
 
 CAPITAL_DISCONNECTION_LABEL
 Not Connected to Empire Capital
+
+ARTISAN_APPRECIATION
+Likes Influence-Focused Artistic Species In System
 
 # %1% name of empire
 # %2% name of policy
