@@ -26,18 +26,6 @@ COMMON_HAPPINESS_EFFECTS
                 min(abs(Value(Target.TargetHappiness) - Value), 1) *
                     (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetHappiness))]))
 
-        EffectsGroup    // more stable on suitable planet for species
-            scope = Source
-            activation = And [
-                Planet
-                (LocalCandidate.LastTurnConquered < CurrentTurn - 5)
-                (LocalCandidate.LastTurnColonized = CurrentTurn)
-            ]
-            effects = SetHappiness value = max(Value,
-                1*(Statistic If condition = And [Target Planet environment = Poor]) +
-                2*(Statistic If condition = And [Target Planet environment = Adequate]) +
-                4*(Statistic If condition = And [Target Planet environment = Good]))
-
         EffectsGroup    // more stable when liked focuses are adopted
             scope = Source
             activation = And [
