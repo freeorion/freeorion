@@ -1246,6 +1246,14 @@ RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_DESC
 
 <u>Si désactivé</u>: Les planètes ayant une Furtivité supérieure à la Capacité de Détection d'un empire sont détectables par cet empire, si celui-ci possède un autre objet dans le même système.'''
 
+RULE_BASIC_VIS_SYSTEM_INFO_SHOWN
+Information de base des systèmes visibles
+
+RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
+'''<u>Si activé</u>: Les systèmes détectés par un empire uniquement à un niveau de visibilité basique ont leur nom et leur type d'étoile révélés à cet empire.
+
+<u>Si désactivé</u>: Les systèmes d'un niveau de visibilité basique n'ayant jamais été détectés à un niveau de visibilité supérieure ont un nom et un type d'étoile inconnus.'''
+
 RULE_HABITABLE_SIZE_TINY
 Zone habitable Minuscules Planètes
 
@@ -1501,7 +1509,7 @@ OPTIONS_DB_PUBLISH_SEED
 Autoriser l'envoi de la Graine de galaxie au joueur.
 
 OPTIONS_DB_FIRST_TURN_TIME
-Référence de temps absolu au format "2019-01-20 11:59:59" UTC. Si vide, la fin du premier tour interviendra après l'intervalle d'expiration. Nécessite l'activation de l'intervalle fixe.
+Référence de temps absolu au format "2019-01-20 11:59:59" UTC. Si vide, la fin du premier tour interviendra après l'intervalle d'expiration.
 
 OPTIONS_DB_TIMEOUT_INTERVAL
 Intervalle maximum en secondes entre la validation automatique de chaque tour. Si 0, la fin du tour par temps limite est désactivée, et le passage au tour suivant interviendra seulement une fois que tous les joueurs auront terminé leur tour. La validation automatique d'un tour est également désactivée après qu'un joueur ait gagné la partie.
@@ -4901,11 +4909,17 @@ Rendement Production
 RP_OUTPUT
 Rendement Recherche
 
+IP_OUTPUT
+Rendement Influence Net
+
 PLANET_COUNT
 Planètes
 
 COLONIES_COUNT  # translated
 Colonies
+
+POLICIES_ADOPTED
+Stratégies appliquées
 
 BATTLESHIP_COUNT
 Astronefs armés
