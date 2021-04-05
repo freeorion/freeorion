@@ -12,6 +12,7 @@ STABILITY_PER_LIKED_OR_DISLIKED_SPECIAL_IN_SYSTEM
 STABILITY_PER_LIKED_OR_DISLIKED_EXPORTED_SPECIAL_IN_EMPIRE
 '''2.0 * [[SPECIAL_LIKE_DISLIKE_SCALING]]'''
 
+// @1@ name of special
 SPECIAL_INFLUENCE_RESOURCE_EXPORT
 '''
         // influence specials on a planet set to influence focus generate influence on that planet, regardless of species
