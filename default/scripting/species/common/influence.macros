@@ -131,8 +131,24 @@ VERY_BAD_INFLUENCE
                 Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "VERY_BAD_INFLUENCE_LABEL"
-            effects = SetTargetInfluence value = Value*[[VERY_BAD_MULTIPLIER]]
+            effects = SetTargetInfluence value = Value + ([[VERY_BAD_MULTIPLIER]]-1.0)*abs(Value)
 '''
+
+/*
+// Influence adjustment calculation examples...
+
+Value  Multiplier       Calc            Adjustment
+5.0       1.2       (1.2-1)*abs(5.0)        1.0
+0.0       1.2       (1.2-1)*abs(0.0)        0.0
+-5.0      1.2       (1.2-1)*abs(-5.0)       1.0
+5.0       1.0       (1.0-1)*abs(5.0)         0
+0.0       1.0       (1.0-1)*abs(0.0)         0
+-5.0      1.0       (1.0-1)*abs(-5.0)        0
+5.0       0.8       (0.8-1)*abs(5.0)       -1.0
+0.0       0.8       (0.8-1)*abs(0.0)         0
+-5.0      0.8       (0.8-1)*abs(-5.0)      -1.0
+*/
+
 
 BAD_INFLUENCE
 '''[[BASIC_INFLUENCE]]
@@ -145,7 +161,7 @@ BAD_INFLUENCE
                 Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "BAD_INFLUENCE_LABEL"
-            effects = SetTargetInfluence value = Value*[[BAD_MULTIPLIER]]
+            effects = SetTargetInfluence value = Value + ([[BAD_MULTIPLIER]]-1.0)*abs(Value)
 '''
 
 AVERAGE_INFLUENCE
@@ -163,7 +179,7 @@ GOOD_INFLUENCE
                 Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "GOOD_INFLUENCE_LABEL"
-            effects = SetTargetInfluence value = Value*[[GOOD_MULTIPLIER]]
+            effects = SetTargetInfluence value = Value + ([[GOOD_MULTIPLIER]]-1.0)*abs(Value)
 '''
 
 GREAT_INFLUENCE
@@ -177,7 +193,7 @@ GREAT_INFLUENCE
                 Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "GREAT_INFLUENCE_LABEL"
-            effects = SetTargetInfluence value = Value*[[GREAT_MULTIPLIER]]
+            effects = SetTargetInfluence value = Value + ([[GREAT_MULTIPLIER]]-1.0)*abs(Value)
 '''
 
 ULTIMATE_INFLUENCE
@@ -191,7 +207,7 @@ ULTIMATE_INFLUENCE
                 Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "ULTIMATE_INFLUENCE_LABEL"
-            effects = SetTargetInfluence value = Value*[[ULTIMATE_MULTIPLIER]]
+            effects = SetTargetInfluence value = Value + ([[ULTIMATE_MULTIPLIER]]-1.0)*abs(Value)
 '''
 
 #include "/scripting/common/misc.macros"
