@@ -16180,6 +16180,11 @@ Likes %1% %2%
 DISLIKES_SPECIAL_LABEL
 Dislikes %1% %2%
 
+# %1% name of planet
+# %2% name of species on planet
+FOCUS_PROTECTION_LABEL
+%2% Protection Focus
+
 # %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
 %1% Average [[metertype METER_CONSTRUCTION]]

@@ -34,6 +34,7 @@ PROTECTION_FOCUS_DEFENSE
                 Focus type = "FOCUS_PROTECTION"
             ]
             stackinggroup = "FOCUS_PROTECTION_DEFENSE_STACK"
+            accountinglabel = "FOCUS_PROTECTION_LABEL"
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetMaxDefense value = Value * 2 accountinglabel = "FOCUS_PROTECTION_LABEL"
