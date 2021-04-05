@@ -16564,9 +16564,6 @@ Good Vision
 EXCELLENT_VISION_LABEL
 Excellent Vision
 
-FOCUS_PROTECTION_LABEL
-Protection Focus
-
 GASEOUS_LABEL
 Gas Giant Environment
 
