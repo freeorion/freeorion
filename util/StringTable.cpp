@@ -66,7 +66,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
     // add newline at end to avoid errors when one is left out, but is expected by parsers
     file_contents += "\n";
 
-    parse::file_substitution(file_contents, path.parent_path());
+    parse::file_substitution(file_contents, path.parent_path(), m_filename);
 
     std::map<std::string, std::string> fallback_lookup_strings;
     std::string fallback_table_file;

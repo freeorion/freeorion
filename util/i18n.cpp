@@ -26,12 +26,16 @@ namespace {
     boost::filesystem::path GetDefaultStringTableFileName() {
         std::string lang;
 
+#if defined(FREEORION_ANDROID)
+        lang = GetAndroidLand();
+#else
         // early return when unable to get locale language string
         try {
             lang = std::use_facet<boost::locale::info>(GetLocale()).language();
         } catch(const std::bad_cast&) {
             ErrorLogger() << "Bad locale cast when setting default language";
         }
+#endif
 
         boost::algorithm::to_lower(lang);
 
@@ -164,6 +168,7 @@ namespace {
     { return GetStringTable(DevDefaultEnglishStringtablePath()); }
 }
 
+#if !defined(FREEORION_ANDROID)
 std::locale GetLocale(const std::string& name) {
     static bool locale_init { false };
     // Initialize backend and generator on first use, provide a log for current enivornment locale
@@ -194,6 +199,7 @@ std::locale GetLocale(const std::string& name) {
                   << " returning " << std::use_facet<boost::locale::info>(retval).name();
     return retval;
 }
+#endif
 
 void FlushLoadedStringTables() {
     std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);

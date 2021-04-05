@@ -205,8 +205,11 @@ namespace parse {
      * @param[in,out] text contents to search through
      * @param[in] file_search_path base path of content
      */
-    void file_substitution(std::string& text, const boost::filesystem::path& file_search_path) {
-        if (!boost::filesystem::is_directory(file_search_path)) {
+    void file_substitution(std::string& text,
+                           const boost::filesystem::path& file_search_path,
+                           const std::string& filename)
+    {
+        if (!IsExistingDir(file_search_path)) {
             ErrorLogger() << "File parsing include substitution given search path that is not a directory: "
                           << file_search_path.string();
             return;
@@ -215,8 +218,10 @@ namespace parse {
             std::set<boost::filesystem::path> files_included;
             process_include_substitutions(text, file_search_path, files_included);
         } catch (const std::exception& e) {
-            ErrorLogger() << "Exception caught regex parsing script file: " << e.what();
-            std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
+            ErrorLogger() << "Exception caught regex parsing script file " << filename
+                          << ": " << e.what();
+            std::cerr << "Exception caught regex parsing script file " << filename
+                      << ": " << e.what() << std::endl;
             return;
         }
     }
@@ -248,10 +253,10 @@ namespace parse {
             // check for base path
             if (fn_match.substr(0, 1) == "/") {
                 base_path = GetResourceDir();
-                match_path = base_path / fn_match.substr(1);
+                match_path = boost::filesystem::weakly_canonical(base_path / fn_match.substr(1));
             } else {
                 base_path = file_search_path;
-                match_path = base_path / fn_match;
+                match_path = boost::filesystem::weakly_canonical(base_path / fn_match);
             }
             std::string fn_str = boost::filesystem::path(fn_match).filename().string();
             if (fn_str.substr(0, 1) == "*") {
@@ -268,14 +273,14 @@ namespace parse {
                     std::size_t match_len = fn_str.length();
                     if (it_len > match_len) {
                         if (it_str.substr(it_len - match_len, match_len) == fn_str) {
-                            match_list.insert(file);
+                            match_list.insert(boost::filesystem::weakly_canonical(file));
                         }
                     }
                 }
                 // read in results
                 std::string dir_text;
                 for (const boost::filesystem::path& file : match_list) {
-                    if (files_included.insert(boost::filesystem::canonical(file)).second) {
+                    if (files_included.insert(file).second) {
                         std::string new_text;
                         if (ReadFile(file, new_text)) {
                             new_text.append("\n");
@@ -286,7 +291,7 @@ namespace parse {
                     }
                 }
                 text = regex_replace(text, INCL_ONCE_SEARCH, dir_text, regex_constants::format_first_only);
-            } else if (files_included.insert(boost::filesystem::canonical(match_path)).second) {
+            } else if (files_included.insert(match_path).second) {
                 std::string file_content;
                 if (ReadFile(match_path, file_content)) {
                     file_content.append("\n");
@@ -496,7 +501,7 @@ namespace parse {
         // add newline at end to avoid errors when one is left out, but is expected by parsers
         file_contents += "\n";
 
-        file_substitution(file_contents, path.parent_path());
+        file_substitution(file_contents, path.parent_path(), filename);
         macro_substitution(file_contents, path);
 
         first = file_contents.begin();

@@ -77,7 +77,7 @@ namespace parse {
     FO_PARSE_API std::map<std::string, std::vector<EncyclopediaArticle>> encyclopedia_articles(const boost::filesystem::path& path);
     FO_PARSE_API GameRules game_rules(const boost::filesystem::path& path);
 
-    FO_PARSE_API void file_substitution(std::string& text, const boost::filesystem::path& file_search_path);
+    FO_PARSE_API void file_substitution(std::string& text, const boost::filesystem::path& file_search_path, const std::string& filename);
     FO_PARSE_API void process_include_substitutions(std::string& text,
                                                     const boost::filesystem::path& file_search_path,
                                                     std::set<boost::filesystem::path>& files_included);

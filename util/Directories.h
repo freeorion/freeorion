@@ -119,6 +119,9 @@ FO_COMMON_API auto GetPythonHome() -> boost::filesystem::path const;
 #if defined(FREEORION_ANDROID)
 //! Sets android environment to access directories
 FO_COMMON_API void SetAndroidEnvironment(JNIEnv* env, jobject activity);
+
+//! Gets locale language from android anvironment
+FO_COMMON_API std::string GetAndroidLang();
 #endif
 
 //! Returns the full path to the configfile.
@@ -140,8 +143,10 @@ FO_COMMON_API auto GetServerSaveDir() -> boost::filesystem::path const;
 //! Returns an utf-8 encoded string from the given filesystem path.
 FO_COMMON_API auto PathToString(boost::filesystem::path const& path) -> std::string;
 
+#if !defined(FREEORION_ANDROID)
 //! Returns current timestamp in a form that can be used in file names
 FO_COMMON_API auto FilenameTimestamp() -> std::string;
+#endif
 
 //! Returns the path to @p to, as it appears from @p from.
 FO_COMMON_API auto RelativePath(boost::filesystem::path const& from, boost::filesystem::path const& to) -> boost::filesystem::path;
@@ -169,6 +174,9 @@ FO_COMMON_API auto GetPath(std::string const& path_string) -> boost::filesystem:
 
 //! Returns true iff path exists and is a regular file
 FO_COMMON_API auto IsExistingFile(boost::filesystem::path const& path) -> bool;
+
+//! Returns true iff path exists and is a directory
+FO_COMMON_API auto IsExistingDir(boost::filesystem::path const& path) -> bool;
 
 //! Reads text file content from @p path and returs true if success
 FO_COMMON_API auto ReadFile(boost::filesystem::path const& path, std::string& file_contents) -> bool;

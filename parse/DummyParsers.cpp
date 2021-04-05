@@ -68,7 +68,7 @@ namespace parse {
     GameRules game_rules(const boost::filesystem::path& path)
     { return {}; }
 
-    void file_substitution(std::string& text, const boost::filesystem::path& file_search_path)
+    void file_substitution(std::string& text, const boost::filesystem::path& file_search_path, const std::string& filename)
     {}
 
     void process_include_substitutions(std::string& text,
