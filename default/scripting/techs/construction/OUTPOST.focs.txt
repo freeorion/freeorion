@@ -27,7 +27,6 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                
             ]
             // has to happen after e.g. FORCE_ENERGY_STRC effects which also happens at AFTER_ALL_TARGET_MAX_METERS_PRIORITY
             priority = [[METER_OVERRIDE_PRIORITY]]
@@ -36,6 +35,15 @@ Tech
                 SetConstruction value = max(Value, 1)
             ]
 
+        // Reset influence to 0 if no policies adopted. Not really relevant to Outposts, but I need somewhere to put this...
+        EffectsGroup
+            scope = Source
+            activation = And [
+                EmpireStockpile resource = Influence high = 0
+                (NumPoliciesAdopted empire = Source.Owner == 0)
+            ]
+            priority = [[METER_OVERRIDE_PRIORITY]]
+            effects = SetEmpireStockpile resource = Influence value = 0.0
     ]
 
 #include "/scripting/common/priorities.macros"
