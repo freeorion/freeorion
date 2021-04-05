@@ -1,4 +1,4 @@
-name: AI and string tables checks
+name: AI linters and tests
 on:
   pull_request:
     types:
