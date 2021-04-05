@@ -16,7 +16,7 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
-    likes = ["FOCUS_PROTECTION"]
+    likes = ["FOCUS_PROTECTION" "SPARK_FOSSILS_SPECIAL" "SUCCULENT_BARNACLES_SPECIAL"]
     dislikes = ["FOCUS_GRWOTH"]
 
     effectsgroups = [

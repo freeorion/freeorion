@@ -17,7 +17,7 @@ Species
     ]
 
     defaultfocus = "FOCUS_RESEARCH"
-    likes = ["FOCUS_RESEARCH"]
+    likes = ["FOCUS_RESEARCH" "FRACTAL_GEODES_SPECIAL" "SHIMMER_SILK_SPECIAL"]
 
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]

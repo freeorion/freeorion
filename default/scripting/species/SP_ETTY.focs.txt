@@ -18,7 +18,7 @@ Species
     ]
 
     defaultfocus = "FOCUS_RESEARCH"
-    likes = ["FOCUS_RESEARCH"]
+    likes = ["FOCUS_RESEARCH" "MIMETIC_ALLOY_SPECIAL" "SPARK_FOSSILS_SPECIAL"]
 
     effectsgroups = [
         [[BAD_INDUSTRY]]

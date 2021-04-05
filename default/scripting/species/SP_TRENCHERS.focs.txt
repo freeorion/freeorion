@@ -14,7 +14,7 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
-    likes = ["FOCUS_PROTECTION"]
+    likes = ["FOCUS_PROTECTION" "FRACTAL_GEODES_SPECIAL" "SPARK_FOSSILS_SPECIAL"]
 
     effectsgroups = [
         [[GOOD_INDUSTRY]]

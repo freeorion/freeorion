@@ -14,7 +14,7 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
-    dislikes = ["PLC_DESIGN_SIMPLICITY"]
+    dislikes = ["PLC_DESIGN_SIMPLICITY" "FRACTAL_GEODES_SPECIAL" "SPARK_FOSSILS_SPECIAL"]
 
     effectsgroups = [
         [[NO_INDUSTRY]]

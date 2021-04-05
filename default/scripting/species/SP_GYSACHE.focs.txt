@@ -16,7 +16,7 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
-    likes = ["FOCUS_INDUSTRY"]
+    likes = ["FOCUS_INDUSTRY" "FRACTAL_GEODES_SPECIAL" "SUCCULENT_BARNACLES_SPECIAL" ]
 
     effectsgroups = [
         [[GOOD_INDUSTRY]]

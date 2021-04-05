@@ -17,7 +17,7 @@ Species
     ]
 
     defaultfocus = "FOCUS_PROTECTION"
-    likes = ["FOCUS_PROTECTION"]
+    likes = ["FOCUS_PROTECTION" "FRACTAL_GEODES_SPECIAL" "SUCCULENT_BARNACLES_SPECIAL"]
 
     effectsgroups = [
         [[BAD_INDUSTRY]]

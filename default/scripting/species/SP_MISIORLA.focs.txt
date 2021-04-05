@@ -15,6 +15,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
+    likes = ["SUCCULENT_BARNACLES_SPECIAL" "SHIMMER_SILK_SPECIAL"]
+
     effectsgroups = [
         [[BAD_INDUSTRY]]
         [[BAD_RESEARCH]]

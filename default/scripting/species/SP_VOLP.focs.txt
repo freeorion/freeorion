@@ -15,7 +15,7 @@ Species
     ]
 
     defaultfocus = "FOCUS_PROTECTION"
-    likes = ["FOCUS_PROTECTION"]
+    likes = ["FOCUS_PROTECTION" "FRACTAL_GEODES_SPECIAL" "MIMETIC_ALLOY_SPECIAL"]
 
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]

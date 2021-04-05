@@ -11,6 +11,8 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
+    likes = ["SUCCULENT_BARNACLES_SPECIAL" "SPARK_FOSSILS_SPECIAL"]
+
     effectsgroups = [
         [[GOOD_STEALTH]]
 

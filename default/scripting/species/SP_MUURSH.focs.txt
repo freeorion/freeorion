@@ -16,6 +16,7 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
+    likes = ["SUCCULENT_BARNACLES_SPECIAL" "MIMETIC_ALLOY_SPECIAL"]
     dislikes = ["PLC_CONFEDERATION" "PLC_CONTINUOUS_SCANNING" "FOCUS_RESEARCH" "FOCUS_INDUSTRY"]
 
     effectsgroups = [
