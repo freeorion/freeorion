@@ -5094,6 +5094,12 @@ Special
 OBJECTS_WITH_SPECIAL
 '''Objects with Special: '''
 
+SPECIES_THAT_LIKE
+'''Species that like: '''
+
+SPECIES_THAT_DISLIKE
+'''Species that dislike: '''
+
 ENC_BUILDING_TYPE
 Building Type
 
