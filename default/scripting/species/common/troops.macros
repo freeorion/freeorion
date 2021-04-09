@@ -11,6 +11,19 @@ NATIVE_PLANETARY_TROOPS
             effects = SetMaxTroops value = Value + @1@
 '''
 
+UNSTABLE_REBEL_TROOPS
+'''        EffectsGroup
+            scope = Source
+            activation = And [
+                Not Unowned
+                Not Happiness low = 0
+                
+            ]
+            accountinglabel = "INSTABILITY_REBELLION"
+            priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
+            effects = SetRebelTroops value = Value + abs(Target.Happiness)  // more negative stability generates more rebels each turn
+'''
+
 BASIC_DEFENSE_TROOPS
 '''        EffectsGroup
             scope = Source
@@ -91,6 +104,8 @@ NO_DEFENSE_TROOPS
         activation = None
         effects = SetMaxTroops value = 0
 
+[[UNSTABLE_REBEL_TROOPS]]
+
 [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
@@ -104,13 +119,17 @@ BAD_DEFENSE_TROOPS
         effects = SetMaxTroops value = Value * 0.5
         accountinglabel = "BAD_TROOPS_LABEL"
 
-    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+[[UNSTABLE_REBEL_TROOPS]]
+
+[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
 AVERAGE_DEFENSE_TROOPS
 '''[[BASIC_DEFENSE_TROOPS]]
 
-    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+[[UNSTABLE_REBEL_TROOPS]]
+
+[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
 GOOD_DEFENSE_TROOPS
@@ -123,7 +142,9 @@ GOOD_DEFENSE_TROOPS
         effects = SetMaxTroops value = Value * 1.5
         accountinglabel = "GOOD_TROOPS_LABEL"
 
-    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+[[UNSTABLE_REBEL_TROOPS]]
+
+[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
 GREAT_DEFENSE_TROOPS
@@ -136,7 +157,9 @@ GREAT_DEFENSE_TROOPS
         effects = SetMaxTroops value = Value * 2
         accountinglabel = "GREAT_TROOPS_LABEL"
 
-    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+[[UNSTABLE_REBEL_TROOPS]]
+
+[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
 ULTIMATE_DEFENSE_TROOPS
@@ -149,7 +172,9 @@ ULTIMATE_DEFENSE_TROOPS
         effects = SetMaxTroops value = Value * 3
         accountinglabel = "ULTIMATE_TROOPS_LABEL"
 
-    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+[[UNSTABLE_REBEL_TROOPS]]
+
+[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
 PROTECTION_FOCUS_TROOPS

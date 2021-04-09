@@ -16276,6 +16276,9 @@ Tidally Locked Rotation
 HOMEWORLD_LABEL
 Homeworld
 
+INSTABILITY_REBELLION
+Rebels from Instability
+
 # %1% FIXME
 # %2% FIXME
 BAD_POPULATION_LABEL
