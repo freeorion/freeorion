@@ -1,0 +1,28 @@
+Special
+    name = "INDEPENDENT_COLONY_TROOPS_SPECIAL"
+    description = "INDEPENDENT_COLONY_TROOPS_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = [
+        // Remove the special if the population died out or the planet is invaded
+        EffectsGroup
+            scope = Source
+            activation = Or [
+                Not Unowned
+                Population high = 0
+            ]
+            effects = RemoveSpecial name = ThisSpecial
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Unowned
+                Species
+            ]
+            priority = [[TARGET_OVERRIDE_PRIORITY]]
+            effects = [
+                SetMaxTroops value = max(Value, SpecialCapacity name = ThisSpecial object = Source.ID)
+            ]
+    ]
+    graphic = "icons/meter/troops.png"
+
+#include "/scripting/common/priorities.macros"
