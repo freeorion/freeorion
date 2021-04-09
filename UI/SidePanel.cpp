@@ -1513,7 +1513,7 @@ void SidePanel::PlanetPanel::Refresh() {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     m_planet_connection.disconnect();
 
-    auto planet = Objects().get<Planet>(m_planet_id).get();
+    auto planet = Objects().get<Planet>(m_planet_id);
     if (!planet) {
         DebugLogger() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
@@ -1791,17 +1791,18 @@ void SidePanel::PlanetPanel::Refresh() {
             m_bombard_button->SetText(UserString("PL_CANCEL_BOMBARD"));
     }
 
-    const auto& species_name{!planet->SpeciesName().empty() ? planet->SpeciesName() :
+    const auto* planet_raw = planet.get();
+    const auto& species_name{!planet_raw->SpeciesName().empty() ? planet_raw->SpeciesName() :
                              !colony_ship_species_name.empty() ? colony_ship_species_name : ""};
     std::string&& env_size_text{
         species_name.empty() ?
             boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
-                           % GetPlanetSizeName(planet)
-                           % GetPlanetTypeName(planet)) :
+                           % GetPlanetSizeName(planet_raw)
+                           % GetPlanetTypeName(planet_raw)) :
             boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
-                           % GetPlanetSizeName(planet)
-                           % GetPlanetTypeName(planet)
-                           % GetPlanetEnvironmentName(planet, species_name)
+                           % GetPlanetSizeName(planet_raw)
+                           % GetPlanetTypeName(planet_raw)
+                           % GetPlanetEnvironmentName(planet_raw, species_name)
                            % UserString(species_name))};
     m_env_size->SetText(std::move(env_size_text));
 
@@ -3271,7 +3272,7 @@ void SidePanel::RefreshImpl() {
 
     RefreshSystemNames();
 
-    auto system = Objects().get<System>(s_system_id).get();
+    auto system = Objects().get<System>(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
@@ -3295,7 +3296,7 @@ void SidePanel::RefreshImpl() {
 
 
     // star type
-    m_star_type_text->SetText("<s>" + GetStarTypeName(system) + "</s>");
+    m_star_type_text->SetText("<s>" + GetStarTypeName(system.get()) + "</s>");
 
 
     // configure selection of planet panels in panel container
