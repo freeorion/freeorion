@@ -522,6 +522,22 @@ float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_speci
     return ra_sp_it->second;
 }
 
+std::vector<std::string> SpeciesManager::SpeciesThatLike(const std::string& content_name) const {
+    std::vector<std::string> retval;
+    for (const auto& [species_name, species] : *this)
+        if (species->Likes().count(content_name))
+            retval.push_back(species_name);
+    return retval;
+}
+
+std::vector<std::string> SpeciesManager::SpeciesThatDislike(const std::string& content_name) const {
+    std::vector<std::string> retval;
+    for (const auto& [species_name, species] : *this)
+        if (species->Dislikes().count(content_name))
+            retval.push_back(species_name);
+    return retval;
+}
+
 void SpeciesManager::ClearSpeciesOpinions() {
     m_species_empire_opinions.clear();
     m_species_species_opinions.clear();
