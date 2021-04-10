@@ -440,10 +440,12 @@ float Ship::WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext
 
     // usually a weapon part destroys one fighter per shot, but that can be overridden
     if (part->TotalFighterDamage()) {
-        int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
-        return part->TotalFighterDamage()->Eval(context) / num_bouts;
-    } else
-        return  CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part->Name());  // used within loop that updates meters, so need current, not initial values
+        ErrorLogger() << "WeaponPartFighterDamage PC_DIRECT_WEAPON TotalFighterDamage " << part->TotalFighterDamage()->Eval(context);
+        return part->TotalFighterDamage()->Eval(context);
+    } else {
+        int num_bouts_with_fighter_targets = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS") - 1;
+        return  CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part->Name()) * num_bouts_with_fighter_targets;  // used within loop that updates meters, so need current, not initial values
+    }
 }
 
 float Ship::WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& context) const {
@@ -454,23 +456,21 @@ float Ship::WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& c
     // usually a weapon part does damage*shots ship damage, but that can be overridden
     if (part->TotalShipDamage()) {
         ErrorLogger() << "WeaponPartShipDamage TotalShipDamage " << part->TotalShipDamage()->Eval(context);
-        int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
-        return part->TotalShipDamage()->Eval(context) / num_bouts;
+        return part->TotalShipDamage()->Eval(context);
     } else {
         float part_attack = CurrentPartMeterValue(MeterType::METER_CAPACITY, part->Name());  // used within loop that updates meters, so need current, not initial values
         float part_shots = CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part->Name());
         float target_shield = 0.0f;
         if (context.effect_target) {
-            // TODO add target to context
-            // TODO use shield in TotalShipDamage valueref where necessary
             const Ship* target = static_cast<const Ship*>(context.effect_target.get());
             if (target) 
                 target_shield = target->GetMeter(MeterType::METER_SHIELD)->Current();
         }
         ErrorLogger() << "WeaponPartShipDamage target.Shield " << part_attack << " - " << target_shield << "  *" << part_shots;
-        if (part_attack > target_shield)
-            return (part_attack - target_shield) * part_shots;
-        else
+        if (part_attack > target_shield) {
+            int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
+            return (part_attack - target_shield) * part_shots * num_bouts;
+        } else
             return 0.0f;
     }
 }
@@ -533,24 +533,35 @@ namespace {
             } else if (part_class == ShipPartClass::PC_FIGHTER_HANGAR && include_fighters) {
                 // attack strength of a ship's fighters per bout determined by the hangar...
                 // assuming all hangars on a ship are the same part type...
-                if (part->CombatTargets() && context.effect_target && part->CombatTargets()->Eval(context, context.effect_target)) {
+                if (target_ships && part->TotalShipDamage()) {
+                    ErrorLogger() << "WeaponDamageCalcImpl PC_FIGHTER_HANGAR add part->TotalShipDamage";
+                    retval.emplace_back(part->TotalShipDamage()->Eval(context));
+                    // as TotalShipDamage contains the damage from all fighters, do not further include fighter
+                    include_fighters = false;
+                } else if (part->TotalFighterDamage() && !target_ships) {
+                    ErrorLogger() << "WeaponDamageCalcImpl PC_FIGHTER_HANGAR add part->TotalFighterDamage";
+                    retval.emplace_back(part->TotalFighterDamage()->Eval(context));
+                    // as TotalFighterDamage contains the damage from all fighters, do not further include fighter
+                    include_fighters = false;
+                } else if (part->CombatTargets() && context.effect_target && part->CombatTargets()->Eval(context, context.effect_target)) {
                     fighter_damage = ship->CurrentPartMeterValue(SECONDARY_METER, part_name);
+                    available_fighters = std::max(0, static_cast<int>(ship->CurrentPartMeterValue(METER, part_name)));  // stacked meter
                 } else {
-                    ErrorLogger() << "does not match combatTargets condition";
-                    ErrorLogger() << "source: " << context.source->Owner() << "  target: " << context.effect_target->Owner();
+                    ErrorLogger() << "WeaponDamageCalcImpl PC_FIGHTER_HANGAR does not match combatTargets condition";
+                    ErrorLogger() << "WeaponDamageCalcImpl PC_FIGHTER_HANGAR source: " << context.source->Owner() << "  target: " << context.effect_target->Owner();
                     std::vector<const Condition::Condition*> target_conditions;
                     target_conditions.push_back(part->CombatTargets());
                     // target is not of the right type
                     fighter_damage = 0.0f;
-                    include_fighters = true; // FIXME should be false
+                    include_fighters = false;
                 }
-                available_fighters = std::max(0, static_cast<int>(ship->CurrentPartMeterValue(METER, part_name)));  // stacked meter
             }
         }
 
         if (!include_fighters || fighter_damage <= 0.0f || available_fighters <= 0 || fighter_launch_capacity <= 0)
             return retval;
 
+        // Calculate fighter damage manually if not
         int fighter_shots = std::min(available_fighters, fighter_launch_capacity);  // how many fighters launched in bout 1
         available_fighters -= fighter_shots;
         int launched_fighters = fighter_shots;
@@ -567,9 +578,9 @@ namespace {
         fighter_damage = std::max(0.0f, fighter_damage);
 
         if (target_ships)
-            retval.emplace_back(fighter_damage * fighter_shots / num_bouts); // divide by bouts because fighter calculation is for a full combat, but direct fire for one attack
+            retval.emplace_back(fighter_damage * fighter_shots);
         else
-            retval.emplace_back((float)fighter_shots / num_bouts); // divide by bouts because fighter calculation is for a full combat, but direct fire for one attack
+            retval.emplace_back((float)fighter_shots);
         return retval;
     }
 
