@@ -1288,7 +1288,8 @@ def generate_production_orders():
             species_map.setdefault(this_spec, []).append(loc)
         colony_build_choices = []
         for pid, (score, this_spec) in aistate.colonisablePlanetIDs.items():
-            colony_build_choices.extend(int(math.ceil(score))*[pid_ for pid_ in species_map.get(this_spec, []) if pid_ in planet_set])
+            if int(math.ceil(score)) != 0:
+                colony_build_choices.extend(pid_ for pid_ in species_map.get(this_spec, []) if pid_ in planet_set)
 
         local_priorities = {}
         local_priorities.update(filtered_priorities)
