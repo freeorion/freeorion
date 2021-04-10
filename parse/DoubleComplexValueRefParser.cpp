@@ -60,7 +60,7 @@ namespace parse {
                  >  label(tok.design_) > simple_int
                  >  label(tok.empire_) > simple_int
                  >  label(tok.location_) > simple_int
-              )     [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
                 deconstruct_movable_(_3, _pass),
@@ -73,6 +73,19 @@ namespace parse {
                  >  label(tok.empire_) > simple_int
                  >  label(tok.meter_) > tok.string
               ) [_val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
+                _1,
+                deconstruct_movable_(_2, _pass),
+                nullptr,
+                nullptr,
+                deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<std::string>>(_3)), _pass),
+                nullptr)) ]
+            ;
+
+        empire_stockpile
+            = ( tok.EmpireStockpile_
+            >   label(tok.empire_) > simple_int
+            >   label(tok.resource_) > ( tok.Industry_ | tok.Influence_ )
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<double>>(
                 _1,
                 deconstruct_movable_(_2, _pass),
                 nullptr,
@@ -201,6 +214,7 @@ namespace parse {
             %=  name_property_rule
             |   id_empire_location_rule
             |   empire_meter_value
+            |   empire_stockpile
             |   direct_distance
             |   shortest_path
             |   species_content_opinion
@@ -214,6 +228,7 @@ namespace parse {
         name_property_rule.name("GameRule; Hull Fuel, Stealth, Structure, or Speed; or PartCapacity or PartSecondaryStat");
         id_empire_location_rule.name("ShipDesignCost");
         empire_meter_value.name("EmpireMeterValue");
+        empire_stockpile.name("EmpireStockpile");
         direct_distance.name("DirectDistanceBetween");
         shortest_path.name("ShortestPathBetween");
         species_content_opinion.name("SpeciesContentOpinion");
@@ -227,6 +242,7 @@ namespace parse {
         debug(name_property_rule);
         debug(id_empire_location_rule);
         debug(empire_meter_value);
+        debug(empire_stockpile);
         debug(direct_distance);
         debug(shortest_path);
         debug(species_empire_opinion);

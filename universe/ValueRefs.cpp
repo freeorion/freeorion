@@ -1843,16 +1843,16 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     }
 
     // empire properties indexed by integers
-    std::function<const std::map<int, float>& (const Empire&)> empire_property{nullptr};
+    std::function<const std::map<int, float>& (const Empire&)> empire_property_int_key{nullptr};
 
     if (variable_name == "PropagatedSystemSupplyRange")
-        empire_property = [](const Empire& empire){ return GetSupplyManager().PropagatedSupplyRanges(empire.EmpireID()); };
+        empire_property_int_key = [](const Empire& empire){ return GetSupplyManager().PropagatedSupplyRanges(empire.EmpireID()); };
     if (variable_name == "SystemSupplyRange")
-        empire_property = &Empire::SystemSupplyRanges;
+        empire_property_int_key = &Empire::SystemSupplyRanges;
     if (variable_name == "PropagatedSystemSupplyDistance")
-        empire_property = [](const Empire& empire){ return GetSupplyManager().PropagatedSupplyDistances(empire.EmpireID()); };
+        empire_property_int_key = [](const Empire& empire){ return GetSupplyManager().PropagatedSupplyDistances(empire.EmpireID()); };
 
-    if (empire_property) {
+    if (empire_property_int_key) {
         using namespace boost::adaptors;
 
         std::shared_ptr<const Empire> empire;
@@ -1871,15 +1871,54 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             key_filter = [k = m_int_ref2->Eval(context)](auto e){ return k == e.first; };
 
         if (empire)
-            return boost::accumulate(empire_property(*empire) | filtered(key_filter) | map_values, 0.0f);
+            return boost::accumulate(empire_property_int_key(*empire) | filtered(key_filter) | map_values, 0.0f);
 
         float sum = 0.0f;
         for ([[maybe_unused]] auto& [unused_id, loop_empire] : context.Empires()) {
             (void)unused_id; // quiet unused variable warning
-            sum += boost::accumulate(empire_property(*loop_empire) | filtered(key_filter) | map_values, 0.0f);
+            sum += boost::accumulate(empire_property_int_key(*loop_empire) | filtered(key_filter) | map_values, 0.0f);
         }
         return sum;
     }
+
+
+    if (variable_name == "EmpireStockpile") {
+        std::shared_ptr<const Empire> empire;
+        if (m_int_ref1) {
+            int empire_id = m_int_ref1->Eval(context);
+            if (empire_id == ALL_EMPIRES)
+                return 0;
+            empire = context.GetEmpire(empire_id);
+            if (!empire)
+                return 0;
+        }
+
+        ResourceType res_type = ResourceType::INVALID_RESOURCE_TYPE;
+        if (m_string_ref1) {
+            std::string res_name = m_string_ref1->Eval(context);
+            if (res_name == "Influence")
+                res_type = ResourceType::RE_INFLUENCE;
+            else if (res_name == "Industry")
+                res_type = ResourceType::RE_INDUSTRY;
+        }
+        if (res_type == ResourceType::INVALID_RESOURCE_TYPE)
+            return 0;
+
+        std::function<int (const Empire*)> empire_property{nullptr};
+
+        empire_property = boost::bind(&Empire::ResourceStockpile, boost::placeholders::_1, res_type);
+
+        using namespace boost::adaptors;
+        auto GetRawPtr = [](const auto& smart_ptr){ return smart_ptr.get(); };
+
+        if (!empire) {
+            return boost::accumulate(context.Empires() | map_values | transformed(GetRawPtr) |
+                                     transformed(empire_property), 0);
+        }
+
+        return empire_property(empire.get());
+    }
+
 
     // non-empire properties
     if (variable_name == "GameRule") {
