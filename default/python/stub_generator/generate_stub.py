@@ -1,10 +1,11 @@
 from logging import error, warning
-from operator import attrgetter, itemgetter
+from operator import attrgetter
 from typing import Iterable, List, Set
 
 from common.print_utils import Table, Text
 from stub_generator.interface_inspector import ClassInfo, EnumInfo, FunctionInfo, InstanceInfo
 from stub_generator.parse_docs import Docs
+from stub_generator.stub_generator import EnumProcessor
 
 
 def _handle_class(info: ClassInfo):
@@ -82,30 +83,6 @@ def _handle_function(fun: FunctionInfo):
     return res
 
 
-ENUM_STUB = ('class Enum(int):\n'
-             '    """Enum stub for docs, not really present in fo"""\n'
-             '    def __new__(cls, *args, **kwargs):\n'
-             '        return super(Enum, cls).__new__(cls, args[0])')
-
-
-def _handle_enum(info: EnumInfo):
-    pairs = sorted(info.attributes.items(), key=itemgetter(1))
-    result = ['class %s(Enum):' % info.name,
-              '    def __init__(self, numerator, name):',
-              '        self.name = name',
-              ''
-              ]
-
-    for text, value in pairs:
-        result.append('    %s = None  # %s(%s, "%s")' % (text, (info.name), value, text))
-    result.append('')
-    result.append('')  # two empty lines between enum and its items declaration
-
-    for text, value in pairs:
-        result.append('%s.%s = %s(%s, "%s")' % ((info.name), text, (info.name), value, text))
-    return '\n'.join(result)
-
-
 def _report_classes_without_instances(classes_map: Iterable[str], instance_names, classes_to_ignore: Set[str]):
     missed_instances = instance_names.symmetric_difference(classes_map).difference(classes_to_ignore)
 
@@ -129,6 +106,12 @@ def _report_classes_without_instances(classes_map: Iterable[str], instance_names
 
 def make_stub(classes: List[ClassInfo], enums: List[EnumInfo], functions: List[FunctionInfo],
               instances: List[InstanceInfo], result_path, classes_to_ignore: set):
+
+    enum_processor = EnumProcessor()
+    enum_processor.process(enums)
+
+
+
     # exclude technical Map classes that are prefixed with map_indexing_suite_ classes
     classes = [x for x in classes if not x.name.startswith('map_indexing_suite_')]
     classes_map = {x.name: x for x in classes}
@@ -177,6 +160,9 @@ def make_stub(classes: List[ClassInfo], enums: List[EnumInfo], functions: List[F
         '# a C++ Boost-python process as part of the launch.\n'
         'from typing import Dict'
     ]
+
+    res.extend(enum_processor.get_heading())
+
     classes = sorted(classes, key=lambda class_: (
         len(class_.parents), class_.parents and class_.parents[0] or '',
         class_.name))  # put classes with no parents on first place
@@ -184,10 +170,13 @@ def make_stub(classes: List[ClassInfo], enums: List[EnumInfo], functions: List[F
     for cls in classes:
         res.append(_handle_class(cls))
 
-    res.append(ENUM_STUB)
 
-    for enum in sorted(enums, key=attrgetter("name")):
-        res.append(_handle_enum(enum))
+
+
+    res.append(enum_processor.get_body())
+
+
+
 
     for function in sorted(functions, key=attrgetter("name")):
         res.append(_handle_function(function))
