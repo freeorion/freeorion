@@ -351,7 +351,14 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
     m_fsm->initiate();
 
     // Start parsing content
-    StartBackgroundParsing();
+    std::promise<void> barrier;
+    std::future<void> barrier_future = barrier.get_future();
+    std::thread background([this] (auto b) {
+        DebugLogger() << "Started background parser thread";
+        StartBackgroundParsing(std::move(b));
+    }, std::move(barrier));
+    background.detach();
+    barrier_future.wait();
     GetOptionsDB().OptionChangedSignal("resource.path").connect(
         boost::bind(&GGHumanClientApp::HandleResoureDirChange, this));
 }
@@ -1548,7 +1555,14 @@ void GGHumanClientApp::UpdateFPSLimit() {
 void GGHumanClientApp::HandleResoureDirChange() {
     if (!m_game_started) {
         DebugLogger() << "Resource directory changed.  Reparsing universe ...";
-        StartBackgroundParsing();
+        std::promise<void> barrier;
+        std::future<void> barrier_future = barrier.get_future();
+        std::thread background([this] (auto b) {
+            DebugLogger() << "Started background parser thread";
+            StartBackgroundParsing(std::move(b));
+        }, std::move(barrier));
+        background.detach();
+        barrier_future.wait();
     } else {
         WarnLogger() << "Resource directory changes will take effect on application restart.";
     }

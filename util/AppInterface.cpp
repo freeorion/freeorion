@@ -13,13 +13,15 @@
 #include "../universe/ShipPart.h"
 #include "../universe/ShipHull.h"
 #include "../universe/Tech.h"
-#include "../util/Directories.h"
-#include "../util/GameRules.h"
-#include "../util/Pending.h"
+#include "Directories.h"
+#include "GameRules.h"
+#include "Pending.h"
 
 #include <boost/filesystem.hpp>
 
+#include <exception>
 #include <future>
+#include <stdexcept>
 
 extern template TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const boost::filesystem::path& path);
 
@@ -48,78 +50,81 @@ int IApp::MAX_AI_PLAYERS() {
     return max_number_AIs;
 }
 
-void IApp::StartBackgroundParsing() {
+void IApp::StartBackgroundParsing(std::promise<void>&& barrier) {
     namespace fs = boost::filesystem;
 
     const auto& rdir = GetResourceDir();
     if (!IsExistingDir(rdir)) {
         ErrorLogger() << "Background parse given non-existant resources directory: " << rdir.string() ;
+        barrier.set_exception(std::make_exception_ptr(std::runtime_error("non-existant resources directory")));
         return;
     }
 
     // named value ref parsing can be done in parallel as the referencing happens after parsing
     if (IsExistingDir(rdir / "scripting/common"))
-        GetNamedValueRefManager().SetNamedValueRefParse(Pending::StartParsing(parse::named_value_refs, rdir / "scripting/common"));
-    else
+        GetNamedValueRefManager().SetNamedValueRefParse(Pending::StartAsyncParsing(parse::named_value_refs, rdir / "scripting/common", std::move(barrier)));
+    else {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/common").string();
+        barrier.set_value();
+    }
 
     if (IsExistingDir(rdir / "scripting/buildings"))
-        GetBuildingTypeManager().SetBuildingTypes(Pending::StartParsing(parse::buildings, rdir / "scripting/buildings"));
+        GetBuildingTypeManager().SetBuildingTypes(Pending::StartAsyncParsing(parse::buildings, rdir / "scripting/buildings"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/buildings").string();
 
     if (IsExistingDir(rdir / "scripting/policies"))
-        GetPolicyManager().SetPolicies(Pending::StartParsing(parse::policies, rdir / "scripting/policies"));
+        GetPolicyManager().SetPolicies(Pending::StartAsyncParsing(parse::policies, rdir / "scripting/policies"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/policies").string();
 
     if (IsExistingDir(rdir / "scripting/encyclopedia"))
-        GetEncyclopedia().SetArticles(Pending::StartParsing(parse::encyclopedia_articles, rdir / "scripting/encyclopedia"));
+        GetEncyclopedia().SetArticles(Pending::StartAsyncParsing(parse::encyclopedia_articles, rdir / "scripting/encyclopedia"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/encyclopedia").string();
 
     if (IsExistingDir(rdir / "scripting/fields"))
-        GetFieldTypeManager().SetFieldTypes(Pending::StartParsing(parse::fields, rdir / "scripting/fields"));
+        GetFieldTypeManager().SetFieldTypes(Pending::StartAsyncParsing(parse::fields, rdir / "scripting/fields"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/fields").string();
 
     if (IsExistingDir(rdir / "scripting/specials"))
-        GetSpecialsManager().SetSpecialsTypes(Pending::StartParsing(parse::specials, rdir / "scripting/specials"));
+        GetSpecialsManager().SetSpecialsTypes(Pending::StartAsyncParsing(parse::specials, rdir / "scripting/specials"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/specials").string();
 
     if (IsExistingDir(rdir / "scripting/species"))
-        GetSpeciesManager().SetSpeciesTypes(Pending::StartParsing(parse::species, rdir / "scripting/species"));
+        GetSpeciesManager().SetSpeciesTypes(Pending::StartAsyncParsing(parse::species, rdir / "scripting/species"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/species").string();
 
     if (IsExistingDir(rdir / "scripting/ship_parts"))
-        GetShipPartManager().SetShipParts(Pending::StartParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
+        GetShipPartManager().SetShipParts(Pending::StartAsyncParsing(parse::ship_parts, rdir / "scripting/ship_parts"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_parts").string();
 
     if (IsExistingDir(rdir / "scripting/ship_hulls"))
-        GetShipHullManager().SetShipHulls(Pending::StartParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));
+        GetShipHullManager().SetShipHulls(Pending::StartAsyncParsing(parse::ship_hulls, rdir / "scripting/ship_hulls"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_hulls").string();
 
     if (IsExistingDir(rdir / "scripting/ship_designs"))
-        GetPredefinedShipDesignManager().SetShipDesignTypes(Pending::StartParsing(parse::ship_designs, rdir / "scripting/ship_designs"));
+        GetPredefinedShipDesignManager().SetShipDesignTypes(Pending::StartAsyncParsing(parse::ship_designs, rdir / "scripting/ship_designs"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/ship_designs").string();
 
     if (IsExistingDir(rdir / "scripting/monster_designs"))
-        GetPredefinedShipDesignManager().SetMonsterDesignTypes(Pending::StartParsing(parse::ship_designs, rdir / "scripting/monster_designs"));
+        GetPredefinedShipDesignManager().SetMonsterDesignTypes(Pending::StartAsyncParsing(parse::ship_designs, rdir / "scripting/monster_designs"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/monster_designs").string();
 
     if (IsExistingFile(rdir / "scripting/game_rules.focs.txt"))
-        GetGameRules().Add(Pending::StartParsing(parse::game_rules, rdir / "scripting/game_rules.focs.txt"));
+        GetGameRules().Add(Pending::StartAsyncParsing(parse::game_rules, rdir / "scripting/game_rules.focs.txt"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/game_rules.focs.txt").string();
 
     if (IsExistingDir(rdir / "scripting/techs"))
-        GetTechManager().SetTechs(Pending::StartParsing(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));
+        GetTechManager().SetTechs(Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/techs").string();
 

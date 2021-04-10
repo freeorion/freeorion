@@ -48,8 +48,13 @@ public:
     //! known universe of this application.
     virtual Universe& GetUniverse() = 0;
 
-    /** Start parsing universe object types on a separate thread. */
-    virtual void StartBackgroundParsing();
+    /** Launches asynchronous parsing of game content, then starts
+      * additional content parsing in the calling thread. \a barrier is
+      * unblocked when the asynchronous parsing of named value refs is
+      * completed, but the synchronous parsing of in the calling thread
+      * or the other asynchronous parsing may still be ongoing
+      * at that time. */
+    virtual void StartBackgroundParsing(std::promise<void>&& barrier);
 
     /** Returns the set of known Empires for this application. */
     virtual EmpireManager& Empires() = 0;

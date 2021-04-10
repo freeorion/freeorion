@@ -92,7 +92,7 @@ public:
 
     void operator()(); ///< external interface to Run()
 
-    void StartBackgroundParsing() override;
+    void StartBackgroundParsing(std::promise<void>&& barrier) override;
 
     /** Returns the galaxy setup data used for the current game */
     GalaxySetupData&    GetGalaxySetupData() { return m_galaxy_setup_data; }
