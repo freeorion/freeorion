@@ -17,13 +17,23 @@ UNSTABLE_REBEL_TROOPS
             activation = And [
                 Not Unowned
                 Not Happiness low = 0
-                
             ]
             accountinglabel = "INSTABILITY_REBELLION"
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
-            // more negative stability generates more rebels each turn
-            // rebels also scale with population
+            // more negative stability and more population generates more rebels each turn
+            // TODO: scale with some species trait?
             effects = SetRebelTroops value = Value + abs(Target.Happiness) * (Target.Population / 5.0)^0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not Unowned
+                Not EmpireStockpile empire = Source.Owner resource = Influence low = 0
+                // TODO: some species trait?
+            ]
+            accountinglabel = "PARTISANS_REBELLION"
+            priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
+            effects = SetRebelTroops value = Value + abs( Target.Population * 0.1 * EmpireStockpile empire = Source.Owner resource = Influence )^0.5
 '''
 
 BASIC_DEFENSE_TROOPS
