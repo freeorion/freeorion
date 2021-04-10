@@ -54,7 +54,7 @@ void MilitaryPanel::CompleteConstruction() {
 
     // small meter indicators - for use when panel is collapsed
     for (MeterType meter : {MeterType::METER_SHIELD, MeterType::METER_DEFENSE, MeterType::METER_TROOPS,
-                            MeterType::METER_DETECTION, MeterType::METER_STEALTH, MeterType::METER_REBEL_TROOPS})
+                            MeterType::METER_DETECTION, MeterType::METER_STEALTH})
     {
         auto stat = GG::Wnd::Create<StatisticIcon>(
             ClientUI::MeterIcon(meter), obj->GetMeter(meter)->Initial(),

@@ -60,6 +60,11 @@ void PopulationPanel::CompleteConstruction() {
         GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_CONSTRUCTION),
                                        pop->GetMeter(MeterType::METER_CONSTRUCTION)->Initial(), 3, false,
                                        MeterIconSize().x, MeterIconSize().y));
+    m_meter_stats.emplace_back(
+        MeterType::METER_REBEL_TROOPS,
+        GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_REBEL_TROOPS),
+                                       pop->GetMeter(MeterType::METER_REBEL_TROOPS)->Initial(), 3, false,
+                                       MeterIconSize().x, MeterIconSize().y));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;
