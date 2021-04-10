@@ -313,6 +313,7 @@ namespace parse {
         detail::value_ref_rule<double>      int_complex_variable_cast;
         detail::value_ref_rule<double>      int_total_fighter_shots_cast;
         detail::value_ref_rule<double>      named_real_valueref;
+        detail::value_ref_rule<double>      named_int_valueref_cast;
     };
 
     struct castable_as_int_parser_rules {

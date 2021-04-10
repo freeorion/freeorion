@@ -140,6 +140,11 @@ parse::double_parser_rules::double_parser_rules(
           ]
         ;
 
+    named_int_valueref_cast
+        =   int_rules.named_int_valueref [ _val = construct_movable_(new_<ValueRef::StaticCast<int, double>>(deconstruct_movable_(_1, _pass))) ]
+        ;
+
+
     statistic_value_ref_expr
         = primary_expr.alias();
 
@@ -156,6 +161,7 @@ parse::double_parser_rules::double_parser_rules(
         |    int_complex_variable_cast
         |    int_total_fighter_shots_cast
         |    named_real_valueref
+        |    named_int_valueref_cast
         ;
 
     int_free_variable_cast.name("integer free variable");
@@ -164,6 +170,7 @@ parse::double_parser_rules::double_parser_rules(
     int_complex_variable_cast.name("integer complex variable");
     int_total_fighter_shots_cast.name("integer TotalFighterShots");
     named_real_valueref.name("named real valueref");
+    named_int_valueref_cast.name("named integer valueref");
 
 #if DEBUG_VALUEREF_PARSERS
     debug(int_constant_cast);
@@ -174,6 +181,7 @@ parse::double_parser_rules::double_parser_rules(
     debug(int_total_fighter_shots_cast);
     debug(double_complex_variable);
     debug(named_real_valueref);
+    debug(named_int_valueref_cast);
 #endif
 }
 
