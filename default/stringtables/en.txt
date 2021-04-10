@@ -16276,8 +16276,15 @@ Tidally Locked Rotation
 HOMEWORLD_LABEL
 Homeworld
 
+# %1% name of planet
+# %2% name of species on planet
 INSTABILITY_REBELLION
-Rebels from Instability
+Rioting from %1% Instability
+
+# %1% name of planet
+# %2% name of species on planet
+PARTISANS_REBELLION
+%2% Partisans from Influence Debt
 
 # %1% FIXME
 # %2% FIXME

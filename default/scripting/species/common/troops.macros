@@ -21,7 +21,9 @@ UNSTABLE_REBEL_TROOPS
             ]
             accountinglabel = "INSTABILITY_REBELLION"
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
-            effects = SetRebelTroops value = Value + abs(Target.Happiness)  // more negative stability generates more rebels each turn
+            // more negative stability generates more rebels each turn
+            // rebels also scale with population
+            effects = SetRebelTroops value = Value + abs(Target.Happiness) * (Target.Population / 5.0)^0.5
 '''
 
 BASIC_DEFENSE_TROOPS
