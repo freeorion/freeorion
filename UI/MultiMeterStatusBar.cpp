@@ -118,9 +118,9 @@ void MultiMeterStatusBar::Render() {
             largest_value = m_target_max_values[i];
     }
 
-    double num_full_increments =
+    const double num_full_increments =
         std::ceil(largest_value / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT);
-    double MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE =
+    const double MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE =
         num_full_increments * MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT;
 
     // lines for 20, 40, 60, 80 etc.
