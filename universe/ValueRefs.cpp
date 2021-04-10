@@ -1398,31 +1398,31 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
     if (variable_name == "BuildingTypesOwned")
         empire_property_string_key = &Empire::BuildingTypesOwned;
-    if (variable_name == "BuildingTypesProduced")
+    else if (variable_name == "BuildingTypesProduced")
         empire_property_string_key = &Empire::BuildingTypesProduced;
-    if (variable_name == "BuildingTypesScrapped")
+    else if (variable_name == "BuildingTypesScrapped")
         empire_property_string_key = &Empire::BuildingTypesScrapped;
-    if (variable_name == "SpeciesColoniesOwned")
+    else if (variable_name == "SpeciesColoniesOwned")
         empire_property_string_key = &Empire::SpeciesColoniesOwned;
-    if (variable_name == "SpeciesPlanetsBombed")
+    else if (variable_name == "SpeciesPlanetsBombed")
         empire_property_string_key = &Empire::SpeciesPlanetsBombed;
-    if (variable_name == "SpeciesPlanetsDepoped")
+    else if (variable_name == "SpeciesPlanetsDepoped")
         empire_property_string_key = &Empire::SpeciesPlanetsDepoped;
-    if (variable_name == "SpeciesPlanetsInvaded")
+    else if (variable_name == "SpeciesPlanetsInvaded")
         empire_property_string_key = &Empire::SpeciesPlanetsInvaded;
-    if (variable_name == "SpeciesShipsDestroyed")
+    else if (variable_name == "SpeciesShipsDestroyed")
         empire_property_string_key = &Empire::SpeciesShipsDestroyed;
-    if (variable_name == "SpeciesShipsLost")
+    else if (variable_name == "SpeciesShipsLost")
         empire_property_string_key = &Empire::SpeciesShipsLost;
-    if (variable_name == "SpeciesShipsOwned")
+    else if (variable_name == "SpeciesShipsOwned")
         empire_property_string_key = &Empire::SpeciesShipsOwned;
-    if (variable_name == "SpeciesShipsProduced")
+    else if (variable_name == "SpeciesShipsProduced")
         empire_property_string_key = &Empire::SpeciesShipsProduced;
-    if (variable_name == "SpeciesShipsScrapped")
+    else if (variable_name == "SpeciesShipsScrapped")
         empire_property_string_key = &Empire::SpeciesShipsScrapped;
-    if (variable_name == "ShipPartsOwned")
+    else if (variable_name == "ShipPartsOwned")
         empire_property_string_key = &Empire::ShipPartsOwned;
-    if (variable_name == "TurnTechResearched")
+    else if (variable_name == "TurnTechResearched")
         empire_property_string_key = &Empire::ResearchedTechs;
 
     // empire properties indexed by strings
@@ -1485,17 +1485,17 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
     if (variable_name == "EmpireShipsDestroyed")
         empire_property_int_key = &Empire::EmpireShipsDestroyed;
-    if (variable_name == "ShipDesignsDestroyed")
+    else if (variable_name == "ShipDesignsDestroyed")
         empire_property_int_key = &Empire::ShipDesignsDestroyed;
-    if (variable_name == "ShipDesignsLost")
+    else if (variable_name == "ShipDesignsLost")
         empire_property_int_key = &Empire::ShipDesignsLost;
-    if (variable_name == "ShipDesignsOwned")
+    else if (variable_name == "ShipDesignsOwned")
         empire_property_int_key = &Empire::ShipDesignsOwned;
-    if (variable_name == "ShipDesignsInProduction")
+    else if (variable_name == "ShipDesignsInProduction")
         empire_property_int_key = &Empire::ShipDesignsInProduction;
-    if (variable_name == "ShipDesignsProduced")
+    else if (variable_name == "ShipDesignsProduced")
         empire_property_int_key = &Empire::ShipDesignsProduced;
-    if (variable_name == "ShipDesignsScrapped")
+    else if (variable_name == "ShipDesignsScrapped")
         empire_property_int_key = &Empire::ShipDesignsScrapped;
 
     // empire properties indexed by integers
