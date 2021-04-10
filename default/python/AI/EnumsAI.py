@@ -10,8 +10,11 @@ class EnumItem(int):
         obj.enum_name = enum_name
         return obj
 
-    def __str__(self):
+    def __repr__(self):
         return "%s.%s" % (self.enum_name, self.name)
+
+    def __str__(self):
+        return repr(self)
 
 
 class EnumMeta(type):
