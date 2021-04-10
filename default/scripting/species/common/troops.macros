@@ -99,14 +99,7 @@ BASIC_DEFENSE_TROOPS
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetTroops value = min(Value(Target.MaxTroops),
-                                            Value + (NamedReal name = "BASIC_DEFENSE_TROOPS_TROOPREGEN_FLAT"
-                                                               value = 1))
-'''
-
-AFTER_SPECIES_MULTIPLICATOR_TROOPS
-'''        // halving troops on outposts can be found in techs/construction/OUTPOST.focs.txt
-
-[[PROTECTION_FOCUS_TROOPS]]
+                                            Value + (NamedReal name = "BASIC_DEFENSE_TROOPS_TROOPREGEN_FLAT" value = 1))
 '''
 
 NO_DEFENSE_TROOPS
@@ -117,8 +110,6 @@ NO_DEFENSE_TROOPS
         effects = SetMaxTroops value = 0
 
 [[UNSTABLE_REBEL_TROOPS]]
-
-[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
 BAD_DEFENSE_TROOPS
@@ -133,7 +124,7 @@ BAD_DEFENSE_TROOPS
 
 [[UNSTABLE_REBEL_TROOPS]]
 
-[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+[[PROTECTION_FOCUS_TROOPS]]
 '''
 
 AVERAGE_DEFENSE_TROOPS
@@ -141,7 +132,7 @@ AVERAGE_DEFENSE_TROOPS
 
 [[UNSTABLE_REBEL_TROOPS]]
 
-[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+[[PROTECTION_FOCUS_TROOPS]]
 '''
 
 GOOD_DEFENSE_TROOPS
@@ -156,7 +147,7 @@ GOOD_DEFENSE_TROOPS
 
 [[UNSTABLE_REBEL_TROOPS]]
 
-[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+[[PROTECTION_FOCUS_TROOPS]]
 '''
 
 GREAT_DEFENSE_TROOPS
@@ -171,7 +162,7 @@ GREAT_DEFENSE_TROOPS
 
 [[UNSTABLE_REBEL_TROOPS]]
 
-[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+[[PROTECTION_FOCUS_TROOPS]]
 '''
 
 ULTIMATE_DEFENSE_TROOPS
@@ -186,11 +177,11 @@ ULTIMATE_DEFENSE_TROOPS
 
 [[UNSTABLE_REBEL_TROOPS]]
 
-[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+[[PROTECTION_FOCUS_TROOPS]]
 '''
 
 PROTECTION_FOCUS_TROOPS
-'''    EffectsGroup
+'''    EffectsGroup // double max troops
         scope = Source
         activation = And [
             Planet
@@ -198,8 +189,19 @@ PROTECTION_FOCUS_TROOPS
         ]
         stackinggroup = "FOCUS_PROTECTION_TROOPS_STACK"
         priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
-        effects = SetMaxTroops value = Value * 2
+        effects = SetMaxTroops value = max(Value, Value * 2)
         accountinglabel = "FOCUS_PROTECTION_LABEL"
+
+    EffectsGroup // increase troop growth rate
+        scope = Source
+        activation = And [
+            Planet
+            Focus type = "FOCUS_PROTECTION"
+            (LocalCandidate.LastTurnConquered < CurrentTurn)
+        ]
+        accountinglabel = "FOCUS_PROTECTION_LABEL"
+        priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+        effects = SetTroops value = min(Value(Target.MaxTroops), Value + max(Target.MaxTroops, Target.Population)^0.5)
 '''
 
 NO_OFFENSE_TROOPS
