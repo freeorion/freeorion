@@ -172,10 +172,9 @@ namespace Pending {
     auto ParseSynchronously(const Func& parser, const boost::filesystem::path& path)
         -> Pending<decltype(parser(path))>
     {
-        auto result = parser(path);
-        auto promise = std::promise<decltype(parser(path))>();
-        promise.set_value(std::move(result));
-        return Pending<decltype(parser(path))>(promise.get_future(), path.filename().string());
+        auto retval = std::async(std::launch::deferred, parser, path);
+        retval.wait();
+        return Pending<decltype(parser(path))>(std::move(retval), path.filename().string());
     }
 
 }
