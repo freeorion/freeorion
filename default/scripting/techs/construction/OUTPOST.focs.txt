@@ -39,7 +39,7 @@ Tech
         EffectsGroup
             scope = Source
             activation = And [
-                EmpireStockpile resource = Influence high = 0
+                EmpireStockpile empire = Source.Owner resource = Influence high = 0
                 (NumPoliciesAdopted empire = Source.Owner == 0)
             ]
             priority = [[METER_OVERRIDE_PRIORITY]]

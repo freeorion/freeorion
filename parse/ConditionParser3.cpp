@@ -240,13 +240,15 @@ namespace parse::detail {
 
         stockpile
             = ( omit_[tok.EmpireStockpile_]
+            >   label(tok.empire_)   >  int_rules.expr
             >   label(tok.resource_) >  resource_type_enum
             > -(label(tok.low_)      >  double_rules.expr)
             > -(label(tok.high_)     >  double_rules.expr)
               ) [ _val = construct_movable_(new_<Condition::EmpireStockpileValue>(
-                    _1,
-                    deconstruct_movable_(_2, _pass),
-                    deconstruct_movable_(_3, _pass))) ]
+                    deconstruct_movable_(_1, _pass),
+                    _2,
+                    deconstruct_movable_(_3, _pass),
+                    deconstruct_movable_(_4, _pass))) ]
             ;
 
         resource_supply_connected
