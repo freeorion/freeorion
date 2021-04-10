@@ -6393,6 +6393,12 @@ XENOPHOBIC_SPECIES_TEXT
 
 Xenophobic species start with [[tech CON_CONC_CAMP]].'''
 
+ARTISTIC_SPECIES_TITLE
+Artistic Trait
+
+ARTISTIC_SPECIES_TRAIT_TEXT
+Artistic species produce artistic works when their empire has adopted [[policy PLC_ARTISAN_WORKSHOPS]], which generates influence. Additionally, when set to influence focus, other planets with artistic species in the same system are more stable.
+
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
 
@@ -7976,6 +7982,12 @@ Gaseous
 
 GASEOUS_SPECIES_CLASS_DESC
 List of [[encyclopedia GASEOUS_SPECIES_TITLE]] species:
+
+ARTISTIC_SPECIES_CLASS
+Artistic
+
+ARTISTIC_SPECIES_CLASS_DESC
+List of [[]]
 
 
 ##
