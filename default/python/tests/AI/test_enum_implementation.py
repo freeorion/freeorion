@@ -29,3 +29,8 @@ def test_has_item_rejects_item_of_other_enum():
 def test_enum_item_attributes():
     assert MyEnum.ONE.name == "ONE"
     assert MyEnum.ONE.enum_name == "MyEnum"
+
+
+def test_enum_str_as_name():
+    assert str(MyEnum.ONE) == "MyEnum.ONE"
+    assert repr(MyEnum.ONE) == "MyEnum.ONE"
