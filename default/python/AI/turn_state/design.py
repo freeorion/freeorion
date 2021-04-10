@@ -74,7 +74,7 @@ def _get_locations(locations: Union[int, Iterable[int], None]) -> FrozenSet[int]
         return get_inhabited_planets()
 
     if isinstance(locations, int):
-        locations = (int,)
+        locations = (locations,)
     return get_inhabited_planets().intersection(locations)
 
 
