@@ -159,7 +159,6 @@ namespace {
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
-            qi::omit_type omit_;
 
             policy_strings
                 = (  tok.Policy_                                            // _1
