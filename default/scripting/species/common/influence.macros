@@ -75,12 +75,25 @@ ARTISANS_INFLUENCE_STABILITY
             scope = Source
             activation = And [
                 HasTag name = "ARTISTIC"
-                Happiness low = 15
+                Happiness low = 1
                 EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_ARTISAN_WORKSHOPS"
+                Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "PLC_ARTISAN_WORKSHOPS"
             effects = SetTargetInfluence value = Value + Target.Population * [[INFLUENCE_PER_POP]]
 
+        EffectsGroup
+            scope = Source
+            activation = And [
+                HasTag name = "ARTISTIC"
+                Happiness low = 10
+                EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_ARTISAN_WORKSHOPS"
+                Not Focus type = "FOCUS_INFLUENCE"
+            ]
+            accountinglabel = "PLC_ARTISAN_WORKSHOPS"
+            effects = SetTargetInfluence value = Value + Target.Population * [[INFLUENCE_PER_POP]] / 10.0
+
+        // TODO: should this move to happiness.macros ?
         EffectsGroup        // artistic species make planets that like them or are also artistic and that are in their system more stable when set to influence focus
             scope = And [
                 Planet
