@@ -1381,10 +1381,10 @@ void GovernmentWnd::MainPanel::DoLayout() {
 
     // place background image of government
     ul = m_slots.front()->Size() * 5/4;
-    GG::Rect background_rect = GG::Rect(ul, ClientLowerRight());
+    //GG::Rect background_rect = GG::Rect(ul, ClientLowerRight());
 
     // arrange policy slots
-    int count = 0;
+    //int count = 0;
     for (auto& slot : m_slots) {
         ul += {slot->Width()*5/4, GG::Y0};
         slot->MoveTo(ul);
