@@ -13,6 +13,9 @@ class EnumItem(int):
     def __repr__(self):
         return "%s.%s" % (self.enum_name, self.name)
 
+    def __str__(self):
+        return repr(self)
+
 
 class EnumMeta(type):
     @staticmethod
