@@ -168,6 +168,8 @@ namespace {
 
         db.Add("ui.map.detection.range.opacity",            UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"),     3,                              RangedValidator<int>(0, 8));
 
+        db.Add("ui.map.lock",                               UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_LOCK"),                     false,                          Validator<bool>());
+
         db.Add("ui.map.menu.enabled",                       UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),                    false,                          Validator<bool>());
 
         db.Add("ui.production.mappanels.removed",           UserStringNop("OPTIONS_DB_UI_HIDE_MAP_PANELS"),                     false,                          Validator<bool>());
@@ -2503,6 +2505,9 @@ void MapWnd::LButtonDown(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 { m_drag_offset = pt - ClientUpperLeft(); }
 
 void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> mod_keys) {
+    if (GetOptionsDB().Get<bool>("ui.map.lock"))
+        return;
+
     GG::Pt move_to_pt = pt - m_drag_offset;
     CorrectMapPosition(move_to_pt);
 
@@ -4190,6 +4195,9 @@ void MapWnd::HideSystemNames() {
 }
 
 void MapWnd::CenterOnMapCoord(double x, double y) {
+    if (GetOptionsDB().Get<bool>("ui.map.lock"))
+        return;
+
     GG::Pt ul = ClientUpperLeft();
     GG::X_d current_x = (AppWidth() / 2 - ul.x) / ZoomFactor();
     GG::Y_d current_y = (AppHeight() / 2 - ul.y) / ZoomFactor();
@@ -5152,6 +5160,9 @@ void MapWnd::SetZoom(double steps_in, bool update_slide) {
 }
 
 void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position) {
+    if (GetOptionsDB().Get<bool>("ui.map.lock"))
+        return;
+
     ScopedTimer timer("MapWnd::SetZoom(steps_in=" + std::to_string(steps_in) +
                       ", update_slide=" + std::to_string(update_slide) +
                       ", position=" + boost::lexical_cast<std::string>(position), true);

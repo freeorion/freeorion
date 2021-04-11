@@ -642,6 +642,8 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page,   0, "ui.map.system.unexplored.rollover.enabled",  UserString("OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY"));
     BoolOption(current_page,   0, "ui.production.mappanels.removed",            UserString("OPTIONS_UI_HIDE_MAP_PANELS"));
 
+    BoolOption(current_page,   0, "ui.map.lock",                                UserString("OPTIONS_UI_LOCK_MAP"));
+
     m_tabs->SetCurrentWnd(0);
 
     // Objects List Page
