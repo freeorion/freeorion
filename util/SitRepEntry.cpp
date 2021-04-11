@@ -197,6 +197,17 @@ SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id) {
     return sitrep;
 }
 
+SitRepEntry CreatePlanetRebelledSitRep(int planet_id, int empire_id) {
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_PLANET_CAPTURED_NEUTRALS"),
+        CurrentTurn() + 1,
+        "icons/sitrep/planet_captured.png",
+        UserStringNop("SITREP_PLANET_CAPTURED_NEUTRALS_LABEL"), true);
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(empire_id));
+    return sitrep;
+}
+
 namespace {
     SitRepEntry GenericCombatDamagedObjectSitrep(int combat_system_id) {
         SitRepEntry sitrep(

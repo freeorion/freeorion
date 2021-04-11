@@ -3081,6 +3081,7 @@ namespace {
 
 
                 } else if (!planet->Unowned() && victor_id == ALL_EMPIRES) {
+                    int previous_owner_id = planet->Owner();
                     planet->Conquer(ALL_EMPIRES);
                     DebugLogger() << "Independents conquer planet";
                     for (const auto& empire_troops : empires_troops)
@@ -3089,7 +3090,7 @@ namespace {
                     // TODO: special planet lost to rebels sitrep
                     for (int empire_id : all_involved_empires) {
                         if (auto empire = empires.GetEmpire(empire_id))
-                            empire->AddSitRepEntry(CreatePlanetCapturedSitRep(planet_id, ALL_EMPIRES));
+                            empire->AddSitRepEntry(CreatePlanetRebelledSitRep(planet_id, previous_owner_id));
                     }
 
                 } else {

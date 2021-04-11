@@ -7282,6 +7282,12 @@ SITREP_PLANET_CAPTURED
 SITREP_PLANET_CAPTURED_LABEL
 Planet Captured
 
+SITREP_PLANET_CAPTURED_NEUTRALS
+%planet% became indepdent from %empire%
+
+SITREP_PLANET_CAPTURED_NEUTRALS_LABEL
+Planet Becomes Independent
+
 SITREP_PLANET_DEPOPULATED
 The population of %planet% has died out entirely!
 
