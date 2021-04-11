@@ -192,5 +192,22 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
     BOOST_REQUIRE_EQUAL(2, categories_seen.size());
 }
 
+BOOST_AUTO_TEST_CASE(parse_techs_full) {
+    auto scripting_dir = boost::filesystem::system_complete(GetBinDir() / "default/scripting");
+    BOOST_REQUIRE(scripting_dir.is_absolute());
+    BOOST_REQUIRE(boost::filesystem::exists(scripting_dir));
+    BOOST_REQUIRE(boost::filesystem::is_directory(scripting_dir));
+
+    Pending::Pending<TechManager::TechParseTuple> techs_p = Pending::StartAsyncParsing(parse::techs<TechManager::TechParseTuple>, scripting_dir / "techs");
+    auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
+    BOOST_REQUIRE(!techs.empty());
+    BOOST_REQUIRE(!tech_categories.empty());
+    BOOST_REQUIRE(!categories_seen.empty());
+
+    BOOST_REQUIRE_EQUAL(207, techs.size());
+    BOOST_REQUIRE_EQUAL(9, tech_categories.size());
+    BOOST_REQUIRE_EQUAL(9, categories_seen.size());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
