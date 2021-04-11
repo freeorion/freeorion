@@ -109,7 +109,7 @@ namespace {
     bool SortByMeterValue(std::pair<MeterType, std::shared_ptr<StatisticIcon>> left,
                           std::pair<MeterType, std::shared_ptr<StatisticIcon>> right)
     {
-        if (left.second->GetValue() == right.second->GetValue()) {
+        if (std::abs(left.second->GetValue()) == std::abs(right.second->GetValue())) {
             if (left.first == MeterType::METER_INFLUENCE && right.first == MeterType::METER_CONSTRUCTION) {
                 // swap order of MeterType::METER_INFLUENCE and MeterType::METER_CONSTRUCTION in relation to
                 // MeterType enum.
@@ -119,7 +119,7 @@ namespace {
             return left.first < right.first;
         }
 
-        return left.second->GetValue() > right.second->GetValue();
+        return std::abs(left.second->GetValue()) > std::abs(right.second->GetValue());
     }
 }
 
