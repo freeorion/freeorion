@@ -58,8 +58,8 @@ void MultiIconValueIndicator::CompleteConstruction() {
                 texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
 
-        m_icons.emplace_back(GG::Wnd::Create<StatisticIcon>(std::move(texture), 0.0, 3, false,
-                                                            IconWidth(), IconHeight()));
+        m_icons.push_back(GG::Wnd::Create<StatisticIcon>(std::move(texture), 0.0, 3, false,
+                                                         IconWidth(), IconHeight()));
         GG::Pt icon_ul(x, GG::Y(EDGE_PAD));
         GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
         m_icons.back()->SizeMove(icon_ul, icon_lr);

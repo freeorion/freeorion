@@ -17,7 +17,7 @@ public:
 
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void            Update();
+    void Update();
 
 private:
     std::shared_ptr<GG::Texture> m_bar_shading_texture;
