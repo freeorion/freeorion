@@ -7983,12 +7983,6 @@ Gaseous
 GASEOUS_SPECIES_CLASS_DESC
 List of [[encyclopedia GASEOUS_SPECIES_TITLE]] species:
 
-ARTISTIC_SPECIES_CLASS
-Artistic
-
-ARTISTIC_SPECIES_CLASS_DESC
-List of [[]]
-
 
 ##
 ## Encyclopedia articles in Species category
