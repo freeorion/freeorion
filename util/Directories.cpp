@@ -643,8 +643,10 @@ auto GetResourceDir() -> fs::path const
     if (init) {
         init = false;
         res_dir = FilenameToPath(GetOptionsDB().Get<std::string>("resource.path"));
-        if (!fs::exists(res_dir) || !fs::is_directory(res_dir))
+        if (!fs::exists(res_dir) || !fs::is_directory(res_dir)) {
+            WarnLogger() << "Reset missing resource directory: " << PathToString(res_dir);
             res_dir = FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource.path"));
+        }
         GetOptionsDB().OptionChangedSignal("resource.path").connect(&RefreshResDir);
         TraceLogger() << "Initialized ResDir and connected change signal";
     }
