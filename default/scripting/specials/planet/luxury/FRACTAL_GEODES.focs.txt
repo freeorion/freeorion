@@ -2,7 +2,7 @@ Special
     name = "FRACTAL_GEODES_SPECIAL"
     description = "FRACTAL_GEODES_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 0.4
+    spawnrate = 10.0
     spawnlimit = 3
     location = And [
         Planet

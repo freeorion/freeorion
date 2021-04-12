@@ -2,7 +2,7 @@ Special
     name = "SHIMMER_SILK_SPECIAL"
     description = "SHIMMER_SILK_SPECIAL_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 0.4
+    spawnrate = 10.0
     spawnlimit = 3
     location = And [
         Planet

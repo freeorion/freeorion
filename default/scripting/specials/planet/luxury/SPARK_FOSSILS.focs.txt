@@ -2,7 +2,7 @@ Special
     name = "SPARK_FOSSILS_SPECIAL"
     description = "SPARK_FOSSILS_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 0.5
+    spawnrate = 15.0
     spawnlimit = 3
     location = And [
         Planet

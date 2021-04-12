@@ -2,7 +2,7 @@ Special
     name = "SUCCULENT_BARNACLES_SPECIAL"
     description = "SUCCULENT_BARNACLES_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 0.4
+    spawnrate = 10.0
     spawnlimit = 3
     location = And [
         Planet

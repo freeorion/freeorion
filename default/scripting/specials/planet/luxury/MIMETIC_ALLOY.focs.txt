@@ -2,7 +2,7 @@ Special
     name = "MIMETIC_ALLOY_SPECIAL"
     description = "MIMETIC_ALLOY_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 0.5
+    spawnrate = 15.0
     spawnlimit = 3
     location = And [
         Planet
