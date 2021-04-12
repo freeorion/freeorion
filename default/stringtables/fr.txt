@@ -1427,6 +1427,9 @@ Affiche/Cache le curseur de zoom de la carte galactique.
 OPTIONS_DB_UI_GALAXY_MAP_POPUP
 Active/Désactive le clic droit affichant un menu contextuel sur la carte galactique.
 
+OPTIONS_DB_UI_GALAXY_MAP_LOCK
+Active/Désactive le défilement et le zoom de la carte galactique.
+
 OPTIONS_DB_UI_HIDE_MAP_PANELS
 Définit si les panneaux Rapport de Situation, Encyclopédie, etc. sont temporairement cachés lors de l'ouverture de la Fenêtre Production et réaffichés lors de la fermeture de la Fenêtre Production.
 
@@ -3022,6 +3025,9 @@ Menu contextuel de la carte galactique
 
 OPTIONS_UI_HIDE_MAP_PANELS
 Cacher les panneaux d'information en vue Production
+
+OPTIONS_UI_LOCK_MAP
+Vérouiller zoom et défilement de la carte galactique
 
 OPTIONS_STARLANES
 Voies spatiales
@@ -5094,6 +5100,12 @@ Particularité
 OBJECTS_WITH_SPECIAL
 '''Objets avec Particularité : '''
 
+SPECIES_THAT_LIKE
+'''Espèces qui aiment : '''
+
+SPECIES_THAT_DISLIKE
+'''Espèces qui n'aiment pas : '''
+
 ENC_BUILDING_TYPE
 Type de Structures
 
@@ -5497,10 +5509,12 @@ ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 '''
 
 # %1% category of the technology.
-# %2% UNUSED
-# %3% short description of the technology.
-#ENC_TECH_DETAIL_TYPE_STR
-#%3%
+ENC_TECH_DETAIL_TYPE_STR
+Technologie %1% -
+
+# %1% category of the policy.
+ENC_POLICY_DETAIL_TYPE_STR
+Stratégie Domaine %1% -
 
 # %1% object, technology or other content that should be looked up in the
 #     encyclopedia.
@@ -6385,6 +6399,12 @@ XENOPHOBIC_SPECIES_TEXT
 
 La technologie [[tech CON_CONC_CAMP]] est disponible par défaut pour les espèces xénophobes.'''
 
+ARTISTIC_SPECIES_TITLE
+Attribut Artistique
+
+ARTISTIC_SPECIES_TRAIT_TEXT
+Les espèces artistiques réalisent des travaux d'ordre artistique lorsque leur empire applique la Stratégie [[policy PLC_ARTISAN_WORKSHOPS]], laquelle génère de l'[[metertype METER_INFLUENCE]]. De plus, les autres planètes dans le même système, peuplées d'espèces artistiques et réglées sur le Focus Influence, jouiront d'une meilleure [[metertype METER_HAPPINESS]].
+
 FLEET_UPKEEP_TITLE
 Entretien des Flottes
 
@@ -7268,6 +7288,12 @@ La planète %planet% a été capturée par %empire%.
 SITREP_PLANET_CAPTURED_LABEL
 Planète capturée
 
+SITREP_PLANET_CAPTURED_NEUTRALS
+La planète %planet% est devenue indépendante de %empire%.
+
+SITREP_PLANET_CAPTURED_NEUTRALS_LABEL
+Planète devenue indépendante
+
 SITREP_PLANET_DEPOPULATED
 La population de la planète %planet% a été totalement décimée!
 
@@ -7300,6 +7326,12 @@ L'avant-poste de la planète %planet% a été abandonné.  %rawtext%.
 
 SITREP_OUTPOST_ABADONED_LABEL
 Avant-Poste abandonné
+
+SITREP_COLONY_INDEPENDENT
+Sur %planet% : la colonie %species% est devenue indépendante.
+
+SITREP_COLONY_INDEPENDENT_LABEL
+Colonie indépendante
 
 SITREP_NEW_COLONY_ESTABLISHED
 Sur %planet% : une nouvelle colonie %species% s'est établie.
@@ -8359,7 +8391,7 @@ Préfèrent les Planètes [[PT_RADIATED]]s.
 
 SP_REPLICON_DESC
 '''Description:
-Un Replicon a l'apparence d'une araignée robotique d'une envergure de 3m et munie d'ailes. Ces ailes sont en réalité des panneaux solaires hautement efficients car couvrant une grande superficie. "L'abdomen" de la créature s'avère être un "centre industriel de production" où les membres de remplacement et les nouveaux Replicons sont créés.
+Un Replicon a l'apparence d'une araignée robotique d'une envergure de 3 mètres et munie d'ailes. Ces ailes sont en réalité des panneaux solaires hautement efficients car couvrant une grande superficie. "L'abdomen" de la créature s'avère être un "centre industriel de production" où les membres de remplacement et les nouveaux Replicons sont créés.
 
 Structure sociale:
 Les Replicons ont une structure sociale relativement primitive. Ils sont dirigés par un gouvernement planétaire s'appuyant sur quelques seigneurs féodaux, ces derniers ayant découvert le voyage spatial, devenu rapidement une solution très pratique pour lancer des attaques contre des peuplades très lointaines. Leur gouvernement est donc féodal en raison d'un fait assez inhabituel: la découverte du vol spatial par quelques individus avant l'avènement d'une révolution industrielle à l'échelle d'une nation. De par la grande variété des machines auto-réplicantes sur Cisarruj, la plupart des besoins normalement satisfaits par l'industrie sur les autres planètes, le sont par "l'agriculture" ou "reproduction" chez les Replicons. En effet, les Replicons ne disposent d'aucune base industrielle ni d'aucune connaissance technologique à proprement parler, autres que l'usage d'équipements et produits créés "naturellement" par leur soin. Par conséquent, leur société est très peu érudite, la plupart des individus transmettant la connaissance d'une manière discontinue et partielle: comment forger un revêtement de titane ou quelle quantité de minerai d'uranium est nécessaire pour alimenter son réacteur de production. La plupart des connaissances que les sociétés développées regroupent, partagent et mettent en relation, ne sont détenues que par les seigneurs, le reste de la société se développant aléatoirement grâce aux quelques savoirs appris et conservés, à la manière d'un monde post-apocalyptique.
@@ -8861,6 +8893,30 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 ## Specials
 ##
 
+INDEPENDENT_COLONY_SHIELD_SPECIAL
+Boucliers Planétaires Indépendants
+
+INDEPENDENT_COLONY_SHIELD_SPECIAL_DESC
+Ceci garantit que l'indicateur [[metertype METER_MAX_SHIELD]] de cette planète est au moins aussi élevé que la valeur de la Particularité tant que la planète est indépendante et peuplée. Est supprimé suite à une invasion ou une dépopulation.
+
+INDEPENDENT_COLONY_DEFENSE_SPECIAL
+Défense Planétaire Indépendante
+
+INDEPENDENT_COLONY_DEFENSE_SPECIAL_DESC
+Ceci garantit que l'indicateur [[metertype METER_MAX_DEFENSE]] de cette planète est au moins aussi élevé que la valeur de la Particularité tant que la planète est indépendante et peuplée. Est supprimé suite à une invasion ou une dépopulation.
+
+INDEPENDENT_COLONY_TROOPS_SPECIAL
+Infanterie Planétaire Indépendante
+
+INDEPENDENT_COLONY_TROOPS_SPECIAL_DESC
+Ceci garantit que l'indicateur [[metertype METER_MAX_TROOPS]] de cette planète est au moins aussi élevé que la valeur de la Particularité tant que la planète est indépendante et peuplée. Est supprimé suite à une invasion ou une dépopulation.
+
+INDEPENDENT_COLONY_POPULATION_SPECIAL
+Population Indépendante
+
+INDEPENDENT_COLONY_POPULATION_SPECIAL_DESC
+Ceci garantit que la [[metertype METER_TARGET_POPULATION]] de cette planète est au moins aussi élevée que la valeur de la Particularité tant que la planète est indépendante et peuplée. Est supprimé suite à une invasion ou une dépopulation.
+
 MODERATE_TECH_NATIVES_SPECIAL
 Indigènes Techno-Compétents
 
@@ -9216,6 +9272,51 @@ Elerium Originel
 
 ELERIUM_SPECIAL_DESC
 Cette planète abrite de riches gisements d'Elerium pur, augmentant significativement la production ou la croissance des espèces lithiques.
+
+SUCCULENT_BARNACLES_SPECIAL
+Bernacles Succulentes
+
+SUCCULENT_BARNACLES_SPECIAL_DESC
+La planète abrite une colonie de succulentes bernacles pouvant être récoltées et exportées.
+
+SUCCULENT_BARNACLES_SPECIAL_IMPORTS
+Import [[SUCCULENT_BARNACLES_SPECIAL]]
+
+FRACTAL_GEODES_SPECIAL
+Géodes Fractales
+
+FRACTAL_GEODES_SPECIAL_DESC
+La planète est jonchée de géodes fractales irisées pouvant être collectées et exportées.
+
+FRACTAL_GEODES_SPECIAL_IMPORTS
+Import [[FRACTAL_GEODES_SPECIAL]]
+
+SHIMMER_SILK_SPECIAL
+Soie Chatoyante
+
+SHIMMER_SILK_SPECIAL_SPECIAL_DESC
+La planète projette à sa surface des feuilles de matière semblables à une soie délicate et chatoyante, pouvant être collectées et exportées.
+
+SHIMMER_SILK_SPECIAL_IMPORTS
+Import [[SHIMMER_SILK_SPECIAL]]
+
+SPARK_FOSSILS_SPECIAL
+Fossiles Scintillants
+
+SPARK_FOSSILS_SPECIAL_DESC
+La croûte externe de cette planète est constellée de créatures de cristal fossilisées, parcourues de petites décharges électriques scintillantes lors d'un contact, et pouvant être extraites et exportées.
+
+SPARK_FOSSILS_SPECIAL_IMPORTS
+Import [[SPARK_FOSSILS_SPECIAL]]
+
+MIMETIC_ALLOY_SPECIAL
+Alliage Mimétique
+
+MIMETIC_ALLOY_SPECIAL_DESC
+Cette planète présente à sa surface des bassins d'alliage mimétique, lequel à la capacité de se modifier afin de prendre la forme d'un objet placé à proximité, et pouvant être embouteillé et exporté.
+
+MIMETIC_ALLOY_SPECIAL_IMPORTS
+Import [[MIMETIC_ALLOY_SPECIAL]]
 
 
 ##
@@ -11630,6 +11731,24 @@ Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées
 PLC_INTERSTELLAR_INFRA_SHORT_DESC
 Octroie des choix de Stratégie
 
+PLC_CAPITAL_MARKETS
+Marchés Capitaux
+
+PLC_CAPITAL_MARKETS_DESC
+Les planètes disposant d'une Particularité de ressources de luxe et réglées sur le Focus Influence, exporteront cette ressource vers les planètes reliées par lignes d'[[metertype METER_SUPPLY]], améliorant la [[metertype METER_HAPPINESS]] des planètes peuplées d'espèces appréciant cette ressource.
+
+PLC_CAPITAL_MARKETS_SHORT_DESC
+Augmente la Stabilité via l'export de ressources
+
+PLC_ARTISAN_WORKSHOPS
+Ateliers Artisanaux
+
+PLC_ARTISAN_WORKSHOPS_DESC
+Les planètes peuplés d'espèces de type [[ARTISTIC]] et réglées sur le Focus Influence généreront de l'Influence et exporteront de l'artisanat de luxe vers les planètes du même système, améliorant la [[metertype METER_HAPPINESS]] de ces planètes.
+
+PLC_ARTISAN_WORKSHOPS_SHORT_DESC
+Production d'objets de luxe par les espèces artistiques
+
 
 ##
 ## Technology categories
@@ -13510,6 +13629,12 @@ BLD_EVACUATION
 BLD_EVACUATION_DESC
 Extrait la [[metertype METER_POPULATION]] de cette planète sur plusieurs tours selon un [[encyclopedia EVACUATION_TITLE]] prédéfini. Si une planète de remplacement avec un [[encyclopedia ENVIRONMENT_TITLE]] approprié est disponible et déjà peuplée par la même espèce, tout en disposant de suffisamment de place libre, la Population y sera transférée.
 
+BLD_COLONY_INDEPENDENCE_DECREE
+Décret d'Indépendance Planétaire
+
+BLD_COLONY_INDEPENDENCE_DECREE_DESC
+Accorde la liberté à la colonie de cette planète. La colonie indépendante conserve sa [[metertype METER_TARGET_POPULATION]], ainsi que les indicateurs [[metertype METER_MAX_SHIELD]], [[metertype METER_MAX_DEFENSE]] et [[metertype METER_MAX_TROOPS]]. La structure est détruite une fois le processus achevé.
+
 BLD_ABANDON_OUTPOST
 Abandon Avant-Poste
 
@@ -14029,7 +14154,7 @@ BLD_XENORESURRECTION_LAB
 Laboratoire de Xénorésurrection
 
 BLD_XENORESURRECTION_LAB_DESC
-Le Laboratoire de Xénorésurrection répare et recompose les échantillons organiques d'une espèce éteinte, permettant ainsi la colonisation de planètes reliées par ligne d'[[metertype METER_SUPPLY]] par une espèce éteinte découverte au sein de [[special ANCIENT_RUINS_SPECIAL]]. Ne peut être construit que sur les planètes où les fouilles de [[special ANCIENT_RUINS_SPECIAL]] ont révélé les corps parfaitement conservés d'une espèce éteinte.
+Le Laboratoire de Xénorésurrection répare et recompose les échantillons organiques d'une espèce éteinte, permettant ainsi la colonisation de planètes reliées par lignes d'[[metertype METER_SUPPLY]] par une espèce éteinte découverte au sein de [[special ANCIENT_RUINS_SPECIAL]]. Ne peut être construit que sur les planètes où les fouilles de [[special ANCIENT_RUINS_SPECIAL]] ont révélé les corps parfaitement conservés d'une espèce éteinte.
 
 BLD_COLONY_BASE
 Colonisateur Stellaire
@@ -16072,6 +16197,9 @@ Mouvement Indépendantiste Planète Natale
 CAPITAL_DISCONNECTION_LABEL
 Non connecté à la Capitale d'Empire
 
+ARTISAN_APPRECIATION
+Aime les espèces artistiques en Focus Influence dans le système
+
 # %1% name of empire
 # %2% name of policy
 LIKES_POLICY_LABEL
@@ -16093,14 +16221,29 @@ DISLIKES_BUILDING_LABEL
 N'aime pas la structure %2% sur %1%
 
 # %1% name of planet
-# %2% name of species on planet
+# %2% name of species on planet (not the focus!)
 LIKES_FOCUS_LABEL
 Aime le Focus sur %1%
 
 # %1% name of planet
-# %2% name of species on planet
+# %2% name of species on planet (not the focus!)
 DISLIKES_FOCUS_LABEL
 N'aime pas le Focus sur %1%
+
+# %1% name of planet
+# %2% name of special
+LIKES_SPECIAL_LABEL
+Aime %2% sur %1% 
+
+# %1% name of planet
+# %2% name of special
+DISLIKES_SPECIAL_LABEL
+N'aime pas %2% sur %1% 
+
+# %1% name of planet
+# %2% name of species on planet
+FOCUS_PROTECTION_LABEL
+%2% Focus Protection
 
 # %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
@@ -16150,6 +16293,16 @@ Rotation Synchrone
 
 HOMEWORLD_LABEL
 Planète Natale
+
+# %1% name of planet
+# %2% name of species on planet
+INSTABILITY_REBELLION
+Émeute Instabilité %1%
+
+# %1% name of planet
+# %2% name of species on planet
+PARTISANS_REBELLION
+Partisans %2% Dette Influence
 
 # %1% FIXME
 # %2% FIXME
@@ -16481,9 +16634,6 @@ Bonne Vision
 EXCELLENT_VISION_LABEL
 Excellente Vision
 
-FOCUS_PROTECTION_LABEL
-Focus Protection
-
 GASEOUS_LABEL
 Environnement Géante Gazeuse
 
@@ -16600,6 +16750,9 @@ Désuet
 
 STYLISH
 Élégant
+
+ARTISTIC
+Artistique
 
 ORGANIC
 Organique
