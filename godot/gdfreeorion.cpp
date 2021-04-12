@@ -173,14 +173,16 @@ void GDFreeOrion::_init() {
     SetAndroidEnvironment(s_android_api_struct->godot_android_get_env(),
                           s_android_api_struct->godot_android_get_activity());
 #endif
+    std::string executable_path = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(OS::get_singleton()->get_executable_path().unicode_str());
 
-    InitDirs(std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(OS::get_singleton()->get_executable_path().unicode_str()));
+    InitDirs(executable_path);
 
     GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
     GetOptionsDB().SetFromFile(GetPersistentConfigPath());
 
 #if !defined(FREEORION_ANDROID)
     std::vector<std::string> args;
+    args.emplace_back(std::move(executable_path));
     const PoolStringArray wargs = OS::get_singleton()->get_cmdline_args();
     const PoolStringArray::Read wargs_read = wargs.read();
     for (int i = 0; i < wargs.size(); ++ i) {
