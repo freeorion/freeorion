@@ -238,12 +238,10 @@ bool Ship::IsMonster() const { // TODO: pass in ScriptingContext
 }
 
 bool Ship::IsArmed() const {
-    ErrorLogger() << "IsArmed?";
     if ((TotalWeaponsShipDamage(0.0f, false) > 0.0f) || (TotalWeaponsFighterDamage(false) > 0.0f))
         return true;    // has non-fighter weapons damaging ships or fighters
     if (HasFighters() && ((TotalWeaponsShipDamage(0.0f, true) > 0.0f) || (TotalWeaponsFighterDamage(false) > 0.0f)))
         return true;    // has no non-fighter weapons but has launchable fighters that do damage
-    ErrorLogger() << "IsArmed - no";
     return false;
 }
 
@@ -440,7 +438,6 @@ float Ship::WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext
 
     // usually a weapon part destroys one fighter per shot, but that can be overridden
     if (part->TotalFighterDamage()) {
-        ErrorLogger() << "WeaponPartFighterDamage PC_DIRECT_WEAPON TotalFighterDamage " << part->TotalFighterDamage()->Eval(context);
         return part->TotalFighterDamage()->Eval(context);
     } else {
         int num_bouts_with_fighter_targets = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS") - 1;
@@ -449,13 +446,11 @@ float Ship::WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext
 }
 
 float Ship::WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& context) const {
-    ErrorLogger() << "WeaponPartShipDamage";
     if (!part || (part->Class() != ShipPartClass::PC_DIRECT_WEAPON))
         return 0.0f;
 
     // usually a weapon part does damage*shots ship damage, but that can be overridden
     if (part->TotalShipDamage()) {
-        ErrorLogger() << "WeaponPartShipDamage TotalShipDamage " << part->TotalShipDamage()->Eval(context);
         return part->TotalShipDamage()->Eval(context);
     } else {
         float part_attack = CurrentPartMeterValue(MeterType::METER_CAPACITY, part->Name());  // used within loop that updates meters, so need current, not initial values
@@ -466,7 +461,6 @@ float Ship::WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& c
             if (target) 
                 target_shield = target->GetMeter(MeterType::METER_SHIELD)->Current();
         }
-        ErrorLogger() << "WeaponPartShipDamage target.Shield " << part_attack << " - " << target_shield << "  *" << part_shots;
         if (part_attack > target_shield) {
             int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
             return (part_attack - target_shield) * part_shots * num_bouts;
@@ -534,12 +528,10 @@ namespace {
                 // attack strength of a ship's fighters per bout determined by the hangar...
                 // assuming all hangars on a ship are the same part type...
                 if (target_ships && part->TotalShipDamage()) {
-                    ErrorLogger() << "WeaponDamageCalcImpl PC_FIGHTER_HANGAR add part->TotalShipDamage";
                     retval.emplace_back(part->TotalShipDamage()->Eval(context));
                     // as TotalShipDamage contains the damage from all fighters, do not further include fighter
                     include_fighters = false;
                 } else if (part->TotalFighterDamage() && !target_ships) {
-                    ErrorLogger() << "WeaponDamageCalcImpl PC_FIGHTER_HANGAR add part->TotalFighterDamage";
                     retval.emplace_back(part->TotalFighterDamage()->Eval(context));
                     // as TotalFighterDamage contains the damage from all fighters, do not further include fighter
                     include_fighters = false;
@@ -547,8 +539,6 @@ namespace {
                     fighter_damage = ship->CurrentPartMeterValue(SECONDARY_METER, part_name);
                     available_fighters = std::max(0, static_cast<int>(ship->CurrentPartMeterValue(METER, part_name)));  // stacked meter
                 } else {
-                    ErrorLogger() << "WeaponDamageCalcImpl PC_FIGHTER_HANGAR does not match combatTargets condition";
-                    ErrorLogger() << "WeaponDamageCalcImpl PC_FIGHTER_HANGAR source: " << context.source->Owner() << "  target: " << context.effect_target->Owner();
                     std::vector<const Condition::Condition*> target_conditions;
                     target_conditions.push_back(part->CombatTargets());
                     // target is not of the right type
@@ -616,7 +606,7 @@ namespace {
 std::vector<float> Ship::AllWeaponsFighterDamage(bool include_fighters) const {
     std::vector<float> retval;
 
-    const ShipDesign* design = GetShipDesign(m_design_id);
+    const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id);
     if (!design)
         return retval;
 
