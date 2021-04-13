@@ -371,7 +371,7 @@ float ShipPart::Capacity() const {
 float ShipPart::SecondaryStat() const {
     switch (m_class) {
     case ShipPartClass::PC_FIGHTER_HANGAR:
-        return m_capacity * GetGameRules().Get<double>("RULE_FIGHTER_DAMAGE_FACTOR");
+        return m_secondary_stat * GetGameRules().Get<double>("RULE_FIGHTER_DAMAGE_FACTOR");
         break;
     default:
         return m_secondary_stat;
