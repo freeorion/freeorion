@@ -137,6 +137,11 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().Add<std::string>("version.string",           UserStringNop("OPTIONS_DB_VERSION_STRING"),         FreeOrionVersionString(),
                                         Validator<std::string>(),                                                       true);
         GetOptionsDB().AddFlag('r', "render-simple",                UserStringNop("OPTIONS_DB_RENDER_SIMPLE"),          false);
+#ifdef FREEORION_WIN32
+        GetOptionsDB().Add<std::string>("freeoriond.path",          UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond.exe"));
+#else
+        GetOptionsDB().Add<std::string>("freeoriond.path",          UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond"));
+#endif
 
         // add sections for option sorting
         GetOptionsDB().AddSection("audio", UserStringNop("OPTIONS_DB_SECTION_AUDIO"));

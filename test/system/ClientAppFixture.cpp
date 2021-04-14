@@ -5,6 +5,7 @@
 #include "universe/Species.h"
 #include "util/Directories.h"
 #include "util/GameRules.h"
+#include "util/i18n.h"
 #include "util/Version.h"
 
 #include <boost/format.hpp>
@@ -23,6 +24,12 @@ ClientAppFixture::ClientAppFixture() :
     InitLoggingSystem((GetUserDataDir() / "test.log").string(), "Test");
 #endif
     //InitLoggingOptionsDBSystem();
+
+#ifdef FREEORION_WIN32
+    GetOptionsDB().Add<std::string>("freeoriond.path",          UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond.exe"));
+#else
+    GetOptionsDB().Add<std::string>("freeoriond.path",          UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond"));
+#endif
 
     InfoLogger() << FreeOrionVersionString();
     DebugLogger() << "Test client initialized";
