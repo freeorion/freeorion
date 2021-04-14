@@ -19,6 +19,7 @@ FO_ENUM(
     ((PATH_DATA_ROOT))
     ((PATH_DATA_USER))
     ((PATH_CONFIG))
+    ((PATH_CACHE))
     ((PATH_SAVE))
     ((PATH_TEMP))
     ((PATH_INVALID))
@@ -62,6 +63,21 @@ FO_COMMON_API void InitDirs(std::string const& argv0);
 //! * If the directory does not exist, it will be created.
 //! * This directory can be considered writable!
 FO_COMMON_API auto GetUserConfigDir() -> boost::filesystem::path const;
+
+//! Returns the directory where FreeOrion store user cache files.
+//!
+//! This covers:
+//! * cached files
+//!
+//! Defaults to:
+//! * Windows: Path to `%appdata%`\FreeOrion`.
+//! * MacOS: Path to `${HOME}/Library/FreeOrion`.
+//! * UNIX-like: Follows XDG Base Dir spec; Path to `${XDG_CACHE_HOME}/freeorion`.
+//!
+//! @note
+//! * If the directory does not exist, it will be created.
+//! * This directory can be considered writable!
+FO_COMMON_API auto GetUserCacheDir() -> boost::filesystem::path const;
 
 //! Returns the directory where FreeOrion stores user specific data.
 //!

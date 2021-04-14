@@ -62,6 +62,7 @@ namespace {
     const std::string PATH_DATA_ROOT_STR = "PATH_DATA_ROOT";
     const std::string PATH_DATA_USER_STR = "PATH_DATA_USER";
     const std::string PATH_CONFIG_STR = "PATH_CONFIG";
+    const std::string PATH_CACHE_STR = "PATH_CACHE";
     const std::string PATH_SAVE_STR = "PATH_SAVE";
     const std::string PATH_TEMP_STR = "PATH_TEMP";
     const std::string PATH_PYTHON_STR = "PATH_PYTHON";
@@ -78,6 +79,7 @@ namespace {
 #if defined(FREEORION_ANDROID)
     thread_local JNIEnv* s_jni_env = nullptr;
     fs::path       s_user_dir;
+    fs::path       s_cache_dir;
     jweak          s_activity;
     AAssetManager* s_asset_manager;
     jobject        s_jni_asset_manager;
@@ -207,6 +209,7 @@ auto PathTypeToString(PathType path_type) -> std::string const&
         case PathType::PATH_DATA_ROOT: return PATH_DATA_ROOT_STR;
         case PathType::PATH_DATA_USER: return PATH_DATA_USER_STR;
         case PathType::PATH_CONFIG:    return PATH_CONFIG_STR;
+        case PathType::PATH_CACHE:     return PATH_CACHE_STR;
         case PathType::PATH_SAVE:      return PATH_SAVE_STR;
         case PathType::PATH_TEMP:      return PATH_TEMP_STR;
         case PathType::PATH_INVALID:   return PATH_INVALID_STR;
@@ -434,6 +437,17 @@ void InitDirs(std::string const& argv0)
     s_user_dir = fs::path(files_dir_chars);
     env->ReleaseStringUTFChars(files_dir_path, files_dir_chars);
 
+    jmethodID get_cache_dir_mid = env->GetMethodID(activity_cls, "getCacheDir", "()Ljava/io/File;");
+    jobject cache_dir = env->CallObjectMethod(activity, get_cache_dir_mid);
+
+    file_cls = env->GetObjectClass(cache_dir);
+    get_absolute_path_mid = env->GetMethodID(file_cls, "getAbsolutePath", "()Ljava/lang/String;");
+    jstring cache_dir_path = reinterpret_cast<jstring>(env->CallObjectMethod(cache_dir, get_absolute_path_mid));
+
+    const char *cache_dir_chars = env->GetStringUTFChars(cache_dir_path, NULL);
+    s_cache_dir = fs::path(cache_dir_chars);
+    env->ReleaseStringUTFChars(cache_dir_path, cache_dir_chars);
+
     jmethodID get_assets_mid = env->GetMethodID(activity_cls, "getAssets", "()Landroid/content/res/AssetManager;");
     jobject asset_manager = env->CallObjectMethod(activity, get_assets_mid);
     s_jni_asset_manager = env->NewGlobalRef(asset_manager);
@@ -458,6 +472,22 @@ auto GetUserConfigDir() -> fs::path const
     static fs::path p = getenv("XDG_CONFIG_HOME")
         ? fs::path(getenv("XDG_CONFIG_HOME")) / "freeorion"
         : fs::path(getenv("HOME")) / ".config" / "freeorion";
+    return p;
+#endif
+}
+
+auto GetUserCacheDir() -> fs::path const
+{
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+    return GetUserDataDir();
+#elif defined(FREEORION_ANDROID)
+    if (!g_initialized)
+        InitDirs("");
+    return s_cache_dir;
+#elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
+    static fs::path p = getenv("XDG_CACHE_HOME")
+        ? fs::path(getenv("XDG_CACHE_HOME")) / "freeorion"
+        : fs::path(getenv("HOME")) / ".cache" / "freeorion";
     return p;
 #endif
 }
@@ -846,6 +876,8 @@ auto GetPath(PathType path_type) -> fs::path
         return GetUserDataDir();
     case PathType::PATH_CONFIG:
         return GetUserConfigDir();
+    case PathType::PATH_CACHE:
+        return GetUserCacheDir();
     case PathType::PATH_SAVE:
         return GetSaveDir();
     case PathType::PATH_TEMP:
