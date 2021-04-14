@@ -385,6 +385,11 @@ void InitDirs(std::string const& argv0)
         fs::create_directories(cp);
     }
 
+    fs::path ca = GetUserCacheDir();
+    if (!exists(ca)) {
+        fs::create_directories(ca);
+    }
+
     fs::path p = GetUserDataDir();
     if (!exists(p)) {
         fs::create_directories(p);
