@@ -14,3 +14,8 @@ jobs:
     - name: Install built snap package
       run: |
         sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }}
+    - name: Test freeorion launch
+      uses: GabrielBB/xvfb-action@v1.4
+      with:
+        run: /bin/bash .github/snap-xvfb-launch.sh
+

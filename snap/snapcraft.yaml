@@ -12,7 +12,7 @@ architectures:
 - build-on: amd64
 apps:
   freeorion:
-    command: usr/local/bin/freeorion -S $SNAP_USER_COMMON/save
+    command: usr/bin/freeorion -S $SNAP_USER_COMMON/save
     plugs:
     - desktop
     - desktop-legacy
@@ -25,29 +25,29 @@ apps:
     - network
     - screen-inhibit-control
     - browser-support
-    desktop: usr/local/share/applications/org.freeorion.FreeOrion.desktop
+    desktop: usr/share/applications/org.freeorion.FreeOrion.desktop
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/local/lib/freeorion
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
       LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
     command-chain:
     - snap/command-chain/desktop-launch
   freeoriond:
-    command: usr/local/bin/freeoriond
+    command: usr/bin/freeoriond
     plugs:
     - home
     - network
     - network-bind
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/local/lib/freeorion
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
   freeoriond-dedicated:
-    command: usr/local/bin/freeoriond --hostless --network.server.unconn-human-empire-players.max
+    command: usr/bin/freeoriond --hostless --network.server.unconn-human-empire-players.max
       0 --network.server.conn-human-empire-players.min 0
     plugs:
     - home
     - network
     - network-bind
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/local/lib/freeorion
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
 parts:
   freeorion:
     source: .
@@ -55,6 +55,8 @@ parts:
       sed -i.bak -e 's|Icon=freeorion$|Icon=${SNAP}/meta/gui/icon.png|g' ../src/packaging/org.freeorion.FreeOrion.desktop
       snapcraftctl build
     plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
     override-pull: |
       snapcraftctl pull
       # this versioning works for e.g. weekly-test-builds

@@ -13,25 +13,25 @@ architectures:
 
 apps:
   freeorion:
-    command: usr/local/bin/freeorion -S $SNAP_USER_COMMON/save
+    command: usr/bin/freeorion -S $SNAP_USER_COMMON/save
     extensions: [gnome-3-38]
     plugs: [home, pulseaudio, opengl, network, screen-inhibit-control, browser-support, x11]
-    desktop: usr/local/share/applications/org.freeorion.FreeOrion.desktop
+    desktop: usr/share/applications/org.freeorion.FreeOrion.desktop
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/local/lib/freeorion
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
       LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
       #PYTHONPATH: $SNAP/usr/lib/python3.6
   freeoriond:
-    command: usr/local/bin/freeoriond
+    command: usr/bin/freeoriond
     plugs: [home, network, network-bind]
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/local/lib/freeorion
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
       #PYTHONPATH: $SNAP/usr/lib/python3.6
   freeoriond-dedicated:
-    command: usr/local/bin/freeoriond --hostless --network.server.unconn-human-empire-players.max 0 --network.server.conn-human-empire-players.min 0
+    command: usr/bin/freeoriond --hostless --network.server.unconn-human-empire-players.max 0 --network.server.conn-human-empire-players.min 0
     plugs: [home, network, network-bind]
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/local/lib/freeorion
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
       #PYTHONPATH: $SNAP/usr/lib/python3.6
 
 parts:
@@ -41,12 +41,14 @@ parts:
       sed -i.bak -e 's|Icon=freeorion$|Icon=${SNAP}/meta/gui/icon.png|g' ../src/packaging/org.freeorion.FreeOrion.desktop
       snapcraftctl build
     plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
     #cmake-parameters: [-DBUILD_TESTING=ON]
     override-pull: |
       snapcraftctl pull
       # this versioning works for e.g. weekly-test-builds
       branchn="$(git rev-parse --abbrev-ref HEAD)"
-      version="$(git log -n1 --date=short --format='%cd.%h' freeorion/$branchn)"
+      version="$(git log -n1 --date=short --format='%cd.%h' $branchn)"
       case $version in
         v*) version=$(echo $version | tail -c +2) ;;
         *)  version=$(echo $version | head -c 32) ;;
