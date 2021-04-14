@@ -71,7 +71,7 @@ COMMON_HAPPINESS_EFFECTS
 
 SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD
 '''
-		// this should ensure that there is a capital / admin for JUMPS_TO_CAPITAL_OR_REGAD
+        // this should ensure that there is a capital / admin for JUMPS_TO_CAPITAL_OR_REGAD
         ResourceSupplyConnected empire = Source.Owner condition = And [
             Or [Capital Building name = "BLD_REGIONAL_ADMIN"]
             OwnedBy empire = Source.Owner
@@ -80,15 +80,14 @@ SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD
 
 JUMPS_TO_CAPITAL_OR_REGAD
 '''
-		Statistic Min
-		    // Replace JumpsBetween by JumpsBetweenByEmpireSupplyConnections once it is implemented
+        Statistic Min
+            // Replace JumpsBetween by JumpsBetweenByEmpireSupplyConnections once it is implemented
             value = JumpsBetween
             object = Source.ID
             object = LocalCandidate.ID
             condition = And [
                 Or [Capital Building name = "BLD_REGIONAL_ADMIN"]
                 OwnedBy empire = Source.Owner
-                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
 '''
 
