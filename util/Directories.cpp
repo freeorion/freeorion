@@ -289,8 +289,10 @@ void InitBinDir(std::string const& argv0)
             // check that a "freeoriond" file (hopefully the freeorion server binary) exists in the found directory
             fs::path p(bin_dir);
             p /= "freeoriond";
-            if (!exists(p))
+            if (!exists(p)) {
+                WarnLogger() << "Not found freeoriond in the same directory as " << PathToString(binary_file);
                 problem = true;
+            }
         }
 
     } catch (...) {
