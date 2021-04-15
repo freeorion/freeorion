@@ -1,4 +1,5 @@
 from operator import attrgetter, itemgetter
+from typing import List
 
 from stub_generator.interface_inspector import EnumInfo
 from stub_generator.stub_generator.processor import BaseProcessor
@@ -28,10 +29,14 @@ def _handle_enum(info: EnumInfo):
 
 
 class EnumProcessor(BaseProcessor):
-    def _process(self, enums):
-        self._items.append(ENUM_STUB)
 
-        for enum in sorted(enums, key=attrgetter("name")):
-            self._items.append(_handle_enum(enum))
+    def __init__(self, enums: List[EnumInfo]):
+        super().__init__()
+        self.enums = enums
 
 
+    def _process(self):
+        self.before.append(ENUM_STUB)
+
+        for enum in sorted(self.enums, key=attrgetter("name")):
+            self.body.append(_handle_enum(enum))

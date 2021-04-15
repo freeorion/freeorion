@@ -3,18 +3,13 @@ from abc import ABC, abstractmethod
 
 class BaseProcessor(ABC):
     def __init__(self):
-        self._headings = []
-        self._items = []
+        self.imports = []
+        self.before = []
+        self.body = []
 
     @abstractmethod
-    def _process(self, items):
+    def _process(self):
         ...
 
-    def process(self, items):
-        return self._process(items)
-
-    def get_body(self):
-        yield from self._items
-
-    def get_heading(self):
-        yield from self._headings
+    def process(self):
+        return self._process()
