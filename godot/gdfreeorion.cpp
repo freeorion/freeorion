@@ -121,6 +121,14 @@ void GDFreeOrion::handle_message(Message&& msg) {
             emit_signal("start_game", is_new_game);
             break;
         }
+        case Message::MessageType::ERROR_MSG: {
+            std::string problem;
+            bool fatal;
+            int player_id;
+            ExtractErrorMessageData(msg, player_id, problem, fatal);
+            emit_signal("error", String(problem.c_str()), fatal);
+            break;
+        }
         default:
             std::ostringstream stream;
             stream << msg.Type();
@@ -141,6 +149,7 @@ void GDFreeOrion::_register_methods() {
     register_method("_send_partial_orders", &GDFreeOrion::_send_partial_orders);
     register_method("_start_turn", &GDFreeOrion::_start_turn);
     register_signal<GDFreeOrion>("ping", "message", GODOT_VARIANT_TYPE_STRING);
+    register_signal<GDFreeOrion>("error", "problem", GODOT_VARIANT_TYPE_STRING, "fatal", GODOT_VARIANT_TYPE_BOOL);
     register_signal<GDFreeOrion>("auth_request", "player_name", GODOT_VARIANT_TYPE_STRING, "auth", GODOT_VARIANT_TYPE_STRING);
     register_signal<GDFreeOrion>("empire_status", "status", GODOT_VARIANT_TYPE_INT, "about_empire_id", GODOT_VARIANT_TYPE_INT);
     register_signal<GDFreeOrion>("start_game", "is_new_game", GODOT_VARIANT_TYPE_BOOL);
