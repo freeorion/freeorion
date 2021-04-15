@@ -43,6 +43,11 @@ const SP_TRITH = 4
 const MIN_SYS_DIST = 1
 const MAX_STARLANE_LENGTH = 15
 
+const INVALID_CLIENT_TYPE = -1
+const CLIENT_TYPE_AI_PLAYER = 0
+const CLIENT_TYPE_HUMAN_PLAYER = 1
+const CLIENT_TYPE_HUMAN_OBSERVER = 2
+const CLIENT_TYPE_HUMAN_MODERATOR = 3
 
 var galaxy: Galaxy
 var starfield: Spatial
