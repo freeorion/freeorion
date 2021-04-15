@@ -339,7 +339,7 @@ bool ClientNetworking::Impl::ConnectToServer(
 
     tcp::resolver::iterator end_it;
 
-    DebugLogger(network) << "Attempt to connect to server at one of these addresses:";
+    DebugLogger(network) << "Attempt to connect to server " << ip_address << " at one of these addresses:";
     for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
         DebugLogger(network) << "  tcp::resolver::iterator host_name: " << it->host_name()
                              << "  address: " << it->endpoint().address()
