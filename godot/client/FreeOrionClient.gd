@@ -21,6 +21,7 @@ func _ready():
     $Node.connect("auth_request", self, "_on_Node_auth_request")
     $Node.connect("empire_status", self, "_on_Node_empire_status")
     $Node.connect("start_game", self, "_on_Node_start_game")
+    $Node.connect("error", self, "_on_Node_error")
     var systems: int = $Node.optionsDB._get_option_int("setup.star.count")
     print("Systems from optionsDB ", systems)
     network_thread = Thread.new()
@@ -84,6 +85,9 @@ func _on_Node_start_game(is_new_game: bool):
     print("Received start game. New ", is_new_game)
     global.freeorion = $Node
     get_tree().change_scene("res://GalaxyMap.tscn")
+
+func _on_Node_error(problem: String, fatal: bool):
+    print("Received error: ", problem, " fatal: ", fatal)
 
 func _on_MultiplayerBtn_pressed():
     $Popup.add_child(multiplayer_setup_dlg)

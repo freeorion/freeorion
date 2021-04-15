@@ -22,7 +22,7 @@ func _on_RefreshBtn_pressed():
     pass
 
 func _on_OKBtn_pressed():
-    player_name = $LeftContainer/PlayerName/Label.text
+    player_name = $LeftContainer/PlayerName/LineEdit.text
     client_type = $LeftContainer/JoinGame/ClientType.get_selected_id()
     if $LeftContainer/JoinGame/CheckButton.pressed:
         server_name = $LeftContainer/ServerName.text
