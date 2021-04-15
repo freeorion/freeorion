@@ -27,7 +27,7 @@ namespace {
         std::string lang;
 
 #if defined(FREEORION_ANDROID)
-        lang = GetAndroidLand();
+        lang = GetAndroidLang();
 #else
         // early return when unable to get locale language string
         try {
