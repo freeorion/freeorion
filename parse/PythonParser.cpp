@@ -196,11 +196,11 @@ py::object PythonParser::find_spec(const std::string& fullname, const py::object
         current = boost::copy_range<std::string>(*it);
     }
 
-    if (boost::filesystem::exists(module_path) && boost::filesystem::is_directory(module_path)) {
+    if (IsExistingDir(module_path)) {
         return py::object(module_spec(fullname, parent, *this));
     } else {
         module_path.replace_extension("py");
-        if (boost::filesystem::exists(module_path) && boost::filesystem::is_regular_file(module_path)) {
+        if (IsExistingFile(module_path)) {
             return py::object(module_spec(fullname, parent, *this));
         } else {
             return py::object();
@@ -226,11 +226,11 @@ py::object PythonParser::exec_module(py::object& module) {
         module_path = module_path / boost::copy_range<std::string>(*it);
     }
 
-    if (boost::filesystem::exists(module_path) && boost::filesystem::is_directory(module_path)) {
+    if (IsExistingDir(module_path)) {
         return py::object();
     } else {
         module_path.replace_extension("py");
-        if (boost::filesystem::exists(module_path) && boost::filesystem::is_regular_file(module_path)) {
+        if (IsExistingFile(module_path)) {
             std::string file_contents;
             bool read_success = ReadFile(module_path, file_contents);
             if (!read_success) {

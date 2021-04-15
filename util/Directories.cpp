@@ -106,6 +106,27 @@ void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
     });
     background.detach();
 }
+
+void CopyInitialResourceAndroid(const std::string& rel_path)
+{
+    AAsset* asset = AAssetManager_open(s_asset_manager, ("default/python/" + rel_path).c_str(), AASSET_MODE_STREAMING);
+    if (asset == nullptr) {
+        return;
+    }
+    off64_t asset_length = AAsset_getLength64(asset);
+    if (asset_length <= 0) {
+        AAsset_close(asset);
+        return;
+    }
+
+    char buf[4096];
+    int nb_read = 0;
+    fs::ofstream ofs(s_python_home / rel_path, std::ios::binary);
+    while ((nb_read = AAsset_read(asset, buf, 4096)) > 0) {
+        ofs.write(buf, nb_read);
+    }
+    ofs.close();
+}
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU)
@@ -319,45 +340,6 @@ void InitBinDir(std::string const& argv0)
     // no binary directory setup required.
 #endif
 }
-
-#if defined(FREEORION_ANDROID)
-void CopyInitialResourceAndroid(const std::string& rel_path)
-{
-    AAsset* asset = AAssetManager_open(s_asset_manager, ("default/python/" + rel_path).c_str(), AASSET_MODE_STREAMING);
-    if (asset == nullptr) {
-        return;
-    }
-    off64_t asset_length = AAsset_getLength64(asset);
-    if (asset_length <= 0) {
-        AAsset_close(asset);
-        return;
-    }
-
-    char buf[4096];
-    int nb_read = 0;
-    fs::ofstream ofs(s_python_home / rel_path, std::ios::binary);
-    while ((nb_read = AAsset_read(asset, buf, 4096)) > 0) {
-        ofs.write(buf, nb_read);
-    }
-    ofs.close();
-}
-
-void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
-{
-    std::thread background([priority, tag, fd]() {
-        int pipes[2];
-        pipe(pipes);
-        dup2(pipes[1], fd);
-        FILE *inputFile = fdopen(pipes[0], "r");
-        char readBuffer[256];
-        while (true) {
-            fgets(readBuffer, sizeof(readBuffer), inputFile);
-            __android_log_write(priority, tag, readBuffer);
-        }
-    });
-    background.detach();
-}
-#endif
 
 void InitDirs(std::string const& argv0)
 {
