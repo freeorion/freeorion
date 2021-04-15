@@ -3,6 +3,7 @@ extends Control
 
 var game_setup_dlg: FOWindow
 var multiplayer_setup_dlg: FOWindow
+var auth_password_setup_dlg: FOWindow
 var pings: int = 0
 var network_thread: Thread
 
@@ -16,6 +17,10 @@ func _ready():
     multiplayer_setup_dlg = preload("res://MultiplayerSetup.tscn").instance()
     multiplayer_setup_dlg.connect("ok", self, "_on_MultiplayerSetupDlg_ok")
     multiplayer_setup_dlg.connect("cancel", self, "_on_MultiplayerSetupDlg_cancel")
+
+    auth_password_setup_dlg = preload("res://AuthPasswordSetup.tscn").instance()
+    auth_password_setup_dlg.connect("ok", self, "_on_AuthPasswordSetupDlg_ok")
+    auth_password_setup_dlg.connect("cancel", self, "_on_AuthPasswordSetupDlg_cancel")
 
     $Node.connect("ping", self, "_on_Node_ping")
     $Node.connect("auth_request", self, "_on_Node_auth_request")
@@ -45,13 +50,14 @@ func _on_SinglePlayerBtn_pressed():
 func _on_QuickstartBtn_pressed():
     $Node._new_single_player_game(true)
 
+
 func _on_GameSetupDlg_ok():
     $Popup.hide()
     $Node._new_single_player_game(false)
 
-
 func _on_GameSetupDlg_cancel():
     $Popup.hide()
+
 
 func _on_MultiplayerSetupDlg_ok():
     $Popup.hide()
@@ -67,16 +73,30 @@ func _on_MultiplayerSetupDlg_ok():
         else:
             pass
 
-
 func _on_MultiplayerSetupDlg_cancel():
     $Popup.hide()
+
+
+func _on_AuthPasswordSetupDlg_ok():
+    $Popup.hide()
+    $Node.networking._auth_response(auth_password_setup_dlg.player_name, auth_password_setup_dlg.password)
+
+func _on_AuthPasswordSetupDlg_cancel():
+    $Popup.hide()
+
 
 func _on_Node_ping(message: String):
     pings += 1
     print("Received message#", pings, " from C++ GDNative library code ", message)
 
 func _on_Node_auth_request(player_name: String, _auth: String):
-    $Node.networking._auth_response(player_name, "1")
+    $Popup.add_child(auth_password_setup_dlg)
+    var pos_x = ($Popup.get_rect().size.x - auth_password_setup_dlg.get_rect().size.x) / 2
+    var pos_y = ($Popup.get_rect().size.y - auth_password_setup_dlg.get_rect().size.y) / 2
+    auth_password_setup_dlg.set_position(Vector2(pos_x, pos_y))
+    auth_password_setup_dlg.set_player_name(player_name)
+    $Popup.popup()
+
 
 func _on_Node_empire_status(status: int, about_empire_id: int):
     print("Received empire #", about_empire_id, " status ", status)

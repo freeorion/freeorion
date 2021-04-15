@@ -11,10 +11,6 @@ var client_type: int
 var server_name: String
 
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-    randomize()
-
 func _on_CloseWidget_pressed():
     emit_signal("cancel")
 
