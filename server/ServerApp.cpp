@@ -2695,6 +2695,7 @@ namespace {
                 continue;
 
             for (auto& [invader_empire_id, troops] : empire_troops) {
+                (void)troops; // quiet warning
                 auto invader_empire = empires.GetEmpire(invader_empire_id);
                 if (!invader_empire)
                     continue;
@@ -2893,6 +2894,7 @@ namespace {
         // give bonuses for allied ground combat, so allies can effectively fight together
         auto effective_empires_troops = empires_troops;
         for (auto& [empire1_id, troop1_count] : empires_troops) {
+            (void)troop1_count; // quiet warning
             for (auto& [empire2_id, troop2_count] : empires_troops) {
                 if (empire1_id == empire2_id)
                     continue;
@@ -3000,7 +3002,7 @@ namespace {
         UpdateEmpireInvasionInfo(planet_empire_troops, empires, objects);
 
         // check each planet invading or other troops, such as due to empire troops, native troops, or rebel troops
-        for (const auto& planet : objects.all<const Planet>()) {
+        for (const auto& planet : objects.all<Planet>()) {
             auto empire_forces = planet->EmpireGroundCombatForces();
             if (!empire_forces.empty())
                 planet_empire_troops[planet->ID()].insert(empire_forces.begin(), empire_forces.end());
