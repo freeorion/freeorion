@@ -234,8 +234,13 @@ public:
     /** Set checked value of control for TechStatus @p status to @p state */
     void SetTechStatus(TechStatus status, bool state);
 
+    void RefreshCategoryButtons();
+
+    boost::signals2::signal<void (std::string, bool)> CategoryCheckedSignal;
+
 private:
-    void            DoButtonLayout();
+    void DoButtonLayout();
+    void CategoryButtonCheckedSlot(std::string category, bool check);
 
     /** These values are determined when doing button layout, and stored.
       * They are later used when rendering separator lines between the groups
@@ -269,21 +274,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     const int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
     const boost::filesystem::path icon_dir = ClientUI::ArtDir() / "icons" / "tech" / "controls";
 
-    // create a button for each tech category...
-    for (const std::string& category : GetTechManager().CategoryNames()) {
-        GG::Clr icon_clr = ClientUI::CategoryColor(category);
-        std::shared_ptr<GG::SubTexture> icon = std::make_shared<GG::SubTexture>(
-            ClientUI::CategoryIcon(category));
-        m_cat_buttons[category] = GG::Wnd::Create<GG::StateButton>(
-            "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-            std::make_shared<CUIIconButtonRepresenter>(icon, icon_clr));
-        m_cat_buttons[category]->SetBrowseInfoWnd(
-            GG::Wnd::Create<TextBrowseWnd>(UserString(category), ""));
-        m_cat_buttons[category]->SetBrowseModeTime(tooltip_delay);
-        AttachChild(m_cat_buttons[category]);
-    }
-
-    GG::Clr icon_color = GG::Clr(113, 150, 182, 255);
+    GG::Clr icon_color = GG::Clr{113, 150, 182, 255};
     // and one for "ALL"
     m_all_cat_button = GG::Wnd::Create<GG::StateButton>(
         "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
@@ -341,12 +332,17 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     // create button to switch between tree and list views
     m_view_type_button = GG::Wnd::Create<GG::StateButton>(
         "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-        std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "06_view_tree.png", true)), icon_color,
-                                                                                      std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "05_view_list.png", true)), GG::Clr(110, 172, 150, 255)));
+        std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
+            ClientUI::GetTexture(icon_dir / "06_view_tree.png", true)),
+        icon_color,
+        std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "05_view_list.png", true)),
+        GG::Clr{110, 172, 150, 255}));
     m_view_type_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_VIEW_TYPE"), ""));
     m_view_type_button->SetBrowseModeTime(tooltip_delay);
     m_view_type_button->SetCheck(false);
     AttachChild(m_view_type_button);
+
+    RefreshCategoryButtons();
 
     SetChildClippingMode(ChildClippingMode::ClipToClient);
 
@@ -356,6 +352,35 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     SaveDefaultedOptions();
     SaveOptions();
 }
+
+void TechTreeWnd::TechTreeControls::RefreshCategoryButtons() {
+    for (auto& button : m_cat_buttons)
+        DetachChildAndReset(button.second);
+    m_cat_buttons.clear();
+
+    const int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
+
+    // create a button for each tech category...
+    for (const auto& category : GetTechManager().CategoryNames()) {
+        GG::Clr icon_clr = ClientUI::CategoryColor(category);
+        auto icon = std::make_shared<GG::SubTexture>(ClientUI::CategoryIcon(category));
+        m_cat_buttons[category] = GG::Wnd::Create<GG::StateButton>(
+            "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+            std::make_shared<CUIIconButtonRepresenter>(icon, icon_clr));
+        m_cat_buttons[category]->SetBrowseInfoWnd(
+            GG::Wnd::Create<TextBrowseWnd>(UserString(category), ""));
+        m_cat_buttons[category]->SetBrowseModeTime(tooltip_delay);
+        AttachChild(m_cat_buttons[category]);
+
+        m_cat_buttons[category]->CheckedSignal.connect(
+            boost::bind(&TechTreeControls::CategoryButtonCheckedSlot, this, category, _1));
+    }
+
+    DoButtonLayout();
+}
+
+void TechTreeWnd::TechTreeControls::CategoryButtonCheckedSlot(std::string category, bool check)
+{ CategoryCheckedSignal(std::move(category), check); }
 
 void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     const int PTS = ClientUI::Pts();
@@ -526,9 +551,9 @@ public:
     void Render() override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    void Update();  ///< update indicated \a tech panel or all panels if \a tech_name is an empty string, without redoing layout
-    void Clear();                               ///< remove all tech panels
-    void Reset();                               ///< redo layout, recentre on a tech
+    void Update();
+    void Clear();   ///< remove all tech panels
+    void Reset();   ///< redo layout, recentre on a tech
     void SetScale(double scale);
     void ShowCategory(const std::string& category);
     void ShowAllCategories();
@@ -648,17 +673,15 @@ public:
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override
     { ForwardEventToParent(); }
 
-    void            Update();
-    void            Select(bool select);
-    int             FontSize() const;
+    void Update();
+    void Select(bool select);
+    int  FontSize() const;
 
     mutable TechTreeWnd::TechClickSignalType    TechLeftClickedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechDoubleClickedSignal;
     mutable TechTreeWnd::TechSignalType         TechPediaDisplaySignal;
 
 private:
-    void            InitBuffers();
-
     GG::GL2DVertexBuffer            m_border_buffer;
     GG::GL2DVertexBuffer            m_eta_border_buffer;
     GG::GL2DVertexBuffer            m_enqueued_indicator_buffer;
@@ -673,24 +696,18 @@ private:
     std::shared_ptr<GG::TextControl>                m_name_label;
     std::shared_ptr<GG::TextControl>                m_cost_and_duration_label;
     std::shared_ptr<GG::TextControl>                m_eta_label;
-    GG::Clr                         m_colour;
-    TechStatus                      m_status;
-    bool                            m_browse_highlight;
-    bool                            m_selected;
-    int                             m_eta;
-    bool                            m_enqueued;
+    GG::Clr                         m_colour = GG::CLR_GRAY;
+    TechStatus                      m_status = TechStatus::TS_RESEARCHABLE;
+    bool                            m_browse_highlight = false;
+    bool                            m_selected = false;
+    int                             m_eta = -1;
+    bool                            m_enqueued = false;
 };
 
 TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, const LayoutPanel* panel) :
     GG::Wnd(GG::X0, GG::Y0, TechPanelWidth(), TechPanelHeight(), GG::INTERACTIVE),
     m_tech_name(tech_name),
-    m_layout_panel(panel),
-    m_colour(GG::CLR_GRAY),
-    m_status(TechStatus::TS_RESEARCHABLE),
-    m_browse_highlight(false),
-    m_selected(false),
-    m_eta(-1),
-    m_enqueued(false)
+    m_layout_panel(panel)
 {
     const int GRAPHIC_SIZE = Value(TechPanelHeight());
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -2024,7 +2041,7 @@ void TechTreeWnd::CompleteConstruction() {
         boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
 
     m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, RES_PEDIA_WND_NAME);
-    m_tech_tree_controls =  GG::Wnd::Create<TechTreeControls>(RES_CONTROLS_WND_NAME);
+    m_tech_tree_controls = GG::Wnd::Create<TechTreeControls>(RES_CONTROLS_WND_NAME);
 
     m_enc_detail_panel->ClosingSignal.connect(boost::bind(&TechTreeWnd::HidePedia, this));
 
@@ -2043,17 +2060,13 @@ void TechTreeWnd::CompleteConstruction() {
     AttachChild(m_tech_tree_controls);
 
     // connect category button clicks to update display
-    for (auto& cat_button : m_tech_tree_controls->m_cat_buttons) {
-        const std::string& category_name = cat_button.first;
-        cat_button.second->CheckedSignal.connect(
-            [this, category_name](bool checked) {
-                if(checked)
-                    this->ShowCategory(category_name);
-                else
-                    this->HideCategory(category_name);
-            }
-        );
-    }
+    m_tech_tree_controls->CategoryCheckedSignal.connect(
+        [this](const std::string& category_name, bool checked) {
+            if (checked)
+                this->ShowCategory(category_name);
+            else
+                this->HideCategory(category_name);
+        });
 
     // connect button for all categories to update display
     m_tech_tree_controls->m_all_cat_button->CheckedSignal.connect(
@@ -2110,6 +2123,7 @@ double TechTreeWnd::Scale() const
 void TechTreeWnd::Update() {
     m_layout_panel->Update();
     m_tech_list->Update();
+    m_tech_tree_controls->RefreshCategoryButtons();
 }
 
 void TechTreeWnd::Clear() {
@@ -2120,6 +2134,7 @@ void TechTreeWnd::Clear() {
 void TechTreeWnd::Reset() {
     m_layout_panel->Reset();
     m_tech_list->Reset();
+    m_tech_tree_controls->RefreshCategoryButtons();
 }
 
 void TechTreeWnd::InitializeWindows() {
@@ -2165,7 +2180,7 @@ void TechTreeWnd::ShowAllCategories() {
     m_tech_list->ShowAllCategories();
 
     for (auto& cat_button : m_tech_tree_controls->m_cat_buttons)
-    { cat_button.second->SetCheck(true); }
+        cat_button.second->SetCheck(true);
 }
 
 void TechTreeWnd::HideCategory(const std::string& category) {

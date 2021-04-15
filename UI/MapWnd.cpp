@@ -6435,6 +6435,8 @@ void MapWnd::ShowResearch() {
     GG::GUI::GetGUI()->MoveUp(m_research_wnd);
     PushWndStack(m_research_wnd);
 
+    m_research_wnd->Update();
+
     // hide pedia again if it is supposed to be hidden persistently
     if (GetOptionsDB().Get<bool>("ui.research.pedia.hidden.enabled"))
         m_research_wnd->HidePedia();
