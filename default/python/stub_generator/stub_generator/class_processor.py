@@ -97,6 +97,8 @@ class ClassProcessor(BaseProcessor):
         self.classes_to_ignore = classes_to_ignore
         self.instances = instances
         self.classes = classes
+        self.enums = enums
+        self._process()
 
     def _process(self):
         # exclude technical Map classes that are prefixed with map_indexing_suite_ classes

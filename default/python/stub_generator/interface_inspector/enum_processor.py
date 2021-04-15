@@ -8,4 +8,4 @@ class EnumInfo:
 
 
 def inspect_enum(name, obj):
-    return EnumInfo(name, {k: v.numerator for k, v in obj.names.body()})
+    return EnumInfo(name, {k: v.numerator for k, v in obj.names.items()})

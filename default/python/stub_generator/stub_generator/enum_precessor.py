@@ -29,14 +29,8 @@ def _handle_enum(info: EnumInfo):
 
 
 class EnumProcessor(BaseProcessor):
-
     def __init__(self, enums: List[EnumInfo]):
         super().__init__()
-        self.enums = enums
-
-
-    def _process(self):
-        self.before.append(ENUM_STUB)
-
-        for enum in sorted(self.enums, key=attrgetter("name")):
+        self.body.append(ENUM_STUB)
+        for enum in sorted(enums, key=attrgetter("name")):
             self.body.append(_handle_enum(enum))

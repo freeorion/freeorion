@@ -22,8 +22,5 @@ def _handle_function(fun: FunctionInfo):
 class FunctionProcessor(BaseProcessor):
     def __init__(self, functions: List[FunctionInfo]):
         super().__init__()
-        self.functions = functions
-
-    def _process(self):
-        for function in sorted(self.functions, key=attrgetter("name")):
+        for function in sorted(functions, key=attrgetter("name")):
             self.body.append(_handle_function(function))
