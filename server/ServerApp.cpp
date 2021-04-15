@@ -2884,23 +2884,6 @@ namespace {
         }
     }
 
-    std::map<int, double> AssembleEmpirePlanetGroundCombatForces(const std::shared_ptr<const Planet>& planet) {
-        std::map<int, double> empire_troops;
-        if (!planet) {
-            ErrorLogger() << "AssembleEmpirePlanetGroundCombatForces given null planet";
-            return empire_troops;
-        }
-        if (planet->GetMeter(MeterType::METER_TROOPS)->Initial() > 0.0f) {
-            // empires may have garrisons on planets
-            empire_troops[planet->Owner()] += planet->GetMeter(MeterType::METER_TROOPS)->Initial() + 0.0001; // small bonus to ensure ties are won by initial owner
-        }
-        if (!planet->Unowned() && planet->GetMeter(MeterType::METER_REBEL_TROOPS)->Initial() > 0.0f) {
-            // rebels may be present on empire-owned planets
-            empire_troops[ALL_EMPIRES] += planet->GetMeter(MeterType::METER_REBEL_TROOPS)->Initial();
-        }
-        return empire_troops;
-    }
-
     /** Given initial set of ground forces on planet, determine ground forces on
       * planet after a turn of ground combat. */
     void ResolveGroundCombat(std::map<int, double>& empires_troops, const EmpireManager& empires) {
@@ -3016,9 +2999,9 @@ namespace {
         // store invasion info in empires
         UpdateEmpireInvasionInfo(planet_empire_troops, empires, objects);
 
-        // check each planet for other troops, such as due to empire troops, native troops, or rebel troops
-        for (auto& planet : objects.all<Planet>()) {
-            auto empire_forces = AssembleEmpirePlanetGroundCombatForces(planet);
+        // check each planet invading or other troops, such as due to empire troops, native troops, or rebel troops
+        for (const auto& planet : objects.all<const Planet>()) {
+            auto empire_forces = planet->EmpireGroundCombatForces();
             if (!empire_forces.empty())
                 planet_empire_troops[planet->ID()].insert(empire_forces.begin(), empire_forces.end());
         }

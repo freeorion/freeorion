@@ -529,6 +529,19 @@ const std::string& Planet::FocusIcon(const std::string& focus_name) const {
     return EMPTY_STRING;
 }
 
+std::map<int, double> Planet::EmpireGroundCombatForces() const {
+    std::map<int, double> empire_troops;
+    if (GetMeter(MeterType::METER_TROOPS)->Initial() > 0.0f) {
+        // empires may have garrisons on planets
+        empire_troops[Owner()] += GetMeter(MeterType::METER_TROOPS)->Initial() + 0.0001; // small bonus to ensure ties are won by initial owner
+    }
+    if (!Unowned() && GetMeter(MeterType::METER_REBEL_TROOPS)->Initial() > 0.0f) {
+        // rebels may be present on empire-owned planets
+        empire_troops[ALL_EMPIRES] += GetMeter(MeterType::METER_REBEL_TROOPS)->Initial();
+    }
+    return empire_troops;
+}
+
 void Planet::SetType(PlanetType type) {
     if (type <= PlanetType::INVALID_PLANET_TYPE)
         type = PlanetType::PT_SWAMP;
