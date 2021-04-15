@@ -872,14 +872,18 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
         account_map.clear();    // remove any old accounting info. this should be redundant here.
         account_map.reserve(meters.size());
 
-        for (auto& meter_pair : meters) {
-            MeterType type = meter_pair.first;
-            const auto& meter = meter_pair.second;
+        for (auto& [type, meter] : meters) {
+            (void)type; // quiet warning
             float meter_change = meter.Current() - Meter::DEFAULT_VALUE;
             if (meter_change != 0.0f)
                 account_map[type].emplace_back(INVALID_OBJECT_ID, EffectsCauseType::ECT_INHERENT,
                                                meter_change, meter.Current());
         }
+
+        //// account for ground combat in troop meter adjustments
+        // TODO: get the empire forces on planet
+        // TODO: evaluate the combat results
+        // TODO: update meter troop levels...
     }
 
     TraceLogger(effects) << "UpdateMeterEstimatesImpl after resetting meters objects:";
