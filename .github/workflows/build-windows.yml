@@ -1,0 +1,49 @@
+name: "Windows build"
+
+on:
+  push:
+    paths-ignore:
+      - 'msvc*/**'
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+  pull_request:
+    paths-ignore:
+      - 'msvc*/**'
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+
+jobs:
+  build-windows-cmake:
+    name: Build FreeOrion on Windows
+    runs-on: windows-2019
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Download SDK
+        id: download-sdk
+        uses: suisei-cn/actions-download-file@v1
+        with:
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v11/FreeOrionSDK_11_MSVC-v141-Win32.zip
+          target: ../
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+        with:
+          vs-version: '[16.0,16.10)'
+      - name: Configure
+        run: |
+          unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
+          cp ..\bin\* .
+          mkdir build
+          pushd build
+          cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DBoost_DEBUG=On ..
+          cat CMakeCache.txt
+      - name: Build
+        run: |
+          pushd build
+          cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /verbosity:minimal 
