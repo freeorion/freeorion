@@ -11,9 +11,11 @@ BuildingType
         Not Contains Building name = "BLD_REGIONAL_ADMIN"
         TargetPopulation low = 1
         Happiness low = 5
-        Not WithinStarlaneJumps jumps = 5 condition = Or [
-            Building name = "BLD_IMPERIAL_PALACE"
-            Building name = "BLD_REGIONAL_ADMIN"
+        Not WithinStarlaneJumps jumps = 5 condition = And [
+            Or [Building name = "BLD_IMPERIAL_PALACE"
+                Building name = "BLD_REGIONAL_ADMIN"
+            ]
+            OwnedBy empire = Source.Owner
         ]
     ]
     effectsgroups = [
