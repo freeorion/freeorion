@@ -41,7 +41,7 @@ jobs:
           cp ..\bin\* .
           mkdir build
           pushd build
-          cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DBoost_DEBUG=On ..
+          cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DBoost_DEBUG=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
           cat CMakeCache.txt
       - name: Build
         run: |
