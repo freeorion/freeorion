@@ -20,17 +20,23 @@ on:
 
 jobs:
   build-ubuntu:
-    name: ${{ matrix.os }} Build FreeOrion GG ${{ matrix.client-gg }} compiler ${{ matrix.compiler }}
+    name: ${{ matrix.os }} Build FreeOrion GG=${{ matrix.client-gg }} Godot=${{ matrix.client-godot }} compiler ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-18.04]
         client-gg: ['ON', 'OFF']
+        client-godot: ['OFF']
         compiler: [gcc]
         include:
           - os: ubuntu-20.04
             client-gg: 'ON'
+            client-godot: 'OFF'
             compiler: clang
+          - os: ubuntu-20.04
+            client-gg: 'ON'
+            client-godot: 'ON'
+            compiler: gcc
     env:
       CACHE_NAME: linux
     steps:
@@ -74,7 +80,7 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/ccache
         run: |
           cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=${{ matrix.client-gg }} ..
+          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=${{ matrix.client-gg }} -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} ..
       - name: Configure for clang
         if: ${{ matrix.compiler == 'clang' }}
         env:
@@ -85,7 +91,7 @@ jobs:
           CXX: clang++
         run: |
           cd build
-          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=${{ matrix.client-gg }} ..
+          cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=${{ matrix.client-gg }} -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} ..
       - name: Build
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
