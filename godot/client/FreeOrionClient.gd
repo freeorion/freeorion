@@ -36,7 +36,7 @@ func _ready():
     
     var scale = 1
     if OS.get_name() == "Android":
-        scale = 1.5
+        scale = 1.4
     
     var minimum_size = Vector2(1600, 900) / scale
     
