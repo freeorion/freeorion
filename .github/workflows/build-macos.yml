@@ -1,0 +1,56 @@
+name: "MacOS"
+
+on:
+  push:
+    paths-ignore:
+      - 'msvc*/**'
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+  pull_request:
+    paths-ignore:
+      - 'msvc*/**'
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+
+jobs:
+  build-macos:
+    name: Build FreeOrion on MacOS
+    runs-on: macos-10.15
+    env:
+      CACHE_NAME: macos-full
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
+      HOMEBREW_NO_AUTO_UPDATE: 1
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Clean up Mono
+        run: sudo ./.github/workflows/mono-uninstall.sh
+      - name: Cache compilation
+        uses: actions/cache@v2
+        with:
+          path: ~/.ccache
+          key: ccache-macos
+      - name: Configure
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          brew install ccache
+          ccache --set-config=max_size=500M --set-config=sloppiness=file_macro
+          ccache --zero-stats
+          mkdir build
+          cd build
+          alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
+          cmake -GXcode -DBUILD_TESTING=OFF -DBoost_NO_BOOST_CMAKE=ON -DGLEW_USE_STATIC_LIBS=ON ..
+      - name: Build
+        run: |
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
+          cd build
+          cmake --build . --config Release -- -parallelizeTargets
+          ccache --cleanup
+          ccache --show-stats
