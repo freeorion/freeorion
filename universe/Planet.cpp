@@ -667,6 +667,13 @@ void Planet::Conquer(int conquerer) {
     // replace ownership
     SetOwner(conquerer);
 
+    if (conquerer == ALL_EMPIRES) {
+        if (const auto species = GetSpecies(SpeciesName()))
+            SetFocus(species->DefaultFocus());
+        else
+            ClearFocus();
+    }
+
     GetMeter(MeterType::METER_SUPPLY)->SetCurrent(0.0f);
     GetMeter(MeterType::METER_SUPPLY)->BackPropagate();
     GetMeter(MeterType::METER_STOCKPILE)->SetCurrent(0.0f);
