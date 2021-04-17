@@ -396,10 +396,10 @@ void FileDlg::OkHandler(bool double_click)
                     }
 #if defined(_WIN32)
                     // convert UTF-16 path string to UTF-8
-                    boost::filesystem::path::string_type file_name_native = p.native();
+                    boost::filesystem::path::string_type file_name_native2 = p.native();
                     std::string temp;
-                    temp.reserve(file_name_native.size());
-                    utf8::utf16to8(file_name_native.begin(), file_name_native.end(), std::back_inserter(temp));
+                    temp.reserve(file_name_native2.size());
+                    utf8::utf16to8(file_name_native2.begin(), file_name_native2.end(), std::back_inserter(temp));
                     m_result.emplace(std::move(temp));
 #else
                     m_result.emplace(p.string());
