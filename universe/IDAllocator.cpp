@@ -297,7 +297,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
         & BOOST_SERIALIZATION_NVP(m_warn_threshold)
         & BOOST_SERIALIZATION_NVP(m_exhausted_threshold);
 
-    if (Archive::is_loading::value) {
+    if constexpr (Archive::is_loading::value) {
         // Always load whatever is there.
         ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
             & BOOST_SERIALIZATION_NVP(m_empire_id_to_next_assigned_object_id)

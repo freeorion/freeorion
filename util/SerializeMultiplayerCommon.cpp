@@ -41,7 +41,9 @@ void serialize(Archive& ar, GalaxySetupData& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    if (Archive::is_saving::value && obj.encoding_empire != ALL_EMPIRES && (!GetOptionsDB().Get<bool>("network.server.publish-seed"))) {
+    if (Archive::is_saving::value && obj.encoding_empire != ALL_EMPIRES &&
+        (!GetOptionsDB().Get<bool>("network.server.publish-seed")))
+    {
         std::string dummy;
         ar  & make_nvp("m_seed", dummy);
     } else {
@@ -65,7 +67,7 @@ void serialize(Archive& ar, GalaxySetupData& obj, unsigned int const version)
     if (version >= 2) {
         ar & make_nvp("m_game_uid", obj.game_uid);
     } else {
-        if (Archive::is_loading::value) {
+        if constexpr (Archive::is_loading::value) {
             obj.game_uid = boost::uuids::to_string(boost::uuids::random_generator()());
         }
     }
@@ -100,7 +102,7 @@ void serialize(Archive& ar, SaveGamePreviewData& obj, unsigned int const version
     using namespace boost::serialization;
 
     if (version >= 2) {
-        if (Archive::is_saving::value) {
+        if constexpr (Archive::is_saving::value) {
             obj.freeorion_version = FreeOrionVersionString();
         }
         ar & make_nvp("description", obj.description)
@@ -158,7 +160,7 @@ void serialize(Archive& ar, SaveGameUIData& obj, unsigned int const version)
         std::vector<int> ordered_ship_design_ids;
         std::map<int, std::pair<bool, int>> ids_obsolete;
 
-        if (Archive::is_saving::value) {
+        if constexpr (Archive::is_saving::value) {
             // populate temp containers
             for (auto& id_pair_pair : obj.ordered_ship_design_ids_and_obsolete) {
                 ordered_ship_design_ids.emplace_back(id_pair_pair.first);
@@ -202,7 +204,7 @@ void serialize(Archive& ar, SaveGameUIData& obj, unsigned int const version)
     if (Archive::is_saving::value || version >= 4) {
         std::map<std::string, int> ordered_obsolete_ship_parts;
 
-        if (Archive::is_saving::value) {
+        if constexpr (Archive::is_saving::value) {
             // populate temp container
             ordered_obsolete_ship_parts = std::map<std::string, int>(obj.obsolete_ship_parts.begin(), obj.obsolete_ship_parts.end());
             // serialize into archive

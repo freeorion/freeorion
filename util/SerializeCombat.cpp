@@ -341,7 +341,7 @@ void serialize(Archive& ar, CombatLogManager& obj, const unsigned int version)
 
     std::map<int, CombatLog> logs;
 
-    if (Archive::is_saving::value) {
+    if constexpr (Archive::is_saving::value) {
         logs.insert(obj.m_logs.begin(), obj.m_logs.end());
         // TODO: filter logs by who should have access to them
     }
@@ -349,7 +349,7 @@ void serialize(Archive& ar, CombatLogManager& obj, const unsigned int version)
     ar  & make_nvp("logs", logs)
         & make_nvp("m_latest_log_id", obj.m_latest_log_id);
 
-    if (Archive::is_loading::value) {
+    if constexpr (Archive::is_loading::value) {
         // copy new logs, but don't erase old ones
         obj.m_logs.insert(std::make_move_iterator(logs.begin()), std::make_move_iterator(logs.end()));
     }
@@ -372,9 +372,10 @@ void SerializeIncompleteLogs(Archive& ar, CombatLogManager& obj, const unsigned 
 
     // If the new m_latest_log_id is greater than the old one then add all
     // of the new ids to the incomplete log set.
-    if (Archive::is_loading::value && obj.m_latest_log_id > old_latest_log_id)
-        for (++old_latest_log_id; old_latest_log_id <= obj.m_latest_log_id; ++old_latest_log_id)
-            obj.m_incomplete_logs.insert(old_latest_log_id);
+    if constexpr (Archive::is_loading::value)
+        if (obj.m_latest_log_id > old_latest_log_id)
+            for (++old_latest_log_id; old_latest_log_id <= obj.m_latest_log_id; ++old_latest_log_id)
+                obj.m_incomplete_logs.insert(old_latest_log_id);
 }
 
 template void SerializeIncompleteLogs<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatLogManager&, unsigned int const);
@@ -397,7 +398,7 @@ void serialize(Archive & ar, CombatInfo& info, const unsigned int version)
     Universe::EmpireObjectVisibilityMap filtered_empire_object_visibility;
     std::vector<CombatEventPtr>         filtered_combat_events;
 
-    if (Archive::is_saving::value) {
+    if constexpr (Archive::is_saving::value) {
         info.GetEmpireIdsToSerialize(             filtered_empire_ids,               GlobalSerializationEncodingForEmpire());
         info.GetObjectsToSerialize(               filtered_objects,                  GlobalSerializationEncodingForEmpire());
         info.GetDamagedObjectsToSerialize(        filtered_damaged_object_ids,       GlobalSerializationEncodingForEmpire());
@@ -417,7 +418,7 @@ void serialize(Archive & ar, CombatInfo& info, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(filtered_empire_object_visibility)
         & BOOST_SERIALIZATION_NVP(filtered_combat_events);
 
-    if (Archive::is_loading::value) {
+    if constexpr (Archive::is_loading::value) {
         info.empire_ids.swap(              filtered_empire_ids);
         info.objects.swap(                 filtered_objects_ptr);
         info.damaged_object_ids.swap(      filtered_damaged_object_ids);

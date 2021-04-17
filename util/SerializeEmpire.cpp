@@ -77,7 +77,7 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(paused)
         & BOOST_SERIALIZATION_NVP(allowed_imperial_stockpile_use);
 
-    if (Archive::is_saving::value) {
+    if constexpr (Archive::is_saving::value) {
         // Serialization of uuid as a primitive doesn't work as expected from
         // the documentation.  This workaround instead serializes a string
         // representation.
@@ -334,12 +334,12 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
 
     TraceLogger() << "Serializing EmpireManager encoding empire: " << GlobalSerializationEncodingForEmpire();
 
-    if (Archive::is_loading::value) {
+    if constexpr (Archive::is_loading::value) {
         em.Clear();    // clean up any existing dynamically allocated contents before replacing containers with deserialized data
     }
 
     std::map<std::pair<int, int>, DiplomaticMessage> messages;
-    if (Archive::is_saving::value)
+    if constexpr (Archive::is_saving::value)
         em.GetDiplomaticMessagesToSerialize(messages, GlobalSerializationEncodingForEmpire());
 
     TraceLogger() << "EmpireManager version : " << version;
@@ -366,7 +366,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
     }
     ar  & BOOST_SERIALIZATION_NVP(messages);
 
-    if (Archive::is_loading::value) {
+    if constexpr (Archive::is_loading::value) {
         for (const auto& entry : em.m_empire_map)
             em.m_const_empire_map.emplace(entry.first, entry.second);
 

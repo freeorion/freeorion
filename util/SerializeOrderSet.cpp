@@ -42,9 +42,11 @@ void Order::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_empire);
     // m_executed is intentionally not serialized so that orders always
     // deserialize with m_execute = false.  See class comment for OrderSet.
-    if (Archive::is_loading::value && version < 1) {
-        bool dummy_executed;
-        ar  & boost::serialization::make_nvp("m_executed", dummy_executed);
+    if constexpr (Archive::is_loading::value) {
+        if (version < 1) {
+            bool dummy_executed;
+            ar  & boost::serialization::make_nvp("m_executed", dummy_executed);
+        }
     }
 }
 
@@ -185,7 +187,7 @@ void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
         // Serialization of m_uuid as a primitive doesn't work as expected from
         // the documentation.  This workaround instead serializes a string
         // representation.
-        if (Archive::is_saving::value) {
+        if constexpr (Archive::is_saving::value) {
             auto string_uuid = boost::uuids::to_string(m_uuid);
             ar & BOOST_SERIALIZATION_NVP(string_uuid);
             auto string_uuid2 = boost::uuids::to_string(m_uuid2);
@@ -220,7 +222,7 @@ void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
         // Serialization of m_uuid as a primitive doesn't work as expected from
         // the documentation.  This workaround instead serializes a string
         // representation.
-        if (Archive::is_saving::value) {
+        if constexpr (Archive::is_saving::value) {
             auto string_uuid = boost::uuids::to_string(m_uuid);
             ar & BOOST_SERIALIZATION_NVP(string_uuid);
         } else {
@@ -232,7 +234,7 @@ void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
                 m_uuid = boost::uuids::nil_generator()();
             }
         }
-    } else if (Archive::is_loading::value) {
+    } else if constexpr (Archive::is_loading::value) {
         m_uuid = boost::uuids::nil_generator()();
     }
 
