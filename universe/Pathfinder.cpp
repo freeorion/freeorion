@@ -1192,7 +1192,7 @@ std::unordered_set<int> Pathfinder::PathfinderImpl::WithinJumps(
         size_t system_index;
         try {
             system_index = m_system_id_to_graph_index.at(candidate);
-        } catch (const std::out_of_range& e) {
+        } catch (const std::out_of_range&) {
             ErrorLogger() << "Passed invalid system id: " << candidate;
             continue;
         }
@@ -1253,7 +1253,7 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
         int index;
         try {
             index = pf.m_system_id_to_graph_index.at(other_id);
-        } catch (const std::out_of_range& e) {
+        } catch (const std::out_of_range&) {
             ErrorLogger() << "Passed invalid system id: " << other_id;
             return false;
         }
@@ -1346,7 +1346,7 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     size_t system_index;
     try {
         system_index = m_system_id_to_graph_index.at(system_id);
-    } catch (const std::out_of_range& e) {
+    } catch (const std::out_of_range&) {
         ErrorLogger() << "Passed invalid system id: " << system_id;
         return false;
     }

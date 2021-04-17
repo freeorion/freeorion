@@ -155,7 +155,7 @@ void GameRules::SetFromStrings(const std::map<std::string, std::string>& names_v
         }
         try {
             rule_it->second.SetFromString(value);
-        } catch (const boost::bad_lexical_cast& e) {
+        } catch (const boost::bad_lexical_cast&) {
             ErrorLogger() << "Unable to set rule: " << name << " to value: " << value
                           << " - couldn't cast string to allowed value for this option";
         } catch (...) {

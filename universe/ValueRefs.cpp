@@ -1457,15 +1457,15 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 key_int >= int(ShipPartClass::NUM_SHIP_PART_CLASSES))
             { return 0; }
 
-            auto key_filter = [part_class = ShipPartClass(key_int)](const std::map<ShipPartClass, int>::value_type& e){ return e.first == part_class; };
+            auto key_filter_class = [part_class = ShipPartClass(key_int)](const std::map<ShipPartClass, int>::value_type& e){ return e.first == part_class; };
 
             if (empire)
-                return boost::accumulate(empire->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
+                return boost::accumulate(empire->ShipPartClassOwned() | filtered(key_filter_class) | map_values, 0);
 
             int sum = 0;
-            for ([[maybe_unused]] auto& [ignored_id, empire] : context.Empires()) {
+            for ([[maybe_unused]] auto& [ignored_id, loop_empire] : context.Empires()) {
                 (void)ignored_id; // quiet unused variable warning
-                sum += boost::accumulate(empire->ShipPartClassOwned() | filtered(key_filter) | map_values, 0);
+                sum += boost::accumulate(loop_empire->ShipPartClassOwned() | filtered(key_filter_class) | map_values, 0);
             }
             return sum;
         }
@@ -1474,9 +1474,9 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return boost::accumulate(empire_property_string_key(*empire) | filtered(key_filter) | map_values, 0);
 
         int sum = 0;
-        for ([[maybe_unused]] auto& [ignored_id, empire] : context.Empires()) {
+        for ([[maybe_unused]] auto& [ignored_id, loop_empire] : context.Empires()) {
             (void)ignored_id; // quiet unused variable warning
-            sum += boost::accumulate(empire_property_string_key(*empire) | filtered(key_filter) | map_values, 0);
+            sum += boost::accumulate(empire_property_string_key(*loop_empire) | filtered(key_filter) | map_values, 0);
         }
         return sum;
     }
@@ -1538,9 +1538,9 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return boost::accumulate(empire_property_int_key(*empire) | filtered(key_filter) | map_values, 0);
 
         int sum = 0;
-        for ([[maybe_unused]] auto& [ignored_id, empire] : context.Empires()) {
+        for ([[maybe_unused]] auto& [ignored_id, loop_empire] : context.Empires()) {
             (void)ignored_id; // quiet unused variable warning
-            sum += boost::accumulate(empire_property_int_key(*empire) | filtered(key_filter) | map_values, 0);
+            sum += boost::accumulate(empire_property_int_key(*loop_empire) | filtered(key_filter) | map_values, 0);
         }
         return sum;
     }

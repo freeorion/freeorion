@@ -848,11 +848,11 @@ std::vector<std::string> OptionsDB::Get<std::vector<std::string>>(const std::str
         throw std::runtime_error("OptionsDB::Get<std::vector<std::string>>() : Attempted to get nonexistent option \"" + name + "\".");
     try {
         return boost::any_cast<std::vector<std::string>>(it->second.value);
-    } catch (const boost::bad_any_cast& e) {
+    } catch (const boost::bad_any_cast&) {
         ErrorLogger() << "bad any cast converting value option named: " << name << ". Returning default value instead";
         try {
             return boost::any_cast<std::vector<std::string>>(it->second.default_value);
-        } catch (const boost::bad_any_cast& e) {
+        } catch (const boost::bad_any_cast&) {
             ErrorLogger() << "bad any cast converting default value of std::vector<std::string> option named: " << name << ". Returning empty vector instead";
             return std::vector<std::string>();
         }

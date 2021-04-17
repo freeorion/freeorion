@@ -296,9 +296,9 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireManage
     if (empire_id != ALL_EMPIRES) {
         empire_ids.insert(empire_id);
     } else {
-        for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
+        for ([[maybe_unused]] auto& [loop_empire_id, empire] : empires) {
             (void)empire;   // quieting unused variable warning
-            empire_ids.insert(empire_id);
+            empire_ids.insert(loop_empire_id);
         }
     }
 
@@ -1991,9 +1991,9 @@ namespace {
             // detected by the empire if the empire has a detector in range.
             // being detectable by an empire requires the object to have
             // low enough stealth (0 or below the empire's detection strength)
-            for (const auto& [empire_id, detection_strength] : empire_detection_strengths) {
-                if (object_stealth <= detection_strength || object_stealth <= 0.0f || obj->OwnedBy(empire_id))
-                    retval[empire_id][object_pos].emplace_back(obj->ID());
+            for (const auto& [loop_empire_id, detection_strength] : empire_detection_strengths) {
+                if (object_stealth <= detection_strength || object_stealth <= 0.0f || obj->OwnedBy(loop_empire_id))
+                    retval[loop_empire_id][object_pos].push_back(obj->ID());
             }
         }
         return retval;
