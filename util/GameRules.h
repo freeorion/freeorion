@@ -86,7 +86,7 @@ public:
             throw std::runtime_error("GameRules::Get<>() : Attempted to get nonexistent rule \"" + name + "\".");
         try {
             return boost::any_cast<T>(it->second.value);
-        } catch (const boost::bad_any_cast& e) {
+        } catch (const boost::bad_any_cast&) {
             ErrorLogger() << "bad any cast converting value of game rule named: " << name << ". Returning default value instead";
             try {
                 return boost::any_cast<T>(it->second.default_value);

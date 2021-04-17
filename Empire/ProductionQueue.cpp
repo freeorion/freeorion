@@ -75,10 +75,11 @@ namespace {
     float CalculateProductionPerTurnLimit(const ProductionQueue::Element& queue_element,
                                           float item_cost, int build_turns)
     {
-        const float frontload_limit_factor = GetGameRules().Get<double>("RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR") * 0.01;
+        const float frontload_limit_factor = static_cast<float>(
+            GetGameRules().Get<double>("RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR") * 0.01);
         // any allowed topping up is limited by how much frontloading was allowed
-        const float topping_up_limit_factor =
-            std::max(0.0, GetGameRules().Get<double>("RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR") * 0.01 - frontload_limit_factor);
+        const float topping_up_limit_factor = static_cast<float>(
+            std::max(0.0, GetGameRules().Get<double>("RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR") * 0.01 - frontload_limit_factor));
 
         item_cost *= queue_element.blocksize;
         build_turns = std::max(build_turns, 1);
@@ -884,7 +885,7 @@ void ProductionQueue::Update() {
         sim_available_stockpile = std::min(sim_pp_in_stockpile, stockpile_limit);
     }
 
-    sim_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
+    sim_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time());
     sim_time = (sim_time_end - sim_time_start).total_microseconds();
     if ((sim_time * 1e-6) >= TOO_LONG_TIME) {
         DebugLogger()  << "ProductionQueue::Update: Projections timed out after " << sim_time

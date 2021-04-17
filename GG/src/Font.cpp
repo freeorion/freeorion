@@ -1258,11 +1258,15 @@ std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
         sub_match<std::string::const_iterator> const* text_match;
         sub_match<std::string::const_iterator> const* whitespace_match;
 
-        if ((text_match = &(*it)[text_tag]) && (text_match->matched))
+        text_match = &(*it)[text_tag];
+        if (text_match  && (text_match->matched)) {
             retval << Substring(text, *text_match);
 
-        else if ((whitespace_match = &(*it)[whitespace_tag]) && whitespace_match->matched)
-            retval << Substring(text, *whitespace_match);
+        } else {
+            whitespace_match = &(*it)[whitespace_tag];
+            if (whitespace_match && whitespace_match->matched)
+                retval << Substring(text, *whitespace_match);
+        }
     }
 
     return retval.str();

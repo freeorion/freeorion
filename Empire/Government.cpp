@@ -119,10 +119,10 @@ float Policy::AdoptionCost(int empire_id, const ObjectMap& objects) const {
         return 1.0f;
 
     } else if (m_adoption_cost->ConstantExpr()) {
-        return m_adoption_cost->Eval();
+        return static_cast<float>(m_adoption_cost->Eval());
 
     } else if (m_adoption_cost->SourceInvariant()) {
-        return m_adoption_cost->Eval();
+        return static_cast<float>(m_adoption_cost->Eval());
 
     } else if (empire_id == ALL_EMPIRES) {
         return arbitrary_large_number;
@@ -133,7 +133,7 @@ float Policy::AdoptionCost(int empire_id, const ObjectMap& objects) const {
             return arbitrary_large_number;
 
         const ScriptingContext context(std::move(source));
-        return m_adoption_cost->Eval(context);
+        return static_cast<float>(m_adoption_cost->Eval(context));
     }
 }
 
