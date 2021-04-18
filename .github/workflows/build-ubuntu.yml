@@ -64,7 +64,7 @@ jobs:
         uses: actions/cache@v1.1.0
         with:
           path: ${{ runner.temp }}/ccache
-          key: build-${{ matrix.os }}-${{ matrix.compiler }}-ccache-${{ steps.build-linux-ccache-timestamp.outputs.timestamp }}
+          key: build-${{ matrix.os }}-${{ matrix.compiler }}-ccache-${{ steps.build-ubuntu-ccache-timestamp.outputs.timestamp }}
           restore-keys: |
             build-${{ matrix.os }}-${{ matrix.compiler }}-ccache-
       - name: Show ccache statistics before build
