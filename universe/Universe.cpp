@@ -880,10 +880,24 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
                                                meter_change, meter.Current());
         }
 
-        //// account for ground combat in troop meter adjustments
-        // TODO: get the empire forces on planet
-        // TODO: evaluate the combat results
-        // TODO: update meter troop levels...
+        // account for ground combat in troop meter adjustments
+        if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            if (auto planet = static_cast<Planet*>(obj.get())) {
+                if (auto meter = planet->GetMeter(MeterType::METER_TROOPS)) {
+                    float pre_value = meter->Current();
+
+                    auto empires_troops = planet->EmpireGroundCombatForces();
+                    Planet::ResolveGroundCombat(empires_troops, context.diplo_statuses);
+                    meter->SetCurrent(empires_troops[obj->Owner()]);
+
+                    float meter_change = meter->Current() - pre_value;
+                    if (meter_change != 0.0f)
+                        account_map[MeterType::METER_TROOPS].emplace_back(
+                            INVALID_OBJECT_ID, EffectsCauseType::ECT_UNKNOWN_CAUSE,
+                            meter_change, meter->Current());
+                }
+            }
+        }
     }
 
     TraceLogger(effects) << "UpdateMeterEstimatesImpl after resetting meters objects:";
