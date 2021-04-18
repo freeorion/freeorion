@@ -222,7 +222,7 @@ void Planet::Init() {
     AddMeter(MeterType::METER_REBEL_TROOPS);
 }
 
-PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/* = ""*/) const {
+PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name) const {
     const Species* species = nullptr;
     if (species_name.empty()) {
         const std::string& this_planet_species_name = this->SpeciesName();
@@ -239,7 +239,7 @@ PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/
     return species->GetPlanetEnvironment(m_type);
 }
 
-PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_name/* = ""*/) const {
+PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_name) const {
     const Species* species = nullptr;
     if (species_name.empty()) {
         const std::string& this_planet_species_name = this->SpeciesName();
@@ -879,4 +879,66 @@ void Planet::ClampMeters() {
 
     UniverseObject::GetMeter(MeterType::METER_REBEL_TROOPS)->ClampCurrentToRange();
     UniverseObject::GetMeter(MeterType::METER_DETECTION)->ClampCurrentToRange();
+}
+
+namespace {
+    // sorted pair, so order of empire IDs specified doesn't matter
+    std::pair<int, int> DiploKey(int id1, int ind2)
+    { return std::make_pair(std::max(id1, ind2), std::min(id1, ind2)); }
+}
+
+void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops, const EmpireManager::DiploStatusMap& diplo_statuses) {
+    if (empires_troops.empty() || empires_troops.size() == 1)
+        return;
+
+    // give bonuses for allied ground combat, so allies can effectively fight together
+    auto effective_empires_troops = empires_troops;
+    for (auto& [empire1_id, troop1_count] : empires_troops) {
+        (void)troop1_count; // quiet warning
+        for (auto& [empire2_id, troop2_count] : empires_troops) {
+            if (empire1_id == empire2_id)
+                continue;
+            auto it = diplo_statuses.find(DiploKey(empire1_id, empire2_id));
+            if (it != diplo_statuses.end() && it->second == DiplomaticStatus::DIPLO_ALLIED)
+                effective_empires_troops[empire1_id] += troop2_count;
+        }
+    }
+
+    // find effective troops and ID of victor...
+    std::multimap<double, int> inverted_empires_troops;
+    for (const auto& entry : effective_empires_troops)
+        inverted_empires_troops.emplace(entry.second, entry.first);
+
+    int victor_id;
+    float victor_effective_troops;
+    std::tie(victor_effective_troops, victor_id) = *inverted_empires_troops.rbegin();
+
+
+    // victor has effective troops reduced by the effective troop count of
+    // the strongest enemy combatant (allied and at-peace co-combatants are
+    // ignored for this reduction)
+    float highest_loser_enemy_effective_troops = 0.0f;
+    for (auto highest_loser_it = inverted_empires_troops.rbegin();
+         highest_loser_it != inverted_empires_troops.rend(); ++highest_loser_it)
+    {
+        const auto& [loser_effective_troops, loser_id] = *highest_loser_it;
+        if (loser_id == victor_id)
+            continue;
+        auto it = diplo_statuses.find(DiploKey(loser_id, victor_id));
+        if (it != diplo_statuses.end() && it->second == DiplomaticStatus::DIPLO_PEACE)
+            continue;
+
+        // found a suitable loser combatant
+        highest_loser_enemy_effective_troops = loser_effective_troops;
+        break;
+    }
+
+    victor_effective_troops -= highest_loser_enemy_effective_troops;
+    float victor_starting_troops = empires_troops[victor_id];
+
+    // every other combatant loses all troops
+    empires_troops.clear();
+
+    // final victor troops can't be more than they started with
+    empires_troops[victor_id] = std::min(victor_effective_troops, victor_starting_troops);
 }

@@ -7,6 +7,7 @@
 #include "PopCenter.h"
 #include "ResourceCenter.h"
 #include "UniverseObject.h"
+#include "../Empire/EmpireManager.h"
 #include "../util/Export.h"
 
 //! Types of Planet%s
@@ -158,6 +159,10 @@ public:
     /** Create planet from @p type and @p size. */
     Planet(PlanetType type, PlanetSize size);
     ~Planet() {}
+
+    /** Given initial set of ground forces on planet, determine ground forces on
+      * planet after a turn of ground combat. */
+    static void ResolveGroundCombat(std::map<int, double>& empires_troops, const EmpireManager::DiploStatusMap& diplo_statuses);
 
 protected:
     template <typename T>

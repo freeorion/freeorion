@@ -2885,64 +2885,6 @@ namespace {
         }
     }
 
-    /** Given initial set of ground forces on planet, determine ground forces on
-      * planet after a turn of ground combat. */
-    void ResolveGroundCombat(std::map<int, double>& empires_troops, const EmpireManager& empires) {
-        if (empires_troops.empty() || empires_troops.size() == 1)
-            return;
-
-        // give bonuses for allied ground combat, so allies can effectively fight together
-        auto effective_empires_troops = empires_troops;
-        for (auto& [empire1_id, troop1_count] : empires_troops) {
-            (void)troop1_count; // quiet warning
-            for (auto& [empire2_id, troop2_count] : empires_troops) {
-                if (empire1_id == empire2_id)
-                    continue;
-                auto diplo_status = empires.GetDiplomaticStatus(empire1_id, empire2_id);
-                if (diplo_status == DiplomaticStatus::DIPLO_ALLIED)
-                    effective_empires_troops[empire1_id] += troop2_count;
-            }
-        }
-
-
-        // find effective troops and ID of victor...
-        std::multimap<double, int> inverted_empires_troops;
-        for (const auto& entry : effective_empires_troops)
-            inverted_empires_troops.emplace(entry.second, entry.first);
-
-        int victor_id;
-        float victor_effective_troops;
-        std::tie(victor_effective_troops, victor_id) = *inverted_empires_troops.rbegin();
-
-
-        // victor has effective troops reduced by the effective troop count of
-        // the strongest enemy combatant (allied and at-peace co-combatants are
-        // ignored for this reduction)
-        float highest_loser_enemy_effective_troops = 0.0f;
-        for (auto highest_loser_it = inverted_empires_troops.rbegin();
-             highest_loser_it != inverted_empires_troops.rend(); ++highest_loser_it)
-        {
-            const auto& [loser_effective_troops, loser_id] = *highest_loser_it;
-            if (loser_id == victor_id)
-                continue;
-            auto diplo_status = empires.GetDiplomaticStatus(victor_id, loser_id);
-            if (diplo_status >= DiplomaticStatus::DIPLO_PEACE)
-                continue;
-            // found a suitable loser combatant
-            highest_loser_enemy_effective_troops = loser_effective_troops;
-            break;
-        }
-
-        victor_effective_troops -= highest_loser_enemy_effective_troops;
-        float victor_starting_troops = empires_troops[victor_id];
-
-        // every other combatant loses all troops
-        empires_troops.clear();
-
-        // final victor troops can't be more than they started with
-        empires_troops[victor_id] = std::min(victor_effective_troops, victor_starting_troops);
-    }
-
     /** Determines which ships ordered to invade planets, does invasion and
       * ground combat resolution */
     void HandleInvasion(EmpireManager& empires, Universe& universe) {
@@ -3028,7 +2970,7 @@ namespace {
             if (empires_troops.size() == 1) {
                 int empire_with_troops_id = empires_troops.begin()->first;
                 if (planet->Unowned() && empire_with_troops_id == ALL_EMPIRES)
-                    continue;
+                    continue;   // if troops are neutral and planet is unowned, not a combat.
                 if (planet->OwnedBy(empire_with_troops_id))
                     continue;   // if troops all belong to planet owner, not a combat.
 
@@ -3036,8 +2978,7 @@ namespace {
                 DebugLogger() << "Ground combat troops on " << planet->Name() << " :";
                 for (const auto& empire_troops : empires_troops)
                     DebugLogger() << " ... empire: " << empire_troops.first << " : " << empire_troops.second;
-
-                ResolveGroundCombat(empires_troops, empires);
+                Planet::ResolveGroundCombat(empires_troops, empires.GetDiplomaticStatuses());
             }
 
             for (int empire_id : all_involved_empires) {
