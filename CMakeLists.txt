@@ -53,12 +53,12 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 option(BUILD_SHARED_LIBS "Build project as shared libraries." ON)
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_CLIENT_GG "Build GiGi client" ON)
-option(BUILD_CLIENT_GODOT "Build Godot client (experimental)" OFF)
+option(BUILD_CLIENT_GODOT "Build Godot client (experimental)" ON)
 option(BUILD_SERVER "Build server" ON)
 option(BUILD_AI "Build AI" ON)
 option(BUILD_PARSERS "Build parsers" ON)
 
-set(GODOT_CPP_ROOT "" CACHE STRING "Path to Godot CPP libraries (empty to build internally)" FORCE)
+set(GODOT_CPP_ROOT "" CACHE PATH "Path to Godot CPP libraries (empty to build internally)")
 
 if(BUILD_TESTING)
     message( STATUS "Building Tests")
@@ -805,7 +805,6 @@ if(APPLE AND BUILD_CLIENT_GG)
     )
 endif()
 
-
 if(BUILD_CLIENT_GODOT)
     add_custom_command(TARGET freeoriongodot POST_BUILD
         COMMAND
@@ -817,13 +816,20 @@ if(BUILD_CLIENT_GODOT)
         add_custom_command(TARGET freeoriongodot POST_BUILD
             COMMAND
                 ${CMAKE_COMMAND} -E copy_if_different "${ICONV_LIBRARY}" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
-        )
-    else()
-        add_custom_command(TARGET freeoriongodot POST_BUILD
             COMMAND
-                ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorioncommon>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
+                ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/client/default/
             COMMAND
-                ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionparse>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
+                ${CMAKE_COMMAND}
+                -DMODE=DATA_LINK
+                "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/client/default/"
+                "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/scripting"
+                -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
+            COMMAND
+                ${CMAKE_COMMAND}
+                -DMODE=DATA_LINK
+                "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/client/default/"
+                "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/stringtables"
+                -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
         )
     endif()
 endif()
@@ -837,6 +843,9 @@ if(BUILD_AI OR BUILD_CLIENT_GG OR BUILD_CLIENT_GODOT)
 endif()
 add_subdirectory(combat)
 add_subdirectory(Empire)
+if(BUILD_CLIENT_GODOT)
+    add_subdirectory(godot)
+endif()
 add_subdirectory(network)
 add_subdirectory(parse)
 if(BUILD_AI OR BUILD_SERVER)
@@ -900,6 +909,15 @@ if(UNIX AND NOT APPLE AND NOT ANDROID)
             FILES
             ${CMAKE_SOURCE_DIR}/packaging/org.freeorion.FreeOrion.desktop
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
+        )
+    endif()
+
+    if(BUILD_CLIENT_GODOT)
+        install(
+            TARGETS
+                freeoriongodot
+            LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         )
     endif()
 
