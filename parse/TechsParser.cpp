@@ -661,7 +661,7 @@ std::function<boost::python::object(const boost::python::tuple&, const boost::py
         if (args[0] == g.m_parser.type_int) {
             std::vector<std::unique_ptr<ValueRef::ValueRef<int>>> operands;
             operands.reserve(boost::python::len(args) - 1);
-            for (size_t i = 1; i < boost::python::len(args); i++) {
+            for (auto i = 1; i < boost::python::len(args); i++) {
                 auto arg = boost::python::extract<value_ref_wrapper<int>>(args[i]);
                 if (arg.check()) {
                     operands.push_back(ValueRef::CloneUnique(arg().value_ref));
@@ -673,7 +673,7 @@ std::function<boost::python::object(const boost::python::tuple&, const boost::py
         } else if (args[0] == g.m_parser.type_float) {
             std::vector<std::unique_ptr<ValueRef::ValueRef<double>>> operands;
             operands.reserve(boost::python::len(args) - 1);
-            for (size_t i = 1; i < boost::python::len(args); i++) {
+            for (auto i = 1; i < boost::python::len(args); i++) {
                 auto arg = boost::python::extract<value_ref_wrapper<double>>(args[i]);
                 if (arg.check()) {
                     operands.push_back(ValueRef::CloneUnique(arg().value_ref));
