@@ -7,6 +7,7 @@
 #include "universe/Universe.h"
 #include "util/AppInterface.h"
 #include "util/MultiplayerCommon.h"
+#include "util/PythonCommon.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
@@ -48,6 +49,7 @@ public:
     int EffectsProcessingThreads() const override;
 protected:
     boost::filesystem::path m_scripting_dir;
+    PythonCommon            m_python;
 
     // Gamestate...
     Universe                    m_universe;

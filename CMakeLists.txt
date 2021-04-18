@@ -240,12 +240,10 @@ set(MINIMUM_BOOST_VERSION 1.60.0)
 
 find_package(Threads)
 find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
-if(BUILD_AI OR BUILD_SERVER)
-    find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
-    message(STATUS "Python library version detected ${PYTHONLIBS_VERSION_STRING}")
-    string(REGEX REPLACE "^([0-9]+)\\.([0-9]+)\\..*" "\\1\\2" Boost_PYTHON_SUFFIX "${PYTHONLIBS_VERSION_STRING}")
-    message(STATUS "Boost python version ${Boost_PYTHON_SUFFIX}")
-endif()
+find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
+message(STATUS "Python library version detected ${PYTHONLIBS_VERSION_STRING}")
+string(REGEX REPLACE "^([0-9]+)\\.([0-9]+)\\..*" "\\1\\2" Boost_PYTHON_SUFFIX "${PYTHONLIBS_VERSION_STRING}")
+message(STATUS "Boost python version ${Boost_PYTHON_SUFFIX}")
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
         filesystem
@@ -258,13 +256,11 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         thread
     REQUIRED)
 
-if(BUILD_AI OR BUILD_SERVER)
-    find_package(Boost OPTIONAL_COMPONENTS python${Boost_PYTHON_SUFFIX})
-    if(NOT Boost_PYTHON${Boost_PYTHON_SUFFIX}_FOUND)
-        # try some strange boost installations
-        string(SUBSTRING "${Boost_PYTHON_SUFFIX}" 0 1 Boost_PYTHON_SUFFIX)
-        find_package(Boost COMPONENTS python${Boost_PYTHON_SUFFIX} REQUIRED)
-    endif()
+find_package(Boost OPTIONAL_COMPONENTS python${Boost_PYTHON_SUFFIX})
+if(NOT Boost_PYTHON${Boost_PYTHON_SUFFIX}_FOUND)
+    # try some strange boost installations
+    string(SUBSTRING "${Boost_PYTHON_SUFFIX}" 0 1 Boost_PYTHON_SUFFIX)
+    find_package(Boost COMPONENTS python${Boost_PYTHON_SUFFIX} REQUIRED)
 endif()
 
 find_package(ZLIB REQUIRED)
@@ -390,7 +386,11 @@ target_compile_definitions(freeorioncommon
         $<$<NOT:$<PLATFORM_ID:Android>>:BOOST_ALL_DYN_LINK>
     PRIVATE
         -DFREEORION_BUILD_COMMON
-        -DFREEORION_PYTHON_VERSION=\"${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}\"
+)
+
+target_include_directories(freeorioncommon SYSTEM
+    PUBLIC
+        ${PYTHON_INCLUDE_PATH}
 )
 
 target_link_libraries(freeorioncommon
@@ -404,8 +404,10 @@ target_link_libraries(freeorioncommon
         Boost::locale
         Boost::log_setup
         Boost::log
+        Boost::python${Boost_PYTHON_SUFFIX}
         Boost::thread
         Boost::serialization
+        ${PYTHON_LIBRARIES}
         ZLIB::ZLIB
         ${ICUI18N_LIBRARY}
         ${ICUUC_LIBRARY}
@@ -413,17 +415,11 @@ target_link_libraries(freeorioncommon
         ${ANDROID_LIBRARY}
         ${LOG_LIBRARY}
     PRIVATE
+        # boost::uuid requires the bcrypt Windows API on Windows since boost 1.67
+        # see https://github.com/boostorg/uuid/issues/68
+        $<$<AND:$<PLATFORM_ID:Windows>,$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.66>>:bcrypt>
         ${CORE_FOUNDATION_LIBRARY}
 )
-
-if(WIN32 AND ${Boost_VERSION} GREATER 106699) # boost >= 1.67
-    # fix https://github.com/boostorg/uuid/issues/68
-    find_library(BCRYPT_LIBRARY bcrypt)
-    target_link_libraries(freeorioncommon
-        PRIVATE
-            ${BCRYPT_LIBRARY}
-    )
-endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Haiku")
 	target_link_libraries(freeorioncommon PUBLIC network)
@@ -445,6 +441,7 @@ target_compile_definitions(freeorionparseobj
 target_include_directories(freeorionparseobj
     PUBLIC
         $<TARGET_PROPERTY:Boost::boost,INTERFACE_INCLUDE_DIRECTORIES>
+        ${PYTHON_INCLUDE_PATH}
 )
 
 set_property(TARGET freeorionparseobj
@@ -473,6 +470,7 @@ target_compile_options(freeorionparseobj
 
 target_compile_definitions(freeorionparseobj
     PUBLIC
+        BOOST_ALL_NO_LIB
         $<$<NOT:$<PLATFORM_ID:Android>>:BOOST_ALL_DYN_LINK>
     PRIVATE
         -DNDEBUG
@@ -535,18 +533,11 @@ if(BUILD_SERVER)
         PRIVATE
             -DFREEORION_BUILD_SERVER
     )
-    
-    target_include_directories(freeoriond SYSTEM
-        PRIVATE
-            ${PYTHON_INCLUDE_PATH}
-    )
-    
+
     target_link_libraries(freeoriond
         PRIVATE
             freeorioncommon
             freeorionparse
-            Boost::python${Boost_PYTHON_SUFFIX}
-            ${PYTHON_LIBRARIES}
     )
     
     target_dependencies_copy_to_build(freeoriond)
@@ -568,16 +559,10 @@ if(BUILD_AI)
             -DFREEORION_BUILD_AI
     )
     
-    target_include_directories(freeorionca SYSTEM
-        PRIVATE
-            ${PYTHON_INCLUDE_PATH}
-    )
-    
     target_link_libraries(freeorionca
-        freeorioncommon
-        freeorionparse
-        Boost::python${Boost_PYTHON_SUFFIX}
-        ${PYTHON_LIBRARIES}
+        PRIVATE
+            freeorioncommon
+            freeorionparse
     )
     
     target_dependencies_copy_to_build(freeorionca)

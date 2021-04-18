@@ -21,6 +21,8 @@
 #include "../../Empire/Empire.h"
 #include "../../Empire/Diplomacy.h"
 
+#include "../../parse/PythonParser.h"
+
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/functional/hash.hpp>
@@ -143,7 +145,7 @@ void AIClientApp::Run() {
         // Start parsing content
         std::promise<void> barrier;
         std::future<void> barrier_future = barrier.get_future();
-        StartBackgroundParsing(std::move(barrier));
+        StartBackgroundParsing(PythonParser(*m_AI, GetResourceDir() / "scripting"), std::move(barrier));
         barrier_future.wait();
 
         // respond to messages until disconnected

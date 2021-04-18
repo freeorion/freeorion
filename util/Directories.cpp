@@ -21,14 +21,19 @@
 #  include <sys/param.h>
 #  include <mach-o/dyld.h>
 #  include <CoreFoundation/CoreFoundation.h>
+#  include <patchlevel.h>
+#  include <boost/preprocessor/cat.hpp>
+#  include <boost/preprocessor/stringize.hpp>
 #endif
 
 #if defined(FREEORION_ANDROID)
 #  include <thread>
 #  include <forward_list>
+#  include <android/log.h>
 #  include <android/asset_manager.h>
 #  include <android/asset_manager_jni.h>
 #  include <android/log.h>
+#  include <patchlevel.h>
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
@@ -84,6 +89,7 @@ namespace {
     AAssetManager* s_asset_manager;
     jobject        s_jni_asset_manager;
     JavaVM*        s_java_vm;
+    fs::path       s_python_home;
 
 void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
 {
@@ -99,6 +105,27 @@ void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
         }
     });
     background.detach();
+}
+
+void CopyInitialResourceAndroid(const std::string& rel_path)
+{
+    AAsset* asset = AAssetManager_open(s_asset_manager, ("default/python/" + rel_path).c_str(), AASSET_MODE_STREAMING);
+    if (asset == nullptr) {
+        return;
+    }
+    off64_t asset_length = AAsset_getLength64(asset);
+    if (asset_length <= 0) {
+        AAsset_close(asset);
+        return;
+    }
+
+    char buf[4096];
+    int nb_read = 0;
+    fs::ofstream ofs(s_python_home / rel_path, std::ios::binary);
+    while ((nb_read = AAsset_read(asset, buf, 4096)) > 0) {
+        ofs.write(buf, nb_read);
+    }
+    ofs.close();
 }
 #endif
 
@@ -357,7 +384,7 @@ void InitDirs(std::string const& argv0)
     s_root_data_dir =   app_path / "Resources";
     s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
     s_bin_dir       =   app_path / "Executables";
-    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / FREEORION_PYTHON_VERSION;
+    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / BOOST_PP_STRINGIZE(BOOST_PP_CAT(BOOST_PP_CAT(PY_MAJOR_VERSION, .), PY_MINOR_VERSION));
 
     fs::path p = s_user_dir;
     if (!exists(p))
@@ -466,6 +493,13 @@ void InitDirs(std::string const& argv0)
 
     RedirectOutputLogAndroid(ANDROID_LOG_ERROR, "stderr", 2);
     RedirectOutputLogAndroid(ANDROID_LOG_INFO, "stdout", 1);
+
+
+    s_python_home = s_user_dir / "python";
+
+    fs::create_directories(s_python_home / "lib");
+
+    CopyInitialResourceAndroid("lib/python36.zip");
 #endif
 
     g_initialized = true;
@@ -559,10 +593,10 @@ auto GetBinDir() -> fs::path const
 #endif
 }
 
-#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
 auto GetPythonHome() -> fs::path const
 {
-#if defined(FREEORION_MACOSX)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_ANDROID)
     if (!g_initialized)
         InitDirs("");
     return s_python_home;
@@ -760,6 +794,9 @@ auto FilenameTimestamp() -> std::string
 
 auto IsFOCScript(const fs::path& path) -> bool
 { return IsExistingFile(path) && ".txt" == path.extension() && path.stem().extension() == ".focs"; }
+
+auto IsFOCPyScript(const fs::path& path) -> bool
+{ return IsExistingFile(path) && ".py" == path.extension() && path.stem().extension() == ".focs"; }
 
 auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predicate) -> std::vector<fs::path>
 {

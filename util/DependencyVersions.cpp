@@ -7,9 +7,7 @@
 #include <zlib.h>
 #include <boost/version.hpp>
 
-#if defined(FREEORION_BUILD_SERVER) || defined(FREEORION_BUILD_AI)
-#   include <patchlevel.h>
-#endif
+#include <patchlevel.h>
 
 #if defined(FREEORION_BUILD_HUMAN)
 #   include <SDL2/SDL_version.h>
@@ -70,10 +68,7 @@ std::map<std::string, std::string> DependencyVersions() {
     // fill with all findable version strings...
     retval["zlib"] =        ZLIB_VERSION;
     retval["Boost"] =       BOOST_LIB_VERSION;
-
-#if defined(FREEORION_BUILD_SERVER) || defined(FREEORION_BUILD_AI)
     retval["Python"] =      PY_VERSION;
-#endif
 
 #if defined(FREEORION_BUILD_HUMAN)
     retval["SDL"] =         SDLVersionString();

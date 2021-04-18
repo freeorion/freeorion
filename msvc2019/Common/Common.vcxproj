@@ -114,7 +114,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_USRDLL;FREEORION_WIN32;_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../../include/python3.5/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
@@ -136,7 +136,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_USRDLL;FREEORION_WIN32;_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../../include/python3.5/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
@@ -255,6 +255,7 @@
     <ClInclude Include="..\..\util\Order.h" />
     <ClInclude Include="..\..\util\OrderSet.h" />
     <ClInclude Include="..\..\util\Process.h" />
+    <ClInclude Include="..\..\util\PythonCommon.h" />
     <ClInclude Include="..\..\util\Pending.h" />
     <ClInclude Include="..\..\util\Random.h" />
     <ClInclude Include="..\..\util\SaveGamePreviewUtils.h" />
@@ -333,6 +334,7 @@
     <ClCompile Include="..\..\util\OptionsDB.cpp" />
     <ClCompile Include="..\..\util\Order.cpp" />
     <ClCompile Include="..\..\util\OrderSet.cpp" />
+    <ClCompile Include="..\..\util\PythonCommon.cpp" />
     <ClCompile Include="..\..\util\Random.cpp" />
     <ClCompile Include="..\..\util\SerializeCombat.cpp" />
     <ClCompile Include="..\..\util\SerializeEmpire.cpp" />

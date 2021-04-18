@@ -54,7 +54,6 @@
     (Capture)                                   \
     (captureresult)                             \
     (category)                                  \
-    (Category)                                  \
     (ceil)                                      \
     (class)                                     \
     (ClockwiseNextPlanetType)                   \

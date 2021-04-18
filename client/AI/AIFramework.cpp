@@ -11,7 +11,6 @@
 #include "../../util/ScopedTimer.h"
 #include "../../Empire/Empire.h"
 #include "../../Empire/Diplomacy.h"
-#include "../../python/CommonFramework.h"
 #include "../../python/SetWrapper.h"
 #include "../../python/CommonWrappers.h"
 

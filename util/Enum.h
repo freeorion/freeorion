@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <map>
+#include <string>
 
 #include <boost/preprocessor/comparison/equal.hpp>
 #include <boost/preprocessor/control/if.hpp>

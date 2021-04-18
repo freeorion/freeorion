@@ -174,7 +174,7 @@
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
-    <ClInclude Include="..\..\python\CommonFramework.h" />
+    <ClInclude Include="..\..\python\PythonBase.h" />
     <ClInclude Include="..\..\python\CommonWrappers.h" />
     <ClInclude Include="..\..\python\SetWrapper.h" />
     <ClInclude Include="..\..\universe\Building.h" />
@@ -225,7 +225,7 @@
     <ClCompile Include="..\..\client\ClientApp.cpp" />
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp" />
     <ClCompile Include="..\..\client\ClientNetworking.cpp" />
-    <ClCompile Include="..\..\python\CommonFramework.cpp" />
+    <ClCompile Include="..\..\python\PythonBase.cpp" />
     <ClCompile Include="..\..\python\ConfigWrapper.cpp" />
     <ClCompile Include="..\..\python\EmpireWrapper.cpp" />
     <ClCompile Include="..\..\python\EnumWrapper.cpp" />

@@ -21,6 +21,7 @@ class Ship;
 class Fleet;
 class Building;
 class Field;
+class PythonParser;
 struct GalaxySetupData;
 
 class FO_COMMON_API IApp {
@@ -53,8 +54,9 @@ public:
       * unblocked when the asynchronous parsing of named value refs is
       * completed, but the synchronous parsing of in the calling thread
       * or the other asynchronous parsing may still be ongoing
-      * at that time. */
-    virtual void StartBackgroundParsing(std::promise<void>&& barrier);
+      * at that time.
+      * Requires \a python to be initialized. */
+    virtual void StartBackgroundParsing(const PythonParser& python, std::promise<void>&& barrier);
 
     /** Returns the set of known Empires for this application. */
     virtual EmpireManager& Empires() = 0;

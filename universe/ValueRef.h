@@ -122,6 +122,10 @@ template<typename T>
 { return ptr ? ptr->Clone() : nullptr; }
 
 template<typename T>
+[[nodiscard]] inline std::unique_ptr<T> CloneUnique(const std::shared_ptr<T>& ptr)
+{ return ptr ? ptr->Clone() : nullptr; }
+
+template<typename T>
 [[nodiscard]] inline std::vector<std::unique_ptr<T>> CloneUnique(const std::vector<std::unique_ptr<T>>& vec) {
     std::vector<std::unique_ptr<T>> retval;
     retval.reserve(vec.size());

@@ -170,7 +170,7 @@
     <ClInclude Include="..\..\Empire\PopulationPool.h" />
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\Networking.h" />
-    <ClInclude Include="..\..\python\CommonFramework.h" />
+    <ClInclude Include="..\..\python\PythonBase.h" />
     <ClInclude Include="..\..\python\SetWrapper.h" />
     <ClInclude Include="..\..\server\SaveLoad.h" />
     <ClInclude Include="..\..\server\ServerApp.h" />
@@ -221,7 +221,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\combat\CombatSystem.cpp" />
-    <ClCompile Include="..\..\python\CommonFramework.cpp" />
+    <ClCompile Include="..\..\python\PythonBase.cpp" />
     <ClCompile Include="..\..\python\ConfigWrapper.cpp" />
     <ClCompile Include="..\..\python\EmpireWrapper.cpp" />
     <ClCompile Include="..\..\python\EnumWrapper.cpp" />
