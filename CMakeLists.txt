@@ -58,7 +58,7 @@ option(BUILD_SERVER "Build server" ON)
 option(BUILD_AI "Build AI" ON)
 option(BUILD_PARSERS "Build parsers" ON)
 
-set(GODOT_CPP_ROOT "" CACHE STRING "Path to Godot CPP libraries (empty to build internally)" FORCE)
+set(GODOT_CPP_ROOT "" CACHE PATH "Path to Godot CPP libraries (empty to build internally)")
 
 if(BUILD_TESTING)
     message( STATUS "Building Tests")
