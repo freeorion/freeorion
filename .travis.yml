@@ -180,6 +180,15 @@ jobs:
         - cmake -DBUILD_CLIENT_GG=OFF -DBUILD_TESTING=ON ..
         - cmake --build .
 
+    - name: Build Godot FreeOrion on Ubunutu 18.04 (Bionic)
+      <<: *_linux_setup_common
+      stage: build
+      env:
+        - CACHE_NAME=linux-godot
+        - CMAKE_BUILD_PARALLEL_LEVEL=2
+      script:
+        - cmake -DBUILD_CLIENT_GG=OFF -DBUILD_CLIENT_GODOT=ON -DBUILD_TESTING=ON ..
+        - cmake --build .
 
     - name: Build FreeOrion on MacOS
       stage: build

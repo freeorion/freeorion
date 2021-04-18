@@ -11,5 +11,6 @@ sudo apt install -y libboost1.71-all-dev \
 	doxygen \
 	python3-pip \
 	ccache \
-    clang
+	clang \
+	godot3-server
 

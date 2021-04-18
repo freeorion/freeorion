@@ -78,3 +78,10 @@ if(BUILD_CLIENT_GG)
             ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
     )
 endif()
+
+if(BUILD_CLIENT_GODOT)
+    target_sources(freeoriongodot
+        PRIVATE
+            ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
+    )
+endif()
