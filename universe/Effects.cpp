@@ -65,7 +65,7 @@ namespace {
 
         // if aggression specified, use that, otherwise get from whether ship is armed
         FleetAggression new_aggr = aggression == FleetAggression::INVALID_FLEET_AGGRESSION ?
-            (ship->IsArmed() ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_DEFENSIVE) :
+            (ship->IsArmed() ? FleetDefaults::FLEET_DEFAULT_ARMED : FleetDefaults::FLEET_DEFAULT_UNARMED) :
             (aggression);
         fleet->SetAggression(new_aggr);
 

@@ -68,7 +68,7 @@ void NewFleetOrder::serialize(Archive& ar, const unsigned int version)
     if (version < 2) {
         bool aggressive = false;
         ar  & boost::serialization::make_nvp("m_aggressive", aggressive);
-        m_aggression = aggressive ? FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_DEFENSIVE;
+        m_aggression = aggressive ? FleetDefaults::FLEET_DEFAULT_ARMED : FleetDefaults::FLEET_DEFAULT_UNARMED;
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_aggression);
     }
