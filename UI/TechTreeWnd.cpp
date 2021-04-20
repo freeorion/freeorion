@@ -373,7 +373,7 @@ void TechTreeWnd::TechTreeControls::RefreshCategoryButtons() {
         AttachChild(m_cat_buttons[category]);
 
         m_cat_buttons[category]->CheckedSignal.connect(
-            boost::bind(&TechTreeControls::CategoryButtonCheckedSlot, this, category, _1));
+            boost::bind(&TechTreeControls::CategoryButtonCheckedSlot, this, category, boost::placeholders::_1));
     }
 
     DoButtonLayout();
