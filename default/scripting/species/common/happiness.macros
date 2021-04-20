@@ -87,6 +87,7 @@ JUMPS_TO_CAPITAL_OR_REGAD
             condition = And [
                 Or [Capital Building name = "BLD_REGIONAL_ADMIN"]
                 OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
 '''
 
