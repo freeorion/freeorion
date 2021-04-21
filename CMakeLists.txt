@@ -7,6 +7,8 @@ endif()
 
 cmake_minimum_required(VERSION ${REQUIRED_CMAKE_VERSION} FATAL_ERROR)
 
+cmake_minimum_required(VERSION ${REQUIRED_CMAKE_VERSION} FATAL_ERROR)
+
 if(POLICY CMP0072)
   cmake_policy(SET CMP0072 NEW)
 endif()
@@ -1100,6 +1102,95 @@ if(WIN32)
         endforeach()
     ]]
     COMPONENT binaries)
+    install(CODE [[
+        file(GET_RUNTIME_DEPENDENCIES
+            EXECUTABLES $<TARGET_FILE:freeorion>
+            RESOLVED_DEPENDENCIES_VAR deps_install
+            PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
+            POST_EXCLUDE_REGEXES ${post_exclude_regexes}
+        )
+    ]])
+endif()
+
+if(WIN32)
+    if(BUILD_SERVER)
+        install(
+            TARGETS
+                freeoriond
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            BUNDLE DESTINATION .
+        )
+        install(CODE [[
+            file(GET_RUNTIME_DEPENDENCIES
+                EXECUTABLES $<TARGET_FILE:freeoriond>
+                RESOLVED_DEPENDENCIES_VAR deps_install
+                PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
+                POST_EXCLUDE_REGEXES ${post_exclude_regexes}
+            )
+        ]])
+    endif()
+
+    if(BUILD_AI)
+        install(
+            TARGETS
+                freeorionca
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            BUNDLE DESTINATION .
+        )
+        install(CODE [[
+            file(GET_RUNTIME_DEPENDENCIES
+                EXECUTABLES $<TARGET_FILE:freeorionca>
+                RESOLVED_DEPENDENCIES_VAR deps_install
+                PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
+                POST_EXCLUDE_REGEXES ${post_exclude_regexes}
+            )
+        ]])
+    endif()
+
+    if(BUILD_CLIENT_GODOT)
+        install(
+            TARGETS
+                freeoriongodot
+            LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        )
+
+        install(CODE [[
+            file(GET_RUNTIME_DEPENDENCIES
+                LIBRARIES $<TARGET_FILE:freeoriongodot>
+                RESOLVED_DEPENDENCIES_VAR deps_install
+                PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
+                POST_EXCLUDE_REGEXES ${post_exclude_regexes}
+            )
+        ]])
+    endif()
+
+    if(BUILD_CLIENT_GG)
+        install(
+            DIRECTORY default/
+            DESTINATION ${CMAKE_INSTALL_BINDIR}/default
+            PATTERN "*~" EXCLUDE
+            PATTERN "*.pyc" EXCLUDE
+        )
+    else()
+        install(
+            DIRECTORY default/
+            DESTINATION ${CMAKE_INSTALL_BINDIR}/default
+            PATTERN "*~" EXCLUDE
+            PATTERN "*.pyc" EXCLUDE
+            PATTERN "*.png" EXCLUDE
+            PATTERN "*.ogg" EXCLUDE
+        )
+    endif()
+endif()
+
+if(WIN32)
+    install(CODE [[
+        message(STATUS "Install dependencies ${deps_install}")
+        foreach(dep ${deps_install})
+            file(INSTALL ${dep} DESTINATION ${CMAKE_INSTALL_PREFIX})
+        endforeach()
+    ]])
 endif()
 
 set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
