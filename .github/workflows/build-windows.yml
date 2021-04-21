@@ -25,6 +25,18 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
+      - name: Install NSIS
+        if: true # only for weekly-test-build push
+        run: |
+          Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
+          scoop bucket add extras
+          scoop install nsis
+      - name: Print NSIS version
+        if: true # only for weekly-test-build push
+        run: makensis -VERSION
+      - name: Print NSIS compile flags
+        if: true # only for weekly-test-build push
+        run: makensis -HDRINFO
       - name: Download SDK
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1
@@ -38,12 +50,23 @@ jobs:
       - name: Configure
         run: |
           unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
-          cp ..\bin\* .
           mkdir build
           pushd build
-          cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DBoost_DEBUG=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
-          cat CMakeCache.txt
+          cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
       - name: Build
         run: |
           pushd build
-          cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /verbosity:minimal 
+          cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /verbosity:minimal
+      - name: Generate installer
+        if: true # only for weekly-test-build push
+        run: |
+          pushd build
+          cpack -C Release -G NSIS
+      - name: Upload installer
+        if: true # only for weekly-test-build push
+        uses: actions/upload-artifact@v2
+        with:
+          name: freeorion-win32-build
+          path: build/FreeOrion-*-win32.exe
+          if-no-files-found: error
+          retention-days: 14
