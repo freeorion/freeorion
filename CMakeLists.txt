@@ -58,7 +58,7 @@ option(BUILD_SERVER "Build server" ON)
 option(BUILD_AI "Build AI" ON)
 option(BUILD_PARSERS "Build parsers" ON)
 
-set(GODOT_CPP_ROOT "" CACHE STRING "Path to Godot CPP libraries (empty to build internally)" FORCE)
+set(GODOT_CPP_ROOT "" CACHE PATH "Path to Godot CPP libraries (empty to build internally)")
 
 if(BUILD_TESTING)
     message( STATUS "Building Tests")
@@ -807,28 +807,6 @@ if(APPLE AND BUILD_CLIENT_GG)
 endif()
 
 
-if(BUILD_CLIENT_GODOT)
-    add_custom_command(TARGET freeoriongodot POST_BUILD
-        COMMAND
-           ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}
-        COMMAND
-           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriongodot>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
-    )
-    if(ANDROID)
-        add_custom_command(TARGET freeoriongodot POST_BUILD
-            COMMAND
-                ${CMAKE_COMMAND} -E copy_if_different "${ICONV_LIBRARY}" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
-        )
-    else()
-        add_custom_command(TARGET freeoriongodot POST_BUILD
-            COMMAND
-                ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorioncommon>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
-            COMMAND
-                ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionparse>" "${CMAKE_SOURCE_DIR}/godot/client/bin/${SYSTEM_NAME}.${BITS}"
-        )
-    endif()
-endif()
-
 ##
 ## Recurse into sources.
 ##
@@ -901,6 +879,15 @@ if(UNIX AND NOT APPLE AND NOT ANDROID)
             FILES
             ${CMAKE_SOURCE_DIR}/packaging/org.freeorion.FreeOrion.desktop
             DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
+        )
+    endif()
+
+    if(BUILD_CLIENT_GODOT)
+        install(
+            TARGETS
+                freeoriongodot
+            LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         )
     endif()
 
