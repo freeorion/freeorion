@@ -201,7 +201,8 @@ struct ScriptingContext {
     DiplomaticStatus ContextDiploStatus(int empire1, int empire2) const {
         if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES || empire1 == empire2)
             return DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
-        auto it = diplo_statuses.find(std::make_pair(std::max(empire1, empire2), std::min(empire1, empire2)));
+        auto high_low_ids = empire1 > empire2 ? std::pair{empire1, empire2} : std::pair{empire2, empire1};
+        auto it = diplo_statuses.find(high_low_ids);
         return it == diplo_statuses.end() ? DiplomaticStatus::INVALID_DIPLOMATIC_STATUS : it->second;
     }
 
