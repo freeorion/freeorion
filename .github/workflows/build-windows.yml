@@ -57,6 +57,7 @@ jobs:
         run: |
           pushd build
           cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /verbosity:minimal
+          cat cmake_install.cmake
       - name: Generate installer
         if: true # only for weekly-test-build push
         run: |
