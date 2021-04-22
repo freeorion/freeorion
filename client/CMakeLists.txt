@@ -4,6 +4,9 @@ endif()
 if(BUILD_CLIENT_GG)
     add_subdirectory(human)
 endif()
+if(BUILD_CLIENT_GODOT)
+    add_subdirectory(godot)
+endif()
 
 if(BUILD_AI)
     target_sources(freeorionca
