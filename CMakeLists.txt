@@ -954,8 +954,8 @@ if(WIN32)
         list(APPEND pre_exclude_regexes "devicelockhelpers.dll") # windows API
         list(APPEND pre_exclude_regexes "wpaxholder.dll") # ...
 
-        list(APPEND post_exclude_regexes ".*WINDOWS[\\/]system32.*") # windows system dlls
-        list(APPEND post_exclude_regexes ".*WINDOWS[\\/]syswow64.*") # windows system dlls
+        list(APPEND post_exclude_regexes ".*[Ww][Ii][Nn][Dd][Oo][Ww][Ss][\\/][Ss][Yy][Ss][Tt][Ee][Mm]32.*") # windows system dlls
+        list(APPEND post_exclude_regexes ".*[Ww][Ii][Nn][Dd][Oo][Ww][Ss][\\/][Ss][Yy][Ss][Ww][Oo][Ww]64.*") # windows system dlls
     ]])
 endif()
 
