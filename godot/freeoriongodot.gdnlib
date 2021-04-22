@@ -1,0 +1,26 @@
+[general]
+
+singleton=false
+load_once=true
+symbol_prefix="godot_"
+reloadable=true
+
+[entry]
+
+Android.armeabi-v7a="res://bin/android.armeabi-v7a.32/libfreeoriongodot.so"
+OSX.64="res://bin/macos.64/libfreeoriongodot.dylib"
+OSX.32="res://bin/macos.32/libfreeoriongodot.dylib"
+X11.64="res://bin/linux.64/libfreeoriongodot.so"
+X11.32="res://bin/linux.32/libfreeoriongodot.so"
+Server.64="res://bin/linux.64/libfreeoriongodot.so"
+Server.32="res://bin/linux.32/libfreeoriongodot.so"
+
+[dependencies]
+
+Android.armeabi-v7a=[ "res://bin/android.armeabi-v7a.32/libiconv.so" ]
+OSX.64=[  ]
+OSX.32=[  ]
+X11.64=[  ]
+X11.32=[  ]
+Server.64=[  ]
+Server.32=[  ]
