@@ -34,6 +34,27 @@ UNSTABLE_REBEL_TROOPS
             accountinglabel = "PARTISANS_REBELLION"
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
             effects = SetRebelTroops value = Value + abs( Target.Population * 0.1 * EmpireStockpile empire = Source.Owner resource = Influence )^0.5
+            
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Adequate
+            accountinglabel = "DEPENDENCE_ON_IMPERIAL_SUPPORT_DUE_TO_ENVIRONMENT"
+            priority = [[TARGET_SCALING_PRIORITY]]
+            effects = SetRebelTroops value = max(0.0, abs(Value / 1.5))
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Poor
+            accountinglabel = "DEPENDENCE_ON_IMPERIAL_SUPPORT_DUE_TO_ENVIRONMENT"
+            priority = [[TARGET_SCALING_PRIORITY]]
+            effects = SetRebelTroops value = max(0.0, abs(Value / 2.0))
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = Hostile
+            accountinglabel = "DEPENDENCE_ON_IMPERIAL_SUPPORT_DUE_TO_ENVIRONMENT"
+            priority = [[TARGET_SCALING_PRIORITY]]
+            effects = SetRebelTroops value = max(0.0, abs(Value / 4.0))
 '''
 
 BASIC_DEFENSE_TROOPS
