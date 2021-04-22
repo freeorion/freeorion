@@ -9,9 +9,9 @@ BuildingType
         OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_IMPERIAL_PALACE"
         Not Contains Building name = "BLD_REGIONAL_ADMIN"
-        Happiness low = 5
         Not WithinStarlaneJumps jumps = 5 condition = And [
-            Or [Building name = "BLD_IMPERIAL_PALACE"
+            Or [
+                Building name = "BLD_IMPERIAL_PALACE"
                 Building name = "BLD_REGIONAL_ADMIN"
             ]
             OwnedBy empire = Source.Owner
