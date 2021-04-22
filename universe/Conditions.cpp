@@ -5933,7 +5933,7 @@ std::string ProducedByEmpire::Description(bool negated/* = false*/) const {
 }
 
 std::string ProducedByEmpire::Dump(unsigned short ntabs) const
-{ return DumpIndent(ntabs) + "ProducedByEmpire empire_id = " + m_empire_id->Dump(ntabs); }
+{ return DumpIndent(ntabs) + "ProducedByEmpire empire = " + m_empire_id->Dump(ntabs); }
 
 bool ProducedByEmpire::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
