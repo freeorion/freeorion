@@ -8,6 +8,16 @@ BuildingType
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     
         EffectsGroup
+            scope = And [
+                Capital
+                OwnedBy empire = Source.Owner
+            ]
+            activation = Not Unowned
+            stackinggroup = "SCRYING_SPHERE_POLICY_SLOT_STACK"
+            effects = SetEmpireMeter empire = Source.Owner
+                                     meter = "SOCIAL_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
+    
+        EffectsGroup
             scope = Or [
                 And [
                     Or [
