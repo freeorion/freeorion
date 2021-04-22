@@ -94,7 +94,7 @@ jobs:
         if: true # only for weekly-test-build push
         run: |
           pushd build
-          cpack -C Release -G NSIS
+          cpack -V -C Release -G NSIS
       - name: Upload installer
         if: true # only for weekly-test-build push
         uses: actions/upload-artifact@v2

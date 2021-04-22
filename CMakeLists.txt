@@ -1098,6 +1098,7 @@ if(WIN32)
             if(${dep_name} MATCHES "^python[0-9]+")
                 get_filename_component(dep_dir ${dep} DIRECTORY)
                 file(INSTALL "${dep_dir}/${dep_name}.zip" DESTINATION ${CMAKE_INSTALL_PREFIX})
+        list(APPEND post_exclude_regexes ".*WINDOWS[\\/]syswow64.*") # windows system dlls
             endif()
         endforeach()
     ]]
@@ -1105,7 +1106,7 @@ if(WIN32)
     install(CODE [[
         file(GET_RUNTIME_DEPENDENCIES
             EXECUTABLES $<TARGET_FILE:freeorion>
-            RESOLVED_DEPENDENCIES_VAR deps_install
+            RESOLVED_DEPENDENCIES_VAR deps_install_fo
             PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
             POST_EXCLUDE_REGEXES ${post_exclude_regexes}
         )
@@ -1123,7 +1124,7 @@ if(WIN32)
         install(CODE [[
             file(GET_RUNTIME_DEPENDENCIES
                 EXECUTABLES $<TARGET_FILE:freeoriond>
-                RESOLVED_DEPENDENCIES_VAR deps_install
+                RESOLVED_DEPENDENCIES_VAR deps_install_fod
                 PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
                 POST_EXCLUDE_REGEXES ${post_exclude_regexes}
             )
@@ -1140,7 +1141,7 @@ if(WIN32)
         install(CODE [[
             file(GET_RUNTIME_DEPENDENCIES
                 EXECUTABLES $<TARGET_FILE:freeorionca>
-                RESOLVED_DEPENDENCIES_VAR deps_install
+                RESOLVED_DEPENDENCIES_VAR deps_install_foca
                 PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
                 POST_EXCLUDE_REGEXES ${post_exclude_regexes}
             )
@@ -1158,7 +1159,7 @@ if(WIN32)
         install(CODE [[
             file(GET_RUNTIME_DEPENDENCIES
                 LIBRARIES $<TARGET_FILE:freeoriongodot>
-                RESOLVED_DEPENDENCIES_VAR deps_install
+                RESOLVED_DEPENDENCIES_VAR deps_install_fog
                 PRE_EXCLUDE_REGEXES ${pre_exclude_regexes}
                 POST_EXCLUDE_REGEXES ${post_exclude_regexes}
             )
@@ -1186,8 +1187,17 @@ endif()
 
 if(WIN32)
     install(CODE [[
-        message(STATUS "Install dependencies ${deps_install}")
-        foreach(dep ${deps_install})
+        message(STATUS "Install dependencies ${deps_install_fo} ${deps_install_fod} ${deps_install_foca} ${deps_install_fog}")
+        foreach(dep ${deps_install_fo})
+            file(INSTALL ${dep} DESTINATION ${CMAKE_INSTALL_PREFIX})
+        endforeach()
+        foreach(dep ${deps_install_fod})
+            file(INSTALL ${dep} DESTINATION ${CMAKE_INSTALL_PREFIX})
+        endforeach()
+        foreach(dep ${deps_install_foca})
+            file(INSTALL ${dep} DESTINATION ${CMAKE_INSTALL_PREFIX})
+        endforeach()
+        foreach(dep ${deps_install_fog})
             file(INSTALL ${dep} DESTINATION ${CMAKE_INSTALL_PREFIX})
         endforeach()
     ]])
