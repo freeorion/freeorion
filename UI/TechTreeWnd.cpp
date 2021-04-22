@@ -386,8 +386,9 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     const int PTS = ClientUI::Pts();
     const GG::X RIGHT_EDGE_PAD(PTS / 3);
     const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);   // space in which to do layout
-    const GG::X BUTTON_WIDTH = GG::X(PTS * std::max(GetOptionsDB().Get<double>("ui.research.control.graphic.size"), 0.5));
-    const GG::Y BUTTON_HEIGHT = GG::Y(Value(BUTTON_WIDTH));
+    const GG::X BUTTON_WIDTH = GG::X{static_cast<int>(
+        PTS * std::max(GetOptionsDB().Get<double>("ui.research.control.graphic.size"), 0.5))};
+    const GG::Y BUTTON_HEIGHT = GG::Y{Value(BUTTON_WIDTH)};
 
     m_col_offset = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
     m_row_offset = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons

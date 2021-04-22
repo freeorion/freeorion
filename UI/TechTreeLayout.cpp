@@ -362,7 +362,7 @@ void TechTreeLayout::Node::CalculateCoordinate(double column_width, double row_h
     m_y = row * row_height;
 }
 
-double TechTreeLayout::Node::CalculateFamilyDistance(int row) {
+double TechTreeLayout::Node::CalculateFamilyDistance(int row_) {
     int familysize = parents.size() + children.size();
     if (familysize == 0)
         return 0;
@@ -370,10 +370,10 @@ double TechTreeLayout::Node::CalculateFamilyDistance(int row) {
     double distance = 0;
     for (const Node* node : children)
         if (node)
-            distance += std::abs(node->row - row);
+            distance += std::abs(node->row - row_);
     for (const Node* node : parents)
         if (node)
-            distance += std::abs(node->row - row);
+            distance += std::abs(node->row - row_);
 
     return distance / familysize;
 }
@@ -426,9 +426,9 @@ bool TechTreeLayout::Node::Wobble(Column& column) {
         improvement = std::abs(dist) + std::abs(s_dist) - std::abs(new_dist) - std::abs(new_s_dist);
         if (improvement > 0.25) { // 0 produces endless loop
             if (weight == n->weight) {
-                for (int i = 0; i < weight; i++) {
-                    column.column[row + i] = n;
-                    column.column[n->row + i] = this;
+                for (int ii = 0; ii < weight; ii++) {
+                    column.column[row + ii] = n;
+                    column.column[n->row + ii] = this;
                 }
                 int t_row = row;
                 row = n->row;
@@ -505,8 +505,8 @@ void TechTreeLayout::Node::AddChild(Node* node) {
     }
 }
 
-void TechTreeLayout::Node::SetDepthRecursive(int depth) {
-    this->depth = std::max(depth, this->depth);
+void TechTreeLayout::Node::SetDepthRecursive(int depth_) {
+    this->depth = std::max(depth_, this->depth);
     // set children's depths
     for (Node* node : children)
         node->SetDepthRecursive(this->depth + 1);

@@ -161,7 +161,7 @@ private:
 
     void SetDepthRecursive(int depth);
 
-    auto CalculateFamilyDistance(int row) -> double;
+    auto CalculateFamilyDistance(int row_) -> double;
 
     void CreatePlaceHolder(std::vector<Node*>& nodes);
 
