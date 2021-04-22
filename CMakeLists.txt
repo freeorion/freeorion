@@ -1098,7 +1098,8 @@ if(WIN32)
             if(${dep_name} MATCHES "^python[0-9]+")
                 get_filename_component(dep_dir ${dep} DIRECTORY)
                 file(INSTALL "${dep_dir}/${dep_name}.zip" DESTINATION ${CMAKE_INSTALL_PREFIX})
-        list(APPEND post_exclude_regexes ".*WINDOWS[\\/]syswow64.*") # windows system dlls
+        list(APPEND post_exclude_regexes ".*[Ww][Ii][Nn][Dd][Oo][Ww][Ss][\\/][Ss][Yy][Ss][Tt][Ee][Mm]32.*") # windows system dlls
+        list(APPEND post_exclude_regexes ".*[Ww][Ii][Nn][Dd][Oo][Ww][Ss][\\/][Ss][Yy][Ss][Ww][Oo][Ww]64.*") # windows system dlls
             endif()
         endforeach()
     ]]
