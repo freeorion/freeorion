@@ -860,9 +860,9 @@ namespace {
     double ShipDataPanel::StatValue(MeterType stat_name) const {
         if (auto ship = Objects().get<Ship>(m_ship_id)) {
             if (stat_name == MeterType::METER_CAPACITY)
-                return ship->TotalWeaponsShipDamage(0.0f, false);
+                return ship->TotalWeaponsShipDamage(0.0f, true);
             else if (stat_name == MeterType::METER_MAX_CAPACITY) // number of fighters shot down
-                return ship->TotalWeaponsFighterDamage(false); // XXX include fighters?
+                return ship->TotalWeaponsFighterDamage(true);
             else if (stat_name == MeterType::METER_TROOPS)
                 return ship->TroopCapacity();
             else if (stat_name == MeterType::METER_SECONDARY_STAT)
@@ -1546,8 +1546,8 @@ void FleetDataPanel::SetStatIconValues() {
 
         if (ship->Design()) {
             ship_count++;
-            damage_tally += ship->TotalWeaponsShipDamage(0.0f, false);
-            destroy_tally += ship->TotalWeaponsFighterDamage(false);// XXX include fighters?
+            damage_tally += ship->TotalWeaponsShipDamage(0.0f, true);
+            destroy_tally += ship->TotalWeaponsFighterDamage(true);
             fighters_tally += ship->FighterCount();
             troops_tally += ship->TroopCapacity();
             colony_tally += ship->ColonyCapacity();

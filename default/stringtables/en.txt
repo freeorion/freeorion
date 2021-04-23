@@ -4105,7 +4105,10 @@ FW_FLEET_STRUCTURE_SUMMARY
 Fleet Structure - Equal to the total structure of ships in the fleet.
 
 FW_FLEET_DAMAGE_SUMMARY
-Fleet Damage - Equal to the total direct fire damage of ships in the fleet.
+Fleet Damage - Equal to the total maximum structural damage of ships and fighters in the fleet.
+
+FW_FLEET_DESTROY_SUMMARY
+Fleet Destruction - Equal to the total maximum fighter destruction of ships and fighters in the fleet.
 
 FW_FLEET_FIGHTER_SUMMARY
 Fleet Fighters - Equal to the total fighters in the fleet.
