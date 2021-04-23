@@ -524,7 +524,7 @@ void FileDlg::UpdateList()
             } else {
                 file_filters[i] = 
                     if_p (LeadingWildcard(filter_specs[i])) [
-                        *(wildcard - f_str_p(FrontStringBegin(non_wildcards), FrontStringEnd(non_wildcards))) 
+                        *(wildcard - f_str_p(FrontStringBegin(non_wildcards), FrontStringEnd(non_wildcards)))
                         >> f_str_p(FrontStringBegin(non_wildcards), FrontStringEnd(non_wildcards))
                     ] .else_p [
                         f_str_p(FrontStringBegin(non_wildcards), FrontStringEnd(non_wildcards))
