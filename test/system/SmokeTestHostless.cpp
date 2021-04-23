@@ -8,18 +8,6 @@
 #include "util/Process.h"
 #include "util/SitRepEntry.h"
 
-namespace {
-    std::string ServerClientExe() {
-#ifdef FREEORION_WIN32
-        return PathToString(GetBinDir() / "freeoriond.exe");
-#else
-        return (GetBinDir() / "freeoriond").string();
-#endif
-    }
-
-    constexpr static int MAX_WAITING_SEC = 120;
-}
-
 #ifdef FREEORION_MACOSX
 #include <stdlib.h>
 #endif
@@ -104,7 +92,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
     if (launch_server) {
         BOOST_REQUIRE(!PingLocalHostServer());
 
-        std::string SERVER_CLIENT_EXE = ServerClientExe();
+        std::string SERVER_CLIENT_EXE = GetOptionsDB().Get<std::string>("misc.server-local-binary.path");
 
         BOOST_TEST_MESSAGE(SERVER_CLIENT_EXE);
 

@@ -34,5 +34,6 @@ protected:
     MultiplayerLobbyData m_lobby_data;     ///< Lobby data.
 };
 
+constexpr static int MAX_WAITING_SEC = 120;
 
 #endif

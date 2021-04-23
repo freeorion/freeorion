@@ -2195,6 +2195,9 @@ Network port to use for server discovery.
 OPTIONS_DB_NETWORK_MESSAGE_PORT
 Network port to use for client-server messaging.
 
+OPTIONS_DB_FREEORIOND_PATH
+Path to freeoriond server executable.
+
 
 ##
 ## Option sections

@@ -407,16 +407,6 @@ bool GGHumanClientApp::CanSaveNow() const {
 void GGHumanClientApp::SetSinglePlayerGame(bool sp/* = true*/)
 { m_single_player_game = sp; }
 
-namespace {
-    std::string ServerClientExe() {
-#ifdef FREEORION_WIN32
-        return PathToString(GetBinDir() / "freeoriond.exe");
-#else
-        return (GetBinDir() / "freeoriond").string();
-#endif
-    }
-}
-
 #ifdef FREEORION_MACOSX
 #include <stdlib.h>
 #endif
@@ -443,7 +433,7 @@ void GGHumanClientApp::StartServer() {
         throw LocalServerAlreadyRunningException();
     }
 
-    std::string SERVER_CLIENT_EXE = ServerClientExe();
+    std::string SERVER_CLIENT_EXE = GetOptionsDB().Get<std::string>("misc.server-local-binary.path");
     DebugLogger() << "GGHumanClientApp::StartServer: " << SERVER_CLIENT_EXE;
 
 #ifdef FREEORION_MACOSX
