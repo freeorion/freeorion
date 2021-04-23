@@ -12,8 +12,8 @@ class FreeOrionNode : public godot::Node {
 public:
     static void _register_methods(); ///< Registers GDNative methods, properties and signals
 
-    FreeOrionNode();
-    ~FreeOrionNode();
+    FreeOrionNode() = default;
+    ~FreeOrionNode() = default;
 
     /** Calls when Godot initializes Node.
       * Should be used instead of constructor. */
