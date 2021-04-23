@@ -26,9 +26,9 @@ ClientAppFixture::ClientAppFixture() :
     //InitLoggingOptionsDBSystem();
 
 #ifdef FREEORION_WIN32
-    GetOptionsDB().Add<std::string>("freeoriond.path",          UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond.exe"));
+    GetOptionsDB().Add<std::string>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond.exe"));
 #else
-    GetOptionsDB().Add<std::string>("freeoriond.path",          UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond"));
+    GetOptionsDB().Add<std::string>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond"));
 #endif
 
     InfoLogger() << FreeOrionVersionString();

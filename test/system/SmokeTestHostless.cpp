@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
     if (launch_server) {
         BOOST_REQUIRE(!PingLocalHostServer());
 
-        std::string SERVER_CLIENT_EXE = GetOptionsDB().Get<std::string>("freeoriond.path");
+        std::string SERVER_CLIENT_EXE = GetOptionsDB().Get<std::string>("misc.server-local-binary.path");
 
         BOOST_TEST_MESSAGE(SERVER_CLIENT_EXE);
 

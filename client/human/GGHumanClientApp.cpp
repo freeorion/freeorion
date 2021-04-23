@@ -433,7 +433,7 @@ void GGHumanClientApp::StartServer() {
         throw LocalServerAlreadyRunningException();
     }
 
-    std::string SERVER_CLIENT_EXE = GetOptionsDB().Get<std::string>("freeoriond.path");
+    std::string SERVER_CLIENT_EXE = GetOptionsDB().Get<std::string>("misc.server-local-binary.path");
     DebugLogger() << "GGHumanClientApp::StartServer: " << SERVER_CLIENT_EXE;
 
 #ifdef FREEORION_MACOSX
