@@ -237,12 +237,19 @@ bool Ship::IsMonster() const { // TODO: pass in ScriptingContext
         return false;
 }
 
+bool Ship::CanDamageShips(float target_shields) const {
+    return TotalWeaponsShipDamage(target_shields, true) > 0.0f;
+}
+
+bool Ship::CanDestroyFighters() const {
+    return TotalWeaponsFighterDamage(true) > 0.0f;
+}
+
 bool Ship::IsArmed() const {
-    if ((TotalWeaponsShipDamage(0.0f, false) > 0.0f) || (TotalWeaponsFighterDamage(false) > 0.0f))
-        return true;    // has non-fighter weapons damaging ships or fighters
     if (HasFighters() && ((TotalWeaponsShipDamage(0.0f, true) > 0.0f) || (TotalWeaponsFighterDamage(true) > 0.0f)))
-        return true;    // has no non-fighter weapons but has launchable fighters that do damage
-    return false;
+        return true;
+    else
+        return ((TotalWeaponsShipDamage(0.0f, false) > 0.0f) || (TotalWeaponsFighterDamage(false) > 0.0f));
 }
 
 bool Ship::HasFighters() const {

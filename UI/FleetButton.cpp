@@ -437,7 +437,7 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(
     bool hasOutpostShips = false;
     bool hasTroopShips = false;
     bool hasMonsters = false;
-    bool hasArmedShips = false;
+    bool canDamageShips = false;
 
     for (auto* fleet : fleets) {
         if (!fleet)
@@ -447,7 +447,7 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(
         hasOutpostShips = hasOutpostShips || fleet->HasOutpostShips(Objects());
         hasTroopShips   = hasTroopShips   || fleet->HasTroopShips(Objects());
         hasMonsters     = hasMonsters     || fleet->HasMonsters(Objects());
-        hasArmedShips   = hasArmedShips   || fleet->HasArmedShips(Objects()) || fleet->HasFighterShips(Objects());
+        canDamageShips   = canDamageShips   || fleet->CanDamageShips(Objects());
     }
 
     // get file name main part depending on type of fleet
@@ -455,10 +455,10 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(
     std::vector<std::string> main_filenames;
     main_filenames.reserve(4);
     if (hasMonsters) {
-        if (hasArmedShips)   { main_filenames.emplace_back(size_prefix + "head-monster.png"); }
+        if (canDamageShips)   { main_filenames.emplace_back(size_prefix + "head-monster.png"); }
         else                 { main_filenames.emplace_back(size_prefix + "head-monster-harmless.png"); }
     } else {
-        if (hasArmedShips)   { main_filenames.emplace_back(size_prefix + "head-warship.png"); }
+        if (canDamageShips)   { main_filenames.emplace_back(size_prefix + "head-warship.png"); }
         if (hasColonyShips)  { main_filenames.emplace_back(size_prefix + "head-colony.png");  }
         if (hasOutpostShips) { main_filenames.emplace_back(size_prefix + "head-outpost.png"); }
         if (hasTroopShips)   { main_filenames.emplace_back(size_prefix + "head-lander.png");  }

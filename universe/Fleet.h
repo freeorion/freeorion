@@ -106,6 +106,8 @@ public:
     bool    BlockadedAtSystem(int start_system_id, int dest_system_id, const ScriptingContext& context) const; ///< returns true iff this fleet's movement would be blockaded at system.
     float   Speed(const ObjectMap& objects) const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
     bool    CanChangeDirectionEnRoute() const   { return false; }       ///< Returns true iff this fleet can change its direction while in interstellar space.
+    bool    CanDamageShips(const ObjectMap& objects, float target_shields = 0.0f) const;              ///< Returns true if there is at least one ship in the fleet which is currently able to damage a ship using direct weapons or fighters
+    bool    CanDestroyFighters(const ObjectMap& objects) const;              ///< Returns true if there is at least one ship in the fleet which is currently able to destroy fighters using direct weapons or fighters
     bool    HasMonsters(const ObjectMap& objects) const;                ///< returns true iff this fleet contains monster ships.
     bool    HasArmedShips(const ObjectMap& objects) const;              ///< Returns true if there is at least one armed ship in the fleet, meaning it has direct fire weapons or fighters that can be launched and that do damage
     bool    HasFighterShips(const ObjectMap& objects) const;            ///< Returns true if there is at least one ship with fighters in the fleet.

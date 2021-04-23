@@ -1168,9 +1168,9 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
         TraceLogger(supply) << "Fleet " << fleet->ID() << " is in system " << system_id
                             << " with next system " << fleet->NextSystemID()
                             << " and is owned by " << fleet->Owner()
-                            << " armed: " << fleet->HasArmedShips(context.ContextObjects())
+                            << " can damage ships: " << fleet->CanDamageShips(context.ContextObjects())
                             << " and obstructive: " << fleet->Obstructive();
-        if (fleet->HasArmedShips(context.ContextObjects()) && fleet->Obstructive()) {
+        if (fleet->CanDamageShips(context.ContextObjects()) && fleet->Obstructive()) {
             if (fleet->OwnedBy(m_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                     systems_containing_friendly_fleets.insert(system_id);

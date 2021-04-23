@@ -166,11 +166,11 @@ namespace {
     bool ClientPlayerIsModerator()
     { return GGHumanClientApp::GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
 
-    bool ContainsArmedShips(const std::vector<int>& ship_ids) {
+    bool CanDamageShips(const std::vector<int>& ship_ids) {
         for (const auto& ship : Objects().find<Ship>(ship_ids)) {
             if (!ship)
                 continue;
-            if (ship->IsArmed() || ship->HasFighters())
+            if (ship->CanDamageShips())
                 return true;
         }
         return false;
@@ -181,7 +181,7 @@ namespace {
             aggression_mode > FleetAggression::INVALID_FLEET_AGGRESSION)
         { return aggression_mode; }
         // auto aggression; examine ships to see if any are armed...
-        if (ContainsArmedShips(ship_ids))
+        if (CanDamageShips(ship_ids))
             return FleetDefaults::FLEET_DEFAULT_ARMED;
         return FleetDefaults::FLEET_DEFAULT_UNARMED;
     }
@@ -1571,12 +1571,12 @@ void FleetDataPanel::SetStatIconValues() {
             break;
         case MeterType::METER_CAPACITY:
             icon->SetValue(damage_tally);
-            if (fleet->HasArmedShips(objects))
+            if (fleet->CanDamageShips(objects))
                 AttachChild(icon);
             break;
         case MeterType::METER_MAX_CAPACITY:
             icon->SetValue(destroy_tally);
-            if (fleet->HasArmedShips(objects))
+            if (fleet->CanDestroyFighters(objects))
                 AttachChild(icon);
             break;
         case MeterType::METER_SECONDARY_STAT:

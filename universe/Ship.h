@@ -51,6 +51,8 @@ public:
     int                         LastResuppliedOnTurn() const{ return m_last_resupplied_on_turn;}///< returns the turn on which this ship was last resupplied / upgraded
 
     bool                        IsMonster() const;
+    bool                        CanDamageShips(float target_shields = 0.0f) const;
+    bool                        CanDestroyFighters() const;
     bool                        IsArmed() const;
     bool                        HasFighters() const;
     bool                        CanColonize() const;
