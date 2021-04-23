@@ -109,6 +109,6 @@ jobs:
           cd build
           cmake --build . --config Release --target unittest || echo Failure
       - name: Run Godot unit tests
-        if: matrix.client-godot == 'ON' && runner.os == 'ubuntu-20.04'
+        if: matrix.client-godot == 'ON' && matrix.os == 'ubuntu-20.04'
         run: |
-          godot3-server -d -s --path godot addons/gut/gut_cmdln.gd -gtest=res://test/integration/test_quickstart.gd -gexit
+          godot3-server -d -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit

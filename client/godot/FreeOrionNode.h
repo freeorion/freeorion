@@ -3,6 +3,7 @@
 
 #include <Godot.hpp>
 #include <Node.hpp>
+#include <String.hpp>
 
 class FreeOrionNode : public godot::Node {
     GODOT_CLASS(FreeOrionNode, godot::Node)
@@ -16,6 +17,8 @@ public:
     void _init();
 private:
     void _exit_tree();
+
+    godot::String get_version() const;
 };
 
 #endif
