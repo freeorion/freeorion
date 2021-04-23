@@ -42,6 +42,7 @@ namespace {
     const std::string MUSIC_FILE_SUFFIX = ".ogg";
     const std::string SOUND_FILE_SUFFIX = ".ogg";
     const std::string FONT_FILE_SUFFIX = ".ttf";
+    const std::string EXE_FILE_SUFFIX = ".exe";
 
     class RowContentsWnd : public GG::Control {
     public:
@@ -172,6 +173,21 @@ namespace {
         try {
             fs::path path = FilenameToPath(file);
             return fs::exists(path) && fs::is_directory(path);
+        } catch (...) {
+        }
+        return false;
+    }
+
+    bool ValidExecutableBinary(const std::string& file) {
+                // putting this in try-catch block prevents crash with error output along the lines of:
+        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        try {
+            fs::path path = FilenameToPath(file);
+#ifdef FREEORION_WIN32
+            if (!boost::algorithm::ends_with(file, EXE_FILE_SUFFIX))
+                return false;
+#endif
+            return fs::exists(path) && fs::is_regular_file(path);
         } catch (...) {
         }
         return false;
@@ -701,24 +717,24 @@ void OptionsWnd::CompleteConstruction() {
     ColorOption(current_page, 1, "ui.research.status.researchable.background.color",UserString("OPTIONS_FILL_COLOR"));
     ColorOption(current_page, 1, "ui.research.status.researchable.border.color",    UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
-    CreateSectionHeader(current_page, 1, UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
-    ColorOption(current_page, 1, "ui.research.status.unresearchable.background.color", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "ui.research.status.unresearchable.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    CreateSectionHeader(current_page, 1,                                                UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
+    ColorOption(current_page, 1, "ui.research.status.unresearchable.background.color",  UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.unresearchable.border.color",      UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
-    CreateSectionHeader(current_page, 1, UserString("OPTIONS_TECH_PROGRESS_COLORS"));
-    ColorOption(current_page, 1, "ui.research.status.progress.color", UserString("OPTIONS_PROGRESS_BAR_COLOR"));
-    ColorOption(current_page, 1, "ui.research.status.progress.background.color", UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
+    CreateSectionHeader(current_page, 1,                                            UserString("OPTIONS_TECH_PROGRESS_COLORS"));
+    ColorOption(current_page, 1, "ui.research.status.progress.color",               UserString("OPTIONS_PROGRESS_BAR_COLOR"));
+    ColorOption(current_page, 1, "ui.research.status.progress.background.color",    UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
     m_tabs->SetCurrentWnd(0);
 
     // Ausosave settings tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_AUTOSAVE"));
-    BoolOption(current_page, 0, "save.auto.turn.start.enabled", UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"));
-    BoolOption(current_page, 0, "save.auto.turn.end.enabled", UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"));
+    BoolOption(current_page, 0, "save.auto.turn.start.enabled",             UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"));
+    BoolOption(current_page, 0, "save.auto.turn.end.enabled",               UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"));
     BoolOption(current_page, 0, "save.auto.turn.multiplayer.start.enabled", UserString("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"));
-    IntOption(current_page,  0, "save.auto.turn.interval", UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
-    IntOption(current_page,  0, "save.auto.file.limit",     UserString("OPTIONS_AUTOSAVE_LIMIT"));
-    BoolOption(current_page, 0, "save.auto.initial.enabled", UserString("OPTIONS_AUTOSAVE_GALAXY_CREATION"));
-    BoolOption(current_page, 0, "save.auto.exit.enabled",   UserString("OPTIONS_AUTOSAVE_GAME_CLOSE"));
+    IntOption(current_page,  0, "save.auto.turn.interval",                  UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
+    IntOption(current_page,  0, "save.auto.file.limit",                     UserString("OPTIONS_AUTOSAVE_LIMIT"));
+    BoolOption(current_page, 0, "save.auto.initial.enabled",                UserString("OPTIONS_AUTOSAVE_GALAXY_CREATION"));
+    BoolOption(current_page, 0, "save.auto.exit.enabled",                   UserString("OPTIONS_AUTOSAVE_GAME_CLOSE"));
     PathDisplay(current_page, 0, UserString("OPTIONS_FOLDER_SAVE"), GetUserDataDir());
     m_tabs->SetCurrentWnd(0);
 
@@ -729,10 +745,16 @@ void OptionsWnd::CompleteConstruction() {
     current_page = CreatePage(UserString("OPTIONS_PAGE_DIRECTORIES"));
     /** GetRootDataDir() returns the default browse path when modifying this directory option.
      *  The actual default directory (before modifying) is gotten from the specified option name "resource.path" */
-    DirectoryOption(current_page, 0, "resource.path",   UserString("OPTIONS_FOLDER_SETTINGS"),      GetRootDataDir(), is_game_running);
-    DirectoryOption(current_page, 0, "save.path",       UserString("OPTIONS_FOLDER_SAVE"),          GetUserDataDir());
-    DirectoryOption(current_page, 0, "save.server.path",UserString("OPTIONS_SERVER_FOLDER_SAVE"),   GetUserDataDir());
-    PathDisplay(    current_page, 0,                    UserString("OPTIONS_FOLDER_CONFIG_LOG"),    GetUserConfigDir());
+    DirectoryOption(current_page, 0, "resource.path",                   UserString("OPTIONS_FOLDER_SETTINGS"),      GetRootDataDir(), is_game_running);
+    DirectoryOption(current_page, 0, "save.path",                       UserString("OPTIONS_FOLDER_SAVE"),          GetUserDataDir());
+    DirectoryOption(current_page, 0, "save.server.path",                UserString("OPTIONS_SERVER_FOLDER_SAVE"),   GetUserDataDir());
+    PathDisplay(    current_page, 0,                                    UserString("OPTIONS_FOLDER_CONFIG_LOG"),    GetUserConfigDir());
+    FileOption(     current_page, 0, "misc.server-local-binary.path",   UserString("OPTIONS_SERVER_EXE"),           GetBinDir()
+#ifdef FREEORION_WIN32
+                  , {std::string("misc.server-local-binary.path"), "*" + EXE_FILE_SUFFIX});
+#else
+                    );
+#endif
     m_tabs->SetCurrentWnd(0);
 
 
