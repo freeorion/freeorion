@@ -12,13 +12,13 @@ import EspionageAI
 import FleetUtilsAI
 import MilitaryAI
 import PlanetUtilsAI
-import ProductionAI
 from AIDependencies import INVALID_ID, Tags
 from EnumsAI import MissionType, PriorityType
 from common.print_utils import Table, Text, Float
 from freeorion_tools import tech_is_complete, AITimer, get_partial_visibility_turn, get_species_tag_grade
 from target import TargetPlanet, TargetSystem
 from turn_state import get_colonized_planets_in_system
+from turn_state.design import get_best_ship_info
 
 MAX_BASE_TROOPERS_GOOD_INVADERS = 20
 MAX_BASE_TROOPERS_POOR_INVADERS = 10
@@ -118,8 +118,7 @@ def get_invasion_fleets():
                 planet2 = universe.getPlanet(pid2)
                 if not planet2 or planet2.speciesName not in ColonisationAI.empire_ship_builders:
                     continue
-                best_base_trooper_here = \
-                    ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, pid2)[1]
+                best_base_trooper_here = get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, pid2)[1]
                 if not best_base_trooper_here:
                     continue
                 troops_per_ship = best_base_trooper_here.troopCapacity
@@ -165,7 +164,7 @@ def get_invasion_fleets():
                 # don't immediately delete from qualifyingTroopBaseTargets or it will be opened up for regular troops
                 continue
             loc = aistate.qualifyingTroopBaseTargets[pid][0]
-            best_base_trooper_here = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)[1]
+            best_base_trooper_here = get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)[1]
             loc_planet = universe.getPlanet(loc)
             if best_base_trooper_here is None:  # shouldn't be possible at this point, but just to be safe
                 warning("Could not find a suitable orbital invasion design at %s" % loc_planet)
@@ -177,8 +176,7 @@ def get_invasion_fleets():
             if not troops_per_ship:
                 warning("The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet)
                 continue
-            _, col_design, build_choices = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION,
-                                                                           loc)
+            _, col_design, build_choices = get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)
             if not col_design:
                 continue
             if loc not in build_choices:
@@ -458,7 +456,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     threat_exponent = 2  # TODO: make this a character trait; higher aggression with a lower exponent
     threat_factor = min(1, preferred_max_portion * total_max_mil_rating/(sys_total_threat+0.001))**threat_exponent
 
-    design_id, _, locs = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_INVASION)
+    design_id, _, locs = get_best_ship_info(PriorityType.PRODUCTION_INVASION)
     if not locs or not universe.getPlanet(locs[0]):
         # We are in trouble anyway, so just calculate whatever approximation...
         build_time = 4

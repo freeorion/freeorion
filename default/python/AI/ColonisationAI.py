@@ -11,7 +11,6 @@ import InvasionAI
 import MilitaryAI
 import PlanetUtilsAI
 import PriorityAI
-import ProductionAI
 from AIDependencies import (
     INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
     POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
@@ -32,6 +31,7 @@ from turn_state import (
     get_unowned_empty_planets, have_computronium, population_with_industry_focus, population_with_research_focus,
     set_best_pilot_rating, set_have_asteroids, set_have_gas_giant, set_have_nest, set_medium_pilot_rating,
 )
+from turn_state.design import get_best_ship_info
 
 colonization_timer = AITimer('getColonyFleets()')
 
@@ -1410,7 +1410,7 @@ class OrbitalColonizationPlan:
 
         # find the best possible base design for the source planet
         universe = fo.getUniverse()
-        best_ship, _, _ = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_OUTPOST, self.source)
+        best_ship, _, _ = get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_OUTPOST, self.source)
         if best_ship is None:
             warning("Can't find optimized outpost base design at %s" % (universe.getPlanet(self.source)))
             try:

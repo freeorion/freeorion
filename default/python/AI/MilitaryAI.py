@@ -7,7 +7,6 @@ import FleetUtilsAI
 import InvasionAI
 import PlanetUtilsAI
 import PriorityAI
-import ProductionAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from CombatRatingsAI import (
@@ -21,6 +20,7 @@ from turn_state import (
     get_distance_to_enemy_supply, get_owned_planets, get_owned_planets_in_system,
     get_systems_by_supply_tier,
 )
+from turn_state.design import cur_best_military_design_rating
 
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
 _military_allocations = []
@@ -38,7 +38,7 @@ def cur_best_mil_ship_rating(include_designs=False):
     if current_turn in _best_ship_rating_cache:
         best_rating = _best_ship_rating_cache[current_turn]
         if include_designs:
-            best_design_rating = ProductionAI.cur_best_military_design_rating()
+            best_design_rating = cur_best_military_design_rating()
             best_rating = max(best_rating, best_design_rating)
         return best_rating
     best_rating = 0.001
@@ -51,7 +51,7 @@ def cur_best_mil_ship_rating(include_designs=False):
             best_rating = max(best_rating, ship_rating)
     _best_ship_rating_cache[current_turn] = best_rating
     if include_designs:
-        best_design_rating = ProductionAI.cur_best_military_design_rating()
+        best_design_rating = cur_best_military_design_rating()
         best_rating = max(best_rating, best_design_rating)
     return max(best_rating, 0.001)
 
