@@ -135,6 +135,17 @@ margin_right = 196.0
 margin_bottom = 489.0
 Title = "Quit"
 
+[node name="Label" type="Label" parent="MainMenu"]
+anchor_right = 1.0
+margin_left = 5.0
+margin_right = -5.0
+margin_bottom = 20.0
+text = "FreeOrion Main Menu"
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 2 )
 autoplay = true
@@ -145,3 +156,7 @@ anchor_bottom = 1.0
 
 [node name="FreeOrion" type="Node" parent="."]
 script = ExtResource( 4 )
+[connection signal="pressed" from="MainMenu/VBoxContainer/SinglePlayerBtn" to="." method="_on_SinglePlayerBtn_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer/QuickstartBtn" to="." method="_on_QuickstartBtn_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer/MultiplayerBtn" to="." method="_on_MultiplayerBtn_pressed"]
+[connection signal="pressed" from="MainMenu/VBoxContainer/QuitBtn" to="." method="_on_QuitBtn_pressed"]
