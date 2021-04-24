@@ -8,9 +8,20 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "",
+"class": "FreeOrionNode",
+"language": "NativeScript",
+"path": "res://freeoriongodot.gdns"
+}, {
+"base": "Button",
+"class": "MainMenuBtn",
+"language": "GDScript",
+"path": "res://MainMenuBtn.gd"
+} ]
 _global_script_class_icons={
-
+"FreeOrionNode": "",
+"MainMenuBtn": ""
 }
 
 [application]
