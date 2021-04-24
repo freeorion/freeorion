@@ -38,23 +38,23 @@ protected:
     bool m_source_invariant = false;
 };
 
-template<typename T, typename std::enable_if<std::is_arithmetic<T>::value, T>::type* = nullptr>
+template<typename T, typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
 std::string FlexibleToString(T&& t)
 {
-    if constexpr (std::is_floating_point<T>::value)
+    if constexpr (std::is_floating_point_v<T>)
         return DoubleToString(t, 3, false);
     else
         return std::to_string(t);
 }
 
-template<typename T, typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr>
+template<typename T, typename std::enable_if_t<std::is_enum_v<T>>* = nullptr>
 std::string FlexibleToString(T&& t)
-{ return std::to_string(static_cast<typename std::underlying_type<T>::type>(t)); }
+{ return std::to_string(static_cast<std::underlying_type_t<T>>(t)); }
 
 inline std::string FlexibleToString(std::string&& t)
 { return std::move(t); }
 
-template<typename T, typename std::enable_if<std::is_same<T, std::vector<std::string>>::value, T>::type* = nullptr>
+template<typename T, typename std::enable_if_t<std::is_same_v<T, std::vector<std::string>>>* = nullptr>
 std::string FlexibleToString(T&& t)
 {
     std::string s;
