@@ -4,6 +4,7 @@
 #include "ScriptingContext.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
+#include "../util/i18n.h"
 #include <type_traits>
 
 namespace ValueRef {
@@ -39,7 +40,12 @@ protected:
 
 template<typename T, typename std::enable_if<std::is_arithmetic<T>::value, T>::type* = nullptr>
 std::string FlexibleToString(T&& t)
-{ return std::to_string(t); }
+{
+    if constexpr (std::is_floating_point<T>::value)
+        return DoubleToString(t, 3, false);
+    else
+        return std::to_string(t);
+}
 
 template<typename T, typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr>
 std::string FlexibleToString(T&& t)
