@@ -19,7 +19,7 @@ Special
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
                 SetTargetResearch value = Value + (NamedReal name = "ECCENTRIC_ORBIT_TARGET_RESEARCH_FLAT" value = 3)
-                SetMaxSupply value = Value + (NamedReal name = "ECCENTRIC_ORBIT_MAXSUPPLY_FLAT" value = -2)
+                SetMaxSupply value = Value + (NamedReal name = "ECCENTRIC_ORBIT_MAX_SUPPLY_FLAT" value = -2)
             ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
 
