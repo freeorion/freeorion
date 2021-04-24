@@ -109,7 +109,7 @@ if(APPLE)
     # Location of the FreeOrionSDK root
     set(CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/dep/")
     set(CMAKE_FRAMEWORK_PATH "${CMAKE_BINARY_DIR}/dep/Frameworks")
-    set(CMAKE_PROGRAM_PATH "${CMAKE_FRAMEWORK_PATH}/Python.framework/Versions/3.5/bin")
+    set(CMAKE_PROGRAM_PATH "${CMAKE_FRAMEWORK_PATH}/Python.framework/Versions/3.6/bin")
 endif()
 
 if(UNIX)
@@ -235,7 +235,7 @@ include(TestForBug2795)
 ## Collect project dependencies.
 ##
 
-set(MINIMUM_PYTHON_VERSION 3.5)
+set(MINIMUM_PYTHON_VERSION 3.6)
 set(MINIMUM_BOOST_VERSION 1.60.0)
 
 find_package(Threads)
