@@ -22,7 +22,7 @@ Policy
             // Very bad multiplier is applied before, so it must be reverted before applying bad multiplier.
             effects = SetTargetIndustry value = Value
                         * (NamedReal name = "PLC_EXOBOT_PRODUCTIVITY_TARGET_INDUSTRY_SCALING"
-                                     value = ([[BAD_MULTIPLIER]] / [[VERY_BAD_MULTIPLIER]])
+                                     value = ([[BAD_MULTIPLIER]] / [[VERY_BAD_MULTIPLIER]]))
     ]
     graphic = "icons/policies/exobot_productivity.png"
 
