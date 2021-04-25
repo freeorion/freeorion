@@ -8,7 +8,7 @@ echo = Launching freeorion =
 
 export SDL_VIDEODRIVER=x11
 
-freeorion &
+LIBGL_DEBUG=verbose freeorion.freeorion-godot &
 FOPID=$!
 sleep 10
 kill ${FOPID}

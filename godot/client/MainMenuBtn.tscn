@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://MainMenuBtn.gd" type="Script" id=3]
+
+[node name="MainMenuBtn" type="Button"]
+margin_right = 12.0
+margin_bottom = 20.0
+focus_mode = 0
+enabled_focus_mode = 0
+script = ExtResource( 3 )
+
+[node name="Label" type="Label" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "Title"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

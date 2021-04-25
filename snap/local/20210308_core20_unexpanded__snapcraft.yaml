@@ -21,6 +21,15 @@ apps:
       LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
       LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
       #PYTHONPATH: $SNAP/usr/lib/python3.6
+  freeorion-godot:
+    command: usr/bin/godot3-runner --main-pack $SNAP/usr/share/freeorion/freeorion.pck --resource.path $SNAP/usr/share/freeorion/default/ -S $SNAP_USER_COMMON/save
+    extensions: [gnome-3-38]
+    plugs: [home, pulseaudio, opengl, network, screen-inhibit-control, browser-support, x11]
+    desktop: usr/share/applications/org.freeorion.FreeOrion.desktop
+    environment:
+      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
+      LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
+      #PYTHONPATH: $SNAP/usr/lib/python3.6
   freeoriond:
     command: usr/bin/freeoriond
     plugs: [home, network, network-bind]
@@ -39,6 +48,12 @@ parts:
     source: .
     override-build: |
       sed -i.bak -e 's|Icon=freeorion$|Icon=${SNAP}/meta/gui/icon.png|g' ../src/packaging/org.freeorion.FreeOrion.desktop
+      sed -i.bak -e 's|="res://bin/linux.*/libfreeoriongodot.so"|="/usr/lib/x86_64-linux-gnu/freeorion/libfreeoriongodot.so"|g' ../src/godot/client/gdcpptest.gdnlib
+      # godot-headless wants a writable homedir, simulate it
+      mkdir -p home/
+      mkdir -p ${SNAPCRAFT_PART_INSTALL}/usr/share/freeorion/
+      # Note: we use godot3-headless really
+      HOME=$(pwd)/home godot3-server --path ../src/godot/client --export-pack "Linux/X11" ${SNAPCRAFT_PART_INSTALL}/usr/share/freeorion/freeorion.pck
       snapcraftctl build
     plugin: cmake
     cmake-parameters:
@@ -78,6 +93,7 @@ parts:
       - libtiff-dev
       - libvorbis-dev
       - pkg-config
+      - godot3-server
       #- python
     stage-packages:
       - mesa-utils
@@ -103,3 +119,4 @@ parts:
       - libvorbisfile3
       - libpng16-16
       - libfreetype6
+      - godot3-runner

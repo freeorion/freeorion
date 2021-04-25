@@ -1,0 +1,84 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://assets/fonts/Roboto-Regular.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://FOWindow.gd" type="Script" id=2]
+[ext_resource path="res://assets/image/frames/FOWindowFrame2.png" type="Texture" id=3]
+[ext_resource path="res://assets/image/WindowFrameResizeWidget.png" type="Texture" id=4]
+[ext_resource path="res://assets/image/WindowFramePinWidgetON.png" type="Texture" id=5]
+[ext_resource path="res://assets/image/WindowFrameCloseWidget.png" type="Texture" id=6]
+[ext_resource path="res://assets/image/WindowFramePinWidgetOFF.png" type="Texture" id=7]
+
+[sub_resource type="DynamicFont" id=1]
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 1 )
+
+[node name="FOWindow" type="NinePatchRect"]
+margin_right = 256.0
+margin_bottom = 256.0
+rect_min_size = Vector2( 256, 256 )
+rect_clip_content = true
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource( 3 )
+patch_margin_left = 5
+patch_margin_top = 25
+patch_margin_right = 5
+patch_margin_bottom = 5
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="."]
+anchor_right = 1.0
+margin_left = 5.0
+margin_top = 1.0
+margin_right = -50.0
+margin_bottom = 20.0
+size_flags_vertical = 0
+custom_fonts/font = SubResource( 1 )
+text = "Window Title"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ResizeWidget" type="TextureRect" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -22.0
+margin_top = -22.0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+texture = ExtResource( 4 )
+
+[node name="HBoxContainer" type="Control" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -40.0
+rect_min_size = Vector2( 40, 20 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PinWidget" type="TextureButton" parent="HBoxContainer"]
+margin_right = 20.0
+margin_bottom = 20.0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+toggle_mode = true
+texture_normal = ExtResource( 7 )
+texture_pressed = ExtResource( 5 )
+stretch_mode = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CloseWidget" type="TextureButton" parent="HBoxContainer"]
+margin_left = 20.0
+margin_right = 40.0
+margin_bottom = 20.0
+texture_normal = ExtResource( 6 )
+[connection signal="toggled" from="HBoxContainer/PinWidget" to="." method="_on_PinWidget_toggled"]
