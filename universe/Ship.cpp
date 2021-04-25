@@ -432,62 +432,6 @@ float Ship::FighterMax() const {
     return retval;
 }
 
-float Ship::WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext& context) const {
-    if (!part || (part->Class() != ShipPartClass::PC_DIRECT_WEAPON))
-        return 0.0f;
-
-    // usually a weapon part destroys one fighter per shot, but that can be overridden
-    if (part->TotalFighterDamage()) {
-        return part->TotalFighterDamage()->Eval(context);
-    } else {
-        int num_bouts_with_fighter_targets = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS") - 1;
-        return  CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part->Name()) * num_bouts_with_fighter_targets;  // used within loop that updates meters, so need current, not initial values
-    }
-}
-
-float Ship::WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& context) const {
-    if (!part || (part->Class() != ShipPartClass::PC_DIRECT_WEAPON))
-        return 0.0f;
-
-    // usually a weapon part does damage*shots ship damage, but that can be overridden
-    if (part->TotalShipDamage()) {
-        return part->TotalShipDamage()->Eval(context);
-    } else {
-        float part_attack = CurrentPartMeterValue(MeterType::METER_CAPACITY, part->Name());  // used within loop that updates meters, so need current, not initial values
-        float part_shots = CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part->Name());
-        float target_shield = 0.0f;
-        if (context.effect_target) {
-            const Ship* target = static_cast<const Ship*>(context.effect_target.get());
-            if (target) 
-                target_shield = target->GetMeter(MeterType::METER_SHIELD)->Current();
-        }
-        if (part_attack > target_shield) {
-            int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
-            return (part_attack - target_shield) * part_shots * num_bouts;
-        } else
-            return 0.0f;
-    }
-}
-
-
-float Ship::TotalWeaponsFighterDamage(bool include_fighters) const {
-    // sum up all individual weapons' attack strengths
-    float total_shots = 0.0f;
-    auto all_weapons_shots = AllWeaponsFighterDamage(include_fighters);
-    for (float shots : all_weapons_shots)
-        total_shots += shots;
-    return total_shots;
-}
-
-float Ship::TotalWeaponsShipDamage(float shield_DR, bool include_fighters) const {
-    // sum up all individual weapons' attack strengths
-    float total_attack = 0.0f;
-    auto all_weapons_damage = AllWeaponsShipDamage(shield_DR, include_fighters);
-    for (float attack : all_weapons_damage)
-        total_attack += attack;
-    return total_attack;
-}
-
 namespace {
     std::vector<float> WeaponDamageCalcImpl(std::shared_ptr<const Ship> ship, const ShipDesign* design,
                                             bool max, bool include_fighters, bool target_ships, const ScriptingContext context) {
@@ -601,6 +545,62 @@ namespace {
             return WeaponDamageCalcImpl(ship, design, max, include_fighters, target_ships, context);
         }
     }
+}
+
+float Ship::WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext& context) const {
+    if (!part || (part->Class() != ShipPartClass::PC_DIRECT_WEAPON))
+        return 0.0f;
+
+    // usually a weapon part destroys one fighter per shot, but that can be overridden
+    if (part->TotalFighterDamage()) {
+        return part->TotalFighterDamage()->Eval(context);
+    } else {
+        int num_bouts_with_fighter_targets = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS") - 1;
+        return  CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part->Name()) * num_bouts_with_fighter_targets;  // used within loop that updates meters, so need current, not initial values
+    }
+}
+
+float Ship::WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& context) const {
+    if (!part || (part->Class() != ShipPartClass::PC_DIRECT_WEAPON))
+        return 0.0f;
+
+    // usually a weapon part does damage*shots ship damage, but that can be overridden
+    if (part->TotalShipDamage()) {
+        return part->TotalShipDamage()->Eval(context);
+    } else {
+        float part_attack = CurrentPartMeterValue(MeterType::METER_CAPACITY, part->Name());  // used within loop that updates meters, so need current, not initial values
+        float part_shots = CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part->Name());
+        float target_shield = 0.0f;
+        if (context.effect_target) {
+            const Ship* target = static_cast<const Ship*>(context.effect_target.get());
+            if (target) 
+                target_shield = target->GetMeter(MeterType::METER_SHIELD)->Current();
+        }
+        if (part_attack > target_shield) {
+            int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
+            return (part_attack - target_shield) * part_shots * num_bouts;
+        } else
+            return 0.0f;
+    }
+}
+
+
+float Ship::TotalWeaponsFighterDamage(bool include_fighters) const {
+    // sum up all individual weapons' attack strengths
+    float total_shots = 0.0f;
+    auto all_weapons_shots = AllWeaponsFighterDamage(include_fighters);
+    for (float shots : all_weapons_shots)
+        total_shots += shots;
+    return total_shots;
+}
+
+float Ship::TotalWeaponsShipDamage(float shield_DR, bool include_fighters) const {
+    // sum up all individual weapons' attack strengths
+    float total_attack = 0.0f;
+    auto all_weapons_damage = AllWeaponsShipDamage(shield_DR, include_fighters);
+    for (float attack : all_weapons_damage)
+        total_attack += attack;
+    return total_attack;
 }
 
 std::vector<float> Ship::AllWeaponsFighterDamage(bool include_fighters) const {
