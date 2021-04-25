@@ -4,6 +4,7 @@
 #include "../util/Logger.h"
 #include "../util/GameRules.h"
 #include "../universe/Building.h"
+#include "../universe/Condition.h"
 #include "../universe/Effect.h"
 #include "../universe/Planet.h"
 #include "../universe/PopCenter.h"
@@ -721,13 +722,29 @@ namespace {
     };
 
     /** Populate fighter state quantities and damages for each combat round until @p limit_to_bout */
-    std::map<int, FighterBoutInfo> ResolveFighterBouts(int bay_capacity, int current_docked,
+    std::map<int, FighterBoutInfo> ResolveFighterBouts(const std::shared_ptr<Ship> ship, const Condition::Condition* combat_targets,
+                                                       int bay_capacity, int current_docked,
                                                        float fighter_damage, int limit_to_bout = -1)
     {
+        // FIXME this should be moved to combat probably
         std::map<int, FighterBoutInfo> retval;
         const int NUM_BOUTS = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
         int target_bout = limit_to_bout < 1 ? NUM_BOUTS : limit_to_bout;
+
+        // FIXME duplicates code from Ship.cpp
+        //auto target = std::make_shared<Fighter>();
+        // XXX DesignID valid?
+        auto target = std::make_shared<Ship>(ALL_EMPIRES, ship->DesignID(), "SP_HUMAN");
+        // target needs to have an ID != -1 to be visible, stealth should be low enough
+        // structure must be higher than zero to be valid target
+        target->SetID(-1000000); // XXX magic number AutoresolveInfo.next_fighter_id starts at -1000001 counting down
+        target->GetMeter(MeterType::METER_STRUCTURE)->Set(100.0f, 100.0f);
+        target->GetMeter(MeterType::METER_MAX_STRUCTURE)->Set(100.0f, 100.0f);
+        GetUniverse().SetEmpireObjectVisibility(ship->Owner(), target->ID(), Visibility::VIS_FULL_VISIBILITY);
+        ScriptingContext context(ship, target);
+
         for (int bout = 1; bout <= target_bout; ++bout) {
+            context.combat_bout = bout;
             // init current fighters
             if (bout == 1) {
                 retval[bout].qty.docked = current_docked;
@@ -740,7 +757,11 @@ namespace {
                 retval[bout].total_damage = retval[bout - 1].total_damage;
             }
             // calc damage this bout, apply to total
-            retval[bout].damage = retval[bout].qty.attacking * fighter_damage;
+            int shots_this_bout = retval[bout].qty.attacking;
+            if (combat_targets && !combat_targets->Eval(context, context.effect_target)) {
+                shots_this_bout = 0;
+            }
+            retval[bout].damage = shots_this_bout * fighter_damage;
             retval[bout].total_damage += retval[bout].damage;
             // launch fighters
             if (bout < NUM_BOUTS) {
@@ -791,7 +812,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     int hangar_current_fighters = 0;
     int hangar_total_capacity = 0;
     int bay_total_capacity = 0;
-
+    const Condition::Condition* combat_targets = nullptr;
     // populate values from hangars and bays
     for (std::string part_name : parts) {
         const ShipPart* part = GetShipPart(part_name);
@@ -810,6 +831,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         } else if (part_class == ShipPartClass::PC_FIGHTER_HANGAR) {
             if (hangar_part.first.empty()) {
                 hangar_part.first = part_name;
+                combat_targets = part->CombatTargets();
             } else if (hangar_part.first != part_name) {
                 ErrorLogger() << "Ship " << ship->ID() << "contains different hangar parts: "
                               << hangar_part.first << ", " << part_name;
@@ -860,7 +882,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     if (!m_show_all_bouts) {
         // Show damage for first wave (2nd combat round)
         std::map<int, FighterBoutInfo> bout_info = ResolveFighterBouts(
-            bay_total_capacity, hangar_current_fighters, fighter_damage, 2);
+            ship, combat_targets, bay_total_capacity, hangar_current_fighters, fighter_damage, 2);
         FighterBoutInfo first_wave = bout_info.rbegin()->second;
         GG::Clr highlight_clr = bout_info[1].qty.launched < bay_total_capacity ? HANGAR_COLOR : BAY_COLOR;
         std::string launch_text = ColouredInt(first_wave.qty.attacking, false, highlight_clr);
@@ -923,7 +945,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         // TODO Add list of effects on hangar(fighter) damage
 
         std::map<int, FighterBoutInfo> bout_info = ResolveFighterBouts(
-            bay_total_capacity, hangar_current_fighters, fighter_damage);
+            ship, combat_targets, bay_total_capacity, hangar_current_fighters, fighter_damage);
         const FighterBoutInfo& last_bout = bout_info.rbegin()->second;
 
         // damage summary text
