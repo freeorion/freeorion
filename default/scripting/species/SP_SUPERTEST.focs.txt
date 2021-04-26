@@ -17,7 +17,7 @@ Species
     ]
 
     likes = ["FOCUS_PROTECTION" "SPARK_FOSSILS_SPECIAL" "SUCCULENT_BARNACLES_SPECIAL"]
-    dislikes = ["FOCUS_GRWOTH"]
+    dislikes = ["FOCUS_GROWTH" "BLD_CULTURE_ARCHIVES" "BLD_CULTURE_LIBRARY" ]
 
     effectsgroups = [
         [[GREAT_INDUSTRY]]
