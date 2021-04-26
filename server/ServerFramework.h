@@ -1,7 +1,7 @@
 #ifndef _ServerFramework_h_
 #define _ServerFramework_h_
 
-#include "../python/CommonFramework.h"
+#include "../python/PythonBase.h"
 #include "../util/MultiplayerCommon.h"
 
 #include <boost/circular_buffer.hpp>

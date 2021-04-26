@@ -1,6 +1,7 @@
 #include "AppInterface.h"
 
 #include "../parse/Parse.h"
+#include "../parse/PythonParser.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Government.h"
 #include "../universe/BuildingType.h"
@@ -23,7 +24,7 @@
 #include <future>
 #include <stdexcept>
 
-extern template TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const boost::filesystem::path& path);
+extern template TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const boost::filesystem::path& path);
 
 IApp*  IApp::s_app = nullptr;
 
@@ -50,7 +51,7 @@ int IApp::MAX_AI_PLAYERS() {
     return max_number_AIs;
 }
 
-void IApp::StartBackgroundParsing(std::promise<void>&& barrier) {
+void IApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>&& barrier) {
     namespace fs = boost::filesystem;
 
     const auto& rdir = GetResourceDir();
@@ -118,13 +119,13 @@ void IApp::StartBackgroundParsing(std::promise<void>&& barrier) {
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/monster_designs").string();
 
-    if (IsExistingFile(rdir / "scripting/game_rules.focs.txt"))
-        GetGameRules().Add(Pending::StartAsyncParsing(parse::game_rules, rdir / "scripting/game_rules.focs.txt"));
+    if (IsExistingFile(rdir / "scripting/game_rules.focs.py"))
+        GetGameRules().Add(Pending::ParseSynchronously(parse::game_rules, python, rdir / "scripting/game_rules.focs.py"));
     else
-        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/game_rules.focs.txt").string();
+        ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/game_rules.focs.py").string();
 
     if (IsExistingDir(rdir / "scripting/techs"))
-        GetTechManager().SetTechs(Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, rdir / "scripting/techs"));
+        GetTechManager().SetTechs(Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, python, rdir / "scripting/techs"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/techs").string();
 

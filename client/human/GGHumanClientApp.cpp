@@ -23,6 +23,7 @@
 #include "../../util/GameRules.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Process.h"
+#include "../../util/PythonCommon.h"
 #include "../../util/SaveGamePreviewUtils.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
@@ -33,6 +34,7 @@
 #include "../../Empire/Empire.h"
 #include "../../combat/CombatLogManager.h"
 #include "../../parse/Parse.h"
+#include "../../parse/PythonParser.h"
 
 #include <GG/BrowseInfoWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
@@ -355,7 +357,9 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
     std::future<void> barrier_future = barrier.get_future();
     std::thread background([this] (auto b) {
         DebugLogger() << "Started background parser thread";
-        StartBackgroundParsing(std::move(b));
+        PythonCommon python;
+        python.Initialize();
+        StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"), std::move(b));
     }, std::move(barrier));
     background.detach();
     barrier_future.wait();
@@ -1549,7 +1553,9 @@ void GGHumanClientApp::HandleResoureDirChange() {
         std::future<void> barrier_future = barrier.get_future();
         std::thread background([this] (auto b) {
             DebugLogger() << "Started background parser thread";
-            StartBackgroundParsing(std::move(b));
+            PythonCommon python;
+            python.Initialize();
+            StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"), std::move(b));
         }, std::move(barrier));
         background.detach();
         barrier_future.wait();

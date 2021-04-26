@@ -1,241 +1,109 @@
-#include "Parse.h"
-
-#include "ParseImpl.h"
-
 #include "../util/GameRules.h"
 
-#include <boost/spirit/include/phoenix.hpp>
+#include "PythonParserImpl.h"
 
+#include <boost/python/args.hpp>
+#include <boost/python/extract.hpp>
+#include <boost/python/object_core.hpp>
+#include <boost/python/raw_function.hpp>
+#include <boost/python/object_fwd.hpp>
+#include <boost/python/str.hpp>
+#include <boost/python/exec.hpp>
+#include <boost/python/import.hpp>
+#include <boost/python/stl_iterator.hpp>
+#include <functional>
+#include <string>
 
-#define DEBUG_PARSERS 0
+using namespace boost::python;
 
-#if DEBUG_PARSERS
-namespace std {
-    inline ostream& operator<<(ostream& os, const std::map<int, int>&) { return os; 
-    inline ostream& operator<<(ostream& os, const std::map<std::string, std::map<int, int>>&) { return os; }
-}
-#endif
+struct grammar;
 
-namespace {
-    struct insert_rule_ {
-        typedef void result_type;
+object insert_rule_(const grammar& g,
+                    GameRules& game_rules,
+                    const tuple& args,
+                    const dict& kw);
 
-        void operator()(GameRules& game_rules, std::string& name,
-                        std::string& desc, std::string& category,
-                        bool default_value) const
-        {
-            TraceLogger() << "Adding Boolean game rule with name: " << name
-                          << ", desc: " << desc << ", default: " << default_value;
-            game_rules.Add<bool>(std::move(name), std::move(desc),
-                                 std::move(category), default_value, false);
-        }
+struct grammar {
+    const PythonParser& m_parser;
 
-        void operator()(GameRules& game_rules, std::string& name,
-                        std::string& desc, std::string& category,
-                        int default_value, int min, int max) const
-        {
-            TraceLogger() << "Adding Integer game rule with name: " << name
-                          << ", desc: " << desc << ", default: " << default_value
-                          << ", min: " << min << ", max: " << max;
-            game_rules.Add<int>(std::move(name), std::move(desc), std::move(category),
-                                default_value, false, RangedValidator<int>(min, max));
-        }
+    grammar(const PythonParser& parser):m_parser(parser) {
+    }
 
-        void operator()(GameRules& game_rules, std::string& name,
-                        std::string& desc, std::string& category,
-                        double default_value, double min, double max) const
-        {
-            TraceLogger() << "Adding Double game rule with name: " << name
-                          << ", desc: " << desc << ", default: " << default_value
-                          << ", min: " << min << ", max: " << max;
-            game_rules.Add<double>(std::move(name), std::move(desc), std::move(category),
-                                   default_value, false, RangedValidator<double>(min, max));
-        }
+    boost::python::dict operator()(GameRules& game_rules) const {
+        boost::python::dict globals(import("builtins").attr("__dict__"));
+        std::function<object(const tuple&, const dict&)> f = [this, &game_rules](const tuple& args,
+                  const dict& kw) { return insert_rule_(*this, game_rules, args, kw); };
+        globals["GameRule"] = raw_function(f);
+        return globals;
+    }
+};
 
-        void operator()(GameRules& game_rules, std::string& name,
-                        std::string& desc, std::string& category,
-                        std::string& default_value,
-                        std::set<std::string>& allowed) const
-        {
-            TraceLogger() << "Adding String game rule with name: " << name
-                          << ", desc: " << desc << ", default: \"" << default_value
-                          << "\", allowed: " << [&allowed](){
+object insert_rule_(const grammar& g,
+                    GameRules& game_rules,
+                    const tuple& args,
+                    const dict& kw)
+{
+    auto name = extract<std::string>(kw["name"])();
+    auto desc = extract<std::string>(kw["description"])();
+    auto category = extract<std::string>(kw["category"])();
+    auto type_ = kw["type"];
+
+    if (type_ == g.m_parser.type_int) {
+        int default_value = extract<int>(kw["default"])();
+        int min = extract<int>(kw["min"])();
+        int max = extract<int>(kw["max"])();
+        DebugLogger() << "Adding Integer game rule with name: " << name
+                      << ", desc: " << desc << ", default: " << default_value
+                      << ", min: " << min << ", max: " << max;
+        game_rules.Add<int>(std::move(name), std::move(desc), std::move(category),
+                            default_value, false, RangedValidator<int>(min, max));
+    } else if (type_ == g.m_parser.type_float) {
+        double default_value = extract<double>(kw["default"])();
+        double min = extract<double>(kw["min"])();
+        double max = extract<double>(kw["max"])();
+        DebugLogger() << "Adding Double game rule with name: " << name
+                      << ", desc: " << desc << ", default: " << default_value
+                      << ", min: " << min << ", max: " << max;
+        game_rules.Add<double>(std::move(name), std::move(desc), std::move(category),
+                               default_value, false, RangedValidator<double>(min, max));
+    } else if (type_ == g.m_parser.type_bool) {
+        bool default_value = extract<bool>(kw["default"])();
+        DebugLogger() << "Adding Boolean game rule with name: " << name
+                      << ", desc: " << desc << ", default: " << default_value;
+        game_rules.Add<bool>(std::move(name), std::move(desc),
+                             std::move(category), default_value, false);
+    } else if (type_ == g.m_parser.type_str) {
+        std::string default_value = extract<std::string>(kw["default"])();
+        std::set<std::string> allowed = std::set<std::string>(stl_input_iterator<std::string>(kw["allowed"]),
+                                                              stl_input_iterator<std::string>());
+        DebugLogger() << "Adding String game rule with name: " << name
+                      << ", desc: " << desc << ", default: \"" << default_value
+                      << "\", allowed: " << [&allowed](){
                 std::string retval;
-                    for (const auto& e : allowed)
-                        retval += "\"" + e + "\", ";
+                for (const auto& e : allowed)
+                    retval += "\"" + e + "\", ";
                 return retval;
             }();
 
-            if (allowed.empty()) {
-                game_rules.Add<std::string>(std::move(name), std::move(desc), std::move(category),
-                                            std::move(default_value), false);
-            } else {
-                game_rules.Add<std::string>(std::move(name), std::move(desc), std::move(category),
-                                            std::move(default_value), false,
-                                            DiscreteValidator<std::string>(std::move(allowed)));
-            }
+        if (allowed.empty()) {
+            game_rules.Add<std::string>(std::move(name), std::move(desc), std::move(category),
+                                        std::move(default_value), false);
+        } else {
+            game_rules.Add<std::string>(std::move(name), std::move(desc), std::move(category),
+                                        std::move(default_value), false,
+                                        DiscreteValidator<std::string>(std::move(allowed)));
         }
-    };
-    const boost::phoenix::function<insert_rule_> add_rule;
+    } else {
+        ErrorLogger() << "Unsupported type for rule " << name << ": " << extract<std::string>(str(type_))();
+    }
 
-    using start_rule_payload = GameRules;
-    using start_rule_signature = void(start_rule_payload&);
-
-    struct grammar : public parse::detail::grammar<start_rule_signature> {
-        grammar(const parse::lexer& tok,
-                const std::string& filename,
-                const parse::text_iterator& first, const parse::text_iterator& last) :
-            grammar::base_type(start),
-            one_or_more_string_tokens(tok),
-            double_rule(tok),
-            int_rule(tok)
-        {
-            namespace phoenix = boost::phoenix;
-            namespace qi = boost::spirit::qi;
-
-            using phoenix::insert;
-            using phoenix::clear;
-
-            qi::_1_type _1;
-            qi::_2_type _2;
-            qi::_3_type _3;
-            qi::_4_type _4;
-            qi::_a_type _a;
-            qi::_b_type _b;
-            qi::_c_type _c;
-            qi::_d_type _d;
-            qi::_e_type _e;
-            qi::_f_type _f;
-            qi::_g_type _g;
-            qi::_h_type _h;
-            qi::_i_type _i;
-            qi::_j_type _j;
-            qi::_r1_type _r1;
-            qi::eps_type eps;
-            boost::spirit::qi::repeat_type repeat_;
-
-            game_rule_bool
-                =   (tok.GameRule_
-                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.type_) >>         tok.Toggle_
-                    )
-                > ((label(tok.default_)
-                    >   (
-                            tok.On_ [ _i = true ]
-                        |   tok.Off_ [ _i = false ]
-                        )
-                   ) | eps [ _i = false ]
-                  )
-                   [ add_rule(_r1, _a, _b, _j, _i) ]
-                ;
-
-            game_rule_int
-                =   (tok.GameRule_
-                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.type_) >>         tok.Integer_
-                    )
-                >   label(tok.default_) >       int_rule [ _f = _1 ]
-                >   label(tok.min_) >           int_rule [ _g = _1 ]
-                >   label(tok.max_) >           int_rule
-                    [ add_rule(_r1, _a, _b, _j, _f, _g, _1 ) ]
-                ;
-
-            game_rule_double
-                =   (tok.GameRule_
-                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.type_) >>         tok.Real_
-                    )
-                >   label(tok.default_) >       double_rule [ _c = _1 ]
-                >   label(tok.min_) >           double_rule [ _d = _1 ]
-                >   label(tok.max_) >           double_rule
-                    [ add_rule(_r1, _a, _b, _j, _c, _d, _1 ) ]
-                ;
-
-            game_rule_string
-                =   (tok.GameRule_
-                    >> (label(tok.name_) >          tok.string [ _a = _1 ])
-                    >> (label(tok.description_) >   tok.string [ _b = _1 ])
-                    >> (label(tok.category_) >      tok.string [ _j = _1 ])
-                    >>  label(tok.type_) >>         tok.String_
-                    )
-                >   label(tok.default_) >       tok.string [ _e = _1 ]
-                >  -( label(tok.allowed_) > one_or_more_string_tokens [_h = _1])
-                  [ add_rule(_r1, _a, _b, _j, _e, _h) ]
-                ;
-
-            all_game_rules
-                %=  game_rule_bool(_r1)
-                |   game_rule_int(_r1)
-                |   game_rule_double(_r1)
-                |   game_rule_string(_r1)
-                ;
-
-            start
-                =  *(all_game_rules(_r1))
-                ;
-
-            game_rule_bool.name("Boolean GameRule");
-            game_rule_int.name("Integer GameRule");
-            game_rule_double.name("Double GameRule");
-            game_rule_string.name("String GameRule");
-            game_rule_string_list.name("String List GameRule");
-            all_game_rules.name("GameRule");
-            start.name("GameRules");
-
-#if DEBUG_PARSERS
-            debug(game_rule_bool);
-            debug(game_rule_int);
-            debug(game_rule_double);
-            debug(game_rule_string);
-            debug(game_rule_string_list);
-#endif
-
-            qi::on_error<qi::fail>(start, parse::report_error(filename, first, last, _1, _2, _3, _4));
-        }
-
-        typedef parse::detail::rule<
-            void (GameRules&),
-            boost::spirit::qi::locals<
-                std::string,            // _a : name
-                std::string,            // _b : description
-                double,                 // _c : default double
-                double,                 // _d : min int (max passed as immediate)
-                std::string,            // _e : default string
-                int,                    // _f : default int
-                int,                    // _g : min int (max passed as immediate)
-                std::set<std::string>,  // _h : default string list
-                bool,                   // _i : allowed string (list) entries
-                std::string             // _j : category
-            >
-        > game_rule_rule;
-
-        using start_rule = parse::detail::rule<start_rule_signature>;
-
-        parse::detail::Labeller label;
-        parse::detail::single_or_repeated_string<std::set<std::string>> one_or_more_string_tokens;
-        parse::detail::double_grammar double_rule;
-        parse::detail::int_grammar int_rule;
-        game_rule_rule  game_rule_bool;
-        game_rule_rule  game_rule_int;
-        game_rule_rule  game_rule_double;
-        game_rule_rule  game_rule_string;
-        game_rule_rule  game_rule_string_list;
-        game_rule_rule  all_game_rules;
-        start_rule      start;
-    };
+    return object();
 }
 
 namespace parse {
-    GameRules game_rules(const boost::filesystem::path& path) {
+    GameRules game_rules(const PythonParser& parser, const boost::filesystem::path& path) {
         GameRules game_rules;
-        const lexer lexer;
-        /*auto success =*/ detail::parse_file<grammar, GameRules>(lexer, path, game_rules);
+        /*auto success =*/ py_parse::detail::parse_file<grammar, GameRules>(parser, path, grammar(parser), game_rules);
         return game_rules;
     }
 }

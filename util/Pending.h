@@ -54,8 +54,8 @@ namespace Pending {
                 DebugLogger() << "Waiting for parse of \"" << pending.filename << "\" to complete.";
 
             if (status == std::future_status::deferred) {
-                ErrorLogger() << "Pending parse is unable to handle deferred future.";
-                throw "deferred future not handled";
+                DebugLogger() << "Pending parse awaiting deferred future.";
+                pending.pending->wait();
             }
             DebugLogger() << "WaitForPendingUnlocked another wait_for round";
         } while (status != std::future_status::ready);
@@ -126,6 +126,17 @@ namespace Pending {
     {
         return Pending<decltype(parser(path))>(
             std::async(std::launch::async, parser, path), path.filename().string());
+    }
+
+    /** Return a Pending<T> constructed with \p parser, \p arg1, and \p path*/
+    template <typename Func, typename Arg1>
+    auto ParseSynchronously(const Func& parser, const Arg1& arg1, const boost::filesystem::path& path)
+        -> Pending<decltype(parser(arg1, path))>
+    {
+        auto result = parser(arg1, path);
+        auto promise = std::promise<decltype(parser(arg1, path))>();
+        promise.set_value(std::move(result));
+        return Pending<decltype(parser(arg1, path))>(promise.get_future(), path.filename().string());
     }
 
     /** Helper struct for use with std::async. operator() evaluates \a _parser

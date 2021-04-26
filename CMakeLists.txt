@@ -256,13 +256,11 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         thread
     REQUIRED)
 
-if(BUILD_AI OR BUILD_SERVER)
-    find_package(Boost OPTIONAL_COMPONENTS python${Boost_PYTHON_SUFFIX})
-    if(NOT Boost_PYTHON${Boost_PYTHON_SUFFIX}_FOUND)
-        # try some strange boost installations
-        string(SUBSTRING "${Boost_PYTHON_SUFFIX}" 0 1 Boost_PYTHON_SUFFIX)
-        find_package(Boost COMPONENTS python${Boost_PYTHON_SUFFIX} REQUIRED)
-    endif()
+find_package(Boost OPTIONAL_COMPONENTS python${Boost_PYTHON_SUFFIX})
+if(NOT Boost_PYTHON${Boost_PYTHON_SUFFIX}_FOUND)
+    # try some strange boost installations
+    string(SUBSTRING "${Boost_PYTHON_SUFFIX}" 0 1 Boost_PYTHON_SUFFIX)
+    find_package(Boost COMPONENTS python${Boost_PYTHON_SUFFIX} REQUIRED)
 endif()
 
 find_package(ZLIB REQUIRED)
@@ -406,6 +404,7 @@ target_link_libraries(freeorioncommon
         Boost::locale
         Boost::log_setup
         Boost::log
+        Boost::python${Boost_PYTHON_SUFFIX}
         Boost::thread
         Boost::serialization
         ZLIB::ZLIB
@@ -442,6 +441,7 @@ target_compile_definitions(freeorionparseobj
 target_include_directories(freeorionparseobj
     PUBLIC
         $<TARGET_PROPERTY:Boost::boost,INTERFACE_INCLUDE_DIRECTORIES>
+        ${PYTHON_INCLUDE_PATH}
 )
 
 set_property(TARGET freeorionparseobj
@@ -533,12 +533,11 @@ if(BUILD_SERVER)
         PRIVATE
             -DFREEORION_BUILD_SERVER
     )
-    
+
     target_link_libraries(freeoriond
         PRIVATE
             freeorioncommon
             freeorionparse
-            Boost::python${Boost_PYTHON_SUFFIX}
     )
     
     target_dependencies_copy_to_build(freeoriond)
@@ -561,9 +560,9 @@ if(BUILD_AI)
     )
     
     target_link_libraries(freeorionca
-        freeorioncommon
-        freeorionparse
-        Boost::python${Boost_PYTHON_SUFFIX}
+        PRIVATE
+            freeorioncommon
+            freeorionparse
     )
     
     target_dependencies_copy_to_build(freeorionca)
