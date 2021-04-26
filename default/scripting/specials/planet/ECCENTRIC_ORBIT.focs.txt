@@ -9,7 +9,7 @@ Special
         Not Capital
         Not Planet type = [Asteroids GasGiant]
     ]
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = Source
             activation = And [
@@ -21,6 +21,10 @@ Special
                 SetTargetResearch value = Value + (NamedReal name = "ECCENTRIC_ORBIT_TARGET_RESEARCH_FLAT" value = 3)
                 SetMaxSupply value = Value + (NamedReal name = "ECCENTRIC_ORBIT_MAX_SUPPLY_FLAT" value = -2)
             ]
+        
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
+    ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/specials/specials.macros.txt"

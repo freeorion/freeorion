@@ -19,9 +19,10 @@ Special
         [[STANDARD_INDUSTRY_BOOST]]
         [[POPULATION_BOOST_ROBOTIC(SUPERCONDUCTOR)]]
         [[CHANCE_OF_GUARD_1]]
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/superconductor.png"
 
 #include "growth.macros"
-
 #include "../monster_guard.macros"
+#include "/scripting/specials/specials.macros.txt"

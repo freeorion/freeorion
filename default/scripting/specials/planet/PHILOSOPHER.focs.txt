@@ -48,7 +48,10 @@ Special
         EffectsGroup
             scope = Source
             effects = SetTargetConstruction value = Value + (NamedReal name = "PHILOSOPHER_TARGET_CONSTRUCTION_FLAT" value = (-20))
+            
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/philospher-planet.png"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/specials/specials.macros.txt"

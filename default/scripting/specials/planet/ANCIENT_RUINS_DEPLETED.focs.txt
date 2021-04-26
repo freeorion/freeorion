@@ -15,8 +15,10 @@ Special
             ]
             effects = SetTargetResearch value = Value + Target.Population
                         * NamedRealLookup name = "ANCIENT_RUINS_TARGET_RESEARCH_PERPOP"
+                        
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/ancient_ruins_excavated.png"
 
 #include "/scripting/common/base_prod.macros"
-
+#include "/scripting/specials/specials.macros.txt"

@@ -27,9 +27,12 @@ Special
             effects = SetTargetPopulation value = Value + Target.HabitableSize
                           * (NamedReal name = "TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE" value = (-5))
                           accountinglabel = "TEMPORAL_ANOMALY_SPECIAL"
+                          
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/temporal_anomaly.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/specials/specials.macros.txt"
 

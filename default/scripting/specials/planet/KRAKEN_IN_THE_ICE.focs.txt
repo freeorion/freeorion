@@ -15,5 +15,10 @@ Special
             ]
         ]
     ]
+    effectsgroups = [
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
+    ]
 
     graphic = "icons/monsters/kraken-5.png"
+
+#include "/scripting/specials/specials.macros.txt"

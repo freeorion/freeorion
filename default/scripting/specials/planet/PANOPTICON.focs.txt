@@ -53,5 +53,9 @@ Special
                 (GalaxyMonsterFrequency >= 1)
             ]
             effects = CreateShip designname = "SM_GUARD_2"
-        ]
-        graphic = "icons/meter/detection.png"
+        
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
+    ]
+    graphic = "icons/meter/detection.png"
+
+#include "/scripting/specials/specials.macros.txt"

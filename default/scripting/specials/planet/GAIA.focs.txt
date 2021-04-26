@@ -66,7 +66,10 @@ Special
             activation = Turn high = 0
             stackinggroup = "GAIAN_STACK"
             effects = Destroy
+            
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/gaia.png"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/specials/specials.macros.txt"

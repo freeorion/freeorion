@@ -25,5 +25,9 @@ Special
             ]
             stackinggroup = "RESONANT_MOON_STACK"
             effects = SetStealth value = Value + 10
+            
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/resonant_moon.png"
+
+#include "/scripting/specials/specials.macros.txt"

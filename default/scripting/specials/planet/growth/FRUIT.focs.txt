@@ -18,9 +18,10 @@ Special
     effectsgroups = [
         [[POPULATION_BOOST_ORGANIC(FRUIT)]]
         [[CHANCE_OF_GUARD_1]]
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/fruit.png"
 
 #include "growth.macros"
-
 #include "../monster_guard.macros"
+#include "/scripting/specials/specials.macros.txt"

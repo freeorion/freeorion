@@ -42,7 +42,10 @@ Special
                 Population low = 0.0001
             ]
             effects = SetTargetHappiness value = Value + 1
+        
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/worldtree.png"
 
 #include "/scripting/common/priorities.macros"
+#include "/scripting/specials/specials.macros.txt"
