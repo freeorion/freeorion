@@ -660,7 +660,7 @@ SM_DRONE  # translated
 Drone
 
 SM_DRONE_DESC
-Outils d'une guerre oubliée depuis longtemps, les Drones remplissent encore aujourd'hui l'objectif qui leur fut initialement fixé : attaquer systématiquement tout astronef à leur portée.
+Outils d'une guerre oubliée depuis longtemps, les Drones remplissent encore aujourd'hui l'objectif qui leur fut initialement fixé: attaquer systématiquement tout astronef à leur portée.
 
 SM_DRONE_FACTORY
 Drone Usine
@@ -1100,10 +1100,10 @@ RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC
 Les technologies coûtent seulement 1 PR et 1 tour de recherche.
 
 RULE_CHEAP_POLICIES
-Stratégies gratuites
+Politiques gratuites
 
 RULE_CHEAP_POLICIES_DESC
-Appliquer une stratégie coûte seulement 1 PI.
+Appliquer une politique coûte seulement 1 PI.
 
 RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION
 Structures gratuites et immédiates
@@ -2195,6 +2195,9 @@ Port réseau à utiliser pour la découverte du serveur.
 OPTIONS_DB_NETWORK_MESSAGE_PORT
 Port réseau à utiliser pour la communication client-serveur.
 
+OPTIONS_DB_FREEORIOND_PATH
+Chemin vers l'exécutable du serveur freeoriond.
+
 
 ##
 ## Option sections
@@ -3254,6 +3257,9 @@ Fichiers de sauvegarde Serveur
 OPTIONS_FOLDER_CONFIG_LOG
 Fichiers Configuration et Journal
 
+OPTIONS_SERVER_EXE
+Fichier binaire Serveur
+
 OPTIONS_LANGUAGE_FILE
 Fichiers de langue
 
@@ -3481,7 +3487,7 @@ MAP_BTN_DESIGN_DESC
 ''''''
 
 MAP_BTN_GOVERNMENT
-Stratégies Gouvernementales
+Politiques Gouvernementales
 
 MAP_BTN_GOVERNMENT_DESC
 ''''''
@@ -3694,7 +3700,7 @@ PL_TYPE_SIZE
 # %3% suitability of the planet for a concrete species (adequate, hostile, ...).
 # %4% species name for which suitability applies (Human, Trith, ...).
 PL_TYPE_SIZE_ENV
-%1% %2% (%4%: %3%)
+%1% %2% (%4% : %3%)
 
 PL_NO_VISIBILITY
 La planète n'est pas visible actuellement.
@@ -3839,7 +3845,7 @@ Espèce <i>%2%</i>
 # %1% name of the adopting empire.
 # %2% name of policy
 TT_POLICY
-%1% Stratégie <i>%2%</i>
+%1% Politique <i>%2%</i>
 
 TT_FIGHTER_LAUNCH
 Lancement
@@ -3857,7 +3863,7 @@ TT_N_OF_N
 
 # %1% combat round
 TT_COMBAT_ROUND
-Passe %1%:
+Passe %1% :
 
 TT_UNKNOWN
 Inconnu
@@ -4331,10 +4337,10 @@ Description
 ##
 
 POLICY_LOCKED
-Stratégie indisponible
+Politique indisponible
 
 POLICY_ADOPTABLE_COST
-Stratégie applicable pour %1% PI
+Politique applicable pour %1% PI
 
 
 ##
@@ -4467,12 +4473,12 @@ Fenêtre Production
 
 PRODUCTION_WINDOW_ARTICLE_TEXT
 '''La Fenêtre Production est l'interface principale permettant l'utilisation des Points de Production (PP).
-Il est possible d'y accéder :
+Il est possible d'y accéder:
 *  Par une touche de raccourci (défaut: CTRL + P)
 *  En double-cliquant sur une planète
 *  En cliquant sur l'une des icônes Production en haut de la  [[MAP_WINDOW_ARTICLE_TITLE]] <img src="icons/buttons/production.png"></img>
 
-La Fenêtre Production est composée de différents panneaux :
+La Fenêtre Production est composée de différents panneaux:
 *  Récapitulation de Production
 *  Projets de Production
 *  File d'Attente de Production
@@ -4661,16 +4667,16 @@ DUPLICATE
 Dupliquer
 
 PRODUCTION_WND_TOOLTIP_PROD_COST
-Coût production: %1%
+Coût production : %1%
 
 PRODUCTION_WND_TOOLTIP_PROD_TIME_MINIMUM
-Tours minimum production: %1%
+Tours minimum production : %1%
 
 PRODUCTION_WND_TOOLTIP_LOCATION_DEPENDENT
 Dépend du lieu de production
 
 PRODUCTION_WND_TOOLTIP_PROD_TIME
-Tours de production entièrement financée sur %2%: %1%
+Tours de production entièrement financée sur %2% : %1%
 
 NO_PRODUCTION_HERE_CANT_PRODUCE
 Production insuffisante sur %1%
@@ -4925,7 +4931,7 @@ COLONIES_COUNT  # translated
 Colonies
 
 POLICIES_ADOPTED
-Stratégies appliquées
+Politiques appliquées
 
 BATTLESHIP_COUNT
 Astronefs armés
@@ -4990,7 +4996,7 @@ ENC_SPECIES_PLANET_TYPE_SUITABILITY  # translated
 
 # %1% name of the planet.
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
-'''%1% est propice à la colonisation par les espèces suivantes :
+'''%1% est propice à la colonisation par les espèces suivantes:
 
 '''
 
@@ -5083,7 +5089,7 @@ ENC_TECH_DESC
 [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]] permet de débloquer de nouveaux effets, indicateurs planétaires améliorés, structures, ou équipements d'astronef, chacun d'entre eux appartenant à l'une des catégories ci-dessous.
 
 ENC_POLICY
-Stratégies
+Politiques
 
 ENC_POLICY_DESC
 Effets d'amélioration ou situationnels pouvant être appliqués par les empires.
@@ -5161,7 +5167,7 @@ RESEARCHED_TECHS
 '''Technologies recherchées : '''
 
 ISSUED_ORDERS
-'''Ordres émis: '''
+'''Ordres émis : '''
 
 ORDER_UNEXECUTED
 ''' - Non-exécuté'''
@@ -5191,10 +5197,10 @@ ORDER_FOCUS_CHANGE
 Changement Focus
 
 ORDER_POLICY_ADOPT
-Appliquer Stratégie
+Appliquer Politique
 
 ORDER_POLICY_ABANDON
-Abandonner Stratégie
+Abandonner Politique
 
 ORDER_RESEARCH
 Recherche
@@ -5227,10 +5233,10 @@ NO_TECHS_RESEARCHED
 Aucune Technologie recherchée
 
 ADOPTED_POLICIES
-'''Stratégies appliquées: '''
+'''Politiques appliquées : '''
 
 NO_POLICIES_ADOPTED
-Aucune Stratégie appliquée
+Aucune Politique appliquée
 
 AVAILABLE_PARTS
 '''Équipements disponibles : '''
@@ -5444,8 +5450,8 @@ Sur %1%, le coût et le temps sont de %2% %3% sur %4% tours.'''
 ENC_SHIP_DESIGN_DESCRIPTION_BASE_STR
 '''%1%
 
-Coque: %2%
-Équipement: %3%
+Coque : %2%
+Équipement : %3%
 
 '''
 
@@ -5472,7 +5478,7 @@ Coque: %2%
 # %20% mock average attack strength/pp
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
-Pour [[encyclopedia ENC_SPECIES]]: %1%
+Pour [[encyclopedia ENC_SPECIES]] : %1%
 Total [[encyclopedia DAMAGE_TITLE]] : %2%    Tirs [[PC_DIRECT_WEAPON]] : %3%
 [[metertype METER_STRUCTURE]] : %4%    [[metertype METER_SHIELD]] : %5%
 [[metertype METER_DETECTION]] : %6%    [[metertype METER_STEALTH]] : %7%
@@ -5514,12 +5520,12 @@ Technologie %1% -
 
 # %1% category of the policy.
 ENC_POLICY_DETAIL_TYPE_STR
-Stratégie Domaine %1% -
+Politique Domaine %1% -
 
 # %1% object, technology or other content that should be looked up in the
 #     encyclopedia.
 ENC_LOOKUP
-Encyclopédie: rechercher %1%
+Consulter Encyclopédie : %1%
 
 # %1% link to the system, where the combat occured.
 # %2% turn when the combat occured.
@@ -5540,7 +5546,7 @@ ENC_COMBAT_ATTACK_STR
 # %3% damage consumed by the target shields.
 # %4% damage done to the target.
 ENC_COMBAT_ATTACK_DETAILS
-Armement: %1%  Puissance: %2%  Boucliers: %3%  Dommages: %4%
+Armement : %1%  Puissance : %2%  Boucliers : %3%  Dommages : %4%
 
 ENC_COMBAT_SHIELD_PIERCED
 percés
@@ -5837,7 +5843,7 @@ DIPLOMACY_TITLE
 Diplomatie
 
 DIPLOMACY_TEXT
-Liste des politiques de Diplomatie :
+Liste des options de Diplomatie:
 
 METABOLISM_TITLE
 Métabolisme
@@ -5866,25 +5872,25 @@ PLANET_MANAGEMENT_TITLE
 Gestion Planétaire
 
 PLANET_MANAGEMENT_TEXT
-Liste non-exhaustive des aspects de Gestion Planétaire :
+Liste non-exhaustive des aspects de Gestion Planétaire:
 
 PLANETARY_FOCUS_TITLE
 Focus Planétaire
 
 PLANETARY_FOCUS_TEXT
-Liste non-exhaustive des réglages de Focus Planétaire :
+Liste non-exhaustive des réglages de Focus Planétaire:
 
 SHIP_MANAGEMENT_TITLE
 Gestion des Astronefs
 
 SHIP_MANAGEMENT_TEXT
-Liste non-exhaustive des caractéristiques de Gestion des Astronefs :
+Liste non-exhaustive des caractéristiques de Gestion des Astronefs:
 
 SPECIES_TRAITS_TITLE
 Attributs d'Espèce
 
 SPECIES_TRAITS_TEXT
-Liste non-exhaustive des Attributs d'Espèce :
+Liste non-exhaustive des Attributs d'Espèce:
 
 SYSTEM_BLOCKADE_TITLE
 Blocus Système
@@ -6028,7 +6034,7 @@ METER_RESEARCH_VALUE_DESC
 La Projection Recherche est le niveau optimal de capacité en Recherche qu'une planète tend à approcher, compte tenu des différents facteurs influençant les ressources en Recherche. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, aux [[encyclopedia ENC_POLICY]] appliquées par l'empire, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Recherche est susceptible de fluctuer à son tour.
 
 L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie coûte 15 PR et requiert un minimum de 3 tours, seulement 5 PR par tour peuvent lui être alloués.
-Les PR sont affectés aux technologies à assimiler selon leur position dans la file d'attente : la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié : les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file. Si des PR restent non-alloués après que chaque technologie ait reçu son maximum autorisé de PR, ces PR en excédent sont automatiquement attribués à une ou plusieurs technologies déverrouillées et présentant le moins de PR nécessaires ou restants avant assimilation.
+Les PR sont affectés aux technologies à assimiler selon leur position dans la file d'attente: la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié: les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file. Si des PR restent non-alloués après que chaque technologie ait reçu son maximum autorisé de PR, ces PR en excédent sont automatiquement attribués à une ou plusieurs technologies déverrouillées et présentant le moins de PR nécessaires ou restants avant assimilation.
 
 À l'inverse de l'[[metertype METER_INDUSTRY]], la Recherche n'impose pas d'échanges matériels entre planètes et n'est donc pas dépendante des lignes d'[[metertype METER_SUPPLY]] de l'empire.'''
 
@@ -6186,7 +6192,7 @@ WAR_TITLE
 Guerre
 
 WAR_TEXT
-La Guerre est le statut diplomatique par défaut entre empires. Les astronefs armés imposeront un [[encyclopedia SYSTEM_BLOCKADE_TITLE]] envers les astronefs ennemis, bloqueront les lignes d'[[metertype METER_SUPPLY]], feront obstacle aux politiques ennemies de colonisation, et engageront le combat contre tout astronef ennemi. Les planètes ennemies peuvent être soumises à des invasions ou des bombardements.
+La Guerre est le statut diplomatique par défaut entre empires. Les astronefs armés imposeront un [[encyclopedia SYSTEM_BLOCKADE_TITLE]] envers les astronefs ennemis, bloqueront les lignes d'[[metertype METER_SUPPLY]], feront obstacle aux à la colonisation ennemie, et engageront le combat contre tout astronef ennemi. Les planètes ennemies peuvent être soumises à des invasions ou des bombardements.
 
 PEACE_TITLE
 Paix
@@ -6260,7 +6266,7 @@ INFLUENCE_FOCUS_TITLE
 Focus Influence
 
 INFLUENCE_FOCUS_TEXT
-Les planètes de l'empire en Focus Influence améliorent leur capacité d'[[metertype METER_INFLUENCE]], utilisée pour appliquer des stratégies gouvernementales et financer la maintenance des colonies.
+Les planètes de l'empire en Focus Influence améliorent leur capacité d'[[metertype METER_INFLUENCE]], utilisée pour appliquer des Politiques gouvernementales et financer la maintenance des colonies.
 
 LOGISTICS_FOCUS_TITLE
 Focus Logistique
@@ -6403,7 +6409,7 @@ ARTISTIC_SPECIES_TITLE
 Attribut Artistique
 
 ARTISTIC_SPECIES_TRAIT_TEXT
-Les espèces artistiques réalisent des travaux d'ordre artistique lorsque leur empire applique la Stratégie [[policy PLC_ARTISAN_WORKSHOPS]], laquelle génère de l'[[metertype METER_INFLUENCE]]. De plus, les autres planètes dans le même système, peuplées d'espèces artistiques et réglées sur le Focus Influence, jouiront d'une meilleure [[metertype METER_HAPPINESS]].
+Les espèces artistiques réalisent des travaux d'ordre artistique lorsque leur empire applique la Politique [[policy PLC_ARTISAN_WORKSHOPS]], laquelle génère de l'[[metertype METER_INFLUENCE]]. De plus, les autres planètes dans le même système, peuplées d'espèces artistiques et réglées sur le Focus Influence, jouiront d'une meilleure [[metertype METER_HAPPINESS]].
 
 FLEET_UPKEEP_TITLE
 Entretien des Flottes
@@ -7091,7 +7097,7 @@ SITREP_WELCOME_LABEL
 Bienvenue
 
 SITREP_SYSTEM_GOT_INCOMING_WARNING
-Dans %system%: des astronefs ennemis arrivent au prochain tour!
+Dans %system% : des astronefs ennemis arrivent au prochain tour!
 
 SITREP_SYSTEM_GOT_INCOMING_WARNING_LABEL
 Ennemis en approche
@@ -7136,10 +7142,10 @@ SITREP_TECH_UNLOCKED_LABEL
 Technologie débloquée
 
 SITREP_POLICY_UNLOCKED
-La stratégie %policy% a été débloquée et peut désormais être appliquée.
+La politique %policy% a été débloquée et peut désormais être appliquée.
 
 SITREP_POLICY_UNLOCKED_LABEL
-Stratégie débloquée
+Politique débloquée
 
 SITREP_SHIP_PART_UNLOCKED
 L'équipement %shippart% a été débloqué et peut désormais être utilisé lors de la conception de modèles d'astronef.
@@ -7406,7 +7412,7 @@ SITREP_NOVA_DETECTED_LABEL
 Supernova détectée
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
-ALERTE: il semble que %rawtext% %predefinedshipdesign% aient été repérés dans le système %system%, rôdant près de l'Avant-Poste %species%!
+ALERTE : il semble que %rawtext% %predefinedshipdesign% aient été repérés dans le système %system%, rôdant près de l'Avant-Poste %species%!
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
 Apparition de monstre Expérimentateur
@@ -8028,17 +8034,17 @@ Préfèrent les Planètes [[PT_OCEAN]]s.
 '''
 
 SP_SCYLIOR_DESC
-'''Description :
+'''Description:
 Les Scyliori sont des céphalopodes à coquille, semblables au nautile. Leurs quatre yeux leur procurent une vision excellente, tandis que leurs quatre antennes contenant des millions de neuromastes, les rendent sensibles à toute variation de pression sous-marine ou de champ électrique. Les Scyliori possèdent trois épais et puissants tentacules leur permettant de saisir outils et nourriture, laquelle est broyée par leur appendice buccal avant d'être ingérée.
 
 Des cellules chromatophores fournissent à l'espèce son principal moyen de communication. Lorsque deux Scyliori désirent communiquer, ils modifient à un rythme soutenu les couleurs et motifs dessinés sur leur peau.
 
 Les Scyliori sont hermaphrodites et itéropares. L'espérance de vie d'un Scylior est d'environ trente années au cours desquelles il ne cesse de croître, leur  coquille mesurant seulement 5cm lors de l'éclosion, mais dont la taille croît annuellement d'environ 10%.
 
-Société :
+Société:
 Les Scyliori considèrent les restes d'un cerveau-ruche télépathe, qu'ils surnomment L'Esprit, comme un dieu bienveillant. Dans l'espoir de retrouver son ancienne puissance, Il leur instille la mission de voyager à travers le Cosmos. Les Scyliori ont construit une société très stable et en sont venus à aimer découvrir, apprendre, et partager la connaissance et le savoir avec L'Esprit.
 
-Histoire :
+Histoire:
 Voici quelques millénaires, une expédition des Précurseurs découvrit une planète que L'Esprit contrôlait en totalité grâce à ses pouvoirs télépathiques. L'Esprit surgit sans tarder et commença à aspirer les connaissances des savants et de l'équipage présents à bord de l'astronef. Mais les savants parvinrent à prélever la majeure partie du cerveau de L'Esprit, et l'emportèrent comme spécimen. Ce qui demeura de L'Esprit survécut, cherchant inlassablement à récupérer les souvenirs qui lui avaient été enlevés. L'Esprit restait cependant une entité immobile, et n'avait rencontré jusqu'alors aucun organisme intelligent susceptible de lui prêter 'main forte'. Alors survinrent les Scyliori.
 <img src="species/scylior.png"></img>
 '''
@@ -8175,7 +8181,7 @@ Structure sociale:
 Les Eaxaw sont organisés en groupes matriarcaux de reproduction. Une femelle domine un "harem" d'environ 200 mâles, lesquels la protègent, la nourrissent et servent de reproducteurs. Tout nouveau mâle que la femelle met au monde est ajouté au harem, mais sert généralement de monnaie d'échange avec les autres femelles. Cela assure la diversité génétique et favorise une large variété de mâles spécialisés pour certaines tâches. Les femelles du plus haut rang (celles dominant les harems les plus grands et les plus diversifiés) forment la Grande Chambre Matriarcal, laquelle édicte la marche à suivre pour les Eaxaw.
 
 Histoire:
-Il y a bien longtemps, un vaisseau abandonné des Précurseurs s'écrasa sur la planète d'origine des Eaxaw. Alors qu'ils découvraient certains de ses secrets, ils devinrent conscients que d'autres espèces intelligentes peuplaient l'Univers. La Grande Chambre Matriarcal édicta alors sa plus fameuse proclamation : "Tous doivent périr!".
+Il y a bien longtemps, un vaisseau abandonné des Précurseurs s'écrasa sur la planète d'origine des Eaxaw. Alors qu'ils découvraient certains de ses secrets, ils devinrent conscients que d'autres espèces intelligentes peuplaient l'Univers. La Grande Chambre Matriarcal édicta alors sa plus fameuse proclamation: "Tous doivent périr!".
 <img src="species/eaxaw.png"></img>
 '''
 
@@ -8193,7 +8199,7 @@ SP_DERTHREAN_DESC
 L'entité Derthrean est un virus vivant à l'intérieur d'une plante, dans une relation mi-parasitaire, mi-symbiotique. Le virus en lui-même n'est pas doué d'intelligence tandis que sans lui, la plante n'est qu'une coquille vide. Pourtant, des synapses neuronales se développent et s'associent pour créer un organisme doué de raison. Bien que le virus procure une conscience à la plante, il s'avère toxique pour son système nerveux, infligeant des douleurs indicibles à son hôte, l'affaiblissant de plus en plus à mesure qu'elle grandit et finissant par tuer la plante elle-même. Cette physiologie particulière signifie que plus un Derthrean est intelligent, plus grande est la douleur continuelle qu'il endure.
 
 Structure sociale:
-Les Derthrean ont une organisation sociale très segmentée, se divisant en castes créées par leurs ancêtres. Ils naissent dans une caste, ils se reproduisent dans leur caste, et meurent comme membre de cette caste. Du fait du faible brassage ethnique sur des millénaires, les traits physiques ont fini par être propres à chaque caste. Celles-ci sont divisées comme suit : la plus respectée de toutes, la caste des Prêtres, la caste des Ouvriers, la caste des Agriculteurs, la caste des Pourvoyeurs, la caste des Savants, et la plus méprisée de toutes, la caste des Guerriers. La religion joue un rôle fondamental dans leur société. Chaque Derthrean est profondément pacifiste, et vit pour satisfaire leur Déesse, dans l'espoir d'être libéré de ce fardeau de douleur et d'être pardonné pour la brutalité et la fourberie de leurs ancêtres.
+Les Derthrean ont une organisation sociale très segmentée, se divisant en castes créées par leurs ancêtres. Ils naissent dans une caste, ils se reproduisent dans leur caste, et meurent comme membre de cette caste. Du fait du faible brassage ethnique sur des millénaires, les traits physiques ont fini par être propres à chaque caste. Celles-ci sont divisées comme suit: la plus respectée de toutes, la caste des Prêtres, la caste des Ouvriers, la caste des Agriculteurs, la caste des Pourvoyeurs, la caste des Savants, et la plus méprisée de toutes, la caste des Guerriers. La religion joue un rôle fondamental dans leur société. Chaque Derthrean est profondément pacifiste, et vit pour satisfaire leur Déesse, dans l'espoir d'être libéré de ce fardeau de douleur et d'être pardonné pour la brutalité et la fourberie de leurs ancêtres.
 '''
 
 SP_LAENFA  # translated
@@ -8242,7 +8248,7 @@ SP_LEMBALALAM_GAMEPLAY_DESC
 '''Reptiles ancestraux égocentriques et dégénérescents, ne pouvant plus se reproduire.
 Préfèrent les Planètes [[PT_DESERT]]s.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-Contrôler les Lembala octroie les technologies suivantes : [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] et [[tech GRO_LIFECYCLE_MAN]].
+Contrôler les Lembala octroie les technologies suivantes: [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] et [[tech GRO_LIFECYCLE_MAN]].
 '''
 
 SP_LEMBALALAM_DESC
@@ -8933,7 +8939,7 @@ GAIA_SPECIAL  # translated
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Terraforme la planète puis accroît sa [[metertype METER_TARGET_POPULATION]] selon la taille de la planète :
+'''Terraforme la planète puis accroît sa [[metertype METER_TARGET_POPULATION]] selon la taille de la planète:
 • [[SZ_TINY]] (+3)
 • [[SZ_SMALL]] (+6)
 • [[SZ_MEDIUM]] (+9)
@@ -9028,7 +9034,7 @@ Orbite Excentrissime
 ECCENTRIC_ORBIT_SPECIAL_DESC
 '''Augmente de [[value ECCENTRIC_ORBIT_TARGET_RESEARCH_FLAT]] la [[metertype METER_TARGET_RESEARCH]], mais réduit l'[[metertype METER_SUPPLY]] ([[value ECCENTRIC_ORBIT_MAX_SUPPLY_FLAT]]).
 
-L'orbite de la planète autour de son étoile est très excentrique : la distance de son aphélie est un très grand multiple de la distance de son périhélie. L'intensité de l'ensoleillement varie ainsi énormément au cours de l'année. Ces conditions variables ralentissent la gestion de l'approvisionnement sur la planète, mais s'avèrent un terrain exaltant pour la recherche scientifique.'''
+L'orbite de la planète autour de son étoile est très excentrique: la distance de son aphélie est un très grand multiple de la distance de son périhélie. L'intensité de l'ensoleillement varie ainsi énormément au cours de l'année. Ces conditions variables ralentissent la gestion de l'approvisionnement sur la planète, mais s'avèrent un terrain exaltant pour la recherche scientifique.'''
 
 TIDAL_LOCK_SPECIAL
 Rotation Synchrone
@@ -9782,13 +9788,13 @@ METER_TECH_COST_FACTOR
 Facteur Coût Technologie
 
 ECONOMIC_CATEGORY_NUM_POLICY_SLOTS
-Choix de Stratégie Économique
+Choix de Politique Économique
 
 SOCIAL_CATEGORY_NUM_POLICY_SLOTS
-Choix de Stratégie Sociale
+Choix de Politique Sociale
 
 MILITARY_CATEGORY_NUM_POLICY_SLOTS
-Choix de Stratégie Militaire
+Choix de Politique Militaire
 
 # Empire affiliation types
 AFFIL_SELF
@@ -9828,7 +9834,7 @@ Technologie
 
 # Unlockable item types
 UIT_POLICY
-Stratégie
+Politique
 
 # Build types
 BT_NOT_BUILDING
@@ -11479,7 +11485,7 @@ PLC_ALLIED_REPAIR
 Réparation Alliée
 
 PLC_ALLIED_REPAIR_DESC
-Si deux empires sont alliés, et que l'un ou l'autre applique cette stratégie, les deux empires bénéficieront de la réparation des astronefs endommagés en [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] quel que soit l'empire propriétaire, et profiteront mutuellement de la technologie [[tech SHP_FLEET_REPAIR]].
+Si deux empires sont alliés, et que l'un ou l'autre applique cette Politique, les deux empires bénéficieront de la réparation des astronefs endommagés en [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] quel que soit l'empire propriétaire, et profiteront mutuellement de la technologie [[tech SHP_FLEET_REPAIR]].
 
 PLC_ALLIED_REPAIR_SHORT_DESC
 Permet aux alliés la réparation mutuelle des astronefs
@@ -11612,7 +11618,7 @@ Autorité Divine
 PLC_DIVINE_AUTHORITY_DESC
 '''Augmente la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_DIVINE_AUTHORITY_TARGET_HAPPINESS_FLAT]] et la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_DIVINE_AUTHORITY_TARGET_INFLUENCE_FLAT]], mais diminue la [[metertype METER_TARGET_RESEARCH]] ([[value PLC_DIVINE_AUTHORITY_TARGET_RESEARCH_FLAT]]).
 
-L'empire est dirigé par une théocratie qui prétend détenir l'autorité des dieux eux-mêmes. Ses dirigeants se revendiquent comme omnipotents et infaillibles, inspirant à tout l'empire la croyance qu'ils représentent le peuple élu. L'extrémisme religieux est encouragé au sein de la population, ce qui renforce la confiance envers la politique gouvernementale, tout en stabilisant la société. La pensée critique et la science par l'expérience s'en trouvent par conséquent fortement entravées.'''
+L'empire est dirigé par une théocratie qui prétend détenir l'autorité des dieux eux-mêmes. Ses dirigeants se revendiquent comme omnipotents et infaillibles, inspirant à tout l'empire la croyance qu'ils représentent le peuple élu. L'extrémisme religieux est encouragé au sein de la population, ce qui renforce la confiance envers les décisions gouvernementales, tout en stabilisant la société. La pensée critique et la science par l'expérience s'en trouvent par conséquent fortement entravées.'''
 
 PLC_DIVINE_AUTHORITY_SHORT_DESC
 Augmente la Stabilité et l'Influence, mais entrave la Recherche
@@ -11639,7 +11645,7 @@ PLC_INDOCTRINATION
 Endoctrinement
 
 PLC_INDOCTRINATION_DESC
-Augmente progressivement la [[metertype METER_TARGET_HAPPINESS]] des planètes. Le bonus croît jusqu'à [[value PLC_INDOCTRINATION_STRENGTH_MAX]] tant que la stratégie est appliquée pour plusieurs tours.
+Augmente progressivement la [[metertype METER_TARGET_HAPPINESS]] des planètes. Le bonus croît jusqu'à [[value PLC_INDOCTRINATION_STRENGTH_MAX]] tant que la Politique est appliquée pour plusieurs tours.
 
 PLC_INDOCTRINATION_SHORT_DESC
 Augmente la Stabilité progressivement
@@ -11702,34 +11708,34 @@ PLC_PLANETARY_INFRA
 Infrastructure Planétaire
 
 PLC_PLANETARY_INFRA_DESC
-'''Octroie 2 choix supplémentaires de Stratégie économique.
+'''Octroie 2 choix supplémentaires de Politique économique.
 
 Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées.'''
 
 PLC_PLANETARY_INFRA_SHORT_DESC
-Octroie des choix de Stratégie
+Octroie des choix de Politique
 
 PLC_SYSTEM_INFRA
 Infrastructure Systémique
 
 PLC_SYSTEM_INFRA_DESC
-'''Octroie 2 choix supplémentaires de Stratégie économique.
+'''Octroie 2 choix supplémentaires de Politique économique.
 
-Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées au sein des systèmes abritant au moins 2 planètes appartenant à l'empire appliquant cette Stratégie.'''
+Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées au sein des systèmes abritant au moins 2 planètes appartenant à l'empire qui applique cette Politique.'''
 
 PLC_SYSTEM_INFRA_SHORT_DESC
-Octroie des choix de Stratégie
+Octroie des choix de Politique
 
 PLC_INTERSTELLAR_INFRA
 Infrastructure Interstellaire
 
 PLC_INTERSTELLAR_INFRA_DESC
-'''Octroie 2 choix supplémentaires de Stratégie économique.
+'''Octroie 2 choix supplémentaires de Politique économique.
 
-Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées étant connectées aux ressources d'approvisionnement de planètes situées dans d'autres systèmes, et appartenant à l'empire appliquant cette stratégie.'''
+Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées étant connectées aux ressources d'approvisionnement de planètes situées dans d'autres systèmes, et appartenant à l'empire appliquant cette Politique.'''
 
 PLC_INTERSTELLAR_INFRA_SHORT_DESC
-Octroie des choix de Stratégie
+Octroie des choix de Politique
 
 PLC_CAPITAL_MARKETS
 Marchés Capitaux
@@ -11979,7 +11985,7 @@ LRN_MIND_VOID
 Esprit du Vide
 
 LRN_MIND_VOID_DESC
-'''Octroie 1 choix de Stratégie sociale.
+'''Octroie 1 choix de Politique sociale.
 
 Nous ne sommes pas seuls dans le cosmos... mais pourquoi la recherche d'autres existences devrait se limiter à un unique paradigme? De nombreuses cultures possèdent des mythes, des légendes ou de ferventes croyances en une plus haute conscience. Que ce soit un Dieu miséricordieux ou malveillant, ou bien un observateur détaché, il est indéniable que quelque chose, peut-être l'univers lui-même à un certain niveau, est vivant, conscient, et observe.'''
 
@@ -11987,7 +11993,7 @@ LRN_TIME_MECH
 Mécanique Temporelle
 
 LRN_TIME_MECH_DESC
-'''Octroie 1 choix supplémentaire de Stratégie militaire.
+'''Octroie 1 choix supplémentaire de Politique militaire.
 
 Qu'est-ce que "le présent", "le futur" et "le passé"? Le double paradoxe de la relativité ou bien la théorie du "trou de ver", suggèrent les premières formes de "voyage dans le temps". La manipulation directe des flux spatio-temporels permet de contrôler et d'amplifier ces effets. Les incursions temporelles ne peuvent pas modifier d'une manière perceptible le passé de l'univers que nous observons. Cependant, ces manipulations peuvent compresser le temps ou allonger arbitrairement la durée des instants, en vue d'applications limitées seulement par nos ressources, ainsi que notre propre patience...'''
 
@@ -12051,7 +12057,7 @@ GRO_SYMBIOTIC_BIO
 Biologie Symbiotique
 
 GRO_SYMBIOTIC_BIO_DESC
-Accroît la [[metertype METER_TARGET_POPULATION]] des Planètes [[PE_GOOD]]s, [[PE_ADEQUATE]]s et [[PE_POOR]]s selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Accroît la [[metertype METER_TARGET_POPULATION]] des Planètes [[PE_GOOD]]s, [[PE_ADEQUATE]]s et [[PE_POOR]]s selon leur taille: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 GRO_GENETIC_MED
 Médecine Génétique
@@ -12079,7 +12085,7 @@ GRO_XENO_GENETICS
 Génétique Xénobiologique
 
 GRO_XENO_GENETICS_DESC
-'''Accroît la [[metertype METER_TARGET_POPULATION]] des planètes, selon leur habitabilité et leur taille :
+'''Accroît la [[metertype METER_TARGET_POPULATION]] des planètes, selon leur habitabilité et leur taille:
 
 • Planète [[PE_ADEQUATE]] ou [[PE_POOR]]: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10)
 • Planète [[PE_HOSTILE]]: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5)
@@ -12100,7 +12106,7 @@ GRO_XENO_HYBRIDS
 Hybridation Xénobiologique
 
 GRO_XENO_HYBRIDS_DESC
-'''Accroît la [[metertype METER_TARGET_POPULATION]] des planètes, selon leur habitabilité et leur taille :
+'''Accroît la [[metertype METER_TARGET_POPULATION]] des planètes, selon leur habitabilité et leur taille:
 
 • Planète [[PE_POOR]]: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5)
 • Planète [[PE_HOSTILE]]: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10)
@@ -12192,7 +12198,7 @@ Pour le service du Stock Impérial, la Prédiction du Vide est l'instrument par 
 Il s'agit donc d'une technologie d'amélioration du [[encyclopedia STOCKPILE_TITLE]]. La [[metertype METER_STOCKPILE]] augmente de 0.2 par [[metertype METER_POPULATION]].
 Ces améliorations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].
 
-Octroie également 1 choix de Stratégie économique.'''
+Octroie également 1 choix de Politique économique.'''
 
 PRO_MICROGRAV_MAN
 Production en Microgravité
@@ -12260,7 +12266,7 @@ Automates Conscients
 PRO_SENTIENT_AUTOMATION_DESC
 '''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PRO_SENTIENT_AUTO_TARGET_INDUSTRY_FLAT]] sur toutes les planètes en Focus Industrie.
 
-Octroie 1 choix supplémentaire de Stratégie économique.
+Octroie 1 choix supplémentaire de Politique économique.
 
 L'évolution naturelle des usines automatisées s'accomplit en attribuant aux consciences artificielles qui dirigent de telles structures, le pouvoir de déduire et décider par elles-mêmes des meilleurs processus afin d'atteindre les buts de leurs propriétaires, avant même que ces derniers n'aient commencé à y réfléchir. Cette amélioration décisionnelle augmente grandement la performance des installations autonomes de production dans tous les systèmes de l'empire se consacrant à la production industrielle.'''
 
@@ -12308,7 +12314,7 @@ Psychologie Architecturale
 CON_ARCH_PSYCH_DESC
 '''La forme d'une structure ou la configuration d'un espace habité ne se définissent pas seulement par les limitations physiques des matériaux qui les composent. L'influence psychologique des habitants, ou d'observateurs extérieurs, peut avoir une incidence bien plus importante sur la réussite et la fonctionnalité d'un design, que la simple robustesse de ses murs ou la profonde solidité de ses fondations.
 
-Octroie 1 choix supplémentaire de Stratégie sociale.'''
+Octroie 1 choix supplémentaire de Politique sociale.'''
 
 CON_ORGANIC_STRC
 Structures Organiques
@@ -12360,7 +12366,7 @@ CON_TRANS_ARCH
 Architecture Transcendantale
 
 CON_TRANS_ARCH_DESC
-'''Octroie 1 choix supplémentaire de Stratégie sociale.
+'''Octroie 1 choix supplémentaire de Politique sociale.
 
 La maîtrise des techniques avancées de construction orbitale permet aux scientifiques d'élaborer des méthodes visant à construire un [[buildingtype BLD_MEGALITH]] d'une majestuosité sans égale.
 
@@ -12370,13 +12376,13 @@ CON_ORBITAL_HAB
 Habitation Orbitale
 
 CON_ORBITAL_HAB_DESC
-Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes habitables selon leur taille: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 CON_NDIM_STRC
 Structures Multidimensionnelles
 
 CON_NDIM_STRC_DESC
-'''Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes habitables selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+'''Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes habitables selon leur taille: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 
 Augmente également de 10 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées.
 
@@ -12698,7 +12704,7 @@ GRO_SUBTER_HAB
 Habitat Souterrain
 
 GRO_SUBTER_HAB_DESC
-Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes selon leur taille: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 GRO_GENOME_BANK
 Banque du Génome
@@ -12740,7 +12746,7 @@ GRO_CYBORG  # translated
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Accroît la [[metertype METER_TARGET_POPULATION]] des Planètes [[PE_HOSTILE]]s selon leur taille : ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+'''Accroît la [[metertype METER_TARGET_POPULATION]] des Planètes [[PE_HOSTILE]]s selon leur taille: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
 Accroît l'[[metertype METER_TROOPS]] max de [[value CYBORG_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes.
 
 Une fusion hautement polyvalente d'un organisme vivant et d'une machine, capable de s'adapter à un nombre considérable de situations. La génération spontanée d'organes spécialisés ainsi qu'une force bio-mécanique fortement accrue permettent aux cyborgs d'évoluer avec aisance dans quasiment tous les types d'environnement.'''
@@ -12781,7 +12787,7 @@ Centralisation Cérébrale
 LRN_DISTRIB_THOUGHT_DESC
 '''Augmente la [[metertype METER_TARGET_RESEARCH]] sur toutes les planètes en Focus Recherche, en fonction de la distance entre la planète et l'astronef de l'empire le plus éloigné.
 
-Octroie 1 choix supplémentaire de Stratégie militaire.
+Octroie 1 choix supplémentaire de Politique militaire.
 
 Le citoyen moyen gaspille littéralement ses capacités cérébrales, pourtant issues d'un des outils de calcul les plus fins de l'univers. En intégrant les cycles cérébraux inactifs d'une population suffisament importante au sein d'un réseau de simples émetteurs-récepteurs cybernétiques, la totalité des centres de recherche d'un empire peuvent accéder à une puissance de calcul considérable et peu coûteuse.'''
 
@@ -12789,7 +12795,7 @@ LRN_STELLAR_TOMOGRAPHY
 Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes réglées sur le Focus Recherche, selon le type d'étoile et le nombre de planètes en Focus Recherche au sein du même système :
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes réglées sur le Focus Recherche, selon le type d'étoile et le nombre de planètes en Focus Recherche au sein du même système:
 * [[STAR_BLACK]] (+[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPLANET]])
 * [[STAR_NEUTRON]] (+[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPLANET]])
 * [[STAR_BLUE]], [[STAR_WHITE]], [[STAR_YELLOW]], [[STAR_ORANGE]] ou [[STAR_RED]] (+[[value LRN_STELLAR_TOMO_NORMAL_STAR_TARGET_RESEARCH_PERPLANET]])
@@ -13504,7 +13510,7 @@ Coque Sensitive
 SHP_SENT_HULL_DESC
 '''Cet astronef amiral doué de conscience dispose de capacités analytiques et mémorielles exceptionnelles, lui permettant ainsi d'intéragir avec les astronefs alliés, en leur fournissant des informations utiles et d'habiles orientations tactiques en situation de combat.
 
-Les empires contrôlant au moins un astronef équipé de cette coque reçoivent également un choix supplémentaire de Stratégie militaire.'''
+Les empires contrôlant au moins un astronef équipé de cette coque reçoivent également un choix supplémentaire de Politique militaire.'''
 
 SHP_BIOINTERCEPTOR
 Bio-Intercepteurs
@@ -13685,7 +13691,7 @@ BLD_IMPERIAL_PALACE_DESC
 • la [[metertype METER_DEFENSE]] de [[value BLD_IMPERIAL_PALACE_MAX_DEFENSE_FLAT]]
 • l'[[metertype METER_TROOPS]] de [[value BLD_IMPERIAL_PALACE_MAX_TROOPS_FLAT]]
 
-Octroie 1 choix de Stratégie économique.
+Octroie 1 choix de Politique économique.
 
 Son emplacement définit la Capitale de l'empire.
 
@@ -13701,7 +13707,7 @@ BLD_MILITARY_COMMAND
 Commandement Militaire
 
 BLD_MILITARY_COMMAND_DESC
-Fournit un choix de Stratégie militaire.
+Fournit un choix de Politique militaire.
 
 BLD_SUPER_TEST
 Invasion Super-Testeurs
@@ -13888,7 +13894,7 @@ BLD_GAIA_TRANS
 Transformateur Gaia
 
 BLD_GAIA_TRANS_DESC
-'''Dote une planète de la Particularité [[special GAIA_SPECIAL]] et accroît la [[metertype METER_TARGET_POPULATION]] pour les [[encyclopedia ENVIRONMENT_TITLE]]s à Habitabilité [[PE_GOOD]], selon la taille de la planète :
+'''Dote une planète de la Particularité [[special GAIA_SPECIAL]] et accroît la [[metertype METER_TARGET_POPULATION]] pour les [[encyclopedia ENVIRONMENT_TITLE]]s à Habitabilité [[PE_GOOD]], selon la taille de la planète:
 • [[SZ_TINY]] (+3)
 • [[SZ_SMALL]] (+6)
 • [[SZ_MEDIUM]] (+9)
@@ -13940,7 +13946,7 @@ BLD_HYPER_DAM
 Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_HYPER_DAM_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes reliées par lignes d'[[metertype METER_SUPPLY]] et réglées sur le Focus Industrie, mais la [[metertype METER_TARGET_POPULATION]] de ces planètes est réduite ([[value BLD_HYPER_DAM_TARGET_POPULATION_PERSIZE]] par la taille de la planète : [[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
+'''Pour les planètes non-reliées à un [[buildingtype BLD_BLACK_HOLE_POW_GEN]], augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_HYPER_DAM_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes reliées par lignes d'[[metertype METER_SUPPLY]] et réglées sur le Focus Industrie, mais la [[metertype METER_TARGET_POPULATION]] de ces planètes est réduite ([[value BLD_HYPER_DAM_TARGET_POPULATION_PERSIZE]] par la taille de la planète: [[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 Une déchirure dans le tissu de l'univers, contrôlée et manipulée en toute sécurité. Chaque planète peut construire son propre barrage hyperspatial, mais un seul centre de contrôle est requis pour s'assurer que le continuum de l'espace-temps n'est pas endommagé. Par contre, toutes les planètes ayant recours à un barrage hyperspatial voient leur population souffrir de différents problèmes de santé, à moins que les planètes en question n'orbitent autour d'un [[STAR_BLACK]].
@@ -13957,7 +13963,7 @@ BLD_SOL_ORB_GEN
 Générateur Orbital Solaire
 
 BLD_SOL_ORB_GEN_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par [[metertype METER_POPULATION]] et selon le type d'étoile :
+'''Augmente la [[metertype METER_TARGET_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par [[metertype METER_POPULATION]] et selon le type d'étoile:
 * [[STAR_BLUE]] ou [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
 * [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x[[value BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
 * [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
@@ -13969,7 +13975,7 @@ BLD_CLONING_CENTER
 Centre de Clonage
 
 BLD_CLONING_CENTER_DESC
-'''Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes selon leur taille : ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
+'''Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes selon leur taille: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 Le [[tech GRO_INDUSTRY_CLONE]] permet de produire industriellement des populations sur-mesure, améliorant considérablement leur croissance.'''
 
@@ -14178,7 +14184,9 @@ BLD_SCRYING_SPHERE
 Sphère de Vision
 
 BLD_SCRYING_SPHERE_DESC
-Octroie la visibilité pour toutes les autres planètes abritant également une Sphère de Vision.
+'''Octroie à son propriétaire un choix de Politique sociale.
+
+Octroie la visibilité pour toutes les autres planètes abritant également une Sphère de Vision.'''
 
 BLD_COL_ABADDONI
 Colonie Abaddoni
@@ -14385,7 +14393,7 @@ BLD_COL_SUPER_TEST_DESC
 HULL_DESC
 '''[[metertype METER_SPEED]] : %1%
 [[metertype METER_FUEL]] : %2%
-[[metertype METER_STEALTH]]: %3%
+[[metertype METER_STEALTH]] : %3%
 [[metertype METER_STRUCTURE]] : %4%
 
 %5%'''
@@ -15406,7 +15414,7 @@ Sa [[metertype METER_STEALTH]] est très élevée de même que son [[metertype M
 
 [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED]]
 
-Les empires contrôlant au moins un astronef équipé de cette coque reçoivent également un choix supplémentaire de Stratégie militaire.'''
+Les empires contrôlant au moins un astronef équipé de cette coque reçoivent également un choix supplémentaire de Politique militaire.'''
 
 SH_COMPRESSED_ENERGY
 Coque Énergie Compressée
@@ -15892,7 +15900,7 @@ GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE
 Les espèces à [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
 GROWTH_SPECIAL_POPULATION_INCREASE
-'''habitant cette planète verront leur [[metertype METER_TARGET_POPULATION]] augmenter selon la taille de la planète :
+'''habitant cette planète verront leur [[metertype METER_TARGET_POPULATION]] augmenter selon la taille de la planète:
 • [[SZ_TINY]] (+1)
 • [[SZ_SMALL]] (+2)
 • [[SZ_MEDIUM]] (+3)
@@ -15929,7 +15937,7 @@ NO_INDUSTRY_DESC
 −−−	Pas d'[[metertype METER_INDUSTRY]]
 
 VERY_BAD_INDUSTRY_DESC
-−−	Très Mauvais en [[metertype METER_INDUSTRY]]: 50%
+−−	Très Mauvais en [[metertype METER_INDUSTRY]] : 50%
 
 BAD_INDUSTRY_DESC
 −	Mauvais en [[metertype METER_INDUSTRY]] : 75%
@@ -15950,7 +15958,7 @@ NO_RESEARCH_DESC
 −−−	Pas de [[metertype METER_RESEARCH]]
 
 VERY_BAD_RESEARCH_DESC
-−−	Très Mauvais en [[metertype METER_RESEARCH]]: 50%
+−−	Très Mauvais en [[metertype METER_RESEARCH]] : 50%
 
 BAD_RESEARCH_DESC
 −	Mauvais en [[metertype METER_RESEARCH]] : 75%
@@ -15971,22 +15979,22 @@ NO_INFLUENCE_DESC
 −−−	Pas d'[[metertype METER_INFLUENCE]]
 
 VERY_BAD_INFLUENCE_DESC
-−−	Très Mauvais en [[metertype METER_INFLUENCE]]: 50%
+−−	Très Mauvais en [[metertype METER_INFLUENCE]] : 50%
 
 BAD_INFLUENCE_DESC
-−	Mauvais en [[metertype METER_INFLUENCE]]: 75%
+−	Mauvais en [[metertype METER_INFLUENCE]] : 75%
 
 AVERAGE_INFLUENCE_DESC
-'''	Normal en [[metertype METER_INFLUENCE]]: 100%'''
+'''	Normal en [[metertype METER_INFLUENCE]] : 100%'''
 
 GOOD_INFLUENCE_DESC
-+	Bon en [[metertype METER_INFLUENCE]]: 150%
++	Bon en [[metertype METER_INFLUENCE]] : 150%
 
 GREAT_INFLUENCE_DESC
-++	Excellent en [[metertype METER_INFLUENCE]]: 200%
+++	Excellent en [[metertype METER_INFLUENCE]] : 200%
 
 ULTIMATE_INFLUENCE_DESC
-+++	Parfait en [[metertype METER_INFLUENCE]]: 300%
++++	Parfait en [[metertype METER_INFLUENCE]] : 300%
 
 NO_DEFENSE_TROOPS_DESC
 −−−	Pas d'[[metertype METER_TROOPS]] défensive
@@ -16083,7 +16091,7 @@ FIXED_LOW_POPULATION_DESC
 −−	Population Maximale limitée à 5
 
 VERY_BAD_SUPPLY_DESC
-−−	Très Mauvais en [[metertype METER_SUPPLY]]: -1
+−−	Très Mauvais en [[metertype METER_SUPPLY]] : -1
 
 BAD_SUPPLY_DESC
 −	Mauvais en [[metertype METER_SUPPLY]] : aucun bonus
@@ -16203,12 +16211,12 @@ Aime les espèces artistiques en Focus Influence dans le système
 # %1% name of empire
 # %2% name of policy
 LIKES_POLICY_LABEL
-Aime la Stratégie %2% de %1%
+Aime la Politique %2% de %1%
 
 # %1% name of empire
 # %2% name of policy
 DISLIKES_POLICY_LABEL
-N'aime pas la Stratégie %2% de %1%
+N'aime pas la Politique %2% de %1%
 
 # %1% name of planet
 # %2% name of building
@@ -16297,12 +16305,17 @@ Planète Natale
 # %1% name of planet
 # %2% name of species on planet
 INSTABILITY_REBELLION
-Émeute Instabilité %1%
+Émeute en raison Instabilité %1%
 
 # %1% name of planet
 # %2% name of species on planet
 PARTISANS_REBELLION
-Partisans %2% Dette Influence
+Partisans %2% en raison Dette Influence
+
+# %1% name of planet
+# %2% name of species on planet
+DEPENDENCE_ON_IMPERIAL_SUPPORT_DUE_TO_ENVIRONMENT
+Dépendance à l'empire en raison Environnement %1%
 
 # %1% FIXME
 # %2% FIXME
@@ -16662,10 +16675,10 @@ FOCUS_PREFERENCE_LABEL
 Focus par défaut activé
 
 LIKES
-'''Aime: '''
+'''Aime : '''
 
 DISLIKES
-'''N'aime pas: '''
+'''N'aime pas : '''
 
 ROBOTIC_INTERFACE_EFFECT
 Réseau d'équipage robotique
@@ -16714,16 +16727,16 @@ GREAT_FUEL_EFFICIENCY_LABEL
 Coque <i>%2%</i> +300%% [[encyclopedia FUEL_EFFICIENCY_TITLE]]
 
 HULL_DESC_BAD_FUEL_EFFICIENCY
-[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 60%
+[[encyclopedia FUEL_EFFICIENCY_TITLE]] : 60%
 
 HULL_DESC_AVERAGE_FUEL_EFFICIENCY
-[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 100%
+[[encyclopedia FUEL_EFFICIENCY_TITLE]] : 100%
 
 HULL_DESC_GOOD_FUEL_EFFICIENCY
-[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 200%
+[[encyclopedia FUEL_EFFICIENCY_TITLE]] : 200%
 
 HULL_DESC_GREAT_FUEL_EFFICIENCY
-[[encyclopedia FUEL_EFFICIENCY_TITLE]]: 400%
+[[encyclopedia FUEL_EFFICIENCY_TITLE]] : 400%
 
 MAX_FUEL_LESS_THAN_ONE_DESC
 Ravitaillement en Carburant impossible
