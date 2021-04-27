@@ -1,0 +1,196 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://FOWindow.tscn" type="PackedScene" id=1]
+[ext_resource path="res://MultiplayerSetup.gd" type="Script" id=2]
+[ext_resource path="res://resources/FOStdTheme.tres" type="Theme" id=3]
+[ext_resource path="res://MultiplayerClientTypeInput.gd" type="Script" id=4]
+[ext_resource path="res://MultiplayerSetupJoinButtonGroup.tres" type="ButtonGroup" id=8]
+
+[node name="MultiplayerSetup" instance=ExtResource( 1 )]
+margin_right = 370.0
+margin_bottom = 430.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 370, 430 )
+theme = ExtResource( 3 )
+script = ExtResource( 2 )
+
+[node name="Title" parent="." index="0"]
+text = "Multiplayer Setup"
+
+[node name="LeftContainer" type="VBoxContainer" parent="." index="3"]
+margin_left = 10.0
+margin_top = 35.0
+margin_right = 355.0
+margin_bottom = 550.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PlayerName" type="HBoxContainer" parent="LeftContainer" index="0"]
+margin_right = 345.0
+margin_bottom = 25.0
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="LeftContainer/PlayerName" index="0"]
+margin_top = 3.0
+margin_right = 167.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+theme = ExtResource( 3 )
+text = "Player Name"
+align = 2
+valign = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineEdit" type="LineEdit" parent="LeftContainer/PlayerName" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 25.0
+size_flags_horizontal = 3
+text = "Human_Player"
+placeholder_text = "0"
+
+[node name="HostGame" type="HBoxContainer" parent="LeftContainer" index="1"]
+margin_top = 30.0
+margin_right = 345.0
+margin_bottom = 64.0
+custom_constants/separation = 10
+
+[node name="CheckButton" type="CheckButton" parent="LeftContainer/HostGame" index="0"]
+margin_right = 181.0
+margin_bottom = 34.0
+pressed = true
+group = ExtResource( 8 )
+text = "Host a new game"
+
+[node name="JoinGame" type="HBoxContainer" parent="LeftContainer" index="2"]
+margin_top = 69.0
+margin_right = 345.0
+margin_bottom = 103.0
+custom_constants/separation = 10
+
+[node name="CheckButton" type="CheckButton" parent="LeftContainer/JoinGame" index="0"]
+margin_right = 167.0
+margin_bottom = 34.0
+group = ExtResource( 8 )
+text = "Join a game as"
+
+[node name="ClientType" type="OptionButton" parent="LeftContainer/JoinGame" index="1"]
+margin_left = 177.0
+margin_right = 345.0
+margin_bottom = 34.0
+size_flags_horizontal = 3
+disabled = true
+script = ExtResource( 4 )
+
+[node name="Label" type="Label" parent="LeftContainer" index="3"]
+margin_top = 108.0
+margin_right = 345.0
+margin_bottom = 127.0
+size_flags_horizontal = 3
+text = "LAN game at:"
+valign = 3
+
+[node name="ServersList" type="ItemList" parent="LeftContainer" index="4"]
+margin_top = 132.0
+margin_right = 345.0
+margin_bottom = 232.0
+rect_min_size = Vector2( 0, 100 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RefreshBtn" type="Button" parent="LeftContainer" index="5"]
+margin_top = 237.0
+margin_right = 345.0
+margin_bottom = 276.0
+rect_min_size = Vector2( 100, 30 )
+
+[node name="Label" type="Label" parent="LeftContainer/RefreshBtn" index="0"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "Refresh list"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="LeftContainer" index="6"]
+margin_top = 281.0
+margin_right = 345.0
+margin_bottom = 300.0
+size_flags_horizontal = 3
+theme = ExtResource( 3 )
+text = "Internet game at:"
+align = 2
+valign = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ServerName" type="LineEdit" parent="LeftContainer" index="7"]
+margin_top = 305.0
+margin_right = 345.0
+margin_bottom = 330.0
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="LeftContainer" index="8"]
+margin_top = 335.0
+margin_right = 345.0
+margin_bottom = 394.0
+custom_constants/margin_right = 20
+custom_constants/margin_top = 10
+custom_constants/margin_left = 20
+custom_constants/margin_bottom = 10
+
+[node name="OK_Cancel_Buttons" type="HBoxContainer" parent="LeftContainer/MarginContainer" index="0"]
+margin_left = 20.0
+margin_top = 10.0
+margin_right = 325.0
+margin_bottom = 49.0
+custom_constants/separation = 50
+alignment = 1
+
+[node name="OKBtn" type="Button" parent="LeftContainer/MarginContainer/OK_Cancel_Buttons" index="0"]
+margin_left = 27.0
+margin_right = 127.0
+margin_bottom = 39.0
+rect_min_size = Vector2( 100, 30 )
+
+[node name="Label" type="Label" parent="LeftContainer/MarginContainer/OK_Cancel_Buttons/OKBtn" index="0"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "OK"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CancelBtn" type="Button" parent="LeftContainer/MarginContainer/OK_Cancel_Buttons" index="1"]
+margin_left = 177.0
+margin_right = 277.0
+margin_bottom = 39.0
+rect_min_size = Vector2( 100, 30 )
+
+[node name="Label" type="Label" parent="LeftContainer/MarginContainer/OK_Cancel_Buttons/CancelBtn" index="0"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "Cancel"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="pressed" from="HBoxContainer/CloseWidget" to="." method="_on_CloseWidget_pressed"]
+[connection signal="toggled" from="LeftContainer/JoinGame/CheckButton" to="." method="_on_JoinCheckButton_toggled"]
+[connection signal="pressed" from="LeftContainer/RefreshBtn" to="." method="_on_RefreshBtn_pressed"]
+[connection signal="pressed" from="LeftContainer/MarginContainer/OK_Cancel_Buttons/OKBtn" to="." method="_on_OKBtn_pressed"]
+[connection signal="pressed" from="LeftContainer/MarginContainer/OK_Cancel_Buttons/CancelBtn" to="." method="_on_CancelBtn_pressed"]
