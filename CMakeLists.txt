@@ -805,6 +805,20 @@ if(APPLE AND BUILD_CLIENT_GG)
     )
 endif()
 
+if(BUILD_CLIENT_GODOT)
+    add_custom_command(TARGET freeoriongodot POST_BUILD
+        COMMAND
+           ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriongodot>" "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}"
+    )
+    if(ANDROID)
+        add_custom_command(TARGET freeoriongodot POST_BUILD
+            COMMAND
+                ${CMAKE_COMMAND} -E copy_if_different "${ICONV_LIBRARY}" "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}"
+        )
+    endif()
+endif()
 
 ##
 ## Recurse into sources.
