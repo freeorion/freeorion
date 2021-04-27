@@ -36,6 +36,10 @@ config/name="FreeOrion Godot Client"
 run/main_scene="res://FreeOrionClient.tscn"
 config/icon="res://assets/image/FO_Icon_256x256.png"
 
+[autoload]
+
+global="*res://global.gd"
+
 [display]
 
 window/size/width=1600
