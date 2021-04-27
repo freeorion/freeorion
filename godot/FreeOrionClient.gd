@@ -1,5 +1,9 @@
 extends Control
 
+var game_setup_dlg: FOWindow
+var multiplayer_setup_dlg: FOWindow
+var auth_password_setup_dlg: FOWindow
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

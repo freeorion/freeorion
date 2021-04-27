@@ -9,7 +9,12 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "",
+"base": "NinePatchRect",
+"class": "FOWindow",
+"language": "GDScript",
+"path": "res://FOWindow.gd"
+}, {
+"base": "Node",
 "class": "FreeOrionNode",
 "language": "NativeScript",
 "path": "res://freeoriongodot.gdns"
@@ -20,6 +25,7 @@ _global_script_classes=[ {
 "path": "res://MainMenuBtn.gd"
 } ]
 _global_script_class_icons={
+"FOWindow": "",
 "FreeOrionNode": "",
 "MainMenuBtn": ""
 }
