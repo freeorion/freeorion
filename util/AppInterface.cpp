@@ -63,11 +63,9 @@ void IApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>
 
     // named value ref parsing can be done in parallel as the referencing happens after parsing
     if (IsExistingDir(rdir / "scripting/common"))
-        GetNamedValueRefManager().SetNamedValueRefParse(Pending::StartAsyncParsing(parse::named_value_refs, rdir / "scripting/common", std::move(barrier)));
-    else {
+        GetNamedValueRefManager().SetNamedValueRefParse(Pending::ParseSynchronously(parse::named_value_refs, rdir / "scripting/common"));
+    else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/common").string();
-        barrier.set_value();
-    }
 
     if (IsExistingDir(rdir / "scripting/buildings"))
         GetBuildingTypeManager().SetBuildingTypes(Pending::StartAsyncParsing(parse::buildings, rdir / "scripting/buildings"));
@@ -125,9 +123,11 @@ void IApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/game_rules.focs.py").string();
 
     if (IsExistingDir(rdir / "scripting/techs"))
-        GetTechManager().SetTechs(Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, python, rdir / "scripting/techs"));
-    else
+        GetTechManager().SetTechs(Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, python, rdir / "scripting/techs", std::move(barrier)));
+    else {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/techs").string();
+        barrier.set_value();
+    }
 
     if (IsExistingFile(rdir / "scripting/empire_colors.xml"))
         InitEmpireColors(rdir / "scripting/empire_colors.xml");
