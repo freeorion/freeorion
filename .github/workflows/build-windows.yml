@@ -95,12 +95,26 @@ jobs:
         run: |
           pushd build
           cpack -V -C Release -G NSIS
+      - name: Generate binaries only
+        if: true # only for weekly-test-build push
+        run: |
+          pushd build
+          cpack -V -C Release -G ZIP -D CPACK_ARCHIVE_COMPONENT_INSTALL=ON -D CPACK_MONOLITHIC_INSTALL=OFF -D CPACK_COMPONENTS_ALL=binaries
+          ls
       - name: Upload installer
         if: true # only for weekly-test-build push
         uses: actions/upload-artifact@v2
         with:
           name: freeorion-win32-build
           path: build/FreeOrion-*-win32.exe
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload binaries
+        if: true # only for weekly-test-build push
+        uses: actions/upload-artifact@v2
+        with:
+          name: freeorion-binaries-win32-build
+          path: build/FreeOrion-*.zip
           if-no-files-found: error
           retention-days: 14
       - name: Generate binaries only
