@@ -3,10 +3,11 @@ Special
     description = "MIMETIC_ALLOY_SPECIAL_DESC"
     stealth = 0
     spawnrate = 15.0
-    spawnlimit = 3
+    spawnlimit = 5
     location = And [
         Planet
         Planet type = [Radiated Inferno]
+        Not Species
     ]
     effectsgroups = [
         [[SPECIAL_INFLUENCE_RESOURCE_EXPORT(MIMETIC_ALLOY_SPECIAL)]]

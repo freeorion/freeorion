@@ -3,10 +3,11 @@ Special
     description = "FRACTAL_GEODES_SPECIAL_DESC"
     stealth = 0
     spawnrate = 10.0
-    spawnlimit = 3
+    spawnlimit = 5
     location = And [
         Planet
         Planet type = [Radiated Barren Tundra]
+        Not Species
     ]
     effectsgroups = [
         [[SPECIAL_INFLUENCE_RESOURCE_EXPORT(FRACTAL_GEODES_SPECIAL)]]

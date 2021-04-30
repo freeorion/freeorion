@@ -3,10 +3,11 @@ Special
     description = "SHIMMER_SILK_SPECIAL_SPECIAL_DESC"
     stealth = 0
     spawnrate = 10.0
-    spawnlimit = 3
+    spawnlimit = 5
     location = And [
         Planet
         Planet type = [Inferno Toxic Swamp]
+        Not Species
     ]
     effectsgroups = [
         [[SPECIAL_INFLUENCE_RESOURCE_EXPORT(SHIMMER_SILK_SPECIAL)]]
