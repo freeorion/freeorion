@@ -857,6 +857,11 @@ add_subdirectory(doc)
 ## Install targets and package project.
 ##
 
+cpack_add_component(binaries
+    DISPLAY_NAME "Binaries"
+    REQUIRED
+)
+
 if(UNIX AND BUILD_CLIENT_GG)
     install(
         TARGETS
@@ -864,6 +869,7 @@ if(UNIX AND BUILD_CLIENT_GG)
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         BUNDLE DESTINATION .
         RESOURCE
+        COMPONENT binaries
     )
 endif()
 
@@ -874,6 +880,7 @@ if(UNIX AND NOT APPLE AND NOT ANDROID)
             freeorionparse
         LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT binaries
     )
     
     if(BUILD_SERVER)
@@ -882,6 +889,7 @@ if(UNIX AND NOT APPLE AND NOT ANDROID)
                 freeoriond
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             BUNDLE DESTINATION .
+            COMPONENT binaries
         )
     endif()
 
@@ -891,6 +899,7 @@ if(UNIX AND NOT APPLE AND NOT ANDROID)
                 freeorionca
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             BUNDLE DESTINATION .
+            COMPONENT binaries
         )
     endif()
 
@@ -908,6 +917,7 @@ if(UNIX AND NOT APPLE AND NOT ANDROID)
                 freeoriongodot
             LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            COMPONENT binaries
         )
     endif()
 
@@ -966,6 +976,7 @@ if(WIN32 AND BUILD_CLIENT_GG)
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         BUNDLE DESTINATION .
         RESOURCE
+        COMPONENT binaries
     )
     install(CODE [[
         file(GET_RUNTIME_DEPENDENCIES
@@ -984,6 +995,7 @@ if(WIN32)
                 freeoriond
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             BUNDLE DESTINATION .
+            COMPONENT binaries
         )
         install(CODE [[
             file(GET_RUNTIME_DEPENDENCIES
@@ -1001,6 +1013,7 @@ if(WIN32)
                 freeorionca
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             BUNDLE DESTINATION .
+            COMPONENT binaries
         )
         install(CODE [[
             file(GET_RUNTIME_DEPENDENCIES
@@ -1018,6 +1031,7 @@ if(WIN32)
                 freeoriongodot
             LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            COMPONENT binaries
         )
 
         install(CODE [[
@@ -1061,7 +1075,8 @@ if(WIN32)
                 file(INSTALL "${dep_dir}/${dep_name}.zip" DESTINATION ${CMAKE_INSTALL_PREFIX})
             endif()
         endforeach()
-    ]])
+    ]]
+    COMPONENT binaries)
 endif()
 
 set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
