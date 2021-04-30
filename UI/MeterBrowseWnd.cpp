@@ -2,9 +2,7 @@
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
-#include "../util/GameRules.h"
 #include "../universe/Building.h"
-#include "../universe/Condition.h"
 #include "../universe/Effect.h"
 #include "../universe/Planet.h"
 #include "../universe/PopCenter.h"
@@ -13,6 +11,7 @@
 #include "../universe/ShipPart.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
+#include "../combat/CombatDamage.h"
 #include "../client/human/GGHumanClientApp.h"
 #include "ClientUI.h"
 #include "CUIDrawUtil.h"
@@ -708,71 +707,6 @@ void ShipFightersBrowseWnd::UpdateSummary() {
                                               DoubleToString(breakdown_total, 3, false)));
 }
 
-namespace {
-    /** Container for return values of ResolveFighterBouts */
-    struct FighterBoutInfo {
-        struct StateQty {
-            int         docked;
-            int         attacking;
-            int         launched;       // transitioning between docked and attacking
-        };
-        float           damage;
-        float           total_damage;   // damage from all previous bouts, including this bout
-        StateQty        qty;
-    };
-
-    /** Populate fighter state quantities and damages for each combat round until @p limit_to_bout */
-    std::map<int, FighterBoutInfo> ResolveFighterBouts(const std::shared_ptr<Ship> ship, const Condition::Condition* combat_targets,
-                                                       int bay_capacity, int current_docked,
-                                                       float fighter_damage, int limit_to_bout = -1)
-    {
-        // FIXME this should be moved to combat probably
-        std::map<int, FighterBoutInfo> retval;
-        const int NUM_BOUTS = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
-        int target_bout = limit_to_bout < 1 ? NUM_BOUTS : limit_to_bout;
-
-        // FIXME duplicates code from Ship.cpp
-        //auto target = std::make_shared<Fighter>();
-        // XXX DesignID valid?
-        auto target = std::make_shared<Ship>(ALL_EMPIRES, ship->DesignID(), "SP_HUMAN");
-        // target needs to have an ID != -1 to be visible, stealth should be low enough
-        // structure must be higher than zero to be valid target
-        target->SetID(-1000000); // XXX magic number AutoresolveInfo.next_fighter_id starts at -1000001 counting down
-        target->GetMeter(MeterType::METER_STRUCTURE)->Set(100.0f, 100.0f);
-        target->GetMeter(MeterType::METER_MAX_STRUCTURE)->Set(100.0f, 100.0f);
-        GetUniverse().SetEmpireObjectVisibility(ship->Owner(), target->ID(), Visibility::VIS_FULL_VISIBILITY);
-        ScriptingContext context(ship, target);
-
-        for (int bout = 1; bout <= target_bout; ++bout) {
-            context.combat_bout = bout;
-            // init current fighters
-            if (bout == 1) {
-                retval[bout].qty.docked = current_docked;
-                retval[bout].qty.attacking = 0;
-                retval[bout].qty.launched = 0;
-            } else {
-                retval[bout].qty = retval[bout - 1].qty;
-                retval[bout].qty.attacking += retval[bout].qty.launched;
-                retval[bout].qty.launched = 0;
-                retval[bout].total_damage = retval[bout - 1].total_damage;
-            }
-            // calc damage this bout, apply to total
-            int shots_this_bout = retval[bout].qty.attacking;
-            if (combat_targets && !combat_targets->Eval(context, context.effect_target)) {
-                shots_this_bout = 0;
-            }
-            retval[bout].damage = shots_this_bout * fighter_damage;
-            retval[bout].total_damage += retval[bout].damage;
-            // launch fighters
-            if (bout < NUM_BOUTS) {
-                retval[bout].qty.launched = std::min(bay_capacity, retval[bout].qty.docked);
-                retval[bout].qty.docked -= retval[bout].qty.launched;
-            }
-        }
-        return retval;
-    }
-}
-
 void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // clear existing labels
     for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
@@ -881,9 +815,9 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     if (!m_show_all_bouts) {
         // Show damage for first wave (2nd combat round)
-        std::map<int, FighterBoutInfo> bout_info = ResolveFighterBouts(
-            ship, combat_targets, bay_total_capacity, hangar_current_fighters, fighter_damage, 2);
-        FighterBoutInfo first_wave = bout_info.rbegin()->second;
+        std::map<int, Combat::FighterBoutInfo> bout_info = Combat::ResolveFighterBouts(
+            std::static_pointer_cast<const Ship>(ship), combat_targets, bay_total_capacity, hangar_current_fighters, fighter_damage, 2);
+        Combat::FighterBoutInfo first_wave = bout_info.rbegin()->second;
         GG::Clr highlight_clr = bout_info[1].qty.launched < bay_total_capacity ? HANGAR_COLOR : BAY_COLOR;
         std::string launch_text = ColouredInt(first_wave.qty.attacking, false, highlight_clr);
         std::string damage_label_text = boost::io::str(FlexibleFormat(UserString("TT_FIGHTER_DAMAGE"))
@@ -944,9 +878,9 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         // Damage summary labels
         // TODO Add list of effects on hangar(fighter) damage
 
-        std::map<int, FighterBoutInfo> bout_info = ResolveFighterBouts(
+        std::map<int, Combat::FighterBoutInfo> bout_info = Combat::ResolveFighterBouts(
             ship, combat_targets, bay_total_capacity, hangar_current_fighters, fighter_damage);
-        const FighterBoutInfo& last_bout = bout_info.rbegin()->second;
+        const Combat::FighterBoutInfo& last_bout = bout_info.rbegin()->second;
 
         // damage summary text
         auto& damage_total_text = UserString("SHIP_FIGHTERS_DAMAGE_TOTAL");
@@ -974,7 +908,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         GG::X left = GG::X0;
         int previous_docked = hangar_current_fighters;
         for (auto& current_bout : bout_info) {
-            const FighterBoutInfo& bout = current_bout.second;
+            const Combat::FighterBoutInfo& bout = current_bout.second;
             // combat round label
             std::string bout_text = boost::io::str(FlexibleFormat(UserString("TT_COMBAT_ROUND"))
                                                    % IntToString(current_bout.first));

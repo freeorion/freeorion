@@ -181,6 +181,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\combat\CombatDamage.h" />
     <ClInclude Include="..\..\combat\CombatEvent.h" />
     <ClInclude Include="..\..\combat\CombatEvents.h" />
     <ClInclude Include="..\..\combat\CombatLogManager.h" />
@@ -269,6 +270,7 @@
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\combat\CombatDamage.cpp" />
     <ClCompile Include="..\..\combat\CombatEvent.cpp" />
     <ClCompile Include="..\..\combat\CombatEvents.cpp" />
     <ClCompile Include="..\..\combat\CombatLogManager.cpp" />
