@@ -5522,7 +5522,6 @@ Estimated combat strength   (<i>ignoring shields</i>):  %15$.f   (%16$.2f per PP
             (<i>enemy with attack %17$.1f and shields %18$.1f</i>):  %19$.f   (%20$.2f per PP)
 '''
 
-
 ENC_SDD_HANGAR
 [[encyclopedia PC_FIGHTER_HANGAR]] [[METER_CAPACITY]]
 
