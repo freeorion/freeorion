@@ -22,12 +22,12 @@ Required Software Dependencies
 FreeOrion depends on the following software to build:
 
   * [Visual Studio] - 2017 or 2019 for Windows Desktop ; Windows only
-  * [Xcode] - 9.4 or later ; Mac OS X only
+  * [Xcode] - 10.1 or later ; Mac OS X only
   * [CMake] - 3.4 (Mac OS X) ; 3.1 or later (Other non-Windows)
   * A C++17 compliant compiler - Other Operating Systems
     * [GNU GCC] - 8.0 or later
     * [Clang] - 5 or later
-  * [Python] - 3.5.* or later
+  * [Python] - 3.6.* or later
   * [Git]
 
 FreeOrion depends on the following libraries or APIs to run:
@@ -37,7 +37,7 @@ FreeOrion depends on the following libraries or APIs to run:
   * OpenAL - It's recommended to use the [OpenAL Soft] implementation
   * [Boost] - 1.58 or later
   * [zlib]
-  * [libpython] - 3.5.* or later
+  * [libpython] - 3.6.* or later
   * [FreeType2]
   * [libpng]
   * [libogg]
@@ -60,9 +60,9 @@ manager or compiling from source).
 Step by step procedure:
 
  * On Windows:
-   * Download the [FreeOrionSDK v11] from the FreeOrionSDK respository releases.
+   * Download the [FreeOrionSDK v12] from the FreeOrionSDK respository releases.
  * On Mac OS X:
-   * The [FreeOrionSDK v11] is downloaded automatically when CMake creates the
+   * The [FreeOrionSDK v12] is downloaded automatically when CMake creates the
      build environment.
  * Linux and other Operating Systems:
    * Install build and runtime dependencies by the preferred way for the
@@ -119,8 +119,6 @@ Visual Studio.  Now compile the whole project by selecting the
 
 After the build finished successfully the binaries can be found within
 the `freeorion-project/FreeOrion` directory.
-
-I
 
 ### Windows (CMake; work in progress)
 
