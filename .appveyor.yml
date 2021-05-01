@@ -22,7 +22,7 @@ skip_commits:
 
 install:
   - cd ..
-  - ps: Start-FileDownload https://github.com/freeorion/freeorion-sdk/releases/download/v11/FreeOrionSDK_11_MSVC-v141-Win32.zip -FileName FreeOrionSDK.zip
+  - ps: Start-FileDownload https://github.com/freeorion/freeorion-sdk/releases/download/v12/FreeOrionSDK_12_MSVC-v141-Win32.zip -FileName FreeOrionSDK.zip
   - unzip -q FreeOrionSDK.zip
   - cp bin/* freeorion/
   - cd freeorion

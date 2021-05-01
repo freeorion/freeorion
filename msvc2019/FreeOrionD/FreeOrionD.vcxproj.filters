@@ -212,13 +212,13 @@
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\python\CommonFramework.h">
-      <Filter>Header Files\python</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\python\SetWrapper.h">
       <Filter>Header Files\python</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="..\..\python\PythonBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\server\ServerFSM.cpp">
@@ -251,9 +251,6 @@
     <ClCompile Include="..\..\combat\CombatSystem.cpp">
       <Filter>Source Files\combat</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\python\CommonFramework.cpp">
-      <Filter>Source Files\python</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\python\EmpireWrapper.cpp">
       <Filter>Source Files\python</Filter>
     </ClCompile>
@@ -273,5 +270,8 @@
       <Filter>Source Files\python</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="..\..\python\PythonBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
