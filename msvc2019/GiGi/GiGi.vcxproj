@@ -105,7 +105,9 @@
     <ClCompile Include="..\..\GG\src\ListBox.cpp" />
     <ClCompile Include="..\..\GG\src\Menu.cpp" />
     <ClCompile Include="..\..\GG\src\MultiEdit.cpp" />
-    <ClCompile Include="..\..\GG\src\nanovg\nanovg.c" />
+    <ClCompile Include="..\..\GG\src\nanovg\nanovg.c">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4068;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
     <ClCompile Include="..\..\GG\src\PtRect.cpp" />
     <ClCompile Include="..\..\GG\src\RichText\BlockControl.cpp" />
     <ClCompile Include="..\..\GG\src\RichText\ImageBlock.cpp" />
