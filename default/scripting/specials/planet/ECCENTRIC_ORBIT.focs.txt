@@ -17,11 +17,14 @@ Special
                 Happiness low = 12
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = [
-                SetTargetResearch value = Value + (NamedReal name = "ECCENTRIC_ORBIT_TARGET_RESEARCH_FLAT" value = 3)
-                SetMaxSupply value = Value + (NamedReal name = "ECCENTRIC_ORBIT_MAX_SUPPLY_FLAT" value = -2)
-            ]
-        
+            effects = SetTargetResearch value = Value + (NamedReal name = "ECCENTRIC_ORBIT_TARGET_RESEARCH_FLAT" value = 3)
+
+        EffectsGroup
+            scope = Source
+            activation = Not Population high = 0
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            effects = SetMaxSupply value = Value + (NamedReal name = "ECCENTRIC_ORBIT_MAX_SUPPLY_FLAT" value = -2)
+
         [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
