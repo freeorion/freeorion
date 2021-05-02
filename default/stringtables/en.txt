@@ -8655,8 +8655,8 @@ Prefers [[PT_INFERNO]] planets.
 SP_ABADDONI_DESC
 '''Description:
 
-Abaddoni are shaped like a chicken egg on its side, roughly 0,8 meters tall and deep red with black spots. Their predominant feature is a large mouth starting at the point and extending back for a full third of the body.
-At the end of each of their 6 short crab like legs, is an inflatable sac which enables them to climb upside down. Because they grew up underground Abaddoni have no eyes, they mainly rely on smell and to a lesser extent sound and touch to navigate.
+Abaddoni are shaped like a chicken egg on its side, roughly 80 cm tall and deep red with black spots. Their predominant feature is a large mouth starting at the point and extending back for a full third of the body.
+At the end of each of their 6 short crab-like legs, is an inflatable sac which enables them to climb upside down. Because they grew up underground, Abaddoni have no eyes; they mainly rely on smell and to a lesser extent sound and touch to navigate.
 
 Social Structure:
 The entire Abaddonnian species lives in a dictatorship ruled by a sentient artificial intelligence called Mother. This AI was created by the Abaddoni as a governmental assistant, but slowly took over. Now every newborn Abaddoni gets a wireless transmitter placed into the brain, for Mother to read their thoughts and being able to terminate them when necessary. There is no real social structure between the Abaddoni, they are all the same - slaves.
@@ -8674,7 +8674,7 @@ Prefers [[PT_RADIATED]] planets.
 
 SP_ACIREMA_DESC
 '''Description
-An Acirem is a 10-30 m ellipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
+An Acirem is a 10-30 m ellipsoidal energy being with large (30-100m) ''wings''. As they age, they accumulate material from around them, developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to this universe: on their "Homeworld" of Portal. However, upon doing that, they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe, and Acirem rarely spend much time before crossing back into their own universe.
 
 As the Acirema found the anomaly that allowed them to enter into this universe, they also found that harnessing the differences in structure allowed them to generate energy in massive amounts in both universes. They also found that their bodies could release and manipulate massive amounts of energy. They rapidly began gathering material on Portal to study, and use to build structures on Portal itself. However that massive amount of energy meant they rapidly mined Portal out, and soon had very limited minerals that were safe for them to extract.
 
