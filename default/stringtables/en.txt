@@ -1190,6 +1190,12 @@ Tech Cost Scaling
 RULE_TECH_COST_FACTOR_DESC
 Adjusts costs of tech
 
+RULE_SINGULARITY_COST_FACTOR
+[[LRN_TRANSCEND]] Cost Scaling
+
+RULE_SINGULARITY_COST_FACTOR_DESC
+Adjusts costs of [[LRN_TRANSCEND]] tech
+
 RULE_ENABLE_EXPERIMENTORS
 Enable Experimentors
 
