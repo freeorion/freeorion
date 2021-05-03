@@ -1,0 +1,26 @@
+name: String tables checks
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9']
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Check string tables formatting
+        run: |
+          diff -u default/stringtables/en.txt <(check/st-tool.py format default/stringtables/en.txt) || { echo "String table is not properly formatted"; exit 1; }
+      - name: Validate string tables
+        run: |
+          ./check/st-tool.py check --reference default/stringtables/en.txt default/stringtables/??.txt

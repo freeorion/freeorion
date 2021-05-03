@@ -19,7 +19,6 @@ if(TARGET Flake8::flake8)
         COMMAND "$<TARGET_FILE:Flake8::flake8>"
         COMMENT "Check python code for PEP-8 style conformance"
         VERBATIM
-        SOURCES "${PROJECT_SOURCE_DIR}/default/python/tox.ini"
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/default/python"
     )
 
@@ -27,7 +26,6 @@ if(TARGET Flake8::flake8)
         COMMAND "$<TARGET_FILE:Flake8::flake8>"
         COMMENT "Check python FreeOrion content scripts for PEP-8 style conformance"
         VERBATIM
-        SOURCES "${PROJECT_SOURCE_DIR}/default/scripting/tox.ini"
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/default/scripting"
     )
 
@@ -35,7 +33,6 @@ if(TARGET Flake8::flake8)
         COMMAND "$<TARGET_FILE:Flake8::flake8>"
         COMMENT "Check python FreeOrion content scripts for PEP-8 style conformance"
         VERBATIM
-        SOURCES "${PROJECT_SOURCE_DIR}/test-scripting/tox.ini"
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/test-scripting"
     )
 endif()

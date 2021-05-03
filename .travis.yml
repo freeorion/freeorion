@@ -1,6 +1,5 @@
 ---
 stages:
-  - lint
   - build
   - test
 
@@ -33,8 +32,6 @@ _linux_setup_common: &_linux_setup_common
       libvorbis-dev
       cppcheck
       doxygen
-      python3-pip
-    - python3 -m pip install flake8==3.7.9
   before_script:
     - mkdir build
     - cd build
@@ -44,43 +41,11 @@ _linux_setup_common: &_linux_setup_common
     - ccache --cleanup
     - ccache --show-stats
 
-_test_python_common: &_test_python_common
-  stage: test
-  os: linux
-  dist: bionic
-  language: python
-  install:
-    - pip install pytest==5.4.1
-  script:
-    - pytest
-
 
 jobs:
   allow_failures:
     dist: focal
-
   include:
-    - name: Lint AI with Python 3.6
-      <<: *_linux_setup_common
-      stage: lint
-      script:
-        - cmake ..
-        - cmake --build . --target check-pep8
-        - cmake --build . --target check-pep8-focs
-        - cmake --build . --target check-pep8-focs-test
-
-
-    - name: Lint string tables
-      stage: lint
-      os: linux
-      dist: bionic
-      language: python
-      python: 3.6
-      script:
-        - ./check/st-tool.py check --reference default/stringtables/en.txt default/stringtables/??.txt
-        - diff -u default/stringtables/en.txt <(check/st-tool.py format default/stringtables/en.txt) || { echo "String table is not properly formatted"; exit 1; }
-
-
     - name: Build C++ API documentation
       <<: *_linux_setup_common
       stage: build
@@ -141,8 +106,6 @@ jobs:
           libvorbis-dev
           cppcheck
           doxygen
-          python3-pip
-        - python3 -m pip install flake8==3.7.9
       before_script:
         - mkdir build
         - cd build
@@ -223,17 +186,3 @@ jobs:
       before_cache:
         - ccache --cleanup
         - ccache --show-stats
-
-
-    - name: Unittest AI with Python 3.6
-      <<: *_test_python_common
-      python: 3.6
-      before_install:
-        - alias pip=/usr/bin/pip3
-
-
-    - name: Unittest AI with Python 3.9
-      <<: *_test_python_common
-      python: 3.9
-      before_install:
-        - alias pip=/usr/bin/pip3
