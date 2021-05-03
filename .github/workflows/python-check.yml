@@ -26,7 +26,7 @@ jobs:
           flake8 default/python --config=default/python/tox.ini --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
       - name: Lint FOCS with flake8
         run: |
-          flake8 default/scripting --config=default/test-scripting/tox.ini --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
+          flake8 default/scripting --config=default/python/tox.ini --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
       - name: Lint FOCS tests with flake8
         run: |
           flake8 test-scripting --config=test-scripting/tox.ini --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
