@@ -219,6 +219,7 @@ PROTECTION_FOCUS_TROOPS
             Planet
             Focus type = "FOCUS_PROTECTION"
             (LocalCandidate.LastTurnConquered < CurrentTurn)
+            (LocalCandidate.LastTurnAttackedByShip < CurrentTurn)
         ]
         accountinglabel = "FOCUS_PROTECTION_LABEL"
         priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
