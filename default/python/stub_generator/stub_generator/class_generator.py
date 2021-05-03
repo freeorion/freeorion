@@ -1,4 +1,5 @@
 from logging import error, warning
+from textwrap import fill
 from typing import Iterable, List, Set
 
 from common.print_utils import Table, Text
@@ -76,14 +77,17 @@ def _report_classes_without_instances(classes_map: Iterable[str], instance_names
         return
 
     warning("")
-    warning(
-        "In order to get more information about the classes in API we need to process an instances of thea classes.")
-    warning("Classes mentioned bellow does not have instances so their specs are not full.")
-    warning("Please provide instances or add them to ignored,")
-    warning("check generate_stub usage in the freeorion/default/python/handlers folder.")
-    warning("")
+    warning(fill(
+        "In order to get more information about the classes in API"
+        " we need to process an instances of classes."
+        " Classes mentioned bellow does not have instances so their specs are not full."
+        " Please provide instances or add them to ignored,"
+        " check generate_stub usage in the"
+        " freeorion/default/python/handlers folder.",
+        width=60
+    ))
 
-    table = Table([Text("classes")], )
+    table = Table([Text("classes without instances")], )
 
     for inst in sorted(missed_instances, key=str.lower):
         table.add_row((str(inst),))
