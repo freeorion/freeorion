@@ -1,4 +1,4 @@
-from operator import attrgetter, itemgetter
+from operator import attrgetter
 from typing import List
 
 from stub_generator.interface_inspector import EnumInfo
@@ -11,7 +11,17 @@ ENUM_STUB = ('class Enum(int):\n'
 
 
 def _handle_enum(info: EnumInfo):
-    pairs = sorted(info.attributes.items(), key=itemgetter(1))
+    def attr_sort_key(pair):
+        """
+        Make key to sort attributes.
+
+        We sort enum items by is value and after that by name.
+        Enum item could have aliases with the same value and different names.
+        """
+        name, val = pair
+        return val, name
+
+    pairs = sorted(info.attributes.items(), key=attr_sort_key)
     result = ['class %s(Enum):' % info.name,
               '    def __init__(self, numerator, name):',
               '        self.name = name',
