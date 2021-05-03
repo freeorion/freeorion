@@ -1,2 +1,2 @@
 from stub_generator.stub_generator.argument_name_generator import normalize_name
-from stub_generator.stub_generator.enum_precessor import EnumProcessor
+from stub_generator.stub_generator.enum_generator import EnumGenerator

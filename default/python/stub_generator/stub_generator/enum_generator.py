@@ -2,7 +2,7 @@ from operator import attrgetter
 from typing import List
 
 from stub_generator.interface_inspector import EnumInfo
-from stub_generator.stub_generator.processor import BaseProcessor
+from stub_generator.stub_generator.base_generator import BaseGenerator
 
 ENUM_STUB = ('class Enum(int):\n'
              '    """Enum stub for docs, not really present in fo"""\n'
@@ -38,7 +38,7 @@ def _handle_enum(info: EnumInfo):
     return '\n'.join(result)
 
 
-class EnumProcessor(BaseProcessor):
+class EnumGenerator(BaseGenerator):
     def __init__(self, enums: List[EnumInfo]):
         super().__init__()
         self.body.append(ENUM_STUB)

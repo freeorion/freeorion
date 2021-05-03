@@ -3,7 +3,7 @@ from typing import List
 
 from stub_generator.interface_inspector import FunctionInfo
 from stub_generator.parse_docs import Docs
-from stub_generator.stub_generator.processor import BaseProcessor
+from stub_generator.stub_generator.base_generator import BaseGenerator
 
 
 def _handle_function(fun: FunctionInfo):
@@ -19,7 +19,7 @@ def _handle_function(fun: FunctionInfo):
     return res
 
 
-class FunctionProcessor(BaseProcessor):
+class FunctionGenerator(BaseGenerator):
     def __init__(self, functions: List[FunctionInfo]):
         super().__init__()
         for function in sorted(functions, key=attrgetter("name")):

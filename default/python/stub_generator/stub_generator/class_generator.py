@@ -4,7 +4,7 @@ from typing import Iterable, List, Set
 from common.print_utils import Table, Text
 from stub_generator.interface_inspector import ClassInfo, EnumInfo, InstanceInfo
 from stub_generator.parse_docs import Docs
-from stub_generator.stub_generator.processor import BaseProcessor
+from stub_generator.stub_generator.base_generator import BaseGenerator
 
 
 def _handle_class(info: ClassInfo):
@@ -90,7 +90,7 @@ def _report_classes_without_instances(classes_map: Iterable[str], instance_names
     warning(table.get_table())
 
 
-class ClassProcessor(BaseProcessor):
+class ClassGenerator(BaseGenerator):
     def __init__(self, classes: List[ClassInfo], instances: List[InstanceInfo], classes_to_ignore: Set[str],
                  enums: List[EnumInfo]):
         super().__init__()

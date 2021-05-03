@@ -1,18 +1,18 @@
 from typing import List, Set
 
 from stub_generator.interface_inspector import ClassInfo, EnumInfo, FunctionInfo, InstanceInfo
-from stub_generator.stub_generator import EnumProcessor
-from stub_generator.stub_generator.class_processor import ClassProcessor
-from stub_generator.stub_generator.function_processor import FunctionProcessor
+from stub_generator.stub_generator import EnumGenerator
+from stub_generator.stub_generator.class_generator import ClassGenerator
+from stub_generator.stub_generator.function_generator import FunctionGenerator
 
 
 def make_stub(classes: List[ClassInfo], enums: List[EnumInfo], functions: List[FunctionInfo],
               instances: List[InstanceInfo], result_path, classes_to_ignore: Set[str]):
 
     processors = [
-        ClassProcessor(classes, instances, classes_to_ignore, enums),
-        EnumProcessor(enums),
-        FunctionProcessor(functions),
+        ClassGenerator(classes, instances, classes_to_ignore, enums),
+        EnumGenerator(enums),
+        FunctionGenerator(functions),
     ]
 
     res = [
