@@ -19,17 +19,25 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install development dependencies
-        run: |
-          pip install -r default/python/requirements-dev.txt
+        run: pip install -r default/python/requirements-dev.txt
       - name: Lint with flake8
-        run: |
-          flake8 default/python --config=default/python/tox.ini --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
+        # Run from root to preserve full path in output
+        run: >
+          flake8 default/python
+          --config=default/python/tox.ini
+          --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
       - name: Lint FOCS with flake8
-        run: |
-          flake8 default/scripting --config=default/python/tox.ini --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
+        # Run from root to preserve full path in output
+        run: >
+          flake8 default/scripting
+          --config=default/scripting/tox.ini
+          --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
       - name: Lint FOCS tests with flake8
-        run: |
-          flake8 test-scripting --config=test-scripting/tox.ini --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
+        # Run from root to preserve full path in output
+        run: >
+          flake8 test-scripting
+          --config=test-scripting/tox.ini
+          --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
       - name: Test with pytest
-        run: |
-           pytest -v default/python/tests
+        # Run from root to preserve full path in output
+        run: pytest -v default/python/tests
