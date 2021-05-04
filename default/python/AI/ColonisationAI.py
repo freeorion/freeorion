@@ -5,6 +5,7 @@ from typing import List
 import AIDependencies
 import AIstate
 import EspionageAI
+import ExplorationAI
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import InvasionAI
@@ -1280,6 +1281,15 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
                 universe.getSystem(sys_id), aistate.systemStatus[sys_id]['monsterThreat']))
             already_targeted.append(planet_id)
             continue
+
+        # If a planet in an unexplored system is visible, e.g. due to species effects,
+        # make sure to check the system for stationary guards first
+        system_was_visible = get_partial_visibility_turn(sys_id) > 0
+        if not system_was_visible:
+            # TODO: Maybe could allow colonization if monster frequency is set to None in game settings?
+            ExplorationAI.request_emergency_exploration(sys_id)
+            continue
+
         this_spec = target[1][1]
         found_fleets = []
         try:
