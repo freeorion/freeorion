@@ -2,6 +2,7 @@ from logging import debug, error, warning
 
 from EnumsAI import ShipRoleType, MissionType
 import EspionageAI
+import ExplorationAI
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from aistate_interface import get_aistate
@@ -446,9 +447,11 @@ class OrderInvade(AIFleetOrder):
                           "is owned by empire %d" % (planet_stealth, shields, pop, planet.owner))
                     if 'needsEmergencyExploration' not in dir(aistate):
                         aistate.needsEmergencyExploration = []
-                    if fleet.systemID not in aistate.needsEmergencyExploration:
-                        aistate.needsEmergencyExploration.append(fleet.systemID)
-                        debug("Due to trouble invading, added system %d to Emergency Exploration List" % fleet.systemID)
+
+                    # TODO: Check if this even makes sense - to invade a planet the ship must be in the system
+                    #       which should grant the same visibility as a scout ship...
+                    ExplorationAI.request_emergency_exploration(fleet.systemID)
+                    debug("Due to trouble invading, added system %d to Emergency Exploration List" % fleet.systemID)
                     self.executed = False
                     # debug(universe.getPlanet(planet_id).dump())  # TODO: fix fo.UniverseObject.dump()
                     break

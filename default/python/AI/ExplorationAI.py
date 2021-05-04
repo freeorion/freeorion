@@ -219,3 +219,9 @@ def update_explored_systems():
         if any(nid in aistate.exploredSystemIDs for nid in neighbors):
             border_unexplored_system_ids.add(sys_id)
     return newly_explored
+
+
+def request_emergency_exploration(system_id: int):
+    aistate = get_aistate()
+    if system_id not in aistate.needsEmergencyExploration:
+        aistate.needsEmergencyExploration.append(system_id)
