@@ -11755,6 +11755,15 @@ Planets with [[ARTISTIC]] species that are set to influence focus will generate 
 PLC_ARTISAN_WORKSHOPS_SHORT_DESC
 Artistic species produce luxuries
 
+PLC_BOOTSTRAPPING
+Colonial Bootstrapping
+
+PLC_BOOTSTRAPPING_DESC
+Increases the growth rate of industry, research, and influence meters, and boosts stability on colonies with population less than 6.
+
+PLC_BOOTSTRAPPING_SHORT_DESC
+Boosts small colonies
+
 
 ##
 ## Technology categories
