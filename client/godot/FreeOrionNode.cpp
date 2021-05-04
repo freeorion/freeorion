@@ -60,7 +60,11 @@ void FreeOrionNode::_init() {
     const godot::PoolStringArray wargs = godot::OS::get_singleton()->get_cmdline_args();
     const godot::PoolStringArray::Read wargs_read = wargs.read();
     for (int i = 0; i < wargs.size(); ++ i) {
-        args.emplace_back(std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(wargs_read[i].unicode_str()));
+        const std::string arg = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(wargs_read[i].unicode_str());
+        // Exclude Godot's options
+        if (arg != "-s" && arg.rfind("-g", 0) != 0) {
+            args.emplace_back(std::move(arg));
+        }
     }
 
     // override previously-saved and default options with command line parameters and flags
