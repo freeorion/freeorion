@@ -1,6 +1,15 @@
 Statistic name = "MILITARY_STRENGTH_STAT" value =
-    Statistic Sum value = (LocalCandidate.Attack * (LocalCandidate.Structure + 2 * LocalCandidate.MaxShield))
+    // Damage prevention by shields: each shield is hit twice and a half times by non-shield-piercing weapons.
+    //   as a shield usefulness scales with structure, we "split" the effect and put part of it on the damage side
+    // Damage prevention by shooting down fighters: each part shot prevents 2/3 of a hit by a laser fighter (4+2 base damage) in bout two.
+    //     With four bouts a bomber destructed in bout two prevents 2 bomber shots, but flak and interceptors are usually idle 2/3 of their total destruction estimation so that evens out
+    //     Usefulness of most anti-fighter weapons scales with the number of enemy fighters
+    // Note that weapons targeting fighters and ships will be counted twice (once for doing structural damage, once for preventing fighter damage)
+    Statistic Sum value = ((LocalCandidate.TotalShipDamageEstimation + 1.5 * LocalCandidate.MaxShield)
+                         * (LocalCandidate.Structure + LocalCandidate.MaxShield + ([[FIGHTER_DAMAGE_FACTOR]] * 4 * LocalCandidate.TotalFighterDamageEstimation)))
         condition = And [
             Ship
             OwnedBy empire = Source.Owner
         ]
+
+#include "/scripting/common/misc.macros"

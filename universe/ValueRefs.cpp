@@ -874,15 +874,20 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     } else if (property_name == "CurrentTurn") {
         return context.current_turn;
 
-    } else if (property_name == "Attack") {
-        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
-            return fleet->Damage(context.ContextObjects());
+    } else if (property_name == "TotalFighterDamageEstimation") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
-            // FIXME need something to prevent recursion ; actually disallowing using Attack inside of combat estimation condition via parsers would be best.
-            return ship->TotalWeaponsShipDamage(); // FIXME + ship-> TotalWeaponsFighterDamage()
+            ErrorLogger() << "TotalFighterDamageEstimation" <<  ship->TotalWeaponsFighterDamage();
+            // FIXME prevent recursion; disallowing the ValueRef inside totalWeaponsFighterDamage via parsers would be best.
+            return ship->TotalWeaponsFighterDamage();
         }
-        if (auto fighter = std::dynamic_pointer_cast<const Fighter>(object))
-            return fighter->Damage();
+        return 0.0;
+
+    } else if (property_name == "TotalShipDamageEstimation") {
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
+            // FIXME prevent recursion; disallowing the ValueRef inside of totalWeaponsShipDamage via parsers would be best.
+            ErrorLogger() << "TotalShipDamageEstimation" <<  ship->TotalWeaponsShipDamage();
+            return ship->TotalWeaponsShipDamage();
+        }
         return 0.0;
 
     } else if (property_name == "PropagatedSupplyRange") {

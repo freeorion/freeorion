@@ -28,7 +28,6 @@
     (Article)                                   \
     (Application)                               \
     (Asteroids)                                 \
-    (Attack)                                    \
     (Barren)                                    \
     (Basic)                                     \
     (BlackHole)                                 \
@@ -576,8 +575,10 @@
     (TopPriorityResearchableTech)               \
     (TopPriorityTransferrableTech)              \
     (totalFighterDamageEstimation)              \
+    (TotalFighterDamageEstimation)              \
     (TotalFighterShots)                         \
     (totalShipDamageEstimation)                 \
+    (TotalShipDamageEstimation)                 \
     (Toxic)                                     \
     (Trade)
 
