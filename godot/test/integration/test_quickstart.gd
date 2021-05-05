@@ -43,6 +43,8 @@ func test_quickstart():
 	freeorion.free()
 	signaler.free()
 
+	assert_no_new_orphans()
+
 
 func _on_freeorion_start_game(_arg1):
 	signaler.notify()
