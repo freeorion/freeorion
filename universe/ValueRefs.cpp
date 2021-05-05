@@ -876,7 +876,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 
     } else if (property_name == "TotalFighterDamageEstimation") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
-            ErrorLogger() << "TotalFighterDamageEstimation" <<  ship->TotalWeaponsFighterDamage();
+            InfoLogger() << "TotalFighterDamageEstimation" <<  ship->TotalWeaponsFighterDamage();
             // FIXME prevent recursion; disallowing the ValueRef inside totalWeaponsFighterDamage via parsers would be best.
             return ship->TotalWeaponsFighterDamage();
         }
@@ -885,7 +885,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     } else if (property_name == "TotalShipDamageEstimation") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
             // FIXME prevent recursion; disallowing the ValueRef inside of totalWeaponsShipDamage via parsers would be best.
-            ErrorLogger() << "TotalShipDamageEstimation" <<  ship->TotalWeaponsShipDamage();
+            InfoLogger() << "TotalShipDamageEstimation" <<  ship->TotalWeaponsShipDamage();
             return ship->TotalWeaponsShipDamage();
         }
         return 0.0;
@@ -1340,19 +1340,22 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
 ///////////////////////////////////////////////////////////
 // TotalFighterShots (of a carrier during one battle)    //
 ///////////////////////////////////////////////////////////
-TotalFighterShots::TotalFighterShots(std::unique_ptr<Condition::Condition>&& sampling_condition) :
-    Variable<int>(ReferenceType::SOURCE_REFERENCE),
+TotalFighterShots::TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id = nullptr, std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr) :
+    Variable<int>(ReferenceType::NON_OBJECT_REFERENCE),
+    m_carrier_id(std::move(carrier_id)),
     m_sampling_condition(std::move(sampling_condition))
 {
-    this->m_root_candidate_invariant = (!m_sampling_condition || m_sampling_condition->RootCandidateInvariant());
+    this->m_root_candidate_invariant = (!m_sampling_condition || m_sampling_condition->RootCandidateInvariant())
+                                       && (!m_carrier_id || m_carrier_id->RootCandidateInvariant()) ;
 
     // no condition can explicitly reference the parent context's local candidate.
     // so local candidate invariance does not depend on the sampling condition
-    this->m_local_candidate_invariant = true;
+    this->m_local_candidate_invariant = (!m_carrier_id || m_carrier_id->LocalCandidateInvariant()) ;
 
-    this->m_target_invariant = (!m_sampling_condition || m_sampling_condition->TargetInvariant());
+    this->m_target_invariant = (!m_sampling_condition || m_sampling_condition->TargetInvariant())
+                               && (!m_carrier_id || m_carrier_id->TargetInvariant()) ;
 
-    this->m_source_invariant = (!m_sampling_condition || m_sampling_condition->SourceInvariant());
+    this->m_source_invariant = true;
 }
 
 bool TotalFighterShots::operator==(const ValueRef<int>& rhs) const
@@ -1364,6 +1367,8 @@ bool TotalFighterShots::operator==(const ValueRef<int>& rhs) const
     const TotalFighterShots& rhs_ = static_cast<const TotalFighterShots&>(rhs);
 
     if (m_sampling_condition == rhs_.m_sampling_condition) {
+        // check next member
+    } else if (m_carrier_id == rhs_.m_carrier_id) {
         return true;
     }
     return false;
@@ -1372,6 +1377,10 @@ bool TotalFighterShots::operator==(const ValueRef<int>& rhs) const
 std::string TotalFighterShots::Description() const
 {
     std::string retval = "TotalFighterShots(";
+    if (m_carrier_id) {
+        retval += m_carrier_id->Description();
+        retval += " ";
+    }
     if (m_sampling_condition) {
         retval += m_sampling_condition->Description();
     }
@@ -1382,6 +1391,8 @@ std::string TotalFighterShots::Description() const
 std::string TotalFighterShots::Dump(unsigned short ntabs) const
 {
     std::string retval = "TotalFighterShots";
+    if (m_carrier_id)
+        retval += " carrier = " + m_carrier_id->Dump();
     if (m_sampling_condition)
         retval += " condition = " + m_sampling_condition->Dump();
     return retval;
@@ -1398,6 +1409,7 @@ unsigned int TotalFighterShots::GetCheckSum() const
     unsigned int retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::TotalFighterShots");
+    CheckSums::CheckSumCombine(retval, m_carrier_id);
     CheckSums::CheckSumCombine(retval, m_sampling_condition);
     TraceLogger() << "GetCheckSum(TotalFighterShots):  retval: " << retval;
     return retval;
@@ -1405,13 +1417,17 @@ unsigned int TotalFighterShots::GetCheckSum() const
 
 int TotalFighterShots::Eval(const ScriptingContext& context) const
 {
-    std::shared_ptr<const Ship> ship = std::static_pointer_cast<const Ship>(context.source);
-    if (!ship) {
-        ErrorLogger() << "TotalFighterShots condition used in context where the Source is not a ship";
+    if (!m_carrier_id) {
+        ErrorLogger() << "TotalFighterShots condition without carrier id";
         return 0;
+    } else {
+        auto carrier = std::static_pointer_cast<const Ship>(context.ContextObjects().get<Ship>(m_carrier_id->Eval(context)));
+        if (!carrier) {
+            ErrorLogger() << "TotalFighterShots condition referenced a carrier which is not a ship";
+            return 0;
+        }
+        return Combat::TotalFighterShots(context, *carrier, m_sampling_condition.get());
     }
-
-    return Combat::TotalFighterShots(context, *ship, m_sampling_condition.get());
 }
 
 ///////////////////////////////////////////////////////////

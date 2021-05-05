@@ -152,9 +152,11 @@ parse::int_arithmetic_rules::int_arithmetic_rules(
         ;
 
     total_fighter_shots
-        = ( tok.TotalFighterShots_ >> label(tok.condition_) > condition_parser
+        = ( tok.TotalFighterShots_
+            > -( label(tok.carrier_) > primary_expr )
+            > -( label(tok.condition_) > condition_parser )
           ) [
-            _val =  construct_movable_(new_<ValueRef::TotalFighterShots>(deconstruct_movable_(_2, _pass)))
+            _val =  construct_movable_(new_<ValueRef::TotalFighterShots>(deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass)))
           ]
         ;
 

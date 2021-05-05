@@ -182,7 +182,7 @@ private:
   * in which the given \a sampling_condition matches. */
 struct FO_COMMON_API TotalFighterShots final : public Variable<int>
 {
-    TotalFighterShots(std::unique_ptr<Condition::Condition>&& sampling_condition);
+    TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id, std::unique_ptr<Condition::Condition>&& sampling_condition);
 
     bool        operator==(const ValueRef<int>& rhs) const override;
     int         Eval(const ScriptingContext& context) const override;
@@ -196,10 +196,11 @@ struct FO_COMMON_API TotalFighterShots final : public Variable<int>
     unsigned int GetCheckSum() const override;
 
     std::unique_ptr<ValueRef<int>> Clone() const override {
-        return std::make_unique<TotalFighterShots>(CloneUnique(m_sampling_condition));
+        return std::make_unique<TotalFighterShots>(CloneUnique(m_carrier_id), CloneUnique(m_sampling_condition));
     }
 
 private:
+    std::unique_ptr<ValueRef<int>>        m_carrier_id;
     std::unique_ptr<Condition::Condition> m_sampling_condition;
 };
 

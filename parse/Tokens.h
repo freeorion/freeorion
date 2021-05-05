@@ -51,6 +51,7 @@
     (Capacity)                                  \
     (Capital)                                   \
     (Capture)                                   \
+    (carrier)                                   \
     (captureresult)                             \
     (category)                                  \
     (ceil)                                      \
