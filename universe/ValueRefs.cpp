@@ -1341,11 +1341,9 @@ TotalFighterShots::TotalFighterShots(std::unique_ptr<Condition::Condition>&& sam
 {
     this->m_root_candidate_invariant = (!m_sampling_condition || m_sampling_condition->RootCandidateInvariant());
 
-    // don't need to check if sampling condition is LocalCandidateInvariant, as
-    // all conditions aren't, but that refers to their own local candidate.  no
-    // condition is explicitly dependent on the parent context's local candidate.
-    // FIXME not sure what that above means (stolen from Statistic constructor), so i claim it is not invariant
-    this->m_local_candidate_invariant = false;
+    // no condition can explicitly reference the parent context's local candidate.
+    // so local candidate invariance does not depend on the sampling condition
+    this->m_local_candidate_invariant = true;
 
     this->m_target_invariant = (!m_sampling_condition || m_sampling_condition->TargetInvariant());
 
