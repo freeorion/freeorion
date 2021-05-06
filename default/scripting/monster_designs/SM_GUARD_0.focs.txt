@@ -6,7 +6,7 @@ ShipDesign
     parts = [
         "SR_ARC_DISRUPTOR"
         "AR_PRECURSOR_PLATE"
-        "SR_ARC_DISRUPTOR"
+        ""
         "SH_DEFENSE_GRID"
     ]
     icon = "icons/monsters/maintenance_ship.png"
