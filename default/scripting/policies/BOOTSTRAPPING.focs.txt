@@ -18,7 +18,7 @@ Policy
                 SetIndustry value = min(Target.TargetIndustry, Value + 1.0)
                 SetResearch value = min(Target.TargetResearch, Value + 1.0)
                 SetInfluence value = min(Target.TargetInfluence, Value + 1.0)
-                SetTargetHappiness value = Value + 3
+                SetTargetHappiness value = Value + 2
             ]
     ]
     graphic = "icons/policies/boot.png"
