@@ -11764,6 +11764,15 @@ Increases the growth rate of industry, research, and influence meters, and boost
 PLC_BOOTSTRAPPING_SHORT_DESC
 Boosts small colonies
 
+PLC_PROPAGANDA
+Propaganda Broadcasts
+
+PLC_PROPAGANDA_DESC
+Increases imperial capital influence by [[value PROPAGANDA_INFLUENCE_FLAT]].
+
+PLC_PROPAGANDA_SHORT_DESC
+Increases capital influence
+
 
 ##
 ## Technology categories
