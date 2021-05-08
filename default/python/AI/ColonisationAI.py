@@ -1282,11 +1282,8 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
             already_targeted.append(planet_id)
             continue
 
-        # If a planet in an unexplored system is visible, e.g. due to species effects,
-        # make sure to check the system for stationary guards first
-        system_was_visible = get_partial_visibility_turn(sys_id) > 0
-        if not system_was_visible:
-            # TODO: Maybe could allow colonization if monster frequency is set to None in game settings?
+        # make sure not to run into stationary guards
+        if ExplorationAI.system_could_have_unknown_stationary_guard(sys_id):
             ExplorationAI.request_emergency_exploration(sys_id)
             continue
 
