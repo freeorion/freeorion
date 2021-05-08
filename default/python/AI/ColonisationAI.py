@@ -163,8 +163,9 @@ def calc_max_pop(planet, species, detail):
         detail.append("Gaia_PSM_late(3)")
 
     if "SELF_SUSTAINING" in tag_list:
-        base_pop_not_modified_by_species += 3
-        detail.append("SelfSustaining_PSM_late(3)")
+        if planet_env == fo.planetEnvironment.good:
+            base_pop_not_modified_by_species += 3
+            detail.append("SelfSustaining_PSM_late(3)")
 
     applicable_boosts = set()
     for this_tag in [tag for tag in tag_list if tag in AIDependencies.metabolismBoostMap]:
