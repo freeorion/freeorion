@@ -5,6 +5,7 @@ from typing import List
 import AIDependencies
 import AIstate
 import EspionageAI
+import ExplorationAI
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import InvasionAI
@@ -1280,6 +1281,12 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
                 universe.getSystem(sys_id), aistate.systemStatus[sys_id]['monsterThreat']))
             already_targeted.append(planet_id)
             continue
+
+        # make sure not to run into stationary guards
+        if ExplorationAI.system_could_have_unknown_stationary_guard(sys_id):
+            ExplorationAI.request_emergency_exploration(sys_id)
+            continue
+
         this_spec = target[1][1]
         found_fleets = []
         try:
