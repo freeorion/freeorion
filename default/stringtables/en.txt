@@ -11633,7 +11633,7 @@ PLC_NATIVE_APPROPRIATION
 Native Appropriation
 
 PLC_NATIVE_APPROPRIATION_DESC
-Increasess [[metertype METER_TARGET_RESEARCH]] on research-focused planets in systems that also contain unowned native-populated planets.
+Increasess [[metertype METER_TARGET_RESEARCH]] by [[value PLC_NATIVE_APPROPRIATION_RESEARCH_PERPLANET]] on research-focused planets in systems that also contain unowned native-populated planets.
 
 PLC_NATIVE_APPROPRIATION_SHORT_DESC
 Boosts Research

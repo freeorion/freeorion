@@ -27,7 +27,7 @@ Policy
                     ]
                 ]
             ]
-            effects = SetTargetResearch value = Value + (NamedReal name = "PLC_NATIVE_APPROPRIATION_RESEARCH_PERPLANET" value = 5) *
+            effects = SetTargetResearch value = Value + (NamedReal name = "PLC_NATIVE_APPROPRIATION_RESEARCH_PERPLANET" value = 5.0) *
                 Statistic Count condition = And [
                     InSystem id = Target.SystemID
                     Planet
