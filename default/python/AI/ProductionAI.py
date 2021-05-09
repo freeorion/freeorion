@@ -56,15 +56,6 @@ def generate_production_orders():
     debug("  Total Available Production Points: %s" % total_pp)
 
     aistate = get_aistate()
-    claimed_stars = aistate.misc.get('claimedStars', {})
-    if claimed_stars == {}:
-        for sType in AIstate.empireStars:
-            claimed_stars[sType] = list(AIstate.empireStars[sType])
-        for sys_id in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
-            t_sys = universe.getSystem(sys_id)
-            if not t_sys:
-                continue
-            claimed_stars.setdefault(t_sys.starType, []).append(sys_id)
 
     if current_turn == 1 and len(AIstate.opponentPlanetIDs) == 0 and len(production_queue) == 0:
         init_build_nums = [(PriorityType.PRODUCTION_EXPLORATION, 2)]
