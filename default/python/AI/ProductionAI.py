@@ -47,10 +47,6 @@ def generate_production_orders():
     empire = fo.getEmpire()
     production_queue = empire.productionQueue
     total_pp = empire.productionPoints
-    # prodResPool = empire.getResourcePool(fo.resourceType.industry)
-    # available_pp = dict_from_map(production_queue.available_pp(prodResPool))
-    # allocated_pp = dict_from_map(production_queue.allocated_pp)
-    # objectsWithWastedPP = production_queue.objectsWithWastedPP(prodResPool)
     current_turn = fo.currentTurn()
     debug('')
     debug("  Total Available Production Points: %s" % total_pp)
