@@ -8,7 +8,6 @@ Tech
     tags = [ "PEDIA_LEARNING_CATEGORY" ]
     prerequisites = [
         "CON_STARGATE"
-        "LRN_NDIM_SUBSPACE"
     ]
     unlock = Item type = Building name = "BLD_GATEWAY_VOID"
     graphic = "icons/tech/monument_to_exodus.png"
