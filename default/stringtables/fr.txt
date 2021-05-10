@@ -11583,7 +11583,7 @@ PLC_EXOBOT_PRODUCTIVITY_DESC
 Augmente l'efficacité de Production des Exobots sur les planètes en Focus Industrie de "Très Mauvais" à seulement "Mauvais".
 
 PLC_EXOBOT_PRODUCTIVITY_SHORT_DESC
-Accroît la Production des Exobots
+Améliore la Production des Exobots
 
 PLC_CONFEDERATION
 Confédération
@@ -11621,7 +11621,7 @@ PLC_DIVINE_AUTHORITY_DESC
 L'empire est dirigé par une théocratie qui prétend détenir l'autorité des dieux eux-mêmes. Ses dirigeants se revendiquent comme omnipotents et infaillibles, inspirant à tout l'empire la croyance qu'ils représentent le peuple élu. L'extrémisme religieux est encouragé au sein de la population, ce qui renforce la confiance envers les décisions gouvernementales, tout en stabilisant la société. La pensée critique et la science par l'expérience s'en trouvent par conséquent fortement entravées.'''
 
 PLC_DIVINE_AUTHORITY_SHORT_DESC
-Augmente la Stabilité et l'Influence, mais entrave la Recherche
+Améliore la Stabilité et l'Influence, mais entrave la Recherche
 
 PLC_NATIVE_APPROPRIATION
 Appropriation Indigène
@@ -11630,7 +11630,7 @@ PLC_NATIVE_APPROPRIATION_DESC
 Augmente la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche au sein des systèmes abritant également des planètes indigènes non-colonisées par l'empire.
 
 PLC_NATIVE_APPROPRIATION_SHORT_DESC
-Augmente la Recherche
+Améliore la Recherche
 
 PLC_ALGORITHMIC_RESEARCH
 Recherche Algorithmique
@@ -11639,7 +11639,7 @@ PLC_ALGORITHMIC_RESEARCH_DESC
 Augmente la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche de [[value LRN_ALGO_RESEARCH_TARGET_RESEARCH_PERCONSTRUCTION]] par la valeur la plus faible entre la [[metertype METER_POPULATION]] ou l'[[metertype METER_CONSTRUCTION]].
 
 PLC_ALGORITHMIC_RESEARCH_SHORT_DESC
-Augmente la Recherche
+Améliore la Recherche
 
 PLC_INDOCTRINATION
 Endoctrinement
@@ -11744,7 +11744,7 @@ PLC_CAPITAL_MARKETS_DESC
 Les planètes disposant d'une Particularité de ressources de luxe et réglées sur le Focus Influence, exporteront cette ressource vers les planètes reliées par lignes d'[[metertype METER_SUPPLY]], améliorant la [[metertype METER_HAPPINESS]] des planètes peuplées d'espèces appréciant cette ressource.
 
 PLC_CAPITAL_MARKETS_SHORT_DESC
-Augmente la Stabilité via l'export de ressources
+Améliore la Stabilité via l'export de ressources
 
 PLC_ARTISAN_WORKSHOPS
 Ateliers Artisanaux
@@ -11754,6 +11754,24 @@ Les planètes peuplés d'espèces de type [[ARTISTIC]] et réglées sur le Focus
 
 PLC_ARTISAN_WORKSHOPS_SHORT_DESC
 Production d'objets de luxe par les espèces artistiques
+
+PLC_BOOTSTRAPPING
+Planification Coloniale
+
+PLC_BOOTSTRAPPING_DESC
+Augmente le taux de croissance des indicateurs Industrie, Recherche, et Influence, et améliore la Stabilité des colonies dont la Population est inférieure à 6.
+
+PLC_BOOTSTRAPPING_SHORT_DESC
+Améliore les colonies de petite taille
+
+PLC_PROPAGANDA
+Informations Propagandistes
+
+PLC_PROPAGANDA_DESC
+Augmente l'Influence de la Capitale de [[value PROPAGANDA_INFLUENCE_FLAT]].
+
+PLC_PROPAGANDA_SHORT_DESC
+Augmente l'Influence de la Capitale
 
 
 ##
@@ -15787,7 +15805,7 @@ BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
 Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 MIN_POPULATION_THREE_REQUIRED
-Ne peut être construit qu'en un lieu où la [[metertype METER_POPULATION]] est supérieure ou égale à 3
+Ne peut être construit qu'en un lieu dont la [[metertype METER_POPULATION]] est supérieure ou égale à 3
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
 Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
