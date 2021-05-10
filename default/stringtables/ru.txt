@@ -1890,6 +1890,9 @@ OPTIONS_DB_SECTION_MISC
 OPTIONS_DB_SECTION_NETWORK
 Сервер и сеть
 
+OPTIONS_DB_SECTION_RAW
+All options with only raw description keys
+
 OPTIONS_DB_SECTION_SAVE
 Сохранение игры
 
@@ -4646,6 +4649,12 @@ ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
             (<i>противник с атакой %17$.1f и щитами %18$.1f</i>):  %19$.f   (%20$.2f за PP)
 '''
 
+ENC_SDD_HANGAR
+[[encyclopedia PC_FIGHTER_HANGAR]] [[METER_CAPACITY]]
+
+ENC_SDD_BAY
+[[encyclopedia PC_FIGHTER_BAY]] [[METER_CAPACITY]]
+
 ENC_UNLOCKED_BY
 '''<u>Открытые технологии:</u>
 
@@ -5276,6 +5285,9 @@ SELF_SUSTAINING_SPECIES_TITLE
 SELF_SUSTAINING_SPECIES_TEXT
 Самоподдерживающиеся виды могут быть энергетическими или кристаллическими существами или чем-то более иноземным. Их объединяет то, что они не нуждаются в питании, поэтому их МАКС численность населения очень высока. Несмотря на то, что у них отсутствуют факторы роста, их МАКС численность населения равна значению вида, который снабжен всеми тремя [[encyclopedia GROWTH_FOCUS_TITLE]] факторами
 
+GASEOUS_SPECIES_TITLE
+Gaseous Metabolism
+
 TELEPATHIC_TITLE
 Телепатия
 
@@ -5518,6 +5530,9 @@ ORBITAL_DRYDOCK_REPAIR_TEXT
 Ремонт начнется только на следующий ход после того как корабль войдет в систему. Корабли нуждаются во времени для стыковки, а ремонтному доку требуется время для подготовки как необходимой оснастки, так и самого пристыкованного корабля
 
 Любой бой в системе нарушит ремонт на этом ходу'''
+
+CONFIG_GUIDE_TITLE
+Configuration Guide
 
 ##
 ## Turn progress
@@ -6404,12 +6419,21 @@ CUSTOM_SITREP_INTRODUCTION
 Добро пожаловать в первоначальный брифинг о состоянии дел и обстановке в империи. В соответствии с директивой %tech% все занятые служащие империи стремятся собрать важную информацию и отправить ее на %system%, где она компилируется в отчеты, например, с уведомлением о важных событиях и других напоминаниях, выбранных лидером империи
 
 # This message value must contain no spaces. Use underlines instead.
+CUSTOM_1
+Custom_1
 
 # This message value must contain no spaces. Use underlines instead.
+CUSTOM_2
+Custom_2
 
 # This message value must contain no spaces. Use underlines instead.
+CUSTOM_3
+Custom_3
 
 # This message value must contain no spaces. Use underlines instead.
+CUSTOM_4
+Custom_4
+
 
 ##
 ## Victory/defeat
@@ -8242,6 +8266,10 @@ METER_DEFENSE
 # Meter types
 METER_SUPPLY
 Снабжение
+
+# Meter types
+METER_STOCKPILE
+Резервы
 
 # Meter types
 METER_TROOPS
@@ -11512,6 +11540,12 @@ BLD_INDUSTRY_CENTER_DESC
 
 Дальнейшее усовершенствование [[tech PRO_INDUSTRY_CENTER_III]] утраивает базовый бонус'''
 
+BLD_INTERSPECIES_ACADEMY
+Species InterDesign Academy
+
+BLD_STOCKPILING_CENTER
+Imperial Entanglement Center
+
 BLD_MEGALITH
 Мегалит
 
@@ -14013,16 +14047,39 @@ ORBITAL
 ##
 
 # Newline separated list of capitol names for beginner AIs
+AI_CAPITOL_NAMES_BEGINNER
+'''Ivory Tower
+Nunnery
+Monastery
+Orphanage'''
 
 # Newline separated list of capitol names for turtle AIs
+AI_CAPITOL_NAMES_TURTLE
+'''Citadel
+Prison'''
 
 # Newline separated list of capitol names for cautious AIs
+AI_CAPITOL_NAMES_CAUTIOUS
+'''Bastion
+Stronghold'''
 
 # Newline separated list of capitol names for typical AIs
+AI_CAPITOL_NAMES_TYPICAL
+'''Haven
+Free Trade Zone
+Homeworld'''
 
 # Newline separated list of capitol names for aggressive AIs
+AI_CAPITOL_NAMES_AGGRESSIVE
+'''Royal
+Imperial'''
 
 # Newline separated list of capitol names for maniacal AIs
+AI_CAPITOL_NAMES_MANIACAL
+'''Glorious
+Supreme
+Eternal
+Invincible'''
 
 AI_SHIPDESIGN_NAME_INVALID
 Неверный дизайн
