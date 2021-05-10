@@ -35,6 +35,15 @@ GameRule(
     max=10.0)
 
 GameRule(
+    name="RULE_SINGULARITY_COST_FACTOR",
+    description="RULE_SINGULARITY_COST_FACTOR_DESC",
+    category="BALANCE",
+    type=float,
+    default=1.0,
+    min=0.1,
+    max=10.0)
+
+GameRule(
     name="RULE_ENABLE_EXPERIMENTORS",
     description="RULE_ENABLE_EXPERIMENTORS_DESC",
     category="CONTENT",
