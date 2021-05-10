@@ -364,16 +364,6 @@ def survey_universe():
             set_medium_pilot_rating(rating_list[0])
         else:
             set_medium_pilot_rating(rating_list[1 + int(len(rating_list) // 5)])
-    # the idea behind this was to note systems that the empire has claimed-- either has a current colony or has targeted
-    # for making/invading a colony
-    # claimedStars = {}
-    # for sType in AIstate.empireStars:
-    # claimedStars[sType] = list( AIstate.empireStars[sType] )
-    # for sysID in set( AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
-    # tSys = universe.getSystem(sysID)
-    # if not tSys: continue
-    # claimedStars.setdefault( tSys.starType, []).append(sysID)
-    # get_aistate().misc['claimedStars'] = claimedStars
     colonization_timer.stop()
 
 

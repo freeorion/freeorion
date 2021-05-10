@@ -19,16 +19,13 @@ from EnumsAI import (EmpireProductionTypes, FocusType, MissionType, PriorityType
 from aistate_interface import get_aistate
 from character.character_module import Aggression
 from common.print_utils import Sequence, Table, Text
-from freeorion_tools import chat_human, ppstring, tech_is_complete
+from freeorion_tools import ppstring, tech_is_complete
 from turn_state import (best_pilot_rating, get_all_empire_planets, get_empire_drydocks, get_empire_outposts,
                         get_empire_planets_by_species,
                         get_inhabited_planets, medium_pilot_rating, get_owned_planets_in_system, get_owned_planets, get_colonized_planets,
                         get_empire_planets_with_species,
                         population_with_industry_focus, )
 from turn_state.design import get_best_ship_info, get_best_ship_ratings
-
-
-_CHAT_DEBUG = False
 
 
 # TODO Move Building names to AIDependencies to avoid typos and for IDE-Support
@@ -50,24 +47,11 @@ def generate_production_orders():
     empire = fo.getEmpire()
     production_queue = empire.productionQueue
     total_pp = empire.productionPoints
-    # prodResPool = empire.getResourcePool(fo.resourceType.industry)
-    # available_pp = dict_from_map(production_queue.available_pp(prodResPool))
-    # allocated_pp = dict_from_map(production_queue.allocated_pp)
-    # objectsWithWastedPP = production_queue.objectsWithWastedPP(prodResPool)
     current_turn = fo.currentTurn()
     debug('')
     debug("  Total Available Production Points: %s" % total_pp)
 
     aistate = get_aistate()
-    claimed_stars = aistate.misc.get('claimedStars', {})
-    if claimed_stars == {}:
-        for sType in AIstate.empireStars:
-            claimed_stars[sType] = list(AIstate.empireStars[sType])
-        for sys_id in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):
-            t_sys = universe.getSystem(sys_id)
-            if not t_sys:
-                continue
-            claimed_stars.setdefault(t_sys.starType, []).append(sys_id)
 
     if current_turn == 1 and len(AIstate.opponentPlanetIDs) == 0 and len(production_queue) == 0:
         init_build_nums = [(PriorityType.PRODUCTION_EXPLORATION, 2)]
@@ -347,8 +331,6 @@ def generate_production_orders():
                 if pid not in queued_building_locs and building_type.canBeProduced(empire.empireID, pid):
                     res = fo.issueEnqueueBuildingProductionOrder(building_name, pid)
                     debug("Enqueueing %s at planet %s, with result %d" % (building_name, universe.getPlanet(pid).name, res))
-                    if _CHAT_DEBUG:
-                        chat_human("Enqueueing %s at planet %s, with result %d" % (building_name, universe.getPlanet(pid), res))
                     if res:
                         queued_building_locs.append(pid)
                         cost, time = empire.productionCostAndTime(production_queue[production_queue.size - 1])
@@ -368,8 +350,6 @@ def generate_production_orders():
             if bld_type.canBeProduced(empire.empireID, pid):
                 res = fo.issueEnqueueBuildingProductionOrder(bld_name, pid)
                 debug("Enqueueing %s at planet %s, with result %d", bld_name, universe.getPlanet(pid), res)
-                if _CHAT_DEBUG:
-                    chat_human("Enqueueing %s at planet %s, with result %d" % (bld_name, universe.getPlanet(pid), res))
                 if res:
                     cost, time = empire.productionCostAndTime(production_queue[production_queue.size - 1])
                     building_expense += cost / time  # production_queue[production_queue.size -1].blocksize *
@@ -619,8 +599,6 @@ def generate_production_orders():
                     res = fo.issueEnqueueBuildingProductionOrder(building_name, use_loc)
                     debug("Enqueueing %s at planet %s , with result %d", building_name, planet_used, res)
                     if res:
-                        if _CHAT_DEBUG:
-                            chat_human("Enqueueing %s at planet %s , with result %d" % (building_name, planet_used, res))
                         res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                         debug("Requeueing %s to front of build queue, with result %d", building_name, res)
                 except:  # noqa: E722
