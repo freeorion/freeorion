@@ -182,8 +182,8 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                     } else if (ref_check_it->second < position + match.length()) {
                         ErrorLogger() << "Expansion error in key expansion: [[" << ref_check_it->first << "]] having end " << ref_check_it->second;
                         ErrorLogger() << "         currently at expansion text position " << position << " with match length: " << match.length();
-                        ErrorLogger() << "         of current expansion text:" << user_read_entry;
-                        ErrorLogger() << "         from keyword "<< key << " with raw text:" << rawtext;
+                        ErrorLogger() << "         of current expansion text: " << user_read_entry;
+                        ErrorLogger() << "         from keyword "<< key << " with raw text: " << rawtext;
                         ErrorLogger() << "         and cumulative substitions: " << cumulative_subsititions;
                         // will also trigger further error logging below
                         ++ref_check_it;
@@ -217,8 +217,8 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                 } else {
                     ErrorLogger() << "Cyclic key expansion: " << match[1] << " in: " << m_filename << "."
                                   << "         at expansion text position " << position;
-                    ErrorLogger() << "         of current expansion text:" << user_read_entry;
-                    ErrorLogger() << "         from keyword "<< key << " with raw text:" << rawtext;
+                    ErrorLogger() << "         of current expansion text: " << user_read_entry;
+                    ErrorLogger() << "         from keyword "<< key << " with raw text: " << rawtext;
                     ErrorLogger() << "         and cumulative substitions: " << cumulative_subsititions;
                     position += match.length();
                 }
@@ -236,7 +236,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                 bool foundmatch = map_lookup_it != m_strings.end();
                 if (!foundmatch && !fallback_lookup_strings.empty()) {
                     DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << m_filename
-                                  << "; checking in fallback file" << fallback_table_file;
+                                  << "; checking in fallback file: " << fallback_table_file;
                     map_lookup_it = fallback_lookup_strings.find(match[2]);
                     foundmatch = map_lookup_it != fallback_lookup_strings.end();
                 }
