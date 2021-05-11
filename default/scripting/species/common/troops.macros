@@ -29,6 +29,7 @@ UNSTABLE_REBEL_TROOPS
             activation = And [
                 Not Unowned
                 Not EmpireStockpile empire = Source.Owner resource = Influence low = 0
+                Not Capital
                 // TODO: some species trait?
             ]
             accountinglabel = "PARTISANS_REBELLION"
