@@ -72,25 +72,28 @@ void SpecialsPanel::Update() {
 
     // get specials and use them to create specials icons
     // for specials with a nonzero
-    for (const auto& entry : obj->Specials()) {
-        const Special* special = GetSpecial(entry.first);
+    for (auto& [special_name, tc] : obj->Specials()) {
+        const auto& [special_added_turn, special_capacity] = tc;
+        const Special* special = GetSpecial(special_name);
+        if (!special)
+            continue;
         std::shared_ptr<StatisticIcon> graphic;
-        if (entry.second.second > 0.0f)
-            graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special->Name()), entry.second.second, 2, false,
+        if (special_capacity > 0.0f)
+            graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special_name), special_capacity, 2, false,
                                                      SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
         else
-            graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special->Name()),
+            graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special_name),
                                                      SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
 
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
         std::string desc = special->Description();
 
-        if (entry.second.second > 0.0f)
-            desc += "\n" + boost::io::str(FlexibleFormat(UserString("SPECIAL_CAPACITY")) % DoubleToString(entry.second.second, 2, false));
+        if (special_capacity > 0.0f)
+            desc += "\n" + boost::io::str(FlexibleFormat(UserString("SPECIAL_CAPACITY")) % DoubleToString(special_capacity, 2, false));
 
-        if (entry.second.first > 0)
-            desc += "\n" + boost::io::str(FlexibleFormat(UserString("ADDED_ON_TURN")) % entry.second.first);
+        if (special_added_turn > 0)
+            desc += "\n" + boost::io::str(FlexibleFormat(UserString("ADDED_ON_TURN")) % special_added_turn);
         else
             desc += "\n" + UserString("ADDED_ON_INITIAL_TURN");
 
@@ -100,17 +103,15 @@ void SpecialsPanel::Update() {
 
         graphic->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
             ClientUI::SpecialIcon(special->Name()), UserString(special->Name()), desc));
-        m_icons[entry.first] = graphic;
+        m_icons[special_name] = graphic;
 
-        auto special_name = entry.first;
-
-        graphic->RightClickedSignal.connect([special_name](const GG::Pt& pt) {
-            auto zoom_action = [special_name]() {
-                ClientUI::GetClientUI()->ZoomToSpecial(special_name);
+        graphic->RightClickedSignal.connect([name{special_name}](const GG::Pt& pt) {
+            auto zoom_action = [name]() {
+                ClientUI::GetClientUI()->ZoomToSpecial(name);
             };
 
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-            std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(special_name));
+            std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(name));
 
             popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, zoom_action));
 
@@ -122,8 +123,8 @@ void SpecialsPanel::Update() {
     GG::X x(EDGE_PAD);
     GG::Y y(EDGE_PAD);
 
-    for (auto& entry : m_icons) {
-        auto& icon = entry.second;
+    for (auto& [icon_name, icon] : m_icons) {
+        (void)icon_name; // quiet ignored warning
         icon->SizeMove(GG::Pt(x, y), GG::Pt(x,y) + GG::Pt(SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT));
         AttachChild(icon);
 
@@ -135,9 +136,8 @@ void SpecialsPanel::Update() {
         }
     }
 
-    if (m_icons.empty()) {
+    if (m_icons.empty())
         Resize(GG::Pt(Width(), GG::Y0));
-    } else {
+    else
         Resize(GG::Pt(Width(), y + SPECIAL_ICON_HEIGHT + EDGE_PAD*2));
-    }
 }
