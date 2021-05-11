@@ -679,7 +679,7 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
         }
     } else {
         // It's a server message. Don't set player name.
-        player_name = "";
+        player_name.clear();
     }
 
     Client().GetClientUI().GetMessageWnd()->HandlePlayerChatMessage(text, player_name, text_color, timestamp, Client().PlayerID(), pm);

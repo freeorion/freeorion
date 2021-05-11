@@ -441,7 +441,7 @@ ShipDesign::MaybeInvalidDesign(const std::string& hull_in,
         } else {
             if (produce_log)
                 ErrorLogger() << "Invalid ShipDesign no available hulls ";
-            hull = "";
+            hull.clear();
             parts.clear();
             return std::make_pair(hull, parts);
         }

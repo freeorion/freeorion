@@ -799,7 +799,7 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::pt
         }
     } else {
         // It's a server message. Don't set player name.
-        player_name = "";
+        player_name.clear();
     }
 
     m_chat_wnd->HandlePlayerChatMessage(msg, player_name, text_color, timestamp, GGHumanClientApp::GetApp()->PlayerID(), false);  // no pm messages for MP lobby yet

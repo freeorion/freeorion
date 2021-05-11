@@ -617,7 +617,7 @@ void MessageWnd::MessageEntered() {
         m_history[0] = trimmed_text;
         m_history.push_front("");
     } else {
-        m_history[0] = "";
+        m_history[0].clear();
     }
     while (12 < static_cast<int>(m_history.size()) + 1)
         m_history.pop_back();
