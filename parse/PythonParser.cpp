@@ -178,20 +178,17 @@ bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
 
 py::object PythonParser::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
     auto module_path(m_scripting_dir);
-    std::string parent = "";
-    std::string current = "";
-    for (boost::algorithm::split_iterator<std::string::const_iterator> it
-         = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
-         it != boost::algorithm::split_iterator<std::string::const_iterator>();
-         ++ it)
+    std::string parent;
+    std::string current;
+    for (auto it = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
+         it != boost::algorithm::split_iterator<std::string::const_iterator>(); ++it)
     {
         module_path = module_path / boost::copy_range<std::string>(*it);
         if (!current.empty()) {
-            if (parent.empty()) {
+            if (parent.empty())
                 parent = std::move(current);
-            } else {
+            else
                 parent = parent + "." + current;
-            }
         }
         current = boost::copy_range<std::string>(*it);
     }
@@ -200,17 +197,15 @@ py::object PythonParser::find_spec(const std::string& fullname, const py::object
         return py::object(module_spec(fullname, parent, *this));
     } else {
         module_path.replace_extension("py");
-        if (boost::filesystem::exists(module_path) && boost::filesystem::is_regular_file(module_path)) {
+        if (boost::filesystem::exists(module_path) && boost::filesystem::is_regular_file(module_path))
             return py::object(module_spec(fullname, parent, *this));
-        } else {
+        else
             return py::object();
-        }
     }
 }
 
-py::object PythonParser::create_module(const module_spec& spec) {
-    return py::object();
-}
+py::object PythonParser::create_module(const module_spec& spec)
+{ return py::object(); }
 
 py::object PythonParser::exec_module(py::object& module) {
     std::string fullname = py::extract<std::string>(module.attr("__name__"));
@@ -218,13 +213,9 @@ py::object PythonParser::exec_module(py::object& module) {
     py::dict m_dict = py::extract<py::dict>(module.attr("__dict__"));
 
     auto module_path(m_scripting_dir);
-    for (boost::algorithm::split_iterator<std::string::iterator> it
-         = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
-         it != boost::algorithm::split_iterator<std::string::iterator>();
-         ++ it)
-    {
-        module_path = module_path / boost::copy_range<std::string>(*it);
-    }
+    for (auto it = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
+         it != boost::algorithm::split_iterator<std::string::iterator>(); ++it)
+    { module_path = module_path / boost::copy_range<std::string>(*it); }
 
     if (boost::filesystem::exists(module_path) && boost::filesystem::is_directory(module_path)) {
         return py::object();
@@ -243,16 +234,13 @@ py::object PythonParser::exec_module(py::object& module) {
             // and still import will work
             py::dict globals = m_current_globals ? (*m_current_globals) : py::dict();
             py::stl_input_iterator<py::object> g_begin(globals.keys()), g_end;
-            for (auto it = g_begin; it != g_end; ++ it) {
-                if (!m_dict.has_key(*it)) {
+            for (auto it = g_begin; it != g_end; ++it) {
+                if (!m_dict.has_key(*it))
                     m_dict[*it] = globals[*it];
-                }
             }
 
             try {
-                py::exec(file_contents.c_str(),
-                         m_dict,
-                         m_dict);
+                py::exec(file_contents.c_str(), m_dict, m_dict);
             } catch (const boost::python::error_already_set& err) {
                 m_python.HandleErrorAlreadySet();
                 if (!m_python.IsPythonRunning()) {

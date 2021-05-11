@@ -222,10 +222,9 @@ namespace {
 
         boost::python::stl_input_iterator<unsigned char> colour_begin(colour), colour_end;
         int colour_index = 0;
-        for (auto it = colour_begin; it != colour_end; ++ it) {
-            if (colour_index < 4) {
+        for (auto it = colour_begin; it != colour_end; ++it) {
+            if (colour_index < 4)
                 color[colour_index] = *it;
-            }
             ++ colour_index;
         }
 
@@ -279,9 +278,8 @@ namespace {
         auto effects_args = boost::python::extract<boost::python::list>(kw["effects"]);
         if (effects_args.check()) {
             boost::python::stl_input_iterator<effect_wrapper> effects_begin(effects_args), effects_end;
-            for (auto it = effects_begin; it != effects_end; ++ it) {
+            for (auto it = effects_begin; it != effects_end; ++it)
                 effects.push_back(ValueRef::CloneUnique(it->effect));
-            }
         } else {
             effects.push_back(ValueRef::CloneUnique(boost::python::extract<effect_wrapper>(kw["effects"])().effect));
         }
@@ -421,7 +419,7 @@ namespace {
         if (kw.has_key("parameters")) {
             boost::python::dict param_args = boost::python::extract<boost::python::dict>(kw["parameters"]);
             boost::python::stl_input_iterator<std::string> p_begin(param_args.keys()), p_end;
-            for (auto it = p_begin; it != p_end; ++ it) {
+            for (auto it = p_begin; it != p_end; ++it) {
                 auto p_arg = boost::python::extract<value_ref_wrapper<std::string>>(param_args[*it]);
                 if (p_arg.check()) {
                     parameters.push_back(std::make_pair(*it, ValueRef::CloneUnique(p_arg().value_ref)));
@@ -431,11 +429,10 @@ namespace {
                         parameters.push_back(std::make_pair(*it, std::make_unique<ValueRef::StringCast<double>>(ValueRef::CloneUnique(p_arg_double().value_ref))));
                     } else {
                         auto p_arg_int = boost::python::extract<value_ref_wrapper<int>>(param_args[*it]);
-                        if (p_arg_int.check()) {
+                        if (p_arg_int.check())
                             parameters.push_back(std::make_pair(*it, std::make_unique<ValueRef::StringCast<int>>(ValueRef::CloneUnique(p_arg_int().value_ref))));
-                        } else {
+                        else
                             parameters.push_back(std::make_pair(*it, std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(param_args[*it]))));
-                        }
                     }
                 }
             }
@@ -512,9 +509,8 @@ namespace {
         std::set<std::string> tags;
         auto tags_args = boost::python::extract<boost::python::list>(kw["tags"])();
         boost::python::stl_input_iterator<std::string> tags_begin(tags_args), tags_end;
-        for (auto it = tags_begin; it != tags_end; ++ it) {
+        for (auto it = tags_begin; it != tags_end; ++it)
             tags.insert(*it);
-        }
 
         std::vector<std::shared_ptr<Effect::EffectsGroup>> effectsgroups;
         if (kw.has_key("effectsgroups")) {
@@ -535,18 +531,16 @@ namespace {
             auto unlock_args = boost::python::extract<boost::python::list>(kw["unlock"]);
             if (unlock_args.check()) {
                 boost::python::stl_input_iterator<unlockable_item_wrapper> unlock_begin(unlock_args()), unlock_end;
-                for (auto it = unlock_begin; it != unlock_end; ++ it) {
+                for (auto it = unlock_begin; it != unlock_end; ++it)
                     unlock.push_back(it->item);
-                }
             } else {
                 unlock.push_back(boost::python::extract<unlockable_item_wrapper>(kw["unlock"])().item);
             }
         }
 
         std::string graphic;
-        if (kw.has_key("graphic")) {
+        if (kw.has_key("graphic"))
             graphic = boost::python::extract<std::string>(kw["graphic"])();
-        }
 
         auto tech_ptr = std::make_unique<Tech>(std::move(name), std::move(description),
                                                std::move(short_description), std::move(category),
@@ -572,9 +566,10 @@ namespace {
         TechManager::TechContainer& m_techs;
         boost::python::dict globals;
 
-        py_grammar_techs(const PythonParser& parser, TechManager::TechContainer& techs):m_parser(parser)
-            ,m_techs(techs)
-            ,globals(boost::python::import("builtins").attr("__dict__"))
+        py_grammar_techs(const PythonParser& parser, TechManager::TechContainer& techs) :
+            m_parser(parser),
+            m_techs(techs),
+            globals(boost::python::import("builtins").attr("__dict__"))
         {
 #if PY_VERSION_HEX < 0x03080000
             globals["__builtins__"] = boost::python::import("builtins");
@@ -621,9 +616,8 @@ std::function<boost::python::object(const boost::python::tuple&, const boost::py
             globals["GenerateSitRepMessage"] = boost::python::raw_function(insert_generate_sit_rep_message_);
         }
 
-        boost::python::dict operator()() const {
-            return globals;
-        }
+        boost::python::dict operator()() const
+        { return globals; }
 
     };
 
@@ -663,11 +657,10 @@ std::function<boost::python::object(const boost::python::tuple&, const boost::py
             operands.reserve(boost::python::len(args) - 1);
             for (auto i = 1; i < boost::python::len(args); i++) {
                 auto arg = boost::python::extract<value_ref_wrapper<int>>(args[i]);
-                if (arg.check()) {
+                if (arg.check())
                     operands.push_back(ValueRef::CloneUnique(arg().value_ref));
-                } else {
+                else
                     operands.push_back(std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(args[i])()));
-                }
             }
             return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Operation<int>>(O, std::move(operands))));
         } else if (args[0] == g.m_parser.type_float) {
@@ -675,11 +668,10 @@ std::function<boost::python::object(const boost::python::tuple&, const boost::py
             operands.reserve(boost::python::len(args) - 1);
             for (auto i = 1; i < boost::python::len(args); i++) {
                 auto arg = boost::python::extract<value_ref_wrapper<double>>(args[i]);
-                if (arg.check()) {
+                if (arg.check())
                     operands.push_back(ValueRef::CloneUnique(arg().value_ref));
-                } else {
+                else
                     operands.push_back(std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(args[i])()));
-                }
             }
             return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(O, std::move(operands))));
         } else {
