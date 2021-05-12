@@ -17,6 +17,7 @@
 #include "../../UI/MultiplayerLobbyWnd.h"
 #include "../../UI/PasswordEnterWnd.h"
 #include "../../UI/MapWnd.h"
+#include "../../UI/Sound.h"
 
 #include <boost/format.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -130,6 +131,9 @@ IntroMenu::IntroMenu(my_context ctx) :
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu";
     Client().GetClientUI().ShowIntroScreen();
     GetGameRules().ResetToDefaults();
+
+    if ((GetOptionsDB().Get<bool>("audio.music.enabled")))
+        Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.title.path"), -1);
 }
 
 IntroMenu::~IntroMenu() {
@@ -632,6 +636,9 @@ PlayingGame::PlayingGame(my_context ctx) :
 
     Client().Register(Client().GetClientUI().GetMapWnd());
     Client().GetClientUI().GetMapWnd()->Show();
+
+    if ((GetOptionsDB().Get<bool>("audio.music.enabled")))
+        Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.ambiance.path"), -1);
 }
 
 PlayingGame::~PlayingGame() {
