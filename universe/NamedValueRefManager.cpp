@@ -113,8 +113,10 @@ unsigned int NamedValueRefManager::GetCheckSum() const {
     unsigned int retval{0};
     for (auto const& name_type_pair : m_value_refs)
         CheckSums::CheckSumCombine(retval, name_type_pair);
+    DebugLogger() << "NamedValueRefManager partial checksum: " << retval;
     for (auto const& name_type_pair : m_value_refs_int)
         CheckSums::CheckSumCombine(retval, name_type_pair);
+    DebugLogger() << "NamedValueRefManager second partial checksum: " << retval;
     for (auto const& name_type_pair : m_value_refs_double)
         CheckSums::CheckSumCombine(retval, name_type_pair);
 
