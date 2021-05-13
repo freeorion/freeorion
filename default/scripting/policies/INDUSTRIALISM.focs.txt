@@ -19,8 +19,8 @@ Policy
             ]
             priority = [[TARGET_2ND_SCALING_PRIORITY]]
             effects =
-                SetTargetIndustry value = Value + abs(Value)
-                    * ((NamedReal name = "PLC_INDUSTRIALISM_TARGET_INDUSTRY_SCALING" value = 1.25) - 1)
+                SetTargetIndustry value = Value
+                    + abs(Value * (NamedReal name = "PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT" value = 25) / 100)
 
         EffectsGroup
             scope = And [
