@@ -11529,7 +11529,7 @@ PLC_INDUSTRIALISM
 Industrialisme
 
 PLC_INDUSTRIALISM_DESC
-'''Les planètes en Focus Industrie améliorent leur [[metertype METER_TARGET_INDUSTRY]] (x[[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_SCALING]]) et leur [[metertype METER_HAPPINESS]] augmente de [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]].
+'''Les planètes en Focus Industrie améliorent leur [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT]]% et leur [[metertype METER_HAPPINESS]] augmente de [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]].
 
 Diminue le coût de recherche de certaines technologies de Génération améliorant la production.'''
 
