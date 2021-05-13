@@ -19,6 +19,8 @@ ClientAppFixture::ClientAppFixture() :
     m_game_started(false),
     m_cookie(boost::uuids::nil_uuid())
 {
+    InitDirs(boost::unit_test::framework::master_test_suite().argv[0]);
+
 #ifdef FREEORION_LINUX
     // Dirty hack to output log to console.
     InitLoggingSystem("/proc/self/fd/1", "Test");
@@ -35,6 +37,8 @@ ClientAppFixture::ClientAppFixture() :
 
     InfoLogger() << FreeOrionVersionString();
     DebugLogger() << "Test client initialized";
+
+    GetOptionsDB().Set<std::string>("resource.path", PathToString(GetBinDir() / "default"));
 
     std::promise<void> barrier;
     std::future<void> barrier_future = barrier.get_future();

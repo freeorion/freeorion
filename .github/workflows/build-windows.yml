@@ -38,12 +38,15 @@ jobs:
       - name: Configure
         run: |
           unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
-          cp ..\bin\* .
           mkdir build
           pushd build
-          cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DBoost_DEBUG=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
-          cat CMakeCache.txt
+          cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
       - name: Build
         run: |
           pushd build
-          cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /verbosity:minimal 
+          cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /verbosity:minimal
+      - name: Test
+        run: |
+          pushd build
+          $env:Path += ";$($pwd.Path)\\Release"
+          cmake --build . --config "Release" --target unittest
