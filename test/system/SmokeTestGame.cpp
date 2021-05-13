@@ -49,7 +49,8 @@ BOOST_AUTO_TEST_CASE(host_server) {
         "\"" + SERVER_CLIENT_EXE + "\"",
         "--singleplayer",
         "--testing",
-        "--log-level", "info"
+        "--log-level", "info",
+        "--resource.path", GetOptionsDB().Get<std::string>("resource.path")
     };
 
 #ifdef FREEORION_LINUX

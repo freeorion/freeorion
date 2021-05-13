@@ -111,7 +111,8 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             "--save.auto.hostless.enabled", save_game ? "1" : "0",
             "--setup.ai.player.count", "0",
             "--testing",
-            "--log-level", "info"
+            "--log-level", "info",
+            "--resource.path", GetOptionsDB().Get<std::string>("resource.path")
         };
 
 #ifdef FREEORION_LINUX

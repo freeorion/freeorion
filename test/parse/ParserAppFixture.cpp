@@ -15,6 +15,8 @@ ParserAppFixture::ParserAppFixture() {
     BOOST_REQUIRE(m_scripting_dir.is_absolute());
     BOOST_REQUIRE(fs::exists(m_scripting_dir));
     BOOST_REQUIRE(fs::is_directory(m_scripting_dir));
+
+    GetOptionsDB().Set<std::string>("resource.path", PathToString(GetBinDir() / "default"));
 }
 
 int ParserAppFixture::CurrentTurn() const
