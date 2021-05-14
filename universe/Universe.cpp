@@ -810,14 +810,8 @@ void Universe::UpdateMeterEstimates(int object_id, ScriptingContext& context, bo
     if (collected_ids.empty())
         return;
 
-    // Clear ids that will be updated
-    for (auto cur_id : collected_ids)
-        m_effect_accounting_map[cur_id].clear();
-
     // Convert to a vector
-    std::vector<int> objects_vec;
-    objects_vec.reserve(collected_ids.size());
-    std::copy(collected_ids.begin(), collected_ids.end(), std::back_inserter(objects_vec));
+    std::vector<int> objects_vec{collected_ids.begin(), collected_ids.end()};
     UpdateMeterEstimatesImpl(objects_vec, context, GetOptionsDB().Get<bool>("effects.accounting.enabled"));
 }
 
@@ -831,9 +825,7 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, Scripti
         m_effect_accounting_map[object_id].clear();
         objects_set.insert(object_id);
     }
-    std::vector<int> final_objects_vec;
-    final_objects_vec.reserve(objects_set.size());
-    std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(final_objects_vec));
+    std::vector<int> final_objects_vec{objects_set.begin(), objects_set.end()};
     if (!final_objects_vec.empty())
         UpdateMeterEstimatesImpl(final_objects_vec, context, GetOptionsDB().Get<bool>("effects.accounting.enabled"));
 }
