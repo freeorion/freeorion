@@ -1314,21 +1314,22 @@ namespace {
             auto* ship = static_cast<const Ship*>(obj.get());
             if (ship) {
                 if (const ShipDesign* design = ship->Design())
-                    retval.emplace_back(ClientUI::ShipDesignIcon(design->ID()));
+                    retval.push_back(ClientUI::ShipDesignIcon(design->ID()));
             }
-            if (retval.empty()) {
-                retval.emplace_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID));  // default icon
-            }
+            if (retval.empty())
+                retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID));  // default icon
+
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
             if (auto* fleet = static_cast<const Fleet*>(obj.get())) {
                 auto size_icon = FleetSizeIcon(fleet, FleetButton::SizeType::LARGE);
                 if (size_icon)
-                    retval.emplace_back(std::move(size_icon));
+                    retval.push_back(std::move(size_icon));
                 auto head_icons = FleetHeadIcons(fleet, FleetButton::SizeType::LARGE);
                 std::copy(std::make_move_iterator(head_icons.begin()),
                           std::make_move_iterator(head_icons.end()),
                           std::back_inserter(retval));
             }
+
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
             if (auto* system = static_cast<const System*>(obj.get())) {
                 StarType star_type = system->GetStarType();
@@ -1336,24 +1337,27 @@ namespace {
                 auto disc_texture = ui->GetModuloTexture(
                     ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], system->ID());
                 if (disc_texture)
-                    retval.emplace_back(std::move(disc_texture));
+                    retval.push_back(std::move(disc_texture));
                 auto halo_texture = ui->GetModuloTexture(
                     ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], system->ID());
                 if (halo_texture)
-                    retval.emplace_back(std::move(halo_texture));
+                    retval.push_back(std::move(halo_texture));
             }
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             if (auto* planet = static_cast<const Planet*>(obj.get()))
-                retval.emplace_back(ClientUI::PlanetIcon(planet->Type()));
+                retval.push_back(ClientUI::PlanetIcon(planet->Type()));
+
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
             if (auto* building = static_cast<const Building*>(obj.get()))
-                retval.emplace_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
+                retval.push_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
+
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_FIELD) {
             if (auto* field = static_cast<const Field*>(obj.get()))
-                retval.emplace_back(ClientUI::FieldTexture(field->FieldTypeName()));
+                retval.push_back(ClientUI::FieldTexture(field->FieldTypeName()));
+
         } // UniverseObjectType::OBJ_FIGHTER shouldn't exist outside of combat, so ignored here
         if (retval.empty())
-            retval.emplace_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "generic_object.png", true));
+            retval.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "generic_object.png", true));
         return retval;
     }
 
