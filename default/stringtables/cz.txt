@@ -1358,9 +1358,6 @@ Multinárodní jazyk
 LRN_PSIONICS
 Psionická komunikace
 
-LRN_ARTIF_MINDS
-Umělá inteligence
-
 LRN_XENOARCH
 Xenoarcheologie
 
