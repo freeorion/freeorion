@@ -837,19 +837,42 @@ def check_action(args):
     for source in args.sources:
         source_st = StringTable.from_file(source)
 
+        references = set()
         for key in source_st.keys():
             entry = source_st[key]
 
             if entry.value:
                 for match in re.finditer(INTERNAL_REFERENCE_PATTERN_TEMPLATE.format('.*?'), entry.value):
-                    match_key = match['key']
-                    if not (match_key in source_st.keys() or (reference_st and match_key in reference_st.keys())):
+                    reference_key = match['key']
+                    references.add(reference_key)
+                    if not (reference_key in source_st.keys() or (reference_st and reference_key in reference_st.keys())):
                         if match['ref_type'].strip() in OPTIONAL_REF_TYPES:
-                            print("{}:{}: Optional referenced key '{}' in value of '{}' was not found. Reference was [[{}{}]].".format(source_st.fpath, entry.keyline, match_key, entry.key, match['ref_type'], match_key))
+                            print("{}:{}: Optional referenced key '{}' in value of '{}' was not found. Reference was [[{}{}]].".format(source_st.fpath, entry.keyline, reference_key, entry.key, match['ref_type'], reference_key))
                             continue
-                        print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, match_key, entry.key))
+
+                        print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, reference_key, entry.key))
                         exit_code = 1
 
+        exit_code += _check_key_usage(source_st, reference_st, references)
+    return exit_code
+
+
+def _check_key_usage(source_st, reference_st, references):
+    exit_code = 0
+
+    def check_key_is_used(key_under_check):
+        if key_under_check in reference_st:
+            return True
+        if key_under_check in references:
+            return True
+        return False
+
+    for key in source_st.keys():
+        if not check_key_is_used(key):
+            print("{path}:{lineno}: {key} is not used".format(
+                key=key, path=source_st.fpath, lineno=source_st[key].keyline
+            ))
+            exit_code = 1
     return exit_code
 
 
@@ -914,7 +937,8 @@ Summary comparing '{}' against '{}':
 if __name__ == "__main__":
     root_parser = argparse.ArgumentParser(description="Verify and modify string tables")
     verb_parsers = root_parser.add_subparsers(
-        title="verbs", description="For more details run `{} <verb> --help`.".format(root_parser.prog),
+        title="verbs",
+        description="For more details run `{} <verb> --help`.".format(root_parser.prog),
     )
 
     format_parser = verb_parsers.add_parser(
