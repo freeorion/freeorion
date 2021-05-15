@@ -2,6 +2,7 @@
 #define _ValueRefManager_h_
 
 #include <map>
+#include <thread>
 #include "ValueRef.h"
 
 FO_COMMON_API const std::string& UserString(const std::string& str);
