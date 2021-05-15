@@ -1482,9 +1482,6 @@ Algoritmische Elegantie
 LRN_TRANSLING_THT
 Translinguïstiek
 
-LRN_ARTIF_MINDS
-Kunstmatig Verstand
-
 LRN_XENOARCH
 Xenoarchaeologie
 

@@ -2957,9 +2957,6 @@ Translinguistica
 LRN_PSIONICS
 Psionica
 
-LRN_ARTIF_MINDS
-Mente Artificiale
-
 LRN_XENOARCH
 Xenoarcheologia
 
