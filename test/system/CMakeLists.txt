@@ -50,6 +50,7 @@ target_sources(fo_systemtest_game
 set(FO_TEST_GAME
         SmokeTestGame
         SmokeTestHostless
+        TestChecksum
 )
 
 foreach(_TEST ${FO_TEST_GAME})
