@@ -182,6 +182,10 @@ namespace {
         std::map<int, float> retval;
         for (auto empire_id : combat_info.empire_ids) { // loop over participating empires
             retval[empire_id] = 0.0f;   // to be replaced...
+            if (empire_id == ALL_EMPIRES) {
+                retval[ALL_EMPIRES] =  combat_info.GetMonsterDetection();
+                continue;
+            }
             const auto empire = GetEmpire(empire_id, combat_info);
             if (!empire) {
                 ErrorLogger() << "GetEmpiresDetectionStrengths(CombatInfo) couldn't find empire with id " << empire_id;
@@ -193,8 +197,6 @@ namespace {
             else
                 retval[empire_id] = meter->Current();
         }
-
-        retval[ALL_EMPIRES] =  combat_info.GetMonsterDetection();
 
         return retval;
     }
