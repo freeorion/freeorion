@@ -1370,7 +1370,8 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
 
     GetUniverse().InhibitUniverseObjectSignals(true);
-    for (auto& ship : capable_and_available_colony_ships) {
+    for (const auto* ship : capable_and_available_colony_ships) {
+        // TODO: Also tabulate estimates stabilities of potential colonies
         if (!ship)
             continue;
         int ship_id = ship->ID();
@@ -1385,9 +1386,9 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
             if (!design)
                 continue;
             colony_ship_capacity = design->ColonyCapacity();
-            if (colony_ship_capacity > 0.0f ) {
+            if (colony_ship_capacity > 0.0f) {
                 auto& ship_species_name = ship->SpeciesName();
-                auto spec_pair = std::make_pair(ship_species_name, target_planet_id);
+                auto spec_pair = std::pair{ship_species_name, target_planet_id};
                 auto spec_pair_it = species_colony_projections.find(spec_pair);
                 if (spec_pair_it != species_colony_projections.end()) {
                     planet_capacity = spec_pair_it->second;
