@@ -8,7 +8,7 @@ BuildingType
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     
-        EffectsGroup          // These bonuses given to anyone
+        EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
                 Planet
@@ -25,24 +25,6 @@ BuildingType
                                  value = 2.5 * [[INDUSTRY_PER_POP]])
             ]
 
-        EffectsGroup
-            scope = And [
-                Object id = Source.PlanetID
-                Planet
-                OwnedBy empire = Source.Owner
-                Not HasSpecial name = "HEAD_ON_A_SPIKE_SPECIAL"
-            ]
-            activation = Not ProducedByEmpire empire = Source.Owner
-            effects = [
-                AddSpecial name = "HEAD_ON_A_SPIKE_SPECIAL"
-                GenerateSitRepMessage
-                    message = "HEAD_ON_A_SPIKE_MESSAGE"
-                    label = "HEAD_ON_A_SPIKE_MESSAGE_LABEL"
-                    icon = "icons/sitrep/empire_eliminated.png"
-                    parameters = [
-                        tag = "empire" data = Source.ProducedByEmpireID
-                    ]
-            ]
     ]
     icon = "icons/building/archive.png"
 
