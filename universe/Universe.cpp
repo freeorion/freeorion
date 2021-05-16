@@ -1134,7 +1134,7 @@ namespace {
                     for (auto& obj : source_objects) {
                         context.source = obj;
                         if (effects_group->Activation()->Eval(context, obj))
-                            active_sources[i].emplace_back(obj);
+                            active_sources[i].push_back(obj);
                     }
                 }
 
@@ -1470,7 +1470,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
         }
 
-        buildings_by_type[building_type_name].emplace_back(building);
+        buildings_by_type[building_type_name].push_back(building);
     }
     // dispatch condition evaluations
     for (const auto& [building_type_name, building_type] : GetBuildingTypeManager()) {
@@ -1576,7 +1576,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
         }
 
-        fields_by_type[field_type_name].emplace_back(field);
+        fields_by_type[field_type_name].push_back(field);
     }
 
     // dispatch field condition evaluations
@@ -1617,7 +1617,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                 // create entry in output with empty TargetSet
                 auto& result{job_results.first[i]};
                 int priority = result.first.effects_group->Priority();
-                source_effects_targets_causes[priority].emplace_back(result);
+                source_effects_targets_causes[priority].push_back(result);
 
                 // overwrite empty placeholder TargetSet with contents of
                 // pointed-to earlier entry
@@ -1630,7 +1630,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             // scope/activation being evaluatied with a set of source objects
             for (const auto& result : job_results.first) {
                 int priority = result.first.effects_group->Priority();
-                source_effects_targets_causes[priority].emplace_back(result);
+                source_effects_targets_causes[priority].push_back(result);
             }
         }
     }
@@ -2866,7 +2866,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
             if (fleet->SystemID() == INVALID_OBJECT_ID && (
                 fleet->NextSystemID() == this_sys_id ||
                 fleet->PreviousSystemID() == this_sys_id))
-            { fleets_to_destroy.emplace_back(fleet); }
+            { fleets_to_destroy.push_back(fleet); }
         }
         for (auto& fleet : fleets_to_destroy)
             RecursiveDestroy(fleet->ID());
