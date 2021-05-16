@@ -69,3 +69,6 @@ jobs:
           cmake --build . --config Release -- -parallelizeTargets
           ccache --cleanup
           ccache --show-stats || true
+      - name: Test
+        run: |
+          ctest -C Release .
