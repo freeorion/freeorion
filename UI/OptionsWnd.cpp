@@ -786,6 +786,8 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page, 0, "effects.server.threads",            UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
     IntOption(current_page, 0, "effects.ai.threads",                UserString("OPTIONS_EFFECTS_THREADS_AI"));
     BoolOption(current_page, 0, "ui.map.sidepanel.meter-refresh",   UserString("OPTIONS_UI_SIDEPANEL_OPEN_METER_UPDATE"));
+    BoolOption(current_page,0,"ui.map.object-changed.meter-refresh",UserString("OPTIONS_UI_OBJECT_CHANGED_METER_UPDATE"));
+
     BoolOption(current_page, 0, "resource.shipdesign.saved.enabled",UserString("OPTIONS_ADD_SAVED_DESIGNS"));
     //BoolOption(current_page, 0, "resource.shipdesign.default.enabled",  UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));   // hidden due to issues with implementation when not enabled preventing designs from being added or recreated
     BoolOption(current_page, 0, "save.format.binary.enabled",       UserString("OPTIONS_USE_BINARY_SERIALIZATION"));

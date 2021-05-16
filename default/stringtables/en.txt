@@ -2105,6 +2105,9 @@ Specifies number of threads to use in effects processing on the server. More tha
 OPTIONS_DB_UI_SIDEPANEL_OPEN_METER_UPDATE
 Run a meter / effects update when opening the sidepanel to a new system. May cause a short UI hang while processing.
 
+OPTIONS_DB_UI_OBJECT_CHANGED_METER_UPDATE
+Run a meter / effects update when an object's state changes. May cause a short UI hang while processing after order issuing.
+
 OPTIONS_DB_AUTO_QUIT
 Automatically quits once any turns specified by --auto-advance-n-turns are completed (defaults to zero), useful for various testing particularly with --quickstart or --load.
 
@@ -3313,6 +3316,9 @@ Effects processing threads (server)
 
 OPTIONS_UI_SIDEPANEL_OPEN_METER_UPDATE
 System sidepanel open meter update
+
+OPTIONS_UI_OBJECT_CHANGED_METER_UPDATE
+Object changed meter update
 
 OPTIONS_DB_UI_EFFECTS_MOVE_TEST
 Test / internal engine switch: Use pointer moves, not casts of containers of pointers, when evaluating conditions.

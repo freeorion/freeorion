@@ -177,6 +177,7 @@ namespace {
         db.Add("ui.map.sidepanel.width",                    UserStringNop("OPTIONS_DB_UI_SIDEPANEL_WIDTH"),                     512,                            Validator<int>());
 
         db.Add("ui.map.sidepanel.meter-refresh",            UserStringNop("OPTIONS_DB_UI_SIDEPANEL_OPEN_METER_UPDATE"),         true,                           Validator<bool>());
+        db.Add("ui.map.object-changed.meter-refresh",       UserStringNop("OPTIONS_DB_UI_OBJECT_CHANGED_METER_UPDATE"),         true,                           Validator<bool>());
 
         // Register hotkey names/default values for the context "map".
         Hotkey::AddHotkey("ui.map.open",                    UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),                          GG::Key::GGK_ESCAPE);
@@ -1400,8 +1401,13 @@ void MapWnd::CompleteConstruction() {
     // useful since most ResourceCenter changes will be due to focus
     // changes on the sidepanel, and most differences in meter estimates
     // and resource pools due to this will be in the same system
-    SidePanel::ResourceCenterChangedSignal.connect(
-        boost::bind(&MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this));
+    SidePanel::ResourceCenterChangedSignal.connect([this](){
+        if (GetOptionsDB().Get<bool>("ui.map.object-changed.meter-refresh")) {
+            ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+            context.ContextUniverse().UpdateMeterEstimates(context);
+            UpdateEmpireResourcePools();
+        }
+    });
 
     // situation report window
     m_sitrep_panel = GG::Wnd::Create<SitRepPanel>(SITREP_WND_NAME);
@@ -6886,15 +6892,11 @@ void MapWnd::RefreshPopulationIndicator() {
         std::move(tag_counts), GetSpeciesManager().census_order()));
 }
 
-void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools() {
-    ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
-    GetUniverse().UpdateMeterEstimates(SidePanel::SystemID(), context, true);
-    UpdateEmpireResourcePools();
-}
-
 void MapWnd::UpdateEmpireResourcePools() {
-    //std::cout << "MapWnd::UpdateEmpireResourcePools" << std::endl;
-    Empire *empire = GetEmpire( GGHumanClientApp::GetApp()->EmpireID() );
+    auto empire = Empires().GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return;
+
     /* Recalculate stockpile, available, production, predicted change of
      * resources.  When resource pools update, they emit ChangeSignal, which is
      * connected to MapWnd::Refresh???ResourceIndicator, which updates the

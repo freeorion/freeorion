@@ -220,9 +220,6 @@ private:
     void RefreshPopulationIndicator();
     void RefreshDetectionIndicator();
 
-    /** update meter estimates for objects contained within the current system
-      * shown in the sidepanel, or all objects if there is no system shown */
-    void UpdateSidePanelSystemObjectMetersAndResourcePools();
     /** recalculates production and predicted changes of player's empire's
       * resource and population pools */
     void UpdateEmpireResourcePools();
