@@ -176,6 +176,8 @@ namespace {
 
         db.Add("ui.map.sidepanel.width",                    UserStringNop("OPTIONS_DB_UI_SIDEPANEL_WIDTH"),                     512,                            Validator<int>());
 
+        db.Add("ui.map.sidepanel.meter-refresh",            UserStringNop("OPTIONS_DB_UI_SIDEPANEL_OPEN_METER_UPDATE"),         true,                           Validator<bool>());
+
         // Register hotkey names/default values for the context "map".
         Hotkey::AddHotkey("ui.map.open",                    UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),                          GG::Key::GGK_ESCAPE);
         Hotkey::AddHotkey("ui.turn.end",                    UserStringNop("HOTKEY_MAP_END_TURN"),                               GG::Key::GGK_RETURN,            GG::MOD_KEY_CTRL);
@@ -2681,10 +2683,7 @@ void MapWnd::InitTurn() {
     GGHumanClientApp::GetApp()->Orders().ApplyOrders(); // TODO: pass Universe?
 
     timer.EnterSection("meter estimates");
-    // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
-    // population is available for currently uncolonized planets
     GetUniverse().UpdateMeterEstimates(context);
-
     GetUniverse().ApplyAppearanceEffects(context);
 
     timer.EnterSection("init rendering");
@@ -4371,7 +4370,6 @@ void MapWnd::ReselectLastSystem() {
 }
 
 void MapWnd::SelectSystem(int system_id) {
-    //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
     auto system = Objects().get<System>(system_id);
     if (!system && system_id != INVALID_OBJECT_ID) {
         ErrorLogger() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
@@ -4379,7 +4377,7 @@ void MapWnd::SelectSystem(int system_id) {
     }
 
 
-    if (system) {
+    if (system && GetOptionsDB().Get<bool>("ui.map.sidepanel.meter-refresh")) {
         // ensure meter estimates are up to date, particularly for which ship is selected
         ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
         GetUniverse().UpdateMeterEstimates(context);
