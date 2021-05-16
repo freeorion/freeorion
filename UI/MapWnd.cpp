@@ -4948,7 +4948,7 @@ namespace {
 
     /** If the \p fleet has a valid destination and it not on a starlane, return true*/
     bool IsOffRoad(const std::shared_ptr<const Fleet>& fleet)
-    { return (IsMoving(fleet) && !IsOnStarlane(fleet)); }
+    { return (fleet->SystemID() == INVALID_OBJECT_ID && !IsOnStarlane(fleet)); }
 }
 
 void MapWnd::RefreshFleetButtons(bool recreate) {
@@ -5079,7 +5079,7 @@ void MapWnd::CreateFleetButtonsOfType(FleetButtonMap& type_fleet_buttons,
             auto fb = GG::Wnd::Create<FleetButton>(std::move(ids_in_cluster), fleet_button_size);
 
             // store per type of fleet button.
-            type_fleet_buttons[key].emplace(fb);
+            type_fleet_buttons[key].insert(fb);
 
             // store FleetButton for fleets in current cluster
             for (int fleet_id : fb->Fleets())
@@ -5865,6 +5865,11 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
 
     for (auto& moving_fleet_button : m_moving_fleet_buttons) {
         for (auto& button : moving_fleet_button.second)
+            button->SetSelected(false);
+    }
+
+    for (auto& offroad_fleet_button : m_offroad_fleet_buttons) {
+        for (auto& button : offroad_fleet_button.second)
             button->SetSelected(false);
     }
 
