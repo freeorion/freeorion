@@ -51,7 +51,7 @@ FieldType
             ]
             stackinggroup = "NEBULA_SHIP_EFFECTS"
             effects = [
-                SetSpeed value = Value - 20
+                SetSpeed value = max(5, Value - 20)
                 SetStealth value = Value + 20
                 SetDetection value = Value - 20
             ]
