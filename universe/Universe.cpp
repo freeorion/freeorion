@@ -903,21 +903,6 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
     std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
     GetEffectsAndTargets(source_effects_targets_causes, objects_vec, context, true);
 
-    DebugLogger() << "UpdateMeterEstimatesImpl targets:";
-    for (auto& [src_id, setacv] : source_effects_targets_causes) {
-        for (auto& [src_efg, targets_causes] : setacv) {
-            auto& [targets, cause] = targets_causes;
-            if (cause.cause_type != EffectsCauseType::ECT_BUILDING)
-                continue;
-            for (auto& target : targets) {
-                if (target->ID() == 8350) {
-                    DebugLogger() << "src: " << src_efg.source_object_id << "   cause: " << cause.specific_cause;
-                    break;
-                }
-            }
-        }
-    }
-
     // Apply and record effect meter adjustments
     ExecuteEffects(source_effects_targets_causes, context, do_accounting, true, false, false, false);
 
@@ -1005,21 +990,6 @@ namespace {
                 + "  candidate objects (" + std::to_string(candidate_objects_in.size()) + ")";
         }();
 
-
-        if (n == 1092) {
-            std::stringstream ss;
-            ss << "StoreTargetsAndCausesOfEffectsGroup < " << n << " > sources: ";
-            for (auto& obj : source_objects)
-                ss << obj->ID() << ", ";
-            ss << "  cause type: " << effect_cause_type
-                << "  specific cause: " << specific_cause_name
-                << "  candidates: ";
-            for (auto& obj : candidate_objects_in)
-                ss << obj->ID() << ", ";
-            DebugLogger() << ss.str();
-        }
-
-
         auto scope = effects_group ? effects_group->Scope() : nullptr;
         if (!scope) {
             if (!effects_group)
@@ -1060,9 +1030,6 @@ namespace {
                     Effect::TargetSet{},
                     Effect::EffectCause{effect_cause_type, specific_cause_name, effects_group->AccountingLabel()}});
 
-            if (n == 1092 && source->ID() == 35569)
-                std::cout << "!!\n";
-
             // extract output Effect::TargetSet
             Effect::TargetSet& matched_targets{source_effects_targets_causes_out.back().second.target_set};
 
@@ -1079,7 +1046,7 @@ namespace {
                     matched_targets.push_back(std::const_pointer_cast<UniverseObject>(source));
 
             } else {
-                // input candidates will all be tested on a copy of the input target set
+                // input candidates will all be tested
                 scope->Eval(context, matched_targets, candidate_objects_in);
                 // copy back into candidates for next loop iteration
                 candidate_objects_in.insert(candidate_objects_in.end(), matched_targets.begin(), matched_targets.end());
@@ -1279,19 +1246,6 @@ namespace {
                 return ss.str();
             }();
 
-            if (n == 1092) {
-                std::stringstream ss;
-                ss << "Dispatching Scope Evaluations < " << n << " > sources(" << active_sources[i].size() << "): ";
-                for (auto& obj : active_sources[i])
-                    ss << obj->ID() << ", ";
-                ss << "  cause type: " << effect_cause_type
-                   << "  specific cause: " << specific_cause_name
-                   << "  candidates: (" << potential_targets_copy.size() << "): ";
-                for (auto& obj : potential_targets_copy)
-                    ss << obj->Name() << " (" << obj->ID() << "), ";
-                DebugLogger() << ss.str();
-            }
-
             // asynchronously evaluate targetset for effectsgroup for each source using worker threads
             boost::asio::post(
                 thread_pool,
@@ -1307,19 +1261,6 @@ namespace {
                     n
                 ]() mutable
             {
-                if (n == 1092) {
-                    std::stringstream ss;
-                    ss << "Evaluating Scope Evaluations < " << n << " > sources: ";
-                    for (auto& obj : active_source_objects)
-                        ss << obj->ID() << ", ";
-                    ss << "  cause type: " << effect_cause_type
-                        << "  specific cause: " << specific_cause_name
-                        << "  candidates: ";
-                    for (auto& obj : potential_targets_copy)
-                        ss << obj->ID() << ", ";
-                    DebugLogger() << ss.str();
-                }
-
                 StoreTargetsAndCausesOfEffectsGroup(context, effects_group, active_source_objects,
                                                     effect_cause_type, specific_cause_name,
                                                     potential_target_ids, potential_targets_copy,
@@ -1533,13 +1474,6 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
 
         buildings_by_type[building_type_name].push_back(building);
     }
-
-    DebugLogger() << "Source buildings: ";
-    for (auto& [name, buildings] : buildings_by_type) {
-        for (auto& building : buildings)
-            DebugLogger() << name << ": " << building->Name() << " (" << building->ID() << ")";
-    }
-
     // dispatch condition evaluations
     for (const auto& [building_type_name, building_type] : GetBuildingTypeManager()) {
         auto buildings_by_type_it = buildings_by_type.find(building_type_name);
