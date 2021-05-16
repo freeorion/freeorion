@@ -848,6 +848,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
         });
     }
 
+    DebugLogger() << "UpdateMeterEstimatesImpl on " << object_ptrs.size() << " objects";
     auto& accounting_map = context.ContextUniverse().GetEffectAccountingMap();
 
     for (auto& obj : object_ptrs) {
@@ -855,38 +856,39 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
         // at start of this turn
         obj->ResetTargetMaxUnpairedMeters();
         obj->ResetPairedActiveMeters();
+    }
 
-        if (!do_accounting)
-            continue;
+    if (do_accounting) {
+        for (auto& obj : object_ptrs) {
+            auto& meters = obj->Meters();
+            auto& account_map = accounting_map[obj->ID()];
+            account_map.clear();    // remove any old accounting info. this should be redundant here.
+            account_map.reserve(meters.size());
 
-        auto& meters = obj->Meters();
-        auto& account_map = accounting_map[obj->ID()];
-        account_map.clear();    // remove any old accounting info. this should be redundant here.
-        account_map.reserve(meters.size());
+            for (auto& [type, meter] : meters) {
+                (void)type; // quiet warning
+                float meter_change = meter.Current() - Meter::DEFAULT_VALUE;
+                if (meter_change != 0.0f)
+                    account_map[type].emplace_back(INVALID_OBJECT_ID, EffectsCauseType::ECT_INHERENT,
+                                                   meter_change, meter.Current());
+            }
 
-        for (auto& [type, meter] : meters) {
-            (void)type; // quiet warning
-            float meter_change = meter.Current() - Meter::DEFAULT_VALUE;
-            if (meter_change != 0.0f)
-                account_map[type].emplace_back(INVALID_OBJECT_ID, EffectsCauseType::ECT_INHERENT,
-                                               meter_change, meter.Current());
-        }
+            // account for ground combat in troop meter adjustments
+            if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+                if (auto planet = static_cast<Planet*>(obj.get())) {
+                    if (auto meter = planet->GetMeter(MeterType::METER_TROOPS)) {
+                        float pre_value = meter->Current();
 
-        // account for ground combat in troop meter adjustments
-        if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-            if (auto planet = static_cast<Planet*>(obj.get())) {
-                if (auto meter = planet->GetMeter(MeterType::METER_TROOPS)) {
-                    float pre_value = meter->Current();
+                        auto empires_troops = planet->EmpireGroundCombatForces();
+                        Planet::ResolveGroundCombat(empires_troops, context.diplo_statuses);
+                        meter->SetCurrent(empires_troops[obj->Owner()]);
 
-                    auto empires_troops = planet->EmpireGroundCombatForces();
-                    Planet::ResolveGroundCombat(empires_troops, context.diplo_statuses);
-                    meter->SetCurrent(empires_troops[obj->Owner()]);
-
-                    float meter_change = meter->Current() - pre_value;
-                    if (meter_change != 0.0f)
-                        account_map[MeterType::METER_TROOPS].emplace_back(
-                            INVALID_OBJECT_ID, EffectsCauseType::ECT_UNKNOWN_CAUSE,
-                            meter_change, meter->Current());
+                        float meter_change = meter->Current() - pre_value;
+                        if (meter_change != 0.0f)
+                            account_map[MeterType::METER_TROOPS].emplace_back(
+                                INVALID_OBJECT_ID, EffectsCauseType::ECT_UNKNOWN_CAUSE,
+                                meter_change, meter->Current());
+                    }
                 }
             }
         }
@@ -1164,7 +1166,7 @@ namespace {
         Effect::TargetSet potential_targets_copy;
         potential_targets_copy.reserve(potential_targets.size());
         for (const auto& obj : potential_targets)
-            potential_targets_copy.emplace_back(std::const_pointer_cast<UniverseObject>(obj));
+            potential_targets_copy.push_back(std::const_pointer_cast<UniverseObject>(obj));
 
 
         // evaluate scope conditions for source objects that are active
@@ -1186,18 +1188,16 @@ namespace {
 
             // check if the scope-condition + sources set has already been dispatched
             bool cache_hit = false;
-            if (effects_group->Scope()) {
-                for (const auto& cond_sources_ptr : already_dispatched_scope_condition_ptrs) {
-                    if (*std::get<0>(cond_sources_ptr) == *(effects_group->Scope()) &&
-                         std::get<1>(cond_sources_ptr) == active_sources[i])
-                    {
+            if (auto* scope = effects_group->Scope()) {
+                //std::vector<std::tuple<Condition::Condition*, Condition::ObjectSet, Effect::SourcesEffectsTargetsAndCausesVec*>> already_dispatched_scope_condition_ptrs;
+                for (auto& [cond, sources, setacv] : already_dispatched_scope_condition_ptrs) {
+                    if (*cond == *scope && sources == active_sources[i]) {
                         TraceLogger(effects) << "scope condition cache hit !";
 
                         // record pointer to previously-dispatched result struct
                         // that will contain the results to copy later, after
                         // all dispatched condition evauations have resolved
-                        source_effects_targets_causes_reorder_buffer_out.back().second =
-                            std::get<2>(cond_sources_ptr);
+                        source_effects_targets_causes_reorder_buffer_out.back().second = setacv;
 
                         // allocate result structs that contain empty
                         // Effect::TargetSets that will be filled later
@@ -1402,8 +1402,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for TECHS";
     std::list<Condition::ObjectSet> tech_sources;   // for each empire, a set with a single source object for all its techs
     // select a source object for each empire and dispatch condition evaluations
-    for (const auto& entry : Empires()) {
-        auto& empire = entry.second;
+    for (auto& [empire_id, empire] : Empires()) {
+        (void)empire_id;    // quiet unused variable warning
         auto source = empire->Source();
         if (!source)
             continue;
