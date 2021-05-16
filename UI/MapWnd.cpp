@@ -4504,7 +4504,9 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
     // if there isn't a FleetWnd for this fleet open, need to open one
     if (!fleet_wnd) {
         // Add any overlapping fleet buttons for moving or offroad fleets.
-        const auto wnd_fleet_ids = FleetIDsOfFleetButtonsOverlapping(fleet->ID());
+        auto wnd_fleet_ids = FleetIDsOfFleetButtonsOverlapping(fleet->ID());
+        if (wnd_fleet_ids.empty())
+            wnd_fleet_ids.push_back(fleet->ID());
 
         // A leeway, scaled to the button size, around a group of moving fleets so the fleetwnd
         // tracks moving fleets together
