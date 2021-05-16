@@ -4386,7 +4386,7 @@ void MapWnd::SelectSystem(int system_id) {
     if (system && GetOptionsDB().Get<bool>("ui.map.sidepanel.meter-refresh")) {
         // ensure meter estimates are up to date, particularly for which ship is selected
         ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
-        GetUniverse().UpdateMeterEstimates(context);
+        GetUniverse().UpdateMeterEstimates(system->ID(), context, true);
     }
 
 
