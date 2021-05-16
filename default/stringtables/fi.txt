@@ -948,17 +948,11 @@ Teollisuus
 RESEARCH_PRODUCTION
 Tutkimus
 
-TRADE_PRODUCTION
-Vaihdanta
-
 INDUSTRY_CONSUMPTION
 Teollisuuden käyttö
 
 RESEARCH_CONSUMPTION
 Tutkimuskulutus
-
-TRADE_CONSUMPTION
-Kulutus
 
 IMPORT_EXPORT_TOOLTIP
 Tuonti / Vienti
@@ -1657,10 +1651,6 @@ teollisuus
 FOCUS_RESEARCH
 tutkimus
 
-# Focus types
-FOCUS_TRADE
-vaihdanta
-
 # Meter types
 METER_TARGET_POPULATION
 Tavoite väestö
@@ -1672,10 +1662,6 @@ Tavoite teollisuus
 # Meter types
 METER_TARGET_RESEARCH
 Tavoite tutkimus
-
-# Meter types
-METER_TARGET_TRADE
-Tavoite vaihdanta
 
 # Meter types
 METER_TARGET_CONSTRUCTION
@@ -1708,10 +1694,6 @@ Teollisuus
 # Meter types
 METER_RESEARCH
 Tutkimus
-
-# Meter types
-METER_TRADE
-Vaihdanta
 
 # Meter types
 METER_CONSTRUCTION
@@ -1856,12 +1838,6 @@ objektin tyyppi
 
 DESC_VAR_STARTYPE
 tähden tyyppi
-
-DESC_VAR_TRADESTOCKPILE
-vaihdannan synnyttämä varanto
-
-DESC_VAR_TRADEOUTPUT
-vaihdanta
 
 DESC_VAR_INDUSTRYOUTPUT
 Teollisuus

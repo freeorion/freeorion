@@ -1295,10 +1295,6 @@ industrie
 FOCUS_RESEARCH
 onderzoek
 
-# Focus types
-FOCUS_TRADE
-handel
-
 # Meter types
 METER_POPULATION
 populatie
@@ -1310,10 +1306,6 @@ industrie
 # Meter types
 METER_RESEARCH
 onderzoek
-
-# Meter types
-METER_TRADE
-handel
 
 # Meter types
 METER_CONSTRUCTION
@@ -1424,9 +1416,6 @@ planet omgeving
 
 DESC_VAR_STARTYPE
 ster type
-
-DESC_VAR_TRADESTOCKPILE
-handel voorraad
 
 DESC_VAR_OWNER
 eigenaar

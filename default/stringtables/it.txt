@@ -1299,12 +1299,6 @@ Rilevamento Impero
 MAP_DETECTION_TEXT
 Forza Rilevamento Impero
 
-MAP_TRADE_TITLE
-Commercio
-
-MAP_TRADE_TEXT
-Commercio totale impero. (Commercio non fa nulla)
-
 
 ##
 ## Side panel/System information
@@ -1326,17 +1320,11 @@ Produzione Industriale
 RESEARCH_PRODUCTION
 Produzione Ricerca
 
-TRADE_PRODUCTION
-Produzione Commercio
-
 INDUSTRY_CONSUMPTION
 Consumo Industriale
 
 RESEARCH_CONSUMPTION
 Consumo Ricerca
-
-TRADE_CONSUMPTION
-Consumo Commercio
 
 IMPORT_EXPORT_TOOLTIP
 Importazione / Esportazione
@@ -2006,9 +1994,6 @@ Industria
 METER_RESEARCH_VALUE_LABEL
 Ricerca
 
-METER_TRADE_VALUE_LABEL
-Commercio
-
 METER_CONSTRUCTION_VALUE_LABEL
 Infrastrutture
 
@@ -2063,12 +2048,6 @@ Gli avamposti sono stazioni non presidiate che possono essere fondate in luoghi 
 
 GROWTH_FOCUS_TITLE
 Focus sulla Crescita
-
-TRADE_FOCUS_TITLE
-Focus sul Commercio
-
-TRADE_FOCUS_TEXT
-Il focus sul commercio non fa nulla, ancora. E' solo un segnaposto per i prossimi aggiornamenti.
 
 PROTECTION_FOCUS_TITLE
 Focus sulla Protezione
@@ -2662,10 +2641,6 @@ industria
 FOCUS_RESEARCH
 ricerca
 
-# Focus types
-FOCUS_TRADE
-commercio
-
 # Empire affiliation types
 AFFIL_SELF
 compagno
@@ -2709,10 +2684,6 @@ edificare
 # Build types
 BT_SHIP
 nave
-
-# Resource types
-RE_TRADE
-commercio
 
 # Resource types
 RE_INDUSTRY
