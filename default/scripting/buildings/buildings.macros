@@ -5,13 +5,10 @@ POLICY_LIKE_DISLIKE_SCALING
     - 0.5*(Statistic If condition = EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_CONFORMANCE"))'''
 
 STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_ON_PLANET
-'''4 * [[POLICY_LIKE_DISLIKE_SCALING]]'''
+'''4.0 * [[POLICY_LIKE_DISLIKE_SCALING]]'''
 
 STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_SYSTEM
-'''1 * [[POLICY_LIKE_DISLIKE_SCALING]]'''
-
-STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_EMPIRE
-'''0.6 * [[POLICY_LIKE_DISLIKE_SCALING]]'''
+'''1.0 * [[POLICY_LIKE_DISLIKE_SCALING]]'''
 
 SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
 '''
@@ -74,8 +71,16 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
             ]
             accountinglabel = "LIKES_BUILDING_LABEL"
             effects =
-                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_EMPIRE]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
-
+                SetTargetHappiness value = Value + ((NamedReal name = "BUILDING_LIKE_EMPIRE_SQRT_SCALING" value = 1.0) * 
+                    max(1.0,
+                        Statistic Count condition = And [
+                            Building
+                            Building name = ThisBuilding
+                            OwnedBy empire = Source.Owner
+                        ]
+                    )^(-0.5)
+                ) * [[POLICY_LIKE_DISLIKE_SCALING]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+ 
         // species dislike building in empire
         EffectsGroup
             scope = And [
@@ -87,6 +92,14 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
             ]
             accountinglabel = "DISLIKES_BUILDING_LABEL"
             effects =
-                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_EMPIRE]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+                SetTargetHappiness value = Value + ((NamedReal name = "BUILDING_LIKE_EMPIRE_SQRT_SCALING" value = 1.0) * 
+                    max(1.0,
+                        Statistic Count condition = And [
+                            Building
+                            Building name = ThisBuilding
+                            OwnedBy empire = Source.Owner
+                        ]
+                    )^(-0.5)
+                ) * [[POLICY_LIKE_DISLIKE_SCALING]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
 
 '''
