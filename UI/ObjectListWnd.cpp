@@ -2163,7 +2163,7 @@ public:
         timer.EnterSection("non-system fleet rows");
         for (const auto& sys_fleets : system_fleets) {
            for (const auto& fleet : sys_fleets.second) {
-            // add fleet rows in this system
+                // add fleet rows in this system
                 std::vector<int> fleet_contents;
                 fleet_contents.reserve(fleet_ships[fleet->ID()].size());
                 for (const auto& ship : fleet_ships[fleet->ID()])
