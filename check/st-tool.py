@@ -845,7 +845,13 @@ def check_action(args):
                 for match in re.finditer(INTERNAL_REFERENCE_PATTERN_TEMPLATE.format('.*?'), entry.value):
                     reference_key = match['key']
                     references.add(reference_key)
-                    if reference_key not in source_st.keys():
+                    # TODO Do not check if key is present in other stringtable
+                    # If reference is not present in the translation it won't be resolved
+                    # Instead just [[...]] will be shown to user.
+                    present_in_reference_st = reference_st and reference_key in reference_st.keys()
+
+                    if not (reference_key in source_st.keys() or present_in_reference_st):
+
                         if match['ref_type'].strip() in OPTIONAL_REF_TYPES:
                             print("{}:{}: Optional referenced key '{}' in value of '{}' was not found. Reference was [[{}{}]].".format(source_st.fpath, entry.keyline, reference_key, entry.key, match['ref_type'], reference_key))
                             continue
