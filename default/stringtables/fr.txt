@@ -1190,6 +1190,12 @@ Ajustement Coût des Technologies
 RULE_TECH_COST_FACTOR_DESC
 Définit les coûts des technologies
 
+RULE_SINGULARITY_COST_FACTOR
+Variation coût [[LRN_TRANSCEND]]
+
+RULE_SINGULARITY_COST_FACTOR_DESC
+Ajuste les coûts des technologies de [[LRN_TRANSCEND]]
+
 RULE_ENABLE_EXPERIMENTORS
 Activer Expérimentateurs
 
@@ -2095,6 +2101,12 @@ Spécifie le nombre de threads simultanés pour le rendu des effets concernant l
 
 OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC
 Spécifie le nombre de threads simultanés pour le rendu des effets côté serveur. Plus d'un thread peut mener à des plantages inopinés.
+
+OPTIONS_DB_UI_SIDEPANEL_OPEN_METER_UPDATE
+Effectue une mise à jour des indicateurs / effets lors de l'ouverture du panneau latéral dans un nouveau système. Peut causer un court ralentissement de l'interface utilisateur durant le processus.
+
+OPTIONS_DB_UI_OBJECT_CHANGED_METER_UPDATE
+Effectue une mise à jour des indicateurs / effets lorsque l'état d'un objet change. Peut causer un court ralentissement de l'interface utilisateur durant le processus une fois l'ordre émis.
 
 OPTIONS_DB_AUTO_QUIT
 Quitter automatiquement une fois au tour spécifié par --auto-advance-n-turns (valeur défaut à zéro), utile pour le débogage notamment avec --quickstart ou --load.
@@ -3301,6 +3313,12 @@ Threads de rendu d'effets (IAs)
 
 OPTIONS_EFFECTS_THREADS_SERVER
 Threads de rendu d'effets (serveur)
+
+OPTIONS_UI_SIDEPANEL_OPEN_METER_UPDATE
+Mise à jour indicateurs quand ouverture panneau latéral
+
+OPTIONS_UI_OBJECT_CHANGED_METER_UPDATE
+Mise à jour indicateurs quand changement d'un objet
 
 OPTIONS_DB_UI_EFFECTS_MOVE_TEST
 Test / modificateur moteur interne: Utilise des redirections de pointeurs, au lieu d'appels de conteneurs de pointeurs, lors de l'évaluation des conditions.
@@ -8196,7 +8214,7 @@ Préfèrent les Planètes [[PT_TOXIC]]s.
 
 SP_DERTHREAN_DESC
 '''Description:
-L'entité Derthrean est un virus vivant à l'intérieur d'une plante, dans une relation mi-parasitaire, mi-symbiotique. Le virus en lui-même n'est pas doué d'intelligence tandis que sans lui, la plante n'est qu'une coquille vide. Pourtant, des synapses neuronales se développent et s'associent pour créer un organisme doué de raison. Bien que le virus procure une conscience à la plante, il s'avère toxique pour son système nerveux, infligeant des douleurs indicibles à son hôte, l'affaiblissant de plus en plus à mesure qu'elle grandit et finissant par tuer la plante elle-même. Cette physiologie particulière signifie que plus un Derthrean est intelligent, plus grande est la douleur continuelle qu'il endure.
+L'entité Derthrean est un virus vivant à l'intérieur d'une plante, dans une relation mi-parasitaire, mi-symbiotique. Le virus en lui-même n'est pas doué d'intelligence tandis que sans lui, la plante n'est qu'une coquille vide. Pourtant, leurs synapses neuronales s'associent pour créer un organisme complet. Bien que le virus procure une conscience à la plante, il s'avère toxique pour son système nerveux, infligeant des douleurs indicibles à son hôte, l'affaiblissant de plus en plus à mesure qu'il se réplique, et finissant par tuer la plante elle-même. Par conséquent, plus un Derthrean est intelligent, plus grande est la douleur qu'il endure.
 
 Structure sociale:
 Les Derthrean ont une organisation sociale très segmentée, se divisant en castes créées par leurs ancêtres. Ils naissent dans une caste, ils se reproduisent dans leur caste, et meurent comme membre de cette caste. Du fait du faible brassage ethnique sur des millénaires, les traits physiques ont fini par être propres à chaque caste. Celles-ci sont divisées comme suit: la plus respectée de toutes, la caste des Prêtres, la caste des Ouvriers, la caste des Agriculteurs, la caste des Pourvoyeurs, la caste des Savants, et la plus méprisée de toutes, la caste des Guerriers. La religion joue un rôle fondamental dans leur société. Chaque Derthrean est profondément pacifiste, et vit pour satisfaire leur Déesse, dans l'espoir d'être libéré de ce fardeau de douleur et d'être pardonné pour la brutalité et la fourberie de leurs ancêtres.
@@ -11627,7 +11645,7 @@ PLC_NATIVE_APPROPRIATION
 Appropriation Indigène
 
 PLC_NATIVE_APPROPRIATION_DESC
-Augmente la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche au sein des systèmes abritant également des planètes indigènes non-colonisées par l'empire.
+Augmente la [[metertype METER_TARGET_RESEARCH]] by [[value PLC_NATIVE_APPROPRIATION_RESEARCH_PERPLANET]] sur les planètes en Focus Recherche au sein des systèmes abritant également des planètes indigènes non-colonisées par l'empire.
 
 PLC_NATIVE_APPROPRIATION_SHORT_DESC
 Améliore la Recherche
@@ -12987,7 +13005,7 @@ DEF_GARRISON_2
 Milice Planétaire Défensive
 
 DEF_GARRISON_2_DESC
-Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_2_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_2_TROOPREGEN_FLAT]] par tour.
+Augmente l'[[metertype METER_TROOPS]] max de [[value GARRISON_2_MAXTROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de [[value GARRISON_2_TROOPREGEN_FLAT]] par tour.
 
 DEF_GARRISON_3
 Réseau Fortication Planétaire
