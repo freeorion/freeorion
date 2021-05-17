@@ -85,7 +85,7 @@ class StringTable(object):
         return key in self._ientries
 
     def __iter__(self):
-        return self._ientries.iteritems()
+        return iter(self._ientries)
 
     def __len__(self):
         return len(self._ientries)
@@ -131,9 +131,6 @@ class StringTable(object):
 
     def items(self):
         return self._entries
-
-    def keys(self):
-        return self._ientries.keys()
 
     @staticmethod
     def set_author(fpath, entries, blames):
@@ -337,7 +334,7 @@ class StringTable(object):
             'identical',
             'layout_mismatch'])
 
-        all_keys = set(left.keys()).union(right.keys())
+        all_keys = set(left).union(right)
 
         untranslated = set()
         identical = set()
@@ -683,7 +680,7 @@ class EditServerHandler(BaseHTTPRequestHandler):
 
         stat = StringTable.statistic(self.server.reference_st, self.server.source_st)
 
-        for key in self.server.reference_st.keys():
+        for key in self.server.reference_st:
             source = self.server.reference_st[key].value
             source = html.escape(source)
 
@@ -805,7 +802,7 @@ def rename_key_action(args):
 
     source_st = StringTable.from_file(args.source)
 
-    for key in source_st.keys():
+    for key in source_st:
         entry = source_st[key]
         entry.value = re.sub(
             INTERNAL_REFERENCE_PATTERN_TEMPLATE.format(re.escape(args.old_key)),
@@ -843,7 +840,7 @@ def check_action(args):
         source_st = StringTable.from_file(source, with_blame=False)
 
         references = set()
-        for key in source_st.keys():
+        for key in source_st:
             entry = source_st[key]
 
             if entry.value:
@@ -853,9 +850,9 @@ def check_action(args):
                     # TODO Do not check if key is present in other stringtable
                     # If reference is not present in the translation it won't be resolved
                     # Instead just [[...]] will be shown to user.
-                    present_in_reference_st = reference_st and reference_key in reference_st.keys()
+                    present_in_reference_st = reference_st and reference_key in reference_st
 
-                    if not (reference_key in source_st.keys() or present_in_reference_st):
+                    if not (reference_key in source_st or present_in_reference_st):
                         if match['ref_type'].strip() in OPTIONAL_REF_TYPES:
                             continue
 
@@ -878,7 +875,7 @@ def _check_key_usage(source_st, reference_st, references):
             return True
         return False
 
-    for key in source_st.keys():
+    for key in source_st:
         if not check_key_is_used(key):
             print("{path}:{lineno}: {key} is not used".format(
                 key=key, path=source_st.fpath, lineno=source_st[key].keyline
@@ -895,7 +892,7 @@ def compare_action(args):
     comp = StringTable.statistic(reference_st, source_st)
 
     if not args.summary_only:
-        for key in source_st.keys():
+        for key in source_st:
             if key in comp.right_only:
                 print("{}:{}: Key '{}' is not in reference file {}".format(comp.right.fpath, comp.right[key].keyline, key, comp.left.fpath))
                 exit_code = 1
