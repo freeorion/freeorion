@@ -172,7 +172,6 @@ class StringTable(object):
                         "{}: git blame did not collect any matching author times for key {}".format(fpath, entry.key))
                 entry.value_times = value_times[entry.key]
 
-
     @staticmethod
     def from_file(fhandle, with_blame=True):
         fpath = fhandle.name
