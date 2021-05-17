@@ -851,9 +851,7 @@ def check_action(args):
                     present_in_reference_st = reference_st and reference_key in reference_st.keys()
 
                     if not (reference_key in source_st.keys() or present_in_reference_st):
-
                         if match['ref_type'].strip() in OPTIONAL_REF_TYPES:
-                            print("{}:{}: Optional referenced key '{}' in value of '{}' was not found. Reference was [[{}{}]].".format(source_st.fpath, entry.keyline, reference_key, entry.key, match['ref_type'], reference_key))
                             continue
 
                         print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, reference_key, entry.key))
