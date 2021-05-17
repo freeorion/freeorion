@@ -867,6 +867,8 @@ def _check_key_usage(source_st, reference_st, references):
     exit_code = 0
 
     def check_key_is_used(key_under_check):
+        if not reference_st:
+            return True
         if key_under_check in reference_st:
             return True
         if key_under_check in references:
