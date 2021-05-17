@@ -20,8 +20,6 @@ STRING_TABLE_KEY_PATTERN = re.compile(r'^[A-Z0-9_]+$')
 # Provides the named capture groups 'ref_type' and 'key'
 INTERNAL_REFERENCE_PATTERN_TEMPLATE = r'\[\[(?P<ref_type>(?:(?:encyclopedia|(?:building|field|meter)type|predefinedshipdesign|ship(?:hull|part)|special|species|tech|policy|value) )?)(?P<key>{})\]\]'
 OPTIONAL_REF_TYPES = ["value"]
-# Provides the named capture groups 'sha', 'old_line', 'new_line' and 'range'
-GIT_BLAME_INCREMENTAL_PATTERN = re.compile(r'^(?P<sha>[0-9a-f]{40}) (?P<old_line>[1-9][0-9]*) (?P<new_line>[1-9][0-9]*)(?P<range> [1-9][0-9]*)?$')
 
 
 class StringTableEntry(object):
@@ -143,6 +141,10 @@ class StringTable(object):
         author_time = None
         line = None
         line_range = None
+
+        # Provides the named capture groups 'sha', 'old_line', 'new_line' and 'range'
+        GIT_BLAME_INCREMENTAL_PATTERN = re.compile(
+            r'^(?P<sha>[0-9a-f]{40}) (?P<old_line>[1-9][0-9]*) (?P<new_line>[1-9][0-9]*)(?P<range> [1-9][0-9]*)?$')
 
         for line_blame in git_blame:
             match = GIT_BLAME_INCREMENTAL_PATTERN.match(line_blame)
