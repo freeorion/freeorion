@@ -727,9 +727,6 @@ Spotřeba průmyslu
 RESEARCH_CONSUMPTION
 Spotřeba výzkumu
 
-TRADE_CONSUMPTION
-Spotřeba obchodu
-
 IMPORT_EXPORT_TOOLTIP
 Dovoz / Vývoz
 
@@ -1216,10 +1213,6 @@ Průmysl
 FOCUS_RESEARCH
 Výzkum
 
-# Focus types
-FOCUS_TRADE
-Obchod
-
 # Meter types
 METER_POPULATION
 populace
@@ -1231,10 +1224,6 @@ průmysl
 # Meter types
 METER_RESEARCH
 výzkum
-
-# Meter types
-METER_TRADE
-obchod
 
 # Meter types
 METER_CONSTRUCTION

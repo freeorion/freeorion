@@ -669,9 +669,6 @@ Koncumpcja produkcji przemysłowej
 RESEARCH_CONSUMPTION
 Koncumpcja badań naukowych
 
-TRADE_CONSUMPTION
-Skuteczność handlu
-
 IMPORT_EXPORT_TOOLTIP
 Import / Eksport
 

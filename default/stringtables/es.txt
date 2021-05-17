@@ -3435,12 +3435,6 @@ Diseño
 #*MAP_DETECTION_TEXT
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_TRADE_TITLE
-#* <not translated 1970-01-01 01:00:00>
-
-#*MAP_TRADE_TEXT
-#* <not translated 1970-01-01 01:00:00>
-
 #*MAP_FLEET_SHIP_COUNT
 #* <not translated 1970-01-01 01:00:00>
 
@@ -3486,9 +3480,6 @@ Producción Industrial
 RESEARCH_PRODUCTION
 Producción de Investigación
 
-TRADE_PRODUCTION
-Producción de Comercio
-
 #*STOCKPILE_GENERATION
 #* <not translated 1970-01-01 01:00:00>
 
@@ -3497,9 +3488,6 @@ Consumo Industrial
 
 RESEARCH_CONSUMPTION
 Consumo de Investigación
-
-TRADE_CONSUMPTION
-Consumo de Comercio
 
 #*STOCKPILE_USE
 #* <not translated 1970-01-01 01:00:00>
@@ -3945,9 +3933,6 @@ Velocidad de Flota – Equivalente a la velocidad mínima de las naves en la flo
 #* <not translated 1970-01-01 01:00:00>
 
 #*FW_FLEET_RESEARCH_SUMMARY
-#* <not translated 1970-01-01 01:00:00>
-
-#*FW_FLEET_TRADE_SUMMARY
 #* <not translated 1970-01-01 01:00:00>
 
 #*FW_MERGE_SYSTEM_FLEETS
@@ -5598,12 +5583,6 @@ No puede estar en diseños con
 #*METER_TARGET_RESEARCH_VALUE_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*METER_TARGET_TRADE_VALUE_LABEL
-#* <not translated 1970-01-01 01:00:00>
-
-#*METER_TARGET_TRADE_VALUE_DESC
-#* <not translated 1970-01-01 01:00:00>
-
 #*METER_TARGET_CONSTRUCTION_VALUE_LABEL
 #* <not translated 1970-01-01 01:00:00>
 
@@ -5705,12 +5684,6 @@ No puede estar en diseños con
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-
-#*METER_TRADE_VALUE_LABEL
-#* <not translated 1970-01-01 01:00:00>
-
-#*METER_TRADE_VALUE_DESC
 #* <not translated 1970-01-01 01:00:00>
 
 #*METER_CONSTRUCTION_VALUE_LABEL
@@ -5907,12 +5880,6 @@ Rango de detección
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-
-#*TRADE_FOCUS_TITLE
-#* <not translated 1970-01-01 01:00:00>
-
-#*TRADE_FOCUS_TEXT
 #* <not translated 1970-01-01 01:00:00>
 
 #*PROTECTION_FOCUS_TITLE
@@ -6448,9 +6415,6 @@ Mensajes
 #* <not translated 1970-01-01 01:00:00>
 
 #*FOCUS
-#* <not translated 1970-01-01 01:00:00>
-
-#*PREFERRED_FOCUS
 #* <not translated 1970-01-01 01:00:00>
 
 #*AVAILABLE_FOCI
@@ -9035,10 +8999,6 @@ FOCUS_RESEARCH
 Investigación
 
 # Focus types
-FOCUS_TRADE
-Comercio
-
-# Focus types
 FOCUS_LOGISTICS
 Logística
 
@@ -9099,10 +9059,6 @@ METER_TARGET_RESEARCH
 Investigación objetivo
 
 # Meter types
-METER_TARGET_TRADE
-Comercio objetivo
-
-# Meter types
 METER_TARGET_CONSTRUCTION
 Infraestructura objetivo
 
@@ -9157,10 +9113,6 @@ Industria
 # Meter types
 METER_RESEARCH
 Investigación
-
-# Meter types
-METER_TRADE
-Comercio
 
 # Meter types
 METER_CONSTRUCTION
@@ -9239,36 +9191,6 @@ Velocidad
 #*METER_TECH_COST_FACTOR
 #* <not translated 1970-01-01 01:00:00>
 
-#*ALIGN_MILITARISM
-#* <not translated 1970-01-01 01:00:00>
-
-#*ALIGN_MILITARY_STRENGTH_DESC
-#* <not translated 1970-01-01 01:00:00>
-
-#*ALIGN_SOCIAL_CONTROL
-#* <not translated 1970-01-01 01:00:00>
-
-#*ALIGN_SOCIAL_CONTROL_DESC
-#* <not translated 1970-01-01 01:00:00>
-
-#*ALIGN_ENVIRONMENT_MODIFICATION
-#* <not translated 1970-01-01 01:00:00>
-
-#*ALIGN_ENVIRONMENT_MODIFICATION_DESC
-#* <not translated 1970-01-01 01:00:00>
-
-#*ALIGN_BIOLOGICAL_ALTERATION
-#* <not translated 1970-01-01 01:00:00>
-
-#*ALIGN_BIOLOGICAL_ALTERATION_DESC
-#* <not translated 1970-01-01 01:00:00>
-
-#*ALIGN_MECHANIZATION
-#* <not translated 1970-01-01 01:00:00>
-
-#*ALIGN_MECHANIZATION_DESC
-#* <not translated 1970-01-01 01:00:00>
-
 # Empire affiliation types
 AFFIL_SELF
 nuestro
@@ -9324,10 +9246,6 @@ nave
 # Resource types
 #*INVALID_RESOURCE_TYPE
 #* <not translated 1970-01-01 01:00:00>
-
-# Resource types
-RE_TRADE
-comercio
 
 # Resource types
 RE_INDUSTRY
@@ -9494,10 +9412,6 @@ Colonización
 #* <not translated 1970-01-01 01:00:00>
 
 #*PC_RESEARCH_DESC
-#* <not translated 1970-01-01 01:00:00>
-
-# Ship part classes
-#*PC_TRADE
 #* <not translated 1970-01-01 01:00:00>
 
 # Ship part classes
@@ -9737,9 +9651,6 @@ valor previo para este medidor
 #*DESC_VAR_TARGETRESEARCH
 #* <not translated 1970-01-01 01:00:00>
 
-#*DESC_VAR_TARGETTRADE
-#* <not translated 1970-01-01 01:00:00>
-
 #*DESC_VAR_TARGETCONSTRUCTION
 #* <not translated 1970-01-01 01:00:00>
 
@@ -9771,9 +9682,6 @@ valor previo para este medidor
 #* <not translated 1970-01-01 01:00:00>
 
 #*DESC_VAR_RESEARCH
-#* <not translated 1970-01-01 01:00:00>
-
-#*DESC_VAR_TRADE
 #* <not translated 1970-01-01 01:00:00>
 
 #*DESC_VAR_CONSTRUCTION
@@ -9814,12 +9722,6 @@ valor previo para este medidor
 
 #*DESC_VAR_SIZE
 #* <not translated 1970-01-01 01:00:00>
-
-DESC_VAR_TRADESTOCKPILE
-existencias de comercio
-
-DESC_VAR_TRADEOUTPUT
-producción de comercio
 
 DESC_VAR_INDUSTRYOUTPUT
 producción industrial
@@ -9905,13 +9807,7 @@ turno actual
 #*DESC_VAR_LASTTURNBATTLEHERE
 #* <not translated 1970-01-01 01:00:00>
 
-#*DESC_COMPLEX
-#* <not translated 1970-01-01 01:00:00>
-
 #*DESC_VAR_JUMPSBETWEEN
-#* <not translated 1970-01-01 01:00:00>
-
-#*DESC_STATISTIC
 #* <not translated 1970-01-01 01:00:00>
 
 #*DESC_VAR_COUNT

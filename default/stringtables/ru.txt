@@ -3013,12 +3013,6 @@ MAP_DETECTION_TITLE
 MAP_DETECTION_TEXT
 Радиус обнаружения
 
-MAP_TRADE_TITLE
-Торговля
-
-MAP_TRADE_TEXT
-Эффективность торговли. (Торговля не реализована)
-
 MAP_FLEET_SHIP_COUNT
 Всего кораблей
 
@@ -3064,9 +3058,6 @@ INDUSTRY_PRODUCTION
 RESEARCH_PRODUCTION
 Наука
 
-TRADE_PRODUCTION
-Торговля
-
 STOCKPILE_GENERATION
 Вместимость резервов
 
@@ -3075,9 +3066,6 @@ INDUSTRY_CONSUMPTION
 
 RESEARCH_CONSUMPTION
 Научные затраты
-
-TRADE_CONSUMPTION
-Торговые расходы
 
 STOCKPILE_USE
 Задействование резервов
@@ -3503,9 +3491,6 @@ FW_FLEET_INDUSTRY_SUMMARY
 
 FW_FLEET_RESEARCH_SUMMARY
 Исследовательская мощь флота - суммарная исследовательская мощь кораблей флота.
-
-FW_FLEET_TRADE_SUMMARY
-Торговые возможности флота - общее количество торговых кораблей флота.
 
 FW_MERGE_SYSTEM_FLEETS
 Объединить все корабли в системе в единый флот
@@ -5045,9 +5030,6 @@ METER_RESEARCH_VALUE_DESC
 
 Для исследования не требуется соединения систем линиями [[metertype METER_SUPPLY]].'''
 
-METER_TRADE_VALUE_LABEL
-Торговля
-
 METER_CONSTRUCTION_VALUE_LABEL
 Инфраструктура
 
@@ -5192,12 +5174,6 @@ GROWTH_FOCUS_TEXT
 Родные планеты, ориентированные на рост населения, только помогают другим планетам, также ориентированным на рост населения. Планета с артефактами, способствующими росту населения и сфокусированные на нем, помогает только соответствующему типу населения, например, некоторые помогают только росту органических видов жизни
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
-
-TRADE_FOCUS_TITLE
-Цель: торговля
-
-TRADE_FOCUS_TEXT
-Торговля пока ничего не делает. Она показывает, где планируется больше ресурсов
 
 PROTECTION_FOCUS_TITLE
 Цель: защита
@@ -5641,9 +5617,6 @@ BUILDING_TYPE
 
 FOCUS
 Цель
-
-PREFERRED_FOCUS
-Предпочтительная цель
 
 AVAILABLE_FOCI
 Доступные цели
@@ -8108,10 +8081,6 @@ FOCUS_RESEARCH
 Исследования
 
 # Focus types
-FOCUS_TRADE
-Торговля
-
-# Focus types
 FOCUS_LOGISTICS
 Снабжение
 
@@ -8172,10 +8141,6 @@ METER_TARGET_RESEARCH
 Цель: наука
 
 # Meter types
-METER_TARGET_TRADE
-Цель: торговля
-
-# Meter types
 METER_TARGET_CONSTRUCTION
 Цель: строительство
 
@@ -8226,10 +8191,6 @@ METER_INDUSTRY
 # Meter types
 METER_RESEARCH
 Исследования
-
-# Meter types
-METER_TRADE
-Торговля
 
 # Meter types
 METER_CONSTRUCTION
@@ -8306,36 +8267,6 @@ METER_SHIP_COST_FACTOR
 METER_TECH_COST_FACTOR
 Фактор стоимости технологии
 
-ALIGN_MILITARISM
-Милитаризм
-
-ALIGN_MILITARY_STRENGTH_DESC
-Сила и размер армии
-
-ALIGN_SOCIAL_CONTROL
-Социальный контроль
-
-ALIGN_SOCIAL_CONTROL_DESC
-Планка, до которой население отслеживается, ограничивается и подвергается воздействиям
-
-ALIGN_ENVIRONMENT_MODIFICATION
-Изменение окружающей среды
-
-ALIGN_ENVIRONMENT_MODIFICATION_DESC
-Использование терраформинга и других широкомасштабных проектов
-
-ALIGN_BIOLOGICAL_ALTERATION
-Биологические модификации
-
-ALIGN_BIOLOGICAL_ALTERATION_DESC
-Использование биоинженеринга и биологических модификаций
-
-ALIGN_MECHANIZATION
-Механизация
-
-ALIGN_MECHANIZATION_DESC
-Использование искусственных организмов и автоматизации
-
 # Empire affiliation types
 AFFIL_SELF
 свой
@@ -8387,10 +8318,6 @@ BT_SHIP
 # Resource types
 INVALID_RESOURCE_TYPE
 Неверный тип ресурса
-
-# Resource types
-RE_TRADE
-торговля
 
 # Resource types
 RE_INDUSTRY
@@ -8557,10 +8484,6 @@ PC_RESEARCH_DESC
 Научные детали увеличивают [[metertype METER_RESEARCH]] генерируемые кораблем. Кораблю может потребоваться [[metertype METER_POPULATION]] чтобы начать производить выходные мощности
 
 # Ship part classes
-PC_TRADE
-Торговля
-
-# Ship part classes
 PC_PRODUCTION_LOCATION
 Производство
 
@@ -8686,9 +8609,6 @@ DESC_VAR_LOCAL_CANDIDATE
 DESC_VAR_ROOT_CANDIDATE
 корневой кандидат состояния
 
-DESC_STATISTIC
-статистика
-
 DESC_STAT_TYPE
 тип отчета
 
@@ -8754,12 +8674,6 @@ DESC_VAR_GALAXYSTARLANEFREQUENCY
 
 DESC_VAR_NON_OBJECT_REFERENCE
 свободная переменная
-
-DESC_VAR_TRADESTOCKPILE
-торговый запас
-
-DESC_VAR_TRADEOUTPUT
-торговая ценность
 
 DESC_VAR_INDUSTRYOUTPUT
 промышленная мощность
@@ -8841,9 +8755,6 @@ DESC_VAR_OWNERTOPPRIORITYENQUEUEDTECH
 
 DESC_VAR_LASTTURNBATTLEHERE
 в последний раз бой был здесь
-
-DESC_COMPLEX
-Совокупность переменных
 
 # FOCS variable reference description text.
 # %1% reference type of the FOCS variable.

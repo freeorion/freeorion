@@ -16,17 +16,17 @@ import webbrowser
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from collections import namedtuple, OrderedDict
 
-STRING_TABLE_KEY_PATTERN = r'^[A-Z0-9_]+$'
+STRING_TABLE_KEY_PATTERN = re.compile(r'^[A-Z0-9_]+$')
 # Provides the named capture groups 'ref_type' and 'key'
-INTERNAL_REFERENCE_PATTERN = r'\[\[(?P<ref_type>(?:(?:encyclopedia|(?:building|field|meter)type|predefinedshipdesign|ship(?:hull|part)|special|species|tech|policy|value) )?)(?P<key>{})\]\]'
-OPTIONAL_REF_TYPES = [ "value" ];
+INTERNAL_REFERENCE_PATTERN_TEMPLATE = r'\[\[(?P<ref_type>(?:(?:encyclopedia|(?:building|field|meter)type|predefinedshipdesign|ship(?:hull|part)|special|species|tech|policy|value) )?)(?P<key>{})\]\]'
+OPTIONAL_REF_TYPES = ["value"]
 # Provides the named capture groups 'sha', 'old_line', 'new_line' and 'range'
-GIT_BLAME_INCREMENTAL_PATTERN = r'^(?P<sha>[0-9a-f]{40}) (?P<old_line>[1-9][0-9]*) (?P<new_line>[1-9][0-9]*)(?P<range> [1-9][0-9]*)?$'
+GIT_BLAME_INCREMENTAL_PATTERN = re.compile(r'^(?P<sha>[0-9a-f]{40}) (?P<old_line>[1-9][0-9]*) (?P<new_line>[1-9][0-9]*)(?P<range> [1-9][0-9]*)?$')
 
 
 class StringTableEntry(object):
     def __init__(self, key, keyline, value, notes, value_times):
-        if not re.match(STRING_TABLE_KEY_PATTERN, key):
+        if not STRING_TABLE_KEY_PATTERN.match(key):
             raise ValueError("Key doesn't match expected format [A-Z0-9_]+, was '{}'".format(key))
         self.key = key
         self.keyline = keyline
@@ -292,7 +292,7 @@ class StringTable(object):
         line_range = None
 
         for line_blame in git_blame:
-            match = re.match(GIT_BLAME_INCREMENTAL_PATTERN, line_blame)
+            match = GIT_BLAME_INCREMENTAL_PATTERN.match(line_blame)
             if match:
                 line = int(match['new_line'])
                 line_range = int(match['range'])
@@ -792,10 +792,10 @@ def sync_action(args):
 
 
 def rename_key_action(args):
-    if not re.match(STRING_TABLE_KEY_PATTERN, args.old_key):
+    if not STRING_TABLE_KEY_PATTERN.match(args.old_key):
         raise ValueError("The given old key '{}' is not a valid name".format(args.old_key))
 
-    if not re.match(STRING_TABLE_KEY_PATTERN, args.new_key):
+    if not STRING_TABLE_KEY_PATTERN.match(args.new_key):
         raise ValueError("The given new key '{}' is not a valid name".format(args.new_key))
 
     source_st = StringTable.from_file(args.source)
@@ -803,7 +803,7 @@ def rename_key_action(args):
     for key in source_st.keys():
         entry = source_st[key]
         entry.value = re.sub(
-            INTERNAL_REFERENCE_PATTERN.format(re.escape(args.old_key)),
+            INTERNAL_REFERENCE_PATTERN_TEMPLATE.format(re.escape(args.old_key)),
             r'[[\1' + args.new_key + ']]',
             entry.value)
         if entry.key == args.old_key:
@@ -837,19 +837,48 @@ def check_action(args):
     for source in args.sources:
         source_st = StringTable.from_file(source)
 
+        references = set()
         for key in source_st.keys():
             entry = source_st[key]
 
             if entry.value:
-                for match in re.finditer(INTERNAL_REFERENCE_PATTERN.format('.*?'), entry.value):
-                    match_key = match['key']
-                    if not (match_key in source_st.keys() or (reference_st and match_key in reference_st.keys())):
+                for match in re.finditer(INTERNAL_REFERENCE_PATTERN_TEMPLATE.format('.*?'), entry.value):
+                    reference_key = match['key']
+                    references.add(reference_key)
+                    # TODO Do not check if key is present in other stringtable
+                    # If reference is not present in the translation it won't be resolved
+                    # Instead just [[...]] will be shown to user.
+                    present_in_reference_st = reference_st and reference_key in reference_st.keys()
+
+                    if not (reference_key in source_st.keys() or present_in_reference_st):
+
                         if match['ref_type'].strip() in OPTIONAL_REF_TYPES:
-                            print("{}:{}: Optional referenced key '{}' in value of '{}' was not found. Reference was [[{}{}]].".format(source_st.fpath, entry.keyline, match_key, entry.key, match['ref_type'], match_key))
+                            print("{}:{}: Optional referenced key '{}' in value of '{}' was not found. Reference was [[{}{}]].".format(source_st.fpath, entry.keyline, reference_key, entry.key, match['ref_type'], reference_key))
                             continue
-                        print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, match_key, entry.key))
+
+                        print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, reference_key, entry.key))
                         exit_code = 1
 
+        exit_code += _check_key_usage(source_st, reference_st, references)
+    return exit_code
+
+
+def _check_key_usage(source_st, reference_st, references):
+    exit_code = 0
+
+    def check_key_is_used(key_under_check):
+        if key_under_check in reference_st:
+            return True
+        if key_under_check in references:
+            return True
+        return False
+
+    for key in source_st.keys():
+        if not check_key_is_used(key):
+            print("{path}:{lineno}: {key} is not used".format(
+                key=key, path=source_st.fpath, lineno=source_st[key].keyline
+            ))
+            exit_code = 1
     return exit_code
 
 
@@ -914,7 +943,8 @@ Summary comparing '{}' against '{}':
 if __name__ == "__main__":
     root_parser = argparse.ArgumentParser(description="Verify and modify string tables")
     verb_parsers = root_parser.add_subparsers(
-        title="verbs", description="For more details run `{} <verb> --help`.".format(root_parser.prog),
+        title="verbs",
+        description="For more details run `{} <verb> --help`.".format(root_parser.prog),
     )
 
     format_parser = verb_parsers.add_parser(

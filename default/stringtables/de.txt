@@ -2107,12 +2107,6 @@ Imperiumsortung
 MAP_DETECTION_TEXT
 Ortungsreichweite des Imperiums
 
-MAP_TRADE_TITLE
-Handel
-
-MAP_TRADE_TEXT
-Handelsleistung des gesamten Imperiums. (Handel tut nichts)
-
 
 ##
 ## Side panel/System information
@@ -2134,17 +2128,11 @@ Industrieproduktion
 RESEARCH_PRODUCTION
 Forschungsproduktion
 
-TRADE_PRODUCTION
-Handelsproduktion
-
 INDUSTRY_CONSUMPTION
 Industrieverbrauch
 
 RESEARCH_CONSUMPTION
 Forschungsverbrauch
-
-TRADE_CONSUMPTION
-Handelsverbrauch
 
 IMPORT_EXPORT_TOOLTIP
 Einfuhr / Ausfuhr
@@ -3015,9 +3003,6 @@ Industrie
 
 METER_RESEARCH_VALUE_LABEL
 Forschung
-
-METER_TRADE_VALUE_LABEL
-Handel
 
 METER_CONSTRUCTION_VALUE_LABEL
 Infrastruktur
@@ -4234,10 +4219,6 @@ FOCUS_RESEARCH
 Forschung
 
 # Focus types
-FOCUS_TRADE
-Handel
-
-# Focus types
 FOCUS_LOGISTICS
 Logistik
 
@@ -4289,10 +4270,6 @@ METER_TARGET_RESEARCH
 Ziel Forschung
 
 # Meter types
-METER_TARGET_TRADE
-Ziel Handel
-
-# Meter types
 METER_TARGET_CONSTRUCTION
 Ziel Infrastruktur
 
@@ -4335,10 +4312,6 @@ Industrie
 # Meter types
 METER_RESEARCH
 Forschung
-
-# Meter types
-METER_TRADE
-Handel
 
 # Meter types
 METER_CONSTRUCTION
@@ -4400,12 +4373,6 @@ Größe
 #METER_DETECTION_STRENGTH
 #[[encyclopedia DETECTION_TITLE]]
 
-ALIGN_MILITARISM
-Militarismus
-
-ALIGN_ENVIRONMENT_MODIFICATION
-Veränderung der Umgebung
-
 # Empire affiliation types
 AFFIL_SELF
 Eigenes
@@ -4453,10 +4420,6 @@ baue
 # Build types
 BT_SHIP
 Schiff
-
-# Resource types
-RE_TRADE
-Handel
 
 # Resource types
 RE_INDUSTRY
@@ -4645,12 +4608,6 @@ Sternenklasse
 
 #DESC_VAR_SIZE
 #[[METER_SIZE]]
-
-DESC_VAR_TRADESTOCKPILE
-Handelslager
-
-DESC_VAR_TRADEOUTPUT
-Handelsproduktion
 
 DESC_VAR_INDUSTRYOUTPUT
 Industrieproduktion
