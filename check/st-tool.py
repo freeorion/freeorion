@@ -136,7 +136,45 @@ class StringTable(object):
         return self._ientries.keys()
 
     @staticmethod
-    def from_file(fhandle):
+    def set_author(fpath, entries, blames):
+        blame_cmd = ['git', 'blame', '--incremental', fpath]
+        git_blame = subprocess.check_output(blame_cmd)
+        git_blame = git_blame.decode('utf-8', 'strict')
+        git_blame = git_blame.splitlines(True)
+
+        value_times = {}
+        author_time = None
+        line = None
+        line_range = None
+
+        for line_blame in git_blame:
+            match = GIT_BLAME_INCREMENTAL_PATTERN.match(line_blame)
+            if match:
+                line = int(match['new_line'])
+                line_range = int(match['range'])
+            if line_blame.startswith('author-time '):
+                author_time = int(line_blame.strip().split(' ')[1])
+            if line_blame.startswith('filename '):
+                for line in range(line, line + line_range):
+                    if line not in blames:
+                        continue
+                    line_times = value_times.get(blames[line], [])
+                    line_times.append(author_time)
+                    value_times[blames[line]] = line_times
+
+        for entry in entries:
+            if isinstance(entry, StringTableEntry):
+                if not entry.value:
+                    # ignore untranslated entries
+                    continue
+                if entry.key not in value_times or len(value_times[entry.key]) != len(entry.value_times):
+                    raise RuntimeError(
+                        "{}: git blame did not collect any matching author times for key {}".format(fpath, entry.key))
+                entry.value_times = value_times[entry.key]
+
+
+    @staticmethod
+    def from_file(fhandle, with_blame=True):
         fpath = fhandle.name
 
         is_quoted = False
@@ -281,40 +319,8 @@ class StringTable(object):
         if is_quoted:
             raise ValueError("{}:{}: Quotes not closed for key '{}'".format(fpath, vline_start, key))
 
-        blame_cmd = ['git', 'blame', '--incremental', fpath]
-        git_blame = subprocess.check_output(blame_cmd)
-        git_blame = git_blame.decode('utf-8', 'strict')
-        git_blame = git_blame.splitlines(True)
-
-        value_times = {}
-        author_time = None
-        line = None
-        line_range = None
-
-        for line_blame in git_blame:
-            match = GIT_BLAME_INCREMENTAL_PATTERN.match(line_blame)
-            if match:
-                line = int(match['new_line'])
-                line_range = int(match['range'])
-            if line_blame.startswith('author-time '):
-                author_time = int(line_blame.strip().split(' ')[1])
-            if line_blame.startswith('filename '):
-                for line in range(line, line + line_range):
-                    if line not in blames:
-                        continue
-                    line_times = value_times.get(blames[line], [])
-                    line_times.append(author_time)
-                    value_times[blames[line]] = line_times
-
-        for entry in entries:
-            if isinstance(entry, StringTableEntry):
-                if not entry.value:
-                    # ignore untranslated entries
-                    continue
-                if entry.key not in value_times or len(value_times[entry.key]) != len(entry.value_times):
-                    raise RuntimeError("{}: git blame did not collect any matching author times for key {}".format(fpath, entry.key))
-                entry.value_times = value_times[entry.key]
-
+        if with_blame:
+            StringTable.set_author(fpath, entries, blames)
         return StringTable(fpath, language, fnotes, includes, entries)
 
     @staticmethod
@@ -833,9 +839,9 @@ def check_action(args):
     exit_code = 0
     reference_st = None
     if args.reference:
-        reference_st = StringTable.from_file(args.reference)
+        reference_st = StringTable.from_file(args.reference, with_blame=False)
     for source in args.sources:
-        source_st = StringTable.from_file(source)
+        source_st = StringTable.from_file(source, with_blame=False)
 
         references = set()
         for key in source_st.keys():
