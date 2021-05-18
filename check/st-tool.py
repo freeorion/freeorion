@@ -20,8 +20,6 @@ STRING_TABLE_KEY_PATTERN = re.compile(r'^[A-Z0-9_]+$')
 # Provides the named capture groups 'ref_type' and 'key'
 INTERNAL_REFERENCE_PATTERN_TEMPLATE = r'\[\[(?P<ref_type>(?:(?:encyclopedia|(?:building|field|meter)type|predefinedshipdesign|ship(?:hull|part)|special|species|tech|policy|value) )?)(?P<key>{})\]\]'
 OPTIONAL_REF_TYPES = ["value"]
-# Provides the named capture groups 'sha', 'old_line', 'new_line' and 'range'
-GIT_BLAME_INCREMENTAL_PATTERN = re.compile(r'^(?P<sha>[0-9a-f]{40}) (?P<old_line>[1-9][0-9]*) (?P<new_line>[1-9][0-9]*)(?P<range> [1-9][0-9]*)?$')
 
 
 class StringTableEntry(object):
@@ -85,7 +83,7 @@ class StringTable(object):
         return key in self._ientries
 
     def __iter__(self):
-        return self._ientries.iteritems()
+        return iter(self._ientries)
 
     def __len__(self):
         return len(self._ientries)
@@ -132,11 +130,49 @@ class StringTable(object):
     def items(self):
         return self._entries
 
-    def keys(self):
-        return self._ientries.keys()
+    @staticmethod
+    def set_author(fpath, entries, blames):
+        blame_cmd = ['git', 'blame', '--incremental', fpath]
+        git_blame = subprocess.check_output(blame_cmd)
+        git_blame = git_blame.decode('utf-8', 'strict')
+        git_blame = git_blame.splitlines(True)
+
+        value_times = {}
+        author_time = None
+        line = None
+        line_range = None
+
+        # Provides the named capture groups 'sha', 'old_line', 'new_line' and 'range'
+        GIT_BLAME_INCREMENTAL_PATTERN = re.compile(
+            r'^(?P<sha>[0-9a-f]{40}) (?P<old_line>[1-9][0-9]*) (?P<new_line>[1-9][0-9]*)(?P<range> [1-9][0-9]*)?$')
+
+        for line_blame in git_blame:
+            match = GIT_BLAME_INCREMENTAL_PATTERN.match(line_blame)
+            if match:
+                line = int(match['new_line'])
+                line_range = int(match['range'])
+            if line_blame.startswith('author-time '):
+                author_time = int(line_blame.strip().split(' ')[1])
+            if line_blame.startswith('filename '):
+                for line in range(line, line + line_range):
+                    if line not in blames:
+                        continue
+                    line_times = value_times.get(blames[line], [])
+                    line_times.append(author_time)
+                    value_times[blames[line]] = line_times
+
+        for entry in entries:
+            if isinstance(entry, StringTableEntry):
+                if not entry.value:
+                    # ignore untranslated entries
+                    continue
+                if entry.key not in value_times or len(value_times[entry.key]) != len(entry.value_times):
+                    raise RuntimeError(
+                        "{}: git blame did not collect any matching author times for key {}".format(fpath, entry.key))
+                entry.value_times = value_times[entry.key]
 
     @staticmethod
-    def from_file(fhandle):
+    def from_file(fhandle, with_blame=True):
         fpath = fhandle.name
 
         is_quoted = False
@@ -281,40 +317,8 @@ class StringTable(object):
         if is_quoted:
             raise ValueError("{}:{}: Quotes not closed for key '{}'".format(fpath, vline_start, key))
 
-        blame_cmd = ['git', 'blame', '--incremental', fpath]
-        git_blame = subprocess.check_output(blame_cmd)
-        git_blame = git_blame.decode('utf-8', 'strict')
-        git_blame = git_blame.splitlines(True)
-
-        value_times = {}
-        author_time = None
-        line = None
-        line_range = None
-
-        for line_blame in git_blame:
-            match = GIT_BLAME_INCREMENTAL_PATTERN.match(line_blame)
-            if match:
-                line = int(match['new_line'])
-                line_range = int(match['range'])
-            if line_blame.startswith('author-time '):
-                author_time = int(line_blame.strip().split(' ')[1])
-            if line_blame.startswith('filename '):
-                for line in range(line, line + line_range):
-                    if line not in blames:
-                        continue
-                    line_times = value_times.get(blames[line], [])
-                    line_times.append(author_time)
-                    value_times[blames[line]] = line_times
-
-        for entry in entries:
-            if isinstance(entry, StringTableEntry):
-                if not entry.value:
-                    # ignore untranslated entries
-                    continue
-                if entry.key not in value_times or len(value_times[entry.key]) != len(entry.value_times):
-                    raise RuntimeError("{}: git blame did not collect any matching author times for key {}".format(fpath, entry.key))
-                entry.value_times = value_times[entry.key]
-
+        if with_blame:
+            StringTable.set_author(fpath, entries, blames)
         return StringTable(fpath, language, fnotes, includes, entries)
 
     @staticmethod
@@ -332,7 +336,7 @@ class StringTable(object):
             'identical',
             'layout_mismatch'])
 
-        all_keys = set(left.keys()).union(right.keys())
+        all_keys = set(left).union(right)
 
         untranslated = set()
         identical = set()
@@ -678,7 +682,7 @@ class EditServerHandler(BaseHTTPRequestHandler):
 
         stat = StringTable.statistic(self.server.reference_st, self.server.source_st)
 
-        for key in self.server.reference_st.keys():
+        for key in self.server.reference_st:
             source = self.server.reference_st[key].value
             source = html.escape(source)
 
@@ -800,7 +804,7 @@ def rename_key_action(args):
 
     source_st = StringTable.from_file(args.source)
 
-    for key in source_st.keys():
+    for key in source_st:
         entry = source_st[key]
         entry.value = re.sub(
             INTERNAL_REFERENCE_PATTERN_TEMPLATE.format(re.escape(args.old_key)),
@@ -833,12 +837,12 @@ def check_action(args):
     exit_code = 0
     reference_st = None
     if args.reference:
-        reference_st = StringTable.from_file(args.reference)
+        reference_st = StringTable.from_file(args.reference, with_blame=False)
     for source in args.sources:
-        source_st = StringTable.from_file(source)
+        source_st = StringTable.from_file(source, with_blame=False)
 
         references = set()
-        for key in source_st.keys():
+        for key in source_st:
             entry = source_st[key]
 
             if entry.value:
@@ -848,12 +852,10 @@ def check_action(args):
                     # TODO Do not check if key is present in other stringtable
                     # If reference is not present in the translation it won't be resolved
                     # Instead just [[...]] will be shown to user.
-                    present_in_reference_st = reference_st and reference_key in reference_st.keys()
+                    present_in_reference_st = reference_st and reference_key in reference_st
 
-                    if not (reference_key in source_st.keys() or present_in_reference_st):
-
+                    if not (reference_key in source_st or present_in_reference_st):
                         if match['ref_type'].strip() in OPTIONAL_REF_TYPES:
-                            print("{}:{}: Optional referenced key '{}' in value of '{}' was not found. Reference was [[{}{}]].".format(source_st.fpath, entry.keyline, reference_key, entry.key, match['ref_type'], reference_key))
                             continue
 
                         print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, reference_key, entry.key))
@@ -867,13 +869,15 @@ def _check_key_usage(source_st, reference_st, references):
     exit_code = 0
 
     def check_key_is_used(key_under_check):
+        if not reference_st:
+            return True
         if key_under_check in reference_st:
             return True
         if key_under_check in references:
             return True
         return False
 
-    for key in source_st.keys():
+    for key in source_st:
         if not check_key_is_used(key):
             print("{path}:{lineno}: {key} is not used".format(
                 key=key, path=source_st.fpath, lineno=source_st[key].keyline
@@ -890,7 +894,7 @@ def compare_action(args):
     comp = StringTable.statistic(reference_st, source_st)
 
     if not args.summary_only:
-        for key in source_st.keys():
+        for key in source_st:
             if key in comp.right_only:
                 print("{}:{}: Key '{}' is not in reference file {}".format(comp.right.fpath, comp.right[key].keyline, key, comp.left.fpath))
                 exit_code = 1
