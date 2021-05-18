@@ -139,11 +139,10 @@ std::vector<float> Combat::WeaponDamageImpl(std::shared_ptr<const Ship> source, 
 
 /** Populate fighter state quantities and damages for each combat round until @p limit_to_bout */
 std::map<int, Combat::FighterBoutInfo> Combat::ResolveFighterBouts(std::shared_ptr<const Ship> ship,
-                                                           const Condition::Condition* combat_targets,
-                                                   int bay_capacity, int current_docked,
-                                                   float fighter_damage, int limit_to_bout)
+                                                                   const Condition::Condition* combat_targets,
+                                                                   int bay_capacity, int current_docked,
+                                                                   float fighter_damage, int limit_to_bout)
 {
-        // FIXME this should be moved to combat probably
         std::map<int, FighterBoutInfo> retval;
         const int NUM_BOUTS = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
         int target_bout = limit_to_bout < 1 ? NUM_BOUTS : limit_to_bout;
@@ -183,8 +182,6 @@ int Combat::TotalFighterShots(const ScriptingContext& context, const Ship& ship,
 {
 
     // Iterate over context, but change bout number
-    // XXX probably should rather take ship ID as argument as well
-    // XXX else i get a fighter and have to fetch me the launching ship from that
     ScriptingContext mut_context(context);
     int launch_capacity = ship.SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_FIGHTER_BAY);
     int hangar_fighters = ship.SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_FIGHTER_HANGAR);

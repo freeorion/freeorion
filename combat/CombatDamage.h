@@ -20,9 +20,9 @@ namespace Combat {
 
     /** Populate fighter state quantities and damages for each combat round until @p limit_to_bout */
     FO_COMMON_API std::map<int, FighterBoutInfo> ResolveFighterBouts(std::shared_ptr<const Ship> ship,
-                                                               const Condition::Condition* combat_targets,
-                                                               int bay_capacity, int current_docked,
-                                                               float fighter_damage, int limit_to_bout = -1);
+                                                                     const Condition::Condition* combat_targets,
+                                                                     int bay_capacity, int current_docked,
+                                                                     float fighter_damage, int limit_to_bout = -1);
 
     FO_COMMON_API int TotalFighterShots(const ScriptingContext& context, const Ship& ship, const Condition::Condition* sampling_condition);
 
