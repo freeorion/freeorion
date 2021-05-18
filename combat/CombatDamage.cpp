@@ -14,7 +14,8 @@
 // damage calculation (shortrange, fighters, shields)
 
 namespace {
-    ScriptingContext CombatContextWithShipTarget(std::shared_ptr<const Ship> source, float shields = 0.0f) {
+    ScriptingContext CombatContextWithShipTarget(std::shared_ptr<const Ship> source, float shields = 0.0f)
+    {
         // use the given design and species as default enemy. at least those least exists
         auto target = std::make_shared<Ship>(ALL_EMPIRES, source->DesignID(), source->SpeciesName());
         // target needs to have an ID != -1 to be visible, stealth should be low enough
@@ -28,7 +29,8 @@ namespace {
         return ScriptingContext{source, target};
     }
 
-    ScriptingContext CombatContextWithFighterTarget(std::shared_ptr<const Ship> source) {
+    ScriptingContext CombatContextWithFighterTarget(std::shared_ptr<const Ship> source)
+    {
         auto target = std::make_shared<Fighter>();
         target->SetID(-1000000); // XXX magic number AutoresolveInfo.next_fighter_id starts at -1000001 counting down
         GetUniverse().SetEmpireObjectVisibility(source->Owner(), target->ID(), Visibility::VIS_FULL_VISIBILITY);
@@ -36,7 +38,8 @@ namespace {
     }
 
     std::vector<float> WeaponDamageCalcImpl(std::shared_ptr<const Ship> ship, bool max, bool include_fighters,
-                                            bool target_ships, const ScriptingContext&& context) {
+                                            bool target_ships, const ScriptingContext&& context)
+    {
         std::vector<float> retval;
         if (!ship)
             return retval;
