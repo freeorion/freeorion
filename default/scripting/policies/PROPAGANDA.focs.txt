@@ -8,9 +8,28 @@ Policy
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
         EffectsGroup
-            scope = Capital
+            scope = And [
+                Capital
+                OwnedBy empire = Source.Owner
+            ]
             effects = SetTargetInfluence value = Value +
                         (NamedReal name = "PROPAGANDA_INFLUENCE_FLAT" value = 5.0)
+
+        EffectsGroup
+            scope = And [
+                Capital
+                OwnedBy affiliation = AllyOf empire = Source.Owner
+                Not EmpireHasAdoptedPolicy empire = LocalCandidate.Owner name = ThisPolicy
+            ]
+            effects = SetTargetInfluence value = Value + (NamedReal name = "PROPAGANDA_INFLUENCE_ALLIED_FLAT" value = 1.0)
+
+        EffectsGroup
+            scope = And [
+                Capital
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                Not EmpireHasAdoptedPolicy empire = LocalCandidate.Owner name = ThisPolicy
+            ]
+            effects = SetTargetInfluence value = Value + (NamedReal name = "PROPAGANDA_INFLUENCE_ENEMY_FLAT" value = -1.0)
     ]
     graphic = "icons/policies/broadcast.png"
 
