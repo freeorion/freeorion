@@ -796,6 +796,8 @@ Wolken aus Wasserstoff, die in sich zusammenfallen können um einen neuen Stern 
 #FLD_NEBULA_2_DESC
 #[[FLD_NEBULA_1_DESC]]
 
+FLD_SUBSPACE_RIFT
+Scissor Rift
 
 ##
 ## Predefined starting fleets
@@ -2993,6 +2995,12 @@ Metriken
 POPULATION_TITLE_SHORT_DESC
 Bevölkerung
 
+##
+## Encyclopedia articles in Game Concepts category
+##
+
+METABOLISM_TITLE
+Metabolism
 
 ##
 ## Encyclopedia articles
@@ -3059,6 +3067,15 @@ Planetarer Fokus
 
 GROWTH_FOCUS_TITLE
 Wachstumsfokus
+
+SLOT_TITLE
+Slot
+
+DETECTION_TITLE
+Detection Strength
+
+ENVIRONMENT_TITLE
+Environment
 
 ORGANIC_SPECIES_TITLE
 Organischer Stoffwechsel
@@ -3676,6 +3693,100 @@ Bevorzugt ozeanische Planeten.
 
 
 ##
+## Encyclopedia articles in Species category
+##
+
+SP_SCYLIOR
+Scylior
+
+SP_GYSACHE
+Gysache
+
+SP_CHATO
+Chato
+
+SP_TRITH
+Trith
+
+SP_HAPPY
+Happybirthday
+
+SP_HHHOH
+Hhhoh
+
+SP_EAXAW
+Eaxaw
+
+SP_DERTHREAN
+Derthrean
+
+SP_LAENFA
+Laenfa
+
+SP_SLY
+Sly
+
+SP_TAEGHIRUS
+Tae Ghirus
+
+SP_MUURSH
+Mu Ursh
+
+SP_GEORGE
+George
+
+SP_CRAY
+Cray
+
+SP_ETTY
+Etty
+
+SP_PHINNERT
+Phinnert
+
+SP_REPLICON
+Replicon
+
+SP_EGASSEM
+Egassem
+
+SP_SSLITH
+Sslith
+
+SP_SETINON
+Setinon
+
+SP_SILEXIAN
+Silexian
+
+SP_KOBUNTURA
+Kobuntura
+
+SP_UGMORS
+Ugmors
+
+SP_ABADDONI
+Abaddoni
+
+SP_FULVER
+Fulver
+
+SP_FURTHEST
+Furthest
+
+SP_BANFORO
+Banforo
+
+SP_KILANDOW
+Kilandow
+
+SP_MISIORLA
+Misiorla
+
+SP_EXOBOT
+Exobot
+
+##
 ## Specials
 ##
 
@@ -3691,8 +3802,8 @@ High Tech-Eingeborene
 HIGH_TECH_NATIVES_SPECIAL_DESC
 Die Ureinwohner dieses Planeten sind technologisch sehr hoch entwickelt, weshalb sie Angriffe und Invasionen weit besser abwehren können, solange sie noch keinem Imperium angehören.
 
-#GAIA_SPECIAL
-#Gaia
+GAIA_SPECIAL
+Gaia
 
 GAIA_SPECIAL_DESC
 '''Terraformiert diesen Planeten und erhöht anschließend [[metertype METER_TARGET_POPULATION]], entsprechend der Planetengröße:
@@ -4087,8 +4198,8 @@ STAR_YELLOW
 gelb
 
 # Star types
-#STAR_ORANGE
-#Orange
+STAR_ORANGE
+Orange
 
 # Star types
 STAR_RED
@@ -4227,8 +4338,8 @@ FOCUS_STEALTH
 Tarnung
 
 # Focus types
-#FOCUS_BIOTERROR
-#Bioterror
+FOCUS_BIOTERROR
+Bioterror
 
 # Focus types
 FOCUS_STARGATE_SEND
@@ -4484,6 +4595,12 @@ Sonstiges
 VIS_NO_VISIBILITY
 Unsichtbar
 
+##
+## Ship hull categories
+##
+
+HULL_LINE_ORGANIC
+Hull Line: Organic
 
 ##
 ## FOCS value references, effects & condition descriptions
@@ -5399,8 +5516,20 @@ Galaktische Erkundung
 SHP_GAL_EXPLO_DESC
 Die Entdeckung von Interstellaren Reisen mittels Sternstraßen leitet eine neue Ära der Entwicklung der Gesellschaft ein. Alte politsche Plänkeleien zwischen Splittergruppen verlieren ihre Bedeutung, wenn die gesamte Zivilisation mit dem unbegrenzten Potential der Sterne konfrontiert ist ... für Wachstum und Wohlstand, oder die totale Vernichtung.
 
+SHP_MIL_ROBO_CONT
+Military Robotic Control
+
+SHP_SPACE_FLUX_DRIVE
+Spatial Flux Drive
+
+SHP_TRANSSPACE_DRIVE
+Trans-Spatial Drive
+
 SHP_FRC_ENRG_COMP
 Kraft-Energie Kompression
+
+SHP_DOMESTIC_MONSTER
+Domesticated Mega-Fauna
 
 SPY_ROOT_DECEPTION
 Täuschung
@@ -5842,6 +5971,12 @@ Elektromagnetische Dämpfung
 
 SPY_STEALTH_2
 Planetare Aschewolken
+
+SPY_STEALTH_3
+Planetary Dimensional Cloak
+
+SPY_STEALTH_4
+Planetary Phasing Cloak
 
 SHP_DEUTERIUM_TANK
 Deuteriumtank
