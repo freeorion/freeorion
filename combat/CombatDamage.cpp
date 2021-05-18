@@ -122,7 +122,7 @@ namespace {
         if (target_ships)
             retval.push_back(fighter_damage * fighter_shots);
         else
-            retval.push_back((float)fighter_shots);
+            retval.push_back(fighter_shots);
         return retval;
     }
 }
