@@ -3822,11 +3822,12 @@ Change
 TT_BREAKDOWN_SUMMARY
 %1%: %2%
 
-# %1% the meter name displayed.
+# %1% the meter name displayed. (E.g. 'Damage')
 # %2% the meter value. (E.g. max damage against ships)
+# %3% the augmenting meter name displayed. (E.g. 'Destruction')
 # %3% the augmenting meter value. (E.g. max number of destroyed fighters)
 TT_BREAKDOWN_AUGMENTED_SUMMARY
-%1%: %2% / %3%
+%1%: %2% / %3%: %4%
 
 TT_INHERENT
 Inherent
@@ -4063,7 +4064,10 @@ FW_ROGUE_SHIP
 Rogue Ship
 
 SHIP_DAMAGE_STAT_TITLE
-Damage
+Structural Damage
+
+SHIP_DESTRUCTION_STAT_TITLE
+Destroyed Fighters
 
 SHIP_TROOPS_TITLE
 Troops

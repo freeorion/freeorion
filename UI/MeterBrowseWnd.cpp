@@ -504,14 +504,16 @@ void ShipDamageBrowseWnd::UpdateSummary() {
     float breakdown_total = ship->TotalWeaponsShipDamage(0.0f, false);
     float breakdown_total_augmentation = ship->TotalWeaponsFighterDamage(false);
     std::string breakdown_meter_name = UserString("SHIP_DAMAGE_STAT_TITLE");
-
+    std::string breakdown_meter_augmentation_name = UserString("SHIP_DESTRUCTION_STAT_TITLE");
+    
 
     // set accounting breakdown total / summary
     if (m_meter_title)
         m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_AUGMENTED_SUMMARY")) %
                                               breakdown_meter_name %
                                               DoubleToString(breakdown_total, 3, false) %
-                                              DoubleToString(breakdown_total_augmentation, 1, false)));
+                                              breakdown_meter_augmentation_name %
+                                              (int)breakdown_total_augmentation));
 }
 
 void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
