@@ -15,12 +15,8 @@
 
 namespace {
     ScriptingContext CombatContextWithShipTarget(std::shared_ptr<const Ship> source, float shields = 0.0f) {
-        // FIXME find default enemy - i use the given design as that at least exists (but might be non-targetable because of stealth)
-        //ErrorLogger() << "DESIGN " << GetPredefinedShipDesignManager().GetDesignID("08a58b08-0929-496d-84fc-faa91424ca21");
-        //auto target = std::make_shared<Ship>(ALL_EMPIRES, GetPredefinedShipDesignManager().GetDesignID("SD_MARK_1"), "SP_HUMAN");
-        //auto target = std::make_shared<Fighter>();
-        // XXX DesignID valid?
-        auto target = std::make_shared<Ship>(ALL_EMPIRES, source->DesignID(), "SP_HUMAN");
+        // use the given design and species as default enemy. at least those least exists
+        auto target = std::make_shared<Ship>(ALL_EMPIRES, source->DesignID(), source->SpeciesName());
         // target needs to have an ID != -1 to be visible, stealth should be low enough
         // structure must be higher than zero to be valid target
         target->SetID(-1000000); // XXX magic number AutoresolveInfo.next_fighter_id starts at -1000001 counting down
