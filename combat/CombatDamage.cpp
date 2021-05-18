@@ -23,7 +23,7 @@ namespace {
         target->GetMeter(MeterType::METER_STRUCTURE)->Set(100.0f, 100.0f);
         target->GetMeter(MeterType::METER_MAX_STRUCTURE)->Set(100.0f, 100.0f);
         // Shield value is used for structural damage estimation
-        target->GetMeter(MeterType::METER_SHIELD)->Set(shields,shields);
+        target->GetMeter(MeterType::METER_SHIELD)->Set(shields, shields);
         GetUniverse().SetEmpireObjectVisibility(source->Owner(), target->ID(), Visibility::VIS_FULL_VISIBILITY);
         return ScriptingContext{source, target};
     }
