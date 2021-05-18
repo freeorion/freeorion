@@ -3822,12 +3822,11 @@ Change
 TT_BREAKDOWN_SUMMARY
 %1%: %2%
 
-# %1% the meter name displayed. (E.g. 'Damage')
-# %2% the meter value. (E.g. max damage against ships)
-# %3% the augmenting meter name displayed. (E.g. 'Destruction')
-# %3% the augmenting meter value. (E.g. max number of destroyed fighters)
-TT_BREAKDOWN_AUGMENTED_SUMMARY
-%1%: %2% / %3%: %4%
+# %1% the number bouts per battle
+# %2% the total estimate of structure damage
+# %3% the total estimate of destroyed fighters
+TT_DAMAGE_BREAKDOWN_SUMMARY
+Totals for %1% bout battle, Structure Damage: %2% / Fighters Destroyed: %3%
 
 TT_INHERENT
 Inherent

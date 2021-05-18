@@ -1,6 +1,7 @@
 #include "MeterBrowseWnd.h"
 
 #include "../util/i18n.h"
+#include "../util/GameRules.h"
 #include "../util/Logger.h"
 #include "../universe/Building.h"
 #include "../universe/Effect.h"
@@ -501,19 +502,15 @@ void ShipDamageBrowseWnd::UpdateSummary() {
         return;
 
     // unpaired meter total for breakdown summary
-    float breakdown_total = ship->TotalWeaponsShipDamage(0.0f, false);
-    float breakdown_total_augmentation = ship->TotalWeaponsFighterDamage(false);
-    std::string breakdown_meter_name = UserString("SHIP_DAMAGE_STAT_TITLE");
-    std::string breakdown_meter_augmentation_name = UserString("SHIP_DESTRUCTION_STAT_TITLE");
-    
-
+    float total_structure_damage = ship->TotalWeaponsShipDamage(0.0f, false);
+    float total_fighters_destroyed = ship->TotalWeaponsFighterDamage(false);
+    int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
     // set accounting breakdown total / summary
     if (m_meter_title)
-        m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_AUGMENTED_SUMMARY")) %
-                                              breakdown_meter_name %
-                                              DoubleToString(breakdown_total, 3, false) %
-                                              breakdown_meter_augmentation_name %
-                                              (int)breakdown_total_augmentation));
+        m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_DAMAGE_BREAKDOWN_SUMMARY")) %
+                                              num_bouts %
+                                              DoubleToString(total_structure_damage, 3, false) %
+                                              (int)total_fighters_destroyed));
 }
 
 void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
