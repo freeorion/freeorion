@@ -93,9 +93,7 @@ namespace {
                     fighter_damage = ship->CurrentPartMeterValue(SECONDARY_METER, part_name);
                     available_fighters = std::max(0, static_cast<int>(ship->CurrentPartMeterValue(METER, part_name)));  // stacked meter
                 } else {
-                    std::vector<const Condition::Condition*> target_conditions;
-                    target_conditions.push_back(part->CombatTargets());
-                    // target is not of the right type
+                    // target is not of the right type; no damage; stop checking hangars/launch bays
                     fighter_damage = 0.0f;
                     include_fighters = false;
                 }
