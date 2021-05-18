@@ -29,14 +29,14 @@ namespace {
         // Shield value is used for structural damage estimation
         target->GetMeter(MeterType::METER_SHIELD)->Set(shields,shields);
         GetUniverse().SetEmpireObjectVisibility(source->Owner(), target->ID(), Visibility::VIS_FULL_VISIBILITY);
-        return ScriptingContext(source, target);
+        return ScriptingContext{source, target};
     }
 
     ScriptingContext CombatContextWithFighterTarget(std::shared_ptr<const Ship> source) {
         auto target = std::make_shared<Fighter>();
         target->SetID(-1000000); // XXX magic number AutoresolveInfo.next_fighter_id starts at -1000001 counting down
         GetUniverse().SetEmpireObjectVisibility(source->Owner(), target->ID(), Visibility::VIS_FULL_VISIBILITY);
-        return ScriptingContext(source, target);
+        return ScriptingContext{source, target};
     }
 
     std::vector<float> WeaponDamageCalcImpl(std::shared_ptr<const Ship> ship, const ShipDesign* design,

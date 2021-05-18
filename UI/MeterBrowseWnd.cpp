@@ -546,7 +546,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             continue;
 
         // get the attack power for each weapon part
-        const ScriptingContext context(ship);
+        const ScriptingContext context{ship};
         float part_attack = ship->WeaponPartShipDamage(part, context);
         float part_fighters_shot = ship->WeaponPartFighterDamage(part, context);
 
