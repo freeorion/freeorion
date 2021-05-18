@@ -71,9 +71,9 @@ namespace {
             // get the attack power for each weapon part.
             if (part_class == ShipPartClass::PC_DIRECT_WEAPON) {
                 if (target_ships)
-                    retval.emplace_back(ship->WeaponPartShipDamage(part, context));
+                    retval.push_back(ship->WeaponPartShipDamage(part, context));
                 else
-                    retval.emplace_back(ship->WeaponPartFighterDamage(part, context));
+                    retval.push_back(ship->WeaponPartFighterDamage(part, context));
             } else if (part_class == ShipPartClass::PC_FIGHTER_BAY && include_fighters) {
                 // launch capacity determined by capacity of bay
                 fighter_launch_capacity += static_cast<int>(ship->CurrentPartMeterValue(METER, part_name));
@@ -82,11 +82,11 @@ namespace {
                 // attack strength of a ship's fighters per bout determined by the hangar...
                 // assuming all hangars on a ship are the same part type...
                 if (target_ships && part->TotalShipDamage()) {
-                    retval.emplace_back(part->TotalShipDamage()->Eval(context));
+                    retval.push_back(part->TotalShipDamage()->Eval(context));
                     // as TotalShipDamage contains the damage from all fighters, do not further include fighter
                     include_fighters = false;
                 } else if (part->TotalFighterDamage() && !target_ships) {
-                    retval.emplace_back(part->TotalFighterDamage()->Eval(context));
+                    retval.push_back(part->TotalFighterDamage()->Eval(context));
                     // as TotalFighterDamage contains the damage from all fighters, do not further include fighter
                     include_fighters = false;
                 } else if (part->CombatTargets() && context.effect_target && part->CombatTargets()->Eval(context, context.effect_target)) {
@@ -122,9 +122,9 @@ namespace {
         fighter_damage = std::max(0.0f, fighter_damage);
 
         if (target_ships)
-            retval.emplace_back(fighter_damage * fighter_shots);
+            retval.push_back(fighter_damage * fighter_shots);
         else
-            retval.emplace_back((float)fighter_shots);
+            retval.push_back((float)fighter_shots);
         return retval;
     }
 }
