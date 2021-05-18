@@ -178,6 +178,7 @@ std::map<int, Combat::FighterBoutInfo> Combat::ResolveFighterBouts(std::shared_p
         return retval;
 }
 
+/** Returns max number of shots a carrier's fighters in a battle. Evals @p sampling_condition for each bout vs @p context */
 int Combat::TotalFighterShots(const ScriptingContext& context, const Ship& ship, const Condition::Condition* sampling_condition)
 {
 

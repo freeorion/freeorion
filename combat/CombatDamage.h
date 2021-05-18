@@ -24,6 +24,10 @@ namespace Combat {
                                                                      int bay_capacity, int current_docked,
                                                                      float fighter_damage, int limit_to_bout = -1);
 
+    /** Returns the maximum number of shots the fighters launched by carrier @p ship shoot in a battle.
+     * If a @p sampling_condition is given, shots are counted for a bout iff the @p sampling_condition evals to true
+     * in the given @p context.
+     * Note that a copy of the context modified with current combat bout is used so the @p sampling_condition can consider the bout */
     FO_COMMON_API int TotalFighterShots(const ScriptingContext& context, const Ship& ship, const Condition::Condition* sampling_condition);
 
     FO_COMMON_API std::vector<float> WeaponDamageImpl(std::shared_ptr<const Ship> ship, float target_shields, bool use_max_meters,
