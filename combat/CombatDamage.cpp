@@ -35,11 +35,16 @@ namespace {
         return ScriptingContext{source, target};
     }
 
-    std::vector<float> WeaponDamageCalcImpl(std::shared_ptr<const Ship> ship, const ShipDesign* design,
-                                            bool max, bool include_fighters, bool target_ships, const ScriptingContext&& context) {
+    std::vector<float> WeaponDamageCalcImpl(std::shared_ptr<const Ship> ship, bool max, bool include_fighters,
+                                            bool target_ships, const ScriptingContext&& context) {
         std::vector<float> retval;
-        if (!ship || !design)
+        if (!ship)
             return retval;
+
+        const ShipDesign* design = ship->Design();
+        if (!design)
+            return retval;
+
         const std::vector<std::string>& parts = design->Parts();
         if (parts.empty())
             return retval;
@@ -121,13 +126,13 @@ namespace {
     }
 }
 
-std::vector<float> Combat::WeaponDamageImpl(std::shared_ptr<const Ship> ship, const ShipDesign* design,
-                                            float shields, bool max, bool include_fighters, bool target_ships)
+std::vector<float> Combat::WeaponDamageImpl(std::shared_ptr<const Ship> source, float shields,
+                                            bool max, bool launch_fighters, bool target_ships)
 {
     if (target_ships)
-        return WeaponDamageCalcImpl(ship, design, max, include_fighters, target_ships, CombatContextWithShipTarget(ship, shields));
+        return WeaponDamageCalcImpl(source, max, launch_fighters, target_ships, CombatContextWithShipTarget(source, shields));
     else
-        return WeaponDamageCalcImpl(ship, design, max, include_fighters, target_ships, CombatContextWithFighterTarget(ship));
+        return WeaponDamageCalcImpl(source, max, launch_fighters, target_ships, CombatContextWithFighterTarget(source));
 }
 
 

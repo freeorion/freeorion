@@ -26,8 +26,8 @@ namespace Combat {
 
     FO_COMMON_API int TotalFighterShots(const ScriptingContext& context, const Ship& ship, const Condition::Condition* sampling_condition);
 
-    FO_COMMON_API std::vector<float> WeaponDamageImpl(std::shared_ptr<const Ship> ship, const ShipDesign* design,
-                                                      float DR, bool max, bool include_fighters, bool target_ships = true);
+    FO_COMMON_API std::vector<float> WeaponDamageImpl(std::shared_ptr<const Ship> ship, float target_shields, bool use_max_meters,
+                                                      bool launch_fighters, bool target_ships = true);
 
 
 }
