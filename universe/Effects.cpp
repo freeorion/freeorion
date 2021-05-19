@@ -1364,10 +1364,13 @@ void SetOwner::Execute(ScriptingContext& context) const {
 
         // move ship into new fleet
         std::shared_ptr<Fleet> new_fleet;
-        if (auto system = owner_context.ContextObjects().get<System>(ship->SystemID()))
+        if (auto system = owner_context.ContextObjects().get<System>(ship->SystemID())) {
             new_fleet = CreateNewFleet(std::move(system), std::move(ship), universe, aggr);
-        else
-            new_fleet = CreateNewFleet(ship->X(), ship->Y(), std::move(ship), universe, aggr);
+        } else {
+            auto x = ship->X();
+            auto y = ship->Y();
+            new_fleet = CreateNewFleet(x, y, std::move(ship), universe, aggr);
+        }
 
         if (new_fleet)
             new_fleet->SetNextAndPreviousSystems(old_fleet->NextSystemID(), old_fleet->PreviousSystemID());
