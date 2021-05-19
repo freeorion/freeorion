@@ -35,7 +35,7 @@ def _handle_enum(info: EnumInfo):
 
     for text, value in pairs:
         result.append('%s.%s = %s(%s, "%s")' % ((info.name), text, (info.name), value, text))
-    return '\n'.join(result)
+    yield '\n'.join(result)
 
 
 class EnumGenerator(BaseGenerator):
@@ -43,4 +43,4 @@ class EnumGenerator(BaseGenerator):
         super().__init__()
         self.body.append(ENUM_STUB)
         for enum in sorted(enums, key=attrgetter("name")):
-            self.body.append(_handle_enum(enum))
+            self.body.extend(_handle_enum(enum))

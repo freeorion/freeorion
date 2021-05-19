@@ -15,12 +15,18 @@ def _handle_function(fun: FunctionInfo):
         end = ''
     else:
         end = '\n    ...'
-    res = 'def %s(%s) %s:%s%s' % (fun.name, function.get_argument_string(), return_annotation, docstring, end)
-    return res
+    arg_strings = list(function.get_argument_strings())
+    if len(arg_strings) == 1:
+        yield 'def %s(%s) %s:%s%s' % (fun.name, arg_strings[0], return_annotation, docstring, end)
+    else:
+        for arg_string in arg_strings:
+            yield '@overload\ndef %s(%s) %s:%s' % (fun.name, arg_string, return_annotation, end)
+
+        yield 'def %s(*args) %s:%s%s' % (fun.name, return_annotation, docstring, end)
 
 
 class FunctionGenerator(BaseGenerator):
     def __init__(self, functions: List[FunctionInfo]):
         super().__init__()
         for function in sorted(functions, key=attrgetter("name")):
-            self.body.append(_handle_function(function))
+            self.body.extend(_handle_function(function))

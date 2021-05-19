@@ -1,6 +1,6 @@
 import re
 from logging import error
-from typing import Iterable, List, Tuple
+from typing import Iterator
 
 from stub_generator.stub_generator import normalize_name
 
@@ -28,54 +28,6 @@ def get_argument_names(arguments, is_class):
     if is_class:
         names.insert(0, 'self')
     return names, types
-
-
-def parse_name(txt):
-    match = re.match(r'\w+\((.*)\) -> (.+) :', txt)
-    args, return_type = match.group(1, 2)
-    args = [x.strip(' (').split(')') for x in args.split(',') if x]
-    return [x[0] for x in args], return_type
-
-
-def _get_duplicated_arguments_message(name, raw_arg_types) -> Iterable[str]:
-    yield ""
-    yield "Cannot merge different set of arguments for a callable: %s" % name
-    args = (', '.join('%s:%s' % (name, tp) for tp, name in arg_set) for arg_set in raw_arg_types)
-    yield from ("   %s:  %s" % (i, args_line) for i, args_line in enumerate(args, start=1))
-    yield ""
-
-
-def merge_args(name: str, raw_arg_types: List[tuple], is_class: bool) -> Tuple[List[str], List[Tuple[str, str]]]:
-    """
-    Merge multiple set of arguments together.
-
-    Single argument set is used as is.
-    If we have two unique argument sets, and on of them is empty, use keywords.
-    In other cases log error and use first one.
-    """
-    # If wrapper define functions that have same name, and same arguments but different return types,
-    # it will come here with len(arg_types) >= 2, where all arguments set are the same.
-    size = len(raw_arg_types)
-    arg_types = sorted(set(raw_arg_types))
-    if len(arg_types) != size:
-        error("[%s] Duplicated argument types", name)
-
-    if len(arg_types) == 1:
-        names, types = get_argument_names(arg_types[0], is_class)
-        use_keyword = False
-    elif len(arg_types) == 2 and any(not x for x in arg_types):
-        names, types = get_argument_names(
-            next(filter(None, arg_types)),
-            is_class
-        )
-        use_keyword = True
-    else:
-
-        error("\n".join(_get_duplicated_arguments_message(name, raw_arg_types)))
-
-        names, types = get_argument_names(raw_arg_types[0], is_class)
-        use_keyword = False
-    return ['%s=None' % arg_name for arg_name in names] if use_keyword else names, list(zip(names, types))
 
 
 def normalize_rtype(rtype):
@@ -141,18 +93,21 @@ class Docs:
 
         # if docs are equals show only one of them
         self.header = sorted(doc_lines)
-        argument_declaration, args = merge_args(name, args, self.is_class)
-        self.argument_declaration = argument_declaration
-        self.args = args
 
-    def get_argument_string(self):
+        self.args_sets = []
 
-        if self.is_class:
-            args = ['self']
-        else:
-            args = []
-        args.extend("%s: %s" % (arg_name, arg_type) for arg_name, arg_type in self.args[self.is_class:])
-        return ', '.join(args)
+        for argument_set in args:
+            names, types = get_argument_names(argument_set, is_class)
+            self.args_sets.append(list(zip(names, types)))
+
+    def get_argument_strings(self) -> Iterator[str]:
+        for arg_set in self.args_sets:
+            if self.is_class:
+                args = ['self']
+            else:
+                args = []
+            args.extend("%s: %s" % (arg_name, arg_type) for arg_name, arg_type in arg_set[self.is_class:])
+            yield ', '.join(args)
 
     def get_doc_string(self):
         doc = []

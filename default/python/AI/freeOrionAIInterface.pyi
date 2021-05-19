@@ -3,7 +3,7 @@
 # about stub files, see https://www.python.org/dev/peps/pep-0484/#stub-files
 # During execution, the actual module is made available via
 # a C++ Boost-python process as part of the launch.
-from typing import Dict
+from typing import Dict, overload
 
 
 class AccountingInfo:
@@ -869,7 +869,13 @@ class empire:
     def buildingTypeAvailable(self, string: str) -> bool:
         ...
 
+    @overload
     def canBuild(self, build_type: buildType, string: str, number: int) -> bool:
+        ...
+    @overload
+    def canBuild(self, build_type: buildType, number1: int, number2: int) -> bool:
+        ...
+    def canBuild(*args) -> bool:
         ...
 
     def getMeter(self, string: str) -> meter:
@@ -1779,7 +1785,13 @@ class field(universeObject):
     def fieldTypeName(self)-> str:
         ...
 
+    @overload
     def inField(self, base_object: universeObject) -> bool:
+        ...
+    @overload
+    def inField(self, floating_number1: float, floating_number2: float) -> bool:
+        ...
+    def inField(*args) -> bool:
         ...
 
 
@@ -2664,7 +2676,15 @@ def getBuildingType(string: str)  -> buildingType:
     """
 
 
+@overload
+def getEmpire()  -> empire:
+
+
+@overload
 def getEmpire(number: int)  -> empire:
+
+
+def getEmpire(*args)  -> empire:
     """
     Returns the empire object (Empire) of this AI player
     Returns the empire object (Empire) with the specified empire ID (int)
@@ -2949,7 +2969,15 @@ def playerIsHost(number: int)  -> bool:
     """
 
 
+@overload
+def playerName()  -> str:
+
+
+@overload
 def playerName(number: int)  -> str:
+
+
+def playerName(*args)  -> str:
     """
     Returns the name (string) of the player with the indicated playerID (int).
     Returns the name (string) of this AI player.

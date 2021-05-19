@@ -21,7 +21,7 @@ def make_stub(classes: List[ClassInfo], enums: List[EnumInfo], functions: List[F
         '# about stub files, see https://www.python.org/dev/peps/pep-0484/#stub-files\n'
         '# During execution, the actual module is made available via\n'
         '# a C++ Boost-python process as part of the launch.\n'
-        'from typing import Dict'
+        'from typing import Dict, overload'
     ]
 
     for processor in processors:

@@ -3,7 +3,7 @@
 # about stub files, see https://www.python.org/dev/peps/pep-0484/#stub-files
 # During execution, the actual module is made available via
 # a C++ Boost-python process as part of the launch.
-from typing import Dict
+from typing import Dict, overload
 
 
 class AccountingInfo:
@@ -916,7 +916,13 @@ class empire:
     def buildingTypeAvailable(self, string: str) -> bool:
         ...
 
+    @overload
     def canBuild(self, build_type: buildType, string: str, number: int) -> bool:
+        ...
+    @overload
+    def canBuild(self, build_type: buildType, number1: int, number2: int) -> bool:
+        ...
+    def canBuild(*args) -> bool:
         ...
 
     def getMeter(self, string: str) -> meter:
@@ -1826,7 +1832,13 @@ class field(universeObject):
     def fieldTypeName(self)-> str:
         ...
 
+    @overload
     def inField(self, base_object: universeObject) -> bool:
+        ...
+    @overload
+    def inField(self, floating_number1: float, floating_number2: float) -> bool:
+        ...
+    def inField(*args) -> bool:
         ...
 
 
@@ -2741,7 +2753,17 @@ def empire_unlock_item(number: int, unlockable_item_type: unlockableItemType, st
     ...
 
 
+@overload
 def generate_sitrep(number: int, string1: str, dictionary: dict, string2: str)  -> None:
+    ...
+
+
+@overload
+def generate_sitrep(number: int, string1: str, string2: str)  -> None:
+    ...
+
+
+def generate_sitrep(*args)  -> None:
     ...
 
 
