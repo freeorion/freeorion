@@ -6,6 +6,9 @@
 from typing import Dict, Iterator, overload
 
 
+from enum import IntEnum
+
+
 class AccountingInfo:
     @property
     def causeType(self): ...
@@ -1548,548 +1551,251 @@ class planet(universeObject, popCenter, resourceCenter):
     def nextBetterPlanetTypeForSpecies(self, string: str) -> planetType: ...
 
 
-class Enum(int):
-    """Enum stub for docs, not really present in fo"""
-    def __new__(cls, *args, **kwargs):
-        return super(Enum, cls).__new__(cls, args[0])
-
-
-class aggression(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    invalid = None  # aggression(-1, "invalid")
-    beginner = None  # aggression(0, "beginner")
-    turtle = None  # aggression(1, "turtle")
-    cautious = None  # aggression(2, "cautious")
-    typical = None  # aggression(3, "typical")
-    aggressive = None  # aggression(4, "aggressive")
-    maniacal = None  # aggression(5, "maniacal")
-
-
-aggression.invalid = aggression(-1, "invalid")
-aggression.beginner = aggression(0, "beginner")
-aggression.turtle = aggression(1, "turtle")
-aggression.cautious = aggression(2, "cautious")
-aggression.typical = aggression(3, "typical")
-aggression.aggressive = aggression(4, "aggressive")
-aggression.maniacal = aggression(5, "maniacal")
-
-
-class buildType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    INVALID_BUILD_TYPE = None  # buildType(-1, "INVALID_BUILD_TYPE")
-    BT_NOT_BUILDING = None  # buildType(0, "BT_NOT_BUILDING")
-    BT_BUILDING = None  # buildType(1, "BT_BUILDING")
-    BT_SHIP = None  # buildType(2, "BT_SHIP")
-    BT_PROJECT = None  # buildType(3, "BT_PROJECT")
-    BT_STOCKPILE = None  # buildType(4, "BT_STOCKPILE")
-    NUM_BUILD_TYPES = None  # buildType(5, "NUM_BUILD_TYPES")
-
-
-buildType.INVALID_BUILD_TYPE = buildType(-1, "INVALID_BUILD_TYPE")
-buildType.BT_NOT_BUILDING = buildType(0, "BT_NOT_BUILDING")
-buildType.BT_BUILDING = buildType(1, "BT_BUILDING")
-buildType.BT_SHIP = buildType(2, "BT_SHIP")
-buildType.BT_PROJECT = buildType(3, "BT_PROJECT")
-buildType.BT_STOCKPILE = buildType(4, "BT_STOCKPILE")
-buildType.NUM_BUILD_TYPES = buildType(5, "NUM_BUILD_TYPES")
-
-
-class captureResult(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    capture = None  # captureResult(0, "capture")
-    destroy = None  # captureResult(1, "destroy")
-    retain = None  # captureResult(2, "retain")
-
-
-captureResult.capture = captureResult(0, "capture")
-captureResult.destroy = captureResult(1, "destroy")
-captureResult.retain = captureResult(2, "retain")
-
-
-class diplomaticMessageType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    noMessage = None  # diplomaticMessageType(-1, "noMessage")
-    warDeclaration = None  # diplomaticMessageType(0, "warDeclaration")
-    peaceProposal = None  # diplomaticMessageType(1, "peaceProposal")
-    acceptPeaceProposal = None  # diplomaticMessageType(2, "acceptPeaceProposal")
-    alliesProposal = None  # diplomaticMessageType(3, "alliesProposal")
-    acceptAlliesProposal = None  # diplomaticMessageType(4, "acceptAlliesProposal")
-    endAllies = None  # diplomaticMessageType(5, "endAllies")
-    cancelProposal = None  # diplomaticMessageType(6, "cancelProposal")
-    rejectProposal = None  # diplomaticMessageType(7, "rejectProposal")
-
-
-diplomaticMessageType.noMessage = diplomaticMessageType(-1, "noMessage")
-diplomaticMessageType.warDeclaration = diplomaticMessageType(0, "warDeclaration")
-diplomaticMessageType.peaceProposal = diplomaticMessageType(1, "peaceProposal")
-diplomaticMessageType.acceptPeaceProposal = diplomaticMessageType(2, "acceptPeaceProposal")
-diplomaticMessageType.alliesProposal = diplomaticMessageType(3, "alliesProposal")
-diplomaticMessageType.acceptAlliesProposal = diplomaticMessageType(4, "acceptAlliesProposal")
-diplomaticMessageType.endAllies = diplomaticMessageType(5, "endAllies")
-diplomaticMessageType.cancelProposal = diplomaticMessageType(6, "cancelProposal")
-diplomaticMessageType.rejectProposal = diplomaticMessageType(7, "rejectProposal")
-
-
-class diplomaticStatus(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    war = None  # diplomaticStatus(0, "war")
-    peace = None  # diplomaticStatus(1, "peace")
-    allied = None  # diplomaticStatus(2, "allied")
-
-
-diplomaticStatus.war = diplomaticStatus(0, "war")
-diplomaticStatus.peace = diplomaticStatus(1, "peace")
-diplomaticStatus.allied = diplomaticStatus(2, "allied")
-
-
-class effectsCauseType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    invalid = None  # effectsCauseType(-1, "invalid")
-    unknown = None  # effectsCauseType(0, "unknown")
-    inherent = None  # effectsCauseType(1, "inherent")
-    tech = None  # effectsCauseType(2, "tech")
-    building = None  # effectsCauseType(3, "building")
-    field = None  # effectsCauseType(4, "field")
-    special = None  # effectsCauseType(5, "special")
-    species = None  # effectsCauseType(6, "species")
-    shipPart = None  # effectsCauseType(7, "shipPart")
-    shipHull = None  # effectsCauseType(8, "shipHull")
-    policy = None  # effectsCauseType(9, "policy")
-
-
-effectsCauseType.invalid = effectsCauseType(-1, "invalid")
-effectsCauseType.unknown = effectsCauseType(0, "unknown")
-effectsCauseType.inherent = effectsCauseType(1, "inherent")
-effectsCauseType.tech = effectsCauseType(2, "tech")
-effectsCauseType.building = effectsCauseType(3, "building")
-effectsCauseType.field = effectsCauseType(4, "field")
-effectsCauseType.special = effectsCauseType(5, "special")
-effectsCauseType.species = effectsCauseType(6, "species")
-effectsCauseType.shipPart = effectsCauseType(7, "shipPart")
-effectsCauseType.shipHull = effectsCauseType(8, "shipHull")
-effectsCauseType.policy = effectsCauseType(9, "policy")
-
-
-class fleetAggression(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    passive = None  # fleetAggression(0, "passive")
-    defensive = None  # fleetAggression(1, "defensive")
-    obstructive = None  # fleetAggression(2, "obstructive")
-    aggressive = None  # fleetAggression(3, "aggressive")
-
-
-fleetAggression.passive = fleetAggression(0, "passive")
-fleetAggression.defensive = fleetAggression(1, "defensive")
-fleetAggression.obstructive = fleetAggression(2, "obstructive")
-fleetAggression.aggressive = fleetAggression(3, "aggressive")
-
-
-class galaxySetupOption(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    invalid = None  # galaxySetupOption(-1, "invalid")
-    none = None  # galaxySetupOption(0, "none")
-    low = None  # galaxySetupOption(1, "low")
-    medium = None  # galaxySetupOption(2, "medium")
-    high = None  # galaxySetupOption(3, "high")
-    random = None  # galaxySetupOption(4, "random")
-
-
-galaxySetupOption.invalid = galaxySetupOption(-1, "invalid")
-galaxySetupOption.none = galaxySetupOption(0, "none")
-galaxySetupOption.low = galaxySetupOption(1, "low")
-galaxySetupOption.medium = galaxySetupOption(2, "medium")
-galaxySetupOption.high = galaxySetupOption(3, "high")
-galaxySetupOption.random = galaxySetupOption(4, "random")
-
-
-class galaxyShape(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    invalid = None  # galaxyShape(-1, "invalid")
-    spiral2 = None  # galaxyShape(0, "spiral2")
-    spiral3 = None  # galaxyShape(1, "spiral3")
-    spiral4 = None  # galaxyShape(2, "spiral4")
-    cluster = None  # galaxyShape(3, "cluster")
-    elliptical = None  # galaxyShape(4, "elliptical")
-    disc = None  # galaxyShape(5, "disc")
-    box = None  # galaxyShape(6, "box")
-    irregular = None  # galaxyShape(7, "irregular")
-    ring = None  # galaxyShape(8, "ring")
-    random = None  # galaxyShape(9, "random")
-
-
-galaxyShape.invalid = galaxyShape(-1, "invalid")
-galaxyShape.spiral2 = galaxyShape(0, "spiral2")
-galaxyShape.spiral3 = galaxyShape(1, "spiral3")
-galaxyShape.spiral4 = galaxyShape(2, "spiral4")
-galaxyShape.cluster = galaxyShape(3, "cluster")
-galaxyShape.elliptical = galaxyShape(4, "elliptical")
-galaxyShape.disc = galaxyShape(5, "disc")
-galaxyShape.box = galaxyShape(6, "box")
-galaxyShape.irregular = galaxyShape(7, "irregular")
-galaxyShape.ring = galaxyShape(8, "ring")
-galaxyShape.random = galaxyShape(9, "random")
-
-
-class meterType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    targetPopulation = None  # meterType(0, "targetPopulation")
-    targetIndustry = None  # meterType(1, "targetIndustry")
-    targetResearch = None  # meterType(2, "targetResearch")
-    targetInfluence = None  # meterType(3, "targetInfluence")
-    targetConstruction = None  # meterType(4, "targetConstruction")
-    targetHappiness = None  # meterType(5, "targetHappiness")
-    maxCapacity = None  # meterType(6, "maxCapacity")
-    maxSecondaryStat = None  # meterType(7, "maxSecondaryStat")
-    maxFuel = None  # meterType(8, "maxFuel")
-    maxShield = None  # meterType(9, "maxShield")
-    maxStructure = None  # meterType(10, "maxStructure")
-    maxDefense = None  # meterType(11, "maxDefense")
-    maxSupply = None  # meterType(12, "maxSupply")
-    maxStockpile = None  # meterType(13, "maxStockpile")
-    maxTroops = None  # meterType(14, "maxTroops")
-    population = None  # meterType(15, "population")
-    industry = None  # meterType(16, "industry")
-    research = None  # meterType(17, "research")
-    influence = None  # meterType(18, "influence")
-    construction = None  # meterType(19, "construction")
-    happiness = None  # meterType(20, "happiness")
-    capacity = None  # meterType(21, "capacity")
-    secondaryStat = None  # meterType(22, "secondaryStat")
-    fuel = None  # meterType(23, "fuel")
-    shield = None  # meterType(24, "shield")
-    structure = None  # meterType(25, "structure")
-    defense = None  # meterType(26, "defense")
-    supply = None  # meterType(27, "supply")
-    stockpile = None  # meterType(28, "stockpile")
-    troops = None  # meterType(29, "troops")
-    rebels = None  # meterType(30, "rebels")
-    size = None  # meterType(31, "size")
-    stealth = None  # meterType(32, "stealth")
-    detection = None  # meterType(33, "detection")
-    speed = None  # meterType(34, "speed")
-
-
-meterType.targetPopulation = meterType(0, "targetPopulation")
-meterType.targetIndustry = meterType(1, "targetIndustry")
-meterType.targetResearch = meterType(2, "targetResearch")
-meterType.targetInfluence = meterType(3, "targetInfluence")
-meterType.targetConstruction = meterType(4, "targetConstruction")
-meterType.targetHappiness = meterType(5, "targetHappiness")
-meterType.maxCapacity = meterType(6, "maxCapacity")
-meterType.maxSecondaryStat = meterType(7, "maxSecondaryStat")
-meterType.maxFuel = meterType(8, "maxFuel")
-meterType.maxShield = meterType(9, "maxShield")
-meterType.maxStructure = meterType(10, "maxStructure")
-meterType.maxDefense = meterType(11, "maxDefense")
-meterType.maxSupply = meterType(12, "maxSupply")
-meterType.maxStockpile = meterType(13, "maxStockpile")
-meterType.maxTroops = meterType(14, "maxTroops")
-meterType.population = meterType(15, "population")
-meterType.industry = meterType(16, "industry")
-meterType.research = meterType(17, "research")
-meterType.influence = meterType(18, "influence")
-meterType.construction = meterType(19, "construction")
-meterType.happiness = meterType(20, "happiness")
-meterType.capacity = meterType(21, "capacity")
-meterType.secondaryStat = meterType(22, "secondaryStat")
-meterType.fuel = meterType(23, "fuel")
-meterType.shield = meterType(24, "shield")
-meterType.structure = meterType(25, "structure")
-meterType.defense = meterType(26, "defense")
-meterType.supply = meterType(27, "supply")
-meterType.stockpile = meterType(28, "stockpile")
-meterType.troops = meterType(29, "troops")
-meterType.rebels = meterType(30, "rebels")
-meterType.size = meterType(31, "size")
-meterType.stealth = meterType(32, "stealth")
-meterType.detection = meterType(33, "detection")
-meterType.speed = meterType(34, "speed")
-
-
-class planetEnvironment(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    uninhabitable = None  # planetEnvironment(0, "uninhabitable")
-    hostile = None  # planetEnvironment(1, "hostile")
-    poor = None  # planetEnvironment(2, "poor")
-    adequate = None  # planetEnvironment(3, "adequate")
-    good = None  # planetEnvironment(4, "good")
-
-
-planetEnvironment.uninhabitable = planetEnvironment(0, "uninhabitable")
-planetEnvironment.hostile = planetEnvironment(1, "hostile")
-planetEnvironment.poor = planetEnvironment(2, "poor")
-planetEnvironment.adequate = planetEnvironment(3, "adequate")
-planetEnvironment.good = planetEnvironment(4, "good")
-
-
-class planetSize(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    unknown = None  # planetSize(-1, "unknown")
-    noWorld = None  # planetSize(0, "noWorld")
-    tiny = None  # planetSize(1, "tiny")
-    small = None  # planetSize(2, "small")
-    medium = None  # planetSize(3, "medium")
-    large = None  # planetSize(4, "large")
-    huge = None  # planetSize(5, "huge")
-    asteroids = None  # planetSize(6, "asteroids")
-    gasGiant = None  # planetSize(7, "gasGiant")
-
-
-planetSize.unknown = planetSize(-1, "unknown")
-planetSize.noWorld = planetSize(0, "noWorld")
-planetSize.tiny = planetSize(1, "tiny")
-planetSize.small = planetSize(2, "small")
-planetSize.medium = planetSize(3, "medium")
-planetSize.large = planetSize(4, "large")
-planetSize.huge = planetSize(5, "huge")
-planetSize.asteroids = planetSize(6, "asteroids")
-planetSize.gasGiant = planetSize(7, "gasGiant")
-
-
-class planetType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    unknown = None  # planetType(-1, "unknown")
-    swamp = None  # planetType(0, "swamp")
-    toxic = None  # planetType(1, "toxic")
-    inferno = None  # planetType(2, "inferno")
-    radiated = None  # planetType(3, "radiated")
-    barren = None  # planetType(4, "barren")
-    tundra = None  # planetType(5, "tundra")
-    desert = None  # planetType(6, "desert")
-    terran = None  # planetType(7, "terran")
-    ocean = None  # planetType(8, "ocean")
-    asteroids = None  # planetType(9, "asteroids")
-    gasGiant = None  # planetType(10, "gasGiant")
-
-
-planetType.unknown = planetType(-1, "unknown")
-planetType.swamp = planetType(0, "swamp")
-planetType.toxic = planetType(1, "toxic")
-planetType.inferno = planetType(2, "inferno")
-planetType.radiated = planetType(3, "radiated")
-planetType.barren = planetType(4, "barren")
-planetType.tundra = planetType(5, "tundra")
-planetType.desert = planetType(6, "desert")
-planetType.terran = planetType(7, "terran")
-planetType.ocean = planetType(8, "ocean")
-planetType.asteroids = planetType(9, "asteroids")
-planetType.gasGiant = planetType(10, "gasGiant")
-
-
-class resourceType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    industry = None  # resourceType(0, "industry")
-    influence = None  # resourceType(1, "influence")
-    research = None  # resourceType(2, "research")
-    stockpile = None  # resourceType(3, "stockpile")
-
-
-resourceType.industry = resourceType(0, "industry")
-resourceType.influence = resourceType(1, "influence")
-resourceType.research = resourceType(2, "research")
-resourceType.stockpile = resourceType(3, "stockpile")
-
-
-class roleType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    host = None  # roleType(0, "host")
-    clientTypeModerator = None  # roleType(1, "clientTypeModerator")
-    clientTypePlayer = None  # roleType(2, "clientTypePlayer")
-    clientTypeObserver = None  # roleType(3, "clientTypeObserver")
-    galaxySetup = None  # roleType(4, "galaxySetup")
-
-
-roleType.host = roleType(0, "host")
-roleType.clientTypeModerator = roleType(1, "clientTypeModerator")
-roleType.clientTypePlayer = roleType(2, "clientTypePlayer")
-roleType.clientTypeObserver = roleType(3, "clientTypeObserver")
-roleType.galaxySetup = roleType(4, "galaxySetup")
-
-
-class ruleType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    invalid = None  # ruleType(-1, "invalid")
-    toggle = None  # ruleType(0, "toggle")
-    int = None  # ruleType(1, "int")
-    double = None  # ruleType(2, "double")
-    string = None  # ruleType(3, "string")
-
-
-ruleType.invalid = ruleType(-1, "invalid")
-ruleType.toggle = ruleType(0, "toggle")
-ruleType.int = ruleType(1, "int")
-ruleType.double = ruleType(2, "double")
-ruleType.string = ruleType(3, "string")
-
-
-class shipPartClass(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    shortRange = None  # shipPartClass(0, "shortRange")
-    fighterBay = None  # shipPartClass(1, "fighterBay")
-    fighterHangar = None  # shipPartClass(2, "fighterHangar")
-    shields = None  # shipPartClass(3, "shields")
-    armour = None  # shipPartClass(4, "armour")
-    troops = None  # shipPartClass(5, "troops")
-    detection = None  # shipPartClass(6, "detection")
-    stealth = None  # shipPartClass(7, "stealth")
-    fuel = None  # shipPartClass(8, "fuel")
-    colony = None  # shipPartClass(9, "colony")
-    speed = None  # shipPartClass(10, "speed")
-    general = None  # shipPartClass(11, "general")
-    bombard = None  # shipPartClass(12, "bombard")
-    industry = None  # shipPartClass(13, "industry")
-    research = None  # shipPartClass(14, "research")
-    influence = None  # shipPartClass(15, "influence")
-    productionLocation = None  # shipPartClass(16, "productionLocation")
-
-
-shipPartClass.shortRange = shipPartClass(0, "shortRange")
-shipPartClass.fighterBay = shipPartClass(1, "fighterBay")
-shipPartClass.fighterHangar = shipPartClass(2, "fighterHangar")
-shipPartClass.shields = shipPartClass(3, "shields")
-shipPartClass.armour = shipPartClass(4, "armour")
-shipPartClass.troops = shipPartClass(5, "troops")
-shipPartClass.detection = shipPartClass(6, "detection")
-shipPartClass.stealth = shipPartClass(7, "stealth")
-shipPartClass.fuel = shipPartClass(8, "fuel")
-shipPartClass.colony = shipPartClass(9, "colony")
-shipPartClass.speed = shipPartClass(10, "speed")
-shipPartClass.general = shipPartClass(11, "general")
-shipPartClass.bombard = shipPartClass(12, "bombard")
-shipPartClass.industry = shipPartClass(13, "industry")
-shipPartClass.research = shipPartClass(14, "research")
-shipPartClass.influence = shipPartClass(15, "influence")
-shipPartClass.productionLocation = shipPartClass(16, "productionLocation")
-
-
-class shipSlotType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    external = None  # shipSlotType(0, "external")
-    internal = None  # shipSlotType(1, "internal")
-    core = None  # shipSlotType(2, "core")
-
-
-shipSlotType.external = shipSlotType(0, "external")
-shipSlotType.internal = shipSlotType(1, "internal")
-shipSlotType.core = shipSlotType(2, "core")
-
-
-class starType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    unknown = None  # starType(-1, "unknown")
-    blue = None  # starType(0, "blue")
-    white = None  # starType(1, "white")
-    yellow = None  # starType(2, "yellow")
-    orange = None  # starType(3, "orange")
-    red = None  # starType(4, "red")
-    neutron = None  # starType(5, "neutron")
-    blackHole = None  # starType(6, "blackHole")
-    noStar = None  # starType(7, "noStar")
-
-
-starType.unknown = starType(-1, "unknown")
-starType.blue = starType(0, "blue")
-starType.white = starType(1, "white")
-starType.yellow = starType(2, "yellow")
-starType.orange = starType(3, "orange")
-starType.red = starType(4, "red")
-starType.neutron = starType(5, "neutron")
-starType.blackHole = starType(6, "blackHole")
-starType.noStar = starType(7, "noStar")
-
-
-class techStatus(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    unresearchable = None  # techStatus(0, "unresearchable")
-    partiallyUnlocked = None  # techStatus(1, "partiallyUnlocked")
-    researchable = None  # techStatus(2, "researchable")
-    complete = None  # techStatus(3, "complete")
-
-
-techStatus.unresearchable = techStatus(0, "unresearchable")
-techStatus.partiallyUnlocked = techStatus(1, "partiallyUnlocked")
-techStatus.researchable = techStatus(2, "researchable")
-techStatus.complete = techStatus(3, "complete")
-
-
-class unlockableItemType(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    invalid = None  # unlockableItemType(-1, "invalid")
-    building = None  # unlockableItemType(0, "building")
-    shipPart = None  # unlockableItemType(1, "shipPart")
-    shipHull = None  # unlockableItemType(2, "shipHull")
-    shipDesign = None  # unlockableItemType(3, "shipDesign")
-    tech = None  # unlockableItemType(4, "tech")
-    policy = None  # unlockableItemType(5, "policy")
-
-
-unlockableItemType.invalid = unlockableItemType(-1, "invalid")
-unlockableItemType.building = unlockableItemType(0, "building")
-unlockableItemType.shipPart = unlockableItemType(1, "shipPart")
-unlockableItemType.shipHull = unlockableItemType(2, "shipHull")
-unlockableItemType.shipDesign = unlockableItemType(3, "shipDesign")
-unlockableItemType.tech = unlockableItemType(4, "tech")
-unlockableItemType.policy = unlockableItemType(5, "policy")
-
-
-class visibility(Enum):
-    def __init__(self, numerator, name):
-        self.name = name
-
-    invalid = None  # visibility(-1, "invalid")
-    none = None  # visibility(0, "none")
-    basic = None  # visibility(1, "basic")
-    partial = None  # visibility(2, "partial")
-    full = None  # visibility(3, "full")
-
-
-visibility.invalid = visibility(-1, "invalid")
-visibility.none = visibility(0, "none")
-visibility.basic = visibility(1, "basic")
-visibility.partial = visibility(2, "partial")
-visibility.full = visibility(3, "full")
+class aggression(IntEnum):
+    invalid = -1
+    beginner = 0
+    turtle = 1
+    cautious = 2
+    typical = 3
+    aggressive = 4
+    maniacal = 5
+
+
+class buildType(IntEnum):
+    INVALID_BUILD_TYPE = -1
+    BT_NOT_BUILDING = 0
+    BT_BUILDING = 1
+    BT_SHIP = 2
+    BT_PROJECT = 3
+    BT_STOCKPILE = 4
+    NUM_BUILD_TYPES = 5
+
+
+class captureResult(IntEnum):
+    capture = 0
+    destroy = 1
+    retain = 2
+
+
+class diplomaticMessageType(IntEnum):
+    noMessage = -1
+    warDeclaration = 0
+    peaceProposal = 1
+    acceptPeaceProposal = 2
+    alliesProposal = 3
+    acceptAlliesProposal = 4
+    endAllies = 5
+    cancelProposal = 6
+    rejectProposal = 7
+
+
+class diplomaticStatus(IntEnum):
+    war = 0
+    peace = 1
+    allied = 2
+
+
+class effectsCauseType(IntEnum):
+    invalid = -1
+    unknown = 0
+    inherent = 1
+    tech = 2
+    building = 3
+    field = 4
+    special = 5
+    species = 6
+    shipPart = 7
+    shipHull = 8
+    policy = 9
+
+
+class fleetAggression(IntEnum):
+    passive = 0
+    defensive = 1
+    obstructive = 2
+    aggressive = 3
+
+
+class galaxySetupOption(IntEnum):
+    invalid = -1
+    none = 0
+    low = 1
+    medium = 2
+    high = 3
+    random = 4
+
+
+class galaxyShape(IntEnum):
+    invalid = -1
+    spiral2 = 0
+    spiral3 = 1
+    spiral4 = 2
+    cluster = 3
+    elliptical = 4
+    disc = 5
+    box = 6
+    irregular = 7
+    ring = 8
+    random = 9
+
+
+class meterType(IntEnum):
+    targetPopulation = 0
+    targetIndustry = 1
+    targetResearch = 2
+    targetInfluence = 3
+    targetConstruction = 4
+    targetHappiness = 5
+    maxCapacity = 6
+    maxSecondaryStat = 7
+    maxFuel = 8
+    maxShield = 9
+    maxStructure = 10
+    maxDefense = 11
+    maxSupply = 12
+    maxStockpile = 13
+    maxTroops = 14
+    population = 15
+    industry = 16
+    research = 17
+    influence = 18
+    construction = 19
+    happiness = 20
+    capacity = 21
+    secondaryStat = 22
+    fuel = 23
+    shield = 24
+    structure = 25
+    defense = 26
+    supply = 27
+    stockpile = 28
+    troops = 29
+    rebels = 30
+    size = 31
+    stealth = 32
+    detection = 33
+    speed = 34
+
+
+class planetEnvironment(IntEnum):
+    uninhabitable = 0
+    hostile = 1
+    poor = 2
+    adequate = 3
+    good = 4
+
+
+class planetSize(IntEnum):
+    unknown = -1
+    noWorld = 0
+    tiny = 1
+    small = 2
+    medium = 3
+    large = 4
+    huge = 5
+    asteroids = 6
+    gasGiant = 7
+
+
+class planetType(IntEnum):
+    unknown = -1
+    swamp = 0
+    toxic = 1
+    inferno = 2
+    radiated = 3
+    barren = 4
+    tundra = 5
+    desert = 6
+    terran = 7
+    ocean = 8
+    asteroids = 9
+    gasGiant = 10
+
+
+class resourceType(IntEnum):
+    industry = 0
+    influence = 1
+    research = 2
+    stockpile = 3
+
+
+class roleType(IntEnum):
+    host = 0
+    clientTypeModerator = 1
+    clientTypePlayer = 2
+    clientTypeObserver = 3
+    galaxySetup = 4
+
+
+class ruleType(IntEnum):
+    invalid = -1
+    toggle = 0
+    int = 1
+    double = 2
+    string = 3
+
+
+class shipPartClass(IntEnum):
+    shortRange = 0
+    fighterBay = 1
+    fighterHangar = 2
+    shields = 3
+    armour = 4
+    troops = 5
+    detection = 6
+    stealth = 7
+    fuel = 8
+    colony = 9
+    speed = 10
+    general = 11
+    bombard = 12
+    industry = 13
+    research = 14
+    influence = 15
+    productionLocation = 16
+
+
+class shipSlotType(IntEnum):
+    external = 0
+    internal = 1
+    core = 2
+
+
+class starType(IntEnum):
+    unknown = -1
+    blue = 0
+    white = 1
+    yellow = 2
+    orange = 3
+    red = 4
+    neutron = 5
+    blackHole = 6
+    noStar = 7
+
+
+class techStatus(IntEnum):
+    unresearchable = 0
+    partiallyUnlocked = 1
+    researchable = 2
+    complete = 3
+
+
+class unlockableItemType(IntEnum):
+    invalid = -1
+    building = 0
+    shipPart = 1
+    shipHull = 2
+    shipDesign = 3
+    tech = 4
+    policy = 5
+
+
+class visibility(IntEnum):
+    invalid = -1
+    none = 0
+    basic = 1
+    partial = 2
+    full = 3
 
 
 def allEmpireIDs()  -> IntVec:
