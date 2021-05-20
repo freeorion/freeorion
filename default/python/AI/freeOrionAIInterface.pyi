@@ -3,7 +3,7 @@
 # about stub files, see https://www.python.org/dev/peps/pep-0484/#stub-files
 # During execution, the actual module is made available via
 # a C++ Boost-python process as part of the launch.
-from typing import Dict, overload
+from typing import Dict, Iterator, overload
 
 
 class AccountingInfo:
@@ -274,7 +274,7 @@ class IntSet:
     def __contains__(self, number: int) -> bool:
         ...
 
-    def __iter__(self) -> iter:
+    def __iter__(self) -> Iterator:
         ...
 
     def __len__(self) -> int:
@@ -340,7 +340,7 @@ class IntVec:
     def __getitem__(self, obj: object) -> object:
         ...
 
-    def __iter__(self) -> iter:
+    def __iter__(self) -> Iterator:
         ...
 
     def __len__(self) -> int:
@@ -552,7 +552,7 @@ class StringVec:
     def __getitem__(self, obj: object) -> object:
         ...
 
-    def __iter__(self) -> iter:
+    def __iter__(self) -> Iterator:
         ...
 
     def __len__(self) -> int:

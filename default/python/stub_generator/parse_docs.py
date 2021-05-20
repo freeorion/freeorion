@@ -32,7 +32,7 @@ def get_argument_names(arguments, is_class):
 
 def normalize_rtype(rtype):
     if rtype == 'iterator':
-        return 'iter'
+        return 'Iterator'
     return rtype
 
 
