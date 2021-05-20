@@ -1,55 +1,12 @@
+from enum import IntEnum
+
+
 def check_validity(value):
     """checks if value is valid"""
     return value is not None and value >= 0
 
 
-class EnumItem(int):
-    def __new__(self, number, name, enum_name):
-        obj = int.__new__(EnumItem, number)
-        obj.name = name
-        obj.enum_name = enum_name
-        return obj
-
-    def __repr__(self):
-        return "%s.%s" % (self.enum_name, self.name)
-
-    def __str__(self):
-        return repr(self)
-
-
-class EnumMeta(type):
-    @staticmethod
-    def __new__(cls, name, bases, attrs):
-        """
-        Modify class on creation.
-
-        Assign all attributes which are int as EnumItem.
-        """
-        for k, v in attrs.items():
-            if not k.startswith('_') and isinstance(v, int):
-                attrs[k] = EnumItem(v, k, name)
-        return super(EnumMeta, cls).__new__(cls, name, bases, attrs)
-
-
-class Enum(metaclass=EnumMeta):
-    """
-    Implementation of the Enum object.
-
-    Each item is represented as EnumItem enherited from `int`.
-    Basically it is `int` with `name` and `enum_name`.
-    """
-
-    @classmethod
-    def has_item(cls, item: EnumItem) -> bool:
-        """Return True if specified item is a member of the enum."""
-        return (
-                isinstance(getattr(cls, item.name), EnumItem)
-                and cls.__name__ == item.enum_name
-                and hasattr(cls, item.name)
-        )
-
-
-class PriorityType(Enum):
+class PriorityType(IntEnum):
     RESOURCE_GROWTH = 1
     RESOURCE_PRODUCTION = 2
     RESOURCE_RESEARCH = 3
@@ -96,7 +53,7 @@ def get_priority_production_types():
     ]
 
 
-class MissionType(Enum):
+class MissionType(IntEnum):
     OUTPOST = 1
     COLONISATION = 2
     SPLIT_FLEET = 3
@@ -114,7 +71,7 @@ class MissionType(Enum):
     PROTECT_REGION = 16
 
 
-class ShipRoleType(Enum):  # this is also used in determining fleetRoles
+class ShipRoleType(IntEnum):  # this is also used in determining fleetRoles
     INVALID = -1
     MILITARY_ATTACK = 1
     MILITARY_MISSILES = 2
@@ -130,7 +87,7 @@ class ShipRoleType(Enum):  # this is also used in determining fleetRoles
     BASE_COLONISATION = 12
 
 
-class EmpireProductionTypes(Enum):
+class EmpireProductionTypes(IntEnum):
     BT_NOT_BUILDING = 0  # ///< no building is taking place
     BT_BUILDING = 1  # ///< a Building object is being built
     BT_SHIP = 2  # ///< a Ship object is being built
