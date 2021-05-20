@@ -5,7 +5,6 @@ from stub_generator.interface_inspector import EnumInfo
 from stub_generator.stub_generator.base_generator import BaseGenerator
 
 
-
 def _handle_enum(info: EnumInfo):
     def attr_sort_key(pair):
         """
