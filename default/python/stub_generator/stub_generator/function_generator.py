@@ -14,7 +14,7 @@ def _handle_function(fun: FunctionInfo):
         docstring = '\n' + docstring
         end = ''
     else:
-        end = '\n    ...'
+        end = ' ...'
     arg_strings = list(function.get_argument_strings())
     if len(arg_strings) == 1:
         yield 'def %s(%s) %s:%s%s' % (fun.name, arg_strings[0], return_annotation, docstring, end)

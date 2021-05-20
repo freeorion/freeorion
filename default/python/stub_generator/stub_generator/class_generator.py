@@ -39,12 +39,10 @@ def _handle_class(info: ClassInfo):
         if property_name == 'class':
             result.append('    # cant define it via python in that way')
             result.append('    # @property')
-            result.append('    # def %s(self)%s: ' % (property_name, return_annotation))
-            result.append('    #    ...')
+            result.append('    # def %s(self)%s: ...' % (property_name, return_annotation))
         else:
             result.append('    @property')
-            result.append('    def %s(self)%s:' % (property_name, return_annotation))
-            result.append('        ...')
+            result.append('    def %s(self)%s: ...' % (property_name, return_annotation))
         result.append('')
 
     for routine_name, routine_docs in instance_methods:
@@ -59,7 +57,7 @@ def _handle_class(info: ClassInfo):
             doc_string = '\n' + doc_string
             end = ''
         else:
-            end = '\n        ...'
+            end = ' ...'
         return_annotation = ' -> %s' % docs.rtype if docs.rtype else ''
         arg_strings = list(docs.get_argument_strings())
         if len(arg_strings) == 1:
