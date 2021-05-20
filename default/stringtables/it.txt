@@ -1988,6 +1988,9 @@ Popolazione
 ## Encyclopedia articles
 ##
 
+DETECTION_TITLE
+Detection Strength
+
 METER_INDUSTRY_VALUE_LABEL
 Industria
 
@@ -2640,6 +2643,30 @@ industria
 # Focus types
 FOCUS_RESEARCH
 ricerca
+
+# Meter types
+METER_DETECTION
+Detection Range
+
+# Meter types
+METER_DEFENSE
+Defense
+
+# Meter types
+METER_SUPPLY
+Supply
+
+# Meter types
+METER_INDUSTRY
+Industry
+
+# Meter types
+METER_SHIELD
+Shields
+
+# Meter types
+METER_TROOPS
+Troops
 
 # Empire affiliation types
 AFFIL_SELF
@@ -3558,6 +3585,11 @@ CO_SUSPEND_ANIM_POD_DESC
 
 Tutte le parti della nave di classe colonia richiedono il pianeta su cui sono costruite per avere una popolazione di almeno tre.'''
 
+CO_OUTPOST_POD
+Outpost Module
+
+GT_TROOP_POD
+Ground Troop Pod
 
 ##
 ## Ship hulls
