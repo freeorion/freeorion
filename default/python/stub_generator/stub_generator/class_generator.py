@@ -39,12 +39,10 @@ def _handle_class(info: ClassInfo):
         if property_name == 'class':
             result.append('    # cant define it via python in that way')
             result.append('    # @property')
-            result.append('    # def %s(self)%s: ' % (property_name, return_annotation))
-            result.append('    #    ...')
+            result.append('    # def %s(self)%s: ...' % (property_name, return_annotation))
         else:
             result.append('    @property')
-            result.append('    def %s(self)%s:' % (property_name, return_annotation))
-            result.append('        ...')
+            result.append('    def %s(self)%s: ...' % (property_name, return_annotation))
         result.append('')
 
     for routine_name, routine_docs in instance_methods:
@@ -59,15 +57,23 @@ def _handle_class(info: ClassInfo):
             doc_string = '\n' + doc_string
             end = ''
         else:
-            end = '\n        ...'
-        result.append(
-            '    def %s(%s) -> %s:%s%s' % (routine_name, docs.get_argument_string(), docs.rtype, doc_string, end))
+            end = ' ...'
+        return_annotation = ' -> %s' % docs.rtype if docs.rtype else ''
+        arg_strings = list(docs.get_argument_strings())
+        if len(arg_strings) == 1:
+            result.append('    def %s(%s)%s:%s%s' % (routine_name, next(docs.get_argument_strings()), return_annotation, doc_string, end))
+        else:
+            for arg_string in arg_strings:
+                result.append('    @overload\n    def %s(%s)%s:%s' % (routine_name, arg_string, return_annotation, end))
+
+            result.append('    def %s(*args)%s:%s%s' % (routine_name, return_annotation, doc_string, end))
+
         result.append('')
     if not (properties or instance_methods):
         result.append('    ...')
     if not result[-1]:
         result.pop()
-    return '\n'.join(result)
+    yield '\n'.join(result)
 
 
 def _report_classes_without_instances(classes_map: Iterable[str], instance_names, classes_to_ignore: Set[str]):
@@ -148,4 +154,4 @@ class ClassGenerator(BaseGenerator):
                                                       class_.name))  # put classes with no parents on first place
 
         for cls in classes:
-            self.body.append(_handle_class(cls))
+            self.body.extend(_handle_class(cls))
