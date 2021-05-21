@@ -48,6 +48,7 @@ loaded from here unless included elsewhere.
 * encyclopedia/  -  Entries for in-game pedia articles.
 * fields/  -  Definitions of fields (e.g. Ion Storm)
 * monster_designs/  -  Ship designs specifically for space monsters.
+* policies/  -  All government policy definitions.
 * ship_designs/  -  Pre-defined ship designs, this is **required for the AI**.
 * ship_hulls/  -  All ship hull definitions.
 * ship_parts/  -  All ship part definitions.
