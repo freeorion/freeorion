@@ -1456,7 +1456,7 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress) {
     // don't just give tech to empire, as another effect might reduce its progress before end of turn
 }
 
-const unsigned int MAX_PROD_QUEUE_SIZE = 500;
+constexpr unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
 void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
                                     boost::uuids::uuid uuid, int number,

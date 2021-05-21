@@ -11,7 +11,7 @@
 #include <vector>
 
 namespace CheckSums {
-    const unsigned int CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
+    constexpr unsigned int CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
 
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, double t);
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, float t);

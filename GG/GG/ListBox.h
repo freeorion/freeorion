@@ -220,10 +220,10 @@ public:
     typedef RowSignalType      AfterEraseRowSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
     typedef RowSignalType      BrowsedRowSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
 
-    static const int DEFAULT_MARGIN;
-    static const X DEFAULT_ROW_WIDTH;
-    static const Y DEFAULT_ROW_HEIGHT;
-    static const unsigned int BORDER_THICK; ///< the thickness with which to render the border of the control
+    static constexpr int DEFAULT_MARGIN = 2;
+    static constexpr X DEFAULT_ROW_WIDTH{50};
+    static constexpr Y DEFAULT_ROW_HEIGHT{22};
+    static constexpr unsigned int BORDER_THICK = 2; ///< the thickness with which to render the border of the control
 
     ListBox(Clr color, Clr interior = CLR_ZERO);
 

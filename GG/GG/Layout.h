@@ -211,7 +211,7 @@ public:
     //! cell.
     GG_CONCRETE_EXCEPTION(AttemptedOverwrite, GG::Layout, Exception);
 
-    static const unsigned int INVALID_CELL_MARGIN;
+    static constexpr unsigned int INVALID_CELL_MARGIN = std::numeric_limits<unsigned int>::max();
 
 protected:
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;

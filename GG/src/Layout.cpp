@@ -43,9 +43,6 @@ Layout::WndPosition::WndPosition(std::size_t first_row_, std::size_t first_colum
     original_size(original_size_)
 {}
 
-// Layout
-const unsigned int Layout::INVALID_CELL_MARGIN = std::numeric_limits<unsigned int>::max();
-
 Layout::Layout(X x, Y y, X w, Y h, std::size_t rows, std::size_t columns,
                unsigned int border_margin/* = 0*/, unsigned int cell_margin/* = INVALID_CELL_MARGIN*/) :
     Wnd(x, y, w, h, NO_WND_FLAGS),

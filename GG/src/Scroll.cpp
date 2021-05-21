@@ -31,7 +31,7 @@ struct ScrolledEcho
     std::string m_name;
 };
 
-const unsigned int MIN_TAB_SIZE = 5;
+constexpr unsigned int MIN_TAB_SIZE = 5;
 
 }
 

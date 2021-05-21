@@ -21,11 +21,6 @@
 
 using namespace GG;
 
-const int ListBox::DEFAULT_MARGIN(2);
-const X ListBox::DEFAULT_ROW_WIDTH(50);
-const Y ListBox::DEFAULT_ROW_HEIGHT(22);
-const unsigned int ListBox::BORDER_THICK = 2;
-
 namespace {
 
 struct ListSignalEcho
