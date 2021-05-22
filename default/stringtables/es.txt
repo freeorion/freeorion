@@ -11636,15 +11636,6 @@ Un centro de investigación creado para desarrollar con seguridad las armas biol
 GRO_REMOTE_TERRAFORM_SHORT_DESC
 Permite la terraformación remota
 
-GRO_CYBORG
-Ciborgs
-
-#*GRO_CYBORG_DESC
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-
 GRO_GAIA_TRANS
 Transformación de Gaia
 

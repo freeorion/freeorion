@@ -7,7 +7,7 @@ Tech
     researchturns = 15
     tags = [ "PEDIA_GROWTH_CATEGORY" ]
     prerequisites = [
-        "GRO_CYBORG"
+        "GRO_NANO_CYBERNET"
         "LRN_EVERYTHING"
         "GRO_TRANSORG_SENT"
     ]

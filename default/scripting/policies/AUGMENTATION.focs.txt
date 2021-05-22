@@ -1,13 +1,13 @@
-Tech
-    name = "GRO_CYBORG"
-    description = "GRO_CYBORG_DESC"
-    short_description = "POPULATION_SHORT_DESC"
-    category = "GROWTH_CATEGORY"
-    researchcost = 250 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 10
-    tags = [ "PEDIA_GROWTH_CATEGORY" ]
-    prerequisites = "GRO_NANO_CYBERNET"
+Policy
+    name = "PLC_AUGMENTATION"
+    description = "PLC_AUGMENTATION_DESC"
+    short_description = "PLC_AUGMENTATION_SHORT_DESC"
+    category = "SOCIAL_CATEGORY"
+    adoptioncost = 100.0
+    exclusions = [ "PLC_RACIAL_PURITY" ]
     effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
         EffectsGroup
             scope = And [
                 Planet
@@ -16,20 +16,21 @@ Tech
             ]
             priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 2 * Target.HabitableSize
-                accountinglabel = "GRO_CYBORG"
 
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
+                Species
             ]
-            stackinggroup = "CYBORG_TROOPS_STACK"
-            accountinglabel = "GRO_CYBORG" 
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
-            effects = SetMaxTroops value = Value + Target.Population
-                        * (NamedReal name = "CYBORG_MAX_TROOPS_PERPOP" value = 1.5 * [[TROOPS_PER_POP]])
+            effects = [
+                SetMaxTroops value = Value + Target.Population
+                                     * (NamedReal name = "CYBORG_MAX_TROOPS_PERPOP" value = 1.5 * [[TROOPS_PER_POP]])
+            ]
     ]
     graphic = "icons/tech/cyborgs.png"
 
+#include "/scripting/policies/policies.macros"
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"

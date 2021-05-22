@@ -12778,15 +12778,6 @@ Un centre de recherche créé pour développer le plus terrifiant des armements 
 GRO_REMOTE_TERRAFORM_SHORT_DESC
 Permet la terraformation à distance
 
-GRO_CYBORG  # translated
-Cyborgs
-
-GRO_CYBORG_DESC
-'''Accroît la [[metertype METER_TARGET_POPULATION]] des Planètes [[PE_HOSTILE]]s selon leur taille: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
-Accroît l'[[metertype METER_TROOPS]] max de [[value CYBORG_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes.
-
-Une fusion hautement polyvalente d'un organisme vivant et d'une machine, capable de s'adapter à un nombre considérable de situations. La génération spontanée d'organes spécialisés ainsi qu'une force bio-mécanique fortement accrue permettent aux cyborgs d'évoluer avec aisance dans quasiment tous les types d'environnement.'''
-
 GRO_GAIA_TRANS
 Transformation Gaia
 
