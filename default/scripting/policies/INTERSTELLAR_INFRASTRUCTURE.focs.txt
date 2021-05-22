@@ -3,7 +3,7 @@ Policy
     description = "PLC_INTERSTELLAR_INFRA_DESC"
     short_description = "PLC_INTERSTELLAR_INFRA_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
-    adoptioncost = 200
+    adoptioncost = 300
     prerequisites = [ "PLC_SYSTEM_INFRA" ]
     unlock = Item type = Building name = "BLD_REGIONAL_ADMIN"
     effectsgroups = [
