@@ -188,14 +188,19 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     bool visible =
         (ALL_EMPIRES == encoding_empire) ||
         (m_id == encoding_empire); // TODO: GameRule for all empire info known to other empires
-    bool allied_visible = visible ||
-        Empires().GetDiplomaticStatus(m_id, GlobalSerializationEncodingForEmpire()) ==
+    bool allied_visible = visible;
+    if constexpr (Archive::is_saving::value)
+        allied_visible = allied_visible || Empires().GetDiplomaticStatus(m_id, GlobalSerializationEncodingForEmpire()) ==
             DiplomaticStatus::DIPLO_ALLIED;
 
     TraceLogger() << "serializing empire " << m_id << ": " << m_name;
     TraceLogger() << "encoding empire: " << encoding_empire;
-    TraceLogger() << std::string(visible ? "visible" : "NOT visible") << "  /  "
-                  << std::string(allied_visible ? "allied visible" : "NOT allied visible");
+    if constexpr (Archive::is_loading::value) {
+        TraceLogger() << std::string(visible ? "visible" : "NOT visible");
+    } else {
+        TraceLogger() << std::string(visible ? "visible" : "NOT visible") << "  /  "
+                      << std::string(allied_visible ? "allied visible" : "NOT allied visible");
+    }
 
     if (Archive::is_loading::value && version < 1) {
         // adapt set to map
