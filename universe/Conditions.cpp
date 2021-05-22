@@ -4117,16 +4117,27 @@ namespace {
                 return false;
 
             // is it a planet or on a planet? TODO: factor out
-            auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
-            std::shared_ptr<const ::Building> building;
-            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
+            std::shared_ptr<const Planet> planet;
+            if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET)
+                planet = std::static_pointer_cast<const ::Planet>(candidate);
+            if (!planet && candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+                const auto* building = static_cast<const ::Building*>(candidate.get());
                 planet = m_objects.get<Planet>(building->PlanetID());
-            if (planet) {
-                // is it one of the specified building types?
-                for (auto environment : m_environments) {
-                    if (planet->EnvironmentForSpecies(m_species) == environment)
-                        return true;
-                }
+            }
+            if (!planet)
+                return false;
+
+            // if no species specified, use planet's own species
+            const auto& species_to_check = m_species.empty() ? planet->SpeciesName() : m_species;
+            // if no species specified and planet has no species, can't match
+            if (species_to_check.empty())
+                return false;
+
+            // get plaent's environment for specified species, and check if it matches any of the indicated environments
+            auto planet_env = planet->EnvironmentForSpecies(species_to_check);
+            for (auto environment : m_environments) {
+                if (environment == planet_env)
+                    return true;
             }
 
             return false;
@@ -4161,7 +4172,8 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
         for (auto& environment : m_environments)
             environments.push_back(environment->Eval(parent_context));
         std::string species_name{m_species_name ? m_species_name->Eval(parent_context) : ""};
-        EvalImpl(matches, non_matches, search_domain, PlanetEnvironmentSimpleMatch(environments, parent_context.ContextObjects(), species_name));
+        EvalImpl(matches, non_matches, search_domain,
+                 PlanetEnvironmentSimpleMatch(environments, parent_context.ContextObjects(), species_name));
     } else {
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
