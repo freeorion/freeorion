@@ -489,9 +489,10 @@ void ResearchWnd::Refresh() {
     // connections of signals emitted from the empire must be remade
     m_empire_connection.disconnect();
 
-    if (Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID()))
+    if (Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID())) {
         m_empire_connection = empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
-                                boost::bind(&ResearchWnd::ResearchQueueChangedSlot, this));
+            boost::bind(&ResearchWnd::ResearchQueueChangedSlot, this));
+    }
     Update();
 }
 

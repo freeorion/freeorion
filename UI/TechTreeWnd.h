@@ -17,10 +17,10 @@ std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name
   * the tech layout, the tech navigator, and the tech detail window. */
 class TechTreeWnd : public GG::Wnd {
 public:
-    typedef boost::signals2::signal<void (const std::string&)>                      TechSignalType;
+    typedef boost::signals2::signal<void (const std::string&)>                   TechSignalType;
     typedef boost::signals2::signal<void (const std::string&,
-                                          const GG::Flags<GG::ModKey>&)>            TechClickSignalType;
-    typedef boost::signals2::signal<void (const std::vector<std::string>&, int)>    QueueAddTechsSignalType;
+                                          const GG::Flags<GG::ModKey>&)>         TechClickSignalType;
+    typedef boost::signals2::signal<void (const std::vector<std::string>&, int)> QueueAddTechsSignalType;
 
     /** TechTreeWnd contructor is usually called before client has
         access to techs.  Attempting to show the tech tree takes a long
@@ -31,38 +31,37 @@ public:
     ~TechTreeWnd();
     void CompleteConstruction() override;
 
-    double                  Scale() const;
-    bool                    PediaVisible();
+    double Scale() const;
+    bool   PediaVisible();
+
     /** If tech @p tech_name is currently visible */
-    bool                    TechIsVisible(const std::string& tech_name) const;
+    bool TechIsVisible(const std::string& tech_name) const;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
     void Show() override;
+    void Update();
+    void Clear();
+    void Reset();
 
-    void            Update();
-    void            Clear();
-    void            Reset();
+    void ShowCategory(const std::string& category);
+    void ShowAllCategories();
+    void HideCategory(const std::string& category);
+    void HideAllCategories();
+    void ToggleAllCategories();
 
-    void            ShowCategory(const std::string& category);
-    void            ShowAllCategories();
-    void            HideCategory(const std::string& category);
-    void            HideAllCategories();
-    void            ToggleAllCategories();
+    void SetTechStatus(const TechStatus status, const bool state);
 
-    void            SetTechStatus(const TechStatus status, const bool state);
+    void ToggleViewType(bool show_list_view);
+    void ShowTreeView();
+    void ShowListView();
 
-    void            ToggleViewType(bool show_list_view);
-    void            ShowTreeView();
-    void            ShowListView();
+    void CenterOnTech(const std::string& tech_name);
+    void SetEncyclopediaTech(const std::string& tech_name);
+    void SelectTech(const std::string& tech_name);
 
-    void            CenterOnTech(const std::string& tech_name);
-    void            SetEncyclopediaTech(const std::string& tech_name);
-    void            SelectTech(const std::string& tech_name);
-
-    void            ShowPedia();
-    void            HidePedia();
-    void            TogglePedia();
+    void ShowPedia();
+    void HidePedia();
+    void TogglePedia();
 
     mutable TechSignalType          TechSelectedSignal;
     mutable QueueAddTechsSignalType AddTechsToQueueSignal;
@@ -72,18 +71,18 @@ private:
     class LayoutPanel;
     class TechListBox;
 
-    void    TechLeftClickedSlot(const std::string& tech_name,
-                                const GG::Flags<GG::ModKey>& modkeys);
-    void    AddTechToResearchQueue(const std::string& tech_name,
-                                   bool to_front);
-    void    TechPediaDisplaySlot(const std::string& tech_name);
+    void TechLeftClickedSlot(const std::string& tech_name,
+                             const GG::Flags<GG::ModKey>& modkeys);
+    void AddTechToResearchQueue(const std::string& tech_name,
+                                bool to_front);
+    void TechPediaDisplaySlot(const std::string& tech_name);
 
-    void    InitializeWindows();
+    void InitializeWindows();
 
-    std::shared_ptr<TechTreeControls>           m_tech_tree_controls;
-    std::shared_ptr<EncyclopediaDetailPanel>    m_enc_detail_panel;
-    std::shared_ptr<LayoutPanel>                m_layout_panel;
-    std::shared_ptr<TechListBox>                m_tech_list;
+    std::shared_ptr<TechTreeControls>        m_tech_tree_controls;
+    std::shared_ptr<EncyclopediaDetailPanel> m_enc_detail_panel;
+    std::shared_ptr<LayoutPanel>             m_layout_panel;
+    std::shared_ptr<TechListBox>             m_tech_list;
 
     /// If m_init_flag is true tech categories are not parsed until the
     /// first time Show() is called.  TechTreeWnd is constructed before the

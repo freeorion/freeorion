@@ -234,7 +234,7 @@ public:
     /** Set checked value of control for TechStatus @p status to @p state */
     void SetTechStatus(TechStatus status, bool state);
 
-    void RefreshCategoryButtons();
+    void RefreshCategoryButtons(const std::set<std::string>& cats);
 
     boost::signals2::signal<void (std::string, bool)> CategoryCheckedSignal;
 
@@ -342,18 +342,15 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     m_view_type_button->SetCheck(false);
     AttachChild(m_view_type_button);
 
-    RefreshCategoryButtons();
-
     SetChildClippingMode(ChildClippingMode::ClipToClient);
 
     CUIWnd::CompleteConstruction();
 
-    DoButtonLayout();
     SaveDefaultedOptions();
     SaveOptions();
 }
 
-void TechTreeWnd::TechTreeControls::RefreshCategoryButtons() {
+void TechTreeWnd::TechTreeControls::RefreshCategoryButtons(const std::set<std::string>& cats_shown) {
     for (auto& button : m_cat_buttons)
         DetachChildAndReset(button.second);
     m_cat_buttons.clear();
@@ -371,6 +368,8 @@ void TechTreeWnd::TechTreeControls::RefreshCategoryButtons() {
             GG::Wnd::Create<TextBrowseWnd>(UserString(category), ""));
         m_cat_buttons[category]->SetBrowseModeTime(tooltip_delay);
         AttachChild(m_cat_buttons[category]);
+
+        m_cat_buttons[category]->SetCheck(cats_shown.count(category));
 
         m_cat_buttons[category]->CheckedSignal.connect(
             boost::bind(&TechTreeControls::CategoryButtonCheckedSlot, this, category, boost::placeholders::_1));
@@ -2072,7 +2071,7 @@ void TechTreeWnd::CompleteConstruction() {
     // connect button for all categories to update display
     m_tech_tree_controls->m_all_cat_button->CheckedSignal.connect(
         [this](bool checked) {
-            if(checked)
+            if (checked)
                 this->ShowAllCategories();
             else
                 this->HideAllCategories();
@@ -2124,7 +2123,7 @@ double TechTreeWnd::Scale() const
 void TechTreeWnd::Update() {
     m_layout_panel->Update();
     m_tech_list->Update();
-    m_tech_tree_controls->RefreshCategoryButtons();
+    m_tech_tree_controls->RefreshCategoryButtons(m_layout_panel->GetCategoriesShown());
 }
 
 void TechTreeWnd::Clear() {
@@ -2135,7 +2134,8 @@ void TechTreeWnd::Clear() {
 void TechTreeWnd::Reset() {
     m_layout_panel->Reset();
     m_tech_list->Reset();
-    m_tech_tree_controls->RefreshCategoryButtons();
+    m_tech_tree_controls->RefreshCategoryButtons(m_layout_panel->GetCategoriesShown());
+    ShowAllCategories();
 }
 
 void TechTreeWnd::InitializeWindows() {
