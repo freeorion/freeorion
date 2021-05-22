@@ -7,7 +7,11 @@
 # Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 # SPDX-License-Identifier: LGPL-2.1-or-later
 
-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+
+if(POLICY CMP0072)
+  cmake_policy(SET CMP0072 NEW)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
 
@@ -133,7 +137,7 @@ target_link_libraries(GiGi
         Boost::disable_autolinking
         Boost::dynamic_linking
         GLEW::GLEW
-        ${OPENGL_opengl_LIBRARY}
+        $<IF:$<BOOL:${OPENGL_opengl_LIBRARY}>,${OPENGL_opengl_LIBRARY},${OPENGL_gl_LIBRARY}>
     PRIVATE
         Boost::filesystem
         Boost::regex

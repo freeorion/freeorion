@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
 cmake_policy(SET CMP0042 NEW)
 if(POLICY CMP0072)
@@ -650,7 +650,7 @@ if(BUILD_CLIENT_GG)
         freeorionparse
         GiGi::GiGi
         ${SDL_LIBRARIES}
-        ${OPENGL_opengl_LIBRARY}
+        $<IF:$<BOOL:${OPENGL_opengl_LIBRARY}>,${OPENGL_opengl_LIBRARY},${OPENGL_gl_LIBRARY}>
         ${OPENAL_LIBRARY}
         ${OGG_LIBRARIES}
         ${VORBIS_LIBRARIES}
