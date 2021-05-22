@@ -351,13 +351,8 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
     if (Archive::is_loading::value && version < 1) {
         std::map<int, Empire*> empire_raw_ptr_map;
         ar  & make_nvp("m_empire_map", empire_raw_ptr_map);
-        TraceLogger() << "EmpireManager deserialized " << empire_raw_ptr_map.size() << " raw pointer empires:";
-        for (const auto& entry : empire_raw_ptr_map)
-            TraceLogger() << entry.second->Name() << " (" << entry.first << ")";
-
-        for (const auto& entry : empire_raw_ptr_map)
-            em.m_empire_map[entry.first] = std::shared_ptr<Empire>(entry.second);
-        TraceLogger() << "EmpireManager put raw pointers into shared_ptr";
+        for (const auto& [empire_id, empire_ptr] : empire_raw_ptr_map)
+            em.m_empire_map[empire_id] = std::shared_ptr<Empire>(empire_ptr);
 
     } else if (Archive::is_loading::value && version < 2) {
         ar  & make_nvp("m_empire_map", em.m_empire_map);
@@ -372,16 +367,16 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
     ar  & BOOST_SERIALIZATION_NVP(messages);
 
     if constexpr (Archive::is_loading::value) {
-        for (const auto& entry : em.m_empire_map)
-            em.m_const_empire_map.emplace(entry.first, entry.second);
+        for (auto& [empire_id, empire_ptr] : em.m_empire_map)
+            em.m_const_empire_map.emplace(empire_id, empire_ptr);
 
         em.m_diplomatic_messages = std::move(messages);
 
         // erase invalid empire diplomatic statuses
         std::vector<std::pair<int, int>> to_erase;
-        for (auto& r : em.m_empire_diplomatic_statuses) {
-            const auto& e1 = r.first.first;
-            const auto& e2 = r.first.second;
+        for (auto& [ids, diplo_status] : em.m_empire_diplomatic_statuses) {
+            (void)diplo_status; // quiet unused warning
+            const auto& [e1, e2] = ids;
             if (em.m_empire_map.count(e1) < 1 || em.m_empire_map.count(e2) < 1) {
                 to_erase.emplace_back(e1, e2);
                 ErrorLogger() << "Erased invalid diplomatic status between empires " << e1 << " and " << e2;
@@ -391,15 +386,17 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
             em.m_empire_diplomatic_statuses.erase(p);
 
         // add missing empire diplomatic statuses
-        for (const auto& e1 : em.m_empire_map) {
-            for (const auto& e2 : em.m_empire_map) {
-                if (e1.first >= e2.first)
+        for (const auto& [e1_id, e1_ptr] : em.m_empire_map) {
+            (void)e1_ptr; // quiet warning
+            for (const auto& [e2_id, e2_ptr] : em.m_empire_map) {
+                (void)e2_ptr; // quiet warning
+                if (e1_id >= e2_id)
                     continue;
-                auto dk = DiploKey(e1.first, e2.first);
+                auto dk = DiploKey(e1_id, e2_id);
                 if (em.m_empire_diplomatic_statuses.count(dk) < 1) {
                     em.m_empire_diplomatic_statuses[dk] = DiplomaticStatus::DIPLO_WAR;
                     ErrorLogger() << "Added missing diplomatic status (default WAR) between empires "
-                                  << e1.first << " and " << e2.first;
+                                  << e1_id << " and " << e2_id;
                 }
             }
         }
