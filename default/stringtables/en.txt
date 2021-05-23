@@ -11690,7 +11690,7 @@ PLC_DREAM_RECURSION
 Dream Recursion
 
 PLC_DREAM_RECURSION_DESC
-Increases [[metertype METER_TARGET_HAPPINESS]] on populated planets by however much is needed to reach [[value PLC_INDOCTRINATION_STRENGTH_MAX]] and reduces each planet's [[metertype METER_INFLUENCE]] by the same amount as its [[metertype METER_TARGET_HAPPINESS]] is increased.
+Increases [[metertype METER_TARGET_HAPPINESS]] on populated planets by however much is needed to reach [[value PLC_INDOCTRINATION_STRENGTH_BASE]] and reduces each planet's [[metertype METER_INFLUENCE]] by the same amount as its [[metertype METER_TARGET_HAPPINESS]] is increased. The limit of [[metertype METER_TARGET_HAPPINESS]] is increased by [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] for each [[buildingtype BLD_COLLECTIVE_NET]] controlled by the empire that has adopted this policy.
 
 PLC_DREAM_RECURSION_SHORT_DESC
 Targeted stability boost
@@ -13962,8 +13962,9 @@ BLD_COLLECTIVE_NET
 Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
-'''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by [[value BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on Planets with the Research focus by [[value BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]]. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
+'''• Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by [[value BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on Planets with the Research focus by [[value BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]]. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
+• Increases the maximum stability reached by [[policy PLC_DREAM_RECURSION]] by [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]].
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 

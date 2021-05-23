@@ -18,9 +18,15 @@ Policy
         priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
         effects = [
             SetTargetInfluence value = Value - max(0.0,
-                (NamedReal name = "PLC_INDOCTRINATION_STRENGTH_MAX" value = 5.0) - Value(Target.TargetHappiness))
+                (NamedReal name = "PLC_INDOCTRINATION_STRENGTH_BASE" value = 5.0) +
+                (NamedReal name = "PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET" value = 2.0) *
+                    (Statistic Count condition = And [ Building name = "BLD_COLLECTIVE_NET" OwnedBy empire = Source.Owner ]) -
+                Value(Target.TargetHappiness))
             SetTargetHappiness value = Value + max(0.0, 
-                (NamedRealLookup name = "PLC_INDOCTRINATION_STRENGTH_MAX") - Value(Target.TargetHappiness))
+                (NamedRealLookup name = "PLC_INDOCTRINATION_STRENGTH_BASE") +
+                (NamedRealLookup name = "PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET") *
+                    (Statistic Count condition = And [ Building name = "BLD_COLLECTIVE_NET" OwnedBy empire = Source.Owner ]) -
+                Value(Target.TargetHappiness))
         ]
     ]
     graphic = "icons/policies/dream_recursion.png"
