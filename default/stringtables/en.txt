@@ -1925,7 +1925,7 @@ OPTIONS_DB_GAMESETUP_PLANET_DENSITY
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
 '''The number of starlanes in the galaxy.
 
-When set to Low, most systems will typically have one or two starlanes. When set to High, most systems will have starlanes linking them to most nearby systems within 120uu.'''
+When set to Low, most systems will typically have one or two starlanes. When set to High, most systems will have starlanes linking them to most nearby systems within 120 uu.'''
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 '''The proportion of planets and systems containing Special Features.
@@ -9141,7 +9141,7 @@ Head on a Spike
 HEAD_ON_A_SPIKE_SPECIAL_DESC
 '''The head of the former emperor rests on a spike for all to see, striking fear in the hearts of the current empire's foes.
 
-Non-empire ships, both enemies and allies, within 100uu will have slightly reduced [[metertype METER_SHIELD]], [[metertype METER_STRUCTURE]] and weapons.
+Non-empire ships, both enemies and allies, within 100 uu will have slightly reduced [[metertype METER_SHIELD]], [[metertype METER_STRUCTURE]] and weapons.
 '''
 
 HEAD_ON_A_SPIKE_SPECIAL_EFFECT
@@ -13881,7 +13881,7 @@ BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-Decreases the [[metertype METER_STEALTH]] of all objects in the same system by 30 and increases the [[metertype METER_SPEED]] of friendly ships that start the turn within 50uu by 20 for that turn. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] and may facilitate use of a [[buildingtype BLD_PLANET_DRIVE]].
+Decreases the [[metertype METER_STEALTH]] of all objects in the same system by 30 and increases the [[metertype METER_SPEED]] of friendly ships that start the turn within 50 uu by 20 for that turn. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] and may facilitate use of a [[buildingtype BLD_PLANET_DRIVE]].
 
 BLD_SCANNING_FACILITY
 Scanning Facility
@@ -14116,7 +14116,7 @@ Either a [[buildingtype BLD_PLANET_BEACON]] or a ship equipped with a [[shippart
 
 To use this building, either construct a [[buildingtype BLD_PLANET_BEACON]] in the adjacent destination system or move a ship with a [[shippart SP_PLANET_BEACON]] there, then set the planet to Planet Drive focus. The planet will then be moved to that system. Note the beacon needs to have been in system for a turn: the drive will not work on the turn the building is completed or on the turn the ship arrives. Also note, a [[buildingtype BLD_TRANSFORMER]] can be used to replicate the effects of this building.
 
-A [[buildingtype BLD_PLANET_BEACON]] can only be constructed in systems with fewer than 7 planets (including Gas Giants and Asteroids). Should an attempt be made to use the [[BLD_PLANET_DRIVE]] to move a planet into a system at capacity, it will safely remain to its Origin system provided an [[buildingtype BLD_LIGHTHOUSE]] is present within 200uu. Otherwise there is a 50% chance of being destroyed in the attempt to move it to the full system.
+A [[buildingtype BLD_PLANET_BEACON]] can only be constructed in systems with fewer than 7 planets (including Gas Giants and Asteroids). Should an attempt be made to use the [[BLD_PLANET_DRIVE]] to move a planet into a system at capacity, it will safely remain to its Origin system provided an [[buildingtype BLD_LIGHTHOUSE]] is present within 200 uu. Otherwise there is a 50% chance of being destroyed in the attempt to move it to the full system.
 '''
 
 BLD_PLANET_BEACON
@@ -14179,7 +14179,7 @@ BLD_SPATIAL_DISTORT_GEN
 Spatial Distortion Generator
 
 BLD_SPATIAL_DISTORT_GEN_DESC
-Manipulates the dimensional properties of adjacent starlanes. Enemy ships moving towards the system containing this building will be pushed back 40uu the way they came after they have moved as long as they have not completed their journey and arrived in system. This is activated with the Spatial Distortion focus.
+Manipulates the dimensional properties of adjacent starlanes. Enemy ships moving towards the system containing this building will be pushed back 40 uu the way they came after they have moved as long as they have not completed their journey and arrived in system. This is activated with the Spatial Distortion focus.
 
 BLD_STARGATE
 Stargate
