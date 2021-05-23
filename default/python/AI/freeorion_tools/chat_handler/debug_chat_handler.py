@@ -83,7 +83,6 @@ class DebugChatHandler(ChatHandlerBase):
         self._debug_mode = False
 
     def _handle_shell_input(self, message):
-        print('>', message, end='')
         out, err = self._interpreter.eval(message)
         if out:
             chat_human(self._formatter.white(out))
@@ -148,7 +147,6 @@ class DebugChatHandler(ChatHandlerBase):
         ]
         for player_id in fo.allPlayerIDs():
             if not fo.playerIsHost(player_id):
-
                 help_message.append(
                     self._get_empire_string(player_id)
                 )
@@ -158,13 +156,10 @@ class DebugChatHandler(ChatHandlerBase):
 
     def _get_empire_string(self, player_id):
         empire = fo.getEmpire(fo.playerEmpireID(player_id))
-
-        empire_color = (empire.colour.r, empire.colour.g, empire.colour.b, empire.colour.a)
-
         return (
-                "    " +
-                self._formatter.underline(self._formatter.blue(empire.empireID)) +
-                self._formatter.colored(empire_color, " %s" % empire.name) +
-                self._formatter.white(
-                    ' by %s' % fo.playerName(player_id))
+            "    " +
+            self._formatter.underline(self._formatter.blue(empire.empireID)) +
+            self._formatter.colored(empire.colour, " %s" % empire.name) +
+            self._formatter.white(
+                ' by %s' % fo.playerName(player_id))
         )
