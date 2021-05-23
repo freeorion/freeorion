@@ -15,7 +15,7 @@ Policy
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
                 Population low = 0.001
-                Happiness low = 15
+                Happiness low = 5
             ]
             priority = [[TARGET_2ND_SCALING_PRIORITY]]
             effects =
@@ -31,7 +31,7 @@ Policy
             ]
             effects =
                 SetTargetHappiness value = Value
-                    + (NamedReal name = "PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT" value = 10)
+                    + (NamedReal name = "PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT" value = 2)
     ]
     graphic = "icons/policies/industrialism.png"
 
