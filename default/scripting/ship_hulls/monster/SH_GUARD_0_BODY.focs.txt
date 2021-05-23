@@ -20,9 +20,20 @@ Hull
     effectsgroups = [
         [[MONSTER_SHIELD_REGENERATION]]
         [[UNOWNED_OWNED_VISION_BONUS(WEAK,10,10)]]
+        // weaken damage and distribute shots so it is possible to survive using a half armoured starting level colony ship
+        EffectsGroup
+            scope = Source
+            effects = [
+                SetMaxCapacity      partname = "SR_ARC_DISRUPTOR" value = [[SHIP_WEAPON_DAMAGE_FACTOR]]
+                SetCapacity         partname = "SR_ARC_DISRUPTOR" value = [[SHIP_WEAPON_DAMAGE_FACTOR]]
+                SetMaxSecondaryStat partname = "SR_ARC_DISRUPTOR" value = 5
+                SetSecondaryStat    partname = "SR_ARC_DISRUPTOR" value = 5
+            ]
+
     ]
     icon = ""
     graphic = "icons/monsters/maintenance_ship.png"
 
 #include "../ship_hulls.macros"
 #include "monster.macros"
+#include "/scripting/common/misc.macros"
