@@ -11807,6 +11807,17 @@ Cyborgification produces a versatile fusion of the organic, inorganic and machin
 PLC_AUGMENTATION_SHORT_DESC
 Various planet boosts
 
+PLC_ISOLATION
+Isolation
+
+PLC_ISOLATION_DESC
+'''• Increases stability on colonies that are further than [[value PLC_ISOLATION_THRESHOLD_DISTANCE]] uu from another populated planet.
+• Decreases stability on colonies that are closer than [[value PLC_ISOLATION_THRESHOLD_DISTANCE]] uu from another populated planet.
+• Increases stealth of colonies by [[value PLC_ISOLATION_STEALTH]].'''
+
+PLC_ISOLATION_SHORT_DESC
+Boosts isolated planets
+
 
 ##
 ## Technology categories
