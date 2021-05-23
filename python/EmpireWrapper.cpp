@@ -52,7 +52,7 @@ namespace {
     auto jumpsToSuppliedSystem(const Empire& empire) -> std::map<int, int>
     {
         std::map<int, int> retval;
-        const std::map<int, std::set<int>>& empire_starlanes = empire.KnownStarlanes();
+        const std::map<int, std::set<int>>& empire_starlanes = empire.KnownStarlanes(GetUniverse());
         std::list<int> propagating_list;
 
         for (int system_id : GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID(), true)) {

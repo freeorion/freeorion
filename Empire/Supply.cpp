@@ -414,7 +414,7 @@ void SupplyManager::Update() {
     std::map<int, std::map<int, std::set<int>>> empire_visible_starlanes;
     for (auto& entry : Empires()) {
         const auto& empire = entry.second;
-        empire_visible_starlanes[entry.first] = empire->KnownStarlanes();//  VisibleStarlanes();
+        empire_visible_starlanes[entry.first] = empire->KnownStarlanes(GetUniverse());//  VisibleStarlanes();
 
         if (empire_visible_starlanes[entry.first].empty()) {
             ErrorLogger(supply) << "Empire " << entry.first << " has no known starlanes?!";

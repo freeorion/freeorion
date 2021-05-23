@@ -7355,9 +7355,9 @@ namespace {
 
     //helper function for DispatchFleetsExploring
     //return the set of all systems ID with a starlane connecting them to a system in set
-    SystemIDListType AddNeighboorsToSet(const Empire *empire, const SystemIDListType& system_ids){
+    SystemIDListType AddNeighboorsToSet(const Empire *empire, const SystemIDListType& system_ids) {
         SystemIDListType retval;
-        auto starlanes = empire->KnownStarlanes();
+        auto starlanes = empire->KnownStarlanes(GetUniverse());
         for (auto system_id : system_ids) {
             auto new_neighboors_it = starlanes.find(system_id);
             if (new_neighboors_it != starlanes.end())

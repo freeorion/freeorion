@@ -1276,16 +1276,14 @@ bool Empire::PreservedLaneTravel(int start_system_id, int dest_system_id) const 
 const std::set<int>& Empire::ExploredSystems() const
 { return m_explored_systems; }
 
-const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
+std::map<int, std::set<int>> Empire::KnownStarlanes(const Universe& universe) const {
     // compile starlanes leading into or out of each system
     std::map<int, std::set<int>> retval;
 
-    const Universe& universe = GetUniverse();
     TraceLogger(supply) << "Empire::KnownStarlanes for empire " << m_id;
 
-    const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    for (const auto& sys : Objects().all<System>())
-    {
+    auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    for (const auto& sys : Objects().all<System>()) {
         int start_id = sys->ID();
         TraceLogger(supply) << "system " << start_id << " has up to " << sys->StarlanesWormholes().size() << " lanes / wormholes";
 
@@ -1300,8 +1298,8 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
             bool is_wormhole = lane.second;
             if (is_wormhole || known_destroyed_objects.count(end_id))
                 continue;   // is a wormhole, not a starlane, or is connected to a known destroyed system
-            retval[start_id].emplace(end_id);
-            retval[end_id].emplace(start_id);
+            retval[start_id].insert(end_id);
+            retval[end_id].insert(start_id);
         }
 
         TraceLogger(supply) << "system " << start_id << " had " << retval[start_id].size() << " known lanes";
@@ -1311,10 +1309,9 @@ const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
     return retval;
 }
 
-const std::map<int, std::set<int>> Empire::VisibleStarlanes() const {
+std::map<int, std::set<int>> Empire::VisibleStarlanes(const Universe& universe) const {
     std::map<int, std::set<int>> retval;   // compile starlanes leading into or out of each system
 
-    const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
 
     for (const auto& sys : objects.all<System>()) {

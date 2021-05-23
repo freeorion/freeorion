@@ -183,8 +183,8 @@ public:
     bool                                    PreservedLaneTravel(int start_system_id, int dest_system_id) const;
 
     const std::set<int>&                    ExploredSystems() const;    ///< returns set of ids of systems that this empire has explored
-    const std::map<int, std::set<int>>      KnownStarlanes() const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
-    const std::map<int, std::set<int>>      VisibleStarlanes() const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
+    std::map<int, std::set<int>>            KnownStarlanes(const Universe& universe) const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
+    std::map<int, std::set<int>>            VisibleStarlanes(const Universe& universe) const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
 
     SitRepItr               SitRepBegin() const;                ///< starting iterator for sitrep entries for this empire
     SitRepItr               SitRepEnd() const;                  ///< end iterator for sitreps
