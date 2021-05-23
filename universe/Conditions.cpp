@@ -7309,7 +7309,7 @@ namespace {
             if (!empire)
                 return false;
 
-            return empire->ShipDesignAvailable(m_id);
+            return empire->ShipDesignAvailable(m_id, m_context.ContextUniverse());
         }
 
         int                     m_empire_id = ALL_EMPIRES;

@@ -716,18 +716,18 @@ bool Empire::BuildingTypeAvailable(const std::string& name) const
 const std::set<int>& Empire::ShipDesigns() const
 { return m_known_ship_designs; }
 
-std::set<int> Empire::AvailableShipDesigns() const {
+std::set<int> Empire::AvailableShipDesigns(const Universe& universe) const {
     // create new map containing all ship designs that are available
     std::set<int> retval;
     for (int design_id : m_known_ship_designs) {
-        if (ShipDesignAvailable(design_id))
-            retval.emplace(design_id);
+        if (ShipDesignAvailable(design_id, universe))
+            retval.insert(design_id);
     }
     return retval;
 }
 
-bool Empire::ShipDesignAvailable(int ship_design_id) const {
-    const ShipDesign* design = GetUniverse().GetShipDesign(ship_design_id); // TODO get from ScriptingContext
+bool Empire::ShipDesignAvailable(int ship_design_id, const Universe& universe) const {
+    const ShipDesign* design = universe.GetShipDesign(ship_design_id);
     return design ? ShipDesignAvailable(*design) : false;
 }
 
@@ -857,7 +857,7 @@ bool Empire::ProducibleItem(BuildType build_type, int design_id, int location,
     if (build_type == BuildType::BT_STOCKPILE)
         throw std::invalid_argument("Empire::ProducibleItem was passed BuildType BT_STOCKPILE with a design id, but the stockpile does not need an identification");
 
-    if (build_type == BuildType::BT_SHIP && !ShipDesignAvailable(design_id))
+    if (build_type == BuildType::BT_SHIP && !ShipDesignAvailable(design_id, context.ContextUniverse()))
         return false;
 
     // design must be known to this empire

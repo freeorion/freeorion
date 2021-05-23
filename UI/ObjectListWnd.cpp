@@ -2571,7 +2571,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     for (const std::string& planet_focus : one_planet->AvailableFoci())
                         all_foci[planet_focus]++;
 
-                    for (int ship_design : cur_empire->AvailableShipDesigns()) {
+                    for (int ship_design : cur_empire->AvailableShipDesigns(GetUniverse())) {
                         if (cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design, row->ObjectID()))
                             avail_designs[ship_design]++;
                     }
