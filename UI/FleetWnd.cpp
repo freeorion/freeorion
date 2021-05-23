@@ -3529,17 +3529,25 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         auto split_action = [this, &ship_ids_set]() {
             ScopedTimer split_fleet_timer("FleetWnd::SplitFleet", true);
 
+            FleetAggression new_aggression_setting = FleetAggression::INVALID_FLEET_AGGRESSION;
+            if (m_new_fleet_drop_target)
+                new_aggression_setting = m_new_fleet_drop_target->GetFleetAggression();
+
             // assemble container of containers of ids of fleets to create.
             // one ship id per vector
             for (int ship_id : ship_ids_set) {
                 CreateNewFleetFromShips(
                     std::vector<int>{ship_id},
-                    FleetAggression::INVALID_FLEET_AGGRESSION);
+                    new_aggression_setting);
             }
         };
 
         auto split_per_design_action = [this, fleet]() {
-            CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(), FleetAggression::INVALID_FLEET_AGGRESSION);
+            FleetAggression new_aggression_setting = FleetAggression::INVALID_FLEET_AGGRESSION;
+            if (m_new_fleet_drop_target)
+                new_aggression_setting = m_new_fleet_drop_target->GetFleetAggression();
+
+            CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(), new_aggression_setting);
         };
 
         popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_FLEET"),             false, false, split_action));
