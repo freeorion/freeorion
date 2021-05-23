@@ -4,7 +4,10 @@ Policy
     short_description = "PLC_PLANETARY_INFRA_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 30
-    unlock = Item type = Policy name = "PLC_SYSTEM_INFRA"
+    unlock = [
+        Item type = Policy name = "PLC_SYSTEM_INFRA"
+        Item type = Policy name = "PLC_ISOLATION"
+    ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
