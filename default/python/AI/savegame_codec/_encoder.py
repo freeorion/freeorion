@@ -20,9 +20,9 @@ import base64
 import collections
 import json
 import zlib
+from enum import IntEnum
 from typing import Any
 
-import EnumsAI
 from ._definitions import (CanNotSaveGameException, ENUM_PREFIX, FALSE, FLOAT_PREFIX, INT_PREFIX, NONE, PLACEHOLDER,
                            SET_PREFIX, TRUE, TUPLE_PREFIX, trusted_classes, )
 
@@ -52,8 +52,8 @@ def encode(o: Any) -> str:
     try:
         encoder = _encoder_table[o_type]
     except KeyError:
-        if issubclass(o_type, EnumsAI.EnumItem):
-            return '"%s%s"' % (ENUM_PREFIX, str(o))
+        if issubclass(o_type, IntEnum):
+            return '"%s%s"' % (ENUM_PREFIX, "%s.%s" % (o.__class__.__name__, o.name))
         else:
             return _encode_object(o)
     else:
