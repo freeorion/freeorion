@@ -20,7 +20,7 @@ namespace {
         auto target = std::make_shared<Ship>(ALL_EMPIRES, source->DesignID(), source->SpeciesName());
         // target needs to have an ID != -1 to be visible, stealth should be low enough
         // structure must be higher than zero to be valid target
-        target->SetID(-1000000); // XXX magic number AutoresolveInfo.next_fighter_id starts at -1000001 counting down
+        target->SetID(TEMPORARY_OBJECT_ID); // also see InsertTemp function usage
         target->GetMeter(MeterType::METER_STRUCTURE)->Set(100.0f, 100.0f);
         target->GetMeter(MeterType::METER_MAX_STRUCTURE)->Set(100.0f, 100.0f);
         // Shield value is used for structural damage estimation
@@ -32,7 +32,7 @@ namespace {
     ScriptingContext CombatContextWithFighterTarget(std::shared_ptr<const Ship> source)
     {
         auto target = std::make_shared<Fighter>();
-        target->SetID(-1000000); // XXX magic number AutoresolveInfo.next_fighter_id starts at -1000001 counting down
+        target->SetID(TEMPORARY_OBJECT_ID);
         GetUniverse().SetEmpireObjectVisibility(source->Owner(), target->ID(), Visibility::VIS_FULL_VISIBILITY);
         return ScriptingContext{source, target};
     }
