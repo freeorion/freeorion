@@ -11740,7 +11740,7 @@ PLC_SYSTEM_INFRA
 System Infrastructure
 
 PLC_SYSTEM_INFRA_DESC
-'''Grants 2 additional economic policy slots.
+'''Grants 1 additional economic policy slot.
 
 Increases [[metertype METER_TARGET_CONSTRUCTION]] by 5 on populated planets in systems with at least 2 planets owned by the empire that adopted this policy.'''
 

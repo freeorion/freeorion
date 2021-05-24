@@ -15,7 +15,7 @@ Policy
         EffectsGroup
             scope = Source
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = SetEmpireMeter empire = Source.Owner meter = "ECONOMIC_CATEGORY_NUM_POLICY_SLOTS" value = Value + 2
+            effects = SetEmpireMeter empire = Source.Owner meter = "ECONOMIC_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
         
         EffectsGroup
             scope = And [
