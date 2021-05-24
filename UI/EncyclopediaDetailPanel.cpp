@@ -3358,9 +3358,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     timer.EnterSection("search subdirs dispatch");
     // assemble link text to all pedia entries, indexed by name
     std::size_t idx = -1;
-    for (auto& entry : pedia_entries) {
-        const auto& article_key_directory = entry.first;
-        auto& article_name_link = entry.second;
+    for (auto& [article_key_directory, article_name_link] : pedia_entries) {
         idx++;
         auto& emr{exact_match_report[idx]};
         auto& wmr{word_match_report[idx]};
