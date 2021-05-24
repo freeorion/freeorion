@@ -13,6 +13,7 @@ Tech
     unlock = [
         Item type = Policy name = "PLC_MARINE_RECRUITMENT"
         Item type = Policy name = "PLC_NATIVE_APPROPRIATION"
+        Item type = Building name = "BLD_TRANSLATOR"
     ]
     graphic = "icons/tech/translingustic_thought.png"
 
