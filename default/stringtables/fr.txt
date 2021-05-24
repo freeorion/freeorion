@@ -11690,7 +11690,7 @@ PLC_DREAM_RECURSION
 Récursivité Imaginaire
 
 PLC_DREAM_RECURSION_DESC
-Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de la valeur nécessaire pour atteindre [[value PLC_INDOCTRINATION_STRENGTH_MAX]] et réduit l'[[metertype METER_INFLUENCE]] de chaque planète de la même valeur que leur [[metertype METER_TARGET_HAPPINESS]] est augmentée.
+Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de la valeur nécessaire pour atteindre [[value PLC_INDOCTRINATION_STRENGTH_BASE]] et réduit l'[[metertype METER_INFLUENCE]] de chaque planète de la même valeur que leur [[metertype METER_TARGET_HAPPINESS]] est augmentée. La limite de la [[metertype METER_TARGET_HAPPINESS]] est augmentée de [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] pour chaque structure [[buildingtype BLD_COLLECTIVE_NET]] contrôlée par l'empire appliquant cette Politique.
 
 PLC_DREAM_RECURSION_SHORT_DESC
 Augmentation ciblée de la Stabilité
@@ -11777,7 +11777,10 @@ PLC_BOOTSTRAPPING
 Planification Coloniale
 
 PLC_BOOTSTRAPPING_DESC
-Augmente le taux de croissance des indicateurs Industrie, Recherche, et Influence, et améliore la Stabilité des colonies dont la Population est inférieure à 6.
+'''• Augmente le taux de croissance des indicateurs Industrie, Recherche, et Influence, et améliore la Stabilité des colonies dont la Population est inférieure à [[value PLC_BOOTSTRAPPING_MAX_POP]].
+• Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes ayant été colonisées durant les [[value PLC_BOOTSTRAPPING_MAX_TURNS]] derniers tours, puis diminue progressivement.
+
+Les nouvelles colonies bénéficient souvent de programmes visant à soutenir leur développement initial et les efforts des colons pour fonder leur nouvel habitat.'''
 
 PLC_BOOTSTRAPPING_SHORT_DESC
 Améliore les colonies de petite taille
@@ -11790,6 +11793,30 @@ Augmente l'Influence de la Capitale de [[value PROPAGANDA_INFLUENCE_FLAT]].
 
 PLC_PROPAGANDA_SHORT_DESC
 Augmente l'Influence de la Capitale
+
+PLC_AUGMENTATION  # translated
+Augmentation
+
+PLC_AUGMENTATION_DESC
+'''• Augmente la [[metertype METER_TARGET_POPULATION]] des planètes [[PE_HOSTILE]]s selon leur taille: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+• Augmente l'[[metertype METER_TROOPS]] max sur toutes les planètes de [[value CYBORG_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]].
+• Augmente ou diminue le taux de croissance de la Population, selon que l'[[metertype METER_CONSTRUCTION]] de la planète est supérieure ou inférieure à [[value AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT]].
+
+La cyborgification engendre la fusion hautement polyvalente d'organismes vivants, de corps inorganiques et de machines, capable de s'adapter rapidement aux circonstances changeantes. La génération spontanée d'organes spécialisés, de mécanismes, et d'une adaptation environnementale, permettent aux cyborgs d'évoluer et de prospérer dans quasiment tous les types d'environnement.'''
+
+PLC_AUGMENTATION_SHORT_DESC
+Améliorations planétaires diverses
+
+PLC_ISOLATION  # translated
+Isolation
+
+PLC_ISOLATION_DESC
+'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] des colonies situées à plus de [[value PLC_ISOLATION_THRESHOLD_DISTANCE]] uu d'une autre planète habitée.
+• Diminue la [[metertype METER_TARGET_HAPPINESS]] des colonies situées à moins de [[value PLC_ISOLATION_THRESHOLD_DISTANCE]] uu d'une autre planète habitée.
+• Augmente la [[metertype METER_STEALTH]] des colonies de [[value PLC_ISOLATION_STEALTH]].'''
+
+PLC_ISOLATION_SHORT_DESC
+Améliore les planètes isolées
 
 
 ##
@@ -13935,10 +13962,11 @@ BLD_COLLECTIVE_NET
 Réseau de Pensée Collective
 
 BLD_COLLECTIVE_NET_DESC
-'''Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
+'''• Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Industrie, et la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]] sur toutes les planètes en Focus Recherche. Tout voyage sur Voies spatiales dans un périmètre de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
+• Augmente de [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] la [[metertype METER_TARGET_HAPPINESS]] maximum atteinte via la Politique [[policy PLC_DREAM_RECURSION]].
 
-En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, résolvant des problèmes et faisant des découvertes qui s'avéreraient hors de portée pour un unique esprit, aussi brillant soit-il.'''
+En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent alors agir en tant qu'un seul, résolvant des problèmes et accomplissant des découvertes qui s'avéreraient hors de portée pour un unique esprit isolé, aussi brillant soit-il.'''
 
 BLD_GATEWAY_VOID
 Portail du Vide
