@@ -453,7 +453,7 @@ void PoliciesListBox::Populate() {
 
 
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
-    const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
+    const int MAX_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
 
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);  // may be nullptr
@@ -463,7 +463,7 @@ void PoliciesListBox::Populate() {
         m_empire_policies_changed_signal_connection = empire->PoliciesChangedSignal.connect(
             boost::bind(&PoliciesListBox::Populate, this), boost::signals2::at_front);
 
-    int cur_col = NUM_COLUMNS;
+    int cur_col = MAX_COLUMNS;
     std::shared_ptr<PoliciesListBoxRow> cur_row;
     int num_policies = 0;
 
@@ -477,7 +477,7 @@ void PoliciesListBox::Populate() {
         // take the sorted policies and make UI element rows for the PoliciesListBox
         for (const auto policy : policies_vec) {
             // check if current row is full, and make a new row if necessary
-            if (cur_col >= NUM_COLUMNS) {
+            if (cur_col >= MAX_COLUMNS) {
                 if (cur_row)
                     Insert(cur_row);
                 cur_col = 0;
@@ -501,7 +501,7 @@ void PoliciesListBox::Populate() {
         Insert(std::move(cur_row));
 
     // keep track of how many columns are present now
-    m_previous_num_columns = NUM_COLUMNS;
+    m_previous_num_columns = MAX_COLUMNS;
 
     // If there are no policies add a prompt to suggest a solution.
     if (num_policies == 0)
@@ -1338,9 +1338,7 @@ void GovernmentWnd::MainPanel::Populate() {
 
     for (unsigned int n = 0; n < all_slot_cats.size(); ++n) {
         // create slot controls for empire's policy slots
-        const auto& cat_slot = all_slot_cats[n];    // todo: std::tie ?
-        const std::string& category_name = cat_slot.first;
-        int category_index = cat_slot.second;
+        auto& [category_name, category_index] = all_slot_cats[n];
         auto slot_control = GG::Wnd::Create<PolicySlotControl>(category_name, category_index, n);
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
@@ -1348,9 +1346,8 @@ void GovernmentWnd::MainPanel::Populate() {
         // assign policy controls to slots that correspond to adopted policies
         if (categories_slots_policies.count(category_name)) {
             const auto& slots = categories_slots_policies[category_name];
-            if (slots.count(category_index)) {
+            if (slots.count(category_index))
                 slot_control->SetPolicy(slots.at(category_index));
-            }
         }
 
         // signals to respond to UI manipulation
@@ -1372,7 +1369,7 @@ void GovernmentWnd::MainPanel::DoLayout() {
     constexpr int GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT = 25;    // rough guesstimate... avoid overly long policy class names
     const GG::X BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
 
-    GG::Pt lr = ClientSize() + GG::Pt(-GG::X(PAD), -GG::Y(PAD));
+    const GG::Pt lr = ClientSize() + GG::Pt(-GG::X(PAD), -GG::Y(PAD));
     GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
     m_clear_button->SizeMove(ul, lr);
 
@@ -1380,13 +1377,21 @@ void GovernmentWnd::MainPanel::DoLayout() {
         return;
 
     // place background image of government
-    ul = m_slots.front()->Size() * 5/4;
-    //GG::Rect background_rect = GG::Rect(ul, ClientLowerRight());
+    const GG::Pt initial_slot_ul = m_slots.front()->Size() * 1/4;
+    ul = initial_slot_ul;
 
     // arrange policy slots
     //int count = 0;
+    std::string prev_cat = m_slots.front()->SlotCategory();
     for (auto& slot : m_slots) {
-        ul += {slot->Width()*5/4, GG::Y0};
+        // separate row per category
+        if (slot->SlotCategory() != prev_cat) {
+            ul.x = initial_slot_ul.x;
+            ul += slot->Size()*5/4;
+        } else {
+            ul += {slot->Width()*5/4, GG::Y0};
+        }
+        prev_cat = slot->SlotCategory();
         slot->MoveTo(ul);
     }
 }
