@@ -48,6 +48,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
         |   tok.LastTurnMoveOrdered_
         |   tok.LastTurnResupplied_
         |   tok.Orbit_
+        |   tok.TurnsSinceColonization_
         |   tok.TurnsSinceFocusChange_
         |   tok.ETA_
         |   tok.LaunchedFrom_

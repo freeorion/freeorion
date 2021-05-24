@@ -6878,6 +6878,9 @@ Age
 TURNS_SINCE_FOCUS_CHANGE
 Turns Since Focus Change
 
+TURNS_SINCE_COLONIZATION
+Turns Since Colonization
+
 SUPPLY_RANGE
 Supply Range
 

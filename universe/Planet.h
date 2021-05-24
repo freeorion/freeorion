@@ -107,6 +107,7 @@ public:
     int OrderedGivenToEmpire() const            { return m_ordered_given_to_empire_id; }
     int LastTurnAttackedByShip() const          { return m_last_turn_attacked_by_ship; }
     int LastTurnColonized() const               { return m_turn_last_colonized; }
+    int TurnsSinceColonization() const;
     int LastTurnConquered() const               { return m_turn_last_conquered; }
 
     const std::string&  SurfaceTexture() const  { return m_surface_texture; }

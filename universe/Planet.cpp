@@ -542,6 +542,15 @@ std::map<int, double> Planet::EmpireGroundCombatForces() const {
     return empire_troops;
 }
 
+int Planet::TurnsSinceColonization() const {
+    if (m_turn_last_colonized == INVALID_GAME_TURN)
+        return 0;
+    int current_turn = CurrentTurn();
+    if (current_turn == INVALID_GAME_TURN)
+        return 0;
+    return current_turn - m_turn_last_colonized;
+}
+
 void Planet::SetType(PlanetType type) {
     if (type <= PlanetType::INVALID_PLANET_TYPE)
         type = PlanetType::PT_SWAMP;
