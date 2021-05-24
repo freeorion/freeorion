@@ -19,8 +19,14 @@ Policy
                 SetIndustry value = min(Target.TargetIndustry, Value + 1.0)
                 SetResearch value = min(Target.TargetResearch, Value + 1.0)
                 SetInfluence value = min(Target.TargetInfluence, Value + 1.0)
-                SetTargetHappiness value = Value +      // increase stability by 10 on first turn, decreasing each turn to 0 at turn 20
-                    0.5 * max(0.0, (NamedReal name = "PLC_BOOTSTRAPPING_MAX_TURNS" value = 20.0) - CurrentTurn + Target.LastTurnColonized)
+
+                // increase target stability by 10 on first turn, decreasing each turn to 0 at turn 20
+                SetTargetHappiness value = Value + 
+                    0.5 * max(0.0, (NamedReal name = "PLC_BOOTSTRAPPING_MAX_TURNS" value = 20.0) - Target.TurnsSinceColonization)
+
+                // increase stability growth rate
+                SetHappiness value = Value + min(abs(Value(Target.TargetHappiness) - Value), 1) *
+                    (Statistic If condition = And [ Target (Value < Value(Target.TargetHappiness))])
             ]
     ]
     graphic = "icons/policies/boot.png"
