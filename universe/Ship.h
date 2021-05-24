@@ -85,8 +85,13 @@ public:
     float                       FighterCount() const;
     float                       FighterMax() const;
     std::vector<float>          AllWeaponsFighterDamage(bool include_fighters = true) const;   ///< any shots against enemy fighters
-    std::vector<float>          AllWeaponsShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;   ///< any nonzero weapons strengths after adjustment versus an enemy with a given shields DR
-    std::vector<float>          AllWeaponsMaxShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;///< any nonzero weapons strengths, assuming the ship has been resupplied recently, after adjustment versus an enemy with a given shields DR
+    /** returns any nonzero weapons strengths after adjustment versus an enemy with a given @p shield_DR shield rating,
+      * uses the normal meters so it might be lower than AllWeaponsMaxShipDamage
+      * if e.g. the ship has less than a full complement of fighters */
+    std::vector<float>          AllWeaponsShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;
+    /** returns any nonzero weapons strengths after adjustment versus an enemy with a given @p shield_DR shield rating,
+      * assuming the ship has been resupplied recently (i.e. this uses Max*Meters) */
+    std::vector<float>          AllWeaponsMaxShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;
 
     void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
     void            SetArrivedOnTurn(int turn);
