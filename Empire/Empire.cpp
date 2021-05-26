@@ -333,17 +333,17 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
 void Empire::UpdatePolicies() {
     // remove any unrecognized policies and uncategorized policies
     auto policies_temp = m_adopted_policies;
-    for (auto policy_pair : policies_temp) {
-        const auto* policy = GetPolicy(policy_pair.first);
+    for (auto& [policy_name, adoption_info] : policies_temp) {
+        const auto* policy = GetPolicy(policy_name);
         if (!policy) {
-            ErrorLogger() << "UpdatePolicies couldn't find policy with name: " << policy_pair.first;
-            m_adopted_policies.erase(policy_pair.first);
+            ErrorLogger() << "UpdatePolicies couldn't find policy with name: " << policy_name;
+            m_adopted_policies.erase(policy_name);
             continue;
         }
 
-        if (policy_pair.second.category.empty()) {
-            ErrorLogger() << "UpdatePolicies found policy " << policy_pair.first << " in empty category?";
-            m_adopted_policies.erase(policy_pair.first);
+        if (adoption_info.category.empty()) {
+            ErrorLogger() << "UpdatePolicies found policy " << policy_name << " in empty category?";
+            m_adopted_policies.erase(policy_name);
         }
     }
 
@@ -353,12 +353,13 @@ void Empire::UpdatePolicies() {
     std::map<std::string, int> total_category_slot_counts = TotalPolicySlots(); // how many slots in each category
     std::set<std::string> categories_needing_rearrangement;                     // which categories have a problem
     std::map<std::string, std::map<int, int>> category_slot_policy_counts;      // how many policies in each slot of each category
-    for (auto policy_pair : m_adopted_policies) {
-        const auto& cat = policy_pair.second.category;
-        const auto& slot = policy_pair.second.slot_in_category;
-        const auto& slot_count = category_slot_policy_counts[cat][slot]++;
-        if (slot_count > 1 || policy_pair.second.slot_in_category >= total_category_slot_counts[cat])
-            categories_needing_rearrangement.emplace(cat);
+    for (auto& [policy_name, adoption_info] : m_adopted_policies) {
+        (void)policy_name; // quiet warning
+        const auto& [adoption_turn, slot_in_category, category] = adoption_info;
+        (void)adoption_turn; // quiet warning
+        const auto& slot_count = category_slot_policy_counts[category][slot_in_category]++;
+        if (slot_count > 1 || slot_in_category >= total_category_slot_counts[category])
+            categories_needing_rearrangement.insert(category);
     }
 
     // if a category has too many policies or a slot number conflict, rearrange it
@@ -387,8 +388,10 @@ void Empire::UpdatePolicies() {
     }
 
     // update counters of how many turns each policy has been adopted
-    for (auto policy_pair : m_adopted_policies)
-        m_policy_adoption_total_duration[policy_pair.first]++;  // assumes default initialization to 0
+    for (auto& [policy_name, adoption_info] : m_adopted_policies) {
+        (void)adoption_info; // quiet warning
+        m_policy_adoption_total_duration[policy_name]++;  // assumes default initialization to 0
+    }
 
     // update initial adopted policies for next turn
     m_initial_adopted_policies = m_adopted_policies;
