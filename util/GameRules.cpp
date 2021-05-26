@@ -46,9 +46,6 @@ GameRules::Rule::Rule(Type type_, const std::string& name_, const boost::any& va
     category(category_)
 {}
 
-GameRules::GameRules()
-{}
-
 bool GameRules::Empty() const {
     CheckPendingGameRules();
     return m_game_rules.empty();

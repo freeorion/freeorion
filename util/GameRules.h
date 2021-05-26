@@ -55,8 +55,6 @@ public:
 
     using GameRulesTypeMap = std::unordered_map<std::string, Rule>;
 
-    GameRules();
-
     bool Empty() const;
     std::unordered_map<std::string, Rule>::const_iterator begin() const;
     std::unordered_map<std::string, Rule>::const_iterator end() const;
