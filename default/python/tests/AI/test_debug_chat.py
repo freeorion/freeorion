@@ -72,8 +72,9 @@ def debug_handler():
             variable="variable_c",
             expression="'value_c'",
             description="variable with import",
-            imports=("from glob import magic_check",),
+            imports=("from glob import has_magic",),
         ),
+
         ShellVariable(
             variable="variable_a_plus_b",
             expression="variable_a + variable_b",
@@ -238,8 +239,8 @@ class TestInDebugMode:
         assert 'value_a' in chat
 
     def test_start_with_initial_imports_evaluates_imports(self, test_caller):
-        chat, log = test_caller("type(magic_check)")
-        assert "<class 're.Pattern'>" in chat
+        chat, log = test_caller("has_magic")
+        assert "function has_magic at" in chat
 
     def test_help_call_is_ignored(self, test_caller):
         chat, log = test_caller("help")
