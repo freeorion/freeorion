@@ -1693,14 +1693,12 @@ void GUI::ProcessBrowseInfo()
 void GUI::PreRender()
 {
     // pre-render normal windows back-to-front
-    for (auto wnd : m_impl->m_zlist.RenderOrder()) {
+    for (auto& wnd : m_impl->m_zlist.RenderOrder())
         PreRenderWindow(wnd.get());
-    }
 
     // pre-render modal windows back-to-front (on top of non-modal Wnds rendered above)
-    for (const auto modal_wnd : m_impl->m_modal_wnds) {
+    for (const auto& modal_wnd : m_impl->m_modal_wnds)
         PreRenderWindow(modal_wnd.first.get());
-    }
 
     // pre-render the active browse info window, if any
     const auto curr_wnd_under_cursor{LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor)};
@@ -1709,9 +1707,8 @@ void GUI::PreRender()
         PreRenderWindow(m_impl->m_browse_info_wnd.get());
     }
 
-    for (const auto& drag_drop_wnd : m_impl->m_drag_drop_wnds) {
+    for (const auto& drag_drop_wnd : m_impl->m_drag_drop_wnds)
         PreRenderWindow(drag_drop_wnd.first.get());
-    }
 }
 
 void GUI::Render()
@@ -1724,13 +1721,13 @@ void GUI::Render()
 
     Enter2DMode();
     // render normal windows back-to-front
-    for (auto wnd : m_impl->m_zlist.RenderOrder()) {
+    for (auto& wnd : m_impl->m_zlist.RenderOrder()) {
         if (wnd)
             RenderWindow(wnd.get());
     }
 
     // render modal windows back-to-front (on top of non-modal Wnds rendered above)
-    for (const auto modal_wnd : m_impl->m_modal_wnds) {
+    for (const auto& modal_wnd : m_impl->m_modal_wnds) {
         if (modal_wnd.first)
             RenderWindow(modal_wnd.first.get());
     }
