@@ -143,7 +143,7 @@ def remove_tags(message):
     return re.sub(expr, '', message)
 
 
-def chat_human(message):
+def chat_human(message, send_to_logs=True):
     """
     Send chat message to human and print it to log.
     Log message cleared form tags.
@@ -151,7 +151,8 @@ def chat_human(message):
     human_id = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)][0]
     message = str(message)
     fo.sendChatMessage(human_id, message)
-    debug("Chat Message to human: %s", remove_tags(message))
+    if send_to_logs:
+        debug("Chat Message to human: %s", remove_tags(message))
 
 
 def cache_for_session(func):

@@ -1,16 +1,50 @@
+from io import StringIO
 from typing import Any
 
 # Tests classes
 import pytest
 
-import freeOrionAIInterface as fo
-from freeorion_tools.chat_handler import debug_chat_handler
 from freeorion_tools.chat_handler.debug_chat_handler import DebugChatHandler
 from freeorion_tools.chat_handler.chat_formatter import ChatFormatter
 from freeorion_tools.chat_handler.shell_variable import ShellVariable
 
 
-class _ChatFormatter(ChatFormatter):
+class Printer:
+    def __init__(self):
+        self.input = StringIO()
+
+    def __call__(self, message):
+        self.input.write(str(message))
+        self.input.write("\n")
+
+
+class DummyProvider:
+    def __init__(self, player_id):
+        self._player_id = player_id
+
+    def get_player_ids(self):
+        return [1, 2, 3]
+
+    def is_host(self, player_id):
+        return player_id == 1
+
+    def player_id(self):
+        return self._player_id
+
+    def player_name(self, player_id):
+        return "Player_%s" % player_id
+
+    def get_empire_id(self, player_id):
+        return player_id
+
+    def get_empire_name(self, player_id):
+        return "Empire_%s" % player_id
+
+    def get_empire_color(self, player_id):
+        return 0, 0, 0, 0
+
+
+class DummyFormatter(ChatFormatter):
     def _get_tag_rgb(self, color: (int, int, int, int)) -> (str, str):
         return '', ''
 
@@ -22,7 +56,7 @@ class _ChatFormatter(ChatFormatter):
 
 
 @pytest.fixture
-def debug_handler(monkeypatch):
+def debug_handler():
     _shell_locals = [
         ShellVariable(
             variable="variable_a",
@@ -47,115 +81,119 @@ def debug_handler(monkeypatch):
         ),
     ]
 
-    monkeypatch.setattr(debug_chat_handler, 'chat_human', print)
-    monkeypatch.setattr(debug_chat_handler.DebugChatHandler, '_shell_locals', _shell_locals)
-    monkeypatch.setattr(debug_chat_handler.DebugChatHandler, '_get_empire_string', lambda self, player_id: "player_%s" % player_id)
-    monkeypatch.setattr(fo, 'allPlayerIDs', lambda: [1, 2, 3], raising=False)
-    monkeypatch.setattr(fo, 'playerIsHost', lambda player_id: player_id == 1, raising=False)
-    monkeypatch.setattr(fo, 'playerID', lambda: 2, raising=False)
-    monkeypatch.setattr(fo, 'playerName', lambda player_id: "Player_%s" % player_id, raising=False)
-    monkeypatch.setattr(debug_chat_handler, 'ChatFormatter', _ChatFormatter)
-    return DebugChatHandler(2)
+    provider = DummyProvider(2)
+    return DebugChatHandler(
+        2,
+        provider=provider,
+        shell_locals=_shell_locals,
+        formatter=DummyFormatter(),
+        chat_printer=Printer(),
+        log_printer=Printer(),
+    )
 
 
 @pytest.fixture
-def debug_handler_for_muted_ai(monkeypatch):
-    monkeypatch.setattr(debug_chat_handler, 'chat_human', print)
-    monkeypatch.setattr(debug_chat_handler.DebugChatHandler, '_shell_locals', [])
-    monkeypatch.setattr(debug_chat_handler.DebugChatHandler, '_get_empire_string', lambda self, player_id: "player_%s" % player_id)
-    monkeypatch.setattr(fo, 'allPlayerIDs', lambda: [1, 2, 3], raising=False)
-    monkeypatch.setattr(fo, 'playerIsHost', lambda player_id: player_id == 1, raising=False)
-    monkeypatch.setattr(fo, 'playerID', lambda: 3, raising=False)
-    monkeypatch.setattr(fo, 'playerName', lambda player_id: "Player_%s" % player_id, raising=False)
-    monkeypatch.setattr(debug_chat_handler, 'ChatFormatter', _ChatFormatter)
-    return DebugChatHandler(3)
+def debug_handler_for_muted_ai():
+    provider = DummyProvider(3)
+    chat_printer = Printer()
+    return chat_printer.input, DebugChatHandler(
+        3,
+        provider=provider,
+        shell_locals=[],
+        formatter=DummyFormatter(),
+        chat_printer=chat_printer,
+        log_printer=Printer(),
+    )
+
+
+def get_output_from_handler(handler):
+    chat = handler._chat_printer.input.getvalue()
+    log = handler._log_printer.input.getvalue()
+    return chat, log
 
 
 @pytest.fixture
-def test_caller(debug_handler, capsys):
+def test_caller(debug_handler: DebugChatHandler):
     def function(message):
         # clear previous logs
-        capsys.readouterr()
+        debug_handler._chat_printer.input.truncate(0)
+        debug_handler._log_printer.input.truncate(0)
         assert debug_handler.process_message(1, message)
-        out, err = capsys.readouterr()
-        assert err == ''
-        assert "SyntaxError" not in out
-        return out
+        chat, log = get_output_from_handler(debug_handler)
+        assert "SyntaxError" not in chat
+        assert "SyntaxError" not in log
+        return chat, log
 
     return function
 
 
 class TestNonDebugModeForAiWhoResponds:
     def test_send_help_prints_user_names(self, test_caller):
-        help_message = test_caller("help")
-        assert "player_1" not in help_message
-        assert "player_2" in help_message
-        assert "player_3" in help_message
+        chat, log = test_caller("help")
+        assert "player_1" not in chat
+        assert "Empire_2 by Player_2" in chat
+        assert "Empire_3 by Player_3" in chat
 
-    def test_sending_unknown_message_is_ignored_by_handler(self, debug_handler, capsys):
+    def test_sending_unknown_message_is_ignored_by_handler(self, debug_handler: DebugChatHandler):
         handled = debug_handler.process_message(1, "hello world")
         assert handled is False
-        out, err = capsys.readouterr()
-        assert err == ''
-        assert out == ''
+        chat, log = get_output_from_handler(debug_handler)
+        assert chat == ''
+        assert log == ''
 
-    def test_sending_stop_before_start_is_swallowed_by_handler(self, debug_handler, capsys):
+    def test_sending_stop_before_start_is_swallowed_by_handler(self, debug_handler: DebugChatHandler):
         result = debug_handler.process_message(1, "stop")
         assert result is True
-        out, err = capsys.readouterr()
-        assert err == ''
-        assert out == ''
+        chat, log = get_output_from_handler(debug_handler)
+        assert chat == ''
+        assert log == ''
 
 
 class TestNonDebugModeForAiWhoMuted:
-    def test_send_help_is_ignored_by_second_ai(self, debug_handler_for_muted_ai, capsys):
-        assert debug_handler_for_muted_ai.process_message(1, "help")
-        out, err = capsys.readouterr()
-        assert err == ''
-        assert out == ''
+    def test_send_help_is_ignored_by_second_ai(self, debug_handler_for_muted_ai: tuple[StringIO, DebugChatHandler]):
+        chat_io, handler = debug_handler_for_muted_ai
+        assert handler.process_message(1, "help")
+        assert chat_io.getvalue() == ''
 
 
 class TestDebugModStart:
-    def test_sending_message_from_ai_is_propagated_by_handler(self, debug_handler, capsys):
+    def test_sending_message_from_ai_is_propagated_by_handler(self, debug_handler: DebugChatHandler):
         # ignore messages not from human
         result = debug_handler.process_message(3, "start 2")
         assert result is False
-        out, err = capsys.readouterr()
-        assert err == ''
-        assert out == ''
+        chat, log = get_output_from_handler(debug_handler)
+        assert chat == ''
+        assert log == ''
 
-    def test_starting_with_not_existing_ai_is_swallowed_by_handler(self, debug_handler, capsys):
+    def test_starting_with_not_existing_ai_is_swallowed_by_handler(self, debug_handler: DebugChatHandler):
         result = debug_handler.process_message(1, "start 10")
         assert result is True
-        out, err = capsys.readouterr()
-        assert err == ''
-        assert out == ''
+        chat, log = get_output_from_handler(debug_handler)
+        assert chat == ''
+        assert log == ''
 
-    def test_starting_with_nonnumerical_ai_is_swallowed_by_handler(self, debug_handler, capsys):
-        result = debug_handler.process_message(1, "start xxx")
-        assert result is True
-        out, err = capsys.readouterr()
-        assert not err
-        assert "Invalid empire id, please input valid number" in out
+    def test_starting_with_nonnumerical_ai_is_swallowed_by_handler(self, debug_handler: DebugChatHandler):
+        assert debug_handler.process_message(1, "start xxx")
+        chat, log = get_output_from_handler(debug_handler)
+        assert "Invalid empire id, please input valid number" in chat
 
     def test_start_start_debug_mode_for_respond_ai(self, test_caller):
-        out = test_caller("start 2")
-        assert "Entering debug mode" in out
+        chat, log = test_caller("start 2")
+        assert "Entering debug mode" in chat
 
-    def test_start_start_debug_mode_for_muted_ai(self, debug_handler_for_muted_ai, capsys):
-        debug_handler_for_muted_ai.process_message(1, "start 3")
-        out, err = capsys.readouterr()
-        assert not err
-        assert "Entering debug mode" in out
+    def test_start_start_debug_mode_for_muted_ai(self, debug_handler_for_muted_ai: tuple[StringIO, DebugChatHandler]):
+        chat_io, handler = debug_handler_for_muted_ai
+        handler.process_message(1, "start 3")
+        assert "Entering debug mode" in chat_io.getvalue()
 
     def test_sending_start_prints_intro_message(self, test_caller):
-        out = test_caller("start 2")
-        assert "variable_a" in out
-        assert "description for a" in out
-        assert "variable_b" in out
-        assert "description for b" in out
-        assert "variable_a_plus_b" in out
-        assert "scription for a+b" in out
+        chat, log = test_caller("start 2")
+        assert "variable_a" in chat
+        assert "description for a" in chat
+        assert "variable_b" in chat
+        assert "description for b" in chat
+        assert "variable_a_plus_b" in chat
+        assert "scription for a+b" in chat
 
 
 @pytest.fixture
@@ -166,77 +204,76 @@ def start_debug(test_caller):
 @pytest.mark.usefixtures("start_debug")
 class TestInDebugMode:
     def test_sending_stop_pauses_debug(self, test_caller):
-        out = test_caller("stop")
-        assert "Exiting debug mode" in out
+        chat, log = test_caller("stop")
+        assert "Exiting debug mode" in chat
 
     def test_evaluate_initial_variables_prints_them_to_chat(self, test_caller):
-        out = test_caller("variable_a")
-        assert "value_a" in out
-        assert "variable_a" in out
-        out = test_caller("variable_b")
-        assert "value_b" in out
-        assert "variable_b" in out
-        out = test_caller("variable_a_plus_b")
-        assert "value_avalue_b" in out
-        assert "variable_a_plus_b" in out
+        chat, log = test_caller("variable_a")
+        assert "value_a" in chat
+        chat, log = test_caller("variable_b")
+        assert "value_b" in chat
+        chat, log = test_caller("variable_a_plus_b")
+        assert "value_avalue_b" in chat
+
+    def test_evaluating_command_prints_command_to_log(self, test_caller):
+        chat, log = test_caller("'free' + 'orion'")
+        assert "'free' + 'orion'" in log
 
     def test_evaluating_command_prints_result(self, test_caller):
-        out = test_caller("'free' + 'orion'")
-        assert "freeorion" in out
+        chat, log = test_caller("'free' + 'orion'")
+        assert "freeorion" in chat
 
     def test_evaluating_assignment_assigns_variable(self, test_caller):
-        out = test_caller("variable_c = 'value_c'")
-        assert "variable_c" in out
-        out = test_caller("variable_c")
-        assert "value_c" in out
+        test_caller("variable_c = 'value_c'")
+        chat, log = test_caller("variable_c")
+        assert "value_c" in chat
 
-    def test_evaluating_erroneous_statement_prints_exception_to_console(self, debug_handler, capsys):
+    def test_evaluating_erroneous_statement_prints_exception_to_console(self, debug_handler: DebugChatHandler):
         assert debug_handler.process_message(1, '1/0')
-        out, err = capsys.readouterr()
-        assert err == ''
-        assert 'ZeroDivisionError: division by zero' in out
+        chat, log = get_output_from_handler(debug_handler)
+        assert 'ZeroDivisionError: division by zero' in chat
+        assert 'ZeroDivisionError: division by zero' in log
         assert debug_handler.process_message(1, 'variable_a')
-        out, err = capsys.readouterr()
-        assert err == ''
-        assert 'value_a' in out
+        chat, log = get_output_from_handler(debug_handler)
+        assert 'value_a' in chat
 
     def test_start_with_initial_imports_evaluates_imports(self, test_caller):
-        result = test_caller("magic_check")
-        assert "magic_checkre" in result
+        chat, log = test_caller("type(magic_check)")
+        assert "<class 're.Pattern'>" in chat
 
     def test_help_call_is_ignored(self, test_caller):
-        result = test_caller("help")
-        assert "Type help() for interactive help" in result
+        chat, log = test_caller("help")
+        assert "Type help() for interactive help" in chat
 
     def test_start_call_is_ignored(self, test_caller):
-        result = test_caller("start")
-        assert " name 'start' is not defined" in result
+        chat, log = test_caller("start")
+        assert " name 'start' is not defined" in chat
 
-    def test_start_with_number_call_is_ignored(self, debug_handler, capsys):
+    def test_start_with_number_call_is_ignored(self, debug_handler: DebugChatHandler):
         assert debug_handler.process_message(1, 'start 2')
-        out, err = capsys.readouterr()
-        assert err == ''
-        assert 'SyntaxError: invalid syntax' in out
+        chat, log = get_output_from_handler(debug_handler)
+        assert 'SyntaxError: invalid syntax' in log
+        assert 'SyntaxError: invalid syntax' in chat
 
 
 class TestRestart:
     def test_modified_initial_variables_are_restored(self, test_caller):
         test_caller("start 2")
         test_caller("variable_b = 'value_d'")
-        out = test_caller("variable_b")
-        assert 'value_d' in out
+        chat, log = test_caller("variable_b")
+        assert 'value_d' in chat
         test_caller("stop")
         test_caller("start 2")
-        out = test_caller("variable_b")
-        assert 'value_b' in out
-        assert 'value_d' not in out
+        chat, log = test_caller("variable_b")
+        assert 'value_b' in chat
+        assert 'value_d' not in chat
 
     def test_not_initial_variables_are_preserved(self, test_caller):
         test_caller("start 2")
         test_caller("variable_d = 'value_d'")
-        out = test_caller("variable_d")
-        assert 'value_d' in out
+        chat, log = test_caller("variable_d")
+        assert 'value_d' in chat
         test_caller("stop")
         test_caller("start 2")
-        out = test_caller("variable_d")
-        assert 'value_d' in out
+        chat, log = test_caller("variable_d")
+        assert 'value_d' in chat
