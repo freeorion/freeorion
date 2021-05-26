@@ -1,5 +1,5 @@
 from io import StringIO
-from typing import Any
+from typing import Any, Tuple
 
 # Tests classes
 import pytest
@@ -150,7 +150,7 @@ class TestNonDebugModeForAiWhoResponds:
 
 
 class TestNonDebugModeForAiWhoMuted:
-    def test_send_help_is_ignored_by_second_ai(self, debug_handler_for_muted_ai: tuple[StringIO, DebugChatHandler]):
+    def test_send_help_is_ignored_by_second_ai(self, debug_handler_for_muted_ai: Tuple[StringIO, DebugChatHandler]):
         chat_io, handler = debug_handler_for_muted_ai
         assert handler.process_message(1, "help")
         assert chat_io.getvalue() == ''
@@ -181,7 +181,7 @@ class TestDebugModStart:
         chat, log = test_caller("start 2")
         assert "Entering debug mode" in chat
 
-    def test_start_start_debug_mode_for_muted_ai(self, debug_handler_for_muted_ai: tuple[StringIO, DebugChatHandler]):
+    def test_start_start_debug_mode_for_muted_ai(self, debug_handler_for_muted_ai: Tuple[StringIO, DebugChatHandler]):
         chat_io, handler = debug_handler_for_muted_ai
         handler.process_message(1, "start 3")
         assert "Entering debug mode" in chat_io.getvalue()
