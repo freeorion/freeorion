@@ -30,11 +30,15 @@ namespace Pending {
             filename(std::move(other.filename))
         {}
 
+        Pending(const Pending& other) = delete;
+
         Pending& operator=(Pending&& other) noexcept {
             pending = std::move(other.pending);
             filename = std::move(other.filename);
             return *this;
         }
+
+        Pending& operator=(const Pending& other) = delete;
 
         boost::optional<std::future<T>> pending = boost::none;
         std::string filename;
@@ -141,7 +145,8 @@ namespace Pending {
 
     /** Return a Pending<T> constructed with \p parser, \p arg1, and \p path*/
     template <typename Func, typename Arg1>
-    auto ParseSynchronously(const Func& parser, const Arg1& arg1, const boost::filesystem::path& path, std::promise<void>&& barrier)
+    auto ParseSynchronously(const Func& parser, const Arg1& arg1, const boost::filesystem::path& path,
+                            std::promise<void>&& barrier)
         -> Pending<decltype(parser(arg1, path))>
     {
         auto result = parser(arg1, path);
@@ -177,8 +182,8 @@ namespace Pending {
      * and notify \p barrier*/
     template <typename Func>
     auto StartAsyncParsing(Func parser,
-                      const boost::filesystem::path& path,
-                      std::promise<void>&& barrier)
+                           const boost::filesystem::path& path,
+                           std::promise<void>&& barrier)
         -> Pending<decltype(parser(path))>
     {
         return Pending<decltype(parser(path))>(
@@ -205,8 +210,8 @@ namespace Pending {
       * before returning. */
     template <typename Func>
     auto ParseSynchronously(const Func& parser,
-                    const boost::filesystem::path& path,
-                    std::promise<void>&& barrier)
+                            const boost::filesystem::path& path,
+                            std::promise<void>&& barrier)
         -> Pending<decltype(parser(path))>
     {
         auto retval = std::async(std::launch::deferred, parser, path);
