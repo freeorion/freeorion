@@ -179,7 +179,7 @@ namespace {
     }
 
     bool ValidExecutableBinary(const std::string& file) {
-                // putting this in try-catch block prevents crash with error output along the lines of:
+        // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
@@ -751,7 +751,8 @@ void OptionsWnd::CompleteConstruction() {
     PathDisplay(    current_page, 0,                                    UserString("OPTIONS_FOLDER_CONFIG_LOG"),    GetUserConfigDir());
     FileOption(     current_page, 0, "misc.server-local-binary.path",   UserString("OPTIONS_SERVER_EXE"),           GetBinDir()
 #ifdef FREEORION_WIN32
-                  , {std::string("misc.server-local-binary.path"), "*" + EXE_FILE_SUFFIX});
+                  , {std::string("misc.server-local-binary.path"), "*" + EXE_FILE_SUFFIX},
+                  ValidExecutableBinary);
 #else
                     );
 #endif
