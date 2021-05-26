@@ -816,6 +816,24 @@ if(BUILD_CLIENT_GODOT)
            ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriongodot>" "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}"
+        COMMAND
+            ${CMAKE_COMMAND}
+            -DMODE=DATA_LINK
+            "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/assets/"
+            "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/data/art"
+            -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
+        COMMAND
+            ${CMAKE_COMMAND}
+            -DMODE=DATA_LINK
+            "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/assets/"
+            "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/data/fonts"
+            -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
+        COMMAND
+            ${CMAKE_COMMAND}
+            -DMODE=DATA_LINK
+            "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/assets/"
+            "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/data/sound"
+            -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
     )
     if(ANDROID)
         add_custom_command(TARGET freeoriongodot POST_BUILD
