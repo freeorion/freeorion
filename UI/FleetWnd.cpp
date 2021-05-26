@@ -3612,10 +3612,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         auto unscrap_action = [fleet]() {
             const OrderSet orders = GGHumanClientApp::GetApp()->Orders();
             for (int ship_id : fleet->ShipIDs()) {
-                for (const auto& id_and_order : orders) {
-                    if (auto order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
-                        if (order->ObjectID() == ship_id) {
-                            GGHumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
+                for (auto& [order_id, order] : orders) {
+                    if (auto scrap_order = std::dynamic_pointer_cast<ScrapOrder>(order)) {
+                        if (scrap_order->ObjectID() == ship_id) {
+                            GGHumanClientApp::GetApp()->Orders().RescindOrder(order_id);
                             // could break here, but won't to ensure there are no problems with doubled orders
                         }
                     }
