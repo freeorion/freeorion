@@ -67,3 +67,25 @@ This script should be run from directory where `tox.ini` located
 cd default/python
 flake8
 ```
+
+## Automate check with pre commit hooks
+Hooks are useful, but optional. 
+This is a tool for developers to be notified quickly,
+the point of truth is GitHub actions. 
+They will run the same set of checks. 
+
+[Install pre-commit](https://pre-commit.com/#install) 
+```sh
+pip install pre-commit
+```
+
+Run hook installation in the root folder:
+```sh
+pre-commit install 
+```
+
+This step should be done once, pre-commit track config files and will autoupdate on changes.
+
+Notes:
+- First commit after installation/update of hooks may take some time.
+- You can skip checks by adding `-n, --no-verify` to `git commit`.
