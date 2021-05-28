@@ -33,7 +33,7 @@ Policy
                 Armed
                 Species name = Source.Species
             ])
-            * (NamedReal name = "PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE" value = 0.25)
+            * (NamedReal name = "PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE" value = 2.0)
         ]
 
         // makes armed ships crewed by imperial capital planet's species cost influence
