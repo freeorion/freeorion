@@ -2995,7 +2995,7 @@ namespace {
                 // if planet is unowned and victor is an empire, or if planet is
                 // owned by an empire that is not the victor, conquer it
                 if ((victor_id != ALL_EMPIRES) && (planet->Unowned() || !planet->OwnedBy(victor_id))) {
-                    planet->Conquer(victor_id);
+                    planet->Conquer(victor_id, empires, objects);
 
                     // create planet conquered sitrep for all involved empires
                     for (int empire_id : all_involved_empires) {
@@ -3010,7 +3010,7 @@ namespace {
 
                 } else if (!planet->Unowned() && victor_id == ALL_EMPIRES) {
                     int previous_owner_id = planet->Owner();
-                    planet->Conquer(ALL_EMPIRES);
+                    planet->Conquer(ALL_EMPIRES, empires, objects);
                     DebugLogger() << "Independents conquer planet";
                     for (const auto& empire_troops : empires_troops)
                         DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second;
@@ -3147,7 +3147,7 @@ namespace {
                         empire->AddSitRepEntry(CreateFleetGiftedSitRep(gifted_obj->ID(), initial_owner_empire_id));
                 }
 
-                Empire::ConquerProductionQueueItemsAtLocation(gifted_obj->ID(), recipient_empire_id); // TODO: pass empires in...
+                Empire::ConquerProductionQueueItemsAtLocation(gifted_obj->ID(), recipient_empire_id, empires);
             }
         }
     }

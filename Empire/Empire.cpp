@@ -1632,7 +1632,7 @@ void Empire::AllowUseImperialPP(int index, bool allow /*=true*/) {
     m_production_queue[index].allowed_imperial_stockpile_use = allow;
 }
 
-void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_id) {
+void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_id, EmpireManager& empires) {
     if (location_id == INVALID_OBJECT_ID) {
         ErrorLogger() << "Empire::ConquerProductionQueueItemsAtLocation: tried to conquer build items located at an invalid location";
         return;
@@ -1641,18 +1641,16 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
     DebugLogger() << "Empire::ConquerProductionQueueItemsAtLocation: conquering items located at "
                   << location_id << " to empire " << empire_id;
 
-    Empire* to_empire = GetEmpire(empire_id);    // may be null
+    auto to_empire = empires.GetEmpire(empire_id);    // may be null
     if (!to_empire && empire_id != ALL_EMPIRES) {
         ErrorLogger() << "Couldn't get empire with id " << empire_id;
         return;
     }
 
 
-    for (auto& entry : Empires()) {
-        int from_empire_id = entry.first;
+    for (auto& [from_empire_id, from_empire] : empires) {
         if (from_empire_id == empire_id) continue;    // skip this empire; can't capture one's own ProductionItems
 
-        auto& from_empire = entry.second;
         ProductionQueue& queue = from_empire->m_production_queue;
 
         for (auto queue_it = queue.begin(); queue_it != queue.end(); ) {

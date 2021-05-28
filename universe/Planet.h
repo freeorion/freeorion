@@ -135,9 +135,8 @@ public:
     void AddBuilding(int building_id);      ///< adds the building to the planet
     bool RemoveBuilding(int building_id);   ///< removes the building from the planet; returns false if no such building was found
 
-    void Conquer(int conquerer);            ///< Called during combat when a planet changes hands
-    bool Colonize(int empire_id, std::string species_name,
-                  double population);       ///< Called during colonization handling to do the actual colonizing
+    void Conquer(int conquerer, EmpireManager& empires, ObjectMap& objects);    ///< Called during combat when a planet changes hands
+    bool Colonize(int empire_id, std::string species_name, double population);  ///< Called during colonization handling to do the actual colonizing
     void SetIsAboutToBeColonized(bool b);   ///< Called during colonization when a planet is about to be colonized
     void ResetIsAboutToBeColonized();       ///< Called after colonization, to reset the number of prospective colonizers to 0
     void SetIsAboutToBeInvaded(bool b);     ///< Marks planet as being invaded or not, depending on whether \a b is true or false

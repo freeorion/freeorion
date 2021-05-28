@@ -477,7 +477,7 @@ public:
       * adds them to the build queue of the indicated empires (if it is an
       * empire), deletes them, or leaves them on the build queue of their
       * current empire */
-    static void ConquerProductionQueueItemsAtLocation(int location_id, int empire_id);
+    static void ConquerProductionQueueItemsAtLocation(int location_id, int empire_id, EmpireManager& empires);
 
     mutable boost::signals2::signal<void ()> ShipDesignsChangedSignal;
     mutable boost::signals2::signal<void ()> PoliciesChangedSignal;

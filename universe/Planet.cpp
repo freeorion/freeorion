@@ -645,14 +645,14 @@ void Planet::Depopulate() {
     ClearFocus();
 }
 
-void Planet::Conquer(int conquerer) {
+void Planet::Conquer(int conquerer, EmpireManager& empires, ObjectMap& objects) {
     m_turn_last_conquered = CurrentTurn();
 
     // deal with things on production queue located at this planet
-    Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer);
+    Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer, empires);
 
     // deal with UniverseObjects (eg. buildings) located on this planet
-    for (auto& building : Objects().find<Building>(m_buildings)) {
+    for (auto& building : objects.find<Building>(m_buildings)) {
         const BuildingType* type = GetBuildingType(building->BuildingTypeName());
 
         // determine what to do with building of this type...
@@ -665,7 +665,7 @@ void Planet::Conquer(int conquerer) {
             // destroy object
             //DebugLogger() << "Planet::Conquer destroying object: " << building->Name();
             this->RemoveBuilding(building->ID());
-            if (auto system = Objects().get<System>(this->SystemID()))
+            if (auto system = objects.get<System>(this->SystemID()))
                 system->Remove(building->ID());
             GetUniverse().Destroy(building->ID());
         } else if (cap_result == CaptureResult::CR_RETAIN) {
