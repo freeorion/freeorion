@@ -3054,11 +3054,11 @@ namespace {
 
     /** Determines which fleets or planets ordered given to other empires,
       * and sets their new ownership */
-    void HandleGifting() {
+    void HandleGifting(EmpireManager& empires, ObjectMap& objects) {
         std::map<int, std::vector<std::shared_ptr<UniverseObject>>> empire_gifted_objects;
 
         // collect fleets ordered to be given
-        for (auto& fleet : GetUniverse().Objects().all<Fleet>()) {
+        for (auto& fleet : objects.all<Fleet>()) {
             int ordered_given_to_empire_id = fleet->OrderedGivenToEmpire();
             if (ordered_given_to_empire_id == ALL_EMPIRES)
                 continue;
@@ -3073,7 +3073,7 @@ namespace {
         }
 
         // collect planets ordered to be given
-        for (auto& planet : GetUniverse().Objects().all<Planet>()) {
+        for (auto& planet : objects.all<Planet>()) {
             int ordered_given_to_empire_id = planet->OrderedGivenToEmpire();
             if (ordered_given_to_empire_id == ALL_EMPIRES)
                 continue;
@@ -3086,19 +3086,19 @@ namespace {
         }
 
         // further filter ordered given objects and do giving if appropriate
-        for (auto& gifted_objects : empire_gifted_objects) {
-            int recipient_empire_id = gifted_objects.first;
+        std::map<std::pair<int, int>, Effect::TargetSet> filtered_empire_gifted_objects; // ((original owner, recipient), objects)
+        for (auto& [recipient_empire_id, gifted_objects] : empire_gifted_objects) {
             std::map<int, bool> systems_contain_recipient_empire_owned_objects;
 
             // for each recipient empire, process objects it is being gifted
-            for (auto& gifted_obj : gifted_objects.second) {
+            for (auto& gifted_obj : gifted_objects) {
                 int initial_owner_empire_id = gifted_obj->Owner();
 
 
                 // gifted object must be in a system
                 if (gifted_obj->SystemID() == INVALID_OBJECT_ID)
                     continue;
-                auto system = Objects().get<System>(gifted_obj->SystemID());
+                auto system = objects.get<System>(gifted_obj->SystemID());
                 if (!system)
                     continue;
 
@@ -3112,7 +3112,7 @@ namespace {
 
                 } else {
                     // not cached, so scan for objects
-                    for (auto& system_obj : Objects().find<const UniverseObject>(system->ObjectIDs())) {
+                    for (auto& system_obj : objects.find<const UniverseObject>(system->ObjectIDs())) {
                         if (system_obj->OwnedBy(recipient_empire_id)) {
                             can_receive_here = true;
                             systems_contain_recipient_empire_owned_objects[system->ID()] = true;
@@ -3126,20 +3126,28 @@ namespace {
                     continue;
 
                 // recipient empire can receive objects at this system, so do transfer
-                for (auto& contained_obj : Objects().find<UniverseObject>(gifted_obj->ContainedObjectIDs())) {
+                filtered_empire_gifted_objects[{initial_owner_empire_id, recipient_empire_id}].push_back(std::move(gifted_obj));
+            }
+        }
+
+        // do transfers of ownership of gifted stuff without further checks
+        for (auto& [initial_recipient_ids, gifted_objects] : filtered_empire_gifted_objects) {
+            const auto& [initial_owner_empire_id, recipient_empire_id] = initial_recipient_ids;
+            for (auto& gifted_obj : gifted_objects) {
+                for (auto& contained_obj : objects.find<UniverseObject>(gifted_obj->ContainedObjectIDs())) {
                     if (contained_obj->OwnedBy(initial_owner_empire_id))
                         contained_obj->SetOwner(recipient_empire_id);
                 }
                 gifted_obj->SetOwner(recipient_empire_id);
 
-                if (Empire* empire = GetEmpire(recipient_empire_id)) {
+                if (auto empire = empires.GetEmpire(recipient_empire_id)) {
                     if (gifted_obj->ObjectType() == UniverseObjectType::OBJ_PLANET)
                         empire->AddSitRepEntry(CreatePlanetGiftedSitRep(gifted_obj->ID(), initial_owner_empire_id));
                     else if (gifted_obj->ObjectType() == UniverseObjectType::OBJ_FLEET)
                         empire->AddSitRepEntry(CreateFleetGiftedSitRep(gifted_obj->ID(), initial_owner_empire_id));
                 }
 
-                Empire::ConquerProductionQueueItemsAtLocation(gifted_obj->ID(), recipient_empire_id);
+                Empire::ConquerProductionQueueItemsAtLocation(gifted_obj->ID(), recipient_empire_id); // TODO: pass empires in...
             }
         }
     }
@@ -3309,7 +3317,7 @@ void ServerApp::PreCombatProcessTurns() {
     HandleInvasion(m_empires, m_universe);
 
     DebugLogger() << "ServerApp::ProcessTurns gifting";
-    HandleGifting();
+    HandleGifting(m_empires, m_universe.Objects());
 
     DebugLogger() << "ServerApp::ProcessTurns scrapping";
     HandleScrapping();
