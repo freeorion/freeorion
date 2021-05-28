@@ -149,7 +149,7 @@ namespace {
 
     boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedXAvailability(bool available, bool restricted) const {
-        const auto [showing_restricted, showing_available, showing_future] = m_availabilities;
+        const auto& [showing_restricted, showing_available, showing_future] = m_availabilities;
 
         bool res = showing_restricted && available && restricted;
         bool now = showing_available  && available && !restricted;
@@ -1006,7 +1006,7 @@ void PolicySlotControl::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_pt
     if (wnds.size() != 1)
         ErrorLogger() << "PolicySlotControl::AcceptDrops given multiple wnds unexpectedly...";
 
-    const auto wnd = *(wnds.begin());
+    const auto& wnd = *(wnds.begin());
     auto* control = boost::polymorphic_downcast<const PolicyControl*>(wnd.get());
     const Policy* policy_type = control ? control->GetPolicy() : nullptr;
 
@@ -1207,12 +1207,8 @@ namespace {
         if (!empire)
             return retval;
 
-        const std::map<std::string, int> policy_slots = empire->TotalPolicySlots();
-
         // for every slot in every category, add entry to retval in series
-        for (const auto& cat_slots : policy_slots) {
-            unsigned int num_slots_in_cat = static_cast<int>(cat_slots.second);
-            const std::string& cat_name = cat_slots.first;
+        for (auto& [cat_name, num_slots_in_cat] : empire->TotalPolicySlots()) {
             for (unsigned int n = 0; n < num_slots_in_cat; ++n)
                 retval.emplace_back(cat_name, n);
         }
