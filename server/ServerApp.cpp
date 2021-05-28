@@ -3265,17 +3265,16 @@ void ServerApp::PreCombatProcessTurns() {
     CleanUpBombardmentStateInfo();
 
     // execute orders
-    for (const auto& empire_orders : m_turn_sequence) {
-        auto& save_game_data = empire_orders.second;
+    for (auto& [orders_empire_id, save_game_data] : m_turn_sequence) {
         if (!save_game_data) {
-            DebugLogger() << "No SaveGameData for empire " << empire_orders.first;
+            DebugLogger() << "No SaveGameData for empire " << orders_empire_id;
             continue;
         }
         if (!save_game_data->orders) {
-            DebugLogger() << "No OrderSet for empire " << empire_orders.first;
+            DebugLogger() << "No OrderSet for empire " << orders_empire_id;
             continue;
         }
-        DebugLogger() << "<<= Executing Orders for empire " << empire_orders.first << " =>>";
+        DebugLogger() << "<<= Executing Orders for empire " << orders_empire_id << " =>>";
         save_game_data->orders->ApplyOrders();
     }
 
@@ -3482,13 +3481,13 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // check for loss of empire capitals
-    for (auto& entry : m_empires) {
-        int capital_id = entry.second->CapitalID();
+    for (auto& [empire_id, empire] : m_empires) {
+        int capital_id = empire->CapitalID();
         if (auto capital = m_universe.Objects().get(capital_id)) {
-            if (!capital->OwnedBy(entry.first))
-                entry.second->SetCapitalID(INVALID_OBJECT_ID);
+            if (!capital->OwnedBy(empire_id))
+                empire->SetCapitalID(INVALID_OBJECT_ID);
         } else {
-            entry.second->SetCapitalID(INVALID_OBJECT_ID);
+            empire->SetCapitalID(INVALID_OBJECT_ID);
         }
     }
 
@@ -3586,13 +3585,13 @@ void ServerApp::PostCombatProcessTurns() {
     m_empires.BackPropagateMeters();
 
     // check for loss of empire capitals
-    for (auto& entry : m_empires) {
-        int capital_id = entry.second->CapitalID();
+    for (auto& [empire_id, empire] : m_empires) {
+        int capital_id = empire->CapitalID();
         if (auto capital = m_universe.Objects().get(capital_id)) {
-            if (!capital->OwnedBy(entry.first))
-                entry.second->SetCapitalID(INVALID_OBJECT_ID);
+            if (!capital->OwnedBy(empire_id))
+                empire->SetCapitalID(INVALID_OBJECT_ID);
         } else {
-            entry.second->SetCapitalID(INVALID_OBJECT_ID);
+            empire->SetCapitalID(INVALID_OBJECT_ID);
         }
     }
 
