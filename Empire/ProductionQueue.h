@@ -179,6 +179,7 @@ struct FO_COMMON_API ProductionQueue {
 
     // STL container-like interface
     void        push_back(const Element& element);
+    void        push_back(Element&& element);
     void        insert(iterator it, const Element& element);
     void        erase(int i);
     iterator    erase(iterator it);
