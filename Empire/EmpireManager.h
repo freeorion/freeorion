@@ -16,6 +16,7 @@
 
 class Empire;
 class UniverseObject;
+typedef std::array<unsigned char, 4> EmpireColor;
 
 /** Maintains all of the Empire objects that exist in the application. */
 class FO_COMMON_API EmpireManager {
@@ -70,7 +71,7 @@ public:
       * caller's responsibility to make sure that universe updates planet
       * ownership. */
     void        CreateEmpire(int empire_id, std::string name, std::string player_name,
-                             const std::array<unsigned char, 4>& color, bool authenticated);
+                             const EmpireColor& color, bool authenticated);
 
     /** Removes and deletes all empires from the manager. */
     void        Clear();

@@ -122,8 +122,7 @@ void EmpireManager::BackPropagateMeters() {
         entry.second->BackPropagateMeters();
 }
 
-void EmpireManager::CreateEmpire(int empire_id, std::string name,
-                                 std::string player_name,
+void EmpireManager::CreateEmpire(int empire_id, std::string name, std::string player_name,
                                  const EmpireColor& color, bool authenticated)
 {
     auto empire = std::make_shared<Empire>(std::move(name), std::move(player_name),
