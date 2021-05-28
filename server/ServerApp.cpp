@@ -3638,9 +3638,12 @@ void ServerApp::PostCombatProcessTurns() {
     }
 
 
+    // do another policy update before final meter update to be consistent with what clients calculate...
+    UpdateEmpirePolicies(m_empires);
+
+
     TraceLogger(effects) << "ServerApp::PostCombatProcessTurns Before Final Meter Estimate Update: ";
     TraceLogger(effects) << m_universe.Objects().Dump();
-
 
     // redo meter estimates to hopefully be consistent with what happens in clients
     m_universe.UpdateMeterEstimates(context, false);
