@@ -355,14 +355,16 @@ void Empire::UpdatePolicies() {
         (void)policy_name; // quiet warning
         const auto& [adoption_turn, slot_in_category, category] = adoption_info;
         (void)adoption_turn; // quiet warning
-        const auto& slot_count = category_slot_policy_counts[category][slot_in_category]++;
-        if (slot_count > 1 || slot_in_category >= total_category_slot_counts[category])
+        const auto& slot_count = category_slot_policy_counts[category][slot_in_category]++; // count how many policies in this slot of this category...
+        if (slot_count > 1 || slot_in_category >= total_category_slot_counts[category])     // if multiple policies in a slot, or slot a policy is in is too high, mark category as problematic...
             categories_needing_rearrangement.insert(category);
     }
 
     // if a category has too many policies or a slot number conflict, rearrange it
     // and remove the excess policies
     for (const auto& cat : categories_needing_rearrangement) {
+        DebugLogger() << "Rearranging poilicies in category " << cat << ":";
+
         policies_temp = m_adopted_policies;
 
         // all adopted policies in this category, sorted by slot and adoption turn (lower first)
@@ -373,13 +375,17 @@ void Empire::UpdatePolicies() {
                 continue;
             slots_turns_policies.emplace(std::pair(slot, turn), temp_policy_name);
             m_adopted_policies.erase(temp_policy_name);    // remove everything from adopted policies in this category...
+            DebugLogger() << "... Policy " << temp_policy_name << " was in slot " << slot;
         }
         // re-add in category up to limit, ordered priority by original slot and adoption turn
         int added = 0;
         for (auto& [slot_turn, policy_name] : slots_turns_policies) {
+            const auto& turn = slot_turn.second;
             if (added >= total_category_slot_counts[cat])
                 break;  // can't add more...
-            m_adopted_policies[std::move(policy_name)] = PolicyAdoptionInfo{slot_turn.second, cat, slot_turn.first};
+            int new_slot = added++;
+            m_adopted_policies[std::move(policy_name)] = PolicyAdoptionInfo{turn, cat, new_slot};
+            DebugLogger() << "... Policy " << policy_name << " was re-added in slot " << new_slot;
         }
     }
 
