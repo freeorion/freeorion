@@ -33,10 +33,8 @@ namespace {
         std::vector<std::pair<std::string, std::string>> retval;
 
         // derive meters from PolicyManager parsed policies' categories
-        for (auto& cat : GetPolicyManager().PolicyCategories()) {
-            std::string&& slots_string{cat + "_NUM_POLICY_SLOTS"};
-            retval.emplace_back(cat, std::move(slots_string));
-        }
+        for (auto& cat : GetPolicyManager().PolicyCategories())
+            retval.emplace_back(cat, cat + "_NUM_POLICY_SLOTS");
         return retval;
     }
 
@@ -369,21 +367,19 @@ void Empire::UpdatePolicies() {
 
         // all adopted policies in this category, sorted by slot and adoption turn (lower first)
         std::multimap<std::pair<int, int>, std::string> slots_turns_policies;
-        for (auto policy_pair : policies_temp) {
-            if (policy_pair.second.category != cat)
+        for (auto& [temp_policy_name, temp_adoption_info] : policies_temp) {
+            const auto& [turn, slot, temp_category] = temp_adoption_info;  // PolicyAdoptionInfo { int adoption_turn; int slot_in_category; std::string category; }
+            if (temp_category != cat)
                 continue;
-            auto slot = policy_pair.second.slot_in_category;
-            auto turn = policy_pair.second.adoption_turn;
-            slots_turns_policies.emplace(std::make_pair(slot, turn), policy_pair.first);
-            m_adopted_policies.erase(policy_pair.first);    // remove everything from adopted policies in this category...
+            slots_turns_policies.emplace(std::pair(slot, turn), temp_policy_name);
+            m_adopted_policies.erase(temp_policy_name);    // remove everything from adopted policies in this category...
         }
         // re-add in category up to limit, ordered priority by original slot and adoption turn
         int added = 0;
-        for (auto slot_turn_policy_pair : slots_turns_policies) {
+        for (auto& [slot_turn, policy_name] : slots_turns_policies) {
             if (added >= total_category_slot_counts[cat])
                 break;  // can't add more...
-            m_adopted_policies[std::move(slot_turn_policy_pair.second)] = {
-                slot_turn_policy_pair.first.second, cat, slot_turn_policy_pair.first.first};
+            m_adopted_policies[std::move(policy_name)] = PolicyAdoptionInfo{slot_turn.second, cat, slot_turn.first};
         }
     }
 
@@ -426,15 +422,15 @@ std::vector<std::string> Empire::AdoptedPolicies() const {
 std::map<std::string, std::map<int, std::string>>
 Empire::CategoriesSlotsPoliciesAdopted() const {
     std::map<std::string, std::map<int, std::string>> retval;
-    for (const auto& entry : m_adopted_policies)
-        retval[entry.second.category][entry.second.slot_in_category] = entry.first;
+    for (auto& [policy_name, adoption_info] : m_adopted_policies)
+        retval[adoption_info.category][adoption_info.slot_in_category] = policy_name;
     return retval;
 }
 
 std::map<std::string, int> Empire::TurnsPoliciesAdopted() const {
     std::map<std::string, int> retval;
-    for (const auto& entry : m_adopted_policies)
-        retval.emplace_hint(retval.end(), entry.first, entry.second.adoption_turn);
+    for (auto& [policy_name, adoption_info] : m_adopted_policies)
+        retval.emplace_hint(retval.end(), policy_name, adoption_info.adoption_turn);
     return retval;
 }
 
@@ -450,15 +446,16 @@ bool Empire::PolicyPrereqsAndExclusionsOK(const std::string& name) const {
         return false;
 
     // is there an exclusion or prerequisite conflict?
-    for (const auto& already_adopted_policy_name_info : m_adopted_policies) {
-        if (policy_to_adopt->Exclusions().count(already_adopted_policy_name_info.first)) {
+    for (auto& [already_adopted_policy_name, ignored] : m_adopted_policies) {
+        (void)ignored; // quiet warning
+        if (policy_to_adopt->Exclusions().count(already_adopted_policy_name)) {
             // policy to be adopted has an exclusion with an already-adopted policy
             return false;
         }
 
-        const Policy* already_adopted_policy = GetPolicy(already_adopted_policy_name_info.first);
+        const Policy* already_adopted_policy = GetPolicy(already_adopted_policy_name);
         if (!already_adopted_policy) {
-            ErrorLogger() << "Couldn't get already adopted policy: " << already_adopted_policy_name_info.first;
+            ErrorLogger() << "Couldn't get already adopted policy: " << already_adopted_policy_name;
             continue;
         }
         if (already_adopted_policy->Exclusions().count(name)) {
@@ -483,15 +480,15 @@ bool Empire::PolicyPrereqsAndExclusionsOK(const std::string& name) const {
 std::map<std::string, int> Empire::TotalPolicySlots() const {
     std::map<std::string, int> retval;
     // collect policy slot category meter values and return
-    for (auto& cat_meter_pair : PolicyCategoriesSlotsMeters()) {
-        if (!m_meters.count(cat_meter_pair.second))
+    for (auto& [cat, cat_slots_string] : PolicyCategoriesSlotsMeters()) {
+        if (!m_meters.count(cat_slots_string))
             continue;
-        auto it = m_meters.find(cat_meter_pair.second);
+        auto it = m_meters.find(cat_slots_string);
         if (it == m_meters.end()) {
-            ErrorLogger() << "Empire doesn't have policy category slot meter with name: " << cat_meter_pair.second;
+            ErrorLogger() << "Empire doesn't have policy category slot meter with name: " << cat_slots_string;
             continue;
         }
-        retval[std::move(cat_meter_pair.first)] = static_cast<int>(it->second.Initial());
+        retval[std::move(cat)] = static_cast<int>(it->second.Initial());
     }
     return retval;
 }
@@ -501,8 +498,10 @@ std::map<std::string, int> Empire::EmptyPolicySlots() const {
     std::map<std::string, int> retval = TotalPolicySlots();
 
     // subtract used policy categories
-    for (const auto& policy_cat_pair : m_adopted_policies)
-        retval[policy_cat_pair.second.category]--;
+    for (auto& [ignored, adoption_info] : m_adopted_policies) {
+        (void)ignored; // quiet warning
+        retval[adoption_info.category]--;
+    }
 
     // return difference
     return retval;
@@ -641,10 +640,9 @@ const std::string& Empire::MostRPSpentEnqueuedTech() const {
     const std::map<std::string, float>::value_type* best_progress = nullptr;
 
     for (const auto& progress : m_research_progress) {
-        const auto& tech_name = progress.first;
+        const auto& [tech_name, rp_spent] = progress;
         if (!m_research_queue.InQueue(tech_name))
             continue;
-        float rp_spent = progress.second;
         if (rp_spent > most_spent) {
             best_progress = &progress;
             most_spent = rp_spent;
@@ -661,7 +659,7 @@ const std::string& Empire::MostRPCostLeftEnqueuedTech() const {
     const std::map<std::string, float>::value_type* best_progress = nullptr;
 
     for (const auto& progress : m_research_progress) {
-        const auto& tech_name = progress.first;
+        const auto& [tech_name, rp_spent] = progress;
         const Tech* tech = GetTech(tech_name);
         if (!tech)
             continue;
@@ -669,7 +667,6 @@ const std::string& Empire::MostRPCostLeftEnqueuedTech() const {
         if (!m_research_queue.InQueue(tech_name))
             continue;
 
-        float rp_spent = progress.second;
         float rp_total_cost = tech->ResearchCost(m_id);
         float rp_left = std::max(0.0f, rp_total_cost - rp_spent);
 
