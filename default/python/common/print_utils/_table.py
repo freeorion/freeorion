@@ -7,7 +7,7 @@ If you improve it somehow, add usage example to __main__ section.
 from collections import defaultdict
 from itertools import zip_longest
 from math import ceil
-from typing import Any, Callable, Collection, List, Tuple, Union
+from typing import Any, Callable, Collection, Union
 
 from common.print_utils._base_field import Field
 
@@ -53,27 +53,13 @@ class Table:
         self._header_sep = header_sep
         self._vertical_sep = vertical_sep
         self._rows = []
-        self._headers = self._extract_fileds(fields)
+        self._headers = fields
         self.totals = defaultdict(int)
-
-    def _extract_fileds(self, fields: Tuple[Union[Field, Collection[Field]]]) -> List[Field]:
-        """
-        Extract fields.
-
-        We support 2 types of arguments:
-        - tuple of fields
-        - tuple with one element which is collection of field
-          TODO update usages and remove this usages
-        """
-        if len(fields) == 1 and not isinstance(fields, Field):
-            return fields[0]
-        else:
-            return fields
 
     def __str__(self):
         return self.get_table()
 
-    def add_row(self, row):
+    def add_row(self, *row):
         table_row = []
         for filed, val in zip(self._headers, row):
             if filed.total:

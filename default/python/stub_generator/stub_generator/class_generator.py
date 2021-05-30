@@ -93,11 +93,11 @@ def _report_classes_without_instances(classes_map: Iterable[str], instance_names
         width=60
     ))
 
-    table = Table([Text("classes without instances")], )
+    table = Table(Text("classes without instances"))
 
     for inst in sorted(missed_instances, key=str.lower):
-        table.add_row((str(inst),))
-    warning(table.get_table())
+        table.add_row(inst)
+    table.print_table(warning)
 
 
 class ClassGenerator(BaseGenerator):
