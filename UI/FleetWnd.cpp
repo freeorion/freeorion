@@ -174,13 +174,13 @@ namespace {
     }
 
     FleetAggression AggressionForFleet(FleetAggression aggression_mode, const std::vector<int>& ship_ids) {
-        if (aggression_mode <= FleetAggression::FLEET_AGGRESSIVE &&
-            aggression_mode >= FleetAggression::FLEET_PASSIVE)
+        if (aggression_mode < FleetAggression::NUM_FLEET_AGGRESSIONS &&
+            aggression_mode > FleetAggression::INVALID_FLEET_AGGRESSION)
         { return aggression_mode; }
         // auto aggression; examine ships to see if any are armed...
         if (ContainsArmedShips(ship_ids))
-            return FleetAggression::FLEET_OBSTRUCTIVE;
-        return FleetAggression::FLEET_PASSIVE;
+            return FleetDefaults::FLEET_DEFAULT_ARMED;
+        return FleetDefaults::FLEET_DEFAULT_UNARMED;
     }
 
     void CreateNewFleetFromShips(const std::vector<int>& ship_ids,
@@ -195,8 +195,6 @@ namespace {
         // TODO: Should probably have the sound effect occur exactly once instead
         //       of not at all.
         Sound::TempUISoundDisabler sound_disabler;
-
-        std::set<int> original_fleet_ids; // ids of fleets from which ships were taken
 
         // validate ships in each group, and generate fleet names for those ships
         const auto ships = Objects().find<const Ship>(ship_ids);
@@ -220,8 +218,6 @@ namespace {
                  ErrorLogger() << "CreateNewFleetFromShips passed ships not owned by this client's empire";
                  return;
              }
-
-             original_fleet_ids.insert(ship->FleetID());
         }
 
         // create new fleet with ships
@@ -302,7 +298,7 @@ namespace {
         std::vector<int> empire_system_fleet_ids;
         empire_system_fleet_ids.reserve(all_system_fleets.size());
         std::vector<int> empire_system_ship_ids;
-        empire_system_ship_ids.reserve(all_system_fleets.size());   // probably an underesitmate
+        empire_system_ship_ids.reserve(all_system_fleets.size());   // probably an underestimate
 
         for (auto& fleet : all_system_fleets) {
             if (!fleet->OwnedBy(client_empire_id))
@@ -3532,9 +3528,6 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     {
         auto split_action = [this, &ship_ids_set]() {
             ScopedTimer split_fleet_timer("FleetWnd::SplitFleet", true);
-            // remove first ship from set, so it stays in its existing fleet
-            auto ship_id_it = ship_ids_set.begin();
-            ship_ids_set.erase(ship_id_it);
 
             FleetAggression new_aggression_setting = FleetAggression::INVALID_FLEET_AGGRESSION;
             if (m_new_fleet_drop_target)

@@ -2495,7 +2495,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                     // rename fleet, given its id and the ship that is in it
                     next_fleet->Rename(next_fleet->GenerateFleetName(context.ContextObjects()));
                     FleetAggression new_aggr = next_fleet->HasArmedShips(context.ContextObjects()) ?
-                        FleetAggression::FLEET_AGGRESSIVE : FleetAggression::FLEET_DEFENSIVE;
+                        FleetDefaults::FLEET_DEFAULT_ARMED : FleetDefaults::FLEET_DEFAULT_UNARMED;
                     next_fleet->SetAggression(new_aggr);
 
                     if (rally_point_id != INVALID_OBJECT_ID) {

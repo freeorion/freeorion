@@ -46,6 +46,11 @@ FO_ENUM(
     ((NUM_FLEET_AGGRESSIONS))
 )
 
+namespace FleetDefaults {
+    constexpr auto FLEET_DEFAULT_ARMED = FleetAggression::FLEET_AGGRESSIVE;
+    constexpr auto FLEET_DEFAULT_UNARMED = FleetAggression::FLEET_DEFENSIVE;
+}
+
 /** Encapsulates data for a FreeOrion fleet.  Fleets are basically a group of
   * ships that travel together. */
 class FO_COMMON_API Fleet : public UniverseObject {
