@@ -235,8 +235,13 @@ public:
 private:
     NamedValueRefManager();
 
+#ifdef __clang__
+    template <typename T>
+    friend struct ValueRef::NamedRef; // for SetTopLevelContent
+#else
     template <typename T>
     friend void ValueRef::NamedRef<T>::SetTopLevelContent(const std::string& content_name);
+#endif
 
     // getter of mutable ValueRef<T>* that can be modified within SetTopLevelContext functions
     template <typename T>
