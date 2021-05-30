@@ -5,7 +5,7 @@ from operator import attrgetter
 from typing import Callable, Dict, Iterator, List, NamedTuple, Tuple
 
 import freeOrionAIInterface as fo
-from common.print_utils import Float, Table, Text
+from common.print_utils import Number, Table, Text
 
 
 class CallInfo(NamedTuple):
@@ -81,27 +81,20 @@ class Tracker:
     def report_turn(self):
         turn = fo.currentTurn()
         table = Table(
-            [
-                Text('Order'),
-                Float("S", precession=0, description="Issued orders"),
-                Float("F", precession=0, description="Failed orders"),
-                Float("Turn", precession=0, description="Total this turn"),
-                Float("Total", precession=0, description="Grand total"),
-            ],
+            Text('Order'),
+            Number("I", precession=0, description="Issued orders", placeholder=" "),
+            Number("F", precession=0, description="Failed orders", placeholder=" "),
+            Number("Turn", precession=0, description="Total this turn", placeholder=" "),
+            Number("Total", precession=0, description="Grand total", placeholder=" "),
             table_name="Issuing orders analytics for turn {}".format(turn),
-
         )
 
         for jar in self.jars:
-
             results = Counter(item.result for item in jar.get_turn(turn))
-
             success = results[True]
             fail = results[False]
             total = success + fail
             table.add_row(
                 (jar.name, success, fail, total, jar.get_total())
             )
-
-        for row in table.get_table().split("\n"):
-            print(row)
+        table.print_table(info)
