@@ -181,9 +181,7 @@ namespace Pending {
     /** Return a Pending<T> constructed with \p parser and \p path
      * and notify \p barrier*/
     template <typename Func>
-    auto StartAsyncParsing(Func parser,
-                           const boost::filesystem::path& path,
-                           std::promise<void>&& barrier)
+    auto StartAsyncParsing(Func parser, const boost::filesystem::path& path, std::promise<void>&& barrier)
         -> Pending<decltype(parser(path))>
     {
         return Pending<decltype(parser(path))>(
@@ -209,9 +207,7 @@ namespace Pending {
       * executes the parser in the calling thread and stores the result
       * before returning. */
     template <typename Func>
-    auto ParseSynchronously(const Func& parser,
-                            const boost::filesystem::path& path,
-                            std::promise<void>&& barrier)
+    auto ParseSynchronously(const Func& parser, const boost::filesystem::path& path, std::promise<void>&& barrier)
         -> Pending<decltype(parser(path))>
     {
         auto retval = std::async(std::launch::deferred, parser, path);
