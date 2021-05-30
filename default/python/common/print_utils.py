@@ -38,7 +38,7 @@ class Base:
     header_fmt = ''
     fmt = None
 
-    def __init__(self, name, align='<', description=None, **kwargs):
+    def __init__(self, name, align='<', description=None, placeholder: str = "", **kwargs):
         """
         Header cell describe how to format column.
 
@@ -50,6 +50,7 @@ class Base:
                             specify it if you use abbr as name: ``name``="PP", ``description``="production points"
 
         :type description: str
+        :param placeholder: placeholder for empty value
         :param kwargs: column specific arguments, like ``precession`` for ``Float``
         :type kwargs: dict
         """
@@ -57,6 +58,7 @@ class Base:
         self.name = name
         self.align = align
         self.description = description
+        self.placeholder = placeholder
         self.kwargs = kwargs
         if description:
             self.name += '*'
@@ -71,7 +73,10 @@ class Base:
         return u'{: <{width}}'.format(self.name, width=width)
 
     def to_unicode(self, val):
-        return self.fmt.format(val, **self.kwargs)
+        if self.placeholder and not val:
+            return self.placeholder
+        else:
+            return self.fmt.format(val, **self.kwargs)
 
 
 class Text(Base):
@@ -84,8 +89,8 @@ class Text(Base):
 class Float(Base):
     fmt = u'{: .{precession}f}'
 
-    def __init__(self, name, align='>', precession=2, description=None):
-        super(Float, self).__init__(name, align=align, precession=precession, description=description)
+    def __init__(self, name, align='>', precession=2, description=None, **kwargs):
+        super(Float, self).__init__(name, align=align, precession=precession, description=description, **kwargs)
 
 
 class Bool(Base):

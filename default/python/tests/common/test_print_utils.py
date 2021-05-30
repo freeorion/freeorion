@@ -66,3 +66,9 @@ def test_empty_table():
         table_name='Wooho'
     )
     assert empty.get_table() == EXPECTED_EMPTY_TABLE
+
+
+
+def test_number_column():
+    field = Float('name', description='Name for first column', placeholder="-")
+    assert field.to_unicode(0) == "-"
