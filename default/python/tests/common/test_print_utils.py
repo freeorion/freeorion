@@ -8,8 +8,11 @@
 
 Process finished with exit code 0
 '''
+from io import StringIO
 
-from common.print_utils import print_in_columns, Table, Text, Float, Sequence
+import pytest
+
+from common.print_utils import print_in_columns, Table, Text, Number, Sequence
 
 EXPECTED_COLUMNS = '''a   c
 b   d
@@ -45,9 +48,9 @@ def test_print_in_columns(capfd):
     assert out == EXPECTED_COLUMNS
 
 
-def test_simple_table():
+def make_table_via_list_fields():
     t = Table(
-        [Text('name', description='Name for first column'), Float('value', description='VValue'),
+        [Text('name', description='Name for first column'), Number('value', description='VValue'),
          Sequence('zzz'), Sequence('zzzzzzzzzzzzzzzzzz')],
         table_name='Wooho')
     t.add_row(['hello', 144444, 'abcffff', 'a'])
@@ -56,13 +59,55 @@ def test_simple_table():
     t.add_row(['Plato B III', 21, 'd', 'a'])
     t.add_row(['Plato Bddddd III', 21, 'd', 'a'])
     t.add_row(['Plato III', 21, 'd', 'a'])
-    assert t.get_table() == EXPECTED_SIMPLE_TABLE
+    return t
+
+
+def make_table_via_args():
+    t = Table(
+        Text('name', description='Name for first column'),
+        Number('value', description='VValue'),
+        Sequence('zzz'),
+        Sequence('zzzzzzzzzzzzzzzzzz'),
+        table_name='Wooho'
+    )
+    t.add_row(['hello', 144444, 'abcffff', 'a'])
+    t.add_row([u'Plato aa\u03b2 III', 21, 'de', 'a'])
+    t.add_row([u'Plato \u03b2 III', 21, 'de', 'a'])
+    t.add_row(['Plato B III', 21, 'd', 'a'])
+    t.add_row(['Plato Bddddd III', 21, 'd', 'a'])
+    t.add_row(['Plato III', 21, 'd', 'a'])
+    return t
+
+
+@pytest.fixture(params=[make_table_via_list_fields, make_table_via_args])
+def table(request):
+    return request.param()
+
+
+def test_table_is_printed(table):
+    io = StringIO()
+
+    def writer(row):
+        io.write(row)
+        io.write("\n")
+
+    table.print_table(writer)
+    assert io.getvalue() == EXPECTED_SIMPLE_TABLE + "\n"
+
+
+def test_table_is_converted_to_str(table):
+    assert table.get_table() == EXPECTED_SIMPLE_TABLE
 
 
 def test_empty_table():
     empty = Table(
-        [Text('name', description='Name for first column'), Float('value', description='VValue'),
+        [Text('name', description='Name for first column'), Number('value', description='VValue'),
          Sequence('zzz'), Sequence('zzzzzzzzzzzzzzzzzz')],
         table_name='Wooho'
     )
     assert empty.get_table() == EXPECTED_EMPTY_TABLE
+
+
+def test_number_column():
+    field = Number('name', placeholder="-")
+    assert field.make_cell_string(0) == "-"
