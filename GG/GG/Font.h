@@ -26,7 +26,6 @@
 #include <GG/FontFwd.h>
 #include <GG/Texture.h>
 #include <GG/UnicodeCharsets.h>
-#include <boost/graph/graph_concepts.hpp>
 
 
 struct FT_FaceRec_;
@@ -829,7 +828,7 @@ GG_API FontManager& GetFontManager();
 GG_EXCEPTION(FailedFTLibraryInit);
 
 namespace detail {
-    template <typename CharT, bool CharIsSigned = boost::is_signed<CharT>::value>
+    template <typename CharT, bool CharIsSigned = std::is_signed_v<CharT>>
     struct ValidUTFChar;
 
     template <typename CharT>
