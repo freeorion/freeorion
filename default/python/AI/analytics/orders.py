@@ -24,7 +24,7 @@ class Jar:
         elif result == 1:
             result = True
         else:
-            error("Unexpected result from issuing order, expect {1, 2} got " % result, stack_info=True)
+            error("Unexpected result from issuing order, expect {0, 1} got " % result, stack_info=True)
             result = True
 
         self._jar.setdefault(fo.currentTurn(), []).append(CallInfo(args, result))
