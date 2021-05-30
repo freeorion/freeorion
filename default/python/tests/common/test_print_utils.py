@@ -111,3 +111,23 @@ def test_empty_table():
 def test_number_column():
     field = Number('name', placeholder="-")
     assert field.make_cell_string(0) == "-"
+
+
+
+def test_total_is_calculated():
+    table = Table(
+        Number("A", precession=0, total=True),
+        Number("B", precession=0, total=True),
+    )
+    table.add_row([1, 10])
+    table.add_row([2, 20])
+    assert list(table) == [
+        "============",
+        "| A  | B   |",
+        "============",
+        "|  1 |  10 |",
+        "|  2 |  20 |",
+        "============",
+        "|  3 |  30 |",
+        "============",
+    ]

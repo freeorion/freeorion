@@ -4,6 +4,7 @@ Print utils.
 For test proposes this module is not import any freeorion runtime libraries.
 If you improve it somehow, add usage example to __main__ section.
 """
+from collections import defaultdict
 from itertools import zip_longest
 from math import ceil
 from typing import Any, Callable, Collection, List, Tuple, Union
@@ -53,6 +54,7 @@ class Table:
         self._vertical_sep = vertical_sep
         self._rows = []
         self._headers = self._extract_fileds(fields)
+        self.totals = defaultdict(int)
 
     def _extract_fileds(self, fields: Tuple[Union[Field, Collection[Field]]]) -> List[Field]:
         """
@@ -72,14 +74,20 @@ class Table:
         return self.get_table()
 
     def add_row(self, row):
-        self._rows.append(tuple(h.make_cell_string(cell) for h, cell in zip(self._headers, row)))
+        table_row = []
+        for filed, val in zip(self._headers, row):
+            if filed.total:
+                self.totals[filed] += val
+            table_row.append(filed.make_cell_string(val))
+        self._rows.append(table_row)
 
     def _get_row_separator(self, char, column_widthes):
-        return char * (2 +
-                       (len(column_widthes) - 1) * 3 +
-                       sum(column_widthes) +
-                       2
-                       )
+        return char * (
+                2 +
+                (len(column_widthes) - 1) * 3 +
+                sum(column_widthes) +
+                2
+        )
 
     def __iter__(self):
         columns = [[len(y) for y in x] for x in zip(*self._rows)]
@@ -111,7 +119,23 @@ class Table:
                 self._vertical_sep
             )
 
-        yield self._get_row_separator(self._bottom_sep, column_widths)
+        if self.totals:
+            yield self._get_row_separator(self._header_sep, column_widths)
+
+            inner = inner_separator.join(
+                        h.format_cell(self.totals.get(h, " "), width) for h, width in
+                        zip(self._headers, column_widths)
+                    )
+
+            yield '%s %s %s' % (
+                self._vertical_sep,
+                inner,
+                self._vertical_sep
+            )
+            yield self._get_row_separator(self._header_sep, column_widths)
+        else:
+            yield self._get_row_separator(self._bottom_sep, column_widths)
+
 
         # print legend
         legend = [x for x in self._headers if x.description]

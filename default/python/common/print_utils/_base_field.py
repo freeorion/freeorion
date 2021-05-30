@@ -3,7 +3,14 @@ from typing import Any
 
 
 class Field(ABC):
-    def __init__(self, name: str, align='<', description="", placeholder=""):
+    def __init__(
+            self,
+            name: str,
+            align='<',
+            description="",
+            placeholder="",
+            total=False,
+    ):
         """
         Cell specification.
         :param name: name of the column
@@ -11,14 +18,15 @@ class Field(ABC):
         :param description: description for column name, will be printed in table legend,
                             specify it if you use abbr as name: ``name``="PP", ``description``="production points"
         :param placeholder: placeholder for empty value
+        :param total: add total string
         """
-
         self.name = name
         self.align = align
         self.description = description
         self.placeholder = placeholder
         if description:
             self.name += '*'
+        self.total = total
 
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, self.name)
@@ -34,6 +42,9 @@ class Field(ABC):
             return self.placeholder
         else:
             return self.convert_value_to_string(val)
+
+    def make_summary_value(self):
+        return ''
 
     @abstractmethod
     def convert_value_to_string(self, val: Any) -> str:
