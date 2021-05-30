@@ -3,6 +3,7 @@ these methods in turn activate other portions of the python AI code."""
 from functools import wraps
 from logging import debug, error, fatal, info
 
+from analytics import Tracker
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.
@@ -20,6 +21,7 @@ from freeorion_tools.fo_chat_handler import configure_debug_chat, process_chat_m
 from freeorion_tools.patch_interface import patch_interface
 
 patch_interface()
+tracker = Tracker()
 
 import ColonisationAI
 import DiplomaticCorp
@@ -362,6 +364,8 @@ def generateOrders():  # pylint: disable=invalid-name
     turn_timer.start("Server_Processing")
 
     aistate.last_turn_played = fo.currentTurn()
+
+    tracker.report_turn()
 
 
 init_handlers(fo.getOptionsDBOptionStr("ai-config"), fo.getAIDir())
