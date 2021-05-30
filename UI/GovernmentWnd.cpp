@@ -1209,7 +1209,7 @@ namespace {
 
         // for every slot in every category, add entry to retval in series
         for (auto& [cat_name, num_slots_in_cat] : empire->TotalPolicySlots()) {
-            for (unsigned int n = 0; n < num_slots_in_cat; ++n)
+            for (unsigned int n = 0; n < static_cast<unsigned int>(std::max(0, num_slots_in_cat)); ++n)
                 retval.emplace_back(cat_name, n);
         }
 
