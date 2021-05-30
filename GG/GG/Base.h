@@ -83,9 +83,9 @@ void ProcessThenRemoveExpiredPtrs(
     const std::function<void(std::shared_ptr<typename Container::value_type::element_type>&)>& process,
     decltype(std::declval<Container>().erase(std::declval<typename Container::iterator>()))* = nullptr,
     decltype(std::declval<Container>().equal_range(std::declval<
-                                                   typename std::add_const<
-                                                   typename std::add_lvalue_reference<
-                                                   typename Container::key_type>::type>::type>()))* = nullptr)
+                                                   typename std::add_const_t<
+                                                   typename std::add_lvalue_reference_t<
+                                                   typename Container::key_type>>>()))* = nullptr)
 {
     auto it = container.begin();
     while (it != container.end()) {
@@ -108,7 +108,7 @@ void ProcessThenRemoveExpiredPtrs(
     const std::function<void(std::shared_ptr<typename Container::value_type::element_type>&)>& process,
     decltype(std::declval<Container>().erase(std::declval<typename Container::iterator>()))* = nullptr,
     decltype(std::declval<Container>().splice(std::declval<typename Container::const_iterator>(),
-                                              std::declval<typename std::add_lvalue_reference<Container>::type>()))* = nullptr)
+                                              std::declval<typename std::add_lvalue_reference_t<Container>>()))* = nullptr)
 {
     auto it = container.begin();
     while (it != container.end()) {

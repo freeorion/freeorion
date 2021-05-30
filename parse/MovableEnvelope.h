@@ -273,7 +273,7 @@ namespace parse { namespace detail {
 
         template <typename F, typename MovableEnvelope_T, typename Bool>
         struct result<F(MovableEnvelope_T, Bool)> {
-            using type = std::unique_ptr<typename std::decay<MovableEnvelope_T>::type::enveloped_type>;
+            using type = std::unique_ptr<typename std::decay_t<MovableEnvelope_T>::enveloped_type>;
         };
         template <typename FMETB>
         using result_t = typename result<FMETB>::type;
@@ -321,7 +321,7 @@ namespace parse { namespace detail {
 
         template <typename F, typename MovableEnvelope_T, typename Bool>
         struct result<F(MovableEnvelope_T, Bool)> {
-            using type = std::vector<std::unique_ptr<typename std::decay<MovableEnvelope_T>::type::value_type::enveloped_type>>;
+            using type = std::vector<std::unique_ptr<typename std::decay_t<MovableEnvelope_T>::value_type::enveloped_type>>;
         };
         template <typename FMETB>
         using result_t = typename result<FMETB>::type;
@@ -371,7 +371,7 @@ namespace parse { namespace detail {
         struct result<F(MovableEnvelope_T, Bool)> {
             using type = std::vector<
                 std::pair<std::string,
-                          std::unique_ptr<typename std::decay<MovableEnvelope_T>::type::value_type::second_type::enveloped_type>>>;
+                          std::unique_ptr<typename std::decay_t<MovableEnvelope_T>::value_type::second_type::enveloped_type>>>;
         };
         template <typename FMETB>
         using result_t = typename result<FMETB>::type;
