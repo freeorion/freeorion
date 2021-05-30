@@ -26,7 +26,7 @@ struct EnumParserFixture {
     template <typename Grammar>
     Grammar& make_grammar(
         const parse::lexer& lexer,
-        typename std::enable_if<std::is_constructible<Grammar, const parse::lexer&>::value, std::nullptr_t>::type = nullptr)
+        typename std::enable_if_t<std::is_constructible_v<Grammar, const parse::lexer&>>* = nullptr)
     {
         static Grammar grammar(lexer);
         return grammar;
@@ -35,7 +35,7 @@ struct EnumParserFixture {
     template <typename Grammar>
     Grammar& make_grammar(
         const parse::lexer& lexer,
-        typename std::enable_if<std::is_constructible<Grammar, const parse::lexer&, parse::detail::Labeller&>::value, std::nullptr_t>::type = nullptr)
+        typename std::enable_if_t<std::is_constructible_v<Grammar, const parse::lexer&, parse::detail::Labeller&>>* = nullptr)
     {
         parse::detail::Labeller label;
         static Grammar grammar(lexer, label);
@@ -45,7 +45,8 @@ struct EnumParserFixture {
     template <typename Grammar>
     Grammar& make_grammar(
         const parse::lexer& lexer,
-        typename std::enable_if<std::is_constructible<Grammar, const parse::lexer&, parse::detail::Labeller&, const parse::detail::condition_parser_grammar&>::value, std::nullptr_t>::type = nullptr)
+        typename std::enable_if_t<std::is_constructible_v<Grammar, const parse::lexer&, parse::detail::Labeller&,
+                                                          const parse::detail::condition_parser_grammar&>>* = nullptr)
     {
         parse::detail::Labeller label;
         parse::conditions_parser_grammar cond(lexer, label);
