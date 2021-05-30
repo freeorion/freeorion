@@ -453,8 +453,11 @@ void SupplyManager::Update() {
 
         // update systems that have supply in them
         for (auto& [empire_id, supply_ranges] : empire_propagating_supply_ranges) {
-            for (auto& [system_id, supply_range] : supply_ranges)
+            (void)empire_id; // quiet warning
+            for (auto& [system_id, supply_range] : supply_ranges) {
+                (void)supply_range; // quiet warning
                 systems_with_supply_in_them.insert(system_id);
+            }
         }
 
 
