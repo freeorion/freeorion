@@ -592,8 +592,8 @@ void FileDlg::UpdateList()
 
         std::vector<std::shared_ptr<ListBox::Row>> rows;
         rows.reserve(sorted_rows.size());
-        for (auto& row : sorted_rows)
-            rows.emplace_back(row.second);
+        for (const auto& row : sorted_rows)
+            rows.push_back(row.second);
         m_files_list->Insert(std::move(rows));
 
         if (!m_select_directories) {
@@ -616,7 +616,7 @@ void FileDlg::UpdateList()
                 } catch (const fs::filesystem_error&) {
                 }
             }
-            for (const auto& row : sorted_rows)
+            for (auto& row : sorted_rows)
                 m_files_list->Insert(std::move(row.second));
         }
     } else {
