@@ -50,8 +50,6 @@ namespace {
     template <ValueRef::OpType O>
     boost::python::object insert_minmaxoneof_(const py_grammar_techs& g, const boost::python::tuple& args, const boost::python::dict& kw);
 
-    const boost::phoenix::function<parse::detail::is_unique> is_unique_;
-
     std::set<std::string>* g_categories_seen = nullptr;
     std::map<std::string, std::unique_ptr<TechCategory>>* g_categories = nullptr;
 
