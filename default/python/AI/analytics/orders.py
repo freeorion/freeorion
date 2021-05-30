@@ -82,10 +82,10 @@ class Tracker:
         turn = fo.currentTurn()
         table = Table(
             Text('Order'),
-            Number("I", precession=0, description="Issued orders", placeholder=" "),
-            Number("F", precession=0, description="Failed orders", placeholder=" "),
-            Number("Turn", precession=0, description="Total this turn", placeholder=" "),
-            Number("Total", precession=0, description="Grand total", placeholder=" "),
+            Number("I", precession=0, description="Issued orders", placeholder=" ", total=True),
+            Number("F", precession=0, description="Failed orders", placeholder=" ", total=True),
+            Number("Turn", precession=0, description="Total for this turn", placeholder=" ", total=True),
+            Number("Total", precession=0, description="Total for this session", placeholder=" ", total=True),
             table_name="Issuing orders analytics for turn {}".format(turn),
         )
 
