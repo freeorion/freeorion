@@ -1812,10 +1812,8 @@ void Font::Init(FT_Face& face)
 {
     FT_Fixed scale;
 
-    if (!m_pt_sz) {
-        throw InvalidPointSize("Attempted to create font \"" + m_font_filename +
-                               "\" with 0 point size");
-    }
+    if (!m_pt_sz)
+        throw InvalidPointSize("Attempted to create font \"" + m_font_filename + "\" with 0 point size");
 
     // Set the character size and use default 72 DPI
     if (FT_Set_Char_Size(face, 0, m_pt_sz * 64, 0, 0)) // if error is returned
@@ -1830,9 +1828,9 @@ void Font::Init(FT_Face& face)
     // underline info
     m_underline_offset = std::floor(FT_MulFix(face->underline_position, scale) / 64.0);
     m_underline_height = std::ceil(FT_MulFix(face->underline_thickness, scale) / 64.0);
-    if (m_underline_height < 1.0) {
+    if (m_underline_height < 1.0)
         m_underline_height = 1.0;
-    }
+
     // italics info
     m_italics_offset = Value(ITALICS_FACTOR * m_height / 2.0);
     // shadow info
@@ -1882,9 +1880,8 @@ void Font::Init(FT_Face& face)
         for (std::uint32_t c = low; c < high; ++c) {
             if (!temp_glyph_data.count(c) && GenerateGlyph(face, c)) {
                 const FT_Bitmap& glyph_bitmap = face->glyph->bitmap;
-                if ((glyph_bitmap.width > TEX_MAX_SIZE) | (glyph_bitmap.rows > TEX_MAX_SIZE)) {
+                if ((glyph_bitmap.width > TEX_MAX_SIZE) || (glyph_bitmap.rows > TEX_MAX_SIZE))
                     ThrowBadGlyph("GG::Font::Init : Glyph too large for buffer'%1%'", c); // catch broken fonts
-                }
 
                 if (Value(x) + glyph_bitmap.width >= TEX_MAX_SIZE) { // start a new row of glyph images
                     if (x > max_x) max_x = x;
@@ -1895,9 +1892,8 @@ void Font::Init(FT_Face& face)
                     // We cannot make the texture any larger. The font does not fit.
                     ThrowBadGlyph("GG::Font::Init : Face too large for buffer. First glyph to no longer fit: '%1%'", c);
                 }
-                if (y + Y(glyph_bitmap.rows) > max_y) {
+                if (y + Y(glyph_bitmap.rows) > max_y)
                     max_y = y + Y(glyph_bitmap.rows + 1); //Leave a one pixel gap between glyphs
-                }
 
                 std::uint8_t*  src_start = glyph_bitmap.buffer;
                 // Resize buffer to fit new data
@@ -1937,8 +1933,10 @@ void Font::Init(FT_Face& face)
                     (unsigned char*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
 
     // create Glyph objects from temp glyph data
-    for (const auto& glyph_data : temp_glyph_data)
-        m_glyphs[glyph_data.first] = Glyph(m_texture, glyph_data.second.ul, glyph_data.second.lr, glyph_data.second.y_offset, glyph_data.second.left_b, glyph_data.second.adv);
+    for (const auto& glyph_data : temp_glyph_data) {
+        m_glyphs[glyph_data.first] = Glyph(m_texture, glyph_data.second.ul, glyph_data.second.lr,
+                                           glyph_data.second.y_offset, glyph_data.second.left_b, glyph_data.second.adv);
+    }
 
     // record the width of the space character
     auto glyph_it = m_glyphs.find(WIDE_SPACE);
