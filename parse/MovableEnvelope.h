@@ -83,8 +83,8 @@ namespace parse { namespace detail {
         MovableEnvelope(std::nullptr_t) {}
 
         template <typename U,
-                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
-                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
+                                                                  std::unique_ptr<T>>>* = nullptr>
         explicit MovableEnvelope(std::unique_ptr<U>&& obj_) :
             obj(std::move(obj_)),
             original_obj(obj.get())
@@ -92,8 +92,8 @@ namespace parse { namespace detail {
 
         // This takes ownership of obj_
         template <typename U,
-                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
-                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
+                                                                  std::unique_ptr<T>>>* = nullptr>
         explicit MovableEnvelope(U* obj_) :
             obj(obj_),
             original_obj(obj.get())
@@ -102,23 +102,23 @@ namespace parse { namespace detail {
         // Converting copy constructor
         // This leaves \p other in an emptied state
         template <typename U,
-                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
-                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
+                                                                  std::unique_ptr<T>>>* = nullptr>
         MovableEnvelope(const MovableEnvelope<U>& other) :
             MovableEnvelope(std::move(other.obj))
         {}
 
         // Converting move constructor
         template <typename U,
-                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
-                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
+                                                                  std::unique_ptr<T>>>* = nullptr>
         MovableEnvelope(MovableEnvelope<U>&& other) :
             MovableEnvelope(std::move(other.obj))
         {}
 
         template <typename U,
-                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
-                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
+                                                                  std::unique_ptr<T>>>* = nullptr>
         MovableEnvelope& operator= (MovableEnvelope<U>&& other) {
             obj = std::move(other.obj);
             original_obj = other.original_obj;
@@ -129,8 +129,8 @@ namespace parse { namespace detail {
         // Copy operator
         // This leaves \p other in an emptied state
         template <typename U,
-                  typename std::enable_if<std::is_convertible<std::unique_ptr<U>,
-                                                              std::unique_ptr<T>>::value>::type* = nullptr>
+                  typename std::enable_if_t<std::is_convertible_v<std::unique_ptr<U>,
+                                                                  std::unique_ptr<T>>>* = nullptr>
         MovableEnvelope& operator= (const MovableEnvelope<U>& other) {
             obj = std::move(other.obj);
             original_obj = other.original_obj;
@@ -275,19 +275,17 @@ namespace parse { namespace detail {
         struct result<F(MovableEnvelope_T, Bool)> {
             using type = std::unique_ptr<typename std::decay<MovableEnvelope_T>::type::enveloped_type>;
         };
+        template <typename FMETB>
+        using result_t = typename result<FMETB>::type;
 
         template <typename T>
-        typename result<const deconstruct_movable(
-            const MovableEnvelope<T>&,     bool&)>::type operator()
-        (
-            const MovableEnvelope<T>& obj, bool& pass) const
+        result_t<const deconstruct_movable(const MovableEnvelope<T>&, bool&)>
+        operator()(const MovableEnvelope<T>& obj, bool& pass) const
         { return obj.OpenEnvelope(pass); }
 
         template <typename T>
-        typename result<const deconstruct_movable(
-            const MovableEnvelope<T>&,     bool&)>::type operator()
-        (
-            const MovableEnvelope<T>& obj, const bool& pass) const
+        result_t<const deconstruct_movable(const MovableEnvelope<T>&, bool&)>
+        operator()(const MovableEnvelope<T>& obj, const bool& pass) const
         {
             // Note: this ignores the constness of pass because older compilers
             // pass the incorrect constness.
@@ -297,10 +295,8 @@ namespace parse { namespace detail {
         // Unwrap ::optional<MovablelEnvelope<T>> to return
         // unique_ptr(nullptr) for none
         template <typename T>
-        typename result<const deconstruct_movable(
-            const MovableEnvelope<T>&,     bool&)>::type operator()
-        (
-            const boost::optional<MovableEnvelope<T>>& obj, bool& pass) const
+        result_t<const deconstruct_movable(const MovableEnvelope<T>&, bool&)>
+        operator()(const boost::optional<MovableEnvelope<T>>& obj, bool& pass) const
         {
             if (!obj)
                 return nullptr;
@@ -308,10 +304,8 @@ namespace parse { namespace detail {
         }
 
         template <typename T>
-        typename result<const deconstruct_movable(
-            const MovableEnvelope<T>&,     bool&)>::type operator()
-        (
-            const boost::optional<MovableEnvelope<T>>& obj, const bool& pass) const
+        result_t<const deconstruct_movable(const MovableEnvelope<T>&, bool&)>
+        operator()(const boost::optional<MovableEnvelope<T>>& obj, const bool& pass) const
         {
             // Note: this ignores the constness of pass because older compilers
             // pass the incorrect constness.
@@ -329,19 +323,17 @@ namespace parse { namespace detail {
         struct result<F(MovableEnvelope_T, Bool)> {
             using type = std::vector<std::unique_ptr<typename std::decay<MovableEnvelope_T>::type::value_type::enveloped_type>>;
         };
+        template <typename FMETB>
+        using result_t = typename result<FMETB>::type;
 
         template <typename T>
-        typename result<const deconstruct_movable(
-            const std::vector<MovableEnvelope<T>>&,      bool&)>::type operator()
-        (
-            const std::vector<MovableEnvelope<T>>& objs, bool& pass) const
+        result_t<const deconstruct_movable(const std::vector<MovableEnvelope<T>>&, bool&)>
+        operator()(const std::vector<MovableEnvelope<T>>& objs, bool& pass) const
         { return OpenEnvelopes(objs, pass); }
 
         template <typename T>
-        typename result<const deconstruct_movable(
-            const std::vector<MovableEnvelope<T>>&,            bool&)>::type operator()
-        (
-            const std::vector<MovableEnvelope<T>>& objs, const bool& pass) const
+        result_t<const deconstruct_movable(const std::vector<MovableEnvelope<T>>&, bool&)>
+        operator()(const std::vector<MovableEnvelope<T>>& objs, const bool& pass) const
         {
             // Note: this ignores the constness of pass because older compilers
             // pass the incorrect constness.
@@ -351,28 +343,22 @@ namespace parse { namespace detail {
         // Unwrap ::optional<vector<MovablelEnvelope<T>>> and return
         // an empty vector for none
         template <typename T>
-        typename result<const deconstruct_movable(
-            const std::vector<MovableEnvelope<T>>&,      bool&)>::type operator()
-        (
-            const boost::optional<std::vector<MovableEnvelope<T>>>& objs, bool& pass) const
+        result_t<const deconstruct_movable(const std::vector<MovableEnvelope<T>>&, bool&)>
+        operator()(const boost::optional<std::vector<MovableEnvelope<T>>>& objs, bool& pass) const
         {
             if (!objs)
-                return typename result<const deconstruct_movable(
-                    const std::vector<MovableEnvelope<T>>&,      bool&)>::type();
+                return {};
             return OpenEnvelopes(*std::move(objs), pass);
         }
 
         template <typename T>
-        typename result<const deconstruct_movable(
-            const std::vector<MovableEnvelope<T>>&,            bool&)>::type operator()
-        (
-            const boost::optional<std::vector<MovableEnvelope<T>>>& objs, const bool& pass) const
+        result_t<const deconstruct_movable(const std::vector<MovableEnvelope<T>>&, bool&)>
+        operator()(const boost::optional<std::vector<MovableEnvelope<T>>>& objs, const bool& pass) const
         {
             // Note: this ignores the constness of pass because older compilers
             // pass the incorrect constness.
             if (!objs)
-                return typename result<const deconstruct_movable(
-                    const std::vector<MovableEnvelope<T>>&,      bool&)>::type();
+                return {};
             return OpenEnvelopes(*std::move(objs), pass);
         }
     };
@@ -387,19 +373,18 @@ namespace parse { namespace detail {
                 std::pair<std::string,
                           std::unique_ptr<typename std::decay<MovableEnvelope_T>::type::value_type::second_type::enveloped_type>>>;
         };
+        template <typename FMETB>
+        using result_t = typename result<FMETB>::type;
 
         template <typename T>
-        typename result<const deconstruct_movable(
-            const std::vector<std::pair<std::string, MovableEnvelope<T>>>&,      bool&)>::type operator()
-        (
-            const std::vector<std::pair<std::string, MovableEnvelope<T>>>& objs, bool& pass) const
+        result_t<const deconstruct_movable(
+            const std::vector<std::pair<std::string, MovableEnvelope<T>>>&, bool&)>
+        operator()(const std::vector<std::pair<std::string, MovableEnvelope<T>>>& objs, bool& pass) const
         { return OpenEnvelopes(objs, pass); }
 
         template <typename T>
-        typename result<const deconstruct_movable(
-            const std::vector<std::pair<std::string, MovableEnvelope<T>>>&,            bool&)>::type operator()
-        (
-            const std::vector<std::pair<std::string, MovableEnvelope<T>>>& objs, const bool& pass) const
+        result_t<const deconstruct_movable(const std::vector<std::pair<std::string, MovableEnvelope<T>>>&, bool&)>
+        operator()(const std::vector<std::pair<std::string, MovableEnvelope<T>>>& objs, const bool& pass) const
         {
             // Note: this ignores the constness of pass because older compilers
             // pass the incorrect constness.
