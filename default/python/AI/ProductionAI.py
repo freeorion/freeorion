@@ -14,6 +14,7 @@ import MilitaryAI
 import PlanetUtilsAI
 import PriorityAI
 from AIDependencies import INVALID_ID
+from colonization import rate_planetary_piloting
 from EnumsAI import (EmpireProductionTypes, FocusType, MissionType, PriorityType, ShipRoleType,
                      get_priority_production_types, )
 from aistate_interface import get_aistate
@@ -1196,7 +1197,7 @@ def generate_production_orders():
                     loc_planet = universe.getPlanet(loc)
                     if loc_planet:
                         pname = loc_planet.name
-                        this_rating = ColonisationAI.rate_planetary_piloting(loc)
+                        this_rating = rate_planetary_piloting(loc)
                         rating_ratio = float(this_rating) / best_pilot_rating()
                         qualifier = "suboptimal " if rating_ratio < 1.0 else ""
                         debug("Building mil ship at loc %d (%s) with %spilot Rating: %.1f; ratio to empire best is %.1f", loc, pname, qualifier, this_rating, rating_ratio)

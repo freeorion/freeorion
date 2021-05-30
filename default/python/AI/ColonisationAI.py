@@ -18,6 +18,7 @@ from AIDependencies import (
     Tags,
 )
 from aistate_interface import get_aistate
+from colonization import rate_piloting_tag
 from common.print_utils import Bool, Float, Sequence, Table, Text
 from EnumsAI import EmpireProductionTypes, FocusType, MissionType, PriorityType, ShipRoleType
 from freeorion_tools import (
@@ -225,21 +226,6 @@ def galaxy_is_sparse():
     return ((setup_data.monsterFrequency <= fo.galaxySetupOption.low) and
             ((avg_empire_systems >= 40) or
              ((avg_empire_systems >= 35) and (setup_data.shape != fo.galaxyShape.elliptical))))
-
-
-@cache_for_session
-def rate_piloting_tag(species_name):
-    grades = {'NO': 1e-8, 'BAD': 0.75, 'GOOD': GOOD_PILOT_RATING, 'GREAT': GREAT_PILOT_RATING,
-              'ULTIMATE': ULT_PILOT_RATING}
-    return grades.get(get_species_tag_grade(species_name, Tags.WEAPONS), 1.0)
-
-
-def rate_planetary_piloting(pid):
-    universe = fo.getUniverse()
-    planet = universe.getPlanet(pid)
-    if not planet:
-        return 0.0
-    return rate_piloting_tag(planet.speciesName)
 
 
 @cache_by_turn_persistent  # helpful to cache history to debug AI supply progress
