@@ -1096,7 +1096,7 @@ namespace {
                 // add fighter to attackers (if it can attack)
                 if (damage > 0.0f) {
                     valid_attacker_object_ids.insert(fighter_ptr->ID());
-                    empire_infos[fighter_ptr->Owner()].attacker_ids.emplace(fighter_ptr->ID());
+                    empire_infos[fighter_ptr->Owner()].attacker_ids.insert(fighter_ptr->ID());
                     DebugLogger(combat) << "Added fighter id: " << fighter_ptr->ID() << " to attackers sets";
                 }
 

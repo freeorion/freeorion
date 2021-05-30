@@ -133,57 +133,57 @@ void MessageWndEdit::FindGameWords() {
      // add player and empire names
     for ([[maybe_unused]] auto& [ignored_id, empire] : Empires()) {
         (void)ignored_id;   // quiet unused variable warning
-        m_game_words.emplace(empire->Name());
-        m_game_words.emplace(empire->PlayerName());
+        m_game_words.insert(empire->Name());
+        m_game_words.insert(empire->PlayerName());
     }
     // add system names
     for (auto& system : GetUniverse().Objects().all<System>()) {
         if (!system->Name().empty())
-            m_game_words.emplace(system->Name());
+            m_game_words.insert(system->Name());
     }
      // add ship names
     for (auto& ship : GetUniverse().Objects().all<Ship>()) {
         if (!ship->Name().empty())
-            m_game_words.emplace(ship->Name());
+            m_game_words.insert(ship->Name());
     }
      // add ship design names
 
     for (const auto& design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {
         if (!design->Name().empty())
-            m_game_words.emplace(UserString(design->Name()));
+            m_game_words.insert(UserString(design->Name()));
     }
      // add specials names
     for (const std::string& special_name : SpecialNames()) {
         if (!special_name.empty())
-            m_game_words.emplace(UserString(special_name));
+            m_game_words.insert(UserString(special_name));
     }
      // add species names
     for (const auto& [name, species] : GetSpeciesManager()) {
         if (!name.empty())
-            m_game_words.emplace(UserString(name));
+            m_game_words.insert(UserString(name));
         (void)species; // quiet unused variable warning
     }
      // add techs names
     for (const std::string& tech_name : GetTechManager().TechNames()) {
         if (!tech_name.empty())
-            m_game_words.emplace(UserString(tech_name));
+            m_game_words.insert(UserString(tech_name));
     }
     // add building type names
     for (const auto& [name, type] : GetBuildingTypeManager()) {
         if (!name.empty())
-            m_game_words.emplace(UserString(name));
+            m_game_words.insert(UserString(name));
         (void)type; // quiet unused variable warning
     }
     // add ship hulls
     for (const auto& design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {
         if (!design->Hull().empty())
-            m_game_words.emplace(UserString(design->Hull()));
+            m_game_words.insert(UserString(design->Hull()));
     }
     // add ship parts
     for (const auto& design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {
         for (const std::string& part_name : design->Parts()) {
             if (!part_name.empty())
-                m_game_words.emplace(UserString(part_name));
+                m_game_words.insert(UserString(part_name));
         }
     }
  }

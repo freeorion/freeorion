@@ -632,7 +632,7 @@ void CUIWnd::SetDefaultedOptions() {
     db.FindOptions(window_options, "ui." + m_config_name);
     for (auto& option : window_options) {
         if (db.IsDefaultValue(option))
-            m_defaulted_options.emplace(option);
+            m_defaulted_options.insert(option);
     }
 }
 
