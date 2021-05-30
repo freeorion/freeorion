@@ -583,8 +583,8 @@ namespace {
         } else {
             // Add the new saved design.
             m_saved_designs.emplace(design.UUID(),
-                                    std::make_pair(std::make_unique<ShipDesign>(design),
-                                                   CreateSavePathForDesign(design)));
+                                    std::pair{std::make_unique<ShipDesign>(design),
+                                              CreateSavePathForDesign(design)});
             SaveDesign(design.UUID());
         }
 
@@ -4638,7 +4638,7 @@ void DesignWnd::MainPanel::DesignChanged() {
 
         // check part exclusions against other parts and hull
         std::set<std::string> already_seen_component_names;
-        already_seen_component_names.emplace(m_hull->Name());
+        already_seen_component_names.insert(m_hull->Name());
         for (std::string& part_name : Parts()) {
             if (m_disabled_by_part_conflict)
                 break;
@@ -4653,7 +4653,7 @@ void DesignWnd::MainPanel::DesignChanged() {
                     break;
                 }
             }
-            already_seen_component_names.emplace(std::move(part_name));
+            already_seen_component_names.insert(std::move(part_name));
         }
 
 

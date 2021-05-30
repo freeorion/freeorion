@@ -136,17 +136,14 @@ namespace {
                                          std::pair<std::string,
                                                    std::string>>& list)
     {
-        std::pair<std::string, std::string>&& meter_name = MeterValueLabelAndString(meter_type);
+        auto&& [value_label, string_rep] = MeterValueLabelAndString(meter_type);
 
-        if (meter_name.first.empty() || meter_name.second.empty())
+        if (value_label.empty() || string_rep.empty())
             return;
 
-        std::string&& link_string = LinkTaggedPresetText(VarText::METER_TYPE_TAG,
-                                                         meter_name.second,
-                                                         meter_name.first) + "\n";
+        std::string&& link_string = LinkTaggedPresetText(VarText::METER_TYPE_TAG, string_rep, value_label) + "\n";
 
-        list.emplace(std::move(meter_name.first),
-                     std::make_pair(std::move(link_string), std::move(meter_name.second)));
+        list.emplace(std::move(value_label), std::pair{std::move(link_string), std::move(string_rep)});
     }
 
     const std::vector<std::string>& GetSearchTextDirNames() {
@@ -186,16 +183,12 @@ namespace {
                 if (str == "ENC_INDEX")
                     continue;
                 sorted_entries_list.emplace(
-                    UserString(str),
-                    std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n",
-                                   str));
+                    UserString(str), std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n", str});
             }
 
             for (const std::string& str : {"ENC_TEXTURES", "ENC_HOMEWORLDS"}) {
                 sorted_entries_list.emplace(
-                    UserString(str),
-                    std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n",
-                                   str));
+                    UserString(str), std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n", str});
             }
 
             for ([[maybe_unused]] auto& [category_name, article_vec] : encyclopedia.Articles()) {
@@ -208,28 +201,26 @@ namespace {
 
                 sorted_entries_list.emplace(
                     UserString(category_name),
-                    std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, category_name) + "\n",
-                                   category_name));
+                    std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, category_name) + "\n", category_name});
             }
 
         }
         else if (dir_name == "ENC_SHIP_PART") {
-            for ([[maybe_unused]] auto& [part_name, part] : GetShipPartManager()) {
+            for (auto& [part_name, part] : GetShipPartManager()) {
                 if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(part->Tags()).empty()) {
                     sorted_entries_list.emplace(
                         UserString(part_name),
-                        std::make_pair(LinkTaggedText(VarText::SHIP_PART_TAG, part_name) + "\n", part_name));
+                        std::pair{LinkTaggedText(VarText::SHIP_PART_TAG, part_name) + "\n", part_name});
                 }
             }
 
         }
         else if (dir_name == "ENC_SHIP_HULL") {
-            for (const auto& entry : GetShipHullManager()) {
-                if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(entry.second->Tags()).empty()) {
+            for (auto& [hull_name, hull] : GetShipHullManager()) {
+                if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(hull->Tags()).empty()) {
                     sorted_entries_list.emplace(
-                        UserString(entry.first),
-                        std::make_pair(LinkTaggedText(VarText::SHIP_HULL_TAG, entry.first) + "\n",
-                                       entry.first));
+                        UserString(hull_name),
+                        std::pair{LinkTaggedText(VarText::SHIP_HULL_TAG, hull_name) + "\n", hull_name});
                 }
             }
 
@@ -243,15 +234,15 @@ namespace {
             }
 
             // second loop over alphabetically sorted names...
-            for (auto& tech_name : userstring_tech_names) {
+            for (auto& [us_name, tech_name] : userstring_tech_names) {
                 if (!exclude_custom_categories_from_dir_name ||
-                    DetermineCustomCategory(GetTech(tech_name.second)->Tags()).empty())
+                    DetermineCustomCategory(GetTech(tech_name)->Tags()).empty())
                 {
                     // already iterating over userstring-looked-up names, so don't need to re-look-up-here
-                    std::string&& tagged_text{LinkTaggedText(VarText::TECH_TAG, tech_name.second) + "\n"};
+                    std::string&& tagged_text{LinkTaggedText(VarText::TECH_TAG, tech_name) + "\n"};
                     sorted_entries_list.emplace(
-                        tech_name.first,
-                        std::make_pair(std::move(tagged_text), std::move(tech_name.second)));
+                        std::move(us_name),
+                        std::make_pair(std::move(tagged_text), std::move(tech_name)));
                 }
             }
 
@@ -262,17 +253,16 @@ namespace {
                 auto& us_name{UserString(policy_name)}; // line before to avoid order of evaluation issues when moving from policy_name
                 sorted_entries_list.emplace(
                     us_name,
-                    std::make_pair(std::move(tagged_text), std::move(policy_name)));
+                    std::pair{std::move(tagged_text), std::move(policy_name)});
             }
 
         }
         else if (dir_name == "ENC_BUILDING_TYPE") {
-            for (const auto& entry : GetBuildingTypeManager()) {
-                if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(entry.second->Tags()).empty()) {
+            for (const auto& [building_name, building_type] : GetBuildingTypeManager()) {
+                if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(building_type->Tags()).empty()) {
                     sorted_entries_list.emplace(
-                        UserString(entry.first),
-                        std::make_pair(LinkTaggedText(VarText::BUILDING_TYPE_TAG, entry.first) + "\n",
-                                       entry.first));
+                        UserString(building_name),
+                        std::pair{LinkTaggedText(VarText::BUILDING_TYPE_TAG, building_name) + "\n", building_name});
                 }
             }
 
@@ -283,18 +273,18 @@ namespace {
                 auto& us_name{UserString(special_name)};    // line before to avoid order of operations issues when moving from special_name
                 sorted_entries_list.emplace(
                     us_name,
-                    std::make_pair(std::move(tagged_text), std::move(special_name)));
+                    std::pair{std::move(tagged_text), std::move(special_name)});
             }
 
         }
         else if (dir_name == "ENC_SPECIES") {
             // directory populated with list of links to other articles that list species
             if (!exclude_custom_categories_from_dir_name) {
-                for (const auto& entry : GetSpeciesManager()) {
+                for (const auto& [species_name, species] : GetSpeciesManager()) {
+                    (void)species; // quiet warning
                     sorted_entries_list.emplace(
-                        UserString(entry.first),
-                        std::make_pair(LinkTaggedText(VarText::SPECIES_TAG, entry.first) + "\n",
-                                       entry.first));
+                        UserString(species_name),
+                        std::pair{LinkTaggedText(VarText::SPECIES_TAG, species_name) + "\n", species_name});
                 }
             }
 
