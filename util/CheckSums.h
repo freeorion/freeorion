@@ -21,14 +21,14 @@ namespace CheckSums {
     // integeral types
     template <typename T>
     void CheckSumCombine(unsigned int& sum, T t,
-                         typename std::enable_if<std::is_signed<T>::value, T>::type* = nullptr)
+                         typename std::enable_if_t<std::is_signed_v<T>>* = nullptr)
     {
         sum += static_cast<unsigned int>(std::abs(t));
         sum %= CHECKSUM_MODULUS;
     }
     template <typename T>
     void CheckSumCombine(unsigned int& sum, T t,
-                         typename std::enable_if<std::is_unsigned<T>::value, T>::type* = nullptr)
+                         typename std::enable_if_t<std::is_unsigned_v<T>>* = nullptr)
     {
         sum += static_cast<unsigned int>(t);
         sum %= CHECKSUM_MODULUS;
@@ -47,7 +47,7 @@ namespace CheckSums {
     // enums
     template <typename T>
     void CheckSumCombine(unsigned int& sum, T t,
-                         typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr)
+                         typename std::enable_if_t<std::is_enum_v<T>>* = nullptr)
     {
         TraceLogger() << "CheckSumCombine(enum): " << typeid(t).name();
         CheckSumCombine(sum, static_cast<int>(t) + 10);

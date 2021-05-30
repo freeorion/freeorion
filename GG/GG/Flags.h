@@ -366,10 +366,10 @@ Flags<FlagType> operator|(FlagType lhs, Flags<FlagType> rhs)
 /** Returns a Flags object that consists of the bitwise-or of \a lhs and \a
     rhs. */
 template <typename FlagType>
-typename std::enable_if<
+typename std::enable_if_t<
     is_flag_type<FlagType>::value,
     Flags<FlagType>
->::type
+>
 operator|(FlagType lhs, FlagType rhs)
 { return Flags<FlagType>(lhs) | Flags<FlagType>(rhs); }
 
@@ -398,10 +398,10 @@ Flags<FlagType> operator&(FlagType lhs, Flags<FlagType> rhs)
 /** Returns a Flags object that consists of the bitwise-and of \a lhs and \a
     rhs. */
 template <typename FlagType>
-typename std::enable_if<
+typename std::enable_if_t<
     is_flag_type<FlagType>::value,
     Flags<FlagType>
->::type
+>
 operator&(FlagType lhs, FlagType rhs)
 { return Flags<FlagType>(lhs) & Flags<FlagType>(rhs); }
 
@@ -430,10 +430,10 @@ Flags<FlagType> operator^(FlagType lhs, Flags<FlagType> rhs)
 /** Returns a Flags object that consists of the bitwise-xor of \a lhs and \a
     rhs. */
 template <typename FlagType>
-typename std::enable_if<
+typename std::enable_if_t<
     is_flag_type<FlagType>::value,
     Flags<FlagType>
->::type
+>
 operator^(FlagType lhs, FlagType rhs)
 { return Flags<FlagType>(lhs) ^ Flags<FlagType>(rhs); }
 
@@ -453,10 +453,10 @@ Flags<FlagType> operator~(Flags<FlagType> flags)
 /** Returns a Flags object that consists of all the flags known to
     FlagSpec<FlagType>::instance() except \a flag. */
 template <typename FlagType>
-typename std::enable_if<
+typename std::enable_if_t<
     is_flag_type<FlagType>::value,
     Flags<FlagType>
->::type
+>
 operator~(FlagType flag)
 { return ~Flags<FlagType>(flag); }
 

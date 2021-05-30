@@ -233,13 +233,13 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
 {
     template <typename T>
     StaticCast(T&& value_ref,
-               typename std::enable_if<std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type* = nullptr);
+               typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>* = nullptr);
 
     template <typename T>
     StaticCast(T&& value_ref,
-               typename std::enable_if<
-               std::is_convertible<T, std::unique_ptr<ValueRef<FromType>>>::value
-               && !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type* = nullptr);
+               typename std::enable_if_t<
+               std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>>
+               && !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>* = nullptr);
 
     bool operator==(const ValueRef<ToType>& rhs) const override;
     ToType Eval(const ScriptingContext& context) const override;
@@ -854,7 +854,7 @@ void Statistic<T, V>::SetTopLevelContent(const std::string& content_name)
 template <
     typename T,
     typename V,
-    typename std::enable_if<std::is_arithmetic<T>::value && std::is_arithmetic<V>::value>::type* = nullptr
+    typename std::enable_if_t<std::is_arithmetic_v<T> && std::is_arithmetic_v<V>>* = nullptr
 >
 T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 {
@@ -1024,8 +1024,8 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 template <
     typename T,
     typename V,
-    typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr,
-    typename std::enable_if<std::is_same<T, V>::value>::type* = nullptr
+    typename std::enable_if_t<std::is_enum_v<T>>* = nullptr,
+    typename std::enable_if_t<std::is_same_v<T, V>>* = nullptr
 >
 T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
 {
@@ -1066,8 +1066,8 @@ T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
 template <
     typename T,
     typename V,
-    typename std::enable_if<std::is_arithmetic<T>::value, T>::type* = nullptr,
-    typename std::enable_if<!std::is_arithmetic<V>::value, V>::type* = nullptr>
+    typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr,
+    typename std::enable_if_t<!std::is_arithmetic_v<V>>* = nullptr>
 T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 {
     if (object_property_values.empty())
@@ -1441,7 +1441,7 @@ template <typename FromType, typename ToType>
 template <typename T>
 StaticCast<FromType, ToType>::StaticCast(
     T&& value_ref,
-    typename std::enable_if<std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type*) :
+    typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>*) :
     Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
     m_value_ref(std::move(value_ref))
 {
@@ -1455,9 +1455,9 @@ template <typename FromType, typename ToType>
 template <typename T>
 StaticCast<FromType, ToType>::StaticCast(
     T&& value_ref,
-    typename std::enable_if<
-        std::is_convertible<T, std::unique_ptr<ValueRef<FromType>>>::value &&
-        !std::is_convertible<T, std::unique_ptr<Variable<FromType>>>::value>::type*) :
+    typename std::enable_if_t<
+        std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>> &&
+        !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>*) :
     Variable<ToType>(ReferenceType::NON_OBJECT_REFERENCE),
     m_value_ref(std::move(value_ref))
 {

@@ -165,7 +165,7 @@ public:
       * If there already was an object in the map with the id \a id then
       * that object will be removed. */
     template <typename T,
-              typename std::enable_if<std::is_base_of<UniverseObject, T>::value>::type* = nullptr>
+              typename std::enable_if_t<std::is_base_of_v<UniverseObject, T>>* = nullptr>
     void insert(std::shared_ptr<T> item, int empire_id = ALL_EMPIRES);
 
     /** Removes object with id \a id from map, and returns that object, if
@@ -340,7 +340,7 @@ std::size_t ObjectMap::size() const
 { return Map<typename std::remove_const<T>::type>().size(); }
 
 template <typename T,
-          typename std::enable_if<std::is_base_of<UniverseObject, T>::value>::type*>
+          typename std::enable_if_t<std::is_base_of_v<UniverseObject, T>>*>
 void ObjectMap::insert(std::shared_ptr<T> item, int empire_id)
 {
     if (!item)

@@ -57,7 +57,7 @@ template <typename Container>
 void ProcessThenRemoveExpiredPtrs(
     Container& container,
     const std::function<void(std::shared_ptr<typename Container::value_type::element_type>&)>& process,
-    typename std::add_pointer<decltype(std::declval<Container>().at(std::declval<typename Container::size_type>()))>::type = nullptr)
+    typename std::add_pointer_t<decltype(std::declval<Container>().at(std::declval<typename Container::size_type>()))> = nullptr)
 {
     // Process
     for (const auto& weak : container)

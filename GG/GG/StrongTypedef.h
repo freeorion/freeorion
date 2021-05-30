@@ -252,7 +252,7 @@ inline constexpr std::size_t Value(std::size_t s)
         struct ConvertibleToBoolDummy {int _;};                         \
                                                                         \
     public:                                                             \
-        static_assert((std::is_integral<type>::value),                  \
+        static_assert((std::is_integral_v<type>),                       \
             "Creating an strong integral without passing an integral type"); \
                                                                         \
         typedef type value_type;                                        \
