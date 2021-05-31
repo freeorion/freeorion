@@ -1,0 +1,59 @@
+name: "Ubuntu 21.04 Hirsute Docker"
+
+on:
+  push:
+    paths-ignore:
+      - 'msvc*/**'
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+  pull_request:
+    paths-ignore:
+      - 'msvc*/**'
+      - 'check/**'
+      - 'doc/**'
+      - 'packaging/**'
+      - 'snap/**'
+      - '*.md'
+
+jobs:
+  build-ubuntu-docker:
+    runs-on: ubuntu-20.04
+    env:
+      CACHE_NAME: linux
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Prepare
+        id: prep
+        run: |
+          TAG=$(echo $GITHUB_SHA | head -c7)
+          IMAGE="freeorion/freeorion"
+          echo ::set-output name=tagged_image::${IMAGE}:${TAG}
+          echo ::set-output name=tag::${TAG}
+      - uses: satackey/action-docker-layer-caching@v0.0.11
+        # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
+      - name: Build production image
+        run: |
+          docker build .github/ubuntu-21.04/ --file .github/ubuntu-21.04/Dockerfile --tag ${{ steps.prep.outputs.tagged_image }}
+      - name: Prepare ccache timestamp
+        id: build-ubuntu-ccache-timestamp
+        shell: cmake -P {0}
+        run: |
+          string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
+          message("::set-output name=timestamp::${current_date}")
+      - name: Cache files with ccache
+        uses: actions/cache@v1.1.0
+        with:
+          path: ${{ runner.temp }}/ccache
+          key: build-ubuntu-docker-ccache-${{ steps.build-ubuntu-ccache-timestamp.outputs.timestamp }}
+          restore-keys: |
+            build-ubuntu-docker-ccache-
+      - name: Build freeorion
+        run: |
+          mkdir build
+          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -DBUILD_TESTING=ON -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 ..
+          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . -- -j 2
