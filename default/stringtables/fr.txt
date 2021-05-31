@@ -6878,6 +6878,9 @@ AGE
 TURNS_SINCE_FOCUS_CHANGE
 Tours depuis Modif. Focus
 
+TURNS_SINCE_COLONIZATION
+Tours depuis Colonisation
+
 SUPPLY_RANGE
 Portée Approvisionnement
 
@@ -11737,7 +11740,7 @@ PLC_SYSTEM_INFRA
 Infrastructure Systémique
 
 PLC_SYSTEM_INFRA_DESC
-'''Octroie 2 choix supplémentaires de Politique économique.
+'''Octroie 1 choix supplémentaire de Politique économique.
 
 Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées au sein des systèmes abritant au moins 2 planètes appartenant à l'empire qui applique cette Politique.'''
 
@@ -11802,7 +11805,7 @@ PLC_AUGMENTATION_DESC
 • Augmente l'[[metertype METER_TROOPS]] max sur toutes les planètes de [[value CYBORG_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]].
 • Augmente ou diminue le taux de croissance de la Population, selon que l'[[metertype METER_CONSTRUCTION]] de la planète est supérieure ou inférieure à [[value AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT]].
 
-La cyborgification engendre la fusion hautement polyvalente d'organismes vivants, de corps inorganiques et de machines, capable de s'adapter rapidement aux circonstances changeantes. La génération spontanée d'organes spécialisés, de mécanismes, et d'une adaptation environnementale, permettent aux cyborgs d'évoluer et de prospérer dans quasiment tous les types d'environnement.'''
+La cyborgification engendre la fusion hautement polyvalente d'organismes vivants, de corps inorganiques et de machines, capable de s'adapter rapidement aux circonstances changeantes. La génération spontanée d'organes spécialisés, de mécanismes, et d'une adaptabilité environnementale, permet aux cyborgs d'évoluer et de prospérer dans quasiment tous les types d'environnement.'''
 
 PLC_AUGMENTATION_SHORT_DESC
 Améliorations planétaires diverses
@@ -12259,9 +12262,7 @@ PRO_VOID_PREDICTION_DESC
 Pour le service du Stock Impérial, la Prédiction du Vide est l'instrument par excellence permettant de fournir les bons matériaux avant même que le besoin ne se manifeste.
 
 Il s'agit donc d'une technologie d'amélioration du [[encyclopedia STOCKPILE_TITLE]]. La [[metertype METER_STOCKPILE]] augmente de 0.2 par [[metertype METER_POPULATION]].
-Ces améliorations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].
-
-Octroie également 1 choix de Politique économique.'''
+Ces améliorations sont cumulables avec les bonus des technologies [[tech PRO_PREDICTIVE_STOCKPILING]], [[tech PRO_GENERIC_SUPPLIES]] et [[tech PRO_INTERSTELLAR_ENTANGLEMENT_FACTORY]].'''
 
 PRO_MICROGRAV_MAN
 Production en Microgravité
@@ -13966,7 +13967,7 @@ BLD_COLLECTIVE_NET_DESC
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 • Augmente de [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] la [[metertype METER_TARGET_HAPPINESS]] maximum atteinte via la Politique [[policy PLC_DREAM_RECURSION]].
 
-En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent alors agir en tant qu'un seul, résolvant des problèmes et accomplissant des découvertes qui s'avéreraient hors de portée pour un unique esprit isolé, aussi brillant soit-il.'''
+En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent ainsi agir en tant qu'un seul, résolvant des problèmes et accomplissant des découvertes qui s'avéreraient hors de portée pour un unique esprit isolé, aussi brillant soit-il.'''
 
 BLD_GATEWAY_VOID
 Portail du Vide
@@ -14215,7 +14216,17 @@ BLD_XENORESURRECTION_LAB
 Laboratoire de Xénorésurrection
 
 BLD_XENORESURRECTION_LAB_DESC
-Le Laboratoire de Xénorésurrection répare et recompose les échantillons organiques d'une espèce éteinte, permettant ainsi la colonisation de planètes reliées par lignes d'[[metertype METER_SUPPLY]] par une espèce éteinte découverte au sein de [[special ANCIENT_RUINS_SPECIAL]]. Ne peut être construit que sur les planètes où les fouilles de [[special ANCIENT_RUINS_SPECIAL]] ont révélé les corps parfaitement conservés d'une espèce éteinte.
+Répare et recompose les échantillons organiques d'une espèce éteinte, permettant ainsi la colonisation de planètes reliées par lignes d'[[metertype METER_SUPPLY]] par une espèce éteinte découverte au sein de [[special ANCIENT_RUINS_SPECIAL]]. Le laboratoire ne peut être construit que sur les planètes où les fouilles de [[special ANCIENT_RUINS_SPECIAL]] ont révélé les corps parfaitement conservés d'une espèce éteinte.
+
+BLD_TRANSLATOR
+Traducteur Quasi-Universel
+
+BLD_TRANSLATOR_DESC
+'''Octroie 1 choix de Politique sociale.
+
+Augmente la capacité en Influence d'une planète, lorsque celle-ci est réglée sur le Focus Influence, de [[value TRANSLATOR_PER_SPECIES_INFLUENCE]] par le nombre d'espèces uniques sur les planètes contrôlées par l'empire possédant cette structure.
+
+Le coût de production diminue à mesure qu'augmente le nombre d'espèces uniques visibles par l'empire producteur de la structure.'''
 
 BLD_COLONY_BASE
 Colonisateur Stellaire
