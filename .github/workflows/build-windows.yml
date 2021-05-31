@@ -34,7 +34,7 @@ jobs:
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.2
         with:
-          vs-version: '[16.0,16.10)'
+          vs-version: '[16.0,16.30)'
       - name: Configure
         run: |
           unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
