@@ -8,14 +8,11 @@
 namespace Combat {
     /** Container for return values of ResolveFighterBouts */
     struct FighterBoutInfo {
-        struct StateQty {
-            int         docked;
-            int         attacking;
-            int         launched;       // transitioning between docked and attacking
-        };
-        float           damage;
-        float           total_damage;   // damage from all previous bouts, including this bout
-        StateQty        qty;
+        float damage       = 0;
+        float total_damage = 0;  // damage from all previous bouts, including this bout
+        int docked    = 0;
+        int attacking = 0;
+        int launched  = 0;       // transitioning between docked and attacking
     };
 
     /** Populate fighter state quantities and damages for each combat round until @p limit_to_bout */

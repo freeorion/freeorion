@@ -153,17 +153,18 @@ std::map<int, Combat::FighterBoutInfo> Combat::ResolveFighterBouts(std::shared_p
             context.combat_bout = bout;
             // init current fighters
             if (bout == 1) {
-                retval[bout].qty.docked = current_docked;
-                retval[bout].qty.attacking = 0;
-                retval[bout].qty.launched = 0;
+                retval[bout].docked = current_docked;
+                retval[bout].attacking = 0;
+                retval[bout].launched = 0;
             } else {
-                retval[bout].qty = retval[bout - 1].qty;
-                retval[bout].qty.attacking += retval[bout].qty.launched;
-                retval[bout].qty.launched = 0;
+                retval[bout] = retval[bout - 1];
+                retval[bout].docked = retval[bout - 1].docked;
+                retval[bout].attacking = retval[bout - 1].attacking + retval[bout].launched;
+                retval[bout].launched = 0;
                 retval[bout].total_damage = retval[bout - 1].total_damage;
             }
             // calc damage this bout, apply to total
-            int shots_this_bout = retval[bout].qty.attacking;
+            int shots_this_bout = retval[bout].attacking;
             if (combat_targets && !combat_targets->Eval(context, context.effect_target)) {
                 shots_this_bout = 0;
             }
@@ -171,8 +172,8 @@ std::map<int, Combat::FighterBoutInfo> Combat::ResolveFighterBouts(std::shared_p
             retval[bout].total_damage += retval[bout].damage;
             // launch fighters
             if (bout < NUM_BOUTS) {
-                retval[bout].qty.launched = std::min(bay_capacity, retval[bout].qty.docked);
-                retval[bout].qty.docked -= retval[bout].qty.launched;
+                retval[bout].launched = std::min(bay_capacity, retval[bout].docked);
+                retval[bout].docked -= retval[bout].launched;
             }
         }
         return retval;

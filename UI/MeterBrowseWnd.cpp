@@ -817,8 +817,8 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         std::map<int, Combat::FighterBoutInfo> bout_info = Combat::ResolveFighterBouts(
             std::static_pointer_cast<const Ship>(ship), combat_targets, bay_total_capacity, hangar_current_fighters, fighter_damage, 2);
         Combat::FighterBoutInfo first_wave = bout_info.rbegin()->second;
-        GG::Clr highlight_clr = bout_info[1].qty.launched < bay_total_capacity ? HANGAR_COLOR : BAY_COLOR;
-        std::string launch_text = ColouredInt(first_wave.qty.attacking, false, highlight_clr);
+        GG::Clr highlight_clr = bout_info[1].launched < bay_total_capacity ? HANGAR_COLOR : BAY_COLOR;
+        std::string launch_text = ColouredInt(first_wave.attacking, false, highlight_clr);
         std::string damage_label_text = boost::io::str(FlexibleFormat(UserString("TT_FIGHTER_DAMAGE"))
                                                        % launch_text % fighter_damage_text);
         // damage formula label
@@ -919,7 +919,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
             // damage formula label
             std::string formula_label_text = boost::io::str(FlexibleFormat(UserString("TT_FIGHTER_DAMAGE"))
-                                                            % IntToString(bout.qty.attacking)
+                                                            % IntToString(bout.attacking)
                                                             % fighter_damage_text);
             auto formula_label = GG::Wnd::Create<CUILabel>(std::move(formula_label_text), GG::FORMAT_RIGHT);
             formula_label->MoveTo(GG::Pt(left, top));
@@ -945,9 +945,9 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             AttachChild(launch_label);
             left += (LABEL_WIDTH / 2) + EDGE_PAD + EDGE_PAD;
 
-            GG::Clr launch_clr = bout.qty.launched < bay_total_capacity ? HANGAR_COLOR : BAY_COLOR;
+            GG::Clr launch_clr = bout.launched < bay_total_capacity ? HANGAR_COLOR : BAY_COLOR;
             std::string launch_text = boost::io::str(FlexibleFormat(UserString("TT_N_OF_N"))
-                                                     % ColouredInt(bout.qty.launched, false, launch_clr)
+                                                     % ColouredInt(bout.launched, false, launch_clr)
                                                      % ColouredInt(previous_docked, false, HANGAR_COLOR));
             auto launch_value = GG::Wnd::Create<CUILabel>(std::move(launch_text), GG::FORMAT_RIGHT);
             launch_value->MoveTo(GG::Pt(left, top));
@@ -957,7 +957,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
             top += m_row_height;
             left = GG::X0;
-            previous_docked = bout.qty.docked;
+            previous_docked = bout.docked;
         }
     }
 }
