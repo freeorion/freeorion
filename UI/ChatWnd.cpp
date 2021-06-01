@@ -597,8 +597,7 @@ void MessageWnd::HandleTextCommand(const std::string& text) {
             std::set<int> recipient;
             recipient.insert(player_id);
             SendChatMessage(message, recipient, true);
-        }
-        else {
+        } else {
             *m_display += UserString("MESSAGES_INVALID") + "\n";
         }
     }
