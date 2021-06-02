@@ -41,10 +41,9 @@ from character.character_strings_module import (
     get_trait_name_aggression,
     possible_capitals,
 )
-from freeorion_tools.timers import AITimer
-
 from common.handlers import init_handlers
 from common.listeners import listener
+from freeorion_tools.timers import AITimer
 
 main_timer = AITimer('timer', write_log=True)
 turn_timer = AITimer('bucket', write_log=True)

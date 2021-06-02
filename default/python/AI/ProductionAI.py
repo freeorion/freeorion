@@ -16,6 +16,7 @@ from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from character.character_module import Aggression
 from colonization import rate_planetary_piloting
+from common.print_utils import Sequence, Table, Text
 from EnumsAI import (
     EmpireProductionTypes,
     FocusType,
@@ -40,8 +41,6 @@ from turn_state import (
     population_with_industry_focus,
 )
 from turn_state.design import get_best_ship_info, get_best_ship_ratings
-
-from common.print_utils import Sequence, Table, Text
 
 
 # TODO Move Building names to AIDependencies to avoid typos and for IDE-Support

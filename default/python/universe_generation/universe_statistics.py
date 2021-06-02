@@ -3,7 +3,6 @@ import freeorion as fo
 import natives
 import planets
 import universe_tables
-
 from common.print_utils import Number, Sequence, Table, Text
 
 species_summary = {species: 0 for species in fo.get_native_species()}

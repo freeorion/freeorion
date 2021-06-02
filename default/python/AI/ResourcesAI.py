@@ -18,11 +18,10 @@ import AIDependencies
 import ColonisationAI
 import PlanetUtilsAI
 from aistate_interface import get_aistate
+from common.print_utils import Table, Text
 from EnumsAI import FocusType, PriorityType, get_priority_resource_types
 from freeorion_tools import combine_ratings, tech_is_complete
 from freeorion_tools.timers import AITimer
-
-from common.print_utils import Table, Text
 
 resource_timer = AITimer('timer_bucket')
 

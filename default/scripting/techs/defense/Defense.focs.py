@@ -1,7 +1,11 @@
-from techs.defense.mines import EG_SYSTEM_MINES
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 from common.base_prod import TECH_COST_MULTIPLIER
-from common.misc import PLANET_SHIELD_FACTOR, PLANET_DEFENSE_FACTOR, SYSTEM_MINES_DAMAGE_FACTOR
+from common.misc import (
+    PLANET_DEFENSE_FACTOR,
+    PLANET_SHIELD_FACTOR,
+    SYSTEM_MINES_DAMAGE_FACTOR,
+)
+from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
+from techs.defense.mines import EG_SYSTEM_MINES
 
 Tech(
     name="DEF_ROOT_DEFENSE",

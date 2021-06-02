@@ -12,6 +12,7 @@ import ShipDesignAI
 import TechsListsAI
 from AIDependencies import Tags
 from aistate_interface import get_aistate
+from common.print_utils import print_in_columns
 from freeorion_tools import chat_human, get_species_tag_grade, tech_is_complete
 from turn_state import (
     get_empire_planets_by_species,
@@ -22,8 +23,6 @@ from turn_state import (
     population_with_industry_focus,
     population_with_research_focus,
 )
-
-from common.print_utils import print_in_columns
 
 inProgressTechs = {}
 

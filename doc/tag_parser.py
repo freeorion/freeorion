@@ -1,8 +1,9 @@
 from __future__ import print_function
+
+import argparse
+import fnmatch
 import os
 from collections import defaultdict
-import fnmatch
-import argparse
 
 arguments = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                     description='Parses files for content tags and creates and a doxygen suitable listing from the parse results.',

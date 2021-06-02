@@ -10,6 +10,7 @@ from operator import itemgetter
 from typing import Dict, List, Tuple
 
 from empires import home_system_layout
+
 from util import unique_product
 
 

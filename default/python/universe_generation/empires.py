@@ -20,6 +20,7 @@ from planets import (
     planet_types_real,
 )
 from starsystems import pick_star_type, star_types_real
+
 from util import report_error, unique_product
 
 

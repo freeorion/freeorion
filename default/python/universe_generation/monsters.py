@@ -4,6 +4,7 @@ import random
 import universe_statistics
 import universe_tables
 from galaxy import DisjointSets
+
 from util import MapGenerationError, report_error
 
 

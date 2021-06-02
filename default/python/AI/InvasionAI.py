@@ -12,6 +12,7 @@ import MilitaryAI
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
+from common.print_utils import Number, Table, Text
 from EnumsAI import MissionType, PriorityType
 from freeorion_tools import (
     get_partial_visibility_turn,
@@ -22,8 +23,6 @@ from freeorion_tools.timers import AITimer
 from target import TargetPlanet, TargetSystem
 from turn_state import get_colonized_planets_in_system
 from turn_state.design import get_best_ship_info
-
-from common.print_utils import Number, Table, Text
 
 MAX_BASE_TROOPERS_GOOD_INVADERS = 20
 MAX_BASE_TROOPERS_POOR_INVADERS = 10

@@ -3,6 +3,7 @@ import random
 import sys
 
 import universe_tables as tables
+
 import util
 
 # tuple of all valid planet sizes (with "no world")

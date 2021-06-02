@@ -17,10 +17,9 @@ import PlanetUtilsAI
 from AIDependencies import INVALID_ID, TECH_NATIVE_SPECIALS
 from character.character_module import Aggression, create_character
 from CombatRatingsAI import ShipCombatStats
+from common.print_utils import Number, Table, Text
 from EnumsAI import MissionType, ShipRoleType
 from freeorion_tools import combine_ratings, get_partial_visibility_turn
-
-from common.print_utils import Number, Table, Text
 
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
 # in general, leaving items as a module attribute if they are recalculated each turn without reference to prior values

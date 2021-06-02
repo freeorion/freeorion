@@ -7,6 +7,9 @@ import freeorion as fo
 import random
 
 import universe_statistics
+from common.handlers import init_handlers
+from common.listeners import listener
+from common.option_tools import parse_config
 from empires import compile_home_system_list, setup_empire
 from fields import generate_fields
 from galaxy import calc_star_system_positions
@@ -17,11 +20,8 @@ from starnames import name_star_systems
 from starsystems import generate_systems, name_planets
 from teams import place_teams
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
-from util import error_list, int_hash, report_error, seed_rng
 
-from common.handlers import init_handlers
-from common.listeners import listener
-from common.option_tools import parse_config
+from util import error_list, int_hash, report_error, seed_rng
 
 parse_config(fo.get_options_db_option_str("ai-config"), fo.get_user_config_dir())
 init_handlers(fo.get_options_db_option_str("ai-config"), None)

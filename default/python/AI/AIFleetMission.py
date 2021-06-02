@@ -11,9 +11,8 @@ import MoveUtilsAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from EnumsAI import MissionType
-
-from fleet_orders import AIFleetOrder
 from fleet_orders import (
+    AIFleetOrder,
     OrderColonize,
     OrderDefend,
     OrderInvade,

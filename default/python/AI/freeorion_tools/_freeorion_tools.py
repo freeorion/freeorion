@@ -8,9 +8,8 @@ from collections.abc import Mapping
 from functools import wraps
 from logging import ERROR, Handler, debug, error, getLogger, warning
 
-from freeorion_tools.caching import cache_for_current_turn, cache_for_session
-
 from common.configure_logging import FOLogFormatter
+from freeorion_tools.caching import cache_for_current_turn, cache_for_session
 
 # color wrappers for chat:
 RED = '<rgba 255 0 0 255>%s</rgba>'

@@ -23,6 +23,7 @@ from AIDependencies import (
 from aistate_interface import get_aistate
 from colonization import get_nest_rating, rate_piloting_tag, special_is_nest
 from colonization.planet_supply import get_planet_supply, update_planet_supply
+from common.print_utils import Bool, Number, Sequence, Table, Text
 from EnumsAI import (
     EmpireProductionTypes,
     FocusType,
@@ -64,8 +65,6 @@ from turn_state import (
     set_medium_pilot_rating,
 )
 from turn_state.design import get_best_ship_info
-
-from common.print_utils import Bool, Number, Sequence, Table, Text
 
 colonization_timer = AITimer('getColonyFleets()')
 
