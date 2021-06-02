@@ -5,7 +5,7 @@ Part
     damage = 1
     shots = 3
     NoDefaultCapacityEffect
-    totalShipDamageEstimation = 0
+    damageStructurePerBattleMax = 0
     combatTargets = And [
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
         Fighter

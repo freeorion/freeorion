@@ -56,8 +56,8 @@ parse::detail::simple_double_parser_rules::simple_double_parser_rules(const pars
         |   tok.HabitableSize_
         |   tok.Size_
         |   tok.DistanceFromOriginalType_
-        |   tok.TotalFighterDamageEstimation_
-        |   tok.TotalShipDamageEstimation_
+        |   tok.DestroyFightersPerBattleMax_
+        |   tok.DamageStructurePerBattleMax_
         |   tok.PropagatedSupplyRange_
         ;
 

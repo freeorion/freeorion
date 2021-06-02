@@ -874,18 +874,18 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     } else if (property_name == "CurrentTurn") {
         return context.current_turn;
 
-    } else if (property_name == "TotalFighterDamageEstimation") {
+    } else if (property_name == "DestroyFightersPerBattleMax") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
-            InfoLogger() << "TotalFighterDamageEstimation" <<  ship->TotalWeaponsFighterDamage();
-            // FIXME prevent recursion; disallowing the ValueRef inside totalWeaponsFighterDamage via parsers would be best.
+            InfoLogger() << "DestroyFightersPerBattleMax" <<  ship->TotalWeaponsFighterDamage();
+            // FIXME prevent recursion; disallowing the ValueRef inside of destroyFightersPerBattleMax via parsers would be best.
             return ship->TotalWeaponsFighterDamage();
         }
         return 0.0;
 
-    } else if (property_name == "TotalShipDamageEstimation") {
+    } else if (property_name == "DamageStructurePerBattleMax") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
-            // FIXME prevent recursion; disallowing the ValueRef inside of totalWeaponsShipDamage via parsers would be best.
-            InfoLogger() << "TotalShipDamageEstimation" <<  ship->TotalWeaponsShipDamage();
+            // FIXME prevent recursion; disallowing the ValueRef inside of damageStructurePerBattleMax via parsers would be best.
+            InfoLogger() << "DamageStructurePerBattleMax" <<  ship->TotalWeaponsShipDamage();
             return ship->TotalWeaponsShipDamage();
         }
         return 0.0;

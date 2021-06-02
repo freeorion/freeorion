@@ -4,8 +4,8 @@ Part
     class = ShortRange
     damage = 1
     shots = 12
-    totalFighterDamageEstimation = ShipPartMeter part = "SR_GRAV_PULSE" meter = SecondaryStat object = Source.ID
-    totalShipDamageEstimation    =
+    destroyFightersPerBattleMax = ShipPartMeter part = "SR_GRAV_PULSE" meter = SecondaryStat object = Source.ID
+    damageStructurePerBattleMax =
         max(0,ShipPartMeter part = "SR_GRAV_PULSE" meter = Capacity object = Source.ID - Value(Target.Shield))
         * ShipPartMeter part = "SR_GRAV_PULSE" meter = SecondaryStat object = Source.ID
     combatTargets = And [

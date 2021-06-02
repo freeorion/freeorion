@@ -4,10 +4,10 @@ Part
     class = ShortRange
     damage = 1
     shots = 10
-    totalFighterDamageEstimation =
+    destroyFightersPerBattleMax =
         ShipPartMeter part = "SR_THRASHING_BODY" meter = SecondaryStat object = Source.ID
         * NamedRealLookup name = "NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE"
-    totalShipDamageEstimation =
+    damageStructurePerBattleMax =
         max(0,ShipPartMeter part = "SR_THRASHING_BODY" meter = Capacity object = Source.ID - Value(Target.Shield))
         * ShipPartMeter part = "SR_THRASHING_BODY" meter = SecondaryStat object = Source.ID
         * NamedRealLookup name = "NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE"

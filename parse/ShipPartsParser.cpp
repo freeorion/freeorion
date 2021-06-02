@@ -133,8 +133,8 @@ namespace {
                    )
                 > matches_[tok.NoDefaultCapacityEffect_]                // _6
 //                > -(label(tok.value_)       > qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<double>>>()[double_rules.expr]) // _7
-                > -(label(tok.totalFighterDamageEstimation_) > double_rules.expr) // _7
-                > -(label(tok.totalShipDamageEstimation_)    > double_rules.expr) // _8
+                > -(label(tok.destroyFightersPerBattleMax_) > double_rules.expr) // _7
+                > -(label(tok.damageStructurePerBattleMax_) > double_rules.expr) // _8
                 > -(label(tok.combatTargets_)       > condition_parser) // _9
                 > -(label(tok.mountableSlotTypes_)  > one_or_more_slots)// _10
                 >   common_rules.common                                 // _11

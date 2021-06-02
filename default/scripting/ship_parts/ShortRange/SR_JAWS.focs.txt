@@ -3,8 +3,8 @@ Part
     description = "SR_JAWS_DESC"
     class = ShortRange
     damage = 10
-    totalFighterDamageEstimation = 0
-    totalShipDamageEstimation =
+    destroyFightersPerBattleMax = 0
+    damageStructurePerBattleMax =
         max(0,ShipPartMeter part = "SR_JAWS" meter = Capacity object = Source.ID - Value(Target.Shield))
         * ShipPartMeter part = "SR_JAWS" meter = SecondaryStat object = Source.ID
         * NamedRealLookup name = "NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE"

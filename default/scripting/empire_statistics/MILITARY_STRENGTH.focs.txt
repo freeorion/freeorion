@@ -5,8 +5,8 @@ Statistic name = "MILITARY_STRENGTH_STAT" value =
     //     With four bouts a bomber destructed in bout two prevents 2 bomber shots, but flak and interceptors are usually idle 2/3 of their total destruction estimation so that evens out
     //     Usefulness of most anti-fighter weapons scales with the number of enemy fighters
     // Note that weapons targeting fighters and ships will be counted twice (once for doing structural damage, once for preventing fighter damage)
-    Statistic Sum value = ((LocalCandidate.TotalShipDamageEstimation + 1.5 * LocalCandidate.MaxShield)
-                         * (LocalCandidate.Structure + LocalCandidate.MaxShield + ([[FIGHTER_DAMAGE_FACTOR]] * 4 * LocalCandidate.TotalFighterDamageEstimation)))
+    Statistic Sum value = ((LocalCandidate.DamageStructurePerBattleMax + 1.5 * LocalCandidate.MaxShield)
+                         * (LocalCandidate.Structure + LocalCandidate.MaxShield + ([[FIGHTER_DAMAGE_FACTOR]] * 4 * LocalCandidate.DestroyFightersPerBattleMax)))
         condition = And [
             Ship
             OwnedBy empire = Source.Owner

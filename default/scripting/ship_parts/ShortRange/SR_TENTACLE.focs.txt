@@ -4,8 +4,8 @@ Part
     class = ShortRange
     damage = 5
     shots = 2
-    // totalFighterDamageEstimation = default, can shoot fighters starting from bout 2
-    totalShipDamageEstimation =
+    // destroyFightersPerBattleMax = default, can shoot fighters starting from bout 2
+    damageStructurePerBattleMax =
         max(0,ShipPartMeter part = "SR_TENTACLE" meter = Capacity object = Source.ID - Value(Target.Shield))
         * ShipPartMeter part = "SR_TENTACLE" meter = SecondaryStat object = Source.ID
         * NamedRealLookup name = "NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE"
