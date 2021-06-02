@@ -122,7 +122,6 @@ class Table:
         else:
             yield self._get_row_separator(self._bottom_sep, column_widths)
 
-
         # print legend
         legend = [x for x in self._headers if x.description]
         if legend:
