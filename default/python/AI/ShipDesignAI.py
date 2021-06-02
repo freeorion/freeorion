@@ -55,7 +55,8 @@ import FleetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from CombatRatingsAI import ShipCombatStats, get_allowed_targets, weight_attack_troops, weight_shields
 from aistate_interface import get_aistate
-from freeorion_tools import UserString, get_ship_part, get_species_tag_grade, tech_is_complete, assertion_fails
+from freeorion_tools import get_ship_part, get_species_tag_grade, tech_is_complete, assertion_fails
+from freeorion_tools.translation import UserString
 from turn_state import get_inhabited_planets
 
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore

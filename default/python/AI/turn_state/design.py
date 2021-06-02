@@ -6,7 +6,8 @@ import ColonisationAI
 import freeOrionAIInterface as fo
 import ShipDesignAI
 from EnumsAI import PriorityType
-from freeorion_tools import AITimer, cache_for_current_turn
+from freeorion_tools.timers import AITimer
+from freeorion_tools.caching import cache_for_current_turn
 from turn_state._planet_state import get_inhabited_planets
 
 

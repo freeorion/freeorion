@@ -19,7 +19,8 @@ import PlanetUtilsAI
 import ColonisationAI
 import AIDependencies
 from common.print_utils import Table, Text
-from freeorion_tools import combine_ratings, tech_is_complete, AITimer
+from freeorion_tools import combine_ratings, tech_is_complete
+from freeorion_tools.timers import AITimer
 
 resource_timer = AITimer('timer_bucket')
 

@@ -9,7 +9,8 @@ import PlanetUtilsAI
 
 from AIDependencies import INVALID_ID
 from EnumsAI import MissionType
-from freeorion_tools import cache_for_current_turn, chat_human, get_partial_visibility_turn
+from freeorion_tools import chat_human, get_partial_visibility_turn
+from freeorion_tools.caching import cache_for_current_turn
 from turn_state import get_system_supply
 
 _DEBUG_CHAT = False

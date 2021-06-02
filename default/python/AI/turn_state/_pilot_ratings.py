@@ -1,4 +1,4 @@
-from freeorion_tools import cache_for_current_turn
+from freeorion_tools.caching import cache_for_current_turn
 
 
 class PilotRatings:

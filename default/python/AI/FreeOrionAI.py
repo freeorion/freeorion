@@ -17,7 +17,8 @@ import freeOrionAIInterface as fo  # interface used to interact with FreeOrion A
 from common.option_tools import parse_config, get_option_dict, check_bool
 parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
 
-from freeorion_tools import patch_interface, configure_debug_chat, process_chat_message
+from freeorion_tools.fo_chat_handler import configure_debug_chat, process_chat_message
+from freeorion_tools.patch_interface import patch_interface
 
 patch_interface()
 
@@ -36,7 +37,7 @@ import ShipDesignAI
 import TechsListsAI
 from aistate_interface import create_new_aistate, load_aistate, get_aistate
 from AIDependencies import INVALID_ID
-from freeorion_tools import AITimer
+from freeorion_tools.timers import AITimer
 from common.handlers import init_handlers
 from common.listeners import listener
 from character.character_module import Aggression

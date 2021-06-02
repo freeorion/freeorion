@@ -7,9 +7,9 @@ from collections.abc import Mapping
 from functools import wraps
 from logging import debug, error, ERROR, getLogger, Handler, warning
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
-from aistate_interface import get_aistate
+import freeOrionAIInterface as fo
 from common.configure_logging import FOLogFormatter
+from freeorion_tools.caching import cache_for_session, cache_for_current_turn
 
 # color wrappers for chat:
 RED = '<rgba 255 0 0 255>%s</rgba>'
@@ -45,36 +45,6 @@ def get_ai_tag_grade(tag_list, tag_type):
         if parts[1] == tag_type.upper():
             return parts[0]
     return ""
-
-
-# this name left with C naming style for compatibility with translation assistance procedures
-def UserString(label, default=None):  # pylint: disable=invalid-name
-    """
-    A translation assistance tool is intended to search for this method to identify translatable strings.
-
-    :param label: a UserString key
-    :param default: a default value to return if there is a key error
-    :return: a translated string for the label
-    """
-
-    table_string = fo.userString(label)
-
-    if "ERROR: " + label in table_string:  # implement test for string lookup not found error
-        return default or table_string
-    else:
-        return table_string
-
-
-# this name left with C naming style for compatibility with translation assistance procedures
-def UserStringList(label):  # pylint: disable=invalid-name
-    """
-    A translation assistance tool is intended to search for this method to identify translatable strings.
-
-    :param label: a UserString key
-    :return: a python list of translated strings from the UserString list identified by the label
-    """
-
-    return fo.userStringList(label)
 
 
 def tech_is_complete(tech):
@@ -153,69 +123,6 @@ def chat_human(message, send_to_logs=True):
     fo.sendChatMessage(human_id, message)
     if send_to_logs:
         debug("Chat Message to human: %s", remove_tags(message))
-
-
-def cache_for_session(func):
-    """
-    Cache a function value for current session.
-
-    Wraps only functions with hashable arguments.
-    Use this only if the called function return value is constant throughout the game.
-    """
-    _cache = {}
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        key = (func, args, tuple(kwargs.items()))
-        if key in _cache:
-            return _cache[key]
-        res = func(*args, **kwargs)
-        _cache[key] = res
-        return res
-    wrapper._cache = _cache
-    return wrapper
-
-
-def cache_for_current_turn(func):
-    """
-    Cache a function value updated each turn.
-
-    The cache is non-persistent through loading a game.
-    Wraps only functions with hashable arguments.
-    """
-    _cache = {}
-
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        key = (func, args, tuple(kwargs.items()))
-        this_turn = fo.currentTurn()
-        if key in _cache and _cache[key][0] == this_turn:
-            return _cache[key][1]
-        res = func(*args, **kwargs)
-        _cache[key] = (this_turn, res)
-        return res
-    wrapper._cache = _cache
-    return wrapper
-
-
-def cache_by_turn_persistent(func):
-    """
-    Cache a function value by turn, persistent through loading a game.
-
-    It will also provides a history that may be analysed.
-    The cache is keyed by the original function name. It only wraps functions without arguments.
-
-    As the result is stored in AIstate, its type must be trusted by the savegame_codec module.
-    """
-    @wraps(func)
-    def wrapper():
-        if get_aistate() is None:
-            return func()
-        else:
-            cache = get_aistate().misc.setdefault('caches', {}).setdefault(func.__name__, {})
-            this_turn = fo.currentTurn()
-            return cache[this_turn] if this_turn in cache else cache.setdefault(this_turn, func())
-    return wrapper
 
 
 def dict_to_tuple(dic):

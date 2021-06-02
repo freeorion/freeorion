@@ -5,7 +5,8 @@ import freeOrionAIInterface as fo
 from AIDependencies import CombatTarget
 from CombatRatingsAI._targets import get_allowed_targets
 from aistate_interface import get_aistate
-from freeorion_tools import cache_for_current_turn, dict_to_tuple, get_ship_part, tuple_to_dict
+from freeorion_tools import dict_to_tuple, get_ship_part, tuple_to_dict
+from freeorion_tools.caching import cache_for_current_turn
 
 
 class ShipCombatStats:

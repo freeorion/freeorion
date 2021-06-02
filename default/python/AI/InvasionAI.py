@@ -15,7 +15,8 @@ import PlanetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from EnumsAI import MissionType, PriorityType
 from common.print_utils import Table, Text, Number
-from freeorion_tools import tech_is_complete, AITimer, get_partial_visibility_turn, get_species_tag_grade
+from freeorion_tools.timers import AITimer
+from freeorion_tools import tech_is_complete, get_partial_visibility_turn, get_species_tag_grade
 from target import TargetPlanet, TargetSystem
 from turn_state import get_colonized_planets_in_system
 from turn_state.design import get_best_ship_info

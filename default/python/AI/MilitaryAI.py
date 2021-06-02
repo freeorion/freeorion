@@ -14,7 +14,8 @@ from CombatRatingsAI import (
     rating_difference, rating_needed,
 )
 from EnumsAI import MissionType
-from freeorion_tools import cache_by_turn_persistent, combine_ratings
+from freeorion_tools import combine_ratings
+from freeorion_tools.caching import cache_by_turn_persistent
 from target import TargetSystem
 from turn_state import (
     get_distance_to_enemy_supply, get_owned_planets, get_owned_planets_in_system,

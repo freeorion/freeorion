@@ -5,7 +5,7 @@ from logging import debug
 import freeOrionAIInterface as fo
 from character.character_module import Aggression
 from character.character_strings_module import possible_greetings
-from freeorion_tools import UserStringList
+from freeorion_tools.translation import UserStringList
 from aistate_interface import get_aistate
 
 

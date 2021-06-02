@@ -3,7 +3,7 @@ from collections import Counter
 from CombatRatingsAI._fleet_combat_stats import get_fleet_combat_stats
 from CombatRatingsAI._ship_combat_stats import ShipCombatStats, get_ship_combat_stats
 from EnumsAI import MissionType
-from freeorion_tools import cache_for_current_turn
+from freeorion_tools.caching import cache_for_current_turn
 
 
 @cache_for_current_turn

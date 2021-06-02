@@ -22,10 +22,9 @@ from colonization import get_nest_rating, rate_piloting_tag, special_is_nest
 from colonization.planet_supply import get_planet_supply, update_planet_supply
 from common.print_utils import Bool, Number, Sequence, Table, Text
 from EnumsAI import EmpireProductionTypes, FocusType, MissionType, PriorityType, ShipRoleType
-from freeorion_tools import (
-    AITimer, cache_by_turn_persistent, cache_for_current_turn, cache_for_session, get_partial_visibility_turn,
-    get_species_tag_grade, tech_is_complete, get_ship_part
-)
+from freeorion_tools.timers import AITimer
+from freeorion_tools.caching import cache_by_turn_persistent, cache_for_current_turn, cache_for_session
+from freeorion_tools import get_partial_visibility_turn, get_species_tag_grade, tech_is_complete, get_ship_part
 from target import TargetPlanet
 from turn_state import (
     best_pilot_rating, get_colonized_planets_in_system, get_empire_outposts, get_empire_planets_by_species,

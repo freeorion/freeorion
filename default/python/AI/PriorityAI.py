@@ -16,7 +16,8 @@ import PlanetUtilsAI
 import ResearchAI
 from AIDependencies import INVALID_ID
 from EnumsAI import EmpireProductionTypes, MissionType, PriorityType, ShipRoleType, get_priority_production_types
-from freeorion_tools import AITimer, tech_is_complete
+from freeorion_tools.timers import AITimer
+from freeorion_tools import tech_is_complete
 from turn_state import get_number_of_colonies, get_owned_planets, have_asteroids, have_gas_giant
 from turn_state.design import cur_best_military_design_rating, get_best_ship_info
 

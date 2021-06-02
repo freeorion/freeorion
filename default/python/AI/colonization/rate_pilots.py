@@ -2,9 +2,9 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 from AIDependencies import (
     Tags,
 )
-from freeorion_tools import (
-    cache_for_session, get_species_tag_grade,
-)
+
+from freeorion_tools.caching import cache_for_session
+from freeorion_tools import get_species_tag_grade
 
 GOOD_PILOT_RATING = 4.0
 GREAT_PILOT_RATING = 6.0
