@@ -1,4 +1,4 @@
-from logging import warning, debug
+from logging import debug, warning
 
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
@@ -6,10 +6,9 @@ from common.configure_logging import redirect_logging_to_freeorion_logger
 redirect_logging_to_freeorion_logger()
 
 import freeorion as fo
-
-from typing import Dict, Tuple, List
-
 from operator import itemgetter
+from typing import Dict, List, Tuple
+
 from empires import home_system_layout
 from util import unique_product
 

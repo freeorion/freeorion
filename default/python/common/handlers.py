@@ -1,10 +1,10 @@
-import sys
-from traceback import print_exc
-from shlex import split
 import os
+import sys
 from logging import error
+from shlex import split
+from traceback import print_exc
 
-from common.option_tools import get_option_dict, HANDLERS
+from common.option_tools import HANDLERS, get_option_dict
 
 
 def init_handlers(config_str, search_dir):

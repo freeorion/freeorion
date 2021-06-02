@@ -43,19 +43,28 @@ global variables:
 #       - _calculate_weapon_strength() may be removed
 #       - Filtering the weapon parts must be updated: current cache does not consider tech upgrades, weapons are ignored
 import copy
+import freeOrionAIInterface as fo
 import math
 from collections import Counter, defaultdict
 from logging import debug, error, info, warning
-from typing import Dict, Iterable, KT, List, Optional, Sequence, Tuple, Union, VT
-
-import freeOrionAIInterface as fo
+from typing import KT, VT, Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
 import AIDependencies
 import FleetUtilsAI
 from AIDependencies import INVALID_ID, Tags
-from CombatRatingsAI import ShipCombatStats, get_allowed_targets, weight_attack_troops, weight_shields
 from aistate_interface import get_aistate
-from freeorion_tools import get_ship_part, get_species_tag_grade, tech_is_complete, assertion_fails
+from CombatRatingsAI import (
+    ShipCombatStats,
+    get_allowed_targets,
+    weight_attack_troops,
+    weight_shields,
+)
+from freeorion_tools import (
+    assertion_fails,
+    get_ship_part,
+    get_species_tag_grade,
+    tech_is_complete,
+)
 from freeorion_tools.translation import UserString
 from turn_state import get_inhabited_planets
 

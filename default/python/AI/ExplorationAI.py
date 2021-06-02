@@ -1,13 +1,13 @@
+import freeOrionAIInterface as fo
 from logging import debug, error, info
 
-import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client # pylint: disable=import-error
 import FleetUtilsAI
-from EnumsAI import MissionType
 import MoveUtilsAI
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID, MINIMUM_GUARD_DISTANCE_TO_HOME_SYSTEM
-from freeorion_tools import get_fleet_position, get_partial_visibility_turn
 from aistate_interface import get_aistate
+from EnumsAI import MissionType
+from freeorion_tools import get_fleet_position, get_partial_visibility_turn
 from target import TargetSystem
 
 graph_flags = set()

@@ -1,6 +1,6 @@
+import freeOrionAIInterface as fo
 from logging import debug
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIstate
 import EspionageAI
 import FleetUtilsAI
@@ -10,15 +10,20 @@ import PriorityAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from CombatRatingsAI import (
-    get_fleet_rating, get_fleet_rating_against_planets, get_ship_combat_stats,
-    rating_difference, rating_needed,
+    get_fleet_rating,
+    get_fleet_rating_against_planets,
+    get_ship_combat_stats,
+    rating_difference,
+    rating_needed,
 )
 from EnumsAI import MissionType
 from freeorion_tools import combine_ratings
 from freeorion_tools.caching import cache_by_turn_persistent
 from target import TargetSystem
 from turn_state import (
-    get_distance_to_enemy_supply, get_owned_planets, get_owned_planets_in_system,
+    get_distance_to_enemy_supply,
+    get_owned_planets,
+    get_owned_planets_in_system,
     get_systems_by_supply_tier,
 )
 from turn_state.design import cur_best_military_design_rating

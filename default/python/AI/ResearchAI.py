@@ -1,24 +1,29 @@
+import freeOrionAIInterface as fo
 import math
 import random
 from functools import partial
-from logging import warning, debug
+from logging import debug, warning
 from typing import Callable, Union
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
-from common.print_utils import print_in_columns
-
 import AIDependencies as Dep
-from AIDependencies import Tags
 import AIstate
 import ColonisationAI
-from aistate_interface import get_aistate
 import ShipDesignAI
 import TechsListsAI
+from AIDependencies import Tags
+from aistate_interface import get_aistate
 from freeorion_tools import chat_human, get_species_tag_grade, tech_is_complete
 from turn_state import (
-    get_empire_planets_by_species, have_asteroids, have_gas_giant, have_nest, have_ruins,
-    population_with_industry_focus, population_with_research_focus,
+    get_empire_planets_by_species,
+    have_asteroids,
+    have_gas_giant,
+    have_nest,
+    have_ruins,
+    population_with_industry_focus,
+    population_with_research_focus,
 )
+
+from common.print_utils import print_in_columns
 
 inProgressTechs = {}
 

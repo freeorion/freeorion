@@ -1,13 +1,24 @@
-import random
-
 import freeorion as fo
+import random
 
 import universe_statistics
 from names import get_name_list, random_name
-from options import (HS_ACCEPTABLE_PLANET_SIZES, HS_ACCEPTABLE_PLANET_TYPES, HS_MAX_JUMP_DISTANCE_LIMIT,
-                     HS_MIN_DISTANCE_PRIORITY_LIMIT, HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM,
-                     HS_MIN_PLANETS_IN_VICINITY_TOTAL, HS_MIN_SYSTEMS_IN_VICINITY, HS_VICINITY_RANGE)
-from planets import calc_planet_size, calc_planet_type, planet_sizes_real, planet_types_real
+from options import (
+    HS_ACCEPTABLE_PLANET_SIZES,
+    HS_ACCEPTABLE_PLANET_TYPES,
+    HS_MAX_JUMP_DISTANCE_LIMIT,
+    HS_MIN_DISTANCE_PRIORITY_LIMIT,
+    HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM,
+    HS_MIN_PLANETS_IN_VICINITY_TOTAL,
+    HS_MIN_SYSTEMS_IN_VICINITY,
+    HS_VICINITY_RANGE,
+)
+from planets import (
+    calc_planet_size,
+    calc_planet_type,
+    planet_sizes_real,
+    planet_types_real,
+)
 from starsystems import pick_star_type, star_types_real
 from util import report_error, unique_product
 

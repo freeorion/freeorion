@@ -1,5 +1,6 @@
-import AIDependencies
 import freeOrionAIInterface as fo
+
+import AIDependencies
 from EnumsAI import FocusType
 from freeorion_tools.caching import cache_for_current_turn
 from turn_state._planet_state import _get_planets_info

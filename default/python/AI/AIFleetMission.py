@@ -1,22 +1,34 @@
+import freeOrionAIInterface as fo
 from logging import debug, warning
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
-
-# the following import is used for type hinting, which pylint seems not to recognize
-from fleet_orders import AIFleetOrder  # pylint: disable=unused-import # noqa: F401
-from fleet_orders import OrderMove, OrderPause, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
 import AIstate
+import CombatRatingsAI
 import EspionageAI
 import FleetUtilsAI
-import MoveUtilsAI
-import MilitaryAI
 import InvasionAI
-import CombatRatingsAI
-from aistate_interface import get_aistate
-from target import Target, TargetSystem, TargetFleet, TargetPlanet
-from EnumsAI import MissionType
+import MilitaryAI
+import MoveUtilsAI
 from AIDependencies import INVALID_ID
-from freeorion_tools import combine_ratings, get_fleet_position, get_partial_visibility_turn, assertion_fails
+from aistate_interface import get_aistate
+from EnumsAI import MissionType
+
+from fleet_orders import AIFleetOrder
+from fleet_orders import (
+    OrderColonize,
+    OrderDefend,
+    OrderInvade,
+    OrderMilitary,
+    OrderMove,
+    OrderOutpost,
+    OrderPause,
+)
+from freeorion_tools import (
+    assertion_fails,
+    combine_ratings,
+    get_fleet_position,
+    get_partial_visibility_turn,
+)
+from target import Target, TargetFleet, TargetPlanet, TargetSystem
 
 ORDERS_FOR_MISSION = {
     MissionType.EXPLORATION: OrderPause,

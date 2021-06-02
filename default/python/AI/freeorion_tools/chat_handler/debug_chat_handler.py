@@ -1,6 +1,6 @@
+import freeOrionAIInterface as fo
 from typing import Any
 
-import freeOrionAIInterface as fo
 from freeorion_tools import chat_human
 from freeorion_tools.chat_handler.base_chat_handler import ChatHandlerBase
 from freeorion_tools.chat_handler.chat_formatter import ChatFormatter

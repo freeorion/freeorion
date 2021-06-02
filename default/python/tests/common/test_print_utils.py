@@ -10,7 +10,7 @@ Process finished with exit code 0
 '''
 from io import StringIO
 
-from common.print_utils import print_in_columns, Sequence, Table, Text, Number
+from common.print_utils import Number, Sequence, Table, Text, print_in_columns
 
 EXPECTED_COLUMNS = '''a   c
 b   d

@@ -1,5 +1,8 @@
-from character.character_module import Trait, Character, Aggression
-from character.character_strings_module import _make_aggression_based_function, get_trait_name_aggression
+from character.character_module import Aggression, Character, Trait
+from character.character_strings_module import (
+    _make_aggression_based_function,
+    get_trait_name_aggression,
+)
 
 
 def test_make_aggression_based_function():

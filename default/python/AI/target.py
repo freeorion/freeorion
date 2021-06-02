@@ -1,7 +1,7 @@
+import freeOrionAIInterface as fo
 from logging import warning
 from typing import Optional
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 from AIDependencies import INVALID_ID
 
 

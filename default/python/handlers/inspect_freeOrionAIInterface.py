@@ -1,5 +1,9 @@
 from common.listeners import register_pre_handler
-from handlers.shared_instances_code import classes_to_exclude_from_ai, get_common_instances, get_item_with_location
+from handlers.shared_instances_code import (
+    classes_to_exclude_from_ai,
+    get_common_instances,
+    get_item_with_location,
+)
 from stub_generator import generate_stub
 
 

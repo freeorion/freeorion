@@ -21,10 +21,10 @@ on character suitable for the UI.
 For example:
 possible_capitals(Character([Aggression(0)])) returns ['Royal', 'Imperial'].
 """
+import freeOrionAIInterface as fo
 from logging import debug
 
 import character as character_package
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 
 class _CharacterTableFunction:

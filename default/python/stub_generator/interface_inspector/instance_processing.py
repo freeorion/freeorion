@@ -1,7 +1,10 @@
 from logging import error, warning
 from typing import Any, Dict, Iterator, List
 
-from stub_generator.interface_inspector.inspection_helpers import _get_member_info, _getmembers
+from stub_generator.interface_inspector.inspection_helpers import (
+    _get_member_info,
+    _getmembers,
+)
 
 _INVALID_CLASSES = {"method"}
 

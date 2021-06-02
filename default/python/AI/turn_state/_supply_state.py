@@ -1,7 +1,7 @@
+import freeOrionAIInterface as fo
 from logging import error, warning
 from typing import Dict, Mapping, Tuple
 
-import freeOrionAIInterface as fo
 from freeorion_tools.caching import cache_for_current_turn
 
 

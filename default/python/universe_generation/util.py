@@ -1,7 +1,7 @@
+import itertools
 import math
 import random
 import sys
-import itertools
 from hashlib import md5
 from typing import Iterable, Iterator, Tuple
 

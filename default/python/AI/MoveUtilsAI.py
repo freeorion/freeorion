@@ -1,13 +1,13 @@
-from logging import warning, debug
+import freeOrionAIInterface as fo
+from logging import debug, warning
 from typing import List, Optional
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
-from aistate_interface import get_aistate
 import AIstate
 import fleet_orders
-import PlanetUtilsAI
 import pathfinding
-from AIDependencies import INVALID_ID, DRYDOCK_HAPPINESS_THRESHOLD
+import PlanetUtilsAI
+from AIDependencies import DRYDOCK_HAPPINESS_THRESHOLD, INVALID_ID
+from aistate_interface import get_aistate
 from freeorion_tools import get_fleet_position
 from target import TargetFleet, TargetSystem
 from turn_state import get_empire_drydocks, get_system_supply

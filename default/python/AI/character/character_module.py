@@ -82,12 +82,11 @@ trait components to the FOCS description of a playable species.
 #
 
 import abc
-from collections import Counter
+import freeOrionAIInterface as fo
 import math
 import random
-from logging import warning, debug
-
-import freeOrionAIInterface as fo  # pylint: disable=import-error
+from collections import Counter
+from logging import debug, warning
 
 
 class Trait(metaclass=abc.ABCMeta):

@@ -1,25 +1,26 @@
 import copy
-from collections import Counter, OrderedDict as odict
-from logging import error, info, warning, debug
+import freeOrionAIInterface as fo
+from collections import Counter
+from collections import OrderedDict as odict
+from logging import debug, error, info, warning
 from operator import itemgetter
 from time import time
 from typing import Dict, List, Optional, Tuple
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
-from CombatRatingsAI import ShipCombatStats
-from common.print_utils import Table, Text, Number
-
 import AIFleetMission
 import ColonisationAI
+import CombatRatingsAI
 import ExplorationAI
 import FleetUtilsAI
-from EnumsAI import MissionType, ShipRoleType
-import CombatRatingsAI
 import MilitaryAI
 import PlanetUtilsAI
-from freeorion_tools import combine_ratings, get_partial_visibility_turn
 from AIDependencies import INVALID_ID, TECH_NATIVE_SPECIALS
-from character.character_module import create_character, Aggression
+from character.character_module import Aggression, create_character
+from CombatRatingsAI import ShipCombatStats
+from EnumsAI import MissionType, ShipRoleType
+from freeorion_tools import combine_ratings, get_partial_visibility_turn
+
+from common.print_utils import Number, Table, Text
 
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
 # in general, leaving items as a module attribute if they are recalculated each turn without reference to prior values

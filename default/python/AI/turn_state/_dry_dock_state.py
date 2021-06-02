@@ -1,8 +1,7 @@
+import freeOrionAIInterface as fo
 from typing import Mapping, Tuple
 
 import AIDependencies
-import freeOrionAIInterface as fo
-
 from freeorion_tools import ReadOnlyDict
 from freeorion_tools.caching import cache_for_current_turn
 

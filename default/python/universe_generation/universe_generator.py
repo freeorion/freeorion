@@ -3,26 +3,26 @@ from common.configure_logging import redirect_logging_to_freeorion_logger
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
 
+import freeorion as fo
 import random
 
-import freeorion as fo
-
-from starnames import name_star_systems
-from galaxy import calc_star_system_positions
-from starsystems import name_planets, generate_systems
+import universe_statistics
 from empires import compile_home_system_list, setup_empire
 from fields import generate_fields
-from natives import generate_natives
+from galaxy import calc_star_system_positions
 from monsters import generate_monsters
+from natives import generate_natives
 from specials import distribute_specials
+from starnames import name_star_systems
+from starsystems import generate_systems, name_planets
 from teams import place_teams
-from util import int_hash, seed_rng, report_error, error_list
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
-import universe_statistics
+from util import error_list, int_hash, report_error, seed_rng
 
 from common.handlers import init_handlers
 from common.listeners import listener
 from common.option_tools import parse_config
+
 parse_config(fo.get_options_db_option_str("ai-config"), fo.get_user_config_dir())
 init_handlers(fo.get_options_db_option_str("ai-config"), None)
 

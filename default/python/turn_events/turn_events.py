@@ -3,11 +3,11 @@ from common.configure_logging import redirect_logging_to_freeorion_logger
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
 
-import sys
-from random import random, uniform, choice
-from math import sin, cos, pi
-
 import freeorion as fo
+import sys
+from math import cos, pi, sin
+from random import choice, random, uniform
+
 from universe_tables import MONSTER_FREQUENCY
 
 

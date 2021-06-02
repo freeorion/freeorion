@@ -1,6 +1,6 @@
+import freeOrionAIInterface as fo
 from functools import wraps
 
-import freeOrionAIInterface as fo
 from aistate_interface import get_aistate
 
 

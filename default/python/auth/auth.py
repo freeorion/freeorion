@@ -1,13 +1,12 @@
-from logging import warning, info
+from logging import info, warning
 
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
 
-import sys
-
 import freeorion as fo
+import sys
 
 # Constants defined by the C++ game engine
 NO_TEAM_ID = -1

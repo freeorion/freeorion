@@ -1,10 +1,8 @@
-import random
-
 import freeorion as fo
+import random
 
 import names
 import options
-
 
 # for starname modifiers
 stargroup_words = []

@@ -1,6 +1,5 @@
-from random import choice, sample, uniform
-
 import freeorion as fo
+from random import choice, sample, uniform
 
 from util import report_error
 

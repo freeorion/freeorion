@@ -1,15 +1,16 @@
 # This Python file uses the following encoding: utf-8
+import freeOrionAIInterface as fo
 import inspect
 import pprint
 import re
 import traceback
 from collections.abc import Mapping
 from functools import wraps
-from logging import debug, error, ERROR, getLogger, Handler, warning
+from logging import ERROR, Handler, debug, error, getLogger, warning
 
-import freeOrionAIInterface as fo
+from freeorion_tools.caching import cache_for_current_turn, cache_for_session
+
 from common.configure_logging import FOLogFormatter
-from freeorion_tools.caching import cache_for_session, cache_for_current_turn
 
 # color wrappers for chat:
 RED = '<rgba 255 0 0 255>%s</rgba>'

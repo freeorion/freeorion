@@ -3,12 +3,12 @@ The TechsListAI module provides functions that describes dependencies between
 various technologies to help the AI decide which technologies should be
 researched next.
 """
+import freeOrionAIInterface as fo
 from itertools import zip_longest
 from logging import debug, warning
 from typing import Iterator, List, Union
 
 import AIDependencies as Dep
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 
 def unusable_techs():

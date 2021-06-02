@@ -1,10 +1,9 @@
-from logging import error, debug
+import freeOrionAIInterface as fo
+from logging import debug, error
 from typing import Iterable, List, Union
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 import ColonisationAI
 from AIDependencies import INVALID_ID
-
 from freeorion_tools import ppstring
 
 

@@ -1,6 +1,7 @@
-from common.option_tools import get_option_dict
 from DiplomaticCorp import DiplomaticCorp, handle_pregame_chat
 from freeorion_tools.chat_handler import DebugChatHandler, NormalChatHandler
+
+from common.option_tools import get_option_dict
 
 _chat_handler = None  # Optional[_ChatHandler]
 

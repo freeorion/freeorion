@@ -1,24 +1,34 @@
+import freeOrionAIInterface as fo
 import math
 from logging import debug
 from operator import itemgetter
-
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 import AIDependencies
 import AIstate
 import ColonisationAI
 import ExplorationAI
 import FleetUtilsAI
-from aistate_interface import get_aistate
 import InvasionAI
 import MilitaryAI
 import PlanetUtilsAI
 import ResearchAI
 from AIDependencies import INVALID_ID
-from EnumsAI import EmpireProductionTypes, MissionType, PriorityType, ShipRoleType, get_priority_production_types
-from freeorion_tools.timers import AITimer
+from aistate_interface import get_aistate
+from EnumsAI import (
+    EmpireProductionTypes,
+    MissionType,
+    PriorityType,
+    ShipRoleType,
+    get_priority_production_types,
+)
 from freeorion_tools import tech_is_complete
-from turn_state import get_number_of_colonies, get_owned_planets, have_asteroids, have_gas_giant
+from freeorion_tools.timers import AITimer
+from turn_state import (
+    get_number_of_colonies,
+    get_owned_planets,
+    have_asteroids,
+    have_gas_giant,
+)
 from turn_state.design import cur_best_military_design_rating, get_best_ship_info
 
 prioritiees_timer = AITimer('calculate_priorities()')

@@ -1,13 +1,12 @@
-from heapq import heappush, heappop
+import freeOrionAIInterface as fo
 from collections import namedtuple
-from logging import warning, error
+from heapq import heappop, heappush
+from logging import error, warning
 from typing import Callable, Optional
 
-from aistate_interface import get_aistate
-import freeOrionAIInterface as fo
 import PlanetUtilsAI
-
 from AIDependencies import INVALID_ID
+from aistate_interface import get_aistate
 from EnumsAI import MissionType
 from freeorion_tools import chat_human, get_partial_visibility_turn
 from freeorion_tools.caching import cache_for_current_turn

@@ -17,11 +17,12 @@
 # Change dataDir to '<user>/AppData/Roaming/'
 
 
-import pylab
 import os
 import sys
-from glob import glob
 import traceback
+from glob import glob
+
+import pylab
 
 
 def show_only_some(x, pos):

@@ -1,6 +1,5 @@
-import random
-
 import freeorion as fo
+import random
 
 import universe_statistics
 import universe_tables

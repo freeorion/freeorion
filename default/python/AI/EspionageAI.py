@@ -1,7 +1,7 @@
+import freeOrionAIInterface as fo
 from logging import error, warning
 from typing import List, Optional, Union
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
 from AIDependencies import ALL_EMPIRES, Tags
 from EnumsAI import EmpireMeters
