@@ -18,7 +18,7 @@ from AIDependencies import (
     Tags,
 )
 from aistate_interface import get_aistate
-from colonization import rate_piloting_tag
+from colonization import get_nest_rating, rate_piloting_tag, special_is_nest
 from colonization.planet_supply import get_planet_supply, update_planet_supply
 from common.print_utils import Bool, Number, Sequence, Table, Text
 from EnumsAI import EmpireProductionTypes, FocusType, MissionType, PriorityType, ShipRoleType
@@ -51,13 +51,6 @@ pilot_ratings = {}
 colony_status = {}
 facilities_by_species_grade = {}
 system_facilities = {}
-
-
-NEST_VAL_MAP = {
-    "SNOWFLAKE_NEST_SPECIAL": 15,
-    "KRAKEN_NEST_SPECIAL": 40,
-    "JUGGERNAUT_NEST_SPECIAL": 80,
-}
 
 AVG_PILOT_RATING = 2.0
 GOOD_PILOT_RATING = 4.0
@@ -317,7 +310,7 @@ def survey_universe():
                         this_facility_dict.setdefault("planets", set()).add(pid)
 
                 for special in planet.specials:
-                    if special in NEST_VAL_MAP:
+                    if special_is_nest(special):
                         set_have_nest()
                     if special in AIDependencies.metabolismBoosts:
                         available_growth_specials.setdefault(special, []).append(pid)
@@ -799,8 +792,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None, empire_rese
 
         for special in planet_specials:
             if "_NEST_" in special:
-                nest_val = NEST_VAL_MAP.get(special,
-                                            5) * discount_multiplier  # get an outpost on the nest quick
+                nest_val = get_nest_rating(special, 5.0) * discount_multiplier  # get an outpost on the nest quick
                 retval += nest_val
                 detail.append("%s %.1f" % (special, nest_val))
             elif special == "FORTRESS_SPECIAL":
