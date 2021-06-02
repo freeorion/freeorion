@@ -94,7 +94,5 @@ class Tracker:
             success = results[True]
             fail = results[False]
             total = success + fail
-            table.add_row(
-                (jar.name, success, fail, total, jar.get_total())
-            )
+            table.add_row(jar.name, success, fail, total, jar.get_total())
         table.print_table(info)
