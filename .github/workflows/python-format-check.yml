@@ -7,7 +7,7 @@ on:
       - reopened
       - synchronize
 jobs:
-  lint-and-test-python:
+  isort-check:
     runs-on: ubuntu-latest
     strategy:
       matrix:
