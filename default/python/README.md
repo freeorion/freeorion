@@ -67,3 +67,34 @@ This script should be run from directory where `tox.ini` located
 cd default/python
 flake8
 ```
+
+# Automate check with pre commit hooks
+Git could run a script
+([hook](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)) 
+when you commit changes.  
+
+This feature could be used as duplication of the CI actions.
+The main difference are that hooks are optional 
+(a developer made a decision if they should be run) 
+and that hooks gives you feedback much faster 
+because they are run on developer machine.
+
+Hooks wok on all operating systems.
+You need to install them once.
+Hook will track config file and update himself in case of changes. 
+
+## First time setup
+- install git
+- install Python
+- [Install pre-commit](https://pre-commit.com/#install) 
+    ```sh
+    pip install pre-commit
+    ```
+- install hooks from the project root
+    ```sh
+    pre-commit install 
+    ```
+
+Notes:
+- First commit after installation/update of hooks may take some time.
+- You can skip checks by adding `-n, --no-verify` to `git commit`.

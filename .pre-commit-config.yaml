@@ -1,0 +1,35 @@
+default_stages:
+  - commit
+  - manual
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-yaml
+  - repo: https://gitlab.com/pycqa/flake8/
+    rev: 3.9.2
+    # We have multiple places where Python code is located
+    # The main 3 points are:
+    # - AI (default/python)
+    # - Game rules (default/scripting)
+    # - Scripting tests (test-scripting)
+    # Each of them has own flake8 config
+    # Other files shares the same config as AI
+    # To addres this structure we run flake8 3 times with different set of excludes
+    hooks:
+      - id: flake8
+        name: flake8 for AI
+        args:
+          - --extend-exclude=default/scripting/*,test-scripting/*
+          - --config=default/python/tox.ini
+      - id: flake8
+        name: flake8 for scripting
+        args:
+          - --extend-exclude=default/python/*,test-scripting/*,cmake/*,doc/*,check/*
+          - --config=default/scripting/tox.ini
+      - id: flake8
+        name: flake8 for test-scripting
+        args:
+          - --extend-exclude=default/python/*,default/scripting/*,cmake/*,doc/*,check/*
+          - --config=test-scripting/tox.ini
