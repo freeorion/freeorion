@@ -14,7 +14,7 @@ import MilitaryAI
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from EnumsAI import MissionType, PriorityType
-from common.print_utils import Table, Text, Float
+from common.print_utils import Table, Text, Number
 from freeorion_tools import tech_is_complete, AITimer, get_partial_visibility_turn, get_species_tag_grade
 from target import TargetPlanet, TargetSystem
 from turn_state import get_colonized_planets_in_system
@@ -215,18 +215,23 @@ def get_invasion_fleets():
     sorted_planets.sort(key=lambda x: x[1], reverse=True)
     sorted_planets = [(pid, pscore % 10000, ptroops) for pid, pscore, ptroops in sorted_planets]
 
-    invasion_table = Table([Text('Planet'), Float('Score'), Text('Species'), Float('Troops')],
-                           table_name="Potential Targets for Invasion Turn %d" % fo.currentTurn())
+    invasion_table = Table(
+        Text('Planet'),
+        Number('Score'),
+        Text('Species'),
+        Number('Troops'),
+        table_name="Potential Targets for Invasion Turn %d" % fo.currentTurn(),
+    )
 
     for pid, pscore, ptroops in sorted_planets:
         planet = universe.getPlanet(pid)
-        invasion_table.add_row([
+        invasion_table.add_row(
             planet,
             pscore,
             planet and planet.speciesName or "unknown",
             ptroops
-        ])
-    info(invasion_table)
+        )
+    invasion_table.print_table(info)
 
     sorted_planets = [x for x in sorted_planets if x[1] > 0]
     # export opponent planets for other AI modules

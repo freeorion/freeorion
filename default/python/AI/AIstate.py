@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Tuple
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from CombatRatingsAI import ShipCombatStats
-from common.print_utils import Table, Text, Float
+from common.print_utils import Table, Text, Number
 
 import AIFleetMission
 import ColonisationAI
@@ -314,16 +314,23 @@ class AIstate:
         current_turn = fo.currentTurn()
         if current_turn >= 100:
             return
-        threat_table = Table([
-            Text('System'), Text('Vis.'), Float('Total'), Float('by Monsters'), Float('by Fleets'),
-            Float('by Planets'), Float('1 jump away'), Float('2 jumps'), Float('3 jumps')],
-            table_name="System Threat Turn %d" % current_turn
+        threat_table = Table(
+            Text('System'),
+            Text('Vis.'),
+            Number('Total'),
+            Number('by Monsters'),
+            Number('by Fleets'),
+            Number('by Planets'),
+            Number('1 jump away'),
+            Number('2 jumps'),
+            Number('3 jumps'),
+            table_name="System Threat Turn %d" % current_turn,
         )
         universe = fo.getUniverse()
         for sys_id in universe.systemIDs:
             sys_status = self.systemStatus.get(sys_id, {})
             system = universe.getSystem(sys_id)
-            threat_table.add_row([
+            threat_table.add_row(
                 system,
                 "Yes" if sys_status.get('currently_visible', False) else "No",
                 sys_status.get('totalThreat', 0),
@@ -333,24 +340,29 @@ class AIstate:
                 sys_status.get('neighborThreat', 0.0),
                 sys_status.get('jump2_threat', 0.0),
                 sys_status.get('jump3_threat', 0.0),
-            ])
-        info(threat_table)
+            )
+        threat_table.print_table(info)
 
     def __report_system_defenses(self):
         """Print a table with system defenses to the logfile."""
         current_turn = fo.currentTurn()
         if current_turn >= 100:
             return
-        defense_table = Table([
-            Text('System Defenses'), Float('Total'), Float('by Planets'), Float('by Fleets'),
-            Float('Fleets 1 jump away'), Float('2 jumps'), Float('3 jumps')],
-                table_name="System Defenses Turn %d" % current_turn
+        defense_table = Table(
+            Text('System Defenses'),
+            Number('Total'),
+            Number('by Planets'),
+            Number('by Fleets'),
+            Number('Fleets 1 jump away'),
+            Number('2 jumps'),
+            Number('3 jumps'),
+            table_name="System Defenses Turn %d" % current_turn,
         )
         universe = fo.getUniverse()
         for sys_id in universe.systemIDs:
             sys_status = self.systemStatus.get(sys_id, {})
             system = universe.getSystem(sys_id)
-            defense_table.add_row([
+            defense_table.add_row(
                 system,
                 sys_status.get('all_local_defenses', 0.0),
                 sys_status.get('mydefenses', {}).get('overall', 0.0),
@@ -358,8 +370,8 @@ class AIstate:
                 sys_status.get('my_neighbor_rating', 0.0),
                 sys_status.get('my_jump2_rating', 0.0),
                 sys_status.get('my_jump3_rating', 0.0),
-            ])
-        info(defense_table)
+            )
+        defense_table.print_table(info)
 
     def assess_planet_threat(self, pid, sighting_age=0):
         if sighting_age > 5:
@@ -885,10 +897,13 @@ class AIstate:
         current_empire_fleets = FleetUtilsAI.get_empire_fleet_ids()
         self.shipCount = 0
 
-        fleet_table = Table([
-            Text('Fleet'), Float('Rating'), Float('Troops'),
-            Text('Location'), Text('Destination')],
-            table_name="Fleet Summary Turn %d" % fo.currentTurn()
+        fleet_table = Table(
+            Text('Fleet'),
+            Number('Rating'),
+            Number('Troops'),
+            Text('Location'),
+            Text('Destination'),
+            table_name="Fleet Summary Turn %d" % fo.currentTurn(),
         )
         # need to loop over a copy as entries are deleted in loop
         for fleet_id in list(self.__fleetRoleByID):
@@ -922,13 +937,13 @@ class AIstate:
             this_sys = universe.getSystem(sys_id)
             next_sys = universe.getSystem(fleet.nextSystemID)
 
-            fleet_table.add_row([
-                    fleet,
-                    rating,
-                    FleetUtilsAI.count_troops_in_fleet(fleet_id),
-                    this_sys or 'starlane',
-                    next_sys or '-',
-                ])
+            fleet_table.add_row(
+                fleet,
+                rating,
+                FleetUtilsAI.count_troops_in_fleet(fleet_id),
+                this_sys or 'starlane',
+                next_sys or '-',
+            )
 
             fleet_status['rating'] = rating
             if next_sys:
@@ -937,7 +952,7 @@ class AIstate:
                 fleet_status['sysID'] = this_sys.id
             else:
                 error("Fleet %s has no valid system." % fleet)
-        info(fleet_table)
+        fleet_table.print_table(info)
         # Next string used in charts. Don't modify it!
         debug("Empire Ship Count: %s" % self.shipCount)
         debug("Empire standard fighter summary: %s", CombatRatingsAI.get_empire_standard_military_ship_stats())
@@ -964,24 +979,30 @@ class AIstate:
         """Print a table reviewing last turn fleet missions to the log file."""
         universe = fo.getUniverse()
         mission_table = Table(
-                [Text('Fleet'), Text('Mission'), Text('Ships'), Float('Rating'), Float('Troops'), Text('Target')],
-                table_name="Turn %d: Fleet Mission Review from Last Turn" % fo.currentTurn())
+            Text('Fleet'),
+            Text('Mission'),
+            Text('Ships'),
+            Number('Rating'),
+            Number('Troops'),
+            Text('Target'),
+            table_name="Turn %d: Fleet Mission Review from Last Turn" % fo.currentTurn(),
+        )
         for fleet_id, mission in self.get_fleet_missions_map().items():
             fleet = universe.getFleet(fleet_id)
             if not fleet:
                 continue
             if not mission:
-                mission_table.add_row([fleet])
+                mission_table.add_row(fleet)
             else:
-                mission_table.add_row([
+                mission_table.add_row(
                     fleet,
                     mission.type or "None",
                     len(fleet.shipIDs),
                     CombatRatingsAI.get_fleet_rating(fleet_id),
                     FleetUtilsAI.count_troops_in_fleet(fleet_id),
                     mission.target or "-"
-                ])
-        info(mission_table)
+                )
+        mission_table.print_table(info)
 
     def __split_new_fleets(self):
         """Split any new fleets.

@@ -10,9 +10,7 @@ Process finished with exit code 0
 '''
 from io import StringIO
 
-import pytest
-
-from common.print_utils import print_in_columns, Table, Text, Number, Sequence
+from common.print_utils import print_in_columns, Sequence, Table, Text, Number
 
 EXPECTED_COLUMNS = '''a   c
 b   d
@@ -30,7 +28,8 @@ EXPECTED_SIMPLE_TABLE = '''Wooho
 | Plato III        |      21.00 | d                   | a                  |
 ----------------------------------------------------------------------------
 *name   Name for first column
-*value  VValue'''
+*value  VValue
+'''
 
 EXPECTED_EMPTY_TABLE = '''Wooho
 =============================================
@@ -38,7 +37,8 @@ EXPECTED_EMPTY_TABLE = '''Wooho
 =============================================
 ---------------------------------------------
 *name   Name for first column
-*value  VValue'''
+*value  VValue
+'''
 
 
 # https://pytest.org/latest/capture.html#accessing-captured-output-from-a-test-function
@@ -48,21 +48,7 @@ def test_print_in_columns(capfd):
     assert out == EXPECTED_COLUMNS
 
 
-def make_table_via_list_fields():
-    t = Table(
-        [Text('name', description='Name for first column'), Number('value', description='VValue'),
-         Sequence('zzz'), Sequence('zzzzzzzzzzzzzzzzzz')],
-        table_name='Wooho')
-    t.add_row(['hello', 144444, 'abcffff', 'a'])
-    t.add_row([u'Plato aa\u03b2 III', 21, 'de', 'a'])
-    t.add_row([u'Plato \u03b2 III', 21, 'de', 'a'])
-    t.add_row(['Plato B III', 21, 'd', 'a'])
-    t.add_row(['Plato Bddddd III', 21, 'd', 'a'])
-    t.add_row(['Plato III', 21, 'd', 'a'])
-    return t
-
-
-def make_table_via_args():
+def make_table():
     t = Table(
         Text('name', description='Name for first column'),
         Number('value', description='VValue'),
@@ -70,21 +56,17 @@ def make_table_via_args():
         Sequence('zzzzzzzzzzzzzzzzzz'),
         table_name='Wooho'
     )
-    t.add_row(['hello', 144444, 'abcffff', 'a'])
-    t.add_row([u'Plato aa\u03b2 III', 21, 'de', 'a'])
-    t.add_row([u'Plato \u03b2 III', 21, 'de', 'a'])
-    t.add_row(['Plato B III', 21, 'd', 'a'])
-    t.add_row(['Plato Bddddd III', 21, 'd', 'a'])
-    t.add_row(['Plato III', 21, 'd', 'a'])
+    t.add_row('hello', 144444, 'abcffff', 'a')
+    t.add_row(u'Plato aa\u03b2 III', 21, 'de', 'a')
+    t.add_row(u'Plato \u03b2 III', 21, 'de', 'a')
+    t.add_row('Plato B III', 21, 'd', 'a')
+    t.add_row('Plato Bddddd III', 21, 'd', 'a')
+    t.add_row('Plato III', 21, 'd', 'a')
     return t
 
 
-@pytest.fixture(params=[make_table_via_list_fields, make_table_via_args])
-def table(request):
-    return request.param()
-
-
-def test_table_is_printed(table):
+def test_table_is_printed():
+    table = make_table()
     io = StringIO()
 
     def writer(row):
@@ -92,22 +74,59 @@ def test_table_is_printed(table):
         io.write("\n")
 
     table.print_table(writer)
-    assert io.getvalue() == EXPECTED_SIMPLE_TABLE + "\n"
+    assert io.getvalue() == EXPECTED_SIMPLE_TABLE
 
 
-def test_table_is_converted_to_str(table):
-    assert table.get_table() == EXPECTED_SIMPLE_TABLE
+def test_table_is_converted_to_str():
+    io = StringIO()
+
+    def writer(row):
+        io.write(row)
+        io.write("\n")
+
+    table = make_table()
+    table.print_table(writer)
+    assert io.getvalue() == EXPECTED_SIMPLE_TABLE
 
 
 def test_empty_table():
     empty = Table(
-        [Text('name', description='Name for first column'), Number('value', description='VValue'),
-         Sequence('zzz'), Sequence('zzzzzzzzzzzzzzzzzz')],
-        table_name='Wooho'
+        Text('name', description='Name for first column'),
+        Number('value', description='VValue'),
+        Sequence('zzz'), Sequence('zzzzzzzzzzzzzzzzzz'),
+        table_name='Wooho',
     )
-    assert empty.get_table() == EXPECTED_EMPTY_TABLE
+
+    io = StringIO()
+
+    def writer(row):
+        io.write(row)
+        io.write("\n")
+
+    empty.print_table(writer)
+
+    assert io.getvalue() == EXPECTED_EMPTY_TABLE
 
 
 def test_number_column():
     field = Number('name', placeholder="-")
     assert field.make_cell_string(0) == "-"
+
+
+def test_total_is_calculated():
+    table = Table(
+        Number("A", precession=0, total=True),
+        Number("B", precession=0, total=True),
+    )
+    table.add_row(1, 10)
+    table.add_row(2, 20)
+    assert list(table) == [
+        "============",
+        "| A  | B   |",
+        "============",
+        "|  1 |  10 |",
+        "|  2 |  20 |",
+        "============",
+        "|  3 |  30 |",
+        "============",
+    ]

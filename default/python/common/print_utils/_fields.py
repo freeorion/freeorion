@@ -12,8 +12,14 @@ class Text(Field):
 
 
 class Number(Field):
-    def __init__(self, name, precession=2, align=">", description="", placeholder=""):
-        super(Number, self).__init__(name, align=align, description=description, placeholder=placeholder)
+    def __init__(self, name, precession=2, align=">", description="", placeholder="", total=False):
+        super(Number, self).__init__(
+            name,
+            align=align,
+            description=description,
+            placeholder=placeholder,
+            total=total,
+        )
         self.precession = precession
 
     def convert_value_to_string(self, val: Any) -> str:

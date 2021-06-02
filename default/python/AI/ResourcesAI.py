@@ -271,29 +271,30 @@ class Reporter:
         # what is the focus of available resource centers?
         debug('')
         warnings = {}
-        foci_table = Table([
-                Text('Planet'),
-                Text('Size'),
-                Text('Type'),
-                Text('Focus'),
-                Text('Species'),
-                Text('Pop')
-            ], table_name="Planetary Foci Overview Turn %d" % fo.currentTurn())
+        foci_table = Table(
+            Text('Planet'),
+            Text('Size'),
+            Text('Type'),
+            Text('Focus'),
+            Text('Species'),
+            Text('Pop'),
+            table_name="Planetary Foci Overview Turn %d" % fo.currentTurn(),
+        )
         for pid in empire_planet_ids:
             planet = universe.getPlanet(pid)
             population = planet.currentMeterValue(fo.meterType.population)
             max_population = planet.currentMeterValue(fo.meterType.targetPopulation)
             if max_population < 1 and population > 0:
                 warnings[planet.name] = (population, max_population)
-            foci_table.add_row([
+            foci_table.add_row(
                 planet,
                 planet.size,
                 planet.type,
                 "_".join(str(planet.focus).split("_")[1:])[:8],
                 planet.speciesName,
-                "%.1f/%.1f" % (population, max_population)
-            ])
-        info(foci_table)
+                "%.1f/%.1f" % (population, max_population),
+            )
+        foci_table.print_table(info)
         debug("Empire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n",
               empire.population(), empire.productionPoints, empire.resourceProduction(fo.resourceType.research))
         for name, (cp, mp) in warnings.items():

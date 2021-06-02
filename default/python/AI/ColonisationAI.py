@@ -20,7 +20,7 @@ from AIDependencies import (
 from aistate_interface import get_aistate
 from colonization import rate_piloting_tag
 from colonization.planet_supply import get_planet_supply, update_planet_supply
-from common.print_utils import Bool, Float, Sequence, Table, Text
+from common.print_utils import Bool, Number, Sequence, Table, Text
 from EnumsAI import EmpireProductionTypes, FocusType, MissionType, PriorityType, ShipRoleType
 from freeorion_tools import (
     AITimer, cache_by_turn_persistent, cache_for_current_turn, cache_for_session, get_partial_visibility_turn,
@@ -1287,20 +1287,29 @@ def _print_empire_species_roster():
     grade_map = {"ULTIMATE": "+++", "GREAT": "++", "GOOD": "+", "AVERAGE": "o", "BAD": "-", "NO": "---"}
     grade_tags = {Tags.INDUSTRY: "Ind.", Tags.RESEARCH: "Res.", Tags.POPULATION: "Pop.",
                   Tags.SUPPLY: "Supply", Tags.WEAPONS: "Pilots", Tags.ATTACKTROOPS: "Troops"}
-    header = [Text('species'), Sequence('Planets'), Bool('Colonizer'), Text('Shipyards')]
-    header.extend(Text(v) for v in grade_tags.values())
-    header.append(Sequence('Tags'))
-    species_table = Table(header, table_name="Empire species roster Turn %d" % fo.currentTurn())
+
+    species_table = Table(
+        Text('species'),
+        Sequence('Planets'),
+        Bool('Colonizer'),
+        Text('Shipyards'),
+        *[Text(v) for v in grade_tags.values()],
+        Sequence('Tags'),
+        table_name="Empire species roster Turn %d" % fo.currentTurn(),
+    )
     for species_name, planet_ids in get_empire_planets_by_species().items():
         species_tags = fo.getSpecies(species_name).tags
         is_colonizer = species_name in empire_colonizers
         number_of_shipyards = len(empire_ship_builders.get(species_name, []))
-        this_row = [species_name, planet_ids, is_colonizer, number_of_shipyards]
-        this_row.extend(grade_map.get(get_species_tag_grade(species_name, tag).upper(), "o") for tag in grade_tags)
-        this_row.append([tag for tag in species_tags if not any(s in tag for s in grade_tags) and 'PEDIA' not in tag])
-        species_table.add_row(this_row)
-    print()
-    info(species_table)
+        species_table.add_row(
+            species_name,
+            planet_ids,
+            is_colonizer,
+            number_of_shipyards,
+            *[grade_map.get(get_species_tag_grade(species_name, tag).upper(), "o") for tag in grade_tags],
+            [tag for tag in species_tags if not any(s in tag for s in grade_tags) and 'PEDIA' not in tag],
+        )
+    species_table.print_table(info)
 
 
 def _print_outpost_candidate_table(candidates, show_detail=False):
@@ -1327,7 +1336,7 @@ def __print_candidate_table(candidates, mission, show_detail=False):
         def get_first_column_value(x):
             return round(x[0], 2), x[1]
     elif mission == 'Outposts':
-        first_column = Float('Score')
+        first_column = Number('Score')
         get_first_column_value = itemgetter(0)
     else:
         warning("__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission))
@@ -1335,7 +1344,7 @@ def __print_candidate_table(candidates, mission, show_detail=False):
     columns = [first_column, Text('Planet'), Text('System'), Sequence('Specials')]
     if show_detail:
         columns.append(Sequence('Detail'))
-    candidate_table = Table(columns,
+    candidate_table = Table(*columns,
                             table_name='Potential Targets for %s in Turn %d' % (mission, fo.currentTurn()))
     for planet_id, score_tuple in candidates:
         if score_tuple[0] > 0.5:
@@ -1347,8 +1356,8 @@ def __print_candidate_table(candidates, mission, show_detail=False):
                        ]
             if show_detail:
                 entries.append(score_tuple[-1])
-            candidate_table.add_row(entries)
-    info(candidate_table)
+            candidate_table.add_row(*entries)
+    candidate_table.print_table(info)
 
 
 class OrbitalColonizationPlan:

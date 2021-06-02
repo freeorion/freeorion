@@ -80,28 +80,29 @@ def generate_production_orders():
         debug("if no capital, no place to build, should get around to capturing or colonizing a new one")  # TODO
     else:
         debug("Empire priority_id %d has current Capital %s:" % (empire.empireID, homeworld.name))
-        table = Table([
+        table = Table(
             Text('Id', description='Building id'),
             Text('Name'),
             Text('Type'),
             Sequence('Tags'),
             Sequence('Specials'),
             Text('Owner Id'),
-        ], table_name='Buildings present at empire Capital in Turn %d' % fo.currentTurn())
+            table_name='Buildings present at empire Capital in Turn %d' % fo.currentTurn(),
+        )
 
         for building_id in homeworld.buildingIDs:
             building = universe.getBuilding(building_id)
 
-            table.add_row((
+            table.add_row(
                 building_id,
                 building.name,
                 "_".join(building.buildingTypeName.split("_")[-2:]),
                 sorted(building.tags),
                 sorted(building.specials),
                 building.owner
-            ))
+            )
 
-        info(table)
+        table.print_table(info)
         capital_buildings = [universe.getBuilding(bldg).buildingTypeName for bldg in homeworld.buildingIDs]
 
         possible_building_type_ids = []
@@ -1362,8 +1363,13 @@ def _print_production_queue(after_turn=False):
     s = "after" if after_turn else "before"
     title = "Production Queue Turn %d %s ProductionAI calls" % (fo.currentTurn(), s)
     prod_queue_table = Table(
-        [Text('Object'), Text('Location'), Text('Quantity'), Text('Progress'), Text('Allocated PP'), Text('Turns left')],
-        table_name=title
+        Text('Object'),
+        Text('Location'),
+        Text('Quantity'),
+        Text('Progress'),
+        Text('Allocated PP'),
+        Text('Turns left'),
+        table_name=title,
     )
     for element in fo.getEmpire().productionQueue:
         if element.buildType == EmpireProductionTypes.BT_SHIP:
@@ -1374,15 +1380,15 @@ def _print_production_queue(after_turn=False):
             continue
         cost = item.productionCost(fo.empireID(), element.locationID)
 
-        prod_queue_table.add_row([
+        prod_queue_table.add_row(
             element.name,
             universe.getPlanet(element.locationID),
             "%dx %d" % (element.remaining, element.blocksize),
-            "%.1f / %.1f" % (element.progress*cost, cost),
+            "%.1f / %.1f" % (element.progress * cost, cost),
             "%.1f" % element.allocation,
             "%d" % element.turnsLeft,
-        ])
-    info(prod_queue_table)
+        )
+    prod_queue_table.print_table(info)
 
 
 def find_automatic_historic_analyzer_candidates() -> List[int]:
