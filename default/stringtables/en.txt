@@ -909,7 +909,7 @@ FLD_METEOR_BLIZZARD
 Meteor Blizzard
 
 FLD_METEOR_BLIZZARD_DESC
-Mystical and mysterious appearance of meteors. Generates one [[metertype METER_RESEARCH]] per ship due to scientific examination of the phenomenom.
+Mystical and mysterious appearance of meteors. Generates one [[metertype METER_RESEARCH]] per ship due to scientific examination of the phenomenon.
 
 FLD_VOID_RIFT
 Void Rift
