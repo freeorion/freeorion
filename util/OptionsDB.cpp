@@ -70,41 +70,54 @@ OptionsDB& GetOptionsDB() {
 /////////////////////////////////////////////
 // OptionsDB::Option
 /////////////////////////////////////////////
-OptionsDB::Option::Option(char short_name_, const std::string& name_, const boost::any& value_,
-                          const boost::any& default_value_, const std::string& description_,
-                          const ValidatorBase* validator_, bool storable_, bool flag_, bool recognized_,
-                          const std::string& section) :
-    name(name_),
+OptionsDB::Option::Option(char short_name_, std::string name_, boost::any value_,
+                          boost::any default_value_, std::string description_,
+                          std::unique_ptr<ValidatorBase>&& validator_, bool storable_,
+                          bool flag_, bool recognized_, std::string section) :
+    name(std::move(name_)),
     short_name(short_name_),
-    value(value_),
-    default_value(default_value_),
-    description(description_),
-    validator(validator_),
+    value(std::move(value_)),
+    default_value(std::move(default_value_)),
+    description(std::move(description_)),
+    validator(std::move(validator_)),
     storable(storable_),
     flag(flag_),
     recognized(recognized_),
     option_changed_sig_ptr(new boost::signals2::signal<void ()>())
 {
-    if (short_name_)
-        short_names[short_name_] = name;
+    if (!validator)
+        DebugLogger() << "Option " << name << " created with null validator...";
 
     auto name_it = name.rfind('.');
     if (name_it != std::string::npos)
         sections.insert(name.substr(0, name_it));
 
+    if (short_name_) {
+        auto [insertion_it, insertion_succeeded] = short_names.emplace(short_name_, name);
+        if (!insertion_succeeded)
+            ErrorLogger() << "Tried to insert short name " << short_name << " for option " << name
+                          << " but that short name was already assigned to option " << insertion_it->second;
+    }
+
     if (!section.empty())
-        sections.insert(section);
+        sections.insert(std::move(section));
     else if (sections.empty())
         sections.emplace("misc");
 }
+
+OptionsDB::Option::~Option() = default;
 
 bool OptionsDB::Option::SetFromString(const std::string& str) {
     bool changed = false;
     boost::any value_;
 
     if (!flag) {
-        value_ = validator->Validate(str);
-        changed = validator->String(value) != validator->String(value_);
+        if (validator) {
+            value_ = validator->Validate(str);
+            changed = validator->String(value) != validator->String(value_);
+        } else {
+            throw std::runtime_error("Option::SetFromString called with no OptionValidator set");
+        }
     } else {
         value_ = boost::lexical_cast<bool>(str);    // if a flag, then the str parameter should just indicate true or false with "1" or "0"
         changed = (boost::lexical_cast<std::string>(boost::any_cast<bool>(value))
@@ -128,17 +141,21 @@ bool OptionsDB::Option::SetToDefault() {
 }
 
 std::string OptionsDB::Option::ValueToString() const {
-    if (!flag)
+    if (flag)
+        return boost::lexical_cast<std::string>(boost::any_cast<bool>(value));
+    else if (validator)
         return validator->String(value);
     else
-        return boost::lexical_cast<std::string>(boost::any_cast<bool>(value));
+        throw std::runtime_error("Option::ValueToString called with no Validator set");
 }
 
 std::string OptionsDB::Option::DefaultValueToString() const {
-    if (!flag)
+    if (flag)
+        return boost::lexical_cast<std::string>(boost::any_cast<bool>(default_value));
+    else if (validator)
         return validator->String(default_value);
     else
-        return boost::lexical_cast<std::string>(boost::any_cast<bool>(default_value));
+        throw std::runtime_error("Option::DefaultValueToString called with no Validator set");
 }
 
 bool OptionsDB::Option::ValueIsDefault() const
@@ -211,10 +228,12 @@ void OptionsDB::Validate(const std::string& name, const std::string& value) cons
     if (!OptionExists(it))
         throw std::runtime_error("Attempted to validate unknown option \"" + name + "\".");
 
-    if (it->second.validator)
-        it->second.validator->Validate(value);
-    else if (it->second.flag)
+    if (it->second.flag)
         boost::lexical_cast<bool>(value);
+    else if (it->second.validator)
+        it->second.validator->Validate(value);
+    else
+        throw std::runtime_error("Attempted to validate option with no validator set");
 }
 
 std::string OptionsDB::GetValueString(const std::string& option_name) const {
@@ -238,15 +257,17 @@ const std::string& OptionsDB::GetDescription(const std::string& option_name) con
     return it->second.description;
 }
 
-std::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& option_name) const {
+const ValidatorBase* OptionsDB::GetValidator(const std::string& option_name) const {
     auto it = m_options.find(option_name);
     if (!OptionExists(it))
         throw std::runtime_error(("OptionsDB::GetValidator(): No option called \"" + option_name + "\" could be found.").c_str());
-    return it->second.validator;
+    return it->second.validator.get();
 }
 
 namespace {
-    const std::size_t TERMINAL_LINE_WIDTH = 80;
+    constexpr std::size_t TERMINAL_LINE_WIDTH = 80;
+
+    const auto lexical_true_str = boost::lexical_cast<std::string>(true);
 
     /** Breaks and indents text over multiple lines when it exceeds width limits
      * @param text String to format, tokenized by spaces, tabs, and newlines (newlines retained but potentially indented)
@@ -654,18 +675,22 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                     StripQuotation(value_str);
                 }
 
-                if (value_str.at(0) == '-') { // this is either the last parameter or the next parameter is another option, assume this one is a flag
-                    m_options[option_name] = Option(static_cast<char>(0), option_name, true,
-                                                    boost::lexical_cast<std::string>(false),
-                                                    "", 0, false, true, false, std::string());
-                } else { // the next parameter is the value, store it as a string to be parsed later
-                    m_options[option_name] = Option(static_cast<char>(0), option_name,
-                                                    value_str, value_str, "",
-                                                    new Validator<std::string>(),
-                                                    false, false, false, std::string()); // don't attempt to store options that have only been specified on the command line
+                if (value_str.at(0) == '-') {
+                    // this is either the last parameter or the next parameter is another option, assume this one is a flag
+                    m_options.emplace(option_name,
+                                      Option{static_cast<char>(0), option_name, true, false, "",
+                                             std::make_unique<Validator<bool>>(), false, true, false});
+                } else {
+                    // the next parameter is the value, store it as a string to be parsed later, but
+                    // don't attempt to store options that have only been specified on the command line
+                    m_options.emplace(option_name,
+                                      Option{static_cast<char>(0), option_name, value_str, value_str, "",
+                                             std::make_unique<Validator<std::string>>(), false, false, false});
                 }
 
-                WarnLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized.  It may not be registered yet or could be a typo.";
+                WarnLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized."
+                             << " It may not be registered yet or could be a typo.";
+
 
             } else {
                 // recognized option
@@ -742,9 +767,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
     }
 }
 
-void OptionsDB::SetFromFile(const boost::filesystem::path& file_path,
-                            const std::string& version)
-{
+void OptionsDB::SetFromFile(const boost::filesystem::path& file_path, const std::string& version) {
     XMLDoc doc;
     try {
         boost::filesystem::ifstream ifs(file_path);
@@ -779,18 +802,20 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
     auto it = m_options.find(option_name);
 
     if (it == m_options.end() || !it->second.recognized) {
+
+        TraceLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized."
+                      << " It may not be registered yet or you may need to delete your config.xml if it is out of date.";
+
         if (elem.Text().length() == 0) {
             // do not retain empty XML options
             return;
         } else {
             // Store unrecognized option to be parsed later if this options is added.
-            m_options[option_name] = Option(static_cast<char>(0), option_name,
-                                            elem.Text(), elem.Text(),
-                                            "", new Validator<std::string>(),
-                                            true, false, false, section_name);
+            Option option{static_cast<char>(0), option_name, elem.Text(), elem.Text(), "",
+                          std::make_unique<Validator<std::string>>(), true, false, false, section_name};
+            m_options.emplace(std::move(option_name), std::move(option));
         }
 
-        TraceLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  It may not be registered yet or you may need to delete your config.xml if it is out of date.";
         m_dirty = true;
         return;
     }
@@ -802,7 +827,6 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
     //}
 
     if (option.flag) {
-        static auto lexical_true_str = boost::lexical_cast<std::string>(true);
         option.value = static_cast<bool>(elem.Text() == lexical_true_str);
     } else {
         try {

@@ -32,22 +32,22 @@ public:
         STRING
     };
 
-    static inline constexpr Type RuleTypeForType(bool dummy)
+    [[nodiscard]] static constexpr Type RuleTypeForType(bool)
     { return Type::TOGGLE; }
-    static inline constexpr Type RuleTypeForType(int dummy)
+    [[nodiscard]] static constexpr Type RuleTypeForType(int)
     { return Type::INT; }
-    static inline constexpr Type RuleTypeForType(double dummy)
+    [[nodiscard]] static constexpr Type RuleTypeForType(double)
     { return Type::DOUBLE; }
-    static inline Type RuleTypeForType(std::string dummy)
+    [[nodiscard]] static inline Type RuleTypeForType(std::string)
     { return Type::STRING; }
 
     struct FO_COMMON_API Rule : public OptionsDB::Option {
-        Rule();
-        Rule(Type type_, const std::string& name_, const boost::any& value_,
-             const boost::any& default_value_, const std::string& description_,
-             const ValidatorBase *validator_, bool engine_internal_,
-             const std::string& category_ = "");
-        bool IsInternal() const { return this->storable; }
+        Rule() = default;
+        Rule(Type type_, std::string name_, boost::any value_,
+             boost::any default_value_, std::string description_,
+             std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
+             std::string category_ = std::string());
+        [[nodiscard]] bool IsInternal() const { return this->storable; }
 
         Type type = Type::INVALID;
         std::string category;
@@ -55,28 +55,30 @@ public:
 
     using GameRulesTypeMap = std::unordered_map<std::string, Rule>;
 
-    bool Empty() const;
-    std::unordered_map<std::string, Rule>::const_iterator begin() const;
-    std::unordered_map<std::string, Rule>::const_iterator end() const;
+    [[nodiscard]] bool Empty() const;
+    [[nodiscard]] std::unordered_map<std::string, Rule>::const_iterator begin() const;
+    [[nodiscard]] std::unordered_map<std::string, Rule>::const_iterator end() const;
+    [[nodiscard]] std::unordered_map<std::string, Rule>::iterator begin();
+    [[nodiscard]] std::unordered_map<std::string, Rule>::iterator end();
 
-    bool RuleExists(const std::string& name) const;
-    bool RuleExists(const std::string& name, Type type) const;
-    Type GetType(const std::string& name) const;
-    bool RuleIsInternal(const std::string& name) const;
+    [[nodiscard]] bool RuleExists(const std::string& name) const;
+    [[nodiscard]] bool RuleExists(const std::string& name, Type type) const;
+    [[nodiscard]] Type GetType(const std::string& name) const;
+    [[nodiscard]] bool RuleIsInternal(const std::string& name) const;
 
     /** returns the description string for rule \a rule_name, or throws
       * std::runtime_error if no such rule exists. */
-    const std::string& GetDescription(const std::string& rule_name) const;
+    [[nodiscard]] const std::string& GetDescription(const std::string& rule_name) const;
 
     /** returns the validator for rule \a rule_name, or throws
       * std::runtime_error if no such rule exists. */
-    std::shared_ptr<const ValidatorBase> GetValidator(const std::string& rule_name) const;
+    [[nodiscard]] const ValidatorBase* GetValidator(const std::string& rule_name) const;
 
     /** returns all contained rules as map of name and value string. */
-    std::map<std::string, std::string> GetRulesAsStrings() const;
+    [[nodiscard]] std::map<std::string, std::string> GetRulesAsStrings() const;
 
     template <typename T>
-    T Get(const std::string& name) const
+    [[nodiscard]] T Get(const std::string& name) const
     {
         CheckPendingGameRules();
         auto it = m_game_rules.find(name);
@@ -99,38 +101,53 @@ public:
         Adds option setup.rules.{RULE_NAME} to override default value and
         option setup.rules.server-locked.{RULE_NAME} to block rule changes from players */
     template <typename T>
-    void Add(const std::string& name, const std::string& description,
-             const std::string& category, T default_value,
-             bool engine_interal, const ValidatorBase& validator = Validator<T>())
+    void Add(std::string name, std::string description, std::string category, T default_value,
+             bool engine_internal, std::unique_ptr<ValidatorBase> validator = nullptr)
     {
         CheckPendingGameRules();
+
+        if (!validator)
+            validator = std::make_unique<Validator<T>>();
+
         auto it = m_game_rules.find(name);
         if (it != m_game_rules.end())
             throw std::runtime_error("GameRules::Add<>() : Rule " + name + " was added twice.");
-        if (!GetOptionsDB().OptionExists("setup.rules.server-locked." + name)) {
+
+        if (!GetOptionsDB().OptionExists("setup.rules.server-locked." + name))
             GetOptionsDB().Add<bool>("setup.rules.server-locked." + name, description, false);
-        }
-        if (!GetOptionsDB().OptionExists("setup.rules." + name)) {
-            GetOptionsDB().Add<T>("setup.rules." + name, description, default_value,
-                                  validator);
-        }
+
+        if (!GetOptionsDB().OptionExists("setup.rules." + name))
+            GetOptionsDB().Add<T>("setup.rules." + name, description, std::move(default_value),
+                                  validator->Clone());
+
         T value = GetOptionsDB().Get<T>("setup.rules." + name);
-        m_game_rules[name] = Rule(RuleTypeForType(T()), name, value, value, description,
-                                  validator.Clone(), engine_interal, category);
+
         DebugLogger() << "Added game rule named " << name << " with default value " << value;
+
+        Rule&& rule{RuleTypeForType(T()), name, value, value, std::move(description),
+                    std::move(validator), engine_internal, std::move(category)};
+        m_game_rules.emplace(std::move(name), std::move(rule));
+    }
+
+    template <typename T>
+    void Add(std::string name, std::string description, std::string category, T default_value,
+             bool engine_internal, Validator<T>&& validator) // validator should be wrapped in unique_ptr
+    {
+        Add(std::move(name), std::move(description), std::move(category), std::move(default_value),
+            engine_internal, std::make_unique<Validator<T>>(std::move(validator)));
     }
 
     /** Adds rules from the \p future. */
     void Add(Pending::Pending<GameRules>&& future);
 
     template <typename T>
-    void Set(const std::string& name, const T& value)
+    void Set(const std::string& name, T value)
     {
         CheckPendingGameRules();
         auto it = m_game_rules.find(name);
         if (it == m_game_rules.end())
             throw std::runtime_error("GameRules::Set<>() : Attempted to set nonexistent rule \"" + name + "\".");
-        it->second.SetFromValue(value);
+        it->second.SetFromValue(std::move(value));
     }
 
     void SetFromStrings(const std::map<std::string, std::string>& names_values);

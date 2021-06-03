@@ -66,16 +66,18 @@ object insert_rule_(const grammar& g,
                       << ", min: " << min << ", max: " << max;
         game_rules.Add<double>(std::move(name), std::move(desc), std::move(category),
                                default_value, false, RangedValidator<double>(min, max));
+
     } else if (type_ == g.m_parser.type_bool) {
         bool default_value = extract<bool>(kw["default"])();
         DebugLogger() << "Adding Boolean game rule with name: " << name
                       << ", desc: " << desc << ", default: " << default_value;
         game_rules.Add<bool>(std::move(name), std::move(desc),
-                             std::move(category), default_value, false);
+                             std::move(category), default_value, false, nullptr);
+
     } else if (type_ == g.m_parser.type_str) {
         std::string default_value = extract<std::string>(kw["default"])();
-        std::set<std::string> allowed = std::set<std::string>(stl_input_iterator<std::string>(kw["allowed"]),
-                                                              stl_input_iterator<std::string>());
+        std::set<std::string> allowed{stl_input_iterator<std::string>(kw["allowed"]),
+                                      stl_input_iterator<std::string>()};
         DebugLogger() << "Adding String game rule with name: " << name
                       << ", desc: " << desc << ", default: \"" << default_value
                       << "\", allowed: " << [&allowed](){
@@ -85,14 +87,12 @@ object insert_rule_(const grammar& g,
                 return retval;
             }();
 
-        if (allowed.empty()) {
-            game_rules.Add<std::string>(std::move(name), std::move(desc), std::move(category),
-                                        std::move(default_value), false);
-        } else {
-            game_rules.Add<std::string>(std::move(name), std::move(desc), std::move(category),
-                                        std::move(default_value), false,
-                                        DiscreteValidator<std::string>(std::move(allowed)));
-        }
+        game_rules.Add<std::string>(std::move(name), std::move(desc), std::move(category),
+                                    std::move(default_value), false,
+                                    allowed.empty() ?
+                                        nullptr :
+                                        std::make_unique<DiscreteValidator<std::string>>(std::move(allowed)));
+
     } else {
         ErrorLogger() << "Unsupported type for rule " << name << ": " << extract<std::string>(str(type_))();
     }

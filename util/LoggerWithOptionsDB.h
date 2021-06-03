@@ -44,7 +44,7 @@
 
 */
 
-DiscreteValidator<std::string> LogLevelValidator();
+std::unique_ptr<DiscreteValidator<std::string>> LogLevelValidator();
 
 /** Initializes the logging system with settings from OptionsDB and starts capturing
  * LoggerCreatedSignal to add new loggers to OptionsDB on the fly. */

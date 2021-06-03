@@ -173,7 +173,7 @@ void GameRulesPanel::CompleteConstruction() {
     indexed_pages[""] = CreatePage(UserString("GENERAL"));
 
     // for all rules, add to page
-    for (auto rule : GetGameRules()) {
+    for (const auto& rule : GetGameRules()) {
         // get or create page for rule
         auto itr = indexed_pages.find(rule.second.category);
         if (itr == indexed_pages.end()) {
@@ -301,20 +301,20 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
                                                   GG::FORMAT_LEFT | GG::FORMAT_NOWRAP,
                                                   GG::INTERACTIVE);
 
-    std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
+    auto validator = GetGameRules().GetValidator(rule_name);
     int value = GetGameRules().Get<int>(rule_name);
 
     std::shared_ptr<GG::Spin<int>> spin;
-    if (auto ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator))
+    if (auto ranged_validator = dynamic_cast<const RangedValidator<int>*>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
 
-    else if (auto step_validator = std::dynamic_pointer_cast<const StepValidator<int>>(validator))
+    else if (auto step_validator = dynamic_cast<const StepValidator<int>*>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, step_validator->m_step_size, -1000000, 1000000, true);
 
-    else if (auto ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<int>>(validator))
+    else if (auto ranged_step_validator = dynamic_cast<const RangedStepValidator<int>*>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
 
-    else if (auto int_validator = std::dynamic_pointer_cast<const Validator<int>>(validator))
+    else if (auto int_validator = dynamic_cast<const Validator<int>*>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, 1, -1000000, 1000000, true);
 
     if (!spin) {
@@ -350,20 +350,20 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
 {
     auto text_control = GG::Wnd::Create<CUILabel>(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
 
-    std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
+    const ValidatorBase* validator = GetGameRules().GetValidator(rule_name);
     double value = GetGameRules().Get<double>(rule_name);
 
     std::shared_ptr<GG::Spin<double>> spin;
-    if (std::shared_ptr<const RangedValidator<double>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<double>>(validator))
+    if (auto ranged_validator = dynamic_cast<const RangedValidator<double>*>(validator))
         spin = GG::Wnd::Create<CUISpin<double>>(value, 0.1, ranged_validator->m_min, ranged_validator->m_max, true);
 
-    else if (std::shared_ptr<const StepValidator<double>> step_validator = std::dynamic_pointer_cast<const StepValidator<double>>(validator))
+    else if (auto step_validator = dynamic_cast<const StepValidator<double>*>(validator))
         spin = GG::Wnd::Create<CUISpin<double>>(value, step_validator->m_step_size, -1000000, 1000000, true);
 
-    else if (std::shared_ptr<const RangedStepValidator<double>> ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<double>>(validator))
+    else if (auto ranged_step_validator = dynamic_cast<const RangedStepValidator<double>*>(validator))
         spin = GG::Wnd::Create<CUISpin<double>>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
 
-    else if (std::shared_ptr<const Validator<double>> int_validator = std::dynamic_pointer_cast<const Validator<double>>(validator))
+    else if (auto int_validator = dynamic_cast<const Validator<double>*>(validator))
         spin = GG::Wnd::Create<CUISpin<double>>(value, 0.1, -1000000, 1000000, true);
 
     if (!spin) {
@@ -420,13 +420,13 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
 {
     auto text_control = GG::Wnd::Create<CUILabel>(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
 
-    std::shared_ptr<const ValidatorBase> validator = GetGameRules().GetValidator(rule_name);
+    auto validator = GetGameRules().GetValidator(rule_name);
     std::string value = GetGameRules().Get<std::string>(rule_name);
 
     auto drop = GG::Wnd::Create<CUIDropDownList>(5);
     drop->Resize(GG::Pt(SPIN_WIDTH, drop->MinUsableSize().y));
 
-    if (auto desc_val = std::dynamic_pointer_cast<const DiscreteValidator<std::string>>(validator)) {
+    if (auto desc_val = dynamic_cast<const DiscreteValidator<std::string>*>(validator)) {
         // add rows for all allowed options
         for (auto& possability : desc_val->m_values)
             drop->Insert(GG::Wnd::Create<UserStringRow>(possability,
@@ -466,32 +466,28 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     return drop.get();
 }
 
-void GameRulesPanel::BoolRuleChanged(const GG::StateButton* button,
-                                     const std::string& rule_name)
-{
-    std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
+void GameRulesPanel::BoolRuleChanged(const GG::StateButton* button, const std::string& rule_name) {
+    auto val = GetGameRules().GetValidator(rule_name);
     if (!val || !button)
         return;
     m_rules[rule_name] = val->String(button->Checked());
 
     DebugLogger() << "Set Rules:";
-    for (const auto& entry : m_rules)
-        DebugLogger() << "  " << entry.first << " : " << entry.second;
+    for (auto& [map_rule_name, map_rule_value] : m_rules)
+        DebugLogger() << "  " << map_rule_name << " : " << map_rule_value;
 
     SettingChanged();
 }
 
-void GameRulesPanel::IntRuleChanged(const GG::Spin<int>* spin,
-                                     const std::string& rule_name)
-{
-    std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
+void GameRulesPanel::IntRuleChanged(const GG::Spin<int>* spin, const std::string& rule_name) {
+    auto val = GetGameRules().GetValidator(rule_name);
     if (!val || !spin)
         return;
     m_rules[rule_name] = val->String(spin->Value());
 
     DebugLogger() << "Set Rules:";
-    for (const auto& entry : m_rules)
-        DebugLogger() << "  " << entry.first << " : " << entry.second;
+    for (auto& [map_rule_name, map_rule_value] : m_rules)
+        DebugLogger() << "  " << map_rule_name << " : " << map_rule_value;
 
     SettingChanged();
 }
@@ -499,14 +495,14 @@ void GameRulesPanel::IntRuleChanged(const GG::Spin<int>* spin,
 void GameRulesPanel::DoubleRuleChanged(const GG::Spin<double>* spin,
                                        const std::string& rule_name)
 {
-    std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
+    auto val = GetGameRules().GetValidator(rule_name);
     if (!val || !spin)
         return;
     m_rules[rule_name] = val->String(spin->Value());
 
     DebugLogger() << "Set Rules:";
-    for (const auto& entry : m_rules)
-        DebugLogger() << "  " << entry.first << " : " << entry.second;
+    for (auto& [map_rule_name, map_rule_value] : m_rules)
+        DebugLogger() << "  " << map_rule_name << " : " << map_rule_value;
 
     SettingChanged();
 }
@@ -514,7 +510,7 @@ void GameRulesPanel::DoubleRuleChanged(const GG::Spin<double>* spin,
 void GameRulesPanel::StringRuleChanged(const GG::DropDownList* drop,
                                        const std::string& rule_name)
 {
-    std::shared_ptr<const ValidatorBase> val = GetGameRules().GetValidator(rule_name);
+    auto val = GetGameRules().GetValidator(rule_name);
     if (!val || !drop)
         return;
 
@@ -527,8 +523,8 @@ void GameRulesPanel::StringRuleChanged(const GG::DropDownList* drop,
     m_rules[rule_name] = row->Name();
 
     DebugLogger() << "Set Rules:";
-    for (const auto& entry : m_rules)
-        DebugLogger() << "  " << entry.first << " : " << entry.second;
+    for (auto& [map_rule_name, map_rule_value] : m_rules)
+        DebugLogger() << "  " << map_rule_name << " : " << map_rule_value;
 
     SettingChanged();
 }

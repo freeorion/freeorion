@@ -47,17 +47,17 @@ namespace {
      */
     template <typename T>
     void AddTraitBypassOption(OptionsDB& db, std::string const & root, std::string ROOT,
-                              T def, ValidatorBase const & validator)
+                              T def, const ValidatorBase& validator)
     {
         std::string option_root = "ai.trait." + root + ".";
         std::string user_string_root = "OPTIONS_DB_AI_CONFIG_TRAIT_"+ROOT;
         db.Add<bool>(option_root + "force.enabled", UserStringNop(user_string_root + "_FORCE"), false);
-        db.Add<T>(option_root + "default", UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator);
+        db.Add<T>(option_root + "default", UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator.Clone());
 
         for (int ii = 1; ii <= IApp::MAX_AI_PLAYERS(); ++ii) {
             std::stringstream ss;
             ss << option_root << "ai_" << std::to_string(ii);
-            db.Add<T>(ss.str(), UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator);
+            db.Add<T>(ss.str(), UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator.Clone());
         }
     }
 

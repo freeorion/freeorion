@@ -53,21 +53,21 @@ namespace {
         }
 
         // Create the new option if necessary.
-        if (!GetOptionsDB().OptionExists(full_option_name))
-            GetOptionsDB().Add<std::string>(full_option_name, description,
-                                            default_level, LogLevelValidator());
+        if (!GetOptionsDB().OptionExists(full_option_name)) {
+            GetOptionsDB().Add<std::string>(full_option_name, std::string{description},
+                                            std::move(default_level), LogLevelValidator());
+        }
 
         // Return the threshold from the db.
         return to_LogLevel(GetOptionsDB().Get<std::string>(full_option_name));
     }
 }
 
-DiscreteValidator<std::string> LogLevelValidator() {
+std::unique_ptr<DiscreteValidator<std::string>> LogLevelValidator() {
     std::set<std::string> valid_labels;
     for (const auto& label_and_value : ValidNameToLogLevel())
-        valid_labels.emplace(label_and_value.first);
-    auto validator = DiscreteValidator<std::string>(std::move(valid_labels));
-    return validator;
+        valid_labels.insert(label_and_value.first);
+    return std::make_unique<DiscreteValidator<std::string>>(std::move(valid_labels));
 }
 
 void InitLoggingOptionsDBSystem() {
