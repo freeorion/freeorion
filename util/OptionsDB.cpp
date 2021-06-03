@@ -42,6 +42,11 @@ namespace {
             erase_last(str, "\"");
         }
     }
+
+    ///< the master list of abbreviated option names, and their corresponding long-form names
+    std::map<char, std::string> short_names;
+
+    OptionsDB options_db;
 }
 
 /////////////////////////////////////////////
@@ -53,7 +58,6 @@ bool RegisterOptions(OptionsDBFn function) {
 }
 
 OptionsDB& GetOptionsDB() {
-    static OptionsDB options_db;
     if (!OptionsRegistry().empty()) {
         for (OptionsDBFn fn : OptionsRegistry())
             fn(options_db);
@@ -66,12 +70,6 @@ OptionsDB& GetOptionsDB() {
 /////////////////////////////////////////////
 // OptionsDB::Option
 /////////////////////////////////////////////
-// static(s)
-std::map<char, std::string> OptionsDB::Option::short_names;
-
-OptionsDB::Option::Option()
-{}
-
 OptionsDB::Option::Option(char short_name_, const std::string& name_, const boost::any& value_,
                           const boost::any& default_value_, const std::string& description_,
                           const ValidatorBase* validator_, bool storable_, bool flag_, bool recognized_,
@@ -92,10 +90,10 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
 
     auto name_it = name.rfind('.');
     if (name_it != std::string::npos)
-        sections.emplace(name.substr(0, name_it));
+        sections.insert(name.substr(0, name_it));
 
     if (!section.empty())
-        sections.emplace(section);
+        sections.insert(section);
     else if (sections.empty())
         sections.emplace("misc");
 }
@@ -150,8 +148,6 @@ bool OptionsDB::Option::ValueIsDefault() const
 /////////////////////////////////////////////
 // OptionsDB::OptionSection
 /////////////////////////////////////////////
-OptionsDB::OptionSection::OptionSection() = default;
-
 OptionsDB::OptionSection::OptionSection(const std::string& name_, const std::string& description_,
                                         std::function<bool (const std::string&)> option_predicate_) :
     name(name_),
@@ -162,16 +158,6 @@ OptionsDB::OptionSection::OptionSection(const std::string& name_, const std::str
 /////////////////////////////////////////////
 // OptionsDB
 /////////////////////////////////////////////
-// static(s)
-OptionsDB* OptionsDB::s_options_db = nullptr;
-
-OptionsDB::OptionsDB() : m_dirty(false) {
-    if (s_options_db)
-        throw std::runtime_error("Attempted to create a duplicate instance of singleton class OptionsDB.");
-
-    s_options_db = this;
-}
-
 bool OptionsDB::Commit(bool only_if_dirty, bool only_non_default) {
     if (only_if_dirty && !m_dirty)
         return true;
@@ -279,7 +265,7 @@ namespace {
             if (token == "\n") 
                 lines.emplace_back();
             else if (widths.second < lines.back().size() + token.size() + indents.second)
-                lines.emplace_back(token + " ");
+                lines.push_back(token + " ");
             else if (!token.empty())
                 lines.back().append(token + " ");
         }
@@ -288,7 +274,7 @@ namespace {
         std::stringstream retval;
         auto first_line = std::move(lines.front());
         retval << std::string(indents.first, ' ') << first_line << "\n";
-        for (auto& line : lines)
+        for (const auto& line : lines)
             if (!line.empty())
                 retval << indent << line << "\n";
 
@@ -364,26 +350,27 @@ std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySecti
     }
 
     // define which section are top level sections ("root"), move top level candidates with single option to misc
-    for (const auto& section_it : total_options_per_section) {
-        auto root_name = section_it.first.substr(0, section_it.first.find_first_of("."));
+    for (auto& [section_name, option_count] : total_options_per_section) {
+        auto root_name = section_name.substr(0, section_name.find_first_of("."));
         // root_name with no dot element allowed to pass if an option is known, potentially moving to misc section
         auto total_it = total_options_per_section.find(root_name);
         if (total_it == total_options_per_section.end())
             continue;
+        auto count = total_it->second;
 
-        if (total_it->second > 1) {
-            options_by_section["root"].emplace(std::move(root_name));
-        } else if (section_it.first != "misc" &&
-                   section_it.first != "root" &&
-                   !m_sections.count(section_it.first))
-        {
-            // move option to misc section
-            auto section_option_it = options_by_section.find(section_it.first);
-            if (section_option_it == options_by_section.end())
+        if (count > 1) {
+            options_by_section["root"].insert(std::move(root_name));
+        }
+        else if (section_name != "misc" && section_name != "root" && !m_sections.count(section_name)) {
+            // no section found with specified name, so move options in section to misc section
+            auto section_options_it = options_by_section.find(section_name);
+            if (section_options_it == options_by_section.end())
                 continue;
-            for (auto&& option : section_option_it->second)
-                options_by_section["misc"].emplace(std::move(option));
-            options_by_section.erase(section_it.first);
+            auto& section_options = section_options_it->second;
+
+            for (auto& option : section_options)
+                options_by_section["misc"].insert(option);
+            options_by_section.erase(section_name);
         }
     }
 
@@ -620,7 +607,7 @@ OptionsDB::OptionChangedSignalType& OptionsDB::OptionChangedSignal(const std::st
 void OptionsDB::Remove(const std::string& name) {
     auto it = m_options.find(name);
     if (it != m_options.end()) {
-        Option::short_names.erase(it->second.short_name);
+        short_names.erase(it->second.short_name);
         m_options.erase(it);
         m_dirty = true;
     }
@@ -724,9 +711,9 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 throw std::runtime_error("A \'-\' was given with no options.");
 
             for (unsigned int j = 0; j < single_char_options.size(); ++j) {
-                auto short_name_it = Option::short_names.find(single_char_options[j]);
+                auto short_name_it = short_names.find(single_char_options[j]);
 
-                if (short_name_it == Option::short_names.end())
+                if (short_name_it == short_names.end())
                     throw std::runtime_error(std::string("Unknown option \"-") + single_char_options[j] + "\" was given.");
 
                 auto name_it = m_options.find(short_name_it->second);

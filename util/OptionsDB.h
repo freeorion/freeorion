@@ -362,7 +362,7 @@ public:
     void SetFromXML(const XMLDoc& doc);
 
     struct FO_COMMON_API Option {
-        Option();
+        Option() = default;
         Option(char short_name_, const std::string& name_, const boost::any& value_,
                const boost::any& default_value_, const std::string& description_,
                const ValidatorBase *validator_, bool storable_, bool flag_, bool recognized_,
@@ -390,23 +390,20 @@ public:
             boolean conversions are done for them. */
         std::shared_ptr<const ValidatorBase> validator;
 
-        bool            storable = false;   ///< whether this option can be stored in an XML config file for use across multiple runs
-        bool            flag = false;
-        bool            recognized = false; ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
+        bool storable = false;   ///< whether this option can be stored in an XML config file for use across multiple runs
+        bool flag = false;
+        bool recognized = false; ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
 
         mutable std::shared_ptr<boost::signals2::signal<void ()>> option_changed_sig_ptr;
-
-        static std::map<char, std::string> short_names;   ///< the master list of abbreviated option names, and their corresponding long-form names
     };
 
     struct FO_COMMON_API OptionSection {
-        OptionSection();
         OptionSection(const std::string& name_, const std::string& description_,
                       std::function<bool (const std::string&)> option_predicate_);
 
         std::string name;
         std::string description;
-        std::function<bool (const std::string&)> option_predicate = nullptr;
+        std::function<bool (const std::string&)> option_predicate;
     };
 
     /** Defines an option section with a description and optionally a option predicate.
@@ -429,8 +426,6 @@ private:
     bool IsDefaultValue(std::map<std::string, Option>::const_iterator it) const
     { return it != m_options.end() && it->second.ValueToString() == it->second.DefaultValueToString(); }
 
-    OptionsDB();
-
     void SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name);
 
     /** Determine known option sections and which options each contains
@@ -439,8 +434,7 @@ private:
 
     std::map<std::string, Option>   m_options;
     std::unordered_map<std::string, OptionSection> m_sections;
-    static OptionsDB*               s_options_db;
-    bool                            m_dirty; //< has OptionsDB changed since last Commit()
+    bool                            m_dirty = false; //< has OptionsDB changed since last Commit()
 
     friend FO_COMMON_API OptionsDB& GetOptionsDB();
 };
