@@ -1,6 +1,11 @@
 from typing import List, Set
 
-from stub_generator.interface_inspector import ClassInfo, EnumInfo, FunctionInfo, InstanceInfo
+from stub_generator.interface_inspector import (
+    ClassInfo,
+    EnumInfo,
+    FunctionInfo,
+    InstanceInfo,
+)
 from stub_generator.stub_generator import EnumGenerator
 from stub_generator.stub_generator.class_generator import ClassGenerator
 from stub_generator.stub_generator.function_generator import FunctionGenerator

@@ -5,9 +5,15 @@ from typing import List, Tuple
 
 from stub_generator.interface_inspector.class_processor import ClassInfo, inspect_class
 from stub_generator.interface_inspector.enum_processor import EnumInfo, inspect_enum
-from stub_generator.interface_inspector.function_processor import FunctionInfo, inspect_function
+from stub_generator.interface_inspector.function_processor import (
+    FunctionInfo,
+    inspect_function,
+)
 from stub_generator.interface_inspector.inspection_helpers import _getmembers
-from stub_generator.interface_inspector.instance_processing import inspect_instances, InstanceInfo
+from stub_generator.interface_inspector.instance_processing import (
+    InstanceInfo,
+    inspect_instances,
+)
 
 
 class MemberType(Enum):

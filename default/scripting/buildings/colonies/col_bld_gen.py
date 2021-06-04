@@ -10,7 +10,6 @@ import os
 import os.path
 import string
 
-
 # List of all species in game: definition key, graphic file(relative to default/data/art)
 species_list = [
     ("SP_SUPER_TEST", "icons/species/other-04.png"),

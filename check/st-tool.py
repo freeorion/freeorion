@@ -13,8 +13,8 @@ import time
 import urllib.parse
 import urllib.request
 import webbrowser
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from collections import namedtuple, OrderedDict
+from collections import OrderedDict, namedtuple
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 STRING_TABLE_KEY_PATTERN = re.compile(r'^[A-Z0-9_]+$')
 # Provides the named capture groups 'ref_type' and 'key'

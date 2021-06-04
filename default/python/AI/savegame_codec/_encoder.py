@@ -23,8 +23,19 @@ import zlib
 from enum import IntEnum
 from typing import Any
 
-from ._definitions import (CanNotSaveGameException, ENUM_PREFIX, FALSE, FLOAT_PREFIX, INT_PREFIX, NONE, PLACEHOLDER,
-                           SET_PREFIX, TRUE, TUPLE_PREFIX, trusted_classes, )
+from ._definitions import (
+    ENUM_PREFIX,
+    FALSE,
+    FLOAT_PREFIX,
+    INT_PREFIX,
+    NONE,
+    PLACEHOLDER,
+    SET_PREFIX,
+    TRUE,
+    TUPLE_PREFIX,
+    CanNotSaveGameException,
+    trusted_classes,
+)
 
 
 def build_savegame_string() -> bytes:

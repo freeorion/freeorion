@@ -29,19 +29,38 @@ If your code adds new sub-modules dependency to existing sub-modules - consider 
 
 from turn_state._dry_dock_state import get_empire_drydocks
 from turn_state._empire_resources import (
-    have_asteroids, have_computronium,
-    have_gas_giant, have_nest, have_ruins,
-    population_with_industry_focus, population_with_research_focus,
-    set_have_asteroids, set_have_gas_giant, set_have_nest,
+    have_asteroids,
+    have_computronium,
+    have_gas_giant,
+    have_nest,
+    have_ruins,
+    population_with_industry_focus,
+    population_with_research_focus,
+    set_have_asteroids,
+    set_have_gas_giant,
+    set_have_nest,
 )
 from turn_state._pilot_ratings import (
-    best_pilot_rating, medium_pilot_rating, set_best_pilot_rating,
+    best_pilot_rating,
+    medium_pilot_rating,
+    set_best_pilot_rating,
     set_medium_pilot_rating,
 )
 from turn_state._planet_state import (
-    get_all_empire_planets, get_colonized_planets, get_colonized_planets_in_system,
-    get_empire_outposts, get_empire_planets_by_species,
-    get_empire_planets_with_species, get_inhabited_planets, get_number_of_colonies,
-    get_owned_planets, get_owned_planets_in_system, get_unowned_empty_planets,
+    get_all_empire_planets,
+    get_colonized_planets,
+    get_colonized_planets_in_system,
+    get_empire_outposts,
+    get_empire_planets_by_species,
+    get_empire_planets_with_species,
+    get_inhabited_planets,
+    get_number_of_colonies,
+    get_owned_planets,
+    get_owned_planets_in_system,
+    get_unowned_empty_planets,
 )
-from turn_state._supply_state import get_distance_to_enemy_supply, get_system_supply, get_systems_by_supply_tier
+from turn_state._supply_state import (
+    get_distance_to_enemy_supply,
+    get_system_supply,
+    get_systems_by_supply_tier,
+)

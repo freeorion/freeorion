@@ -1,6 +1,5 @@
 from typing import Dict
 
-
 _planet_supply_map: Dict[int, int] = {}
 
 

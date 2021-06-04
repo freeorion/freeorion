@@ -38,16 +38,14 @@ wrap any fo function or method to logger to get more info about it.
 don't commit logger wrapped function to repo.
 
 """
+import freeOrionAIInterface as fo
 import inspect
 import os
-from itertools import zip_longest
-
 from functools import wraps
+from itertools import zip_longest
 from logging import debug
 
-import freeOrionAIInterface as fo
 from ._freeorion_tools import dict_from_map, dict_from_map_recursive
-
 
 PLANET = 'P'
 SYSTEM = 'S'

@@ -1,7 +1,10 @@
 from inspect import getdoc
 from typing import Any, Dict, List
 
-from stub_generator.interface_inspector.inspection_helpers import _get_member_info, _getmembers
+from stub_generator.interface_inspector.inspection_helpers import (
+    _get_member_info,
+    _getmembers,
+)
 
 
 class ClassInfo:

@@ -1,29 +1,29 @@
 """The FreeOrionAI module contains the methods which can be made by the C game client;
 these methods in turn activate other portions of the python AI code."""
-from logging import debug, info, error, fatal
 from functools import wraps
+from logging import debug, error, fatal, info
 
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.
 redirect_logging_to_freeorion_logger()
 
-import sys
+import freeOrionAIInterface as fo
 import random
+import sys
 
-import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
+from common.option_tools import check_bool, get_option_dict, parse_config
 
-
-from common.option_tools import parse_config, get_option_dict, check_bool
 parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
 
-from freeorion_tools import patch_interface, configure_debug_chat, process_chat_message
+from freeorion_tools.fo_chat_handler import configure_debug_chat, process_chat_message
+from freeorion_tools.patch_interface import patch_interface
 
 patch_interface()
 
 import ColonisationAI
-import ExplorationAI
 import DiplomaticCorp
+import ExplorationAI
 import FleetUtilsAI
 import InvasionAI
 import MilitaryAI
@@ -34,13 +34,16 @@ import ResearchAI
 import ResourcesAI
 import ShipDesignAI
 import TechsListsAI
-from aistate_interface import create_new_aistate, load_aistate, get_aistate
 from AIDependencies import INVALID_ID
-from freeorion_tools import AITimer
+from aistate_interface import create_new_aistate, get_aistate, load_aistate
+from character.character_module import Aggression
+from character.character_strings_module import (
+    get_trait_name_aggression,
+    possible_capitals,
+)
 from common.handlers import init_handlers
 from common.listeners import listener
-from character.character_module import Aggression
-from character.character_strings_module import get_trait_name_aggression, possible_capitals
+from freeorion_tools.timers import AITimer
 
 main_timer = AITimer('timer', write_log=True)
 turn_timer = AITimer('bucket', write_log=True)
@@ -48,6 +51,7 @@ turn_timer = AITimer('bucket', write_log=True)
 using_statprof = False
 try:
     import statprof
+
     # statprof.start()
     # using_statprof = True
 except ImportError:

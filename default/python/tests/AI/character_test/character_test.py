@@ -1,5 +1,5 @@
 import pytest
-from character.character_module import Trait, Character
+from character.character_module import Character, Trait
 
 
 class LeftTrait(Trait):

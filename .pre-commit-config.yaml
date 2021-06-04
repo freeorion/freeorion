@@ -33,3 +33,7 @@ repos:
         args:
           - --extend-exclude=default/python/*,default/scripting/*,cmake/*,doc/*,check/*
           - --config=test-scripting/tox.ini
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.8.0
+    hooks:
+      - id: isort

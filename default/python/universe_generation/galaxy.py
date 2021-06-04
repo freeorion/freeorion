@@ -1,12 +1,12 @@
+import freeorion as fo
 import sys
 from collections import defaultdict
 from math import acos, ceil, cos, floor, pi, sin, sqrt
 from random import gauss, randint, random, uniform
 from typing import List, Tuple
 
-import freeorion as fo
-
 import universe_tables
+
 import util
 
 

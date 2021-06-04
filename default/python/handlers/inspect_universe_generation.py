@@ -1,5 +1,9 @@
 from common.listeners import register_post_handler
-from handlers.shared_instances_code import classes_to_exclude_from_universe, get_item_with_location, get_common_instances
+from handlers.shared_instances_code import (
+    classes_to_exclude_from_universe,
+    get_common_instances,
+    get_item_with_location,
+)
 from stub_generator import generate_stub
 
 

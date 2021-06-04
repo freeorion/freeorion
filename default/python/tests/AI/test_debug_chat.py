@@ -3,9 +3,8 @@ from typing import Any, Tuple
 
 # Tests classes
 import pytest
-
-from freeorion_tools.chat_handler.debug_chat_handler import DebugChatHandler
 from freeorion_tools.chat_handler.chat_formatter import ChatFormatter
+from freeorion_tools.chat_handler.debug_chat_handler import DebugChatHandler
 from freeorion_tools.chat_handler.shell_variable import ShellVariable
 
 

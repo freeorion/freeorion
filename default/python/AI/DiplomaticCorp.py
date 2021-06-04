@@ -1,12 +1,12 @@
 """Handle diplomatic messages and response determination."""
+import freeOrionAIInterface as fo
 import random
 from logging import debug
 
-import freeOrionAIInterface as fo
+from aistate_interface import get_aistate
 from character.character_module import Aggression
 from character.character_strings_module import possible_greetings
-from freeorion_tools import UserStringList
-from aistate_interface import get_aistate
+from freeorion_tools.translation import UserStringList
 
 
 def handle_pregame_chat(sender_player_id, message_txt):

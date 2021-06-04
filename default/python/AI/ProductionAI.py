@@ -1,10 +1,9 @@
+import freeOrionAIInterface as fo
 import math
 import random
 from logging import debug, error, info, warning
 from operator import itemgetter
 from typing import List
-
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 import AIDependencies
 import AIstate
@@ -14,18 +13,33 @@ import MilitaryAI
 import PlanetUtilsAI
 import PriorityAI
 from AIDependencies import INVALID_ID
-from colonization import rate_planetary_piloting
-from EnumsAI import (EmpireProductionTypes, FocusType, MissionType, PriorityType, ShipRoleType,
-                     get_priority_production_types, )
 from aistate_interface import get_aistate
 from character.character_module import Aggression
+from colonization import rate_planetary_piloting
 from common.print_utils import Sequence, Table, Text
+from EnumsAI import (
+    EmpireProductionTypes,
+    FocusType,
+    MissionType,
+    PriorityType,
+    ShipRoleType,
+    get_priority_production_types,
+)
 from freeorion_tools import ppstring, tech_is_complete
-from turn_state import (best_pilot_rating, get_all_empire_planets, get_empire_drydocks, get_empire_outposts,
-                        get_empire_planets_by_species,
-                        get_inhabited_planets, medium_pilot_rating, get_owned_planets_in_system, get_owned_planets, get_colonized_planets,
-                        get_empire_planets_with_species,
-                        population_with_industry_focus, )
+from turn_state import (
+    best_pilot_rating,
+    get_all_empire_planets,
+    get_colonized_planets,
+    get_empire_drydocks,
+    get_empire_outposts,
+    get_empire_planets_by_species,
+    get_empire_planets_with_species,
+    get_inhabited_planets,
+    get_owned_planets,
+    get_owned_planets_in_system,
+    medium_pilot_rating,
+    population_with_industry_focus,
+)
 from turn_state.design import get_best_ship_info, get_best_ship_ratings
 
 

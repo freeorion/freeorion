@@ -1,18 +1,17 @@
+import freeOrionAIInterface as fo
 import math
-from logging import error, warning, debug
+from logging import debug, error, warning
 from typing import List, Set, Tuple, Union
-
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 import AIDependencies
 import MoveUtilsAI
 from AIDependencies import INVALID_ID
-from CombatRatingsAI import get_fleet_rating, get_ship_combat_stats, rating_needed
 from aistate_interface import get_aistate
-from freeorion_tools import assertion_fails, combine_ratings
+from CombatRatingsAI import get_fleet_rating, get_ship_combat_stats, rating_needed
 from EnumsAI import MissionType, ShipRoleType
+from freeorion_tools import assertion_fails, combine_ratings
 from ShipDesignAI import get_ship_part
-from target import TargetPlanet, TargetFleet, TargetSystem
+from target import TargetFleet, TargetPlanet, TargetSystem
 
 
 def stats_meet_reqs(stats: dict, requirements: dict) -> bool:

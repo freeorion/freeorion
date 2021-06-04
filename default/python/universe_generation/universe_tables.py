@@ -1,6 +1,5 @@
 import freeorion as fo
 
-
 #################################
 # Galaxy Generation Data Tables #
 #################################

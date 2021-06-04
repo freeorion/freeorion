@@ -1,16 +1,16 @@
+import freeOrionAIInterface as fo
 from logging import debug, error, warning
 
-from EnumsAI import ShipRoleType, MissionType
+import CombatRatingsAI
 import EspionageAI
 import ExplorationAI
 import FleetUtilsAI
-import freeOrionAIInterface as fo  # pylint: disable=import-error
-from aistate_interface import get_aistate
 import MilitaryAI
 import MoveUtilsAI
-import CombatRatingsAI
+from aistate_interface import get_aistate
+from EnumsAI import MissionType, ShipRoleType
 from freeorion_tools import combine_ratings
-from target import Target, TargetFleet, TargetSystem, TargetPlanet
+from target import Target, TargetFleet, TargetPlanet, TargetSystem
 
 
 class AIFleetOrder:

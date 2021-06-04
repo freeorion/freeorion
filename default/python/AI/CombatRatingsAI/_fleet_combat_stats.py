@@ -1,8 +1,9 @@
+import freeOrionAIInterface as fo
 from typing import List
 
-import freeOrionAIInterface as fo
 from CombatRatingsAI._ship_combat_stats import ShipCombatStats, get_ship_combat_stats
-from freeorion_tools import cache_for_current_turn, combine_ratings
+from freeorion_tools import combine_ratings
+from freeorion_tools.caching import cache_for_current_turn
 
 
 class FleetCombatStats:

@@ -1,10 +1,10 @@
 # a list of trusted classes - other classes will not be loaded
 import AIFleetMission
-import fleet_orders
-import character.character_module
 import AIstate
+import character.character_module
 import ColonisationAI
 import CombatRatingsAI
+import fleet_orders
 
 trusted_classes = {"%s.%s" % (cls.__module__, cls.__name__): cls for cls in [
     AIFleetMission.AIFleetMission,

@@ -7,19 +7,21 @@ and finally the targeted ratio of research/production. Each decision on a planet
 transfers the planet from the raw list to the baked list, until all planets
 have their future focus decided.
 """
+
 # Note: The algorithm is not stable with respect to pid order.  i.e. Two empire with
 #       exactly the same colonies, but different pids may make different choices.
-from logging import info, warning, debug
+import freeOrionAIInterface as fo
+from logging import debug, info, warning
 from operator import itemgetter
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
-from aistate_interface import get_aistate
-from EnumsAI import PriorityType, get_priority_resource_types, FocusType
-import PlanetUtilsAI
-import ColonisationAI
 import AIDependencies
+import ColonisationAI
+import PlanetUtilsAI
+from aistate_interface import get_aistate
 from common.print_utils import Table, Text
-from freeorion_tools import combine_ratings, tech_is_complete, AITimer
+from EnumsAI import FocusType, PriorityType, get_priority_resource_types
+from freeorion_tools import combine_ratings, tech_is_complete
+from freeorion_tools.timers import AITimer
 
 resource_timer = AITimer('timer_bucket')
 

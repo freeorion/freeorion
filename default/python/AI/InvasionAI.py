@@ -1,9 +1,7 @@
+import freeOrionAIInterface as fo
 import math
 from logging import debug, info, warning
 
-import freeOrionAIInterface as fo
-
-from aistate_interface import get_aistate
 import AIDependencies
 import AIstate
 import ColonisationAI
@@ -13,9 +11,15 @@ import FleetUtilsAI
 import MilitaryAI
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID, Tags
+from aistate_interface import get_aistate
+from common.print_utils import Number, Table, Text
 from EnumsAI import MissionType, PriorityType
-from common.print_utils import Table, Text, Number
-from freeorion_tools import tech_is_complete, AITimer, get_partial_visibility_turn, get_species_tag_grade
+from freeorion_tools import (
+    get_partial_visibility_turn,
+    get_species_tag_grade,
+    tech_is_complete,
+)
+from freeorion_tools.timers import AITimer
 from target import TargetPlanet, TargetSystem
 from turn_state import get_colonized_planets_in_system
 from turn_state.design import get_best_ship_info

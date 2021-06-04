@@ -3,11 +3,8 @@
 # about stub files, see https://www.python.org/dev/peps/pep-0484/#stub-files
 # During execution, the actual module is made available via
 # a C++ Boost-python process as part of the launch.
-from typing import Dict, Iterator, overload
-
-
 from enum import IntEnum
-
+from typing import Dict, Iterator, overload
 
 class AccountingInfo:
     @property

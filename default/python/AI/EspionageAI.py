@@ -1,11 +1,12 @@
+import freeOrionAIInterface as fo
 from logging import error, warning
 from typing import List, Optional, Union
 
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
 from AIDependencies import ALL_EMPIRES, Tags
 from EnumsAI import EmpireMeters
-from freeorion_tools import cache_for_current_turn, get_species_tag_grade
+from freeorion_tools import get_species_tag_grade
+from freeorion_tools.caching import cache_for_current_turn
 
 
 def default_empire_detection_strength():

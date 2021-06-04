@@ -1,3 +1,4 @@
+import freeOrionAIInterface as fo
 from logging import debug, error, info, warning
 from operator import itemgetter
 from typing import List
@@ -7,32 +8,61 @@ import AIstate
 import EspionageAI
 import ExplorationAI
 import FleetUtilsAI
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 import InvasionAI
 import MilitaryAI
 import PlanetUtilsAI
 import PriorityAI
 from AIDependencies import (
-    INVALID_ID, OUTPOSTING_TECH, POP_CONST_MOD_MAP,
-    POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES, POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
+    INVALID_ID,
+    OUTPOSTING_TECH,
+    POP_CONST_MOD_MAP,
+    POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
+    POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
     Tags,
 )
 from aistate_interface import get_aistate
 from colonization import get_nest_rating, rate_piloting_tag, special_is_nest
 from colonization.planet_supply import get_planet_supply, update_planet_supply
 from common.print_utils import Bool, Number, Sequence, Table, Text
-from EnumsAI import EmpireProductionTypes, FocusType, MissionType, PriorityType, ShipRoleType
-from freeorion_tools import (
-    AITimer, cache_by_turn_persistent, cache_for_current_turn, cache_for_session, get_partial_visibility_turn,
-    get_species_tag_grade, tech_is_complete,
+from EnumsAI import (
+    EmpireProductionTypes,
+    FocusType,
+    MissionType,
+    PriorityType,
+    ShipRoleType,
 )
-from ShipDesignAI import get_ship_part
+from freeorion_tools import (
+    get_partial_visibility_turn,
+    get_ship_part,
+    get_species_tag_grade,
+    tech_is_complete,
+)
+from freeorion_tools.caching import (
+    cache_by_turn_persistent,
+    cache_for_current_turn,
+    cache_for_session,
+)
+from freeorion_tools.timers import AITimer
 from target import TargetPlanet
 from turn_state import (
-    best_pilot_rating, get_colonized_planets_in_system, get_empire_outposts, get_empire_planets_by_species,
-    get_inhabited_planets, get_number_of_colonies, get_owned_planets, get_owned_planets_in_system, get_system_supply,
-    get_unowned_empty_planets, have_computronium, population_with_industry_focus, population_with_research_focus,
-    set_best_pilot_rating, set_have_asteroids, set_have_gas_giant, set_have_nest, set_medium_pilot_rating,
+    best_pilot_rating,
+    get_colonized_planets_in_system,
+    get_empire_outposts,
+    get_empire_planets_by_species,
+    get_inhabited_planets,
+    get_number_of_colonies,
+    get_owned_planets,
+    get_owned_planets_in_system,
+    get_system_supply,
+    get_unowned_empty_planets,
+    have_computronium,
+    population_with_industry_focus,
+    population_with_research_focus,
+    set_best_pilot_rating,
+    set_have_asteroids,
+    set_have_gas_giant,
+    set_have_nest,
+    set_medium_pilot_rating,
 )
 from turn_state.design import get_best_ship_info
 

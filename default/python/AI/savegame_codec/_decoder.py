@@ -18,8 +18,19 @@ from typing import Union
 import EnumsAI
 from AIstate import AIstate
 
-from ._definitions import (ENUM_PREFIX, FALSE, FLOAT_PREFIX, INT_PREFIX, InvalidSaveGameException, NONE, PLACEHOLDER,
-                           SET_PREFIX, TRUE, TUPLE_PREFIX, trusted_classes, )
+from ._definitions import (
+    ENUM_PREFIX,
+    FALSE,
+    FLOAT_PREFIX,
+    INT_PREFIX,
+    NONE,
+    PLACEHOLDER,
+    SET_PREFIX,
+    TRUE,
+    TUPLE_PREFIX,
+    InvalidSaveGameException,
+    trusted_classes,
+)
 
 
 class SaveDecompressException(Exception):

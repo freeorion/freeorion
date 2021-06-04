@@ -19,8 +19,7 @@ Example usage:
     import AIDependencies
     my_industry = AIDependencies.INDUSTRY_PER_POP * my_population
 """
-import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
-
+import freeOrionAIInterface as fo
 from typing import Dict
 
 # Note re common dictionary lookup structure, "PlanetSize-Dependent-Lookup":

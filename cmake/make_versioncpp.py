@@ -2,14 +2,13 @@
 
 from __future__ import print_function
 
-import sys
 import os
-from string import Template
+import sys
 from datetime import datetime
-from subprocess import check_output, CalledProcessError
-from platform import system
 from glob import glob
-
+from platform import system
+from string import Template
+from subprocess import CalledProcessError, check_output
 
 INVALID_BUILD_NO = "???"
 
