@@ -30,12 +30,12 @@ GameRules& GetGameRules() {
 
 
 /////////////////////////////////////////////////////
-// GameRules
+// GameRule
 /////////////////////////////////////////////////////
-GameRules::GameRule::GameRule(Type type_, std::string name_, boost::any value_,
-                              boost::any default_value_, std::string description_,
-                              std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
-                              std::string category_) :
+GameRule::GameRule(Type type_, std::string name_, boost::any value_,
+                   boost::any default_value_, std::string description_,
+                   std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
+                   std::string category_) :
     OptionsDB::Option(static_cast<char>(0), std::move(name_), std::move(value_),
                       std::move(default_value_), std::move(description_),
                       std::move(validator_), engine_internal_, false, true, "setup.rules"),
@@ -43,27 +43,31 @@ GameRules::GameRule::GameRule(Type type_, std::string name_, boost::any value_,
     category(std::move(category_))
 {}
 
+
+/////////////////////////////////////////////////////
+// GameRules
+/////////////////////////////////////////////////////
 bool GameRules::Empty() const {
     CheckPendingGameRules();
     return m_game_rules.empty();
 }
 
-std::unordered_map<std::string, GameRules::GameRule>::const_iterator GameRules::begin() const {
+std::unordered_map<std::string, GameRule>::const_iterator GameRules::begin() const {
     CheckPendingGameRules();
     return m_game_rules.begin();
 }
 
-std::unordered_map<std::string, GameRules::GameRule>::const_iterator GameRules::end() const {
+std::unordered_map<std::string, GameRule>::const_iterator GameRules::end() const {
     CheckPendingGameRules();
     return m_game_rules.end();
 }
 
-std::unordered_map<std::string, GameRules::GameRule>::iterator GameRules::begin() {
+std::unordered_map<std::string, GameRule>::iterator GameRules::begin() {
     CheckPendingGameRules();
     return m_game_rules.begin();
 }
 
-std::unordered_map<std::string, GameRules::GameRule>::iterator GameRules::end() {
+std::unordered_map<std::string, GameRule>::iterator GameRules::end() {
     CheckPendingGameRules();
     return m_game_rules.end();
 }
@@ -73,8 +77,8 @@ bool GameRules::RuleExists(const std::string& name) const {
     return m_game_rules.count(name);
 }
 
-bool GameRules::RuleExists(const std::string& name, Type type) const {
-    if (type == Type::INVALID)
+bool GameRules::RuleExists(const std::string& name, GameRule::Type type) const {
+    if (type == GameRule::Type::INVALID)
         return false;
     CheckPendingGameRules();
     auto rule_it = m_game_rules.find(name);
@@ -83,11 +87,11 @@ bool GameRules::RuleExists(const std::string& name, Type type) const {
     return rule_it->second.type == type;
 }
 
-GameRules::Type GameRules::GetType(const std::string& name) const {
+GameRule::Type GameRules::GetType(const std::string& name) const {
     CheckPendingGameRules();
     auto rule_it = m_game_rules.find(name);
     if (rule_it == m_game_rules.end())
-        return Type::INVALID;
+        return GameRule::Type::INVALID;
     return rule_it->second.type;
 }
 

@@ -21,9 +21,7 @@ FO_COMMON_API bool RegisterGameRules(GameRulesFn function);
 /** returns the single instance of the GameRules class */
 FO_COMMON_API GameRules& GetGameRules();
 
-/** Database of values that control how the game mechanics function. */
-class FO_COMMON_API GameRules {
-public:
+struct FO_COMMON_API GameRule : public OptionsDB::Option {
     enum class Type : int {
         INVALID = -1,
         TOGGLE,
@@ -41,20 +39,24 @@ public:
     [[nodiscard]] static inline Type RuleTypeForType(std::string)
     { return Type::STRING; }
 
-    struct FO_COMMON_API GameRule : public OptionsDB::Option {
-        GameRule() = default;
-        GameRule(Type type_, std::string name_, boost::any value_,
-                 boost::any default_value_, std::string description_,
-                 std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
-                 std::string category_ = std::string());
-        [[nodiscard]] bool IsInternal() const { return this->storable; }
 
-        Type type = Type::INVALID;
-        std::string category;
-    };
+    GameRule() = default;
+    GameRule(Type type_, std::string name_, boost::any value_,
+             boost::any default_value_, std::string description_,
+             std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
+             std::string category_ = std::string());
+    [[nodiscard]] bool IsInternal() const { return this->storable; }
 
-    using GameRulesTypeMap = std::unordered_map<std::string, GameRule>;
+    Type type = Type::INVALID;
+    std::string category;
+};
 
+using GameRulesTypeMap = std::unordered_map<std::string, GameRule>;
+
+
+/** Database of values that control how the game mechanics function. */
+class FO_COMMON_API GameRules {
+public:
     [[nodiscard]] bool Empty() const;
     [[nodiscard]] std::unordered_map<std::string, GameRule>::const_iterator begin() const;
     [[nodiscard]] std::unordered_map<std::string, GameRule>::const_iterator end() const;
@@ -62,8 +64,8 @@ public:
     [[nodiscard]] std::unordered_map<std::string, GameRule>::iterator end();
 
     [[nodiscard]] bool RuleExists(const std::string& name) const;
-    [[nodiscard]] bool RuleExists(const std::string& name, Type type) const;
-    [[nodiscard]] Type GetType(const std::string& name) const;
+    [[nodiscard]] bool RuleExists(const std::string& name, GameRule::Type type) const;
+    [[nodiscard]] GameRule::Type GetType(const std::string& name) const;
     [[nodiscard]] bool RuleIsInternal(const std::string& name) const;
 
     /** returns the description string for rule \a rule_name, or throws
@@ -124,7 +126,7 @@ public:
 
         DebugLogger() << "Added game rule named " << name << " with default value " << value;
 
-        GameRule&& rule{RuleTypeForType(T()), name, value, value, std::move(description),
+        GameRule&& rule{GameRule::RuleTypeForType(T()), name, value, value, std::move(description),
                         std::move(validator), engine_internal, std::move(category)};
         m_game_rules.emplace(std::move(name), std::move(rule));
     }

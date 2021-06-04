@@ -188,16 +188,16 @@ void GameRulesPanel::CompleteConstruction() {
 
         // add rule to page
         switch (rule.second.type) {
-        case GameRules::Type::TOGGLE:
+        case GameRule::Type::TOGGLE:
             BoolRuleWidget(current_page, 0, rule.first);
             break;
-        case GameRules::Type::INT:
+        case GameRule::Type::INT:
             IntRuleWidget(current_page, 0, rule.first);
             break;
-        case GameRules::Type::DOUBLE:
+        case GameRule::Type::DOUBLE:
             DoubleRuleWidget(current_page, 0, rule.first);
             break;
-        case GameRules::Type::STRING:
+        case GameRule::Type::STRING:
             StringRuleWidget(current_page, 0, rule.first);
             break;
         default:
