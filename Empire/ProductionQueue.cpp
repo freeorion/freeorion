@@ -811,7 +811,6 @@ void ProductionQueue::Update() {
     constexpr float TOO_LONG_TIME = 0.5f; // max time in seconds to spend simulating queue
 
 
-    update_timer.EnterSection("Remove Unproducible");
     // remove from simulated queue any paused items and items that can't be built due to not
     // meeting their location conditions; can't feasibly re-check
     // buildability each projected turn as this would require creating a simulated
@@ -821,7 +820,7 @@ void ProductionQueue::Update() {
     // this would also be inaccurate anyway due to player choices or random
     // chance, so for simplicity, it is assumed that building location
     // conditions evaluated at the present turn apply indefinitely.
-    //
+    update_timer.EnterSection("Remove Unproducible");
     for (unsigned int i = 0; i < sim_queue.size(); ++i) {
         if (sim_queue[i].paused || !is_producible[i]) {
             sim_queue.erase(sim_queue.begin() + i);
@@ -884,6 +883,7 @@ void ProductionQueue::Update() {
             available_pp, allocated_pp, allocated_stockpile_pp);
         sim_available_stockpile = std::min(sim_pp_in_stockpile, stockpile_limit);
     }
+    update_timer.EnterSection("Logging");
 
     sim_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time());
     sim_time = (sim_time_end - sim_time_start).total_microseconds();
@@ -894,6 +894,8 @@ void ProductionQueue::Update() {
     DebugLogger() << "ProductionQueue::Update: Projections took "
                   << ((sim_time_end - sim_time_start).total_microseconds()) << " microseconds with "
                   << empire->ResourceOutput(ResourceType::RE_INDUSTRY) << " industry output";
+
+    update_timer.EnterSection("ProductionQueueChangedSignal response");
     ProductionQueueChangedSignal();
 }
 
