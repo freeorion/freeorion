@@ -32,10 +32,10 @@ GameRules& GetGameRules() {
 /////////////////////////////////////////////////////
 // GameRules
 /////////////////////////////////////////////////////
-GameRules::Rule::Rule(Type type_, std::string name_, boost::any value_,
-                      boost::any default_value_, std::string description_,
-                      std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
-                      std::string category_) :
+GameRules::GameRule::GameRule(Type type_, std::string name_, boost::any value_,
+                              boost::any default_value_, std::string description_,
+                              std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
+                              std::string category_) :
     OptionsDB::Option(static_cast<char>(0), std::move(name_), std::move(value_),
                       std::move(default_value_), std::move(description_),
                       std::move(validator_), engine_internal_, false, true, "setup.rules"),
@@ -48,22 +48,22 @@ bool GameRules::Empty() const {
     return m_game_rules.empty();
 }
 
-std::unordered_map<std::string, GameRules::Rule>::const_iterator GameRules::begin() const {
+std::unordered_map<std::string, GameRules::GameRule>::const_iterator GameRules::begin() const {
     CheckPendingGameRules();
     return m_game_rules.begin();
 }
 
-std::unordered_map<std::string, GameRules::Rule>::const_iterator GameRules::end() const {
+std::unordered_map<std::string, GameRules::GameRule>::const_iterator GameRules::end() const {
     CheckPendingGameRules();
     return m_game_rules.end();
 }
 
-std::unordered_map<std::string, GameRules::Rule>::iterator GameRules::begin() {
+std::unordered_map<std::string, GameRules::GameRule>::iterator GameRules::begin() {
     CheckPendingGameRules();
     return m_game_rules.begin();
 }
 
-std::unordered_map<std::string, GameRules::Rule>::iterator GameRules::end() {
+std::unordered_map<std::string, GameRules::GameRule>::iterator GameRules::end() {
     CheckPendingGameRules();
     return m_game_rules.end();
 }
@@ -182,7 +182,7 @@ void GameRules::CheckPendingGameRules() const {
 
     for (auto& [name, value] : *parsed_new_rules) {
         if (m_game_rules.count(name)) {
-            ErrorLogger() << "GameRules::Add<>() : Rule " << name << " was added twice. Skipping ...";
+            ErrorLogger() << "GameRules::Add<>() : GameRule " << name << " was added twice. Skipping ...";
             continue;
         }
         m_game_rules.emplace(name, std::move(value));

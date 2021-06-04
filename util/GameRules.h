@@ -41,25 +41,25 @@ public:
     [[nodiscard]] static inline Type RuleTypeForType(std::string)
     { return Type::STRING; }
 
-    struct FO_COMMON_API Rule : public OptionsDB::Option {
-        Rule() = default;
-        Rule(Type type_, std::string name_, boost::any value_,
-             boost::any default_value_, std::string description_,
-             std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
-             std::string category_ = std::string());
+    struct FO_COMMON_API GameRule : public OptionsDB::Option {
+        GameRule() = default;
+        GameRule(Type type_, std::string name_, boost::any value_,
+                 boost::any default_value_, std::string description_,
+                 std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_,
+                 std::string category_ = std::string());
         [[nodiscard]] bool IsInternal() const { return this->storable; }
 
         Type type = Type::INVALID;
         std::string category;
     };
 
-    using GameRulesTypeMap = std::unordered_map<std::string, Rule>;
+    using GameRulesTypeMap = std::unordered_map<std::string, GameRule>;
 
     [[nodiscard]] bool Empty() const;
-    [[nodiscard]] std::unordered_map<std::string, Rule>::const_iterator begin() const;
-    [[nodiscard]] std::unordered_map<std::string, Rule>::const_iterator end() const;
-    [[nodiscard]] std::unordered_map<std::string, Rule>::iterator begin();
-    [[nodiscard]] std::unordered_map<std::string, Rule>::iterator end();
+    [[nodiscard]] std::unordered_map<std::string, GameRule>::const_iterator begin() const;
+    [[nodiscard]] std::unordered_map<std::string, GameRule>::const_iterator end() const;
+    [[nodiscard]] std::unordered_map<std::string, GameRule>::iterator begin();
+    [[nodiscard]] std::unordered_map<std::string, GameRule>::iterator end();
 
     [[nodiscard]] bool RuleExists(const std::string& name) const;
     [[nodiscard]] bool RuleExists(const std::string& name, Type type) const;
@@ -111,7 +111,7 @@ public:
 
         auto it = m_game_rules.find(name);
         if (it != m_game_rules.end())
-            throw std::runtime_error("GameRules::Add<>() : Rule " + name + " was added twice.");
+            throw std::runtime_error("GameRules::Add<>() : GameRule " + name + " was added twice.");
 
         if (!GetOptionsDB().OptionExists("setup.rules.server-locked." + name))
             GetOptionsDB().Add<bool>("setup.rules.server-locked." + name, description, false);
@@ -124,8 +124,8 @@ public:
 
         DebugLogger() << "Added game rule named " << name << " with default value " << value;
 
-        Rule&& rule{RuleTypeForType(T()), name, value, value, std::move(description),
-                    std::move(validator), engine_internal, std::move(category)};
+        GameRule&& rule{RuleTypeForType(T()), name, value, value, std::move(description),
+                        std::move(validator), engine_internal, std::move(category)};
         m_game_rules.emplace(std::move(name), std::move(rule));
     }
 
