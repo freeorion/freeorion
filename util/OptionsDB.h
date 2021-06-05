@@ -432,7 +432,7 @@ public:
                boost::any default_value_, std::string description_,
                std::unique_ptr<ValidatorBase>&& validator_, bool storable_, bool flag_,
                bool recognized_, std::string section = std::string());
-        Option(Option&& rhs) noexcept = default;
+        Option(Option&& rhs) = default;
         virtual ~Option();
         Option& operator=(Option&& rhs) = default;
 
