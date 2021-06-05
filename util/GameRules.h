@@ -57,6 +57,10 @@ using GameRulesTypeMap = std::unordered_map<std::string, GameRule>;
 /** Database of values that control how the game mechanics function. */
 class FO_COMMON_API GameRules {
 public:
+    GameRules() = default;
+    ~GameRules() = default;
+
+    // warning: these const functions may invalidate existing iterators to GameRules
     [[nodiscard]] bool Empty() const;
     [[nodiscard]] std::unordered_map<std::string, GameRule>::const_iterator begin() const;
     [[nodiscard]] std::unordered_map<std::string, GameRule>::const_iterator end() const;
@@ -140,7 +144,7 @@ public:
     }
 
     /** Adds rules from the \p future. */
-    void Add(Pending::Pending<GameRules>&& future);
+    void Add(Pending::Pending<GameRulesTypeMap>&& future);
 
     template <typename T>
     void Set(const std::string& name, T value)
@@ -162,12 +166,14 @@ public:
     void ResetToDefaults();
 
 private:
+    void Add(GameRule&& rule) const;
+
     /** Assigns any m_pending_rules to m_game_rules. */
     void CheckPendingGameRules() const;
 
     /** Future rules being parsed by parser.  mutable so that it can
         be assigned to m_game_rules when completed.*/
-    mutable boost::optional<Pending::Pending<GameRules>> m_pending_rules = boost::none;
+    mutable boost::optional<Pending::Pending<GameRulesTypeMap>> m_pending_rules = boost::none;
 
     mutable GameRulesTypeMap m_game_rules;
 

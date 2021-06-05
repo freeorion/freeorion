@@ -35,6 +35,10 @@ FO_COMMON_API bool RegisterOptions(OptionsDBFn function);
 /** returns the single instance of the OptionsDB class */
 FO_COMMON_API OptionsDB& GetOptionsDB();
 
+template<typename T> struct is_unique_ptr : std::false_type {};
+template<typename T> struct is_unique_ptr<std::unique_ptr<T>> : std::true_type {};
+template<typename T> constexpr bool is_unique_ptr_v = is_unique_ptr<T>::value;
+
 
 /////////////////////////////////////////////
 // OptionsDB
@@ -252,14 +256,15 @@ public:
         OptionAddedSignal(name);
     }
 
-    template <typename T>
+    template <typename T, typename V,
+              typename std::enable_if_t<!is_unique_ptr_v<V>>* = nullptr,
+              typename std::enable_if_t<!std::is_null_pointer_v<V>>* = nullptr>
     void Add(std::string name, std::string description, T default_value,
-             Validator<T>&& validator, // validator should be wrapped in unique_ptr
+             V&& validator, // validator should be wrapped in unique_ptr
              bool storable = true, std::string section = std::string())
     {
-        Add(std::move(name), std::move(description), std::move(default_value),
-            std::make_unique<Validator<T>>(std::move(validator)),
-            storable, std::move(section));
+        Add<T>(std::move(name), std::move(description), std::move(default_value),
+               std::make_unique<V>(std::move(validator)), storable, std::move(section));
     }
 
     /** adds an Option with an alternative one-character shortened name,
@@ -304,17 +309,18 @@ public:
         OptionAddedSignal(name);
     }
 
-    template <typename T>
+    template <typename T, typename V,
+              typename std::enable_if_t<!is_unique_ptr_v<V>>* = nullptr,
+              typename std::enable_if_t<!std::is_null_pointer_v<V>>* = nullptr>
     void Add(char short_name, std::string name, std::string description,
-             T default_value, ValidatorBase&& validator, // validator should be wrapped in unique_ptr
+             T default_value, V&& validator, // validator should be wrapped in unique_ptr
              bool storable = true, std::string section = std::string())
     {
-        Add(short_name, std::move(name), std::move(description),
-            std::move(default_value),
-            std::make_unique<ValidatorBase>(std::move(validator)),
-            storable, std::move(section));
+        Add<T>(short_name, std::move(name), std::move(description),
+               std::move(default_value),
+               std::make_unique<V>(std::move(validator)),
+               storable, std::move(section));
     }
-
 
     /** adds a flag Option, which is treated as a boolean value with a default
       * of false.  Using the flag on the command line at all indicates that its
@@ -350,8 +356,8 @@ public:
     /** adds an Option with an alternative one-character shortened name, which
       * is treated as a boolean value with a default of false.  Using the flag
       * on the command line at all indicates that its value it set to true. */
-    void AddFlag(char short_name, std::string name, std::string description, bool storable = true,
-                 std::string section = std::string())
+    void AddFlag(char short_name, std::string name, std::string description,
+                 bool storable = true, std::string section = std::string())
     {
         auto it = m_options.find(name);
         bool value = false;
