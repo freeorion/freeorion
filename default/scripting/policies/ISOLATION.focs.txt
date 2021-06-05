@@ -31,7 +31,7 @@ Policy
                             VisibleToEmpire empire = Source.Owner
                             Not Target
                         ]
-                    ) / (NamedReal name = "PLC_ISOLATION_THRESHOLD_DISTANCE" value = 200.0) * 10.0 - 10.0)
+                    ) / (NamedReal name = "PLC_ISOLATION_THRESHOLD_DISTANCE" value = 150.0) * 10.0 - 10.0)
 
         EffectsGroup
             scope = And [
