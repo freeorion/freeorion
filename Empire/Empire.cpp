@@ -1348,7 +1348,7 @@ Empire::SitRepItr Empire::SitRepEnd() const
 float Empire::ProductionPoints() const
 { return ResourceOutput(ResourceType::RE_INDUSTRY); }
 
-const std::shared_ptr<ResourcePool> Empire::GetResourcePool(ResourceType resource_type) const {
+std::shared_ptr<const ResourcePool> Empire::GetResourcePool(ResourceType resource_type) const {
     auto it = m_resource_pools.find(resource_type);
     if (it == m_resource_pools.end())
         return nullptr;

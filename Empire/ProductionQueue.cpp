@@ -599,9 +599,7 @@ float ProductionQueue::TotalPPsSpent() const {
 /** TODO: Is there any reason to keep this method in addition to the more
   * specific information directly available from the empire?  This should
   * probably at least be renamed to clarify it is non-stockpile output */
-std::map<std::set<int>, float> ProductionQueue::AvailablePP(
-    const std::shared_ptr<ResourcePool>& industry_pool) const
-{
+std::map<std::set<int>, float> ProductionQueue::AvailablePP(const std::shared_ptr<const ResourcePool>& industry_pool) const {
     std::map<std::set<int>, float> retval;
     if (!industry_pool) {
         ErrorLogger() << "ProductionQueue::AvailablePP passed invalid industry resource pool";
@@ -639,27 +637,25 @@ float ProductionQueue::StockpileCapacity() const {
     return retval;
 }
 
-std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(
-    const std::shared_ptr<ResourcePool>& industry_pool) const
-{
+std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(const std::shared_ptr<const ResourcePool>& industry_pool) const {
     std::set<std::set<int>> retval;
     if (!industry_pool) {
         ErrorLogger() << "ProductionQueue::ObjectsWithWastedPP passed invalid industry resource pool";
         return retval;
     }
 
-    for (auto& avail_pp : AvailablePP(industry_pool)) {
+    for (auto& [group, avail_pp_in_group] : AvailablePP(industry_pool)) {
         //std::cout << "available PP groups size: " << avail_pp.first.size() << " pp: " << avail_pp.second << std::endl;
 
-        if (avail_pp.second <= 0)
+        if (avail_pp_in_group <= 0)
             continue;   // can't waste if group has no PP
-        const std::set<int>& group = avail_pp.first;
+
         // find this group's allocated PP
         auto alloc_it = m_object_group_allocated_pp.find(group);
         // is less allocated than is available?  if so, some is wasted (assumes stockpile contribuutions can never be lossless)
         // XXX maybe should check stockpile input ratio
-        if (alloc_it == m_object_group_allocated_pp.end() || alloc_it->second < avail_pp.second)
-            retval.insert(avail_pp.first);
+        if (alloc_it == m_object_group_allocated_pp.end() || alloc_it->second < avail_pp_in_group)
+            retval.insert(group);
     }
     return retval;
 }

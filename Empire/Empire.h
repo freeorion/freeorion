@@ -59,148 +59,145 @@ public:
            const EmpireColor& color, bool authenticated);
     ~Empire();
 
-    const std::string&  Name() const;            ///< Returns the Empire's name
-    const std::string&  PlayerName() const;      ///< Returns the Empire's player's name
-    bool                IsAuthenticated() const; ///< Returns the Empire's player's authentication status
-    int                 EmpireID() const;        ///< Returns the Empire's unique numeric ID
-    const EmpireColor&  Color() const;           ///< Returns the Empire's color
-    int                 CapitalID() const;       ///< Returns the numeric ID of the empire's capital
+    [[nodiscard]] const std::string&  Name() const;            ///< Returns the Empire's name
+    [[nodiscard]] const std::string&  PlayerName() const;      ///< Returns the Empire's player's name
+    [[nodiscard]] bool                IsAuthenticated() const; ///< Returns the Empire's player's authentication status
+    [[nodiscard]] int                 EmpireID() const;        ///< Returns the Empire's unique numeric ID
+    [[nodiscard]] const EmpireColor&  Color() const;           ///< Returns the Empire's color
+    [[nodiscard]] int                 CapitalID() const;       ///< Returns the numeric ID of the empire's capital
+    [[nodiscard]] int                 SourceID() const;        ///< Returns an object id that is owned by the empire or INVALID_OBJECT_ID.
 
-    /** Returns an object id that is owned by the empire or INVALID_OBJECT_ID. */
-    int                 SourceID() const;
-    /** Returns an object that is owned by the empire, or null.*/
-    std::shared_ptr<const UniverseObject> Source(const ObjectMap& objects = Objects()) const;
+                                                               /** Returns an object that is owned by the empire, or null.*/
+    [[nodiscard]] std::shared_ptr<const UniverseObject> Source(const ObjectMap& objects = Objects()) const;
 
-    std::string         Dump() const;
+    [[nodiscard]] std::string              Dump() const;
 
-    bool                            PolicyAdopted(const std::string& name) const;
-    int                             TurnPolicyAdopted(const std::string& name) const;
-    int                             SlotPolicyAdoptedIn(const std::string& name) const;
-    std::vector<std::string>        AdoptedPolicies() const;
+    [[nodiscard]] bool                     PolicyAdopted(const std::string& name) const;
+    [[nodiscard]] int                      TurnPolicyAdopted(const std::string& name) const;
+    [[nodiscard]] int                      SlotPolicyAdoptedIn(const std::string& name) const;
+    [[nodiscard]] std::vector<std::string> AdoptedPolicies() const;
 
     /** For each category, returns the slots in which policies have been adopted
       * and what policy is in that slot. */
-    std::map<std::string, std::map<int, std::string>>
+    [[nodiscard]] std::map<std::string, std::map<int, std::string>>
                                     CategoriesSlotsPoliciesAdopted() const;
 
     /** Returns the policies the empire has adopted and the categories
       * in which they were adopted. */
-    std::map<std::string, int>      TurnsPoliciesAdopted() const;
-
+    [[nodiscard]] std::map<std::string, int>    TurnsPoliciesAdopted() const;
     /** Returns the set of policies / slots the empire has avaialble. */
-    const std::set<std::string>&    AvailablePolicies() const;
-    bool                            PolicyAvailable(const std::string& name) const;
-    bool                            PolicyPrereqsAndExclusionsOK(const std::string& name) const;
-    std::map<std::string, int>      TotalPolicySlots() const;
-    std::map<std::string, int>      EmptyPolicySlots() const;
+    [[nodiscard]]  const std::set<std::string>& AvailablePolicies() const;
+    [[nodiscard]] bool                          PolicyAvailable(const std::string& name) const;
+    [[nodiscard]] bool                          PolicyPrereqsAndExclusionsOK(const std::string& name) const;
+    [[nodiscard]] std::map<std::string, int>    TotalPolicySlots() const;
+    [[nodiscard]] std::map<std::string, int>    EmptyPolicySlots() const;
 
     /** Returns the set of Tech names available to this empire and the turns on
       * which they were researched. */
-    const std::map<std::string, int>&   ResearchedTechs() const;
+    [[nodiscard]] const std::map<std::string, int>& ResearchedTechs() const;
 
     /** Returns the set of BuildingType names availble to this empire. */
-    const std::set<std::string>&    AvailableBuildingTypes() const;
+    [[nodiscard]] const std::set<std::string>& AvailableBuildingTypes() const;
 
     /** Returns the set of ShipDesign IDs available for this empire to build. */
-    std::set<int>                   AvailableShipDesigns(const Universe& universe) const;
+    [[nodiscard]] std::set<int>                AvailableShipDesigns(const Universe& universe) const;
 
-    const std::set<int>&            ShipDesigns() const;                ///< Returns the set of all ship design ids of this empire
-    const std::set<std::string>&    AvailableShipParts() const;         ///< Returns the set of ship part names this empire that the empire can currently build
-    const std::set<std::string>&    AvailableShipHulls() const;         ///< Returns the set of ship hull names that that the empire can currently build
+    [[nodiscard]] const std::set<int>&         ShipDesigns() const;                ///< Returns the set of all ship design ids of this empire
+    [[nodiscard]] const std::set<std::string>& AvailableShipParts() const;         ///< Returns the set of ship part names this empire that the empire can currently build
+    [[nodiscard]] const std::set<std::string>& AvailableShipHulls() const;         ///< Returns the set of ship hull names that that the empire can currently build
 
-    const std::string&              TopPriorityEnqueuedTech() const;
-    const std::string&              MostExpensiveEnqueuedTech() const;
-    const std::string&              LeastExpensiveEnqueuedTech() const;
-    const std::string&              MostRPSpentEnqueuedTech() const;
-    const std::string&              MostRPCostLeftEnqueuedTech() const;
+    [[nodiscard]] const std::string&           TopPriorityEnqueuedTech() const;
+    [[nodiscard]] const std::string&           MostExpensiveEnqueuedTech() const;
+    [[nodiscard]] const std::string&           LeastExpensiveEnqueuedTech() const;
+    [[nodiscard]] const std::string&           MostRPSpentEnqueuedTech() const;
+    [[nodiscard]] const std::string&           MostRPCostLeftEnqueuedTech() const;
 
-    const std::string&              TopPriorityResearchableTech() const;
-    const std::string&              MostExpensiveResearchableTech() const;
-    const std::string&              LeastExpensiveResearchableTech() const;
-    const std::string&              MostRPSpentResearchableTech() const;
-    const std::string&              MostRPCostLeftResearchableTech() const;
+    [[nodiscard]] const std::string&           TopPriorityResearchableTech() const;
+    [[nodiscard]] const std::string&           MostExpensiveResearchableTech() const;
+    [[nodiscard]] const std::string&           LeastExpensiveResearchableTech() const;
+    [[nodiscard]] const std::string&           MostRPSpentResearchableTech() const;
+    [[nodiscard]] const std::string&           MostRPCostLeftResearchableTech() const;
 
-    const Meter*                                    GetMeter(const std::string& name) const;
-    std::map<std::string, Meter>::const_iterator    meter_begin() const { return m_meters.begin(); }
-    std::map<std::string, Meter>::const_iterator    meter_end() const   { return m_meters.end(); }
+    [[nodiscard]] const Meter*                                 GetMeter(const std::string& name) const;
+    [[nodiscard]] std::map<std::string, Meter>::const_iterator meter_begin() const { return m_meters.begin(); }
+    [[nodiscard]] std::map<std::string, Meter>::const_iterator meter_end() const   { return m_meters.end(); }
 
-    const ResearchQueue&    GetResearchQueue() const;                   ///< Returns the queue of techs being or queued to be researched.
-    const ProductionQueue&  GetProductionQueue() const;                 ///< Returns the queue of items being or queued to be produced.
-    const InfluenceQueue&   GetInfluenceQueue() const;                  ///< Returns the queue of items being funded with influence.
+    [[nodiscard]] const ResearchQueue&    GetResearchQueue() const;                   ///< Returns the queue of techs being or queued to be researched.
+    [[nodiscard]] const ProductionQueue&  GetProductionQueue() const;                 ///< Returns the queue of items being or queued to be produced.
+    [[nodiscard]] const InfluenceQueue&   GetInfluenceQueue() const;                  ///< Returns the queue of items being funded with influence.
 
-    bool        ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
-    float       ResearchProgress(const std::string& name) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
-    bool        TechResearched(const std::string& name) const;          ///< Returns true iff this tech has been completely researched.
-    bool        HasResearchedPrereqAndUnresearchedPrereq(const std::string& name) const;    ///< Returns true iff this tech has some but not all prerequisites researched
-    TechStatus  GetTechStatus(const std::string& name) const;           ///< Returns the status (researchable, researched, unresearchable) for this tech for this
+    [[nodiscard]] bool        ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
+    [[nodiscard]] float       ResearchProgress(const std::string& name) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
+    [[nodiscard]] bool        TechResearched(const std::string& name) const;          ///< Returns true iff this tech has been completely researched.
+    [[nodiscard]] bool        HasResearchedPrereqAndUnresearchedPrereq(const std::string& name) const;    ///< Returns true iff this tech has some but not all prerequisites researched
+    [[nodiscard]] TechStatus  GetTechStatus(const std::string& name) const;           ///< Returns the status (researchable, researched, unresearchable) for this tech for this
 
-    bool        BuildingTypeAvailable(const std::string& name) const;   ///< Returns true if the given building type is known to this empire, false if it is not
-    bool        ShipDesignAvailable(const ShipDesign& design) const;    ///< Returns true iff this ship design can be built by this empire.
-    bool        ShipDesignAvailable(int ship_design_id, const Universe& unvierse) const;    ///< Returns true iff this ship design can be built by this empire.  If no such ship design exists, returns false
-    bool        ShipDesignKept(int ship_design_id) const;               ///< Returns true iff the given ship design id is in the set of design ids of this empire.  That is, it has been added to this empire.
-    bool        ShipPartAvailable(const std::string& name) const;       ///< Returns true iff this ship part can be built by this empire.  If no such ship part exists, returns false
-    bool        ShipHullAvailable(const std::string& name) const;       ///< Returns true iff this ship hull can be built by this empire.  If no such ship hull exists, returns false
+    [[nodiscard]] bool        BuildingTypeAvailable(const std::string& name) const;   ///< Returns true if the given building type is known to this empire, false if it is not
+    [[nodiscard]] bool        ShipDesignAvailable(const ShipDesign& design) const;    ///< Returns true iff this ship design can be built by this empire.
+    [[nodiscard]] bool        ShipDesignAvailable(int ship_design_id, const Universe& unvierse) const;    ///< Returns true iff this ship design can be built by this empire.  If no such ship design exists, returns false
+    [[nodiscard]] bool        ShipDesignKept(int ship_design_id) const;               ///< Returns true iff the given ship design id is in the set of design ids of this empire.  That is, it has been added to this empire.
+    [[nodiscard]] bool        ShipPartAvailable(const std::string& name) const;       ///< Returns true iff this ship part can be built by this empire.  If no such ship part exists, returns false
+    [[nodiscard]] bool        ShipHullAvailable(const std::string& name) const;       ///< Returns true iff this ship hull can be built by this empire.  If no such ship hull exists, returns false
 
-    float       ProductionStatus(int i, const ScriptingContext& context) const; ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
+    [[nodiscard]] float       ProductionStatus(int i, const ScriptingContext& context) const; ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
 
     /** Return true iff this empire can produce the specified item at the specified location. */
-    bool                    ProducibleItem(BuildType build_type, int location,
-                                           const ScriptingContext& context = ScriptingContext{}) const;
-    bool                    ProducibleItem(BuildType build_type, const std::string& name, int location,
-                                           const ScriptingContext& context = ScriptingContext{}) const;
-    bool                    ProducibleItem(BuildType build_type, int design_id, int location,
-                                           const ScriptingContext& context = ScriptingContext{}) const;
-    bool                    ProducibleItem(const ProductionQueue::ProductionItem& item, int location,
-                                           const ScriptingContext& context = ScriptingContext{}) const;
+    [[nodiscard]] bool        ProducibleItem(BuildType build_type, int location,
+                                             const ScriptingContext& context = ScriptingContext{}) const;
+    [[nodiscard]] bool        ProducibleItem(BuildType build_type, const std::string& name, int location,
+                                             const ScriptingContext& context = ScriptingContext{}) const;
+    [[nodiscard]] bool        ProducibleItem(BuildType build_type, int design_id, int location,
+                                             const ScriptingContext& context = ScriptingContext{}) const;
+    [[nodiscard]] bool        ProducibleItem(const ProductionQueue::ProductionItem& item, int location,
+                                             const ScriptingContext& context = ScriptingContext{}) const;
 
     /** Return true iff this empire can enqueue the specified item at the specified location. */
-    bool                    EnqueuableItem(BuildType build_type, const std::string& name, int location,
-                                           const ScriptingContext& context = ScriptingContext{}) const;
-    bool                    EnqueuableItem(const ProductionQueue::ProductionItem& item, int location,
-                                           const ScriptingContext& context = ScriptingContext{}) const;
+    [[nodiscard]] bool        EnqueuableItem(BuildType build_type, const std::string& name, int location,
+                                             const ScriptingContext& context = ScriptingContext{}) const;
+    [[nodiscard]] bool        EnqueuableItem(const ProductionQueue::ProductionItem& item, int location,
+                                             const ScriptingContext& context = ScriptingContext{}) const;
 
-    bool                    HasExploredSystem(int ID) const;                            ///< returns  true if the given item is in the appropriate list, false if it is not.
+    [[nodiscard]] bool        HasExploredSystem(int ID) const;                            ///< returns  true if the given item is in the appropriate list, false if it is not.
 
-    bool                    Eliminated() const;                                         ///< whether this empire has lost the game
-    bool                    Won() const;                                                ///< whether this empire has won the game
-    bool                    Ready() const;                                              ///< Returns readiness status of empire
+    [[nodiscard]] bool        Eliminated() const;                                         ///< whether this empire has lost the game
+    [[nodiscard]] bool        Won() const;                                                ///< whether this empire has won the game
+    [[nodiscard]] bool        Ready() const;                                              ///< Returns readiness status of empire
 
-    int                     NumSitRepEntries(int turn = INVALID_GAME_TURN) const;       ///< number of entries in the SitRep.
+    [[nodiscard]] int         NumSitRepEntries(int turn = INVALID_GAME_TURN) const;       ///< number of entries in the SitRep.
 
     /** Returns distance in jumps away from each system that this empire can
       * propagate supply. */
-    const std::map<int, float>&             SystemSupplyRanges() const;
+    [[nodiscard]] const std::map<int, float>&  SystemSupplyRanges() const;
 
     /** Returns set of system ids that are able to propagate supply from one
       * system to the next, or at which supply can be delivered to fleets if
       * supply can reach the system from elsewhere, or in which planets can
       * exchange supply between themselves (even if not leaving the system). */
-    const std::set<int>&                    SupplyUnobstructedSystems() const;
+    [[nodiscard]] const std::set<int>&         SupplyUnobstructedSystems() const;
 
     /** Returns true if the specified lane travel is preserved against being blockaded (i.e., the empire
      * has in the start system at least one fleet that meets the requirements to preserve the lane (which
      * is determined in Empire::UpdateSupplyUnobstructedSystems(). */
-    bool                                    PreservedLaneTravel(int start_system_id, int dest_system_id) const;
+    [[nodiscard]] bool                         PreservedLaneTravel(int start_system_id, int dest_system_id) const;
 
-    const std::set<int>&                    ExploredSystems() const;    ///< returns set of ids of systems that this empire has explored
-    std::map<int, std::set<int>>            KnownStarlanes(const Universe& universe) const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
-    std::map<int, std::set<int>>            VisibleStarlanes(const Universe& universe) const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
+    [[nodiscard]] const std::set<int>&         ExploredSystems() const;     ///< returns set of ids of systems that this empire has explored
+    [[nodiscard]] std::map<int, std::set<int>> KnownStarlanes(const Universe& universe) const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
+    [[nodiscard]] std::map<int, std::set<int>> VisibleStarlanes(const Universe& universe) const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
 
-    SitRepItr               SitRepBegin() const;                ///< starting iterator for sitrep entries for this empire
-    SitRepItr               SitRepEnd() const;                  ///< end iterator for sitreps
+    [[nodiscard]] SitRepItr                    SitRepBegin() const;         ///< starting iterator for sitrep entries for this empire
+    [[nodiscard]] SitRepItr                    SitRepEnd() const;           ///< end iterator for sitreps
 
-    float                   ProductionPoints() const;           ///< Returns the empire's current production point output (this is available industry not including stockpile)
+    [[nodiscard]] float                        ProductionPoints() const;    ///< Returns the empire's current production point output (this is available industry not including stockpile)
 
-    /** Returns ResourcePool for \a resource_type or 0 if no such ResourcePool
-        exists. */
-    const std::shared_ptr<ResourcePool> GetResourcePool(ResourceType resource_type) const;
+    /** Returns ResourcePool for \a resource_type or 0 if no such ResourcePool exists. */
+    [[nodiscard]] std::shared_ptr<const ResourcePool> GetResourcePool(ResourceType resource_type) const;
 
-    float                   ResourceStockpile(ResourceType type) const;         ///< returns current stockpiled amount of resource \a type
-    float                   ResourceOutput(ResourceType type) const;            ///< returns amount of resource \a type being generated by ResourceCenters
-    float                   ResourceAvailable(ResourceType type) const;         ///< returns amount of resource \a type immediately available.  This = production + stockpile
+    [[nodiscard]] float                 ResourceStockpile(ResourceType type) const;         ///< returns current stockpiled amount of resource \a type
+    [[nodiscard]] float                 ResourceOutput(ResourceType type) const;            ///< returns amount of resource \a type being generated by ResourceCenters
+    [[nodiscard]] float                 ResourceAvailable(ResourceType type) const;         ///< returns amount of resource \a type immediately available.  This = production + stockpile
 
-    const PopulationPool&   GetPopulationPool() const;                          ///< Returns PopulationPool
-    float                   Population() const;                                 ///< returns total Population of empire
+    [[nodiscard]] const PopulationPool& GetPopulationPool() const;                          ///< Returns PopulationPool
+    [[nodiscard]] float                 Population() const;                                 ///< returns total Population of empire
 
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */
