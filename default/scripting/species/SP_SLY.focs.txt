@@ -90,6 +90,11 @@ Species
                 SetFuel value = Target.MaxFuel
                 // TODO: have a resupply effect that will also act on part meters without needing to list them all...
             ]
+
+        EffectsGroup
+            scope = Source
+            activation = Capital
+            effects = UnlockPolicy name = "PLC_CONFEDERATION" empire = Source.Owner
     ]
 
     environments = [
