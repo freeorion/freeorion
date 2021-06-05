@@ -11693,7 +11693,9 @@ PLC_DREAM_RECURSION
 Dream Recursion
 
 PLC_DREAM_RECURSION_DESC
-Increases [[metertype METER_TARGET_HAPPINESS]] on populated planets by however much is needed to reach [[value PLC_INDOCTRINATION_STRENGTH_BASE]] and reduces each planet's [[metertype METER_INFLUENCE]] by the same amount as its [[metertype METER_TARGET_HAPPINESS]] is increased. The limit of [[metertype METER_TARGET_HAPPINESS]] is increased by [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] for each [[buildingtype BLD_COLLECTIVE_NET]] controlled by the empire that has adopted this policy.
+'''Increases [[metertype METER_TARGET_HAPPINESS]] on populated planets by however much is needed to reach [[value PLC_INDOCTRINATION_STRENGTH_BASE]]. This limit is increased by [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] for each [[buildingtype BLD_COLLECTIVE_NET]] controlled by the empire that has adopted this policy.
+
+Reduces each planet's [[metertype METER_INFLUENCE]] by the square-root of the amount that [[metertype METER_TARGET_HAPPINESS]] is increased.'''
 
 PLC_DREAM_RECURSION_SHORT_DESC
 Targeted stability boost

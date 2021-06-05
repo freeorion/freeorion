@@ -21,7 +21,7 @@ Policy
                 (NamedReal name = "PLC_INDOCTRINATION_STRENGTH_BASE" value = 5.0) +
                 (NamedReal name = "PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET" value = 2.0) *
                     (Statistic Count condition = And [ Building name = "BLD_COLLECTIVE_NET" OwnedBy empire = Source.Owner ]) -
-                Value(Target.TargetHappiness))
+                Value(Target.TargetHappiness))^0.5
             SetTargetHappiness value = Value + max(0.0, 
                 (NamedRealLookup name = "PLC_INDOCTRINATION_STRENGTH_BASE") +
                 (NamedRealLookup name = "PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET") *
