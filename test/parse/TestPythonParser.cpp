@@ -19,17 +19,17 @@ BOOST_FIXTURE_TEST_SUITE(TestPythonParser, ParserAppFixture)
 BOOST_AUTO_TEST_CASE(parse_game_rules) {
     PythonParser parser(m_python, m_scripting_dir);
 
-    Pending::Pending<GameRules> game_rules_p = Pending::ParseSynchronously(parse::game_rules, parser,  m_scripting_dir / "game_rules.focs.py");
+    auto game_rules_p = Pending::ParseSynchronously(parse::game_rules, parser,  m_scripting_dir / "game_rules.focs.py");
     auto game_rules = *Pending::WaitForPendingUnlocked(std::move(game_rules_p));
-    BOOST_REQUIRE(!game_rules.Empty());
-    BOOST_REQUIRE(game_rules.RuleExists("RULE_HABITABLE_SIZE_MEDIUM"));
-    BOOST_REQUIRE(GameRules::Type::TOGGLE == game_rules.GetType("RULE_ENABLE_ALLIED_REPAIR"));
+    BOOST_REQUIRE(!game_rules.empty());
+    BOOST_REQUIRE(game_rules.count("RULE_HABITABLE_SIZE_MEDIUM") > 0);
+    BOOST_REQUIRE(GameRule::Type::TOGGLE == game_rules["RULE_ENABLE_ALLIED_REPAIR"].type);
 }
 
 BOOST_AUTO_TEST_CASE(parse_techs) {
     PythonParser parser(m_python, m_scripting_dir);
 
-    Pending::Pending<TechManager::TechParseTuple> techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, m_scripting_dir / "techs");
+    auto techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, m_scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
     BOOST_REQUIRE(!tech_categories.empty());
 
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
                         ),
                         std::string("ORBITAL_HAB_LABEL")));
 
-        std::shared_ptr<Effect::EffectsGroup> effect_group = std::shared_ptr<Effect::EffectsGroup>(new Effect::EffectsGroup(
+        auto effect_group = std::shared_ptr<Effect::EffectsGroup>(new Effect::EffectsGroup(
                 std::make_unique<Condition::And>(
                     std::make_unique<Condition::Species>(),
                     std::make_unique<Condition::EmpireAffiliation>(
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
 
     PythonParser parser(m_python, scripting_dir);
 
-    Pending::Pending<TechManager::TechParseTuple> techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, scripting_dir / "techs");
+    auto techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
 
     BOOST_REQUIRE(!techs.empty());
