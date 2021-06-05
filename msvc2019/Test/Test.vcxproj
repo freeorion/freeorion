@@ -182,6 +182,7 @@
     <ClCompile Include="..\..\test\parse\main.cpp" />
     <ClCompile Include="..\..\test\parse\ParserAppFixture.cpp" />
     <ClCompile Include="..\..\test\parse\TestEnumParser.cpp" />
+    <ClCompile Include="..\..\test\parse\TestPythonParser.cpp" />
     <ClCompile Include="..\..\test\parse\TestScriptParser.cpp" />
     <ClCompile Include="..\..\test\system\ClientAppFixture.cpp" />
     <ClCompile Include="..\..\test\system\SmokeTestGame.cpp" />

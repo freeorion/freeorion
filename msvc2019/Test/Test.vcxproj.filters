@@ -65,5 +65,8 @@
       <Filter>Test\parse</Filter>
     </ClCompile>
     <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="..\..\test\parse\TestPythonParser.cpp">
+      <Filter>Test\parse</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
