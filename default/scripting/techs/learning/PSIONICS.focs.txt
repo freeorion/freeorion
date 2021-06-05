@@ -18,7 +18,6 @@ Tech
     unlock = [
         Item type = Policy name = "PLC_INDOCTRINATION"
         Item type = Policy name = "PLC_CONFORMANCE"
-        Item type = Policy name = "PLC_LIBERTY"
     ]
     graphic = "icons/tech/psionics.png"
 

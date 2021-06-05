@@ -11,7 +11,7 @@ Policy
 
         // used in setting stability adjustments for species likes / dislikes
 
-        // increases research but penalizes stability overall
+        // increases research but penalizes stability
         EffectsGroup
         scope = And [
             Planet
@@ -22,7 +22,6 @@ Policy
         effects = [
             SetTargetResearch value = Value + (NamedReal name = "PLC_LIBERTY_RESEARCH_BONUS_FLAT" value = 2.0)
             SetTargetHappiness value = Value - (NamedReal name = "PLC_LIBERTY_STABILITY_PENALTY_FLAT" value = 2.0)
-            SetTargetInfluence value = Value - (NamedReal name = "PLC_LIBERTY_INFLUENCE_PENALTY_FLAT" value = 1.0)
         ]
     ]
     graphic = "icons/policies/liberty.png"
