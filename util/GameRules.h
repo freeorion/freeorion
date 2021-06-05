@@ -132,7 +132,7 @@ public:
 
         GameRule&& rule{GameRule::RuleTypeForType(T()), name, value, value, std::move(description),
                         std::move(validator), engine_internal, std::move(category)};
-        m_game_rules.emplace(std::move(name), std::move(rule));
+        m_game_rules.insert_or_assign(std::move(name), std::move(rule));
     }
 
     template <typename T>

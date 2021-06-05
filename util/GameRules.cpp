@@ -182,7 +182,7 @@ void GameRules::Add(GameRule&& rule) const {
         return;
     }
     }
-    m_game_rules.emplace(std::move(name), std::move(rule));
+    m_game_rules.insert_or_assign(std::move(name), std::move(rule));
 }
 
 void GameRules::SetFromStrings(const std::map<std::string, std::string>& names_values) {

@@ -251,7 +251,7 @@ public:
 
         Option&& option{static_cast<char>(0), name, std::move(value), std::move(default_value), std::move(description),
                         std::move(validator), storable, false, true, std::move(section)};
-        m_options[name] = std::move(option);
+        m_options.insert_or_assign(name, std::move(option));
         m_dirty = true;
         OptionAddedSignal(name);
     }
@@ -304,7 +304,7 @@ public:
 
         Option&& option{short_name, name, std::move(value), std::move(default_value), std::move(description),
                         std::move(validator), storable, false, true, std::move(section)};
-        m_options[name] = std::move(option);
+        m_options.insert_or_assign(name, std::move(option));
         m_dirty = true;
         OptionAddedSignal(name);
     }
@@ -348,7 +348,7 @@ public:
 
         Option&& option{static_cast<char>(0), name, value, value, std::move(description),
                         std::move(validator), storable, true, true, std::move(section)};
-        m_options[name] = std::move(option);
+        m_options.insert_or_assign(name, std::move(option));
         m_dirty = true;
         OptionAddedSignal(name);
     }
@@ -379,7 +379,7 @@ public:
 
         Option&& option{short_name, name, value, value, std::move(description),
                         std::move(validator), storable, true, true, std::move(section)};
-        m_options[name] = std::move(option);
+        m_options.insert_or_assign(name, std::move(option));
         m_dirty = true;
         OptionAddedSignal(name);
     }
