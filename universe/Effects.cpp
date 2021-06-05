@@ -3420,41 +3420,63 @@ std::unique_ptr<Effect> SetEmpireTechProgress::Clone() const {
 
 
 ///////////////////////////////////////////////////////////
-// GiveEmpireTech                                        //
+// GiveEmpireContent                                        //
 ///////////////////////////////////////////////////////////
-GiveEmpireTech::GiveEmpireTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& tech_name,
-                               std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
-    m_tech_name(std::move(tech_name)),
+GiveEmpireContent::GiveEmpireContent(std::unique_ptr<ValueRef::ValueRef<std::string>>&& content_name,
+                                     UnlockableItemType unlock_type,
+                                     std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+    m_content_name(std::move(content_name)),
+    m_unlock_type(unlock_type),
     m_empire_id(std::move(empire_id))
 {
     if (!m_empire_id)
         m_empire_id.reset(new ValueRef::Variable<int>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "Owner"));
 }
 
-void GiveEmpireTech::Execute(ScriptingContext& context) const {
+void GiveEmpireContent::Execute(ScriptingContext& context) const {
     if (!m_empire_id) return;
     auto empire = context.GetEmpire(m_empire_id->Eval(context));
     if (!empire) return;
 
-    if (!m_tech_name)
+    if (!m_content_name)
         return;
 
-    std::string tech_name = m_tech_name->Eval(context);
+    std::string content_name = m_content_name->Eval(context);
 
-    const Tech* tech = GetTech(tech_name);
-    if (!tech) {
-        ErrorLogger() << "GiveEmpireTech::Execute couldn't get tech with name: " << tech_name;
-        return;
+    switch (m_unlock_type) {
+    case UnlockableItemType::UIT_BUILDING:  empire->AddBuildingType(content_name); break;
+    case UnlockableItemType::UIT_SHIP_PART: empire->AddShipPart(content_name);     break;
+    case UnlockableItemType::UIT_SHIP_HULL: empire->AddShipHull(content_name);     break;
+    case UnlockableItemType::UIT_POLICY:    empire->AddPolicy(content_name);       break;
+    case UnlockableItemType::UIT_TECH: {
+        const Tech* tech = GetTech(content_name);
+        if (!tech) {
+            ErrorLogger() << "GiveEmpireContent::Execute couldn't get tech with name: " << content_name;
+            return;
+        }
+        empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(content_name);
+        break;
     }
-
-    empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(tech_name);
+    default: {
+        ErrorLogger() << "GiveEmpireContent::Execute given invalid unlockable item type";
+    }
+    }
 }
 
-std::string GiveEmpireTech::Dump(unsigned short ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "GiveEmpireTech";
+std::string GiveEmpireContent::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "GiveEmpire";
 
-    if (m_tech_name)
-        retval += " name = " + m_tech_name->Dump(ntabs);
+    switch(m_unlock_type) {
+    case UnlockableItemType::UIT_TECH:      retval += "Tech";       break;
+    case UnlockableItemType::UIT_BUILDING:  retval += "Building";   break;
+    case UnlockableItemType::UIT_SHIP_HULL: retval += "Hull";       break;
+    case UnlockableItemType::UIT_SHIP_PART: retval += "Part";       break;
+    case UnlockableItemType::UIT_POLICY:    retval += "Policy";     break;
+    default:                                retval += "???";
+    }
+
+    if (m_content_name)
+        retval += " name = " + m_content_name->Dump(ntabs);
 
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump(ntabs);
@@ -3463,27 +3485,29 @@ std::string GiveEmpireTech::Dump(unsigned short ntabs) const {
     return retval;
 }
 
-void GiveEmpireTech::SetTopLevelContent(const std::string& content_name) {
+void GiveEmpireContent::SetTopLevelContent(const std::string& content_name) {
     if (m_empire_id)
         m_empire_id->SetTopLevelContent(content_name);
-    if (m_tech_name)
-        m_tech_name->SetTopLevelContent(content_name);
+    if (m_content_name)
+        m_content_name->SetTopLevelContent(content_name);
 }
 
-unsigned int GiveEmpireTech::GetCheckSum() const {
+unsigned int GiveEmpireContent::GetCheckSum() const {
     unsigned int retval{0};
 
-    CheckSums::CheckSumCombine(retval, "GiveEmpireTech");
-    CheckSums::CheckSumCombine(retval, m_tech_name);
+    CheckSums::CheckSumCombine(retval, "GiveEmpireContent");
+    CheckSums::CheckSumCombine(retval, m_content_name);
+    CheckSums::CheckSumCombine(retval, m_unlock_type);
     CheckSums::CheckSumCombine(retval, m_empire_id);
 
-    TraceLogger() << "GetCheckSum(GiveEmpireTech): retval: " << retval;
+    TraceLogger() << "GetCheckSum(GiveEmpireContent): retval: " << retval;
     return retval;
 }
 
-std::unique_ptr<Effect> GiveEmpireTech::Clone() const {
-    return std::make_unique<GiveEmpireTech>(ValueRef::CloneUnique(m_tech_name),
-                                            ValueRef::CloneUnique(m_empire_id));
+std::unique_ptr<Effect> GiveEmpireContent::Clone() const {
+    return std::make_unique<GiveEmpireContent>(ValueRef::CloneUnique(m_content_name),
+                                               m_unlock_type,
+                                               ValueRef::CloneUnique(m_empire_id));
 }
 
 

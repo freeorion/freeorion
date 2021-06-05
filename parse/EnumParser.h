@@ -22,6 +22,11 @@ namespace parse {
         detail::enum_rule<UnlockableItemType> rule;
     };
 
+    struct give_empire_unlockable_item_enum_grammar : public detail::enum_grammar<UnlockableItemType> {
+        give_empire_unlockable_item_enum_grammar(const parse::lexer& tok);
+        detail::enum_rule<UnlockableItemType> rule;
+    };
+
     struct ship_slot_enum_grammar : public detail::enum_grammar<ShipSlotType> {
         ship_slot_enum_grammar(const parse::lexer& tok);
         detail::enum_rule<ShipSlotType> rule;

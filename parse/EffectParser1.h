@@ -37,9 +37,10 @@ namespace parse { namespace detail {
         parse::int_arithmetic_rules                            int_rules;
         parse::double_parser_rules                             double_rules;
         parse::empire_affiliation_enum_grammar                 empire_affiliation_type_enum;
+        parse::give_empire_unlockable_item_enum_grammar        unlock_item_type_enum;
         effect_parser_rule                                     set_empire_meter_1;
         effect_parser_rule                                     set_empire_meter_2;
-        effect_parser_rule                                     give_empire_tech;
+        effect_parser_rule                                     give_empire_content;
         effect_parser_rule                                     set_empire_tech_progress;
         generate_sitrep_message_rule                           generate_sitrep_message;
         effect_parser_rule                                     set_overlay_texture;

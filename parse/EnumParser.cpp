@@ -38,12 +38,24 @@ namespace parse {
         unlockable_item_enum_grammar::base_type(rule, "unlockable_item_enum_grammar")
     {
         rule
-            =   tok.Building_       [ _val = UnlockableItemType::UIT_BUILDING ]
-            |   tok.ShipPart_       [ _val = UnlockableItemType::UIT_SHIP_PART ]
-            |   tok.ShipHull_       [ _val = UnlockableItemType::UIT_SHIP_HULL ]
-            |   tok.ShipDesign_     [ _val = UnlockableItemType::UIT_SHIP_DESIGN ]
-            |   tok.Tech_           [ _val = UnlockableItemType::UIT_TECH ]
-            |   tok.Policy_         [ _val = UnlockableItemType::UIT_POLICY ]
+            =   tok.Building_           [ _val = UnlockableItemType::UIT_BUILDING ]
+            |   tok.ShipPart_           [ _val = UnlockableItemType::UIT_SHIP_PART ]
+            |   tok.ShipHull_           [ _val = UnlockableItemType::UIT_SHIP_HULL ]
+            |   tok.ShipDesign_         [ _val = UnlockableItemType::UIT_SHIP_DESIGN ]
+            |   tok.Tech_               [ _val = UnlockableItemType::UIT_TECH ]
+            |   tok.Policy_             [ _val = UnlockableItemType::UIT_POLICY ]
+        ;
+    }
+
+    give_empire_unlockable_item_enum_grammar::give_empire_unlockable_item_enum_grammar(const parse::lexer& tok) :
+        give_empire_unlockable_item_enum_grammar::base_type(rule, "give_empire_unlockable_item_enum_grammar")
+    {
+        rule
+            =   tok.UnlockBuildingType_ [ _val = UnlockableItemType::UIT_BUILDING ]
+            |   tok.UnlockShipPart_     [ _val = UnlockableItemType::UIT_SHIP_PART ]
+            |   tok.UnlockShipHull_     [ _val = UnlockableItemType::UIT_SHIP_HULL ]
+            |   tok.GiveEmpireTech_     [ _val = UnlockableItemType::UIT_TECH ]
+            |   tok.UnlockPolicy_       [ _val = UnlockableItemType::UIT_POLICY ]
         ;
     }
 

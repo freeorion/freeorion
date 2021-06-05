@@ -590,6 +590,10 @@
     (UniverseCentreX)                           \
     (UniverseCentreY)                           \
     (UniverseWidth)                             \
+    (UnlockBuildingType)                        \
+    (UnlockPolicy)                              \
+    (UnlockShipHull)                            \
+    (UnlockShipPart)                            \
     (unlock)                                    \
     (Unowned)                                   \
     (Unproducible)                              \

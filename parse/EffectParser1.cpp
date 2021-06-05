@@ -93,6 +93,7 @@ namespace parse { namespace detail {
         int_rules(tok, label, condition_parser, string_grammar),
         double_rules(tok, label, condition_parser, string_grammar),
         empire_affiliation_type_enum(tok),
+        unlock_item_type_enum(tok),
         one_or_more_string_and_string_ref_pair(string_and_string_ref)
     {
         qi::_1_type _1;
@@ -135,13 +136,14 @@ namespace parse { namespace detail {
                    deconstruct_movable_(_2, _pass))) ]
             ;
 
-        give_empire_tech
-            =   (   omit_[tok.GiveEmpireTech_]
-                    >   label(tok.name_)    >   string_grammar
-                    > -(label(tok.empire_)  >   int_rules.expr)
-                ) [ _val = construct_movable_(new_<Effect::GiveEmpireTech>(
-                    deconstruct_movable_(_1, _pass),
-                    deconstruct_movable_(_2, _pass))) ]
+        give_empire_content
+            =   (   unlock_item_type_enum
+                >   label(tok.name_)    >   string_grammar
+                > -(label(tok.empire_)  >   int_rules.expr)
+                ) [ _val = construct_movable_(new_<Effect::GiveEmpireContent>(
+                    deconstruct_movable_(_2, _pass),
+                    _1,
+                    deconstruct_movable_(_3, _pass))) ]
             ;
 
         set_empire_tech_progress
@@ -229,7 +231,7 @@ namespace parse { namespace detail {
         start
             %=   set_empire_meter_1
             |    set_empire_meter_2
-            |    give_empire_tech
+            |    give_empire_content
             |    set_empire_tech_progress
             |    generate_sitrep_message
             |    set_overlay_texture
@@ -237,7 +239,7 @@ namespace parse { namespace detail {
 
         set_empire_meter_1.name("SetEmpireMeter (w/empire ID)");
         set_empire_meter_2.name("SetEmpireMeter");
-        give_empire_tech.name("GiveEmpireTech");
+        give_empire_content.name("GiveEmpireContent");
         set_empire_tech_progress.name("SetEmpireTechProgress");
         generate_sitrep_message.name("GenerateSitrepMessage");
         set_overlay_texture.name("SetOverlayTexture");
@@ -247,7 +249,7 @@ namespace parse { namespace detail {
 #if DEBUG_EFFECT_PARSERS
         debug(set_empire_meter_1);
         debug(set_empire_meter_2);
-        debug(give_empire_tech);
+        debug(give_empire_content);
         debug(set_empire_tech_progress);
         debug(generate_sitrep_message);
         debug(set_overlay_texture);
