@@ -1232,16 +1232,11 @@ namespace {
             return;
         }
         else if (item_name == "ENC_GAME_RULES") {
-            const GameRules& rules = GetGameRules();
-
-            for (auto& rule : rules) {
-                if (rule.second.ValueIsDefault()) {
-                    detailed_description += UserString(rule.first) + " : "
-                                         + rule.second.ValueToString() + "\n";
-                } else {
-                    detailed_description += "<u>" + UserString(rule.first) + " : "
-                                         + rule.second.ValueToString() + "</u>\n";
-                }
+            for (auto& [rule_name, rule] : GetGameRules()) {
+                if (rule.ValueIsDefault())
+                    detailed_description += UserString(rule_name) + " : " + rule.ValueToString() + "\n";
+                else
+                    detailed_description += "<u>" + UserString(rule_name) + " : " + rule.ValueToString() + "</u>\n";
             }
             return;
         }

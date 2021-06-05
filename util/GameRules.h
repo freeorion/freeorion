@@ -60,31 +60,28 @@ public:
     GameRules() = default;
     ~GameRules() = default;
 
-    // warning: these const functions may invalidate existing iterators to GameRules
-    [[nodiscard]] bool Empty() const;
-    [[nodiscard]] std::unordered_map<std::string, GameRule>::const_iterator begin() const;
-    [[nodiscard]] std::unordered_map<std::string, GameRule>::const_iterator end() const;
-    [[nodiscard]] std::unordered_map<std::string, GameRule>::iterator begin();
-    [[nodiscard]] std::unordered_map<std::string, GameRule>::iterator end();
+    [[nodiscard]] bool Empty();
+    [[nodiscard]] std::unordered_map<std::string, GameRule>::const_iterator begin();
+    [[nodiscard]] std::unordered_map<std::string, GameRule>::const_iterator end();
 
-    [[nodiscard]] bool RuleExists(const std::string& name) const;
-    [[nodiscard]] bool RuleExists(const std::string& name, GameRule::Type type) const;
-    [[nodiscard]] GameRule::Type GetType(const std::string& name) const;
-    [[nodiscard]] bool RuleIsInternal(const std::string& name) const;
+    [[nodiscard]] bool RuleExists(const std::string& name);
+    [[nodiscard]] bool RuleExists(const std::string& name, GameRule::Type type);
+    [[nodiscard]] GameRule::Type GetType(const std::string& name);
+    [[nodiscard]] bool RuleIsInternal(const std::string& name);
 
     /** returns the description string for rule \a rule_name, or throws
       * std::runtime_error if no such rule exists. */
-    [[nodiscard]] const std::string& GetDescription(const std::string& rule_name) const;
+    [[nodiscard]] const std::string& GetDescription(const std::string& rule_name);
 
     /** returns the validator for rule \a rule_name, or throws
       * std::runtime_error if no such rule exists. */
-    [[nodiscard]] const ValidatorBase* GetValidator(const std::string& rule_name) const;
+    [[nodiscard]] const ValidatorBase* GetValidator(const std::string& rule_name);
 
     /** returns all contained rules as map of name and value string. */
-    [[nodiscard]] std::map<std::string, std::string> GetRulesAsStrings() const;
+    [[nodiscard]] std::map<std::string, std::string> GetRulesAsStrings();
 
     template <typename T>
-    [[nodiscard]] T Get(const std::string& name) const
+    [[nodiscard]] T Get(const std::string& name)
     {
         CheckPendingGameRules();
         auto it = m_game_rules.find(name);
@@ -166,16 +163,16 @@ public:
     void ResetToDefaults();
 
 private:
-    void Add(GameRule&& rule) const;
+    void Add(GameRule&& rule);
 
     /** Assigns any m_pending_rules to m_game_rules. */
-    void CheckPendingGameRules() const;
+    void CheckPendingGameRules();
 
     /** Future rules being parsed by parser.  mutable so that it can
         be assigned to m_game_rules when completed.*/
-    mutable boost::optional<Pending::Pending<GameRulesTypeMap>> m_pending_rules = boost::none;
+    boost::optional<Pending::Pending<GameRulesTypeMap>> m_pending_rules = boost::none;
 
-    mutable GameRulesTypeMap m_game_rules;
+    GameRulesTypeMap m_game_rules;
 
     friend FO_COMMON_API GameRules& GetGameRules();
 };

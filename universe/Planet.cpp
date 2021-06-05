@@ -194,7 +194,7 @@ std::string Planet::Dump(unsigned short ntabs) const {
 }
 
 int Planet::HabitableSize() const {
-    const auto& gr = GetGameRules();
+    auto& gr = GetGameRules();
     switch (m_size) {
     case PlanetSize::SZ_GASGIANT:  return gr.Get<int>("RULE_HABITABLE_SIZE_GASGIANT");   break;
     case PlanetSize::SZ_HUGE:      return gr.Get<int>("RULE_HABITABLE_SIZE_HUGE");   break;

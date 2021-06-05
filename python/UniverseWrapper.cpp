@@ -732,8 +732,8 @@ namespace FreeOrionPython {
             .add_property("empty",              make_function(&GameRules::Empty,                py::return_value_policy<py::return_by_value>()))
             .def("getRulesAsStrings",           &GameRules::GetRulesAsStrings,
                                                 py::return_value_policy<py::return_by_value>())
-            .def("ruleExists",                  +[](const GameRules& rules, const std::string& name) -> bool { return rules.RuleExists(name); })
-            .def("ruleExistsWithType",          +[](const GameRules& rules, const std::string& name, GameRule::Type type) -> bool { return rules.RuleExists(name, type); })
+            .def("ruleExists",                  +[](GameRules& rules, const std::string& name) -> bool { return rules.RuleExists(name); })
+            .def("ruleExistsWithType",          +[](GameRules& rules, const std::string& name, GameRule::Type type) -> bool { return rules.RuleExists(name, type); })
             .def("getDescription",              &GameRules::GetDescription,
                                                 py::return_value_policy<py::copy_const_reference>())
             .def("getToggle",                   &GameRules::Get<bool>)

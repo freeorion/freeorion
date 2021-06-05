@@ -47,37 +47,27 @@ GameRule::GameRule(Type type_, std::string name_, boost::any value_,
 /////////////////////////////////////////////////////
 // GameRules
 /////////////////////////////////////////////////////
-bool GameRules::Empty() const {
+bool GameRules::Empty() {
     CheckPendingGameRules();
     return m_game_rules.empty();
 }
 
-std::unordered_map<std::string, GameRule>::const_iterator GameRules::begin() const {
+std::unordered_map<std::string, GameRule>::const_iterator GameRules::begin() {
     CheckPendingGameRules();
     return m_game_rules.begin();
 }
 
-std::unordered_map<std::string, GameRule>::const_iterator GameRules::end() const {
+std::unordered_map<std::string, GameRule>::const_iterator GameRules::end() {
     CheckPendingGameRules();
     return m_game_rules.end();
 }
 
-std::unordered_map<std::string, GameRule>::iterator GameRules::begin() {
-    CheckPendingGameRules();
-    return m_game_rules.begin();
-}
-
-std::unordered_map<std::string, GameRule>::iterator GameRules::end() {
-    CheckPendingGameRules();
-    return m_game_rules.end();
-}
-
-bool GameRules::RuleExists(const std::string& name) const {
+bool GameRules::RuleExists(const std::string& name) {
     CheckPendingGameRules();
     return m_game_rules.count(name);
 }
 
-bool GameRules::RuleExists(const std::string& name, GameRule::Type type) const {
+bool GameRules::RuleExists(const std::string& name, GameRule::Type type) {
     if (type == GameRule::Type::INVALID)
         return false;
     CheckPendingGameRules();
@@ -87,7 +77,7 @@ bool GameRules::RuleExists(const std::string& name, GameRule::Type type) const {
     return rule_it->second.type == type;
 }
 
-GameRule::Type GameRules::GetType(const std::string& name) const {
+GameRule::Type GameRules::GetType(const std::string& name) {
     CheckPendingGameRules();
     auto rule_it = m_game_rules.find(name);
     if (rule_it == m_game_rules.end())
@@ -95,7 +85,7 @@ GameRule::Type GameRules::GetType(const std::string& name) const {
     return rule_it->second.type;
 }
 
-bool GameRules::RuleIsInternal(const std::string& name) const {
+bool GameRules::RuleIsInternal(const std::string& name) {
     CheckPendingGameRules();
     auto rule_it = m_game_rules.find(name);
     if (rule_it == m_game_rules.end())
@@ -103,7 +93,7 @@ bool GameRules::RuleIsInternal(const std::string& name) const {
     return rule_it->second.IsInternal();
 }
 
-const std::string& GameRules::GetDescription(const std::string& rule_name) const {
+const std::string& GameRules::GetDescription(const std::string& rule_name) {
     CheckPendingGameRules();
     auto it = m_game_rules.find(rule_name);
     if (it == m_game_rules.end())
@@ -111,7 +101,7 @@ const std::string& GameRules::GetDescription(const std::string& rule_name) const
     return it->second.description;
 }
 
-const ValidatorBase* GameRules::GetValidator(const std::string& rule_name) const {
+const ValidatorBase* GameRules::GetValidator(const std::string& rule_name) {
     CheckPendingGameRules();
     auto it = m_game_rules.find(rule_name);
     if (it == m_game_rules.end())
@@ -137,7 +127,7 @@ void GameRules::ResetToDefaults() {
         it.second.SetToDefault();
 }
 
-std::map<std::string, std::string> GameRules::GetRulesAsStrings() const {
+std::map<std::string, std::string> GameRules::GetRulesAsStrings() {
     CheckPendingGameRules();
     std::map<std::string, std::string> retval;
     for (auto& [rule_name, rule_value] : m_game_rules)
@@ -162,7 +152,7 @@ namespace {
     }
 }
 
-void GameRules::Add(GameRule&& rule) const {
+void GameRules::Add(GameRule&& rule) {
     auto name{rule.name};
 
     auto it = m_game_rules.find(name);
@@ -213,7 +203,7 @@ void GameRules::SetFromStrings(const std::map<std::string, std::string>& names_v
         DebugLogger() << "  " << name << " : " << value.ValueToString();
 }
 
-void GameRules::CheckPendingGameRules() const {
+void GameRules::CheckPendingGameRules() {
     if (!m_pending_rules)
         return;
 
