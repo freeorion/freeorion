@@ -37,14 +37,6 @@ struct FO_COMMON_API UnlockableItem {
     //! Returns a data file format representation of this object
     auto Dump(unsigned short ntabs = 0) const -> std::string;
 
-    //! Returns a number, calculated from the contained data, which should be
-    //! different for different contained data, and must be the same for
-    //! the same contained data, and must be the same on different platforms
-    //! and executions of the program and the function. Useful to verify that
-    //! the parsed content is consistent without sending it all between
-    //! clients and server.
-    auto GetCheckSum() const -> unsigned int;
-
     //! The kind of item this is
     UnlockableItemType type = UnlockableItemType::INVALID_UNLOCKABLE_ITEM_TYPE;
 
