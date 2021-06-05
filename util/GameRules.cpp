@@ -145,8 +145,45 @@ std::map<std::string, std::string> GameRules::GetRulesAsStrings() const {
     return retval;
 }
 
-void GameRules::Add(Pending::Pending<GameRules>&& future)
+void GameRules::Add(Pending::Pending<GameRulesTypeMap>&& future)
 { m_pending_rules = std::move(future); }
+
+namespace {
+    template <typename T>
+    void CheckValidatorAndAddRuleOption(GameRule& rule)
+    {
+        if (!rule.validator)
+            rule.validator = std::make_unique<Validator<T>>();
+        auto option_name = "setup.rules." + rule.name;
+        if (!GetOptionsDB().OptionExists(option_name))
+            GetOptionsDB().Add<T>(std::move(option_name), rule.description,
+                                  boost::any_cast<T>(rule.default_value),
+                                  rule.validator->Clone());
+    }
+}
+
+void GameRules::Add(GameRule&& rule) const {
+    auto name{rule.name};
+
+    auto it = m_game_rules.find(name);
+    if (it != m_game_rules.end())
+        throw std::runtime_error("GameRules::Add<>() : GameRule " + name + " was added twice.");
+
+    if (!GetOptionsDB().OptionExists("setup.rules.server-locked." + name))
+        GetOptionsDB().Add<bool>("setup.rules.server-locked." + name, rule.description, false);
+
+    switch (rule.type) {
+    case GameRule::Type::TOGGLE:    CheckValidatorAndAddRuleOption<bool>(rule);         break;
+    case GameRule::Type::INT:       CheckValidatorAndAddRuleOption<int>(rule);          break;
+    case GameRule::Type::DOUBLE:    CheckValidatorAndAddRuleOption<double>(rule);       break;
+    case GameRule::Type::STRING:    CheckValidatorAndAddRuleOption<std::string>(rule);  break;
+    default: {
+        ErrorLogger() << "GameRules::Add(GameRule&&) unknown rule type. Skipping.";
+        return;
+    }
+    }
+    m_game_rules.emplace(std::move(name), std::move(rule));
+}
 
 void GameRules::SetFromStrings(const std::map<std::string, std::string>& names_values) {
     CheckPendingGameRules();
@@ -184,12 +221,16 @@ void GameRules::CheckPendingGameRules() const {
     if (!parsed_new_rules)
         return;
 
-    for (auto& [name, value] : *parsed_new_rules) {
+    for (auto& [name, game_rule] : *parsed_new_rules) {
         if (m_game_rules.count(name)) {
             ErrorLogger() << "GameRules::Add<>() : GameRule " << name << " was added twice. Skipping ...";
             continue;
         }
-        m_game_rules.emplace(name, std::move(value));
+        if (!game_rule.validator) {
+            ErrorLogger() << "GameRules::Add<>() : GameRule " << name << " has no validator. Skipping ...";
+            continue;
+        }
+        Add(std::move(game_rule));
     }
 
     DebugLogger() << "Registered and Parsed Game Rules:";
