@@ -9903,10 +9903,6 @@ namespace {
                 return p->CombatTargets();
             break;
         }
-        case ContentType::CONTENT_BUILDING:
-        case ContentType::CONTENT_SHIP_HULL:
-        case ContentType::CONTENT_SPECIAL:
-        case ContentType::CONTENT_FOCUS:
         default:
             return nullptr;
         }

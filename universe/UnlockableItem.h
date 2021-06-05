@@ -16,7 +16,7 @@ FO_ENUM(
     ((UIT_SHIP_DESIGN))            ///< a complete ship design
     ((UIT_TECH))                   ///< a technology
     ((UIT_POLICY))                 ///< an imperial policy
-    ((NUM_UNLOCKABLE_ITEM_TYPES))   ///< keep last, the number of types of unlockable item
+    ((NUM_UNLOCKABLE_ITEM_TYPES))  ///< keep last, the number of types of unlockable item
 )
 
 

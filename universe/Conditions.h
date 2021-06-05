@@ -47,7 +47,9 @@ enum class ContentType : int {
     CONTENT_SHIP_HULL,
     CONTENT_SHIP_PART,
     CONTENT_SPECIAL,
-    CONTENT_FOCUS
+    CONTENT_FOCUS,
+    CONTENT_POLICY,
+    CONTENT_TECH
 };
 
 /** Same as ConditionDescription, but returns a string only with conditions that have not been met. */
@@ -1476,7 +1478,7 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name1;
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name2;
-    ContentType m_content_type;
+    ContentType                                      m_content_type;
 };
 
 /** Matches objects that match the combat targeting condition of the specified
