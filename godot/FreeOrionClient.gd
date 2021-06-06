@@ -3,6 +3,7 @@ extends Control
 var game_setup_dlg: FOWindow
 var multiplayer_setup_dlg: FOWindow
 var auth_password_setup_dlg: FOWindow
+var network_thread: Thread
 
 onready var viewport = get_viewport()
 
@@ -37,6 +38,13 @@ func _ready():
 
 	viewport.set_size_override(true, new_size)
 
+	network_thread = Thread.new()
+	network_thread.start($FreeOrion, "network_thread")
+
+
+func _exit_tree():
+	network_thread.wait_to_finish()
+
 
 func _on_SinglePlayerBtn_pressed():
 	$Popup.add_child(game_setup_dlg)
@@ -47,7 +55,7 @@ func _on_SinglePlayerBtn_pressed():
 
 
 func _on_QuickstartBtn_pressed():
-	pass  # Replace with function body.
+	$FreeOrion.new_single_player_game()
 
 
 func _on_MultiplayerBtn_pressed():
@@ -65,6 +73,7 @@ func _on_QuitBtn_pressed():
 func _on_GameSetupDlg_ok():
 	$Popup.hide()
 	$Popup.remove_child(game_setup_dlg)
+	$FreeOrion.new_single_player_game()
 
 
 func _on_GameSetupDlg_cancel():

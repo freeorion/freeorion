@@ -4,6 +4,6 @@
 
 [resource]
 resource_name = "FreeOrionNode"
+class_name = "FreeOrionNode"
 library = ExtResource( 1 )
 script_class_name = "FreeOrionNode"
-class_name = "FreeOrionNode"

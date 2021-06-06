@@ -677,7 +677,7 @@ if(BUILD_CLIENT_GODOT)
         include(ExternalProject)
         ExternalProject_Add(godotcpp
             GIT_REPOSITORY https://github.com/godotengine/godot-cpp
-            GIT_TAG d7c55b1ab2606253e94db5ed3caf75f90a47d03c
+            GIT_TAG 476a870d6c02957df63f3b961df8823874549de1
             SOURCE_DIR ${CMAKE_BINARY_DIR}/godot-cpp
             BINARY_DIR ${CMAKE_BINARY_DIR}/godot-cpp-build
             CMAKE_ARGS
@@ -816,6 +816,24 @@ if(BUILD_CLIENT_GODOT)
            ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriongodot>" "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}"
+        COMMAND
+            ${CMAKE_COMMAND}
+            -DMODE=DATA_LINK
+            "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/assets/"
+            "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/data/art"
+            -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
+        COMMAND
+            ${CMAKE_COMMAND}
+            -DMODE=DATA_LINK
+            "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/assets/"
+            "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/data/fonts"
+            -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
+        COMMAND
+            ${CMAKE_COMMAND}
+            -DMODE=DATA_LINK
+            "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/assets/"
+            "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/data/sound"
+            -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
     )
     if(ANDROID)
         add_custom_command(TARGET freeoriongodot POST_BUILD

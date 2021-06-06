@@ -14,6 +14,8 @@ X11.64="res://bin/linux.64/libfreeoriongodot.so"
 X11.32="res://bin/linux.32/libfreeoriongodot.so"
 Server.64="res://bin/linux.64/libfreeoriongodot.so"
 Server.32="res://bin/linux.32/libfreeoriongodot.so"
+Windows.64="res://bin/windows.64/freeoriongodot.dll"
+Windows.32="res://bin/windows.32/freeoriongodot.dll"
 
 [dependencies]
 
@@ -24,3 +26,5 @@ X11.64=[  ]
 X11.32=[  ]
 Server.64=[  ]
 Server.32=[  ]
+Windows.64=[  ]
+Windows.32=[  ]

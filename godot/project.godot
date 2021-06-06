@@ -34,7 +34,7 @@ _global_script_class_icons={
 
 config/name="FreeOrion Godot Client"
 run/main_scene="res://FreeOrionClient.tscn"
-config/icon="res://assets/image/FO_Icon_256x256.png"
+config/icon="res://assets/art/icons/FO_Icon_256x256.png"
 
 [autoload]
 

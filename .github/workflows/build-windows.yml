@@ -40,7 +40,7 @@ jobs:
           unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
           mkdir build
           pushd build
-          cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
+          cmake -G "Visual Studio 16 2019" -T v142 -A Win32 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
       - name: Build
         run: |
           pushd build
@@ -50,3 +50,25 @@ jobs:
           pushd build
           $env:Path += ";$($pwd.Path)\\Release"
           cmake --build . --config "Release" --target unittest
+      - name: Download Godot
+        id: download-godot
+        uses: suisei-cn/actions-download-file@v1
+        with:
+          url: https://downloads.tuxfamily.org/godotengine/3.2.3/Godot_v3.2.3-stable_win32.exe.zip
+          target: ../
+      - name: Download Mesa
+        id: download-mesa
+        uses: suisei-cn/actions-download-file@v1
+        with:
+          url: https://downloads.fdossena.com/geth.php?r=mesa-latest
+          target: ../
+      - name: Install Godot and dependencies
+        run: |
+          unzip -q ../${{ steps.download-godot.outputs.filename }} -d build/Release
+          mkdir build/Release/Godot_v3.2.3-stable_win32.exe.local
+          pushd build/Release/Godot_v3.2.3-stable_win32.exe.local
+          7z e ../../../../${{ steps.download-mesa.outputs.filename }}
+      - name: Test Godot
+        run: |
+          $env:Path += ";$($pwd.Path)\\build\\Release"
+          .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -d -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
