@@ -2829,11 +2829,16 @@ namespace {
             // Add extinct species if their tech is known
             // Extinct species and enabling tech should have an EXTINCT tag
             if (species_tags.count(TAG_EXTINCT)) {
-                for (const auto& tech : empire->ResearchedTechs()) {
+                for (auto& [tech_name, turn_researched] : empire->ResearchedTechs()) {
                     // Check for presence of tags in tech
-                    const auto& tech_tags = GetTech(tech.first)->Tags();
-                    if (tech_tags.count(species_str) && tech_tags.count(TAG_EXTINCT))
-                    {
+                    auto tech = GetTech(tech_name);
+                    if (!tech) {
+                        ErrorLogger() << "ReportedSpeciesForPlanet couldn't get tech " << tech_name
+                                      << " (researched on turn " << turn_researched << ")";
+                        continue;
+                    }
+                    const auto& tech_tags = tech->Tags();
+                    if (tech_tags.count(species_str) && tech_tags.count(TAG_EXTINCT)) {
                         // Add the species and exit loop
                         retval.insert(species_str);
                         break;
