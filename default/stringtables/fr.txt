@@ -11693,7 +11693,9 @@ PLC_DREAM_RECURSION
 Récursivité Imaginaire
 
 PLC_DREAM_RECURSION_DESC
-Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de la valeur nécessaire pour atteindre [[value PLC_INDOCTRINATION_STRENGTH_BASE]] et réduit l'[[metertype METER_INFLUENCE]] de chaque planète de la même valeur que leur [[metertype METER_TARGET_HAPPINESS]] est augmentée. La limite de la [[metertype METER_TARGET_HAPPINESS]] est augmentée de [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] pour chaque structure [[buildingtype BLD_COLLECTIVE_NET]] contrôlée par l'empire appliquant cette Politique.
+'''Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de la valeur nécessaire pour atteindre [[value PLC_INDOCTRINATION_STRENGTH_BASE]]. Cette limite est augmentée de [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] pour chaque structure [[buildingtype BLD_COLLECTIVE_NET]] contrôlée par l'empire appliquant cette Politique.
+
+Réduit l'[[metertype METER_INFLUENCE]] de chaque planète de la racine carrée de la valeur augmentant leur [[metertype METER_TARGET_HAPPINESS]].'''
 
 PLC_DREAM_RECURSION_SHORT_DESC
 Augmentation ciblée de la Stabilité
