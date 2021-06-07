@@ -2649,7 +2649,7 @@ std::string StringCast<int>::Eval(const ScriptingContext& context) const
     int temp = m_value_ref->Eval(context);
 
     // special case for a few sub-value-refs to help with UI representation
-    if (Variable<int>* int_var = dynamic_cast<Variable<int>*>(m_value_ref.get())) {
+    if (auto int_var = dynamic_cast<Variable<int>*>(m_value_ref.get())) {
         if (int_var->PropertyName().back() == "ETA") {
             if (temp == Fleet::ETA_UNKNOWN) {
                 return UserString("FW_FLEET_ETA_UNKNOWN");
