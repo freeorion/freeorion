@@ -814,7 +814,7 @@ void SitRepPanel::Update() {
     // create UI rows for all sitrps
     GG::X width = m_sitreps_lb->ClientWidth();
     // first the ordered sitreps
-    for (const SitRepEntry& sitrep : ordered_sitreps) {
+    for (SitRepEntry& sitrep : ordered_sitreps) {
         m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, GG::Y(ClientUI::Pts()*2),
                                                         std::move(sitrep)));
     }
