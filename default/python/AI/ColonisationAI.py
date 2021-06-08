@@ -483,16 +483,35 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
 
 def _print_empire_species_roster():
     """Print empire species roster in table format to log."""
-    grade_map = {"ULTIMATE": "+++", "GREAT": "++", "GOOD": "+", "AVERAGE": "o", "BAD": "-", "NO": "---"}
-    grade_tags = {Tags.INDUSTRY: "Ind.", Tags.RESEARCH: "Res.", Tags.POPULATION: "Pop.",
-                  Tags.SUPPLY: "Supply", Tags.WEAPONS: "Pilots", Tags.ATTACKTROOPS: "Troops"}
+    grade_map = {
+        "ULTIMATE": "+++",
+        "GREAT": "++",
+        "GOOD": "+",
+        "AVERAGE": "o",
+        "BAD": "-",
+        "NO": "---"
+    }
+
+    grade_tags = [
+        Tags.INDUSTRY, Tags.RESEARCH, Tags.POPULATION,
+        Tags.SUPPLY, Tags.WEAPONS, Tags.ATTACKTROOPS,
+    ]
+
+    grade_tags_names = {
+        Tags.INDUSTRY: "Ind.",
+        Tags.RESEARCH: "Res.",
+        Tags.POPULATION: "Pop.",
+        Tags.SUPPLY: "Supply",
+        Tags.WEAPONS: "Pilot",
+        Tags.ATTACKTROOPS: "Troop"
+    }
 
     species_table = Table(
         Text('species'),
-        Sequence('Planets'),
-        Bool('Colonizer'),
+        Sequence('PIDs'),
+        Bool('Colonize'),
         Text('Shipyards'),
-        *[Text(v) for v in grade_tags.values()],
+        *[Text(grade_tags_names[v]) for v in grade_tags],
         Sequence('Tags'),
         table_name="Empire species roster Turn %d" % fo.currentTurn(),
     )
@@ -530,7 +549,7 @@ def _print_colony_candidate_table(candidates, show_detail=False):
 def __print_candidate_table(candidates, mission, show_detail=False):
     universe = fo.getUniverse()
     if mission == 'Colonization':
-        first_column = Text('(Score, Species)')
+        first_column = Text('Score/Species')
 
         def get_first_column_value(x):
             return round(x[0], 2), x[1]
