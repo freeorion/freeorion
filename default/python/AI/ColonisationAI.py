@@ -136,7 +136,6 @@ def survey_universe():
         local_ast = False
         local_gg = False
         empire_has_qualifying_planet = False
-        best_local_pilot_val = 0
         if sys_id in AIstate.colonyTargetedSystemIDs:
             empire_has_qualifying_planet = True
         for pid in system.planetIDs:
@@ -167,7 +166,6 @@ def survey_universe():
                             pilot_val += 1
                         weapons_grade = "WEAPONS_%.1f" % pilot_val
                         pilot_ratings[pid] = pilot_val
-                        best_local_pilot_val = max(best_local_pilot_val, pilot_val)
                         yard_here = []
                         if "BLD_SHIPYARD_BASE" in buildings_here:
                             empire_ship_builders.setdefault(spec_name, []).append(pid)
