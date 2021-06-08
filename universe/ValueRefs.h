@@ -859,7 +859,7 @@ template <
 T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 {
     if (object_property_values.empty())
-        return T(0);
+        return T{0};
 
     // should be able to convert between V and T types, so can do a bunch of
     // numerical statistics or histogram statistics
@@ -867,7 +867,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
     switch (stat_type) {
         case StatisticType::IF: {
             // 1 if any objects have property values, else 0 above
-            return T(1);
+            return T{1};
             break;
         }
 
@@ -987,7 +987,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 
         case StatisticType::STDEV: {
             if (object_property_values.size() < 2)
-                return T(0);
+                return T{0};
 
             // find sample mean
             double accumulator = 0.0;
@@ -1030,7 +1030,7 @@ template <
 T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
 {
     if (object_property_values.empty())
-        return T(0);
+        return T{0};
 
     // enum types T and V are the return value type and the property value type
     // so can calculate the most common value and return it
@@ -1039,8 +1039,8 @@ T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
         case StatisticType::IF: {
             // 1 if any objects have property values, else 0
             if (object_property_values.empty())
-                return T(0);
-            return T(1);
+                return T{0};
+            return T{1};
             break;
         }
 
@@ -1071,7 +1071,7 @@ template <
 T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
 {
     if (object_property_values.empty())
-        return T(0);
+        return T{0};
 
     // return value type T is a number and the object property value type V is
     // not a numeric type, such as std::string or an enum type, so can calculate
@@ -1081,8 +1081,8 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         case StatisticType::IF: {
             // 1 if any objects have property values, else 0
             if (object_property_values.empty())
-                return T(0);
-            return T(1);
+                return T{0};
+            return T{1};
             break;
         }
 
@@ -1158,7 +1158,7 @@ T Statistic<T, V>::Eval(const ScriptingContext& context) const
     if (m_stat_type == StatisticType::COUNT)
         return static_cast<T>(condition_matches.size());
     if (m_stat_type == StatisticType::IF)
-        return condition_matches.empty() ? T(0) : T(1);
+        return condition_matches.empty() ? T{0} : T{1};
 
     // evaluate property for each condition-matched object
     std::vector<V> object_property_values;
@@ -1900,11 +1900,11 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
     switch (m_op_type) {
     case OpType::TIMES: {
         // useful for writing a "Statistic If" expression with arbitrary types.
-        // If returns T(0) or T(1) for nothing or something matching the
-        // sampling condition. This can be checked here by returning T(0) if
-        // the LHS operand is T(0) and just returning RHS() otherwise.
-        if (LHS()->Eval(context) == T(0))
-            return T(0);
+        // If returns T{0} or T{1} for nothing or something matching the
+        // sampling condition. This can be checked here by returning T{0} if
+        // the LHS operand is T{0} and just returning RHS() otherwise.
+        if (LHS()->Eval(context) == T{0})
+            return T{0};
         return RHS()->Eval(context);
         break;
     }
@@ -1955,12 +1955,12 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
             default:    break;  // ??? do nothing, default to false
         }
         if (m_operands.size() < 3) {
-            return T(1);
+            return T{1};
         } else if (m_operands.size() < 4) {
             if (test_result)
                 return m_operands[2]->Eval(context);
             else
-                return T(0);
+                return T{0};
         } else {
             if (test_result)
                 return m_operands[2]->Eval(context);
