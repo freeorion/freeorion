@@ -12,9 +12,7 @@ import MilitaryAI
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
-from colonization.calculate_planet_colonization_rating import (
-    calculate_planet_colonization_rating,
-)
+from colonization import calculate_planet_colonization_rating
 from common.print_utils import Number, Table, Text
 from EnumsAI import MissionType, PriorityType
 from freeorion_tools import (
@@ -356,7 +354,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         # this call iterates over this Empire's available species with which it could colonize after an invasion
         planet_eval = ColonisationAI.assign_colonisation_values([planet_id], MissionType.INVASION, None, detail)
         colony_base_value = max(0.75 * planet_eval.get(planet_id, [0])[0],
-                                calculate_planet_colonization_rating(
+                                calculate_planet_colonization_rating.calculate_planet_colonization_rating(
                                     planet_id=planet_id,
                                     mission_type=MissionType.OUTPOST,
                                     spec_name=None,
@@ -364,7 +362,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
                                     empire_research_list=empire_research_list
                                 ))
     else:
-        colony_base_value = calculate_planet_colonization_rating(
+        colony_base_value = calculate_planet_colonization_rating.calculate_planet_colonization_rating(
             planet_id=planet_id,
             mission_type=MissionType.INVASION,
             spec_name=species_name,
