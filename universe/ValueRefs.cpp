@@ -2646,22 +2646,37 @@ std::string StringCast<int>::Eval(const ScriptingContext& context) const
 {
     if (!m_value_ref)
         return "";
-    int temp = m_value_ref->Eval(context);
+
+    auto raw_ref = m_value_ref.get();
+    if (!raw_ref)
+        return "";
+
+    int result = raw_ref->Eval(context);
+
+    auto int_ref = dynamic_cast<Variable<int>*>(raw_ref);
+    if (!int_ref)
+        return std::to_string(result);
 
     // special case for a few sub-value-refs to help with UI representation
-    if (auto int_var = dynamic_cast<Variable<int>*>(m_value_ref.get())) {
-        if (int_var->PropertyName().back() == "ETA") {
-            if (temp == Fleet::ETA_UNKNOWN) {
-                return UserString("FW_FLEET_ETA_UNKNOWN");
-            } else if (temp == Fleet::ETA_NEVER) {
-                return UserString("FW_FLEET_ETA_NEVER");
-            } else if (temp == Fleet::ETA_OUT_OF_RANGE) {
-                return UserString("FW_FLEET_ETA_OUT_OF_RANGE");
-            }
+    const auto& property = int_ref->PropertyName();
+    if (property.empty())
+        return std::to_string(result);
+
+    const auto& end_of_property = property.back();
+    if (end_of_property.empty())
+        return std::to_string(result);
+
+    if (end_of_property == "ETA") {
+        if (result == Fleet::ETA_UNKNOWN) {
+            return UserString("FW_FLEET_ETA_UNKNOWN");
+        } else if (result == Fleet::ETA_NEVER) {
+            return UserString("FW_FLEET_ETA_NEVER");
+        } else if (result == Fleet::ETA_OUT_OF_RANGE) {
+            return UserString("FW_FLEET_ETA_OUT_OF_RANGE");
         }
     }
 
-    return std::to_string(temp);
+    return std::to_string(result);
 }
 
 template <>
@@ -2673,6 +2688,7 @@ std::string StringCast<std::vector<std::string>>::Eval(const ScriptingContext& c
 
     // concatenate strings into one big string
     std::string retval;
+    retval.reserve(16 * temp.size()); // rough guesstimate to avoid reallocations
     for (auto str : temp)
         retval += str + " ";
     return retval;
