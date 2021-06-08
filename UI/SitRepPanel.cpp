@@ -133,27 +133,30 @@ namespace {
     }
 
     std::vector<std::string> AllSitRepTemplateStrings() {
-        std::set<std::string> template_set;
-
         // get templates for each empire
-        for (auto& entry : Empires()) {
-            auto empire_strings = EmpireSitRepTemplateStrings(entry.first);
-            template_set.insert(empire_strings.begin(), empire_strings.end());
-        }
+        std::set<std::string> template_set;
+        for (const auto& entry : Empires())
+            template_set.merge(EmpireSitRepTemplateStrings(entry.first));
+
+        auto ordered_template_strings{OrderedSitrepTemplateStrings()};
 
         std::vector<std::string> retval;
+        retval.reserve(ordered_template_strings.size() + template_set.size());
 
-        // only use those ordered templates actually in the current set of sitrep templates
-        for (const std::string& templ : OrderedSitrepTemplateStrings()) {
-            if ( template_set.count(templ) &&
+        // first add only use those ordered templates actually in the current set of sitrep templates
+        for (std::string& templ : OrderedSitrepTemplateStrings()) {
+            if (template_set.count(templ) &&
                 !std::count(retval.begin(), retval.end(), templ))
-            { retval.push_back(templ); }
+            { retval.push_back(std::move(templ)); }
         }
 
-        //now add the current templates that did not have a specified order
-        for (const std::string& templ : template_set)
-            if (!std::count(retval.begin(), retval.end(), templ))
-                retval.push_back(templ);
+        // next add the current templates that did not have a specified order
+        for (auto it = template_set.begin(); it != template_set.end();) {
+            if (!std::count(retval.begin(), retval.end(), *it))
+                retval.push_back(std::move(template_set.extract(it++).value()));
+            else
+                ++it;
+        }
 
         return retval;
     }
@@ -486,7 +489,7 @@ namespace {
         }
 
         std::map<int, std::list<SitRepEntry>> turns;
-        for (auto& sitrep_empire : sr_empires) {
+        for (auto sitrep_empire : sr_empires) {
             for (auto sitrep_it = sitrep_empire->SitRepBegin();
                  sitrep_it != sitrep_empire->SitRepEnd(); ++sitrep_it)
             {
@@ -604,8 +607,7 @@ void SitRepPanel::FilterClicked() {
 
     auto all_templates = AllSitRepTemplateStrings();
 
-    auto popup = GG::Wnd::Create<CUIPopupMenu>(m_filter_button->Left(),
-                                               m_filter_button->Bottom());
+    auto popup = GG::Wnd::Create<CUIPopupMenu>(m_filter_button->Left(), m_filter_button->Bottom());
 
     for (const std::string& templ : all_templates) {
         menu_index_templates[index] = templ;
@@ -749,7 +751,6 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
         GG::GUI::GetGUI()->SetClipboardText(GG::Font::StripTags(sitrep_text));
     };
     auto help_action = []() { ClientUI::GetClientUI()->ZoomToEncyclopediaEntry("SITREP_IGNORE_BLOCK_TITLE"); };
-
     popup->AddMenuItem(entry_margin + UserString("HOTKEY_COPY"), false, false, copy_action);
     popup->AddMenuItem(entry_margin + UserString("POPUP_MENU_PEDIA_PREFIX") + UserString("SITREP_IGNORE_BLOCK_TITLE"),
                        false, false, help_action);
