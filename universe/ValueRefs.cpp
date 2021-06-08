@@ -2624,21 +2624,37 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
 {
     if (!m_value_ref)
         return "";
-    double temp = m_value_ref->Eval(context);
+
+    auto raw_ref = m_value_ref.get();
+    if (!raw_ref)
+        return "";
+
+    double result = raw_ref->Eval(context);
+
+    auto int_ref = dynamic_cast<Variable<double>*>(raw_ref);
+    if (!int_ref)
+        return std::to_string(result);
 
     // special case for a few sub-value-refs to help with UI representation
-    if (Variable<double>* int_var = dynamic_cast<Variable<double>*>(m_value_ref.get())) {
-        if (int_var->PropertyName().back() == "X" || int_var->PropertyName().back() == "Y") {
-            if (temp == UniverseObject::INVALID_POSITION)
-                return UserString("INVALID_POSITION");
+    const auto& property = int_ref->PropertyName();
+    if (property.empty())
+        return std::to_string(result);
 
-            std::stringstream ss;
-            ss << std::setprecision(6) << temp;
-            return ss.str();
-        }
+    const auto& end_of_property = property.back();
+    if (end_of_property.empty())
+        return std::to_string(result);
+
+    // special case for a few sub-value-refs to help with UI representation
+    if (end_of_property == "X" || end_of_property == "Y") {
+        if (result == UniverseObject::INVALID_POSITION)
+            return UserString("INVALID_POSITION");
+
+        std::stringstream ss;
+        ss << std::setprecision(6) << result;
+        return ss.str();
     }
 
-    return DoubleToString(temp, 3, false);
+    return DoubleToString(result, 3, false);
 }
 
 template <>
