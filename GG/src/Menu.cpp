@@ -73,7 +73,10 @@ PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color
 }
 
 void PopupMenu::AddMenuItem(MenuItem&& menu_item)
-{ m_menu_data.next_level.emplace_back(std::move(menu_item)); }
+{ m_menu_data.next_level.push_back(std::move(menu_item)); }
+
+void PopupMenu::AddMenuItem(std::string str, bool disable, bool check, std::function<void()> selected_on_close_callback)
+{ m_menu_data.next_level.emplace_back(std::move(str), disable, check, selected_on_close_callback); }
 
 Pt PopupMenu::ClientUpperLeft() const
 { return m_origin; }

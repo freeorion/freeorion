@@ -80,6 +80,9 @@ public:
 
     /** Add \p menu_item to the end of the popup menu and store its callback.*/
     void AddMenuItem(MenuItem&& menu_item);
+    void AddMenuItem(std::string str, bool disable, bool check,
+                     std::function<void()> selected_on_close_callback = std::function<void()>());
+
     void Render() override;
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;

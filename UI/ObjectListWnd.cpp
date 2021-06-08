@@ -1733,7 +1733,7 @@ private:
             SetColumnName(column_id, "");
             ColumnsChangedSignal();
         };
-        popup->AddMenuItem(GG::MenuItem("", false, current_column_type.empty(), empty_col_action));
+        popup->AddMenuItem("", false, current_column_type.empty(), empty_col_action);
 
         GG::MenuItem meters_submenu(UserString("METERS_SUBMENU"),           false, false);
         GG::MenuItem planets_submenu(UserString("PLANETS_SUBMENU"),         false, false);
@@ -1753,7 +1753,7 @@ private:
 
             // put meters into root or submenus...
             if (entry.first.second.empty())
-                popup->AddMenuItem(GG::MenuItem(menu_label, false, check, col_action));
+                popup->AddMenuItem(menu_label, false, check, col_action);
             else if (entry.first.second == "METERS_SUBMENU")
                 meters_submenu.next_level.emplace_back(menu_label, false, check, col_action);
             else if (entry.first.second == "PLANETS_SUBMENU")
@@ -1779,12 +1779,8 @@ private:
         retval.emplace_back(control);
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
-            std::string text;
-            const std::string& header_name = GetColumnName(static_cast<int>(i));
-            if (!header_name.empty())
-                text = UserString(header_name);
-            control = Wnd::Create<CUIButton>(text);
-            retval.emplace_back(control);
+            std::string header_name{GetColumnName(static_cast<int>(i))};
+            retval.push_back(Wnd::Create<CUIButton>(header_name.empty() ? "" : UserString(header_name)));
         }
 
         return retval;
@@ -2544,7 +2540,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     // create popup menu with object commands in it
-    popup->AddMenuItem(GG::MenuItem(UserString("DUMP"), false, false, dump_action));
+    popup->AddMenuItem(UserString("DUMP"), false, false, dump_action);
 
     auto obj = Objects().get(object_id);
     //DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
@@ -2557,41 +2553,41 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     int menuitem_id = MENUITEM_SET_FOCUS_BASE;
     int ship_menuitem_id = MENUITEM_SET_SHIP_BASE;
     int bld_menuitem_id = MENUITEM_SET_BUILDING_BASE;
-    std::map<std::string, int> all_foci, avail_blds;
-    std::map<int, int> avail_designs;
+    std::map<std::string, int> all_foci, avail_blds;    // counts of how many planets can use each focus or can produce each building type
+    std::map<int, int> avail_designs;                   // count of how many planets can produce each ship design
     UniverseObjectType type = obj->ObjectType();
     Empire* cur_empire = GetEmpire(app->EmpireID());
+
     if (type == UniverseObjectType::OBJ_PLANET) {
-        popup->AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action));
+        popup->AddMenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action);
 
         for (const auto& entry : m_list_box->Selections()) {
-            ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get());
-            if (row) {
-                auto one_planet = Objects().get<Planet>(row->ObjectID());
+            ObjectRow* row = dynamic_cast<ObjectRow *>(entry->get());
+            if (!row)
+                continue;
+
+            auto one_planet = Objects().get<Planet>(row->ObjectID());
                 if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
-                    for (const std::string& planet_focus : one_planet->AvailableFoci())
-                        all_foci[planet_focus]++;
+                for (const std::string& planet_focus : one_planet->AvailableFoci())
+                    all_foci[planet_focus]++;
 
-                    for (int ship_design : cur_empire->AvailableShipDesigns(GetUniverse())) {
-                        if (cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design, row->ObjectID()))
-                            avail_designs[ship_design]++;
-                    }
+                for (int ship_design_id : cur_empire->AvailableShipDesigns(GetUniverse())) {
+                    if (cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design_id, row->ObjectID()))
+                        avail_designs[ship_design_id]++;
+                }
 
-                    for (const std::string& building_type : cur_empire->AvailableBuildingTypes()) {
-                        if (cur_empire->EnqueuableItem(BuildType::BT_BUILDING, building_type, row->ObjectID()) &&
-                            cur_empire->ProducibleItem(BuildType::BT_BUILDING, building_type, row->ObjectID()))
-                        {
-                            avail_blds[building_type]++;
-                        }
-                    }
+                for (const std::string& building_type : cur_empire->AvailableBuildingTypes()) {
+                    if (cur_empire->EnqueuableItem(BuildType::BT_BUILDING, building_type, row->ObjectID()) &&
+                        cur_empire->ProducibleItem(BuildType::BT_BUILDING, building_type, row->ObjectID()))
+                    { avail_blds[building_type]++; }
                 }
             }
         }
+
         GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), false, false/*, no action*/);
-        for (auto& entry : all_foci) {
+        for (auto& [focus_name, count_of_planets_that_have_focus_available] : all_foci) {
             menuitem_id++;
-            auto focus_action = [this, entry, app, &focus_ship_building_common_action]() {
-                std::string focus = entry.first;
+            auto focus_action = [this, focus{focus_name}, app, &focus_ship_building_common_action]() {
                 for (const auto& selection : m_list_box->Selections()) {
                     ObjectRow* row = dynamic_cast<ObjectRow*>(selection->get());
                     if (!row)
@@ -2610,7 +2606,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             };
 
             std::stringstream out;
-            out << UserString(entry.first) << " (" << entry.second << ")";
+            out << UserString(focus_name) << " (" << count_of_planets_that_have_focus_available  << ")";
             focusMenuItem.next_level.emplace_back(out.str(), false, false, focus_action);
         }
         if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
@@ -2710,8 +2706,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         auto set_owner_action = [object_id, &net]() {
             net.SendMessage(ModeratorActionMessage(Moderator::SetOwner(object_id, ALL_EMPIRES)));
         };
-        popup->AddMenuItem(GG::MenuItem(UserString("MOD_DESTROY"),      false, false, destroy_object_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("MOD_SET_OWNER"),    false, false, set_owner_action));
+        popup->AddMenuItem(UserString("MOD_DESTROY"),      false, false, destroy_object_action);
+        popup->AddMenuItem(UserString("MOD_SET_OWNER"),    false, false, set_owner_action);
     }
 
     popup->Run();
