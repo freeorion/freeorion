@@ -16,6 +16,7 @@ from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from character.character_module import Aggression
 from colonization import rate_planetary_piloting
+from colonization.rate_pilots import GREAT_PILOT_RATING
 from common.print_utils import Sequence, Table, Text
 from EnumsAI import (
     EmpireProductionTypes,
@@ -307,7 +308,7 @@ def generate_production_orders():
 
     top_pilot_systems = {}
     for pid, _ in ColonisationAI.pilot_ratings.items():
-        if (_ <= medium_pilot_rating()) and (_ < ColonisationAI.GREAT_PILOT_RATING):
+        if (_ <= medium_pilot_rating()) and (_ < GREAT_PILOT_RATING):
             continue
         top_pilot_systems.setdefault(universe.getPlanet(pid).systemID, []).append((pid, _))
         if (pid in queued_shipyard_locs) or not building_type.canBeProduced(empire.empireID, pid):
