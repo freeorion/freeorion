@@ -1,0 +1,77 @@
+Policy
+    name = "PLC_BUREAUCRACY"
+    description = "PLC_BUREAUCRACY_DESC"
+    short_description = "PLC_BUREAUCRACY_SHORT_DESC"
+    category = "ECONOMIC_CATEGORY"
+    adoptioncost = 1.0 * floor(2 + 2 * Statistic Count
+                                           condition = And [ Planet Species OwnedBy empire = Source.Owner ])
+    prerequisites = [ "PLC_CENTRALIZATION" ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
+        // costs IP to change focus: don't disrupt the system!
+        EffectsGroup
+            scope = And [
+                Planet
+                (LocalCandidate.TurnsSinceFocusChange == 0)
+                (LocalCandidate.TurnsSinceColonization > 1) // all changes on first turn or two after colonization without penalty
+            ]
+            priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
+            effects = SetInfluence value = Value - (NamedReal name = "BUREAUCRACY_FOCUS_CHANGE_PENALTY" value = 3.0)
+
+        // increases stability on all planets, as long as there are enough regional admin buildings...
+        // ... if count of region admins is less than (turns_adopted / 10), no stability bonus
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            activation = Number
+                low = (CurrentTurn - TurnPolicyAdopted empire = Source.Owner name = ThisPolicy) /
+                      (NamedInteger name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING" value = 10)
+                condition = And [
+                    Or [
+                        Building name = "BLD_REGIONAL_ADMIN"
+                        Building name = "BLD_IMPERIAL_PALACE"
+                    ]
+                    OwnedBy empire = Source.Owner
+                ]
+            effects = SetTargetHappiness value = Value + (NamedReal name = "PLC_BUREAUCRACY_STABILITY_FLAT" value = 5.0)
+
+        // warn about bureaucratic delays due to lack of facilities...
+        EffectsGroup
+            scope = Source
+            activation = Not Number
+                low = (CurrentTurn - TurnPolicyAdopted empire = Source.Owner name = ThisPolicy) /
+                      (NamedInteger name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING" value = 10)
+                condition = And [
+                    Or [
+                        Building name = "BLD_REGIONAL_ADMIN"
+                        Building name = "BLD_IMPERIAL_PALACE"
+                    ]
+                    OwnedBy empire = Source.Owner
+                ]
+            effects = GenerateSitRepMessage
+                message = "SITREP_BUREAUCRACY_STOPPED"
+                label = "SITREP_BUREAUCRACY_STOPPED_LABEL"
+                icon = "icons/policies/bureaucracy.png"
+                parameters = [
+                    tag = "havebuildings" data = Statistic Count condition = And [
+                        Or [
+                            Building name = "BLD_REGIONAL_ADMIN"
+                            Building name = "BLD_IMPERIAL_PALACE"
+                        ]
+                        OwnedBy empire = Source.Owner
+                    ]
+                    tag = "needbuildings" data = (CurrentTurn - TurnPolicyAdopted empire = Source.Owner name = ThisPolicy) /
+                                                 (NamedIntegerLookup name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING")
+                ]
+                empire = Source.Owner
+            
+    ]
+    graphic = "icons/policies/bureaucracy.png"
+
+#include "/scripting/common/base_prod.macros"
+#include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"

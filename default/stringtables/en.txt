@@ -7432,6 +7432,12 @@ Astronomers have observed a new supernova, destroying everything in the star sys
 SITREP_NOVA_DETECTED_LABEL
 Supernova detected
 
+SITREP_BUREAUCRACY_STOPPED
+The expanding [[policy PLC_BUREAUCRACY]] has halted work due to insufficient administrative facilities. Of [[buildingtype BLD_REGIONAL_ADMIN]] and [[buildingtype BLD_IMPERIAL_PALACE]], currently a total of %rawtext:havebuildings% are owned, but %rawtext:needbuildings% are needed to improve planet stability by [[value PLC_BUREAUCRACY_STABILITY_FLAT]]. [[policy PLC_BUREAUCRACY]] requires an additional administrative building every [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] turns.
+
+SITREP_BUREAUCRACY_STOPPED_LABEL
+Bureaucratic Gridlock
+
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 WARNING: Sightings of %rawtext% %predefinedshipdesign% are reported around the %species% Outpost at %system%!
 
@@ -11822,6 +11828,17 @@ PLC_ISOLATION_DESC
 
 PLC_ISOLATION_SHORT_DESC
 Boosts isolated planets
+
+PLC_BUREAUCRACY
+Bureaucracy
+
+PLC_BUREAUCRACY_DESC
+'''• Increases an empire's populated planet stability by [[value PLC_BUREAUCRACY_STABILITY_FLAT]], as long as the empire has enough [[buildingtype BLD_REGIONAL_ADMIN]]. An additional [[buildingtype BLD_REGIONAL_ADMIN]] is required per [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] turns this policy has been adopted.
+• Changing planet focus reduces that planet's [[metertype METER_INFLUENCE]] by [[value BUREAUCRACY_FOCUS_CHANGE_PENALTY]].
+'''
+
+PLC_BUREAUCRACY_SHORT_DESC
+Boosts stability
 
 
 ##
