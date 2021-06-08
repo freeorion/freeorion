@@ -53,9 +53,7 @@ BuildingType
                     message = "EFFECT_INTERSPECIES_ACADEMY_DESTROY"
                     label = "EFFECT_INTERSPECIES_ACADEMY_DESTROY_LABEL"
                     icon = "icons/building/blackhole.png"
-                    parameters = [
-                        tag = "planet" data = Target.PlanetID
-                    ]
+                    parameters = tag = "planet" data = Target.PlanetID
                     empire = Source.Owner
                 Destroy
             ]

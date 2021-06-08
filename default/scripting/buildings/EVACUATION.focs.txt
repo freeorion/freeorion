@@ -51,7 +51,7 @@ BuildingType
                     icon = "icons/building/evacuation.png"
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner
-                ]
+            ]
 
         EffectsGroup            // remove population from location
             scope = And [
