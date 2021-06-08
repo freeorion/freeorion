@@ -2607,12 +2607,10 @@ namespace {
                     //DebugLogger() << "Object is destroyed and doesn't need a sitrep.";
                     continue;
                 // which empires know about this object?
-                for (const auto& empire_ok : combat_info.empire_object_visibility) {
+                for (auto& [empire_id, empire_known_objects] : combat_info.empire_object_visibility) {
                     // does this empire know about this object?
-                    const auto& empire_known_objects = empire_ok.second;
                     if (!empire_known_objects.count(damaged_object_id))
                         continue;
-                    int empire_id = empire_ok.first;
                     if (auto empire = GetEmpire(empire_id))
                         empire->AddSitRepEntry(CreateCombatDamagedObjectSitRep(
                             damaged_object_id, combat_info.system_id, empire_id));

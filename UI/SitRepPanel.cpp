@@ -475,11 +475,12 @@ namespace {
      consuming for sitreps that the player will never view. */
     std::map<int, std::list<SitRepEntry>> GetUnvalidatedSitRepsSortedByTurn(int empire_id) {
         std::set<const Empire*> sr_empires;
-        const Empire* empire = GetEmpire(empire_id);
-        if (empire) {
+
+        if (const Empire* empire = GetEmpire(empire_id)) {
             sr_empires.insert(empire);
+
         } else {
-            // Moderator mode, sort sitreps from all empires
+            // Observer / Moderator mode, sort sitreps from all empires
             for (const auto& entry : Empires())
                 sr_empires.insert(entry.second.get());
         }
