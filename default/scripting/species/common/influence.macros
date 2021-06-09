@@ -9,6 +9,7 @@ BASE_INFLUENCE_COSTS
             ]
             stackinggroup = "IMPERIAL_PALACE_MANY_PLANETS_INFLUENCE_PENALTY"
             accountinglabel = "COLONY_ADMIN_COSTS_LABEL"
+            priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetInfluence value = Value -
                 (NamedReal name = "COLONY_ADMIN_COSTS_PER_PLANET" value = 0.4) * ((
                     Statistic Count condition = And [
@@ -34,6 +35,7 @@ BASE_INFLUENCE_COSTS
                 Homeworld name = LocalCandidate.Species
             ]
             accountinglabel = "SPECIES_HOMEWORLD_INDEPENDENCE_DESIRE_LABEL"
+            priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetInfluence value = Value - 1
 
         EffectsGroup      // colonies consume more influence if not supply connected to empire's capital
@@ -48,6 +50,7 @@ BASE_INFLUENCE_COSTS
                 ]
             ]
             accountinglabel = "CAPITAL_DISCONNECTION_LABEL"
+            priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetInfluence value = Value
                         - NamedReal name = "SUPPLY_DISCONNECTED_INFLUENCE_MALUS"
                                     value = [[SUPPLY_DISCONNECTED_INFLUENCE_MALUS]]
@@ -61,7 +64,7 @@ BASE_INFLUENCE_COSTS
                 (GalaxyMaxAIAggression = 0)
             ]
             accountinglabel = "DIFFICULTY"
-            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = SetTargetInfluence value = Value + 1
 '''
 
@@ -146,6 +149,7 @@ VERY_BAD_INFLUENCE
                 Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "VERY_BAD_INFLUENCE_LABEL"
+            priority = [[TARGET_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + ([[VERY_BAD_MULTIPLIER]]-1.0)*abs(Value)
 '''
 
@@ -176,6 +180,7 @@ BAD_INFLUENCE
                 Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "BAD_INFLUENCE_LABEL"
+            priority = [[TARGET_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + ([[BAD_MULTIPLIER]]-1.0)*abs(Value)
 '''
 
@@ -194,6 +199,7 @@ GOOD_INFLUENCE
                 Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "GOOD_INFLUENCE_LABEL"
+            priority = [[TARGET_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + ([[GOOD_MULTIPLIER]]-1.0)*abs(Value)
 '''
 
@@ -208,6 +214,7 @@ GREAT_INFLUENCE
                 Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "GREAT_INFLUENCE_LABEL"
+            priority = [[TARGET_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + ([[GREAT_MULTIPLIER]]-1.0)*abs(Value)
 '''
 
@@ -222,6 +229,7 @@ ULTIMATE_INFLUENCE
                 Focus type = "FOCUS_INFLUENCE"
             ]
             accountinglabel = "ULTIMATE_INFLUENCE_LABEL"
+            priority = [[TARGET_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + ([[ULTIMATE_MULTIPLIER]]-1.0)*abs(Value)
 '''
 
