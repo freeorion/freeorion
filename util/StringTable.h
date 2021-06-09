@@ -156,6 +156,16 @@ public:
     //!     True iff a translation with that key exists, false otherwise.
     bool StringExists(const std::string& key) const;
 
+    //! Returns if a translation for @p key exists and what that translation is, if it exists
+    //!
+    //! @param key
+    //!     The identifying key of a translation entry.
+    //!
+    //! @return
+    //!     pair containing true iff a translation with that key exists, false otherwise, and
+    //!                     reference to the translation or to an emptry string if no translation exists
+    std::pair<bool, const std::string&> CheckGet(const std::string& key) const;
+
     //! Returns the native language name of this StringTable.
     inline const std::string& Language() const
     { return m_language; }
