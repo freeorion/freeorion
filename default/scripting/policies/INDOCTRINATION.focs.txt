@@ -9,7 +9,7 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
-        // makes planets more stable over time at cost of influence
+        // makes all planets more stable over time at the cost of influence
         EffectsGroup
         scope = And [
             Planet
@@ -20,8 +20,23 @@ Policy
             SetTargetHappiness value = Value + 
                 min((NamedReal name = "PLC_INDOCTRINATION_STRENGTH_MAX" value = 10.0),
                     (CurrentTurn - TurnPolicyAdopted empire = Source.Owner name = "PLC_INDOCTRINATION") / 4.0)
+            SetTargetInfluence value = Value - 1.0
+        ]
 
-            SetTargetInfluence value = Value - 4.0
+        // boosts influence of influence-focused planets
+        // TODO: Consider restricting this effect to also having the Palace or a Reg. Adm. center.
+        EffectsGroup
+        scope = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species
+            Focus type = "FOCUS_INFLUENCE"
+            // Or [Capital Contains Building name = "BLD_REGIONAL_ADMIN"]
+        ]
+        priority = [[TARGET_SCALING_PRIORITY]]
+        effects = [
+            SetTargetInfluence value = Value * 
+                (NamedReal name = "PLC_INDOCTRINATION_INFLUENCE_FACTOR" value = 2.0)
         ]
     ]
     graphic = "icons/policies/indoctrination.png"
