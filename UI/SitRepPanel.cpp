@@ -12,6 +12,8 @@
 #include "../util/SitRepEntry.h"
 #include "../universe/ShipDesign.h"
 
+#include "../util/ScopedTimer.h"
+
 #include <GG/Layout.h>
 
 #include <boost/lexical_cast.hpp>
@@ -600,15 +602,19 @@ void SitRepPanel::LastClicked() {
 }
 
 void SitRepPanel::FilterClicked() {
+    SectionedScopedTimer filter_click_timer{"SitRepPanel::FilterClicked"};
     std::map<int, std::string> menu_index_templates;
     std::map<int, bool> menu_index_checked;
     int index = 1;
     bool all_checked = true;
 
+    filter_click_timer.EnterSection("get templates");
     auto all_templates = AllSitRepTemplateStrings();
 
+    filter_click_timer.EnterSection("create popupmenu");
     auto popup = GG::Wnd::Create<CUIPopupMenu>(m_filter_button->Left(), m_filter_button->Bottom());
 
+    filter_click_timer.EnterSection("add templates");
     for (const std::string& templ : all_templates) {
         menu_index_templates[index] = templ;
         bool check = true;
@@ -639,9 +645,8 @@ void SitRepPanel::FilterClicked() {
         // select / deselect all templates
         if (all_checked) {
             // deselect all
-            for (const std::string& templ : all_templates) {
-                m_hidden_sitrep_templates.insert(templ);
-            }
+            m_hidden_sitrep_templates.insert(std::make_move_iterator(all_templates.begin()),
+                                             std::make_move_iterator(all_templates.end()));
         } else {
             // select all
             m_hidden_sitrep_templates.clear();
@@ -650,9 +655,11 @@ void SitRepPanel::FilterClicked() {
     popup->AddMenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
                        false, false, all_templates_action);
 
+    filter_click_timer.EnterSection("run menu");
     if (!popup->Run())
         return;
 
+    filter_click_timer.EnterSection("cleanup");
     SetHiddenSitRepTemplateStringsInOptions(m_hidden_sitrep_templates);
 
     Update();
