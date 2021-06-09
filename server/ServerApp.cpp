@@ -2581,21 +2581,14 @@ namespace {
             }
 
             // sitreps about destroyed objects
-            for (const auto& empire_kdos : combat_info.destroyed_object_knowers) {
-                int empire_id = empire_kdos.first;
-                Empire* empire = GetEmpire(empire_id);
+            for (auto& [knowing_empire_id, known_destroyed_object_ids] : combat_info.destroyed_object_knowers) {
+                Empire* empire = GetEmpire(knowing_empire_id);
                 if (!empire)
                     continue;
 
-                for (int dest_obj_id : empire_kdos.second) {
-                    //DebugLogger() << "Creating destroyed object sitrep for empire " << empire_id << " and object " << dest_obj_id;
-                    //if (auto obj = EmpireKnownObjects(empire_id).get(dest_obj_id)) {
-                    //    DebugLogger() << "Object known to empire: " << obj->Dump();
-                    //} else {
-                    //    DebugLogger() << "Object not known to empire";
-                    //}
+                for (int dest_obj_id : known_destroyed_object_ids) {
                     empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(
-                        dest_obj_id, combat_info.system_id, empire_id));
+                        dest_obj_id, combat_info.system_id, knowing_empire_id));
                 }
             }
 
