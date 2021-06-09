@@ -133,7 +133,7 @@ public:
     //! @param  fallback
     //!     A StringTable that should be used look up unknown translation
     //!     entries.
-    StringTable(const std::string& filename, std::shared_ptr<const StringTable> fallback = nullptr);
+    explicit StringTable(std::string filename, std::shared_ptr<const StringTable> fallback = nullptr);
 
     ~StringTable();
 

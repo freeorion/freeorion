@@ -22,8 +22,8 @@ StringTable::StringTable():
     m_filename(DEFAULT_FILENAME)
 { Load(); }
 
-StringTable::StringTable(const std::string& filename, std::shared_ptr<const StringTable> fallback):
-    m_filename(filename)
+StringTable::StringTable(std::string filename, std::shared_ptr<const StringTable> fallback):
+    m_filename(std::move(filename))
 { Load(fallback); }
 
 StringTable::~StringTable()
