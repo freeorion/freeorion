@@ -327,8 +327,12 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     if (!maybe_info_vec)
         return;
 
+    // helpers for combining building effects into a single line
+    std::vector<std::string> combinedNames;
+    float combinedChange = 0.0;
     // add label-value pairs for each alteration recorded for this meter
-    for (const auto& info : *maybe_info_vec) {
+    for (auto it = maybe_info_vec->begin(); it != maybe_info_vec->end(); ++it) {
+        auto info = *it;
         auto source = Objects().get(info.source_id);
 
         std::string text;
@@ -354,12 +358,36 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             if (const auto& building = std::dynamic_pointer_cast<const Building>(source))
                 if (const auto& planet = Objects().get<Planet>(building->PlanetID()))
                     name = planet->Name();
-            const std::string& label_template = (info.custom_label.empty()
-                ? UserString("TT_BUILDING")
-                : UserString(info.custom_label));
-            text += boost::io::str(FlexibleFormat(label_template)
-                % name
-                % UserString(info.specific_cause));
+            // same effect from several planets?
+            auto next = it + 1;
+            if (next != maybe_info_vec->end() and
+                next->cause_type == EffectsCauseType::ECT_BUILDING and
+                // better not compare floats with ==
+                std::fabs(next->meter_change - info.meter_change) < 0.001 and
+                next->specific_cause == info.specific_cause)
+            {
+                combinedChange += info.meter_change;
+                combinedNames.emplace_back(std::move(name));
+                continue;
+            }
+            else
+            {
+                if (not combinedNames.empty())
+                {
+                    combinedNames.emplace_back(std::move(name));
+                    name = std::to_string(combinedNames.size()) + " x";
+                    info.meter_change += combinedChange;
+                    // TBD add way to unfold the number to get combinedNames
+                    combinedNames.clear();
+                    combinedChange = 0.0;
+                }
+                const std::string& label_template = (info.custom_label.empty()
+                    ? UserString("TT_BUILDING")
+                    : UserString(info.custom_label));
+                text += boost::io::str(FlexibleFormat(label_template)
+                    % name
+                    % UserString(info.specific_cause));
+            }
             break;
         }
         case EffectsCauseType::ECT_FIELD: {
