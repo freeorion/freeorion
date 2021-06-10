@@ -1,6 +1,7 @@
 BuildingType
     name = "BLD_COLONY_INDEPENDENCE_DECREE"
     description = "BLD_COLONY_INDEPENDENCE_DECREE_DESC"
+    captureresult = Destroy
     buildcost = 20
     buildtime = 1
     location = And [
@@ -55,6 +56,7 @@ BuildingType
                         tag = "species" data = Target.Species
                     ]
                     empire = Source.Owner
+                SetVisibility empire = Source.Owner visibility = Max(Value, Partial)
             ]
 
          EffectsGroup

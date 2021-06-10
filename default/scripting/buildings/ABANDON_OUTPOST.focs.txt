@@ -1,6 +1,7 @@
 BuildingType
     name = "BLD_ABANDON_OUTPOST"
     description = "BLD_ABANDON_OUTPOST_DESC"
+    captureresult = Destroy
     buildcost = 20
     buildtime = 1
     location = And [
@@ -57,9 +58,9 @@ BuildingType
                     icon = "icons/tech/environmental_encapsulation.png"
                     parameters =  [
                         tag = "planet" data = Target.ID
-                        tag = "rawtext" data = Source.CreationTurn
                     ]
                     empire = Source.Owner
+                SetVisibility empire = Source.Owner visibility = Max(Value, Partial)
             ]
 
         EffectsGroup
