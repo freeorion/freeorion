@@ -2596,17 +2596,23 @@ namespace {
             for (int damaged_object_id : combat_info.damaged_object_ids) {
                 //DebugLogger() << "Checking object " << damaged_object_id << " for damaged sitrep";
                 // is object destroyed? If so, don't need a damage sitrep
-                if (combat_info.destroyed_object_ids.count(damaged_object_id))
-                    //DebugLogger() << "Object is destroyed and doesn't need a sitrep.";
+                if (combat_info.destroyed_object_ids.count(damaged_object_id)) {
+                    //DebugLogger() << " ... Object is destroyed and doesn't need a sitrep.";
                     continue;
+                }
                 // which empires know about this object?
-                for (auto& [empire_id, empire_known_objects] : combat_info.empire_object_visibility) {
+                for (auto& [viewing_empire_id, empire_known_objects] : combat_info.empire_object_visibility) {
                     // does this empire know about this object?
-                    if (!empire_known_objects.count(damaged_object_id))
+                    auto damaged_obj_it = empire_known_objects.find(damaged_object_id);
+                    if (damaged_obj_it == empire_known_objects.end())
                         continue;
-                    if (auto empire = GetEmpire(empire_id))
+                    //DebugLogger() << " ... Empire " << viewing_empire_id << " has visibility " << damaged_obj_it->second << " of object " << damaged_object_id;
+                    if (damaged_obj_it->second < Visibility::VIS_BASIC_VISIBILITY)
+                        continue;
+
+                    if (auto empire = GetEmpire(viewing_empire_id))
                         empire->AddSitRepEntry(CreateCombatDamagedObjectSitRep(
-                            damaged_object_id, combat_info.system_id, empire_id));
+                            damaged_object_id, combat_info.system_id, viewing_empire_id));
                 }
             }
         }
