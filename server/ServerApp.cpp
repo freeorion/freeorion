@@ -2618,29 +2618,40 @@ namespace {
         }
     }
 
+    /** De-nests sub-events into a single layer list of events */
+    std::vector<ConstCombatEventPtr> FlattenEvents(const std::vector<CombatEventPtr>& events1) {
+        std::vector<ConstCombatEventPtr> flat_events{events1.begin(), events1.end()}; // copy top-level input events
+
+        // copy nested sub-events of top-level events
+        for (const auto& event1 : events1) {                        // can't modify the input events pointers
+            auto events2{event1->SubEvents(ALL_EMPIRES)};           // makes movable pointers to event1's sub-events
+
+            for (auto& event2 : events2) {
+                auto events3{event2->SubEvents(ALL_EMPIRES)};       // makes movable pointers to event2's sub-events
+                flat_events.push_back(std::move(event2));           // can move the pointers to events2 = event1's sub-events
+
+                for (auto& event3 : events3) {
+                    auto events4{event3->SubEvents(ALL_EMPIRES)};   // makes movable pointers to event3's sub-events
+                    flat_events.push_back(std::move(event3));       // can move the pointers to events3 = event2's sub-events
+
+                    for (auto& event4 : events4)
+                        flat_events.push_back(std::move(event4));   // can move the pointers to events4 = event3's sub-events
+                }
+            }
+        }
+
+        return flat_events;
+    }
+
     /** Records info in Empires about what they destroyed or had destroyed during combat. */
     void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats, const ObjectMap& objects) {
         for (const CombatInfo& combat_info : combats) {
-            std::vector<ConstCombatEventPtr> flat_events;
-            for (auto event : combat_info.combat_events) {
-                flat_events.push_back(event);
-                for (auto event2 : event->SubEvents(ALL_EMPIRES)) {
-                    flat_events.push_back(event2);
-                    for (auto event3 : event2->SubEvents(ALL_EMPIRES)) {
-                        flat_events.push_back(event3);
-                        for (auto event4 : event3->SubEvents(ALL_EMPIRES))
-                            flat_events.push_back(event4);
-                    }
-                }
-            }
-
-
             std::vector<WeaponFireEvent::ConstWeaponFireEventPtr> events_that_killed;
-            for (auto event : flat_events) {
-                auto fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(event);
+            for (auto& event : FlattenEvents(combat_info.combat_events)) { // TODO: could do the filtering in the call function and avoid some moves later...
+                auto fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(std::move(event));
                 if (fire_event && combat_info.destroyed_object_ids.count(fire_event->target_id)) {
-                    events_that_killed.push_back(fire_event);
-                    TraceLogger() << "Kill event: " << event->DebugString(objects);
+                    TraceLogger() << "Kill event: " << fire_event->DebugString(objects);
+                    events_that_killed.push_back(std::move(fire_event));
                 }
             }
             DebugLogger() << "Combat combat_info system: " << combat_info.system_id
