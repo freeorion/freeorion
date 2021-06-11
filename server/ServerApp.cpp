@@ -2670,7 +2670,7 @@ namespace {
                 int attacker_empire_id = attacker->Owner();
                 Empire* attacker_empire = GetEmpire(attacker_empire_id);
 
-                auto target_ship = Objects().get<Ship>(attack_event->target_id);
+                auto target_ship = objects.get<Ship>(attack_event->target_id);
                 if (!target_ship)
                     continue;
                 Empire* target_empire = GetEmpire(target_ship->Owner());
@@ -2722,7 +2722,7 @@ namespace {
             ErrorLogger() << "ColonizePlanet couldn't get ship with id " << ship_id;
             return false;
         }
-        auto planet = Objects().get<Planet>(planet_id);
+        auto planet = objects.get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "ColonizePlanet couldn't get planet with id " << planet_id;
             return false;
@@ -2758,7 +2758,7 @@ namespace {
             return false;
         }
 
-        auto system = Objects().get<System>(ship->SystemID());
+        auto system = objects.get<System>(ship->SystemID());
 
         // destroy colonizing ship, and its fleet if now empty
         auto fleet = objects.get<Fleet>(ship->FleetID());
@@ -3163,8 +3163,10 @@ namespace {
     /** Destroys suitable objects that have been ordered scrapped.*/
     void HandleScrapping() {
         std::vector<std::shared_ptr<Ship>> scrapped_ships;
+        Universe& universe{GetUniverse()};
+        ObjectMap& objects{universe.Objects()};
 
-        for (auto& ship : Objects().all<Ship>()) {
+        for (auto& ship : objects.all<Ship>()) {
             if (ship->OrderedScrapped())
                 scrapped_ships.push_back(ship);
         }
@@ -3172,17 +3174,17 @@ namespace {
         for (auto& ship : scrapped_ships) {
             DebugLogger() << "... ship: " << ship->ID() << " ordered scrapped";
 
-            auto system = Objects().get<System>(ship->SystemID());
+            auto system = objects.get<System>(ship->SystemID());
             if (system)
                 system->Remove(ship->ID());
 
-            auto fleet = Objects().get<Fleet>(ship->FleetID());
+            auto fleet = objects.get<Fleet>(ship->FleetID());
             if (fleet) {
                 fleet->RemoveShips({ship->ID()});
                 if (fleet->Empty()) {
                     //scrapped_object_ids.push_back(fleet->ID());
                     system->Remove(fleet->ID());
-                    GetUniverse().Destroy(fleet->ID());
+                    universe.Destroy(fleet->ID());
                 }
             }
 
@@ -3192,21 +3194,21 @@ namespace {
                 scrapping_empire->RecordShipScrapped(*ship);
 
             //scrapped_object_ids.push_back(ship->ID());
-            GetUniverse().Destroy(ship->ID());
+            universe.Destroy(ship->ID());
         }
 
         std::vector<std::shared_ptr<Building>> scrapped_buildings;
 
-        for (auto& building : Objects().all<Building>()) {
+        for (auto& building : objects.all<Building>()) {
             if (building->OrderedScrapped())
                 scrapped_buildings.push_back(building);
         }
 
         for (auto& building : scrapped_buildings) {
-            if (auto planet = Objects().get<Planet>(building->PlanetID()))
+            if (auto planet = objects.get<Planet>(building->PlanetID()))
                 planet->RemoveBuilding(building->ID());
 
-            if (auto system = Objects().get<System>(building->SystemID()))
+            if (auto system = objects.get<System>(building->SystemID()))
                 system->Remove(building->ID());
 
             // record scrapping in empire stats
@@ -3215,7 +3217,7 @@ namespace {
                 scrapping_empire->RecordBuildingScrapped(*building);
 
             //scrapped_object_ids.push_back(building->ID());
-            GetUniverse().Destroy(building->ID());
+            universe.Destroy(building->ID());
         }
     }
 
@@ -3250,17 +3252,19 @@ namespace {
     /** Deletes empty fleets. */
     void CleanEmptyFleets() {
         std::vector<std::shared_ptr<Fleet>> empty_fleets;
+        Universe& universe{GetUniverse()};
+        ObjectMap& objects{universe.Objects()};
 
-        for (auto& fleet : Objects().all<Fleet>()) {
+        for (auto& fleet : objects.all<Fleet>()) {
             if (fleet->Empty())
                 empty_fleets.push_back(fleet);
         }
 
         for (auto& fleet : empty_fleets) {
-            if (auto sys = Objects().get<System>(fleet->SystemID()))
+            if (auto sys = objects.get<System>(fleet->SystemID()))
                 sys->Remove(fleet->ID());
 
-            GetUniverse().RecursiveDestroy(fleet->ID());
+            universe.RecursiveDestroy(fleet->ID());
         }
     }
 }
@@ -3269,7 +3273,7 @@ void ServerApp::PreCombatProcessTurns() {
     ScopedTimer timer("ServerApp::PreCombatProcessTurns", true);
 
     m_universe.ResetAllObjectMeters(false, true);   // revert current meter values to initial values prior to update after incrementing turn number during previous post-combat turn processing.
-    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(Empires());
+    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
 
     DebugLogger() << "ServerApp::ProcessTurns executing orders";
 
@@ -3375,11 +3379,10 @@ void ServerApp::PreCombatProcessTurns() {
         if (!fleet || !fleet->ArrivedThisTurn())
             continue;
         // sitreps for all empires that can see fleet at new location
-        for (auto& entry : Empires()) {
-            if (fleet->GetVisibility(entry.first) >= Visibility::VIS_BASIC_VISIBILITY)
-                entry.second->AddSitRepEntry(
-                    CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID(),
-                                                          entry.first));
+        for (auto& [empire_id, empire] : m_empires) {
+            if (fleet->GetVisibility(empire_id) >= Visibility::VIS_BASIC_VISIBILITY)
+                empire->AddSitRepEntry(
+                    CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID(), empire_id));
         }
     }
 
@@ -3393,8 +3396,7 @@ void ServerApp::PreCombatProcessTurns() {
     {
         auto player = *player_it;
         int empire_id = PlayerEmpireID(player->PlayerID());
-        const Empire* empire = GetEmpire(empire_id);
-        if (empire ||
+        if (m_empires.GetEmpire(empire_id) ||
             player->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR ||
             player->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
         {
