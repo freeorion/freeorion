@@ -89,7 +89,7 @@ public:
       * in which they were adopted. */
     [[nodiscard]] std::map<std::string, int>    TurnsPoliciesAdopted() const;
     /** Returns the set of policies / slots the empire has avaialble. */
-    [[nodiscard]]  const std::set<std::string>& AvailablePolicies() const;
+    [[nodiscard]] const std::set<std::string>&  AvailablePolicies() const;
     [[nodiscard]] bool                          PolicyAvailable(const std::string& name) const;
     [[nodiscard]] bool                          PolicyPrereqsAndExclusionsOK(const std::string& name) const;
     [[nodiscard]] std::map<std::string, int>    TotalPolicySlots() const;
@@ -472,6 +472,9 @@ public:
 
     auto BuildingTypesScrapped() const -> const std::map<std::string, int>&
     { return m_building_types_scrapped; }
+
+    auto TurnsSystemsExplored() const -> const std::map<int, int>&
+    { return m_explored_systems; }
 
     /** Processes Builditems on queues of empires other than the indicated
       * empires, at the location with id \a location_id and, as appropriate,
