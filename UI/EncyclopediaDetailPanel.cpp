@@ -1866,15 +1866,18 @@ namespace {
         // Policies
         auto policies = empire->AdoptedPolicies();
         if (!policies.empty()) {
-            detailed_description += "\n" + UserString("ADOPTED_POLICIES");
-            for (const auto& policy_name : policies) {
-                detailed_description += "\n";
-                std::string turn_text;
+            // re-sort by adoption turn
+            std::multimap<int, std::string&> turns_policies_adopted;
+            for (auto& policy_name : policies) {
                 int turn = empire->TurnPolicyAdopted(policy_name);
-                if (turn == BEFORE_FIRST_TURN)
-                    turn_text = UserString("BEFORE_FIRST_TURN");
-                else
-                    turn_text = UserString("TURN") + " " + std::to_string(turn);
+                turns_policies_adopted.emplace(turn, policy_name);
+            }
+
+            detailed_description += "\n" + UserString("ADOPTED_POLICIES");
+            for (auto& [adoption_turn, policy_name] : turns_policies_adopted) {
+                detailed_description += "\n";
+                std::string turn_text{adoption_turn == BEFORE_FIRST_TURN ? UserString("BEFORE_FIRST_TURN") :
+                    (UserString("TURN") + " " + std::to_string(adoption_turn))};
                 detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name)
                                      + " : " + turn_text;
             }
