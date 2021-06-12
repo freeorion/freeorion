@@ -1400,6 +1400,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 {
     const std::string& variable_name = m_property_name.back();
 
+
+    // empire properties indexed by strings
     std::function<const std::map<std::string, int>& (const Empire&)> empire_property_string_key{nullptr};
 
     if (variable_name == "BuildingTypesOwned")
@@ -1430,8 +1432,11 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         empire_property_string_key = &Empire::ShipPartsOwned;
     else if (variable_name == "TurnTechResearched")
         empire_property_string_key = &Empire::ResearchedTechs;
+    else if (variable_name == "TurnsSincePolicyAdopted")
+        empire_property_string_key = &Empire::PolicyCurrentAdoptedDurations;
+    else if (variable_name == "CumulativeTurnsPolicyAdopted")
+        empire_property_string_key = &Empire::PolicyTotalAdoptedDurations;
 
-    // empire properties indexed by strings
     if (empire_property_string_key) {
         using namespace boost::adaptors;
 
@@ -1487,6 +1492,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return sum;
     }
 
+
+    // empire properties indexed by integers
     std::function<const std::map<int, int>& (const Empire&)> empire_property_int_key{nullptr};
 
     if (variable_name == "EmpireShipsDestroyed")
@@ -1506,7 +1513,6 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     else if (variable_name == "TurnSystemExplored")
         empire_property_int_key = &Empire::TurnsSystemsExplored;
 
-    // empire properties indexed by integers
     if (empire_property_int_key) {
         using namespace boost::adaptors;
 
@@ -1553,6 +1559,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return sum;
     }
 
+
     // unindexed empire proprties
     if (variable_name == "OutpostsOwned") {
         std::shared_ptr<const Empire> empire;
@@ -1578,6 +1585,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
         return empire_property(empire.get());
     }
+
 
     // non-empire properties
     if (variable_name == "GameRule") {
@@ -1763,9 +1771,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return object->SpecialAddedOnTurn(special_name);
 
     }
-    else if (variable_name == "TurnPolicyAdopted" || variable_name == "TurnsSincePolicyAdopted" || // TODO: these should be in empire_property_string_key
-             variable_name == "CumulativeTurnsPolicyAdopted")
-    {
+    else if (variable_name == "TurnPolicyAdopted") { // returns by value, so can't assign &Empire::TurnsPoliciesAdopted to empire_property_string_key above
         if (!m_string_ref1)
             return 0;
         std::string policy_name = m_string_ref1->Eval();
@@ -1782,15 +1788,9 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (!empire)
             return 0;
 
-        if (variable_name == "TurnPolicyAdopted") {
-            return empire->TurnPolicyAdopted(policy_name);
-        } else if (variable_name == "TurnsSincePolicyAdopted") {
-            return empire->CurrentTurnsPolicyHasBeenAdopted(policy_name);
-        } else if (variable_name == "CumulativeTurnsPolicyAdopted") {
-            return empire->CumulativeTurnsPolicyHasBeenAdopted(policy_name);
-        }
+        return empire->TurnPolicyAdopted(policy_name);
     }
-    else if (variable_name == "NumPoliciesAdopted") {
+    else if (variable_name == "NumPoliciesAdopted") { // similar to a string-keyed empire property, but does specialized lookups of adopted policy info
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
             empire_id = m_int_ref1->Eval(context);
