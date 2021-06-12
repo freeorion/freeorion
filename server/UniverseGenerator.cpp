@@ -841,7 +841,7 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
     GetSpeciesManager().AddSpeciesHomeworld(std::move(species_name), home_planet->ID());
 
     empire->SetCapitalID(home_planet->ID());
-    empire->AddExploredSystem(home_planet->SystemID());
+    empire->AddExploredSystem(home_planet->SystemID(), BEFORE_FIRST_TURN);
 
     return true;
 }

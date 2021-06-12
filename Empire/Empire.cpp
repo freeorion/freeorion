@@ -1295,8 +1295,19 @@ bool Empire::PreservedLaneTravel(int start_system_id, int dest_system_id) const 
             && find_it->second.count(dest_system_id);
 }
 
-const std::set<int>& Empire::ExploredSystems() const
-{ return m_explored_systems; }
+std::set<int> Empire::ExploredSystems() const {
+    std::set<int> retval;
+    for (const auto& entry : m_explored_systems)
+        retval.insert(entry.first);
+    return retval;
+}
+
+int Empire::TurnSystemExplored(int system_id) const {
+    auto it = m_explored_systems.find(system_id);
+    if (it == m_explored_systems.end())
+        return INVALID_GAME_TURN;
+    return it->second;
+}
 
 std::map<int, std::set<int>> Empire::KnownStarlanes(const Universe& universe) const {
     // compile starlanes leading into or out of each system
@@ -1845,9 +1856,9 @@ void Empire::AddShipHull(const std::string& name) {
     AddSitRepEntry(CreateShipHullUnlockedSitRep(name));
 }
 
-void Empire::AddExploredSystem(int ID) {
+void Empire::AddExploredSystem(int ID, int turn) {
     if (Objects().get<System>(ID))
-        m_explored_systems.insert(ID);
+        m_explored_systems.emplace(ID, turn);
     else
         ErrorLogger() << "Empire::AddExploredSystem given an invalid system id: " << ID;
 }

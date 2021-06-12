@@ -7698,8 +7698,7 @@ void MapWnd::DispatchFleetsExploring() {
 
     //list all unexplored systems by taking the neighboors of explored systems because ObjectMap does not list them all.
     SystemIDListType candidates_unknown_systems;
-    const auto& empire_explored_systems = empire->ExploredSystems();
-    SystemIDListType explored_systems{empire_explored_systems.begin(), empire_explored_systems.end()};
+    SystemIDListType explored_systems{empire->ExploredSystems()};
     candidates_unknown_systems = AddNeighboorsToSet(empire, explored_systems);
     auto neighboors = AddNeighboorsToSet(empire, candidates_unknown_systems);
     candidates_unknown_systems.insert(neighboors.begin(), neighboors.end());

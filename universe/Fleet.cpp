@@ -965,7 +965,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
         if (system) {
             // node is a system.  explore system for all owners of this fleet
             if (empire) {
-                empire->AddExploredSystem(it->object_id);
+                empire->AddExploredSystem(it->object_id, context.current_turn);
                 empire->RecordPendingLaneUpdate(it->object_id, m_prev_system);  // specifies the lane from it->object_id back to m_prev_system is available
             }
 

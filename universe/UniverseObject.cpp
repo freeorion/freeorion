@@ -319,7 +319,7 @@ void UniverseObject::SetOwner(int id) {
     }
     /* TODO: if changing object ownership gives an the new owner an
      * observer in, or ownership of a previoiusly unexplored system, then need
-     * to call empire->AddExploredSystem(system_id); */
+     * to call empire->AddExploredSystem(system_id, CurrentTurn()); */
 }
 
 void UniverseObject::SetSystem(int sys) {

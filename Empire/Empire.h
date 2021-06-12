@@ -183,7 +183,8 @@ public:
      * is determined in Empire::UpdateSupplyUnobstructedSystems(). */
     [[nodiscard]] bool                         PreservedLaneTravel(int start_system_id, int dest_system_id) const;
 
-    [[nodiscard]] const std::set<int>&         ExploredSystems() const;     ///< returns set of ids of systems that this empire has explored
+    [[nodiscard]] std::set<int>                ExploredSystems() const;     ///< returns set of ids of systems that this empire has explored
+    [[nodiscard]] int                          TurnSystemExplored(int system_id) const;
     [[nodiscard]] std::map<int, std::set<int>> KnownStarlanes(const Universe& universe) const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
     [[nodiscard]] std::map<int, std::set<int>> VisibleStarlanes(const Universe& universe) const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
 
@@ -270,7 +271,7 @@ public:
     //! list of available items.
     void UnlockItem(const UnlockableItem& item);
 
-    void AddBuildingType(const std::string& name);   ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
+    void AddBuildingType(const std::string& name);  ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     //! Inserts the given ShipPart into the Empire's list of available ShipPart%s.
     void AddShipPart(const std::string& name);
 
@@ -278,7 +279,7 @@ public:
     //! ShipHull%s.
     void AddShipHull(const std::string& name);
 
-    void AddExploredSystem(int ID);                  ///< Inserts the given ID into the Empire's list of explored systems.
+    void AddExploredSystem(int ID, int turn);       ///< Inserts the given ID into the Empire's list of explored systems.
 
     /** inserts given design id into the empire's set of designs in front of next design */
     void AddShipDesign(int ship_design_id, const Universe& universe, int next_design_id = INVALID_DESIGN_ID);
@@ -547,7 +548,7 @@ private:
     //! List of acquired ship ShipHull referenced by name.
     std::set<std::string>           m_available_ship_hulls;
 
-    std::set<int>                   m_explored_systems;         ///< systems explored by this empire
+    std::map<int, int>              m_explored_systems;         ///< systems explored by this empire and the turn on which they were explored
     std::set<int>                   m_known_ship_designs;       ///< ids of ship designs in the universe that this empire knows about
 
     std::vector<SitRepEntry>        m_sitrep_entries;           ///< The Empire's sitrep entries
