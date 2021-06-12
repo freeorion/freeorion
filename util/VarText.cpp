@@ -203,9 +203,8 @@ namespace {
 
         std::string operator()(xpr::smatch const& match) const {
             // Labelled variables have the form %tag:label%,  unlabelled are just %tag%
-            std::string tag = match[1];
             // Use the label value. When missing, use the tag submatch as label instead.
-            std::string label = match[match[2].matched ? 2 : 1];
+            std::string label{match[match[2].matched ? 2 : 1].str()};
 
             // look up child
             auto elem = m_variables.find(label);
@@ -215,11 +214,12 @@ namespace {
                 return UserString("ERROR");
             }
 
+
+            std::string tag{match[1].str()};
             auto substituter = SubstitutionMap().find(tag);
             if (substituter != SubstitutionMap().end()) {
-                if (auto substitution = substituter->second(elem->second)) {
+                if (auto substitution = substituter->second(elem->second))
                     return *substitution;
-                }
             }
 
             ErrorLogger() << "Substitute::operator(): No substitution executed for tag: " << tag << " from token: " << match.str();
@@ -316,7 +316,7 @@ void VarText::GenerateVarText() const {
         return;
 
     // get string into which to substitute variables
-    std::string template_str = m_stringtable_lookup_flag ? UserString(m_template_string) : m_template_string;
+    const auto& template_str = m_stringtable_lookup_flag ? UserString(m_template_string) : m_template_string;
 
     xpr::sregex var = '%' >> (xpr::s1 = -+xpr::_w) >> !(':' >> (xpr::s2 = -+xpr::_w)) >> '%';
     m_text = xpr::regex_replace(template_str, var, Substitute(m_variables, m_validated));
