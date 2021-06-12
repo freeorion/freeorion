@@ -157,3 +157,8 @@ if(SDL_FOUND)
         add_dependencies(SDL::SDL SDL::main)
     endif()
 endif()
+
+mark_as_advanced(
+  SDL_LIBRARY
+  SDL_INCLUDE_DIR
+)
