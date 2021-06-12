@@ -178,12 +178,21 @@ namespace {
         main_text += UserString(policy->ShortDescription()) + "\n\n";
 
         if (empire) {
-            if (!empire->PolicyAvailable(policy_name)) {
-                main_text += UserString("POLICY_LOCKED") + "\n\n";
-            } else {
-                auto cost = policy->AdoptionCost(empire_id);
-                main_text += boost::io::str(FlexibleFormat(UserString("POLICY_ADOPTABLE_COST")) % cost)  + "\n\n";
-            }
+            bool available = empire->PolicyAvailable(policy_name);
+            bool adopted = empire->PolicyAdopted(policy_name);
+
+            auto cost = policy->AdoptionCost(empire_id);
+            const auto& adoption_cost_template{adopted ?
+                UserString("POLICY_ADOPTED") : available ?
+                UserString("POLICY_ADOPTABLE_COST") : UserString("POLICY_LOCKED")};
+            main_text += boost::io::str(FlexibleFormat(adoption_cost_template) % cost) + "\n\n";
+
+            auto current_adoption_duration = empire->CurrentTurnsPolicyHasBeenAdopted(policy_name);
+            auto total_adoption_duration = empire->CumulativeTurnsPolicyHasBeenAdopted(policy_name);
+            const auto& adopted_time_timeplate{adopted ?
+                UserString("POLICY_ADOPTION_TIMES_CURRENT_AND_TOTAL") : UserString("POLICY_ADOPTION_TIME_TOTAL")};
+            main_text += boost::io::str(FlexibleFormat(adopted_time_timeplate)
+                                        % current_adoption_duration % total_adoption_duration) + "\n\n";
         }
 
         main_text += UserString(policy->Description());

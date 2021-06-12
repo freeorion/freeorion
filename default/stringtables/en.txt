@@ -4355,10 +4355,19 @@ Description
 ##
 
 POLICY_LOCKED
-Policy Unavailable
+Policy Unavailable but would require %1% IP to adopt
 
 POLICY_ADOPTABLE_COST
 Policy Adoptable for %1% IP
+
+POLICY_ADOPTED
+Policy Adopted. Would have required %1% IP to adopt now.
+
+POLICY_ADOPTION_TIMES_CURRENT_AND_TOTAL
+Policy Adopted for %1% turns currently and %2% turns cumulative.
+
+POLICY_ADOPTION_TIME_TOTAL
+Policy Not Currently Adopted. Has been adopted for %2% turns cumulative.
 
 
 ##
