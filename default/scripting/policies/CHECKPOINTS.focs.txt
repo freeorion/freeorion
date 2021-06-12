@@ -29,7 +29,7 @@ Policy
                 empire = Source.Owner
                 meter = "METER_DETECTION_STRENGTH"
                 value = Value + min((NamedReal name = "PLC_CHECKPOINTS_DETECTION_STRENGTH_MAX" value = 20.0),
-                                    CurrentTurn - TurnPolicyAdopted empire = Source.Owner name = "PLC_CHECKPOINTS")
+                                    TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy)
     ]
     graphic = "icons/policies/checkpoints.png"
 
