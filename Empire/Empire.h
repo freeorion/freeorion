@@ -82,12 +82,13 @@ public:
 
     /** For each category, returns the slots in which policies have been adopted
       * and what policy is in that slot. */
-    [[nodiscard]] std::map<std::string, std::map<int, std::string>>
-                                    CategoriesSlotsPoliciesAdopted() const;
+    [[nodiscard]] std::map<std::string, std::map<int, std::string>> CategoriesSlotsPoliciesAdopted() const;
 
-    /** Returns the policies the empire has adopted and the categories
-      * in which they were adopted. */
-    [[nodiscard]] std::map<std::string, int>    TurnsPoliciesAdopted() const;
+    /** Returns the policies the empire has adopted and turns on which they were adopted. */
+    [[nodiscard]] std::map<std::string, int>        TurnsPoliciesAdopted() const;
+    [[nodiscard]] const std::map<std::string, int>& PolicyTotalAdoptedDurations() const;
+    [[nodiscard]] const std::map<std::string, int>& PolicyCurrentAdoptedDurations() const;
+
     /** Returns the set of policies / slots the empire has avaialble. */
     [[nodiscard]] const std::set<std::string>&  AvailablePolicies() const;
     [[nodiscard]] bool                          PolicyAvailable(const std::string& name) const;

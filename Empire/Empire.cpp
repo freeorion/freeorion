@@ -466,6 +466,12 @@ std::map<std::string, int> Empire::TurnsPoliciesAdopted() const {
     return retval;
 }
 
+const std::map<std::string, int>& Empire::PolicyTotalAdoptedDurations() const
+{ return m_policy_adoption_total_duration; }
+
+const std::map<std::string, int>& Empire::PolicyCurrentAdoptedDurations() const
+{ return m_policy_adoption_current_duration; }
+
 const std::set<std::string>& Empire::AvailablePolicies() const
 { return m_available_policies; }
 
