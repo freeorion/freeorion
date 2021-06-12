@@ -28,7 +28,7 @@ Policy
                 Species
             ]
             activation = Number
-                low = (CurrentTurn - TurnPolicyAdopted empire = Source.Owner name = ThisPolicy) /
+                low = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) /
                       (NamedInteger name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING" value = 10)
                 condition = And [
                     Or [
@@ -42,8 +42,8 @@ Policy
         // warn about bureaucratic delays due to lack of facilities...
         EffectsGroup
             scope = Source
-            activation = Not Number
-                low = (CurrentTurn - TurnPolicyAdopted empire = Source.Owner name = ThisPolicy) /
+            activation = Not Number // want warning generated one turn earlier than effect, so it's seen on the same turn as the effect will kick in...
+                low = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy + 1) /
                       (NamedInteger name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING" value = 10)
                 condition = And [
                     Or [
@@ -64,7 +64,7 @@ Policy
                         ]
                         OwnedBy empire = Source.Owner
                     ]
-                    tag = "needbuildings" data = (CurrentTurn - TurnPolicyAdopted empire = Source.Owner name = ThisPolicy) /
+                    tag = "needbuildings" data = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) /
                                                  (NamedIntegerLookup name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING")
                 ]
                 empire = Source.Owner
