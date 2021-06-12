@@ -213,15 +213,15 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     // also adopting any other policies that were first adopted this turn
     // add up all other policy adoption costs for this turn
     double other_this_turn_adopted_policies_cost = 0.0;
-    for (const auto& policy_entry : m_adopted_policies) {
-        if (policy_entry.second.adoption_turn != CurrentTurn())
+    for (auto& [policy_name, adoption_info] : m_adopted_policies) {
+        if (adoption_info.adoption_turn != CurrentTurn())
             continue;
-        auto pre_adptd_policy = GetPolicy(policy_entry.first);
+        auto pre_adptd_policy = GetPolicy(policy_name);
         if (!pre_adptd_policy) {
-            ErrorLogger() << "Empire::AdoptPolicy couldn't find policy named " << policy_entry.first << " that was supposedly already adopted this turn (" << CurrentTurn() << ")";
+            ErrorLogger() << "Empire::AdoptPolicy couldn't find policy named " << policy_name << " that was supposedly already adopted this turn (" << CurrentTurn() << ")";
             continue;
         }
-        DebugLogger() << "Empire::AdoptPolicy : Already adopted policy this turn: " << policy_entry.first
+        DebugLogger() << "Empire::AdoptPolicy : Already adopted policy this turn: " << policy_name
                       << " with cost " << pre_adptd_policy->AdoptionCost(m_id, objects);
         other_this_turn_adopted_policies_cost += pre_adptd_policy->AdoptionCost(m_id, objects);
     }
@@ -269,28 +269,38 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
 
     // collect already-adopted policies in category
     std::map<int, std::string> adopted_policies_in_category_map;
-    for (const auto& policy_entry : m_adopted_policies) {
-        if (policy_entry.second.category != category)
+    for (auto& [policy_name, adoption_info] : m_adopted_policies) {
+        if (adoption_info.category != category)
             continue;
-        if (policy_entry.second.slot_in_category >= total_slots_in_category) {
+        if (adoption_info.slot_in_category >= total_slots_in_category) {
             ErrorLogger() << "Empire::AdoptPolicy found adopted policy: "
-                          << policy_entry.first << "  in category: " << category
-                          << "  in slot: " << policy_entry.second.slot_in_category
+                          << policy_name << "  in category: " << category
+                          << "  in slot: " << adoption_info.slot_in_category
                           << "  which is higher than max slot in category: "
                           << (total_slots_in_category - 1);
         }
-        if (slot != INVALID_SLOT_INDEX && policy_entry.second.slot_in_category == slot) {
+        if (slot != INVALID_SLOT_INDEX && adoption_info.slot_in_category == slot) {
             ErrorLogger() << "Empire::AdoptPolicy found adopted policy: "
-                          << policy_entry.first << "  in category: " << category
+                          << policy_name << "  in category: " << category
                           << "  in slot: " << slot
                           << "  so cannot adopt another policy in that slot";
             return;
         }
 
-        adopted_policies_in_category_map[policy_entry.second.slot_in_category] = policy_entry.first;
+        adopted_policies_in_category_map[adoption_info.slot_in_category] = policy_name;
     }
-    // convert to vector;
-    std::vector<std::string> adopted_policies_in_category;
+    // convert to vector
+    std::vector<std::string> adopted_policies_in_category(total_slots_in_category, "");
+    for (auto& [adopted_policy_slot, adopted_policy_name] : adopted_policies_in_category_map) {
+        if (adopted_policy_slot < 0 || adopted_policy_slot >= adopted_policies_in_category.size()) {
+            ErrorLogger() << "AdoptPolicy somehow got slot " << adopted_policy_slot << " of adopted policy " << adopted_policy_name
+                          << " outside the suitable range with total slots size: " << adopted_policies_in_category.size();
+            continue;
+        }
+        adopted_policies_in_category[adopted_policy_slot] = std::move(adopted_policy_name);
+    }
+
+
 
     // if no particular slot was specified, try to find a suitable slot in category
     if (slot == INVALID_SLOT_INDEX) {
