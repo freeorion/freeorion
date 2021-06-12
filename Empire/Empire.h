@@ -519,6 +519,7 @@ private:
     std::map<std::string, PolicyAdoptionInfo>
                                     m_initial_adopted_policies;         ///< adopted policies at start of turn
     std::map<std::string, int>      m_policy_adoption_total_duration;   ///< how many turns each policy has been adopted over the course of the game by this empire
+    std::map<std::string, int>      m_policy_adoption_current_duration; ///< how many turns each currently-adopted policy has been adopted since it was last adopted. somewhat redundant with adoption_turn in AdoptionInfo, but seems necessary to avoid off-by-one issues between client and server
     std::set<std::string>           m_available_policies;               ///< names of unlocked policies
 
 

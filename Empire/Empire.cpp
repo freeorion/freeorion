@@ -390,9 +390,11 @@ void Empire::UpdatePolicies() {
     }
 
     // update counters of how many turns each policy has been adopted
+    m_policy_adoption_current_duration.clear();
     for (auto& [policy_name, adoption_info] : m_adopted_policies) {
         (void)adoption_info; // quiet warning
         m_policy_adoption_total_duration[policy_name]++;  // assumes default initialization to 0
+        m_policy_adoption_current_duration[policy_name] = CurrentTurn() - adoption_info.adoption_turn;
     }
 
     // update initial adopted policies for next turn
@@ -404,18 +406,24 @@ bool Empire::PolicyAdopted(const std::string& name) const
 { return m_adopted_policies.count(name); }
 
 int Empire::TurnPolicyAdopted(const std::string& name) const {
-    if (!PolicyAdopted(name))
-        return INVALID_GAME_TURN;
     auto it = m_adopted_policies.find(name);
+    if (it == m_adopted_policies.end())
+        return INVALID_GAME_TURN;
     return it->second.adoption_turn;
 }
 
 int Empire::CurrentTurnsPolicyHasBeenAdopted(const std::string& name) const {
-    return 0;
+    auto it = m_policy_adoption_current_duration.find(name);
+    if (it == m_policy_adoption_current_duration.end())
+        return 0;
+    return it->second;
 }
 
 int Empire::CumulativeTurnsPolicyHasBeenAdopted(const std::string& name) const {
-    return 0;
+    auto it = m_policy_adoption_total_duration.find(name);
+    if (it == m_policy_adoption_total_duration.end())
+        return 0;
+    return it->second;
 }
 
 int Empire::SlotPolicyAdoptedIn(const std::string& name) const {

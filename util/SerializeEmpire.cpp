@@ -225,6 +225,15 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         }
     }
 
+    if (Archive::is_loading::value && version < 7) {
+        m_policy_adoption_current_duration.clear();
+        for (auto& [policy_name, adoption_info] : m_adopted_policies)
+            m_policy_adoption_current_duration[policy_name] = CurrentTurn() - adoption_info.adoption_turn;
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_policy_adoption_current_duration);
+    }
+
+
     ar  & BOOST_SERIALIZATION_NVP(m_meters);
     if (Archive::is_saving::value && !allied_visible) {
         // don't send what other empires building and researching
@@ -319,7 +328,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     TraceLogger() << "DONE serializing empire " << m_id << ": " << m_name;
 }
 
-BOOST_CLASS_VERSION(Empire, 6)
+BOOST_CLASS_VERSION(Empire, 7)
 
 template void Empire::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
