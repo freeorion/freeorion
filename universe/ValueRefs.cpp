@@ -1761,7 +1761,9 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return object->SpecialAddedOnTurn(special_name);
 
     }
-    else if (variable_name == "TurnPolicyAdopted") {
+    else if (variable_name == "TurnPolicyAdopted" || variable_name == "TurnsSincePolicyAdopted" ||
+             variable_name == "CumulativeTurnsPolicyAdopted")
+    {
         if (!m_string_ref1)
             return 0;
         std::string policy_name = m_string_ref1->Eval();
@@ -1778,7 +1780,13 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (!empire)
             return 0;
 
-        return empire->TurnPolicyAdopted(policy_name);
+        if (variable_name == "TurnPolicyAdopted") {
+            return empire->TurnPolicyAdopted(policy_name);
+        } else if (variable_name == "TurnsSincePolicyAdopted") {
+            return empire->CurrentTurnsPolicyHasBeenAdopted(policy_name);
+        } else if (variable_name == "CumulativeTurnsPolicyAdopted") {
+            return empire->CumulativeTurnsPolicyHasBeenAdopted(policy_name);
+        }
     }
     else if (variable_name == "NumPoliciesAdopted") {
         int empire_id = ALL_EMPIRES;

@@ -74,6 +74,9 @@ public:
 
     [[nodiscard]] bool                     PolicyAdopted(const std::string& name) const;
     [[nodiscard]] int                      TurnPolicyAdopted(const std::string& name) const;
+    [[nodiscard]] int                      CurrentTurnsPolicyHasBeenAdopted(const std::string& name) const;
+    [[nodiscard]] int                      CumulativeTurnsPolicyHasBeenAdopted(const std::string& name) const;
+
     [[nodiscard]] int                      SlotPolicyAdoptedIn(const std::string& name) const;
     [[nodiscard]] std::vector<std::string> AdoptedPolicies() const;
 

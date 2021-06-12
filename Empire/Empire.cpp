@@ -410,6 +410,14 @@ int Empire::TurnPolicyAdopted(const std::string& name) const {
     return it->second.adoption_turn;
 }
 
+int Empire::CurrentTurnsPolicyHasBeenAdopted(const std::string& name) const {
+    return 0;
+}
+
+int Empire::CumulativeTurnsPolicyHasBeenAdopted(const std::string& name) const {
+    return 0;
+}
+
 int Empire::SlotPolicyAdoptedIn(const std::string& name) const {
     if (!PolicyAdopted(name))
         return INVALID_SLOT_INDEX;

@@ -79,6 +79,7 @@
     (CreateShip)                                \
     (CreateSystem)                              \
     (CreationTurn)                              \
+    (CumulativeTurnsPolicyAdopted)              \
     (CurrentContent)                            \
     (CurrentTurn)
 
@@ -584,6 +585,7 @@
     (TurnPolicyAdopted)                         \
     (TurnsSinceColonization)                    \
     (TurnsSinceFocusChange)                     \
+    (TurnsSincePolicyAdopted)                   \
     (TurnTechResearched)                        \
     (type)                                      \
     (Uninhabitable)                             \

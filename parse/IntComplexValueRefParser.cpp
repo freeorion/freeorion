@@ -62,6 +62,8 @@ namespace parse {
                     |   tok.SpeciesShipsScrapped_
                     |   tok.TurnTechResearched_
                     |   tok.TurnPolicyAdopted_
+                    |   tok.TurnsSincePolicyAdopted_
+                    |   tok.CumulativeTurnsPolicyAdopted_
                     |   tok.NumPoliciesAdopted_
                     )
                 >  -(   label(tok.empire_) > int_rules.expr)
