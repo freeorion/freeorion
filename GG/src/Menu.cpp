@@ -23,31 +23,6 @@ namespace {
 
 
 ////////////////////////////////////////////////
-// GG::MenuItem
-////////////////////////////////////////////////
-MenuItem::MenuItem(bool separator_) :
-    disabled(true),
-    separator(true)
-{}
-
-MenuItem::MenuItem(const std::string& str, bool disable, bool check,
-                   std::function<void()> selected_on_close_callback) :
-    label(str),
-    disabled(disable),
-    checked(check),
-    m_selected_on_close_callback{selected_on_close_callback}
-{}
-
-MenuItem::MenuItem(std::string&& str, bool disable, bool check,
-                   std::function<void()> selected_on_close_callback) :
-    label(std::move(str)),
-    disabled(disable),
-    checked(check),
-    m_selected_on_close_callback{selected_on_close_callback}
-{}
-
-
-////////////////////////////////////////////////
 // GG::PopupMenu
 ////////////////////////////////////////////////
 namespace {

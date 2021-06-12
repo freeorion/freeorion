@@ -37,12 +37,19 @@ struct GG_API MenuItem
 {
     MenuItem() = default;
 
-    explicit MenuItem(bool separator);
+    explicit MenuItem(bool separator) :
+        disabled(true),
+        separator(true)
+    {}
 
-    MenuItem(const std::string& str, bool disable, bool check,
-             std::function<void()> selected_on_close_callback = std::function<void()>());
-    MenuItem(std::string&& str, bool disable, bool check,
-             std::function<void()> selected_on_close_callback = std::function<void()>());
+    template <class S>
+    MenuItem(S&& str, bool disable, bool check,
+             std::function<void()> selected_on_close_callback = std::function<void()>()) :
+        label(std::forward<S>(str)),
+        disabled(disable),
+        checked(check),
+        m_selected_on_close_callback{selected_on_close_callback}
+    {}
 
     std::string           label;            ///< text shown for this menu item
     bool                  disabled = false; ///< set to true when this menu item is disabled
