@@ -73,7 +73,17 @@ namespace parse {
                   ]
             ;
 
-        empire_ships_destroyed
+         empire_id_ref
+            = (
+                    tok.TurnSystemExplored_
+                >-( label(tok.empire_) > int_rules.expr )
+                >-(label(tok.id_)      > int_rules.expr )
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
+                        _1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr))
+                ]
+            ;
+
+         empire_ships_destroyed
             =   (
                     tok.EmpireShipsDestroyed_
                 >-( label(tok.empire_) > int_rules.expr )
@@ -198,6 +208,7 @@ namespace parse {
         start
             %=  game_rule
             |   empire_name_ref
+            |   empire_id_ref
             |   empire_ships_destroyed
             |   jumps_between
             //|   jumps_between_by_empire_supply
@@ -212,7 +223,8 @@ namespace parse {
             ;
 
         game_rule.name("GameRule");
-        empire_name_ref.name("...");
+        empire_name_ref.name("EmpirePropertyWithName");
+        empire_id_ref.name("EmpirePropertyWithID");
         empire_ships_destroyed.name("EmpireShipsDestroyed");
         jumps_between.name("JumpsBetween");
         //jumps_between_by_empire_supply.name("JumpsBetweenByEmpireSupplyConnections");
@@ -229,6 +241,7 @@ namespace parse {
 #if DEBUG_INT_COMPLEX_PARSERS
         debug(game_rule);
         debug(empire_name_ref);
+        debug(empire_id_ref);
         debug(empire_ships_destroyed);
         debug(jumps_between);
         //debug(jumps_between_by_empire_supply);

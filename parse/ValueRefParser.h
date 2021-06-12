@@ -243,6 +243,7 @@ namespace parse {
         ship_part_class_enum_grammar        ship_part_class_enum;
         detail::complex_variable_rule<int>  game_rule;
         detail::complex_variable_rule<int>  empire_name_ref;
+        detail::complex_variable_rule<int>  empire_id_ref;
         detail::complex_variable_rule<int>  empire_ships_destroyed;
         detail::complex_variable_rule<int>  jumps_between;
         //complex_variable_rule<int>          jumps_between_by_empire_supply;

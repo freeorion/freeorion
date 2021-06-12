@@ -586,6 +586,7 @@
     (TurnsSinceColonization)                    \
     (TurnsSinceFocusChange)                     \
     (TurnsSincePolicyAdopted)                   \
+    (TurnSystemExplored)                        \
     (TurnTechResearched)                        \
     (type)                                      \
     (Uninhabitable)                             \

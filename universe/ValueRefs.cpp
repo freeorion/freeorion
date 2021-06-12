@@ -1503,6 +1503,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         empire_property_int_key = &Empire::ShipDesignsProduced;
     else if (variable_name == "ShipDesignsScrapped")
         empire_property_int_key = &Empire::ShipDesignsScrapped;
+    else if (variable_name == "TurnSystemExplored")
+        empire_property_int_key = &Empire::TurnsSystemsExplored;
 
     // empire properties indexed by integers
     if (empire_property_int_key) {
@@ -1761,7 +1763,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return object->SpecialAddedOnTurn(special_name);
 
     }
-    else if (variable_name == "TurnPolicyAdopted" || variable_name == "TurnsSincePolicyAdopted" ||
+    else if (variable_name == "TurnPolicyAdopted" || variable_name == "TurnsSincePolicyAdopted" || // TODO: these should be in empire_property_string_key
              variable_name == "CumulativeTurnsPolicyAdopted")
     {
         if (!m_string_ref1)
