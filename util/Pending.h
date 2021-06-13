@@ -46,7 +46,7 @@ namespace Pending {
     };
 
     template <typename T>
-    boost::optional<T> WaitForPendingUnlocked(Pending<T>&& pending, bool do_not_care_about_result = false) {
+    [[nodiscard]] boost::optional<T> WaitForPendingUnlocked(Pending<T>&& pending, bool do_not_care_about_result = false) {
         std::future_status status;
         do {
             if (!pending.pending->valid()) {
@@ -111,21 +111,19 @@ namespace Pending {
     T& SwapPending(boost::optional<Pending<T>>& pending, T& stored) {
         if (pending) {
             std::scoped_lock lock(pending->m_mutex);
-            if (!pending) {
-                // another thread in the meantime transferred the pending to stored
-                return stored;
-            }
-            if (auto tt = WaitForPendingUnlocked(std::move(*pending))) {
+            if (!pending)
+                return stored; // another thread in the meantime transferred the pending to stored
+
+            if (auto tt = WaitForPendingUnlocked(std::move(*pending)))
                 std::swap(*tt, stored);
-            }
-        pending = boost::none;
+            pending = boost::none;
         }
         return stored;
     }
 
     /** Return a Pending<T> constructed with \p parser and \p path*/
     template <typename Func>
-    auto StartAsyncParsing(const Func& parser, const boost::filesystem::path& path)
+    [[nodiscard]] auto StartAsyncParsing(const Func& parser, const boost::filesystem::path& path)
         -> Pending<decltype(parser(path))>
     {
         return Pending<decltype(parser(path))>(
@@ -134,7 +132,7 @@ namespace Pending {
 
     /** Return a Pending<T> constructed with \p parser, \p arg1, and \p path*/
     template <typename Func, typename Arg1>
-    auto ParseSynchronously(const Func& parser, const Arg1& arg1, const boost::filesystem::path& path)
+    [[nodiscard]] auto ParseSynchronously(const Func& parser, const Arg1& arg1, const boost::filesystem::path& path)
         -> Pending<decltype(parser(arg1, path))>
     {
         auto result = parser(arg1, path);
@@ -145,7 +143,7 @@ namespace Pending {
 
     /** Return a Pending<T> constructed with \p parser, \p arg1, and \p path*/
     template <typename Func, typename Arg1>
-    auto ParseSynchronously(const Func& parser, const Arg1& arg1, const boost::filesystem::path& path,
+    [[nodiscard]] auto ParseSynchronously(const Func& parser, const Arg1& arg1, const boost::filesystem::path& path,
                             std::promise<void>&& barrier)
         -> Pending<decltype(parser(arg1, path))>
     {
@@ -181,7 +179,7 @@ namespace Pending {
     /** Return a Pending<T> constructed with \p parser and \p path
      * and notify \p barrier*/
     template <typename Func>
-    auto StartAsyncParsing(Func parser, const boost::filesystem::path& path, std::promise<void>&& barrier)
+    [[nodiscard]] auto StartAsyncParsing(Func parser, const boost::filesystem::path& path, std::promise<void>&& barrier)
         -> Pending<decltype(parser(path))>
     {
         return Pending<decltype(parser(path))>(
@@ -195,7 +193,7 @@ namespace Pending {
       * executes the parser in the calling thread and stores the result
       * before returning. */
     template <typename Func>
-    auto ParseSynchronously(const Func& parser, const boost::filesystem::path& path)
+    [[nodiscard]] auto ParseSynchronously(const Func& parser, const boost::filesystem::path& path)
         -> Pending<decltype(parser(path))>
     {
         auto retval = std::async(std::launch::deferred, parser, path);
@@ -207,7 +205,7 @@ namespace Pending {
       * executes the parser in the calling thread and stores the result
       * before returning. */
     template <typename Func>
-    auto ParseSynchronously(const Func& parser, const boost::filesystem::path& path, std::promise<void>&& barrier)
+    [[nodiscard]] auto ParseSynchronously(const Func& parser, const boost::filesystem::path& path, std::promise<void>&& barrier)
         -> Pending<decltype(parser(path))>
     {
         auto retval = std::async(std::launch::deferred, parser, path);
