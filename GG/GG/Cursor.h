@@ -56,10 +56,10 @@ public:
     TextureCursor(std::shared_ptr<Texture> texture, const Pt& hotspot = Pt());
 
     /** Returns the texture used to render this TextureCursor. */
-    const std::shared_ptr<Texture>& GetTexture() const;
+    [[nodiscard]] const std::shared_ptr<Texture>& GetTexture() const;
 
     /** Returns the position within Texture() of the cursor hotspot. */
-    const Pt& Hotspot() const;
+    [[nodiscard]] const Pt& Hotspot() const;
 
     void Render(const Pt& pt) override;
 

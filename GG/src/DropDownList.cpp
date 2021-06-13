@@ -34,10 +34,9 @@ public:
     /** ModalListPicker is run then it returns true if it was not destroyed while running.*/
     bool RunAndCheckSelfDestruction();
     void EndRun() override;
-    void Render() override
-    {}
+    void Render() override {}
 
-    bool           Dropped() const;
+    [[nodiscard]] bool Dropped() const;
 
     /** Adjust the m_lb_wnd size so that there are no more than m_num_shown_rows shown. It will
         not adjust a visible window, or if there is no relative to window. */
@@ -57,7 +56,7 @@ public:
     /** The selection change signal while running the modal drop down box.*/
     mutable SelChangedSignalType SelChangedWhileDroppedSignal;
 
-    DropDownList::iterator CurrentItem();
+    [[nodiscard]] DropDownList::iterator CurrentItem();
 
     /** If \p it is not none then select \p it in the LB().  Return the newly selected iterator or none if
         the selection did not change.*/
@@ -68,12 +67,12 @@ public:
 
     /** A common KeyPress() for both ModalListPicker and its DropDownList.
         Examine \p key and return the new list iterator or none.*/
-    boost::optional<DropDownList::iterator> KeyPressCommon(
+    [[nodiscard]] boost::optional<DropDownList::iterator> KeyPressCommon(
         Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys);
 
     /** A common MouseWheel() for both ModalListPicker and its DropDownList.
         Examine \p pt and \p move and then return the new list iterator or none.*/
-    boost::optional<DropDownList::iterator> MouseWheelCommon(
+    [[nodiscard]] boost::optional<DropDownList::iterator> MouseWheelCommon(
         const Pt& pt, int move, Flags<ModKey> mod_keys);
 
     /** Set the drop down list to only mouse scroll if it is dropped. */
@@ -103,14 +102,15 @@ private:
     /** Used by CorrectListSize() to determine the list height from the current first shown row. */
     Pt DetermineListHeight(const Pt& drop_down_size);
 
-    std::shared_ptr<ListBox>    m_lb_wnd;
-    const size_t                m_num_shown_rows;
-    const DropDownList*         m_relative_to_wnd;
-    bool                        m_dropped; ///< Is the drop down list open.
+    std::shared_ptr<ListBox> m_lb_wnd;
+    const size_t             m_num_shown_rows = 0;
+    const DropDownList*      m_relative_to_wnd = nullptr;
+    bool                     m_dropped = false; ///< Is the drop down list open.
 
     /** Should the list wnd scroll only when dropped? */
-    bool                        m_only_mouse_scroll_when_dropped;
+    bool                     m_only_mouse_scroll_when_dropped = false;
 };
+
 
 namespace {
 
@@ -151,9 +151,7 @@ ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd,
     Control(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
     m_num_shown_rows(std::max<std::size_t>(1, num_rows)),
-    m_relative_to_wnd(relative_to_wnd),
-    m_dropped(false),
-    m_only_mouse_scroll_when_dropped(false)
+    m_relative_to_wnd(relative_to_wnd)
 {}
 
 void ModalListPicker::CompleteConstruction()

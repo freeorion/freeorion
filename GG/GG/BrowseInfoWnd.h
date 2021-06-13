@@ -90,18 +90,18 @@ public:
 
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
 
-    bool                           TextFromTarget() const; ///< returns true iff the text to display will be read from the target wnd
-    const std::string&             Text () const;          ///< returns the text currently set for display
+    [[nodiscard]] bool                         TextFromTarget() const; ///< returns true iff the text to display will be read from the target wnd
+    [[nodiscard]] const std::string&           Text () const;          ///< returns the text currently set for display
 
     /** Returns the Font used to display text. */
-    const std::shared_ptr<Font>& GetFont() const;
+    [[nodiscard]] const std::shared_ptr<Font>& GetFont() const;
 
-    Clr                            Color() const;          ///< returns the color used to render the text box
-    Clr                            BorderColor() const;    ///< returns the color used to render the text box border
-    Clr                            TextColor() const;      ///< returns the color used to render the text
-    Flags<TextFormat>              GetTextFormat() const;  ///< returns the text format used to render the text
-    unsigned int                   BorderWidth() const;    ///< returns the width of the text box border
-    unsigned int                   TextMargin() const;     ///< returns the margin to leave between the text and the text box
+    [[nodiscard]] Clr                          Color() const;          ///< returns the color used to render the text box
+    [[nodiscard]] Clr                          BorderColor() const;    ///< returns the color used to render the text box border
+    [[nodiscard]] Clr                          TextColor() const;      ///< returns the color used to render the text
+    [[nodiscard]] Flags<TextFormat>            GetTextFormat() const;  ///< returns the text format used to render the text
+    [[nodiscard]] unsigned int                 BorderWidth() const;    ///< returns the width of the text box border
+    [[nodiscard]] unsigned int                 TextMargin() const;     ///< returns the margin to leave between the text and the text box
 
     void SetText(std::string str);
     void Render() override;

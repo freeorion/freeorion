@@ -68,50 +68,50 @@ public:
     DropDownList(size_t num_shown_elements, Clr color);
     ~DropDownList();
 
-    iterator        CurrentItem() const;            ///< returns the currently selected list item (returns end() if none is selected)
-    std::size_t     CurrentItemIndex() const;       ///< returns the position of the currently selected list item within the list (returns -1 if none is selected)
+    [[nodiscard]] iterator        CurrentItem() const;            ///< returns the currently selected list item (returns end() if none is selected)
+    [[nodiscard]] std::size_t     CurrentItemIndex() const;       ///< returns the position of the currently selected list item within the list (returns -1 if none is selected)
 
-    std::size_t     IteratorToIndex(iterator it) const;     ///< returns the position of \a it within the list (returns -1 if \a it == end())
-    iterator        IndexToIterator(std::size_t n) const;   ///< returns an iterator to the row in position \a n (returns end() if \a n is an invalid index)
+    [[nodiscard]] std::size_t     IteratorToIndex(iterator it) const;     ///< returns the position of \a it within the list (returns -1 if \a it == end())
+    [[nodiscard]] iterator        IndexToIterator(std::size_t n) const;   ///< returns an iterator to the row in position \a n (returns end() if \a n is an invalid index)
 
-    bool            Empty() const;                  ///< returns true when the list is empty
+    [[nodiscard]] bool            Empty() const;                  ///< returns true when the list is empty
 
-    const_iterator  begin() const;                  ///< returns an iterator to the first list row
-    const_iterator  end() const;                    ///< returns an iterator to the imaginary row one past the last
+    [[nodiscard]] const_iterator  begin() const;                  ///< returns an iterator to the first list row
+    [[nodiscard]] const_iterator  end() const;                    ///< returns an iterator to the imaginary row one past the last
 
-    const Row&      GetRow(std::size_t n) const;    ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
-    bool            Selected(iterator it) const;    ///< returns true if row \a it is selected
-    bool            Selected(std::size_t n) const;  ///< returns true if row at position \a n is selected
-    Clr             InteriorColor() const;          ///< returns the color painted into the client area of the control
+    [[nodiscard]] const Row&      GetRow(std::size_t n) const;    ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
+    [[nodiscard]] bool            Selected(iterator it) const;    ///< returns true if row \a it is selected
+    [[nodiscard]] bool            Selected(std::size_t n) const;  ///< returns true if row at position \a n is selected
+    [[nodiscard]] Clr             InteriorColor() const;          ///< returns the color painted into the client area of the control
 
-    Y               DropHeight() const;             ///< returns the height of the drop-down list
-    bool            Dropped() const;                ///< Return true if the drop down list is open.
+    [[nodiscard]] Y               DropHeight() const;             ///< returns the height of the drop-down list
+    [[nodiscard]] bool            Dropped() const;                ///< Return true if the drop down list is open.
 
     /** Returns the style flags of the list \see GG::ListBoxStyle */
-    Flags<ListBoxStyle> Style() const;
+    [[nodiscard]] Flags<ListBoxStyle> Style() const;
 
-    std::size_t     NumRows() const;          ///< returns the total number of items in the list
-    std::size_t     NumCols() const;          ///< returns the total number of columns in each list item
+    [[nodiscard]] std::size_t     NumRows() const;          ///< returns the total number of items in the list
+    [[nodiscard]] std::size_t     NumCols() const;          ///< returns the total number of columns in each list item
 
     /** Returns the index of the column used to sort items, when sorting is
         enabled.  \note The sort column is not range checked when it is set by
         the user; it may be >= NumCols(). */
-    std::size_t     SortCol() const;
+    [[nodiscard]] std::size_t     SortCol() const;
 
-    X               ColWidth(std::size_t n) const;     ///< returns the width of column \a n in pixels; not range-checked
-    Alignment       ColAlignment(std::size_t n) const; ///< returns the alignment of column \a n; must be LIST_LEFT, LIST_CENTER, or LIST_RIGHT; not range-checked
-    Alignment       RowAlignment(iterator it) const;   ///< returns the alignment of row \a n; must be LIST_TOP, LIST_VCENTER, or LIST_BOTTOM; not range-checked
+    [[nodiscard]] X               ColWidth(std::size_t n) const;     ///< returns the width of column \a n in pixels; not range-checked
+    [[nodiscard]] Alignment       ColAlignment(std::size_t n) const; ///< returns the alignment of column \a n; must be LIST_LEFT, LIST_CENTER, or LIST_RIGHT; not range-checked
+    [[nodiscard]] Alignment       RowAlignment(iterator it) const;   ///< returns the alignment of row \a n; must be LIST_TOP, LIST_VCENTER, or LIST_BOTTOM; not range-checked
 
-    Pt ClientUpperLeft() const override;
-    Pt ClientLowerRight() const override;
+    [[nodiscard]] Pt ClientUpperLeft() const override;
+    [[nodiscard]] Pt ClientLowerRight() const override;
 
     /** Return the width of the displayed row.  Override this function if the displayed row is a
         different width than the client width.*/
-    virtual GG::X DisplayedRowWidth() const;
+    [[nodiscard]] virtual GG::X DisplayedRowWidth() const;
 
     /** Return the width of the dropped row.  Override this function if the dropped row is a
         different width than the client width.*/
-    virtual GG::X DroppedRowWidth() const;
+    [[nodiscard]] virtual GG::X DroppedRowWidth() const;
 
     /** The selection change signal while not running the modal drop down box.
         This will also signal an event when the drop list closes if the selection changed.
@@ -153,12 +153,12 @@ public:
     void Insert(std::vector<std::shared_ptr<Row>>&& rows);
 
     std::shared_ptr<Row> Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
-    void Clear();                        ///< empties the list
+    void Clear();                               ///< empties the list
 
-    iterator begin();                    ///< returns an iterator to the first list row
-    iterator end();                      ///< returns an iterator to the imaginary row one past the last one
+    [[nodiscard]] iterator begin();             ///< returns an iterator to the first list row
+    [[nodiscard]] iterator end();               ///< returns an iterator to the imaginary row one past the last one
 
-    Row& GetRow(std::size_t n);          ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
+    [[nodiscard]] Row& GetRow(std::size_t n);   ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
 
     void Select(iterator it);            ///< selects row-item \a it in the list
     void Select(std::size_t n);          ///< selects row-item \a it in the list
