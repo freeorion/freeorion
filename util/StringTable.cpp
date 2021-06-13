@@ -26,9 +26,6 @@ StringTable::StringTable(std::string filename, std::shared_ptr<const StringTable
     m_filename(std::move(filename))
 { Load(fallback); }
 
-StringTable::~StringTable()
-{}
-
 bool StringTable::StringExists(const std::string& key) const {
     std::scoped_lock lock(m_mutex);
     return m_strings.find(key) != m_strings.end();
