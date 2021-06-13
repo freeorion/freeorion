@@ -8,6 +8,7 @@ import pathfinding
 import PlanetUtilsAI
 from AIDependencies import DRYDOCK_HAPPINESS_THRESHOLD, INVALID_ID
 from aistate_interface import get_aistate
+from fo_typing import SystemId
 from freeorion_tools import get_fleet_position
 from target import TargetFleet, TargetSystem
 from turn_state import get_empire_drydocks, get_system_supply
@@ -65,7 +66,7 @@ def can_travel_to_system(
     return [TargetSystem(sys_id) for sys_id in path_info.path]
 
 
-def get_nearest_supplied_system(start_system_id: int):
+def get_nearest_supplied_system(start_system_id: SystemId):
     """ Return systemAITarget of nearest supplied system from starting system startSystemID."""
     empire = fo.getEmpire()
     fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs

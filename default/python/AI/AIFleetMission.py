@@ -21,6 +21,7 @@ from fleet_orders import (
     OrderOutpost,
     OrderPause,
 )
+from fo_typing import FleetId
 from freeorion_tools import (
     assertion_fails,
     combine_ratings,
@@ -67,7 +68,7 @@ class AIFleetMission:
     :type target: target.Target | None
     """
 
-    def __init__(self, fleet_id: int):
+    def __init__(self, fleet_id: FleetId):
         self.orders = []
         self.fleet = TargetFleet(fleet_id)
         self.type = None

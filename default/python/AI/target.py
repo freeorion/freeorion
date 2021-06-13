@@ -3,17 +3,17 @@ from logging import warning
 from typing import Optional
 
 from AIDependencies import INVALID_ID
+from fo_typing import FleetId, PlanetId, SystemId, TargetId
 
 
 class Target:
     """
     Stores information about AI target - its id and type.
-    :type id: int
     """
     object_name = 'target'
+    id: TargetId
 
-    def __init__(self, target_id):
-        self.id = target_id
+    def __init__(self):
         if not self:
             warning("Target is invalid %s" % self)
 
@@ -47,6 +47,10 @@ class Target:
 class TargetPlanet(Target):
     object_name = 'planet'
 
+    def __init__(self, target_id: PlanetId):
+        self.id: PlanetId = target_id
+        super().__init__()
+
     def get_system(self) -> Optional["TargetSystem"]:
         """
         Returns the system that contains this object, or None.
@@ -65,6 +69,10 @@ class TargetPlanet(Target):
 class TargetSystem(Target):
     object_name = 'system'
 
+    def __init__(self, target_id: SystemId):
+        self.id: SystemId = target_id
+        super().__init__()
+
     def get_system(self) -> "TargetSystem":
         """
         Returns this object.
@@ -77,6 +85,10 @@ class TargetSystem(Target):
 
 class TargetFleet(Target):
     object_name = 'fleet'
+
+    def __init__(self, target_id: FleetId):
+        self.id: FleetId = target_id
+        super().__init__()
 
     def get_current_system_id(self):
         """

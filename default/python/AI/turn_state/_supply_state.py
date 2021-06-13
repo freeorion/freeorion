@@ -2,11 +2,12 @@ import freeOrionAIInterface as fo
 from logging import error, warning
 from typing import Dict, Mapping, Tuple
 
+from fo_typing import SystemId
 from freeorion_tools.caching import cache_for_current_turn
 
 
 @cache_for_current_turn
-def _get_system_supply_map() -> Dict[int, int]:
+def _get_system_supply_map() -> Dict[SystemId, int]:
     return fo.getEmpire().supplyProjections()  # map from system_id to supply
 
 
@@ -29,7 +30,7 @@ def get_system_supply(sys_id: int) -> int:
 
 
 @cache_for_current_turn
-def _get_systems_map_by_jumps_to_supply() -> Mapping[int, Tuple[int]]:
+def _get_systems_map_by_jumps_to_supply() -> Mapping[int, Tuple[SystemId]]:
     systems_by_jumps_to_supply = {}
 
     for sys_id, supply_val in _get_system_supply_map().items():
@@ -37,7 +38,7 @@ def _get_systems_map_by_jumps_to_supply() -> Mapping[int, Tuple[int]]:
     return {key: tuple(value) for key, value in systems_by_jumps_to_supply.items()}
 
 
-def get_systems_by_supply_tier(supply_tier: int) -> Tuple[int]:
+def get_systems_by_supply_tier(supply_tier: int) -> Tuple[SystemId]:
     """
     Get systems with supply tier.
 
