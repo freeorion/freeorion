@@ -27,8 +27,8 @@ public:
 
     void restart();
 
-    double duration() const;
-    std::string DurationString() const;
+    [[nodiscard]] double duration() const;
+    [[nodiscard]] std::string DurationString() const;
 
     class Impl;
 
@@ -114,7 +114,7 @@ public:
     //! strucures.
     void EnterSection(const std::string& section_name);
 
-    std::chrono::nanoseconds Elapsed() const;
+    [[nodiscard]] std::chrono::nanoseconds Elapsed() const;
 
 private:
     class Impl;
