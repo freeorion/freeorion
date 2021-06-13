@@ -202,28 +202,11 @@ void Empire::serialize(Archive& ar, const unsigned int version)
                       << std::string(allied_visible ? "allied visible" : "NOT allied visible");
     }
 
-    if (Archive::is_loading::value && version < 1) {
-        // adapt set to map
-        std::set<std::string> temp_stringset;
-        ar  & boost::serialization::make_nvp("m_techs", temp_stringset);
-        m_techs.clear();
-        for (auto& entry : temp_stringset)
-            m_techs[entry] = BEFORE_FIRST_TURN;
-    } else {
-        ar  & BOOST_SERIALIZATION_NVP(m_techs);
-
-        if (Archive::is_loading::value && version < 4) {
-            m_adopted_policies.clear();
-            m_initial_adopted_policies.clear();
-            m_available_policies.clear();
-            m_policy_adoption_total_duration.clear();
-        } else {
-            ar  & BOOST_SERIALIZATION_NVP(m_adopted_policies)
-                & BOOST_SERIALIZATION_NVP(m_initial_adopted_policies)
-                & BOOST_SERIALIZATION_NVP(m_available_policies)
-                & BOOST_SERIALIZATION_NVP(m_policy_adoption_total_duration);
-        }
-    }
+    ar  & BOOST_SERIALIZATION_NVP(m_techs)
+        & BOOST_SERIALIZATION_NVP(m_adopted_policies)
+        & BOOST_SERIALIZATION_NVP(m_initial_adopted_policies)
+        & BOOST_SERIALIZATION_NVP(m_available_policies)
+        & BOOST_SERIALIZATION_NVP(m_policy_adoption_total_duration);
 
     if (Archive::is_loading::value && version < 7) {
         m_policy_adoption_current_duration.clear();
@@ -357,9 +340,8 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
 
     TraceLogger() << "Serializing EmpireManager encoding empire: " << GlobalSerializationEncodingForEmpire();
 
-    if constexpr (Archive::is_loading::value) {
+    if constexpr (Archive::is_loading::value)
         em.Clear();    // clean up any existing dynamically allocated contents before replacing containers with deserialized data
-    }
 
     std::map<std::pair<int, int>, DiplomaticMessage> messages;
     if constexpr (Archive::is_saving::value)
