@@ -81,17 +81,17 @@ public:
     void RequestSavePreviews(const std::string& relative_directory);
     void Autosave();                    ///< Autosaves the current game, iff autosaves are enabled and any turn number requirements are met
     void ContinueSinglePlayerGame();    ///< Load the newest single player autosave and continue playing game
-    bool IsLoadGameAvailable() const;
-    std::string SelectLoadFile();       ///< Lets the user select a multiplayer save to load
+    [[nodiscard]] bool IsLoadGameAvailable() const;
+    [[nodiscard]] std::string SelectLoadFile(); ///< Lets the user select a multiplayer save to load
     void InitAutoTurns(int auto_turns); ///< Initialize auto turn counter
     void DecAutoTurns(int n = 1);       ///< Decrease auto turn counter
     void EliminateSelf();               ///< Resign from the game
 
-    ClientUI& GetClientUI()
+    [[nodiscard]] ClientUI& GetClientUI()
     { return *m_ui.get(); }
 
     void Reinitialize();
-    float GLVersion() const;
+    [[nodiscard]] float GLVersion() const;
 
     void UpdateCombatLogs(const Message& msg);
     /** Update any open SaveGameDialog with previews from the server. */
@@ -107,22 +107,22 @@ public:
     mutable FullscreenSwitchSignalType  FullscreenSwitchSignal;
     mutable RepositionWindowsSignalType RepositionWindowsSignal;
 
-    static std::pair<int, int>  GetWindowWidthHeight();
-    static std::pair<int, int>  GetWindowLeftTop();
+    [[nodiscard]] static std::pair<int, int> GetWindowWidthHeight();
+    [[nodiscard]] static std::pair<int, int> GetWindowLeftTop();
 
-    static GGHumanClientApp*      GetApp();               ///< returns GGHumanClientApp pointer to the single instance of the app
+    [[nodiscard]] static GGHumanClientApp*   GetApp(); ///< returns GGHumanClientApp pointer to the single instance of the app
 
     /** Adds window dimension options to OptionsDB after the start of main, but before GGHumanClientApp constructor.
         OSX will not tolerate static initialization of SDL, to check screen size. */
     static void AddWindowSizeOptionsAfterMainStart(OptionsDB& db);
 
     /** Converts server address to correct option name */
-    static std::string EncodeServerAddressOption(const std::string& server);
+    [[nodiscard]] static std::string EncodeServerAddressOption(const std::string& server);
 
     /** If hosting then send the logger state to the server. */
     void SendLoggingConfigToServer();
 
-    boost::intrusive_ptr<const boost::statechart::event_base> GetDeferredPostedEvent();
+    [[nodiscard]] boost::intrusive_ptr<const boost::statechart::event_base> GetDeferredPostedEvent();
     void PostDeferredEvent(boost::intrusive_ptr<const boost::statechart::event_base> event);
 
 protected:

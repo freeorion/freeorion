@@ -36,19 +36,19 @@ public:
      *
      * @return The player identifier of this client as assigned by the server.
      */
-    int PlayerID() const;
+    [[nodiscard]] int PlayerID() const;
 
     /** @brief Return the empire identifier of the empire this client controls
      *
      * @return An empire identifier.
      */
-    int EmpireID() const;
+    [[nodiscard]] int EmpireID() const;
 
     /** @brief Return the current game turn
      *
      * @return The number representing the current game turn.
      */
-    int CurrentTurn() const override;
+    [[nodiscard]] int CurrentTurn() const override;
 
     /** @brief Return the player identfier of the player controlling the empire
      *      @a empire_id
@@ -57,7 +57,7 @@ public:
      *
      * @return The player identifier of the client controlling the empire.
      */
-    int EmpirePlayerID(int empire_id) const;
+    [[nodiscard]] int EmpirePlayerID(int empire_id) const;
 
     /** @brief Return the players in game as ::PlayerInfo map
      *
@@ -65,8 +65,8 @@ public:
      *      their player identifier as key.
      *
      * @{ */
-    std::map<int, PlayerInfo>& Players();
-    const std::map<int, PlayerInfo>& Players() const;
+    [[nodiscard]] std::map<int, PlayerInfo>& Players();
+    [[nodiscard]] const std::map<int, PlayerInfo>& Players() const;
     /** @} */
 
     /** @brief Return the ::Universe known to this client
@@ -75,8 +75,8 @@ public:
      *      the known universe of this client.
      *
      * @{ */
-    Universe& GetUniverse() override;
-    const Universe& GetUniverse() const;
+    [[nodiscard]] Universe& GetUniverse() override;
+    [[nodiscard]] const Universe& GetUniverse() const;
     /** @} */
 
     /** @brief Return the ::GalaxySetupData of this game
@@ -84,8 +84,8 @@ public:
      * @return A reference to the ::GalaxySetupData used in this game session.
      *
      * @{ */
-    GalaxySetupData& GetGalaxySetupData();
-    const GalaxySetupData& GetGalaxySetupData() const override;
+    [[nodiscard]] GalaxySetupData& GetGalaxySetupData();
+    [[nodiscard]] const GalaxySetupData& GetGalaxySetupData() const override;
     /** @} */
 
     /** @brief Return the OrderSet of this client
@@ -93,8 +93,8 @@ public:
      * @return A reference to the OrderSet of this client.
      *
      * @{ */
-    OrderSet& Orders();
-    const OrderSet& Orders() const;
+    [[nodiscard]] OrderSet& Orders();
+    [[nodiscard]] const OrderSet& Orders() const;
     /** @} */
 
     /** @brief Return the networking object of this clients player
@@ -102,15 +102,15 @@ public:
      * @return A reference to the ClientNetworking object of this client.
      *
      * @{ */
-    ClientNetworking& Networking();
-    const ClientNetworking& Networking() const;
+    [[nodiscard]] ClientNetworking& Networking();
+    [[nodiscard]] const ClientNetworking& Networking() const;
     /** @} */
 
     /** @brief Return The Networking::ClientType of this client
      *
      * @return the networking client type of this players client.
      */
-    Networking::ClientType GetClientType() const;
+    [[nodiscard]] Networking::ClientType GetClientType() const;
 
     /** @brief Return the Networking::ClientType of the empire @a empire_id
      *
@@ -119,7 +119,7 @@ public:
      * @return the networking client type of the empire represented by @a
      *      empire_id parameter.
      */
-    Networking::ClientType GetEmpireClientType(int empire_id) const override;
+    [[nodiscard]] Networking::ClientType GetEmpireClientType(int empire_id) const override;
 
     /** @brief Return the Networking::ClientType of the player @a player_id
      *
@@ -128,7 +128,7 @@ public:
      * @return the networking client type of the player represented by @a
      *      player_id parameter.
      */
-    Networking::ClientType GetPlayerClientType(int player_id) const override;
+    [[nodiscard]] Networking::ClientType GetPlayerClientType(int player_id) const override;
 
     /** @brief Return the for this client visible name of @a object
      *
@@ -137,7 +137,7 @@ public:
      * @return The name of the @a object.  Depdending on Visibility it may not
      *      match with the actual object name.
      */
-    std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) override;
+    [[nodiscard]] std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) override;
 
     /** @brief Send the OrderSet and UI data to the server and start a new turn */
     virtual void StartTurn(const SaveGameUIData& ui_data);
@@ -157,8 +157,8 @@ public:
      * @return The EmpireManager instance in charge of maintaining the Empire
      *      object instances.
      * @{ */
-    EmpireManager& Empires() override;
-    const EmpireManager& Empires() const;
+    [[nodiscard]] EmpireManager& Empires() override;
+    [[nodiscard]] const EmpireManager& Empires() const;
     /** @} */
 
     /** @brief Return the Empire identified by @a empire_id
@@ -169,13 +169,13 @@ public:
      *      If there is no Empire with this @a empire_id or if the Empire is
      *      not yet known to this client a nullptr is returned.
      */
-    Empire* GetEmpire(int empire_id) override;
+    [[nodiscard]] Empire* GetEmpire(int empire_id) override;
 
-    SpeciesManager& GetSpeciesManager() override;
-    const SpeciesManager& GetSpeciesManager() const;
-    Species* GetSpecies(const std::string& name) override;
+    [[nodiscard]] SpeciesManager& GetSpeciesManager() override;
+    [[nodiscard]] const SpeciesManager& GetSpeciesManager() const;
+    [[nodiscard]] Species* GetSpecies(const std::string& name) override;
 
-    SupplyManager& GetSupplyManager() override;
+    [[nodiscard]] SupplyManager& GetSupplyManager() override;
 
     /** @brief Return all Objects known to @a empire_id
      *
@@ -184,7 +184,7 @@ public:
      * @return A map containing all Objects known to the ::Empire identified by
      *      @a empire_id.  If there is no ::Empire an empty map is returned.
      */
-    ObjectMap& EmpireKnownObjects(int empire_id) override;
+    [[nodiscard]] ObjectMap& EmpireKnownObjects(int empire_id) override;
 
     /** @brief Set the identifier of the ::Empire controlled by this client to
      *      @a empire_id
@@ -211,13 +211,13 @@ public:
      *
      * @return A pointer to the single ClientApp instance of this client.
      */
-    static ClientApp* GetApp();
+    [[nodiscard]] static ClientApp* GetApp();
 
     /** @brief Compare content checksum from server with client content checksum.
      *
      * @return true if verify successed.
      */
-    bool VerifyCheckSum(const Message& msg);
+    [[nodiscard]] bool VerifyCheckSum(const Message& msg);
 
 protected:
     // Gamestate...

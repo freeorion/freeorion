@@ -5,7 +5,7 @@
 
 namespace FreeOrionPython {
     // getter and setter for static s_save_state_string to be exposed to Python
-    const std::string& GetStaticSaveStateString();
+    [[nodiscard]] const std::string& GetStaticSaveStateString();
     void  SetStaticSaveStateString(const std::string& new_state_string);
     void  ClearStaticSaveStateString();
 

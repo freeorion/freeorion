@@ -71,7 +71,7 @@
 
 
 class CombatLogManager;
-CombatLogManager& GetCombatLogManager();
+[[nodiscard]] CombatLogManager& GetCombatLogManager();
 
 namespace {
     DeclareThreadSafeLogger(FSM);
