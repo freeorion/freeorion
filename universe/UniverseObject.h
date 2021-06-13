@@ -96,13 +96,13 @@ public:
 
     virtual int                 SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
 
-    const std::map<std::string, std::pair<int, float>>&   Specials() const;         ///< returns the Specials attached to this object
-    bool                        HasSpecial(const std::string& name) const;          ///< returns true iff this object has a special with the indicated \a name
-    int                         SpecialAddedOnTurn(const std::string& name) const;  ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
-    float                       SpecialCapacity(const std::string& name) const;     ///> returns the capacity of the special with name \a name or 0 if that special is not present
+    [[nodiscard]] const std::map<std::string, std::pair<int, float>>& Specials() const; ///< returns the Specials attached to this object
+    bool                        HasSpecial(const std::string& name) const;              ///< returns true iff this object has a special with the indicated \a name
+    int                         SpecialAddedOnTurn(const std::string& name) const;      ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
+    float                       SpecialCapacity(const std::string& name) const;         ///> returns the capacity of the special with name \a name or 0 if that special is not present
 
     /** Returns all tags this object has. */
-    virtual std::set<std::string>   Tags() const;
+    [[nodiscard]] virtual std::set<std::string>   Tags() const;
 
     /** Returns true iff this object has the tag with the indicated \a name. */
     virtual bool                HasTag(const std::string& name) const;
@@ -111,38 +111,38 @@ public:
 
     /** Return human readable string description of object offset \p ntabs from
         margin. */
-    virtual std::string         Dump(unsigned short ntabs = 0) const;
+    [[nodiscard]] virtual std::string Dump(unsigned short ntabs = 0) const;
 
     /** Returns id of the object that directly contains this object, if any, or
         INVALID_OBJECT_ID if this object is not contained by any other. */
-    virtual int                 ContainerObjectID() const;
+    [[nodiscard]] virtual int                 ContainerObjectID() const;
 
     /** Returns ids of objects contained within this object. */
-    virtual const std::set<int>&ContainedObjectIDs() const;
+    [[nodiscard]] virtual const std::set<int>&ContainedObjectIDs() const;
 
     /** Returns true if there is an object with id \a object_id is contained
         within this UniverseObject. */
-    virtual bool                Contains(int object_id) const;
+    [[nodiscard]] virtual bool                Contains(int object_id) const;
 
     /* Returns true if there is an object with id \a object_id that contains
        this UniverseObject. */
-    virtual bool                ContainedBy(int object_id) const;
+    [[nodiscard]] virtual bool                ContainedBy(int object_id) const;
 
-    std::set<int>               VisibleContainedObjectIDs(int empire_id) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
+    [[nodiscard]] std::set<int> VisibleContainedObjectIDs(int empire_id) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
 
-    const MeterMap&             Meters() const { return m_meters; }             ///< returns this UniverseObject's meters
-    const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    [[nodiscard]] const MeterMap&             Meters() const { return m_meters; }             ///< returns this UniverseObject's meters
+    [[nodiscard]] const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
-    Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+    [[nodiscard]] Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
 
     /** Returns the name of this objectas it appears to empire \a empire_id .*/
-    virtual const std::string&  PublicName(int empire_id, const ObjectMap& objects) const;
+    [[nodiscard]] virtual const std::string&  PublicName(int empire_id, const ObjectMap& objects) const;
 
     /** Accepts a visitor object \see UniverseObjectVisitor */
-    virtual std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const;
+    virtual std::shared_ptr<UniverseObject>   Accept(const UniverseObjectVisitor& visitor) const;
 
-    int                         CreationTurn() const;               ///< returns game turn on which object was created
-    int                         AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
+    [[nodiscard]] int                         CreationTurn() const;               ///< returns game turn on which object was created
+    [[nodiscard]] int                         AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
 
     mutable StateChangedSignalType StateChangedSignal;              ///< emitted when the UniverseObject is altered in any way
 
@@ -164,8 +164,8 @@ public:
     /** moves this object to map coordinates (x, y). */
     void            MoveTo(double x, double y);
 
-    MeterMap&       Meters() { return m_meters; }           ///< returns this UniverseObject's meters
-    Meter*          GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    [[nodiscard]] MeterMap&       Meters() { return m_meters; }           ///< returns this UniverseObject's meters
+    [[nodiscard]] Meter*          GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     /** Sets all this UniverseObject's meters' initial values equal to their
         current values. */
@@ -250,7 +250,7 @@ private:
 
 /** A function that returns the correct amount of spacing for an indentation of
   * \p ntabs during a dump. */
-inline std::string DumpIndent(unsigned short ntabs = 1)
+[[nodiscard]] inline std::string DumpIndent(unsigned short ntabs = 1)
 { return std::string(ntabs * 4 /* conversion to size_t is safe */, ' '); }
 
 

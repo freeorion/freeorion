@@ -225,10 +225,10 @@ void PolicyManager::SetPolicies(Pending::Pending<PoliciesTypeMap>&& future)
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
 ///////////////////////////////////////////////////////////
-PolicyManager& GetPolicyManager() {
+[[nodiscard]] PolicyManager& GetPolicyManager() {
     static PolicyManager manager;
     return manager;
 }
 
-const Policy* GetPolicy(const std::string& name)
+[[nodiscard]] const Policy* GetPolicy(const std::string& name)
 { return GetPolicyManager().GetPolicy(name); }

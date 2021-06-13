@@ -52,37 +52,37 @@ public:
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
     template <typename T = UniverseObject>
-    std::shared_ptr<const T> get(int id) const;
+    [[nodiscard]] std::shared_ptr<const T> get(int id) const;
 
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
     template <typename T = UniverseObject>
-    std::shared_ptr<T> get(int id);
+    [[nodiscard]] std::shared_ptr<T> get(int id);
 
     using id_range = boost::any_range<int, boost::forward_traversal_tag>;
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
     template <typename T = UniverseObject>
-    std::vector<std::shared_ptr<const T>> find(const id_range& object_ids) const;
+    [[nodiscard]] std::vector<std::shared_ptr<const T>> find(const id_range& object_ids) const;
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
     template <typename T = UniverseObject>
-    std::vector<std::shared_ptr<T>> find(const id_range& object_ids);
+    [[nodiscard]] std::vector<std::shared_ptr<T>> find(const id_range& object_ids);
 
     /** Returns all the objects that match \a visitor */
     template <typename T = UniverseObject>
-    std::vector<std::shared_ptr<const T>> find(const UniverseObjectVisitor& visitor) const;
+    [[nodiscard]] std::vector<std::shared_ptr<const T>> find(const UniverseObjectVisitor& visitor) const;
 
     /** Returns all the objects that match \a visitor */
     template <typename T = UniverseObject>
-    std::vector<std::shared_ptr<T>> find(const UniverseObjectVisitor& visitor);
+    [[nodiscard]] std::vector<std::shared_ptr<T>> find(const UniverseObjectVisitor& visitor);
 
     /** Returns IDs of all the objects that match \a visitor */
     template <typename T = UniverseObject>
-    std::vector<int> findIDs(const UniverseObjectVisitor& visitor) const;
+    [[nodiscard]] std::vector<int> findIDs(const UniverseObjectVisitor& visitor) const;
 
     /** Returns how many objects match \a visitor */
     template <typename T = UniverseObject>
@@ -94,42 +94,42 @@ public:
 
     /** Returns all the objects of type T */
     template <typename T = UniverseObject>
-    boost::select_second_const_range<container_type<T>> all() const
+    [[nodiscard]] boost::select_second_const_range<container_type<T>> all() const
     { return Map<T>() | boost::adaptors::map_values; }
 
     /** Returns all the objects of type T */
     template <typename T = UniverseObject>
-    boost::select_second_mutable_range<container_type<T>> all()
+    [[nodiscard]] boost::select_second_mutable_range<container_type<T>> all()
     { return Map<T>() | boost::adaptors::map_values; }
 
     /** Returns the IDs of all objects not known to have been destroyed. */
-    std::vector<int>        FindExistingObjectIDs() const;
+    [[nodiscard]] std::vector<int> FindExistingObjectIDs() const;
 
     /** Returns highest used object ID in this ObjectMap */
-    int                     HighestObjectID() const;
+    int HighestObjectID() const;
 
-    std::string             Dump(unsigned short ntabs = 0) const;
+    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const;
 
     /**  */
-    std::shared_ptr<const UniverseObject> ExistingObject(int id) const;
+    [[nodiscard]] std::shared_ptr<const UniverseObject> ExistingObject(int id) const;
 
-    const container_type<const UniverseObject>& ExistingObjects() const
+    [[nodiscard]] const container_type<const UniverseObject>& ExistingObjects() const
     { return m_existing_objects; }
-    const container_type<const UniverseObject>& ExistingResourceCenters() const
+    [[nodiscard]] const container_type<const UniverseObject>& ExistingResourceCenters() const
     { return m_existing_resource_centers; }
-    const container_type<const UniverseObject>& ExistingPopCenters() const
+    [[nodiscard]] const container_type<const UniverseObject>& ExistingPopCenters() const
     { return m_existing_pop_centers; }
-    const container_type<const UniverseObject>& ExistingShips() const
+    [[nodiscard]] const container_type<const UniverseObject>& ExistingShips() const
     { return m_existing_ships; }
-    const container_type<const UniverseObject>& ExistingFleets() const
+    [[nodiscard]] const container_type<const UniverseObject>& ExistingFleets() const
     { return m_existing_fleets; }
-    const container_type<const UniverseObject>& ExistingPlanets() const
+    [[nodiscard]] const container_type<const UniverseObject>& ExistingPlanets() const
     { return m_existing_planets; }
-    const container_type<const UniverseObject>& ExistingSystems() const
+    [[nodiscard]] const container_type<const UniverseObject>& ExistingSystems() const
     { return m_existing_systems; }
-    const container_type<const UniverseObject>& ExistingBuildings() const
+    [[nodiscard]] const container_type<const UniverseObject>& ExistingBuildings() const
     { return m_existing_buildings; }
-    const container_type<const UniverseObject>& ExistingFields() const
+    [[nodiscard]] const container_type<const UniverseObject>& ExistingFields() const
     { return m_existing_fields; }
 
     /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap.

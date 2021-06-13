@@ -187,57 +187,58 @@ public:
     typedef TechContainer::index<CategoryIndex>::type::const_iterator category_iterator;
 
     /** iterator that runs over all techs */
-    typedef TechContainer::index<NameIndex>::type::const_iterator     iterator;
+    typedef TechContainer::index<NameIndex>::type::const_iterator iterator;
 
     /** returns the tech with the name \a name; you should use the free function GetTech() instead */
-    const Tech*                     GetTech(const std::string& name) const;
+    [[nodiscard]] const Tech*              GetTech(const std::string& name) const;
 
     /** returns the tech category with the name \a name; you should use the free function GetTechCategory() instead */
-    const TechCategory*             GetTechCategory(const std::string& name) const;
+    [[nodiscard]] const TechCategory*      GetTechCategory(const std::string& name) const;
 
     /** returns the list of category names */
-    std::vector<std::string>        CategoryNames() const;
+    [[nodiscard]] std::vector<std::string> CategoryNames() const;
 
     /** returns list of all tech names */
-    std::vector<std::string>        TechNames() const;
+    [[nodiscard]] std::vector<std::string> TechNames() const;
 
     /** returns list of names of techs in specified category */
-    std::vector<std::string>        TechNames(const std::string& name) const;
+    [[nodiscard]] std::vector<std::string> TechNames(const std::string& name) const;
 
     /** returns all researchable techs */
-    std::vector<const Tech*>        AllNextTechs(const std::set<std::string>& known_techs);
+    [[nodiscard]] std::vector<const Tech*> AllNextTechs(const std::set<std::string>& known_techs);
 
     /** returns the cheapest researchable tech */
-    const Tech*                     CheapestNextTech(const std::set<std::string>& known_techs, int empire_id);
+    [[nodiscard]] const Tech*              CheapestNextTech(const std::set<std::string>& known_techs, int empire_id);
 
     /** returns all researchable techs that progress from the given known techs to the given desired tech */
-    std::vector<const Tech*>        NextTechsTowards(const std::set<std::string>& known_techs,
-                                                     const std::string& desired_tech,
-                                                     int empire_id);
-
-    /** returns the cheapest researchable tech that progresses from the given known techs to the given desired tech */
-    const Tech*                     CheapestNextTechTowards(const std::set<std::string>& known_techs,
+    [[nodiscard]] std::vector<const Tech*> NextTechsTowards(const std::set<std::string>& known_techs,
                                                             const std::string& desired_tech,
                                                             int empire_id);
 
-    size_t                          size() const;
+    /** returns the cheapest researchable tech that progresses from the given known techs to the given desired tech */
+    [[nodiscard]] const Tech*              CheapestNextTechTowards(const std::set<std::string>& known_techs,
+                                                                   const std::string& desired_tech,
+                                                                   int empire_id);
+
+    [[nodiscard]] size_t                   size() const;
 
     /** iterator to the first tech */
-    iterator                        begin() const;
+    [[nodiscard]] iterator                 begin() const;
 
     /** iterator to the last + 1th tech */
-    iterator                        end() const;
+    [[nodiscard]] iterator                 end() const;
 
     /** iterator to the first tech in category \a name */
-    category_iterator               category_begin(const std::string& name) const;
+    [[nodiscard]] category_iterator        category_begin(const std::string& name) const;
 
     /** iterator to the last + 1th tech in category \a name */
-    category_iterator               category_end(const std::string& name) const;
+    [[nodiscard]] category_iterator        category_end(const std::string& name) const;
 
     /** Returns names of indicated tech's prerequisites, and all prereqs of
       * those techs, etc. recursively. If \a min_required is false then prereqs
       * will be included and recursed into even if already known to the empire. */
-    std::vector<std::string>        RecursivePrereqs(const std::string& tech_name, int empire_id, bool min_required = true) const;
+    [[nodiscard]] std::vector<std::string> RecursivePrereqs(const std::string& tech_name, int empire_id,
+                                                            bool min_required = true) const;
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -245,7 +246,7 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    unsigned int                    GetCheckSum() const;
+    [[nodiscard]] unsigned int             GetCheckSum() const;
 
     using TechParseTuple = std::tuple<
         TechManager::TechContainer, // techs_
@@ -257,7 +258,7 @@ public:
 
 
     /** returns the instance of this singleton class; you should use the free function GetTechManager() instead */
-    static TechManager& GetTechManager();
+    [[nodiscard]] static TechManager& GetTechManager();
 
 private:
     TechManager();
@@ -267,15 +268,15 @@ private:
 
     /** returns an error string indicating the first instance of an illegal prerequisite relationship between
         two techs in m_techs, or an empty string if there are no illegal dependencies  */
-    std::string FindIllegalDependencies() const;
+    [[nodiscard]] std::string FindIllegalDependencies() const;
 
     /** returns an error string indicating the first prerequisite dependency cycle found in m_techs, or an
         empty string if there are no dependency cycles */
-    std::string FindFirstDependencyCycle() const;
+    [[nodiscard]] std::string FindFirstDependencyCycle() const;
 
     /** returns an error string indicating the first instance of a redundant dependency, or an empty string if there
         are no redundant dependencies.  An example of a redundant dependency is A --> C, if A --> B and B --> C. */
-    std::string FindRedundantDependency() const;
+    [[nodiscard]] std::string FindRedundantDependency() const;
 
     void AllChildren(const Tech* tech, std::map<std::string, std::string>& children) const;
 
