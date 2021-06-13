@@ -4501,15 +4501,15 @@ Production Window
 PRODUCTION_WINDOW_ARTICLE_TEXT
 '''The Production Window is the primary interface for utilizing Production Points (PP).
 It may be accessed by:
-*  Pressing the hotkey (default: CTRL + P)
-*  Double clicking on a planet
-*  Clicking on either of the industry icons at top of the [[MAP_WINDOW_ARTICLE_TITLE]] (shown here) <img src="icons/buttons/production.png"></img>
+• Pressing the hotkey (default: CTRL + P)
+• Double clicking on a planet
+• Clicking on either of the industry icons at top of the [[MAP_WINDOW_ARTICLE_TITLE]] (shown here) <img src="icons/buttons/production.png"></img>
 
 The Production Window is composed of:
-*  Production Summary panel
-*  Producible Items panel
-*  Production Queue panel
-*  The system side panel (on the right edge)
+• Production Summary panel
+• Producible Items panel
+• Production Queue panel
+• The system side panel (on the right edge)
 It also allows for some interaction with the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], primarily to change the system selection.
 
 
@@ -5885,8 +5885,8 @@ STOCKPILE_TEXT
 '''Most industry is used immediately for producing buildings or ships. An empire can also store Production Points (PP) for later use in the imperial stockpile. Usually PP can only be used for production if the production site is in the supply network where the PP are generated. Contrary to this PP from the imperial stockpile can be used at any owned production site. Only a small amount of PP-no more than the imperial use limit-can be used for production each turn.
 
 There are two ways two store PP in the imperial stockpile:
-* Surplus PP (PP not allocated to anything on the queue) at any other location are automatically transferred to the stockpile. This may trigger a warning.
-* PP explicitly allocated to a [[encyclopedia PROJECT_BT_STOCKPILE]] are also transferred to the stockpile.
+• Surplus PP (PP not allocated to anything on the queue) at any other location are automatically transferred to the stockpile. This may trigger a warning.
+• PP explicitly allocated to a [[encyclopedia PROJECT_BT_STOCKPILE]] are also transferred to the stockpile.
 
 The imperial stockpile use limit is the total of the [[metertype METER_STOCKPILE]] of each planet.
 Species stockpile distribution ability, buildings, technologies, and setting the [[encyclopedia STOCKPILE_FOCUS_TITLE]] increase it.
@@ -6396,15 +6396,15 @@ PHOTOTROPHIC_SPECIES_TEXT
 
 Population changes:
 
-* [[STAR_BLUE]] star: ([[SZ_TINY]] +3) ([[SZ_SMALL]] +6) ([[SZ_MEDIUM]] +9) ([[SZ_LARGE]] +12) ([[SZ_HUGE]] +15)
+• [[STAR_BLUE]] star: ([[SZ_TINY]] +3) ([[SZ_SMALL]] +6) ([[SZ_MEDIUM]] +9) ([[SZ_LARGE]] +12) ([[SZ_HUGE]] +15)
 
-* [[STAR_WHITE]] star: ([[SZ_TINY]] +1.5) ([[SZ_SMALL]] +3) ([[SZ_MEDIUM]] +4.5) ([[SZ_LARGE]] +6) ([[SZ_HUGE]] +7.5)
+• [[STAR_WHITE]] star: ([[SZ_TINY]] +1.5) ([[SZ_SMALL]] +3) ([[SZ_MEDIUM]] +4.5) ([[SZ_LARGE]] +6) ([[SZ_HUGE]] +7.5)
 
-* [[STAR_YELLOW]] star, [[STAR_ORANGE]] star: (No changes)
+• [[STAR_YELLOW]] star, [[STAR_ORANGE]] star: (No changes)
 
-* [[STAR_RED]] star, [[STAR_NEUTRON]] star: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5)
+• [[STAR_RED]] star, [[STAR_NEUTRON]] star: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5)
 
-* [[STAR_BLACK]], [[STAR_NONE]]: ([[SZ_TINY]] -10) ([[SZ_SMALL]] -20) ([[SZ_MEDIUM]] -30) ([[SZ_LARGE]] -40) ([[SZ_HUGE]] -50)'''
+• [[STAR_BLACK]], [[STAR_NONE]]: ([[SZ_TINY]] -10) ([[SZ_SMALL]] -20) ([[SZ_MEDIUM]] -30) ([[SZ_LARGE]] -40) ([[SZ_HUGE]] -50)'''
 
 SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Metabolism
@@ -12870,7 +12870,9 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with research focus, dependent on the distance from the planet to the furthest-away ship owned by its empire.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with research focus, dependent on the distance from the planet to the furthest-away other planet also set to research focus and owned by the same empire. Research is increased by the lesser of:
+• [[value DISTRIB_THOUGH_RESEARCH_SCALING]] x the square root of the distance in uu to the furthest research-focused owned planet
+• The target's [[metertype METER_CONSTRUCTION]] x [[value DISTRIB_THOUGH_INFRA_LIMIT_SCALING]]
 
 Grants 1 extra military policy slot.
 
@@ -12881,9 +12883,9 @@ Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on planets with the Research focus, depending on the star type and number of planets with research focus in the system:
-* [[STAR_BLACK]] (+[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPLANET]])
-* [[STAR_NEUTRON]] (+[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPLANET]])
-* [[STAR_BLUE]], [[STAR_WHITE]], [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (+[[value LRN_STELLAR_TOMO_NORMAL_STAR_TARGET_RESEARCH_PERPLANET]])
+• [[STAR_BLACK]] (+[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPLANET]])
+• [[STAR_NEUTRON]] (+[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPLANET]])
+• [[STAR_BLUE]], [[STAR_WHITE]], [[STAR_YELLOW]], [[STAR_ORANGE]] or [[STAR_RED]] (+[[value LRN_STELLAR_TOMO_NORMAL_STAR_TARGET_RESEARCH_PERPLANET]])
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
@@ -14050,9 +14052,9 @@ Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets, per [[metertype METER_POPULATION]] and depending on the star type:
-* [[STAR_BLUE]] or [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
-* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x[[value BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
-* [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
+• [[STAR_BLUE]] or [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
+• [[STAR_YELLOW]] or [[STAR_ORANGE]] (x[[value BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
+• [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus applies.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
@@ -15949,8 +15951,8 @@ COLONY_SHIP_PARTS_UPKEEP_COST
 The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.
 
 TROOP_POD_OPERATION_TEXT
-'''  * The troops can only be used for one invasion.
-  * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
+'''  • The troops can only be used for one invasion.
+  • The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
 
 SHIP_WEAPON_GRADUALLY_REDUCE
 which allows ships to gradually reduce
