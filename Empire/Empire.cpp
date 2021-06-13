@@ -292,7 +292,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     // convert to vector
     std::vector<std::string> adopted_policies_in_category(total_slots_in_category, "");
     for (auto& [adopted_policy_slot, adopted_policy_name] : adopted_policies_in_category_map) {
-        if (adopted_policy_slot < 0 || adopted_policy_slot >= adopted_policies_in_category.size()) {
+        if (adopted_policy_slot < 0 || adopted_policy_slot >= static_cast<int>(adopted_policies_in_category.size())) {
             ErrorLogger() << "AdoptPolicy somehow got slot " << adopted_policy_slot << " of adopted policy " << adopted_policy_name
                           << " outside the suitable range with total slots size: " << adopted_policies_in_category.size();
             continue;
