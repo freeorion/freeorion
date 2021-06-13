@@ -6,6 +6,10 @@
 #include "../util/i18n.h"
 
 
+namespace {
+    const EncyclopediaArticle empty_article;
+}
+
 Encyclopedia& GetEncyclopedia() {
     static Encyclopedia encyclopedia;
     return encyclopedia;

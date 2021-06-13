@@ -33,19 +33,18 @@ public:
     // map from category name to list of articles in that category
     using ArticleMap = std::map<std::string, std::vector<EncyclopediaArticle>>;
 
-    Encyclopedia() {};
-    unsigned int GetCheckSum() const;
+    Encyclopedia() = default;
+    [[nodiscard]] unsigned int GetCheckSum() const;
 
     /** Sets articles to the value of \p future. */
     FO_COMMON_API void SetArticles(Pending::Pending<ArticleMap>&& future);
 
-    FO_COMMON_API const ArticleMap& Articles() const;
+    [[nodiscard]] FO_COMMON_API const ArticleMap& Articles() const;
 
-    FO_COMMON_API const EncyclopediaArticle& GetArticleByKey(const std::string& key) const;
-    FO_COMMON_API const EncyclopediaArticle& GetArticleByCategoryAndKey(const std::string& category, const std::string& key) const;
-    FO_COMMON_API const EncyclopediaArticle& GetArticleByName(const std::string& name) const;
+    [[nodiscard]] FO_COMMON_API const EncyclopediaArticle& GetArticleByKey(const std::string& key) const;
+    [[nodiscard]] FO_COMMON_API const EncyclopediaArticle& GetArticleByCategoryAndKey(const std::string& category, const std::string& key) const;
+    [[nodiscard]] FO_COMMON_API const EncyclopediaArticle& GetArticleByName(const std::string& name) const;
 
-    const EncyclopediaArticle empty_article;
 private:
     mutable ArticleMap m_articles;
 
@@ -53,6 +52,6 @@ private:
     mutable boost::optional<Pending::Pending<ArticleMap>> m_pending_articles = boost::none;
 };
 
-FO_COMMON_API Encyclopedia& GetEncyclopedia();
+[[nodiscard]] FO_COMMON_API Encyclopedia& GetEncyclopedia();
 
 #endif
