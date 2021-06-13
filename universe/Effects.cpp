@@ -3184,8 +3184,7 @@ void SetDestination::Execute(ScriptingContext& context) const {
 
     auto target_fleet = std::dynamic_pointer_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
-        ErrorLogger() << "SetDestination::Execute acting on non-fleet target:";
-        context.effect_target->Dump();
+        ErrorLogger() << "SetDestination::Execute acting on non-fleet target:" << context.effect_target->Dump();
         return;
     }
 
@@ -3272,8 +3271,7 @@ void SetAggression::Execute(ScriptingContext& context) const {
 
     auto target_fleet = std::dynamic_pointer_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
-        ErrorLogger() << "SetAggression::Execute acting on non-fleet target:";
-        context.effect_target->Dump();
+        ErrorLogger() << "SetAggression::Execute acting on non-fleet target:" << context.effect_target->Dump();
         return;
     }
 
