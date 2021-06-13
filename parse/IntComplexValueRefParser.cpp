@@ -77,7 +77,7 @@ namespace parse {
             = (
                     tok.TurnSystemExplored_
                 >-( label(tok.empire_) > int_rules.expr )
-                >-(label(tok.id_)      > int_rules.expr )
+                >-( label(tok.id_)      > int_rules.expr )
               ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
                         _1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr))
                 ]

@@ -372,6 +372,7 @@ std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySecti
 
     // define which section are top level sections ("root"), move top level candidates with single option to misc
     for (auto& [section_name, option_count] : total_options_per_section) {
+        (void)option_count; // quiet warning
         auto root_name = section_name.substr(0, section_name.find_first_of("."));
         // root_name with no dot element allowed to pass if an option is known, potentially moving to misc section
         auto total_it = total_options_per_section.find(root_name);
@@ -379,9 +380,9 @@ std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySecti
             continue;
         auto count = total_it->second;
 
-        if (count > 1) {
+        if (count > 1)
             options_by_section["root"].insert(std::move(root_name));
-        }
+
         else if (section_name != "misc" && section_name != "root" && !m_sections.count(section_name)) {
             // no section found with specified name, so move options in section to misc section
             auto section_options_it = options_by_section.find(section_name);
