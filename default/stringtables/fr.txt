@@ -532,13 +532,13 @@ SD_COLONY_SHIP
 Colon Galactique
 
 SD_COLONY_SHIP_DESC
-Astronef non-armé [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], et disposant d'un [[buildingtype BLD_SHIPYARD_BASE]].
+Astronef non-armé [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], et disposant d'un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_CRYONIC_COLONY_SHIP
 Colon Galactique Cryogenic
 
 SD_CRYONIC_COLONY_SHIP_DESC
-Astronef non-armé [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], et disposant d'un [[buildingtype BLD_SHIPYARD_BASE]].
+Astronef non-armé [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], et disposant d'un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_OUTPOST_SHIP
 Bâtisseur Galactique
@@ -556,13 +556,13 @@ SD_COLONY_BASE
 Colon Stellaire
 
 SD_COLONY_BASE_DESC
-Astronef non-armé pouvant créer une [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Astronef non-armé pouvant créer une [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_CRYONIC_COLONY_BASE
 Colon Stellaire Cryogenic
 
 SD_CRYONIC_COLONY_BASE_DESC
-Astronef non-armé pouvant créer une large [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Astronef non-armé pouvant créer une large [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_OUTPOST_BASE
 Bâtisseur Stellaire
@@ -6034,7 +6034,7 @@ Population
 METER_POPULATION_VALUE_DESC
 '''La Population représente la taille d'une colonie sur une planète. Sa valeur maximale dépend de l'[[encyclopedia ENC_SPECIES]] et de son adaptation à l'[[encyclopedia ENVIRONMENT_TITLE]] d'une planète. Plusieurs bonus de capacité en [[metertype METER_INDUSTRY]] et en [[metertype METER_RESEARCH]] sont liés à la taille de la Population: plus la Population est importante, plus les bonus sont élevés.
 
-Une Population supérieure ou égale à 3 et un [[metertype METER_HAPPINESS]] minimum de 5 sont requis pour qu'une colonie puisse lancer la colonisation d'autres planètes. Un astronef colonisateur est peuplé de Colons, leur nombre étant déterminé par la capacité de [[encyclopedia PC_COLONY]] du modèle d'astronef. Lors de la colonisation d'une planète, le nombre de Colons à bord de l'astronef constituera la Population de départ sur une planète nouvellement colonisée.
+Une Population supérieure ou égale à [[value MIN_COLONY_SIZE]] et un [[metertype METER_HAPPINESS]] minimum de [[value MIN_COLONY_HAPPINESS]] sont requis pour qu'une colonie puisse lancer la colonisation d'autres planètes. Un astronef colonisateur est peuplé de Colons, leur nombre étant déterminé par la capacité de [[encyclopedia PC_COLONY]] du modèle d'astronef. Lors de la colonisation d'une planète, le nombre de Colons à bord de l'astronef constituera la Population de départ sur une planète nouvellement colonisée.
 
 La Projection Population est la valeur optimale de Population qu'une planète tend à approcher, compte tenu des différents facteurs influençant la Population planétaire. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Population est susceptible de fluctuer à son tour.
 '''
@@ -14262,7 +14262,7 @@ BLD_COLONY_BASE
 Colonisateur Stellaire
 
 BLD_COLONY_BASE_DESC
-Crée un astronef [[predefinedshipdesign SD_COLONY_BASE]] permettant de coloniser une autre planète du même système stellaire. [[MIN_POPULATION_THREE_REQUIRED]].
+Crée un astronef [[predefinedshipdesign SD_COLONY_BASE]] permettant de coloniser une autre planète du même système stellaire. [[MIN_POPULATION_REQUIRED]].
 
 BLD_EXPERIMENTOR_OUTPOST
 Avant-Poste Expérimentateur
@@ -15882,8 +15882,8 @@ Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
 Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
-MIN_POPULATION_THREE_REQUIRED
-Ne peut être construit qu'en un lieu dont la [[metertype METER_POPULATION]] est supérieure ou égale à 3
+MIN_POPULATION_REQUIRED
+Ne peut être construit qu'en un lieu dont la [[metertype METER_POPULATION]] est supérieure ou égale à [[value MIN_COLONY_SIZE]]
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
 Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].

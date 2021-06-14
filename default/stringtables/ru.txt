@@ -502,13 +502,13 @@ SD_COLONY_SHIP
 Колониальный корабль
 
 SD_COLONY_SHIP_DESC
-Безоружный корабль, [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], в системе с [[buildingtype BLD_SHIPYARD_BASE]].
+Безоружный корабль, [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], в системе с [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_CRYONIC_COLONY_SHIP
 Колониальный корабль с модулем криозаморозки
 
 SD_CRYONIC_COLONY_SHIP_DESC
-Безоружный корабль, [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], в системе с [[buildingtype BLD_SHIPYARD_BASE]].
+Безоружный корабль, [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], в системе с [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_OUTPOST_SHIP
 Аванпост
@@ -526,13 +526,13 @@ SD_COLONY_BASE
 База для колонии
 
 SD_COLONY_BASE_DESC
-Безоружный корабль, способный создавать [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Безоружный корабль, способный создавать [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_CRYONIC_COLONY_BASE
 Крионическая база для колонии
 
 SD_CRYONIC_COLONY_BASE_DESC
-Безоружный корабль, способный создавать большие [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Безоружный корабль, способный создавать большие [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_OUTPOST_BASE
 Аванпост (база)
@@ -11737,7 +11737,7 @@ BLD_COLONY_BASE
 База колоний
 
 BLD_COLONY_BASE_DESC
-Создает корабль [[predefinedshipdesign SD_COLONY_BASE]], который может использоваться для колонизации другой планеты в той же системе. [[MIN_POPULATION_THREE_REQUIRED]]
+Создает корабль [[predefinedshipdesign SD_COLONY_BASE]], который может использоваться для колонизации другой планеты в той же системе. [[MIN_POPULATION_REQUIRED]]
 
 BLD_EXPERIMENTOR_OUTPOST
 Экспериментальный аванпост
@@ -13261,7 +13261,7 @@ BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
 Может быть построен только при наличии [[buildingtype BLD_SHIPYARD_BASE]] и [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] и [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] в системе.
 
-MIN_POPULATION_THREE_REQUIRED
+MIN_POPULATION_REQUIRED
 Может быть построен только при наличии уровня населения не менее трёх.
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
