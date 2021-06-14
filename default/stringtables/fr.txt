@@ -4355,10 +4355,19 @@ Description
 ##
 
 POLICY_LOCKED
-Politique indisponible
+Politique indisponible mais demanderait %1% PI pour être appliquée.
 
 POLICY_ADOPTABLE_COST
 Politique applicable pour %1% PI
+
+POLICY_ADOPTED
+Politique appliquée. Aurait requis %1% PI si appliquée présentement.
+
+POLICY_ADOPTION_TIMES_CURRENT_AND_TOTAL
+Politique appliquée depuis %1% tours actuellement et %2% tours au total.
+
+POLICY_ADOPTION_TIME_TOTAL
+Politique non appliquée actuellement. A été appliquée pendant %2% tours au total.
 
 
 ##
@@ -7431,6 +7440,12 @@ Les astronomes ont observé une nouvelle supernova ayant détruit la totalité d
 
 SITREP_NOVA_DETECTED_LABEL
 Supernova détectée
+
+SITREP_BUREAUCRACY_STOPPED
+Le développement exponentiel de la [[policy PLC_BUREAUCRACY]] a paralysé son fonctionnement en raison d'un manque de structures administratives. Le nombre total de structures d'[[buildingtype BLD_REGIONAL_ADMIN]] et [[buildingtype BLD_IMPERIAL_PALACE]] possédées par l'empire s'élève actuellement à %rawtext:havebuildings%, mais %rawtext:needbuildings% sont nécessaires pour améliorer la Stabilité planétaire de [[value PLC_BUREAUCRACY_STABILITY_FLAT]]. La [[policy PLC_BUREAUCRACY]] requiert une structure admistrative supplémentaire tous les [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] tours.
+
+SITREP_BUREAUCRACY_STOPPED_LABEL
+Paralysie Bureaucratique
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 ALERTE : il semble que %rawtext% %predefinedshipdesign% aient été repérés dans le système %system%, rôdant près de l'Avant-Poste %species%!
@@ -11684,7 +11699,9 @@ PLC_TERROR_SUPPRESSION
 Suppression du Terrorisme
 
 PLC_TERROR_SUPPRESSION_DESC
-Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de [[value PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE]] par le nombre d'astronefs présents dans le système et appartenant à l'empire, armés, et dont l'équipage est de la même espèce que celle peuplant la Capitale impériale. Ces astronefs coûtent [[value PLC_TERROR_SUPPRESSION_SHIP_INFLUENCE_FLAT]] en [[metertype METER_INFLUENCE]].
+'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de [[value PLC_TERROR_SUPPRESSION_TARGET_STABILITY_SCALE]] par le nombre d'astronefs présents dans le système et appartenant à l'empire, armés, et dont l'équipage est de la même espèce que celle peuplant la Capitale impériale.
+• Diminue l'[[metertype METER_REBEL_TROOPS]] sur ces planètes de [[value PLC_TERROR_SUPPRESSION_REBEL_REDUCTION_SCALE]] par astronef.
+• Ces astronefs coûtent [[value PLC_TERROR_SUPPRESSION_SHIP_INFLUENCE_FLAT]] en [[metertype METER_INFLUENCE]].'''
 
 PLC_TERROR_SUPPRESSION_SHORT_DESC
 Augmente la Stabilité à l'aide d'astronefs armés
@@ -11822,6 +11839,17 @@ PLC_ISOLATION_DESC
 
 PLC_ISOLATION_SHORT_DESC
 Améliore les planètes isolées
+
+PLC_BUREAUCRACY
+Bureaucratie
+
+PLC_BUREAUCRACY_DESC
+'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] d'une planète habitée et appartenant à l'empire de [[value PLC_BUREAUCRACY_STABILITY_FLAT]], tant que l'empire dispose de suffisamment de structures d'[[buildingtype BLD_REGIONAL_ADMIN]]. Une structure supplémentaire d'[[buildingtype BLD_REGIONAL_ADMIN]] est requise tous les [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] tours à partir de l'application de cette Politique.
+• Modifier le Focus planétaire réduit l'[[metertype METER_INFLUENCE]] de cette planète de [[value BUREAUCRACY_FOCUS_CHANGE_PENALTY]].
+'''
+
+PLC_BUREAUCRACY_SHORT_DESC
+Améliore la Stabilité
 
 
 ##
