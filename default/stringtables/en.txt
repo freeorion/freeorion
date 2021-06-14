@@ -532,13 +532,13 @@ SD_COLONY_SHIP
 Colony Ship
 
 SD_COLONY_SHIP_DESC
-Unarmed vessel [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
+Unarmed vessel [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_CRYONIC_COLONY_SHIP
 Cryonic Colony Ship
 
 SD_CRYONIC_COLONY_SHIP_DESC
-Unarmed vessel [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
+Unarmed vessel [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_OUTPOST_SHIP
 Outpost Ship
@@ -556,13 +556,13 @@ SD_COLONY_BASE
 Colony Base
 
 SD_COLONY_BASE_DESC
-Unarmed vessel capable of creating a [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Unarmed vessel capable of creating a [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_CRYONIC_COLONY_BASE
 Cryonic Colony Base
 
 SD_CRYONIC_COLONY_BASE_DESC
-Unarmed vessel capable of creating a large [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Unarmed vessel capable of creating a large [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_OUTPOST_BASE
 Outpost Base
@@ -6032,11 +6032,11 @@ METER_POPULATION_VALUE_LABEL
 Population
 
 METER_POPULATION_VALUE_DESC
-'''The Population represents the size of a colony on a planet. Its maximum value depends on the [[encyclopedia ENC_SPECIES]] and how suitable the planet's [[encyclopedia ENVIRONMENT_TITLE]] is for that species. Many [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] output bonuses are linked to the Population size: larger Population gives more bonuses.
+'''The Population represents the current size of a colony on a planet. Many [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] output bonuses are linked to the Population size: larger Population gives more bonuses.
 
-A Population of at least three and a minimum [[metertype METER_HAPPINESS]] of 5 is necessary for a colony to act as a source of settlers for colonizing other planets. A colony ship has a population of Colonists, which is determined by the [[encyclopedia PC_COLONY]] capacity of the ship design. When colonizing a planet, the number of Colonists aboard the ship will be the starting Population on the newly settled planet.
+The Target Population is the stable Population size a planet will approach, given the current factors influencing the planetary Population. Its value depends on the [[encyclopedia ENC_SPECIES]] and how suitable the planet's [[encyclopedia ENVIRONMENT_TITLE]] is for that species. It is also connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Population value is likely to shift.
 
-The Target Population is the stable Population size a planet will approach, given the current factors influencing the planetary Population. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, and various other game effects. If these factors change, then the Target Population value is likely to shift.
+A Population of at least [[value MIN_COLONY_SIZE]] and a minimum [[metertype METER_HAPPINESS]] of [[value MIN_COLONY_HAPPINESS]] is necessary for a colony to act as a source of settlers for colonizing other planets. A colony ship has a population of Colonists, which is determined by the [[encyclopedia PC_COLONY]] capacity of the ship design. When colonizing a planet, the number of Colonists aboard the ship will be the starting Population on the newly settled planet.
 '''
 
 METER_INDUSTRY_VALUE_LABEL
@@ -14262,7 +14262,7 @@ BLD_COLONY_BASE
 Colony Base
 
 BLD_COLONY_BASE_DESC
-Creates a [[predefinedshipdesign SD_COLONY_BASE]] ship which can be used to colonize another planet in the same system. [[MIN_POPULATION_THREE_REQUIRED]].
+Creates a [[predefinedshipdesign SD_COLONY_BASE]] ship which can be used to colonize another planet in the same system. [[MIN_POPULATION_REQUIRED]].
 
 BLD_EXPERIMENTOR_OUTPOST
 Experimentor Outpost
@@ -15882,8 +15882,8 @@ Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]] and an
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
-MIN_POPULATION_THREE_REQUIRED
-Can only be built at a location with a [[metertype METER_POPULATION]] of at least three
+MIN_POPULATION_REQUIRED
+Can only be built at a location with a [[metertype METER_POPULATION]] of at least [[value MIN_COLONY_SIZE]]
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].

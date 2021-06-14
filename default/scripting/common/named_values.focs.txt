@@ -18,5 +18,9 @@ NamedInteger name = "FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE" value = (GameR
 
 NamedReal name = "AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT" value = 40.0
 
+NamedInteger name = "MIN_COLONY_SIZE" value = [[MIN_RECOLONIZING_SIZE]]
+
+NamedInteger name = "MIN_COLONY_HAPPINESS" value = [[MIN_RECOLONIZING_HAPPINESS]]
+
 #include "/scripting/common/misc.macros"
 #include "/scripting/common/base_prod.macros"

@@ -453,13 +453,13 @@ SD_COLONY_SHIP
 Siedlungsschiff
 
 SD_COLONY_SHIP_DESC
-Unbewaffnetes Schiff, [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]]. EIne [[buildingtype BLD_SHIPYARD_BASE]] ist ebenfalls erforderlich.
+Unbewaffnetes Schiff, [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]]. EIne [[buildingtype BLD_SHIPYARD_BASE]] ist ebenfalls erforderlich.
 
 SD_CRYONIC_COLONY_SHIP
 Kryostase-Siedlungsschiff
 
 SD_CRYONIC_COLONY_SHIP_DESC
-Unbewaffnetes Schiff, [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]]. EIne [[buildingtype BLD_SHIPYARD_BASE]] ist ebenfalls erforderlich.
+Unbewaffnetes Schiff, [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]]. EIne [[buildingtype BLD_SHIPYARD_BASE]] ist ebenfalls erforderlich.
 
 SD_OUTPOST_SHIP
 Außenpostenschiff
@@ -477,13 +477,13 @@ SD_COLONY_BASE
 Siedlungsbasis
 
 SD_COLONY_BASE_DESC
-Unbewaffnetes Schiff, dass eine [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]] gründen kann. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Unbewaffnetes Schiff, dass eine [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]] gründen kann. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_CRYONIC_COLONY_BASE
 Kryostase-Siedlungsbasis
 
 SD_CRYONIC_COLONY_BASE_DESC
-Unbewaffnetes Schiff, dass eine große [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]] gründen kann. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Unbewaffnetes Schiff, dass eine große [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]] gründen kann. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_OUTPOST_BASE
 Außenpostenbasis
@@ -7961,7 +7961,7 @@ Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]] und ein[[buildin
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
 Zum Bau müssen vor Ort eine [[buildingtype BLD_SHIPYARD_BASE]], ein [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] und eine [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] vorhanden sein.
 
-MIN_POPULATION_THREE_REQUIRED
+MIN_POPULATION_REQUIRED
 Zum Bau muss vor Ort eine [[metertype METER_POPULATION]] von mindestens drei vorhanden sein
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED

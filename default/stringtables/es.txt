@@ -521,13 +521,13 @@ SD_COLONY_SHIP
 Nave colonizadora
 
 SD_COLONY_SHIP_DESC
-Nave desarmada [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], con un [[buildingtype BLD_SHIPYARD_BASE]].
+Nave desarmada [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], con un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_CRYONIC_COLONY_SHIP
 Nave colonizadora criónica
 
 SD_CRYONIC_COLONY_SHIP_DESC
-Nave desarmada [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], con un [[buildingtype BLD_SHIPYARD_BASE]].
+Nave desarmada [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], con un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_OUTPOST_SHIP
 Nave de avanzada
@@ -545,13 +545,13 @@ SD_COLONY_BASE
 Lanzadera de colonización
 
 SD_COLONY_BASE_DESC
-Nave desarmada capaz de crear una [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Nave desarmada capaz de crear una [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_CRYONIC_COLONY_BASE
 Lanzadera criónica de colonización
 
 SD_CRYONIC_COLONY_BASE_DESC
-Nave desarmada capaz de crear una [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_THREE_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+Nave desarmada capaz de crear una [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
 
 SD_OUTPOST_BASE
 Lanzadera de avanzada
@@ -12998,7 +12998,7 @@ BLD_COLONY_BASE
 Colonia Base
 
 BLD_COLONY_BASE_DESC
-Crea una nave Colonia Base que puede ser usada para colonizar otro planeta en el mismo sistema.  Solo puede ser construida en un colonia con una población de 3 o mas.
+Crea una nave Colonia Base que puede ser usada para colonizar otro planeta en el mismo sistema. Solo puede ser construida en un colonia con una población de [[value MIN_COLONY_SIZE]] o mas.
 
 #*BLD_EXPERIMENTOR_OUTPOST
 #* <not translated 1970-01-01 01:00:00>
@@ -14589,7 +14589,7 @@ Solo se puede construir en un planeta con un [[buildingtype BLD_SHIPYARD_BASE]] 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
 Solo se puede construir en un planeta con un [[buildingtype BLD_SHIPYARD_BASE]], una [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] y una [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
-MIN_POPULATION_THREE_REQUIRED
+MIN_POPULATION_REQUIRED
 Solo se puede construir en un planeta con una [[metertype METER_POPULATION]] de al menos 3
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
