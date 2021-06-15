@@ -8439,7 +8439,7 @@ Social Structure:
 Replicons have a relatively primitive social structure. They have a planetary government, because a few feudal lords discovered space travel as a convenient way of attacking people really far away. Their government is effectively feudal, due to some unusual effects that allowed them to reach space flight before achieving the nationstate/industrial revolution stage of development. Because of the wide variety of self-replicating machines on Cisarruj, most needs that are met by industry on other worlds are met by 'agriculture' or 'breeding' by Replicons. They end up without any actual 'Industrial Base' or even much of an understanding of technology other than what various 'natural' parts and products can be used for. This means that their society is highly illiterate, most people passing on knowledge that their pappies taught them on how to skin a "creature's" titanium coat, just enough so that it could grow it back or how much uranium ore to feed a reprocessing reactor if it was giving bad aluminum. Most things that normal 'developed' societies would expect are only present in the lord's estates, the remainder of society looks like something out of a post-apocalyptic novel.
 
 Homeworld:
-Cisarruj is a heavily irradiated planet with a profound mystery about it. The planet is dominated by a wide variety of autonomous self replicating machines. There are recorded histories of who went to war with who when, and this is actually significant when dealing with the formation of the Cisarruj Empire. However, most simply reads like any other world's pre industrial history periods of powers large and small waxing and waning. The Mystery of the Replicons, however is in their prehistory. Did a sentient race assemble them as an experiment maybe, or were they some type of accident (an industrial development project left unsupervised) did their creators simply leave and forget about them, or did their creators meet a worse fate possibly at the hands of those beings they created.
+Cisarruj is a heavily irradiated planet with a profound mystery about it. The planet is dominated by a wide variety of autonomous self replicating machines. There are recorded histories of who went to war with who when, and this is actually significant when dealing with the formation of the Cisarruj Empire. However, most simply reads like any other world's pre industrial history periods of powers large and small waxing and waning. The Mystery of the Replicons, however is in their prehistory. Did a sentient race assemble them as an experiment maybe, or were they some type of accident (an industrial development project left unsupervised), did their creators simply leave and forget about them, or did their creators meet a worse fate possibly at the hands of those beings they created.
 '''
 
 SP_EGASSEM
@@ -8559,7 +8559,7 @@ SP_RAAAGH_DESC
 '''The Raaagh are 1.5 meter tall stripe-furred bipeds. The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance. The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage - they must survive on their own competing against their siblings for hiding places and stealing food like vermin. After three years usually only one is left, and the surviving young begin to learn to speak. This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
 
 Personality:
-Extreme territoriality is the Raaagh's most distinctive trait- woven throughout their daily lives and culture. Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
+Extreme territoriality is the Raaagh's most distinctive trait, woven throughout their daily lives and culture. Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
 
 Homeworld:
 The Raaagh homeworld is of the Terran type. Sea and land are more or less evenly spread out, with the largest continent covering only 4% of planet's surface. The many small continents and large islands encourage a territorial attitude.
@@ -16092,6 +16092,21 @@ GREAT_INFLUENCE_DESC
 ULTIMATE_INFLUENCE_DESC
 +++	Ultimate [[metertype METER_INFLUENCE]]: 300%
 
+BAD_HAPPINESS_DESC
+−	Bad [[metertype METER_HAPPINESS]]: -5
+
+AVERAGE_HAPPINESS_DESC
+'''	Average [[metertype METER_HAPPINESS]]: +0'''
+
+GOOD_HAPPINESS_DESC
++	Good [[metertype METER_HAPPINESS]]: +5
+
+GREAT_HAPPINESS_DESC
+++	Great [[metertype METER_HAPPINESS]]: +10
+
+ULTIMATE_HAPPINESS_DESC
++++	Ultimate [[metertype METER_HAPPINESS]]: +15
+
 NO_DEFENSE_TROOPS_DESC
 −−−	No Defensive Ground [[metertype METER_TROOPS]]
 
@@ -16512,6 +16527,26 @@ GREAT_INFLUENCE_LABEL
 # %2% FIXME
 ULTIMATE_INFLUENCE_LABEL
 %2% Ultimate Influence
+
+# %1% FIXME
+# %2% FIXME
+BAD_HAPPINESS_LABEL
+%2% Bad Stability
+
+# %1% FIXME
+# %2% FIXME
+GOOD_HAPPINESS_LABEL
+%2% Good Stability
+
+# %1% FIXME
+# %2% FIXME
+GREAT_HAPPINESS_LABEL
+%2% Great Stability
+
+# %1% FIXME
+# %2% FIXME
+ULTIMATE_HAPPINESS_LABEL
+%2% Ultimate Stability
 
 # %1% FIXME
 # %2% FIXME

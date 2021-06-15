@@ -6,7 +6,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "LITHIC" "TELEPATHIC" "GOOD_INDUSTRY" "BAD_RESEARCH" "GREAT_SUPPLY" "PEDIA_LITHIC_SPECIES_CLASS" ]
+    tags = [ "LITHIC" "TELEPATHIC" "GOOD_INDUSTRY" "BAD_RESEARCH" "GOOD_HAPPINESS" "GREAT_SUPPLY" "PEDIA_LITHIC_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -23,11 +23,11 @@ Species
     effectsgroups = [
         [[GOOD_INDUSTRY]]
         [[BAD_RESEARCH]]
-        [[GOOD_INFLUENCE]]
+        [[AVERAGE_INFLUENCE]]
         [[AVERAGE_STOCKPILE]]
 
         [[AVERAGE_POPULATION]]
-        [[AVERAGE_HAPPINESS]]
+        [[GOOD_HAPPINESS]]
         [[GREAT_SUPPLY]]
         [[AVERAGE_DEFENSE_TROOPS]]
 
