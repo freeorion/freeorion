@@ -6,7 +6,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = ["ORGANIC" "XENOPHOBIC" "GREAT_WEAPONS" "AVERAGE_SUPPLY" "PEDIA_ORGANIC_SPECIES_CLASS" ]
+    tags = ["ORGANIC" "XENOPHOBIC" "GREAT_WEAPONS" "GOOD_HAPPINESS" "AVERAGE_SUPPLY" "PEDIA_ORGANIC_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -27,7 +27,7 @@ Species
         [[AVERAGE_STOCKPILE]]
 
         [[AVERAGE_POPULATION]]
-        [[AVERAGE_HAPPINESS]]
+        [[GOOD_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
         [[AVERAGE_DEFENSE_TROOPS]]
 

@@ -3,11 +3,10 @@ Species
     description = "SP_ABADDONI_DESC"
     gameplay_description = "SP_ABADDONI_GAMEPLAY_DESC"
     Playable
-    //Native
     CanProduceShips
     CanColonize
 
-    tags = [ "LITHIC" "BAD_RESEARCH" "AVERAGE_SUPPLY"  "PEDIA_LITHIC_SPECIES_CLASS" ] 
+    tags = [ "LITHIC" "BAD_RESEARCH" "GOOD_INFLUENCE" "GOOD_HAPPINESS" "AVERAGE_SUPPLY" "PEDIA_LITHIC_SPECIES_CLASS" ] 
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -27,7 +26,7 @@ Species
         [[AVERAGE_STOCKPILE]]
 
         [[AVERAGE_POPULATION]]
-        [[AVERAGE_HAPPINESS]]
+        [[GOOD_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
         EffectsGroup

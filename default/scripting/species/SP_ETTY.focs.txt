@@ -3,7 +3,6 @@ Species
     description = "SP_ETTY_DESC"
     gameplay_description = "SP_ETTY_GAMEPLAY_DESC"
     Playable
-    //Native
     CanProduceShips
     CanColonize
 

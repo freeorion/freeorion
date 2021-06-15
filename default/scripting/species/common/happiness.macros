@@ -2,10 +2,62 @@ STABILITY_PER_LIKED_OR_DISLIKED_FOCUS
 '''2.0 * (1.0 + (Statistic If condition = EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_LIBERTY")
           - 0.5*(Statistic If condition = EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_CONFORMANCE"))'''
 
+BAD_HAPPINESS
+'''
+[[COMMON_HAPPINESS_EFFECTS]]
+[[STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY]]
+
+        EffectsGroup
+            description = "BAD_HAPPINESS_DESC"
+            scope = Source
+            activation = Planet
+            accountinglabel = "BAD_HAPPINESS_LABEL"
+            effects = SetTargetHappiness value = Value - 5
+'''
+
 AVERAGE_HAPPINESS
 '''
 [[COMMON_HAPPINESS_EFFECTS]]
 [[STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY]]
+'''
+
+GOOD_HAPPINESS
+'''
+[[COMMON_HAPPINESS_EFFECTS]]
+[[STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY]]
+
+        EffectsGroup
+            description = "GOOD_HAPPINESS_DESC"
+            scope = Source
+            activation = Planet
+            accountinglabel = "GOOD_HAPPINESS_LABEL"
+            effects = SetTargetHappiness value = Value + 5
+'''
+
+GREAT_HAPPINESS
+'''
+[[COMMON_HAPPINESS_EFFECTS]]
+[[STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY]]
+
+        EffectsGroup
+            description = "GREAT_HAPPINESS_DESC"
+            scope = Source
+            activation = Planet
+            accountinglabel = "GREAT_HAPPINESS_LABEL"
+            effects = SetTargetHappiness value = Value + 10
+'''
+
+ULTIMATE_HAPPINESS
+'''
+[[COMMON_HAPPINESS_EFFECTS]]
+[[STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY]]
+
+        EffectsGroup
+            description = "ULTIMATE_HAPPINESS_DESC"
+            scope = Source
+            activation = Planet
+            accountinglabel = "ULTIMATE_HAPPINESS_LABEL"
+            effects = SetTargetHappiness value = Value + 15
 '''
 
 INDEPENDENT_HAPPINESS
