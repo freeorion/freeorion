@@ -1340,7 +1340,7 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
 ///////////////////////////////////////////////////////////
 // TotalFighterShots (of a carrier during one battle)    //
 ///////////////////////////////////////////////////////////
-TotalFighterShots::TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id = nullptr, std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr) :
+TotalFighterShots::TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id, std::unique_ptr<Condition::Condition>&& sampling_condition) :
     Variable<int>(ReferenceType::NON_OBJECT_REFERENCE),
     m_carrier_id(std::move(carrier_id)),
     m_sampling_condition(std::move(sampling_condition))

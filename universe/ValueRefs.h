@@ -176,13 +176,13 @@ private:
     std::unique_ptr<ValueRef<V>>          m_value_ref;
 };
 
-/** The variable TotalFighterShots class.   The value returned by this node is
+/** The variable TotalFighterShots class. The value returned by this node is
   * computed from the gamestate; the number of shots of a launched fighters
-  * of the source carrier is counted (and added up) for all combat bouts
+  * of the given \a carrier_id is counted (and added up) for all combat bouts
   * in which the given \a sampling_condition matches. */
 struct FO_COMMON_API TotalFighterShots final : public Variable<int>
 {
-    TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id, std::unique_ptr<Condition::Condition>&& sampling_condition);
+    TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id, std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr);
 
     bool        operator==(const ValueRef<int>& rhs) const override;
     int         Eval(const ScriptingContext& context) const override;
