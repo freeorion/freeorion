@@ -32,49 +32,49 @@ public:
     EmpireManager& operator=(EmpireManager&& other) noexcept;
     virtual ~EmpireManager();
 
-    const const_container_type&           GetEmpires() const;
-    std::shared_ptr<const Empire>         GetEmpire(int id) const;  //!< Returns the empire whose ID is \a id, or nullptr if none exist
-    const std::string&                    GetEmpireName(int id) const;
-    std::shared_ptr<const UniverseObject> GetSource(int id, const ObjectMap& objects = Objects()) const;  //!< Return the empire source or nullptr if the empire or source doesn't exist
+    [[nodiscard]] const const_container_type&           GetEmpires() const;
+    [[nodiscard]] std::shared_ptr<const Empire>         GetEmpire(int id) const;  //!< Returns the empire whose ID is \a id, or nullptr if none exist
+    [[nodiscard]] const std::string&                    GetEmpireName(int id) const;
+    [[nodiscard]] std::shared_ptr<const UniverseObject> GetSource(int id, const ObjectMap& objects = Objects()) const;  //!< Return the empire source or nullptr if the empire or source doesn't exist
 
-    int                         NumEmpires() const;
-    int                         NumEliminatedEmpires() const;
+    [[nodiscard]] int                       NumEmpires() const;
+    [[nodiscard]] int                       NumEliminatedEmpires() const;
 
-    const DiploStatusMap&       GetDiplomaticStatuses() const;
-    DiplomaticStatus            GetDiplomaticStatus(int empire1, int empire2) const;
-    std::set<int>               GetEmpireIDsWithDiplomaticStatusWithEmpire(int empire_id,
+    [[nodiscard]] const DiploStatusMap&     GetDiplomaticStatuses() const;
+    [[nodiscard]] DiplomaticStatus          GetDiplomaticStatus(int empire1, int empire2) const;
+    [[nodiscard]] std::set<int>             GetEmpireIDsWithDiplomaticStatusWithEmpire(int empire_id,
                                                                            DiplomaticStatus diplo_status) const;
-    bool                        DiplomaticMessageAvailable(int sender_id, int recipient_id) const;
-    const DiplomaticMessage&    GetDiplomaticMessage(int sender_id, int recipient_id) const;
+    [[nodiscard]] bool                      DiplomaticMessageAvailable(int sender_id, int recipient_id) const;
+    [[nodiscard]] const DiplomaticMessage&  GetDiplomaticMessage(int sender_id, int recipient_id) const;
 
-    std::string                 Dump() const;
+    [[nodiscard]] std::string               Dump() const;
 
-    std::shared_ptr<Empire>     GetEmpire(int id);  //!< Returns the empire whose ID is \a id, or nullptr if none exist
-    const container_type&       GetEmpires();
+    [[nodiscard]] std::shared_ptr<Empire>   GetEmpire(int id);  //!< Returns the empire whose ID is \a id, or nullptr if none exist
+    [[nodiscard]] const container_type&     GetEmpires();
 
-    const_iterator begin() const;
-    const_iterator end() const;
-    iterator       begin();
-    iterator       end();
+    [[nodiscard]] const_iterator            begin() const;
+    [[nodiscard]] const_iterator            end() const;
+    [[nodiscard]] iterator                  begin();
+    [[nodiscard]] iterator                  end();
 
-    void        BackPropagateMeters();
+    void BackPropagateMeters();
 
-    void        SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
-    void        HandleDiplomaticMessage(const DiplomaticMessage& message);
-    void        SetDiplomaticMessage(const DiplomaticMessage& message);
-    void        RemoveDiplomaticMessage(int sender_id, int recipient_id);
+    void SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
+    void HandleDiplomaticMessage(const DiplomaticMessage& message);
+    void SetDiplomaticMessage(const DiplomaticMessage& message);
+    void RemoveDiplomaticMessage(int sender_id, int recipient_id);
 
-    void        ResetDiplomacy();
+    void ResetDiplomacy();
 
     /** Creates and inserts an empire with the specified properties and returns
       * a pointer to it.  This will only set up the data in Empire.  It is the
       * caller's responsibility to make sure that universe updates planet
       * ownership. */
-    void        CreateEmpire(int empire_id, std::string name, std::string player_name,
-                             const EmpireColor& color, bool authenticated);
+    void CreateEmpire(int empire_id, std::string name, std::string player_name,
+                      const EmpireColor& color, bool authenticated);
 
     /** Removes and deletes all empires from the manager. */
-    void        Clear();
+    void Clear();
 
     typedef boost::signals2::signal<void (int, int)> DiploSignalType;
 
@@ -82,7 +82,7 @@ public:
     mutable DiploSignalType DiplomaticMessageChangedSignal;
 
 private:
-    std::string DumpDiplomacy() const;
+    [[nodiscard]] std::string DumpDiplomacy() const;
 
     void InsertEmpire(std::shared_ptr<Empire>&& empire); //!< Adds the given empire to the manager
 
@@ -102,7 +102,7 @@ private:
 };
 
 /** The colors that are available for use for empires in the game. */
-FO_COMMON_API const std::vector<std::array<unsigned char, 4>>& EmpireColors();
+[[nodiscard]] FO_COMMON_API const std::vector<std::array<unsigned char, 4>>& EmpireColors();
 
 /** Initialize empire colors from \p path */
 FO_COMMON_API void InitEmpireColors(const boost::filesystem::path& path);

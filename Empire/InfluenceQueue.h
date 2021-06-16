@@ -19,7 +19,7 @@ class ResourcePool;
 struct FO_COMMON_API InfluenceQueue {
     /** The type of a single element in the Influence queue. */
     struct FO_COMMON_API Element {
-        explicit Element() = default;
+        Element() = default;
         Element(int empire_id_, std::string name_, bool paused_ = false) :
             name(std::move(name_)),
             empire_id(empire_id_),
@@ -31,7 +31,7 @@ struct FO_COMMON_API InfluenceQueue {
         float           allocated_ip = 0.0f;        ///< IP allocated to this InfluenceQueue Element by Empire Influence update
         bool            paused = false;
 
-        std::string Dump() const;
+        [[nodiscard]] std::string Dump() const;
 
     private:
         friend class boost::serialization::access;
@@ -50,28 +50,28 @@ struct FO_COMMON_API InfluenceQueue {
         m_empire_id(empire_id)
     {}
 
-    bool    InQueue(const std::string& name) const;
+    [[nodiscard]] bool  InQueue(const std::string& name) const;
 
-    int     ProjectsInProgress() const { return m_projects_in_progress; }
-    float   TotalIPsSpent() const { return m_total_IPs_spent; };
-    int     EmpireID() const { return m_empire_id; }
+    [[nodiscard]] int   ProjectsInProgress() const { return m_projects_in_progress; }
+    [[nodiscard]] float TotalIPsSpent() const { return m_total_IPs_spent; };
+    [[nodiscard]] int   EmpireID() const { return m_empire_id; }
 
     /** Returns amount of stockpile IP allocated to Influence queue elements. */
-    float AllocatedStockpileIP() const;
+    [[nodiscard]] float AllocatedStockpileIP() const;
 
     /** Returns the value expected for the Influence Stockpile for the next
       * turn, based on the current InfluenceQueue allocations. */
-    float ExpectedNewStockpileAmount() const { return m_expected_new_stockpile_amount; }
+    [[nodiscard]] float ExpectedNewStockpileAmount() const { return m_expected_new_stockpile_amount; }
 
 
     // STL container-like interface
-    bool            empty() const { return m_queue.empty(); }
-    unsigned int    size() const { return m_queue.size(); }
-    const_iterator  begin() const { return m_queue.begin(); }
-    const_iterator  end() const { return m_queue.end(); }
-    const_iterator  find(const std::string& item_name) const;
-    const Element&  operator[](std::size_t i) const;
-    const Element&  operator[](int i) const;
+    [[nodiscard]] bool           empty() const { return m_queue.empty(); }
+    [[nodiscard]] unsigned int   size() const { return m_queue.size(); }
+    [[nodiscard]] const_iterator begin() const { return m_queue.begin(); }
+    [[nodiscard]] const_iterator end() const { return m_queue.end(); }
+    [[nodiscard]] const_iterator find(const std::string& item_name) const;
+    [[nodiscard]] const Element& operator[](std::size_t i) const;
+    [[nodiscard]] const Element& operator[](int i) const;
 
 
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
@@ -83,17 +83,16 @@ struct FO_COMMON_API InfluenceQueue {
 
 
     // STL container-like interface
-    void        push_back(const Element& element) { m_queue.push_back(element); }
-    void        insert(iterator it, const Element& element) { m_queue.insert(it, element); }
-    void        erase(int i);
-    iterator    erase(iterator it) { return m_queue.erase(it); }
+    void                    push_back(const Element& element) { m_queue.push_back(element); }
+    void                    insert(iterator it, const Element& element) { m_queue.insert(it, element); }
+    void                    erase(int i);
+    iterator                erase(iterator it) { return m_queue.erase(it); }
+    [[nodiscard]] iterator  begin() { return m_queue.begin(); }
+    [[nodiscard]] iterator  end() { return m_queue.end(); }
+    [[nodiscard]] iterator  find(const std::string& item_name);
+    [[nodiscard]] Element&  operator[](int i);
 
-    iterator    begin() { return m_queue.begin(); }
-    iterator    end() { return m_queue.end(); }
-    iterator    find(const std::string& item_name);
-    Element&    operator[](int i);
-
-    void        clear();
+    void clear();
 
     mutable boost::signals2::signal<void ()> InfluenceQueueChangedSignal;
 

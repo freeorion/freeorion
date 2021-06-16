@@ -38,10 +38,10 @@ public:
     auto GetType() const -> Type
     { return m_type; }
 
-    int                     SenderEmpireID() const { return m_sender_empire; }
-    int                     RecipientEmpireID() const { return m_recipient_empire; }
-    std::string             Dump() const;
-    bool                    IsAllowed() const; ///< Tells if this dimplomatic message allowed by game rules
+    [[nodiscard]] int           SenderEmpireID() const { return m_sender_empire; }
+    [[nodiscard]] int           RecipientEmpireID() const { return m_recipient_empire; }
+    [[nodiscard]] std::string   Dump() const;
+    [[nodiscard]] bool          IsAllowed() const; ///< Tells if this dimplomatic message allowed by game rules
 
 private:
     int  m_sender_empire;
