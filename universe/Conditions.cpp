@@ -1,6 +1,7 @@
 #include "Conditions.h"
 
 #include <array>
+#include <cfloat>
 #include <boost/algorithm/cxx11/all_of.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/graph/adjacency_list.hpp>
