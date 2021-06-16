@@ -32,6 +32,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/st_connected.hpp>
 
+#include <cfloat>
 
 using boost::io::str;
 
