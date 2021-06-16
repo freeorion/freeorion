@@ -1077,7 +1077,7 @@ namespace {
     /** Recursively searches pedia directory \a dir_name for articles and
       * sub-directories. Returns a map from
       * (category_str_key, dir_name) to (readable_article_name, link_text) */
-    std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>>
+    [[nodiscard]] std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>>
         GetSubDirs(const std::string& dir_name, bool exclude_custom_categories_from_dir_name = true, int depth = 0)
     {
         std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>> retval;
@@ -1125,7 +1125,7 @@ namespace {
         return retval;
     }
 
-    int DefaultLocationForEmpire(int empire_id) {
+    [[nodiscard]] int DefaultLocationForEmpire(int empire_id) {
         if (empire_id == ALL_EMPIRES)
             return INVALID_OBJECT_ID;
 
@@ -1150,12 +1150,12 @@ namespace {
         return location ? location->ID() : INVALID_OBJECT_ID;
     }
 
-    std::vector<std::string> TechsThatUnlockItem(const UnlockableItem& item) {
+    [[nodiscard]] std::vector<std::string> TechsThatUnlockItem(const UnlockableItem& item) {
         std::vector<std::string> retval;
+        retval.reserve(GetTechManager().size()); // rough guesstimate
 
         for (const auto& tech : GetTechManager()) {
             if (!tech) continue;
-            const std::string& tech_name = tech->Name();
 
             bool found_item = false;
             for (const UnlockableItem& unlocked_item : tech->UnlockedItems()) {
@@ -1165,13 +1165,13 @@ namespace {
                 }
             }
             if (found_item)
-                retval.push_back(tech_name);
+                retval.push_back(tech->Name());
         }
 
         return retval;
     }
 
-    std::vector<std::string> PoliciesThatUnlockItem(const UnlockableItem& item) {
+    [[nodiscard]] std::vector<std::string> PoliciesThatUnlockItem(const UnlockableItem& item) {
         std::vector<std::string> retval;
 
         for (auto& [policy_name, policy] : GetPolicyManager()) {
@@ -1191,7 +1191,7 @@ namespace {
         return retval;
     }
 
-    const std::string& GeneralTypeOfObject(UniverseObjectType obj_type) {
+    [[nodiscard]] const std::string& GeneralTypeOfObject(UniverseObjectType obj_type) {
         switch (obj_type) {
         case UniverseObjectType::OBJ_SHIP:          return UserString("ENC_SHIP");          break;
         case UniverseObjectType::OBJ_FLEET:         return UserString("ENC_FLEET");         break;

@@ -2157,7 +2157,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 }
 
 namespace {
-    std::vector<std::string> TechsResearchedByEmpire(int empire_id, const ScriptingContext& context) {
+    [[nodiscard]] std::vector<std::string> TechsResearchedByEmpire(int empire_id, const ScriptingContext& context) {
         auto empire = context.GetEmpire(empire_id);
         if (!empire) return {};
 
@@ -2165,11 +2165,11 @@ namespace {
         return {researched_techs_range.begin(), researched_techs_range.end()};
     }
 
-    std::vector<std::string> TechsResearchableByEmpire(int empire_id, const ScriptingContext& context) {
-        auto empire = context.GetEmpire(empire_id);
-        if (!empire) return {};
-
+    [[nodiscard]] std::vector<std::string> TechsResearchableByEmpire(int empire_id, const ScriptingContext& context) {
         std::vector<std::string> retval;
+        auto empire = context.GetEmpire(empire_id);
+        if (!empire) return retval;
+
         retval.reserve(GetTechManager().size());
         for (const auto& tech : GetTechManager()) {
             if (tech && empire->ResearchableTech(tech->Name()))
@@ -2178,8 +2178,8 @@ namespace {
         return retval;
     }
 
-    std::vector<std::string> TransferrableTechs(int sender_empire_id, int receipient_empire_id,
-                                                const ScriptingContext& context)
+    [[nodiscard]] std::vector<std::string> TransferrableTechs(int sender_empire_id, int receipient_empire_id,
+                                                              const ScriptingContext& context)
     {
         std::vector<std::string> sender_researched_techs = TechsResearchedByEmpire(sender_empire_id, context);
         std::vector<std::string> recepient_researchable = TechsResearchableByEmpire(receipient_empire_id, context);
