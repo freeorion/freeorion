@@ -10,6 +10,7 @@ import MilitaryAI
 import MoveUtilsAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
+from common.fo_typing import FleetId
 from EnumsAI import MissionType
 from fleet_orders import (
     AIFleetOrder,
@@ -21,7 +22,6 @@ from fleet_orders import (
     OrderOutpost,
     OrderPause,
 )
-from fo_typing import FleetId
 from freeorion_tools import (
     assertion_fails,
     combine_ratings,

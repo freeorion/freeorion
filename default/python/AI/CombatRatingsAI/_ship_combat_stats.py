@@ -5,7 +5,7 @@ from typing import Dict, Tuple
 from AIDependencies import CombatTarget
 from aistate_interface import get_aistate
 from CombatRatingsAI._targets import get_allowed_targets
-from fo_typing import ShipId
+from common.fo_typing import ShipId
 from freeorion_tools import dict_to_tuple, get_ship_part, tuple_to_dict
 from freeorion_tools.caching import cache_for_current_turn
 

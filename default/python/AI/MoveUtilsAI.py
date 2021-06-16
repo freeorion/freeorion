@@ -8,7 +8,7 @@ import pathfinding
 import PlanetUtilsAI
 from AIDependencies import DRYDOCK_HAPPINESS_THRESHOLD, INVALID_ID
 from aistate_interface import get_aistate
-from fo_typing import SystemId
+from common.fo_typing import SystemId
 from freeorion_tools import get_fleet_position
 from target import TargetFleet, TargetSystem
 from turn_state import get_empire_drydocks, get_system_supply

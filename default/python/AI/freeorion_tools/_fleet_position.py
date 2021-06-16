@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 
-from fo_typing import FleetId, SystemId
+from common.fo_typing import FleetId, SystemId
 
 
 def get_fleet_position(fleet_id: FleetId) -> SystemId:

@@ -2,7 +2,7 @@ import freeOrionAIInterface as fo
 from typing import Callable, FrozenSet, List, Mapping, Set, Tuple
 
 import AIDependencies
-from fo_typing import PlanetId, SystemId
+from common.fo_typing import PlanetId, SystemId
 from freeorion_tools import ReadOnlyDict
 from freeorion_tools.caching import cache_for_current_turn
 

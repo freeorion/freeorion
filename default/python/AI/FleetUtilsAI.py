@@ -8,8 +8,8 @@ import MoveUtilsAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
 from CombatRatingsAI import get_fleet_rating, get_ship_combat_stats, rating_needed
+from common.fo_typing import PlanetId
 from EnumsAI import MissionType, ShipRoleType
-from fo_typing import PlanetId
 from freeorion_tools import assertion_fails, combine_ratings
 from ShipDesignAI import get_ship_part
 from target import TargetFleet, TargetPlanet, TargetSystem

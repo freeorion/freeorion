@@ -6,8 +6,8 @@ import MoveUtilsAI
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID, MINIMUM_GUARD_DISTANCE_TO_HOME_SYSTEM
 from aistate_interface import get_aistate
+from common.fo_typing import SystemId
 from EnumsAI import MissionType
-from fo_typing import SystemId
 from freeorion_tools import get_fleet_position, get_partial_visibility_turn
 from target import TargetSystem
 

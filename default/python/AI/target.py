@@ -3,7 +3,7 @@ from logging import warning
 from typing import Optional
 
 from AIDependencies import INVALID_ID
-from fo_typing import FleetId, PlanetId, SystemId, TargetId
+from common.fo_typing import FleetId, ObjectId, PlanetId, SystemId
 
 
 class Target:
@@ -11,7 +11,7 @@ class Target:
     Stores information about AI target - its id and type.
     """
     object_name = 'target'
-    id: TargetId
+    id: ObjectId
 
     def __init__(self):
         if not self:

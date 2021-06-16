@@ -2,8 +2,8 @@ from collections import Counter
 
 from CombatRatingsAI._fleet_combat_stats import get_fleet_combat_stats
 from CombatRatingsAI._ship_combat_stats import ShipCombatStats, get_ship_combat_stats
+from common.fo_typing import FleetId, ShipId
 from EnumsAI import MissionType
-from fo_typing import FleetId, ShipId
 from freeorion_tools.caching import cache_for_current_turn
 
 

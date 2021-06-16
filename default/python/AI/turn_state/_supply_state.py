@@ -2,7 +2,7 @@ import freeOrionAIInterface as fo
 from logging import error, warning
 from typing import Dict, Mapping, Tuple
 
-from fo_typing import SystemId
+from common.fo_typing import SystemId
 from freeorion_tools.caching import cache_for_current_turn
 
 
