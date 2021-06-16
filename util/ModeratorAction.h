@@ -28,7 +28,7 @@ public:
     virtual void Execute() const
     {}
 
-    virtual std::string Dump() const
+    [[nodiscard]] virtual std::string Dump() const
     { return "ModeratorAction"; }
 
 private:
@@ -43,7 +43,7 @@ public:
     explicit DestroyUniverseObject(int object_id);
 
     void Execute() const override;
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
 private:
     int m_object_id = INVALID_OBJECT_ID;
@@ -59,7 +59,7 @@ public:
     SetOwner(int object_id, int new_owner_empire_id);
 
     void Execute() const override;
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
 private:
     int m_object_id = INVALID_OBJECT_ID;
@@ -76,7 +76,7 @@ public:
     AddStarlane(int system_1_id, int system_2_id);
 
     void Execute() const override;
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
 private:
     int m_id_1 = INVALID_OBJECT_ID;
@@ -93,7 +93,7 @@ public:
     RemoveStarlane(int system_1_id, int system_2_id);
 
     void Execute() const override;
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
 private:
     int m_id_1 = INVALID_OBJECT_ID;
@@ -110,7 +110,7 @@ public:
     CreateSystem(double x, double y, StarType star_type);
 
     void Execute() const override;
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
 private:
     double   m_x = 0.0;
@@ -128,7 +128,7 @@ public:
     CreatePlanet(int system_id, PlanetType planet_type, PlanetSize planet_size);
 
     void Execute() const override;
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
 private:
     int         m_system_id = INVALID_OBJECT_ID;

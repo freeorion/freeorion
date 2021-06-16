@@ -226,7 +226,7 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
         GalaxySetupData(std::move(base))
     {}
 
-    std::string Dump() const;
+    [[nodiscard]] std::string Dump() const;
 
     bool                                        any_can_edit = false;
     bool                                        new_game = true;
@@ -245,9 +245,9 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
 
 /** The data structure stores information about latest chat massages. */
 struct FO_COMMON_API ChatHistoryEntity {
-    boost::posix_time::ptime    timestamp;
-    std::string                 player_name;
-    std::string                 text;
+    boost::posix_time::ptime     timestamp;
+    std::string                  player_name;
+    std::string                  text;
     std::array<unsigned char, 4> text_color{{192, 192, 192, 255}};
 };
 
