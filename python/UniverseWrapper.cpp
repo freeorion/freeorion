@@ -281,19 +281,19 @@ namespace FreeOrionPython {
         //    Universe    //
         ////////////////////
         py::class_<Universe, boost::noncopyable>("universe", py::no_init)
-            .def("getObject",                   +[](const Universe&, int id) -> const UniverseObject* { return ::Objects().get<UniverseObject>(id).operator->(); },
+            .def("getObject",                   +[](const Universe& u, int id) -> const UniverseObject* { return ::Objects().get<UniverseObject>(id).operator->(); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getFleet",                    +[](const Universe&, int id) -> const Fleet* { return ::Objects().get<Fleet>(id).operator->(); },
+            .def("getFleet",                    +[](const Universe& u, int id) -> const Fleet* { return u.Objects().get<Fleet>(id).operator->(); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getShip",                     +[](const Universe&, int id) -> const Ship* { return ::Objects().get<Ship>(id).operator->(); },
+            .def("getShip",                     +[](const Universe& u, int id) -> const Ship* { return u.Objects().get<Ship>(id).operator->(); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getPlanet",                   +[](const Universe&, int id) -> const Planet* { return ::Objects().get<Planet>(id).operator->(); },
+            .def("getPlanet",                   +[](const Universe& u, int id) -> const Planet* { return u.Objects().get<Planet>(id).operator->(); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getSystem",                   +[](const Universe&, int id) -> const System* { return ::Objects().get<System>(id).operator->(); },
+            .def("getSystem",                   +[](const Universe& u, int id) -> const System* { return u.Objects().get<System>(id).operator->(); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getField",                    +[](const Universe&, int id) -> const Field* { return ::Objects().get<Field>(id).operator->(); },
+            .def("getField",                    +[](const Universe& u, int id) -> const Field* { return u.Objects().get<Field>(id).operator->(); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getBuilding",                 +[](const Universe&, int id) -> const Building* { return ::Objects().get<Building>(id).operator->(); },
+            .def("getBuilding",                 +[](const Universe& u, int id) -> const Building* { return u.Objects().get<Building>(id).operator->(); },
                                                 py::return_value_policy<py::reference_existing_object>())
             .def("getGenericShipDesign",        &Universe::GetGenericShipDesign,
                                                 py::return_value_policy<py::reference_existing_object>(),
@@ -309,17 +309,17 @@ namespace FreeOrionPython {
             .def("destroyedObjectIDs",          &Universe::EmpireKnownDestroyedObjectIDs,
                                                 py::return_value_policy<py::return_by_value>())
 
-            .def("systemHasStarlane",           +[](const Universe& universe, int system_id, int empire_id) -> bool { return universe.GetPathfinder()->SystemHasVisibleStarlanes(system_id, EmpireKnownObjects(empire_id)); },
+            .def("systemHasStarlane",           +[](const Universe& u, int system_id, int empire_id) -> bool { return u.GetPathfinder()->SystemHasVisibleStarlanes(system_id, EmpireKnownObjects(empire_id)); },
                                                 py::return_value_policy<py::return_by_value>())
 
             .def("updateMeterEstimates",        &UpdateMetersWrapper)
             .add_property("effectAccounting",   make_function(+[](Universe& u) -> const Effect::AccountingMap& { return u.GetEffectAccountingMap(); },
                                                                                         py::return_value_policy<py::reference_existing_object>()))
 
-            .def("linearDistance",              +[](const Universe& universe, int system1_id, int system2_id) -> double { return universe.GetPathfinder()->LinearDistance(system1_id, system2_id, universe.Objects()); },
+            .def("linearDistance",              +[](const Universe& u, int system1_id, int system2_id) -> double { return u.GetPathfinder()->LinearDistance(system1_id, system2_id, u.Objects()); },
                                                 py::return_value_policy<py::return_by_value>())
 
-            .def("jumpDistance",                +[](const Universe& universe, int object1_id, int object2_id) -> int { return universe.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id, universe.Objects()); },
+            .def("jumpDistance",                +[](const Universe& u, int object1_id, int object2_id) -> int { return u.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id, u.Objects()); },
                                                 py::return_value_policy<py::return_by_value>(),
                                                 "If two system ids are passed or both objects are within a system, "
                                                 "return the jump distance between the two systems. If one object "
@@ -336,13 +336,13 @@ namespace FreeOrionPython {
                                                 "System (number2) with no hostile Fleets as determined by visibility "
                                                 "of Empire (number3).  (number3) must be a valid empire.")
 
-            .def("shortestPathDistance",        +[](const Universe& universe, int object1_id, int object2_id) -> double { return universe.GetPathfinder()->ShortestPathDistance(object1_id, object2_id, universe.Objects()); },
+            .def("shortestPathDistance",        +[](const Universe& u, int object1_id, int object2_id) -> double { return u.GetPathfinder()->ShortestPathDistance(object1_id, object2_id, u.Objects()); },
                                                 py::return_value_policy<py::return_by_value>())
 
             .def("leastJumpsPath",              LeastJumpsPath,
                                                 py::return_value_policy<py::return_by_value>())
 
-            .def("systemsConnected",            +[](const Universe& universe, int system1_id, int system2_id, int empire_id) -> bool { return universe.GetPathfinder()->SystemsConnected(system1_id, system2_id, empire_id); },
+            .def("systemsConnected",            +[](const Universe& u, int system1_id, int system2_id, int empire_id) -> bool { return u.GetPathfinder()->SystemsConnected(system1_id, system2_id, empire_id); },
                                                 py::return_value_policy<py::return_by_value>())
 
             .def("getImmediateNeighbors",       ImmediateNeighbors,
@@ -365,7 +365,7 @@ namespace FreeOrionPython {
                                                 "staistic name (string), then by empire id (int), then by turn "
                                                 "number (int), pointing to the statisic value (double).")
 
-            .def("dump",                        +[](const Universe& universe) { DebugLogger() << universe.Objects().Dump(); })
+            .def("dump",                        +[](const Universe& u) { DebugLogger() << u.Objects().Dump(); })
         ;
 
         ////////////////////
@@ -396,12 +396,12 @@ namespace FreeOrionPython {
             .add_property("tags",               make_function(&UniverseObject::Tags,        py::return_value_policy<py::return_by_value>()))
             .def("hasTag",                      &UniverseObject::HasTag)
             .add_property("meters",             make_function(
-                                                    +[](const UniverseObject& object) -> std::map<MeterType, Meter> { return {object.Meters().begin(), object.Meters().end()}; },
+                                                    +[](const UniverseObject& o) -> std::map<MeterType, Meter> { return {o.Meters().begin(), o.Meters().end()}; },
                                                     py::return_value_policy<py::return_by_value>()
                                                 ))
-            .def("getMeter",                    +[](const UniverseObject& object, MeterType type) -> const Meter* { return object.GetMeter(type); },
+            .def("getMeter",                    +[](const UniverseObject& o, MeterType type) -> const Meter* { return o.GetMeter(type); },
                                                 py::return_internal_reference<>())
-            .def("dump",                        +[](const UniverseObject& obj) -> std::string { return obj.Dump(); },
+            .def("dump",                        +[](const UniverseObject& o) -> std::string { return o.Dump(); },
                                                 py::return_value_policy<py::return_by_value>(),
                                                 "Returns string with debug information.")
         ;
