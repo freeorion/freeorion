@@ -632,7 +632,7 @@ namespace {
     public:
         SearchEdit() :
             CUIEdit("")
-        {}
+        { DisallowChars("\n\r"); }
 
         void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {
             switch (key) {
