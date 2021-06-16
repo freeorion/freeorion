@@ -37,14 +37,14 @@ public:
 
     virtual ~Order() = default;
 
-    virtual std::string Dump() const { return ""; }
+    [[nodiscard]] virtual std::string Dump() const { return ""; }
 
     /** Returns the ID of the Empire issuing the order. */
-    int EmpireID() const { return m_empire; }
+    [[nodiscard]] int EmpireID() const { return m_empire; }
 
     /** Returns true iff this order has been executed (a second execution
       * indicates server-side execution). */
-    bool Executed() const { return m_executed; }
+    [[nodiscard]] bool Executed() const { return m_executed; }
 
     /** Executes the order on the Universe and Empires.
      *
@@ -93,18 +93,18 @@ class FO_COMMON_API RenameOrder : public Order {
 public:
     RenameOrder(int empire, int object, const std::string& name);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of fleet selected in this order. */
-    int ObjectID() const
+    [[nodiscard]] int ObjectID() const
     { return m_object; }
 
     /** Returns the new name of the fleet. */
-    const std::string& Name() const
+    [[nodiscard]] const std::string& Name() const
     { return m_name; }
 
     //! Returns true when the Order parameters are valid.
-    static bool Check(int empire, int object, const std::string& new_name);
+    [[nodiscard]] static bool Check(int empire, int object, const std::string& new_name);
 
 private:
     RenameOrder() = default;
@@ -142,24 +142,24 @@ public:
                   std::vector<int> ship_ids,
                   FleetAggression aggression);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
-    const std::string& FleetName() const
+    [[nodiscard]] const std::string& FleetName() const
     { return m_fleet_name; }
 
-    const int& FleetID() const
+    [[nodiscard]] const int& FleetID() const
     { return m_fleet_id; }
 
-    const std::vector<int>& ShipIDs() const
+    [[nodiscard]] const std::vector<int>& ShipIDs() const
     { return m_ship_ids; }
 
-    bool Aggressive() const;
+    [[nodiscard]] bool Aggressive() const;
 
-    FleetAggression Aggression() const
+    [[nodiscard]] FleetAggression Aggression() const
     { return m_aggression; }
 
-    static bool Check(int empire, const std::string& fleet_name,
-                      const std::vector<int>& ship_ids, FleetAggression aggression);
+    [[nodiscard]] static bool Check(int empire, const std::string& fleet_name,
+                                    const std::vector<int>& ship_ids, FleetAggression aggression);
 private:
     NewFleetOrder() = default;
 
@@ -195,18 +195,18 @@ public:
     FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
                    bool append = false);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of fleet selected in this order. */
-    int FleetID() const
+    [[nodiscard]] int FleetID() const
     { return m_fleet; }
 
     /* Returns ID of system set as destination for this order. */
-    int DestinationSystemID() const
+    [[nodiscard]] int DestinationSystemID() const
     { return m_dest_system; }
 
     /* Returns the IDs of the systems in the route specified by this Order. */
-    const std::vector<int>& Route() const
+    [[nodiscard]] const std::vector<int>& Route() const
     { return m_route; }
 
     static bool Check(int empire_id, int fleet_id, int dest_fleet_id, bool append = false);
@@ -247,17 +247,17 @@ class FO_COMMON_API FleetTransferOrder : public Order {
 public:
     FleetTransferOrder(int empire, int dest_fleet, const std::vector<int>& ships);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /* Returns ID of the fleet that the ships will go into. */
-    int DestinationFleet() const
+    [[nodiscard]] int DestinationFleet() const
     { return m_dest_fleet; }
 
     /** Returns IDs of the ships selected for addition to the fleet. */
-    const std::vector<int>& Ships() const
+    [[nodiscard]] const std::vector<int>& Ships() const
     { return m_add_ships; }
 
-    static bool Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids);
+    [[nodiscard]] static bool Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids);
 
 private:
     FleetTransferOrder() = default;
@@ -290,17 +290,17 @@ class FO_COMMON_API ColonizeOrder : public Order {
 public:
     ColonizeOrder(int empire, int ship, int planet);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of the planet to be colonized. */
-    int PlanetID() const
+    [[nodiscard]] int PlanetID() const
     { return m_planet; }
 
     /** Returns ID of the ship which is colonizing the planet. */
-    int ShipID() const
+    [[nodiscard]] int ShipID() const
     { return m_ship; }
 
-    static bool Check(int empire_id, int ship_id, int planet_id);
+    [[nodiscard]] static bool Check(int empire_id, int ship_id, int planet_id);
 
 private:
     ColonizeOrder() = default;
@@ -337,17 +337,17 @@ class FO_COMMON_API InvadeOrder : public Order {
 public:
     InvadeOrder(int empire, int ship, int planet);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of the planet to be invaded. */
-    int PlanetID() const
+    [[nodiscard]] int PlanetID() const
     { return m_planet; }
 
     /** Returns ID of the ship which is invading the planet. */
-    int ShipID() const
+    [[nodiscard]] int ShipID() const
     { return m_ship; }
 
-    static bool Check(int empire_id, int ship_id, int planet_id);
+    [[nodiscard]] static bool Check(int empire_id, int ship_id, int planet_id);
 
 private:
     InvadeOrder() = default;
@@ -384,14 +384,14 @@ class FO_COMMON_API BombardOrder : public Order {
 public:
     BombardOrder(int empire, int ship, int planet);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of the planet to be bombarded. */
-    int PlanetID() const
+    [[nodiscard]] int PlanetID() const
     { return m_planet; }
 
     /** Returns ID of the ship which is bombarding the planet. */
-    int ShipID() const
+    [[nodiscard]] int ShipID() const
     { return m_ship; }
 
     static bool Check(int empire_id, int ship_id, int planet_id);
@@ -429,13 +429,13 @@ class FO_COMMON_API ChangeFocusOrder : public Order {
 public:
     ChangeFocusOrder(int empire, int planet, const std::string& focus);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /* Returns ID of the fleet to be deleted. */
-    int PlanetID() const
+    [[nodiscard]] int PlanetID() const
     { return m_planet; }
 
-    static bool Check(int empire_id, int planet_id, const std::string& focus);
+    [[nodiscard]] static bool Check(int empire_id, int planet_id, const std::string& focus);
 
 private:
     ChangeFocusOrder() = default;
@@ -467,13 +467,13 @@ public:
                 const std::string& category, bool adopt,
                 int slot = -1);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of fleet selected in this order. */
-    const std::string&  PolicyName() const  { return m_policy_name; }
-    const std::string&  CategoryName() const{ return m_category; }
-    bool                Adopt() const       { return m_adopt; }
-    int                 Slot() const        { return m_slot; }
+    [[nodiscard]] const std::string& PolicyName() const   { return m_policy_name; }
+    [[nodiscard]] const std::string& CategoryName() const { return m_category; }
+    [[nodiscard]] bool               Adopt() const        { return m_adopt; }
+    [[nodiscard]] int                Slot() const         { return m_slot; }
 
 private:
     PolicyOrder() = default;
@@ -503,7 +503,7 @@ public:
     ResearchQueueOrder(int empire, const std::string& tech_name, int position);
     ResearchQueueOrder(int empire, const std::string& tech_name, bool pause, float dummy);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
 private:
     ResearchQueueOrder() = default;
@@ -560,7 +560,7 @@ public:
                          boost::uuids::uuid uuid,
                          int num1 = -1, int num2 = -1);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
 private:
     ProductionQueueOrder() = default;
@@ -608,9 +608,9 @@ public:
     ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name,
                     const std::string& new_description = "");
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
-    int DesignID() const
+    [[nodiscard]] int DesignID() const
     { return m_design_id; }
 
 private:
@@ -670,13 +670,13 @@ class FO_COMMON_API ScrapOrder : public Order {
 public:
     ScrapOrder(int empire, int object_id);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of object selected in this order. */
-    int ObjectID() const
+    [[nodiscard]] int ObjectID() const
     { return m_object_id; }
 
-    static bool Check(int empire_id, int object_id);
+    [[nodiscard]] static bool Check(int empire_id, int object_id);
 private:
     ScrapOrder() = default;
 
@@ -709,16 +709,16 @@ class FO_COMMON_API AggressiveOrder : public Order {
 public:
     AggressiveOrder(int empire, int object_id, FleetAggression aggression);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of object selected in this order. */
-    int ObjectID() const
+    [[nodiscard]] int ObjectID() const
     { return m_object_id; }
 
     /** Returns aggression state to set object to. */
-    FleetAggression Aggression() const { return m_aggression; }
+    [[nodiscard]] FleetAggression Aggression() const { return m_aggression; }
 
-    static bool Check(int empire_id, int object_id, FleetAggression aggression);
+    [[nodiscard]] static bool Check(int empire_id, int object_id, FleetAggression aggression);
 
 private:
     AggressiveOrder() = default;
@@ -751,14 +751,14 @@ class FO_COMMON_API GiveObjectToEmpireOrder : public Order {
 public:
     GiveObjectToEmpireOrder(int empire, int object_id, int recipient);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of object selected in this order. */
-    int ObjectID() const
+    [[nodiscard]] int ObjectID() const
     { return m_object_id; }
 
     /** Returns ID of empire to which object is given. */
-    int RecipientEmpireID()
+    [[nodiscard]] int RecipientEmpireID()
     { return m_recipient_empire_id; }
 
     static bool Check(int empire_id, int object_id, int recipient_empire_id);
@@ -793,10 +793,10 @@ class FO_COMMON_API ForgetOrder : public Order {
 public:
     ForgetOrder(int empire, int object_id);
 
-    std::string Dump() const override;
+    [[nodiscard]] std::string Dump() const override;
 
     /** Returns ID of object selected in this order. */
-    int ObjectID() const
+    [[nodiscard]] int ObjectID() const
     { return m_object_id; }
 
 private:
