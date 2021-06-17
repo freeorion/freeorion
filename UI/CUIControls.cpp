@@ -1667,7 +1667,7 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
 {
     Resize(GG::Pt(COLOR_SELECTOR_WIDTH, h - 8));
 
-    for (const GG::Clr& color : EmpireColors())
+    for (auto& color : EmpireColors())
         Insert(GG::Wnd::Create<ColorRow>(color, h - 4));
 
     SelChangedSignal.connect(
