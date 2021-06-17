@@ -27,7 +27,7 @@
 namespace GG {
 
 namespace detail {
-    inline std::size_t OneBits(unsigned int num)
+    constexpr inline std::size_t OneBits(unsigned int num)
     {
         std::size_t retval = 0;
         const std::size_t NUM_BITS = sizeof(num) * 8;
@@ -64,19 +64,19 @@ inline constexpr bool is_flag_type_v = is_flag_type<T>::value;
     class GG_API name                                                   \
     {                                                                   \
     public:                                                             \
-        name() : m_value(0) {}                                          \
-        explicit name(unsigned int value) :                             \
+        constexpr name() : m_value(0) {}                                \
+        constexpr explicit name(unsigned int value) :                   \
             m_value(value)                                              \
             {                                                           \
                 if (1u < detail::OneBits(value))                        \
                     throw std::invalid_argument(                        \
                         "Non-bitflag passed to " #name " constructor"); \
             }                                                           \
-        bool operator==(name rhs) const                                 \
+        constexpr bool operator==(name rhs) const                       \
             { return m_value == rhs.m_value; }                          \
-        bool operator!=(name rhs) const                                 \
+        constexpr bool operator!=(name rhs) const                       \
             { return m_value != rhs.m_value; }                          \
-        bool operator<(name rhs) const                                  \
+        constexpr bool operator<(name rhs) const                        \
             { return m_value < rhs.m_value; }                           \
     private:                                                            \
         unsigned int m_value;                                           \
