@@ -339,11 +339,18 @@ namespace FreeOrionPython {
             .add_property("empty",                  &ProductionQueue::empty)
             .add_property("totalSpent",             &ProductionQueue::TotalPPsSpent)
             .add_property("empireID",               &ProductionQueue::EmpireID)
-            .def("availablePP",                     &ProductionQueue::AvailablePP,
-                                                    py::return_value_policy<py::return_by_value>())
+
+            .def("availablePP",                     +[](const ProductionQueue& queue, const std::shared_ptr<ResourcePool>& r) -> std::map<std::set<int>, float> {
+                                                        const auto const_r{std::const_pointer_cast<const ResourcePool>(r)};
+                                                        return queue.AvailablePP(const_r);
+                                                    }, py::return_value_policy<py::return_by_value>())
+
             .add_property("allocatedPP",            make_function(&ProductionQueue::AllocatedPP,        py::return_internal_reference<>()))
-            .def("objectsWithWastedPP",             &ProductionQueue::ObjectsWithWastedPP,
-                                                    py::return_value_policy<py::return_by_value>())
+
+            .def("objectsWithWastedPP",             +[](const ProductionQueue& queue, const std::shared_ptr<ResourcePool>& r) -> std::set<std::set<int>> {
+                                                        const auto const_r{std::const_pointer_cast<const ResourcePool>(r)};
+                                                        return queue.ObjectsWithWastedPP(const_r);
+                                                    }, py::return_value_policy<py::return_by_value>())
             ;
 
         ////////////////////
