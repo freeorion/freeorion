@@ -345,7 +345,7 @@ std::shared_ptr<RichText::BLOCK_FACTORY_MAP>& RichText::DefaultBlockFactoryMap()
 }
 
 int RichText::RegisterDefaultBlock(const std::string& tag,
-                                    std::shared_ptr<IBlockControlFactory>&& factory)
+                                   std::shared_ptr<IBlockControlFactory>&& factory)
 {
     Font::RegisterKnownTag(tag);
     (*DefaultBlockFactoryMap()) [tag] = std::move(factory);
