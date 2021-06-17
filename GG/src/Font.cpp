@@ -228,30 +228,20 @@ void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data, A
 constexpr double ITALICS_SLANT_ANGLE = 12; // degrees
 const double ITALICS_FACTOR = 1.0 / tan((90 - ITALICS_SLANT_ANGLE) * 3.1415926 / 180.0); // factor used to shear glyphs ITALICS_SLANT_ANGLE degrees CW from straight up
 
-const std::vector<std::pair<std::uint32_t, std::uint32_t>> PRINTABLE_ASCII_ALPHA_RANGES{
+constexpr std::array<std::pair<std::uint32_t, std::uint32_t>, 2> PRINTABLE_ASCII_ALPHA_RANGES{{
     {0x41, 0x5B},
-    {0x61, 0x7B}};
+    {0x61, 0x7B}}};
 
-const std::vector<std::pair<std::uint32_t, std::uint32_t>> PRINTABLE_ASCII_NONALPHA_RANGES{
+constexpr std::array<std::pair<std::uint32_t, std::uint32_t>, 7> PRINTABLE_ASCII_NONALPHA_RANGES{{
     {0x09, 0x0D},
     {0x20, 0x21},
     {0x30, 0x3A},
     {0x21, 0x30},
     {0x3A, 0x41},
     {0x5B, 0x61},
-    {0x7B, 0x7F}};
+    {0x7B, 0x7F}}};
 
 }
-
-///////////////////////////////////////
-// Constants
-///////////////////////////////////////
-const StrSize GG::S0(0);
-const StrSize GG::S1(1);
-const StrSize GG::INVALID_STR_SIZE(std::numeric_limits<std::size_t>::max());
-const CPSize GG::CP0(0);
-const CPSize GG::CP1(1);
-const CPSize GG::INVALID_CP_SIZE(std::numeric_limits<std::size_t>::max());
 
 
 ///////////////////////////////////////
@@ -273,18 +263,6 @@ std::string GG::RgbaTag(const Clr& c)
 ///////////////////////////////////////
 // TextFormat
 ///////////////////////////////////////
-const TextFormat GG::FORMAT_NONE         (0);
-const TextFormat GG::FORMAT_VCENTER      (1 << 0);
-const TextFormat GG::FORMAT_TOP          (1 << 1);
-const TextFormat GG::FORMAT_BOTTOM       (1 << 2);
-const TextFormat GG::FORMAT_CENTER       (1 << 3);
-const TextFormat GG::FORMAT_LEFT         (1 << 4);
-const TextFormat GG::FORMAT_RIGHT        (1 << 5);
-const TextFormat GG::FORMAT_NOWRAP       (1 << 6);
-const TextFormat GG::FORMAT_WORDBREAK    (1 << 7);
-const TextFormat GG::FORMAT_LINEWRAP     (1 << 8);
-const TextFormat GG::FORMAT_IGNORETAGS   (1 << 9);
-
 GG_FLAGSPEC_IMPL(TextFormat);
 
 namespace {
