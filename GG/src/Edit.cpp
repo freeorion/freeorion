@@ -209,8 +209,10 @@ void Edit::AcceptPastedText(const std::string& text)
 {
     if (!Interactive())
         return;
-    if (!utf8::is_valid(text.begin(), text.end()))
+    if (!utf8::is_valid(text.begin(), text.end())) {
+        std::cerr << "Pasted text is not valid UTF-8:" << text << std::endl;
         return;
+    }
 
     bool modified_text = false;
 
@@ -267,20 +269,35 @@ CPSize Edit::CharIndexOf(X x) const
 
 X Edit::FirstCharOffset() const
 {
-    const auto& line_data = GetLineData();
+    const auto& line_data{GetLineData()};
     if (line_data.empty() || m_first_char_shown == CP0)
         return X0;
-    const auto& char_data = line_data.at(0).char_data;
+
+    const auto& char_data{line_data.front().char_data};
     if (char_data.empty())
         return X0;
+
     auto char_idx = std::min(char_data.size() - 1, Value(m_first_char_shown) - 1);
-    return char_data.at(char_idx).extent;
+    return char_data[char_idx].extent;
 }
 
 X Edit::ScreenPosOfChar(CPSize idx) const
 {
-    X first_char_offset = FirstCharOffset();
-    return ClientUpperLeft().x + ((!GetLineData().empty() && idx ? GetLineData()[0].char_data[Value(idx - 1)].extent : X0) - first_char_offset);
+    const auto& line_data{GetLineData()};
+    if (line_data.empty())
+        return ClientUpperLeft().x;
+
+    X line_first_char_x = ClientUpperLeft().x - FirstCharOffset();
+    if (idx == CP0)
+        return line_first_char_x;
+
+    const auto& char_data{line_data.front().char_data};
+    // get index of previous character to the location of the requested char
+    // get the extent to the right of that char to get the left position of the requested char
+    auto char_idx = std::min(char_data.size() - 1, Value(idx - 1));
+    X line_extent_to_idx_char = char_data[char_idx].extent;
+
+    return line_first_char_x + line_extent_to_idx_char;
 }
 
 CPSize Edit::LastVisibleChar() const
