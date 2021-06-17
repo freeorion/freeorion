@@ -1030,7 +1030,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         EditedSignal(Text());
 }
 
-void MultiEdit::TextInput(const std::string* text) {
+void MultiEdit::TextInput(const std::string& text) {
     // Typed or pasted text. If typed, this function is called from a TextInput event after the
     // KeyPress event leads to a call to MultiEdit::KeyPress, which should itself do nothing.
     if (Disabled()) {
@@ -1038,7 +1038,7 @@ void MultiEdit::TextInput(const std::string* text) {
         return;
     }
 
-    if (!text || !Interactive() || m_style & MULTI_READ_ONLY)
+    if (text.empty() || !Interactive() || m_style & MULTI_READ_ONLY)
         return;
 
     Edit::TextInput(text);  // will call AcceptPastedText, which should be the class' override

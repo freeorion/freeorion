@@ -515,16 +515,16 @@ void Edit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_key
         EditedSignal(Text());
 }
 
-void Edit::TextInput(const std::string* text) {
+void Edit::TextInput(const std::string& text) {
     if (Disabled()) {
         TextControl::TextInput(text);
         return;
     }
 
-    if (!text || !Interactive())
+    if (text.empty() || !Interactive())
         return;
 
-    AcceptPastedText(*text);
+    AcceptPastedText(text);
 
     if (LastVisibleChar() <= m_cursor_pos.first)
         AdjustView();

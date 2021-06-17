@@ -104,7 +104,7 @@ public:
     WndEvent(EventType type, const Pt& pt, const Wnd* const drag_wnd, Flags<ModKey> mod_keys);
     WndEvent(EventType type, Key key, std::uint32_t code_point, Flags<ModKey> mod_keys);
     WndEvent(EventType type, unsigned int ticks, Timer* timer);
-    WndEvent(EventType type, const std::string* text);
+    WndEvent(EventType type, std::string text);
     explicit WndEvent(EventType type);
 
     EventType                   Type() const;           ///< returns the type of the WndEvent
@@ -123,10 +123,11 @@ public:
     int                         WheelMove() const;      ///< returns the ammount of mouse wheel movement represented by the WndEvent, if any
     unsigned int                Ticks() const;          ///< returns the number of ticks represented by the WndEvent. if any
     Timer*                      GetTimer() const;       ///< returns the Timer represented by the WndEvent. if any
-    const std::string*          GetText() const;        ///< returns the utf8 text represented by the WndEvent, if any
-    const std::map<const Wnd* const, Pt>&   DragDropWnds() const;   ///< returns the drag-and-drop wnds represented by the WndEvent, if any
-    std::vector<std::shared_ptr<Wnd>>&          GetDragDropWnds() const;
-    std::map<const Wnd*, bool>& GetAcceptableDropWnds() const;
+    const std::string&          GetText() const;        ///< returns the utf8 text represented by the WndEvent, if any
+
+    const std::map<const Wnd* const, Pt>& DragDropWnds() const;   ///< returns the drag-and-drop wnds represented by the WndEvent, if any
+    std::vector<std::shared_ptr<Wnd>>&    GetDragDropWnds() const;
+    std::map<const Wnd*, bool>&           GetAcceptableDropWnds() const;
 
 private:
     EventType                       m_type;
@@ -143,7 +144,7 @@ private:
 
     unsigned int                    m_ticks = 0;
     Timer*                          m_timer = nullptr;
-    const std::string*              m_text = nullptr;
+    std::string                     m_text;
 
     mutable std::vector<std::shared_ptr<Wnd>>   m_dropped_wnds;
     mutable std::map<const Wnd*, bool>          m_acceptable_drop_wnds;

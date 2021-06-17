@@ -137,16 +137,16 @@ struct GG::GUIImpl
     void HandleMouseButtonPress(  unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
     void HandleMouseDrag(         unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
     void HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
-    void HandleIdle(             Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks);
+    void HandleIdle(              Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks);
 
-    void HandleKeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
+    void HandleKeyPress(          Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
 
-    void HandleKeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
+    void HandleKeyRelease(        Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
 
-    void HandleTextInput(        const std::string* text);
-    void HandleMouseMove(        Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
-    void HandleMouseWheel(       Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
-    void HandleMouseEnter(       Flags<ModKey> mod_keys, const GG::Pt& pos, const std::shared_ptr<Wnd>& w);
+    void HandleTextInput(         std::string text);
+    void HandleMouseMove(         Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
+    void HandleMouseWheel(        Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
+    void HandleMouseEnter(        Flags<ModKey> mod_keys, const GG::Pt& pos, std::shared_ptr<Wnd> w);
 
     void ClearState();
 
@@ -681,13 +681,13 @@ void GUIImpl::HandleKeyRelease(Key key, std::uint32_t key_code_point, Flags<ModK
             WndEvent::EventType::KeyRelease, key, key_code_point, mod_keys));
 }
 
-void GUIImpl::HandleTextInput(const std::string* text) {
+void GUIImpl::HandleTextInput(std::string text) {
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
     m_browse_target = nullptr;
     auto&& focus_wnd = FocusWnd();
     if (focus_wnd)
-        focus_wnd->HandleEvent(WndEvent(WndEvent::EventType::TextInput, text));
+        focus_wnd->HandleEvent(WndEvent(WndEvent::EventType::TextInput, std::move(text)));
 }
 
 void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel,
@@ -740,10 +740,10 @@ void GUIImpl::HandleMouseWheel(Flags<ModKey> mod_keys, const GG::Pt& pos, const 
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
 }
 
-void GUIImpl::HandleMouseEnter(Flags< ModKey > mod_keys, const GG::Pt& pos, const std::shared_ptr<Wnd>& w)
+void GUIImpl::HandleMouseEnter(Flags<ModKey> mod_keys, const GG::Pt& pos, std::shared_ptr<Wnd> w)
 {
     w->HandleEvent(WndEvent(WndEvent::EventType::MouseEnter, pos, mod_keys));
-    m_curr_wnd_under_cursor = w;
+    m_curr_wnd_under_cursor = std::move(w);
 }
 
 std::shared_ptr<Wnd> GUIImpl::FocusWnd() const
@@ -1143,7 +1143,7 @@ void GUI::SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const
 }
 
 void GUI::HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point,
-                        Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, const std::string* text)
+                        Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, std::string text)
 {
     m_impl->m_mod_keys = mod_keys;
 
@@ -1175,7 +1175,7 @@ void GUI::HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point,
         break;
 
     case EventType::TEXTINPUT:
-        m_impl->HandleTextInput(text);
+        m_impl->HandleTextInput(std::move(text));
         break;
 
     case EventType::MOUSEMOVE:
@@ -1798,7 +1798,7 @@ std::shared_ptr<Wnd> GUI::ModalWindow() const
 
 std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys)
 {
-    const auto&& wnd_under_pt = GetWindowUnder(pt);
+    auto wnd_under_pt = GetWindowUnder(pt);
     const auto& dragged_wnd = m_impl->m_curr_drag_wnd; // wnd being continuously repositioned / dragged around, not a drag-drop
 
     //std::cout << "GUI::CheckedGetWindowUnder w: " << w << "  dragged_wnd: " << dragged_wnd << std::endl;

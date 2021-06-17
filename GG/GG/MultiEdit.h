@@ -171,7 +171,7 @@ protected:
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
-    void TextInput(const std::string* text) override;
+    void TextInput(const std::string& text) override;
 
     /** Recreates the vertical and horizontal scrolls as needed. */
     void RecreateScrolls();

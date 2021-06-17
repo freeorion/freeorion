@@ -458,7 +458,7 @@ void SDLGUI::HandleSystemEvents() {
         }
 
         if (send_to_gg)
-            HandleGGEvent(gg_event, key, key_code_point, mod_keys, mouse_pos, mouse_rel);
+            HandleGGEvent(gg_event, key, key_code_point, mod_keys, mouse_pos, mouse_rel, std::string());
         else
             HandleNonGGEvent(event);
     }
@@ -627,8 +627,8 @@ void SDLGUI::RelayTextInput(const SDL_TextInputEvent& text, GG::Pt mouse_pos) {
     const char* end = current + SDL_TEXTEDITINGEVENT_TEXT_SIZE;
     while (current != end && *current)
         ++current;
-    std::string text_string{text.text, current};
-    HandleGGEvent(EventType::TEXTINPUT, Key::GGK_NONE, 0u, Flags<ModKey>(), mouse_pos, Pt(X0, Y0), &text_string);
+    HandleGGEvent(EventType::TEXTINPUT, Key::GGK_NONE, 0u, Flags<ModKey>(), mouse_pos, Pt(X0, Y0),
+                  std::string(text.text, current));
 }
 
 void SDLGUI::ResetFramebuffer() {

@@ -124,9 +124,9 @@ WndEvent::WndEvent(EventType type, unsigned int ticks, Timer* timer) :
     m_timer(timer)
 {}
 
-WndEvent::WndEvent (WndEvent::EventType type, const std::string* text):
+WndEvent::WndEvent (WndEvent::EventType type, std::string text):
     m_type(type),
-    m_text(text)
+    m_text(std::move(text))
 {}
 
 WndEvent::WndEvent(EventType type) :
@@ -169,7 +169,7 @@ unsigned int WndEvent::Ticks() const
 Timer* WndEvent::GetTimer() const
 { return m_timer; }
 
-const std::string* WndEvent::GetText() const
+const std::string& WndEvent::GetText() const
 { return m_text; }
 
 std::string EventTypeName(const WndEvent& event) {

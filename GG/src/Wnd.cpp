@@ -1096,7 +1096,7 @@ void Wnd::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys
 void Wnd::KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 { if (!Interactive()) ForwardEventToParent(); }
 
-void Wnd::TextInput(const std::string* text)
+void Wnd::TextInput(const std::string&)
 { if (!Interactive()) ForwardEventToParent(); }
 
 void Wnd::GainingFocus()

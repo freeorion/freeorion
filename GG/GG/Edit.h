@@ -170,7 +170,7 @@ protected:
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
-    void TextInput(const std::string* text) override;
+    void TextInput(const std::string& text) override;
     void GainingFocus() override;
     void LosingFocus() override;
 
