@@ -19,6 +19,7 @@
 #include <GG/Flags.h>
 #include <GG/StrongTypedef.h>
 
+#include <limits>
 
 namespace GG {
 
