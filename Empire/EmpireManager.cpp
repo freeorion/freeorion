@@ -441,7 +441,7 @@ const std::vector<EmpireColor>& EmpireColors() {
     auto& colors = EmpireColorsNonConst();
     if (colors.empty()) {
         colors = {{{ 0, 255,   0, 255}}, {{  0,   0, 255, 255}}, {{255,   0,   0, 255}},
-                 {{ 0, 255, 255, 255}},  {{255, 255,   0, 255}}, {{255,   0, 255, 255}}};
+                  {{ 0, 255, 255, 255}}, {{255, 255,   0, 255}}, {{255,   0, 255, 255}}};
     }
     return colors;
 }
