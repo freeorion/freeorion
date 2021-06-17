@@ -623,18 +623,12 @@ int SDLGUI::MaximumPossibleHeight()
 { return MaximumPossibleDimension(false); }
 
 void SDLGUI::RelayTextInput(const SDL_TextInputEvent& text, GG::Pt mouse_pos) {
-    const char *current = text.text;
-    const char *last = current;
-    // text is zero terminated, find the end
-    while (*last)
-    { ++last; }
-    std::string text_string(current, last);
-
-    // pass each utf-8 character as a separate event
-    while (current != last) {
-        HandleGGEvent(EventType::TEXTINPUT, Key::GGK_NONE, utf8::next(current, last), Flags<ModKey>(),
-                      mouse_pos, Pt(X0, Y0), &text_string);
-    }
+    const char* current = text.text;
+    const char* end = current + SDL_TEXTEDITINGEVENT_TEXT_SIZE;
+    while (current != end && *current)
+        ++current;
+    std::string text_string{text.text, current};
+    HandleGGEvent(EventType::TEXTINPUT, Key::GGK_NONE, 0u, Flags<ModKey>(), mouse_pos, Pt(X0, Y0), &text_string);
 }
 
 void SDLGUI::ResetFramebuffer() {
