@@ -6,6 +6,7 @@ import MoveUtilsAI
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID, MINIMUM_GUARD_DISTANCE_TO_HOME_SYSTEM
 from aistate_interface import get_aistate
+from common.fo_typing import SystemId
 from EnumsAI import MissionType
 from freeorion_tools import get_fleet_position, get_partial_visibility_turn
 from target import TargetSystem
@@ -221,13 +222,13 @@ def update_explored_systems():
     return newly_explored
 
 
-def request_emergency_exploration(system_id: int):
+def request_emergency_exploration(system_id: SystemId):
     aistate = get_aistate()
     if system_id not in aistate.needsEmergencyExploration:
         aistate.needsEmergencyExploration.append(system_id)
 
 
-def system_could_have_unknown_stationary_guard(system_id: int) -> bool:
+def system_could_have_unknown_stationary_guard(system_id: SystemId) -> bool:
     """Return True if the system may have spawned stationary guards.
 
     A stationary guard is defined as immobile monster fleets spawned at game start.

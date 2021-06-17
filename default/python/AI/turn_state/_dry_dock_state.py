@@ -2,12 +2,13 @@ import freeOrionAIInterface as fo
 from typing import Mapping, Tuple
 
 import AIDependencies
+from common.fo_typing import PlanetId, SystemId
 from freeorion_tools import ReadOnlyDict
 from freeorion_tools.caching import cache_for_current_turn
 
 
 @cache_for_current_turn
-def get_empire_drydocks() -> Mapping[int, Tuple[int]]:
+def get_empire_drydocks() -> Mapping[SystemId, Tuple[PlanetId]]:
     """
     Return a map from system ids to planet ids where empire drydocks are located.
     """

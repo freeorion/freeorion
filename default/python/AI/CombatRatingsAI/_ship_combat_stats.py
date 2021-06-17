@@ -5,6 +5,7 @@ from typing import Dict, Tuple
 from AIDependencies import CombatTarget
 from aistate_interface import get_aistate
 from CombatRatingsAI._targets import get_allowed_targets
+from common.fo_typing import ShipId
 from freeorion_tools import dict_to_tuple, get_ship_part, tuple_to_dict
 from freeorion_tools.caching import cache_for_current_turn
 
@@ -124,7 +125,7 @@ class ShipCombatStats:
             total_fighter_damage += self.fighter_damage * flying_fighters
         return total_fighter_damage / num_bouts
 
-    def get_rating_vs_planets(self):
+    def get_rating_vs_planets(self) -> float:
         """Heuristic to estimate combat strength against planets"""
         damage = self.damage_vs_planets
         if self.has_bomber:
@@ -133,7 +134,7 @@ class ShipCombatStats:
 
 
 @cache_for_current_turn
-def get_ship_combat_stats(ship_id, max_stats=False):
+def get_ship_combat_stats(ship_id: ShipId, max_stats=False) -> ShipCombatStats:
     """
     Return combat stats for the ship.
 

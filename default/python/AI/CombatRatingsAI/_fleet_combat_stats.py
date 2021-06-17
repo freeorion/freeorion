@@ -2,6 +2,7 @@ import freeOrionAIInterface as fo
 from typing import List
 
 from CombatRatingsAI._ship_combat_stats import ShipCombatStats, get_ship_combat_stats
+from common.fo_typing import FleetId
 from freeorion_tools import combine_ratings
 from freeorion_tools.caching import cache_for_current_turn
 
@@ -9,7 +10,7 @@ from freeorion_tools.caching import cache_for_current_turn
 class FleetCombatStats:
     """Stores combat related stats of the fleet."""
 
-    def __init__(self, fleet_id, max_stats=False):
+    def __init__(self, fleet_id: FleetId, max_stats=False):
         self._fleet_id = fleet_id
         self._max_stats = max_stats
         self._ship_stats = self._get_stats_from_fleet()
@@ -26,7 +27,7 @@ class FleetCombatStats:
         """
         return combine_ratings(x.get_rating(enemy_stats) for x in self._ship_stats)
 
-    def get_rating_vs_planets(self):
+    def get_rating_vs_planets(self) -> float:
         return combine_ratings(x.get_rating_vs_planets() for x in self._ship_stats)
 
     def _get_stats_from_fleet(self):
