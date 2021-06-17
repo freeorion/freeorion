@@ -314,7 +314,7 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     else if (auto ranged_step_validator = dynamic_cast<const RangedStepValidator<int>*>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
 
-    else if (auto int_validator = dynamic_cast<const Validator<int>*>(validator))
+    else //if (auto int_validator = dynamic_cast<const Validator<int>*>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, 1, -1000000, 1000000, true);
 
     if (!spin) {
@@ -363,7 +363,7 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     else if (auto ranged_step_validator = dynamic_cast<const RangedStepValidator<double>*>(validator))
         spin = GG::Wnd::Create<CUISpin<double>>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
 
-    else if (auto int_validator = dynamic_cast<const Validator<double>*>(validator))
+    else //if (auto int_validator = dynamic_cast<const Validator<double>*>(validator))
         spin = GG::Wnd::Create<CUISpin<double>>(value, 0.1, -1000000, 1000000, true);
 
     if (!spin) {

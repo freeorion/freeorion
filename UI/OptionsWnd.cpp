@@ -989,7 +989,7 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level,
         spin = GG::Wnd::Create<CUISpin<int>>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min,
                                              ranged_step_validator->m_max, true);
 
-    else if (auto int_validator = dynamic_cast<const Validator<int>*>(validator))
+    else //if (auto int_validator = dynamic_cast<const Validator<int>*>(validator))
         spin = GG::Wnd::Create<CUISpin<int>>(value, 1, -1000000, 1000000, true);
 
     if (!spin) {
@@ -1034,8 +1034,8 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
         spin = GG::Wnd::Create<CUISpin<double>>(value, ranged_step_validator->m_step_size,
                                                 ranged_step_validator->m_min, ranged_step_validator->m_max, true);
 
-    else if (auto double_validator = dynamic_cast<const Validator<double>*>(validator))
-        spin = GG::Wnd::Create<CUISpin<double>>(value, 1, -1000000, 1000000, true);
+    else //if (auto double_validator = dynamic_cast<const Validator<double>*>(validator))
+        spin = GG::Wnd::Create<CUISpin<double>>(value, 1, -1000000.0, 1000000.0, true);
 
     if (!spin) {
         ErrorLogger() << "Unable to create DoubleOption spin";
@@ -1268,12 +1268,12 @@ void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, const std:
 }
 
 void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
-    auto width_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.fullscreen.width"));
-    auto height_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.fullscreen.height"));
-    auto windowed_width_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.windowed.width"));
-    auto windowed_height_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.windowed.height"));
-    auto windowed_left_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.windowed.left"));
-    auto windowed_top_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.windowed.top"));
+    //auto width_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.fullscreen.width"));
+    //auto height_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.fullscreen.height"));
+    //auto windowed_width_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.windowed.width"));
+    //auto windowed_height_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.windowed.height"));
+    //auto windowed_left_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.windowed.left"));
+    //auto windowed_top_validator = dynamic_cast<const RangedValidator<int>*>(GetOptionsDB().GetValidator("video.windowed.top"));
 
     // compile list of resolutions available on this system
 
