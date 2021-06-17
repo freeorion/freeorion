@@ -22,8 +22,8 @@ class Application::Impl {
         void Run(std::shared_ptr<GG::Wnd> wnd);
 
     private:
-        [[maybe_unused]] class Application* const m_front;
-        class MinimalGGApp* m_app;
+        class Application* const m_front = nullptr;
+        class MinimalGGApp* m_app = nullptr;
 };
 
 
@@ -230,17 +230,14 @@ void Application::Run(std::shared_ptr<GG::Wnd> wnd) {
 
 Application::Impl::Impl(Application* q, int argc, char** argv, unsigned width,
                         unsigned height) :
-    m_front(q),
-    m_app(nullptr)
+    m_front(q)
 {
         std::vector<std::string> args;
 
-        for (int i = 0; i < argc; ++i) {
+        for (int i = 0; i < argc; ++i)
             args.push_back(argv[i]);
-        }
 
         try {
-
             bool fullscreen = false;
             std::pair<int, int> left_top(200, 100);
             int left(left_top.first), top(left_top.second);
