@@ -428,15 +428,14 @@ void SDLGUI::HandleSystemEvents() {
                     }
                     // If faking resolution change, we need to listen to this event
                     // to size the buffer correctly for the screen.
-                    if (m_fullscreen && m_fake_mode_change) {
+                    if (m_fullscreen && m_fake_mode_change)
                         ResetFramebuffer();
-                    }
+                    [[fallthrough]]; // not sure if this is inteded to be a fall through to the next case, but it seems plausible...
                 case SDL_WINDOWEVENT_RESIZED:
                     // Alt-tabbing and other things give dubious resize events while in fullscreen mode.
                     // ignore them
-                    if (!m_fullscreen) {
+                    if (!m_fullscreen)
                         WindowResizedSignal(X(event.window.data1), Y(event.window.data2));
-                    }
                     break;
                 case SDL_WINDOWEVENT_FOCUS_GAINED:
                     FocusChangedSignal(true);
