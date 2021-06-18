@@ -46,9 +46,6 @@ GameRules::Rule::Rule(Type type_, const std::string& name_, const boost::any& va
     category(category_)
 {}
 
-GameRules::GameRules()
-{}
-
 bool GameRules::Empty() const {
     CheckPendingGameRules();
     return m_game_rules.empty();
@@ -137,7 +134,7 @@ std::map<std::string, std::string> GameRules::GetRulesAsStrings() const {
     return retval;
 }
 
-void GameRules::Add(Pending::Pending<GameRules>&& future)
+void GameRules::Add(Pending::Pending<GameRulesTypeMap>&& future)
 { m_pending_rules = std::move(future); }
 
 void GameRules::SetFromStrings(const std::map<std::string, std::string>& names_values) {

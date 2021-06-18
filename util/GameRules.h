@@ -55,7 +55,7 @@ public:
 
     using GameRulesTypeMap = std::unordered_map<std::string, Rule>;
 
-    GameRules();
+    GameRules() = default;
 
     /** \name Accessors */ //@{
     bool Empty() const;
@@ -126,7 +126,7 @@ public:
     }
 
     /** Adds rules from the \p future. */
-    void Add(Pending::Pending<GameRules>&& future);
+    void Add(Pending::Pending<GameRulesTypeMap>&& future);
 
     template <typename T>
     void Set(const std::string& name, const T& value)
@@ -154,7 +154,7 @@ private:
 
     /** Future rules being parsed by parser.  mutable so that it can
         be assigned to m_game_rules when completed.*/
-    mutable boost::optional<Pending::Pending<GameRules>> m_pending_rules = boost::none;
+    mutable boost::optional<Pending::Pending<GameRulesTypeMap>> m_pending_rules = boost::none;
 
     mutable GameRulesTypeMap m_game_rules;
 
