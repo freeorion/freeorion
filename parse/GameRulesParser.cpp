@@ -21,38 +21,51 @@ namespace {
     struct insert_rule_ {
         typedef void result_type;
 
-        void operator()(GameRules& game_rules, const std::string& name,
+        void operator()(GameRules::GameRulesTypeMap& game_rules, const std::string& name,
                         const std::string& desc, const std::string& category,
                         bool default_value) const
         {
             DebugLogger() << "Adding Boolean game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value;
-            game_rules.Add<bool>(name, desc, category, default_value, false);
+
+            Validator<bool> val;
+            auto rule = GameRules::Rule{GameRules::Type::TOGGLE, name, default_value,
+                                        default_value, desc, &val, false, category};
+
+            game_rules.emplace(name, std::move(rule));
         }
 
-        void operator()(GameRules& game_rules, const std::string& name,
+        void operator()(GameRules::GameRulesTypeMap& game_rules, const std::string& name,
                         const std::string& desc, const std::string& category,
                         int default_value, int min, int max) const
         {
             DebugLogger() << "Adding Integer game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
-            game_rules.Add<int>(name, desc, category, default_value, false,
-                                RangedValidator<int>(min, max));
+
+            RangedValidator<int> val{min, max};
+            auto rule = GameRules::Rule{GameRules::Type::INT, name, default_value,
+                                        default_value, desc, &val, false, category};
+
+            game_rules.emplace(name, std::move(rule));
         }
 
-        void operator()(GameRules& game_rules, const std::string& name,
+        void operator()(GameRules::GameRulesTypeMap& game_rules, const std::string& name,
                         const std::string& desc, const std::string& category,
                         double default_value, double min, double max) const
         {
             DebugLogger() << "Adding Double game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
-            game_rules.Add<double>(name, desc, category, default_value,
-                                   false, RangedValidator<double>(min, max));
+
+            RangedValidator<double> val{min, max};
+            auto rule = GameRules::Rule{GameRules::Type::DOUBLE, name, default_value,
+                                        default_value, desc, &val, false, category};
+
+            game_rules.emplace(name, std::move(rule));
         }
 
-        void operator()(GameRules& game_rules, const std::string& name,
+        void operator()(GameRules::GameRulesTypeMap& game_rules, const std::string& name,
                         const std::string& desc, const std::string& category,
                         const std::string& default_value,
                         const std::set<std::string>& allowed = {}) const
@@ -65,16 +78,22 @@ namespace {
                           << "\", allowed: " << allowed_values_string;
 
             if (allowed.empty()) {
-                game_rules.Add<std::string>(name, desc, category, default_value, false);
+                Validator<std::string> val;
+                auto rule = GameRules::Rule{GameRules::Type::STRING, name, default_value,
+                                        default_value, desc, &val, false, category};
+                game_rules.emplace(name, std::move(rule));
+
             } else {
-                game_rules.Add<std::string>(name, desc, category, default_value, false,
-                                            DiscreteValidator<std::string>(allowed));
+                DiscreteValidator<std::string> val{allowed.begin(), allowed.end()};
+                auto rule = GameRules::Rule{GameRules::Type::STRING, name, default_value,
+                                        default_value, desc, &val, false, category};
+                game_rules.emplace(name, std::move(rule));
             }
         }
     };
     const boost::phoenix::function<insert_rule_> add_rule;
 
-    using start_rule_payload = GameRules;
+    using start_rule_payload = GameRules::GameRulesTypeMap;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
@@ -196,7 +215,7 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            void (GameRules&),
+            void (GameRules::GameRulesTypeMap&),
             boost::spirit::qi::locals<
                 std::string,            // _a : name
                 std::string,            // _b : description
@@ -228,10 +247,10 @@ namespace {
 }
 
 namespace parse {
-    GameRules game_rules(const boost::filesystem::path& path) {
-        GameRules game_rules;
+    GameRules::GameRulesTypeMap game_rules(const boost::filesystem::path& path) {
+        GameRules::GameRulesTypeMap game_rules;
         const lexer lexer;
-        /*auto success =*/ detail::parse_file<grammar, GameRules>(lexer, path, game_rules);
+        detail::parse_file<grammar, GameRules::GameRulesTypeMap>(lexer, path, game_rules);
         return game_rules;
     }
 }
