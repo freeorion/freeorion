@@ -28,9 +28,9 @@ namespace {
             DebugLogger() << "Adding Boolean game rule with name: " << name
                           << ", desc: " << desc << ", default: " << default_value;
 
-            Validator<bool> val;
+            auto val = new Validator<bool>{};
             auto rule = GameRules::Rule{GameRules::Type::TOGGLE, name, default_value,
-                                        default_value, desc, &val, false, category};
+                                        default_value, desc, val, false, category};
 
             game_rules.emplace(name, std::move(rule));
         }
@@ -43,9 +43,9 @@ namespace {
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
 
-            RangedValidator<int> val{min, max};
+            auto val = new RangedValidator<int>{min, max};
             auto rule = GameRules::Rule{GameRules::Type::INT, name, default_value,
-                                        default_value, desc, &val, false, category};
+                                        default_value, desc, val, false, category};
 
             game_rules.emplace(name, std::move(rule));
         }
@@ -58,9 +58,9 @@ namespace {
                           << ", desc: " << desc << ", default: " << default_value
                           << ", min: " << min << ", max: " << max;
 
-            RangedValidator<double> val{min, max};
+            auto val = new RangedValidator<double>{min, max};
             auto rule = GameRules::Rule{GameRules::Type::DOUBLE, name, default_value,
-                                        default_value, desc, &val, false, category};
+                                        default_value, desc, val, false, category};
 
             game_rules.emplace(name, std::move(rule));
         }
@@ -78,15 +78,15 @@ namespace {
                           << "\", allowed: " << allowed_values_string;
 
             if (allowed.empty()) {
-                Validator<std::string> val;
+                auto val = new Validator<std::string>{};
                 auto rule = GameRules::Rule{GameRules::Type::STRING, name, default_value,
-                                        default_value, desc, &val, false, category};
+                                            default_value, desc, val, false, category};
                 game_rules.emplace(name, std::move(rule));
 
             } else {
-                DiscreteValidator<std::string> val{allowed.begin(), allowed.end()};
+                auto val = new DiscreteValidator<std::string>{allowed.begin(), allowed.end()};
                 auto rule = GameRules::Rule{GameRules::Type::STRING, name, default_value,
-                                        default_value, desc, &val, false, category};
+                                        default_value, desc, val, false, category};
                 game_rules.emplace(name, std::move(rule));
             }
         }
