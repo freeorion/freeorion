@@ -13794,7 +13794,8 @@ BLD_MILITARY_COMMAND
 Military Command
 
 BLD_MILITARY_COMMAND_DESC
-Provides a military policy slot.
+'''• Provides a military policy slot.
+• Provides an additional military policy slot if the empire has destroyed at least 5 ships.'''
 
 BLD_SUPER_TEST
 Super-Tester Takeover
