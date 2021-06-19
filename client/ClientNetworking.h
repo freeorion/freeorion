@@ -46,32 +46,32 @@ public:
     ~ClientNetworking();
 
     /** Returns true iff the client is full duplex connected to the server. */
-    bool IsConnected() const;
+    [[nodiscard]] bool IsConnected() const;
 
     /** Returns true iff the client is connected to receive from the server. */
-    bool IsRxConnected() const;
+    [[nodiscard]] bool IsRxConnected() const;
 
     /** Returns true iff the client is connected to send to the server. */
-    bool IsTxConnected() const;
+    [[nodiscard]] bool IsTxConnected() const;
 
     /** Returns the ID of the player on this client. */
-    int PlayerID() const;
+    [[nodiscard]] int PlayerID() const;
 
     /** Returns the ID of the host player, or INVALID_PLAYER_ID if there is no host player. */
-    int HostPlayerID() const;
+    [[nodiscard]] int HostPlayerID() const;
 
     /** Returns whether the indicated player ID is the host. */
-    bool PlayerIsHost(int player_id) const;
+    [[nodiscard]] bool PlayerIsHost(int player_id) const;
 
     /** Checks if the client has some authorization \a role. */
-    bool HasAuthRole(Networking::RoleType role) const;
+    [[nodiscard]] bool HasAuthRole(Networking::RoleType role) const;
 
     /** Returns address of multiplayer server entered by player. */
-    const std::string& Destination() const;
+    [[nodiscard]] const std::string& Destination() const;
 
     /** Returns a list of the addresses and names of all servers on the Local
         Area Network. */
-    ServerNames DiscoverLANServerNames();
+    [[nodiscard]] ServerNames DiscoverLANServerNames();
 
     /** Connects to the server at \a ip_address.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
@@ -101,7 +101,7 @@ public:
 
     /** Return the next incoming message from the server if available or boost::none.
         Remove the message from the incoming message queue. */
-    boost::optional<Message> GetMessage();
+    [[nodiscard]] boost::optional<Message> GetMessage();
 
     /** Disconnects the client from the server. First tries to send any pending transmit messages. */
     void DisconnectFromServer();
@@ -113,7 +113,7 @@ public:
     void SetHostPlayerID(int host_player_id);
 
     /** Access to client's authorization roles */
-    Networking::AuthRoles& AuthorizationRoles();
+    [[nodiscard]] Networking::AuthRoles& AuthorizationRoles();
 
 private:
     friend class ClientApp;

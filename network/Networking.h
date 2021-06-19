@@ -40,14 +40,14 @@ namespace Networking {
     public:
         AuthRoles() = default;
 
-        AuthRoles(const std::initializer_list<RoleType>& roles);
+        explicit AuthRoles(const std::initializer_list<RoleType>& roles);
 
         void SetRole(RoleType role, bool value = true);
         void Clear();
 
         bool HasRole(RoleType role) const;
 
-        std::string Text() const;
+        [[nodiscard]] std::string Text() const;
         void SetText(const std::string& text);
     private:
         std::bitset<int(RoleType::Roles_Count)> m_roles;

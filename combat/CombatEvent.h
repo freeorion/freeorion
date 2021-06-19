@@ -31,28 +31,28 @@ struct FO_COMMON_API CombatEvent {
     CombatEvent() = default;
     virtual ~CombatEvent() = default;
 
-    virtual std::string DebugString(const ObjectMap& objects) const = 0;
+    [[nodiscard]] virtual std::string DebugString(const ObjectMap& objects) const = 0;
 
     /** Generate the combat log description.
         Describe the result of a combat event (i.e. what happened). */
-    virtual std::string CombatLogDescription(int viewing_empire_id, const ObjectMap& objects) const = 0;
+    [[nodiscard]] virtual std::string CombatLogDescription(int viewing_empire_id, const ObjectMap& objects) const = 0;
 
     /** Generate the combat log details.
         Describe how it happened in enough detail to avoid a trip to the Pedia. */
-    virtual std::string CombatLogDetails(int viewing_empire_id) const
+    [[nodiscard]] virtual std::string CombatLogDetails(int viewing_empire_id) const
     { return ""; }
 
     /** If the combat event is composed of smaller events then return a vector of the sub events,
         otherwise returns an empty vector. */
-    virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const
+    [[nodiscard]] virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const
     { return std::vector<ConstCombatEventPtr>(); }
 
     /** Return true if there are no details; */
-    virtual bool AreDetailsEmpty(int viewing_empire_id) const
+    [[nodiscard]] virtual bool AreDetailsEmpty(int viewing_empire_id) const
     { return true; }
 
     /** Return true if there are no sub events; */
-    virtual bool AreSubEventsEmpty(int viewing_empire_id) const
+    [[nodiscard]] virtual bool AreSubEventsEmpty(int viewing_empire_id) const
     { return true; }
 
     /** Return true if sub events are to be flattened on display; */
@@ -66,7 +66,7 @@ struct FO_COMMON_API CombatEvent {
         faction most active in the event (i.e. the attacker in a WeaponEvent).
         It is from the perspective of the \p viewing_empire_id. Some events
         like BoutBegin are not associated with any faction.*/
-    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
+    [[nodiscard]] virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
 };
 
 

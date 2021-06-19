@@ -220,7 +220,7 @@ public:
     void UpdatePolicies(bool update_cumulative_adoption_time);
 
     /** Returns the meter with the indicated \a name if it exists, or nullptr. */
-    Meter* GetMeter(const std::string& name);
+    [[nodiscard]] Meter* GetMeter(const std::string& name);
     void BackPropagateMeters();
 
     /** Adds \a tech to the research queue, placing it before position \a pos.
@@ -286,7 +286,7 @@ public:
     void AddShipDesign(int ship_design_id, const Universe& universe, int next_design_id = INVALID_DESIGN_ID);
     int AddShipDesign(ShipDesign* ship_design, Universe& universe); ///< inserts given ShipDesign into the Universe, adds the design's id to the Empire's set of ids, and returns the new design's id, which is INVALID_OBJECT_ID on failure.  If successful, universe takes ownership of passed ShipDesign.
 
-    std::string NewShipName();                                      ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
+    [[nodiscard]] std::string NewShipName();                        ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
     void Eliminate(EmpireManager& empires = Empires());             ///< Marks empire as eliminated and cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
     /** Marks this empire as having won for this reason, and sends the appropriate sitreps */
     void Win(const std::string& reason, EmpireManager& empires = Empires());
@@ -404,77 +404,77 @@ public:
     void RecordPlanetInvaded(const Planet& planet);
     void RecordPlanetDepopulated(const Planet& planet);
 
-    int TotalShipsOwned() const;
-    int TotalShipPartsOwned() const;    ///< Total number of parts for all owned ships in this empire
-    int TotalBuildingsOwned() const;
+    [[nodiscard]] int TotalShipsOwned() const;
+    [[nodiscard]] int TotalShipPartsOwned() const;    ///< Total number of parts for all owned ships in this empire
+    [[nodiscard]] int TotalBuildingsOwned() const;
 
-    auto SpeciesShipsOwned() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto SpeciesShipsOwned() const -> const std::map<std::string, int>&
     { return m_species_ships_owned; }
 
-    auto ShipDesignsOwned() const -> const std::map<int, int>&
+    [[nodiscard]] auto ShipDesignsOwned() const -> const std::map<int, int>&
     { return m_ship_designs_owned; }
 
-    auto ShipPartsOwned() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto ShipPartsOwned() const -> const std::map<std::string, int>&
     { return m_ship_parts_owned; }
 
-    auto ShipPartClassOwned() const -> const std::map<ShipPartClass, int>&
+    [[nodiscard]] auto ShipPartClassOwned() const -> const std::map<ShipPartClass, int>&
     { return m_ship_part_class_owned; }
 
-    auto SpeciesColoniesOwned() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto SpeciesColoniesOwned() const -> const std::map<std::string, int>&
     { return m_species_colonies_owned; }
 
-    auto OutpostsOwned() const -> int
+    [[nodiscard]] auto OutpostsOwned() const -> int
     { return m_outposts_owned; }
 
-    auto BuildingTypesOwned() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto BuildingTypesOwned() const -> const std::map<std::string, int>&
     { return m_building_types_owned; }
 
-    auto EmpireShipsDestroyed() const -> const std::map<int, int>&
+    [[nodiscard]] auto EmpireShipsDestroyed() const -> const std::map<int, int>&
     { return m_empire_ships_destroyed; }
 
-    auto ShipDesignsDestroyed() const -> const std::map<int, int>&
+    [[nodiscard]] auto ShipDesignsDestroyed() const -> const std::map<int, int>&
     { return m_ship_designs_destroyed; }
 
-    auto SpeciesShipsDestroyed() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto SpeciesShipsDestroyed() const -> const std::map<std::string, int>&
     { return m_species_ships_destroyed; }
 
-    auto SpeciesPlanetsInvaded() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto SpeciesPlanetsInvaded() const -> const std::map<std::string, int>&
     { return m_species_planets_invaded; }
 
-    auto ShipDesignsInProduction() const -> const std::map<int, int>&
+    [[nodiscard]] auto ShipDesignsInProduction() const -> const std::map<int, int>&
     { return m_ship_designs_in_production; }
 
-    auto SpeciesShipsProduced() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto SpeciesShipsProduced() const -> const std::map<std::string, int>&
     { return m_species_ships_produced; }
 
-    auto ShipDesignsProduced() const -> const std::map<int, int>&
+    [[nodiscard]] auto ShipDesignsProduced() const -> const std::map<int, int>&
     { return m_ship_designs_produced; }
 
-    auto SpeciesShipsLost() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto SpeciesShipsLost() const -> const std::map<std::string, int>&
     { return m_species_ships_lost; }
 
-    auto ShipDesignsLost() const -> const std::map<int, int>&
+    [[nodiscard]] auto ShipDesignsLost() const -> const std::map<int, int>&
     { return m_ship_designs_lost; }
 
-    auto SpeciesShipsScrapped() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto SpeciesShipsScrapped() const -> const std::map<std::string, int>&
     { return m_species_ships_scrapped; }
 
-    auto ShipDesignsScrapped() const -> const std::map<int, int>&
+    [[nodiscard]] auto ShipDesignsScrapped() const -> const std::map<int, int>&
     { return m_ship_designs_scrapped; }
 
-    auto SpeciesPlanetsDepoped() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto SpeciesPlanetsDepoped() const -> const std::map<std::string, int>&
     { return m_species_planets_depoped; }
 
-    auto SpeciesPlanetsBombed() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto SpeciesPlanetsBombed() const -> const std::map<std::string, int>&
     { return m_species_planets_bombed; }
 
-    auto BuildingTypesProduced() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto BuildingTypesProduced() const -> const std::map<std::string, int>&
     { return m_building_types_produced; }
 
-    auto BuildingTypesScrapped() const -> const std::map<std::string, int>&
+    [[nodiscard]] auto BuildingTypesScrapped() const -> const std::map<std::string, int>&
     { return m_building_types_scrapped; }
 
-    auto TurnsSystemsExplored() const -> const std::map<int, int>&
+    [[nodiscard]] auto TurnsSystemsExplored() const -> const std::map<int, int>&
     { return m_explored_systems; }
 
     /** Processes Builditems on queues of empires other than the indicated

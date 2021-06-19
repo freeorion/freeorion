@@ -96,7 +96,7 @@ public:
      *
      * @return The serialized state information of the game running.
      */
-    const std::string&  GetSaveStateString() const;
+    [[nodiscard]] const std::string& GetSaveStateString() const;
 
     /** @brief Set the aggressiveness of this AI
      *
