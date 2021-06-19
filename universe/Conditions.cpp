@@ -3200,18 +3200,18 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
         if (search_domain == SearchDomain::MATCHES && subcondition_matches.empty()) {
             // move to non_matches
             matches.clear();
-            non_matches.push_back(local_context.condition_local_candidate);
+            non_matches.push_back(std::move(local_context.condition_local_candidate));
         } else if (search_domain == SearchDomain::NON_MATCHES && !subcondition_matches.empty()) {
             // move to matches
             non_matches.clear();
-            matches.push_back(local_context.condition_local_candidate);
+            matches.push_back(std::move(local_context.condition_local_candidate));
         }
 
     } else {
         // evaluate container objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
         std::shared_ptr<const UniverseObject> no_object;
-        ScriptingContext local_context(parent_context, no_object);
+        ScriptingContext local_context(parent_context, std::move(no_object));
         ObjectSet subcondition_matches;
         m_condition->Eval(local_context, subcondition_matches);
 
@@ -3259,11 +3259,12 @@ bool ContainedBy::Match(const ScriptingContext& local_context) const {
 
     ObjectSet container_objects = local_context.ContextObjects().find<const UniverseObject>(containers);
     if (container_objects.empty())
-        return false;
+        return false;   // if no containers, don't need to check them
 
+    // do any containers match the subcondition?
     m_condition->Eval(local_context, container_objects);
 
-    return container_objects.empty();
+    return !container_objects.empty(); 
 }
 
 void ContainedBy::SetTopLevelContent(const std::string& content_name) {
