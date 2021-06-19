@@ -50,6 +50,7 @@ namespace parse { namespace detail {
                             tok.sin_    [ _c = ValueRef::OpType::SINE ] // single-parameter math functions
                         |   tok.cos_    [ _c = ValueRef::OpType::COSINE ]
                         |   tok.log_    [ _c = ValueRef::OpType::LOGARITHM ]
+                        |   tok.NoOp_   [ _c = ValueRef::OpType::NOOP ] // pass-through does nothing, for debug purposes
                         |   tok.abs_    [ _c = ValueRef::OpType::ABS ]
                         |   tok.round_  [ _c = ValueRef::OpType::ROUND_NEAREST ]
                         |   tok.ceil_   [ _c = ValueRef::OpType::ROUND_UP ]

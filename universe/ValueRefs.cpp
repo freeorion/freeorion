@@ -2966,6 +2966,15 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             break;
         }
 
+        case OpType::NOOP: {
+            DebugLogger() << "ValueRef::Operation<double>::NoOp::EvalImpl";
+            auto retval = LHS()->Eval(context);
+            DebugLogger() << "ValueRef::Operation<double>::NoOp::EvalImpl. Sub-Expression returned: " << retval
+                          << " from: " << LHS()->Dump();
+            return retval;
+            break;
+        }
+
         case OpType::ABS:
             return std::abs(LHS()->Eval(context)); break;
 
@@ -3113,6 +3122,15 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
                 ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
                 return 0;
             }
+            break;
+        }
+
+        case OpType::NOOP: {
+            DebugLogger() << "ValueRef::Operation<int>::NoOp::EvalImpl";
+            auto retval = LHS()->Eval(context);
+            DebugLogger() << "ValueRef::Operation<int>::NoOp::EvalImpl. Sub-Expression returned: " << retval
+                          << " from: " << LHS()->Dump();
+            return retval;
             break;
         }
 
