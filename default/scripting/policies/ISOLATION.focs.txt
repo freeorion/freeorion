@@ -9,6 +9,7 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
+        // apply stability bonus dependent on distance to other known populated planets. Above the threshold distance, a bonus is given. Closer than that, a penalty is applied.
         EffectsGroup
             scope = And [
                 Planet
@@ -33,6 +34,7 @@ Policy
                         ]
                     ) / (NamedReal name = "PLC_ISOLATION_THRESHOLD_DISTANCE" value = 150.0) * 10.0 - 10.0)
 
+        // fallback for case when only a single populated planet is known to an empire...
         EffectsGroup
             scope = And [
                 Planet
@@ -46,6 +48,7 @@ Policy
             ]
             effects = SetTargetHappiness value = Value + 10.0
         
+        // stealth boost
         EffectsGroup
             scope = And [
                 Planet
