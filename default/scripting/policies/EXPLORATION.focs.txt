@@ -5,6 +5,7 @@ Policy
     category = "MILITARY_CATEGORY"
     adoptioncost = 5 + Statistic Count condition = And [Ship OwnedBy empire = Source.Owner]
     exclusions = [ "PLC_COLONIZATION" "PLC_ISOLATION" ]
+    unlock = Item type = Policy name = "PLC_EXPLORATION_RESEARCH"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
     

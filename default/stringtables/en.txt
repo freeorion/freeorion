@@ -7765,6 +7765,12 @@ The capital of the %empire% empire has fallen.
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Empire Capital Captured
 
+SITREP_FIELD_RESEARCH_LABEL
+Exploration Research
+
+SITREP_FIELD_RESEARCH
+At %system%: exploration generated research.
+
 CUSTOM_SITREP_INTRODUCTION
 Welcome to the initial Situation Report Briefing. Pursuant to the %tech% Directive, all the busy empire servants endeavor to collect important information and send it back to %system%, where it is compiled into Situation Reports, such as this, providing notice of important events and other reminders selected by the empire leadership.
 
@@ -11850,6 +11856,15 @@ PLC_BUREAUCRACY_DESC
 
 PLC_BUREAUCRACY_SHORT_DESC
 Boosts stability
+
+PLC_EXPLORATION_RESEARCH
+Exploration Research
+
+PLC_EXPLORATION_RESEARCH_DESC
+Every turn a system is newly explored, the ships in that system generate a total of [[value EXPLORATION_RESEARCH_BONUS_TOTAL]] RP.
+
+PLC_EXPLORATION_RESEARCH_SHORT_DESC
+Exploration Gives Research
 
 
 ##
