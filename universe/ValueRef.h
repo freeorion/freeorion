@@ -15,21 +15,21 @@ struct FO_COMMON_API ValueRefBase {
     ValueRefBase() = default;
     virtual ~ValueRefBase() = default;
 
-    virtual bool RootCandidateInvariant() const  { return m_root_candidate_invariant; }
-    virtual bool LocalCandidateInvariant() const { return m_local_candidate_invariant; }
-    virtual bool TargetInvariant() const         { return m_target_invariant; }
-    virtual bool SourceInvariant() const         { return m_source_invariant; }
-    virtual bool SimpleIncrement() const         { return false; }
-    virtual bool ConstantExpr() const            { return false; }
+    [[nodiscard]] virtual bool RootCandidateInvariant() const  { return m_root_candidate_invariant; }
+    [[nodiscard]] virtual bool LocalCandidateInvariant() const { return m_local_candidate_invariant; }
+    [[nodiscard]] virtual bool TargetInvariant() const         { return m_target_invariant; }
+    [[nodiscard]] virtual bool SourceInvariant() const         { return m_source_invariant; }
+    [[nodiscard]] virtual bool SimpleIncrement() const         { return false; }
+    [[nodiscard]] virtual bool ConstantExpr() const            { return false; }
 
-    std::string InvariancePattern() const;
-    virtual std::string Description() const = 0;                    //! Returns a user-readable text description of this ValueRef
-    virtual std::string EvalAsString() const = 0;                   //! Returns a textual representation of the evaluation result  with an empty/default context
-    virtual std::string Dump(unsigned short ntabs = 0) const = 0;   //! Returns a textual representation that should be parseable to recreate this ValueRef
+    [[nodiscard]] std::string         InvariancePattern() const;
+    [[nodiscard]] virtual std::string Description() const = 0;                    //! Returns a user-readable text description of this ValueRef
+    [[nodiscard]] virtual std::string EvalAsString() const = 0;                   //! Returns a textual representation of the evaluation result  with an empty/default context
+    [[nodiscard]] virtual std::string Dump(unsigned short ntabs = 0) const = 0;   //! Returns a textual representation that should be parseable to recreate this ValueRef
 
     virtual void SetTopLevelContent(const std::string& content_name) {}
 
-    virtual unsigned int GetCheckSum() const { return 0; }
+    [[nodiscard]] virtual unsigned int GetCheckSum() const { return 0; }
 
 protected:
     bool m_root_candidate_invariant = false;
@@ -51,11 +51,11 @@ template<typename T, typename std::enable_if_t<std::is_enum_v<T>>* = nullptr>
 std::string FlexibleToString(T&& t)
 { return std::to_string(static_cast<std::underlying_type_t<T>>(t)); }
 
-inline std::string FlexibleToString(std::string&& t)
+[[nodiscard]] inline std::string FlexibleToString(std::string&& t)
 { return std::move(t); }
 
 template<typename T, typename std::enable_if_t<std::is_same_v<T, std::vector<std::string>>>* = nullptr>
-std::string FlexibleToString(T&& t)
+[[nodiscard]] std::string FlexibleToString(T&& t)
 {
     std::string s;
     for (auto&& piece : t) s += piece;
@@ -71,28 +71,28 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
     ValueRef() = default;
     virtual ~ValueRef() = default;
 
-    virtual bool operator==(const ValueRef<T>& rhs) const;
+    [[nodiscard]] virtual bool operator==(const ValueRef<T>& rhs) const;
 
-    bool operator!=(const ValueRef<T>& rhs) const
+    [[nodiscard]] bool operator!=(const ValueRef<T>& rhs) const
     { return !(*this == rhs); }
 
     /** Evaluates the expression tree with a default context.  Useful for
       * evaluating expressions that do not depend on source, target, or
       * candidate objects. */
-    T Eval() const
+    [[nodiscard]] T Eval() const
     { return Eval(::ScriptingContext{}); }
 
     /** Evaluates the expression tree and return the results; \a context
       * is used to fill in any instances of the "Value" variable or references
       * to objects such as the source, effect target, or condition candidates
       * that exist in the tree. */
-    virtual T Eval(const ScriptingContext& context) const = 0;
+    [[nodiscard]] virtual T Eval(const ScriptingContext& context) const = 0;
 
     /** Evaluates the expression tree with an empty context and retuns the
       * a string representation of the result value iff the result type is
       * supported (currently std::string, int, float, double, enum).
       * See ValueRefs.cpp for specialisation implementations. */
-    std::string EvalAsString() const final
+    [[nodiscard]] std::string EvalAsString() const final
     { return FlexibleToString(Eval()); }
 
     /** Makes a clone of this ValueRef in a new owning pointer. Required for Boost.Python, which

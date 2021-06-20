@@ -45,19 +45,20 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
 {
     explicit Constant(T value);
 
-    bool operator==(const ValueRef<T>& rhs) const override;
-    T Eval(const ScriptingContext& context) const override;
-
-    bool ConstantExpr() const override
+    [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override;
+    [[nodiscard]] T    Eval(const ScriptingContext& context) const override;
+    [[nodiscard]] bool ConstantExpr() const override
     { return true; }
 
-    std::string Description() const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override;
-    T Value() const;
-    unsigned int GetCheckSum() const override;
+    [[nodiscard]] std::string Description() const override;
+    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
 
-    std::unique_ptr<ValueRef<T>> Clone() const override {
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    [[nodiscard]] T Value() const;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
+
+    [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
         auto retval = std::make_unique<Constant>(m_value);
         retval->m_top_level_content = m_top_level_content;
         return retval;
@@ -104,16 +105,16 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
              bool return_immediate_value = false);
 
-    bool operator==(const ValueRef<T>& rhs) const override;
-    T Eval(const ScriptingContext& context) const override;
-    std::string Description() const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
-    ReferenceType GetReferenceType() const;
-    const std::vector<std::string>& PropertyName() const;
-    bool ReturnImmediateValue() const;
-    unsigned int GetCheckSum() const override;
+    [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override;
+    [[nodiscard]] T Eval(const ScriptingContext& context) const override;
+    [[nodiscard]] std::string Description() const override;
+    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] ReferenceType GetReferenceType() const;
+    [[nodiscard]] const std::vector<std::string>& PropertyName() const;
+    [[nodiscard]] bool ReturnImmediateValue() const;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<T>> Clone() const override
+    [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<Variable<T>>(m_ref_type, m_property_name, m_return_immediate_value); }
 
 protected:
@@ -136,24 +137,25 @@ struct FO_COMMON_API Statistic final : public Variable<T>
               StatisticType stat_type,
               std::unique_ptr<Condition::Condition>&& sampling_condition);
 
-    bool        operator==(const ValueRef<T>& rhs) const override;
-    T           Eval(const ScriptingContext& context) const override;
-    std::string Description() const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
-    void        SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] bool        operator==(const ValueRef<T>& rhs) const override;
+    [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
+    [[nodiscard]] std::string Description() const override;
+    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
 
-    StatisticType GetStatisticType() const
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    [[nodiscard]] StatisticType GetStatisticType() const
     { return m_stat_type; }
 
-    const Condition::Condition* GetSamplingCondition() const
+    [[nodiscard]] const Condition::Condition* GetSamplingCondition() const
     { return m_sampling_condition.get(); }
 
-    const ValueRef<V>* GetValueRef() const
+    [[nodiscard]] const ValueRef<V>* GetValueRef() const
     { return m_value_ref.get(); }
 
-    unsigned int GetCheckSum() const override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<T>> Clone() const override {
+    [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
         return std::make_unique<Statistic<T, V>>(CloneUnique(m_value_ref),
                                                  m_stat_type,
                                                  CloneUnique(m_sampling_condition));
@@ -200,19 +202,21 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
 
     explicit ComplexVariable(const ComplexVariable<T>& rhs);
 
-    bool operator==(const ValueRef<T>& rhs) const override;
-    T Eval(const ScriptingContext& context) const override;
-    std::string Description() const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override;
-    const ValueRef<int>* IntRef1() const;
-    const ValueRef<int>* IntRef2() const;
-    const ValueRef<int>* IntRef3() const;
-    const ValueRef<std::string>* StringRef1() const;
-    const ValueRef<std::string>* StringRef2() const;
-    unsigned int GetCheckSum() const override;
+    [[nodiscard]] bool        operator==(const ValueRef<T>& rhs) const override;
+    [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
+    [[nodiscard]] std::string Description() const override;
+    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
 
-    std::unique_ptr<ValueRef<T>> Clone() const override
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    [[nodiscard]] const ValueRef<int>*         IntRef1() const;
+    [[nodiscard]] const ValueRef<int>*         IntRef2() const;
+    [[nodiscard]] const ValueRef<int>*         IntRef3() const;
+    [[nodiscard]] const ValueRef<std::string>* StringRef1() const;
+    [[nodiscard]] const ValueRef<std::string>* StringRef2() const;
+    [[nodiscard]] unsigned int                 GetCheckSum() const override;
+
+    [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<ComplexVariable<T>>(*this); }
 
 protected:
@@ -232,27 +236,28 @@ template <typename FromType, typename ToType>
 struct FO_COMMON_API StaticCast final : public Variable<ToType>
 {
     template <typename T>
-    StaticCast(T&& value_ref,
-               typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>* = nullptr);
+    explicit StaticCast(T&& value_ref,
+                        typename std::enable_if_t<std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>* = nullptr);
 
     template <typename T>
-    StaticCast(T&& value_ref,
-               typename std::enable_if_t<
-               std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>>
-               && !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>* = nullptr);
+    explicit StaticCast(T&& value_ref,
+                        typename std::enable_if_t<
+                        std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>>
+                        && !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>>* = nullptr);
 
-    bool operator==(const ValueRef<ToType>& rhs) const override;
-    ToType Eval(const ScriptingContext& context) const override;
-    std::string Description() const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]]             bool operator==(const ValueRef<ToType>& rhs) const override;
+    [[nodiscard]] ToType      Eval(const ScriptingContext& context) const override;
+    [[nodiscard]] std::string Description() const override;
+    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef<FromType>* GetValueRef() const
+    [[nodiscard]] const ValueRef<FromType>* GetValueRef() const
     { return m_value_ref.get(); }
 
-    unsigned int GetCheckSum() const override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<ToType>> Clone() const override
+    [[nodiscard]] std::unique_ptr<ValueRef<ToType>> Clone() const override
     { return std::make_unique<StaticCast<FromType, ToType>>(CloneUnique(m_value_ref)); }
 
 private:
@@ -267,18 +272,19 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
 {
     explicit StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref);
 
-    bool operator==(const ValueRef<std::string>& rhs) const override;
-    std::string Eval(const ScriptingContext& context) const override;
-    std::string Description() const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] bool        operator==(const ValueRef<std::string>& rhs) const override;
+    [[nodiscard]] std::string Eval(const ScriptingContext& context) const override;
+    [[nodiscard]] std::string Description() const override;
+    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef<FromType>* GetValueRef() const
+    [[nodiscard]] const ValueRef<FromType>* GetValueRef() const
     { return m_value_ref; }
 
-    unsigned int GetCheckSum() const override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<std::string>> Clone() const override
+    [[nodiscard]] std::unique_ptr<ValueRef<std::string>> Clone() const override
     { return std::make_unique<StringCast<FromType>>(CloneUnique(m_value_ref)); }
 
 private:
@@ -291,18 +297,19 @@ template <typename FromType>
 struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
     explicit UserStringLookup(std::unique_ptr<ValueRef<FromType>>&& value_ref);
 
-    bool operator==(const ValueRef<std::string>& rhs) const override;
-    std::string Eval(const ScriptingContext& context) const override;
-    std::string Description() const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] bool        operator==(const ValueRef<std::string>& rhs) const override;
+    [[nodiscard]] std::string Eval(const ScriptingContext& context) const override;
+    [[nodiscard]] std::string Description() const override;
+    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef<FromType>* GetValueRef() const
+    [[nodiscard]] const ValueRef<FromType>* GetValueRef() const
     { return m_value_ref; }
 
-    unsigned int GetCheckSum() const override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<std::string>> Clone() const override
+    [[nodiscard]] std::unique_ptr<ValueRef<std::string>> Clone() const override
     { return std::make_unique<UserStringLookup<FromType>>(CloneUnique(m_value_ref)); }
 
 private:
@@ -320,21 +327,22 @@ struct FO_COMMON_API NameLookup final : public Variable<std::string> {
 
     NameLookup(std::unique_ptr<ValueRef<int>>&& value_ref, LookupType lookup_type);
 
-    bool operator==(const ValueRef<std::string>& rhs) const override;
-    std::string Eval(const ScriptingContext& context) const override;
-    std::string Description() const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] bool        operator==(const ValueRef<std::string>& rhs) const override;
+    [[nodiscard]] std::string Eval(const ScriptingContext& context) const override;
+    [[nodiscard]] std::string Description() const override;
+    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef<int>* GetValueRef() const
+    [[nodiscard]] const ValueRef<int>* GetValueRef() const
     { return m_value_ref.get(); }
 
-    LookupType GetLookupType() const
+    [[nodiscard]] LookupType GetLookupType() const
     { return m_lookup_type; }
 
-    unsigned int GetCheckSum() const override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<std::string>> Clone() const override
+    [[nodiscard]] std::unique_ptr<ValueRef<std::string>> Clone() const override
     { return std::make_unique<NameLookup>(CloneUnique(m_value_ref), m_lookup_type); }
 
 private:
@@ -477,7 +485,7 @@ bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
 template <typename T>
 Constant<T>::Constant(T value) :
     ValueRef<T>(),
-    m_value(std::move(value))
+    m_value(value)
 {
     this->m_root_candidate_invariant = true;
     this->m_local_candidate_invariant = true;
@@ -1712,9 +1720,9 @@ Operation<T>::Operation(OpType op_type,
     m_op_type(op_type)
 {
     if (operand1)
-        m_operands.emplace_back(std::move(operand1));
+        m_operands.push_back(std::move(operand1));
     if (operand2)
-        m_operands.emplace_back(std::move(operand2));
+        m_operands.push_back(std::move(operand2));
     InitConstInvariants();
     CacheConstValue();
 }
@@ -1725,7 +1733,7 @@ Operation<T>::Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand) 
     m_op_type(op_type)
 {
     if (operand)
-        m_operands.emplace_back(std::move(operand));
+        m_operands.push_back(std::move(operand));
     InitConstInvariants();
     CacheConstValue();
 }
@@ -1824,10 +1832,10 @@ bool Operation<T>::operator==(const ValueRef<T>& rhs) const
 
     try {
         for (std::size_t idx = 0; idx < m_operands.size(); ++idx) {
-            const auto& my_op = m_operands.at(idx);
-            const auto& rhs_op = rhs_.m_operands.at(idx);
+            const auto& my_op = m_operands[idx];
+            const auto& rhs_op = rhs_.m_operands[idx];
 
-            if (my_op == rhs_op)
+            if (my_op == rhs_op) // operands are unique_ptr so can only compare equal if nullptr
                 continue;
             if (!my_op || !rhs_op)
                 return false;
@@ -1851,27 +1859,11 @@ OpType Operation<T>::GetOpType() const
 
 template <typename T>
 const ValueRef<T>* Operation<T>::LHS() const
-{
-    if (m_operands.empty())
-        return nullptr;
-    try {
-        return m_operands.at(0).get();
-    } catch (...) {
-        return nullptr;
-    }
-}
+{ return m_operands.empty() ? nullptr : m_operands.front().get(); }
 
 template <typename T>
 const ValueRef<T>* Operation<T>::RHS() const
-{
-    if (m_operands.size() < 2)
-        return nullptr;
-    try {
-        return m_operands.at(1).get();
-    } catch (...) {
-        return nullptr;
-    }
-}
+{ return m_operands.size() < 2 ? nullptr : m_operands[1].get(); }
 
 template <typename T>
 const std::vector<ValueRef<T>*> Operation<T>::Operands() const
