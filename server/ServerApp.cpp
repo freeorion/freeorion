@@ -2644,7 +2644,9 @@ namespace {
     }
 
     /** Records info in Empires about what they destroyed or had destroyed during combat. */
-    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats, const ObjectMap& objects) {
+    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats, const ObjectMap& objects) { // TODO: pass Empires()
+        auto& empires{Empires()};
+
         for (const CombatInfo& combat_info : combats) {
             std::vector<WeaponFireEvent::ConstWeaponFireEventPtr> events_that_killed;
             for (auto& event : FlattenEvents(combat_info.combat_events)) { // TODO: could do the filtering in the call function and avoid some moves later...
@@ -2658,22 +2660,26 @@ namespace {
                           << "  Total Kill Events: " << events_that_killed.size();
 
 
+            
+
             // If a ship was attacked multiple times during a combat in which it dies, it will get
             // processed multiple times here.  The below set will keep it from being logged as
             // multiple destroyed ships for its owner.
             // TODO: fix similar issue for overlogging on attacker side
-            std::set<int> already_logged__target_ships;
+            std::unordered_set<int> already_logged__target_ships;
+            std::unordered_map<int, int> empire_destroyed_ship_ids;
+
             for (const auto& attack_event : events_that_killed) {
-                auto attacker = Objects().get(attack_event->attacker_id);
+                auto attacker = objects.get(attack_event->attacker_id);
                 if (!attacker)
                     continue;
                 int attacker_empire_id = attacker->Owner();
-                Empire* attacker_empire = GetEmpire(attacker_empire_id);
+                auto attacker_empire = empires.GetEmpire(attacker_empire_id);
 
                 auto target_ship = objects.get<Ship>(attack_event->target_id);
                 if (!target_ship)
                     continue;
-                Empire* target_empire = GetEmpire(target_ship->Owner());
+                auto target_empire = empires.GetEmpire(target_ship->Owner());
 
                 DebugLogger() << "Attacker " << attacker->Name() << " (id: " << attacker->ID()
                               << "  empire: " << attacker_empire_id << ")  attacks "

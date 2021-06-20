@@ -190,7 +190,7 @@ public:
       * empire id if success and ALL_EMPIRES if no empire found.
       * Simply sends GAME_START message so established player knows he is in the game.
       * Notificates the player about statuses of other empires. */
-    [[nodiscard]] int AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, int target_empire_id);
+    int AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, int target_empire_id);
 
     /** Get list of players delegated by \a player_name */
     [[nodiscard]] std::list<std::string> GetPlayerDelegation(const std::string& player_name);
