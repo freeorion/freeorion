@@ -2271,11 +2271,11 @@ namespace {
         const auto& pt_env_map = species->PlanetEnvironments();
         if (!pt_env_map.empty()) {
             detailed_description += UserString("ENVIRONMENTAL_PREFERENCES") + "\n";
-            for (const auto& pt_env : pt_env_map) {
-                detailed_description += UserString(boost::lexical_cast<std::string>(pt_env.first)) + " : " +
-                                        UserString(boost::lexical_cast<std::string>(pt_env.second)) + "\n";
+            for (auto& [ptype, penv] : pt_env_map) {
+                detailed_description += UserString(boost::lexical_cast<std::string>(ptype)) + " : " +
+                                        UserString(boost::lexical_cast<std::string>(penv)) + "\n";
                 // add blank line between cyclical environments and asteroids and gas giants
-                if (pt_env.first == PlanetType::PT_OCEAN)
+                if (ptype == PlanetType::PT_OCEAN)
                     detailed_description += "\n";
             }
         } else {
@@ -2300,7 +2300,7 @@ namespace {
 
         // occupied planets
         std::vector<std::shared_ptr<const Planet>> species_occupied_planets;
-        auto& species_object_populations = GetSpeciesManager().SpeciesObjectPopulations();
+        const auto& species_object_populations = GetSpeciesManager().SpeciesObjectPopulations();
         species_occupied_planets.reserve(species_object_populations.size());
         auto sp_op_it = species_object_populations.find(item_name);
         if (sp_op_it != species_object_populations.end()) {
