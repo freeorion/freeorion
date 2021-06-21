@@ -2715,7 +2715,7 @@ std::string StringCast<std::vector<std::string>>::Eval(const ScriptingContext& c
     // concatenate strings into one big string
     std::string retval;
     retval.reserve(16 * temp.size()); // rough guesstimate to avoid reallocations
-    for (auto str : temp)
+    for (const auto& str : temp)
         retval += str + " ";
     return retval;
 }
