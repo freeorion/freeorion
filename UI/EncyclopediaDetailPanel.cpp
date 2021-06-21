@@ -383,15 +383,14 @@ namespace {
 
         }
         else if (dir_name == "ENC_SHIP_DESIGN") {
-            for (auto it = GetUniverse().beginShipDesigns();
-                 it != GetUniverse().endShipDesigns(); ++it)
-            {
-                if (it->second->IsMonster())
+            for (auto it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it) {
+                const auto& [design_id, design] = *it;
+                if (design->IsMonster())
                     continue;
                 sorted_entries_list.emplace(
-                    it->second->Name(),
-                    std::make_pair(LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n",
-                                   std::to_string(it->first)));
+                    design->Name(),
+                    std::make_pair(LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design->Name()) + "\n",
+                                   std::to_string(design_id)));
             }
 
         }
@@ -418,14 +417,13 @@ namespace {
 
         }
         else if (dir_name == "ENC_MONSTER_TYPE") {
-            for (auto it = GetUniverse().beginShipDesigns();
-                 it != GetUniverse().endShipDesigns(); ++it)
-            {
-                if (it->second->IsMonster())
+            for (auto it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it) {
+                const auto& [design_id, design] = *it;
+                if (design->IsMonster())
                     sorted_entries_list.emplace(
-                        it->second->Name(),
-                        std::make_pair(LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n",
-                                       std::to_string(it->first)));
+                        design->Name(),
+                        std::make_pair(LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design->Name()) + "\n",
+                                       std::to_string(design_id)));
             }
 
         }
@@ -489,35 +487,35 @@ namespace {
 
         }
         else if (dir_name == "ENC_TEXTURES") {
-             for (auto tex : GG::GetTextureManager().Textures()) {
+             for (auto& [tex_name, tex] : GG::GetTextureManager().Textures()) {
                  std::string&& texture_info_str = boost::io::str(
                      FlexibleFormat(UserString("ENC_TEXTURE_INFO")) %
-                     Value(tex.second->Width()) %
-                     Value(tex.second->Height()) %
-                     tex.second->BytesPP() %
-                     tex.first);
+                     Value(tex->Width()) %
+                     Value(tex->Height()) %
+                     tex->BytesPP() %
+                     tex_name);
                  sorted_entries_list.emplace(
-                     tex.first,
-                     std::make_pair(std::move(texture_info_str), tex.first));
+                     tex_name,
+                     std::pair(std::move(texture_info_str), tex_name));
              }
 
-             for (auto tex: GG::GetVectorTextureManager().Textures()) {
+             for (auto& [tex_name, tex] : GG::GetVectorTextureManager().Textures()) {
                  std::string&& texture_info_str = boost::io::str(
                      FlexibleFormat(UserString("ENC_VECTOR_TEXTURE_INFO")) %
-                     Value(tex.second->Size().x) %
-                     Value(tex.second->Size().y) %
-                     tex.second->NumShapes() %
-                     tex.first);
+                     Value(tex->Size().x) %
+                     Value(tex->Size().y) %
+                     tex->NumShapes() %
+                     tex_name);
                  sorted_entries_list.emplace(
-                     tex.first,
-                     std::make_pair(std::move(texture_info_str), tex.first));
+                     tex_name,
+                     std::make_pair(std::move(texture_info_str), tex_name));
              }
 
         }
         else if (dir_name == "ENC_STRINGS") {
             // show all stringable keys and values
-            for (auto& str : AllStringtableEntries())
-                sorted_entries_list.emplace(str.first, std::make_pair(str.first + ": " + str.second + "\n", str.first));
+            for (auto& [str_key, str_val] : AllStringtableEntries())
+                sorted_entries_list.emplace(str_key, std::pair(str_key + ": " + str_val + "\n", str_key));
 
         }
         else if  (dir_name == "ENC_NAMED_VALUE_REF") {
