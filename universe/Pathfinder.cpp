@@ -500,8 +500,8 @@ namespace {
                     ErrorLogger() << "EdgeVisibilityFilter passed null graph pointer";
 
                 // record all edges in objects
-                for (auto sys : objects.all<System>()) {
-                    for (auto [lane_id, is_wormhole] : sys->StarlanesWormholes()) {
+                for (const auto& sys : objects.all<System>()) {
+                    for (auto& [lane_id, is_wormhole] : sys->StarlanesWormholes()) {
                         (void)is_wormhole; // quiet unused variable_warning
                         edges.emplace(std::min(sys->ID(), lane_id), std::max(sys->ID(), lane_id));
                     }
@@ -536,8 +536,8 @@ namespace {
         void AddSystemPredicate(const Pathfinder::SystemExclusionPredicateType& pred,
                                 const EmpireManager& empires, const ObjectMap& objects)
         {
-            for (auto empire : empires) {
-                auto empire_id = empire.first;
+            for (auto& [empire_id, empire] : empires) {
+                (void)empire;
                 SystemPredicateFilter sys_pred_filter(&system_graph, &objects, pred);
                 auto sys_pred_filtered_graph_ptr = std::make_shared<SystemPredicateGraph>(
                     system_graph, sys_pred_filter);
@@ -600,7 +600,7 @@ namespace {
                 }
 
                 // Discard edge if it finds a contained object or matches either system for visitor
-                for (auto object : m_objects->find(*m_pred.get())) {
+                for (const auto& object : m_objects->find(*m_pred.get())) {
                     if (!object)
                         continue;
                     // object is destination system
