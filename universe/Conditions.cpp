@@ -128,7 +128,7 @@ namespace {
                        from_set.end());
     }
 
-    std::vector<const Condition::Condition*> FlattenAndNestedConditions(
+    [[nodiscard]] std::vector<const Condition::Condition*> FlattenAndNestedConditions(
         const std::vector<const Condition::Condition*>& input_conditions)
     {
         std::vector<const Condition::Condition*> retval;
@@ -144,7 +144,7 @@ namespace {
         return retval;
     }
 
-    std::map<std::string, bool> ConditionDescriptionAndTest(
+    [[nodiscard]] std::map<std::string, bool> ConditionDescriptionAndTest(
         const std::vector<const Condition::Condition*>& conditions,
         const ScriptingContext& parent_context,
         std::shared_ptr<const UniverseObject> candidate_object/* = nullptr*/)
@@ -168,9 +168,9 @@ namespace {
 }
 
 namespace Condition {
-std::string ConditionFailedDescription(const std::vector<const Condition*>& conditions,
-                                       std::shared_ptr<const UniverseObject> candidate_object/* = nullptr*/,
-                                       std::shared_ptr<const UniverseObject> source_object/* = nullptr*/)
+[[nodiscard]] std::string ConditionFailedDescription(const std::vector<const Condition*>& conditions,
+                                                     std::shared_ptr<const UniverseObject> candidate_object/* = nullptr*/,
+                                                     std::shared_ptr<const UniverseObject> source_object/* = nullptr*/)
 {
     if (conditions.empty())
         return UserString("NONE");
@@ -8752,16 +8752,16 @@ bool FleetSupplyableByEmpire::operator==(const Condition& rhs) const {
 
 namespace {
     struct FleetSupplyableSimpleMatch {
-        FleetSupplyableSimpleMatch(int empire_id) :
-            m_empire_id(empire_id)
+        FleetSupplyableSimpleMatch(int empire_id, const SupplyManager& supply) :
+            m_empire_id(empire_id),
+            m_supply(supply)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
             if (!candidate)
                 return false;
 
-            const SupplyManager& supply = GetSupplyManager();   // TODO: Get from ScriptingContext
-            const auto& empire_supplyable_systems = supply.FleetSupplyableSystemIDs();
+            const auto& empire_supplyable_systems = m_supply.FleetSupplyableSystemIDs();
             auto it = empire_supplyable_systems.find(m_empire_id);
             if (it == empire_supplyable_systems.end())
                 return false;
@@ -8769,6 +8769,7 @@ namespace {
         }
 
         int m_empire_id;
+        const SupplyManager& m_supply;
     };
 }
 
@@ -8782,7 +8783,7 @@ void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
         int empire_id = m_empire_id->Eval(parent_context);
-        EvalImpl(matches, non_matches, search_domain, FleetSupplyableSimpleMatch(empire_id));
+        EvalImpl(matches, non_matches, search_domain, FleetSupplyableSimpleMatch(empire_id, parent_context.supply));
     } else {
         // re-evaluate empire id for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -8819,7 +8820,7 @@ bool FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const
 
     int empire_id = m_empire_id->Eval(local_context);
 
-    return FleetSupplyableSimpleMatch(empire_id)(candidate);
+    return FleetSupplyableSimpleMatch(empire_id, local_context.supply)(candidate);
 }
 
 void FleetSupplyableByEmpire::SetTopLevelContent(const std::string& content_name) {
@@ -8876,10 +8877,12 @@ bool ResourceSupplyConnectedByEmpire::operator==(const Condition& rhs) const {
 
 namespace {
     struct ResourceSupplySimpleMatch {
-        ResourceSupplySimpleMatch(int empire_id, const ObjectSet& from_objects, const ObjectMap& objects) :
+        ResourceSupplySimpleMatch(int empire_id, const ObjectSet& from_objects,
+                                  const ObjectMap& objects, const SupplyManager& supply) :
             m_empire_id(empire_id),
             m_from_objects(from_objects),
-            m_objects(objects)
+            m_objects(objects),
+            m_supply(supply)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -8887,7 +8890,7 @@ namespace {
                 return false;
             if (m_from_objects.empty())
                 return false;
-            const auto& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);  // TODO: put supply info in ScriptingContext
+            const auto& groups = m_supply.ResourceSupplyGroups(m_empire_id);  // TODO: put supply info in ScriptingContext
             if (groups.empty())
                 return false;
 
@@ -8945,6 +8948,7 @@ namespace {
         int m_empire_id;
         const ObjectSet& m_from_objects;
         const ObjectMap& m_objects;
+        const SupplyManager& m_supply;
     };
 }
 
@@ -8963,7 +8967,9 @@ void ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_contex
         m_condition->Eval(parent_context, subcondition_matches);
         int empire_id = m_empire_id->Eval(parent_context);
 
-        EvalImpl(matches, non_matches, search_domain, ResourceSupplySimpleMatch(empire_id, subcondition_matches, parent_context.ContextObjects()));
+        EvalImpl(matches, non_matches, search_domain,
+                 ResourceSupplySimpleMatch(empire_id, subcondition_matches, parent_context.ContextObjects(),
+                                           parent_context.supply));
     } else {
         // re-evaluate empire id for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -8982,7 +8988,8 @@ bool ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_contex
     m_condition->Eval(local_context, subcondition_matches);
     int empire_id = m_empire_id->Eval(local_context);
 
-    return ResourceSupplySimpleMatch(empire_id, subcondition_matches, local_context.ContextObjects())(candidate);
+    return ResourceSupplySimpleMatch(empire_id, subcondition_matches, local_context.ContextObjects(),
+                                     local_context.supply)(candidate);
 }
 
 std::string ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*/) const {
@@ -9673,9 +9680,9 @@ std::unique_ptr<Condition> ValueTest::Clone() const
 // Location                                              //
 ///////////////////////////////////////////////////////////
 namespace {
-    const Condition* GetLocationCondition(ContentType content_type,
-                                          const std::string& name1,
-                                          const std::string& name2)
+    [[nodiscard]] const Condition* GetLocationCondition(ContentType content_type,
+                                                        const std::string& name1,
+                                                        const std::string& name2)
     {
         if (name1.empty())
             return nullptr;
@@ -9723,7 +9730,7 @@ namespace {
         return nullptr;
     }
 
-    const std::string& GetContentTypeName(ContentType content_type) {
+    [[nodiscard]] const std::string& GetContentTypeName(ContentType content_type) {
         switch (content_type) {
         case ContentType::CONTENT_BUILDING:  return UserString("UIT_BUILDING");          break;
         case ContentType::CONTENT_SPECIES:   return UserString("ENC_SPECIES");           break;
