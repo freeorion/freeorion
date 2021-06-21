@@ -4501,15 +4501,15 @@ Fenêtre Production
 PRODUCTION_WINDOW_ARTICLE_TEXT
 '''La Fenêtre Production est l'interface principale permettant l'utilisation des Points de Production (PP).
 Il est possible d'y accéder:
-*  Par une touche de raccourci (défaut: CTRL + P)
-*  En double-cliquant sur une planète
-*  En cliquant sur l'une des icônes Production en haut de la  [[MAP_WINDOW_ARTICLE_TITLE]] <img src="icons/buttons/production.png"></img>
+• Par une touche de raccourci (défaut: CTRL + P)
+• En double-cliquant sur une planète
+• En cliquant sur l'une des icônes Production en haut de la  [[MAP_WINDOW_ARTICLE_TITLE]] <img src="icons/buttons/production.png"></img>
 
 La Fenêtre Production est composée de différents panneaux:
-*  Récapitulation de Production
-*  Projets de Production
-*  File d'Attente de Production
-*  Panneau latéral Système (sur la droite)
+• Récapitulation de Production
+• Projets de Production
+• File d'Attente de Production
+• Panneau latéral Système (sur la droite)
 La Fenêtre Production permet d'interagir directement avec la carte de la  [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], principalement pour sélectionner un autre système.
 
 
@@ -5885,8 +5885,8 @@ STOCKPILE_TEXT
 '''La capacité industrielle est utilisée immédiatemment pour produire structures et astronefs. Un empire peut également accumuler les Points de Production (PP) dans le stock impérial en vue d'une utilisation ultérieure. Généralement, les PP peuvent être utilisés pour la production seulement si le lieu de production se trouve dans le réseau d'approvisionnement au sein duquel les PP sont générés. Cependant, les PP issus du stock impérial peuvent être utilisés par n'importe quel site de production appartenant à l'empire. Seule une quantité définie de ces PP -ne dépassant pas la limite d'usage impériale- peut être utilisée chaque tour pour la production.
 
 Il existe deux manières d'ajouter des PP au stock impérial:
-* les PP en excédent (PP non-alloués dans la file d'attente de production) de tout site de production sont automatiquement transférés vers le stock. Cela déclenche une alerte.
-* les PP explicitement alloués à un projet de [[encyclopedia PROJECT_BT_STOCKPILE]] sont également envoyés vers le stock.
+• les PP en excédent (PP non-alloués dans la file d'attente de production) de tout site de production sont automatiquement transférés vers le stock. Cela déclenche une alerte.
+• les PP explicitement alloués à un projet de [[encyclopedia PROJECT_BT_STOCKPILE]] sont également envoyés vers le stock.
 
 La limite d'usage du stock impérial est égale au total des indicateurs [[metertype METER_STOCKPILE]] de chaque planète.
 Les prédispositions de certaines espèces en distribution du stock, certaines structures ou technologies, ainsi que l'utilisation du [[encyclopedia STOCKPILE_FOCUS_TITLE]], permettent d'augmenter cette limite.
@@ -6032,11 +6032,11 @@ METER_POPULATION_VALUE_LABEL  # translated
 Population
 
 METER_POPULATION_VALUE_DESC
-'''La Population représente la taille d'une colonie sur une planète. Sa valeur maximale dépend de l'[[encyclopedia ENC_SPECIES]] et de son adaptation à l'[[encyclopedia ENVIRONMENT_TITLE]] d'une planète. Plusieurs bonus de capacité en [[metertype METER_INDUSTRY]] et en [[metertype METER_RESEARCH]] sont liés à la taille de la Population: plus la Population est importante, plus les bonus sont élevés.
+'''La Population représente la taille actuelle d'une colonie sur une planète. Plusieurs bonus de capacité en [[metertype METER_INDUSTRY]] et en [[metertype METER_RESEARCH]] sont liés à la taille de la Population: plus la Population est importante, plus les bonus sont élevés.
 
-Une Population supérieure ou égale à [[value MIN_COLONY_SIZE]] et un [[metertype METER_HAPPINESS]] minimum de [[value MIN_COLONY_HAPPINESS]] sont requis pour qu'une colonie puisse lancer la colonisation d'autres planètes. Un astronef colonisateur est peuplé de Colons, leur nombre étant déterminé par la capacité de [[encyclopedia PC_COLONY]] du modèle d'astronef. Lors de la colonisation d'une planète, le nombre de Colons à bord de l'astronef constituera la Population de départ sur une planète nouvellement colonisée.
+La Projection Population est la taille optimale de Population qu'une planète tend à approcher, compte tenu des différents facteurs influençant la Population planétaire. Sa valeur dépend de l'[[encyclopedia ENC_SPECIES]] et de son adaptation à l'[[encyclopedia ENVIRONMENT_TITLE]] d'une planète. Cette valeur est également liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Population est susceptible de fluctuer à son tour.
 
-La Projection Population est la valeur optimale de Population qu'une planète tend à approcher, compte tenu des différents facteurs influençant la Population planétaire. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Population est susceptible de fluctuer à son tour.
+Une Population supérieure ou égale à [[value MIN_COLONY_SIZE]] et une [[metertype METER_HAPPINESS]] minimum de [[value MIN_COLONY_HAPPINESS]] sont requis pour qu'une colonie puisse lancer la colonisation d'autres planètes. Un astronef colonisateur est peuplé de Colons, leur nombre étant déterminé par la capacité de [[encyclopedia PC_COLONY]] du modèle d'astronef. Lors de la colonisation d'une planète, le nombre de Colons à bord de l'astronef constituera la Population de départ sur la planète nouvellement colonisée.
 '''
 
 METER_INDUSTRY_VALUE_LABEL
@@ -6396,15 +6396,15 @@ PHOTOTROPHIC_SPECIES_TEXT
 
 Influence sur la Population:
 
-* Étoile [[STAR_BLUE]]: ([[SZ_TINY]] +3) ([[SZ_SMALL]] +6) ([[SZ_MEDIUM]] +9) ([[SZ_LARGE]] +12) ([[SZ_HUGE]] +15)
+• Étoile [[STAR_BLUE]]: ([[SZ_TINY]] +3) ([[SZ_SMALL]] +6) ([[SZ_MEDIUM]] +9) ([[SZ_LARGE]] +12) ([[SZ_HUGE]] +15)
 
-* Étoile [[STAR_WHITE]]: ([[SZ_TINY]] +1.5) ([[SZ_SMALL]] +3) ([[SZ_MEDIUM]] +4.5) ([[SZ_LARGE]] +6) ([[SZ_HUGE]] +7.5)
+• Étoile [[STAR_WHITE]]: ([[SZ_TINY]] +1.5) ([[SZ_SMALL]] +3) ([[SZ_MEDIUM]] +4.5) ([[SZ_LARGE]] +6) ([[SZ_HUGE]] +7.5)
 
-* Étoile [[STAR_YELLOW]], Étoile [[STAR_ORANGE]]: (Aucune influence)
+• Étoile [[STAR_YELLOW]], Étoile [[STAR_ORANGE]]: (Aucune influence)
 
-* Étoile [[STAR_RED]], Étoile [[STAR_NEUTRON]]: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5)
+• Étoile [[STAR_RED]], Étoile [[STAR_NEUTRON]]: ([[SZ_TINY]] -1) ([[SZ_SMALL]] -2) ([[SZ_MEDIUM]] -3) ([[SZ_LARGE]] -4) ([[SZ_HUGE]] -5)
 
-* [[STAR_BLACK]], [[STAR_NONE]]: ([[SZ_TINY]] -10) ([[SZ_SMALL]] -20) ([[SZ_MEDIUM]] -30) ([[SZ_LARGE]] -40) ([[SZ_HUGE]] -50)'''
+• [[STAR_BLACK]], [[STAR_NONE]]: ([[SZ_TINY]] -10) ([[SZ_SMALL]] -20) ([[SZ_MEDIUM]] -30) ([[SZ_LARGE]] -40) ([[SZ_HUGE]] -50)'''
 
 SELF_SUSTAINING_SPECIES_TITLE
 Métabolisme Autosuffisant
@@ -7442,7 +7442,7 @@ SITREP_NOVA_DETECTED_LABEL
 Supernova détectée
 
 SITREP_BUREAUCRACY_STOPPED
-Le développement exponentiel de la [[policy PLC_BUREAUCRACY]] a paralysé son fonctionnement en raison d'un manque de structures administratives. Le nombre total de structures d'[[buildingtype BLD_REGIONAL_ADMIN]] et [[buildingtype BLD_IMPERIAL_PALACE]] possédées par l'empire s'élève actuellement à %rawtext:havebuildings%, mais %rawtext:needbuildings% sont nécessaires pour améliorer la Stabilité planétaire de [[value PLC_BUREAUCRACY_STABILITY_FLAT]]. La [[policy PLC_BUREAUCRACY]] requiert une structure admistrative supplémentaire tous les [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] tours.
+Le développement exponentiel de la [[policy PLC_BUREAUCRACY]] a paralysé son fonctionnement en raison d'un manque de structures administratives. Le nombre total de structures d'[[buildingtype BLD_REGIONAL_ADMIN]] et [[buildingtype BLD_IMPERIAL_PALACE]] possédées par l'empire s'élève actuellement à %rawtext:havebuildings%, mais %rawtext:needbuildings% sont nécessaires pour améliorer la Stabilité planétaire de [[value PLC_BUREAUCRACY_STABILITY_FLAT]]. La [[policy PLC_BUREAUCRACY]] requiert une structure administrative supplémentaire tous les [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] tours.
 
 SITREP_BUREAUCRACY_STOPPED_LABEL
 Paralysie Bureaucratique
@@ -7764,6 +7764,12 @@ La capitale de l'empire %empire% est tombée.
 
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Capitale d'Empire capturée
+
+SITREP_FIELD_RESEARCH_LABEL
+Recherche d'exploration
+
+SITREP_FIELD_RESEARCH
+Dans %system% : l'exploration a généré de la Recherche.
 
 CUSTOM_SITREP_INTRODUCTION
 Réception briefing initial du Rapport de Situation. Conformément à la directive du %tech%, l'ensemble des agents impériaux collectent toutes les informations importantes et les transmettent vers le système %system%, afin que ces dernières soient compilées en Rapports de Situation (Sitreps). Ces Sitreps informent de tout événement important et notifient également toute situation spécifique définie ou sélectionnée au préalable par le commandement impérial.
@@ -8559,7 +8565,7 @@ SP_RAAAGH_DESC
 '''Les Raaagh sont des organismes bipèdes à fourrure mesurant 1.5 mètre de hauteur. Le corps est penché vers l'avant à 45 degrés, laissant libres leurs mâchoires acérées et leurs membres antérieurs munis de griffes, afin de combattre, capturer des proies ou construire. Leurs oreilles triangulaires et leur iris en forme de fente leur donnent une apparence féline. Ovipares, les Raaagh pondent une moyenne de douze œufs. Après l'éclosion, peu de soins et d'attention sont portés aux petits. Ces derniers doivent survivre par leurs propres moyens, entrant en compétition avec leurs jeunes semblables pour trouver un abri ou dérober de la nourriture. Après trois années, un seul jeune Raaagh parvient généralement à survivre, ce dernier commençant alors à développer l'aptitude au langage. Cela active soudainement l'instinct parental des adultes, et le jeune rescapé est alors élevé avec attention comme membre de la Tribu.
 
 Comportement:
-La territorialité extrême est le trait comportemental le plus distinctif chez les Raaagh- régissant leur vie quotidienne et imprégnant toute leur culture. Ce caractère marqué dénote leur préférence pour ce qui est familier et connu. Leur curiosité est très peu développée, ce qui explique leur technologie très peu avancée.
+La territorialité extrême est le trait comportemental le plus distinctif chez les Raaagh, régissant leur vie quotidienne et imprégnant toute leur culture. Ce caractère marqué dénote leur préférence pour ce qui est familier et connu. Leur curiosité est très peu développée, ce qui explique leur technologie très peu avancée.
 
 Planète Natale:
 La planète natale des Raaagh est de type terrestre. Les surfaces terrestres et océaniques sont réparties d'une manière plus ou moins égale, mais le plus grand des continents ne recouvre que 4% de la surface planétaire. Cette profusion de petits continents et de grandes îles renforcent d'autant plus leur attitude territoriale.
@@ -11851,6 +11857,15 @@ PLC_BUREAUCRACY_DESC
 PLC_BUREAUCRACY_SHORT_DESC
 Améliore la Stabilité
 
+PLC_EXPLORATION_RESEARCH
+Recherche d'Exploration
+
+PLC_EXPLORATION_RESEARCH_DESC
+Pour chaque tour durant lequel un système est nouvellement exploré, les astronefs présents dans ce système génèrent un total de [[value EXPLORATION_RESEARCH_BONUS_TOTAL]] PR.
+
+PLC_EXPLORATION_RESEARCH_SHORT_DESC
+L'exploration octroie de la Recherche
+
 
 ##
 ## Technology categories
@@ -12870,7 +12885,9 @@ LRN_DISTRIB_THOUGHT
 Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur toutes les planètes en Focus Recherche, en fonction de la distance entre la planète et l'astronef de l'empire le plus éloigné.
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur toutes les planètes en Focus Recherche, en fonction de la distance entre la planète et l'autre planète la plus éloignée également en Focus Recherche et appartenant au même empire. La Recherche est augmentée de la valeur la plus faible entre:
+• [[value DISTRIB_THOUGH_RESEARCH_SCALING]] x la racine carrée de la distance en uu de la planète la plus éloignée, en Focus Recherche et appartenant à l'empire
+• L'[[metertype METER_CONSTRUCTION]] de la planète la plus éloignée x [[value DISTRIB_THOUGH_INFRA_LIMIT_SCALING]]
 
 Octroie 1 choix supplémentaire de Politique militaire.
 
@@ -12881,9 +12898,9 @@ Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
 '''Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes réglées sur le Focus Recherche, selon le type d'étoile et le nombre de planètes en Focus Recherche au sein du même système:
-* [[STAR_BLACK]] (+[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPLANET]])
-* [[STAR_NEUTRON]] (+[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPLANET]])
-* [[STAR_BLUE]], [[STAR_WHITE]], [[STAR_YELLOW]], [[STAR_ORANGE]] ou [[STAR_RED]] (+[[value LRN_STELLAR_TOMO_NORMAL_STAR_TARGET_RESEARCH_PERPLANET]])
+• [[STAR_BLACK]] (+[[value LRN_STELLAR_TOMO_BLACK_TARGET_RESEARCH_PERPLANET]])
+• [[STAR_NEUTRON]] (+[[value LRN_STELLAR_TOMO_NEUTRON_TARGET_RESEARCH_PERPLANET]])
+• [[STAR_BLUE]], [[STAR_WHITE]], [[STAR_YELLOW]], [[STAR_ORANGE]] ou [[STAR_RED]] (+[[value LRN_STELLAR_TOMO_NORMAL_STAR_TARGET_RESEARCH_PERPLANET]])
 
 Un réseau de satellites spécialisés peut utiliser des méthodes tomographiques pour cartographier et reconstituer les différentes activités se produisant dans les profondeurs d'une étoile. Ces conditions expérimentales, habituellement coûteuses à mettre en place, sont ici idéales pour une multitude de projets de recherche, les plus grands bénéfices scientifiques découlant de l'étude des types d'étoiles les plus exotiques.'''
 
@@ -13792,7 +13809,8 @@ BLD_MILITARY_COMMAND
 Commandement Militaire
 
 BLD_MILITARY_COMMAND_DESC
-Fournit un choix de Politique militaire.
+'''• Octroie un choix de Politique militaire.
+• Octroie un choix supplémentaire de Politique militaire si l'empire a détruit au moins 5 astronefs.'''
 
 BLD_SUPER_TEST
 Invasion Super-Testeurs
@@ -14050,9 +14068,9 @@ Générateur Orbital Solaire
 
 BLD_SOL_ORB_GEN_DESC
 '''Augmente la [[metertype METER_TARGET_INDUSTRY]] sur toutes les planètes lui étant reliées par ligne d'[[metertype METER_SUPPLY]], par [[metertype METER_POPULATION]] et selon le type d'étoile:
-* [[STAR_BLUE]] ou [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
-* [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x[[value BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
-* [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
+• [[STAR_BLUE]] ou [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
+• [[STAR_YELLOW]] ou [[STAR_ORANGE]] (x[[value BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
+• [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] Le meilleur bonus s'applique.
 
 Un puissant générateur situé en orbite stellaire basse, conçu pour puiser directement l'énergie d'une étoile. Étant donné que différents types d'étoiles produisent différentes quantités d'énergie, le bonus industriel à l'échelle du système est tributaire du type d'étoile. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
@@ -15949,8 +15967,8 @@ COLONY_SHIP_PARTS_UPKEEP_COST
 Le coût de cet équipement augmente à mesure que l'empire s'étend en raison des coûts d'entretien plus élevés pour un vaste empire.
 
 TROOP_POD_OPERATION_TEXT
-'''  * Les troupes d'infanterie ne peuvent être utilisées que pour une seule invasion.
-  * Les astronefs transportant des troupes d'infanterie pendant une invasion sont destinés à des atterrissages rapides et dangereux, les rendant inutilisables par la suite.'''
+'''  • Les troupes d'infanterie ne peuvent être utilisées que pour une seule invasion.
+  • Les astronefs transportant des troupes d'infanterie pendant une invasion sont destinés à des atterrissages rapides et dangereux, les rendant inutilisables par la suite.'''
 
 SHIP_WEAPON_GRADUALLY_REDUCE
 permettant aux astronefs de réduire progressivement
@@ -16091,6 +16109,21 @@ GREAT_INFLUENCE_DESC
 
 ULTIMATE_INFLUENCE_DESC
 +++	Parfait en [[metertype METER_INFLUENCE]] : 300%
+
+BAD_HAPPINESS_DESC
+−	Mauvais en [[metertype METER_HAPPINESS]]: -5
+
+AVERAGE_HAPPINESS_DESC
+'''	Normal en [[metertype METER_HAPPINESS]]: +0'''
+
+GOOD_HAPPINESS_DESC
++	Bon en [[metertype METER_HAPPINESS]]: +5
+
+GREAT_HAPPINESS_DESC
+++	Excellent en [[metertype METER_HAPPINESS]]: +10
+
+ULTIMATE_HAPPINESS_DESC
++++	Parfait en [[metertype METER_HAPPINESS]]: +15
 
 NO_DEFENSE_TROOPS_DESC
 −−−	Pas d'[[metertype METER_TROOPS]] défensive
@@ -16512,6 +16545,26 @@ GREAT_INFLUENCE_LABEL
 # %2% FIXME
 ULTIMATE_INFLUENCE_LABEL
 %2% Parfait en Influence
+
+# %1% FIXME
+# %2% FIXME
+BAD_HAPPINESS_LABEL
+%2% Mauvais en Stabilité
+
+# %1% FIXME
+# %2% FIXME
+GOOD_HAPPINESS_LABEL
+%2% Bon en Stabilité
+
+# %1% FIXME
+# %2% FIXME
+GREAT_HAPPINESS_LABEL
+%2% Excellent en Stabilité
+
+# %1% FIXME
+# %2% FIXME
+ULTIMATE_HAPPINESS_LABEL
+%2% Parfait en Stabilité
 
 # %1% FIXME
 # %2% FIXME
