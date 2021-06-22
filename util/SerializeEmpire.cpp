@@ -274,9 +274,15 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_ship_part_class_owned)
             & BOOST_SERIALIZATION_NVP(m_species_colonies_owned)
             & BOOST_SERIALIZATION_NVP(m_outposts_owned)
-            & BOOST_SERIALIZATION_NVP(m_building_types_owned)
+            & BOOST_SERIALIZATION_NVP(m_building_types_owned);
 
-            & BOOST_SERIALIZATION_NVP(m_empire_ships_destroyed)
+        if (Archive::is_loading::value && version < 9) {
+            m_ships_destroyed.clear();
+        } else {
+            ar  & BOOST_SERIALIZATION_NVP(m_ships_destroyed);
+        }
+
+        ar  & BOOST_SERIALIZATION_NVP(m_empire_ships_destroyed)
             & BOOST_SERIALIZATION_NVP(m_ship_designs_destroyed)
             & BOOST_SERIALIZATION_NVP(m_species_ships_destroyed)
             & BOOST_SERIALIZATION_NVP(m_species_planets_invaded)
@@ -320,7 +326,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     TraceLogger() << "DONE serializing empire " << m_id << ": " << m_name;
 }
 
-BOOST_CLASS_VERSION(Empire, 8)
+BOOST_CLASS_VERSION(Empire, 9)
 
 template void Empire::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
