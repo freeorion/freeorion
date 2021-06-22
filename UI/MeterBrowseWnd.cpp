@@ -329,7 +329,6 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // helpers for combining building effects into a single line
     std::vector<std::string> combined_names;
-    float combined_meter_change = 0.0f;
     // add label-value pairs for each alteration recorded for this meter
     for (auto it = maybe_info_vec->begin(); it != maybe_info_vec->end(); ++it) {
         auto info = *it;
@@ -359,18 +358,17 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                 if (const auto& planet = Objects().get<Planet>(building->PlanetID()))
                     name = planet->Name();
             // Some effects are triggered by every building in the own empire.
-            // To avoid excessive effect list, we combine same effects.
-            // Local (same planet or system) buildings have a stronger effect
-            // and are kept apart.
-            // So this changes e.g.
+            // To avoid excessive effect lists, we combine identical effects.
+            // This changes e.g.
             // Likes <own planet> building Interstellar Lighthouse +4.00
             //    Likes <other 1> building Interstellar Lighthouse +0.71
             //    Likes <other 2> building Interstellar Lighthouse +0.71
             // to
             // Likes <own planet> building Interstellar Lighthouse +4.00
             //          Likes 2 x building Interstellar Lighthouse +1.41
-            // Note that if there is more than one of the building on other
-            // planets in the same system, you will get two combined lines.
+            // There is one line per effect strength and it shows the
+            // number of buildings involved and the summed effect of
+            // all those buildings.
             auto next = it + 1;
             if (next != maybe_info_vec->end() &&
                 next->cause_type == info.cause_type &&
@@ -378,31 +376,28 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                 std::fabs(next->meter_change - info.meter_change) < 0.001 &&
                 next->specific_cause == info.specific_cause)
             {
-                // Combined if with next, if next exists, is also a building,
+                // Combined with next, if next exists, is also a building,
                 // meter change and building type (specific_cause) are the same.
-                combined_meter_change += info.meter_change;
                 combined_names.emplace_back(std::move(name));
                 continue;
             }
-            else
+            if (!combined_names.empty())
             {
-                if (!combined_names.empty())
-                {
-                    combined_names.emplace_back(std::move(name));
-                    name = std::to_string(combined_names.size()) + " x";
-                    info.meter_change += combined_meter_change;
-                    // TBD: add way to unfold the number to see the list of planets
-                    // stored in combined_names (or replace combined_names by an int)
-                    combined_names.clear();
-                    combined_meter_change = 0.0f;
-                }
-                const std::string& label_template = (info.custom_label.empty()
-                    ? UserString("TT_BUILDING")
-                    : UserString(info.custom_label));
-                text += boost::io::str(FlexibleFormat(label_template)
-                    % name
-                    % UserString(info.specific_cause));
+                // This is the last of a list of identical effects. Replace name
+                // by number of planets and multiply meter_change with the number.
+                combined_names.emplace_back(std::move(name));
+                name = std::to_string(combined_names.size()) + " x";
+                info.meter_change *= combined_names.size();
+                // TBD: add way to unfold the number to see the list of planets
+                // stored in combined_names (or replace combined_names by an int)
+                combined_names.clear();
             }
+            const std::string& label_template = (info.custom_label.empty()
+                ? UserString("TT_BUILDING")
+                : UserString(info.custom_label));
+            text += boost::io::str(FlexibleFormat(label_template)
+                % name
+                % UserString(info.specific_cause));
             break;
         }
         case EffectsCauseType::ECT_FIELD: {
