@@ -104,11 +104,11 @@ namespace {
      */
     auto PlayerEmpireID(int player_id) -> int
     {
-        for (auto& entry : AIClientApp::GetApp()->Players()) {
-            if (entry.first == player_id)
-                return entry.second.empire_id;
-        }
-        return ALL_EMPIRES; // default invalid value
+        const auto& players = AIClientApp::GetApp()->Players();
+        auto it = players.find(player_id);
+        if (it == players.end())
+            return ALL_EMPIRES; // default invalid value
+        return it->second.empire_id;
     }
 
     /** @brief Return all empire identifiers that are in game
@@ -117,9 +117,12 @@ namespace {
      */
     auto AllEmpireIDs() -> std::vector<int>
     {
+        const auto& players = AIClientApp::GetApp()->Players();
         std::vector<int> empire_ids;
-        for (auto& entry : AIClientApp::GetApp()->Players()) {
-            auto empire_id = entry.second.empire_id;
+        empire_ids.reserve(players.size());
+        for (auto& [player_id, player_info] : players) {
+            (void)player_id; // quiet warning
+            auto empire_id = player_info.empire_id;
             if (empire_id != ALL_EMPIRES)
                 empire_ids.push_back(empire_id);
         }
