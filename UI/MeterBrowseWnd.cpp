@@ -327,8 +327,11 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     if (!maybe_info_vec)
         return;
 
+    // helpers for combining building effects into a single line
+    std::vector<std::string> combined_names;
     // add label-value pairs for each alteration recorded for this meter
-    for (const auto& info : *maybe_info_vec) {
+    for (auto it = maybe_info_vec->begin(); it != maybe_info_vec->end(); ++it) {
+        auto info = *it;
         auto source = Objects().get(info.source_id);
 
         std::string text;
@@ -354,6 +357,41 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             if (const auto& building = std::dynamic_pointer_cast<const Building>(source))
                 if (const auto& planet = Objects().get<Planet>(building->PlanetID()))
                     name = planet->Name();
+            // Some effects are triggered by every building in the own empire.
+            // To avoid excessive effect lists, we combine identical effects.
+            // This changes e.g.
+            // Likes <own planet> building Interstellar Lighthouse +4.00
+            //    Likes <other 1> building Interstellar Lighthouse +0.71
+            //    Likes <other 2> building Interstellar Lighthouse +0.71
+            // to
+            // Likes <own planet> building Interstellar Lighthouse +4.00
+            //          Likes 2 x building Interstellar Lighthouse +1.41
+            // There is one line per effect strength and it shows the
+            // number of buildings involved and the summed effect of
+            // all those buildings.
+            auto next = it + 1;
+            if (next != maybe_info_vec->end() &&
+                next->cause_type == info.cause_type &&
+                // better not compare floats with ==
+                std::fabs(next->meter_change - info.meter_change) < 0.001 &&
+                next->specific_cause == info.specific_cause)
+            {
+                // Combined with next, if next exists, is also a building,
+                // meter change and building type (specific_cause) are the same.
+                combined_names.emplace_back(std::move(name));
+                continue;
+            }
+            if (!combined_names.empty())
+            {
+                // This is the last of a list of identical effects. Replace name
+                // by number of planets and multiply meter_change with the number.
+                combined_names.emplace_back(std::move(name));
+                name = std::to_string(combined_names.size()) + " x";
+                info.meter_change *= combined_names.size();
+                // TBD: add way to unfold the number to see the list of planets
+                // stored in combined_names (or replace combined_names by an int)
+                combined_names.clear();
+            }
             const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_BUILDING")
                 : UserString(info.custom_label));
