@@ -22,7 +22,6 @@
 #include "Government.h"
 
 #include <boost/uuid/uuid_io.hpp>
-#include <unordered_set>
 
 
 namespace {
@@ -2751,6 +2750,13 @@ int Empire::TotalShipsOwned() const {
 }
 
 void Empire::RecordShipShotDown(const Ship& ship) {
+    bool insert_succeeded = m_ships_destroyed.insert(ship.ID()).second;
+    if (!insert_succeeded) {
+        DebugLogger() << "Already recorded empire " << m_id << " destruction of ship " << ship.Name() << " (" << ship.ID() << ")";
+        return; // already recorded this destruction
+    }
+
+    DebugLogger() << "Recording empire " << m_id << " destruction of ship " << ship.Name() << " (" << ship.ID() << ")";
     m_empire_ships_destroyed[ship.Owner()]++;
     m_ship_designs_destroyed[ship.DesignID()]++;
     m_species_ships_destroyed[ship.SpeciesName()]++;
