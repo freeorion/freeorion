@@ -71,27 +71,33 @@ std::string EmpireManager::Dump() const {
 
 std::string EmpireManager::DumpDiplomacy() const {
     std::string retval = "Diplomatic Statuses:\n";
-    for (const auto& entry : m_empire_diplomatic_statuses) {
-        auto empire1 = GetEmpire(entry.first.first).get();
-        auto empire2 = GetEmpire(entry.first.second).get();
+    for (auto& [ids, diplo_status] : m_empire_diplomatic_statuses) {
+        auto it = m_const_empire_map.find(ids.first);
+        if (it == m_const_empire_map.end())
+            continue;
+        const auto& empire1 = it->second;
+        it = m_const_empire_map.find(ids.second);
+        if (it == m_const_empire_map.end())
+            continue;
+        const auto& empire2 = it->second;
         if (!empire1 || !empire2)
             continue;
         retval += " * " + empire1->Name() + " / " + empire2->Name() + " : ";
-        switch (entry.second) {
-        case DiplomaticStatus::DIPLO_WAR:     retval += "War";    break;
-        case DiplomaticStatus::DIPLO_PEACE:   retval += "Peace";  break;
-        case DiplomaticStatus::DIPLO_ALLIED:  retval += "Allied";  break;
-        default:            retval += "?";      break;
+        switch (diplo_status) {
+        case DiplomaticStatus::DIPLO_WAR:    retval += "War";    break;
+        case DiplomaticStatus::DIPLO_PEACE:  retval += "Peace";  break;
+        case DiplomaticStatus::DIPLO_ALLIED: retval += "Allied";  break;
+        default:                             retval += "?";      break;
         }
         retval += "\n";
     }
     retval += "Diplomatic Messages:\n";
-    for (const auto& message : m_diplomatic_messages) {
-        if (message.second.GetType() == DiplomaticMessage::Type::INVALID)
+    for (auto& [ids, message] : m_diplomatic_messages) {
+        if (message.GetType() == DiplomaticMessage::Type::INVALID)
             continue;   // don't print non-messages and pollute the log files...
-        retval += "From: " + std::to_string(message.first.first)
-               + " to: " + std::to_string(message.first.second)
-               + " message: " + message.second.Dump() + "\n";
+        retval += "From: " + std::to_string(ids.first)
+               + " to: " + std::to_string(ids.second)
+               + " message: " + message.Dump() + "\n";
     }
 
     return retval;
