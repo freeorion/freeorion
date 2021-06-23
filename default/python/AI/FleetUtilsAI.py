@@ -1,7 +1,7 @@
 import freeOrionAIInterface as fo
 import math
 from logging import debug, error, warning
-from typing import List, Set, Tuple, Union
+from typing import List, Sequence, Set, Tuple, Union
 
 import AIDependencies
 import MoveUtilsAI
@@ -52,7 +52,7 @@ def count_troops_in_fleet(fleet_id: int) -> float:
     return fleet_troop_capacity
 
 
-def get_targeted_planet_ids(planet_ids: List[PlanetId], mission_type: MissionType) -> List[int]:
+def get_targeted_planet_ids(planet_ids: Sequence[PlanetId], mission_type: MissionType) -> List[PlanetId]:
     """Find the planets that are targets of the specified mission type.
 
     :param planet_ids: planets to be queried

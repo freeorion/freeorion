@@ -15,6 +15,7 @@ from colonization import get_nest_rating, update_planet_supply
 from colonization.calculate_population import calc_max_pop
 from colonization.colony_score import MINIMUM_COLONY_SCORE
 from colonization.rate_pilots import rate_piloting_tag
+from common.fo_typing import PlanetId, SpeciesName
 from common.print_utils import Sequence
 from EnumsAI import FocusType, MissionType
 from freeorion_tools import (
@@ -43,9 +44,9 @@ empire_metabolisms = {}
 
 def calculate_planet_colonization_rating(
         *,
-        planet_id: int,
+        planet_id: PlanetId,
         mission_type: MissionType,
-        spec_name: Optional[str],
+        spec_name: Optional[SpeciesName],
         detail: Optional[list],
         empire_research_list: Optional[Sequence]
 ) -> float:
@@ -66,9 +67,9 @@ def calculate_planet_colonization_rating(
 
 
 def _calculate_planet_colonization_rating(
-        planet_id: int,
+        planet_id: PlanetId,
         mission_type: MissionType,
-        spec_name: str,
+        species_name: SpeciesName,
         detail: list,
         empire_research_list: Sequence
 ) -> float:
@@ -76,12 +77,12 @@ def _calculate_planet_colonization_rating(
     retval = 0
     character = get_aistate().character
     discount_multiplier = character.preferred_discount_multiplier([30.0, 40.0])
-    species = fo.getSpecies(spec_name)
+    species = fo.getSpecies(species_name)
     species_foci = [] and species and list(species.foci)
     tag_list = list(species.tags) if species else []
     pilot_val = pilot_rating = 0
     if species and species.canProduceShips:
-        pilot_val = pilot_rating = rate_piloting_tag(spec_name)
+        pilot_val = pilot_rating = rate_piloting_tag(species_name)
         if pilot_val > best_pilot_rating():
             pilot_val *= 2
         if pilot_val > 2:
@@ -103,7 +104,7 @@ def _calculate_planet_colonization_rating(
                                     AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()]
                                     if pscore > InvasionAI.MIN_INVASION_SCORE]
 
-    if spec_name != planet.speciesName and planet.speciesName and mission_type != MissionType.INVASION:
+    if species_name != planet.speciesName and planet.speciesName and mission_type != MissionType.INVASION:
         return 0
 
     this_sysid = planet.systemID
@@ -114,7 +115,6 @@ def _calculate_planet_colonization_rating(
             least_jumps = universe.jumpDistance(home_system_id, eval_system_id)
             if least_jumps == -1:  # indicates no known path
                 return 0.0
-                # distanceFactor = 1.001 / (least_jumps + 1)
 
     claimed_stars = get_claimed_stars()
 
@@ -143,10 +143,10 @@ def _calculate_planet_colonization_rating(
     planet_supply += sum(AIDependencies.SUPPLY_MOD_SPECIALS[_special].get(int(psize), 0)
                          for _special in supply_specials for psize in [-1, planet.size])
 
-    ind_tag_mod = AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(get_species_tag_grade(spec_name, Tags.INDUSTRY), 1.0)
-    res_tag_mod = AIDependencies.SPECIES_RESEARCH_MODIFIER.get(get_species_tag_grade(spec_name, Tags.RESEARCH), 1.0)
+    ind_tag_mod = AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(get_species_tag_grade(species_name, Tags.INDUSTRY), 1.0)
+    res_tag_mod = AIDependencies.SPECIES_RESEARCH_MODIFIER.get(get_species_tag_grade(species_name, Tags.RESEARCH), 1.0)
     if species:
-        supply_tag_mod = AIDependencies.SPECIES_SUPPLY_MODIFIER.get(get_species_tag_grade(spec_name, Tags.SUPPLY), 1)
+        supply_tag_mod = AIDependencies.SPECIES_SUPPLY_MODIFIER.get(get_species_tag_grade(species_name, Tags.SUPPLY), 1)
     else:
         supply_tag_mod = 0
 
@@ -158,10 +158,10 @@ def _calculate_planet_colonization_rating(
 
     planet_supply += supply_tag_mod
     planet_supply = max(planet_supply, 0)  # planets can't have negative supply
-    if planet.speciesName == spec_name:
+    if planet.speciesName == species_name:
         update_planet_supply(planet_id, planet_supply + sys_supply)
 
-    threat_factor = _determine_colony_threat_factor(planet_id, spec_name, existing_presence)
+    threat_factor = _determine_colony_threat_factor(planet_id, species_name, existing_presence)
 
     sys_partial_vis_turn = get_partial_visibility_turn(this_sysid)
     planet_partial_vis_turn = get_partial_visibility_turn(planet_id)
@@ -263,7 +263,7 @@ def _calculate_planet_colonization_rating(
         detail.append("ECCENTRIC_ORBIT_SPECIAL %.1f" % (discount_multiplier * 6))
 
     if (mission_type == MissionType.OUTPOST or
-            (mission_type == MissionType.INVASION and not spec_name)):
+            (mission_type == MissionType.INVASION and not species_name)):
 
         if "ANCIENT_RUINS_SPECIAL" in planet.specials:  # TODO: add value for depleted ancient ruins
             retval += discount_multiplier * 30
@@ -344,7 +344,7 @@ def _calculate_planet_colonization_rating(
                 per_gg = 20
             elif tech_is_complete("CON_ORBITAL_CON"):
                 per_gg = 10
-            if spec_name:
+            if species_name:
                 populated_gg_factor = 0.5
         else:
             per_gg = 5
@@ -371,7 +371,7 @@ def _calculate_planet_colonization_rating(
                 detail.append("Won't GGG")
         if existing_presence:
             detail.append("preexisting system colony")
-            retval = (retval + existing_presence * _get_defense_value(spec_name)) * 1.5
+            retval = (retval + existing_presence * _get_defense_value(species_name)) * 1.5
 
         # Fixme - sys_supply is always <= 0 leading to incorrect supply bonus score
         supply_val = 0
@@ -411,7 +411,7 @@ def _calculate_planet_colonization_rating(
                 supply_val = 40 * (planet_supply - max(-3, sys_supply))
             else:
                 supply_val = 200 * (planet_supply + sys_supply)  # a penalty
-                if spec_name == "SP_SLY":
+                if species_name == "SP_SLY":
                     # Sly are essentially stuck with lousy supply, so don't penalize for that
                     supply_val = 0
         elif planet_supply > sys_supply == 1:  # TODO: check min neighbor supply
@@ -554,7 +554,7 @@ def _calculate_planet_colonization_rating(
         retval *= priority_scaling
         if existing_presence:
             detail.append("preexisting system colony")
-            retval = (retval + existing_presence * _get_defense_value(spec_name)) * 2
+            retval = (retval + existing_presence * _get_defense_value(species_name)) * 2
         if threat_factor < 1.0:
             threat_factor = _revise_threat_factor(threat_factor, retval, this_sysid, MINIMUM_COLONY_SCORE)
             retval *= threat_factor

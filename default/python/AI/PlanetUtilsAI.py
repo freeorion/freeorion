@@ -1,9 +1,10 @@
 import freeOrionAIInterface as fo
 from logging import debug, error
-from typing import Iterable, List, Union
+from typing import Iterable, List, Sequence, Union
 
 import ColonisationAI
 from AIDependencies import INVALID_ID
+from common.fo_typing import PlanetId, SystemId
 from freeorion_tools import ppstring
 
 
@@ -23,10 +24,9 @@ def sys_name_ids(sys_ids: Iterable[int]) -> str:
     return ppstring([str(universe.getSystem(sys_id)) for sys_id in sys_ids])
 
 
-def planet_string(planet_ids: Union[int, List[int]]) -> str:
+def planet_string(planet_ids: Union[PlanetId, List[PlanetId]]) -> str:
     """
-    Get a string representation of the passed planets
-    :param planet_ids: list of planet ids or single id
+    Get a string representation of the passed planets.
     """
 
     def _safe_planet_name(planet_id):
@@ -38,7 +38,7 @@ def planet_string(planet_ids: Union[int, List[int]]) -> str:
     return ppstring([_safe_planet_name(pid) for pid in planet_ids])
 
 
-def get_capital() -> int:
+def get_capital() -> PlanetId:
     """
     Return current empire capital id.
 
@@ -122,11 +122,9 @@ def get_owned_planets_by_empire(planet_ids):
     return result
 
 
-def get_all_owned_planet_ids(planet_ids):
+def get_all_owned_planet_ids(planet_ids: Sequence[PlanetId]) -> Sequence[PlanetId]:
     """
     Return list of all owned and populated planet_ids.
-    :param planet_ids:
-    :return: list of planet_ids
     """
     # TODO: remove after refactoring in invasionAI
     # this function result used only to filter out unpopulated planets,
@@ -142,7 +140,7 @@ def get_all_owned_planet_ids(planet_ids):
     return result
 
 
-def get_populated_planet_ids(planet_ids):
+def get_populated_planet_ids(planet_ids: Sequence[PlanetId]) -> Sequence[PlanetId]:
     """
     Filter planets with population.
     :param planet_ids: list of planets ids
@@ -152,11 +150,9 @@ def get_populated_planet_ids(planet_ids):
     return [pid for pid in planet_ids if universe.getPlanet(pid).initialMeterValue(fo.meterType.population) > 0]
 
 
-def get_systems(planet_ids):
+def get_systems(planet_ids: Sequence[PlanetId]) -> Sequence[SystemId]:
     """
-    Return list of systems containing planet_ids
-    :param planet_ids: list of planet ids
-    :return: list of system ids
+    Return list of systems containing planet_ids.
     """
     # TODO discuss change return type to set
     universe = fo.getUniverse()
