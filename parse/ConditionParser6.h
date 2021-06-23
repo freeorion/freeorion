@@ -18,6 +18,7 @@ namespace parse { namespace detail {
         single_or_bracketed_repeat<value_ref_grammar<std::string>> one_or_more_string_values;
         condition_parser_rule             homeworld;
         condition_parser_rule             building;
+        condition_parser_rule             field;
         condition_parser_rule             species;
         condition_parser_rule             focus_type;
         condition_parser_rule             planet_type;

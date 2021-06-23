@@ -68,6 +68,12 @@ namespace parse { namespace detail {
                 ) [ _val = construct_movable_(new_<Condition::Building>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
+        field
+            =   ( omit_[tok.Field_]
+                > -(label(tok.name_) > one_or_more_string_values)
+                ) [ _val = construct_movable_(new_<Condition::Field>(deconstruct_movable_vector_(_1, _pass))) ]
+            ;
+
         species
             = ( omit_[tok.Species_]
                 > -(label(tok.name_) > one_or_more_string_values)
@@ -124,6 +130,7 @@ namespace parse { namespace detail {
         start
             %=  homeworld
             |   building
+            |   field
             |   species
             |   focus_type
             |   planet_type
@@ -135,6 +142,7 @@ namespace parse { namespace detail {
         one_or_more_string_values.name("sequence of string expressions");
         homeworld.name("Homeworld");
         building.name("Building");
+        field.name("Field");
         species.name("Species");
         focus_type.name("Focus");
         planet_type.name("PlanetType");
@@ -146,6 +154,7 @@ namespace parse { namespace detail {
         debug(one_or_more_string_values);
         debug(homeworld);
         debug(building);
+        debug(field);
         debug(species);
         debug(focus_type);
         debug(planet_type);
