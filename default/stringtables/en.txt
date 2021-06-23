@@ -11578,6 +11578,15 @@ Also makes some production-boosting generation techs cheaper to research.'''
 PLC_INDUSTRIALISM_SHORT_DESC
 Improves industry output
 
+PLC_TECHNOCRACY
+Technocracy
+
+PLC_TECHNOCRACY_DESC
+Research-focused planets get a boost to [[metertype METER_TARGET_RESEARCH]] of [[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT]]% and a bonus of [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]] to [[metertype METER_HAPPINESS]].
+
+PLC_TECHNOCRACY_SHORT_DESC
+Improves research output
+
 PLC_CHECKPOINTS
 Border Checkpoints
 

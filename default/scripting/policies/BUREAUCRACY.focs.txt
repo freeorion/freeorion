@@ -6,6 +6,7 @@ Policy
     adoptioncost = 1.0 * floor(2 + 2 * Statistic Count
                                            condition = And [ Planet Species OwnedBy empire = Source.Owner ])
     prerequisites = [ "PLC_CENTRALIZATION" ]
+    unlock = Item type = Policy name = "PLC_TECHNOCRACY"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
