@@ -379,6 +379,30 @@ private:
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
 };
 
+/** Matches all Field objects that are one of the field types specified
+  * in \a names. */
+struct FO_COMMON_API Field final : public Condition {
+    explicit Field(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+
+    bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+    std::string Description(bool negated = false) const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override;
+    unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<Condition> Clone() const override;
+
+private:
+    bool Match(const ScriptingContext& local_context) const override;
+
+    std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+};
+
+
 /** Matches all objects that have an attached Special named \a name. */
 struct FO_COMMON_API HasSpecial final : public Condition {
     HasSpecial();

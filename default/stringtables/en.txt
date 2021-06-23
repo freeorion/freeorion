@@ -10700,6 +10700,14 @@ DESC_BUILDING
 DESC_BUILDING_NOT
 ''' that is not a %1% building'''
 
+# %1% name of a field type.
+DESC_FIELD
+''' that is a %1% field'''
+
+# %1% name of a field type.
+DESC_FIELD_NOT
+''' that is not a %1% field'''
+
 # %1% name of the special the object should have.
 DESC_SPECIAL
 ''' that has a %1% special'''

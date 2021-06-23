@@ -8,6 +8,7 @@
 #include <boost/graph/st_connected.hpp>
 #include "BuildingType.h"
 #include "Building.h"
+#include "Field.h"
 #include "Fighter.h"
 #include "Fleet.h"
 #include "Meter.h"
@@ -2350,6 +2351,173 @@ unsigned int Building::GetCheckSum() const {
 
 std::unique_ptr<Condition> Building::Clone() const
 { return std::make_unique<Building>(ValueRef::CloneUnique(m_names)); }
+
+///////////////////////////////////////////////////////////
+// Field                                                 //
+///////////////////////////////////////////////////////////
+Field::Field(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+    Condition(),
+    m_names(std::move(names))
+{
+    m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
+    m_target_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->TargetInvariant(); });
+    m_source_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->SourceInvariant(); });
+}
+
+bool Field::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Field& rhs_ = static_cast<const Field&>(rhs);
+
+    if (m_names.size() != rhs_.m_names.size())
+        return false;
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_names.at(i))
+    }
+
+    return true;
+}
+
+namespace {
+    struct FieldSimpleMatch {
+        FieldSimpleMatch(const std::vector<std::string>& names) :
+            m_names(names)
+        {}
+
+        bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
+            if (!candidate)
+                return false;
+
+            // is it a field?
+            if (candidate->ObjectType() != UniverseObjectType::OBJ_FIELD)
+                return false;
+            auto* field = static_cast<const ::Field*>(candidate.get());
+
+            // if no name supplied, match any field
+            if (m_names.empty())
+                return true;
+
+            // is it one of the specified field types?
+            return std::count(m_names.begin(), m_names.end(), field->FieldTypeName());
+        }
+
+        const std::vector<std::string>& m_names;
+    };
+}
+
+void Field::Eval(const ScriptingContext& parent_context,
+                 ObjectSet& matches, ObjectSet& non_matches,
+                 SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+{
+    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    if (simple_eval_safe) {
+        // check each valueref for invariance to local candidate
+        for (auto& name : m_names) {
+            if (!name->LocalCandidateInvariant()) {
+                simple_eval_safe = false;
+                break;
+            }
+        }
+    }
+    if (simple_eval_safe) {
+        // evaluate names once, and use to check all candidate objects
+        std::vector<std::string> names;
+        names.reserve(m_names.size());
+        // get all names from valuerefs
+        for (auto& name : m_names)
+            names.push_back(name->Eval(parent_context));
+        EvalImpl(matches, non_matches, search_domain, FieldSimpleMatch(names));
+    } else {
+        // re-evaluate allowed field types range for each candidate object
+        Condition::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+std::string Field::Description(bool negated/* = false*/) const {
+    std::string values_str;
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        values_str += m_names[i]->ConstantExpr() ?
+                        UserString(m_names[i]->Eval()) :
+                        m_names[i]->Description();
+        if (2 <= m_names.size() && i < m_names.size() - 2) {
+            values_str += ", ";
+        } else if (i == m_names.size() - 2) {
+            values_str += m_names.size() < 3 ? " " : ", ";
+            values_str += UserString("OR");
+            values_str += " ";
+        }
+    }
+    return str(FlexibleFormat((!negated)
+           ? UserString("DESC_FIELD")
+           : UserString("DESC_FIELD_NOT"))
+           % values_str);
+}
+
+std::string Field::Dump(unsigned short ntabs) const {
+    std::string retval = DumpIndent(ntabs) + "Field name = ";
+    if (m_names.size() == 1) {
+        retval += m_names[0]->Dump(ntabs) + "\n";
+    } else {
+        retval += "[ ";
+        for (auto& name : m_names) {
+            retval += name->Dump(ntabs) + " ";
+        }
+        retval += "]\n";
+    }
+    return retval;
+}
+
+void Field::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                              ObjectSet& condition_non_targets) const
+{ AddFieldSet(parent_context.ContextObjects(), condition_non_targets); }
+
+bool Field::Match(const ScriptingContext& local_context) const {
+    auto& candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger() << "Field::Match passed no candidate object";
+        return false;
+    }
+
+    // is it a field?
+    if (candidate->ObjectType() != UniverseObjectType::OBJ_FIELD)
+        return false;
+    auto* field = static_cast<const ::Field*>(candidate.get());
+
+    // match any field type?
+    if (m_names.empty())
+        return true;
+
+    // match one of the specified field names
+    for (auto& name : m_names) {
+        if (name->Eval(local_context) == field->FieldTypeName())
+            return true;
+    }
+
+    return false;
+}
+
+void Field::SetTopLevelContent(const std::string& content_name) {
+    for (auto& name : m_names) {
+        if (name)
+            name->SetTopLevelContent(content_name);
+    }
+}
+
+unsigned int Field::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Field");
+    CheckSums::CheckSumCombine(retval, m_names);
+
+    TraceLogger() << "GetCheckSum(Field): retval: " << retval;
+    return retval;
+}
+
+std::unique_ptr<Condition> Field::Clone() const
+{ return std::make_unique<Field>(ValueRef::CloneUnique(m_names)); }
 
 ///////////////////////////////////////////////////////////
 // HasSpecial                                            //
