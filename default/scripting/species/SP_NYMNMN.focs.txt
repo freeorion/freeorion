@@ -31,6 +31,13 @@ Species
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
 
+        EffectsGroup
+            scope = MinimumNumberOf
+                number = 1
+                sortkey = DirectDistanceBetween object = Source.ID object = LocalCandidate.ID
+                condition = Field name = [ "FLD_ION_STORM" "FLD_METEOR_BLIZZARD" "FLD_NANITE_SWARM" ]
+            effects = MoveTowards speed = 5 target = Source
+
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
