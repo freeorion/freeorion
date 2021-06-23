@@ -14063,6 +14063,12 @@ Black Hole Collapser
 BLD_BLACK_HOLE_COLLAPSER_DESC
 Generates a [[fieldtype FLD_SUBSPACE_RIFT]] with radius 100 uu centred at the building's location.
 
+BLD_FIELD_REPELLOR
+Field Repellor
+
+BLD_FIELD_REPELLOR_DESC
+Pushes mobile fields (those not in systems) away from its location.
+
 BLD_HYPER_DAM
 Hyperspatial Dam
 
