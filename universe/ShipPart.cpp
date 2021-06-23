@@ -447,7 +447,9 @@ float ShipPart::ProductionCost(int empire_id, int location_id, int in_design_id)
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
-    const ScriptingContext context(std::move(source), std::move(location), in_design_id);
+    constexpr int PRODUCTION_BLOCK_SIZE = 1;
+
+    const ScriptingContext context(std::move(source), std::move(location), in_design_id, PRODUCTION_BLOCK_SIZE);
     return static_cast<float>(m_production_cost->Eval(context));
 }
 
@@ -470,7 +472,9 @@ int ShipPart::ProductionTime(int empire_id, int location_id, int in_design_id) c
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    const ScriptingContext context(std::move(source), std::move(location), in_design_id);
+    constexpr int PRODUCTION_BLOCK_SIZE = 1;
+
+    const ScriptingContext context{std::move(source), std::move(location), in_design_id, PRODUCTION_BLOCK_SIZE};
     return m_production_time->Eval(context);
 }
 

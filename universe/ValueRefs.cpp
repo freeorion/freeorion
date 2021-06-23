@@ -931,20 +931,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return static_cast<int>(context.galaxy_setup_data.GetNativeFreq());
         if (property_name == "GalaxyMaxAIAggression")
             return static_cast<int>(context.galaxy_setup_data.GetAggression());
-
-        // non-object values passed by abuse of context.current_value
-        if (property_name == "UsedInDesignID") {
-            // check if an int was passed as the current_value, as would be
-            // done when evaluating a ValueRef for the cost or production
-            // time of a part or hull in a ship design. this should be the id
-            // of the design.
-            try {
-                return boost::get<int>(context.current_value);
-            } catch (...) {
-                ErrorLogger() << "Variable<int>::Eval could get ship design id for property: " << TraceReference(m_property_name, m_ref_type, context);
-            }
-            return 0;
-        }
+        if (property_name == "UsedInDesignID")
+            return context.in_design_id;
 
         // add more non-object reference int functions here
 

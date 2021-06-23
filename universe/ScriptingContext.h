@@ -31,6 +31,8 @@ struct ScriptingContext {
         current_value(            parent_context.current_value),
         combat_bout(              parent_context.combat_bout),
         current_turn(             parent_context.current_turn),
+        in_design_id(             parent_context.in_design_id),
+        production_block_size(    parent_context.production_block_size),
         galaxy_setup_data(        parent_context.galaxy_setup_data),
         species(                  parent_context.species),
         supply(                   parent_context.supply),
@@ -45,7 +47,7 @@ struct ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    ScriptingContext(std::shared_ptr<const UniverseObject> source_) :
+    explicit ScriptingContext(std::shared_ptr<const UniverseObject> source_) :
         source(           std::move(source_)),
         galaxy_setup_data(GetGalaxySetupData()),
         species(          GetSpeciesManager()),
@@ -66,6 +68,8 @@ struct ScriptingContext {
         current_value(            parent_context.current_value),
         combat_bout(              parent_context.combat_bout),
         current_turn(             parent_context.current_turn),
+        in_design_id(             parent_context.in_design_id),
+        production_block_size(    parent_context.production_block_size),
         galaxy_setup_data(        parent_context.galaxy_setup_data),
         species(                  parent_context.species),
         supply(                   parent_context.supply),
@@ -89,6 +93,8 @@ struct ScriptingContext {
         current_value(            current_value_),
         combat_bout(              parent_context.combat_bout),
         current_turn(             parent_context.current_turn),
+        in_design_id(             parent_context.in_design_id),
+        production_block_size(    parent_context.production_block_size),
         galaxy_setup_data(        parent_context.galaxy_setup_data),
         species(                  parent_context.species),
         supply(                   parent_context.supply),
@@ -103,6 +109,23 @@ struct ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
+    ScriptingContext(std::shared_ptr<const UniverseObject> source_,
+                     std::shared_ptr<UniverseObject> target_,
+                     int in_design_id_, int production_block_size_) :
+        source(                   std::move(source_)),
+        effect_target(            std::move(target_)),
+        in_design_id(             in_design_id_),
+        production_block_size(    production_block_size_),
+        galaxy_setup_data(        GetGalaxySetupData()),
+        species(                  GetSpeciesManager()),
+        supply(                   GetSupplyManager()),
+        universe(                 &GetUniverse()),
+        const_universe(           GetUniverse()),
+        empires(                  &(::Empires().GetEmpires())),
+        const_empires(            const_cast<const EmpireManager&>(::Empires()).GetEmpires()),
+        diplo_statuses(           ::Empires().GetDiplomaticStatuses())
+    {}
+
     ScriptingContext(const ScriptingContext& parent_context,
                      std::shared_ptr<UniverseObject> target_,
                      const CurrentValueVariant& current_value_) :
@@ -113,6 +136,8 @@ struct ScriptingContext {
         current_value(            current_value_),
         combat_bout(              parent_context.combat_bout),
         current_turn(             parent_context.current_turn),
+        in_design_id(             parent_context.in_design_id),
+        production_block_size(    parent_context.production_block_size),
         galaxy_setup_data(        parent_context.galaxy_setup_data),
         species(                  parent_context.species),
         supply(                   parent_context.supply),
@@ -241,6 +266,8 @@ struct ScriptingContext {
     // general gamestate info
     int                                            combat_bout = 0;
     int                                            current_turn = CurrentTurn();
+    int                                            in_design_id = INVALID_DESIGN_ID;
+    int                                            production_block_size = 1;
     const GalaxySetupData&                         galaxy_setup_data{GetGalaxySetupData()};
     SpeciesManager&                                species{GetSpeciesManager()};
     const SupplyManager&                           supply{GetSupplyManager()};
