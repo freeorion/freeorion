@@ -20,6 +20,8 @@ def _get_property_return_type_by_name(attr_name: str) -> str:
         "empireID": "EmpireId",
         "description": "str",
         "speciesName": "str",
+        "capitalID": "PlaneId",
+        "owner": "EmpireId",
     }
     return property_map.get(attr_name, "")
 
@@ -49,6 +51,9 @@ def _update_property_return_type(attr_name: str, rtype: str):
         ("fleetIDs", "IntSet"): "Set[FleetId]",
         ("systemIDs", "IntVec"): "Sequence[SystemId]",
         ("empireID", "int"): "EmpireId",
+        ("capitalID", "int"): "PlanetId",
+        ("owner", "int"): "EmpireId",
+        ("speciesName", "str"): "SpeciesName",
     }
     return property_map.get((attr_name, rtype), rtype)
 

@@ -28,7 +28,6 @@ def _handle_enum(info: EnumInfo):
 class EnumGenerator(BaseGenerator):
     def __init__(self, enums: List[EnumInfo]):
         super().__init__()
-        self.imports.append("from enum import IntEnum")
 
         for enum in sorted(enums, key=attrgetter("name")):
             self.body.extend(_handle_enum(enum))
