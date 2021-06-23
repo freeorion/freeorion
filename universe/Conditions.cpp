@@ -894,7 +894,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // before the subcondition is evaluated, so the local context that is
     // passed to the subcondition should have a null local candidate.
     std::shared_ptr<const UniverseObject> no_object;
-    ScriptingContext local_context(parent_context, no_object);
+    ScriptingContext local_context{parent_context, no_object};
 
     // which input matches match the subcondition?
     ObjectSet subcondition_matching_matches;
@@ -2969,7 +2969,8 @@ void Contains::Eval(const ScriptingContext& parent_context,
 
     } else if (search_domain_size == 1) {
         // evaluate subcondition on objects contained by the candidate
-        ScriptingContext local_context(parent_context, search_domain == SearchDomain::MATCHES ? *matches.begin() : *non_matches.begin());
+        ScriptingContext local_context{
+            parent_context, search_domain == SearchDomain::MATCHES ? *matches.begin() : *non_matches.begin()};
 
         // initialize subcondition candidates from local candidate's contents
         const ObjectMap& objects = parent_context.ContextObjects();
@@ -2996,7 +2997,7 @@ void Contains::Eval(const ScriptingContext& parent_context,
         // evaluate contained objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
         std::shared_ptr<const UniverseObject> no_object;
-        ScriptingContext local_context(parent_context, no_object);
+        ScriptingContext local_context{parent_context, no_object};
         ObjectSet subcondition_matches;
         m_condition->Eval(local_context, subcondition_matches);
 
@@ -3178,7 +3179,8 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
 
     } else if (search_domain_size == 1) {
         // evaluate subcondition on objects that contain the candidate
-        ScriptingContext local_context(parent_context, search_domain == SearchDomain::MATCHES ? *matches.begin() : *non_matches.begin());
+        ScriptingContext local_context{
+            parent_context, search_domain == SearchDomain::MATCHES ? *matches.begin() : *non_matches.begin()};
 
         // initialize subcondition candidates from local candidate's containers
         const ObjectMap& objects = parent_context.ContextObjects();
@@ -3211,7 +3213,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
         // evaluate container objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
         std::shared_ptr<const UniverseObject> no_object;
-        ScriptingContext local_context(parent_context, std::move(no_object));
+        ScriptingContext local_context{parent_context, std::move(no_object)};
         ObjectSet subcondition_matches;
         m_condition->Eval(local_context, subcondition_matches);
 

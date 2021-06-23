@@ -1708,7 +1708,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
             auto source = context.ContextObjects().get(sourced_effects_group.source_object_id);
             if (!source)
                 WarnLogger() << "No source found for ID: " << sourced_effects_group.source_object_id;
-            ScriptingContext source_context(std::move(source), context);
+            ScriptingContext source_context{std::move(source), context};
             effects_group->Execute(source_context,
                                    targets_and_cause,
                                    update_effect_accounting ? &m_effect_accounting_map : nullptr,
@@ -2425,7 +2425,7 @@ namespace {
 
                 auto& visible_specials = obj_specials_map[object_id];
                 auto& obj_specials = obj->Specials();
-                const ScriptingContext context(std::move(obj), input_context);
+                const ScriptingContext context{std::move(obj), input_context};
 
                 // check all object's specials.
                 for (const auto& special_entry : obj_specials) {

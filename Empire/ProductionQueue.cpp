@@ -430,7 +430,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto location_obj = context.ContextObjects().get(location_id);
-            ScriptingContext location_target_context(location_obj, context); // non-const but should be OK as only passed below to function taking const ScriptingContext&
+            ScriptingContext location_target_context{location_obj, context}; // non-const but should be OK as only passed below to function taking const ScriptingContext&
 
             for (const auto& psc : bt->ProductionSpecialConsumption()) {
                 if (!psc.second.first)
@@ -456,7 +456,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
     case BuildType::BT_SHIP: {
         if (const ShipDesign* sd = context.ContextUniverse().GetShipDesign(design_id)) {
             auto location_obj = context.ContextObjects().get(location_id);
-            const ScriptingContext location_target_context(location_obj, context);
+            const ScriptingContext location_target_context{location_obj, context};
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& psc : ship_hull->ProductionSpecialConsumption()) {
@@ -492,8 +492,7 @@ std::map<MeterType, std::map<int, float>>
 ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id, const ScriptingContext& context) const {
     std::map<MeterType, std::map<int, float>> retval;
 
-    auto obj = context.ContextObjects().get(location_id);
-    const ScriptingContext location_context(obj, context);
+    const ScriptingContext location_context{context.ContextObjects().get(location_id), context};
 
     switch (build_type) {
     case BuildType::BT_BUILDING: {

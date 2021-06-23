@@ -386,7 +386,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const { // T
         return false;
     }
     // evaluate using location as the source, as it should be an object owned by this empire.
-    ScriptingContext location_as_source_context(location, location);
+    ScriptingContext location_as_source_context{location, location};
     if (!hull->Location()->Eval(location_as_source_context, location))
         return false;
 

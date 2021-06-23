@@ -160,7 +160,7 @@ namespace {
             ErrorLogger() << "UniverseWrapper::HullProductionLocation Could not find location with id " << location_id;
             return false;
         }
-        ScriptingContext location_as_source_context(location, location);
+        ScriptingContext location_as_source_context{location, location};
         return hull.Location()->Eval(location_as_source_context, std::move(location));
     }
 
@@ -171,7 +171,7 @@ namespace {
             ErrorLogger() << "UniverseWrapper::PartTypeProductionLocation Could not find location with id " << location_id;
             return false;
         }
-        ScriptingContext location_as_source_context(location, location);
+        ScriptingContext location_as_source_context{location, location};
         return part_type.Location()->Eval(location_as_source_context, std::move(location));
     }
 }
