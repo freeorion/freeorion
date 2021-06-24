@@ -176,7 +176,6 @@ find_package_handle_standard_args(
 )
 
 mark_as_advanced(
-  FREETYPE_LIBRARIES
-  FREETYPE_INCLUDE_DIRS
-  FREETYPE_VERSION
+  FREETYPE_LIBRARY
+  FREETYPE_INCLUDE_DIR
 )
