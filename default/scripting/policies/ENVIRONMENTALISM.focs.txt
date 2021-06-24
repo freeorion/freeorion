@@ -50,16 +50,18 @@ Policy
                 Not Planet type = GasGiant
                 Not Planet type = Asteroids
                 Planet type = LocalCandidate.OriginalType
+                Not Contains Building
+                Not Focus type = "FOCUS_INDUSTRY"
                 Population low = 0.001
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value
                     + (NamedReal name = "PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_ORIGINAL_FLAT"
-                                 value = 10)
+                                 value = 5)
                 SetTargetInfluence value = Value
                     + (NamedReal name = "PLC_ENVIRONMENTALISM_TARGET_INFLUENCE_ORIGINAL_FLAT"
-                                 value = 2)
+                                 value = 1)
                 SetTargetResearch value = Value
                     + (NamedReal name = "PLC_ENVIRONMENTALISM_TARGET_RESEARCH_ORIGINAL_FLAT"
                                  value = 3)
