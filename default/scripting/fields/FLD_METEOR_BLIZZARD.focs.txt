@@ -33,7 +33,11 @@ FieldType
             ]
             stackinggroup = "METEOR_BLIZZARD_SHIP_EFFECTS"
             effects = [
-                SetTargetResearch value = Value + 1
+                SetTargetResearch value = Value + 2 / (1 + Statistic Count condition = And [
+                    Ship
+                    WithinDistance distance = Source.Size * 0.9 condition = Source
+                    Not Monster
+                ])^0.5
             ]
 
         EffectsGroup    // after reaching a certain age, dissipate when small
