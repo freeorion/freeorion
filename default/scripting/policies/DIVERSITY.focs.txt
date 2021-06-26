@@ -15,10 +15,10 @@ Policy
                 Planet
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
-                Happiness low = 8
+                Happiness low = (NamedReal name = "PLC_DIVERSITY_MIN_STABILITY" value = 8)
             ]
             effects = [
-                SetTargetResearch value = Value - 2 + 0.5 * Statistic CountUnique
+                SetTargetResearch value = Value - 2 + (NamedReal name = "PLC_DIVERSITY_SCALING" value = 0.5) * Statistic CountUnique
                     value = LocalCandidate.Species
                     condition = And [
                         Planet
@@ -35,7 +35,7 @@ Policy
                 Population low = 0.001
             ]
             effects = [
-                SetTargetHappiness value = Value - 2 + 0.5 * Statistic CountUnique
+                SetTargetHappiness value = Value - 2 + NamedRealLookup name = "PLC_DIVERSITY_SCALING" * Statistic CountUnique
                     value = LocalCandidate.Species
                     condition = And [
                         Planet
@@ -51,7 +51,7 @@ Policy
                 OwnedBy empire = Source.Owner
             ]
             effects = [
-                SetTargetInfluence value = Value + 0.5 * Statistic CountUnique
+                SetTargetInfluence value = Value - 2 + NamedRealLookup name = "PLC_DIVERSITY_SCALING" * Statistic CountUnique
                     value = LocalCandidate.Species
                     condition = And [
                         Planet

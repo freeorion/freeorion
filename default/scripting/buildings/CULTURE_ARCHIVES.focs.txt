@@ -14,7 +14,7 @@ BuildingType
                 Planet
                 Not Population high = 0
                 OwnedBy empire = Source.Owner
-                Happiness low = 5
+                Happiness low = (NamedReal name = "BLD_CULTURE_ARCHIVES_MIN_STABILITY" value = 5)
             ]
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = [

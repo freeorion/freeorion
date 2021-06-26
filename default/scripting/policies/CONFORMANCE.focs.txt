@@ -17,7 +17,7 @@ Policy
             Planet
             OwnedBy empire = Source.Owner
             Species
-            Happiness low = 4
+            Happiness low = (NamedReal name = "PLC_CONFORMANCE_MIN_STABILITY" value = 4)
         ]
         effects = [
             SetTargetResearch value = Value - (NamedReal name = "PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT" value = 2.0)

@@ -14,7 +14,7 @@ Policy
             scope = And [
                 Capital
                 OwnedBy empire = Source.Owner
-                Happiness low = 20
+                Happiness low = (NamedReal name = "PLC_CENTRALIZATION_MIN_STABILITY" value = 20)
             ]
             effects = [
                 SetTargetIndustry value = Value + Target.Population

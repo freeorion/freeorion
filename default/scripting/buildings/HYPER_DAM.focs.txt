@@ -19,7 +19,7 @@ BuildingType
                 PopulationCenter
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
-                Happiness low = 12
+                Happiness low = (NamedReal name = "BLD_HYPER_DAM_MIN_STABILITY" value = 12)
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Not ResourceSupplyConnected empire = Source.Owner condition = And [
                     Building name = "BLD_BLACK_HOLE_POW_GEN" 

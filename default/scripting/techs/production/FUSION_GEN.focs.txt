@@ -14,7 +14,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
-                Happiness low = 18
+                Happiness low = (NamedReal name = "PRO_FUSION_GEN_MIN_STABILITY" value = 18)
             ]
             effects = SetTargetIndustry value = Value + Target.Population
                         * (NamedReal name = "PRO_FUSION_GEN_TARGET_INDUSTRY_PERPOP"

@@ -12,7 +12,7 @@ Policy
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
-                Happiness low = 8
+                Happiness low = (NamedReal name = "LRN_ALGO_RESEARCH_MIN_STABILITY" value = 8)
             ]
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value + min(Target.Construction, Target.Population)

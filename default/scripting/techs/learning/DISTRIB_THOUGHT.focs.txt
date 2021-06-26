@@ -13,7 +13,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
-                Happiness low = 10
+                Happiness low = (NamedReal name = "LRN_DISTRIB_THOUGHT_MIN_STABILITY" value = 10)
             ]
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value +
