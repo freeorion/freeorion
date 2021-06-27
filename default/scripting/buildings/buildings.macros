@@ -77,6 +77,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                             Building
                             Building name = ThisBuilding
                             OwnedBy empire = Source.Owner
+                            Not InSystem id = Target.SystemID
                         ]
                     )^(-0.5)
                 ) * [[POLICY_LIKE_DISLIKE_SCALING]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
@@ -98,6 +99,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                             Building
                             Building name = ThisBuilding
                             OwnedBy empire = Source.Owner
+                            Not InSystem id = Target.SystemID
                         ]
                     )^(-0.5)
                 ) * [[POLICY_LIKE_DISLIKE_SCALING]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
