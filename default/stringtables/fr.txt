@@ -1236,7 +1236,7 @@ RULE_ALL_OBJECTS_VISIBLE
 Tous les Objets visibles
 
 RULE_ALL_OBJECTS_VISIBLE_DESC
-Tous les systèmes, planètes, structures, flottes, astronefs, et régions interstellaires peuvent être détectés par les empires à au moins un niveau de visibilité partielle.
+Tous les systèmes, planètes, structures, flottes, astronefs, et milieux interstellaires peuvent être détectés par les empires à au moins un niveau de visibilité partielle.
 
 RULE_ALL_SYSTEMS_VISIBLE
 Tous les Systèmes visibles
@@ -5161,7 +5161,7 @@ ENC_SPECIES_DESC
 Chaque espèce est classifiée selon son [[encyclopedia METABOLISM_TITLE]].
 
 ENC_FIELD_TYPE
-Type de Régions
+Type de Milieux
 
 ENC_SHIP_DESIGN
 [Partie - Modèle Astronef]
@@ -5364,7 +5364,7 @@ ENC_SYSTEM
 [Partie - Systèmes]
 
 ENC_FIELD
-[Partie - Régions]
+[Partie - Milieux]
 
 ENC_HOMEWORLDS
 [Partie - Planètes Natales]
@@ -6124,7 +6124,7 @@ Boucliers d'astronefs: les [[encyclopedia DAMAGE_TITLE]] infligés par chaque ti
 
 Boucliers planétaires: Agit comme une sorte d'armure. La solidité d'un bouclier planétaire s'amenuise après chaque tir encaissé jusqu'à que celle-ci soit réduite à néant, les tirs suivants passant alors au travers et endommageant les structures planétaires (en premier lieu les structures de [[metertype METER_DEFENSE]], puis dans un second temps l'[[metertype METER_CONSTRUCTION]] dans son ensemble). Les Boucliers planétaires se regénèrent après chaque tour à un certain taux, ce dernier pouvant varier selon les technologies maîtrisées.
 
-Une différence supplémentaire réside dans le fait que les boucliers d'astronefs peuvent partiellement ou entièrement être neutralisés par un type de région interstellaire tel qu'un [[fieldtype FLD_MOLECULAR_CLOUD]].
+Une différence supplémentaire réside dans le fait que les boucliers d'astronefs peuvent partiellement ou entièrement être neutralisés par un type de milieu interstellaire tel qu'un [[fieldtype FLD_MOLECULAR_CLOUD]].
 '''
 
 METER_STRUCTURE_VALUE_LABEL
@@ -6563,10 +6563,10 @@ show-fleet-eta : Active/Désactive l'Estimation du Temps d'Arrivée d'une flotte
 '''
 
 FIELDS_TITLE
-Régions Interstellaires
+Milieux Interstellaires
 
 FIELDS_TEXT
-Il existe plus d'un Type de Régions interstellaires, ayant chacun une apparence diffuse et différente. Un clic-droit sur l'un de ces objets à partir de la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] affiche une petite vignette identifiant son type et un lien vers l'Encyclopédie afin d'en découvrir la nature.
+Il existe plus d'un Type de Milieux interstellaires, ayant chacun une apparence diffuse et différente. Un clic-droit sur l'un de ces objets à partir de la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] affiche une petite vignette identifiant son type et un lien vers l'Encyclopédie afin d'en découvrir la nature.
 
 
 ##
@@ -9409,7 +9409,7 @@ Système
 
 # Universe object types
 OBJ_FIELD
-Région
+Milieu
 
 # Universe object types
 OBJ_FIGHTER
@@ -10700,6 +10700,14 @@ DESC_BUILDING
 DESC_BUILDING_NOT
 ''' n'étant pas une structure %1%'''
 
+# %1% name of a field type.
+DESC_FIELD
+''' étant un milieu %1%'''
+
+# %1% name of a field type.
+DESC_FIELD_NOT
+''' n'étant pas un milieu %1%'''
+
 # %1% name of the special the object should have.
 DESC_SPECIAL
 ''' présentant la Particularité %1%'''
@@ -11577,6 +11585,15 @@ Diminue le coût de recherche de certaines technologies de Génération amélior
 
 PLC_INDUSTRIALISM_SHORT_DESC
 Améliore la capacité industrielle
+
+PLC_TECHNOCRACY
+Technocratie
+
+PLC_TECHNOCRACY_DESC
+Les planètes en Focus Recherche améliorent leur [[metertype METER_TARGET_RESEARCH]] de [[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT]]% et reçoivent un bonus de [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]] en [[metertype METER_HAPPINESS]].
+
+PLC_TECHNOCRACY_SHORT_DESC
+Améliore la capacité en Recherche
 
 PLC_CHECKPOINTS
 Postes-Frontières
@@ -14045,6 +14062,12 @@ Inverseur de Trou Noir
 
 BLD_BLACK_HOLE_COLLAPSER_DESC
 Génère une [[fieldtype FLD_SUBSPACE_RIFT]] d'un rayon de 100 uu dont l'origine se situe à l'emplacement de la structure.
+
+BLD_FIELD_REPELLOR
+Répulseur de Milieux Interstellaires
+
+BLD_FIELD_REPELLOR_DESC
+Repousse les milieux interstellaires mobiles (ceux n'étant pas dans un système) loin de leur emplacement actuel.
 
 BLD_HYPER_DAM
 Barrage Hyperspatial
