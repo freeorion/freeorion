@@ -118,6 +118,7 @@ auto PythonServer::IsRequireAuthOrReturnRoles(const std::string& player_name, bo
         ErrorLogger() << "Unable to call Python method is_require_auth";
         return false;
     }
+    roles.Clear();
     py::object r = f(player_name);
     py::extract<py::list> py_roles(r);
     if (py_roles.check()) {
@@ -126,7 +127,7 @@ auto PythonServer::IsRequireAuthOrReturnRoles(const std::string& player_name, bo
         for (auto& it = role_begin; it != role_end; ++it)
             roles.SetRole(*it, true);
     } else {
-        result = true;
+        result = py::extract<bool>(r)();
     }
     return true;
 }
