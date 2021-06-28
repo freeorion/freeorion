@@ -1937,7 +1937,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     empire->SetAuthenticated(player_connection->IsAuthenticated());
 
     // drop previous connection to that empire
-    if (previous_player_id != Networking::INVALID_PLAYER_ID) {
+    if (previous_player_id != Networking::INVALID_PLAYER_ID && previous_player_id != player_connection->PlayerID()) {
         WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
                      << " previous player " << previous_player_id
                      << " was kicked.";
