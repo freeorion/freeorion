@@ -160,3 +160,5 @@ script = ExtResource( 4 )
 [connection signal="pressed" from="MainMenu/VBoxContainer/QuickstartBtn" to="." method="_on_QuickstartBtn_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer/MultiplayerBtn" to="." method="_on_MultiplayerBtn_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer/QuitBtn" to="." method="_on_QuitBtn_pressed"]
+[connection signal="auth_request" from="FreeOrion" to="." method="_on_FreeOrion_auth_request"]
+[connection signal="start_game" from="FreeOrion" to="." method="_on_FreeOrion_start_game"]
