@@ -276,7 +276,7 @@ if(BUILD_CLIENT_GG)
     find_package(OpenGL REQUIRED)
     find_package(OpenAL REQUIRED)
     find_package(Ogg REQUIRED)
-    find_package(Vorbis COMPONENTS Vorbis VorbisFile REQUIRED)
+    find_package(Vorbis REQUIRED)
 endif()
 
 if(APPLE)
@@ -641,6 +641,7 @@ if(BUILD_CLIENT_GG)
             ${OPENGL_INCLUDE_DIR}
             ${OPENAL_INCLUDE_DIR}
             ${OGG_INCLUDE_DIRS}
+            ${VORBIS_INCLUDE_DIRS}
             ${FREETYPE_INCLUDE_DIRS}
     )
 
@@ -652,8 +653,7 @@ if(BUILD_CLIENT_GG)
         $<IF:$<BOOL:${OPENGL_opengl_LIBRARY}>,${OPENGL_opengl_LIBRARY},${OPENGL_gl_LIBRARY}>
         ${OPENAL_LIBRARY}
         ${OGG_LIBRARIES}
-        Vorbis::Vorbis
-        Vorbis::VorbisFile
+        ${VORBIS_LIBRARIES}
         ${ICONV_LIBRARY}
     )
 
