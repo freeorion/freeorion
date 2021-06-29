@@ -14,7 +14,7 @@ Special
             scope = And [
                 Source
                 Focus type = "FOCUS_RESEARCH"
-                Happiness low = 16
+                Happiness low = (NamedReal name = "TEMPORAL_ANOMALY_MIN_STABILITY" value = 16)
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population

@@ -18,7 +18,7 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
-                Happiness low = 15
+                Happiness low = (NamedReal name = "BLD_COLLECTIVE_NET_MIN_STABILITY" value = 15)
             ]
             activation = Not WithinDistance distance = 200 condition = And [
                 Ship
@@ -35,7 +35,7 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
-                Happiness low = 15
+                Happiness low = NamedRealLookup name = "BLD_COLLECTIVE_NET_MIN_STABILITY"
             ]
             activation = Not WithinDistance distance = 200 condition = And [
                 Ship

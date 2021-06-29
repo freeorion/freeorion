@@ -21,7 +21,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 Not Population high = 0
                 OwnedBy empire = Source.Owner
-                Happiness low = 10
+                Happiness low = (NamedReal name = "BLD_GAS_GIANT_GEN_MIN_STABILITY" value = 10)
             ]
             activation = ContainedBy Population high = 0
             stackinggroup = "GAS_GIANT_GEN_STACK"

@@ -18,7 +18,7 @@ BuildingType
                 PopulationCenter
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
-                Happiness low = 10
+                Happiness low = (NamedReal name = "BLD_SOL_ORB_GEN_MIN_STABILITY" value = 10)
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = Star type = [Blue White]
@@ -33,7 +33,7 @@ BuildingType
                 PopulationCenter
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
-                Happiness low = 10
+                Happiness low = NamedRealLookup name = "BLD_SOL_ORB_GEN_MIN_STABILITY"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = And [
@@ -55,7 +55,7 @@ BuildingType
                 PopulationCenter
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
-                Happiness low = 10
+                Happiness low = NamedRealLookup name = "BLD_SOL_ORB_GEN_MIN_STABILITY"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = And [

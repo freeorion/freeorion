@@ -13,35 +13,35 @@ BuildingType
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     
+        // Defining the better effect first simplifies the definition.
+        // Activation no longer excludes the availibity of the improved effect, thus ensuring
+        // lower effects are not lost on planets lacking the higher stability demand for the
+        // improved effects.
+        // The stacking group not only ensures that multiple centers don't stack, but also that
+        // only the best possible effect is used.
         EffectsGroup
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
-                Happiness low = 8
-                Focus type = "FOCUS_INDUSTRY"
+                Happiness low = (NamedReal name = "BLD_INDUSTRY_CENTER_3_MIN_STABILITY" value = 12)
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
             ]
-            activation = And [
-                OwnerHasTech name = "PRO_INDUSTRY_CENTER_I"
-                Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
-            ]
+            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
             stackinggroup = "INDUSTRY_CENTER_STACK"
             effects = SetTargetIndustry value = Value + Target.Population
-                        * (NamedReal name = "BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP"
-                                     value = 0.25 * [[INDUSTRY_PER_POP]])
+                        * (NamedReal name = "BLD_INDUSTRY_CENTER_3_TARGET_INDUSTRY_PERPOP"
+                                     value = 0.75 * [[INDUSTRY_PER_POP]])
 
         EffectsGroup
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
-                Happiness low = 10
+                Happiness low = (NamedReal name = "BLD_INDUSTRY_CENTER_2_MIN_STABILITY" value = 10)
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Focus type = "FOCUS_INDUSTRY"
             ]
-            activation = And [
-                OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
-                Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
-            ]
+            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
             stackinggroup = "INDUSTRY_CENTER_STACK"
             effects = SetTargetIndustry value = Value + Target.Population
                         * (NamedReal name = "BLD_INDUSTRY_CENTER_2_TARGET_INDUSTRY_PERPOP"
@@ -51,15 +51,15 @@ BuildingType
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
-                Happiness low = 12
-                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Happiness low = (NamedReal name = "BLD_INDUSTRY_CENTER_1_MIN_STABILITY" value = 8)
                 Focus type = "FOCUS_INDUSTRY"
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
-            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
+            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_I"
             stackinggroup = "INDUSTRY_CENTER_STACK"
             effects = SetTargetIndustry value = Value + Target.Population
-                        * (NamedReal name = "BLD_INDUSTRY_CENTER_3_TARGET_INDUSTRY_PERPOP"
-                                     value = 0.75 * [[INDUSTRY_PER_POP]])
+                        * (NamedReal name = "BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP"
+                                     value = 0.25 * [[INDUSTRY_PER_POP]])
     ]
     icon = "icons/tech/industrial_centre_ii.png"
 

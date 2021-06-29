@@ -19,7 +19,7 @@ BuildingType
                 PopulationCenter
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
-                Happiness low = 20
+                Happiness low = (NamedReal name = "BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY" value = 20)
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = Star type = BlackHole

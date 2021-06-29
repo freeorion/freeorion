@@ -9075,6 +9075,7 @@ Eccentric Orbit
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] by [[value ECCENTRIC_ORBIT_TARGET_RESEARCH_FLAT]], but [[metertype METER_SUPPLY]] is decreased ([[value ECCENTRIC_ORBIT_MAX_SUPPLY_FLAT]]).
+The research bonus requires a stability of [[value ECCENTRIC_ORBIT_MIN_STABILITY]].
 
 This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit the supply the planet can provide, but are a beneficial platform for research.'''
 
@@ -9091,6 +9092,7 @@ Temporal Anomaly
 
 TEMPORAL_ANOMALY_SPECIAL_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to [[metertype METER_RESEARCH]]. Penalizes [[metertype METER_TARGET_POPULATION]] (regardless of Focus) with [[value TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE]] per planet size ([[SZ_TINY]] -5, [[SZ_SMALL]] -10, [[SZ_MEDIUM]] -15, [[SZ_LARGE]] -20, [[SZ_HUGE]] -25).
+The research bonus requires a stability of [[value TEMPORAL_ANOMALY_MIN_STABILITY]].
 
 The flow of time on this planet is gravely disturbed. Seemingly random local occurences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this planet.
 On the other hand the temporal anomaly has a huge potential for scientific experiments beyond what is possible on normal planets.'''
@@ -9108,6 +9110,7 @@ Computronium Moon
 
 COMPUTRONIUM_SPECIAL_DESC
 '''When a planet with a Computronium Moon has the [[encyclopedia RESEARCH_FOCUS_TITLE]], all research focused planets in the empire gain [[value COMPUTRONIUM_TARGET_RESEARCH_PERPOP]] [[metertype METER_TARGET_RESEARCH]] per [[metertype METER_POPULATION]].
+The effect requires a stability of [[value COMPUTRONIUM_MIN_STABILITY]].
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 
@@ -9124,6 +9127,7 @@ Philosopher Planet
 
 PHILOSOPHER_SPECIAL_DESC
 '''As long as the Philosopher Planet is uninhabited, all inhabited planets in the same system have their [[metertype METER_TARGET_RESEARCH]] increased by [[value PHILOSOPHER_TARGET_RESEARCH_FLAT]]. [[metertype METER_TARGET_CONSTRUCTION]] on the Philosopher Planet is decreased ([[value PHILOSOPHER_TARGET_CONSTRUCTION_FLAT]]).
+The research bonus requires a stability of [[value PHILOSOPHER_MIN_STABILITY]].
 
 The lone remnant of a planet-sized space wandering species has found his final rest orbiting in this system like a normal planet. Having lived for thousands of years he lost the will and ability to travel and resorts to pondering about the mysteries of the universe he has seen and learned about. Eccentric and slightly demented he refuses to communicate with anything that isn't the size and shape of his kin, leaving scientists no choice but to ask questions via the planet they are living on. Understandably colonizing the Philosopher Planet will disturb him gravely and he will fall silent. Construction on his surface is difficult as is to be expected from a living being.'''
 
@@ -11454,13 +11458,14 @@ PLC_CENTRALIZATION_DESC
 • Increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_CENTRALIZATION_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
 • Increases [[metertype METER_TARGET_INDUSTRY]] by [[value PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP]] per population.
 • Increases [[metertype METER_TARGET_CONSTRUCTION]] by [[value PLC_CENTRALIZATION_TARGET_CONSTRUCTION_FLAT]].
+The effect requires a stability of [[value PLC_CENTRALIZATION_MIN_STABILITY]].
+
 However, it also reduces [[metertype METER_SUPPLY]] range ([[value PLC_CENTRALIZATION_MAX_SUPPLY_FLAT]]) and [[metertype METER_STOCKPILE]] ([[value PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT]]), and increases the [[metertype METER_INFLUENCE]] cost of the empire's colonies:
 • [[metertype METER_SUPPLY]] connected colonies get a penalization of [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP]] per jump distance to the capital, capped at [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]].
 • Colonies not [[metertype METER_SUPPLY]] connected to the capital gets the maximum penalization ([[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]]).
+Additionally, the cost of colonization ship parts is increased by 50%.
 
-Logistics of the whole empire are focused into boosting the capital's production, by diverting there most of the social and material resources. This causes some resentment in the colonies, which increases [[metertype METER_INFLUENCE]] costs.
-
-The cost of colonization ship parts is also increased by 50%.'''
+Logistics of the whole empire are focused into boosting the capital's production, by diverting there most of the social and material resources. This causes some resentment in the colonies, which increases [[metertype METER_INFLUENCE]] costs.'''
 
 PLC_CENTRALIZATION_SHORT_DESC
 Boosts Capital
@@ -11580,6 +11585,7 @@ Industrialism
 
 PLC_INDUSTRIALISM_DESC
 '''Industry-focused planets get a boost to [[metertype METER_TARGET_INDUSTRY]] of [[value PLC_INDUSTRIALISM_TARGET_INDUSTRY_PERCENT]]% and a bonus of [[value PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT]] to [[metertype METER_HAPPINESS]].
+The effect requires a stability of [[value PLC_INDUSTRIALISM_MIN_STABILITY]].
 
 Also makes some production-boosting generation techs cheaper to research.'''
 
@@ -11611,8 +11617,9 @@ Diversity
 
 PLC_DIVERSITY_DESC
 '''Gives bonuses or penalties to research, stability, and capital influence, dependent on the number of species in the empire.
+The research bonus requires a stability of [[value PLC_DIVERSITY_MIN_STABILITY]].
 
-Gives bigger bonuses or penalities the more above or below 4 species that are present.'''
+All bonuses or penalties are [value PLC_DIVERSITY_SCALING]] per species above or below 4 species that are present.'''
 
 PLC_DIVERSITY_SHORT_DESC
 Improves research, stability, and Influence
@@ -11695,7 +11702,8 @@ PLC_ALGORITHMIC_RESEARCH
 Algorithmic Research
 
 PLC_ALGORITHMIC_RESEARCH_DESC
-Increases [[metertype METER_TARGET_RESEARCH]] on research-focused planets by [[value LRN_ALGO_RESEARCH_TARGET_RESEARCH_PERCONSTRUCTION]] per the lesser of [[metertype METER_POPULATION]] or [[metertype METER_CONSTRUCTION]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] on research-focused planets by [[value LRN_ALGO_RESEARCH_TARGET_RESEARCH_PERCONSTRUCTION]] per the lesser of [[metertype METER_POPULATION]] or [[metertype METER_CONSTRUCTION]].
+The effect requires a stability of [[value LRN_ALGO_RESEARCH_MIN_STABILITY]].'''
 
 PLC_ALGORITHMIC_RESEARCH_SHORT_DESC
 Boosts Research
@@ -11744,7 +11752,8 @@ PLC_CONFORMANCE
 Conformance
 
 PLC_CONFORMANCE_DESC
-Reduces the impact of species likes and dislikes on planet stability.
+'''Reduces the impact of species likes and dislikes on planet stability.
+Additionally it increases [[metertype METER_TARGET_CONSTRUCTION]] by [[value PLC_CONFORMANCE_INFRASTRUCTURE_BONUS_FLAT]] and [[metertype METER_STOCKPILE]] by [[value PLC_CONFORMANCE_STOCKPILING_BONUS_FLAT]], but descreases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT]] on all planets with a stability of at least [[value PLC_CONFORMANCE_MIN_STABILITY]].'''
 
 PLC_CONFORMANCE_SHORT_DESC
 Reduces species opinion effects
@@ -11753,7 +11762,8 @@ PLC_LIBERTY
 Liberty
 
 PLC_LIBERTY_DESC
-Increases the impact of species likes and dislikes on planet stability.
+'''Increases the impact of species likes and dislikes on planet stability.
+Additionally it increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_LIBERTY_RESEARCH_BONUS_FLAT]] and decreases [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_LIBERTY_STABILITY_PENALTY_FLAT]] on all planets with a stability of at least [[value PLC_LIBERTY_MIN_STABILITY]].'''
 
 PLC_LIBERTY_SHORT_DESC
 Increases species opinion effects
@@ -12071,6 +12081,7 @@ Nascent Artificial Intelligence
 
 LRN_NASCENT_AI_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on all planets by [[value LRN_NASCENT_AI_TARGET_RESEARCH_FLAT]].
+The effect requires a stability of [[value LRN_NASCENT_AI_MIN_STABILITY]].
 
 While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable facsimiles may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
 
@@ -12144,6 +12155,7 @@ Quantum Networking
 
 LRN_QUANT_NET_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by [[value LRN_QUANT_NET_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
+The effect requires a stability of [[value LRN_QUANT_NET_MIN_STABILITY]].
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
 
@@ -12331,6 +12343,7 @@ Microgravity Industry
 
 PRO_MICROGRAV_MAN_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] by [[value PRO_MICROGRAV_MAN_TARGET_INDUSTRY_FLAT]] on all Industry-focused colonies in systems with asteroid belt outposts or colonies. Additional claimed asteroid belts do not provide additional benefit.
+The effect requires a stability of [[value PRO_MICROGRAV_MAN_MIN_STABILITY]].
 
 Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquefy and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
 
@@ -12341,6 +12354,7 @@ Robotic Production
 
 PRO_ROBOTIC_PROD_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets with the Industry focus by [[value PRO_ROBOTIC_PROD_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
+The effect requires a stability of [[value PRO_ROBOTIC_PROD_MIN_STABILITY]].
 
 Robots designed to fulfill nearly any job, in fields as wide ranging as electronics to large-scale construction, improve the performance of the worlds focused primarily on industry.
 
@@ -12357,6 +12371,7 @@ Fusion Generation
 
 PRO_FUSION_GEN_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by [[value PRO_FUSION_GEN_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
+The effect requires a stability of [[value PRO_FUSION_GEN_MIN_STABILITY]].
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -12381,6 +12396,7 @@ Adaptive Automation
 
 PRO_ADAPTIVE_AUTOMATION_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on all planets by [[value PRO_ADAPTIVE_AUTO_TARGET_INDUSTRY_FLAT]].
+The effect requires a stability of [[value PRO_ADAPTIVE_AUTO_MIN_STABILITY]].
 
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
@@ -12905,6 +12921,7 @@ LRN_DISTRIB_THOUGHT_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with research focus, dependent on the distance from the planet to the furthest-away other planet also set to research focus and owned by the same empire. Research is increased by the lesser of:
 • [[value DISTRIB_THOUGH_RESEARCH_SCALING]] x the square root of the distance in uu to the furthest research-focused owned planet
 • The target's [[metertype METER_CONSTRUCTION]] x [[value DISTRIB_THOUGH_INFRA_LIMIT_SCALING]]
+The effect requires a stability of [[value LRN_DISTRIB_THOUGHT_MIN_STABILITY]].
 
 Grants 1 extra military policy slot.
 
@@ -13779,6 +13796,7 @@ Cultural Archives
 
 BLD_CULTURE_ARCHIVES_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] by [[value BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT]] and [[metertype METER_TARGET_INDUSTRY]] by [[value BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
+The effects require a stability of [[value BLD_CULTURE_ARCHIVES_MIN_STABILITY]].
 
 Stores the sum accumulated knowledge from thousands of years of life on this planet, improving many aspects of planetary productivity.'''
 
@@ -13787,6 +13805,7 @@ Cultural Library
 
 BLD_CULTURE_LIBRARY_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] by [[value BLD_CULTURE_LIBRARY_TARGET_RESEARCH_FLAT]].
+The effect requires a stability of [[value BLD_CULTURE_LIBRARY_MIN_STABILITY]].
 
 Stores the accumulated knowledge from thousands of years of life on this planet, giving a bonuses to research. This building will be destroyed when the [[metertype METER_POPULATION]] of the high tech natives reaches zero.'''
 
@@ -13962,21 +13981,23 @@ Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
 '''Initially provides a bonus to [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with Industry focus by [[value BLD_INDUSTRY_CENTER_1_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
+The effect requires a stability of [[value BLD_INDUSTRY_CENTER_1_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-[[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to [[value BLD_INDUSTRY_CENTER_2_TARGET_INDUSTRY_PERPOP]] per population.
+[[tech PRO_INDUSTRY_CENTER_II]] refinement increases the bonus to [[value BLD_INDUSTRY_CENTER_2_TARGET_INDUSTRY_PERPOP]] per population, requiring a stability of [[value BLD_INDUSTRY_CENTER_2_MIN_STABILITY]].
 
-[[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to [[value BLD_INDUSTRY_CENTER_3_TARGET_INDUSTRY_PERPOP]] per population.'''
+[[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to [[value BLD_INDUSTRY_CENTER_3_TARGET_INDUSTRY_PERPOP]] per population, requiring a stability of [[value BLD_INDUSTRY_CENTER_3_MIN_STABILITY]].'''
 
 BLD_INTERSPECIES_ACADEMY
 Species InterDesign Academy
 
 BLD_INTERSPECIES_ACADEMY_DESC
 '''Increases the imperial stockpile use limit by increasing the stockpile use capacity on this planet by [[value BLD_INTERSPECIES_ACADEMY_MAX_STOCKPILE_FLAT]] when it has [[encyclopedia STOCKPILE_FOCUS_TITLE]], [[metertype METER_TARGET_RESEARCH]] by [[value BLD_INTERSPECIES_ACADEMY_TARGET_RESEARCH_FLAT]] when it has [[encyclopedia RESEARCH_FOCUS_TITLE]], or [[metertype METER_TARGET_INFLUENCE]] by [[value BLD_INTERSPECIES_ACADEMY_TARGET_INFLUENCE_FLAT]] when it has [[encyclopedia INFLUENCE_FOCUS_TITLE]]
+The research bonus requires a stability of [[value BLD_INTERSPECIES_ACADEMY_MIN_STABILITY]].
 
 Learning to design devices for use by different species is crucial for developing universally usable tools.
 
-Each empire may contain an academy on up to six planets with different species. To support an academy, a planet's [[metertype METER_POPULATION]] must be happy, and more than three starlane jumps away from the nearest existing academy.'''
+Each empire may contain an academy on up to six planets with different species. To build an academy, a planet must have a stability of [[value BLD_INTERSPECIES_ACADEMY_MIN_STABILITY_BUILD]], and must be more than three starlane jumps away from the nearest existing academy.'''
 
 BLD_STOCKPILING_CENTER
 Imperial Entanglement Center
@@ -14029,6 +14050,7 @@ Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
 '''• Increases [[metertype METER_TARGET_INDUSTRY]] on planets with the Industry focus by [[value BLD_COLLECTIVE_NET_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], and [[metertype METER_TARGET_RESEARCH]] on Planets with the Research focus by [[value BLD_COLLECTIVE_NET_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]]. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
+The effects require a stability of [[value BLD_COLLECTIVE_NET_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 • Increases the maximum stability reached by [[policy PLC_DREAM_RECURSION]] by [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]].
 
@@ -14047,6 +14069,7 @@ Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on all planets with the Research focus by [[value BLD_ENCLAVE_VOID_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
+The effect requires a stability of [[value BLD_ENCLAVE_VOID_MIN_STABILITY]].
 Multiple copies do not stack.
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
@@ -14074,6 +14097,7 @@ Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
 '''For planets not connected to a [[buildingtype BLD_BLACK_HOLE_POW_GEN]], increases [[metertype METER_TARGET_INDUSTRY]] on [[metertype METER_SUPPLY]] line connected planets with the Industry focus by [[value BLD_HYPER_DAM_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], but [[metertype METER_TARGET_POPULATION]] on such planets is reduced ([[value BLD_HYPER_DAM_TARGET_POPULATION_PERSIZE]] per planet size: [[SZ_TINY]] -1, [[SZ_SMALL]] -2, [[SZ_MEDIUM]] -3, [[SZ_LARGE]] -4, [[SZ_HUGE]] -5).
+The effect requires a stability of [[value BLD_HYPER_DAM_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a [[STAR_BLACK]].
@@ -14094,6 +14118,7 @@ BLD_SOL_ORB_GEN_DESC
 • [[STAR_BLUE]] or [[STAR_WHITE]] (x[[value BLD_SOL_ORB_GEN_BRIGHT_TARGET_INDUSTRY_PERPOP]])
 • [[STAR_YELLOW]] or [[STAR_ORANGE]] (x[[value BLD_SOL_ORB_GEN_NORMAL_TARGET_INDUSTRY_PERPOP]])
 • [[STAR_RED]] (x[[value BLD_SOL_ORB_GEN_DIM_TARGET_INDUSTRY_PERPOP]])
+The effects require a stability of [[value BLD_SOL_ORB_GEN_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus applies.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
@@ -14175,6 +14200,7 @@ Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
 '''Increases [[metertype METER_TARGET_INDUSTRY]] on all [[metertype METER_SUPPLY]] line connected planets with the Industry focus by [[value BLD_BLACK_HOLE_POW_GEN_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
+The effect requires a stability of [[value BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 [[BUILDING_AVAILABLE_ON_OUTPOSTS]], but must be in a [[STAR_BLACK]] system.'''
@@ -14267,6 +14293,7 @@ Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
 '''This building can only be constructed at a [[PT_GASGIANT]]. It gives a [[value BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus to planets with the Industry focus in the same system. If the [[BLD_GAS_GIANT_GEN]] is built on an inhabited gas giant it gives only a [[value BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT]] [[metertype METER_INDUSTRY]] bonus.
+The effect requires a stability of [[value BLD_GAS_GIANT_GEN_MIN_STABILITY]].
 Multiple copies in the same system do not stack.
 
 A power generator designed to harvest the energy of a [[PT_GASGIANT]].'''

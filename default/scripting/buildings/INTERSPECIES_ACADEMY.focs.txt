@@ -8,7 +8,7 @@ BuildingType
         Species
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
         OwnedBy empire = Source.Owner
-        Happiness low = 15
+        Happiness low = (NamedReal name = "BLD_INTERSPECIES_ACADEMY_MIN_STABILITY_BUILD" value = 15)
         Not WithinStarlaneJumps jumps = 3 condition = And [
             System
             Contains And [
@@ -80,7 +80,7 @@ BuildingType
                 Focus type = "FOCUS_RESEARCH"
                 OwnedBy empire = Source.Owner
                 Species
-                Happiness low = 12
+                Happiness low = (NamedReal name = "BLD_INTERSPECIES_ACADEMY_MIN_STABILITY_RESEARCH" value = 12)
             ]
             accountinglabel = "INTERSPECIES_ACADEMY_LABEL"
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]

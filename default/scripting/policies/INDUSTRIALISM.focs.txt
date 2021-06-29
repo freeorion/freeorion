@@ -15,7 +15,7 @@ Policy
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
                 Population low = 0.001
-                Happiness low = 5
+                Happiness low = (NamedReal name = "PLC_INDUSTRIALISM_MIN_STABILITY" value = 5)
             ]
             priority = [[TARGET_2ND_SCALING_PRIORITY]]
             effects =
