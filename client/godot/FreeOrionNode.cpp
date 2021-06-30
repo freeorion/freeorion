@@ -7,10 +7,14 @@
 #include <OS.hpp>
 
 #include "GodotClientApp.h"
+#include "GodotFleet.h"
+#include "GodotSystem.h"
 
 #include "../ClientNetworking.h"
 #include "../../combat/CombatLogManager.h"
 #include "../../network/Message.h"
+#include "../../universe/Fleet.h"
+#include "../../universe/System.h"
 #include "../../util/Directories.h"
 #include "../../util/GameRules.h"
 #include "../../util/i18n.h"
@@ -28,6 +32,8 @@ void FreeOrionNode::_register_methods() {
     register_method("connect_to_server", &FreeOrionNode::connect_to_server);
     register_method("join_game", &FreeOrionNode::join_game);
     register_method("auth_response", &FreeOrionNode::auth_response);
+    register_method("get_systems", &FreeOrionNode::get_systems);
+    register_method("get_fleets", &FreeOrionNode::get_fleets);
 
     godot::register_signal<FreeOrionNode>("ping", "message", GODOT_VARIANT_TYPE_STRING);
     godot::register_signal<FreeOrionNode>("error", "problem", GODOT_VARIANT_TYPE_STRING, "fatal", GODOT_VARIANT_TYPE_BOOL);
@@ -267,5 +273,21 @@ void FreeOrionNode::auth_response(godot::String player_name, godot::String passw
     std::string player_name8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(player_name.unicode_str());
     std::string password8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(password.unicode_str());
     app->Networking().SendMessage(AuthResponseMessage(player_name8, password8));
+}
+
+godot::Dictionary FreeOrionNode::get_systems() const {
+    godot::Dictionary systems;
+    for (const auto& sys : Objects().all<System>()) {
+        systems[sys->ID()] = GodotSystem::Wrap(sys);
+    }
+    return systems;
+}
+
+godot::Dictionary FreeOrionNode::get_fleets() const {
+    godot::Dictionary fleets;
+    for (const auto& fleet : Objects().all<Fleet>()) {
+        fleets[fleet->ID()] = GodotFleet::Wrap(fleet);
+    }
+    return fleets;
 }
 

@@ -48,6 +48,10 @@ private:
 
     void auth_response(godot::String player_name, godot::String password); ///< Send \a password to the server
 
+    godot::Dictionary get_systems() const; ///< Returns Godot Dictionary with systems
+
+    godot::Dictionary get_fleets() const; ///< Returns Godot Dictionary with fleets
+
     std::unique_ptr<GodotClientApp> app;
 
 #if defined(FREEORION_ANDROID)
