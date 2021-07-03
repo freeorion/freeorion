@@ -968,7 +968,8 @@ void PolicySlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptab
         if (policy &&
             policy->Category() == m_slot_category &&
             policy_control != m_policy_control.get() &&
-            empire->PolicyAvailable(policy->Name()))
+            empire->PolicyAvailable(policy->Name()) &&
+            empire->PolicyPrereqsAndExclusionsOK(policy->Name()))
         {
             it->second = true;
             return;
@@ -1490,7 +1491,7 @@ void GovernmentWnd::CompleteConstruction() {
         boost::bind(&GovernmentWnd::MainPanel::ClearPolicy, m_main_panel, _1));
 
     auto zoom_to_policy_action = [](const Policy* policy, GG::Flags<GG::ModKey> modkeys) { ClientUI::GetClientUI()->ZoomToPolicy(policy->Name()); };
-    m_main_panel->PolicyClickedSignal.connect(zoom_to_policy_action);
+    //m_main_panel->PolicyClickedSignal.connect(zoom_to_policy_action);
     m_policy_palette->PolicyClickedSignal.connect(zoom_to_policy_action);
 
     CUIWnd::CompleteConstruction();
