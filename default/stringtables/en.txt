@@ -11701,6 +11701,15 @@ Increasess [[metertype METER_TARGET_RESEARCH]] by [[value PLC_NATIVE_APPROPRIATI
 PLC_NATIVE_APPROPRIATION_SHORT_DESC
 Boosts Research
 
+PLC_THE_HUNT
+The Hunt
+
+PLC_THE_HUNT_DESC
+Boosts [[metertype METER_TARGET_HAPPINESS]], [[metertype METER_TARGET_INFLUENCE]], and [[metertype METER_MAX_TROOPS]] of planets in systems that also contain an unowned populated planet, with no [[metertype METER_SHIELD]] or [[metertype METER_DEFENSE]], and with a species other than the species on the benefiting planet or on the the imperial capital.
+
+PLC_THE_HUNT_SHORT_DESC
+Hunting Natives Gives Boosts
+
 PLC_ALGORITHMIC_RESEARCH
 Algorithmic Research
 

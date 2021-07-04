@@ -7,6 +7,7 @@ Policy
                                         condition = And [ Planet OwnedBy empire = Source.Owner ])
     prerequisites = [ "PLC_DIVERSITY" ]
     exclusions = [ "PLC_RACIAL_PURITY" ]
+    unlock = Item type = Policy name = "PLC_THE_HUNT"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
