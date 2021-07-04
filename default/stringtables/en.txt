@@ -11575,7 +11575,10 @@ PLC_TERRAFORMING
 Terraforming
 
 PLC_TERRAFORMING_DESC
-Decreases the minimum time to produce [[buildingtype BLD_TERRAFORM]] and [[buildingtype BLD_TERRAFORM_REVERT]] projects on planets.
+'''• Decreases the minimum time to produce [[buildingtype BLD_TERRAFORM]] and [[buildingtype BLD_TERRAFORM_REVERT]] projects on planets.
+• Boosts [[metertype METER_TARGET_HAPPINESS]] on terraformed planets by [[value PLC_TERRAFORMING_TARGET_HAPPINESS_ORIGINAL_FLAT]] per step they have been terraformed away from their original planet type
+• Boosts [[metertype METER_TARGET_INFLUENCE]] on planets set to influence focus by [[value PLC_TERRAFORMING__TARGET_INFLUENCE_ORIGINAL_FLAT]] per step they have been terraformed away from their original planet type
+• Boosts [[metertype METER_TARGET_RESEARCH]] on planets set to research focus by the square root of [[metertype METER_POPULATION]] times [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] per step they have been terraformed away from their original planet type'''
 
 PLC_TERRAFORMING_SHORT_DESC
 Speeds up terraforming
