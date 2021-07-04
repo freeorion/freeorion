@@ -100,7 +100,7 @@ namespace parse { namespace detail {
 
         common
             =
-            (   label(tok.buildcost_)  > double_rules.expr
+            (       label(tok.buildcost_)  > double_rules.expr
                 >   label(tok.buildtime_)  > castable_int_rules.flexible_int
                 >   producible
                 >   tags_parser
