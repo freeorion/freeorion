@@ -19,7 +19,7 @@ Policy
             ]
             priority = [[TARGET_2ND_SCALING_PRIORITY]]
             effects =
-                SetTargetIndustry value = Value
+                SetTargetResearch value = Value
                     + abs(Value * (NamedReal name = "PLC_TECHNOCRACY_TARGET_INDUSTRY_PERCENT" value = 25) / 100)
 
         EffectsGroup
