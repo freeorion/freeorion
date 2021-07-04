@@ -816,7 +816,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         if ((property_name == "UniverseCentreX") ||
             (property_name == "UniverseCentreY"))
         {
-            return context.ContextUniverse().UniverseWidth() / 2;   // TODO: get Universe from ScriptingContext
+            return context.ContextUniverse().UniverseWidth() / 2;
         } else if (property_name == "UniverseWidth") {
             return context.ContextUniverse().UniverseWidth();
         }
