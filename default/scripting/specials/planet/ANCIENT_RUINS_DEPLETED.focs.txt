@@ -11,7 +11,7 @@ Special
             scope = And [
                 Source
                 Focus type = "FOCUS_RESEARCH"
-                Happiness low = 15
+                Happiness low = NamedRealLookup name = "ANCIENT_RUINS_MIN_STABILITY"
             ]
             effects = SetTargetResearch value = Value + Target.Population
                         * NamedRealLookup name = "ANCIENT_RUINS_TARGET_RESEARCH_PERPOP"

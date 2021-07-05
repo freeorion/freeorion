@@ -15,16 +15,23 @@ Policy
             Planet
             OwnedBy empire = Source.Owner
             Population low = 0.001
-            Happiness low = 10
         ]
         effects = [
             SetTargetHappiness value = Value
                 + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_HAPPINESS_FLAT" value = 4)
             SetTargetResearch value = Value
                 + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_RESEARCH_FLAT" value = -5)
+        ]
+        EffectsGroup
+        scope = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Population low = 0.001
+            Happiness low = (NamedReal name = "PLC_DIVINE_AUTHORITY_MIN_STABILITY" value = 10)
+        ]
+        effects =
             SetTargetInfluence value = Value
                 + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_INFLUENCE_FLAT" value = 1)
-        ]
     ]
     graphic = "icons/policies/divine_authority.png"
 
