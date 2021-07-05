@@ -653,8 +653,8 @@ if(BUILD_CLIENT_GG)
         $<IF:$<BOOL:${OPENGL_opengl_LIBRARY}>,${OPENGL_opengl_LIBRARY},${OPENGL_gl_LIBRARY}>
         ${OPENAL_LIBRARY}
         ${OGG_LIBRARIES}
-        ${VORBIS_LIBRARY}
-        ${VORBISFILE_LIBRARY}
+        Vorbis::Vorbis
+        $<$<NOT:$<PLATFORM_ID:Darwin>>:Vorbis::VorbisFile>
         ${ICONV_LIBRARY}
     )
 
