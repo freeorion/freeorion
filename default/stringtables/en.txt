@@ -3822,6 +3822,12 @@ Change
 TT_BREAKDOWN_SUMMARY
 %1%: %2%
 
+# %1% the number bouts per battle
+# %2% the total estimate of structure damage
+# %3% the total estimate of destroyed fighters
+TT_DAMAGE_BREAKDOWN_SUMMARY
+Totals for %1% bout battle, Structure Damage: %2% / Fighters Destroyed: %3%
+
 TT_INHERENT
 Inherent
 
@@ -4057,7 +4063,10 @@ FW_ROGUE_SHIP
 Rogue Ship
 
 SHIP_DAMAGE_STAT_TITLE
-Damage
+Structural Damage
+
+SHIP_DESTRUCTION_STAT_TITLE
+Destroyed Fighters
 
 SHIP_TROOPS_TITLE
 Troops
@@ -4099,7 +4108,10 @@ FW_FLEET_STRUCTURE_SUMMARY
 Fleet Structure - Equal to the total structure of ships in the fleet.
 
 FW_FLEET_DAMAGE_SUMMARY
-Fleet Damage - Equal to the total direct fire damage of ships in the fleet.
+Structural Damage by Fleet - Equal to the total maximum structural damage done by ships and fighters in the fleet.
+
+FW_FLEET_DESTROY_SUMMARY
+Fighter Destruction by Fleet - Equal to the total maximum of fighters destroyed by ships and fighters in the fleet.
 
 FW_FLEET_FIGHTER_SUMMARY
 Fleet Fighters - Equal to the total fighters in the fleet.
@@ -5506,7 +5518,7 @@ Parts: %3%
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 For [[encyclopedia ENC_SPECIES]]: %1%
-Total [[encyclopedia DAMAGE_TITLE]]: %2%    [[PC_DIRECT_WEAPON]] Shots: %3%
+Total Structure [[encyclopedia DAMAGE_TITLE]]: %2%    Total Fighter Destruction: %3%
 [[metertype METER_STRUCTURE]]: %4%    [[metertype METER_SHIELD]]: %5%
 [[metertype METER_DETECTION]]: %6%    [[metertype METER_STEALTH]]: %7%
 [[metertype METER_SPEED]]: %8%    [[metertype METER_FUEL]] [[METER_CAPACITY]]: %9%
@@ -6871,6 +6883,12 @@ Hull
 
 ATTACK
 Total Weapon Damage
+
+DAMAGE_STRUCTURE_PER_BATTLE
+Total Structure Damage per Battle
+
+DESTROY_FIGHTERS_PER_BATTLE
+Number of Destroyed Fighters per Battle
 
 PRODUCTION_COST
 Production Cost

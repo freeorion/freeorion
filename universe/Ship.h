@@ -4,10 +4,12 @@
 
 #include "Meter.h"
 #include "ConstantsFwd.h"
+#include "ScriptingContext.h"
 #include "UniverseObject.h"
 #include "../util/Export.h"
 
 class ShipDesign;
+class ShipPart;
 
 /** a class representing a single FreeOrion ship */
 class FO_COMMON_API Ship : public UniverseObject {
@@ -49,6 +51,8 @@ public:
     int                         LastResuppliedOnTurn() const{ return m_last_resupplied_on_turn;}///< returns the turn on which this ship was last resupplied / upgraded
 
     bool                        IsMonster() const;
+    bool                        CanDamageShips(float target_shields = 0.0f) const;
+    bool                        CanDestroyFighters() const;
     bool                        IsArmed() const;
     bool                        HasFighters() const;
     bool                        CanColonize() const;
@@ -74,11 +78,20 @@ public:
     /** Returns sum of current value for part meter @p type of all parts with ShipPartClass @p part_class */
     float                       SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class) const;
 
-    float                       TotalWeaponsDamage(float shield_DR = 0.0f, bool include_fighters = true) const; ///< versus an enemy with a given shields DR
+    float                       WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext& context) const; ///< versus fighter enemies
+    float                       WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& context) const; ///< versus an enemy context.effect_target ship with a given shields meter
+    float                       TotalWeaponsFighterDamage(bool include_fighters = true) const; ///< versus an fighter enemy
+    float                       TotalWeaponsShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const; ///< versus an enemy ship with a given shields DR
     float                       FighterCount() const;
     float                       FighterMax() const;
-    std::vector<float>          AllWeaponsDamage(float shield_DR = 0.0f, bool include_fighters = true) const;   ///< any nonzero weapons strengths after adjustment versus an enemy with a given shields DR
-    std::vector<float>          AllWeaponsMaxDamage(float shield_DR = 0.0f, bool include_fighters = true) const;///< any nonzero weapons strengths, assuming the ship has been refueled recently, after adjustment versus an enemy with a given shields DR
+    std::vector<float>          AllWeaponsFighterDamage(bool include_fighters = true) const;   ///< any shots against enemy fighters
+    /** returns any nonzero weapons strengths after adjustment versus an enemy with a given @p shield_DR shield rating,
+      * uses the normal meters so it might be lower than AllWeaponsMaxShipDamage
+      * if e.g. the ship has less than a full complement of fighters */
+    std::vector<float>          AllWeaponsShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;
+    /** returns any nonzero weapons strengths after adjustment versus an enemy with a given @p shield_DR shield rating,
+      * assuming the ship has been resupplied recently (i.e. this uses Max*Meters) */
+    std::vector<float>          AllWeaponsMaxShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;
 
     void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
     void            SetArrivedOnTurn(int turn);

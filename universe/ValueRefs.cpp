@@ -26,6 +26,7 @@
 #include "UniverseObjectVisitors.h"
 #include "UniverseObject.h"
 #include "Universe.h"
+#include "../combat/CombatDamage.h"
 #include "../Empire/Empire.h"
 #include "../Empire/Supply.h"
 #include "../util/GameRules.h"
@@ -838,8 +839,9 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 
     MeterType meter_type = NameToMeter(property_name);
     if (object && meter_type != MeterType::INVALID_METER_TYPE) {
-        if (auto* m = object->GetMeter(meter_type))
+        if (auto* m = object->GetMeter(meter_type)) {
             return m_return_immediate_value ? m->Current() : m->Initial();
+        }
         return 0.0;
 
     } else if (property_name == "X") {
@@ -872,13 +874,20 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     } else if (property_name == "CurrentTurn") {
         return context.current_turn;
 
-    } else if (property_name == "Attack") {
-        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
-            return fleet->Damage(context.ContextObjects());
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
-            return ship->TotalWeaponsDamage();
-        if (auto fighter = std::dynamic_pointer_cast<const Fighter>(object))
-            return fighter->Damage();
+    } else if (property_name == "DestroyFightersPerBattleMax") {
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
+            InfoLogger() << "DestroyFightersPerBattleMax" <<  ship->TotalWeaponsFighterDamage();
+            // FIXME prevent recursion; disallowing the ValueRef inside of destroyFightersPerBattleMax via parsers would be best.
+            return ship->TotalWeaponsFighterDamage();
+        }
+        return 0.0;
+
+    } else if (property_name == "DamageStructurePerBattleMax") {
+        if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
+            // FIXME prevent recursion; disallowing the ValueRef inside of damageStructurePerBattleMax via parsers would be best.
+            InfoLogger() << "DamageStructurePerBattleMax" <<  ship->TotalWeaponsShipDamage();
+            return ship->TotalWeaponsShipDamage();
+        }
         return 0.0;
 
     } else if (property_name == "PropagatedSupplyRange") {
@@ -1314,6 +1323,99 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
                                 [](auto p1, auto p2) { return p1.second < p2.second; });
 
     return max->first;
+}
+
+///////////////////////////////////////////////////////////
+// TotalFighterShots (of a carrier during one battle)    //
+///////////////////////////////////////////////////////////
+TotalFighterShots::TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id, std::unique_ptr<Condition::Condition>&& sampling_condition) :
+    Variable<int>(ReferenceType::NON_OBJECT_REFERENCE),
+    m_carrier_id(std::move(carrier_id)),
+    m_sampling_condition(std::move(sampling_condition))
+{
+    this->m_root_candidate_invariant = (!m_sampling_condition || m_sampling_condition->RootCandidateInvariant())
+                                       && (!m_carrier_id || m_carrier_id->RootCandidateInvariant()) ;
+
+    // no condition can explicitly reference the parent context's local candidate.
+    // so local candidate invariance does not depend on the sampling condition
+    this->m_local_candidate_invariant = (!m_carrier_id || m_carrier_id->LocalCandidateInvariant()) ;
+
+    this->m_target_invariant = (!m_sampling_condition || m_sampling_condition->TargetInvariant())
+                               && (!m_carrier_id || m_carrier_id->TargetInvariant()) ;
+
+    this->m_source_invariant = true;
+}
+
+bool TotalFighterShots::operator==(const ValueRef<int>& rhs) const
+{
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const TotalFighterShots& rhs_ = static_cast<const TotalFighterShots&>(rhs);
+
+    if (m_sampling_condition == rhs_.m_sampling_condition) {
+        // check next member
+    } else if (m_carrier_id == rhs_.m_carrier_id) {
+        return true;
+    }
+    return false;
+}
+
+std::string TotalFighterShots::Description() const
+{
+    std::string retval = "TotalFighterShots(";
+    if (m_carrier_id) {
+        retval += m_carrier_id->Description();
+        retval += " ";
+    }
+    if (m_sampling_condition) {
+        retval += m_sampling_condition->Description();
+    }
+    retval += ")";
+    return retval;
+}
+
+std::string TotalFighterShots::Dump(unsigned short ntabs) const
+{
+    std::string retval = "TotalFighterShots";
+    if (m_carrier_id)
+        retval += " carrier = " + m_carrier_id->Dump();
+    if (m_sampling_condition)
+        retval += " condition = " + m_sampling_condition->Dump();
+    return retval;
+}
+
+void TotalFighterShots::SetTopLevelContent(const std::string& content_name)
+{
+    if (m_sampling_condition)
+        m_sampling_condition->SetTopLevelContent(content_name);
+}
+
+unsigned int TotalFighterShots::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::TotalFighterShots");
+    CheckSums::CheckSumCombine(retval, m_carrier_id);
+    CheckSums::CheckSumCombine(retval, m_sampling_condition);
+    TraceLogger() << "GetCheckSum(TotalFighterShots):  retval: " << retval;
+    return retval;
+}
+
+int TotalFighterShots::Eval(const ScriptingContext& context) const
+{
+    if (!m_carrier_id) {
+        ErrorLogger() << "TotalFighterShots condition without carrier id";
+        return 0;
+    } else {
+        auto carrier = std::static_pointer_cast<const Ship>(context.ContextObjects().get<Ship>(m_carrier_id->Eval(context)));
+        if (!carrier) {
+            ErrorLogger() << "TotalFighterShots condition referenced a carrier which is not a ship";
+            return 0;
+        }
+        return Combat::TotalFighterShots(context, *carrier, m_sampling_condition.get());
+    }
 }
 
 ///////////////////////////////////////////////////////////

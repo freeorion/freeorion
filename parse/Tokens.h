@@ -28,7 +28,6 @@
     (Article)                                   \
     (Application)                               \
     (Asteroids)                                 \
-    (Attack)                                    \
     (Barren)                                    \
     (Basic)                                     \
     (BlackHole)                                 \
@@ -52,6 +51,7 @@
     (Capacity)                                  \
     (Capital)                                   \
     (Capture)                                   \
+    (carrier)                                   \
     (captureresult)                             \
     (category)                                  \
     (ceil)                                      \
@@ -70,6 +70,7 @@
     (Core)                                      \
     (cos)                                       \
     (Count)                                     \
+    (countIf)                                   \
     (CountUnique)                               \
     (CounterClockwiseNextPlanetType)            \
     (CreateBuilding)                            \
@@ -86,6 +87,8 @@
 #define TOKEN_SEQ_3                             \
     (damage)                                    \
     (Damage)                                    \
+    (damageStructurePerBattleMax)               \
+    (DamageStructurePerBattleMax)               \
     (data)                                      \
     (default)                                   \
     (defaultfocus)                              \
@@ -104,6 +107,8 @@
     (designname)                                \
     (destination)                               \
     (Destroy)                                   \
+    (destroyFightersPerBattleMax)               \
+    (DestroyFightersPerBattleMax)               \
     (Detection)                                 \
     (DirectDistanceBetween)                     \
     (Disabled)                                  \
@@ -574,6 +579,7 @@
     (TopPriorityEnqueuedTech)                   \
     (TopPriorityResearchableTech)               \
     (TopPriorityTransferrableTech)              \
+    (TotalFighterShots)                         \
     (Toxic)                                     \
     (Trade)
 

@@ -276,7 +276,8 @@ namespace {
             col_types[{UserStringNop("NEAREST_SYSTEM"),             UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("NearestSystemID");
             col_types[{UserStringNop("HULL"),                       UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Hull");
             col_types[{UserStringNop("PARTS"),                      UserStringNop("FLEETS_SUBMENU")}] = UserStringVecValueRef("Parts");
-            col_types[{UserStringNop("ATTACK"),                     UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<double>("Attack");
+            col_types[{UserStringNop("DAMAGE_STRUCTURE_PER_BATTLE"), UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<double>("DamageStructurePerBattleMax");
+            col_types[{UserStringNop("DESTROY_FIGHTERS_PER_BATTLE"), UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<double>("DestroyFightersPerBattleMax");
             col_types[{UserStringNop("PRODUCTION_COST"),            UserStringNop("FLEETS_SUBMENU")}] = DesignCostValueRef();
 
             // planet environments species

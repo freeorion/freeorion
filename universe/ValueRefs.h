@@ -178,6 +178,34 @@ private:
     std::unique_ptr<ValueRef<V>>          m_value_ref;
 };
 
+/** The variable TotalFighterShots class. The value returned by this node is
+  * computed from the gamestate; the number of shots of a launched fighters
+  * of the given \a carrier_id is counted (and added up) for all combat bouts
+  * in which the given \a sampling_condition matches. */
+struct FO_COMMON_API TotalFighterShots final : public Variable<int>
+{
+    TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id, std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr);
+
+    bool        operator==(const ValueRef<int>& rhs) const override;
+    int         Eval(const ScriptingContext& context) const override;
+    std::string Description() const override;
+    std::string Dump(unsigned short ntabs = 0) const override;
+    void        SetTopLevelContent(const std::string& content_name) override;
+
+    const Condition::Condition* GetSamplingCondition() const
+    { return m_sampling_condition.get(); }
+
+    unsigned int GetCheckSum() const override;
+
+    std::unique_ptr<ValueRef<int>> Clone() const override {
+        return std::make_unique<TotalFighterShots>(CloneUnique(m_carrier_id), CloneUnique(m_sampling_condition));
+    }
+
+private:
+    std::unique_ptr<ValueRef<int>>        m_carrier_id;
+    std::unique_ptr<Condition::Condition> m_sampling_condition;
+};
+
 /** The complex variable ValueRef class. The value returned by this node
   * is taken from the gamestate. */
 template <typename T>
@@ -1192,6 +1220,12 @@ template struct Statistic<double, double>;
 template struct Statistic<double, std::string>;
 template struct Statistic<int, int>;
 template struct Statistic<int, std::string>;
+
+///////////////////////////////////////////////////////////
+// TotalFighterShots (of a carrier during one battle)    //
+///////////////////////////////////////////////////////////
+
+// Definig implementation here leads to ODR-hell
 
 ///////////////////////////////////////////////////////////
 // ComplexVariable                                       //

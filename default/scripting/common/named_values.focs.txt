@@ -20,6 +20,9 @@ NamedInteger name = "FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE" value = (GameR
 
 NamedReal name = "AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT" value = 40.0
 
+// For calculation we mostly need a real value
+NamedReal name = "NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE" value = (GameRule name = "RULE_NUM_COMBAT_ROUNDS") - (GameRule name = "RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE") + 1
+
 NamedInteger name = "MIN_COLONY_SIZE" value = [[MIN_RECOLONIZING_SIZE]]
 
 NamedInteger name = "MIN_COLONY_HAPPINESS" value = [[MIN_RECOLONIZING_HAPPINESS]]

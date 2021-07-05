@@ -4,6 +4,7 @@ Part
     class = ShortRange
     damage = 9
     NoDefaultCapacityEffect
+    destroyFightersPerBattleMax = 0
     combatTargets = And [
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
         Or [
