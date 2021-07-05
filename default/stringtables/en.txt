@@ -9004,6 +9004,7 @@ Ancient Ruins (Excavated)
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value ANCIENT_RUINS_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to Research.
+The effect requires a stability of [[value ANCIENT_RUINS_MIN_STABILITY]].
 
 This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.'''
 
@@ -9011,7 +9012,8 @@ ANCIENT_RUINS_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by 1 per [[metertype METER_POPULATION]] when Focus is set to Research.
+'''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value ANCIENT_RUINS_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to Research.
+The effect requires a stability of [[value ANCIENT_RUINS_MIN_STABILITY]].
 
 This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship. There's also a good chance that well preserved bodies of an extinct species will be found.'''
 
@@ -11622,7 +11624,7 @@ PLC_DIVERSITY_DESC
 '''Gives bonuses or penalties to research, stability, and capital influence, dependent on the number of species in the empire.
 The research bonus requires a stability of [[value PLC_DIVERSITY_MIN_STABILITY]].
 
-All bonuses or penalties are [value PLC_DIVERSITY_SCALING]] per species above or below 4 species that are present.'''
+All bonuses or penalties are [[value PLC_DIVERSITY_SCALING]] per species above or below 4 species that are present.'''
 
 PLC_DIVERSITY_SHORT_DESC
 Improves research, stability, and Influence
@@ -11686,6 +11688,7 @@ Divine Authority
 
 PLC_DIVINE_AUTHORITY_DESC
 '''Increases [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_DIVINE_AUTHORITY_TARGET_HAPPINESS_FLAT]] and [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_DIVINE_AUTHORITY_TARGET_INFLUENCE_FLAT]], but reduces [[metertype METER_TARGET_RESEARCH]] ([[value PLC_DIVINE_AUTHORITY_TARGET_RESEARCH_FLAT]]).
+The influence bonus requires a stability of [[value PLC_DIVINE_AUTHORITY_MIN_STABILITY]].
 
 The empire is ruled by a theocracy which claims deific authority. They assert omnipotence and infallibility, and inspire the empire with the belief that they are the chosen people. Religious extremism is promoted in the population, boosting confidence in government decree and stabilizing society, but critical thinking and evidence-based science is hampered.'''
 
@@ -14005,7 +14008,7 @@ Species InterDesign Academy
 
 BLD_INTERSPECIES_ACADEMY_DESC
 '''Increases the imperial stockpile use limit by increasing the stockpile use capacity on this planet by [[value BLD_INTERSPECIES_ACADEMY_MAX_STOCKPILE_FLAT]] when it has [[encyclopedia STOCKPILE_FOCUS_TITLE]], [[metertype METER_TARGET_RESEARCH]] by [[value BLD_INTERSPECIES_ACADEMY_TARGET_RESEARCH_FLAT]] when it has [[encyclopedia RESEARCH_FOCUS_TITLE]], or [[metertype METER_TARGET_INFLUENCE]] by [[value BLD_INTERSPECIES_ACADEMY_TARGET_INFLUENCE_FLAT]] when it has [[encyclopedia INFLUENCE_FOCUS_TITLE]]
-The research bonus requires a stability of [[value BLD_INTERSPECIES_ACADEMY_MIN_STABILITY]].
+The research bonus requires a stability of [[value BLD_INTERSPECIES_ACADEMY_MIN_STABILITY_RESEARCH]].
 
 Learning to design devices for use by different species is crucial for developing universally usable tools.
 

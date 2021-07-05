@@ -6,6 +6,8 @@
 
 NamedReal name = "ANCIENT_RUINS_TARGET_RESEARCH_PERPOP" value = (5 * [[RESEARCH_PER_POP]])
 
+NamedReal name = "ANCIENT_RUINS_MIN_STABILITY" value = 12
+
 NamedReal name = "IMPERIAL_GARRISON_MAX_TROOPS_FLAT" value = 6
 
 NamedReal name = "SHP_REINFORCED_HULL_BONUS" value = (5 * [[SHIP_STRUCTURE_FACTOR]]) 
