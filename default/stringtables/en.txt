@@ -13996,7 +13996,7 @@ Species InterDesign Academy
 
 BLD_INTERSPECIES_ACADEMY_DESC
 '''Increases the imperial stockpile use limit by increasing the stockpile use capacity on this planet by [[value BLD_INTERSPECIES_ACADEMY_MAX_STOCKPILE_FLAT]] when it has [[encyclopedia STOCKPILE_FOCUS_TITLE]], [[metertype METER_TARGET_RESEARCH]] by [[value BLD_INTERSPECIES_ACADEMY_TARGET_RESEARCH_FLAT]] when it has [[encyclopedia RESEARCH_FOCUS_TITLE]], or [[metertype METER_TARGET_INFLUENCE]] by [[value BLD_INTERSPECIES_ACADEMY_TARGET_INFLUENCE_FLAT]] when it has [[encyclopedia INFLUENCE_FOCUS_TITLE]]
-The research bonus requires a stability of [[value BLD_INTERSPECIES_ACADEMY_MIN_STABILITY]].
+The research bonus requires a stability of [[value BLD_INTERSPECIES_ACADEMY_MIN_STABILITY_RESEARCH]].
 
 Learning to design devices for use by different species is crucial for developing universally usable tools.
 
