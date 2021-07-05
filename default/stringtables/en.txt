@@ -6884,6 +6884,12 @@ Hull
 ATTACK
 Total Weapon Damage
 
+DAMAGE_STRUCTURE_PER_BATTLE
+Total Structure Damage per Battle
+
+DESTROY_FIGHTERS_PER_BATTLE
+Number of Destroyed Fighters per Battle
+
 PRODUCTION_COST
 Production Cost
 
