@@ -1,0 +1,19 @@
+BuildingType
+    name = "BLD_FIELD_REPELLOR"
+    description = "BLD_FIELD_REPELLOR_DESC"
+    buildcost = 1000 * [[BUILDING_COST_MULTIPLIER]]
+    buildtime = 5
+    location = Number high = 0 condition = And [
+        Building name = ThisBuilding
+        OwnedBy empire = Source.Owner
+    ]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = Field name = [ "FLD_ION_STORM" "FLD_METEOR_BLIZZARD" "FLD_MOLECULAR_CLOUD" "FLD_NANITE_SWARM" "FLD_SUBSPACE_RIFT" "FLD_VOID_RIFT" ]
+            effects = MoveTowards speed = -Target.Speed x = Source.X y = Source.Y
+    ]
+    icon = "icons/building/field_repellor.png"
+
+#include "/scripting/common/enqueue.macros"
+#include "/scripting/common/base_prod.macros"
