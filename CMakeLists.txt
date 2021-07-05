@@ -276,7 +276,7 @@ if(BUILD_CLIENT_GG)
     find_package(OpenGL REQUIRED)
     find_package(OpenAL REQUIRED)
     find_package(Ogg REQUIRED)
-    find_package(Vorbis REQUIRED)
+    find_package(Vorbis COMPONENTS Vorbis VorbisFile REQUIRED)
 endif()
 
 if(APPLE)
