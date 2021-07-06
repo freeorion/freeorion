@@ -11926,6 +11926,15 @@ Every turn a system is newly explored, the ships in that system generate a total
 PLC_EXPLORATION_RESEARCH_SHORT_DESC
 Exploration Gives Research
 
+PLC_FLANKING
+Flanking
+
+PLC_FLANKING_DESC
+In systems where the empire that adopted this policy has more stationary armed ships than there are enemy ships present, that empire's weapons will do [[value PLC_FLANKING_DAMAGE_BOOST]] additional structural damage per shot.
+
+PLC_FLANKING_SHORT_DESC
+Boosts Ship Damage
+
 
 ##
 ## Technology categories

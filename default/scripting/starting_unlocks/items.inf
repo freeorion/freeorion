@@ -62,3 +62,5 @@ Item type = Policy name = "PLC_CONTINUOUS_SCANNING"
 Item type = Policy name = "PLC_EXPLORATION"
 Item type = Policy name = "PLC_ALLIED_REPAIR"
 Item type = Policy name = "PLC_PROPAGANDA"
+Item type = Policy name = "PLC_FLANKING"
+
