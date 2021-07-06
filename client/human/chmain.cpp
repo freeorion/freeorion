@@ -40,7 +40,7 @@ constexpr bool STORE_FULLSCREEN_FLAG = false;
 // so there is no reason to default to not touching it.
 constexpr bool FAKE_MODE_CHANGE_FLAG = false;
 #else
-constexpr bool  STORE_FULLSCREEN_FLAG = true;
+constexpr bool STORE_FULLSCREEN_FLAG = true;
 // The X window system does not always work
 // well with resolution changes, so we avoid them
 // by default
@@ -94,7 +94,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     // did the player request the version output?
     if (GetOptionsDB().Get<bool>("version")) {
         ShutdownLoggingSystemFileSink();
-        std::cout << "FreeOrionCH " << FreeOrionVersionString() << std::endl;
+        std::cout << "FreeOrion Human Client " << FreeOrionVersionString() << std::endl;
         return 0;   // quit without actually starting game
     }
 
@@ -274,7 +274,7 @@ int mainSetupAndRun() {
 #endif
 
         GGHumanClientApp app(width, height, true, "FreeOrion " + FreeOrionVersionString(),
-                           left, top, fullscreen, fake_mode_change);
+                             left, top, fullscreen, fake_mode_change);
 
         if (GetOptionsDB().Get<bool>("quickstart")) {
             // immediately start the server, establish network connections, and

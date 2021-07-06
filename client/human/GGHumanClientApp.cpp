@@ -209,7 +209,7 @@ std::string GGHumanClientApp::EncodeServerAddressOption(const std::string& serve
 }
 
 GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, std::string name,
-                               int x, int y, bool fullscreen, bool fake_mode_change) :
+                                   int x, int y, bool fullscreen, bool fake_mode_change) :
     ClientApp(),
     SDLGUI(width, height, calculate_fps, std::move(name), x, y, fullscreen, fake_mode_change)
 {
@@ -355,7 +355,7 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
     // Start parsing content
     std::promise<void> barrier;
     std::future<void> barrier_future = barrier.get_future();
-    std::thread background([this] (auto b) {
+    std::thread background([this](auto b){
         DebugLogger() << "Started background parser thread";
         PythonCommon python;
         python.Initialize();
