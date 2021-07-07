@@ -28,7 +28,7 @@ void FreeOrionNode::_register_methods() {
     register_method("new_single_player_game", &FreeOrionNode::new_single_player_game);
     register_method("network_thread", &FreeOrionNode::network_thread);
     register_method("get_version", &FreeOrionNode::get_version);
-    register_method("is_connected", &FreeOrionNode::is_connected);
+    register_method("is_server_connected", &FreeOrionNode::is_server_connected);
     register_method("connect_to_server", &FreeOrionNode::connect_to_server);
     register_method("join_game", &FreeOrionNode::join_game);
     register_method("auth_response", &FreeOrionNode::auth_response);
@@ -255,7 +255,7 @@ godot::String FreeOrionNode::get_version() const {
     return godot::String(FreeOrionVersionString().c_str());
 }
 
-bool FreeOrionNode::is_connected() const {
+bool FreeOrionNode::is_server_connected() const {
     return app->Networking().IsConnected();
 }
 

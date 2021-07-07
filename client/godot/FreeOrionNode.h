@@ -40,7 +40,7 @@ private:
 
     godot::String get_version() const; ///< Returns FreeOrion version
 
-    bool is_connected() const; ///< Returns if FreeOrion connected to server
+    bool is_server_connected() const; ///< Returns if FreeOrion connected to server
 
     bool connect_to_server(godot::String dest); ///< Connect to \a dest server
 
