@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://GalaxyMapCamera.gd" type="Script" id=1]
+
+[sub_resource type="Environment" id=1]
+
+[node name="GalaxyMap" type="Spatial"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 1 )
+
+[node name="GalaxyMapCamera" type="Camera" parent="."]
+script = ExtResource( 1 )
