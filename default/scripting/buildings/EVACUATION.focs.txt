@@ -61,6 +61,9 @@ BuildingType
             activation = ContainedBy And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
+                // evacuation building needs to exist one turn for technical reasons.
+                // it should not destroy a new colony
+                (LocalCandidate.TurnsSinceColonization > 0)
             ]
             priority = [[CONCENTRATION_CAMP_PRIORITY]]
             effects = [
@@ -78,7 +81,12 @@ BuildingType
                 ContainedBy Or [
                     And [
                         Object id = Source.PlanetID
-                        Population high = 0
+                        Or [
+                            Population high = 0
+                            // evacuation building needs to exist one turn for technical reasons.
+                            // it should not destroy a new colony
+                            (LocalCandidate.TurnsSinceColonization < 1)
+                        ]
                     ]
                     Contains Building name = "BLD_CONC_CAMP"
                     HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
