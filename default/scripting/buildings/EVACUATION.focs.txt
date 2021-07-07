@@ -63,7 +63,7 @@ BuildingType
                 OwnedBy empire = Source.Owner
                 // evacuation building needs to exist one turn for technical reasons.
                 // it should not destroy a new colony
-                (LocalCandidate.TurnsSinceColonization > 1)
+                (LocalCandidate.TurnsSinceColonization > 0)
             ]
             priority = [[CONCENTRATION_CAMP_PRIORITY]]
             effects = [
@@ -85,7 +85,7 @@ BuildingType
                             Population high = 0
                             // evacuation building needs to exist one turn for technical reasons.
                             // it should not destroy a new colony
-                            (LocalCandidate.TurnsSinceColonization < 2)
+                            (LocalCandidate.TurnsSinceColonization < 1)
                         ]
                     ]
                     Contains Building name = "BLD_CONC_CAMP"
