@@ -48,16 +48,6 @@ from freeorion_tools.timers import AITimer
 main_timer = AITimer('timer', write_log=True)
 turn_timer = AITimer('bucket', write_log=True)
 
-using_statprof = False
-try:
-    import statprof
-
-    # statprof.start()
-    # using_statprof = True
-except ImportError:
-    pass
-
-
 user_dir = fo.getUserDataDir()
 debug("Path to folder for user specific data: %s" % user_dir)
 debug('Python paths %s' % sys.path)
@@ -360,14 +350,6 @@ def generateOrders():  # pylint: disable=invalid-name
     turn_timer.start("Server_Processing")
 
     aistate.last_turn_played = fo.currentTurn()
-
-    if using_statprof:
-        try:
-            statprof.stop()
-            statprof.display()
-            statprof.start()
-        except:  # noqa: E722
-            pass
 
 
 init_handlers(fo.getOptionsDBOptionStr("ai-config"), fo.getAIDir())
