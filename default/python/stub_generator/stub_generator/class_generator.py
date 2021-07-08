@@ -52,6 +52,7 @@ def _update_property_return_type(attr_name: str, rtype: str):
         ("systemIDs", "IntVec"): "Sequence[SystemId]",
         ("empireID", "int"): "EmpireId",
         ("capitalID", "int"): "PlanetId",
+        ("locationID", "int"): "PlanetId",
         ("owner", "int"): "EmpireId",
         ("speciesName", "str"): "SpeciesName",
     }
