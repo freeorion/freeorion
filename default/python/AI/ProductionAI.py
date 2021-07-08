@@ -983,7 +983,7 @@ def generate_production_orders():
         block_str = "%d x " % element.blocksize  # ["a single ", "in blocks of %d "%element.blocksize][element.blocksize>1]
         debug("    %s%s  requiring %s  more turns; alloc: %.2f PP with cum. progress of %.1f  being built at %s",
               block_str, element.name, element.turnsLeft, element.allocation,
-              element.progress, universe.getObject(element.locationID).name)
+              element.progress, universe.getPlanet(element.locationID).name)
         if element.turnsLeft == -1:
             if element.locationID not in get_all_empire_planets():
                 # dequeue_list.append(queue_index) #TODO add assessment of recapture -- invasion target etc.
