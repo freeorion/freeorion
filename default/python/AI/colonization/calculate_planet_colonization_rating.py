@@ -89,8 +89,6 @@ def _calculate_planet_colonization_rating(
             retval += discount_multiplier * 5 * pilot_val
             detail.append("Pilot Val %.1f" % (discount_multiplier * 5 * pilot_val))
 
-    priority_scaling = 1.0
-    max_gggs = 1  # if goes above 1 need some other adjustments below
     if empire.productionPoints < 100:
         backup_factor = 0.0
     else:
@@ -364,7 +362,7 @@ def _calculate_planet_colonization_rating(
                     # Note, this reported value may not take into account a later adjustment from a populated gg
                     gg_detail.append("GGG for %s %.1f" % (other_planet.name, discount_multiplier * per_gg *
                                                           populated_gg_factor))
-            if planet_id in sorted(gg_list)[:max_gggs]:
+            if planet_id in sorted(gg_list)[:1]:
                 retval += orb_gen_val * populated_gg_factor
                 detail.extend(gg_detail)
             else:
@@ -551,7 +549,6 @@ def _calculate_planet_colonization_rating(
 
         retval += max(ind_val + asteroid_bonus + gas_giant_bonus, research_bonus,
                       growth_val) + fixed_ind + fixed_res + supply_val
-        retval *= priority_scaling
         if existing_presence:
             detail.append("preexisting system colony")
             retval = (retval + existing_presence * _get_defense_value(species_name)) * 2
