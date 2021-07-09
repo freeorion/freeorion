@@ -38,6 +38,15 @@ jobs:
           flake8 test-scripting
           --config=test-scripting/tox.ini
           --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
+      - name: Lint st-tool with flake8
+        # Run from root to preserve full path in output
+        run: >
+          flake8 check
+          --ignore=E501,W504
+          --format="::error file=%(path)s,line=%(row)d,col=%(col)d::%(path)s:%(row)d:%(col)d: %(code)s %(text)s"
       - name: Test with pytest
         # Run from root to preserve full path in output
         run: pytest -v default/python/tests
+      - name: Test st-tool with pytest
+        # Run from root to preserve full path in output
+        run: pytest -v check --doctest-modules --doctest-continue-on-failure
