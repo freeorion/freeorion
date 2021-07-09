@@ -15,11 +15,64 @@ import urllib.request
 import webbrowser
 from collections import OrderedDict, namedtuple
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from typing import Iterator
 
 STRING_TABLE_KEY_PATTERN = re.compile(r'^[A-Z0-9_]+$')
 # Provides the named capture groups 'ref_type' and 'key'
 INTERNAL_REFERENCE_PATTERN_TEMPLATE = r'\[\[(?P<ref_type>(?:(?:encyclopedia|(?:building|field|meter)type|predefinedshipdesign|ship(?:hull|part)|special|species|tech|policy|value) )?)(?P<key>{})\]\]'
 OPTIONAL_REF_TYPES = ["value"]
+
+
+def _get_brackets(text) -> Iterator[str]:
+    has = False
+    prev = ''
+    for char in text:
+        if char in '[]':
+            if has:
+                has = False
+                if prev == char:
+                    yield char
+            else:
+                has = True
+                prev = char
+        else:
+            has = False
+
+
+def check_balanced_reference(text: str) -> bool:
+    """
+    Check if reference [[XXX]] has balanced syntax.
+
+    >>> check_balanced_reference("no reference")
+    True
+
+    >>> check_balanced_reference("[[valid reference]]")
+    True
+
+    >>> check_balanced_reference("[[unbalanced left]")
+    False
+
+    >>> check_balanced_reference("[unbalanced right]]")
+    False
+
+    >>> check_balanced_reference("[[ multiple with ]] [[ not closed")
+    False
+
+    >>> check_balanced_reference("[[ [[ reference ]] in reference ]]")
+    False
+    """
+    braces = _get_brackets(text)
+    is_open = False
+    for b in braces:
+        if b == '[':
+            if is_open:
+                return False
+            is_open = True
+        else:
+            if not is_open:
+                return False
+            is_open = False
+    return not is_open
 
 
 class StringTableEntry(object):
@@ -846,6 +899,12 @@ def check_action(args):
             entry = source_st[key]
 
             if entry.value:
+                if not check_balanced_reference(entry.value):
+                    print(
+                        "{}:{}: Unbalanced brackets: '{}'.".format(source_st.fpath, entry.key, entry.value)
+                    )
+                    exit_code = 1
+
                 for match in re.finditer(INTERNAL_REFERENCE_PATTERN_TEMPLATE.format('.*?'), entry.value):
                     reference_key = match['key']
                     references.add(reference_key)
