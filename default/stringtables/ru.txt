@@ -11321,7 +11321,7 @@ BLD_SHIPYARD_ORBITAL_DRYDOCK
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
 '''Это обновление для [[buildingtype BLD_SHIPYARD_BASE]] и оно необходимо для постройки некоторых дальнейших улучшений. Это обновление также обеспечивает возможности ремонта поврежденных судов, восстанавливая их [[metertype METER_STRUCTURE]] на каждом ходе
 
-[[encyclopedia ORBITAL_DRYDOCK_REPAIR_TITLE]] улучшение также предоставляет возможность ремонта поврежденных кораблей, проводя полный ремонт структурных повреждений за один ход, только если уровень [metertype METER_HAPPINESS]] превышает 5 и если в системе не было битвы в этот ход
+[[encyclopedia ORBITAL_DRYDOCK_REPAIR_TITLE]] улучшение также предоставляет возможность ремонта поврежденных кораблей, проводя полный ремонт структурных повреждений за один ход, только если уровень [[metertype METER_HAPPINESS]] превышает 5 и если в системе не было битвы в этот ход
 
 Когда строится большое межзвездное судно, не практично перемещать большие детали с поверхности планеты на Орбитальные мастерские вверх и вниз в космических лифтах. Целесообразней изготавливать детали на месте и собирать их в единую конструкцию на том же самом орбитальном заводе, тем самым исключая необходимость в транспортировке, особенно массивных частей корабля с поверхности планеты'''
 
@@ -11905,7 +11905,7 @@ BLD_COL_SILEXIAN
 Колония Силексианцев
 
 BLD_COL_SILEXIAN_DESC
-Колония L_PART_1]] [[species SP_SILEXIAN]]. [[BLD_COL_PART_2]] Колония Силексианцев [[BLD_COL_PART_3]]
+Колония [[BLD_COL_PART_1]] [[species SP_SILEXIAN]]. [[BLD_COL_PART_2]] Колония Силексианцев [[BLD_COL_PART_3]]
 
 BLD_COL_SLY
 Колония Слаев
@@ -11923,7 +11923,7 @@ BLD_COL_TAEGHIRUS
 Колония Тэ Гирусов
 
 BLD_COL_TAEGHIRUS_DESC
-Колония [[BLD_COL_PART_1]] [[species SP_TAEGHIRUS]]. [[BLD_COL_PART_2]] Колония Тэ Гирусов [BLD_COL_PART_3]]
+Колония [[BLD_COL_PART_1]] [[species SP_TAEGHIRUS]]. [[BLD_COL_PART_2]] Колония Тэ Гирусов [[BLD_COL_PART_3]]
 
 BLD_COL_TRITH
 Колония Тритов
@@ -12855,7 +12855,7 @@ SH_RAVENOUS_DESC
 
 Органический рост: создается с [[metertype METER_STRUCTURE]] равной 5, но наращивает дополнительно 20 Прочности через 40 ходов
 
-metertype METER_STEALTH]] средняя, [[metertype METER_DETECTION]] превосходное и [[metertype METER_SPEED]] высокая
+[[metertype METER_STEALTH]] средняя, [[metertype METER_DETECTION]] превосходное и [[metertype METER_SPEED]] высокая
 
 С потенциалом мощного и быстрого военного корабля
 
