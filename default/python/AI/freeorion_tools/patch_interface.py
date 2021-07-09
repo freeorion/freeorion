@@ -70,7 +70,7 @@ def to_dict_recursive(method):
 
 
 def to_str(prefix, id, name):
-    return '{}_{}<{}>'.format(prefix, id, name)
+    return f'{prefix}_{id}<{name}>'
 
 
 def patch_interface():

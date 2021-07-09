@@ -78,7 +78,9 @@ def check_balanced_reference(text: str) -> bool:
 class StringTableEntry(object):
     def __init__(self, key, keyline, value, notes, value_times):
         if not STRING_TABLE_KEY_PATTERN.match(key):
-            raise ValueError("Key doesn't match expected format [A-Z0-9_]+, was '{}'".format(key))
+            raise ValueError(
+                f"Key doesn't match expected format [A-Z0-9_]+, was '{key}'"
+            )
         self.key = key
         self.keyline = keyline
         self.value = value
@@ -98,13 +100,12 @@ class StringTableEntry(object):
         else:
             result += "#*" + self.key + "\n"
             for e in self.value_times:
-                result += "#* <not translated {}>\n".format(
-                    datetime.datetime.fromtimestamp(e).isoformat(sep=' '))
+                result += f"#* <not translated {datetime.datetime.fromtimestamp(e).isoformat(sep=' ')}>\n"
 
         return result
 
     def __repr__(self):
-        return "StringTableEntry(key={}, keyline={}, value={})".format(self.key, self.keyline, self.value)
+        return f"StringTableEntry(key={self.key}, keyline={self.keyline}, value={self.value})"
 
 
 class StringTable(object):
@@ -119,14 +120,10 @@ class StringTable(object):
         for entry in self._entries:
             if isinstance(entry, StringTableEntry):
                 if entry.key in self._ientries:
-                    msg = "{fpath}:{fline}: Duplicate key '{key}', previously defined on line {pline}"
-                    msg = msg.format(**{
-                        'fpath': self.fpath,
-                        'fline': entry.keyline,
-                        'key': entry.key,
-                        'pline': self._ientries[entry.key].keyline,
-                    })
-                    raise ValueError(msg)
+                    raise ValueError(
+                        f"{self.fpath}:{entry.keyline}:"
+                        f" Duplicate key '{entry.key}', previously defined on line {self._ientries[entry.key].keyline}"
+                    )
                 self._ientries[entry.key] = entry
 
     def __getitem__(self, key):
@@ -362,13 +359,13 @@ class StringTable(object):
                 vline_end = fline
                 continue
 
-            raise ValueError("{}:{}: Impossible parser state; last valid line: {}".format(fpath, vline_start, line))
+            raise ValueError(f"{fpath}:{vline_start}: Impossible parser state; last valid line: {line}")
 
         if key:
-            raise ValueError("{}:{}: Key '{}' without value".format(fpath, vline_start, key))
+            raise ValueError(f"{fpath}:{vline_start}: Key '{key}' without value")
 
         if is_quoted:
-            raise ValueError("{}:{}: Quotes not closed for key '{}'".format(fpath, vline_start, key))
+            raise ValueError(f"{fpath}:{vline_start}: Quotes not closed for key '{key}'")
 
         if with_blame:
             StringTable.set_author(fpath, entries, blames)
@@ -796,7 +793,7 @@ class EditServerHandler(BaseHTTPRequestHandler):
             raise
 
         if request['id'] not in self.server.reference_st:
-            self.POST_error("No entry with key {}".format(request['id']))
+            self.POST_error(f"No entry with key {request['id']}")
 
         entry = self.server.source_st[request['id']]
         rentry = self.server.reference_st[request['id']]
@@ -850,10 +847,10 @@ def sync_action(args):
 
 def rename_key_action(args):
     if not STRING_TABLE_KEY_PATTERN.match(args.old_key):
-        raise ValueError("The given old key '{}' is not a valid name".format(args.old_key))
+        raise ValueError(f"The given old key '{args.old_key}' is not a valid name")
 
     if not STRING_TABLE_KEY_PATTERN.match(args.new_key):
-        raise ValueError("The given new key '{}' is not a valid name".format(args.new_key))
+        raise ValueError(f"The given new key '{args.new_key}' is not a valid name")
 
     source_st = StringTable.from_file(args.source)
 
@@ -901,7 +898,7 @@ def check_action(args):
             if entry.value:
                 if not check_balanced_reference(entry.value):
                     print(
-                        "{}:{}: Unbalanced brackets: '{}'.".format(source_st.fpath, entry.key, entry.value)
+                        f"{source_st.fpath}:{entry.key}: Unbalanced brackets: '{entry.value}'"
                     )
                     exit_code = 1
 
@@ -913,7 +910,8 @@ def check_action(args):
                         if match['ref_type'].strip() in OPTIONAL_REF_TYPES:
                             continue
 
-                        print("{}:{}: Referenced key '{}' in value of '{}' was not found.".format(source_st.fpath, entry.keyline, reference_key, entry.key))
+                        print(
+                            f"{source_st.fpath}:{entry.keyline}: Referenced key '{reference_key}' in value of '{entry.key}' was not found.")
                         exit_code = 1
 
         exit_code += _check_key_usage(source_st, reference_st, references)
@@ -934,9 +932,7 @@ def _check_key_usage(source_st, reference_st, references):
 
     for key in source_st:
         if not check_key_is_used(key):
-            print("{path}:{lineno}: {key} is not used".format(
-                key=key, path=source_st.fpath, lineno=source_st[key].keyline
-            ))
+            print(f"{source_st.fpath}:{source_st[key].keyline}: {key} is not used")
             exit_code = 1
     return exit_code
 
@@ -951,51 +947,61 @@ def compare_action(args):
     if not args.summary_only:
         for key in source_st:
             if key in comp.right_only:
-                print("{}:{}: Key '{}' is not in reference file {}".format(comp.right.fpath, comp.right[key].keyline, key, comp.left.fpath))
+                print(
+                    f"{comp.right.fpath}:{comp.right[key].keyline}: Key '{key}' is not in reference file {comp.left.fpath}"
+                )
                 exit_code = 1
 
             if key in comp.left_pure_reference:
-                print("{}:{}: Key '{}' contains translation for pure reference in reference file value {}:{}".format(comp.right.fpath, comp.right[key].keyline, key, comp.left.fpath, comp.left[key].keyline))
+                print(
+                    f"{comp.right.fpath}:{comp.right[key].keyline}:"
+                    f" Key '{key}' contains translation for pure reference in reference file"
+                    f" value {comp.left.fpath}:{comp.left[key].keyline}"
+                )
                 exit_code = 1
 
             if key in comp.layout_mismatch:
-                print("{}:{}: Value of key '{}' layout does not match that of reference file value {}:{}".format(comp.right.fpath, comp.right[key].keyline, key, comp.left.fpath, comp.left[key].keyline))
+                print(
+                    f"{comp.right.fpath}:{comp.right[key].keyline}:"
+                    f" Value of key '{key}' layout does not match that of reference file"
+                    f" value {comp.left.fpath}:{comp.left[key].keyline}"
+                )
                 exit_code = 1
 
             if key in comp.right_older:
-                print("{}:{}: Value of key '{}' is older than reference file value {}:{}".format(comp.right.fpath, comp.right[key].keyline, key, comp.left.fpath, comp.left[key].keyline))
+                print(
+                    f"{comp.right.fpath}:{comp.right[key].keyline}:"
+                    f" Value of key '{key}' is older than reference file"
+                    f" value {comp.left.fpath}:{comp.left[key].keyline}"
+                )
                 exit_code = 1
 
             if key in comp.untranslated:
-                print("{}:{}: Value of key '{}' has no translation compared to reference file {}:{}".format(comp.right.fpath, comp.right[key].keyline, key, comp.left.fpath, comp.left[key].keyline))
+                print(
+                    f"{comp.right.fpath}:{comp.right[key].keyline}:"
+                    f" Value of key '{key}' has no translation compared to reference file"
+                    f" {comp.left.fpath}:{comp.left[key].keyline}"
+                )
                 exit_code = 1
 
             if key in comp.identical:
-                print("{}:{}: Value of key '{}' is identical to reference file {}:{}".format(comp.right.fpath, comp.right[key].keyline, key, comp.left.fpath, comp.left[key].keyline))
-                exit_code = 1
+                print(
+                    f"{comp.right.fpath}:{comp.right[key].keyline}:"
+                    f" Value of key '{key}' is identical to reference file"
+                    f" {comp.left.fpath}:{comp.left[key].keyline}"
+                )
+            exit_code = 1
 
-    print("""
-Summary comparing '{}' against '{}':
-    Keys matching - {}/{} ({:3.1f}%)
-    Keys not in reference - {}
-    Value is reference - {}
-    Values layout mismatch - {}
-    Values older than reference - {}
-    Values untranslated - {}
-    Values same as reference - {}
-""".strip().format(
-        comp.right.fpath,
-        comp.left.fpath,
-        len(comp.right) - len(comp.right_only),
-        len(comp.left),
-        100.0 * (len(comp.right) - len(comp.right_only)) / len(comp.left),
-        len(comp.right_only),
-        len(comp.left_pure_reference),
-        len(comp.layout_mismatch),
-        len(comp.right_older),
-        len(comp.untranslated),
-        len(comp.identical)))
-
+    print(f"""
+Summary comparing '{comp.right.fpath}' against '{comp.left.fpath}':
+    Keys matching - {len(comp.right) - len(comp.right_only)}/{len(comp.left)} ({100.0 * (len(comp.right) - len(comp.right_only)) / len(comp.left):3.1f}%)
+    Keys not in reference - {len(comp.right_only)}
+    Value is reference - {len(comp.left_pure_reference)}
+    Values layout mismatch - {len(comp.layout_mismatch)}
+    Values older than reference - {len(comp.right_older)}
+    Values untranslated - {len(comp.untranslated)}
+    Values same as reference - {len(comp.identical)}
+""".strip())
     return exit_code
 
 
@@ -1003,7 +1009,7 @@ if __name__ == "__main__":
     root_parser = argparse.ArgumentParser(description="Verify and modify string tables")
     verb_parsers = root_parser.add_subparsers(
         title="verbs",
-        description="For more details run `{} <verb> --help`.".format(root_parser.prog),
+        description=f"For more details run `{root_parser.prog} <verb> --help`.",
     )
 
     format_parser = verb_parsers.add_parser(

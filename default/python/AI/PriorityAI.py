@@ -40,7 +40,7 @@ unmetThreat = 0
 
 def calculate_priorities():
     """Calculates the priorities of the AI player."""
-    debug("\n{0}Preparing to Calculate Priorities{0}".format(10 * "="))
+    debug("\n=== Preparing to Calculate Priorities ===")
     prioritiees_timer.start('setting Production Priority')
     aistate = get_aistate()
     aistate.set_priority(PriorityType.RESOURCE_PRODUCTION, 50)  # let this one stay fixed & just adjust Research
