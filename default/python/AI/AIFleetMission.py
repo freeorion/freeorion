@@ -140,7 +140,7 @@ class AIFleetMission:
 
         :param context: Context of the function call for logging purposes
         """
-        debug("Considering to merge %s", self.__str__())
+        debug(f"Considering to merge {self}")
         if self.type not in MERGEABLE_MISSION_TYPES:
             debug("Mission type does not allow merging.")
             return

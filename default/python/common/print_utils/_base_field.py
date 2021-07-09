@@ -29,13 +29,13 @@ class Field(ABC):
         self.total = total
 
     def __repr__(self):
-        return '%s(%s)' % (self.__class__.__name__, self.name)
+        return f'{self.__class__.__name__}({self.name})'
 
     def format_cell(self, item, width):
-        return '{:{align}{width}}'.format(item, width=width, align=self.align)
+        return f'{item:{self.align}{width}}'
 
     def format_header(self, width):
-        return '{: <{width}}'.format(self.name, width=width)
+        return f'{self.name:<{width}}'
 
     def make_cell_string(self, val):
         if self.placeholder and not val:

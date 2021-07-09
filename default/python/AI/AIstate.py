@@ -459,7 +459,7 @@ class AIstate:
         self.empire_standard_enemy_rating = self.get_standard_enemy().get_rating()
 
     def __update_system_status(self):
-        debug('{0} Updating System Threats {0}'.format(10 * "="))
+        debug('=== Updating System Threats ===')
         universe = fo.getUniverse()
         empire = fo.getEmpire()
         empire_id = fo.empireID()

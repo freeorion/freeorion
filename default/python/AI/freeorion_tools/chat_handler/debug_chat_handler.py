@@ -148,7 +148,7 @@ class DebugChatHandler(ChatHandlerBase):
 
     def _handle_shell_input(self, message):
         """Handle message and prints it to chat and logs."""
-        self.send_notification(log_message=">>> {}".format(message))
+        self.send_notification(log_message=f">>> {message}")
         out, err = self._interpreter.eval(message)
         if out:
             self.send_notification(
