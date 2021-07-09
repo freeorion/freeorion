@@ -100,6 +100,7 @@ public:
     float   Fuel(const ObjectMap& objects) const;                       ///< Returns effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
     float   MaxFuel(const ObjectMap& objects) const;                    ///< Returns effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
     int     FinalDestinationID() const;                                 ///< Returns ID of system that this fleet is moving to or INVALID_OBJECT_ID if staying still.
+    int     PreviousToFinalDestinationID() const;                       ///< Returns ID of system previous to the destination system that this fleet is moving to or INVALID_OBJECT_ID not moving at least two jumps.
     int     PreviousSystemID() const    { return m_prev_system; }       ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
     int     NextSystemID() const        { return m_next_system; }       ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
     bool    Blockaded(const ScriptingContext& context) const;           ///< returns true iff either (i) fleet is stationary and at least one system exit is blocked for this fleet or (ii) fleet is attempting to depart a system along a blocked system exit
