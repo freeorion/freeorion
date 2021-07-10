@@ -1,0 +1,89 @@
+Part
+    name = "FT_HANGAR_MISSILE"
+    description = "FT_HANGAR_MISSILE_DESC"
+    exclusions = [ "FT_HANGAR_0" "FT_HANGAR_1" "FT_HANGAR_2" "FT_HANGAR_3" "FT_HANGAR_4" "FT_HANGAR_MISSILE" "FT_BAY_1" ]
+    class = FighterHangar
+    // Capacity is set to launch capacity per launch bay (4)
+    // MaxCapacity is also set to that value
+    // "Real" missile capacity (storage) is four times launch capacity plus once launch capacity per bay (4 per launch bay)
+    // As default for UI we put four times launch capacity
+    capacity = 16
+    damage = 3
+    // There is a problem with storage/resupply and launching:
+    //   resupply happens in Fleet.cpp in movement phase and sets all parts capacity to maximum capacity
+    //   but hangar capacity has to be equal to launch capacity (because missile should only launch in bout 1)
+    // without that resupply, MaxCapacity could be set to real missile storage capacity to give the user a hint
+    // or even better a launch condition which only allows launching in bout 1
+//    NoDefaultCapacityEffect
+    combatTargets = And [
+        (CombatBout == 3)
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Or [
+            [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+            Fighter
+        ]
+    ]
+    mountableSlotTypes = Internal
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 1
+    tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
+    location = OwnedBy empire = Source.Owner
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = (Source.LastTurnActiveInBattle == CurrentTurn)
+            stackinggroup = "SET_MISSILE_STORAGE"
+            accountinglabel = "MISSILE_STORAGE_USE"
+            effects = [
+             // SetMaxCapacity partname = "FT_HANGAR_MISSILE"           value = max(0, ( SpecialCapacity  name = "MISSILE_STORAGE_CAPACITY" object = Source.ID ) - ( [[MISSILE_LAUNCHES]] ) )
+                SetMaxCapacity partname = "FT_HANGAR_MISSILE"           value = min( ( [[MISSILE_LAUNCHES]] ) , max(0, ( SpecialCapacity  name = "MISSILE_STORAGE_CAPACITY" object = Source.ID ) - ( [[MISSILE_LAUNCHES]] ) ) )
+                SetSpecialCapacity name = "MISSILE_STORAGE_CAPACITY" capacity = max(0, ( SpecialCapacity  name = "MISSILE_STORAGE_CAPACITY" object = Source.ID ) - ( [[MISSILE_LAUNCHES]] ) )
+            ]
+
+       EffectsGroup
+            scope = Source
+            activation = Or [ Not HasSpecial name = "MISSILE_STORAGE_CAPACITY" And [
+                InSystem
+                Stationary
+                (Source.LastTurnActiveInBattle < CurrentTurn)
+                // For allied supply needs to be moved to a tech i guess
+                ResupplyableBy empire = Source.Owner
+            ] ]
+            stackinggroup = "SET_MISSILE_STORAGE"
+            accountinglabel = "MISSILE_STORAGE_RESUPPLY_LABEL"
+            effects = [
+                SetSpecialCapacity name = "MISSILE_STORAGE_CAPACITY" capacity = 16 + [[MISSILE_LAUNCHES]]
+             // SetMaxCapacity partname = "FT_HANGAR_MISSILE"           value = 16 + [[MISSILE_LAUNCHES]]
+                SetMaxCapacity partname = "FT_HANGAR_MISSILE"           value = [[MISSILE_LAUNCHES]]
+            ]
+
+       EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "SET_MISSILE_STORAGE"
+            accountinglabel = "MISSILE_STORAGE_FALLBACK_LABEL"
+            effects = [
+             // SetMaxCapacity partname = "FT_HANGAR_MISSILE" value = ( SpecialCapacity  name = "MISSILE_STORAGE_CAPACITY" object = Source.ID )
+                SetMaxCapacity partname = "FT_HANGAR_MISSILE" value = min( ( [[MISSILE_LAUNCHES]] ) , max(0, SpecialCapacity  name = "MISSILE_STORAGE_CAPACITY" object = Source.ID ) )
+            ]
+
+        EffectsGroup
+            scope = And [
+                Source
+            ]
+            activation = Source
+            stackinggroup = "SET_MISSILE_LAUNCH_CAPACITY"
+            effects = [
+                // Launchable missiles
+                SetCapacity partname = "FT_HANGAR_MISSILE" value = [[MISSILE_LAUNCHES]]
+            ]
+    ]
+
+    icon = "icons/ship_parts/nuclear_missile.png"
+
+MISSILE_LAUNCHES
+'''4 * PartsInShipDesign name = "FT_BAY_MISSILE" design = Source.DesignID'''
+
+#include "/scripting/common/upkeep.macros"
+#include "/scripting/techs/techs.macros"
+#include "/scripting/ship_parts/targeting.macros"
