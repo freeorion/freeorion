@@ -2644,14 +2644,15 @@ namespace {
     }
 
     /** Records info in Empires about what they destroyed or had destroyed during combat. */
-    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats, const ObjectMap& objects,
-                                           EmpireManager& empires) {
+    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats, ScriptingContext& context) {
+        const ObjectMap& objects = context.ContextObjects();
+
         for (const CombatInfo& combat_info : combats) {
             std::vector<WeaponFireEvent::ConstWeaponFireEventPtr> events_that_killed;
             for (auto& event : FlattenEvents(combat_info.combat_events)) { // TODO: could do the filtering in the call function and avoid some moves later...
                 auto fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(std::move(event));
                 if (fire_event && combat_info.destroyed_object_ids.count(fire_event->target_id)) {
-                    TraceLogger() << "Kill event: " << fire_event->DebugString(objects, empires);
+                    TraceLogger() << "Kill event: " << fire_event->DebugString(context);
                     events_that_killed.push_back(std::move(fire_event));
                 }
             }
@@ -2663,7 +2664,6 @@ namespace {
             // If a ship was attacked multiple times during a combat in which it dies, it will get
             // processed multiple times here.  The below set will keep it from being logged as
             // multiple destroyed ships for its owner.
-            // TODO: fix similar issue for overlogging on attacker side
             std::unordered_set<int> already_logged__target_ships;
             std::unordered_map<int, int> empire_destroyed_ship_ids;
 
@@ -2672,12 +2672,12 @@ namespace {
                 if (!attacker)
                     continue;
                 int attacker_empire_id = attacker->Owner();
-                auto attacker_empire = empires.GetEmpire(attacker_empire_id);
+                auto attacker_empire = context.GetEmpire(attacker_empire_id);
 
                 auto target_ship = objects.get<Ship>(attack_event->target_id);
                 if (!target_ship)
                     continue;
-                auto target_empire = empires.GetEmpire(target_ship->Owner());
+                auto target_empire = context.GetEmpire(target_ship->Owner());
 
                 DebugLogger() << "Attacker " << attacker->Name() << " (id: " << attacker->ID()
                               << "  empire: " << attacker_empire_id << ")  attacks "
@@ -3027,7 +3027,6 @@ namespace {
                     for (const auto& empire_troops : empires_troops)
                         DebugLogger() << " empire: " << empire_troops.first << ": " << empire_troops.second;
 
-                    // TODO: special planet lost to rebels sitrep
                     for (int empire_id : all_involved_empires) {
                         if (auto empire = empires.GetEmpire(empire_id))
                             empire->AddSitRepEntry(CreatePlanetRebelledSitRep(planet_id, previous_owner_id));
@@ -3437,7 +3436,8 @@ void ServerApp::ProcessCombats() {
 
     BackProjectSystemCombatInfoObjectMeters(combats);
 
-    UpdateEmpireCombatDestructionInfo(combats, m_universe.Objects(), m_empires);
+    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
+    UpdateEmpireCombatDestructionInfo(combats, context);
 
     DisseminateSystemCombatInfo(combats, m_universe);
     // update visibilities with any new info gleaned during combat
@@ -3631,7 +3631,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireStaleObjectKnowledge(m_empires);
 
     // update empire-visibility filtered graphs after visiblity update
-    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(Empires());
+    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
 
     TraceLogger(effects) << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
     TraceLogger(effects) << m_universe.Objects().Dump();
@@ -3737,14 +3737,15 @@ void ServerApp::PostCombatProcessTurns() {
 void ServerApp::CheckForEmpireElimination() {
     std::set<std::shared_ptr<Empire>> surviving_empires;
     std::set<std::shared_ptr<Empire>> non_eliminated_non_ai_controlled_empires;
-    for (auto& entry : Empires()) {
-        if (entry.second->Eliminated())
+    for (auto& [empire_id, empire] : m_empires) {
+        if (empire->Eliminated())
             continue;   // don't double-eliminate an empire
-        else if (EmpireEliminated(entry.first, m_universe.Objects())) {
-            entry.second->Eliminate();
-            RemoveEmpireTurn(entry.first);
-            const int player_id = EmpirePlayerID(entry.first);
-            DebugLogger() << "ServerApp::CheckForEmpireElimination empire #" << entry.first << " " << entry.second->Name() << " of player #" << player_id << " eliminated";
+        else if (EmpireEliminated(empire_id, m_universe.Objects())) {
+            empire->Eliminate();
+            RemoveEmpireTurn(empire_id);
+            const int player_id = EmpirePlayerID(empire_id);
+            DebugLogger() << "ServerApp::CheckForEmpireElimination empire #" << empire_id << " " << empire->Name()
+                          << " of player #" << player_id << " eliminated";
             auto player_it = m_networking.GetPlayer(player_id);
             if (player_it != m_networking.established_end() &&
                 (*player_it)->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
@@ -3756,19 +3757,20 @@ void ServerApp::CheckForEmpireElimination() {
                 }
             }
         } else {
-            surviving_empires.emplace(entry.second);
+            surviving_empires.insert(empire);
             // empires could be controlled only by connected AI client, connected human client, or
             // disconnected human client.
             // Disconnected AI client controls non-eliminated empire is an error.
-            if (GetEmpireClientType(entry.second->EmpireID()) != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-                non_eliminated_non_ai_controlled_empires.emplace(entry.second);
+            if (GetEmpireClientType(empire->EmpireID()) != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
+                non_eliminated_non_ai_controlled_empires.insert(empire);
         }
     }
 
-    if (surviving_empires.size() == 1) // last man standing
-        (*surviving_empires.begin())->Win(UserStringNop("VICTORY_ALL_ENEMIES_ELIMINATED"));
-    else if (!m_single_player_game &&
-             static_cast<int>(non_eliminated_non_ai_controlled_empires.size()) <= GetGameRules().Get<int>("RULE_THRESHOLD_HUMAN_PLAYER_WIN"))
+    if (surviving_empires.size() == 1) { // last man standing
+        auto& only_empire = *surviving_empires.begin();
+        only_empire->Win(UserStringNop("VICTORY_ALL_ENEMIES_ELIMINATED"));
+    } else if (!m_single_player_game &&
+               static_cast<int>(non_eliminated_non_ai_controlled_empires.size()) <= GetGameRules().Get<int>("RULE_THRESHOLD_HUMAN_PLAYER_WIN"))
     {
         // human victory threshold
         if (GetGameRules().Get<bool>("RULE_ONLY_ALLIANCE_WIN")) {

@@ -1962,7 +1962,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     DebugLogger(combat) << "AutoResolveCombat objects after resolution: " << combat_info.objects->Dump();
 
     DebugLogger(combat) << "combat event log start:";
+    ScriptingContext context{combat_info};
     for (const auto& event : combat_info.combat_events)
-        DebugLogger(combat) << event->DebugString(*combat_info.objects, Empires()); // TODO: combat_info.empires
+        DebugLogger(combat) << event->DebugString(context);
     DebugLogger(combat) << "combat event log end:";
 }

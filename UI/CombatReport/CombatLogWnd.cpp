@@ -249,7 +249,7 @@ namespace {
         log(log_),
         viewing_empire_id(viewing_empire_id_),
         event(event_),
-        title(log.DecorateLinkText(event->CombatLogDescription(viewing_empire_id, GetUniverse().Objects(), Empires())))
+        title(log.DecorateLinkText(event->CombatLogDescription(viewing_empire_id, ScriptingContext{})))
     {}
 
     void CombatLogAccordionPanel::CompleteConstruction() {
@@ -544,7 +544,7 @@ std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(
         return new_logs;
     }
 
-    std::string title = event->CombatLogDescription(viewing_empire_id, GetUniverse().Objects(), Empires());
+    std::string title = event->CombatLogDescription(viewing_empire_id, ScriptingContext{});
     if (!(event->FlattenSubEvents() && title.empty()))
         new_logs.push_back(DecorateLinkText(title));
 
@@ -610,8 +610,9 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
             GG::X0, *this, client_empire_id, empire_forces.first, empire_forces.second));
 
     // Write Logs
+    const ScriptingContext context;
     for (CombatEventPtr event : log->combat_events) {
-        DebugLogger(combat_log) << "event debug info: " << event->DebugString(objects, empires);
+        DebugLogger(combat_log) << "event debug info: " << event->DebugString(context);
         for (auto&& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event))
             AddRow(std::move(wnd));
     }
