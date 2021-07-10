@@ -16,6 +16,7 @@ struct CombatEvent;
 typedef std::shared_ptr<CombatEvent> CombatEventPtr;
 typedef std::shared_ptr<const CombatEvent> ConstCombatEventPtr;
 class ObjectMap;
+class EmpireManager;
 
 /// An abstract base class for combat events
 /**
@@ -31,11 +32,12 @@ struct FO_COMMON_API CombatEvent {
     CombatEvent() = default;
     virtual ~CombatEvent() = default;
 
-    [[nodiscard]] virtual std::string DebugString(const ObjectMap& objects) const = 0;
+    [[nodiscard]] virtual std::string DebugString(const ObjectMap& objects, const EmpireManager& empires) const = 0;
 
     /** Generate the combat log description.
         Describe the result of a combat event (i.e. what happened). */
-    [[nodiscard]] virtual std::string CombatLogDescription(int viewing_empire_id, const ObjectMap& objects) const = 0;
+    [[nodiscard]] virtual std::string CombatLogDescription(int viewing_empire_id, const ObjectMap& objects,
+                                                           const EmpireManager& empires) const = 0;
 
     /** Generate the combat log details.
         Describe how it happened in enough detail to avoid a trip to the Pedia. */

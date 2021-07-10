@@ -2644,15 +2644,14 @@ namespace {
     }
 
     /** Records info in Empires about what they destroyed or had destroyed during combat. */
-    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats, const ObjectMap& objects) { // TODO: pass Empires()
-        auto& empires{Empires()};
-
+    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats, const ObjectMap& objects,
+                                           EmpireManager& empires) {
         for (const CombatInfo& combat_info : combats) {
             std::vector<WeaponFireEvent::ConstWeaponFireEventPtr> events_that_killed;
             for (auto& event : FlattenEvents(combat_info.combat_events)) { // TODO: could do the filtering in the call function and avoid some moves later...
                 auto fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(std::move(event));
                 if (fire_event && combat_info.destroyed_object_ids.count(fire_event->target_id)) {
-                    TraceLogger() << "Kill event: " << fire_event->DebugString(objects);
+                    TraceLogger() << "Kill event: " << fire_event->DebugString(objects, empires);
                     events_that_killed.push_back(std::move(fire_event));
                 }
             }
@@ -2660,7 +2659,6 @@ namespace {
                           << "  Total Kill Events: " << events_that_killed.size();
 
 
-            
 
             // If a ship was attacked multiple times during a combat in which it dies, it will get
             // processed multiple times here.  The below set will keep it from being logged as
@@ -3439,7 +3437,7 @@ void ServerApp::ProcessCombats() {
 
     BackProjectSystemCombatInfoObjectMeters(combats);
 
-    UpdateEmpireCombatDestructionInfo(combats, m_universe.Objects());
+    UpdateEmpireCombatDestructionInfo(combats, m_universe.Objects(), m_empires);
 
     DisseminateSystemCombatInfo(combats, m_universe);
     // update visibilities with any new info gleaned during combat
