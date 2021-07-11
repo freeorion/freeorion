@@ -136,11 +136,11 @@ boost::format FlexibleFormatList(
 template<typename T1, typename T2>
 boost::format FlexibleFormatList(const T2& header_words, const T1& words)
 {
-    return FlexibleFormatList(header_words, words
-                              , UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER")
-                              , UserString("FORMAT_LIST_DEFAULT_SINGLE_HEADER")
-                              , UserString("FORMAT_LIST_DEFAULT_EMPTY_HEADER")
-                              , UserString("FORMAT_LIST_DEFAULT_DUAL_HEADER"));
+    return FlexibleFormatList(header_words, words,
+                              UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER"),
+                              UserString("FORMAT_LIST_DEFAULT_SINGLE_HEADER"),
+                              UserString("FORMAT_LIST_DEFAULT_EMPTY_HEADER"),
+                              UserString("FORMAT_LIST_DEFAULT_DUAL_HEADER"));
 }
 
 template<typename T1, typename T2>
