@@ -1,0 +1,62 @@
+Policy
+    name = "PLC_FEUDALISM"
+    description = "PLC_FEUDALISM_DESC"
+    short_description = "PLC_FEUDALISM_SHORT_DESC"
+    category = "ECONOMIC_CATEGORY"
+    adoptioncost = 5 + floor(5 + 0.1 * Statistic Sum value = LocalCandidate.Population
+                                        condition = And [
+                                            Planet
+                                            Unowned
+                                            Species name = Source.Species
+                                            ContainedBy And [
+                                                Object id = RootCandidate.SystemID
+                                                Contains And [
+                                                    Planet
+                                                    Species name = RootCandidate.Species
+                                                    OwnedBy empire = Source.Owner
+                                                ]
+                                            ]
+                                        ])
+    prerequisites = [ "PLC_CONFEDERATION" "PLC_SYSTEM_INFRA" ]
+    exclusions = [ "PLC_CENTRALIZATION" "PLC_LIBERTY" "PLC_ISOLATION" ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
+        // industry-focused planets tht are in systems with unowned populated planets that have the same species, get an industry boost
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INDUSTRY"
+                Species name = Source.Species
+                ContainedBy And [
+                    Object id = RootCandidate.SystemID
+                    Contains And [
+                        InSystem id = RootCandidate.SystemID
+                        Planet
+                        Unowned
+                        Species name = RootCandidate.Species
+                        ResourceSupplyConnected empire = Source.Owner condition = RootCandidate
+                    ]
+                ]
+            ]
+            effects = SetTargetIndustry value = Value +
+                (NamedReal name = "PLC_FEUDALISM_DESC_INDUSTRY_SCALING" value = 3.0) *
+                (Statistic Sum value = LocalCandidate.Population condition = And [
+                    InSystem id = Target.SystemID
+                    Planet
+                    Unowned
+                    Species name = Target.Species
+                ] ^ 0.5) / max(1.0,
+                (Statistic Count condition = And [ // spreads bonus over eligible recipient planets in system
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Species name = Target.Species
+                    Focus type = "FOCUS_IDNUSTRY"
+                    InSystem id = Target.SystemID
+                ]))
+    ]
+    graphic = "icons/policies/feudalism.png"
+
+#include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"

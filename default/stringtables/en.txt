@@ -11744,6 +11744,15 @@ Increases [[metertype METER_TARGET_INDUSTRY]] of industry-focused planets by the
 PLC_COLONIALISM_SHORT_DESC
 Collects Industry from Neutral Planets
 
+PLC_FEUDALISM
+Feudalism
+
+PLC_FEUDALISM_DESC
+Increases [[metertype METER_TARGET_INDUSTRY]] of industry-fovused planets that are in systems with unowned planets that have the same species, by [[value PLC_FEUDALISM_DESC_INDUSTRY_SCALING]] times the square root of the total population of those unowned planets.
+
+PLC_FEUDALISM_SHORT_DESC
+Neutral Planets Boost Industry
+
 PLC_THE_HUNT
 The Hunt
 
