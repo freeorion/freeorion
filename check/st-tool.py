@@ -172,7 +172,7 @@ class StringTable(object):
                 entry.value_times = value_times[entry.key]
 
     @staticmethod
-    def from_file(fhandle, with_blame=True):
+    def from_file(fhandle, with_blame=True, check_brackets=False):
         fpath = fhandle.name
 
         is_quoted = False
@@ -193,8 +193,23 @@ class StringTable(object):
         untranslated_key = None
         untranslated_keyline = None
         untranslated_lines = []
+        if check_brackets:
+            # compile them once to speed up the loop
+            reBrackets = re.compile(r'\[.*\]')
+            reOneBracket = re.compile(r'\[[^\[\]]*\]')
+            reBadBracket = re.compile(r'[\[\]]')
 
         for fline, line in enumerate(fhandle, 1):
+            if check_brackets:
+                # hack for DESC_AND_BEFORE/AFTER_OPERANDS: only check, if there is at least one pair
+                if (reBrackets.search(line)):
+                    aux = line;
+                    while True:
+                        (aux, n) = reOneBracket.subn('', aux)
+                        if n == 0: break;
+                    if reBadBracket.search(aux):
+                        print("{}:{}: Unbalanced brackets: {}".format(fpath, fline, line))
+
             if not is_quoted and not line.strip():
                 # discard empty lines when not in quoted value
                 if section:
@@ -839,7 +854,7 @@ def check_action(args):
     if args.reference:
         reference_st = StringTable.from_file(args.reference, with_blame=False)
     for source in args.sources:
-        source_st = StringTable.from_file(source, with_blame=False)
+        source_st = StringTable.from_file(source, with_blame=False, check_brackets=True)
 
         references = set()
         for key in source_st:
