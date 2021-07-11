@@ -105,7 +105,9 @@ namespace {
     }
 
     std::string EmpireLink(int empire_id, const ScriptingContext& context) {
-        if (auto empire = context.GetEmpire(empire_id)) {
+        if (empire_id == ALL_EMPIRES) {
+            return UserString("NEUTRAL");
+        } else if (auto empire = context.GetEmpire(empire_id)) {
             const std::string& tag = VarText::EMPIRE_ID_TAG;
             std::string empire_wrapped = WrapWithTagAndId(empire->Name(), tag, empire_id);
             return EmpireColorWrappedText(empire_id, empire_wrapped);
@@ -229,6 +231,8 @@ std::string InitialStealthEvent::DebugString(const ScriptingContext& context) co
             (void)object_vis; // quiet warning
             const auto obj = context.ContextObjects().get(object_id);
             int owner_id = obj ? obj->Owner() : ALL_EMPIRES;
+            if (owner_id == ALL_EMPIRES)
+                continue;
             ss << FighterOrPublicNameLink(ALL_EMPIRES, object_id, owner_id, context.ContextObjects());
         }
         ss << "\n";
@@ -265,9 +269,13 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id, con
 
         if (!cloaked_attackers.empty()) {
             desc += "\n"; //< Add \n at start of the report and between each empire
-            std::vector<std::string> detector_empire_link{EmpireLink(detector_empire_id, context)};
-            desc += FlexibleFormatList(detector_empire_link, cloaked_attackers,
-                                       UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
+            if (detector_empire_id != ALL_EMPIRES) {
+                std::vector<std::string> detector_empire_link{EmpireLink(detector_empire_id, context)};
+                desc += FlexibleFormatList(detector_empire_link, cloaked_attackers,
+                                           UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
+            } else {
+                desc += FlexibleFormatList(cloaked_attackers, UserString("ENC_COMBAT_NEUTRAL_INITIAL_STEALTH_LIST")).str();
+            }
         }
     }
 

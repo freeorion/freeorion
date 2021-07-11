@@ -5657,10 +5657,14 @@ The planet %2% was incapacitated
 ENC_COMBAT_DESTROYED_STR
 The ship %2% was destroyed
 
-# %1% unused
+# %1% number of items in list
 # %2% name of empire
 ENC_COMBAT_INITIAL_STEALTH_LIST
-%2% empire initially cannot detect:
+%2% initially cannot detect:
+
+# %1% number of items in list
+ENC_COMBAT_NEUTRAL_INITIAL_STEALTH_LIST
+[[NEUTRAL]] forces initially cannot detect:
 
 # %1 link to the attacking unit
 # %2 link to the defending unit.
