@@ -19,6 +19,7 @@ Policy
                                         ])
     prerequisites = [ "PLC_CONFEDERATION" "PLC_SYSTEM_INFRA" ]
     exclusions = [ "PLC_RACIAL_PURITY" "PLC_NATIVE_APPROPRIATION" "PLC_THE_HUNT" "PLC_ISOLATION" ]
+    unlock = Item type = Policy name = "PLC_COLONIALISM"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 

@@ -1,0 +1,68 @@
+Policy
+    name = "PLC_COLONIALISM"
+    description = "PLC_COLONIALISM_DESC"
+    short_description = "PLC_COLONIALISM_SHORT_DESC"
+    category = "ECONOMIC_CATEGORY"
+    adoptioncost = 5 + floor(5 + 0.1 * Statistic Count condition = And [
+                                            Planet
+                                            Unowned
+                                            Species
+                                            Not ContainedBy Contains And [
+                                                Planet
+                                                Species
+                                                OwnedBy empire = Source.Owner
+                                            ]
+                                            ResourceSupplyConnected empire = Source.Owner condition = And [
+                                                Planet
+                                                Species
+                                                OwnedBy empire = Source.Owner
+                                            ]
+                                        ])
+    prerequisites = [ "PLC_INTERSTELLAR_INFRA" ]
+    exclusions = [ "PLC_RACIAL_PURITY" "PLC_NATIVE_APPROPRIATION" "PLC_ISOLATION" ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
+        // industry-focused planets collect industry output from neutral planets that are in nearby systems in the supply network
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INDUSTRY"
+                ResourceSupplyConnected empire = Source.Owner condition = And [ // needs to be connected to at least one candidate to take industry from...
+                    Not InSystem id = RootCandidate.SystemID
+                    Planet
+                    Species
+                    Unowned
+                    WithinStarlaneJumps jumps = 3 condition = RootCandidate
+                ]
+            ]
+            effects = SetTargetIndustry value = Value +
+                (Statistic Sum
+                    value = (LocalCandidate.Industry / max(1.0, Statistic Count condition = And [ // adjust industry of planets that are collected from by the number of planets that might be simultaneously taking from them
+                        Not InSystem id = RootCandidate.SystemID
+                        Planet
+                        OwnedBy empire = Source.Owner
+                        Focus type = "FOCUS_INDUSTRY"
+                        ResourceSupplyConnected empire = Source.Owner condition = And [
+                            Not InSystem id = RootCandidate.SystemID
+                            Planet
+                            Species
+                            OwnedBy empire = Source.Owner
+                            Focus type = "FOCUS_INDUSTRY"
+                            WithinStarlaneJumps jumps = 3 condition = RootCandidate
+                        ]
+                    ]))
+                    condition = And [ // collect industry from neutral populated planets that are within 3 jumps and that are resource supply connected to the target planet
+                        Not InSystem id = Target.SystemID
+                        Planet
+                        Unowned
+                        Species
+                        WithinStarlaneJumps jumps = 3 condition = Target
+                        ResourceSupplyConnected empire = Source.Owner condition = Target
+                    ])
+    ]
+    graphic = "icons/policies/colonialism.png"
+
+#include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"

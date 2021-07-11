@@ -11735,6 +11735,15 @@ Increases [[metertype METER_TARGET_INFLUENCE]] of influence-focused planets that
 PLC_VASSALIZATION_SHORT_DESC
 Neutral Planets Boost Influence
 
+PLC_COLONIALISM
+Colonialism
+
+PLC_COLONIALISM_DESC
+Increases [[metertype METER_TARGET_INDUSTRY]] of industry-focused planets by the industry output of nearby neutral planets. The contributing neutral planets must be supply connected to the recipient and within 3 starlane jumps and unowned. Multiple recipient planets will share the taken industry evenly.
+
+PLC_COLONIALISM_SHORT_DESC
+Collects Industry from Neutral Planets
+
 PLC_THE_HUNT
 The Hunt
 
