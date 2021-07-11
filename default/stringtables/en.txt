@@ -11726,6 +11726,15 @@ Increasess [[metertype METER_TARGET_RESEARCH]] by [[value PLC_NATIVE_APPROPRIATI
 PLC_NATIVE_APPROPRIATION_SHORT_DESC
 Boosts Research
 
+PLC_VASSALIZATION
+Vassalization
+
+PLC_VASSALIZATION_DESC
+Increases [[metertype METER_TARGET_INFLUENCE]] of influence-focused planets that are in systems with unowned planets that have a different species from the empire capital and from the influence-focused planet, by [[value PLC_VASSALIZATION_INFLUENCE_SCALING]] times the square root of the total population of those unowned planets.
+
+PLC_VASSALIZATION_SHORT_DESC
+Neutral Planets Boost Influence
+
 PLC_THE_HUNT
 The Hunt
 
