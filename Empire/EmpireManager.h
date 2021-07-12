@@ -30,7 +30,7 @@ public:
 
     EmpireManager() = default;
     EmpireManager& operator=(EmpireManager&& other) noexcept;
-    virtual ~EmpireManager();
+    ~EmpireManager() = default;
 
     [[nodiscard]] const const_container_type&           GetEmpires() const;
     [[nodiscard]] std::shared_ptr<const Empire>         GetEmpire(int id) const;  //!< Returns the empire whose ID is \a id, or nullptr if none exist

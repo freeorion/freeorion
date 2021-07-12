@@ -90,7 +90,7 @@ namespace Effect {
     * source or target objects. */
     class FO_COMMON_API Effect {
     public:
-        virtual ~Effect();
+        virtual ~Effect() = default;
 
         virtual void Execute(ScriptingContext& context) const = 0;
 
@@ -105,9 +105,8 @@ namespace Effect {
                              bool include_empire_meter_effects = false,
                              bool only_generate_sitrep_effects = false) const;
 
-        virtual bool operator==(const Effect& rhs) const;
-        bool operator!=(const Effect& rhs) const
-        { return !(*this == rhs); }
+        virtual bool            operator==(const Effect& rhs) const;
+        bool                    operator!=(const Effect& rhs) const { return !(*this == rhs); }
 
         virtual std::string     Dump(unsigned short ntabs = 0) const = 0;
 

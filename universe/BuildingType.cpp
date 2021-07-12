@@ -55,8 +55,7 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
     Init();
 }
 
-BuildingType::~BuildingType()
-{}
+BuildingType::~BuildingType() = default;
 
 bool BuildingType::operator==(const BuildingType& rhs) const {
     if (&rhs == this)

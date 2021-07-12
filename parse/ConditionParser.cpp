@@ -54,6 +54,5 @@ namespace parse {
         start.name("Condition");
     }
 
-    conditions_parser_grammar::~conditions_parser_grammar()
-    {}
+    conditions_parser_grammar::~conditions_parser_grammar() = default;
 }

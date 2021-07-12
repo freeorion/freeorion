@@ -755,9 +755,6 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
 }
 
-EncyclopediaDetailPanel::~EncyclopediaDetailPanel()
-{}
-
 namespace {
     constexpr int BTN_WIDTH = 36;
     constexpr int PAD = 2;

@@ -31,7 +31,7 @@ public:
                                                            GG::RESIZABLE | CLOSABLE | PINABLE,
                             const std::string& config_name = "");
     void CompleteConstruction() override;
-    virtual ~EncyclopediaDetailPanel();
+    ~EncyclopediaDetailPanel() = default;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;

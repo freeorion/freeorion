@@ -14,7 +14,7 @@
 class FieldIcon : public GG::Control {
 public:
     FieldIcon(int field_id);
-    ~FieldIcon();
+    ~FieldIcon() = default;
     void CompleteConstruction() override;
 
     /** Checks to see if point lies inside in-system fleet buttons before

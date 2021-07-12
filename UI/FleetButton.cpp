@@ -88,9 +88,6 @@ void FleetButton::CompleteConstruction() {
     Refresh(m_size);
 }
 
-FleetButton::~FleetButton()
-{}
-
 void FleetButton::Refresh(SizeType size_type) {
     auto fleets_shared = Objects().find<Fleet>(m_fleets);
     std::vector<const Fleet*> fleets;

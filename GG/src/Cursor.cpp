@@ -17,12 +17,6 @@ namespace {
     constexpr bool OUTLINE_CURSOR = false;
 }
 
-Cursor::Cursor()
-{}
-
-Cursor::~Cursor()
-{}
-
 TextureCursor::TextureCursor(std::shared_ptr<Texture> texture,
                              const Pt& hotspot/* = Pt()*/) :
     m_texture(std::move(texture)),

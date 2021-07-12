@@ -209,8 +209,7 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
     m_content_name(std::move(content_name))
 {}
 
-EffectsGroup::~EffectsGroup()
-{}
+EffectsGroup::~EffectsGroup() = default;
 
 bool EffectsGroup::operator==(const EffectsGroup& rhs) const {
     if (&rhs == this)
@@ -391,11 +390,8 @@ std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_group
 
 
 ///////////////////////////////////////////////////////////
-// Effect                                            //
+// Effect                                                //
 ///////////////////////////////////////////////////////////
-Effect::~Effect()
-{}
-
 bool Effect::operator==(const Effect& rhs) const {
     if (this == &rhs)
         return true;

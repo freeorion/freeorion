@@ -12,7 +12,7 @@ class ShaderProgram;
 class BuildingsPanel : public AccordionPanel {
 public:
     BuildingsPanel(GG::X w, int columns, int planet_id);
-    ~BuildingsPanel();
+    ~BuildingsPanel() = default;
     void CompleteConstruction() override;
 
     int PlanetID() const { return m_planet_id; }

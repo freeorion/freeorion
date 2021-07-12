@@ -195,7 +195,7 @@ public:
             \a nl indicates that it is a newline element. */
         TextElement(bool ws, bool nl);
 
-        virtual ~TextElement();
+        virtual ~TextElement() = default;
 
         /** Attach this TextElement to the string \p whole_text, by
             attaching the SubString data member text to \p whole_text.
@@ -239,15 +239,15 @@ public:
         /** The text from the original string represented by the element. */
         Substring text;
 
-        std::vector<X> widths;     ///< The widths of the glyphs in \a text.
-        const bool     whitespace; ///< True iff this is a whitespace element.
-        const bool     newline;    ///< True iff this is a newline element.
+        std::vector<X> widths;             ///< The widths of the glyphs in \a text.
+        const bool     whitespace = false; ///< True iff this is a whitespace element.
+        const bool     newline = false;    ///< True iff this is a newline element.
 
     protected:
-        TextElement();
+        TextElement() = default;
 
     private:
-        mutable X cached_width{0};
+        mutable X cached_width{-X1};
     };
 
     /** \brief TextAndElementsAssembler is used to assemble a matched pair of text and a vector of
@@ -261,7 +261,7 @@ public:
     {
     public:
         TextAndElementsAssembler(const Font& font);
-        ~TextAndElementsAssembler();
+        ~TextAndElementsAssembler(); // needed for unique_ptr<Impl>
 
         /** Return the constructed text.*/
         const std::string& Text() const;
@@ -426,7 +426,7 @@ public:
         std::unique_ptr<GLRGBAColorBuffer> underline_colors;
 
         RenderCache();
-        ~RenderCache();
+        ~RenderCache(); // needed for unique_ptr<forward_declared_class>
     };
 
     /** Construct a font using only the printable ASCII characters.

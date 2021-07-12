@@ -629,19 +629,9 @@ namespace {
 ///////////////////////////////////////
 // class GG::Font::TextElement
 ///////////////////////////////////////
-Font::TextElement::TextElement() :
-    whitespace(false),
-    newline(false),
-    cached_width(-X1)
-{}
-
 Font::TextElement::TextElement(bool ws, bool nl) :
     whitespace(ws),
-    newline(nl),
-    cached_width(-X1)
-{}
-
-Font::TextElement::~TextElement()
+    newline(nl)
 {}
 
 void Font::TextElement::Bind(const std::string& whole_text)
@@ -662,7 +652,6 @@ StrSize Font::TextElement::StringSize() const
 
 CPSize Font::TextElement::CodePointSize() const
 { return CPSize(widths.size()); }
-
 
 bool Font::TextElement::operator==(const TextElement &rhs) const
 {
@@ -850,8 +839,7 @@ Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font) :
 {}
 
 // Required because Impl is defined here
-Font::TextAndElementsAssembler::~TextAndElementsAssembler()
-{}
+Font::TextAndElementsAssembler::~TextAndElementsAssembler() = default;
 
 const std::string& Font::TextAndElementsAssembler::Text() const
 { return m_impl->Text(); }
@@ -955,18 +943,15 @@ bool Font::RenderState::ColorsEmpty() const
 // class GG::Font::RenderCache
 ///////////////////////////////////////
 
-// Must be here for scoped_ptr deleter to work
 Font::RenderCache::RenderCache() :
-    vertices(new GL2DVertexBuffer()),
-    coordinates(new GLTexCoordBuffer()),
-    colors(new GLRGBAColorBuffer()),
-    underline_vertices(new GL2DVertexBuffer()),
-    underline_colors(new GLRGBAColorBuffer())
+    vertices(std::make_unique<GL2DVertexBuffer>()),
+    coordinates(std::make_unique<GLTexCoordBuffer>()),
+    colors(std::make_unique<GLRGBAColorBuffer>()),
+    underline_vertices(std::make_unique<GL2DVertexBuffer>()),
+    underline_colors(std::make_unique<GLRGBAColorBuffer>())
 {}
 
-// Must be here for unique_ptr deleter to work
-Font::RenderCache::~RenderCache()
-{}
+Font::RenderCache::~RenderCache() = default;
 
 ///////////////////////////////////////
 // class GG::Font::LineData::CharData

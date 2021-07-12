@@ -212,8 +212,7 @@ void CombatReportWnd::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 }
 
-CombatReportWnd::~CombatReportWnd()
-{}
+CombatReportWnd::~CombatReportWnd() = default;
 
 void CombatReportWnd::SetLog(int log_id)
 { m_impl->SetLog(log_id); }

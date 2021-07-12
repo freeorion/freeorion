@@ -32,9 +32,8 @@ class Texture;
 class GG_API Cursor
 {
 public:
-    Cursor();
-
-    virtual ~Cursor();
+    Cursor() = default;
+    virtual ~Cursor() = default;
 
     /** Renders the cursor at the specified location.  Subclasses should take
         care to ensure that the cursor's "hotspot" is rendered at \a pt. */

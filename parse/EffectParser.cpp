@@ -79,8 +79,7 @@ namespace parse {
         start.name("Effect");
     }
 
-    effects_parser_grammar::~effects_parser_grammar()
-    {};
+    effects_parser_grammar::~effects_parser_grammar() = default;
 
     effects_group_grammar::effects_group_grammar(
         const lexer& tok,

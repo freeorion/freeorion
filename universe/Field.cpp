@@ -12,9 +12,6 @@
 /////////////////////////////////////////////////
 // Field                                       //
 /////////////////////////////////////////////////
-Field::~Field()
-{}
-
 Field::Field(const std::string& field_type, double x, double y, double radius) :
     UniverseObject("", x, y),
     m_type_name(field_type)

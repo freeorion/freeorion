@@ -80,9 +80,6 @@ void BuildingsPanel::CompleteConstruction() {
     RequirePreRender();
 }
 
-BuildingsPanel::~BuildingsPanel()
-{}
-
 void BuildingsPanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_planet_id]) return; // nothing to do
     s_expanded_map[m_planet_id] = expanded;

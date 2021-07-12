@@ -27,9 +27,6 @@ EmpireManager& EmpireManager::operator=(EmpireManager&& other) noexcept {
     return *this;
 }
 
-EmpireManager::~EmpireManager()
-{}
-
 const EmpireManager::const_container_type& EmpireManager::GetEmpires() const
 { return m_const_empire_map; }
 

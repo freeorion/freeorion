@@ -1104,8 +1104,7 @@ ShipDesignManager::ShipDesignManager() :
     m_saved_designs(std::make_unique<SavedDesignsManager>())
 {}
 
-ShipDesignManager::~ShipDesignManager()
-{}
+ShipDesignManager::~ShipDesignManager() = default;
 
 void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
     auto empire = GetEmpire(empire_id);

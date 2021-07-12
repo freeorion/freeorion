@@ -32,9 +32,6 @@ void FieldIcon::CompleteConstruction() {
     Refresh();
 }
 
-FieldIcon::~FieldIcon()
-{}
-
 int FieldIcon::FieldID() const
 { return m_field_id; }
 

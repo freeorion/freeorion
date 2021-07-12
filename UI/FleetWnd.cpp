@@ -1036,7 +1036,7 @@ class FleetDataPanel : public GG::Control {
 public:
     FleetDataPanel(GG::X w, GG::Y h, int fleet_id);
     FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_drop_target);
-    ~FleetDataPanel();
+    ~FleetDataPanel() = default;
 
     /** Upper left plus border insets. */
     GG::Pt ClientUpperLeft() const override;
@@ -1121,9 +1121,6 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     RequirePreRender();
     SetChildClippingMode(ChildClippingMode::ClipToClient);
 }
-
-FleetDataPanel::~FleetDataPanel()
-{}
 
 GG::Pt FleetDataPanel::ClientUpperLeft() const
 { return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }

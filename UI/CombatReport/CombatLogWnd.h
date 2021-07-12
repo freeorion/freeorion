@@ -11,12 +11,10 @@ class CombatLogWnd : public GG::Wnd {
 public:
     CombatLogWnd(GG::X w, GG::Y h);
 
-    virtual ~CombatLogWnd();
+    ~CombatLogWnd();
 
     GG::Pt ClientUpperLeft() const override;
-
     GG::Pt ClientLowerRight() const override;
-
     GG::Pt MinUsableSize() const override;
 
     void PreRender() override;

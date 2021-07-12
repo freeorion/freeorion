@@ -41,7 +41,7 @@ public:
     void ClampMeters() override;
 
     Field(const std::string& field_type, double x, double y, double radius);
-    ~Field();
+    ~Field() = default;
 
 protected:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);

@@ -226,7 +226,7 @@ namespace {
     public:
         CombatLogAccordionPanel(GG::X w, CombatLogWnd::Impl &log_,
                                 int viewing_empire_id_, ConstCombatEventPtr event_);
-        ~CombatLogAccordionPanel();
+        ~CombatLogAccordionPanel() = default;
         void CompleteConstruction() override;
 
     private:
@@ -267,9 +267,6 @@ namespace {
         RequirePreRender();
     }
 
-    CombatLogAccordionPanel::~CombatLogAccordionPanel()
-    {}
-
     void CombatLogAccordionPanel::ToggleExpansion() {
         bool new_collapsed = !IsCollapsed();
         if (new_collapsed) {
@@ -297,7 +294,7 @@ namespace {
                                    int empire_id,
                                    std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces_);
 
-        ~EmpireForcesAccordionPanel();
+        ~EmpireForcesAccordionPanel() = default;
 
         void CompleteConstruction() override;
 
@@ -342,8 +339,6 @@ namespace {
         SetCollapsed(true);
         RequirePreRender();
     }
-
-    EmpireForcesAccordionPanel::~EmpireForcesAccordionPanel() {}
 
     void EmpireForcesAccordionPanel::ToggleExpansion() {
         bool new_collapsed = !IsCollapsed();
@@ -633,9 +628,7 @@ CombatLogWnd::CombatLogWnd(GG::X w, GG::Y h) :
     SetName("CombatLogWnd");
 }
 
-// This virtual destructor must exist to ensure that the m_impl is destroyed.
-CombatLogWnd::~CombatLogWnd()
-{}
+CombatLogWnd::~CombatLogWnd() = default;
 
 void CombatLogWnd::SetFont(std::shared_ptr<GG::Font> font)
 { m_impl->SetFont(std::move(font)); }

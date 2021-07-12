@@ -7000,8 +7000,7 @@ EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRe
     EmpireHasAdoptedPolicy(nullptr, std::move(name))
 {}
 
-EmpireHasAdoptedPolicy::~EmpireHasAdoptedPolicy()
-{}
+EmpireHasAdoptedPolicy::~EmpireHasAdoptedPolicy() = default;
 
 bool EmpireHasAdoptedPolicy::operator==(const Condition& rhs) const {
     if (this == &rhs)
