@@ -1,4 +1,6 @@
 #include "FreeOrionNode.h"
+#include "GodotFleet.h"
+#include "GodotSystem.h"
 
 extern "C" void GDN_EXPORT godot_gdnative_init(godot_gdnative_init_options *o) {
     // ToDo: use future OS::get_native_handle instead
@@ -22,5 +24,7 @@ extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
     godot::Godot::nativescript_init(handle);
 
     godot::register_class<FreeOrionNode>();
+    godot::register_class<GodotFleet>();
+    godot::register_class<GodotSystem>();
 }
 
