@@ -4,35 +4,35 @@ Policy
     short_description = "PLC_DIVINE_AUTHORITY_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
     adoptioncost = 1.0*floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
-    prerequisites = [ "PLC_CENTRALIZATION" ]
-    //exclusions = [ "PLC_MERITOCRACY" ]
+    prerequisites = [ "PLC_INDOCTRINATION" ]
+    exclusions = [ "PLC_LIBERTY" "PLC_ALGORITHMIC_RESEARCH" ]
     unlock = Item type = Policy name = "PLC_FEUDALISM"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
-        // makes all planets more stable and influentential, but impair research
+        // makes all planets more stable and influentential, but impairs research
         EffectsGroup
-        scope = And [
-            Planet
-            OwnedBy empire = Source.Owner
-            Population low = 0.001
-        ]
-        effects = [
-            SetTargetHappiness value = Value
-                + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_HAPPINESS_FLAT" value = 4)
-            SetTargetResearch value = Value
-                + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_RESEARCH_FLAT" value = -5)
-        ]
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
+            ]
+            effects = [
+                SetTargetHappiness value = Value
+                    + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_HAPPINESS_FLAT" value = 4)
+                SetTargetResearch value = Value
+                    + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_RESEARCH_FLAT" value = -5)
+            ]
         EffectsGroup
-        scope = And [
-            Planet
-            OwnedBy empire = Source.Owner
-            Population low = 0.001
-            Happiness low = (NamedReal name = "PLC_DIVINE_AUTHORITY_MIN_STABILITY" value = 10)
-        ]
-        effects =
-            SetTargetInfluence value = Value
-                + (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_INFLUENCE_FLAT" value = 1)
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
+                Happiness low = (NamedReal name = "PLC_DIVINE_AUTHORITY_MIN_STABILITY" value = 10)
+            ]
+            effects =
+                SetTargetInfluence value = Value +
+                    (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_INFLUENCE_FLAT" value = 1)
     ]
     graphic = "icons/policies/divine_authority.png"
 
