@@ -87,9 +87,6 @@ void MilitaryPanel::CompleteConstruction() {
     Refresh();
 }
 
-MilitaryPanel::~MilitaryPanel()
-{}
-
 void MilitaryPanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_planet_id]) return; // nothing to do
     s_expanded_map[m_planet_id] = expanded;

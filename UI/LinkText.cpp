@@ -291,15 +291,10 @@ struct TextLinker::Link {
 ///////////////////////////////////////
 // TextLinker
 ///////////////////////////////////////
-TextLinker::TextLinker() :
-    m_links(),
-    m_rollover_link(-1)
-{
-    RegisterLinkTags();
-}
+TextLinker::TextLinker()
+{ RegisterLinkTags(); }
 
-TextLinker::~TextLinker()
-{}
+TextLinker::~TextLinker() = default;
 
 void TextLinker::SetDecorator(const std::string& link_type, LinkDecorator* decorator) {
     m_decorators[link_type] = std::shared_ptr<LinkDecorator>(decorator);
@@ -310,9 +305,8 @@ std::string TextLinker::LinkDefaultFormatTag(const Link& link, const std::string
     const LinkDecorator* decorator = &DEFAULT_DECORATOR;
 
     auto it = m_decorators.find(link.type);
-    if (it != m_decorators.end()){
+    if (it != m_decorators.end())
         decorator = it->second.get();
-    }
 
     return decorator->Decorate(link.data, content);
 }

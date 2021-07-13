@@ -18,7 +18,7 @@ public:
     boost::signals2::signal<void()> MinSizeChangedSignal;
 
     GraphicalSummaryWnd();
-    ~GraphicalSummaryWnd();
+    ~GraphicalSummaryWnd(); // needed for unique_ptr
 
     /// Get the minimum size of this window required to show all of its
     /// children

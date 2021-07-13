@@ -866,6 +866,8 @@ MapWnd::MovementLineData::MovementLineData() :
     colour(GG::CLR_ZERO)
 {}
 
+MapWnd::MovementLineData::~MovementLineData() = default;
+
 MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
                                            const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
                                            GG::Clr colour_/*= GG::CLR_WHITE*/, int empireID /*= ALL_EMPIRES*/) :
@@ -1530,9 +1532,6 @@ void MapWnd::CompleteConstruction() {
     m_timeout_clock.Stop();
     m_timeout_clock.Connect(this);
 }
-
-MapWnd::~MapWnd()
-{}
 
 void MapWnd::DoLayout() {
     m_toolbar->Resize(GG::Pt(AppWidth(), TOOLBAR_HEIGHT));

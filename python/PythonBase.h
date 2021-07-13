@@ -12,8 +12,8 @@
 
 class PythonBase : public PythonCommon {
 public:
-    PythonBase();
-    virtual ~PythonBase();
+    PythonBase() = default;
+    ~PythonBase();
 
     bool         Initialize();                         // initializes and runs the Python interpreter, prepares the Python environment
     virtual bool InitCommonImports() override;         // initializes Python imports, must be implemented by derived classes

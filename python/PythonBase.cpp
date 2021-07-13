@@ -19,15 +19,11 @@ BOOST_PYTHON_MODULE(freeorion_logger) {
     FreeOrionPython::WrapLogger();
 }
 
-PythonBase::PythonBase()
-{}
-
 PythonBase::~PythonBase()
 { Finalize(); }
 
 bool PythonBase::Initialize() {
     if (!PythonCommon::Initialize()) {
-
 
 #if defined(MS_WINDOWS)
         // forces stream encoding to UTF8, which will hopefully fix issues on windows with non-english locale settings

@@ -183,9 +183,6 @@ void ModeratorActionsWnd::CompleteConstruction() {
     SaveDefaultedOptions();
 }
 
-ModeratorActionsWnd::~ModeratorActionsWnd()
-{}
-
 void ModeratorActionsWnd::NoAction() {
     m_selected_action = ModeratorActionSetting::MAS_NoAction;
     NoActionSelectedSignal();

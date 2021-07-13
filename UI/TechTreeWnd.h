@@ -28,7 +28,6 @@ public:
         tech categories are not parsed until the first time Show() is
         called, speeding up the constructor and preventing spurious errors.*/
     TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden = true);
-    ~TechTreeWnd();
     void CompleteConstruction() override;
 
     double Scale() const;

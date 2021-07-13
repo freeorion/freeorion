@@ -105,7 +105,7 @@ private:
     std::string LinkRolloverFormatTag(const Link& link, const std::string& content) const;
 
     std::vector<Link>                       m_links;
-    int                                     m_rollover_link;
+    int                                     m_rollover_link = -1;
     std::map<std::string, LinkDecoratorPtr> m_decorators;
     static const LinkDecorator DEFAULT_DECORATOR;
 };

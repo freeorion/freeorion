@@ -189,8 +189,6 @@ private:
 
 class HotkeyManager {
 public:
-    ~HotkeyManager();
-
     /// Rebuilds all shortcuts/connections. Should be called again at
     /// the end of every function that registers new connections (just
     /// once, though cause calling it every time would get expensive),
@@ -204,9 +202,8 @@ public:
     void Connect(std::function<bool()> func, const std::string& name, std::function<bool()> cond = nullptr)
     { AddConditionalConnection(name, NamedSignal(name).connect(func), cond); };
 
-
 private:
-    HotkeyManager();
+    HotkeyManager() = default;
 
     /// The shortcut processing function. Passed using boost::bind.
     bool ProcessNamedShortcut(const std::string& name, GG::Key key, GG::Flags<GG::ModKey> mod);

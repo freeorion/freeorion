@@ -7,9 +7,6 @@
 
 namespace py = boost::python;
 
-PythonCommon::PythonCommon()
-{ }
-
 PythonCommon::~PythonCommon()
 { Finalize(); }
 

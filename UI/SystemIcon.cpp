@@ -310,9 +310,6 @@ void SystemIcon::CompleteConstruction() {
     Refresh();
 }
 
-SystemIcon::~SystemIcon()
-{}
-
 int SystemIcon::SystemID() const
 { return m_system_id; }
 

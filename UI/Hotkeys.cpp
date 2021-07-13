@@ -338,12 +338,6 @@ bool AndCondition::operator()() const {
 //////////////////////////////////////////////////////////////////////
 HotkeyManager* HotkeyManager::s_singleton = nullptr;
 
-HotkeyManager::HotkeyManager()
-{}
-
-HotkeyManager::~HotkeyManager()
-{}
-
 HotkeyManager* HotkeyManager::GetManager() {
     if (!s_singleton)
         s_singleton = new HotkeyManager;

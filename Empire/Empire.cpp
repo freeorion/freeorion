@@ -76,7 +76,7 @@ void Empire::Init() {
     //m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
     //m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
     //m_meters[UserStringNop("METER_TECH_COST_FACTOR")];
-    for (auto entry : PolicyCategoriesSlotsMeters())
+    for (const auto& entry : PolicyCategoriesSlotsMeters())
         m_meters[entry.second];
 }
 

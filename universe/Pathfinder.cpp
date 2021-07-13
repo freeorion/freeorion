@@ -714,8 +714,7 @@ Pathfinder::Pathfinder() :
     pimpl(new PathfinderImpl)
 {}
 
-Pathfinder::~Pathfinder()
-{}
+Pathfinder::~Pathfinder() = default;
 
 namespace {
     std::shared_ptr<const Fleet> FleetFromObject(const std::shared_ptr<const UniverseObject>& obj,

@@ -516,8 +516,6 @@ namespace {
 class SidePanel::PlanetPanel : public GG::Control {
 public:
     PlanetPanel(GG::X w, int planet_id, StarType star_type);
-
-    ~PlanetPanel();
     void CompleteConstruction() override;
 
     bool InWindow(const GG::Pt& pt) const override;
@@ -609,7 +607,6 @@ private:
 class SidePanel::PlanetPanelContainer : public GG::Wnd {
 public:
     PlanetPanelContainer();
-    ~PlanetPanelContainer();
 
     bool InWindow(const GG::Pt& pt) const override;
 
@@ -620,7 +617,6 @@ public:
     int                     ScrollPosition() const;
 
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
-
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void PreRender() override;
@@ -667,11 +663,11 @@ private:
     void VScroll(int pos_top, int pos_bottom, int range_min, int range_max); //!< responds to user scrolling of planet panels list.  all but first parameter ignored
 
     std::vector<std::shared_ptr<PlanetPanel>>   m_planet_panels;
-    int                                         m_selected_planet_id;
+    int                                         m_selected_planet_id = INVALID_OBJECT_ID;
     std::set<int>                               m_candidate_ids;
     std::shared_ptr<UniverseObjectVisitor>      m_valid_selection_predicate;
     std::shared_ptr<GG::Scroll>                 m_vscroll; ///< the vertical scroll (for viewing all the planet panes);
-    bool                                        m_ignore_recursive_resize;
+    bool                                        m_ignore_recursive_resize = false;
 };
 
 class RotatingPlanetControl : public GG::Control {
@@ -1035,9 +1031,6 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     RequirePreRender();
 }
-
-SidePanel::PlanetPanel::~PlanetPanel()
-{}
 
 void SidePanel::PlanetPanel::DoLayout() {
     GG::X left = GG::X0 + MaxPlanetDiameter() + EDGE_PAD;
@@ -2498,10 +2491,7 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
 ////////////////////////////////////////////////
 SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
     Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
-    m_planet_panels(),
-    m_selected_planet_id(INVALID_OBJECT_ID),
-    m_vscroll(GG::Wnd::Create<CUIScroll>(GG::Orientation::VERTICAL)),
-    m_ignore_recursive_resize(false)
+    m_vscroll(GG::Wnd::Create<CUIScroll>(GG::Orientation::VERTICAL))
 {
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ChildClippingMode::ClipToClient);
@@ -2512,9 +2502,6 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer() :
         boost::bind(&SidePanel::PlanetPanelContainer::VScroll, this, ph::_1, ph::_2, ph::_3, ph::_4));
     RequirePreRender();
 }
-
-SidePanel::PlanetPanelContainer::~PlanetPanelContainer()
-{}
 
 bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const {
     // ensure pt is below top of container

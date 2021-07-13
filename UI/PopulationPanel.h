@@ -16,7 +16,6 @@ class StatisticIcon;
 class PopulationPanel : public AccordionPanel {
 public:
     PopulationPanel(GG::X w, int object_id);
-    ~PopulationPanel();
     void CompleteConstruction() override;
 
     int PopCenterID() const { return m_popcenter_id; }

@@ -82,9 +82,6 @@ void InGameMenu::CompleteConstruction() {
     DoLayout();
 }
 
-InGameMenu::~InGameMenu()
-{}
-
 GG::Rect InGameMenu::CalculatePosition() const {
     constexpr GG::X H_MAINMENU_MARGIN{40};  //horizontal empty space
     constexpr GG::Y V_MAINMENU_MARGIN{40};  //vertical empty space

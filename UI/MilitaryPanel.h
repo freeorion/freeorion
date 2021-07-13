@@ -14,7 +14,6 @@ class StatisticIcon;
 class MilitaryPanel : public AccordionPanel {
 public:
     MilitaryPanel(GG::X w, int planet_id);
-    ~MilitaryPanel();
     void CompleteConstruction() override;
 
     int PlanetID() const { return m_planet_id; }

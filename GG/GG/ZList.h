@@ -41,8 +41,6 @@ class Wnd;
 class GG_API ZList
 {
 public:
-    ~ZList();
-
     /** RenderOrderIterable can be iterated in back to front render order. */
     struct RenderOrderIterable {
         RenderOrderIterable(const std::list<std::shared_ptr<Wnd>>& list) :

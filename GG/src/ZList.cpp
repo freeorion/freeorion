@@ -42,13 +42,10 @@ std::shared_ptr<Wnd> PickWithinWindow(const Pt& pt, std::shared_ptr<Wnd> wnd,
 ///////////////////////////////////////
 // class GG::ZList
 ///////////////////////////////////////
-
-
-ZList::~ZList()
-{}
-
 ZList::RenderOrderIterable ZList::RenderOrder() const
 { return RenderOrderIterable(m_list); }
+
+
 
 std::shared_ptr<Wnd> ZList::Pick(const Pt& pt, const std::shared_ptr<Wnd>& modal, const std::set<Wnd*>* ignore/* = 0*/) const
 {

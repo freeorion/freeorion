@@ -132,9 +132,8 @@ IntroMenu::IntroMenu(my_context ctx) :
     GetGameRules().ResetToDefaults();
 }
 
-IntroMenu::~IntroMenu() {
-    TraceLogger(FSM) << "(HumanClientFSM) ~IntroMenu";
-}
+IntroMenu::~IntroMenu()
+{ TraceLogger(FSM) << "(HumanClientFSM) ~IntroMenu"; }
 
 boost::statechart::result IntroMenu::react(const HostSPGameRequested& a) {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu.HostSPGameRequested";
@@ -451,9 +450,8 @@ MPLobby::MPLobby(my_context ctx) :
     wnd->CleanupChat();
 }
 
-MPLobby::~MPLobby() {
-    TraceLogger(FSM) << "(HumanClientFSM) ~MPLobby";
-}
+MPLobby::~MPLobby()
+{ TraceLogger(FSM) << "(HumanClientFSM) ~MPLobby"; }
 
 boost::statechart::result MPLobby::react(const Disconnection& d) {
     TraceLogger(FSM) << "(HumanClientFSM) MPLobby.Disconnection";
@@ -634,9 +632,8 @@ PlayingGame::PlayingGame(my_context ctx) :
     Client().GetClientUI().GetMapWnd()->Show();
 }
 
-PlayingGame::~PlayingGame() {
-    TraceLogger(FSM) << "(HumanClientFSM) ~PlayingGame";
-}
+PlayingGame::~PlayingGame()
+{ TraceLogger(FSM) << "(HumanClientFSM) ~PlayingGame"; }
 
 boost::statechart::result PlayingGame::react(const HostID& msg) {
     const int initial_host_id = Client().Networking().HostPlayerID();

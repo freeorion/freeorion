@@ -580,8 +580,7 @@ GraphicalSummaryWnd::GraphicalSummaryWnd() :
     GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS)
 {}
 
-GraphicalSummaryWnd::~GraphicalSummaryWnd()
-{}
+GraphicalSummaryWnd::~GraphicalSummaryWnd() = default;
 
 GG::Pt GraphicalSummaryWnd::MinUsableSize() const {
     GG::Pt min_size(GG::X0, GG::Y0);

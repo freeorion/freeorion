@@ -31,12 +31,6 @@
 
 using namespace GG;
 
-StyleFactory::StyleFactory()
-{}
-
-StyleFactory::~StyleFactory()
-{}
-
 std::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts/* = 12*/) const
 {
     if (GetFontManager().HasFont(DefaultFontName(), pts)) {

@@ -93,9 +93,6 @@ void ResourcePanel::CompleteConstruction() {
     Refresh();
 }
 
-ResourcePanel::~ResourcePanel()
-{}
-
 void ResourcePanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_rescenter_id]) return; // nothing to do
     s_expanded_map[m_rescenter_id] = expanded;

@@ -42,15 +42,13 @@ class SystemIcon : public GG::Control {
 public:
     /** Construct from a universe ID at specified size and position. */
     SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id);
-
-    ~SystemIcon();
     void CompleteConstruction() override;
 
     /** Checks to see if point lies inside in-system fleet buttons before
         checking parent InWindow method. */
     bool InWindow(const GG::Pt& pt) const override;
 
-    int             SystemID() const;                           //!< returns ID of system this icon represents
+    int SystemID() const;                           //!< returns ID of system this icon represents
 
     /** Returns the solid star disc texture. */
     const std::shared_ptr<GG::Texture>& DiscTexture() const;
@@ -61,37 +59,31 @@ public:
     /** Returns the alternate texture shown when icon very small. */
     const std::shared_ptr<GG::Texture>& TinyTexture() const;
 
-    GG::Pt          NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const; //!< returns upper left point of moving or stationary fleetbutton number \a button_number
-    int             EnclosingCircleDiameter() const;        //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon
+    GG::Pt NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const; //!< returns upper left point of moving or stationary fleetbutton number \a button_number
+    int    EnclosingCircleDiameter() const;        //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void Render() override;
 
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
-
     void MouseLeave() override;
-
     void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void            RenderDisc();
-    void            RenderHalo(double scale_factor);
-    void            RenderOverlay(double zoom_factor);
+    void RenderDisc();
+    void RenderHalo(double scale_factor);
+    void RenderOverlay(double zoom_factor);
 
-    void            SetSelected(bool selected = true);   //!< shows/hides the system selection indicator over this system
+    void SetSelected(bool selected = true);   //!< shows/hides the system selection indicator over this system
 
-    void            Refresh();                      //!< Resets system name text and calls RefreshFleetButtons().  Should be called after an icon is attached to the map
+    void Refresh();                      //!< Resets system name text and calls RefreshFleetButtons().  Should be called after an icon is attached to the map
 
-    void            ShowName();                     //!< enables the system name text
-    void            HideName();                     //!< disables the system name text
+    void ShowName();                     //!< enables the system name text
+    void HideName();                     //!< disables the system name text
 
     mutable boost::signals2::signal<void (int, GG::Flags< GG::ModKey > mod_keys)> MouseEnteringSignal;
     mutable boost::signals2::signal<void (int)> MouseLeavingSignal;

@@ -1444,9 +1444,6 @@ void OptionsWnd::HotkeysPage() {
     m_tabs->SetCurrentWnd(0);
 }
 
-OptionsWnd::~OptionsWnd()
-{}
-
 void OptionsWnd::KeyPress(GG::Key key, std::uint32_t key_code_point,
                           GG::Flags<GG::ModKey> mod_keys)
 {

@@ -16,7 +16,6 @@ class StatisticIcon;
 class ResourcePanel : public AccordionPanel {
 public:
     ResourcePanel(GG::X w, int object_id);
-    ~ResourcePanel();
     void CompleteConstruction() override;
 
     int ResourceCenterID() const { return m_rescenter_id; }

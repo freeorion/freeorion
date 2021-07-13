@@ -91,20 +91,15 @@ void TechTreeLayout::Edge::Debug() const {
     DebugLogger() << "\n";
 }
 
-/**
- * releases all resources
- */
 TechTreeLayout::~TechTreeLayout() {
     for (Node* node : m_nodes)
         delete node;
 }
 
-/**
- * creates and initialises all nodes
- * @param column_width width of each column
- * @param row_height height of each row
- * @param x_margin horizontal part of arrow before changing direction to child node
- */
+/** creates and initialises all nodes
+  * @param column_width width of each column
+  * @param row_height height of each row
+  * @param x_margin horizontal part of arrow before changing direction to child node */
 void TechTreeLayout::DoLayout(double column_width, double row_height, double x_margin) {
     assert(column_width > 0 && row_height > 0);
     double internal_height = row_height / NODE_CELL_HEIGHT; // node has NODE_CELL_HEIGHT rows internally

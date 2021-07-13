@@ -1098,7 +1098,6 @@ namespace {
 //////////////////////////////////////////////////
 // ShipDesignManager                            //
 //////////////////////////////////////////////////
-
 ShipDesignManager::ShipDesignManager() :
     m_displayed_designs(std::make_unique<DisplayedShipDesignManager>()),
     m_saved_designs(std::make_unique<SavedDesignsManager>())

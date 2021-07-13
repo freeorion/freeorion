@@ -641,14 +641,12 @@ private:
 class TechTreeWnd::LayoutPanel::TechPanel : public GG::Wnd {
 public:
     TechPanel(const std::string& tech_name, const TechTreeWnd::LayoutPanel* panel);
-    virtual         ~TechPanel();
     void CompleteConstruction() override;
 
     bool InWindow(const GG::Pt& pt) const override;
 
     /** Update layout and format only if required.*/
     void PreRender() override;
-
     void Render() override;
 
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override
@@ -727,9 +725,6 @@ void TechTreeWnd::LayoutPanel::TechPanel::CompleteConstruction() {
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     Update();
 }
-
-TechTreeWnd::LayoutPanel::TechPanel::~TechPanel()
-{}
 
 int TechTreeWnd::LayoutPanel::TechPanel::FontSize() const
 { return ClientUI::Pts() * 3 / 2; }
@@ -1524,21 +1519,18 @@ bool TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard() {
 class TechTreeWnd::TechListBox : public CUIListBox {
 public:
     TechListBox(GG::X w, GG::Y h);
-    virtual ~TechListBox();
-
     void CompleteConstruction() override;
 
     bool TechRowCmp(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column);
 
-    void    Reset();
-    void    Update(bool populate = true);
-
-    void    ShowCategory(const std::string& category);
-    void    ShowAllCategories();
-    void    HideCategory(const std::string& category);
-    void    HideAllCategories();
-    void    ShowStatus(TechStatus status);
-    void    HideStatus(TechStatus status);
+    void Reset();
+    void Update(bool populate = true);
+    void ShowCategory(const std::string& category);
+    void ShowAllCategories();
+    void HideCategory(const std::string& category);
+    void HideAllCategories();
+    void ShowStatus(TechStatus status);
+    void HideStatus(TechStatus status);
 
     mutable TechClickSignalType TechLeftClickedSignal;  ///< emitted when a technology is single-left-clicked
     mutable TechClickSignalType TechDoubleClickedSignal;///< emitted when a technology is double-clicked
@@ -1548,7 +1540,6 @@ private:
     class TechRow : public CUIListBox::Row {
     public:
         TechRow(GG::X w, const std::string& tech_name);
-
         void CompleteConstruction() override;
 
         void Render() override;
@@ -1828,11 +1819,7 @@ void TechTreeWnd::TechListBox::CompleteConstruction() {
     SetSortCmp([&](const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t col) { return TechRowCmp(lhs, rhs, col); });
 }
 
-TechTreeWnd::TechListBox::~TechListBox()
-{}
-
-void TechTreeWnd::TechListBox::Reset()
-{
+void TechTreeWnd::TechListBox::Reset() {
     m_tech_row_cache.clear();
     Populate();
 }
@@ -2102,9 +2089,6 @@ void TechTreeWnd::CompleteConstruction() {
 
     ShowTreeView();
 }
-
-TechTreeWnd::~TechTreeWnd()
-{}
 
 void TechTreeWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();

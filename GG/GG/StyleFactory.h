@@ -56,10 +56,6 @@ struct UnicodeCharset;
 class GG_API StyleFactory
 {
 public:
-    StyleFactory();
-
-    virtual ~StyleFactory();
-
     /** Returns the default font for this style, in the size \a pts,
         supporting all printable ASCII characters. */
     virtual std::shared_ptr<Font> DefaultFont(unsigned int pts = 12) const;

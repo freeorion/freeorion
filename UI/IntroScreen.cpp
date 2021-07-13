@@ -335,28 +335,20 @@ void IntroScreen::CompleteConstruction() {
     RequirePreRender();
 }
 
-IntroScreen::~IntroScreen()
-{}
+void IntroScreen::OnContinue()
+{ GGHumanClientApp::GetApp()->ContinueSinglePlayerGame(); }
 
-void IntroScreen::OnContinue() {
-    GGHumanClientApp::GetApp()->ContinueSinglePlayerGame();
-}
+void IntroScreen::OnSinglePlayer()
+{ GGHumanClientApp::GetApp()->NewSinglePlayerGame(); }
 
-void IntroScreen::OnSinglePlayer() {
-    GGHumanClientApp::GetApp()->NewSinglePlayerGame();
-}
+void IntroScreen::OnQuickStart()
+{ GGHumanClientApp::GetApp()->NewSinglePlayerGame(true); }
 
-void IntroScreen::OnQuickStart() {
-    GGHumanClientApp::GetApp()->NewSinglePlayerGame(true);
-}
+void IntroScreen::OnMultiPlayer()
+{ GGHumanClientApp::GetApp()->MultiPlayerGame(); }
 
-void IntroScreen::OnMultiPlayer() {
-    GGHumanClientApp::GetApp()->MultiPlayerGame();
-}
-
-void IntroScreen::OnLoadGame() {
-    GGHumanClientApp::GetApp()->LoadSinglePlayerGame();
-}
+void IntroScreen::OnLoadGame()
+{ GGHumanClientApp::GetApp()->LoadSinglePlayerGame(); }
 
 void IntroScreen::OnOptions() {
     auto options_wnd = GG::Wnd::Create<OptionsWnd>(false);
