@@ -7,31 +7,55 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
+        // Two effects: Stationary ships bonus, Multi starlane attack bonus
+        //  Stationary ships bonus:
         // if, on the previous turn, the empire that adopted this policy had more ships in the system
         // than there were enemy ships in the system, give them a bonus. ships arriving on the turn of
         // a battle do not receive or contribute to this effect.
+        //
+        // Multi starlane attack bonus:
+        // if, on the previous turn ships were coming in from different starlanes, give them a bonus
+        // Note: the system must be set as the final destination
         EffectsGroup
             scope = And [
                 Ship
                 OwnedBy empire = Source.Owner
                 Armed
-                InSystem
-                Stationary
-                ((
-                    Statistic Count condition = And [
-                        Ship
-                        InSystem id = RootCandidate.SystemID
-                        OwnedBy empire = Source.Owner
-                        Armed
-                    ]
-                 ) > (
-                    Statistic Count condition = And [
-                        Ship
-                        InSystem id = RootCandidate.SystemID
-                        OwnedBy affiliation = EnemyOf empire = Source.Owner
-                    ]
-                 )
-                )
+                (LocalCandidate.Fleet.ETA = 1)
+                Or [
+                   // Stationary ships bonus (prepared defensive flanking)
+                   And [ Planet
+                       InSystem
+                       Stationary
+                       ((
+                           Statistic Count condition = And [
+                               Ship
+                               InSystem id = RootCandidate.SystemID
+                               OwnedBy empire = Source.Owner
+                               Armed
+                           ]
+                        ) > (
+                           Statistic Count condition = And [
+                               Ship
+                               InSystem id = RootCandidate.SystemID
+                               OwnedBy affiliation = EnemyOf empire = Source.Owner
+                           ]
+                        )
+                       )
+                   ]
+                   // Multi starlane attack bonus (pincer attack)
+                       (( Statistic CountUnique
+                          value = LocalCandidate.PreviousToFinalDestinationID
+                          condition = And [
+                              Fleet
+                              OwnedBy empire = RootCandidate.Owner
+                              (LocalCandidate.FinalDestinationID = RootCandidate.Fleet.FinalDestinationID)
+                              (LocalCandidate.ETA = 1)
+                              Contains condition = And [ Ship Armed ]
+                          ]
+                        ) > 1
+                       )
+                ]
             ]
             effects = [
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + (NamedReal name = "PLC_FLANKING_DAMAGE_BOOST" value = 1.0 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )

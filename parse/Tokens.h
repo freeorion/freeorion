@@ -362,6 +362,7 @@
     (position)                                  \
     (prerequisites)                             \
     (PreviousSystemID)                          \
+    (PreviousToFinalDestinationID)              \
     (priority)                                  \
     (probability)                               \
     (ProducedByEmpire)                          \

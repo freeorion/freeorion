@@ -1006,6 +1006,8 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         fleet_property = &Fleet::NextSystemID;
     else if (property_name == "PreviousSystemID")
         fleet_property = &Fleet::PreviousSystemID;
+    else if (property_name == "PreviousToFinalDestinationID")
+        fleet_property = &Fleet::PreviousToFinalDestinationID;
     else if (property_name == "ArrivalStarlaneID")
         fleet_property = &Fleet::ArrivalStarlane;
     else if (property_name == "LastTurnMoveOrdered")

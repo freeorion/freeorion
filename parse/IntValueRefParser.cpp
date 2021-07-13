@@ -38,6 +38,7 @@ parse::detail::simple_int_parser_rules::simple_int_parser_rules(const parse::lex
         |   tok.NextSystemID_
         |   tok.NearestSystemID_
         |   tok.PreviousSystemID_
+        |   tok.PreviousToFinalDestinationID_
         |   tok.NumShips_
         |   tok.NumStarlanes_
         |   tok.LastTurnActiveInBattle_

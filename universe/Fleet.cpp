@@ -634,6 +634,15 @@ int Fleet::FinalDestinationID() const {
         return m_travel_route.back();
 }
 
+int Fleet::PreviousToFinalDestinationID() const {
+    if (m_travel_route.empty())
+        return INVALID_OBJECT_ID;
+    else if (m_travel_route.size() == 1)
+        return this->PreviousSystemID();
+    else
+        return *std::prev(std::prev(m_travel_route.end()));
+}
+
 namespace {
     bool HasXShips(const std::function<bool(const std::shared_ptr<const Ship>&)>& pred,
                    const std::set<int>& ship_ids,
