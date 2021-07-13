@@ -19,9 +19,9 @@ class UniverseObject;
   * population and still travel between systems). */
 class FO_COMMON_API PopCenter : virtual public std::enable_shared_from_this<UniverseObject> {
 public:
-    PopCenter();
+    PopCenter() = default;
     explicit PopCenter(const std::string& species_name);
-    virtual ~PopCenter();
+    ~PopCenter() = default;
 
     const std::string&  SpeciesName() const {return m_species_name;}        ///< returns the name of the species that populates this planet
     std::string         Dump(unsigned short ntabs = 0) const;

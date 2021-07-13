@@ -197,9 +197,6 @@ ListBox::Row::Row(X w, Y h) :
 void ListBox::Row::CompleteConstruction()
 { SetLayout(Wnd::Create<DeferredLayout>(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin)); }
 
-ListBox::Row::~Row()
-{}
-
 std::string ListBox::Row::SortKey(std::size_t col) const
 {
     if (col >= m_cells.size()) {
@@ -535,9 +532,6 @@ void ListBox::CompleteConstruction()
         BrowsedRowSignal.connect(ListSignalEcho(*this, "ListBox::BrowsedRowSignal"));
     }
 }
-
-ListBox::~ListBox()
-{}
 
 void ListBox::AllowDrops(bool allow)
 { m_allow_drops = allow; }

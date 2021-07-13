@@ -213,7 +213,7 @@ protected:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
 public:
-    virtual ~UniverseObject();
+    virtual ~UniverseObject() = default;
 
 protected:
     /** returns new copy of this UniverseObject, limited to only copy data that

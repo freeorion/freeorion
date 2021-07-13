@@ -87,7 +87,7 @@ public:
     */
     explicit TextControl(const TextControl& that);
 
-    virtual ~TextControl();
+    ~TextControl() = default;
 
     /** Assignment operator.
 

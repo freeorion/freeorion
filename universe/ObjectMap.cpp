@@ -105,12 +105,6 @@ namespace {
 /////////////////////////////////////////////
 // class ObjectMap
 /////////////////////////////////////////////
-ObjectMap::ObjectMap()
-{}
-
-ObjectMap::~ObjectMap()
-{}
-
 void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id) {
     if (&copied_map == this)
         return;

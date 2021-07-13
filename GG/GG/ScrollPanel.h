@@ -33,10 +33,8 @@ class GG_API ScrollPanel : public Wnd
 {
 public:
     ScrollPanel();
-    //! Create a ScrollPanel with content.
     ScrollPanel(X x, Y y, X w, Y h, std::shared_ptr<Wnd> content);
-    virtual ~ScrollPanel();
-
+    ~ScrollPanel() = default;
     void CompleteConstruction() override;
 
     void SizeMove(const Pt& ul, const Pt& lr) override;

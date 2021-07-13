@@ -29,7 +29,7 @@ class GG_API OverlayWnd : public Wnd
 {
 public:
     OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags = NO_WND_FLAGS);
-    ~OverlayWnd();
+    ~OverlayWnd() = default;
     void CompleteConstruction() override;
 
     Pt MinUsableSize() const override;

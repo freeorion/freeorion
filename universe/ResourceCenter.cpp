@@ -16,14 +16,11 @@ namespace {
 }
 
 ResourceCenter::ResourceCenter() :
-    m_focus(),
     m_last_turn_focus_changed(INVALID_GAME_TURN),
-    m_focus_turn_initial(),
     m_last_turn_focus_changed_turn_initial(INVALID_GAME_TURN)
 {}
 
-ResourceCenter::~ResourceCenter()
-{}
+ResourceCenter::~ResourceCenter() = default;
 
 ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
     m_focus(rhs.m_focus),

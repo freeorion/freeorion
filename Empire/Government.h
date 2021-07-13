@@ -77,9 +77,6 @@ public:
     using PoliciesTypeMap = std::map<std::string, std::unique_ptr<Policy>>;
     using iterator = PoliciesTypeMap::const_iterator;
 
-    PolicyManager();
-    ~PolicyManager();
-
     //! returns the policy with the name \a name; you should use the free
     //! function GetPolicy() instead
     [[nodiscard]] const Policy*               GetPolicy(const std::string& name) const;

@@ -95,9 +95,6 @@ class FO_COMMON_API SpecialsManager {
 public:
     using SpecialsTypeMap = std::map<std::string, std::unique_ptr<Special>>;
 
-    SpecialsManager();
-    ~SpecialsManager();
-
     int                         NumSpecials() const { return m_specials.size(); }
     std::vector<std::string>    SpecialNames() const;
     const Special*              GetSpecial(const std::string& name) const;

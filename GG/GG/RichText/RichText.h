@@ -58,7 +58,7 @@ public:
 
     void CompleteConstruction() override;
 
-    ~RichText();
+    ~RichText(); // needed due to unique_ptr
 
     /** Set the text content. */
     virtual void SetText(const std::string& str);

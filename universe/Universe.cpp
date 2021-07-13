@@ -162,8 +162,7 @@ Universe& Universe::operator=(Universe&& other) noexcept {
     return *this;
 }
 
-Universe::~Universe()
-{}
+Universe::~Universe() = default;
 
 void Universe::Clear() {
     // empty object maps

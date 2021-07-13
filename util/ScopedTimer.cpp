@@ -131,8 +131,7 @@ ScopedTimer::ScopedTimer(std::function<std::string ()> output_text_fn,
 
 //! @note
 //!     ~ScopedTimer is required because Impl is defined here.
-ScopedTimer::~ScopedTimer()
-{}
+ScopedTimer::~ScopedTimer() = default;
 
 void ScopedTimer::restart()
 { m_impl->Restart(); }
@@ -308,8 +307,7 @@ SectionedScopedTimer::SectionedScopedTimer(std::string timed_name,
 {}
 
 // ~SectionedScopedTimer is required because Impl is defined here.
-SectionedScopedTimer::~SectionedScopedTimer()
-{}
+SectionedScopedTimer::~SectionedScopedTimer() = default;
 
 std::chrono::nanoseconds SectionedScopedTimer::Elapsed() const
 { return m_impl->Elapsed(); }

@@ -68,8 +68,6 @@ public:
          std::vector<UnlockableItem>&& unlocked_items,
          std::string&& graphic);
 
-    ~Tech();
-
     bool operator==(const Tech& rhs) const;
     bool operator!=(const Tech& rhs) const
     { return !(*this == rhs); }

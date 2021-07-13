@@ -118,7 +118,7 @@ public:
 
         Row();
         Row(X w, Y h);
-        virtual ~Row();
+        ~Row() = default;
 
         void CompleteConstruction() override;
 
@@ -226,9 +226,7 @@ public:
     static constexpr unsigned int BORDER_THICK = 2; ///< the thickness with which to render the border of the control
 
     ListBox(Clr color, Clr interior = CLR_ZERO);
-
-    virtual ~ListBox();
-
+    ~ListBox() = default;
     void CompleteConstruction() override;
 
     Pt MinUsableSize() const override;

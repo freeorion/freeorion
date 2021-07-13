@@ -195,12 +195,6 @@ PolicyManager::iterator PolicyManager::end() const {
     return m_policies.end();
 }
 
-PolicyManager::PolicyManager()
-{}
-
-PolicyManager::~PolicyManager()
-{}
-
 void PolicyManager::CheckPendingPolicies() const {
     if (!m_pending_types)
         return;

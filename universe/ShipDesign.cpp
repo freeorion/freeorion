@@ -72,7 +72,7 @@ CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& product
         tags.insert(boost::to_upper_copy<std::string>(tag));
 }
 
-CommonParams::~CommonParams() {}
+CommonParams::~CommonParams() = default;
 
 
 /////////////////////////////////////

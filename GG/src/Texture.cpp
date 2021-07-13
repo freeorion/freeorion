@@ -490,9 +490,6 @@ SubTexture::SubTexture(std::shared_ptr<const Texture> texture) :
     m_tex_coords[3] = 1.0f;
 }
 
-SubTexture::~SubTexture()
-{}
-
 SubTexture::SubTexture(const SubTexture& rhs)
 { *this = rhs; }
 

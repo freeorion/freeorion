@@ -67,7 +67,7 @@ public:
          Clr color, Clr text_color = CLR_BLACK);
     void CompleteConstruction() override;
 
-    ~Spin();
+    ~Spin() = default;
 
     Pt      MinUsableSize() const override;
 
@@ -180,10 +180,6 @@ void Spin<T>::CompleteConstruction()
     SizeMove(UpperLeft(), LowerRight());
     Spin<T>::SetEditTextFromValue();
 }
-
-template <typename T>
-Spin<T>::~Spin()
-{}
 
 template <typename T>
 Pt Spin<T>::MinUsableSize() const

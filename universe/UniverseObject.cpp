@@ -28,9 +28,6 @@ UniverseObject::UniverseObject(std::string name, double x, double y) :
     m_created_on_turn(CurrentTurn())
 {}
 
-UniverseObject::~UniverseObject()
-{}
-
 void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
                           Visibility vis, const std::set<std::string>& visible_specials)
 {

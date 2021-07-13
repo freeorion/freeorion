@@ -103,9 +103,6 @@ MultiEdit::MultiEdit(std::string str, const std::shared_ptr<Font>& font, Clr col
     SizeMove(UpperLeft(), LowerRight()); // do this to set up the scrolls, and in case MULTI_INTEGRAL_HEIGHT is in effect
 }
 
-MultiEdit::~MultiEdit()
-{}
-
 Pt MultiEdit::MinUsableSize() const
 {
     return Pt(X(4 * SCROLL_WIDTH + 2 * BORDER_THICK),

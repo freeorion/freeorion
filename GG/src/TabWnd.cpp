@@ -40,9 +40,6 @@ OverlayWnd::OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags) :
 void OverlayWnd::CompleteConstruction()
 { SetLayout(Wnd::Create<Layout>(X0, Y0, Width(), Height(), 1, 1)); }
 
-OverlayWnd::~OverlayWnd()
-{}
-
 Pt OverlayWnd::MinUsableSize() const
 {
     Pt retval;

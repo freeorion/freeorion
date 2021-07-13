@@ -33,9 +33,6 @@ public:
     template <typename T>
     using container_type = std::map<int, std::shared_ptr<T>>;
 
-    ObjectMap();
-    ~ObjectMap();
-
     /** Copies contents of this ObjectMap to a new ObjectMap, which is
       * returned.  Copies are limited to only duplicate information that the
       * empire with id \a empire_id would know about the copied objects. */

@@ -22,12 +22,6 @@
                                                 return false;               \
                                         }   }
 
-SpecialsManager::SpecialsManager()
-{}
-
-SpecialsManager::~SpecialsManager()
-{}
-
 std::vector<std::string> SpecialsManager::SpecialNames() const {
     CheckPendingSpecialsTypes();
     std::vector<std::string> retval;
@@ -93,8 +87,7 @@ Special::Special(std::string&& name, std::string&& description,
     Init();
 }
 
-Special::~Special()
-{}
+Special::~Special() = default;
 
 bool Special::operator==(const Special& rhs) const {
     if (&rhs == this)

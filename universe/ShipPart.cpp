@@ -200,49 +200,49 @@ void ShipPart::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
         switch (m_class) {
         case ShipPartClass::PC_COLONY:
         case ShipPartClass::PC_TROOPS:
-            m_effects.emplace_back(IncreaseMeter(MeterType::METER_CAPACITY,                     m_name, m_capacity, false));
+            m_effects.push_back(IncreaseMeter(MeterType::METER_CAPACITY,                     m_name, m_capacity, false));
             break;
         case ShipPartClass::PC_FIGHTER_HANGAR: {   // capacity indicates how many fighters are stored in this type of part (combined for all copies of the part)
-            m_effects.emplace_back(IncreaseMeter(MeterType::METER_MAX_CAPACITY,                 m_name, m_capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
-            m_effects.emplace_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, "RULE_FIGHTER_DAMAGE_FACTOR",     false));  // stacking damage not allowed, as damage per shot should be the same regardless of number of shots
+            m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_CAPACITY,                 m_name, m_capacity, true));         // stacking capacities allowed for this part, so each part contributes to the total capacity
+            m_effects.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_SECONDARY_STAT, m_name, m_secondary_stat, "RULE_FIGHTER_DAMAGE_FACTOR",     false));  // stacking damage not allowed, as damage per shot should be the same regardless of number of shots
             break;
         }
         case ShipPartClass::PC_FIGHTER_BAY: {      // capacity indicates how many fighters each instance of the part can launch per combat bout...
-            m_effects.emplace_back(IncreaseMeter(MeterType::METER_MAX_CAPACITY,                 m_name, m_capacity, false));
-            m_effects.emplace_back(IncreaseMeter(MeterType::METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
+            m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_CAPACITY,                 m_name, m_capacity, false));
+            m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
             break;
         }
         case ShipPartClass::PC_DIRECT_WEAPON: {    // capacity indicates weapon damage per shot
-            m_effects.emplace_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_CAPACITY,       m_name, m_capacity,       "RULE_SHIP_WEAPON_DAMAGE_FACTOR", false));
-            m_effects.emplace_back(IncreaseMeter(MeterType::METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
+            m_effects.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_CAPACITY,       m_name, m_capacity,       "RULE_SHIP_WEAPON_DAMAGE_FACTOR", false));
+            m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_SECONDARY_STAT,           m_name, m_secondary_stat, false));
             break;
         }
         case ShipPartClass::PC_SHIELD:
-            m_effects.emplace_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_SHIELD,    m_capacity,     "RULE_SHIP_WEAPON_DAMAGE_FACTOR"));
+            m_effects.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_SHIELD,    m_capacity,     "RULE_SHIP_WEAPON_DAMAGE_FACTOR"));
             break;
         case ShipPartClass::PC_DETECTION:
-            m_effects.emplace_back(IncreaseMeter(MeterType::METER_DETECTION,               m_capacity));
+            m_effects.push_back(IncreaseMeter(MeterType::METER_DETECTION,               m_capacity));
             break;
         case ShipPartClass::PC_STEALTH:
-            m_effects.emplace_back(IncreaseMeter(MeterType::METER_STEALTH,                 m_capacity));
+            m_effects.push_back(IncreaseMeter(MeterType::METER_STEALTH,                 m_capacity));
             break;
         case ShipPartClass::PC_FUEL:
-            m_effects.emplace_back(IncreaseMeter(MeterType::METER_MAX_FUEL,                m_capacity));
+            m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_FUEL,                m_capacity));
             break;
         case ShipPartClass::PC_ARMOUR:
-            m_effects.emplace_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_STRUCTURE, m_capacity,     "RULE_SHIP_STRUCTURE_FACTOR"));
+            m_effects.push_back(IncreaseMeterRuleScaled(MeterType::METER_MAX_STRUCTURE, m_capacity,     "RULE_SHIP_STRUCTURE_FACTOR"));
             break;
         case ShipPartClass::PC_SPEED:
-            m_effects.emplace_back(IncreaseMeterRuleScaled(MeterType::METER_SPEED,         m_capacity,     "RULE_SHIP_SPEED_FACTOR"));
+            m_effects.push_back(IncreaseMeterRuleScaled(MeterType::METER_SPEED,         m_capacity,     "RULE_SHIP_SPEED_FACTOR"));
             break;
         case ShipPartClass::PC_RESEARCH:
-            m_effects.emplace_back(IncreaseMeter(MeterType::METER_TARGET_RESEARCH,         m_capacity));
+            m_effects.push_back(IncreaseMeter(MeterType::METER_TARGET_RESEARCH,         m_capacity));
             break;
         case ShipPartClass::PC_INDUSTRY:
-            m_effects.emplace_back(IncreaseMeter(MeterType::METER_TARGET_INDUSTRY,         m_capacity));
+            m_effects.push_back(IncreaseMeter(MeterType::METER_TARGET_INDUSTRY,         m_capacity));
             break;
         case ShipPartClass::PC_INFLUENCE:
-            m_effects.emplace_back(IncreaseMeter(MeterType::METER_TARGET_INFLUENCE,        m_capacity));
+            m_effects.push_back(IncreaseMeter(MeterType::METER_TARGET_INFLUENCE,        m_capacity));
             break;
         default:
             break;
@@ -259,12 +259,11 @@ void ShipPart::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
         m_combat_targets->SetTopLevelContent(m_name);
     for (auto&& effect : effects) {
         effect->SetTopLevelContent(m_name);
-        m_effects.emplace_back(std::move(effect));
+        m_effects.push_back(std::move(effect));
     }
 }
 
-ShipPart::~ShipPart()
-{}
+ShipPart::~ShipPart() = default;
 
 bool ShipPart::operator==(const ShipPart& rhs) const {
     if (&rhs == this)

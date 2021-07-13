@@ -107,8 +107,7 @@ Tech::TechInfo::TechInfo(std::string& name_, std::string& description_,
     tags(std::move(tags_))
 {}
 
-Tech::TechInfo::~TechInfo()
-{}
+Tech::TechInfo::~TechInfo() = default;
 
 ///////////////////////////////////////////////////////////
 // Tech                                                  //
@@ -162,9 +161,6 @@ Tech::Tech(TechInfo&& tech_info,
         m_tags.emplace(boost::to_upper_copy<std::string>(tag));
     Init();
 }
-
-Tech::~Tech()
-{}
 
 void Tech::Init() {
     if (m_research_cost)

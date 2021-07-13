@@ -82,9 +82,6 @@ void ScrollPanel::CompleteConstruction()
     DoLayout();
 }
 
-ScrollPanel::~ScrollPanel()
-{}
-
 void ScrollPanel::ScrollTo(Y pos)
 {
     m_vscroll->ScrollTo(Value(pos));

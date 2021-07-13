@@ -99,7 +99,7 @@ public:
 
     Universe();
     Universe& operator=(Universe&& other) noexcept;
-    virtual ~Universe();
+    ~Universe();
 
 
     /** Returns objects in this Universe. */

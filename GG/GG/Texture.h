@@ -171,7 +171,7 @@ public:
     SubTexture& operator=(const SubTexture& rhs);
     SubTexture& operator=(SubTexture&& rhs) noexcept;
 
-    virtual ~SubTexture();
+    virtual ~SubTexture() = default;
 
     bool             Empty() const;     ///< returns true if this object has no associated GG::Texture
     const GLfloat*   TexCoords() const; ///< texture coordinates to use when blitting this sub-texture

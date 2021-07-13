@@ -322,7 +322,7 @@ void RichText::CompleteConstruction() {
     m_self->CompleteConstruction();
 }
 
-RichText::~RichText() {}
+RichText::~RichText() = default;
 
 void RichText::SetText(const std::string& str) { m_self->SetText(str); }
 

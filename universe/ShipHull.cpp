@@ -125,10 +125,10 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
          default_structure_effects);
 
     for (const std::string& tag : common_params.tags)
-        m_tags.emplace(boost::to_upper_copy<std::string>(tag));
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
 }
 
-ShipHull::~ShipHull() {}
+ShipHull::~ShipHull() = default;
 
 bool ShipHull::operator==(const ShipHull& rhs) const {
     if (&rhs == this)
