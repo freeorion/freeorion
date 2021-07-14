@@ -11494,6 +11494,15 @@ Logistics of the whole empire are focused into boosting the capital's production
 PLC_CENTRALIZATION_SHORT_DESC
 Boosts Capital
 
+PLC_METROPOLES
+Metropoles
+
+PLC_METROPOLES_DESC
+Boosts largest planets, penalizes others...
+
+PLC_METROPOLES_SHORT_DESC
+Boosts Largest-Population Planets
+
 PLC_COLONIZATION
 Colonization
 
