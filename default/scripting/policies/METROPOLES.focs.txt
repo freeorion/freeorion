@@ -1,0 +1,54 @@
+Policy
+    name = "PLC_METROPOLES"
+    description = "PLC_METROPOLES_DESC"
+    short_description = "PLC_METROPOLES_SHORT_DESC"
+    category = "ECONOMIC_CATEGORY"
+    adoptioncost = 1.0 * floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population
+                                          condition = And [ Planet OwnedBy empire = Source.Owner ])
+    exclusions = [ "PLC_CONFEDERATION" "PLC_COLONIZATION" ]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
+        // TODO: limit of planets based on number of regional admins?
+
+        // boosts to largest-population planets...
+        EffectsGroup
+            scope = MaximumNumberOf number = (NamedInteger name = "METROPOLES_PLANET_LIMIT" value = 6) sortkey = LocalCandidate.Population condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = (NamedReal name = "METROPOLES_MINIMUM_POPULATION" value = 20.0)
+            ]
+            effects = [
+                SetTargetIndustry value = Value + Target.Population
+                    * (NamedReal name = "METROPOLES_TARGET_INDUSTRY_PERPOP"
+                                 value = 2.0 * [[INDUSTRY_PER_POP]])
+                SetTargetResearch value = Value + Target.Population
+                    * (NamedReal name = "METROPOLES_TARGET_RESEARCH_PERPOP"
+                                 value = 2.0 * [[RESEARCH_PER_POP]])
+                SetTargetConstruction value = Value
+                    + (NamedReal name = "METROPOLES_TARGET_CONSTRUCTION_FLAT" value = 10)
+                SetMaxSupply value = Value
+                    + (NamedReal name = "METROPOLES_MAX_SUPPLY_FLAT" value = 2)
+                SetMaxStockpile value = Value
+                    + (NamedReal name = "METROPOLES_MAX_STOCKPILE_FLAT" value = -2)
+            ]
+
+        // reduced stability outside of largest-population planets
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species // excludes non-populated planets
+                Not MaximumNumberOf number = (NamedIntegerLookup name = "METROPOLES_PLANET_LIMIT") sortkey = LocalCandidate.Population condition = And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Population low = (NamedRealLookup name = "METROPOLES_MINIMUM_POPULATION")
+                ]
+            ]
+            effects =
+                SetTargetHappiness value = Value - (NamedReal name = "METROPOLES_STABILITY_PENALTY" value = 5.0)
+    ]
+    graphic = "icons/policies/metropoles.png"
+
+#include "/scripting/common/base_prod.macros"
+#include "/scripting/policies/policies.macros"
