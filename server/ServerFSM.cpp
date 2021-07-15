@@ -402,7 +402,8 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         ErrorLogger(FSM) << "Unable to recover server terminating.";
         if (m_server.IsHostless()) {
             if (GetOptionsDB().Get<bool>("save.auto.hostless.enabled") &&
-                GetOptionsDB().Get<bool>("save.auto.exit.enabled"))
+                GetOptionsDB().Get<bool>("save.auto.exit.enabled") &&
+                m_server.CurrentTurn() > 0)
             {
                 // save game on exit
                 std::string save_filename = GetAutoSaveFileName(m_server.CurrentTurn());
@@ -2657,7 +2658,8 @@ sc::result PlayingGame::react(const ShutdownServer& msg) {
 
     if (server.IsHostless() &&
         GetOptionsDB().Get<bool>("save.auto.hostless.enabled") &&
-        GetOptionsDB().Get<bool>("save.auto.exit.enabled"))
+        GetOptionsDB().Get<bool>("save.auto.exit.enabled") &&
+        server.CurrentTurn() > 0)
     {
         // save game on exit
         std::string save_filename = GetAutoSaveFileName(server.CurrentTurn());
@@ -3359,7 +3361,7 @@ sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
     }
 
     // save game so orders from the player will be backuped
-    if (server.IsHostless() && GetOptionsDB().Get<bool>("save.auto.hostless.each-player.enabled")) {
+    if (server.IsHostless() && GetOptionsDB().Get<bool>("save.auto.hostless.each-player.enabled") && server.CurrentTurn() > 0) {
         PlayerConnectionPtr dummy_connection = nullptr;
         post_event(SaveGameRequest(HostSaveGameInitiateMessage(GetAutoSaveFileName(server.CurrentTurn())), dummy_connection));
     }
@@ -3409,6 +3411,10 @@ sc::result WaitingForTurnEnd::react(const SaveGameRequest& msg) {
 void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& error) {
     if (error) {
         DebugLogger() << "Save timed out cancelled";
+        return;
+    }
+
+    if (Server().CurrentTurn() <= 0) {
         return;
     }
 
@@ -3468,7 +3474,7 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
         }
     }
 
-    if (server.IsHostless() && GetOptionsDB().Get<bool>("save.auto.hostless.enabled")) {
+    if (server.IsHostless() && GetOptionsDB().Get<bool>("save.auto.hostless.enabled") && server.CurrentTurn() > 0) {
         PlayerConnectionPtr dummy_connection = nullptr;
         post_event(SaveGameRequest(HostSaveGameInitiateMessage(GetAutoSaveFileName(server.CurrentTurn())), dummy_connection));
     }
