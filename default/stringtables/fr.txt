@@ -5657,10 +5657,14 @@ La planète %2% a été mise en déroute
 ENC_COMBAT_DESTROYED_STR
 L'astronef %2% a été détruit
 
-# %1% unused
+# %1% number of items in list
 # %2% name of empire
 ENC_COMBAT_INITIAL_STEALTH_LIST
 L'empire %2% ne peut pas initialement détecter :
+
+# %1% number of items in list
+ENC_COMBAT_NEUTRAL_INITIAL_STEALTH_LIST
+Les forces [[NEUTRAL]]s ne peuvent pas initialement détecter :
 
 # %1 link to the attacking unit
 # %2 link to the defending unit.
@@ -11722,11 +11726,38 @@ Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_NATIVE_APPROPRIAT
 PLC_NATIVE_APPROPRIATION_SHORT_DESC
 Améliore la Recherche
 
+PLC_VASSALIZATION
+Vassalisation
+
+PLC_VASSALIZATION_DESC
+Augmente la [[metertype METER_TARGET_INFLUENCE]] des planètes en Focus Influence au sein des systèmes abritant des planètes non-colonisées, dont l'espèce est différente de celle peuplant la Capitale de l'empire et la planète bénéficiaire, de [[value PLC_VASSALIZATION_INFLUENCE_SCALING]] multiplié par la racine carrée du total de la Population sur ces planètes non-colonisées.
+
+PLC_VASSALIZATION_SHORT_DESC
+Les planètes neutres améliorent l'Influence
+
+PLC_COLONIALISM
+Colonialisme
+
+PLC_COLONIALISM_DESC
+Augmente la [[metertype METER_TARGET_INDUSTRY]] des planètes en Focus Industrie de la capacité en Industrie des planètes neutres à proximité. Les planètes neutres contributrices doivent être reliées par lignes d'[[metertype METER_SUPPLY]] à la planète bénéficiaire, se trouver au plus à 3 Voies spatiales, et être non-colonisées. Plusieurs planètes bénéficiaires se partageront l'Industrie prélevée de manière égale.
+
+PLC_COLONIALISM_SHORT_DESC
+Collecte l'Industrie des planètes neutres
+
+PLC_FEUDALISM
+Féodalisme
+
+PLC_FEUDALISM_DESC
+Augmente la [[metertype METER_TARGET_INDUSTRY]] des planètes en Focus Industrie au sein des systèmes abritant des planètes non-colonisées et peuplées de la même espèce, de [[value PLC_FEUDALISM_DESC_INDUSTRY_SCALING]] multiplié par la racine carrée du total de la Population sur ces planètes non-colonisées.
+
+PLC_FEUDALISM_SHORT_DESC
+Les planètes neutres améliorent l'Industrie
+
 PLC_THE_HUNT
 La Chasse
 
 PLC_THE_HUNT_DESC
-Améliore la [[metertype METER_TARGET_HAPPINESS]], la [[metertype METER_TARGET_INFLUENCE]], et l'indicateur [[metertype METER_MAX_TROOPS]] des planètes au sein de systèmes abritant également une planète habitée non-colonisée, n'ayant pas de [[metertype METER_SHIELD]] ni de [[metertype METER_DEFENSE]], dont l'espèce est différente de celle peuplant les planètes bénéficiaires ou la Capitale impériale.
+Améliore la [[metertype METER_TARGET_HAPPINESS]], la [[metertype METER_TARGET_INFLUENCE]], et l'indicateur [[metertype METER_MAX_TROOPS]] des planètes au sein des systèmes abritant également une planète habitée non-colonisée, n'ayant pas de [[metertype METER_SHIELD]] ni de [[metertype METER_DEFENSE]], et dont l'espèce est différente de celle peuplant la planète bénéficiaire ou la Capitale impériale.
 
 PLC_THE_HUNT_SHORT_DESC
 Chasser les espèces indigènes octroie diverses améliorations
@@ -14000,7 +14031,7 @@ BLD_BIOTERROR_PROJECTOR
 Base Bioterroriste
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Donne accès au Focus Bioterrorisme à la planète sur laquelle est construite la Base Bioterroriste. Cela a pour effet de réduire de 2 par tour la [[metertype METER_POPULATION]] des planètes ennemies, seulement si ces dernières sont distantes de quatre Voies spatiales ou moins et si l'empire ennemi ne dispose pas d'une [[buildingtype BLD_GENOME_BANK]].
+'''Donne accès au Focus Bioterrorisme à la planète sur laquelle est construite la Base Bioterroriste. Cela a pour effet de réduire de 2 par tour la [[metertype METER_POPULATION]] des planètes ennemies, seulement si ces dernières sont distantes au plus de 4 Voies spatiales et si l'empire ennemi ne dispose pas d'une [[buildingtype BLD_GENOME_BANK]].
 
 Cette base clandestine d'armements biologiques provoque des ravages sur les planètes ennemies à proximité, en réduisant progressivement la Population de ces dernières jusqu'à extermination totale. Cependant, de telles activités n'étant pas approuvées par les lois galactiques, cette structure ne peut être construite que sur une planète autour de laquelle orbite une [[special RESONANT_MOON_SPECIAL]], et s'avère sans effets si l'empire ennemi dispose d'une Banque du Génome. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], si une Lune Synchrone orbite également autour de ce dernier.'''
 
