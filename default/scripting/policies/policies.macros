@@ -27,3 +27,14 @@ SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_POLICY]] * SpeciesContentOpinion species = Target.Species name = ThisPolicy
 '''
+
+POPULATION_OWNED_BY_EMPIRE
+'''(Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])'''
+
+PLANETS_OWNED_BY_EMPIRE
+'''(Statistic Count condition = And [ Planet Species OwnedBy empire = Source.Owner ])'''
+
+SHIPS_OWNED_BY_EMPIRE
+'''(Statistic Count condition = And [Ship OwnedBy empire = Source.Owner])'''
+
+

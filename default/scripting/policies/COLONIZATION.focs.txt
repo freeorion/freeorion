@@ -3,7 +3,7 @@ Policy
     description = "PLC_COLONIZATION_DESC"
     short_description = "PLC_COLONIZATION_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
-    adoptioncost = floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population condition = And [ Planet OwnedBy empire = Source.Owner ])
+    adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
     exclusions = [ "PLC_EXPLORATION" "PLC_CENTRALIZATION" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
