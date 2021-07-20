@@ -44,17 +44,17 @@ Policy
                        )
                    ]
                    // Multi starlane attack bonus (pincer attack)
-                       (( Statistic CountUnique
-                          value = LocalCandidate.PreviousToFinalDestinationID
-                          condition = And [
-                              Fleet
-                              OwnedBy empire = RootCandidate.Owner
-                              (LocalCandidate.FinalDestinationID = RootCandidate.Fleet.FinalDestinationID)
-                              (LocalCandidate.ETA = 1)
-                              Contains condition = And [ Ship Armed ]
-                          ]
-                        ) > 1
-                       )
+                   (( Statistic CountUnique
+                      value = LocalCandidate.PreviousToFinalDestinationID
+                      condition = And [
+                          Fleet
+                          OwnedBy empire = RootCandidate.Owner
+                          (LocalCandidate.FinalDestinationID = RootCandidate.Fleet.FinalDestinationID)
+                          (LocalCandidate.ETA = 1)
+                          Contains condition = And [ Ship Armed ]
+                      ]
+                    ) > 1
+                   )
                 ]
             ]
             effects = [
