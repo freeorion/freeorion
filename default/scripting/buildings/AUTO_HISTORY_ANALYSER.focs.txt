@@ -22,16 +22,13 @@ BuildingType
                 OwnedBy empire = Source.Owner
                 Happiness low = 0
             ]
-            activation = And [
-                ContainedBy And [
-                    Planet
-                    Contains Building name = "BLD_CULTURE_ARCHIVES"
-                ]
+            activation = ContainedBy And [
+                Planet
+                Contains Building name = "BLD_CULTURE_ARCHIVES"
             ]
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
-            effects = [
+            effects =
                 SetTargetResearch value = Value + (NamedReal name = "BLD_AUTO_HISTORY_ANALYSER_TARGET_RESEARCH_FLAT" value = 5)
-            ]
     ]
     icon = "icons/building/science1.png"
 
