@@ -20,6 +20,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install development dependencies
         run: pip install -r default/python/requirements-dev.txt
+      - name: Lint with black
+        run: |
+          black . --check -q
       - name: Lint with isort
         run: |
           isort . --check -q
