@@ -3,3 +3,10 @@ profile = "black"
 multi_line_output = 3
 skip_gitignore=true
 extra_standard_library=["freeorion", "freeOrionAIInterface"]
+
+[tool.black]
+include = '\.pyi?$'
+exclude = '.*venv.*|default'
+target-version = ["py36"]
+line-length=120
+

@@ -36,8 +36,8 @@ def find_files_from_vcxproj(vcxproj, includetype, fileextension):
     with open(vcxproj) as f:
         for i, line in enumerate(f):
             match = vcxproj_pattern.match(line)
-            if match and match.group('include') not in IGNORE_INCLUDES:
-                in_project_path = pathlib.PureWindowsPath(match.group('include'))
+            if match and match.group("include") not in IGNORE_INCLUDES:
+                in_project_path = pathlib.PureWindowsPath(match.group("include"))
                 yield str(base_path.joinpath(in_project_path))
 
 
@@ -56,11 +56,11 @@ def find_includes_from_cpp_or_h(filename):
                 if_nesting_level -= 1
             elif if_nesting_level == 0:
                 match = include_pattern.match(line)
-                if match and match.group('include') not in IGNORE_INCLUDES:
+                if match and match.group("include") not in IGNORE_INCLUDES:
                     lib = ""
-                    if match.group('lib'):
-                        lib = match.group('lib')
-                    yield (match.group('include'), lib)
+                    if match.group("lib"):
+                        lib = match.group("lib")
+                    yield (match.group("include"), lib)
 
 
 def assemble_precompile_header_includes(headeronly_vcxproj_files, vcxproj_files):
@@ -68,7 +68,7 @@ def assemble_precompile_header_includes(headeronly_vcxproj_files, vcxproj_files)
     cpp_includes = {}
 
     index = -1
-    for vcxproj in (headeronly_vcxproj_files + vcxproj_files):
+    for vcxproj in headeronly_vcxproj_files + vcxproj_files:
         index = index + 1
         for include_file in find_files_from_vcxproj(vcxproj, "ClInclude", ".h"):
             for include, lib in find_includes_from_cpp_or_h(include_file):
@@ -86,25 +86,30 @@ def assemble_precompile_header_includes(headeronly_vcxproj_files, vcxproj_files)
                 else:
                     cpp_includes[include][3] = cpp_includes[include][3] + 1
 
-    headers = [('includes from .h',
-                headers_includes[include][0],
-                headers_includes[include][1],
-                headers_includes[include][2],
-                include,
-                0) for include in headers_includes]
+    headers = [
+        (
+            "includes from .h",
+            headers_includes[include][0],
+            headers_includes[include][1],
+            headers_includes[include][2],
+            include,
+            0,
+        )
+        for include in headers_includes
+    ]
     headers.sort()
 
     cpps = [
         (
-            'includes from .cpp',
+            "includes from .cpp",
             cpp_includes[include][0],
             cpp_includes[include][1],
             cpp_includes[include][2],
             include,
-            cpp_includes[include][3]
-        ) for include in cpp_includes
-        if include not in headers_includes
-        and cpp_includes[include][3] >= MIN_CPP_INCLUDE_COUNT
+            cpp_includes[include][3],
+        )
+        for include in cpp_includes
+        if include not in headers_includes and cpp_includes[include][3] >= MIN_CPP_INCLUDE_COUNT
     ]
     cpps.sort()
 
@@ -118,14 +123,15 @@ def update_stdafx_h(stdafx_h_filename, header_only_vcxproj_files, vcxproj_files)
 
     lines = []
 
-    for type, index, proj, lib, include, count \
-            in assemble_precompile_header_includes(header_only_vcxproj_files, vcxproj_files):
+    for type, index, proj, lib, include, count in assemble_precompile_header_includes(
+        header_only_vcxproj_files, vcxproj_files
+    ):
         if lib in EXCLUDE_LIBS:
             continue
         if type != last_type:
             if last_type:
                 lines.append("")
-            lines.append("// " + '-' * len(type))
+            lines.append("// " + "-" * len(type))
             lines.append("// " + type)
             last_type = type
         if last_proj != proj:
@@ -141,18 +147,17 @@ def update_stdafx_h(stdafx_h_filename, header_only_vcxproj_files, vcxproj_files)
 
         lines.append(include_directive)
 
-    with open(stdafx_h_filename, 'w') as f:
+    with open(stdafx_h_filename, "w") as f:
         f.write(PREAMBLE)
         f.write("\n".join(lines))
         f.write(POSTAMBLE)
 
 
-update_stdafx_h("Parsers/StdAfx.h",     [], ["Parsers/Parsers.vcxproj"])
-update_stdafx_h("Common/StdAfx.h",      [], ["Common/Common.vcxproj"])
+update_stdafx_h("Parsers/StdAfx.h", [], ["Parsers/Parsers.vcxproj"])
+update_stdafx_h("Common/StdAfx.h", [], ["Common/Common.vcxproj"])
 
-update_stdafx_h("FreeOrion/StdAfx.h",   ["Common/Common.vcxproj", "GiGi/GiGi.vcxproj"],
-                                        ["FreeOrion/FreeOrion.vcxproj"])
-update_stdafx_h("FreeOrionD/StdAfx.h",  ["Common/Common.vcxproj"],   ["FreeOrionD/FreeOrionD.vcxproj"])
-update_stdafx_h("FreeOrionCA/StdAfx.h", ["Common/Common.vcxproj"],   ["FreeOrionCA/FreeOrionCA.vcxproj"])
+update_stdafx_h("FreeOrion/StdAfx.h", ["Common/Common.vcxproj", "GiGi/GiGi.vcxproj"], ["FreeOrion/FreeOrion.vcxproj"])
+update_stdafx_h("FreeOrionD/StdAfx.h", ["Common/Common.vcxproj"], ["FreeOrionD/FreeOrionD.vcxproj"])
+update_stdafx_h("FreeOrionCA/StdAfx.h", ["Common/Common.vcxproj"], ["FreeOrionCA/FreeOrionCA.vcxproj"])
 
-update_stdafx_h("GiGi/StdAfx.h",        [],                    ["GiGi/GiGi.vcxproj"])
+update_stdafx_h("GiGi/StdAfx.h", [], ["GiGi/GiGi.vcxproj"])

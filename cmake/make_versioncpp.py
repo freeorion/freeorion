@@ -23,7 +23,8 @@ class Generator(object):
             FreeOrion_VERSION=version,
             FreeOrion_BRANCH=branch,
             FreeOrion_BUILD_NO=build_no,
-            FreeOrion_BUILDSYS=build_sys)
+            FreeOrion_BUILDSYS=build_sys,
+        )
 
     def execute(self, version, branch, build_no, build_sys):
         if build_no == INVALID_BUILD_NO:
@@ -74,7 +75,8 @@ class NsisInstScriptGenerator(Generator):
                 FreeOrion_BUILDSYS=build_sys,
                 FreeOrion_DLL_LIST_INSTALL="\n  ".join(['File "..\\' + fname + '"' for fname in dll_files]),
                 FreeOrion_DLL_LIST_UNINSTALL="\n  ".join(['Delete "$INSTDIR\\' + fname + '"' for fname in dll_files]),
-                FreeOrion_PYTHON_VERSION="%d%d" % (sys.version_info.major, sys.version_info.minor))
+                FreeOrion_PYTHON_VERSION="%d%d" % (sys.version_info.major, sys.version_info.minor),
+            )
 
         else:
             print("WARNING: no dll files for installer package found")
@@ -85,7 +87,8 @@ class NsisInstScriptGenerator(Generator):
                 FreeOrion_BUILDSYS=build_sys,
                 FreeOrion_DLL_LIST_INSTALL="",
                 FreeOrion_DLL_LIST_UNINSTALL="",
-                FreeOrion_PYTHON_VERSION="")
+                FreeOrion_PYTHON_VERSION="",
+            )
 
 
 if len(sys.argv) not in (3, 4):
@@ -118,27 +121,30 @@ required_boost_libraries = [
 
 
 # A list of tuples containing generators
-generators = [
-    Generator('util/Version.cpp.in', 'util/Version.cpp')
-]
-if system() == 'Windows':
-    generators.append(NsisInstScriptGenerator('packaging/windows_installer.nsi.in',
-                                              'packaging/windows_installer.nsi'))
-if system() == 'Darwin':
-    generators.append(Generator('packaging/Info.plist.in', 'packaging/Info.plist'))
+generators = [Generator("util/Version.cpp.in", "util/Version.cpp")]
+if system() == "Windows":
+    generators.append(NsisInstScriptGenerator("packaging/windows_installer.nsi.in", "packaging/windows_installer.nsi"))
+if system() == "Darwin":
+    generators.append(Generator("packaging/Info.plist.in", "packaging/Info.plist"))
 
 version = "0.4.10+"
 branch = ""
 build_no = INVALID_BUILD_NO
 
 try:
-    branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], universal_newlines=True).strip()
+    branch = check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"], universal_newlines=True).strip()
     if (branch == "master") or (branch[:7] == "release"):
         branch = ""
     else:
         branch += " "
-    commit = check_output(["git", "show", "--no-show-signature", "-s", "--format=%h", "--abbrev=7", "HEAD"], universal_newlines=True).strip()
-    timestamp = float(check_output(["git", "show", "--no-show-signature", "-s", "--format=%ct", "HEAD"], universal_newlines=True).strip())
+    commit = check_output(
+        ["git", "show", "--no-show-signature", "-s", "--format=%h", "--abbrev=7", "HEAD"], universal_newlines=True
+    ).strip()
+    timestamp = float(
+        check_output(
+            ["git", "show", "--no-show-signature", "-s", "--format=%ct", "HEAD"], universal_newlines=True
+        ).strip()
+    )
     build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
 except (IOError, CalledProcessError):
     print("WARNING: git not installed or not setup correctly")
