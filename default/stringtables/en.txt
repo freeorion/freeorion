@@ -14416,7 +14416,7 @@ Nearly-Universal Translator
 BLD_TRANSLATOR_DESC
 '''Grants 1 social policy slot.
 
-Increases influence output on its planet, when that planet is set to influence focus, by [[value TRANSLATOR_PER_SPECIES_INFLUENCE]] per unique species on planets controlled by the empire that owns this building.
+Increases influence output on its planet, when that planet is set to influence focus, by [[value TRANSLATOR_PER_SPECIES_INFLUENCE]] times the square root of the number of unique species on planets controlled by the empire that owns this building.
 
 Production cost decreases when more unique species are visible to the producing empire.'''
 

@@ -27,12 +27,14 @@ BuildingType
                 Focus type = "FOCUS_INFLUENCE"
             ]
             activation = Not Unowned
-            effects = SetTargetInfluence value = Value + (NamedReal name = "TRANSLATOR_PER_SPECIES_INFLUENCE" value = 3.0) *
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
+            effects = SetTargetInfluence value = Value + (NamedReal name = "TRANSLATOR_PER_SPECIES_INFLUENCE" value = 1.0) *
                 (Statistic CountUnique
                     value = LocalCandidate.Species
-                    condition = And [ Planet Species OwnedBy empire = Source.Owner ])
+                    condition = And [ Planet Species OwnedBy empire = Source.Owner ])^0.5
     ]
     icon = "icons/building/translator.png"
 
+#include "/scripting/common/priorities.macros"
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/buildings/buildings.macros"
