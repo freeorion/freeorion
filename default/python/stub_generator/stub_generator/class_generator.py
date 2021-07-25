@@ -19,9 +19,10 @@ def _get_property_return_type_by_name(attr_name: str) -> str:
         "name": "str",
         "empireID": "EmpireId",
         "description": "str",
-        "speciesName": "str",
+        "speciesName": "SpeciesName",
         "capitalID": "PlaneId",
         "owner": "EmpireId",
+        "designedOnTurn": "Turn",
     }
     return property_map.get(attr_name, "")
 
@@ -55,6 +56,7 @@ def _update_property_return_type(attr_name: str, rtype: str):
         ("locationID", "int"): "PlanetId",
         ("owner", "int"): "EmpireId",
         ("speciesName", "str"): "SpeciesName",
+        ("designedOnTurn", "int"): "Turn",
     }
     return property_map.get((attr_name, rtype), rtype)
 
