@@ -82,10 +82,9 @@ class Tracker:
         turn = fo.currentTurn()
         table = Table(
             Text('Order'),
-            Number("I", precession=0, description="Issued orders", placeholder=" ", total=True),
-            Number("F", precession=0, description="Failed orders", placeholder=" ", total=True),
-            Number("Turn", precession=0, description="Total for this turn", placeholder=" ", total=True),
-            Number("Total", precession=0, description="Total for this session", placeholder=" ", total=True),
+            Number("Issued", precession=0, placeholder=" ", total=True),
+            Number("Failed", precession=0, placeholder=" ", total=True),
+            Number("Total", precession=0, placeholder=" ", total=True),
             table_name="Issuing orders analytics for turn {}".format(turn),
         )
 
@@ -93,6 +92,5 @@ class Tracker:
             results = Counter(item.result for item in jar.get_turn(turn))
             success = results[True]
             fail = results[False]
-            total = success + fail
-            table.add_row(jar.name, success, fail, total, jar.get_total())
+            table.add_row(jar.name, success, fail, jar.get_total())
         table.print_table(info)
