@@ -6945,6 +6945,9 @@ ID Modèle
 FINAL_DEST
 Système Destination Finale
 
+PREV_TO_FINAL_DEST
+Système Préc. vers Destination Finale
+
 NEXT_SYSTEM
 Système Suiv.
 
