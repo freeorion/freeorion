@@ -28,7 +28,7 @@ BuildingType
             ]
             activation = Not Unowned
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
-            effects = SetTargetInfluence value = Value + (NamedReal name = "TRANSLATOR_PER_SPECIES_INFLUENCE" value = 1.0) *
+            effects = SetTargetInfluence value = Value + (NamedReal name = "TRANSLATOR_PER_SPECIES_INFLUENCE" value = 0.5) *
                 (Statistic CountUnique
                     value = LocalCandidate.Species
                     condition = And [ Planet Species OwnedBy empire = Source.Owner ])^0.5
