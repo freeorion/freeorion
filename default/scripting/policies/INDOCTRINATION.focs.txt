@@ -31,12 +31,12 @@ Policy
             OwnedBy empire = Source.Owner
             Species
             Focus type = "FOCUS_INFLUENCE"
-            // Or [Capital Contains Building name = "BLD_REGIONAL_ADMIN"]
+            Or [Capital Contains Building name = "BLD_REGIONAL_ADMIN"]
         ]
         priority = [[TARGET_SCALING_PRIORITY]]
         effects = [
-            SetTargetInfluence value = Value * 
-                (NamedReal name = "PLC_INDOCTRINATION_INFLUENCE_FACTOR" value = 2.0)
+            SetTargetInfluence value = Value + 
+                (NamedReal name = "PLC_INDOCTRINATION_INFLUENCE_FLAT" value = 5.0)
         ]
     ]
     graphic = "icons/policies/indoctrination.png"
