@@ -3,8 +3,7 @@ Policy
     description = "PLC_CONFORMANCE_DESC"
     short_description = "PLC_CONFORMANCE_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
-    adoptioncost = 5 + floor(Statistic Sum value = LocalCandidate.Population
-                                           condition = And [ Planet OwnedBy empire = Source.Owner ])
+    adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
     exclusions = [ "PLC_LIBERTY" "PLC_DIVERSITY" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
