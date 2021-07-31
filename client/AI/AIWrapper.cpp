@@ -341,8 +341,10 @@ namespace {
 
     auto IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id) -> int
     {
+        const EmpireManager& empires{Empires()}; // TODO: pass in equivalent
+
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
+        auto empire = empires.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueEnqueueBuildingProductionOrder : couldn't get empire with id " << empire_id;
             return 0;
@@ -369,8 +371,11 @@ namespace {
 
     auto IssueEnqueueShipProductionOrder(int design_id, int location_id) -> int
     {
+        const Universe& universe{GetUniverse()}; // TODO: pass in
+        const EmpireManager& empires{Empires()}; // TODO: pass in equivalent
+
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
+        auto empire = empires.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueEnqueueShipProductionOrder : couldn't get empire with id " << empire_id;
             return 0;
@@ -381,7 +386,7 @@ namespace {
             return 0;
         }
 
-        auto item = ProductionQueue::ProductionItem(BuildType::BT_SHIP, design_id);
+        auto item = ProductionQueue::ProductionItem(BuildType::BT_SHIP, design_id, universe);
 
         AIClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,

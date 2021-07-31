@@ -2167,7 +2167,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
     for (auto& elem : m_production_queue) {
         // for items that don't depend on location, only store cost/time once
-        int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
+        int location_id = (elem.item.CostIsProductionLocationInvariant(context.ContextUniverse()) ? INVALID_OBJECT_ID : elem.location);
         auto key = std::make_pair(elem.item, location_id);
 
         if (!queue_item_costs_and_times.count(key))
@@ -2189,7 +2189,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
         int build_turns;
 
         // for items that don't depend on location, only store cost/time once
-        int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
+        int location_id = (elem.item.CostIsProductionLocationInvariant(context.ContextUniverse()) ? INVALID_OBJECT_ID : elem.location);
         std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
 
         std::tie(item_cost, build_turns) = queue_item_costs_and_times[key];

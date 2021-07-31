@@ -156,7 +156,7 @@ namespace {
       * Returns the amount of PP which gets transferred to the stockpile using 
       * stockpile project build items. */
     float SetProdQueueElementSpending(
-        std::map<std::set<int>, float> available_pp, float available_stockpile, 
+        std::map<std::set<int>, float> available_pp, float available_stockpile,
         float stockpile_limit,
         const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
         const std::map<std::pair<ProductionQueue::ProductionItem, int>,
@@ -167,6 +167,8 @@ namespace {
         std::map<std::set<int>, float>& allocated_stockpile_pp,
         int& projects_in_progress, bool simulating)
     {
+        const Universe& universe{GetUniverse()}; // TODO: pass in
+
         //DebugLogger() << "========SetProdQueueElementSpending========";
         //DebugLogger() << "production status: ";
         //DebugLogger() << "queue: ";
@@ -232,7 +234,7 @@ namespace {
             }
 
             // get max contribution per turn and turns to build at max contribution rate
-            int location_id = (queue_element.item.CostIsProductionLocationInvariant() ?
+            int location_id = (queue_element.item.CostIsProductionLocationInvariant(universe) ?
                 INVALID_OBJECT_ID : queue_element.location);
             std::pair<ProductionQueue::ProductionItem, int> key(queue_element.item, location_id);
             float item_cost = 1e6;  // dummy/default value, shouldn't ever really be needed
@@ -333,19 +335,19 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::stri
     name(name_)
 {}
 
-ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int design_id_) :
+ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int design_id_, const Universe& universe) :
     build_type(build_type_),
     design_id(design_id_)
 {
     if (build_type == BuildType::BT_SHIP) {
-        if (const ShipDesign* ship_design = GetUniverse().GetShipDesign(design_id))
+        if (const ShipDesign* ship_design = universe.GetShipDesign(design_id))
             name = ship_design->Name();
         else
             ErrorLogger() << "ProductionItem::ProductionItem couldn't get ship design with id: " << design_id;
     }
 }
 
-bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant() const {
+bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant(const Universe& universe) const {
     if (build_type == BuildType::BT_BUILDING) {
         const BuildingType* type = GetBuildingType(name);
         if (!type)
@@ -353,7 +355,7 @@ bool ProductionQueue::ProductionItem::CostIsProductionLocationInvariant() const 
         return type->ProductionCostTimeLocationInvariant();
 
     } else if (build_type == BuildType::BT_SHIP) {
-        const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
+        const ShipDesign* design = universe.GetShipDesign(design_id);
         if (!design)
             return true;
         return design->ProductionCostTimeLocationInvariant();
@@ -697,7 +699,10 @@ int ProductionQueue::IndexOfUUID(boost::uuids::uuid uuid) const {
 }
 
 void ProductionQueue::Update() {
-    const Empire* empire = GetEmpire(m_empire_id);
+    const Universe& universe{GetUniverse()}; // TODO: pass in
+    const EmpireManager& empires{Empires()}; // TODO: pass in equivalent
+
+    auto empire = empires.GetEmpire(m_empire_id);
     if (!empire) {
         ErrorLogger() << "ProductionQueue::Update passed null empire.  doing nothing.";
         m_projects_in_progress = 0;
@@ -751,7 +756,7 @@ void ProductionQueue::Update() {
     for (auto& elem : m_queue) {
         is_producible.push_back(empire->ProducibleItem(elem.item, elem.location));
         // for items that don't depend on location, only store cost/time once
-        int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
+        int location_id = (elem.item.CostIsProductionLocationInvariant(universe) ? INVALID_OBJECT_ID : elem.location);
         auto key = std::pair{elem.item, location_id};
 
         if (!queue_item_costs_and_times.count(key))

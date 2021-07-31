@@ -143,7 +143,9 @@ namespace {
                 return;
             m_initialized = true;
 
-            const Empire* empire = GetEmpire(m_empire_id);
+            ScriptingContext context;
+            const EmpireManager& empires{Empires()}; // TODO: pass in?
+            auto empire = empires.GetEmpire(m_empire_id);
 
             std::shared_ptr<GG::Texture>                texture;
             std::string                                 name_text;
@@ -190,7 +192,7 @@ namespace {
                 stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
                 stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity();
 
-                auto [total_cost, minimum_production_time] = m_item.ProductionCostAndTime(m_empire_id, m_location_id);
+                auto [total_cost, minimum_production_time] = m_item.ProductionCostAndTime(m_empire_id, m_location_id, context);
 
                 int production_time = ProductionTurns(total_cost, minimum_production_time,
                                                       local_pp_output, stockpile,
@@ -957,7 +959,9 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 }
 
 void BuildDesignatorWnd::BuildSelector::PopulateList() {
-    Empire* empire = GetEmpire(m_empire_id);
+    const Universe& universe{GetUniverse()}; // TODO: pass in?
+    const EmpireManager& empires{Empires()}; // TODO: pass in?
+    auto empire = empires.GetEmpire(m_empire_id);
     if (!empire)
         return;
 
@@ -1011,9 +1015,9 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         if (empire) {
             design_ids = ClientUI::GetClientUI()->GetShipDesignManager()->DisplayedDesigns()->OrderedIDs();
         } else {
-            design_ids.reserve(GetUniverse().NumShipDesigns());
-            for (auto it = GetUniverse().beginShipDesigns();
-                 it != GetUniverse().endShipDesigns(); ++it)
+            design_ids.reserve(universe.NumShipDesigns());
+            for (auto it = universe.beginShipDesigns();
+                 it != universe.endShipDesigns(); ++it)
             { design_ids.push_back(it->first); }
         }
 
@@ -1023,13 +1027,13 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         for (int ship_design_id : design_ids) {
             if (!BuildableItemVisible(BuildType::BT_SHIP, ship_design_id))
                 continue;
-            const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
+            const ShipDesign* ship_design = universe.GetShipDesign(ship_design_id);
             if (!ship_design)
                 continue;
             timer.EnterSection(ship_design->Name());
             auto item_row = GG::Wnd::Create<ProductionItemRow>(
                 row_size.x, row_size.y, 
-                ProductionQueue::ProductionItem(BuildType::BT_SHIP, ship_design_id),
+                ProductionQueue::ProductionItem(BuildType::BT_SHIP, ship_design_id, universe),
                 m_empire_id, m_production_location);
             rows.push_back(std::move(item_row));
         }

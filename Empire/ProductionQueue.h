@@ -42,17 +42,16 @@ struct FO_COMMON_API ProductionQueue {
     /** The type that specifies a single production item (BuildType and name string). */
     struct FO_COMMON_API ProductionItem {
         ProductionItem() = default;
-        explicit ProductionItem(BuildType build_type_);                 ///< basic ctor for BuildTypes only have one type of item (e.g. stockpile transfer item)
-        ProductionItem(BuildType build_type_, std::string name_);       ///< basic ctor for BuildTypes that use std::string to identify specific items (BuildingTypes)
-        ProductionItem(BuildType build_type_, int design_id_);          ///< basic ctor for BuildTypes that use int to indentify the design of the item (ShipDesigns)
+        explicit ProductionItem(BuildType build_type_);                                       ///< basic ctor for BuildTypes only have one type of item (e.g. stockpile transfer item)
+        ProductionItem(BuildType build_type_, std::string name_);                             ///< basic ctor for BuildTypes that use std::string to identify specific items (BuildingTypes)
+        ProductionItem(BuildType build_type_, int design_id_, const Universe& universe);      ///< basic ctor for BuildTypes that use int to indentify the design of the item (ShipDesigns)
 
-        [[nodiscard]] bool CostIsProductionLocationInvariant() const;   ///< indicates whether production location can change the cost of this item. This is useful for cachcing cost results per-location or once for all locations.
+        [[nodiscard]] bool CostIsProductionLocationInvariant(const Universe& universe) const; ///< indicates whether production location can change the cost of this item. This is useful for cachcing cost results per-location or once for all locations.
 
         /** Returns the total cost per item (blocksize 1) and the minimum number of
           * turns required to produce the indicated item, or (-1.0, -1) if the item
           * is unknown, unavailable, or invalid. */
-        std::pair<float, int> ProductionCostAndTime(int empire_id, int location_id,
-                                                    const ScriptingContext& context = ScriptingContext{}) const;
+        [[nodiscard]] std::pair<float, int> ProductionCostAndTime(int empire_id, int location_id, const ScriptingContext& context) const;
 
         bool operator<(const ProductionItem& rhs) const;
 
