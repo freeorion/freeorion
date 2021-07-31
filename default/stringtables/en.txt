@@ -11838,8 +11838,8 @@ PLC_CONFORMANCE
 Conformance
 
 PLC_CONFORMANCE_DESC
-'''Reduces the impact of species likes and dislikes on planet stability.
-Additionally it increases [[metertype METER_TARGET_CONSTRUCTION]] by [[value PLC_CONFORMANCE_INFRASTRUCTURE_BONUS_FLAT]] and [[metertype METER_STOCKPILE]] by [[value PLC_CONFORMANCE_STOCKPILING_BONUS_FLAT]], but descreases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT]] on all planets with a stability of at least [[value PLC_CONFORMANCE_MIN_STABILITY]].'''
+'''• Reduces the impact of species likes and dislikes on planet stability due to buildings and policies.
+• Increases [[metertype METER_TARGET_CONSTRUCTION]] by [[value PLC_CONFORMANCE_INFRASTRUCTURE_BONUS_FLAT]] and [[metertype METER_STOCKPILE]] by [[value PLC_CONFORMANCE_STOCKPILING_BONUS_FLAT]], but descreases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT]] on all planets with a stability of at least [[value PLC_CONFORMANCE_MIN_STABILITY]].'''
 
 PLC_CONFORMANCE_SHORT_DESC
 Reduces species opinion effects
@@ -11848,8 +11848,8 @@ PLC_LIBERTY
 Liberty
 
 PLC_LIBERTY_DESC
-'''Increases the impact of species likes and dislikes on planet stability.
-Additionally it increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_LIBERTY_RESEARCH_BONUS_FLAT]] and decreases [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_LIBERTY_STABILITY_PENALTY_FLAT]] on all planets with a stability of at least [[value PLC_LIBERTY_MIN_STABILITY]].'''
+'''• Increases the impact of species likes and dislikes on planet stability due to buildings and policies.
+• Increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_LIBERTY_RESEARCH_BONUS_FLAT]] and decreases [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_LIBERTY_STABILITY_PENALTY_FLAT]] on all planets with a stability of at least [[value PLC_LIBERTY_MIN_STABILITY]].'''
 
 PLC_LIBERTY_SHORT_DESC
 Increases species opinion effects
