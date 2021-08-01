@@ -3028,7 +3028,10 @@ namespace {
 
         // further filter ordered given objects and do giving if appropriate
         std::map<std::pair<int, int>, Effect::TargetSet> filtered_empire_gifted_objects; // ((original owner, recipient), objects)
-        for (auto& [recipient_empire_id, gifted_objects] : empire_gifted_objects) {
+        for (auto& entry : empire_gifted_objects) {
+            auto recipient_empire_id = entry.first;
+            auto& gifted_objects = entry.second;
+
             std::map<int, bool> systems_contain_recipient_empire_owned_objects;
 
             // for each recipient empire, process objects it is being gifted
@@ -3072,8 +3075,11 @@ namespace {
         }
 
         // do transfers of ownership of gifted stuff without further checks
-        for (auto& [initial_recipient_ids, gifted_objects] : filtered_empire_gifted_objects) {
-            const auto& [initial_owner_empire_id, recipient_empire_id] = initial_recipient_ids;
+        for (auto& init_recipients_gifted_objects : filtered_empire_gifted_objects) {
+            int initial_owner_empire_id = init_recipients_gifted_objects.first.first;
+            int recipient_empire_id = init_recipients_gifted_objects.first.second;
+            auto& gifted_objects = init_recipients_gifted_objects.second;
+
             for (auto& gifted_obj : gifted_objects) {
                 for (auto& contained_obj : objects.find<UniverseObject>(gifted_obj->ContainedObjectIDs())) {
                     if (contained_obj->OwnedBy(initial_owner_empire_id))
