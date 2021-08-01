@@ -34,10 +34,8 @@ namespace {
 
     void InsertFleetWithShips(Fleet& fleet, std::shared_ptr<System>& system){
         system->Insert(fleet.shared_from_this());
-
-        for (auto& ship : Objects().find<Ship>(fleet.ShipIDs())) {
+        for (auto& ship : Objects().find<Ship>(fleet.ShipIDs()))
             system->Insert(ship);
-        }
     }
 
     /** Return \p full_route terminates at \p last_system or before the first
@@ -985,10 +983,10 @@ void Fleet::MovementPhase(ScriptingContext& context) {
             // node is a system.  explore system for all owners of this fleet
             if (empire) {
                 empire->AddExploredSystem(it->object_id, context.current_turn);
-                empire->RecordPendingLaneUpdate(it->object_id, m_prev_system);  // specifies the lane from it->object_id back to m_prev_system is available
+                empire->RecordPendingLaneUpdate(it->object_id, m_prev_system, context.ContextObjects()); // specifies the lane from it->object_id back to m_prev_system is available
             }
 
-            m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
+            m_prev_system = system->ID(); // passing a system, so update previous system of this fleet
 
             // reached a system, so remove it from the route
             if (m_travel_route.front() == system->ID())
@@ -1000,9 +998,8 @@ void Fleet::MovementPhase(ScriptingContext& context) {
             if (resupply_here) {
                 //DebugLogger() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0f;
-                for (auto& ship : ships) {
+                for (auto& ship : ships)
                     ship->Resupply();
-                }
             }
 
 
@@ -1025,15 +1022,14 @@ void Fleet::MovementPhase(ScriptingContext& context) {
             } else {
                 // fleet will continue past this system this turn.
                 m_arrival_starlane = m_prev_system;
-                if (!resupply_here) {
+                if (!resupply_here)
                     fuel_consumed += 1.0f;
-                }
             }
 
         } else {
             // node is not a system.
             m_arrival_starlane = m_prev_system;
-            if (node_is_next_stop) {            // node is not a system, but is it the last node reached this turn?
+            if (node_is_next_stop) { // node is not a system, but is it the last node reached this turn?
                 MoveFleetWithShips(*this, it->x, it->y, Objects());
                 break;
             }
@@ -1045,7 +1041,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
     if (!m_travel_route.empty() && next_it != move_path.end() && it != move_path.end()) {
         // there is another system later on the path to aim for.  find it
         for (; next_it != move_path.end(); ++next_it) {
-            if (Objects().get<System>(next_it->object_id)) {
+            if (context.ContextObjects().get<System>(next_it->object_id)) {
                 //DebugLogger() << "___ setting m_next_system to " << next_it->object_id;
                 m_next_system = next_it->object_id;
                 break;
