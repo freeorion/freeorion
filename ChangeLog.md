@@ -4,6 +4,18 @@ Changelog
 Notable changes to the FreeOrion project will be documented in this file.
 
 
+[v0.4.10.2] - 2021-08-01
+-----------------------
+
+#### Bug Fixes / Improvements
+
+- Fixed issues with some unusual boost installations
+- Added MSVC 2019 support
+- Fixed compile issues with GCC 11 and MSVC 2019 toolset
+- Fixed several compile/build issues
+- Fixed issue with gifting where it was order-dependent for swapping all objects between two empires at a location
+
+
 [v0.4.10.1] - 2020-09-25
 -----------------------
 
