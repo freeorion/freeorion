@@ -6,7 +6,6 @@ extra_standard_library=["freeorion", "freeOrionAIInterface"]
 
 [tool.black]
 include = '\.pyi?$'
-exclude = '.*venv.*|default' # Exclude default for a first iteration of adding black
+exclude = 'venv_.*|.*_venv|venv|default' # Exclude default for a first iteration of adding black
 target-version = ["py36"]
 line-length=120
-
