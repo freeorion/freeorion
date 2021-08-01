@@ -186,20 +186,19 @@ struct FO_COMMON_API TotalFighterShots final : public Variable<int>
 {
     TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id, std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr);
 
-    bool        operator==(const ValueRef<int>& rhs) const override;
-    int         Eval(const ScriptingContext& context) const override;
-    std::string Description() const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
-    void        SetTopLevelContent(const std::string& content_name) override;
+    bool                      operator==(const ValueRef<int>& rhs) const override;
+    [[nodiscard]] int         Eval(const ScriptingContext& context) const override;
+    [[nodiscard]] std::string Description() const override;
+    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    void                      SetTopLevelContent(const std::string& content_name) override;
 
-    const Condition::Condition* GetSamplingCondition() const
+    [[nodiscard]] const Condition::Condition* GetSamplingCondition() const
     { return m_sampling_condition.get(); }
 
-    unsigned int GetCheckSum() const override;
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<ValueRef<int>> Clone() const override {
-        return std::make_unique<TotalFighterShots>(CloneUnique(m_carrier_id), CloneUnique(m_sampling_condition));
-    }
+    [[nodiscard]] std::unique_ptr<ValueRef<int>> Clone() const override
+    { return std::make_unique<TotalFighterShots>(CloneUnique(m_carrier_id), CloneUnique(m_sampling_condition)); }
 
 private:
     std::unique_ptr<ValueRef<int>>        m_carrier_id;

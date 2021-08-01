@@ -23,7 +23,7 @@ struct FO_COMMON_API All final : public Condition {
     {}
     unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<Condition> Clone() const override;
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 };
 
 }

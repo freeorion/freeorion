@@ -124,7 +124,8 @@ void CombatInfo::GetObjectsToSerialize(ObjectMap& filtered_objects, int encoding
     filtered_objects.Copy(*this->objects);  // temporary... copy everything in combat info
     // TODO: Actually filter based on the encoding empire and what visibility it has of objects
 
-    DebugLogger() << "CombatInfo::GetObjectsToSerialize: input: " << this->objects->size() << "  copied: " << filtered_objects.size();
+    DebugLogger() << "CombatInfo::GetObjectsToSerialize: input: " << this->objects->size()
+                  << "  copied: " << filtered_objects.size();
 }
 
 void CombatInfo::GetDamagedObjectsToSerialize(std::set<int>& filtered_damaged_objects,
@@ -1435,7 +1436,7 @@ namespace {
         // use combat-specific gamestate info for the ScriptingContext with which
         // to evaluate targetting conditions.
         // attacker is source object for condition evaluation.
-        //const Universe& universe,
+        //             const Universe& universe,
         //             ObjectMap& objects_,
         //             const EmpireManager& empires_,
         //             const GalaxySetupData& galaxy_setup_data_,
