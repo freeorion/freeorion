@@ -32,9 +32,9 @@ namespace {
             ship->MoveTo(x, y);
     }
 
-    void InsertFleetWithShips(Fleet& fleet, std::shared_ptr<System>& system){
+    void InsertFleetWithShips(Fleet& fleet, std::shared_ptr<System>& system, ObjectMap& objects) {
         system->Insert(fleet.shared_from_this());
-        for (auto& ship : Objects().find<Ship>(fleet.ShipIDs()))
+        for (auto& ship : objects.find<Ship>(fleet.ShipIDs()))
             system->Insert(ship);
     }
 
@@ -1006,7 +1006,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
             // is system the last node reached this turn?
             if (node_is_next_stop) {
                 // fleet ends turn at this node.  insert fleet and ships into system
-                InsertFleetWithShips(*this, system);
+                InsertFleetWithShips(*this, system, context.ContextObjects());
 
                 current_system = system;
 
