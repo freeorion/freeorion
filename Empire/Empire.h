@@ -335,7 +335,7 @@ public:
     void UpdateUnobstructedFleets(ObjectMap& objects, const std::set<int>& known_destroyed_objects);
     /** Records, in a list of pending updates, the start_system exit lane to the
       * specified destination as accessible to this empire*/
-    void RecordPendingLaneUpdate(int start_system_id, int dest_system_id);
+    void RecordPendingLaneUpdate(int start_system_id, int dest_system_id, const ObjectMap& objects);
     /** Processes all the pending lane access updates.  This is managed as a two
       * step process to avoid order-of-processing issues. */
     void UpdatePreservedLanes();

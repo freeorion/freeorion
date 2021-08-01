@@ -1285,13 +1285,12 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
     }
 }
 
-void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
-    if (!m_supply_unobstructed_systems.count(start_system_id))
+void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id, const ObjectMap& objects) {
+    if (!m_supply_unobstructed_systems.count(start_system_id)) {
         m_pending_system_exit_lanes[start_system_id].insert(dest_system_id);
-    else { // if the system is unobstructed, mark all its lanes as avilable
-        for (const auto& lane : Objects().get<System>(start_system_id)->StarlanesWormholes()) {
+    } else { // if the system is unobstructed, mark all its lanes as avilable
+        for (const auto& lane : objects.get<System>(start_system_id)->StarlanesWormholes())
             m_pending_system_exit_lanes[start_system_id].insert(lane.first); // will add both starlanes and wormholes
-        }
     }
 }
 
