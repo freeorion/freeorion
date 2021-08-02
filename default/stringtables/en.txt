@@ -903,13 +903,13 @@ FLD_NANITE_SWARM
 Nanite Swarm
 
 FLD_NANITE_SWARM_DESC
-A swarm of ancient robotic particles that attach themselves to ship hulls, repairing ship [[metertype METER_STRUCTURE]] by [[value FLD_NANITE_SWARM_STRUCTURE_FLAT]] per turn. Harvesting of particles allows to increase [[metertype METER_INDUSTRY]] by [[value FLD_NANITE_SWARM_TARGET_INDUSTRY_FLAT]] per turn and ship within the swarm.
+A swarm of ancient nanorobots that attach themselves to and attempts to repair the hulls of ships within the swarm. Ship [[metertype METER_STRUCTURE]] increases by [[value FLD_NANITE_SWARM_STRUCTURE_FLAT]] per turn, spread equally over ships within the swarm.
 
 FLD_METEOR_BLIZZARD
 Meteor Blizzard
 
 FLD_METEOR_BLIZZARD_DESC
-Mystical and mysterious appearance of meteors. Generates one [[metertype METER_RESEARCH]] per ship due to scientific examination of the phenomenon.
+Anomalously self-attracting conglomeration of meteors. Generates [[metertype METER_RESEARCH]] on ships within as they observe the phenomenon.
 
 FLD_VOID_RIFT
 Void Rift

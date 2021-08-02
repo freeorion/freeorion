@@ -25,18 +25,31 @@ FieldType
             activation = (Source.Age >= max((UniverseWidth ^ 1.1) / 50, 20))
             effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
 
-        EffectsGroup    // increase ship structure, grant industry
+        EffectsGroup    // increase ship structure
             scope = And [
                 Ship
                 WithinDistance distance = Source.Size * 0.9 condition = Source
                 Not Monster
             ]
             stackinggroup = "NANITE_SWARM_SHIP_REPAIR"
-            effects = [
-                SetStructure value = Value + (NamedReal name = "FLD_NANITE_SWARM_STRUCTURE_FLAT"
-                                                        value = 5 * [[SHIP_STRUCTURE_FACTOR]])
-                SetTargetIndustry value = Value
-                    + (NamedReal name = "FLD_NANITE_SWARM_TARGET_INDUSTRY_FLAT" value = 1)
+            effects = SetStructure value = Value + (NamedReal name = "FLD_NANITE_SWARM_STRUCTURE_FLAT" value = 5 * [[SHIP_STRUCTURE_FACTOR]]) /
+                max(1.0, Statistic Count condition = And [
+                    Ship
+                    WithinDistance distance = Source.Size * 0.9 condition = Source
+                    Not Monster
+                ])
+
+        EffectsGroup    // shrink when ships are in...
+            scope = Source
+            activation = Number low = 1 condition = And [
+                Ship
+                WithinDistance distance = Source.Size * 0.9 condition = Source
+                Not Monster
+            ]
+            effects = SetSize value = Value - Statistic Count condition = And [
+                Ship
+                WithinDistance distance = Source.Size * 0.9 condition = Source
+                Not Monster
             ]
 
         EffectsGroup    // after reaching a certain age, dissipate when small
