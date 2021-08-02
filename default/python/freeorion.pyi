@@ -15,6 +15,7 @@ from common.fo_typing import (
     ShipId,
     SpeciesName,
     SystemId,
+    Turn,
 )
 
 class AccountingInfo:
@@ -804,7 +805,7 @@ class policy:
 
 class popCenter:
     @property
-    def speciesName(self) -> str: ...
+    def speciesName(self) -> SpeciesName: ...
 
 
 class productionQueue:
@@ -829,9 +830,9 @@ class productionQueue:
 
     def __len__(self) -> int: ...
 
-    def availablePP(self, obj: object) -> resPoolMap: ...
+    def availablePP(self, res_pool: resPool) -> resPoolMap: ...
 
-    def objectsWithWastedPP(self, obj: object) -> IntSetSet: ...
+    def objectsWithWastedPP(self, res_pool: resPool) -> IntSetSet: ...
 
 
 class productionQueueElement:
@@ -959,7 +960,7 @@ class shipDesign:
     def description(self) -> str: ...
 
     @property
-    def designedOnTurn(self) -> int: ...
+    def designedOnTurn(self) -> Turn: ...
 
     @property
     def detection(self) -> float: ...
