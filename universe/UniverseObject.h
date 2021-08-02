@@ -223,8 +223,8 @@ protected:
       * returned pointee. */
     [[nodiscard]] virtual UniverseObject* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const = 0;
 
-    void                    AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
-    void                    Init();                         ///< adds stealth meter
+    void AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
+    void Init();                         ///< adds stealth meter
 
     /** Used by public UniverseObject::Copy and derived classes' ::Copy methods.
       */
