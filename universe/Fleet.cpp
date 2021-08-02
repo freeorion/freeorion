@@ -82,18 +82,18 @@ Fleet::Fleet(std::string name, double x, double y, int owner) :
     SetOwner(owner);
 }
 
-Fleet* Fleet::Clone(int empire_id) const {
+Fleet* Fleet::Clone(Universe& universe, int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
     Fleet* retval = new Fleet(m_name, X(), Y(), Owner());
-    retval->Copy(shared_from_this(), empire_id);
+    retval->Copy(shared_from_this(), universe, empire_id);
     return retval;
 }
 
-void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
+void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {
     if (copied_object.get() == this)
         return;
     auto copied_fleet = std::dynamic_pointer_cast<const Fleet>(copied_object);
@@ -106,22 +106,22 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     auto visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
-    UniverseObject::Copy(std::move(copied_object), vis, visible_specials);
+    UniverseObject::Copy(std::move(copied_object), vis, visible_specials, universe);
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-        m_ships =                         copied_fleet->VisibleContainedObjectIDs(empire_id);
+        m_ships =               copied_fleet->VisibleContainedObjectIDs(empire_id);
 
-        m_next_system = ((EmpireKnownObjects(empire_id).get<System>(copied_fleet->m_next_system))
-                         ? copied_fleet->m_next_system : INVALID_OBJECT_ID);
-        m_prev_system = ((EmpireKnownObjects(empire_id).get<System>(copied_fleet->m_prev_system))
-                         ? copied_fleet->m_prev_system : INVALID_OBJECT_ID);
-        m_arrived_this_turn =             copied_fleet->m_arrived_this_turn;
-        m_arrival_starlane =              copied_fleet->m_arrival_starlane;
+        m_next_system =         ((EmpireKnownObjects(empire_id).get<System>(copied_fleet->m_next_system))
+                                    ? copied_fleet->m_next_system : INVALID_OBJECT_ID);
+        m_prev_system =         ((EmpireKnownObjects(empire_id).get<System>(copied_fleet->m_prev_system))
+                                    ? copied_fleet->m_prev_system : INVALID_OBJECT_ID);
+        m_arrived_this_turn =   copied_fleet->m_arrived_this_turn;
+        m_arrival_starlane =    copied_fleet->m_arrival_starlane;
 
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-            m_aggression =                copied_fleet->m_aggression;
+            m_aggression =      copied_fleet->m_aggression;
             if (Unowned())
-                m_name =                  copied_fleet->m_name;
+                m_name =        copied_fleet->m_name;
 
             // Truncate the travel route to only systems known to empire_id
             int moving_to = (vis >= Visibility::VIS_FULL_VISIBILITY
@@ -130,7 +130,7 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
                                 : INVALID_OBJECT_ID)
                              : m_next_system);
 
-            m_travel_route = TruncateRouteToEndAtSystem(copied_fleet->m_travel_route, Objects(), moving_to);
+            m_travel_route = TruncateRouteToEndAtSystem(copied_fleet->m_travel_route, universe.Objects(), moving_to);
 
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
@@ -1030,7 +1030,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
             // node is not a system.
             m_arrival_starlane = m_prev_system;
             if (node_is_next_stop) { // node is not a system, but is it the last node reached this turn?
-                MoveFleetWithShips(*this, it->x, it->y, Objects());
+                MoveFleetWithShips(*this, it->x, it->y, context.ContextObjects());
                 break;
             }
         }
@@ -1157,7 +1157,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
             ErrorLogger() << "Fleet::CalculateRoute got empty route from ShortestPath";
             return;
         }
-        obj = Objects().get(sys_list2.front());
+        obj = objects.get(sys_list2.front());
         if (!obj) {
             ErrorLogger() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
             return;

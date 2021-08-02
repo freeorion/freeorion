@@ -29,7 +29,8 @@ UniverseObject::UniverseObject(std::string name, double x, double y) :
 {}
 
 void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
-                          Visibility vis, const std::set<std::string>& visible_specials)
+                          Visibility vis, const std::set<std::string>& visible_specials,
+                          const Universe&)
 {
     if (copied_object.get() == this)
         return;
@@ -86,9 +87,8 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
             this->m_owner_empire_id =   copied_object->m_owner_empire_id;
             this->m_created_on_turn =   copied_object->m_created_on_turn;
 
-            if (vis >= Visibility::VIS_FULL_VISIBILITY) {
+            if (vis >= Visibility::VIS_FULL_VISIBILITY)
                 this->m_name =          copied_object->m_name;
-            }
         }
     }
 }
@@ -209,7 +209,7 @@ const std::set<int>& UniverseObject::ContainedObjectIDs() const
 
 std::set<int> UniverseObject::VisibleContainedObjectIDs(int empire_id) const {
     std::set<int> retval;
-    const Universe& universe = GetUniverse();
+    const Universe& universe = GetUniverse(); // TODO: pass in
     for (int object_id : ContainedObjectIDs()) {
         if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY)
             retval.insert(object_id);

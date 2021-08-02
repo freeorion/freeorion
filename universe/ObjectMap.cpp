@@ -127,16 +127,18 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source, int emp
     if (!source)
         return;
 
+    Universe& universe{GetUniverse()}; // TODO: pass in?
+
     int source_id = source->ID();
 
     // can empire see object at all?  if not, skip copying object's info
-    if (GetUniverse().GetObjectVisibilityByEmpire(source_id, empire_id) <= Visibility::VIS_NO_VISIBILITY)
+    if (universe.GetObjectVisibilityByEmpire(source_id, empire_id) <= Visibility::VIS_NO_VISIBILITY)
         return;
 
     if (auto destination = this->get(source_id)) {
-        destination->Copy(std::move(source), empire_id); // there already is a version of this object present in this ObjectMap, so just update it
+        destination->Copy(std::move(source), universe, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
-        insertCore(std::shared_ptr<UniverseObject>(source->Clone()), empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
+        insertCore(std::shared_ptr<UniverseObject>(source->Clone(universe)), empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
     }
 }
 

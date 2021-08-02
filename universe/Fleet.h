@@ -137,7 +137,8 @@ public:
       * (via combat or they retreat). **/
     int ArrivalStarlane() const { return m_arrival_starlane; }
 
-    void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe,
+              int empire_id = ALL_EMPIRES) override;
 
     /** Moves fleet, its ships, and sets systems as explored for empires. */
     void MovementPhase(ScriptingContext& context);
@@ -186,19 +187,19 @@ public:
 
 protected:
     /** Returns new copy of this Fleet. */
-    Fleet* Clone(int empire_id = ALL_EMPIRES) const override;
+    Fleet* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
 private:
-    std::set<int>               m_ships;
+    std::set<int>   m_ships;
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
-    int                         m_prev_system = INVALID_OBJECT_ID;  ///< the previous system in the route, if any
-    int                         m_next_system = INVALID_OBJECT_ID;  ///< the next system in the route, if any
+    int             m_prev_system = INVALID_OBJECT_ID;  ///< the previous system in the route, if any
+    int             m_next_system = INVALID_OBJECT_ID;  ///< the next system in the route, if any
 
-    FleetAggression             m_aggression = FleetAggression::FLEET_OBSTRUCTIVE;  ///< should this fleet attack enemies in the same system, block their passage, or ignore them
+    FleetAggression m_aggression = FleetAggression::FLEET_OBSTRUCTIVE;  ///< should this fleet attack enemies in the same system, block their passage, or ignore them
 
-    int                         m_ordered_given_to_empire_id = ALL_EMPIRES;
-    int                         m_last_turn_move_ordered;
+    int             m_ordered_given_to_empire_id = ALL_EMPIRES;
+    int             m_last_turn_move_ordered;
     /** list of systems on travel route of fleet from current position to
       * destination.  If the fleet is currently in a system, that will be the
       * first system on the list.  Otherwise, the first system on the list will
@@ -206,10 +207,10 @@ private:
       * also contain a single null pointer, which indicates that the route is
       * unknown.  The list may also be empty, which indicates that the fleet
       * is not planning to move. */
-    std::list<int>              m_travel_route;
+    std::list<int>  m_travel_route;
 
-    bool                        m_arrived_this_turn = false;
-    int                         m_arrival_starlane = INVALID_OBJECT_ID; // see comment for ArrivalStarlane()
+    bool            m_arrived_this_turn = false;
+    int             m_arrival_starlane = INVALID_OBJECT_ID; // see comment for ArrivalStarlane()
 
     template <typename Archive>
     friend void serialize(Archive&, Fleet&, unsigned int const);

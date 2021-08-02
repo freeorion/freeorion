@@ -116,7 +116,7 @@ public:
     std::map<int, double> EmpireGroundCombatForces() const;
 
 
-    void Copy(std::shared_ptr<const UniverseObject> copied_object,
+    void Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe,
               int empire_id = ALL_EMPIRES) override;
 
     Meter* GetMeter(MeterType type) override;
@@ -170,7 +170,7 @@ protected:
 
 protected:
     /** returns new copy of this Planet. */
-    Planet* Clone(int empire_id = ALL_EMPIRES) const override;
+    Planet* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
 private:
     void Init();

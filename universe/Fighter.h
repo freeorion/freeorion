@@ -22,7 +22,8 @@ public:
     UniverseObjectType ObjectType() const override;
     std::string Dump(unsigned short ntabs = 0) const override;
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
-    void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe,
+              int empire_id = ALL_EMPIRES) override;
     const ::Condition::Condition* CombatTargets() const;
     float                       Damage() const;
     bool                        Destroyed() const;
@@ -31,7 +32,7 @@ public:
     void                        SetDestroyed(bool destroyed = true);
 
 protected:
-    Fighter* Clone(int empire_id = ALL_EMPIRES) const override;
+    Fighter* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
 private:
     float               m_damage = 0.0f;                        // strength of fighter's attack

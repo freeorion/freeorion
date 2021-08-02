@@ -66,18 +66,18 @@ Planet::Planet(PlanetType type, PlanetSize size) :
         m_rotational_period = -m_rotational_period;
 }
 
-Planet* Planet::Clone(int empire_id) const {
+Planet* Planet::Clone(Universe& universe, int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
     Planet* retval = new Planet(m_type, m_size);
-    retval->Copy(UniverseObject::shared_from_this(), empire_id);
+    retval->Copy(UniverseObject::shared_from_this(), universe, empire_id);
     return retval;
 }
 
-void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
+void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {
     if (copied_object.get() == this)
         return;
     auto copied_planet = std::dynamic_pointer_cast<const Planet>(copied_object);
@@ -90,7 +90,7 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     auto visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
-    UniverseObject::Copy(std::move(copied_object), vis, visible_specials);
+    UniverseObject::Copy(std::move(copied_object), vis, visible_specials, universe);
     PopCenter::Copy(copied_planet, vis);
     ResourceCenter::Copy(copied_planet, vis);
 

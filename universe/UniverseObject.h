@@ -23,6 +23,7 @@ class System;
 class SitRepEntry;
 class EmpireManager;
 class ObjectMap;
+class Universe;
 struct UniverseObjectVisitor;
 
 // The ID number assigned to temporary universe objects
@@ -149,7 +150,7 @@ public:
     /** copies data from \a copied_object to this object, limited to only copy
       * data about the copied object that is known to the empire with id
       * \a empire_id (or all data if empire_id is ALL_EMPIRES) */
-    virtual void    Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) = 0;
+    virtual void    Copy(std::shared_ptr<const UniverseObject> copied_object, Universe&, int empire_id) = 0;
 
     void            SetID(int id);                      ///< sets the ID number of the object to \a id
     void            Rename(const std::string& name);    ///< renames this object to \a name     // TODO: by-value + move instead of const reference
@@ -164,8 +165,8 @@ public:
     /** moves this object to map coordinates (x, y). */
     void            MoveTo(double x, double y);
 
-    [[nodiscard]] MeterMap&       Meters() { return m_meters; }           ///< returns this UniverseObject's meters
-    [[nodiscard]] Meter*          GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    [[nodiscard]] MeterMap& Meters() { return m_meters; } ///< returns this UniverseObject's meters
+    [[nodiscard]] Meter*    GetMeter(MeterType type);     ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     /** Sets all this UniverseObject's meters' initial values equal to their
         current values. */
@@ -220,7 +221,7 @@ protected:
       * is visible to the empire with the specified \a empire_id as determined
       * by the detection and visibility system.  Caller takes ownership of
       * returned pointee. */
-    virtual UniverseObject* Clone(int empire_id = ALL_EMPIRES) const = 0;
+    [[nodiscard]] virtual UniverseObject* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const = 0;
 
     void                    AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
     void                    Init();                         ///< adds stealth meter
@@ -228,21 +229,22 @@ protected:
     /** Used by public UniverseObject::Copy and derived classes' ::Copy methods.
       */
     void Copy(std::shared_ptr<const UniverseObject> copied_object, Visibility vis,
-              const std::set<std::string>& visible_specials);
+              const std::set<std::string>& visible_specials,
+              const Universe& universe);
 
-    std::string             m_name;
+    std::string m_name;
 
 private:
-    MeterMap                CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
+    [[nodiscard]] MeterMap CensoredMeters(Visibility vis) const; ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
 
-    int                                             m_id = INVALID_OBJECT_ID;
-    double                                          m_x = INVALID_POSITION;
-    double                                          m_y = INVALID_POSITION;
-    int                                             m_owner_empire_id = ALL_EMPIRES;
-    int                                             m_system_id = INVALID_OBJECT_ID;
-    std::map<std::string, std::pair<int, float>>    m_specials; // map from special name to pair of (turn added, capacity)
-    MeterMap                                        m_meters;
-    int                                             m_created_on_turn = INVALID_GAME_TURN;
+    int                                          m_id = INVALID_OBJECT_ID;
+    double                                       m_x = INVALID_POSITION;
+    double                                       m_y = INVALID_POSITION;
+    int                                          m_owner_empire_id = ALL_EMPIRES;
+    int                                          m_system_id = INVALID_OBJECT_ID;
+    std::map<std::string, std::pair<int, float>> m_specials; // map from special name to pair of (turn added, capacity)
+    MeterMap                                     m_meters;
+    int                                          m_created_on_turn = INVALID_GAME_TURN;
 
     template <typename Archive>
     friend void serialize(Archive&, UniverseObject&, unsigned int const);
