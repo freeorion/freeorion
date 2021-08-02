@@ -6452,7 +6452,7 @@ ARTISTIC_SPECIES_TITLE
 Artistic Trait
 
 ARTISTIC_SPECIES_TRAIT_TEXT
-Artistic species produce artistic works when their empire has adopted [[policy PLC_ARTISAN_WORKSHOPS]], which generates influence. Additionally, when set to influence focus, other planets with artistic species in the same system are more stable.
+Artistic species produce artistic works when their empire has adopted [[policy PLC_ARTISAN_WORKSHOPS]], which generates influence. Additionally, other planets with different artistic species in the same system are more stable.
 
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
