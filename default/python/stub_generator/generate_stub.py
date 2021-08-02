@@ -38,6 +38,7 @@ def make_stub(classes: List[ClassInfo], enums: List[EnumInfo], functions: List[F
         "    ShipId,\n"
         "    SpeciesName,\n"
         "    SystemId,\n"
+        "    Turn,\n"
         ")\n\n"
     )
 

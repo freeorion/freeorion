@@ -15,6 +15,7 @@ from common.fo_typing import (
     ShipId,
     SpeciesName,
     SystemId,
+    Turn,
 )
 
 class AccountingInfo:
@@ -769,7 +770,7 @@ class policy:
 
 class popCenter:
     @property
-    def speciesName(self) -> str: ...
+    def speciesName(self) -> SpeciesName: ...
 
 
 class productionQueue:
@@ -794,9 +795,9 @@ class productionQueue:
 
     def __len__(self) -> int: ...
 
-    def availablePP(self, obj: object) -> resPoolMap: ...
+    def availablePP(self, res_pool: resPool) -> resPoolMap: ...
 
-    def objectsWithWastedPP(self, obj: object) -> IntSetSet: ...
+    def objectsWithWastedPP(self, res_pool: resPool) -> IntSetSet: ...
 
 
 class productionQueueElement:
@@ -816,7 +817,7 @@ class productionQueueElement:
     def designID(self) -> int: ...
 
     @property
-    def locationID(self) -> int: ...
+    def locationID(self) -> PlanetId: ...
 
     @property
     def name(self) -> str: ...
@@ -924,7 +925,7 @@ class shipDesign:
     def description(self) -> str: ...
 
     @property
-    def designedOnTurn(self) -> int: ...
+    def designedOnTurn(self) -> Turn: ...
 
     @property
     def detection(self) -> float: ...
@@ -1806,7 +1807,7 @@ class visibility(IntEnum):
     full = 3
 
 
-def allEmpireIDs() -> IntVec:
+def allEmpireIDs() -> Sequence[EmpireId]:
     """
     Returns an object (intVec) that contains the empire IDs of all empires in the game.
     """
@@ -1824,13 +1825,13 @@ def appendFleetMoveOrder(number1: int, number2: int) -> int:
     """
 
 
-def currentTurn() -> int:
+def currentTurn() -> Turn:
     """
     Returns the current game turn (int).
     """
 
 
-def empireID() -> int:
+def empireID() -> EmpireId:
     """
     Returns the empire ID (int) of this AI player's empire.
     """

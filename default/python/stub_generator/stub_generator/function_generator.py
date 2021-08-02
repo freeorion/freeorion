@@ -1,14 +1,28 @@
 from operator import attrgetter
 from typing import List
 
+from common.fo_typing import EmpireId, Turn
 from stub_generator.interface_inspector import FunctionInfo
 from stub_generator.parse_docs import Docs
 from stub_generator.stub_generator.base_generator import BaseGenerator
 
 
+rtypes_map = {
+    "currentTurn": Turn.__name__,
+    "empireID": EmpireId.__name__,
+    "allEmpireIDs": f"Sequence[{EmpireId.__name__}]",
+}
+
+
+def _get_function_rtype(name: str, rtype: str) -> str:
+    if name in rtypes_map:
+        return rtypes_map[name]
+    return rtype if rtype else ''
+
+
 def _handle_function(fun: FunctionInfo):
     function = Docs(fun.doc, 1)
-    return_annotation = ' -> %s' % function.rtype if function.rtype else ''
+    return_annotation = ' -> %s' % _get_function_rtype(fun.name, function.rtype)
     docstring = function.get_doc_string()
     if docstring:
         docstring = '\n' + docstring
