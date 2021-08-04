@@ -66,7 +66,6 @@ public:
     [[nodiscard]] int                 EmpireID() const;        ///< Returns the Empire's unique numeric ID
     [[nodiscard]] const EmpireColor&  Color() const;           ///< Returns the Empire's color
     [[nodiscard]] int                 CapitalID() const;       ///< Returns the numeric ID of the empire's capital
-    [[nodiscard]] int                 SourceID() const;        ///< Returns an object id that is owned by the empire or INVALID_OBJECT_ID.
 
                                                                /** Returns an object that is owned by the empire, or null.*/
     [[nodiscard]] std::shared_ptr<const UniverseObject> Source(const ObjectMap& objects) const;
@@ -280,7 +279,7 @@ public:
     //! ShipHull%s.
     void AddShipHull(const std::string& name);
 
-    void AddExploredSystem(int ID, int turn);       ///< Inserts the given ID into the Empire's list of explored systems.
+    void AddExploredSystem(int ID, int turn, const ObjectMap& objects); ///< Inserts the given ID into the Empire's list of explored systems.
 
     /** inserts given design id into the empire's set of designs in front of next design */
     void AddShipDesign(int ship_design_id, const Universe& universe, int next_design_id = INVALID_DESIGN_ID);

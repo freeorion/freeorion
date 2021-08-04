@@ -101,13 +101,6 @@ const EmpireColor& Empire::Color() const
 int Empire::CapitalID() const
 { return m_capital_id; }
 
-int Empire::SourceID() const { // TODO: pass in ScriptingContext or ObjectMap
-    const ObjectMap& objects{Objects()};
-
-    auto good_source = Source(objects);
-    return good_source ? good_source->ID() : INVALID_OBJECT_ID;
-}
-
 std::shared_ptr<const UniverseObject> Empire::Source(const ObjectMap& objects) const {
     if (m_eliminated)
         return nullptr;
@@ -1877,8 +1870,8 @@ void Empire::AddShipHull(const std::string& name) {
     AddSitRepEntry(CreateShipHullUnlockedSitRep(name));
 }
 
-void Empire::AddExploredSystem(int ID, int turn) {
-    if (Objects().get<System>(ID))
+void Empire::AddExploredSystem(int ID, int turn, const ObjectMap& objects) {
+    if (objects.get<System>(ID))
         m_explored_systems.emplace(ID, turn);
     else
         ErrorLogger() << "Empire::AddExploredSystem given an invalid system id: " << ID;
