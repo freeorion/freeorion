@@ -437,6 +437,9 @@ float ShipPart::ProductionCost(int empire_id, int location_id, int in_design_id)
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
         return 1.0f;
 
+    ObjectMap& objects{Objects()};
+    const EmpireManager& empires{Empires()};
+
     if (m_production_cost->ConstantExpr()) {
         return static_cast<float>(m_production_cost->Eval());
     } else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant()) {
@@ -444,23 +447,26 @@ float ShipPart::ProductionCost(int empire_id, int location_id, int in_design_id)
         return static_cast<float>(m_production_cost->Eval(ScriptingContext(temp_context, in_design_id)));
     }
 
-    auto location = Objects().get(location_id);
+    auto location = objects.get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
-    auto source = Empires().GetSource(empire_id);   // TODO: pass ObjectMap in and on here
+    auto source = empires.GetSource(empire_id, objects);
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
     constexpr int PRODUCTION_BLOCK_SIZE = 1;
 
-    const ScriptingContext context(std::move(source), std::move(location), in_design_id, PRODUCTION_BLOCK_SIZE);
+    const ScriptingContext context{std::move(source), std::move(location), in_design_id, PRODUCTION_BLOCK_SIZE};
     return static_cast<float>(m_production_cost->Eval(context));
 }
 
 int ShipPart::ProductionTime(int empire_id, int location_id, int in_design_id) const {  // TODO: pass in ScriptingContext
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
         return 1;
+
+    ObjectMap& objects{Objects()};
+    const EmpireManager& empires{Empires()};
 
     if (m_production_time->ConstantExpr()) {
         return m_production_time->Eval();
@@ -469,11 +475,11 @@ int ShipPart::ProductionTime(int empire_id, int location_id, int in_design_id) c
         return m_production_time->Eval(ScriptingContext(temp_context, in_design_id));
     }
 
-    auto location = Objects().get(location_id);
+    auto location = objects.get(location_id);
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    auto source = Empires().GetSource(empire_id);   // TODO: pass ObjectMap in and on here
+    auto source = empires.GetSource(empire_id, objects);
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 

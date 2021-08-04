@@ -101,8 +101,10 @@ const EmpireColor& Empire::Color() const
 int Empire::CapitalID() const
 { return m_capital_id; }
 
-int Empire::SourceID() const {
-    auto good_source = Source();
+int Empire::SourceID() const { // TODO: pass in ScriptingContext or ObjectMap
+    const ObjectMap& objects{Objects()};
+
+    auto good_source = Source(objects);
     return good_source ? good_source->ID() : INVALID_OBJECT_ID;
 }
 
@@ -165,7 +167,7 @@ void Empire::SetCapitalID(int id, const ObjectMap& objects) {
 }
 
 void Empire::AdoptPolicy(const std::string& name, const std::string& category,
-                         bool adopt, int slot, const ObjectMap& objects)
+                         const ObjectMap& objects, bool adopt, int slot)
 {
     if (adopt && name.empty()) {
         ErrorLogger() << "Empire::AdoptPolicy asked to adopt empty policy name in category " << category << " slot " << slot;
@@ -1335,7 +1337,7 @@ std::map<int, std::set<int>> Empire::KnownStarlanes(const Universe& universe) co
     TraceLogger(supply) << "Empire::KnownStarlanes for empire " << m_id;
 
     auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
-    for (const auto& sys : Objects().all<System>()) {
+    for (const auto& sys : universe.Objects().all<System>()) {
         int start_id = sys->ID();
         TraceLogger(supply) << "system " << start_id << " has up to " << sys->StarlanesWormholes().size() << " lanes / wormholes";
 

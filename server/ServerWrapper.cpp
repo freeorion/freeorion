@@ -286,12 +286,13 @@ namespace {
 
     auto EmpireSetHomeworld(int empire_id, int planet_id, const std::string& species_name) -> bool
     {
-        Empire* empire = GetEmpire(empire_id);
+        ScriptingContext context;
+        auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "EmpireSetHomeworld: couldn't get empire with ID " << empire_id;
             return false;
         }
-        return SetEmpireHomeworld(empire, planet_id, species_name);
+        return SetEmpireHomeworld(empire.get(), planet_id, species_name, context);
     }
 
     void EmpireUnlockItem(int empire_id, UnlockableItemType item_type,

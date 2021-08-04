@@ -1142,7 +1142,7 @@ void SetEmpireCapital::Execute(ScriptingContext& context) const {
     if (!planet)
         return;
 
-    empire->SetCapitalID(planet->ID());
+    empire->SetCapitalID(planet->ID(), context.ContextObjects());
 }
 
 std::string SetEmpireCapital::Dump(unsigned short ntabs) const

@@ -667,7 +667,7 @@ namespace {
             if (empire->Eliminated())
                 continue;
 
-            empire->InitResourcePools();   // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
+            empire->InitResourcePools(context.ContextObjects()); // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
             empire->UpdateResourcePools(); // determines how much of each resources is available in each resource sharing group
         }
     }
@@ -752,7 +752,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     // initialize empire owned object counters
     for (auto& entry : m_empires)
-        entry.second->UpdateOwnedObjectCounters();
+        entry.second->UpdateOwnedObjectCounters(m_universe.Objects());
 
     UpdateEmpireSupply(context, m_empires, m_supply_manager);
     m_universe.UpdateStatRecords(m_empires);
@@ -3497,6 +3497,8 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
 void ServerApp::PostCombatProcessTurns() {
     ScopedTimer timer("ServerApp::PostCombatProcessTurns", true);
 
+    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager,m_supply_manager};
+
     // post-combat visibility update
     m_universe.UpdateEmpireObjectVisibilities(Empires());
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
@@ -3507,9 +3509,9 @@ void ServerApp::PostCombatProcessTurns() {
         int capital_id = empire->CapitalID();
         if (auto capital = m_universe.Objects().get(capital_id)) {
             if (!capital->OwnedBy(empire_id))
-                empire->SetCapitalID(INVALID_OBJECT_ID);
+                empire->SetCapitalID(INVALID_OBJECT_ID, m_universe.Objects());
         } else {
-            empire->SetCapitalID(INVALID_OBJECT_ID);
+            empire->SetCapitalID(INVALID_OBJECT_ID, m_universe.Objects());
         }
     }
 
@@ -3522,8 +3524,6 @@ void ServerApp::PostCombatProcessTurns() {
 
     TraceLogger(effects) << "!!!!!!! BEFORE TURN PROCESSING EFFECTS APPLICATION";
     TraceLogger(effects) << m_universe.Objects().Dump();
-
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
 
     // execute all effects and update meters prior to production, research, etc.
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
@@ -3611,9 +3611,9 @@ void ServerApp::PostCombatProcessTurns() {
         int capital_id = empire->CapitalID();
         if (auto capital = m_universe.Objects().get(capital_id)) {
             if (!capital->OwnedBy(empire_id))
-                empire->SetCapitalID(INVALID_OBJECT_ID);
+                empire->SetCapitalID(INVALID_OBJECT_ID, m_universe.Objects());
         } else {
-            empire->SetCapitalID(INVALID_OBJECT_ID);
+            empire->SetCapitalID(INVALID_OBJECT_ID, m_universe.Objects());
         }
     }
 
@@ -3685,7 +3685,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateStatRecords(m_empires);
     for ([[maybe_unused]] auto& [ignored_empire_id, empire] : m_empires) {
         (void)ignored_empire_id;    // quiet unused variable warning
-        empire->UpdateOwnedObjectCounters();
+        empire->UpdateOwnedObjectCounters(m_universe.Objects());
     }
     GetSpeciesManager().UpdatePopulationCounter();
 

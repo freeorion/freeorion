@@ -69,7 +69,7 @@ public:
     [[nodiscard]] int                 SourceID() const;        ///< Returns an object id that is owned by the empire or INVALID_OBJECT_ID.
 
                                                                /** Returns an object that is owned by the empire, or null.*/
-    [[nodiscard]] std::shared_ptr<const UniverseObject> Source(const ObjectMap& objects = Objects()) const;
+    [[nodiscard]] std::shared_ptr<const UniverseObject> Source(const ObjectMap& objects) const;
 
     [[nodiscard]] std::string              Dump() const;
 
@@ -207,13 +207,12 @@ public:
 
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */
-    void SetCapitalID(int id, const ObjectMap& objects = Objects());
+    void SetCapitalID(int id, const ObjectMap& objects);
 
     /** Adopts the specified policy, assuming its conditions are met. Revokes
       * the policy if \a adopt is false; */
     void AdoptPolicy(const std::string& name, const std::string& category,
-                     bool adopt = true, int slot = -1,
-                     const ObjectMap& objects = Objects());
+                     const ObjectMap& objects, bool adopt = true, int slot = -1);
 
     /** Checks that all policy adoption conditions are met, removing any that
       * are not allowed. Also copies adopted policies to initial adopted
@@ -319,7 +318,7 @@ public:
     /** Calculates ranges that systems can send fleet and resource supplies,
       * using the specified st of \a known_objects as the source for supply-
       * producing objects and systems through which it can be propagated. */
-    void UpdateSystemSupplyRanges(const std::set<int>& known_objects, const ObjectMap& objects = Objects());
+    void UpdateSystemSupplyRanges(const std::set<int>& known_objects, const ObjectMap& objects);
     /** Calculates ranges that systems can send fleet and resource supplies. */
     void UpdateSystemSupplyRanges(const Universe& universe = GetUniverse());
     /** Calculates systems that can propagate supply (fleet or resource) using
@@ -366,7 +365,7 @@ public:
     /** Determines ResourceCenters that can provide resources for this empire and sets
       * the supply groups used for each ResourcePool as appropriate for each resource.
       * call UpdateResourceSupply before calling this. */
-    void InitResourcePools(const ObjectMap& objects = Objects());
+    void InitResourcePools(const ObjectMap& objects);
 
     /** Resets production of resources and calculates allocated resources (on
       * each item in queues and overall) for each resource by calling
@@ -394,7 +393,7 @@ public:
     /** Resets empire meters. */
     void ResetMeters();
 
-    void UpdateOwnedObjectCounters(const ObjectMap& objects = Objects());
+    void UpdateOwnedObjectCounters(const ObjectMap& objects);
 
     void SetAuthenticated(bool authenticated = true);
 

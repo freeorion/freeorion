@@ -794,12 +794,12 @@ void SetNativePopulationValues(ObjectMap& object_map) {
     }
 }
 
-bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name) {
+bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name, ScriptingContext& context) {
     // get home planet and system, check if they exist
-    auto home_planet = Objects().get<Planet>(planet_id);
+    auto home_planet = context.ContextObjects().get<Planet>(planet_id);
     if (!home_planet)
         return false;
-    auto home_system = Objects().get<System>(home_planet->SystemID());
+    auto home_system = context.ContextObjects().get<System>(home_planet->SystemID());
     if (!home_system)
         return false;
 
@@ -807,7 +807,7 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
                   << " (planet " <<  home_planet->ID() << ") to be home system for empire " << empire->EmpireID();
 
     // get species, check if it exists
-    Species* species = GetSpecies(species_name);
+    Species* species = context.species.GetSpecies(species_name);
     if (!species) {
         ErrorLogger() << "SetEmpireHomeworld: couldn't get species \""
                       << species_name << "\" to set with homeworld id " << home_planet->ID();
@@ -838,9 +838,9 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
     }
 
     home_planet->Colonize(empire->EmpireID(), species_name, Meter::LARGE_VALUE);
-    GetSpeciesManager().AddSpeciesHomeworld(std::move(species_name), home_planet->ID());
+    context.species.AddSpeciesHomeworld(std::move(species_name), home_planet->ID());
 
-    empire->SetCapitalID(home_planet->ID());
+    empire->SetCapitalID(home_planet->ID(), context.ContextObjects());
     empire->AddExploredSystem(home_planet->SystemID(), BEFORE_FIRST_TURN);
 
     return true;
@@ -850,19 +850,18 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
     DebugLogger() << "Initializing " << player_setup_data.size() << " empires";
 
     // copy empire colour table, so that individual colours can be removed after they're used
-    auto colors = EmpireColors();
+    auto colors{EmpireColors()};
 
     // create empire objects and do some basic initilization for each player
-    for (const auto& entry : player_setup_data) {
+    for (auto& [empire_id, psd] : player_setup_data) {
         // use map key for empire ID so that the calling code can get the
         // correct empire for each player in player_setup_data
-        int         empire_id =     entry.first;
         if (empire_id == ALL_EMPIRES)
             ErrorLogger() << "InitEmpires empire id (" << empire_id << ") is invalid";
 
-        const auto& player_name =   entry.second.player_name;
-        auto        empire_colour = entry.second.empire_color;
-        bool        authenticated = entry.second.authenticated;
+        const auto& player_name =   psd.player_name;
+        auto        empire_colour = psd.empire_color;
+        bool        authenticated = psd.authenticated;
 
         // validate or generate empire colour
         // ensure no other empire gets auto-assigned this colour automatically
@@ -891,7 +890,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
         std::string empire_name = UserString("EMPIRE") + std::to_string(empire_id);
 
         DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
-                      << " for player: " << player_name << " in team: " << entry.second.starting_team;
+                      << " for player: " << player_name << " in team: " << psd.starting_team;
 
         // create new Empire object through empire manager
         Empires().CreateEmpire(empire_id, std::move(empire_name), player_name,
@@ -900,18 +899,18 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
 
     Empires().ResetDiplomacy();
 
-    for (const auto& entry : player_setup_data) {
-        if (entry.second.starting_team < 0)
+    for (auto& [player_id1, psd1] : player_setup_data) {
+        if (psd1.starting_team < 0)
             continue;
 
-        for (const auto& other_entry : player_setup_data) {
-            if (entry.first == other_entry.first)
+        for (auto& [player_id2, psd2] : player_setup_data) {
+            if (player_id1 == player_id2)
                 continue;
 
-            if (entry.second.starting_team != other_entry.second.starting_team)
+            if (psd1.starting_team != psd2.starting_team)
                 continue;
 
-            Empires().SetDiplomaticStatus(entry.first, other_entry.first, DiplomaticStatus::DIPLO_ALLIED);
+            Empires().SetDiplomaticStatus(player_id1, player_id2, DiplomaticStatus::DIPLO_ALLIED);
         }
     }
 }

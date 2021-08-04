@@ -272,8 +272,11 @@ std::string Tech::Dump(unsigned short ntabs) const {
     return retval;
 }
 
-float Tech::ResearchCost(int empire_id) const {
+float Tech::ResearchCost(int empire_id) const { // TODO: pass in ScriptingContext
     const auto ARBITRARY_LARGE_COST = 999999.9f;
+
+    const ObjectMap& objects{Objects()};
+    const EmpireManager& empires{Empires()};
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_cost) {
         return 1.0;
@@ -288,7 +291,7 @@ float Tech::ResearchCost(int empire_id) const {
         return ARBITRARY_LARGE_COST;
 
     } else {
-        auto source = Empires().GetSource(empire_id);   // TODO: pass ScriptingContext and use here
+        auto source = empires.GetSource(empire_id, objects);   // TODO: pass ScriptingContext and use here
         if (!source)
             return ARBITRARY_LARGE_COST;
         return m_research_cost->Eval(ScriptingContext(std::move(source)));
@@ -301,20 +304,23 @@ float Tech::PerTurnCost(int empire_id) const
 int Tech::ResearchTime(int empire_id) const {
     const auto ARBITRARY_LARGE_TURNS = 9999;
 
+    const ObjectMap& objects{Objects()};
+    const EmpireManager& empires{Empires()};
+
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_TECH_RESEARCH") || !m_research_turns) {
         return 1;
 
     } else if (m_research_turns->ConstantExpr()) {
-            return m_research_turns->Eval();
+        return m_research_turns->Eval();
 
     } else if (m_research_turns->SourceInvariant()) {
-            return m_research_turns->Eval();
+        return m_research_turns->Eval();
 
     } else if (empire_id == ALL_EMPIRES) {
         return ARBITRARY_LARGE_TURNS;
 
     } else {
-        auto source = Empires().GetSource(empire_id);   // TODO: pass ScriptingContext and use here
+        auto source = empires.GetSource(empire_id, objects);
         if (!source && !m_research_turns->SourceInvariant())
             return ARBITRARY_LARGE_TURNS;
 

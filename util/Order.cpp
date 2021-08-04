@@ -978,7 +978,7 @@ std::string PolicyOrder::Dump() const {
     return m_adopt ? UserString("ORDER_POLICY_ADOPT") : UserString("ORDER_POLICY_ABANDON");
 }
 
-void PolicyOrder::ExecuteImpl() const {
+void PolicyOrder::ExecuteImpl() const { // TODO: pass in ObjectMap
     auto empire = GetValidatedEmpire();
     if (m_adopt)
         DebugLogger() << "PolicyOrder adopt " << m_policy_name << " in category " << m_category
@@ -986,7 +986,7 @@ void PolicyOrder::ExecuteImpl() const {
     else
         DebugLogger() << "PolicyOrder revoke " << m_policy_name << " from category " << m_category
                       << " in slot " << m_slot;
-    empire->AdoptPolicy(m_policy_name, m_category, m_adopt, m_slot, Objects());
+    empire->AdoptPolicy(m_policy_name, m_category, Objects(), m_adopt, m_slot);
 }
 
 ////////////////////////////////////////////////

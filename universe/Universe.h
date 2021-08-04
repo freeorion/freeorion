@@ -314,7 +314,7 @@ public:
 
     /** Record in statistics that \a object_id was destroyed by species/empire
       * associated with \a source_object_id */
-    void CountDestructionInStats(int object_id, int source_object_id, ScriptingContext& context);
+    void CountDestructionInStats(int object_id, int source_object_id, const std::map<int, std::shared_ptr<Empire>>& empires);
 
     /** Removes the object with ID number \a object_id from the universe's map
       * of existing objects, and adds the object's id to the set of destroyed
