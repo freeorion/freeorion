@@ -25,4 +25,4 @@ jobs:
           black . --check -q
       - name: Lint with isort
         run: |
-          isort . --check -q
+          isort . --check-only --diff --quiet
