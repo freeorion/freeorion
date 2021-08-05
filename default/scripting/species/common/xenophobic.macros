@@ -42,7 +42,7 @@ XENOPHOBIC_SELF
                         Not Population high = 0
                         Not Contains Building name = "BLD_CONC_CAMP"
                         WithinStarlaneJumps jumps = 5 condition = Source
-                    ]) * (NamedReal name = "XENOPHOBIC_SELF_TARGET_HAPPINESS_COUNT" value = 1.0)
+                    ]) * (NamedReal name = "XENOPHOBIC_SELF_TARGET_HAPPINESS_COUNT" value = -1.0)
             ]
 
         // Give a pop malus for self-sustaining xenophobic species based on the number of nearby planets with other species
