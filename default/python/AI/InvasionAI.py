@@ -14,6 +14,7 @@ from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
 from colonization import calculate_planet_colonization_rating
 from common.print_utils import Number, Table, Text
+from empire.ship_builders import can_build_ship_for_species
 from EnumsAI import MissionType, PriorityType
 from freeorion_tools import (
     get_partial_visibility_turn,
@@ -121,7 +122,7 @@ def get_invasion_fleets():
                 if available_pp.get(pid2, 0) < 2:  # TODO: improve troop base PP sufficiency determination
                     break
                 planet2 = universe.getPlanet(pid2)
-                if not planet2 or planet2.speciesName not in ColonisationAI.empire_ship_builders:
+                if not planet2 or not can_build_ship_for_species(planet2.speciesName):
                     continue
                 best_base_trooper_here = get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, pid2)[1]
                 if not best_base_trooper_here:

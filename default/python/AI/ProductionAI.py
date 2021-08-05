@@ -24,6 +24,7 @@ from empire.colony_builders import (
     get_colony_builder_locations,
     get_colony_builders,
 )
+from empire.ship_builders import can_build_ship_for_species, get_ship_builder_locations
 from EnumsAI import (
     EmpireProductionTypes,
     FocusType,
@@ -348,7 +349,7 @@ def generate_production_orders():
                 if len(queued_building_locs) > 1:  # build a max of 2 at once
                     break
                 this_planet = universe.getPlanet(pid)
-                if not (this_planet and this_planet.speciesName in ColonisationAI.empire_ship_builders):  # TODO: also check that not already one for this spec in this sys
+                if not (this_planet and can_build_ship_for_species(this_planet.speciesName)):  # TODO: also check that not already one for this spec in this sys
                     continue
                 enrgy_shipyard_locs.setdefault(this_planet.systemID, []).append(pid)
                 if pid not in queued_building_locs and building_type.canBeProduced(empire.empireID, pid):
@@ -368,7 +369,7 @@ def generate_production_orders():
         bld_type = fo.getBuildingType(bld_name)
         for pid in bh_pilots:
             this_planet = universe.getPlanet(pid)
-            if not (this_planet and this_planet.speciesName in ColonisationAI.empire_ship_builders):  # TODO: also check that not already one for this spec in this sys
+            if not (this_planet and can_build_ship_for_species(this_planet.speciesName)):  # TODO: also check that not already one for this spec in this sys
                 continue
             if bld_type.canBeProduced(empire.empireID, pid):
                 res = fo.issueEnqueueBuildingProductionOrder(bld_name, pid)
@@ -422,8 +423,8 @@ def generate_production_orders():
                     asteroid_systems.setdefault(sys_id, []).append(pid)
                     if (pid in queued_building_locs) or (building_name in [universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs]):
                         asteroid_yards[sys_id] = pid  # shouldn't ever overwrite another, but ok if it did
-                if this_spec in ColonisationAI.empire_ship_builders:
-                    if pid in ColonisationAI.empire_ship_builders[this_spec]:
+                if can_build_ship_for_species(this_spec):
+                    if pid in get_ship_builder_locations(this_spec):
                         shipyard_systems.setdefault(sys_id, []).append(pid)
                     else:
                         builder_systems.setdefault(sys_id, []).append((planet.speciesName, pid))
@@ -457,7 +458,7 @@ def generate_production_orders():
                                 colonizer_loc_choices.append(sys_id)
                                 need_yard[sys_id] = pid
                         else:
-                            if pid in (ColonisationAI.empire_ship_builders.get(this_spec, []) + queued_shipyard_locs):
+                            if pid in (get_ship_builder_locations(this_spec) + queued_shipyard_locs):
                                 builder_loc_choices.insert(0, sys_id)
                             else:
                                 builder_loc_choices.append(sys_id)

@@ -24,6 +24,7 @@ from empire.colony_builders import (
     get_colony_builders,
     set_colony_builders,
 )
+from empire.ship_builders import get_ship_builder_locations, set_ship_builders
 from EnumsAI import (
     EmpireProductionTypes,
     FocusType,
@@ -58,7 +59,6 @@ from turn_state.design import get_best_ship_info
 colonization_timer = AITimer('getColonyFleets()')
 
 
-empire_ship_builders = {}
 empire_shipyards = {}
 available_growth_specials = {}
 all_colony_opportunities = {}
@@ -116,7 +116,6 @@ def survey_universe():
         colony_status['colonies_under_attack'] = []
         colony_status['colonies_under_threat'] = []
         AIstate.empireStars.clear()
-        empire_ship_builders.clear()
         empire_shipyards.clear()
         empire_metabolisms.clear()
         available_growth_specials.clear()
@@ -166,7 +165,7 @@ def survey_universe():
                         pilot_ratings[pid] = pilot_val
                         yard_here = []
                         if "BLD_SHIPYARD_BASE" in buildings_here:
-                            empire_ship_builders.setdefault(spec_name, []).append(pid)
+                            set_ship_builders(spec_name, pid)
                             empire_shipyards[pid] = pilot_val
                             yard_here = [pid]
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
@@ -515,7 +514,7 @@ def _print_empire_species_roster():
     )
     for species_name, planet_ids in get_empire_planets_by_species().items():
         species_tags = fo.getSpecies(species_name).tags
-        number_of_shipyards = len(empire_ship_builders.get(species_name, []))
+        number_of_shipyards = len(get_ship_builder_locations(species_name))
         species_table.add_row(
             species_name,
             planet_ids,

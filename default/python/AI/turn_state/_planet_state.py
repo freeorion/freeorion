@@ -2,7 +2,7 @@ import freeOrionAIInterface as fo
 from typing import Callable, FrozenSet, List, Mapping, Set, Tuple
 
 import AIDependencies
-from common.fo_typing import PlanetId, SystemId
+from common.fo_typing import PlanetId, SpeciesName, SystemId
 from freeorion_tools import ReadOnlyDict
 from freeorion_tools.caching import cache_for_current_turn
 
@@ -94,7 +94,7 @@ def get_all_empire_planets() -> Tuple[PlanetId]:
 
 
 @cache_for_current_turn
-def get_empire_planets_by_species() -> Mapping[str, List[PlanetId]]:
+def get_empire_planets_by_species() -> Mapping[SpeciesName, List[PlanetId]]:
     """
     Return dict for empire from species to list of planet ids.
     """
