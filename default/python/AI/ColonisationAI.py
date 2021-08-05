@@ -24,6 +24,7 @@ from empire.colony_builders import (
     get_colony_builders,
     set_colony_builders,
 )
+from empire.growth_specials import set_growth_special
 from empire.ship_builders import get_ship_builder_locations, set_ship_builders
 from EnumsAI import (
     EmpireProductionTypes,
@@ -58,7 +59,6 @@ from turn_state.design import get_best_ship_info
 
 colonization_timer = AITimer('getColonyFleets()')
 
-available_growth_specials = {}
 all_colony_opportunities = {}
 
 pilot_ratings = {}
@@ -115,7 +115,6 @@ def survey_universe():
         colony_status['colonies_under_threat'] = []
         AIstate.empireStars.clear()
         empire_metabolisms.clear()
-        available_growth_specials.clear()
         active_growth_specials.clear()
         pilot_ratings.clear()
         facilities_by_species_grade.clear()
@@ -179,7 +178,7 @@ def survey_universe():
                     if special_is_nest(special):
                         set_have_nest()
                     if special in AIDependencies.metabolismBoosts:
-                        available_growth_specials.setdefault(special, []).append(pid)
+                        set_growth_special(special, pid)
                         if planet.focus == FocusType.FOCUS_GROWTH:
                             active_growth_specials.setdefault(special, []).append(pid)
             elif owner_id != -1:
