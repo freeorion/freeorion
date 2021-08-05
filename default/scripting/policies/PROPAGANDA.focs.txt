@@ -4,6 +4,7 @@ Policy
     short_description = "PLC_PROPAGANDA_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
     adoptioncost = 5.0
+    unlock = Item type = Policy name = "PLC_MARINE_RECRUITMENT"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 

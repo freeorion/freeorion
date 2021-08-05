@@ -6,6 +6,18 @@ Policy
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                (LocalCandidate.LastTurnConquered < CurrentTurn)
+                (LocalCandidate.LastTurnAttackedByShip < CurrentTurn)
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetTroops value = min(Value(Target.MaxTroops),
+                                            Value + (NamedReal name = "PLC_MARINE_RECRUITMENT_TROOP_GROWTH_FLAT" value = 2))
+
     ]
     graphic = "icons/policies/marine_recruitment.png"
 
