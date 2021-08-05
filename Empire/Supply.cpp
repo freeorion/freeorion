@@ -169,9 +169,8 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool incl
     return false;
 }
 
-std::string SupplyManager::Dump(int empire_id) const {
+std::string SupplyManager::Dump(const ObjectMap& objects, int empire_id) const {
     std::string retval;
-    const ObjectMap& objects = Objects(); // TODO: pass in ObjectMap
 
     try {
         for (const auto& empire_supply : m_fleet_supplyable_system_ids) {

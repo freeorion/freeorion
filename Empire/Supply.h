@@ -8,6 +8,7 @@
 #include "../universe/ConstantsFwd.h"
 #include "../util/Export.h"
 
+class ObjectMap;
 
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {
@@ -60,7 +61,7 @@ public:
     [[nodiscard]] bool        SystemHasFleetSupply(int system_id, int empire_id) const;
     [[nodiscard]] bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const;
 
-    [[nodiscard]] std::string Dump(int empire_id = ALL_EMPIRES) const;
+    [[nodiscard]] std::string Dump(const ObjectMap& objects, int empire_id = ALL_EMPIRES) const;
 
     /** Calculates systems at which fleets of empires can be supplied, and
       * groups of systems that can exchange resources, and the starlane
