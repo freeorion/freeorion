@@ -39,12 +39,12 @@ namespace {
 ////////////////////////////////////////////////
 CombatInfo::CombatInfo(int system_id_, int turn_,
                        Universe& universe_mutable_in,
-                       const EmpireManager& empires_,
+                       EmpireManager& empires_,
                        const GalaxySetupData& galaxy_setup_data_,
                        SpeciesManager& species_,
                        const SupplyManager& supply_) :
     universe(universe_mutable_in),
-    empires(empires_.GetEmpires()),
+    empires(empires_),
     empire_object_vis_turns(universe_mutable_in.GetEmpireObjectVisibilityTurnMap()),
     diplo_statuses(empires_.GetDiplomaticStatuses()),
     galaxy_setup_data(galaxy_setup_data_),
@@ -173,11 +173,6 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
 { filtered_empire_object_visibility = this->empire_object_visibility; }
 
 namespace {
-    std::shared_ptr<const Empire> GetEmpire(int id, const CombatInfo& combat_info) {
-        auto it = combat_info.empires.find(id);
-        return it == combat_info.empires.end() ? nullptr : it->second;
-    }
-
     // collect detection strengths of all empires (and neutrals) in \a combat_info
     std::map<int, float> GetEmpiresDetectionStrengths(const CombatInfo& combat_info) {
         std::map<int, float> retval;
@@ -187,7 +182,7 @@ namespace {
                 retval[ALL_EMPIRES] =  combat_info.GetMonsterDetection();
                 continue;
             }
-            const auto empire = GetEmpire(empire_id, combat_info);
+            const auto empire = combat_info.empires.GetEmpire(empire_id);
             if (!empire) {
                 ErrorLogger() << "GetEmpiresDetectionStrengths(CombatInfo) couldn't find empire with id " << empire_id;
                 continue;
@@ -300,7 +295,7 @@ ScriptingContext::ScriptingContext(CombatInfo& info,
     empire_object_vis(      info.empire_object_visibility),
     empire_object_vis_turns(info.empire_object_vis_turns),
     empires(                nullptr),
-    const_empires(          info.empires),
+    const_empires(          const_cast<const EmpireManager&>(info.empires).GetEmpires()),
     diplo_statuses(         info.diplo_statuses)
 {}
 
@@ -1589,7 +1584,7 @@ namespace {
             species_name = attacker_planet->SpeciesName();
 
         int attacker_owner_id = attacker->Owner();
-        const auto empire = GetEmpire(attacker_owner_id, combat_state.combat_info);
+        const auto empire = combat_state.combat_info.empires.GetEmpire(attacker_owner_id);
         const auto& empire_name = (empire ? empire->Name() : UserString("ENC_COMBAT_ROGUE"));
 
 

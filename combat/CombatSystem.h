@@ -12,7 +12,7 @@ public:
     CombatInfo() = default;
     CombatInfo(int system_id_, int turn_,
                Universe& universe_,
-               const EmpireManager& empires_,
+               EmpireManager& empires_,
                const GalaxySetupData& galaxy_setup_data_,
                SpeciesManager& species_,
                const SupplyManager& supply_);
@@ -25,7 +25,7 @@ public:
     std::shared_ptr<System> GetSystem();
 
     const Universe&                                universe{GetUniverse()}; // universe in which combat occurs, used for general info getting, but not object state info
-    const EmpireManager::const_container_type&     empires{const_cast<const EmpireManager&>(::Empires()).GetEmpires()}; // map from ID to empires, may include empires not actually participating in this combat
+    EmpireManager&                                 empires{Empires()};
     const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{GetUniverse().GetEmpireObjectVisibilityTurnMap()};
     const EmpireManager::DiploStatusMap&           diplo_statuses{Empires().GetDiplomaticStatuses()};
     const GalaxySetupData&                         galaxy_setup_data{GetGalaxySetupData()};
