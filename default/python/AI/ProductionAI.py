@@ -24,7 +24,11 @@ from empire.colony_builders import (
     get_colony_builder_locations,
     get_colony_builders,
 )
-from empire.ship_builders import can_build_ship_for_species, get_ship_builder_locations
+from empire.ship_builders import (
+    can_build_ship_for_species,
+    get_ship_builder_locations,
+    has_shipyard,
+)
 from EnumsAI import (
     EmpireProductionTypes,
     FocusType,
@@ -899,7 +903,7 @@ def generate_production_orders():
             else:
                 pass
             for _, pid in sorted([(local_top_pilots.get(pid, 0), pid) for pid in pids], reverse=True):
-                if pid not in ColonisationAI.empire_shipyards:
+                if has_shipyard(pid):
                     continue
                 if pid in local_drydocks or pid in queued_locs:
                     break

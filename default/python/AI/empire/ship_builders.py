@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Set, Union
 
 from common.fo_typing import PlanetId, SpeciesName
 from freeorion_tools.caching import cache_for_current_turn
@@ -19,6 +19,7 @@ def set_ship_builders(species_name: SpeciesName, pid: PlanetId):
     Warning! Temporal coupling.
     All calls of this function should be done before using of this information.
     """
+    get_shipyards().add(pid)
     get_ship_builders().setdefault(species_name, []).append(pid)
 
 
@@ -28,3 +29,12 @@ def get_ship_builders() -> Dict[SpeciesName, List[PlanetId]]:
     Return map from the species to list of the planet where you could build a ship with it.
     """
     return {}
+
+
+@cache_for_current_turn
+def get_shipyards() -> Set[PlanetId]:
+    return set()
+
+
+def has_shipyard(pid: PlanetId) -> bool:
+    return pid in get_shipyards()

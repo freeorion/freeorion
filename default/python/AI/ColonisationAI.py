@@ -58,8 +58,6 @@ from turn_state.design import get_best_ship_info
 
 colonization_timer = AITimer('getColonyFleets()')
 
-
-empire_shipyards = {}
 available_growth_specials = {}
 all_colony_opportunities = {}
 
@@ -116,7 +114,6 @@ def survey_universe():
         colony_status['colonies_under_attack'] = []
         colony_status['colonies_under_threat'] = []
         AIstate.empireStars.clear()
-        empire_shipyards.clear()
         empire_metabolisms.clear()
         available_growth_specials.clear()
         active_growth_specials.clear()
@@ -166,7 +163,6 @@ def survey_universe():
                         yard_here = []
                         if "BLD_SHIPYARD_BASE" in buildings_here:
                             set_ship_builders(spec_name, pid)
-                            empire_shipyards[pid] = pilot_val
                             yard_here = [pid]
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             set_colony_builders(spec_name, yard_here)
