@@ -18,6 +18,12 @@ from character.character_module import Aggression
 from colonization import rate_planetary_piloting
 from colonization.rate_pilots import GREAT_PILOT_RATING
 from common.print_utils import Sequence, Table, Text
+from empire.colony_builders import (
+    can_build_colony_for_species,
+    can_build_only_sly_colonies,
+    get_colony_builder_locations,
+    get_colony_builders,
+)
 from EnumsAI import (
     EmpireProductionTypes,
     FocusType,
@@ -71,7 +77,7 @@ def generate_production_orders():
 
     if current_turn == 1 and len(AIstate.opponentPlanetIDs) == 0 and len(production_queue) == 0:
         init_build_nums = [(PriorityType.PRODUCTION_EXPLORATION, 2)]
-        if list(ColonisationAI.empire_colonizers) == ["SP_SLY"]:
+        if can_build_only_sly_colonies():
             init_build_nums.append((PriorityType.PRODUCTION_COLONISATION, 1))
         else:
             init_build_nums.append((PriorityType.PRODUCTION_OUTPOST, 1))
@@ -269,8 +275,8 @@ def generate_production_orders():
     colony_systems = {}
     empire_species = get_empire_planets_by_species()
     systems_with_species = get_colonized_planets().keys()
-    for spec_name in ColonisationAI.empire_colonizers:
-        if (len(ColonisationAI.empire_colonizers[spec_name]) == 0) and (spec_name in empire_species):  # not enough current shipyards for this species#TODO: also allow orbital incubators and/or asteroid ships
+    for spec_name in get_colony_builders():
+        if not get_colony_builder_locations(spec_name) and (spec_name in empire_species):  # not enough current shipyards for this species #TODO: also allow orbital incubators and/or asteroid ships
             for pid in get_empire_planets_with_species(spec_name):  # SP_EXOBOT may not actually have a colony yet but be in empireColonizers
                 if pid in queued_shipyard_locs:
                     break  # won't try building more than one shipyard at once, per colonizer
@@ -444,8 +450,8 @@ def generate_production_orders():
                 bld_systems = set(asteroid_systems.keys()).difference(asteroid_yards.keys())
                 for sys_id in bld_systems.intersection(builder_systems.keys()):
                     for this_spec, pid in builder_systems[sys_id]:
-                        if this_spec in ColonisationAI.empire_colonizers:
-                            if pid in (ColonisationAI.empire_colonizers[this_spec] + queued_shipyard_locs):
+                        if can_build_colony_for_species(this_spec):
+                            if pid in (get_colony_builder_locations(this_spec) + queued_shipyard_locs):
                                 colonizer_loc_choices.insert(0, sys_id)
                             else:
                                 colonizer_loc_choices.append(sys_id)
@@ -774,7 +780,7 @@ def generate_production_orders():
         pop_disqualified = (c_pop <= 32) or (c_pop < 0.9*t_pop)
         built_camp = False
         this_spec = planet.speciesName
-        safety_margin_met = ((this_spec in ColonisationAI.empire_colonizers and (len(get_empire_planets_with_species(this_spec)) + len(colony_ship_map.get(this_spec, [])) >= 2)) or (c_pop >= 50))
+        safety_margin_met = ((can_build_colony_for_species(this_spec) and (len(get_empire_planets_with_species(this_spec)) + len(colony_ship_map.get(this_spec, [])) >= 2)) or (c_pop >= 50))
         if pop_disqualified or not safety_margin_met:  # check even if not aggressive, etc, just in case acquired planet with a ConcCamp on it
             if can_build_camp:
                 if pop_disqualified:
@@ -1309,7 +1315,7 @@ def empire_has_colony_bld_species(building_name: str) -> bool:
     if not building_name.startswith('BLD_COL_'):
         return False
     species_name = 'SP_' + building_name.split('BLD_COL_')[1]
-    return species_name in ColonisationAI.empire_colonizers
+    return can_build_colony_for_species(species_name)
 
 
 def already_has_completed_colony_building(planet_id) -> bool:

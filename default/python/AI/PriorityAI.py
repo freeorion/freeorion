@@ -14,6 +14,10 @@ import PlanetUtilsAI
 import ResearchAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
+from empire.colony_builders import (
+    can_build_colony_for_species,
+    can_build_only_sly_colonies,
+)
 from EnumsAI import (
     EmpireProductionTypes,
     MissionType,
@@ -258,8 +262,7 @@ def _calculate_colonisation_priority():
     outpost_prio = aistate.get_priority(PriorityType.PRODUCTION_OUTPOST)
 
     # if have no SP_SLY, and have any outposts to build, don't build colony ships TODO: make more complex assessment
-    colonizers = list(ColonisationAI.empire_colonizers)
-    if "SP_SLY" not in colonizers and outpost_prio > 0:
+    if not can_build_colony_for_species("SP_SLY") and outpost_prio > 0:
         return 0.0
     min_score = ColonisationAI.MINIMUM_COLONY_SCORE
     minimal_top = min_score + 2  # one more than the conditional floor set by ColonisationAI.revise_threat_factor()
@@ -276,16 +279,11 @@ def _calculate_colonisation_priority():
     num_colony_ships = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(colony_ship_ids))
     colonisation_priority = 60 * (1.0 + num_colonisable_planet_ids - num_colony_ships) / (num_colonisable_planet_ids + 1)
 
-    if colonizers == ["SP_SLY"]:
+    if can_build_only_sly_colonies():
         colonisation_priority *= 2
-    elif "SP_SLY" in colonizers:
+    elif can_build_colony_for_species("SP_SLY"):
         colony_opportunities = minimal_opportunities + decent_opportunities
         colonisation_priority *= (1.0 + colony_opportunities.count("SP_SLY")) / len(colony_opportunities)
-
-    # print
-    # print "Number of Colony Ships : " + str(num_colony_ships)
-    # print "Number of Colonisable planets : " + str(num_colonisable_planet_ids)
-    # print "Priority for colony ships : " + str(colonisation_priority)
 
     if colonisation_priority < 1:
         return 0
@@ -331,9 +329,10 @@ def _calculate_outpost_priority():
     num_outpost_ships = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(outpost_ship_ids))
     outpost_priority = (50.0 * (num_outpost_targets - num_outpost_ships)) / num_outpost_targets
 
-    # discourage early outposting for SP_SLY, due to supply and stealth considerations they are best off
+    # If the only possible race for colonization is SP_SLY (early stage of game before conquers and exobots)
+    # discourage early outposting due to supply and stealth considerations they are best off
     # using colony ships until they have other colonizers (and more established military)
-    if list(ColonisationAI.empire_colonizers) == ["SP_SLY"]:
+    if can_build_only_sly_colonies():
         outpost_priority /= 3.0
 
     # print

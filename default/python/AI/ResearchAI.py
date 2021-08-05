@@ -13,6 +13,7 @@ import TechsListsAI
 from AIDependencies import Tags
 from aistate_interface import get_aistate
 from common.print_utils import print_in_columns
+from empire.colony_builders import get_colony_builders
 from freeorion_tools import chat_human, get_species_tag_grade, tech_is_complete
 from turn_state import (
     get_empire_planets_by_species,
@@ -147,7 +148,7 @@ def if_tech_target(tech_target, false_val, true_val):
 
 def has_only_bad_colonizers():
     most_adequate = 0
-    for specName in ColonisationAI.empire_colonizers:
+    for specName in get_colony_builders():
         environs = {}
         this_spec = fo.getSpecies(specName)
         if not this_spec:
@@ -165,7 +166,7 @@ def get_max_stealth_species():
     stealth_grades = {'BAD': -15, 'GOOD': 15, 'GREAT': 40, 'ULTIMATE': 60}
     stealth = -999
     stealth_species = ""
-    for species_name in ColonisationAI.empire_colonizers:
+    for species_name in get_colony_builders():
         this_stealth = stealth_grades.get(get_species_tag_grade(species_name, Tags.STEALTH), 0)
         if this_stealth > stealth:
             stealth_species = species_name
@@ -926,7 +927,7 @@ def generate_classic_research_orders():
     if True:  # just to help with cold-folding / organization
         if got_ggg_tech and got_sym_bio and (not got_xeno_gen):
             most_adequate = 0
-            for specName in ColonisationAI.empire_colonizers:
+            for specName in get_colony_builders():
                 environs = {}
                 this_spec = fo.getSpecies(specName)
                 if not this_spec:
