@@ -109,6 +109,7 @@ public:
     int LastTurnColonized() const               { return m_turn_last_colonized; }
     int TurnsSinceColonization() const;
     int LastTurnConquered() const               { return m_turn_last_conquered; }
+    int TurnsSinceLastConquered() const;
 
     const std::string&  SurfaceTexture() const  { return m_surface_texture; }
     std::string         CardinalSuffix() const; ///< returns a roman number representing this planets orbit in relation to other planets

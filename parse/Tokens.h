@@ -592,6 +592,7 @@
     (TurnPolicyAdopted)                         \
     (TurnsSinceColonization)                    \
     (TurnsSinceFocusChange)                     \
+    (TurnsSinceLastConquered)                   \
     (TurnsSincePolicyAdopted)                   \
     (TurnSystemExplored)                        \
     (TurnTechResearched)                        \

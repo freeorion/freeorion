@@ -11798,7 +11798,7 @@ PLC_INDOCTRINATION
 Indoctrination
 
 PLC_INDOCTRINATION_DESC
-'''• Increases [[metertype METER_TARGET_HAPPINESS]] on planets over time. The bonus grows up to [[value PLC_INDOCTRINATION_STRENGTH_MAX]] as the policy remains adopted for more turns.
+'''• Increases [[metertype METER_TARGET_HAPPINESS]] on planets over time. The bonus grows by [[value PLC_INDOCTRINATION_PER_TURN]] per turn, up to a maximum of [[value PLC_INDOCTRINATION_STRENGTH_MAX]]. Conquered planets start with zero, settled planets get the current maximum.
 • Increases [[metertype METER_TARGET_INFLUENCE]] of the capital or planets with a [[buildingtype BLD_REGIONAL_ADMIN]] that have Influence focus by [[value PLC_INDOCTRINATION_INFLUENCE_FLAT]].'''
 
 PLC_INDOCTRINATION_SHORT_DESC

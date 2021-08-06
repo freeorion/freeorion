@@ -1044,7 +1044,11 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->TurnsSinceColonization();
         return 0;
-
+    }
+    else if (property_name == "TurnsSinceLastConquered") {
+        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+            return planet->TurnsSinceLastConquered();
+        return 0;
     }
     else if (property_name == "ProducedByEmpireID") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
