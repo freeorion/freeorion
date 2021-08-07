@@ -12004,6 +12004,17 @@ In systems where the empire that adopted this policy has more stationary armed s
 PLC_FLANKING_SHORT_DESC
 Boosts Ship Damage
 
+PLC_CHARGE
+Charge
+
+PLC_CHARGE_DESC
+'''For armed ships with at least [[value PLC_CHARGE_MINIMUM_SPEED]] [[metertype METER_SPEED]]:
+• Weapon damage is increased by [[value PLC_CHARGE_DAMAGE_BOOST]]
+• [[metertype METER_MAX_SHIELD]] is reduced by [[value PLC_CHARGE_SHIELD_REDUCTION]] '''
+
+PLC_CHARGE_SHORT_DESC
+Boosts Fast Ship Damage
+
 
 ##
 ## Technology categories
