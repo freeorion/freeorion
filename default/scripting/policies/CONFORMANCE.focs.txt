@@ -10,7 +10,7 @@ Policy
 
         // used in setting stability adjustments for species likes / dislikes
 
-        // reduces research but boosts infrastructure and stockpiling
+        // reduces research but boosts infrastructure and stockpiling and stability
         EffectsGroup
         scope = And [
             Planet
@@ -19,9 +19,19 @@ Policy
             Happiness low = (NamedReal name = "PLC_CONFORMANCE_MIN_STABILITY" value = 4)
         ]
         effects = [
-            SetTargetResearch value = Value - (NamedReal name = "PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT" value = 2.0)
             SetTargetConstruction value = Value + (NamedReal name = "PLC_CONFORMANCE_INFRASTRUCTURE_BONUS_FLAT" value = 5.0)
             SetMaxStockpile value = Value + (NamedReal name = "PLC_CONFORMANCE_STOCKPILING_BONUS_FLAT" value = 1.0)
+        ]
+
+        EffectsGroup
+        scope = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species
+        ]
+        effects = [
+            SetTargetHappiness value = Value + (NamedReal name = "PLC_CONFORMANCE_STABILITY_BONUS_FLAT" value = 2.0)
+            SetTargetResearch value = Value - (NamedReal name = "PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT" value = 2.0)
         ]
     ]
     graphic = "icons/policies/conformance.png"
