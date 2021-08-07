@@ -11501,15 +11501,15 @@ PLC_METROPOLES
 Metropoles
 
 PLC_METROPOLES_DESC
-'''Boosts the output of the [[value METROPOLES_PLANET_LIMIT]] highest-population planets in the empire, regardless of focus:
+'''Boosts the output of up to [[value METROPOLES_PLANET_LIMIT]] planets with population of at least [[value METROPOLES_MINIMUM_POPULATION]]. The highest-[[metertype METER_POPULATION]] of the qualified planets will receive, regardless of focus:
 • Increases [[metertype METER_TARGET_RESEARCH]] by [[value METROPOLES_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
 • Increases [[metertype METER_TARGET_INDUSTRY]] by [[value METROPOLES_TARGET_INDUSTRY_PERPOP]] per population.
 • Increases [[metertype METER_TARGET_CONSTRUCTION]] by [[value METROPOLES_TARGET_CONSTRUCTION_FLAT]].
 • Increases [[metertype METER_MAX_SUPPLY]] by [[value METROPOLES_MAX_SUPPLY_FLAT]].
 but also has a penalty:
-• Decreases [[metertype METER_MAX_SUPPLY]] by [[value METROPOLES_MAX_STOCKPILE_FLAT]].
+• Decreases [[metertype METER_MAX_STOCKPILE]] by [[value METROPOLES_MAX_STOCKPILE_FLAT]].
 
-Additionally, other populated planets (with lower than the highest population planets) have a penalty applied:
+Additionally, other populated planets (with lower than the highest population planets, including all with less than [[value METROPOLES_MINIMUM_POPULATION]] [[metertype METER_POPULATION]]) have a penalty applied:
 • Decreases [[metertype METER_TARGET_HAPPINESS]] by [[value METROPOLES_STABILITY_PENALTY]].'''
 
 PLC_METROPOLES_SHORT_DESC
