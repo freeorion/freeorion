@@ -11908,7 +11908,8 @@ PLC_CAPITAL_MARKETS
 Capital Markets
 
 PLC_CAPITAL_MARKETS_DESC
-Planets with a luxury resource special and that is set to influence focus will export the resource to supply-connected planets, boosting the stability of planets with species that like the resource.
+'''• Planets with a luxury resource special and that are set to influence focus will export the resource to supply-connected planets. This boosts the stability of planets with species that like the resource by [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]].
+• Increases the rate of growth or decay of [[metertype METER_INFLUENCE]] by [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / turn towards [[metertype METER_TARGET_INFLUENCE]].'''
 
 PLC_CAPITAL_MARKETS_SHORT_DESC
 Boosts stability with resource export

@@ -23,14 +23,14 @@ SPECIAL_INFLUENCE_RESOURCE_EXPORT
                 Focus type = "FOCUS_INFLUENCE"
             ]
             effects =
-                SetTargetInfluence value = Value + 3
+                SetTargetInfluence value = Value + NamedReal name = "SPECIAL_INFLUENCE_FOCUS_BONUS" value = 3.0
 
         // stability bonus to connected planets that like this special when running capital markets
         EffectsGroup
             scope = And [
                 Planet
                 Not Source
-                Population low = 0.001
+                Species // must have some population
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial > 0)
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 // TODO: check for other empires with border checkpoints or free trade or somesuch...
@@ -42,7 +42,7 @@ SPECIAL_INFLUENCE_RESOURCE_EXPORT
             ]
             stackinggroup = "@1@_STACK"
             accountinglabel = "@1@_IMPORTS"
-            effects = SetTargetHappiness value = Value + 1
+            effects = SetTargetHappiness value = Value + NamedReal name = "SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS" value = 2.0
 '''
 
 SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS

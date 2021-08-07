@@ -3,10 +3,24 @@ Policy
     description = "PLC_CAPITAL_MARKETS_DESC"
     short_description = "PLC_CAPITAL_MARKETS_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
-    adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)    effectsgroups = [
+    adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
+    effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+        
+        // grow influence meters faster
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects =
+                If condition = (Value(LocalCandidate.Influence) <= Value(LocalCandidate.TargetInfluence))
+                    effects = SetInfluence value = min(Value + NamedReal name = "PLC_CAPITAL_MARKETS_INFLUENCE_RATE" value = 2.0, Value(Target.TargetInfluence))
+                    else = SetInfluence value = max(Value - NamedRealLookup name = "PLC_CAPITAL_MARKETS_INFLUENCE_RATE", Value(Target.TargetInfluence))
     ]
     graphic = "icons/policies/capital_markets.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"
