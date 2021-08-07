@@ -4,6 +4,7 @@ Policy
     short_description = "PLC_CHECKPOINTS_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = 5 + floor(5.0 * [[PLANETS_OWNED_BY_EMPIRE]]^0.5)
+    unlock = Item type = Policy name = "PLC_MARTIAL_LAW"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
