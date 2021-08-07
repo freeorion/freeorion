@@ -1,4 +1,4 @@
-from typing import Dict, List, Sequence, Union
+from typing import Dict, List, Mapping, Sequence, Union
 
 import AIDependencies
 from common.fo_typing import PlanetId, SpeciesName
@@ -13,7 +13,7 @@ def set_colony_builders(species_name: SpeciesName, yards: Sequence[PlanetId]):
     Warning! Temporal coupling.
     All calls of this function should be done before using of this information.
     """
-    empire_colonizers = get_colony_builders()
+    empire_colonizers = _get_colony_builders()
     empire_colonizers.setdefault(species_name, []).extend(yards)
 
 
@@ -37,10 +37,17 @@ def can_build_only_sly_colonies():
     return list(get_colony_builders()) == ["SP_SLY"]
 
 
-@cache_for_current_turn
-def get_colony_builders() -> Dict[SpeciesName, List[PlanetId]]:
+def get_colony_builders() -> Mapping[SpeciesName, List[PlanetId]]:
     """
     Return map from the species to list of the planet where you could build a colony ship with it.
+    """
+    return _get_colony_builders()
+
+
+@cache_for_current_turn
+def _get_colony_builders() -> Dict[SpeciesName, List[PlanetId]]:
+    """
+    Return mutable state.
     """
     colony_build_locations = {}
 

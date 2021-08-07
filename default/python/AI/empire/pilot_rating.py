@@ -1,4 +1,4 @@
-from typing import Dict, Sequence
+from typing import Dict, Mapping, Sequence
 
 from common.fo_typing import PlanetId
 from freeorion_tools.caching import cache_for_current_turn
@@ -11,15 +11,22 @@ def set_pilot_rating_for_planet(pid: PlanetId, pilot_rating: float):
     Warning! Temporal coupling.
     All calls of this function should be done before using of this information.
     """
-    get_pilot_ratings()[pid] = pilot_rating
+    _get_pilot_ratings()[pid] = pilot_rating
 
 
 def get_rating_for_planet(pid: PlanetId) -> float:
     return get_pilot_ratings().get(pid, 0)
 
 
+def get_pilot_ratings() -> Mapping[PlanetId, float]:
+    return _get_pilot_ratings()
+
+
 @cache_for_current_turn
-def get_pilot_ratings() -> Dict[PlanetId, float]:
+def _get_pilot_ratings() -> Dict[PlanetId, float]:
+    """
+    Return mutable state.
+    """
     return {}
 
 
