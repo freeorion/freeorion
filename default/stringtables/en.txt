@@ -14053,7 +14053,7 @@ BLD_SHIPYARD_ENRG_COMP_DESC
 
 Requiring a high energy star to siphon energy from, it can only be built at a system with a [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star type.
 
-A highly specialized shipyard designed to create and mount parts on large bundles of densely compressed energy. This is a fragile process, and this shipyard will explode mightily if it takes more than a very small amount of [[encyclopedia DAMAGE_TITLE]].'''
+A highly specialized shipyard designed to create and mount parts on large bundles of densely compressed energy.'''
 
 BLD_SHIPYARD_ENRG_SOLAR
 Solar Containment Unit
