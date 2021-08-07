@@ -59,7 +59,7 @@ from turn_state.design import get_best_ship_info
 
 colonization_timer = AITimer('getColonyFleets()')
 
-all_colony_opportunities = {}
+_all_colony_opportunities = {}
 
 pilot_ratings = {}
 colony_status = {}
@@ -283,8 +283,8 @@ def get_colony_fleets():
     evaluated_colony_planets = assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None)
     colonization_timer.stop('Evaluate %d Primary Colony Opportunities' % (len(evaluated_colony_planet_ids)))
     colonization_timer.start('Evaluate All Colony Opportunities')
-    all_colony_opportunities.clear()
-    all_colony_opportunities.update(
+    _all_colony_opportunities.clear()
+    _all_colony_opportunities.update(
         assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None, [], True))
     colonization_timer.start('Evaluate Outpost Opportunities')
 
@@ -407,7 +407,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
         debug("Trying best matches to current colony ships")
         best_scores = dict(evaluated_planets)
         potential_targets = []
-        for pid, ratings in all_colony_opportunities.items():
+        for pid, ratings in _all_colony_opportunities.items():
             for rating in ratings:
                 if rating[0] >= 0.75 * best_scores.get(pid, [9999])[0]:
                     potential_targets.append((pid, rating))
