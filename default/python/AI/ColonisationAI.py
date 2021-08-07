@@ -19,6 +19,7 @@ from colonization.calculate_population import active_growth_specials, calc_max_p
 from colonization.colony_score import MINIMUM_COLONY_SCORE
 from colonization.planet_supply import get_planet_supply
 from common.print_utils import Bool, Number, Sequence, Table, Text
+from empire.buildings_locations import set_building_locations
 from empire.colony_builders import (
     can_build_colony_for_species,
     get_colony_builders,
@@ -68,9 +69,6 @@ colonization_timer = AITimer('getColonyFleets()')
 
 _all_colony_opportunities = {}
 
-facilities_by_species_grade = {}
-system_facilities = {}
-
 
 @cache_for_current_turn
 def colony_pod_cost_turns():
@@ -119,8 +117,6 @@ def survey_universe():
         AIstate.empireStars.clear()
         empire_metabolisms.clear()
         active_growth_specials.clear()
-        facilities_by_species_grade.clear()
-        system_facilities.clear()
 
     # var setup done
     aistate = get_aistate()
@@ -167,14 +163,7 @@ def survey_universe():
                             yard_here = [pid]
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             set_colony_builders(spec_name, yard_here)
-
-                this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
-                for facility in ship_facilities:
-                    this_grade_facilities.setdefault(facility, []).append(pid)
-                    if facility in AIDependencies.SYSTEM_SHIP_FACILITIES:
-                        this_facility_dict = system_facilities.setdefault(facility, {})
-                        this_facility_dict.setdefault("systems", set()).add(sys_id)
-                        this_facility_dict.setdefault("planets", set()).add(pid)
+                set_building_locations(weapons_grade, ship_facilities, pid, sys_id)
 
                 for special in planet.specials:
                     if special_is_nest(special):

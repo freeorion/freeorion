@@ -7,7 +7,6 @@ from typing import List
 
 import AIDependencies
 import AIstate
-import ColonisationAI
 import FleetUtilsAI
 import MilitaryAI
 import PlanetUtilsAI
@@ -18,6 +17,10 @@ from character.character_module import Aggression
 from colonization import rate_planetary_piloting
 from colonization.rate_pilots import GREAT_PILOT_RATING
 from common.print_utils import Sequence, Table, Text
+from empire.buildings_locations import (
+    get_facilities_for_best_pilots,
+    get_systems_with_building,
+)
 from empire.colony_builders import (
     can_build_colony_for_species,
     can_build_only_sly_colonies,
@@ -223,8 +226,7 @@ def generate_production_orders():
                     debug("Requeueing BLD_NEUTRONIUM_SYNTH to front of build queue, with result %d" % res)
 
     # TODO: add total_pp checks below, so don't overload queue
-    best_pilot_facilities = ColonisationAI.facilities_by_species_grade.get(
-        "WEAPONS_%.1f" % best_pilot_rating(), {})
+    best_pilot_facilities = get_facilities_for_best_pilots()
 
     debug("best_pilot_facilities: \n %s" % best_pilot_facilities)
 
@@ -1350,12 +1352,11 @@ def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
         return
     queued_bld_locs = [element.locationID for element in empire.productionQueue if element.name == bld_name]
     if bld_name in AIDependencies.SYSTEM_SHIP_FACILITIES:
-        current_locs = ColonisationAI.system_facilities.get(bld_name, {}).get('systems', set())
+        current_locs = get_systems_with_building(bld_name)
         current_coverage = current_locs.union(universe.getPlanet(planet_id).systemID for planet_id in queued_bld_locs)
         open_systems = set(universe.getPlanet(pid).systemID
                            for pid in best_pilot_facilities.get("BLD_SHIPYARD_BASE", [])).difference(current_coverage)
-        try_systems = open_systems.intersection(ColonisationAI.system_facilities.get(
-            prereq_bldg, {}).get('systems', [])) if prereq_bldg else open_systems
+        try_systems = open_systems.intersection(get_systems_with_building(prereq_bldg)) if prereq_bldg else open_systems
         try_locs = set(pid for sys_id in try_systems for pid in get_owned_planets_in_system(sys_id))
     else:
         current_locs = best_pilot_facilities.get(bld_name, [])
