@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import DefaultDict, Dict, List, Mapping, Set
+from typing import DefaultDict, Dict, FrozenSet, Set, Union
 
 import AIDependencies
 from common.fo_typing import BuildingId, PlanetId, SystemId
@@ -7,9 +7,11 @@ from empire.pilot_rating import best_pilot_rating
 from freeorion_tools.caching import cache_for_current_turn
 
 
-def get_facilities_for_best_pilots() -> Mapping[BuildingId, List[PlanetId]]:
-    return _get_facilities().get(
+def get_best_pilot_facilities(building: Union[BuildingId, str]) -> FrozenSet[PlanetId]:
+    best_pilot_facilities = _get_facilities().get(
         "WEAPONS_%.1f" % best_pilot_rating(), {})
+
+    return best_pilot_facilities.get(building, set())
 
 
 def get_systems_with_building(bld_name: BuildingId):
@@ -17,7 +19,7 @@ def get_systems_with_building(bld_name: BuildingId):
 
 
 @cache_for_current_turn
-def _get_facilities() -> Dict[str, Dict[BuildingId, List[PlanetId]]]:
+def _get_facilities() -> Dict[str, Dict[BuildingId, Set[PlanetId]]]:
     return {}
 
 
@@ -36,6 +38,6 @@ def set_building_locations(
     this_grade_facilities = _get_facilities().setdefault(weapons_grade, {})
 
     for facility in ship_facilities:
-        this_grade_facilities.setdefault(facility, []).append(pid)
+        this_grade_facilities.setdefault(facility, set()).add(pid)
         if facility in AIDependencies.SYSTEM_SHIP_FACILITIES:
             _get_system_facilities()[facility].add(sid)
