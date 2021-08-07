@@ -18,6 +18,7 @@ from empire.colony_builders import (
     can_build_colony_for_species,
     can_build_only_sly_colonies,
 )
+from empire.colony_status import colonies_is_under_attack, colonies_is_under_treat
 from EnumsAI import (
     EmpireProductionTypes,
     MissionType,
@@ -402,8 +403,8 @@ def _calculate_invasion_priority():
 
     # invasion_priority = max( 10+ 200*max(0, troop_ships_needed ) , int(0.1* total_val) )
     invasion_priority = multiplier * (30 + 150*max(0, troop_ships_needed))
-    if not ColonisationAI.colony_status.get('colonies_under_attack', []):
-        if not ColonisationAI.colony_status.get('colonies_under_threat', []):
+    if not colonies_is_under_attack():
+        if not colonies_is_under_treat():
             invasion_priority *= 2.0
         else:
             invasion_priority *= 1.5

@@ -24,6 +24,10 @@ from empire.colony_builders import (
     get_colony_builders,
     set_colony_builders,
 )
+from empire.colony_status import (
+    set_colonies_is_under_attack,
+    set_colonies_is_under_treat,
+)
 from empire.growth_specials import set_growth_special
 from empire.pilot_rating import (
     get_pilot_ratings,
@@ -64,7 +68,6 @@ colonization_timer = AITimer('getColonyFleets()')
 
 _all_colony_opportunities = {}
 
-colony_status = {}
 facilities_by_species_grade = {}
 system_facilities = {}
 
@@ -113,8 +116,6 @@ def survey_universe():
 
     # set up / reset various variables; the 'if' is purely for code folding convenience
     if True:
-        colony_status['colonies_under_attack'] = []
-        colony_status['colonies_under_threat'] = []
         AIstate.empireStars.clear()
         empire_metabolisms.clear()
         active_growth_specials.clear()
@@ -196,9 +197,9 @@ def survey_universe():
             AIstate.empireStars.setdefault(system.starType, []).append(sys_id)
             sys_status = aistate.systemStatus.setdefault(sys_id, {})
             if sys_status.get('fleetThreat', 0) > 0:
-                colony_status['colonies_under_attack'].append(sys_id)
+                set_colonies_is_under_attack()
             if sys_status.get('neighborThreat', 0) > 0:
-                colony_status['colonies_under_threat'].append(sys_id)
+                set_colonies_is_under_treat()
 
     _print_empire_species_roster()
 
