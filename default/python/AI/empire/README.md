@@ -45,17 +45,3 @@ Technically this example returns list,
 but we use annotation with supertype which is immutable. 
 It won’t prevent collection modification in runtime, but will show warning in IDE.
 Creating defensive copy might be complicated for some cases.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
