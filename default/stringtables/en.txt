@@ -11808,7 +11808,9 @@ PLC_MARTIAL_LAW
 Martial Law
 
 PLC_MARTIAL_LAW_DESC
-Increases populated planets' [[metertype METER_TARGET_HAPPINESS]] and decreases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_MARTIAL_LAW_STABILITY_PER_TROOPS]] per [[metertype METER_MAX_TROOPS]] on planets. Also decreases populated planets' supply range by [[value PLC_MARTIAL_LAW_SUPPLY_PENALTY]].
+'''• Decreases populated planets' supply range by [[value PLC_MARTIAL_LAW_SUPPLY_PENALTY]]
+• Increases populated planets' [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_MARTIAL_LAW_STABILITY_PER_TROOPS]] per [[metertype METER_MAX_TROOPS]]
+• Decreases populated planets' [[metertype METER_TARGET_RESEARCH]] by [[value PLC_MARTIAL_LAW_STABILITY_PER_TROOPS]] per [[metertype METER_MAX_TROOPS]]'''
 
 PLC_MARTIAL_LAW_SHORT_DESC
 Increases stability with troops
