@@ -15,7 +15,6 @@ Policy
             Planet
             OwnedBy empire = Source.Owner
             Species
-            Happiness high = 15
         ]
         effects = [
             SetTargetHappiness value = Value + Target.Troops * (NamedReal name = "PLC_MARTIAL_LAW_STABILITY_PER_TROOPS" value = 0.2)
