@@ -12376,7 +12376,9 @@ GRO_TRANSORG_SENT
 Trans-Organic Sentience
 
 GRO_TRANSORG_SENT_DESC
-Sentience as we know it is always observed as being inextricably tied to biological life. By grasping the true nature and origin of sentience itself, it would be possible to create conscious entities that could not possibly be classified as life as we know it.
+'''• Increases the rate of growth or decay of [[metertype METER_INFLUENCE]] by [[value GRO_TRANSORG_INFLUENCE_RATE]] / turn towards [[metertype METER_TARGET_INFLUENCE]].
+
+Sentience is inextricably tied to life, but with a fundamental understanding of its nature, it should be possible to create conscious entities that could not possibly be classified as life.'''
 
 GRO_ENERGY_META
 Pure-Energy Metabolism
