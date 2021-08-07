@@ -40,12 +40,6 @@ from turn_state._empire_resources import (
     set_have_gas_giant,
     set_have_nest,
 )
-from turn_state._pilot_ratings import (
-    best_pilot_rating,
-    medium_pilot_rating,
-    set_best_pilot_rating,
-    set_medium_pilot_rating,
-)
 from turn_state._planet_state import (
     get_all_empire_planets,
     get_colonized_planets,

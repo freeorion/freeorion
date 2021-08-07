@@ -24,6 +24,12 @@ from empire.colony_builders import (
     get_colony_builder_locations,
     get_colony_builders,
 )
+from empire.pilot_rating import (
+    best_pilot_rating,
+    get_pilot_ratings,
+    get_rating_for_planet,
+    medium_pilot_rating,
+)
 from empire.ship_builders import (
     can_build_ship_for_species,
     get_ship_builder_locations,
@@ -39,7 +45,6 @@ from EnumsAI import (
 )
 from freeorion_tools import ppstring, tech_is_complete
 from turn_state import (
-    best_pilot_rating,
     get_all_empire_planets,
     get_colonized_planets,
     get_empire_drydocks,
@@ -49,7 +54,6 @@ from turn_state import (
     get_inhabited_planets,
     get_owned_planets,
     get_owned_planets_in_system,
-    medium_pilot_rating,
     population_with_industry_focus,
 )
 from turn_state.design import get_best_ship_info, get_best_ship_ratings
@@ -318,7 +322,7 @@ def generate_production_orders():
             debug("Requeueing Acirema BLD_SHIPYARD_BASE to front of build queue, with result %d" % res)
 
     top_pilot_systems = {}
-    for pid, _ in ColonisationAI.pilot_ratings.items():
+    for pid, _ in get_pilot_ratings().items():
         if (_ <= medium_pilot_rating()) and (_ < GREAT_PILOT_RATING):
             continue
         top_pilot_systems.setdefault(universe.getPlanet(pid).systemID, []).append((pid, _))
@@ -332,15 +336,15 @@ def generate_production_orders():
             debug("Requeueing BLD_SHIPYARD_BASE to front of build queue, with result %d" % res)
 
     pop_ctrs = list(get_inhabited_planets())
-    red_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in pop_ctrs
+    red_popctrs = sorted([(get_rating_for_planet(pid), pid) for pid in pop_ctrs
                           if colony_systems.get(pid, INVALID_ID) in AIstate.empireStars.get(fo.starType.red, [])],
                          reverse=True)
     red_pilots = [pid for _, pid in red_popctrs if _ == best_pilot_rating()]
-    blue_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in pop_ctrs
+    blue_popctrs = sorted([(get_rating_for_planet(pid), pid) for pid in pop_ctrs
                            if colony_systems.get(pid, INVALID_ID) in AIstate.empireStars.get(fo.starType.blue, [])],
                           reverse=True)
     blue_pilots = [pid for _, pid in blue_popctrs if _ == best_pilot_rating()]
-    bh_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in pop_ctrs
+    bh_popctrs = sorted([(get_rating_for_planet(pid), pid) for pid in pop_ctrs
                          if colony_systems.get(pid, INVALID_ID) in AIstate.empireStars.get(fo.starType.blackHole, [])],
                         reverse=True)
     bh_pilots = [pid for _, pid in bh_popctrs if _ == best_pilot_rating()]
@@ -1218,7 +1222,7 @@ def generate_production_orders():
             ship_number = 1
             per_turn_cost = (float(best_design.productionCost(empire.empireID, loc)) / best_design.productionTime(empire.empireID, loc))
             if this_priority == PriorityType.PRODUCTION_MILITARY:
-                this_rating = ColonisationAI.pilot_ratings.get(loc, 0)
+                this_rating = get_rating_for_planet(pid)
                 rating_ratio = float(this_rating) / best_pilot_rating()
                 if rating_ratio < 0.1:
                     loc_planet = universe.getPlanet(loc)

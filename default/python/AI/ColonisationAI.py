@@ -25,6 +25,11 @@ from empire.colony_builders import (
     set_colony_builders,
 )
 from empire.growth_specials import set_growth_special
+from empire.pilot_rating import (
+    get_pilot_ratings,
+    set_pilot_rating_for_planet,
+    summarize_pilot_ratings,
+)
 from empire.ship_builders import get_ship_builder_locations, set_ship_builders
 from EnumsAI import (
     EmpireProductionTypes,
@@ -49,11 +54,9 @@ from turn_state import (
     get_number_of_colonies,
     get_owned_planets,
     get_unowned_empty_planets,
-    set_best_pilot_rating,
     set_have_asteroids,
     set_have_gas_giant,
     set_have_nest,
-    set_medium_pilot_rating,
 )
 from turn_state.design import get_best_ship_info
 
@@ -61,7 +64,6 @@ colonization_timer = AITimer('getColonyFleets()')
 
 _all_colony_opportunities = {}
 
-pilot_ratings = {}
 colony_status = {}
 facilities_by_species_grade = {}
 system_facilities = {}
@@ -116,7 +118,6 @@ def survey_universe():
         AIstate.empireStars.clear()
         empire_metabolisms.clear()
         active_growth_specials.clear()
-        pilot_ratings.clear()
         facilities_by_species_grade.clear()
         system_facilities.clear()
 
@@ -158,7 +159,7 @@ def survey_universe():
                         if spec_name == "SP_ACIREMA":
                             pilot_val += 1
                         weapons_grade = "WEAPONS_%.1f" % pilot_val
-                        pilot_ratings[pid] = pilot_val
+                        set_pilot_rating_for_planet(pid, pilot_val)
                         yard_here = []
                         if "BLD_SHIPYARD_BASE" in buildings_here:
                             set_ship_builders(spec_name, pid)
@@ -201,13 +202,8 @@ def survey_universe():
 
     _print_empire_species_roster()
 
-    if pilot_ratings:
-        rating_list = sorted(pilot_ratings.values(), reverse=True)
-        set_best_pilot_rating(rating_list[0])
-        if len(pilot_ratings) == 1:
-            set_medium_pilot_rating(rating_list[0])
-        else:
-            set_medium_pilot_rating(rating_list[1 + int(len(rating_list) // 5)])
+    rating_list = sorted(get_pilot_ratings().values(), reverse=True)
+    summarize_pilot_ratings(rating_list)
     colonization_timer.stop()
 
 

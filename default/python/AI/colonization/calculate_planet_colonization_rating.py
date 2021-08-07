@@ -22,6 +22,7 @@ from colonization.colony_score import MINIMUM_COLONY_SCORE
 from colonization.rate_pilots import rate_piloting_tag
 from common.fo_typing import PlanetId, SpeciesName
 from common.print_utils import Sequence
+from empire.pilot_rating import best_pilot_rating
 from EnumsAI import FocusType, MissionType
 from freeorion_tools import (
     get_partial_visibility_turn,
@@ -30,7 +31,6 @@ from freeorion_tools import (
 )
 from freeorion_tools.caching import cache_by_turn_persistent, cache_for_session
 from turn_state import (
-    best_pilot_rating,
     get_inhabited_planets,
     get_owned_planets,
     get_owned_planets_in_system,
