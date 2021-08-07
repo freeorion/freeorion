@@ -1,0 +1,24 @@
+Policy
+    name = "PLC_NECESSITY"
+    description = "PLC_NECESSITY_DESC"
+    short_description = "PLC_NECESSITY_SHORT_DESC"
+    category = "SOCIAL_CATEGORY"
+    adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
+    
+        // boosts research on planets with low stability
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Happiness high = (NamedReal name = "PLC_NECESSITY_MAX_STABILITY" value = 6)
+            ]
+            effects = SetTargetResearch value = Value +
+                (Target.Population * max(0.0, (NamedRealLookup name = "PLC_NECESSITY_MAX_STABILITY") - Target.Happiness))^0.5
+    ]
+    graphic = "icons/policies/necessity.png"
+
+#include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"
+#include "/scripting/policies/policies.macros"
