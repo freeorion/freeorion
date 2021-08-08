@@ -50,7 +50,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
-                Happiness low = 20
+                Happiness low = (NamedReal name = "GRO_ENERGY_META_MIN_STABILITY" value = 20)
             ]
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population
@@ -62,7 +62,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
-                Happiness low = 20
+                Happiness low = NamedRealLookup name = "GRO_ENERGY_META_MIN_STABILITY"
             ]
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
             effects = SetTargetResearch value = Value  + Target.Population
