@@ -19,7 +19,9 @@ Policy
         effects = [
             SetTargetHappiness value = Value + 
                 min((NamedReal name = "PLC_INDOCTRINATION_STRENGTH_MAX" value = 10.0),
-                    (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) / 4.0)
+                    (Target.TurnsSinceLastConquered != 0 ? Target.TurnsSinceLastConquered :
+                     TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) *
+                     (NamedReal name = "PLC_INDOCTRINATION_PER_TURN" value = 0.25))
             SetTargetInfluence value = Value - 1.0
         ]
 
