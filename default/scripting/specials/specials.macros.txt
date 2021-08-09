@@ -43,6 +43,20 @@ SPECIAL_INFLUENCE_RESOURCE_EXPORT
             stackinggroup = "@1@_STACK"
             accountinglabel = "@1@_IMPORTS"
             effects = SetTargetHappiness value = Value + NamedReal name = "SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS" value = 2.0
+
+        // influence bonus to planets with low stability that are supply-connected to luxury specials that the population likes, when running black markets
+        EffectsGroup
+            scope = And [
+                Planet
+                Species
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INFLUENCE"
+                Happiness high = (NamedReal name = "PLC_BLACK_MARKET_MAX_STABILITY" value = 8)
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecial > 0)
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+            ]
+            activation = EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_BLACK_MARKET"
+            effects = SetTargetInfluence value = Value + NamedReal name = "SPECIAL_BLACK_MARKET_INFLUENCE_FOCUS_BONUS" value = 2.0
 '''
 
 SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS

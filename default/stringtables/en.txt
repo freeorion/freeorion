@@ -11916,6 +11916,15 @@ PLC_CAPITAL_MARKETS_DESC
 PLC_CAPITAL_MARKETS_SHORT_DESC
 Boosts stability with resource export
 
+PLC_BLACK_MARKET
+Black Markets
+
+PLC_BLACK_MARKET_DESC
+Planets with stability of [[value PLC_BLACK_MARKET_MAX_STABILITY]] or less and that are set to influence focus will have [[metertype METER_TARGET_INFLUENCE]] increased by [[value SPECIAL_BLACK_MARKET_INFLUENCE_FOCUS_BONUS]] for each supply connected planet with a luxury resource special that the influence-focused planet's population likes.
+
+PLC_BLACK_MARKET_SHORT_DESC
+Boosts Influence with resources
+
 PLC_ARTISAN_WORKSHOPS
 Artisan Workshops
 

@@ -8,6 +8,7 @@ Policy
     unlock = [
         Item type = Policy name = "PLC_VASSALIZATION"
         Item type = Policy name = "PLC_FEUDALISM"
+        Item type = Policy name = "PLC_BLACK_MARKET"
     ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
