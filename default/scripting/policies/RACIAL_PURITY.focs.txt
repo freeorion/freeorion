@@ -4,7 +4,6 @@ Policy
     short_description = "PLC_RACIAL_PURITY_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
-    prerequisites = [ "PLC_CHECKPOINTS" ]
     exclusions = [ "PLC_DIVERSITY" "PLC_NATIVE_APPROPRIATION" ]
     unlock = Item type = Policy name = "PLC_THE_HUNT"
     effectsgroups = [

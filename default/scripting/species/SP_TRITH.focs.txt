@@ -43,6 +43,15 @@ Species
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[NARROW_EP]]
         [[STANDARD_SHIP_SHIELDS]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Unowned
+                Capital
+            ]
+            effects = UnlockPolicy name = "PLC_RACIAL_PURITY"
     ]
 
     [[RADIATED_NARROW_EP]]

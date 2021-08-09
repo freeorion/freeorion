@@ -8168,6 +8168,8 @@ SP_TRITH_GAMEPLAY_DESC
 Bereaved xenophobic telepaths.
 Prefer [[PT_RADIATED]] planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
+
+Empires with Trith on their capital planet have [[policy PLC_RACIAL_PURITY]] unlocked.
 '''
 
 SP_TRITH_DESC
