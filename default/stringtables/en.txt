@@ -12596,11 +12596,11 @@ CON_FRC_ENRG_STRC
 Force-Energy Structures
 
 CON_FRC_ENRG_STRC_DESC
-'''Increases the growth of resource and infrastructure meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn. [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] grow only if [[metertype METER_HAPPINESS]] is at least 5.
+'''Increases the growth and decay of [[metertype METER_INDUSTRY]], [[metertype METER_RESEARCH]], [[metertype METER_CONSTRUCTION]], and [[metertype METER_STOCKPILE]] twoards their target or max values by [[value FORCE_ENERGY_RATE_INCREASE]] per turn.
 
 The flexibility and versatility of force-energy structures permits a colonies buildings to be more easily re-tooled to suit new purposes, increasing the rate at which focus changes can take effect.
 
-When forces and energy can be manipulated as desired to provide the same functionality as solid surfaces, there is no essential need to have physical materials enclosing the occupants of a building. Structures composed entirely of energy have many advantages, including simple reconfiguration, resilience, portability and novel design possibilities.'''
+When forces and energy can be manipulated adaptively to provide the same functionality as solid surfaces, there is no need for physical materials enclosing the occupants of a building. Structures composed entirely of energy have many advantages, including rapid reconfiguration, resilience, portability, and novel design possibilities.'''
 
 CON_CONTGRAV_ARCH
 Gravitic Architecture
