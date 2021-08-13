@@ -5,11 +5,11 @@ Special
     spawnrate = 0.5
     spawnlimit = 9999
     location = And [
+        Planet
         Or [
             (GalaxyMonsterFrequency >= 1)
             Random probability = 0.2
         ]
-        Planet
         Not Planet type = [Asteroids GasGiant]
         Not ContainedBy And [
             System 

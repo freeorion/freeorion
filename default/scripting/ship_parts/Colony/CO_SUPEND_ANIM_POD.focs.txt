@@ -8,6 +8,7 @@ Part
     buildtime = 10
     tags = [ "PEDIA_PC_COLONY" ]
     location = And [
+        Planet
         OwnedBy empire = Source.Owner
         Population low = [[MIN_RECOLONIZING_SIZE]] high = 999
     ]

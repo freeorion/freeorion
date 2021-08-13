@@ -8,6 +8,8 @@ Part
     buildtime = 3
     tags = [ "PEDIA_PC_ARMOUR" ]
     location = And [
+        Planet
+        OwnedBy empire = Source.Owner
         ResourceSupplyConnected empire = Source.Owner condition = And [
             Building name = "BLD_SHIPYARD_AST_REF"
             Or [

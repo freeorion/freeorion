@@ -17,10 +17,8 @@ Hull
     buildtime = 4
     tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" "GOOD_FUEL_EFFICIENCY" ]
     location = And [
-       // Contains And [
-        //    Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
-        //    OwnedBy empire = Source.Owner
-       // ]
+        Planet
+        OwnedBy empire = Source.Owner
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_ORB_INC"
             OwnedBy empire = Source.Owner
@@ -29,7 +27,6 @@ Hull
             Building name = "BLD_SHIPYARD_BASE"
             OwnedBy empire = Source.Owner
         ]
-        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         [[GOOD_FUEL_EFFICIENCY]]

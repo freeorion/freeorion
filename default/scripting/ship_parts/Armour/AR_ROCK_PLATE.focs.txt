@@ -8,6 +8,8 @@ Part
     buildtime = 2
     tags = [ "PEDIA_PC_ARMOUR" ]
     location = And [
+        Planet
+        OwnedBy empire = Source.Owner
         ResourceSupplyConnected empire = Source.Owner condition = And [
             Building name = "BLD_SHIPYARD_AST_REF"
             Or [
@@ -15,7 +17,6 @@ Part
                 OwnedBy affiliation = AllyOf empire = Source.Owner
             ]
         ]
-        OwnedBy empire = Source.Owner
     ]
     icon = "icons/ship_parts/rock_plating.png"
 

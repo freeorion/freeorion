@@ -16,7 +16,10 @@ Part
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 3
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
-    location = OwnedBy empire = Source.Owner
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
     effectsgroups =
         [[WEAPON_BASE_DEFAULT_EFFECTS(SR_WEAPON_3_1)]]
     icon = "icons/ship_parts/plasma.png"

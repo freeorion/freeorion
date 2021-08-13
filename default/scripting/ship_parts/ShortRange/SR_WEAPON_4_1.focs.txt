@@ -16,7 +16,10 @@ Part
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 4
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
-    location = OwnedBy empire = Source.Owner
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
     effectsgroups =
         [[WEAPON_BASE_DEFAULT_EFFECTS(SR_WEAPON_4_1)]]
     icon = "icons/ship_parts/death-ray.png"

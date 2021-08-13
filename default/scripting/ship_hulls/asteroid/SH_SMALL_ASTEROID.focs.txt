@@ -14,6 +14,7 @@ Hull
     buildtime = 2
     tags = [ "ASTEROID_HULL" "PEDIA_HULL_LINE_ASTEROIDS" "GOOD_FUEL_EFFICIENCY" ]
     location = And [
+        Planet
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
             OwnedBy empire = Source.Owner

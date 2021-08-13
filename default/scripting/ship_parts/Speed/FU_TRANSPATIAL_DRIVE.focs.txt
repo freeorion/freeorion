@@ -15,9 +15,10 @@ Part
     buildtime = 8
     tags = [ "PEDIA_PC_SPEED" ]
     location = And [
+        Planet
         OwnedBy empire = Source.Owner
         Contains Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
-        ]
+    ]
     effectsgroups = [
         EffectsGroup
             scope = Source

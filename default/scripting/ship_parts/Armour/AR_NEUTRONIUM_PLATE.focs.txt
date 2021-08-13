@@ -8,9 +8,11 @@ Part
     buildtime = 5
     tags = [ "PEDIA_PC_ARMOUR" ]
     location = And [
+        Planet
         OwnedBy empire = Source.Owner
         Contains Building name = "BLD_NEUTRONIUM_FORGE"
         ResourceSupplyConnected empire = Source.Owner condition = And [
+            Building
             OwnedBy empire = Source.Owner
             Or [
                 Building name = "BLD_NEUTRONIUM_EXTRACTOR"

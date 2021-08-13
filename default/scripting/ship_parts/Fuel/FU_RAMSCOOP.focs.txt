@@ -9,7 +9,10 @@ Part
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 6
     tags = [ "PEDIA_PC_FUEL" ]
-    location = OwnedBy empire = Source.Owner
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
     effectsgroups =
         EffectsGroup
             scope = Source

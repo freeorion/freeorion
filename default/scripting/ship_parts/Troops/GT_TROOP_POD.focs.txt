@@ -8,6 +8,7 @@ Part
     buildtime = 1
     tags = [ "COMFORTABLE" "PEDIA_PC_TROOPS" ]
     location = And [
+        Planet
         OwnedBy empire = Source.Owner
         /// @content_tag{NO_ATTACKTROOPS} Prevents production of ships with this part in their design at locations with this tag
         Not HasTag name = "NO_ATTACKTROOPS"

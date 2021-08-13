@@ -8,6 +8,7 @@ Part
     buildtime = 4
     tags = [ "PEDIA_PC_SHIELD" ]
     location = And [
+        Planet
         OwnedBy empire = Source.Owner
         /// @content_tag{ROBOTIC} Allows a location to produce this ShipPart
         HasTag name = "ROBOTIC"

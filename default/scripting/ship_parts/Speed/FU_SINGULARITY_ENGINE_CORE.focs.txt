@@ -14,7 +14,10 @@ Part
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 6
     tags = [ "PEDIA_PC_SPEED" ]
-    location = OwnedBy empire = Source.Owner
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
     icon = "icons/ship_parts/engine-3.png"
 
 #include "/scripting/common/upkeep.macros"

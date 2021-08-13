@@ -8,7 +8,10 @@ Part
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 5
     tags = [ "PEDIA_PC_DETECTION" ]
-    location = OwnedBy empire = Source.Owner
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
     icon = "icons/ship_parts/detector-3.png"
 
 #include "detection.macros"

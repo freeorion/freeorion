@@ -8,7 +8,10 @@ Part
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 10
     tags = [ "PEDIA_PC_STEALTH" ]
-    location = OwnedBy empire = Source.Owner
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
     icon = "icons/ship_parts/cloak-4.png"
 
 #include "stealth.macros"

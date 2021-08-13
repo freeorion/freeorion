@@ -15,7 +15,10 @@ Hull
     buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildtime = 3
     tags = [ "PEDIA_HULL_LINE_GENERIC" ]
-    location = OwnedBy empire = Source.Owner
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
     effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
 
