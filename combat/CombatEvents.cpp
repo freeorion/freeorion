@@ -147,8 +147,8 @@ BoutEvent::BoutEvent(int _bout):
     bout(_bout)
 {}
 
-void BoutEvent::AddEvent(const CombatEventPtr& event)
-{ events.push_back(event); }
+void BoutEvent::AddEvent(CombatEventPtr event)
+{ events.push_back(std::move(event)); }
 
 std::string BoutEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
@@ -166,8 +166,8 @@ std::vector<ConstCombatEventPtr> BoutEvent::SubEvents(int viewing_empire_id) con
 //////////////////////////////////////////
 ///////// SimultaneousEvents ///////////////////
 //////////////////////////////////////////
-void SimultaneousEvents::AddEvent(const CombatEventPtr& event)  // TODO: make not const and move
-{ events.push_back(event); }
+void SimultaneousEvents::AddEvent(CombatEventPtr event)
+{ events.push_back(std::move(event)); }
 
 // The following two function definitions were moved to the header because the linker refuses to find them otherwise...
 

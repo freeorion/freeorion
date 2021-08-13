@@ -34,7 +34,7 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
     BoutEvent() = default;
     explicit BoutEvent(int bout);
 
-    void AddEvent(const CombatEventPtr& event);
+    void AddEvent(CombatEventPtr event);
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
@@ -66,7 +66,7 @@ struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
 
     SimultaneousEvents() = default;
 
-    void AddEvent(const CombatEventPtr& event);
+    void AddEvent(CombatEventPtr event);
 
     [[nodiscard]] FO_COMMON_API std::string DebugString(const ScriptingContext& context) const override
     { return "SimultaneousEvents has " + std::to_string(events.size()) + " events"; } // no idea why, but the linker refuses to find this function if defined in the .cpp

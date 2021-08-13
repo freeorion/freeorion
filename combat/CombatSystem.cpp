@@ -854,7 +854,7 @@ namespace {
             bout, round, attacker->ID(), target->ID(), weapon.ship_part_name,
             std::tie(power, pierced_shield_value, total_damage),
             attacker->Owner(), target->Owner());
-        attacks_event->AddEvent(attack_event);
+        attacks_event->AddEvent(attack_event); // TODO: should this be a move?
 
         target->SetLastTurnAttackedByShip(combat_info.turn);
     }
@@ -1147,17 +1147,15 @@ namespace {
                     // again next round (ships have a minimal structure test instead)
                     delete_list.push_back(obj->ID());
                 } else {
-                    CombatEventPtr incap_event = std::make_shared<IncapacitationEvent>(
-                        bout, obj->ID(), obj->Owner());
-                    incaps_event->AddEvent(incap_event);
+                    incaps_event->AddEvent(std::make_shared<IncapacitationEvent>(bout, obj->ID(), obj->Owner()));
                 }
             }
 
             if (at_least_one_fighter_destroyed)
-                bout_event->AddEvent(fighters_destroyed_event);
+                bout_event->AddEvent(std::move(fighters_destroyed_event));
 
             if (!incaps_event->AreSubEventsEmpty(ALL_EMPIRES))
-                bout_event->AddEvent(incaps_event);
+                bout_event->AddEvent(std::move(incaps_event));
 
             std::stringstream ss;
             for (auto id : delete_list) {
@@ -1576,12 +1574,16 @@ namespace {
             return;   // no ability to attack!
         }
 
-        std::string species_name;
         auto attacker_ship = std::dynamic_pointer_cast<Ship>(attacker);
-        if (attacker_ship)
-            species_name = attacker_ship->SpeciesName();
-        else if (auto attacker_planet = std::dynamic_pointer_cast<Planet>(attacker))
-            species_name = attacker_planet->SpeciesName();
+        const auto& species_name = [&attacker, &attacker_ship]() {
+            static const std::string EMPTY_STRING;
+            if (attacker_ship)
+                return attacker_ship->SpeciesName();
+            else if (auto attacker_planet = std::dynamic_pointer_cast<Planet>(attacker))
+                return attacker_planet->SpeciesName();
+            else
+                return EMPTY_STRING;
+        }();
 
         int attacker_owner_id = attacker->Owner();
         const auto empire = combat_state.combat_info.empires.GetEmpire(attacker_owner_id);
@@ -1606,15 +1608,14 @@ namespace {
             else
                 TraceLogger(combat) << " ... with no targeting condition!";
 
-            std::vector<int> new_fighter_ids =
+            auto new_fighter_ids =
                 combat_state.AddFighters(weapon.fighters_launched, weapon.fighter_damage,
                                          attacker_owner_id, attacker->ID(), species_name,
                                          fighter_name, weapon.combat_targets);
 
             // combat event
-            CombatEventPtr launch_event = std::make_shared<FighterLaunchEvent>(
-                combat_state.combat_info.bout, attacker->ID(), attacker_owner_id, new_fighter_ids.size());
-            launches_event->AddEvent(launch_event);
+            launches_event->AddEvent(std::make_shared<FighterLaunchEvent>(
+                combat_state.combat_info.bout, attacker->ID(), attacker_owner_id, new_fighter_ids.size()));
 
 
             // reduce hangar capacity (contents) corresponding to launched fighters
@@ -1714,8 +1715,8 @@ namespace {
             }
             IncreaseStoredFighterCount(ship, fighter_count);
             // launching negative ships indicates recovery of them
-            CombatEventPtr launch_event = std::make_shared<FighterLaunchEvent>(bout, ship_id, ship->Owner(), -fighter_count);
-            launches_event->AddEvent(launch_event);
+            launches_event->AddEvent(std::make_shared<FighterLaunchEvent>(
+                bout, ship_id, ship->Owner(), -fighter_count));
         }
     }
 
@@ -1797,7 +1798,7 @@ namespace {
                             attacks_event, platform_event, fighter_on_fighter_event);
 
             if (!platform_event->AreSubEventsEmpty(attacker->Owner()))
-                attacks_event->AddEvent(platform_event);
+                attacks_event->AddEvent(std::move(platform_event));
         }
 
         auto stealth_change_event = std::make_shared<StealthChangeEvent>(combat_info.bout);
@@ -1836,10 +1837,8 @@ namespace {
 
                         // record visibility change event due to attack
                         // FIXME attacker, TARGET, attacker empire, target empire, visibility
-                        stealth_change_event->AddEvent(attacker->ID(),
-                                                       attacker->ID(),
-                                                       attacker->Owner(),
-                                                       detector_empire_id,
+                        stealth_change_event->AddEvent(attacker->ID(), attacker->ID(),
+                                                       attacker->Owner(), detector_empire_id,
                                                        Visibility::VIS_BASIC_VISIBILITY);
                     }
                 }
@@ -1847,7 +1846,7 @@ namespace {
             }
 
             if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES))
-                bout_event->AddEvent(launches_event);
+                bout_event->AddEvent(std::move(launches_event));
         }
 
 
