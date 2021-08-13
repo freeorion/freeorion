@@ -117,9 +117,15 @@ std::shared_ptr<const UniverseObject> Empire::Source(const ObjectMap& objects) c
         return capital_as_source;
     }
 
-    // Find any object owned by the empire
+    // Find any planet / ship owned by the empire
     // TODO determine if ExistingObjects() is faster and acceptable
-    for (const auto& obj : objects.all()) {
+    for (const auto& obj : objects.all<Planet>()) {
+        if (obj->OwnedBy(m_id)) {
+            m_source_id = obj->ID();
+            return obj;
+        }
+    }
+    for (const auto& obj : objects.all<Ship>()) {
         if (obj->OwnedBy(m_id)) {
             m_source_id = obj->ID();
             return obj;
