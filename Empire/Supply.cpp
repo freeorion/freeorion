@@ -274,13 +274,13 @@ namespace {
             return 0.0f;
 
         float accumulator_current = 0.0f;
-
-        for (auto obj : Objects().find(OwnedVisitor(empire_id))) {
+        for (auto& obj : Objects().find<Planet>(OwnedVisitor(empire_id))) { // TODO: handle ships if they can have supply meters
             if (!obj)
                 continue;
             if (auto* m = obj->GetMeter(MeterType::METER_SUPPLY))
                 accumulator_current += m->Current();
         }
+
         return accumulator_current;
     }
 
