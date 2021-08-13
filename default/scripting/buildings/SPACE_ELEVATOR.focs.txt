@@ -5,9 +5,9 @@ BuildingType
     buildtime = 6
     location = And [
         Planet
+        OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_SPACE_ELEVATOR"
         Not Planet type = Asteroids
-        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]

@@ -4,8 +4,9 @@ BuildingType
     buildcost = 500 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 8
     location = And [
-        Not Contains Building name = "BLD_SPATIAL_DISTORT_GEN"
+        Planet
         OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_SPATIAL_DISTORT_GEN"
     ]
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [

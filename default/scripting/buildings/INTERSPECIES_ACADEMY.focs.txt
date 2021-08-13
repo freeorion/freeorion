@@ -5,6 +5,7 @@ BuildingType
     buildtime = 5
     location = And [
         // Homeworld
+        Planet
         Species
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
         OwnedBy empire = Source.Owner

@@ -5,9 +5,10 @@ BuildingType
     buildtime = 8
     tags = "ORBITAL"
     location = And [
+        Planet
+        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
         Not Contains Building name = "BLD_STARGATE"
-        OwnedBy empire = Source.Owner
     ]
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [

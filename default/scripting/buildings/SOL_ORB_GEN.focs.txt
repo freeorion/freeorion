@@ -5,10 +5,11 @@ BuildingType
     buildtime = 6
     tags = "ORBITAL"
     location = And [
-        Not Contains Building name = "BLD_SOL_ORB_GEN"
+        Planet
         OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_SOL_ORB_GEN"
         Not Star type = [Neutron BlackHole NoStar]
-        ]
+    ]
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]

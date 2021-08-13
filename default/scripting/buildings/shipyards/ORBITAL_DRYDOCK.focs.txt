@@ -14,9 +14,9 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
+        OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
         [[LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_BASE)]]
-        OwnedBy empire = Source.Owner
     ]
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [

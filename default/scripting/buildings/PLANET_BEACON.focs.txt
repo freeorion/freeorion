@@ -4,6 +4,7 @@ BuildingType
     buildcost = 1
     buildtime = 1
     location = And [
+        Planet
         Not Contains Building name = "BLD_PLANET_BEACON"
         OwnedBy empire = Source.Owner
         Number high = 6 condition = And [

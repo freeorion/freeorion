@@ -4,6 +4,7 @@ BuildingType
     buildcost = 200 * [[BUILDING_COST_MULTIPLIER]]
     buildtime = 10
     location = And [
+        Planet
         Not Contains Building name = "BLD_GATEWAY_VOID"
         OwnedBy empire = Source.Owner
     ]
