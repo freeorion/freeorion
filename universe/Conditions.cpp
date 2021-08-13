@@ -489,18 +489,19 @@ void Number::Eval(const ScriptingContext& parent_context,
 }
 
 bool Number::Match(const ScriptingContext& local_context) const {
-    // get acceptable range of subcondition matches for candidate
-    int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
-    int high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
-
     // get set of all UniverseObjects that satisfy m_condition
     ObjectSet condition_matches;
     m_condition->Eval(local_context, condition_matches);
 
     // compare number of objects that satisfy m_condition to the acceptable range of such objects
     int matched = condition_matches.size();
-    bool in_range = (low <= matched && matched <= high);
-    return in_range;
+
+    // get acceptable range of subcondition matches for candidate
+    int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+    if (low > matched)
+        return false;
+    int high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
+    return matched <= high;
 }
 
 void Number::SetTopLevelContent(const std::string& content_name) {
@@ -3027,9 +3028,12 @@ bool CreatedOnTurn::Match(const ScriptingContext& local_context) const {
         ErrorLogger() << "CreatedOnTurn::Match passed no candidate object";
         return false;
     }
+    int turn = candidate->CreationTurn();
     int low = (m_low ? std::max(0, m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
+    if (low > turn)
+        return false;
     int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
-    return CreatedOnTurnSimpleMatch(low, high)(candidate);
+    return turn <= high;
 }
 
 void CreatedOnTurn::SetTopLevelContent(const std::string& content_name) {
