@@ -39,9 +39,6 @@
     <Filter Include="Source Files\python">
       <UniqueIdentifier>{2ab2cfda-27b9-4be9-a9ce-9e5b1cec2e28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\GG">
-      <UniqueIdentifier>{7e48aed2-0a7f-45a6-8c82-c1d7a143dfa7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\util">
       <UniqueIdentifier>{03b7dbd3-a99a-4b9a-a838-acc16244db37}</UniqueIdentifier>
     </Filter>
