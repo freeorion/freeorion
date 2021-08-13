@@ -1279,6 +1279,29 @@ namespace {
             m_context(context)
         {}
 
+        EmpireAffiliationSimpleMatch(EmpireAffiliationType affiliation,
+                                     const ScriptingContext& context) :
+            m_affiliation(affiliation),
+            m_context(context)
+        {}
+
+        // is it necessary to evaluate and pass in a non-default empire id?
+        static bool AffiliationTypeUsesEmpireID(EmpireAffiliationType affiliation) {
+            switch (affiliation) {
+            case EmpireAffiliationType::AFFIL_SELF:
+            case EmpireAffiliationType::AFFIL_ENEMY:
+            case EmpireAffiliationType::AFFIL_PEACE:
+            case EmpireAffiliationType::AFFIL_ALLY:
+                return true;
+            case EmpireAffiliationType::AFFIL_ANY:
+            case EmpireAffiliationType::AFFIL_NONE:
+            case EmpireAffiliationType::AFFIL_CAN_SEE: // TODO: update once implemented below
+            case EmpireAffiliationType::AFFIL_HUMAN:
+            default:
+                return false;
+            }
+        }
+
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
             if (!candidate)
                 return false;
@@ -1327,8 +1350,7 @@ namespace {
                 break;
 
             case EmpireAffiliationType::AFFIL_CAN_SEE: {
-                // todo...
-                return false;
+                return false; // TODO
                 break;
             }
 
@@ -1347,7 +1369,7 @@ namespace {
             }
         }
 
-        int m_empire_id;
+        int m_empire_id = ALL_EMPIRES;
         EmpireAffiliationType m_affiliation;
         const ScriptingContext& m_context;
     };
@@ -1452,10 +1474,12 @@ bool EmpireAffiliation::Match(const ScriptingContext& local_context) const {
         ErrorLogger() << "EmpireAffiliation::Match passed no candidate object";
         return false;
     }
-
-    int empire_id = m_empire_id ? m_empire_id->Eval(local_context) : ALL_EMPIRES;
-
-    return EmpireAffiliationSimpleMatch(empire_id, m_affiliation, local_context)(candidate);
+    if (EmpireAffiliationSimpleMatch::AffiliationTypeUsesEmpireID(m_affiliation) && m_empire_id) {
+        int empire_id = m_empire_id->Eval(local_context);
+        return EmpireAffiliationSimpleMatch(empire_id, m_affiliation, local_context)(candidate);
+    } else {
+        return EmpireAffiliationSimpleMatch(m_affiliation, local_context)(candidate);
+    }
 }
 
 void EmpireAffiliation::SetTopLevelContent(const std::string& content_name) {
