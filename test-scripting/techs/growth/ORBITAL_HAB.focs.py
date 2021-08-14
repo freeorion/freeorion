@@ -14,6 +14,8 @@ Tech(
         EffectsGroup(
             scope=Species & OwnedBy(empire=Source.Owner),
             priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
-            effects=SetTargetPopulation(value=Value + 1 * Target.HabitableSize, accountinglabel="ORBITAL_HAB_LABEL"))
+            effects=SetTargetPopulation(value=Value + 1 * Target.HabitableSize, accountinglabel="ORBITAL_HAB_LABEL"),
+        )
     ],
-    graphic="icons/tech/orbital_gardens.png")
+    graphic="icons/tech/orbital_gardens.png",
+)
