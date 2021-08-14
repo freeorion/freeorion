@@ -309,13 +309,13 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
         retval += "Value(";
 
     switch (ref_type) {
-    case ReferenceType::SOURCE_REFERENCE:                    retval = "Source";          break;
-    case ReferenceType::EFFECT_TARGET_REFERENCE:             retval = "Target";          break;
-    case ReferenceType::EFFECT_TARGET_VALUE_REFERENCE:       retval = "Value";           break;
-    case ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE: retval = "LocalCandidate";  break;
-    case ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:  retval = "RootCandidate";   break;
-    case ReferenceType::NON_OBJECT_REFERENCE:                retval = "";                break;
-    default:                                                 retval = "?????";           break;
+    case ReferenceType::SOURCE_REFERENCE:                    retval += "Source";          break;
+    case ReferenceType::EFFECT_TARGET_REFERENCE:             retval += "Target";          break;
+    case ReferenceType::EFFECT_TARGET_VALUE_REFERENCE:       retval += "Value";           break;
+    case ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE: retval += "LocalCandidate";  break;
+    case ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:  retval += "RootCandidate";   break;
+    case ReferenceType::NON_OBJECT_REFERENCE:                retval += "";                break;
+    default:                                                 retval += "?????";           break;
     }
 
     if (ref_type != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE) {
