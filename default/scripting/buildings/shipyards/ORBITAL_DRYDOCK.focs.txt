@@ -39,6 +39,7 @@ BuildingType
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
             activation = ContainedBy And [
+                Object id = Source.PlanetID
                 [[PLANET_OWNED_DRYDOCK_HIGHEST_HAPPINESS]]
                 Population high = 0
             ]
@@ -211,8 +212,8 @@ ORB_DRYDOCK_REPAIR_VAL
 // Planet in system with highest happiness that is owned and has a drydock
 PLANET_OWNED_DRYDOCK_HIGHEST_HAPPINESS
 '''MaximumNumberOf number = 1 sortkey = LocalCandidate.Happiness condition = And [
-    Planet
     InSystem id = Source.SystemID
+    Planet
     Or [
         OwnedBy empire = Source.Owner
         And [

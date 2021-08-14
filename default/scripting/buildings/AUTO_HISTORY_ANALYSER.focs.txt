@@ -23,6 +23,7 @@ BuildingType
                 Happiness low = 0
             ]
             activation = ContainedBy And [
+                Object id = Source.PlanetID
                 Planet
                 Contains Building name = "BLD_CULTURE_ARCHIVES"
             ]

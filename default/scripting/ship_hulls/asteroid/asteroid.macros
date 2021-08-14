@@ -2,7 +2,7 @@ ASTEROID_FIELD_STEALTH_BONUS
 '''EffectsGroup
             scope = Source
             activation = ContainedBy And [
-                System 
+                Object id = Source.SystemID
                 Contains Planet type = Asteroids
             ]
             accountinglabel = "ASTEROID_FIELD_STEALTH"

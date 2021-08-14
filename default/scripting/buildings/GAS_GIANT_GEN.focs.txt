@@ -16,14 +16,18 @@ BuildingType
     
         EffectsGroup
             scope = And [
-                Planet
                 InSystem id = Source.SystemID
+                Planet
                 Focus type = "FOCUS_INDUSTRY"
                 Not Population high = 0
                 OwnedBy empire = Source.Owner
                 Happiness low = (NamedReal name = "BLD_GAS_GIANT_GEN_MIN_STABILITY" value = 10)
             ]
-            activation = ContainedBy Population high = 0
+            activation = ContainedBy And [
+                Object id = Source.PlanetID
+                Planet
+                Population high = 0
+            ]
             stackinggroup = "GAS_GIANT_GEN_STACK"
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value

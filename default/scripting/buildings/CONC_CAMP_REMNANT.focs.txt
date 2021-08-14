@@ -13,7 +13,8 @@ BuildingType
                 Planet
             ]
             activation = ContainedBy And [
-                PopulationCenter
+                Object id = Source.PlanetID
+                Planet
                 Not Contains Building name = "BLD_CONC_CAMP"
             ]
             priority = [[CONCENTRATION_CAMP_PRIORITY]]
