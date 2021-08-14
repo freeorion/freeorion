@@ -1797,7 +1797,7 @@ Operation<T>::Operation(const Operation<T>& rhs) :
 template <typename T>
 void Operation<T>::InitConstInvariants()
 {
-    if (m_op_type == OpType::RANDOM_UNIFORM || m_op_type == OpType::RANDOM_PICK) {
+    if (m_op_type == OpType::RANDOM_UNIFORM || m_op_type == OpType::RANDOM_PICK || m_op_type == OpType::NOOP) {
         m_constant_expr = false;
         this->m_root_candidate_invariant = false;
         this->m_local_candidate_invariant = false;
