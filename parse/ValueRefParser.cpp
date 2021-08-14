@@ -20,7 +20,7 @@ namespace std {
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
-namespace parse { namespace detail {
+namespace parse::detail {
 
     const reference_token_rule variable_scope(const parse::lexer& tok) {
         qi::_val_type _val;
@@ -108,5 +108,4 @@ namespace parse { namespace detail {
         const std::string& type_name, const parse::lexer& tok);
     template simple_variable_rules<double>::simple_variable_rules(
         const std::string& type_name, const parse::lexer& tok);
-
-} }
+}
