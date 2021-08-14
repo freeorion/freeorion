@@ -1944,16 +1944,21 @@ void Universe::SetEmpireSpecialVisibility(int empire_id, int object_id,
 
 
 namespace {
-    /** for each empire: for each position where the empire has detector objects,
-      * what is the empire's detection range at that location?  (this is the
-      * largest of the detection ranges of objects the empire has at that spot) */
-    auto GetEmpiresPositionDetectionRanges(const ObjectMap& objects) {
-        std::map<int, std::map<std::pair<double, double>, float>> retval;
-
-        for (const auto& obj : objects.all()) {
-            // skip unowned objects, which can't provide detection to any empire
+    template <typename R>
+    auto CheckObjects(R&& range, std::map<int, std::map<std::pair<double, double>, float>>& retval)
+    {
+        for (const auto& obj : range) {
+            // skip systems and unowned objects, which can't provide detection to any empire
             if (obj->Unowned())
                 continue;
+
+            // skip ships not in systems, so that they cannot provide detection
+            using RangeElementType = typename R::value_type::element_type;
+            constexpr auto is_ship_range = std::is_same_v<RangeElementType, Ship>;
+            if constexpr (is_ship_range) {
+                if (obj->SystemID() == INVALID_OBJECT_ID)
+                    continue;
+            }
 
             // skip objects with no detection range
             const Meter* detection_meter = obj->GetMeter(MeterType::METER_DETECTION);
@@ -1962,20 +1967,6 @@ namespace {
             float object_detection_range = detection_meter->Current();
             if (object_detection_range <= 0.0f)
                 continue;
-
-            // don't allow moving ships / fleets to give detection
-            std::shared_ptr<const Fleet> fleet;
-            if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
-                fleet = std::dynamic_pointer_cast<const Fleet>(obj);
-            } else if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-                if (auto ship = static_cast<const Ship*>(obj.get()))
-                    fleet = objects.get<Fleet>(ship->FleetID());
-            }
-            if (fleet) {
-                int cur_id = fleet->SystemID();
-                if (cur_id == INVALID_OBJECT_ID) // fleets do not grant detection when in a starlane
-                    continue;
-            }
 
             // record object's detection range for owner
             int object_owner_empire_id = obj->Owner();
@@ -1989,6 +1980,18 @@ namespace {
             else
                 retval_pos_it->second = std::max(retval_pos_it->second, object_detection_range);
         }
+    }
+
+    /** for each empire: for each position where the empire has detector objects,
+      * what is the empire's detection range at that location?  (this is the
+      * largest of the detection ranges of objects the empire has at that spot) */
+    auto GetEmpiresPositionDetectionRanges(const ObjectMap& objects) {
+        std::map<int, std::map<std::pair<double, double>, float>> retval;
+
+        CheckObjects(objects.all<Planet>(), retval);
+        CheckObjects(objects.all<Ship>(), retval);
+        //CheckObjects(objects.all<Building>(), retval); // as of this writing, buildings don't have detection meters
+
         return retval;
     }
 
