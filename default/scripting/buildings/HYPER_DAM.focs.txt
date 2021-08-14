@@ -16,7 +16,7 @@ BuildingType
     
         EffectsGroup
             scope = And [
-                PopulationCenter
+                Planet
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 Happiness low = (NamedReal name = "BLD_HYPER_DAM_MIN_STABILITY" value = 12)
@@ -34,7 +34,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
-                PopulationCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Not Star type = BlackHole

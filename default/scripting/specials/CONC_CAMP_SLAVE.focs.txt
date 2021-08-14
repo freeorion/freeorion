@@ -11,7 +11,7 @@ Special
         EffectsGroup
             scope = Source
             activation = And [
-                PopulationCenter
+                Planet
                 Not Contains Building name = "BLD_CONC_CAMP"
                 Not Contains Building name = "BLD_CONC_CAMP_REMNANT"
             ]

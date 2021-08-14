@@ -27,7 +27,7 @@ BuildingType
     
         EffectsGroup            // add population to connected plants with room and suitable species
             scope = NumberOf number = 1 condition = And [
-                PopulationCenter
+                Planet
                 Species name = Source.Planet.Species
                 Not Object id = Source.PlanetID
                 ResourceSupplyConnected empire = Source.Owner condition = Source
@@ -36,7 +36,7 @@ BuildingType
                 Not Contains Building name = "BLD_CONC_CAMP"
             ]
             activation = Number low = 1 condition = And [
-                PopulationCenter
+                Planet
                 Species name = Source.Planet.Species
                 Not Object id = Source.PlanetID
                 ResourceSupplyConnected empire = Source.Owner condition = Source

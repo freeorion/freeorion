@@ -41,7 +41,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
-                PopulationCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 TargetPopulation low = 1
             ]

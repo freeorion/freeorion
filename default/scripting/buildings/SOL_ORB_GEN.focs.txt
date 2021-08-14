@@ -16,7 +16,7 @@ BuildingType
     
         EffectsGroup
             scope = And [
-                PopulationCenter
+                Planet
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 Happiness low = (NamedReal name = "BLD_SOL_ORB_GEN_MIN_STABILITY" value = 10)
@@ -31,7 +31,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
-                PopulationCenter
+                Planet
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 Happiness low = NamedRealLookup name = "BLD_SOL_ORB_GEN_MIN_STABILITY"
@@ -53,7 +53,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
-                PopulationCenter
+                Planet
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 Happiness low = NamedRealLookup name = "BLD_SOL_ORB_GEN_MIN_STABILITY"

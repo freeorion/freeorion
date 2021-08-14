@@ -32,7 +32,7 @@ BuildingType
             
         EffectsGroup
             scope = And [
-                PopulationCenter
+                Planet
                 InSystem id = Source.SystemID
             ]
             activation = Turn low = Source.CreationTurn + 1

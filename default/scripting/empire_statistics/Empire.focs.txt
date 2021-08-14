@@ -32,6 +32,6 @@ Statistic name = "TOTAL_POPULATION_STAT"
     value = Statistic Sum
         value = LocalCandidate.Population
         condition = And [
-            PopulationCenter
+            Planet
             OwnedBy empire = Source.Owner
         ]

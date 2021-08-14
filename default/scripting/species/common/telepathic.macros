@@ -2,7 +2,7 @@ PRECOGNITIVE_DETECTION
 '''     EffectsGroup
             description = "PRECOGNITIVE_DETECTION_DESC"
             scope = And [
-                PopulationCenter
+                Planet
                 Not VisibleToEmpire empire = Source.Owner
                 Not Source
                 Not OwnedBy empire = Source.Owner
@@ -16,7 +16,7 @@ TELEPATHIC_DETECTION
 '''     EffectsGroup
             description = "TELEPATHIC_DETECTION_DESC"
             scope = And [
-                PopulationCenter
+                Planet
                 Not Population high = 0
                 Not OwnedBy empire = Source.Owner
                 Not VisibleToEmpire empire = Source.Owner

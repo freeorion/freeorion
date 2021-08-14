@@ -10,9 +10,9 @@ XENOPHOBIC_SELF
         EffectsGroup
             scope = Source
             activation = And [
-                PopulationCenter
+                Planet
                 Number low = 1 condition = And [
-                    PopulationCenter
+                    Planet
                     OwnedBy empire = RootCandidate.Owner
                     Not Or [ 
                         Species name = RootCandidate.Species
@@ -33,7 +33,7 @@ XENOPHOBIC_SELF
                     * (NamedReal name = "XENOPHOBIC_SELF_TARGET_RESEARCH_SCALING" value = 0.9)
                 SetTargetHappiness value = Value
                     + (Statistic Count condition = And [
-                        PopulationCenter
+                        Planet
                         OwnedBy empire = Source.Owner
                         Not Or [ 
                             Species name = Source.Species
@@ -49,7 +49,7 @@ XENOPHOBIC_SELF
         EffectsGroup
             scope = Source
             activation = And [
-                PopulationCenter
+                Planet
                 HasTag name = "SELF_SUSTAINING"
             ]
             stackinggroup = "XENOPHOBIC_POP_SELF"
@@ -64,7 +64,7 @@ XENOPHOBIC_SELF
 XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT
 '''
 Statistic Count condition = And [
-                    PopulationCenter
+                    Planet
                     Not Or [
                         Species name = Source.Species
                         Species name = "SP_EXOBOT"
@@ -82,7 +82,7 @@ Statistic Count condition = And [
 XENOPHOBIC_OTHER
 '''     EffectsGroup 
             scope = And [
-                PopulationCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 Not Or [ 
                     Species name = Source.Species
@@ -92,7 +92,7 @@ XENOPHOBIC_OTHER
                 Not Contains Building name = "BLD_CONC_CAMP"
                 WithinStarlaneJumps jumps = 5 condition = Source
             ]
-            activation = PopulationCenter
+            activation = Planet
             stackinggroup = "XENOPHOBIC_LABEL_@1@_OTHER"
             accountinglabel = "XENOPHOBIC_LABEL_@1@_OTHER"
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]

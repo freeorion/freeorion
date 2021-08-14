@@ -14,7 +14,7 @@ BuildingType
     
         EffectsGroup
             scope = And [
-                PopulationCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
                 Happiness low = (NamedReal name = "BLD_ENCLAVE_VOID_MIN_STABILITY" value = 10)

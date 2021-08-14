@@ -21,7 +21,7 @@ BuildingType
         // only the best possible effect is used.
         EffectsGroup
             scope = And [
-                PopulationCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 Happiness low = (NamedReal name = "BLD_INDUSTRY_CENTER_3_MIN_STABILITY" value = 12)
                 ResourceSupplyConnected empire = Source.Owner condition = Source
@@ -35,7 +35,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
-                PopulationCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 Happiness low = (NamedReal name = "BLD_INDUSTRY_CENTER_2_MIN_STABILITY" value = 10)
                 ResourceSupplyConnected empire = Source.Owner condition = Source
@@ -49,7 +49,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
-                PopulationCenter
+                Planet
                 OwnedBy empire = Source.Owner
                 Happiness low = (NamedReal name = "BLD_INDUSTRY_CENTER_1_MIN_STABILITY" value = 8)
                 Focus type = "FOCUS_INDUSTRY"
