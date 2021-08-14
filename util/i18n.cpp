@@ -57,7 +57,7 @@ namespace {
         }
 
         if (!IsExistingFile(default_stringtable_path))
-            ErrorLogger() << "Default english stringtable file also not presennt!!: " << PathToString(default_stringtable_path);
+            ErrorLogger() << "Default english stringtable file also not present !!!: " << PathToString(default_stringtable_path);
 
         DebugLogger() << "GetDefaultStringTableFileName returning: " << PathToString(default_stringtable_path);
         return default_stringtable_path;
