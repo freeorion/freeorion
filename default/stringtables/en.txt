@@ -1337,6 +1337,22 @@ All Forbidden
 ## Command-line and options database entries
 ##
 
+COMMAND_LINE_HELP_GENERAL_DESCRIPTION
+'''FreeOrion is a 4X Space Strategy game.
+
+Command-line switches and options may be specified to adjust how the program runs.
+
+These are grouped, and can be listed by running the binary and passing the "-h" or "--help" switches, followed by the name of an option group.
+
+For example, to output network-related options:
+freeorion --help network
+
+Options may have an abbreviated switch form, like "-h" instead of "--help".
+
+Options that do not have an abbreviated form expect a parameter to be passed after their name to set that option to the passed value, like:
+freeorion --network.discovery.port 123
+'''
+
 COMMAND_LINE_NOT_FOUND
 No options or sections found matching
 
