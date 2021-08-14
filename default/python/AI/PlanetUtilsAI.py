@@ -2,9 +2,10 @@ import freeOrionAIInterface as fo
 from logging import debug, error
 from typing import Iterable, List, Sequence, Union
 
-import ColonisationAI
 from AIDependencies import INVALID_ID
 from common.fo_typing import PlanetId, SystemId
+from empire.colony_builders import get_colony_builders
+from empire.ship_builders import get_ship_builders
 from freeorion_tools import ppstring
 
 
@@ -64,7 +65,7 @@ def get_capital() -> PlanetId:
         else:
             return INVALID_ID
     try:
-        for spec_list in [ColonisationAI.empire_colonizers, ColonisationAI.empire_ship_builders, None]:
+        for spec_list in [get_colony_builders(), get_ship_builders(), None]:
             population_id_pairs = []
             for planet_id in peopled_planets:
                 planet = universe.getPlanet(planet_id)

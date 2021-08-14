@@ -19,6 +19,23 @@ from colonization.calculate_population import active_growth_specials, calc_max_p
 from colonization.colony_score import MINIMUM_COLONY_SCORE
 from colonization.planet_supply import get_planet_supply
 from common.print_utils import Bool, Number, Sequence, Table, Text
+from empire.buildings_locations import set_building_locations
+from empire.colony_builders import (
+    can_build_colony_for_species,
+    get_colony_builders,
+    set_colony_builders,
+)
+from empire.colony_status import (
+    set_colonies_is_under_attack,
+    set_colonies_is_under_treat,
+)
+from empire.growth_specials import set_growth_special
+from empire.pilot_rating import (
+    get_pilot_ratings,
+    set_pilot_rating_for_planet,
+    summarize_pilot_ratings,
+)
+from empire.ship_builders import get_ship_builder_locations, set_ship_builders
 from EnumsAI import (
     EmpireProductionTypes,
     FocusType,
@@ -42,27 +59,15 @@ from turn_state import (
     get_number_of_colonies,
     get_owned_planets,
     get_unowned_empty_planets,
-    set_best_pilot_rating,
     set_have_asteroids,
     set_have_gas_giant,
     set_have_nest,
-    set_medium_pilot_rating,
 )
 from turn_state.design import get_best_ship_info
 
 colonization_timer = AITimer('getColonyFleets()')
 
-
-empire_colonizers = {}
-empire_ship_builders = {}
-empire_shipyards = {}
-available_growth_specials = {}
-all_colony_opportunities = {}
-
-pilot_ratings = {}
-colony_status = {}
-facilities_by_species_grade = {}
-system_facilities = {}
+_all_colony_opportunities = {}
 
 
 @cache_for_current_turn
@@ -109,23 +114,9 @@ def survey_universe():
 
     # set up / reset various variables; the 'if' is purely for code folding convenience
     if True:
-        colony_status['colonies_under_attack'] = []
-        colony_status['colonies_under_threat'] = []
         AIstate.empireStars.clear()
-        empire_colonizers.clear()
-        empire_ship_builders.clear()
-        empire_shipyards.clear()
         empire_metabolisms.clear()
-        available_growth_specials.clear()
         active_growth_specials.clear()
-        if tech_is_complete(AIDependencies.EXOBOT_TECH_NAME):
-            empire_colonizers["SP_EXOBOT"] = []  # get it into colonizer list even if no colony yet
-        for spec_name in AIDependencies.EXTINCT_SPECIES:
-            if tech_is_complete("TECH_COL_" + spec_name):
-                empire_colonizers["SP_" + spec_name] = []  # get it into colonizer list even if no colony yet
-        pilot_ratings.clear()
-        facilities_by_species_grade.clear()
-        system_facilities.clear()
 
     # var setup done
     aistate = get_aistate()
@@ -165,28 +156,20 @@ def survey_universe():
                         if spec_name == "SP_ACIREMA":
                             pilot_val += 1
                         weapons_grade = "WEAPONS_%.1f" % pilot_val
-                        pilot_ratings[pid] = pilot_val
+                        set_pilot_rating_for_planet(pid, pilot_val)
                         yard_here = []
                         if "BLD_SHIPYARD_BASE" in buildings_here:
-                            empire_ship_builders.setdefault(spec_name, []).append(pid)
-                            empire_shipyards[pid] = pilot_val
+                            set_ship_builders(spec_name, pid)
                             yard_here = [pid]
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
-                            empire_colonizers.setdefault(spec_name, []).extend(yard_here)
-
-                this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
-                for facility in ship_facilities:
-                    this_grade_facilities.setdefault(facility, []).append(pid)
-                    if facility in AIDependencies.SYSTEM_SHIP_FACILITIES:
-                        this_facility_dict = system_facilities.setdefault(facility, {})
-                        this_facility_dict.setdefault("systems", set()).add(sys_id)
-                        this_facility_dict.setdefault("planets", set()).add(pid)
+                            set_colony_builders(spec_name, yard_here)
+                set_building_locations(weapons_grade, ship_facilities, pid, sys_id)
 
                 for special in planet.specials:
                     if special_is_nest(special):
                         set_have_nest()
                     if special in AIDependencies.metabolismBoosts:
-                        available_growth_specials.setdefault(special, []).append(pid)
+                        set_growth_special(special, pid)
                         if planet.focus == FocusType.FOCUS_GROWTH:
                             active_growth_specials.setdefault(special, []).append(pid)
             elif owner_id != -1:
@@ -203,19 +186,14 @@ def survey_universe():
             AIstate.empireStars.setdefault(system.starType, []).append(sys_id)
             sys_status = aistate.systemStatus.setdefault(sys_id, {})
             if sys_status.get('fleetThreat', 0) > 0:
-                colony_status['colonies_under_attack'].append(sys_id)
+                set_colonies_is_under_attack()
             if sys_status.get('neighborThreat', 0) > 0:
-                colony_status['colonies_under_threat'].append(sys_id)
+                set_colonies_is_under_treat()
 
     _print_empire_species_roster()
 
-    if pilot_ratings:
-        rating_list = sorted(pilot_ratings.values(), reverse=True)
-        set_best_pilot_rating(rating_list[0])
-        if len(pilot_ratings) == 1:
-            set_medium_pilot_rating(rating_list[0])
-        else:
-            set_medium_pilot_rating(rating_list[1 + int(len(rating_list) // 5)])
+    rating_list = sorted(get_pilot_ratings().values(), reverse=True)
+    summarize_pilot_ratings(rating_list)
     colonization_timer.stop()
 
 
@@ -273,7 +251,7 @@ def get_colony_fleets():
         sys_id = planet.systemID
         for pid2 in get_colonized_planets_in_system(sys_id):
             planet2 = universe.getPlanet(pid2)
-            if not (planet2 and planet2.speciesName in empire_colonizers):
+            if not (planet2 and can_build_colony_for_species(planet2.speciesName)):
                 continue
             if planet.unowned:
                 outpost_base_manager.create_new_plan(pid, pid2)
@@ -291,8 +269,8 @@ def get_colony_fleets():
     evaluated_colony_planets = assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None)
     colonization_timer.stop('Evaluate %d Primary Colony Opportunities' % (len(evaluated_colony_planet_ids)))
     colonization_timer.start('Evaluate All Colony Opportunities')
-    all_colony_opportunities.clear()
-    all_colony_opportunities.update(
+    _all_colony_opportunities.clear()
+    _all_colony_opportunities.update(
         assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None, [], True))
     colonization_timer.start('Evaluate Outpost Opportunities')
 
@@ -348,7 +326,7 @@ def assign_colonisation_values(planet_ids, mission_type, species, detail=None, r
             try_species = [species.name]
     else:
         # print "\n=========\nAssigning Colony Values\n========="
-        try_species = list(empire_colonizers)
+        try_species = list(get_colony_builders())
     for planet_id in planet_ids:
         pv = []
         for spec_name in try_species:
@@ -415,7 +393,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
         debug("Trying best matches to current colony ships")
         best_scores = dict(evaluated_planets)
         potential_targets = []
-        for pid, ratings in all_colony_opportunities.items():
+        for pid, ratings in _all_colony_opportunities.items():
             for rating in ratings:
                 if rating[0] >= 0.75 * best_scores.get(pid, [9999])[0]:
                     potential_targets.append((pid, rating))
@@ -517,12 +495,11 @@ def _print_empire_species_roster():
     )
     for species_name, planet_ids in get_empire_planets_by_species().items():
         species_tags = fo.getSpecies(species_name).tags
-        is_colonizer = species_name in empire_colonizers
-        number_of_shipyards = len(empire_ship_builders.get(species_name, []))
+        number_of_shipyards = len(get_ship_builder_locations(species_name))
         species_table.add_row(
             species_name,
             planet_ids,
-            is_colonizer,
+            can_build_colony_for_species(species_name),
             number_of_shipyards,
             *[grade_map.get(get_species_tag_grade(species_name, tag).upper(), "o") for tag in grade_tags],
             [tag for tag in species_tags if not any(s in tag for s in grade_tags) and 'PEDIA' not in tag],
@@ -671,7 +648,7 @@ class OrbitalColonizationPlan:
             detail=None,
             empire_research_list=None
         )
-        for species in empire_colonizers:
+        for species in get_colony_builders():
             this_score = calculate_planet_colonization_rating(
                 planet_id=self.target,
                 mission_type=MissionType.COLONISATION,
@@ -696,7 +673,7 @@ class OrbitalColonizationPlan:
 
         # make sure source is valid
         source = universe.getPlanet(self.source)
-        if not (source and source.ownedBy(fo.empireID()) and source.speciesName in empire_colonizers):
+        if not (source and source.ownedBy(fo.empireID()) and can_build_colony_for_species(source.speciesName)):
             return False
 
         # appears to be valid

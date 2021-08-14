@@ -3,8 +3,8 @@ import math
 import random
 from typing import Dict, FrozenSet, Iterable, Iterator, List, Optional, Tuple, Union
 
-import ColonisationAI
 import ShipDesignAI
+from empire.ship_builders import get_shipyards
 from EnumsAI import PriorityType
 from freeorion_tools.caching import cache_for_current_turn
 from freeorion_tools.timers import AITimer
@@ -139,7 +139,7 @@ def get_best_ship_ratings(planet_ids: Tuple[int]) -> List[Tuple[float, int, int,
 def _get_best_ship_ratings(planet_ids: Tuple[int]) -> Iterator[Tuple[float, int, int, "fo.shipDesign"]]:
     design_repository = get_design_repository()
     priority = PriorityType.PRODUCTION_MILITARY
-    planet_ids = set(planet_ids).intersection(ColonisationAI.empire_shipyards)
+    planet_ids = set(planet_ids).intersection(get_shipyards())
 
     if priority not in design_repository:
         return

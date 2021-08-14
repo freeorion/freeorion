@@ -19,6 +19,7 @@ import ColonisationAI
 import PlanetUtilsAI
 from aistate_interface import get_aistate
 from common.print_utils import Table, Text
+from empire.growth_specials import get_growth_specials
 from EnumsAI import FocusType, PriorityType, get_priority_resource_types
 from freeorion_tools import combine_ratings, tech_is_complete
 from freeorion_tools.timers import AITimer
@@ -407,7 +408,7 @@ def set_planet_growth_specials(focus_manager):
         return
 
     # TODO Consider actual resource output of the candidate locations rather than only population
-    for special, locations in ColonisationAI.available_growth_specials.items():
+    for special, locations in get_growth_specials().items():
         # Find which metabolism is boosted by this special
         metabolism = AIDependencies.metabolismBoosts.get(special)
         if not metabolism:

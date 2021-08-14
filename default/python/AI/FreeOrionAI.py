@@ -276,13 +276,7 @@ def generateOrders():  # pylint: disable=invalid-name
     # for game-reload consistency.
     random_seed = str(fo.getGalaxySetupData().seed) + "%05d%s" % (turn, fo.getEmpire().name)
     random.seed(random_seed)
-
-    universe = fo.getUniverse()
     empire = fo.getEmpire()
-    planet_id = PlanetUtilsAI.get_capital()
-    planet = None
-    if planet_id is not None:
-        planet = universe.getPlanet(planet_id)
     aggression_name = get_trait_name_aggression(aistate.character)
     debug("***************************************************************************")
     debug("*******  Log info for AI progress chart script. Do not modify.   **********")
@@ -305,7 +299,9 @@ def generateOrders():  # pylint: disable=invalid-name
     debug(f"EmpireID: {empire.empireID} Name: {empire_name} Turn: {turn}")
 
     debug(f"EmpireColors: {empire.colour}")
-    if planet:
+    planet_id = PlanetUtilsAI.get_capital()
+    if planet_id:
+        planet = fo.getUniverse().getPlanet(planet_id)
         debug("CapitalID: " + str(planet_id) + " Name: " + planet.name + " Species: " + planet.speciesName)
     else:
         debug("CapitalID: None Currently Name: None Species: None ")
