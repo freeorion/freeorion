@@ -1324,17 +1324,22 @@ namespace {
 
         // Populate lists of things that can attack. List attackers also by empire.
         void PopulateAttackers() {
-            for (const auto& obj : combat_info.objects->all()) {
-                bool can_attack{ObjectCanAttack(obj, *combat_info.objects)};
-                if (can_attack) {
-                    valid_attacker_object_ids.insert(obj->ID());
-                    empire_infos[obj->Owner()].attacker_ids.insert(obj->ID());
-                }
+            auto check_add = [&](auto&& range) {
+                for (const auto& obj : range) {
+                    bool can_attack{ObjectCanAttack(obj, *combat_info.objects)};
+                    if (can_attack) {
+                        valid_attacker_object_ids.insert(obj->ID());
+                        empire_infos[obj->Owner()].attacker_ids.insert(obj->ID());
+                    }
 
-                DebugLogger(combat) << "Considering object " << obj->Name() << " (" << obj->ID() << ")"
-                                    << " owned by " << std::to_string(obj->Owner())
-                                    << (can_attack ? "... can attack" : "");
-            }
+                    DebugLogger(combat) << "Considering object " << obj->Name() << " (" << obj->ID() << ")"
+                                        << " owned by " << std::to_string(obj->Owner())
+                                        << (can_attack ? "... can attack" : "");
+                }
+            };
+
+            check_add(combat_info.objects->all<Planet>());
+            check_add(combat_info.objects->all<Ship>());
         }
     };
 
