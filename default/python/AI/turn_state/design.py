@@ -16,20 +16,23 @@ def get_design_repository() -> Dict[PriorityType, Tuple[float, int, int, float]]
     """Calculate the best designs for each ship class available at this turn."""
     design_repository = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating and indexed by priority type
 
-    design_timer = AITimer('ShipDesigner')
-    design_timer.start('Updating cache for new turn')
+    design_timer = AITimer("ShipDesigner")
+    design_timer.start("Updating cache for new turn")
 
     # TODO Don't use PriorityType but introduce more reasonable Enum
     designers = [
-        ('Orbital Invasion', PriorityType.PRODUCTION_ORBITAL_INVASION, ShipDesignAI.OrbitalTroopShipDesigner),
-        ('Invasion', PriorityType.PRODUCTION_INVASION, ShipDesignAI.StandardTroopShipDesigner),
-        ('Orbital Colonization', PriorityType.PRODUCTION_ORBITAL_COLONISATION,
-         ShipDesignAI.OrbitalColonisationShipDesigner),
-        ('Colonization', PriorityType.PRODUCTION_COLONISATION, ShipDesignAI.StandardColonisationShipDesigner),
-        ('Orbital Outposter', PriorityType.PRODUCTION_ORBITAL_OUTPOST, ShipDesignAI.OrbitalOutpostShipDesigner),
-        ('Outposter', PriorityType.PRODUCTION_OUTPOST, ShipDesignAI.StandardOutpostShipDesigner),
-        ('Orbital Defense', PriorityType.PRODUCTION_ORBITAL_DEFENSE, ShipDesignAI.OrbitalDefenseShipDesigner),
-        ('Scouts', PriorityType.PRODUCTION_EXPLORATION, ShipDesignAI.ScoutShipDesigner),
+        ("Orbital Invasion", PriorityType.PRODUCTION_ORBITAL_INVASION, ShipDesignAI.OrbitalTroopShipDesigner),
+        ("Invasion", PriorityType.PRODUCTION_INVASION, ShipDesignAI.StandardTroopShipDesigner),
+        (
+            "Orbital Colonization",
+            PriorityType.PRODUCTION_ORBITAL_COLONISATION,
+            ShipDesignAI.OrbitalColonisationShipDesigner,
+        ),
+        ("Colonization", PriorityType.PRODUCTION_COLONISATION, ShipDesignAI.StandardColonisationShipDesigner),
+        ("Orbital Outposter", PriorityType.PRODUCTION_ORBITAL_OUTPOST, ShipDesignAI.OrbitalOutpostShipDesigner),
+        ("Outposter", PriorityType.PRODUCTION_OUTPOST, ShipDesignAI.StandardOutpostShipDesigner),
+        ("Orbital Defense", PriorityType.PRODUCTION_ORBITAL_DEFENSE, ShipDesignAI.OrbitalDefenseShipDesigner),
+        ("Scouts", PriorityType.PRODUCTION_EXPLORATION, ShipDesignAI.ScoutShipDesigner),
     ]
 
     for timer_name, priority_type, designer in designers:
@@ -37,13 +40,13 @@ def get_design_repository() -> Dict[PriorityType, Tuple[float, int, int, float]]
         design_repository[priority_type] = designer().optimize_design()
     best_military_stats = ShipDesignAI.WarShipDesigner().optimize_design()
     best_carrier_stats = ShipDesignAI.CarrierShipDesigner().optimize_design()
-    best_stats = best_military_stats + best_carrier_stats if random.random() < .8 else best_military_stats
+    best_stats = best_military_stats + best_carrier_stats if random.random() < 0.8 else best_military_stats
     best_stats.sort(reverse=True)
     design_repository[PriorityType.PRODUCTION_MILITARY] = best_stats
-    design_timer.start('Krill Spawner')
+    design_timer.start("Krill Spawner")
     ShipDesignAI.KrillSpawnerShipDesigner().optimize_design()  # just designing it, building+mission not supported yet
     if fo.currentTurn() % 10 == 0:
-        design_timer.start('Printing')
+        design_timer.start("Printing")
         ShipDesignAI.Cache.print_best_designs()
     design_timer.stop_print_and_clear()
     return design_repository
@@ -80,7 +83,7 @@ def _get_locations(locations: Union[int, Iterable[int], None]) -> FrozenSet[int]
 
 
 def get_best_ship_info(
-        priority: PriorityType, loc: Union[int, Iterable[int], None] = None
+    priority: PriorityType, loc: Union[int, Iterable[int], None] = None
 ) -> Tuple[Optional[int], Optional["fo.shipDesign"], Optional[List[int]]]:
     """Returns 3 item tuple: designID, design, buildLocList."""
     planet_ids = _get_locations(loc)
@@ -90,8 +93,7 @@ def get_best_ship_info(
 
 
 def _get_best_ship_info(
-        priority: PriorityType,
-        planet_ids: Tuple[int]
+    priority: PriorityType, planet_ids: Tuple[int]
 ) -> Tuple[Optional[int], Optional["fo.shipDesign"], Optional[List[int]]]:
     design_repository = get_design_repository()
 
@@ -108,8 +110,11 @@ def _get_best_ship_info(
                 break
         else:
             return None, None, None  # apparently can't build for this priority within the desired planet group
-        valid_locs = [pid_ for rating, pid_, design_id, _, _ in best_designs if
-                      rating == top_rating and design_id == top_id and pid_ in planet_ids]
+        valid_locs = [
+            pid_
+            for rating, pid_, design_id, _, _ in best_designs
+            if rating == top_rating and design_id == top_id and pid_ in planet_ids
+        ]
         return top_id, fo.getShipDesign(top_id), valid_locs
     else:
         return None, None, None  # must be missing a Shipyard or other orbital (or missing tech)
@@ -145,8 +150,11 @@ def _get_best_ship_ratings(planet_ids: Tuple[int]) -> Iterator[Tuple[float, int,
         return
 
     build_choices = design_repository[priority]
-    loc_choices = [[rating, pid, design_id, fo.getShipDesign(design_id)]
-                   for (rating, pid, design_id, cost, stats) in build_choices if pid in planet_ids]
+    loc_choices = [
+        [rating, pid, design_id, fo.getShipDesign(design_id)]
+        for (rating, pid, design_id, cost, stats) in build_choices
+        if pid in planet_ids
+    ]
     if not loc_choices:
         return
     best_rating = loc_choices[0][0]

@@ -18,6 +18,7 @@ def handle_interfaces_mismatch():
 
     try:
         import freeorion as fo
+
         universe = fo.get_universe()
         empire_of_first_ai = fo.get_empire(2)
         galaxy_data = fo.get_galaxy_setup_data()
@@ -27,6 +28,7 @@ def handle_interfaces_mismatch():
 
     try:
         import freeOrionAIInterface as fo
+
         universe = fo.getUniverse()
         empire_of_first_ai = fo.getEmpire(2)
         galaxy_data = fo.getGalaxySetupData()
@@ -50,16 +52,16 @@ def get_common_instances() -> Generator:
 
     yield universe.getSystem(planet.systemID)
 
-    tech = fo.getTech('SHP_WEAPON_2_1')
+    tech = fo.getTech("SHP_WEAPON_2_1")
     yield tech
     yield tech.unlockedItems[0]
 
     yield fo.getGameRules()
-    ship_hull = fo.getShipHull('SH_XENTRONIUM')
+    ship_hull = fo.getShipHull("SH_XENTRONIUM")
     yield ship_hull
     yield ship_hull.slots,
 
-    yield fo.getSpecies('SP_ABADDONI')
+    yield fo.getSpecies("SP_ABADDONI")
 
     fleets_int_vector = universe.fleetIDs
     yield fleets_int_vector
@@ -71,12 +73,12 @@ def get_common_instances() -> Generator:
     field = universe.getField(fields_ids[0])
     yield field
 
-    yield fo.getFieldType('FLD_ION_STORM')
-    yield fo.getBuildingType('BLD_SHIPYARD_BASE')
+    yield fo.getFieldType("FLD_ION_STORM")
+    yield fo.getBuildingType("BLD_SHIPYARD_BASE")
 
-    yield fo.getShipPart('SR_WEAPON_1_1')
-    yield fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL')
-    yield fo.getShipHull('SH_XENTRONIUM')
+    yield fo.getShipPart("SR_WEAPON_1_1")
+    yield fo.getSpecial("MODERATE_TECH_NATIVES_SPECIAL")
+    yield fo.getShipHull("SH_XENTRONIUM")
 
     yield universe.effectAccounting
     yield universe.buildingIDs
@@ -104,25 +106,40 @@ def get_common_instances() -> Generator:
 
 
 common_classes_to_exclude = {
-    'IntBoolMap', 'IntDblMap', 'IntFltMap', 'IntFltMap', 'IntPairVec', 'IntSetSet', 'MeterTypeMeterMap',
-    'MeterTypeStringPair', 'PairIntInt_IntMap', 'VisibilityIntMap', 'IntSet', 'StringSet', 'StringVec',
-    'IntIntDblMapMap', 'IntStringMap', 'String_IntStringMap_Map', 'StringIntMap', 'StringsMap',
+    "IntBoolMap",
+    "IntDblMap",
+    "IntFltMap",
+    "IntFltMap",
+    "IntPairVec",
+    "IntSetSet",
+    "MeterTypeMeterMap",
+    "MeterTypeStringPair",
+    "PairIntInt_IntMap",
+    "VisibilityIntMap",
+    "IntSet",
+    "StringSet",
+    "StringVec",
+    "IntIntDblMapMap",
+    "IntStringMap",
+    "String_IntStringMap_Map",
+    "StringIntMap",
+    "StringsMap",
 }
 
 classes_to_exclude_from_universe = {
-    'MeterTypeAccountingInfoVecMap',
-    'MonsterFleetPlan',
-    'RuleValueStringStringPair',
-    'ShipPartMeterMap',
-    'AccountingInfoVec',
+    "MeterTypeAccountingInfoVecMap",
+    "MonsterFleetPlan",
+    "RuleValueStringStringPair",
+    "ShipPartMeterMap",
+    "AccountingInfoVec",
 }
 
 classes_to_exclude_from_ai = {
-    'ShipSlotVec',
-    'UnlockableItemVec',
-    'universeObject',
+    "ShipSlotVec",
+    "UnlockableItemVec",
+    "universeObject",
     # this item cannot be get from generate orders
-    'diplomaticStatusUpdate',
+    "diplomaticStatusUpdate",
 }
 
 classes_to_exclude_from_ai.update(common_classes_to_exclude)

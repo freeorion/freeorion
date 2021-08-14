@@ -46,8 +46,9 @@ def build_savegame_string() -> bytes:
     :return: compressed savegame string
     """
     from aistate_interface import get_aistate
+
     savegame_string = encode(get_aistate())
-    return base64.b64encode(zlib.compress(savegame_string.encode('utf-8')))
+    return base64.b64encode(zlib.compress(savegame_string.encode("utf-8")))
 
 
 def encode(o: Any) -> str:
@@ -120,14 +121,13 @@ def _encode_object(obj):
         value = getstate()
 
     # encode information about class
-    value.update({'__class__': obj.__class__.__name__,
-                  '__module__': obj.__class__.__module__})
+    value.update({"__class__": obj.__class__.__name__, "__module__": obj.__class__.__module__})
     return _encode_dict(value)
 
 
 def _encode_list(o):
     """Get a string representation of a list with its encoded content."""
-    return "[%s]" % (', '.join([encode(v) for v in o]))
+    return "[%s]" % (", ".join([encode(v) for v in o]))
 
 
 def _encode_tuple(o):
@@ -142,7 +142,7 @@ def _encode_set(o):
 
 def _encode_dict(o):
     """Get a string representation of a dict with its encoded content."""
-    return "{%s}" % (', '.join(['%s: %s' % (encode(k), encode(v)) for k, v in o.items()]))
+    return "{%s}" % (", ".join(["%s: %s" % (encode(k), encode(v)) for k, v in o.items()]))
 
 
 _encoder_table = {

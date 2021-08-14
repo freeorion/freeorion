@@ -11,8 +11,14 @@ from stub_generator.stub_generator.class_generator import ClassGenerator
 from stub_generator.stub_generator.function_generator import FunctionGenerator
 
 
-def make_stub(classes: List[ClassInfo], enums: List[EnumInfo], functions: List[FunctionInfo],
-              instances: List[InstanceInfo], result_path, classes_to_ignore: Set[str]):
+def make_stub(
+    classes: List[ClassInfo],
+    enums: List[EnumInfo],
+    functions: List[FunctionInfo],
+    instances: List[InstanceInfo],
+    result_path,
+    classes_to_ignore: Set[str],
+):
 
     processors = [
         ClassGenerator(classes, instances, classes_to_ignore, enums),
@@ -46,7 +52,7 @@ def make_stub(classes: List[ClassInfo], enums: List[EnumInfo], functions: List[F
     for processor in processors:
         res.extend(processor.body)
 
-    with open(result_path, 'w') as f:
+    with open(result_path, "w") as f:
         f.write(header)
-        f.write('\n\n\n'.join(res))
-        f.write('\n')
+        f.write("\n\n\n".join(res))
+        f.write("\n")

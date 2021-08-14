@@ -4,7 +4,7 @@ from common.print_utils._base_field import Field
 
 
 class Text(Field):
-    def __init__(self, name, description="", align='<'):
+    def __init__(self, name, description="", align="<"):
         super(Text, self).__init__(name, align=align, description=description)
 
     def convert_value_to_string(self, val: Any) -> str:
@@ -23,7 +23,7 @@ class Number(Field):
         self.precession = precession
 
     def convert_value_to_string(self, val: Any) -> str:
-        return '{: .{precession}f}'.format(val, precession=self.precession)
+        return "{: .{precession}f}".format(val, precession=self.precession)
 
 
 class Bool(Field):
@@ -38,4 +38,4 @@ class Bool(Field):
 
 class Sequence(Text):
     def convert_value_to_string(self, vals: Collection[Any]) -> str:
-        return ', '.join(str(val) for val in vals)
+        return ", ".join(str(val) for val in vals)

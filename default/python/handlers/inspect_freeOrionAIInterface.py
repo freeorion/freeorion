@@ -22,7 +22,7 @@ def collect_ai_instances():
     yield prod_queue[0]
 
     research_queue = empire_of_first_ai.researchQueue
-    fo.issueEnqueueTechOrder('SHP_WEAPON_1_2', -1)
+    fo.issueEnqueueTechOrder("SHP_WEAPON_1_2", -1)
     yield research_queue
     yield research_queue[0]
 
@@ -37,9 +37,9 @@ def inspect_ai_interface():
         fo,
         instances=instances,
         classes_to_ignore=classes_to_exclude_from_ai,
-        path='AI',
+        path="AI",
     )
     exit(1)  # exit game to main menu, gameplay may be broken due to invasive instance generation.
 
 
-register_pre_handler('generateOrders', inspect_ai_interface)
+register_pre_handler("generateOrders", inspect_ai_interface)

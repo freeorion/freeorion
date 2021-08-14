@@ -6,50 +6,55 @@ import ColonisationAI
 import CombatRatingsAI
 import fleet_orders
 
-trusted_classes = {"%s.%s" % (cls.__module__, cls.__name__): cls for cls in [
-    AIFleetMission.AIFleetMission,
-    fleet_orders.AIFleetOrder,
-    fleet_orders.OrderMilitary,
-    fleet_orders.OrderDefend,
-    fleet_orders.OrderColonize,
-    fleet_orders.OrderOutpost,
-    fleet_orders.OrderPause,
-    fleet_orders.OrderInvade,
-    fleet_orders.OrderMove,
-    fleet_orders.OrderRepair,
-    fleet_orders.OrderResupply,
-    character.character_module.Trait,
-    character.character_module.Aggression,
-    character.character_module.EmpireIDTrait,
-    character.character_module.Character,
-    AIstate.AIstate,
-    ColonisationAI.OrbitalColonizationManager,
-    ColonisationAI.OrbitalColonizationPlan,
-    CombatRatingsAI.ShipCombatStats
-]}
+trusted_classes = {
+    "%s.%s" % (cls.__module__, cls.__name__): cls
+    for cls in [
+        AIFleetMission.AIFleetMission,
+        fleet_orders.AIFleetOrder,
+        fleet_orders.OrderMilitary,
+        fleet_orders.OrderDefend,
+        fleet_orders.OrderColonize,
+        fleet_orders.OrderOutpost,
+        fleet_orders.OrderPause,
+        fleet_orders.OrderInvade,
+        fleet_orders.OrderMove,
+        fleet_orders.OrderRepair,
+        fleet_orders.OrderResupply,
+        character.character_module.Trait,
+        character.character_module.Aggression,
+        character.character_module.EmpireIDTrait,
+        character.character_module.Character,
+        AIstate.AIstate,
+        ColonisationAI.OrbitalColonizationManager,
+        ColonisationAI.OrbitalColonizationPlan,
+        CombatRatingsAI.ShipCombatStats,
+    ]
+}
 
 # prefixes to encode types not supported by json
 # or not fully supported as dictionary key
-ENUM_PREFIX = '__ENUM__'
-INT_PREFIX = '__INT__'
-FLOAT_PREFIX = '__FLOAT__'
-TRUE = '__TRUE__'
-FALSE = '__FALSE__'
-NONE = '__NONE__'
-SET_PREFIX = '__SET__'
-TUPLE_PREFIX = '__TUPLE__'
+ENUM_PREFIX = "__ENUM__"
+INT_PREFIX = "__INT__"
+FLOAT_PREFIX = "__FLOAT__"
+TRUE = "__TRUE__"
+FALSE = "__FALSE__"
+NONE = "__NONE__"
+SET_PREFIX = "__SET__"
+TUPLE_PREFIX = "__TUPLE__"
 
 
 # placeholder char to represent quotes in nested containers
 # which would break json decoding if present.
-PLACEHOLDER = '$'
+PLACEHOLDER = "$"
 
 
 class CanNotSaveGameException(Exception):
     """Exception raised when constructing the savegame string failed."""
+
     pass
 
 
 class InvalidSaveGameException(Exception):
     """Exception raised if the savegame could not be loaded."""
+
     pass

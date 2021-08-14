@@ -19,30 +19,30 @@ Tech(
         EffectsGroup(
             scope=Planet() & OwnedBy(empire=Source.Owner),
             stackinggroup="PLANET_SHIELDS_STACK_ROOT",
-            effects=SetMaxShield(value=Value + 1, accountinglabel="DEF_ROOT_DEFENSE")),
-
+            effects=SetMaxShield(value=Value + 1, accountinglabel="DEF_ROOT_DEFENSE"),
+        ),
         EffectsGroup(  # base regeneration of troops, defense and shields if not attacked
-            scope=Planet() &
-            OwnedBy(empire=Source.Owner) &
-            (LocalCandidate.LastTurnAttackedByShip < CurrentTurn) &
-            (LocalCandidate.LastTurnConquered < CurrentTurn),
+            scope=Planet()
+            & OwnedBy(empire=Source.Owner)
+            & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn)
+            & (LocalCandidate.LastTurnConquered < CurrentTurn),
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
                 SetShield(value=Min(float, Value + PLANET_SHIELD_FACTOR, Value(Target.MaxShield))),
                 SetDefense(value=Min(float, Value + PLANET_DEFENSE_FACTOR, Value(Target.MaxDefense))),
-                SetTroops(value=Min(float, Value + 1, Value(Target.MaxTroops)))
-            ]),
-
+                SetTroops(value=Min(float, Value + 1, Value(Target.MaxTroops))),
+            ],
+        ),
         EffectsGroup(  # set minimum troops for just-colonized planets
-            scope=Planet() &
-            OwnedBy(empire=Source.Owner) &
-            (LocalCandidate.LastTurnColonized == CurrentTurn),
+            scope=Planet() & OwnedBy(empire=Source.Owner) & (LocalCandidate.LastTurnColonized == CurrentTurn),
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-            effects=SetTroops(value=Min(float,
-                                        NamedRealLookup(name="IMPERIAL_GARRISON_MAX_TROOPS_FLAT"),
-                                        Value(Target.MaxTroops))))
+            effects=SetTroops(
+                value=Min(float, NamedRealLookup(name="IMPERIAL_GARRISON_MAX_TROOPS_FLAT"), Value(Target.MaxTroops))
+            ),
+        ),
     ],
-    graphic="")
+    graphic="",
+)
 
 Tech(
     name="DEF_PLANET_CLOAK",
@@ -54,7 +54,8 @@ Tech(
     unresearchable=True,
     tags=["PEDIA_DEFENSE_CATEGORY"],
     prerequisites="SPY_STEALTH_3",
-    unlock=Item(type=Building, name="BLD_PLANET_CLOAK"))
+    unlock=Item(type=Building, name="BLD_PLANET_CLOAK"),
+)
 
 Tech(
     name="DEF_SYST_DEF_MINE_1",
@@ -68,7 +69,8 @@ Tech(
     effectsgroups=[
         EG_SYSTEM_MINES(2 * SYSTEM_MINES_DAMAGE_FACTOR, 75, "EMPIRE")
     ],  # Priority deliberately not a macro and before all priority macros
-    graphic="icons/tech/system_defense_mines.png")
+    graphic="icons/tech/system_defense_mines.png",
+)
 
 Tech(
     name="DEF_SYST_DEF_MINE_2",
@@ -79,10 +81,9 @@ Tech(
     researchturns=6,
     tags=["PEDIA_DEFENSE_CATEGORY"],
     prerequisites="DEF_SYST_DEF_MINE_1",
-    effectsgroups=[
-        EG_SYSTEM_MINES(6 * SYSTEM_MINES_DAMAGE_FACTOR, 65, "EMPIRE")
-    ],
-    graphic="icons/tech/system_defense_mines.png")
+    effectsgroups=[EG_SYSTEM_MINES(6 * SYSTEM_MINES_DAMAGE_FACTOR, 65, "EMPIRE")],
+    graphic="icons/tech/system_defense_mines.png",
+)
 
 Tech(
     name="DEF_SYST_DEF_MINE_3",
@@ -93,7 +94,6 @@ Tech(
     researchturns=8,
     tags=["PEDIA_DEFENSE_CATEGORY"],
     prerequisites="DEF_SYST_DEF_MINE_2",
-    effectsgroups=[
-        EG_SYSTEM_MINES(14 * SYSTEM_MINES_DAMAGE_FACTOR, 60, "EMPIRE")
-    ],
-    graphic="icons/tech/system_defense_mines.png")
+    effectsgroups=[EG_SYSTEM_MINES(14 * SYSTEM_MINES_DAMAGE_FACTOR, 60, "EMPIRE")],
+    graphic="icons/tech/system_defense_mines.png",
+)

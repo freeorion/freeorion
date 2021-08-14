@@ -12,8 +12,8 @@ from common.configure_logging import FOLogFormatter
 from freeorion_tools.caching import cache_for_current_turn, cache_for_session
 
 # color wrappers for chat:
-RED = '<rgba 255 0 0 255>%s</rgba>'
-WHITE = '<rgba 255 255 255 255>%s</rgba>'
+RED = "<rgba 255 0 0 255>%s</rgba>"
+WHITE = "<rgba 255 255 255 255>%s</rgba>"
 
 
 def dict_from_map(thismap):
@@ -75,11 +75,12 @@ def ppstring(foo):
 
 
 class ConsoleLogHandler(Handler):
-    """A log handler to send errors to the console. """
+    """A log handler to send errors to the console."""
+
     def emit(self, record):
         """Emit a record.
 
-        If a formatter is specified, it is used to format the record and then sent to human players. """
+        If a formatter is specified, it is used to format the record and then sent to human players."""
         try:
             human_ids = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)]
             if not human_ids:
@@ -99,8 +100,10 @@ class ConsoleLogHandler(Handler):
 console_handler = ConsoleLogHandler()
 
 console_handler.setFormatter(
-    FOLogFormatter(RED % ('%s : %%(filename)s:%%(funcName)s():%%(lineno)d  - %%(message)s'
-                          % fo.userString('AI_ERROR_MSG'))))
+    FOLogFormatter(
+        RED % ("%s : %%(filename)s:%%(funcName)s():%%(lineno)d  - %%(message)s" % fo.userString("AI_ERROR_MSG"))
+    )
+)
 
 console_handler.setLevel(ERROR)
 
@@ -109,8 +112,8 @@ getLogger().addHandler(console_handler)
 
 def remove_tags(message):
     """Remove tags described in Font.h from message."""
-    expr = r'</?(i|u|(rgba ([0-1]\.)?\d+ ([0-1]\.)?\d+ ([0-1]\.)?\d+ ([0-1]\.)?\d+)|rgba|left|center|right|pre)>'
-    return re.sub(expr, '', message)
+    expr = r"</?(i|u|(rgba ([0-1]\.)?\d+ ([0-1]\.)?\d+ ([0-1]\.)?\d+ ([0-1]\.)?\d+)|rgba|left|center|right|pre)>"
+    return re.sub(expr, "", message)
 
 
 def chat_human(message, send_to_logs=True):
@@ -153,29 +156,29 @@ def get_partial_visibility_turn(obj_id: int) -> int:
 class ReadOnlyDict(Mapping):
     """A dict that offers only read access.
 
-     Note that if the values of the ReadOnlyDict are mutable,
-     then those objects may actually be changed.
+    Note that if the values of the ReadOnlyDict are mutable,
+    then those objects may actually be changed.
 
-     It is strongly advised to store only immutable objects.
-     A slight protection is offered by checking for hashability of the values.
+    It is strongly advised to store only immutable objects.
+    A slight protection is offered by checking for hashability of the values.
 
-      Example usage:
-      my_dict = ReadOnlyDict({1:2, 3:4})
-      print my_dict[1]
-      for k in my_dict:
-          print my_dict.get(k, -1)
-      for k in my_dict.keys():
-          print my_dict[k]
-      for k, v in my_dict.iteritems():
-          print k, v
-      my_dict[5] = 4  # throws TypeError
-      del my_dict[1]  # throws TypeError
+     Example usage:
+     my_dict = ReadOnlyDict({1:2, 3:4})
+     print my_dict[1]
+     for k in my_dict:
+         print my_dict.get(k, -1)
+     for k in my_dict.keys():
+         print my_dict[k]
+     for k, v in my_dict.iteritems():
+         print k, v
+     my_dict[5] = 4  # throws TypeError
+     del my_dict[1]  # throws TypeError
 
-      Implementation note:
+     Implementation note:
 
-     The checks that values are hashable is the main difference from the built-in types.MappingProxyType.
-     MappingProxyType has slightly different signature and cannot be inherited.
-     """
+    The checks that values are hashable is the main difference from the built-in types.MappingProxyType.
+    MappingProxyType has slightly different signature and cannot be inherited.
+    """
 
     def __init__(self, *args, **kwargs):
         self._data = dict(*args, **kwargs)
@@ -203,8 +206,7 @@ def dump_universe():
     """Dump the universe but not more than once per turn."""
     cur_turn = fo.currentTurn()
 
-    if (not hasattr(dump_universe, "last_dump") or
-            dump_universe.last_dump < cur_turn):
+    if not hasattr(dump_universe, "last_dump") or dump_universe.last_dump < cur_turn:
         dump_universe.last_dump = cur_turn
         fo.getUniverse().dump()  # goes to debug logger
 
@@ -221,6 +223,7 @@ class LogLevelSwitcher:
 
     debug("baz")  # not printed, we are back to INFO level
     """
+
     def __init__(self, log_level):
         self.target_log_level = log_level
         self.old_log_level = 0
@@ -248,6 +251,7 @@ def with_log_level(log_level):
     def foo():
         debug("debug stuff")
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -255,6 +259,7 @@ def with_log_level(log_level):
                 return func(*args, **kwargs)
 
         return wrapper
+
     return decorator
 
 
@@ -278,7 +283,7 @@ def assertion_fails(cond: bool, msg: str = "") -> bool:
     warning("\n===")
     error(header)
     stack = traceback.extract_stack()[:-1]  # do not log this function
-    warning("Stack trace (most recent call last): %s", ''.join(traceback.format_list(stack)))
+    warning("Stack trace (most recent call last): %s", "".join(traceback.format_list(stack)))
     frame = inspect.currentframe().f_back
     local_vars = pprint.pformat(frame.f_locals)
     warning("Locals inside the {}\n{}".format(frame.f_code.co_name, local_vars))

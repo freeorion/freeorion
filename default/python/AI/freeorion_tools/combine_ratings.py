@@ -4,7 +4,7 @@ from typing import Iterable, Union
 
 
 def _combine_ratings(rating1: float, rating2: float) -> float:
-    """ Combines two combat ratings to a total rating.
+    """Combines two combat ratings to a total rating.
 
     The formula takes into account the fact that the combined strength of two ships is more than the
     sum of its individual ratings. Basic idea as follows:
@@ -29,7 +29,7 @@ def _combine_ratings(rating1: float, rating2: float) -> float:
 
     Note that this function has commutative and associative properties.
     """
-    return rating1 + rating2 + 2 * (rating1 * rating2)**0.5
+    return rating1 + rating2 + 2 * (rating1 * rating2) ** 0.5
 
 
 def combine_ratings(first: Union[float, Iterable], *ratings: float) -> float:
@@ -37,5 +37,5 @@ def combine_ratings(first: Union[float, Iterable], *ratings: float) -> float:
     Combine multiple ratings to one.
     """
     if isinstance(first, (int, float)):
-        first = (first, )
+        first = (first,)
     return reduce(_combine_ratings, chain(first, ratings), 0.0)

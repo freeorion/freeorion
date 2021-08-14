@@ -7,33 +7,73 @@ import universe_tables as tables
 import util
 
 # tuple of all valid planet sizes (with "no world")
-planet_sizes_all = (fo.planetSize.tiny, fo.planetSize.small, fo.planetSize.medium, fo.planetSize.large,
-                    fo.planetSize.huge, fo.planetSize.asteroids, fo.planetSize.gasGiant, fo.planetSize.noWorld)
+planet_sizes_all = (
+    fo.planetSize.tiny,
+    fo.planetSize.small,
+    fo.planetSize.medium,
+    fo.planetSize.large,
+    fo.planetSize.huge,
+    fo.planetSize.asteroids,
+    fo.planetSize.gasGiant,
+    fo.planetSize.noWorld,
+)
 
 # tuple of planet sizes without "no world"
-planet_sizes = (fo.planetSize.tiny, fo.planetSize.small, fo.planetSize.medium, fo.planetSize.large,
-                fo.planetSize.huge, fo.planetSize.asteroids, fo.planetSize.gasGiant)
+planet_sizes = (
+    fo.planetSize.tiny,
+    fo.planetSize.small,
+    fo.planetSize.medium,
+    fo.planetSize.large,
+    fo.planetSize.huge,
+    fo.planetSize.asteroids,
+    fo.planetSize.gasGiant,
+)
 
 # tuple of "real" planet sizes (without "no world", asteroids and gas giants)
-planet_sizes_real = (fo.planetSize.tiny, fo.planetSize.small, fo.planetSize.medium,
-                     fo.planetSize.large, fo.planetSize.huge)
+planet_sizes_real = (
+    fo.planetSize.tiny,
+    fo.planetSize.small,
+    fo.planetSize.medium,
+    fo.planetSize.large,
+    fo.planetSize.huge,
+)
 
 # tuple of all available planet types (with asteroids and gas giants)
-planet_types = (fo.planetType.swamp, fo.planetType.radiated, fo.planetType.toxic, fo.planetType.inferno,
-                fo.planetType.barren, fo.planetType.tundra, fo.planetType.desert, fo.planetType.terran,
-                fo.planetType.ocean, fo.planetType.asteroids, fo.planetType.gasGiant)
+planet_types = (
+    fo.planetType.swamp,
+    fo.planetType.radiated,
+    fo.planetType.toxic,
+    fo.planetType.inferno,
+    fo.planetType.barren,
+    fo.planetType.tundra,
+    fo.planetType.desert,
+    fo.planetType.terran,
+    fo.planetType.ocean,
+    fo.planetType.asteroids,
+    fo.planetType.gasGiant,
+)
 
 # tuple of available planet types without asteroids and gas giants ("real" planets)
-planet_types_real = (fo.planetType.swamp, fo.planetType.radiated, fo.planetType.toxic, fo.planetType.inferno,
-                     fo.planetType.barren, fo.planetType.tundra, fo.planetType.desert, fo.planetType.terran,
-                     fo.planetType.ocean)
+planet_types_real = (
+    fo.planetType.swamp,
+    fo.planetType.radiated,
+    fo.planetType.toxic,
+    fo.planetType.inferno,
+    fo.planetType.barren,
+    fo.planetType.tundra,
+    fo.planetType.desert,
+    fo.planetType.terran,
+    fo.planetType.ocean,
+)
 
 
 def base_chance_of_planet(planet_density, galaxy_shape, star_type, orbit, planet_size):
-    return (tables.DENSITY_MOD_TO_PLANET_SIZE_DIST[planet_density][planet_size]
-            + tables.STAR_TYPE_MOD_TO_PLANET_SIZE_DIST[star_type][planet_size]
-            + tables.ORBIT_MOD_TO_PLANET_SIZE_DIST[orbit][planet_size]
-            + tables.GALAXY_SHAPE_MOD_TO_PLANET_SIZE_DIST[galaxy_shape][planet_size])
+    return (
+        tables.DENSITY_MOD_TO_PLANET_SIZE_DIST[planet_density][planet_size]
+        + tables.STAR_TYPE_MOD_TO_PLANET_SIZE_DIST[star_type][planet_size]
+        + tables.ORBIT_MOD_TO_PLANET_SIZE_DIST[orbit][planet_size]
+        + tables.GALAXY_SHAPE_MOD_TO_PLANET_SIZE_DIST[galaxy_shape][planet_size]
+    )
 
 
 def can_have_planets(star_type, orbits, planet_density, galaxy_shape):
@@ -42,8 +82,9 @@ def can_have_planets(star_type, orbits, planet_density, galaxy_shape):
     """
     for orbit in orbits:
         base_chance_none = base_chance_of_planet(planet_density, galaxy_shape, star_type, orbit, fo.planetSize.noWorld)
-        base_chance_any = max([base_chance_of_planet(planet_density, galaxy_shape, star_type, orbit, size)
-                               for size in planet_sizes])
+        base_chance_any = max(
+            [base_chance_of_planet(planet_density, galaxy_shape, star_type, orbit, size) for size in planet_sizes]
+        )
 
         if base_chance_any > base_chance_none - 100:
             return True
@@ -60,8 +101,7 @@ def calc_planet_size(star_type, orbit, planet_density, galaxy_shape):
     try:
         max_roll = 0
         for size in planet_sizes_all:
-            roll = (random.randint(1, 100)
-                    + base_chance_of_planet(planet_density, galaxy_shape, star_type, orbit, size))
+            roll = random.randint(1, 100) + base_chance_of_planet(planet_density, galaxy_shape, star_type, orbit, size)
             if max_roll < roll:
                 max_roll = roll
                 planet_size = size

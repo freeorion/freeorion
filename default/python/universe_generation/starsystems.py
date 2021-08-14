@@ -9,12 +9,19 @@ import universe_tables
 import util
 
 # tuple of available star types
-star_types = (fo.starType.blue, fo.starType.white, fo.starType.yellow, fo.starType.orange,
-              fo.starType.red, fo.starType.neutron, fo.starType.blackHole, fo.starType.noStar)
+star_types = (
+    fo.starType.blue,
+    fo.starType.white,
+    fo.starType.yellow,
+    fo.starType.orange,
+    fo.starType.red,
+    fo.starType.neutron,
+    fo.starType.blackHole,
+    fo.starType.noStar,
+)
 
 # tuple of "real" star types (that is, blue to red, not neutron, black hole or even no star)
-star_types_real = (fo.starType.blue, fo.starType.white, fo.starType.yellow,
-                   fo.starType.orange, fo.starType.red)
+star_types_real = (fo.starType.blue, fo.starType.white, fo.starType.yellow, fo.starType.orange, fo.starType.red)
 
 
 def pick_star_type(galaxy_age):
@@ -28,9 +35,11 @@ def pick_star_type(galaxy_age):
     try:
         max_roll = 0
         for candidate in star_types:
-            roll = random.randint(1, 100) \
-                + universe_tables.UNIVERSE_AGE_MOD_TO_STAR_TYPE_DIST[galaxy_age][candidate] \
+            roll = (
+                random.randint(1, 100)
+                + universe_tables.UNIVERSE_AGE_MOD_TO_STAR_TYPE_DIST[galaxy_age][candidate]
                 + universe_tables.BASE_STAR_TYPE_DIST[candidate]
+            )
             if max_roll < roll:
                 max_roll = roll
                 star_type = candidate
@@ -84,8 +93,9 @@ def generate_systems(pos_list, gsd):
         system = fo.create_system(star_type, "", position[0], position[1])
         if system == fo.invalid_object():
             # create system failed, report an error and try to continue with next position
-            util.report_error("Python generate_systems: create system at position (%f, %f) failed"
-                              % (position[0], position[1]))
+            util.report_error(
+                "Python generate_systems: create system at position (%f, %f) failed" % (position[0], position[1])
+            )
             continue
         sys_list.append(system)
 
@@ -114,7 +124,12 @@ def generate_systems(pos_list, gsd):
                 break
         else:
             # Intentionally non-modal.  Should be a warning.
-            print(("Python generate_systems: place planets in system %d at position (%.2f, %.2f) failed"
-                   % (system, position[0], position[1])), file=sys.stderr)
+            print(
+                (
+                    "Python generate_systems: place planets in system %d at position (%.2f, %.2f) failed"
+                    % (system, position[0], position[1])
+                ),
+                file=sys.stderr,
+            )
 
     return sys_list

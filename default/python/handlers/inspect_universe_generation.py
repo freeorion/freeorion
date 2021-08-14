@@ -9,6 +9,7 @@ from stub_generator import generate_stub
 
 def inspect_universe_generation_interface(*args, **kwargs):
     import freeorion as fo
+
     universe = fo.get_universe()
 
     # this field should be visible to AI

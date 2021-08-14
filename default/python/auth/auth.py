@@ -16,9 +16,11 @@ class AuthProvider:
     def __init__(self):
         self.logins = {}
         self.roles_symbols = {
-            'h': fo.roleType.host, 'm': fo.roleType.clientTypeModerator,
-            'p': fo.roleType.clientTypePlayer, 'o': fo.roleType.clientTypeObserver,
-            'g': fo.roleType.galaxySetup
+            "h": fo.roleType.host,
+            "m": fo.roleType.clientTypeModerator,
+            "p": fo.roleType.clientTypePlayer,
+            "o": fo.roleType.clientTypeObserver,
+            "g": fo.roleType.galaxySetup,
         }
         try:
             with open(fo.get_user_config_dir() + "/auth.txt") as f:
@@ -28,14 +30,16 @@ class AuthProvider:
                         first_line = False
                         self.default_roles = self.__parse_roles(line.strip())
                     else:
-                        login, roles, password = line.rsplit(':', 2)
+                        login, roles, password = line.rsplit(":", 2)
                         self.logins[login] = (password.strip(), self.__parse_roles(roles.strip()))
         except IOError:
             exctype, value = sys.exc_info()[:2]
             warning("Can't read auth file %s: %s %s" % (fo.get_user_config_dir() + "/auth.txt", exctype, value))
             self.default_roles = [
-                fo.roleType.clientTypeModerator, fo.roleType.clientTypePlayer,
-                fo.roleType.clientTypeObserver, fo.roleType.galaxySetup
+                fo.roleType.clientTypeModerator,
+                fo.roleType.clientTypePlayer,
+                fo.roleType.clientTypeObserver,
+                fo.roleType.galaxySetup,
             ]
         info("Auth initialized")
 

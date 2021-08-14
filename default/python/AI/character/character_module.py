@@ -310,8 +310,7 @@ class Aggression(Trait):
         return monster_threat < 2000 * self.aggression
 
     def may_surge_industry(self, total_pp, total_rp):
-        return ((self.aggression > fo.aggression.cautious) and
-                ((total_pp + 1.6 * total_rp) < (50 * self.aggression)))
+        return (self.aggression > fo.aggression.cautious) and ((total_pp + 1.6 * total_rp) < (50 * self.aggression))
 
     def may_maximize_research(self):
         return self.aggression >= fo.aggression.maniacal
@@ -319,11 +318,12 @@ class Aggression(Trait):
     def max_number_colonies(self):
         # significant growth barrier for low aggression, negligible for high aggression
         # TODO: consider further changes, including a dependency on galaxy size and planet density
-        return 2 + ((0.5 + 1.4*self.aggression) ** 2) * fo.currentTurn() / 50.0
+        return 2 + ((0.5 + 1.4 * self.aggression) ** 2) * fo.currentTurn() / 50.0
 
     def may_invade(self):
-        return (self.aggression > fo.aggression.turtle
-                and not (self.aggression == fo.aggression.beginner and fo.currentTurn() < 150))
+        return self.aggression > fo.aggression.turtle and not (
+            self.aggression == fo.aggression.beginner and fo.currentTurn() < 150
+        )
 
     def may_invade_with_bases(self):
         return self.aggression > fo.aggression.typical
@@ -332,8 +332,11 @@ class Aggression(Trait):
         return 0.5 if self.aggression == fo.aggression.beginner else 1.0
 
     def military_priority_scaling(self):
-        return (1.0 if self.aggression > fo.aggression.typical
-                else ((1.0 + self.aggression) / (1.0 + fo.aggression.typical)))
+        return (
+            1.0
+            if self.aggression > fo.aggression.typical
+            else ((1.0 + self.aggression) / (1.0 + fo.aggression.typical))
+        )
 
     def max_defense_portion(self):
         return [0.7, 0.4, 0.3, 0.2, 0.1, 0.0][self.aggression]
@@ -344,25 +347,29 @@ class Aggression(Trait):
 
     def target_number_of_orbitals(self):
         aggression_index = max(1, self.aggression)
-        return min(int(((fo.currentTurn() + 4) / (8.0 * aggression_index ** 1.5)) ** 0.8),
-                   fo.aggression.maniacal - aggression_index)
+        return min(
+            int(((fo.currentTurn() + 4) / (8.0 * aggression_index ** 1.5)) ** 0.8),
+            fo.aggression.maniacal - aggression_index,
+        )
 
-    BUILDING_TABLE_STATIC = {"BLD_SHIPYARD_AST": fo.aggression.beginner,
-                             "BLD_GAS_GIANT_GEN": fo.aggression.beginner,
-                             "BLD_SOL_ORB_GEN": fo.aggression.turtle,
-                             "BLD_ART_BLACK_HOLE": fo.aggression.typical,
-                             "BLD_BLACK_HOLE_POW_GEN": fo.aggression.cautious,
-                             "BLD_CONC_CAMP": fo.aggression.typical,
-                             "BLD_SHIPYARD_CON_NANOROBO": fo.aggression.aggressive,
-                             "BLD_SHIPYARD_CON_GEOINT": fo.aggression.aggressive,
-                             # TODO determine which duplicate of BLD_SHIPYARD_AST is correct
-                             # "BLD_SHIPYARD_AST": fo.aggression.typical,
-                             "BLD_SHIPYARD_AST_REF": fo.aggression.maniacal,
-                             "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB": fo.aggression.aggressive,
-                             "BLD_SHIPYARD_ORG_XENO_FAC": fo.aggression.aggressive,
-                             "BLD_SHIPYARD_ENRG_COMP": fo.aggression.aggressive,
-                             "BLD_SHIPYARD_ENRG_SOLAR": fo.aggression.maniacal,
-                             "BLD_NEUTRONIUM_FORGE": fo.aggression.cautious}
+    BUILDING_TABLE_STATIC = {
+        "BLD_SHIPYARD_AST": fo.aggression.beginner,
+        "BLD_GAS_GIANT_GEN": fo.aggression.beginner,
+        "BLD_SOL_ORB_GEN": fo.aggression.turtle,
+        "BLD_ART_BLACK_HOLE": fo.aggression.typical,
+        "BLD_BLACK_HOLE_POW_GEN": fo.aggression.cautious,
+        "BLD_CONC_CAMP": fo.aggression.typical,
+        "BLD_SHIPYARD_CON_NANOROBO": fo.aggression.aggressive,
+        "BLD_SHIPYARD_CON_GEOINT": fo.aggression.aggressive,
+        # TODO determine which duplicate of BLD_SHIPYARD_AST is correct
+        # "BLD_SHIPYARD_AST": fo.aggression.typical,
+        "BLD_SHIPYARD_AST_REF": fo.aggression.maniacal,
+        "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB": fo.aggression.aggressive,
+        "BLD_SHIPYARD_ORG_XENO_FAC": fo.aggression.aggressive,
+        "BLD_SHIPYARD_ENRG_COMP": fo.aggression.aggressive,
+        "BLD_SHIPYARD_ENRG_SOLAR": fo.aggression.maniacal,
+        "BLD_NEUTRONIUM_FORGE": fo.aggression.cautious,
+    }
 
     @property
     def building_table(self):
@@ -403,27 +410,33 @@ class Aggression(Trait):
     def may_research_tech(self, tech):
         return type(self).tech_lower_threshold_static.get(tech, fo.aggression.beginner) <= self.aggression
 
-    TECH_UPPER_THRESHOLD_CLASSIC_STATIC = {"DEF_DEFENSE_NET_1": fo.aggression.cautious,
-                                           "DEF_GARRISON_1": fo.aggression.cautious,
-                                           "GRO_XENO_GENETICS": fo.aggression.cautious,
-                                           "GRO_GENETIC_ENG": fo.aggression.cautious}
+    TECH_UPPER_THRESHOLD_CLASSIC_STATIC = {
+        "DEF_DEFENSE_NET_1": fo.aggression.cautious,
+        "DEF_GARRISON_1": fo.aggression.cautious,
+        "GRO_XENO_GENETICS": fo.aggression.cautious,
+        "GRO_GENETIC_ENG": fo.aggression.cautious,
+    }
 
-    TECH_LOWER_THRESHOLD_CLASSIC_STATIC = {"SHP_DEFLECTOR_SHIELD": fo.aggression.aggressive,
-                                           "CON_ARCH_PSYCH": fo.aggression.aggressive,
-                                           "CON_CONC_CAMP": fo.aggression.aggressive,
-                                           "LRN_XENOARCH": fo.aggression.typical,
-                                           "LRN_PHYS_BRAIN": fo.aggression.typical,
-                                           "LRN_TRANSLING_THT": fo.aggression.typical,
-                                           "LRN_PSIONICS": fo.aggression.typical,
-                                           "LRN_DISTRIB_THOUGHT": fo.aggression.typical,
-                                           "LRN_QUANT_NET": fo.aggression.typical,
-                                           "PRO_SINGULAR_GEN": fo.aggression.typical,
-                                           "LRN_TRANSCEND": fo.aggression.typical}
+    TECH_LOWER_THRESHOLD_CLASSIC_STATIC = {
+        "SHP_DEFLECTOR_SHIELD": fo.aggression.aggressive,
+        "CON_ARCH_PSYCH": fo.aggression.aggressive,
+        "CON_CONC_CAMP": fo.aggression.aggressive,
+        "LRN_XENOARCH": fo.aggression.typical,
+        "LRN_PHYS_BRAIN": fo.aggression.typical,
+        "LRN_TRANSLING_THT": fo.aggression.typical,
+        "LRN_PSIONICS": fo.aggression.typical,
+        "LRN_DISTRIB_THOUGHT": fo.aggression.typical,
+        "LRN_QUANT_NET": fo.aggression.typical,
+        "PRO_SINGULAR_GEN": fo.aggression.typical,
+        "LRN_TRANSCEND": fo.aggression.typical,
+    }
 
     def may_research_tech_classic(self, tech):
-        return (type(self).TECH_LOWER_THRESHOLD_CLASSIC_STATIC.get(tech, fo.aggression.beginner)
-                <= self.aggression <=
-                type(self).TECH_UPPER_THRESHOLD_CLASSIC_STATIC.get(tech, fo.aggression.maniacal))
+        return (
+            type(self).TECH_LOWER_THRESHOLD_CLASSIC_STATIC.get(tech, fo.aggression.beginner)
+            <= self.aggression
+            <= type(self).TECH_UPPER_THRESHOLD_CLASSIC_STATIC.get(tech, fo.aggression.maniacal)
+        )
 
     def attitude_to_empire(self, other_empire_id, diplomatic_logs):
         # TODO: In other traits consider proximity, competitive
@@ -437,11 +450,15 @@ class Aggression(Trait):
         if self.aggression == fo.aggression.beginner:
             return 9
         log_index = (other_empire_id, fo.empireID())
-        num_alliance_requests = len(diplomatic_logs.get('alliance_requests', {}).get(log_index, []))
-        num_peace_requests = len(diplomatic_logs.get('peace_requests', {}).get(log_index, []))
-        num_war_declarations = len(diplomatic_logs.get('war_declarations', {}).get(log_index, []))
+        num_alliance_requests = len(diplomatic_logs.get("alliance_requests", {}).get(log_index, []))
+        num_peace_requests = len(diplomatic_logs.get("peace_requests", {}).get(log_index, []))
+        num_war_declarations = len(diplomatic_logs.get("war_declarations", {}).get(log_index, []))
         # Too many requests for peace irritate the AI, as do any war declarations
-        irritation = (self.aggression * (2.0 + num_alliance_requests / 5.0 + num_peace_requests / 10.0 + 2.0 * num_war_declarations) + 0.5)
+        irritation = (
+            self.aggression
+            * (2.0 + num_alliance_requests / 5.0 + num_peace_requests / 10.0 + 2.0 * num_war_declarations)
+            + 0.5
+        )
         attitude = 10 * random.random() - irritation
         return min(10, max(-10, attitude))
 
@@ -523,9 +540,12 @@ class EmpireIDTrait(Trait):
         return self._modulo_two_choice(alternatives)
 
     def may_travel_beyond_supply(self, distance):
-        return (distance < 2
-                or distance <= 2 and self.aggression >= fo.aggression.typical
-                or self.aggression >= fo.aggression.aggressive)
+        return (
+            distance < 2
+            or distance <= 2
+            and self.aggression >= fo.aggression.typical
+            or self.aggression >= fo.aggression.aggressive
+        )
 
     # TODO remove this function as soon as old style research is gone
     # It defeats the orthogonality goal of character components for little gain
@@ -545,6 +565,7 @@ class Character(Trait):
     For each query that Trait supports a Character queries
     all of its own traits to determine if an action is permissible or prefered.
     """
+
     # See Note below: Algorithmic Completion of Character class.
     def __init__(self, traits):
         self.traits = traits
@@ -561,37 +582,58 @@ class Character(Trait):
 # Complete the Character class by adding all of the combiners to combine the outputs of the
 # individual traits.  Character tries to combine results in the way most limiting to the AI
 
+
 def _make_single_function_combiner(funcnamei, f_combo):
     """Make a combiner that collects the results of funcname from each trait
     and applies f_combo to the results"""
+
     def func(self, *args, **kwargs):
         """Apply funcnamei to each trait and combine them with ''f_combo''"""
         return f_combo([getattr(x, funcnamei)(*args, **kwargs) for x in self.traits])
+
     return func
 
 
 def _maxmin_not_none(f_combo):
     """Make a combiner that collects not None items and applies min or max"""
+
     def func(llin):
         ll = [x for x in llin if x is not None]
         if not ll:
             return 0
         return f_combo(ll)
+
     return func
 
 
 # Create combiners for traits that all must be true
-for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_research", "may_invade",
-                 "may-invade_with_bases", "may_build_building", "may_produce_troops",
-                 "may_dither_focus_to_gain_research", "may_research_heavily", "may_use_growth_focus",
-                 "may_travel_beyond_supply", "may_research_xeno_genetics_variances",
-                 "prefer_research_defensive", "prefer_research_low_aggression", "may_research_tech",
-                 "may_research_tech_classic"]:
+for funcname in [
+    "may_explore_system",
+    "may_surge_industry",
+    "may_maximize_research",
+    "may_invade",
+    "may-invade_with_bases",
+    "may_build_building",
+    "may_produce_troops",
+    "may_dither_focus_to_gain_research",
+    "may_research_heavily",
+    "may_use_growth_focus",
+    "may_travel_beyond_supply",
+    "may_research_xeno_genetics_variances",
+    "prefer_research_defensive",
+    "prefer_research_low_aggression",
+    "may_research_tech",
+    "may_research_tech_classic",
+]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, all))
 
 # Create combiners for traits that take min result
-for funcname in ["max_number_colonies", "invasion_priority_scaling",
-                 "military_priority_scaling", "max_defense_portion"]:
+for funcname in [
+    "max_number_colonies",
+    "invasion_priority_scaling",
+    "military_priority_scaling",
+    "max_defense_portion",
+]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, _maxmin_not_none(min)))
 
 # Create combiners for traits that take max result
@@ -633,6 +675,7 @@ for funcname in ["warship_adjusted_production_cost_exponent"]:
 def _make_most_preferred_combiner(funcnamei):
     """Make a combiner that runs the preference function for each trait and
     returns the result most preferred by all the traits."""
+
     def _most_preferred(self, alternatives):
         """Applies funcnamei from each trait to the alternatives and return the most preferred."""
         prefs = [y for y in [getattr(x, funcnamei)(alternatives) for x in self.traits] if y is not None]
@@ -641,12 +684,18 @@ def _make_most_preferred_combiner(funcnamei):
         if len(prefs) == 1:
             return prefs[0]
         return Counter.most_common(Counter(prefs), 1)[0][0]
+
     return _most_preferred
 
 
 # Create combiners for traits deal with preference
-for funcname in ["preferred_research_cutoff", "preferred_colonization_portion",
-                 "preferred_outpost_portion", "preferred_building_ratio", "preferred_discount_multiplier"]:
+for funcname in [
+    "preferred_research_cutoff",
+    "preferred_colonization_portion",
+    "preferred_outpost_portion",
+    "preferred_building_ratio",
+    "preferred_discount_multiplier",
+]:
     setattr(Character, funcname, _make_most_preferred_combiner(funcname))
 
 

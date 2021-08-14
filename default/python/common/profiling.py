@@ -5,7 +5,7 @@ import time
 from io import StringIO
 
 
-def profile(save_path, sort_by='cumulative'):
+def profile(save_path, sort_by="cumulative"):
     """
     Profile function decorator.
 
@@ -36,9 +36,9 @@ def profile(save_path, sort_by='cumulative'):
             base_path = os.path.dirname(save_path)
             if not os.path.exists(base_path):
                 os.makedirs(base_path)
-            with open(save_path, 'a') as f:
+            with open(save_path, "a") as f:
                 f.write(s.getvalue())
-                f.write('\n')
+                f.write("\n")
 
             return result
 

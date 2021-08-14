@@ -17,22 +17,22 @@ def get_argument_names(arguments, is_class):
     arg_names = [normalize_name(tp) for tp in arguments]
     for tp, arg_name in zip(arguments, arg_names):
         if arg_names.count(arg_name) == 1:
-            suffix = ''
+            suffix = ""
         else:
             if arg_name in counts:
                 counts[arg_name] += 1
             else:
                 counts[arg_name] = 1
             suffix = str(counts[arg_name])
-        names.append('%s%s' % (arg_name, suffix))
+        names.append("%s%s" % (arg_name, suffix))
     if is_class:
-        names.insert(0, 'self')
+        names.insert(0, "self")
     return names, types
 
 
 def normalize_rtype(rtype):
-    if rtype == 'iterator':
-        return 'Iterator'
+    if rtype == "iterator":
+        return "Iterator"
     return rtype
 
 
@@ -42,26 +42,26 @@ class Docs:
         self.is_class = is_class
 
         if not text:
-            self.rtype = 'unknown'
-            self.args = ['*args']
-            self.header = ''
+            self.rtype = "unknown"
+            self.args = ["*args"]
+            self.header = ""
             return
 
         self.text = text
 
-        lines = [x.strip() for x in self.text.split('\n')]
+        lines = [x.strip() for x in self.text.split("\n")]
 
         def parse_signature(line):
-            expre = re.compile(r'(\w+)\((.*)\) -> (\w+)')
+            expre = re.compile(r"(\w+)\((.*)\) -> (\w+)")
             name, args, rtype = expre.match(line).group(1, 2, 3)
-            args = tuple(re.findall(r'\((\w+)\) *(\w+)', args))
+            args = tuple(re.findall(r"\((\w+)\) *(\w+)", args))
             return name, args, rtype
 
         res = []
         name, args, rtype = parse_signature(lines[0])
         res.append((args, rtype, []))
         for line in lines[1:]:
-            if line.startswith('%s(' % name):
+            if line.startswith("%s(" % name):
                 name, args, rtype = parse_signature(line)
                 res.append((args, rtype, []))
             else:
@@ -89,7 +89,7 @@ class Docs:
                     continue
                 if not doc_part[-1]:
                     doc_part = doc_part[:-1]
-                doc_lines.append('\n'.join(doc_part))
+                doc_lines.append("\n".join(doc_part))
 
         # if docs are equals show only one of them
         self.header = sorted(doc_lines)
@@ -103,11 +103,11 @@ class Docs:
     def get_argument_strings(self) -> Iterator[str]:
         for arg_set in self.args_sets:
             if self.is_class:
-                args = ['self']
+                args = ["self"]
             else:
                 args = []
-            args.extend("%s: %s" % (arg_name, arg_type) for arg_name, arg_type in arg_set[self.is_class:])
-            yield ', '.join(args)
+            args.extend("%s: %s" % (arg_name, arg_type) for arg_name, arg_type in arg_set[self.is_class :])
+            yield ", ".join(args)
 
     def get_doc_string(self):
         doc = []
@@ -117,10 +117,10 @@ class Docs:
                 doc.extend(self.header)
             doc.append('"""')
 
-        return '\n'.join('%s%s' % (' ' * 4 * self.indent if x else '', x) for x in doc)
+        return "\n".join("%s%s" % (" " * 4 * self.indent if x else "", x) for x in doc)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # example1 = """__delitem__( (IntBoolMap)arg1, (object)arg2) -> None"""
     example1 = """getEmpire() -> empire\n\ngetEmpire((int)star_name, (int)arg2, (int)arg3) -> empire"""
 

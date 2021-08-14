@@ -1,8 +1,8 @@
-
 class ShellVariable:
     """
     Variable initialization and description for an interpreter.
     """
+
     def __init__(self, *, variable: str, expression: str, description: str, imports=tuple()):
         self.name = variable
         self.expression = expression
@@ -11,4 +11,4 @@ class ShellVariable:
 
     def get_evaluation_command(self) -> str:
         yield from self.imports
-        yield '%s = %s' % (self.name, self.expression)
+        yield "%s = %s" % (self.name, self.expression)

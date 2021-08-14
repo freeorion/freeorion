@@ -84,6 +84,7 @@ except ImportError:
     # Create an alternative logger for use in testing when the server is unavailable
     class _FreeOrionLoggerForTest:
         """A stub freeorion_logger for testing"""
+
         @staticmethod
         def debug(msg, *args):
             print(msg)
@@ -109,6 +110,7 @@ except ImportError:
 
 class _stdXLikeStream:
     """A stream-like object to redirect stdout or stderr to the C++ process."""
+
     def __init__(self, level):
         self.logger = {
             logging.DEBUG: freeorion_logger.debug,
@@ -116,12 +118,12 @@ class _stdXLikeStream:
             logging.WARNING: freeorion_logger.warn,
             logging.ERROR: freeorion_logger.error,
             logging.FATAL: freeorion_logger.fatal,
-            logging.NOTSET: freeorion_logger.debug
+            logging.NOTSET: freeorion_logger.debug,
         }[level]
 
     def write(self, msg):
         # Grab the caller's call frame info
-        if hasattr(sys, '_getframe'):
+        if hasattr(sys, "_getframe"):
             frame = sys._getframe(1)
             try:
                 line_number = frame.f_lineno
@@ -145,6 +147,7 @@ class _stdXLikeStream:
 
 class _LoggerHandler(logging.Handler):
     """A handler to send logs to the C++ process."""
+
     def __init__(self, level):
         super(_LoggerHandler, self).__init__(level)
         self.logger = {
@@ -153,7 +156,7 @@ class _LoggerHandler(logging.Handler):
             logging.WARNING: freeorion_logger.warn,
             logging.ERROR: freeorion_logger.error,
             logging.FATAL: freeorion_logger.fatal,
-            logging.NOTSET: freeorion_logger.debug
+            logging.NOTSET: freeorion_logger.debug,
         }[level]
 
     def emit(self, record):
@@ -171,7 +174,6 @@ class _LoggerHandler(logging.Handler):
 
 
 class FOLogFormatter(logging.Formatter):
-
     def formatException(self, ei):
         exc_text = "".join(traceback.format_exception(*ei))
         tb = ei[2]
@@ -188,6 +190,7 @@ class FOLogFormatter(logging.Formatter):
 
 class _SingleLevelFilter(logging.Filter):
     """This filter selects for only one log level."""
+
     def __init__(self, _level):
         super(_SingleLevelFilter, self).__init__()
         self.level = _level
@@ -207,8 +210,7 @@ def _create_narrow_handler(level):
 
 
 def _unhandled_exception_hook(*exc_info):
-    traceback_msg = "Uncaught exception: {0}".format(
-        "".join(traceback.format_exception(*exc_info)))
+    traceback_msg = "Uncaught exception: {0}".format("".join(traceback.format_exception(*exc_info)))
     logging.getLogger().error(traceback_msg)
 
 
@@ -218,7 +220,7 @@ def redirect_logging_to_freeorion_logger(initial_log_level=logging.DEBUG):
     if not hasattr(redirect_logging_to_freeorion_logger, "only_redirect_once"):
         sys.stdout = _stdXLikeStream(logging.DEBUG)
         sys.stderr = _stdXLikeStream(logging.ERROR)
-        print('Python stdout and stderr are redirected to ai process.')
+        print("Python stdout and stderr are redirected to ai process.")
 
         # thread and process information is already provided by boost logging framework
         # we can avoid some logging call overheads by turning this off
@@ -238,7 +240,8 @@ def redirect_logging_to_freeorion_logger(initial_log_level=logging.DEBUG):
         sys.excepthook = _unhandled_exception_hook
 
         logger.setLevel(initial_log_level)
-        logger.info("The python logger is initialized with a log level of %s" %
-                    logging.getLevelName(logger.getEffectiveLevel()))
+        logger.info(
+            "The python logger is initialized with a log level of %s" % logging.getLevelName(logger.getEffectiveLevel())
+        )
 
         redirect_logging_to_freeorion_logger.only_redirect_once = True

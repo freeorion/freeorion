@@ -47,17 +47,18 @@ from logging import debug
 
 from ._freeorion_tools import dict_from_map, dict_from_map_recursive
 
-PLANET = 'P'
-SYSTEM = 'S'
-FLEET = 'F'
-SHIP_DESIGN = 'D'
-EMPIRE = 'E'
+PLANET = "P"
+SYSTEM = "S"
+FLEET = "F"
+SHIP_DESIGN = "D"
+EMPIRE = "E"
 
 
 def to_dict(method):
     @wraps(method)
     def wrapper(*args):
         return dict_from_map(method(*args))
+
     return wrapper
 
 
@@ -70,7 +71,7 @@ def to_dict_recursive(method):
 
 
 def to_str(prefix, id, name):
-    return f'{prefix}_{id}<{name}>'
+    return f"{prefix}_{id}<{name}>"
 
 
 def patch_interface():
@@ -88,22 +89,26 @@ def patch_interface():
 
     def design_to_string(design):
         return to_str(SHIP_DESIGN, design.id, design.name)
+
     fo.shipDesign.__repr__ = design_to_string
 
     def planet_to_string(planet):
         return to_str(PLANET, planet.id, planet.name)
+
     fo.planet.__repr__ = planet_to_string
 
     def fleet_to_string(fleet):
         return to_str(FLEET, fleet.id, fleet.name)
+
     fo.fleet.__repr__ = fleet_to_string
 
     def empire_to_string(empire):
         return to_str(EMPIRE, empire.empireID, empire.name)
+
     fo.empire.__repr__ = empire_to_string
 
     def set_to_string(val):
-        return '{%s}' % ', '.join(map(str, val))
+        return "{%s}" % ", ".join(map(str, val))
 
     fo.StringSet.__str__ = set_to_string
     fo.IntSet.__str__ = set_to_string
@@ -133,11 +138,20 @@ def logger(callable_object, argument_wrappers=None):
      for example ``lambda x: fo.getUniverse().getPlanet(x)`` for planet id.
     :return:
     """
+
     def inner(*args, **kwargs):
         arguments = [str(wrapper(arg) if wrapper else arg) for arg, wrapper in zip_longest(args, argument_wrappers)]
-        arguments.extend('%s=%s' % item for item in kwargs.items())
+        arguments.extend("%s=%s" % item for item in kwargs.items())
         res = callable_object(*args, **kwargs)
         frame = inspect.currentframe().f_back
-        debug("%s:%s %s(%s) -> %s", os.path.basename(frame.f_code.co_filename), frame.f_lineno, callable_object.__name__, ', '.join(arguments), res)
+        debug(
+            "%s:%s %s(%s) -> %s",
+            os.path.basename(frame.f_code.co_filename),
+            frame.f_lineno,
+            callable_object.__name__,
+            ", ".join(arguments),
+            res,
+        )
         return res
+
     return inner

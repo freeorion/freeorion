@@ -18,10 +18,16 @@ REPEAT_RATE = {1: 0.08, 2: 0.05, 3: 0.01, 4: 0.00}
 
 def calculate_number_of_specials_to_place(objs):
     """Return a list of number of specials to be placed at each obj"""
-    return [1 if random.random() > REPEAT_RATE[1] else
-            2 if random.random() > REPEAT_RATE[2] else
-            3 if random.random() > REPEAT_RATE[3] else 4
-            for _ in objs]
+    return [
+        1
+        if random.random() > REPEAT_RATE[1]
+        else 2
+        if random.random() > REPEAT_RATE[2]
+        else 3
+        if random.random() > REPEAT_RATE[3]
+        else 4
+        for _ in objs
+    ]
 
 
 def place_special(specials, obj):
@@ -66,28 +72,43 @@ def distribute_specials(specials_freq, universe_objects):
 
     # get a list with all specials that have a spawn rate and limit both > 0 and a location condition defined
     # (no location condition means a special shouldn't get added at game start)
-    specials = [sp for sp in fo.get_all_specials() if fo.special_spawn_rate(sp) > 0.0 and
-                fo.special_spawn_limit(sp) > 0 and fo.special_has_location(sp)]
+    specials = [
+        sp
+        for sp in fo.get_all_specials()
+        if fo.special_spawn_rate(sp) > 0.0 and fo.special_spawn_limit(sp) > 0 and fo.special_has_location(sp)
+    ]
     if not specials:
         return
 
     # dump a list of all specials meeting that conditions and their properties to the log
     print("Specials available for distribution at game start:")
     for special in specials:
-        print("... {:30}: spawn rate {:2.3f} / spawn limit {}".
-              format(special, fo.special_spawn_rate(special), fo.special_spawn_limit(special)))
+        print(
+            "... {:30}: spawn rate {:2.3f} / spawn limit {}".format(
+                special, fo.special_spawn_rate(special), fo.special_spawn_limit(special)
+            )
+        )
 
     objects_needing_specials = [obj for obj in universe_objects if random.random() < base_chance]
 
     track_num_placed = {obj: 0 for obj in universe_objects}
 
-    print("Base chance for specials is {}. Placing specials on {} of {} ({:1.4f})objects"
-          .format(base_chance, len(objects_needing_specials), len(universe_objects),
-                  float(len(objects_needing_specials)) / len(universe_objects)))
+    print(
+        "Base chance for specials is {}. Placing specials on {} of {} ({:1.4f})objects".format(
+            base_chance,
+            len(objects_needing_specials),
+            len(universe_objects),
+            float(len(objects_needing_specials)) / len(universe_objects),
+        )
+    )
 
-    obj_tuple_needing_specials = set(zip(objects_needing_specials,
-                                         fo.objs_get_systems(objects_needing_specials),
-                                         calculate_number_of_specials_to_place(objects_needing_specials)))
+    obj_tuple_needing_specials = set(
+        zip(
+            objects_needing_specials,
+            fo.objs_get_systems(objects_needing_specials),
+            calculate_number_of_specials_to_place(objects_needing_specials),
+        )
+    )
 
     # Equal to the largest distance in WithinStarlaneJumps conditions
     # GALAXY_DECOUPLING_DISTANCE is used as follows.  For any two or more objects
@@ -122,8 +143,11 @@ def distribute_specials(specials_freq, universe_objects):
                 if neighbor in systems_needing_specials:
                     systems_needing_specials.pop(neighbor)
 
-        print("Caching specials_locations() at {} of {} remaining locations.".
-              format(str(len(candidates)), str(len(obj_tuple_needing_specials) + len(candidates))))
+        print(
+            "Caching specials_locations() at {} of {} remaining locations.".format(
+                str(len(candidates)), str(len(obj_tuple_needing_specials) + len(candidates))
+            )
+        )
         # Get the locations at which each special can be placed
         locations_cache = {}
         for special in specials:

@@ -46,8 +46,10 @@ def get_systems_by_supply_tier(supply_tier: int) -> Tuple[SystemId]:
     Negative values indicate jumps away from supply.
     """
     if supply_tier > 0:
-        warning("The current implementation does not distinguish between positive supply levels. "
-                "Interpreting the query as supply_tier=0 (indicating system in supply).")
+        warning(
+            "The current implementation does not distinguish between positive supply levels. "
+            "Interpreting the query as supply_tier=0 (indicating system in supply)."
+        )
         supply_tier = 0
     return _get_systems_map_by_jumps_to_supply().get(supply_tier, tuple())
 
@@ -59,12 +61,11 @@ def _get_enemy_supply_distance_map() -> Mapping[int, int]:
 
     for enemy in enemies:
         if enemy is None:
-            error('Got None for enemy empire!')
+            error("Got None for enemy empire!")
             continue
 
         for sys_id, supply_val in enemy.supplyProjections().items():
-            distance_to_enemy_supply[sys_id] = min(
-                distance_to_enemy_supply.get(sys_id, 999), -supply_val)
+            distance_to_enemy_supply[sys_id] = min(distance_to_enemy_supply.get(sys_id, 999), -supply_val)
 
     return distance_to_enemy_supply
 

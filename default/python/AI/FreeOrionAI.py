@@ -45,12 +45,12 @@ from common.handlers import init_handlers
 from common.listeners import listener
 from freeorion_tools.timers import AITimer
 
-main_timer = AITimer('timer', write_log=True)
-turn_timer = AITimer('bucket', write_log=True)
+main_timer = AITimer("timer", write_log=True)
+turn_timer = AITimer("bucket", write_log=True)
 
 user_dir = fo.getUserDataDir()
 debug("Path to folder for user specific data: %s" % user_dir)
-debug('Python paths %s' % sys.path)
+debug("Python paths %s" % sys.path)
 
 
 diplomatic_corp = None
@@ -67,6 +67,7 @@ def error_handler(func):
         except Exception as e:
             error("Exception %s occurred during %s", e, func.__name__, exc_info=True)
             raise
+
     return _error_handler
 
 
@@ -75,8 +76,10 @@ def _pre_game_start(empire_id, aistate):
     Configuration that should be done before AI start operating.
     """
     aggression_trait = aistate.character.get_trait(Aggression)
-    diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
-                               fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
+    diplomatic_corp_configs = {
+        fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
+        fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp,
+    }
     global diplomatic_corp
     diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
     TechsListsAI.test_tech_integrity()
@@ -103,8 +106,10 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     create_new_aistate(aggression_input)
     aistate = get_aistate()
     aggression_trait = aistate.character.get_trait(Aggression)
-    debug("New game started, AI Aggression level %d (%s)" % (
-        aggression_trait.key, get_trait_name_aggression(aistate.character)))
+    debug(
+        "New game started, AI Aggression level %d (%s)"
+        % (aggression_trait.key, get_trait_name_aggression(aistate.character))
+    )
     aistate.session_start_cleanup()
     debug("Initialization of AI state complete!")
     debug("Trying to rename our homeworld...")
@@ -133,8 +138,10 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
 
     debug("Resuming loaded game")
     if not saved_state_string:
-        error("AI given empty state-string to resume from; this is expected if the AI is assigned to an empire "
-              "previously run by a human, but is otherwise an error. AI will be set to Aggressive.")
+        error(
+            "AI given empty state-string to resume from; this is expected if the AI is assigned to an empire "
+            "previously run by a human, but is otherwise an error. AI will be set to Aggressive."
+        )
         aistate = create_new_aistate(fo.aggression.aggressive)
         aistate.session_start_cleanup()
     else:
@@ -145,11 +152,13 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
             # assigning new state
             aistate = create_new_aistate(fo.aggression.aggressive)
             aistate.session_start_cleanup()
-            error("Failed to load the AIstate from the savegame. The AI will"
-                  " play with a fresh AIstate instance with aggression level set"
-                  " to 'aggressive'. The behaviour of the AI may be different"
-                  " than in the original session. The error raised was: %s"
-                  % e, exc_info=True)
+            error(
+                "Failed to load the AIstate from the savegame. The AI will"
+                " play with a fresh AIstate instance with aggression level set"
+                " to 'aggressive'. The behaviour of the AI may be different"
+                " than in the original session. The error raised was: %s" % e,
+                exc_info=True,
+            )
     _pre_game_start(fo.getEmpire().empireID, aistate)
 
 
@@ -171,14 +180,17 @@ def prepareForSave():  # pylint: disable=invalid-name
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
     import savegame_codec
+
     try:
         dump_string = savegame_codec.build_savegame_string()
         fo.setSaveStateString(dump_string)
     except Exception as e:
-        error("Failed to encode the AIstate as save-state string. "
-              "The resulting save file should be playable but the AI "
-              "may have a different aggression. The error raised was: %s"
-              % e, exc_info=True)
+        error(
+            "Failed to encode the AIstate as save-state string. "
+            "The resulting save file should be playable but the AI "
+            "may have a different aggression. The error raised was: %s" % e,
+            exc_info=True,
+        )
 
 
 @error_handler
@@ -292,9 +304,7 @@ def generateOrders():  # pylint: disable=invalid-name
         ResearchAI.get_research_index(),
         aggression_name.capitalize(),
     )
-    empire_name = '_'.join(
-        str(part) for part in name_parts
-    )
+    empire_name = "_".join(str(part) for part in name_parts)
 
     debug(f"EmpireID: {empire.empireID} Name: {empire_name} Turn: {turn}")
 
@@ -317,7 +327,7 @@ def generateOrders():  # pylint: disable=invalid-name
     # TODO: Consider adding an option to clear AI orders after load (must save AIstate at turn start then)
     if fo.currentTurn() == aistate.last_turn_played:
         info("The AIstate indicates that this turn was already played.")
-        if not check_bool(get_option_dict().get('replay_turn_after_load', 'False')):
+        if not check_bool(get_option_dict().get("replay_turn_after_load", "False")):
             info("Aborting new order generation. Orders from savegame will still be issued.")
             return
         info("Issuing new orders anyway.")
@@ -325,25 +335,27 @@ def generateOrders():  # pylint: disable=invalid-name
     if turn == 1:
         human_player = fo.empirePlayerID(1)
         greet = diplomatic_corp.get_first_turn_greet_message()
-        fo.sendChatMessage(human_player,
-                           '%s (%s): [[%s]]' % (empire.name, get_trait_name_aggression(aistate.character), greet))
+        fo.sendChatMessage(
+            human_player, "%s (%s): [[%s]]" % (empire.name, get_trait_name_aggression(aistate.character), greet)
+        )
 
     aistate.prepare_for_new_turn()
     debug("Calling AI Modules")
     # call AI modules
-    action_list = [ColonisationAI.survey_universe,
-                   ShipDesignAI.Cache.update_for_new_turn,
-                   PriorityAI.calculate_priorities,
-                   ExplorationAI.assign_scouts_to_explore_systems,
-                   ColonisationAI.assign_colony_fleets_to_colonise,
-                   InvasionAI.assign_invasion_fleets_to_invade,
-                   MilitaryAI.assign_military_fleets_to_systems,
-                   FleetUtilsAI.generate_fleet_orders_for_fleet_missions,
-                   FleetUtilsAI.issue_fleet_orders_for_fleet_missions,
-                   ResearchAI.generate_research_orders,
-                   ProductionAI.generate_production_orders,
-                   ResourcesAI.generate_resources_orders,
-                   ]
+    action_list = [
+        ColonisationAI.survey_universe,
+        ShipDesignAI.Cache.update_for_new_turn,
+        PriorityAI.calculate_priorities,
+        ExplorationAI.assign_scouts_to_explore_systems,
+        ColonisationAI.assign_colony_fleets_to_colonise,
+        InvasionAI.assign_invasion_fleets_to_invade,
+        MilitaryAI.assign_military_fleets_to_systems,
+        FleetUtilsAI.generate_fleet_orders_for_fleet_missions,
+        FleetUtilsAI.issue_fleet_orders_for_fleet_missions,
+        ResearchAI.generate_research_orders,
+        ProductionAI.generate_production_orders,
+        ResourcesAI.generate_resources_orders,
+    ]
 
     for action in action_list:
         try:
