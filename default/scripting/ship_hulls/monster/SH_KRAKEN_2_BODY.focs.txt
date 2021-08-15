@@ -54,7 +54,7 @@ Hull
             effects = [
                 CreateShip designname = "SM_KRAKEN_3" empire = Source.Owner
                 Destroy
-                GenerateSitRepMessage
+                GenerateSitRepMessage   // generate sitrep message for owner. does nothing when unowned.
                     message = "EFFECT_TAME_MONSTER_MATURED"
                     label = "EFFECT_TAME_MONSTER_MATURED_LABEL"
                     icon = "icons/monsters/kraken-3.png"
