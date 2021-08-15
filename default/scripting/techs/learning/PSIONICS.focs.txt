@@ -4,6 +4,7 @@ Tech
     short_description = "THEORY_SHORT_DESC"
     category = "LEARNING_CATEGORY"
     researchcost = 300 * [[TECH_COST_MULTIPLIER]] - (150 * [[TECH_COST_MULTIPLIER]] * Statistic If condition = And [
+        // no Source condition here. Empire needs to have a ship or planet with a telepathic species, but it need not be the capital / source object
         Or [
             Planet
             Ship
