@@ -294,7 +294,7 @@ float Tech::ResearchCost(int empire_id) const { // TODO: pass in ScriptingContex
         auto source = empires.GetSource(empire_id, objects);   // TODO: pass ScriptingContext and use here
         if (!source)
             return ARBITRARY_LARGE_COST;
-        return m_research_cost->Eval(ScriptingContext(std::move(source)));
+        return m_research_cost->Eval(ScriptingContext{std::move(source)});
     }
 }
 

@@ -3381,13 +3381,13 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
             parent_context, search_domain == SearchDomain::MATCHES ? *matches.begin() : *non_matches.begin()};
 
         // initialize subcondition candidates from local candidate's containers
-        const ObjectMap& objects = parent_context.ContextObjects();
         std::set<int> container_object_ids;
         if (local_context.condition_local_candidate->ContainerObjectID() != INVALID_OBJECT_ID)
             container_object_ids.insert(local_context.condition_local_candidate->ContainerObjectID());
         if (local_context.condition_local_candidate->SystemID() != INVALID_OBJECT_ID)
             container_object_ids.insert(local_context.condition_local_candidate->SystemID());
 
+        const ObjectMap& objects = parent_context.ContextObjects();
         ObjectSet subcondition_matches = objects.find(container_object_ids);
 
         // apply subcondition to candidates
