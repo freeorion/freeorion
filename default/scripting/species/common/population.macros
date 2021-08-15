@@ -27,10 +27,10 @@ BASIC_POPULATION
             ]
             priority = [[POPULATION_FIRST_PRIORITY]]
             effects = SetPopulation value =
-                (Statistic If condition = (Value < Target.TargetPopulation) *
+                (Statistic If condition = And [ Target (Value < Target.TargetPopulation)] *
                     min(Target.TargetPopulation, Value + Value*[[GROWTH_RATE_FACTOR]]*
                                                                (Target.TargetPopulation + 1 - Value)))
-              + (Statistic If condition = (Value >= Target.TargetPopulation) *
+              + (Statistic If condition = And [ Target (Value >= Target.TargetPopulation)] *
                     max(Target.TargetPopulation, Value - 0.1*(Value - Target.TargetPopulation)))
 
         // Since all species have the same advanced focus effects and
