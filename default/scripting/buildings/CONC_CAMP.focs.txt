@@ -37,7 +37,7 @@ BuildingType
             activation = Or [
                 Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
                 ContainedBy And [
-                    Planet
+                    Object id = Source.PlanetID
                     OwnedBy empire = Source.Owner
                     Population low = 0.0001
                     Not HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
@@ -68,7 +68,6 @@ BuildingType
             ]
             activation = ContainedBy And [
                 Object id = Source.PlanetID
-                Planet
                 OwnedBy empire = Source.Owner
                 HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
             ]

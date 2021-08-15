@@ -24,7 +24,6 @@ BuildingType
             ]
             activation = ContainedBy And [
                 Object id = Source.PlanetID
-                Planet
                 Contains Building name = "BLD_CULTURE_ARCHIVES"
             ]
             priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]

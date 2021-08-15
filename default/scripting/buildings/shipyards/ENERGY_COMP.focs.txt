@@ -13,8 +13,10 @@ BuildingType
             Star type = [White Blue BlackHole]
             Enqueued type = Building name = "BLD_ART_BLACK_HOLE"
             ContainedBy And [
+                Object id = RootCandidate.SystemID
                 Star type = Red
                 Contains And [
+                    InSystem id = RootCandidate.SystemID
                     Planet
                     OwnedBy empire = Source.Owner
                     Enqueued type = Building name = "BLD_ART_BLACK_HOLE"

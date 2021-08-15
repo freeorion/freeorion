@@ -25,7 +25,6 @@ BuildingType
             ]
             activation = ContainedBy And [
                 Object id = Source.PlanetID
-                Planet
                 Population high = 0
             ]
             stackinggroup = "GAS_GIANT_GEN_STACK"

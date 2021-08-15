@@ -60,7 +60,6 @@ BuildingType
             ]
             activation = ContainedBy And [
                 Object id = Source.PlanetID
-                Planet
                 OwnedBy empire = Source.Owner
                 // evacuation building needs to exist one turn for technical reasons.
                 // it should not destroy a new colony
