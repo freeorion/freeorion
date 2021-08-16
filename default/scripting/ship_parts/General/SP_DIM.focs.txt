@@ -19,9 +19,10 @@ Part
             ]
             effects = AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"
 
+        // does any empire have a tech that can produce stealth specials?
         EffectsGroup
             scope = Source
-            activation = Number low = 1 condition = OwnerHasTech name = "SPY_STEALTH_4"
+            activation = Number low = 1 condition = And [Capital OwnerHasTech name = "SPY_STEALTH_4"]
             effects = [
                 CreateShip designname = "SM_VOID" empire = Source.Owner
                 Destroy
