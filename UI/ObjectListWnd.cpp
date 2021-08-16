@@ -1973,23 +1973,24 @@ public:
         m_object_change_connections.clear();
     }
 
-    bool ObjectShown(std::shared_ptr<const UniverseObject> obj,
+    bool ObjectShown(const std::shared_ptr<const UniverseObject>& obj,
+                     const ScriptingContext& context,
                      bool assume_visible_without_checking = false)
     {
         if (!obj)
             return false;
 
-        if (m_filter_condition && !m_filter_condition->Eval(obj))
+        if (m_filter_condition && !m_filter_condition->Eval(context, obj))
             return false;
 
         int object_id = obj->ID();
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
         UniverseObjectType type = obj->ObjectType();
 
-        if (GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).count(object_id))
+        if (context.ContextUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).count(object_id))
             return m_visibilities[type].count(VIS_DISPLAY::SHOW_DESTROYED);
 
-        if (assume_visible_without_checking || GetUniverse().GetObjectVisibilityByEmpire(object_id, client_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY)
+        if (assume_visible_without_checking || context.ContextUniverse().GetObjectVisibilityByEmpire(object_id, client_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY)
             return m_visibilities[type].count(VIS_DISPLAY::SHOW_VISIBLE);
 
         return m_visibilities[type].count(VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE);
@@ -2011,30 +2012,31 @@ public:
         std::map<int, std::set<std::shared_ptr<Planet>>>    system_planets;
         std::map<int, std::set<std::shared_ptr<Building>>>  planet_buildings;
         std::map<int, std::set<std::shared_ptr<Field>>>     system_fields;
+        ScriptingContext context;
 
         timer.EnterSection("object cast-sorting");
         for (const auto& obj : Objects().all<System>()) {
-            if (ObjectShown(obj))
+            if (ObjectShown(obj, context))
                 systems.insert(obj);
         }
         for (const auto& obj : Objects().all<Field>()) {
-            if (ObjectShown(obj))
+            if (ObjectShown(obj, context))
                 system_fields[obj->SystemID()].insert(obj);
         }
         for (const auto& obj : Objects().all<Fleet>()) {
-            if (ObjectShown(obj))
+            if (ObjectShown(obj, context))
                 system_fleets[obj->SystemID()].insert(obj);
         }
         for (const auto& obj : Objects().all<Ship>()) {
-            if (ObjectShown(obj))
+            if (ObjectShown(obj, context))
                 fleet_ships[obj->FleetID()].insert(obj);
         }
         for (const auto& obj : Objects().all<Planet>()) {
-            if (ObjectShown(obj))
+            if (ObjectShown(obj, context))
                 system_planets[obj->SystemID()].insert(obj);
         }
         for (const auto& obj : Objects().all<Building>()) {
-            if (ObjectShown(obj))
+            if (ObjectShown(obj, context))
                 planet_buildings[obj->PlanetID()].insert(obj);
         }
         // UniverseObjectType::OBJ_FIGHTER shouldn't exist outside combat, so ignored here

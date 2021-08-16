@@ -347,16 +347,6 @@ bool Condition::Eval(const ScriptingContext& parent_context,
     return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
 }
 
-bool Condition::Eval(std::shared_ptr<const UniverseObject> candidate) const {
-    if (!candidate)
-        return false;
-    ObjectSet non_matches{std::move(candidate)}, matches;
-
-    ScriptingContext context; // TODO: pass in and use instead of creating?
-    Eval(context, matches, non_matches);
-    return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
-}
-
 void Condition::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                   ObjectSet& condition_non_targets) const
 { AddAllObjectsSet(parent_context.ContextObjects(), condition_non_targets); }

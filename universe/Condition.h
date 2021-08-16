@@ -55,10 +55,6 @@ struct FO_COMMON_API Condition {
     bool Eval(const ScriptingContext& parent_context,
               std::shared_ptr<const UniverseObject> candidate) const;
 
-    /** Tests single candidate object, returning true iff it matches condition
-      * with empty ScriptingContext. If this condition is not invariant to */
-    bool Eval(std::shared_ptr<const UniverseObject> candidate) const;
-
     virtual void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                    ObjectSet& condition_non_targets) const;
 
