@@ -40,6 +40,18 @@ private:
 
     godot::String get_version() const; ///< Returns FreeOrion version
 
+    bool is_server_connected() const; ///< Returns if FreeOrion connected to server
+
+    bool connect_to_server(godot::String dest); ///< Connect to \a dest server
+
+    void join_game(godot::String player_name, int client_type); ///< Join to connected server
+
+    void auth_response(godot::String player_name, godot::String password); ///< Send \a password to the server
+
+    godot::Dictionary get_systems() const; ///< Returns Godot Dictionary with systems
+
+    godot::Dictionary get_fleets() const; ///< Returns Godot Dictionary with fleets
+
     std::unique_ptr<GodotClientApp> app;
 
 #if defined(FREEORION_ANDROID)
