@@ -1337,6 +1337,22 @@ Toutes interdites
 ## Command-line and options database entries
 ##
 
+COMMAND_LINE_HELP_GENERAL_DESCRIPTION
+'''FreeOrion est un jeu de Stratégie Spatiale 4X.
+
+Des options et paramètres en ligne de commande peuvent être spécifiés pour définir la façon dont le programme fonctionne.
+
+Ceux-ci sont groupés et peuvent être listés en démarrant le fichier binaire avec le paramètre "-h" ou "--help", suivi du nom du groupe d'options.
+
+Par exemple, pour afficher les options relatives au réseau:
+freeorion --help network
+
+Les options peuvent avoir un paramètre sous forme abrégée, comme "-h" au lieu de "--help".
+
+Les options n'ayant pas de forme abrégée doivent avoir un paramètre appliqué après leur nom, pour définir cette option selon la valeur indiquée, comme:
+freeorion --network.discovery.port 123
+'''
+
 COMMAND_LINE_NOT_FOUND
 Aucune option ou section correspondante trouvée
 
@@ -8168,6 +8184,8 @@ SP_TRITH_GAMEPLAY_DESC
 Télépathes xénophobes tourmentés.
 Préfèrent les Planètes [[PT_RADIATED]]s.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
+
+La Politique [[policy PLC_RACIAL_PURITY]] est disponible par défaut pour les empires dont la Capitale est peuplée par des Trith.
 '''
 
 SP_TRITH_DESC
@@ -11809,7 +11827,7 @@ Loi Martiale
 
 PLC_MARTIAL_LAW_DESC
 '''• Diminue la portée de l'[[metertype METER_SUPPLY]] des planètes habitées de [[value PLC_MARTIAL_LAW_SUPPLY_PENALTY]].
-• Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de [[value PLC_MARTIAL_LAW_STABILITY_PER_TROOPS]] par la valeur de l'indicateur  [[metertype METER_MAX_TROOPS]].
+• Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de [[value PLC_MARTIAL_LAW_STABILITY_PER_TROOPS]] par la valeur de l'indicateur [[metertype METER_MAX_TROOPS]].
 • Diminue la [[metertype METER_TARGET_RESEARCH]] des planètes habitées de [[value PLC_MARTIAL_LAW_STABILITY_PER_TROOPS]] par la valeur de l'indicateur [[metertype METER_MAX_TROOPS]].'''
 
 PLC_MARTIAL_LAW_SHORT_DESC
@@ -11908,10 +11926,20 @@ PLC_CAPITAL_MARKETS
 Marchés Capitaux
 
 PLC_CAPITAL_MARKETS_DESC
-Les planètes disposant d'une Particularité de ressources de luxe et réglées sur le Focus Influence, exporteront cette ressource vers les planètes reliées par lignes d'[[metertype METER_SUPPLY]], améliorant la [[metertype METER_HAPPINESS]] des planètes peuplées d'espèces appréciant cette ressource.
+'''• Les planètes disposant d'une Particularité de ressources de luxe et réglées sur le Focus Influence, exporteront cette ressource vers les planètes reliées par lignes d'[[metertype METER_SUPPLY]]. Cela améliore de [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]] la [[metertype METER_HAPPINESS]] des planètes peuplées d'espèces appréciant cette ressource.
+• Augmente le taux de progression ou de régression de l'[[metertype METER_INFLUENCE]] de [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / tour pour atteindre la valeur de la [[metertype METER_TARGET_INFLUENCE]].'''
 
 PLC_CAPITAL_MARKETS_SHORT_DESC
 Améliore la Stabilité via l'export de ressources
+
+PLC_BLACK_MARKET
+Marchés Noirs
+
+PLC_BLACK_MARKET_DESC
+La [[metertype METER_TARGET_INFLUENCE]] des planètes avec une [[metertype METER_HAPPINESS]] de [[value PLC_BLACK_MARKET_MAX_STABILITY]] ou moins, et étant réglées sur le Focus Influence, augmentera de [[value SPECIAL_BLACK_MARKET_INFLUENCE_FOCUS_BONUS]] pour chaque planète reliées par ligne d'[[metertype METER_SUPPLY]] et disposant d'une Particularité de ressources de luxe, qu'apprécie la population de la planète en Focus Influence.
+
+PLC_BLACK_MARKET_SHORT_DESC
+Améliore l'Influence selon les ressources
 
 PLC_ARTISAN_WORKSHOPS
 Ateliers Artisanaux
@@ -11926,7 +11954,7 @@ PLC_BOOTSTRAPPING
 Planification Coloniale
 
 PLC_BOOTSTRAPPING_DESC
-'''• Augmente le taux de croissance des indicateurs Industrie, Recherche, et Influence, et améliore la Stabilité des colonies dont la Population est inférieure à [[value PLC_BOOTSTRAPPING_MAX_POP]].
+'''• Augmente le taux de progression des indicateurs Industrie, Recherche, et Influence, et améliore la Stabilité des colonies dont la Population est inférieure à [[value PLC_BOOTSTRAPPING_MAX_POP]].
 • Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes ayant été colonisées durant les [[value PLC_BOOTSTRAPPING_MAX_TURNS]] derniers tours, puis diminue progressivement.
 
 Les nouvelles colonies bénéficient souvent de programmes visant à soutenir leur développement initial et les efforts des colons pour fonder leur nouvel habitat.'''
@@ -11981,7 +12009,7 @@ PLC_NECESSITY
 Nécessité
 
 PLC_NECESSITY_DESC
-Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes dont la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]] multiplié par la racine carrée du produit entre la Population et de combien la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]].
+Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes dont la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]], de la racine carrée du produit entre la Population et de combien la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]].
 
 PLC_NECESSITY_SHORT_DESC
 Améliore la Recherche des planètes à faible Stabilité
@@ -12003,6 +12031,17 @@ Dans les systèmes où l'empire appliquant cette Politique dispose d'astronefs a
 
 PLC_FLANKING_SHORT_DESC
 Améliore les dommages infligés par les astronefs
+
+PLC_CHARGE  # translated
+Charge
+
+PLC_CHARGE_DESC
+'''Pour les astronefs armés ayant une [[metertype METER_SPEED]] supérieure ou égale à [[value PLC_CHARGE_MINIMUM_SPEED]] :
+• Les [[encyclopedia DAMAGE_TITLE]] infligés par l'armement augmentent de [[value PLC_CHARGE_DAMAGE_BOOST]].
+• L'indicateur [[metertype METER_MAX_SHIELD]] diminue de [[value PLC_CHARGE_SHIELD_REDUCTION]].'''
+
+PLC_CHARGE_SHORT_DESC
+Améliore les dommages des astronefs rapides
 
 
 ##
@@ -12376,7 +12415,7 @@ GRO_TRANSORG_SENT
 Sentience Trans-Organique
 
 GRO_TRANSORG_SENT_DESC
-'''• Augmente le taux de croissance ou de régression de l'[[metertype METER_INFLUENCE]] de [[value GRO_TRANSORG_INFLUENCE_RATE]] / tour pour atteindre la valeur de [[metertype METER_TARGET_INFLUENCE]].
+'''• Augmente le taux de progression ou de régression de l'[[metertype METER_INFLUENCE]] de [[value GRO_TRANSORG_INFLUENCE_RATE]] / tour pour atteindre la valeur de la [[metertype METER_TARGET_INFLUENCE]].
 
 La sentience est inextricablement liée à la vie, mais avec une compréhension fondamentale de sa nature, il deviendrait alors possible de créer des entités conscientes qui ne pourraient être cataloguées en tant que vie.'''
 
@@ -12596,11 +12635,11 @@ CON_FRC_ENRG_STRC
 Structures Synergiques
 
 CON_FRC_ENRG_STRC_DESC
-'''Accroît la progression des indicateurs de ressources et d'infrastructure inférieurs à la valeur projetée de 3 par tour, et la diminution des indicateurs de ressources supérieurs à la valeur projetée de 5 par tour. L'[[metertype METER_INDUSTRY]] et la [[metertype METER_RESEARCH]] n'augmentent que si la [[metertype METER_HAPPINESS]] est au moins égale à 5.
+'''Augmente le taux de progression ou de régression de l'[[metertype METER_INDUSTRY]], de la [[metertype METER_RESEARCH]], de l'[[metertype METER_CONSTRUCTION]], et de la [[metertype METER_STOCKPILE]] pour atteindre leur Projection ou leur valeur maximum, de [[value FORCE_ENERGY_RATE_INCREASE]] par tour.
 
 La flexibilité et la versatilité des structures synergiques permettent de redéfinir plus facilement le rôle des infrastructures des colonies en vue de nouvelles applications, augmentant ainsi la rapidité et le taux d'une modification de Focus.
 
-Quand les forces et les énergies peuvent être manipulées à volonté afin de remplir les mêmes fonctions que des objets solides, les matériaux physiques ne sont plus nécessaires dans la conception infrastructurelle. Des structures composées entièrement d'énergie présentent de nombreux avantages, tels que la reconfiguration simplifiée, l'adaptation et la résistance, la mobilité ainsi que de nouvelles possibilités de design.'''
+Quand les forces et les énergies peuvent être manipulées de manière adaptée afin de remplir les mêmes fonctions que des objets solides, les matériaux physiques ne sont plus nécessaires dans la conception infrastructurelle. Des structures composées entièrement d'énergie présentent de nombreux avantages, tels que la reconfiguration rapide, l'adaptation et la résistance, la mobilité, ainsi que de nouvelles possibilités de design.'''
 
 CON_CONTGRAV_ARCH
 Architecture Gravitationnelle
