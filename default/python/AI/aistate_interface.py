@@ -18,6 +18,7 @@ _aistate = None
 
 def create_new_aistate(*args, **kwargs):
     import AIstate
+
     global _aistate
     _aistate = AIstate.AIstate(*args, **kwargs)
     return _aistate
@@ -25,6 +26,7 @@ def create_new_aistate(*args, **kwargs):
 
 def load_aistate(savegame_string: str):
     import savegame_codec
+
     global _aistate
     _aistate = savegame_codec.load_savegame_string(savegame_string)
     return _aistate

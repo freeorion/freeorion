@@ -44,12 +44,12 @@ empire_metabolisms = {}
 
 
 def calculate_planet_colonization_rating(
-        *,
-        planet_id: PlanetId,
-        mission_type: MissionType,
-        spec_name: Optional[SpeciesName],
-        detail: Optional[list],
-        empire_research_list: Optional[Sequence]
+    *,
+    planet_id: PlanetId,
+    mission_type: MissionType,
+    spec_name: Optional[SpeciesName],
+    detail: Optional[list],
+    empire_research_list: Optional[Sequence],
 ) -> float:
     """Returns the colonisation value of a planet."""
     if detail is None:
@@ -62,17 +62,15 @@ def calculate_planet_colonization_rating(
         empire = fo.getEmpire()
         empire_research_list = tuple(element.tech for element in empire.researchQueue)
 
-    return _calculate_planet_colonization_rating(
-        planet_id, mission_type, spec_name, detail, empire_research_list
-    )
+    return _calculate_planet_colonization_rating(planet_id, mission_type, spec_name, detail, empire_research_list)
 
 
 def _calculate_planet_colonization_rating(
-        planet_id: PlanetId,
-        mission_type: MissionType,
-        species_name: SpeciesName,
-        detail: list,
-        empire_research_list: Sequence
+    planet_id: PlanetId,
+    mission_type: MissionType,
+    species_name: SpeciesName,
+    detail: list,
+    empire_research_list: Sequence,
 ) -> float:
     empire = fo.getEmpire()
     retval = 0
@@ -99,9 +97,11 @@ def _calculate_planet_colonization_rating(
     capital_id = PlanetUtilsAI.get_capital()
     homeworld = universe.getPlanet(capital_id)
     planet = universe.getPlanet(planet_id)
-    prospective_invasion_targets = [pid for pid, pscore, trp in
-                                    AIstate.invasionTargets[:PriorityAI.allotted_invasion_targets()]
-                                    if pscore > InvasionAI.MIN_INVASION_SCORE]
+    prospective_invasion_targets = [
+        pid
+        for pid, pscore, trp in AIstate.invasionTargets[: PriorityAI.allotted_invasion_targets()]
+        if pscore > InvasionAI.MIN_INVASION_SCORE
+    ]
 
     if species_name != planet.speciesName and planet.speciesName and mission_type != MissionType.INVASION:
         return 0
@@ -132,13 +132,20 @@ def _calculate_planet_colonization_rating(
     sys_supply = get_system_supply(this_sysid)
     planet_supply = AIDependencies.supply_by_size.get(planet.size, 0)
     bld_types = set(universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs).intersection(
-        AIDependencies.building_supply)
-    planet_supply += sum(AIDependencies.building_supply[bld_type].get(int(psize), 0)
-                         for psize in [-1, planet.size] for bld_type in bld_types)
+        AIDependencies.building_supply
+    )
+    planet_supply += sum(
+        AIDependencies.building_supply[bld_type].get(int(psize), 0)
+        for psize in [-1, planet.size]
+        for bld_type in bld_types
+    )
 
     supply_specials = set(planet.specials).union(system.specials).intersection(AIDependencies.SUPPLY_MOD_SPECIALS)
-    planet_supply += sum(AIDependencies.SUPPLY_MOD_SPECIALS[_special].get(int(psize), 0)
-                         for _special in supply_specials for psize in [-1, planet.size])
+    planet_supply += sum(
+        AIDependencies.SUPPLY_MOD_SPECIALS[_special].get(int(psize), 0)
+        for _special in supply_specials
+        for psize in [-1, planet.size]
+    )
 
     ind_tag_mod = AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(get_species_tag_grade(species_name, Tags.INDUSTRY), 1.0)
     res_tag_mod = AIDependencies.SPECIES_RESEARCH_MODIFIER.get(get_species_tag_grade(species_name, Tags.RESEARCH), 1.0)
@@ -194,18 +201,14 @@ def _calculate_planet_colonization_rating(
                     # still has extra value as an alternate location for solar generators
                     star_bonus += 10 * discount_multiplier * backup_factor
                     detail.append(
-                        "PRO_SOL_ORB_GEN BW Backup Location %.1f" % (10 * discount_multiplier * backup_factor))
+                        "PRO_SOL_ORB_GEN BW Backup Location %.1f" % (10 * discount_multiplier * backup_factor)
+                    )
                 elif fo.currentTurn() > 100:  # lock up this whole system
                     pass
                     # starBonus += 5  # TODO: how much?
                     # detail.append("PRO_SOL_ORB_GEN BW LockingDownSystem %.1f"%5)
             if system.starType in [fo.starType.yellow, fo.starType.orange]:
-                if has_claimed_star(
-                        fo.starType.blue,
-                        fo.starType.white,
-                        fo.starType.yellow,
-                        fo.starType.orange
-                ):
+                if has_claimed_star(fo.starType.blue, fo.starType.white, fo.starType.yellow, fo.starType.orange):
                     star_bonus += 10 * discount_multiplier
                     detail.append("PRO_SOL_ORB_GEN YO %.1f" % (10 * discount_multiplier))
                 else:
@@ -262,8 +265,7 @@ def _calculate_planet_colonization_rating(
         fixed_res += discount_multiplier * 6
         detail.append("ECCENTRIC_ORBIT_SPECIAL %.1f" % (discount_multiplier * 6))
 
-    if (mission_type == MissionType.OUTPOST or
-            (mission_type == MissionType.INVASION and not species_name)):
+    if mission_type == MissionType.OUTPOST or (mission_type == MissionType.INVASION and not species_name):
 
         if "ANCIENT_RUINS_SPECIAL" in planet.specials:  # TODO: add value for depleted ancient ruins
             retval += discount_multiplier * 30
@@ -279,8 +281,12 @@ def _calculate_planet_colonization_rating(
                 retval += fort_val
                 detail.append("%s %.1f" % (special, fort_val))
             elif special == "HONEYCOMB_SPECIAL":
-                honey_val = 0.3 * (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
-                                   population_with_industry_focus() * discount_multiplier)
+                honey_val = 0.3 * (
+                    AIDependencies.HONEYCOMB_IND_MULTIPLIER
+                    * AIDependencies.INDUSTRY_PER_POP
+                    * population_with_industry_focus()
+                    * discount_multiplier
+                )
                 retval += honey_val
                 detail.append("%s %.1f" % (special, honey_val))
         if planet.size == fo.planetSize.asteroids:
@@ -358,12 +364,16 @@ def _calculate_planet_colonization_rating(
                     gg_list.append(pid)
                     if other_planet.speciesName:
                         populated_gg_factor = 0.5
-                if pid != planet_id and other_planet.owner == empire.empireID and FocusType.FOCUS_INDUSTRY in list(
-                        other_planet.availableFoci) + [other_planet.focus]:
+                if (
+                    pid != planet_id
+                    and other_planet.owner == empire.empireID
+                    and FocusType.FOCUS_INDUSTRY in list(other_planet.availableFoci) + [other_planet.focus]
+                ):
                     orb_gen_val += per_gg * discount_multiplier
                     # Note, this reported value may not take into account a later adjustment from a populated gg
-                    gg_detail.append("GGG for %s %.1f" % (other_planet.name, discount_multiplier * per_gg *
-                                                          populated_gg_factor))
+                    gg_detail.append(
+                        "GGG for %s %.1f" % (other_planet.name, discount_multiplier * per_gg * populated_gg_factor)
+                    )
             if planet_id in sorted(gg_list)[:1]:
                 retval += orb_gen_val * populated_gg_factor
                 detail.extend(gg_detail)
@@ -398,8 +408,12 @@ def _calculate_planet_colonization_rating(
             retval += discount_multiplier * 50
             detail.append("Undepleted Ruins %.1f" % discount_multiplier * 50)
         if "HONEYCOMB_SPECIAL" in planet.specials:
-            honey_val = (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
-                         population_with_industry_focus() * discount_multiplier)
+            honey_val = (
+                AIDependencies.HONEYCOMB_IND_MULTIPLIER
+                * AIDependencies.INDUSTRY_PER_POP
+                * population_with_industry_focus()
+                * discount_multiplier
+            )
             if FocusType.FOCUS_INDUSTRY not in species_foci:
                 honey_val *= -0.3  # discourage settlement by colonizers not able to use Industry Focus
             retval += honey_val
@@ -464,8 +478,8 @@ def _calculate_planet_colonization_rating(
                 if species and species.canProduceShips:
                     asteroid_bonus = 30 * discount_multiplier * pilot_val
                     detail.append(
-                        "Asteroid ShipBuilding from %s %.1f" % (
-                            ast_shipyard_name, discount_multiplier * 30 * pilot_val))
+                        "Asteroid ShipBuilding from %s %.1f" % (ast_shipyard_name, discount_multiplier * 30 * pilot_val)
+                    )
         if gg_factor > 0.0:
             if tech_is_complete("PRO_ORBITAL_GEN") or "PRO_ORBITAL_GEN" in empire_research_list[:5]:
                 flat_industry += per_ggg * gg_factor  # will go into detailed industry projection
@@ -479,8 +493,10 @@ def _calculate_planet_colonization_rating(
             detail.append("Fixed max population of %.2f" % max_pop_size)
 
         if max_pop_size <= 0:
-            detail.append("Non-positive population projection for species '%s', so no colonization value" % (
-                species and species.name))
+            detail.append(
+                "Non-positive population projection for species '%s', so no colonization value"
+                % (species and species.name)
+            )
             return 0
 
         for special in ["MINERALS_SPECIAL", "CRYSTALS_SPECIAL", "ELERIUM_SPECIAL"]:
@@ -497,8 +513,9 @@ def _calculate_planet_colonization_rating(
             if tech_is_complete(tech) and (tech != AIDependencies.PRO_SINGULAR_GEN or has_blackhole):
                 ind_mult += ind_tech_map_before_species_mod[tech]
 
-        ind_mult = ind_mult * max(ind_tag_mod,
-                                  0.5 * (ind_tag_mod + res_tag_mod))  # TODO: report an actual calc for research value
+        ind_mult = ind_mult * max(
+            ind_tag_mod, 0.5 * (ind_tag_mod + res_tag_mod)
+        )  # TODO: report an actual calc for research value
 
         for tech in ind_tech_map_after_species_mod:
             if tech_is_complete(tech) and (tech != AIDependencies.PRO_SINGULAR_GEN or has_blackhole):
@@ -510,7 +527,7 @@ def _calculate_planet_colonization_rating(
                 fixed_ind += discount_multiplier * ind_tech_map_flat[tech]
 
         if FocusType.FOCUS_INDUSTRY in species.foci:
-            if 'TIDAL_LOCK_SPECIAL' in planet.specials:
+            if "TIDAL_LOCK_SPECIAL" in planet.specials:
                 ind_mult += 1
             max_ind_factor += AIDependencies.INDUSTRY_PER_POP * mining_bonus
             max_ind_factor += AIDependencies.INDUSTRY_PER_POP * ind_mult
@@ -520,15 +537,20 @@ def _calculate_planet_colonization_rating(
         elif tech_is_complete("GRO_LIFECYCLE_MAN"):
             cur_pop = 3.0
         cur_industry = planet.currentMeterValue(fo.meterType.industry)
-        ind_val = _project_ind_val(cur_pop, max_pop_size, cur_industry, max_ind_factor, flat_industry,
-                                   discount_multiplier)
+        ind_val = _project_ind_val(
+            cur_pop, max_pop_size, cur_industry, max_ind_factor, flat_industry, discount_multiplier
+        )
         detail.append("ind_val %.1f" % ind_val)
         # used to give preference to closest worlds
 
         for special in [spec for spec in planet_specials if spec in AIDependencies.metabolismBoosts]:
             # TODO: also consider potential future benefit re currently unpopulated planets
-            gbonus = discount_multiplier * AIDependencies.INDUSTRY_PER_POP * ind_mult * empire_metabolisms.get(
-                AIDependencies.metabolismBoosts[special], 0)  # due to growth applicability to other planets
+            gbonus = (
+                discount_multiplier
+                * AIDependencies.INDUSTRY_PER_POP
+                * ind_mult
+                * empire_metabolisms.get(AIDependencies.metabolismBoosts[special], 0)
+            )  # due to growth applicability to other planets
             growth_val += gbonus
             detail.append("Bonus for %s: %.1f" % (special, gbonus))
 
@@ -541,16 +563,25 @@ def _calculate_planet_colonization_rating(
                 research_bonus += discount_multiplier * 2 * AIDependencies.RESEARCH_PER_POP * max_pop_size * 25
                 detail.append("Temporal Anomaly Research")
             if AIDependencies.COMPUTRONIUM_SPECIAL in planet.specials:
-                comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *
-                              AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * population_with_research_focus() *
-                              discount_multiplier)
+                comp_bonus = (
+                    0.5
+                    * AIDependencies.TECH_COST_MULTIPLIER
+                    * AIDependencies.RESEARCH_PER_POP
+                    * AIDependencies.COMPUTRONIUM_RES_MULTIPLIER
+                    * population_with_research_focus()
+                    * discount_multiplier
+                )
                 if have_computronium():
                     comp_bonus *= backup_factor
                 research_bonus += comp_bonus
                 detail.append(AIDependencies.COMPUTRONIUM_SPECIAL)
 
-        retval += max(ind_val + asteroid_bonus + gas_giant_bonus, research_bonus,
-                      growth_val) + fixed_ind + fixed_res + supply_val
+        retval += (
+            max(ind_val + asteroid_bonus + gas_giant_bonus, research_bonus, growth_val)
+            + fixed_ind
+            + fixed_res
+            + supply_val
+        )
         if existing_presence:
             detail.append("preexisting system colony")
             retval = (retval + existing_presence * _get_defense_value(species_name)) * 2
@@ -569,10 +600,10 @@ def _determine_colony_threat_factor(planet_id, spec_name, existing_presence):
         return 0
     sys_status = get_aistate().systemStatus.get(planet.systemID, {})
     cur_best_mil_ship_rating = max(MilitaryAI.cur_best_mil_ship_rating(), 0.001)
-    local_defenses = sys_status.get('all_local_defenses', 0)
-    local_threat = sys_status.get('fleetThreat', 0) + sys_status.get('monsterThreat', 0)
-    neighbor_threat = sys_status.get('neighborThreat', 0)
-    jump2_threat = 0.6 * max(0, sys_status.get('jump2_threat', 0) - sys_status.get('my_neighbor_rating', 0))
+    local_defenses = sys_status.get("all_local_defenses", 0)
+    local_threat = sys_status.get("fleetThreat", 0) + sys_status.get("monsterThreat", 0)
+    neighbor_threat = sys_status.get("neighborThreat", 0)
+    jump2_threat = 0.6 * max(0, sys_status.get("jump2_threat", 0) - sys_status.get("my_neighbor_rating", 0))
     area_threat = neighbor_threat + jump2_threat
     area_threat *= 2.0 / (existing_presence + 2)  # once we have a foothold be less scared off by area threats
     # TODO: evaluate detectability by specific source of area threat, also consider if the subject AI already has
@@ -583,13 +614,19 @@ def _determine_colony_threat_factor(planet_id, spec_name, existing_presence):
         area_threat *= 0.05
     net_threat = max(0, local_threat + area_threat - local_defenses)
     # even if our military has lost all warships, rate planets as if we have at least one
-    reference_rating = max(cur_best_mil_ship_rating, MilitaryAI.get_preferred_max_military_portion_for_single_battle() *
-                           MilitaryAI.get_concentrated_tot_mil_rating())
+    reference_rating = max(
+        cur_best_mil_ship_rating,
+        MilitaryAI.get_preferred_max_military_portion_for_single_battle()
+        * MilitaryAI.get_concentrated_tot_mil_rating(),
+    )
     threat_factor = min(1.0, reference_rating / (net_threat + 0.001)) ** 2
     if threat_factor < 0.5:
         mil_ref_string = "Military rating reference: %.1f" % reference_rating
-        debug("Significant threat discounting %2d%% at %s, local defense: %.1f, local threat %.1f, area threat %.1f" %
-              (100 * (1 - threat_factor), planet.name, local_defenses, local_threat, area_threat) + mil_ref_string)
+        debug(
+            "Significant threat discounting %2d%% at %s, local defense: %.1f, local threat %.1f, area threat %.1f"
+            % (100 * (1 - threat_factor), planet.name, local_defenses, local_threat, area_threat)
+            + mil_ref_string
+        )
     return threat_factor
 
 
@@ -626,15 +663,15 @@ def _get_base_colony_defense_value():
     # not counting mine techs because their effects are per-system, not per-planet
 
     # for now, just combing these for rough composite factor
-    result = 4 * (0.1 + net_count) * (1 + regen_count/2.0) * (1 + garrison_count/4.0) * (1 + shield_count/2.0)
+    result = 4 * (0.1 + net_count) * (1 + regen_count / 2.0) * (1 + garrison_count / 4.0) * (1 + shield_count / 2.0)
     return result
 
 
 def _revise_threat_factor(
-        threat_factor: float,
-        planet_value: float,
-        system_id: int,
-        min_planet_value: float = MINIMUM_COLONY_SCORE,
+    threat_factor: float,
+    planet_value: float,
+    system_id: int,
+    min_planet_value: float = MINIMUM_COLONY_SCORE,
 ) -> float:
     """
     Check if the threat_factor should be made less severe.
@@ -655,9 +692,9 @@ def _revise_threat_factor(
     # the default value below for fleetThreat shouldn't come in to play, but is just to be absolutely sure we don't
     # send colony ships into some system for which we have not evaluated fleetThreat
     system_status = get_aistate().systemStatus.get(system_id, {})
-    system_fleet_treat = system_status.get('fleetThreat', 1000)
+    system_fleet_treat = system_status.get("fleetThreat", 1000)
     # TODO: consider taking area threat into account here.  Arguments can be made both ways, see discussion in PR2069
-    sys_total_threat = system_fleet_treat + system_status.get('monsterThreat', 0) + system_status.get('planetThreat', 0)
+    sys_total_threat = system_fleet_treat + system_status.get("monsterThreat", 0) + system_status.get("planetThreat", 0)
     if (MilitaryAI.get_concentrated_tot_mil_rating() > sys_total_threat) and (planet_value > 2 * min_planet_value):
         threat_factor = max(threat_factor, (min_planet_value + 1) / planet_value)
     return threat_factor
@@ -678,7 +715,7 @@ def _get_base_outpost_defense_value() -> float:
     # for now, just combing these for rough composite factor
     # since outposts have no infrastructure (until late game at least), many of these have less weight
     # than for colonies
-    result = 3 * (0.1 + net_count) * (1 + regen_count/3.0) * (1 + garrison_count/6.0) * (1 + shield_count/3.0)
+    result = 3 * (0.1 + net_count) * (1 + regen_count / 3.0) * (1 + garrison_count / 6.0) * (1 + shield_count / 3.0)
 
     return result
 

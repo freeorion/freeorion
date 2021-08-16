@@ -13,17 +13,20 @@ from freeorion_tools.caching import cache_for_current_turn
 class ShipCombatStats:
     """Stores all relevant stats of a ship for combat strength evaluation."""
 
-    def __init__(self, *,
-                 attacks: Tuple[Tuple[float, int]] = None,
-                 structure=1.0,
-                 shields=0.0,
-                 fighter_capacity=0,
-                 fighter_launch_rate=0,
-                 fighter_damage=0,
-                 flak_shots=0,
-                 has_interceptors=False,
-                 damage_vs_planets=0,
-                 has_bomber=False):
+    def __init__(
+        self,
+        *,
+        attacks: Tuple[Tuple[float, int]] = None,
+        structure=1.0,
+        shields=0.0,
+        fighter_capacity=0,
+        fighter_launch_rate=0,
+        fighter_damage=0,
+        flak_shots=0,
+        has_interceptors=False,
+        damage_vs_planets=0,
+        has_bomber=False,
+    ):
 
         self.structure = structure
         self.shields = shields
@@ -41,16 +44,16 @@ class ShipCombatStats:
 
     def __getstate__(self):
         return {
-            'structure': self.structure,
-            'shields': self.shields,
-            'attacks': self.attacks,
-            'fighter_capacity': self.fighter_capacity,
-            'fighter_launch_rate': self.fighter_launch_rate,
-            'fighter_damage': self.fighter_damage,
-            'flak_shots': self.flak_shots,
-            'has_interceptors': self.has_interceptors,
-            'damage_vs_planets': self.damage_vs_planets,
-            'has_bomber': self.has_bomber
+            "structure": self.structure,
+            "shields": self.shields,
+            "attacks": self.attacks,
+            "fighter_capacity": self.fighter_capacity,
+            "fighter_launch_rate": self.fighter_launch_rate,
+            "fighter_damage": self.fighter_damage,
+            "flak_shots": self.flak_shots,
+            "has_interceptors": self.has_interceptors,
+            "damage_vs_planets": self.damage_vs_planets,
+            "has_bomber": self.has_bomber,
         }
 
     def __hash__(self):
@@ -79,7 +82,7 @@ class ShipCombatStats:
         my_hit_points = self.structure
         if enemy_stats:
             my_hit_points *= self._calculate_shield_factor(enemy_stats.attacks, self.shields)
-            my_total_attack = sum(n * max(dmg - enemy_stats.shields, .001) for dmg, n in self.attacks.items())
+            my_total_attack = sum(n * max(dmg - enemy_stats.shields, 0.001) for dmg, n in self.attacks.items())
         else:
             my_total_attack = sum(n * dmg for dmg, n in self.attacks.items())
             my_hit_points += self.shields
@@ -98,8 +101,8 @@ class ShipCombatStats:
             return 1.0
         e_total_attack = sum(n * dmg for dmg, n in e_attacks.items())
         if e_total_attack:
-            e_net_attack = sum(n * max(dmg - my_shields, .001) for dmg, n in e_attacks.items())
-            e_net_attack = max(e_net_attack, .1 * e_total_attack)
+            e_net_attack = sum(n * max(dmg - my_shields, 0.001) for dmg, n in e_attacks.items())
+            e_net_attack = max(e_net_attack, 0.1 * e_total_attack)
             shield_factor = e_total_attack / e_net_attack
             return max(1.0, shield_factor)
         else:
@@ -121,7 +124,7 @@ class ShipCombatStats:
                 # now handle a bout with lower capacity launch
                 flying_fighters = (flying_fighters * survival_rate) + (self.fighter_capacity % self.fighter_launch_rate)
             else:
-                flying_fighters = (flying_fighters * survival_rate)
+                flying_fighters = flying_fighters * survival_rate
             total_fighter_damage += self.fighter_damage * flying_fighters
         return total_fighter_damage / num_bouts
 
@@ -204,5 +207,5 @@ def get_ship_combat_stats(ship_id: ShipId, max_stats=False) -> ShipCombatStats:
         flak_shots=flak_shots,
         has_interceptors=has_interceptors,
         damage_vs_planets=damage_vs_planets,
-        has_bomber=has_bomber
+        has_bomber=has_bomber,
     )

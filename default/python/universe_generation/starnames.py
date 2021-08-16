@@ -8,9 +8,32 @@ import options
 stargroup_words = []
 stargroup_chars = []
 stargroup_modifiers = []
-greek_letters = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa",
-                 "Lambda", "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho", "Sigma", "Tau", "Upsilon", "Phi",
-                 "Chi", "Psi", "Omega"]
+greek_letters = [
+    "Alpha",
+    "Beta",
+    "Gamma",
+    "Delta",
+    "Epsilon",
+    "Zeta",
+    "Eta",
+    "Theta",
+    "Iota",
+    "Kappa",
+    "Lambda",
+    "Mu",
+    "Nu",
+    "Xi",
+    "Omicron",
+    "Pi",
+    "Rho",
+    "Sigma",
+    "Tau",
+    "Upsilon",
+    "Phi",
+    "Chi",
+    "Psi",
+    "Omega",
+]
 
 
 def random_star_name():
@@ -41,7 +64,7 @@ def assign_clusters(points, ctrs):
         best_dist_sqr = 1e20
         best_ctr = 0
         for index_ctr, ctr in enumerate(ctrs):
-            this_dist_sqr = (ctr[0] - point[0])**2 + (ctr[1] - point[1])**2  # TODO use math.hypot, max
+            this_dist_sqr = (ctr[0] - point[0]) ** 2 + (ctr[1] - point[1]) ** 2  # TODO use math.hypot, max
             if this_dist_sqr < best_dist_sqr:
                 best_dist_sqr = this_dist_sqr
                 best_ctr = index_ctr
@@ -96,8 +119,11 @@ def name_group(group_list, group_name, star_type_assignments, planet_assignments
     not_deep, deep_space = check_deep_space(group_list, star_type_assignments, planet_assignments)
     these_systems = not_deep + deep_space  # so that unnamed deep space will get the later star group modifiers
     while len(modifiers) < group_size:  # emergency fallback
-        trial_mod = random.choice(stargroup_modifiers) + " " +\
-            "".join(random.sample(names.consonants + names.vowels, 3)).upper()
+        trial_mod = (
+            random.choice(stargroup_modifiers)
+            + " "
+            + "".join(random.sample(names.consonants + names.vowels, 3)).upper()
+        )
         if trial_mod not in modifiers:
             modifiers.append(trial_mod)
     if options.POSTFIX_STARGROUP_MODIFIERS:
@@ -150,12 +176,15 @@ def name_star_systems(system_list):
     target_indiv_ratio = [options.TARGET_INDIV_RATIO_SMALL, options.TARGET_INDIV_RATIO_LARGE][choice]
     # TODO improve the following calc to be more likely to hit target_indiv_ratio if more or less than
     # 50% potential_group_names used for groups
-    num_individual_stars = int(max(min(num_systems * target_indiv_ratio,
-                                       len(individual_names) + int(0.5 * len(potential_group_names))),
-                                   num_systems - 0.8 * len(stargroup_modifiers) *
-                                   (len(group_names) + int(0.5 * len(potential_group_names)))))
-    star_group_size = 1 + int((num_systems - num_individual_stars) /
-                              (max(1, len(group_names) + int(0.5 * len(potential_group_names)))))
+    num_individual_stars = int(
+        max(
+            min(num_systems * target_indiv_ratio, len(individual_names) + int(0.5 * len(potential_group_names))),
+            num_systems - 0.8 * len(stargroup_modifiers) * (len(group_names) + int(0.5 * len(potential_group_names))),
+        )
+    )
+    star_group_size = 1 + int(
+        (num_systems - num_individual_stars) / (max(1, len(group_names) + int(0.5 * len(potential_group_names))))
+    )
     # make group size a bit bigger than min necessary, at least a trio
     star_group_size = max(3, star_group_size)
     num_star_groups = 1 + int(num_systems / star_group_size)  # initial value
@@ -218,8 +247,10 @@ def name_star_systems(system_list):
     random.shuffle(potential_group_names)
     random.shuffle(individual_names)
     random.shuffle(group_names)
-    num_for_indiv = min(max(len(potential_group_names) // 2, num_individual_stars + 1 - len(individual_names)),
-                        len(potential_group_names))
+    num_for_indiv = min(
+        max(len(potential_group_names) // 2, num_individual_stars + 1 - len(individual_names)),
+        len(potential_group_names),
+    )
     individual_names.extend(potential_group_names[:num_for_indiv])
     group_names.extend(potential_group_names[num_for_indiv:])
 
@@ -233,8 +264,9 @@ def name_star_systems(system_list):
         group_names.extend([names.random_name(6) for _ in range(num_star_groups - len(group_names))])
     group_name_sample = random.sample(group_names, num_star_groups)
     for index_group, group_list in enumerate(sorted(star_groups.values())):
-        star_name_map.update(name_group(group_list, group_name_sample[index_group], star_type_assignments,
-                                        planet_assignments))
+        star_name_map.update(
+            name_group(group_list, group_name_sample[index_group], star_type_assignments, planet_assignments)
+        )
 
     # assign names from star_name_map to star systems
     for system in system_list:

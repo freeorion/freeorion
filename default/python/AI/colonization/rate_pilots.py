@@ -9,12 +9,12 @@ GREAT_PILOT_RATING = 6.0
 ULT_PILOT_RATING = 12.0
 
 _pilot_tags_rating = {
-        'NO': 1e-8,
-        'BAD': 0.75,
-        'GOOD': GOOD_PILOT_RATING,
-        'GREAT': GREAT_PILOT_RATING,
-        'ULTIMATE': ULT_PILOT_RATING
-    }
+    "NO": 1e-8,
+    "BAD": 0.75,
+    "GOOD": GOOD_PILOT_RATING,
+    "GREAT": GREAT_PILOT_RATING,
+    "ULTIMATE": ULT_PILOT_RATING,
+}
 
 
 @cache_for_session

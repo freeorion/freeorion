@@ -29,7 +29,8 @@ def calc_max_pop(planet, species, detail):
 
     tag_list = list(species.tags) if species else []
     pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(
-        get_species_tag_grade(species.name, Tags.POPULATION), 1.0)
+        get_species_tag_grade(species.name, Tags.POPULATION), 1.0
+    )
     if planet.type == fo.planetType.gasGiant and "GASEOUS" in tag_list:
         gaseous_adjustment = AIDependencies.GASEOUS_POP_FACTOR
         detail.append("GASEOUS adjustment: %.2f" % gaseous_adjustment)
@@ -107,7 +108,7 @@ def calc_max_pop(planet, species, detail):
         detail.append("boosts_PSM(%d from %s)" % (n_boosts, applicable_boosts))
 
     if planet.id in species.homeworlds:
-        detail.append('Homeworld (2)')
+        detail.append("Homeworld (2)")
         base_pop_not_modified_by_species += 2
 
     if AIDependencies.TAG_LIGHT_SENSITIVE in tag_list:
@@ -120,8 +121,13 @@ def calc_max_pop(planet, species, detail):
         species_effect = (pop_tag_mod - 1) * abs(base_pop_modified_by_species)
         gaseous_effect = (gaseous_adjustment - 1) * abs(base_pop_modified_by_species)
         mindless_effect = (mindless_adjustment - 1) * abs(base_pop_modified_by_species)
-        base_pop = (base_pop_not_modified_by_species + base_pop_modified_by_species
-                    + species_effect + gaseous_effect + mindless_effect)
+        base_pop = (
+            base_pop_not_modified_by_species
+            + base_pop_modified_by_species
+            + species_effect
+            + gaseous_effect
+            + mindless_effect
+        )
         return planet_size * base_pop + pop_const_mod
 
     target_pop = max_pop_size()
@@ -133,9 +139,16 @@ def calc_max_pop(planet, species, detail):
         target_pop = max_pop_size()
 
     detail.append("max_pop = base + size*[psm_early + species_mod*abs(psm_early) + psm_late]")
-    detail.append("        = %.2f + %d * [%.2f + %.2f*abs(%.2f) + %.2f]" % (
-                    pop_const_mod, planet_size, base_pop_modified_by_species,
-                    (pop_tag_mod+gaseous_adjustment-2), base_pop_modified_by_species,
-                    base_pop_not_modified_by_species))
+    detail.append(
+        "        = %.2f + %d * [%.2f + %.2f*abs(%.2f) + %.2f]"
+        % (
+            pop_const_mod,
+            planet_size,
+            base_pop_modified_by_species,
+            (pop_tag_mod + gaseous_adjustment - 2),
+            base_pop_modified_by_species,
+            base_pop_not_modified_by_species,
+        )
+    )
     detail.append("        = %.2f" % target_pop)
     return target_pop

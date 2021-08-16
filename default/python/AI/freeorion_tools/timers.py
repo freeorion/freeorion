@@ -24,7 +24,7 @@ except KeyError:
 
 
 def make_header(*args):
-    return ['%-8s ' % x for x in args]
+    return ["%-8s " % x for x in args]
 
 
 def _get_timers_dir():
@@ -42,6 +42,7 @@ class DummyTimer:
     """
     Dummy timer to be used if timers are disabled.
     """
+
     def __init__(self, *args, **kwargs):
         pass
 
@@ -71,8 +72,8 @@ class DummyTimer:
 
 
 class AILogTimer(Timer):
-    """A Timer with a FO AI engine dependent extension that logs timer results to a file each turn.
-    """
+    """A Timer with a FO AI engine dependent extension that logs timer results to a file each turn."""
+
     def __init__(self, timer_name, write_log=False):
         """
         Creates timer. Timer name is name that will be in logs header and part of filename if write_log=True
@@ -89,13 +90,13 @@ class AILogTimer(Timer):
             return
         if not self.log_name:
             empaire_id = fo.getEmpire().empireID - 1
-            self.log_name = os.path.join(_get_timers_dir(), '%s-%02d.txt' % (self.timer_name, empaire_id))
-            mode = 'w'  # empty file
+            self.log_name = os.path.join(_get_timers_dir(), "%s-%02d.txt" % (self.timer_name, empaire_id))
+            mode = "w"  # empty file
         else:
-            mode = 'a'
+            mode = "a"
         with open(self.log_name, mode) as f:
             f.write(text)
-            f.write('\n')
+            f.write("\n")
 
     def stop_print_and_clear(self):
         """
@@ -106,15 +107,15 @@ class AILogTimer(Timer):
 
         if self.write_log and DUMP_TO_FILE:
             turn = fo.currentTurn()
-            headers = make_header('Turn', *[x[0] for x in self.timers])
+            headers = make_header("Turn", *[x[0] for x in self.timers])
             if self.headers != headers:
-                self._write(''.join(headers) + '\n' + ''.join(['-' * (len(x) - 2) + '  ' for x in headers]))
+                self._write("".join(headers) + "\n" + "".join(["-" * (len(x) - 2) + "  " for x in headers]))
                 self.headers = headers
 
             row = []
             for header, val in zip(self.headers, [turn] + [x[1] for x in self.timers]):
-                row.append('%*s ' % (len(header) - 2, int(val)))
-            self._write(''.join(row))
+                row.append("%*s " % (len(header) - 2, int(val)))
+            self._write("".join(row))
 
 
 AITimer = AILogTimer if USE_TIMERS else DummyTimer

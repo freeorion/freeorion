@@ -34,10 +34,10 @@ def log_planet_count_dist(sys_list):
     planet_tally = sum(planet_size_dist.values())
 
     count_distribution_table = Table(
-        Text('planets in system'),
-        Text('num of systems'),
-        Number('% of systems', precession=1),
-        table_name='Planet Count Distribution',
+        Text("planets in system"),
+        Text("num of systems"),
+        Number("% of systems", precession=1),
+        table_name="Planet Count Distribution",
     )
     for planet_count, sys_count in planet_count_dist.items():
         count_distribution_table.add_row(
@@ -49,10 +49,10 @@ def log_planet_count_dist(sys_list):
     print()
 
     size_distribution = Table(
-        Text('size'),
-        Text('count'),
-        Number('% of planets', precession=1),
-        table_name='Planet Size Distribution',
+        Text("size"),
+        Text("count"),
+        Number("% of planets", precession=1),
+        table_name="Planet Size Distribution",
     )
     for planet_size, planet_count in sorted(planet_size_dist.items()):
         size_distribution.add_row(
@@ -72,9 +72,9 @@ def log_planet_type_summary(sys_list):
     planet_total = sum(planet_type_summary_table.values())
 
     type_summary_table = Table(
-        Text('planet type', align='<'),
-        Number('% of planets', precession=1),
-        table_name='Planet Type Summary for a total of %d placed planets' % planet_total,
+        Text("planet type", align="<"),
+        Number("% of planets", precession=1),
+        table_name="Planet Type Summary for a total of %d placed planets" % planet_total,
     )
 
     for planet_type, planet_count in sorted(planet_type_summary_table.items()):
@@ -92,13 +92,15 @@ def log_species_summary(native_freq):
     exp_count = num_empires // num_species
 
     species_summary_table = Table(
-        Text('species'),
-        Text('count'),
-        Number('%', precession=1),
-        table_name=('Empire Starting Species Summary\n'
-                    'Approximately %d to %d empires expected per species\n'
-                    '%d Empires and %d playable species') % (max(0, exp_count - 1), exp_count + 1,
-                                                             num_empires, num_species),
+        Text("species"),
+        Text("count"),
+        Number("%", precession=1),
+        table_name=(
+            "Empire Starting Species Summary\n"
+            "Approximately %d to %d empires expected per species\n"
+            "%d Empires and %d playable species"
+        )
+        % (max(0, exp_count - 1), exp_count + 1, num_empires, num_species),
     )
 
     for species, count in sorted(empire_species.items()):
@@ -116,12 +118,12 @@ def log_species_summary(native_freq):
     if native_chance <= 0:
         return
     native_table = Table(
-        Text('settled natives'),
-        Text('on planets'),
-        Number('total', precession=1),
-        Number('actual', precession=1),
-        Number('expected', precession=1),
-        Sequence('planet types'),
+        Text("settled natives"),
+        Text("on planets"),
+        Number("total", precession=1),
+        Number("actual", precession=1),
+        Number("expected", precession=1),
+        Sequence("planet types"),
         table_name="Natives Placement Summary (native frequency: %.1f%%)" % (100 * native_chance),
     )
 
@@ -133,17 +135,17 @@ def log_species_summary(native_freq):
             for p_type in natives.planet_types_for_natives[species]:
                 settleable_planets += potential_native_planet_summary[p_type]
                 expectation_tally += (
-                        native_chance *
-                        100.0 *
-                        potential_native_planet_summary[p_type] /
-                        (1E-10 + len(natives.natives_for_planet_type[p_type]))
+                    native_chance
+                    * 100.0
+                    * potential_native_planet_summary[p_type]
+                    / (1e-10 + len(natives.natives_for_planet_type[p_type]))
                 )
-            expectation = expectation_tally / (1E-10 + settleable_planets)
+            expectation = expectation_tally / (1e-10 + settleable_planets)
             native_table.add_row(
                 species,
                 species_summary[species],
-                100.0 * species_summary[species] / (1E-10 + native_potential_planet_total),
-                100.0 * species_summary[species] / (1E-10 + settleable_planets),
+                100.0 * species_summary[species] / (1e-10 + native_potential_planet_total),
+                100.0 * species_summary[species] / (1e-10 + settleable_planets),
                 expectation,
                 [str(p_t) for p_t in natives.planet_types_for_natives[species]],
             )
@@ -153,18 +155,20 @@ def log_species_summary(native_freq):
 
     native_settled_planet_total = sum(settled_native_planet_summary.values())
     type_summary_table = Table(
-        Text('planet type'),
-        Number('potential (% of tot)', precession=1),
-        Number('settled (% of potential)', precession=1),
-        table_name=("Planet Type Summary for Native Planets (native frequency: %.1f%%)\n"
-                    "Totals: native_potential_planet_total: %s; native_settled_planet_total %s"
-                    ) % (100 * native_chance, native_potential_planet_total, native_settled_planet_total),
+        Text("planet type"),
+        Number("potential (% of tot)", precession=1),
+        Number("settled (% of potential)", precession=1),
+        table_name=(
+            "Planet Type Summary for Native Planets (native frequency: %.1f%%)\n"
+            "Totals: native_potential_planet_total: %s; native_settled_planet_total %s"
+        )
+        % (100 * native_chance, native_potential_planet_total, native_settled_planet_total),
     )
 
     for planet_type, planet_count in sorted(potential_native_planet_summary.items()):
         settled_planet_count = settled_native_planet_summary.get(planet_type, 0)
-        potential_percent = 100.0 * planet_count / (1E-10 + native_potential_planet_total)
-        settled_percent = 100.0 * settled_planet_count / (1E-10 + planet_count)
+        potential_percent = 100.0 * planet_count / (1e-10 + native_potential_planet_total)
+        settled_percent = 100.0 * settled_planet_count / (1e-10 + planet_count)
         type_summary_table.add_row(
             planet_type.name,
             potential_percent,
@@ -176,9 +180,9 @@ def log_species_summary(native_freq):
 
 def log_monsters_summary(monster_freq):
     monster_place_table = Table(
-        Text('monster'),
-        Text('count'),
-        table_name='Monster placement',
+        Text("monster"),
+        Text("count"),
+        table_name="Monster placement",
     )
     for monster, counter in sorted(monsters_summary):
         monster_place_table.add_row(monster, counter)
@@ -187,14 +191,16 @@ def log_monsters_summary(monster_freq):
 
     monster_chance = universe_tables.MONSTER_FREQUENCY[monster_freq]
     monster_table = Table(
-        Text('monster'),
-        Number('chance'),
-        Text('attempts'),
-        Text('number placed'),
-        Text('number valid sys locs'),
-        Text('number valid nest planet locs'),
-        table_name=("Space Monsters Placement Summary\n"
-                    "Tracked Monster and Nest Summary (base monster freq: %4.1f%%)" % (100 * monster_chance))
+        Text("monster"),
+        Number("chance"),
+        Text("attempts"),
+        Text("number placed"),
+        Text("number valid sys locs"),
+        Text("number valid nest planet locs"),
+        table_name=(
+            "Space Monsters Placement Summary\n"
+            "Tracked Monster and Nest Summary (base monster freq: %4.1f%%)" % (100 * monster_chance)
+        ),
     )
     for monster in sorted(tracked_monsters_summary):
         monster_table.add_row(
@@ -211,8 +217,8 @@ def log_monsters_summary(monster_freq):
 
 def log_specials_summary():
     special_placement_count_table = Table(
-        Text('special'),
-        Text('times placed'),
+        Text("special"),
+        Text("times placed"),
         table_name="Special Placement Summary",
     )
     for special in sorted(specials_summary):
@@ -221,9 +227,9 @@ def log_specials_summary():
     print()
 
     special_placement = Table(
-        Text('count'),
-        Text('tally'),
-        Number('% of objects', precession=1),
+        Text("count"),
+        Text("tally"),
+        Number("% of objects", precession=1),
         table_name="Specials Count(Repeat) Distribution",
     )
     objects_tally = sum(specials_repeat_dist.values())
@@ -231,7 +237,7 @@ def log_specials_summary():
         special_placement.add_row(
             number,
             tally,
-            100.0 * tally / (1E-10 + objects_tally),
+            100.0 * tally / (1e-10 + objects_tally),
         )
     special_placement.print_table(print)
     print()
@@ -241,12 +247,12 @@ def log_systems():
     universe = fo.get_universe()
 
     systems_table = Table(
-        Text('id'),
-        Text('name'),
-        Sequence('planets'),
-        Sequence('connections'),
-        Text('star'),
-        table_name='System summary',
+        Text("id"),
+        Text("name"),
+        Sequence("planets"),
+        Sequence("connections"),
+        Text("star"),
+        table_name="System summary",
     )
     for sid in fo.get_systems():
         system = universe.getSystem(sid)
@@ -263,14 +269,14 @@ def log_systems():
 def log_planets():
     universe = fo.get_universe()
     planets_table = Table(
-        Text('id'),
-        Text('name'),
-        Text('system'),
-        Text('type'),
-        Sequence('specials'),
-        Text('species'),
-        Sequence('buildings'),
-        table_name='Planets summary',
+        Text("id"),
+        Text("name"),
+        Text("system"),
+        Text("type"),
+        Sequence("specials"),
+        Text("species"),
+        Sequence("buildings"),
+        table_name="Planets summary",
     )
     # group planets by system
     for sid in fo.get_systems():
@@ -280,7 +286,7 @@ def log_planets():
             planet_type = fo.planet_get_type(pid).name
             planet_size = fo.planet_get_size(pid).name
             if planet_type != planet_size:
-                planet_type = '%s %s' % (planet_type, planet_size)
+                planet_type = "%s %s" % (planet_type, planet_size)
 
             buildings = [universe.getBuilding(x).name for x in planet.buildingIDs]
             planets_table.add_row(

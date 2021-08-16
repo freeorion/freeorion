@@ -49,7 +49,6 @@ def get_priority_production_types():
         PriorityType.PRODUCTION_INVASION,
         PriorityType.PRODUCTION_MILITARY,
         PriorityType.PRODUCTION_BUILDINGS,
-
     ]
 
 

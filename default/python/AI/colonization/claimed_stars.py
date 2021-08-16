@@ -34,9 +34,7 @@ def _get_claimed_stars() -> Mapping["fo.starType", Set[SystemId]]:
     """
     claimed_stars = defaultdict(set)
 
-    claimed_stars.update(
-        {int(s_type): set(AIstate.empireStars[s_type]) for s_type in AIstate.empireStars}
-    )
+    claimed_stars.update({int(s_type): set(AIstate.empireStars[s_type]) for s_type in AIstate.empireStars})
 
     universe = fo.getUniverse()
     for sys_id in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs):

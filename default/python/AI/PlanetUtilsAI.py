@@ -32,7 +32,7 @@ def planet_string(planet_ids: Union[PlanetId, List[PlanetId]]) -> str:
 
     def _safe_planet_name(planet_id):
         planet = fo.getUniverse().getPlanet(planet_id)
-        return fo.to_str('P', planet_id, (planet and planet.name) or "?")
+        return fo.to_str("P", planet_id, (planet and planet.name) or "?")
 
     if isinstance(planet_ids, int):
         return _safe_planet_name(planet_ids)
@@ -55,8 +55,10 @@ def get_capital() -> PlanetId:
         if homeworld.owner == empire_id:
             return capital_id
         else:
-            debug("Nominal Capitol %s does not appear to be owned by empire %d %s" % (
-                homeworld.name, empire_id, empire.name))
+            debug(
+                "Nominal Capitol %s does not appear to be owned by empire %d %s"
+                % (homeworld.name, empire_id, empire.name)
+            )
     empire_owned_planet_ids = get_owned_planets_by_empire(universe.planetIDs)
     peopled_planets = get_populated_planet_ids(empire_owned_planet_ids)
     if not peopled_planets:
@@ -117,8 +119,12 @@ def get_owned_planets_by_empire(planet_ids):
     for pid in planet_ids:
         planet = universe.getPlanet(pid)
         # even if our universe says we own it, if we can't see it we must have lost it
-        if (planet and not planet.unowned and planet.ownedBy(empire_id)
-                and universe.getVisibility(pid, empire_id) >= fo.visibility.partial):
+        if (
+            planet
+            and not planet.unowned
+            and planet.ownedBy(empire_id)
+            and universe.getVisibility(pid, empire_id) >= fo.visibility.partial
+        ):
             result.append(pid)
     return result
 

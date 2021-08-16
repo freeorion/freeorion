@@ -6,15 +6,15 @@ def _get_member_info(name, member):
     type_ = str(type(member))
 
     info = {
-        'type': type_,
+        "type": type_,
     }
     if isinstance(member, property):
-        info['getter'] = getdoc(member.fget)
+        info["getter"] = getdoc(member.fget)
     elif isroutine(member):
-        info['routine'] = (member.__name__, getdoc(member))
+        info["routine"] = (member.__name__, getdoc(member))
     elif isinstance(member, (int, str, float, list, tuple, dict, set, frozenset)):
         pass  # we don't need any
-    elif 'freeOrionAIInterface' in type_ or "freeorion" in type_:
+    elif "freeOrionAIInterface" in type_ or "freeorion" in type_:
         pass  # TODO we got some instance here, probably we should inspect it too.
     else:
         # instance properties will be already resolved
@@ -40,7 +40,7 @@ def _getmembers(obj, predicate=None):
                 str(e),
                 "..." * 20,
             ]
-            error('\n'.join(message))
+            error("\n".join(message))
             continue
         if not predicate or predicate(value):
             results.append((key, value))

@@ -13,29 +13,29 @@ def _chat_printer(message: Any):
 
 
 debug_chat_handler_local_vars = _shell_locals = [
-        ShellVariable(
-            variable="fo",
-            expression="freeOrionAIInterface",
-            description="fo",
-            imports=('import freeOrionAIInterface', ),
-        ),
-        ShellVariable(
-            variable='ai',
-            expression='get_aistate()',
-            description='aistate',
-            imports=("from aistate_interface import get_aistate",),
-        ),
-        ShellVariable(
-            variable='u',
-            expression='fo.getUniverse()',
-            description='universe',
-        ),
-        ShellVariable(
-            variable='e',
-            expression='fo.getEmpire()',
-            description='empire',
-        ),
-    ]
+    ShellVariable(
+        variable="fo",
+        expression="freeOrionAIInterface",
+        description="fo",
+        imports=("import freeOrionAIInterface",),
+    ),
+    ShellVariable(
+        variable="ai",
+        expression="get_aistate()",
+        description="aistate",
+        imports=("from aistate_interface import get_aistate",),
+    ),
+    ShellVariable(
+        variable="u",
+        expression="fo.getUniverse()",
+        description="universe",
+    ),
+    ShellVariable(
+        variable="e",
+        expression="fo.getEmpire()",
+        description="empire",
+    ),
+]
 
 
 class Provider:
@@ -71,17 +71,18 @@ class DebugChatHandler(ChatHandlerBase):
     This handler allows executing arbitrary python code for the AIs players.
     Mainly it is supposed to be used for debugging purposed, but can be used for cheating too.
     """
-    _entering_debug_message = 'Entering debug mode'
-    _exit_debug_message = 'Exiting debug mode'
+
+    _entering_debug_message = "Entering debug mode"
+    _exit_debug_message = "Exiting debug mode"
 
     def __init__(
-            self,
-            empire_id: int,
-            chat_printer=_chat_printer,
-            log_printer=print,
-            formatter=ChatFormatter(),
-            shell_locals=None,
-            provider=None,
+        self,
+        empire_id: int,
+        chat_printer=_chat_printer,
+        log_printer=print,
+        formatter=ChatFormatter(),
+        shell_locals=None,
+        provider=None,
     ):
         if not shell_locals:
             shell_locals = debug_chat_handler_local_vars
@@ -98,9 +99,9 @@ class DebugChatHandler(ChatHandlerBase):
         self._chat_printer = chat_printer
 
     def send_notification(
-            self,
-            chat_message: Any = None,
-            log_message: Any = None,
+        self,
+        chat_message: Any = None,
+        log_message: Any = None,
     ):
         """Handle user notifications wia logs and chat."""
         if chat_message is not None:
@@ -109,8 +110,7 @@ class DebugChatHandler(ChatHandlerBase):
             self._log_printer(log_message)
 
     def process_message(self, sender_id: int, message: str) -> bool:
-        host_id = [x for x in self._provider.get_player_ids() if
-                   self._provider.is_host(x)][0]
+        host_id = [x for x in self._provider.get_player_ids() if self._provider.is_host(x)][0]
 
         if sender_id != host_id:
             return False  # only user can send debug message
@@ -121,18 +121,18 @@ class DebugChatHandler(ChatHandlerBase):
             return self._handle_chat_commands(message)
 
     def _handle_chat_commands(self, message):
-        if message.startswith('start'):
+        if message.startswith("start"):
             self._handle_start(message)
-        elif message == 'help' and not self._debug_mode:
+        elif message == "help" and not self._debug_mode:
             self._handle_help()
-        elif message == 'stop':
+        elif message == "stop":
             pass
         else:
             return False
         return True
 
     def _handle_debug_commands(self, message):
-        if message == 'stop':
+        if message == "stop":
             self._handle_stop()
         else:
             self._handle_shell_input(message)
@@ -182,22 +182,21 @@ class DebugChatHandler(ChatHandlerBase):
 
         start_message = [
             self._entering_debug_message,
-            "Print %s to exit." % self._formatter.blue('stop'),
+            "Print %s to exit." % self._formatter.blue("stop"),
             "Local variables:",
         ]
 
         variables_description = self._interpreter.set_locals()
         for var, name in variables_description:
             start_message.append(
-                '  %s%s%s' % (
+                "  %s%s%s"
+                % (
                     self._formatter.underline(self._formatter.yellow(var)),
-                    ' ' * (3 - len(var)),  # cannot use normal formatting because of tags
-                    name
+                    " " * (3 - len(var)),  # cannot use normal formatting because of tags
+                    name,
                 )
             )
-        self.send_notification(
-            chat_message="\n".join(self._formatter.white(x) for x in start_message)
-        )
+        self.send_notification(chat_message="\n".join(self._formatter.white(x) for x in start_message))
 
     def _ai_should_respond(self):
         """
@@ -206,8 +205,7 @@ class DebugChatHandler(ChatHandlerBase):
         To avoid chat pollution only one AI should respond to the message.
         AI player with the smallest id is selected.
         """
-        ais = [x for x in self._provider.get_player_ids() if
-               not self._provider.is_host(x)]
+        ais = [x for x in self._provider.get_player_ids() if not self._provider.is_host(x)]
         return ais[0] == self._provider.player_id()
 
     def _handle_help(self):
@@ -217,17 +215,16 @@ class DebugChatHandler(ChatHandlerBase):
         help_message = [
             self._formatter.white("Chat commands:"),
             self._formatter.white(
-                "  " + self._formatter.underline(
-                    self._formatter.blue('start <id>')) + ": start debug for selected empire"),
+                "  "
+                + self._formatter.underline(self._formatter.blue("start <id>"))
+                + ": start debug for selected empire"
+            ),
         ]
         for player_id in self._provider.get_player_ids():
             if not self._provider.is_host(player_id):
-                help_message.append(
-                    self._get_empire_string(player_id)
-                )
-        self._formatter.white(
-            "  " + self._formatter.underline(self._formatter.blue('stop')) + ": stop debug"),
-        self.send_notification(chat_message='\n'.join(help_message))
+                help_message.append(self._get_empire_string(player_id))
+        self._formatter.white("  " + self._formatter.underline(self._formatter.blue("stop")) + ": stop debug"),
+        self.send_notification(chat_message="\n".join(help_message))
 
     def _get_empire_string(self, player_id):
         empire_id = self._provider.get_empire_id(player_id)
@@ -235,9 +232,8 @@ class DebugChatHandler(ChatHandlerBase):
         color = self._provider.get_empire_color(player_id)
 
         return (
-            "    " +
-            self._formatter.underline(self._formatter.blue(empire_id)) +
-            self._formatter.colored(color, " %s" % name) +
-            self._formatter.white(
-                ' by %s' % self._provider.player_name(player_id))
+            "    "
+            + self._formatter.underline(self._formatter.blue(empire_id))
+            + self._formatter.colored(color, " %s" % name)
+            + self._formatter.white(" by %s" % self._provider.player_name(player_id))
         )

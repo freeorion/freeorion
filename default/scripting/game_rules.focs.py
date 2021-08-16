@@ -5,7 +5,8 @@ GameRule(
     type=float,
     default=1.0,
     min=0.1,
-    max=10.0)
+    max=10.0,
+)
 
 GameRule(
     name="RULE_SHIP_PART_COST_FACTOR",
@@ -14,7 +15,8 @@ GameRule(
     type=float,
     default=1.0,
     min=0.1,
-    max=10.0)
+    max=10.0,
+)
 
 GameRule(
     name="RULE_TECH_COST_FACTOR",
@@ -23,7 +25,8 @@ GameRule(
     type=float,
     default=2.0,
     min=0.1,
-    max=10.0)
+    max=10.0,
+)
 
 GameRule(
     name="RULE_BUILDING_COST_FACTOR",
@@ -32,7 +35,8 @@ GameRule(
     type=float,
     default=1.0,
     min=0.1,
-    max=10.0)
+    max=10.0,
+)
 
 GameRule(
     name="RULE_SINGULARITY_COST_FACTOR",
@@ -41,21 +45,24 @@ GameRule(
     type=float,
     default=1.0,
     min=0.1,
-    max=10.0)
+    max=10.0,
+)
 
 GameRule(
     name="RULE_ENABLE_EXPERIMENTORS",
     description="RULE_ENABLE_EXPERIMENTORS_DESC",
     category="CONTENT",
     type=bool,
-    default=True)
+    default=True,
+)
 
 GameRule(
     name="RULE_ENABLE_SUPER_TESTER",
     description="RULE_ENABLE_SUPER_TESTER_DESC",
     category="CONTENT",
     type=bool,
-    default=True)
+    default=True,
+)
 
 GameRule(
     name="RULE_TEST_STRING",
@@ -63,7 +70,8 @@ GameRule(
     category="TEST",
     type=str,
     default="PLAYER",
-    allowed=["MODERATOR", "OBSERVER", "PLAYER", "AI_PLAYER"])
+    allowed=["MODERATOR", "OBSERVER", "PLAYER", "AI_PLAYER"],
+)
 
 GameRule(
     name="RULE_HABITABLE_SIZE_TINY",
@@ -72,7 +80,8 @@ GameRule(
     type=int,
     default=1,
     min=0,
-    max=999)
+    max=999,
+)
 
 GameRule(
     name="RULE_HABITABLE_SIZE_SMALL",
@@ -81,7 +90,8 @@ GameRule(
     type=int,
     default=2,
     min=0,
-    max=999)
+    max=999,
+)
 
 GameRule(
     name="RULE_HABITABLE_SIZE_MEDIUM",
@@ -90,7 +100,8 @@ GameRule(
     type=int,
     default=3,
     min=0,
-    max=999)
+    max=999,
+)
 
 GameRule(
     name="RULE_HABITABLE_SIZE_LARGE",
@@ -99,7 +110,8 @@ GameRule(
     type=int,
     default=4,
     min=0,
-    max=999)
+    max=999,
+)
 
 GameRule(
     name="RULE_HABITABLE_SIZE_HUGE",
@@ -108,7 +120,8 @@ GameRule(
     type=int,
     default=5,
     min=0,
-    max=999)
+    max=999,
+)
 
 GameRule(
     name="RULE_HABITABLE_SIZE_ASTEROIDS",
@@ -117,7 +130,8 @@ GameRule(
     type=int,
     default=3,
     min=0,
-    max=999)
+    max=999,
+)
 
 GameRule(
     name="RULE_HABITABLE_SIZE_GASGIANT",
@@ -126,21 +140,24 @@ GameRule(
     type=int,
     default=6,
     min=0,
-    max=999)
+    max=999,
+)
 
 GameRule(
     name="RULE_SHIP_PART_BASED_UPKEEP",
     description="RULE_SHIP_PART_BASED_UPKEEP_DESC",
     category="BALANCE",
     type=bool,
-    default=False)
+    default=False,
+)
 
 GameRule(
     name="RULE_ENABLE_ALLIED_REPAIR",
     description="RULE_ENABLE_ALLIED_REPAIR_DESC",
     category="MULTIPLAYER",
     type=bool,
-    default=False)
+    default=False,
+)
 
 GameRule(
     name="RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE",
@@ -149,4 +166,5 @@ GameRule(
     type=int,
     default=3,
     min=1,
-    max=20)
+    max=20,
+)

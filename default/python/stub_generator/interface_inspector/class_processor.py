@@ -8,14 +8,7 @@ from stub_generator.interface_inspector.inspection_helpers import (
 
 
 class ClassInfo:
-    def __init__(
-            self,
-            name: str,
-            attributes: Dict[str, Any],
-            doc: str,
-            parents: List[str]
-
-    ):
+    def __init__(self, name: str, attributes: Dict[str, Any], doc: str, parents: List[str]):
         self.name = name
         self.attributes = attributes
         self.doc = doc
@@ -29,6 +22,6 @@ def inspect_class(class_name, obj):
     attrs = {}
 
     for attr_name, member in _getmembers(obj):
-        if attr_name not in parent_attrs + ['__module__', '__instance_size__']:
-            attrs[attr_name] = _get_member_info('%s.%s' % (class_name, attr_name), member)
+        if attr_name not in parent_attrs + ["__module__", "__instance_size__"]:
+            attrs[attr_name] = _get_member_info("%s.%s" % (class_name, attr_name), member)
     return ClassInfo(class_name, attrs, getdoc(obj), [str(parent.__name__) for parent in parents])

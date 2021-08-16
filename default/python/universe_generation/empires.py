@@ -96,6 +96,7 @@ def min_planets_in_vicinity_limit(num_systems):
 
 class HomeSystemFinder:
     """Finds a set of home systems with a least ''num_home_systems'' systems."""
+
     def __init__(self, _num_home_systems):
         # cache of sytem merits
         self.system_merit = {}
@@ -123,8 +124,7 @@ class HomeSystemFinder:
                 self.system_merit[system] = calculate_home_system_merit(system)
 
         # The list of merits and systems sorted in descending order by merit.
-        all_merit_system = sorted([(self.system_merit[s], s)
-                                   for s in systems_pool], reverse=True)
+        all_merit_system = sorted([(self.system_merit[s], s) for s in systems_pool], reverse=True)
 
         current_merit_lower_bound = 0
         best_candidate = []
@@ -157,10 +157,13 @@ class HomeSystemFinder:
 
             if len(local_pool) < self.num_home_systems:
                 if not best_candidate:
-                    print("Failing in find_home_systems_for_min_jump_distance because "
-                          "current_merit_lower_bound = {} trims local pool to {} systems "
-                          "which is less than num_home_systems {}.".format(
-                              current_merit_lower_bound, len(local_pool), self.num_home_systems))
+                    print(
+                        "Failing in find_home_systems_for_min_jump_distance because "
+                        "current_merit_lower_bound = {} trims local pool to {} systems "
+                        "which is less than num_home_systems {}.".format(
+                            current_merit_lower_bound, len(local_pool), self.num_home_systems
+                        )
+                    )
                 break
 
             attempts = min(attempts - 1, len(local_pool))
@@ -182,21 +185,23 @@ class HomeSystemFinder:
 
             # Calculate the merit of the current attempt.  If it is the best so far
             # keep it and update the merit_threshold
-            merit_system = sorted([(self.system_merit[s], s)
-                                   for s in candidate], reverse=True)[:self.num_home_systems]
+            merit_system = sorted([(self.system_merit[s], s) for s in candidate], reverse=True)[: self.num_home_systems]
 
             (merit, system) = merit_system[-1]
 
             # If we have a better candidate, set the new lower bound and try for a better candidate.
             if merit > current_merit_lower_bound:
-                print("Home system set merit lower bound improved from {} to "
-                      "{}".format(current_merit_lower_bound, merit))
+                print(
+                    "Home system set merit lower bound improved from {} to "
+                    "{}".format(current_merit_lower_bound, merit)
+                )
                 current_merit_lower_bound = merit
                 best_candidate = [s for (_, s) in merit_system]
 
                 # Quit successfully if the lowest merit system meets the minimum threshold
                 if merit >= min_planets_in_vicinity_limit(
-                        len(fo.systems_within_jumps_unordered(HS_VICINITY_RANGE, [system]))):
+                    len(fo.systems_within_jumps_unordered(HS_VICINITY_RANGE, [system]))
+                ):
                     break
 
         return best_candidate
@@ -267,7 +272,7 @@ def add_planets_to_vicinity(vicinity, num_planets, gsd):
         star_types_real,
         (fo.starType.noStar,),
         (fo.starType.neutron,),
-        (fo.starType.blackHole,)
+        (fo.starType.blackHole,),
     ]
 
     # store the free orbits as a list of tuples of (system, orbit)
@@ -347,8 +352,9 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     #     and with large galaxies an excessive amount of time can be used in failed attempts
     # b.) lower than the minimum jump distance limit that should be considered high priority (see options.py),
     #     otherwise no attempt at all would be made to enforce the other requirements for home systems (see below)
-    min_jumps = min(HS_MAX_JUMP_DISTANCE_LIMIT, max(int(len(systems) / (num_home_systems * 2)),
-                                                    HS_MIN_DISTANCE_PRIORITY_LIMIT))
+    min_jumps = min(
+        HS_MAX_JUMP_DISTANCE_LIMIT, max(int(len(systems) / (num_home_systems * 2)), HS_MIN_DISTANCE_PRIORITY_LIMIT)
+    )
 
     # home systems must have a certain minimum of systems and planets in their near vicinity
     # we will try to select our home systems from systems that match this criteria, if that fails, we will select our
@@ -367,8 +373,9 @@ def compile_home_system_list(num_home_systems, systems, gsd):
             pool_matching_sys_limit.append(system)
             if count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity)):
                 pool_matching_sys_and_planet_limit.append(system)
-    print(len(pool_matching_sys_and_planet_limit),
-          "systems meet the min systems and planets in the near vicinity limit")
+    print(
+        len(pool_matching_sys_and_planet_limit), "systems meet the min systems and planets in the near vicinity limit"
+    )
     print(len(pool_matching_sys_limit), "systems meet the min systems in the near vicinity limit")
 
     # now try to pick the requested number of home systems
@@ -400,8 +407,10 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     # check if the selection process delivered a list with enough home systems
     # if not, our galaxy obviously is too crowded, report an error and return an empty list
     if len(home_systems) < num_home_systems:
-        report_error("Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems"
-                     % (num_home_systems, len(systems)))
+        report_error(
+            "Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems"
+            % (num_home_systems, len(systems))
+        )
         return []
 
     # check if we got more home systems than we requested
@@ -419,17 +428,27 @@ def compile_home_system_list(num_home_systems, systems, gsd):
         # if this home system has no "real" star, change star type to a randomly selected "real" star
         if fo.sys_get_star_type(home_system) not in star_types_real:
             star_type = random.choice(star_types_real)
-            print("Home system", home_system, "has star type", fo.sys_get_star_type(home_system), ", changing that to",
-                  star_type)
+            print(
+                "Home system",
+                home_system,
+                "has star type",
+                fo.sys_get_star_type(home_system),
+                ", changing that to",
+                star_type,
+            )
             fo.sys_set_star_type(home_system, star_type)
 
         # if this home system has no planets, create one in a random orbit
         # we take random values for type and size, as these will be set to suitable values later
         if not fo.sys_get_planets(home_system):
             print("Home system", home_system, "has no planets, adding one")
-            planet = fo.create_planet(random.choice(planet_sizes_real),
-                                      random.choice(planet_types_real),
-                                      home_system, random.randint(0, fo.sys_get_num_orbits(home_system) - 1), "")
+            planet = fo.create_planet(
+                random.choice(planet_sizes_real),
+                random.choice(planet_types_real),
+                home_system,
+                random.randint(0, fo.sys_get_num_orbits(home_system) - 1),
+                "",
+            )
             # if we couldn't create the planet, report an error and return an empty list
             if planet == fo.invalid_object():
                 report_error("Python generate_home_system_list: couldn't create planet in home system")
@@ -444,8 +463,16 @@ def compile_home_system_list(num_home_systems, systems, gsd):
         num_systems_in_vicinity = len(systems_in_vicinity)
         num_planets_in_vicinity = count_planets_in_systems(systems_in_vicinity)
         num_planets_to_add = min_planets_in_vicinity_limit(num_systems_in_vicinity) - num_planets_in_vicinity
-        print("Home system", home_system, "has", num_systems_in_vicinity, "systems and", num_planets_in_vicinity,
-              "planets in the near vicinity, required minimum:", min_planets_in_vicinity_limit(num_systems_in_vicinity))
+        print(
+            "Home system",
+            home_system,
+            "has",
+            num_systems_in_vicinity,
+            "systems and",
+            num_planets_in_vicinity,
+            "planets in the near vicinity, required minimum:",
+            min_planets_in_vicinity_limit(num_systems_in_vicinity),
+        )
         if num_planets_to_add > 0:
             systems_in_vicinity.remove(home_system)  # don't add planets to the home system, so remove it from the list
             # sort the systems_in_vicinity before adding, since the C++ engine doesn't guarrantee the same
@@ -500,11 +527,27 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         # if no, and there is at least one available focus,
         # just take the first of the list
         if preferred_focus == "":
-            print("Player", player_name, ": starting species", starting_species, "has no preferred focus, using",
-                  available_foci[0], "instead")
+            print(
+                "Player",
+                player_name,
+                ": starting species",
+                starting_species,
+                "has no preferred focus, using",
+                available_foci[0],
+                "instead",
+            )
         else:
-            print("Player", player_name, ": preferred focus", preferred_focus, "for starting species", starting_species,
-                  "not available on homeworld, using", available_foci[0], "instead")
+            print(
+                "Player",
+                player_name,
+                ": preferred focus",
+                preferred_focus,
+                "for starting species",
+                starting_species,
+                "not available on homeworld, using",
+                available_foci[0],
+                "instead",
+            )
         fo.planet_set_focus(homeworld, available_foci[0])
     else:
         # if no focus is available on the homeworld, don't set any focus
@@ -553,8 +596,10 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
             # create a ship in the fleet
             # if the ship couldn't be created, report an error and try to continue with the next ship design
             if fo.create_ship("", ship_design, starting_species, fleet) == fo.invalid_object():
-                report_error("Python setup empire: couldn't create ship of design %s for fleet %s"
-                             % (ship_design, fleet_plan.name()))
+                report_error(
+                    "Python setup empire: couldn't create ship of design %s for fleet %s"
+                    % (ship_design, fleet_plan.name())
+                )
 
     return True
 

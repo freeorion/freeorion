@@ -11,8 +11,11 @@ from freeorion_tools.caching import cache_for_current_turn
 
 def default_empire_detection_strength():
     # TODO doublecheck typical AI research times for Radar, for below default value
-    return (AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_1"] if fo.currentTurn() < 40
-            else AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_2"])
+    return (
+        AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_1"]
+        if fo.currentTurn() < 40
+        else AIDependencies.DETECTION_TECH_STRENGTHS["SPY_DETECT_2"]
+    )
 
 
 @cache_for_current_turn
@@ -49,11 +52,11 @@ def get_max_empire_detection(empire_list: Union[List[int], "fo.IntVec"]) -> floa
 
 
 def colony_detectable_by_empire(
-        planet_id: int,
-        species_name: Optional[str] = None,
-        empire: Union[int, List[int]] = ALL_EMPIRES,
-        future_stealth_bonus: int = 0,
-        default_result: bool = True
+    planet_id: int,
+    species_name: Optional[str] = None,
+    empire: Union[int, List[int]] = ALL_EMPIRES,
+    future_stealth_bonus: int = 0,
+    default_result: bool = True,
 ) -> bool:
     """
     Predicts if a planet/colony is/will-be detectable by an empire.
@@ -100,7 +103,8 @@ def colony_detectable_by_empire(
     # overlapping with or superseded by the future_stealth_bonus, not additive with it.
     planet_stealth = max(planet_stealth, AIDependencies.BASE_PLANET_STEALTH + future_stealth_bonus)
     species_stealth_mod = AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(
-        get_species_tag_grade(species_name, Tags.STEALTH), 0)
+        get_species_tag_grade(species_name, Tags.STEALTH), 0
+    )
     total_stealth = planet_stealth + species_stealth_mod
     if isinstance(empire, int):
         empire_detection = get_empire_detection(empire)

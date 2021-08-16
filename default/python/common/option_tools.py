@@ -3,16 +3,16 @@ import sys
 from collections import OrderedDict as odict
 from configparser import ConfigParser
 
-AI_SUB_DIR = 'AI'
-DEFAULT_SUB_DIR = os.path.join(AI_SUB_DIR, 'default')
-CONFIG_DEFAULT_FILE = 'config.ini'
+AI_SUB_DIR = "AI"
+DEFAULT_SUB_DIR = os.path.join(AI_SUB_DIR, "default")
+CONFIG_DEFAULT_FILE = "config.ini"
 
 # CONFIG KEYS
-TIMER_SECTION = 'Timers'
-TIMERS_USE_TIMERS = 'timers_to_log'
-TIMERS_TO_FILE = 'timers_dump'
-TIMERS_DUMP_FOLDER = 'timers_dump_folder'
-HANDLERS = 'handlers'
+TIMER_SECTION = "Timers"
+TIMERS_USE_TIMERS = "timers_to_log"
+TIMERS_TO_FILE = "timers_dump"
+TIMERS_DUMP_FOLDER = "timers_dump_folder"
+HANDLERS = "handlers"
 
 
 flat_options = odict()
@@ -47,18 +47,15 @@ def _get_preset_default_ai_options():
     each sub-dict corresponds to a config file section
     :return:
     """
-    return odict([
-        (TIMER_SECTION, odict([
-            (TIMERS_USE_TIMERS, False),
-            (TIMERS_TO_FILE, False),
-            (TIMERS_DUMP_FOLDER, 'timers')
-        ])
-         ),
-        ('main', odict([
-            (HANDLERS, '')
-        ])
-         )  # module names in handler directory, joined by space
-    ])
+    return odict(
+        [
+            (
+                TIMER_SECTION,
+                odict([(TIMERS_USE_TIMERS, False), (TIMERS_TO_FILE, False), (TIMERS_DUMP_FOLDER, "timers")]),
+            ),
+            ("main", odict([(HANDLERS, "")])),  # module names in handler directory, joined by space
+        ]
+    )
 
 
 def _create_default_config_file(path):
@@ -73,7 +70,7 @@ def _create_default_config_file(path):
             config.set(section, k, str(v))
     if path:
         try:
-            with open(path, 'w') as configfile:
+            with open(path, "w") as configfile:
                 config.write(configfile)
             print("default config is dumped to %s" % path)
         except IOError:
@@ -118,8 +115,7 @@ def parse_config(option_string, config_dir):
         try:
             config = _create_default_config_file(default_file)
         except IOError:
-            sys.stderr.write(
-                "AI Config: default file is not present and not writable at location %s\n" % default_file)
+            sys.stderr.write("AI Config: default file is not present and not writable at location %s\n" % default_file)
             config = _create_default_config_file(os.path.join(config_dir, CONFIG_DEFAULT_FILE))
 
     if option_string:
@@ -127,8 +123,10 @@ def parse_config(option_string, config_dir):
         configs_read = config.read(config_files)
         print("AI Config read config file(s): %s" % configs_read)
         if len(configs_read) != len(config_files):
-            sys.stderr.write("AI Config Error; could NOT read config file(s): %s\n"
-                             % list(set(config_files).difference(configs_read)))
+            sys.stderr.write(
+                "AI Config Error; could NOT read config file(s): %s\n"
+                % list(set(config_files).difference(configs_read))
+            )
     for section in config.sections():
         sectioned_options.setdefault(section, odict())
         for k, v in config.items(section):

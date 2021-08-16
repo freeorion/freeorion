@@ -7,7 +7,7 @@ _chat_handler = None  # Optional[_ChatHandler]
 
 def configure_debug_chat(empire_id: int) -> None:
     global _chat_handler
-    if get_option_dict().get('allow_debug_chat', False):
+    if get_option_dict().get("allow_debug_chat", False):
         _chat_handler = DebugChatHandler(empire_id)
     else:
         _chat_handler = NormalChatHandler()

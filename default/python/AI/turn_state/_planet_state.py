@@ -69,7 +69,7 @@ def get_owned_planets_in_system(sys_id: SystemId) -> Tuple[PlanetId]:
 def get_colonized_planets_in_system(sys_id: SystemId) -> Tuple[PlanetId]:
     """
     Return list of planets with colony in the system.
-     """
+    """
     return get_colonized_planets().get(sys_id)
 
 

@@ -42,7 +42,13 @@ _OBJECT_HANDLERS = {
 }
 
 _MODULE_NAMES_TO_IGNORE = {
-    '__doc__', '__package__', '__name__', 'INVALID_GAME_TURN', 'to_str', '__loader__', '__spec__'
+    "__doc__",
+    "__package__",
+    "__name__",
+    "INVALID_GAME_TURN",
+    "to_str",
+    "__loader__",
+    "__spec__",
 }
 
 
@@ -67,5 +73,5 @@ def get_module_info(obj, instances) -> Tuple[List[ClassInfo], List[EnumInfo], Li
         module_members[MemberType.CLASS],
         module_members[MemberType.ENUM],
         module_members[MemberType.FUNCTION],
-        list(inspect_instances(instances))
+        list(inspect_instances(instances)),
     )

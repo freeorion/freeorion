@@ -49,7 +49,9 @@ def home_system_team_core(home_systems: List[int], teams: List[Tuple[int, int]])
     return result
 
 
-def place_teams_layout(layout: Dict[int, List[int]], cores: Dict[int, int], placement_teams: List[int]) -> Dict[int, int]:
+def place_teams_layout(
+    layout: Dict[int, List[int]], cores: Dict[int, int], placement_teams: List[int]
+) -> Dict[int, int]:
     """
     Place teams on home systems layout.
     Returns map from home system to team.

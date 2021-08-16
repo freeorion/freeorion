@@ -45,10 +45,10 @@ class DummyProvider:
 
 class DummyFormatter(ChatFormatter):
     def _get_tag_rgb(self, color: (int, int, int, int)) -> (str, str):
-        return '', ''
+        return "", ""
 
     def _get_underline_tag(self) -> (str, str):
-        return '', ''
+        return "", ""
 
     def _wrap_to_tag(self, tag: str, message: Any) -> str:
         return str(message)
@@ -73,7 +73,6 @@ def debug_handler():
             description="variable with import",
             imports=("from glob import has_magic",),
         ),
-
         ShellVariable(
             variable="variable_a_plus_b",
             expression="variable_a + variable_b",
@@ -138,22 +137,22 @@ class TestNonDebugModeForAiWhoResponds:
         handled = debug_handler.process_message(1, "hello world")
         assert handled is False
         chat, log = get_output_from_handler(debug_handler)
-        assert chat == ''
-        assert log == ''
+        assert chat == ""
+        assert log == ""
 
     def test_sending_stop_before_start_is_swallowed_by_handler(self, debug_handler: DebugChatHandler):
         result = debug_handler.process_message(1, "stop")
         assert result is True
         chat, log = get_output_from_handler(debug_handler)
-        assert chat == ''
-        assert log == ''
+        assert chat == ""
+        assert log == ""
 
 
 class TestNonDebugModeForAiWhoMuted:
     def test_send_help_is_ignored_by_second_ai(self, debug_handler_for_muted_ai: Tuple[StringIO, DebugChatHandler]):
         chat_io, handler = debug_handler_for_muted_ai
         assert handler.process_message(1, "help")
-        assert chat_io.getvalue() == ''
+        assert chat_io.getvalue() == ""
 
 
 class TestDebugModStart:
@@ -162,15 +161,15 @@ class TestDebugModStart:
         result = debug_handler.process_message(3, "start 2")
         assert result is False
         chat, log = get_output_from_handler(debug_handler)
-        assert chat == ''
-        assert log == ''
+        assert chat == ""
+        assert log == ""
 
     def test_starting_with_not_existing_ai_is_swallowed_by_handler(self, debug_handler: DebugChatHandler):
         result = debug_handler.process_message(1, "start 10")
         assert result is True
         chat, log = get_output_from_handler(debug_handler)
-        assert chat == ''
-        assert log == ''
+        assert chat == ""
+        assert log == ""
 
     def test_starting_with_nonnumerical_ai_is_swallowed_by_handler(self, debug_handler: DebugChatHandler):
         assert debug_handler.process_message(1, "start xxx")
@@ -229,13 +228,13 @@ class TestInDebugMode:
         assert "value_c" in chat
 
     def test_evaluating_erroneous_statement_prints_exception_to_console(self, debug_handler: DebugChatHandler):
-        assert debug_handler.process_message(1, '1/0')
+        assert debug_handler.process_message(1, "1/0")
         chat, log = get_output_from_handler(debug_handler)
-        assert 'ZeroDivisionError: division by zero' in chat
-        assert 'ZeroDivisionError: division by zero' in log
-        assert debug_handler.process_message(1, 'variable_a')
+        assert "ZeroDivisionError: division by zero" in chat
+        assert "ZeroDivisionError: division by zero" in log
+        assert debug_handler.process_message(1, "variable_a")
         chat, log = get_output_from_handler(debug_handler)
-        assert 'value_a' in chat
+        assert "value_a" in chat
 
     def test_start_with_initial_imports_evaluates_imports(self, test_caller):
         chat, log = test_caller("has_magic")
@@ -250,10 +249,10 @@ class TestInDebugMode:
         assert " name 'start' is not defined" in chat
 
     def test_start_with_number_call_is_ignored(self, debug_handler: DebugChatHandler):
-        assert debug_handler.process_message(1, 'start 2')
+        assert debug_handler.process_message(1, "start 2")
         chat, log = get_output_from_handler(debug_handler)
-        assert 'SyntaxError: invalid syntax' in log
-        assert 'SyntaxError: invalid syntax' in chat
+        assert "SyntaxError: invalid syntax" in log
+        assert "SyntaxError: invalid syntax" in chat
 
 
 class TestRestart:
@@ -261,19 +260,19 @@ class TestRestart:
         test_caller("start 2")
         test_caller("variable_b = 'value_d'")
         chat, log = test_caller("variable_b")
-        assert 'value_d' in chat
+        assert "value_d" in chat
         test_caller("stop")
         test_caller("start 2")
         chat, log = test_caller("variable_b")
-        assert 'value_b' in chat
-        assert 'value_d' not in chat
+        assert "value_b" in chat
+        assert "value_d" not in chat
 
     def test_not_initial_variables_are_preserved(self, test_caller):
         test_caller("start 2")
         test_caller("variable_d = 'value_d'")
         chat, log = test_caller("variable_d")
-        assert 'value_d' in chat
+        assert "value_d" in chat
         test_caller("stop")
         test_caller("start 2")
         chat, log = test_caller("variable_d")
-        assert 'value_d' in chat
+        assert "value_d" in chat

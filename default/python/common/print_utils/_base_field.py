@@ -4,12 +4,12 @@ from typing import Any
 
 class Field(ABC):
     def __init__(
-            self,
-            name: str,
-            align='<',
-            description="",
-            placeholder="",
-            total=False,
+        self,
+        name: str,
+        align="<",
+        description="",
+        placeholder="",
+        total=False,
     ):
         """
         Cell specification.
@@ -25,17 +25,17 @@ class Field(ABC):
         self.description = description
         self.placeholder = placeholder
         if description:
-            self.name += '*'
+            self.name += "*"
         self.total = total
 
     def __repr__(self):
-        return f'{self.__class__.__name__}({self.name})'
+        return f"{self.__class__.__name__}({self.name})"
 
     def format_cell(self, item, width):
-        return f'{item:{self.align}{width}}'
+        return f"{item:{self.align}{width}}"
 
     def format_header(self, width):
-        return f'{self.name:<{width}}'
+        return f"{self.name:<{width}}"
 
     def make_cell_string(self, val):
         if self.placeholder and not val:
@@ -44,7 +44,7 @@ class Field(ABC):
             return self.convert_value_to_string(val)
 
     def make_summary_value(self):
-        return ''
+        return ""
 
     @abstractmethod
     def convert_value_to_string(self, val: Any) -> str:

@@ -10,7 +10,8 @@ class Target:
     """
     Stores information about AI target - its id and type.
     """
-    object_name = 'target'
+
+    object_name = "target"
     id: ObjectId
 
     def __init__(self):
@@ -45,7 +46,7 @@ class Target:
 
 
 class TargetPlanet(Target):
-    object_name = 'planet'
+    object_name = "planet"
 
     def __init__(self, target_id: PlanetId):
         self.id: PlanetId = target_id
@@ -67,7 +68,7 @@ class TargetPlanet(Target):
 
 
 class TargetSystem(Target):
-    object_name = 'system'
+    object_name = "system"
 
     def __init__(self, target_id: SystemId):
         self.id: SystemId = target_id
@@ -84,7 +85,7 @@ class TargetSystem(Target):
 
 
 class TargetFleet(Target):
-    object_name = 'fleet'
+    object_name = "fleet"
 
     def __init__(self, target_id: FleetId):
         self.id: FleetId = target_id

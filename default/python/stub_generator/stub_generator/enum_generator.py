@@ -17,12 +17,13 @@ def _handle_enum(info: EnumInfo):
         return val, name
 
     pairs = sorted(info.attributes.items(), key=attr_sort_key)
-    result = ['class %s(IntEnum):' % info.name,
-              ]
+    result = [
+        "class %s(IntEnum):" % info.name,
+    ]
 
     for text, value in pairs:
-        result.append('    %s = %s' % (text, value))
-    yield '\n'.join(result)
+        result.append("    %s = %s" % (text, value))
+    yield "\n".join(result)
 
 
 class EnumGenerator(BaseGenerator):

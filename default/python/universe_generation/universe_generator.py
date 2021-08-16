@@ -33,6 +33,7 @@ class PyGalaxySetupData:
     This data can then be modified when needed during the universe generation process, without having to
     change the original data structure.
     """
+
     def __init__(self, galaxy_setup_data):
         self.seed = galaxy_setup_data.seed
         self.size = galaxy_setup_data.size
@@ -81,7 +82,7 @@ def create_universe(psd_map):
     total_players = len(psd_map)
 
     # initialize RNG
-    h = int_hash(gsd.seed.encode('utf-8'))
+    h = int_hash(gsd.seed.encode("utf-8"))
     print("Using hashed seed", h)
     seed_rng(h)
     seed_pool = [random.random() for _ in range(100)]

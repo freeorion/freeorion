@@ -1,5 +1,5 @@
 # coding=utf-8
-'''
+"""
 
 
 ===== Columns =====
@@ -7,16 +7,16 @@
 
 
 Process finished with exit code 0
-'''
+"""
 from io import StringIO
 
 from common.print_utils import Number, Sequence, Table, Text, print_in_columns
 
-EXPECTED_COLUMNS = '''a   c
+EXPECTED_COLUMNS = """a   c
 b   d
-'''
+"""
 
-EXPECTED_SIMPLE_TABLE = '''Wooho
+EXPECTED_SIMPLE_TABLE = """Wooho
 ============================================================================
 | name*            | value*     | zzz                 | zzzzzzzzzzzzzzzzzz |
 ============================================================================
@@ -29,39 +29,39 @@ EXPECTED_SIMPLE_TABLE = '''Wooho
 ----------------------------------------------------------------------------
 *name   Name for first column
 *value  VValue
-'''
+"""
 
-EXPECTED_EMPTY_TABLE = '''Wooho
+EXPECTED_EMPTY_TABLE = """Wooho
 =============================================
 | name* | value* | zzz | zzzzzzzzzzzzzzzzzz |
 =============================================
 ---------------------------------------------
 *name   Name for first column
 *value  VValue
-'''
+"""
 
 
 # https://pytest.org/latest/capture.html#accessing-captured-output-from-a-test-function
 def test_print_in_columns(capfd):
-    print_in_columns(['a', 'b', 'c', 'd'], 2)
+    print_in_columns(["a", "b", "c", "d"], 2)
     out, err = capfd.readouterr()
     assert out == EXPECTED_COLUMNS
 
 
 def make_table():
     t = Table(
-        Text('name', description='Name for first column'),
-        Number('value', description='VValue'),
-        Sequence('zzz'),
-        Sequence('zzzzzzzzzzzzzzzzzz'),
-        table_name='Wooho'
+        Text("name", description="Name for first column"),
+        Number("value", description="VValue"),
+        Sequence("zzz"),
+        Sequence("zzzzzzzzzzzzzzzzzz"),
+        table_name="Wooho",
     )
-    t.add_row('hello', 144444, 'abcffff', 'a')
-    t.add_row(u'Plato aa\u03b2 III', 21, 'de', 'a')
-    t.add_row(u'Plato \u03b2 III', 21, 'de', 'a')
-    t.add_row('Plato B III', 21, 'd', 'a')
-    t.add_row('Plato Bddddd III', 21, 'd', 'a')
-    t.add_row('Plato III', 21, 'd', 'a')
+    t.add_row("hello", 144444, "abcffff", "a")
+    t.add_row("Plato aa\u03b2 III", 21, "de", "a")
+    t.add_row("Plato \u03b2 III", 21, "de", "a")
+    t.add_row("Plato B III", 21, "d", "a")
+    t.add_row("Plato Bddddd III", 21, "d", "a")
+    t.add_row("Plato III", 21, "d", "a")
     return t
 
 
@@ -91,10 +91,11 @@ def test_table_is_converted_to_str():
 
 def test_empty_table():
     empty = Table(
-        Text('name', description='Name for first column'),
-        Number('value', description='VValue'),
-        Sequence('zzz'), Sequence('zzzzzzzzzzzzzzzzzz'),
-        table_name='Wooho',
+        Text("name", description="Name for first column"),
+        Number("value", description="VValue"),
+        Sequence("zzz"),
+        Sequence("zzzzzzzzzzzzzzzzzz"),
+        table_name="Wooho",
     )
 
     io = StringIO()
@@ -109,7 +110,7 @@ def test_empty_table():
 
 
 def test_number_column():
-    field = Number('name', placeholder="-")
+    field = Number("name", placeholder="-")
     assert field.make_cell_string(0) == "-"
 
 

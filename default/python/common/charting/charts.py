@@ -30,7 +30,7 @@ def show_only_some(x, pos):
     if val in [3, 5, 30, 50, 80, 300, 500, 800, 3000, 5000, 8000]:
         return str(val)
     else:
-        return ''
+        return ""
 
 
 def parse_file(file_name, ai=True):
@@ -40,8 +40,8 @@ def parse_file(file_name, ai=True):
     got_species = False
     got_name = False
     data = {"PP": [], "RP": [], "RP_Ratio": [], "ShipCount": [], "turnsP": [], "turnPP": [], "PP + 2RP": []}
-    details = {'color': {1, 1, 1, 1}, 'name': "", 'species': ""}
-    with open(file_name, 'r') as lf:
+    details = {"color": {1, 1, 1, 1}, "name": "", "species": ""}
+    with open(file_name, "r") as lf:
         while True:
             line = lf.readline()
             if not line:
@@ -51,37 +51,37 @@ def parse_file(file_name, ai=True):
                 if len(colors) == 4:
                     got_colors = True
                     if isinstance(colors[0], str):
-                        details['color'] = tuple(map(lambda x: float(x) / 255.0, colors))
+                        details["color"] = tuple(map(lambda x: float(x) / 255.0, colors))
                     else:
-                        details['color'] = tuple(map(lambda x: float(ord(x[0])) / 255.0, colors))
+                        details["color"] = tuple(map(lambda x: float(ord(x[0])) / 255.0, colors))
             if ai and not got_species and "CapitalID:" in line:
                 got_species = True
-                details['species'] = line.split("Species:")[1].strip()
+                details["species"] = line.split("Species:")[1].strip()
             if ai and not got_name and "EmpireID:" in line:
                 got_name = True
-                details['name'] = line.split("Name:")[1].split("Turn:")[0].strip()
+                details["name"] = line.split("Name:")[1].split("Turn:")[0].strip()
             if "Current Output (turn" in line:
                 info = line.split("Current Output (turn")[1]
-                parts = info.split(')')
-                data['turnsP'].append((int(parts[0])))
-                data['turnPP'].append((int(parts[0]), float(parts[1].split('/')[-1])))
-                rppp = parts[1].split('(')[-1].split('/')
-                data['PP'].append(float(rppp[1]))
-                data['RP'].append(float(rppp[0]))
-                data['PP + 2RP'].append(float(rppp[1]) + 2 * float(rppp[0]))
-                data['RP_Ratio'].append(float(rppp[0]) / (float(rppp[1]) + 0.001))
+                parts = info.split(")")
+                data["turnsP"].append((int(parts[0])))
+                data["turnPP"].append((int(parts[0]), float(parts[1].split("/")[-1])))
+                rppp = parts[1].split("(")[-1].split("/")
+                data["PP"].append(float(rppp[1]))
+                data["RP"].append(float(rppp[0]))
+                data["PP + 2RP"].append(float(rppp[1]) + 2 * float(rppp[0]))
+                data["RP_Ratio"].append(float(rppp[0]) / (float(rppp[1]) + 0.001))
             if "Empire Ship Count:" in line:
-                data['ShipCount'].append(int(line.split("Empire Ship Count:")[1]))
+                data["ShipCount"].append(int(line.split("Empire Ship Count:")[1]))
     return data, details
 
 
 def main():
-    if os.name == 'nt':
-        dataDir = os.path.expanduser('~') + '\\Appdata\\Roaming\\Freeorion'
-    elif os.name == 'posix':
-        dataDir = os.environ.get('XDG_DATA_HOME', os.environ.get('HOME', "") + "/.local/share") + "/freeorion"
+    if os.name == "nt":
+        dataDir = os.path.expanduser("~") + "\\Appdata\\Roaming\\Freeorion"
+    elif os.name == "posix":
+        dataDir = os.environ.get("XDG_DATA_HOME", os.environ.get("HOME", "") + "/.local/share") + "/freeorion"
     else:
-        dataDir = os.environ.get('HOME', "") + "/.freeorion"
+        dataDir = os.environ.get("HOME", "") + "/.freeorion"
 
     graphDir = dataDir
 
@@ -102,13 +102,17 @@ def main():
 
     if not os.path.exists(dataDir + os.sep + "freeorion.log"):
         print("can't find freeorion.log")
-    elif A1log and (A1log[0] in logfiles) and (os.path.getmtime(dataDir + os.sep + "freeorion.log") < os.path.getmtime(A1log[0]) - 300):
+    elif (
+        A1log
+        and (A1log[0] in logfiles)
+        and (os.path.getmtime(dataDir + os.sep + "freeorion.log") < os.path.getmtime(A1log[0]) - 300)
+    ):
         print("freeorion.log file is stale ( more than 5 minutes older than AI_1.log) and will be skipped")
     else:
         data, details = parse_file(dataDir + os.sep + "freeorion.log", False)
-        if len(data.get('PP', [])) > 0:
+        if len(data.get("PP", [])) > 0:
             allData[playerName] = data
-            empireColors[playerName] = details['color']
+            empireColors[playerName] = details["color"]
 
     logfiles = sorted(glob(dataDir + os.sep + "A*.log"))
     A1log = glob(dataDir + os.sep + "AI_1.log")
@@ -123,9 +127,9 @@ def main():
     for lfile in logfiles:
         try:
             data, details = parse_file(lfile, True)
-            allData[details['name']] = data
-            empireColors[details['name']] = details['color']
-            species[details['name']] = details['species']
+            allData[details["name"]] = data
+            empireColors[details["name"]] = details["color"]
+            species[details["name"]] = details["species"]
         except:  # noqa: E722
             print("error processing %s" % lfile)
             print("Error: exception triggered and caught: ", traceback.format_exc())
@@ -155,7 +159,7 @@ def main():
         if pdata:
             ymin = min(ymin, min(pdata))
             ymax = max(ymax, max(pdata))
-            turns = allData.get(playerName, {}).get('turnsP', [])
+            turns = allData.get(playerName, {}).get("turnsP", [])
 
         for empireName, data in allData.items():
             if empireName == playerName:
@@ -168,18 +172,18 @@ def main():
                     ymin = min(ymin, thisMin)
                 ymax = max(ymax, max(adata))
                 if not turns:
-                    turns = data.get('turnsP', [])
+                    turns = data.get("turnsP", [])
 
         if not turns:
             if len(allData) == 0:
                 break
             turns = range(1, len(allData.values()[0].get(plotType, [])) + 1)
         rankings.sort()
-        pylab.xlabel('Turn')
+        pylab.xlabel("Turn")
         pylab.ylabel(plotType)
-        pylab.title(caption + ' Progression')
+        pylab.title(caption + " Progression")
         if ymax >= 100:
-            ax.set_yscale('log', basey=10)
+            ax.set_yscale("log", basey=10)
 
         if playerName not in allData:
             print("\t\t\tcan't find playerData in allData\n")
@@ -187,27 +191,52 @@ def main():
             if playerName in empireColors:
                 turnsP = allData[playerName].get("turnsP", [])
                 thisData = allData.get(playerName, {}).get(plotType, [])
-                print("plotting with color for player: ", playerName, "data min/max: ",
-                      min(allData[playerName].get(plotType, [])), ' | ', max(allData[playerName].get(plotType, [])))
-                pylab.plot(turnsP, thisData, 'o-', color=empireColors[playerName], label="%s - %.1f" % (playerName, sum(thisData)), linewidth=2.0)
+                print(
+                    "plotting with color for player: ",
+                    playerName,
+                    "data min/max: ",
+                    min(allData[playerName].get(plotType, [])),
+                    " | ",
+                    max(allData[playerName].get(plotType, [])),
+                )
+                pylab.plot(
+                    turnsP,
+                    thisData,
+                    "o-",
+                    color=empireColors[playerName],
+                    label="%s - %.1f" % (playerName, sum(thisData)),
+                    linewidth=2.0,
+                )
             else:
-                print("plotting withOUT color for player: ", playerName, "data min/max: ",
-                      min(allData[playerName].get(plotType, [])), ' | ', max(allData[playerName].get(plotType, [])))
-                pylab.plot(turnsP, allData[playerName].get(plotType, []), 'bx-', label=playerName, linewidth=2.0)
+                print(
+                    "plotting withOUT color for player: ",
+                    playerName,
+                    "data min/max: ",
+                    min(allData[playerName].get(plotType, [])),
+                    " | ",
+                    max(allData[playerName].get(plotType, [])),
+                )
+                pylab.plot(turnsP, allData[playerName].get(plotType, []), "bx-", label=playerName, linewidth=2.0)
         print("Ranked by ", plotType)
         for rank, name in rankings[::-1]:
             print(name)
             if name in empireColors:
                 adata = allData[name].get(plotType, [])
-                pylab.plot(range(turns[0], turns[0] + len(adata)), adata, color=empireColors[name], label="%s: %s - %.1f" % (name, species[name], sum(adata)), linewidth=2.0)
+                pylab.plot(
+                    range(turns[0], turns[0] + len(adata)),
+                    adata,
+                    color=empireColors[name],
+                    label="%s: %s - %.1f" % (name, species[name], sum(adata)),
+                    linewidth=2.0,
+                )
             else:
                 print("can't find empire color for ", name)
                 # pylab.plot(range(turns[0], turns[0]+len(allData[name])), allData[name].get(plotType, []), label="(%d) "%(empires.index(name)+1)+name+" : "+species[name], linewidth=2.0)
         # legend(loc='upper left',prop={"size":'medium'})
-        pylab.legend(loc='upper left', prop={"size": 9}, labelspacing=0.2)
-        pylab.xlabel('Turn')
+        pylab.legend(loc="upper left", prop={"size": 9}, labelspacing=0.2)
+        pylab.xlabel("Turn")
         pylab.ylabel(plotType)
-        pylab.title(caption + ' Progression ')
+        pylab.title(caption + " Progression ")
         x1, x2, y1, y2 = pylab.axis()
         newY2 = y2
         if plotType in ["PP + 2RP", "PP", "RP", "ShipCount"]:
@@ -218,12 +247,12 @@ def main():
             print("y1: %.1f ; ymin: %.1f ; newY2/100: %.1f" % (y1, ymin, newY2 / 100))
             y1 = max(y1, 4, ymin, newY2 / 100)
         pylab.axis((x1, x2, y1, newY2))
-        pylab.grid(b=True, which='major', color='0.25', linestyle='-')
-        pylab.grid(b=True, which='minor', color='0.1', linestyle='--')
+        pylab.grid(b=True, which="major", color="0.25", linestyle="-")
+        pylab.grid(b=True, which="minor", color="0.1", linestyle="--")
         ax.yaxis.set_minor_formatter(pylab.FuncFormatter(show_only_some))
-        ax.yaxis.set_ticks_position('right')
-        ax.yaxis.set_ticks_position('both')
-        ax.tick_params(labelleft='on')  # for matplotlib versions where 'both' doesn't work
+        ax.yaxis.set_ticks_position("right")
+        ax.yaxis.set_ticks_position("both")
+        ax.tick_params(labelleft="on")  # for matplotlib versions where 'both' doesn't work
         # ax.tick_params(labelright='on')
         if saveFile:
             pylab.savefig(graphDir + os.sep + plotType + "_" + fileRoot + ".png")

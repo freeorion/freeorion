@@ -11,7 +11,7 @@ class DummyTestClass(object):
         self.some_string = "TestString"
         self._some_private_var = "_Test"
         self.__some_more_private_var = "__Test"
-        self.some_dict = {'ABC': 123.1, (1, 2.3, 'ABC', "zz"): (1, (2, (3, 4)))}
+        self.some_dict = {"ABC": 123.1, (1, 2.3, "ABC", "zz"): (1, (2, (3, 4)))}
         self.some_list = [self.some_int, self.some_float, self.some_other_float, self.some_string]
         self.some_set = set(self.some_list)
         self.some_tuple = tuple(self.some_list)
@@ -23,10 +23,12 @@ class DummyTestClass(object):
 @pytest.fixture()
 def trusted_scope(monkeypatch):
     test_scope = dict(savegame_codec._decoder.trusted_classes)
-    test_scope.update({
-        __name__ + ".GetStateTester": GetStateTester,
-        __name__ + ".SetStateTester": SetStateTester,
-    })
+    test_scope.update(
+        {
+            __name__ + ".GetStateTester": GetStateTester,
+            __name__ + ".SetStateTester": SetStateTester,
+        }
+    )
     monkeypatch.setattr(savegame_codec._decoder, "trusted_classes", test_scope)
     monkeypatch.setattr(savegame_codec._definitions, "trusted_classes", test_scope)
     monkeypatch.setattr(savegame_codec._encoder, "trusted_classes", test_scope)
@@ -49,14 +51,31 @@ class SetStateTester(object):
 
 @pytest.fixture(
     params=[
-        int(), float(), str(), bool(),
-        1, 1.2, 1.2e4, "TestString", True, False, None,
-        tuple(), set(), list(), dict(),
-        (1, 2, 3), [1, 2, 3], {1, 2, 3},
-        {'a': 1, True: False, (1, 2): {1, 2, 3}, (1, 2, (3, (4,))): [1, 2, (3, 4), {1, 2, 3}]}
+        int(),
+        float(),
+        str(),
+        bool(),
+        1,
+        1.2,
+        1.2e4,
+        "TestString",
+        True,
+        False,
+        None,
+        tuple(),
+        set(),
+        list(),
+        dict(),
+        (1, 2, 3),
+        [1, 2, 3],
+        {1, 2, 3},
+        {"a": 1, True: False, (1, 2): {1, 2, 3}, (1, 2, (3, (4,))): [1, 2, (3, 4), {1, 2, 3}]},
     ],
-    ids=str)
-def simple_object(request, ):
+    ids=str,
+)
+def simple_object(
+    request,
+):
     return request.param
 
 
@@ -85,16 +104,16 @@ def test_encoding_function():
 def test_encoding_type():
     match = "Class builtins.type is not trusted$"
 
-    with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       match=match):
+    with pytest.raises(savegame_codec.CanNotSaveGameException, match=match):
         check_encoding(list)
         pytest.fail("Could save untrusted class")
 
 
 def test_class_encoding(trusted_scope):
     obj = DummyTestClass()
-    with pytest.raises(savegame_codec.CanNotSaveGameException,
-                       match="Class test_savegame_manager.DummyTestClass is not trusted"):
+    with pytest.raises(
+        savegame_codec.CanNotSaveGameException, match="Class test_savegame_manager.DummyTestClass is not trusted"
+    ):
         savegame_codec.encode(obj)
         pytest.fail("Could save game even though test module should not be trusted")
 
@@ -115,8 +134,10 @@ def test_class_encoding(trusted_scope):
 
     del trusted_scope[__name__ + ".DummyTestClass"]
 
-    with pytest.raises(savegame_codec.InvalidSaveGameException,
-                       match="DANGER DANGER - test_savegame_manager.DummyTestClass not trusted"):
+    with pytest.raises(
+        savegame_codec.InvalidSaveGameException,
+        match="DANGER DANGER - test_savegame_manager.DummyTestClass not trusted",
+    ):
         savegame_codec.decode(retval)
         pytest.fail("Could load object from untrusted module")
 

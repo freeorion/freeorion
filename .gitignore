@@ -29,6 +29,10 @@
 
 # Python
 *.py[cod]
+__pycache__
+venv_*
+*_venv
+venv
 
 # Mac OSX
 .DS_Store
@@ -52,7 +56,7 @@ DerivedData
 *.nib
 
 # PyCharm
-*.idea/
+*.idea
 
 # FreeOrion specific
 *.zip
@@ -97,8 +101,8 @@ DerivedData
 .vscode/
 
 # linters temp files
-.mypy_cache/
-.pytest_cache/
+.mypy_cache
+.pytest_cache
 .coverage
 htmlcov
 

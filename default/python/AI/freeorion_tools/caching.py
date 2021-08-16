@@ -21,6 +21,7 @@ def cache_for_session(func):
         res = func(*args, **kwargs)
         _cache[key] = res
         return res
+
     wrapper._cache = _cache
     return wrapper
 
@@ -43,6 +44,7 @@ def cache_for_current_turn(func):
         res = func(*args, **kwargs)
         _cache[key] = (this_turn, res)
         return res
+
     wrapper._cache = _cache
     return wrapper
 
@@ -56,12 +58,14 @@ def cache_by_turn_persistent(func):
 
     As the result is stored in AIstate, its type must be trusted by the savegame_codec module.
     """
+
     @wraps(func)
     def wrapper():
         if get_aistate() is None:
             return func()
         else:
-            cache = get_aistate().misc.setdefault('caches', {}).setdefault(func.__name__, {})
+            cache = get_aistate().misc.setdefault("caches", {}).setdefault(func.__name__, {})
             this_turn = fo.currentTurn()
             return cache[this_turn] if this_turn in cache else cache.setdefault(this_turn, func())
+
     return wrapper

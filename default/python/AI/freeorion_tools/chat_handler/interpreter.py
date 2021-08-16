@@ -29,11 +29,10 @@ class DebugInterpreter:
         err = sys.stderr.read()
         sys.stdout = old_stdout
         sys.stderr = old_stderr
-        return out.strip('\n'), err.strip('\n')
+        return out.strip("\n"), err.strip("\n")
 
     def set_locals(self):
-        initial_code = [
-        ]
+        initial_code = []
 
         variables_description = []
         for shellLocal in self._shell_locals:

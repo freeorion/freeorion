@@ -29,8 +29,9 @@ def create_move_orders_to_system(fleet: TargetFleet, target: TargetSystem) -> Li
         # nothing to do here
         return []
     # if the mission does not end at the targeted system, make sure we can actually return to supply after moving.
-    ensure_return = target.id not in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs
-                                         + AIstate.invasionTargetedSystemIDs)
+    ensure_return = target.id not in set(
+        AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs
+    )
     system_targets = can_travel_to_system(fleet.id, starting_system, target, ensure_return=ensure_return)
     result = [fleet_orders.OrderMove(fleet, system) for system in system_targets]
     if not result and starting_system.id != target.id:
@@ -39,7 +40,7 @@ def create_move_orders_to_system(fleet: TargetFleet, target: TargetSystem) -> Li
 
 
 def can_travel_to_system(
-        fleet_id: int, start: TargetSystem, target: TargetSystem, ensure_return: bool = False
+    fleet_id: int, start: TargetSystem, target: TargetSystem, ensure_return: bool = False
 ) -> List[TargetSystem]:
     """
     Return list systems to be visited.
@@ -56,8 +57,9 @@ def can_travel_to_system(
         return []
 
     min_fuel_at_target = target_distance_from_supply if ensure_return else 0
-    path_info = pathfinding.find_path_with_resupply(start.id, target.id, fleet_id,
-                                                    minimum_fuel_at_target=min_fuel_at_target)
+    path_info = pathfinding.find_path_with_resupply(
+        start.id, target.id, fleet_id, minimum_fuel_at_target=min_fuel_at_target
+    )
     if path_info is None:
         debug("Found no valid path.")
         return []
@@ -67,7 +69,7 @@ def can_travel_to_system(
 
 
 def get_nearest_supplied_system(start_system_id: SystemId):
-    """ Return systemAITarget of nearest supplied system from starting system startSystemID."""
+    """Return systemAITarget of nearest supplied system from starting system startSystemID."""
     empire = fo.getEmpire()
     fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs
     universe = fo.getUniverse()
@@ -114,14 +116,15 @@ def get_best_drydock_system_id(start_system_id: int, fleet_id: int) -> Optional[
             continue
         for pid in pids:
             planet = universe.getPlanet(pid)
-            if (planet and
-                    planet.currentMeterValue(fo.meterType.happiness) >= DRYDOCK_HAPPINESS_THRESHOLD and
-                    planet.currentMeterValue(fo.meterType.targetHappiness) >= DRYDOCK_HAPPINESS_THRESHOLD):
+            if (
+                planet
+                and planet.currentMeterValue(fo.meterType.happiness) >= DRYDOCK_HAPPINESS_THRESHOLD
+                and planet.currentMeterValue(fo.meterType.targetHappiness) >= DRYDOCK_HAPPINESS_THRESHOLD
+            ):
                 drydock_system_ids.add(sys_id)
                 break
 
-    sys_distances = sorted([(universe.jumpDistance(start_system_id, sys_id), sys_id)
-                            for sys_id in drydock_system_ids])
+    sys_distances = sorted([(universe.jumpDistance(start_system_id, sys_id), sys_id) for sys_id in drydock_system_ids])
 
     aistate = get_aistate()
     fleet_rating = aistate.get_rating(fleet_id)
@@ -129,17 +132,20 @@ def get_best_drydock_system_id(start_system_id: int, fleet_id: int) -> Optional[
         dock_system = TargetSystem(dock_sys_id)
         path = can_travel_to_system(fleet_id, start_system, dock_system)
 
-        path_rating = sum([aistate.systemStatus[path_sys.id]['totalThreat']
-                           for path_sys in path])
+        path_rating = sum([aistate.systemStatus[path_sys.id]["totalThreat"] for path_sys in path])
 
         SAFETY_MARGIN = 10
         if SAFETY_MARGIN * path_rating <= fleet_rating:
-            debug("Drydock recommendation %s from %s for fleet %s with fleet rating %.1f and path rating %.1f."
-                  % (dock_system, start_system, universe.getFleet(fleet_id), fleet_rating, path_rating))
+            debug(
+                "Drydock recommendation %s from %s for fleet %s with fleet rating %.1f and path rating %.1f."
+                % (dock_system, start_system, universe.getFleet(fleet_id), fleet_rating, path_rating)
+            )
             return dock_system.id
 
-    debug("No safe drydock recommendation from %s for fleet %s with fleet rating %.1f."
-          % (start_system, universe.getFleet(fleet_id), fleet_rating))
+    debug(
+        "No safe drydock recommendation from %s for fleet %s with fleet rating %.1f."
+        % (start_system, universe.getFleet(fleet_id), fleet_rating)
+    )
     return None
 
 
@@ -150,8 +156,10 @@ def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
     this_path = can_travel_to_system(fleet_id, start_targ, dest_targ, ensure_return=False)
     path_ids = [targ.id for targ in this_path if targ.id != start_id] + [start_id]
     universe = fo.getUniverse()
-    debug("Fleet %d requested safe path leg from %s to %s, found path %s" % (
-        fleet_id, universe.getSystem(start_id), universe.getSystem(dest_id), PlanetUtilsAI.sys_name_ids(path_ids)))
+    debug(
+        "Fleet %d requested safe path leg from %s to %s, found path %s"
+        % (fleet_id, universe.getSystem(start_id), universe.getSystem(dest_id), PlanetUtilsAI.sys_name_ids(path_ids))
+    )
     return path_ids[0]
 
 
