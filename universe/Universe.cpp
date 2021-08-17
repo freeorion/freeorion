@@ -2191,10 +2191,16 @@ namespace {
 
     /** sets visibility of objects that empires own for those objects */
     void SetEmpireOwnedObjectVisibilities(Universe& universe) {
-        for (const auto& obj : universe.Objects().all()) {
-            if (!obj->Unowned())
-                universe.SetEmpireObjectVisibility(obj->Owner(), obj->ID(), Visibility::VIS_FULL_VISIBILITY);
-        }
+        auto process_objects = [&](const auto&& range) {
+            for (const auto& obj : range) {
+                if (!obj->Unowned())
+                    universe.SetEmpireObjectVisibility(obj->Owner(), obj->ID(), Visibility::VIS_FULL_VISIBILITY);
+            }
+        };
+        process_objects(universe.Objects().all<Building>());
+        process_objects(universe.Objects().all<Planet>());
+        process_objects(universe.Objects().all<Ship>());
+        process_objects(universe.Objects().all<Fleet>());
     }
 
     /** sets all objects visible to all empires */
