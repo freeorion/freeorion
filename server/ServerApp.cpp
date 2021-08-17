@@ -49,6 +49,20 @@
 #include "../util/SitRepEntry.h"
 #include "../util/Version.h"
 
+#if BOOST_VERSION >= 106600
+#  include <boost/asio/thread_pool.hpp>
+#  include <boost/asio/post.hpp>
+#else
+namespace boost::asio {
+    // dummy implementation of thread_pool and post that just immediately executes the passed-in function
+    struct thread_pool {
+        thread_pool(int) {}
+        void join() {}
+    };
+    void post(const thread_pool&, std::function<void()> func) { func(); }
+}
+#endif
+
 
 namespace fs = boost::filesystem;
 
@@ -656,20 +670,33 @@ namespace {
             if (empire->Eliminated())
                 continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
-            empire->UpdateSupplyUnobstructedSystems(context, precombat); // determines which systems can propagate fleet and resource (same for both)
-            empire->UpdateSystemSupplyRanges();                          // sets range systems can propagate fleet and resourse supply (separately)
+            // determine which systems can propagate fleet and resource (same for both)
+            empire->UpdateSupplyUnobstructedSystems(context, precombat);
+            // set range systems can propagate fleet and resourse supply (separately)
+            empire->UpdateSystemSupplyRanges(context.ContextUniverse());
         }
 
-        supply.Update();
+        supply.Update(); // must call after updating supply ranges for all empires
+
+        const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
+        boost::asio::thread_pool thread_pool(num_threads);
 
         for ([[maybe_unused]] auto& [ignored_id, empire] : empires) {
             (void)ignored_id; // quiet unused variable warning
             if (empire->Eliminated())
                 continue;
+            boost::asio::post(thread_pool, [&context, empire{empire}]() {
+                // determine population centers and resource centers of empire, tells resource pools
+                // the centers and groups of systems that can share resources (note that being able to
+                // share resources doesn't mean a system produces resources)
+                empire->InitResourcePools(context.ContextObjects());
 
-            empire->InitResourcePools(context.ContextObjects()); // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
-            empire->UpdateResourcePools(); // determines how much of each resources is available in each resource sharing group
+                // determine how much of each resources is available in each resource sharing group
+                empire->UpdateResourcePools();
+            });
         }
+
+        thread_pool.join();
     }
 }
 
