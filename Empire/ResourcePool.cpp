@@ -174,33 +174,32 @@ void ResourcePool::Update() {
             continue;
 
         // is object's system in a system group?
-        std::set<int> object_system_group;
-        for (const auto& sys_group : m_connected_system_groups) {
-            if (sys_group.count(object_system_id)) {
-                object_system_group = sys_group;
-                break;
-            }
-        }
+        auto object_system_group = [&]() -> std::set<int> {
+            for (const auto& sys_group : m_connected_system_groups)
+                if (sys_group.find(object_system_id) != sys_group.end())
+                    return sys_group;
+            return {};
+        }();
 
         // if object's system is not in a system group, add it as its
         // own entry in m_connected_object_groups_resource_output and m_connected_object_groups_resource_target_output
         // this will allow the object to use its own locally produced
         // resource when, for instance, distributing pp
         if (object_system_group.empty()) {
-            object_system_group.insert(object_id);  // just use this already-available set to store the object id, even though it is not likely actually a system
+            // store object id in set, even though it is not likely actually a system
+            object_system_group.insert(object_id);
 
             const auto* mmt = obj->GetMeter(meter_type);
-            m_connected_object_groups_resource_output[object_system_group] = mmt ? mmt->Current() : 0.0f;
-
             const auto* mtmt = obj->GetMeter(target_meter_type);
-            m_connected_object_groups_resource_target_output[object_system_group] = mtmt ? mtmt->Current() : 0.0f;
 
-            continue;
+            m_connected_object_groups_resource_output[object_system_group] = mmt ? mmt->Current() : 0.0f;
+            m_connected_object_groups_resource_target_output[std::move(object_system_group)] = mtmt ? mtmt->Current() : 0.0f;
+
+        } else {
+            // if resource center's system is in a system group, record which system
+            // group that is for later
+            system_groups_to_object_groups[std::move(object_system_group)].insert(std::move(obj));
         }
-
-        // if resource center's system is in a system group, record which system
-        // group that is for later
-        system_groups_to_object_groups[object_system_group].insert(obj);
     }
 
     // sum the resource production for object groups, and store the total
