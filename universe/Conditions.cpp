@@ -10308,9 +10308,13 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         return ss.str();
     };
 
-    TraceLogger(conditions) << "And::Eval searching " << (search_domain == SearchDomain::MATCHES ? "matches" : "non_matches")
-                            << " with input matches (" << matches.size() << "): " << ObjList(matches)
-                            << " and input non_matches(" << non_matches.size() << "): " << ObjList(non_matches);
+    TraceLogger(conditions) << [&]() {
+        std::stringstream ss;
+        ss << "And::Eval searching " << (search_domain == SearchDomain::MATCHES ? "matches" : "non_matches")
+           << " with input matches (" << matches.size() << "): " << ObjList(matches)
+           << " and input non_matches(" << non_matches.size() << "): " << ObjList(non_matches);
+        return ss.str();
+    }();
 
     if (search_domain == SearchDomain::NON_MATCHES) {
         ObjectSet partly_checked_non_matches;
@@ -10319,15 +10323,25 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // move items in non_matches set that pass first operand condition into
         // partly_checked_non_matches set
         m_operands[0]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::NON_MATCHES);
-        TraceLogger(conditions) << "Subcondition: " << m_operands[0]->Dump()
-                                <<"\npartly_checked_non_matches (" << partly_checked_non_matches.size() << "): " << ObjList(partly_checked_non_matches);
+        TraceLogger(conditions) << [&]() {
+            std::stringstream ss;
+            ss << "Subcondition: " << m_operands[0]->Dump()
+               <<"\npartly_checked_non_matches (" << partly_checked_non_matches.size() << "): "
+               << ObjList(partly_checked_non_matches);
+            return ss.str();
+        }();
 
         // move items that don't pass one of the other conditions back to non_matches
         for (unsigned int i = 1; i < m_operands.size(); ++i) {
             if (partly_checked_non_matches.empty()) break;
             m_operands[i]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::MATCHES);
-            TraceLogger(conditions) << "Subcondition: " << m_operands[i]->Dump()
-                                    <<"\npartly_checked_non_matches (" << partly_checked_non_matches.size() << "): " << ObjList(partly_checked_non_matches);
+            TraceLogger(conditions) << [&]() {
+                std::stringstream ss;
+                ss << "Subcondition: " << m_operands[i]->Dump()
+                   <<"\npartly_checked_non_matches (" << partly_checked_non_matches.size() << "): "
+                   << ObjList(partly_checked_non_matches);
+                return ss.str();
+            }();
         }
 
         // merge items that passed all operand conditions into matches
