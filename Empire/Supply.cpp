@@ -82,11 +82,9 @@ std::set<int> SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool includ
         return retval;
 
     // add supplyable systems of all allies
-    for (auto& empire_id_sys_id_set : m_fleet_supplyable_system_ids) {
-        int other_empire_id = empire_id_sys_id_set.first;
+    for (auto& [other_empire_id, systems] : m_fleet_supplyable_system_ids) {
         if (other_empire_id == empire_id)
             continue;
-        const std::set<int>& systems = empire_id_sys_id_set.second;
         if (systems.empty() || Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DiplomaticStatus::DIPLO_ALLIED)
             continue;
         retval.insert(systems.begin(), systems.end());
@@ -95,9 +93,9 @@ std::set<int> SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool includ
 }
 
 int SupplyManager::EmpireThatCanSupplyAt(int system_id) const {
-    for (const auto& entry : m_fleet_supplyable_system_ids) {
-        if (entry.second.count(system_id))
-            return entry.first;
+    for (auto& [empire_id, sys_ids] : m_fleet_supplyable_system_ids) {
+        if (sys_ids.count(system_id))
+            return empire_id;
     }
     return ALL_EMPIRES;
 }
@@ -334,24 +332,26 @@ void SupplyManager::Update() {
     // map from empire id to total supply range sum of objects it owns
     std::map<int, float> empire_total_supply_range_sums;
 
-    for (const auto& entry : empires) {
-        const auto& empire = entry.second;
-        empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
-        empire_supply_unobstructed_systems[entry.first] = empire->SupplyUnobstructedSystems();
+    for (auto& [empire_id, empire] : empires) {
+        empire_system_supply_ranges[empire_id] = empire->SystemSupplyRanges();
+        empire_supply_unobstructed_systems[empire_id] = empire->SupplyUnobstructedSystems();
 
-        TraceLogger(supply) << "Empire " << empire->EmpireID() << " unobstructed systems: " << [&]() {
+        TraceLogger(supply) << "Empire " << empire_id << " unobstructed systems: "
+                            << [&empire_supply_unobstructed_systems, empire_id{empire_id}]()
+        {
             std::stringstream ss;
-            for (int system_id : empire_supply_unobstructed_systems[entry.first])
-            { ss << system_id << ", "; }
+            for (int system_id : empire_supply_unobstructed_systems[empire_id])
+                ss << system_id << ", ";
             return ss.str();
         }();
     }
-    for (auto empire_id_pair : empire_system_supply_ranges) {
-        for (auto sys_id_pair : empire_id_pair.second) {
-            empire_system_supply_range_sums[empire_id_pair.first][sys_id_pair.first] =
-                EmpireTotalSupplyRangeSumInSystem(empire_id_pair.first, sys_id_pair.first);
+    for (auto& [empire_id, systems] : empire_system_supply_ranges) {
+        for (auto& [system_id, ignored_range] : systems) {
+            (void)ignored_range;
+            empire_system_supply_range_sums[empire_id][system_id] =
+                EmpireTotalSupplyRangeSumInSystem(empire_id, system_id);
         }
-        empire_total_supply_range_sums[empire_id_pair.first] = EmpireTotalSupplyRange(empire_id_pair.first);
+        empire_total_supply_range_sums[empire_id] = EmpireTotalSupplyRange(empire_id);
     }
 
 
