@@ -787,12 +787,10 @@ void ServerNetworking::CleanupCookies() {
             to_delete.insert(cookie.first);
     }
     // don't clean up cookies from active connections
-    for (auto it = established_begin();
-        it != established_end(); ++it)
-    {
+    for (auto it = established_begin(); it != established_end(); ++it)
         to_delete.erase((*it)->Cookie());
-    }
-    for (auto cookie : to_delete)
+
+    for (const auto& cookie : to_delete)
         m_cookies.erase(cookie);
 }
 
