@@ -6,8 +6,8 @@ Part
     capacity = 3
     damage = 1
     combatTargets = And [
-        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
         Fighter
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
     ]
     mountableSlotTypes = Internal
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]

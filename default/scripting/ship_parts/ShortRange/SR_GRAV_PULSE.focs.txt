@@ -10,12 +10,12 @@ Part
         * ShipPartMeter part = "SR_GRAV_PULSE" meter = SecondaryStat object = Source.ID
     combatTargets = And [
         (CombatBout = 2)
-        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
         Or [
             Fighter
             [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
             [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
         ]
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
     ]
     mountableSlotTypes = [ Internal External ]
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]

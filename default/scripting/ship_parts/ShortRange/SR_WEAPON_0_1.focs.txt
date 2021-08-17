@@ -7,8 +7,8 @@ Part
     NoDefaultCapacityEffect
     damageStructurePerBattleMax = 0
     combatTargets = And [
-        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
         Fighter
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
     ]
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
