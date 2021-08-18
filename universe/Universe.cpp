@@ -1434,8 +1434,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
 
         // unlike species and special effectsgroups, all techs for an empire have the same source object
-        tech_sources.emplace_back(1U, source);
-        const auto& source_objects = tech_sources.back();
+        const auto& source_objects = tech_sources.emplace_back(1U, source);
 
         for ([[maybe_unused]] auto& [tech_name, researched_turn] : empire->ResearchedTechs()) {
             const Tech* tech = GetTech(tech_name);
@@ -1463,8 +1462,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
             continue;
 
         // like techs, all policies for an empire have the same source object
-        policy_sources.emplace_back(1U, source);
-        const auto& source_objects = policy_sources.back();
+        const auto& source_objects = policy_sources.emplace_back(1U, source);
 
         for (const auto& policy_name : empire->AdoptedPolicies()) {
             const Policy* policy = GetPolicy(policy_name);
@@ -1491,7 +1489,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         const std::string& building_type_name = building->BuildingTypeName();
         const BuildingType* building_type = GetBuildingType(building_type_name);
         if (!building_type) {
-            ErrorLogger() << "GetEffectsAndTargets couldn't get BuildingType " << building->BuildingTypeName();
+            ErrorLogger() << "GetEffectsAndTargets couldn't get BuildingType " << building_type_name;
             continue;
         }
 
@@ -1597,7 +1595,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         const std::string& field_type_name = field->FieldTypeName();
         const FieldType* field_type = GetFieldType(field_type_name);
         if (!field_type) {
-            ErrorLogger() << "GetEffectsAndTargets couldn't get FieldType " << field->FieldTypeName();
+            ErrorLogger() << "GetEffectsAndTargets couldn't get FieldType " << field_type_name;
             continue;
         }
 
@@ -1642,12 +1640,11 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                 // create entry in output with empty TargetSet
                 auto& result{job_results.first[i]};
                 int priority = result.first.effects_group->Priority();
-                source_effects_targets_causes[priority].push_back(result);
+                auto& res_in_map = source_effects_targets_causes[priority].emplace_back(result);
 
                 // overwrite empty placeholder TargetSet with contents of
                 // pointed-to earlier entry
-                source_effects_targets_causes[priority].back().second.target_set =
-                    resolved_scope_target_sets.at(i).second.target_set;
+                res_in_map.second.target_set = resolved_scope_target_sets.at(i).second.target_set;
             }
 
         } else {
