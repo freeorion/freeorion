@@ -1628,31 +1628,32 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
 
     // add results to source_effects_targets_causes, sorted by effect priority, then in issue order
     type_timer.EnterSection("reordering");
-    for (const auto& job_results : source_effects_targets_causes_reorder_buffer) {
-        if (job_results.second) {
-            // entry in reorder buffer contains empty Effect::TargetSets that
-            // should be populated from the pointed-to earlier entry
-            const auto& resolved_scope_target_sets{*job_results.second};
+    for (const auto& [job_result, job_result_cached] : source_effects_targets_causes_reorder_buffer) {
+        if (job_result_cached) {
+            // job_result contains empty Effect::TargetSets that should be
+            // populated from those in the pointed-to cached earlier entry
+            const auto& resolved_scope_target_sets{*job_result_cached};
             TraceLogger(effects) << "Reordering using cached result of size " << resolved_scope_target_sets.size()
-                                 << "  for expected result of size: " << job_results.first.size();
+                                 << "  for expected result of size: " << job_result.size();
 
-            for (std::size_t i = 0; i < std::min(job_results.first.size(), resolved_scope_target_sets.size()); ++i) {
+            // copy TargetSets from the pointed-to cached results
+            for (std::size_t i = 0; i < std::min(job_result.size(), resolved_scope_target_sets.size()); ++i) {
                 // create entry in output with empty TargetSet
-                auto& result{job_results.first[i]};
+                auto& result{job_result[i]};
                 int priority = result.first.effects_group->Priority();
-                auto& res_in_map = source_effects_targets_causes[priority].emplace_back(result);
+                auto& res_cause = source_effects_targets_causes[priority].emplace_back(result).second;
 
                 // overwrite empty placeholder TargetSet with contents of
                 // pointed-to earlier entry
-                res_in_map.second.target_set = resolved_scope_target_sets.at(i).second.target_set;
+                res_cause.target_set = resolved_scope_target_sets.at(i).second.target_set;
             }
 
         } else {
             // entry in reorder buffer contains the results of an effectsgroup
             // scope/activation being evaluatied with a set of source objects
-            for (const auto& result : job_results.first) {
+            for (const auto& result : job_result) {
                 int priority = result.first.effects_group->Priority();
-                source_effects_targets_causes[priority].push_back(result);
+                source_effects_targets_causes[priority].push_back(result); // can't move as another result might point to this one as a cache. would need to reverse-iterate over results to be sure moving is OK
             }
         }
     }
