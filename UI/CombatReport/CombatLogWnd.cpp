@@ -575,7 +575,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const ObjectMap& objects = Objects();
-    const EmpireManager& empires = Empires();
+    //const EmpireManager& empires = Empires();
 
     // Write Header text
     auto system = objects.get<System>(log->system_id);
