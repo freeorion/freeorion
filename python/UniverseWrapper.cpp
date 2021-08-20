@@ -34,6 +34,11 @@ namespace py = boost::python;
 
 
 namespace {
+    std::map<std::tuple<int, int, int>, std::vector<int>> least_jumps_path_cache;
+    std::map<std::pair<int, int>, std::vector<int>> immediate_neighbours_cache;
+
+    size_t hits{0}, misses{1};
+
     template<typename T>
     auto ObjectIDs(const Universe& universe) -> std::vector<int>
     {
@@ -87,19 +92,42 @@ namespace {
 
     auto LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        auto path = universe.GetPathfinder()->LeastJumpsPath(
-            start_sys, end_sys, empire_id);
-        return std::vector<int>{path.first.begin(), path.first.end()};
+        // look up requested connection
+        std::tuple<int, int, int> ljp_key{std::min(start_sys, end_sys), std::max(start_sys, end_sys), empire_id};
+        auto it = least_jumps_path_cache.find(ljp_key);
+        if (it != least_jumps_path_cache.end()) {
+            hits++;
+            return it->second;
+        }
+        misses++;
+
+        // cacluate, store, and return requested connection
+        auto path_and_length = universe.GetPathfinder()->LeastJumpsPath(start_sys, end_sys, empire_id);
+        auto it_and_bool{least_jumps_path_cache.emplace(std::move(ljp_key),
+                                                        std::vector<int>{path_and_length.first.begin(),
+                                                                         path_and_length.first.end()})};
+        return it_and_bool.first->second;
     }
+
+    auto SystemsConnected(const Universe& universe, int start_sys, int end_sys, int empire_id) -> bool
+    { return !LeastJumpsPath(universe, start_sys, end_sys, empire_id).empty(); }
 
     auto ImmediateNeighbors(const Universe& universe, int system1_id, int empire_id) -> std::vector<int>
     {
-        auto neighbours{universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id)};
-        std::vector<int> retval;
-        retval.reserve(neighbours.size());
-        std::transform(neighbours.begin(), neighbours.end(), std::back_inserter(retval),
+        // look up requested neighburs
+        std::pair<int, int> im_key{system1_id, empire_id};
+        auto it = immediate_neighbours_cache.find(im_key);
+        if (it != immediate_neighbours_cache.end())
+            return it->second;
+
+        // cacluate, store, and return requested neighbours
+        auto distances_neighbours{universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id)};
+        auto& neighbours{immediate_neighbours_cache[std::move(im_key)]};
+        neighbours.reserve(distances_neighbours.size());
+        std::transform(distances_neighbours.begin(), distances_neighbours.end(), std::back_inserter(neighbours),
                        [](auto& n) { return n.second; });
-        return retval;
+
+        return neighbours;
     }
 
     auto SystemNeighborsMap(const Universe& universe, int system1_id, int empire_id) -> std::map<int, double>
@@ -174,6 +202,20 @@ namespace {
         ScriptingContext location_as_source_context{location, location};
         return part_type.Location()->Eval(location_as_source_context, std::move(location));
     }
+}
+
+void ClearPathfinderCaches() {
+    DebugLogger() << "Clearing pathfinder cache. Previous hits/misses: " << hits << " / " << misses
+                  << " : " << std::to_string(static_cast<float>(hits) / (hits + misses) * 100.0f) << "%";
+    hits = 0;
+    misses = 1;
+
+    least_jumps_path_cache.clear();
+    const auto system_count = GetUniverse().Objects().size<System>();
+    //least_jumps_path_cache.reserve(system_count * system_count);
+
+    least_jumps_path_cache.clear();
+    immediate_neighbours_cache.clear();
 }
 
 namespace FreeOrionPython {
@@ -342,7 +384,7 @@ namespace FreeOrionPython {
             .def("leastJumpsPath",              LeastJumpsPath,
                                                 py::return_value_policy<py::return_by_value>())
 
-            .def("systemsConnected",            +[](const Universe& u, int system1_id, int system2_id, int empire_id) -> bool { return u.GetPathfinder()->SystemsConnected(system1_id, system2_id, empire_id); },
+            .def("systemsConnected",            SystemsConnected, //+[](const Universe& u, int system1_id, int system2_id, int empire_id) -> bool { return u.GetPathfinder()->SystemsConnected(system1_id, system2_id, empire_id); },
                                                 py::return_value_policy<py::return_by_value>())
 
             .def("getImmediateNeighbors",       ImmediateNeighbors,

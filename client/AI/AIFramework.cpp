@@ -76,6 +76,8 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     FreeOrionPython::SetWrapper<std::string>::Wrap("StringSet");
 }
 
+void ClearPathfinderCaches();
+
 //////////////////////
 //     PythonAI     //
 //////////////////////
@@ -121,6 +123,7 @@ auto PythonAI::InitModules() -> bool
 void PythonAI::GenerateOrders()
 {
     DebugLogger() << "PythonAI::GenerateOrders : initializing turn";
+    ClearPathfinderCaches();
 
     ScopedTimer order_timer;
     try {
