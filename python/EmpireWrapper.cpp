@@ -53,7 +53,7 @@ namespace {
     {
         std::map<int, int> retval;
         const std::map<int, std::set<int>>& empire_starlanes = empire.KnownStarlanes(GetUniverse());
-        std::list<int> propagating_list;
+        std::deque<int> propagating_list;
 
         for (int system_id : GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID(), true)) {
             retval[system_id] = 0;
