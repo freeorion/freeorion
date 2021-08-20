@@ -87,6 +87,9 @@ public:
     //! iterator to the last + 1th field type
     FO_COMMON_API auto end() const -> iterator;
 
+    //! How many types are known?
+    auto size() const -> std::size_t;
+
     //! Returns the instance of this singleton class; you should use the free
     //! function GetFieldTypeManager() instead
     static auto GetFieldTypeManager() -> FieldTypeManager&;

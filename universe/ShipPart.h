@@ -189,6 +189,9 @@ public:
     //! Iterator to one after the last ShipPart.
     auto end() const -> iterator;
 
+    //! How many parts are known?
+    auto size() const -> std::size_t;
+
     //! Returns the instance of this singleton class; you should use the free
     //! function GetShipPartManager() instead.
     static auto GetShipPartManager() -> ShipPartManager&;

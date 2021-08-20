@@ -543,9 +543,14 @@ ShipPartManager::iterator ShipPartManager::begin() const {
     return m_parts.begin();
 }
 
-ShipPartManager::iterator ShipPartManager::end() const{
+ShipPartManager::iterator ShipPartManager::end() const {
     CheckPendingShipParts();
     return m_parts.end();
+}
+
+std::size_t ShipPartManager::size() const {
+    CheckPendingShipParts();
+    return m_parts.size();
 }
 
 unsigned int ShipPartManager::GetCheckSum() const {

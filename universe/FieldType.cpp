@@ -142,6 +142,11 @@ FieldTypeManager::iterator FieldTypeManager::end() const {
     return m_field_types.end();
 }
 
+std::size_t FieldTypeManager::size() const {
+    CheckPendingFieldTypes();
+    return m_field_types.size();
+}
+
 FieldTypeManager& FieldTypeManager::GetFieldTypeManager() {
     static FieldTypeManager manager;
     return manager;
