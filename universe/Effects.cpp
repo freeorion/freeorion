@@ -136,9 +136,8 @@ namespace {
             return;
         }
 
-        if (new_previous_system != INVALID_OBJECT_ID && !objects.get<System>(new_previous_system)) {
+        if (new_previous_system != INVALID_OBJECT_ID && !objects.get<System>(new_previous_system))
             ErrorLogger() << "UpdateFleetRoute couldn't get new previous system with id: " << new_previous_system;
-        }
 
         fleet->SetNextAndPreviousSystems(new_next_system, new_previous_system);
 
@@ -150,8 +149,8 @@ namespace {
 
         int dest_system = fleet->FinalDestinationID();
 
-        std::pair<std::list<int>, double> route_pair =
-            context.ContextUniverse().GetPathfinder()->ShortestPath(start_system, dest_system, fleet->Owner(), objects);
+        auto route_pair = context.ContextUniverse().GetPathfinder()->ShortestPath(
+            start_system, dest_system, fleet->Owner(), objects);
 
         // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
         // to the next system that it was just set to move to anyway.
