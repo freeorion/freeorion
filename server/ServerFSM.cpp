@@ -738,8 +738,7 @@ sc::result Idle::react(const Hostless&) {
     if (autostart_load_filename.empty()) {
         DebugLogger(FSM) << "Start new game";
 
-        std::list<PlayerSetupData> human_players = server.FillListPlayers();
-
+        auto human_players = server.FillListPlayers();
         for (auto& player_setup_data : human_players) {
             DebugLogger(FSM) << "Create player " << player_setup_data.player_name;
             player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
