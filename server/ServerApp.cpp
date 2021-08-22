@@ -1755,7 +1755,7 @@ bool ServerApp::IsAuthSuccessAndFillRoles(const std::string& player_name, const 
     return result;
 }
 
-std::list<PlayerSetupData> ServerApp::FillListPlayers() {
+std::vector<PlayerSetupData> ServerApp::FillListPlayers() {
     std::list<PlayerSetupData> result;
     bool success = false;
     try {
@@ -1780,7 +1780,7 @@ std::list<PlayerSetupData> ServerApp::FillListPlayers() {
         ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
                                                                       false));
     }
-    return result;
+    return {result.begin(), result.end()};
 }
 
 void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
@@ -1890,7 +1890,7 @@ void ServerApp::DropPlayerEmpireLink(int player_id)
 int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, int target_empire_id) {
     std::shared_ptr<Empire> empire;
     int empire_id = ALL_EMPIRES;
-    std::list<std::string> delegation = GetPlayerDelegation(player_connection->PlayerName());
+    auto delegation = GetPlayerDelegation(player_connection->PlayerName());
     if (GetOptionsDB().Get<bool>("network.server.take-over-ai")) {
         for (auto& e : Empires()) {
             if (!e.second->Eliminated() &&
@@ -1902,19 +1902,19 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     }
     if (target_empire_id == ALL_EMPIRES) {
         // search empire by player name
-        for (auto& e : Empires()) {
-            if (e.second->PlayerName() == player_connection->PlayerName()) {
-                empire_id = e.first;
-                empire = e.second;
+        for (auto& [loop_empire_id, loop_empire] : Empires()) {
+            if (loop_empire->PlayerName() == player_connection->PlayerName()) {
+                empire_id = loop_empire_id;
+                empire = loop_empire;
                 break;
             }
         }
         // Assign player to empire if he doesn't have own empire and delegates signle
         if (delegation.size() == 1 && empire == nullptr) {
-            for (auto e : Empires()) {
-                if (e.second->PlayerName() == delegation.front()) {
-                    empire_id = e.first;
-                    empire = e.second;
+            for (auto& [loop_empire_id, loop_empire] : Empires()) {
+                if (loop_empire->PlayerName() == delegation.front()) {
+                    empire_id = loop_empire_id;
+                    empire = loop_empire;
                     break;
                 }
             }
@@ -1927,7 +1927,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
         // use provided empire and test if it's player himself or one of delegated
         empire_id = target_empire_id;
         empire = Empires().GetEmpire(target_empire_id);
-        if (empire == nullptr)
+        if (!empire)
             return ALL_EMPIRES;
 
         if (empire->PlayerName() != player_connection->PlayerName()) {
@@ -2016,7 +2016,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     return empire_id;
 }
 
-std::list<std::string> ServerApp::GetPlayerDelegation(const std::string& player_name) {
+std::vector<std::string> ServerApp::GetPlayerDelegation(const std::string& player_name) {
     std::list<std::string> result;
     bool success = false;
     try {
@@ -2042,7 +2042,7 @@ std::list<std::string> ServerApp::GetPlayerDelegation(const std::string& player_
         ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
                                                                       false));
     }
-    return result;
+    return {result.begin(), result.end()};
 }
 
 bool ServerApp::IsHostless() const

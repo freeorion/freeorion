@@ -173,7 +173,7 @@ public:
                                                  Networking::AuthRoles& roles);
 
     /** Returns list of player for multiplayer quickstart*/
-    [[nodiscard]] std::list<PlayerSetupData> FillListPlayers();
+    [[nodiscard]] std::vector<PlayerSetupData> FillListPlayers();
 
     /** Adds new observing player to running game.
       * Simply sends GAME_START message so established player knows he is in the game. */
@@ -193,7 +193,7 @@ public:
     int AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, int target_empire_id);
 
     /** Get list of players delegated by \a player_name */
-    [[nodiscard]] std::list<std::string> GetPlayerDelegation(const std::string& player_name);
+    [[nodiscard]] std::vector<std::string> GetPlayerDelegation(const std::string& player_name);
 
     /** Sets turn to be expired. Server doesn't wait for human player turns. */
     void ExpireTurn();
