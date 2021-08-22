@@ -272,8 +272,7 @@ namespace {
 
     class SavedDesignsManager : public ShipDesignManager::Designs {
     public:
-        SavedDesignsManager()
-        {}
+        SavedDesignsManager() = default;
 
         const std::list<boost::uuids::uuid>& OrderedDesignUUIDs() const;
         std::vector<int> OrderedIDs() const override;
