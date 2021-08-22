@@ -72,7 +72,7 @@ namespace {
 
     auto ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(
+        auto path = universe.GetPathfinder()->ShortestPath(
             start_sys, end_sys, empire_id, universe.EmpireKnownObjects(empire_id));
         return std::vector<int>{path.first.begin(), path.first.end()};
     }
@@ -80,14 +80,14 @@ namespace {
     auto ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
         auto fleet_pred = std::make_shared<HostileVisitor>(empire_id);
-        std::pair<std::list<int>, int> path = universe.GetPathfinder()->ShortestPath(
+        auto path = universe.GetPathfinder()->ShortestPath(
             start_sys, end_sys, empire_id, fleet_pred, Empires(), universe.EmpireKnownObjects(empire_id));
         return std::vector<int>{path.first.begin(), path.first.end()};
     }
 
     auto LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        std::pair<std::list<int>, int> path = universe.GetPathfinder()->LeastJumpsPath(
+        auto path = universe.GetPathfinder()->LeastJumpsPath(
             start_sys, end_sys, empire_id);
         return std::vector<int>{path.first.begin(), path.first.end()};
     }
