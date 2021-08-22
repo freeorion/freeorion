@@ -1924,7 +1924,27 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 
 void Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                 ObjectSet& condition_non_targets) const
-{ AddPlanetSet(parent_context.ContextObjects(), condition_non_targets); }
+{
+    if constexpr(false) {
+        auto capital_ids{[empires{parent_context.Empires()}]() -> std::set<int> {
+            // collect capitals of all empires
+            std::set<int> retval;
+            for (auto& [empire_id, empire] : empires) {
+                (void)empire_id;
+                auto id = empire->CapitalID();
+                if (id != INVALID_OBJECT_ID)
+                    retval.insert(id);
+            }
+            return retval;
+        }()};
+
+        condition_non_targets.reserve(condition_non_targets.size() + capital_ids.size());
+        for (auto& obj : parent_context.ContextObjects().find(capital_ids))
+            condition_non_targets.push_back(std::move(obj));
+    } else {
+        AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+    }
+}
 
 unsigned int Capital::GetCheckSum() const {
     unsigned int retval{0};
