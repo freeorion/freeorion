@@ -47,8 +47,6 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
 
     [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override;
     [[nodiscard]] T    Eval(const ScriptingContext& context) const override;
-    [[nodiscard]] bool ConstantExpr() const override
-    { return true; }
 
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
@@ -109,9 +107,10 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     [[nodiscard]] T Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
-    [[nodiscard]] ReferenceType GetReferenceType() const;
-    [[nodiscard]] const std::vector<std::string>& PropertyName() const;
-    [[nodiscard]] bool ReturnImmediateValue() const;
+    [[nodiscard]] ReferenceType GetReferenceType() const noexcept { return m_ref_type; }
+    [[nodiscard]] const std::vector<std::string>& PropertyName() const noexcept { return m_property_name; }
+    [[nodiscard]] bool ReturnImmediateValue() const noexcept { return m_return_immediate_value; }
+
     [[nodiscard]] unsigned int GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
@@ -428,8 +427,6 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
 
     [[nodiscard]] bool        operator==(const ValueRef<T>& rhs) const override;
     [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
-    [[nodiscard]] bool        SimpleIncrement() const override { return m_simple_increment; }
-    [[nodiscard]] bool        ConstantExpr() const override { return m_constant_expr; }
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
     [[nodiscard]] OpType      GetOpType() const;
@@ -457,8 +454,6 @@ private:
 
     OpType                                      m_op_type = OpType::TIMES;
     std::vector<std::unique_ptr<ValueRef<T>>>   m_operands;
-    bool                                        m_constant_expr = false;
-    bool                                        m_simple_increment = false;
     T                                           m_cached_const_value = T();
 };
 
@@ -681,18 +676,6 @@ bool Variable<T>::operator==(const ValueRef<T>& rhs) const
            (m_property_name == rhs_.m_property_name) &&
            (m_return_immediate_value == rhs_.m_return_immediate_value);
 }
-
-template <typename T>
-ReferenceType Variable<T>::GetReferenceType() const
-{ return m_ref_type; }
-
-template <typename T>
-const std::vector<std::string>& Variable<T>::PropertyName() const
-{ return m_property_name; }
-
-template <typename T>
-bool Variable<T>::ReturnImmediateValue() const
-{ return m_return_immediate_value; }
 
 template <typename T>
 std::string Variable<T>::Description() const
@@ -1275,6 +1258,7 @@ ComplexVariable<T>::ComplexVariable(const ComplexVariable<T>& rhs) :
     this->m_local_candidate_invariant = rhs.m_local_candidate_invariant;
     this->m_target_invariant = rhs.m_target_invariant;
     this->m_source_invariant = rhs.m_source_invariant;
+    // this->m_constant_expr and this->m_simple_increment should always be false
 }
 
 template <typename T>
@@ -1286,6 +1270,7 @@ void ComplexVariable<T>::InitInvariants()
     this->m_local_candidate_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->LocalCandidateInvariant(); });
     this->m_target_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->TargetInvariant(); });
     this->m_source_invariant = boost::algorithm::all_of(refs, [](const auto& e) { return !e || e->SourceInvariant(); });
+    // this->m_constant_expr and this->m_simple_increment should always be false
 }
 
 template <typename T>
@@ -1487,6 +1472,8 @@ StaticCast<FromType, ToType>::StaticCast(
     this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
     this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
     this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
+    this->m_constant_expr = !m_value_ref || m_value_ref->ConstantExpr();
+    // this->m_simple_increment should always be false
 }
 
 template <typename FromType, typename ToType>
@@ -1503,6 +1490,8 @@ StaticCast<FromType, ToType>::StaticCast(
     this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
     this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
     this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
+    this->m_constant_expr = !m_value_ref || m_value_ref->ConstantExpr();
+    // this->m_simple_increment should always be false
 }
 
 template <typename FromType, typename ToType>
@@ -1579,6 +1568,8 @@ StringCast<FromType>::StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref
     this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
     this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
     this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
+    this->m_constant_expr = !m_value_ref || m_value_ref->ConstantExpr();
+    // this->m_simple_increment should always be false
 }
 
 template <typename FromType>
@@ -1672,6 +1663,8 @@ UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRef<FromType>>
     this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
     this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
     this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
+    this->m_constant_expr = !m_value_ref || m_value_ref->ConstantExpr();
+    // this->m_simple_increment should always be false
 }
 
 template <typename FromType>
@@ -1784,30 +1777,31 @@ template <typename T>
 Operation<T>::Operation(const Operation<T>& rhs) :
     m_op_type(rhs.m_op_type),
     m_operands(CloneUnique(rhs.m_operands)),
-    m_constant_expr(rhs.m_constant_expr),
-    m_simple_increment(rhs.m_simple_increment),
     m_cached_const_value(rhs.m_cached_const_value)
 {
     this->m_root_candidate_invariant = rhs.m_root_candidate_invariant;
     this->m_local_candidate_invariant = rhs.m_local_candidate_invariant;
     this->m_target_invariant = rhs.m_target_invariant;
     this->m_source_invariant = rhs.m_source_invariant;
+    this->m_constant_expr = rhs.m_constant_expr;
+    this->m_simple_increment = rhs.m_simple_increment; // only case where this might not be false
 }
 
 template <typename T>
 void Operation<T>::InitConstInvariants()
 {
     if (m_op_type == OpType::RANDOM_UNIFORM || m_op_type == OpType::RANDOM_PICK || m_op_type == OpType::NOOP) {
-        m_constant_expr = false;
-        this->m_root_candidate_invariant = false;
-        this->m_local_candidate_invariant = false;
-        this->m_target_invariant = false;
-        this->m_source_invariant = false;
-        m_simple_increment = false;
+        // all defaults for invariants = false should apply
+        //this->m_root_candidate_invariant = false;
+        //this->m_local_candidate_invariant = false;
+        //this->m_target_invariant = false;
+        //this->m_source_invariant = false;
+        //this->m_constant_expr = false;
+        //this->m_simple_increment = false;
         return;
     }
 
-    m_constant_expr = std::all_of(m_operands.begin(), m_operands.end(),
+    this->m_constant_expr = std::all_of(m_operands.begin(), m_operands.end(),
         [](const auto& operand) { return operand && operand->ConstantExpr(); });
 
     this->m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(),
@@ -1822,29 +1816,29 @@ void Operation<T>::InitConstInvariants()
 
     // determine if this is a simple incrment operation
     if (m_op_type != OpType::PLUS && m_op_type != OpType::MINUS) {
-        m_simple_increment = false;
+        this->m_simple_increment = false;
         return;
     }
     if (m_operands.size() < 2 || !m_operands[0] || !m_operands[1]) {
-        m_simple_increment = false;
+        this->m_simple_increment = false;
         return;
     }
     // RHS must be the same value for all targets
     if (!m_operands[1]->TargetInvariant()) {
-        m_simple_increment = false;
+        this->m_simple_increment = false;
         return;
     }
     // LHS must be just the immediate value of what's being incremented
     if (const auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0].get()))
-        m_simple_increment = (lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
+        this->m_simple_increment = (lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
     else
-        m_simple_increment = false;
+        this->m_simple_increment = false;
 }
 
 template <typename T>
 void Operation<T>::CacheConstValue()
 {
-    if (!m_constant_expr)
+    if (!this->m_constant_expr)
         return;
     m_cached_const_value = this->EvalImpl(ScriptingContext{});
 }
@@ -1879,10 +1873,6 @@ bool Operation<T>::operator==(const ValueRef<T>& rhs) const
         return false;
     }
 
-    // should be redundant...
-    if (m_constant_expr != rhs_.m_constant_expr)
-        return false;
-
     return true;
 }
 
@@ -1911,7 +1901,7 @@ const std::vector<ValueRef<T>*> Operation<T>::Operands() const
 template <typename T>
 T Operation<T>::Eval(const ScriptingContext& context) const
 {
-    if (m_constant_expr)
+    if (this->m_constant_expr)
         return m_cached_const_value;
     return this->EvalImpl(context);
 }
@@ -2017,7 +2007,7 @@ unsigned int Operation<T>::GetCheckSum() const
     CheckSums::CheckSumCombine(retval, m_op_type);
     CheckSums::CheckSumCombine(retval, m_operands);
     // derived member values should not be part of checksums
-    // e.g. the invariants, m_constant_expr, and m_cached_const_value
+    // e.g. the invariants and m_cached_const_value
     TraceLogger() << "GetCheckSum(Operation<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }

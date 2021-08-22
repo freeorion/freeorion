@@ -2857,6 +2857,8 @@ NameLookup::NameLookup(std::unique_ptr<ValueRef<int>>&& value_ref, LookupType lo
     m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
     m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
     m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
+    m_constant_expr = !m_value_ref; // should be false if an object ID is provided, since the name of that object is gamestate and is not known at initialization time and can vary with time
+    //m_simple_increment = false; // should be always false for this class
 }
 
 bool NameLookup::operator==(const ValueRef<std::string>& rhs) const {

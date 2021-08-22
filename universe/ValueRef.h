@@ -15,12 +15,13 @@ struct FO_COMMON_API ValueRefBase {
     ValueRefBase() = default;
     virtual ~ValueRefBase() = default;
 
+    // these getters can't be noexcept due to a derived class doing complicated stuff
     [[nodiscard]] virtual bool RootCandidateInvariant() const  { return m_root_candidate_invariant; }
     [[nodiscard]] virtual bool LocalCandidateInvariant() const { return m_local_candidate_invariant; }
     [[nodiscard]] virtual bool TargetInvariant() const         { return m_target_invariant; }
     [[nodiscard]] virtual bool SourceInvariant() const         { return m_source_invariant; }
-    [[nodiscard]] virtual bool SimpleIncrement() const         { return false; }
-    [[nodiscard]] virtual bool ConstantExpr() const            { return false; }
+    [[nodiscard]] virtual bool SimpleIncrement() const         { return m_simple_increment; }
+    [[nodiscard]] virtual bool ConstantExpr() const            { return m_constant_expr; }
 
     [[nodiscard]] std::string         InvariancePattern() const;
     [[nodiscard]] virtual std::string Description() const = 0;                    //! Returns a user-readable text description of this ValueRef
@@ -36,6 +37,8 @@ protected:
     bool m_local_candidate_invariant = false;
     bool m_target_invariant = false;
     bool m_source_invariant = false;
+    bool m_constant_expr = false;
+    bool m_simple_increment = false;
 };
 
 template<typename T, typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
