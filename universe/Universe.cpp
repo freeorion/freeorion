@@ -1,6 +1,7 @@
 #include "Universe.h"
 
 #include <boost/algorithm/string.hpp>
+#include <boost/container/flat_set.hpp>
 #include <boost/property_map/property_map.hpp>
 #include "BuildingType.h"
 #include "Building.h"
@@ -990,13 +991,14 @@ namespace {
       * the default candidate objects for the scope condition is used. Stores
       * the objects that matched the effects group's scope condition, for each
       * source object, as a separate entry in \a targets_cases_out */
+    template <typename IntSetT>
     void StoreTargetsAndCausesOfEffectsGroup(
         ScriptingContext&                           context,
         const Effect::EffectsGroup*                 effects_group,
         const Condition::ObjectSet&                 source_objects,
         EffectsCauseType                            effect_cause_type,
         const std::string&                          specific_cause_name,
-        const std::unordered_set<int>&              candidate_object_ids,   // TODO: Can this be removed along with scope is source test?
+        IntSetT&                                    candidate_object_ids,   // TODO: Can this be removed along with scope is source test?
         Effect::TargetSet&                          candidate_objects_in,   // may be empty: indicates to test for full universe of objects
         Effect::SourcesEffectsTargetsAndCausesVec&  source_effects_targets_causes_out,
         int n)
@@ -1086,6 +1088,7 @@ namespace {
     /** Collect info for scope condition evaluations and dispatch those
       * evaluations to \a thread_pool. Not thread-safe, but the individual
       * condition evaluations should be safe to evaluate in parallel. */
+    template <typename ReorderBufferT, typename IntSetT>
     void DispatchEffectsGroupScopeEvaluations(
         EffectsCauseType effect_cause_type,
         const std::string& specific_cause_name,
@@ -1094,9 +1097,8 @@ namespace {
         bool only_meter_effects,
         ScriptingContext context,
         const Condition::ObjectSet& potential_targets,
-        const std::unordered_set<int>& potential_target_ids,
-        std::list<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
-                            Effect::SourcesEffectsTargetsAndCausesVec*>>& source_effects_targets_causes_reorder_buffer_out,
+        const IntSetT& potential_target_ids,
+        ReorderBufferT& source_effects_targets_causes_reorder_buffer_out,
         boost::asio::thread_pool& thread_pool,
         int& n)
     {
@@ -1310,27 +1312,32 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
 
     // assemble target objects from input vector of IDs
     auto potential_targets{context.ContextObjects().find<const UniverseObject>(target_object_ids)};
-    std::unordered_set<int> potential_ids_set{target_object_ids.begin(), target_object_ids.end()};
+    const boost::container::flat_set<int> potential_ids_set{target_object_ids.begin(), target_object_ids.end()};
+    const auto& doids{context.ContextUniverse().DestroyedObjectIds()};
+    const boost::container::flat_set<int> destroyed_object_ids{doids.begin(), doids.end()};
 
     TraceLogger(effects) << "GetEffectsAndTargets input candidate target objects:";
     for (auto& obj : potential_targets)
         TraceLogger(effects) << obj->Dump();
 
-    // list, not vector, to avoid invaliding iterators when pushing more items
-    // onto list due to vector reallocation.
+
+    // deque, not vector, to avoid invaliding iterators when pushing more items
+    // onto list due to vector reallocation. space can't be reserved easily due to
+    // not knowing how many target set evaluations will be dispatched
     // .first are results of evaluating an effectsgroups's activation and source
     // conditions for a set of candidate source objects
     // .second may be nullptr, in which case it is ignored, or may be a pointer
     // to another earlier entry in this list, which contains the results of
     // evaluating the same scope condition on the same set of activation-passing
     // source objects, and which should be copied into the paired Vec
-    std::list<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
-                        Effect::SourcesEffectsTargetsAndCausesVec*>> source_effects_targets_causes_reorder_buffer;
+    std::deque<std::pair<Effect::SourcesEffectsTargetsAndCausesVec,
+                         Effect::SourcesEffectsTargetsAndCausesVec*>> source_effects_targets_causes_reorder_buffer;
+
 
     const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
     boost::asio::thread_pool thread_pool(num_threads);
 
-    int n = 1;  // count dispatched condition evaluations
+    int n = 0;  // count dispatched condition evaluations
 
 
     // 1) EffectsGroups from Species
@@ -1339,12 +1346,12 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> species_objects;
     // find each species planets in single pass, maintaining object map order per-species
     for (auto& planet : context.ContextObjects().all<Planet>()) {
-        if (context.ContextUniverse().DestroyedObjectIds().count(planet->ID()))
+        if (destroyed_object_ids.count(planet->ID()))
             continue;
         const std::string& species_name = planet->SpeciesName();
         if (species_name.empty())
             continue;
-        const Species* species = GetSpecies(species_name);
+        const Species* species = context.species.GetSpecies(species_name);
         if (!species) {
             ErrorLogger() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
@@ -1353,12 +1360,12 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     }
     // find each species ships in single pass, maintaining object map order per-species
     for (auto& ship : context.ContextObjects().all<Ship>()) {
-        if (context.ContextUniverse().DestroyedObjectIds().count(ship->ID()))
+        if (destroyed_object_ids.count(ship->ID()))
             continue;
         const std::string& species_name = ship->SpeciesName();
         if (species_name.empty())
             continue;
-        const Species* species = GetSpecies(species_name);
+        const Species* species = context.species.GetSpecies(species_name);
         if (!species) {
             ErrorLogger() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
@@ -1383,14 +1390,13 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                                              thread_pool, n);
     }
 
-
     // 2) EffectsGroups from Specials
     type_timer.EnterSection("specials");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for SPECIALS";
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> specials_objects;
     // determine objects with specials in a single pass
     for (const auto& obj : context.ContextObjects().all()) {
-        if (context.ContextUniverse().DestroyedObjectIds().count(obj->ID()))
+        if (destroyed_object_ids.count(obj->ID()))
             continue;
         for (const auto& entry : obj->Specials()) {
             const std::string& special_name = entry.first;
@@ -1403,7 +1409,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         }
     }
     // dispatch condition evaluations
-    for (const std::string& special_name : SpecialNames()) {
+    for (const std::string& special_name : GetSpecialsManager().SpecialNames()) {
         const Special* special = GetSpecial(special_name);
         auto specials_objects_it = specials_objects.find(special_name);
         if (specials_objects_it == specials_objects.end())
@@ -1425,7 +1431,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // 3) EffectsGroups from Techs
     type_timer.EnterSection("techs");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for TECHS";
-    std::list<Condition::ObjectSet> tech_sources;   // for each empire, a set with a single source object for all its techs
+    std::vector<Condition::ObjectSet> tech_sources;   // for each empire, a set with a single source object for all its techs
+    tech_sources.reserve(context.Empires().size());
     // select a source object for each empire and dispatch condition evaluations
     for (auto& [empire_id, empire] : context.Empires()) {
         (void)empire_id;    // quiet unused variable warning
@@ -1454,7 +1461,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // 3.5) EffectsGroups from Policies
     type_timer.EnterSection("policies");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for POLICIES";
-    std::list<Condition::ObjectSet> policy_sources; // for each empire, a set with a single source object for all its policies
+    std::vector<Condition::ObjectSet> policy_sources; // for each empire, a set with a single source object for all its policies
+    policy_sources.reserve(context.Empires().size());
     for (const auto& [empire_id, empire] : context.Empires()) {
         (void)empire_id;    // quiet unused varianle warning
         auto source = empire->Source(context.ContextObjects());
@@ -1484,7 +1492,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // determine buildings of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> buildings_by_type;
     for (const auto& building : context.ContextObjects().all<Building>()) {
-        if (context.ContextUniverse().DestroyedObjectIds().count(building->ID()))
+        if (destroyed_object_ids.count(building->ID()))
             continue;
         const std::string& building_type_name = building->BuildingTypeName();
         const BuildingType* building_type = GetBuildingType(building_type_name);
@@ -1524,7 +1532,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_ship_part;
 
     for (const auto& ship : context.ContextObjects().all<Ship>()) {
-        if (context.ContextUniverse().DestroyedObjectIds().count(ship->ID()))
+        if (destroyed_object_ids.count(ship->ID()))
             continue;
         const ShipDesign* ship_design = ship->Design();
         if (!ship_design)
@@ -1590,7 +1598,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // determine fields of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> fields_by_type;
     for (const auto& field : context.ContextObjects().all<Field>()) {
-        if (context.ContextUniverse().DestroyedObjectIds().count(field->ID()))
+        if (destroyed_object_ids.count(field->ID()))
             continue;
         const std::string& field_type_name = field->FieldTypeName();
         const FieldType* field_type = GetFieldType(field_type_name);
