@@ -255,7 +255,7 @@ std::vector<std::shared_ptr<const T>> ObjectMap::find(const id_range& object_ids
     for (int object_id : object_ids) {
         auto map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
-            retval.emplace_back(map_it->second);
+            retval.push_back(map_it->second);
     }
     return retval;
 }
@@ -269,7 +269,7 @@ std::vector<std::shared_ptr<T>> ObjectMap::find(const id_range& object_ids)
     for (int object_id : object_ids) {
         auto map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
-            retval.emplace_back(map_it->second);
+            retval.push_back(map_it->second);
     }
     return retval;
 }
