@@ -37,24 +37,9 @@
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
 #include "../util/ScopedTimer.h"
+#include "../util/ThreadPool.h"
 #include "../util/i18n.h"
 
-
-#if BOOST_VERSION >= 106600
-#  include <boost/asio/thread_pool.hpp>
-#  include <boost/asio/post.hpp>
-#else
-#  include <boost/asio/io_service.hpp>
-#  include <boost/thread/thread.hpp>
-namespace boost::asio {
-    // dummy implementation of thread_pool and post that just immediately executes the passed-in function
-    struct thread_pool {
-        thread_pool(int) {}
-        void join() {}
-    };
-    void post(const thread_pool&, std::function<void()> func) { func(); }
-}
-#endif
 
 namespace {
     DeclareThreadSafeLogger(effects);

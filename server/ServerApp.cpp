@@ -47,22 +47,8 @@
 #include "../util/SaveGamePreviewUtils.h"
 #include "../util/ScopedTimer.h"
 #include "../util/SitRepEntry.h"
+#include "../util/ThreadPool.h"
 #include "../util/Version.h"
-
-#if BOOST_VERSION >= 106600
-#  include <boost/asio/thread_pool.hpp>
-#  include <boost/asio/post.hpp>
-#else
-namespace boost::asio {
-    // dummy implementation of thread_pool and post that just immediately executes the passed-in function
-    struct thread_pool {
-        thread_pool(int) {}
-        void join() {}
-    };
-    void post(const thread_pool&, std::function<void()> func) { func(); }
-}
-#endif
-
 
 namespace fs = boost::filesystem;
 
