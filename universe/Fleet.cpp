@@ -43,8 +43,10 @@ namespace {
     std::list<int> TruncateRouteToEndAtSystem(const std::list<int>& full_route,
                                               const ObjectMap& objects, int last_system)
     {
+        std::list<int> truncated_route;
+
         if (full_route.empty() || (last_system == INVALID_OBJECT_ID))
-            return std::list<int>();
+            return truncated_route;
 
         auto visible_end_it = full_route.cend();
         if (last_system != full_route.back()) {
@@ -52,7 +54,7 @@ namespace {
 
             // if requested last system not in route, do nothing
             if (visible_end_it == full_route.end())
-                return std::list<int>();
+                return truncated_route;
 
             ++visible_end_it;
         }
@@ -66,9 +68,7 @@ namespace {
         auto end_it = std::find_if(full_route.begin(), visible_end_it,
                                    boost::bind(&SystemHasNoVisibleStarlanes, boost::placeholders::_1, std::ref(objects)));
 
-        std::list<int> truncated_route;
         std::copy(full_route.begin(), end_it, std::back_inserter(truncated_route));
-
         return truncated_route;
     }
 }
