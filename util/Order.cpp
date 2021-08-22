@@ -367,16 +367,18 @@ void FleetMoveOrder::ExecuteImpl() const { // TODO: pass in ScriptingContext?
         return;
 
     // convert list of ids to list of System
-    std::list<int> route_list;
-
     auto fleet = Objects().get<Fleet>(FleetID());
+    if (!fleet) {
+        ErrorLogger() << "FleetMoveOrder::ExecuteImpl couldn't get fleet with ID: " << m_fleet;
+        return;
+    }
+    using RouteListT = std::remove_const_t<std::remove_reference_t<decltype(fleet->TravelRoute())>>;
+    RouteListT fleet_travel_route{m_append ? fleet->TravelRoute() : RouteListT{}};
 
-    if (m_append && !fleet->TravelRoute().empty()) {
-        route_list = fleet->TravelRoute();      // copy existing route
-
+    if (m_append && !fleet_travel_route.empty()) {
         DebugLogger() << "FleetMoveOrder::ExecuteImpl appending initial" << [&]() {
             std::stringstream ss;
-            for (int waypoint : route_list)
+            for (int waypoint : fleet_travel_route)
                 ss << " " << waypoint;
             return ss.str();
         }() << "  with" << [&]() {
@@ -385,36 +387,36 @@ void FleetMoveOrder::ExecuteImpl() const { // TODO: pass in ScriptingContext?
                 ss << " " << waypoint;
             return ss.str();
         }();
-
-        route_list.erase(--route_list.end());   // remove last item as it should be the first in the appended route
+        fleet_travel_route.pop_back(); // remove last item as it should be the first in the appended route
     }
 
-    std::copy(m_route.begin(), m_route.end(), std::back_inserter(route_list));
-    DebugLogger() << [fleet, route_list]() {
+    std::copy(m_route.begin(), m_route.end(), std::back_inserter(fleet_travel_route));
+    DebugLogger() << [&fleet, &fleet_travel_route]() {
         std::stringstream ss;
         ss << "FleetMoveOrder::ExecuteImpl Setting route of fleet " << fleet->ID() << " at system " << fleet->SystemID() << " to: ";
-        if (route_list.empty())
+        if (fleet_travel_route.empty())
             return std::string("[empty route]");
-        for (int waypoint : route_list)
+        for (int waypoint : fleet_travel_route)
             ss << " " << std::to_string(waypoint);
         return ss.str();
     }();
 
-    if (route_list.front() == fleet->SystemID()) {
-        DebugLogger() << "FleetMoveOrder::ExecuteImpl given route that starts with fleet " << fleet->ID() << "'s current system (" << route_list.front() << "); removing it";
-        route_list.pop_front();
+    if (!fleet_travel_route.empty() && fleet_travel_route.front() == fleet->SystemID()) {
+        DebugLogger() << "FleetMoveOrder::ExecuteImpl given route that starts with fleet " << fleet->ID()
+                      << "'s current system (" << fleet_travel_route.front() << "); removing it";
+        fleet_travel_route.pop_front();
     }
 
     // check destination validity: disallow movement that's out of range
     ScriptingContext context;
-    auto eta = fleet->ETA(fleet->MovePath(route_list, false, context));
+    auto eta = fleet->ETA(fleet->MovePath(fleet_travel_route, false, context));
     if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_OUT_OF_RANGE) {
         DebugLogger() << "FleetMoveOrder::ExecuteImpl rejected out of range move order";
         return;
     }
 
     try {
-        fleet->SetRoute(route_list, Objects());
+        fleet->SetRoute(fleet_travel_route, Objects());
         fleet->SetMoveOrderedTurn(CurrentTurn());
         // todo: set last turn ordered moved
     } catch (const std::exception& e) {
