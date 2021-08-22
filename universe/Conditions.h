@@ -286,6 +286,8 @@ private:
 struct FO_COMMON_API Capital final : public Condition {
     Capital();
     bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
     [[nodiscard]] std::string  Description(bool negated = false) const override;
