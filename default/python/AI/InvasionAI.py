@@ -1,6 +1,7 @@
 import freeOrionAIInterface as fo
 import math
 from logging import debug, info, warning
+from typing import Sequence, Tuple
 
 import AIDependencies
 import AIstate
@@ -13,6 +14,7 @@ import PlanetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
 from colonization import calculate_planet_colonization_rating
+from common.fo_typing import SystemId
 from common.print_utils import Number, Table, Text
 from empire.ship_builders import can_build_ship_for_species
 from EnumsAI import MissionType, PriorityType
@@ -21,10 +23,12 @@ from freeorion_tools import (
     get_species_tag_grade,
     tech_is_complete,
 )
+from freeorion_tools.caching import cache_for_current_turn
 from freeorion_tools.timers import AITimer
 from target import TargetPlanet, TargetSystem
 from turn_state import get_colonized_planets_in_system
 from turn_state.design import get_best_ship_info
+from universe.system_network import systems_connected
 
 MAX_BASE_TROOPERS_GOOD_INVADERS = 20
 MAX_BASE_TROOPERS_POOR_INVADERS = 10
@@ -45,11 +49,7 @@ def get_invasion_fleets():
     visible_system_ids = list(aistate.visInteriorSystemIDs) + list(aistate.visBorderSystemIDs)
 
     if home_system_id != INVALID_ID:
-        accessible_system_ids = [
-            sys_id
-            for sys_id in visible_system_ids
-            if (sys_id != INVALID_ID) and universe.systemsConnected(sys_id, home_system_id, empire_id)
-        ]
+        accessible_system_ids = [sys_id for sys_id in visible_system_ids if systems_connected(sys_id, home_system_id)]
     else:
         debug("Empire has no identifiable homeworld; will treat all visible planets as accessible.")
         # TODO: check if any troop ships owned, use their system as home system
@@ -104,9 +104,6 @@ def get_invasion_fleets():
         # same as the source planet originally identified, but we could consider reevaluating that, or use that second
         # value to instead record how many base troopers have been queued, so that on later turns we can assess if the
         # process got delayed & perhaps more troopers need to be queued).
-        secure_ai_fleet_missions = aistate.get_fleet_missions_with_any_mission_types(
-            [MissionType.SECURE, MissionType.MILITARY]
-        )
 
         # Pass 1: identify qualifying base troop invasion targets
         for pid in invadable_planet_ids:  # TODO: reorganize
@@ -158,7 +155,7 @@ def get_invasion_fleets():
                     all_invasion_targeted_system_ids.add(planet.systemID)
                 # TODO: evaluate changes to situation, any more troops needed, etc.
                 continue  # already building for here
-            _, planet_troops = evaluate_invasion_planet(pid, secure_ai_fleet_missions, True)
+            _, planet_troops = evaluate_invasion_planet(pid)
             sys_id = planet.systemID
             this_sys_status = aistate.systemStatus.get(sys_id, {})
             troop_tally = 0
@@ -284,11 +281,8 @@ def assign_invasion_values(planet_ids):
     neighbor_values = {}
     neighbor_val_ratio = 0.95
     universe = fo.getUniverse()
-    secure_missions = get_aistate().get_fleet_missions_with_any_mission_types(
-        [MissionType.SECURE, MissionType.MILITARY]
-    )
     for pid in planet_ids:
-        planet_values[pid] = neighbor_values.setdefault(pid, evaluate_invasion_planet(pid, secure_missions))
+        planet_values[pid] = neighbor_values.setdefault(pid, evaluate_invasion_planet(pid))
         debug("planet %d, values %s", pid, planet_values[pid])
         planet = universe.getPlanet(pid)
         species_name = (planet and planet.speciesName) or ""
@@ -319,12 +313,33 @@ def assign_invasion_values(planet_ids):
                     planet_values[pid][0] += (
                         industry_ratio
                         * neighbor_val_ratio
-                        * (neighbor_values.setdefault(pid2, evaluate_invasion_planet(pid2, secure_missions))[0])
+                        * (neighbor_values.setdefault(pid2, evaluate_invasion_planet(pid2))[0])
                     )
     return planet_values
 
 
-def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
+@cache_for_current_turn
+def _get_path_from_capital(planet: "fo.planet") -> Tuple[Sequence[SystemId], int]:
+    """
+    Return chain of system from the planet to capital and length.
+
+    If there is no path, return empty sequence and default distance.
+
+    """
+    universe = fo.getUniverse()
+    capitol_id = PlanetUtilsAI.get_capital()
+    if capitol_id:
+        homeworld = universe.getPlanet(capitol_id)
+        if homeworld and homeworld.systemID != INVALID_ID and planet.systemID != INVALID_ID:
+            least_jumps_path = list(universe.leastJumpsPath(homeworld.systemID, planet.systemID, fo.empireID()))
+            max_jumps = len(least_jumps_path)
+            return least_jumps_path, max_jumps
+    else:
+
+        return [], 8
+
+
+def evaluate_invasion_planet(planet_id):
     """Return the invasion value (score, troops) of a planet."""
     universe = fo.getUniverse()
     empire_id = fo.empireID()
@@ -337,8 +352,8 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
 
     system_id = planet.systemID
 
-    # by using the following instead of simply relying on stealth meter reading, can (sometimes) plan ahead even if
-    # planet is temporarily shrouded by an ion storm
+    # by using the following instead of simply relying on stealth meter reading,
+    # can (sometimes) plan ahead even if planet is temporarily shrouded by an ion storm
     predicted_detectable = EspionageAI.colony_detectable_by_empire(
         planet_id, empire=fo.empireID(), default_result=False
     )
@@ -349,11 +364,12 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         else:
             debug(
                 "InvasionAI predicts planet id %d to be stealthed" % planet_id
-                + ", but somehow have current visibity anyway, will still consider as target"
+                + ", but somehow have current visibility anyway, will still consider as target"
             )
 
     # Check if the target planet was extra-stealthed somehow its system was last viewed
-    # this test below may augment the tests above, but can be thrown off by temporary combat-related sighting
+    # this test below may augment the tests above,
+    # but can be thrown off by temporary combat-related sighting
     system_last_seen = get_partial_visibility_turn(planet_id)
     planet_last_seen = get_partial_visibility_turn(system_id)
     if planet_last_seen < system_last_seen:
@@ -429,15 +445,9 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
             tech_tally += tech_value
             detail.append("%s: %d" % (unlocked_tech, tech_value))
 
-    max_jumps = 8
-    capitol_id = PlanetUtilsAI.get_capital()
-    least_jumps_path = []
+    least_jumps_path, max_jumps = _get_path_from_capital(planet)
     clear_path = True
-    if capitol_id:
-        homeworld = universe.getPlanet(capitol_id)
-        if homeworld and homeworld.systemID != INVALID_ID and system_id != INVALID_ID:
-            least_jumps_path = list(universe.leastJumpsPath(homeworld.systemID, system_id, empire_id))
-            max_jumps = len(least_jumps_path)
+
     aistate = get_aistate()
     system_status = aistate.systemStatus.get(system_id, {})
     system_fleet_treat = system_status.get("fleetThreat", 1000)
@@ -464,7 +474,9 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     this_system = universe.getSystem(system_id)
     secure_targets = [system_id] + list(this_system.planetIDs)
     system_secured = False
-    for mission in secure_fleet_missions:
+
+    secure_fleets = get_aistate().get_fleet_missions_with_any_mission_types([MissionType.SECURE, MissionType.MILITARY])
+    for mission in secure_fleets:
         secure_fleet_id = mission.fleet.id
         s_fleet = universe.getFleet(secure_fleet_id)
         if not s_fleet or s_fleet.systemID != system_id:
@@ -475,15 +487,13 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
                 system_secured = True
                 break
     system_secured = system_secured and system_status.get("myFleetRating", 0)
-
-    if verbose:
-        debug(
-            "Invasion eval of %s\n" " - maxShields: %.1f\n" " - sysFleetThreat: %.1f\n" " - sysMonsterThreat: %.1f",
-            planet,
-            planet.currentMeterValue(fo.meterType.maxShield),
-            system_fleet_treat,
-            system_monster_threat,
-        )
+    debug(
+        "Invasion eval of %s\n" " - maxShields: %.1f\n" " - sysFleetThreat: %.1f\n" " - sysMonsterThreat: %.1f",
+        planet,
+        planet.currentMeterValue(fo.meterType.maxShield),
+        system_fleet_treat,
+        system_monster_threat,
+    )
     enemy_val = 0
     if planet.owner != -1:  # value in taking this away from an enemy
         enemy_val = 20 * (
@@ -534,26 +544,25 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     planet_score = retaliation_risk_factor(planet.owner) * threat_factor * max(0, base_score)
     if clear_path:
         planet_score *= 1.5
-    if verbose:
-        debug(
-            " - planet score: %.2f\n"
-            " - planned troops: %.2f\n"
-            " - projected troop cost: %.1f\n"
-            " - threat factor: %s\n"
-            " - planet detail: %s\n"
-            " - popval: %.1f\n"
-            " - bldval: %s\n"
-            " - enemyval: %s",
-            planet_score,
-            planned_troops,
-            troop_cost,
-            threat_factor,
-            detail,
-            colony_base_value,
-            bld_tally,
-            enemy_val,
-        )
-        debug(" - system secured: %s" % system_secured)
+    debug(
+        " - planet score: %.2f\n"
+        " - planned troops: %.2f\n"
+        " - projected troop cost: %.1f\n"
+        " - threat factor: %s\n"
+        " - planet detail: %s\n"
+        " - popval: %.1f\n"
+        " - bldval: %s\n"
+        " - enemyval: %s",
+        planet_score,
+        planned_troops,
+        troop_cost,
+        threat_factor,
+        detail,
+        colony_base_value,
+        bld_tally,
+        enemy_val,
+    )
+    debug(" - system secured: %s" % system_secured)
     return [planet_score, planned_troops]
 
 

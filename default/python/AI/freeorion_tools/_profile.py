@@ -23,6 +23,7 @@ def profile(func: Callable):
         sortby = "cumulative"
         ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
         ps.print_stats()
+        debug(f"Profile stats for {func.__name__}")
         debug(s.getvalue())
         return retval
 
