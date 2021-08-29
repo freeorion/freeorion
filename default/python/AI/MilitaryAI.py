@@ -1057,8 +1057,9 @@ def get_tot_mil_rating() -> float:
 
     :return: a military rating value
     """
-    return sum(
-        get_fleet_rating(fleet_id) for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
+    return round(
+        sum(get_fleet_rating(fleet_id) for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)),
+        0,
     )
 
 
@@ -1069,8 +1070,11 @@ def get_concentrated_tot_mil_rating() -> float:
 
     :return: a military rating value
     """
-    return combine_ratings(
-        get_fleet_rating(fleet_id) for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
+    return round(
+        combine_ratings(
+            get_fleet_rating(fleet_id) for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
+        ),
+        0,
     )
 
 

@@ -664,7 +664,7 @@ def _get_base_colony_defense_value():
 
     # for now, just combing these for rough composite factor
     result = 4 * (0.1 + net_count) * (1 + regen_count / 2.0) * (1 + garrison_count / 4.0) * (1 + shield_count / 2.0)
-    return result
+    return round(result, 2)
 
 
 def _revise_threat_factor(
@@ -717,7 +717,7 @@ def _get_base_outpost_defense_value() -> float:
     # than for colonies
     result = 3 * (0.1 + net_count) * (1 + regen_count / 3.0) * (1 + garrison_count / 6.0) * (1 + shield_count / 3.0)
 
-    return result
+    return round(result, 2)
 
 
 @cache_for_session
