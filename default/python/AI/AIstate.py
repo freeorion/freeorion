@@ -4,7 +4,6 @@ from collections import Counter
 from collections import OrderedDict as odict
 from logging import debug, error, info, warning
 from operator import itemgetter
-from time import time
 from typing import Dict, List, Optional, Tuple
 
 import AIFleetMission
@@ -155,12 +154,6 @@ class AIstate:
         # self.__class__.__dict__ while we only pickle the object (i.e. self.__dict__ )
         self.version = AIstate.version
 
-        # Debug info
-        # unique id for game
-        self.uid = self.generate_uid(first=True)
-        # unique ids for turns.  {turn: uid}
-        self.turn_uids = {}
-
         # see AIstate docstring re importance of int cast for aggression
         self._aggression = int(aggression)
 
@@ -231,43 +224,6 @@ class AIstate:
             state[content] = odict(sorted_planets)
 
         self.__dict__ = state
-
-    def generate_uid(self, first=False):
-        """
-        Generates unique identifier.
-        It is hexed number of milliseconds.
-        To set self.uid use flag first=True result will be
-        number of mils between current time and some recent date
-        For turn result is mils between uid and current time
-        """
-        time_delta = (time() - 1433809768) * 1000
-        if not first:
-            time_delta - int(self.uid, 16)
-        res = hex(int(time_delta))[2:].strip("L")
-        return res
-
-    def set_turn_uid(self):
-        """
-        Set turn uid. Should be called once per generateOrders.
-        When game loaded same turn can be evaluated once again. We force change id for it.
-        """
-        uid = self.generate_uid()
-        self.turn_uids[fo.currentTurn()] = uid
-        return uid
-
-    def get_current_turn_uid(self):
-        """
-        Return uid of current turn.
-        """
-        return self.turn_uids.setdefault(fo.currentTurn(), self.generate_uid())
-
-    def get_prev_turn_uid(self):
-        """
-        Return uid of previous turn.
-        If called during the first turn after loading a saved game that had an AI version not yet using uids
-        will return default value.
-        """
-        return self.turn_uids.get(fo.currentTurn() - 1, "0")
 
     def __refresh(self):
         """Turn start AIstate cleanup/refresh."""
