@@ -324,7 +324,6 @@ def _get_path_from_capital(planet: "fo.planet") -> Tuple[Sequence[SystemId], int
     Return chain of system from the planet to capital and length.
 
     If there is no path, return empty sequence and default distance.
-
     """
     universe = fo.getUniverse()
     capitol_id = PlanetUtilsAI.get_capital()
