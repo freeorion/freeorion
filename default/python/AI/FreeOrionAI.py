@@ -278,9 +278,8 @@ def generateOrders():  # pylint: disable=invalid-name
 
     turn = fo.currentTurn()
     aistate = get_aistate()
-    turn_uid = aistate.set_turn_uid()
     debug("\n\n\n" + "=" * 20)
-    debug("Starting turn %s (%s) of game: %s" % (turn, turn_uid, aistate.uid))
+    debug(f"Starting turn {turn}")
     debug("=" * 20 + "\n")
 
     turn_timer.start("AI planning")
