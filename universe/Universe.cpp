@@ -1128,43 +1128,42 @@ namespace {
                 // no activation condition, leave all sources active
                 active_sources[i] = source_objects;
                 continue;
+            }
+
+            // check if this activation condition has already been evaluated
+            bool cache_hit = false;
+            for (const auto& cond_idx : already_evaluated_activation_condition_idx) {
+                if (*cond_idx.first == *(effects_group->Activation())) {
+                    active_sources[i] = active_sources[cond_idx.second];    // copy previous condition evaluation result
+                    cache_hit = true;
+                    break;
+                }
+            }
+            if (cache_hit)
+                continue;   // don't need to evaluate activation condition on these sources again
+
+            // no cache hit; need to evaluate activation condition on input source objects
+            if (effects_group->Activation()->SourceInvariant()) {
+                // can apply condition to all source objects simultaneously
+                Condition::ObjectSet rejected;
+                rejected.reserve(source_objects.size());
+                active_sources[i] = source_objects; // copy input source objects set
+                context.source = nullptr;
+                effects_group->Activation()->Eval(context, active_sources[i],
+                                                  rejected, Condition::SearchDomain::MATCHES);
 
             } else {
-                // check if this activation condition has already been evaluated
-                bool cache_hit = false;
-                for (const auto& cond_idx : already_evaluated_activation_condition_idx) {
-                    if (*cond_idx.first == *(effects_group->Activation())) {
-                        active_sources[i] = active_sources[cond_idx.second];    // copy previous condition evaluation result
-                        cache_hit = true;
-                        break;
-                    }
+                // need to apply separately to each source object
+                active_sources[i].reserve(source_objects.size());
+                for (auto& obj : source_objects) {
+                    context.source = obj;
+                    if (effects_group->Activation()->Eval(context, obj))
+                        active_sources[i].push_back(obj);
                 }
-                if (cache_hit)
-                    continue;   // don't need to evaluate activation condition on these sources again
-
-                // no cache hit; need to evaluate activation condition on input source objects
-                if (effects_group->Activation()->SourceInvariant()) {
-                    // can apply condition to all source objects simultaneously
-                    Condition::ObjectSet rejected;
-                    rejected.reserve(source_objects.size());
-                    active_sources[i] = source_objects; // copy input source objects set
-                    context.source = nullptr;
-                    effects_group->Activation()->Eval(context, active_sources[i],
-                                                      rejected, Condition::SearchDomain::MATCHES);
-
-                } else {
-                    // need to apply separately to each source object
-                    active_sources[i].reserve(source_objects.size());
-                    for (auto& obj : source_objects) {
-                        context.source = obj;
-                        if (effects_group->Activation()->Eval(context, obj))
-                            active_sources[i].push_back(obj);
-                    }
-                }
-
-                // save evaluation lookup index in cache
-                already_evaluated_activation_condition_idx.emplace_back(effects_group->Activation(), i);
             }
+
+            // save evaluation lookup index in cache
+            already_evaluated_activation_condition_idx.emplace_back(effects_group->Activation(), i);
         }
 
 
@@ -1195,13 +1194,15 @@ namespace {
 
         // evaluate scope conditions for source objects that are active
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
-            if (active_sources[i].empty()) {
-                TraceLogger(effects) << "Skipping empty active sources set";
+            if (active_sources[i].empty())
                 continue;
-            }
             TraceLogger(effects) << "Handing active sources set of size: " << active_sources[i].size();
 
+            // can assume these pointers are non-null due to previous use
             const auto* effects_group = effects_groups.at(i).get();
+            auto* scope = effects_group->Scope();
+
+
             n++;
 
             // allocate space to store output of effectsgroup targets evaluation
@@ -1212,47 +1213,49 @@ namespace {
 
             // check if the scope-condition + sources set has already been dispatched
             bool cache_hit = false;
-            if (auto* scope = effects_group->Scope()) {
-                //std::vector<std::tuple<Condition::Condition*, Condition::ObjectSet, Effect::SourcesEffectsTargetsAndCausesVec*>> already_dispatched_scope_condition_ptrs;
-                for (auto& [cond, sources, setacv] : already_dispatched_scope_condition_ptrs) {
-                    if (*cond == *scope && sources == active_sources[i]) {
-                        TraceLogger(effects) << "scope condition cache hit !";
 
-                        // record pointer to previously-dispatched result struct
-                        // that will contain the results to copy later, after
-                        // all dispatched condition evauations have resolved
-                        source_effects_targets_causes_reorder_buffer_out.back().second = setacv;
 
-                        // allocate result structs that contain empty
-                        // Effect::TargetSets that will be filled later
-                        auto& vec_out{source_effects_targets_causes_reorder_buffer_out.back().first};
-                        for (auto& source : active_sources[i]) {
-                            context.source = source;
-                            vec_out.emplace_back(
-                                Effect::SourcedEffectsGroup{source->ID(), effects_group},
-                                Effect::TargetsAndCause{
-                                    {}, // empty Effect::TargetSet
-                                    Effect::EffectCause{effect_cause_type, specific_cause_name,
-                                                        effects_group->AccountingLabel()}});
-                        }
+            //std::vector<std::tuple<Condition::Condition*, Condition::ObjectSet,
+            //                       Effect::SourcesEffectsTargetsAndCausesVec*>> already_dispatched_scope_condition_ptrs;
+            for (auto& [cond, sources, setacv] : already_dispatched_scope_condition_ptrs) {
+                // cache hit only if the scope condition and active source objects are the same
+                if (*cond != *scope || sources != active_sources[i])
+                    continue;
 
-                        cache_hit = true;
-                        break;
-                    }
+                TraceLogger(effects) << "scope condition cache hit !";
+
+                // record pointer to previously-dispatched result struct
+                // that will contain the results to copy later, after
+                // all dispatched condition evauations have resolved
+                source_effects_targets_causes_reorder_buffer_out.back().second = setacv;
+
+                // allocate result structs that contain empty
+                // Effect::TargetSets that will be filled later
+                auto& vec_out{source_effects_targets_causes_reorder_buffer_out.back().first};
+                for (auto& source : active_sources[i]) {
+                    context.source = source;
+                    vec_out.emplace_back(
+                        Effect::SourcedEffectsGroup{source->ID(), effects_group},
+                        Effect::TargetsAndCause{
+                            {}, // empty Effect::TargetSet
+                            Effect::EffectCause{effect_cause_type, specific_cause_name,
+                                                effects_group->AccountingLabel()}});
                 }
+
+                cache_hit = true;
+                break;
             }
+            // if an already-dispatched evaluation of the scope was found, don't need to re-dispatch it
             if (cache_hit)
                 continue;
-            if (!cache_hit) {
-                TraceLogger(effects) << "scope condition cache miss idx: " << n;
+            TraceLogger(effects) << "scope condition cache miss idx: " << n;
 
-                // add cache entry for this combination, with pointer to the
-                // storage that will contain the to-be-dispatched scope
-                // condition evaluation results
-                already_dispatched_scope_condition_ptrs.emplace_back(
-                    effects_group->Scope(), active_sources[i],
-                    &source_effects_targets_causes_reorder_buffer_out.back().first);
-            }
+            // add cache entry for this combination, with pointer to the
+            // storage that will contain the to-be-dispatched scope
+            // condition evaluation results
+            already_dispatched_scope_condition_ptrs.emplace_back(
+                scope, active_sources[i],
+                &source_effects_targets_causes_reorder_buffer_out.back().first);
 
 
             TraceLogger(effects) << [&]() {
@@ -1267,6 +1270,7 @@ namespace {
                     ss << obj->ID() << ", ";
                 return ss.str();
             }();
+
 
             // asynchronously evaluate targetset for effectsgroup for each source using worker threads
             boost::asio::post(
