@@ -39,13 +39,13 @@ namespace {
         typedef T value_type;  ///< An integral type for number of hops.
         typedef std::vector<T>& row_ref;  ///< A reference to row type
 
-        distance_matrix_storage() {};
+        distance_matrix_storage() = default;
         distance_matrix_storage(const distance_matrix_storage<T>& src)
         { resize(src.m_data.size()); };
         //TODO C++11 Move Constructor.
 
         /**Number of rows and columns. (N)*/
-        size_t size()
+        size_t size() const
         { return m_data.size(); }
 
         /**Resize and clear all mutexes.  Assumes that table is locked.*/
@@ -58,9 +58,9 @@ namespace {
         }
 
         /**N x N table of hop distances in row column form.*/
-        std::vector< std::vector<T>> m_data;
+        std::vector<std::vector<T>> m_data;
         /**Per row mutexes.*/
-        std::vector< std::shared_ptr<std::shared_mutex>> m_row_mutexes;
+        std::vector<std::shared_ptr<std::shared_mutex>> m_row_mutexes;
         /**Table mutex*/
         std::shared_mutex m_mutex;
     };
@@ -483,7 +483,7 @@ namespace {
                                 boost::property<boost::vertex_index_t, int>> vertex_property_t; ///< a system graph property map type
         typedef boost::property<boost::edge_weight_t, double>                edge_property_t;   ///< a system graph property map type
 
-        // declare main graph types, including properties declared above
+        // declare main graph types, including properties declared above.
         // could add boost::disallow_parallel_edge_tag GraphProperty but it doesn't
         // work for vecS vector-based lists and parallel edges can be avoided while
         // creating the graph by filtering the edges to be added
@@ -910,7 +910,7 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
     the GeneralizedLocation that it is visiting.*/
 struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
     JumpDistanceSys1Visitor(const Pathfinder::PathfinderImpl& _pf,
-                            const GeneralizedLocationType&_sys2_ids) :
+                            const GeneralizedLocationType& _sys2_ids) :
         pf(_pf), sys2_ids(_sys2_ids)
     {}
 
@@ -975,7 +975,7 @@ std::pair<std::list<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
                                     linear_distance, m_system_id_to_graph_index);
         } catch (const std::out_of_range&) {
             ErrorLogger() << "PathfinderImpl::ShortestPath passed invalid system id(s): "
-                                   << system1_id << " & " << system2_id;
+                          << system1_id << " & " << system2_id;
             throw;
         }
     }
@@ -1043,7 +1043,8 @@ double Pathfinder::ShortestPathDistance(int object1_id, int object2_id, const Ob
 double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int object2_id,
                                                         const ObjectMap& objects) const
 {
-    ScopedTimer("PathfinderImpl::ShortestPathDistance(" + std::to_string(object1_id) + ", " + std::to_string(object2_id) + ")");
+    ScopedTimer timer("PathfinderImpl::ShortestPathDistance(" + std::to_string(object1_id) + ", " + std::to_string(object2_id) + ")",
+                      true);
 
     // If one or both objects are (in) a fleet between systems, use the destination system
     // and add the distance from the fleet to the destination system, essentially calculating
