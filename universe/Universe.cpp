@@ -824,9 +824,6 @@ namespace {
         if (&universe != &context_universe)
             ErrorLogger() << "Universe member function passed context with different Universe from this";
 
-        if (!&context_objects)
-            ErrorLogger() << "Universe member function passed context with no valid ObjectMap";
-
         if (&context_objects != &universe_objects)
             ErrorLogger() << "Universe member function passed context different ObjectMap from this Universe";
     }
