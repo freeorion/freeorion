@@ -13,7 +13,7 @@ from EnumsAI import MissionType, ShipRoleType
 from freeorion_tools import assertion_fails, combine_ratings
 from ShipDesignAI import get_ship_part
 from target import TargetFleet, TargetPlanet, TargetSystem
-from universe.system_network import get_shortest_distance
+from universe.system_network import get_neighbors, get_shortest_distance
 
 
 def stats_meet_reqs(stats: dict, requirements: dict) -> bool:
@@ -184,7 +184,7 @@ def get_fleets_for_mission(
                 return fleet_list
 
         # finished system without meeting requirements. Add neighboring systems to search queue.
-        for neighbor_id in universe.getImmediateNeighbors(this_system_id, fo.empireID()):
+        for neighbor_id in get_neighbors(this_system_id):
             if all(
                 (
                     neighbor_id not in systems_visited,

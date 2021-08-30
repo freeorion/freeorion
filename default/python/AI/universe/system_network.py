@@ -48,3 +48,8 @@ def get_shortest_distance(system_1: SystemId, system_2: SystemId) -> float:
 @cache_for_current_turn
 def _get_shortest_distance(system_1: SystemId, system_2: SystemId) -> float:
     return fo.getUniverse().shortestPathDistance(system_1, system_2)
+
+
+@cache_for_current_turn
+def get_neighbors(sid: SystemId):
+    return set(fo.getUniverse().getImmediateNeighbors(sid, fo.empireID()))

@@ -12,7 +12,7 @@ from EnumsAI import MissionType
 from freeorion_tools import chat_human, get_partial_visibility_turn
 from freeorion_tools.caching import cache_for_current_turn
 from turn_state import get_system_supply
-from universe.system_network import get_shortest_distance
+from universe.system_network import get_neighbors, get_shortest_distance
 
 _DEBUG_CHAT = False
 _ACCEPTABLE_DETOUR_LENGTH = 2000
@@ -254,7 +254,7 @@ def find_path_with_resupply_generic(
         # add neighboring systems to the queue if the resulting path
         # is either shorter or offers more fuel than the other paths
         # which we already found to those systems
-        for neighbor in universe.getImmediateNeighbors(current, empire_id):
+        for neighbor in get_neighbors(current, empire_id):
             # A system we have never had partial vis for will count as fully blockaded for us, but perhaps if
             # we are scouting we might want to be able to route a path through it anyway.
             if any(

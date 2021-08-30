@@ -23,6 +23,8 @@ from freeorion_tools import combine_ratings, get_partial_visibility_turn
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
 # in general, leaving items as a module attribute if they are recalculated each turn without reference to prior values
 # global variables
+from universe.system_network import get_neighbors
+
 colonyTargetedSystemIDs = []
 outpostTargetedSystemIDs = []
 opponentPlanetIDs = []
@@ -674,7 +676,7 @@ class AIstate:
                 sys_status["all_local_defenses"] = combine_ratings(
                     sys_status["myFleetRating"], sys_status["mydefenses"]["overall"]
                 )
-            sys_status["neighbors"] = set(universe.getImmediateNeighbors(sys_id, self.empireID))
+            sys_status["neighbors"] = get_neighbors(sys_id)
 
         for sys_id in universe.systemIDs:
             sys_status = self.systemStatus[sys_id]
