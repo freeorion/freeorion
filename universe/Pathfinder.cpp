@@ -1079,39 +1079,39 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
     if (!obj2)
         return -1;
 
-    auto system_one = objects.get<System>(obj1->SystemID());
-    auto system_two = objects.get<System>(obj2->SystemID());
-    std::pair<std::list<int>, double> path_len_pair;
-    double dist1(0.0), dist2(0.0);
-    std::shared_ptr<const Fleet> fleet;
+    double dist{0.0};
 
+    auto&& system_one = obj1->ObjectType() == UniverseObjectType::OBJ_SYSTEM ?
+        std::static_pointer_cast<const System>(obj1) : objects.get<System>(obj1->SystemID());
     if (!system_one) {
-        fleet = FleetFromObject(obj1, objects);
+        auto fleet = FleetFromObject(obj1, objects);
         if (!fleet)
             return -1;
         if (auto next_sys = objects.get<System>(fleet->NextSystemID())) {
-            system_one = next_sys;
-            dist1 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
+            dist = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
+            system_one = std::move(next_sys);
         }
     }
 
+    auto&& system_two = obj2->ObjectType() == UniverseObjectType::OBJ_SYSTEM ?
+        std::static_pointer_cast<const System>(obj2) : objects.get<System>(obj2->SystemID());
     if (!system_two) {
-        fleet = FleetFromObject(obj2, objects);
+        auto fleet = FleetFromObject(obj2, objects);
         if (!fleet)
             return -1;
         if (auto next_sys = objects.get<System>(fleet->NextSystemID())) {
-            system_two = next_sys;
-            dist2 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
+            dist += std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
+            system_two = std::move(next_sys);
         }
     }
 
     try {
-        path_len_pair = ShortestPath(system_one->ID(), system_two->ID(), objects);
+        auto path_len_pair = ShortestPath(system_one->ID(), system_two->ID(), objects);
+        return path_len_pair.second + dist;
     } catch (...) {
         ErrorLogger() << "ShortestPathDistance caught exception when calling ShortestPath";
         return -1;
     }
-    return path_len_pair.second + dist1 + dist2;
 }
 
 std::pair<std::list<int>, int> Pathfinder::LeastJumpsPath(
