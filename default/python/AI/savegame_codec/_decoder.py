@@ -38,7 +38,17 @@ class SaveDecompressException(Exception):
     Exception class for troubles with decompressing save game string.
     """
 
-    pass
+
+def _starts_with_prefix(prefix: str, candidate: str) -> bool:
+    return candidate.startswith(prefix)
+
+
+def _extract_value(prefix: str, value: str):
+    return value[len(prefix) :]
+
+
+def _extract_collection(prefix: str, value: str):
+    return value[len(prefix) + 1 : -1]
 
 
 def load_savegame_string(string: Union[str, bytes]) -> AIstate:
@@ -123,36 +133,35 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
 
         # if it is a string, check if it encodes another data type
         if isinstance(x, str):
-
             # does it encode an integer?
-            if x.startswith(INT_PREFIX):
-                x = x[len(INT_PREFIX) :]
+            if _starts_with_prefix(INT_PREFIX, x):
+                x = _extract_value(INT_PREFIX, x)
                 return int(x)
 
             # does it encode a float?
-            if x.startswith(FLOAT_PREFIX):
-                x = x[len(FLOAT_PREFIX) :]
+            if _starts_with_prefix(FLOAT_PREFIX, x):
+                x = _extract_value(FLOAT_PREFIX, x)
                 return float(x)
 
             # does it encode a tuple?
-            if x.startswith(TUPLE_PREFIX):
+            if _starts_with_prefix(TUPLE_PREFIX, x):
                 # ignore surrounding parentheses
-                content = x[len(TUPLE_PREFIX) + 1 : -1]
+                content = _extract_collection(TUPLE_PREFIX, x)
                 content = _replace_quote_placeholders(content)
                 result = self.decode(content)
                 return tuple(result)
 
             # does it encode a set?
-            if x.startswith(SET_PREFIX):
+            if _starts_with_prefix(SET_PREFIX, x):
                 # ignore surrounding parentheses
-                content = x[len(SET_PREFIX) + 1 : -1]
+                content = _extract_collection(SET_PREFIX, x)
                 content = _replace_quote_placeholders(content)
                 result = self.decode(content)
                 return set(result)
 
             # does it encode an enum?
-            if x.startswith(ENUM_PREFIX):
-                full_name = x[len(ENUM_PREFIX) :]
+            if _starts_with_prefix(ENUM_PREFIX, x):
+                full_name = _extract_value(ENUM_PREFIX, x)
                 partial_names = full_name.split(".")
                 if not len(partial_names) == 2:
                     raise InvalidSaveGameException("Could not decode Enum %s" % x)
@@ -165,13 +174,13 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
                     raise InvalidSaveGameException("Invalid enum value %s" % full_name)
                 return retval
 
-            if x == TRUE:
+            if _starts_with_prefix(TRUE, x):
                 return True
 
-            if x == FALSE:
+            if _starts_with_prefix(FALSE, x):
                 return False
 
-            if x == NONE:
+            if _starts_with_prefix(NONE, x):
                 return None
 
             # no special cases apply at this point, should be a standard string

@@ -38,6 +38,10 @@ from ._definitions import (
 )
 
 
+def _encode_with_prefix(prefix, value):
+    return f'"{prefix}{value}"'
+
+
 def build_savegame_string() -> bytes:
     """Encode the AIstate and compress the resulting string with zlib.
 
@@ -65,7 +69,8 @@ def encode(o: Any) -> str:
         encoder = _encoder_table[o_type]
     except KeyError:
         if issubclass(o_type, IntEnum):
-            return '"%s%s"' % (ENUM_PREFIX, "%s.%s" % (o.__class__.__name__, o.name))
+            return _encode_with_prefix(ENUM_PREFIX, f"{o.__class__.__name__}.{o.name}")
+
         else:
             return _encode_object(o)
     else:
@@ -86,19 +91,19 @@ def _encode_str(o):
 
 
 def _encode_none(o):
-    return '"%s"' % NONE
+    return _encode_with_prefix(NONE, "")
 
 
 def _encode_int(o):
-    return '"%s%s"' % (INT_PREFIX, str(o))
+    return _encode_with_prefix(INT_PREFIX, str(o))
 
 
 def _encode_float(o):
-    return '"%s%s"' % (FLOAT_PREFIX, repr(o))
+    return _encode_with_prefix(FLOAT_PREFIX, repr(o))
 
 
 def _encode_bool(o):
-    return '"%s"' % (TRUE if o else FALSE)
+    return _encode_with_prefix(TRUE, "") if o else _encode_with_prefix(FALSE, "")
 
 
 def _encode_object(obj):
@@ -132,12 +137,12 @@ def _encode_list(o):
 
 def _encode_tuple(o):
     """Get a string representation of a tuple with its encoded content."""
-    return '"%s(%s)"' % (TUPLE_PREFIX, _encode_list(list(o)).replace('"', PLACEHOLDER))
+    return _encode_with_prefix(TUPLE_PREFIX, "(%s)" % (_encode_list(list(o)).replace('"', PLACEHOLDER)))
 
 
 def _encode_set(o):
     """Get a string representation of a set with its encoded content."""
-    return '"%s(%s)"' % (SET_PREFIX, _encode_list(list(o)).replace('"', PLACEHOLDER))
+    return _encode_with_prefix(SET_PREFIX, "(%s)" % (_encode_list(list(o)).replace('"', PLACEHOLDER)))
 
 
 def _encode_dict(o):
