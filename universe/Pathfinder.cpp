@@ -4,6 +4,8 @@
 #include <limits>
 #include <shared_mutex>
 #include <stdexcept>
+#include <boost/container/container_fwd.hpp>
+#include <boost/container/flat_set.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -499,13 +501,29 @@ namespace {
                 if (!m_graph)
                     ErrorLogger() << "EdgeVisibilityFilter passed null graph pointer";
 
-                // record all edges in objects
+                // collect all edges
+#if BOOST_VERSION >= 106500
+                decltype(edges)::sequence_type edges_vec;
+#else
+                std::vector<decltype(edges)::value_type> edges_vec;
+#endif
+                edges_vec.reserve(objects.size<System>() * 10); // guesstimate
                 for (const auto& sys : objects.all<System>()) {
+                    auto sys_id{sys->ID()};
                     for (auto& [lane_id, is_wormhole] : sys->StarlanesWormholes()) {
                         (void)is_wormhole; // quiet unused variable_warning
-                        edges.emplace(std::min(sys->ID(), lane_id), std::max(sys->ID(), lane_id));
+                        edges_vec.emplace_back(std::min(sys_id, lane_id), std::max(sys_id, lane_id));
                     }
                 }
+                // sort and ensure uniqueness of entries before moving into flat_set
+                std::sort(edges_vec.begin(), edges_vec.end());
+                edges_vec.erase(std::unique(edges_vec.begin(), edges_vec.end()), edges_vec.end());
+#if BOOST_VERSION >= 106500
+                edges.adopt_sequence(boost::container::ordered_unique_range_t{}, std::move(edges_vec));
+#else
+                edges.insert(boost::container::ordered_unique_range_t{}, std::make_move_iterator(edges_vec.begin()),
+                             std::make_move_iterator(edges_vec.end()));
+#endif
             }
 
             template <typename EdgeDescriptor>
@@ -522,12 +540,16 @@ namespace {
                 int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
                 // look up lane between systems
-                return edges.count({std::min(sys_id_1, sys_id_2), std::max(sys_id_1, sys_id_2)});
+#if BOOST_VERSION >= 106900
+                return edges.contains(std::pair{std::min(sys_id_1, sys_id_2), std::max(sys_id_1, sys_id_2)});
+#else
+                return edges.find(std::pair{std::min(sys_id_1, sys_id_2), std::max(sys_id_1, sys_id_2)}) != edges.end();
+#endif
             }
 
         private:
             const SystemGraph* m_graph = nullptr;
-            std::unordered_set<std::pair<int, int>, boost::hash<std::pair<int, int>>> edges;
+            boost::container::flat_set<std::pair<int, int>> edges;
         };
         typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
         typedef std::map<int, std::shared_ptr<EmpireViewSystemGraph>> EmpireViewSystemGraphMap;
