@@ -199,7 +199,6 @@ def find_path_with_resupply_generic(
     """
 
     universe = fo.getUniverse()
-    empire_id = fo.empireID()
 
     if start == INVALID_ID or target == INVALID_ID:
         warning("Requested path between invalid systems.")
@@ -254,7 +253,7 @@ def find_path_with_resupply_generic(
         # add neighboring systems to the queue if the resulting path
         # is either shorter or offers more fuel than the other paths
         # which we already found to those systems
-        for neighbor in get_neighbors(current, empire_id):
+        for neighbor in get_neighbors(current):
             # A system we have never had partial vis for will count as fully blockaded for us, but perhaps if
             # we are scouting we might want to be able to route a path through it anyway.
             if any(
