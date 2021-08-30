@@ -17,7 +17,13 @@
 //!
 //! If @p enable_output is true and duration is greater than threshold then
 //! print output.
+
+#if defined(__GNUC__)
+// GCC doesn't seem to like class [[nodiscard]] mixed with FO_COMMON_API
 class FO_COMMON_API ScopedTimer {
+#else
+class FO_COMMON_API [[nodiscard]] ScopedTimer {
+#endif
 public:
     explicit ScopedTimer(std::string timed_name = "", bool enable_output = false,
                          std::chrono::microseconds threshold = std::chrono::milliseconds(1));
@@ -99,7 +105,12 @@ private:
 //! Title - final section      time: xxxx ms
 //! Title                      time: xxxx ms
 //! ```
+#if defined(__GNUC__)
+// GCC doesn't seem to like class [[nodiscard]] mixed with FO_COMMON_API
 class FO_COMMON_API SectionedScopedTimer {
+#else
+class FO_COMMON_API [[nodiscard]] SectionedScopedTimer {
+#endif
 public:
     explicit SectionedScopedTimer(std::string timed_name,
                                   std::chrono::microseconds threshold = std::chrono::milliseconds(1),

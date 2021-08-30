@@ -304,7 +304,7 @@ namespace {
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
                                                                   int candidate_object_id, int empire_id)
     {
-        ScopedTimer("ProductionItemRowBrowseWnd: " + item.name);
+        ScopedTimer timer("ProductionItemRowBrowseWnd: " + item.name, true);
 
         // get available PP for empire at candidate location
         float local_pp_output = 0.0f;
@@ -534,7 +534,7 @@ namespace {
             SetRowAlignment(GG::ALIGN_NONE);
             SetChildClippingMode(ChildClippingMode::ClipToClient);
 
-            ScopedTimer("ProductionItemRow: " + item.name);
+            ScopedTimer timer("ProductionItemRow: " + item.name, true);
 
             if (m_item.build_type == BuildType::BT_SHIP) {
                 SetDragDropDataType(std::to_string(m_item.design_id));
