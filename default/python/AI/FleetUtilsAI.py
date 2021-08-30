@@ -13,6 +13,7 @@ from EnumsAI import MissionType, ShipRoleType
 from freeorion_tools import assertion_fails, combine_ratings
 from ShipDesignAI import get_ship_part
 from target import TargetFleet, TargetPlanet, TargetSystem
+from universe.system_network import get_shortest_distance
 
 
 def stats_meet_reqs(stats: dict, requirements: dict) -> bool:
@@ -668,7 +669,7 @@ def calculate_estimated_time_of_arrival(fleet_id, target_system_id):
     fleet = universe.getFleet(fleet_id)
     if not fleet or not fleet.speed:
         return 99999
-    distance = universe.shortestPathDistance(fleet_id, target_system_id)
+    distance = get_shortest_distance(fleet_id, target_system_id)
     return math.ceil(float(distance) / fleet.speed)
 
 

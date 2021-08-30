@@ -10,6 +10,10 @@ def _min_max(a, b) -> Sequence:
     """
     Return args in sorted order.
 
+    This function is designed to improve caches performaces,
+    when order of arguments doesn't matter we can reduce number of cached calls by
+    setting them in the sorted order.
+
     >>> _min_max(1, 2)
     (1, 2)
 
@@ -22,10 +26,6 @@ def _min_max(a, b) -> Sequence:
 def systems_connected(system1: SystemId, system2: SystemId) -> bool:
     """
     Return True if systems connected.
-
-    Implementation notes: This is expensive operation on server.
-    So we are caching it as much as possible.
-    Sorting planets by ids could increase cache hits.
     """
     return _systems_connected(*_min_max(system1, system2))
 
@@ -36,3 +36,14 @@ def _systems_connected(system1: SystemId, system2: SystemId) -> bool:
         return False
 
     return fo.getUniverse().systemsConnected(system1, system2, fo.empireID())
+
+
+def get_shortest_distance(system_1: SystemId, system_2: SystemId) -> float:
+    """
+    Return the distance between the systems where objects are located.
+    """
+    return _get_shortest_distance(*_min_max(system_1, system_2))
+
+
+def _get_shortest_distance(system_1: SystemId, system_2: SystemId) -> float:
+    return fo.getUniverse().shortestPathDistance(system_1, system_2)
