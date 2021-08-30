@@ -16,7 +16,9 @@ Special
     ]
     effectsgroups = [
         [[MONSTER_NEST(JUGGERNAUT,juggernaut,0.06)]]
+        [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/juggernaut-nest.png"
 
 #include "monster_nest.macros"
+#include "/scripting/specials/specials.macros.txt"
