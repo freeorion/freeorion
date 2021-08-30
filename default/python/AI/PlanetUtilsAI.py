@@ -7,6 +7,7 @@ from common.fo_typing import PlanetId, SystemId
 from empire.colony_builders import get_colony_builders
 from empire.ship_builders import get_ship_builders
 from freeorion_tools import ppstring
+from freeorion_tools.caching import cache_for_current_turn
 
 
 def safe_name(univ_object):
@@ -39,6 +40,7 @@ def planet_string(planet_ids: Union[PlanetId, List[PlanetId]]) -> str:
     return ppstring([_safe_planet_name(pid) for pid in planet_ids])
 
 
+@cache_for_current_turn
 def get_capital() -> PlanetId:
     """
     Return current empire capital id.

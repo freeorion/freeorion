@@ -10,6 +10,7 @@ from common.fo_typing import SystemId
 from EnumsAI import MissionType
 from freeorion_tools import get_fleet_position, get_partial_visibility_turn
 from target import TargetSystem
+from universe.system_network import systems_connected
 
 graph_flags = set()
 border_unexplored_system_ids = set()
@@ -167,7 +168,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
             status_info = [system_header]
 
         has_been_visible = get_partial_visibility_turn(cur_system_id) > 0
-        is_connected = universe.systemsConnected(cur_system_id, home_system_id, -1)  # self.empire_id)
+        is_connected = systems_connected(cur_system_id, home_system_id)
         status_info.append("    -- is%s partially visible" % ("" if has_been_visible else " not"))
         status_info.append("    -- is%s visibly connected to homesystem" % ("" if is_connected else " not"))
         if has_been_visible:
