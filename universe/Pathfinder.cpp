@@ -307,7 +307,7 @@ namespace SystemPathing {
     template <typename Graph>
     std::pair<std::list<int>, double> ShortestPathImpl(
         const Graph& graph, int system1_id, int system2_id,
-        double linear_distance, const boost::unordered_map<int, size_t>& id_to_graph_index)
+        double linear_distance, const boost::container::flat_map<int, size_t>& id_to_graph_index)
     {
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type     ConstSystemIDPropertyMap;
         typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type  ConstIndexPropertyMap;
@@ -392,7 +392,7 @@ namespace SystemPathing {
       * empty and the path length is -1 */
     template <typename Graph>
     std::pair<std::list<int>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id,
-                                                      const boost::unordered_map<int, size_t>& id_to_graph_index,
+                                                      const boost::container::flat_map<int, size_t>& id_to_graph_index,
                                                       int max_jumps = INT_MAX)
     {
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
@@ -459,7 +459,7 @@ namespace SystemPathing {
 
     template <typename Graph>
     std::multimap<double, int> ImmediateNeighborsImpl(const Graph& graph, int system_id,
-                                                      const boost::unordered_map<int, size_t>& id_to_graph_index)
+                                                      const boost::container::flat_map<int, size_t>& id_to_graph_index)
     {
         typedef typename Graph::out_edge_iterator OutEdgeIterator;
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
@@ -724,9 +724,9 @@ public:
     void HandleCacheMiss(size_t ii, distance_matrix_storage<short>::row_ref row) const;
 
 
-    mutable distance_matrix_storage<short> m_system_jumps;             ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
-    std::shared_ptr<GraphImpl>             m_graph_impl;               ///< a graph in which the systems are vertices and the starlanes are edges
-    boost::unordered_map<int, size_t>      m_system_id_to_graph_index;
+    mutable distance_matrix_storage<short>  m_system_jumps;             ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
+    std::shared_ptr<GraphImpl>              m_graph_impl;               ///< a graph in which the systems are vertices and the starlanes are edges
+    boost::container::flat_map<int, size_t> m_system_id_to_graph_index;
 };
 
 /////////////////////////////////////////////
@@ -1425,14 +1425,29 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
     for (auto& sys : objects.ExistingSystems())
         system_ids.push_back(sys.first);
 
+#if BOOST_VERSION >= 106500
+    decltype(m_system_id_to_graph_index)::sequence_type system_id_to_graph_idx_vec;
+#else
+    std::vector<decltype(m_system_id_to_graph_index)::value_type> system_id_to_graph_idx_vec;
+#endif
+    system_id_to_graph_idx_vec.reserve(system_ids.size());
+
     for (size_t system_index = 0; system_index < system_ids.size(); ++system_index) {
         // add a vertex to the graph for this system, and assign it the system's universe ID as a property
         boost::add_vertex(new_graph_impl->system_graph);
         int system_id = system_ids[system_index];
         sys_id_property_map[system_index] = system_id;
         // add record of index in new_graph_impl->system_graph of this system
-        m_system_id_to_graph_index[system_id] = system_index;
+        system_id_to_graph_idx_vec.emplace_back(system_id, system_index);
     }
+    std::sort(system_id_to_graph_idx_vec.begin(), system_id_to_graph_idx_vec.end());
+#if BOOST_VERSION >= 106500
+    m_system_id_to_graph_index.adopt_sequence(boost::container::ordered_unique_range_t{}, std::move(system_id_to_graph_idx_vec));
+#else
+    m_system_id_to_graph_index.insert(boost::container::ordered_unique_range_t{},
+                                      std::make_move_iterator(system_id_to_graph_idx_vec.begin()),
+                                      std::make_move_iterator(system_id_to_graph_idx_vec.end()));
+#endif
 
     // add edges for all starlanes
     for (size_t system1_index = 0; system1_index < system_ids.size(); ++system1_index) {
