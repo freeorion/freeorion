@@ -45,8 +45,7 @@ from common.handlers import init_handlers
 from common.listeners import listener
 from freeorion_tools.timers import AITimer
 
-main_timer = AITimer("timer", write_log=True)
-turn_timer = AITimer("bucket", write_log=True)
+turn_timer = AITimer("full turn")
 
 user_dir = fo.getUserDataDir()
 debug("Path to folder for user specific data: %s" % user_dir)
@@ -98,9 +97,6 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     if empire.eliminated:
         info("This empire has been eliminated. Ignoring new game start message.")
         return
-
-    turn_timer.start("Server Processing")
-
     # initialize AIstate
     debug("Initializing AI state...")
     create_new_aistate(aggression_input)
@@ -134,8 +130,6 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     if fo.getEmpire().eliminated:
         info("This empire has been eliminated. Ignoring resume loaded game.")
         return
-    turn_timer.start("Server Processing")
-
     debug("Resuming loaded game")
     if not saved_state_string:
         error(
@@ -240,6 +234,9 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     diplomatic_corp.handle_diplomatic_status_update(status_update)
 
 
+generate_order_timer = AITimer("generate orders")
+
+
 @error_handler
 @listener
 def generateOrders():  # pylint: disable=invalid-name
@@ -250,6 +247,8 @@ def generateOrders():  # pylint: disable=invalid-name
     After leaving this function, the AI's turn will be finished
     and its orders will be sent to the server.
     """
+    turn_timer.start("AI planning")
+    generate_order_timer.start("Check AI state")
     try:
         rules = fo.getGameRules()
         debug("Defined game rules:")
@@ -270,19 +269,20 @@ def generateOrders():  # pylint: disable=invalid-name
         info("This empire has been eliminated. Aborting order generation.")
         return
 
+    generate_order_timer.start("Update states on server")
     # This code block is required for correct AI work.
     info("Meter / Resource Pool updating...")
     fo.initMeterEstimatesDiscrepancies()
     fo.updateMeterEstimates(False)
     fo.updateResourcePools()
 
+    generate_order_timer.start("Prepare each turn data")
     turn = fo.currentTurn()
     aistate = get_aistate()
     debug("\n\n\n" + "=" * 20)
     debug(f"Starting turn {turn}")
     debug("=" * 20 + "\n")
 
-    turn_timer.start("AI planning")
     # set the random seed (based on galaxy seed, empire name and current turn)
     # for game-reload consistency.
     random_seed = str(fo.getGalaxySetupData().seed) + "%05d%s" % (turn, fo.getEmpire().name)
@@ -358,17 +358,16 @@ def generateOrders():  # pylint: disable=invalid-name
 
     for action in action_list:
         try:
-            main_timer.start(action.__name__)
+            generate_order_timer.start(action.__name__)
             action()
-            main_timer.stop()
+            generate_order_timer.stop()
         except Exception as e:
             error("Exception %s while trying to %s" % (e, action.__name__), exc_info=True)
-    main_timer.stop_print_and_clear()
-    turn_timer.stop_print_and_clear()
-
-    turn_timer.start("Server_Processing")
 
     aistate.last_turn_played = fo.currentTurn()
+    generate_order_timer.stop_print_and_clear()
+    turn_timer.stop_print_and_clear()
+    turn_timer.start("Time between AI turn")
 
 
 init_handlers(fo.getOptionsDBOptionStr("ai-config"), fo.getAIDir())

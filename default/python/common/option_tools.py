@@ -10,8 +10,6 @@ CONFIG_DEFAULT_FILE = "config.ini"
 # CONFIG KEYS
 TIMER_SECTION = "Timers"
 TIMERS_USE_TIMERS = "timers_to_log"
-TIMERS_TO_FILE = "timers_dump"
-TIMERS_DUMP_FOLDER = "timers_dump_folder"
 HANDLERS = "handlers"
 
 
@@ -51,7 +49,7 @@ def _get_preset_default_ai_options():
         [
             (
                 TIMER_SECTION,
-                odict([(TIMERS_USE_TIMERS, False), (TIMERS_TO_FILE, False), (TIMERS_DUMP_FOLDER, "timers")]),
+                odict([(TIMERS_USE_TIMERS, False)]),
             ),
             ("main", odict([(HANDLERS, "")])),  # module names in handler directory, joined by space
         ]
