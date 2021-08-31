@@ -7,10 +7,12 @@ from typing import Callable, Optional
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
+from common.fo_typing import SystemId
 from EnumsAI import MissionType
 from freeorion_tools import chat_human, get_partial_visibility_turn
 from freeorion_tools.caching import cache_for_current_turn
 from turn_state import get_system_supply
+from universe.system_network import get_neighbors, get_shortest_distance
 
 _DEBUG_CHAT = False
 _ACCEPTABLE_DETOUR_LENGTH = 2000
@@ -164,8 +166,8 @@ def find_path_with_resupply(
 #    - For large graphs, check if there are any must-visit nodes (e.g. only possible resupplying system),
 #      then try to find the shortest path between those and start/target.
 def find_path_with_resupply_generic(
-    start: int,
-    target: int,
+    start: SystemId,
+    target: SystemId,
     start_fuel: float,
     max_fuel: float,
     system_suppliable_func: Callable[[int], bool],
@@ -183,8 +185,6 @@ def find_path_with_resupply_generic(
      nodes are locked only for a certain minimum level of fuel - if a longer path yields a higher fuel
      level at a given system, then that path is considered as possible detour for refueling and added to the queue.
 
-    :param start: start system id
-    :param target:  target system id
     :param start_fuel: starting fuel of the fleet
     :param max_fuel: max fuel of the fleet
     :param system_suppliable_func: boolean function with one int param s, specifying if a system s provides fleet supply
@@ -199,7 +199,6 @@ def find_path_with_resupply_generic(
     """
 
     universe = fo.getUniverse()
-    empire_id = fo.empireID()
 
     if start == INVALID_ID or target == INVALID_ID:
         warning("Requested path between invalid systems.")
@@ -215,7 +214,7 @@ def find_path_with_resupply_generic(
         return None
 
     # make sure the target is connected to the start system
-    shortest_possible_path_distance = universe.shortestPathDistance(start, target)
+    shortest_possible_path_distance = get_shortest_distance(start, target)
     if shortest_possible_path_distance == -1:
         warning("Requested path between disconnected systems, doing nothing.")
         return None
@@ -254,7 +253,7 @@ def find_path_with_resupply_generic(
         # add neighboring systems to the queue if the resulting path
         # is either shorter or offers more fuel than the other paths
         # which we already found to those systems
-        for neighbor in universe.getImmediateNeighbors(current, empire_id):
+        for neighbor in get_neighbors(current):
             # A system we have never had partial vis for will count as fully blockaded for us, but perhaps if
             # we are scouting we might want to be able to route a path through it anyway.
             if any(
@@ -278,7 +277,7 @@ def find_path_with_resupply_generic(
                 continue
 
             # calculate the new distance prediction, i.e. the A* heuristic.
-            predicted_distance = new_dist + universe.shortestPathDistance(neighbor, target)
+            predicted_distance = new_dist + get_shortest_distance(neighbor, target)
 
             # Ignore paths that are much longer than the shortest possible path
             if predicted_distance > max(

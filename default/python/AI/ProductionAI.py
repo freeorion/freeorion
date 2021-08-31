@@ -61,6 +61,7 @@ from turn_state import (
     population_with_industry_focus,
 )
 from turn_state.design import get_best_ship_info, get_best_ship_ratings
+from universe.system_network import get_neighbors
 
 
 def get_priority_locations() -> FrozenSet[PlanetId]:
@@ -1078,7 +1079,7 @@ def generate_production_orders():
             if sys_id in scanner_locs:
                 continue
             need_scanner = False
-            for nSys in universe.getImmediateNeighbors(sys_id, empire.empireID):
+            for nSys in get_neighbors(sys_id):
                 if universe.getVisibility(nSys, empire.empireID) < fo.visibility.partial:
                     need_scanner = True
                     break
@@ -1118,8 +1119,7 @@ def generate_production_orders():
         ]:  # coverage of neighbors up to 2 jumps away from a drydock
             for dd_sys_id in start_set.copy():
                 dest_set.add(dd_sys_id)
-                neighbors = universe.getImmediateNeighbors(dd_sys_id, empire.empireID)
-                dest_set.update(neighbors)
+                dest_set.update(get_neighbors(dd_sys_id))
 
         max_dock_builds = int(0.8 + empire.productionPoints / 120.0)
         debug(
@@ -1148,8 +1148,7 @@ def generate_production_orders():
                 if res:
                     queued_locs.append(planet.systemID)
                     covered_drydoc_locs.add(planet.systemID)
-                    neighboring_systems = universe.getImmediateNeighbors(planet.systemID, empire.empireID)
-                    covered_drydoc_locs.update(neighboring_systems)
+                    covered_drydoc_locs.update(get_neighbors(planet.systemID))
                     if max_dock_builds >= 2:
                         res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                         debug("Requeueing %s to front of build queue, with result %d", building_name, res)

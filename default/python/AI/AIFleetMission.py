@@ -29,6 +29,7 @@ from freeorion_tools import (
     get_partial_visibility_turn,
 )
 from target import Target, TargetFleet, TargetPlanet, TargetSystem
+from universe.system_network import get_neighbors
 
 ORDERS_FOR_MISSION = {
     MissionType.EXPLORATION: OrderPause,
@@ -165,7 +166,7 @@ class AIFleetMission:
 
         # only merge PROTECT_REGION if there is any threat near target
         if self.type == MissionType.PROTECT_REGION:
-            neighbor_systems = universe.getImmediateNeighbors(self.target.id, empire_id)
+            neighbor_systems = get_neighbors(self.target.id)
             if not any(MilitaryAI.get_system_local_threat(sys_id) for sys_id in neighbor_systems):
                 debug("Not merging PROTECT_REGION fleet - no threat nearby.")
                 return
@@ -808,7 +809,7 @@ class AIFleetMission:
         else:
             debug("  No immediate threats.")
             # Try to eliminate neighbouring fleets
-            neighbors = universe.getImmediateNeighbors(primary_objective, fo.empireID())
+            neighbors = get_neighbors(primary_objective)
             threat_list = sorted(map(lambda x: (MilitaryAI.get_system_local_threat(x), x), neighbors), reverse=True)
 
             if not threat_list:

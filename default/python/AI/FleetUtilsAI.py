@@ -13,6 +13,7 @@ from EnumsAI import MissionType, ShipRoleType
 from freeorion_tools import assertion_fails, combine_ratings
 from ShipDesignAI import get_ship_part
 from target import TargetFleet, TargetPlanet, TargetSystem
+from universe.system_network import get_neighbors, get_shortest_distance
 
 
 def stats_meet_reqs(stats: dict, requirements: dict) -> bool:
@@ -183,7 +184,7 @@ def get_fleets_for_mission(
                 return fleet_list
 
         # finished system without meeting requirements. Add neighboring systems to search queue.
-        for neighbor_id in universe.getImmediateNeighbors(this_system_id, fo.empireID()):
+        for neighbor_id in get_neighbors(this_system_id):
             if all(
                 (
                     neighbor_id not in systems_visited,
@@ -668,7 +669,7 @@ def calculate_estimated_time_of_arrival(fleet_id, target_system_id):
     fleet = universe.getFleet(fleet_id)
     if not fleet or not fleet.speed:
         return 99999
-    distance = universe.shortestPathDistance(fleet_id, target_system_id)
+    distance = get_shortest_distance(fleet_id, target_system_id)
     return math.ceil(float(distance) / fleet.speed)
 
 

@@ -10,7 +10,7 @@ from common.fo_typing import SystemId
 from EnumsAI import MissionType
 from freeorion_tools import get_fleet_position, get_partial_visibility_turn
 from target import TargetSystem
-from universe.system_network import systems_connected
+from universe.system_network import get_neighbors, systems_connected
 
 graph_flags = set()
 border_unexplored_system_ids = set()
@@ -175,7 +175,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
             sys_status = aistate.systemStatus.setdefault(cur_system_id, {})
             aistate.visInteriorSystemIDs.add(cur_system_id)
             aistate.visBorderSystemIDs.discard(cur_system_id)
-            neighbors = set(universe.getImmediateNeighbors(cur_system_id, empire_id))
+            neighbors = get_neighbors(cur_system_id)
             sys_status.setdefault("neighbors", set()).update(neighbors)
             if neighbors:
                 status_info.append(" -- has neighbors %s" % sorted(neighbors))
@@ -199,7 +199,6 @@ def update_explored_systems():
         debug("Obstructed starlanes are: %s" % ", ".join("%s-%s" % item for item in obs_lanes_list))
     else:
         debug("No obstructed Starlanes")
-    empire_id = fo.empireID()
     newly_explored = []
     still_unexplored = []
     aistate = get_aistate()
@@ -220,14 +219,14 @@ def update_explored_systems():
     dummy = []
     for id_list, next_list in [(newly_explored, neighbor_list), (neighbor_list, dummy)]:
         for sys_id in id_list:
-            neighbors = list(universe.getImmediateNeighbors(sys_id, empire_id))
+            neighbors = get_neighbors(sys_id)
             for neighbor_id in neighbors:
                 # when it matters, unexplored will be smaller than explored
                 if neighbor_id not in aistate.unexploredSystemIDs:
                     next_list.append(neighbor_id)
 
     for sys_id in still_unexplored:
-        neighbors = list(universe.getImmediateNeighbors(sys_id, empire_id))
+        neighbors = get_neighbors(sys_id)
         if any(nid in aistate.exploredSystemIDs for nid in neighbors):
             border_unexplored_system_ids.add(sys_id)
     return newly_explored
