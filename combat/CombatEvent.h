@@ -15,7 +15,7 @@
 struct CombatEvent;
 typedef std::shared_ptr<CombatEvent> CombatEventPtr;
 typedef std::shared_ptr<const CombatEvent> ConstCombatEventPtr;
-class ScriptingContext;
+struct ScriptingContext;
 
 /// An abstract base class for combat events
 /**
