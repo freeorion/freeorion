@@ -15,6 +15,9 @@ class DummyTimer:
     Dummy timer to be used if timers are disabled.
     """
 
+    def __init__(self, *args, **kwargs):
+        pass
+
     def stop(self, *args, **kwargs):
         pass
 
