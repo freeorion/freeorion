@@ -792,9 +792,8 @@ void Statistic<T, V>::GetConditionMatches(const ScriptingContext& context,
                                           Condition::Condition* condition) const
 {
     condition_targets.clear();
-    if (!condition)
-        return;
-    condition->Eval(context, condition_targets);
+    if (condition)
+        condition->Eval(context, condition_targets);
 }
 
 template <typename T, typename V>
