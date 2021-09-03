@@ -2876,7 +2876,7 @@ void MapWnd::InitTurn() {
 
 void MapWnd::MidTurnUpdate() {
     DebugLogger() << "MapWnd::MidTurnUpdate";
-    ScopedTimer timer("MapWnd::MidTurnUpdate", true);
+    ScopedTimer timer("MapWnd::MidTurnUpdate");
 
     GetUniverse().InitializeSystemGraph(Empires(), Objects());
     GetUniverse().UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(Empires());
@@ -2896,7 +2896,7 @@ void MapWnd::MidTurnUpdate() {
 
 void MapWnd::InitTurnRendering() {
     DebugLogger() << "MapWnd::InitTurnRendering";
-    ScopedTimer timer("MapWnd::InitTurnRendering", true);
+    ScopedTimer timer("MapWnd::InitTurnRendering");
 
     using boost::placeholders::_1;
     using boost::placeholders::_2;
@@ -3006,7 +3006,7 @@ void MapWnd::InitTurnRendering() {
 
 void MapWnd::InitSystemRenderingBuffers() {
     DebugLogger() << "MapWnd::InitSystemRenderingBuffers";
-    ScopedTimer timer("MapWnd::InitSystemRenderingBuffers", true);
+    ScopedTimer timer("MapWnd::InitSystemRenderingBuffers");
 
     // clear out all the old buffers
     ClearSystemRenderingBuffers();

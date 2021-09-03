@@ -393,7 +393,7 @@ namespace parse {
 
         boost::filesystem::path manifest_file;
 
-        ScopedTimer timer("Species Parsing", true);
+        ScopedTimer timer("Species Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript)) {
             if (file.filename() == "SpeciesCensusOrdering.focs.txt" ) {

@@ -121,7 +121,7 @@ namespace parse {
         const lexer lexer;
         start_rule_payload building_types;
 
-        ScopedTimer timer("Buildings Parsing", true);
+        ScopedTimer timer("Buildings Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload>(lexer, file, building_types);

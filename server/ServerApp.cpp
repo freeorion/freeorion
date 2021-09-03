@@ -3289,7 +3289,7 @@ namespace {
 }
 
 void ServerApp::PreCombatProcessTurns() {
-    ScopedTimer timer("ServerApp::PreCombatProcessTurns", true);
+    ScopedTimer timer("ServerApp::PreCombatProcessTurns");
 
     m_universe.ResetAllObjectMeters(false, true);   // revert current meter values to initial values prior to update after incrementing turn number during previous post-combat turn processing.
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
@@ -3427,7 +3427,7 @@ void ServerApp::PreCombatProcessTurns() {
 }
 
 void ServerApp::ProcessCombats() {
-    ScopedTimer timer("ServerApp::ProcessCombats", true);
+    ScopedTimer timer("ServerApp::ProcessCombats");
     DebugLogger() << "ServerApp::ProcessCombats";
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::COMBAT));
 
@@ -3511,7 +3511,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
 }
 
 void ServerApp::PostCombatProcessTurns() {
-    ScopedTimer timer("ServerApp::PostCombatProcessTurns", true);
+    ScopedTimer timer("ServerApp::PostCombatProcessTurns");
 
     ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager,m_supply_manager};
 

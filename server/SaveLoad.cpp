@@ -529,7 +529,7 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
     ServerSaveGameData  ignored_server_save_game_data;
     GalaxySetupData     ignored_galaxy_setup_data;
 
-    ScopedTimer timer("LoadPlayerSaveHeaderData: " + filename, true);
+    ScopedTimer timer("LoadPlayerSaveHeaderData: " + filename);
 
     try {
         DebugLogger() << "Reading player save game data from: " << filename;
@@ -581,7 +581,7 @@ void LoadEmpireSaveGameData(const std::string& filename,
     ServerSaveGameData                  saved_server_save_game_data;
     GalaxySetupData                     saved_galaxy_setup_data;
 
-    ScopedTimer timer("LoadEmpireSaveGameData: " + filename, true);
+    ScopedTimer timer("LoadEmpireSaveGameData: " + filename);
 
     try {
         fs::path path = FilenameToPath(filename);

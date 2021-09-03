@@ -1050,7 +1050,7 @@ void ExtractTurnUpdateMessageData(std::string text, int empire_id, int& current_
                                   SupplyManager& supply, std::map<int, PlayerInfo>& players)
 {
     try {
-        ScopedTimer timer("Turn Update Unpacking", true);
+        ScopedTimer timer("Turn Update Unpacking");
 
         bool try_xml = false;
         if (std::strncmp(text.c_str(), "<?xml", 5)) {
@@ -1095,7 +1095,7 @@ void ExtractTurnUpdateMessageData(std::string text, int empire_id, int& current_
 
 void ExtractTurnPartialUpdateMessageData(const Message& msg, int empire_id, Universe& universe) {
     try {
-        ScopedTimer timer("Mid Turn Update Unpacking", true);
+        ScopedTimer timer("Mid Turn Update Unpacking");
 
         bool try_xml = false;
         if (std::strncmp(msg.Data(), "<?xml", 5)) {

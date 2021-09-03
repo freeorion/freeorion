@@ -230,7 +230,7 @@ namespace parse {
         const lexer lexer;
         start_rule_payload policies_;
 
-        ScopedTimer timer("Policies Parsing", true);
+        ScopedTimer timer("Policies Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload>(lexer, file, policies_);

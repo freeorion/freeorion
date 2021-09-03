@@ -113,14 +113,17 @@ public:
     std::chrono::microseconds                      m_threshold;
 };
 
+ScopedTimer::ScopedTimer() :
+    ScopedTimer("", false)
+{}
+
 ScopedTimer::ScopedTimer(std::string timed_name, bool enable_output,
                          std::chrono::microseconds threshold) :
     m_impl(new Impl(std::move(timed_name), enable_output, threshold))
 {}
 
-ScopedTimer::ScopedTimer(std::string timed_name,
-                         std::chrono::microseconds threshold) :
-    m_impl(new Impl(std::move(timed_name), true, threshold))
+ScopedTimer::ScopedTimer(std::string timed_name, std::chrono::microseconds threshold) :
+    ScopedTimer(std::move(timed_name), true, threshold)
 {}
 
 ScopedTimer::ScopedTimer(std::function<std::string ()> output_text_fn,
@@ -300,10 +303,8 @@ private:
 };
 
 SectionedScopedTimer::SectionedScopedTimer(std::string timed_name,
-                                           std::chrono::microseconds threshold,
-                                           bool enable_output,
-                                           bool unify_section_duration_units) :
-    m_impl(new Impl(std::move(timed_name), threshold, enable_output, unify_section_duration_units))
+                                           std::chrono::microseconds threshold) :
+    m_impl(new Impl(std::move(timed_name), threshold, true, true))
 {}
 
 // ~SectionedScopedTimer is required because Impl is defined here.

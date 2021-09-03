@@ -2250,7 +2250,7 @@ public:
     }
 
     void Refresh() {
-        ScopedTimer timer("ShipsListBox::Refresh", true);
+        ScopedTimer timer("ShipsListBox::Refresh");
 
         auto fleet = Objects().get<Fleet>(m_fleet_id);
         if (!fleet) {
@@ -3545,7 +3545,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
        )
     {
         auto split_action = [this, &ship_ids_set]() {
-            ScopedTimer split_fleet_timer("FleetWnd::SplitFleet", true);
+            ScopedTimer split_fleet_timer("FleetWnd::SplitFleet");
 
             FleetAggression new_aggression_setting = FleetAggression::INVALID_FLEET_AGGRESSION;
             if (m_new_fleet_drop_target)

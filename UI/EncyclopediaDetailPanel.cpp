@@ -1067,8 +1067,8 @@ namespace {
         if (dir_name == "ENC_STRINGS")
             return retval;
 
-        ScopedTimer subdir_timer("GetSubDirs(" + dir_name + ", " + std::to_string(exclude_custom_categories_from_dir_name) + ", " + std::to_string(depth) + ")",
-                                 true, std::chrono::milliseconds(10));
+        ScopedTimer subdir_timer("GetSubDirs(" + dir_name + ", " + std::to_string(exclude_custom_categories_from_dir_name) +
+                                 ", " + std::to_string(depth) + ")");
 
         depth++;
         // safety check to pre-empt potential infinite loop

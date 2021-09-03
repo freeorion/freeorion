@@ -694,7 +694,7 @@ namespace parse {
         g_categories_seen = &categories_seen;
         g_categories = &categories;
 
-        ScopedTimer timer("Techs Parsing", true);
+        ScopedTimer timer("Techs Parsing");
 
         py_parse::detail::parse_file<py_grammar_category, TechManager::TechContainer>(parser, path / "Categories.inf.py", py_grammar_category(), techs_);
 

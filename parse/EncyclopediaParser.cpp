@@ -88,7 +88,7 @@ namespace parse {
         const lexer lexer;
         ArticleMap articles;
 
-        ScopedTimer timer("Encyclopedia Parsing", true);
+        ScopedTimer timer("Encyclopedia Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, ArticleMap>(lexer, file, articles);
