@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 
-cmake_policy(SET CMP0042 NEW)
 if(POLICY CMP0072)
   cmake_policy(SET CMP0072 NEW)
 endif()
