@@ -15,7 +15,9 @@ Special
     ]
     effectsgroups = [
         [[MONSTER_NEST(SNOWFLAKE,snowflake,0.08)]]
+         [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/snowflake-nest.png"
 
 #include "monster_nest.macros"
+#include "/scripting/specials/specials.macros.txt"
