@@ -331,25 +331,28 @@ bool Ship::CanHaveTroops() const {
     return design ? design->HasTroops() : false;
 }
 
-const std::string& Ship::PublicName(int empire_id, const ObjectMap&) const {
+const std::string& Ship::PublicName(int empire_id) const {
     // Disclose real ship name only to fleet owners. Rationale: a player who
     // doesn't know the design for a particular ship can easily guess it if the
     // ship's name is "Scout"
     // An exception is made for unowned monsters.
-    if (empire_id == ALL_EMPIRES || OwnedBy(empire_id) || (IsMonster() && Owner() == ALL_EMPIRES))  // TODO: GameRule for all objects visible
+    if (empire_id == ALL_EMPIRES || OwnedBy(empire_id) || (IsMonster() && Unowned()))  // TODO: Check / apply GameRule for all objects visible?
         return Name();
-    const ShipDesign* design = Design();
+    const ShipDesign* design = Design(); // TODO: get from context...?
     if (design)
         return design->Name();
     else if (IsMonster())
         return UserString("SM_MONSTER");
     else if (!Unowned())
         return UserString("FW_FOREIGN_SHIP");
-    else if (Unowned() && GetVisibility(empire_id) > Visibility::VIS_NO_VISIBILITY)
+    else if (Unowned()/* && GetVisibility(empire_id) > Visibility::VIS_NO_VISIBILITY*/)
         return UserString("FW_ROGUE_SHIP");
     else
         return UserString("OBJ_SHIP");
 }
+
+const std::string& Ship::PublicName(int empire_id, const ObjectMap&) const
+{ return PublicName(empire_id); } // TODO: pass full context to also get visibility, design manager ?
 
 std::shared_ptr<UniverseObject> Ship::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<Ship>(std::static_pointer_cast<const Ship>(shared_from_this()))); }

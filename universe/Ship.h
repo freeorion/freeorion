@@ -27,6 +27,7 @@ public:
 
     bool ContainedBy(int object_id) const override;
     [[nodiscard]] const std::string& PublicName(int empire_id, const ObjectMap& objects) const override;
+    [[nodiscard]] const std::string& PublicName(int empire_id) const;
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** Back propagates part meters (which UniverseObject equivalent doesn't). */
