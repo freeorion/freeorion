@@ -443,11 +443,11 @@ void Universe::ObfuscateIDGenerator() {
 }
 
 bool Universe::VerifyUnusedObjectID(const int empire_id, const int id) {
-    auto good_id_and_possible_legacy = m_object_id_allocator->IsIDValidAndUnused(id, empire_id);
-    if (!good_id_and_possible_legacy.second) // Possibly from old save game
+    auto [good_id, possible_legacy] = m_object_id_allocator->IsIDValidAndUnused(id, empire_id);
+    if (!possible_legacy) // Possibly from old save game
         ErrorLogger() << "object id = " << id << " should not have been assigned by empire = " << empire_id;
 
-    return good_id_and_possible_legacy.first && good_id_and_possible_legacy.second;
+    return good_id && possible_legacy;
 }
 
 void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
@@ -456,7 +456,7 @@ void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
 
     auto valid = m_object_id_allocator->UpdateIDAndCheckIfOwned(id);
     if (!valid) {
-        ErrorLogger() << "An object has not been inserted into the universe because it's id = " << id << " is invalid.";
+        ErrorLogger() << "An object has not been inserted into the universe because it's id = " << id << " was invalid.";
         obj->SetID(INVALID_OBJECT_ID);
         return;
     }
