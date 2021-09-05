@@ -318,28 +318,24 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
 
     // set contained objects of all possible containers
     for (const auto& obj : all()) {
-        if (obj->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
-            auto sys = std::dynamic_pointer_cast<System>(obj);
-            if (!sys)
-                continue;
-            sys->m_objects =    contained_objs[sys->ID()];
-            sys->m_planets =    contained_planets[sys->ID()];
-            sys->m_buildings =  contained_buildings[sys->ID()];
-            sys->m_fleets =     contained_fleets[sys->ID()];
-            sys->m_ships =      contained_ships[sys->ID()];
-            sys->m_fields =     contained_fields[sys->ID()];
+        const int ID = obj->ID();
+        const auto TYPE = obj->ObjectType();
+        if (TYPE == UniverseObjectType::OBJ_SYSTEM) {
+            auto sys = std::static_pointer_cast<System>(obj);
+            sys->m_objects =    contained_objs[ID];
+            sys->m_planets =    contained_planets[ID];
+            sys->m_buildings =  contained_buildings[ID];
+            sys->m_fleets =     contained_fleets[ID];
+            sys->m_ships =      contained_ships[ID];
+            sys->m_fields =     contained_fields[ID];
 
-        } else if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-            auto plt = std::dynamic_pointer_cast<Planet>(obj);
-            if (!plt)
-                continue;
-            plt->m_buildings =  contained_buildings[plt->ID()];
+        } else if (TYPE == UniverseObjectType::OBJ_PLANET) {
+            auto plt = std::static_pointer_cast<Planet>(obj);
+            plt->m_buildings =  contained_buildings[ID];
 
-        } else if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
-            auto flt = std::dynamic_pointer_cast<Fleet>(obj);
-            if (!flt)
-                continue;
-            flt->m_ships =      contained_ships[flt->ID()];
+        } else if (TYPE == UniverseObjectType::OBJ_FLEET) {
+            auto flt = std::static_pointer_cast<Fleet>(obj);
+            flt->m_ships =      contained_ships[ID];
         }
     }
 }
