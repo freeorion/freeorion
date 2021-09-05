@@ -84,31 +84,31 @@ public:
 
     typedef StateChangedSignalType::slot_type StateChangedSlotType;
 
-    int                         ID() const;                         ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
-    const std::string&          Name() const;                       ///< returns the name of this object; some valid objects will have no name
-    virtual double              X() const;                          ///< the X-coordinate of this object
-    virtual double              Y() const;                          ///< the Y-coordinate of this object
+    [[nodiscard]] int                           ID() const;                         ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
+    [[nodiscard]] const std::string&            Name() const;                       ///< returns the name of this object; some valid objects will have no name
+    [[nodiscard]] virtual double                X() const;                          ///< the X-coordinate of this object
+    [[nodiscard]] virtual double                Y() const;                          ///< the Y-coordinate of this object
 
-    virtual int                 Owner() const;                      ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
-    bool                        Unowned() const;                    ///< returns true iff there are no owners of this object
-    bool                        OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire owns this object; unowned objects always return false;
+    [[nodiscard]] virtual int                   Owner() const;                      ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
+    [[nodiscard]] bool                          Unowned() const;                    ///< returns true iff there are no owners of this object
+    [[nodiscard]] bool                          OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire owns this object; unowned objects always return false;
     /** Object owner is at war with empire @p empire_id */
-    virtual bool                HostileToEmpire(int empire_id, const EmpireManager& empires) const;
+    [[nodiscard]] virtual bool                  HostileToEmpire(int empire_id, const EmpireManager& empires) const;
 
-    virtual int                 SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
+    [[nodiscard]] virtual int                   SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
 
-    [[nodiscard]] const std::map<std::string, std::pair<int, float>>& Specials() const; ///< returns the Specials attached to this object
-    bool                        HasSpecial(const std::string& name) const;              ///< returns true iff this object has a special with the indicated \a name
-    int                         SpecialAddedOnTurn(const std::string& name) const;      ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
-    float                       SpecialCapacity(const std::string& name) const;         ///> returns the capacity of the special with name \a name or 0 if that special is not present
+    [[nodiscard]] const std::map<std::string,   std::pair<int, float>>& Specials() const; ///< returns the Specials attached to this object
+    [[nodiscard]] bool                          HasSpecial(const std::string& name) const;              ///< returns true iff this object has a special with the indicated \a name
+    [[nodiscard]] int                           SpecialAddedOnTurn(const std::string& name) const;      ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
+    [[nodiscard]] float                         SpecialCapacity(const std::string& name) const;         ///> returns the capacity of the special with name \a name or 0 if that special is not present
 
     /** Returns all tags this object has. */
-    [[nodiscard]] virtual std::set<std::string>   Tags() const;
+    [[nodiscard]] virtual std::set<std::string> Tags() const;
 
     /** Returns true iff this object has the tag with the indicated \a name. */
-    virtual bool                HasTag(const std::string& name) const;
+    [[nodiscard]] virtual bool                  HasTag(const std::string& name) const;
 
-    virtual UniverseObjectType  ObjectType() const;
+    [[nodiscard]] virtual UniverseObjectType    ObjectType() const;
 
     /** Return human readable string description of object offset \p ntabs from
         margin. */
