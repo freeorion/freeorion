@@ -362,28 +362,24 @@ public:
     /** InsertNew constructs and inserts a UniverseObject into the object map with a new
         id. It returns the new object. */
     template <typename T, typename... Args>
-    std::shared_ptr<T> InsertNew(Args&&... args) {
-        int id = GenerateObjectID();
-        return InsertID<T>(id, std::forward<Args>(args)...);
-    }
+    std::shared_ptr<T> InsertNew(Args&&... args)
+    { return InsertID<T>(GenerateObjectID(), std::forward<Args>(args)...); }
 
     /** InsertTemp constructs and inserts a temporary UniverseObject into the object map with a
         temporary id. It returns the new object. */
     template <typename T, typename... Args>
-    std::shared_ptr<T> InsertTemp(Args&&... args) {
-        auto id = TEMPORARY_OBJECT_ID;
-        return InsertID<T>(id, std::forward<Args>(args)...);
-    }
+    std::shared_ptr<T> InsertTemp(Args&&... args)
+    { return InsertID<T>(TEMPORARY_OBJECT_ID, std::forward<Args>(args)...); }
 
     /** \p empire_id inserts object \p obj into the universe with the given \p id.
         This is provided for use with Orders which are run once on the client
         and receive a new id and then are run a second time on the server using
         the id assigned on the client. */
     template <typename T, typename... Args>
-    std::shared_ptr<T> InsertByEmpireWithID(int empire_id, int id, Args&&... args) {
+    std::shared_ptr<T> InsertByEmpireWithID(int empire_id, int id, Args&&... args)
+    {
         if (!VerifyUnusedObjectID(empire_id, id))
             return nullptr;
-
         return InsertID<T>(id, std::forward<Args>(args)...);
     }
 
@@ -436,12 +432,10 @@ private:
     /** Inserts object \p obj into the universe with the given \p id. */
     template <typename T, typename... Args>
     std::shared_ptr<T> InsertID(int id, Args&&... args) {
+        static_assert(std::is_base_of_v<UniverseObject, T>);
+        static_assert(!std::is_same_v<UniverseObject, T>);
         auto obj = std::make_shared<T>(std::forward<Args>(args)...);
-        auto uobj = std::dynamic_pointer_cast<UniverseObject>(obj);
-        if (!uobj)
-            return nullptr;
-
-        InsertIDCore(std::move(uobj), id);
+        InsertIDCore(obj, id);
         return obj;
     }
 
