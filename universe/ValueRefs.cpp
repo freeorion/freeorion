@@ -43,6 +43,9 @@
 #  ifndef _GNU_SOURCE
 #    define _GNU_SOURCE
 #  endif
+#  if defined(_MSC_VER) && _MSC_VER >= 1930
+struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax error: 'identifier' was unexpected here; expected 'type specifier'"
+#  endif
 
 #  include <boost/stacktrace.hpp>
 #endif

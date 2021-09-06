@@ -1,7 +1,7 @@
 //! GiGi - A GUI for OpenGL
 //!
 //!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
-//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!  Copyright (C) 2013-2021 The FreeOrion Project
 //!
 //! Released under the GNU Lesser General Public License 2.1 or later.
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
@@ -15,8 +15,13 @@
 // versions of min and max.  Defining NOMINMAX disables the creation of those
 // macros
 #define NOMINMAX
+
 #include <boost/spirit/include/classic_dynamic.hpp>
+#if defined(_MSC_VER) && _MSC_VER >= 1930
+struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax error: 'identifier' was unexpected here; expected 'type specifier'"
+#endif
 #include <boost/spirit/include/classic.hpp>
+
 #include <boost/system/system_error.hpp>
 #include <GG/Button.h>
 #include <GG/dialogs/FileDlg.h>

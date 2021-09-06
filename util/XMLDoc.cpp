@@ -59,6 +59,9 @@
 
 #include "XMLDoc.h"
 
+#if defined(_MSC_VER) && _MSC_VER >= 1930
+struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax error: 'identifier' was unexpected here; expected 'type specifier'"
+#endif
 #include <boost/spirit/include/classic.hpp>
 
 #include <algorithm>

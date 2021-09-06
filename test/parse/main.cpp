@@ -2,6 +2,9 @@
 
 #include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_monitor.hpp>
+#if defined(_MSC_VER) && _MSC_VER >= 1930
+struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax error: 'identifier' was unexpected here; expected 'type specifier'"
+#endif
 #include <boost/test/output/compiler_log_formatter.hpp>
 
 #include "CommonTest.h"
