@@ -43,7 +43,10 @@ constexpr Y Y1{1};
 /** \brief A GG screen coordinate class. */
 struct GG_API Pt
 {
-    constexpr Pt() = default;
+    constexpr Pt() :
+        x(X0),
+        y(Y0)
+    {}
 
     constexpr Pt(X x_, Y y_) :
         x(x_),
@@ -77,8 +80,8 @@ struct GG_API Pt
     Pt&          operator/=(const double rhs) { x /= rhs;   y /= rhs;   return *this; } ///< Devides components of Pt by \a rhs
     Pt&          operator*=(const double rhs) { x *= rhs;   y *= rhs;   return *this; } ///< Multiplies components of Pt by \a rhs
 
-    X x = GG::X0;
-    Y y = GG::Y0;
+    X x = X0;
+    Y y = Y0;
 };
 
 GG_API std::ostream& operator<<(std::ostream& os, const Pt& pt);
