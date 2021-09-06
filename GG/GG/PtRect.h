@@ -44,8 +44,8 @@ constexpr Y Y1{1};
 struct GG_API Pt
 {
     constexpr Pt() :
-        x(X0),
-        y(Y0)
+        x{X0},
+        y{Y0}
     {}
 
     constexpr Pt(X x_, Y y_) :
@@ -102,7 +102,10 @@ GG_API           inline Pt   operator/(const Pt& lhs, double rhs)     { return P
     This is essentially just two points that bound the rectangle. */
 struct GG_API Rect
 {
-    constexpr Rect() = default;
+    constexpr Rect() :
+        ul{},
+        lr{}
+    {}
 
     constexpr Rect(const Pt& pt1, const Pt& pt2) :
         ul{std::min(pt1.x, pt2.x), std::min(pt1.y, pt2.y)},
