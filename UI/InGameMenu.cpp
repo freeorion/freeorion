@@ -18,11 +18,6 @@
 
 #include <boost/filesystem/operations.hpp>
 
-namespace {
-    constexpr GG::X IN_GAME_OPTIONS_WIDTH(150);
-    constexpr GG::Y IN_GAME_OPTIONS_HEIGHT(310);
-}
-
 InGameMenu::InGameMenu():
     CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"),
            GG::INTERACTIVE | GG::MODAL)

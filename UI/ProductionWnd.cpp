@@ -323,9 +323,8 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow
     //////////////////////////////////////////////////
-    constexpr int MARGIN = 2;
-    constexpr GG::X X_MARGIN = GG::X(MARGIN);
-    constexpr GG::Y Y_MARGIN = GG::Y(MARGIN);
+    constexpr GG::X X_MARGIN{4};
+    constexpr GG::Y Y_MARGIN{2};
 
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ProductionQueue::Element& elem_, int queue_index_) :
@@ -345,7 +344,7 @@ namespace {
                 pp_accumulated = 0.0f;
 
             panel = GG::Wnd::Create<QueueProductionItemPanel>(
-                GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
+                GG::X0, GG::Y0, ClientWidth() - X_MARGIN,
                 elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
                 pp_accumulated);
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
@@ -465,10 +464,10 @@ namespace {
 
         if (elem.item.build_type == BuildType::BT_SHIP || elem.item.build_type == BuildType::BT_STOCKPILE) {
             m_quantity_selector = GG::Wnd::Create<QuantitySelector>(
-                elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
+                elem, GG::X1, Y_MARGIN, GG::Y(FONT_PTS-2*Y_MARGIN),
                 m_in_progress, GG::X(FONT_PTS*2.5), false);
             m_block_size_selector = GG::Wnd::Create<QuantitySelector>(
-                elem, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
+                elem, GG::X1, Y_MARGIN, GG::Y(FONT_PTS-2*Y_MARGIN),
                 m_in_progress, GG::X(FONT_PTS*2.5), true);
             m_quantity_selector->SetOnlyMouseScrollWhenDropped(true);
             m_block_size_selector->SetOnlyMouseScrollWhenDropped(true);
@@ -571,52 +570,52 @@ namespace {
     void QueueProductionItemPanel::DoLayout() {
         const int FONT_PTS = ClientUI::Pts();
         const GG::Y METER_HEIGHT(FONT_PTS);
-        const GG::Y HEIGHT = GG::Y(MARGIN) + FONT_PTS + MARGIN + METER_HEIGHT + MARGIN + FONT_PTS + MARGIN + 6;
+        const GG::Y HEIGHT = Y_MARGIN + FONT_PTS + Y_MARGIN + METER_HEIGHT + Y_MARGIN + FONT_PTS + Y_MARGIN + 6;
         const int GRAPHIC_SIZE = Value(HEIGHT - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
-        const GG::X METER_WIDTH = Width() - GRAPHIC_SIZE - 3*MARGIN - 3;
+        const GG::X METER_WIDTH = Width() - GRAPHIC_SIZE - 3*X_MARGIN/2 - 3;
 
         // create and arrange widgets to display info
-        GG::Y top(MARGIN);
-        GG::X left(MARGIN);
+        GG::Y top(Y_MARGIN);
+        GG::X left(X_MARGIN);
 
         if (m_icon) {
             m_icon->MoveTo(GG::Pt(left, top));
             m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
         }
 
-        left += GRAPHIC_SIZE + MARGIN;
+        left += GRAPHIC_SIZE + X_MARGIN;
         if (m_quantity_selector) {
-            m_quantity_selector->MoveTo(GG::Pt(left, GG::Y(MARGIN)));
+            m_quantity_selector->MoveTo(GG::Pt(left, Y_MARGIN));
             left += m_quantity_selector->Width();
         }
         if (m_block_size_selector) {
-            m_block_size_selector->MoveTo(GG::Pt(left, GG::Y(MARGIN)));
+            m_block_size_selector->MoveTo(GG::Pt(left, Y_MARGIN));
             left += m_block_size_selector->Width();
         }
 
-        const GG::X NAME_WIDTH = Width() - left - MARGIN - 3;
+        const GG::X NAME_WIDTH = Width() - left - X_MARGIN - 3;
         m_name_text->MoveTo(GG::Pt(left, top));
-        m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
+        m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*Y_MARGIN)));
         m_name_text->SetChildClippingMode(ChildClippingMode::ClipToClient);
 
         m_location_text->MoveTo(GG::Pt(left, top));
-        m_location_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
+        m_location_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*Y_MARGIN)));
 
         top += m_name_text->Height();
-        left = GG::X(GRAPHIC_SIZE + MARGIN*2);
+        left = GG::X(GRAPHIC_SIZE + X_MARGIN);
         m_progress_bar->MoveTo(GG::Pt(left, top));
         m_progress_bar->Resize(GG::Pt(METER_WIDTH, METER_HEIGHT));
 
-        top += m_progress_bar->Height() + MARGIN;
+        top += m_progress_bar->Height() + Y_MARGIN;
 
         GG::X TURNS_AND_COST_WIDTH = METER_WIDTH / 2;
         m_PPs_and_turns_text->MoveTo(GG::Pt(left, top));
-        m_PPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
+        m_PPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + Y_MARGIN)));
 
         left += TURNS_AND_COST_WIDTH;
 
         m_turns_remaining_until_next_complete_text->MoveTo(GG::Pt(left, top));
-        m_turns_remaining_until_next_complete_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
+        m_turns_remaining_until_next_complete_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + Y_MARGIN)));
     }
 
     void QueueProductionItemPanel::ItemQuantityChanged(int quant, int blocksize)

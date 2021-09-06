@@ -2528,7 +2528,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         moderator = true;
 
     Universe& universe{GetUniverse()};
-    const EmpireManager& empires{Empires()};
+    EmpireManager& empires{Empires()};
 
     // Right click on an unselected row should automatically select it
     m_list_box->SelectRow(it, true);
@@ -2563,7 +2563,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     std::map<std::string, int> all_foci, avail_blds;    // counts of how many planets can use each focus or can produce each building type
     std::map<int, int> avail_designs;                   // count of how many planets can produce each ship design
     UniverseObjectType type = obj->ObjectType();
-    Empire* cur_empire = GetEmpire(app->EmpireID());
+    auto cur_empire = empires.GetEmpire(app->EmpireID());
 
     if (type == UniverseObjectType::OBJ_PLANET) {
         popup->AddMenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action);

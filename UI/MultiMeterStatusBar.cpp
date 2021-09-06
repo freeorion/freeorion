@@ -144,8 +144,6 @@ void MultiMeterStatusBar::Render() {
     // current, initial, and target/max horizontal bars for each pair of MeterType
     y = TOP;
     for (unsigned int i = 0; i < m_initial_values.size(); ++i) {
-        GG::Clr clr;
-
         const GG::Y BAR_TOP = y;
         const GG::Y BAR_BOTTOM = BAR_TOP + BAR_HEIGHT;
 

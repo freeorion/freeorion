@@ -19,7 +19,6 @@ namespace {
     // These margins determine how we avoid drawing children on top of the
     // bevel in the lower right corner.
     constexpr GG::X BEVEL_MARGIN_X(6);
-    constexpr GG::Y BEVEL_MARGIN_Y(12);
 
     // The height of the space where the display option buttons are put
     GG::Y OPTION_BAR_HEIGHT(25);
