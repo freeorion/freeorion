@@ -2921,7 +2921,12 @@ namespace {
         GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
         auto font = ClientUI::GetFont();
 
-        const std::string hair_space_str { u8"\u200A" };
+#if defined(__cpp_lib_char8_t)
+        std::u8string hair_space_chars{u8"\u200A"};
+        std::string hair_space_str{hair_space_chars.begin(), hair_space_chars.end()};
+#else
+        constexpr auto hair_space_str{ u8"\u200A"};
+#endif
         auto elems = font->ExpensiveParseFromTextToTextElements(hair_space_str, format);
         auto lines = font->DetermineLines(hair_space_str, format, GG::X(1 << 15), elems);
         retval = font->TextExtent(lines);
@@ -2952,7 +2957,12 @@ namespace {
         // align end of column with end of longest row
         auto hair_space_width = HairSpaceExtent().x;
         auto hair_space_width_str = std::to_string(Value(hair_space_width));
-        const std::string hair_space_str { u8"\u200A" };
+#if defined(__cpp_lib_char8_t)
+        std::u8string hair_space_chars{u8"\u200A"};
+        std::string hair_space_str{hair_space_chars.begin(), hair_space_chars.end()};
+#else
+        constexpr auto hair_space_str{u8"\u200A"};
+#endif
         for (auto& it : retval) {
             if (column1_species_extents.count(it.first) != 1) {
                 ErrorLogger() << "No column1 extent stored for " << it.first;
@@ -2969,15 +2979,15 @@ namespace {
                 it.second.append(hair_space_str);
 
             TraceLogger() << "Species Suitability Column 1:\n\t" << it.first << " \"" << it.second << "\"" << [&]() {
-                    std::string out("");
-                    auto col_val = Value(column1_species_extents.at(it.first).x);
-                    out.append("\n\t\t(" + std::to_string(col_val) + " + (" + std::to_string(num_spaces) + " * " + hair_space_width_str);
-                    out.append(") = " + std::to_string(col_val + (num_spaces * Value(hair_space_width))) + ")");
-                    auto text_elements = font->ExpensiveParseFromTextToTextElements(it.second, format);
-                    auto lines = font->DetermineLines(it.second, format, GG::X(1 << 15), text_elements);
-                    out.append(" = " + std::to_string(Value(font->TextExtent(lines).x)));
-                    return out;
-                }();
+                std::string out;
+                auto col_val = Value(column1_species_extents.at(it.first).x);
+                out.append("\n\t\t(" + std::to_string(col_val) + " + (" + std::to_string(num_spaces) + " * " + hair_space_width_str);
+                out.append(") = " + std::to_string(col_val + (num_spaces * Value(hair_space_width))) + ")");
+                auto text_elements = font->ExpensiveParseFromTextToTextElements(it.second, format);
+                auto lines = font->DetermineLines(it.second, format, GG::X(1 << 15), text_elements);
+                out.append(" = " + std::to_string(Value(font->TextExtent(lines).x)));
+                return out;
+            }();
         }
 
         return retval;
