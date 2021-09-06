@@ -16468,10 +16468,10 @@ GOOD_PLANETARY_DEFENSE_DESC
 +	Good planetary [[metertype METER_DEFENSE]]: +5
 
 BROAD_EP_DESC
-++	Broad Planet Tolerance: can tolerate more types.
++	Broad Planet Tolerance: can tolerate more types.
 
 NARROW_EP_DESC
-−	Narrow Planet Tolerance: flourishes on fewer types.
+−−	Narrow Planet Tolerance: flourishes on fewer types.
 
 FAST_COLONIZATION_DESC
 +	Fast Colonization: -25% time to build colonies
