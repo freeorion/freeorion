@@ -12,7 +12,7 @@
 class AccordionPanel : public GG::Control {
 public:
     AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left = false);
-    virtual ~AccordionPanel();
+    ~AccordionPanel();
 
     void CompleteConstruction() override;
     GG::Pt ClientUpperLeft() const override;
