@@ -11,92 +11,135 @@
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 
+class Fighter;
 
-#define FOR_EACH_SPECIALIZED_MAP(f, ...)  { f(m_resource_centers, ##__VA_ARGS__);   \
-                                            f(m_pop_centers, ##__VA_ARGS__);        \
-                                            f(m_ships, ##__VA_ARGS__);              \
-                                            f(m_fleets, ##__VA_ARGS__);             \
-                                            f(m_planets, ##__VA_ARGS__);            \
-                                            f(m_systems, ##__VA_ARGS__);            \
-                                            f(m_buildings, ##__VA_ARGS__);          \
-                                            f(m_fields, ##__VA_ARGS__); }
+#define FOR_EACH_SPECIALIZED_MAP(f, ...)  { f<UniverseObjectType::OBJ_PROD_CENTER>(m_resource_centers, ##__VA_ARGS__); \
+                                            f<UniverseObjectType::OBJ_POP_CENTER>(m_pop_centers, ##__VA_ARGS__);       \
+                                            f<UniverseObjectType::OBJ_SHIP>(m_ships, ##__VA_ARGS__);                   \
+                                            f<UniverseObjectType::OBJ_FLEET>(m_fleets, ##__VA_ARGS__);                 \
+                                            f<UniverseObjectType::OBJ_PLANET>(m_planets, ##__VA_ARGS__);               \
+                                            f<UniverseObjectType::OBJ_SYSTEM>(m_systems, ##__VA_ARGS__);               \
+                                            f<UniverseObjectType::OBJ_BUILDING>(m_buildings, ##__VA_ARGS__);           \
+                                            f<UniverseObjectType::OBJ_FIELD>(m_fields, ##__VA_ARGS__); }
 
-#define FOR_EACH_MAP(f, ...)              { f(m_objects, ##__VA_ARGS__);            \
+#define FOR_EACH_MAP(f, ...)              { f(m_objects, ##__VA_ARGS__);                   \
                                             FOR_EACH_SPECIALIZED_MAP(f, ##__VA_ARGS__); }
 
-#define FOR_EACH_EXISTING_MAP(f, ...)     { f(m_existing_objects, ##__VA_ARGS__);          \
-                                            f(m_existing_resource_centers, ##__VA_ARGS__); \
-                                            f(m_existing_pop_centers, ##__VA_ARGS__);      \
-                                            f(m_existing_ships, ##__VA_ARGS__);            \
-                                            f(m_existing_fleets, ##__VA_ARGS__);           \
-                                            f(m_existing_planets, ##__VA_ARGS__);          \
-                                            f(m_existing_systems, ##__VA_ARGS__);          \
-                                            f(m_existing_buildings, ##__VA_ARGS__);        \
-                                            f(m_existing_fields, ##__VA_ARGS__); }
+#define FOR_EACH_EXISTING_MAP(f, ...)     { f(m_existing_objects, ##__VA_ARGS__);                                               \
+                                            f<UniverseObjectType::OBJ_PROD_CENTER>(m_existing_resource_centers, ##__VA_ARGS__); \
+                                            f<UniverseObjectType::OBJ_POP_CENTER>(m_existing_pop_centers, ##__VA_ARGS__);       \
+                                            f<UniverseObjectType::OBJ_SHIP>(m_existing_ships, ##__VA_ARGS__);                   \
+                                            f<UniverseObjectType::OBJ_FLEET>(m_existing_fleets, ##__VA_ARGS__);                 \
+                                            f<UniverseObjectType::OBJ_PLANET>(m_existing_planets, ##__VA_ARGS__);               \
+                                            f<UniverseObjectType::OBJ_SYSTEM>(m_existing_systems, ##__VA_ARGS__);               \
+                                            f<UniverseObjectType::OBJ_BUILDING>(m_existing_buildings, ##__VA_ARGS__);           \
+                                            f<UniverseObjectType::OBJ_FIELD>(m_existing_fields, ##__VA_ARGS__); }
 
 
 namespace {
-    template <typename T>
-    static void ClearMap(ObjectMap::container_type<T>& map)
+    template <UniverseObjectType ignored = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
+              typename T>
+    void ClearMap(ObjectMap::container_type<T>& map)
     { map.clear(); }
 
+    // UniverseObject class type to enum UniverseObjectType
+    template <typename UniverseObject_t>
+    constexpr UniverseObjectType UniverseObjectClassTypeToEnum() {
+        static_assert(std::is_base_of_v<UniverseObject, UniverseObject_t> ||
+                      std::is_same_v<ResourceCenter, UniverseObject_t> ||
+                      std::is_same_v<PopCenter, UniverseObject_t>);
+
+        if constexpr (std::is_same_v<UniverseObject_t, Building>)            return UniverseObjectType::OBJ_BUILDING;
+        else if constexpr (std::is_same_v<UniverseObject_t, Ship>)           return UniverseObjectType::OBJ_SHIP;
+        else if constexpr (std::is_same_v<UniverseObject_t, Fleet>)          return UniverseObjectType::OBJ_FLEET;
+        else if constexpr (std::is_same_v<UniverseObject_t, Planet>)         return UniverseObjectType::OBJ_PLANET;
+        else if constexpr (std::is_same_v<UniverseObject_t, System>)         return UniverseObjectType::OBJ_SYSTEM;
+        else if constexpr (std::is_same_v<UniverseObject_t, Field>)          return UniverseObjectType::OBJ_FIELD;
+        else if constexpr (std::is_same_v<UniverseObject_t, Fighter>)        return UniverseObjectType::OBJ_FIGHTER;
+        else if constexpr (std::is_same_v<UniverseObject_t, ResourceCenter>) return UniverseObjectType::OBJ_PROD_CENTER;
+        else if constexpr (std::is_same_v<UniverseObject_t, PopCenter>)      return UniverseObjectType::OBJ_POP_CENTER;
+        else                                                                 return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
+    }
     template <typename T>
-    void TryInsertIntoMap(ObjectMap::container_type<T>& map,
-                          std::shared_ptr<UniverseObject> item)
+    inline constexpr auto uot_enum_v = UniverseObjectClassTypeToEnum<T>();
+
+
+    // filtering and selective inserting into maps by UniverseObject derived class type
+    template <UniverseObjectType obj_type_filter = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
+              typename MappedObjectType, typename PtrType>
+    bool TryInsertIntoMap(ObjectMap::container_type<MappedObjectType>& map, PtrType&& item)
     {
-        if (dynamic_cast<T*>(item.get()))
-            map[item->ID()] = std::dynamic_pointer_cast<T, UniverseObject>(item);
+        using PtrTypeBare = std::remove_const_t<std::remove_reference_t<PtrType>>;
+        static_assert(std::is_same_v<PtrTypeBare, std::shared_ptr<UniverseObject>>);
+        using PtrElementType = typename PtrTypeBare::element_type; // should be UniverseObject
+        static_assert(std::is_same_v<PtrElementType, UniverseObject>);
+
+        using MapTypeBare = std::remove_const_t<MappedObjectType>; // eg. Planet, ResourceCenter, UniverseObject
+        static_assert(std::is_base_of_v<UniverseObject, MapTypeBare> ||
+                      std::is_same_v<ResourceCenter, MapTypeBare> ||
+                      std::is_same_v<PopCenter, MapTypeBare>);
+
+        if (!item)
+            return false;
+
+        // check dynamic type filter on the passed in pointer
+        if constexpr (obj_type_filter == UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE) {
+            // any pointed-to object type is acceptable, as long as it is convertable into
+            // the MappedObjectType and thus insertable into the input map
+
+        } else if constexpr (obj_type_filter == UniverseObjectType::OBJ_POP_CENTER ||
+                             obj_type_filter == UniverseObjectType::OBJ_PROD_CENTER)
+        {
+            // only one of PopCenter or ResourceCenter objects are acceptable, which
+            // as of this writing can only be planets, so don't need to dynamic cast
+            // or otherwise try to convert to a specialized base class
+            if (item->ObjectType() != UniverseObjectType::OBJ_PLANET)
+                return false;
+
+        } else {
+            // only the specified object type is accetpable
+            // all pointers should be shared_ptr<UniverseObject> but the pointed-to
+            // objects should be a concrete type (Planet, System, Building, etc.)
+            if (item->ObjectType() != obj_type_filter)
+                return false;
+        }
+
+
+        // check whether the passed-in pointer can be inserted into the passed-in map
+        if constexpr (std::is_same_v<UniverseObject, MapTypeBare>) {
+            // passed a pointer and a map of of the same type: UniverseObject
+            map.insert_or_assign(item->ID(), std::forward<PtrType>(item));
+            return true;
+
+        } else if constexpr (std::is_base_of_v<UniverseObject, MapTypeBare>) {
+            // passed a UniverseObject pointer and a map of derived type. need to check the
+            // actual type of the pointer before inserting in the map
+            if (item->ObjectType() == uot_enum_v<MapTypeBare>) {
+                auto ID = item->ID();
+                map.insert_or_assign(ID, std::static_pointer_cast<MappedObjectType>(std::forward<PtrType>(item)));
+                return true;
+            }
+            return false;
+
+        } else if constexpr (std::is_same_v<ResourceCenter, MapTypeBare> || std::is_same_v<PopCenter, MapTypeBare>) {
+            // passed a map of ResourceCenter or PopCenter, which are not related classes to UniverseObject,
+            // and passed a pointer to UniverseObject. need to check its actual type...
+            if (item->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+                auto ID = item->ID();
+                map.insert_or_assign(ID, std::static_pointer_cast<MapTypeBare>(
+                    std::static_pointer_cast<Planet>(std::forward<PtrType>(item))));
+                return true;
+            }
+            return false;
+
+        } else {
+            static_assert(false, "TryInsertIntoMap couldn't handle input map and pointer types.");
+            return false;
+        }
     }
 
-    template <>
-    void TryInsertIntoMap(ObjectMap::container_type<Ship>& map,
-                          std::shared_ptr<UniverseObject> item)
-    {
-        if (item && item->ObjectType() == UniverseObjectType::OBJ_SHIP)
-            map[item->ID()] = std::static_pointer_cast<Ship>(item);
-    }
-
-    template <>
-    void TryInsertIntoMap(ObjectMap::container_type<Fleet>& map,
-                          std::shared_ptr<UniverseObject> item)
-    {
-        if (item && item->ObjectType() == UniverseObjectType::OBJ_FLEET)
-            map[item->ID()] = std::static_pointer_cast<Fleet>(item);
-    }
-
-    template <>
-    void TryInsertIntoMap(ObjectMap::container_type<Building>& map,
-                          std::shared_ptr<UniverseObject> item)
-    {
-        if (item && item->ObjectType() == UniverseObjectType::OBJ_BUILDING)
-            map[item->ID()] = std::static_pointer_cast<Building>(item);
-    }
-
-    template <>
-    void TryInsertIntoMap(ObjectMap::container_type<Planet>& map,
-                          std::shared_ptr<UniverseObject> item)
-    {
-        if (item && item->ObjectType() == UniverseObjectType::OBJ_PLANET)
-            map[item->ID()] = std::static_pointer_cast<Planet>(item);
-    }
-
-    template <>
-    void TryInsertIntoMap(ObjectMap::container_type<System>& map,
-                          std::shared_ptr<UniverseObject> item)
-    {
-        if (item && item->ObjectType() == UniverseObjectType::OBJ_SYSTEM)
-            map[item->ID()] = std::static_pointer_cast<System>(item);
-    }
-
-    template <>
-    void TryInsertIntoMap(ObjectMap::container_type<Field>& map,
-                          std::shared_ptr<UniverseObject> item)
-    {
-        if (item && item->ObjectType() == UniverseObjectType::OBJ_FIELD)
-            map[item->ID()] = std::static_pointer_cast<Field>(item);
-    }
-
-    template <typename T>
+    template <UniverseObjectType ignored = UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
+              typename T>
     void EraseFromMap(ObjectMap::container_type<T>& map, int id)
     { map.erase(id); }
 }
@@ -159,44 +202,17 @@ int ObjectMap::HighestObjectID() const {
 
 void ObjectMap::insertCore(std::shared_ptr<UniverseObject> item, int empire_id) {
     const auto ID = item ? item->ID() : INVALID_OBJECT_ID;
-    FOR_EACH_MAP(TryInsertIntoMap, item);
+    const bool known_destroyed = (ID != INVALID_OBJECT_ID) ?
+        GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).count(ID) : false;
 
-    if (ID != INVALID_OBJECT_ID &&
-        !GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).count(ID))
-    {
+    // can't use FOR_EACH_EXISTING_MAP with TryInsertIntoMap as all the existing map types store UniverseObject pointers
+    FOR_EACH_SPECIALIZED_MAP(TryInsertIntoMap, item);
+    if (!known_destroyed) {
+        FOR_EACH_EXISTING_MAP(TryInsertIntoMap, item)
+
         m_existing_objects[ID] = item;
-        switch (item->ObjectType()) {
-            case UniverseObjectType::OBJ_BUILDING:
-                m_existing_buildings[ID] = std::move(item);
-                break;
-            case UniverseObjectType::OBJ_FIELD:
-                m_existing_fields[ID] = std::move(item);
-                break;
-            case UniverseObjectType::OBJ_FLEET:
-                m_existing_fleets[ID] = std::move(item);
-                break;
-            case UniverseObjectType::OBJ_PLANET:
-                m_existing_planets[ID] = item;
-                m_existing_pop_centers[ID] = item;
-                m_existing_resource_centers[ID] = std::move(item);
-                break;
-            case UniverseObjectType::OBJ_POP_CENTER:
-                m_existing_pop_centers[ID] = std::move(item);
-                break;
-            case UniverseObjectType::OBJ_PROD_CENTER:
-                m_existing_resource_centers[ID] = std::move(item);
-                break;
-            case UniverseObjectType::OBJ_SHIP:
-                m_existing_ships[ID] = std::move(item);
-                break;
-            case UniverseObjectType::OBJ_SYSTEM:
-                m_existing_systems[ID] = std::move(item);
-                break;
-            case UniverseObjectType::OBJ_FIGHTER:
-            default:
-                break;
-        }
     }
+    m_objects[ID] = std::move(item);
 }
 
 std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
@@ -208,8 +224,7 @@ std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
     // object found, so store pointer for later...
     auto result = it->second;
     // and erase from pointer maps
-    m_objects.erase(it);
-    FOR_EACH_SPECIALIZED_MAP(EraseFromMap, id);
+    FOR_EACH_MAP(EraseFromMap, id);
     FOR_EACH_EXISTING_MAP(EraseFromMap, id);
     return result;
 }
@@ -218,7 +233,6 @@ void ObjectMap::clear() {
     FOR_EACH_MAP(ClearMap);
     FOR_EACH_EXISTING_MAP(ClearMap);
 }
-
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     std::vector<int> result;
@@ -232,42 +246,11 @@ std::vector<int> ObjectMap::FindExistingObjectIDs() const {
 
 void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_object_ids) {
     FOR_EACH_EXISTING_MAP(ClearMap);
-    for (const auto& [id, obj] : m_objects) {
-        if (!obj || destroyed_object_ids.count(id))
+    for (const auto& [ID, obj] : m_objects) {
+        if (!obj || destroyed_object_ids.count(ID))
             continue;
-        auto this_item = this->get(id);
-        m_existing_objects[id] = this_item;
-        switch (obj->ObjectType()) {
-            case UniverseObjectType::OBJ_BUILDING:
-                m_existing_buildings[id] = std::move(this_item);
-                break;
-            case UniverseObjectType::OBJ_FIELD:
-                m_existing_fields[id] = std::move(this_item);
-                break;
-            case UniverseObjectType::OBJ_FLEET:
-                m_existing_fleets[id] = std::move(this_item);
-                break;
-            case UniverseObjectType::OBJ_PLANET:
-                m_existing_planets[id] = this_item;
-                m_existing_pop_centers[id] = this_item;
-                m_existing_resource_centers[id] = std::move(this_item);
-                break;
-            case UniverseObjectType::OBJ_POP_CENTER:
-                m_existing_pop_centers[id] = std::move(this_item);
-                break;
-            case UniverseObjectType::OBJ_PROD_CENTER:
-                m_existing_resource_centers[id] = std::move(this_item);
-                break;
-            case UniverseObjectType::OBJ_SHIP:
-                m_existing_ships[id] = std::move(this_item);
-                break;
-            case UniverseObjectType::OBJ_SYSTEM:
-                m_existing_systems[id] = std::move(this_item);
-                break;
-            case UniverseObjectType::OBJ_FIGHTER:
-            default:
-                break;
-        }
+        FOR_EACH_EXISTING_MAP(TryInsertIntoMap, obj);
+
     }
 }
 
