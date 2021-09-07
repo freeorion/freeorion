@@ -260,9 +260,9 @@ private:
     MessageQueue                    m_incoming_messages;    // accessed from multiple threads, but its interface is threadsafe
     std::list<Message>              m_outgoing_messages;
 
-    Message::HeaderBuffer           m_incoming_header= {};
+    Message::HeaderBuffer           m_incoming_header = {};
     Message                         m_incoming_message;
-    Message::HeaderBuffer           m_outgoing_header= {};
+    Message::HeaderBuffer           m_outgoing_header = {};
 
     std::string                     m_destination;
 };

@@ -28,8 +28,8 @@ public:
     GGHumanClientApp() = delete;
 
     GGHumanClientApp(int width, int height, bool calculate_FPS,
-                   std::string name, int x, int y,
-                   bool fullscreen, bool fake_mode_change);
+                     std::string name, int x, int y,
+                     bool fullscreen, bool fake_mode_change);
 
     GGHumanClientApp(const GGHumanClientApp&) = delete;
     GGHumanClientApp(GGHumanClientApp&&) = delete;
