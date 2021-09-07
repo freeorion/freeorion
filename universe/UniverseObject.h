@@ -87,8 +87,8 @@ public:
 
     [[nodiscard]] int                           ID() const;                         ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
     [[nodiscard]] const std::string&            Name() const;                       ///< returns the name of this object; some valid objects will have no name
-    [[nodiscard]] virtual double                X() const;                          ///< the X-coordinate of this object
-    [[nodiscard]] virtual double                Y() const;                          ///< the Y-coordinate of this object
+    [[nodiscard]] double                        X() const;                          ///< the X-coordinate of this object
+    [[nodiscard]] double                        Y() const;                          ///< the Y-coordinate of this object
 
     [[nodiscard]] virtual int                   Owner() const;                      ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
     [[nodiscard]] bool                          Unowned() const;                    ///< returns true iff there are no owners of this object
@@ -203,9 +203,9 @@ public:
         actions during the pop growth/production/research phase of a turn. */
     virtual void    PopGrowthProductionResearchPhase(ScriptingContext&) {}
 
-    static constexpr double INVALID_POSITION = -100000.0;           ///< the position in x and y at which default-constructed objects are placed
-    static constexpr int    INVALID_OBJECT_AGE = -(1 << 30) - 1;;   ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN
-    static constexpr int    SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
+    static constexpr double INVALID_POSITION = -100000.0;        ///< the position in x and y at which default-constructed objects are placed
+    static constexpr int INVALID_OBJECT_AGE = -(1 << 30) - 1;;   ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN
+    static constexpr int SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
     virtual ~UniverseObject() = default;
 
@@ -237,9 +237,11 @@ protected:
 private:
     [[nodiscard]] MeterMap CensoredMeters(Visibility vis) const; ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
 
+    [[nodiscard]] static int ConvertPositionToInt(double pos);
+
     int                                          m_id = INVALID_OBJECT_ID;
-    double                                       m_x = INVALID_POSITION;
-    double                                       m_y = INVALID_POSITION;
+    int                                          m_x = 0.0;
+    int                                          m_y = 0.0;
     int                                          m_owner_empire_id = ALL_EMPIRES;
     int                                          m_system_id = INVALID_OBJECT_ID;
     std::map<std::string, std::pair<int, float>> m_specials; // map from special name to pair of (turn added, capacity)

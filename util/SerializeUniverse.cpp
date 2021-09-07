@@ -211,7 +211,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 }
 
 BOOST_CLASS_EXPORT(UniverseObject)
-BOOST_CLASS_VERSION(UniverseObject, 2)
+BOOST_CLASS_VERSION(UniverseObject, 3)
 
 template <typename Archive>
 void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
@@ -219,10 +219,18 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
     using namespace boost::serialization;
 
     ar  & make_nvp("m_id", o.m_id)
-        & make_nvp("m_name", o.m_name)
-        & make_nvp("m_x", o.m_x)
-        & make_nvp("m_y", o.m_y)
-        & make_nvp("m_owner_empire_id", o.m_owner_empire_id)
+        & make_nvp("m_name", o.m_name);
+    if (version < 3) {
+        double x, y;
+        ar  & make_nvp("m_x", x)
+            & make_nvp("m_y", y);
+        o.m_x = UniverseObject::ConvertPositionToInt(x);
+        o.m_y = UniverseObject::ConvertPositionToInt(y);
+    } else {
+        ar  & make_nvp("x", o.m_x)
+            & make_nvp("y", o.m_y);
+    }
+    ar  & make_nvp("m_owner_empire_id", o.m_owner_empire_id)
         & make_nvp("m_system_id", o.m_system_id)
         & make_nvp("m_specials", o.m_specials);
     if (version < 2) {

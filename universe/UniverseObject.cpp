@@ -14,19 +14,37 @@
 #include "../util/Logger.h"
 #include "../util/i18n.h"
 
+namespace {
+    constexpr double POSITION_SCALE_FACTOR_INT_TO_DOUBLE = 0.001; // multiplying converts int-valued position to double-valued
+    constexpr double MAX_POSITION = 999999.99999;
+    constexpr int MAX_INT_POSITION = static_cast<int>(MAX_POSITION / POSITION_SCALE_FACTOR_INT_TO_DOUBLE);
+    constexpr double POSITION_MAX_BIT_USE_RATIO = static_cast<double>(MAX_INT_POSITION) / std::numeric_limits<int>::max();
+    static_assert(POSITION_MAX_BIT_USE_RATIO < 0.5);
+    static_assert(UniverseObject::INVALID_POSITION < 0);
+    constexpr int INVALID_POSITION_AS_INT{static_cast<int>(UniverseObject::INVALID_POSITION / POSITION_SCALE_FACTOR_INT_TO_DOUBLE)};
+    static_assert(INVALID_POSITION_AS_INT > -MAX_INT_POSITION);
+
+    constexpr double CXAbs(double d)
+    { return d >= 0 ? d : -d; }
+
+    constexpr int ConvertPositionToInt(double pos) {
+        if (CXAbs(pos) > MAX_POSITION)
+            pos = pos > 0 ? MAX_POSITION : -MAX_POSITION;
+        return static_cast<int>(pos / POSITION_SCALE_FACTOR_INT_TO_DOUBLE);
+    }
+}
+
 UniverseObject::UniverseObject() :
-    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(
-        GetUniverse().UniverseObjectSignalsInhibited())),
-    m_created_on_turn(CurrentTurn())
+    UniverseObject({}, INVALID_POSITION, INVALID_POSITION)
 {}
 
 UniverseObject::UniverseObject(std::string name, double x, double y) :
     StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(
         GetUniverse().UniverseObjectSignalsInhibited())),
     m_name(std::move(name)),
-    m_x(x),
-    m_y(y),
-    m_created_on_turn(CurrentTurn())
+    m_x{ConvertPositionToInt(x)},
+    m_y{ConvertPositionToInt(y)},
+    m_created_on_turn{CurrentTurn()}
 {}
 
 void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
@@ -104,10 +122,10 @@ const std::string& UniverseObject::Name() const
 { return m_name; }
 
 double UniverseObject::X() const
-{ return m_x; }
+{ return m_x * POSITION_SCALE_FACTOR_INT_TO_DOUBLE; }
 
 double UniverseObject::Y() const
-{ return m_y; }
+{ return m_y * POSITION_SCALE_FACTOR_INT_TO_DOUBLE; }
 
 int UniverseObject::CreationTurn() const
 { return m_created_on_turn; }
@@ -280,7 +298,7 @@ void UniverseObject::Rename(std::string name) {
 }
 
 void UniverseObject::Move(double x, double y)
-{ MoveTo(m_x + x, m_y + y); }
+{ MoveTo(X() + x, Y() + y); }
 
 void UniverseObject::MoveTo(const std::shared_ptr<const UniverseObject>& object) {
     if (!object) {
@@ -299,11 +317,14 @@ void UniverseObject::MoveTo(const std::shared_ptr<UniverseObject>& object) {
 }
 
 void UniverseObject::MoveTo(double x, double y) {
-    if (m_x == x && m_y == y)
+    int new_x = ConvertPositionToInt(x);
+    int new_y = ConvertPositionToInt(y);
+
+    if (m_x == new_x && m_y == new_y)
         return;
 
-    m_x = x;
-    m_y = y;
+    m_x = new_x;
+    m_y = new_y;
 
     StateChangedSignal();
 }
@@ -383,3 +404,6 @@ void UniverseObject::ClampMeters() {
     if (it != m_meters.end())
         it->second.ClampCurrentToRange();
 }
+
+int UniverseObject::ConvertPositionToInt(double pos)
+{ return ::ConvertPositionToInt(pos); }
