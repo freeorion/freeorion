@@ -133,7 +133,10 @@ namespace {
             return false;
 
         } else {
-            static_assert(false, "TryInsertIntoMap couldn't handle input map and pointer types.");
+            // shouldn't be possible to instantiate with this block enabled, but if so,
+            // try to generate some useful compiler error messages to indicate what
+            // type MappedObjectType is
+            using GenerateCompileError = typename MappedObjectType::not_a_member_zi23tg;
             return false;
         }
     }
@@ -151,6 +154,8 @@ namespace {
 void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id) {
     if (&copied_map == this)
         return;
+
+
 
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
