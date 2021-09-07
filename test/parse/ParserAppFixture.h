@@ -25,7 +25,7 @@ public:
 
     int CurrentTurn() const override;
 
-    Universe& GetUniverse() override;
+    Universe& GetUniverse() noexcept override;
 
     const GalaxySetupData& GetGalaxySetupData() const override;
 

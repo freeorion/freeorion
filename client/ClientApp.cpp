@@ -27,10 +27,10 @@ int ClientApp::EmpireID() const
 int ClientApp::CurrentTurn() const
 { return m_current_turn; }
 
-Universe& ClientApp::GetUniverse()
+Universe& ClientApp::GetUniverse() noexcept
 { return m_universe; }
 
-const Universe& ClientApp::GetUniverse() const
+const Universe& ClientApp::GetUniverse() const noexcept
 { return m_universe; }
 
 GalaxySetupData& ClientApp::GetGalaxySetupData()

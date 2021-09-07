@@ -37,7 +37,7 @@ public:
 
     /** Returns a ClientApp pointer to the singleton instance of the app. */
     [[nodiscard]] static ServerApp* GetApp();
-    [[nodiscard]] Universe& GetUniverse() override;
+    [[nodiscard]] Universe& GetUniverse() noexcept override;
     [[nodiscard]] EmpireManager& Empires() override;
     [[nodiscard]] Empire* GetEmpire(int id) override;
     [[nodiscard]] SupplyManager& GetSupplyManager() override;

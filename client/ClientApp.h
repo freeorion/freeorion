@@ -75,8 +75,8 @@ public:
      *      the known universe of this client.
      *
      * @{ */
-    [[nodiscard]] Universe& GetUniverse() override;
-    [[nodiscard]] const Universe& GetUniverse() const;
+    [[nodiscard]] Universe& GetUniverse() noexcept override;
+    [[nodiscard]] const Universe& GetUniverse() const noexcept;
     /** @} */
 
     /** @brief Return the ::GalaxySetupData of this game

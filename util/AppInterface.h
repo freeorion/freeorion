@@ -47,7 +47,7 @@ public:
     //! @return
     //! A constant reference to the single ::Universe instance representing the
     //! known universe of this application.
-    virtual Universe& GetUniverse() = 0;
+    virtual Universe& GetUniverse() noexcept = 0;
 
     /** Launches asynchronous parsing of game content, then starts
       * additional content parsing in the calling thread. \a barrier is
@@ -121,7 +121,7 @@ protected:
 { return IApp::GetApp()->GetSupplyManager(); }
 
 /** Accessor for the App's universe object */
-[[nodiscard]] inline Universe& GetUniverse()
+[[nodiscard]] inline Universe& GetUniverse() noexcept
 { return IApp::GetApp()->GetUniverse(); }
 
 /** Accessor for the App's universe object */

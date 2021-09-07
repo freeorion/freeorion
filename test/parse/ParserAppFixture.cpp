@@ -22,7 +22,7 @@ ParserAppFixture::ParserAppFixture() {
 int ParserAppFixture::CurrentTurn() const
 { return INVALID_GAME_TURN; }
 
-Universe& ParserAppFixture::GetUniverse()
+Universe& ParserAppFixture::GetUniverse() noexcept
 { return m_universe; }
 
 const GalaxySetupData& ParserAppFixture::GetGalaxySetupData() const

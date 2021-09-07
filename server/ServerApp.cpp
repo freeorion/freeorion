@@ -300,7 +300,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 ServerApp* ServerApp::GetApp()
 { return static_cast<ServerApp*>(s_app); }
 
-Universe& ServerApp::GetUniverse()
+Universe& ServerApp::GetUniverse() noexcept
 { return m_universe; }
 
 EmpireManager& ServerApp::Empires()
