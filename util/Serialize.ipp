@@ -27,7 +27,7 @@ struct CompatColor {
     unsigned char a;   ///< the alpha channel
 };
 
-namespace boost { namespace serialization {
+namespace boost::serialization {
 
     template <typename Archive>
     void serialize(Archive& ar, CompatColor& clr, const unsigned int version)
@@ -38,5 +38,5 @@ namespace boost { namespace serialization {
             & BOOST_SERIALIZATION_NVP(clr.a);
     }
 
-} }
+}
 
