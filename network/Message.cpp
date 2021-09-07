@@ -59,15 +59,15 @@ Message::Message(MessageType type, const std::string& text) :
     m_type(type),
     m_message_size(text.size()),
     m_message_text(new char[text.size()])
-{ std::copy(text.begin(), text.end(), m_message_text.get()); }
+{ std::copy(text.begin(), text.end(), m_message_text.get()); } // TODO: can text be moved into this Message's storage?
 
-Message::MessageType Message::Type() const
+Message::MessageType Message::Type() const noexcept
 { return m_type; }
 
-std::size_t Message::Size() const
+std::size_t Message::Size() const noexcept
 { return m_message_size; }
 
-const char* Message::Data() const
+const char* Message::Data() const noexcept
 { return m_message_text.get(); }
 
 std::string Message::Text() const
@@ -78,16 +78,16 @@ void Message::Resize(std::size_t size) {
     m_message_text.reset(new char[m_message_size]);
 }
 
-char* Message::Data()
+char* Message::Data() noexcept
 { return m_message_text.get(); }
 
-void Message::Swap(Message& rhs) {
+void Message::Swap(Message& rhs) noexcept {
     std::swap(m_type, rhs.m_type);
     std::swap(m_message_size, rhs.m_message_size);
     std::swap(m_message_text, rhs.m_message_text);
 }
 
-void Message::Reset() {
+void Message::Reset() noexcept {
     m_type = MessageType::UNDEFINED;
     m_message_size = 0;
     m_message_text.reset();
