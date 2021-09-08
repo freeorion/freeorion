@@ -10,11 +10,6 @@ namespace {
     static const std::string EMPTY_STRING;
 }
 
-Fighter::Fighter() :
-    UniverseObject(),
-    m_species_name{EMPTY_STRING}
-{}
-
 Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name,
                  float damage, const ::Condition::Condition* combat_targets) :
     UniverseObject(),
