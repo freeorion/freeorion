@@ -40,8 +40,8 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
     }
 
     auto censored_meters = copied_object->CensoredMeters(vis);
-    for (const auto& entry : copied_object->m_meters) {
-        MeterType type = entry.first;
+    for (auto& [type, copied_meter] : copied_object->m_meters) {
+        (void)copied_meter;
 
         // get existing meter in this object, or create a default one
         auto m_meter_it = m_meters.find(type);
