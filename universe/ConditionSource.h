@@ -17,16 +17,15 @@ struct FO_COMMON_API Source final : public Condition {
     bool operator==(const Condition& rhs) const override;
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
-    std::string Description(bool negated = false) const override;
-    std::string Dump(unsigned short ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override
-    {}
-    unsigned int GetCheckSum() const override;
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    void SetTopLevelContent(const std::string& content_name) override {}
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<Condition> Clone() const override;
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 };
 
 }

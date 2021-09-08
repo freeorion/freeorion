@@ -147,7 +147,7 @@ private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
     /** Returns new copy of this System. */
-    System* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] System* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
     StarType            m_star;
     std::vector<int>    m_orbits = std::vector<int>(SYSTEM_ORBITS, INVALID_OBJECT_ID);  ///< indexed by orbit number, indicates the id of the planet in that orbit

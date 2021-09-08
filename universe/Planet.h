@@ -52,75 +52,75 @@ class FO_COMMON_API Planet :
     public ResourceCenter
 {
 public:
-    std::set<std::string>   Tags() const override;
-    bool                    HasTag(const std::string& name) const override;
-    UniverseObjectType      ObjectType() const override;
+    [[nodiscard]] std::set<std::string>   Tags() const override;
+    [[nodiscard]] bool                    HasTag(const std::string& name) const override;
+    [[nodiscard]] UniverseObjectType      ObjectType() const override;
 
-    std::string             Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string             Dump(unsigned short ntabs = 0) const override;
 
-    int                     ContainerObjectID() const override;
-    const std::set<int>&    ContainedObjectIDs() const override;
-    bool                    Contains(int object_id) const override;
-    bool                    ContainedBy(int object_id) const override;
+    [[nodiscard]] int                     ContainerObjectID() const override;
+    [[nodiscard]] const std::set<int>&    ContainedObjectIDs() const override;
+    [[nodiscard]] bool                    Contains(int object_id) const override;
+    [[nodiscard]] bool                    ContainedBy(int object_id) const override;
 
-    const Meter*            GetMeter(MeterType type) const override;
+    [[nodiscard]] const Meter*            GetMeter(MeterType type) const override;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
-    std::vector<std::string>AvailableFoci() const override;
-    const std::string&      FocusIcon(const std::string& focus_name) const override;
+    [[nodiscard]] std::vector<std::string>AvailableFoci() const override;
+    [[nodiscard]] const std::string&      FocusIcon(const std::string& focus_name) const override;
 
-    PlanetType          Type() const                        { return m_type; }
-    PlanetType          OriginalType() const                { return m_original_type; }
-    int                 DistanceFromOriginalType() const    { return TypeDifference(m_type, m_original_type); }
-    PlanetSize          Size() const                        { return m_size; }
-    int                 HabitableSize() const;
+    [[nodiscard]] PlanetType          Type() const                        { return m_type; }
+    [[nodiscard]] PlanetType          OriginalType() const                { return m_original_type; }
+    [[nodiscard]] int                 DistanceFromOriginalType() const    { return TypeDifference(m_type, m_original_type); }
+    [[nodiscard]] PlanetSize          Size() const                        { return m_size; }
+    [[nodiscard]] int                 HabitableSize() const;
 
-    bool                HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
+    [[nodiscard]] bool                HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
 
-    PlanetEnvironment   EnvironmentForSpecies(const std::string& species_name = "") const;
-    PlanetType          NextBetterPlanetTypeForSpecies(const std::string& species_name = "") const;
-    PlanetType          NextCloserToOriginalPlanetType() const;
-    PlanetType          ClockwiseNextPlanetType() const;
-    PlanetType          CounterClockwiseNextPlanetType() const;
-    PlanetSize          NextLargerPlanetSize() const;
-    PlanetSize          NextSmallerPlanetSize() const;
+    [[nodiscard]] PlanetEnvironment   EnvironmentForSpecies(const std::string& species_name = "") const;
+    [[nodiscard]] PlanetType          NextBetterPlanetTypeForSpecies(const std::string& species_name = "") const;
+    [[nodiscard]] PlanetType          NextCloserToOriginalPlanetType() const;
+    [[nodiscard]] PlanetType          ClockwiseNextPlanetType() const;
+    [[nodiscard]] PlanetType          CounterClockwiseNextPlanetType() const;
+    [[nodiscard]] PlanetSize          NextLargerPlanetSize() const;
+    [[nodiscard]] PlanetSize          NextSmallerPlanetSize() const;
 
     /** An orbital period is equal to a planets "year". A "year" is arbitrarily
       * defined to be 4 turns. */
-    float OrbitalPeriod() const;
+    [[nodiscard]] float OrbitalPeriod() const;
     /** @returns an angle in radians. */
-    float InitialOrbitalPosition() const;
+    [[nodiscard]] float InitialOrbitalPosition() const;
     /** @returns an angle in radians. */
-    float OrbitalPositionOnTurn(int turn) const;
+    [[nodiscard]] float OrbitalPositionOnTurn(int turn) const;
     /** The rotational period represents a planets "day".  A "day" is
       * arbitrarily defined to be 1/360 of a "year", and 1/90 of a turn. */
-    float RotationalPeriod() const;
+    [[nodiscard]] float RotationalPeriod() const;
     /** @returns an angle in degree. */
-    float AxialTilt() const;
+    [[nodiscard]] float AxialTilt() const;
 
-    const std::set<int>& BuildingIDs() const    { return m_buildings; }
+    [[nodiscard]] const std::set<int>& BuildingIDs() const    { return m_buildings; }
 
-    bool IsAboutToBeColonized() const           { return m_is_about_to_be_colonized; }
-    bool IsAboutToBeInvaded() const             { return m_is_about_to_be_invaded; }
-    bool IsAboutToBeBombarded() const           { return m_is_about_to_be_bombarded; }
-    int OrderedGivenToEmpire() const            { return m_ordered_given_to_empire_id; }
-    int LastTurnAttackedByShip() const          { return m_last_turn_attacked_by_ship; }
-    int LastTurnColonized() const               { return m_turn_last_colonized; }
-    int TurnsSinceColonization() const;
-    int LastTurnConquered() const               { return m_turn_last_conquered; }
-    int TurnsSinceLastConquered() const;
+    [[nodiscard]] bool IsAboutToBeColonized() const           { return m_is_about_to_be_colonized; }
+    [[nodiscard]] bool IsAboutToBeInvaded() const             { return m_is_about_to_be_invaded; }
+    [[nodiscard]] bool IsAboutToBeBombarded() const           { return m_is_about_to_be_bombarded; }
+    [[nodiscard]] int OrderedGivenToEmpire() const            { return m_ordered_given_to_empire_id; }
+    [[nodiscard]] int LastTurnAttackedByShip() const          { return m_last_turn_attacked_by_ship; }
+    [[nodiscard]] int LastTurnColonized() const               { return m_turn_last_colonized; }
+    [[nodiscard]] int TurnsSinceColonization() const;
+    [[nodiscard]] int LastTurnConquered() const               { return m_turn_last_conquered; }
+    [[nodiscard]] int TurnsSinceLastConquered() const;
 
-    const std::string&  SurfaceTexture() const  { return m_surface_texture; }
-    std::string         CardinalSuffix() const; ///< returns a roman number representing this planets orbit in relation to other planets
+    [[nodiscard]] const std::string&  SurfaceTexture() const  { return m_surface_texture; }
+    [[nodiscard]] std::string         CardinalSuffix() const; ///< returns a roman number representing this planets orbit in relation to other planets
 
-    std::map<int, double> EmpireGroundCombatForces() const;
+    [[nodiscard]] std::map<int, double> EmpireGroundCombatForces() const;
 
 
     void Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe,
               int empire_id = ALL_EMPIRES) override;
 
-    Meter* GetMeter(MeterType type) override;
+    [[nodiscard]] Meter* GetMeter(MeterType type) override;
 
     void Reset() override;
     void Depopulate() override;
@@ -151,7 +151,7 @@ public:
     void SetSurfaceTexture(const std::string& texture);
     void ResetTargetMaxUnpairedMeters() override;
 
-    static int TypeDifference(PlanetType type1, PlanetType type2);
+    [[nodiscard]] static int TypeDifference(PlanetType type1, PlanetType type2);
 
     /** Given initial set of ground forces on planet, determine ground forces on
       * planet after a turn of ground combat. */
@@ -166,11 +166,11 @@ private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
     /** returns new copy of this Planet. */
-    Planet* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] Planet* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
     void Init();
 
-    Visibility GetVisibility(int empire_id) const override
+    [[nodiscard]] Visibility GetVisibility(int empire_id) const override
     { return UniverseObject::GetVisibility(empire_id); }
 
     void AddMeter(MeterType meter_type) override

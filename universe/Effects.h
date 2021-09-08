@@ -23,12 +23,12 @@ class FO_COMMON_API NoOp final : public Effect {
 public:
     NoOp() = default;
 
-    void            Execute(ScriptingContext& context) const override;
-    std::string     Dump(unsigned short ntabs = 0) const override;
-    void            SetTopLevelContent(const std::string& content_name) override {}
-    unsigned int    GetCheckSum() const override;
+    void                       Execute(ScriptingContext& context) const override;
+    [[nodiscard]] std::string  Dump(unsigned short ntabs = 0) const override;
+    void                       SetTopLevelContent(const std::string& content_name) override {}
+    [[nodiscard]] unsigned int GetCheckSum() const override;
 
-    std::unique_ptr<Effect> Clone() const override;
+    [[nodiscard]] std::unique_ptr<Effect> Clone() const override;
 };
 
 /** Sets the meter of the given kind to \a value.  The max value of the meter

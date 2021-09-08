@@ -14,24 +14,24 @@ namespace Effect {
 /** a class representing a region of space */
 class FO_COMMON_API Field : public UniverseObject {
 public:
-    std::set<std::string>   Tags() const override;
-    bool                    HasTag(const std::string& name) const override;
+    [[nodiscard]] std::set<std::string> Tags() const override;
+    [[nodiscard]] bool                  HasTag(const std::string& name) const override;
 
-    UniverseObjectType  ObjectType() const override;
+    [[nodiscard]] UniverseObjectType    ObjectType() const override;
 
-    std::string         Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string           Dump(unsigned short ntabs = 0) const override;
 
-    int                 ContainerObjectID() const override;
-    bool                ContainedBy(int object_id) const override;
+    [[nodiscard]] int                   ContainerObjectID() const override;
+    [[nodiscard]] bool                  ContainedBy(int object_id) const override;
 
-    const std::string&  PublicName(int empire_id, const ObjectMap&) const override;
-    const std::string&  FieldTypeName() const { return m_type_name; }
+    [[nodiscard]] const std::string&    PublicName(int empire_id, const ObjectMap&) const override;
+    [[nodiscard]] const std::string&    FieldTypeName() const { return m_type_name; }
 
     /* Field is (presently) the only distributed UniverseObject that isn't just
      * location at a single point in space. These functions check if locations
      * or objecs are within this field's area. */
-    bool                InField(std::shared_ptr<const UniverseObject> obj) const;
-    bool                InField(double x, double y) const;
+    [[nodiscard]] bool                  InField(std::shared_ptr<const UniverseObject> obj) const;
+    [[nodiscard]] bool                  InField(double x, double y) const;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
@@ -48,7 +48,7 @@ private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
     /** Returns new copy of this Field. */
-    Field* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] Field* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
     std::string m_type_name;
 
