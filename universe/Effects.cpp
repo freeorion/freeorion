@@ -1576,7 +1576,7 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
         return;
     }
 
-    auto planet = GetUniverse().InsertNew<Planet>(type, size);
+    auto planet = context.ContextUniverse().InsertNew<Planet>(type, size);
     if (!planet) {
         ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
         return;
@@ -1684,7 +1684,7 @@ void CreateBuilding::Execute(ScriptingContext& context) const {
         return;
     }
 
-    auto building = GetUniverse().InsertNew<Building>(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
+    auto building = context.ContextUniverse().InsertNew<Building>(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
     if (!building) {
         ErrorLogger() << "CreateBuilding::Execute couldn't create building!";
         return;
@@ -2007,7 +2007,7 @@ void CreateField::Execute(ScriptingContext& context) const {
     else
         y = target->Y();
 
-    auto field = GetUniverse().InsertNew<Field>(field_type->Name(), x, y, size);
+    auto field = context.ContextUniverse().InsertNew<Field>(field_type->Name(), x, y, size);
     if (!field) {
         ErrorLogger() << "CreateField::Execute couldn't create field!";
         return;
@@ -2152,7 +2152,7 @@ void CreateSystem::Execute(ScriptingContext& context) const {
         name_str = GenerateSystemName(context.ContextObjects());
     }
 
-    auto system = GetUniverse().InsertNew<System>(star_type, name_str, x, y);
+    auto system = context.ContextUniverse().InsertNew<System>(star_type, name_str, x, y);
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
