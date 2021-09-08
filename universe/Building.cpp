@@ -29,9 +29,9 @@ Building* Building::Clone(Universe& universe, int empire_id) const {
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    Building* retval = new Building(Owner(), m_building_type, m_produced_by_empire_id);
+    auto retval = std::make_unique<Building>();
     retval->Copy(shared_from_this(), universe, empire_id);
-    return retval;
+    return retval.release();
 }
 
 void Building::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {

@@ -92,9 +92,9 @@ Ship* Ship::Clone(Universe& universe, int empire_id) const {
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    Ship* retval = new Ship();
+    auto retval = std::make_unique<Ship>();
     retval->Copy(shared_from_this(), universe, empire_id);
-    return retval;
+    return retval.release();
 }
 
 void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {

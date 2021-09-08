@@ -88,9 +88,9 @@ Fleet* Fleet::Clone(Universe& universe, int empire_id) const {
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    Fleet* retval = new Fleet(m_name, X(), Y(), Owner());
+    auto retval = std::make_unique<Fleet>();
     retval->Copy(shared_from_this(), universe, empire_id);
-    return retval;
+    return retval.release();
 }
 
 void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {
@@ -103,8 +103,8 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& 
     }
 
     int copied_object_id = copied_object->ID();
-    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
-    auto visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+    Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
     UniverseObject::Copy(std::move(copied_object), vis, visible_specials, universe);
 

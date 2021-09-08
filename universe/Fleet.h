@@ -174,10 +174,12 @@ public:
     static constexpr int ETA_OUT_OF_RANGE = (1 << 30) - 2;  ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
     Fleet(std::string name, double x, double y, int owner);
+    Fleet() = default;
 
 private:
     friend class ObjectMap;
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+
 
     /** Returns new copy of this Fleet. */
     Fleet* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;

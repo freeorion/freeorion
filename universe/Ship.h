@@ -96,11 +96,8 @@ public:
 
     void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
     void            SetArrivedOnTurn(int turn);
-
     void            Resupply();
-
     void            SetSpecies(std::string species_name);
-
     void            SetOrderedScrapped(bool b = true);                          ///< flags ship for scrapping
     void            SetColonizePlanet(int planet_id);                           ///< marks ship to colonize the indicated planet
     void            ClearColonizePlanet();                                      ///< marks ship to colonize no planets
@@ -108,29 +105,22 @@ public:
     void            ClearInvadePlanet();                                        ///< marks ship to invade no planets
     void            SetBombardPlanet(int planet_id);                            ///< marks ship to bombard the indicated planet
     void            ClearBombardPlanet();                                       ///< marks ship to bombard no planets
-
     void            SetLastTurnActiveInCombat(int turn) { m_last_turn_active_in_combat = turn; } ///< sets the last turn this ship was actively involved in combat
 
     [[nodiscard]] Meter* GetPartMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     virtual void    SetShipMetersToMax();
 
-    friend class Universe;
-
-    Ship() = default;
-
     /** Create a ship from an @p empire_id, @p design_id, @p species_name and
         @p production_by_empire_id. */
     Ship(int empire_id, int design_id, std::string species_name,
          int produced_by_empire_id = ALL_EMPIRES);
-
-protected:
-    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-
-public:
-    ~Ship() = default;
+    Ship() = default;
 
 private:
+    friend class Universe;
+    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+
     int             m_design_id = INVALID_DESIGN_ID;
     int             m_fleet_id = INVALID_OBJECT_ID;
     bool            m_ordered_scrapped = false;

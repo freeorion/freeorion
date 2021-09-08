@@ -120,8 +120,7 @@ public:
               int empire_id = ALL_EMPIRES) override;
 
     /** Adding owner to system objects is a no-op. */
-    void SetOwner(int id) override
-    {}
+    void SetOwner(int id) override {}
 
     void ResetTargetMaxUnpairedMeters() override;
 
@@ -141,23 +140,15 @@ public:
 
     void SetOverlayTexture(const std::string& texture, double size);
 
-public:
     System(StarType star, const std::string& name, double x, double y);
+    System() = default;
 
-protected:
-    System(StarType star, const std::map<int, bool>& lanes_and_holes,
-           const std::string& name, double x, double y);
-
+private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
-public:
-    ~System() = default;
-
-protected:
     /** Returns new copy of this System. */
     System* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
-private:
     StarType            m_star;
     std::vector<int>    m_orbits = std::vector<int>(SYSTEM_ORBITS, INVALID_OBJECT_ID);  ///< indexed by orbit number, indicates the id of the planet in that orbit
     std::set<int>       m_objects;

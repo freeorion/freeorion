@@ -159,6 +159,7 @@ public:
 
     /** Create planet from @p type and @p size. */
     Planet(PlanetType type, PlanetSize size);
+    Planet() = default;
 
 private:
     friend class ObjectMap;
@@ -179,9 +180,9 @@ private:
 
     void ClampMeters() override;
 
-    PlanetType      m_type;
-    PlanetType      m_original_type;
-    PlanetSize      m_size;
+    PlanetType      m_type = PlanetType::PT_SWAMP;
+    PlanetType      m_original_type = PlanetType::PT_SWAMP;
+    PlanetSize      m_size = PlanetSize::SZ_TINY;
     float           m_orbital_period = 1.0f;
     float           m_initial_orbital_position = 0.0f;
     float           m_rotational_period = 1.0f;

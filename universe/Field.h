@@ -42,15 +42,14 @@ public:
     void ClampMeters() override;
 
     Field(const std::string& field_type, double x, double y, double radius);
-    ~Field() = default;
+    Field() = default;
 
-protected:
+private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
     /** Returns new copy of this Field. */
     Field* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
-private:
     std::string m_type_name;
 
     template <typename Archive>

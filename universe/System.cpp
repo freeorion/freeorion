@@ -38,31 +38,15 @@ System::System(StarType star, const std::string& name, double x, double y) :
     UniverseObject::Init();
 }
 
-System::System(StarType star, const std::map<int, bool>& lanes_and_holes,
-               const std::string& name, double x, double y) :
-    UniverseObject(name, x, y),
-    m_star(star),
-    m_starlanes_wormholes(lanes_and_holes)
-{
-    if (m_star < StarType::INVALID_STAR_TYPE || StarType::NUM_STAR_TYPES < m_star)
-        m_star = StarType::INVALID_STAR_TYPE;
-
-    m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
-
-    SetSystem(ID());
-
-    UniverseObject::Init();
-}
-
 System* System::Clone(Universe& universe, int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    System* retval = new System(StarType::INVALID_STAR_TYPE, "", X(), Y());
+    auto retval = std::make_unique<System>();
     retval->Copy(shared_from_this(), universe, empire_id);
-    return retval;
+    return retval.release();
 }
 
 void System::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {

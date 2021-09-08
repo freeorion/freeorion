@@ -33,17 +33,15 @@ public:
     void SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
     void ResetTargetMaxUnpairedMeters() override;
 
-    Building(int empire_id, const std::string& building_type,
-             int produced_by_empire_id = ALL_EMPIRES);
+    Building(int empire_id, const std::string& building_type, int produced_by_empire_id = ALL_EMPIRES);
+    Building() = default;
 
-protected:
+private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-
 
     /** Returns new copy of this Building. */
     [[nodiscard]] Building* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
-private:
     std::string m_building_type;
     int         m_planet_id = INVALID_OBJECT_ID;
     bool        m_ordered_scrapped = false;

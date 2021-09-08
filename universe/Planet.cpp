@@ -72,9 +72,9 @@ Planet* Planet::Clone(Universe& universe, int empire_id) const {
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
 
-    Planet* retval = new Planet(m_type, m_size);
+    auto retval = std::make_unique<Planet>();
     retval->Copy(UniverseObject::shared_from_this(), universe, empire_id);
-    return retval;
+    return retval.release();
 }
 
 void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {
