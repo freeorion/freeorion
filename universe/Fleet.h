@@ -128,7 +128,7 @@ public:
     bool UnknownRoute() const;
 
     /** Returns true iff this fleet arrived at its current System this turn. */
-    bool ArrivedThisTurn() const { return m_arrived_this_turn; }
+    bool ArrivedThisTurn() const;
 
     /** Returns the ID of the starlane that this fleet arrived on, if it arrived
       * into a blockade which is not yet broken. If in a system and not
@@ -173,23 +173,15 @@ public:
     static constexpr int ETA_UNKNOWN = (1 << 30) - 1;       ///< returned when ETA can't be determined
     static constexpr int ETA_OUT_OF_RANGE = (1 << 30) - 2;  ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
-protected:
-    friend class ObjectMap;
-
-public:
     Fleet(std::string name, double x, double y, int owner);
 
-protected:
+private:
+    friend class ObjectMap;
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
-public:
-    ~Fleet() = default;
-
-protected:
     /** Returns new copy of this Fleet. */
     Fleet* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
-private:
     std::set<int>   m_ships;
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
@@ -209,12 +201,11 @@ private:
       * is not planning to move. */
     std::list<int>  m_travel_route;
 
-    bool            m_arrived_this_turn = false;
     int             m_arrival_starlane = INVALID_OBJECT_ID; // see comment for ArrivalStarlane()
+    bool            m_arrived_this_turn = false;
 
     template <typename Archive>
     friend void serialize(Archive&, Fleet&, unsigned int const);
 };
-
 
 #endif

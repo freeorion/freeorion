@@ -153,27 +153,20 @@ public:
 
     static int TypeDifference(PlanetType type1, PlanetType type2);
 
-protected:
-    friend class ObjectMap;
-
-public:
-    /** Create planet from @p type and @p size. */
-    Planet(PlanetType type, PlanetSize size);
-    ~Planet() {}
-
     /** Given initial set of ground forces on planet, determine ground forces on
       * planet after a turn of ground combat. */
     static void ResolveGroundCombat(std::map<int, double>& empires_troops, const EmpireManager::DiploStatusMap& diplo_statuses);
 
-protected:
-    template <typename T>
-    friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+    /** Create planet from @p type and @p size. */
+    Planet(PlanetType type, PlanetSize size);
 
-protected:
+private:
+    friend class ObjectMap;
+    template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+
     /** returns new copy of this Planet. */
     Planet* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
-private:
     void Init();
 
     Visibility GetVisibility(int empire_id) const override

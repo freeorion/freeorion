@@ -739,6 +739,9 @@ float Fleet::ResourceOutput(ResourceType type, const ObjectMap& objects) const {
     return output;
 }
 
+bool Fleet::ArrivedThisTurn() const
+{ return m_arrived_this_turn; }
+
 bool Fleet::UnknownRoute() const
 { return m_travel_route.size() == 1 && m_travel_route.front() == INVALID_OBJECT_ID; }
 
