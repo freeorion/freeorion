@@ -121,18 +121,18 @@ private:
     friend class Universe;
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
+    PartMeterMap    m_part_meters;
+    std::string     m_species_name;
     int             m_design_id = INVALID_DESIGN_ID;
     int             m_fleet_id = INVALID_OBJECT_ID;
-    bool            m_ordered_scrapped = false;
     int             m_ordered_colonize_planet_id = INVALID_OBJECT_ID;
     int             m_ordered_invade_planet_id = INVALID_OBJECT_ID;
     int             m_ordered_bombard_planet_id = INVALID_OBJECT_ID;
     int             m_last_turn_active_in_combat = INVALID_GAME_TURN;
-    PartMeterMap    m_part_meters;
-    std::string     m_species_name;
     int             m_produced_by_empire_id = ALL_EMPIRES;
     int             m_arrived_on_turn = INVALID_GAME_TURN;
     int             m_last_resupplied_on_turn = BEFORE_FIRST_TURN;
+    bool            m_ordered_scrapped = false;
 
     template <typename Archive>
     friend void serialize(Archive&, Ship&, unsigned int const);
