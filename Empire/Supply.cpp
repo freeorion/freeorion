@@ -167,8 +167,10 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool incl
     return false;
 }
 
-std::string SupplyManager::Dump(const ObjectMap& objects, int empire_id) const {
+std::string SupplyManager::Dump(const Universe& u, int empire_id) const {
     std::string retval;
+
+    const ObjectMap& objects = u.Objects();
 
     try {
         for (const auto& empire_supply : m_fleet_supplyable_system_ids) {
@@ -178,7 +180,7 @@ std::string SupplyManager::Dump(const ObjectMap& objects, int empire_id) const {
             for (const auto& sys : objects.find<System>(empire_supply.second)) {
                 if (!sys)
                     continue;
-                retval += "\n" + sys->PublicName(empire_id, objects) + " (" + std::to_string(sys->ID()) + ") ";
+                retval += "\n" + sys->PublicName(empire_id, u) + " (" + std::to_string(sys->ID()) + ") ";
 
                 retval += "\nTraversals from here to: ";
 
@@ -186,7 +188,7 @@ std::string SupplyManager::Dump(const ObjectMap& objects, int empire_id) const {
                     if (trav.first == sys->ID()) {
                         auto obj = objects.get(trav.second);
                         if (obj)
-                            retval += obj->PublicName(empire_id, objects) + " (" + std::to_string(obj->ID()) + ")  ";
+                            retval += obj->PublicName(empire_id, u) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
                 }
                 retval += "\n";
@@ -196,7 +198,7 @@ std::string SupplyManager::Dump(const ObjectMap& objects, int empire_id) const {
                     if (trav.second == sys->ID()) {
                         auto obj = objects.get(trav.first);
                         if (obj)
-                            retval += obj->PublicName(empire_id, objects) + " (" + std::to_string(obj->ID()) + ")  ";
+                            retval += obj->PublicName(empire_id, u) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
                 }
                 retval += "\n";
@@ -204,9 +206,8 @@ std::string SupplyManager::Dump(const ObjectMap& objects, int empire_id) const {
                 retval += "Blocked Traversals from here to: ";
                 for (const auto& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
                     if (trav.first == sys->ID()) {
-                        auto obj = objects.get(trav.second);
-                        if (obj)
-                            retval += obj->PublicName(empire_id, objects) + " (" + std::to_string(obj->ID()) + ")  ";
+                        if (auto obj = objects.get(trav.second))
+                            retval += obj->PublicName(empire_id, u) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
                 }
                 retval += "\n";
@@ -214,9 +215,8 @@ std::string SupplyManager::Dump(const ObjectMap& objects, int empire_id) const {
                 retval += "Blocked Traversals to here from: ";
                 for (const auto& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
                     if (trav.second == sys->ID()) {
-                        auto obj = objects.get(trav.first);
-                        if (obj)
-                            retval += obj->PublicName(empire_id, objects) + " (" + std::to_string(obj->ID()) + ")  ";
+                        if (auto obj = objects.get(trav.first))
+                            retval += obj->PublicName(empire_id, u) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
                 }
                 retval += "\n";
@@ -230,9 +230,8 @@ std::string SupplyManager::Dump(const ObjectMap& objects, int empire_id) const {
             for (const auto& system_group : empire_supply.second) {
                 retval += "group: ";
                 for (const auto& sys : objects.find<System>(system_group)) {
-                    if (!sys)
-                        continue;
-                    retval += "\n" + sys->PublicName(empire_id, objects) + " (" + std::to_string(sys->ID()) + ") ";
+                    if (sys)
+                        retval += "\n" + sys->PublicName(empire_id, u) + " (" + std::to_string(sys->ID()) + ") ";
                 }
                 retval += "\n";
             }
@@ -256,7 +255,7 @@ namespace {
         float accumulator_current = 0.0f;
         float accumulator_max = 0.0f;
 
-        for (auto obj : Objects().find(sys->ObjectIDs())) {
+        for (auto& obj : Objects().find(sys->ObjectIDs())) {
             if (!obj || !obj->OwnedBy(empire_id))
                 continue;
             if (const auto* m = obj->GetMeter(MeterType::METER_SUPPLY))
@@ -371,7 +370,7 @@ void SupplyManager::Update() {
             if (system_id == INVALID_OBJECT_ID || known_destroyed_objects.count(fleet->ID()))
                 continue;
 
-            if (fleet->CanDamageShips(Objects()) && fleet->Obstructive() && fleet->OwnedBy(empire_id)) {
+            if (fleet->CanDamageShips(universe) && fleet->Obstructive() && fleet->OwnedBy(empire_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID ||
                     fleet->NextSystemID() == fleet->SystemID())
                 { systems_containing_friendly_fleets.insert(system_id); }

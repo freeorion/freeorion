@@ -267,10 +267,10 @@ public:
         m_sizer(sizer),
         m_hovered(false)
     {
-        const ObjectMap& objects = Objects();
-        auto object = objects.get(participant.object_id);
+        const Universe& u = GetUniverse();
+        auto object = u.Objects().get(participant.object_id);
         if (object) {
-            SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID(), objects) + " " +
+            SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID(), u) + " " +
                           DoubleToString(participant.current_health, 3, false) + "/" +
                           DoubleToString(participant.max_health, 3, false)
             );

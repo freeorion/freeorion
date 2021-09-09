@@ -161,9 +161,9 @@ namespace {
         bool operator()(const std::shared_ptr<UniverseObject>& lhs,
                         const std::shared_ptr<UniverseObject>& rhs)
         {
-            const ObjectMap& objects = Objects();
-            const auto& lhs_public_name = lhs->PublicName(viewing_empire_id, objects);
-            const auto& rhs_public_name = rhs->PublicName(viewing_empire_id, objects);
+            const Universe& u = GetUniverse();
+            const auto& lhs_public_name = lhs->PublicName(viewing_empire_id, u);
+            const auto& rhs_public_name = rhs->PublicName(viewing_empire_id, u);
             if (lhs_public_name != rhs_public_name) {
 #if defined(FREEORION_MACOSX)
                 // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α
@@ -189,7 +189,7 @@ namespace {
         const std::string& category_delimiter = "\n-\n")
     {
         std::stringstream ss;
-        const ObjectMap& objects = Objects();
+        const Universe& universe = GetUniverse();
 
         bool first_category = true;
         for (const auto& category : forces) {
@@ -206,7 +206,7 @@ namespace {
                     first_in_category = false;
                 else
                     ss << delimiter;
-                ss << WrapWithTagAndId(object->PublicName(viewing_empire_id, objects),
+                ss << WrapWithTagAndId(object->PublicName(viewing_empire_id, universe),
                                        LinkTag(object->ObjectType()), object->ID());
             }
         }
@@ -574,12 +574,13 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     m_wnd.SetLayout(layout);
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const ObjectMap& objects = Objects();
+    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = universe.Objects();
     //const EmpireManager& empires = Empires();
 
     // Write Header text
     auto system = objects.get<System>(log->system_id);
-    const std::string& sys_name = (system ? system->PublicName(client_empire_id, objects) : UserString("ERROR"));
+    const std::string& sys_name = (system ? system->PublicName(client_empire_id, universe) : UserString("ERROR"));
     DebugLogger(combat_log) << "Showing combat log #" << log_id << " at " << sys_name << " (" << log->system_id
                             << ") with " << log->combat_events.size() << " events";
 

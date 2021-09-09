@@ -1172,9 +1172,9 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
         TraceLogger(supply) << "Fleet " << fleet->ID() << " is in system " << system_id
                             << " with next system " << fleet->NextSystemID()
                             << " and is owned by " << fleet->Owner()
-                            << " can damage ships: " << fleet->CanDamageShips(context.ContextObjects())
+                            << " can damage ships: " << fleet->CanDamageShips(context.ContextUniverse())
                             << " and obstructive: " << fleet->Obstructive();
-        if (fleet->CanDamageShips(context.ContextObjects()) && fleet->Obstructive()) {
+        if (fleet->CanDamageShips(context.ContextUniverse()) && fleet->Obstructive()) {
             if (fleet->OwnedBy(m_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                     systems_containing_friendly_fleets.insert(system_id);
@@ -2495,10 +2495,10 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
                 // create a single fleet for combat ships and individual
                 // fleets for non-combat ships
-                bool individual_fleets = !(   (*ships.begin())->IsArmed()
-                                           || (*ships.begin())->HasFighters()
-                                           || (*ships.begin())->CanHaveTroops()
-                                           || (*ships.begin())->CanBombard());
+                bool individual_fleets = !(   (*ships.begin())->IsArmed(context.ContextUniverse())
+                                           || (*ships.begin())->HasFighters(context.ContextUniverse())
+                                           || (*ships.begin())->CanHaveTroops(context.ContextUniverse())
+                                           || (*ships.begin())->CanBombard(context.ContextUniverse()));
 
                 std::vector<std::shared_ptr<Fleet>> fleets;
                 std::shared_ptr<Fleet> fleet;
@@ -2540,8 +2540,8 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
                 for (auto& next_fleet : fleets) {
                     // rename fleet, given its id and the ship that is in it
-                    next_fleet->Rename(next_fleet->GenerateFleetName(context.ContextObjects()));
-                    FleetAggression new_aggr = next_fleet->HasArmedShips(context.ContextObjects()) ?
+                    next_fleet->Rename(next_fleet->GenerateFleetName(context.ContextUniverse(), context.species));
+                    FleetAggression new_aggr = next_fleet->HasArmedShips(context.ContextUniverse()) ?
                         FleetDefaults::FLEET_DEFAULT_ARMED : FleetDefaults::FLEET_DEFAULT_UNARMED;
                     next_fleet->SetAggression(new_aggr);
 

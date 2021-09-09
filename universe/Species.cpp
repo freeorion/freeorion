@@ -586,11 +586,18 @@ void SpeciesManager::UpdatePopulationCounter() {
     }
 }
 
-std::map<std::string, std::map<int, float>>& SpeciesManager::SpeciesObjectPopulations(int encoding_empire)
+const std::map<std::string, std::map<int, float>>& SpeciesManager::SpeciesObjectPopulations(int) const
 { return m_species_object_populations; }
 
-std::map<std::string, std::map<std::string, int>>& SpeciesManager::SpeciesShipsDestroyed(int encoding_empire)
+const std::map<std::string, std::map<std::string, int>>& SpeciesManager::SpeciesShipsDestroyed(int) const
 { return m_species_species_ships_destroyed; }
+
+void SpeciesManager::SetSpeciesObjectPopulations(std::map<std::string, std::map<int, float>> sop)
+{ m_species_object_populations = std::move(sop); }
+
+void SpeciesManager::SetSpeciesShipsDestroyed(std::map<std::string, std::map<std::string, int>> ssd)
+{ m_species_species_ships_destroyed = std::move(ssd); }
+
 
 unsigned int SpeciesManager::GetCheckSum() const {
     CheckPendingSpeciesTypes();

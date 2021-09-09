@@ -192,11 +192,14 @@ std::string System::Dump(unsigned short ntabs) const {
 const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and_none/* = false*/) const {
     static const std::string EMPTY_STRING;
 
+    const Universe& u = GetUniverse();
+    const ObjectMap& o = u.Objects();
+
     if (empire_id == ALL_EMPIRES)
-        return this->PublicName(empire_id, Objects()); // TODO: pass Universe into this function
+        return this->PublicName(empire_id, u); // TODO: pass Universe into this function
 
     // has the indicated empire ever detected this system?
-    const auto& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(this->ID(), empire_id);
+    const auto& vtm = u.GetObjectVisibilityTurnMapByEmpire(this->ID(), empire_id);
     if (!vtm.count(Visibility::VIS_PARTIAL_VISIBILITY)) {
         if (blank_unexplored_and_none)
             return EMPTY_STRING;
@@ -209,9 +212,9 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
 
     if (m_star == StarType::STAR_NONE) {
         // determine if there are any planets in the system
-        for (const auto& entry : Objects().ExistingPlanets()) {
+        for (const auto& entry : o.ExistingPlanets()) {
             if (entry.second->SystemID() == this->ID())
-                return this->PublicName(empire_id, Objects());
+                return this->PublicName(empire_id, u);
         }
         if (blank_unexplored_and_none) {
             //DebugLogger() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< EMPTY_STRING;
@@ -221,7 +224,7 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
         return UserString("EMPTY_SPACE");
     }
 
-    return this->PublicName(empire_id, Objects()); // todo get Objects from inputs
+    return this->PublicName(empire_id, u); // todo get Objects from inputs
 }
 
 StarType System::NextOlderStarType() const {

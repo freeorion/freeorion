@@ -1316,7 +1316,7 @@ namespace {
         if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto* ship = static_cast<const Ship*>(obj.get());
             if (ship) {
-                if (const ShipDesign* design = ship->Design())
+                if (const ShipDesign* design = GetUniverse().GetShipDesign(ship->DesignID()))
                     retval.push_back(ClientUI::ShipDesignIcon(design->ID()));
             }
             if (retval.empty())

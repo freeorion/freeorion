@@ -418,7 +418,10 @@ SitRepEntry CreateFleetGiftedSitRep(int fleet_id, int empire_id) {
 }
 
 SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id) {
-    auto fleet = Objects().get<Fleet>(fleet_id);
+    const Universe& u = GetUniverse();
+    const ObjectMap& o = u.Objects();
+
+    auto fleet = o.get<Fleet>(fleet_id);
 
     //bool system_contains_recipient_empire_planets = false;
     //if (const System* system = Objects().get<System>(system_id)) {
@@ -445,7 +448,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
         sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
         sitrep.AddVariable(VarText::FLEET_ID_TAG,   std::to_string(fleet_id));
         return sitrep;
-    } else if (fleet->Unowned() && fleet->HasMonsters(Objects())) {
+    } else if (fleet->Unowned() && fleet->HasMonsters(u)) {
         if (fleet->NumShips() == 1) {
             SitRepEntry sitrep(
                 UserStringNop("SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION"),
@@ -456,7 +459,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             sitrep.AddVariable(VarText::FLEET_ID_TAG,      std::to_string(fleet_id));
             int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       std::to_string(ship_id));
-            if (auto ship = Objects().get<Ship>(ship_id))
+            if (auto ship = o.get<Ship>(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(ship->DesignID()));
             return sitrep;
         } else {

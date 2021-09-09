@@ -1174,7 +1174,7 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
     }
     else if (property_name == "Parts") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
-            if (const ShipDesign* design = ship->Design())
+            if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(ship->DesignID()))
                 return design->Parts();
         return {};
     }
@@ -1254,7 +1254,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 
     } else if (property_name == "Hull") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
-            if (const ShipDesign* design = ship->Design())
+            if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(ship->DesignID()))
                 return design->Hull();
         return "";
 

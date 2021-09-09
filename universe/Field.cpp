@@ -84,7 +84,7 @@ std::string Field::Dump(unsigned short ntabs) const {
     return os.str();
 }
 
-const std::string& Field::PublicName(int empire_id, const ObjectMap&) const {
+const std::string& Field::PublicName(int empire_id, const Universe&) const {
     // always just return name since fields (as of this writing) don't have owners
     return UserString(m_type_name);
 }

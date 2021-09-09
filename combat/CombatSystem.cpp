@@ -498,7 +498,8 @@ namespace {
     void AttackShipPlanet(const std::shared_ptr<Ship>& attacker, const PartAttackInfo& weapon,
                           const std::shared_ptr<Planet>& target, CombatInfo& combat_info,
                           int bout, int round,
-                          WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
+                          WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event,
+                          const Universe& universe)
     {
         if (!attacker || !target) return;
         float power = weapon.part_attack;
@@ -507,7 +508,7 @@ namespace {
 
         std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
 
-        const ShipDesign* attacker_design = attacker->Design();
+        const ShipDesign* attacker_design = universe.GetShipDesign(attacker->DesignID());
         if (!attacker_design)
             return;
 
@@ -895,7 +896,7 @@ namespace {
         if (attack_ship && target_ship) {
             AttackShipShip(         attack_ship,    weapon, target_ship,    combat_info, bout, round, platform_event);
         } else if (attack_ship && target_planet) {
-            AttackShipPlanet(       attack_ship,    weapon, target_planet,  combat_info, bout, round, platform_event);
+            AttackShipPlanet(       attack_ship,    weapon, target_planet,  combat_info, bout, round, platform_event, combat_info.universe);
         } else if (attack_ship && target_fighter) {
             AttackShipFighter(      attack_ship,    weapon, target_fighter, combat_info, bout, round, platform_event);
         } else if (attack_planet && target_ship) {
@@ -913,11 +914,11 @@ namespace {
         }
     }
 
-    bool ObjectCanAttack(const std::shared_ptr<const UniverseObject>& obj, const ObjectMap& objects) {
+    bool ObjectCanAttack(const std::shared_ptr<const UniverseObject>& obj, const Universe& u) {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(obj)) {
-            if (!ship->IsArmed())
+            if (!ship->IsArmed(u))
                 return false;
-            auto fleet = objects.get<Fleet>(ship->FleetID());
+            auto fleet = u.Objects().get<Fleet>(ship->FleetID());
             return !fleet || fleet->Aggression() > FleetAggression::FLEET_PASSIVE;
         } else if (auto planet = std::dynamic_pointer_cast<const Planet>(obj)) {
             return obj->GetMeter(MeterType::METER_DEFENSE)->Current() > 0.0f;
@@ -1208,7 +1209,7 @@ namespace {
                 }
 
             } else if (target->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-                if (!ObjectCanAttack(target, *combat_info.objects) &&
+                if (!ObjectCanAttack(target, combat_info.universe) &&
                     valid_attacker_object_ids.count(target_id))
                 {
                     DebugLogger(combat) << "!! Target Planet " << target_id << " knocked out, can no longer attack";
@@ -1326,7 +1327,7 @@ namespace {
         void PopulateAttackers() {
             auto check_add = [&](auto&& range) {
                 for (const auto& obj : range) {
-                    bool can_attack{ObjectCanAttack(obj, *combat_info.objects)};
+                    bool can_attack{ObjectCanAttack(obj, combat_info.universe)};
                     if (can_attack) {
                         valid_attacker_object_ids.insert(obj->ID());
                         empire_infos[obj->Owner()].attacker_ids.insert(obj->ID());
@@ -1529,7 +1530,7 @@ namespace {
         } // end for over weapons
     }
 
-    void ReduceStoredFighterCount(std::shared_ptr<Ship>& ship, float launched_fighters) {
+    void ReduceStoredFighterCount(std::shared_ptr<Ship>& ship, float launched_fighters, const Universe& universe) {
         if (!ship || launched_fighters <= 0)
             return;
 
@@ -1537,7 +1538,7 @@ namespace {
         // may be multiple hangar part types, each with different capacity (number of stored fighters)
         std::map<std::string, Meter*> ship_part_fighter_hangar_capacities;
 
-        const ShipDesign* design = ship->Design();
+        const ShipDesign* design = universe.GetShipDesign(ship->DesignID());
         if (!design) {
             ErrorLogger(combat) << "ReduceStoredFighterCount couldn't get ship design with id " << ship->DesignID();;
             return;
@@ -1626,7 +1627,7 @@ namespace {
             // reduce hangar capacity (contents) corresponding to launched fighters
             int num_launched = new_fighter_ids.size();
             if (attacker_ship)
-                ReduceStoredFighterCount(attacker_ship, num_launched);
+                ReduceStoredFighterCount(attacker_ship, num_launched, combat_state.combat_info.universe);
 
             // launching fighters counts as a ship being active in combat
             if (!new_fighter_ids.empty())
@@ -1636,7 +1637,7 @@ namespace {
         } // end for over weapons
     }
 
-    void IncreaseStoredFighterCount(std::shared_ptr<Ship>& ship, float recovered_fighters) {
+    void IncreaseStoredFighterCount(std::shared_ptr<Ship>& ship, float recovered_fighters, const Universe& universe) {
         if (!ship || recovered_fighters <= 0)
             return;
 
@@ -1644,7 +1645,7 @@ namespace {
         // may be multiple hangar part types, each with different capacity (number of stored fighters)
         std::map<std::string, std::pair<Meter*, Meter*>> ship_part_fighter_hangar_capacities;
 
-        const ShipDesign* design = ship->Design();
+        const ShipDesign* design = universe.GetShipDesign(ship->DesignID());
         if (!design) {
             ErrorLogger(combat) << "IncreaseStoredFighterCount couldn't get ship design with id " << ship->DesignID();;
             return;
@@ -1684,15 +1685,12 @@ namespace {
         }
     }
 
-    void RecoverFighters(CombatInfo& combat_info, int bout,
-                         FighterLaunchesEventPtr& launches_event)
-    {
+    void RecoverFighters(CombatInfo& combat_info, int bout, FighterLaunchesEventPtr& launches_event) {
         std::map<int, float> ships_fighters_to_add_back;
         DebugLogger() << "Recovering fighters at end of combat...";
 
         // count still-existing and not destroyed fighters at end of combat
-        for (const auto& obj : combat_info.objects->all())
-        {
+        for (const auto& obj : combat_info.objects->all()) { // TODO: call this iterate over <Fighter> and avoid the dynamic_pointer_cast ?
             if (obj->ID() >= 0)
                 continue;
             auto fighter = std::dynamic_pointer_cast<Fighter>(obj);
@@ -1718,7 +1716,7 @@ namespace {
                 ErrorLogger(combat) << "Couldn't get ship with id " << ship_id << " for fighter to return to...";
                 continue;
             }
-            IncreaseStoredFighterCount(ship, fighter_count);
+            IncreaseStoredFighterCount(ship, fighter_count, combat_info.universe);
             // launching negative ships indicates recovery of them
             launches_event->AddEvent(std::make_shared<FighterLaunchEvent>(
                 bout, ship_id, ship->Owner(), -fighter_count));
@@ -1766,7 +1764,7 @@ namespace {
         for (const auto& planet : combat_info.objects->find<Planet>(shuffled_attackers)) {
             if (!planet)
                 continue;
-            if (!ObjectCanAttack(planet, *combat_info.objects)) {
+            if (!ObjectCanAttack(planet, combat_info.universe)) {
                 DebugLogger() << "Planet " << planet->Name() << " could not attack.";
                 continue;
             }
@@ -1788,7 +1786,7 @@ namespace {
             if (attacker->ObjectType() == UniverseObjectType::OBJ_PLANET)
                 continue;   // planet attacks processed above
 
-            if (!ObjectCanAttack(attacker, *combat_info.objects)) {
+            if (!ObjectCanAttack(attacker, combat_info.universe)) {
                 DebugLogger() << "Attacker " << attacker->ObjectType() << " : "
                               << attacker->Name() << " (" << attacker->ID() << ") could not attack.";
                 continue;
@@ -1816,7 +1814,7 @@ namespace {
             for (const auto& attacker : combat_info.objects->find<Ship>(shuffled_attackers)) {
                 if (!attacker)
                     continue;
-                if (!ObjectCanAttack(attacker, *combat_info.objects)) {
+                if (!ObjectCanAttack(attacker, combat_info.universe)) {
                     DebugLogger() << "Attacker " << attacker->Name() << " could not attack.";
                     continue;
                 }

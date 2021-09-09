@@ -743,7 +743,7 @@ namespace {
         if (!ship)
             return;
 
-        const ShipDesign* design = ship->Design();
+        const ShipDesign* design = GetUniverse().GetShipDesign(ship->DesignID());
         auto icon{ClientUI::ShipDesignIcon(design ? design->ID() : INVALID_OBJECT_ID)};
 
         m_ship_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(icon), DataPanelIconStyle());
@@ -799,10 +799,10 @@ namespace {
 
 
         int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-
+        const Universe& universe = GetUniverse();
 
         // name and design name update
-        const std::string& ship_name = ship->PublicName(empire_id, Objects());
+        const std::string& ship_name = ship->PublicName(empire_id, universe);
         std::string id_name_part{GetOptionsDB().Get<bool>("ui.name.id.shown")
             ? " (" + std::to_string(m_ship_id) + ")"
             : ""};
@@ -815,7 +815,7 @@ namespace {
         }
 
         if (m_design_name_text) {
-            const ShipDesign* design = ship->Design();
+            const ShipDesign* design = universe.GetShipDesign(ship->DesignID());
             const auto& design_name = design ? design->Name() : UserString("FW_UNKNOWN_DESIGN_NAME");
             if (!ship->SpeciesName().empty()) {
                 m_design_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_SPECIES_SHIP_DESIGN_LABEL")) %
@@ -858,17 +858,20 @@ namespace {
     }
 
     double ShipDataPanel::StatValue(MeterType stat_name) const {
-        if (auto ship = Objects().get<Ship>(m_ship_id)) {
+        const Universe& u = GetUniverse();
+        const ObjectMap& o = u.Objects();
+
+        if (auto ship = o.get<Ship>(m_ship_id)) {
             if (stat_name == MeterType::METER_CAPACITY)
                 return ship->TotalWeaponsShipDamage(0.0f, true);
             else if (stat_name == MeterType::METER_MAX_CAPACITY) // number of fighters shot down
                 return ship->TotalWeaponsFighterDamage(true);
             else if (stat_name == MeterType::METER_TROOPS)
-                return ship->TroopCapacity();
+                return ship->TroopCapacity(u);
             else if (stat_name == MeterType::METER_SECONDARY_STAT)
                 return ship->FighterCount();
             else if (stat_name == MeterType::METER_POPULATION)
-                return ship->ColonyCapacity();
+                return ship->ColonyCapacity(u);
             else if (ship->UniverseObject::GetMeter(stat_name))
                 return ship->GetMeter(stat_name)->Initial();
 
@@ -925,7 +928,8 @@ namespace {
         if (!ship)
             return;
 
-        if (const ShipDesign* design = ship->Design()) {
+        const Universe& universe = GetUniverse();
+        if (const ShipDesign* design = universe.GetShipDesign(ship->DesignID())) {
             m_design_name_text = GG::Wnd::Create<CUILabel>(design->Name(), GG::FORMAT_RIGHT);
             AttachChild(m_design_name_text);
         }
@@ -936,15 +940,15 @@ namespace {
         std::vector<std::pair<MeterType, std::shared_ptr<GG::Texture>>> meters_icons;
         meters_icons.reserve(13);
         meters_icons.emplace_back(MeterType::METER_STRUCTURE,          ClientUI::MeterIcon(MeterType::METER_STRUCTURE));
-        if (ship->IsArmed()) {
+        if (ship->IsArmed(universe)) {
             meters_icons.emplace_back(MeterType::METER_CAPACITY,       DamageIcon());
             meters_icons.emplace_back(MeterType::METER_MAX_CAPACITY,   DestroyIcon()); // number of fighters shot down
         }
-        if (ship->HasFighters())
+        if (ship->HasFighters(universe))
             meters_icons.emplace_back(MeterType::METER_SECONDARY_STAT, FightersIcon());
-        if (ship->HasTroops())
+        if (ship->HasTroops(universe))
             meters_icons.emplace_back(MeterType::METER_TROOPS,         TroopIcon());
-        if (ship->CanColonize())
+        if (ship->CanColonize(universe, GetSpeciesManager()))
             meters_icons.emplace_back(MeterType::METER_POPULATION,     ColonyIcon());
         if (ship->GetMeter(MeterType::METER_INDUSTRY)->Initial() != 0.0f)
             meters_icons.emplace_back(MeterType::METER_INDUSTRY,       IndustryIcon());
@@ -1371,6 +1375,10 @@ void FleetDataPanel::Refresh() {
         DetachChildAndReset(overlay);
     m_fleet_icon_overlays.clear();
 
+    const Universe& u = GetUniverse();
+    const ObjectMap& o = u.Objects();
+    const EmpireManager& e = Empires();
+
     if (m_is_new_fleet_drop_target) {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
         m_fleet_destination_text->Clear();
@@ -1381,12 +1389,12 @@ void FleetDataPanel::Refresh() {
             std::move(new_fleet_texture), DataPanelIconStyle());
         AttachChild(m_fleet_icon);
 
-    } else if (auto fleet = Objects().get<Fleet>(m_fleet_id)) {
+    } else if (auto fleet = o.get<Fleet>(m_fleet_id)) {
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
         // set fleet name and destination text
-        std::string public_fleet_name = fleet->PublicName(client_empire_id, Objects());
+        std::string public_fleet_name = fleet->PublicName(client_empire_id, u);
         if (!fleet->Unowned() && public_fleet_name == UserString("FW_FOREIGN_FLEET")) {
-            const Empire* ship_owner_empire = GetEmpire(fleet->Owner());
+            auto ship_owner_empire = e.GetEmpire(fleet->Owner());
             const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
             std::string fleet_name = boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEET")) % owner_name);
             if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
@@ -1397,7 +1405,7 @@ void FleetDataPanel::Refresh() {
                 public_fleet_name = public_fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             m_fleet_name_text->SetText(std::move(public_fleet_name));
         }
-        ScriptingContext context;
+        ScriptingContext context{u, e};
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id, context));
 
         // set icons
@@ -1409,19 +1417,20 @@ void FleetDataPanel::Refresh() {
         m_fleet_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(std::move(icons), std::move(styles));
         AttachChild(m_fleet_icon);
 
-        if (Empire* empire = GetEmpire(fleet->Owner()))
-            m_fleet_icon->SetColor(empire->Color());
-        else if (fleet->Unowned() && fleet->HasMonsters(Objects()))
+        if (auto fleet_owner_empire = e.GetEmpire(fleet->Owner()))
+            m_fleet_icon->SetColor(fleet_owner_empire->Color());
+        else if (fleet->Unowned() && fleet->HasMonsters(u))
             m_fleet_icon->SetColor(GG::CLR_RED);
 
-        auto all_ships = [fleet](const std::function<bool(const std::shared_ptr<const Ship>&)>& pred) {
-            // Searching for each Ship one at a time is faster than
+        auto all_ships = [&fleet, &o](const std::function<bool(const std::shared_ptr<const Ship>&)>& pred) {
+            // Searching for each Ship one at a time is probably faster than
             // FindObjects(ship_ids), because an early exit avoids searching the
             // remaining ids.
+            const auto& ship_ids{fleet->ShipIDs()};
             return std::all_of(
-                fleet->ShipIDs().begin(), fleet->ShipIDs().end(),
-                [&pred](const int ship_id) {
-                    auto ship = Objects().get<const Ship>(ship_id);
+                ship_ids.begin(), ship_ids.end(),
+                [&pred, &o](const int ship_id) {
+                    auto ship = o.get<Ship>(ship_id);
                     if (!ship) {
                         WarnLogger() << "Object map is missing ship with expected id " << ship_id;
                         return false;
@@ -1541,13 +1550,13 @@ void FleetDataPanel::SetStatIconValues() {
         if (this_client_stale_object_info.count(ship_id))
             continue;
 
-        if (ship->Design()) {
+        if (universe.GetShipDesign(ship->DesignID())) {
             ship_count++;
             damage_tally += ship->TotalWeaponsShipDamage(0.0f, true);
             destroy_tally += ship->TotalWeaponsFighterDamage(true);
             fighters_tally += ship->FighterCount();
-            troops_tally += ship->TroopCapacity();
-            colony_tally += ship->ColonyCapacity();
+            troops_tally += ship->TroopCapacity(universe);
+            colony_tally += ship->ColonyCapacity(universe);
             structure_tally += ship->GetMeter(MeterType::METER_STRUCTURE)->Initial();
             shield_tally += ship->GetMeter(MeterType::METER_SHIELD)->Initial();
             fuels.push_back(ship->GetMeter(MeterType::METER_FUEL)->Initial());
@@ -1568,27 +1577,27 @@ void FleetDataPanel::SetStatIconValues() {
             break;
         case MeterType::METER_CAPACITY:
             icon->SetValue(damage_tally);
-            if (fleet->CanDamageShips(objects))
+            if (fleet->CanDamageShips(universe))
                 AttachChild(icon);
             break;
         case MeterType::METER_MAX_CAPACITY:
             icon->SetValue(destroy_tally);
-            if (fleet->CanDestroyFighters(objects))
+            if (fleet->CanDestroyFighters(universe))
                 AttachChild(icon);
             break;
         case MeterType::METER_SECONDARY_STAT:
             icon->SetValue(fighters_tally);
-            if (fleet->HasFighterShips(objects))
+            if (fleet->HasFighterShips(universe))
                 AttachChild(icon);
             break;
         case MeterType::METER_TROOPS:
             icon->SetValue(troops_tally);
-            if (fleet->HasTroopShips(objects))
+            if (fleet->HasTroopShips(universe))
                 AttachChild(icon);
             break;
         case MeterType::METER_POPULATION:
             icon->SetValue(colony_tally);
-            if (fleet->HasColonyShips(objects))
+            if (fleet->HasColonyShips(universe))
                 AttachChild(icon);
             break;
         case MeterType::METER_INDUSTRY: {
@@ -2902,11 +2911,14 @@ void FleetWnd::SetStatIconValues() {
     float troop_tally =     0.0f;
     float colony_tally =    0.0f;
 
-    for (auto& fleet : Objects().find<const Fleet>(m_fleet_ids)) {
+    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = universe.Objects();
+
+    for (auto& fleet : objects.find<const Fleet>(m_fleet_ids)) {
         if ( !(((m_empire_id == ALL_EMPIRES) && (fleet->Unowned())) || fleet->OwnedBy(m_empire_id)) )
             continue;
 
-        for (auto& ship : Objects().find<const Ship>(fleet->ShipIDs())) {
+        for (auto& ship : objects.find<const Ship>(fleet->ShipIDs())) {
             int ship_id = ship->ID();
 
             // skip known destroyed and stale info objects
@@ -2915,15 +2927,15 @@ void FleetWnd::SetStatIconValues() {
             if (this_client_stale_object_info.count(ship_id))
                 continue;
 
-            if (ship->Design()) {
+            if (universe.GetShipDesign(ship->DesignID())) {
                 ship_count++;
                 damage_tally += ship->TotalWeaponsShipDamage(0.0f, false);
-                destroy_tally += ship->TotalWeaponsFighterDamage(true); // XXX inconsistent to count fighters killing fighters here?
+                destroy_tally += ship->TotalWeaponsFighterDamage(true); // TODO: Is it inconsistent to count fighters killing fighters here?
                 fighters_tally += ship->FighterCount();
                 structure_tally += ship->GetMeter(MeterType::METER_STRUCTURE)->Initial();
                 shield_tally += ship->GetMeter(MeterType::METER_SHIELD)->Initial();
-                troop_tally += ship->TroopCapacity();
-                colony_tally += ship->ColonyCapacity();
+                troop_tally += ship->TroopCapacity(universe);
+                colony_tally += ship->ColonyCapacity(universe);
             }
         }
     }
@@ -2960,10 +2972,8 @@ void FleetWnd::RefreshStateChangedSignals() {
     m_fleet_connections.clear();
 
     for (const auto& fleet : Objects().find<Fleet>(m_fleet_ids)) {
-        if (!fleet)
-            continue;
-        m_fleet_connections.emplace_back(
-            fleet->StateChangedSignal.connect(
+        if (fleet)
+            m_fleet_connections.push_back(fleet->StateChangedSignal.connect(
                 boost::bind(&FleetWnd::RequireRefresh, this)));
     }
 }
@@ -3411,11 +3421,15 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
 void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
-    auto fleet = Objects().get<Fleet>(FleetInRow(it));
+    const Universe& u = GetUniverse();
+    const ObjectMap& o = u.Objects();
+    const EmpireManager& e = Empires();
+
+    auto fleet = o.get<Fleet>(FleetInRow(it));
     if (!fleet)
         return;
 
-    auto system = Objects().get<System>(fleet->SystemID());
+    auto system = o.get<System>(fleet->SystemID());
     std::set<int> ship_ids_set = fleet->ShipIDs();
 
     std::vector<int> damaged_ship_ids;
@@ -3426,7 +3440,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     unfueled_ship_ids.reserve(ship_ids_set.size());
     not_full_fighters_ship_ids.reserve(ship_ids_set.size());
 
-    for (const auto& ship : Objects().find<Ship>(ship_ids_set)) {
+    for (const auto& ship : o.find<Ship>(ship_ids_set)) {
         if (!ship)
             continue;
 
@@ -3437,7 +3451,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         if (ship->GetMeter(MeterType::METER_FUEL)->Initial() < 1.0f)
             unfueled_ship_ids.push_back(ship->ID());
         // find ships that can carry fighters but dont have a full complement of them
-        if (ship->HasFighters() && ship->FighterCount() < ship->FighterMax())
+        if (ship->HasFighters(u) && ship->FighterCount() < ship->FighterMax())
             not_full_fighters_ship_ids.push_back(ship->ID());
     }
 
@@ -3445,14 +3459,14 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     // an owned object in this fleet's system
     std::set<int> peaceful_empires_in_system;
     if (system) {
-        for (auto& obj : Objects().find<const UniverseObject>(system->ObjectIDs())) {
+        for (auto& obj : o.find<const UniverseObject>(system->ObjectIDs())) {
             if (obj->GetVisibility(client_empire_id) < Visibility::VIS_PARTIAL_VISIBILITY)
                 continue;
             if (obj->Owner() == client_empire_id || obj->Unowned())
                 continue;
             if (peaceful_empires_in_system.count(obj->Owner()))
                 continue;
-            if (Empires().GetDiplomaticStatus(client_empire_id, obj->Owner()) < DiplomaticStatus::DIPLO_PEACE)
+            if (e.GetDiplomaticStatus(client_empire_id, obj->Owner()) < DiplomaticStatus::DIPLO_PEACE)
                 continue;
             peaceful_empires_in_system.insert(obj->Owner());
         }
@@ -3599,7 +3613,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
     // add a fleet popup command to order all ships in the fleet scrapped
     if (system
-        && fleet->HasShipsWithoutScrapOrders(Objects())
+        && fleet->HasShipsWithoutScrapOrders(u)
         && !ClientPlayerIsModerator()
         && fleet->OwnedBy(client_empire_id))
     {
@@ -3617,7 +3631,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
     // add a fleet popup command to cancel all scrap orders on ships in this fleet
     if (system
-        && fleet->HasShipsOrderedScrapped(Objects())
+        && fleet->HasShipsOrderedScrapped(u)
         && !ClientPlayerIsModerator())
     {
         auto unscrap_action = [fleet]() {
@@ -3685,8 +3699,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         auto forget_fleet_action = [fleet]() {
             ClientUI::GetClientUI()->GetMapWnd()->ForgetObject(fleet->ID());
         };
-        auto visibility_turn_map =
-            GetUniverse().GetObjectVisibilityTurnMapByEmpire(fleet->ID(), client_empire_id);
+        auto visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(fleet->ID(), client_empire_id);
         auto last_turn_visible_it = visibility_turn_map.find(Visibility::VIS_BASIC_VISIBILITY);
         if (last_turn_visible_it != visibility_turn_map.end()
             && last_turn_visible_it->second < CurrentTurn())

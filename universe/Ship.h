@@ -26,7 +26,7 @@ public:
     { return m_fleet_id; }
 
     bool ContainedBy(int object_id) const override;
-    [[nodiscard]] const std::string& PublicName(int empire_id, const ObjectMap& objects) const override;
+    [[nodiscard]] const std::string& PublicName(int empire_id, const Universe& universe) const override;
     [[nodiscard]] const std::string& PublicName(int empire_id) const;
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
@@ -42,28 +42,24 @@ public:
 
     void Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id = ALL_EMPIRES) override;
 
-    [[nodiscard]] const ShipDesign*           Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
     [[nodiscard]] int                         DesignID() const            { return m_design_id; }             ///< returns the design id of the ship
-
     [[nodiscard]] int                         FleetID() const             { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in
-
     [[nodiscard]] int                         ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
     [[nodiscard]] int                         ArrivedOnTurn() const       { return m_arrived_on_turn; }       ///< returns the turn on which this ship arrived in its current system
     [[nodiscard]] int                         LastResuppliedOnTurn() const{ return m_last_resupplied_on_turn;}///< returns the turn on which this ship was last resupplied / upgraded
-
-    [[nodiscard]] bool                        IsMonster() const;
+    [[nodiscard]] bool                        IsMonster(const Universe& universe) const;
     [[nodiscard]] bool                        CanDamageShips(float target_shields = 0.0f) const;
     [[nodiscard]] bool                        CanDestroyFighters() const;
-    [[nodiscard]] bool                        IsArmed() const;
-    [[nodiscard]] bool                        HasFighters() const;
-    [[nodiscard]] bool                        CanColonize() const;
-    [[nodiscard]] bool                        HasTroops() const;
-    [[nodiscard]] bool                        CanHaveTroops() const;
-    [[nodiscard]] bool                        CanBombard() const;
-    [[nodiscard]] const std::string&          SpeciesName() const         { return m_species_name; }
+    [[nodiscard]] bool                        IsArmed(const Universe& universe) const;
+    [[nodiscard]] bool                        HasFighters(const Universe& universe) const;
+    [[nodiscard]] bool                        CanColonize(const Universe& universe, const SpeciesManager& sm) const;
+    [[nodiscard]] bool                        HasTroops(const Universe& universe) const;
+    [[nodiscard]] bool                        CanHaveTroops(const Universe& universe) const;
+    [[nodiscard]] bool                        CanBombard(const Universe& universe) const;
+    [[nodiscard]] const std::string&          SpeciesName() const             { return m_species_name; }
     [[nodiscard]] float                       Speed() const;
-    [[nodiscard]] float                       ColonyCapacity() const;
-    [[nodiscard]] float                       TroopCapacity() const;
+    [[nodiscard]] float                       ColonyCapacity(const Universe& universe) const;
+    [[nodiscard]] float                       TroopCapacity(const Universe& universe) const;
 
     [[nodiscard]] bool                        OrderedScrapped() const         { return m_ordered_scrapped; }          ///< returns true iff this ship has been ordered scrapped, or false otherwise
     [[nodiscard]] int                         OrderedColonizePlanet() const   { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet

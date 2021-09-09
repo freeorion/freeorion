@@ -137,7 +137,7 @@ public:
     [[nodiscard]] Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
 
     /** Returns the name of this objectas it appears to empire \a empire_id .*/
-    [[nodiscard]] virtual const std::string&  PublicName(int empire_id, const ObjectMap& objects) const;
+    [[nodiscard]] virtual const std::string&  PublicName(int empire_id, const Universe& universe) const;
 
     /** Accepts a visitor object \see UniverseObjectVisitor */
     virtual std::shared_ptr<UniverseObject>   Accept(const UniverseObjectVisitor& visitor) const;

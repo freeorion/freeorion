@@ -1990,7 +1990,7 @@ bool Monster::Match(const ScriptingContext& local_context) const {
 
     if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
         auto* ship = static_cast<const Ship*>(candidate.get());
-        if (ship->IsMonster())
+        if (ship->IsMonster(local_context.ContextUniverse()))
             return true;
     }
 
@@ -2045,7 +2045,7 @@ bool Armed::Match(const ScriptingContext& local_context) const {
 
     if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
         auto* ship = static_cast<const Ship*>(candidate.get());
-        if (ship->IsArmed())
+        if (ship->IsArmed(local_context.ContextUniverse()))
             return true;
     }
 
@@ -5409,8 +5409,9 @@ bool DesignHasHull::operator==(const Condition& rhs) const {
 
 namespace {
     struct DesignHasHullSimpleMatch {
-        explicit DesignHasHullSimpleMatch(const std::string& name) :
-            m_name(name)
+        DesignHasHullSimpleMatch(const std::string& name, const Universe& universe) :
+            m_name(name),
+            m_universe(universe)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -5423,7 +5424,7 @@ namespace {
             auto* ship = static_cast<const ::Ship*>(candidate.get());
 
             // with a valid design?
-            const ShipDesign* design = ship->Design();
+            const ShipDesign* design = m_universe.GetShipDesign(ship->DesignID());
             if (!design)
                 return false;
 
@@ -5431,6 +5432,7 @@ namespace {
         }
 
         const std::string& m_name;
+        const Universe& m_universe;
     };
 }
 
@@ -5446,7 +5448,7 @@ void DesignHasHull::Eval(const ScriptingContext& parent_context,
 
         // need to test each candidate separately using EvalImpl and because the
         // design of the candidate object is tested
-        EvalImpl(matches, non_matches, search_domain, DesignHasHullSimpleMatch(name));
+        EvalImpl(matches, non_matches, search_domain, DesignHasHullSimpleMatch(name, parent_context.ContextUniverse()));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -5483,7 +5485,7 @@ bool DesignHasHull::Match(const ScriptingContext& local_context) const {
 
     std::string name = (m_name ? m_name->Eval(local_context) : "");
 
-    return DesignHasHullSimpleMatch(name)(candidate);
+    return DesignHasHullSimpleMatch(name, local_context.ContextUniverse())(candidate);
 }
 
 void DesignHasHull::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -5544,11 +5546,11 @@ bool DesignHasPart::operator==(const Condition& rhs) const {
 
 namespace {
     struct DesignHasPartSimpleMatch {
-        DesignHasPartSimpleMatch(int low, int high, const std::string& name, const ObjectMap& objects) :
+        DesignHasPartSimpleMatch(int low, int high, const std::string& name, const Universe& universe) :
             m_low(low),
             m_high(high),
             m_name(name),
-            m_objects(objects)
+            m_universe(universe)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -5558,7 +5560,7 @@ namespace {
             const Ship* ship = nullptr;
             if (candidate->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
                 auto* fighter = static_cast<const ::Fighter*>(candidate.get());
-                ship = m_objects.get<Ship>(fighter->LaunchedFrom()).get();
+                ship = m_universe.Objects().get<Ship>(fighter->LaunchedFrom()).get();
             } else if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
                 ship = static_cast<const ::Ship*>(candidate.get());
             }
@@ -5566,7 +5568,7 @@ namespace {
                 return false;
 
             // with a valid design?
-            const ShipDesign* design = ship->Design();
+            const ShipDesign* design = m_universe.GetShipDesign(ship->DesignID());
             if (!design)
                 return false;
 
@@ -5583,7 +5585,7 @@ namespace {
         int                 m_low;
         int                 m_high;
         const std::string&  m_name;
-        const ObjectMap&    m_objects;
+        const Universe&     m_universe;
     };
 }
 
@@ -5603,7 +5605,7 @@ void DesignHasPart::Eval(const ScriptingContext& parent_context,
 
         // need to test each candidate separately using EvalImpl and because the
         // design of the candidate object is tested
-        EvalImpl(matches, non_matches, search_domain, DesignHasPartSimpleMatch(low, high, name, parent_context.ContextObjects()));
+        EvalImpl(matches, non_matches, search_domain, DesignHasPartSimpleMatch(low, high, name, parent_context.ContextUniverse()));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -5660,7 +5662,7 @@ bool DesignHasPart::Match(const ScriptingContext& local_context) const {
     int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
     std::string name = (m_name ? m_name->Eval(local_context) : "");
 
-    return DesignHasPartSimpleMatch(low, high, name, local_context.ContextObjects())(candidate);
+    return DesignHasPartSimpleMatch(low, high, name, local_context.ContextUniverse())(candidate);
 }
 
 void DesignHasPart::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
@@ -5732,10 +5734,11 @@ bool DesignHasPartClass::operator==(const Condition& rhs) const {
 
 namespace {
     struct DesignHasPartClassSimpleMatch {
-        DesignHasPartClassSimpleMatch(int low, int high, ShipPartClass part_class) :
+        DesignHasPartClassSimpleMatch(int low, int high, ShipPartClass part_class, const Universe& universe) :
             m_low(low),
             m_high(high),
-            m_part_class(part_class)
+            m_part_class(part_class),
+            m_universe(universe)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -5748,7 +5751,7 @@ namespace {
             auto* ship = static_cast<const ::Ship*>(candidate.get());
 
             // with a valid design?
-            const ShipDesign* design = ship->Design();
+            const ShipDesign* design = m_universe.GetShipDesign(ship->DesignID());
             if (!design)
                 return false;
 
@@ -5763,9 +5766,10 @@ namespace {
             return (m_low <= count && count <= m_high);
         }
 
-        int m_low;
-        int m_high;
-        ShipPartClass m_part_class;
+        int             m_low;
+        int             m_high;
+        ShipPartClass   m_part_class;
+        const Universe& m_universe;
     };
 }
 
@@ -5783,7 +5787,8 @@ void DesignHasPartClass::Eval(const ScriptingContext& parent_context,
 
         // need to test each candidate separately using EvalImpl and because the
         // design of the candidate object is tested
-        EvalImpl(matches, non_matches, search_domain, DesignHasPartClassSimpleMatch(low, high, m_class));
+        EvalImpl(matches, non_matches, search_domain,
+                 DesignHasPartClassSimpleMatch(low, high, m_class, parent_context.ContextUniverse()));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -5832,7 +5837,7 @@ bool DesignHasPartClass::Match(const ScriptingContext& local_context) const {
     int low =  (m_low ? m_low->Eval(local_context) : 0);
     int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
 
-    return DesignHasPartClassSimpleMatch(low, high, m_class)(candidate);
+    return DesignHasPartClassSimpleMatch(low, high, m_class, local_context.ContextUniverse())(candidate);
 }
 
 void DesignHasPartClass::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,

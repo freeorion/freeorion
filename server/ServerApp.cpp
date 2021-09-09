@@ -2355,7 +2355,7 @@ namespace {
                     continue;
                 // an unarmed Monster will not trigger combat
                 if (  (fleet->Aggressive() || fleet->Unowned())  &&
-                      (fleet->CanDamageShips(objects) || !fleet->Unowned())  )
+                      (fleet->CanDamageShips(universe) || !fleet->Unowned())  )
                 {
                     if (!empires_with_aggressive_fleets_here.count(empire_id))
                         DebugLogger(combat) << "\t Empire " << empire_id << " has at least one aggressive fleet present";
@@ -2755,7 +2755,7 @@ namespace {
             return false;
         }
 
-        float colonist_capacity = ship->ColonyCapacity();
+        float colonist_capacity = ship->ColonyCapacity(universe);
 
         if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(species_name) < PlanetEnvironment::PE_HOSTILE) {
             ErrorLogger() << "ColonizePlanet nonzero colonist capacity and planet that ship's species can't colonize";
@@ -2866,7 +2866,7 @@ namespace {
             // find which empires have obstructive armed ships in system
             std::set<int> empires_with_armed_ships_in_system;
             for (auto& fleet : objects.find<const Fleet>(system->FleetIDs())) {
-                if (fleet->Obstructive() && fleet->CanDamageShips(objects))
+                if (fleet->Obstructive() && fleet->CanDamageShips(universe))
                     empires_with_armed_ships_in_system.insert(fleet->Owner());  // may include ALL_EMPIRES, which is fine; this makes monsters prevent colonization
             }
 
@@ -2891,7 +2891,7 @@ namespace {
             if (!ship)
                 ErrorLogger() << "HandleColonization couldn't get ship with id " << colonizing_ship_id;
             const auto& species_name = ship ? ship->SpeciesName() : "";
-            float colonist_capacity = ship ? ship->ColonyCapacity() : 0.0f;
+            float colonist_capacity = ship ? ship->ColonyCapacity(universe) : 0.0f;
 
 
             // do colonization
@@ -2923,7 +2923,7 @@ namespace {
 
         // collect ships that are invading and the troops they carry
         for (auto& ship : objects.all<Ship>()) {
-            if (!ship->HasTroops())     // can't invade without troops
+            if (!ship->HasTroops(universe))     // can't invade without troops
                 continue;
             if (ship->SystemID() == INVALID_OBJECT_ID)
                 continue;
@@ -2942,9 +2942,9 @@ namespace {
                 continue;
 
             // how many troops are invading?
-            planet_empire_troops[ship->OrderedInvadePlanet()][ship->Owner()] += ship->TroopCapacity();
+            planet_empire_troops[ship->OrderedInvadePlanet()][ship->Owner()] += ship->TroopCapacity(universe);
 
-            DebugLogger() << "HandleInvasion has accounted for "<< ship->TroopCapacity()
+            DebugLogger() << "HandleInvasion has accounted for "<< ship->TroopCapacity(universe)
                           << " troops to invade " << planet->Name()
                           << " and is destroying ship " << ship->ID()
                           << " named " << ship->Name();
@@ -3484,7 +3484,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
             // before you, or be in cahoots with someone who did.
             bool unrestricted = ((fleet->ArrivalStarlane() == system->ID())
                                  && fleet->Obstructive()
-                                 && fleet->CanDamageShips(m_universe.Objects()));
+                                 && fleet->CanDamageShips(m_universe));
             if (fleet->Unowned()) {
                 monsters.push_back(std::move(fleet));
                 if (unrestricted)

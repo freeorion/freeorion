@@ -501,8 +501,8 @@ void serialize(Archive& ar, SpeciesManager& sm, unsigned int const version)
         sm.SetSpeciesHomeworlds(std::move(species_homeworlds));
         sm.SetSpeciesEmpireOpinions(std::move(empire_opinions));
         sm.SetSpeciesSpeciesOpinions(std::move(other_species_opinions));
-        sm.m_species_object_populations = std::move(species_object_populations);
-        sm.m_species_species_ships_destroyed = std::move(species_ships_destroyed);
+        sm.SetSpeciesObjectPopulations(std::move(species_object_populations));
+        sm.SetSpeciesShipsDestroyed(std::move(species_ships_destroyed));
     }
 }
 

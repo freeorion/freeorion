@@ -480,27 +480,30 @@ namespace {
             if (m_empire_id == ALL_EMPIRES)
                 return;
 
-            const auto& destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(m_empire_id);
+            const Universe& universe = GetUniverse();
+            const SpeciesManager& sm = GetSpeciesManager();
+
+            const auto& destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(m_empire_id);
             for (auto& ship : Objects().all<Ship>()) {
                 if (!ship->OwnedBy(m_empire_id) || destroyed_objects.count(ship->ID()))
                     continue;
                 m_values[FLEET_DETAIL_SHIP_COUNT]++;
 
-                if (ship->IsArmed())
+                if (ship->IsArmed(universe))
                     m_values[FLEET_DETAIL_ARMED_COUNT]++;
                 else
                     m_values[FLEET_DETAIL_UNARMED_COUNT]++;
 
-                if (ship->CanColonize())
+                if (ship->CanColonize(universe, sm))
                     m_values[FLEET_DETAIL_COLONY_COUNT]++;
 
-                if (ship->HasTroops())
+                if (ship->HasTroops(universe))
                     m_values[FLEET_DETAIL_TROOP_COUNT]++;
 
-                if (ship->HasFighters())
+                if (ship->HasFighters(universe))
                     m_values[FLEET_DETAIL_CARRIER_COUNT]++;
 
-                const ShipDesign* design = ship->Design();
+                const ShipDesign* design = universe.GetShipDesign(ship->DesignID());
                 if (!design)
                     continue;
                 m_ship_design_counts[design->ID()]++;
@@ -4558,7 +4561,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     const Empire* empire = GetEmpire(fleet->Owner());
     if (empire)
         line_colour = empire->Color();
-    else if (fleet->Unowned() && fleet->HasMonsters(Objects()))
+    else if (fleet->Unowned() && fleet->HasMonsters(GetUniverse()))
         line_colour = GG::CLR_RED;
 
     const ScriptingContext context;

@@ -711,13 +711,14 @@ namespace {
             auto& row = *it;
             QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row.get()) : nullptr;
 
+            const Universe& u = GetUniverse();
+
             int remaining = 0;
             bool location_passes = true;
             if (queue_row) {
                 ProductionQueue::Element elem = queue_row->elem;
                 remaining = elem.remaining;
-                ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(),
-                                         GetSpeciesManager(), GetSupplyManager()};
+                ScriptingContext context{u, Empires()};
                 location_passes = elem.item.EnqueueConditionPassedAt(elem.location, context);
             }
 
@@ -735,10 +736,10 @@ namespace {
 
             if (build_type == BuildType::BT_SHIP) {
                 // for ships, add a set rally point command
-                if (auto system = Objects().get<System>(SidePanel::SystemID())) {
+                if (auto system = u.Objects().get<System>(SidePanel::SystemID())) {
                     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM"))
-                                                              % system->PublicName(empire_id, Objects()));
+                                                              % system->PublicName(empire_id, u));
                     popup->AddMenuItem(GG::MenuItem(std::move(rally_prompt), disabled, false, rally_to_action));
                 }
             }
@@ -771,7 +772,7 @@ namespace {
                 item_name = queue_row->elem.item.name;
                 break;
             case BuildType::BT_SHIP:
-                item_name = GetUniverse().GetShipDesign(queue_row->elem.item.design_id)->Name(false);
+                item_name = u.GetShipDesign(queue_row->elem.item.design_id)->Name(false);
                 break;
             default:
                 break;

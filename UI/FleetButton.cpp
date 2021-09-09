@@ -89,7 +89,12 @@ void FleetButton::CompleteConstruction() {
 }
 
 void FleetButton::Refresh(SizeType size_type) {
-    auto fleets_shared = Objects().find<Fleet>(m_fleets);
+    const Universe& u = GetUniverse();
+    const ObjectMap& o = u.Objects();
+    const EmpireManager& e = Empires();
+    ScriptingContext context{u, e};
+
+    auto fleets_shared = o.find<Fleet>(m_fleets);
     std::vector<const Fleet*> fleets;
     fleets.reserve(fleets_shared.size());
     std::transform(fleets_shared.begin(), fleets_shared.end(), std::back_inserter(fleets),
@@ -120,8 +125,8 @@ void FleetButton::Refresh(SizeType size_type) {
         bool monsters = true;
         // find if any ship in fleets in button is not a monster
         for (const auto& fleet : fleets) {
-            for (const auto& ship : Objects().find<Ship>(fleet->ShipIDs())) {
-                if (!ship->IsMonster()) {
+            for (const auto& ship : o.find<Ship>(fleet->ShipIDs())) {
+                if (!ship->IsMonster(u)) {
                     monsters = false;
                     break;
                 }
@@ -133,7 +138,7 @@ void FleetButton::Refresh(SizeType size_type) {
 
     } else {
         // single empire owner
-        const Empire* empire = GetEmpire(owner_id);
+        auto empire = e.GetEmpire(owner_id);
         SetColor(empire ? empire->Color() : GG::CLR_GRAY);
     }
 
@@ -176,7 +181,6 @@ void FleetButton::Refresh(SizeType size_type) {
     for (const auto& fleet : fleets) {
         if (fleet) {
             num_ships += fleet->NumShips();
-            ScriptingContext context;
             if (!m_fleet_blockaded && fleet->Blockaded(context))
                 m_fleet_blockaded = true;
         }
@@ -436,15 +440,15 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(
     bool hasMonsters = false;
     bool canDamageShips = false;
 
-    for (auto* fleet : fleets) {
+    for (const auto* fleet : fleets) {
         if (!fleet)
             continue;
-
-        hasColonyShips  = hasColonyShips  || fleet->HasColonyShips(Objects());
-        hasOutpostShips = hasOutpostShips || fleet->HasOutpostShips(Objects());
-        hasTroopShips   = hasTroopShips   || fleet->HasTroopShips(Objects());
-        hasMonsters     = hasMonsters     || fleet->HasMonsters(Objects());
-        canDamageShips   = canDamageShips   || fleet->CanDamageShips(Objects());
+        const Universe& u = GetUniverse();
+        hasColonyShips  = hasColonyShips  || fleet->HasColonyShips(u);
+        hasOutpostShips = hasOutpostShips || fleet->HasOutpostShips(u);
+        hasTroopShips   = hasTroopShips   || fleet->HasTroopShips(u);
+        hasMonsters     = hasMonsters     || fleet->HasMonsters(u);
+        canDamageShips  = canDamageShips  || fleet->CanDamageShips(u);
     }
 
     // get file name main part depending on type of fleet

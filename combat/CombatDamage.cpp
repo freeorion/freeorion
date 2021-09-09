@@ -42,11 +42,11 @@ namespace {
         if (!ship)
             return retval;
 
-        const ShipDesign* design = ship->Design();
+        const ShipDesign* design = context.ContextUniverse().GetShipDesign(ship->DesignID());
         if (!design)
             return retval;
 
-        const std::vector<std::string>& parts = design->Parts();
+        const auto& parts = design->Parts();
         if (parts.empty())
             return retval;
 

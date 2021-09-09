@@ -1520,7 +1520,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     for (const auto& ship : context.ContextObjects().all<Ship>()) {
         if (destroyed_object_ids.count(ship->ID()))
             continue;
-        const ShipDesign* ship_design = ship->Design();
+        const ShipDesign* ship_design = context.ContextUniverse().GetShipDesign(ship->DesignID());
         if (!ship_design)
             continue;
         const ShipHull* ship_hull = GetShipHull(ship_design->Hull());
@@ -1823,7 +1823,7 @@ void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
                 target_initial_vis = neov_it->second;
 
             // evaluate valuerefs and and store visibility of object
-            for (auto& source_ref_entry : object_entry.second) {
+            for (auto& source_ref_entry : object_entry.second) { // TODO: [[]]
                 // set up context for executing ValueRef to determine visibility to set
                 const ScriptingContext context{*this, empires, m_objects->get(source_ref_entry.first),
                                                target, target_initial_vis};

@@ -65,7 +65,7 @@ public:
     [[nodiscard]] bool                    Contains(int object_id) const override;
     [[nodiscard]] bool                    ContainedBy(int object_id) const override;
 
-    [[nodiscard]] const std::string&      PublicName(int empire_id, const ObjectMap& objects) const override;
+    [[nodiscard]] const std::string&      PublicName(int empire_id, const Universe& universe) const override;
 
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
@@ -94,7 +94,7 @@ public:
     [[nodiscard]] std::pair<int, int>     ETA(const ScriptingContext& context) const;         ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
     [[nodiscard]] std::pair<int, int>     ETA(const std::list<MovePathNode>& move_path) const;///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
 
-    [[nodiscard]] float   Damage(const ObjectMap& objects) const;                     ///< Returns total amount of damage this fleet has, which is the sum of the ships' damage
+    [[nodiscard]] float   Damage(const Universe& universe) const;                     ///< Returns total amount of damage this fleet has, which is the sum of the ships' damage
     [[nodiscard]] float   Structure(const ObjectMap& objects) const;                  ///< Returns total amount of structure this fleet has, which is the sum of the ships' structure
     [[nodiscard]] float   Shields(const ObjectMap& objects) const;                    ///< Returns total amount of shields this fleet has, which is the sum of the ships' shields
     [[nodiscard]] float   Fuel(const ObjectMap& objects) const;                       ///< Returns effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
@@ -107,16 +107,16 @@ public:
     [[nodiscard]] bool    BlockadedAtSystem(int start_system_id, int dest_system_id, const ScriptingContext& context) const; ///< returns true iff this fleet's movement would be blockaded at system.
     [[nodiscard]] float   Speed(const ObjectMap& objects) const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
     [[nodiscard]] bool    CanChangeDirectionEnRoute() const   { return false; }       ///< Returns true iff this fleet can change its direction while in interstellar space.
-    [[nodiscard]] bool    CanDamageShips(const ObjectMap& objects, float target_shields = 0.0f) const;              ///< Returns true if there is at least one ship in the fleet which is currently able to damage a ship using direct weapons or fighters
-    [[nodiscard]] bool    CanDestroyFighters(const ObjectMap& objects) const;              ///< Returns true if there is at least one ship in the fleet which is currently able to destroy fighters using direct weapons or fighters
-    [[nodiscard]] bool    HasMonsters(const ObjectMap& objects) const;                ///< returns true iff this fleet contains monster ships.
-    [[nodiscard]] bool    HasArmedShips(const ObjectMap& objects) const;              ///< Returns true if there is at least one armed ship in the fleet, meaning it has direct fire weapons or fighters that can be launched and that do damage
-    [[nodiscard]] bool    HasFighterShips(const ObjectMap& objects) const;            ///< Returns true if there is at least one ship with fighters in the fleet.
-    [[nodiscard]] bool    HasColonyShips(const ObjectMap& objects) const;             ///< Returns true if there is at least one colony ship with nonzero capacity in the fleet.
-    [[nodiscard]] bool    HasOutpostShips(const ObjectMap& objects) const;            ///< Returns true if there is at least one colony ship with zero capacity in the fleet
-    [[nodiscard]] bool    HasTroopShips(const ObjectMap& objects) const;              ///< Returns true if there is at least one troop ship in the fleet.
-    [[nodiscard]] bool    HasShipsOrderedScrapped(const ObjectMap& objects) const;    ///< Returns true if there is at least one ship ordered scrapped in the fleet.
-    [[nodiscard]] bool    HasShipsWithoutScrapOrders(const ObjectMap& objects) const; ///< Returns true if there is at least one ship without any scrap orders in the fleet.
+    [[nodiscard]] bool    CanDamageShips(const Universe& universe, float target_shields = 0.0f) const;              ///< Returns true if there is at least one ship in the fleet which is currently able to damage a ship using direct weapons or fighters
+    [[nodiscard]] bool    CanDestroyFighters(const Universe& universe) const;              ///< Returns true if there is at least one ship in the fleet which is currently able to destroy fighters using direct weapons or fighters
+    [[nodiscard]] bool    HasMonsters(const Universe& universe) const;                ///< returns true iff this fleet contains monster ships.
+    [[nodiscard]] bool    HasArmedShips(const Universe& universe) const;              ///< Returns true if there is at least one armed ship in the fleet, meaning it has direct fire weapons or fighters that can be launched and that do damage
+    [[nodiscard]] bool    HasFighterShips(const Universe& universe) const;            ///< Returns true if there is at least one ship with fighters in the fleet.
+    [[nodiscard]] bool    HasColonyShips(const Universe& universe) const;             ///< Returns true if there is at least one colony ship with nonzero capacity in the fleet.
+    [[nodiscard]] bool    HasOutpostShips(const Universe& universe) const;            ///< Returns true if there is at least one colony ship with zero capacity in the fleet
+    [[nodiscard]] bool    HasTroopShips(const Universe& universe) const;              ///< Returns true if there is at least one troop ship in the fleet.
+    [[nodiscard]] bool    HasShipsOrderedScrapped(const Universe& universe) const;    ///< Returns true if there is at least one ship ordered scrapped in the fleet.
+    [[nodiscard]] bool    HasShipsWithoutScrapOrders(const Universe& universe) const; ///< Returns true if there is at least one ship without any scrap orders in the fleet.
     [[nodiscard]] int     NumShips() const            { return m_ships.size(); }      ///< Returns number of ships in fleet.
     [[nodiscard]] bool    Empty() const               { return m_ships.empty(); }     ///< Returns true if fleet contains no ships, false otherwise.
     [[nodiscard]] float   ResourceOutput(ResourceType type, const ObjectMap& objects) const;
@@ -167,7 +167,7 @@ public:
     void SetMoveOrderedTurn(int turn);                      ///< marks fleet to as being ordered to move on indicated turn
 
     /* returns a name for a fleet based on its ships*/
-    [[nodiscard]] std::string GenerateFleetName(const ObjectMap& objects);
+    [[nodiscard]] std::string GenerateFleetName(const Universe& u, const SpeciesManager& sm);
 
     static constexpr int ETA_NEVER = (1 << 30);             ///< returned by ETA when fleet can't reach destination due to lack of route or inability to move
     static constexpr int ETA_UNKNOWN = (1 << 30) - 1;       ///< returned when ETA can't be determined
