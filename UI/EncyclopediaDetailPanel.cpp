@@ -3007,9 +3007,7 @@ namespace {
     }
 
     const std::vector<std::string>& PlanetEnvFilenames(PlanetType planet_type) {
-        static std::unordered_map<PlanetType, std::vector<std::string>> filenames_by_type {
-            std::make_pair(PlanetType::INVALID_PLANET_TYPE, std::vector<std::string>())
-        };
+        static std::unordered_map<PlanetType, std::vector<std::string>> filenames_by_type{{PlanetType::INVALID_PLANET_TYPE, {}}};
         std::string planet_type_str = boost::lexical_cast<std::string>(planet_type);
         boost::algorithm::to_lower(planet_type_str);
 
@@ -3019,12 +3017,15 @@ namespace {
             auto pe_type_func = [planet_type_str, pe_path](const boost::filesystem::path& path) {
                 return IsExistingFile(path)
                     && (pe_path == path.parent_path())
-                    && boost::algorithm::starts_with(path.filename().string(), planet_type_str);
+                    && boost::algorithm::starts_with(PathToString(path.filename()), planet_type_str);
             };
 
             // retain only the filenames of each path
             for (const auto& file_path : ListDir(pe_path, pe_type_func))
-                filenames_by_type[planet_type].emplace_back(PathToString(file_path.filename()));
+                filenames_by_type[planet_type].push_back(PathToString(file_path.filename()));
+
+            for (const auto& filename : filenames_by_type[planet_type])
+                DebugLogger() << "PlanetEnvFilename for " << boost::lexical_cast<std::string>(planet_type) <<" : " << filename;
         }
 
         if (filenames_by_type.count(planet_type))
@@ -3060,57 +3061,61 @@ namespace {
             detailed_description.append(env_img_tag);
         }
 
-        name = planet->PublicName(planet_id, universe);
+        try {
+            name = planet->PublicName(planet_id, universe);
 
-        auto species_names = ReportedSpeciesForPlanet(*planet);
-        auto target_population_species = SpeciesEnvByTargetPop(planet, species_names);
-        auto species_suitability_column1 = SpeciesSuitabilityColumn1(species_names);
+            auto species_names = ReportedSpeciesForPlanet(*planet);
+            auto target_population_species = SpeciesEnvByTargetPop(planet, species_names);
+            auto species_suitability_column1 = SpeciesSuitabilityColumn1(species_names);
 
-        bool positive_header_placed = false;
-        bool negative_header_placed = false;
+            bool positive_header_placed = false;
+            bool negative_header_placed = false;
 
-        for (auto it = target_population_species.rbegin(); it != target_population_species.rend(); ++it) {
-            auto species_name_column1_it = species_suitability_column1.find(it->second.first);
-            if (species_name_column1_it == species_suitability_column1.end())
-                continue;
+            for (auto it = target_population_species.rbegin(); it != target_population_species.rend(); ++it) {
+                auto species_name_column1_it = species_suitability_column1.find(it->second.first);
+                if (species_name_column1_it == species_suitability_column1.end())
+                    continue;
 
-            if (it->first > 0) {
-                if (!positive_header_placed) {
-                    auto pos_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER"))
-                                          % planet->PublicName(planet_id, universe));
-                    TraceLogger() << "Suitability report positive header \"" << pos_header << "\"";
-                    detailed_description.append(pos_header);
-                    positive_header_placed = true;
+                if (it->first > 0) {
+                    if (!positive_header_placed) {
+                        auto pos_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER"))
+                                              % planet->PublicName(planet_id, universe));
+                        TraceLogger() << "Suitability report positive header \"" << pos_header << "\"";
+                        detailed_description.append(pos_header);
+                        positive_header_placed = true;
+                    }
+
+                    auto pos_row = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
+                        % species_name_column1_it->second
+                        % UserString(boost::lexical_cast<std::string>(it->second.second))
+                        % (GG::RgbaTag(ClientUI::StatIncrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
+                    TraceLogger() << "Suitability report positive row \"" << pos_row << "\"";
+                    detailed_description.append(pos_row);
+
+                } else if (it->first <= 0) {
+                    if (!negative_header_placed) {
+                        if (positive_header_placed)
+                            detailed_description += "\n\n";
+
+                        auto neg_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_NEGATIVE_HEADER"))
+                                              % planet->PublicName(planet_id, universe));
+                        TraceLogger() << "Suitability report regative header \"" << neg_header << "\"";
+                        detailed_description.append(neg_header);
+                        negative_header_placed = true;
+                    }
+
+                    auto neg_row = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
+                        % species_name_column1_it->second
+                        % UserString(boost::lexical_cast<std::string>(it->second.second))
+                        % (GG::RgbaTag(ClientUI::StatDecrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
+                    TraceLogger() << "Suitability report negative row \"" << neg_row << "\"";
+                    detailed_description.append(neg_row);
                 }
 
-                auto pos_row = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
-                    % species_name_column1_it->second
-                    % UserString(boost::lexical_cast<std::string>(it->second.second))
-                    % (GG::RgbaTag(ClientUI::StatIncrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
-                TraceLogger() << "Suitability report positive row \"" << pos_row << "\"";
-                detailed_description.append(pos_row);
-
-            } else if (it->first <= 0) {
-                if (!negative_header_placed) {
-                    if (positive_header_placed)
-                        detailed_description += "\n\n";
-
-                    auto neg_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_NEGATIVE_HEADER"))
-                                          % planet->PublicName(planet_id, universe));
-                    TraceLogger() << "Suitability report regative header \"" << neg_header << "\"";
-                    detailed_description.append(neg_header);
-                    negative_header_placed = true;
-                }
-
-                auto neg_row = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
-                    % species_name_column1_it->second
-                    % UserString(boost::lexical_cast<std::string>(it->second.second))
-                    % (GG::RgbaTag(ClientUI::StatDecrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
-                TraceLogger() << "Suitability report negative row \"" << neg_row << "\"";
-                detailed_description.append(neg_row);
+                detailed_description += "\n";
             }
-
-            detailed_description += "\n";
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception generating planet suitability info: " << e.what();
         }
 
         if (planet->Type() < PlanetType::PT_ASTEROIDS && planet->Type() > PlanetType::INVALID_PLANET_TYPE) {
