@@ -1250,8 +1250,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
 
     auto empire = context.GetEmpire(this->Owner());
     if (empire) {
-        auto unobstructed_systems = empire->SupplyUnobstructedSystems();
-        if (unobstructed_systems.count(start_system_id))
+        if (empire->SupplyUnobstructedSystems().count(start_system_id))
             return false;
         if (empire->PreservedLaneTravel(start_system_id, dest_system_id)) {
             return false;
