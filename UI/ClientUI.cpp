@@ -75,8 +75,8 @@ int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>
 GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<GG::Clr>("ui.font.color"); }
 GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<GG::Clr>("ui.font.link.color"); }
 GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<GG::Clr>("ui.font.link.rollover.color"); }
-GG::Clr     ClientUI::DefaultTooltipColor()        { return GetOptionsDB().Get<GG::Clr>("ui.font.tooltip.color"); }
-GG::Clr     ClientUI::RolloverTooltipColor()       { return GetOptionsDB().Get<GG::Clr>("ui.font.tooltip.rollover.color"); }
+GG::Clr     ClientUI::DefaultTooltipColor()     { return GetOptionsDB().Get<GG::Clr>("ui.font.tooltip.color"); }
+GG::Clr     ClientUI::RolloverTooltipColor()    { return GetOptionsDB().Get<GG::Clr>("ui.font.tooltip.rollover.color"); }
 
 
 GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<GG::Clr>("ui.window.background.color"); }
