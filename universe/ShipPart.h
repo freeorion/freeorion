@@ -154,7 +154,6 @@ private:
     float           m_capacity = 0.0f;
     //! Damage for a hangar bay, shots per turn for a weapon, etc.
     float           m_secondary_stat = 0.0f;
-    bool            m_producible = false;
 
     std::unique_ptr<ValueRef::ValueRef<double>>         m_production_cost;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
@@ -166,10 +165,12 @@ private:
     std::set<std::string>                               m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_icon;
-    bool                                                m_add_standard_capacity_effect = false;
     std::unique_ptr<Condition::Condition>               m_combat_targets;
     std::unique_ptr<ValueRef::ValueRef<double>>         m_total_fighter_damage;
     std::unique_ptr<ValueRef::ValueRef<double>>         m_total_ship_damage;
+    bool                                                m_add_standard_capacity_effect = false;
+    bool                                                m_producible = false;
+
 };
 
 

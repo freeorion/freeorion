@@ -25,7 +25,6 @@ private:
     GG::GL2DVertexBuffer        m_buffer;
     std::shared_ptr<GG::Label>  m_title_text;
 
-    bool                        m_show_points = false;
     std::shared_ptr<GG::Label>  m_used_points_label;
     std::shared_ptr<GG::Label>  m_used_points;
     std::shared_ptr<GG::Label>  m_used_points_P_label;
@@ -35,7 +34,6 @@ private:
     std::shared_ptr<GG::Label>  m_target_points_label;
     std::shared_ptr<GG::Label>  m_target_points;
     std::shared_ptr<GG::Label>  m_target_points_P_label;
-    bool                        m_show_stockpile = false;
     std::shared_ptr<GG::Label>  m_stockpile_points_label;
     std::shared_ptr<GG::Label>  m_stockpile_points;
     std::shared_ptr<GG::Label>  m_stockpile_points_P_label;
@@ -46,6 +44,8 @@ private:
     std::shared_ptr<GG::Label>  m_stockpile_change_points;
     std::shared_ptr<GG::Label>  m_stockpile_change_points_P_label;
     GG::Pt                      m_offset;
+    bool                        m_show_points = false;
+    bool                        m_show_stockpile = false;
     bool                        m_show_stockpile_limit = false;
 };
 

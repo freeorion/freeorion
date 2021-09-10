@@ -29,11 +29,11 @@ struct FO_COMMON_API ParsedShipDesign {
 
     std::string                 m_hull;
     std::vector<std::string>    m_parts;
-    bool                        m_is_monster = false;
 
     std::string                 m_icon;
     std::string                 m_3D_model;
 
+    bool                        m_is_monster = false;
     bool                        m_name_desc_in_stringtable = false;
 };
 
@@ -197,19 +197,12 @@ private:
 
     std::string                 m_hull;
     std::vector<std::string>    m_parts;
-    bool                        m_is_monster = false;
 
     std::string                 m_icon;
     std::string                 m_3D_model;
 
-    bool                        m_name_desc_in_stringtable = false;
-
     // Note that these are fine to compute on demand and cache here -- it is
     // not necessary to serialize them.
-    bool    m_has_direct_weapons = false;
-    bool    m_has_fighters = false;
-    bool    m_is_armed = false;
-    bool    m_can_bombard = false;
     float   m_detection = 0.0f;
     float   m_colony_capacity = 0.0f;
     float   m_troop_capacity = 0.0f;
@@ -221,10 +214,17 @@ private:
     float   m_research_generation = 0.0f;
     float   m_industry_generation = 0.0f;
     float   m_influence_generation = 0.0f;
-    bool    m_is_production_location = false;
     std::map<std::string, int>      m_num_ship_parts;
     std::map<ShipPartClass, int>    m_num_part_classes;
+    bool    m_is_production_location = false;
     bool    m_producible = false;
+    bool    m_has_direct_weapons = false;
+    bool    m_has_fighters = false;
+    bool    m_is_armed = false;
+    bool    m_can_bombard = false;
+
+    bool    m_is_monster = false;
+    bool    m_name_desc_in_stringtable = false;
 
     template <typename Archive>
     friend void serialize(Archive&, ShipDesign&, unsigned int const);
