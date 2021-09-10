@@ -1570,7 +1570,7 @@ void GGHumanClientApp::DisconnectedFromServer() {
 }
 
 GGHumanClientApp* GGHumanClientApp::GetApp()
-{ return dynamic_cast<GGHumanClientApp*>(GG::GUI::GetGUI()); }
+{ return static_cast<GGHumanClientApp*>(GG::GUI::GetGUI()); }
 
 void GGHumanClientApp::Initialize()
 {}
