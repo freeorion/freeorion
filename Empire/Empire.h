@@ -489,16 +489,12 @@ public:
 private:
     void Init();
 
-    int         m_id = ALL_EMPIRES;         ///< Empire's unique numeric id
-    std::string m_name;                     ///< Empire's name
-    std::string m_player_name;              ///< Empire's Player's name
-
-    /** Empire's Player's authentication flag. Set if only player with empire's player's name
-        should play this empire. */
-    bool        m_authenticated = false;
+    int         m_id = ALL_EMPIRES;                ///< Empire's unique numeric id
+    int         m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
+    std::string m_name;                            ///< Empire's name
+    std::string m_player_name;                     ///< Empire's Player's name
 
     EmpireColor m_color = {{128, 255, 255, 255}};
-    int         m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
 
     static constexpr int INVALID_SLOT_INDEX = -1;
 
@@ -526,12 +522,6 @@ private:
     std::map<std::string, int>      m_policy_adoption_current_duration; ///< how many turns each currently-adopted policy has been adopted since it was last adopted. somewhat redundant with adoption_turn in AdoptionInfo, but seems necessary to avoid off-by-one issues between client and server
     std::set<std::string>           m_available_policies;               ///< names of unlocked policies
 
-
-    /** The source id is the id of any object owned by the empire.  It is
-        mutable so that Source() can be const and still cache its result. */
-    mutable int                     m_source_id = INVALID_OBJECT_ID;
-
-    bool                            m_eliminated = false;       ///< Whether the empire has lost
     std::set<std::string>           m_victories;                ///< The ways that the empire has won, if any
 
     std::set<std::string>           m_newly_researched_techs;   ///< names of researched but not yet effective technologies, and turns on which they were acquired.
@@ -570,7 +560,6 @@ private:
 
     std::map<ShipPartClass, int>    m_ship_part_class_owned;    ///< how many ship parts are currently owned, indexed by ShipPartClass
     std::map<std::string, int>      m_species_colonies_owned;   ///< how many colonies of each species does this empire currently own?
-    int                             m_outposts_owned = 0;       ///< how many uncolonized outposts does this empire currently own?
     std::map<std::string, int>      m_building_types_owned;     ///< how many buildings does this empire currently own?
 
     std::map<int, int>              m_ship_designs_in_production;   ///< how many ships of each design has this empire in active production in its production queue
@@ -599,8 +588,17 @@ private:
     std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
     std::map<int, std::set<int>>    m_preserved_system_exit_lanes;  ///< for each system known to this empire, the set of exit lanes preserved for fleet travel even if otherwise blockaded
     std::map<int, std::set<int>>    m_pending_system_exit_lanes;    ///< pending updates to m_preserved_system_exit_lanes
-    bool                            m_ready = false;                ///< readiness status of empire
     int                             m_auto_turn_count = 0;          ///< auto-turn counter value
+
+    /** The source id is the id of any object owned by the empire.  It is
+        mutable so that Source() can be const and still cache its result. */
+    mutable int                     m_source_id = INVALID_OBJECT_ID;
+
+    int                             m_outposts_owned = 0;       ///< how many uncolonized outposts does this empire currently own?
+
+    bool                            m_ready = false;            ///< readiness status of empire
+    bool                            m_authenticated = false;    ///< Empire's Player's authentication flag. Set if only player with empire's player's name should play this empire.
+    bool                            m_eliminated = false;       ///< Whether the empire has lost
 
     friend class boost::serialization::access;
     Empire();
