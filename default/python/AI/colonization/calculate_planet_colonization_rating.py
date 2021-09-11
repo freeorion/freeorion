@@ -194,7 +194,7 @@ def _calculate_planet_colonization_rating(
 
         if tech_is_complete("PRO_SOL_ORB_GEN") or "PRO_SOL_ORB_GEN" in empire_research_list[:5]:
             if system.starType in [fo.starType.blue, fo.starType.white]:
-                if has_claimed_star(fo.starType.blue, fo.starType.white):
+                if not has_claimed_star(fo.starType.blue, fo.starType.white):
                     star_bonus += 20 * discount_multiplier
                     detail.append("PRO_SOL_ORB_GEN BW %.1f" % (20 * discount_multiplier))
                 elif not already_got_this_one:
@@ -208,7 +208,7 @@ def _calculate_planet_colonization_rating(
                     # starBonus += 5  # TODO: how much?
                     # detail.append("PRO_SOL_ORB_GEN BW LockingDownSystem %.1f"%5)
             if system.starType in [fo.starType.yellow, fo.starType.orange]:
-                if has_claimed_star(fo.starType.blue, fo.starType.white, fo.starType.yellow, fo.starType.orange):
+                if not has_claimed_star(fo.starType.blue, fo.starType.white, fo.starType.yellow, fo.starType.orange):
                     star_bonus += 10 * discount_multiplier
                     detail.append("PRO_SOL_ORB_GEN YO %.1f" % (10 * discount_multiplier))
                 else:
@@ -227,20 +227,20 @@ def _calculate_planet_colonization_rating(
             if system.starType == fo.starType.blackHole:
                 # pretty rare planets, good for generator
                 this_val = 0.5 * max(population_with_industry_focus(), 20) * discount_multiplier
-                if has_claimed_star(fo.starType.blackHole):
+                if not has_claimed_star(fo.starType.blackHole):
                     star_bonus += this_val
                     detail.append("PRO_SINGULAR_GEN %.1f" % this_val)
                 elif not is_system_star_claimed(system):
                     # still has extra value as an alternate location for generators & for blocking enemies generators
                     star_bonus += this_val * backup_factor
                     detail.append("PRO_SINGULAR_GEN Backup %.1f" % (this_val * backup_factor))
-            elif system.starType == fo.starType.red and has_claimed_star(fo.starType.blackHole):
+            elif system.starType == fo.starType.red and not has_claimed_star(fo.starType.blackHole):
                 rfactor = (1.0 + count_claimed_stars(fo.starType.red)) ** -2
                 star_bonus += 40 * discount_multiplier * backup_factor * rfactor  # can be used for artif'l black hole
                 detail.append("Red Star for Art Black Hole %.1f" % (40 * discount_multiplier * backup_factor * rfactor))
         if tech_is_complete("PRO_NEUTRONIUM_EXTRACTION") or "PRO_NEUTRONIUM_EXTRACTION" in empire_research_list[:8]:
             if system.starType in [fo.starType.neutron]:
-                if has_claimed_star(fo.starType.neutron):
+                if not has_claimed_star(fo.starType.neutron):
                     star_bonus += 80 * discount_multiplier  # pretty rare planets, good for armor
                     detail.append("PRO_NEUTRONIUM_EXTRACTION %.1f" % (80 * discount_multiplier))
                 else:
@@ -251,7 +251,7 @@ def _calculate_planet_colonization_rating(
             # TODO: base this on pilot val, and also consider red stars
             if system.starType in [fo.starType.blackHole, fo.starType.blue]:
                 init_val = 100 * discount_multiplier * (pilot_val or 1)
-                if has_claimed_star(fo.starType.blackHole, fo.starType.blue):
+                if not has_claimed_star(fo.starType.blackHole, fo.starType.blue):
                     colony_star_bonus += init_val  # pretty rare planets, good for energy shipyards
                     detail.append("SHP_ENRG_BOUND_MAN %.1f" % init_val)
                 elif not is_system_star_claimed(system):
