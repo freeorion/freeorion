@@ -3,28 +3,36 @@ Policy
     description = "PLC_METROPOLES_DESC"
     short_description = "PLC_METROPOLES_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
-    adoptioncost = 1.0 * floor(5 + 0.25 * Statistic Sum value = LocalCandidate.Population
-                                          condition = And [ Planet OwnedBy empire = Source.Owner ])
+    adoptioncost = 1.0 * floor(15 + 0.25 * Statistic Sum value = LocalCandidate.Population
+                                           condition = And [ Planet OwnedBy empire = Source.Owner ])
     exclusions = [ "PLC_CONFEDERATION" "PLC_COLONIZATION" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
-        // TODO: limit of planets based on number of regional admins?
-
-        // boosts to largest-population planets...
+        // Boost largest-population planets, provided they have enough population and stability.
+        // Metropoles need some "umland", so no more than 1 in 4 can become a metropole.
+        // Note that to raise a planet to a metropole, you have to reach the minimum stability
+        // while suffering from the non-metropole penalty below.
         EffectsGroup
-            scope = MaximumNumberOf number = (NamedInteger name = "METROPOLES_PLANET_LIMIT" value = 6) sortkey = LocalCandidate.Population condition = And [
+            scope = MaximumNumberOf number = min((NamedInteger name = "METROPOLES_PLANET_LIMIT" value = 6),
+                                                 floor(Statistic Count condition = And [
+                                                           Planet
+                                                           OwnedBy empire = Source.Owner
+                                                           Species
+                                                       ] / (NamedInteger name = "METROPOLES_MIN_PLANETS" value = 4)))
+                                    sortkey = LocalCandidate.Population condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Population low = (NamedReal name = "METROPOLES_MINIMUM_POPULATION" value = 20.0)
+                Happiness low = (NamedReal name = "METROPOLES_MIN_STABILITY" value = 12)
             ]
             effects = [
                 SetTargetIndustry value = Value + Target.Population
                     * (NamedReal name = "METROPOLES_TARGET_INDUSTRY_PERPOP"
-                                 value = 2.0 * [[INDUSTRY_PER_POP]])
+                                 value = [[INDUSTRY_PER_POP]])
                 SetTargetResearch value = Value + Target.Population
                     * (NamedReal name = "METROPOLES_TARGET_RESEARCH_PERPOP"
-                                 value = 2.0 * [[RESEARCH_PER_POP]])
+                                 value = [[RESEARCH_PER_POP]])
                 SetTargetConstruction value = Value
                     + (NamedReal name = "METROPOLES_TARGET_CONSTRUCTION_FLAT" value = 10)
                 SetMaxSupply value = Value
@@ -33,16 +41,23 @@ Policy
                     + (NamedReal name = "METROPOLES_MAX_STOCKPILE_FLAT" value = -2)
             ]
 
-        // reduced stability outside of largest-population planets
+        // reduce stability on all other planets
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Species // excludes non-populated planets
-                Not MaximumNumberOf number = (NamedIntegerLookup name = "METROPOLES_PLANET_LIMIT") sortkey = LocalCandidate.Population condition = And [
+                Not MaximumNumberOf number = min((NamedIntegerLookup name = "METROPOLES_PLANET_LIMIT"),
+                                                 floor(Statistic Count condition = And [
+                                                           Planet
+                                                           OwnedBy empire = Source.Owner
+                                                           Species
+                                                       ] / (NamedIntegerLookup name = "METROPOLES_MIN_PLANETS")))
+                                    sortkey = LocalCandidate.Population condition = And [
                     Planet
                     OwnedBy empire = Source.Owner
                     Population low = (NamedRealLookup name = "METROPOLES_MINIMUM_POPULATION")
+                    Happiness low = (NamedRealLookup name = "METROPOLES_MIN_STABILITY")
                 ]
             ]
             effects =
