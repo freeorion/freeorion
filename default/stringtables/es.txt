@@ -1173,29 +1173,29 @@ Escalado de coste de partes
 #*RULE_STARLANES_EVERYWHERE_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*RULE_HABITABLE_SIZE_TINY
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_TINY
+Hábitats en planetas enanos
 
-#*RULE_HABITABLE_SIZE_SMALL
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_SMALL
+Hábitats en planetas pequeños
 
-#*RULE_HABITABLE_SIZE_MEDIUM
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_MEDIUM
+Hábitats en planetas medianos
 
-#*RULE_HABITABLE_SIZE_LARGE
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_LARGE
+Hábitats en planetas  grandes
 
-#*RULE_HABITABLE_SIZE_HUGE
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_HUGE
+Hábitats en planetas  enormes
 
-#*RULE_HABITABLE_SIZE_ASTEROIDS
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_ASTEROIDS
+Hábitats en asteroides
 
-#*RULE_HABITABLE_SIZE_GASGIANT
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_GASGIANT
+Hábitats en gigantes gaseosos
 
 #*RULE_HABITABLE_SIZE_DESC
-#* <not translated 1970-01-01 01:00:00>
+#*Valor empleado para ajustarse a los cambios de [[METER_POPULATION]] en planetas de este tamaño.
 
 #*RULE_ALLOW_CONCEDE
 #* <not translated 1970-01-01 01:00:00>
@@ -1352,8 +1352,8 @@ Alterna entre enseñar o no la barra de nivel de zoom en el mapa de galaxia.
 OPTIONS_DB_STARLANE_THICKNESS
 Establece el ancho para renderizar las líneas de suministro en pixeles.
 
-#*OPTIONS_DB_STARLANE_CORE
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_STARLANE_CORE
+Multiplicador de grosor para la lineas estelares principales del imperio
 
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
 Alterna entre colorear las líneas estelares con los colores del imperio, si puede intercambiar recursos por ellas.
@@ -1709,8 +1709,8 @@ Establece el tamaño del indicador de selección de flota (relativo al icono de 
 #*OPTIONS_DB_SHOW_FLEET_ETA
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_SHOW_IDS_AFTER_NAMES
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_SHOW_IDS_AFTER_NAMES
+Muestra el id tras el nombre de cada objeto.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Establece el tamaño del indicador de selección de sistema (relativo al icono de sistema.
@@ -1727,8 +1727,8 @@ Establece el retraso de las notificaciones de sugerencia, en ms.
 #*OPTIONS_DB_UI_TOOLTIP_LONG_DELAY
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
+Cuando busque en la pedia, buscar coincidencias en el contenido de los artículos. La búsqueda será más lenta, pero puede otorgar más resultados.
 
 # Section title for options window logging
 #*OPTIONS_DB_UI_LOGGER_THRESHOLDS
@@ -1744,20 +1744,20 @@ Establece el retraso de las notificaciones de sugerencia, en ms.
 #*OPTIONS_DB_UI_LOGGER_PER_PROCESS_GENERAL
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_KEYPRESS_REPEAT_DELAY
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_KEYPRESS_REPEAT_DELAY
+Establece el tiempo que tarda en procesarse una nueva pulsación cuando se mantiene la tecla pulsada.
 
-#*OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL
+Establece el retraso para procesar pulsaciones diferentes de una tecla.
 
-#*OPTIONS_DB_MOUSE_REPEAT_DELAY
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_MOUSE_REPEAT_DELAY
+Establece el tiempo que tarda en procesarse una nueva pulsación cuando se mantiene el click.
 
-#*OPTIONS_DB_MOUSE_REPEAT_INTERVAL
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_MOUSE_REPEAT_INTERVAL
+Establece el tiempo que tarda en procesarse pulsaciones diferentes del ratón.
 
-#*OPTIONS_DB_DISPLAY_TIMESTAMP
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_DISPLAY_TIMESTAMP
+Muestra la marca de tiempo en los mensajes de la ventana de chat.
 
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 Si es cierto, clicks en múltiples botones de flota, abrirán múltiples ventanas al mismo tiempo. Por otra parte, abrir una ventana de flota cerraría cualquier ventana de flota abierta.
@@ -1765,14 +1765,14 @@ Si es cierto, clicks en múltiples botones de flota, abrirán múltiples ventana
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Cierra ventanas abiertas como las ventanas de flota y el panel lateral de vista de sistema cuando haces click derecho en el mapa principal.
 
-#*OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
+Habilita/Deshabilita la recolocación automática de ventanas cuando el tamaño de la ventana de juego cambia.
 
-#*OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
+Añadir automáticamente todos los diseños de nave guardados por el usuario a los diseños conocidos del imperio del jugador.
 
-#*OPTIONS_DB_ADD_DEFAULT_DESIGNS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_ADD_DEFAULT_DESIGNS
+Añadir automáticamente todos los diseños de nave por defecto a los diseños conocidos del imperio del jugador.
 
 #*OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 #* <not translated 1970-01-01 01:00:00>
@@ -1789,66 +1789,66 @@ Establece el tamaño de los planetas mas pequeños en el panel lateral.
 OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
 Establece si se muestran renderizados o no los planetas, asteroides en el panel lateral.
 
-#*OPTIONS_DB_UI_QUEUE_WIDTH
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_QUEUE_WIDTH
+Establece el ancho de cola en las ventanas de producción e investigación.
 
 #*OPTIONS_DB_UI_PROD_QUEUE_LOCATION
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_GAMESETUP_SEED
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_SEED
+'''Semilla usada para generar la galaxia aleatoreamente.
+Las galaxias generadas con las mismas opciones y la misma semilla serán idénticas.'''
 
 #*OPTIONS_DB_GAMESETUP_UID
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_GAMESETUP_STARS
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_STARS
+'''Número aproximado de sistemas en la galaxia generada.
 
-#*OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+Para el balanceo de partida recomendado, use 15-30 sistemas por imperio.
 
-#*OPTIONS_DB_GAMESETUP_GALAXY_AGE
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+Números muy grandes de sistemas pueden ralentizar FreeOrion, especialmente en partidas ya avanzadas.'''
 
-#*OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
+'''Forma de la galaxia.
 
-#*OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+Distintas formas darán lugar a distintos retos tácticos y estratégicos.'''
 
-#*OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_GALAXY_AGE
+'''Edad de la galaxia.
 
-#*OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+Las galaxias jóvenes tendrán más estrellas brillantes, mientras que las más viejas tendrán más agujeros negros y estrellas de neutrones.'''
 
-#*OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_PLANET_DENSITY
+'''Número de planetas por sistema en la galaxia.
+'''
 
-#*OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
+'''Número de lineas estelares en la galaxia.
+
+Cuando se asigna valor Bajo, la mayoría de sistemas tendrán una o dos lineas estelares. Cuando se asigna valor Alto, la mayoría de sistemas tendrán líneas estelares conectándolos con la mayoría de sistemas en un radio de 120 uu.'''
+
+OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
+'''Proporción de planeras y sistemas que contienen Sucesos Especiales.
+
+Algunos Sucesos Especiales están protegidas por Guardianes dejados atrás por es especies Precursoras. Sólo asignar Ninguna a la Frecuencia de Monstruos evitará que éstos aparezcan si el juego contiene Sucesos Especiales.
+'''
+
+OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
+'''Frecuencia de monstruos errantes en la galaxia.
+
+Esta opción afecta a los monstruos errantes pero no a los Guardiantes generados por las Sucesos Especiales, sin embargo, asignar un valor Ninguno eliminará a los Guardianes también.'''
+
+OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
+'''Frecuencia de nativos en la galaxia.
+
+Algunos nativos pueden ser tecnológicamente avanzados y pueden crear naves guardían para proteger su mundo de origen, estos aparecerán incluso si la frecuencia de Monstruos está asignada a valor Ninguna.
+'''
+
+OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
+'''Nivel de agresividad máximo de la IA oponente.
+
+Muchas IAs estarán al nivel establecido, con algunas al nivel inferior. Todas deberían mandar saludos y determinar su nivel en la ventana de mensajes durante el primer turno.'''
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 El nombre usado en juego por tu imperio.
@@ -1859,17 +1859,17 @@ El nombre usado en el juego para representar al jugador en el modo solitario.
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
 El color usado en juego por tu imperio.
 
-#*OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
+'''Especie inicial de su imperio.
 
-#*OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+Esto determina la especie de su mundo de origen y su primera nave colonia. No tiene efecto en los planetas del imperio colonizados por otras especies.'''
+
+OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
+'''El número de oponentes controlados por la IA en el juego.
+
+Es mejor tener al menos un jugador por cada 15-30 sistemas en el juego, jugar con más o menos IAs que esto puede llevar a problemas de balanceo.
+
+Números muy grandes de IAs pueden causar ralentizaciones, especialmente en estadíos avanzados de la partida.'''
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 El espaciado horizontal a ser introducido entre tecnologías en el árbol tecnológico, en múltiplos del ancho de una sola teoría tecnológica.
@@ -1877,11 +1877,11 @@ El espaciado horizontal a ser introducido entre tecnologías en el árbol tecnol
 OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
 El espaciado vertical a ser introducido entre tecnologías en el árbol tecnológico, en múltiplos del alto de una sola teoría tecnológica.
 
-#*OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE
+Ajusta la escala de zoom para la ventana de tecnologías.
 
-#*OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE
+Ajusta el tamaño de los controles de la pantalla de investigación, escalado con respecto al tamaño de fuente.
 
 OPTIONS_DB_SAVE_DIR
 El directorio en donde las partidas guardadas se guardan y desde donde son cargadas. Los nombres de directorio suelen ser relativos a la localización del ejecutable.
@@ -1925,17 +1925,17 @@ Establece el archivo de tablas de cadenas de idioma.
 #*OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START
+Habilitar autoguardado al comienzo del turno en las partidas para un jugador
 
-#*OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END
+Habilitar autoguardado al final del turno en las partidas para un jugador
 
-#*OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START
+Habilitar autoguardado al comienzo del turno en las partidas multijugador
 
-#*OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_END
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_END
+Habilitar autoguardado al final del turno en las partidas multijugador
 
 OPTIONS_DB_AUTOSAVE_TURNS
 Establece el número de turnos que pasarán entre auto guardados.
@@ -1943,11 +1943,11 @@ Establece el número de turnos que pasarán entre auto guardados.
 #*OPTIONS_DB_AUTOSAVE_LIMIT
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
+Habilitar el autoguardado al crear la galaxia.
 
-#*OPTIONS_DB_AUTOSAVE_GAME_CLOSE
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_GAME_CLOSE
+Habilitar el autoguardado al salir del juego
 
 #*OPTIONS_DB_AUTOSAVE_HOSTLESS
 #* <not translated 1970-01-01 01:00:00>
@@ -1955,8 +1955,8 @@ Establece el número de turnos que pasarán entre auto guardados.
 #*OPTIONS_DB_AUTOSAVE_INTERVAL
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_UI_MOUSE_LR_SWAP
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_MOUSE_LR_SWAP
+Intercambia los resultados de clickar los botones derecho e izquierdo del ratón.
 
 OPTIONS_DB_MUSIC_VOLUME
 El volumen (de 0 a 255) en el que la música se reproduce.
@@ -1976,11 +1976,11 @@ Comienza un nuevo juego rápido, sin pasar por el menu.
 #*OPTIONS_DB_RESET_FSSIZE
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
+Habilita el volcado del grupo de efectos en tecnologías, construcciones o descriptions de partes de naves.
 
-#*OPTIONS_DB_VERBOSE_SITREP_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_VERBOSE_SITREP_DESC
+Habilita la inclusión de informes de situación con errores.
 
 #*OPTIONS_DB_EFFECT_ACCOUNTING
 #* <not translated 1970-01-01 01:00:00>
@@ -1991,26 +1991,26 @@ Comienza un nuevo juego rápido, sin pasar por el menu.
 OPTIONS_DB_LOAD
 Carga la partida guardada de un solo jugador especificada.
 
-#*OPTIONS_DB_EFFECTS_THREADS_UI_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_EFFECTS_THREADS_UI_DESC
+Especifica el número de hilos empleados para el procesamiento de efectos en la interfaz de usuario. Usar más de un hilo puede llevar a errores impredecibles.
 
-#*OPTIONS_DB_EFFECTS_THREADS_AI_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_EFFECTS_THREADS_AI_DESC
+Especifica el número de hilos empleados para el procesamiento de efectos para los jugadores de la IA. Usar más de un hilo puede llevar a errores impredecibles.
 
-#*OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC
+Especifica el número de hilos empleados para el procesamiento de efectos del servidor. Usar más de un hilo puede llevar a errores impredecibles.
 
 #*OPTIONS_DB_AUTO_QUIT
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_BINARY_SERIALIZATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_BINARY_SERIALIZATION
+Usar serialización binaria para guardar el juego. La serialización binartia es más rápida para guardar y cargar partidas,pero puede no ser posible cargar el archivo en un sistema operativo distinto.
 
-#*OPTIONS_DB_SERVER_BINARY_SERIALIZATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_SERVER_BINARY_SERIALIZATION
+El servidor usará serialización binaria la interacción cliente-servidor si la versión del cliente es igual a la del servidor. La serialización binaria se transfiere más rapidamente, pero puede resultar incompatible entre distintos sistemas operativos y arquitecturas.
 
-#*OPTIONS_DB_XML_ZLIB_SERIALIZATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_XML_ZLIB_SERIALIZATION
+Al salvar partidas usando serialización XML, comprime gran parte del XML antes de escribir el fichero. La compresión reduce sustancialmente el tamaño de los ficheros de guardado, pero puede hacer las partidas imposibles de cargar debido a los requisitos de memoria requeridos para descomprimir la información guardada.
 
 #*OPTIONS_DB_UI_WINDOWS_EXISTS
 #* <not translated 1970-01-01 01:00:00>
@@ -2412,11 +2412,11 @@ Especies Iniciales
 GSETUP_NUMBER_AIS
 Número de jugadores IA
 
-#*GSETUP_SEED
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_SEED
+Semilla
 
-#*GSETUP_RANDOM_SEED
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_RANDOM_SEED
+Activa/Desactiva la generación de una semilla aleatoria
 
 GSETUP_STARS
 Estrellas
@@ -2434,16 +2434,16 @@ GSETUP_PLANET_DENSITY
 Densidad de planetas
 
 GSETUP_SPECIALS_FREQ
-Sucesos especiales
+Sucesos Especiales
 
-#*GSETUP_MONSTER_FREQ
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_MONSTER_FREQ
+Frecuencia de Monstruos
 
-#*GSETUP_NATIVE_FREQ
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_NATIVE_FREQ
+Frecuencia de Nativos
 
-#*GSETUP_AI_AGGR
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_AI_AGGR
+Agresividad máxima de la IA
 
 # A galaxy shape to select when generating a universe.
 GSETUP_2ARM
@@ -2466,8 +2466,8 @@ GSETUP_ELLIPTICAL
 Elíptica
 
 # A galaxy shape to select when generating a universe.
-#*GSETUP_DISC
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_DISC
+Disco
 
 # A galaxy shape to select when generating a universe.
 #*GSETUP_BOX
@@ -2482,8 +2482,8 @@ GSETUP_RING
 Anillo
 
 # A galaxy shape to select when generating a universe.
-#*GSETUP_RANDOM
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_RANDOM
+Aleatorio
 
 # Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_NONE
@@ -2738,7 +2738,7 @@ OPTIONS_FONT_BOLD_TEXT
 Texto en negrita
 
 OPTIONS_FONT_TITLE
-Títulos de ventanas
+Ventanas
 
 SHOW_FONT_TEXTURES
 Mostrar texturas de fuentes
@@ -3151,41 +3151,47 @@ Archivos de música
 OPTIONS_SOUND_FILE
 Archivos de sonido
 
-#*OPTIONS_DUMP_EFFECTS_GROUPS_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DUMP_EFFECTS_GROUPS_DESC
+Descripción de efectos autogenerados
 
-#*OPTIONS_VERBOSE_LOGGING_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_VERBOSE_LOGGING_DESC
+Logging detallado para debug
 
-#*OPTIONS_VERBOSE_SITREP_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_VERBOSE_SITREP_DESC
+Infornes de situación con errores
 
-#*OPTIONS_SHOW_IDS_AFTER_NAMES
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_SHOW_IDS_AFTER_NAMES
+ID tras nombre
+
+OPTIONS_AUTOSAVE_GAME_CLOSE
+Habilitar autoguardado al dimitir o cerrar el juego
+
+OPTIONS_AUTOSAVE_GALAXY_CREATION
+Habilitar autoguardado tras crear la galaxia
 
 #*OPTIONS_EFFECT_ACCOUNTING
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_EFFECTS_THREADS_UI
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_EFFECTS_THREADS_UI
+Hilos de procesamiento (Interfaz)
 
-#*OPTIONS_EFFECTS_THREADS_AI
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_EFFECTS_THREADS_AI
+Hilos de procesamiento (IA)
 
-#*OPTIONS_EFFECTS_THREADS_SERVER
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_EFFECTS_THREADS_SERVER
+Hilos de procesamiento (Servidor)
 
-#*OPTIONS_ADD_SAVED_DESIGNS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_ADD_SAVED_DESIGNS
+Cargar los diseños de nave guardados
 
-#*OPTIONS_ADD_DEFAULT_DESIGNS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_ADD_DEFAULT_DESIGNS
+Cargar los diseños de nave por defecto
 
-#*OPTIONS_USE_BINARY_SERIALIZATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_USE_BINARY_SERIALIZATION
+Crear ficheros de guardado en formato binario
 
-#*OPTIONS_USE_XML_ZLIB_SERIALIZATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_USE_XML_ZLIB_SERIALIZATION
+Comprimir los ficheros de guardado XML
 
 OPTIONS_CREATE_PERSISTENT_CONFIG
 Guarda el archivo de configuración persistente
@@ -3242,42 +3248,43 @@ Turno %1%
 MAP_BTN_TURN_UNREADY
 Revisar %1%
 
-#*MAP_BTN_TURN_TOOLTIP
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_TURN_TOOLTIP
+Empezar turno
 
-#*MAP_BTN_TURN_TOOLTIP_DESC_SP
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_TURN_TOOLTIP_DESC_SP
+'''Comienza el procesamiento del turno con la siguiente secuencia:
 
-#*MAP_BTN_TURN_TOOLTIP_DESC_MP
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
 
-#*MAP_BTN_TURN_TOOLTIP_DESC_OBS
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_TURN_TOOLTIP_DESC_MP
+'''Envía órdenes al servidor. El procesamiento del turno se ejecutará conforme a la siguiente secuencia:
 
-#*MAP_BTN_TURN_TOOLTIP_DESC_MOD
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
+
+MAP_BTN_TURN_TOOLTIP_DESC_OBS
+Los observadores no pueden iniciar el procesamiento de un turno.
+
+MAP_BTN_TURN_TOOLTIP_DESC_MOD
+'''Comienza el procesamiento del turno incluso si algunos jugadores todavía no han enviado sus órdenes al servidor.
+El procesamiento del turno se ejecutará conforme a la siguiente secuencia:
+
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
 
 #*MAP_BTN_TURN_TOOLTIP_DESC_WAIT
-#* <not translated 1970-01-01 01:00:00>
+Esperando a que otros jugadores envíen sus órdenes. Haga click de nuevo para revisar sus órdenes.
 
 #*MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+'''<u>Ejecución de orden</u>
+Colonización, invasión, bombardeo, regalos, desguace y movimiento de flota
+
+<u>Resolución de combate</u>
+
+<u>Producción, Investigación y Crecimiento</u>
+Producción de naves y edificios, desbloque de nuevas tecnologías, aumento de la población, actualización de la propagación de suministros'''
+
 
 # %1% number of seconds
 #*MAP_TIMEOUT_SECONDS
@@ -3307,26 +3314,26 @@ Menú
 #*MAP_BTN_MENU_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_AUTO_ADVANCE_ENABLED
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_AUTO_ADVANCE_ENABLED
+Avance de turno automático
 
 #*MAP_BTN_AUTO_ADVANCE_ENABLED_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_MANUAL_TURN_ADVANCE
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_MANUAL_TURN_ADVANCE
+Avance de turno manual
 
 #*MAP_BTN_MANUAL_TURN_ADVANCE_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_MODERATOR
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_MODERATOR
+Moderador
 
 #*MAP_BTN_MODERATOR_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_OBJECTS
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_OBJECTS
+Objetos
 
 #*MAP_BTN_OBJECTS_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -3355,8 +3362,14 @@ Diseño
 #*MAP_BTN_DESIGN_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_GRAPH
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_GOVERNMENT
+Políticas de Gobierno
+
+MAP_BTN_GOVERNMENT_DESC
+''''''
+
+MAP_BTN_GRAPH
+Grafo
 
 #*MAP_BTN_GRAPH_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -3367,40 +3380,40 @@ Diseño
 #*MAP_BTN_PEDIA_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_EMPIRES
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_EMPIRES
+Imperios
 
 #*MAP_BTN_EMPIRES_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_MESSAGES
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_MESSAGES
+Mensajes
 
 #*MAP_BTN_MESSAGES_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_PRODUCTION_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_PRODUCTION_TITLE
+Producción
 
-#*MAP_PRODUCTION_WASTED_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_PRODUCTION_WASTED_TITLE
+Producción Perdida
 
-#*MAP_PROD_CLICK_TO_OPEN
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+MAP_PROD_CLICK_TO_OPEN
+'''
+Haga click para abrir el menú de producción'''
 
-#*MAP_RESEARCH_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_RESEARCH_TITLE
+Investigación
 
-#*MAP_RESEARCH_WASTED_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_RESEARCH_WASTED_TITLE
+Investigación Perdida
 
-#*MAP_RES_CLICK_TO_OPEN
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+MAP_RES_CLICK_TO_OPEN
+'''
+Haga click para abrir el menú de investigación'''
 
-#*MAP_STOCKPILE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_STOCKPILE_TITLE
+Reserva Imperial
 
 #*RESOURCE_TT_OUTPUT
 #* <not translated 1970-01-01 01:00:00>
@@ -5421,24 +5434,24 @@ No puede estar en diseños con
 #*COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL_TIP
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_COMBAT_COLORS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_COMBAT_COLORS
+Colores de Combate
 
-#*OPTIONS_COMBAT_SUMMARY_DEAD_COLOR
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_COMBAT_SUMMARY_DEAD_COLOR
+Unidades Muertas
 
-#*OPTIONS_COMBAT_SUMMARY_WOUND_COLOR
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_COMBAT_SUMMARY_WOUND_COLOR
+Daño
 
-#*OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR
+Salud
 
 #*COMBAT_LOG
 #* <not translated 1970-01-01 01:00:00>
 
-# %1% name of the belligerent party.
-# %2% current health of all units.
-# %3% total health of all units.
+# %1% nombre de la facción beligerante.
+# %2% salud actual de todas las unidades.
+# %3% salud total de todas las unidades.
 #*COMBAT_FLEET_HEALTH_AXIS_LABEL
 #* <not translated 1970-01-01 01:00:00>
 
@@ -6139,14 +6152,14 @@ Medio ambiente
 #*DETAILED_PEDIA_REFERENCE
 #* <not translated 1970-01-01 01:00:00>
 
-#*GREETINGS_GUIDE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+GREETINGS_GUIDE_TITLE
+**Saludos**
 
-#*GREETINGS_INTRO
-#* <not translated 1970-01-01 01:00:00>
+GREETINGS_INTRO
+Bienvenida estimada Entidad, ¡Sea bienvenida al Univero  FreeOrion!
 
-#*GREETINGS_GUIDE_REFERENCE
-#* <not translated 1970-01-01 01:00:00>
+GREETINGS_GUIDE_REFERENCE
+Los nuevos habitantes de este universo pueden querer consultar la [[encyclopedia QUICK_START_GUIDE_TITLE]].
 
 #*GREETINGS_GUIDE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6159,8 +6172,8 @@ Medio ambiente
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*QUICK_START_GUIDE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+QUICK_START_GUIDE_TITLE
+Guía de Inicio Rápido
 
 #*QUICK_START_GUIDE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6390,29 +6403,29 @@ Mensajes
 #*METERS_SUBMENU
 #* <not translated 1970-01-01 01:00:00>
 
-#*PLANETS_SUBMENU
-#* <not translated 1970-01-01 01:00:00>
+PLANETS_SUBMENU
+Planetas
 
-#*FLEETS_SUBMENU
-#* <not translated 1970-01-01 01:00:00>
+FLEETS_SUBMENU
+Flotas / Naves
 
-#*PLANET_ENVIRONMENTS_SUBMENU
-#* <not translated 1970-01-01 01:00:00>
+PLANET_ENVIRONMENTS_SUBMENU
+Ambiente para la Especie
 
 #*ID
 #* <not translated 1970-01-01 01:00:00>
 
-#*NAME
-#* <not translated 1970-01-01 01:00:00>
+NAME
+Nombre
 
-#*OWNER
-#* <not translated 1970-01-01 01:00:00>
+OWNER
+Propietario
 
-#*SPECIES
-#* <not translated 1970-01-01 01:00:00>
+SPECIES
+Especies
 
-#*BUILDING_TYPE
-#* <not translated 1970-01-01 01:00:00>
+BUILDING_TYPE
+Tipo de Edificio
 
 #*FOCUS
 #* <not translated 1970-01-01 01:00:00>
@@ -6426,17 +6439,17 @@ Mensajes
 #*HULL
 #* <not translated 1970-01-01 01:00:00>
 
-#*ATTACK
-#* <not translated 1970-01-01 01:00:00>
+ATTACK
+Daño Total
 
-#*PRODUCTION_COST
-#* <not translated 1970-01-01 01:00:00>
+PRODUCTION_COST
+Coste de Producción
 
-#*OBJECT_TYPE
-#* <not translated 1970-01-01 01:00:00>
+OBJECT_TYPE
+Tipo
 
-#*CREATION_TURN
-#* <not translated 1970-01-01 01:00:00>
+CREATION_TURN
+Turno de Creación
 
 #*AGE
 #* <not translated 1970-01-01 01:00:00>
@@ -6507,8 +6520,8 @@ Mensajes
 #*ARRIVED_ON_TURN
 #* <not translated 1970-01-01 01:00:00>
 
-#*SIZE_AS_DOUBLE
-#* <not translated 1970-01-01 01:00:00>
+SIZE_AS_DOUBLE
+Tamaño Numérico
 
 #*HABITABLE_SIZE
 #* <not translated 1970-01-01 01:00:00>
@@ -6525,17 +6538,17 @@ Mensajes
 #*NEXT_TOWARDS_ORIGINAL_TYPE
 #* <not translated 1970-01-01 01:00:00>
 
-#*PLANET_SIZE
-#* <not translated 1970-01-01 01:00:00>
+PLANET_SIZE
+Tamaño de Planeta
 
-#*PLANET_ENVIRONMENT
-#* <not translated 1970-01-01 01:00:00>
+PLANET_ENVIRONMENT
+Ambiente Planetario
 
-#*STAR_TYPE
-#* <not translated 1970-01-01 01:00:00>
+STAR_TYPE
+Tipo de Estrella
 
-#*NEXT_TURN_POP_GROWTH
-#* <not translated 1970-01-01 01:00:00>
+NEXT_TURN_POP_GROWTH
+Crecimiento de la población en el próximo turno
 
 #*NUM_SPECIALS
 #* <not translated 1970-01-01 01:00:00>
@@ -7524,8 +7537,8 @@ El imperio %empire% ha sido eliminado.
 ## Encyclopedia articles in Species category
 ##
 
-#*SP_HUMAN
-#* <not translated 1970-01-01 01:00:00>
+SP_HUMAN
+Humana
 
 #*SP_HUMAN_GAMEPLAY_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -15912,14 +15925,14 @@ SHIPDESIGN_PLANET_INVASION
 #*HOTKEY_FOCUS_NEXT_WND
 #* <not translated 1970-01-01 01:00:00>
 
-#*HOTKEY_EXIT
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_EXIT
+Salir al escritorio
 
-#*HOTKEY_QUIT
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_QUIT
+Salir de la partida
 
-#*HOTKEY_FULLSCREEN
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_FULLSCREEN
+Activar/Desactivar pantalla completa
 
 
 ##
