@@ -2,9 +2,9 @@ import freeOrionAIInterface as fo
 from typing import Sequence, Set
 
 from AIDependencies import INVALID_ID
-from PlanetUtilsAI import get_capital_sys_id
 from common.fo_typing import SystemId
 from freeorion_tools.caching import cache_for_current_turn
+from PlanetUtilsAI import get_capital_sys_id
 
 
 def _min_max(a, b) -> Sequence:
