@@ -467,7 +467,7 @@ namespace {
                 std::set<GG::UnicodeCharset> default_stringtable_charsets = GG::UnicodeCharsetsToRender(stringtable_str);
                 DebugLogger() << "loading " << default_stringtable_charsets.size() << " charsets for default stringtable characters";
 
-                stringtable_charsets.insert(default_stringtable_charsets.begin(), default_stringtable_charsets.end());
+                stringtable_charsets.merge(default_stringtable_charsets); // insert(default_stringtable_charsets.begin(), default_stringtable_charsets.end());
                 DebugLogger() << "combined stringtable charsets have " << stringtable_charsets.size() << " charsets";
             }
 
