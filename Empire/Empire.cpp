@@ -1296,11 +1296,9 @@ void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id, co
 }
 
 void Empire::UpdatePreservedLanes() {
-    for (auto& system : m_pending_system_exit_lanes) {
-        m_preserved_system_exit_lanes[system.first].insert(system.second.begin(), system.second.end());
-        system.second.clear();
-    }
-    m_pending_system_exit_lanes.clear(); // TODO: consider: not really necessary, & may be more efficient to not clear.
+    for (auto& system : m_pending_system_exit_lanes)
+        m_preserved_system_exit_lanes[system.first].merge(system.second); //insert(system.second.begin(), system.second.end());
+    m_pending_system_exit_lanes.clear();
 }
 
 const std::map<int, float>& Empire::SystemSupplyRanges() const
