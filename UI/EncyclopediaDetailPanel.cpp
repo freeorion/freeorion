@@ -2883,7 +2883,7 @@ namespace {
             return retval;
 
         // store original state of planet
-        auto original_planet_species = planet->SpeciesName(); // intentional copy
+        auto original_planet_species{planet->SpeciesName()}; // intentional copy
         auto original_owner_id = planet->Owner();
         auto orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
 
@@ -2901,28 +2901,45 @@ namespace {
             // @see also: MapWnd::ApplyMeterEffectsAndUpdateMeters
             // NOTE: Overridding current or initial value of MeterType::METER_TARGET_POPULATION prior to update
             //       results in incorrect estimates for at least effects with a min target population of 0
-            planet->SetSpecies(species_name);
-            planet->SetOwner(empire_id);
-            universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
+            try {
+                planet->SetSpecies(species_name);
+                planet->SetOwner(empire_id);
+                universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
+            } catch (const std::exception& e) {
+                ErrorLogger() << "Caught exception applying species name " << species_name
+                              << " and owner empire id " << empire_id << " : " << e.what();
+            }
 
-            const auto species = context.species.GetSpecies(species_name);
-            auto planet_environment = PlanetEnvironment::PE_UNINHABITABLE;
-            if (species)
-                planet_environment = species->GetPlanetEnvironment(planet->Type());
+            try {
+                const auto species = context.species.GetSpecies(species_name);
+                auto planet_environment = PlanetEnvironment::PE_UNINHABITABLE;
+                if (species)
+                    planet_environment = species->GetPlanetEnvironment(planet->Type());
 
-            float planet_capacity = ((planet_environment == PlanetEnvironment::PE_UNINHABITABLE) ?
-                                     0.0f : planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
+                float planet_capacity = ((planet_environment == PlanetEnvironment::PE_UNINHABITABLE) ?
+                                         0.0f : planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
 
-            retval.emplace(planet_capacity, std::pair{species_name, planet_environment});
+                retval.emplace(planet_capacity, std::pair{species_name, planet_environment});
+            } catch (const std::exception& e) {
+                ErrorLogger() << "Caught exception emplacing into species env by target pop : " << e.what();
+            }
         }
 
-        // restore planet to original state
-        planet->SetSpecies(original_planet_species);
-        planet->SetOwner(original_owner_id);
-        planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
+        try {
+            // restore planet to original state
+            planet->SetSpecies(original_planet_species);
+            planet->SetOwner(original_owner_id);
+            planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception restoring planet to original state after setting test species / owner : " << e.what();
+        }
 
-        universe.InhibitUniverseObjectSignals(false);
-        universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
+        try {
+            universe.InhibitUniverseObjectSignals(false);
+            universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception re-applying meter effects to planet after temporary species / owner : " << e.what();
+        }
 
         return retval;
     }
@@ -2941,67 +2958,92 @@ namespace {
 #else
         constexpr auto hair_space_str{ u8"\u200A"};
 #endif
-        auto elems = font->ExpensiveParseFromTextToTextElements(hair_space_str, format);
-        auto lines = font->DetermineLines(hair_space_str, format, GG::X(1 << 15), elems);
-        retval = font->TextExtent(lines);
+        try {
+            auto elems = font->ExpensiveParseFromTextToTextElements(hair_space_str, format);
+            auto lines = font->DetermineLines(hair_space_str, format, GG::X(1 << 15), elems);
+            retval = font->TextExtent(lines);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception in HairSpaceExtext parsing or determining lines: " << e.what();
+        }
         return retval;
     }
 
-    std::unordered_map<std::string, std::string> SpeciesSuitabilityColumn1(const std::unordered_set<std::string>& species_names) {
+    std::unordered_map<std::string, std::string> SpeciesSuitabilityColumn1(
+        const std::unordered_set<std::string>& species_names)
+    {
         std::unordered_map<std::string, std::string> retval;
         auto font = ClientUI::GetFont();
 
         for (const auto& species_name : species_names) {
-            retval[species_name] = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1"))
-                                       % LinkTaggedText(VarText::SPECIES_TAG, species_name));
+            try {
+                retval.emplace(species_name, str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1"))
+                                                 % LinkTaggedText(VarText::SPECIES_TAG, species_name)));
+            } catch (const std::exception& e) {
+                ErrorLogger() << "Caught exception in SpeciesSuitabilityColumn1 when handling species " << species_name << " : " << e.what();
+            }
         }
 
         // determine widest column, storing extents of each row for later alignment
         GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
         GG::X longest_width { 0 };
         std::unordered_map<std::string, GG::Pt> column1_species_extents;
-        for (const auto& it : retval) {
-            auto text_elements = font->ExpensiveParseFromTextToTextElements(it.second, format);
-            auto lines = font->DetermineLines(it.second, format, GG::X(1 << 15), text_elements);
-            GG::Pt extent = font->TextExtent(lines);
-            column1_species_extents[it.first] = extent;
-            longest_width = std::max(longest_width, extent.x);
+        for (auto& [species_name, formatted_col1] : retval) {
+            std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements;
+            try {
+                text_elements = font->ExpensiveParseFromTextToTextElements(formatted_col1, format);
+            } catch (const std::exception& e) {
+                ErrorLogger() << "Caught exception in SpeciesSuitabilityColumn1 when during expensive parse: " << e.what();
+                ErrorLogger() << " ... text was: " << formatted_col1;
+            }
+            try {
+                auto lines = font->DetermineLines(formatted_col1, format, GG::X(1 << 15), text_elements);
+                GG::Pt extent = font->TextExtent(lines);
+                column1_species_extents[species_name] = extent;
+                longest_width = std::max(longest_width, extent.x);
+            } catch (const std::exception& e) {
+                ErrorLogger() << "Caught exception in SpeciesSuitabilityColumn1 when  determining lines: " << e.what();
+            }
         }
 
-        // align end of column with end of longest row
-        auto hair_space_width = HairSpaceExtent().x;
-        auto hair_space_width_str = std::to_string(Value(hair_space_width));
+        try {
+            // align end of column with end of longest row
+            auto hair_space_width = HairSpaceExtent().x;
+            auto hair_space_width_str = std::to_string(Value(hair_space_width));
 #if defined(__cpp_lib_char8_t)
-        std::u8string hair_space_chars{u8"\u200A"};
-        std::string hair_space_str{hair_space_chars.begin(), hair_space_chars.end()};
+            std::u8string hair_space_chars{u8"\u200A"};
+            std::string hair_space_str{hair_space_chars.begin(), hair_space_chars.end()};
 #else
-        constexpr auto hair_space_str{u8"\u200A"};
+            constexpr auto hair_space_str{u8"\u200A"};
 #endif
-        for (auto& it : retval) {
-            if (column1_species_extents.count(it.first) != 1) {
-                ErrorLogger() << "No column1 extent stored for " << it.first;
-                continue;
-            }
-            auto distance = longest_width - column1_species_extents.at(it.first).x;
-            std::size_t num_spaces = Value(distance) / Value(hair_space_width);
-            TraceLogger() << it.first << " Num spaces: " << std::to_string(Value(longest_width))
-                          << " - " << std::to_string(Value(column1_species_extents.at(it.first).x))
-                          << " = " << std::to_string(Value(distance))
-                          << " / " << std::to_string(Value(hair_space_width))
-                          << " = " << std::to_string(num_spaces);;
-            for (std::size_t i = 0; i < num_spaces; ++i)
-                it.second.append(hair_space_str);
 
-            TraceLogger() << "Species Suitability Column 1:\n\t" << it.first << " \"" << it.second << "\"" << [&]() {
-                std::string out;
-                auto col_val = Value(column1_species_extents.at(it.first).x);
-                out.append("\n\t\t(" + std::to_string(col_val) + " + (" + std::to_string(num_spaces) + " * " + hair_space_width_str);
-                out.append(") = " + std::to_string(col_val + (num_spaces * Value(hair_space_width))) + ")");
-                auto text_elements = font->ExpensiveParseFromTextToTextElements(it.second, format);
-                auto lines = font->DetermineLines(it.second, format, GG::X(1 << 15), text_elements);
-                out.append(" = " + std::to_string(Value(font->TextExtent(lines).x)));
-                return out;
-            }();
+            for (auto& it : retval) {
+                if (column1_species_extents.count(it.first) != 1) {
+                    ErrorLogger() << "No column1 extent stored for " << it.first;
+                    continue;
+                }
+                auto distance = longest_width - column1_species_extents.at(it.first).x;
+                std::size_t num_spaces = Value(distance) / Value(hair_space_width);
+                TraceLogger() << it.first << " Num spaces: " << std::to_string(Value(longest_width))
+                              << " - " << std::to_string(Value(column1_species_extents.at(it.first).x))
+                              << " = " << std::to_string(Value(distance))
+                              << " / " << std::to_string(Value(hair_space_width))
+                              << " = " << std::to_string(num_spaces);;
+                for (std::size_t i = 0; i < num_spaces; ++i)
+                    it.second.append(hair_space_str);
+
+                TraceLogger() << "Species Suitability Column 1:\n\t" << it.first << " \"" << it.second << "\"" << [&]() {
+                    std::string out;
+                    auto col_val = Value(column1_species_extents.at(it.first).x);
+                    out.append("\n\t\t(" + std::to_string(col_val) + " + (" + std::to_string(num_spaces) + " * " + hair_space_width_str);
+                    out.append(") = " + std::to_string(col_val + (num_spaces * Value(hair_space_width))) + ")");
+                    auto text_elements = font->ExpensiveParseFromTextToTextElements(it.second, format);
+                    auto lines = font->DetermineLines(it.second, format, GG::X(1 << 15), text_elements);
+                    out.append(" = " + std::to_string(Value(font->TextExtent(lines).x)));
+                    return out;
+                }();
+            }
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Caught exception in SpeciesSuitabilityColumn1 when doing hair space and maybe trace stuff?: " << e.what();
         }
 
         return retval;
