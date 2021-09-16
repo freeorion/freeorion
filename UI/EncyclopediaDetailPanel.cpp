@@ -1102,7 +1102,7 @@ namespace {
             retval.emplace(std::pair{std::move(category_str_key), dir_name},
                            std::pair{readable_article_name, std::move(link_text)});
 
-            retval.insert(std::make_move_iterator(temp.begin()), std::make_move_iterator(temp.end())); // TODO: use C++17 map::merge
+            retval.merge(temp);
         }
 
         return retval;
@@ -2733,7 +2733,8 @@ namespace {
             for (const auto& fleet : objects.find<const Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
                 if (!fleet)
                     continue;
-                chosen_ships.insert(fleet->ShipIDs().begin(), fleet->ShipIDs().end());
+                const auto& fleet_ship_ids{fleet->ShipIDs()};
+                chosen_ships.insert(fleet_ship_ids.begin(), fleet_ship_ids.end());
             }
         }
         for (const auto& this_ship : objects.find<const Ship>(chosen_ships)) {
