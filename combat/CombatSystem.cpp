@@ -1247,35 +1247,34 @@ namespace {
         /// If so, remove that empire's entry
         void CleanEmpires() {
             DebugLogger(combat) << "CleanEmpires";
-            auto temp = empire_infos;
+            auto temp{empire_infos};
 
             std::set<int> empire_ids_with_objects;
             for (const auto& obj : combat_info.objects->all())
                 empire_ids_with_objects.insert(obj->Owner());
 
-            for (auto& empire : empire_infos) {
-                if (!empire_ids_with_objects.count(empire.first)) {
-                    temp.erase(empire.first);
-                    DebugLogger(combat) << "No objects left for empire with id: " << empire.first;
+            for (auto& [empire_id, ignored] : empire_infos) {
+                (void)ignored;
+                if (!empire_ids_with_objects.count(empire_id)) {
+                    temp.erase(empire_id);
+                    DebugLogger(combat) << "No objects left for empire with id: " << empire_id;
                 }
             }
             empire_infos = std::move(temp);
 
             if (!empire_infos.empty()) {
                 DebugLogger(combat) << "Empires with objects remaining:";
-                for (auto empire : empire_infos) {
-                    DebugLogger(combat) << " ... " << empire.first;
-                    for (auto obj_id : empire.second.attacker_ids) {
+                for (auto& [empire_id, empire_info] : empire_infos) {
+                    DebugLogger(combat) << " ... " << empire_id;
+                    for (auto obj_id : empire_info.attacker_ids)
                         TraceLogger(combat) << " ... ... " << obj_id;
-                    }
                 }
             }
         }
 
         /// Clears and refills \a shuffled with attacker ids in a random order
         void GetShuffledValidAttackerIDs(std::vector<int>& shuffled) {
-            shuffled.clear();
-            shuffled.insert(shuffled.begin(), valid_attacker_object_ids.begin(), valid_attacker_object_ids.end());
+            shuffled = {valid_attacker_object_ids.begin(), valid_attacker_object_ids.end()};
             RandomShuffle(shuffled);
         }
 
