@@ -3441,7 +3441,10 @@ namespace {
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         const auto& allocated_pp(queue.AllocatedPP());
-        const auto available_pp(empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Output());
+        auto industry_pool{empire->GetResourcePool(ResourceType::RE_INDUSTRY)};
+        if (!industry_pool)
+            return;
+        const auto& available_pp(industry_pool->Output());
         // For each industry set,
         // add all planet's systems to res_pool_systems[industry set]
         for (const auto& available_pp_group : available_pp) {
