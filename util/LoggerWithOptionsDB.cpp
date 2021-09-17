@@ -151,7 +151,7 @@ namespace {
             const auto option_value = AddLoggerToOptionsDB(full_option);
 
             // Add to return value
-            retval.insert(std::make_tuple(full_option, option_name, option_value));
+            retval.emplace(full_option, option_name, option_value);
         }
 
         return retval;
