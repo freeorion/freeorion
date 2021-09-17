@@ -597,25 +597,6 @@ float ProductionQueue::TotalPPsSpent() const {
     return retval;
 }
 
-/** TODO: Is there any reason to keep this method in addition to the more
-  * specific information directly available from the empire?  This should
-  * probably at least be renamed to clarify it is non-stockpile output */
-std::map<std::set<int>, float> ProductionQueue::AvailablePP(const std::shared_ptr<const ResourcePool>& industry_pool) const {
-    std::map<std::set<int>, float> retval;
-    if (!industry_pool) {
-        ErrorLogger() << "ProductionQueue::AvailablePP passed invalid industry resource pool";
-        return retval;
-    }
-
-    // determine available PP (ie. industry) in each resource sharing group of systems
-    for (const auto& ind : industry_pool->Output()) {   // get group of systems in industry pool
-        const std::set<int>& group = ind.first;
-        retval[group] = ind.second;
-    }
-
-    return retval;
-}
-
 const std::map<std::set<int>, float>& ProductionQueue::AllocatedPP() const
 { return m_object_group_allocated_pp; }
 
@@ -645,7 +626,7 @@ std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(const std::shared_p
         return retval;
     }
 
-    for (auto& [group, avail_pp_in_group] : AvailablePP(industry_pool)) {
+    for (auto& [group, avail_pp_in_group] : industry_pool->Output()) {
         //std::cout << "available PP groups size: " << avail_pp.first.size() << " pp: " << avail_pp.second << std::endl;
 
         if (avail_pp_in_group <= 0)
@@ -714,7 +695,7 @@ void ProductionQueue::Update() {
     update_timer.EnterSection("Get PP");
 
     auto industry_resource_pool = empire->GetResourcePool(ResourceType::RE_INDUSTRY);
-    auto available_pp = AvailablePP(industry_resource_pool);
+    auto& available_pp = industry_resource_pool->Output();
     float pp_in_stockpile = industry_resource_pool->Stockpile();
     TraceLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
     float stockpile_limit = StockpileCapacity();
@@ -729,7 +710,7 @@ void ProductionQueue::Update() {
         int location_id = element.location;
 
         // search through groups to find object
-        for (auto groups_it = available_pp.begin(); true; ++groups_it) {
+        for (auto groups_it = available_pp.begin(); true; ++groups_it) { // TODO: structured binding?
             if (groups_it == available_pp.end()) {
                 // didn't find a group containing this object, so add an empty group as this element's queue element group
                 queue_element_groups.emplace_back();

@@ -130,10 +130,6 @@ struct FO_COMMON_API ProductionQueue {
     [[nodiscard]] int     EmpireID() const { return m_empire_id; }
 
     /** Returns map from sets of object ids that can share resources to amount
-      * of PP available in those groups of objects ; does not include stockpile */
-    [[nodiscard]] std::map<std::set<int>, float> AvailablePP(const std::shared_ptr<const ResourcePool>& industry_pool) const;
-
-    /** Returns map from sets of object ids that can share resources to amount
       * of PP allocated to production queue elements that have build locations
       * in systems in the group. */
     [[nodiscard]] const std::map<std::set<int>, float>& AllocatedPP() const;
