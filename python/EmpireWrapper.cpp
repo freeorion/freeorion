@@ -97,17 +97,17 @@ namespace {
     auto PlanetsWithAvailablePP(const Empire& empire) -> std::map<std::set<int>, float>
     {
         auto industry_pool{empire.GetResourcePool(ResourceType::RE_INDUSTRY)};
-        const ProductionQueue& prod_queue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planets_with_available_pp;
-        for (const auto& objects_pp : prod_queue.AvailablePP(industry_pool)) {
-            std::set<int> planets;
-            for (const auto& planet : Objects().find<Planet>(objects_pp.first)) {
-                if (!planet)
-                    continue;
-                planets.insert(planet->ID());
+
+        // filter industry pool output to get just planet IDs
+        for (auto& [object_ids, PP] : industry_pool->Output()) {
+            std::set<int> planet_ids;
+            for (const auto& planet : Objects().find<Planet>(object_ids)) {
+                if (planet)
+                    planet_ids.insert(planet->ID());
             }
-            if (!planets.empty())
-                planets_with_available_pp[planets] = objects_pp.second;
+            if (!planet_ids.empty())
+                planets_with_available_pp.emplace(std::move(planet_ids), PP);
         }
         return planets_with_available_pp;
     }
@@ -134,17 +134,16 @@ namespace {
         auto industry_pool{empire.GetResourcePool(ResourceType::RE_INDUSTRY)};
         const ProductionQueue& prod_queue = empire.GetProductionQueue();
         std::set<std::set<int>> planets_with_wasted_pp;
-        for (const auto& objects : prod_queue.ObjectsWithWastedPP(industry_pool)) {
-                 std::set<int> planets;
-                 for (const auto& planet : Objects().find<Planet>(objects)) {
-                    if (!planet)
-                        continue;
-                    planets.insert(planet->ID());
-                 }
-                 if (!planets.empty())
-                     planets_with_wasted_pp.insert(planets);
-             }
-             return planets_with_wasted_pp;
+        for (const auto& object_ids : prod_queue.ObjectsWithWastedPP(industry_pool)) {
+            std::set<int> planet_ids;
+            for (const auto& planet : Objects().find<Planet>(object_ids)) {
+                if (planet)
+                    planet_ids.insert(planet->ID());
+            }
+            if (!planet_ids.empty())
+                planets_with_wasted_pp.insert(std::move(planet_ids));
+        }
+        return planets_with_wasted_pp;
     }
 
     auto ResearchedTechNames(const Empire& empire) -> std::set<std::string>
@@ -341,8 +340,7 @@ namespace FreeOrionPython {
             .add_property("empireID",               &ProductionQueue::EmpireID)
 
             .def("availablePP",                     +[](const ProductionQueue& queue, const std::shared_ptr<ResourcePool>& r) -> std::map<std::set<int>, float> {
-                                                        const auto const_r{std::const_pointer_cast<const ResourcePool>(r)};
-                                                        return queue.AvailablePP(const_r);
+                                                        return r ? r->Output() : std::map<std::set<int>, float>{};
                                                     }, py::return_value_policy<py::return_by_value>())
 
             .add_property("allocatedPP",            make_function(&ProductionQueue::AllocatedPP,        py::return_internal_reference<>()))
