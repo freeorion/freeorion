@@ -2974,9 +2974,10 @@ namespace {
 
         // check each planet invading or other troops, such as due to empire troops, native troops, or rebel troops
         for (const auto& planet : objects.all<Planet>()) {
-            auto empire_forces = planet->EmpireGroundCombatForces();
-            if (!empire_forces.empty())
-                planet_empire_troops[planet->ID()].insert(empire_forces.begin(), empire_forces.end());
+            planet_empire_troops[planet->ID()].merge(planet->EmpireGroundCombatForces());
+            //auto empire_forces = planet->EmpireGroundCombatForces();
+            //if (!empire_forces.empty())
+            //    planet_empire_troops[planet->ID()].insert(empire_forces.begin(), empire_forces.end());
         }
 
         // process each planet's ground combats
