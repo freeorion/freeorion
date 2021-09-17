@@ -513,8 +513,9 @@ void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
 
     if (!event->AreSubEventsEmpty(viewing_empire_id)) {
         for (auto& sub_event : event->SubEvents(viewing_empire_id)) {
-            auto&& flat_logs = MakeCombatLogPanel(w, viewing_empire_id, sub_event);
-            new_logs.insert(new_logs.end(), flat_logs.begin(), flat_logs.end());
+            auto flat_logs = MakeCombatLogPanel(w, viewing_empire_id, sub_event);
+            new_logs.insert(new_logs.end(), std::make_move_iterator(flat_logs.begin()),
+                            std::make_move_iterator(flat_logs.end()));
         }
     }
 }
