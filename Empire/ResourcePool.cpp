@@ -71,7 +71,7 @@ float ResourcePool::TotalOutput() const {
     return retval;
 }
 
-std::map<std::set<int>, float> ResourcePool::Output() const
+const std::map<std::set<int>, float>& ResourcePool::Output() const
 { return m_connected_object_groups_resource_output; }
 
 float ResourcePool::GroupOutput(int object_id) const {
