@@ -1156,7 +1156,10 @@ void ProductionWnd::UpdateInfoPanel() {
     // resource availability
 
     // find available and allocated PP at selected production location
-    auto available_pp = queue.AvailablePP(empire->GetResourcePool(ResourceType::RE_INDUSTRY));
+    auto industry_pool{empire->GetResourcePool(ResourceType::RE_INDUSTRY)};
+    if (!industry_pool)
+        return;
+    const auto& available_pp = industry_pool->Output();
     const auto& allocated_pp = queue.AllocatedPP();
 
     float available_pp_at_loc = 0.0f;
