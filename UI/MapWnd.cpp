@@ -3515,7 +3515,7 @@ namespace {
             }
         }
 
-        // Take note of all systems of under allocated resource groups.
+        // Take note of all systems of under-allocated resource groups.
         for (const auto& available_pp_group : available_pp) {
             float group_pp = available_pp_group.second;
             if (group_pp < 1e-4f)
