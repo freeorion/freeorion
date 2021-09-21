@@ -700,7 +700,7 @@ bool Fleet::HasColonyShips(const Universe& universe) const {
 bool Fleet::HasOutpostShips(const Universe& universe) const {
     auto isX = [&universe](const std::shared_ptr<const Ship>& ship) {
         if (const auto design = universe.GetShipDesign(ship->DesignID()))
-            if (design->ColonyCapacity() == 0.0f)
+            if (design->CanColonize() && design->ColonyCapacity() == 0.0f)
                 return true;
         return false;
     };
