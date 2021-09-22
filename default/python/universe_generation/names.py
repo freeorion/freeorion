@@ -24,4 +24,4 @@ def get_name_list(name_list):
     """
     Retrieves a list of names from the string tables.
     """
-    return fo.user_string(name_list).splitlines()
+    return fo.userString(name_list).splitlines()

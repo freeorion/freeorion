@@ -146,6 +146,8 @@ public:
     //!     The translation for @p key or S_ERROR_STRING if no translation was
     //!     found.
     [[nodiscard]] const std::string& operator[] (const std::string& key) const;
+    [[nodiscard]] const std::string& operator[] (const std::string_view key) const;
+    [[nodiscard]] const std::string& operator[] (const char* key) const;
 
     //! Returns if a translation for @p key exists.
     //!
@@ -155,6 +157,8 @@ public:
     //! @return
     //!     True iff a translation with that key exists, false otherwise.
     [[nodiscard]] bool StringExists(const std::string& key) const;
+    [[nodiscard]] bool StringExists(const std::string_view key) const;
+    [[nodiscard]] bool StringExists(const char* key) const;
 
     //! Returns if a translation for @p key exists and what that translation is, if it exists
     //!
@@ -165,6 +169,8 @@ public:
     //!     pair containing true iff a translation with that key exists, false otherwise, and
     //!                     reference to the translation or to an emptry string if no translation exists
     [[nodiscard]] std::pair<bool, const std::string&> CheckGet(const std::string& key) const;
+    [[nodiscard]] std::pair<bool, const std::string&> CheckGet(const std::string_view key) const;
+    [[nodiscard]] std::pair<bool, const std::string&> CheckGet(const char* key) const;
 
     //! Returns the native language name of this StringTable.
     [[nodiscard]] const std::string& Language() const
@@ -174,7 +180,7 @@ public:
     [[nodiscard]] const std::string& Filename() const
     { return m_filename; }
 
-    [[nodiscard]] const std::map<std::string, std::string>& AllStrings() const
+    [[nodiscard]] const auto& AllStrings() const
     { return m_strings; }
 
 private:
@@ -192,7 +198,7 @@ private:
     std::string m_language;
 
     //! Mapping of translation entry keys to translated strings.
-    std::map<std::string, std::string> m_strings;
+    std::map<std::string, std::string, std::less<>> m_strings;
 
     //! Cache for missing translation keys to ensure the returned error
     //! reference string is not destroyed due local scope.

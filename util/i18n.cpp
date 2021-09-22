@@ -206,7 +206,7 @@ void FlushLoadedStringTables() {
     stringtables.clear();
 }
 
-const std::map<std::string, std::string>& AllStringtableEntries(bool default_table) {
+const std::map<std::string, std::string, std::less<>>& AllStringtableEntries(bool default_table) {
     std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     if (default_table)
         return GetDevDefaultStringTable().AllStrings();
@@ -215,6 +215,22 @@ const std::map<std::string, std::string>& AllStringtableEntries(bool default_tab
 }
 
 const std::string& UserString(const std::string& str) {
+    std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    const auto& [string_found, string_value] = GetStringTable().CheckGet(str);
+    if (string_found)
+        return string_value;
+    return GetDevDefaultStringTable()[str];
+}
+
+const std::string& UserString(const std::string_view str) {
+    std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    const auto& [string_found, string_value] = GetStringTable().CheckGet(str);
+    if (string_found)
+        return string_value;
+    return GetDevDefaultStringTable()[str];
+}
+
+const std::string& UserString(const char* str) {
     std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
     const auto& [string_found, string_value] = GetStringTable().CheckGet(str);
     if (string_found)

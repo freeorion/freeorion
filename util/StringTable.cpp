@@ -13,7 +13,7 @@
 
 namespace {
     const std::string DEFAULT_FILENAME = "en.txt";
-    const std::string ERROR_STRING = "ERROR: ";
+    constexpr std::string_view ERROR_STRING = "ERROR: ";
     const std::string EMPTY_STRING;
 }
 
@@ -31,12 +31,61 @@ bool StringTable::StringExists(const std::string& key) const {
     return m_strings.find(key) != m_strings.end();
 }
 
+bool StringTable::StringExists(const std::string_view key) const {
+    std::scoped_lock lock(m_mutex);
+    return m_strings.find(key) != m_strings.end();
+}
+
+bool StringTable::StringExists(const char* key) const {
+    std::scoped_lock lock(m_mutex);
+    return m_strings.find(key) != m_strings.end();
+}
+
 std::pair<bool, const std::string&> StringTable::CheckGet(const std::string& key) const {
     std::scoped_lock lock(m_mutex);
-
     auto it = m_strings.find(key);
     bool found_string = it != m_strings.end();
     return {found_string, found_string ? it->second : EMPTY_STRING};
+}
+
+std::pair<bool, const std::string&> StringTable::CheckGet(const std::string_view key) const {
+    std::scoped_lock lock(m_mutex);
+    auto it = m_strings.find(key);
+    bool found_string = it != m_strings.end();
+    return {found_string, found_string ? it->second : EMPTY_STRING};
+}
+
+std::pair<bool, const std::string&> StringTable::CheckGet(const char* key) const {
+    std::scoped_lock lock(m_mutex);
+    auto it = m_strings.find(key);
+    bool found_string = it != m_strings.end();
+    return {found_string, found_string ? it->second : EMPTY_STRING};
+}
+
+namespace {
+    std::string operator+(const std::string_view sv, const std::string& s) {
+        std::string retval;
+        retval.reserve(sv.size() + s.size());
+        retval.append(sv);
+        retval.append(s);
+        return retval;
+    }
+
+    std::string operator+(const std::string_view sv1, const std::string_view sv2) {
+        std::string retval;
+        retval.reserve(sv1.size() + sv2.size());
+        retval.append(sv1);
+        retval.append(sv2);
+        return retval;
+    }
+
+    std::string operator+(const std::string_view sv, const char* c) {
+        std::string retval;
+        retval.reserve(sv.size() + std::strlen(c));
+        retval.append(sv);
+        retval.append(c);
+        return retval;
+    }
 }
 
 const std::string& StringTable::operator[] (const std::string& key) const {
@@ -48,6 +97,36 @@ const std::string& StringTable::operator[] (const std::string& key) const {
 
     auto error = m_error_strings.insert(ERROR_STRING + key);
     return *(error.first);
+}
+
+const std::string& StringTable::operator[] (const std::string_view key) const {
+    std::scoped_lock lock(m_mutex);
+
+    auto it = m_strings.find(key);
+    if (it != m_strings.end())
+        return it->second;
+
+    auto error = m_error_strings.insert(ERROR_STRING + key);
+    return *(error.first);
+}
+
+const std::string& StringTable::operator[] (const char* key) const {
+    std::scoped_lock lock(m_mutex);
+
+    auto it = m_strings.find(key);
+    if (it != m_strings.end())
+        return it->second;
+
+    auto error = m_error_strings.insert(ERROR_STRING + key);
+    return *(error.first);
+}
+
+namespace {
+    std::string_view MatchLookupKey(const boost::xpressive::smatch& match, size_t idx) {
+        //return match[idx].str(); // constructs a std::string, which should be avoidable for lookup purposes...
+        const auto& m{match[idx]};
+        return {&*m.first, static_cast<size_t>(std::max(0, static_cast<int>(m.length())))};
+    }
 }
 
 void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
@@ -199,7 +278,8 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                 if (!cyclic_reference_check.count(match[1])) {
                     //DebugLogger() << "Pushing to cyclic ref check: " << match[1];
                     cyclic_reference_check[match[1]] = position + match.length();
-                    auto map_lookup_it = m_strings.find(match[1]);
+
+                    auto map_lookup_it = m_strings.find(MatchLookupKey(match, 1u));
                     bool foundmatch = map_lookup_it != m_strings.end();
                     if (!foundmatch && !fallback_lookup_strings.empty()) {
                         DebugLogger() << "Key expansion: " << match[1] << " not found in primary stringtable: " << m_filename
@@ -208,13 +288,12 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                         foundmatch = map_lookup_it != fallback_lookup_strings.end();
                     }
                     if (foundmatch) {
-                        const std::string substitution = map_lookup_it->second;
+                        const std::string& substitution = map_lookup_it->second;
                         cumulative_subsititions += substitution + "|**|";
                         user_read_entry.replace(position, match.length(), substitution);
                         std::size_t added_chars = substitution.length() - match.length();
-                        for (auto& ref_check : cyclic_reference_check) {
+                        for (auto& ref_check : cyclic_reference_check)
                             ref_check.second += added_chars;
-                        }
                         // replace recursively -- do not skip past substitution
                     } else {
                         ErrorLogger() << "Unresolved key expansion: " << match[1] << " in: " << m_filename << ".";
@@ -238,7 +317,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
             smatch match;
             while (regex_search(user_read_entry.begin() + position, user_read_entry.end(), match, REFERENCE)) {
                 position += match.position();
-                auto map_lookup_it = m_strings.find(match[2]);
+                auto map_lookup_it = m_strings.find(MatchLookupKey(match, 2u));
                 bool foundmatch = map_lookup_it != m_strings.end();
                 if (!foundmatch && !fallback_lookup_strings.empty()) {
                     DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << m_filename
