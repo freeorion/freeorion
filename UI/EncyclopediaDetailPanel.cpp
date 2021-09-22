@@ -9,6 +9,7 @@
 #include <GG/ScrollPanel.h>
 #include <GG/StaticGraphic.h>
 #include <GG/Texture.h>
+#include <GG/utf8/checked.h>
 #include "CUIControls.h"
 #include "CUILinkTextBlock.h"
 #include "DesignWnd.h"
@@ -52,7 +53,6 @@
 #include "../util/ScopedTimer.h"
 #include "../util/ThreadPool.h"
 #include "../util/VarText.h"
-
 
 using boost::io::str;
 
@@ -2953,11 +2953,17 @@ namespace {
         auto font = ClientUI::GetFont();
 
 #if defined(__cpp_lib_char8_t)
-        std::u8string hair_space_chars{u8"\u200A"};
-        std::string hair_space_str{hair_space_chars.begin(), hair_space_chars.end()};
+        constexpr std::u8string_view hair_space_chars{u8"\u200A"};
+        static const std::string hair_space_str{hair_space_chars.begin(), hair_space_chars.end()};
+        DebugLogger() << "HairSpaceExtext with __cpp_lib_char8_t defined";
 #else
-        constexpr auto hair_space_str{ u8"\u200A"};
+        constexpr std::string_view hair_space_chars{u8"\u200A"};
+        static const std::string hair_space_str{hair_space_chars};
+        DebugLogger() << "HairSpaceExtext without __cpp_lib_char8_t defined";
 #endif
+        DebugLogger() << "hair_space_str: " << hair_space_str << " valid UTF8?: "
+                      << utf8::is_valid(hair_space_str.begin(), hair_space_str.end());
+
         try {
             auto elems = font->ExpensiveParseFromTextToTextElements(hair_space_str, format);
             auto lines = font->DetermineLines(hair_space_str, format, GG::X(1 << 15), elems);
