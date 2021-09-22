@@ -4457,7 +4457,7 @@ void MapWnd::ReselectLastFleet() {
     // search through stored selected fleets' ids and remove ids of missing fleets
     std::set<int> missing_fleets;
     for (const auto& fleet : objects.find<Fleet>(m_selected_fleet_ids)) {
-        if (!fleet)
+        if (fleet)
             missing_fleets.insert(fleet->ID());
     }
     for (int fleet_id : missing_fleets)
