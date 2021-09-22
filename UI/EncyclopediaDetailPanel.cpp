@@ -175,7 +175,7 @@ namespace {
                     UserString(str), std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n", str});
             }
 
-            for (const std::string& str : {"ENC_TEXTURES", "ENC_HOMEWORLDS"}) {
+            for (auto str : {"ENC_TEXTURES", "ENC_HOMEWORLDS"}) {
                 sorted_entries_list.emplace(
                     UserString(str), std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n", str});
             }
