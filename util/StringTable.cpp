@@ -136,12 +136,11 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
 
     parse::file_substitution(file_contents, path.parent_path(), m_filename);
 
-    std::map<std::string, std::string> fallback_lookup_strings;
+    decltype(fallback->m_strings) fallback_lookup_strings;
     std::string fallback_table_file;
     if (fallback) {
-        std::scoped_lock fallback_lock(fallback->m_mutex);
         fallback_table_file = fallback->Filename();
-        fallback_lookup_strings.insert(fallback->m_strings.begin(), fallback->m_strings.end());
+        fallback_lookup_strings = fallback->m_strings; //.insert(fallback->m_strings.begin(), fallback->m_strings.end());
     }
 
     using namespace boost::xpressive;
@@ -267,7 +266,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                     if (!foundmatch && !fallback_lookup_strings.empty()) {
                         DebugLogger() << "Key expansion: " << match[1] << " not found in primary stringtable: " << m_filename
                                       << "; checking in fallback file: " << fallback_table_file;
-                        map_lookup_it = fallback_lookup_strings.find(match[1]);
+                        map_lookup_it = fallback_lookup_strings.find(MatchLookupKey(match, 1u));
                         foundmatch = map_lookup_it != fallback_lookup_strings.end();
                     }
                     if (foundmatch) {
@@ -305,7 +304,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                 if (!foundmatch && !fallback_lookup_strings.empty()) {
                     DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << m_filename
                                   << "; checking in fallback file: " << fallback_table_file;
-                    map_lookup_it = fallback_lookup_strings.find(match[2]);
+                    map_lookup_it = fallback_lookup_strings.find(MatchLookupKey(match, 2u));
                     foundmatch = map_lookup_it != fallback_lookup_strings.end();
                 }
                 if (foundmatch) {

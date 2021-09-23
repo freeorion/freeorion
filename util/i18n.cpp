@@ -11,9 +11,9 @@
 #include <mutex>
 
 namespace {
-    std::map<std::string, std::shared_ptr<const StringTable>>  stringtables;
-    std::recursive_mutex                                       stringtable_access_mutex;
-    bool                                                       stringtable_filename_init = false;
+    std::map<std::string, std::shared_ptr<const StringTable>> stringtables;
+    std::recursive_mutex                                      stringtable_access_mutex;
+    bool                                                      stringtable_filename_init = false;
 
     // fallback stringtable to look up key in if entry is not found in currently configured stringtable
     boost::filesystem::path DevDefaultEnglishStringtablePath()
