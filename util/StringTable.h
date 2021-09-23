@@ -6,7 +6,7 @@
 
 #include <string>
 #include <map>
-#include <unordered_set>
+#include <set>
 #include <mutex>
 #include <memory>
 
@@ -202,7 +202,7 @@ private:
 
     //! Cache for missing translation keys to ensure the returned error
     //! reference string is not destroyed due local scope.
-    mutable std::unordered_set<std::string> m_error_strings;
+    mutable std::set<std::string> m_error_strings;
 
     //! True if the StringTable was completely loaded and all references
     //! were successfully resolved.
