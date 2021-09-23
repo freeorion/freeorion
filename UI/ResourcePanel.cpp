@@ -17,7 +17,6 @@
 
 namespace {
     constexpr int   EDGE_PAD(3);
-    constexpr GG::X METER_BROWSE_VALUE_WIDTH(50);
 
     /** How big we want meter icons with respect to the current UI font size.
       * Meters should scale along font size, but not below the size for the

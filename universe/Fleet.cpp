@@ -1416,7 +1416,7 @@ std::string Fleet::GenerateFleetName(const Universe& u, const SpeciesManager& sm
     // todo: rewrite with a lambda and store in a const string& to avoid copies...
     std::string fleet_name_key = UserStringNop("NEW_FLEET_NAME");
 
-    auto IsCombatShip = [&u, &sm](const auto& ship)
+    auto IsCombatShip = [&u](const auto& ship)
     { return ship.IsArmed(u) || ship.HasFighters(u) || ship.CanHaveTroops(u) || ship.CanBombard(u); };
 
     if (boost::algorithm::all_of(ships, [&u](const auto& ship){ return ship->IsMonster(u); }))

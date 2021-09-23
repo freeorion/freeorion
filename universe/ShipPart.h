@@ -170,7 +170,6 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>>         m_total_ship_damage;
     bool                                                m_add_standard_capacity_effect = false;
     bool                                                m_producible = false;
-
 };
 
 

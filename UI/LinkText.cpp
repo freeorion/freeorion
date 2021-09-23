@@ -399,7 +399,6 @@ void TextLinker::MouseLeave_() {
 void TextLinker::FindLinks() {
     m_links.clear();
 
-    GG::Y y_posn(0); // y-coordinate of the top of the current line
     Link link;
 
     // control text needs to be updated so that the line data is calculated from

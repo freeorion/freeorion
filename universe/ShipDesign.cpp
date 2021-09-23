@@ -90,9 +90,9 @@ ParsedShipDesign::ParsedShipDesign(
     m_designed_by_empire(designed_by_empire),
     m_hull(std::move(hull)),
     m_parts(std::move(parts)),
-    m_is_monster(monster),
     m_icon(std::move(icon)),
     m_3D_model(std::move(model)),
+    m_is_monster(monster),
     m_name_desc_in_stringtable(name_desc_in_stringtable)
 {}
 
@@ -116,9 +116,9 @@ ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_thro
     m_designed_by_empire(designed_by_empire),
     m_hull(std::move(hull)),
     m_parts(std::move(parts)),
-    m_is_monster(monster),
     m_icon(std::move(icon)),
     m_3D_model(std::move(model)),
+    m_is_monster(monster),
     m_name_desc_in_stringtable(name_desc_in_stringtable)
 {
     // Either force a valid design and log about it or just throw std::invalid_argument

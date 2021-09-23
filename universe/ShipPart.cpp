@@ -156,7 +156,6 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
     m_class(part_class),
     m_capacity(capacity),
     m_secondary_stat(stat2),
-    m_producible(common_params.producible),
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
     m_mountable_slot_types(std::move(mountable_slot_types)),
@@ -165,10 +164,11 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
     m_location(std::move(common_params.location)),
     m_exclusions(std::move(exclusions)),
     m_icon(std::move(icon)),
-    m_add_standard_capacity_effect(add_standard_capacity_effect),
     m_combat_targets(std::move(combat_targets)),
     m_total_fighter_damage(std::move(total_fighter_damage)),
-    m_total_ship_damage(std::move(total_ship_damage))
+    m_total_ship_damage(std::move(total_ship_damage)),
+    m_add_standard_capacity_effect(add_standard_capacity_effect),
+    m_producible(common_params.producible)
 {
     Init(std::move(common_params.effects));
 

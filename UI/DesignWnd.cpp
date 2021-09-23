@@ -4525,7 +4525,7 @@ void DesignWnd::MainPanel::DoLayout() {
     const GG::X PTS_WIDE(PTS / 2);           // guess at how wide per character the font needs
     constexpr int PAD = 6;
 
-    GG::Pt ul,lr,ll,ur,mus;
+    GG::Pt ul,lr,ll,mus;
     lr = ClientSize() - GG::Pt(GG::X(PAD), GG::Y(PAD));
     m_confirm_button->SizeMove(lr - m_confirm_button->MinUsableSize(), lr);
 

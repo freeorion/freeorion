@@ -54,11 +54,11 @@ Empire::Empire(std::string name, std::string player_name,
     m_id(empire_id),
     m_name(std::move(name)),
     m_player_name(std::move(player_name)),
-    m_authenticated(authenticated),
     m_color(color),
     m_research_queue(m_id),
     m_production_queue(m_id),
-    m_influence_queue(m_id)
+    m_influence_queue(m_id),
+    m_authenticated(authenticated)
 {
     DebugLogger() << "Empire::Empire(" << m_name << ", " << m_player_name
                   << ", " << empire_id << ", colour)";
