@@ -45,7 +45,7 @@
 //!   terminated by a newline, trimming of any whitespace at the begining or end
 //!   of the translated string or a multi-line string.
 //! * A multi-line string starts and ends with three single quotes `'''`. As the
-//!   name implies a multi-line string can span over multiple lines and any
+//!   name implies, a multi-line string can span over multiple lines and any
 //!   whitespace inside the string will be preseved.
 //!
 //! A minimal example translation file for the english language `en.txt` should
@@ -203,10 +203,6 @@ private:
     //! Cache for missing translation keys to ensure the returned error
     //! reference string is not destroyed due local scope.
     mutable std::unordered_set<std::string> m_error_strings;
-
-    //! Ensure that multithreaded access to a StringTable is done in an orderly
-    //! fashion.
-    mutable std::mutex m_mutex;
 
     //! True if the StringTable was completely loaded and all references
     //! were successfully resolved.

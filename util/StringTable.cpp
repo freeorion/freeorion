@@ -12,7 +12,7 @@
 
 
 namespace {
-    const std::string DEFAULT_FILENAME = "en.txt";
+    constexpr std::string_view DEFAULT_FILENAME = "en.txt";
     constexpr std::string_view ERROR_STRING = "ERROR: ";
     const std::string EMPTY_STRING;
 }
@@ -26,37 +26,28 @@ StringTable::StringTable(std::string filename, std::shared_ptr<const StringTable
     m_filename(std::move(filename))
 { Load(fallback); }
 
-bool StringTable::StringExists(const std::string& key) const {
-    std::scoped_lock lock(m_mutex);
-    return m_strings.find(key) != m_strings.end();
-}
+bool StringTable::StringExists(const std::string& key) const
+{ return m_strings.find(key) != m_strings.end(); }
 
-bool StringTable::StringExists(const std::string_view key) const {
-    std::scoped_lock lock(m_mutex);
-    return m_strings.find(key) != m_strings.end();
-}
+bool StringTable::StringExists(const std::string_view key) const
+{ return m_strings.find(key) != m_strings.end(); }
 
-bool StringTable::StringExists(const char* key) const {
-    std::scoped_lock lock(m_mutex);
-    return m_strings.find(key) != m_strings.end();
-}
+bool StringTable::StringExists(const char* key) const
+{ return m_strings.find(key) != m_strings.end(); }
 
 std::pair<bool, const std::string&> StringTable::CheckGet(const std::string& key) const {
-    std::scoped_lock lock(m_mutex);
     auto it = m_strings.find(key);
     bool found_string = it != m_strings.end();
     return {found_string, found_string ? it->second : EMPTY_STRING};
 }
 
 std::pair<bool, const std::string&> StringTable::CheckGet(const std::string_view key) const {
-    std::scoped_lock lock(m_mutex);
     auto it = m_strings.find(key);
     bool found_string = it != m_strings.end();
     return {found_string, found_string ? it->second : EMPTY_STRING};
 }
 
 std::pair<bool, const std::string&> StringTable::CheckGet(const char* key) const {
-    std::scoped_lock lock(m_mutex);
     auto it = m_strings.find(key);
     bool found_string = it != m_strings.end();
     return {found_string, found_string ? it->second : EMPTY_STRING};
@@ -89,8 +80,6 @@ namespace {
 }
 
 const std::string& StringTable::operator[] (const std::string& key) const {
-    std::scoped_lock lock(m_mutex);
-
     auto it = m_strings.find(key);
     if (it != m_strings.end())
         return it->second;
@@ -100,8 +89,6 @@ const std::string& StringTable::operator[] (const std::string& key) const {
 }
 
 const std::string& StringTable::operator[] (const std::string_view key) const {
-    std::scoped_lock lock(m_mutex);
-
     auto it = m_strings.find(key);
     if (it != m_strings.end())
         return it->second;
@@ -111,8 +98,6 @@ const std::string& StringTable::operator[] (const std::string_view key) const {
 }
 
 const std::string& StringTable::operator[] (const char* key) const {
-    std::scoped_lock lock(m_mutex);
-
     auto it = m_strings.find(key);
     if (it != m_strings.end())
         return it->second;
@@ -130,8 +115,6 @@ namespace {
 }
 
 void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
-    std::scoped_lock lock(m_mutex);
-
     if (fallback && !fallback->m_initialized) {
         // this prevents deadlock if two stringtables were to be loaded
         // simultaneously with eachother as fallback tables
