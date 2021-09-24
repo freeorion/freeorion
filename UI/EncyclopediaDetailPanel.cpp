@@ -3293,7 +3293,7 @@ namespace {
         }
     }
 
-    void SearchPediaArticlesForWords(       std::string article_key,
+    void SearchPediaArticleForWords(        std::string article_key,
                                             std::string article_directory,
                                             std::pair<std::string, std::string> article_name_link,
                                             std::pair<std::string, std::string>& exact_match,
@@ -3439,14 +3439,14 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
                 idx,
                 search_desc
             ]() mutable {
-                SearchPediaArticlesForWords(article_key,
-                                            article_dir,
-                                            std::move(article_name_link),
-                                            emr, wmr, pmr, amr,
-                                            search_text,
-                                            words_in_search_text,
-                                            idx,
-                                            search_desc);
+                SearchPediaArticleForWords(article_key,
+                                           article_dir,
+                                           std::move(article_name_link),
+                                           emr, wmr, pmr, amr,
+                                           search_text,
+                                           words_in_search_text,
+                                           idx,
+                                           search_desc);
             });
     }
 
