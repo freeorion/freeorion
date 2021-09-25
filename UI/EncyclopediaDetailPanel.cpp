@@ -2823,11 +2823,10 @@ namespace {
         // Collect species colonizing/environment hospitality information
         // start by building roster-- any species tagged as 'ALWAYS_REPORT' plus any species
         // represented in this empire's PopCenters
-        for (const auto& entry : species_manager) { // TODO: [[]]
-            if (!entry.second)
+        for (auto& [species_str, species] : species_manager) {
+            if (!species)
                 continue;
-            const std::string& species_str = entry.first;
-            const auto& species_tags = entry.second->Tags();
+            const auto& species_tags = species->Tags();
             if (species_tags.count(TAG_ALWAYS_REPORT)) {
                 retval.insert(species_str);
                 continue;
@@ -2877,7 +2876,8 @@ namespace {
     }
 
     std::multimap<float, std::pair<std::string, PlanetEnvironment>>
-        SpeciesEnvByTargetPop(std::shared_ptr<Planet>& planet, const std::unordered_set<std::string>& species_names)
+        SpeciesEnvByTargetPop(std::shared_ptr<Planet>& planet,
+                              const std::unordered_set<std::string>& species_names)
     {
         std::multimap<float, std::pair<std::string, PlanetEnvironment>> retval;
 
