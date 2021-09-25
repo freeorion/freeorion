@@ -25,9 +25,8 @@ const std::string TextLinker::BROWSE_PATH_TAG("browsepath");
 
 namespace {
     constexpr bool RENDER_DEBUGGING_LINK_RECTS = false;
-
-    // closing format tag
-    static const std::string LINK_FORMAT_CLOSE = "</rgba>";
+    constexpr std::string_view LINK_FORMAT_CLOSE = "</rgba>"; // closing format tag
+    const LinkDecorator DEFAULT_DECORATOR;
 
     std::string AllParamsAsString(const std::vector<GG::Font::Substring>& params) {
         std::string retval;
@@ -226,13 +225,11 @@ void LinkText::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 // LinkDecorator
 ///////////////////////////////////////
 
-std::string LinkDecorator::Decorate(const std::string& target, const std::string& content) const{
-    return GG::RgbaTag(ClientUI::DefaultLinkColor()) + content + LINK_FORMAT_CLOSE;
-}
+std::string LinkDecorator::Decorate(const std::string& target, const std::string& content) const
+{ return GG::RgbaTag(ClientUI::DefaultLinkColor()).append(content).append(LINK_FORMAT_CLOSE); }
 
-std::string LinkDecorator::DecorateRollover(const std::string& target, const std::string& content) const{
-    return GG::RgbaTag(ClientUI::RolloverLinkColor()) + content + LINK_FORMAT_CLOSE;
-}
+std::string LinkDecorator::DecorateRollover(const std::string& target, const std::string& content) const
+{ return GG::RgbaTag(ClientUI::RolloverLinkColor()).append(content).append(LINK_FORMAT_CLOSE); }
 
 int LinkDecorator::CastStringToInt(const std::string& str) {
     std::stringstream ss;
@@ -256,35 +253,31 @@ std::string ColorByOwner::Decorate(const std::string& object_id_str, const std::
         empire = GetEmpire(object->Owner());
     if (empire)
         color = empire->Color();
-    return GG::RgbaTag(color) + content + "</rgba>";
+    return GG::RgbaTag(color).append(content).append("</rgba>");
 }
 
-std::string PathTypeDecorator::Decorate(const std::string& path_type, const std::string& content) const {
-    return LinkDecorator::Decorate(path_type, BrowsePathLinkText(content));
-}
+std::string PathTypeDecorator::Decorate(const std::string& path_type, const std::string& content) const
+{ return LinkDecorator::Decorate(path_type, BrowsePathLinkText(content)); }
 
-std::string PathTypeDecorator::DecorateRollover(const std::string& path_type, const std::string& content) const {
-    return LinkDecorator::DecorateRollover(path_type, BrowsePathLinkText(content));
-}
+std::string PathTypeDecorator::DecorateRollover(const std::string& path_type, const std::string& content) const
+{ return LinkDecorator::DecorateRollover(path_type, BrowsePathLinkText(content)); }
 
-std::string ValueRefDecorator::Decorate(const std::string& value_ref_name, const std::string& content) const {
-    return GG::RgbaTag(ClientUI::DefaultTooltipColor()) + ::ValueRefLinkText(content, false) + LINK_FORMAT_CLOSE;
-}
+std::string ValueRefDecorator::Decorate(const std::string& value_ref_name, const std::string& content) const
+{ return GG::RgbaTag(ClientUI::DefaultTooltipColor()).append(::ValueRefLinkText(content, false)).append(LINK_FORMAT_CLOSE); }
 
-std::string ValueRefDecorator::DecorateRollover(const std::string& value_ref_name, const std::string& content) const {
-    return GG::RgbaTag(ClientUI::RolloverTooltipColor()) + ::ValueRefLinkText(content, true) + LINK_FORMAT_CLOSE;
-}
+std::string ValueRefDecorator::DecorateRollover(const std::string& value_ref_name, const std::string& content) const
+{ return GG::RgbaTag(ClientUI::RolloverTooltipColor()).append(::ValueRefLinkText(content, true)).append(LINK_FORMAT_CLOSE); }
 
 
 ///////////////////////////////////////
 // TextLinker::Link
 ///////////////////////////////////////
 struct TextLinker::Link {
-    std::string             type;           ///< contents of type field of link tag (eg "planet" in <planet 3>)
-    std::string             data;           ///< contents of data field of link tag (eg "3" in <planet 3>)
-    std::vector<GG::Rect>   rects;          ///< the rectangles in which this link falls, in window coordinates (some links may span more than one line)
-    std::pair<int, int>     text_posn;      ///< the index of the first (.first) and last + 1 (.second) characters in the raw link text
-    std::pair<int, int>     real_text_posn; ///< the index of the first and last + 1 characters in the current (potentially decorated) content string
+    std::string           type;           ///< contents of type field of link tag (eg "planet" in <planet 3>)
+    std::string           data;           ///< contents of data field of link tag (eg "3" in <planet 3>)
+    std::vector<GG::Rect> rects;          ///< the rectangles in which this link falls, in window coordinates (some links may span more than one line)
+    std::pair<int, int>   text_posn;      ///< the index of the first (.first) and last + 1 (.second) characters in the raw link text
+    std::pair<int, int>   real_text_posn; ///< the index of the first and last + 1 characters in the current (potentially decorated) content string
 };
 
 
@@ -347,10 +340,8 @@ void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         return;
     }
 
-    const auto& LINK_TYPE = m_links[sel_link].type;
-    const auto& DATA = m_links[sel_link].data;
-
-    LinkClickedSignal(LINK_TYPE, DATA);
+    const auto& LINK = m_links[sel_link];
+    LinkClickedSignal(LINK.type, LINK.data);
 }
 
 void TextLinker::RClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -362,10 +353,8 @@ void TextLinker::RClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         return;
     }
 
-    const std::string& LINK_TYPE = m_links[sel_link].type;
-    const std::string& DATA = m_links[sel_link].data;
-
-    LinkRightClickedSignal(LINK_TYPE, DATA);
+    const auto& LINK = m_links[sel_link];
+    LinkClickedSignal(LINK.type, LINK.data);
 }
 
 void TextLinker::LDoubleClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -377,10 +366,8 @@ void TextLinker::LDoubleClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         return;
     }
 
-    const std::string& LINK_TYPE = m_links[sel_link].type;
-    const std::string& DATA = m_links[sel_link].data;
-
-    LinkDoubleClickedSignal(LINK_TYPE, DATA);
+    const auto& LINK = m_links[sel_link];
+    LinkClickedSignal(LINK.type, LINK.data);
 }
 
 void TextLinker::MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -584,16 +571,32 @@ void TextLinker::MarkLinks() {
     SetLinkedText(std::move(marked_text));
 }
 
-const LinkDecorator TextLinker::DEFAULT_DECORATOR;
+std::string LinkTaggedText(const std::string& tag, std::string_view stringtable_entry) {
+    std::string retval;
+    const auto& us{UserString(stringtable_entry)};
+    retval.reserve(10 + stringtable_entry.length() + 2*tag.length() + us.length());
+    retval.append("<").append(tag).append(" ").append(stringtable_entry)
+          .append(">").append(us).append("</").append(tag).append(">");
+    return retval;
+}
 
-std::string LinkTaggedText(const std::string& tag, const std::string& stringtable_entry)
-{ return "<" + tag + " " + stringtable_entry + ">" + UserString(stringtable_entry) + "</" + tag + ">"; }
+std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& text) {
+    std::string retval;
+    retval.reserve(22 + text.length() + 2*tag.length());
+    retval.append("<").append(tag).append(" ").append(std::to_string(id))
+          .append(">").append(text).append("</").append(tag).append(">");
+    return retval;
+}
 
-std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& text)
-{ return "<" + tag + " " + std::to_string(id) + ">" + text + "</" + tag + ">"; }
-
-std::string LinkTaggedPresetText(const std::string& tag, const std::string& stringtable_entry, const std::string& display_text)
-{ return "<" + tag + " " + stringtable_entry + ">" + display_text + "</" + tag + ">"; }
+std::string LinkTaggedPresetText(const std::string& tag, const std::string& stringtable_entry,
+                                 const std::string& display_text)
+{
+    std::string retval;
+    retval.reserve(10 + display_text.length() + 2*tag.length() + stringtable_entry.length());
+    retval.append("<").append(tag).append(" ").append(stringtable_entry)
+          .append(">").append(display_text).append("</").append(tag).append(">");
+    return retval;
+}
 
 namespace {
     static bool link_tags_registered = false;

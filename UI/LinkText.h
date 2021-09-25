@@ -107,7 +107,6 @@ private:
     std::vector<Link>                       m_links;
     int                                     m_rollover_link = -1;
     std::map<std::string, LinkDecoratorPtr> m_decorators;
-    static const LinkDecorator DEFAULT_DECORATOR;
 };
 
 /** Allows text that the user sees to emit signals when clicked, and indicates
@@ -174,7 +173,7 @@ private:
 
 
 /// Helper for generating a link string with content from a stringtable entry
-std::string LinkTaggedText(const std::string& tag, const std::string& stringtable_entry);
+std::string LinkTaggedText(const std::string& tag, std::string_view stringtable_entry);
 
 /// Helper for generating a link string
 std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& text);
