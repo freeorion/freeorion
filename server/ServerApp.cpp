@@ -1841,12 +1841,12 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     // destroy owned ships
     for (auto& obj : m_universe.Objects().find<Ship>(OwnedVisitor(empire_id))) {
         obj->SetOwner(ALL_EMPIRES);
-        GetUniverse().RecursiveDestroy(obj->ID());
+        m_universe.RecursiveDestroy(obj->ID());
     }
     // destroy owned buildings
     for (auto& obj : m_universe.Objects().find<Building>(OwnedVisitor(empire_id))) {
         obj->SetOwner(ALL_EMPIRES);
-        GetUniverse().RecursiveDestroy(obj->ID());
+        m_universe.RecursiveDestroy(obj->ID());
     }
     // unclaim owned planets
     for (const auto& planet : planets)
