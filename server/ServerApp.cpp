@@ -3181,9 +3181,8 @@ namespace {
     }
 
     /** Destroys suitable objects that have been ordered scrapped.*/
-    void HandleScrapping() {
+    void HandleScrapping(Universe& universe, EmpireManager& empires) {
         std::vector<std::shared_ptr<Ship>> scrapped_ships;
-        Universe& universe{GetUniverse()};
         ObjectMap& objects{universe.Objects()};
 
         for (auto& ship : objects.all<Ship>()) {
@@ -3209,7 +3208,7 @@ namespace {
             }
 
             // record scrapping in empire stats
-            Empire* scrapping_empire = GetEmpire(ship->Owner());
+            auto scrapping_empire = empires.GetEmpire(ship->Owner());
             if (scrapping_empire)
                 scrapping_empire->RecordShipScrapped(*ship);
 
@@ -3232,7 +3231,7 @@ namespace {
                 system->Remove(building->ID());
 
             // record scrapping in empire stats
-            Empire* scrapping_empire = GetEmpire(building->Owner());
+            auto scrapping_empire = empires.GetEmpire(building->Owner());
             if (scrapping_empire)
                 scrapping_empire->RecordBuildingScrapped(*building);
 
@@ -3352,7 +3351,7 @@ void ServerApp::PreCombatProcessTurns() {
     HandleGifting(m_empires, m_universe.Objects());
 
     DebugLogger() << "ServerApp::ProcessTurns scrapping";
-    HandleScrapping();
+    HandleScrapping(m_universe, m_empires);
 
 
     DebugLogger() << "ServerApp::ProcessTurns movement";
