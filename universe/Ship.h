@@ -88,7 +88,7 @@ public:
     [[nodiscard]] std::vector<float>          AllWeaponsShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;
     /** returns any nonzero weapons strengths after adjustment versus an enemy with a given @p shield_DR shield rating,
       * assuming the ship has been resupplied recently (i.e. this uses Max*Meters) */
-    [[nodiscard]] std::vector<float>          AllWeaponsMaxShipDamage(float shield_DR = 0.0f, bool include_fighters = true) const;
+    [[nodiscard]] std::vector<float>          AllWeaponsMaxShipDamage(const Universe& universe, float shield_DR = 0.0f, bool include_fighters = true) const;
 
     void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
     void            SetArrivedOnTurn(int turn);

@@ -511,10 +511,10 @@ std::vector<float> Ship::AllWeaponsFighterDamage(bool launch_fighters) const
 std::vector<float> Ship::AllWeaponsShipDamage(float shield_DR, bool launch_fighters) const
 { return Combat::WeaponDamageImpl(std::static_pointer_cast<const Ship>(shared_from_this()), shield_DR, false, launch_fighters, true); }
 
-std::vector<float> Ship::AllWeaponsMaxShipDamage(float shield_DR, bool launch_fighters) const {
+std::vector<float> Ship::AllWeaponsMaxShipDamage(const Universe& universe, float shield_DR, bool launch_fighters) const {
     std::vector<float> retval;
 
-    const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id); // TODO: pass in Scriptingcontext
+    const ShipDesign* design = universe.GetShipDesign(m_design_id);
     if (!design)
         return retval;
 

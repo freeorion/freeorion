@@ -2517,15 +2517,16 @@ namespace {
             ErrorLogger() << "RefreshDetailPanelShipDesignTag couldn't convert name to design ID: " << item_name;
             return;
         }
-        const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        Universe& universe = GetUniverse();
+        ObjectMap& objects = universe.Objects();
+
+        const ShipDesign* design = universe.GetShipDesign(design_id);
         if (!design) {
             ErrorLogger() << "RefreshDetailPanelShipDesignTag couldn't find ShipDesign with id " << item_name;
             return;
         }
 
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        Universe& universe = GetUniverse();
-        ObjectMap& objects = universe.Objects();
 
         universe.InhibitUniverseObjectSignals(true);
 
@@ -2589,7 +2590,7 @@ namespace {
                     enemy_DR = this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
-                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(); // FIXME FighterDamage
+                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(universe); // FIXME FighterDamage
                     for (float shot : this_damage)
                         DebugLogger() << "Weapons Dmg " << shot;
                     enemy_shots.insert(this_damage.begin(), this_damage.end());
@@ -2678,7 +2679,7 @@ namespace {
         EmpireManager& empires = Empires();
         ScriptingContext context{universe, empires, GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
 
-        GetUniverse().InhibitUniverseObjectSignals(true);
+        universe.InhibitUniverseObjectSignals(true);
 
 
         // incomplete design.  not yet in game universe; being created on design screen
@@ -2696,7 +2697,7 @@ namespace {
         cost_units = UserString("ENC_PP");
 
 
-        GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design), client_empire_id, TEMPORARY_OBJECT_ID);
+        universe.InsertShipDesignID(new ShipDesign(*incomplete_design), client_empire_id, TEMPORARY_OBJECT_ID);
         detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
 
         float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
@@ -2724,7 +2725,7 @@ namespace {
                     enemy_DR = this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
-                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(); // FIXME MaxFighterDamage
+                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(universe); // FIXME: MaxFighterDamage
                     for (float shot : this_damage)
                         DebugLogger() << "Weapons Dmg " << shot;
                     enemy_shots.insert(this_damage.begin(), this_damage.end());
