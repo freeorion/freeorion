@@ -95,26 +95,31 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
-    auto system = Objects().get<System>(system_id);
+    const SpeciesManager& species_manager = GetSpeciesManager();
+    const EmpireManager& empire_manager = Empires();
+    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = universe.Objects();
+
+    auto system = objects.get<System>(system_id);
     if (!system)
         return;
 
-    const auto& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const auto& known_destroyed_object_ids = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
     if (known_destroyed_object_ids.count(system_id))
         return;
 
-    const SpeciesManager& species_manager = GetSpeciesManager();
-    const EmpireManager& empire_manager = Empires();
 
     // get system name
-    const std::string& system_name = system->ApparentName(client_empire_id, blank_unexplored_and_none);
+    const std::string& system_name = system->ApparentName(
+        client_empire_id, universe, blank_unexplored_and_none);
 
     // loop through planets in system, checking if any are a homeworld, capital
     // or have a shipyard, or have neutral population
-    bool capital = false, homeworld = false, has_shipyard = false, has_neutrals = false, has_player_planet = false;
+    bool capital = false, homeworld = false, has_shipyard = false,
+         has_neutrals = false, has_player_planet = false;
 
     std::set<int> owner_empire_ids;
-    auto system_planets = Objects().find<const Planet>(system->PlanetIDs());
+    auto system_planets = objects.find<const Planet>(system->PlanetIDs());
 
     for (auto& planet : system_planets) {
         int planet_id = planet->ID();
@@ -145,7 +150,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
         // does planet contain a shipyard?
         if (!has_shipyard) {
-            for (auto& building : Objects().find<const Building>(planet->BuildingIDs())) {
+            for (auto& building : objects.find<const Building>(planet->BuildingIDs())) {
                 int building_id = building->ID();
 
                 if (known_destroyed_object_ids.count(building_id))
@@ -198,9 +203,8 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
         text_color = ClientUI::TextColor();
     }
 
-    if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
+    if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
         wrapped_system_name = wrapped_system_name + " (" + std::to_string(system_id) + ")";
-    }
 
     m_text = GG::Wnd::Create<GG::TextControl>(
         GG::X0, GG::Y0, GG::X1, GG::Y1,

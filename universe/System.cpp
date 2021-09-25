@@ -189,14 +189,15 @@ std::string System::Dump(unsigned short ntabs) const {
     return os.str();
 }
 
-const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and_none/* = false*/) const {
+const std::string& System::ApparentName(int empire_id, const Universe& u,
+                                        bool blank_unexplored_and_none) const
+{
     static const std::string EMPTY_STRING;
 
-    const Universe& u = GetUniverse();
     const ObjectMap& o = u.Objects();
 
     if (empire_id == ALL_EMPIRES)
-        return this->PublicName(empire_id, u); // TODO: pass Universe into this function
+        return this->PublicName(empire_id, u);
 
     // has the indicated empire ever detected this system?
     const auto& vtm = u.GetObjectVisibilityTurnMapByEmpire(this->ID(), empire_id);

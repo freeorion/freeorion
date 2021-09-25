@@ -106,7 +106,7 @@ namespace {
             const auto [eta_final, eta_next] = fleet->ETA(context);
 
             // name of final destination
-            std::string dest_name = dest_sys->ApparentName(client_empire_id);
+            std::string dest_name = dest_sys->ApparentName(client_empire_id, context.ContextUniverse());
             if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
                 dest_name += " (" + std::to_string(dest_sys->ID()) + ")";
 
@@ -146,7 +146,7 @@ namespace {
             }
 
         } else if (cur_sys) {
-            std::string cur_system_name = cur_sys->ApparentName(client_empire_id);
+            std::string cur_system_name = cur_sys->ApparentName(client_empire_id, context.ContextUniverse());
             if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
                 cur_system_name = cur_system_name + " (" + std::to_string(cur_sys->ID()) + ")";
             }
@@ -3737,14 +3737,15 @@ int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
 }
 
 namespace {
-    std::string SystemNameNearestToFleet(int client_empire_id, int fleet_id, const ObjectMap& objects) {
+    std::string SystemNameNearestToFleet(int client_empire_id, int fleet_id, const Universe& u) {
+        const ObjectMap& objects{u.Objects()};
         auto fleet = objects.get<Fleet>(fleet_id);
         if (!fleet)
             return "";
 
-        int nearest_system_id(GetUniverse().GetPathfinder()->NearestSystemTo(fleet->X(), fleet->Y(), objects));
+        int nearest_system_id(u.GetPathfinder()->NearestSystemTo(fleet->X(), fleet->Y(), objects));
         if (auto system = objects.get<System>(nearest_system_id))
-            return system->ApparentName(client_empire_id);
+            return system->ApparentName(client_empire_id, u);
         return "";
     }
 }
@@ -3753,15 +3754,18 @@ std::string FleetWnd::TitleText() const {
     // if no fleets available, default to indicating no fleets
     if (m_fleet_ids.empty())
         return UserString("FW_NO_FLEET");
+    const Universe& u{GetUniverse()};
+    const ObjectMap& objects{u.Objects()};
+    const EmpireManager& empires{Empires()};
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
     // at least one fleet is available, so show appropriate title this
     // FleetWnd's empire and system
-    const Empire* empire = GetEmpire(m_empire_id);
+    auto empire = empires.GetEmpire(m_empire_id);
 
-    if (auto system = Objects().get<System>(m_system_id)) {
-        const std::string& sys_name = system->ApparentName(client_empire_id);
+    if (auto system = objects.get<System>(m_system_id)) {
+        const std::string& sys_name = system->ApparentName(client_empire_id, u);
         return (empire
                 ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
                                  empire->Name() % sys_name)
@@ -3769,7 +3773,7 @@ std::string FleetWnd::TitleText() const {
                                  sys_name));
     }
 
-    const std::string sys_name = SystemNameNearestToFleet(client_empire_id, *m_fleet_ids.begin(), Objects());
+    std::string sys_name = SystemNameNearestToFleet(client_empire_id, *m_fleet_ids.begin(), u);
     if (!sys_name.empty()) {
         return (empire
                 ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_NEAR_SYSTEM")) %

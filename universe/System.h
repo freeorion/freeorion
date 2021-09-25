@@ -72,7 +72,7 @@ public:
       * yet explored might be "Unexplored Region", rather than an empty string
       * for the name.  This is distinct from PublicName functions, which filter
       * the name based on ownership. */
-    [[nodiscard]] const std::string&      ApparentName(int empire_id, bool blank_unexplored_and_none = false) const;
+    [[nodiscard]] const std::string&      ApparentName(int empire_id, const Universe& u, bool blank_unexplored_and_none = false) const;
 
     [[nodiscard]] StarType                GetStarType() const             { return m_star; }  ///< returns the type of star for this system
     [[nodiscard]] StarType                NextOlderStarType() const;
