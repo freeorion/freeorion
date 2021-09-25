@@ -3652,9 +3652,15 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
         for ([[maybe_unused]] auto& [empire_id, unused_empire] : context.Empires()) {
             (void)unused_empire;
             for (auto& object : condition_matches) {
-                if (object->GetVisibility(empire_id) >= Visibility::VIS_BASIC_VISIBILITY) { // TODO use context visibility
+                auto empire_it = context.empire_object_vis.find(empire_id);
+                if (empire_it == context.empire_object_vis.end())
+                    continue;
+                auto obj_it = empire_it->second.find(object->ID());
+                if (obj_it == empire_it->second.end())
+                    continue;
+                if (obj_it->second >= Visibility::VIS_BASIC_VISIBILITY) {
                     recipient_empire_ids.insert(empire_id);
-                    break;
+                    break; // can move to the next empire, since this one has seen a matching object
                 }
             }
         }
