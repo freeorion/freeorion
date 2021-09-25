@@ -155,8 +155,8 @@ public:
       * \a empire_id (or all data if empire_id is ALL_EMPIRES) */
     virtual void    Copy(std::shared_ptr<const UniverseObject> copied_object, Universe&, int empire_id) = 0;
 
-    void            SetID(int id);                      ///< sets the ID number of the object to \a id
-    void            Rename(const std::string& name);    ///< renames this object to \a name     // TODO: by-value + move instead of const reference
+    void            SetID(int id);              ///< sets the ID number of the object to \a id
+    void            Rename(std::string name);   ///< renames this object to \a name
 
     /** moves this object by relative displacements x and y. */
     void            Move(double x, double y);

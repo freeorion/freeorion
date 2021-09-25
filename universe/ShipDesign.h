@@ -144,7 +144,7 @@ public:
     /** returns number of parts in this ship design, indexed by ShipPartClass */
     const std::map<ShipPartClass, int>&   PartClassCount() const { return m_num_part_classes; }
 
-    std::string                     Dump(unsigned short ntabs = 0) const;                                   ///< returns a data file format representation of this object
+    std::string                     Dump(unsigned short ntabs = 0) const;           ///< returns a data file format representation of this object
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -158,11 +158,11 @@ public:
 
     bool                            ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
 
-    void                            SetID(int id);                          ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
+    void                            SetID(int id);                                              ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
     /** Set the UUID. */
     void                            SetUUID(const boost::uuids::uuid& uuid);
-    void                            Rename(const std::string& name) { m_name = name; }  ///< renames this design to \a name
-    void                            SetMonster(const bool is_monster) {m_is_monster = is_monster; }
+    void                            Rename(std::string name) { m_name = std::move(name); }      ///< renames this design to \a name
+    void                            SetMonster(const bool is_monster) { m_is_monster = is_monster; }
 
     /** Return true if \p hull and \p parts would make a valid design. */
     static bool ValidDesign(const std::string& hull, const std::vector<std::string>& parts);

@@ -274,8 +274,8 @@ void UniverseObject::SetID(int id) {
     StateChangedSignal();
 }
 
-void UniverseObject::Rename(const std::string& name) {
-    m_name = name;
+void UniverseObject::Rename(std::string name) {
+    m_name = std::move(name);
     StateChangedSignal();
 }
 

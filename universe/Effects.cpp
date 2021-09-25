@@ -1593,7 +1593,7 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
     } else {
         name_str = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % system->Name() % planet->CardinalSuffix());
     }
-    planet->Rename(name_str);
+    planet->Rename(std::move(name_str));
 
     // apply after-creation effects
     ScriptingContext local_context{context, std::move(planet), ScriptingContext::CurrentValueVariant()};
@@ -1704,7 +1704,7 @@ void CreateBuilding::Execute(ScriptingContext& context) const {
         std::string name_str = m_name->Eval(context);
         if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
-        building->Rename(name_str);
+        building->Rename(std::move(name_str));
     }
 
     // apply after-creation effects
@@ -1855,7 +1855,7 @@ void CreateShip::Execute(ScriptingContext& context) const {
         std::string name_str = m_name->Eval(context);
         if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
-        ship->Rename(name_str);
+        ship->Rename(std::move(name_str));
     } else if (ship->IsMonster(context.ContextUniverse())) {
         ship->Rename(NewMonsterName());
     } else if (empire) {
@@ -2032,7 +2032,7 @@ void CreateField::Execute(ScriptingContext& context) const {
     } else {
         name_str = UserString(field_type->Name());
     }
-    field->Rename(name_str);
+    field->Rename(std::move(name_str));
 
     // apply after-creation effects
     ScriptingContext local_context{context, std::move(field), ScriptingContext::CurrentValueVariant()};
