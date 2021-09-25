@@ -2470,6 +2470,7 @@ namespace {
         // use the current meter values here, not initial, as this is used
         // within a loop that sets the species, updates meter, then checks
         // meter values for display
+        const Universe& universe = GetUniverse();
 
         auto& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
         float structure = ship->GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
@@ -2489,11 +2490,11 @@ namespace {
             % ship->GetMeter(MeterType::METER_STEALTH)->Current()
             % ship->GetMeter(MeterType::METER_SPEED)->Current()
             % ship->GetMeter(MeterType::METER_MAX_FUEL)->Current()
-            % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_COLONY)
-            % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_TROOPS)
+            % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_COLONY, universe)
+            % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_TROOPS, universe)
             % ship->FighterMax()
-            % (attack - ship->TotalWeaponsShipDamage(0.0f, false)) // FIXME TotalWeaponsFighterDamage 
-            % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_MAX_CAPACITY, ShipPartClass::PC_FIGHTER_BAY)
+            % (attack - ship->TotalWeaponsShipDamage(0.0f, false)) // FIXME TotalWeaponsFighterDamage
+            % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_MAX_CAPACITY, ShipPartClass::PC_FIGHTER_BAY, universe)
             % strength
             % (strength / cost)
             % typical_shot

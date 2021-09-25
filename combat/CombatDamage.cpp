@@ -183,8 +183,8 @@ int Combat::TotalFighterShots(const ScriptingContext& context, const Ship& ship,
 
     // Iterate over context, but change bout number
     ScriptingContext mut_context{context};
-    int launch_capacity = ship.SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_FIGHTER_BAY);
-    int hangar_fighters = ship.SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_FIGHTER_HANGAR);
+    int launch_capacity = ship.SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_FIGHTER_BAY, context.ContextUniverse());
+    int hangar_fighters = ship.SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_FIGHTER_HANGAR, context.ContextUniverse());
     int launched_fighters = 0;
     int shots_total = 0;
     Condition::ObjectSet condition_matches;

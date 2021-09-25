@@ -387,10 +387,12 @@ float Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) 
     return 0.0f;
 }
 
-float Ship::SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class) const {
+float Ship::SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class,
+                                                  const Universe& universe) const
+{
     float retval = 0.0f;
 
-    const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id); // TODO: pass in ScriptingContext
+    const ShipDesign* design = universe.GetShipDesign(m_design_id);
     if (!design)
         return retval;
 

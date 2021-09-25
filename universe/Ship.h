@@ -73,7 +73,7 @@ public:
     [[nodiscard]] float                       InitialPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns this turn's initial value for the specified part meter \a type for the specified part name
 
     /** Returns sum of current value for part meter @p type of all parts with ShipPartClass @p part_class */
-    [[nodiscard]] float                       SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class) const;
+    [[nodiscard]] float                       SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class, const Universe& universe) const;
 
     [[nodiscard]] float                       WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext& context) const; ///< versus fighter enemies
     [[nodiscard]] float                       WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& context) const; ///< versus an enemy context.effect_target ship with a given shields meter
