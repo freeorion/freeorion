@@ -67,7 +67,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
 }
 
 Planet* Planet::Clone(Universe& universe, int empire_id) const {
-    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
+    Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
@@ -87,8 +87,8 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe&
     }
 
     int copied_object_id = copied_object->ID();
-    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
-    auto visible_specials = GetUniverse().GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
+    Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
     UniverseObject::Copy(std::move(copied_object), vis, visible_specials, universe);
     PopCenter::Copy(copied_planet, vis);
@@ -120,9 +120,9 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe&
                 // copy system name if at partial visibility, as it won't be copied
                 // by UniverseObject::Copy unless at full visibility, but players
                 // should know planet names even if they don't own the planet
-                GetUniverse().InhibitUniverseObjectSignals(true);
+                universe.InhibitUniverseObjectSignals(true);
                 this->Rename(copied_planet->Name());
-                GetUniverse().InhibitUniverseObjectSignals(false);
+                universe.InhibitUniverseObjectSignals(false);
             }
         }
     }
@@ -676,7 +676,7 @@ void Planet::Conquer(int conquerer, EmpireManager& empires, ObjectMap& objects) 
             this->RemoveBuilding(building->ID());
             if (auto system = objects.get<System>(this->SystemID()))
                 system->Remove(building->ID());
-            GetUniverse().Destroy(building->ID());
+            GetUniverse().Destroy(building->ID()); // TODO: pass in Universe
         } else if (cap_result == CaptureResult::CR_RETAIN) {
             // do nothing
         }
