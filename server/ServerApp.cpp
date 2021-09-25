@@ -3242,10 +3242,10 @@ namespace {
 
     /** Removes bombardment state info from objects. Actual effects of
       * bombardment are handled during */
-    void CleanUpBombardmentStateInfo() { // TODO pass in ObjectMap
-        for (auto& ship : GetUniverse().Objects().all<Ship>())
+    void CleanUpBombardmentStateInfo(ObjectMap& objects) {
+        for (auto& ship : objects.all<Ship>())
             ship->ClearBombardPlanet();
-        for (auto& planet : GetUniverse().Objects().all<Planet>()) {
+        for (auto& planet : objects.all<Planet>()) {
             if (planet->IsAboutToBeBombarded()) {
                 //DebugLogger() << "CleanUpBombardmentStateInfo: " << planet->Name() << " was about to be bombarded";
                 planet->ResetIsAboutToBeBombarded();
@@ -3301,7 +3301,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     // clear bombardment state before executing orders, so result after is only
     // determined by what orders set.
-    CleanUpBombardmentStateInfo();
+    CleanUpBombardmentStateInfo(m_universe.Objects());
 
     // execute orders
     for (auto& [orders_empire_id, save_game_data] : m_turn_sequence) {
