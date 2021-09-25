@@ -1373,7 +1373,7 @@ std::map<int, std::set<int>> Empire::VisibleStarlanes(const Universe& universe) 
             continue;
 
         // get system's visible lanes for this empire
-        for (auto& [other_end_id, is_wormhole] : sys->VisibleStarlanesWormholes(m_id)) {
+        for (auto& [other_end_id, is_wormhole] : sys->VisibleStarlanesWormholes(m_id, universe)) {
             if (is_wormhole)
                 continue;   // is a wormhole, not a starlane
             retval[start_id].insert(other_end_id);

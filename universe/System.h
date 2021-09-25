@@ -104,7 +104,7 @@ public:
       * \a empire_id; the map contains keys that are IDs of connected systems,
       * and bool values indicating whether each is a starlane (false) or a
       * wormhole (true)*/
-    [[nodiscard]] std::map<int, bool>     VisibleStarlanesWormholes(int empire_id) const;
+    [[nodiscard]] std::map<int, bool>     VisibleStarlanesWormholes(int empire_id, const Universe& universe) const;
 
     [[nodiscard]] int                     LastTurnBattleHere() const  { return m_last_turn_battle_here; }
 

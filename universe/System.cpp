@@ -71,7 +71,7 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe&
         }
 
         // add any visible lanes, without removing existing entries
-        std::map<int, bool> visible_lanes_holes = copied_system->VisibleStarlanesWormholes(empire_id);
+        std::map<int, bool> visible_lanes_holes = copied_system->VisibleStarlanesWormholes(empire_id, universe);
         for (const auto& entry : visible_lanes_holes)
             this->m_starlanes_wormholes[entry.first] = entry.second;
 
@@ -518,14 +518,11 @@ std::set<int> System::FreeOrbits() const {
 const std::map<int, bool>& System::StarlanesWormholes() const
 { return m_starlanes_wormholes; }
 
-std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
+std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id, const Universe& universe) const {
     if (empire_id == ALL_EMPIRES)
         return m_starlanes_wormholes;
 
-    const Universe& universe = GetUniverse(); // TODO: pass in
     const ObjectMap& objects = universe.Objects();
-
-
     Visibility this_system_vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     //visible starlanes are:
