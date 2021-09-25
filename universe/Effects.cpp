@@ -1873,7 +1873,7 @@ void CreateShip::Execute(ScriptingContext& context) const {
 
     ship->BackPropagateMeters();
 
-    GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
+    context.ContextUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
 
     CreateNewFleet(std::move(system), ship, context.ContextUniverse(), context.species);
 
@@ -2237,7 +2237,7 @@ void Destroy::Execute(ScriptingContext& context) const {
     if (context.source)
         source_id = context.source->ID();
 
-    GetUniverse().EffectDestroy(context.effect_target->ID(), source_id);
+    context.ContextUniverse().EffectDestroy(context.effect_target->ID(), source_id);
 }
 
 std::string Destroy::Dump(unsigned short ntabs) const
@@ -2556,7 +2556,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
         return;
     }
 
-    Universe& universe = GetUniverse();
+    Universe& universe = context.ContextUniverse();
 
     Condition::ObjectSet valid_locations;
     // apply location condition to determine valid location to move target to
@@ -3988,7 +3988,7 @@ void SetVisibility::Execute(ScriptingContext& context) const {
         for (int obj_id : object_ids) {
             // store source object id and ValueRef to evaluate to determine
             // what visibility level to set at time of application
-            GetUniverse().SetEffectDerivedVisibility(emp_id, obj_id, source_id, m_vis.get());   // TODO: include in ScriptingContext
+            context.ContextUniverse().SetEffectDerivedVisibility(emp_id, obj_id, source_id, m_vis.get());
         }
     }
 }
