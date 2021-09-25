@@ -129,12 +129,12 @@ public:
        this UniverseObject. */
     [[nodiscard]] virtual bool                ContainedBy(int object_id) const;
 
-    [[nodiscard]] std::set<int> VisibleContainedObjectIDs(int empire_id) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
+    [[nodiscard]] std::set<int>               VisibleContainedObjectIDs(int empire_id) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
 
     [[nodiscard]] const MeterMap&             Meters() const { return m_meters; }             ///< returns this UniverseObject's meters
     [[nodiscard]] const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
-    [[nodiscard]] Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+    [[nodiscard]] Visibility                  GetVisibility(int empire_id) const;             ///< TODO: remove this and use explicit Universe or vis map lookups?  Returns the visibility status of this universe object relative to the input empire.
 
     /** Returns the name of this objectas it appears to empire \a empire_id .*/
     [[nodiscard]] virtual const std::string&  PublicName(int empire_id, const Universe& universe) const;
