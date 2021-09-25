@@ -91,7 +91,7 @@ Ship::Ship(int empire_id, int design_id, std::string species_name, int produced_
 }
 
 Ship* Ship::Clone(Universe& universe, int empire_id) const {
-    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
+    Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
