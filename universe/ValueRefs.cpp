@@ -172,7 +172,7 @@ namespace {
         retval += " | ";
 
         auto first = property_name.begin();
-        auto last = property_name.end();
+        const auto last = property_name.end();
         while (first != last) {
             std::string property_name_part = *first;
             retval += " " + property_name_part + " ";
@@ -2848,7 +2848,7 @@ std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingCont
     if (ref_vals.empty())
         return "";
     std::string retval;
-    for (auto val : ref_vals) {
+    for (auto& val : ref_vals) {
         if (val.empty() || !UserStringExists(val))
             continue;
         retval += UserString(val) + " ";
