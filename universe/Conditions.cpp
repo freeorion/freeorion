@@ -4795,6 +4795,7 @@ bool Enqueued::operator==(const Condition& rhs) const {
 
 namespace {
     int NumberOnQueue(const ProductionQueue& queue, BuildType build_type, const int location_id,
+                      const Universe& universe,
                       const std::string& name = "", int design_id = INVALID_DESIGN_ID)
     {
         int retval = 0;
@@ -4815,7 +4816,7 @@ namespace {
                         continue;
                 } else if (!name.empty()) {
                     // ... or accept design by predefined name
-                    const ShipDesign* design = GetUniverse().GetShipDesign(element.item.design_id);   // TODO: put ship design info in ScriptingContext
+                    const ShipDesign* design = universe.GetShipDesign(element.item.design_id);
                     if (!design || name != design->Name(false))
                         continue;
                 }
@@ -4847,14 +4848,16 @@ namespace {
                 for ([[maybe_unused]] auto& [ignored_empire_id, empire] : m_context.Empires()) {
                     (void)ignored_empire_id; // quiet unused variable warning
                     count += NumberOnQueue(empire->GetProductionQueue(), m_build_type,
-                                           candidate->ID(), m_name, m_design_id);
+                                           candidate->ID(), m_context.ContextUniverse(),
+                                           m_name, m_design_id);
                 }
 
             } else {
                 auto empire = m_context.GetEmpire(m_empire_id);
                 if (!empire) return false;
                 count = NumberOnQueue(empire->GetProductionQueue(), m_build_type,
-                                      candidate->ID(), m_name, m_design_id);
+                                      candidate->ID(), m_context.ContextUniverse(),
+                                      m_name, m_design_id);
             }
 
             return (m_low <= count && count <= m_high);
