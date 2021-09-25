@@ -189,7 +189,7 @@ const std::string& Fleet::PublicName(int empire_id, const Universe& universe) co
         return UserString("FW_FOREIGN_FLEET");
     else if (Unowned() && HasMonsters(universe))
         return UserString("MONSTERS");
-    else if (Unowned() && GetVisibility(empire_id) > Visibility::VIS_NO_VISIBILITY)
+    else if (Unowned() && GetVisibility(empire_id, universe) > Visibility::VIS_NO_VISIBILITY)
         return UserString("FW_ROGUE_FLEET");
     else
         return UserString("OBJ_FLEET");

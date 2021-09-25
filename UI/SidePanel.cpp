@@ -1151,12 +1151,14 @@ namespace {
     bool IsAvailable(const Ship* ship, int system_id, int empire_id) {
         if (!ship)
             return false;
-        auto fleet = Objects().get<Fleet>(ship->FleetID()).get();
+        const Universe& universe = GetUniverse();
+        const ObjectMap& objects = universe.Objects();
+        auto fleet = objects.get<Fleet>(ship->FleetID()).get();
         if (!fleet)
             return false;
         return ship->SystemID() == system_id &&
             ship->OwnedBy(empire_id) &&
-            ship->GetVisibility(empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY &&
+            ship->GetVisibility(empire_id, universe) >= Visibility::VIS_PARTIAL_VISIBILITY &&
             ship->OrderedScrapped() == false &&
             fleet->FinalDestinationID() == INVALID_OBJECT_ID;
     }
@@ -1519,11 +1521,12 @@ void SidePanel::PlanetPanel::Refresh() {
     m_planet_connection.disconnect();
 
     Universe& u = GetUniverse();
+    ObjectMap& objects = u.Objects(); // must be mutable to allow setting species and updating to estimate colonize button numbers
     SpeciesManager& sm = GetSpeciesManager();
     EmpireManager& e = Empires();
     const SupplyManager& supply = GetSupplyManager();
 
-    auto planet = u.Objects().get<Planet>(m_planet_id);
+    auto planet = objects.get<Planet>(m_planet_id);
     if (!planet) {
         DebugLogger() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
@@ -1564,7 +1567,7 @@ void SidePanel::PlanetPanel::Refresh() {
     // check for shipyard
     const auto& known_destroyed_object_ids =
         u.EmpireKnownDestroyedObjectIDs(client_empire_id);
-    for (const auto& building : u.Objects().find<Building>(planet->BuildingIDs())) {
+    for (const auto& building : objects.find<Building>(planet->BuildingIDs())) {
         if (!building || known_destroyed_object_ids.count(building->ID()))
             continue;
         if (building->HasTag(TAG_SHIPYARD)) {
@@ -1604,7 +1607,7 @@ void SidePanel::PlanetPanel::Refresh() {
 
     auto selected_colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
     if (!selected_colony_ship && FleetUIManager::GetFleetUIManager().SelectedShipIDs().empty())
-        selected_colony_ship = u.Objects().get<Ship>(AutomaticallyChosenColonyShip(m_planet_id)).get();
+        selected_colony_ship = objects.get<Ship>(AutomaticallyChosenColonyShip(m_planet_id)).get();
 
     auto invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
     if (invasion_ships.empty()) {
@@ -1618,7 +1621,8 @@ void SidePanel::PlanetPanel::Refresh() {
         bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
     }
 
-    auto& colony_ship_species_name{selected_colony_ship ? selected_colony_ship->SpeciesName() : ""};
+    static const std::string EMPTY_STRING;
+    auto& colony_ship_species_name{selected_colony_ship ? selected_colony_ship->SpeciesName() : EMPTY_STRING};
     float colony_ship_capacity{selected_colony_ship ? selected_colony_ship->ColonyCapacity(u) : 0.0f};
     const Species* colony_ship_species = GetSpecies(colony_ship_species_name);
     PlanetEnvironment planet_env_for_colony_species = PlanetEnvironment::PE_UNINHABITABLE;
@@ -1707,7 +1711,7 @@ void SidePanel::PlanetPanel::Refresh() {
             colony_projections[this_pair] = planet_capacity;
         } else {
             u.InhibitUniverseObjectSignals(true);
-            auto orig_species = planet->SpeciesName(); //want to store by value, not reference. should be just ""
+            auto orig_species{planet->SpeciesName()}; //want to store by value, not reference. should be just ""
             int orig_owner = planet->Owner();
             float orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
             planet->SetOwner(client_empire_id);
@@ -1954,8 +1958,8 @@ void SidePanel::PlanetPanel::Refresh() {
                                  " (id: " << m_planet_id << ") without having seen it before!";
             }
 
-            auto system = Objects().get<System>(planet->SystemID());
-            if (system && system->GetVisibility(client_empire_id) <= Visibility::VIS_BASIC_VISIBILITY) { // HACK: system is basically visible or less, so we must not be in detection range of the planet.
+            auto system = objects.get<System>(planet->SystemID());
+            if (system && system->GetVisibility(client_empire_id, u) <= Visibility::VIS_BASIC_VISIBILITY) { // HACK: system is basically visible or less, so we must not be in detection range of the planet.
                 detection_info = UserString("PL_NOT_IN_RANGE");
             }
             else if (apparent_stealth > client_empire_detection_strength) {
@@ -2072,7 +2076,9 @@ void SidePanel::PlanetPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
-    auto planet = Objects().get<Planet>(m_planet_id);
+    const Universe& u = GetUniverse();
+    const ObjectMap& objects = u.Objects();
+    auto planet = objects.get<Planet>(m_planet_id);
     if (!planet)
         return;
 
@@ -2082,11 +2088,11 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     // an owned object in this fleet's system
     std::set<int> peaceful_empires_in_system;
     if (system) {
-        auto system_objects = Objects().find<const UniverseObject>(system->ObjectIDs());
+        auto system_objects = objects.find<const UniverseObject>(system->ObjectIDs());
         for (auto& obj : system_objects) {
-            if (obj->GetVisibility(client_empire_id) < Visibility::VIS_PARTIAL_VISIBILITY)
+            if (obj->GetVisibility(client_empire_id, u) < Visibility::VIS_PARTIAL_VISIBILITY)
                 continue;
-            if (obj->Owner() == client_empire_id || obj->Unowned())
+            if (obj->OwnedBy(client_empire_id)|| obj->Unowned())
                 continue;
             if (peaceful_empires_in_system.count(obj->Owner()))
                 continue;

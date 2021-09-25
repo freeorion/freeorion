@@ -4,6 +4,7 @@
 #include <boost/lexical_cast.hpp>
 #include "Enums.h"
 #include "Pathfinder.h"
+#include "ScriptingContext.h"
 #include "Special.h"
 #include "System.h"
 #include "UniverseObjectVisitor.h"
@@ -249,8 +250,18 @@ bool UniverseObject::OwnedBy(int empire) const
 bool UniverseObject::HostileToEmpire(int, const EmpireManager&) const
 { return false; }
 
-Visibility UniverseObject::GetVisibility(int empire_id) const
-{ return GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id); }
+Visibility UniverseObject::GetVisibility(int empire_id, const EmpireIDtoObjectIDtoVisMap& v) const {
+    auto empire_it = v.find(empire_id);
+    if (empire_it == v.end())
+        return Visibility::VIS_NO_VISIBILITY;
+    auto obj_it = empire_it->second.find(m_id);
+    if (obj_it == empire_it->second.end())
+        return Visibility::VIS_NO_VISIBILITY;
+    return obj_it->second;
+}
+
+Visibility UniverseObject::GetVisibility(int empire_id, const Universe& u) const
+{ return GetVisibility(empire_id, u.GetEmpireObjectVisibility()); }
 
 const std::string& UniverseObject::PublicName(int, const Universe&) const
 { return m_name; }

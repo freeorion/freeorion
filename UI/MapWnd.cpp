@@ -2916,9 +2916,10 @@ void MapWnd::InitTurnRendering() {
     ClearProjectedFleetMovementLines();
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    const auto& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
-    const ObjectMap& objects = Objects();
+    const Universe& universe = GetUniverse();
+    const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const auto& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
+    const ObjectMap& objects = universe.Objects();
 
     // remove old system icons
     for (const auto& system_icon : m_system_icons)
@@ -2978,7 +2979,7 @@ void MapWnd::InitTurnRendering() {
         if (this_client_stale_object_info.count(fld_id))
             continue;
         // don't skip not visible but not stale fields; still expect these to be where last seen, or near there
-        //if (field->GetVisibility(client_empire_id) <= Visibility::VIS_NO_VISIBILITY)
+        //if (field->GetVisibility(client_empire_id, universe) <= Visibility::VIS_NO_VISIBILITY)
         //    continue;
 
         // create new system icon
@@ -3998,13 +3999,16 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     ClearVisibilityRadiiRenderingBuffers();
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const auto& destroyed_object_ids = GetUniverse().DestroyedObjectIds();
-    const auto& stale_object_ids = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
+    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = universe.Objects();
+    const EmpireManager& empires = Empires();
+    const auto& destroyed_object_ids = universe.DestroyedObjectIds();
+    const auto& stale_object_ids = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
 
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<float, float>>, float> empire_position_max_detection_ranges;
 
-    for (auto& obj : Objects().all<UniverseObject>()) {
+    for (auto& obj : objects.all<UniverseObject>()) {
         int object_id = obj->ID();
         // skip destroyed objects
         if (destroyed_object_ids.count(object_id))
@@ -4018,7 +4022,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             continue;
 
         // skip objects not at least partially visible this turn
-        if (obj->GetVisibility(client_empire_id) <= Visibility::VIS_BASIC_VISIBILITY)
+        if (obj->GetVisibility(client_empire_id, universe) <= Visibility::VIS_BASIC_VISIBILITY)
             continue;
 
         // don't show radii for fleets or moving ships
@@ -4028,7 +4032,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             auto ship = static_cast<const Ship*>(obj.get());
             if (!ship)
                 continue;
-            auto fleet = Objects().get<Fleet>(ship->FleetID());
+            auto fleet = objects.get<Fleet>(ship->FleetID());
             if (!fleet || INVALID_OBJECT_ID == fleet->SystemID())
                 continue;
         }
@@ -4057,7 +4061,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
 
     std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt>>> circles;
     for (const auto& detection_circle : empire_position_max_detection_ranges) {
-        const Empire* empire = GetEmpire(detection_circle.first.first);
+        auto empire = empires.GetEmpire(detection_circle.first.first);
         if (!empire) {
             ErrorLogger() << "InitVisibilityRadiiRenderingBuffers couldn't find empire with id: " << detection_circle.first.first;
             continue;

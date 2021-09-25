@@ -739,11 +739,14 @@ namespace {
         m_ship_icon_overlays.clear();
         DetachChildAndReset(m_scanline_control);
 
-        auto ship = Objects().get<Ship>(m_ship_id);
+        const Universe& universe = GetUniverse();
+        const ObjectMap& objects = universe.Objects();
+
+        auto ship = objects.get<Ship>(m_ship_id);
         if (!ship)
             return;
 
-        const ShipDesign* design = GetUniverse().GetShipDesign(ship->DesignID());
+        const ShipDesign* design = universe.GetShipDesign(ship->DesignID());
         auto icon{ClientUI::ShipDesignIcon(design ? design->ID() : INVALID_OBJECT_ID)};
 
         m_ship_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(icon), DataPanelIconStyle());
@@ -771,7 +774,7 @@ namespace {
             add_overlay("bombarding.png");
 
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        if ((ship->GetVisibility(client_empire_id) < Visibility::VIS_BASIC_VISIBILITY)
+        if ((ship->GetVisibility(client_empire_id, universe) < Visibility::VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(
@@ -1483,7 +1486,7 @@ void FleetDataPanel::Refresh() {
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES && fleet->TravelRoute().empty())
             add_overlay("gifting.png");
 
-        if ((fleet->GetVisibility(client_empire_id) < Visibility::VIS_BASIC_VISIBILITY)
+        if ((fleet->GetVisibility(client_empire_id, u) < Visibility::VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
@@ -1755,7 +1758,7 @@ void FleetDataPanel::Init() {
             boost::bind(&FleetDataPanel::ToggleAggression, this));
 
     } else if (auto fleet = Objects().get<Fleet>(m_fleet_id)) {
-        std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext{
+        std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, const char*>> meters_icons_browsetext{
             {MeterType::METER_SIZE,           FleetCountIcon(),                                "FW_FLEET_COUNT_SUMMARY"},
             {MeterType::METER_CAPACITY,       DamageIcon(),                                    "FW_FLEET_DAMAGE_SUMMARY"},
             {MeterType::METER_MAX_CAPACITY,   DestroyIcon(), /* number of destroyed fighters */"FW_FLEET_DESTROY_SUMMARY"},
@@ -1795,7 +1798,8 @@ void FleetDataPanel::Init() {
         }
 
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= Visibility::VIS_FULL_VISIBILITY) {
+        const Universe& u = GetUniverse();
+        if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id, u) >= Visibility::VIS_FULL_VISIBILITY) {
             m_aggression_toggle = Wnd::Create<CUIButton>(
                 GG::SubTexture(FleetAggressiveIcon()),
                 GG::SubTexture(FleetPassiveIcon()),
@@ -3460,7 +3464,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     std::set<int> peaceful_empires_in_system;
     if (system) {
         for (auto& obj : o.find<const UniverseObject>(system->ObjectIDs())) {
-            if (obj->GetVisibility(client_empire_id) < Visibility::VIS_PARTIAL_VISIBILITY)
+            if (obj->GetVisibility(client_empire_id, u) < Visibility::VIS_PARTIAL_VISIBILITY)
                 continue;
             if (obj->Owner() == client_empire_id || obj->Unowned())
                 continue;

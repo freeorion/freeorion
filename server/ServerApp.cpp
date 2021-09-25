@@ -3399,7 +3399,7 @@ void ServerApp::PreCombatProcessTurns() {
             continue;
         // sitreps for all empires that can see fleet at new location
         for (auto& [empire_id, empire] : m_empires) {
-            if (fleet->GetVisibility(empire_id) >= Visibility::VIS_BASIC_VISIBILITY)
+            if (fleet->GetVisibility(empire_id, m_universe) >= Visibility::VIS_BASIC_VISIBILITY)
                 empire->AddSitRepEntry(
                     CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID(), empire_id));
         }

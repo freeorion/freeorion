@@ -170,9 +170,6 @@ private:
 
     void Init();
 
-    [[nodiscard]] Visibility GetVisibility(int empire_id) const override
-    { return UniverseObject::GetVisibility(empire_id); }
-
     void AddMeter(MeterType meter_type) override
     { UniverseObject::AddMeter(meter_type); }
 

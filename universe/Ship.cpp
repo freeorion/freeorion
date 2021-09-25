@@ -344,7 +344,7 @@ const std::string& Ship::PublicName(int empire_id, const Universe& universe) con
         return UserString("SM_MONSTER");
     else if (!Unowned())
         return UserString("FW_FOREIGN_SHIP");
-    else if (Unowned()/* && GetVisibility(empire_id) > Visibility::VIS_NO_VISIBILITY*/)
+    else if (Unowned() && GetVisibility(empire_id, universe) > Visibility::VIS_NO_VISIBILITY)
         return UserString("FW_ROGUE_SHIP");
     else
         return UserString("OBJ_SHIP");

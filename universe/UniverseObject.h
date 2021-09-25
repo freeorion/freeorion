@@ -24,6 +24,7 @@ class SitRepEntry;
 class EmpireManager;
 class ObjectMap;
 class Universe;
+class ScriptingContext;
 struct UniverseObjectVisitor;
 
 // The ID number assigned to temporary universe objects
@@ -134,7 +135,9 @@ public:
     [[nodiscard]] const MeterMap&             Meters() const { return m_meters; }             ///< returns this UniverseObject's meters
     [[nodiscard]] const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
-    [[nodiscard]] Visibility                  GetVisibility(int empire_id) const;             ///< TODO: remove this and use explicit Universe or vis map lookups?  Returns the visibility status of this universe object relative to the input empire.
+    using EmpireIDtoObjectIDtoVisMap = std::map<int, std::map<int, Visibility>>; // duplicates Universe::EmpireObjectVisibilityMap
+    [[nodiscard]] Visibility                  GetVisibility(int empire_id, const EmpireIDtoObjectIDtoVisMap& v) const;
+    [[nodiscard]] Visibility                  GetVisibility(int empire_id, const Universe& u) const;
 
     /** Returns the name of this objectas it appears to empire \a empire_id .*/
     [[nodiscard]] virtual const std::string&  PublicName(int empire_id, const Universe& universe) const;

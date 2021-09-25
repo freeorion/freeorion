@@ -2726,9 +2726,8 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
 
 
         // fleets that are not visible and that contain no ships or only stale ships are stale
-        for (const auto& fleet : latest_known_objects.all<Fleet>())
-        {
-            if (fleet->GetVisibility(empire_id) >= Visibility::VIS_BASIC_VISIBILITY)
+        for (const auto& fleet : latest_known_objects.all<Fleet>()) {
+            if (fleet->GetVisibility(empire_id, *this) >= Visibility::VIS_BASIC_VISIBILITY)
                 continue;
 
             // destroyed? not stale
@@ -2818,7 +2817,7 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
         // record empires that know this object has been destroyed
         for (auto& empire_entry : Empires()) {
             int empire_id = empire_entry.first;
-            if (obj->GetVisibility(empire_id) >= Visibility::VIS_BASIC_VISIBILITY) {
+            if (obj->GetVisibility(empire_id, *this) >= Visibility::VIS_BASIC_VISIBILITY) {
                 SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
                 // TODO: Update m_empire_latest_known_objects somehow?
             }

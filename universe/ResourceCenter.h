@@ -61,8 +61,7 @@ private:
     std::string m_focus_turn_initial;
     int         m_last_turn_focus_changed_turn_initial;
 
-    virtual Visibility  GetVisibility(int empire_id) const = 0;         ///< implementation should return the visibility of this ResourceCenter for the empire with the specified \a empire_id
-    virtual void        AddMeter(MeterType meter_type) = 0;             ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
+    virtual void AddMeter(MeterType meter_type) = 0; ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
 
     template <typename Archive>
     friend void serialize(Archive&, ResourceCenter&, unsigned int const);
