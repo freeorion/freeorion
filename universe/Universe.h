@@ -371,6 +371,25 @@ public:
     std::shared_ptr<T> InsertTemp(Args&&... args)
     { return InsertID<T>(TEMPORARY_OBJECT_ID, std::forward<Args>(args)...); }
 
+    /** InsertTemp inserts the provided \a objets into the object map with a series of
+      * temporary ids. It returns the ids of the inserted objects. */
+    template <typename T>
+    std::vector<int> InsertTemp(const std::vector<std::shared_ptr<T>>& objects)
+    {
+        auto ID = TEMPORARY_OBJECT_ID;
+        std::vector<int> retval;
+        retval.reserve(objects.size());
+        for (auto& obj : objects) {
+            if (!obj)
+                continue;
+            retval.push_back(ID);
+            obj->SetID(ID); // assign and decrement temporary ID
+            m_objects->insert(std::move(obj)); // directly insert into objects, skipping ID validation
+            ID--;
+        }
+        return retval;
+    }
+
     /** \p empire_id inserts object \p obj into the universe with the given \p id.
         This is provided for use with Orders which are run once on the client
         and receive a new id and then are run a second time on the server using
