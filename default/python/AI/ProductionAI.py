@@ -1,7 +1,7 @@
 import freeOrionAIInterface as fo
 import math
 import random
-from logging import debug, error, info, warning
+from logging import debug, error, warning
 from operator import itemgetter
 from typing import FrozenSet, List
 
@@ -17,7 +17,6 @@ from character.character_module import Aggression
 from colonization import rate_planetary_piloting
 from colonization.rate_pilots import GREAT_PILOT_RATING
 from common.fo_typing import PlanetId
-from common.print_utils import Sequence, Table, Text
 from empire.buildings_locations import (
     get_best_pilot_facilities,
     get_systems_with_building,
@@ -48,6 +47,7 @@ from EnumsAI import (
     get_priority_production_types,
 )
 from freeorion_tools import ppstring, tech_is_complete
+from production import print_building_list, print_capital_info, print_production_queue
 from turn_state import (
     get_all_empire_planets,
     get_colonized_planets,
@@ -75,80 +75,71 @@ def get_priority_locations() -> FrozenSet[PlanetId]:
     return frozenset(loc for building in priority_facilities for loc in get_best_pilot_facilities(building))
 
 
+def _get_capital_info():
+    capital_id = PlanetUtilsAI.get_capital()
+    if capital_id is None or capital_id == INVALID_ID:
+        homeworld = None
+        capital_system_id = None
+    else:
+        homeworld = fo.getUniverse().getPlanet(capital_id)
+        capital_system_id = homeworld.systemID
+    return capital_id, homeworld, capital_system_id
+
+
+def _first_turn_first_time():
+    """
+    Return true if generate production order at the first time.
+
+    If game is loaded on the first turn this code should return false.
+    """
+    return fo.currentTurn() == 1 and len(AIstate.opponentPlanetIDs) == 0 and len(fo.getEmpire().productionQueue) == 0
+
+
+def _first_turn_action():
+    if not _first_turn_first_time():
+        return
+
+    init_build_nums = [(PriorityType.PRODUCTION_EXPLORATION, 2)]
+    if can_build_only_sly_colonies():
+        init_build_nums.append((PriorityType.PRODUCTION_COLONISATION, 1))
+    else:
+        init_build_nums.append((PriorityType.PRODUCTION_OUTPOST, 1))
+    for ship_type, num_ships in init_build_nums:
+        best_design_id, _, build_choices = get_best_ship_info(ship_type)
+        if best_design_id is not None:
+            for _ in range(num_ships):
+                fo.issueEnqueueShipProductionOrder(best_design_id, build_choices[0])
+            fo.updateProductionQueue()
+
+
 # TODO Move Building names to AIDependencies to avoid typos and for IDE-Support
 def generate_production_orders():
     """generate production orders"""
     # first check ship designs
     # next check for buildings etc that could be placed on queue regardless of locally available PP
     # next loop over resource groups, adding buildings & ships
-    _print_production_queue()
+    print_production_queue()
     universe = fo.getUniverse()
-    capital_id = PlanetUtilsAI.get_capital()
-    if capital_id is None or capital_id == INVALID_ID:
-        homeworld = None
-        capital_system_id = None
-    else:
-        homeworld = universe.getPlanet(capital_id)
-        capital_system_id = homeworld.systemID
+
     debug("Production Queue Management:")
     empire = fo.getEmpire()
-    production_queue = empire.productionQueue
     total_pp = empire.productionPoints
-    current_turn = fo.currentTurn()
     debug("")
     debug("  Total Available Production Points: %s" % total_pp)
+    print_building_list()
 
     aistate = get_aistate()
 
-    if current_turn == 1 and len(AIstate.opponentPlanetIDs) == 0 and len(production_queue) == 0:
-        init_build_nums = [(PriorityType.PRODUCTION_EXPLORATION, 2)]
-        if can_build_only_sly_colonies():
-            init_build_nums.append((PriorityType.PRODUCTION_COLONISATION, 1))
-        else:
-            init_build_nums.append((PriorityType.PRODUCTION_OUTPOST, 1))
-        for ship_type, num_ships in init_build_nums:
-            best_design_id, _, build_choices = get_best_ship_info(ship_type)
-            if best_design_id is not None:
-                for _ in range(num_ships):
-                    fo.issueEnqueueShipProductionOrder(best_design_id, build_choices[0])
-                fo.updateProductionQueue()
-
+    _first_turn_action()
     building_expense = 0.0
     building_ratio = aistate.character.preferred_building_ratio([0.4, 0.35, 0.30])
-    debug("Buildings present on all owned planets:")
-    for pid in get_all_empire_planets():
-        planet = universe.getPlanet(pid)
-        if planet:
-            debug("%30s: %s" % (planet.name, [universe.getBuilding(bldg).name for bldg in planet.buildingIDs]))
-    debug("")
-
+    capital_id, homeworld, capital_system_id = _get_capital_info()
+    current_turn = fo.currentTurn()
     if not homeworld:
         debug("if no capital, no place to build, should get around to capturing or colonizing a new one")  # TODO
     else:
         debug("Empire priority_id %d has current Capital %s:" % (empire.empireID, homeworld.name))
-        table = Table(
-            Text("Id", description="Building id"),
-            Text("Name"),
-            Text("Type"),
-            Sequence("Tags"),
-            Sequence("Specials"),
-            Text("Owner Id"),
-            table_name="Buildings present at empire Capital in Turn %d" % fo.currentTurn(),
-        )
-
-        for building_id in homeworld.buildingIDs:
-            building = universe.getBuilding(building_id)
-
-            table.add_row(
-                building_id,
-                building.name,
-                "_".join(building.buildingTypeName.split("_")[-2:]),
-                sorted(building.tags),
-                sorted(building.specials),
-                building.owner,
-            )
-
-        table.print_table(info)
+        print_capital_info(homeworld)
         capital_buildings = [universe.getBuilding(bldg).buildingTypeName for bldg in homeworld.buildingIDs]
 
         possible_building_type_ids = []
@@ -187,6 +178,7 @@ def generate_production_orders():
 
             debug("")
             debug("Buildings already in Production Queue:")
+            production_queue = empire.productionQueue
             capital_queued_buildings = []
             for element in [e for e in production_queue if (e.buildType == EmpireProductionTypes.BT_BUILDING)]:
                 building_expense += element.allocation
@@ -1623,7 +1615,7 @@ def generate_production_orders():
         debug("")
     update_stockpile_use()
     fo.updateProductionQueue()
-    _print_production_queue(after_turn=True)
+    print_production_queue(after_turn=True)
 
 
 def update_stockpile_use():
@@ -1724,40 +1716,6 @@ def build_ship_facilities(bld_name, top_locs=None):
         if res:
             num_queued += 1
             already_covered.extend(get_owned_planets_in_system(universe.getPlanet(pid).systemID))
-
-
-def _print_production_queue(after_turn=False):
-    """Print production queue content with relevant info in table format."""
-    universe = fo.getUniverse()
-    s = "after" if after_turn else "before"
-    title = "Production Queue Turn %d %s ProductionAI calls" % (fo.currentTurn(), s)
-    prod_queue_table = Table(
-        Text("Object"),
-        Text("Location"),
-        Text("Quantity"),
-        Text("Progress"),
-        Text("Allocated PP"),
-        Text("Turns left"),
-        table_name=title,
-    )
-    for element in fo.getEmpire().productionQueue:
-        if element.buildType == EmpireProductionTypes.BT_SHIP:
-            item = fo.getShipDesign(element.designID)
-        elif element.buildType == EmpireProductionTypes.BT_BUILDING:
-            item = fo.getBuildingType(element.name)
-        else:
-            continue
-        cost = item.productionCost(fo.empireID(), element.locationID)
-
-        prod_queue_table.add_row(
-            element.name,
-            universe.getPlanet(element.locationID),
-            "%dx %d" % (element.remaining, element.blocksize),
-            "%.1f / %.1f" % (element.progress * cost, cost),
-            "%.1f" % element.allocation,
-            "%d" % element.turnsLeft,
-        )
-    prod_queue_table.print_table(info)
 
 
 def find_automatic_historic_analyzer_candidates() -> List[int]:
