@@ -172,12 +172,14 @@ namespace {
                 if (str == "ENC_INDEX")
                     continue;
                 sorted_entries_list.emplace(
-                    UserString(str), std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n", str});
+                    UserString(str),
+                    std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str).append("\n"), str});
             }
 
             for (auto str : {"ENC_TEXTURES", "ENC_HOMEWORLDS"}) {
                 sorted_entries_list.emplace(
-                    UserString(str), std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n", str});
+                    UserString(str),
+                    std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str).append("\n"), str});
             }
 
             for ([[maybe_unused]] auto& [category_name, article_vec] : encyclopedia.Articles()) {
@@ -190,7 +192,7 @@ namespace {
 
                 sorted_entries_list.emplace(
                     UserString(category_name),
-                    std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, category_name) + "\n", category_name});
+                    std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, category_name).append("\n"), category_name});
             }
 
         }
@@ -199,7 +201,7 @@ namespace {
                 if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(part->Tags()).empty()) {
                     sorted_entries_list.emplace(
                         UserString(part_name),
-                        std::pair{LinkTaggedText(VarText::SHIP_PART_TAG, part_name) + "\n", part_name});
+                        std::pair{LinkTaggedText(VarText::SHIP_PART_TAG, part_name).append("\n"), part_name});
                 }
             }
 
@@ -209,7 +211,7 @@ namespace {
                 if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(hull->Tags()).empty()) {
                     sorted_entries_list.emplace(
                         UserString(hull_name),
-                        std::pair{LinkTaggedText(VarText::SHIP_HULL_TAG, hull_name) + "\n", hull_name});
+                        std::pair{LinkTaggedText(VarText::SHIP_HULL_TAG, hull_name).append("\n"), hull_name});
                 }
             }
 
@@ -231,7 +233,7 @@ namespace {
                     DetermineCustomCategory(GetTech(tech_name)->Tags()).empty())
                 {
                     // already iterating over userstring-looked-up names, so don't need to re-look-up-here
-                    std::string&& tagged_text{LinkTaggedText(VarText::TECH_TAG, tech_name) + "\n"};
+                    std::string tagged_text{LinkTaggedText(VarText::TECH_TAG, tech_name).append("\n")};
                     sorted_entries_list.emplace(
                         std::move(us_name),
                         std::pair(std::move(tagged_text), std::move(tech_name)));
@@ -241,7 +243,7 @@ namespace {
         }
         else if (dir_name == "ENC_POLICY") {
             for (auto& policy_name : GetPolicyManager().PolicyNames()) {
-                std::string&& tagged_text{LinkTaggedText(VarText::POLICY_TAG, policy_name) + "\n"};
+                std::string tagged_text{LinkTaggedText(VarText::POLICY_TAG, policy_name).append("\n")};
                 auto& us_name{UserString(policy_name)}; // line before to avoid order of evaluation issues when moving from policy_name
                 sorted_entries_list.emplace(
                     us_name,
@@ -254,14 +256,14 @@ namespace {
                 if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(building_type->Tags()).empty()) {
                     sorted_entries_list.emplace(
                         UserString(building_name),
-                        std::pair{LinkTaggedText(VarText::BUILDING_TYPE_TAG, building_name) + "\n", building_name});
+                        std::pair{LinkTaggedText(VarText::BUILDING_TYPE_TAG, building_name).append("\n"), building_name});
                 }
             }
 
         }
         else if (dir_name == "ENC_SPECIAL") {
             for (std::string& special_name : SpecialNames()) {
-                std::string&& tagged_text{LinkTaggedText(VarText::SPECIAL_TAG, special_name) + "\n"};
+                std::string tagged_text{LinkTaggedText(VarText::SPECIAL_TAG, special_name).append("\n")};
                 auto& us_name{UserString(special_name)};    // line before to avoid order of operations issues when moving from special_name
                 sorted_entries_list.emplace(
                     us_name,
@@ -276,7 +278,7 @@ namespace {
                     (void)species; // quiet warning
                     sorted_entries_list.emplace(
                         UserString(species_name),
-                        std::pair{LinkTaggedText(VarText::SPECIES_TAG, species_name) + "\n", species_name});
+                        std::pair{LinkTaggedText(VarText::SPECIES_TAG, species_name).append("\n"), species_name});
                 }
             }
 
@@ -286,7 +288,7 @@ namespace {
 
             for (const auto& entry : GetSpeciesManager()) {
                 std::set<int> known_homeworlds;
-                std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, entry.first) + " ";
+                std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, entry.first).append(" ");
 
 
                 // homeworld
@@ -331,14 +333,14 @@ namespace {
                     }
                 }
                 sorted_entries_list.emplace(UserString(entry.first),
-                                            std::make_pair(species_entry + "\n", entry.first));
+                                            std::pair{species_entry.append("\n"), entry.first});
             }
-            sorted_entries_list.emplace("⃠ ", std::make_pair("\n\n", "  "));
+            sorted_entries_list.emplace("⃠ ", std::pair{"\n\n", "  "});
             for (const auto& entry : GetSpeciesManager()) {
                 if (!homeworlds.count(entry.first) || homeworlds.at(entry.first).empty()) {
                     std::string species_entry{LinkTaggedText(VarText::SPECIES_TAG, entry.first) + ":  \n" + UserString("NO_HOMEWORLD")};
                     sorted_entries_list.emplace("⃠⃠" + std::string( "⃠ ") + UserString(entry.first),
-                                                std::make_pair(std::move(species_entry), entry.first));
+                                                std::pair{std::move(species_entry), entry.first});
                 }
             }
 
@@ -346,9 +348,9 @@ namespace {
         else if (dir_name == "ENC_FIELD_TYPE") {
             for (const auto& entry : GetFieldTypeManager()) {
                 if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(entry.second->Tags()).empty()) {
-                    sorted_entries_list.emplace(UserString(entry.first),
-                                                std::make_pair(LinkTaggedText(VarText::FIELD_TYPE_TAG, entry.first) + "\n",
-                                                               entry.first));
+                    sorted_entries_list.emplace(
+                        UserString(entry.first),
+                        std::pair{LinkTaggedText(VarText::FIELD_TYPE_TAG, entry.first).append("\n"), entry.first});
                 }
             }
 
@@ -365,9 +367,10 @@ namespace {
         }
         else if (dir_name == "ENC_EMPIRE") {
             for (const auto& [id, empire] : Empires()) {
-                sorted_entries_list.emplace(empire->Name(),
-                                            std::make_pair(LinkTaggedIDText(VarText::EMPIRE_ID_TAG, id, empire->Name()) + "\n",
-                                                           std::to_string(id)));
+                sorted_entries_list.emplace(
+                    empire->Name(),
+                    std::pair{LinkTaggedIDText(VarText::EMPIRE_ID_TAG, id, empire->Name()).append("\n"),
+                              std::to_string(id)});
             }
 
         }
@@ -378,8 +381,8 @@ namespace {
                     continue;
                 sorted_entries_list.emplace(
                     design->Name(),
-                    std::make_pair(LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design->Name()) + "\n",
-                                   std::to_string(design_id)));
+                    std::pair{LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design->Name()).append("\n"),
+                              std::to_string(design_id)});
             }
 
         }
@@ -388,8 +391,8 @@ namespace {
                 const std::string& ship_name = ship->PublicName(client_empire_id, universe);
                 sorted_entries_list.emplace(
                     ship_name,
-                    std::make_pair(LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ",
-                                   std::to_string(ship->ID())));
+                    std::pair{LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name).append("  "),
+                              std::to_string(ship->ID())});
             }
 
         }
@@ -400,8 +403,8 @@ namespace {
                 const std::string& ship_name = ship->PublicName(client_empire_id, universe);
                 sorted_entries_list.emplace(
                     ship_name,
-                    std::make_pair(LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ",
-                                   std::to_string(ship->ID())));
+                    std::pair{LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name).append("  "),
+                              std::to_string(ship->ID())});
             }
 
         }
@@ -411,8 +414,8 @@ namespace {
                 if (design->IsMonster())
                     sorted_entries_list.emplace(
                         design->Name(),
-                        std::make_pair(LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design->Name()) + "\n",
-                                       std::to_string(design_id)));
+                        std::pair{LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design->Name()).append("\n"),
+                                  std::to_string(design_id)});
             }
 
         }
@@ -421,8 +424,8 @@ namespace {
                 const std::string& flt_name = fleet->PublicName(client_empire_id, universe);
                 sorted_entries_list.emplace(
                     flt_name,
-                    std::make_pair(LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name) + "  ",
-                                   std::to_string(fleet->ID())));
+                    std::pair{LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name).append("  "),
+                              std::to_string(fleet->ID())});
             }
 
         }
@@ -431,8 +434,8 @@ namespace {
                 const std::string& plt_name = planet->PublicName(client_empire_id, universe);
                 sorted_entries_list.emplace(
                     plt_name,
-                    std::make_pair(LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name) + "  ",
-                                   std::to_string(planet->ID())));
+                    std::pair{LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name).append("  "),
+                              std::to_string(planet->ID())});
             }
 
         }
@@ -441,8 +444,8 @@ namespace {
                 const std::string& bld_name = building->PublicName(client_empire_id, universe);
                 sorted_entries_list.emplace(
                     bld_name,
-                    std::make_pair(LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name) + "  ",
-                                   std::to_string(building->ID())));
+                    std::pair{LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name).append("  "),
+                              std::to_string(building->ID())});
             }
 
         }
@@ -451,8 +454,8 @@ namespace {
                 const std::string& sys_name = system->ApparentName(client_empire_id, universe);
                 sorted_entries_list.emplace(
                     sys_name,
-                    std::make_pair(LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name) + "  ",
-                                   std::to_string(system->ID())));
+                    std::pair{LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name).append("  "),
+                              std::to_string(system->ID())});
             }
 
         }
@@ -461,8 +464,8 @@ namespace {
                 const std::string& field_name = field->Name();
                 sorted_entries_list.emplace(
                     field_name,
-                    std::make_pair(LinkTaggedIDText(VarText::FIELD_ID_TAG, field->ID(), field_name) + "  ",
-                                   std::to_string(field->ID())));
+                    std::pair{LinkTaggedIDText(VarText::FIELD_ID_TAG, field->ID(), field_name).append("  "),
+                              std::to_string(field->ID())});
             }
 
         }
@@ -470,8 +473,8 @@ namespace {
             for (const auto& stat_record : universe.GetStatRecords()) {
                 sorted_entries_list.emplace(
                     UserString(stat_record.first),
-                    std::make_pair(LinkTaggedText(TextLinker::GRAPH_TAG, stat_record.first) + "\n",
-                                   stat_record.first));
+                    std::pair{LinkTaggedText(TextLinker::GRAPH_TAG, stat_record.first).append("\n"),
+                              stat_record.first});
             }
 
         }
@@ -485,7 +488,7 @@ namespace {
                      tex_name);
                  sorted_entries_list.emplace(
                      tex_name,
-                     std::pair(std::move(texture_info_str), tex_name));
+                     std::pair{std::move(texture_info_str), tex_name});
              }
 
              for (auto& [tex_name, tex] : GG::GetVectorTextureManager().Textures()) {
@@ -1494,22 +1497,19 @@ namespace {
 
         if (!unlocked_items.empty()) {
             for (const UnlockableItem& item : unlocked_items) {
-                std::string TAG;
-                switch (item.type) {
-                case UnlockableItemType::UIT_BUILDING:    TAG = VarText::BUILDING_TYPE_TAG;     break;
-                case UnlockableItemType::UIT_SHIP_PART:   TAG = VarText::SHIP_PART_TAG;         break;
-                case UnlockableItemType::UIT_SHIP_HULL:   TAG = VarText::SHIP_HULL_TAG;         break;
-                case UnlockableItemType::UIT_SHIP_DESIGN: TAG = VarText::PREDEFINED_DESIGN_TAG; break;
-                case UnlockableItemType::UIT_TECH:        TAG = VarText::TECH_TAG;              break;
-                case UnlockableItemType::UIT_POLICY:      TAG = VarText::POLICY_TAG;            break;
-                default: break;
-                }
+                auto& TAG = [type{item.type}]() -> const std::string& {
+                    switch (type) {
+                    case UnlockableItemType::UIT_BUILDING:    return VarText::BUILDING_TYPE_TAG;     break;
+                    case UnlockableItemType::UIT_SHIP_PART:   return VarText::SHIP_PART_TAG;         break;
+                    case UnlockableItemType::UIT_SHIP_HULL:   return VarText::SHIP_HULL_TAG;         break;
+                    case UnlockableItemType::UIT_SHIP_DESIGN: return VarText::PREDEFINED_DESIGN_TAG; break;
+                    case UnlockableItemType::UIT_TECH:        return VarText::TECH_TAG;              break;
+                    case UnlockableItemType::UIT_POLICY:      return VarText::POLICY_TAG;            break;
+                    default:                                  return EMPTY_STRING;
+                    }
+                }();
 
-                std::string link_text;
-                if (!TAG.empty())
-                    link_text = LinkTaggedText(TAG, item.name);
-                else
-                    link_text = UserString(item.name);
+                std::string link_text = TAG.empty() ? UserString(item.name) : LinkTaggedText(TAG, item.name);
 
                 detailed_description += str(FlexibleFormat(UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
                     % UserString(boost::lexical_cast<std::string>(item.type))
