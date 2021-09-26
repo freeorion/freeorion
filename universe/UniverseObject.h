@@ -207,6 +207,14 @@ public:
     static constexpr int    INVALID_OBJECT_AGE = -(1 << 30) - 1;;   ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN
     static constexpr int    SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
+    virtual ~UniverseObject() = default;
+
+    /** returns new copy of this UniverseObject, limited to only copy data that
+      * is visible to the empire with the specified \a empire_id as determined
+      * by the detection and visibility system.  Caller takes ownership of
+      * returned pointee. */
+    [[nodiscard]] virtual UniverseObject* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const = 0;
+
 protected:
     friend class Universe;
     friend class ObjectMap;
@@ -215,16 +223,6 @@ protected:
     UniverseObject(std::string name, double x, double y);
 
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-
-public:
-    virtual ~UniverseObject() = default;
-
-protected:
-    /** returns new copy of this UniverseObject, limited to only copy data that
-      * is visible to the empire with the specified \a empire_id as determined
-      * by the detection and visibility system.  Caller takes ownership of
-      * returned pointee. */
-    [[nodiscard]] virtual UniverseObject* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const = 0;
 
     void AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
     void Init();                         ///< adds stealth meter

@@ -161,12 +161,12 @@ public:
     Planet(PlanetType type, PlanetSize size);
     Planet() = default;
 
+    /** returns new copy of this Planet. */
+    [[nodiscard]] Planet* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
+
 private:
     friend class ObjectMap;
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-
-    /** returns new copy of this Planet. */
-    [[nodiscard]] Planet* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
     void Init();
 
