@@ -190,6 +190,7 @@ public:
 
 private:
     void insertCore(std::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);
+    void insertCore(std::shared_ptr<Planet> item, int empire_id = ALL_EMPIRES);
 
     void CopyObjectsToSpecializedMaps();
 

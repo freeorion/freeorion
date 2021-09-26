@@ -220,6 +220,23 @@ void ObjectMap::insertCore(std::shared_ptr<UniverseObject> item, int empire_id) 
     m_objects[ID] = std::move(item);
 }
 
+void ObjectMap::insertCore(std::shared_ptr<Planet> item, int empire_id) {
+    const auto ID = item ? item->ID() : INVALID_OBJECT_ID;
+    const bool known_destroyed = (ID != INVALID_OBJECT_ID) ?
+        GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).count(ID) : false;
+
+    m_resource_centers.insert_or_assign(ID, item);
+    m_pop_centers.insert_or_assign(ID, item);
+    m_planets.insert_or_assign(ID, item);
+    if (!known_destroyed) {
+        m_existing_resource_centers.insert_or_assign(ID, item);
+        m_existing_pop_centers.insert_or_assign(ID, item);
+        m_existing_planets.insert_or_assign(ID, item);
+        m_existing_objects.insert_or_assign(ID, item);
+    }
+    m_objects[ID] = std::move(item);
+}
+
 std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
     // search for object in objects map
     auto it = m_objects.find(id);
