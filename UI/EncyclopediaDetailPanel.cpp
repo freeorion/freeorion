@@ -2806,8 +2806,8 @@ namespace {
         }
     }
 
-    std::unordered_set<std::string> ReportedSpeciesForPlanet(Planet& planet) {
-        std::unordered_set<std::string> retval;
+    std::vector<std::string_view> ReportedSpeciesForPlanet(Planet& planet) {
+        std::vector<std::string_view> retval;
 
         const ObjectMap& objects = Objects();
         const SpeciesManager& species_manager = GetSpeciesManager();
@@ -2828,7 +2828,7 @@ namespace {
                 continue;
             const auto& species_tags = species->Tags();
             if (species_tags.count(TAG_ALWAYS_REPORT)) {
-                retval.insert(species_str);
+                retval.push_back(species_str);
                 continue;
             }
             // Add extinct species if their tech is known
@@ -2845,7 +2845,7 @@ namespace {
                     const auto& tech_tags = tech->Tags();
                     if (tech_tags.count(species_str) && tech_tags.count(TAG_EXTINCT)) {
                         // Add the species and exit loop
-                        retval.insert(species_str);
+                        retval.push_back(species_str);
                         break;
                     }
                 }
@@ -2857,7 +2857,7 @@ namespace {
                 continue;
 
             const std::string& species_name = pop_center->SpeciesName();
-            if (species_name.empty())
+            if (species_name.empty() || std::find(retval.begin(), retval.end(), species_name) != retval.end())
                 continue;
 
             const Species* species = species_manager.GetSpecies(species_name);
@@ -2869,19 +2869,19 @@ namespace {
             // their own planet allows comparison vs other races, which might
             // be better suited to this planet. 
             if (species->CanColonize() || species_name == planet_current_species)
-                retval.insert(species_name);
+                retval.push_back(species_name);
         }
 
         return retval;
     }
 
-    std::multimap<float, std::pair<std::string, PlanetEnvironment>>
-        SpeciesEnvByTargetPop(std::shared_ptr<Planet>& planet,
-                              const std::unordered_set<std::string>& species_names)
+    std::multimap<float, std::pair<std::string_view, PlanetEnvironment>>
+        SpeciesEnvByTargetPop(const std::shared_ptr<Planet>& planet,
+                              const std::vector<std::string_view>& species_names)
     {
-        std::multimap<float, std::pair<std::string, PlanetEnvironment>> retval;
+        std::multimap<float, std::pair<std::string_view, PlanetEnvironment>> retval;
 
-        if (species_names.empty())
+        if (species_names.empty() || !planet)
             return retval;
 
         // store original state of planet
@@ -2904,7 +2904,7 @@ namespace {
             // NOTE: Overridding current or initial value of MeterType::METER_TARGET_POPULATION prior to update
             //       results in incorrect estimates for at least effects with a min target population of 0
             try {
-                planet->SetSpecies(species_name);
+                planet->SetSpecies(std::string{species_name});
                 planet->SetOwner(empire_id);
                 universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
             } catch (const std::exception& e) {
@@ -2976,10 +2976,10 @@ namespace {
         return retval;
     }
 
-    std::unordered_map<std::string, std::string> SpeciesSuitabilityColumn1(
-        const std::unordered_set<std::string>& species_names)
+    std::unordered_map<std::string_view, std::string> SpeciesSuitabilityColumn1(
+        const std::vector<std::string_view>& species_names)
     {
-        std::unordered_map<std::string, std::string> retval;
+        std::unordered_map<std::string_view, std::string> retval;
         auto font = ClientUI::GetFont();
 
         for (const auto& species_name : species_names) {
@@ -2993,8 +2993,8 @@ namespace {
 
         // determine widest column, storing extents of each row for later alignment
         GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
-        GG::X longest_width { 0 };
-        std::unordered_map<std::string, GG::Pt> column1_species_extents;
+        GG::X longest_width{0};
+        std::unordered_map<std::string_view, GG::Pt> column1_species_extents;
         for (auto& [species_name, formatted_col1] : retval) {
             std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements;
             try {
@@ -3024,7 +3024,7 @@ namespace {
             constexpr auto hair_space_str{u8"\u200A"};
 #endif
 
-            for (auto& it : retval) {
+            for (auto& it : retval) { // TODO [[]]
                 if (column1_species_extents.count(it.first) != 1) {
                     ErrorLogger() << "No column1 extent stored for " << it.first;
                     continue;
@@ -3091,6 +3091,8 @@ namespace {
                                           std::string& specific_type, std::string& detailed_description,
                                           GG::Clr& color)
     {
+        ScopedTimer suitability_timer{"RefreshDetailPanelSuitabilityTag"};
+
         general_type = UserString("SP_PLANET_SUITABILITY");
 
         Universe& universe = GetUniverse();
@@ -3115,9 +3117,9 @@ namespace {
         try {
             name = planet->PublicName(planet_id, universe);
 
-            auto species_names = ReportedSpeciesForPlanet(*planet);
-            auto target_population_species = SpeciesEnvByTargetPop(planet, species_names);
-            auto species_suitability_column1 = SpeciesSuitabilityColumn1(species_names);
+            const auto species_names = ReportedSpeciesForPlanet(*planet);
+            const auto target_population_species = SpeciesEnvByTargetPop(planet, species_names);
+            const auto species_suitability_column1 = SpeciesSuitabilityColumn1(species_names);
 
             bool positive_header_placed = false;
             bool negative_header_placed = false;
