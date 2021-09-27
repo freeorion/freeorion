@@ -173,7 +173,7 @@ public:
 
     [[nodiscard]] SpeciesManager& GetSpeciesManager() override;
     [[nodiscard]] const SpeciesManager& GetSpeciesManager() const;
-    [[nodiscard]] Species* GetSpecies(const std::string& name) override;
+    [[nodiscard]] const Species* GetSpecies(const std::string& name) override;
 
     [[nodiscard]] SupplyManager& GetSupplyManager() override;
 

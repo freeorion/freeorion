@@ -52,15 +52,14 @@ Empire* ParserAppFixture::GetEmpire(int empire_id)
 SpeciesManager& ParserAppFixture::GetSpeciesManager()
 { return m_species_manager; }
 
-Species* ParserAppFixture::GetSpecies(const std::string& name)
+const Species* ParserAppFixture::GetSpecies(const std::string& name)
 { return m_species_manager.GetSpecies(name); }
 
 SupplyManager& ParserAppFixture::GetSupplyManager()
 { return m_supply_manager; }
 
-ObjectMap& ParserAppFixture::EmpireKnownObjects(int empire_id) {
-    return m_universe.EmpireKnownObjects(empire_id);
-}
+ObjectMap& ParserAppFixture::EmpireKnownObjects(int empire_id)
+{ return m_universe.EmpireKnownObjects(empire_id); }
 
 int ParserAppFixture::EffectsProcessingThreads() const
 { return 1; }

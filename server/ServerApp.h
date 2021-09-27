@@ -42,7 +42,7 @@ public:
     [[nodiscard]] Empire* GetEmpire(int id) override;
     [[nodiscard]] SupplyManager& GetSupplyManager() override;
     [[nodiscard]] SpeciesManager& GetSpeciesManager() override;
-    [[nodiscard]] Species* GetSpecies(const std::string& name) override;
+    [[nodiscard]] const Species* GetSpecies(const std::string& name) override;
 
     /** Returns the server's map for known objects of specified empire. */
     [[nodiscard]] ObjectMap& EmpireKnownObjects(int empire_id) override;

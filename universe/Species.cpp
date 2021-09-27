@@ -362,7 +362,7 @@ const Species* SpeciesManager::GetSpecies(const std::string& name) const {
     return it != s_species.end() ? it->second.get() : nullptr;
 }
 
-Species* SpeciesManager::GetSpecies(const std::string& name) {
+const Species* SpeciesManager::GetSpecies(std::string_view name) const {
     CheckPendingSpeciesTypes();
     auto it = s_species.find(name);
     return it != s_species.end() ? it->second.get() : nullptr;

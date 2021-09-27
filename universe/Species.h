@@ -171,7 +171,7 @@ private:
     { bool operator()(const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const; };
 
 public:
-    using SpeciesTypeMap = std::map<std::string, std::unique_ptr<Species>>;
+    using SpeciesTypeMap = std::map<std::string, std::unique_ptr<Species>, std::less<>>;
     using CensusOrder = std::vector<std::string>;
     using iterator = SpeciesTypeMap::const_iterator;
     typedef boost::filter_iterator<PlayableSpecies, iterator> playable_iterator;
@@ -182,7 +182,7 @@ public:
     /** returns the building type with the name \a name; you should use the
       * free function GetSpecies() instead, mainly to save some typing. */
     const Species*      GetSpecies(const std::string& name) const;
-    Species*            GetSpecies(const std::string& name);
+    const Species*      GetSpecies(std::string_view name) const;
 
     /** iterators for all species */
     iterator            begin() const;

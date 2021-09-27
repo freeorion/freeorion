@@ -40,7 +40,7 @@ public:
     Empire* GetEmpire(int empire_id) override;
 
     SpeciesManager& GetSpeciesManager() override;
-    Species* GetSpecies(const std::string& name) override;
+    const Species* GetSpecies(const std::string& name) override;
 
     SupplyManager& GetSupplyManager() override;
 

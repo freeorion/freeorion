@@ -94,7 +94,7 @@ namespace {
     };
 
     void insert_species(
-        std::map<std::string, std::unique_ptr<Species>>& species,
+        SpeciesManager::SpeciesTypeMap& species,
         SpeciesStrings& strings,
         boost::optional<std::map<PlanetType, PlanetEnvironment>>& planet_environments,
         boost::optional<parse::effects_group_payload>& effects,
@@ -163,7 +163,7 @@ namespace {
     };
 
     using start_rule_payload = std::pair<
-        std::map<std::string, std::unique_ptr<Species>>, // species_by_name
+        SpeciesManager::SpeciesTypeMap, // species_by_name
         std::vector<std::string> // census ordering
     >;
     using start_rule_signature = void(start_rule_payload::first_type&);

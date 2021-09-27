@@ -315,7 +315,7 @@ SupplyManager& ServerApp::GetSupplyManager()
 SpeciesManager& ServerApp::GetSpeciesManager()
 { return m_species_manager; }
 
-Species* ServerApp::GetSpecies(const std::string& name)
+const Species* ServerApp::GetSpecies(const std::string& name)
 { return m_species_manager.GetSpecies(name); }
 
 ObjectMap& ServerApp::EmpireKnownObjects(int empire_id)
