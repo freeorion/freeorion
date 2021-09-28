@@ -29,10 +29,10 @@ Ship::Ship(int empire_id, int design_id, std::string species_name, int produced_
     m_arrived_on_turn(CurrentTurn()),
     m_last_resupplied_on_turn(CurrentTurn())
 {
-    const Universe& universe = GetUniverse();
+    const Universe& universe = GetUniverse();  // TODO: pass in ScriptingContext
     const ShipDesign* design = universe.GetShipDesign(design_id);
 
-    if (!design_id) // TODO: pass in ScriptingContext
+    if (!design)
         throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
 
     if (!m_species_name.empty() && !GetSpecies(m_species_name))
