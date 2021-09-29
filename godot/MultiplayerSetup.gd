@@ -31,4 +31,5 @@ func _on_CancelBtn_pressed():
 
 
 func _on_JoinCheckButton_toggled(button_pressed: bool):
-	$LeftContainer/JoinGame/ClientType.disabled = ! button_pressed
+	$LeftContainer/JoinGame/ClientType.disabled = !button_pressed
+	$LeftContainer/ServerName.editable = button_pressed

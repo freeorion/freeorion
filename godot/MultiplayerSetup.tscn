@@ -140,6 +140,7 @@ margin_top = 305.0
 margin_right = 345.0
 margin_bottom = 330.0
 size_flags_horizontal = 3
+editable = false
 
 [node name="MarginContainer" type="MarginContainer" parent="LeftContainer" index="8"]
 margin_top = 335.0

@@ -34,8 +34,8 @@ func test_quickstart():
 
 	freeorion.new_single_player_game()
 
-	yield(yield_to(signaler, 'started_game', 100), YIELD)
-	assert_signal_emitted(signaler, 'started_game', 'Game started')
+	yield(yield_to(signaler, "started_game", 100), YIELD)
+	assert_signal_emitted(signaler, "started_game", "Game started")
 
 	remove_child(freeorion)
 

@@ -88,6 +88,9 @@ func _on_GameSetupDlg_cancel():
 func _on_MultiplayerSetup_ok():
 	$Popup.hide()
 	$Popup.remove_child(multiplayer_setup_dlg)
+	$FreeOrion.connect_to_server(multiplayer_setup_dlg.server_name)
+	if $FreeOrion.is_server_connected():
+		$FreeOrion.join_game(multiplayer_setup_dlg.player_name, multiplayer_setup_dlg.client_type)
 
 
 func _on_MultiplayerSetup_cancel():
@@ -98,8 +101,7 @@ func _on_MultiplayerSetup_cancel():
 func _on_AuthSetupDlg_ok():
 	$Popup.hide()
 	$Popup.remove_child(auth_password_setup_dlg)
-	# ToDo: send password
-	print("Send password from auth dialog")
+	$FreeOrion.auth_response(auth_password_setup_dlg.player_name, auth_password_setup_dlg.password)
 
 
 func _on_AuthSetupDlg_cancel():
