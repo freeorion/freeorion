@@ -1,13 +1,29 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://GalaxyMapCamera.gd" type="Script" id=1]
+[ext_resource path="res://assets/sound/artificial_intelligence_v3.ogg" type="AudioStream" id=2]
+[ext_resource path="res://GalaxyMap.gd" type="Script" id=3]
 
 [sub_resource type="Environment" id=1]
 
 [node name="GalaxyMap" type="Spatial"]
+script = ExtResource( 3 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 1 )
 
 [node name="GalaxyMapCamera" type="Camera" parent="."]
 script = ExtResource( 1 )
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 2 )
+autoplay = true
+
+[node name="ToolBoxPanelContainer" type="PanelContainer" parent="."]
+margin_right = 439.0
+margin_bottom = 33.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
