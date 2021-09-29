@@ -54,7 +54,8 @@ class AuthProvider:
         return roles
 
     def is_require_auth_or_return_roles(self, player_name):
-        """Returns True if player should be authenticated or list of roles for anonymous players"""
+        """Returns True if player should be authenticated, False if user not allowed,
+        or list of roles for anonymous players"""
         known_login = player_name in self.logins
         if not known_login:
             # default list of roles
