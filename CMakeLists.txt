@@ -411,11 +411,11 @@ target_link_libraries(freeorioncommon
         Boost::python${Boost_PYTHON_SUFFIX}
         Boost::thread
         Boost::serialization
+        ${PYTHON_LIBRARIES}
         ZLIB::ZLIB
         ${ICUI18N_LIBRARY}
         ${ICUUC_LIBRARY}
         ${ICUDATA_LIBRARY}
-        ${PYTHON_LIBRARIES}
         ${ANDROID_LIBRARY}
         ${LOG_LIBRARY}
     PRIVATE
@@ -838,6 +838,20 @@ if(BUILD_CLIENT_GODOT)
         add_custom_command(TARGET freeoriongodot POST_BUILD
             COMMAND
                 ${CMAKE_COMMAND} -E copy_if_different "${ICONV_LIBRARY}" "${CMAKE_SOURCE_DIR}/godot/bin/${SYSTEM_NAME}.${BITS}"
+            COMMAND
+                ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/godot/default/
+            COMMAND
+                ${CMAKE_COMMAND}
+                -DMODE=DATA_LINK
+                "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/default/"
+                "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/scripting"
+                -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
+            COMMAND
+                ${CMAKE_COMMAND}
+                -DMODE=DATA_LINK
+                "-DDESTINATION=${CMAKE_SOURCE_DIR}/godot/default/"
+                "-DSOURCE_PATH=${PROJECT_SOURCE_DIR}/default/stringtables"
+                -P "${PROJECT_SOURCE_DIR}/cmake/TargetDependencies.cmake"
         )
     endif()
 endif()

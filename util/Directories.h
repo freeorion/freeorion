@@ -127,7 +127,7 @@ FO_COMMON_API auto GetRootDataDir() -> boost::filesystem::path const;
 //! @note This directory and everything in it should be assumed read-only!
 FO_COMMON_API auto GetBinDir() -> boost::filesystem::path const;
 
-#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
 //! Returns the Python home directory on platform where Python is embedded.
 FO_COMMON_API auto GetPythonHome() -> boost::filesystem::path const;
 #endif
