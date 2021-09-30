@@ -33,7 +33,7 @@ public:
     void Finalize();          // stops Python interpreter and releases its resources
 private:
     // some helper objects needed to initialize and run the Python interface
-#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
     wchar_t* m_home_dir = nullptr;
     wchar_t* m_program_name = nullptr;
 #endif

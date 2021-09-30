@@ -83,6 +83,7 @@ namespace {
     thread_local JNIEnv* s_jni_env = nullptr;
     fs::path       s_user_dir;
     fs::path       s_cache_dir;
+    fs::path       s_python_home;
     jweak          s_activity;
     AAssetManager* s_asset_manager;
     jobject        s_jni_asset_manager;
@@ -102,6 +103,27 @@ void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
         }
     });
     background.detach();
+}
+
+void CopyInitialResourceAndroid(const std::string& rel_path)
+{
+    AAsset* asset = AAssetManager_open(s_asset_manager, ("default/python/" + rel_path).c_str(), AASSET_MODE_STREAMING);
+    if (asset == nullptr) {
+        return;
+    }
+    off64_t asset_length = AAsset_getLength64(asset);
+    if (asset_length <= 0) {
+        AAsset_close(asset);
+        return;
+    }
+
+    char buf[4096];
+    int nb_read = 0;
+    fs::ofstream ofs(s_python_home / rel_path, std::ios::binary);
+    while ((nb_read = AAsset_read(asset, buf, 4096)) > 0) {
+        ofs.write(buf, nb_read);
+    }
+    ofs.close();
 }
 #endif
 
@@ -476,6 +498,10 @@ void InitDirs(std::string const& argv0)
 
     RedirectOutputLogAndroid(ANDROID_LOG_ERROR, "stderr", 2);
     RedirectOutputLogAndroid(ANDROID_LOG_INFO, "stdout", 1);
+
+    s_python_home = s_cache_dir / "python";
+    fs::create_directories(s_python_home / "lib");
+    CopyInitialResourceAndroid("lib/python36.zip");
 #endif
 
     g_initialized = true;
@@ -569,10 +595,10 @@ auto GetBinDir() -> fs::path const
 #endif
 }
 
-#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
 auto GetPythonHome() -> fs::path const
 {
-#if defined(FREEORION_MACOSX)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_ANDROID)
     if (!g_initialized)
         InitDirs("");
     return s_python_home;
@@ -770,7 +796,7 @@ auto IsFOCScript(const fs::path& path) -> bool
 { return IsExistingFile(path) && ".txt" == path.extension() && path.stem().extension() == ".focs"; }
 
 auto IsFOCPyScript(const fs::path& path) -> bool
-{ return fs::is_regular_file(path) && ".py" == path.extension() && path.stem().extension() == ".focs"; }
+{ return IsExistingFile(path) && ".py" == path.extension() && path.stem().extension() == ".focs"; }
 
 auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predicate) -> std::vector<fs::path>
 {

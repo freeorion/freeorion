@@ -203,9 +203,14 @@ the `freeorion-project/build` directory.
 
 Install Android NDK.
 
-Build [Python-For-Android].
+Build [Python-For-Android]. Pack standard library with
 
-Build [Boost-For-Android] with iconv support for boost_locale library
+```bash
+zip -r -9 -q --exclude=*.pyc --exclude=*.a --exclude=*.so \
+<Project>/godot/default/python/lib/python36.zip .
+```
+
+Build [Boost-For-Android] with iconv support for boost_locale library and python support.
 
 ```bash
 ./build-android.sh --with-iconv --arch=arm64-v8a --with-python=`readlink -f ../python-install` --layout=system $ANDROID_NDK
@@ -217,7 +222,7 @@ Create a `build` directory aside the _source_directory_ and change into
 this directory. It will contain all compile FreeOrion build artifacs.
 
 ```bash
-<android>/cmake/3.10.2.4988404/bin/cmake -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=21 -DANDROID_NDK=<android>/ndk-bundle/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=<android>/ndk-bundle/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=<Boost-for-Android>/build/out/armeabi-v7a/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=<Boost-for-Android>/build/out/armeabi-v7a/lib/ -DBUILD_CLIENT_GODOT=On -DICUI18N_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicui18n.a -DICUUC_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicuuc.a -DICUDATA_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicudata.a -DICONV_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libiconv.so ../freeorion
+<android>/cmake/3.10.2.4988404/bin/cmake -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=21 -DANDROID_NDK=<android>/ndk-bundle/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=<android>/ndk-bundle/build/cmake/android.toolchain.cmake -DCMAKE_CXX_FLAGS=-std=c++14 -DANDROID_ALLOW_UNDEFINED_SYMBOLS=Off -DBUILD_SERVER=OFF -DBUILD_AI=OFF -DBUILD_CLIENT_GG=OFF -DBoost_INCLUDE_DIR=<Boost-for-Android>/build/out/armeabi-v7a/include/ -DBoost_USE_STATIC_LIBS=On -DBoost_LIBRARY_DIR=<Boost-for-Android>/build/out/armeabi-v7a/lib/ -DBUILD_CLIENT_GODOT=On -DICUI18N_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicui18n.a -DICUUC_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicuuc.a -DICUDATA_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libicudata.a -DICONV_LIBRARY=<Boost-for-Android>/libiconv-libicu-android/armeabi-v7a/lib/libiconv.so -DPYTHON_LIBRARY=<Python-for-Android>/lib/libpython3.6m.a -DPYTHON_INCLUDE_DIR=<Python-for-Android>/include/python3.6m/ ../freeorion
 ```
 
 After successfully creating the Makefiles build the whole project by
@@ -228,7 +233,17 @@ calling:
 ```
 
 After the build finished successfully the godot libraries can be found within
-the `freeorion-project/build` directory.
+the `freeorion-project/build` directory and copied to `godot/client/bin/`.
+
+Call `strip` on those libraries to clean debug symbols.
+
+Export [Godot-Export-Android] with additional `default/*` resources.
+
+To get logs run:
+
+```bash
+adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-godot.log
+```
 
 [Visual Studio]: https://visualstudio.microsoft.com/vs/older-downloads/
 [Xcode]: https://itunes.apple.com/de/app/xcode/id497799835?mt=12

@@ -17,7 +17,7 @@ bool PythonCommon::Initialize() {
     DebugLogger() << "Initializing FreeOrion Python interface";
 
     try {
-#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
         // There have been recurring issues on Windows and OSX to get FO to use the
         // Python framework shipped with the app (instead of falling back on the ones
         // provided by the system). These API calls have been added in an attempt to
@@ -29,6 +29,10 @@ bool PythonCommon::Initialize() {
         m_program_name = Py_DecodeLocale((GetPythonHome() / "Python").string().c_str(), nullptr);
         Py_SetProgramName(m_program_name);
         DebugLogger() << "Python program name set to " << Py_GetProgramFullPath();
+#endif
+
+#if defined(FREEORION_ANDROID)
+        Py_NoSiteFlag = 1;
 #endif
         if (!InitCommonImports()) {
             ErrorLogger() << "Unable to initialize imports";
