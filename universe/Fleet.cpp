@@ -662,14 +662,16 @@ namespace {
     }
 }
 
-bool Fleet::CanDamageShips(const Universe& u, float target_shields) const {
-    auto isX = [target_shields](const std::shared_ptr<const Ship>& ship){ return ship->CanDamageShips(target_shields); };
-    return HasXShips(isX, m_ships, u.Objects());
+bool Fleet::CanDamageShips(const ScriptingContext& context, float target_shields) const {
+    auto isX = [target_shields, &context](const std::shared_ptr<const Ship>& ship)
+    { return ship->CanDamageShips(context, target_shields); };
+    return HasXShips(isX, m_ships, context.ContextObjects());
 }
 
-bool Fleet::CanDestroyFighters(const Universe& u) const {
-    auto isX = [](const std::shared_ptr<const Ship>& ship){ return ship->CanDestroyFighters(); };
-    return HasXShips(isX, m_ships, u.Objects());
+bool Fleet::CanDestroyFighters(const ScriptingContext& context) const {
+    auto isX = [&context](const std::shared_ptr<const Ship>& ship)
+    { return ship->CanDestroyFighters(context); };
+    return HasXShips(isX, m_ships, context.ContextObjects());
 }
 
 bool Fleet::HasMonsters(const Universe& u) const {
@@ -677,9 +679,9 @@ bool Fleet::HasMonsters(const Universe& u) const {
     return HasXShips(isX, m_ships, u.Objects());
 }
 
-bool Fleet::HasArmedShips(const Universe& u) const {
-    auto isX = [&u](const std::shared_ptr<const Ship>& ship){ return ship->IsArmed(u); };
-    return HasXShips(isX, m_ships, u.Objects());
+bool Fleet::HasArmedShips(const ScriptingContext& context) const {
+    auto isX = [&context](const std::shared_ptr<const Ship>& ship){ return ship->IsArmed(context); };
+    return HasXShips(isX, m_ships, context.ContextObjects());
 }
 
 bool Fleet::HasFighterShips(const Universe& u) const {
@@ -1316,7 +1318,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
         if (fleet->MaxShipAgeInTurns() <= 1)
             continue;
         // These are the most costly checks.  Do them last
-        if (!fleet->CanDamageShips(context.ContextUniverse()))
+        if (!fleet->CanDamageShips(context))
             continue;
 
         // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
@@ -1404,20 +1406,24 @@ float Fleet::Shields(const ObjectMap& objects) const {
     return retval;
 }
 
-std::string Fleet::GenerateFleetName(const Universe& u, const SpeciesManager& sm) {
+std::string Fleet::GenerateFleetName(const ScriptingContext& context) {
     // TODO: Change returned name based on passed ship designs.  eg. return "colony fleet" if
     // ships are colony ships, or "battle fleet" if ships are armed.
     if (ID() == INVALID_OBJECT_ID)
         return UserString("NEW_FLEET_NAME_NO_NUMBER");
 
+    const Universe& u{context.ContextUniverse()};
+    const SpeciesManager& sm{context.species};
     const ObjectMap& objects = u.Objects();
     auto ships = objects.find<Ship>(m_ships);
 
     // todo: rewrite with a lambda and store in a const string& to avoid copies...
     std::string fleet_name_key = UserStringNop("NEW_FLEET_NAME");
 
-    auto IsCombatShip = [&u](const auto& ship)
-    { return ship.IsArmed(u) || ship.HasFighters(u) || ship.CanHaveTroops(u) || ship.CanBombard(u); };
+    auto IsCombatShip = [&context, &u](const auto& ship) {
+        return ship.IsArmed(context) || ship.HasFighters(u) ||
+               ship.CanHaveTroops(u) || ship.CanBombard(u);
+    };
 
     if (boost::algorithm::all_of(ships, [&u](const auto& ship){ return ship->IsMonster(u); }))
         fleet_name_key = UserStringNop("NEW_MONSTER_FLEET_NAME");

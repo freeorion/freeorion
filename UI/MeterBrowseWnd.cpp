@@ -539,16 +539,18 @@ void ShipDamageBrowseWnd::UpdateSummary() {
     if (!ship)
         return;
 
+    const ScriptingContext context;
+
     // unpaired meter total for breakdown summary
-    float total_structure_damage = ship->TotalWeaponsShipDamage(0.0f, false);
-    float total_fighters_destroyed = ship->TotalWeaponsFighterDamage(false);
+    float total_structure_damage = ship->TotalWeaponsShipDamage(context, 0.0f, false);
+    float total_fighters_destroyed = ship->TotalWeaponsFighterDamage(context, false);
     int num_bouts = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
     // set accounting breakdown total / summary
     if (m_meter_title)
         m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_DAMAGE_BREAKDOWN_SUMMARY")) %
                                               num_bouts %
                                               DoubleToString(total_structure_damage, 3, false) %
-                                              (int)total_fighters_destroyed));
+                                              static_cast<int>(total_fighters_destroyed)));
 }
 
 void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
@@ -754,13 +756,17 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_bay_list->DetachChildren();
     m_hangar_list->DetachChildren();
 
+    ScriptingContext context;
+    const Universe& u = context.ContextUniverse();
+    const ObjectMap& o = context.ContextObjects();
+
     // early return if no valid ship, ship design, or no parts in the design
-    auto ship = Objects().get<Ship>(m_object_id);
+    auto ship = o.get<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;
     }
-    const ShipDesign* design = GetUniverse().GetShipDesign(ship->DesignID());
+    const ShipDesign* design = u.GetShipDesign(ship->DesignID());
     if (!design)
         return;
     const std::vector<std::string>& parts = design->Parts();
@@ -851,14 +857,19 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                                                         DAMAGE_COLOR);
 
     if (!m_show_all_bouts) {
+        constexpr int BOUTS_TO_SHOW_LIMIT = 2;
+
         // Show damage for first wave (2nd combat round)
-        std::map<int, Combat::FighterBoutInfo> bout_info = Combat::ResolveFighterBouts(
-            std::static_pointer_cast<const Ship>(ship), combat_targets, bay_total_capacity, hangar_current_fighters, fighter_damage, 2);
+        auto bout_info = Combat::ResolveFighterBouts(
+            context, std::move(ship), combat_targets, bay_total_capacity,
+            hangar_current_fighters, fighter_damage, BOUTS_TO_SHOW_LIMIT);
+
         Combat::FighterBoutInfo first_wave = bout_info.rbegin()->second;
         GG::Clr highlight_clr = bout_info[1].launched < bay_total_capacity ? HANGAR_COLOR : BAY_COLOR;
         std::string launch_text = ColouredInt(first_wave.attacking, false, highlight_clr);
         std::string damage_label_text = boost::io::str(FlexibleFormat(UserString("TT_FIGHTER_DAMAGE"))
                                                        % launch_text % fighter_damage_text);
+
         // damage formula label
         auto damage_label = GG::Wnd::Create<CUILabel>(std::move(damage_label_text), GG::FORMAT_RIGHT);
         damage_label->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
@@ -915,8 +926,9 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         // Damage summary labels
         // TODO Add list of effects on hangar(fighter) damage
 
-        std::map<int, Combat::FighterBoutInfo> bout_info = Combat::ResolveFighterBouts(
-            ship, combat_targets, bay_total_capacity, hangar_current_fighters, fighter_damage);
+        auto bout_info = Combat::ResolveFighterBouts(
+            context, std::move(ship), combat_targets, bay_total_capacity,
+            hangar_current_fighters, fighter_damage);
         const Combat::FighterBoutInfo& last_bout = bout_info.rbegin()->second;
 
         // damage summary text

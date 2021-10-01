@@ -879,17 +879,19 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 
     } else if (property_name == "DestroyFightersPerBattleMax") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
-            InfoLogger() << "DestroyFightersPerBattleMax" <<  ship->TotalWeaponsFighterDamage();
-            // FIXME prevent recursion; disallowing the ValueRef inside of destroyFightersPerBattleMax via parsers would be best.
-            return ship->TotalWeaponsFighterDamage();
+            auto retval = ship->TotalWeaponsFighterDamage(context);
+            InfoLogger() << "DestroyFightersPerBattleMax" << retval;
+            // TODO: prevent recursion; disallowing the ValueRef inside of destroyFightersPerBattleMax via parsers would be best.
+            return retval;
         }
         return 0.0;
 
     } else if (property_name == "DamageStructurePerBattleMax") {
         if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
-            // FIXME prevent recursion; disallowing the ValueRef inside of damageStructurePerBattleMax via parsers would be best.
-            InfoLogger() << "DamageStructurePerBattleMax" <<  ship->TotalWeaponsShipDamage();
-            return ship->TotalWeaponsShipDamage();
+            // TODO: prevent recursion; disallowing the ValueRef inside of damageStructurePerBattleMax via parsers would be best.
+            auto retval = ship->TotalWeaponsShipDamage(context);
+            InfoLogger() << "DamageStructurePerBattleMax" << retval;
+            return retval;
         }
         return 0.0;
 

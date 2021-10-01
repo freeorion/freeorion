@@ -298,6 +298,7 @@ void SupplyManager::Update() {
     const EmpireManager& empires = Empires();
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
+    const ScriptingContext context{universe, empires};
 
     m_supply_starlane_traversals.clear();
     m_supply_starlane_obstructed_traversals.clear();
@@ -370,7 +371,7 @@ void SupplyManager::Update() {
             if (system_id == INVALID_OBJECT_ID || known_destroyed_objects.count(fleet->ID()))
                 continue;
 
-            if (fleet->CanDamageShips(universe) && fleet->Obstructive() && fleet->OwnedBy(empire_id)) {
+            if (fleet->CanDamageShips(context) && fleet->Obstructive() && fleet->OwnedBy(empire_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID ||
                     fleet->NextSystemID() == fleet->SystemID())
                 { systems_containing_friendly_fleets.insert(system_id); }

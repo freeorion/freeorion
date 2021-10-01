@@ -481,6 +481,7 @@ namespace {
                 return;
 
             const Universe& universe = GetUniverse();
+            const ScriptingContext context{universe, Empires()};
             const SpeciesManager& sm = GetSpeciesManager();
 
             const auto& destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(m_empire_id);
@@ -489,7 +490,7 @@ namespace {
                     continue;
                 m_values[FLEET_DETAIL_SHIP_COUNT]++;
 
-                if (ship->IsArmed(universe))
+                if (ship->IsArmed(context))
                     m_values[FLEET_DETAIL_ARMED_COUNT]++;
                 else
                     m_values[FLEET_DETAIL_UNARMED_COUNT]++;

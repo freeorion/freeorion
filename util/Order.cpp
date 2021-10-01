@@ -222,8 +222,9 @@ void NewFleetOrder::ExecuteImpl() const {
     Universe& u = GetUniverse();
     ObjectMap& o = u.Objects();
     const SpeciesManager& sm = GetSpeciesManager();
+    const ScriptingContext context{u, Empires()};
 
-    GetUniverse().InhibitUniverseObjectSignals(true);
+    u.InhibitUniverseObjectSignals(true);
 
     // validate specified ships
     auto validated_ships = o.find<Ship>(m_ship_ids);
@@ -274,7 +275,7 @@ void NewFleetOrder::ExecuteImpl() const {
     fleet->SetMoveOrderedTurn(ordered_moved_turn);
 
     if (m_fleet_name.empty())
-        fleet->Rename(fleet->GenerateFleetName(u, sm));
+        fleet->Rename(fleet->GenerateFleetName(context));
 
     u.InhibitUniverseObjectSignals(false);
 

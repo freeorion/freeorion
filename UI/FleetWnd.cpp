@@ -167,10 +167,11 @@ namespace {
     { return GGHumanClientApp::GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
 
     bool CanDamageShips(const std::vector<int>& ship_ids) {
+        const ScriptingContext context;
         for (const auto& ship : Objects().find<Ship>(ship_ids)) {
             if (!ship)
                 continue;
-            if (ship->CanDamageShips())
+            if (ship->CanDamageShips(context))
                 return true;
         }
         return false;
@@ -863,12 +864,13 @@ namespace {
     double ShipDataPanel::StatValue(MeterType stat_name) const {
         const Universe& u = GetUniverse();
         const ObjectMap& o = u.Objects();
+        const ScriptingContext context{u, Empires()};
 
         if (auto ship = o.get<Ship>(m_ship_id)) {
             if (stat_name == MeterType::METER_CAPACITY)
-                return ship->TotalWeaponsShipDamage(0.0f, true);
+                return ship->TotalWeaponsShipDamage(context, 0.0f, true);
             else if (stat_name == MeterType::METER_MAX_CAPACITY) // number of fighters shot down
-                return ship->TotalWeaponsFighterDamage(true);
+                return ship->TotalWeaponsFighterDamage(context, true);
             else if (stat_name == MeterType::METER_TROOPS)
                 return ship->TroopCapacity(u);
             else if (stat_name == MeterType::METER_SECONDARY_STAT)
@@ -932,6 +934,7 @@ namespace {
             return;
 
         const Universe& universe = GetUniverse();
+        const ScriptingContext context{universe, Empires()};
         if (const ShipDesign* design = universe.GetShipDesign(ship->DesignID())) {
             m_design_name_text = GG::Wnd::Create<CUILabel>(design->Name(), GG::FORMAT_RIGHT);
             AttachChild(m_design_name_text);
@@ -943,7 +946,7 @@ namespace {
         std::vector<std::pair<MeterType, std::shared_ptr<GG::Texture>>> meters_icons;
         meters_icons.reserve(13);
         meters_icons.emplace_back(MeterType::METER_STRUCTURE,          ClientUI::MeterIcon(MeterType::METER_STRUCTURE));
-        if (ship->IsArmed(universe)) {
+        if (ship->IsArmed(context)) {
             meters_icons.emplace_back(MeterType::METER_CAPACITY,       DamageIcon());
             meters_icons.emplace_back(MeterType::METER_MAX_CAPACITY,   DestroyIcon()); // number of fighters shot down
         }
@@ -1525,6 +1528,8 @@ void FleetDataPanel::SetStatIconValues() {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
+    const ScriptingContext context{universe, Empires()};
+
 
     const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
     const std::set<int>& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
@@ -1555,8 +1560,8 @@ void FleetDataPanel::SetStatIconValues() {
 
         if (universe.GetShipDesign(ship->DesignID())) {
             ship_count++;
-            damage_tally += ship->TotalWeaponsShipDamage(0.0f, true);
-            destroy_tally += ship->TotalWeaponsFighterDamage(true);
+            damage_tally += ship->TotalWeaponsShipDamage(context, 0.0f, true);
+            destroy_tally += ship->TotalWeaponsFighterDamage(context, true);
             fighters_tally += ship->FighterCount();
             troops_tally += ship->TroopCapacity(universe);
             colony_tally += ship->ColonyCapacity(universe);
@@ -1567,7 +1572,7 @@ void FleetDataPanel::SetStatIconValues() {
         }
     }
     if (!fuels.empty())
-        min_fuel = *std::min_element(fuels.begin(), fuels.end());
+        min_fuel = *std::min_element(fuels.begin(), fuels.end()); // TODO: cbegin, cend
     if (!speeds.empty())
         min_speed = *std::min_element(speeds.begin(), speeds.end());
 
@@ -1580,12 +1585,12 @@ void FleetDataPanel::SetStatIconValues() {
             break;
         case MeterType::METER_CAPACITY:
             icon->SetValue(damage_tally);
-            if (fleet->CanDamageShips(universe))
+            if (fleet->CanDamageShips(context))
                 AttachChild(icon);
             break;
         case MeterType::METER_MAX_CAPACITY:
             icon->SetValue(destroy_tally);
-            if (fleet->CanDestroyFighters(universe))
+            if (fleet->CanDestroyFighters(context))
                 AttachChild(icon);
             break;
         case MeterType::METER_SECONDARY_STAT:
@@ -2904,8 +2909,6 @@ GG::Rect FleetWnd::CalculatePosition() const {
 
 void FleetWnd::SetStatIconValues() {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
     int ship_count =        0;
     float damage_tally =    0.0f;
     float destroy_tally   = 0.0f; // number of destroyed fighters
@@ -2917,6 +2920,11 @@ void FleetWnd::SetStatIconValues() {
 
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
+    const ScriptingContext context{universe, Empires()};
+
+    const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const std::set<int>& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
+
 
     for (auto& fleet : objects.find<const Fleet>(m_fleet_ids)) {
         if ( !(((m_empire_id == ALL_EMPIRES) && (fleet->Unowned())) || fleet->OwnedBy(m_empire_id)) )
@@ -2933,8 +2941,8 @@ void FleetWnd::SetStatIconValues() {
 
             if (universe.GetShipDesign(ship->DesignID())) {
                 ship_count++;
-                damage_tally += ship->TotalWeaponsShipDamage(0.0f, false);
-                destroy_tally += ship->TotalWeaponsFighterDamage(true); // TODO: Is it inconsistent to count fighters killing fighters here?
+                damage_tally += ship->TotalWeaponsShipDamage(context, 0.0f, false);
+                destroy_tally += ship->TotalWeaponsFighterDamage(context, true); // TODO: Is it inconsistent to count fighters killing fighters here?
                 fighters_tally += ship->FighterCount();
                 structure_tally += ship->GetMeter(MeterType::METER_STRUCTURE)->Initial();
                 shield_tally += ship->GetMeter(MeterType::METER_SHIELD)->Initial();

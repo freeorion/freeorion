@@ -2250,10 +2250,25 @@ namespace {
         }
     }
 
-    void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id,
-                                          const ObjectMap& objects, const EmpireManager& empires,
-                                          const Universe::EmpireObjectVisibilityMap& vis_map)
+    // TODO: move into ScriptingContext
+    Visibility GetVisFromMap(int object_id, int empire_id,
+                             const std::map<int, std::map<int, Visibility>>& vis)
     {
+        auto empire_it = vis.find(empire_id);
+        if (empire_it == vis.end())
+            return Visibility::VIS_NO_VISIBILITY;
+        auto object_it = empire_it->second.find(object_id);
+        if (object_it == empire_it->second.end())
+            return Visibility::VIS_NO_VISIBILITY;
+        return object_it->second;
+    }
+
+    void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id,
+                                          const ScriptingContext& context)
+    {
+        const ObjectMap& objects{context.ContextObjects()};
+        const auto& vis_map{context.empire_object_vis};
+
         visible_fleets.clear();
         auto system = objects.get<System>(system_id);
         if (!system)
@@ -2261,7 +2276,7 @@ namespace {
         const auto& fleet_ids = system->FleetIDs();
         if (fleet_ids.empty())
             return; // no fleets to be seen
-        if (empire_id != ALL_EMPIRES && !empires.GetEmpire(empire_id))
+        if (empire_id != ALL_EMPIRES && !context.GetEmpire(empire_id))
             return; // no such empire
 
         TraceLogger(combat) << "\t** GetFleetsVisibleToEmpire " << empire_id << " at system " << system->Name();
@@ -2272,14 +2287,7 @@ namespace {
                     continue;
                 if (fleet->OwnedBy(empire_id))
                     continue;   // don't care about fleets owned by the same empire for determining combat conditions
-
-                Visibility fleet_vis = Visibility::VIS_NO_VISIBILITY;
-                auto emp_it = vis_map.find(empire_id);
-                if (emp_it != vis_map.end()) {
-                    auto obj_it = emp_it->second.find(fleet->ID());
-                    if (obj_it != emp_it->second.end())
-                        fleet_vis = obj_it->second;
-                }
+                Visibility fleet_vis = GetVisFromMap(fleet->ID(), empire_id, vis_map);
                 TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
                 if (fleet_vis >= Visibility::VIS_BASIC_VISIBILITY)
                     visible_fleets.emplace(fleet->ID());
@@ -2322,9 +2330,11 @@ namespace {
     }
 
     void GetPlanetsVisibleToEmpireAtSystem(std::set<int>& visible_planets, int empire_id, int system_id,
-                                           const Universe& universe, const EmpireManager& empires)
+                                           const ScriptingContext& context)
     {
-        const auto& objects{universe.Objects()};
+        const auto& objects{context.ContextObjects()};
+        const auto& universe{context.ContextUniverse()};
+
         visible_planets.clear();
         auto system = objects.get<System>(system_id);
         if (!system)
@@ -2332,15 +2342,16 @@ namespace {
         const auto& planet_ids = system->PlanetIDs();
         if (planet_ids.empty())
             return; // no planets to be seen
-        if (empire_id != ALL_EMPIRES && !empires.GetEmpire(empire_id))
+        if (empire_id != ALL_EMPIRES && !context.GetEmpire(empire_id))
             return; // no such empire
 
-        TraceLogger(combat) << "\t** GetPlanetsVisibleToEmpire " << empire_id << " at system " << system->Name();
+        TraceLogger(combat) << "\t** GetPlanetsVisibleToEmpire " << empire_id
+                            << " at system " << system->Name();
         // for visible planets by an empire, check visibility of planet by that empire
         if (empire_id != ALL_EMPIRES) {
             for (int planet_id : planet_ids) {
                 // include planets visible to empire
-                Visibility planet_vis = universe.GetObjectVisibilityByEmpire(planet_id, empire_id);
+                Visibility planet_vis = GetVisFromMap(planet_id, empire_id, context.empire_object_vis);
                 TraceLogger(combat) << "\t\tplanet (" << planet_id << ") has visibility rank " << planet_vis;
                 if (planet_vis <= Visibility::VIS_BASIC_VISIBILITY)
                     continue;
@@ -2378,8 +2389,10 @@ namespace {
 
     /** Returns true iff there is an appropriate combination of objects in the
       * system with id \a system_id for a combat to occur. */
-    bool CombatConditionsInSystem(int system_id, const Universe& universe, const EmpireManager& empires) {
-        const auto& objects{universe.Objects()};
+    bool CombatConditionsInSystem(int system_id, const ScriptingContext& context) {
+        const auto& universe{context.ContextUniverse()};
+        const auto& objects{context.ContextObjects()};
+
         // combats occur if:
         // 1) empires A and B are at war, and
         // 2) a) empires A and B both have fleets in a system, or
@@ -2408,7 +2421,7 @@ namespace {
                     continue;
                 // an unarmed Monster will not trigger combat
                 if (  (fleet->Aggressive() || fleet->Unowned())  &&
-                      (fleet->CanDamageShips(universe) || !fleet->Unowned())  )
+                      (fleet->CanDamageShips(context) || !fleet->Unowned())  )
                 {
                     if (!empires_with_aggressive_fleets_here.count(empire_id))
                         DebugLogger(combat) << "\t Empire " << empire_id << " has at least one aggressive fleet present";
@@ -2467,8 +2480,8 @@ namespace {
 
             // what planets can the aggressive empire see?
             std::set<int> aggressive_empire_visible_planets;
-            GetPlanetsVisibleToEmpireAtSystem(aggressive_empire_visible_planets, aggressive_empire_id, system_id,
-                                              universe, empires);
+            GetPlanetsVisibleToEmpireAtSystem(aggressive_empire_visible_planets, aggressive_empire_id,
+                                              system_id, context);
 
             // is any planet owned by an empire at war with aggressive empire?
             for (const auto& planet : objects.find<Planet>(aggressive_empire_visible_planets)) {
@@ -2495,8 +2508,8 @@ namespace {
 
             // what fleets can the aggressive empire see?
             std::set<int> aggressive_empire_visible_fleets;
-            GetFleetsVisibleToEmpireAtSystem(aggressive_empire_visible_fleets, aggressive_empire_id, system_id,
-                                             objects, empires, universe.GetEmpireObjectVisibility());
+            GetFleetsVisibleToEmpireAtSystem(aggressive_empire_visible_fleets, aggressive_empire_id,
+                                             system_id, context);
 
             // is any fleet owned by an empire at war with aggressive empire?
             for (const auto& fleet : objects.find<Fleet>(aggressive_empire_visible_fleets)) {
@@ -2519,21 +2532,21 @@ namespace {
 
     /** Clears and refills \a combats with CombatInfo structs for
       * every system where a combat should occur this turn. */
-    void AssembleSystemCombatInfo(std::vector<CombatInfo>& combats,
-                                  Universe& universe,
-                                  EmpireManager& empires,
-                                  const GalaxySetupData& setup_data,
-                                  SpeciesManager& species,
-                                  const SupplyManager& supply)
+    std::vector<CombatInfo> AssembleSystemCombatInfo(
+        Universe& universe, EmpireManager& empires, const GalaxySetupData& setup_data,
+        SpeciesManager& species, const SupplyManager& supply)
     {
-        combats.clear();
+        std::vector<CombatInfo> combats;
+        combats.reserve(universe.Objects().size());
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in combats
+        const ScriptingContext context{universe, empires, setup_data, species, supply};
         for (const auto& sys : universe.Objects().all<System>()) {
-            if (CombatConditionsInSystem(sys->ID(), universe, empires))
+            if (CombatConditionsInSystem(sys->ID(), context))
                 combats.emplace_back(sys->ID(), CurrentTurn(), universe,
                                      empires, setup_data, species, supply);
         }
+        return combats;
     }
 
     /** Back project meter values of objects in combat info, so that changes to
@@ -2853,8 +2866,9 @@ namespace {
 
     /** Determines which ships ordered to colonize planet succeed, does
       * appropriate colonization, and cleans up after colonization orders */
-    void HandleColonization(Universe& universe, EmpireManager& empires) {
-        auto& objects = universe.Objects();
+    void HandleColonization(ScriptingContext& context) {
+        Universe& universe = context.ContextUniverse();
+        ObjectMap& objects = context.ContextObjects();
 
         // collect, for each planet, what ships have been ordered to colonize it
         std::map<int, std::map<int, std::set<int>>> planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
@@ -2919,7 +2933,7 @@ namespace {
             // find which empires have obstructive armed ships in system
             std::set<int> empires_with_armed_ships_in_system;
             for (auto& fleet : objects.find<const Fleet>(system->FleetIDs())) {
-                if (fleet->Obstructive() && fleet->CanDamageShips(universe))
+                if (fleet->Obstructive() && fleet->CanDamageShips(context))
                     empires_with_armed_ships_in_system.insert(fleet->Owner());  // may include ALL_EMPIRES, which is fine; this makes monsters prevent colonization
             }
 
@@ -2929,7 +2943,8 @@ namespace {
                 if (armed_ship_empire_id == colonizing_empire_id)
                     continue;
                 if (armed_ship_empire_id == ALL_EMPIRES ||
-                    empires.GetDiplomaticStatus(colonizing_empire_id, armed_ship_empire_id) == DiplomaticStatus::DIPLO_WAR)
+                    context.ContextDiploStatus(colonizing_empire_id, armed_ship_empire_id) ==
+                        DiplomaticStatus::DIPLO_WAR)
                 {
                     colonize_blocked = true;
                     break;
@@ -2955,7 +2970,7 @@ namespace {
             newly_colonize_planet_ids.push_back(planet_id);
 
             // sitrep about colonization / outposting
-            auto empire = empires.GetEmpire(colonizing_empire_id);
+            auto empire = context.GetEmpire(colonizing_empire_id);
             if (!empire) {
                 ErrorLogger() << "HandleColonization couldn't get empire with id " << colonizing_empire_id;
             } else {
@@ -3394,8 +3409,10 @@ void ServerApp::PreCombatProcessTurns() {
     // player notifications
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::COLONIZE_AND_SCRAP));
 
+    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
+
     DebugLogger() << "ServerApp::ProcessTurns colonization";
-    HandleColonization(m_universe, m_empires);
+    HandleColonization(context);
 
     DebugLogger() << "ServerApp::ProcessTurns invasion";
     HandleInvasion(m_empires, m_universe);
@@ -3410,8 +3427,6 @@ void ServerApp::PreCombatProcessTurns() {
     DebugLogger() << "ServerApp::ProcessTurns movement";
     // player notifications
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::FLEET_MOVEMENT));
-
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
 
     // Update system-obstruction after orders, colonization, invasion, gifting, scrapping
     for (auto& entry : m_empires) {
@@ -3484,11 +3499,12 @@ void ServerApp::ProcessCombats() {
     DebugLogger() << "ServerApp::ProcessCombats";
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::COMBAT));
 
-    std::vector<CombatInfo> combats;   // map from system ID to CombatInfo for that system
+    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
 
-
-    // collect data about locations where combat is to occur
-    AssembleSystemCombatInfo(combats, m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager);
+    // collect data about locations where combat is to occur:
+    // map from system ID to CombatInfo for that system
+    auto combats = AssembleSystemCombatInfo(m_universe, m_empires, m_galaxy_setup_data,
+                                            m_species_manager, m_supply_manager);
 
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
@@ -3505,7 +3521,6 @@ void ServerApp::ProcessCombats() {
 
     BackProjectSystemCombatInfoObjectMeters(combats);
 
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
     UpdateEmpireCombatDestructionInfo(combats, context);
 
     DisseminateSystemCombatInfo(combats, m_universe);
@@ -3519,6 +3534,9 @@ void ServerApp::ProcessCombats() {
 }
 
 void ServerApp::UpdateMonsterTravelRestrictions() {
+    const ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
+                                   m_species_manager, m_supply_manager};
+
     for (auto const &maybe_system : m_universe.Objects().ExistingSystems()) {
         auto system = std::dynamic_pointer_cast<const System>(maybe_system.second);
         if (!system) {
@@ -3537,7 +3555,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
             // before you, or be in cahoots with someone who did.
             bool unrestricted = ((fleet->ArrivalStarlane() == system->ID())
                                  && fleet->Obstructive()
-                                 && fleet->CanDamageShips(m_universe));
+                                 && fleet->CanDamageShips(context));
             if (fleet->Unowned()) {
                 monsters.push_back(std::move(fleet));
                 if (unrestricted)

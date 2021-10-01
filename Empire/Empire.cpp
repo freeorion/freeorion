@@ -1172,9 +1172,9 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
         TraceLogger(supply) << "Fleet " << fleet->ID() << " is in system " << system_id
                             << " with next system " << fleet->NextSystemID()
                             << " and is owned by " << fleet->Owner()
-                            << " can damage ships: " << fleet->CanDamageShips(context.ContextUniverse())
+                            << " can damage ships: " << fleet->CanDamageShips(context)
                             << " and obstructive: " << fleet->Obstructive();
-        if (fleet->CanDamageShips(context.ContextUniverse()) && fleet->Obstructive()) {
+        if (fleet->CanDamageShips(context) && fleet->Obstructive()) {
             if (fleet->OwnedBy(m_id)) {
                 if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
                     systems_containing_friendly_fleets.insert(system_id);
@@ -2390,7 +2390,8 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
             for (int count = 0; count < elem.blocksize; count++) {
                 // create ship
-                ship = context.ContextUniverse().InsertNew<Ship>(m_id, elem.item.design_id, species_name, m_id);
+                ship = context.ContextUniverse().InsertNew<Ship>(
+                    m_id, elem.item.design_id, species_name, context.ContextUniverse(), m_id);
                 system->Insert(ship);
 
                 // record ship production in empire stats
@@ -2493,7 +2494,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
                 // create a single fleet for combat ships and individual
                 // fleets for non-combat ships
-                bool individual_fleets = !(   (*ships.begin())->IsArmed(context.ContextUniverse())
+                bool individual_fleets = !(   (*ships.begin())->IsArmed(context)
                                            || (*ships.begin())->HasFighters(context.ContextUniverse())
                                            || (*ships.begin())->CanHaveTroops(context.ContextUniverse())
                                            || (*ships.begin())->CanBombard(context.ContextUniverse()));
@@ -2538,8 +2539,8 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
                 for (auto& next_fleet : fleets) {
                     // rename fleet, given its id and the ship that is in it
-                    next_fleet->Rename(next_fleet->GenerateFleetName(context.ContextUniverse(), context.species));
-                    FleetAggression new_aggr = next_fleet->HasArmedShips(context.ContextUniverse()) ?
+                    next_fleet->Rename(next_fleet->GenerateFleetName(context));
+                    FleetAggression new_aggr = next_fleet->HasArmedShips(context) ?
                         FleetDefaults::FLEET_DEFAULT_ARMED : FleetDefaults::FLEET_DEFAULT_UNARMED;
                     next_fleet->SetAggression(new_aggr);
 

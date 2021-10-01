@@ -10,6 +10,10 @@
 struct CombatInfo {
 public:
     CombatInfo() = default;
+
+    /** Assembles objects from \a universe_ that are in the system with ID
+      * system_id_ and puts them into a new ObjectMap, without the rest of
+      * the Universe contents. */
     CombatInfo(int system_id_, int turn_,
                Universe& universe_,
                EmpireManager& empires_,

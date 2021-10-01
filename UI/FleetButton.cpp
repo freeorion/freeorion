@@ -43,7 +43,7 @@ namespace {
     }
 
     /* returns prefix of filename used for icons for the indicated fleet button size type */
-    const std::string& FleetIconSizePrefix(FleetButton::SizeType size_type) {
+    const std::string& FleetIconSizePrefix(FleetButton::SizeType size_type) { // TODO: string_view ?
         static const std::string EMPTY_STRING;
         static const std::string BIG_STRING{"big-"};
         static const std::string MED_STRING{"med-"};
@@ -441,15 +441,17 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(
     bool hasMonsters = false;
     bool canDamageShips = false;
 
+    const Universe& u = GetUniverse();
+    const ScriptingContext context{u, Empires()};
+
     for (const auto* fleet : fleets) {
         if (!fleet)
             continue;
-        const Universe& u = GetUniverse();
         hasColonyShips  = hasColonyShips  || fleet->HasColonyShips(u);
         hasOutpostShips = hasOutpostShips || fleet->HasOutpostShips(u);
         hasTroopShips   = hasTroopShips   || fleet->HasTroopShips(u);
         hasMonsters     = hasMonsters     || fleet->HasMonsters(u);
-        canDamageShips  = canDamageShips  || fleet->CanDamageShips(u);
+        canDamageShips  = canDamageShips  || fleet->CanDamageShips(context);
     }
 
     // get file name main part depending on type of fleet
@@ -457,10 +459,10 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(
     std::vector<std::string> main_filenames;
     main_filenames.reserve(4);
     if (hasMonsters) {
-        if (canDamageShips)   { main_filenames.emplace_back(size_prefix + "head-monster.png"); }
+        if (canDamageShips)  { main_filenames.emplace_back(size_prefix + "head-monster.png"); }
         else                 { main_filenames.emplace_back(size_prefix + "head-monster-harmless.png"); }
     } else {
-        if (canDamageShips)   { main_filenames.emplace_back(size_prefix + "head-warship.png"); }
+        if (canDamageShips)  { main_filenames.emplace_back(size_prefix + "head-warship.png"); }
         if (hasColonyShips)  { main_filenames.emplace_back(size_prefix + "head-colony.png");  }
         if (hasOutpostShips) { main_filenames.emplace_back(size_prefix + "head-outpost.png"); }
         if (hasTroopShips)   { main_filenames.emplace_back(size_prefix + "head-lander.png");  }

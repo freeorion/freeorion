@@ -2471,15 +2471,16 @@ namespace {
         // within a loop that sets the species, updates meter, then checks
         // meter values for display
         const Universe& universe = GetUniverse();
+        const ScriptingContext context{universe, Empires()};
 
         auto& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
         float structure = ship->GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
         float shield = ship->GetMeter(MeterType::METER_MAX_SHIELD)->Current();
-        float attack = ship->TotalWeaponsShipDamage();
-        float destruction = ship->TotalWeaponsFighterDamage();
+        float attack = ship->TotalWeaponsShipDamage(context);
+        float destruction = ship->TotalWeaponsFighterDamage(context);
         float strength = std::pow(attack * structure, 0.6f);
-        float typical_shot = *std::max_element(enemy_shots.begin(), enemy_shots.end());
-        float typical_strength = std::pow(ship->TotalWeaponsShipDamage(enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f); // FIXME TotalWeaponsFighterDamage 
+        float typical_shot = enemy_shots.empty() ? 0.0f : *std::max_element(enemy_shots.begin(), enemy_shots.end()); // TODO: cbegin, cend (also elsewhere)
+        float typical_strength = std::pow(ship->TotalWeaponsShipDamage(context, enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f); // FIXME TotalWeaponsFighterDamage 
         return (FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR"))
             % species
             % attack
@@ -2493,7 +2494,7 @@ namespace {
             % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_COLONY, universe)
             % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_TROOPS, universe)
             % ship->FighterMax()
-            % (attack - ship->TotalWeaponsShipDamage(0.0f, false)) // FIXME TotalWeaponsFighterDamage
+            % (attack - ship->TotalWeaponsShipDamage(context, 0.0f, false)) // FIXME TotalWeaponsFighterDamage
             % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_MAX_CAPACITY, ShipPartClass::PC_FIGHTER_BAY, universe)
             % strength
             % (strength / cost)
@@ -2520,6 +2521,7 @@ namespace {
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
         Universe& universe = GetUniverse();
         ObjectMap& objects = universe.Objects();
+        const ScriptingContext context{universe, Empires()};
 
         const ShipDesign* design = universe.GetShipDesign(design_id);
         if (!design) {
@@ -2547,17 +2549,17 @@ namespace {
         float enemy_DR = 20 * tech_level;
         TraceLogger() << "RefreshDetailPanelShipDesignTag default enemy stats:: tech_level: "
                       << tech_level << "   DR: " << enemy_DR << "   attack: " << typical_shot;
-        std::set<float> enemy_shots;
-        enemy_shots.insert(typical_shot);
+        std::set<float> enemy_shots{typical_shot};
 
 
         // select which species to show info for
 
+        // TODO: can this be a vector of string_view ?
         std::set<std::string> additional_species; // from currently selected planet and fleets, if any
         const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
         if (const auto planet = objects.get<Planet>(map_wnd->SelectedPlanetID())) {
             if (!planet->SpeciesName().empty())
-                additional_species.emplace(planet->SpeciesName());
+                additional_species.insert(planet->SpeciesName());
         }
 
         FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
@@ -2590,7 +2592,7 @@ namespace {
                     enemy_DR = this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
-                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(universe); // FIXME FighterDamage
+                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(context); // FIXME FighterDamage
                     for (float shot : this_damage)
                         DebugLogger() << "Weapons Dmg " << shot;
                     enemy_shots.insert(this_damage.begin(), this_damage.end());
@@ -2614,7 +2616,7 @@ namespace {
 
         if (!only_description) { // don't generate detailed stat description involving adding / removing temporary ship from universe
             // temporary ship to use for estimating design's meter values
-            auto temp = universe.InsertTemp<Ship>(client_empire_id, design_id, "", client_empire_id);
+            auto temp = universe.InsertTemp<Ship>(client_empire_id, design_id, "", universe, client_empire_id);
 
             // apply empty species for 'Generic' entry
             ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
@@ -2725,7 +2727,7 @@ namespace {
                     enemy_DR = this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
-                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(universe); // FIXME: MaxFighterDamage
+                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(context); // FIXME: MaxFighterDamage
                     for (float shot : this_damage)
                         DebugLogger() << "Weapons Dmg " << shot;
                     enemy_shots.insert(this_damage.begin(), this_damage.end());
@@ -2749,7 +2751,8 @@ namespace {
 
 
         // temporary ship to use for estimating design's meter values
-        auto temp = universe.InsertTemp<Ship>(client_empire_id, TEMPORARY_OBJECT_ID, "", client_empire_id);
+        auto temp = universe.InsertTemp<Ship>(client_empire_id, TEMPORARY_OBJECT_ID, "",
+                                              universe, client_empire_id);
 
         // apply empty species for 'Generic' entry
         universe.UpdateMeterEstimates(temp->ID(), context);

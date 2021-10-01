@@ -2045,7 +2045,7 @@ bool Armed::Match(const ScriptingContext& local_context) const {
 
     if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
         auto* ship = static_cast<const Ship*>(candidate.get());
-        if (ship->IsArmed(local_context.ContextUniverse()))
+        if (ship->IsArmed(local_context))
             return true;
     }
 
