@@ -167,9 +167,8 @@ protected:
                              Condition::Condition* condition) const;
 
     /** Evaluates the property for the specified objects. */
-    void GetObjectPropertyValues(const ScriptingContext& context,
-                                 const Condition::ObjectSet& objects,
-                                 std::vector<V>& object_property_values) const;
+    std::vector<V> GetObjectPropertyValues(const ScriptingContext& context,
+                                           const Condition::ObjectSet& objects) const;
 
 private:
     StatisticType                         m_stat_type;
@@ -797,19 +796,18 @@ void Statistic<T, V>::GetConditionMatches(const ScriptingContext& context,
 }
 
 template <typename T, typename V>
-void Statistic<T, V>::GetObjectPropertyValues(const ScriptingContext& context,
-                                              const Condition::ObjectSet& objects,
-                                              std::vector<V>& object_property_values) const
+std::vector<V> Statistic<T, V>::GetObjectPropertyValues(const ScriptingContext& context,
+                                                        const Condition::ObjectSet& objects) const
 {
-    object_property_values.clear();
+    std::vector<V> retval(objects.size());
 
     if (m_value_ref) {
-        // evaluate ValueRef with each condition match as the LocalCandidate
-        // TODO: Can / should this be paralleized?
-        object_property_values.reserve(objects.size());
-        for (auto& object : objects)
-            object_property_values.push_back(m_value_ref->Eval(ScriptingContext(context, object)));
+        std::transform(objects.begin(), objects.end(), retval.begin(),
+                       [&context, &ref{m_value_ref}](const auto& obj)
+            { return ref->Eval(ScriptingContext(context, obj)); });
     }
+
+    return retval;
 }
 
 template <typename T, typename V>
@@ -908,7 +906,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
                 observed_values[entry]++;
 
             auto max = std::max_element(observed_values.begin(), observed_values.end(),
-                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+                                        [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
 
             return T(max->second);
             break;
@@ -921,7 +919,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
                 observed_values[entry]++;
 
             auto min = std::min_element(observed_values.begin(), observed_values.end(),
-                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+                                        [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
 
             return T(min->second);
             break;
@@ -933,10 +931,10 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
             for (auto entry : object_property_values)
                 observed_values[entry]++;
 
-            auto minmax = std::minmax_element(observed_values.begin(), observed_values.end(),
-                                              [](auto p1, auto p2) { return p1.second < p2.second; });
+            auto [min, max] = std::minmax_element(observed_values.begin(), observed_values.end(),
+                                                  [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
 
-            return T(minmax.second->second - minmax.first->second);
+            return T(max->second - min->second);
             break;
         }
 
@@ -953,10 +951,15 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         }
 
         case StatisticType::RMS: {
-            V accumulator(0);
+#if (defined(__clang_major__)) || (defined(__GNUC__) && (__GNUC__ < 11))
+            V accumulator{0};
             for (auto entry : object_property_values)
                 accumulator += (entry * entry);
-
+#else
+            V accumulator = std::transform_reduce(
+                object_property_values.begin(), object_property_values.end(),
+                V{0}, std::plus{}, [](const auto& a) { return a*a; });
+#endif
             double tempval = static_cast<double>(accumulator) / object_property_values.size();
             return static_cast<T>(std::sqrt(tempval));
             break;
@@ -968,34 +971,30 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
             for (auto& entry : object_property_values)
                 observed_values[entry]++;
 
-            auto max = std::max_element(observed_values.begin(), observed_values.end(),
-                                        [](auto p1, auto p2) { return p1 < p2; });
+            auto max = std::max_element(observed_values.begin(), observed_values.end());
 
             return T(max->first);
             break;
         }
 
         case StatisticType::MAX: {
-            auto max = std::max_element(object_property_values.begin(), object_property_values.end(),
-                                        [](auto p1, auto p2) { return p1 < p2; });
+            auto max = std::max_element(object_property_values.begin(), object_property_values.end());
 
             return static_cast<T>(*max);
             break;
         }
 
         case StatisticType::MIN: {
-            auto min = std::min_element(object_property_values.begin(), object_property_values.end(),
-                                        [](auto p1, auto p2) { return p1 < p2; });
+            auto min = std::min_element(object_property_values.begin(), object_property_values.end());
 
             return static_cast<T>(*min);
             break;
         }
 
         case StatisticType::SPREAD: {
-            auto minmax = std::minmax_element(object_property_values.begin(), object_property_values.end(),
-                                              [](auto p1, auto p2) { return p1 < p2; });
+            auto [min, max] = std::minmax_element(object_property_values.begin(), object_property_values.end());
 
-            return static_cast<T>(*minmax.second - *minmax.first);
+            return static_cast<T>(*max - *min);
             break;
         }
 
@@ -1065,7 +1064,7 @@ T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
                 observed_values[entry]++;
 
             auto max = std::max_element(observed_values.begin(), observed_values.end(),
-                                        [](auto p1, auto p2) { return p1.second < p2.second; });
+                                        [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
 
             return max->first;
             break;
@@ -1148,10 +1147,11 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
             for (auto& entry : object_property_values)
                 observed_values[std::move(entry)]++;
 
-            auto minmax = std::minmax_element(observed_values.begin(), observed_values.end(),
-                                              [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
+            auto [min, max] = std::minmax_element(
+                observed_values.begin(), observed_values.end(),
+                [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
 
-            return T(minmax.second->second - minmax.first->second);
+            return T(max->second - min->second);
             break;
         }
 
@@ -1175,10 +1175,7 @@ T Statistic<T, V>::Eval(const ScriptingContext& context) const
         return condition_matches.empty() ? T{0} : T{1};
 
     // evaluate property for each condition-matched object
-    std::vector<V> object_property_values;
-    GetObjectPropertyValues(context, condition_matches, object_property_values);
-
-    return ReduceData<T, V>(m_stat_type, std::move(object_property_values));
+    return ReduceData<T, V>(m_stat_type, GetObjectPropertyValues(context, condition_matches));
 }
 
 template <typename T, typename V>
