@@ -61,14 +61,14 @@ void Field::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& 
     }
 }
 
-std::set<std::string> Field::Tags() const {
+std::set<std::string> Field::Tags(const ScriptingContext&) const {
     const FieldType* type = GetFieldType(m_type_name);
     if (!type)
         return {};
     return type->Tags();
 }
 
-bool Field::HasTag(const std::string& name) const {
+bool Field::HasTag(const std::string& name, const ScriptingContext&) const {
     const FieldType* type = GetFieldType(m_type_name);
 
     return type && type->Tags().count(name);

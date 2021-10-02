@@ -104,10 +104,10 @@ public:
     [[nodiscard]] float                         SpecialCapacity(const std::string& name) const;         ///> returns the capacity of the special with name \a name or 0 if that special is not present
 
     /** Returns all tags this object has. */
-    [[nodiscard]] virtual std::set<std::string> Tags() const;
+    [[nodiscard]] virtual std::set<std::string> Tags(const ScriptingContext&) const;
 
     /** Returns true iff this object has the tag with the indicated \a name. */
-    [[nodiscard]] virtual bool                  HasTag(const std::string& name) const;
+    [[nodiscard]] virtual bool                  HasTag(const std::string& name, const ScriptingContext&) const;
 
     [[nodiscard]] virtual UniverseObjectType    ObjectType() const;
 
@@ -200,8 +200,7 @@ public:
 
     /** performs the movement that this object is responsible for this object's
         actions during the pop growth/production/research phase of a turn. */
-    virtual void    PopGrowthProductionResearchPhase()
-    {};
+    virtual void    PopGrowthProductionResearchPhase(ScriptingContext&) {}
 
     static constexpr double INVALID_POSITION = -100000.0;           ///< the position in x and y at which default-constructed objects are placed
     static constexpr int    INVALID_OBJECT_AGE = -(1 << 30) - 1;;   ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN

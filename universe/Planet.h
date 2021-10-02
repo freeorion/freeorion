@@ -52,8 +52,8 @@ class FO_COMMON_API Planet :
     public ResourceCenter
 {
 public:
-    [[nodiscard]] std::set<std::string>   Tags() const override;
-    [[nodiscard]] bool                    HasTag(const std::string& name) const override;
+    [[nodiscard]] std::set<std::string>   Tags(const ScriptingContext& context) const override;
+    [[nodiscard]] bool                    HasTag(const std::string& name, const ScriptingContext& context) const override;
     [[nodiscard]] UniverseObjectType      ObjectType() const override;
 
     [[nodiscard]] std::string             Dump(unsigned short ntabs = 0) const override;
@@ -173,7 +173,7 @@ private:
     void AddMeter(MeterType meter_type) override
     { UniverseObject::AddMeter(meter_type); }
 
-    void PopGrowthProductionResearchPhase() override;
+    void PopGrowthProductionResearchPhase(ScriptingContext& context) override;
 
     void ClampMeters() override;
 

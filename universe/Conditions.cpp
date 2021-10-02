@@ -2875,28 +2875,31 @@ bool HasTag::operator==(const Condition& rhs) const {
 
 namespace {
     struct HasTagSimpleMatch {
-        HasTagSimpleMatch() :
+        HasTagSimpleMatch(const ScriptingContext& context) :
             m_any_tag_ok(true),
-            m_name(EMPTY_STRING)
+            m_name(EMPTY_STRING),
+            m_context(context)
         {}
 
-        HasTagSimpleMatch(const std::string& name) :
+        HasTagSimpleMatch(const std::string& name, const ScriptingContext& context) :
             m_any_tag_ok(false),
-            m_name(name)
+            m_name(name),
+            m_context(context)
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
             if (!candidate)
                 return false;
 
-            if (m_any_tag_ok && !candidate->Tags().empty())
+            if (m_any_tag_ok && !candidate->Tags(m_context).empty())
                 return true;
 
-            return candidate->HasTag(m_name);
+            return candidate->HasTag(m_name, m_context);
         }
 
-        bool               m_any_tag_ok;
-        const std::string& m_name;
+        bool                    m_any_tag_ok;
+        const std::string&      m_name;
+        const ScriptingContext& m_context;
     };
 }
 
@@ -2909,10 +2912,10 @@ void HasTag::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
         if (!m_name) {
-            EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch());
+            EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch(parent_context));
         } else {
             std::string name = boost::to_upper_copy<std::string>(m_name->Eval(parent_context));
-            EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch(name));
+            EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch(name, parent_context));
         }
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -2949,10 +2952,10 @@ bool HasTag::Match(const ScriptingContext& local_context) const {
     }
 
     if (!m_name)
-        return HasTagSimpleMatch()(candidate);
+        return HasTagSimpleMatch(local_context)(candidate);
 
     std::string name = boost::to_upper_copy<std::string>(m_name->Eval(local_context));
-    return HasTagSimpleMatch(name)(candidate);
+    return HasTagSimpleMatch(name, local_context)(candidate);
 }
 
 void HasTag::SetTopLevelContent(const std::string& content_name) {

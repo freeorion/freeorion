@@ -836,9 +836,13 @@ private:
             return;
         const std::string& condition_key = condition_row->GetKey();
 
-        GG::X PAD(3);
+        constexpr GG::X PAD{3};
         GG::X param_widget_left = DropListWidth() + PAD;
         GG::Y param_widget_top = GG::Y0;
+
+        ScriptingContext context;
+        const ObjectMap& objects = context.ContextObjects();
+
 
         // create controls for selected condition
         if (condition_key == ALL_CONDITION ||
@@ -905,8 +909,8 @@ private:
 
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
-            for (auto& obj : Objects().all()) {
-                auto tags = obj->Tags();
+            for (auto& obj : objects.all()) {
+                auto tags = obj->Tags(context);
                 all_tags.insert(tags.begin(), tags.end());
             }
 
@@ -996,7 +1000,7 @@ private:
 
             // collect all valid foci on any object in universe
             std::set<std::string> all_foci;
-            for (auto& planet : Objects().all<Planet>()) {
+            for (auto& planet : objects.all<Planet>()) {
                 auto obj_foci = planet->AvailableFoci();
                 std::copy(std::make_move_iterator(obj_foci.begin()),
                           std::make_move_iterator(obj_foci.end()),
@@ -1055,7 +1059,7 @@ private:
             param_widget_top += m_string_drop->Height();
 
             // add rows for empire names
-            for (const auto& entry : Empires()) {
+            for (const auto& entry : context.Empires()) {
                 const std::string& empire_name = entry.second->Name();
                 m_string_drop->Insert(GG::Wnd::Create<StringRow>(
                     empire_name, GG::Y(ClientUI::Pts()), false));

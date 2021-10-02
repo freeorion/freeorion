@@ -2333,7 +2333,6 @@ namespace {
                                            const ScriptingContext& context)
     {
         const auto& objects{context.ContextObjects()};
-        const auto& universe{context.ContextUniverse()};
 
         visible_planets.clear();
         auto system = objects.get<System>(system_id);
@@ -3682,7 +3681,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // Planet depopulation, some in-C++ meter modifications
     for (const auto& obj : m_universe.Objects().all()) {
-        obj->PopGrowthProductionResearchPhase();
+        obj->PopGrowthProductionResearchPhase(context);
         obj->ClampMeters();  // ensures no meters are over MAX.  probably redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
 

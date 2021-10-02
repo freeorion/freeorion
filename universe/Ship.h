@@ -17,8 +17,8 @@ public:
     typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeterMap;
 
     [[nodiscard]] bool HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
-    [[nodiscard]] std::set<std::string> Tags() const override;
-    [[nodiscard]] bool HasTag(const std::string& name) const override;
+    [[nodiscard]] std::set<std::string> Tags(const ScriptingContext& context) const override;
+    [[nodiscard]] bool HasTag(const std::string& name, const ScriptingContext& context) const override;
     [[nodiscard]] UniverseObjectType ObjectType() const override;
     [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
 

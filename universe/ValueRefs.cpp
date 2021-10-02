@@ -896,14 +896,14 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
 
     } else if (property_name == "PropagatedSupplyRange") {
-        const auto& ranges = GetSupplyManager().PropagatedSupplyRanges();   // TODO: Get from Context..
+        const auto& ranges = context.supply.PropagatedSupplyRanges();
         auto range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
             return 0.0;
         return range_it->second;
 
     } else if (property_name == "PropagatedSupplyDistance") {
-        const auto& ranges = GetSupplyManager().PropagatedSupplyDistances(); // TODO: get from context
+        const auto& ranges = context.supply.PropagatedSupplyDistances();
         auto range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
             return 0.0;
@@ -975,7 +975,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     }
     else if (property_name == "SupplyingEmpire") {
-        return GetSupplyManager().EmpireThatCanSupplyAt(object->SystemID()); // TODO: Get SupplyManager from Context
+        return context.supply.EmpireThatCanSupplyAt(object->SystemID());
     }
     else if (property_name == "ID") {
         return object->ID();
@@ -1163,7 +1163,7 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
     }
 
     if (property_name == "Tags") {
-        auto tags = object->Tags();
+        auto tags = object->Tags(context);
         return {tags.begin(), tags.end()};
     }
     else if (property_name == "Specials") {

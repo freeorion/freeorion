@@ -393,7 +393,11 @@ namespace FreeOrionPython {
                                                 py::return_value_policy<py::return_by_value>())
             .def("initialMeterValue",           ObjectInitialMeterValue,
                                                 py::return_value_policy<py::return_by_value>())
-            .add_property("tags",               make_function(&UniverseObject::Tags,        py::return_value_policy<py::return_by_value>()))
+            .add_property("tags",               make_function(
+                                                    +[](const UniverseObject& o) -> std::set<std::string> { return o.Tags(ScriptingContext{}); },
+                                                    py::return_value_policy<py::return_by_value>()
+                                                ))
+            //.add_property("tags",               make_function(&UniverseObject::Tags,        py::return_value_policy<py::return_by_value>()))
             .def("hasTag",                      &UniverseObject::HasTag)
             .add_property("meters",             make_function(
                                                     +[](const UniverseObject& o) -> std::map<MeterType, Meter> { return {o.Meters().begin(), o.Meters().end()}; },

@@ -145,15 +145,15 @@ bool Planet::HostileToEmpire(int empire_id, const EmpireManager& empires) const 
     return empires.GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
-std::set<std::string> Planet::Tags() const {
-    const Species* species = GetSpecies(SpeciesName());
+std::set<std::string> Planet::Tags(const ScriptingContext& context) const {
+    const Species* species = context.species.GetSpecies(SpeciesName());
     if (!species)
         return {};
     return species->Tags();
 }
 
-bool Planet::HasTag(const std::string& name) const {
-    const Species* species = GetSpecies(SpeciesName());
+bool Planet::HasTag(const std::string& name, const ScriptingContext& context) const {
+    const Species* species = context.species.GetSpecies(SpeciesName());
 
     return species && species->Tags().count(name);
 }
@@ -847,18 +847,18 @@ void Planet::SetSurfaceTexture(const std::string& texture) {
     StateChangedSignal();
 }
 
-void Planet::PopGrowthProductionResearchPhase() {
-    UniverseObject::PopGrowthProductionResearchPhase();
+void Planet::PopGrowthProductionResearchPhase(ScriptingContext& context) {
+    UniverseObject::PopGrowthProductionResearchPhase(context);
     PopCenterPopGrowthProductionResearchPhase();
 
     // should be run after a meter update, but before a backpropagation, so check current, not initial, meter values
 
     // check for colonies without positive population, and change to outposts
     if (!SpeciesName().empty() && GetMeter(MeterType::METER_POPULATION)->Current() <= 0.0f) {
-        if (Empire* empire = GetEmpire(this->Owner())) {
+        if (auto empire = context.GetEmpire(this->Owner())) {
             empire->AddSitRepEntry(CreatePlanetDepopulatedSitRep(this->ID()));
 
-            if (!HasTag(TAG_STAT_SKIP_DEPOP))
+            if (!HasTag(TAG_STAT_SKIP_DEPOP, context))
                 empire->RecordPlanetDepopulated(*this);
         }
         // remove species

@@ -1148,7 +1148,7 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
 }
 
 namespace {
-    bool IsAvailable(const Ship* ship, int system_id, int empire_id) {
+    bool IsAvailable(const Ship* ship, int system_id, int empire_id) { // TODO: pass in context
         if (!ship)
             return false;
         const Universe& universe = GetUniverse();
@@ -1163,7 +1163,7 @@ namespace {
             fleet->FinalDestinationID() == INVALID_OBJECT_ID;
     }
 
-    bool AvailableToColonize(const Ship* ship, int system_id, int empire_id) {
+    bool AvailableToColonize(const Ship* ship, int system_id, int empire_id) { // TODO: pass in context
         if (!ship)
             return false;
         const Universe& u = GetUniverse();
@@ -1175,7 +1175,7 @@ namespace {
             ship->OrderedColonizePlanet() == INVALID_OBJECT_ID;
     };
 
-    bool AvailableToInvade(const Ship* ship, int system_id, int empire_id) {
+    bool AvailableToInvade(const Ship* ship, int system_id, int empire_id) { // TODO: pass in Universe
         if (!ship)
             return false;
         const Universe& u = GetUniverse();
@@ -1186,7 +1186,7 @@ namespace {
             ship->OrderedInvadePlanet() == INVALID_OBJECT_ID;
     };
 
-    bool AvailableToBombard(const Ship* ship, int system_id, int empire_id) {
+    bool AvailableToBombard(const Ship* ship, int system_id, int empire_id) { // TODO: pass in Universe
         if (!ship)
             return false;
         const Universe& u = GetUniverse();
@@ -1203,11 +1203,11 @@ namespace {
      *  the corresponding "CTRL_BOMBARD_ROBOTIC" tag, the ship would be auto-selected to bombard that planet.
      *  If the Ship contains the content tag defined in TAG_BOMBARD_ALWAYS, only that tag will be returned.
      */
-    std::vector<std::string> BombardTagsForShip(const Ship* ship) {
+    std::vector<std::string> BombardTagsForShip(const Ship* ship, const ScriptingContext& context) {
         std::vector<std::string> retval;
         if (!ship)
             return retval;
-        auto&& tags{ship->Tags()};
+        auto&& tags{ship->Tags(context)};
         retval.reserve(tags.size());
         for (auto& tag : tags) {
             if (tag == TAG_BOMBARD_ALWAYS) {
@@ -1477,7 +1477,7 @@ std::set<const Ship*> AutomaticallyChosenInvasionShips(int target_planet_id) {
 /** Returns valid Ship%s capable of bombarding a given Planet.
  * @param target_planet_id ID of Planet to potentially bombard
  */
-std::set<const Ship*> AutomaticallyChosenBombardShips(int target_planet_id) {
+std::set<const Ship*> AutomaticallyChosenBombardShips(int target_planet_id) { // TODO: pass context
     std::set<const Ship*> retval;
 
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
@@ -1485,6 +1485,7 @@ std::set<const Ship*> AutomaticallyChosenBombardShips(int target_planet_id) {
         return retval;
 
     const Universe& u = GetUniverse();
+    const ScriptingContext context{u, Empires()};
 
     auto target_planet = u.Objects().get<Planet>(target_planet_id).get();
     if (!target_planet)
@@ -1505,8 +1506,8 @@ std::set<const Ship*> AutomaticallyChosenBombardShips(int target_planet_id) {
 
         // Select ship if the planet contains a content tag specified by the ship,
         // or ship is tagged to always be selected
-        for (const std::string& tag : BombardTagsForShip(ship.get())) {
-            if ((tag == TAG_BOMBARD_ALWAYS) || (target_planet->HasTag(tag))) {
+        for (const std::string& tag : BombardTagsForShip(ship.get(), context)) {
+            if ((tag == TAG_BOMBARD_ALWAYS) || (target_planet->HasTag(tag, context))) {
                 retval.insert(ship.get());
                 break;
             }
@@ -1522,9 +1523,10 @@ void SidePanel::PlanetPanel::Refresh() {
 
     Universe& u = GetUniverse();
     ObjectMap& objects = u.Objects(); // must be mutable to allow setting species and updating to estimate colonize button numbers
-    SpeciesManager& sm = GetSpeciesManager();
     EmpireManager& e = Empires();
-    const SupplyManager& supply = GetSupplyManager();
+    ScriptingContext context{u, e};
+    SpeciesManager& sm = context.species;
+    const SupplyManager& supply = context.supply;
 
     auto planet = objects.get<Planet>(m_planet_id);
     if (!planet) {
@@ -1570,7 +1572,7 @@ void SidePanel::PlanetPanel::Refresh() {
     for (const auto& building : objects.find<Building>(planet->BuildingIDs())) {
         if (!building || known_destroyed_object_ids.count(building->ID()))
             continue;
-        if (building->HasTag(TAG_SHIPYARD)) {
+        if (building->HasTag(TAG_SHIPYARD, context)) {
             has_shipyard = true;
             break;
         }
@@ -1691,8 +1693,6 @@ void SidePanel::PlanetPanel::Refresh() {
     }
 
     if (can_colonize) {
-        ScriptingContext context{u, e, GetGalaxySetupData(), sm, supply};
-
         // show colonize button; in case the chosen colony ship is not actually
         // selected, but has been chosen by AutomaticallyChosenColonyShip,
         // determine what population capacity to put on the conolnize buttone by

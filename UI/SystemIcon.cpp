@@ -95,10 +95,12 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
-    const SpeciesManager& species_manager = GetSpeciesManager();
     const EmpireManager& empire_manager = Empires();
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
+    const ScriptingContext context{universe, empire_manager};
+    const SpeciesManager& species_manager = context.species;
+
 
     auto system = objects.get<System>(system_id);
     if (!system)
@@ -156,7 +158,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
                 if (known_destroyed_object_ids.count(building_id))
                     continue;
 
-                if (building->HasTag(TAG_SHIPYARD)) {
+                if (building->HasTag(TAG_SHIPYARD, context)) {
                     has_shipyard = true;
                     break;
                 }

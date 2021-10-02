@@ -156,8 +156,8 @@ bool Ship::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
         empires.GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
-std::set<std::string> Ship::Tags() const {
-    const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id); // TODO: pass in ScriptingContext
+std::set<std::string> Ship::Tags(const ScriptingContext& context) const {
+    const ShipDesign* design = context.ContextUniverse().GetShipDesign(m_design_id);
     if (!design)
         return {};
 
@@ -179,8 +179,8 @@ std::set<std::string> Ship::Tags() const {
     return retval;
 }
 
-bool Ship::HasTag(const std::string& name) const {
-    const ShipDesign* design = GetUniverse().GetShipDesign(m_design_id); // TODO: pass in ScriptingContext
+bool Ship::HasTag(const std::string& name, const ScriptingContext& context) const {
+    const ShipDesign* design = context.ContextUniverse().GetShipDesign(m_design_id);
     if (design) {
         // check hull for tag
         const ShipHull* hull = ::GetShipHull(design->Hull());
@@ -195,7 +195,7 @@ bool Ship::HasTag(const std::string& name) const {
         }
     }
     // check species for tag
-    const Species* species = GetSpecies(SpeciesName());
+    const Species* species = context.species.GetSpecies(SpeciesName());
     if (species && species->Tags().count(name))
         return true;
 
