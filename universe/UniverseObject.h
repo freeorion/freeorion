@@ -24,7 +24,7 @@ class SitRepEntry;
 class EmpireManager;
 class ObjectMap;
 class Universe;
-class ScriptingContext;
+struct ScriptingContext;
 struct UniverseObjectVisitor;
 
 // The ID number assigned to temporary universe objects

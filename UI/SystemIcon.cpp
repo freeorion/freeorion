@@ -277,7 +277,7 @@ void SystemIcon::CompleteConstruction() {
     GG::Pt sz{texture->DefaultWidth(), texture->DefaultHeight()};
     m_selection_indicator = GG::Wnd::Create<RotatingGraphic>(
         std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
+    m_selection_indicator->SetRPM(static_cast<float>(ClientUI::SystemSelectionIndicatorRPM()));
     AttachChild(m_selection_indicator);
     m_selection_indicator->Resize(sz);
 

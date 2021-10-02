@@ -1478,8 +1478,8 @@ void TechTreeWnd::LayoutPanel::SelectTech(const std::string& tech_name)
 }
 
 void TechTreeWnd::LayoutPanel::TreeDraggedSlot(const GG::Pt& move) {
-    m_hscroll->ScrollTo(m_drag_scroll_position_x - Value(move.x / m_scale));
-    m_vscroll->ScrollTo(m_drag_scroll_position_y - Value(move.y / m_scale));
+    m_hscroll->ScrollTo(static_cast<int>(m_drag_scroll_position_x - Value(move.x / m_scale)));
+    m_vscroll->ScrollTo(static_cast<int>(m_drag_scroll_position_y - Value(move.y / m_scale)));
     m_scroll_position_x = m_hscroll->PosnRange().first;
     m_scroll_position_y = m_vscroll->PosnRange().first;
 }
