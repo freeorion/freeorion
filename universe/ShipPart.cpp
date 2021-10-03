@@ -433,12 +433,11 @@ bool ShipPart::ProductionCostTimeLocationInvariant() const {
     return true;
 }
 
-float ShipPart::ProductionCost(int empire_id, int location_id, int in_design_id) const {    // TODO: pass in ScriptingContext
+float ShipPart::ProductionCost(int empire_id, int location_id, const ScriptingContext& context,
+                               int in_design_id) const
+{
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
         return 1.0f;
-
-    ObjectMap& objects{Objects()};
-    const EmpireManager& empires{Empires()};
 
     if (m_production_cost->ConstantExpr()) {
         return static_cast<float>(m_production_cost->Eval());
@@ -447,46 +446,57 @@ float ShipPart::ProductionCost(int empire_id, int location_id, int in_design_id)
         return static_cast<float>(m_production_cost->Eval(ScriptingContext(temp_context, in_design_id)));
     }
 
+    const ObjectMap& objects{context.ContextObjects()};
     auto location = objects.get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
-    auto source = empires.GetSource(empire_id, objects);
+    std::shared_ptr<const UniverseObject> source;
+    if (auto empire = context.GetEmpire(empire_id))
+        source = empire->Source(context.ContextObjects());
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
     constexpr int PRODUCTION_BLOCK_SIZE = 1;
 
-    const ScriptingContext context{std::move(source), std::move(location), in_design_id, PRODUCTION_BLOCK_SIZE};
-    return static_cast<float>(m_production_cost->Eval(context));
+    const ScriptingContext design_id_context{
+        context, std::move(source),
+        std::const_pointer_cast<UniverseObject>(location), // won't be modified when evaluating a ValueRef, but needs to be a pointer to mutable to be passed as the target object
+        in_design_id, PRODUCTION_BLOCK_SIZE};
+
+    return static_cast<float>(m_production_cost->Eval(design_id_context));
 }
 
-int ShipPart::ProductionTime(int empire_id, int location_id, int in_design_id) const {  // TODO: pass in ScriptingContext
+int ShipPart::ProductionTime(int empire_id, int location_id, const ScriptingContext& context,
+                             int in_design_id) const
+{
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
         return 1;
-
-    ObjectMap& objects{Objects()};
-    const EmpireManager& empires{Empires()};
 
     if (m_production_time->ConstantExpr()) {
         return m_production_time->Eval();
     } else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant()) {
-        ScriptingContext temp_context; // TODO: replace with passed in context
-        return m_production_time->Eval(ScriptingContext(temp_context, in_design_id));
+        return m_production_time->Eval(ScriptingContext{context, in_design_id});
     }
 
+    const ObjectMap& objects{context.ContextObjects()};
     auto location = objects.get(location_id);
     if (!location && !m_production_time->TargetInvariant())
         return ARBITRARY_LARGE_TURNS;
 
-    auto source = empires.GetSource(empire_id, objects);
+    std::shared_ptr<const UniverseObject> source;
+    if (auto empire = context.GetEmpire(empire_id))
+        source = empire->Source(context.ContextObjects());
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
 
     constexpr int PRODUCTION_BLOCK_SIZE = 1;
 
-    const ScriptingContext context{std::move(source), std::move(location), in_design_id, PRODUCTION_BLOCK_SIZE};
-    return m_production_time->Eval(context);
+    const ScriptingContext design_id_context{
+        context, std::move(source),
+        std::const_pointer_cast<UniverseObject>(location), // won't be modified when evaluating a ValueRef, but needs to be a pointer to mutable to be passed as the target object
+        in_design_id, PRODUCTION_BLOCK_SIZE};
+    return m_production_time->Eval(design_id_context);
 }
 
 unsigned int ShipPart::GetCheckSum() const {

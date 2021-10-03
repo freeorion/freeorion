@@ -1550,9 +1550,9 @@ void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group
         } catch (...) {}
     }
 
-    for (auto part_it = this_group.begin();
-         part_it != this_group.end(); ++part_it)
-    {
+    const ScriptingContext context;
+
+    for (auto part_it = this_group.begin(); part_it != this_group.end(); ++part_it) {
         const ShipPart* checkPart = *part_it;
         for (const ShipPart* ref_part : this_group) {
             float cap_check = GetMainStat(checkPart);
@@ -1560,13 +1560,14 @@ void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group
             if ((cap_check < 0.0f) || (cap_ref < 0.0f))
                 continue;  // not intended to handle such cases
             float cap_ratio = cap_ref / std::max(cap_check, 1e-4f) ;  // some part types currently have zero capacity, but need to reject if both are zero
-            float cost_check = checkPart->ProductionCost(empire_id, loc_id);
-            float cost_ref = ref_part->ProductionCost(empire_id, loc_id);
+            float cost_check = checkPart->ProductionCost(empire_id, loc_id, context);
+            float cost_ref = ref_part->ProductionCost(empire_id, loc_id, context);
             if ((cost_check < 0.0f) || (cost_ref < 0.0f))
                 continue;  // not intended to handle such cases
             float cost_ratio = (cost_ref + 1e-4) / (cost_check + 1e-4);  // can accept if somehow they both have cost zero
             float bargain_ratio = cap_ratio / std::max(cost_ratio, 1e-4f);
-            float time_ratio = float(std::max(1, ref_part->ProductionTime(empire_id, loc_id))) / std::max(1, checkPart->ProductionTime(empire_id, loc_id));
+            float time_ratio = float(std::max(1, ref_part->ProductionTime(empire_id, loc_id, context))) /
+                               std::max(1, checkPart->ProductionTime(empire_id, loc_id, context));
             // adjusting the max cost ratio to 1.4 or higher, will allow, for example, for
             // Zortium armor to make Standard armor redundant.  Setting a min_bargain_ratio higher than one can keep
             // trivial bargains from blocking lower valued parts.

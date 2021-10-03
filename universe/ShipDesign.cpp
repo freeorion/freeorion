@@ -192,7 +192,7 @@ float ShipDesign::ProductionCost(int empire_id, int location_id) const {
     int part_count = 0;
     for (const std::string& part_name : m_parts) {
         if (const ShipPart* part = GetShipPart(part_name)) {
-            cost_accumulator += part->ProductionCost(empire_id, location_id, m_id);
+            cost_accumulator += part->ProductionCost(empire_id, location_id, context, m_id);
             part_count++;
         }
     }
@@ -211,13 +211,16 @@ int ShipDesign::ProductionTime(int empire_id, int location_id) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION"))
         return 1;
 
+    ScriptingContext context; // TODO: pass in
+
     int time_accumulator = 1;
     if (const ShipHull* hull = GetShipHull(m_hull))
         time_accumulator = std::max(time_accumulator, hull->ProductionTime(empire_id, location_id));
 
     for (const std::string& part_name : m_parts)
         if (const ShipPart* part = GetShipPart(part_name))
-            time_accumulator = std::max(time_accumulator, part->ProductionTime(empire_id, location_id));
+            time_accumulator = std::max(time_accumulator,
+                                        part->ProductionTime(empire_id, location_id, context));
 
     // assuming that ARBITRARY_LARGE_TURNS is larger than any reasonable turns,
     // so the std::max calls will preserve it be returned

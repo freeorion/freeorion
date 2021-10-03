@@ -1283,11 +1283,12 @@ namespace {
 
         // Ship Parts
         if (!only_description) {
+            const ScriptingContext context;
             name = UserString(item_name);
             texture = ClientUI::PartIcon(item_name);
             int default_location_id = DefaultLocationForEmpire(client_empire_id);
-            turns = part->ProductionTime(client_empire_id, default_location_id);
-            cost = part->ProductionCost(client_empire_id, default_location_id);
+            turns = part->ProductionTime(client_empire_id, default_location_id, context);
+            cost = part->ProductionCost(client_empire_id, default_location_id, context);
             cost_units = UserString("ENC_PP");
             general_type = UserString("ENC_SHIP_PART");
             specific_type = UserString(boost::lexical_cast<std::string>(part->Class()));
