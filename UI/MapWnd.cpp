@@ -2689,7 +2689,7 @@ void MapWnd::InitTurn() {
     // if we've just loaded the game there may be some unexecuted orders, we
     // should reapply them now, so they are reflected in the UI, but do not
     // influence current meters or their discrepancies for this turn
-    GGHumanClientApp::GetApp()->Orders().ApplyOrders(); // TODO: pass Universe?
+    GGHumanClientApp::GetApp()->Orders().ApplyOrders(context);
 
     timer.EnterSection("meter estimates");
     GetUniverse().UpdateMeterEstimates(context);
@@ -4680,7 +4680,10 @@ void MapWnd::ForgetObject(int id) {
     // Tell the server to change what the empire wants to know
     // in future so that the server doesn't keep resending this
     // object information.
-    auto obj = Objects().get(id);
+    ScriptingContext context;
+    ObjectMap& objects{context.ContextObjects()};
+    Universe& universe{context.ContextUniverse()};
+    auto obj = objects.get(id);
     if (!obj)
         return;
 
@@ -4688,7 +4691,7 @@ void MapWnd::ForgetObject(int id) {
     const Ship* ship = nullptr;
     if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
         ship = static_cast<const Ship*>(obj.get());
-        if (auto ship_s_fleet = GetUniverse().Objects().get<const Fleet>(ship->FleetID())) {
+        if (auto ship_s_fleet = objects.get<const Fleet>(ship->FleetID())) {
             bool only_ship_in_fleet = ship_s_fleet->NumShips() == 1;
             if (only_ship_in_fleet)
                 return ForgetObject(ship->FleetID());
@@ -4698,11 +4701,12 @@ void MapWnd::ForgetObject(int id) {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
     GGHumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ForgetOrder>(client_empire_id, obj->ID()));
+        std::make_shared<ForgetOrder>(client_empire_id, obj->ID()),
+        context);
 
     // Client changes for immediate effect
     // Force the client to change immediately.
-    GetUniverse().ForgetKnownObject(ALL_EMPIRES, obj->ID());
+    universe.ForgetKnownObject(ALL_EMPIRES, obj->ID());
 
     // Force a refresh
     RequirePreRender();
@@ -5471,7 +5475,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
-    const ObjectMap& objects = Objects();
+    ScriptingContext context;
+    const ObjectMap& objects{context.ContextObjects()};
+    const Universe& universe{context.ContextUniverse()};
 
     // apply to all selected this-player-owned fleets in currently-active FleetWnd
     for (const auto& fleet : objects.find<Fleet>(fleet_ids)) {
@@ -5498,7 +5504,8 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             start_system = fleet->NextSystemID();
 
         // get path to destination...
-        std::list<int> route = GetUniverse().GetPathfinder()->ShortestPath(start_system, system_id, empire_id, objects).first;
+        auto route = universe.GetPathfinder()->ShortestPath(
+            start_system, system_id, empire_id, objects).first;
         // Prepend a non-empty old_route to the beginning of route.
         if (append && !fleet->TravelRoute().empty()) {
             std::list<int> old_route(fleet->TravelRoute());
@@ -5515,15 +5522,14 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
             if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
                 !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))
-            {
-                continue;
-            }
+            { continue; }
         }
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
         if (execute_move && !route.empty()){
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<FleetMoveOrder>(empire_id, fleet->ID(), system_id, append));
+                std::make_shared<FleetMoveOrder>(empire_id, fleet->ID(), system_id, append, context),
+                context);
             StopFleetExploring(fleet->ID());
         }
 
@@ -7528,15 +7534,17 @@ namespace {
     }
 
     /** Route from current system of @p fleet to nearest system with supply as determined by owning empire of @p fleet  */
-    OrderedRouteType ExploringFleetResupplyRoute(const std::shared_ptr<Fleet>& fleet) {
-        auto empire = GetEmpire(fleet->Owner());
+    OrderedRouteType ExploringFleetResupplyRoute(const std::shared_ptr<Fleet>& fleet,
+                                                 const ScriptingContext& context)
+    {
+        auto empire = context.GetEmpire(fleet->Owner());
         if (!empire) {
             WarnLogger() << "Invalid empire for id " << fleet->Owner();
             return OrderedRouteType();
         }
 
-        auto nearest_supply = GetNearestSupplyRoute(empire, fleet->SystemID(),
-                                                    std::trunc(fleet->Fuel(Objects())));
+        auto nearest_supply = GetNearestSupplyRoute(empire.get(), fleet->SystemID(),
+                                                    std::trunc(fleet->Fuel(context.ContextObjects())));
         if (nearest_supply.first > 0.0 && FleetRouteInRange(fleet, nearest_supply.second))
             return nearest_supply;
 
@@ -7550,7 +7558,9 @@ namespace {
             return false;
         }
 
-        auto route = ExploringFleetResupplyRoute(fleet);
+        ScriptingContext context;
+
+        auto route = ExploringFleetResupplyRoute(fleet, context);
         // Attempt move order if route is not empty and fleet has enough fuel to reach it
         if (route.second.empty()) {
             TraceLogger() << "Empty route for resupply of exploring fleet " << fleet->ID();
@@ -7558,19 +7568,21 @@ namespace {
         }
 
         auto num_jumps_resupply = JumpsForRoute(route.second);
-        int max_fleet_jumps = std::trunc(fleet->Fuel(Objects()));
+        int max_fleet_jumps = std::trunc(fleet->Fuel(context.ContextObjects()));
         if (num_jumps_resupply <= max_fleet_jumps) {
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<FleetMoveOrder>(fleet->Owner(), fleet->ID(), *route.second.rbegin()));
+                std::make_shared<FleetMoveOrder>(
+                    fleet->Owner(), fleet->ID(), *route.second.crbegin(), false, context),
+                context);
         } else {
             TraceLogger() << "Not enough fuel for fleet " << fleet->ID()
-                          << " to resupply at system " << *route.second.rbegin();
+                          << " to resupply at system " << *route.second.crbegin();
             return false;
         }
 
-        if (fleet->FinalDestinationID() == *route.second.rbegin()) {
+        if (fleet->FinalDestinationID() == *route.second.crbegin()) {
             TraceLogger() << "Sending fleet " << fleet->ID()
-                          << " to refuel at system " << *route.second.rbegin();
+                          << " to refuel at system " << *route.second.crbegin();
             return true;
         } else {
             TraceLogger() << "Fleet move order failed fleet:" << fleet->ID() << " route:"
@@ -7593,18 +7605,21 @@ namespace {
         }
         if (!FleetRouteInRange(fleet, route)) {
             TraceLogger() << "Fleet " << std::to_string(fleet->ID())
-                          << " has no eta for route to " << std::to_string(*route.rbegin());
+                          << " has no eta for route to " << std::to_string(*route.crbegin());
             return false;
         }
 
+        ScriptingContext context;
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<FleetMoveOrder>(fleet->Owner(), fleet->ID(), *route.rbegin()));
-        if (fleet->FinalDestinationID() == *route.rbegin()) {
-            TraceLogger() << "Sending fleet " << fleet->ID() << " to explore system " << *route.rbegin();
+            std::make_shared<FleetMoveOrder>(fleet->Owner(), fleet->ID(),
+                                             *route.crbegin(), false, context),
+            context);
+        if (fleet->FinalDestinationID() == *route.crbegin()) {
+            TraceLogger() << "Sending fleet " << fleet->ID() << " to explore system " << *route.crbegin();
             return true;
         }
 
-        TraceLogger() << "Fleet move order failed fleet:" << fleet->ID() << " dest:" << *route.rbegin();
+        TraceLogger() << "Fleet move order failed fleet:" << fleet->ID() << " dest:" << *route.crbegin();
         return false;
     }
 
@@ -7613,7 +7628,7 @@ namespace {
                                    SystemFleetMap& systems_being_explored,
                                    const FleetRouteType& fleet_route)
     {
-        auto route = fleet_route.second;
+        const auto& route = fleet_route.second;
         if (route.empty()) { // no route
             WarnLogger() << "Attempted to issue move order with empty route";
             return;
@@ -7624,8 +7639,8 @@ namespace {
             return;
         }
 
-        if (systems_being_explored.count(*route.rbegin())) {
-            TraceLogger() << "System " << std::to_string(*route.rbegin()) << " already being explored";
+        if (systems_being_explored.count(*route.crbegin())) {
+            TraceLogger() << "System " << std::to_string(*route.crbegin()) << " already being explored";
             return;
         }
 

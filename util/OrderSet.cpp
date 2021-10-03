@@ -22,17 +22,14 @@ std::string OrderSet::Dump() const {
     return retval;
 }
 
-int OrderSet::IssueOrder(const OrderPtr& order)
-{ return IssueOrder(OrderPtr(order)); }
-
-int OrderSet::IssueOrder(OrderPtr&& order) {
+int OrderSet::IssueOrder(OrderPtr order, ScriptingContext& context) {
     int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
 
     // Insert the order into the m_orders map.  forward the rvalue to use the move constructor.
     auto inserted = m_orders.emplace(retval, std::move(order));
     m_last_added_orders.emplace(retval);
     try {
-        inserted.first->second->Execute();
+        inserted.first->second->Execute(context);
     } catch (const std::exception& e) {
         ErrorLogger() << "OrderSet::IssueOrder caught exception issuing order: " << e.what();
     }
@@ -42,7 +39,7 @@ int OrderSet::IssueOrder(OrderPtr&& order) {
     return retval;
 }
 
-void OrderSet::ApplyOrders() {
+void OrderSet::ApplyOrders(ScriptingContext& context) {
     DebugLogger() << "OrderSet::ApplyOrders() executing " << m_orders.size() << " orders";
     unsigned int executed_count = 0, failed_count = 0, already_executed_count = 0;
     for (auto& order : m_orders) {
@@ -51,7 +48,7 @@ void OrderSet::ApplyOrders() {
             ++already_executed_count;
         } else {
             try {
-                order.second->Execute();
+                order.second->Execute(context);
                 ++executed_count;
             } catch (const std::exception& e) {
                 ++failed_count;
@@ -65,9 +62,9 @@ void OrderSet::ApplyOrders() {
                   << " orders";
 }
 
-bool OrderSet::RescindOrder(int order) {
+bool OrderSet::RescindOrder(int order, ScriptingContext& context) {
     auto it = m_orders.find(order);
-    if (it != m_orders.end() && it->second->Undo()) {
+    if (it != m_orders.end() && it->second->Undo(context)) {
         m_last_deleted_orders.emplace(it->first);
         m_orders.erase(it);  // Invalidates it
         return true;

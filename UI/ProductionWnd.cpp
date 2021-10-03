@@ -1043,8 +1043,9 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
 {
     if (!m_order_issuing_enabled)
         return;
+    ScriptingContext context;
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(client_empire_id);
+    auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -1058,9 +1059,10 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
 
     if (queue_it != empire->GetProductionQueue().end())
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::MOVE_ITEM_TO_INDEX,
-                                                   client_empire_id, queue_it->uuid,
-                                                   corrected_new_position));
+            std::make_shared<ProductionQueueOrder>(
+                ProductionQueueOrder::ProdQueueOrderAction::MOVE_ITEM_TO_INDEX,
+                client_empire_id, queue_it->uuid, corrected_new_position),
+            context);
     empire->UpdateProductionQueue();
 }
 
@@ -1199,14 +1201,17 @@ void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& i
 {
     if (!m_order_issuing_enabled)
         return;
+    ScriptingContext context;
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(client_empire_id);
+    auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
 
     GGHumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
-                                               client_empire_id, item, number, location, pos));
+        std::make_shared<ProductionQueueOrder>(
+            ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
+            client_empire_id, item, number, location, pos),
+        context);
 
     empire->UpdateProductionQueue();
     m_build_designator_wnd->CenterOnBuild(pos >= 0 ? pos : m_queue_wnd->GetQueueListBox()->NumRows() - 1);
@@ -1215,8 +1220,9 @@ void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& i
 void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
     if (!m_order_issuing_enabled)
         return;
+    ScriptingContext context;
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(client_empire_id);
+    auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -1224,8 +1230,10 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
 
     if (queue_it != empire->GetProductionQueue().end())
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::SET_QUANTITY,
-                                                   client_empire_id, queue_it->uuid, quantity));
+            std::make_shared<ProductionQueueOrder>(
+                ProductionQueueOrder::ProdQueueOrderAction::SET_QUANTITY,
+                client_empire_id, queue_it->uuid, quantity),
+            context);
 
     empire->UpdateProductionQueue();
 }
@@ -1233,8 +1241,9 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
 void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize) {
     if (!m_order_issuing_enabled)
         return;
+    ScriptingContext context;
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(client_empire_id);
+    auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -1242,9 +1251,10 @@ void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, in
 
     if (queue_it != empire->GetProductionQueue().end())
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::SET_QUANTITY_AND_BLOCK_SIZE,
-                                                   client_empire_id, queue_it->uuid,
-                                                   quantity, blocksize));
+            std::make_shared<ProductionQueueOrder>(
+                ProductionQueueOrder::ProdQueueOrderAction::SET_QUANTITY_AND_BLOCK_SIZE,
+                client_empire_id, queue_it->uuid, quantity, blocksize),
+            context);
 
     empire->UpdateProductionQueue();
 }
@@ -1252,8 +1262,9 @@ void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, in
 void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (!m_order_issuing_enabled)
         return;
+    ScriptingContext context;
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(client_empire_id);
+    auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -1263,8 +1274,10 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (queue_it != empire->GetProductionQueue().end()) {
         DebugLogger() << "DeleteQueueItem idx: " << idx << "  item: " << queue_it->Dump();
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::REMOVE_FROM_QUEUE,
-                                                   client_empire_id, queue_it->uuid));
+            std::make_shared<ProductionQueueOrder>(
+                ProductionQueueOrder::ProdQueueOrderAction::REMOVE_FROM_QUEUE,
+                client_empire_id, queue_it->uuid),
+            context);
     }
 
     empire->UpdateProductionQueue();
@@ -1287,8 +1300,9 @@ void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const G
 void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
     if (!m_order_issuing_enabled)
         return;
+    ScriptingContext context;
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(client_empire_id);
+    auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -1305,9 +1319,10 @@ void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
 
     if (queue_it != empire->GetProductionQueue().end())
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::SET_RALLY_POINT,
-                                                   client_empire_id, queue_it->uuid,
-                                                   rally_point_id));
+            std::make_shared<ProductionQueueOrder>(
+                ProductionQueueOrder::ProdQueueOrderAction::SET_RALLY_POINT,
+                client_empire_id, queue_it->uuid, rally_point_id),
+            context);
 
     empire->UpdateProductionQueue();
 }
@@ -1315,8 +1330,9 @@ void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
 void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
     if (!m_order_issuing_enabled)
         return;
+    ScriptingContext context;
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(client_empire_id);
+    auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -1327,7 +1343,8 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
 
     if (queue_it != empire->GetProductionQueue().end())
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(action, client_empire_id, queue_it->uuid));
+            std::make_shared<ProductionQueueOrder>(action, client_empire_id, queue_it->uuid),
+            context);
 
     empire->UpdateProductionQueue();
 }
@@ -1335,8 +1352,9 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
 void ProductionWnd::QueueItemDuped(GG::ListBox::iterator it) {
     if (!m_order_issuing_enabled)
         return;
+    ScriptingContext context;
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(client_empire_id);
+    auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -1345,8 +1363,10 @@ void ProductionWnd::QueueItemDuped(GG::ListBox::iterator it) {
 
     if (queue_it != empire->GetProductionQueue().end())
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::DUPLICATE_ITEM,
-                                                   client_empire_id, queue_it->uuid));
+            std::make_shared<ProductionQueueOrder>(
+                ProductionQueueOrder::ProdQueueOrderAction::DUPLICATE_ITEM,
+                client_empire_id, queue_it->uuid),
+            context);
 
     empire->UpdateProductionQueue();
 }
@@ -1354,8 +1374,9 @@ void ProductionWnd::QueueItemDuped(GG::ListBox::iterator it) {
 void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
     if (!m_order_issuing_enabled)
         return;
+    ScriptingContext context;
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(client_empire_id);
+    auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -1364,8 +1385,10 @@ void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
 
     if (queue_it != empire->GetProductionQueue().end())
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::SPLIT_INCOMPLETE,
-                                                   client_empire_id, queue_it->uuid));
+            std::make_shared<ProductionQueueOrder>(
+                ProductionQueueOrder::ProdQueueOrderAction::SPLIT_INCOMPLETE,
+                client_empire_id, queue_it->uuid),
+            context);
 
     empire->UpdateProductionQueue();
 }
@@ -1373,8 +1396,9 @@ void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
 void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow) {
     if (!m_order_issuing_enabled)
         return;
+    ScriptingContext context;
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(client_empire_id);
+    auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -1385,12 +1409,14 @@ void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow)
 
     if (queue_it != empire->GetProductionQueue().end())
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new ProductionQueueOrder(action, client_empire_id, queue_it->uuid)));
+            std::make_shared<ProductionQueueOrder>(
+                action, client_empire_id, queue_it->uuid),
+            context);
 
     empire->UpdateProductionQueue();
 }
 
-void ProductionWnd::EnableOrderIssuing(bool enable/* = true*/) {
+void ProductionWnd::EnableOrderIssuing(bool enable) {
     m_order_issuing_enabled = enable;
     m_queue_wnd->GetQueueListBox()->EnableOrderIssuing(m_order_issuing_enabled);
 }

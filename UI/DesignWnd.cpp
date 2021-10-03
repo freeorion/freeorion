@@ -349,7 +349,9 @@ namespace {
     void AddSavedDesignToDisplayedDesigns(const boost::uuids::uuid& uuid, int empire_id,
                                           bool is_front = true)
     {
-        const auto empire = GetEmpire(empire_id);
+        ScriptingContext context;
+
+        const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "AddSavedDesignsToDisplayedDesigns HumanClient Does Not Control an Empire";
             return;
@@ -371,11 +373,11 @@ namespace {
         TraceLogger() << "Add saved design " << design->Name() << " to current designs.";
 
         // Give it a new UUID so that the empire design is distinct.
-        auto new_current_design = *design;
+        auto new_current_design{*design};
         new_current_design.SetUUID(boost::uuids::random_generator()());
 
         auto order = std::make_shared<ShipDesignOrder>(empire_id, new_current_design);
-        GGHumanClientApp::GetApp()->Orders().IssueOrder(order);
+        GGHumanClientApp::GetApp()->Orders().IssueOrder(order, context);
 
         auto& current_manager = GetDisplayedDesignsManager();
         const auto& all_ids = current_manager.AllOrderedIDs();
@@ -399,13 +401,16 @@ namespace {
         const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
         manager.SetObsolete(design_id, obsolete);
+        ScriptingContext context;
+
 
         if (obsolete) {
             // make empire forget on the server
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true),
+                context);
         } else {
-            const auto design = GetUniverse().GetShipDesign(design_id);
+            const auto design = context.ContextUniverse().GetShipDesign(design_id);
             if (!design) {
                 ErrorLogger() << "Attempted to toggle obsolete state of design id "
                               << design_id << " which is unknown to the server";
@@ -414,19 +419,22 @@ namespace {
 
             //make known to empire on server
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id));
+                std::make_shared<ShipDesignOrder>(empire_id, design_id),
+                context);
         }
     }
 
     /** Remove design from DisplayedDesigns. */
     void DeleteFromDisplayedDesigns(const int design_id) {
         auto& manager = GetDisplayedDesignsManager();
+        ScriptingContext context;
 
         const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
         const auto maybe_obsolete = manager.IsObsolete(design_id);  // purpose of this obsolescence check is unclear... author didn't comment
         if (maybe_obsolete && !*maybe_obsolete)
             GGHumanClientApp::GetApp()->Orders().IssueOrder(          // erase design id order : empire should forget this design
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true),
+                context);
         manager.Remove(design_id);
     }
 
@@ -1105,7 +1113,8 @@ ShipDesignManager::ShipDesignManager() :
 ShipDesignManager::~ShipDesignManager() = default;
 
 void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
-    auto empire = GetEmpire(empire_id);
+    ScriptingContext context;
+    auto empire = context.GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "Unable to initialize ShipDesignManager because empire id, " << empire_id << ", is invalid";
         return;
@@ -1149,10 +1158,10 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         // Remove the default designs from the empire's current designs.
         // Purpose and logic of this is unclear... author didn't comment upon inquiry, but having this here reportedly fixes some issues...
         DebugLogger() << "Remove default designs from empire";
-        const auto ids = empire->ShipDesigns();
-        for (const auto design_id : ids) {
+        for (const auto design_id : empire->ShipDesigns()) {
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true),
+                context);
         }
     }
 
@@ -3028,14 +3037,14 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     if (!design_row)
         return;
 
+    ScriptingContext context;
+
     const auto design_id = design_row->DesignID();
-    const auto design = GetUniverse().GetShipDesign(design_id);
+    const auto design = context.ContextUniverse().GetShipDesign(design_id);
     if (!design)
         return;
 
     DesignRightClickedSignal(design);
-
-    const auto empire_id = EmpireID();
 
     DebugLogger() << "BasesListBox::BaseRightClicked on design id : " << design_id;
 
@@ -3046,41 +3055,44 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     const auto& manager = GetDisplayedDesignsManager();
     const auto maybe_obsolete = manager.IsObsolete(design_id);
     bool is_obsolete = maybe_obsolete && *maybe_obsolete;
-    auto toggle_obsolete_design_action = [&design_id, is_obsolete, this]() {
+    auto toggle_obsolete_design_action = [design_id, is_obsolete, this]() {
         SetObsoleteInDisplayedDesigns(design_id, !is_obsolete);
         Populate();
     };
 
-    auto delete_design_action = [&design_id, this]() {
+    auto delete_design_action = [design_id, this]() {
         DeleteFromDisplayedDesigns(design_id);
         Populate();
         DesignUpdatedSignal(design_id);
     };
 
-    auto rename_design_action = [&empire_id, &design_id, design, &design_row]() {
+    const auto empire_id = EmpireID();
+
+    auto rename_design_action = [empire_id, design_id, design, &design_row, &context]() {
         auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(
             GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
         edit_wnd->Run();
         const std::string& result = edit_wnd->Result();
         if (!result.empty() && result != design->Name()) {
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, result));
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, result),
+                context);
             design_row->SetDisplayName(design->Name());
         }
     };
 
-    auto movetotop_design_action = [&design, this]() {
-        GetDisplayedDesignsManager().MoveBefore(design->ID(), *GetDisplayedDesignsManager().OrderedIDs().begin());
+    auto movetotop_design_action = [id{design->ID()}, this]() {
+        GetDisplayedDesignsManager().MoveBefore(id, *GetDisplayedDesignsManager().OrderedIDs().begin());
         Populate();
     };
 
-    auto movetobottom_design_action = [&design, this]() {
-        GetDisplayedDesignsManager().MoveBefore(design->ID(), INVALID_DESIGN_ID);
+    auto movetobottom_design_action = [id{design->ID()}, this]() {
+        GetDisplayedDesignsManager().MoveBefore(id, INVALID_DESIGN_ID);
         Populate();
     };
 
     auto save_design_action = [&design]() {
-        auto saved_design = *design;
+        auto saved_design{*design};
         saved_design.SetUUID(boost::uuids::random_generator()());
         GetSavedDesignsManager().InsertBefore(
             saved_design, GetSavedDesignsManager().OrderedDesignUUIDs().begin());
@@ -4899,12 +4911,13 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
 
         // Otherwise insert into current empire designs
         } else {
+            ScriptingContext context;
             int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-            const Empire* empire = GetEmpire(empire_id);
+            auto empire = context.GetEmpire(empire_id);
             if (!empire) return {INVALID_DESIGN_ID, boost::uuids::nil_generator()()};
 
             auto order = std::make_shared<ShipDesignOrder>(empire_id, design);
-            GGHumanClientApp::GetApp()->Orders().IssueOrder(order);
+            GGHumanClientApp::GetApp()->Orders().IssueOrder(order, context);
             new_design_id = order->DesignID();
 
             auto& manager = GetDisplayedDesignsManager();
@@ -4960,9 +4973,12 @@ void DesignWnd::MainPanel::ReplaceDesign() {
             // Remove the old id from the Empire.
             const auto maybe_obsolete = manager.IsObsolete(replaced_id);
             bool is_obsolete = maybe_obsolete && *maybe_obsolete;
-            if (!is_obsolete)
+            if (!is_obsolete) {
+                ScriptingContext context;
                 GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
+                    std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true),
+                    context);
+            }
 
             // Replace the old id in the manager.
             manager.MoveBefore(new_design_id, replaced_id);

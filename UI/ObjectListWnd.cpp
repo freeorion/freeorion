@@ -2531,8 +2531,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
         moderator = true;
 
-    Universe& universe{GetUniverse()};
-    EmpireManager& empires{Empires()};
+    ScriptingContext context;
+    Universe& universe{context.ContextUniverse()};
 
     // Right click on an unselected row should automatically select it
     m_list_box->SelectRow(it, true);
@@ -2567,7 +2567,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     std::map<std::string, int> all_foci, avail_blds;    // counts of how many planets can use each focus or can produce each building type
     std::map<int, int> avail_designs;                   // count of how many planets can produce each ship design
     UniverseObjectType type = obj->ObjectType();
-    auto cur_empire = empires.GetEmpire(app->EmpireID());
+    auto cur_empire = context.GetEmpire(app->EmpireID());
 
     if (type == UniverseObjectType::OBJ_PLANET) {
         popup->AddMenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action);
@@ -2598,8 +2598,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), false, false/*, no action*/);
         for (auto& [focus_name, count_of_planets_that_have_focus_available] : all_foci) {
             menuitem_id++;
-            auto focus_action = [this, focus{focus_name}, app, &focus_ship_building_common_action, &universe]() {
-                for (const auto& selection : m_list_box->Selections()) {
+            auto focus_action = [focus{focus_name}, app, &universe, &context,
+                                 lb{m_list_box}, &focus_ship_building_common_action]()
+            {
+                for (const auto& selection : lb->Selections()) {
                     ObjectRow* row = dynamic_cast<ObjectRow*>(selection->get());
                     if (!row)
                         continue;
@@ -2609,16 +2611,19 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                         continue;
 
                     one_planet->SetFocus(focus);
-                    app->Orders().IssueOrder(std::make_shared<
-                        ChangeFocusOrder>(app->EmpireID(), one_planet->ID(), focus));
+                    app->Orders().IssueOrder(std::make_shared<ChangeFocusOrder>(
+                        app->EmpireID(), one_planet->ID(), focus, context),
+                        context);
                 }
 
                 focus_ship_building_common_action();
             };
 
-            std::stringstream out;
-            out << UserString(focus_name) << " (" << count_of_planets_that_have_focus_available  << ")";
-            focusMenuItem.next_level.emplace_back(out.str(), false, false, focus_action);
+            std::string out;
+            out.reserve(50); // guesstimate
+            out.append(UserString(focus_name)).append(" (")
+               .append(std::to_string(count_of_planets_that_have_focus_available)).append(")");
+            focusMenuItem.next_level.emplace_back(std::move(out), false, false, focus_action);
         }
         if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
             popup->AddMenuItem(std::move(focusMenuItem));
@@ -2630,7 +2635,9 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         {
             ship_menuitem_id++;
 
-            auto produce_ship_action = [this, design_it, app, cur_empire, &focus_ship_building_common_action, &universe](int pos) {
+            auto produce_ship_action = [this, design_it, app, cur_empire, &universe, &context,
+                                        &focus_ship_building_common_action](int pos)
+            {
                 int ship_design = design_it->first;
                 bool needs_queue_update(false);
                 for (const auto& entry : m_list_box->Selections()) {
@@ -2638,12 +2645,14 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     if (!row)
                         continue;
                     auto one_planet = universe.Objects().get<Planet>(row->ObjectID());
-                    if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) || !cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design, row->ObjectID()))
-                        continue;
+                    if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) ||
+                        !cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design, row->ObjectID()))
+                    { continue; }
                     ProductionQueue::ProductionItem ship_item(BuildType::BT_SHIP, ship_design, universe);
                     app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
                         ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE, app->EmpireID(),
-                        ship_item, 1, row->ObjectID(), pos));
+                        ship_item, 1, row->ObjectID(), pos),
+                        context);
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)
@@ -2670,24 +2679,30 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         for (auto& entry : avail_blds) {
             bld_menuitem_id++;
 
-            auto produce_building_action = [this, entry, app, cur_empire, &focus_ship_building_common_action](int pos) {
-                std::string bld = entry.first;
+            auto produce_building_action = [this, entry, app, cur_empire, &context,
+                                            &focus_ship_building_common_action](int pos)
+            {
+                const auto& building_type_name = entry.first;
                 bool needs_queue_update(false);
+                const ObjectMap& objects{context.ContextObjects()};
+
                 for (const auto& selection : m_list_box->Selections()) {
                     auto row = dynamic_cast<ObjectRow *>(selection->get());
                     if (!row)
                         continue;
-                    auto one_planet = Objects().get<Planet>(row->ObjectID());
+
+                    auto one_planet = objects.get<Planet>(row->ObjectID());
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID())
-                        || !cur_empire->EnqueuableItem(BuildType::BT_BUILDING, bld, row->ObjectID())
-                        || !cur_empire->ProducibleItem(BuildType::BT_BUILDING, bld, row->ObjectID()))
-                    {
-                        continue;
-                    }
-                    ProductionQueue::ProductionItem bld_item(BuildType::BT_BUILDING, bld);
+                        || !cur_empire->EnqueuableItem(BuildType::BT_BUILDING, building_type_name, row->ObjectID())
+                        || !cur_empire->ProducibleItem(BuildType::BT_BUILDING, building_type_name, row->ObjectID()))
+                    { continue; }
+
+                    ProductionQueue::ProductionItem bld_item(BuildType::BT_BUILDING, building_type_name);
                     app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
                         ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE, app->EmpireID(),
-                        bld_item, 1, row->ObjectID(), pos));
+                        bld_item, 1, row->ObjectID(), pos), // TODO: pass bld_item with move?
+                        context);
+
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)
@@ -2698,10 +2713,11 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             auto produce_building_action_top = std::bind(produce_building_action, 0);
             auto produce_building_action_bottom = std::bind(produce_building_action, -1);
 
-            std::stringstream out;
-            out << UserString(entry.first) << " (" << entry.second << ")";
-            building_menu_item_top.next_level.emplace_back(out.str(), false, false, produce_building_action_top);
-            building_menu_item.next_level.emplace_back(out.str(), false, false, produce_building_action_bottom);
+            std::string out;
+            out.reserve(50); // rough guesstimate
+            out.append(UserString(entry.first)).append(" (").append(std::to_string(entry.second)).append(")");
+            building_menu_item_top.next_level.emplace_back(out, false, false, produce_building_action_top);
+            building_menu_item.next_level.emplace_back(std::move(out), false, false, produce_building_action_bottom);
         }
 
         if (bld_menuitem_id > MENUITEM_SET_BUILDING_BASE) {
@@ -2711,14 +2727,12 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     }
     // moderator actions...
     if (moderator) {
-        auto destroy_object_action = [object_id, &net]() {
-            net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(object_id)));
-        };
-        auto set_owner_action = [object_id, &net]() {
-            net.SendMessage(ModeratorActionMessage(Moderator::SetOwner(object_id, ALL_EMPIRES)));
-        };
-        popup->AddMenuItem(UserString("MOD_DESTROY"),      false, false, destroy_object_action);
-        popup->AddMenuItem(UserString("MOD_SET_OWNER"),    false, false, set_owner_action);
+        auto destroy_object_action = [object_id, &net]()
+        { net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(object_id))); };
+        auto set_owner_action = [object_id, &net]()
+        { net.SendMessage(ModeratorActionMessage(Moderator::SetOwner(object_id, ALL_EMPIRES))); };
+        popup->AddMenuItem(UserString("MOD_DESTROY"), false, false, destroy_object_action);
+        popup->AddMenuItem(UserString("MOD_SET_OWNER"), false, false, set_owner_action);
     }
 
     popup->Run();

@@ -13,6 +13,7 @@
 #include <string>
 
 class Order;
+struct ScriptingContext;
 
 /** The pointer type used to store Orders in OrderSets. */
 typedef std::shared_ptr<Order> OrderPtr;
@@ -64,16 +65,15 @@ public:
     /** Execute the \p order immediately on the client.
         Store the \p order in the OrderSet to be executed later on the server.
         Return an index that can be used to reference the order. */
-    int IssueOrder(const OrderPtr& order);
-    int IssueOrder(OrderPtr&& order);
+    int IssueOrder(OrderPtr order, ScriptingContext& context);
 
     /** Applies all Orders in the OrderSet.  As of this writing, this is needed only after deserializing an OrderSet
         client-side during game loading. */
-    void ApplyOrders();
+    void ApplyOrders(ScriptingContext& context);
 
     /** Try to Undo() \p order and if it succeeds remove the order from the
         set.  Return true if \p order exists and was successfully removed. */
-    bool RescindOrder(int order);
+    bool RescindOrder(int order, ScriptingContext& context);
     void Reset(); ///< clears all orders; should be called at the beginning of a new turn
 
     std::pair<OrderSet, std::set<int>> ExtractChanges(); ///< extract and clear changed orders

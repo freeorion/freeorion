@@ -3370,6 +3370,8 @@ void ServerApp::PreCombatProcessTurns() {
     // determined by what orders set.
     CleanUpBombardmentStateInfo(m_universe.Objects());
 
+    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
+
     // execute orders
     for (auto& [orders_empire_id, save_game_data] : m_turn_sequence) {
         if (!save_game_data) {
@@ -3381,7 +3383,7 @@ void ServerApp::PreCombatProcessTurns() {
             continue;
         }
         DebugLogger() << "<<= Executing Orders for empire " << orders_empire_id << " =>>";
-        save_game_data->orders->ApplyOrders();
+        save_game_data->orders->ApplyOrders(context);
     }
 
     // clean up orders, which are no longer needed
@@ -3407,8 +3409,6 @@ void ServerApp::PreCombatProcessTurns() {
 
     // player notifications
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::COLONIZE_AND_SCRAP));
-
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
 
     DebugLogger() << "ServerApp::ProcessTurns colonization";
     HandleColonization(context);

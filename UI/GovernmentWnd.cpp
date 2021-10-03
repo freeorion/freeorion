@@ -1247,15 +1247,18 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy specified nonexistant slot";
         return;
     }
+
+    ScriptingContext context;
+
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(empire_id);  // may be nullptr
+    auto empire = context.GetEmpire(empire_id);  // may be nullptr
     if (!empire) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy has no empire to set policies for";
         return;
     }
 
     // what category and slot is policy being adopted in
-    auto&& [adopt_in_category_slot, adopt_in_category] = OverallSlotToCategoryAndSlot(empire, slot);
+    auto&& [adopt_in_category_slot, adopt_in_category] = OverallSlotToCategoryAndSlot(empire.get(), slot);
     if (adopt_in_category.empty()) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy specified invalid slot: " << slot;
         return;
@@ -1301,13 +1304,12 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     // issue order to adopt or revoke
     auto order = std::make_shared<PolicyOrder>(empire_id, order_policy_name, adopt_in_category,
                                                adopt, adopt_in_category_slot);
-    GGHumanClientApp::GetApp()->Orders().IssueOrder(std::move(order));
+    GGHumanClientApp::GetApp()->Orders().IssueOrder(std::move(order), context);
 
     // update UI after policy changes
     empire->UpdateInfluenceSpending();
     Populate();
-    ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
-    GetUniverse().UpdateMeterEstimates(context);
+    context.ContextUniverse().UpdateMeterEstimates(context);
     SidePanel::Refresh();
     FleetUIManager::GetFleetUIManager().RefreshAll();
 }

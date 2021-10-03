@@ -267,7 +267,9 @@ void AIClientApp::HandleMessage(const Message& msg) {
         if (loaded_game_data) {
             TraceLogger() << "Message::GAME_START save_state_string: " << save_state_string;
             m_AI->ResumeLoadedGame(save_state_string);
-            Orders().ApplyOrders();
+            ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
+                                     m_species_manager, m_supply_manager};
+            Orders().ApplyOrders(context);
         } else {
             DebugLogger() << "Message::GAME_START Starting New Game!";
             // % Distribution of aggression levels

@@ -57,22 +57,22 @@ public:
      *  Subclasses add additional preconditions.  An std::runtime_error
      *   should be thrown if any precondition fails.
      */
-    void Execute() const;
+    void Execute(ScriptingContext& context) const;
 
     /** If this function returns true, it reverts the game state to what it was
      *  before this order was executed, otherwise it returns false and has no
      *  effect. If an order is undone on the client and then still sent to the server it will be
      *  executed on the server, which is probably not desired. */
-    bool Undo() const;
+    bool Undo(ScriptingContext& context) const;
 
 protected:
     /** Verifies that the empire ID in this order is valid and return the Empire pointer.
      *  Throws an std::runtime_error if not valid. */
-    Empire* GetValidatedEmpire() const;
+    std::shared_ptr<Empire> GetValidatedEmpire(ScriptingContext& context) const;
 
 private:
-    virtual void ExecuteImpl() const = 0;
-    virtual bool UndoImpl() const { return false; }
+    virtual void ExecuteImpl(ScriptingContext& context) const = 0;
+    virtual bool UndoImpl(ScriptingContext& context) const { return false; }
 
     int m_empire = ALL_EMPIRES;
 
@@ -91,7 +91,7 @@ private:
 /** the Order subclass that represents the renaming of a UniverseObject. */
 class FO_COMMON_API RenameOrder : public Order {
 public:
-    RenameOrder(int empire, int object, const std::string& name);
+    RenameOrder(int empire, int object, const std::string& name, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -104,7 +104,8 @@ public:
     { return m_name; }
 
     //! Returns true when the Order parameters are valid.
-    [[nodiscard]] static bool Check(int empire, int object, const std::string& new_name);
+    [[nodiscard]] static bool Check(int empire, int object, const std::string& new_name,
+                                    const ScriptingContext& context);
 
 private:
     RenameOrder() = default;
@@ -117,7 +118,7 @@ private:
      *    - the planet focus is changed which=0(primary),1(secondary)
      *
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
     int m_object = INVALID_OBJECT_ID;
     std::string m_name;
@@ -136,11 +137,11 @@ private:
 class FO_COMMON_API NewFleetOrder : public Order {
 public:
     NewFleetOrder(int empire, std::string fleet_name,
-                  std::vector<int> ship_ids,
+                  std::vector<int> ship_ids, const ScriptingContext& context,
                   bool aggressive, bool passive = false, bool defensive = false);
     NewFleetOrder(int empire, std::string fleet_name,
-                  std::vector<int> ship_ids,
-                  FleetAggression aggression);
+                  std::vector<int> ship_ids, FleetAggression aggression,
+                  const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -159,7 +160,8 @@ public:
     { return m_aggression; }
 
     [[nodiscard]] static bool Check(int empire, const std::string& fleet_name,
-                                    const std::vector<int>& ship_ids, FleetAggression aggression);
+                                    const std::vector<int>& ship_ids, FleetAggression aggression,
+                                    const ScriptingContext& context);
 private:
     NewFleetOrder() = default;
 
@@ -171,7 +173,7 @@ private:
      *    - new fleets will exist in system with id m_system_id,
      *      and will belong to the creating empire.
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
     std::string m_fleet_name;
     /** m_fleet_id is mutable because ExecuteImpl generates the fleet id. */
@@ -192,8 +194,8 @@ private:
     These orders change the current destination of a fleet */
 class FO_COMMON_API FleetMoveOrder : public Order {
 public:
-    FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
-                   bool append = false);
+    FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id, bool append,
+                   const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -209,7 +211,8 @@ public:
     [[nodiscard]] const std::vector<int>& Route() const
     { return m_route; }
 
-    static bool Check(int empire_id, int fleet_id, int dest_fleet_id, bool append = false);
+    static bool Check(int empire_id, int fleet_id, int dest_fleet_id, bool append,
+                      const ScriptingContext& context);
 private:
     FleetMoveOrder() = default;
 
@@ -224,12 +227,12 @@ private:
      *    - TODO: WRITE THIS
      *
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
-    int m_fleet = INVALID_OBJECT_ID;
-    int m_dest_system = INVALID_OBJECT_ID;
+    int              m_fleet = INVALID_OBJECT_ID;
+    int              m_dest_system = INVALID_OBJECT_ID;
     std::vector<int> m_route;
-    bool m_append = false;
+    bool             m_append = false;
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -245,7 +248,8 @@ private:
   * another. */
 class FO_COMMON_API FleetTransferOrder : public Order {
 public:
-    FleetTransferOrder(int empire, int dest_fleet, const std::vector<int>& ships);
+    FleetTransferOrder(int empire, int dest_fleet, const std::vector<int>& ships,
+                       const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -257,7 +261,8 @@ public:
     [[nodiscard]] const std::vector<int>& Ships() const
     { return m_add_ships; }
 
-    [[nodiscard]] static bool Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids);
+    [[nodiscard]] static bool Check(int empire_id, int dest_fleet_id, const std::vector<int>& ship_ids,
+                                    const ScriptingContext& context);
 
 private:
     FleetTransferOrder() = default;
@@ -271,7 +276,7 @@ private:
      *     - all ships in m_add_ships will be moved from their initial fleet to the destination fleet
      *     - any resulting empty fleets will be deleted
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
     int m_dest_fleet = INVALID_OBJECT_ID;
     std::vector<int> m_add_ships;
@@ -288,7 +293,7 @@ private:
 /** the Order subclass that represents a planet colonization action*/
 class FO_COMMON_API ColonizeOrder : public Order {
 public:
-    ColonizeOrder(int empire, int ship, int planet);
+    ColonizeOrder(int empire, int ship, int planet, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -300,7 +305,8 @@ public:
     [[nodiscard]] int ShipID() const
     { return m_ship; }
 
-    [[nodiscard]] static bool Check(int empire_id, int ship_id, int planet_id);
+    [[nodiscard]] static bool Check(int empire_id, int ship_id, int planet_id,
+                                    const ScriptingContext& context);
 
 private:
     ColonizeOrder() = default;
@@ -316,9 +322,9 @@ private:
      *      - The ship with ID m_ship will be marked to colonize the planet with
      *        id m_planet during the next turn processing.
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
-    bool UndoImpl() const override;
+    bool UndoImpl(ScriptingContext& context) const override;
 
     int m_ship = INVALID_OBJECT_ID;
     int m_planet = INVALID_OBJECT_ID;
@@ -335,7 +341,7 @@ private:
 /** the Order subclass that represents a planet invasion action*/
 class FO_COMMON_API InvadeOrder : public Order {
 public:
-    InvadeOrder(int empire, int ship, int planet);
+    InvadeOrder(int empire, int ship, int planet, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -347,7 +353,8 @@ public:
     [[nodiscard]] int ShipID() const
     { return m_ship; }
 
-    [[nodiscard]] static bool Check(int empire_id, int ship_id, int planet_id);
+    [[nodiscard]] static bool Check(int empire_id, int ship_id,
+                                    int planet_id, const ScriptingContext& context);
 
 private:
     InvadeOrder() = default;
@@ -363,9 +370,9 @@ private:
      *      - The ship with ID m_ship will be marked to invade the planet with
      *        id m_planet during the next turn processing.
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
-    bool UndoImpl() const override;
+    bool UndoImpl(ScriptingContext& context) const override;
 
     int m_ship = INVALID_OBJECT_ID;
     int m_planet = INVALID_OBJECT_ID;
@@ -382,7 +389,7 @@ private:
 /** the Order subclass that represents a planet bombardment action*/
 class FO_COMMON_API BombardOrder : public Order {
 public:
-    BombardOrder(int empire, int ship, int planet);
+    BombardOrder(int empire, int ship, int planet, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -394,7 +401,7 @@ public:
     [[nodiscard]] int ShipID() const
     { return m_ship; }
 
-    static bool Check(int empire_id, int ship_id, int planet_id);
+    static bool Check(int empire_id, int ship_id, int planet_id, const ScriptingContext& context);
 
 private:
     BombardOrder() = default;
@@ -408,9 +415,9 @@ private:
      *      - The ship with ID m_ship will be marked to bombard the planet with
      *        id m_planet during the next turn processing.
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
-    bool UndoImpl() const override;
+    bool UndoImpl(ScriptingContext& context) const override;
 
     int m_ship = INVALID_OBJECT_ID;
     int m_planet = INVALID_OBJECT_ID;
@@ -427,7 +434,8 @@ private:
 /** the Order subclass that represents changing a planet focus*/
 class FO_COMMON_API ChangeFocusOrder : public Order {
 public:
-    ChangeFocusOrder(int empire, int planet, const std::string& focus);
+    ChangeFocusOrder(int empire, int planet, std::string focus,
+                     const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -435,7 +443,8 @@ public:
     [[nodiscard]] int PlanetID() const
     { return m_planet; }
 
-    [[nodiscard]] static bool Check(int empire_id, int planet_id, const std::string& focus);
+    [[nodiscard]] static bool Check(int empire_id, int planet_id, const std::string& focus,
+                                    const ScriptingContext& context);
 
 private:
     ChangeFocusOrder() = default;
@@ -447,7 +456,7 @@ private:
      *  Postconditions:
      *    - the planet focus is changed
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
     int m_planet = INVALID_OBJECT_ID;
     std::string m_focus;
@@ -463,7 +472,7 @@ private:
 /** the Order subclass that represents the adoptiong imperial polices. */
 class FO_COMMON_API PolicyOrder : public Order {
 public:
-    PolicyOrder(int empire, const std::string& name,
+    PolicyOrder(int empire, const std::string& name, // TODO: pass name by value and move?
                 const std::string& category, bool adopt,
                 int slot = -1);
 
@@ -478,7 +487,7 @@ public:
 private:
     PolicyOrder() = default;
 
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
     std::string m_policy_name;
     std::string m_category;
@@ -508,7 +517,7 @@ public:
 private:
     ResearchQueueOrder() = default;
 
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
     std::string m_tech_name;
     int m_position = INVALID_INDEX;
@@ -565,7 +574,7 @@ public:
 private:
     ProductionQueueOrder() = default;
 
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
     ProductionQueue::ProductionItem m_item;
     int                             m_location = INVALID_OBJECT_ID;
@@ -634,25 +643,26 @@ private:
      *    - For removing a design, the empire will no longer have the design's
      *      id in its set of design ids
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
     /// m_design_id is mutable to save the id for the server when the client calls ExecuteImpl.
-    mutable int m_design_id = INVALID_DESIGN_ID;
-    boost::uuids::uuid m_uuid;
-    bool m_update_name_or_description = false;
-    bool m_delete_design_from_empire = false;
-    bool m_create_new_design = false;
+    mutable int              m_design_id = INVALID_DESIGN_ID;
+
+    boost::uuids::uuid       m_uuid;
+    bool                     m_update_name_or_description = false;
+    bool                     m_delete_design_from_empire = false;
+    bool                     m_create_new_design = false;
 
     // details of design to create
-    std::string m_name;
-    std::string m_description;
-    int m_designed_on_turn = 0;
-    std::string m_hull;
+    std::string              m_name;
+    std::string              m_description;
+    int                      m_designed_on_turn = 0;
+    std::string              m_hull;
     std::vector<std::string> m_parts;
-    bool m_is_monster  = false;
-    std::string m_icon;
-    std::string m_3D_model;
-    bool m_name_desc_in_stringtable = false;
+    bool                     m_is_monster  = false;
+    std::string              m_icon;
+    std::string              m_3D_model;
+    bool                     m_name_desc_in_stringtable = false;
     // end details of design to create
 
     friend class boost::serialization::access;
@@ -668,7 +678,7 @@ private:
   * a building or ship owned by an empire. */
 class FO_COMMON_API ScrapOrder : public Order {
 public:
-    ScrapOrder(int empire, int object_id);
+    ScrapOrder(int empire, int object_id, const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -676,7 +686,7 @@ public:
     [[nodiscard]] int ObjectID() const
     { return m_object_id; }
 
-    [[nodiscard]] static bool Check(int empire_id, int object_id);
+    [[nodiscard]] static bool Check(int empire_id, int object_id, const ScriptingContext& context);
 private:
     ScrapOrder() = default;
 
@@ -688,9 +698,9 @@ private:
      *  Postconditions:
      *     - the object is marked to be scrapped during the next turn processing.
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
-    bool UndoImpl() const override;
+    bool UndoImpl(ScriptingContext& context) const override;
 
     int m_object_id = INVALID_OBJECT_ID;
 
@@ -707,7 +717,8 @@ private:
   * controlled by an empire. */
 class FO_COMMON_API AggressiveOrder : public Order {
 public:
-    AggressiveOrder(int empire, int object_id, FleetAggression aggression);
+    AggressiveOrder(int empire, int object_id, FleetAggression aggression,
+                    const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -718,7 +729,8 @@ public:
     /** Returns aggression state to set object to. */
     [[nodiscard]] FleetAggression Aggression() const { return m_aggression; }
 
-    [[nodiscard]] static bool Check(int empire_id, int object_id, FleetAggression aggression);
+    [[nodiscard]] static bool Check(int empire_id, int object_id, FleetAggression aggression,
+                                    const ScriptingContext& context);
 
 private:
     AggressiveOrder() = default;
@@ -731,10 +743,10 @@ private:
      *  Postconditions:
      *     - the object is set to the new aggression state
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
     int m_object_id = INVALID_OBJECT_ID;
-    FleetAggression m_aggression;
+    FleetAggression m_aggression{};
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -749,7 +761,8 @@ private:
   * another empire */
 class FO_COMMON_API GiveObjectToEmpireOrder : public Order {
 public:
-    GiveObjectToEmpireOrder(int empire, int object_id, int recipient);
+    GiveObjectToEmpireOrder(int empire, int object_id, int recipient,
+                            const ScriptingContext& context);
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -761,7 +774,8 @@ public:
     [[nodiscard]] int RecipientEmpireID()
     { return m_recipient_empire_id; }
 
-    static bool Check(int empire_id, int object_id, int recipient_empire_id);
+    static bool Check(int empire_id, int object_id, int recipient_empire_id,
+                      const ScriptingContext& context);
 private:
     GiveObjectToEmpireOrder() = default;
 
@@ -773,9 +787,9 @@ private:
      *  Postconditions:
      *     - the object's ownership is set to the other empire
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
-    bool UndoImpl() const override;
+    bool UndoImpl(ScriptingContext& context) const override;
 
     int m_object_id = INVALID_OBJECT_ID;
     int m_recipient_empire_id = ALL_EMPIRES;
@@ -809,7 +823,7 @@ private:
      *  Postconditions:
      *     - the object is removed from the table of known objects.
      */
-    void ExecuteImpl() const override;
+    void ExecuteImpl(ScriptingContext& context) const override;
 
     int m_object_id = INVALID_OBJECT_ID;
 
