@@ -908,12 +908,14 @@ namespace {
     { return std::make_pair(std::max(id1, ind2), std::min(id1, ind2)); }
 }
 
-void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops, const EmpireManager::DiploStatusMap& diplo_statuses) {
+void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
+                                 const EmpireManager::DiploStatusMap& diplo_statuses)
+{
     if (empires_troops.empty() || empires_troops.size() == 1)
         return;
 
     // give bonuses for allied ground combat, so allies can effectively fight together
-    auto effective_empires_troops = empires_troops;
+    auto effective_empires_troops{empires_troops};
     for (auto& [empire1_id, troop1_count] : empires_troops) {
         (void)troop1_count; // quiet warning
         for (auto& [empire2_id, troop2_count] : empires_troops) {
