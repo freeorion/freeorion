@@ -44,4 +44,46 @@ const CLIENT_TYPE_HUMAN_PLAYER = 1
 const CLIENT_TYPE_HUMAN_OBSERVER = 2
 const CLIENT_TYPE_HUMAN_MODERATOR = 3
 
+var galaxy: Galaxy
+var starfield: Spatial
 var freeorion: Node
+
+
+class Starlane:
+	var source: int
+	var dest: int
+
+	func _init(a_source, a_dest):
+		source = a_source
+		dest = a_dest
+		if not valid():
+			print("WARNING: Created starlane where source and destination system are the same")
+
+	func valid():
+		return source != dest
+
+
+class Galaxy:
+	extends AStar
+	var systems = {}
+	var starlanes = []
+	var fleets = {}
+
+	func _init():
+		systems = global.freeorion.get_systems()
+		for sys in systems.values():
+			add_point(sys.id, sys.pos)
+		for sys in systems.values():
+			var starlanes_wormholes: Dictionary = sys.get_starlanes_wormholes()
+			for id in starlanes_wormholes.keys():
+				if !starlanes_wormholes[id] && sys.id > id:
+					add_starlane(Starlane.new(sys.id, id))
+		fleets = global.freeorion.get_fleets()
+
+	func add_starlane(starlane: Starlane):
+		if not ((starlane.source in systems.keys()) and (starlane.dest in systems.keys())):
+			print("ERROR: Attempting to add starlane to non-existing systems")
+			return
+
+		starlanes.append(starlane)
+		connect_points(starlane.source, starlane.dest)
