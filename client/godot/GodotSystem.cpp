@@ -3,7 +3,7 @@
 #include "../../universe/System.h"
 
 void GodotSystem::_register_methods() {
-    register_method("_get_starlanes_wormholes", &GodotSystem::get_starlanes_wormholes);
+    register_method("get_starlanes_wormholes", &GodotSystem::get_starlanes_wormholes);
     godot::register_property<GodotSystem, godot::Spatial*>("spatial",
         &GodotSystem::set_spatial,
         &GodotSystem::get_spatial,
