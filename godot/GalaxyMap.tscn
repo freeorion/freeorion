@@ -1,8 +1,12 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://GalaxyMapCamera.gd" type="Script" id=1]
 [ext_resource path="res://assets/sound/artificial_intelligence_v3.ogg" type="AudioStream" id=2]
 [ext_resource path="res://GalaxyMap.gd" type="Script" id=3]
+[ext_resource path="res://StarField.gd" type="Script" id=4]
+[ext_resource path="res://Starnames.gd" type="Script" id=5]
+[ext_resource path="res://StarSystemSelectionMarker.tscn" type="PackedScene" id=6]
+[ext_resource path="res://FleetWindow.tscn" type="PackedScene" id=7]
 
 [sub_resource type="Environment" id=1]
 
@@ -27,3 +31,15 @@ size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="StarField" type="Spatial" parent="."]
+script = ExtResource( 4 )
+
+[node name="StarSystemSelectionMarker" parent="StarField" instance=ExtResource( 6 )]
+visible = false
+
+[node name="Starnames" type="Node2D" parent="."]
+script = ExtResource( 5 )
+
+[node name="FleetWindow" parent="." instance=ExtResource( 7 )]
+visible = false

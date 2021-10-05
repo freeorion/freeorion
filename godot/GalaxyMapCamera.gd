@@ -67,3 +67,8 @@ func update_position():
 	var z = dist * sin(angle_h) * f
 	look_at_from_position(origin + Vector3(x, y, z), origin, Vector3(0, 1, 0))
 	emit_signal("updated", translation, angle_h, angle_v, dist)
+
+
+func look_at_galaxy(new_origin: Vector3):
+	origin = new_origin
+	update_position()
