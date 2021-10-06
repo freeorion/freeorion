@@ -77,6 +77,7 @@ void Seed(unsigned int seed);
 ServerApp::ServerApp() :
     IApp(),
     m_signals(m_io_context, SIGINT, SIGTERM),
+    m_timer(m_io_context),
     m_networking(m_io_context,
                  boost::bind(&ServerApp::HandleNonPlayerMessage, this, boost::placeholders::_1, boost::placeholders::_2),
                  boost::bind(&ServerApp::HandleMessage, this, boost::placeholders::_1, boost::placeholders::_2),
@@ -117,6 +118,17 @@ ServerApp::ServerApp() :
     InitializePython();
     if (!m_python_server.IsPythonRunning())
         throw std::runtime_error("Python not initialized");
+
+    if (GetOptionsDB().Get<int>("network.server.python.asyncio-interval") > 0) {
+#if BOOST_VERSION >= 106600
+        m_timer.expires_after(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.python.asyncio-interval")));
+#else
+        m_timer.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.python.asyncio-interval")));
+#endif
+        m_timer.async_wait(boost::bind(&ServerApp::AsyncIOTimedoutHandler,
+                                       this,
+                                       boost::asio::placeholders::error));
+    }
 
     // Start parsing content before FSM initialization
     // to have data initialized before autostart execution
@@ -354,6 +366,47 @@ void ServerApp::InitializePython() {
         return;
 
     ErrorLogger() << "Server's python interpreter failed to initialize.";
+}
+
+void ServerApp::AsyncIOTimedoutHandler(const boost::system::error_code& error) {
+    if (error) {
+        DebugLogger() << "Turn timed out cancelled";
+        return;
+    }
+
+    bool success = false;
+    try {
+        success = m_python_server.AsyncIOTick();
+    } catch (const boost::python::error_already_set& err) {
+        success = false;
+        m_python_server.HandleErrorAlreadySet();
+        if (!m_python_server.IsPythonRunning()) {
+            ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
+            if (m_python_server.Initialize()) {
+                ErrorLogger() << "Python interpreter successfully restarted.";
+            } else {
+                ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
+                m_fsm->process_event(ShutdownServer());
+            }
+        }
+    }
+
+    if (success) {
+        if (GetOptionsDB().Get<int>("network.server.python.asyncio-interval") > 0) {
+#if BOOST_VERSION >= 106600
+            m_timer.expires_after(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.python.asyncio-interval")));
+#else
+            m_timer.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.python.asyncio-interval")));
+#endif
+            m_timer.async_wait(boost::bind(&ServerApp::AsyncIOTimedoutHandler,
+                                             this,
+                                             boost::asio::placeholders::error));
+        }
+    } else {
+        ErrorLogger() << "Python scripted authentication failed.";
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
+                                                                      false));
+    }
 }
 
 void ServerApp::CleanupAIs() {
