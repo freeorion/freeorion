@@ -139,6 +139,7 @@ void GameRules::Add(Pending::Pending<GameRulesTypeMap>&& future)
 { m_pending_rules = std::move(future); }
 
 namespace {
+    /** Sets default validator, ensures option and sets value to value of the option. */
     template <typename T>
     void CheckValidatorAndAddRuleOption(GameRule& rule)
     {
