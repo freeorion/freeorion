@@ -24,6 +24,7 @@ public:
     bool GetPlayerDelegation(const std::string& player_name, std::list<std::string> &result) const; // Wraps call to AuthProvider's method get_player_delegation
     bool LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& chat_history); // Wraps call to ChatProvider's method load_history
     bool PutChatHistoryEntity(const ChatHistoryEntity& chat_history_entity); // Wraps call to ChatProvider's method put_history_entity
+    bool AsyncIOTick(); // Executes awaiting asyncio callbacks, see https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.loop.run_forever
 
 private:
     // reference to imported Python universe generator module
@@ -37,6 +38,9 @@ private:
 
     // reference to importer Python chat module
     boost::python::object m_python_module_chat;
+
+    // reference to asyncio event loop
+    boost::python::object m_asyncio_event_loop;
 };
 
 // Returns folder containing the Python universe generator scripts

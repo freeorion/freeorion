@@ -102,6 +102,13 @@ auto PythonServer::InitModules() -> bool
     // Save ChatProvider instance in chat module's namespace
     m_python_module_chat.attr("__dict__")["chat_history_provider"] = m_python_module_chat.attr("ChatHistoryProvider")();
 
+    // Save asyncio event loop
+    if (GetOptionsDB().Get<int>("network.server.python.asyncio-interval") > 0) {
+        py::object asyncio = py::import("asyncio");
+
+        m_asyncio_event_loop = asyncio.attr("get_event_loop")();
+    }
+
     DebugLogger() << "Server Python modules successfully initialized!";
     return true;
 }
@@ -307,6 +314,24 @@ auto PythonServer::ExecuteTurnEvents() -> bool
         return false;
     }
     return f();
+}
+
+auto PythonServer::AsyncIOTick() -> bool
+{
+    py::object stop = m_asyncio_event_loop.attr("stop");
+    if (!stop) {
+        ErrorLogger() << "Unable to call Python function stop";
+        return false;
+    }
+    stop();
+    py::object run_forever = m_asyncio_event_loop.attr("run_forever");
+    if (!run_forever) {
+        ErrorLogger() << "Unable to call Python function run_forever";
+        return false;
+    }
+    run_forever();
+
+    return true;
 }
 
 auto GetPythonUniverseGeneratorDir() -> const std::string

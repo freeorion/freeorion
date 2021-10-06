@@ -4,6 +4,7 @@
 #include <set>
 #include <vector>
 #include <boost/circular_buffer.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
 #include "ServerFramework.h"
 #include "ServerNetworking.h"
 #include "../Empire/EmpireManager.h"
@@ -302,8 +303,12 @@ private:
       * an empire is eliminated from the game */
     void    RemoveEmpireTurn(int empire_id);
 
+    /** Called when asyncio timer ends. Executes Python asyncio callbacks if any was generated. */
+    void    AsyncIOTimedoutHandler(const boost::system::error_code& error);
+
     boost::asio::io_context m_io_context;
     boost::asio::signal_set m_signals;
+    boost::asio::high_resolution_timer m_timer;
 
     Universe                m_universe;
     EmpireManager           m_empires;
