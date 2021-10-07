@@ -76,13 +76,13 @@ OptionsDB::Option::Option(char short_name_, std::string name_, boost::any value_
                           bool flag_, bool recognized_, std::string section) :
     name(std::move(name_)),
     short_name(short_name_),
+    storable(storable_),
+    flag(flag_),
+    recognized(recognized_),
     value(std::move(value_)),
     default_value(std::move(default_value_)),
     description(std::move(description_)),
     validator(std::move(validator_)),
-    storable(storable_),
-    flag(flag_),
-    recognized(recognized_),
     option_changed_sig_ptr(new boost::signals2::signal<void ()>())
 {
     if (!validator)

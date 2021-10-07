@@ -448,20 +448,19 @@ public:
         [[nodiscard]] std::string DefaultValueToString() const;
         [[nodiscard]] bool        ValueIsDefault() const;
 
-        std::string     name;           ///< the name of the option
-        char            short_name{0};  ///< the one character abbreviation of the option
-        boost::any      value;          ///< the value of the option
-        boost::any      default_value;  ///< the default value of the option
-        std::string     description;    ///< a desription of the option
+        std::string     name;               ///< the name of the option
+        char            short_name{0};      ///< the one character abbreviation of the option
+        bool            storable = false;   ///< whether this option can be stored in an XML config file for use across multiple runs
+        bool            flag = false;
+        bool            recognized = false; ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
+        boost::any      value;              ///< the value of the option
+        boost::any      default_value;      ///< the default value of the option
+        std::string     description;        ///< a desription of the option
         std::unordered_set<std::string> sections; ///< sections this option should display under
 
         /** A validator for the option.  Flags have no validators; lexical_cast
             boolean conversions are done for them. */
         std::unique_ptr<ValidatorBase> validator;
-
-        bool storable = false;   ///< whether this option can be stored in an XML config file for use across multiple runs
-        bool flag = false;
-        bool recognized = false; ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
 
         mutable std::shared_ptr<boost::signals2::signal<void ()>> option_changed_sig_ptr;
     };
