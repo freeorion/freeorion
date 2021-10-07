@@ -33,7 +33,7 @@ namespace details {
 /** base class for all OptionsDB validators. Simply provides the basic interface. */
 struct ValidatorBase {
     ValidatorBase() = default;
-    ValidatorBase(ValidatorBase&& rhs) = default;
+    ValidatorBase(ValidatorBase&& rhs) noexcept = default;
     virtual ~ValidatorBase() = default;
 
     /** returns normally if \a str is a valid value, or throws otherwise */
@@ -54,7 +54,7 @@ template <typename T>
 struct Validator : public ValidatorBase
 {
     Validator() = default;
-    Validator(Validator&& rhs) = default;
+    Validator(Validator&& rhs) noexcept = default;
     ~Validator() override = default;
 
     boost::any Validate(const std::string& str) const override
@@ -74,7 +74,7 @@ template <>
 struct Validator<std::vector<std::string>> : public ValidatorBase
 {
     Validator() = default;
-    Validator(Validator&& rhs) = default;
+    Validator(Validator&& rhs) noexcept = default;
     ~Validator() override = default;
 
     boost::any Validate(const std::string& str) const override
@@ -92,7 +92,7 @@ template <typename T>
 struct RangedValidator : public Validator<T>
 {
     RangedValidator(const T& min, const T& max) : m_min(min), m_max(max) {}
-    RangedValidator(RangedValidator&& rhs) = default;
+    RangedValidator(RangedValidator&& rhs) noexcept = default;
     ~RangedValidator() override = default;
 
     boost::any Validate(const std::string& str) const override {
@@ -107,6 +107,7 @@ struct RangedValidator : public Validator<T>
 
     T m_min;
     T m_max;
+    static_assert(std::is_nothrow_move_constructible<T>::value);
 };
 
 /** a Validator that constrains valid values to certain step-values
@@ -117,7 +118,7 @@ template <typename T>
 struct StepValidator : public Validator<T>
 {
     StepValidator(const T& step, const T& origin = T()) : m_step_size(step), m_origin(origin) {}
-    StepValidator(StepValidator&& rhs) = default;
+    StepValidator(StepValidator&& rhs) noexcept = default;
     ~StepValidator() override = default;
 
     boost::any Validate(const std::string& str) const override {
@@ -132,6 +133,7 @@ struct StepValidator : public Validator<T>
 
     T m_step_size;
     T m_origin;
+    static_assert(std::is_nothrow_move_constructible<T>::value);
 };
 
 /** a Validator similar to a StepValidator, but that further constrains the valid values to be within a certain range (eg: [25, 50, ..., 200]). */
@@ -141,7 +143,7 @@ struct RangedStepValidator : public Validator<T>
 public:
     RangedStepValidator(const T& step, const T& min, const T& max) : m_step_size(step), m_origin(T()), m_min(min), m_max(max) {}
     RangedStepValidator(const T& step, const T& origin, const T& min, const T& max) : m_step_size (step), m_origin (origin), m_min (min), m_max (max) {}
-    RangedStepValidator(RangedStepValidator&& rhs) = default;
+    RangedStepValidator(RangedStepValidator&& rhs) noexcept = default;
     ~RangedStepValidator() override = default;
 
     boost::any Validate(const std::string& str) const override {
@@ -160,6 +162,7 @@ public:
     T m_origin;
     T m_min;
     T m_max;
+    static_assert(std::is_nothrow_move_constructible<T>::value);
 };
 
 /// a Validator that specifies a finite number of valid values.
@@ -180,7 +183,7 @@ struct DiscreteValidator : public Validator<T>
         m_values(start, finish)
     {}
 
-    DiscreteValidator(DiscreteValidator&& rhs) = default;
+    DiscreteValidator(DiscreteValidator&& rhs) noexcept = default;
 
     ~DiscreteValidator() override = default;
 
@@ -198,6 +201,7 @@ struct DiscreteValidator : public Validator<T>
 
     /// Stores the list of vaild values.
     std::set<T> m_values;
+    static_assert(std::is_nothrow_move_constructible<T>::value);
 };
 
 /// a Validator that performs a logical OR of two validators.
@@ -218,7 +222,7 @@ struct OrValidator : public Validator<T>
         m_validator_b{std::move(validator_b)}
     {}
 
-    OrValidator(OrValidator&& rhs) = default;
+    OrValidator(OrValidator&& rhs) noexcept = default;
     ~OrValidator() override = default;
 
     boost::any Validate(const std::string& str) const override {
@@ -249,6 +253,7 @@ struct OrValidator : public Validator<T>
 
     std::unique_ptr<Validator<T>> m_validator_a;
     std::unique_ptr<Validator<T>> m_validator_b;
+    static_assert(std::is_nothrow_move_constructible<std::unique_ptr<Validator<T>>>::value);
 };
 
 
