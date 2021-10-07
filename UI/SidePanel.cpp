@@ -2298,10 +2298,10 @@ namespace {
 
         // is selected ship already ordered to colonize?  If so, recind that order.
         if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
-            for (const auto& id_and_order : orders) { // TODO: []
-                if (auto order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
-                    if (order->ShipID() == ship->ID()) {
-                        GGHumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first, context);
+            for (const auto& [order_id, order] : orders) {
+                if (auto colonize_order = std::dynamic_pointer_cast<ColonizeOrder>(order)) {
+                    if (colonize_order->ShipID() == ship->ID()) {
+                        GGHumanClientApp::GetApp()->Orders().RescindOrder(order_id, context);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2310,10 +2310,10 @@ namespace {
 
         // is selected ship ordered to invade?  If so, recind that order
         if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
-            for (const auto& id_and_order : orders) {
-               if (auto order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
-                    if (order->ShipID() == ship->ID()) {
-                        GGHumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first, context);
+            for (const auto& [order_id, order] : orders) {
+               if (auto invade_order = std::dynamic_pointer_cast<InvadeOrder>(order)) {
+                    if (invade_order->ShipID() == ship->ID()) {
+                        GGHumanClientApp::GetApp()->Orders().RescindOrder(order_id, context);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2322,10 +2322,10 @@ namespace {
 
         // is selected ship ordered scrapped?  If so, recind that order
         if (ship->OrderedScrapped()) {
-            for (const auto& id_and_order : orders) {
-                if (auto order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
-                    if (order->ObjectID() == ship->ID()) {
-                        GGHumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first, context);
+            for (const auto& [order_id, order] : orders) {
+                if (auto scrap_order = std::dynamic_pointer_cast<ScrapOrder>(order)) {
+                    if (scrap_order->ObjectID() == ship->ID()) {
+                        GGHumanClientApp::GetApp()->Orders().RescindOrder(order_id, context);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2334,10 +2334,10 @@ namespace {
 
         // is selected ship order to bombard?  If so, recind that order
         if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
-            for (const auto& id_and_order : orders) { // TODO: []
-               if (auto order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
-                    if (order->ShipID() == ship->ID()) {
-                        GGHumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first, context);
+            for (const auto& [order_id, order] : orders) {
+               if (auto bombard_order = std::dynamic_pointer_cast<BombardOrder>(order)) {
+                    if (bombard_order->ShipID() == ship->ID()) {
+                        GGHumanClientApp::GetApp()->Orders().RescindOrder(order_id, context);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }

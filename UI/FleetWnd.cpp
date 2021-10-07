@@ -336,9 +336,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        for (const auto& id_and_order : app->Orders()) { // TODO: []
-            if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second))
-                retval[order->ObjectID()] = id_and_order.first;
+        for (const auto& [order_id, order] : app->Orders()) {
+            if (auto scrap_order = std::dynamic_pointer_cast<ScrapOrder>(order))
+                retval.emplace(scrap_order->ObjectID(), order_id);
         }
         return retval;
     }
@@ -3726,13 +3726,13 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
 
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             auto ungift_action = [fleet, &context]() {
-                const OrderSet orders = GGHumanClientApp::GetApp()->Orders();
-                for (const auto& id_and_order : orders) { // TODO: []
-                    if (auto order = std::dynamic_pointer_cast<
-                        GiveObjectToEmpireOrder>(id_and_order.second))
-                    {
-                        if (order->ObjectID() == fleet->ID()) {
-                            GGHumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first, context);
+                const ClientApp* app = ClientApp::GetApp();
+                if (!app)
+                    return;
+                for (const auto& [order_id, order] : app->Orders()) {
+                    if (auto give_order = std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(order)) {
+                        if (give_order->ObjectID() == fleet->ID()) {
+                            GGHumanClientApp::GetApp()->Orders().RescindOrder(order_id, context);
                             // could break here, but won't to ensure there are no problems with doubled orders
                         }
                     }

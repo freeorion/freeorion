@@ -35,10 +35,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        for (const auto& id_and_order : app->Orders()) { // TODO: []
-            if (auto order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
-                retval[order->ObjectID()] = id_and_order.first;
-            }
+        for (const auto& [order_id, order] : app->Orders()) {
+            if (auto scrap_order = std::dynamic_pointer_cast<ScrapOrder>(order))
+                retval.emplace(scrap_order->ObjectID(), order_id);
         }
         return retval;
     }
