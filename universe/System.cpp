@@ -557,7 +557,9 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id, const Unive
 
     // get moving fleets owned by empire
     std::vector<const Fleet*> moving_empire_fleets;
-    for (auto& object : objects.find(MovingFleetVisitor())) {
+    moving_empire_fleets.reserve(objects.size<Fleet>());
+    static const MovingFleetVisitor moving_fleet_visitor;
+    for (auto& object : objects.find(moving_fleet_visitor)) {
         if (object && object->ObjectType() == UniverseObjectType::OBJ_FLEET && object->OwnedBy(empire_id))
             moving_empire_fleets.emplace_back(static_cast<const Fleet*>(object.get()));
     }
