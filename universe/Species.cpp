@@ -562,24 +562,22 @@ void SpeciesManager::RemoveSpeciesHomeworld(const std::string& species, int home
 void SpeciesManager::ClearSpeciesHomeworlds()
 { m_species_homeworlds.clear(); }
 
-void SpeciesManager::UpdatePopulationCounter() {
+void SpeciesManager::UpdatePopulationCounter(const ObjectMap& objects) {
     // ships of each species and design
     m_species_object_populations.clear();
-    for (const auto& entry : Objects().ExistingObjects()) {
-        auto obj = entry.second;
-        if (obj->ObjectType() != UniverseObjectType::OBJ_PLANET && obj->ObjectType() != UniverseObjectType::OBJ_POP_CENTER)
-            continue;
+    for (const auto& [obj_id, obj] : objects.ExistingObjects()) {
+        if (obj->ObjectType() != UniverseObjectType::OBJ_PLANET &&
+            obj->ObjectType() != UniverseObjectType::OBJ_POP_CENTER)
+        { continue; }
 
         auto pop_center = std::dynamic_pointer_cast<const PopCenter>(obj);
-        if (!pop_center)
-            continue;
-
         const std::string& species = pop_center->SpeciesName();
         if (species.empty())
             continue;
 
         try {
-            m_species_object_populations[species][obj->ID()] += obj->GetMeter(MeterType::METER_POPULATION)->Current();
+            m_species_object_populations[species][obj_id] +=
+                obj->GetMeter(MeterType::METER_POPULATION)->Current();
         } catch (...) {
             continue;
         }

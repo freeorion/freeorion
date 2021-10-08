@@ -23,6 +23,7 @@ namespace Condition {
 namespace Effect {
     class EffectsGroup;
 }
+class ObjectMap;
 
 //! Environmental suitability of planets for a particular Species
 FO_ENUM(
@@ -269,7 +270,7 @@ public:
     void RemoveSpeciesHomeworld(const std::string& species, int homeworld_id);
     void ClearSpeciesHomeworlds();
 
-    void UpdatePopulationCounter();
+    void UpdatePopulationCounter(const ObjectMap& objects);
 
     const std::map<std::string, std::map<int, float>>&       SpeciesObjectPopulations(int encoding_empire = ALL_EMPIRES) const;
     const std::map<std::string, std::map<std::string, int>>& SpeciesShipsDestroyed(int encoding_empire = ALL_EMPIRES) const;
