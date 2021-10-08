@@ -1349,7 +1349,6 @@ void SetOwner::Execute(ScriptingContext& context) const {
 
     Universe& universe = context.ContextUniverse();
     ObjectMap& objects = context.ContextObjects();
-    const SpeciesManager& sm = GetSpeciesManager();
     context.effect_target->SetOwner(empire_id);
 
     if (auto ship = std::dynamic_pointer_cast<Ship>(context.effect_target)) {

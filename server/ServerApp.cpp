@@ -2389,7 +2389,6 @@ namespace {
     /** Returns true iff there is an appropriate combination of objects in the
       * system with id \a system_id for a combat to occur. */
     bool CombatConditionsInSystem(int system_id, const ScriptingContext& context) {
-        const auto& universe{context.ContextUniverse()};
         const auto& objects{context.ContextObjects()};
 
         // combats occur if:
@@ -2459,7 +2458,7 @@ namespace {
             ++emp2_it;
             for (; emp2_it != empires_here.end(); ++emp2_it) {
                 if (*emp1_it == ALL_EMPIRES || *emp2_it == ALL_EMPIRES ||
-                    Empires().GetDiplomaticStatus(*emp1_it, *emp2_it) == DiplomaticStatus::DIPLO_WAR)
+                    context.ContextDiploStatus(*emp1_it, *emp2_it) == DiplomaticStatus::DIPLO_WAR)
                 {
                     empires_here_at_war[*emp1_it].emplace(*emp2_it);
                     empires_here_at_war[*emp2_it].emplace(*emp1_it);
