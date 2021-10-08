@@ -83,8 +83,6 @@ namespace {
     {
         if (!system || !ship)
             return nullptr;
-
-        const SpeciesManager& sm = context.species;
         Universe& universe = context.ContextUniverse();
 
         // remove ship from old fleet / system, put into new system if necessary
@@ -173,7 +171,7 @@ namespace {
     }
 
     std::string GenerateSystemName(const ObjectMap& objects) {
-        static std::vector<std::string> star_names = UserStringList("STAR_NAMES");
+        static const std::vector<std::string> star_names = UserStringList("STAR_NAMES");
 
         // pick a name for the system
         for (const std::string& star_name : star_names) {
