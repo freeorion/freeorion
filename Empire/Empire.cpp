@@ -2674,7 +2674,8 @@ void Empire::ResetMeters() {
         entry.second.ResetCurrent();
 }
 
-void Empire::UpdateOwnedObjectCounters(const ObjectMap& objects) {
+void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
+    const ObjectMap& objects{universe.Objects()};
     // ships of each species and design
     m_species_ships_owned.clear();
     m_ship_designs_owned.clear();
@@ -2702,7 +2703,7 @@ void Empire::UpdateOwnedObjectCounters(const ObjectMap& objects) {
     m_ship_parts_owned.clear();
     m_ship_part_class_owned.clear();
     for (const auto& design_count : m_ship_designs_owned) {
-        const ShipDesign* design = GetUniverse().GetShipDesign(design_count.first); // TODO: pass in universe
+        const ShipDesign* design = universe.GetShipDesign(design_count.first);
         if (!design)
             continue;
 

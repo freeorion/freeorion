@@ -392,7 +392,7 @@ public:
     /** Resets empire meters. */
     void ResetMeters();
 
-    void UpdateOwnedObjectCounters(const ObjectMap& objects);
+    void UpdateOwnedObjectCounters(const Universe& universe);
 
     void SetAuthenticated(bool authenticated = true);
 

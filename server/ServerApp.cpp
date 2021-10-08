@@ -818,7 +818,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     // initialize empire owned object counters
     for (auto& entry : m_empires)
-        entry.second->UpdateOwnedObjectCounters(m_universe.Objects());
+        entry.second->UpdateOwnedObjectCounters(m_universe);
 
     UpdateEmpireSupply(context, m_empires, m_supply_manager);
     m_universe.UpdateStatRecords(m_empires);
@@ -3770,9 +3770,9 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateStatRecords(m_empires);
     for ([[maybe_unused]] auto& [ignored_empire_id, empire] : m_empires) {
         (void)ignored_empire_id;    // quiet unused variable warning
-        empire->UpdateOwnedObjectCounters(m_universe.Objects());
+        empire->UpdateOwnedObjectCounters(m_universe);
     }
-    GetSpeciesManager().UpdatePopulationCounter();
+    m_species_manager.UpdatePopulationCounter();
 
 
     // indicate that the clients are waiting for their new gamestate
