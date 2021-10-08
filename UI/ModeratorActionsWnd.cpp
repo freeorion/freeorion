@@ -69,8 +69,8 @@ void ModeratorActionsWnd::CompleteConstruction() {
     for (StarType star_type = StarType::STAR_BLUE; star_type != StarType::NUM_STAR_TYPES;
          star_type = StarType(int(star_type) + 1))
     {
-        std::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
-            ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], 0);
+        auto disc_texture = ui->GetModuloTexture(
+            ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefix(star_type), 0);
         auto row = GG::Wnd::Create<GG::DropDownList::Row>();
         auto icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(disc_texture), style);
         icon->Resize(GG::Pt(CONTROL_WIDTH, CONTROL_HEIGHT));

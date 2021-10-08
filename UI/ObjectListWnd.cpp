@@ -1342,11 +1342,11 @@ namespace {
                 StarType star_type = system->GetStarType();
                 ClientUI* ui = ClientUI::GetClientUI();
                 auto disc_texture = ui->GetModuloTexture(
-                    ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], system->ID());
+                    ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefix(star_type), system->ID());
                 if (disc_texture)
                     retval.push_back(std::move(disc_texture));
                 auto halo_texture = ui->GetModuloTexture(
-                    ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], system->ID());
+                    ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefix(star_type), system->ID());
                 if (halo_texture)
                     retval.push_back(std::move(halo_texture));
             }

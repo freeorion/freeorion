@@ -95,20 +95,20 @@ public:
     /** Loads a texture at random from the set of files starting with \a prefix
         in directory \a dir. */
     std::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir,
-                                                  const std::string& prefix,
+                                                  std::string_view prefix,
                                                   bool mipmap = false);
 
     /** Loads texture \a n % N from the set of files starting with \a prefix in
         directory \a dir, where N is the number of files found in \a dir with
         prefix \a prefix. */
     std::shared_ptr<GG::Texture> GetModuloTexture(const boost::filesystem::path& dir,
-                                                  const std::string& prefix, int n,
+                                                  std::string_view prefix, int n,
                                                   bool mipmap = false);
 
     /** Returns all textures in the set of files starting with \a prefix in
         directory \a dir. */
     std::vector<std::shared_ptr<GG::Texture>> GetPrefixedTextures(const boost::filesystem::path& dir,
-                                                                  const std::string& prefix,
+                                                                  std::string_view prefix,
                                                                   bool mipmap = false);
 
     static ClientUI* GetClientUI();     //!< returns a pointer to the singleton ClientUI class
@@ -206,9 +206,9 @@ public:
     static GG::Clr  TechWndProgressBarColor();
     static GG::Clr  CategoryColor(const std::string& category_name);
 
-    static std::map<PlanetType, std::string>& PlanetTypeFilePrefixes();
-    static std::map<StarType, std::string>&   StarTypeFilePrefixes();
-    static std::map<StarType, std::string>&   HaloStarTypeFilePrefixes();
+    static std::string_view PlanetTypeFilePrefix(PlanetType planet_type);
+    static std::string_view StarTypeFilePrefix(StarType star_type);
+    static std::string_view HaloStarTypeFilePrefix(StarType star_type);
     //!@}
 
 private:
@@ -227,7 +227,7 @@ private:
     //!< when textures are looked up with GetPrefixedTextures, the specified
     //!< dir is searched for filenames that start with the prefix. pointers
     //!< to the Texture objects for these files are stored as the mapped value.
-    std::map<std::string, std::vector<std::shared_ptr<GG::Texture>>>
+    std::map<std::string, std::vector<std::shared_ptr<GG::Texture>>, std::less<>>
                                             m_prefixed_textures;
 
     std::unique_ptr<ShipDesignManager>      m_ship_designs;         //!< ship designs the client knows about, and their ordering in the UI

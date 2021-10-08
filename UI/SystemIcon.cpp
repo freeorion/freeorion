@@ -255,13 +255,13 @@ void SystemIcon::CompleteConstruction() {
     if (auto system = Objects().get<System>(m_system_id)) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
-                                              ClientUI::StarTypeFilePrefixes()[star_type],
+                                              ClientUI::StarTypeFilePrefix(star_type),
                                               m_system_id);
         m_halo_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
-                                              ClientUI::HaloStarTypeFilePrefixes()[star_type],
+                                              ClientUI::HaloStarTypeFilePrefix(star_type),
                                               m_system_id);
         m_tiny_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
-                                              "tiny_" + ClientUI::StarTypeFilePrefixes()[star_type],
+                                              std::string("tiny_").append(ClientUI::StarTypeFilePrefix(star_type)),
                                               m_system_id);
     } else {
         m_disc_texture = ui->GetTexture(ClientUI::ArtDir() / "misc" / "missing.png");
