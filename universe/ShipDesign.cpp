@@ -749,17 +749,14 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 }
 
 namespace {
-    void AddDesignToUniverse(std::unordered_map<std::string, int>& design_generic_ids,
+    void AddDesignToUniverse(Universe& universe, std::unordered_map<std::string, int>& design_generic_ids,
                              const std::unique_ptr<ShipDesign>& design, bool monster)
     {
         if (!design)
             return;
 
-        Universe& universe = GetUniverse(); // TODO: pass in
         /* check if there already exists this same design in the universe. */
-        for (auto it = universe.beginShipDesigns();
-             it != universe.endShipDesigns(); ++it)
-        {
+        for (auto it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
             const ShipDesign* existing_design = it->second;
             if (!existing_design) {
                 ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse found an invalid design in the Universe";
@@ -791,15 +788,15 @@ namespace {
     };
 }
 
-void PredefinedShipDesignManager::AddShipDesignsToUniverse() const { // TODO: pass in and pass along Universe&
+void PredefinedShipDesignManager::AddShipDesignsToUniverse(Universe& universe) const {
     CheckPendingDesignsTypes();
     m_design_generic_ids.clear();
 
     for (const auto& uuid : m_ship_ordering)
-        AddDesignToUniverse(m_design_generic_ids, m_designs.at(uuid), false);
+        AddDesignToUniverse(universe, m_design_generic_ids, m_designs.at(uuid), false);
 
     for (const auto& uuid : m_monster_ordering)
-        AddDesignToUniverse(m_design_generic_ids, m_designs.at(uuid), true);
+        AddDesignToUniverse(universe, m_design_generic_ids, m_designs.at(uuid), true);
 }
 
 PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesignManager() {

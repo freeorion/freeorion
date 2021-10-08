@@ -1569,7 +1569,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     m_universe.ResetAllIDAllocation(empire_ids);
 
     // Add predefined ship designs to universe
-    GetPredefinedShipDesignManager().AddShipDesignsToUniverse(); // TODO: pass in m_universe
+    GetPredefinedShipDesignManager().AddShipDesignsToUniverse(m_universe);
     // Initialize empire objects for each player
     InitEmpires(player_setup_data);
 

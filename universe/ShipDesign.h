@@ -10,6 +10,8 @@
 #include "EnumsFwd.h"
 #include "../util/Pending.h"
 
+class Universe;
+
 /** ParsedShipDesign holds the results of a parsed ship design which can be
     converted to a ShipDesign. */
 struct FO_COMMON_API ParsedShipDesign {
@@ -262,7 +264,7 @@ public:
 
     /** Adds designs in this manager to the universe with the design creator
       * left as no empire. */
-    void AddShipDesignsToUniverse() const;
+    void AddShipDesignsToUniverse(Universe& universe) const;
 
     /** Returns the predefined ShipDesign with the name \a name.  If no such
       * ship design exists, 0 is returned instead. */
