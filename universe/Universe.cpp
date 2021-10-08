@@ -3021,10 +3021,9 @@ void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, in
         designs_to_serialize.clear();
 
         // add generic monster ship designs so they always appear in players' pedias
-        for (const auto& ship_design_entry : m_ship_designs) {
-            ShipDesign* design = ship_design_entry.second;
+        for (const auto& [design_id, design] : m_ship_designs) {
             if (design->IsMonster() && design->DesignedByEmpire() == ALL_EMPIRES)
-                designs_to_serialize[design->ID()] = design;
+                designs_to_serialize.emplace(design_id, design);
         }
 
         // get empire's known ship designs
@@ -3038,7 +3037,7 @@ void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, in
         for (int design_id : empire_designs) {
             auto universe_design_it = m_ship_designs.find(design_id);
             if (universe_design_it != m_ship_designs.end())
-                designs_to_serialize[design_id] = universe_design_it->second;
+                designs_to_serialize.emplace(design_id, universe_design_it->second);
             else
                 ErrorLogger() << "Universe::GetShipDesignsToSerialize empire " << encoding_empire
                               << " should know about design with id " << design_id
