@@ -2393,8 +2393,9 @@ bool Building::Match(const ScriptingContext& local_context) const {
         return true;
 
     // match one of the specified building types
+    const auto& btn{building->BuildingTypeName()};
     for (auto& name : m_names) {
-        if (name->Eval(local_context) == building->BuildingTypeName())
+        if (name->Eval(local_context) == btn)
             return true;
     }
 
