@@ -350,7 +350,7 @@ namespace {
     }
 
     const std::vector<float>& StarLightColour(StarType star_type) {
-        static std::vector<float> white(4, 0.0f);
+        static const std::vector<float> white(4, 0.0f);
         const auto& colour_map = GetStarLightColors();
         auto it = colour_map.find(star_type);
         if (it != colour_map.end())
@@ -3308,7 +3308,7 @@ void SidePanel::RefreshImpl() {
     // (re)create top right star graphic
     auto graphic = ClientUI::GetClientUI()->GetModuloTexture(
         ClientUI::ArtDir() / "stars_sidepanel",
-        ClientUI::StarTypeFilePrefixes()[system->GetStarType()],
+        ClientUI::StarTypeFilePrefix(system->GetStarType()),
         s_system_id);
     std::vector<std::shared_ptr<GG::Texture>> textures{std::move(graphic)};
 
