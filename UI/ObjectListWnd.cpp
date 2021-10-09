@@ -493,9 +493,6 @@ public:
         // TODO: set newly created parameter controls' values based on init condition
     }
 
-    ~ConditionWidget()
-    {}
-
     std::unique_ptr<Condition::Condition> GetCondition() {
         auto row_it = m_class_drop->CurrentItem();
         if (row_it == m_class_drop->end())
