@@ -7838,8 +7838,7 @@ namespace {
             m_empire_id(empire_id),
             m_since_turn(since_turn),
             m_vis(vis == Visibility::INVALID_VISIBILITY ? Visibility::VIS_BASIC_VISIBILITY : vis),
-            m_vis_map(context.empire_object_vis),
-            m_vis_turn_map(context.empire_object_vis_turns)
+            m_context{context}
         {}
 
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
@@ -7852,21 +7851,14 @@ namespace {
 
             if (m_since_turn == INVALID_GAME_TURN) {
                 // no valid game turn was specified, so use current universe state
-
-                auto empire_it = m_vis_map.find(m_empire_id);
-                if (empire_it == m_vis_map.end())
-                    return false;
-                const auto& object_map = empire_it->second;
-                auto object_it = object_map.find(candidate->ID());
-                if (object_it == object_map.end())
-                    return false;
-                return object_it->second >= m_vis;
+                return m_context.ContextVis(candidate->ID(), m_empire_id) >= m_vis;
 
             } else {
                 // if a game turn after which to check is specified, check the
                 // history of when empires saw which objects at which visibility
-                auto empire_it = m_vis_turn_map.find(m_empire_id);
-                if (empire_it == m_vis_turn_map.end())
+                const auto& vis_turn_map{m_context.empire_object_vis_turns};
+                auto empire_it = vis_turn_map.find(m_empire_id);
+                if (empire_it == vis_turn_map.end())
                     return false;
                 const auto& object_vis_turns_map = empire_it->second;
                 auto object_it = object_vis_turns_map.find(candidate->ID());
@@ -7880,11 +7872,10 @@ namespace {
             }
         }
 
-        int                                             m_empire_id = ALL_EMPIRES;
-        int                                             m_since_turn = BEFORE_FIRST_TURN;
-        Visibility                                      m_vis = Visibility::VIS_BASIC_VISIBILITY;
-        const Universe::EmpireObjectVisibilityMap&      m_vis_map;
-        const Universe::EmpireObjectVisibilityTurnMap&  m_vis_turn_map;
+        int                     m_empire_id = ALL_EMPIRES;
+        int                     m_since_turn = BEFORE_FIRST_TURN;
+        Visibility              m_vis = Visibility::VIS_BASIC_VISIBILITY;
+        const ScriptingContext& m_context;
 
     };
 }
@@ -9148,7 +9139,7 @@ namespace {
                 return false;
             if (m_from_objects.empty())
                 return false;
-            const auto& groups = m_supply.ResourceSupplyGroups(m_empire_id);  // TODO: put supply info in ScriptingContext
+            const auto& groups = m_supply.ResourceSupplyGroups(m_empire_id);
             if (groups.empty())
                 return false;
 
