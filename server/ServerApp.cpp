@@ -2251,24 +2251,10 @@ namespace {
         }
     }
 
-    // TODO: move into ScriptingContext
-    Visibility GetVisFromMap(int object_id, int empire_id,
-                             const std::map<int, std::map<int, Visibility>>& vis)
-    {
-        auto empire_it = vis.find(empire_id);
-        if (empire_it == vis.end())
-            return Visibility::VIS_NO_VISIBILITY;
-        auto object_it = empire_it->second.find(object_id);
-        if (object_it == empire_it->second.end())
-            return Visibility::VIS_NO_VISIBILITY;
-        return object_it->second;
-    }
-
     void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id,
                                           const ScriptingContext& context)
     {
         const ObjectMap& objects{context.ContextObjects()};
-        const auto& vis_map{context.empire_object_vis};
 
         visible_fleets.clear();
         auto system = objects.get<System>(system_id);
@@ -2288,7 +2274,7 @@ namespace {
                     continue;
                 if (fleet->OwnedBy(empire_id))
                     continue;   // don't care about fleets owned by the same empire for determining combat conditions
-                Visibility fleet_vis = GetVisFromMap(fleet->ID(), empire_id, vis_map);
+                Visibility fleet_vis = context.ContextVis(fleet->ID(), empire_id);
                 TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
                 if (fleet_vis >= Visibility::VIS_BASIC_VISIBILITY)
                     visible_fleets.emplace(fleet->ID());
@@ -2351,7 +2337,7 @@ namespace {
         if (empire_id != ALL_EMPIRES) {
             for (int planet_id : planet_ids) {
                 // include planets visible to empire
-                Visibility planet_vis = GetVisFromMap(planet_id, empire_id, context.empire_object_vis);
+                Visibility planet_vis = context.ContextVis(planet_id, empire_id);
                 TraceLogger(combat) << "\t\tplanet (" << planet_id << ") has visibility rank " << planet_vis;
                 if (planet_vis <= Visibility::VIS_BASIC_VISIBILITY)
                     continue;

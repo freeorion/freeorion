@@ -3655,7 +3655,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
         for ([[maybe_unused]] auto& [empire_id, unused_empire] : context.Empires()) {
             (void)unused_empire;
             for (auto& object : condition_matches) {
-                auto vis = object->GetVisibility(empire_id, context.empire_object_vis);
+                auto vis = context.ContextVis(object->ID(), empire_id);
                 if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
                     recipient_empire_ids.insert(empire_id);
                     break; // can move to the next empire, since this one has seen a matching object

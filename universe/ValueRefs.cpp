@@ -1490,13 +1490,7 @@ Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) co
                 return Visibility::VIS_NO_VISIBILITY;
         }
 
-        auto empire_it = context.empire_object_vis.find(empire_id);
-        if (empire_it == context.empire_object_vis.end())
-            return Visibility::VIS_NO_VISIBILITY;
-        auto obj_it = empire_it->second.find(object_id);
-        if (obj_it == empire_it->second.end())
-            return Visibility::VIS_NO_VISIBILITY;
-        return obj_it->second;
+        return context.ContextVis(object_id, empire_id);
     }
 
     return Visibility::INVALID_VISIBILITY;

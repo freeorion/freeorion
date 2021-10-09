@@ -270,6 +270,16 @@ struct ScriptingContext {
         return it == diplo_statuses.end() ? DiplomaticStatus::INVALID_DIPLOMATIC_STATUS : it->second;
     }
 
+    Visibility ContextVis(int object_id, int empire_id) const {
+        auto empire_it = empire_object_vis.find(empire_id);
+        if (empire_it == empire_object_vis.end())
+            return Visibility::VIS_NO_VISIBILITY;
+        auto object_it = empire_it->second.find(object_id);
+        if (object_it == empire_it->second.end())
+            return Visibility::VIS_NO_VISIBILITY;
+        return object_it->second;
+    }
+
     // mutable empire not thread safe to modify
     std::shared_ptr<Empire> GetEmpire(int id) {
         if (!empires) {
