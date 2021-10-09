@@ -1767,7 +1767,7 @@ void Empire::AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& n
     m_newly_researched_techs.insert(name);
 }
 
-void Empire::ApplyNewTechs() {
+void Empire::ApplyNewTechs(Universe& universe, int current_turn) {
     for (const auto& new_tech : m_newly_researched_techs) {
         const Tech* tech = GetTech(new_tech);
         if (!tech) {
@@ -1776,17 +1776,17 @@ void Empire::ApplyNewTechs() {
         }
 
         for (const UnlockableItem& item : tech->UnlockedItems())
-            UnlockItem(item);  // potential infinite if a tech (in)directly unlocks itself?
+            UnlockItem(item, universe, current_turn);  // potential infinite if a tech (in)directly unlocks itself?
 
         if (!m_techs.count(new_tech)) {
             m_techs[new_tech] = CurrentTurn();
-            AddSitRepEntry(CreateTechResearchedSitRep(new_tech));
+            AddSitRepEntry(CreateTechResearchedSitRep(new_tech, current_turn));
         }
     }
     m_newly_researched_techs.clear();
 }
 
-void Empire::AddPolicy(const std::string& name) {
+void Empire::AddPolicy(const std::string& name, int current_turn) {
     const Policy* policy = GetPolicy(name);
     if (!policy) {
         ErrorLogger() << "Empire::AddPolicy given and invalid policy: " << name;
@@ -1794,14 +1794,14 @@ void Empire::AddPolicy(const std::string& name) {
     }
 
     if (m_available_policies.find(name) == m_available_policies.end()) {
-        AddSitRepEntry(CreatePolicyUnlockedSitRep(name));
+        AddSitRepEntry(CreatePolicyUnlockedSitRep(name, current_turn));
         m_available_policies.insert(name);
     }
 }
 
-void Empire::ApplyPolicies() {
+void Empire::ApplyPolicies(Universe& universe, int current_turn) {
     for (auto& [policy_name, adoption_info] : m_adopted_policies) {
-        if (adoption_info.adoption_turn >= CurrentTurn())
+        if (adoption_info.adoption_turn >= current_turn)
             continue; // policy unlock take effect one turn after adoption
 
         const Policy* policy = GetPolicy(policy_name);
@@ -1810,36 +1810,36 @@ void Empire::ApplyPolicies() {
             continue;
         }
         for (const UnlockableItem& item : policy->UnlockedItems())
-            UnlockItem(item);
+            UnlockItem(item, universe, current_turn);
     }
 }
 
-void Empire::UnlockItem(const UnlockableItem& item) { // TODO: pass Universe
+void Empire::UnlockItem(const UnlockableItem& item, Universe& universe, int current_turn) {
     switch (item.type) {
     case UnlockableItemType::UIT_BUILDING:
-        AddBuildingType(item.name);
+        AddBuildingType(item.name, current_turn);
         break;
     case UnlockableItemType::UIT_SHIP_PART:
-        AddShipPart(item.name);
+        AddShipPart(item.name, current_turn);
         break;
     case UnlockableItemType::UIT_SHIP_HULL:
-        AddShipHull(item.name);
+        AddShipHull(item.name, current_turn);
         break;
     case UnlockableItemType::UIT_SHIP_DESIGN:
-        AddShipDesign(GetPredefinedShipDesignManager().GetDesignID(item.name), GetUniverse());
+        AddShipDesign(GetPredefinedShipDesignManager().GetDesignID(item.name), universe);
         break;
     case UnlockableItemType::UIT_TECH:
         AddNewlyResearchedTechToGrantAtStartOfNextTurn(item.name);
         break;
     case UnlockableItemType::UIT_POLICY:
-        AddPolicy(item.name);
+        AddPolicy(item.name, current_turn);
         break;
     default:
         ErrorLogger() << "Empire::UnlockItem : passed UnlockableItem with unrecognized UnlockableItemType";
     }
 }
 
-void Empire::AddBuildingType(const std::string& name) {
+void Empire::AddBuildingType(const std::string& name, int current_turn) {
     const BuildingType* building_type = GetBuildingType(name);
     if (!building_type) {
         ErrorLogger() << "Empire::AddBuildingType given an invalid building type name: " << name;
@@ -1850,10 +1850,10 @@ void Empire::AddBuildingType(const std::string& name) {
     if (m_available_building_types.count(name))
         return;
     m_available_building_types.insert(name);
-    AddSitRepEntry(CreateBuildingTypeUnlockedSitRep(name));
+    AddSitRepEntry(CreateBuildingTypeUnlockedSitRep(name, current_turn));
 }
 
-void Empire::AddShipPart(const std::string& name) {
+void Empire::AddShipPart(const std::string& name, int current_turn) {
     const ShipPart* ship_part = GetShipPart(name);
     if (!ship_part) {
         ErrorLogger() << "Empire::AddShipPart given an invalid ship part name: " << name;
@@ -1862,10 +1862,10 @@ void Empire::AddShipPart(const std::string& name) {
     if (!ship_part->Producible())
         return;
     m_available_ship_parts.insert(name);
-    AddSitRepEntry(CreateShipPartUnlockedSitRep(name));
+    AddSitRepEntry(CreateShipPartUnlockedSitRep(name, current_turn));
 }
 
-void Empire::AddShipHull(const std::string& name) {
+void Empire::AddShipHull(const std::string& name, int current_turn) {
     const ShipHull* ship_hull = GetShipHull(name);
     if (!ship_hull) {
         ErrorLogger() << "Empire::AddShipHull given an invalid hull type name: " << name;
@@ -1874,7 +1874,7 @@ void Empire::AddShipHull(const std::string& name) {
     if (!ship_hull->Producible())
         return;
     m_available_ship_hulls.insert(name);
-    AddSitRepEntry(CreateShipHullUnlockedSitRep(name));
+    AddSitRepEntry(CreateShipHullUnlockedSitRep(name, current_turn));
 }
 
 void Empire::AddExploredSystem(int ID, int turn, const ObjectMap& objects) {
@@ -2349,12 +2349,9 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
             system->Insert(building);
 
             // record building production in empire stats
-            if (m_building_types_produced.count(elem.item.name))
-                m_building_types_produced[elem.item.name]++;
-            else
-                m_building_types_produced[elem.item.name] = 1;
+            m_building_types_produced[elem.item.name]++;
 
-            AddSitRepEntry(CreateBuildingBuiltSitRep(building->ID(), planet->ID()));
+            AddSitRepEntry(CreateBuildingBuiltSitRep(building->ID(), planet->ID(), context.current_turn));
             DebugLogger() << "New Building created on turn: " << CurrentTurn();
             break;
         }
@@ -2430,10 +2427,12 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
             }
             // add sitrep
             if (elem.blocksize == 1) {
-                AddSitRepEntry(CreateShipBuiltSitRep(ship->ID(), system->ID(), ship->DesignID()));
+                AddSitRepEntry(CreateShipBuiltSitRep(ship->ID(), system->ID(),
+                                                     ship->DesignID(), context.current_turn));
                 DebugLogger() << "New Ship, id " << ship->ID() << ", created on turn: " << ship->CreationTurn();
             } else {
-                AddSitRepEntry(CreateShipBlockBuiltSitRep(system->ID(), ship->DesignID(), elem.blocksize));
+                AddSitRepEntry(CreateShipBlockBuiltSitRep(system->ID(), ship->DesignID(),
+                                                          elem.blocksize, context.current_turn));
                 DebugLogger() << "New block of "<< elem.blocksize << " ships created on turn: " << ship->CreationTurn();
             }
             break;

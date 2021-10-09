@@ -298,20 +298,24 @@ namespace {
     void EmpireUnlockItem(int empire_id, UnlockableItemType item_type,
                           const std::string& item_name)
     {
-        Empire* empire = GetEmpire(empire_id);
+        Universe& universe{GetUniverse()};
+        EmpireManager& empires{Empires()};
+        int current_turn{CurrentTurn()};
+
+        auto empire = empires.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "EmpireUnlockItem: couldn't get empire with ID " << empire_id;
             return;
         }
-        UnlockableItem item = UnlockableItem(item_type, item_name);
-        empire->UnlockItem(item);
+        auto item = UnlockableItem{item_type, item_name};
+        empire->UnlockItem(item, universe, current_turn);
     }
 
-    void EmpireAddShipDesign(int empire_id, const std::string& design_name)
-    {
-        Universe& universe = GetUniverse();
+    void EmpireAddShipDesign(int empire_id, const std::string& design_name) {
+        Universe& universe{GetUniverse()};
+        EmpireManager& empires{Empires()};
 
-        Empire* empire = GetEmpire(empire_id);
+        auto empire = empires.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "EmpireAddShipDesign: couldn't get empire with ID " << empire_id;
             return;

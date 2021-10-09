@@ -262,22 +262,22 @@ public:
     void ResumeProduction(int index);                        ///< Sets the production of produce at postion \a index unpaused, if such an index exists
     void AllowUseImperialPP(int index, bool allow=true);     ///< Allows or disallows the use of the imperial stockpile for production
 
-    void AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& name);    ///< Inserts the given Tech into the Empire's list of innovations. Call ApplyAddedTech to make it effective.
-    void ApplyNewTechs();                           ///< Moves all Techs from the Empire's list of innovations into the Empire's list of available technologies.
-    void AddPolicy(const std::string& name);        ///< Inserts the given Policy into the Empire's list of available policies
-    void ApplyPolicies();                           ///< Unlocks anything unlocked by adopted policies
+    void AddNewlyResearchedTechToGrantAtStartOfNextTurn(const std::string& name); ///< Inserts the given Tech into the Empire's list of innovations. Call ApplyAddedTech to make it effective.
+    void ApplyNewTechs(Universe& universe, int current_turn);  ///< Moves all Techs from the Empire's list of innovations into the Empire's list of available technologies.
+    void AddPolicy(const std::string& name, int current_turn); ///< Inserts the given Policy into the Empire's list of available policies
+    void ApplyPolicies(Universe& universe, int current_turn);  ///< Unlocks anything unlocked by adopted policies
 
     //! Adds a given producible item (Building, Ship Hull, Ship part) to the
     //! list of available items.
-    void UnlockItem(const UnlockableItem& item);
+    void UnlockItem(const UnlockableItem& item, Universe& universe, int current_turn);
 
-    void AddBuildingType(const std::string& name);  ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
+    void AddBuildingType(const std::string& name, int current_turn);  ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     //! Inserts the given ShipPart into the Empire's list of available ShipPart%s.
-    void AddShipPart(const std::string& name);
+    void AddShipPart(const std::string& name, int current_turn);
 
     //! Inserts the given ship ShipHull into the Empire's list of available
     //! ShipHull%s.
-    void AddShipHull(const std::string& name);
+    void AddShipHull(const std::string& name, int current_turn);
 
     void AddExploredSystem(int ID, int turn, const ObjectMap& objects); ///< Inserts the given ID into the Empire's list of explored systems.
 

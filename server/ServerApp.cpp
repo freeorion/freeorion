@@ -1590,11 +1590,12 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     }
 
     if (!success)
-        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_UNIVERSE_GENERATION_ERRORS"), false));
+        ServerApp::GetApp()->Networking().SendMessageAll(
+            ErrorMessage(UserStringNop("SERVER_UNIVERSE_GENERATION_ERRORS"), false));
 
     for (auto& empire : m_empires) {
-        empire.second->ApplyNewTechs();
-        empire.second->ApplyPolicies();
+        empire.second->ApplyNewTechs(m_universe, m_current_turn);
+        empire.second->ApplyPolicies(m_universe, m_current_turn);
     }
 
     DebugLogger() << "Applying first turn effects and updating meters";
@@ -3739,8 +3740,8 @@ void ServerApp::PostCombatProcessTurns() {
     for ([[maybe_unused]] auto& [ignored_id, empire] : m_empires) {
         (void)ignored_id;   // quiet unused variable warning
         if (empire && !empire->Eliminated()) {
-            empire->ApplyNewTechs();
-            empire->ApplyPolicies();
+            empire->ApplyNewTechs(m_universe, m_current_turn);
+            empire->ApplyPolicies(m_universe, m_current_turn);
         }
     }
 

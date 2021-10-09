@@ -45,16 +45,16 @@ private:
 //! events.
 //!
 //! @{
-[[nodiscard]] SitRepEntry CreateTechResearchedSitRep(const std::string& tech_name);
-[[nodiscard]] SitRepEntry CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id);
-[[nodiscard]] SitRepEntry CreateShipBlockBuiltSitRep(int system_id, int shipdesign_id, int number);
-[[nodiscard]] SitRepEntry CreateBuildingBuiltSitRep(int building_id, int planet_id);
+[[nodiscard]] SitRepEntry CreateTechResearchedSitRep(const std::string& tech_name, int current_turn);
+[[nodiscard]] SitRepEntry CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id, int current_turn);
+[[nodiscard]] SitRepEntry CreateShipBlockBuiltSitRep(int system_id, int shipdesign_id, int number, int current_turn);
+[[nodiscard]] SitRepEntry CreateBuildingBuiltSitRep(int building_id, int planet_id, int current_turn);
 
-[[nodiscard]] SitRepEntry CreateTechUnlockedSitRep(const std::string& tech_name);
-[[nodiscard]] SitRepEntry CreatePolicyUnlockedSitRep(const std::string& policy_name);
-[[nodiscard]] SitRepEntry CreateBuildingTypeUnlockedSitRep(const std::string& building_type_name);
-[[nodiscard]] SitRepEntry CreateShipHullUnlockedSitRep(const std::string& ship_hull_name);
-[[nodiscard]] SitRepEntry CreateShipPartUnlockedSitRep(const std::string& ship_part_name);
+[[nodiscard]] SitRepEntry CreateTechUnlockedSitRep(const std::string& tech_name, int current_turn);
+[[nodiscard]] SitRepEntry CreatePolicyUnlockedSitRep(const std::string& policy_name, int current_turn);
+[[nodiscard]] SitRepEntry CreateBuildingTypeUnlockedSitRep(const std::string& building_type_name, int current_turn);
+[[nodiscard]] SitRepEntry CreateShipHullUnlockedSitRep(const std::string& ship_hull_name, int current_turn);
+[[nodiscard]] SitRepEntry CreateShipPartUnlockedSitRep(const std::string& ship_part_name, int current_turn);
 
 [[nodiscard]] FO_COMMON_API SitRepEntry CreateCombatSitRep(int system_id, int log_id, int empire_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreateGroundCombatSitRep(int planet_id, int empire_id);

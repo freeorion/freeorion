@@ -3448,10 +3448,10 @@ void GiveEmpireContent::Execute(ScriptingContext& context) const {
     std::string content_name = m_content_name->Eval(context);
 
     switch (m_unlock_type) {
-    case UnlockableItemType::UIT_BUILDING:  empire->AddBuildingType(content_name); break;
-    case UnlockableItemType::UIT_SHIP_PART: empire->AddShipPart(content_name);     break;
-    case UnlockableItemType::UIT_SHIP_HULL: empire->AddShipHull(content_name);     break;
-    case UnlockableItemType::UIT_POLICY:    empire->AddPolicy(content_name);       break;
+    case UnlockableItemType::UIT_BUILDING:  empire->AddBuildingType(content_name, context.current_turn); break;
+    case UnlockableItemType::UIT_SHIP_PART: empire->AddShipPart(content_name, context.current_turn);     break;
+    case UnlockableItemType::UIT_SHIP_HULL: empire->AddShipHull(content_name, context.current_turn);     break;
+    case UnlockableItemType::UIT_POLICY:    empire->AddPolicy(content_name, context.current_turn);       break;
     case UnlockableItemType::UIT_TECH: {
         const Tech* tech = GetTech(content_name);
         if (!tech) {
