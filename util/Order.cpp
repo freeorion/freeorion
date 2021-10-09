@@ -362,7 +362,8 @@ bool FleetMoveOrder::Check(int empire_id, int fleet_id, int dest_system_id,
         return false;
     }
 
-    const auto& known_objs = context.ContextUniverse().EmpireKnownObjects(empire_id);
+    const auto& known_objs{AppEmpireID() == ALL_EMPIRES ?
+        context.ContextUniverse().EmpireKnownObjects(empire_id) : context.ContextObjects()};
     auto dest_system = known_objs.get<System>(dest_system_id);
     if (!dest_system) {
         ErrorLogger() << "Empire with id " << empire_id << " ordered fleet to move to system with id " << dest_system_id << " but no such system is known to that empire";

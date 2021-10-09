@@ -1077,7 +1077,10 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects, const 
 }
 
 void Empire::UpdateSystemSupplyRanges(const Universe& universe) {
-    const ObjectMap& empire_known_objects = universe.EmpireKnownObjects(this->EmpireID());
+    if (AppEmpireID() != ALL_EMPIRES)
+        ErrorLogger() << "Empire::UpdateSystemSupplyRanges unexpectedly called by an App with a specific empire ID";
+    const ObjectMap& empire_known_objects{AppEmpireID() == ALL_EMPIRES ?
+        universe.EmpireKnownObjects(this->EmpireID()) : universe.Objects()};
 
     // get ids of objects partially or better visible to this empire.
     const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
