@@ -78,6 +78,12 @@ COMMON_HAPPINESS_EFFECTS
                 min(abs(Value(Target.TargetHappiness) - Value), 1) *
                     (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetHappiness))]))
 
+        EffectsGroup
+            scope = Source
+            activation = ((GameRule name = "RULE_BASELINE_PLANET_STABILITY") != 0)
+            accountinglabel = "RULE_BASELINE_PLANET_STABILITY"
+            effects = SetTargetHappiness value = Value + (GameRule name = "RULE_BASELINE_PLANET_STABILITY")
+
         EffectsGroup    // more stable when liked focuses are adopted
             scope = Source
             activation = And [

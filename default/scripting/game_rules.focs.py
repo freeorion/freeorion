@@ -144,6 +144,16 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_BASELINE_PLANET_STABILITY",
+    description="RULE_BASELINE_PLANET_STABILITY_DESC",
+    category="BALANCE",
+    type=float,
+    default=0.0,
+    min=-20.0,
+    max=20.0,
+)
+
+GameRule(
     name="RULE_SHIP_PART_BASED_UPKEEP",
     description="RULE_SHIP_PART_BASED_UPKEEP_DESC",
     category="BALANCE",

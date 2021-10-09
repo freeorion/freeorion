@@ -1284,6 +1284,12 @@ Gas Giants Habitable size
 RULE_HABITABLE_SIZE_DESC
 Value used to adjust for [[METER_POPULATION]] changes on a planet of this size.
 
+RULE_BASELINE_PLANET_STABILITY
+Planet Stability Baseline
+
+RULE_BASELINE_PLANET_STABILITY_DESC
+Baseline level of planet [[METER_HAPPINESS]].
+
 RULE_ALLOW_CONCEDE
 Allow Conceding
 
