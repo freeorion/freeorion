@@ -74,6 +74,10 @@ public:
 
     [[nodiscard]] virtual std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) = 0;
 
+    /** On server or clients with no player: ALL_EMPIRES
+      * On clients with a player: that player's ID */
+    [[nodiscard]] virtual int EmpireID() const = 0;
+
     //! Returns the current game turn
     //!
     //! @return The number representing the current game turn.
@@ -143,6 +147,11 @@ protected:
  * name, if the application isn't supposed to see the real object name. */
 [[nodiscard]] inline std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object)
 { return IApp::GetApp()->GetVisibleObjectName(object); }
+
+/** Returns app's empire ID. This may be an actual empire ID or may be
+  * ALL_EMPIRES. */
+[[nodiscard]] inline int AppEmpireID()
+{ return IApp::GetApp()->EmpireID(); }
 
 /** Returns current game turn.  This is >= 1 during a game, BEFORE_FIRST_TURN
   * during galaxy setup, or is INVALID_GAME_TURN at other times */

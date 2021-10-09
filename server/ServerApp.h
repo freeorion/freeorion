@@ -50,6 +50,9 @@ public:
 
     [[nodiscard]] std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) override;
 
+    [[nodiscard]] int EmpireID() const override
+    { return ALL_EMPIRES; }
+
     [[nodiscard]] int CurrentTurn() const override
     { return m_current_turn; }
 

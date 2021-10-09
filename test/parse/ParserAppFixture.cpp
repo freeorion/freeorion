@@ -19,6 +19,9 @@ ParserAppFixture::ParserAppFixture() {
     GetOptionsDB().Set<std::string>("resource.path", PathToString(GetBinDir() / "default"));
 }
 
+int ParserAppFixture::EmpireID() const
+{ return ALL_EMPIRES; }
+
 int ParserAppFixture::CurrentTurn() const
 { return INVALID_GAME_TURN; }
 

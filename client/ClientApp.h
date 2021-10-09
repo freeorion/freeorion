@@ -42,7 +42,7 @@ public:
      *
      * @return An empire identifier.
      */
-    [[nodiscard]] int EmpireID() const;
+    [[nodiscard]] int EmpireID() const override;
 
     /** @brief Return the current game turn
      *
