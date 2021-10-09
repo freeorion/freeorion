@@ -26,8 +26,7 @@ enum class SearchDomain : int {
 
 /** The base class for all Conditions. */
 struct FO_COMMON_API Condition {
-    Condition() = default;
-    virtual ~Condition();
+    virtual ~Condition() = default;
 
     virtual bool operator==(const Condition& rhs) const;
     bool operator!=(const Condition& rhs) const
@@ -94,6 +93,7 @@ struct FO_COMMON_API Condition {
     [[nodiscard]] virtual std::unique_ptr<Condition> Clone() const = 0;
 
 protected:
+    Condition() = default;
     //! Copies invariants from other Condition
     Condition(const Condition& rhs) = default;
     Condition(Condition&& rhs) = delete;

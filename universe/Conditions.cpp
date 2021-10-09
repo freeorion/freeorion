@@ -254,8 +254,6 @@ struct Condition::MatchHelper {
     const ScriptingContext& m_parent_context;
 };
 
-Condition::~Condition() = default;
-
 bool Condition::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
