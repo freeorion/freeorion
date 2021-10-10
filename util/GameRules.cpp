@@ -139,6 +139,7 @@ void GameRules::Add(Pending::Pending<GameRulesTypeMap>&& future)
 { m_pending_rules = std::move(future); }
 
 namespace {
+    /** Sets default validator, ensures option and sets value to value of the option. */
     template <typename T>
     void CheckValidatorAndAddRuleOption(GameRule& rule)
     {
@@ -146,9 +147,10 @@ namespace {
             rule.validator = std::make_unique<Validator<T>>();
         auto option_name = "setup.rules." + rule.name;
         if (!GetOptionsDB().OptionExists(option_name))
-            GetOptionsDB().Add<T>(std::move(option_name), rule.description,
+            GetOptionsDB().Add<T>(option_name, rule.description,
                                   boost::any_cast<T>(rule.default_value),
                                   rule.validator->Clone());
+        rule.value = GetOptionsDB().Get<T>(option_name);
     }
 }
 
