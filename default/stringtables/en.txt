@@ -6149,7 +6149,7 @@ METER_FUEL_VALUE_LABEL
 Fuel
 
 METER_FUEL_VALUE_DESC
-'''Fuel allows ships to travel the starlanes outside of [[metertype METER_SUPPLY]] of your empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate.
+'''Fuel allows ships to travel the starlanes outside of [[metertype METER_SUPPLY]] of their empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate.
 
 The effective amount of fuel a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> depends on the base fuel of the hull and additional fuel effects scaled by the [[encyclopedia FUEL_EFFICIENCY_TITLE]] of the [[encyclopedia ENC_SHIP_HULL]]. Fuel efficiency changes the effective capacity of fuel [[encyclopedia ENC_SHIP_PART]]s and will multiply any other fuel-modifying effects.
 
@@ -7786,7 +7786,7 @@ EFFECT_MINES_SHIP_DESTROYED_LABEL
 System Mines Destroyed Ship
 
 EFFECT_MINES_UNKNOWN
-At %system%: An unknown object has triggered your mines.
+At %system%: An unknown object has triggered mines.
 
 EFFECT_MINES_UNKNOWN_LABEL
 System Mines Unknown Ship
@@ -8842,7 +8842,7 @@ SP_FULVER_DESC
 The Fulvers' appearance resembles that of large nervous ants. They possess quantum computing brains which effectively allows them to predict all possible near futures making them hard to surprise in combat.
 
 Name:
-No other species on the Fulver homeworld has this precognition ability. As such a "Fulver" is "One who can see" your possible reactions.
+No other species on the Fulver homeworld has this precognition ability. As such a "Fulver" is "One who can see" another being's possible reactions.
 
 Personality:
 Fulver prefer to concentrate on their strength and prefer to live from day to day. Fulver often favor the tools and decisions which allows for the highest number of future choices. Having a bad memory and no capability for long term future prediction they are bad at long term commitments like science and building up defensive structures. Feeling locked in by the limited number of choices they are restless and unsatisfied and constantly try to overcome their situation.
@@ -11528,7 +11528,7 @@ PLC_METROPOLES
 Metropoles
 
 PLC_METROPOLES_DESC
-'''Boosts the output of up to [[value METROPOLES_PLANET_LIMIT]] planets (but no more than 1 / [[value METROPOLES_MIN_PLANETS]] or your populated planets) with [[metertype METER_POPULATION]] of at least [[value METROPOLES_MINIMUM_POPULATION]] and [[metertype METER_HAPPINESS]] of at least [[value METROPOLES_MIN_STABILITY]].
+'''Boosts the output of up to [[value METROPOLES_PLANET_LIMIT]] planets. At most (1 / [[value METROPOLES_MIN_PLANETS]] or populated planets) with [[metertype METER_POPULATION]] of at least [[value METROPOLES_MINIMUM_POPULATION]] and [[metertype METER_HAPPINESS]] of at least [[value METROPOLES_MIN_STABILITY]] will be boosted.
 The highest-populated of the qualified planets will receive, regardless of focus:
 • Increases [[metertype METER_TARGET_RESEARCH]] by [[value METROPOLES_TARGET_RESEARCH_PERPOP]] per population.
 • Increases [[metertype METER_TARGET_INDUSTRY]] by [[value METROPOLES_TARGET_INDUSTRY_PERPOP]] per population.
