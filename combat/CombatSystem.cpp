@@ -121,7 +121,7 @@ void CombatInfo::GetObjectsToSerialize(ObjectMap& filtered_objects, int encoding
         return;
 
     filtered_objects.clear();
-    filtered_objects.Copy(*this->objects);  // temporary... copy everything in combat info
+    filtered_objects.Copy(*this->objects, this->universe); // copy everything in combat info
     // TODO: Actually filter based on the encoding empire and what visibility it has of objects
 
     DebugLogger() << "CombatInfo::GetObjectsToSerialize: input: " << this->objects->size()

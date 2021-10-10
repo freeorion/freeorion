@@ -305,7 +305,7 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
-        Client().ResetToIntro(true);
+        client.ResetToIntro(true);
         ClientUI::MessageBox(UserString(problem), true);
         client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }

@@ -38,7 +38,7 @@ System::System(StarType star, const std::string& name, double x, double y) :
     UniverseObject::Init();
 }
 
-System* System::Clone(Universe& universe, int empire_id) const {
+System* System::Clone(const Universe& universe, int empire_id) const {
     Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
@@ -49,7 +49,9 @@ System* System::Clone(Universe& universe, int empire_id) const {
     return retval.release();
 }
 
-void System::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {
+void System::Copy(std::shared_ptr<const UniverseObject> copied_object,
+                  const Universe& universe, int empire_id)
+{
     if (copied_object.get() == this)
         return;
     std::shared_ptr<const System> copied_system = std::dynamic_pointer_cast<const System>(copied_object);
@@ -69,11 +71,6 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe&
             this->m_name = copied_system->m_name;
             this->m_star = copied_system->m_star;
         }
-
-        // add any visible lanes, without removing existing entries
-        std::map<int, bool> visible_lanes_holes = copied_system->VisibleStarlanesWormholes(empire_id, universe);
-        for (const auto& entry : visible_lanes_holes)
-            this->m_starlanes_wormholes[entry.first] = entry.second;
 
         // copy visible info of visible contained objects
         this->m_objects = copied_system->VisibleContainedObjectIDs(empire_id);
@@ -125,21 +122,16 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe&
             this->m_star =                  copied_system->m_star;
             this->m_last_turn_battle_here = copied_system->m_last_turn_battle_here;
 
-            // remove any not-visible lanes that were previously known: with
-            // partial vis, they should be seen, but aren't, so are known not
-            // to exist any more
+            // update lanes to be just those that are visible, erasing any
+            // previously known that aren't visible now, as these are thus
+            // known not to exist any more
+            this->m_starlanes_wormholes = copied_system->VisibleStarlanesWormholes(empire_id, universe);
 
-            // remove previously known lanes that aren't currently visible
-            for (auto entry_it = m_starlanes_wormholes.begin(); entry_it != m_starlanes_wormholes.end();
-                 /* conditional increment in deleting loop */)
-            {
-                int lane_end_sys_id = entry_it->first;
-                if (!visible_lanes_holes.count(lane_end_sys_id)) {
-                    entry_it = m_starlanes_wormholes.erase(entry_it);
-                } else {
-                    ++entry_it;
-                }
-            }
+        } else {
+            // add any visible lanes, without removing existing entries
+            for (const auto& [lane_id, lane_or_hole] :
+                 copied_system->VisibleStarlanesWormholes(empire_id, universe))
+            { this->m_starlanes_wormholes[lane_id] = lane_or_hole; }
         }
     }
 }

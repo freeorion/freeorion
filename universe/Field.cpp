@@ -29,7 +29,7 @@ Field::Field(const std::string& field_type, double x, double y, double radius) :
     UniverseObject::GetMeter(MeterType::METER_SIZE)->Set(radius, radius);
 }
 
-Field* Field::Clone(Universe& universe, int empire_id) const {
+Field* Field::Clone(const Universe& universe, int empire_id) const {
     Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
@@ -40,7 +40,9 @@ Field* Field::Clone(Universe& universe, int empire_id) const {
     return retval.release();
 }
 
-void Field::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {
+void Field::Copy(std::shared_ptr<const UniverseObject> copied_object,
+                 const Universe& universe, int empire_id)
+{
     if (copied_object.get() == this)
         return;
     std::shared_ptr<const Field> copied_field = std::dynamic_pointer_cast<const Field>(copied_object);

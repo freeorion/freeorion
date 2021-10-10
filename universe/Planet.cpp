@@ -66,7 +66,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
         m_rotational_period = -m_rotational_period;
 }
 
-Planet* Planet::Clone(Universe& universe, int empire_id) const {
+Planet* Planet::Clone(const Universe& universe, int empire_id) const {
     Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
@@ -77,7 +77,9 @@ Planet* Planet::Clone(Universe& universe, int empire_id) const {
     return retval.release();
 }
 
-void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {
+void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object,
+                  const Universe& universe, int empire_id)
+{
     if (copied_object.get() == this)
         return;
     auto copied_planet = std::dynamic_pointer_cast<const Planet>(copied_object);
@@ -120,9 +122,7 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe&
                 // copy system name if at partial visibility, as it won't be copied
                 // by UniverseObject::Copy unless at full visibility, but players
                 // should know planet names even if they don't own the planet
-                universe.InhibitUniverseObjectSignals(true);
-                this->Rename(copied_planet->Name());
-                universe.InhibitUniverseObjectSignals(false);
+                m_name = copied_planet->Name();
             }
         }
     }

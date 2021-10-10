@@ -151,16 +151,14 @@ namespace {
 /////////////////////////////////////////////
 // class ObjectMap
 /////////////////////////////////////////////
-void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id) {
+void ObjectMap::Copy(const ObjectMap& copied_map, const Universe& universe, int empire_id) {
     if (&copied_map == this)
         return;
-
-
 
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
     for (const auto& obj : copied_map.all())
-        this->CopyObject(obj, empire_id);
+        this->CopyObject(obj, empire_id, universe);
 }
 
 void ObjectMap::CopyForSerialize(const ObjectMap& copied_map) {
@@ -171,11 +169,11 @@ void ObjectMap::CopyForSerialize(const ObjectMap& copied_map) {
     m_objects.insert(copied_map.m_objects.begin(), copied_map.m_objects.end());
 }
 
-void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source, int empire_id) {
+void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source,
+                           int empire_id, const Universe& universe)
+{
     if (!source)
         return;
-
-    Universe& universe{GetUniverse()}; // TODO: pass in?
 
     int source_id = source->ID();
 
@@ -190,10 +188,10 @@ void ObjectMap::CopyObject(std::shared_ptr<const UniverseObject> source, int emp
     }
 }
 
-ObjectMap* ObjectMap::Clone(int empire_id) const {
-    ObjectMap* result = new ObjectMap();
-    result->Copy(*this, empire_id);
-    return result;
+ObjectMap* ObjectMap::Clone(const Universe& universe, int empire_id) const {
+    auto result = std::make_unique<ObjectMap>();
+    result->Copy(*this, universe, empire_id);
+    return result.release();
 }
 
 bool ObjectMap::empty() const

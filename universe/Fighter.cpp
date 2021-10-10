@@ -62,13 +62,15 @@ std::string Fighter::Dump(unsigned short ntabs) const {
 std::shared_ptr<UniverseObject> Fighter::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(std::const_pointer_cast<Fighter>(std::static_pointer_cast<const Fighter>(shared_from_this()))); }
 
-Fighter* Fighter::Clone(Universe& universe, int empire_id) const {
+Fighter* Fighter::Clone(const Universe& universe, int empire_id) const {
     auto retval = std::make_unique<Fighter>();
     retval->Copy(shared_from_this(), universe, empire_id);
     return retval.release();
 }
 
-void Fighter::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {
+void Fighter::Copy(std::shared_ptr<const UniverseObject> copied_object,
+                   const Universe& universe, int empire_id)
+{
     if (copied_object.get() == this)
         return;
     auto copied_fighter = std::dynamic_pointer_cast<const Fighter>(copied_object);

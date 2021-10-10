@@ -138,8 +138,8 @@ public:
       * (via combat or they retreat). **/
     [[nodiscard]] int ArrivalStarlane() const { return m_arrival_starlane; }
 
-    void Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe,
-              int empire_id = ALL_EMPIRES) override;
+    void Copy(std::shared_ptr<const UniverseObject> copied_object,
+              const Universe& universe, int empire_id = ALL_EMPIRES) override;
 
     /** Moves fleet, its ships, and sets systems as explored for empires. */
     void MovementPhase(ScriptingContext& context);
@@ -182,7 +182,7 @@ private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
     /** Returns new copy of this Fleet. */
-    [[nodiscard]] Fleet* Clone(Universe& universe, int empire_id = ALL_EMPIRES) const override;
+    [[nodiscard]] Fleet* Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
     std::set<int>   m_ships;
 

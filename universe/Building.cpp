@@ -23,7 +23,7 @@ Building::Building(int empire_id, const std::string& building_type,
     UniverseObject::Init();
 }
 
-Building* Building::Clone(Universe& universe, int empire_id) const {
+Building* Building::Clone(const Universe& universe, int empire_id) const {
     Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
@@ -34,7 +34,9 @@ Building* Building::Clone(Universe& universe, int empire_id) const {
     return retval.release();
 }
 
-void Building::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {
+void Building::Copy(std::shared_ptr<const UniverseObject> copied_object,
+                    const Universe& universe, int empire_id)
+{
     if (copied_object.get() == this)
         return;
     auto copied_building = std::dynamic_pointer_cast<const Building>(copied_object);

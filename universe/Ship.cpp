@@ -92,7 +92,7 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
     }
 }
 
-Ship* Ship::Clone(Universe& universe, int empire_id) const {
+Ship* Ship::Clone(const Universe& universe, int empire_id) const {
     Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
@@ -103,7 +103,9 @@ Ship* Ship::Clone(Universe& universe, int empire_id) const {
     return retval.release();
 }
 
-void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {
+void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object,
+                const Universe& universe, int empire_id)
+{
     if (copied_object.get() == this)
         return;
     auto copied_ship = std::dynamic_pointer_cast<const Ship>(copied_object);
@@ -119,12 +121,7 @@ void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& u
     UniverseObject::Copy(std::move(copied_object), vis, visible_specials, universe);
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-        if (this->m_fleet_id != copied_ship->m_fleet_id) {
-            // as with other containers, removal from the old container is triggered by the contained Object; removal from System is handled by UniverseObject::Copy
-            if (auto old_fleet = universe.Objects().get<Fleet>(this->m_fleet_id))
-                old_fleet->RemoveShips({this->ID()});
-            this->m_fleet_id = copied_ship->m_fleet_id; // as with other containers (Systems), actual insertion into fleet ships set is handled by the fleet
-        }
+        this->m_fleet_id =                      copied_ship->m_fleet_id;
 
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
             if (this->Unowned())
@@ -165,13 +162,9 @@ std::set<std::string> Ship::Tags(const ScriptingContext& context) const {
     if (!hull)
         return {};
 
-    std::set<std::string> retval{hull->Tags().begin(), hull->Tags().end()};
+    std::set<std::string> retval{hull->Tags()};
 
-    const std::vector<std::string>& parts = design->Parts();
-    if (parts.empty())
-        return retval;
-
-    for (const std::string& part_name : parts) {
+    for (const std::string& part_name : design->Parts()) {
         if (const ShipPart* part = GetShipPart(part_name))
             retval.insert(part->Tags().begin(), part->Tags().end());
     }

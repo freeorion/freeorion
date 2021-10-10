@@ -82,8 +82,8 @@ Fleet::Fleet(std::string name, double x, double y, int owner) :
     SetOwner(owner);
 }
 
-Fleet* Fleet::Clone(Universe& universe, int empire_id) const {
-    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
+Fleet* Fleet::Clone(const Universe& universe, int empire_id) const {
+    Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
@@ -93,7 +93,9 @@ Fleet* Fleet::Clone(Universe& universe, int empire_id) const {
     return retval.release();
 }
 
-void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, Universe& universe, int empire_id) {
+void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object,
+                 const Universe& universe, int empire_id)
+{
     if (copied_object.get() == this)
         return;
     auto copied_fleet = std::dynamic_pointer_cast<const Fleet>(copied_object);

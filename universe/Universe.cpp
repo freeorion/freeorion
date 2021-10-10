@@ -3059,7 +3059,7 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
 
     } else if constexpr (!ENABLE_VISIBILITY_EMPIRE_MEMORY) {
         // if encoding without memory, copy all info visible to specified empire
-        objects.Copy(*m_objects, encoding_empire);
+        objects.Copy(*m_objects, *this, encoding_empire);
 
     } else {
         // if encoding for a specific empire with memory...

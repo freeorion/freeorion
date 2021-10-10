@@ -17,6 +17,7 @@
 
 struct UniverseObjectVisitor;
 
+class Universe;
 class UniverseObject;
 class ResourceCenter;
 class PopCenter;
@@ -36,7 +37,7 @@ public:
     /** Copies contents of this ObjectMap to a new ObjectMap, which is
       * returned.  Copies are limited to only duplicate information that the
       * empire with id \a empire_id would know about the copied objects. */
-    ObjectMap* Clone(int empire_id = ALL_EMPIRES) const;
+    ObjectMap* Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const;
 
     /** Returns the number of objects of the specified class in this ObjectMap. */
     template <typename T = UniverseObject>
@@ -141,7 +142,7 @@ public:
       * Copy or Clone functions of the copied UniverseObjects.  Any objects
       * in this ObjectMap that have no corresponding object in \a copied_map
       * are left unchanged. */
-    void Copy(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
+    void Copy(const ObjectMap& copied_map, const Universe& universe, int empire_id = ALL_EMPIRES);
 
     /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap, in
      * preparation for serializing this ObjectMap.  The normal object-by-object 
@@ -156,7 +157,8 @@ public:
       * by passing the visibility of the object by the empire specified by
       * \a empire_id to Copy or Clone of the object.  The passed object is
       * unchanged. */
-    void CopyObject(std::shared_ptr<const UniverseObject> source, int empire_id = ALL_EMPIRES);
+    void CopyObject(std::shared_ptr<const UniverseObject> source, int empire_id,
+                    const Universe& universe);
 
     /** Adds object \a obj to the map under its ID, if it is a valid object.
       * If there already was an object in the map with the id \a id then

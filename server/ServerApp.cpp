@@ -2575,10 +2575,8 @@ namespace {
             // be empires in this battle that otherwise couldn't see the object
             // as determined for galaxy map purposes, but which do know it has
             // been destroyed from having observed it during the battle.
-            for (const auto& dok : combat_info.destroyed_object_knowers) {
-                int empire_id = dok.first;
-
-                for (int object_id : dok.second) {
+            for (const auto& [empire_id, obj_ids] : combat_info.destroyed_object_knowers) {
+                for (int object_id : obj_ids) {
                     //DebugLogger() << "Setting knowledge of destroyed object " << object_id
                     //                       << " for empire " << empire_id;
                     universe.SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
@@ -2625,7 +2623,7 @@ namespace {
                 // that an empire who lose all objects in the system still
                 // knows about a change in system ownership
                 for (int empire_id : combat_info.empire_ids)
-                    universe.EmpireKnownObjects(empire_id).CopyObject(system, ALL_EMPIRES);
+                    universe.EmpireKnownObjects(empire_id).CopyObject(system, ALL_EMPIRES, universe);
             }
         }
     }
@@ -3126,7 +3124,7 @@ namespace {
             if (planet_initial_owner_id != ALL_EMPIRES && planet_initial_owner_id != planet->Owner()) {
                 // get empire's knowledge of object
                 ObjectMap& empire_latest_known_objects = universe.EmpireKnownObjects(planet_initial_owner_id);
-                empire_latest_known_objects.CopyObject(std::move(planet), planet_initial_owner_id);
+                empire_latest_known_objects.CopyObject(std::move(planet), planet_initial_owner_id, universe);
             }
         }
     }
