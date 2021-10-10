@@ -10,25 +10,45 @@ Policy
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
         // makes all planets more stable over time at the cost of influence
+        // First variant: Current population was colonized.
+        // Planet was never conquered or it was conquered, emptied and re-colonised.
+        // Bonus is based on only how long indoctrination has been adapted.
         EffectsGroup
         scope = And [
             Planet
             OwnedBy empire = Source.Owner
             Species
+            Or [(LocalCandidate.TurnsSinceLastConquered == 0)
+                (LocalCandidate.TurnsSinceLastConquered > LocalCandidate.TurnsSinceColonization)]
         ]
         effects = [
             SetTargetHappiness value = Value + 
                 min((NamedReal name = "PLC_INDOCTRINATION_STRENGTH_MAX" value = 10.0),
-                    (Target.TurnsSinceLastConquered != 0 ?
-                     min(Target.TurnsSinceLastConquered,
-                         TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) :
-                     TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) *
-                     (NamedReal name = "PLC_INDOCTRINATION_PER_TURN" value = 0.25))
+                    (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) *
+                    (NamedReal name = "PLC_INDOCTRINATION_PER_TURN" value = 0.25))
+            SetTargetInfluence value = Value - 1.0
+        ]
+        // Second variant: Current population was conquered.
+        // Bonus is additonally limited to turns since conquered.
+        EffectsGroup
+        scope = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species
+            (LocalCandidate.TurnsSinceLastConquered != 0)
+            // Note: TurnsSinceColonization cannot be equal to TurnsSinceLastConquered
+            (LocalCandidate.TurnsSinceLastConquered < LocalCandidate.TurnsSinceColonization)
+        ]
+        effects = [
+            SetTargetHappiness value = Value +
+                min((NamedRealLookup name = "PLC_INDOCTRINATION_STRENGTH_MAX"),
+                    min(Target.TurnsSinceLastConquered,
+                        TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) *
+                    (NamedRealLookup name = "PLC_INDOCTRINATION_PER_TURN"))
             SetTargetInfluence value = Value - 1.0
         ]
 
-        // boosts influence of influence-focused planets
-        // TODO: Consider restricting this effect to also having the Palace or a Reg. Adm. center.
+        // boosts influence of influence-focused capitals or regional administrations
         EffectsGroup
         scope = And [
             Planet
