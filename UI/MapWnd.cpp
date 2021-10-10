@@ -5642,8 +5642,10 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
         return;
 
     // allow switching to fleetView even when in production mode
-    if (m_in_production_view_mode)
+    if (m_in_production_view_mode) {
         HideProduction();
+        RestoreSidePanel();
+    }
 
     // Add any overlapping fleet buttons for moving or offroad fleets.
     const auto fleet_ids_to_include_in_fleet_wnd = FleetIDsOfFleetButtonsOverlapping(*fleet_btn);
@@ -6171,6 +6173,7 @@ void MapWnd::ShowModeratorActions() {
     HideProduction();
     HideDesign();
     HideGovernment();
+    RestoreSidePanel();
 
     // update moderator window
     m_moderator_wnd->Refresh();
@@ -6209,6 +6212,7 @@ void MapWnd::ShowObjects() {
     HideResearch();
     HideProduction();
     HideDesign();
+    RestoreSidePanel();
 
     // update objects window
     m_object_list_wnd->Refresh();
@@ -6248,6 +6252,7 @@ void MapWnd::ShowSitRep() {
     HideResearch();
     HideProduction();
     HideDesign();
+    RestoreSidePanel();
 
     // show the sitrep window
     m_sitrep_panel->Show();
@@ -6282,6 +6287,7 @@ void MapWnd::ShowMessages() {
     HideResearch();
     HideProduction();
     HideDesign();
+    RestoreSidePanel();
 
     ClientUI* cui = ClientUI::GetClientUI();
     if (!cui)
@@ -6333,6 +6339,7 @@ void MapWnd::ShowEmpires() {
     HideResearch();
     HideProduction();
     HideDesign();
+    RestoreSidePanel();
 
     ClientUI* cui = ClientUI::GetClientUI();
     if (!cui)
@@ -6384,18 +6391,16 @@ void MapWnd::ShowPedia() {
         m_production_wnd->TogglePedia();
         return;
     }
-
+    // same for research
     if (m_research_wnd->Visible()) {
         m_research_wnd->TogglePedia();
         return;
     }
+    // design screen already has a pedia in it...
+    if (m_design_wnd->Visible())
+        return;
 
     ClearProjectedFleetMovementLines();
-
-    // hide other "competing" windows
-    HideResearch();
-    HideProduction();
-    HideDesign();
 
     if (m_pedia_panel->GetItemsSize() == 0)
         m_pedia_panel->SetIndex();
@@ -6437,16 +6442,15 @@ bool MapWnd::ShowGraphs() {
     return true;
 }
 
-void MapWnd::HideSidePanel() {
-    m_sidepanel_open_before_showing_other = m_side_panel->Visible();   // a kludge, so the sidepanel will reappear after opening and closing a full screen wnd
+void MapWnd::HideSidePanelAndRememberIfItWasVisible() {
+    // a kludge, so the sidepanel will reappear after opening and closing a full screen wnd
+    m_sidepanel_open_before_showing_other = m_side_panel->Visible();
     m_side_panel->Hide();
 }
 
 void MapWnd::RestoreSidePanel() {
     if (m_sidepanel_open_before_showing_other)
         ReselectLastSystem();
-    // send order changes could be made in research, production or other windows
-    GGHumanClientApp::GetApp()->SendPartialOrders();
 }
 
 void MapWnd::ShowResearch() {
@@ -6455,7 +6459,7 @@ void MapWnd::ShowResearch() {
     // hide other "competing" windows
     HideProduction();
     HideDesign();
-    HideSidePanel();
+    HideSidePanelAndRememberIfItWasVisible();
 
     // show the research window
     m_research_wnd->Show();
@@ -6474,19 +6478,21 @@ void MapWnd::ShowResearch() {
 }
 
 void MapWnd::HideResearch() {
+    GGHumanClientApp::GetApp()->SendPartialOrders();
+
     m_research_wnd->Hide();
     RemoveFromWndStack(m_research_wnd);
     m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
     m_btn_research->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
-
-    RestoreSidePanel();
 }
 
 bool MapWnd::ToggleResearch() {
-    if (m_research_wnd->Visible())
+    if (m_research_wnd->Visible()) {
         HideResearch();
-    else
+        RestoreSidePanel();
+    } else {
         ShowResearch();
+    }
     return true;
 }
 
@@ -6496,7 +6502,7 @@ void MapWnd::ShowProduction() {
     // hide other "competing" windows
     HideResearch();
     HideDesign();
-    HideSidePanel();
+    HideSidePanelAndRememberIfItWasVisible();
     HidePedia();
 
     if (GetOptionsDB().Get<bool>("ui.production.mappanels.removed")) {
@@ -6534,6 +6540,8 @@ void MapWnd::ShowProduction() {
 }
 
 void MapWnd::HideProduction() {
+    GGHumanClientApp::GetApp()->SendPartialOrders();
+
     m_production_wnd->Hide();
     RemoveFromWndStack(m_production_wnd);
     m_in_production_view_mode = false;
@@ -6547,14 +6555,15 @@ void MapWnd::HideProduction() {
     GG::GUI::GetGUI()->Register(ClientUI::GetClientUI()->GetPlayerListWnd());
 
     ShowAllPopups();
-    RestoreSidePanel();
 }
 
 bool MapWnd::ToggleProduction() {
-    if (m_in_production_view_mode)
+    if (m_in_production_view_mode) {
         HideProduction();
-    else
+        RestoreSidePanel();
+    } else {
         ShowProduction();
+    }
 
     // make info panels in production/map window's side panel update their expand-collapse state
     m_side_panel->Update();
@@ -6568,7 +6577,7 @@ void MapWnd::ShowDesign() {
     // hide other "competing" windows
     HideResearch();
     HideProduction();
-    HideSidePanel();
+    HideSidePanelAndRememberIfItWasVisible();
 
     // show the design window
     m_design_wnd->Show();
@@ -6582,19 +6591,21 @@ void MapWnd::ShowDesign() {
 }
 
 void MapWnd::HideDesign() {
+    GGHumanClientApp::GetApp()->SendPartialOrders();
+
     m_design_wnd->Hide();
     RemoveFromWndStack(m_design_wnd);
     m_btn_design->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
     m_btn_design->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
-
-    RestoreSidePanel();
 }
 
 bool MapWnd::ToggleDesign() {
-    if (m_design_wnd->Visible())
+    if (m_design_wnd->Visible()) {
         HideDesign();
-    else
+        RestoreSidePanel();
+    } else {
         ShowDesign();
+    }
     return true;
 }
 
@@ -6605,6 +6616,7 @@ void MapWnd::ShowGovernment() {
     HideResearch();
     HideProduction();
     HideDesign();
+    RestoreSidePanel();
 
     // show the government window
     m_government_wnd->Show();
@@ -6618,12 +6630,12 @@ void MapWnd::ShowGovernment() {
 }
 
 void MapWnd::HideGovernment() {
+    GGHumanClientApp::GetApp()->SendPartialOrders();
+
     m_government_wnd->Hide();
     RemoveFromWndStack(m_government_wnd);
     m_btn_government->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government.png")));
     m_btn_government->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government_mouseover.png")));
-
-    RestoreSidePanel();
 }
 
 bool MapWnd::ToggleGovernment() {
@@ -6658,6 +6670,8 @@ bool MapWnd::ShowMenu() {
 }
 
 bool MapWnd::CloseSystemView() {
+    GGHumanClientApp::GetApp()->SendPartialOrders();
+
     SelectSystem(INVALID_OBJECT_ID);
     m_side_panel->Hide();   // redundant, but safer to keep in case the behavior of SelectSystem changes
     return true;

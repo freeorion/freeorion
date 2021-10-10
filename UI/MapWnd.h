@@ -393,8 +393,8 @@ private:
 
     bool ShowGraphs();
 
-    void HideSidePanel();
-    void RestoreSidePanel(); //!< restores side panel, sends to server changes made in other windows
+    void HideSidePanelAndRememberIfItWasVisible();
+    void RestoreSidePanel();
 
     bool ToggleResearch();
     void ShowResearch();
