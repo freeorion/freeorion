@@ -700,11 +700,9 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
 }
 
 namespace {
-    void UpdateEmpireSupply(const ScriptingContext& context, EmpireManager& empires,
-                            SupplyManager& supply, bool precombat = false)
-    {
+    void UpdateEmpireSupply(ScriptingContext& context, SupplyManager& supply, bool precombat) {
         // Determine initial supply distribution and exchanging and resource pools for empires
-        for ([[maybe_unused]] auto& [ignored_id, empire] : empires) {
+        for ([[maybe_unused]] auto& [ignored_id, empire] : context.Empires()) {
             (void)ignored_id; // quiet unused variable warning
             if (empire->Eliminated())
                 continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
@@ -720,7 +718,7 @@ namespace {
         const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
         boost::asio::thread_pool thread_pool(num_threads);
 
-        for ([[maybe_unused]] auto& [ignored_id, empire] : empires) {
+        for ([[maybe_unused]] auto& [ignored_id, empire] : context.Empires()) {
             (void)ignored_id; // quiet unused variable warning
             if (empire->Eliminated())
                 continue;
@@ -731,7 +729,7 @@ namespace {
                 empire->InitResourcePools(context.ContextObjects());
 
                 // determine how much of each resources is available in each resource sharing group
-                empire->UpdateResourcePools();
+                empire->UpdateResourcePools(context);
             });
         }
 
@@ -820,7 +818,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     for (auto& entry : m_empires)
         entry.second->UpdateOwnedObjectCounters(m_universe);
 
-    UpdateEmpireSupply(context, m_empires, m_supply_manager);
+    UpdateEmpireSupply(context, m_supply_manager, false);
     m_universe.UpdateStatRecords(m_empires);
 }
 
@@ -1450,7 +1448,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
 
     ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager,m_supply_manager};
-    UpdateEmpireSupply(context, m_empires, m_supply_manager, true);  // precombat supply update
+    UpdateEmpireSupply(context, m_supply_manager, true);  // precombat supply update
 
     std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
 
@@ -3390,7 +3388,7 @@ void ServerApp::PreCombatProcessTurns() {
     for (auto& entry : Empires()) {
         if (entry.second->Eliminated())
             continue;   // skip eliminated empires
-        entry.second->UpdateProductionQueue();
+        entry.second->UpdateProductionQueue(context);
     }
 
     // player notifications
@@ -3619,7 +3617,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireObjectVisibilities(m_empires);
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
-    UpdateEmpireSupply(context, m_empires, m_supply_manager);
+    UpdateEmpireSupply(context, m_supply_manager, false);
 
     // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
@@ -3747,7 +3745,7 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // Re-determine supply distribution and exchanging and resource pools for empires
-    UpdateEmpireSupply(context, m_empires, m_supply_manager, true);
+    UpdateEmpireSupply(context, m_supply_manager, true);
 
     // copy latest visible gamestate to each empire's known object state
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();

@@ -192,7 +192,8 @@ namespace {
             ErrorLogger() << "UpdateResourcePools : couldn't get empire with id " << empire_id;
             return;
         }
-        empire->UpdateResourcePools();
+        ScriptingContext context;
+        empire->UpdateResourcePools(context);
     }
 
     void UpdateResearchQueue() {
@@ -212,7 +213,8 @@ namespace {
             ErrorLogger() << "UpdateProductionQueue : couldn't get empire with id " << empire_id;
             return;
         }
-        empire->UpdateProductionQueue();
+        ScriptingContext context;
+        empire->UpdateProductionQueue(context);
     }
 
     auto GetUserStringList(const std::string& list_key) -> py::list

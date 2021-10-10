@@ -2653,7 +2653,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)
-                    cur_empire->UpdateProductionQueue();
+                    cur_empire->UpdateProductionQueue(context);
 
                 focus_ship_building_common_action();
             };
@@ -2703,7 +2703,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)
-                    cur_empire->UpdateProductionQueue();
+                    cur_empire->UpdateProductionQueue(context);
 
                 focus_ship_building_common_action();
             };

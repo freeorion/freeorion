@@ -2151,7 +2151,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
     DebugLogger() << "========Empire::CheckProductionProgress=======";
     // following commented line should be redundant, as previous call to
     // UpdateResourcePools should have generated necessary info
-    // m_production_queue.Update();
+    // m_production_queue.Update(context.ContextUniverse());
 
     std::map<int, std::vector<std::shared_ptr<Ship>>> system_new_ships;
     std::map<int, int> new_ship_rally_point_ids;
@@ -2576,7 +2576,7 @@ void Empire::CheckInfluenceProgress() {
     DebugLogger() << "========Empire::CheckProductionProgress=======";
     // following commented line should be redundant, as previous call to
     // UpdateResourcePools should have generated necessary info
-    // m_influence_queue.Update();
+    // m_influence_queue.Update(context.ContextUniverse());
 
     auto spending = m_influence_queue.TotalIPsSpent();
     auto new_stockpile = m_influence_queue.ExpectedNewStockpileAmount();
@@ -2635,12 +2635,12 @@ void Empire::InitResourcePools(const ObjectMap& objects) {
     m_resource_pools[ResourceType::RE_INFLUENCE]->SetConnectedSupplyGroups(sets_set);
 }
 
-void Empire::UpdateResourcePools() {
+void Empire::UpdateResourcePools(const ScriptingContext& context) {
     // updating queues, allocated_rp, distribution and growth each update their
     // respective pools, (as well as the ways in which the resources are used,
     // which needs to be done simultaneously to keep things consistent)
     UpdateResearchQueue();
-    UpdateProductionQueue();
+    UpdateProductionQueue(context);
     UpdateInfluenceSpending();
     UpdatePopulationGrowth();
 }
@@ -2651,11 +2651,11 @@ void Empire::UpdateResearchQueue() {
     m_resource_pools[ResourceType::RE_RESEARCH]->ChangedSignal();
 }
 
-void Empire::UpdateProductionQueue() {
+void Empire::UpdateProductionQueue(const ScriptingContext& context) {
     DebugLogger() << "========= Production Update for empire: " << EmpireID() << " ========";
 
     m_resource_pools[ResourceType::RE_INDUSTRY]->Update();
-    m_production_queue.Update();
+    m_production_queue.Update(context);
     m_resource_pools[ResourceType::RE_INDUSTRY]->ChangedSignal();
 }
 

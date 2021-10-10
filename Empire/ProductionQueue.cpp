@@ -165,10 +165,9 @@ namespace {
         ProductionQueue::QueueType& queue,
         std::map<std::set<int>, float>& allocated_pp,
         std::map<std::set<int>, float>& allocated_stockpile_pp,
-        int& projects_in_progress, bool simulating)
+        int& projects_in_progress, bool simulating,
+        const Universe& universe)
     {
-        const Universe& universe{GetUniverse()}; // TODO: pass in
-
         //DebugLogger() << "========SetProdQueueElementSpending========";
         //DebugLogger() << "production status: ";
         //DebugLogger() << "queue: ";
@@ -249,7 +248,8 @@ namespace {
             }
             //DebugLogger() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
-            float element_this_turn_limit = CalculateProductionPerTurnLimit(queue_element, item_cost, build_turns);
+            float element_this_turn_limit = CalculateProductionPerTurnLimit(
+                queue_element, item_cost, build_turns);
 
             // determine how many pp to allocate to this queue element block this turn.  allocation is limited by the
             // item cost, which is the max number of PP per turn that can be put towards this item, and by the
@@ -282,9 +282,8 @@ namespace {
             float group_drawdown = std::min(allocation, group_pp_available);
 
             allocated_pp[group] += group_drawdown;  // relies on default initial mapped value of 0.0f
-            if (queue_element.item.build_type == BuildType::BT_STOCKPILE) {
+            if (queue_element.item.build_type == BuildType::BT_STOCKPILE)
                 stockpile_transfer += group_drawdown;
-            }
             group_pp_available -= group_drawdown;
 
             float stockpile_drawdown = allocation <= group_drawdown ? 0.0f : (allocation - group_drawdown);
@@ -679,13 +678,12 @@ int ProductionQueue::IndexOfUUID(boost::uuids::uuid uuid) const {
     return std::distance(begin(), it);
 }
 
-void ProductionQueue::Update() {
-    const Universe& universe{GetUniverse()}; // TODO: pass in
-    const EmpireManager& empires{Empires()}; // TODO: pass in equivalent
+void ProductionQueue::Update(const ScriptingContext& context) {
+    const Universe& universe{context.ContextUniverse()};
 
-    auto empire = empires.GetEmpire(m_empire_id);
+    auto empire = context.GetEmpire(m_empire_id);
     if (!empire) {
-        ErrorLogger() << "ProductionQueue::Update passed null empire.  doing nothing.";
+        ErrorLogger() << "ProductionQueue::Update passed null empire id.  doing nothing.";
         m_projects_in_progress = 0;
         m_object_group_allocated_pp.clear();
         return;
@@ -735,9 +733,10 @@ void ProductionQueue::Update() {
              std::pair<float, int>> queue_item_costs_and_times;
     std::vector<bool> is_producible;
     for (auto& elem : m_queue) {
-        is_producible.push_back(empire->ProducibleItem(elem.item, elem.location));
+        is_producible.push_back(empire->ProducibleItem(elem.item, elem.location, context));
         // for items that don't depend on location, only store cost/time once
-        int location_id = (elem.item.CostIsProductionLocationInvariant(universe) ? INVALID_OBJECT_ID : elem.location);
+        int location_id = (elem.item.CostIsProductionLocationInvariant(universe) ?
+                           INVALID_OBJECT_ID : elem.location);
         auto key = std::pair{elem.item, location_id};
 
         if (!queue_item_costs_and_times.count(key))
@@ -760,7 +759,7 @@ void ProductionQueue::Update() {
         available_pp, available_stockpile, stockpile_limit, queue_element_groups,
         queue_item_costs_and_times, is_producible, m_queue,
         m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp,
-        m_projects_in_progress, false);
+        m_projects_in_progress, false, universe);
 
     //update expected new stockpile amount
     m_expected_new_stockpile_amount = CalculateNewStockpile(
@@ -837,7 +836,7 @@ void ProductionQueue::Update() {
         float sim_project_transfer_to_stockpile = SetProdQueueElementSpending(
             available_pp, sim_available_stockpile, stockpile_limit, queue_element_groups,
             queue_item_costs_and_times, is_producible, sim_queue,
-            allocated_pp, allocated_stockpile_pp, dummy_int, true);
+            allocated_pp, allocated_stockpile_pp, dummy_int, true, universe);
 
         // check completion status and update m_queue and sim_queue as appropriate
         for (unsigned int i = 0; i < sim_queue.size(); i++) {

@@ -146,7 +146,7 @@ public:
     [[nodiscard]] float       ProductionStatus(int i, const ScriptingContext& context) const; ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
 
     /** Return true iff this empire can produce the specified item at the specified location. */
-    [[nodiscard]] bool        ProducibleItem(BuildType build_type, int location,
+    [[nodiscard]] bool        ProducibleItem(BuildType build_type, int location, // TODO: remove default context
                                              const ScriptingContext& context = ScriptingContext{}) const;
     [[nodiscard]] bool        ProducibleItem(BuildType build_type, const std::string& name, int location,
                                              const ScriptingContext& context = ScriptingContext{}) const;
@@ -373,13 +373,13 @@ public:
       * to spend.  Actual consumption of resources, removal of items from queue,
       * processing of finished items and population growth happens in various
       * Check(Whatever)Progress functions. */
-    void UpdateResourcePools();
+    void UpdateResourcePools(const ScriptingContext& context);
     /** Calls Update() on empire's research queue, which recalculates the RPs
       * spent on and number of turns left for each tech in the queue. */
     void UpdateResearchQueue();
     /** Calls Update() on empire's production queue, which recalculates the PPs
       * spent on and number of turns left for each project in the queue. */
-    void UpdateProductionQueue();
+    void UpdateProductionQueue(const ScriptingContext& context);
     /** Eventually: Calls appropriate subsystem Update to calculate influence
       * spent on social projects and maintenance of buildings.  Later call to
       * CheckInfluenceProgress() will then have the correct allocations of

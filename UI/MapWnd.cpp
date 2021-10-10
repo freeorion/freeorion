@@ -2812,7 +2812,7 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("update resource pools");
     for (auto& entry : empires)
-        entry.second->UpdateResourcePools();
+        entry.second->UpdateResourcePools(context);
 
     timer.EnterSection("refresh government");
     m_government_wnd->Refresh();
@@ -6930,7 +6930,9 @@ void MapWnd::RefreshPopulationIndicator() {
 }
 
 void MapWnd::UpdateEmpireResourcePools() {
-    auto empire = Empires().GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    ScriptingContext context;
+
+    auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
 
@@ -6938,7 +6940,7 @@ void MapWnd::UpdateEmpireResourcePools() {
      * resources.  When resource pools update, they emit ChangeSignal, which is
      * connected to MapWnd::Refresh???ResourceIndicator, which updates the
      * empire resource pool indicators of the MapWnd. */
-    empire->UpdateResourcePools();
+    empire->UpdateResourcePools(context);
 
     // Update indicators on sidepanel, which are not directly connected to from the ResourcePool ChangedSignal
     SidePanel::Update();
@@ -7821,21 +7823,19 @@ void MapWnd::DispatchFleetsExploring() {
         IssueExploringFleetOrders(idle_fleets, systems_being_explored, fleet_route.second, context);
 
     // verify fleets have expected destination
-    for (SystemFleetMap::iterator system_fleet_it = systems_being_explored.begin();
-         system_fleet_it != systems_being_explored.end(); ++system_fleet_it) // TODO: can this be [] simple loop?
-    {
-        auto fleet = objects.get<Fleet>(system_fleet_it->second);
+    for (const auto& [dest_sys_id, fleet_id] : systems_being_explored) {
+        auto fleet = objects.get<Fleet>(fleet_id);
         if (!fleet)
             continue;
 
         auto dest_id = fleet->FinalDestinationID();
-        if (dest_id == system_fleet_it->first)
+        if (dest_id == dest_sys_id)
             continue;
 
-        WarnLogger() << "Non idle exploring fleet "<< system_fleet_it->second << " has differing destination:"
-                     << fleet->FinalDestinationID() << " expected:" << system_fleet_it->first;
+        WarnLogger() << "Non idle exploring fleet "<< fleet_id << " has differing destination:"
+                     << fleet->FinalDestinationID() << " expected:" << dest_sys_id;
 
-        idle_fleets.emplace(system_fleet_it->second);
+        idle_fleets.emplace(fleet_id);
         // systems_being_explored.erase(system_fleet_it);
     }
 
