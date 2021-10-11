@@ -610,10 +610,6 @@ void Constant<std::string>::SetTopLevelContent(const std::string& content_name)
 ///////////////////////////////////////////////////////////
 #define IF_CURRENT_VALUE(T)                                            \
 if (m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE) {      \
-    if (context.current_value.empty())                                 \
-        throw std::runtime_error(                                      \
-            "Variable<" #T ">::Eval(): Value could not be evaluated, " \
-            "because no current value was provided.");                 \
     try {                                                              \
         return boost::get<T>(context.current_value);                   \
     } catch (const boost::bad_get&) {                                  \
