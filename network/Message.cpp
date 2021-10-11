@@ -58,8 +58,8 @@ std::ostream& operator<<(std::ostream& os, const Message& msg) {
 Message::Message(MessageType type, const std::string& text) :
     m_type(type),
     m_message_size(text.size()),
-    m_message_text(new char[text.size()])
-{ std::copy(text.begin(), text.end(), m_message_text.get()); } // TODO: can text be moved into this Message's storage?
+    m_message_text(text)
+{}
 
 Message::MessageType Message::Type() const noexcept
 { return m_type; }
@@ -68,18 +68,19 @@ std::size_t Message::Size() const noexcept
 { return m_message_size; }
 
 const char* Message::Data() const noexcept
-{ return m_message_text.get(); }
+{ return m_message_text.data(); }
 
-std::string Message::Text() const
-{ return std::string(m_message_text.get(), m_message_size); }
+const std::string& Message::Text() const
+{ return m_message_text; }
 
 void Message::Resize(std::size_t size) {
     m_message_size = size;
-    m_message_text.reset(new char[m_message_size]);
+    m_message_text.clear();
+    m_message_text.resize(size);
 }
 
 char* Message::Data() noexcept
-{ return m_message_text.get(); }
+{ return m_message_text.data(); }
 
 void Message::Swap(Message& rhs) noexcept {
     std::swap(m_type, rhs.m_type);
@@ -90,7 +91,7 @@ void Message::Swap(Message& rhs) noexcept {
 void Message::Reset() noexcept {
     m_type = MessageType::UNDEFINED;
     m_message_size = 0;
-    m_message_text.reset();
+    m_message_text.clear();
 }
 
 bool operator==(const Message& lhs, const Message& rhs) {

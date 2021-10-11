@@ -5,7 +5,6 @@
 #include "../util/Enum.h"
 #include "../util/Export.h"
 
-#include <boost/shared_array.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/uuid/uuid.hpp>
 
@@ -140,20 +139,20 @@ public:
     Message() = default;
     Message(MessageType message_type, const std::string& text);
 
-    MessageType Type() const noexcept;      ///< Returns the type of the message.
-    std::size_t Size() const noexcept;      ///< Returns the size of the underlying buffer.
-    const char* Data() const noexcept;      ///< Returns the underlying buffer.
-    std::string Text() const;               ///< Returns the underlying buffer as a std::string.
+    MessageType        Type() const noexcept;      ///< Returns the type of the message.
+    std::size_t        Size() const noexcept;      ///< Returns the size of the underlying buffer.
+    const char*        Data() const noexcept;      ///< Returns the underlying buffer.
+    const std::string& Text() const;               ///< Returns the underlying buffer as a std::string.
 
-    void        Resize(std::size_t size);   ///< Resizes the underlying char buffer to \a size uninitialized bytes.
-    char*       Data() noexcept;            ///< Returns the underlying buffer.
-    void        Swap(Message& rhs) noexcept;///< Swaps the contents of \a *this with \a rhs.  Does not throw.
-    void        Reset() noexcept;           ///< Reverts message to same state as after default constructor
+    void               Resize(std::size_t size);   ///< Resizes the underlying char buffer to \a size uninitialized bytes.
+    char*              Data() noexcept;            ///< Returns the underlying buffer.
+    void               Swap(Message& rhs) noexcept;///< Swaps the contents of \a *this with \a rhs.  Does not throw.
+    void               Reset() noexcept;           ///< Reverts message to same state as after default constructor
 
 private:
     MessageType                 m_type = MessageType::UNDEFINED;
     std::string_view::size_type m_message_size = 0;
-    boost::shared_array<char>   m_message_text;
+    std::string                 m_message_text;
 
     friend FO_COMMON_API void BufferToHeader(const HeaderBuffer&, Message&);
 };
