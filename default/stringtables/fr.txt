@@ -1284,6 +1284,12 @@ Zone habitable Géantes Gazeuses
 RULE_HABITABLE_SIZE_DESC
 Valeur utilisée pour ajuster les variations de [[METER_POPULATION]] sur une planète de cette taille.
 
+RULE_BASELINE_PLANET_STABILITY
+Stabilité planétaire de base
+
+RULE_BASELINE_PLANET_STABILITY_DESC
+Niveau de base de la [[METER_HAPPINESS]] d'une planète.
+
 RULE_ALLOW_CONCEDE
 Autoriser Capitulation
 
@@ -1550,6 +1556,9 @@ Annuler la lecture du statut de l'empire en rejoignant une partie en cours.
 
 OPTIONS_DB_TAKE_OVER_AI
 Option de serveur permettant aux joueurs humains de prendre le contrôle des empires dirigés par l'IA.
+
+OPTIONS_DB_PYTHON_ASYNCIO_INTERVAL
+Intervalle en secondes d'appel de la boucle d'évènements python asyncio ou -1 pour le désactiver. Les appels d'asyncio sont désactivés par défaut.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position horizontale du centre du menu principal de l'écran d'introduction, en pourcentage de la largeur totale de la fenêtre de jeu ou du plein écran.
@@ -6068,7 +6077,7 @@ METER_POPULATION_VALUE_DESC
 
 La Projection Population est la taille optimale de Population qu'une planète tend à approcher, compte tenu des différents facteurs influençant la Population planétaire. Sa valeur dépend de l'[[encyclopedia ENC_SPECIES]] et de son adaptation à l'[[encyclopedia ENVIRONMENT_TITLE]] d'une planète. Cette valeur est également liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Population est susceptible de fluctuer à son tour.
 
-Une Population supérieure ou égale à [[value MIN_COLONY_SIZE]] et une [[metertype METER_HAPPINESS]] minimum de [[value MIN_COLONY_HAPPINESS]] sont requis pour qu'une colonie puisse lancer la colonisation d'autres planètes. Un astronef colonisateur est peuplé de Colons, leur nombre étant déterminé par la capacité de [[encyclopedia PC_COLONY]] du modèle d'astronef. Lors de la colonisation d'une planète, le nombre de Colons à bord de l'astronef constituera la Population de départ sur la planète nouvellement colonisée.
+Une Population au moins égale à [[value MIN_COLONY_SIZE]] et une [[metertype METER_HAPPINESS]] minimum de [[value MIN_COLONY_HAPPINESS]] sont requises pour qu'une colonie puisse lancer la colonisation d'autres planètes. Un astronef colonisateur est peuplé de Colons, leur nombre étant déterminé par la capacité de [[encyclopedia PC_COLONY]] du modèle d'astronef. Lors de la colonisation d'une planète, le nombre de Colons à bord de l'astronef constituera la Population de départ sur la planète nouvellement colonisée.
 '''
 
 METER_INDUSTRY_VALUE_LABEL
@@ -7777,7 +7786,7 @@ EFFECT_MINES_SHIP_DESTROYED_LABEL
 Destruction d'astronef par mines
 
 EFFECT_MINES_UNKNOWN
-Dans %system% : un objet non-identifié a déclenché vos mines.
+Dans %system% : un objet non-identifié a déclenché des mines.
 
 EFFECT_MINES_UNKNOWN_LABEL
 Enclenchement mines par astronef inconnu
@@ -7973,7 +7982,7 @@ BEGINNER_HINT_18
 18: [[encyclopedia FOCUS_TITLE]] - Faites attention au réglage du Focus de chaque nouvelle planète intégrant votre empire, que ce soit par l'établissement d'une nouvelle colonie ou bien par conquête militaire. Ce réglage détermine si la planète privilégie l'[[metertype METER_INDUSTRY]], la [[metertype METER_RESEARCH]] ou la [[metertype METER_DEFENSE]]. À mesure que la partie avance, de nouvelles possibilités de Focus peuvent être débloquées si les [[encyclopedia ENC_TECH]] requises sont maîtrisées, tandis que différentes espèces peuvent avoir différents types de Focus disponibles.
 
 BEGINNER_HINT_19
-19: Une nouvelle colonie peut être établie sur un [[encyclopedia OUTPOSTS_TITLE]] en y construisant une structure 'Colonie' ou bien à l'aide d'un astronef [[predefinedshipdesign SD_COLONY_SHIP]]. La plupart des structures 'Colonie' requièrent une connection d'[[metertype METER_SUPPLY]] à une planète présentant un indicateur [[metertype METER_HAPPINESS]] d'au moins 5, et une [[metertype METER_POPULATION]] supérieure ou égale à 3. Lorsqu'une nouvelle espèce est débloquée, par exemple via la recherche de la technologie [[tech PRO_EXOBOTS]], ce pré-requis ne s'applique pas pour leur structure 'Colonie'.
+19: Une nouvelle colonie peut être établie sur un [[encyclopedia OUTPOSTS_TITLE]] en y construisant une structure 'Colonie' ou bien à l'aide d'un astronef [[predefinedshipdesign SD_COLONY_SHIP]]. La plupart des structures 'Colonie' requièrent une connection d'[[metertype METER_SUPPLY]] à une planète présentant un indicateur [[metertype METER_HAPPINESS]] d'au moins 5, et une [[metertype METER_POPULATION]] au moins égale à 3. Lorsqu'une nouvelle espèce est débloquée, par exemple via la recherche de la technologie [[tech PRO_EXOBOTS]], ce pré-requis ne s'applique pas pour leur structure 'Colonie'.
 
 BEGINNER_HINT_20
 20: Les Rapports de Situation spécifiques (tel celui-ci) peuvent être temporairement ignorés via un clic-droit sur leur icône, puis en sélectionnant une des options proposées. Les Rapports d'un certain type peuvent également être filtrés en utilisant le menu 'Filtres' de la Fenêtre 'Rapport de Situation'. Les astuces de jeu destinées aux débutants sont regroupées sous la dénomination [[encyclopedia BEGINNER_HINTS]] dans la liste de filtres.
@@ -8830,10 +8839,10 @@ Préfèrent les planètes [[PT_TUNDRA]].
 
 SP_FULVER_DESC
 '''Biologie:
-Les Fulvers ont l'apparence de grandes fourmis nerveuses. Ces dernières sont dotées d'un cerveau quantique qui leur permet de prédire avec une grande efficacité tous les futurs proches possibles, rendant très difficile de les surprendre en situation de combat.
+Les Fulvers ont l'apparence de grandes fourmis frénétiques. Ces dernières sont dotées d'un cerveau quantique leur permettant de prédire avec une grande efficacité tous les futurs proches possibles, ce qui les rend difficiles à surprendre en situation de combat.
 
 Nom:
-Aucune autre espèce au sein du monde natal des Fulvers ne dispose de cette capacité de précognition. Par conséquent, un "Fulver" est "Celui qui peut voir" toutes vos possibles réactions.
+Aucune autre espèce au sein du monde natal des Fulvers ne dispose de cette capacité de précognition. Par conséquent, un "Fulver" est "Celui qui peut voir" toutes les réactions possibles d'un autre être vivant.
 
 Personnalité:
 Un Fulver préfère se concentrer sur sa force individuelle et vivre au jour le jour. Il favorise le plus souvent les outils et les décisions qui lui permettent d'appréhender le plus grand nombre de choix futurs. Ayant une mauvaise mémoire et étant dans l'impossibilité de prévoir le futur à long terme, les Fulvers ne peuvent pas entreprendre sur le long terme, dans le domaine scientifique ou la construction de structures défensives complexes. Se sentant entravés par ce nombre limité de choix, les Fulvers, constamment agités et insatisfaits, tentent cependant de surmonter leur condition.
@@ -11519,15 +11528,16 @@ PLC_METROPOLES
 Métropoles
 
 PLC_METROPOLES_DESC
-'''Améliore le rendement pour un maximum de [[value METROPOLES_PLANET_LIMIT]] planètes dont la Population est supérieure ou égale à [[value METROPOLES_MINIMUM_POPULATION]]. Les planètes éligibles avec la [[metertype METER_POPULATION]] la plus importante recevront les bonus suivants, indépendamment de leur Focus:
-• Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value METROPOLES_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]].
+'''Améliore le rendement pour un maximum de [[value METROPOLES_PLANET_LIMIT]] planètes. S'applique au plus à (1 / [[value METROPOLES_MIN_PLANETS]] des planètes habitées) dont la [[metertype METER_POPULATION]] est au moins égale à [[value METROPOLES_MINIMUM_POPULATION]] et la [[metertype METER_HAPPINESS]] est au moins égale à [[value METROPOLES_MIN_STABILITY]].
+Les planètes éligibles avec la [[metertype METER_POPULATION]] la plus importante recevront les bonus suivants, indépendamment de leur Focus:
+• Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value METROPOLES_TARGET_RESEARCH_PERPOP]] par Population.
 • Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value METROPOLES_TARGET_INDUSTRY_PERPOP]] par Population.
 • Augmente la [[metertype METER_TARGET_CONSTRUCTION]] de [[value METROPOLES_TARGET_CONSTRUCTION_FLAT]].
 • Augmente l'indicateur [[metertype METER_MAX_SUPPLY]] de [[value METROPOLES_MAX_SUPPLY_FLAT]].
 mais subiront également la pénalité suivante:
 • Diminue l'indicateur [[metertype METER_MAX_STOCKPILE]] de [[value METROPOLES_MAX_STOCKPILE_FLAT]].
 
-Par ailleurs, les autres planètes habitées (celles éligibles mais dont la Population est moindre parmi les planètes les plus fortement peuplées, ainsi que toutes les autres planètes n'atteignant pas une [[metertype METER_POPULATION]] de [[value METROPOLES_MINIMUM_POPULATION]]) subiront la pénalité suivante:
+Par ailleurs, les autres planètes (celles éligibles mais dont la Population est moindre parmi les planètes les plus fortement peuplées, ainsi que toutes les autres planètes ayant une Population inférieure à [[value METROPOLES_MINIMUM_POPULATION]] ou une Stabilité inférieure à [[value METROPOLES_MIN_STABILITY]]) subiront la pénalité suivante:
 • Diminue la [[metertype METER_TARGET_HAPPINESS]] de [[value METROPOLES_STABILITY_PENALTY]].'''
 
 PLC_METROPOLES_SHORT_DESC
@@ -11863,7 +11873,7 @@ PLC_CONFORMANCE_DESC
 • Diminue la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT]] sur toutes les planètes. 
 • Augmente la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_CONFORMANCE_STABILITY_BONUS_FLAT]].
 
-Sur toutes les planètes dont la [[metertype METER_HAPPINESS]] est supérieure ou égale à [[value PLC_CONFORMANCE_MIN_STABILITY]]:
+Sur toutes les planètes dont la [[metertype METER_HAPPINESS]] est au moins égale à [[value PLC_CONFORMANCE_MIN_STABILITY]]:
 • Augmente la [[metertype METER_TARGET_CONSTRUCTION]] de [[value PLC_CONFORMANCE_INFRASTRUCTURE_BONUS_FLAT]].
 • Augmente la [[metertype METER_STOCKPILE]] de [[value PLC_CONFORMANCE_STOCKPILING_BONUS_FLAT]].'''
 
@@ -11875,7 +11885,7 @@ Liberté
 
 PLC_LIBERTY_DESC
 '''• Augmente l'impact des préférences d'une espèce (aime ou n'aime pas telles structures ou Politiques) sur la [[metertype METER_HAPPINESS]] planétaire.
-• Sur toutes les planètes dont la [[metertype METER_HAPPINESS]] est supérieure ou égale à [[value PLC_LIBERTY_MIN_STABILITY]], augmente la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_LIBERTY_RESEARCH_BONUS_FLAT]] et diminue la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_LIBERTY_STABILITY_PENALTY_FLAT]].'''
+• Sur toutes les planètes dont la [[metertype METER_HAPPINESS]] est au moins égale à [[value PLC_LIBERTY_MIN_STABILITY]], augmente la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_LIBERTY_RESEARCH_BONUS_FLAT]] et diminue la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_LIBERTY_STABILITY_PENALTY_FLAT]].'''
 
 PLC_LIBERTY_SHORT_DESC
 Augmente les effets des opinions d'une espèce
@@ -12036,7 +12046,7 @@ PLC_CHARGE  # translated
 Charge
 
 PLC_CHARGE_DESC
-'''Pour les astronefs armés ayant une [[metertype METER_SPEED]] supérieure ou égale à [[value PLC_CHARGE_MINIMUM_SPEED]] :
+'''Pour les astronefs armés ayant une [[metertype METER_SPEED]] au moins égale à [[value PLC_CHARGE_MINIMUM_SPEED]] :
 • Les [[encyclopedia DAMAGE_TITLE]] infligés par l'armement augmentent de [[value PLC_CHARGE_DAMAGE_BOOST]].
 • L'indicateur [[metertype METER_MAX_SHIELD]] diminue de [[value PLC_CHARGE_SHIELD_REDUCTION]].'''
 
@@ -16104,7 +16114,7 @@ BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED
 Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
 MIN_POPULATION_REQUIRED
-Ne peut être construit qu'en un lieu dont la [[metertype METER_POPULATION]] est supérieure ou égale à [[value MIN_COLONY_SIZE]]
+Ne peut être construit qu'en un lieu dont la [[metertype METER_POPULATION]] est au moins égale à [[value MIN_COLONY_SIZE]]
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED
 Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
@@ -16164,7 +16174,7 @@ NO_STACK_SHIELDS_SHIP_PARTS
 Les [[metertype METER_SHIELD]] réduisent les [[encyclopedia DAMAGE_TITLE]] infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.
 
 COLONY_SHIP_PARTS_MIN_POP
-Toutes les classes d'astronefs colonisateurs requièrent de leur planète d'origine une [[metertype METER_POPULATION]] supérieure ou égale à 3.
+Toutes les classes d'astronefs colonisateurs requièrent de leur planète d'origine une [[metertype METER_POPULATION]] au moins égale à 3.
 
 COLONY_SHIP_PARTS_UPKEEP_COST
 Le coût de cet équipement augmente à mesure que l'empire s'étend en raison des coûts d'entretien plus élevés pour un vaste empire.
@@ -16468,10 +16478,10 @@ GOOD_PLANETARY_DEFENSE_DESC
 +	Bonne [[metertype METER_DEFENSE]] planétaire : +5
 
 BROAD_EP_DESC
-++	Grande adaptabilité : peut s'acclimater à plus de types planétaires.
++	Grande adaptabilité : peut s'acclimater à plus de types planétaires.
 
 NARROW_EP_DESC
-−	Faible adaptabilité : s'acclimate à moins de types planétaires.
+−−	Faible adaptabilité : s'acclimate à moins de types planétaires.
 
 FAST_COLONIZATION_DESC
 +	Colonisation rapide : -25% de délai pour bâtir une colonie.
