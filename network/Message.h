@@ -137,7 +137,7 @@ public:
     )
 
     Message() = default;
-    Message(MessageType message_type, const std::string& text);
+    Message(MessageType message_type, std::string text);
 
     MessageType        Type() const noexcept;      ///< Returns the type of the message.
     std::size_t        Size() const noexcept;      ///< Returns the size of the underlying buffer.
@@ -273,7 +273,7 @@ FO_COMMON_API Message TurnPartialUpdateMessage(int empire_id, const Universe& un
 
 /** creates a SAVE_GAME_INITIATE request message.  This message should only be sent by
   * the host player.*/
-FO_COMMON_API Message HostSaveGameInitiateMessage(const std::string& filename);
+FO_COMMON_API Message HostSaveGameInitiateMessage(std::string filename);
 
 /** creates a SAVE_GAME_COMPLETE complete message.  This message should only be
     sent by the server to inform clients that the last initiated save has been
