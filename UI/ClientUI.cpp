@@ -1062,7 +1062,7 @@ void ClientUI::HandleFullscreenSwitch() const {
 std::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir,
                                                         std::string_view prefix, bool mipmap)
 {
-    auto prefixed_textures = GetPrefixedTextures(dir, prefix, mipmap);
+    const auto& prefixed_textures = GetPrefixedTextures(dir, prefix, mipmap);
     if (prefixed_textures.empty())
         return nullptr;
     return prefixed_textures.at(RandInt(0, prefixed_textures.size()));
@@ -1072,10 +1072,10 @@ std::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem:
                                                         std::string_view prefix, int n, bool mipmap)
 {
     assert(0 <= n);
-    auto prefixed_textures = GetPrefixedTextures(dir, prefix, mipmap);
+    const auto& prefixed_textures = GetPrefixedTextures(dir, prefix, mipmap);
     if (prefixed_textures.empty())
         return nullptr;
-    return prefixed_textures.at(n % prefixed_textures.size());
+    return prefixed_textures[n % prefixed_textures.size()];
 }
 
 void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data) {
@@ -1126,7 +1126,8 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path&
 
 std::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/) {
      try {
-        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.path"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.path"), pts,
+                                          RequiredCharsets().begin(), RequiredCharsets().end());
      } catch (...) {
          try {
             return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.path"),
@@ -1163,21 +1164,20 @@ std::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/) {
    }
 }
 
-std::vector<std::shared_ptr<GG::Texture>> ClientUI::GetPrefixedTextures(
+const std::vector<std::shared_ptr<GG::Texture>>& ClientUI::GetPrefixedTextures(
     const boost::filesystem::path& dir, std::string_view prefix, bool mipmap)
 {
     namespace fs = boost::filesystem;
-
-    std::string KEY = std::string(dir.string()).append("/").append(prefix);
-    auto prefixed_textures_it = m_prefixed_textures.find(KEY);
-
-    if (prefixed_textures_it != m_prefixed_textures.end())
-        return prefixed_textures_it->second;
-
     if (!fs::is_directory(dir)) {
         ErrorLogger() << "GetPrefixedTextures passed invalid dir: " << dir;
-        return {};
+        static const std::vector<std::shared_ptr<GG::Texture>> EMPTY_VEC;
+        return EMPTY_VEC;
     }
+
+    std::string KEY{(dir / prefix.data()).string()};
+    auto prefixed_textures_it = m_prefixed_textures.find(KEY);
+    if (prefixed_textures_it != m_prefixed_textures.end())
+        return prefixed_textures_it->second;
 
     // if not already loaded, load textures with requested key
     std::vector<std::shared_ptr<GG::Texture>> textures;
@@ -1195,9 +1195,9 @@ std::vector<std::shared_ptr<GG::Texture>> ClientUI::GetPrefixedTextures(
         }
     }
     std::sort(textures.begin(), textures.end(), TextureFileNameCompare);
-    m_prefixed_textures.emplace(std::move(KEY), textures);
-
-    return textures;
+    auto [emplace_it, b] = m_prefixed_textures.emplace(std::move(KEY), std::move(textures));
+    (void)b; // ignored
+    return emplace_it->second;
 }
 
 int FontBasedUpscale(int x) {

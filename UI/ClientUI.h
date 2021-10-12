@@ -107,9 +107,8 @@ public:
 
     /** Returns all textures in the set of files starting with \a prefix in
         directory \a dir. */
-    std::vector<std::shared_ptr<GG::Texture>> GetPrefixedTextures(const boost::filesystem::path& dir,
-                                                                  std::string_view prefix,
-                                                                  bool mipmap = false);
+    const std::vector<std::shared_ptr<GG::Texture>>& GetPrefixedTextures(
+        const boost::filesystem::path& dir, std::string_view prefix, bool mipmap = false);
 
     static ClientUI* GetClientUI();     //!< returns a pointer to the singleton ClientUI class
 
