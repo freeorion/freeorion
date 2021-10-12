@@ -85,13 +85,12 @@ namespace {
 
 namespace parse {
     ArticleMap encyclopedia_articles(const boost::filesystem::path& path) {
-        const lexer lexer;
         ArticleMap articles;
 
         ScopedTimer timer("Encyclopedia Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, ArticleMap>(lexer, file, articles);
+            detail::parse_file<grammar, ArticleMap>(lexer::tok, file, articles);
 
         return articles;
     }

@@ -83,8 +83,7 @@ struct lexer :
     static constexpr const char* int_regex = "\\d+";
     static constexpr const char* double_regex = "\\d+\\.\\d*|\\d*\\.\\d+";
     static constexpr const char* string_regex = "\\\"[^\\\"]*\\\"";
-
-private:
+    static const lexer tok;
 };
 
 /** The type of iterator passed to the script file parser by the script file

@@ -683,8 +683,6 @@ std::function<boost::python::object(const boost::python::tuple&, const boost::py
 }
 
 namespace parse {
-    const lexer tech_lexer;
-
     template <typename T>
     T techs(const PythonParser& parser, const boost::filesystem::path& path) {
         TechManager::TechContainer techs_;
@@ -701,7 +699,7 @@ namespace parse {
         py_grammar_techs p = py_grammar_techs(parser, techs_);
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, TechManager::TechContainer>(tech_lexer, file, techs_);
+            detail::parse_file<grammar, TechManager::TechContainer>(lexer::tok, file, techs_);
         for (const auto& file : ListDir(path, IsFOCPyScript))
             py_parse::detail::parse_file<py_grammar_techs>(parser, file, p);
 

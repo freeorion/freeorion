@@ -125,6 +125,8 @@ lexer::lexer() :
         ;
 }
 
+const lexer lexer::tok{};
+
 namespace boost { namespace spirit { namespace traits {
 
 } } }

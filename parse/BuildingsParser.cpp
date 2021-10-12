@@ -118,13 +118,12 @@ namespace {
 
 namespace parse {
     start_rule_payload buildings(const boost::filesystem::path& path) {
-        const lexer lexer;
         start_rule_payload building_types;
 
         ScopedTimer timer("Buildings Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, start_rule_payload>(lexer, file, building_types);
+            detail::parse_file<grammar, start_rule_payload>(lexer::tok, file, building_types);
 
         return building_types;
     }

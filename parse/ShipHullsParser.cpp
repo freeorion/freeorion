@@ -208,11 +208,10 @@ struct ShipHullStats {
 
 namespace parse {
     start_rule_payload ship_hulls(const boost::filesystem::path& path) {
-        const lexer lexer;
         start_rule_payload hulls;
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, start_rule_payload>(lexer, file, hulls);
+            detail::parse_file<grammar, start_rule_payload>(lexer::tok, file, hulls);
 
         return hulls;
     }

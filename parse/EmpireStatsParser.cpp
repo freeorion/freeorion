@@ -94,13 +94,12 @@ namespace {
 
 namespace parse {
     start_rule_payload statistics(const boost::filesystem::path& path) {
-        const lexer lexer;
         start_rule_payload all_stats;
 
         for (const auto& file : ListDir(path, IsFOCScript)) {
             start_rule_payload stats_;
-            if (detail::parse_file<grammar, start_rule_payload>(lexer, file, stats_)) {
-                for (auto&& stat : stats_) {
+            if (detail::parse_file<grammar, start_rule_payload>(lexer::tok, file, stats_)) {
+                for (auto& stat : stats_) {
                     auto maybe_inserted = all_stats.emplace(stat.first, std::move(stat.second));
                     if (!maybe_inserted.second) {
                         WarnLogger() << "Addition of second statistic with name " << maybe_inserted.first->first

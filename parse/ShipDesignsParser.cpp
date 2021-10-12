@@ -219,7 +219,6 @@ namespace parse {
            checks of parts, hulls etc are done elsewhere.  A successful parse
            depends only on the parsed string and not other potentially
            concurrent parses of hulls and parts.*/
-        const lexer lexer;
         std::vector<std::pair<std::unique_ptr<ParsedShipDesign>,
                     boost::filesystem::path>> designs_and_paths;
         std::vector<boost::uuids::uuid> ordering;
@@ -238,7 +237,7 @@ namespace parse {
             try {
                 boost::optional<std::unique_ptr<ParsedShipDesign>> maybe_design;
                 auto partial_result = detail::parse_file<grammar, boost::optional<std::unique_ptr<ParsedShipDesign>>>(
-                    lexer, file, maybe_design);
+                    lexer::tok, file, maybe_design);
 
                 if (!partial_result || !maybe_design)
                     continue;
@@ -252,8 +251,8 @@ namespace parse {
 
         if (!manifest_file.empty()) {
             try {
-                /*auto success =*/ detail::parse_file<manifest_grammar, std::vector<boost::uuids::uuid>>(
-                    lexer, manifest_file, ordering);
+                detail::parse_file<manifest_grammar, std::vector<boost::uuids::uuid>>(
+                    lexer::tok, manifest_file, ordering);
 
             } catch (const std::runtime_error& e) {
                 ErrorLogger() << "Failed to parse ship design manifest in " << manifest_file << " from " << path
