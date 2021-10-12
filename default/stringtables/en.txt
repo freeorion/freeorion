@@ -16324,19 +16324,19 @@ ULTIMATE_INFLUENCE_DESC
 +++	Ultimate [[metertype METER_INFLUENCE]]: 300%
 
 BAD_HAPPINESS_DESC
-−	Bad [[metertype METER_HAPPINESS]]: -5
+−	Bad [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
 
 AVERAGE_HAPPINESS_DESC
 '''	Average [[metertype METER_HAPPINESS]]: +0'''
 
 GOOD_HAPPINESS_DESC
-+	Good [[metertype METER_HAPPINESS]]: +5
++	Good [[metertype METER_HAPPINESS]]: +[[value GOOD_HAPPINESS_VAL]]
 
 GREAT_HAPPINESS_DESC
-++	Great [[metertype METER_HAPPINESS]]: +10
+++	Great [[metertype METER_HAPPINESS]]: +[[value GREAT_HAPPINESS_VAL]]
 
 ULTIMATE_HAPPINESS_DESC
-+++	Ultimate [[metertype METER_HAPPINESS]]: +15
++++	Ultimate [[metertype METER_HAPPINESS]]: +[[value ULTIMATE_HAPPINESS_VAL]]
 
 NO_DEFENSE_TROOPS_DESC
 −−−	No Defensive Ground [[metertype METER_TROOPS]]
