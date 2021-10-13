@@ -10,7 +10,6 @@
 #include <vector>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/any_range.hpp>
-#include <boost/range/size.hpp>
 #include "ConstantsFwd.h"
 #include "../util/Export.h"
 
@@ -92,13 +91,19 @@ public:
 
     /** Returns all the objects of type T */
     template <typename T = UniverseObject>
-    [[nodiscard]] boost::select_second_const_range<container_type<T>> all() const
-    { return Map<T>() | boost::adaptors::map_values; }
+    [[nodiscard]] auto all() const
+    {
+        static const auto tx = [](const typename container_type<T>::mapped_type& p)
+            -> const typename container_type<const T>::mapped_type
+        { return std::const_pointer_cast<const T>(p); };
+
+        return Map<T>() | boost::adaptors::map_values | boost::adaptors::transformed(tx);
+    }
 
     /** Returns all the objects of type T */
     template <typename T = UniverseObject>
-    [[nodiscard]] boost::select_second_mutable_range<container_type<T>> all()
-    { return Map<T>() | boost::adaptors::map_values; }
+    [[nodiscard]] auto all()
+    { return std::as_const(Map<T>()) | boost::adaptors::map_values; }
 
     /** Returns the IDs of all objects not known to have been destroyed. */
     [[nodiscard]] std::vector<int> FindExistingObjectIDs() const;
