@@ -31,22 +31,18 @@ namespace GG {
 class ExceptionBase : public std::exception
 {
 public:
-    ExceptionBase() noexcept
-    {}
+    ExceptionBase() noexcept = default;
 
     /** Create an exception with the given @p msg. */
-    ExceptionBase(const std::string& msg) noexcept :
-        m_msg(msg)
-    {}
-
-    /** Dtor required by std::exception. */
-    ~ExceptionBase() noexcept
+    template <class S>
+    ExceptionBase(S&& msg) noexcept :
+        m_msg(std::forward<S>(msg))
     {}
 
     /** Returns a string representation of the type this exception. */
-    virtual const char* type() const throw() = 0;
+    virtual const char* type() const noexcept = 0;
 
-    const char* what() const throw() override
+    const char* what() const noexcept override
     { return m_msg.c_str(); }
 
 private:
@@ -59,10 +55,11 @@ private:
     class name : public ExceptionBase                                   \
     {                                                                   \
     public:                                                             \
-        name () throw() : ExceptionBase() {}                            \
-        name (const std::string& msg) throw() : ExceptionBase(msg) {}   \
+        name () noexcept = default;                                     \
+        template <class S>                                              \
+        name (S&& msg) noexcept : ExceptionBase(std::forward<S>(msg)) {}\
         const char* type() const noexcept override                      \
-            {return "GG::" # name ;}                                    \
+        { return "GG::" # name ; }                                      \
     };
 
 /** Declares an abstract base for further GG exception class inheritance.
@@ -72,8 +69,9 @@ private:
     class name : public ExceptionBase                                   \
     {                                                                   \
     public:                                                             \
-        name () throw() : ExceptionBase() {}                            \
-        name (const std::string& msg) throw() : ExceptionBase(msg) {}   \
+        name () noexcept = default;                                     \
+        template <class S>                                              \
+        name (S&& msg) noexcept : ExceptionBase(std::forward<S>(msg)) {}\
         const char* type() const noexcept override = 0;                 \
     };
 
@@ -84,12 +82,12 @@ private:
     class name : public superclass                                      \
     {                                                                   \
     public:                                                             \
-        name () throw() : superclass () {}                              \
-        name (const std::string& msg) throw() : superclass (msg) {}     \
+        name () noexcept = default;                                     \
+        template <class S>                                              \
+        name (S&& msg) noexcept : superclass (std::forward<S>(msg)) {}  \
         const char* type() const noexcept override                      \
-            {return # class_name "::" # name ;}                         \
+        {return # class_name "::" # name ;}                             \
     };
-
 }
 
 
