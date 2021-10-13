@@ -2007,38 +2007,40 @@ public:
         m_header_row->Update();
 
         // sort objects by containment associations
-        std::set<std::shared_ptr<System>>                   systems;
-        std::map<int, std::set<std::shared_ptr<Fleet>>>     system_fleets;
-        std::map<int, std::set<std::shared_ptr<Ship>>>      fleet_ships;
-        std::map<int, std::set<std::shared_ptr<Planet>>>    system_planets;
-        std::map<int, std::set<std::shared_ptr<Building>>>  planet_buildings;
-        std::map<int, std::set<std::shared_ptr<Field>>>     system_fields;
+        std::vector<std::shared_ptr<const System>>                  systems;
+        std::map<int, std::vector<std::shared_ptr<const Fleet>>>    system_fleets;
+        std::map<int, std::vector<std::shared_ptr<const Ship>>>     fleet_ships;
+        std::map<int, std::vector<std::shared_ptr<const Planet>>>   system_planets;
+        std::map<int, std::vector<std::shared_ptr<const Building>>> planet_buildings;
+        std::map<int, std::vector<std::shared_ptr<const Field>>>    system_fields;
         ScriptingContext context;
+        const ObjectMap& objects{context.ContextObjects()};
 
         timer.EnterSection("object cast-sorting");
-        for (const auto& obj : Objects().all<System>()) {
+        systems.reserve(objects.size<System>());
+        for (const auto& obj : objects.all<System>()) {
             if (ObjectShown(obj, context))
-                systems.insert(obj);
+                systems.push_back(obj);
         }
-        for (const auto& obj : Objects().all<Field>()) {
+        for (const auto& obj : objects.all<Field>()) {
             if (ObjectShown(obj, context))
-                system_fields[obj->SystemID()].insert(obj);
+                system_fields[obj->SystemID()].push_back(obj);
         }
-        for (const auto& obj : Objects().all<Fleet>()) {
+        for (const auto& obj : objects.all<Fleet>()) {
             if (ObjectShown(obj, context))
-                system_fleets[obj->SystemID()].insert(obj);
+                system_fleets[obj->SystemID()].push_back(obj);
         }
-        for (const auto& obj : Objects().all<Ship>()) {
+        for (const auto& obj : objects.all<Ship>()) {
             if (ObjectShown(obj, context))
-                fleet_ships[obj->FleetID()].insert(obj);
+                fleet_ships[obj->FleetID()].push_back(obj);
         }
-        for (const auto& obj : Objects().all<Planet>()) {
+        for (const auto& obj : objects.all<Planet>()) {
             if (ObjectShown(obj, context))
-                system_planets[obj->SystemID()].insert(obj);
+                system_planets[obj->SystemID()].push_back(obj);
         }
-        for (const auto& obj : Objects().all<Building>()) {
+        for (const auto& obj : objects.all<Building>()) {
             if (ObjectShown(obj, context))
-                planet_buildings[obj->PlanetID()].insert(obj);
+                planet_buildings[obj->PlanetID()].push_back(obj);
         }
         // UniverseObjectType::OBJ_FIGHTER shouldn't exist outside combat, so ignored here
 
@@ -2053,9 +2055,9 @@ public:
             std::vector<int> system_contents;
             system_contents.reserve(system_planets[SYSTEM_ID].size() + system_fleets[SYSTEM_ID].size());
             for (const auto& planet : system_planets[SYSTEM_ID])
-                system_contents.emplace_back(planet->ID());
+                system_contents.push_back(planet->ID());
             for (const auto& fleet : system_fleets[SYSTEM_ID])
-                system_contents.emplace_back(fleet->ID());
+                system_contents.push_back(fleet->ID());
 
 
             AddObjectRow(std::move(system), INVALID_OBJECT_ID, system_contents, indent);
@@ -2078,7 +2080,7 @@ public:
                 std::vector<int> planet_contents;
                 planet_contents.reserve(planet_buildings[PLANET_ID].size());
                 for (const auto& building : planet_buildings[PLANET_ID])
-                    planet_contents.emplace_back(building->ID());
+                    planet_contents.push_back(building->ID());
 
                 AddObjectRow(std::move(planet), SYSTEM_ID, planet_contents, indent);
                 if (ObjectCollapsed(PLANET_ID)) {
@@ -2090,7 +2092,7 @@ public:
                 ++indent;
                 // add building rows on this planet
                 for (auto& building : planet_buildings[planet->ID()])
-                    AddObjectRow(std::move(building), PLANET_ID, id_range(), indent);
+                    AddObjectRow(std::move(building), PLANET_ID, id_range{}, indent);
                 planet_buildings[PLANET_ID].clear();
                 --indent;
             }
@@ -2098,13 +2100,13 @@ public:
 
             // add fleet rows in this system
             timer.EnterSection("system fleet rows");
-            for (const auto& fleet : system_fleets[SYSTEM_ID]) {
+            for (auto& fleet : system_fleets[SYSTEM_ID]) {
                 const int FLEET_ID = fleet->ID();
 
                 std::vector<int> fleet_contents;
                 fleet_contents.reserve(fleet_ships[FLEET_ID].size());
                 for (const auto& ship : fleet_ships[FLEET_ID])
-                    fleet_contents.emplace_back(ship->ID());
+                    fleet_contents.push_back(ship->ID());
 
                 AddObjectRow(std::move(fleet), SYSTEM_ID, fleet_contents, indent);
                 if (ObjectCollapsed(FLEET_ID)) {
