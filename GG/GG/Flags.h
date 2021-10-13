@@ -64,22 +64,22 @@ inline constexpr bool is_flag_type_v = is_flag_type<T>::value;
     class GG_API name                                                   \
     {                                                                   \
     public:                                                             \
-        constexpr name() : m_value(0) {}                                \
+        constexpr name() noexcept = default;                            \
         constexpr explicit name(unsigned int value) :                   \
             m_value(value)                                              \
-            {                                                           \
-                if (1u < detail::OneBits(value))                        \
-                    throw std::invalid_argument(                        \
-                        "Non-bitflag passed to " #name " constructor"); \
-            }                                                           \
+        {                                                               \
+            if (1u < detail::OneBits(value))                            \
+                throw std::invalid_argument(                            \
+                    "Non-bitflag passed to " #name " constructor");     \
+        }                                                               \
         constexpr bool operator==(name rhs) const                       \
-            { return m_value == rhs.m_value; }                          \
+        { return m_value == rhs.m_value; }                              \
         constexpr bool operator!=(name rhs) const                       \
-            { return m_value != rhs.m_value; }                          \
+        { return m_value != rhs.m_value; }                              \
         constexpr bool operator<(name rhs) const                        \
-            { return m_value < rhs.m_value; }                           \
+        { return m_value < rhs.m_value; }                               \
     private:                                                            \
-        unsigned int m_value;                                           \
+        unsigned int m_value = 0;                                       \
         friend class Flags<name>;                                       \
     };                                                                  \
                                                                         \
