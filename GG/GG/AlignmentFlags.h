@@ -16,7 +16,6 @@
 
 
 #include <GG/Base.h>
-#include <GG/Exception.h>
 #include <GG/Flags.h>
 
 
