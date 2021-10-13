@@ -769,7 +769,7 @@ void OptionsWnd::CompleteConstruction() {
     for (const auto& sink : log_file_sinks) {
         const auto& option = std::get<0>(sink);
         const auto& option_label = std::get<1>(sink);
-        const auto full_label = str(FlexibleFormat(UserString("OPTIONS_DB_UI_LOGGER_PER_PROCESS_GENERAL")) % option_label);
+        auto full_label = str(FlexibleFormat(UserString("OPTIONS_DB_UI_LOGGER_PER_PROCESS_GENERAL")) % option_label);
         LoggerLevelOption(*current_page, true, std::move(full_label), option);
     }
 
