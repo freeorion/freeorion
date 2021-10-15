@@ -12,7 +12,7 @@ extern const unsigned char cursor_data[16 * 16 * 4];
 
 class Application::Impl {
     public:
-        Impl(Application* q, int argc, char** argv, unsigned width, unsigned height);
+        Impl(int argc, char** argv, unsigned width, unsigned height);
 
         virtual ~Impl();
 
@@ -22,8 +22,7 @@ class Application::Impl {
         void Run(std::shared_ptr<GG::Wnd> wnd);
 
     private:
-        class Application* const m_front = nullptr;
-        class MinimalGGApp* m_app = nullptr;
+        std::unique_ptr<class MinimalGGApp> m_app;
 };
 
 
@@ -218,31 +217,25 @@ void MinimalGGApp::GLInit() {
 }
 
 
-Application::Application(int argc, char** argv, unsigned width, unsigned height) :
-    self(new Application::Impl (this, argc, argv, width, height)) {
+Application::Application(int argc, char** argv, unsigned width, unsigned height)
+{ self = std::make_unique<Application::Impl>(argc, argv, width, height); }
 
-}
+Application::~Application() = default;
 
-void Application::Run(std::shared_ptr<GG::Wnd> wnd) {
-    self->Run(std::forward<std::shared_ptr<GG::Wnd>>(wnd));
-}
+void Application::Run(std::shared_ptr<GG::Wnd> wnd)
+{ self->Run(std::forward<std::shared_ptr<GG::Wnd>>(wnd)); }
 
+Application::Impl::Impl(int argc, char** argv, unsigned width, unsigned height) {
+    //std::vector<std::string> args;
+    //for (int i = 0; i < argc; ++i)
+    //    args.push_back(argv[i]);
 
-Application::Impl::Impl(Application* q, int argc, char** argv, unsigned width,
-                        unsigned height) :
-    m_front(q)
-{
-        std::vector<std::string> args;
+    try {
+        bool fullscreen = false;
+        int left = 200;
+        int top = 100;
 
-        for (int i = 0; i < argc; ++i)
-            args.push_back(argv[i]);
-
-        try {
-            bool fullscreen = false;
-            std::pair<int, int> left_top(200, 100);
-            int left(left_top.first), top(left_top.second);
-
-            m_app = new MinimalGGApp(800, 600, true, "Test", left, top, fullscreen, false);
+        m_app = std::make_unique<MinimalGGApp>(800, 600, true, "Test", left, top, fullscreen, false);
 
     } catch (const std::exception& e) {
         std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
@@ -251,8 +244,7 @@ Application::Impl::Impl(Application* q, int argc, char** argv, unsigned width,
     }
 }
 
-Application::Impl::~Impl()
-{ delete m_app; }
+Application::Impl::~Impl() = default;
 
 void Application::Impl::Run(std::shared_ptr<GG::Wnd> window) {
     try {

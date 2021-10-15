@@ -2,6 +2,7 @@
 #define Application_h
 
 #include <GG/Wnd.h>
+#include <memory>
 
 
 /// This class is designed to help you make GiGi
@@ -14,6 +15,7 @@ public:
     /// An option database will be initialized from them.
     /// You need to register your options.
     Application(int argc, char** argv, unsigned width = 400, unsigned height = 300);
+    ~Application();
 
     /// The given window will be made visible.
     /// Then the event pump is started.
@@ -22,7 +24,7 @@ public:
 
 private:
     class Impl;
-    Impl* const self;
+    std::unique_ptr<Impl> self;
 };
 
 
