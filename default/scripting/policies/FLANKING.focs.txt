@@ -16,46 +16,6 @@ Policy
         // Multi starlane attack bonus:
         // if, on the previous turn ships were coming in from different starlanes, give them a bonus
         // Note: the system must be set as the final destination
-                EffectsGroup
-            scope = And [
-                Ship
-                OwnedBy empire = Source.Owner
-                Armed
-                   // Stationary ships bonus (prepared defensive flanking)
-                   And [
-                       InSystem
-                       Stationary
-                       ((
-                           Statistic Count condition = And [
-                               Ship
-                               InSystem id = RootCandidate.SystemID
-                               OwnedBy empire = Source.Owner
-                               Armed
-                           ]
-                        ) > (
-                           Statistic Count condition = And [
-                               Ship
-                               InSystem id = RootCandidate.SystemID
-                               OwnedBy affiliation = EnemyOf empire = Source.Owner
-                           ]
-                        )
-                       )
-                   ]
-           ]                   
-           priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = [
-                GenerateSitRepMessage
-            message = "STATIONARY FLANKING to %ship% -  %system%"
-             label = "Custom_213"
-             NoStringtableLookup
-             icon = "icons/monsters/kraken-1.png"
-             parameters = [
-                 tag = "ship" data = Target.ID
-                 tag = "system" data = Target.SystemID
-             ]
-             empire = Source.Owner
-         ]
-         
         EffectsGroup
             scope = And [
                 Ship
@@ -108,7 +68,7 @@ Policy
                 SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + NamedRealLookup name = "PLC_FLANKING_DAMAGE_BOOST"
                 SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + NamedRealLookup name = "PLC_FLANKING_DAMAGE_BOOST"
                 SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + NamedRealLookup name = "PLC_FLANKING_DAMAGE_BOOST"
-                SetMaxSecondaryStat partname = "SR_ARC_DISRUPTOR" value = Value + NamedReal name = "PLC_CHARGE_ARC_DISRUPTOR_SHOT_BONUS" value = 1.0
+                SetMaxSecondaryStat partname = "SR_ARC_DISRUPTOR" value = Value + NamedReal name = "PLC_FLANKING_ARC_DISRUPTOR_SHOT_BONUS" value = 1.0
                 SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + (NamedReal name = "PLC_FLANKING_FIGHTER_DAMAGE_BOOST" value = 2.0 * [[FIGHTER_DAMAGE_FACTOR]] )
                 SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + NamedRealLookup name = "PLC_FLANKING_FIGHTER_DAMAGE_BOOST"
                 SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + NamedRealLookup name = "PLC_FLANKING_FIGHTER_DAMAGE_BOOST"
@@ -118,18 +78,6 @@ Policy
                    * (NamedReal name = "PLC_FLANKING_BAY_LAUNCH_BONUS" value = 2.0 ) )
                 // TODO check monster weapons
                 // no bonus to point defense
-                GenerateSitRepMessage
-                  message = "Applying FLANKING to %ship% -  %system%"
-                  label = "Custom_211"
-                  NoStringtableLookup
-                  icon = "icons/monsters/kraken-1.png"
-                  parameters = [
-                    tag = "ship" data = Target.ID
-                    tag = "system" data = Target.SystemID
-                  ]
-                  empire = Source.Owner
-
-
             ]
 
     ]
