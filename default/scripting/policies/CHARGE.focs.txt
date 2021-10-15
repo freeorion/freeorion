@@ -7,7 +7,8 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
-        // fast ships do more damage
+        // This is policy which trains your military to efficiently plan and execute charge attacks, i.e.:
+        // fast ships do more damage and fast carriers field fighters more efficiently/closer to the enemy
         EffectsGroup
             scope = And [
                 Ship
@@ -15,12 +16,35 @@ Policy
                 Armed
                 Speed low = NamedReal name = "PLC_CHARGE_MINIMUM_SPEED" value = 100.0
             ]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
+                // fluff-wise: a charge bonus could interact with "range", so e.g. a charging vessel could shoot a bout earlier.
+                // fluff-wise: a charge bonus probably should wear off when already in close combat range
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + (NamedReal name = "PLC_CHARGE_DAMAGE_BOOST" value = 1.0 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
                 SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + NamedRealLookup name = "PLC_CHARGE_DAMAGE_BOOST"
                 SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + NamedRealLookup name = "PLC_CHARGE_DAMAGE_BOOST"
                 SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + NamedRealLookup name = "PLC_CHARGE_DAMAGE_BOOST"
-                SetMaxShield value = Value - NamedReal name = "PLC_CHARGE_SHIELD_REDUCTION" value = 3.0
+                SetMaxSecondaryStat partname = "SR_ARC_DISRUPTOR" value = (Value + NamedReal name = "PLC_CHARGE_ARC_DISRUPTOR_SHOT_BONUS" value = 1.0)
+                // TODO check monster weapons
+                // fluff-wise: Fighters should not get a charge bonus for fighters from carriers as the carrier speed does not give combat advantage to the fighters.
+                //             XXX but then we also should distinguish between ships which should charge and those which shouldnt for determining the malus
+                //             i.e. in that case, a carrier without other weapons should definitly not charge/have meters lowered
+                // also in order to avoid that we instead increase the launch rate, fluff: more efficient fielding of fighters
+                SetMaxCapacity partname = "FT_BAY_1" value = Value + (NamedInteger name = "PLC_CHARGE_BAY_LAUNCH_BONUS" value = 1)
+                // Point defense and shields are less efficient when charging:
+                SetMaxDamage partname = "SR_WEAPON_0_1" value = Value - (NamedReal name = "PLC_CHARGE_FLAK_SHOT_REDUCTION" value = 1.0)
+                SetMaxShield value = Value - (NamedReal name = "PLC_CHARGE_SHIELD_REDUCTION" value = 3.0 * [[SHIP_SHIELD_FACTOR]] )
+
+//                GenerateSitRepMessage
+//                  message = "Applying CHARGE to %ship% -  %system%"
+//                  label = "Custom_212"
+//                  NoStringtableLookup
+//                  icon = "icons/monsters/kraken-1.png"
+//                  parameters = [
+//                    tag = "ship" data = Target.ID
+//                    tag = "system" data = Target.SystemID
+//                  ]
+//                  empire = Source.Owner
             ]
 
     ]
