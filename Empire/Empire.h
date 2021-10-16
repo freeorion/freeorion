@@ -387,7 +387,7 @@ public:
     void UpdateInfluenceSpending();
     /** Has m_population_pool recalculate all PopCenters' and empire's total
       * expected population growth */
-    void UpdatePopulationGrowth();
+    void UpdatePopulationGrowth(const ObjectMap& objects);
 
     /** Resets empire meters. */
     void ResetMeters();

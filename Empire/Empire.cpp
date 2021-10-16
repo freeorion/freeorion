@@ -2642,7 +2642,7 @@ void Empire::UpdateResourcePools(const ScriptingContext& context) {
     UpdateResearchQueue();
     UpdateProductionQueue(context);
     UpdateInfluenceSpending();
-    UpdatePopulationGrowth();
+    UpdatePopulationGrowth(context.ContextObjects());
 }
 
 void Empire::UpdateResearchQueue() {
@@ -2665,8 +2665,8 @@ void Empire::UpdateInfluenceSpending() {
     m_resource_pools[ResourceType::RE_INFLUENCE]->ChangedSignal();
 }
 
-void Empire::UpdatePopulationGrowth()
-{ m_population_pool.Update(); }
+void Empire::UpdatePopulationGrowth(const ObjectMap& objects)
+{ m_population_pool.Update(objects); }
 
 void Empire::ResetMeters() {
     for (auto& entry : m_meters)
