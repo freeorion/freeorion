@@ -100,10 +100,26 @@ public:
         return Map<T>() | boost::adaptors::map_values | boost::adaptors::transformed(tx);
     }
 
+    template <typename T = UniverseObject>
+    [[nodiscard]] auto allRaw() const
+    {
+        return Map<T>() | boost::adaptors::map_values | boost::adaptors::transformed(
+            [](const auto& p) -> const T* { return p.get(); }
+        );
+    }
+
     /** Returns all the objects of type T */
     template <typename T = UniverseObject>
     [[nodiscard]] auto all()
     { return std::as_const(Map<T>()) | boost::adaptors::map_values; }
+
+    template <typename T = UniverseObject>
+    [[nodiscard]] auto allRaw()
+    {
+        return Map<T>() | boost::adaptors::map_values | boost::adaptors::transformed(
+            [](const auto& p) -> T* { return p.get(); }
+        );
+    }
 
     /** Returns the IDs of all objects not known to have been destroyed. */
     [[nodiscard]] std::vector<int> FindExistingObjectIDs() const;
