@@ -50,12 +50,16 @@ public:
       * ID \a id is not of type T. */
     template <typename T = UniverseObject>
     [[nodiscard]] std::shared_ptr<const T> get(int id) const;
+    template <typename T = UniverseObject>
+    [[nodiscard]] const T* getRaw(int id) const;
 
     /** Returns a pointer to the object of type T with ID number \a id.
       * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
     template <typename T = UniverseObject>
     [[nodiscard]] std::shared_ptr<T> get(int id);
+    template <typename T = UniverseObject>
+    [[nodiscard]] T* getRaw(int id);
 
     using id_range = boost::any_range<int, boost::forward_traversal_tag>;
 
@@ -261,6 +265,16 @@ std::shared_ptr<const T> ObjectMap::get(int id) const
 }
 
 template <typename T>
+const T* ObjectMap::getRaw(int id) const
+{
+    auto it = Map<typename std::remove_const_t<T>>().find(id);
+    return
+        it != Map<typename std::remove_const_t<T>>().end()
+            ? it->second.get()
+            : nullptr;
+}
+
+template <typename T>
 std::shared_ptr<T> ObjectMap::get(int id)
 {
     auto it = Map<typename std::remove_const_t<T>>().find(id);
@@ -268,6 +282,16 @@ std::shared_ptr<T> ObjectMap::get(int id)
         it != Map<typename std::remove_const_t<T>>().end()
             ? it->second
             : nullptr);
+}
+
+template <typename T>
+T* ObjectMap::getRaw(int id)
+{
+    auto it = Map<typename std::remove_const_t<T>>().find(id);
+    return
+        it != Map<typename std::remove_const_t<T>>().end()
+            ? it->second.get()
+            : nullptr;
 }
 
 template <typename T>

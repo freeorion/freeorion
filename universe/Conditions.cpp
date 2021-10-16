@@ -5267,7 +5267,7 @@ namespace {
             if (candidate->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
                 auto system = static_cast<const System*>(candidate.get());
                 return std::count(m_types.begin(), m_types.end(), system->GetStarType());
-            } else if (auto system = m_objects.get<System>(candidate->SystemID()).get()) {
+            } else if (auto system = m_objects.getRaw<System>(candidate->SystemID())) {
                 return std::count(m_types.begin(), m_types.end(), system->GetStarType());
             } else {
                 return false;
@@ -5354,7 +5354,7 @@ bool StarType::Match(const ScriptingContext& local_context) const {
     if (candidate->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
         auto system = static_cast<const System*>(candidate.get());
         star_type = system->GetStarType();
-    } else if (auto system = local_context.ContextObjects().get<System>(candidate->SystemID()).get()) {
+    } else if (auto system = local_context.ContextObjects().getRaw<System>(candidate->SystemID())) {
         star_type = system->GetStarType();
     } else {
         return false;
@@ -5565,7 +5565,7 @@ namespace {
             const Ship* ship = nullptr;
             if (candidate->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
                 auto* fighter = static_cast<const ::Fighter*>(candidate.get());
-                ship = m_universe.Objects().get<Ship>(fighter->LaunchedFrom()).get();
+                ship = m_universe.Objects().getRaw<Ship>(fighter->LaunchedFrom());
             } else if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
                 ship = static_cast<const ::Ship*>(candidate.get());
             }
@@ -8487,7 +8487,7 @@ namespace {
 
             // check all existing lanes of currently-being-checked system
             for (const auto& lane : sys_existing_lanes) {
-                auto lane_end_sys3 = objects.get<System>(lane.first).get();
+                auto lane_end_sys3 = objects.getRaw<System>(lane.first);
                 if (!lane_end_sys3)
                     continue;
                 // don't need to check against existing lanes that include one
@@ -8551,7 +8551,7 @@ namespace {
             // get system from candidate
             auto candidate_sys = dynamic_cast<const System*>(candidate.get());
             if (!candidate_sys)
-                candidate_sys = m_objects.get<System>(candidate->SystemID()).get();
+                candidate_sys = m_objects.getRaw<System>(candidate->SystemID());
             if (!candidate_sys)
                 return false;
 
@@ -8573,7 +8573,7 @@ namespace {
             // present lanes of the candidate system
             //TraceLogger() << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << "\n";
             for (const auto& lane : candidate_sys->StarlanesWormholes()) {
-                auto candidate_existing_lane_end_sys = m_objects.get<System>(lane.first).get();
+                auto candidate_existing_lane_end_sys = m_objects.getRaw<System>(lane.first);
                 if (!candidate_existing_lane_end_sys)
                     continue;
 
@@ -8596,7 +8596,7 @@ namespace {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
                 for (const auto& dest_lane : dest_sys->StarlanesWormholes()) {
-                    auto dest_lane_end_sys = m_objects.get<System>(dest_lane.first).get();
+                    auto dest_lane_end_sys = m_objects.getRaw<System>(dest_lane.first);
                     if (!dest_lane_end_sys)
                         continue;
 
@@ -8874,7 +8874,7 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
     auto fleet = dynamic_cast<const Fleet*>(candidate.get());
     if (!fleet)
         if (auto ship = dynamic_cast<const Ship*>(candidate.get()))
-            fleet = local_context.ContextObjects().get<Fleet>(ship->FleetID()).get();
+            fleet = local_context.ContextObjects().getRaw<Fleet>(ship->FleetID());
 
     if (fleet) {
         // if a fleet is available, it is "moving", or not stationary, if it's
@@ -8950,7 +8950,7 @@ bool Aggressive::Match(const ScriptingContext& local_context) const {
         fleet = static_cast<const Fleet*>(candidate.get());
     } else if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
         auto* ship = static_cast<const Ship*>(candidate.get());
-        fleet = local_context.ContextObjects().get<Fleet>(ship->FleetID()).get();
+        fleet = local_context.ContextObjects().getRaw<Fleet>(ship->FleetID());
     }
 
     if (!fleet)

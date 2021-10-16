@@ -145,7 +145,7 @@ namespace {
      *      estimated value for those planets.
      */
     void UpdateMeterEstimates(bool pretend_to_own_unowned_planets) {
-        std::vector<std::shared_ptr<Planet>> unowned_planets;
+        std::vector<Planet*> unowned_planets;
         int player_id = -1;
         Universe& universe = AIClientApp::GetApp()->GetUniverse();
         if (pretend_to_own_unowned_planets) {
@@ -164,8 +164,9 @@ namespace {
             // (aren't owned by anyone).  Add this the current player's
             // ownership to all, while remembering which planets this is done
             // to.
+            unowned_planets.reserve(universe.Objects().size<Planet>());
             universe.InhibitUniverseObjectSignals(true);
-            for (auto& planet : universe.Objects().all<Planet>()) {
+            for (auto planet : universe.Objects().allRaw<Planet>()) {
                  if (planet->Unowned()) {
                      unowned_planets.push_back(planet);
                      planet->SetOwner(player_id);
@@ -179,7 +180,7 @@ namespace {
 
         if (pretend_to_own_unowned_planets) {
             // remove temporary ownership added above
-            for (auto& planet : unowned_planets)
+            for (auto planet : unowned_planets)
                 planet->SetOwner(ALL_EMPIRES);
             universe.InhibitUniverseObjectSignals(false);
         }

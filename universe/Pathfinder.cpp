@@ -508,7 +508,7 @@ namespace {
                 std::vector<decltype(edges)::value_type> edges_vec;
 #endif
                 edges_vec.reserve(objects.size<System>() * 10); // guesstimate
-                for (const auto& sys : objects.all<System>()) {
+                for (const auto& sys : objects.allRaw<System>()) {
                     auto sys_id{sys->ID()};
                     for (auto& [lane_id, is_wormhole] : sys->StarlanesWormholes()) {
                         (void)is_wormhole; // quiet unused variable_warning
@@ -949,7 +949,7 @@ struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
     /** For an object in transit, apply the JumpDistanceSys2Visitor and return
         the shortest distance.*/
     int operator()(std::pair<int, int> prev_next) const {
-        short sjumps1 = -1, sjumps2 = -1;
+        int sjumps1 = -1, sjumps2 = -1;
         int prev_sys_id = prev_next.first, next_sys_id = prev_next.second;
         if (prev_sys_id != INVALID_OBJECT_ID) {
             JumpDistanceSys2Visitor visitor(pf, prev_sys_id);
@@ -960,11 +960,10 @@ struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
             sjumps2 = boost::apply_visitor(visitor, sys2_ids);
         }
 
-        int jumps1 = (sjumps1 == -1) ? INT_MAX : static_cast<int>(sjumps1);
-        int jumps2 = (sjumps2 == -1) ? INT_MAX : static_cast<int>(sjumps2);
+        int jumps1 = (sjumps1 == -1) ? INT_MAX : sjumps1;
+        int jumps2 = (sjumps2 == -1) ? INT_MAX : sjumps2;
 
-        int jumps = std::min(jumps1, jumps2);
-        return jumps;
+        return std::min(jumps1, jumps2);
     }
     const Pathfinder::PathfinderImpl& pf;
     const GeneralizedLocationType& sys2_ids;

@@ -522,9 +522,9 @@ void FleetTransferOrder::ExecuteImpl(ScriptingContext& context) const {
     // remove from old fleet(s)
     std::set<Fleet*> modified_fleets;
     for (auto& ship : ships) {
-        if (auto* source_fleet = Objects().get<Fleet>(ship->FleetID()).get()) {
+        if (auto source_fleet = context.ContextObjects().getRaw<Fleet>(ship->FleetID())) {
             source_fleet->RemoveShips({ship->ID()});
-            modified_fleets.emplace(source_fleet);
+            modified_fleets.insert(source_fleet);
         }
         ship->SetFleetID(target_fleet->ID());
     }
@@ -533,14 +533,14 @@ void FleetTransferOrder::ExecuteImpl(ScriptingContext& context) const {
     std::vector<int> validated_ship_ids;
     validated_ship_ids.reserve(m_add_ships.size());
     for (const auto& ship : ships)
-        validated_ship_ids.emplace_back(ship->ID());
+        validated_ship_ids.push_back(ship->ID());
 
     target_fleet->AddShips(validated_ship_ids);
 
     context.ContextUniverse().InhibitUniverseObjectSignals(false);
 
     // signal change to fleet states
-    modified_fleets.emplace(target_fleet.get());
+    modified_fleets.insert(target_fleet.get());
 
     for (auto* modified_fleet : modified_fleets) {
         if (!modified_fleet) {
@@ -548,7 +548,7 @@ void FleetTransferOrder::ExecuteImpl(ScriptingContext& context) const {
         } else if (!modified_fleet->Empty()) {
             modified_fleet->StateChangedSignal();
         } else {
-            if (auto system = context.ContextObjects().get<System>(modified_fleet->SystemID()))
+            if (auto system = context.ContextObjects().getRaw<System>(modified_fleet->SystemID()))
                 system->Remove(modified_fleet->ID());
 
             context.ContextUniverse().Destroy(modified_fleet->ID());
