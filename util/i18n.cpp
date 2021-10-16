@@ -156,9 +156,9 @@ namespace {
         // if not already loaded, load, store, and return,
         // using default stringtable for fallback expansion lookups
         auto table = std::make_shared<StringTable>(stringtable_filename, default_stringtable_it->second);
-        stringtables[stringtable_filename] = table; // TODO: emplace?
-
-        return *table;
+        auto [p, b] = stringtables.emplace(std::move(stringtable_filename), std::move(table));
+        (void)b;
+        return *(p->second);
     }
 
     const StringTable& GetStringTable()

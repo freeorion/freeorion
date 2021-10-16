@@ -327,8 +327,8 @@ std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySecti
 
     // tally the total number of options under each section
     std::unordered_map<std::string, std::size_t> total_options_per_section;
-    for (const auto& option_section : sections_by_option) {
-        auto option_name = option_section.first;
+    for (const auto& [option_name, sections_set] : sections_by_option) {
+        (void)sections_set; // quiet warning
         auto dot_it = option_name.find_first_of(".");
         // increment count of each containing parent section
         while (dot_it != std::string::npos) {
@@ -342,7 +342,7 @@ std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySecti
     std::unordered_map<std::string, std::set<std::string>> options_by_section;
     for (const auto& option : sections_by_option) {
         for (const auto& section : option.second) {
-            auto section_name = section;
+            auto section_name{section};
             auto defined_section_it = m_sections.find(section_name);
             bool has_descr = defined_section_it != m_sections.end() ?
                              !defined_section_it->second.description.empty() :
