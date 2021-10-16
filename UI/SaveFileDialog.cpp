@@ -36,7 +36,7 @@ namespace {
     constexpr GG::X SAVE_FILE_DIALOG_MIN_WIDTH(160);
     constexpr GG::Y SAVE_FILE_DIALOG_MIN_HEIGHT(100);
 
-    const std::string SAVE_FILE_WND_NAME = "dialog.save";
+    constexpr std::string_view SAVE_FILE_WND_NAME = "dialog.save";
 
     constexpr GG::X PROMT_WIDTH(200);
     constexpr GG::Y PROMPT_HEIGHT(75);
@@ -47,23 +47,28 @@ namespace {
     constexpr unsigned int SAVE_FILE_CELL_MARGIN = 2;
     constexpr unsigned int ROW_MARGIN = 2;
 
-    const std::string PATH_DELIM_BEGIN = "[";
-    const std::string PATH_DELIM_END = "]";
+    constexpr std::string_view PATH_DELIM_BEGIN = "[";
+    constexpr std::string_view PATH_DELIM_END = "]";
 
-    const std::string WIDE_AS = "wide-as";
-    const std::string STRETCH = "stretch";
+    constexpr std::string_view WIDE_AS = "wide-as";
+    constexpr std::string_view STRETCH = "stretch";
 
-    const std::string SERVER_LABEL = "SERVER";
+    constexpr std::string_view SERVER_LABEL = "SERVER";
 
-    const std::string VALID_PREVIEW_COLUMNS[] = {
+    constexpr std::array<std::string_view, 17> VALID_PREVIEW_COLUMNS = {
         "player", "empire", "turn", "time", "file", "seed", "galaxy_age", "galaxy_size", "galaxy_shape",
         "monster_freq", "native_freq", "planet_freq", "specials_freq", "starlane_freq", "ai_aggression",
         "number_of_empires", "number_of_humans"
     };
-
-    constexpr unsigned int VALID_PREVIEW_COLUMN_COUNT = sizeof(VALID_PREVIEW_COLUMNS) / sizeof(std::string);
-
+    constexpr unsigned int VALID_PREVIEW_COLUMN_COUNT = VALID_PREVIEW_COLUMNS.size();
     constexpr int WHEEL_INCREMENT = 80;
+
+    std::string operator+(std::string_view lhs, std::string_view rhs) {
+        std::string retval;
+        retval.reserve(lhs.size() + rhs.size());
+        retval.append(lhs).append(rhs);
+        return retval;
+    }
 
     // command-line options
     void AddOptions(OptionsDB& db) {
@@ -124,10 +129,11 @@ namespace {
 /** Describes how a column should be set up in the dialog */
 class SaveFileColumn {
 public:
-    static std::shared_ptr<std::vector<SaveFileColumn>> GetColumns(GG::X max_width) {
-        auto columns = std::make_shared<std::vector<SaveFileColumn>>();
-        for (unsigned int i = 0; i < VALID_PREVIEW_COLUMN_COUNT; ++i)
-            columns->push_back(GetColumn(VALID_PREVIEW_COLUMNS[i], max_width));
+    static std::vector<SaveFileColumn> GetColumns(GG::X max_width) {
+        std::vector<SaveFileColumn> columns;
+        columns.reserve(VALID_PREVIEW_COLUMNS.size());
+        for (const auto& sv : VALID_PREVIEW_COLUMNS)
+            columns.push_back(GetColumn(sv, max_width));
         return columns;
     }
 
@@ -176,8 +182,8 @@ public:
     { return m_name; }
 
 private:
-    static SaveFileColumn GetColumn(const std::string& name, GG::X max_width) {
-        const std::string prefix = "ui.dialog.save.columns.";
+    static SaveFileColumn GetColumn(std::string_view name, GG::X max_width) {
+        const std::string_view prefix = "ui.dialog.save.columns.";
         std::string option = prefix + name + ".";
         OptionsDB&  db = GetOptionsDB();
 
@@ -193,23 +199,23 @@ private:
     }
 
     /// Creates a fixed width column
-    SaveFileColumn(std::string name, std::string wide_as, GG::X max_width) :
-        m_name(std::move(name)),
+    template <class S1, class S2>
+    SaveFileColumn(S1&& name, S2&& wide_as, GG::X max_width) :
+        m_name(std::forward<S1>(name)),
         m_fixed(true),
-        m_fixed_width(GG::X0),
-        m_wide_as(std::move(wide_as)),
+        m_wide_as(std::forward<S2>(wide_as)),
         m_stretch(0.0)
     { m_fixed_width = ComputeFixedWidth(Title(), m_wide_as, max_width);}
 
     /// Creates a stretchy column
-    SaveFileColumn(std::string name, double stretch, GG::X max_width) :
-        m_name(std::move(name)),
+    template <class S>
+    SaveFileColumn(S&& name, double stretch, GG::X max_width) :
+        m_name(std::forward<S>(name)),
         m_fixed(false),
-        m_fixed_width(GG::X0),
         m_stretch(stretch)
     { m_fixed_width = ComputeFixedWidth(Title(), m_wide_as, max_width);}
 
-    std::string Title() const {
+    const std::string& Title() const {
         if (m_name == "player") {
             return UserString("SAVE_PLAYER_TITLE");
         } else if( m_name == "empire") {
@@ -246,12 +252,14 @@ private:
             return UserString("SAVE_NUMBER_HUMANS_TITLE");
         } else {
             ErrorLogger() << "SaveFileColumn::Title Error: no such preview field: " << m_name;
-            return "???";
+            static const std::string QUESTIONABLE{"???"};
+            return QUESTIONABLE;
         }
     }
 
     static GG::X ComputeFixedWidth(const std::string& title, const std::string& wide_as,
-                                   GG::X max_width) {
+                                   GG::X max_width)
+    {
         auto font = ClientUI::GetFont();
         // We need to maintain the fixed sizes since the base list box messes them
         std::vector<GG::Font::LineData> lines;
@@ -275,7 +283,7 @@ private:
     /// If false, column stretches with factor m_stretch
     bool m_fixed;
     /// The wideset fixed width from wide_as or the title
-    GG::X m_fixed_width;
+    GG::X m_fixed_width = GG::X0;
     /// The string to be used in determining the width of the column
     std::string m_wide_as;
     /// The stretch of the column.
@@ -285,13 +293,10 @@ private:
 /** A Specialized row for the save dialog list box. */
 class SaveFileRow: public GG::ListBox::Row {
 public:
-    SaveFileRow() {}
-
-    SaveFileRow(std::shared_ptr<std::vector<SaveFileColumn>> columns,
-                std::string filename) :
-        m_filename(std::move(filename)),
-        m_columns(std::move(columns)),
-        m_initialized(false)
+    template <class S>
+    SaveFileRow(const std::vector<SaveFileColumn>& columns, S&& filename) :
+        m_filename(std::forward<S>(filename)),
+        m_columns(columns)
     {
         SetName("SaveFileRow for \"" + m_filename + "\"");
         SetChildClippingMode(ChildClippingMode::ClipToClient);
@@ -335,22 +340,22 @@ public:
         auto&& layout = GetLayout();
         if (!layout)
             return;
-        for (unsigned int i = 0; i < m_columns->size(); ++i) {
-            const SaveFileColumn& column = (*m_columns)[i];
-            layout->SetColumnStretch ( i, column.Stretch() );
-            layout->SetMinimumColumnWidth ( i, column.FixedWidth() ); // Considers header
+        for (unsigned int i = 0; i < m_columns.size(); ++i) {
+            const SaveFileColumn& column = m_columns.at(i);
+            layout->SetColumnStretch (i, column.Stretch() );
+            layout->SetMinimumColumnWidth (i, column.FixedWidth() ); // Considers header
         }
     }
 
 protected:
     std::string m_filename;
-    std::shared_ptr<std::vector<SaveFileColumn>> m_columns;
+    const std::vector<SaveFileColumn>& m_columns;
     bool m_initialized = false;
 };
 
 class SaveFileHeaderRow: public SaveFileRow {
 public:
-    SaveFileHeaderRow(const std::shared_ptr<std::vector<SaveFileColumn>>& columns) :
+    SaveFileHeaderRow(const std::vector<SaveFileColumn>& columns) :
         SaveFileRow(columns, "")
     {}
 
@@ -359,19 +364,19 @@ public:
 
         SetMargin(ROW_MARGIN);
 
-        for (const auto& column : *m_columns)
-        { push_back(SaveFileColumn::TitleForColumn(column)); }
+        for (const auto& column : m_columns)
+            push_back(SaveFileColumn::TitleForColumn(column));
         AdjustColumns();
     }
 
-    void Render() override
-    {}
+    void Render() override {}
 };
 
 class SaveFileDirectoryRow: public SaveFileRow {
 public:
-    SaveFileDirectoryRow(const std::shared_ptr<std::vector<SaveFileColumn>>& columns, const std::string& directory) :
-        SaveFileRow(columns, directory) {}
+    SaveFileDirectoryRow(const std::vector<SaveFileColumn>& columns, const std::string& directory) :
+        SaveFileRow(columns, directory)
+    {}
 
     void CompleteConstruction() override {
         SaveFileRow::CompleteConstruction();
@@ -380,17 +385,17 @@ public:
 
     void Init() override {
         SaveFileRow::Init();
-        for (unsigned int i = 0; i < m_columns->size(); ++i) {
+        for (unsigned int i = 0; i < m_columns.size(); ++i) {
             if (i == 0) {
                 auto label = GG::Wnd::Create<CUILabel>(PATH_DELIM_BEGIN + m_filename + PATH_DELIM_END,
                                                        GG::FORMAT_NOWRAP | GG::FORMAT_LEFT);
                 label->Resize(GG::Pt(DirectoryNameSize(), ClientUI::GetFont()->Height()));
-                push_back(label);
+                push_back(std::move(label));
             } else {
                 // Dummy columns so that all rows have the same number of cols
                 auto label = GG::Wnd::Create<CUILabel>("", GG::FORMAT_NOWRAP);
                 label->Resize(GG::Pt(GG::X0, ClientUI::GetFont()->Height()));
-                push_back(label);
+                push_back(std::move(label));
             }
         }
 
@@ -408,7 +413,7 @@ public:
 
         // Give the directory label at least all the room that the other columns demand anyway
         GG::X sum(0);
-        for (const auto& column : *m_columns) {
+        for (const auto& column : m_columns) {
             sum += column.FixedWidth();
         }
         return sum;
@@ -419,8 +424,8 @@ class SaveFileFileRow: public SaveFileRow {
 public:
     /// Creates a row for the given savefile
     SaveFileFileRow(FullPreview&& full,
-                    const std::shared_ptr<std::vector<SaveFileColumn>>& visible_columns,
-                    const std::shared_ptr<std::vector<SaveFileColumn>>& columns,
+                    const std::vector<SaveFileColumn>& visible_columns,
+                    const std::vector<SaveFileColumn>& columns,
                     int tooltip_delay) :
         SaveFileRow(visible_columns, full.filename),
         m_all_columns(columns),
@@ -439,9 +444,9 @@ public:
         SaveFileRow::Init();
         VarText browse_text(UserStringNop("SAVE_DIALOG_ROW_BROWSE_TEMPLATE"));
 
-        for (const auto& column : *m_columns)
+        for (const auto& column : m_columns)
             push_back(SaveFileColumn::CellForColumn(column, m_full_preview, ClientWidth()));
-        for (const auto& column : *m_all_columns)
+        for (const auto& column : m_all_columns)
             browse_text.AddVariable(column.Name(), ColumnInPreview(m_full_preview, column.Name(), false));
 
         AdjustColumns();
@@ -454,28 +459,26 @@ public:
 
 private:
     /** All possible columns. */
-    std::shared_ptr<std::vector<SaveFileColumn>> m_all_columns;
+    const std::vector<SaveFileColumn>& m_all_columns;
     const FullPreview m_full_preview;
 };
 
 class SaveFileListBox : public CUIListBox {
 public:
-    SaveFileListBox() :
-        CUIListBox()
-    {}
+    SaveFileListBox() = default;
 
     void Init() {
         m_columns = SaveFileColumn::GetColumns(ClientWidth());
         m_visible_columns = FilterColumns(m_columns);
         ManuallyManageColProps();
         NormalizeRowsOnInsert(false);
-        SetNumCols(m_visible_columns->size());
+        SetNumCols(m_visible_columns.size());
 
         SetColHeaders(GG::Wnd::Create<SaveFileHeaderRow>(m_visible_columns));
-        for (unsigned int i = 0; i < m_visible_columns->size(); ++i) {
-            const SaveFileColumn& column = (*m_visible_columns)[i];
+        std::size_t i = 0;
+        for (const SaveFileColumn& column : m_visible_columns) {
             SetColStretch(i, column.Stretch());
-            SetColWidth(i, column.FixedWidth());
+            SetColWidth(i++, column.FixedWidth());
         }
 
         SetSortCmp(&SaveFileListBox::DirectoryAwareCmp);
@@ -516,8 +519,8 @@ public:
         std::vector<std::shared_ptr<Row>> rows;
         rows.reserve(previews.size());
         for (FullPreview& preview : previews) {
-            rows.emplace_back(GG::Wnd::Create<SaveFileFileRow>(std::move(preview), m_visible_columns,
-                                                               m_columns, tooltip_delay));
+            rows.push_back(GG::Wnd::Create<SaveFileFileRow>(std::move(preview), m_visible_columns,
+                                                            m_columns, tooltip_delay));
         }
 
         // Insert rows enmasse to avoid per insertion vector sort costs.
@@ -564,25 +567,21 @@ public:
     }
 
 private:
-    std::shared_ptr<std::vector<SaveFileColumn>> m_columns;         // TODO: why are these pointers...?
-    std::shared_ptr<std::vector<SaveFileColumn>> m_visible_columns;
+    std::vector<SaveFileColumn> m_columns;
+    std::vector<SaveFileColumn> m_visible_columns;
 
-    static std::shared_ptr<std::vector<SaveFileColumn>> FilterColumns(
-        const std::shared_ptr<std::vector<SaveFileColumn>>& all_cols)
+    static std::vector<SaveFileColumn> FilterColumns(
+        const std::vector<SaveFileColumn>& all_cols)
     {
-        auto columns = std::make_shared<std::vector<SaveFileColumn>>();
-        if (!all_cols) {
-            ErrorLogger() << "FilterColumns passed null pointer to columns";
-            return columns;
-        }
-        columns->reserve(all_cols->size());
+        std::vector<SaveFileColumn> columns;
+        columns.reserve(all_cols.size());
 
         std::vector<std::string> names = GetOptionsDB().Get<std::vector<std::string>>("ui.dialog.save.columns");
         for (std::string& column_name : names) {
             bool found_col = false;
-            for (const auto& column : *all_cols) {
+            for (const auto& column : all_cols) {
                 if (column.Name() == column_name) {
-                    columns->emplace_back(column);
+                    columns.push_back(column);
                     found_col = true;
                     break;
                 }
@@ -590,7 +589,7 @@ private:
             if (!found_col)
                 ErrorLogger() << "SaveFileListBox::FilterColumns: Column not found: " << column_name;
         }
-        DebugLogger() << "SaveFileDialog::FilterColumns: Visible columns: " << columns->size();
+        DebugLogger() << "SaveFileDialog::FilterColumns: Visible columns: " << columns.size();
         return columns;
     }
 
@@ -616,11 +615,10 @@ private:
     }
 };
 
-SaveFileDialog::SaveFileDialog(const Purpose purpose /* =Purpose::Load*/,
-                               const SaveType type /*= SaveType::SinglePlayer*/) :
+SaveFileDialog::SaveFileDialog(const Purpose purpose, const SaveType type) :
     CUIWnd(UserString("GAME_MENU_SAVE_FILES"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
-           SAVE_FILE_WND_NAME),
+           std::string{SAVE_FILE_WND_NAME}),
     m_extension((type == SaveType::SinglePlayer) ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION),
     m_load_only(purpose == Purpose::Load),
     m_server_previews((type == SaveType::SinglePlayer) ? false : true)
@@ -676,11 +674,9 @@ void SaveFileDialog::Init() {
         m_current_dir_edit = GG::Wnd::Create<CUIEdit>(SERVER_LABEL + "/.");
         m_layout->Add(m_current_dir_edit, 0, 1, 1, 3);
         GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
-        std::string server_label(SERVER_LABEL+SERVER_LABEL+SERVER_LABEL);
-        std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
-            font->ExpensiveParseFromTextToTextElements(server_label, fmt);
-        std::vector<GG::Font::LineData> lines =
-            font->DetermineLines(server_label, fmt, ClientWidth(), text_elements);
+        static const std::string server_label{SERVER_LABEL + SERVER_LABEL + SERVER_LABEL};
+        auto text_elements = font->ExpensiveParseFromTextToTextElements(server_label, fmt);
+        auto lines = font->DetermineLines(server_label, fmt, ClientWidth(), text_elements);
         GG::X drop_width = font->TextExtent(lines).x;
         m_layout->SetMinimumColumnWidth(2, std::max(m_confirm_btn->MinUsableSize().x + 2*SAVE_FILE_BUTTON_MARGIN, drop_width/2));
         m_layout->SetMinimumColumnWidth(3, std::max(cancel_btn->MinUsableSize().x + SAVE_FILE_BUTTON_MARGIN, drop_width / 2));
@@ -743,9 +739,6 @@ void SaveFileDialog::Init() {
     SaveDefaultedOptions();
     SaveOptions();
 }
-
-SaveFileDialog::~SaveFileDialog()
-{}
 
 GG::Rect SaveFileDialog::CalculatePosition() const {
     GG::Pt ul((GG::GUI::GetGUI()->AppWidth() - SAVE_FILE_DIALOG_WIDTH) / 2,

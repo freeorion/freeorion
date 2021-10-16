@@ -27,7 +27,7 @@ public:
     SaveFileDialog(const Purpose purpose = Purpose::Load, const SaveType type = SaveType::SinglePlayer);
 
     void CompleteConstruction() override;
-    ~SaveFileDialog();
+    ~SaveFileDialog() = default;
 
     void ModalInit() override;
 
