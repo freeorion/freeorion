@@ -1131,16 +1131,19 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
     TraceLogger(supply) << "UpdateSupplyUnobstructedSystems (allowing supply propagation) for empire " << m_id;
     m_supply_unobstructed_systems.clear();
 
+    const Universe& universe{context.ContextUniverse()};
+    const ObjectMap& objects{context.ContextObjects()};
+
     // get systems with historically at least partial visibility
     std::set<int> systems_with_at_least_partial_visibility_at_some_point;
     for (int system_id : known_systems) {
-        const auto& vis_turns = context.ContextUniverse().GetObjectVisibilityTurnMapByEmpire(system_id, m_id);
+        const auto& vis_turns = universe.GetObjectVisibilityTurnMapByEmpire(system_id, m_id);
         if (vis_turns.count(Visibility::VIS_PARTIAL_VISIBILITY))
             systems_with_at_least_partial_visibility_at_some_point.insert(system_id);
     }
 
     // get all fleets, or just those visible to this client's empire
-    const auto& known_destroyed_objects = context.ContextUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     // get empire supply ranges
     std::map<int, std::map<int, float>> empire_system_supply_ranges;
@@ -1164,7 +1167,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
     std::set<int> unrestricted_friendly_systems;
     std::set<int> systems_containing_obstructing_objects;
     std::set<int> unrestricted_obstruction_systems;
-    for (auto& fleet : context.ContextObjects().all<Fleet>()) {
+    for (auto& fleet : objects.all<Fleet>()) {
         int system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
             continue;   // not in a system, so can't affect system obstruction
@@ -1199,7 +1202,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
                 // fleets themselves may be created and/or destroyed purely as organizational matters, we check ship
                 // age not fleet age.
                 int cutoff_age = precombat ? 1 : 0;
-                if (fleet_at_war && fleet->MaxShipAgeInTurns() > cutoff_age) {
+                if (fleet_at_war && fleet->MaxShipAgeInTurns(objects) > cutoff_age) {
                     systems_containing_obstructing_objects.insert(system_id);
                     if (fleet->ArrivalStarlane() == system_id)
                         unrestricted_obstruction_systems.insert(system_id);
@@ -1235,7 +1238,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
 
 
     // check each potential supplyable system for whether it can propagate supply.
-    for (const auto& sys : context.ContextObjects().find<System>(known_systems)) {
+    for (const auto& sys : objects.find<System>(known_systems)) {
         if (!sys)
             continue;
 
