@@ -376,7 +376,7 @@ public:
     void UpdateResourcePools(const ScriptingContext& context);
     /** Calls Update() on empire's research queue, which recalculates the RPs
       * spent on and number of turns left for each tech in the queue. */
-    void UpdateResearchQueue();
+    void UpdateResearchQueue(const ObjectMap& objects);
     /** Calls Update() on empire's production queue, which recalculates the PPs
       * spent on and number of turns left for each project in the queue. */
     void UpdateProductionQueue(const ScriptingContext& context);
@@ -384,7 +384,7 @@ public:
       * spent on social projects and maintenance of buildings.  Later call to
       * CheckInfluenceProgress() will then have the correct allocations of
       * influence. */
-    void UpdateInfluenceSpending();
+    void UpdateInfluenceSpending(const ObjectMap& objects);
     /** Has m_population_pool recalculate all PopCenters' and empire's total
       * expected population growth */
     void UpdatePopulationGrowth(const ObjectMap& objects);

@@ -560,7 +560,7 @@ void ResearchWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
         context);
 
     if (auto empire = context.GetEmpire(empire_id))
-        empire->UpdateResearchQueue();
+        empire->UpdateResearchQueue(context.ContextObjects());
 }
 
 void ResearchWnd::Sanitize()
@@ -672,7 +672,7 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
                 pos += 1;
         }
     }
-    empire->UpdateResearchQueue();
+    empire->UpdateResearchQueue(context.ContextObjects());
 }
 
 void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
@@ -686,7 +686,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (auto queue_row = boost::polymorphic_downcast<QueueRow*>(it->get()))
         orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name), context);
     if (auto empire = context.GetEmpire(empire_id))
-        empire->UpdateResearchQueue();
+        empire->UpdateResearchQueue(context.ContextObjects());
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
@@ -727,7 +727,7 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
             std::make_shared<ResearchQueueOrder>(client_empire_id, queue_row->elem.name, pause, -1.0f),
             context);
 
-    empire->UpdateResearchQueue();
+    empire->UpdateResearchQueue(context.ContextObjects());
 }
 
 

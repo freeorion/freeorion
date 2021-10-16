@@ -204,7 +204,7 @@ namespace {
             ErrorLogger() << "UpdateResearchQueue : couldn't get empire with id " << empire_id;
             return;
         }
-        empire->UpdateResearchQueue();
+        empire->UpdateResearchQueue(Objects());
     }
 
     void UpdateProductionQueue() {

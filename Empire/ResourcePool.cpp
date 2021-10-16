@@ -67,7 +67,7 @@ float ResourcePool::Stockpile() const
 float ResourcePool::TotalOutput() const {
     float retval = 0.0f;
     for (const auto& entry : m_connected_object_groups_resource_output)
-    { retval += entry.second; }
+        retval += entry.second;
     return retval;
 }
 
@@ -76,9 +76,9 @@ const std::map<std::set<int>, float>& ResourcePool::Output() const
 
 float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
-    for (const auto& entry : m_connected_object_groups_resource_output) {
-        if (entry.first.count(object_id))
-            return entry.second;
+    for (const auto& [group, output] : m_connected_object_groups_resource_output) {
+        if (group.count(object_id))
+            return output;
     }
 
     // default return case:
@@ -89,7 +89,7 @@ float ResourcePool::GroupOutput(int object_id) const {
 float ResourcePool::TargetOutput() const {
     float retval = 0.0f;
     for (const auto& entry : m_connected_object_groups_resource_target_output)
-    { retval += entry.second; }
+        retval += entry.second;
     return retval;
 }
 
@@ -108,14 +108,12 @@ float ResourcePool::GroupTargetOutput(int object_id) const {
 float ResourcePool::TotalAvailable() const {
     float retval = m_stockpile;
     for (const auto& entry : m_connected_object_groups_resource_output)
-    { retval += entry.second; }
+        retval += entry.second;
     return retval;
 }
 
-std::map<std::set<int>, float> ResourcePool::Available() const {
-    auto retval = m_connected_object_groups_resource_output;
-    return retval;
-}
+std::map<std::set<int>, float> ResourcePool::Available() const
+{ return m_connected_object_groups_resource_output; }
 
 float ResourcePool::GroupAvailable(int object_id) const {
     TraceLogger() << "ResourcePool::GroupAvailable(" << object_id << ")";
@@ -143,7 +141,7 @@ void ResourcePool::SetStockpile(float d) {
     m_stockpile = d;
 }
 
-void ResourcePool::Update() {
+void ResourcePool::Update(const ObjectMap& objects) {
     //DebugLogger() << "ResourcePool::Update for type " << m_type;
     // sum production from all ResourceCenters in each group, for resource point type appropriate for this pool
     MeterType meter_type = ResourceToMeter(m_type);
@@ -166,7 +164,7 @@ void ResourcePool::Update() {
     // system.  If a group does, place the object into that system group's set
     // of objects.  If no group contains the object, place the object in its own
     // single-object group.
-    for (auto& obj : Objects().find<const UniverseObject>(m_object_ids)) {
+    for (auto& obj : objects.find<const UniverseObject>(m_object_ids)) {
         int object_id = obj->ID();
         int object_system_id = obj->SystemID();
         // can't generate resources when not in a system

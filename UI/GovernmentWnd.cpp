@@ -1307,7 +1307,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     GGHumanClientApp::GetApp()->Orders().IssueOrder(std::move(order), context);
 
     // update UI after policy changes
-    empire->UpdateInfluenceSpending();
+    empire->UpdateInfluenceSpending(context.ContextObjects());
     Populate();
     context.ContextUniverse().UpdateMeterEstimates(context);
     SidePanel::Refresh();

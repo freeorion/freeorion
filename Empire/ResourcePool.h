@@ -11,6 +11,7 @@
 #include "../util/Enum.h"
 #include "../util/Export.h"
 
+class ObjectMap;
 
 //! Types of resources that Empire%s can produce
 FO_ENUM(
@@ -65,9 +66,9 @@ public:
       * have no common systems. */
     void SetConnectedSupplyGroups(const std::set<std::set<int>>& connected_system_groups);
 
-    void SetStockpile(float d);      ///< sets current sockpiled amount of resource
+    void SetStockpile(float d);             ///< sets current sockpiled amount of resource
 
-    void Update();                   ///< recalculates total resource production
+    void Update(const ObjectMap& objects);  ///< recalculates total resource production
 
 private:
     ResourcePool(); ///< default ctor needed for serialization

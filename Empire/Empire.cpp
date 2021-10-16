@@ -2642,14 +2642,14 @@ void Empire::UpdateResourcePools(const ScriptingContext& context) {
     // updating queues, allocated_rp, distribution and growth each update their
     // respective pools, (as well as the ways in which the resources are used,
     // which needs to be done simultaneously to keep things consistent)
-    UpdateResearchQueue();
+    UpdateResearchQueue(context.ContextObjects());
     UpdateProductionQueue(context);
-    UpdateInfluenceSpending();
+    UpdateInfluenceSpending(context.ContextObjects());
     UpdatePopulationGrowth(context.ContextObjects());
 }
 
-void Empire::UpdateResearchQueue() {
-    m_resource_pools[ResourceType::RE_RESEARCH]->Update();
+void Empire::UpdateResearchQueue(const ObjectMap& objects) {
+    m_resource_pools[ResourceType::RE_RESEARCH]->Update(objects);
     m_research_queue.Update(m_resource_pools[ResourceType::RE_RESEARCH]->TotalAvailable(), m_research_progress);
     m_resource_pools[ResourceType::RE_RESEARCH]->ChangedSignal();
 }
@@ -2657,13 +2657,13 @@ void Empire::UpdateResearchQueue() {
 void Empire::UpdateProductionQueue(const ScriptingContext& context) {
     DebugLogger() << "========= Production Update for empire: " << EmpireID() << " ========";
 
-    m_resource_pools[ResourceType::RE_INDUSTRY]->Update();
+    m_resource_pools[ResourceType::RE_INDUSTRY]->Update(context.ContextObjects());
     m_production_queue.Update(context);
     m_resource_pools[ResourceType::RE_INDUSTRY]->ChangedSignal();
 }
 
-void Empire::UpdateInfluenceSpending() {
-    m_resource_pools[ResourceType::RE_INFLUENCE]->Update(); // recalculate total influence production
+void Empire::UpdateInfluenceSpending(const ObjectMap& objects) {
+    m_resource_pools[ResourceType::RE_INFLUENCE]->Update(objects); // recalculate total influence production
     m_influence_queue.Update();
     m_resource_pools[ResourceType::RE_INFLUENCE]->ChangedSignal();
 }
