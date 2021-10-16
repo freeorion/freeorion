@@ -1332,7 +1332,7 @@ namespace FreeOrionPython {
         py::def("current_turn",                     CurrentTurn);
         py::def("generate_sitrep",                  GenerateSitRep);
         py::def("generate_sitrep",                  +[](int empire_id, const std::string& template_string, const std::string& icon) { GenerateSitRep(empire_id, template_string, py::dict(), icon); });
-        py::def("generate_starlanes",               GenerateStarlanes);
+        py::def("generate_starlanes",               +[](int max_jumps_between_systems, int max_starlane_length) { GenerateStarlanes(max_jumps_between_systems, max_starlane_length, GetUniverse()); });
 
         py::def("species_preferred_focus",          SpeciesDefaultFocus);
         py::def("species_get_planet_environment",   SpeciesGetPlanetEnvironment);

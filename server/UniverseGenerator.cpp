@@ -29,16 +29,13 @@ namespace Delauney {
       * triangle that overlaps all actual points being triangulated) */
     class DTPoint {
     public:
-        DTPoint() :
-            x(0.0),
-            y(0.0)
-        {}
+        DTPoint() = default;
         DTPoint(double x_, double y_) :
             x(x_),
             y(y_)
         {}
-        double  x;
-        double  y;
+        double x = 0.0;
+        double y = 0.0;
     };
 
     /* simple class for an integer that has an associated "sorting value",
@@ -61,18 +58,18 @@ namespace Delauney {
       * the circumcircle */
     class DTTriangle {
     public:
-        DTTriangle();
+        DTTriangle() = default;
         DTTriangle(int vert1, int vert2, int vert3,
-                   const std::vector<Delauney::DTPoint> &points);
+                   const std::vector<Delauney::DTPoint>& points);
 
         ///< determines whether a specified point is within the circumcircle of the triangle
-        bool PointInCircumCircle(const Delauney::DTPoint &p);
-        const std::vector<int>& Verts() {return verts;}
+        bool PointInCircumCircle(const Delauney::DTPoint& p);
+        const std::array<int, 3>& Verts() {return verts;}
 
     private:
-        std::vector<int>    verts;      ///< indices of vertices of triangle
-        Delauney::DTPoint   centre;     ///< location of circumcentre of triangle
-        double              radius2;    ///< radius of circumcircle squared
+        std::array<int, 3> verts{0, 0, 0};   ///< indices of vertices of triangle
+        Delauney::DTPoint  centre{0.0, 0.0}; ///< location of circumcentre of triangle
+        double             radius2{0.0};     ///< radius of circumcircle squared
     };
 
     DTTriangle::DTTriangle(int vert1, int vert2, int vert3,
@@ -119,18 +116,10 @@ namespace Delauney {
         radius2 = (Sx*Sx + Sy*Sy)/(a*a) + b/a;
     };
 
-    DTTriangle::DTTriangle() :
-        verts{0, 0, 0},
-        centre{0.0, 0.0},
-        radius2{0.0}
-    {};
-
-    bool DTTriangle::PointInCircumCircle(const Delauney::DTPoint &p) {
+    bool DTTriangle::PointInCircumCircle(const Delauney::DTPoint& p) {
         double vectX = p.x - centre.x;
         double vectY = p.y - centre.y;
-        if (vectX*vectX + vectY*vectY < radius2)
-            return true;
-        return false;
+        return (vectX*vectX + vectY*vectY < radius2);
     };
 
 
@@ -138,7 +127,7 @@ namespace Delauney {
     /** Runs a Delauney Triangulation on a set of 2D points corresponding
       * to the locations of the systems in \a systems_vec */
     std::list<Delauney::DTTriangle> DelauneyTriangulate(
-        const std::vector<std::shared_ptr<System>> &systems_vec)
+        const std::vector<std::shared_ptr<const System>>& systems_vec, double universe_width)
     {
         // ensure a useful list of systems was passed...
         if (systems_vec.empty()) {
@@ -162,8 +151,8 @@ namespace Delauney {
         // enough to form a triangle that encloses all the points in points_vec
         // (or at least one whose circumcircle covers all points)
         points_vec.push_back({-1.0, -1.0});
-        points_vec.push_back({2.0 * (GetUniverse().UniverseWidth() + 1.0), -1.0});
-        points_vec.push_back({-1.0, 2.0 * (GetUniverse().UniverseWidth() + 1.0)});
+        points_vec.push_back({2.0 * (universe_width + 1.0), -1.0});
+        points_vec.push_back({-1.0, 2.0 * (universe_width + 1.0)});
 
 
         // initialize triangle_list.
@@ -374,11 +363,10 @@ namespace {
       * each other. */
     void CullAngularlyTooCloseLanes(double max_lane_uvect_dot_product,
                                     std::map<int, std::set<int>>& system_lanes,
-                                    const std::map<int, std::shared_ptr<System>>& systems)
+                                    const std::map<int, std::shared_ptr<const System>>& systems)
     {
         // 2 component vector and vect + magnitude typedefs
-        typedef std::pair<double, double> VectTypeQQ;
-        typedef std::pair<VectTypeQQ, double> VectAndMagTypeQQ;
+        typedef std::pair<std::pair<double, double>, double> VectAndMagTypeQQ;
 
         std::set<std::pair<int, int>> lanesToRemoveSet;  // start and end stars of lanes to be removed in final step...
 
@@ -431,13 +419,10 @@ namespace {
             ++laneSetIter1;  // start at second, since iterators are used in pairs, and starting both at the first wouldn't be a valid pair
             while (laneSetIter1 != system_lanes[cur_sys_id].end()) {
                 // get destination of current starlane
-                auto dest1 = *laneSetIter1;
+                const auto& dest1 = *laneSetIter1;
 
-                std::pair<int, int> lane1;
-                if (cur_sys_id < dest1)
-                    lane1 = {cur_sys_id, dest1};
-                else
-                    lane1 = {dest1, cur_sys_id};
+                auto lane1{(cur_sys_id < dest1) ?
+                    std::pair{cur_sys_id, dest1} : std::pair{dest1, cur_sys_id}};
 
                 // check if this lane has already been added to the set of lanes to remove
                 if (lanesToRemoveSet.count(lane1)) {
@@ -448,11 +433,8 @@ namespace {
                 // extract data on starlane vector...
                 auto laneVectsMapIter = laneVectsMap.find(dest1);
                 assert(laneVectsMapIter != laneVectsMap.end());
-                auto tempVectAndMag = laneVectsMapIter->second;
-                auto tempVect = tempVectAndMag.first;
-                auto vectX1 = tempVect.first;
-                auto vectY1 = tempVect.second;
-                auto mag1 = tempVectAndMag.second;
+                const auto& [temp_vec, mag1] = laneVectsMapIter->second;
+                const auto& [vectX1, vectY1] = temp_vec;
 
                 // iterate through other lanes of cur_sys_id, in order
                 // to get all possible pairs of lanes
@@ -476,11 +458,8 @@ namespace {
                     // extract data on starlane vector...
                     laneVectsMapIter = laneVectsMap.find(dest2);
                     assert(laneVectsMapIter != laneVectsMap.end());
-                    tempVectAndMag = laneVectsMapIter->second;
-                    tempVect = tempVectAndMag.first;
-                    auto vectX2 = tempVect.first;
-                    auto vectY2 = tempVect.second;
-                    auto mag2 = tempVectAndMag.second;
+                    const auto& [temp_vect2, mag2] = laneVectsMapIter->second;
+                    const auto& [vectX2, vectY2] = temp_vect2;
 
                     // find dot product
                     auto dotProd = vectX1 * vectX2 + vectY1 * vectY2;
@@ -508,16 +487,16 @@ namespace {
         auto lanes_to_remove_it = lanesToRemoveSet.begin();
         auto lanes_to_remove_end = lanesToRemoveSet.end();
         while (lanes_to_remove_it != lanes_to_remove_end) {
-            auto lane1 = *lanes_to_remove_it;
+            const auto& [l_start, l_end] = *lanes_to_remove_it;
 
-            system_lanes[lane1.first].erase(lane1.second);
-            system_lanes[lane1.second].erase(lane1.first);
+            system_lanes[l_start].erase(l_end);
+            system_lanes[l_end].erase(l_start);
 
             // check that removing lane hasn't disconnected systems
-            if (!ConnectedWithin(lane1.first, lane1.second, systems.size(), system_lanes)) {
+            if (!ConnectedWithin(l_start, l_end, systems.size(), system_lanes)) {
                 // they aren't connected... reconnect them
-                system_lanes[lane1.first].insert(lane1.second);
-                system_lanes[lane1.second].insert(lane1.first);
+                system_lanes[l_start].insert(l_end);
+                system_lanes[l_end].insert(l_start);
             }
 
             ++lanes_to_remove_it;
@@ -528,7 +507,7 @@ namespace {
       * each other. */
     void CullTooLongLanes(double max_lane_length,
                           std::map<int, std::set<int>>& system_lanes,
-                          const std::map<int, std::shared_ptr<System>>& systems)
+                          const std::map<int, std::shared_ptr<const System>>& systems)
     {
         DebugLogger() << "CullTooLongLanes max lane length: " << max_lane_length
                       << "  potential lanes: " << IntSetMapSizeCount(system_lanes)
@@ -547,10 +526,7 @@ namespace {
         double max_lane_length2 = max_lane_length*max_lane_length;
 
         // loop through systems
-        for (const auto& system_entry : systems) {
-            int cur_sys_id = system_entry.first;
-            const auto& cur_system = system_entry.second;
-
+        for (const auto& [cur_sys_id, cur_system] : systems) {
             // get position of current system (for use in calculating vector)
             double startX = cur_system->X();
             double startY = cur_system->Y();
@@ -628,7 +604,9 @@ namespace {
     }
 }
 
-void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
+void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length,
+                       Universe& universe)
+{
     DebugLogger() << "GenerateStarlanes  max jumps b/w sys: " << max_jumps_between_systems
                   << "  max lane length: " << max_starlane_length;
 
@@ -642,11 +620,11 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
     std::map<int, std::set<int>> potential_system_lanes;
 
     // get systems
-    auto sys_rng = Objects().all<System>();
-    std::vector<std::shared_ptr<System>> sys_vec{sys_rng.begin(), sys_rng.end()};
-    std::map<int, std::shared_ptr<System>> sys_map;
+    auto sys_rng = std::as_const(universe.Objects()).all<System>();
+    std::vector<std::shared_ptr<const System>> sys_vec{sys_rng.begin(), sys_rng.end()};
+    std::map<int, std::shared_ptr<const System>> sys_map;
     std::transform(sys_rng.begin(), sys_rng.end(), std::inserter(sys_map, sys_map.end()),
-                   [](const std::shared_ptr<System>& p) { return std::make_pair(p->ID(), p); });
+                   [](const std::shared_ptr<const System>& p) { return std::pair{p->ID(), p}; });
 
     // generate lanes
     if (GetGameRules().Get<bool>("RULE_STARLANES_EVERYWHERE")) {
@@ -666,7 +644,7 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
 
     } else {
         // pass systems to Delauney Triangulation routine, getting array of triangles back
-        auto triangle_list = Delauney::DelauneyTriangulate(sys_vec);
+        auto triangle_list = Delauney::DelauneyTriangulate(sys_vec, universe.UniverseWidth());
         if (triangle_list.empty()) {
             ErrorLogger() << "Got blank list of triangles from Triangulation.";
             return;
@@ -675,16 +653,11 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
         // extract triangles from list, add edges to sets of potential starlanes
         // for each star (in array)
         while (!triangle_list.empty()) {
-            auto tri = triangle_list.front();
-
             // extract indices for the corners of the triangles, which should
             // correspond to indices in sys_vec, except that there can also be
             // indices up to sys_vec.size() + 2, which correspond to extra points
             // used by the algorithm
-            triangle_vertices = tri.Verts();
-            int s1 = triangle_vertices[0];
-            int s2 = triangle_vertices[1];
-            int s3 = triangle_vertices[2];
+            const auto& [s1, s2, s3] = triangle_list.front().Verts();
 
             if (s1 < 0 || s2 < 0 || s3 < 0) {
                 ErrorLogger() << "Got negative vector indices from DelauneyTriangulate!";

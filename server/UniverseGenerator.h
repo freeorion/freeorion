@@ -9,6 +9,7 @@ class Empire;
 class ObjectMap;
 struct PlayerSetupData;
 struct ScriptingContext;
+class Universe;
 
 
 //! Set active meter current values equal to target/max meter current values.
@@ -20,12 +21,14 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map);
 void SetNativePopulationValues(ObjectMap& object_map);
 
 //! Creates starlanes and adds them systems already generated.
-void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length);
+void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length,
+                       Universe& universe);
 
 //! Sets empire homeworld
 //! This includes setting ownership, capital, species, preferred environment
 //! (planet type) for the species
-bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name, ScriptingContext& context);
+bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name,
+                        ScriptingContext& context);
 
 //! Creates Empires objects for each entry in \a player_setup_data with empire
 //! ids equal to the corresponding map keys (so that the calling code can know
