@@ -1283,7 +1283,7 @@ void SetSpecies::Execute(ScriptingContext& context) const {
 
 
         const Species* species = GetSpecies(planet->SpeciesName());
-        auto& default_focus = species ? species->DefaultFocus() : "";
+        const auto& default_focus = species ? species->DefaultFocus() : "";
 
         // chose default focus if available. otherwise use any available focus
         bool default_available = false;
@@ -1295,7 +1295,7 @@ void SetSpecies::Execute(ScriptingContext& context) const {
         }
 
         if (default_available) {
-            planet->SetFocus(std::move(default_focus));
+            planet->SetFocus(default_focus);
         } else if (!available_foci.empty()) {
             planet->SetFocus(*available_foci.begin());
         }
