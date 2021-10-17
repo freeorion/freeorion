@@ -94,7 +94,13 @@ boost::optional<const CombatLog&> CombatLogManager::GetLog(int log_id) const {
 
 int CombatLogManager::AddNewLog(const CombatLog& log) {
     int new_log_id = ++m_latest_log_id;
-    m_logs[new_log_id] = log;
+    m_logs.emplace(new_log_id, log);
+    return new_log_id;
+}
+
+int CombatLogManager::AddNewLog(CombatLog&& log) {
+    int new_log_id = ++m_latest_log_id;
+    m_logs.emplace(new_log_id, std::move(log));
     return new_log_id;
 }
 

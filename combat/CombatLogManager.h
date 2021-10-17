@@ -2,11 +2,8 @@
 #define _CombatLogManager_h_
 
 #include "CombatSystem.h"
-
 #include "../util/Export.h"
-
 #include <boost/optional/optional.hpp>
-
 #include <memory>
 
 
@@ -46,10 +43,12 @@ public:
     /** Return the ids of all incomplete logs or boost::none if they are all complete.*/
     [[nodiscard]] boost::optional<std::vector<int>> IncompleteLogIDs() const;
 
-    int  AddNewLog(const CombatLog& log);   // adds log, returns unique log id
+    int AddNewLog(const CombatLog& log); // adds log, returns unique log id
+    int AddNewLog(CombatLog&& log);      // adds log, returns unique log id
+
     /** Replace incomplete log with \p id with \p log. An incomplete log is a
         partially downloaded log where only the log id is known.*/
-    void CompleteLog(int id, const CombatLog& log);
+    void CompleteLog(int id, const CombatLog& log); // TODO: add && override
     void Clear();
 
 private:
