@@ -89,18 +89,31 @@ namespace {
     // determining how much of their speed is consumed by the jump
     // unused variable consexprt double WORMHOLE_TRAVEL_DISTANCE = 0.1;
 
-    template <typename Key, typename Value>
-    struct constant_property
-    { Value m_value; };
+    void CheckContextVsThisUniverse(const Universe& universe, const ScriptingContext& context) {
+        const auto& universe_objects{universe.Objects()};
+        const auto& context_objects{context.ContextObjects()};
+        const auto& context_universe{context.ContextUniverse()};
+
+        if (&universe != &context_universe)
+            ErrorLogger() << "Universe member function passed context with different Universe from this";
+
+        if (&context_objects != &universe_objects)
+            ErrorLogger() << "Universe member function passed context different ObjectMap from this Universe";
+    }
 }
 
 namespace boost {
+    template <typename Key, typename Value>
+    struct constant_property
+    { Value m_value; };
+
     template <typename Key, typename Value>
     struct property_traits<constant_property<Key, Value>> {
         typedef Value value_type;
         typedef Key key_type;
         typedef readable_property_map_tag category;
     };
+
     template <typename Key, typename Value>
     const Value& get(const constant_property<Key, Value>& pmap, const Key&) { return pmap.m_value; }
 }
@@ -520,6 +533,7 @@ void Universe::ResetObjectMeters(const std::vector<std::shared_ptr<UniverseObjec
 }
 
 void Universe::ApplyAllEffectsAndUpdateMeters(ScriptingContext& context, bool do_accounting) {
+    CheckContextVsThisUniverse(*this, context);
     ScopedTimer timer("Universe::ApplyAllEffectsAndUpdateMeters");
 
     if (do_accounting) {
@@ -556,6 +570,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(ScriptingContext& context, bool do
 void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, ScriptingContext& context,
                                                 bool do_accounting)
 {
+    CheckContextVsThisUniverse(*this, context);
     if (object_ids.empty())
         return;
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on " + std::to_string(object_ids.size()) + " objects");
@@ -587,6 +602,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 }
 
 void Universe::ApplyMeterEffectsAndUpdateMeters(ScriptingContext& context, bool do_accounting) {
+    CheckContextVsThisUniverse(*this, context);
     ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on all objects");
     if (do_accounting) {
         // override if disabled
@@ -618,6 +634,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(ScriptingContext& context, bool 
 }
 
 void Universe::ApplyAppearanceEffects(const std::vector<int>& object_ids, ScriptingContext& context) {
+    CheckContextVsThisUniverse(*this, context);
     if (object_ids.empty())
         return;
     ScopedTimer timer("Universe::ApplyAppearanceEffects on " + std::to_string(object_ids.size()) + " objects");
@@ -653,6 +670,7 @@ void Universe::ApplyGenerateSitRepEffects(ScriptingContext& context) {
 }
 
 void Universe::InitMeterEstimatesAndDiscrepancies(ScriptingContext& context) {
+    CheckContextVsThisUniverse(*this, context);
     DebugLogger(effects) << "Universe::InitMeterEstimatesAndDiscrepancies";
     ScopedTimer timer("Universe::InitMeterEstimatesAndDiscrepancies", true, std::chrono::microseconds(1));
 
@@ -756,6 +774,7 @@ void Universe::UpdateMeterEstimates(ScriptingContext& context, bool do_accountin
 }
 
 void Universe::UpdateMeterEstimates(int object_id, ScriptingContext& context, bool update_contained_objects) {
+    CheckContextVsThisUniverse(*this, context);
     // ids of the object and all valid contained objects
     std::unordered_set<int> collected_ids;
 
@@ -813,20 +832,6 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, Scripti
     std::vector<int> final_objects_vec{objects_set.begin(), objects_set.end()};
     if (!final_objects_vec.empty())
         UpdateMeterEstimatesImpl(final_objects_vec, context, GetOptionsDB().Get<bool>("effects.accounting.enabled"));
-}
-
-namespace {
-    void CheckContextVsThisUniverse(const Universe& universe, const ScriptingContext& context) {
-        const auto& universe_objects{universe.Objects()};
-        const auto& context_objects{context.ContextObjects()};
-        const auto& context_universe{context.ContextUniverse()};
-
-        if (&universe != &context_universe)
-            ErrorLogger() << "Universe member function passed context with different Universe from this";
-
-        if (&context_objects != &universe_objects)
-            ErrorLogger() << "Universe member function passed context different ObjectMap from this Universe";
-    }
 }
 
 void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
@@ -1282,7 +1287,6 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                                     const ScriptingContext& context,
                                     bool only_meter_effects) const
 {
-    CheckContextVsThisUniverse(*this, context);
     source_effects_targets_causes.clear();
     GetEffectsAndTargets(source_effects_targets_causes, std::vector<int>(), context, only_meter_effects);
 }
@@ -1293,7 +1297,6 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                                     bool only_meter_effects) const
 {
     CheckContextVsThisUniverse(*this, context);
-
     SectionedScopedTimer type_timer("Effect TargetSets Evaluation", std::chrono::microseconds(0));
 
     // assemble target objects from input vector of IDs
@@ -1662,7 +1665,6 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
                               bool only_generate_sitrep_effects/* = false*/)
 {
     CheckContextVsThisUniverse(*this, context);
-
     ScopedTimer timer("Universe::ExecuteEffects", true);
 
     context.ContextUniverse().m_marked_destroyed.clear();
