@@ -174,7 +174,7 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
 
     int system_id = INVALID_OBJECT_ID;
 
-    for (const auto& ship : Objects().find<Ship>(ship_ids)) {
+    for (const auto& ship : context.ContextObjects().find<Ship>(ship_ids)) {
         // verify that empire is not trying to take ships from somebody else's fleet
         if (!ship) {
             ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
@@ -208,7 +208,7 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
                       << ") outside a system";
         return false;
     }
-    auto system = Objects().get<System>(system_id);
+    auto system = context.ContextObjects().get<System>(system_id);
     if (!system) {
         ErrorLogger() << "Empire " << empire << " attempted to create a new fleet (" << fleet_name
                       << ") in a nonexistant system (" << system_id << ")";
@@ -1030,7 +1030,7 @@ void PolicyOrder::ExecuteImpl(ScriptingContext& context) const {
     else
         DebugLogger() << "PolicyOrder revoke " << m_policy_name << " from category " << m_category
                       << " in slot " << m_slot;
-    empire->AdoptPolicy(m_policy_name, m_category, Objects(), m_adopt, m_slot);
+    empire->AdoptPolicy(m_policy_name, m_category, context.ContextObjects(), m_adopt, m_slot);
 }
 
 ////////////////////////////////////////////////
