@@ -240,7 +240,6 @@ constexpr std::array<std::pair<std::uint32_t, std::uint32_t>, 7> PRINTABLE_ASCII
     {0x3A, 0x41},
     {0x5B, 0x61},
     {0x7B, 0x7F}}};
-
 }
 
 
