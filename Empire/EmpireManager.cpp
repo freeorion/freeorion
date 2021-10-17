@@ -171,19 +171,19 @@ DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) co
 }
 
 std::set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
-    int empire_id, DiplomaticStatus diplo_status) const
+    int empire_id, DiplomaticStatus diplo_status, const DiploStatusMap& statuses)
 {
     std::set<int> retval;
     if (empire_id == ALL_EMPIRES || diplo_status == DiplomaticStatus::INVALID_DIPLOMATIC_STATUS)
         return retval;
     // find ids of empires with the specified diplomatic status with the specified empire
-    for (auto const& id_pair_status : m_empire_diplomatic_statuses) {
-        if (id_pair_status.second != diplo_status)
+    for (auto const& [id_pair, status] : statuses) {
+        if (status != diplo_status)
             continue;
-        if (id_pair_status.first.first == empire_id)
-            retval.insert(id_pair_status.first.second);
-        else if (id_pair_status.first.second == empire_id)
-            retval.insert(id_pair_status.first.first);
+        if (id_pair.first == empire_id)
+            retval.insert(id_pair.second);
+        else if (id_pair.second == empire_id)
+            retval.insert(id_pair.first);
     }
     return retval;
 }

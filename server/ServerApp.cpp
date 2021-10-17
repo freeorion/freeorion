@@ -713,7 +713,7 @@ namespace {
             empire->UpdateSystemSupplyRanges(context.ContextUniverse());
         }
 
-        supply.Update(); // must call after updating supply ranges for all empires
+        supply.Update(context); // must call after updating supply ranges for all empires
 
         const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
         boost::asio::thread_pool thread_pool(num_threads);

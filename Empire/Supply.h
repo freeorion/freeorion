@@ -9,6 +9,7 @@
 #include "../util/Export.h"
 
 class Universe;
+struct ScriptingContext;
 
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {
@@ -66,7 +67,7 @@ public:
     /** Calculates systems at which fleets of empires can be supplied, and
       * groups of systems that can exchange resources, and the starlane
       * traversals used to do so. */
-    void    Update();
+    void Update(const ScriptingContext& context);
 
 private:
     /** ordered pairs of system ids between which a starlane runs that can be
