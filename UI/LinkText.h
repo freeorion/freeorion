@@ -11,8 +11,8 @@
 /// but a decorator is free to manipulate the decorated text in any way.
 class LinkDecorator {
 public:
-    LinkDecorator() {};
-    virtual ~LinkDecorator() {};
+    LinkDecorator() = default;
+    virtual ~LinkDecorator() = default;
 
     /// Gets called for each link of the type this decorator is assigned to.
     /// The return value is shown to the user as the link.
