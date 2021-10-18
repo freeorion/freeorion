@@ -452,7 +452,7 @@ std::string StatisticDescription(StatisticType stat_type,
         boost::lexical_cast<std::string>(stat_type)));
 
     if (UserStringExists(stringtable_key)) {
-        boost::format formatter = FlexibleFormat(stringtable_key);
+        boost::format formatter = FlexibleFormat(UserString(stringtable_key));
         formatter % value_desc % condition_desc;
         return boost::io::str(formatter);
     }
