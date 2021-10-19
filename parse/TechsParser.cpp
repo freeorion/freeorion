@@ -239,13 +239,6 @@ namespace {
         }
     };
 
-    template<typename T>
-    value_ref_wrapper<T> insert_named_lookup_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        auto name = boost::python::extract<std::string>(kw["name"])();
-
-        return value_ref_wrapper<T>(std::make_shared<ValueRef::NamedRef<T>>(name, true));
-    }
-
     boost::python::object py_insert_tech_(TechManager::TechContainer& techs, const boost::python::tuple& args, const boost::python::dict& kw) {
         auto name = boost::python::extract<std::string>(kw["name"])();
         auto description = boost::python::extract<std::string>(kw["description"])();
@@ -340,24 +333,20 @@ namespace {
 #endif
             RegisterGlobalsEffects(globals);
             RegisterGlobalsConditions(globals);
+            RegisterGlobalsValueRefs(globals);
 
             std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_game_rule = [this](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(*this, args, kw); };
             globals["GameRule"] = boost::python::raw_function(f_insert_game_rule);
             std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_tech = [&techs](const boost::python::tuple& args, const boost::python::dict& kw) { return py_insert_tech_(techs, args, kw); };
             globals["Tech"] = boost::python::raw_function(f_insert_tech);
-
             globals["Source"] = source_wrapper();
-            globals["Value"] = value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE));
             globals["Target"] = target_wrapper();
             globals["LocalCandidate"] = local_candidate_wrapper();
-            globals["CurrentTurn"] = value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, "CurrentTurn"));
             std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_min = [this](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_minmaxoneof_<ValueRef::OpType::MINIMUM>(*this, args, kw); };
             globals["Min"] = boost::python::raw_function(f_insert_min, 3);
             std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_max = [this](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_minmaxoneof_<ValueRef::OpType::MAXIMUM>(*this, args, kw); };
             globals["Max"] = boost::python::raw_function(f_insert_max, 3);
-            globals["NamedRealLookup"] = boost::python::raw_function(insert_named_lookup_<double>);
             globals["EnemyOf"] = enum_wrapper<EmpireAffiliationType>(EmpireAffiliationType::AFFIL_ENEMY);
-
         }
 
         boost::python::dict operator()() const

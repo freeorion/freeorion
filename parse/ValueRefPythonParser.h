@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include <boost/python/dict.hpp>
+
 #include "../universe/ValueRefs.h"
 
 #include "ConditionPythonParser.h"
@@ -43,6 +45,8 @@ value_ref_wrapper<double> operator-(const value_ref_wrapper<double>&, const valu
 
 condition_wrapper operator<(const value_ref_wrapper<int>&, const value_ref_wrapper<int>&);
 condition_wrapper operator==(const value_ref_wrapper<int>&, const value_ref_wrapper<int>&);
+
+void RegisterGlobalsValueRefs(boost::python::dict& globals);
 
 #endif // _ValueRefPythonParser_h_
 
