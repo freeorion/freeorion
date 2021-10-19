@@ -3,8 +3,6 @@
 
 #include <memory>
 
-#include <boost/python/dict.hpp>
-
 #include "../universe/ValueRefs.h"
 
 #include "ConditionPythonParser.h"

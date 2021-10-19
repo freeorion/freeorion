@@ -1,5 +1,7 @@
 #include "SourcePythonParser.h"
 
+#include <boost/python/dict.hpp>
+
 #include "../universe/ValueRefs.h"
 
 value_ref_wrapper<int> source_wrapper::owner() const {
