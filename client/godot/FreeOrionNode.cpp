@@ -2,6 +2,7 @@
 
 #include <codecvt>
 
+#include <boost/xpressive/xpressive.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
 #include <OS.hpp>
@@ -12,6 +13,7 @@
 
 #include "../ClientNetworking.h"
 #include "../../combat/CombatLogManager.h"
+#include "../../Empire/Empire.h"
 #include "../../network/Message.h"
 #include "../../universe/Fleet.h"
 #include "../../universe/System.h"
@@ -21,6 +23,51 @@
 #include "../../util/Version.h"
 
 std::atomic_bool quit(false);
+
+// Copied from ChatWnd.cpp
+namespace {
+    std::string UserStringSubstitute(const boost::xpressive::smatch& match) {
+        auto key = match.str(1);
+
+        if (match.nested_results().empty()) {
+            // not parameterized
+            if (UserStringExists(key))
+                return UserString(key);
+            return key;
+        }
+
+        if (UserStringExists(key))
+            // replace key with user string if such exists
+            key = UserString(key);
+
+        auto formatter = FlexibleFormat(key);
+
+        size_t arg = 1;
+        for (auto submatch : match.nested_results())
+            formatter.bind_arg(arg++, submatch.str());
+
+        return formatter.str();
+    }
+
+    // finds instances of stringtable substitutions and/or string formatting
+    // within the text \a input and evaluates them. [[KEY]] will be looked up
+    // in the stringtable, and if found, replaced with the corresponding
+    // stringtable entry. If not found, KEY is used instead. [[KEY,var1,var2]]
+    // will look up KEY in the stringtable or use just KEY if there is no
+    // such stringtable entry, and then substitute var1 for all instances of %1%
+    // in the string, and var2 for all instances of %2% in the string. Any
+    // intance of %3% or higher numbers will be deleted from the string, unless
+    // a third or more parameters are specified.
+    std::string StringtableTextSubstitute(const std::string& input) {
+        using namespace boost::xpressive;
+
+        sregex param = (s1 = +_w);
+        sregex regex = as_xpr("[[") >> (s1 = +_w) >> !*(',' >> param) >> "]]";
+
+        return regex_replace(input, regex, UserStringSubstitute);
+    }
+}
+
 
 void FreeOrionNode::_register_methods() {
     register_method("_exit_tree", &FreeOrionNode::_exit_tree);
@@ -40,6 +87,8 @@ void FreeOrionNode::_register_methods() {
     godot::register_signal<FreeOrionNode>("auth_request", "player_name", GODOT_VARIANT_TYPE_STRING, "auth", GODOT_VARIANT_TYPE_STRING);
     godot::register_signal<FreeOrionNode>("empire_status", "status", GODOT_VARIANT_TYPE_INT, "about_empire_id", GODOT_VARIANT_TYPE_INT);
     godot::register_signal<FreeOrionNode>("start_game", "is_new_game", GODOT_VARIANT_TYPE_BOOL);
+    // ToDo: implement timestamps
+    godot::register_signal<FreeOrionNode>("chat_message", "text", GODOT_VARIANT_TYPE_STRING, "player_name", GODOT_VARIANT_TYPE_STRING, "text_color", GODOT_VARIANT_TYPE_COLOR, "pm", GODOT_VARIANT_TYPE_BOOL);
 }
 
 FreeOrionNode::FreeOrionNode()
@@ -220,6 +269,57 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
             int player_id;
             ExtractErrorMessageData(msg, player_id, problem, fatal);
             emit_signal("error", godot::String(problem.c_str()), fatal);
+            break;
+        }
+        case Message::MessageType::CHAT_HISTORY: {
+            std::vector<ChatHistoryEntity> chat_history;
+            ExtractChatHistoryMessage(msg, chat_history);
+
+            for (const auto& elem : chat_history) {
+                emit_signal("chat_message",
+                            godot::String(StringtableTextSubstitute(elem.text).c_str()),
+                            godot::String(elem.player_name.c_str()),
+                            elem.player_name.empty() ?
+                                godot::Color(1.0f, 1.0f, 1.0f, 1.0f) :
+                                godot::Color(std::get<0>(elem.text_color) / 255.0f,
+                                             std::get<1>(elem.text_color) / 255.0f,
+                                             std::get<2>(elem.text_color) / 255.0f,
+                                             std::get<3>(elem.text_color) / 255.0f),
+                            false);
+            }
+
+            break;
+        }
+        case Message::MessageType::PLAYER_CHAT: {
+            int sending_player_id;
+            boost::posix_time::ptime timestamp;
+            std::string data;
+            bool pm;
+            ExtractServerPlayerChatMessageData(msg, sending_player_id, timestamp, data, pm);
+
+            std::string player_name{UserString("PLAYER") + " " + std::to_string(sending_player_id)};
+            godot::Color text_color{1.0f, 1.0f, 1.0f, 1.0f};
+            if (sending_player_id != Networking::INVALID_PLAYER_ID) {
+                const auto& players = app->Players();
+                auto player_it = players.find(sending_player_id);
+                if (player_it != players.end()) {
+                    if (auto empire = GetEmpire(player_it->second.empire_id))
+                        text_color = godot::Color(std::get<0>(empire->Color()) / 255.0f,
+                                                  std::get<1>(empire->Color()) / 255.0f,
+                                                  std::get<2>(empire->Color()) / 255.0f,
+                                                  std::get<3>(empire->Color()) / 255.0f);
+                }
+            } else {
+                // It's a server message. Don't set player name.
+                player_name.clear();
+            }
+
+            emit_signal("chat_message",
+                        godot::String(StringtableTextSubstitute(data).c_str()),
+                        godot::String((pm ? player_name + UserString("MESSAGES_WHISPER") : player_name).c_str()),
+                        text_color,
+                        pm);
+
             break;
         }
         default:
