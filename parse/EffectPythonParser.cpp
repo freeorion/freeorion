@@ -133,6 +133,20 @@ namespace {
                                                       "",
                                                       ""));
     }
+
+    effect_wrapper set_empire_meter(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto meter = boost::python::extract<std::string>(kw["meter"])();
+        auto value = ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<double>>(kw["value"])().value_ref);
+        if (kw.has_key("empire")) {
+            auto empire = ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<int>>(kw["empire"])().value_ref);
+            return effect_wrapper(std::make_shared<Effect::SetEmpireMeter>(std::move(empire),
+                                                                           meter,
+                                                                           std::move(value)));
+        } else {
+            return effect_wrapper(std::make_shared<Effect::SetEmpireMeter>(meter,
+                                                                           std::move(value)));
+        }
+    }
 }
 
 void RegisterGlobalsEffects(py::dict& globals) {
@@ -145,6 +159,8 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["Destroy"] = effect_wrapper(std::make_shared<Effect::Destroy>());
 
     globals["GenerateSitRepMessage"] = py::raw_function(insert_generate_sit_rep_message_);
+
+    globals["SetEmpireMeter"] = boost::python::raw_function(set_empire_meter);
 
     globals["SetMaxShield"] = py::raw_function(insert_set_meter_<MeterType::METER_MAX_SHIELD>);
     globals["SetShield"] = py::raw_function(insert_set_meter_<MeterType::METER_SHIELD>);
