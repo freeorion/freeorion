@@ -1,7 +1,11 @@
 #ifndef _EnumPythonParser_h
 #define _EnumPythonParser_h
 
-#include <boost/python/dict.hpp>
+namespace boost {
+    namespace python {
+        class dict;
+    }
+}
 
 template<typename E>
 struct enum_wrapper {

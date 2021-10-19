@@ -1,5 +1,7 @@
 #include "EnumPythonParser.h"
 
+#include <boost/python/dict.hpp>
+
 #include "../universe/Enums.h"
 
 void RegisterGlobalsEnums(boost::python::dict& globals) {

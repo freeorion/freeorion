@@ -3,9 +3,13 @@
 
 #include <memory>
 
-#include <boost/python/dict.hpp>
-
 #include "../universe/Condition.h"
+
+namespace boost {
+    namespace python {
+        class dict;
+    }
+}
 
 struct condition_wrapper {
     condition_wrapper(std::shared_ptr<Condition::Condition>&& ref)

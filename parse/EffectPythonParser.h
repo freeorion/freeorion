@@ -3,10 +3,14 @@
 
 #include <memory>
 
-#include <boost/python/dict.hpp>
-
 #include "../universe/Effect.h"
 #include "../universe/UnlockableItem.h"
+
+namespace boost {
+    namespace python {
+        class dict;
+    }
+}
 
 struct effect_wrapper {
     effect_wrapper(std::shared_ptr<Effect::Effect>&& ref)
