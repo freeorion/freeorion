@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include <boost/python/dict.hpp>
+
 #include "../universe/Condition.h"
 
 struct condition_wrapper {
@@ -20,6 +22,8 @@ struct condition_wrapper {
 condition_wrapper operator&(const condition_wrapper&, const condition_wrapper&);
 condition_wrapper operator|(const condition_wrapper&, const condition_wrapper&);
 condition_wrapper operator~(const condition_wrapper&);
+
+void RegisterGlobalsConditions(boost::python::dict& globals);
 
 #endif // _ConditionPythonParser_h_
 
