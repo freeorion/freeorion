@@ -51,3 +51,9 @@ value_ref_wrapper<int> local_candidate_wrapper::last_turn_colonized() const {
     return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE, "LastTurnColonized"));
 }
 
+void RegisterGlobalsSources(boost::python::dict& globals) {
+    globals["Source"] = source_wrapper();
+    globals["Target"] = target_wrapper();
+    globals["LocalCandidate"] = local_candidate_wrapper();
+}
+
