@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include <boost/python/dict.hpp>
+
 #include "../universe/Effect.h"
 #include "../universe/UnlockableItem.h"
 
@@ -41,6 +43,8 @@ struct unlockable_item_wrapper {
 
     UnlockableItem item;
 };
+
+void RegisterGlobalsEffects(boost::python::dict& globals);
 
 #endif
 
