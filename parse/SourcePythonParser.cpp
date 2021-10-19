@@ -2,11 +2,16 @@
 
 #include <boost/python/dict.hpp>
 
+#include "../universe/Conditions.h"
 #include "../universe/ValueRefs.h"
 
 value_ref_wrapper<int> source_wrapper::owner() const {
     auto variable = std::make_shared<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner");
     return value_ref_wrapper<int>(variable);
+}
+
+source_wrapper::operator condition_wrapper() const {
+    return condition_wrapper(std::make_shared<Condition::Source>());
 }
 
 value_ref_wrapper<double> target_wrapper::habitable_size() const {

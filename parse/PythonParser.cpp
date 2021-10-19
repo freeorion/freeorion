@@ -118,6 +118,8 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def_readonly("LastTurnConquered", &local_candidate_wrapper::last_turn_conquered)
             .def_readonly("LastTurnColonized", &local_candidate_wrapper::last_turn_colonized);
 
+        py::implicitly_convertible<source_wrapper, condition_wrapper>();
+
         m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"));
         m_meta_path.append(boost::cref(*this));
     } catch (const boost::python::error_already_set& err) {

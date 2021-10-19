@@ -5,6 +5,7 @@
 
 struct source_wrapper {
     value_ref_wrapper<int> owner() const;
+    operator condition_wrapper() const;
 };
 
 struct target_wrapper {
