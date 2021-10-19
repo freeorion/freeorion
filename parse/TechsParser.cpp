@@ -13,24 +13,14 @@
 #include "EnumPythonParser.h"
 #include "SourcePythonParser.h"
 
-#include "../universe/Conditions.h"
-#include "../universe/Effects.h"
-#include "../universe/ValueRefs.h"
-
-#include "../universe/Effect.h"
-#include "../universe/Species.h"
 #include "../universe/Tech.h"
-#include "../universe/UnlockableItem.h"
-#include "../universe/ValueRef.h"
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/include/qi_as.hpp>
 
-#include <boost/python/extract.hpp>
 #include <boost/python/import.hpp>
 #include <boost/python/raw_function.hpp>
-#include <boost/python/stl_iterator.hpp>
 
 #define DEBUG_PARSERS 0
 
