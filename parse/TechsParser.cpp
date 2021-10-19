@@ -45,11 +45,6 @@ namespace std {
 #endif
 
 namespace {
-    struct py_grammar_techs;
-    boost::python::object insert_game_rule_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw);
-    template <ValueRef::OpType O>
-    boost::python::object insert_minmaxoneof_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw);
-
     std::set<std::string>* g_categories_seen = nullptr;
     std::map<std::string, std::unique_ptr<TechCategory>>* g_categories = nullptr;
 
@@ -329,86 +324,18 @@ namespace {
 #endif
             RegisterGlobalsEffects(globals);
             RegisterGlobalsConditions(globals);
-            RegisterGlobalsValueRefs(globals);
+            RegisterGlobalsValueRefs(globals, parser);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
-            std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_game_rule = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(parser, args, kw); };
-            globals["GameRule"] = boost::python::raw_function(f_insert_game_rule);
             std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_tech = [&techs](const boost::python::tuple& args, const boost::python::dict& kw) { return py_insert_tech_(techs, args, kw); };
             globals["Tech"] = boost::python::raw_function(f_insert_tech);
-            std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_min = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_minmaxoneof_<ValueRef::OpType::MINIMUM>(parser, args, kw); };
-            globals["Min"] = boost::python::raw_function(f_insert_min, 3);
-            std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_max = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_minmaxoneof_<ValueRef::OpType::MAXIMUM>(parser, args, kw); };
-            globals["Max"] = boost::python::raw_function(f_insert_max, 3);
         }
 
         boost::python::dict operator()() const
         { return globals; }
 
     };
-
-    boost::python::object insert_game_rule_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw) {
-        auto name = boost::python::extract<std::string>(kw["name"])();
-        auto type_ = kw["type"];
-
-        if (type_ == parser.type_int) {
-            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
-                "GameRule",
-                nullptr,
-                nullptr,
-                nullptr,
-                std::make_unique<ValueRef::Constant<std::string>>(name),
-                nullptr)));
-        } else if (type_ == parser.type_float) {
-            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
-                "GameRule",
-                nullptr,
-                nullptr,
-                nullptr,
-                std::make_unique<ValueRef::Constant<std::string>>(name),
-                nullptr)));
-        } else {
-            ErrorLogger() << "Unsupported type for rule " << name << ": " << boost::python::extract<std::string>(boost::python::str(type_))();
-
-            throw std::runtime_error(std::string("Not implemented ") + __func__);
-        }
-
-        return boost::python::object();
-    }
-
-    template <ValueRef::OpType O>
-    boost::python::object insert_minmaxoneof_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw) {
-        if (args[0] == parser.type_int) {
-            std::vector<std::unique_ptr<ValueRef::ValueRef<int>>> operands;
-            operands.reserve(boost::python::len(args) - 1);
-            for (auto i = 1; i < boost::python::len(args); i++) {
-                auto arg = boost::python::extract<value_ref_wrapper<int>>(args[i]);
-                if (arg.check())
-                    operands.push_back(ValueRef::CloneUnique(arg().value_ref));
-                else
-                    operands.push_back(std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(args[i])()));
-            }
-            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Operation<int>>(O, std::move(operands))));
-        } else if (args[0] == parser.type_float) {
-            std::vector<std::unique_ptr<ValueRef::ValueRef<double>>> operands;
-            operands.reserve(boost::python::len(args) - 1);
-            for (auto i = 1; i < boost::python::len(args); i++) {
-                auto arg = boost::python::extract<value_ref_wrapper<double>>(args[i]);
-                if (arg.check())
-                    operands.push_back(ValueRef::CloneUnique(arg().value_ref));
-                else
-                    operands.push_back(std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(args[i])()));
-            }
-            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(O, std::move(operands))));
-        } else {
-            ErrorLogger() << "Unsupported type for min/max/oneof : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
-
-            throw std::runtime_error(std::string("Not implemented ") + __func__);
-        }
-
-        return boost::python::object();
-    }
 }
 
 namespace parse {
