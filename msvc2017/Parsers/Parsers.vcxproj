@@ -202,9 +202,11 @@
     <ClCompile Include="..\..\parse\EffectParser3.cpp" />
     <ClCompile Include="..\..\parse\EffectParser4.cpp" />
     <ClCompile Include="..\..\parse\EffectParser5.cpp" />
+    <ClCompile Include="..\..\parse\EffectPythonParser.cpp" />
     <ClCompile Include="..\..\parse\EmpireStatsParser.cpp" />
     <ClCompile Include="..\..\parse\EncyclopediaParser.cpp" />
     <ClCompile Include="..\..\parse\EnumParser.cpp" />
+    <ClCompile Include="..\..\parse\EnumPythonParser.cpp" />
     <ClCompile Include="..\..\parse\FieldsParser.cpp" />
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
     <ClCompile Include="..\..\parse\GameRulesParser.cpp" />
