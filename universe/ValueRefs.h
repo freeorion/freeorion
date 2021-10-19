@@ -43,7 +43,9 @@ namespace ValueRef {
 template <typename T>
 struct FO_COMMON_API Constant final : public ValueRef<T>
 {
-    explicit Constant(T value);
+    template <typename TT,
+              typename std::enable_if_t<std::is_convertible_v<TT, T>>* = nullptr>
+    explicit Constant(TT&& value);
 
     [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override;
     [[nodiscard]] T    Eval(const ScriptingContext& context) const override;
@@ -504,10 +506,12 @@ bool ValueRef<T>::operator==(const ValueRef<T>& rhs) const
 // Constant                                              //
 ///////////////////////////////////////////////////////////
 template <typename T>
-Constant<T>::Constant(T value) :
-    ValueRef<T>(),
-    m_value(value)
+template <typename TT,
+          typename std::enable_if_t<std::is_convertible_v<TT, T>>*>
+Constant<T>::Constant(TT&& value) :
+    m_value(std::forward<TT>(value))
 {
+    static_assert(std::is_convertible_v<TT, T>);
     this->m_root_candidate_invariant = true;
     this->m_local_candidate_invariant = true;
     this->m_target_invariant = true;
