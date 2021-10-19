@@ -23,6 +23,7 @@ if(BUILD_PARSERS)
             ${CMAKE_CURRENT_LIST_DIR}/EffectParser4.h
             ${CMAKE_CURRENT_LIST_DIR}/EffectParser5.h
             ${CMAKE_CURRENT_LIST_DIR}/EffectParserImpl.h
+            ${CMAKE_CURRENT_LIST_DIR}/EffectPythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/EnumParser.h
             ${CMAKE_CURRENT_LIST_DIR}/EnumValueRefRules.h
             ${CMAKE_CURRENT_LIST_DIR}/Lexer.h
@@ -49,6 +50,7 @@ if(BUILD_PARSERS)
             ${CMAKE_CURRENT_LIST_DIR}/EffectParser4.cpp
             ${CMAKE_CURRENT_LIST_DIR}/EffectParser5.cpp
             ${CMAKE_CURRENT_LIST_DIR}/EffectParser.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/EffectPythonParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/EmpireStatsParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/EncyclopediaParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/EnumParser.cpp
