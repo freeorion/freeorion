@@ -1,7 +1,5 @@
 #include "FreeOrionNode.h"
 
-#include <codecvt>
-
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
@@ -103,7 +101,7 @@ void FreeOrionNode::_init() {
     SetAndroidEnvironment(s_android_api_struct->godot_android_get_env(),
                           s_android_api_struct->godot_android_get_activity());
 #endif
-    std::string executable_path = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(godot::OS::get_singleton()->get_executable_path().unicode_str());
+    std::string executable_path = godot::OS::get_singleton()->get_executable_path().utf8().get_data();
 
     InitDirs(executable_path);
 
@@ -122,7 +120,7 @@ void FreeOrionNode::_init() {
     const godot::PoolStringArray wargs = godot::OS::get_singleton()->get_cmdline_args();
     const godot::PoolStringArray::Read wargs_read = wargs.read();
     for (int i = 0; i < wargs.size(); ++ i) {
-        const std::string arg = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(wargs_read[i].unicode_str());
+        const std::string arg = wargs_read[i].utf8().get_data();
         // Exclude Godot's options
         if (arg != "-s" && arg.rfind("-g", 0) != 0) {
             args.emplace_back(std::move(arg));
@@ -370,18 +368,18 @@ bool FreeOrionNode::is_server_connected() const {
 }
 
 bool FreeOrionNode::connect_to_server(godot::String dest) {
-    std::string dest8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(dest.unicode_str());
+    std::string dest8 = dest.utf8().get_data();
     return m_app->Networking().ConnectToServer(dest8);
 }
 
 void FreeOrionNode::join_game(godot::String player_name, int client_type) {
-    std::string player_name8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(player_name.unicode_str());
+    std::string player_name8 = player_name.utf8().get_data();
     m_app->Networking().SendMessage(JoinGameMessage(player_name8, static_cast<Networking::ClientType>(client_type), boost::uuids::nil_uuid()));
 }
 
 void FreeOrionNode::auth_response(godot::String player_name, godot::String password) {
-    std::string player_name8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(player_name.unicode_str());
-    std::string password8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(password.unicode_str());
+    std::string player_name8 = player_name.utf8().get_data();
+    std::string password8 = password.utf8().get_data();
     m_app->Networking().SendMessage(AuthResponseMessage(player_name8, password8));
 }
 
@@ -402,7 +400,7 @@ godot::Dictionary FreeOrionNode::get_fleets() const {
 }
 
 void FreeOrionNode::send_chat_message(godot::String text) {
-    std::string text8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(text.unicode_str());
+    std::string text8 = text.utf8().get_data();
     m_app->Networking().SendMessage(PlayerChatMessage(text8, {}, false));
 }
 
