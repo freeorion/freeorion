@@ -32,17 +32,17 @@ namespace {
             for (auto it = p_begin; it != p_end; ++it) {
                 auto p_arg = boost::python::extract<value_ref_wrapper<std::string>>(param_args[*it]);
                 if (p_arg.check()) {
-                    parameters.push_back(std::make_pair(*it, ValueRef::CloneUnique(p_arg().value_ref)));
+                    parameters.emplace_back(*it, ValueRef::CloneUnique(p_arg().value_ref));
                 } else {
                     auto p_arg_double = boost::python::extract<value_ref_wrapper<double>>(param_args[*it]);
                     if (p_arg_double.check()) {
-                        parameters.push_back(std::make_pair(*it, std::make_unique<ValueRef::StringCast<double>>(ValueRef::CloneUnique(p_arg_double().value_ref))));
+                        parameters.emplace_back(*it, std::make_unique<ValueRef::StringCast<double>>(ValueRef::CloneUnique(p_arg_double().value_ref)));
                     } else {
                         auto p_arg_int = boost::python::extract<value_ref_wrapper<int>>(param_args[*it]);
                         if (p_arg_int.check())
-                            parameters.push_back(std::make_pair(*it, std::make_unique<ValueRef::StringCast<int>>(ValueRef::CloneUnique(p_arg_int().value_ref))));
+                            parameters.emplace_back(*it, std::make_unique<ValueRef::StringCast<int>>(ValueRef::CloneUnique(p_arg_int().value_ref)));
                         else
-                            parameters.push_back(std::make_pair(*it, std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(param_args[*it]))));
+                            parameters.emplace_back(*it, std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(param_args[*it])));
                     }
                 }
             }
