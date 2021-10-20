@@ -21,8 +21,16 @@ func _ready():
 	auth_password_setup_dlg.connect("ok", self, "_on_AuthSetupDlg_ok")
 	auth_password_setup_dlg.connect("cancel", self, "_on_AuthSetupDlg_cancel")
 
+	global.chat_window = preload("res://ChatWindow.tscn").instance()
+	add_child(global.chat_window)
+	global.chat_window.hide()
+
 	FreeOrionNode.connect("auth_request", self, "_on_FreeOrion_auth_request", [], CONNECT_DEFERRED)
 	FreeOrionNode.connect("start_game", self, "_on_FreeOrion_start_game", [], CONNECT_DEFERRED)
+	FreeOrionNode.connect(
+		"chat_message", global.chat_window, "_on_FreeOrion_chat_message", [], CONNECT_DEFERRED
+	)
+	FreeOrionNode.connect("chat_message", self, "_on_FreeOrion_chat_message", [], CONNECT_DEFERRED)
 
 	var scale = 1
 	if OS.get_name() == "Android":
@@ -118,4 +126,9 @@ func _on_FreeOrion_auth_request(player_name, _auth):
 
 
 func _on_FreeOrion_start_game(_is_new_game):
+	remove_child(global.chat_window)
 	get_tree().change_scene("res://GalaxyMap.tscn")
+
+
+func _on_FreeOrion_chat_message(_text: String, _player_name: String, _text_color: Color, _pm: bool):
+	global.chat_window.show()
