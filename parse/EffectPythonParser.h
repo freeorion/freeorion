@@ -6,10 +6,8 @@
 #include "../universe/Effect.h"
 #include "../universe/UnlockableItem.h"
 
-namespace boost {
-    namespace python {
-        class dict;
-    }
+namespace boost::python {
+    class dict;
 }
 
 struct effect_wrapper {

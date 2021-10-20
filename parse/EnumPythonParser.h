@@ -1,10 +1,8 @@
 #ifndef _EnumPythonParser_h
 #define _EnumPythonParser_h
 
-namespace boost {
-    namespace python {
-        class dict;
-    }
+namespace boost::python {
+    class dict;
 }
 
 template<typename E>
