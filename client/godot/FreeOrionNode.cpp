@@ -81,6 +81,7 @@ void FreeOrionNode::_register_methods() {
     register_method("auth_response", &FreeOrionNode::auth_response);
     register_method("get_systems", &FreeOrionNode::get_systems);
     register_method("get_fleets", &FreeOrionNode::get_fleets);
+    register_method("send_chat_message", &FreeOrionNode::send_chat_message);
 
     godot::register_signal<FreeOrionNode>("ping", "message", GODOT_VARIANT_TYPE_STRING);
     godot::register_signal<FreeOrionNode>("error", "problem", GODOT_VARIANT_TYPE_STRING, "fatal", GODOT_VARIANT_TYPE_BOOL);
@@ -398,5 +399,10 @@ godot::Dictionary FreeOrionNode::get_fleets() const {
         fleets[fleet->ID()] = GodotFleet::Wrap(fleet);
     }
     return fleets;
+}
+
+void FreeOrionNode::send_chat_message(godot::String text) {
+    std::string text8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(text.unicode_str());
+    m_app->Networking().SendMessage(PlayerChatMessage(text8, {}, false));
 }
 
