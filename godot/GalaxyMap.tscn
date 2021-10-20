@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://GalaxyMapCamera.gd" type="Script" id=1]
 [ext_resource path="res://assets/sound/artificial_intelligence_v3.ogg" type="AudioStream" id=2]
@@ -7,6 +7,9 @@
 [ext_resource path="res://Starnames.gd" type="Script" id=5]
 [ext_resource path="res://StarSystemSelectionMarker.tscn" type="PackedScene" id=6]
 [ext_resource path="res://FleetWindow.tscn" type="PackedScene" id=7]
+[ext_resource path="res://assets/art/icons/buttons/messages.png" type="Texture" id=8]
+[ext_resource path="res://assets/art/icons/buttons/messages_mouseover.png" type="Texture" id=9]
+[ext_resource path="res://assets/art/icons/buttons/messages_clicked.png" type="Texture" id=10]
 
 [sub_resource type="Environment" id=1]
 
@@ -24,13 +27,28 @@ stream = ExtResource( 2 )
 autoplay = true
 
 [node name="ToolBoxPanelContainer" type="PanelContainer" parent="."]
-margin_right = 439.0
+anchor_right = 1.0
+margin_right = 487.0
 margin_bottom = 33.0
 grow_horizontal = 2
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="MessagesButton" type="TextureButton" parent="ToolBoxPanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 2080.0
+margin_bottom = 26.0
+size_flags_horizontal = 5
+size_flags_vertical = 5
+toggle_mode = true
+texture_normal = ExtResource( 8 )
+texture_pressed = ExtResource( 10 )
+texture_hover = ExtResource( 9 )
+expand = true
+stretch_mode = 4
 
 [node name="StarField" type="Spatial" parent="."]
 script = ExtResource( 4 )
@@ -43,3 +61,4 @@ script = ExtResource( 5 )
 
 [node name="FleetWindow" parent="." instance=ExtResource( 7 )]
 visible = false
+[connection signal="toggled" from="ToolBoxPanelContainer/MessagesButton" to="." method="_on_MessagesButton_toggled"]

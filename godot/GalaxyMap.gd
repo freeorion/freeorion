@@ -3,11 +3,6 @@ extends Spatial
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	# ToDo: catch window resize
-	var toolbox_size: Vector2 = $ToolBoxPanelContainer.get_size()
-	toolbox_size.x = OS.get_window_size().x
-	$ToolBoxPanelContainer.set_size(toolbox_size)
-
 	var camera_init: Vector3 = Vector3(0, 0, 0)
 
 	for ss in global.galaxy.systems.values():
@@ -21,7 +16,28 @@ func _ready():
 
 	$GalaxyMapCamera.look_at_galaxy(camera_init)
 
+	add_child(global.chat_window)
+	global.chat_window.hide()
+
+	FreeOrionNode.connect("chat_message", self, "_on_FreeOrion_chat_message", [], CONNECT_DEFERRED)
+
+
+func _exit_tree():
+	remove_child(global.chat_window)
+
 
 func _on_Fleet_clicked(fleet):
 	$FleetWindow.set_fleet(fleet)
 	$FleetWindow.show()
+
+
+func _on_FreeOrion_chat_message(_text: String, _player_name: String, _text_color: Color, _pm: bool):
+	global.chat_window.show()
+
+
+func _on_MessagesButton_toggled(button_pressed):
+	print("Test ", button_pressed)
+	if button_pressed:
+		global.chat_window.show()
+	else:
+		global.chat_window.hide()

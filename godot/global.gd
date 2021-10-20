@@ -46,6 +46,7 @@ const CLIENT_TYPE_HUMAN_MODERATOR = 3
 
 var galaxy: Galaxy
 var starfield: Spatial
+var chat_window: FOWindow
 
 
 class Starlane:
