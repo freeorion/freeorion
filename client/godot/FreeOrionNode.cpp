@@ -159,7 +159,11 @@ void FreeOrionNode::_init() {
     }
 #endif
 
-    app = std::make_unique<GodotClientApp>();
+    m_app = std::make_unique<GodotClientApp>();
+
+    m_network_thread = godot::Ref<godot::Thread>();
+    m_network_thread.instance();
+    m_network_thread->start(this, "network_thread");
 }
 
 
@@ -171,8 +175,11 @@ void FreeOrionNode::set_android_api_struct(const godot_gdnative_ext_android_api_
 #endif
 
 void FreeOrionNode::_exit_tree() {
+    DebugLogger() << "FreeOrionNode::_exit_tree(): Stopping freeorion node";
     quit = true;
-    app.reset();
+    m_network_thread->wait_to_finish();
+    m_app.reset();
+    DebugLogger() << "FreeOrionNode::_exit_tree(): Freeorion node stopped";
 
     ShutdownLoggingSystemFileSink();
 }
@@ -189,14 +196,14 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
             break;
         }
         case Message::MessageType::SET_AUTH_ROLES: {
-            ExtractSetAuthorizationRolesMessage(msg, app->Networking().AuthorizationRoles());
+            ExtractSetAuthorizationRolesMessage(msg, m_app->Networking().AuthorizationRoles());
             break;
         }
         case Message::MessageType::JOIN_GAME: {
             int player_id;
             boost::uuids::uuid cookie;
             ExtractJoinAckMessageData(msg, player_id, cookie);
-            app->Networking().SetPlayerID(player_id);
+            m_app->Networking().SetPlayerID(player_id);
             break;
         }
         case Message::MessageType::HOST_ID: {
@@ -208,7 +215,7 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
                 ErrorLogger() << "GDFreeOrion::handle_message(HOST_ID) could not convert \"" << text << "\" to host id";
             }
 
-            app->Networking().SetHostPlayerID(host_id);
+            m_app->Networking().SetHostPlayerID(host_id);
             break;
         }
         case Message::MessageType::PLAYER_STATUS: {
@@ -222,8 +229,8 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
             try {
                 int host_id = boost::lexical_cast<int>(msg.Text());
 
-                app->Networking().SetPlayerID(host_id);
-                app->Networking().SetHostPlayerID(host_id);
+                m_app->Networking().SetPlayerID(host_id);
+                m_app->Networking().SetHostPlayerID(host_id);
             } catch (const boost::bad_lexical_cast& ex) {
                 ErrorLogger() << "GDFreeOrion::handle_message(HOST_ID) Host id " << msg.Text() << " is not a number: " << ex.what();
             }
@@ -239,25 +246,25 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
             bool single_player_game = false;
             int empire_id = ALL_EMPIRES;
             int current_turn = INVALID_GAME_TURN;
-            app->Orders().Reset();
+            m_app->Orders().Reset();
             try {
                 ExtractGameStartMessageData(msg,                 single_player_game,             empire_id,
                                             current_turn,        Empires(),                      GetUniverse(),
                                             GetSpeciesManager(), GetCombatLogManager(),          GetSupplyManager(),
-                                            app->Players(),      app->Orders(),              loaded_game_data,
+                                            m_app->Players(),    m_app->Orders(),                loaded_game_data,
                                             ui_data_available,   ui_data,                        save_state_string_available,
-                                            save_state_string,   app->GetGalaxySetupData());
+                                            save_state_string,   m_app->GetGalaxySetupData());
             } catch (...) {
                 return;
             }
 
             DebugLogger() << "Extracted GameStart message for turn: " << current_turn << " with empire: " << empire_id;
 
-            app->SetSinglePlayerGame(single_player_game);
-            app->SetEmpireID(empire_id);
-            app->SetCurrentTurn(current_turn);
+            m_app->SetSinglePlayerGame(single_player_game);
+            m_app->SetEmpireID(empire_id);
+            m_app->SetCurrentTurn(current_turn);
 
-            GetGameRules().SetFromStrings(app->GetGalaxySetupData().GetGameRules());
+            GetGameRules().SetFromStrings(m_app->GetGalaxySetupData().GetGameRules());
 
             bool is_new_game = !(loaded_game_data && ui_data_available);
             emit_signal("start_game", is_new_game);
@@ -300,7 +307,7 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
             std::string player_name{UserString("PLAYER") + " " + std::to_string(sending_player_id)};
             godot::Color text_color{1.0f, 1.0f, 1.0f, 1.0f};
             if (sending_player_id != Networking::INVALID_PLAYER_ID) {
-                const auto& players = app->Players();
+                const auto& players = m_app->Players();
                 auto player_it = players.find(sending_player_id);
                 if (player_it != players.end()) {
                     if (auto empire = GetEmpire(player_it->second.empire_id))
@@ -334,20 +341,22 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
 }
 
 void FreeOrionNode::network_thread() {
+    DebugLogger() << "FreeOrionNode::network_thread(): Freeorion networking started";
     while(!quit) {
-        if (auto msg = this->app->Networking().GetMessage()) {
+        if (auto msg = this->m_app->Networking().GetMessage()) {
             this->HandleMessage(std::move(*msg));
         } else {
             godot::OS::get_singleton()->delay_msec(20);
         }
     }
+    DebugLogger() << "FreeOrionNode::network_thread(): Freeorion networking stopped";
 }
 
 void FreeOrionNode::new_single_player_game() {
 #ifdef FREEORION_ANDROID
     ErrorLogger() << "No single player game supported";
 #else
-    app->NewSinglePlayerGame();
+    m_app->NewSinglePlayerGame();
 #endif
 }
 
@@ -356,23 +365,23 @@ godot::String FreeOrionNode::get_version() const {
 }
 
 bool FreeOrionNode::is_server_connected() const {
-    return app->Networking().IsConnected();
+    return m_app->Networking().IsConnected();
 }
 
 bool FreeOrionNode::connect_to_server(godot::String dest) {
     std::string dest8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(dest.unicode_str());
-    return app->Networking().ConnectToServer(dest8);
+    return m_app->Networking().ConnectToServer(dest8);
 }
 
 void FreeOrionNode::join_game(godot::String player_name, int client_type) {
     std::string player_name8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(player_name.unicode_str());
-    app->Networking().SendMessage(JoinGameMessage(player_name8, static_cast<Networking::ClientType>(client_type), boost::uuids::nil_uuid()));
+    m_app->Networking().SendMessage(JoinGameMessage(player_name8, static_cast<Networking::ClientType>(client_type), boost::uuids::nil_uuid()));
 }
 
 void FreeOrionNode::auth_response(godot::String player_name, godot::String password) {
     std::string player_name8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(player_name.unicode_str());
     std::string password8 = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.to_bytes(password.unicode_str());
-    app->Networking().SendMessage(AuthResponseMessage(player_name8, password8));
+    m_app->Networking().SendMessage(AuthResponseMessage(player_name8, password8));
 }
 
 godot::Dictionary FreeOrionNode::get_systems() const {

@@ -39,6 +39,7 @@ config/icon="res://assets/art/icons/FO_Icon_256x256.png"
 [autoload]
 
 global="*res://global.gd"
+FreeOrionNode="*res://freeoriongodot.gdns"
 
 [display]
 
@@ -51,6 +52,10 @@ window/stretch/aspect="expand"
 [editor_plugins]
 
 enabled=PoolStringArray( "gut" )
+
+[gdnative]
+
+singletons=[  ]
 
 [physics]
 

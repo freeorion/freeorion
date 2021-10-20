@@ -46,7 +46,6 @@ const CLIENT_TYPE_HUMAN_MODERATOR = 3
 
 var galaxy: Galaxy
 var starfield: Spatial
-var freeorion: Node
 
 
 class Starlane:
@@ -70,7 +69,7 @@ class Galaxy:
 	var fleets = {}
 
 	func _init():
-		systems = global.freeorion.get_systems()
+		systems = FreeOrionNode.get_systems()
 		for sys in systems.values():
 			add_point(sys.id, sys.pos)
 		for sys in systems.values():
@@ -78,7 +77,7 @@ class Galaxy:
 			for id in starlanes_wormholes.keys():
 				if !starlanes_wormholes[id] && sys.id > id:
 					add_starlane(Starlane.new(sys.id, id))
-		fleets = global.freeorion.get_fleets()
+		fleets = FreeOrionNode.get_fleets()
 
 	func add_starlane(starlane: Starlane):
 		if not ((starlane.source in systems.keys()) and (starlane.dest in systems.keys())):
