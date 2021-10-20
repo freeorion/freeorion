@@ -6,6 +6,7 @@
 #include <Godot.hpp>
 #include <Node.hpp>
 #include <String.hpp>
+#include <Thread.hpp>
 
 class Message;
 class GodotClientApp;
@@ -52,7 +53,8 @@ private:
 
     godot::Dictionary get_fleets() const; ///< Returns Godot Dictionary with fleets
 
-    std::unique_ptr<GodotClientApp> app;
+    std::unique_ptr<GodotClientApp> m_app;
+    godot::Ref<godot::Thread> m_network_thread;
 
 #if defined(FREEORION_ANDROID)
     static const godot_gdnative_ext_android_api_struct* s_android_api_struct;

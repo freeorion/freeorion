@@ -1,9 +1,8 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://FreeOrionClient.gd" type="Script" id=1]
 [ext_resource path="res://assets/sound/artificial_intelligence_v3.ogg" type="AudioStream" id=2]
 [ext_resource path="res://assets/art/splash.png" type="Texture" id=3]
-[ext_resource path="res://freeoriongodot.gdns" type="Script" id=4]
 [ext_resource path="res://resources/FOStdTheme.tres" type="Theme" id=5]
 [ext_resource path="res://assets/art/logo.png" type="Texture" id=6]
 [ext_resource path="res://assets/image/frames/FOWindowFrame2.png" type="Texture" id=7]
@@ -153,12 +152,7 @@ autoplay = true
 [node name="Popup" type="Popup" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-
-[node name="FreeOrion" type="Node" parent="."]
-script = ExtResource( 4 )
 [connection signal="pressed" from="MainMenu/VBoxContainer/SinglePlayerBtn" to="." method="_on_SinglePlayerBtn_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer/QuickstartBtn" to="." method="_on_QuickstartBtn_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer/MultiplayerBtn" to="." method="_on_MultiplayerBtn_pressed"]
 [connection signal="pressed" from="MainMenu/VBoxContainer/QuitBtn" to="." method="_on_QuitBtn_pressed"]
-[connection signal="auth_request" from="FreeOrion" to="." method="_on_FreeOrion_auth_request" flags=3]
-[connection signal="start_game" from="FreeOrion" to="." method="_on_FreeOrion_start_game" flags=3]
