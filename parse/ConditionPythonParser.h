@@ -5,10 +5,8 @@
 
 #include "../universe/Condition.h"
 
-namespace boost {
-    namespace python {
-        class dict;
-    }
+namespace boost::python {
+    class dict;
 }
 
 struct condition_wrapper {
