@@ -2,7 +2,6 @@ extends "res://addons/gut/test.gd"
 
 const PASS = 1
 
-var fo = preload("res://freeoriongodot.gdns")
 var signaler: Signaler = Signaler.new()
 
 
@@ -16,31 +15,20 @@ class Signaler:
 
 
 func test_quickstart():
-	assert_not_null(fo)
-	assert_true(is_instance_valid(fo))
+	assert_not_null(FreeOrionNode)
+	assert_true(is_instance_valid(FreeOrionNode))
 
-	assert_not_null(fo.library)
-	assert_true(is_instance_valid(fo.library))
+	assert_not_null(FreeOrionNode.get_version())
+	assert_typeof(FreeOrionNode.get_version(), TYPE_STRING)
 
-	var freeorion = add_child_autoqfree(fo.new())
+	FreeOrionNode.connect("start_game", self, "_on_freeorion_start_game")
 
-	assert_not_null(freeorion.get_version())
-	assert_typeof(freeorion.get_version(), TYPE_STRING)
-
-	var thread = autofree(Thread.new())
-	thread.start(freeorion, "network_thread")
-
-	freeorion.connect("start_game", self, "_on_freeorion_start_game")
-
-	freeorion.new_single_player_game()
+	FreeOrionNode.new_single_player_game()
 
 	yield(yield_to(signaler, "started_game", 100), YIELD)
 	assert_signal_emitted(signaler, "started_game", "Game started")
 
-	remove_child(freeorion)
-
-	thread.wait_to_finish()
-	freeorion.free()
+	FreeOrionNode.free()
 	signaler.free()
 
 	assert_no_new_orphans()
