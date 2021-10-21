@@ -17,6 +17,16 @@ anchor_bottom = 1.0
 margin_left = 10.0
 margin_top = 30.0
 margin_right = -10.0
-margin_bottom = -10.0
+margin_bottom = -40.0
 bbcode_enabled = true
+
+[node name="ChatMessage" type="LineEdit" parent="." index="4"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = -30.0
+margin_right = -10.0
+margin_bottom = -10.0
 [connection signal="pressed" from="HBoxContainer/CloseWidget" to="." method="_on_CloseWidget_pressed"]
+[connection signal="text_entered" from="ChatMessage" to="." method="_on_ChatMessage_text_entered"]
