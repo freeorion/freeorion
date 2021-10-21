@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_STOCKPILE_LIQUIDATION_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = floor([[POPULATION_OWNED_BY_EMPIRE]]^0.5)
-    exclusions = [ "PLC_BALANCE" ]
+    exclusions = [ "PLC_MODERATION" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 

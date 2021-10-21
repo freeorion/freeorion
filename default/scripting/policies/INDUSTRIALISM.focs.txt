@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_INDUSTRIALISM_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
-    exclusions = [ "PLC_BALANCE" "PLC_TECHNOCRACY" "PLC_ENVIRONMENTALISM" ]
+    exclusions = [ "PLC_MODERATION" "PLC_TECHNOCRACY" "PLC_ENVIRONMENTALISM" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
