@@ -80,6 +80,8 @@ void FreeOrionNode::_register_methods() {
     register_method("get_systems", &FreeOrionNode::get_systems);
     register_method("get_fleets", &FreeOrionNode::get_fleets);
     register_method("send_chat_message", &FreeOrionNode::send_chat_message);
+    register_method("options_commit", &FreeOrionNode::options_commit);
+    register_method("options_set", &FreeOrionNode::options_set);
 
     godot::register_signal<FreeOrionNode>("ping", "message", GODOT_VARIANT_TYPE_STRING);
     godot::register_signal<FreeOrionNode>("error", "problem", GODOT_VARIANT_TYPE_STRING, "fatal", GODOT_VARIANT_TYPE_BOOL);
@@ -202,6 +204,7 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
             int player_id;
             boost::uuids::uuid cookie;
             ExtractJoinAckMessageData(msg, player_id, cookie);
+
             m_app->Networking().SetPlayerID(player_id);
             break;
         }
@@ -309,6 +312,7 @@ void FreeOrionNode::HandleMessage(Message&& msg) {
                 const auto& players = m_app->Players();
                 auto player_it = players.find(sending_player_id);
                 if (player_it != players.end()) {
+                    player_name = player_it->second.name;
                     if (auto empire = GetEmpire(player_it->second.empire_id))
                         text_color = godot::Color(std::get<0>(empire->Color()) / 255.0f,
                                                   std::get<1>(empire->Color()) / 255.0f,
@@ -402,5 +406,19 @@ godot::Dictionary FreeOrionNode::get_fleets() const {
 void FreeOrionNode::send_chat_message(godot::String text) {
     std::string text8 = text.utf8().get_data();
     m_app->Networking().SendMessage(PlayerChatMessage(text8, {}, false));
+}
+
+void FreeOrionNode::options_commit()
+{ GetOptionsDB().Commit(); }
+
+void FreeOrionNode::options_set(godot::String option, godot::Variant value) {
+    std::string option8 = option.utf8().get_data();
+    switch (value.get_type()) {
+    case godot::Variant::Type::STRING:
+        GetOptionsDB().Set<std::string>(option8, godot::String(value).utf8().get_data());
+        break;
+    default:
+        ErrorLogger() << "Unsupported option " << option8 << " type " << value.get_type();
+    }
 }
 
