@@ -55,6 +55,10 @@ private:
 
     void send_chat_message(godot::String text); ///< Sends \a text to chat
 
+    void options_commit(); ///< Commits options DB
+
+    void options_set(godot::String option, godot::Variant value); ///< Sets options DB value
+
     std::unique_ptr<GodotClientApp> m_app;
     godot::Ref<godot::Thread> m_network_thread;
 
