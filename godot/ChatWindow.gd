@@ -12,6 +12,7 @@ func _on_FreeOrion_chat_message(text: String, player_name: String, text_color: C
 	if !player_name.empty():
 		$ChatText.push_bold()
 		$ChatText.add_text(player_name)
+		$ChatText.add_text(": ")
 	if !player_name.empty():
 		$ChatText.pop()
 	$ChatText.add_text(text)
@@ -19,3 +20,8 @@ func _on_FreeOrion_chat_message(text: String, player_name: String, text_color: C
 		$ChatText.pop()
 	$ChatText.pop()
 	$ChatText.newline()
+
+
+func _on_ChatMessage_text_entered(new_text: String):
+	FreeOrionNode.send_chat_message(new_text)
+	$ChatMessage.text = ""
