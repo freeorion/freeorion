@@ -269,7 +269,7 @@ private:
     unsigned int                    m_cell_margin = 1;
     std::vector<RowColParams>       m_row_params;
     std::vector<RowColParams>       m_column_params;
-    std::map<Wnd*, WndPosition>     m_wnd_positions;
+    std::map<Wnd*, WndPosition, std::less<>> m_wnd_positions;
     Pt                              m_min_usable_size;
     bool                            m_ignore_child_resize = false;
     bool                            m_stop_resize_recursion = false;

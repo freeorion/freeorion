@@ -67,7 +67,7 @@ std::size_t Layout::Columns() const
 
 Flags<Alignment> Layout::ChildAlignment(const Wnd* wnd) const
 {
-    auto it = m_wnd_positions.find(const_cast<Wnd*>(wnd));
+    auto it = m_wnd_positions.find(wnd);
     if (it == m_wnd_positions.end())
         throw NoSuchChild("Layout::ChildAlignment() : Alignment of a nonexistent child was requested");
     return it->second.alignment;
@@ -544,11 +544,12 @@ void Layout::Remove(Wnd* wnd)
 
 void Layout::DetachAndResetChildren()
 {
-    std::map<Wnd*, WndPosition> wnd_positions = m_wnd_positions;
+    auto wnd_positions{m_wnd_positions}; // TODO: is this copy needed?
     DetachChildren();
-    for (auto& wnd_position : wnd_positions) {
-        wnd_position.first->SizeMove(wnd_position.second.original_ul, wnd_position.second.original_ul + wnd_position.second.original_size);
-    }
+    for (auto& wnd_position : wnd_positions)
+        wnd_position.first->SizeMove(wnd_position.second.original_ul,
+                                     wnd_position.second.original_ul + wnd_position.second.original_size);
+
     m_wnd_positions.clear();
 }
 
