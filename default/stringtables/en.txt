@@ -12019,7 +12019,7 @@ PLC_NECESSITY
 Necessity
 
 PLC_NECESSITY_DESC
-Increases [[metertype METER_TARGET_RESEARCH]] of planets with [[metertype METER_HAPPINESS]] less than [[value PLC_NECESSITY_MAX_STABILITY]] by the square root of the product of population and how far [[metertype METER_HAPPINESS]] is below [[value PLC_NECESSITY_MAX_STABILITY]].
+Increases [[metertype METER_TARGET_RESEARCH]] of research focused planets with [[metertype METER_HAPPINESS]] less than [[value PLC_NECESSITY_MAX_STABILITY]] by the square root of the product of population and how far [[metertype METER_HAPPINESS]] is below [[value PLC_NECESSITY_MAX_STABILITY]].
 
 PLC_NECESSITY_SHORT_DESC
 Boosts Unstable Planet Research
