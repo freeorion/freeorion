@@ -562,9 +562,9 @@ void Layout::ResizeLayout(std::size_t rows, std::size_t columns)
 {
     assert(0 < rows);
     assert(0 < columns);
-    if (static_cast<std::size_t>(rows) < m_cells.size()) {
-        for (std::size_t i = static_cast<std::size_t>(rows); i < m_cells.size(); ++i) {
-            for (auto& cell : m_cells[i]) {
+    if (rows < m_cells.size()) {
+        for (auto& row : m_cells) {
+            for (auto& cell : row) {
                 auto locked = cell.lock();
                 cell.reset();
                 DetachChild(locked.get());
@@ -574,10 +574,10 @@ void Layout::ResizeLayout(std::size_t rows, std::size_t columns)
     }
     m_cells.resize(rows);
     for (auto& row : m_cells) {
-        if (static_cast<std::size_t>(columns) < row.size()) { // TODO: remove redundant cast?
-            for (std::size_t j = static_cast<std::size_t>(columns); j < row.size(); ++j) {
-                auto locked = row[j].lock();
-                row[j].reset();
+        if (columns < row.size()) {
+            for (auto& cell : row) {
+                auto locked = cell.lock();
+                cell.reset();
                 DetachChild(locked.get());
                 m_wnd_positions.erase(locked.get());
             }
