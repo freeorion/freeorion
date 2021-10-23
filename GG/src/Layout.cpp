@@ -544,11 +544,16 @@ void Layout::Remove(Wnd* wnd)
 
 void Layout::DetachAndResetChildren()
 {
-    auto wnd_positions{m_wnd_positions}; // TODO: is this copy needed?
+    // store intitial positions to be restored after detaching
+    std::vector<decltype(m_wnd_positions)::value_type>
+        wnd_positions{m_wnd_positions.begin(), m_wnd_positions.end()};
+
     DetachChildren();
-    for (auto& wnd_position : wnd_positions)
-        wnd_position.first->SizeMove(wnd_position.second.original_ul,
-                                     wnd_position.second.original_ul + wnd_position.second.original_size);
+
+    // restore initial positions
+    for (const auto& [wnd, position] : wnd_positions)
+        wnd->SizeMove(position.original_ul,
+                      position.original_ul + position.original_size);
 
     m_wnd_positions.clear();
 }
@@ -569,7 +574,7 @@ void Layout::ResizeLayout(std::size_t rows, std::size_t columns)
     }
     m_cells.resize(rows);
     for (auto& row : m_cells) {
-        if (static_cast<std::size_t>(columns) < row.size()) {
+        if (static_cast<std::size_t>(columns) < row.size()) { // TODO: remove redundant cast?
             for (std::size_t j = static_cast<std::size_t>(columns); j < row.size(); ++j) {
                 auto locked = row[j].lock();
                 row[j].reset();
