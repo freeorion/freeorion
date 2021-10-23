@@ -988,9 +988,9 @@ namespace {
         auto add_to_list = [&list, &server_dir_str](const fs::path& subdir) {
             auto subdir_str = PathToString(fs::canonical(subdir));
             auto rel_path = subdir_str.substr(server_dir_str.length());
-            list.push_back(rel_path);
             TraceLogger() << "Added relative path " << rel_path << " in " << subdir
                           << " to save preview directories";
+            list.push_back(std::move(rel_path));
         };
 
         // Add parent dir if still within server_dir_str
@@ -2634,6 +2634,11 @@ namespace {
 
         for (const CombatInfo& combat_info : combats) {
             auto& empires = combat_info.empires;
+            if (!combat_info.objects) {
+                ErrorLogger() << "CreateCombatSitReps CombatInfo has null objects?!";
+                continue;
+            }
+            const ObjectMap& objects{*combat_info.objects};
 
             // add combat log entry
             int log_id = log_manager.AddNewLog(CombatLog(combat_info));
@@ -2646,11 +2651,13 @@ namespace {
             }
 
             // sitreps about destroyed objects
-            for (auto& [knowing_empire_id, known_destroyed_object_ids] : combat_info.destroyed_object_knowers) {
+            for (auto& [knowing_empire_id, known_destroyed_object_ids] :
+                 combat_info.destroyed_object_knowers)
+            {
                 if (auto empire{empires.GetEmpire(knowing_empire_id)}) {
                     for (int dest_obj_id : known_destroyed_object_ids) {
                         empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(
-                            dest_obj_id, combat_info.system_id, knowing_empire_id));
+                            dest_obj_id, combat_info.system_id, knowing_empire_id, combat_info.turn));
                     }
                 }
             }
@@ -2675,7 +2682,8 @@ namespace {
 
                     if (auto empire = empires.GetEmpire(viewing_empire_id))
                         empire->AddSitRepEntry(CreateCombatDamagedObjectSitRep(
-                            damaged_object_id, combat_info.system_id, viewing_empire_id));
+                            damaged_object_id, combat_info.system_id, viewing_empire_id,
+                            objects, combat_info.turn));
                 }
             }
         }

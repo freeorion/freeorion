@@ -11,6 +11,8 @@
 
 #include "Export.h"
 
+class ObjectMap;
+
 //! Represents a situation report entry for a significant game event.
 class FO_COMMON_API SitRepEntry : public VarText {
 public:
@@ -60,8 +62,10 @@ private:
 [[nodiscard]] FO_COMMON_API SitRepEntry CreateGroundCombatSitRep(int planet_id, int empire_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetRebelledSitRep(int planet_id, int empire_id);
-[[nodiscard]] FO_COMMON_API SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id, int empire_id);
-[[nodiscard]] FO_COMMON_API SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id);
+[[nodiscard]] FO_COMMON_API SitRepEntry CreateCombatDamagedObjectSitRep(
+    int object_id, int combat_system_id, int empire_id, const ObjectMap& objects, int current_turn);
+[[nodiscard]] FO_COMMON_API SitRepEntry CreateCombatDestroyedObjectSitRep(
+    int object_id, int combat_system_id, int empire_id, int current_turn);
 [[nodiscard]] SitRepEntry               CreatePlanetDepopulatedSitRep(int planet_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetColonizedSitRep(int planet_id, const std::string& species);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetOutpostedSitRep(int planet_id);
