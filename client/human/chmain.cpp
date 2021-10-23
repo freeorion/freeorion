@@ -148,8 +148,8 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().AddSection("audio.music", UserStringNop("OPTIONS_DB_SECTION_AUDIO_MUSIC"));
         GetOptionsDB().AddSection("audio.effects", UserStringNop("OPTIONS_DB_SECTION_AUDIO_EFFECTS"));
         GetOptionsDB().AddSection("audio.effects.paths", UserStringNop("OPTIONS_DB_SECTION_AUDIO_EFFECTS_PATHS"),
-                                  [](const std::string& name)->bool {
-                                      std::string suffix { "sound.path" };
+                                  [](std::string_view name)->bool {
+                                      static constexpr std::string_view suffix{"sound.path"};
                                       return name.size() > suffix.size() &&
                                              name.substr(name.size() - suffix.size()) == suffix;
                                   });
@@ -161,14 +161,14 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().AddSection("setup", UserStringNop("OPTIONS_DB_SECTION_SETUP"));
         GetOptionsDB().AddSection("ui", UserStringNop("OPTIONS_DB_SECTION_UI"));
         GetOptionsDB().AddSection("ui.colors", UserStringNop("OPTIONS_DB_SECTION_UI_COLORS"),
-                                  [](const std::string& name)->bool {
-                                      std::string suffix { ".color" };
+                                  [](std::string_view name)->bool {
+                                      static constexpr std::string_view suffix{".color"};
                                       return name.size() > suffix.size() &&
                                              name.substr(name.size() - suffix.size()) == suffix;
                                   });
         GetOptionsDB().AddSection("ui.hotkeys", UserStringNop("OPTIONS_DB_SECTION_UI_HOTKEYS"),
-                                  [](const std::string& name)->bool {
-                                      std::string suffix { ".hotkey" };
+                                  [](std::string_view name)->bool {
+                                      static constexpr std::string_view suffix{".hotkey"};
                                       return name.size() > suffix.size() &&
                                              name.substr(name.size() - suffix.size()) == suffix;
                                   });
