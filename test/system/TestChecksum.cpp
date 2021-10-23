@@ -8,8 +8,7 @@ void TestCheckSumFromEnv(const char* env, unsigned int def, unsigned int expecte
     bool force = false;
     unsigned int value = def;
 
-    const char *env_value = std::getenv(env);
-    if (env_value) {
+    if (const char *env_value = std::getenv(env)) {
         force = true;
         try {
             value = boost::lexical_cast<unsigned int>(env_value);
@@ -25,9 +24,9 @@ void TestCheckSumFromEnv(const char* env, unsigned int def, unsigned int expecte
 }
 
 /**
- * - Enforces named value reference checksum test if FO_CHECKSUM_NAMED_VALUEREF set.
- * - Enforces techs checksum test if FO_CHECKSUM_TECH set.
- * - If environment variable set to integer value that value test with calculated checksum.
+ * - Enforces named value reference checksum test if FO_CHECKSUM_NAMED_VALUEREF is set.
+ * - Enforces techs checksum test if FO_CHECKSUM_TECH is set.
+ * - Setting each of these environment variables to an integer value will test that value against the corresponding parsed content checksum.
  */
 
 BOOST_AUTO_TEST_CASE(compare_checksum) {
