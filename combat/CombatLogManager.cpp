@@ -85,6 +85,13 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
 ////////////////////////////////////////////////
 // CombatLogManager
 ////////////////////////////////////////////////
+CombatLogManager& CombatLogManager::operator=(CombatLogManager&& rhs) noexcept {
+    m_latest_log_id.store(rhs.m_latest_log_id.load());
+    m_logs = std::move(rhs.m_logs);
+    m_incomplete_logs = std::move(rhs.m_incomplete_logs);
+    return *this;
+}
+
 boost::optional<const CombatLog&> CombatLogManager::GetLog(int log_id) const {
     auto it = m_logs.find(log_id);
     if (it != m_logs.end())

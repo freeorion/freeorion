@@ -346,8 +346,16 @@ void serialize(Archive& ar, CombatLogManager& obj, const unsigned int version)
         // TODO: filter logs by who should have access to them
     }
 
-    ar  & make_nvp("logs", logs)
-        & make_nvp("m_latest_log_id", obj.m_latest_log_id);
+    ar  & make_nvp("logs", logs);
+
+    if constexpr (Archive::is_loading::value) {
+        int latest_log_id = 0;
+        ar  & make_nvp("m_latest_log_id", latest_log_id);
+        obj.m_latest_log_id.store(latest_log_id);
+    } else {
+        int latest_log_id = obj.m_latest_log_id.load();
+        ar  & make_nvp("m_latest_log_id", latest_log_id);
+    }
 
     if constexpr (Archive::is_loading::value) {
         // copy new logs, but don't erase old ones
@@ -366,16 +374,23 @@ void SerializeIncompleteLogs(Archive& ar, CombatLogManager& obj, const unsigned 
 {
     using namespace boost::serialization;
 
-    int old_latest_log_id = obj.m_latest_log_id;
-    ar & make_nvp("m_latest_log_id", obj.m_latest_log_id);
-    DebugLogger(combat_log) << "SerializeIncompleteLogs latest log id: " << obj.m_latest_log_id << " and old latest log id: " << old_latest_log_id;
+    int latest_log_id = obj.m_latest_log_id.load();
+    if constexpr (Archive::is_loading::value) {
+        int old_latest_log_id = latest_log_id;
+        ar  & make_nvp("m_latest_log_id", latest_log_id);
+        obj.m_latest_log_id.store(latest_log_id);
+        DebugLogger(combat_log) << "SerializeIncompleteLogs loaded latest log id: " << latest_log_id << " and had old latest log id: " << old_latest_log_id;
 
-    // If the new m_latest_log_id is greater than the old one then add all
-    // of the new ids to the incomplete log set.
-    if constexpr (Archive::is_loading::value)
-        if (obj.m_latest_log_id > old_latest_log_id)
-            for (++old_latest_log_id; old_latest_log_id <= obj.m_latest_log_id; ++old_latest_log_id)
+        // If the new m_latest_log_id is greater than the old one then add all
+        // of the new ids to the incomplete log set.
+        if (latest_log_id > old_latest_log_id)
+            for (++old_latest_log_id; old_latest_log_id <= latest_log_id; ++old_latest_log_id)
                 obj.m_incomplete_logs.insert(old_latest_log_id);
+
+    } else {
+        ar  & make_nvp("m_latest_log_id", latest_log_id);
+        DebugLogger(combat_log) << "SerializeIncompleteLogs saved latest log id: " << latest_log_id;
+    }
 }
 
 template void SerializeIncompleteLogs<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatLogManager&, unsigned int const);

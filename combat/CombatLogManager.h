@@ -36,6 +36,7 @@ struct FO_COMMON_API CombatLog {
 class FO_COMMON_API CombatLogManager {
 public:
     CombatLogManager() = default;
+    CombatLogManager& operator=(CombatLogManager&& rhs) noexcept;
 
     /** Return the requested combat log or boost::none.*/
     [[nodiscard]] boost::optional<const CombatLog&> GetLog(int log_id) const;
@@ -55,7 +56,7 @@ private:
     std::unordered_map<int, CombatLog> m_logs;
     //! Set of logs ids that do not have bodies and need to be fetched from the server
     std::set<int>                      m_incomplete_logs;
-    int                                m_latest_log_id = -1;
+    std::atomic<int>                   m_latest_log_id = -1;
 
     template <typename Archive>
     friend void serialize(Archive&, CombatLogManager&, const unsigned int);
