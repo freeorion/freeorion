@@ -11528,7 +11528,7 @@ PLC_METROPOLES
 Metropoles
 
 PLC_METROPOLES_DESC
-'''Boosts the output of up to [[value METROPOLES_PLANET_LIMIT]] planets. At most 1 / [[value METROPOLES_MIN_PLANETS]] of all populated planets with [[metertype METER_POPULATION]] of at least [[value METROPOLES_MINIMUM_POPULATION]] and [[metertype METER_HAPPINESS]] of at least [[value METROPOLES_MIN_STABILITY]] will be boosted.
+'''Boosts the output of up to [[value METROPOLES_PLANET_LIMIT]] planets, but not more than a fraction of 1 / [[value METROPOLES_MIN_PLANETS]] of all the empire's populated planets. To qualify for being boosted, planets must have [[metertype METER_POPULATION]] of at least [[value METROPOLES_MINIMUM_POPULATION]] and [[metertype METER_HAPPINESS]] of at least [[value METROPOLES_MIN_STABILITY]].
 The highest-populated of the qualified planets will receive, regardless of focus:
 • Increases [[metertype METER_TARGET_RESEARCH]] by [[value METROPOLES_TARGET_RESEARCH_PERPOP]] per population.
 • Increases [[metertype METER_TARGET_INDUSTRY]] by [[value METROPOLES_TARGET_INDUSTRY_PERPOP]] per population.
