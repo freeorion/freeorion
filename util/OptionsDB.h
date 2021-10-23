@@ -209,7 +209,8 @@ public:
 
     /** find all registered Options that begin with \a prefix and store them in
       * \a ret. If \p allow_unrecognized then include unrecognized options. */
-    void FindOptions(std::set<std::string>& ret, const std::string& prefix, bool allow_unrecognized = false) const;
+    void FindOptions(std::set<std::string>& ret, std::string_view prefix, bool allow_unrecognized = false) const;
+    std::vector<std::string_view> FindOptions(std::string_view prefix, bool allow_unrecognized = false) const;
 
     /** the option changed signal object for the given option */
     OptionChangedSignalType&        OptionChangedSignal(const std::string& option);
@@ -249,11 +250,12 @@ public:
             }
         }
 
-        Option&& option{static_cast<char>(0), name, std::move(value), std::move(default_value), std::move(description),
-                        std::move(validator), storable, false, true, std::move(section)};
-        m_options.insert_or_assign(name, std::move(option));
+        Option option{static_cast<char>(0), name, std::move(value), std::move(default_value),
+                      std::move(description), std::move(validator), storable, false, true,
+                      std::move(section)};
+        it = m_options.insert_or_assign(std::move(name), std::move(option)).first;
         m_dirty = true;
-        OptionAddedSignal(name);
+        OptionAddedSignal(it->first);
     }
 
     template <typename T, typename V,
@@ -440,7 +442,7 @@ public:
         template <typename T>
         bool SetFromValue(T value_);
         // SetFromString returns true if this->value is successfully changed
-        bool SetFromString(const std::string& str);
+        bool SetFromString(std::string_view str);
         // SetToDefault returns true if this->value is successfully changed
         bool SetToDefault();
 
@@ -479,7 +481,7 @@ public:
      *  @param description Stringtable key used for local description
      *  @param option_predicate Functor accepting a option name in the form of a std::string const ref and
      *                          returning a bool. Options which return true are displayed in the section for @p name */
-    void AddSection(const std::string& name, const std::string& description,
+    void AddSection(const char* name, const std::string& description,
                     std::function<bool (const std::string&)> option_predicate = nullptr);
 
 private:
@@ -498,11 +500,13 @@ private:
 
     /** Determine known option sections and which options each contains
      *  A special "root" section is added for determined top-level sections */
-    std::unordered_map<std::string, std::set<std::string>> OptionsBySection(bool allow_unrecognized = false) const;
+    std::unordered_map<std::string_view, std::set<std::string_view>> OptionsBySection(
+        bool allow_unrecognized = false) const;
 
-    std::map<std::string, Option>   m_options;
-    std::unordered_map<std::string, OptionSection> m_sections;
-    bool                            m_dirty = false; //< has OptionsDB changed since last Commit()
+    std::map<std::string, Option> m_options;
+    std::unordered_map<std::string_view, OptionSection>
+                                  m_sections;
+    bool                          m_dirty = false; //< has OptionsDB changed since last Commit()
 
     friend FO_COMMON_API OptionsDB& GetOptionsDB();
 };

@@ -30,23 +30,21 @@ namespace details {
     { return std::fmod(dividend, divisor); }
 }
 
-/** base class for all OptionsDB validators. Simply provides the basic interface. */
+/** Interface base class for all OptionsDB validators. Simply provides the basic interface. */
 struct ValidatorBase {
     ValidatorBase() = default;
     ValidatorBase(ValidatorBase&& rhs) noexcept = default;
     virtual ~ValidatorBase() = default;
 
     /** returns normally if \a str is a valid value, or throws otherwise */
-    virtual boost::any Validate(const std::string& str) const
-    { throw std::runtime_error("ValidatorBase::Validate(const std::string& str) called..."); };
+    virtual boost::any Validate(const std::string& str) const = 0;
+    virtual boost::any Validate(std::string_view str) const = 0;
 
     /** returns the string representation of \a value */
-    [[nodiscard]] virtual std::string String(const boost::any& value) const
-    { throw std::runtime_error("ValidatorBase::String(const boost::any& value) called..."); };
+    [[nodiscard]] virtual std::string String(const boost::any& value) const = 0;
 
     /** returns a dynamically allocated copy of the object. */
-    [[nodiscard]] virtual std::unique_ptr<ValidatorBase> Clone() const
-    { throw std::runtime_error("ValidatorBase::Clone() called..."); };
+    [[nodiscard]] virtual std::unique_ptr<ValidatorBase> Clone() const = 0;
 };
 
 /** determines if a string is a valid value for an OptionsDB option */
@@ -59,6 +57,8 @@ struct Validator : public ValidatorBase
 
     boost::any Validate(const std::string& str) const override
     { return boost::any(boost::lexical_cast<T>(str)); }
+    boost::any Validate(std::string_view str) const override
+    { return boost::any(boost::lexical_cast<T>(str)); }
 
     [[nodiscard]] std::string String(const boost::any& value) const override
     { return boost::lexical_cast<std::string>(boost::any_cast<T>(value)); }
@@ -67,7 +67,9 @@ struct Validator : public ValidatorBase
     { return std::make_unique<Validator>(); }
 };
 
-FO_COMMON_API std::string ListToString(const std::vector<std::string>& input_list);
+FO_COMMON_API std::string ListToString(std::vector<std::string>&& input_list);
+FO_COMMON_API std::vector<std::string> StringToList(std::string_view input_string);
+FO_COMMON_API std::vector<std::string> StringToList(const char* input_string);
 FO_COMMON_API std::vector<std::string> StringToList(const std::string& input_string);
 
 template <>
@@ -78,6 +80,8 @@ struct Validator<std::vector<std::string>> : public ValidatorBase
     ~Validator() override = default;
 
     boost::any Validate(const std::string& str) const override
+    { return boost::any(StringToList(str)); }
+    boost::any Validate(std::string_view str) const override
     { return boost::any(StringToList(str)); }
 
     [[nodiscard]] std::string String(const boost::any& value) const override

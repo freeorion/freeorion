@@ -35,12 +35,10 @@ namespace {
         return retval;
     }
 
-    void StripQuotation(std::string& str) {
-        using namespace boost::algorithm;
-        if (starts_with(str, "\"") && ends_with(str, "\"")) {
-            erase_first(str, "\"");
-            erase_last(str, "\"");
-        }
+    std::string_view StripQuotation(std::string_view str) {
+        if (str.size() < 2 || str[0] != '"' || str[str.size() - 1] != '"')
+            return str;
+        return str.substr(1, str.size() - 2);
     }
 
     ///< the master list of abbreviated option names, and their corresponding long-form names
@@ -107,7 +105,7 @@ OptionsDB::Option::Option(char short_name_, std::string name_, boost::any value_
 
 OptionsDB::Option::~Option() = default;
 
-bool OptionsDB::Option::SetFromString(const std::string& str) {
+bool OptionsDB::Option::SetFromString(std::string_view str) {
     bool changed = false;
     boost::any value_;
 
@@ -308,25 +306,32 @@ namespace {
             return false;
         return lhs.substr(0, it) == rhs;
     }
+
+    bool OptionNameHasParentSection(std::string_view lhs, std::string_view rhs) {
+        auto it = lhs.find_last_of('.');
+        if (it == std::string::npos)
+            return false;
+        return lhs.substr(0, it) == rhs;
+    }
 }
 
-std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySection(bool allow_unrecognized) const {
+std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::OptionsBySection(bool allow_unrecognized) const {
     // Determine sections after all predicate calls from known options
-    std::unordered_map<std::string, std::unordered_set<std::string>> sections_by_option;
-    for (const auto& option : m_options) {
-        if (!allow_unrecognized && !option.second.recognized)
+    std::unordered_map<std::string_view, std::unordered_set<std::string_view>> sections_by_option;
+    for (const auto& [option_name, option] : m_options) {
+        if (!allow_unrecognized && !option.recognized)
             continue;
 
-        for (const auto& section : option.second.sections)
-            sections_by_option[option.first].emplace(section);
+        for (const auto& section : option.sections)
+            sections_by_option[option_name].emplace(section);
 
         for (auto& section : m_sections)
-            if (section.second.option_predicate && section.second.option_predicate(option.first))
-                sections_by_option[option.first].emplace(section.first);
+            if (section.second.option_predicate && section.second.option_predicate(option_name))
+                sections_by_option[option_name].emplace(section.first);
     }
 
     // tally the total number of options under each section
-    std::unordered_map<std::string, std::size_t> total_options_per_section;
+    std::unordered_map<std::string_view, std::size_t> total_options_per_section;
     for (const auto& [option_name, sections_set] : sections_by_option) {
         (void)sections_set; // quiet warning
         auto dot_it = option_name.find_first_of(".");
@@ -339,10 +344,9 @@ std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySecti
     }
 
     // sort options into common sections
-    std::unordered_map<std::string, std::set<std::string>> options_by_section;
-    for (const auto& option : sections_by_option) {
-        for (const auto& section : option.second) {
-            auto section_name{section};
+    std::unordered_map<std::string_view, std::set<std::string_view>> options_by_section;
+    for (const auto& [option_name, sections_set] : sections_by_option) {
+        for (std::string_view section_name : sections_set) {
             auto defined_section_it = m_sections.find(section_name);
             bool has_descr = defined_section_it != m_sections.end() ?
                              !defined_section_it->second.description.empty() :
@@ -366,7 +370,7 @@ std::unordered_map<std::string, std::set<std::string>> OptionsDB::OptionsBySecti
                     has_descr = !defined_section_it->second.description.empty();
             }
 
-            options_by_section[section_name].emplace(option.first);
+            options_by_section[section_name].emplace(option_name);
         }
     }
 
@@ -429,7 +433,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
     }
 
     bool print_misc_section = command_line.empty();
-    std::set<std::string> section_list {};
+    std::set<std::string_view> section_list;
     // print option sections
     if (command_line != "all" && command_line != "raw") {
         std::size_t name_col_width = 20;
@@ -454,7 +458,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
 
         auto indents = std::make_pair(2, name_col_width + 4);
         auto widths = std::make_pair(TERMINAL_LINE_WIDTH - name_col_width, TERMINAL_LINE_WIDTH);
-        for (const auto& section : section_list) {
+        for (std::string_view section : section_list) {
             if (section == "misc") {
                 print_misc_section = true;
                 continue;
@@ -481,29 +485,29 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool
 
     // print options
     if (!command_line.empty()) {
-        std::set<std::string> option_list;
+        std::vector<std::string_view> option_list;
         if (command_line == "all" || command_line == "raw") {
             for (const auto& option_section_it : options_by_section)
                 for (const auto& option : option_section_it.second)
-                    option_list.emplace(option);
+                    option_list.push_back(option);
         } else {
             auto option_section_it = options_by_section.find(command_line);
             if (option_section_it != options_by_section.end())
-                option_list = option_section_it->second;
+                option_list = {option_section_it->second.begin(), option_section_it->second.end()};
             // allow traversal by node when no other results are found
             if (option_list.empty() && section_list.empty())
-                FindOptions(option_list, command_line, allow_unrecognized);
+                option_list = FindOptions(command_line, allow_unrecognized);
         }
 
         // insert command_line as option, if it exists
         if (command_line != "all" && command_line != "raw" && m_options.count(command_line))
-            option_list.emplace(command_line);
+            option_list.push_back(command_line);
 
         if (!option_list.empty())
             os << UserString("COMMAND_LINE_OPTIONS") << ":\n";
 
-        for (const auto& option_name : option_list) {
-            auto option_it = m_options.find(option_name);
+        for (std::string_view option_name : option_list) {
+            auto option_it = m_options.find(std::string{option_name}); // No hetero lookup :(
             if (option_it == m_options.end() || (!allow_unrecognized && !option_it->second.recognized))
                 continue;
 
@@ -653,37 +657,44 @@ void OptionsDB::RemoveUnrecognized(const std::string& prefix) {
     }
 }
 
-void OptionsDB::FindOptions(std::set<std::string>& ret, const std::string& prefix, bool allow_unrecognized) const {
+void OptionsDB::FindOptions(std::set<std::string>& ret, std::string_view prefix, bool allow_unrecognized) const {
     ret.clear();
-    for (auto& option : m_options)
-        if ((option.second.recognized || allow_unrecognized) && option.first.find(prefix) == 0)
-            ret.insert(option.first);
+    for (auto& [option_name, option] : m_options)
+        if ((option.recognized || allow_unrecognized) && option_name.find(prefix) == 0)
+            ret.insert(option_name);
+}
+
+std::vector<std::string_view> OptionsDB::FindOptions(std::string_view prefix, bool allow_unrecognized) const {
+    std::vector<std::string_view> ret;
+    ret.reserve(m_options.size());
+    for (auto& [option_name, option] : m_options)
+        if ((option.recognized || allow_unrecognized) && option_name.find(prefix) == 0)
+            ret.push_back(option_name);
+    return ret;
 }
 
 void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
     //bool option_changed = false;
 
     for (unsigned int i = 1; i < args.size(); ++i) {
-        std::string current_token(args[i]);
+        std::string_view current_token{args[i]};
 
         if (current_token.find("--") == 0) {
-            std::string option_name = current_token.substr(2);
+            std::string option_name{current_token.substr(2)}; // need a string here as there is no unordered_map heterogeneous lookup :(
 
             if (option_name.empty())
                 throw std::runtime_error("A \'--\' was given with no option name.");
 
-            auto it = m_options.find(option_name);
+            auto it = m_options.find(option_name); 
 
             if (it == m_options.end() || !it->second.recognized) {
                 // unrecognized option: may be registered later on so we'll store it for now
                 // Check for more parameters (if this is the last one, assume that it is a flag).
-                std::string value_str("-");
-                if (i + 1 < static_cast<unsigned int>(args.size())) {
-                    value_str = args[i + 1]; // copy assignment
-                    StripQuotation(value_str);
-                }
+                std::string_view value_str{"-"};
+                if (i + 1 < static_cast<unsigned int>(args.size()))
+                    value_str = StripQuotation(args[i + 1]);
 
-                if (value_str.at(0) == '-') {
+                if (value_str.front() == '-') {
                     // this is either the last parameter or the next parameter is another option, assume this one is a flag
                     m_options.emplace(option_name,
                                       Option{static_cast<char>(0), option_name, true, false, "",
@@ -714,13 +725,13 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                             continue;
                         }
                         // get parameter value
-                        std::string value_str(args[++i]);
-                        StripQuotation(value_str);
+                        std::string_view value_str = StripQuotation(args[++i]);
+
                         // ensure parameter is actually a parameter, and not the next option name (which would indicate
                         // that the option was specified without a parameter value, as if it was a flag)
-                        if (!value_str.empty() && value_str.at(0) == '-')
+                        if (!value_str.empty() && value_str.front() == '-')
                             throw std::runtime_error("the option \"" + option.name +
-                                                     "\" was followed by the parameter \"" + value_str +
+                                                     "\" was followed by the parameter \"" + std::string{value_str} +
                                                      "\", which appears to be an option flag, not a parameter value, because it begins with a \"-\" character.");
                         m_dirty |= option.SetFromString(value_str);
                     } catch (const std::exception& e) {
@@ -738,7 +749,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 #endif
             )
         {
-            std::string single_char_options = current_token.substr(1);
+            auto single_char_options = current_token.substr(1);
 
             if (single_char_options.empty())
                 throw std::runtime_error("A \'-\' was given with no options.");
@@ -846,7 +857,7 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
     }
 }
 
-void OptionsDB::AddSection(const std::string& name, const std::string& description,
+void OptionsDB::AddSection(const char* name, const std::string& description,
                            std::function<bool (const std::string&)> option_predicate)
 {
     auto insert_result = m_sections.emplace(name, OptionSection(name, description, option_predicate));
@@ -855,7 +866,7 @@ void OptionsDB::AddSection(const std::string& name, const std::string& descripti
         if (!description.empty() && insert_result.first->second.description.empty())
             insert_result.first->second.description = description;
         if (option_predicate != nullptr && insert_result.first->second.option_predicate == nullptr)
-            insert_result.first->second.option_predicate = option_predicate;
+            insert_result.first->second.option_predicate = std::move(option_predicate);
     }
 }
 
@@ -878,26 +889,55 @@ std::vector<std::string> OptionsDB::Get<std::vector<std::string>>(const std::str
     }
 }
 
-std::string ListToString(const std::vector<std::string>& input_list) {
+std::string ListToString(std::vector<std::string>&& input_list) {
     // list input strings in comma-separated-value format
     std::string retval;
-    for (auto it = input_list.begin(); it != input_list.end(); ++it) {
-        if (it != input_list.begin())
+    retval.reserve(20*input_list.size()); // guesstimate
+    unsigned int count = 0;
+    for (auto& input_string : input_list) {
+        if (count++ > 0)
             retval += ",";
-        std::string str(*it);
-        boost::remove_erase_if(str, boost::is_any_of("<&>'\",[]|\a\b\f\n\r\t\b"));  // remove XML protected characters and a few other semi-randomly chosen characters to avoid corrupting enclosing XML document structure
-        retval += str;
+
+        // remove XML protected characters and a few other semi-randomly chosen
+        // characters to avoid corrupting enclosing XML document structure
+        boost::remove_erase_if(input_string, boost::is_any_of("<&>'\",[]|\a\b\f\n\r\t\b"));
+        retval.append(input_string);
     }
     return retval;
 }
 
-std::vector<std::string> StringToList(const std::string& input_string) {
+std::vector<std::string> StringToList(std::string_view input_string) {
     std::vector<std::string> retval;
-    typedef boost::tokenizer<boost::char_separator<char>> Tokenizer;
-    boost::char_separator<char> separator(",");
-    Tokenizer tokens(input_string, separator);
-    retval.reserve(std::distance(tokens.begin(), tokens.end()));
-    for (auto& token : tokens)
-        retval.emplace_back(token);
+    retval.reserve(5); // guesstimate
+    static constexpr std::string_view separator{","};
+
+    // adapted from https://github.com/fenbf/StringViewTests/blob/7e2e4c4f17dda2ed4569cca409fa2f02e0ef77ad/StringViewTest.cpp#L151
+    std::string_view::const_pointer first = input_string.data();
+    std::string_view::const_pointer second = nullptr;
+    std::string_view::const_pointer last = first + input_string.size();
+    // some tokens,delimited by commas,as an example
+    // f                                            l
+
+    for (; second != last && first != last; first = second + 1) {
+        // some tokens,delimited by commas,as an example
+        //            sf                                l
+        second = std::find_first_of(
+            first, last, std::cbegin(separator), std::cend(separator));
+        // some tokens,delimited by commas,as an example
+        //             f                  s             l
+        if (first != second)
+            retval.emplace_back(first, second - first);
+    }
+
     return retval;
+}
+
+std::vector<std::string> StringToList(const char* input_string)
+{ return StringToList(std::string_view{input_string}); }
+
+std::vector<std::string> StringToList(const std::string& input_string) {
+    using Tokenizer = boost::tokenizer<boost::char_separator<char>>;
+    static const boost::char_separator<char> separator{","};
+    Tokenizer tokens{input_string, separator};
+    return {tokens.begin(), tokens.end()};
 }
