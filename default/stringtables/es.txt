@@ -1173,29 +1173,29 @@ Escalado de coste de partes
 #*RULE_STARLANES_EVERYWHERE_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*RULE_HABITABLE_SIZE_TINY
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_TINY
+Espacio habitable en planetas enanos
 
-#*RULE_HABITABLE_SIZE_SMALL
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_SMALL
+Espacio habitable en planetas pequeños
 
-#*RULE_HABITABLE_SIZE_MEDIUM
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_MEDIUM
+Espacio habitable en planetas medianos
 
-#*RULE_HABITABLE_SIZE_LARGE
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_LARGE
+Espacio habitable en planetas grandes
 
-#*RULE_HABITABLE_SIZE_HUGE
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_HUGE
+Espacio habitable en planetas enormes
 
-#*RULE_HABITABLE_SIZE_ASTEROIDS
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_ASTEROIDS
+Espacio habitable en asteroides
 
-#*RULE_HABITABLE_SIZE_GASGIANT
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_GASGIANT
+Espacio habitable en gigantes gaseosos
 
-#*RULE_HABITABLE_SIZE_DESC
-#* <not translated 1970-01-01 01:00:00>
+RULE_HABITABLE_SIZE_DESC
+Valor empleado para ajustarse a los cambios de [[METER_POPULATION]] en planetas de este tamaño.
 
 #*RULE_ALLOW_CONCEDE
 #* <not translated 1970-01-01 01:00:00>
@@ -1329,7 +1329,7 @@ OPTIONS_DB_GALAXY_MAP_GAS
 Renderizar substancias gaseosas alrededor de los sistemas para dar forma a la galaxia. Puede retrasar el renderizado en sistemas antiguos.
 
 OPTIONS_DB_GALAXY_MAP_STARFIELDS
-Renderizar líneas estelares alrededor de los sistemas.  Puede retrasar el renderizado en sistemas antiguos.
+Renderizar líneas estelares alrededor de los sistemas. Puede retrasar el renderizado en sistemas antiguos.
 
 #*OPTIONS_DB_GALAXY_MAP_STARFIELDS_SCALE
 #* <not translated 1970-01-01 01:00:00>
@@ -1352,8 +1352,8 @@ Alterna entre enseñar o no la barra de nivel de zoom en el mapa de galaxia.
 OPTIONS_DB_STARLANE_THICKNESS
 Establece el ancho para renderizar las líneas de suministro en pixeles.
 
-#*OPTIONS_DB_STARLANE_CORE
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_STARLANE_CORE
+Multiplicador de grosor para la lineas estelares principales del imperio
 
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
 Alterna entre colorear las líneas estelares con los colores del imperio, si puede intercambiar recursos por ellas.
@@ -1698,7 +1698,7 @@ OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
 Establece el mínimo nivel de zoom en el que los iconos pequeños de flota serán mostrados.
 
 OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
-Establece el mínimo nivel de zoom en el que los diminutos iconos de flota serán mostrados.  Con zooms pequeños los iconos de flota no serán mostrados en el mapa de galaxia.
+Establece el mínimo nivel de zoom en el que los diminutos iconos de flota serán mostrados. Con zooms pequeños los iconos de flota no serán mostrados en el mapa de galaxia.
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Establece el tamaño del indicador de selección de flota (relativo al icono de flota).
@@ -1709,8 +1709,8 @@ Establece el tamaño del indicador de selección de flota (relativo al icono de 
 #*OPTIONS_DB_SHOW_FLEET_ETA
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_SHOW_IDS_AFTER_NAMES
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_SHOW_IDS_AFTER_NAMES
+Muestra el id tras el nombre de cada objeto.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Establece el tamaño del indicador de selección de sistema (relativo al icono de sistema.
@@ -1727,8 +1727,8 @@ Establece el retraso de las notificaciones de sugerencia, en ms.
 #*OPTIONS_DB_UI_TOOLTIP_LONG_DELAY
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
+Cuando busque en la pedia, buscar coincidencias en el contenido de los artículos. La búsqueda será más lenta, pero puede otorgar más resultados.
 
 # Section title for options window logging
 #*OPTIONS_DB_UI_LOGGER_THRESHOLDS
@@ -1744,20 +1744,20 @@ Establece el retraso de las notificaciones de sugerencia, en ms.
 #*OPTIONS_DB_UI_LOGGER_PER_PROCESS_GENERAL
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_KEYPRESS_REPEAT_DELAY
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_KEYPRESS_REPEAT_DELAY
+Establece el tiempo que tarda en procesarse una nueva pulsación cuando se mantiene la tecla pulsada.
 
-#*OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL
+Establece el retraso para procesar pulsaciones diferentes de una tecla.
 
-#*OPTIONS_DB_MOUSE_REPEAT_DELAY
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_MOUSE_REPEAT_DELAY
+Establece el tiempo que tarda en procesarse una nueva pulsación cuando se mantiene el click.
 
-#*OPTIONS_DB_MOUSE_REPEAT_INTERVAL
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_MOUSE_REPEAT_INTERVAL
+Establece el tiempo que tarda en procesarse pulsaciones diferentes del ratón.
 
-#*OPTIONS_DB_DISPLAY_TIMESTAMP
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_DISPLAY_TIMESTAMP
+Muestra la marca de tiempo en los mensajes de la ventana de chat.
 
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 Si es cierto, clicks en múltiples botones de flota, abrirán múltiples ventanas al mismo tiempo. Por otra parte, abrir una ventana de flota cerraría cualquier ventana de flota abierta.
@@ -1765,14 +1765,14 @@ Si es cierto, clicks en múltiples botones de flota, abrirán múltiples ventana
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Cierra ventanas abiertas como las ventanas de flota y el panel lateral de vista de sistema cuando haces click derecho en el mapa principal.
 
-#*OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
+Habilita/Deshabilita la recolocación automática de ventanas cuando el tamaño de la ventana de juego cambia.
 
-#*OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
+Añadir automáticamente todos los diseños de nave guardados por el usuario a los diseños conocidos del imperio del jugador.
 
-#*OPTIONS_DB_ADD_DEFAULT_DESIGNS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_ADD_DEFAULT_DESIGNS
+Añadir automáticamente todos los diseños de nave por defecto a los diseños conocidos del imperio del jugador.
 
 #*OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 #* <not translated 1970-01-01 01:00:00>
@@ -1789,66 +1789,66 @@ Establece el tamaño de los planetas mas pequeños en el panel lateral.
 OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
 Establece si se muestran renderizados o no los planetas, asteroides en el panel lateral.
 
-#*OPTIONS_DB_UI_QUEUE_WIDTH
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_QUEUE_WIDTH
+Establece el ancho de cola en las ventanas de producción e investigación.
 
 #*OPTIONS_DB_UI_PROD_QUEUE_LOCATION
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_GAMESETUP_SEED
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_SEED
+'''Semilla usada para generar la galaxia aleatoreamente.
+Las galaxias generadas con las mismas opciones y la misma semilla serán idénticas.'''
 
 #*OPTIONS_DB_GAMESETUP_UID
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_GAMESETUP_STARS
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_STARS
+'''Número aproximado de sistemas en la galaxia generada.
 
-#*OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+Para el equilibrio de partida recomendado, use 15-30 sistemas por imperio.
 
-#*OPTIONS_DB_GAMESETUP_GALAXY_AGE
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+Números muy grandes de sistemas pueden ralentizar FreeOrion, especialmente en partidas ya avanzadas.'''
 
-#*OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
+'''Forma de la galaxia.
 
-#*OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+Distintas formas darán lugar a distintos retos tácticos y estratégicos.'''
 
-#*OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_GALAXY_AGE
+'''Edad de la galaxia.
 
-#*OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+Las galaxias jóvenes tendrán más estrellas brillantes, mientras que las más viejas tendrán más agujeros negros y estrellas de neutrones.'''
 
-#*OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_PLANET_DENSITY
+'''Número de planetas por sistema en la galaxia.
+'''
 
-#*OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
+'''Número de lineas estelares en la galaxia.
+
+Cuando se asigna valor Bajo, la mayoría de sistemas tendrán una o dos lineas estelares. Cuando se asigna valor Alto, la mayoría de sistemas tendrán líneas estelares conectándolos con la mayoría de sistemas en un radio de 120 uu.'''
+
+OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
+'''Proporción de planeras y sistemas que contienen Sucesos Especiales.
+
+Algunos Sucesos Especiales están protegidas por Guardianes dejados atrás por es especies Precursoras. Sólo asignar Ninguna a la Frecuencia de Monstruos evitará que éstos aparezcan si el juego contiene Sucesos Especiales.
+'''
+
+OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
+'''Frecuencia de monstruos errantes en la galaxia.
+
+Esta opción afecta a los monstruos errantes pero no a los Guardiantes generados por las Sucesos Especiales, sin embargo, asignar un valor Ninguno eliminará a los Guardianes también.'''
+
+OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
+'''Frecuencia de nativos en la galaxia.
+
+Algunos nativos pueden ser tecnológicamente avanzados y pueden crear naves guardían para proteger su mundo de origen, estos aparecerán incluso si la frecuencia de Monstruos está asignada a valor Ninguna.
+'''
+
+OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
+'''Nivel de agresividad máximo de la IA oponente.
+
+Muchas IAs estarán al nivel establecido, con algunas al nivel inferior. Todas deberían mandar saludos y determinar su nivel en la ventana de mensajes durante el primer turno.'''
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 El nombre usado en juego por tu imperio.
@@ -1859,17 +1859,17 @@ El nombre usado en el juego para representar al jugador en el modo solitario.
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
 El color usado en juego por tu imperio.
 
-#*OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
+'''Especie inicial de su imperio.
 
-#*OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+Esto determina la especie de su mundo de origen y su primera nave colonia. No tiene efecto en los planetas del imperio colonizados por otras especies.'''
+
+OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
+'''El número de oponentes controlados por la IA en el juego.
+
+Es mejor tener al menos un jugador por cada 15-30 sistemas en el juego, jugar con más o menos IAs que esto puede llevar a problemas de balanceo.
+
+Números muy grandes de IAs pueden causar ralentizaciones, especialmente en estadíos avanzados de la partida.'''
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 El espaciado horizontal a ser introducido entre tecnologías en el árbol tecnológico, en múltiplos del ancho de una sola teoría tecnológica.
@@ -1877,11 +1877,11 @@ El espaciado horizontal a ser introducido entre tecnologías en el árbol tecnol
 OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
 El espaciado vertical a ser introducido entre tecnologías en el árbol tecnológico, en múltiplos del alto de una sola teoría tecnológica.
 
-#*OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE
+Ajusta la escala de zoom para la ventana de tecnologías.
 
-#*OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE
+Ajusta el tamaño de los controles de la pantalla de investigación, escalado con respecto al tamaño de fuente.
 
 OPTIONS_DB_SAVE_DIR
 El directorio en donde las partidas guardadas se guardan y desde donde son cargadas. Los nombres de directorio suelen ser relativos a la localización del ejecutable.
@@ -1925,17 +1925,17 @@ Establece el archivo de tablas de cadenas de idioma.
 #*OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START
+Habilitar autoguardado al comienzo del turno en las partidas para un jugador
 
-#*OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END
+Habilitar autoguardado al final del turno en las partidas para un jugador
 
-#*OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START
+Habilitar autoguardado al comienzo del turno en las partidas multijugador
 
-#*OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_END
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_END
+Habilitar autoguardado al final del turno en las partidas multijugador
 
 OPTIONS_DB_AUTOSAVE_TURNS
 Establece el número de turnos que pasarán entre auto guardados.
@@ -1943,11 +1943,11 @@ Establece el número de turnos que pasarán entre auto guardados.
 #*OPTIONS_DB_AUTOSAVE_LIMIT
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_GALAXY_CREATION
+Habilitar el autoguardado al crear la galaxia.
 
-#*OPTIONS_DB_AUTOSAVE_GAME_CLOSE
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_AUTOSAVE_GAME_CLOSE
+Habilitar el autoguardado al salir del juego
 
 #*OPTIONS_DB_AUTOSAVE_HOSTLESS
 #* <not translated 1970-01-01 01:00:00>
@@ -1955,8 +1955,8 @@ Establece el número de turnos que pasarán entre auto guardados.
 #*OPTIONS_DB_AUTOSAVE_INTERVAL
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_UI_MOUSE_LR_SWAP
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_MOUSE_LR_SWAP
+Intercambia los resultados de clickar los botones derecho e izquierdo del ratón.
 
 OPTIONS_DB_MUSIC_VOLUME
 El volumen (de 0 a 255) en el que la música se reproduce.
@@ -1976,11 +1976,11 @@ Comienza un nuevo juego rápido, sin pasar por el menu.
 #*OPTIONS_DB_RESET_FSSIZE
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
+Habilita el volcado del grupo de efectos en tecnologías, construcciones o descriptions de partes de naves.
 
-#*OPTIONS_DB_VERBOSE_SITREP_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_VERBOSE_SITREP_DESC
+Habilita la inclusión de informes de situación con errores.
 
 #*OPTIONS_DB_EFFECT_ACCOUNTING
 #* <not translated 1970-01-01 01:00:00>
@@ -1991,26 +1991,26 @@ Comienza un nuevo juego rápido, sin pasar por el menu.
 OPTIONS_DB_LOAD
 Carga la partida guardada de un solo jugador especificada.
 
-#*OPTIONS_DB_EFFECTS_THREADS_UI_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_EFFECTS_THREADS_UI_DESC
+Especifica el número de hilos empleados para el procesamiento de efectos en la interfaz de usuario. Usar más de un hilo puede llevar a errores impredecibles.
 
-#*OPTIONS_DB_EFFECTS_THREADS_AI_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_EFFECTS_THREADS_AI_DESC
+Especifica el número de hilos empleados para el procesamiento de efectos para los jugadores de la IA. Usar más de un hilo puede llevar a errores impredecibles.
 
-#*OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC
+Especifica el número de hilos empleados para el procesamiento de efectos del servidor. Usar más de un hilo puede llevar a errores impredecibles.
 
 #*OPTIONS_DB_AUTO_QUIT
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_DB_BINARY_SERIALIZATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_BINARY_SERIALIZATION
+Usar serialización binaria para guardar el juego. La serialización binartia es más rápida para guardar y cargar partidas,pero puede no ser posible cargar el archivo en un sistema operativo distinto.
 
-#*OPTIONS_DB_SERVER_BINARY_SERIALIZATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_SERVER_BINARY_SERIALIZATION
+El servidor usará serialización binaria la interacción cliente-servidor si la versión del cliente es igual a la del servidor. La serialización binaria se transfiere más rapidamente, pero puede resultar incompatible entre distintos sistemas operativos y arquitecturas.
 
-#*OPTIONS_DB_XML_ZLIB_SERIALIZATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_XML_ZLIB_SERIALIZATION
+Al salvar partidas usando serialización XML, comprime gran parte del XML antes de escribir el fichero. La compresión reduce sustancialmente el tamaño de los ficheros de guardado, pero puede hacer las partidas imposibles de cargar debido a los requisitos de memoria requeridos para descomprimir la información guardada.
 
 #*OPTIONS_DB_UI_WINDOWS_EXISTS
 #* <not translated 1970-01-01 01:00:00>
@@ -2412,11 +2412,11 @@ Especies Iniciales
 GSETUP_NUMBER_AIS
 Número de jugadores IA
 
-#*GSETUP_SEED
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_SEED
+Semilla
 
-#*GSETUP_RANDOM_SEED
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_RANDOM_SEED
+Activa/Desactiva la generación de una semilla aleatoria
 
 GSETUP_STARS
 Estrellas
@@ -2434,16 +2434,16 @@ GSETUP_PLANET_DENSITY
 Densidad de planetas
 
 GSETUP_SPECIALS_FREQ
-Sucesos especiales
+Sucesos Especiales
 
-#*GSETUP_MONSTER_FREQ
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_MONSTER_FREQ
+Frecuencia de Monstruos
 
-#*GSETUP_NATIVE_FREQ
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_NATIVE_FREQ
+Frecuencia de Nativos
 
-#*GSETUP_AI_AGGR
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_AI_AGGR
+Agresividad máxima de la IA
 
 # A galaxy shape to select when generating a universe.
 GSETUP_2ARM
@@ -2466,8 +2466,8 @@ GSETUP_ELLIPTICAL
 Elíptica
 
 # A galaxy shape to select when generating a universe.
-#*GSETUP_DISC
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_DISC
+Disco
 
 # A galaxy shape to select when generating a universe.
 #*GSETUP_BOX
@@ -2482,8 +2482,8 @@ GSETUP_RING
 Anillo
 
 # A galaxy shape to select when generating a universe.
-#*GSETUP_RANDOM
-#* <not translated 1970-01-01 01:00:00>
+GSETUP_RANDOM
+Aleatorio
 
 # Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_NONE
@@ -2738,7 +2738,7 @@ OPTIONS_FONT_BOLD_TEXT
 Texto en negrita
 
 OPTIONS_FONT_TITLE
-Títulos de ventanas
+Títulos de Ventana
 
 SHOW_FONT_TEXTURES
 Mostrar texturas de fuentes
@@ -3151,41 +3151,47 @@ Archivos de música
 OPTIONS_SOUND_FILE
 Archivos de sonido
 
-#*OPTIONS_DUMP_EFFECTS_GROUPS_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DUMP_EFFECTS_GROUPS_DESC
+Descripción de efectos autogenerados
 
-#*OPTIONS_VERBOSE_LOGGING_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_VERBOSE_LOGGING_DESC
+Logging detallado para debug
 
-#*OPTIONS_VERBOSE_SITREP_DESC
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_VERBOSE_SITREP_DESC
+Informes de situación con errores
 
-#*OPTIONS_SHOW_IDS_AFTER_NAMES
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_SHOW_IDS_AFTER_NAMES
+ID tras nombre
+
+OPTIONS_AUTOSAVE_GAME_CLOSE
+Habilitar autoguardado al dimitir o cerrar el juego
+
+OPTIONS_AUTOSAVE_GALAXY_CREATION
+Habilitar autoguardado tras crear la galaxia
 
 #*OPTIONS_EFFECT_ACCOUNTING
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_EFFECTS_THREADS_UI
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_EFFECTS_THREADS_UI
+Hilos de procesamiento (Interfaz)
 
-#*OPTIONS_EFFECTS_THREADS_AI
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_EFFECTS_THREADS_AI
+Hilos de procesamiento (IA)
 
-#*OPTIONS_EFFECTS_THREADS_SERVER
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_EFFECTS_THREADS_SERVER
+Hilos de procesamiento (Servidor)
 
-#*OPTIONS_ADD_SAVED_DESIGNS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_ADD_SAVED_DESIGNS
+Cargar los diseños de nave guardados
 
-#*OPTIONS_ADD_DEFAULT_DESIGNS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_ADD_DEFAULT_DESIGNS
+Cargar los diseños de nave por defecto
 
-#*OPTIONS_USE_BINARY_SERIALIZATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_USE_BINARY_SERIALIZATION
+Crear ficheros de guardado en formato binario
 
-#*OPTIONS_USE_XML_ZLIB_SERIALIZATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_USE_XML_ZLIB_SERIALIZATION
+Comprimir los ficheros de guardado XML
 
 OPTIONS_CREATE_PERSISTENT_CONFIG
 Guarda el archivo de configuración persistente
@@ -3242,42 +3248,43 @@ Turno %1%
 MAP_BTN_TURN_UNREADY
 Revisar %1%
 
-#*MAP_BTN_TURN_TOOLTIP
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_TURN_TOOLTIP
+Empezar turno
 
-#*MAP_BTN_TURN_TOOLTIP_DESC_SP
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_TURN_TOOLTIP_DESC_SP
+'''Comienza el procesamiento del turno con la siguiente secuencia:
 
-#*MAP_BTN_TURN_TOOLTIP_DESC_MP
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
 
-#*MAP_BTN_TURN_TOOLTIP_DESC_OBS
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_TURN_TOOLTIP_DESC_MP
+'''Envía órdenes al servidor. El procesamiento del turno se ejecutará conforme a la siguiente secuencia:
 
-#*MAP_BTN_TURN_TOOLTIP_DESC_MOD
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
 
-#*MAP_BTN_TURN_TOOLTIP_DESC_WAIT
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_TURN_TOOLTIP_DESC_OBS
+Los observadores no pueden iniciar el procesamiento de un turno.
 
-#*MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_TURN_TOOLTIP_DESC_MOD
+'''Comienza el procesamiento del turno incluso si algunos jugadores todavía no han enviado sus órdenes al servidor.
+El procesamiento del turno se ejecutará conforme a la siguiente secuencia:
+
+[[MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO]]
+'''
+
+MAP_BTN_TURN_TOOLTIP_DESC_WAIT
+Esperando a que otros jugadores envíen sus órdenes. Haga click de nuevo para revisar sus órdenes.
+
+MAP_BTN_TURN_TOOLTIP_SEQUENCE_MACRO
+'''<u>Ejecución de orden</u>
+Colonización, invasión, bombardeo, regalos, desguace y movimiento de flota
+
+<u>Resolución de combate</u>
+
+<u>Producción, Investigación y Crecimiento</u>
+Producción de naves y edificios, desbloqueo de nuevas tecnologías, aumento de la población, actualización de la propagación de suministros'''
+
 
 # %1% number of seconds
 #*MAP_TIMEOUT_SECONDS
@@ -3307,26 +3314,26 @@ Menú
 #*MAP_BTN_MENU_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_AUTO_ADVANCE_ENABLED
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_AUTO_ADVANCE_ENABLED
+Avance de turno automático
 
 #*MAP_BTN_AUTO_ADVANCE_ENABLED_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_MANUAL_TURN_ADVANCE
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_MANUAL_TURN_ADVANCE
+Avance de turno manual
 
 #*MAP_BTN_MANUAL_TURN_ADVANCE_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_MODERATOR
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_MODERATOR
+Moderador
 
 #*MAP_BTN_MODERATOR_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_OBJECTS
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_OBJECTS
+Objetos
 
 #*MAP_BTN_OBJECTS_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -3355,8 +3362,14 @@ Diseño
 #*MAP_BTN_DESIGN_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_GRAPH
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_GOVERNMENT
+Políticas de Gobierno
+
+MAP_BTN_GOVERNMENT_DESC
+''''''
+
+MAP_BTN_GRAPH
+Grafo
 
 #*MAP_BTN_GRAPH_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -3367,40 +3380,40 @@ Diseño
 #*MAP_BTN_PEDIA_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_EMPIRES
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_EMPIRES
+Imperios
 
 #*MAP_BTN_EMPIRES_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_BTN_MESSAGES
-#* <not translated 1970-01-01 01:00:00>
+MAP_BTN_MESSAGES
+Mensajes
 
 #*MAP_BTN_MESSAGES_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_PRODUCTION_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_PRODUCTION_TITLE
+Producción
 
-#*MAP_PRODUCTION_WASTED_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_PRODUCTION_WASTED_TITLE
+Producción Desperdiciada
 
-#*MAP_PROD_CLICK_TO_OPEN
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+MAP_PROD_CLICK_TO_OPEN
+'''
+Haga click para abrir el menú de producción'''
 
-#*MAP_RESEARCH_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_RESEARCH_TITLE
+Investigación
 
-#*MAP_RESEARCH_WASTED_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_RESEARCH_WASTED_TITLE
+Investigación Desperdiciada
 
-#*MAP_RES_CLICK_TO_OPEN
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+MAP_RES_CLICK_TO_OPEN
+'''
+Haga click para abrir el menú de investigación'''
 
-#*MAP_STOCKPILE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_STOCKPILE_TITLE
+Reserva Imperial
 
 #*RESOURCE_TT_OUTPUT
 #* <not translated 1970-01-01 01:00:00>
@@ -3948,7 +3961,7 @@ Velocidad de Flota – Equivalente a la velocidad mínima de las naves en la flo
 #* <not translated 1970-01-01 01:00:00>
 
 FW_SPLIT_FLEET
-Dividir la  Flota
+Dividir la Flota
 
 #*FW_SPLIT_SHIPS_THIS_DESIGN
 #* <not translated 1970-01-01 01:00:00>
@@ -5421,24 +5434,24 @@ No puede estar en diseños con
 #*COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL_TIP
 #* <not translated 1970-01-01 01:00:00>
 
-#*OPTIONS_COMBAT_COLORS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_COMBAT_COLORS
+Colores de Combate
 
-#*OPTIONS_COMBAT_SUMMARY_DEAD_COLOR
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_COMBAT_SUMMARY_DEAD_COLOR
+Unidades Muertas
 
-#*OPTIONS_COMBAT_SUMMARY_WOUND_COLOR
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_COMBAT_SUMMARY_WOUND_COLOR
+Daño
 
-#*OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR
+Salud
 
 #*COMBAT_LOG
 #* <not translated 1970-01-01 01:00:00>
 
-# %1% name of the belligerent party.
-# %2% current health of all units.
-# %3% total health of all units.
+# %1% nombre de la facción beligerante.
+# %2% salud actual de todas las unidades.
+# %3% salud total de todas las unidades.
 #*COMBAT_FLEET_HEALTH_AXIS_LABEL
 #* <not translated 1970-01-01 01:00:00>
 
@@ -6139,14 +6152,14 @@ Medio ambiente
 #*DETAILED_PEDIA_REFERENCE
 #* <not translated 1970-01-01 01:00:00>
 
-#*GREETINGS_GUIDE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+GREETINGS_GUIDE_TITLE
+**Saludos**
 
-#*GREETINGS_INTRO
-#* <not translated 1970-01-01 01:00:00>
+GREETINGS_INTRO
+Bienvenida estimada Entidad, ¡Sea bienvenida al Universo FreeOrion!
 
-#*GREETINGS_GUIDE_REFERENCE
-#* <not translated 1970-01-01 01:00:00>
+GREETINGS_GUIDE_REFERENCE
+Los nuevos habitantes de este universo pueden querer consultar la [[encyclopedia QUICK_START_GUIDE_TITLE]].
 
 #*GREETINGS_GUIDE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6159,8 +6172,8 @@ Medio ambiente
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*QUICK_START_GUIDE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+QUICK_START_GUIDE_TITLE
+Guía de Inicio Rápido
 
 #*QUICK_START_GUIDE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6390,29 +6403,29 @@ Mensajes
 #*METERS_SUBMENU
 #* <not translated 1970-01-01 01:00:00>
 
-#*PLANETS_SUBMENU
-#* <not translated 1970-01-01 01:00:00>
+PLANETS_SUBMENU
+Planetas
 
-#*FLEETS_SUBMENU
-#* <not translated 1970-01-01 01:00:00>
+FLEETS_SUBMENU
+Flotas / Naves
 
-#*PLANET_ENVIRONMENTS_SUBMENU
-#* <not translated 1970-01-01 01:00:00>
+PLANET_ENVIRONMENTS_SUBMENU
+Ambiente para la Especie
 
 #*ID
 #* <not translated 1970-01-01 01:00:00>
 
-#*NAME
-#* <not translated 1970-01-01 01:00:00>
+NAME
+Nombre
 
-#*OWNER
-#* <not translated 1970-01-01 01:00:00>
+OWNER
+Propietario
 
-#*SPECIES
-#* <not translated 1970-01-01 01:00:00>
+SPECIES
+Especies
 
-#*BUILDING_TYPE
-#* <not translated 1970-01-01 01:00:00>
+BUILDING_TYPE
+Tipo de Edificio
 
 #*FOCUS
 #* <not translated 1970-01-01 01:00:00>
@@ -6426,17 +6439,17 @@ Mensajes
 #*HULL
 #* <not translated 1970-01-01 01:00:00>
 
-#*ATTACK
-#* <not translated 1970-01-01 01:00:00>
+ATTACK
+Daño Total
 
-#*PRODUCTION_COST
-#* <not translated 1970-01-01 01:00:00>
+PRODUCTION_COST
+Coste de Producción
 
-#*OBJECT_TYPE
-#* <not translated 1970-01-01 01:00:00>
+OBJECT_TYPE
+Tipo
 
-#*CREATION_TURN
-#* <not translated 1970-01-01 01:00:00>
+CREATION_TURN
+Turno de Creación
 
 #*AGE
 #* <not translated 1970-01-01 01:00:00>
@@ -6507,8 +6520,8 @@ Mensajes
 #*ARRIVED_ON_TURN
 #* <not translated 1970-01-01 01:00:00>
 
-#*SIZE_AS_DOUBLE
-#* <not translated 1970-01-01 01:00:00>
+SIZE_AS_DOUBLE
+Tamaño Numérico
 
 #*HABITABLE_SIZE
 #* <not translated 1970-01-01 01:00:00>
@@ -6525,17 +6538,17 @@ Mensajes
 #*NEXT_TOWARDS_ORIGINAL_TYPE
 #* <not translated 1970-01-01 01:00:00>
 
-#*PLANET_SIZE
-#* <not translated 1970-01-01 01:00:00>
+PLANET_SIZE
+Tamaño de Planeta
 
-#*PLANET_ENVIRONMENT
-#* <not translated 1970-01-01 01:00:00>
+PLANET_ENVIRONMENT
+Ambiente Planetario
 
-#*STAR_TYPE
-#* <not translated 1970-01-01 01:00:00>
+STAR_TYPE
+Tipo de Estrella
 
-#*NEXT_TURN_POP_GROWTH
-#* <not translated 1970-01-01 01:00:00>
+NEXT_TURN_POP_GROWTH
+Crecimiento de la población en el próximo turno
 
 #*NUM_SPECIALS
 #* <not translated 1970-01-01 01:00:00>
@@ -7524,8 +7537,8 @@ El imperio %empire% ha sido eliminado.
 ## Encyclopedia articles in Species category
 ##
 
-#*SP_HUMAN
-#* <not translated 1970-01-01 01:00:00>
+SP_HUMAN
+Humana
 
 #*SP_HUMAN_GAMEPLAY_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -10939,7 +10952,7 @@ LRN_TRANSCEND
 Transcendencia de Singularidad
 
 LRN_TRANSCEND_DESC
-¿Qué es una divinidad?  ¿Es un dios moral y benevolente o un tirano déspota?  ¿Dios trata a los mortales con cuidado y amor, hambruna y sufrimiento o con indiferencia?  ¿Está al tanto ese dios de lo que ocurre en cada minúscula partícula del mundo físico o tiene una forma divina indescriptible, que nuestra parte mortal no puede comprender y lo mismo le ocurre a ese dios?
+¿Qué es una divinidad? ¿Es un dios moral y benevolente o un tirano déspota? ¿Dios trata a los mortales con cuidado y amor, hambruna y sufrimiento o con indiferencia? ¿Está al tanto ese dios de lo que ocurre en cada minúscula partícula del mundo físico o tiene una forma divina indescriptible, que nuestra parte mortal no puede comprender y lo mismo le ocurre a ese dios?
 
 GRO_PLANET_ECOL
 Ecología Planetaria
@@ -10965,13 +10978,13 @@ GRO_SYMBIOTIC_BIO
 Biología Simbiótica
 
 GRO_SYMBIOTIC_BIO_DESC
-Desde los primeros animales domesticados o plantas, las sociedades han descubierto los beneficios de una relación simbiotica con otras especies.  Mas tarde, bacterias o parasitos naturales son usados para usos médicos.  En esas formas primitivas, la especie dominante (idealmente) ejerce el control sobre la relación, con el organismo "cultivado" existiendo solo para servir a su dueño.  La verdadera simbiosis ocurre solo si ambos organismos existen y prosperan juntos, ayudando y dependiendo uno del otro para beneficio mútuo. La combinación es mas grande que la suma de las partes solas.
+Desde los primeros animales domesticados o plantas, las sociedades han descubierto los beneficios de una relación simbiotica con otras especies. Mas tarde, bacterias o parasitos naturales son usados para usos médicos. En esas formas primitivas, la especie dominante (idealmente) ejerce el control sobre la relación, con el organismo "cultivado" existiendo solo para servir a su dueño. La verdadera simbiosis ocurre solo si ambos organismos existen y prosperan juntos, ayudando y dependiendo uno del otro para beneficio mútuo. La combinación es mas grande que la suma de las partes solas.
 
 GRO_GENETIC_MED
 Medicina Genética
 
 GRO_GENETIC_MED_DESC
-La ingeniería tradicional genética altera códigos genéticos e implementa o aumenta el organismo modificado.  Técnicas similares pueden ser aplicadas a individuos maduros también.  Las metas de estos tratamientos pueden ser cosmeticos o mejorar modificaciones, o correciones, preventivas o tratamientos médicos de tiempo crítico.  Reduciendo el retraso entre alteración y resultados de generaciones a meses, días u horas tiene su incremento correspondiente en el alcance y poder de posibles alteraciones.
+La ingeniería tradicional genética altera códigos genéticos e implementa o aumenta el organismo modificado. Técnicas similares pueden ser aplicadas a individuos maduros también. Las metas de estos tratamientos pueden ser cosmeticos o mejorar modificaciones, o correciones, preventivas o tratamientos médicos de tiempo crítico. Reduciendo el retraso entre alteración y resultados de generaciones a meses, días u horas tiene su incremento correspondiente en el alcance y poder de posibles alteraciones.
 
 GRO_LIFECYCLE_MAN
 Manipulación del Ciclo de Vida
@@ -11027,13 +11040,13 @@ GRO_NANO_CYBERNET
 Cibernética Nanotecnológica
 
 GRO_NANO_CYBERNET_DESC
-Después de aplicar nanotecnología para corregir defectos internos o heridas, el siguiente paso es aumentar o reemplazar sistemas bioquímicos naturales con reemplazos artificiales superiores.  En vez de recrecer miembros perdidos o reparar órganos dañados, los aumentos son capaces de crear nuevas partes para cubrir las necesidades en cualquier momento. Sistemas biológicos anticuados, desde tejido muscular y tendones, hasta órganos o encimas pueden ser reemplazados, ofreciendo una resistencia mucho mayor, así como durabilidad y flexibilidad.
+Después de aplicar nanotecnología para corregir defectos internos o heridas, el siguiente paso es aumentar o reemplazar sistemas bioquímicos naturales con reemplazos artificiales superiores. En vez de recrecer miembros perdidos o reparar órganos dañados, los aumentos son capaces de crear nuevas partes para cubrir las necesidades en cualquier momento. Sistemas biológicos anticuados, desde tejido muscular y tendones, hasta órganos o encimas pueden ser reemplazados, ofreciendo una resistencia mucho mayor, así como durabilidad y flexibilidad.
 
 GRO_TRANSORG_SENT
 Sensibilidad Trans-Organica
 
 GRO_TRANSORG_SENT_DESC
-La sensibilidad tal y como la conocemos siempre ha sido vista como inextricablemente asociada a la vida biologica.  Asiendo la verdadera naturaleza y origen de la sensibilidad misma, podría ser posible crear entidades conscientes que no sería posible clasificar como la vida que conocemos.
+La sensibilidad tal y como la conocemos siempre ha sido vista como inextricablemente asociada a la vida biologica. Asiendo la verdadera naturaleza y origen de la sensibilidad misma, podría ser posible crear entidades conscientes que no sería posible clasificar como la vida que conocemos.
 
 GRO_ENERGY_META
 Metabolismo de Pura Energía
@@ -11146,7 +11159,7 @@ PRO_NANOTECH_PROD
 Producción Nanotecnológica
 
 PRO_NANOTECH_PROD_DESC
-Las técnicas tradicionales de producción estan fundamentalmente limitadas por el tamaño y forma de las herramientas usadas.  Cuando un producto toma forma, su exterior puede evitar la manipulación directa de las capas de la estructura interior, requiriendo ajustes inconvenientes e ineficientes para la orden de ensamblaje.  Además, los componentes de un producto mayor deben ser formados y ensamblados cuidadosamente para que las especificaciones sean exactas para asegurar que funcionaran como se pretende cuando sean combinados.  Usando nanotecnología para formar un producto completo en un solo paso, directamente con materiales almacenados, las limitaciones pueden ser ignoradas, incrementando dramáticamente la eficiencia y la velocidad de producción.
+Las técnicas tradicionales de producción estan fundamentalmente limitadas por el tamaño y forma de las herramientas usadas. Cuando un producto toma forma, su exterior puede evitar la manipulación directa de las capas de la estructura interior, requiriendo ajustes inconvenientes e ineficientes para la orden de ensamblaje. Además, los componentes de un producto mayor deben ser formados y ensamblados cuidadosamente para que las especificaciones sean exactas para asegurar que funcionaran como se pretende cuando sean combinados. Usando nanotecnología para formar un producto completo en un solo paso, directamente con materiales almacenados, las limitaciones pueden ser ignoradas, incrementando dramáticamente la eficiencia y la velocidad de producción.
 
 PRO_ORBITAL_GEN
 Generación Orbital
@@ -11196,7 +11209,7 @@ PRO_NEUTRONIUM_EXTRACTION
 Extracción de Neutronium
 
 PRO_NEUTRONIUM_EXTRACTION_DESC
-El núcleo de una estrella [[STAR_NEUTRON]] consiste de materia de neutrones degenerada, comprimida por la gravedad a una densidad mucho mayor que la materia normal mas pesada.  Este exótico material tiene numerosas aplicaciones una vez extraído de la estrella, permitiendo la producción de partes de nave y estructuras imposibles de otra forma.
+El núcleo de una estrella [[STAR_NEUTRON]] consiste de materia de neutrones degenerada, comprimida por la gravedad a una densidad mucho mayor que la materia normal mas pesada. Este exótico material tiene numerosas aplicaciones una vez extraído de la estrella, permitiendo la producción de partes de nave y estructuras imposibles de otra forma.
 
 #*CON_OUTPOST
 #* <not translated 1970-01-01 01:00:00>
@@ -11208,7 +11221,7 @@ CON_ARCH_PSYCH
 Arquitectura Psicológica
 
 CON_ARCH_PSYCH_DESC
-La forma de una estructura o espacio inhabitado no es meramente guiado por las limitaciones físicas de los materiales con que son construidos.  Los efectos psicológicos sobre habitantes dentro u observadores fuera puede tener una mayor influencia en la consecución del diseño que la fuerza de un muro o la robustez de una fundación.
+La forma de una estructura o espacio inhabitado no es meramente guiado por las limitaciones físicas de los materiales con que son construidos. Los efectos psicológicos sobre habitantes dentro u observadores fuera puede tener una mayor influencia en la consecución del diseño que la fuerza de un muro o la robustez de una fundación.
 
 CON_ORGANIC_STRC
 Estructura Orgánica
@@ -11222,13 +11235,13 @@ CON_ARCH_MONOFILS
 Monofilamento Arquitectural
 
 CON_ARCH_MONOFILS_DESC
-Esencialmente indestructible y de solo unos átomos de diámetro, los filamentos de monocristal tienen muchos usos en mejorar los diseños de estructuras tradicionales en duración y economía de la construcción.  La capacidad para suspender o estresar otros materiales en configuraciones previamente imposibles también permite un mundo de nuevos diseños.  Filamentos de bajo peso y gran fuerza son usados en particular en escalas grandes orbitales que abarcan estructuras, donde antes las variaciones de gravedad a distancia eran prohibitivas.
+Esencialmente indestructible y de solo unos átomos de diámetro, los filamentos de monocristal tienen muchos usos en mejorar los diseños de estructuras tradicionales en duración y economía de la construcción. La capacidad para suspender o estresar otros materiales en configuraciones previamente imposibles también permite un mundo de nuevos diseños. Filamentos de bajo peso y gran fuerza son usados en particular en escalas grandes orbitales que abarcan estructuras, donde antes las variaciones de gravedad a distancia eran prohibitivas.
 
 CON_ASYMP_MATS
 Materiales Asintóticos
 
 CON_ASYMP_MATS_DESC
-Una vez ciertos umbrales de rendimiento son sobrepasados, medir las propiedades físicas de materiales para comparación relativa se vuelve impractico en cualquier termino aparte de magnitudes de orden o escalas logarítmicas.  Casi como la superconductividad en la electrónica, la fuerza tensora, dureza, densidad, elasticidad, indice de refracción y otras propiedades mecánicas de materiales pueden ser controlados sin limites efectivos.  Con todas las limitaciones previas quitadas, los diseños de estructuras son mas trabados, y pueden extender o cambiar por orden similar a las escalas de magnitud.
+Una vez ciertos umbrales de rendimiento son sobrepasados, medir las propiedades físicas de materiales para comparación relativa se vuelve impractico en cualquier termino aparte de magnitudes de orden o escalas logarítmicas. Casi como la superconductividad en la electrónica, la fuerza tensora, dureza, densidad, elasticidad, indice de refracción y otras propiedades mecánicas de materiales pueden ser controlados sin limites efectivos. Con todas las limitaciones previas quitadas, los diseños de estructuras son mas trabados, y pueden extender o cambiar por orden similar a las escalas de magnitud.
 
 CON_FRC_ENRG_STRC
 Estructuras Fuerza-Energía
@@ -11254,7 +11267,7 @@ CON_ART_HEAVENLY
 Cuerpos Celestiales Artificiales
 
 CON_ART_HEAVENLY_DESC
-Una gran masa de una pequeña luna o mas grande no es suficiente para concebir lo que se considera como una estructura, estación o nave.  Mas bien, bajo esta escala, el objeto se convierte en algo más parecido a un cuerpo celestial; su gravedad influencia los movimientos orbitales, puede retener una fina atmósfera en su superficie y puede ser orbitada en vez de orbitar con menores estructuras.  A escalas mucho mayores, planetas enteros pueden ser construidos, reconstruidos o incluso nuevas estrellas pueden ser formadas o encendidas, pregonando el poder y determinación de sus creadores a través del universo.
+Una gran masa de una pequeña luna o mas grande no es suficiente para concebir lo que se considera como una estructura, estación o nave. Mas bien, bajo esta escala, el objeto se convierte en algo más parecido a un cuerpo celestial; su gravedad influencia los movimientos orbitales, puede retener una fina atmósfera en su superficie y puede ser orbitada en vez de orbitar con menores estructuras. A escalas mucho mayores, planetas enteros pueden ser construidos, reconstruidos o incluso nuevas estrellas pueden ser formadas o encendidas, pregonando el poder y determinación de sus creadores a través del universo.
 
 CON_TRANS_ARCH
 Arquitectura Transcendental
@@ -11286,7 +11299,7 @@ SHP_GAL_EXPLO
 Exploración Galáctica
 
 SHP_GAL_EXPLO_DESC
-El descubrimiento de los viajes interestelares mediante las líneas estelares impulsa una nueva era en el desarrollo de la sociedad.  Viejas disputas políticas entre facciones menores, pasan a ser insignificantes cuando toda una civilización se enfrenta al potencial ilimitado de las estrellas... para crecer con prosperidad o enfrentarse a la total destrucción.
+El descubrimiento de los viajes interestelares mediante las líneas estelares impulsa una nueva era en el desarrollo de la sociedad. Viejas disputas políticas entre facciones menores, pasan a ser insignificantes cuando toda una civilización se enfrenta al potencial ilimitado de las estrellas... para crecer con prosperidad o enfrentarse a la total destrucción.
 
 SHP_INTSTEL_LOG
 Logística Interestelar
@@ -11312,7 +11325,7 @@ SHP_SPACE_FLUX_DRIVE
 Motor Espacial Fluido
 
 SHP_SPACE_FLUX_DRIVE_DESC
-Ordinariamente, la propulsión en el espacio es limitada por el combustible o el campo de propulsión.  A escalas relativamente pequeñas, es posible impulsar un objeto en el espacio como se haría en el agua, empujando hacia atrás el medio en el que el objeto es inmerso. Esto requiere la manipulación del espacio mismo donde las mas pequeñas unidades de espacio colapsan, forzando a la materia que una vez contuvieron en unidades de espacio adyacentes.  Este método de propulsión es muy eficiente, pero peligroso en escalas grandes y fácilmente detectable debido a los efectos dimensionales.
+Ordinariamente, la propulsión en el espacio es limitada por el combustible o el campo de propulsión. A escalas relativamente pequeñas, es posible impulsar un objeto en el espacio como se haría en el agua, empujando hacia atrás el medio en el que el objeto es inmerso. Esto requiere la manipulación del espacio mismo donde las mas pequeñas unidades de espacio colapsan, forzando a la materia que una vez contuvieron en unidades de espacio adyacentes. Este método de propulsión es muy eficiente, pero peligroso en escalas grandes y fácilmente detectable debido a los efectos dimensionales.
 
 #*SHP_SPACE_FLUX_BUBBLE
 #* <not translated 1970-01-01 01:00:00>
@@ -11324,19 +11337,19 @@ SHP_CONTGRAV_MAINT
 Mantenimiento ContraGravitacional
 
 SHP_CONTGRAV_MAINT_DESC
-Cuando la masa de la nave sobrepasa una determinada medida, se convierte en necesario considerar el estrés gravitacional en puntos vitales arquitecturales en la estructura de la nave.  Estos puntos no podrán aguantar el estrés y colapsaran, destruyendo la nave.  Es necesario un casi constante mantenimiento de estos puntos para evitar el completo fallo estructural.
+Cuando la masa de la nave sobrepasa una determinada medida, se convierte en necesario considerar el estrés gravitacional en puntos vitales arquitecturales en la estructura de la nave. Estos puntos no podrán aguantar el estrés y colapsaran, destruyendo la nave. Es necesario un casi constante mantenimiento de estos puntos para evitar el completo fallo estructural.
 
 SHP_NANOROBO_MAINT
 Mantenimiento Nano-Robótico
 
 SHP_NANOROBO_MAINT_DESC
-Así como los nanorobots pueden ser usados en producción, también pueden ser usados para mantenimiento.  Un casco con un complemento de ingenieros nanitos organizados centralizados pueden reparar rápidamente el daño, incluso en combate.  Estas máquinas tendrían una gran dificultad en distinguir seres orgánicos como parte del casco que necesiten reparación, por lo que el concepto solo se aplicaria a cascos automatizados.
+Así como los nanorobots pueden ser usados en producción, también pueden ser usados para mantenimiento. Un casco con un complemento de ingenieros nanitos organizados centralizados pueden reparar rápidamente el daño, incluso en combate. Estas máquinas tendrían una gran dificultad en distinguir seres orgánicos como parte del casco que necesiten reparación, por lo que el concepto solo se aplicaria a cascos automatizados.
 
 SHP_MASSPROP_SPEC
 Especialización Masa-Producción
 
 SHP_MASSPROP_SPEC_DESC
-Los dispositivos tradicionales de propulsión operan en objetos de relativamente poca masa.  Cuando la masa de una nave se acerca a una luna pequeña, métodos de propulsión ordinarios son muy toscos y requieren enormes cantidades de energía.  Un nuevo enfoque de la propulsión, teniendo en cuenta el tamaño del objeto en cuestión como un aspecto fundamental del sistema, permitiría a estas naves una movilidad útil.
+Los dispositivos tradicionales de propulsión operan en objetos de relativamente poca masa. Cuando la masa de una nave se acerca a una luna pequeña, métodos de propulsión ordinarios son muy toscos y requieren enormes cantidades de energía. Un nuevo enfoque de la propulsión, teniendo en cuenta el tamaño del objeto en cuestión como un aspecto fundamental del sistema, permitiría a estas naves una movilidad útil.
 
 SHP_TRANSSPACE_DRIVE
 Motor Trans-Espacial
@@ -11350,25 +11363,25 @@ SHP_MIDCOMB_LOG
 Logística en Pleno Combate
 
 SHP_MIDCOMB_LOG_DESC
-Cuando las flotas estelares realizan tareas cotidianas, el traslado de personal y material en ausencia de naves enemigas es una tarea trivial.  En cambio en combate, cuando estas transferencias podrían potencialmente tener un gran mérito táctico, hay una gran dificultad con los aspectos coordinados logísticos debido a la posibilidad de repentinos cambios en el escenario táctico.  Usando una sola estación de comando móvil, es posible organizar y enaltecer patrones logísticos en pleno combate.
+Cuando las flotas estelares realizan tareas cotidianas, el traslado de personal y material en ausencia de naves enemigas es una tarea trivial. En cambio en combate, cuando estas transferencias podrían potencialmente tener un gran mérito táctico, hay una gran dificultad con los aspectos coordinados logísticos debido a la posibilidad de repentinos cambios en el escenario táctico. Usando una sola estación de comando móvil, es posible organizar y enaltecer patrones logísticos en pleno combate.
 
 SHP_ASTEROID_HULLS
 Cascos de Asteroide
 
 SHP_ASTEROID_HULLS_DESC
-En vez de construir un casco desde cero, es mucho mas fácil usar un objeto pre-existente espacial y adaptarlo para el rol del casco de una nave.  No solo serían estas naves muy baratas de producir, sino que también serían capaces de evadir la detección de naves enemigas escondiéndose entre asteroides.
+En vez de construir un casco desde cero, es mucho mas fácil usar un objeto pre-existente espacial y adaptarlo para el rol del casco de una nave. No solo serían estas naves muy baratas de producir, sino que también serían capaces de evadir la detección de naves enemigas escondiéndose entre asteroides.
 
 SHP_HEAVY_AST_HULL
 Casco de Asteroide Pesado
 
 SHP_HEAVY_AST_HULL_DESC
-Este casco se construye a partir de un asteroide gigantesco. Tiene seis espacios externos y tres internos.  La velocidad es muy baja, pero su estructura es moderadamente alta.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
+Este casco se construye a partir de un asteroide gigantesco. Tiene seis espacios externos y tres internos. La velocidad es muy baja, pero su estructura es moderadamente alta. Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
 
 SHP_ASTEROID_REFORM
 Reformación de Asteroide
 
 SHP_ASTEROID_REFORM_DESC
-Mientras la modificación de asteroides para ser usados como casco de nave es muy eficiente, esta limitado por la disponibilidad de tamaños y formas.  Combinando o rompiendo, los cascos de asteroide de tamaño extremo o pequeñas partes pueden ser producidas.
+Mientras la modificación de asteroides para ser usados como casco de nave es muy eficiente, esta limitado por la disponibilidad de tamaños y formas. Combinando o rompiendo, los cascos de asteroide de tamaño extremo o pequeñas partes pueden ser producidas.
 
 SHP_MONOMOLEC_LATTICE
 Enrejado Monomolecular
@@ -11380,7 +11393,7 @@ SHP_MULTICELL_CAST
 Fundición Multi-Celular
 
 SHP_MULTICELL_CAST_DESC
-Incluso cuando estan inertes, los materiales orgánicos son mucho mas versátiles que un material standard.  Una nave multi-celular sin vida puede proporcionar algunas de las ventajas de materiales orgánicos sin las molestias habituales de la vida orgánica.
+Incluso cuando estan inertes, los materiales orgánicos son mucho mas versátiles que un material standard. Una nave multi-celular sin vida puede proporcionar algunas de las ventajas de materiales orgánicos sin las molestias habituales de la vida orgánica.
 
 #*SHP_DOMESTIC_MONSTER
 #* <not translated 1970-01-01 01:00:00>
@@ -11398,19 +11411,19 @@ SHP_MONOCELL_EXP
 Expansión Mono-Celular
 
 SHP_MONOCELL_EXP_DESC
-Los organismos multi-celulares tienden a tener una larga vida comparados con organismo unicelulares debido a la especialización e interdependencia.  Aunque con los refinamientos tecnológicos adecuados, estos aspectos de vida multi-celular pueden ser aplicados a un organismo masivo unicelular, permitiendo una funcionalidad práctica en combate.
+Los organismos multi-celulares tienden a tener una larga vida comparados con organismo unicelulares debido a la especialización e interdependencia. Aunque con los refinamientos tecnológicos adecuados, estos aspectos de vida multi-celular pueden ser aplicados a un organismo masivo unicelular, permitiendo una funcionalidad práctica en combate.
 
 SHP_CONT_SYMB
 Simbiosis Artificial
 
 SHP_CONT_SYMB_DESC
-Cualquier casco de nave tiene una relación simbiótica con su creador para hacerlo realidad y mantenerlo mientras realiza las funciones deseadas.  Aunque se trata de un tipo de comportamiento puramente simbiótico.  Mediante una planificación y diseño cuidadosos, una nave orgánica puede tener un relación simbiótica biológica con su tripulación, proporcionando al otro las necesidades de la vida.
+Cualquier casco de nave tiene una relación simbiótica con su creador para hacerlo realidad y mantenerlo mientras realiza las funciones deseadas. Aunque se trata de un tipo de comportamiento puramente simbiótico. Mediante una planificación y diseño cuidadosos, una nave orgánica puede tener un relación simbiótica biológica con su tripulación, proporcionando al otro las necesidades de la vida.
 
 SHP_CONT_BIOADAPT
 Bioadaptación Controlada
 
 SHP_CONT_BIOADAPT_DESC
-Es muy difícil predecir las acciones de un ser viviente a cualquier grado de certeza sin tener una comprensión intima de los patrones de comportamiento.  Emplazando una forma de vida bajo duras condiciones de desarrollo competitivas, el patrón de comportamiento puede ser manipulado, reforzado y efectivamente utilizado en la guerra.
+Es muy difícil predecir las acciones de un ser viviente a cualquier grado de certeza sin tener una comprensión intima de los patrones de comportamiento. Emplazando una forma de vida bajo duras condiciones de desarrollo competitivas, el patrón de comportamiento puede ser manipulado, reforzado y efectivamente utilizado en la guerra.
 
 #*SHP_BIOADAPTIVE_SPEC
 #* <not translated 1970-01-01 01:00:00>
@@ -11422,7 +11435,7 @@ SHP_FRC_ENRG_COMP
 Compresión Fuerza-Energía
 
 SHP_FRC_ENRG_COMP_DESC
-De manera habitual, la manipulación de energía requiere que tenga forma de materia para que el potencial energético pueda ser almacenado a voluntad y ofrecido bajo demanda.  La materia convertida en pura energía almacenada en la fábrica del espacio-tiempo mismo sería mas versatil que cualquier otra substancia, pero imposible de obtener sin tecnología avanzada de campos de fuerza.
+De manera habitual, la manipulación de energía requiere que tenga forma de materia para que el potencial energético pueda ser almacenado a voluntad y ofrecido bajo demanda. La materia convertida en pura energía almacenada en la fábrica del espacio-tiempo mismo sería mas versatil que cualquier otra substancia, pero imposible de obtener sin tecnología avanzada de campos de fuerza.
 
 #*SHP_ENRG_FRIGATE
 #* <not translated 1970-01-01 01:00:00>
@@ -11449,7 +11462,7 @@ SHP_SOLAR_CONT
 Contención Solar
 
 SHP_SOLAR_CONT_DESC
-Un casco construido de pura energía, aunque mas versátil que un casco sólido, tiene la desventaja de no poder recolectar la potencial energía de objetos materiales.  Aunque si fuera posible contener un casco compuesto no de pura energía sino de gases supercalientes llevando a cabo un reacción de fusión auto sostenida, las limitaciones de ambos, pura energía y materia sólida pueden ser evitados.
+Un casco construido de pura energía, aunque mas versátil que un casco sólido, tiene la desventaja de no poder recolectar la potencial energía de objetos materiales. Aunque si fuera posible contener un casco compuesto no de pura energía sino de gases supercalientes llevando a cabo un reacción de fusión auto sostenida, las limitaciones de ambos, pura energía y materia sólida pueden ser evitados.
 
 #*SHP_KRILL_SPAWN
 #* <not translated 1970-01-01 01:00:00>
@@ -11505,13 +11518,13 @@ Mejora la Defensa
 #* <not translated 1970-01-01 01:00:00>
 
 METER_GROWTH_SHORT_DESC
-Mejora el  Medidor de Crecimiento
+Mejora el Medidor de Crecimiento
 
 POPULATION_SHORT_DESC
 Aumenta la Población del Planeta
 
 STRUCTURE_SHORT_DESC
-Mejora la  Estructura
+Mejora la Estructura
 
 #*SHIP_REPAIR_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -11550,7 +11563,7 @@ CON_ORBITAL_CON
 Construcción Orbital
 
 CON_ORBITAL_CON_DESC
-'''En un planeta donde siempre hay una dirección de referencia fija: “arriba”.  La micro-gravedad es efectivamente isotrópica.  Esta simple diferencia tiene multitud de consecuencias para los tipos de estructuras que pueden ser construidas, y cual de estas formas es la mas optimizada en espacio, materiales y energía en cada ambiente.  Así mismo, la configuración de los espacios en órbita deben ser recapacitados.  Aun así, si bien es atractivo intentar revolucionar completamente el diseño interior en un paradigma completamente independiente de los estilos usados en la superficie del planeta, el uso práctico de estos espacios sera inicialmente útil para los que estén habituados y adaptados a esas superficies planetarias.  En vez de romper completamente con los viejos estilos, una transición gradual seria mas efectiva.
+'''En un planeta donde siempre hay una dirección de referencia fija: “arriba”. La micro-gravedad es efectivamente isotrópica. Esta simple diferencia tiene multitud de consecuencias para los tipos de estructuras que pueden ser construidas, y cual de estas formas es la mas optimizada en espacio, materiales y energía en cada ambiente. Así mismo, la configuración de los espacios en órbita deben ser recapacitados. Aun así, si bien es atractivo intentar revolucionar completamente el diseño interior en un paradigma completamente independiente de los estilos usados en la superficie del planeta, el uso práctico de estos espacios sera inicialmente útil para los que estén habituados y adaptados a esas superficies planetarias. En vez de romper completamente con los viejos estilos, una transición gradual seria mas efectiva.
 
 Incrementa el alcance de suministro de recursos para todas las colonias por 1.'''
 
@@ -11558,13 +11571,13 @@ CON_CONC_CAMP
 Campos de Concentración
 
 CON_CONC_CAMP_DESC
-Habitualmente, cuando los obreros son forzados a trabajar hasta la muerte, los ciudadanos pondran algo de resistencia y tendran la simpatia y el soporte de observadores extranjeros.  Aunque, creando cuidadosamente edificios designados para apagar el fuego de la justicia y promoviendo sentimientos de futilidad y servilismo en los que estan dentro, los campos de concentración puede ser efectivamente usados sin miedo a revueltas.
+Habitualmente, cuando los obreros son forzados a trabajar hasta la muerte, los ciudadanos pondran algo de resistencia y tendran la simpatia y el soporte de observadores extranjeros. Aunque, creando cuidadosamente edificios designados para apagar el fuego de la justicia y promoviendo sentimientos de futilidad y servilismo en los que estan dentro, los campos de concentración puede ser efectivamente usados sin miedo a revueltas.
 
 CON_FRC_ENRG_CAMO
 Camuflaje Fuerza-Energía
 
 CON_FRC_ENRG_CAMO_DESC
-'''Estructuras físicas ordinarias tienden a ser opacas y rígidas, construidas al principio desde una opacidad similar y una rigidad de materiales natural.  Un campo de fuerza no posee una de estas mejoras en ningun sentido permanente y pueden ser encendidos o apagados desde un color al otro a voluntad.  Mientras que la mayoria de edificios son facilmente visibles desde muchos uus de distancia con un poderoso aparato de detección, una estructura de fuerza-energía - o una estructura regular rodeada por campos de fuerzas camuflados - sera esencialmente invisible desde grandes distancias.
+'''Estructuras físicas ordinarias tienden a ser opacas y rígidas, construidas al principio desde una opacidad similar y una rigidad de materiales natural. Un campo de fuerza no posee una de estas mejoras en ningun sentido permanente y pueden ser encendidos o apagados desde un color al otro a voluntad. Mientras que la mayoria de edificios son facilmente visibles desde muchos uus de distancia con un poderoso aparato de detección, una estructura de fuerza-energía - o una estructura regular rodeada por campos de fuerzas camuflados - sera esencialmente invisible desde grandes distancias.
 
 Incrementa la ocultación de las estructuras por 20.'''
 
@@ -11572,13 +11585,13 @@ CON_PLANET_DRIVE
 Motor de Línea Estelar Planetario
 
 CON_PLANET_DRIVE_DESC
-Los planetas en sistemas alejados de un imperio suelen estar en peligro de ataque por flotas enemigas, aunque estos planetas pueden a veces contener recursos y especiales extremadamente valiosos.  Equipando un planeta con los medios para abrir y navegar a líneas estelares, puede ser posible mover esos planetas a lugares mas seguros en tiempos de necesidad.
+Los planetas en sistemas alejados de un imperio suelen estar en peligro de ataque por flotas enemigas, aunque estos planetas pueden a veces contener recursos y especiales extremadamente valiosos. Equipando un planeta con los medios para abrir y navegar a líneas estelares, puede ser posible mover esos planetas a lugares mas seguros en tiempos de necesidad.
 
 CON_STARGATE
 Puerta Estelar
 
 CON_STARGATE_DESC
-En imperios particularmente expansivos, la necesidad de mover naves a lugares defensivos especificos rapidamente a veces excede la factibilidad.  Creando una aceleración entre dos o mas puntos del espacio, puede ser posible mover naves a traves del imperio entere cuando es necesario, permitiendo nuevas estrategias ofensivas y defensivas.
+En imperios particularmente expansivos, la necesidad de mover naves a lugares defensivos especificos rapidamente a veces excede la factibilidad. Creando una aceleración entre dos o mas puntos del espacio, puede ser posible mover naves a traves del imperio entere cuando es necesario, permitiendo nuevas estrategias ofensivas y defensivas.
 
 CON_ART_PLANET
 Planeta Artificial
@@ -11592,7 +11605,7 @@ CON_PALACE_EXCLUDE
 Palacio Excluidor
 
 CON_PALACE_EXCLUDE_DESC
-Asegura que solo un palacio imperial este presente en el imperio al mismo tiempo.  Asegurate de destruir tu antiguo palacio imperial antes de construir este.
+Asegura que solo un palacio imperial este presente en el imperio al mismo tiempo. Asegurate de destruir tu antiguo palacio imperial antes de construir este.
 
 #*GRO_SUBTER_HAB
 #* <not translated 1970-01-01 01:00:00>
@@ -11604,19 +11617,19 @@ GRO_GENOME_BANK
 Banco de Genomas
 
 GRO_GENOME_BANK_DESC
-Las desconocidas variables en los calculos genomicos para cualquier especie siguen siendo severos para todos incluso para las mas simples reparaciones, sin mencionar los cambios que una modificación genetica puede potencialmente tener en una gran bioesfera de múltiples especies.  Para darse cuenta de los beneficios de la medicina genetica, es necesario colectar una masiva base de datos genómica para todas las especies de todos los mundos conocidos.
+Las desconocidas variables en los calculos genomicos para cualquier especie siguen siendo severos para todos incluso para las mas simples reparaciones, sin mencionar los cambios que una modificación genetica puede potencialmente tener en una gran bioesfera de múltiples especies. Para darse cuenta de los beneficios de la medicina genetica, es necesario colectar una masiva base de datos genómica para todas las especies de todos los mundos conocidos.
 
 GRO_INDUSTRY_CLONE
 Clonación Industrial
 
 GRO_INDUSTRY_CLONE_DESC
-Primitivas técnicas de clonación de transferencia nuclear son poco mas que novedades para grandes organismos.  Aplicando técnicas similares para masas de producción industriales o procesos bioquímicos de ingeniería, se convierten en una posiblidad para generar docenas o millones de copias maduras de una sola copia genetica.  Las poblaciones pueden ser hechas a medida para cubrir las necesidades especificas para la sociedad.
+Primitivas técnicas de clonación de transferencia nuclear son poco mas que novedades para grandes organismos. Aplicando técnicas similares para masas de producción industriales o procesos bioquímicos de ingeniería, se convierten en una posiblidad para generar docenas o millones de copias maduras de una sola copia genetica. Las poblaciones pueden ser hechas a medida para cubrir las necesidades especificas para la sociedad.
 
 GRO_TERRAFORM
 Terraformar
 
 GRO_TERRAFORM_DESC
-Cambiando el tipo de ambiente de un planeta es una tarea masiva, el reto de este proceso es de un gran grado logistico.  El método preciso depende en gran parte en el tipo de planeta a ser cambiado y el resultado deseado.  Aun así, en todos los casos gran parte de la superficie del planeta y su atmosfera necesita ser convertida en otro tipo de moleculas, lanzadas al espacio o incineradas.  Como tal, este proceso requiere que gran parte del planeta sea accesible para los terraformadores y que no puede llevarse a cabo en un mundo con una población máxima menor de uno.
+Cambiando el tipo de ambiente de un planeta es una tarea masiva, el reto de este proceso es de un gran grado logistico. El método preciso depende en gran parte en el tipo de planeta a ser cambiado y el resultado deseado. Aun así, en todos los casos gran parte de la superficie del planeta y su atmosfera necesita ser convertida en otro tipo de moleculas, lanzadas al espacio o incineradas. Como tal, este proceso requiere que gran parte del planeta sea accesible para los terraformadores y que no puede llevarse a cabo en un mundo con una población máxima menor de uno.
 
 GRO_TERRAFORM_SHORT_DESC
 Permite la terraformación
@@ -11625,7 +11638,7 @@ GRO_REMOTE_TERRAFORM
 Terraformación Remota
 
 GRO_REMOTE_TERRAFORM_DESC
-Los métodos tradicionales tratan al planeta como una estructura e intentan alterar su ambiente mediante medios físicos y químicos.  Esto necesita que la mayoria del planeta este accesible para los terraformadores, que generalmente limita su utilidad.  Tratando el planeta como a un organismo y alterando su fisiologia indirectamente, es posible hacer uso de un esfuerzo menos intensivo, mediante métodos de terraformado que consumen mas tiempo, permitiendo puestos de avanzada en mundos pobres u hostiles hacer uso del terraformado.
+Los métodos tradicionales tratan al planeta como una estructura e intentan alterar su ambiente mediante medios físicos y químicos. Esto necesita que la mayoria del planeta este accesible para los terraformadores, que generalmente limita su utilidad. Tratando el planeta como a un organismo y alterando su fisiologia indirectamente, es posible hacer uso de un esfuerzo menos intensivo, mediante métodos de terraformado que consumen mas tiempo, permitiendo puestos de avanzada en mundos pobres u hostiles hacer uso del terraformado.
 
 GRO_BIOTERROR
 Instalaciones Bioterror
@@ -11640,7 +11653,7 @@ GRO_GAIA_TRANS
 Transformación de Gaia
 
 GRO_GAIA_TRANS_DESC
-Teóricamente es posible predecir completamente la ecología de un solo planeta mapeando la red de interdependencia biológica, tanto sensible como no sensible, en algoritmos fractales.  Aunque en la práctica, solo puede ser realizado construyendo una vasta red planetaria ejecutando un programa de ordenador dedicado a regular la bioesfera del planeta entero.  Este ordenador se convertirá, en efecto, en el cerebro de un nuevo tipo de vida – un solo organismo planetario, con ciudadanos inteligentes como parte de su fábrica, sujetos a la gran voluntad.
+Teóricamente es posible predecir completamente la ecología de un solo planeta mapeando la red de interdependencia biológica, tanto sensible como no sensible, en algoritmos fractales. Aunque en la práctica, solo puede ser realizado construyendo una vasta red planetaria ejecutando un programa de ordenador dedicado a regular la bioesfera del planeta entero. Este ordenador se convertirá, en efecto, en el cerebro de un nuevo tipo de vida – un solo organismo planetario, con ciudadanos inteligentes como parte de su fábrica, sujetos a la gran voluntad.
 
 GRO_GAIA_TRANS_SHORT_DESC
 Permite la Transformación de Gaia
@@ -11664,7 +11677,7 @@ LRN_SOLAR_MAN
 Manipulación Solar
 
 LRN_SOLAR_MAN_DESC
-Diferentes tipos de estrella no solo tienen sus propios atributos distintivos y oportunidades para ser explotados, también tienden a dar aumento a un tipo particular de planeta.  A veces, la estrella de un tipo particular dará la bonificación deseada, pero casi seguro se carece de planetas deseables, o no estarán en un sitio oportuno en la galaxia.  Manipulando las reacciones de alta energia en el núcleo de una estrella, sería posible frenar o acelerar el proceso natural en la estrella, permitiendo cambiarla a un tipo diferente bajo demanda.
+Diferentes tipos de estrella no solo tienen sus propios atributos distintivos y oportunidades para ser explotados, también tienden a dar aumento a un tipo particular de planeta. A veces, la estrella de un tipo particular dará la bonificación deseada, pero casi seguro se carece de planetas deseables, o no estarán en un sitio oportuno en la galaxia. Manipulando las reacciones de alta energia en el núcleo de una estrella, sería posible frenar o acelerar el proceso natural en la estrella, permitiendo cambiarla a un tipo diferente bajo demanda.
 
 LRN_DISTRIB_THOUGHT
 Red Distribuida de Computadores
@@ -11696,7 +11709,7 @@ LRN_GATEWAY_VOID
 Puerta al Vacío
 
 LRN_GATEWAY_VOID_DESC
-El poder de la Mente del Vacío es casi impredecible en un espacio-tiempo simple de cuatro dimensiones.  Creando una puerta permanente con acceso a un inmenso número de dimensiones, una fuerza no discriminatoria puede ser liberada en un área concreta.
+El poder de la Mente del Vacío es casi impredecible en un espacio-tiempo simple de cuatro dimensiones. Creando una puerta permanente con acceso a un inmenso número de dimensiones, una fuerza no discriminatoria puede ser liberada en un área concreta.
 
 LRN_ENCLAVE_VOID
 Mente del Vacío
@@ -11708,7 +11721,7 @@ LRN_ART_BLACK_HOLE
 Agujero Negro Artificial
 
 LRN_ART_BLACK_HOLE_DESC
-Colapsando con cuidado una estrella roja, un Agujero Negro puede ser formado.  Esta es una tarea cara y peligrosa, pero con beneficios potencialmente elevados para la Investigación e Industria.
+Colapsando con cuidado una estrella roja, un Agujero Negro puede ser formado. Esta es una tarea cara y peligrosa, pero con beneficios potencialmente elevados para la Investigación e Industria.
 
 LRN_PSY_DOM
 Dominación Psicogenica
@@ -11726,7 +11739,7 @@ PRO_SOL_ORB_GEN
 Generación Solar Orbital
 
 PRO_SOL_ORB_GEN_DESC
-Los métodos tradicionales de generación solar se sustentan solamente en la energía radioactiva solar.  Poniendo generadores en la órbita baja alrededor de la misma estrella, la habilidad para recolectar la energía de fenomenos supermasivos estelares es posible y un beneficio cuantificable a la industria puede ser obtenido.
+Los métodos tradicionales de generación solar se sustentan solamente en la energía radioactiva solar. Poniendo generadores en la órbita baja alrededor de la misma estrella, la habilidad para recolectar la energía de fenomenos supermasivos estelares es posible y un beneficio cuantificable a la industria puede ser obtenido.
 
 PRO_INDUSTRY_CENTER_I
 Centros Industriales
@@ -11734,7 +11747,7 @@ Centros Industriales
 PRO_INDUSTRY_CENTER_I_DESC
 '''Coordinando la actividad industrial entre planetas y sistemas de estrellas puede ser conseguido en grandes complejos centralizados.
 
-El alto coste y el tiempo necesario de las instalaciones, así como el futuro alcance del potencial de crecimiento, requiere una fuerte planificación para producir in situ con una utilidad ideal futura.  Los Centros Industriales tiene un gran coste a corto plazo, tanto en producción de recursos como en tiempo, pero con una gran oportunidad para una posible expansión.  Esto los hace ideales para estrategias a largo plazo, pero poco atractivos para imperios con una planificación para una rápida victoria.'''
+El alto coste y el tiempo necesario de las instalaciones, así como el futuro alcance del potencial de crecimiento, requiere una fuerte planificación para producir in situ con una utilidad ideal futura. Los Centros Industriales tiene un gran coste a corto plazo, tanto en producción de recursos como en tiempo, pero con una gran oportunidad para una posible expansión. Esto los hace ideales para estrategias a largo plazo, pero poco atractivos para imperios con una planificación para una rápida victoria.'''
 
 PRO_INDUSTRY_MOD
 Modificador de Industria
@@ -11882,7 +11895,7 @@ SHP_REINFORCED_HULL
 Casco Reforzado
 
 SHP_REINFORCED_HULL_DESC
-'''Los cascos de nave standard están diseñados y construidos con técnicas de microgravedad avanzada gravitacional y materiales altamente resistentes.  Aunque, las limitaciones de materia física imponen una severa limitación en la fuerza de cascos.  Mejorando el casco con campos de intregridad estructurales, un incremento medible en la fuerza  puede ser obtenido.
+'''Los cascos de nave standard están diseñados y construidos con técnicas de microgravedad avanzada gravitacional y materiales altamente resistentes. Aunque, las limitaciones de materia física imponen una severa limitación en la fuerza de cascos. Mejorando el casco con campos de intregridad estructurales, un incremento medible en la fuerza puede ser obtenido.
 
 Incrementa la estructura máxima de todas las naves por 5.'''
 
@@ -11890,7 +11903,7 @@ SHP_BASIC_DAM_CONT
 Control de Daño Básico
 
 SHP_BASIC_DAM_CONT_DESC
-Incrementa gradualmente la salud de naves dañadas.  La estructura actual de todas las naves aumenta a un ritmo de 1 por turno.
+Incrementa gradualmente la salud de naves dañadas. La estructura actual de todas las naves aumenta a un ritmo de 1 por turno.
 
 SHP_ADV_DAM_CONT
 Control Avanzado de Daño
@@ -12150,7 +12163,7 @@ SPY_DETECT_3
 Escaner de Neutrones
 
 SPY_DETECT_3_DESC
-'''La radiación electromagnética no tiene restos de masa y es fácilmente manipulable.  Flexionando las ondas de la luz alrededor de un objeto, es posible dejar a los radares virtualmente inútiles.  Disparando ondas de neutrones en vez de radiación electromagnética, un escaneo activo más efectivo puede ser utilizado.
+'''La radiación electromagnética no tiene restos de masa y es fácilmente manipulable. Flexionando las ondas de la luz alrededor de un objeto, es posible dejar a los radares virtualmente inútiles. Disparando ondas de neutrones en vez de radiación electromagnética, un escaneo activo más efectivo puede ser utilizado.
 
 Incrementa la detección de todos los planetas por 60.'''
 
@@ -12184,9 +12197,9 @@ SPY_STEALTH_2
 Campo de Absorción
 
 SPY_STEALTH_2_DESC
-'''Amortiguando simples emisiones electromagnéticas se puede hacer completamente invisible a escaneos pasivos.  Aunque los escaneos activos, pueden hacer de esos métodos para esconder un objeto casi inútil.  Absorbiendo, en vez de reflejar la radiación emitida por dispositivos de escaneo activo, la ocultación de una nave puede ser altamente incrementada.
+'''Amortiguando simples emisiones electromagnéticas se puede hacer completamente invisible a escaneos pasivos. Aunque los escaneos activos, pueden hacer de esos métodos para esconder un objeto casi inútil. Absorbiendo, en vez de reflejar la radiación emitida por dispositivos de escaneo activo, la ocultación de una nave puede ser altamente incrementada.
 
-Incrementa la ocultación de todos los planetas, sistemas y edificios por 30.  Esta bonificación no es acumulativa con otras tecnologías de ocultación.'''
+Incrementa la ocultación de todos los planetas, sistemas y edificios por 30. Esta bonificación no es acumulativa con otras tecnologías de ocultación.'''
 
 #*SPY_STEALTH_PART_2
 #* <not translated 1970-01-01 01:00:00>
@@ -12212,9 +12225,9 @@ SPY_STEALTH_4
 Camuflaje de Fase
 
 SPY_STEALTH_4_DESC
-'''Incluso con la más cuidadosa nave oculta emite radiación en forma de partículas de fuerza con carga.  Modulando la forma de las ondas de estas partículas, es posible sincronizarlas con la radiación de fondo, evitando incluso intentos avanzados de detectar la nave.
+'''Incluso con la más cuidadosa nave oculta emite radiación en forma de partículas de fuerza con carga. Modulando la forma de las ondas de estas partículas, es posible sincronizarlas con la radiación de fondo, evitando incluso intentos avanzados de detectar la nave.
 
-Incrementa la ocultación de todos los planetas, sistemas y edificios por 80.  Esta bonificación no es acumulativa con otras tecnologías de ocultación.'''
+Incrementa la ocultación de todos los planetas, sistemas y edificios por 80. Esta bonificación no es acumulativa con otras tecnologías de ocultación.'''
 
 #*SPY_CUSTOM_ADVISORIES
 #* <not translated 1970-01-01 01:00:00>
@@ -12297,7 +12310,7 @@ SHP_ZORTRIUM_PLATE
 Armadura de Blindaje de Zortrium
 
 SHP_ZORTRIUM_PLATE_DESC
-Desbloquea la parte de nave  Armadura de Blindaje de Zortrium.
+Desbloquea la parte de nave Armadura de Blindaje de Zortrium.
 
 #*SHP_DIAMOND_PLATE
 #* <not translated 1970-01-01 01:00:00>
@@ -12339,7 +12352,7 @@ SPY_DIST_MOD
 Modulador de Distorsión
 
 SPY_DIST_MOD_DESC
-Todos los objetos con masa causan una curvatura en el espacio-tiempo debido a los efectos gravitacionales.  Otras fuerzas como las electromagnéticas tienen efectos geométricos similares.  Amplificando indiscriminadamente estos efectos en un area localizada, distorsiones en el espacio-tiempo causadas por naves puede ser fácilmente distinguidas del fondo electromagnético y la radiación gravitacional.
+Todos los objetos con masa causan una curvatura en el espacio-tiempo debido a los efectos gravitacionales. Otras fuerzas como las electromagnéticas tienen efectos geométricos similares. Amplificando indiscriminadamente estos efectos en un area localizada, distorsiones en el espacio-tiempo causadas por naves puede ser fácilmente distinguidas del fondo electromagnético y la radiación gravitacional.
 
 SHP_ANTIMAT_TORP
 Torpedo Antimateria
@@ -12357,19 +12370,19 @@ SHP_CAMO_AST_HULL
 Casco de Asteroide Camuflado
 
 SHP_CAMO_AST_HULL_DESC
-Este casco esta diseñado para parecer un asteroide real.  Tiene cuatro espacios internos, pero sin externos.  La estructura es moderada, pero la velocidad bastante baja.  Este casco recibe una tremenda bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
+Este casco esta diseñado para parecer un asteroide real. Tiene cuatro espacios internos, pero sin externos. La estructura es moderada, pero la velocidad bastante baja. Este casco recibe una tremenda bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
 
 SHP_MINIAST_SWARM
 Enjambre de Mini Asteroides
 
 SHP_MINIAST_SWARM_DESC
-Este casco se construye a partir de un asteroide pequeño, donde muchos de los trozos se han dividido para formar numerosos asteroides diminutos, controlados por el casco principal.  Estos asteroides protegen a la nave, otorgando una bonificación a sus escudo.  Este casco tiene dos espacios externos pero ninguno interno.  La estructura es muy baja, pero con una velocidad alta.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
+Este casco se construye a partir de un asteroide pequeño, donde muchos de los trozos se han dividido para formar numerosos asteroides diminutos, controlados por el casco principal. Estos asteroides protegen a la nave, otorgando una bonificación a sus escudo. Este casco tiene dos espacios externos pero ninguno interno. La estructura es muy baja, pero con una velocidad alta. Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
 
 SHP_SCAT_AST_HULL
 Casco de Asteroide Esparcido
 
 SHP_SCAT_AST_HULL_DESC
-Esta nave insignia se construye a partir de asteroides grandiosos, algunos de los cuales han sido combinados para formar el casco principal.  Estos asteroides protegen a  la nave principal, así como cualquier nave amiga que la acompañe, otorgando una bonificación a sus escudos para todas las naves que te pertenezcan y las naves aliadas en las cercanias.  Como el casco de asteroide compuesto,  tiene cincuenta espacios externos y cuatro internos.  La velocidad es muy baja, pero la estructura es elevada.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
+Esta nave insignia se construye a partir de asteroides grandiosos, algunos de los cuales han sido combinados para formar el casco principal. Estos asteroides protegen a la nave principal, así como cualquier nave amiga que la acompañe, otorgando una bonificación a sus escudos para todas las naves que te pertenezcan y las naves aliadas en las cercanias. Como el casco de asteroide compuesto, tiene cincuenta espacios externos y cuatro internos. La velocidad es muy baja, pero la estructura es elevada. Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
 
 SHP_ORG_HULL
 Casco Orgánico
@@ -12383,25 +12396,25 @@ SHP_ENDOSYMB_HULL
 Casco Endosimbiótico
 
 SHP_ENDOSYMB_HULL_DESC
-Este casco monocelular existe en una relación simbiótica con su tripulación, suspendiendolos en citoplasma y usando sus órganos.  Tiene tres espacios externos y dos internos.  La velocidad y ocultación son buenas y su estructura moderada.  Este casco regenera estructura y combustible entre combates.
+Este casco monocelular existe en una relación simbiótica con su tripulación, suspendiendolos en citoplasma y usando sus órganos. Tiene tres espacios externos y dos internos. La velocidad y ocultación son buenas y su estructura moderada. Este casco regenera estructura y combustible entre combates.
 
 SHP_SENT_HULL
 Casco Sensible
 
 SHP_SENT_HULL_DESC
-Esta nave insignia consciente de si misma tiene poderosas habilidades analíticas  y una tremenda capacidad de memorización, que le permite dirigir naves amigas y proporcionar información útil y tácticas sutiles en combate, otorgando una bonificación a la salud y detección para todas las naves amigas que la acompañen.  Tiene seis espacios externos y tres internos.  Tiene una velocidad baja, pero una ocultación y estructura buenas.  Este casco regenera estructura y combustible entre combates.
+Esta nave insignia consciente de si misma tiene poderosas habilidades analíticas y una tremenda capacidad de memorización, que le permite dirigir naves amigas y proporcionar información útil y tácticas sutiles en combate, otorgando una bonificación a la salud y detección para todas las naves amigas que la acompañen. Tiene seis espacios externos y tres internos. Tiene una velocidad baja, pero una ocultación y estructura buenas. Este casco regenera estructura y combustible entre combates.
 
 SHP_BIOINTERCEPTOR
 Biointerceptores
 
 SHP_BIOINTERCEPTOR_DESC
-Interceptores vivientes diseñados para destruir misiles y cazas enemigos.  Mucho mas efectivos que interceptores normales.  Esta parte solo puede ser construida si hay una instalación Xenocoordinadora y una Camara Celular de Crecimiento en el imperio o en un imperio aliados.
+Interceptores vivientes diseñados para destruir misiles y cazas enemigos. Mucho mas efectivos que interceptores normales. Esta parte solo puede ser construida si hay una instalación Xenocoordinadora y una Camara Celular de Crecimiento en el imperio o en un imperio aliados.
 
 SHP_BIOBOMBER
 Biobombarderos
 
 SHP_BIOBOMBER_DESC
-Bombarderos vivientes diseñados para destruir naves y planetas.  Mucho mas efectivos que interceptores normales.  Esta parte solo puede ser construida si hay una Cámara de Maduración Competitiva y una Unidad de Modificación Bioneural en algún lugar del imperio o en un imperio aliado.
+Bombarderos vivientes diseñados para destruir naves y planetas. Mucho mas efectivos que interceptores normales. Esta parte solo puede ser construida si hay una Cámara de Maduración Competitiva y una Unidad de Modificación Bioneural en algún lugar del imperio o en un imperio aliado.
 
 #*SHP_NOVA_BOMB
 #* <not translated 1970-01-01 01:00:00>
@@ -12510,9 +12523,9 @@ BLD_OBSERVATORY
 Observatorio
 
 BLD_OBSERVATORY_DESC
-'''La extensión natural de telescopios industriales -e información-, con algoritmos inspirados en los militares permite mejorar la detección de largo alcance.   El planeta en el que el Observatorio es construido emite ondas de alta frecuencia en el espacio profundo.   Estos pulsos interfieren con cualquier intento de hacer al planeta invisible, pero las señales pueden reflejarse en objetos de las proximidades de la galaxia, permitiendo que sean más fácilmente detectables por planetas amigos en las proximidades del Observatorio.
+'''La extensión natural de telescopios industriales -e información-, con algoritmos inspirados en los militares permite mejorar la detección de largo alcance. El planeta en el que el Observatorio es construido emite ondas de alta frecuencia en el espacio profundo. Estos pulsos interfieren con cualquier intento de hacer al planeta invisible, pero las señales pueden reflejarse en objetos de las proximidades de la galaxia, permitiendo que sean más fácilmente detectables por planetas amigos en las proximidades del Observatorio.
 
-Un estrella al azar sera revelada cada turno para la galaxia entera.  A veces, una estrella que ya es visible/explorada puede ser revelada, resultando en que ninguna nueva estrella sea descubierta para los imperios en la galaxia.'''
+Un estrella al azar sera revelada cada turno para la galaxia entera. A veces, una estrella que ya es visible/explorada puede ser revelada, resultando en que ninguna nueva estrella sea descubierta para los imperios en la galaxia.'''
 
 BLD_CULTURE_ARCHIVES
 Archivos Culturales
@@ -12556,7 +12569,7 @@ BLD_SHIPYARD_BASE
 Astillero Básico
 
 BLD_SHIPYARD_BASE_DESC
-Instalación de producción orbital para el ensamblaje de naves interestelares militares.  Permite la producción de naves en el sistema donde este localizado.  Pueden ser mejorados produciendo edificios adicionales en el mismo sistema.
+Instalación de producción orbital para el ensamblaje de naves interestelares militares. Permite la producción de naves en el sistema donde este localizado. Pueden ser mejorados produciendo edificios adicionales en el mismo sistema.
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK
 Dique seco Orbital
@@ -12656,7 +12669,7 @@ BLD_BIOTERROR_PROJECTOR
 Base de Proyección Bioterror
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Esta base de guerra biológica clandestina contamina planetas enemigos en la vecindad.  Reduce gradualmente la salud de planetas enemigos a cuatro saltos de línea estelar hasta que la población desaparezca.  Estas actividades no se dan a conocer en público y solo puede ser construido en un planeta con una luna resonante. Inefectivo si el imperio enemigo tiene el edificio Banco de Genomas.  Este edificio puede ser construido también en un puesto de avanzada, siempre que tenga una luna resonante.
+'''Esta base de guerra biológica clandestina contamina planetas enemigos en la vecindad. Reduce gradualmente la salud de planetas enemigos a cuatro saltos de línea estelar hasta que la población desaparezca. Estas actividades no se dan a conocer en público y solo puede ser construido en un planeta con una luna resonante. Inefectivo si el imperio enemigo tiene el edificio Banco de Genomas. Este edificio puede ser construido también en un puesto de avanzada, siempre que tenga una luna resonante.
 
 Proporciona al planeta en el que se construye el enfoque BioTerror, que decrementa la salud en planetas enemigos a cuatro saltos de línea estelar a dos por turno, siempre que el imperio enemigo no contenga un Banco de Genomas.'''
 
@@ -12664,7 +12677,7 @@ BLD_LIGHTHOUSE
 Faro Interestelar
 
 BLD_LIGHTHOUSE_DESC
-Decrementa la ocultación de todos los objetos en el mismo sistema por 45.  Este edificio puede ser construido en puestos de avanzada.
+Decrementa la ocultación de todos los objetos en el mismo sistema por 45. Este edificio puede ser construido en puestos de avanzada.
 
 #*BLD_SCANNING_FACILITY
 #* <not translated 1970-01-01 01:00:00>
@@ -12710,7 +12723,7 @@ Megalito
 BLD_MEGALITH_DESC
 '''Una maravilla de la Arquitectura de la era del Éxodo, el Megalito es un rasca estrellas irregularmente masivo, de kilómetros de diámetro. El Megalito es una inspiración para arquitectos de todo el sector y es a menudo la joya de la corona del poderoso imperio de un verdadero magnate.
 
-Este edificio establece la capital de dueño del imperio, por encima de cualquier Palacio Imperial.  El planeta en el que se construye recibe una bonificación de +2 a su alcance de suministro de recursos y tiene todos los medidores de recurso objetivo en un solo turno.  Más aún, todas las colonias del imperio reciben una bonificación de +1 al alcance de suministro de recursos.'''
+Este edificio establece la capital de dueño del imperio, por encima de cualquier Palacio Imperial. El planeta en el que se construye recibe una bonificación de +2 a su alcance de suministro de recursos y tiene todos los medidores de recurso objetivo en un solo turno. Más aún, todas las colonias del imperio reciben una bonificación de +1 al alcance de suministro de recursos.'''
 
 BLD_SPACE_ELEVATOR
 Ascensor Espacial
@@ -12726,7 +12739,7 @@ Banco de Genomas
 BLD_GENOME_BANK_DESC
 '''La mayor base de datos jamás concebida. El banco de genomas incluye mapas de genomas de cada organismo conocido por el imperio. Esta base de datos tiene un valor incalculable en el tratamiento de enfermedades y en el establecimiento de colonias agrícolas.
 
-Incrementa la agricultura objetivo en planetas enfocados en agricultura por una mitad de la población del planeta e incrementa la salud de todos los planetas por 3.  Este edificio también proporciona al imperio inmunidad contra el bioterrorismo.'''
+Incrementa la agricultura objetivo en planetas enfocados en agricultura por una mitad de la población del planeta e incrementa la salud de todos los planetas por 3. Este edificio también proporciona al imperio inmunidad contra el bioterrorismo.'''
 
 BLD_GAIA_TRANS
 Transformación de Gaia
@@ -12795,7 +12808,7 @@ BLD_SOL_ACCEL
 Acelerador Solar
 
 BLD_SOL_ACCEL_DESC
-Un Acelerador Solar incrementa la edad de una estrella artificialmente acelerando su proceso natural.  La estrella se convierte en un tipo más viejo, dependiendo del siguiente orden:  Azul, Blanca, Amarilla, Naranja o Roja.  Este proceso puede ser llevado a cabo en un puesto de avanzada.
+Un Acelerador Solar incrementa la edad de una estrella artificialmente acelerando su proceso natural. La estrella se convierte en un tipo más viejo, dependiendo del siguiente orden: Azul, Blanca, Amarilla, Naranja o Roja. Este proceso puede ser llevado a cabo en un puesto de avanzada.
 
 BLD_SOL_ORB_GEN
 Generador Solar Orbital
@@ -12813,7 +12826,7 @@ BLD_CLONING_CENTER
 Centro de Clonación
 
 BLD_CLONING_CENTER_DESC
-'''La Clonación Industrial permite producir poblaciones de forma industrial, incrementando significativamente la salud del planeta.  Aunque debido a consideraciones políticas, estas actividades deben ser mantenidas en secreto para aquellos que tengan problemas éticos.  Como resultado, este edificio debe ser ocultado a la población en el lado oscuro de una luna resonante.  Este edificio puede ser construido en un puesto de avanzada con una luna resonante.
+'''La Clonación Industrial permite producir poblaciones de forma industrial, incrementando significativamente la salud del planeta. Aunque debido a consideraciones políticas, estas actividades deben ser mantenidas en secreto para aquellos que tengan problemas éticos. Como resultado, este edificio debe ser ocultado a la población en el lado oscuro de una luna resonante. Este edificio puede ser construido en un puesto de avanzada con una luna resonante.
 
 Incrementa la salud objetivo de todos los planetas por 30.'''
 
@@ -12833,7 +12846,7 @@ BLD_REMOTE_TERRAFORM
 Terraformación Remota
 
 BLD_REMOTE_TERRAFORM_DESC
-Los métodos tradicionales tratan al planeta como una estructura e intentan alterar su ambiente mediante medios físicos y químicos.  Esto necesita que la mayoria del planeta este accesible para los terraformadores, que generalmente limita su utilidad.  Tratando el planeta como a un organismo y alterando su fisiologia indirectamente, es posible hacer uso de un esfuerzo menos intensivo, mediante métodos de terraformado que consumen mas tiempo, permitiendo puestos de avanzada en mundos pobres u hostiles hacer uso del terraformado.
+Los métodos tradicionales tratan al planeta como una estructura e intentan alterar su ambiente mediante medios físicos y químicos. Esto necesita que la mayoria del planeta este accesible para los terraformadores, que generalmente limita su utilidad. Tratando el planeta como a un organismo y alterando su fisiologia indirectamente, es posible hacer uso de un esfuerzo menos intensivo, mediante métodos de terraformado que consumen mas tiempo, permitiendo puestos de avanzada en mundos pobres u hostiles hacer uso del terraformado.
 
 #*BLD_NEST_ERADICATOR
 #* <not translated 1970-01-01 01:00:00>
@@ -12868,7 +12881,7 @@ BLD_CONC_CAMP
 Campos de Concentración
 
 BLD_CONC_CAMP_DESC
-'''Quitandose de encima especies no deseadas en un planeta permite la introducción de especies más adaptadas.  Creando una red de campos de concentración alrededor del planeta diseñados para que los ciudadanos trabajen hasta la muerte, el objetivo puede ser alcanzado rápida y efectivamente.  Este edificio puede ser construido en un puesto de avanzada.
+'''Quitandose de encima especies no deseadas en un planeta permite la introducción de especies más adaptadas. Creando una red de campos de concentración alrededor del planeta diseñados para que los ciudadanos trabajen hasta la muerte, el objetivo puede ser alcanzado rápida y efectivamente. Este edificio puede ser construido en un puesto de avanzada.
 
 Decrementa la población del planeta a un ritmo de 3 por turno e incrementa la industria objetivo 5 veces la población del planeta.'''
 
@@ -12891,23 +12904,23 @@ BLD_PLANET_DRIVE
 Motor Planetario de Línea Estelar
 
 BLD_PLANET_DRIVE_DESC
-'''Permite a un planeta moverse entre sistemas estelares.  Un faro interestelar es necesario entre 200 uus de distancia del sistema objetivo para permitir al planeta proceder de forma segura.  De otra forma, el planeta tiene un 50% de posibilidades de ser destruido en transito.  Es una jornada hazarosa incluso si el planeta sobrevive y solo la mitad de la población vivirá incluso con el soporte de faros interestelares.  Este edificio puede ser construido en un puesto de avanzada, pero no en un cinturón de asteroides.
+'''Permite a un planeta moverse entre sistemas estelares. Un faro interestelar es necesario entre 200 uus de distancia del sistema objetivo para permitir al planeta proceder de forma segura. De otra forma, el planeta tiene un 50% de posibilidades de ser destruido en transito. Es una jornada hazarosa incluso si el planeta sobrevive y solo la mitad de la población vivirá incluso con el soporte de faros interestelares. Este edificio puede ser construido en un puesto de avanzada, pero no en un cinturón de asteroides.
 
-Debido a la falta de apuntador UI, un segundo edificio es actualmente necesario en el otro lado de la línea estelar.  Este edificio se autodestruirá inmediatemente, para que el planeta pueda moverse a una sistema estelar objetivo diferente mas adelante.
+Debido a la falta de apuntador UI, un segundo edificio es actualmente necesario en el otro lado de la línea estelar. Este edificio se autodestruirá inmediatemente, para que el planeta pueda moverse a una sistema estelar objetivo diferente mas adelante.
 
-Para usar este edificio, establece el planeta en enfoque Motor Planetario y construye una Sonda Planetaria en el sistema adyacente.  El planeta será movido a ese sistema.'''
+Para usar este edificio, establece el planeta en enfoque Motor Planetario y construye una Sonda Planetaria en el sistema adyacente. El planeta será movido a ese sistema.'''
 
 BLD_PLANET_BEACON
 Sonda Planetaria
 
 BLD_PLANET_BEACON_DESC
-Designa el objetivo para el motor de línea estelar planetario.  Este edificio puede ser construido en un puesto de avanzada.
+Designa el objetivo para el motor de línea estelar planetario. Este edificio puede ser construido en un puesto de avanzada.
 
 BLD_ART_PLANET
 Planeta Artificial
 
 BLD_ART_PLANET_DESC
-Forma un planeta artificial a partir de un cinturón de asteroides o un gigante de gas.  Los asteroides se convierten en diminutos planetas esteriles y los gigantes de gas se convierten en enormes planetas esteriles.  Este proceso debe ser llevado a cabo en un puesto de avanzada en un gigante de gas o un cinturón de asteroides.
+Forma un planeta artificial a partir de un cinturón de asteroides o un gigante de gas. Los asteroides se convierten en diminutos planetas esteriles y los gigantes de gas se convierten en enormes planetas esteriles. Este proceso debe ser llevado a cabo en un puesto de avanzada en un gigante de gas o un cinturón de asteroides.
 
 #*BLD_ART_FACTORY_PLANET
 #* <not translated 1970-01-01 01:00:00>
@@ -12935,7 +12948,7 @@ BLD_SOL_REJUV
 Rejuvenecedor Solar
 
 BLD_SOL_REJUV_DESC
-Un Rejuvenecedor Solar rejuvenece artificialmente una estrella incrementando su suministro de combustible.  La estrella se convierte en un tipo mas joven, de acuerdo al siguiente orden: Roja, Naranja, Amarilla, Blanca, Azul.  Este proceso puede ser llevado a cabo en un puesto de avanzada.
+Un Rejuvenecedor Solar rejuvenece artificialmente una estrella incrementando su suministro de combustible. La estrella se convierte en un tipo mas joven, de acuerdo al siguiente orden: Roja, Naranja, Amarilla, Blanca, Azul. Este proceso puede ser llevado a cabo en un puesto de avanzada.
 
 BLD_TRANSFORMER
 Tranformador
@@ -13472,13 +13485,13 @@ Doce cazas rápidos y desarmados diseñados para reconocimiento
 #* <not translated 1970-01-01 01:00:00>
 
 FI_BIOINTERCEPTOR_DESC
-Treinta y seis interceptores vivientes diseñados para destruir misiles y cazas enemigos.  Mucho mas efectivos que interceptores normales.  Esta parte solo puede ser construida si hay una instalación Xenocoordinadora y una Cámara Celular de Crecimiento en el imperio o en un imperio aliados.
+Treinta y seis interceptores vivientes diseñados para destruir misiles y cazas enemigos. Mucho mas efectivos que interceptores normales. Esta parte solo puede ser construida si hay una instalación Xenocoordinadora y una Cámara Celular de Crecimiento en el imperio o en un imperio aliados.
 
 FI_BIOBOMBER
 Bio-Bombardero
 
 FI_BIOBOMBER_DESC
-Ochenta bombarderos vivientes diseñados para destruir naves y planetas.  Mucho mas efectivos que interceptores normales.  Esta parte solo puede ser construida si hay una Cámara de Maduración Competitiva y una Unidad de Modificación Bioneural en algún lugar del imperio o en un imperio aliado.
+Ochenta bombarderos vivientes diseñados para destruir naves y planetas. Mucho mas efectivos que interceptores normales. Esta parte solo puede ser construida si hay una Cámara de Maduración Competitiva y una Unidad de Modificación Bioneural en algún lugar del imperio o en un imperio aliado.
 
 LR_NUCLEAR_MISSILE
 Misil Nuclear
@@ -13508,13 +13521,13 @@ LR_ANTIMATTER_TORPEDO
 Torpedo de Antimateria
 
 LR_ANTIMATTER_TORPEDO_DESC
-Un misil rápido, de largo alcance alimentado por el Motor Espacial Fluido y armado con una potente cabeza antimateria.  Esta parte solo puede ser construida si hay una Bahía de Ingeniería o una Bahía Avanzada de Ingeniería en algún lugar del imperio o un imperio aliado.
+Un misil rápido, de largo alcance alimentado por el Motor Espacial Fluido y armado con una potente cabeza antimateria. Esta parte solo puede ser construida si hay una Bahía de Ingeniería o una Bahía Avanzada de Ingeniería en algún lugar del imperio o un imperio aliado.
 
 LR_PLASMA_TORPEDO
 Torpedo de Plasma
 
 LR_PLASMA_TORPEDO_DESC
-Un misil rápido, de largo alcance con una ocultación excelente, alimentado por un Motor Trans-Espacial y armado con una devastadora cabeza de plasma.  Esta parte solo puede ser construida si hay una Bahía Avanzada de Ingeniería en algún lugar del imperio o imperio aliado.
+Un misil rápido, de largo alcance con una ocultación excelente, alimentado por un Motor Trans-Espacial y armado con una devastadora cabeza de plasma. Esta parte solo puede ser construida si hay una Bahía Avanzada de Ingeniería en algún lugar del imperio o imperio aliado.
 
 DT_DETECTOR_1
 Escaner Óptico
@@ -13659,13 +13672,13 @@ AR_ROCK_PLATE
 Armadura Blindada de Roca
 
 AR_ROCK_PLATE_DESC
-Una fuerte y barata alternativa a las aleaciones.  Este parte solo puede ser construida si hay una Instalación Reformadora de Asteroide en un cinturón de asteroides en algun lugar del imperio o imperio aliado.
+Una fuerte y barata alternativa a las aleaciones. Este parte solo puede ser construida si hay una Instalación Reformadora de Asteroide en un cinturón de asteroides en algun lugar del imperio o imperio aliado.
 
 AR_CRYSTAL_PLATE
 Armadura Blindada de Cristal
 
 AR_CRYSTAL_PLATE_DESC
-Una armadura increiblemente fuerte producida con técnicas avanzadas de cristalización.  Este parte solo puede ser construida si hay un Modulo de Cristalización en un cinturón de asteroides en algun lugar del imperio o imperio aliado.
+Una armadura increiblemente fuerte producida con técnicas avanzadas de cristalización. Este parte solo puede ser construida si hay un Modulo de Cristalización en un cinturón de asteroides en algun lugar del imperio o imperio aliado.
 
 AR_NEUTRONIUM_PLATE
 Armadura Blindada de Neutronio
@@ -13732,7 +13745,7 @@ CO_COLONY_POD
 Capsula Colonial
 
 CO_COLONY_POD_DESC
-'''Instalaciones básicas para colonos para sobrevivir a la jornada de un nuevo planeta.  Permite a la nave colonizar nuevos mundos.
+'''Instalaciones básicas para colonos para sobrevivir a la jornada de un nuevo planeta. Permite a la nave colonizar nuevos mundos.
 
 Todas las partes de naves de clase Colonia requieren un planeta en el que ser construidos para tener una población de al menos tres.'''
 
@@ -13778,7 +13791,7 @@ SP_DISTORTION_MODULATOR
 Modulador de Distorsión
 
 SP_DISTORTION_MODULATOR_DESC
-Distingue irregularidades geométricas naturales de naves enemigas manipulando distorsiones espacio-tiempo causadas por todas las naves en la vecindad.  Todas las naves entre 0 uus tienen una ocultación máxima reducida por 20.
+Distingue irregularidades geométricas naturales de naves enemigas manipulando distorsiones espacio-tiempo causadas por todas las naves en la vecindad. Todas las naves entre 0 uus tienen una ocultación máxima reducida por 20.
 
 #*SP_CLOUD
 #* <not translated 1970-01-01 01:00:00>
@@ -15912,14 +15925,14 @@ SHIPDESIGN_PLANET_INVASION
 #*HOTKEY_FOCUS_NEXT_WND
 #* <not translated 1970-01-01 01:00:00>
 
-#*HOTKEY_EXIT
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_EXIT
+Salir al escritorio
 
-#*HOTKEY_QUIT
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_QUIT
+Salir de la partida
 
-#*HOTKEY_FULLSCREEN
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_FULLSCREEN
+Activar/Desactivar pantalla completa
 
 
 ##

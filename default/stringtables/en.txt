@@ -1878,7 +1878,7 @@ OPTIONS_DB_MOUSE_REPEAT_DELAY
 Sets delay between holding a mouse button and repeat clicks being generated
 
 OPTIONS_DB_MOUSE_REPEAT_INTERVAL
-Sets delay between repeat clicks while holding a moues button
+Sets delay between repeat clicks while holding a mouse button
 
 OPTIONS_DB_DISPLAY_TIMESTAMP
 Enables messages' timestamp in the chat windows.
