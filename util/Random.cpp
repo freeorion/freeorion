@@ -32,7 +32,7 @@ int RandInt(int min, int max) {
         return min;
     {
         std::scoped_lock lock(s_prng_mutex);
-        static boost::random::uniform_smallint<> dis;
+        static const boost::random::uniform_smallint<> dis;
         return dis(gen, decltype(dis)::param_type{min, max});
     }
 }
@@ -48,7 +48,7 @@ double RandDouble(double min, double max) {
         return min;
     {
         std::scoped_lock lock(s_prng_mutex);
-        static boost::random::uniform_real_distribution<> dis;
+        static const boost::random::uniform_real_distribution<> dis;
         return dis(gen, decltype(dis)::param_type{min, max});
     }
 }
