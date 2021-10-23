@@ -152,7 +152,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
     const sregex MULTI_LINE_VALUE = -*_;
 
     const sregex ENTRY =
-        keep(*(space | +COMMENT)) >>
+        keep(*(space | keep(+COMMENT))) >>
         KEY >> *blank >> (_n | COMMENT) >>
         (("'''" >> MULTI_LINE_VALUE >> "'''" >> *space >> _n) | SINGLE_LINE_VALUE >> _n);
 
