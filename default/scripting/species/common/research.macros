@@ -34,7 +34,6 @@ VERY_BAD_RESEARCH
             activation = And [
                 Planet
                 Focus type = "FOCUS_RESEARCH"
-                Happiness low = 8
             ]
             accountinglabel = "VERY_BAD_RESEARCH_LABEL"
             effects = SetTargetResearch value = Value*[[VERY_BAD_MULTIPLIER]]
@@ -49,7 +48,6 @@ BAD_RESEARCH
             activation = And [
                 Planet
                 Focus type = "FOCUS_RESEARCH"
-                Happiness low = 6
             ]
             accountinglabel = "BAD_RESEARCH_LABEL"
             effects = SetTargetResearch value = Value*[[BAD_MULTIPLIER]]
