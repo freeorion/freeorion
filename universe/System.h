@@ -149,7 +149,7 @@ private:
     /** Returns new copy of this System. */
     [[nodiscard]] System* Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
-    StarType            m_star;
+    StarType            m_star = StarType::INVALID_STAR_TYPE;
     std::vector<int>    m_orbits = std::vector<int>(SYSTEM_ORBITS, INVALID_OBJECT_ID);  ///< indexed by orbit number, indicates the id of the planet in that orbit
     std::set<int>       m_objects;
     std::set<int>       m_planets;
