@@ -4,6 +4,7 @@
 #include <boost/algorithm/clamp.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 #include <GG/GUI.h>
 #include <GG/RichText/RichText.h>
 #include <GG/ScrollPanel.h>
@@ -3301,6 +3302,19 @@ namespace {
         }
     }
 
+    std::set<std::string> ExtractWords(const std::string& search_text) { // TODO: return vector<string_view> ?
+        std::set<std::string> words_in_search_text;
+        for (const auto& word_range : GG::GUI::GetGUI()->FindWordsStringIndices(search_text)) {
+            if (word_range.first == word_range.second)
+                continue;
+            std::string word(search_text.begin() + Value(word_range.first), search_text.begin() + Value(word_range.second));
+            if (word.empty())
+                continue;
+            words_in_search_text.insert(std::move(word));
+        }
+        return words_in_search_text;
+    }
+
     void SearchPediaArticleForWords(        std::string article_key,
                                             std::string article_directory,
                                             std::pair<std::string, std::string> article_name_link,
@@ -3314,17 +3328,18 @@ namespace {
                                             bool search_article_text)
     {
         //std::cout << "start scanning article " << idx << ": " << article_name_link.first << std::endl;
-        const auto& article_name = article_name_link.first;
+        auto article_name = boost::algorithm::to_lower_copy(article_name_link.first);
 
         // search for exact title matches
-        if (boost::iequals(article_name, search_text)) {
+        if (article_name == search_text) {
             exact_match = std::move(article_name_link);
             return;
         }
 
-        // search for full word matches in titles
-        for (const std::string& word : words_in_search_text) {
-            if (GG::GUI::GetGUI()->ContainsWord(article_name, word)) {
+        // search for full word matches in title
+        auto title_words{ExtractWords(article_name)};
+        for (const auto& title_word : title_words) {
+            if (words_in_search_text.count(title_word)) {
                 word_match = std::move(article_name_link);
                 return;
             }
@@ -3336,7 +3351,7 @@ namespace {
             // reject searches in text for words less than 3 characters
             if (word.size() < 3)
                 continue;
-            if (boost::icontains(article_name, word)) {
+            if (boost::contains(article_name, word)) {
                 partial_match = std::move(article_name_link);
                 return;
             }
@@ -3373,22 +3388,10 @@ namespace {
                                   dummy3, dummy1, dummy2, dummyA, dummyB, dummy4,
                                   dummy5, dummy6, detailed_description, dummyC,
                                   dummyD, true);
+        boost::algorithm::to_lower(detailed_description);
 
-        if (boost::icontains(detailed_description, search_text))
+        if (boost::contains(detailed_description, search_text))
             article_match = std::move(article_name_link);
-    }
-
-    std::set<std::string> ExtractWords(const std::string& search_text) {
-        std::set<std::string> words_in_search_text;
-        for (const auto& word_range : GG::GUI::GetGUI()->FindWordsStringIndices(search_text)) {
-            if (word_range.first == word_range.second)
-                continue;
-            std::string word(search_text.begin() + Value(word_range.first), search_text.begin() + Value(word_range.second));
-            if (word.empty())
-                continue;
-            words_in_search_text.insert(std::move(word));
-        }
-        return words_in_search_text;
     }
 }
 
@@ -3400,7 +3403,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     boost::asio::thread_pool thread_pool(num_threads);
 
     // search lists of articles for typed text
-    const std::string& search_text = m_search_edit->Text();
+    auto search_text = boost::algorithm::to_lower_copy(m_search_edit->Text());
     if (search_text.empty())
         return;
 
