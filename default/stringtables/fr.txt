@@ -11528,7 +11528,7 @@ PLC_METROPOLES
 Métropoles
 
 PLC_METROPOLES_DESC
-'''Améliore le rendement pour un maximum de [[value METROPOLES_PLANET_LIMIT]] planètes. S'applique au plus à (1 / [[value METROPOLES_MIN_PLANETS]] des planètes habitées) dont la [[metertype METER_POPULATION]] est au moins égale à [[value METROPOLES_MINIMUM_POPULATION]] et la [[metertype METER_HAPPINESS]] est au moins égale à [[value METROPOLES_MIN_STABILITY]].
+'''Améliore le rendement pour un maximum de [[value METROPOLES_PLANET_LIMIT]] planètes, sans dépasser 1 / [[value METROPOLES_MIN_PLANETS]] de toutes les planètes habitées dans l'empire. Pour être éligibles à cette amélioration, les planètes doivent avoir une [[metertype METER_POPULATION]] au moins égale à [[value METROPOLES_MINIMUM_POPULATION]] et une [[metertype METER_HAPPINESS]] au moins égale à [[value METROPOLES_MIN_STABILITY]].
 Les planètes éligibles avec la [[metertype METER_POPULATION]] la plus importante recevront les bonus suivants, indépendamment de leur Focus:
 • Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value METROPOLES_TARGET_RESEARCH_PERPOP]] par Population.
 • Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value METROPOLES_TARGET_INDUSTRY_PERPOP]] par Population.
@@ -12019,7 +12019,7 @@ PLC_NECESSITY
 Nécessité
 
 PLC_NECESSITY_DESC
-Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes dont la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]], de la racine carrée du produit entre la Population et de combien la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]].
+Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes en Focus Recherche dont la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]] multiplié par la racine carrée du produit entre la Population et de combien la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]].
 
 PLC_NECESSITY_SHORT_DESC
 Améliore la Recherche des planètes à faible Stabilité
@@ -16324,19 +16324,19 @@ ULTIMATE_INFLUENCE_DESC
 +++	Parfait en [[metertype METER_INFLUENCE]] : 300%
 
 BAD_HAPPINESS_DESC
-−	Mauvais en [[metertype METER_HAPPINESS]]: -5
+−	Mauvais en [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
 
 AVERAGE_HAPPINESS_DESC
 '''	Normal en [[metertype METER_HAPPINESS]]: +0'''
 
 GOOD_HAPPINESS_DESC
-+	Bon en [[metertype METER_HAPPINESS]]: +5
++	Bon en [[metertype METER_HAPPINESS]]: +[[value GOOD_HAPPINESS_VAL]]
 
 GREAT_HAPPINESS_DESC
-++	Excellent en [[metertype METER_HAPPINESS]]: +10
+++	Excellent en [[metertype METER_HAPPINESS]]: +[[value GREAT_HAPPINESS_VAL]]
 
 ULTIMATE_HAPPINESS_DESC
-+++	Parfait en [[metertype METER_HAPPINESS]]: +15
++++	Parfait en [[metertype METER_HAPPINESS]]: +[[value ULTIMATE_HAPPINESS_VAL]]
 
 NO_DEFENSE_TROOPS_DESC
 −−−	Pas d'[[metertype METER_TROOPS]] défensive
