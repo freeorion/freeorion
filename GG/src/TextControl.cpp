@@ -108,7 +108,7 @@ Pt TextControl::MinUsableSize(X width) const
 const std::string& TextControl::Text() const
 { return m_text; }
 
-std::string TextControl::Text(CPSize from, CPSize to) const
+std::string_view TextControl::Text(CPSize from, CPSize to) const
 {
     if (from == INVALID_CP_SIZE || to == INVALID_CP_SIZE)
         return "";
@@ -131,7 +131,7 @@ std::string TextControl::Text(CPSize from, CPSize to) const
         //std::cout << "dist low to high: " << std::distance(low_it, high_it) << std::endl;
         //std::cout << "dist high to end: " << std::distance(high_it, m_text.end()) << std::endl;
 
-        return std::string(low_it, high_it);
+        return {&*low_it, static_cast<size_t>(std::distance(low_it, high_it))};
     } catch (...) {
         return "";
     }

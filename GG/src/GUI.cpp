@@ -1486,9 +1486,9 @@ bool GUI::CopyWndText(const Wnd* wnd)
             // if TextControl is an Edit, it may have a subset of its text
             // selected. in that case, only copy the selected text. if nothing
             // is selected, revert to copying the full text of the TextControl.
-            std::string selected_text = edit_control->SelectedText();
+            auto selected_text = edit_control->SelectedText();
             if (!selected_text.empty()) {
-                SetClipboardText(GG::Font::StripTags(selected_text));
+                SetClipboardText(GG::Font::StripTags(std::string{selected_text}));
                 return true;
             }
         }

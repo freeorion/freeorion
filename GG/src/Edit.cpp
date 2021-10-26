@@ -70,7 +70,7 @@ Pt Edit::ClientLowerRight() const
 const std::pair<CPSize, CPSize>& Edit::CursorPosn() const
 { return m_cursor_pos; }
 
-std::string Edit::SelectedText() const
+std::string_view Edit::SelectedText() const
 { return Text(m_cursor_pos.first, m_cursor_pos.second); }
 
 Clr Edit::InteriorColor() const
