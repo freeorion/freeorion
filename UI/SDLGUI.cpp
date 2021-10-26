@@ -220,13 +220,13 @@ std::string SDLGUI::ClipboardText() const {
     if (SDL_HasClipboardText()) {
         char* text = SDL_GetClipboardText();
         if (text) {
-            std::string result(text);
+            std::string result{text};
             SDL_free(text);
             return result;
         }
     }
 
-    return std::string();
+    return std::string{};
 }
 
 void SDLGUI::ExitApp(int code)
@@ -258,7 +258,7 @@ void SDLGUI::SetVideoMode(X width, Y height, bool fullscreen, bool fake_mode_cha
     ResetFramebuffer();
 }
 
-bool SDLGUI::SetClipboardText(const std::string& text)
+bool SDLGUI::SetClipboardText(std::string text)
 { return SDL_SetClipboardText(text.c_str()) == 0; }
 
 SDLGUI* SDLGUI::GetGUI()

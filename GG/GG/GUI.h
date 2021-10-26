@@ -356,7 +356,7 @@ public:
     /** Sets the currently-installed cursor. */
     void SetCursor(const std::shared_ptr<Cursor>& cursor);
 
-    virtual bool SetClipboardText(const std::string& text); ///< sets text stored in clipboard
+    virtual bool SetClipboardText(std::string text);        ///< sets text stored in clipboard
     bool CopyFocusWndText();                                ///< copies current focus Wnd as text to clipboard
     bool CopyWndText(const Wnd* wnd);                       ///< copies \a wnd as text to clipboard
     bool PasteFocusWndText(const std::string& text);        ///< attempts to paste \a text into the current focus Wnd

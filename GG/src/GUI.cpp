@@ -1463,9 +1463,9 @@ void GUI::SetCursor(const std::shared_ptr<Cursor>& cursor)
 std::string GUI::ClipboardText() const
 { return m_impl->m_clipboard_text; }
 
-bool GUI::SetClipboardText(const std::string& text)
+bool GUI::SetClipboardText(std::string text)
 {
-    m_impl->m_clipboard_text = text;
+    m_impl->m_clipboard_text = std::move(text);
     return true;
 }
 
@@ -1488,7 +1488,7 @@ bool GUI::CopyWndText(const Wnd* wnd)
             // is selected, revert to copying the full text of the TextControl.
             auto selected_text = edit_control->SelectedText();
             if (!selected_text.empty()) {
-                SetClipboardText(GG::Font::StripTags(std::string{selected_text}));
+                SetClipboardText(GG::Font::StripTags(selected_text));
                 return true;
             }
         }

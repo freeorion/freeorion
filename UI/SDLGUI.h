@@ -65,7 +65,7 @@ public:
     virtual bool FakeModeChange() const final;
 
     void ExitApp(int code = 0) override;
-    bool SetClipboardText(const std::string& text) override;
+    bool SetClipboardText(std::string text) override;
 
     void Enter2DMode() override;
     void Exit2DMode() override;
