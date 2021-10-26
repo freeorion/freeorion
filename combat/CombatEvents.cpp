@@ -29,8 +29,7 @@ namespace {
 
     // TODO: Move this code into a common non UI linked location, so that
     // there is no duplicated code between server and clientUI.
-    const std::string EMPTY_STRING("");
-    const std::string& LinkTag(UniverseObjectType obj_type) {
+    std::string_view LinkTag(UniverseObjectType obj_type) {
         switch (obj_type) {
         case UniverseObjectType::OBJ_SHIP:
             return VarText::SHIP_ID_TAG;
@@ -45,24 +44,24 @@ namespace {
         case UniverseObjectType::OBJ_FIELD:
         case UniverseObjectType::OBJ_FIGHTER:
         default:
-            return EMPTY_STRING;
+            return "";
         }
     }
 
-    std::string WrapWithTagAndId(const std::string& meat, const std::string& tag, int id) {
+    std::string WrapWithTagAndId(std::string_view meat, std::string_view tag, int id) {
         std::stringstream ss;
         ss << "<" << tag << " " << std::to_string(id) << ">" << meat << "</" << tag << ">";
         return ss.str();
     }
 
-    std::string WrapUserStringWithTag(const std::string& table_id, const std::string& tag) {
+    std::string WrapUserStringWithTag(std::string_view table_id, std::string_view tag) {
         std::stringstream ss;
         ss << "<" << tag << " " << table_id << ">" << UserString(table_id) << "</" << tag << ">";
         return ss.str();
     }
 
     //Copied pasted from Font.cpp due to Font not being linked into AI and server code
-    std::string WrapColorTag(std::string const & text, const EmpireColor& c) {
+    std::string WrapColorTag(std::string_view text, EmpireColor c) {
         std::stringstream stream;
         stream << "<rgba "
                << static_cast<int>(std::get<0>(c)) << " "
@@ -73,12 +72,11 @@ namespace {
         return stream.str();
     }
 
-    std::string EmpireColorWrappedText(int empire_id, const std::string& text) {
+    std::string EmpireColorWrappedText(int empire_id, std::string_view text) {
         // TODO: refactor this to somewhere that links with the UI code.
         // Hardcoded default color becauses not linked with UI code.
-        const Empire* empire = GetEmpire(empire_id);
-        EmpireColor c = (empire ? empire->Color() : EmpireColor{{80, 255, 128, 255}});
-        return WrapColorTag(text, c);
+        auto empire = GetEmpire(empire_id);
+        return WrapColorTag(text, empire ? empire->Color() : EmpireColor{{80, 255, 128, 255}});
     }
 
     /// Creates a link tag of the appropriate type for object_id,
@@ -108,15 +106,13 @@ namespace {
         if (empire_id == ALL_EMPIRES) {
             return UserString("NEUTRAL");
         } else if (auto empire = context.GetEmpire(empire_id)) {
-            const std::string& tag = VarText::EMPIRE_ID_TAG;
-            std::string empire_wrapped = WrapWithTagAndId(empire->Name(), tag, empire_id);
-            return EmpireColorWrappedText(empire_id, empire_wrapped);
+            return EmpireColorWrappedText(empire_id, WrapWithTagAndId(empire->Name(), VarText::EMPIRE_ID_TAG, empire_id));
         } else {
             return UserString("ENC_COMBAT_UNKNOWN_OBJECT");
         }
     }
 
-    std::string ShipPartLink(const std::string& part) {
+    std::string ShipPartLink(std::string_view part) {
         return part.empty() ? UserString("ENC_COMBAT_UNKNOWN_OBJECT")
             : WrapUserStringWithTag(part, VarText::SHIP_PART_TAG);
     }
