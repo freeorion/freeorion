@@ -71,7 +71,7 @@ jobs:
       - name: Test Godot
         run: |
           $env:Path += ";$($pwd.Path)\\build\\Release"
-          .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -d -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
+          .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
 
   build-windows-2022-cmake:
     name: MSVS 2022 on Windows 
@@ -125,4 +125,4 @@ jobs:
       - name: Test Godot
         run: |
           $env:Path += ";$($pwd.Path)\\build\\Release"
-          .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -d -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
+          .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
