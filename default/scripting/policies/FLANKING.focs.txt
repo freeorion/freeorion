@@ -21,10 +21,9 @@ Policy
                 Ship
                 OwnedBy empire = Source.Owner
                 Armed
-                (LocalCandidate.Fleet.ETA = 1)
-                Or [
+                 Or [
                    // Stationary ships bonus (prepared defensive flanking)
-                   And [ Planet
+                   And [
                        InSystem
                        Stationary
                        ((
@@ -32,6 +31,7 @@ Policy
                                Ship
                                InSystem id = RootCandidate.SystemID
                                OwnedBy empire = Source.Owner
+                               Stationary
                                Armed
                            ]
                         ) > (
@@ -43,25 +43,42 @@ Policy
                         )
                        )
                    ]
-                   // Multi starlane attack bonus (pincer attack)
-                   (( Statistic CountUnique
-                      value = LocalCandidate.PreviousToFinalDestinationID
-                      condition = And [
-                          Fleet
-                          OwnedBy empire = RootCandidate.Owner
-                          (LocalCandidate.FinalDestinationID = RootCandidate.Fleet.FinalDestinationID)
-                          (LocalCandidate.ETA = 1)
-                          Contains condition = And [ Ship Armed ]
-                      ]
+                   And [
+                       (LocalCandidate.Fleet.ETA = 1)
+
+                       // Multi starlane attack bonus (pincer attack)
+                       (( Statistic CountUnique
+                          value = LocalCandidate.PreviousToFinalDestinationID
+                          condition = And [
+                              Fleet
+                              OwnedBy empire = RootCandidate.Owner
+                              (LocalCandidate.FinalDestinationID = RootCandidate.Fleet.FinalDestinationID)
+                              (LocalCandidate.ETA = 1)
+                              Contains condition = And [ Ship Armed ]
+                          ]
                     ) > 1
                    )
+                   ]
+                   
                 ]
             ]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
+                // Boost damage for ship weapons, strikers, *bombers. Arc disruptor instead increases shots.
                 SetMaxDamage partname = "SR_WEAPON_1_1" value = Value + (NamedReal name = "PLC_FLANKING_DAMAGE_BOOST" value = 1.0 * [[SHIP_WEAPON_DAMAGE_FACTOR]] )
                 SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + NamedRealLookup name = "PLC_FLANKING_DAMAGE_BOOST"
                 SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + NamedRealLookup name = "PLC_FLANKING_DAMAGE_BOOST"
                 SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + NamedRealLookup name = "PLC_FLANKING_DAMAGE_BOOST"
+                SetMaxSecondaryStat partname = "SR_ARC_DISRUPTOR" value = Value + NamedReal name = "PLC_FLANKING_ARC_DISRUPTOR_SHOT_BONUS" value = 1.0
+                SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + (NamedReal name = "PLC_FLANKING_FIGHTER_DAMAGE_BOOST" value = 2.0 * [[FIGHTER_DAMAGE_FACTOR]] )
+                SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + NamedRealLookup name = "PLC_FLANKING_FIGHTER_DAMAGE_BOOST"
+                SetMaxSecondaryStat partname = "FT_HANGAR_4" value = Value + NamedRealLookup name = "PLC_FLANKING_FIGHTER_DAMAGE_BOOST"
+                // Boost interceptor launch rate by 2
+                SetMaxCapacity partname = "FT_BAY_1" value = Value
+                + (  (Statistic If condition = And [ Object id = Target.ID  DesignHasPart low = 1 high = 999 name = "FT_HANGAR_1" ] )
+                   * (NamedReal name = "PLC_FLANKING_BAY_LAUNCH_BONUS" value = 2.0 ) )
+                // TODO check monster weapons
+                // no bonus to point defense
             ]
 
     ]

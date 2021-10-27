@@ -12037,7 +12037,14 @@ PLC_FLANKING
 Flanking
 
 PLC_FLANKING_DESC
-In systems where the empire that adopted this policy has more stationary armed ships than there are enemy ships present, that empire's weapons will do [[value PLC_FLANKING_DAMAGE_BOOST]] additional structural damage per shot.
+'''In systems where the empire that adopted this policy has more stationary armed ships than there are enemy ships present, that empire's weapons will do additional structural damage per shot.
+
+Also ships flying a pincer attack do that additional structural damage. A pincer attack happens when ships of the adopting empire are in flight arriving next turn in a system via different starlanes.
+
+• Weapon damage for ship weapons is increased by [[value PLC_FLANKING_DAMAGE_BOOST]] (i.e. for [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], or [[shippart SR_WEAPON_4_1]])
+• Weapon damage for strikers, bombers and heavy bombers is increased by [[value PLC_FLANKING_FIGHTER_DAMAGE_BOOST]] (i.e. for [[shippart FT_HANGAR_1]], [[shippart FT_HANGAR_2]], or [[shippart FT_HANGAR_3]])
+• Number of fighters launched per [[FT_BAY_1]] is increased by [[value PLC_FLANKING_BAY_LAUNCH_BONUS]]
+• Number of shots for [[shippart SR_ARC_DISRUPTOR]] is increased by [[value PLC_FLANKING_ARC_DISRUPTOR_SHOT_BONUS]] '''
 
 PLC_FLANKING_SHORT_DESC
 Boosts Ship Damage
@@ -12047,7 +12054,10 @@ Charge
 
 PLC_CHARGE_DESC
 '''For armed ships with at least [[value PLC_CHARGE_MINIMUM_SPEED]] [[metertype METER_SPEED]]:
-• Weapon damage is increased by [[value PLC_CHARGE_DAMAGE_BOOST]]
+• Weapon damage for ship weapons is increased by [[value PLC_CHARGE_DAMAGE_BOOST]] (i.e. for [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], or [[shippart SR_WEAPON_4_1]])
+• Number of fighters launched per [[FT_BAY_1]] is increased by [[value PLC_CHARGE_BAY_LAUNCH_BONUS]]
+• Number of shots for [[shippart SR_ARC_DISRUPTOR]] is increased by [[value PLC_CHARGE_ARC_DISRUPTOR_SHOT_BONUS]]
+• Number of shots for [[shippart SR_WEAPON_0_1]] is decreased by [[value PLC_CHARGE_FLAK_SHOT_REDUCTION]]
 • [[metertype METER_MAX_SHIELD]] is reduced by [[value PLC_CHARGE_SHIELD_REDUCTION]] '''
 
 PLC_CHARGE_SHORT_DESC
