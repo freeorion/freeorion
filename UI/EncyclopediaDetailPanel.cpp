@@ -1623,10 +1623,11 @@ namespace {
             for (auto& name : species_that_dislike)
                 detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name) + " ";
         }
+        detailed_description += "\n";
 
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown") &&
             !policy->Effects().empty())
-        { detailed_description += "\n\n" + Dump(policy->Effects()); }
+        { detailed_description += "\n" + Dump(policy->Effects()); }
     }
 
     void RefreshDetailPanelBuildingTypeTag( const std::string& item_type, const std::string& item_name,
@@ -3380,6 +3381,7 @@ namespace {
         float dummyB;
         std::string dummy3, dummy4, dummy5, dummy6;
         std::string detailed_description;
+        detailed_description.reserve(2000); // guessitmate
         GG::Clr dummyC;
         std::weak_ptr<const ShipDesign> dummyD;
 
@@ -3552,6 +3554,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     std::string general_type;           // general type of thing being shown, eg. "Building" or "Ship Part"
     std::string specific_type;          // specific type of thing; thing's purpose.  eg. "Farming" or "Colonization".  May be left blank for things without specific types (eg. specials)
     std::string detailed_description;
+    detailed_description.reserve(2000); // guesstimate
     GG::Clr color(GG::CLR_ZERO);
 
     if (m_items.empty())
