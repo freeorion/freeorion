@@ -35,7 +35,7 @@ MAX_BASE_TROOPERS_POOR_INVADERS = 10
 _TROOPS_SAFETY_MARGIN = 1  # try to send this amount of additional troops to account for uncertainties in calculation
 MIN_INVASION_SCORE = 20
 
-invasion_timer = AITimer("get_invasion_fleets()", write_log=False)
+invasion_timer = AITimer("get_invasion_fleets()")
 
 
 def get_invasion_fleets():
