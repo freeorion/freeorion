@@ -1499,7 +1499,7 @@ namespace {
 
         if (!unlocked_items.empty()) {
             for (const UnlockableItem& item : unlocked_items) {
-                auto& TAG = [type{item.type}]() -> const std::string& {
+                auto TAG = [type{item.type}]() -> std::string_view {
                     switch (type) {
                     case UnlockableItemType::UIT_BUILDING:    return VarText::BUILDING_TYPE_TAG;     break;
                     case UnlockableItemType::UIT_SHIP_PART:   return VarText::SHIP_PART_TAG;         break;
@@ -1507,7 +1507,7 @@ namespace {
                     case UnlockableItemType::UIT_SHIP_DESIGN: return VarText::PREDEFINED_DESIGN_TAG; break;
                     case UnlockableItemType::UIT_TECH:        return VarText::TECH_TAG;              break;
                     case UnlockableItemType::UIT_POLICY:      return VarText::POLICY_TAG;            break;
-                    default:                                  return EMPTY_STRING;
+                    default:                                  return "";
                     }
                 }();
 
@@ -1761,14 +1761,14 @@ namespace {
         if (!objects_with_special.empty()) {
             detailed_description += "\n\n" + UserString("OBJECTS_WITH_SPECIAL");
             for (auto& obj : objects_with_special) {
-                const auto& TEXT_TAG = [&obj]() {
+                auto TEXT_TAG = [&obj]() -> std::string_view {
                     switch (obj->ObjectType()) {
                     case UniverseObjectType::OBJ_SHIP:      return VarText::SHIP_ID_TAG;    break;
                     case UniverseObjectType::OBJ_FLEET:     return VarText::FLEET_ID_TAG;   break;
                     case UniverseObjectType::OBJ_PLANET:    return VarText::PLANET_ID_TAG;  break;
                     case UniverseObjectType::OBJ_BUILDING:  return VarText::BUILDING_ID_TAG;break;
                     case UniverseObjectType::OBJ_SYSTEM:    return VarText::SYSTEM_ID_TAG;  break;
-                    default:                                return EMPTY_STRING;
+                    default:                                return "";
                     }
                 }();
 
@@ -3642,7 +3642,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     m_scroll_panel->ScrollTo(GG::Y0);
 }
 
-void EncyclopediaDetailPanel::AddItem(const std::string& type, std::string name) {
+void EncyclopediaDetailPanel::AddItem(std::string_view type, std::string name) {
     // if the actual item is not the last one, all aubsequented items are deleted
     if (!m_items.empty()) {
         if (m_items_it->first == type && m_items_it->second == name)

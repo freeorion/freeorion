@@ -571,7 +571,7 @@ void TextLinker::MarkLinks() {
     SetLinkedText(std::move(marked_text));
 }
 
-std::string LinkTaggedText(const std::string& tag, std::string_view stringtable_entry) {
+std::string LinkTaggedText(std::string_view tag, std::string_view stringtable_entry) {
     std::string retval;
     const auto& us{UserString(stringtable_entry)};
     retval.reserve(10 + stringtable_entry.length() + 2*tag.length() + us.length());
@@ -580,7 +580,7 @@ std::string LinkTaggedText(const std::string& tag, std::string_view stringtable_
     return retval;
 }
 
-std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& text) {
+std::string LinkTaggedIDText(std::string_view tag, int id, std::string_view text) {
     std::string retval;
     retval.reserve(22 + text.length() + 2*tag.length());
     retval.append("<").append(tag).append(" ").append(std::to_string(id))
@@ -588,8 +588,8 @@ std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& 
     return retval;
 }
 
-std::string LinkTaggedPresetText(const std::string& tag, const std::string& stringtable_entry,
-                                 const std::string& display_text)
+std::string LinkTaggedPresetText(std::string_view tag, std::string_view stringtable_entry,
+                                 std::string_view display_text)
 {
     std::string retval;
     retval.reserve(10 + display_text.length() + 2*tag.length() + stringtable_entry.length());
