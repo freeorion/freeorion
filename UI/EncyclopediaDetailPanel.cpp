@@ -3,8 +3,9 @@
 #include <unordered_map>
 #include <boost/algorithm/clamp.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string/replace.hpp>
-#include <boost/algorithm/string/case_conv.hpp>
+//#include <boost/algorithm/string/replace.hpp>
+//#include <boost/algorithm/string/case_conv.hpp>
+#include <boost/locale/conversion.hpp>
 #include <GG/GUI.h>
 #include <GG/RichText/RichText.h>
 #include <GG/ScrollPanel.h>
@@ -3329,8 +3330,7 @@ namespace {
                                             bool search_article_text)
     {
         //std::cout << "start scanning article " << idx << ": " << article_name_link.first << std::endl;
-        auto article_name = boost::algorithm::to_lower_copy(article_name_link.first);
-
+        std::string article_name = boost::locale::to_lower(article_name_link.first, GetLocale("en_US.UTF-8"));
         // search for exact title matches
         if (article_name == search_text) {
             exact_match = std::move(article_name_link);
@@ -3366,10 +3366,11 @@ namespace {
         const auto& article_entry = GetEncyclopedia().GetArticleByCategoryAndKey(article_directory, article_key);
         if (!article_entry.description.empty()) {
             // article present in pedia directly
-            if (boost::icontains(UserString(article_entry.description), search_text)) {
+            const auto& article_text{UserString(article_entry.description)};
+            std::string article_text_lower = boost::locale::to_lower(article_text, GetLocale("en_US.UTF-8"));
+            if (boost::contains(article_text_lower, search_text))
                 article_match = std::move(article_name_link);
-                return;
-            }
+            return;
         }
 
 
@@ -3390,10 +3391,15 @@ namespace {
                                   dummy3, dummy1, dummy2, dummyA, dummyB, dummy4,
                                   dummy5, dummy6, detailed_description, dummyC,
                                   dummyD, true);
-        boost::algorithm::to_lower(detailed_description);
-
-        if (boost::contains(detailed_description, search_text))
+        if (boost::contains(detailed_description, search_text)) {
             article_match = std::move(article_name_link);
+            return;
+        }
+        std::string desc_lower = boost::locale::to_lower(detailed_description, GetLocale("en_US.UTF-8"));
+        if (boost::contains(desc_lower, search_text)) {
+            article_match = std::move(article_name_link);
+            return;
+        }
     }
 }
 
