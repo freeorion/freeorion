@@ -74,7 +74,7 @@
 class FO_COMMON_API VarText {
 public:
     //! Create a VarText instance with an empty #m_template_string.
-    VarText();
+    VarText() = default;
 
     //! Create a VarText instance from the given @p template_string.
     //!
@@ -97,7 +97,7 @@ public:
     { return m_stringtable_lookup_flag; }
 
     //! Return the variables available for substitution.
-    std::vector<std::string> GetVariableTags() const;
+    std::vector<std::string_view> GetVariableTags() const;
 
     //! Set the #m_template_string to the given @p template_string.
     //!
@@ -114,18 +114,9 @@ public:
     //!     Tag of the #m_variables set, may be labled.
     //! @param  data
     //!     Data value of the #m_variables set.
-    void AddVariable(const std::string& tag, const std::string& data);
-
-    //! Assign @p data to a given @p tag. Overwrites / replaces data of existing tags.
-    //!
-    //! The @p data should match @p tag as listed in
-    //!   @ref variable_tags "Variable tags".
-    //!
-    //! @param  tag
-    //!     Tag of the #m_variables set, may be labled.
-    //! @param  data
-    //!     Data value of the #m_variables set.
-    void AddVariable(const std::string& tag, std::string&& data);
+    void AddVariable(std::string tag, std::string data);
+    void AddVariable(std::string_view tag, std::string data)
+    { AddVariable(std::string{tag}, std::move(data)); }
 
     //! Assign @p data as tags. Does not overwrite or replace data of existing tags.
     //!
@@ -200,14 +191,14 @@ protected:
     //! substituted to render the text as user-readable.
     //!
     //! @see  #m_stringtable_lookup_flag
-    std::string m_template_string;
+    std::string m_template_string; // need to hold own copy of this string to support deserialization
 
     //! If true the #m_template_string will be looked up in the stringtable
     //! prior to substitution for variables.
     bool m_stringtable_lookup_flag = false;
 
     //! Maps variable tags into values, which are used during text substitution.
-    std::map<std::string, std::string> m_variables;
+    std::map<std::string, std::string, std::less<>> m_variables; // need to hold own copies of strings here to support deserialization
 
     //! #m_template_string with applied #m_variables substitute.
     mutable std::string m_text;

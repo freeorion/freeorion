@@ -196,7 +196,7 @@ namespace {
     //! Looks up the given match in the Universe and returns the Universe
     //! entities value.
     struct Substitute {
-        Substitute(const std::map<std::string, std::string>& variables, bool& valid) :
+        Substitute(const std::map<std::string, std::string, std::less<>>& variables, bool& valid) :
             m_variables(variables),
             m_valid(valid)
         {}
@@ -227,7 +227,7 @@ namespace {
             return UserString("ERROR");
         }
 
-        const std::map<std::string, std::string>& m_variables;
+        const std::map<std::string, std::string, std::less<>>& m_variables;
         bool& m_valid;
     };
 }
@@ -262,9 +262,6 @@ const std::string VarText::FIELD_TYPE_TAG = "fieldtype";
 const std::string VarText::METER_TYPE_TAG = "metertype";
 
 
-VarText::VarText()
-{}
-
 VarText::VarText(std::string template_string, bool stringtable_lookup) :
     m_template_string(std::move(template_string)),
     m_stringtable_lookup_flag(stringtable_lookup)
@@ -287,23 +284,20 @@ void VarText::SetTemplateString(std::string template_string, bool stringtable_lo
     m_stringtable_lookup_flag = stringtable_lookup;
 }
 
-std::vector<std::string> VarText::GetVariableTags() const {
-    std::vector<std::string> retval;
+std::vector<std::string_view> VarText::GetVariableTags() const {
+    std::vector<std::string_view> retval;
     retval.reserve(m_variables.size());
-    for (const auto& variable : m_variables)
-        retval.emplace_back(variable.first);
+    for (const auto& [tag, data] : m_variables)
+        retval.emplace_back(tag);
     return retval;
 }
 
-void VarText::AddVariable(const std::string& tag, const std::string& data)
-{ m_variables[tag] = data; }
-
-void VarText::AddVariable(const std::string& tag, std::string&& data)
-{ m_variables[tag] = std::move(data); }
+void VarText::AddVariable(std::string tag, std::string data)
+{ m_variables[std::move(tag)] = std::move(data); }
 
 void VarText::AddVariables(std::vector<std::pair<std::string, std::string>>&& data) {
     for (auto& dat : data)
-        m_variables.emplace(std::move(dat));
+        m_variables.insert(std::move(dat));
 }
 
 void VarText::GenerateVarText() const {
