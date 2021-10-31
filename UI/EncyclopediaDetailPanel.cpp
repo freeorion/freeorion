@@ -3,8 +3,6 @@
 #include <unordered_map>
 #include <boost/algorithm/clamp.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-//#include <boost/algorithm/string/replace.hpp>
-//#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/locale/conversion.hpp>
 #include <GG/GUI.h>
 #include <GG/RichText/RichText.h>
@@ -68,11 +66,11 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     const std::string EMPTY_STRING;
-    const std::string INCOMPLETE_DESIGN = "incomplete design";
-    const std::string UNIVERSE_OBJECT = "universe object";
-    const std::string PLANET_SUITABILITY_REPORT = "planet suitability report";
-    const std::string GRAPH = "data graph";
-    const std::string TEXT_SEARCH_RESULTS = "dynamic generated text";
+    constexpr std::string_view INCOMPLETE_DESIGN = "incomplete design";
+    constexpr std::string_view UNIVERSE_OBJECT = "universe object";
+    constexpr std::string_view PLANET_SUITABILITY_REPORT = "planet suitability report";
+    constexpr std::string_view GRAPH = "data graph";
+    constexpr std::string_view TEXT_SEARCH_RESULTS = "dynamic generated text";
 
     /** @content_tag{CTRL_ALWAYS_REPORT} Always display a species on a planet suitability report. **/
     const std::string TAG_ALWAYS_REPORT = "CTRL_ALWAYS_REPORT";
@@ -90,17 +88,19 @@ namespace {
      * @return The first matched pedia category for this set of tags,
      *          or empty string if there are no matches.
      */
-    std::string DetermineCustomCategory(const std::set<std::string>& tags) {
-        if (tags.empty())
-            return EMPTY_STRING;
-
+    template <class TagContainer = std::vector<std::string_view>>
+    std::string_view DetermineCustomCategory(const TagContainer& tags) {
         // for each tag, check if it starts with the prefix TAG_PEDIA_PREFIX
         // when a match is found, return the match (without the prefix portion)
-        for (const std::string& tag : tags)
-            if (boost::starts_with(tag, TAG_PEDIA_PREFIX))
-                return boost::replace_first_copy(tag, TAG_PEDIA_PREFIX, EMPTY_STRING);
+        for (std::string_view tag : tags) {
+            if (boost::starts_with(tag, TAG_PEDIA_PREFIX)) {
+                //return boost::replace_first_copy(tag, TAG_PEDIA_PREFIX, "");
+                tag.remove_prefix(TAG_PEDIA_PREFIX.length());
+                return tag;
+            }
+        }
 
-        return EMPTY_STRING;
+        return ""; // no matching tag found
     }
 
     /** Retreive a value label and general string representation for @a meter_type */
@@ -3518,7 +3518,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     match_report += "\n\n" + boost::io::str(FlexibleFormat(UserString("ENC_SEARCH_TOOK"))
                                             % search_text % (std::to_string(duration_ms) + " ms"));
 
-    AddItem(TEXT_SEARCH_RESULTS, match_report);
+    AddItem(TEXT_SEARCH_RESULTS, std::move(match_report));
 }
 
 void EncyclopediaDetailPanel::Refresh() {
