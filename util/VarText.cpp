@@ -47,10 +47,13 @@ namespace {
     //!
     //! @return
     //!     The tagged content.
-    std::string WithTags(const std::string& content, const std::string& tag, const std::string& data) {
-        std::string open_tag = "<" + tag + " " + data + ">";
-        std::string close_tag = "</" + tag + ">";
-        return open_tag + content + close_tag;
+    std::string WithTags(std::string_view content, std::string_view tag, std::string_view data) {
+        std::string retval;
+        retval.reserve(1 + tag.size() + 1 + data.size() + 1 + content.size() + 2 + tag.size() + 2);
+        retval.append("<").append(tag).append(" ").append(data).append(">")
+              .append(content)
+              .append("</").append(tag).append(">");
+        return retval;
     }
 
     //! Function signature of tag substitution functions.
@@ -140,8 +143,8 @@ namespace {
     }
 
     //! Global substitution map, wrapped in a function to avoid initialization order issues
-    const std::map<std::string, TagString>& SubstitutionMap() {
-        static std::map<std::string, TagString> substitute_map{
+    const std::map<std::string, TagString, std::less<>>& SubstitutionMap() {
+        static const std::map<std::string, TagString, std::less<>> substitute_map{
             {VarText::TEXT_TAG, [](const std::string& data) -> boost::optional<std::string>
                 { return UserString(data); }},
             {VarText::RAW_TEXT_TAG, [](const std::string& data) -> boost::optional<std::string>
@@ -194,7 +197,8 @@ namespace {
 
 
     //! Looks up the given match in the Universe and returns the Universe
-    //! entities value.
+    //! entities value. If the lookup or the substitution fails, sets
+    //! \a valid to false.
     struct Substitute {
         Substitute(const std::map<std::string, std::string, std::less<>>& variables, bool& valid) :
             m_variables(variables),
@@ -204,25 +208,31 @@ namespace {
         std::string operator()(xpr::smatch const& match) const {
             // Labelled variables have the form %tag:label%,  unlabelled are just %tag%
             // Use the label value. When missing, use the tag submatch as label instead.
-            std::string label{match[match[2].matched ? 2 : 1].str()};
+
+            const int idx = match[2].matched ? 2 : 1;
+            const auto& m{match[idx]};
+            std::string_view label{&*m.first, static_cast<size_t>(std::max(0, static_cast<int>(m.length())))};
 
             // look up child
             auto elem = m_variables.find(label);
-            if (m_variables.end() == elem) {
-                ErrorLogger() << "Substitute::operator(): No value found for label: " << label << " from token: " << match.str();
+            if (elem == m_variables.end()) {
+                ErrorLogger() << "Substitute::operator(): No value found for label: " << label
+                              << "  from token: " << match.str();
                 m_valid = false;
                 return UserString("ERROR");
             }
 
+            std::string_view tag{&*match[1].first, static_cast<size_t>(std::max(0, static_cast<int>(match[1].length())))};
 
-            std::string tag{match[1].str()};
-            auto substituter = SubstitutionMap().find(tag);
-            if (substituter != SubstitutionMap().end()) {
-                if (auto substitution = substituter->second(elem->second))
-                    return *substitution;
+            if (auto substituter = SubstitutionMap().find(tag); substituter != SubstitutionMap().end()) {
+                const auto& substitution_func = substituter->second;
+                const auto& variable_value = elem->second;
+                if (auto substitution = substitution_func(variable_value))
+                    return *substitution; // optional<std::string> contains a temporary string, which can't be returned by reference
             }
 
-            ErrorLogger() << "Substitute::operator(): No substitution executed for tag: " << tag << " from token: " << match.str();
+            ErrorLogger() << "Substitute::operator(): No substitution executed for tag: " << tag
+                          << " from token: " << match.str();
             m_valid = false;
             return UserString("ERROR");
         }
