@@ -56,15 +56,8 @@ namespace {
         return retval;
     }
 
-    //! Function signature of tag substitution functions.
-    //!
-    //! @param data
-    //!     Data values The signature of functions that generate substitution
-    //!     strings for tags.
-    typedef std::function<boost::optional<std::string> (const std::string& data)> TagString;
-
     //! Get string substitute for a tag that is a universe object
-    boost::optional<std::string> UniverseObjectString(const std::string& data, const std::string& tag) {
+    boost::optional<std::string> UniverseObjectString(const std::string& data, std::string_view tag) {
         int object_id = INVALID_OBJECT_ID;
         try {
             object_id = boost::lexical_cast<int>(data);
@@ -105,8 +98,10 @@ namespace {
         boost::optional<std::string> retval = boost::none;
         // validate data
         MeterType meter_type = MeterType::INVALID_METER_TYPE;
-        std::istringstream data_ss(data);
-        data_ss >> meter_type;
+        try {
+            meter_type = boost::lexical_cast<MeterType>(data);
+        } catch (...) {
+        }
 
         if (meter_type > MeterType::INVALID_METER_TYPE && meter_type < MeterType::NUM_METER_TYPES) {
             retval = boost::lexical_cast<std::string>(meter_type);
@@ -131,23 +126,26 @@ namespace {
         return boost::none;
     }
 
-    //! Returns substitution string for an empire tag
-    //! Interprets value of data as a name.
-    //! Returns translation of name, if Get says
-    //! that a thing by that name exists, otherwise boost::none.
+    //! Returns substitution string for tag and data, where \a data is looked up using the
+    //! GetByName function and the returned name is wrapped in \a tag to linkifying it.
+    //! If GetByName returns an empty optional or null pointer, then an empty optional<string>
+    //! is returned
     template <typename T, const T* (*GetByName)(const std::string&)>
-    boost::optional<std::string> NameString(const std::string& data, const std::string& tag) {
+    boost::optional<std::string> NameString(const std::string& data, std::string_view tag) {
         if (!GetByName(data))
             return boost::none;
         return WithTags(UserString(data), tag, data);
     }
 
-    //! Global substitution map, wrapped in a function to avoid initialization order issues
-    const std::map<std::string, TagString, std::less<>>& SubstitutionMap() {
-        static const std::map<std::string, TagString, std::less<>> substitute_map{
-            {VarText::TEXT_TAG, [](const std::string& data) -> boost::optional<std::string>
+    //! Function signature of tag substitution functions.
+    using TagStringFunc = std::function<boost::optional<std::string> (const std::string& data)>;
+
+    //! tag data to user-readable text Substitution map
+    const std::map<std::string_view, TagStringFunc>& SubstitutionMap() {
+        static std::map<std::string_view, TagStringFunc> substitute_map{
+            {VarText::TEXT_TAG, [](const std::string& data)
                 { return UserString(data); }},
-            {VarText::RAW_TEXT_TAG, [](const std::string& data) -> boost::optional<std::string>
+            {VarText::RAW_TEXT_TAG, [](const std::string& data)
                 { return data; }},
             {VarText::PLANET_ID_TAG, [](const std::string& data)
                 { return UniverseObjectString(data, VarText::PLANET_ID_TAG); }},
@@ -161,7 +159,7 @@ namespace {
                 { return UniverseObjectString(data, VarText::BUILDING_ID_TAG); }},
             {VarText::FIELD_ID_TAG, [](const std::string& data)
                 { return UniverseObjectString(data, VarText::FIELD_ID_TAG); }},
-            {VarText::COMBAT_ID_TAG, [](const std::string& data) -> boost::optional<std::string>
+            {VarText::COMBAT_ID_TAG, [](const std::string& data)
                 { return WithTags(UserString("COMBAT"), VarText::COMBAT_ID_TAG, data); }},
             {VarText::TECH_TAG, [](const std::string& data)
                 { return NameString<Tech, GetTech>(data, VarText::TECH_TAG); }},
