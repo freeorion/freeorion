@@ -137,7 +137,7 @@ namespace {
 
     std::string EmpireIdToText(int empire_id) {
         std::string retval;
-        const/*expr*/ size_t retval_sz = 24 + 1 + VarText::EMPIRE_ID_TAG.length()*2 + 1 + 8 + 1 + 30 + 3 + 1 + 10; // semi-guesstimate TODO: make constexpr
+        constexpr size_t retval_sz = 24 + 1 + VarText::EMPIRE_ID_TAG.length()*2 + 1 + 8 + 1 + 30 + 3 + 1 + 10; // semi-guesstimate
         retval.reserve(retval_sz);
         if (const auto empire = GetEmpire(empire_id))
             return retval.append(GG::RgbaTag(empire->Color())).append("<").append(VarText::EMPIRE_ID_TAG).append(" ")
