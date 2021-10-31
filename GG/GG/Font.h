@@ -602,6 +602,7 @@ public:
         when rendering text.  Passing "foo" will cause Font to treat "<foo>",
         "<foo [arg1 [arg2 ...]]>", and "</foo>" as tags. */
     static void RegisterKnownTag(const std::string& tag);
+    static void RegisterKnownTag(std::string_view tag);
 
     /** Removes \a tag from the known tag list.  Does not remove the built in
         tags: \<i>, \<u>, \<rgba r g b a>, and \<pre>. */

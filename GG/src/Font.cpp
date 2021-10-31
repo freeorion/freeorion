@@ -566,6 +566,9 @@ namespace {
         void Insert(const std::string& tag)
         { m_known_tags.emplace(tag); }
 
+        void Insert(std::string_view tag)
+        { m_known_tags.emplace(tag); }
+
         /** Remove a tag from the set of known tags.*/
         void Erase(const std::string& tag)
         { m_known_tags.erase(tag); }
@@ -1249,6 +1252,9 @@ Pt Font::TextExtent(const std::vector<LineData>& line_data) const
 }
 
 void Font::RegisterKnownTag(const std::string& tag)
+{ StaticTagHandler().Insert(tag); }
+
+void Font::RegisterKnownTag(std::string_view tag)
 { StaticTagHandler().Insert(tag); }
 
 void Font::RemoveKnownTag(const std::string& tag)
