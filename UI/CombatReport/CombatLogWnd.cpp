@@ -65,9 +65,7 @@ public:
 
 namespace {
     // TODO: Function adapted from CombatEvents.cpp, will need to be extracted to a common library
-    const std::string& LinkTag(UniverseObjectType obj_type) {
-        static const std::string EMPTY_STRING;
-
+    std::string_view LinkTag(UniverseObjectType obj_type) {
         switch (obj_type) {
         case UniverseObjectType::OBJ_SHIP:
             return VarText::SHIP_ID_TAG;
@@ -81,13 +79,14 @@ namespace {
             return VarText::SYSTEM_ID_TAG;
         case UniverseObjectType::OBJ_FIELD:
         case UniverseObjectType::OBJ_FIGHTER:
+        [[fallthrough]];
         default:
-            return EMPTY_STRING;
+            return "";
         }
     }
 
     // TODO: Function adapted from CombatEvents.cpp, will need to beextracted to a common library
-    std::string WrapWithTagAndId(const std::string& meat, const std::string& tag, int id)
+    std::string WrapWithTagAndId(std::string_view meat, std::string_view tag, int id)
     { return boost::str(boost::format("<%1% %2%>%3%</%1%>") % tag % id % meat); }
 
     /// Segregates \a objects into categories based on \a categories and ownership;
@@ -137,12 +136,15 @@ namespace {
     }
 
     std::string EmpireIdToText(int empire_id) {
+        std::string retval;
+        const/*expr*/ size_t retval_sz = 24 + 1 + VarText::EMPIRE_ID_TAG.length()*2 + 1 + 8 + 1 + 30 + 3 + 1 + 10; // semi-guesstimate TODO: make constexpr
+        retval.reserve(retval_sz);
         if (const auto empire = GetEmpire(empire_id))
-            return GG::RgbaTag(empire->Color()) + "<" + VarText::EMPIRE_ID_TAG + " " +
-                   std::to_string(empire->EmpireID()) + ">" + empire->Name() + "</" +
-                   VarText::EMPIRE_ID_TAG + ">" + "</rgba>";
+            return retval.append(GG::RgbaTag(empire->Color())).append("<").append(VarText::EMPIRE_ID_TAG).append(" ")
+                         .append(std::to_string(empire->EmpireID())).append(">").append(empire->Name()).append("</")
+                         .append(VarText::EMPIRE_ID_TAG).append(">").append("</rgba>");
         else
-            return GG::RgbaTag(ClientUI::DefaultLinkColor()) + UserString("NEUTRAL") + "</rgba>";
+            return retval.append(GG::RgbaTag(ClientUI::DefaultLinkColor())).append(UserString("NEUTRAL")).append("</rgba>");
     }
 
     /// converts to "Empire_name: n" text
