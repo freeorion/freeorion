@@ -173,20 +173,21 @@ std::string SupplyManager::Dump(const Universe& u, int empire_id) const {
     const ObjectMap& objects = u.Objects();
 
     try {
-        for (const auto& empire_supply : m_fleet_supplyable_system_ids) {
-            if (empire_id != ALL_EMPIRES && empire_supply.first != empire_id)
+        for (const auto& [supplying_empire_id, supplyable_system_ids] : m_fleet_supplyable_system_ids) {
+            if (empire_id != ALL_EMPIRES && supplying_empire_id != empire_id)
                 continue;
-            retval += "Supplyable systems for empire " + std::to_string(empire_supply.first) + "\n";
-            for (const auto& sys : objects.find<System>(empire_supply.second)) {
+
+            retval += "Supplyable systems for empire " + std::to_string(supplying_empire_id) + "\n";
+            for (const auto& sys : objects.find<System>(supplyable_system_ids)) {
                 if (!sys)
                     continue;
                 retval += "\n" + sys->PublicName(empire_id, u) + " (" + std::to_string(sys->ID()) + ") ";
 
                 retval += "\nTraversals from here to: ";
 
-                for (const auto& trav : m_supply_starlane_traversals.at(empire_supply.first)) {
-                    if (trav.first == sys->ID()) {
-                        auto obj = objects.get(trav.second);
+                for (const auto& [sys1_id, sys2_id] : m_supply_starlane_traversals.at(supplying_empire_id)) {
+                    if (sys1_id == sys->ID()) {
+                        auto obj = objects.get(sys2_id);
                         if (obj)
                             retval += obj->PublicName(empire_id, u) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -194,9 +195,9 @@ std::string SupplyManager::Dump(const Universe& u, int empire_id) const {
                 retval += "\n";
 
                 retval += "Traversals to here from: ";
-                for (const auto& trav : m_supply_starlane_traversals.at(empire_supply.first)) {
-                    if (trav.second == sys->ID()) {
-                        auto obj = objects.get(trav.first);
+                for (const auto& [sys1_id, sys2_id] : m_supply_starlane_traversals.at(supplying_empire_id)) {
+                    if (sys2_id == sys->ID()) {
+                        auto obj = objects.get(sys1_id);
                         if (obj)
                             retval += obj->PublicName(empire_id, u) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -204,18 +205,18 @@ std::string SupplyManager::Dump(const Universe& u, int empire_id) const {
                 retval += "\n";
 
                 retval += "Blocked Traversals from here to: ";
-                for (const auto& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
-                    if (trav.first == sys->ID()) {
-                        if (auto obj = objects.get(trav.second))
+                for (const auto& [sys1_id, sys2_id] : m_supply_starlane_obstructed_traversals.at(supplying_empire_id)) {
+                    if (sys1_id == sys->ID()) {
+                        if (auto obj = objects.get(sys2_id))
                             retval += obj->PublicName(empire_id, u) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
                 }
                 retval += "\n";
 
                 retval += "Blocked Traversals to here from: ";
-                for (const auto& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
-                    if (trav.second == sys->ID()) {
-                        if (auto obj = objects.get(trav.first))
+                for (const auto& [sys1_id, sys2_id] : m_supply_starlane_obstructed_traversals.at(supplying_empire_id)) {
+                    if (sys2_id == sys->ID()) {
+                        if (auto obj = objects.get(sys1_id))
                             retval += obj->PublicName(empire_id, u) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
                 }
@@ -225,9 +226,9 @@ std::string SupplyManager::Dump(const Universe& u, int empire_id) const {
             retval += "\n\n";
         }
 
-        for (const auto& empire_supply : m_resource_supply_groups) {
-            retval += "Supply groups for empire " + std::to_string(empire_supply.first) + "\n";
-            for (const auto& system_group : empire_supply.second) {
+        for (const auto& [supplying_empire_id, system_groups] : m_resource_supply_groups) {
+            retval += "Supply groups for empire " + std::to_string(supplying_empire_id) + "\n";
+            for (const auto& system_group : system_groups) {
                 retval += "group: ";
                 for (const auto& sys : objects.find<System>(system_group)) {
                     if (sys)
