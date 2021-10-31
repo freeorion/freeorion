@@ -43,33 +43,40 @@ namespace {
             return VarText::SYSTEM_ID_TAG;
         case UniverseObjectType::OBJ_FIELD:
         case UniverseObjectType::OBJ_FIGHTER:
+            [[fallthrough]];
         default:
             return "";
         }
     }
 
     std::string WrapWithTagAndId(std::string_view meat, std::string_view tag, int id) {
-        std::stringstream ss;
-        ss << "<" << tag << " " << std::to_string(id) << ">" << meat << "</" << tag << ">";
-        return ss.str();
+        std::string retval;
+        retval.reserve(1  + 2* tag.size() + 1 + 10 + 1 + meat.size() + 2 + 1); // guesstimate
+        retval.append("<").append(tag).append(" ").append(std::to_string(id)).append(">")
+              .append(meat).append("</").append(tag).append(">");
+        return retval;
     }
 
     std::string WrapUserStringWithTag(std::string_view table_id, std::string_view tag) {
-        std::stringstream ss;
-        ss << "<" << tag << " " << table_id << ">" << UserString(table_id) << "</" << tag << ">";
-        return ss.str();
+        std::string retval;
+        const auto& us{UserString(table_id)};
+        retval.reserve(1 + 2*tag.size() + 1 + table_id.size() + 1 + us.size() + 2 + 1 + 5);
+        retval.append("<").append(tag).append(" ").append(table_id).append(">")
+              .append(us).append("</").append(tag).append(">");
+        return retval;
     }
 
     //Copied pasted from Font.cpp due to Font not being linked into AI and server code
     std::string WrapColorTag(std::string_view text, EmpireColor c) {
-        std::stringstream stream;
-        stream << "<rgba "
-               << static_cast<int>(std::get<0>(c)) << " "
-               << static_cast<int>(std::get<1>(c)) << " "
-               << static_cast<int>(std::get<2>(c)) << " "
-               << static_cast<int>(std::get<3>(c))
-               << ">" << text << "</rgba>";
-        return stream.str();
+        std::string retval;
+        retval.reserve(6 + 4*4 + text.size() + 7 + 4);
+        retval.append("<rgba ")
+              .append(std::to_string(static_cast<int>(std::get<0>(c)))).append(" ")
+              .append(std::to_string(static_cast<int>(std::get<1>(c)))).append(" ")
+              .append(std::to_string(static_cast<int>(std::get<2>(c)))).append(" ")
+              .append(std::to_string(static_cast<int>(std::get<3>(c)))).append(">")
+              .append(text).append("</rgba>");
+        return retval;
     }
 
     std::string EmpireColorWrappedText(int empire_id, std::string_view text) {
