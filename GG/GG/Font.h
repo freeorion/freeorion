@@ -158,6 +158,7 @@ public:
 
         /** Comparison with std::string. */
         bool operator==(const std::string& rhs) const;
+        bool operator==(std::string_view rhs) const;
 
         /** Comparison with std::string. */
         bool operator!=(const std::string& rhs) const;

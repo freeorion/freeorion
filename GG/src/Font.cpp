@@ -342,6 +342,9 @@ Font::Substring::operator std::string() const
 bool Font::Substring::operator==(const std::string& rhs) const
 { return size() == rhs.size() && !std::memcmp(str->data() + first, rhs.data(), rhs.size()); }
 
+bool Font::Substring::operator==(std::string_view rhs) const
+{ return size() == rhs.size() && !std::memcmp(str->data() + first, rhs.data(), rhs.size()); }
+
 bool Font::Substring::operator!=(const std::string& rhs) const
 { return !operator==(rhs); }
 
