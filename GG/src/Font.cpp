@@ -1,13 +1,18 @@
 //! GiGi - A GUI for OpenGL
 //!
 //!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
-//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!  Copyright (C) 2013-2021 The FreeOrion Project
 //!
 //! Released under the GNU Lesser General Public License 2.1 or later.
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <cctype>
+// Compile on MacOS 10.15 errors when it can't find the <charconv> include
+// GNU 11.1.0 compiler reports "error: 'to_chars' is not a member of 'std'" when only testing the __cpp_lib_to_chars before including
+#if defined(__cpp_lib_to_chars) || (defined(__GNUC__) && __GNUC__ >= 8)
+  #include <charconv>
+#endif
 #include <cmath>
 #include <iterator>
 #include <numeric>
@@ -248,14 +253,30 @@ constexpr std::array<std::pair<std::uint32_t, std::uint32_t>, 7> PRINTABLE_ASCII
 ///////////////////////////////////////
 std::string GG::RgbaTag(const Clr& c)
 {
-    std::stringstream stream;
-    stream << "<rgba "
-           << static_cast<int>(c.r) << " "
-           << static_cast<int>(c.g) << " "
-           << static_cast<int>(c.b) << " "
-           << static_cast<int>(c.a)
-           << ">";
-    return stream.str();
+#if defined(__cpp_lib_to_chars)
+    std::array<std::string::value_type, 6 + 4*4 + 1> buffer{"<rgba "}; // rest should be nulls
+    auto result = std::to_chars(buffer.data() + 6, buffer.data() + 9, static_cast<int>(c.r));
+    *result.ptr = ' ';
+    result = std::to_chars(result.ptr + 1, result.ptr + 4, static_cast<int>(c.g));
+    *result.ptr = ' ';
+    result = std::to_chars(result.ptr + 1, result.ptr + 4, static_cast<int>(c.b));
+    *result.ptr = ' ';
+    result = std::to_chars(result.ptr + 1, result.ptr + 4, static_cast<int>(c.a));
+    *result.ptr = '>';
+    return {buffer.data()};
+#else
+    std::string retval;
+    // reserve space for leading "<rgba " and 4 numbers of 3 digits (000-255),
+    // each followed by 1 character (" " or ">").
+    // this is also probably within the small string optimization size (31 chars in my tests)
+    retval.reserve(6 + 4*4);
+    retval.append("<rgba ")
+          .append(std::to_string(static_cast<int>(c.r))).append(" ")
+          .append(std::to_string(static_cast<int>(c.g))).append(" ")
+          .append(std::to_string(static_cast<int>(c.b))).append(" ")
+          .append(std::to_string(static_cast<int>(c.a))).append(">");
+    return retval;
+#endif
 }
 
 

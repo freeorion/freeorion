@@ -10,6 +10,9 @@
 
 #include "../Empire/Empire.h"
 
+#if defined(__cpp_lib_to_chars)
+  #include <charconv>
+#endif
 #include <sstream>
 
 namespace {
@@ -68,7 +71,25 @@ namespace {
 
     //Copied pasted from Font.cpp due to Font not being linked into AI and server code
     std::string WrapColorTag(std::string_view text, EmpireColor c) {
+        constexpr auto lim = std::numeric_limits<EmpireColor::value_type>::max();
+        static_assert(lim < 1000); // ensure no more than 3 characters will be consumed per number
+        assert(c.size() >= 4);
+
         std::string retval;
+
+#if defined(__cpp_lib_to_chars)
+        std::array<std::string::value_type, 6 + 4*4 + 1> buffer{"<rgba "}; // rest should be nulls
+        auto result = std::to_chars(buffer.data() + 6, buffer.data() + 9, static_cast<int>(c[0]));
+        *result.ptr = ' ';
+        result = std::to_chars(result.ptr + 1, result.ptr + 4, static_cast<int>(c[1]));
+        *result.ptr = ' ';
+        result = std::to_chars(result.ptr + 1, result.ptr + 4, static_cast<int>(c[2]));
+        *result.ptr = ' ';
+        result = std::to_chars(result.ptr + 1, result.ptr + 4, static_cast<int>(c[3]));
+        *result.ptr = '>';
+        retval.reserve(buffer.size() + text.size() + 7 + 1);
+        retval.append(buffer.data()).append(text).append("</rgba>");
+#else
         retval.reserve(6 + 4*4 + text.size() + 7 + 4);
         retval.append("<rgba ")
               .append(std::to_string(static_cast<int>(std::get<0>(c)))).append(" ")
@@ -76,6 +97,7 @@ namespace {
               .append(std::to_string(static_cast<int>(std::get<2>(c)))).append(" ")
               .append(std::to_string(static_cast<int>(std::get<3>(c)))).append(">")
               .append(text).append("</rgba>");
+#endif
         return retval;
     }
 
