@@ -17,12 +17,6 @@
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string.hpp>
 
-// TextLinker static(s)
-const std::string TextLinker::ENCYCLOPEDIA_TAG("encyclopedia");
-const std::string TextLinker::GRAPH_TAG("graph");
-const std::string TextLinker::URL_TAG("url");
-const std::string TextLinker::BROWSE_PATH_TAG("browsepath");
-
 namespace {
     constexpr bool RENDER_DEBUGGING_LINK_RECTS = false;
     constexpr std::string_view LINK_FORMAT_CLOSE = "</rgba>"; // closing format tag
@@ -38,21 +32,19 @@ namespace {
         return retval;
     }
 
-    std::string ResolveNestedPathTypes(const std::string& text) {
+    std::string ResolveNestedPathTypes(std::string text) {
         if (text.empty())
             return text;
-        std::string new_text = text;
-        for (const auto& path_type : PathTypeStrings()) {
-            std::string path_string = PathToString(GetPath(path_type));
-            boost::replace_all(new_text, path_type, path_string);
-        }
-        return new_text;
+        for (const auto& path_type : PathTypeStrings()) // TODO: add getter that returns a list of PathType rather than casting back and forth from strings
+            boost::replace_all(text, path_type, PathToString(GetPath(path_type)));
+
+        return text;
     }
 
     namespace xpr = boost::xpressive;
     const xpr::sregex REGEX_NON_BRACKET = *~(xpr::set= '<', '>');
-    const std::string BROWSEPATH_TAG_OPEN_PRE("<" + TextLinker::BROWSE_PATH_TAG);
-    const std::string BROWSEPATH_TAG_CLOSE("</" + TextLinker::BROWSE_PATH_TAG + ">");
+    const std::string BROWSEPATH_TAG_OPEN_PRE{std::string{"<"}.append(TextLinker::BROWSE_PATH_TAG)};
+    const std::string BROWSEPATH_TAG_CLOSE{std::string{"</"}.append(TextLinker::BROWSE_PATH_TAG).append(">")};
     const xpr::sregex BROWSEPATH_SEARCH = BROWSEPATH_TAG_OPEN_PRE >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> ">" >>
                                           (xpr::s2 = REGEX_NON_BRACKET) >> BROWSEPATH_TAG_CLOSE;
 
@@ -102,15 +94,16 @@ namespace {
  *  If the tag content is empty or @p add_explanation is true,
  *  the value ref description gets added as explanation instead. */
 std::string ValueRefLinkText(const std::string& text, const bool add_explanation) {
-    auto FOCS_VALUE_TAG_CLOSE("</" + VarText::FOCS_VALUE_TAG + ">");
+    static const std::string FOCS_VALUE_TAG_CLOSE{std::string{"</"}.append(VarText::FOCS_VALUE_TAG).append(">")};
     if (!boost::contains(text, FOCS_VALUE_TAG_CLOSE))
         return text;
 
     std::string retval(text);
     auto text_it = retval.begin();
     xpr::smatch match;
-    const xpr::sregex FOCS_VALUE_SEARCH = ("<" + VarText::FOCS_VALUE_TAG) >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> ">" >>
-                                          (xpr::s2 = REGEX_NON_BRACKET) >> ("</" + VarText::FOCS_VALUE_TAG + ">");
+    const xpr::sregex FOCS_VALUE_SEARCH =
+        (std::string{"<"}.append(VarText::FOCS_VALUE_TAG)) >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> ">" >>
+        (xpr::s2 = REGEX_NON_BRACKET) >> (std::string{"</"}.append(VarText::FOCS_VALUE_TAG).append(">"));
 
     while (true) {
         if (!xpr::regex_search(text_it, retval.end(), match, FOCS_VALUE_SEARCH, xpr::regex_constants::match_default))
@@ -126,8 +119,9 @@ std::string ValueRefLinkText(const std::string& text, const bool add_explanation
             ? " (" + ((match[2].length()==0 || !UserStringExists(value_ref_name)) ? "" : match[2] + ": ") + value_ref->Description() + ")"
             : ""};
 
-        auto resolved_tooltip = "<" + VarText::FOCS_VALUE_TAG + " " + value_ref_name + ">"
-                                + value_str + explanation_str + "</" + VarText::FOCS_VALUE_TAG + ">";
+        auto resolved_tooltip = std::string{"<"}.append(VarText::FOCS_VALUE_TAG).append(" ")
+                               .append(value_ref_name).append(">").append(value_str).append(explanation_str)
+                               .append("</").append(VarText::FOCS_VALUE_TAG).append(">");
 
         retval.replace(text_it + match.position(), text_it + match.position() + match.length(), resolved_tooltip);
 
@@ -289,7 +283,7 @@ TextLinker::TextLinker()
 
 TextLinker::~TextLinker() = default;
 
-void TextLinker::SetDecorator(const std::string& link_type, LinkDecorator* decorator) {
+void TextLinker::SetDecorator(std::string_view link_type, LinkDecorator* decorator) {
     m_decorators[link_type] = std::shared_ptr<LinkDecorator>(decorator);
     MarkLinks();
 }

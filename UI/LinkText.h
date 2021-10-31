@@ -65,18 +65,18 @@ public:
     /// Sets the link decorator for a link type.
     /// \param link_type The link type (tag) to be decorated. Eg. "planet"
     /// \param decorator The decorator to use. Assumes ownership.
-    void SetDecorator(const std::string& link_type, LinkDecorator* decorator);
+    void SetDecorator(std::string_view link_type, LinkDecorator* decorator);
 
     ///< link clicked signals: first string is the link type, second string is the specific item clicked
     mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkClickedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkDoubleClickedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkRightClickedSignal;
 
-    static const std::string ENCYCLOPEDIA_TAG;
-    static const std::string GRAPH_TAG;
-    static const std::string URL_TAG;
+    static constexpr std::string_view ENCYCLOPEDIA_TAG = "encyclopedia";
+    static constexpr std::string_view GRAPH_TAG = "graph";
+    static constexpr std::string_view URL_TAG = "url";
     /** Tag for clickable link to open users file manager at a specified directory */
-    static const std::string BROWSE_PATH_TAG;
+    static constexpr std::string_view BROWSE_PATH_TAG = "browsepath";
 
 protected:
     void Render_();
@@ -104,9 +104,9 @@ private:
     std::string LinkDefaultFormatTag(const Link& link, const std::string& content) const;
     std::string LinkRolloverFormatTag(const Link& link, const std::string& content) const;
 
-    std::vector<Link>                       m_links;
-    int                                     m_rollover_link = -1;
-    std::map<std::string, LinkDecoratorPtr> m_decorators;
+    std::vector<Link>                            m_links;
+    int                                          m_rollover_link = -1;
+    std::map<std::string_view, LinkDecoratorPtr> m_decorators;
 };
 
 /** Allows text that the user sees to emit signals when clicked, and indicates
