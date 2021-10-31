@@ -241,35 +241,6 @@ namespace {
 }
 
 
-const std::string VarText::TEXT_TAG = "text";
-const std::string VarText::RAW_TEXT_TAG = "rawtext";
-
-const std::string VarText::PLANET_ID_TAG = "planet";
-const std::string VarText::SYSTEM_ID_TAG = "system";
-const std::string VarText::SHIP_ID_TAG = "ship";
-const std::string VarText::FLEET_ID_TAG = "fleet";
-const std::string VarText::BUILDING_ID_TAG = "building";
-const std::string VarText::FIELD_ID_TAG = "field";
-
-const std::string VarText::COMBAT_ID_TAG = "combat";
-
-const std::string VarText::EMPIRE_ID_TAG = "empire";
-const std::string VarText::DESIGN_ID_TAG = "shipdesign";
-const std::string VarText::PREDEFINED_DESIGN_TAG = "predefinedshipdesign";
-
-const std::string VarText::FOCS_VALUE_TAG = "value";
-
-const std::string VarText::TECH_TAG = "tech";
-const std::string VarText::POLICY_TAG = "policy";
-const std::string VarText::BUILDING_TYPE_TAG = "buildingtype";
-const std::string VarText::SPECIAL_TAG = "special";
-const std::string VarText::SHIP_HULL_TAG = "shiphull";
-const std::string VarText::SHIP_PART_TAG = "shippart";
-const std::string VarText::SPECIES_TAG = "species";
-const std::string VarText::FIELD_TYPE_TAG = "fieldtype";
-const std::string VarText::METER_TYPE_TAG = "metertype";
-
-
 VarText::VarText(std::string template_string, bool stringtable_lookup) :
     m_template_string(std::move(template_string)),
     m_stringtable_lookup_flag(stringtable_lookup)
