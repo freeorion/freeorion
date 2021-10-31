@@ -10,7 +10,7 @@
 
 #include "../Empire/Empire.h"
 
-#if defined(__cpp_lib_to_chars)
+#if __has_include(<charconv>)
   #include <charconv>
 #endif
 #include <sstream>

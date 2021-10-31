@@ -8,9 +8,7 @@
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <cctype>
-// Compile on MacOS 10.15 errors when it can't find the <charconv> include
-// GNU 11.1.0 compiler reports "error: 'to_chars' is not a member of 'std'" when only testing the __cpp_lib_to_chars before including
-#if defined(__cpp_lib_to_chars) || (defined(__GNUC__) && __GNUC__ >= 8)
+#if __has_include(<charconv>)
   #include <charconv>
 #endif
 #include <cmath>
