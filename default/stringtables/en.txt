@@ -10225,6 +10225,12 @@ Hull Line: Robotic
 HULL_LINE_ROBOTIC_DESC
 Line of hulls with a heavy emphasis on artificial intelligence and automation.
 
+HULL_LINE_SPATIAL_FLUX
+Hull Line: Spatial Flux
+
+HULL_LINE_SPATIAL_FLUX_DESC
+Line of hulls using built to run on spatial flux. Not as modular as most hulls
+
 HULL_MONSTER
 Monster Bodies
 

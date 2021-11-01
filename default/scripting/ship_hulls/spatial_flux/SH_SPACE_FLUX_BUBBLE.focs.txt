@@ -9,7 +9,7 @@ Hull
     slots = Slot type = Internal position = (0.50, 0.50)
     buildcost = 17 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildtime = 2
-    tags = [ "ROBOTIC_HULL" "PEDIA_HULL_LINE_ROBOTIC" "GREAT_FUEL_EFFICIENCY" ]
+    tags = [ "PEDIA_HULL_LINE_SPATIAL_FLUX" "GREAT_FUEL_EFFICIENCY" ]
     location = And [
         Planet
         OwnedBy empire = Source.Owner
