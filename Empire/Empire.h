@@ -500,10 +500,10 @@ private:
 
     struct PolicyAdoptionInfo {
         PolicyAdoptionInfo() = default;
-        PolicyAdoptionInfo(int turn, const std::string& cat, int slot) :
+        PolicyAdoptionInfo(int turn, std::string cat, int slot) :
             adoption_turn(turn),
             slot_in_category(slot),
-            category(cat)
+            category(std::move(cat))
         {}
 
         int adoption_turn = INVALID_GAME_TURN;
