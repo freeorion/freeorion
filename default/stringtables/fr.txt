@@ -6248,7 +6248,7 @@ METER_SPEED_VALUE_LABEL
 Vitesse
 
 METER_SPEED_VALUE_DESC
-Vitesse sur la carte galactique (uu/tour). La distance en uu parcourue par un astronef en un tour est égale à la valeur de sa Vitesse sur Voie spatiale, et est représentée sur la carte par une ligne en pointillé. Celle-ci indique également le nombre de tour requis pour parcourir la Voie spatiale dans sa totalité et ainsi atteindre le prochain système. Si la Vitesse d'un astronef est inférieure à la longueur de la Voie spatiale, un minimum de 2 tours sera nécessaire à l'astronef pour parcourir cette dernière. Un voyage complet sur une Voie spatiale consommera seulement 1 unité de [[metertype METER_FUEL]], quel que soit le nombre de tour requis.
+Vitesse sur la carte galactique (uu/tour). La distance en uu parcourue par un astronef en un tour est égale à la valeur de sa Vitesse sur Voie spatiale, et est représentée sur la carte par une ligne en pointillé. Celle-ci indique également le nombre de tours requis pour parcourir la Voie spatiale dans sa totalité et ainsi atteindre le prochain système. Si la Vitesse d'un astronef est inférieure à la longueur de la Voie spatiale, un minimum de 2 tours sera nécessaire à l'astronef pour parcourir cette dernière. Un voyage complet sur une Voie spatiale consommera seulement 1 unité de [[metertype METER_FUEL]], quel que soit le nombre de tours requis.
 
 METER_DETECTION_STRENGTH_VALUE_LABEL
 [[DETECTION_TITLE]]
@@ -12037,7 +12037,14 @@ PLC_FLANKING
 Encerclement
 
 PLC_FLANKING_DESC
-Dans les systèmes où l'empire appliquant cette Politique dispose d'astronefs armés stationnaires plus nombreux que les astronefs ennemis présents, l'armement de cet empire infligera [[value PLC_FLANKING_DAMAGE_BOOST]] dommages additionnels par tir.
+'''Dans les systèmes où l'empire appliquant cette Politique dispose d'astronefs armés stationnaires plus nombreux que les astronefs ennemis présents, l'armement de cet empire infligera des [[encyclopedia DAMAGE_TITLE]] additionnels par tir.
+
+D'autre part, les astronefs effectuant une attaque en tenaille infligeront également des dommages additionnels. Une attaque en tenaille est déclenchée lorsque les astronefs de l'empire appliquant cette politique sont en vol et arrivent au tour suivant dans un système via des Voies spatiales différentes.
+
+• Les dommages pour les armements d'astronef sont augmentés de [[value PLC_FLANKING_DAMAGE_BOOST]] (c-à-d. pour les équipements [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], ou [[shippart SR_WEAPON_4_1]])
+• Les dommages pour les chasseurs, les bombardiers et les bombardiers lourds sont augmentés de [[value PLC_FLANKING_FIGHTER_DAMAGE_BOOST]] (c-à-d. pour les équipements [[shippart FT_HANGAR_1]], [[shippart FT_HANGAR_2]], ou [[shippart FT_HANGAR_3]])
+• Le nombre de chasseurs lancés par [[FT_BAY_1]] est augmenté de [[value PLC_FLANKING_BAY_LAUNCH_BONUS]]
+• Le nombre de tirs pour l'équipement [[shippart SR_ARC_DISRUPTOR]] est augmenté de [[value PLC_FLANKING_ARC_DISRUPTOR_SHOT_BONUS]].'''
 
 PLC_FLANKING_SHORT_DESC
 Améliore les dommages infligés par les astronefs
@@ -12047,7 +12054,10 @@ Charge
 
 PLC_CHARGE_DESC
 '''Pour les astronefs armés ayant une [[metertype METER_SPEED]] au moins égale à [[value PLC_CHARGE_MINIMUM_SPEED]] :
-• Les [[encyclopedia DAMAGE_TITLE]] infligés par l'armement augmentent de [[value PLC_CHARGE_DAMAGE_BOOST]].
+• Les [[encyclopedia DAMAGE_TITLE]] pour les armements d'astronef sont augmentés de [[value PLC_CHARGE_DAMAGE_BOOST]] (c-à-d. pour les équipements [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], ou [[shippart SR_WEAPON_4_1]])
+• Le nombre de chasseurs lancés par [[FT_BAY_1]] est augmenté de [[value PLC_CHARGE_BAY_LAUNCH_BONUS]]
+• Le nombre de tirs pour l'équipement [[shippart SR_ARC_DISRUPTOR]] est augmenté de [[value PLC_CHARGE_ARC_DISRUPTOR_SHOT_BONUS]]
+• Le nombre de tirs pour l'équipement [[shippart SR_WEAPON_0_1]] est diminué de [[value PLC_CHARGE_FLAK_SHOT_REDUCTION]]
 • L'indicateur [[metertype METER_MAX_SHIELD]] diminue de [[value PLC_CHARGE_SHIELD_REDUCTION]].'''
 
 PLC_CHARGE_SHORT_DESC
