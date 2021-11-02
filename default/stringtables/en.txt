@@ -6490,6 +6490,7 @@ Evacuation Plan
 
 EVACUATION_TEXT
 '''The [[buildingtype BLD_EVACUATION]] building when built will remove the [[metertype METER_POPULATION]] of a planet. Each turn, some of the Population will be removed. If there are planets colonized by the same species with free space, and connected by [[metertype METER_SUPPLY]] lines, one will be randomly chosen and the Population will move there. If there are no appropriate planets available, the Population disappears into the vastness of space.
+
 During an evacuation, production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] building deletes itself.'''
 
 AI_LEVELS_TITLE
@@ -13942,7 +13943,11 @@ BLD_EVACUATION
 Evacuate Planet
 
 BLD_EVACUATION_DESC
-Remove [[metertype METER_POPULATION]] from this planet over several turns according to an [[encyclopedia EVACUATION_TITLE]]. If a suitable alternate planets are available, with the same species and sufficient extra capacity, Population will move there.
+'''Remove [[metertype METER_POPULATION]] from this planet over several turns.
+
+If suitable alternate planets are available, with the same species and sufficient extra capacity, the [[encyclopedia EVACUATION_TITLE]] will move the population.
+
+If there is no suitable alternate planet, the population is lost.'''
 
 BLD_COLONY_INDEPENDENCE_DECREE
 Planet Independence Decree
