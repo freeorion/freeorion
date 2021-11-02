@@ -15483,6 +15483,18 @@ SH_SPACE_FLUX_BUBBLE_DESC
 
 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
 
+SH_SPACE_FLUX_COMPOSITE
+Spatial Flux Composite Hull
+
+SH_SPACE_FLUX_COMPOSITE_DESC
+'''Expensive special purpose built ship built around a single core part using [[tech SHP_SPACE_FLUX_COMPOSITION]]. It has one core slot and one external slot, and its max [[metertype METER_STRUCTURE]] is high.
+
+[[metertype METER_STEALTH]] starts at 15, is increased by 10 when passive, but reduced by 30 on any turn it remains in transit. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by [[value SPATIAL_FLUX_STEALTH_TECH_BONUS]] each.
+
+[[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
 SH_SELF_GRAVITATING
 Self-Gravitating Hull
 

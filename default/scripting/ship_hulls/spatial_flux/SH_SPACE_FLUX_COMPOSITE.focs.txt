@@ -1,0 +1,48 @@
+Hull
+    name = "SH_SPACE_FLUX_COMPOSITE"
+    description = "SH_SPACE_FLUX_COMPOSITE_DESC"
+    speed = 80
+    fuel = 4
+    NoDefaultFuelEffect
+    stealth = 15
+    structure = 50
+    slots = [
+        Slot type = External position = (0.70, 0.30)
+        Slot type = Internal position = (0.40, 0.50)
+        Slot type = Core position = (0.55, 0.50)
+    ]
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
+    buildtime = 2
+    tags = [ "PEDIA_HULL_LINE_SPATIAL_FLUX" "GOOD_FUEL_EFFICIENCY" ]
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
+        Contains And [
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
+        ]
+    ]
+    effectsgroups = [
+        [[SPATIAL_FLUX_STEALTH_EFFECTS]]
+
+        [[GOOD_FUEL_EFFICIENCY]]
+        [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
+        [[AVERAGE_BASE_FUEL_REGEN]]
+        [[REGULAR_HULL_DETECTION]]
+        [[SCAVANGE_FUEL_UNOWNED]]
+        [[UNOWNED_GOOD_VISION]]
+        [[UNOWNED_MOVE]]
+    ]
+    // FIXME graphic and icon
+    icon = "icons/ship_hulls/agregate_asteroid_hull_small.png"
+    graphic = "hulls_design/agregate_asteroid_hull.png"
+
+#include "spatial_flux.macros"
+
+#include "../ship_hulls.macros"
+
+#include "/scripting/common/upkeep.macros"
