@@ -12063,6 +12063,7 @@ PLC_CHARGE_DESC
 • Weapon damage for ship weapons is increased by [[value PLC_CHARGE_DAMAGE_BOOST]] (i.e. for [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], or [[shippart SR_WEAPON_4_1]])
 • Number of fighters launched per [[FT_BAY_1]] is increased by [[value PLC_CHARGE_BAY_LAUNCH_BONUS]]
 • Number of shots for [[shippart SR_ARC_DISRUPTOR]] is increased by [[value PLC_CHARGE_ARC_DISRUPTOR_SHOT_BONUS]]
+• A charging [[shippart SR_FLUX_LANCE]] can attack ships a combat round earlier
 • Number of shots for [[shippart SR_WEAPON_0_1]] is decreased by [[value PLC_CHARGE_FLAK_SHOT_REDUCTION]]
 • [[metertype METER_MAX_SHIELD]] is reduced by [[value PLC_CHARGE_SHIELD_REDUCTION]] '''
 
@@ -14908,6 +14909,18 @@ Spinal Antimatter Cannon
 
 SR_SPINAL_ANTIMATTER_DESC
 A huge spinal mount mass driver firing heavy projectiles made of antimatter. Attacks ships and planets.
+
+SR_FLUX_LANCE
+Spatial Flux Lance
+
+SR_FLUX_LANCE_DESC
+'''The Spatial Flux Lance, a internally mounted short-ranged ship weapon. Cheap to produce, but does only small amount of damage.
+
+The Spatial Flux Lance generator creates a short-lived spatial distortion in proximity outside the ship. The distortion is deadly to fighters and a nuisance for armoured ships. Multiple generators interfere with each other so only a single Flux Lance part may effectively mounted on a ship.
+
+A Flux Lance can inflict [[encyclopedia DAMAGE_TITLE]] to ships starting from combat round [[value FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE]] as the targets are too far away in earlier rounds. The Flux Lance starts to destroy fighters when they come in range in combat round 2.
+
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage.'''
 
 SR_GRAV_PULSE
 Graviton Pulsar
