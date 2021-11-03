@@ -7,8 +7,7 @@ Tech
     researchturns = 3
     tags = [ "PEDIA_ROBOTIC_HULL_TECHS" ]
     prerequisites = [
-        "CON_ASYMP_MATS"
-        "PRO_ROBOTIC_PROD"
+        "SHP_SPACE_FLUX_BASICS"
     ]
     unlock = Item type = ShipHull name = "SH_SPACE_FLUX_BUBBLE"
     graphic = "icons/ship_hulls/bulk_freighter_hull_small.png"

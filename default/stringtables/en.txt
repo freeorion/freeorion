@@ -12736,17 +12736,29 @@ SHP_MIL_ROBO_CONT_DESC
 
 Robotic control can be used effectively for tasks such as mining and industry; the natural extension of this concept is to develop military robotic equipment capable of independently operating a starship. This would allow greater versatility in design, as the necessity for bulky life-support systems would be removed. Hulls produced with such technology could also perform dangerous repairs without thought for the safety and biological limitations of living engineers.'''
 
+SHP_SPACE_FLUX_BASICS
+Spatial Flux Manipulation
+
+SHP_SPACE_FLUX_BASICS_DESC
+This tech allows the manipulation of space itself, expanding or collapsing the smallest units of space. At this basic level of manipulation a simple weapon can be devised by manipulating the space in the path of enemy vessels. With further research, the effects can also be used to efficiently propel vessels through space.
+
 SHP_SPACE_FLUX_DRIVE
 Spatial Flux Drive
 
 SHP_SPACE_FLUX_DRIVE_DESC
-Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption. Advanced research allows different hull layout than the [[tech SHP_SPACE_FLUX_BUBBLE]].
+Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption.
 
 SHP_SPACE_FLUX_BUBBLE
 Spatial Flux Bubble
 
 SHP_SPACE_FLUX_BUBBLE_DESC
-Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption. The simplest solution to building a vessel using the flux propulsion is the bubble drive, which covers a sphere-shaped hull. More complex solutions are possible with better tech [[tech SHP_SPACE_FLUX_DRIVE]].
+Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects. Further research into stealth technologies can reduce the dimensional disruption. The simplest solution to building a vessel using the flux propulsion is the bubble drive, which covers a sphere-shaped hull. More complex solutions are possible with better techs [[tech SHP_SPACE_FLUX_DRIVE]] and [[tech SHP_SPACE_FLUX_COMPOSITION]].
+
+SHP_SPACE_FLUX_COMPOSITION
+Spatial Flux Composition
+
+SHP_SPACE_FLUX_COMPOSITION_DESC
+By bending and stretching spatial flux bubbles and combining those with spatial flux drives one can build specialised hulls for specific purposes.
 
 SHP_CONTGRAV_MAINT
 Contra Gravitational Maintenance
