@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
     BOOST_REQUIRE(!tech_categories.empty());
     BOOST_REQUIRE(!categories_seen.empty());
 
-    BOOST_REQUIRE_EQUAL(206, techs.size());
+    BOOST_REQUIRE_EQUAL(208, techs.size());
     BOOST_REQUIRE_EQUAL(9, tech_categories.size());
     BOOST_REQUIRE_EQUAL(9, categories_seen.size());
 }
