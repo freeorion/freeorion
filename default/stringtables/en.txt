@@ -15490,7 +15490,7 @@ Spatial Flux Hull
 SH_SPATIAL_FLUX_DESC
 '''This tiny hull is capable of decent speed over long distances due to the power of the [[tech SHP_SPACE_FLUX_DRIVE]]. It has only two external slots however, and its max [[metertype METER_STRUCTURE]] is low.
 
-[[metertype METER_STEALTH]] starts at 15, is increased by 10 when passive, but reduced by 30 on any turn it remains in transit. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by [[value SPATIAL_FLUX_STEALTH_TECH_BONUS]] each.
+[[FLUX_STEALTH_DESC]]
 
 [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
@@ -15502,7 +15502,7 @@ Spatial Flux Bubble Hull
 SH_SPACE_FLUX_BUBBLE_DESC
 '''This tiny hull is capable of decent speed over long distances due to the power of the [[tech SHP_SPACE_FLUX_BUBBLE]]. It has only one internal slots however, and its max [[metertype METER_STRUCTURE]] is low.
 
-[[metertype METER_STEALTH]] starts at 15, is increased by 10 when passive, but reduced by 30 on any turn it remains in transit. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by [[value SPATIAL_FLUX_STEALTH_TECH_BONUS]] each.
+[[FLUX_STEALTH_DESC]]
 
 [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
@@ -15514,11 +15514,14 @@ Spatial Flux Composite Hull
 SH_SPACE_FLUX_COMPOSITE_DESC
 '''Expensive special purpose built ship built around a single core part using [[tech SHP_SPACE_FLUX_COMPOSITION]]. It has one core slot and one external slot, and its max [[metertype METER_STRUCTURE]] is high.
 
-[[metertype METER_STEALTH]] starts at 15, is increased by 10 when passive, but reduced by 30 on any turn it remains in transit. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by [[value SPATIAL_FLUX_STEALTH_TECH_BONUS]] each.
+[[FLUX_STEALTH_DESC]]
 
 [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
+FLUX_STEALTH_DESC
+[[metertype METER_STEALTH]] starts at 15, and is increased by 10 when passive. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by [[value SPATIAL_FLUX_STEALTH_TECH_BONUS]] each. If the ship stops in a system, the flux coherence breaks down decreasing stealth by 30 for two turns.
 
 SH_SELF_GRAVITATING
 Self-Gravitating Hull
