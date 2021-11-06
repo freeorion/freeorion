@@ -35,6 +35,18 @@ Tech
                 SetConstruction value = max(Value, 1)
             ]
 
+        // Influence growth / reduction towards target, since outposts have no species to get this effect from
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Not Species
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = SetHappiness value = Value +
+                min(abs(Value(Target.TargetHappiness) - Value), 1) *
+                    (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.TargetHappiness))]))
+
         // Reset influence to 0 if no policies adopted. Not really relevant to Outposts, but I need somewhere to put this...
         EffectsGroup
             scope = Source
