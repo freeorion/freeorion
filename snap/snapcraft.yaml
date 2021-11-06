@@ -1,3 +1,4 @@
+---
 name: freeorion
 base: core20
 summary: turn-based space empire and galactic conquest (4X) computer game
@@ -11,6 +12,7 @@ adopt-info: freeorion
 architectures:
   - build-on: amd64
 
+# Build OK but release fails? Check https://dashboard.snapcraft.io/snaps/freeorion/collaboration/
 apps:
   freeorion:
     command: usr/bin/freeorion -S $SNAP_USER_COMMON/save
@@ -18,45 +20,51 @@ apps:
     plugs: [home, pulseaudio, opengl, network, screen-inhibit-control, browser-support, x11]
     desktop: usr/share/applications/org.freeorion.FreeOrion.desktop
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
-      LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
-      #PYTHONPATH: $SNAP/usr/lib/python3.6
+      LD_LIBRARY_PATH: $SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/freeorion
+      LIBGL_DRIVERS_PATH: $SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri
+      # PYTHONPATH: $SNAP/usr/lib/python3.6
   freeorion-godot:
+    # LD_LIBRARY_PATH=$SNAP/usr/lib/x86_64-linux-gnu/freeorion:$SNAP/usr/lib/x86_64-linux-gnu/:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio LIBGL_DRIVERS_PATH=$SNAP/usr/lib/x86_64-linux-gnu/dri godot3-runner   --resource.path $SNAP/usr/share/freeorion/default/ -S $SNAP_USER_COMMON/save
     command: usr/bin/godot3-runner --main-pack $SNAP/usr/share/freeorion/freeorion.pck --resource.path $SNAP/usr/share/freeorion/default/ -S $SNAP_USER_COMMON/save
     extensions: [gnome-3-38]
     plugs: [home, pulseaudio, opengl, network, screen-inhibit-control, browser-support, x11]
     desktop: usr/share/applications/org.freeorion.FreeOrion.desktop
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
-      LIBGL_DRIVERS_PATH: $SNAP/usr/lib/x86_64-linux-gnu/dri
+      LD_LIBRARY_PATH: $SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/freeorion
+      LIBGL_DRIVERS_PATH: $SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri
       #PYTHONPATH: $SNAP/usr/lib/python3.6
   freeoriond:
     command: usr/bin/freeoriond
     plugs: [home, network, network-bind]
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
+      LD_LIBRARY_PATH: $SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/freeorion
       #PYTHONPATH: $SNAP/usr/lib/python3.6
   freeoriond-dedicated:
     command: usr/bin/freeoriond --hostless --network.server.unconn-human-empire-players.max 0 --network.server.conn-human-empire-players.min 0
     plugs: [home, network, network-bind]
     environment:
-      LD_LIBRARY_PATH: $SNAP/usr/lib/x86_64-linux-gnu/freeorion
+      LD_LIBRARY_PATH: $SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/freeorion
       #PYTHONPATH: $SNAP/usr/lib/python3.6
+
+layout:
+  # the path to the freeorion libs has to be known when snapcraft exports the godot client
+  # $SNAP depends on the release number so it is unknown/wrong/different in the build step
+  /usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/freeorion:
+    symlink: $SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/freeorion
 
 parts:
   freeorion:
     source: .
     override-build: |
-      sed -i.bak -e 's|Icon=freeorion$|Icon=${SNAP}/meta/gui/icon.png|g' ../src/packaging/org.freeorion.FreeOrion.desktop
-      sed -i.bak -e 's|="res://bin/linux.*/libfreeoriongodot.so"|="/usr/lib/x86_64-linux-gnu/freeorion/libfreeoriongodot.so"|g' ../src/godot/freeoriongodot.gdnlib
-
+      # Icon paths in the desktop file will be rewritten to use ${SNAP}/<file> if specified as desktop file in snapcraft.yaml
+      sed -i.bak -e "s|Icon=freeorion$|Icon=meta/gui/icon.png|g" ../src/packaging/org.freeorion.FreeOrion.desktop
+      sed -i.bak -e 's|="res://bin/linux.*/libfreeoriongodot.so"|="/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/freeorion/libfreeoriongodot.so"|g' ../src/godot/freeoriongodot.gdnlib
       snapcraftctl build
       # godot-headless wants a writable homedir, simulate it
       mkdir -p home/
-      mkdir -p ${SNAPCRAFT_PART_INSTALL}/usr/share/freeorion/
+      mkdir -p "${SNAPCRAFT_PART_INSTALL}/usr/share/freeorion/"
       # Note: we use godot3-headless really
-      HOME=$(pwd)/home godot3-server --path ../src/godot --export-pack "Linux/X11" ${SNAPCRAFT_PART_INSTALL}/usr/share/freeorion/freeorion.pck
-
+      HOME=$(pwd)/home godot3-server --path ../src/godot --export-pack "Linux/X11" "${SNAPCRAFT_PART_INSTALL}/usr/share/freeorion/freeorion.pck"
     plugin: cmake
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_CLIENT_GODOT=ON
@@ -96,12 +104,12 @@ parts:
       - libvorbis-dev
       - pkg-config
       - godot3-server
-      #- python
+      # - python
     stage-packages:
       - mesa-utils
       - libgl1-mesa-dri
-      #- python3
-      #- libpython3.8
+      # - python3
+      # - libpython3.8
       - libboost-date-time1.67.0
       - libboost-filesystem1.67.0
       - libboost-iostreams1.67.0
@@ -122,8 +130,4 @@ parts:
       - libpng16-16
       - libfreetype6
       - godot3-runner
-
-
-
-
 
