@@ -13,6 +13,8 @@ Policy
         EffectsGroup
             scope = And [
                 Planet
+                OwnedBy empire = Source.Owner
+                Species
                 (LocalCandidate.TurnsSinceFocusChange == 0)
                 (LocalCandidate.TurnsSinceColonization > 1) // all changes on first turn or two after colonization without penalty
             ]
