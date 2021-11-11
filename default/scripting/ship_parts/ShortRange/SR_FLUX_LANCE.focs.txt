@@ -30,7 +30,8 @@ Part
            And [
                // Attack fighters starting from bout 2 until FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE
                (CombatBout >= 2)
-               [[COMBAT_TARGETS_VISIBLE_ENEMY]] Fighter
+               [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+               Fighter
            ]
         ]
     ]
