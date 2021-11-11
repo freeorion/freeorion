@@ -1089,10 +1089,8 @@ namespace {
         GetSortedPediaDirEntires(dir_name, sorted_entries, exclude_custom_categories_from_dir_name);
 
 
-        for (auto& entry : sorted_entries) {
-            const std::string& readable_article_name = entry.first;
-            std::string& link_text = entry.second.first;
-            std::string& category_str_key = entry.second.second;
+        for (auto& [readable_article_name, link_category] : sorted_entries) {
+            auto& [link_text, category_str_key] = link_category;
 
             // explicitly exclude textures and input directory itself
             if (category_str_key == "ENC_TEXTURES" || category_str_key == dir_name)
