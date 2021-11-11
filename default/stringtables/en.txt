@@ -15488,7 +15488,7 @@ SH_SPATIAL_FLUX
 Spatial Flux Hull
 
 SH_SPATIAL_FLUX_DESC
-'''This tiny hull is capable of decent speed over long distances due to the power of the [[tech SHP_SPACE_FLUX_DRIVE]]. It has only two external slots however, and its max [[metertype METER_STRUCTURE]] is low.
+'''This small hull is capable of decent speed over long distances due to the efficiency of the [[tech SHP_SPACE_FLUX_DRIVE]]. It has two external slots, but its max [[metertype METER_STRUCTURE]] is low.
 
 [[FLUX_STEALTH_DESC]]
 
@@ -15500,7 +15500,7 @@ SH_SPACE_FLUX_BUBBLE
 Spatial Flux Bubble Hull
 
 SH_SPACE_FLUX_BUBBLE_DESC
-'''This tiny hull is capable of decent speed over long distances due to the power of the [[tech SHP_SPACE_FLUX_BUBBLE]]. It has only one internal slots however, and its max [[metertype METER_STRUCTURE]] is low.
+'''This medium hull is capable of decent speed over long distances due to the efficiency of the [[tech SHP_SPACE_FLUX_BUBBLE]]. It has only one internal slot however, but its max [[metertype METER_STRUCTURE]] is decent.
 
 [[FLUX_STEALTH_DESC]]
 
@@ -15512,7 +15512,7 @@ SH_SPACE_FLUX_COMPOSITE
 Spatial Flux Composite Hull
 
 SH_SPACE_FLUX_COMPOSITE_DESC
-'''Expensive special purpose built ship built around a single core part using [[tech SHP_SPACE_FLUX_COMPOSITION]]. It has one core slot and one external slot, and its max [[metertype METER_STRUCTURE]] is high.
+'''Large ship that is purpose-built around a single core part using [[tech SHP_SPACE_FLUX_COMPOSITION]]. It is capable of decent speed over long distances. It has one core slot, one internal and one external slot, and its max [[metertype METER_STRUCTURE]] is high.
 
 [[FLUX_STEALTH_DESC]]
 
@@ -15521,7 +15521,11 @@ SH_SPACE_FLUX_COMPOSITE_DESC
 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
 
 FLUX_STEALTH_DESC
-[[metertype METER_STEALTH]] starts at 15, and is increased by 10 when passive. Technology advances such as [[tech SPY_STEALTH_PART_1]] allow crews to increase the stealth of the craft by [[value SPATIAL_FLUX_STEALTH_TECH_BONUS]] each. If the ship stops in a system, the flux coherence breaks down decreasing stealth by 30 for two turns.
+'''Base [[metertype METER_STEALTH]] of ships with this hull is [[value SPATIAL_FLUX_STEALTH_HULL_BASE]] when in a fleet that is set to initiate combat, and [[value SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE]] for other fleet aggression settings.
+
+Researching each of [[tech SPY_STEALTH_PART_1]], [[tech SPY_STEALTH_PART_2]], [[tech SPY_STEALTH_PART_3]], and [[tech SPY_STEALTH_4]] will increase base stealth by [[value SPATIAL_FLUX_STEALTH_TECH_BONUS]].
+
+If the ship stops in a system, its stealth is reduced by [[value SPATIAL_FLUX_STEALTH_ARRIVAL_MALUS]] for 2 turns, due to breakdown of flux coherence.'''
 
 SH_SELF_GRAVITATING
 Self-Gravitating Hull

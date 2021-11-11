@@ -10,8 +10,6 @@ NamedReal name = "ANCIENT_RUINS_MIN_STABILITY" value = 12
 
 NamedReal name = "IMPERIAL_GARRISON_MAX_TROOPS_FLAT" value = 6
 
-NamedReal name = "SPATIAL_FLUX_STEALTH_TECH_BONUS" value = 10
-
 NamedReal name = "SHP_REINFORCED_HULL_BONUS" value = (5 * [[SHIP_STRUCTURE_FACTOR]])
 
 NamedInteger name = "NUM_COMBAT_ROUNDS" value = (GameRule name = "RULE_NUM_COMBAT_ROUNDS")
@@ -28,6 +26,20 @@ NamedReal name = "NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE" value = (Game
 NamedInteger name = "MIN_COLONY_SIZE" value = [[MIN_RECOLONIZING_SIZE]]
 
 NamedInteger name = "MIN_COLONY_HAPPINESS" value = [[MIN_RECOLONIZING_HAPPINESS]]
+
+// Spatial Flux Stealth section
+NamedReal name = "SPATIAL_FLUX_STEALTH_HULL_BASE" value = [[SPATIAL_FLUX_STEALTH_HULL_BASE]]
+NamedReal name = "SPATIAL_FLUX_STEALTH_ARRIVAL_MALUS" value = 30
+NamedReal name = "SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE_BONUS" value = [[SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE_BONUS]]
+NamedReal name = "SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE" value = [[SPATIAL_FLUX_STEALTH_HULL_BASE]] + [[SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE_BONUS]]
+NamedReal name = "SPATIAL_FLUX_STEALTH_TECH_BONUS" value = 10
+
+SPATIAL_FLUX_STEALTH_HULL_BASE
+'''15'''
+
+SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE_BONUS
+'''10'''
+
 
 #include "/scripting/common/misc.macros"
 #include "/scripting/common/base_prod.macros"
