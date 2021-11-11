@@ -8,7 +8,7 @@ Tech
     tags = [ "PEDIA_CONSTRUCTION_CATEGORY" "THEORY" ]
     prerequisites = "CON_ASYMP_MATS"
     unlock = [
-        Item type = Policy name = "PLC_BALANCE"
+        Item type = Policy name = "PLC_MODERATION"
         Item type = Policy name = "PLC_RACIAL_PURITY"
     ]
     effectsgroups = EffectsGroup

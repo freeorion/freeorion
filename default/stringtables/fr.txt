@@ -11619,17 +11619,17 @@ Si deux empires sont alliés, et que l'un ou l'autre applique cette Politique, l
 PLC_ALLIED_REPAIR_SHORT_DESC
 Permet aux alliés la réparation mutuelle des astronefs
 
-PLC_BALANCE
+PLC_MODERATION
 Équilibre
 
-PLC_BALANCE_DESC
+PLC_MODERATION_DESC
 '''Accorde un bonus d'Influence et de Stabilité à la Capitale impériale selon l'uniformité du nombre de planètes de l'empire utilisant différents réglages de focus. Pour chaque focus utilisé dans l'empire, le nombre de planètes les utilisant est compté. Si la différence est faible entre le nombre de planètes utilisant le focus le plus populaire et le nombre de celles utilisant le focus le moins populaire, les bonus pour la Capitale sont plus importants. Les bonus sont également plus élevés lorsque plusieurs focus différents sont utilisés.
 
 Les Avant-Postes sans focus défini comptent également comme un focus, ce dernier pouvant alors représenter le réglage de focus le plus populaire, rendant par conséquent difficile l'obtention de bonus élevés.
 
 Par exemple, 6 avant-postes sans focus, 3 planètes en focus Industrie, et 2 planètes en focus Recherche: 3 différents réglages de focus sont utilisés et une différence de 6 - 2 = 4 entre le nombre de fois que sont utilisés les focus les plus et les moins populaires. Utiliser davantage de focus différents ou réduire la différence entre les réglages de focus les plus et les moins populaires, octroiraient des bonus plus importants.'''
 
-PLC_BALANCE_SHORT_DESC
+PLC_MODERATION_SHORT_DESC
 Augmente l'Influence et la Stabilité lorsque davantage de focus différents sont utilisés
 
 PLC_ENVIRONMENTALISM
