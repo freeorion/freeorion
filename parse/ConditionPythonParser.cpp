@@ -59,8 +59,7 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::Contains>(ValueRef::CloneUnique(cond.condition)));
     }
 
-    template <MeterType M>
-    condition_wrapper insert_meter_value_(const boost::python::tuple& args, const boost::python::dict& kw) {
+    condition_wrapper insert_meter_value_(const boost::python::tuple& args, const boost::python::dict& kw, MeterType m) {
         std::unique_ptr<ValueRef::ValueRef<double>> low = nullptr;
         if (kw.has_key("low")) {
             auto low_args = boost::python::extract<value_ref_wrapper<double>>(kw["low"]);
@@ -80,7 +79,7 @@ namespace {
                 high = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["high"])());
             }
         }
-        return condition_wrapper(std::make_shared<Condition::MeterValue>(M, std::move(low), std::move(high)));
+        return condition_wrapper(std::make_shared<Condition::MeterValue>(m, std::move(low), std::move(high)));
     }
 
     condition_wrapper insert_visible_to_empire_(const boost::python::tuple& args, const boost::python::dict& kw) {
@@ -149,7 +148,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["Unowned"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE));
     globals["Human"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_HUMAN));
 
-    globals["Structure"] = boost::python::raw_function(insert_meter_value_<MeterType::METER_STRUCTURE>);
+    globals["Structure"] = boost::python::raw_function([] (auto args, auto kw) -> auto { return insert_meter_value_(args, kw, MeterType::METER_STRUCTURE);});
 
     globals["Species"] = condition_wrapper(std::make_shared<Condition::Species>());
 
