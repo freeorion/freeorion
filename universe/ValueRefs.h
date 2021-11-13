@@ -382,6 +382,7 @@ enum class OpType : int {
     MINUS,
     TIMES,
     DIVIDE,
+    REMAINDER,
     NEGATE,
     EXPONENTIATE,
     ABS,
@@ -2029,8 +2030,9 @@ std::string Operation<T>::Description() const
             OpType op_type = rhs->GetOpType();
             if (op_type == OpType::PLUS   || op_type == OpType::MINUS ||
                 op_type == OpType::TIMES  || op_type == OpType::DIVIDE ||
-                op_type == OpType::NEGATE || op_type == OpType::EXPONENTIATE)
-            return "-(" + LHS()->Description() + ")";
+                op_type == OpType::NEGATE || op_type == OpType::EXPONENTIATE ||
+                op_type == OpType::REMAINDER)
+            { return "-(" + LHS()->Description() + ")"; }
         } else {
             return "-" + LHS()->Description();
         }
@@ -2098,10 +2100,11 @@ std::string Operation<T>::Description() const
         if (
             (m_op_type == OpType::EXPONENTIATE &&
              (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES   || op_type == OpType::DIVIDE ||
-              op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE)
+              op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE ||
+              op_type == OpType::REMAINDER)
             ) ||
-            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE) &&
-              (op_type == OpType::PLUS        || op_type == OpType::MINUS)) || op_type == OpType::NEGATE)
+            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE || op_type == OpType::REMAINDER) &&
+              (op_type == OpType::PLUS        || op_type == OpType::MINUS))  || op_type == OpType::NEGATE)
            )
             parenthesize_lhs = true;
     }
@@ -2110,10 +2113,11 @@ std::string Operation<T>::Description() const
         if (
             (m_op_type == OpType::EXPONENTIATE &&
              (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES   || op_type == OpType::DIVIDE ||
-              op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE)
+              op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE ||
+              op_type == OpType::REMAINDER)
             ) ||
-            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE) &&
-              (op_type == OpType::PLUS        || op_type == OpType::MINUS)) || op_type == OpType::NEGATE)
+            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE || op_type == OpType::REMAINDER) &&
+              (op_type == OpType::PLUS        || op_type == OpType::MINUS))  || op_type == OpType::NEGATE)
            )
             parenthesize_rhs = true;
     }
@@ -2129,6 +2133,7 @@ std::string Operation<T>::Description() const
     case OpType::MINUS:        retval += " - "; break;
     case OpType::TIMES:        retval += " * "; break;
     case OpType::DIVIDE:       retval += " / "; break;
+    case OpType::REMAINDER:    retval += " % "; break;
     case OpType::EXPONENTIATE: retval += " ^ "; break;
     default:                   retval += " ? "; break;
     }
@@ -2149,8 +2154,9 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
             OpType op_type = rhs->GetOpType();
             if (op_type == OpType::PLUS   || op_type == OpType::MINUS ||
                 op_type == OpType::TIMES  || op_type == OpType::DIVIDE ||
-                op_type == OpType::NEGATE || op_type == OpType::EXPONENTIATE)
-            return "-(" + LHS()->Dump(ntabs) + ")";
+                op_type == OpType::NEGATE || op_type == OpType::EXPONENTIATE ||
+                op_type == OpType::REMAINDER)
+            { return "-(" + LHS()->Dump(ntabs) + ")"; }
         } else {
             return "-" + LHS()->Dump(ntabs);
         }
@@ -2218,10 +2224,11 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
         if (
             (m_op_type == OpType::EXPONENTIATE &&
              (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES  || op_type == OpType::DIVIDE ||
-              op_type == OpType::PLUS         || op_type == OpType::MINUS  || op_type == OpType::NEGATE)
+              op_type == OpType::PLUS         || op_type == OpType::MINUS  || op_type == OpType::NEGATE ||
+              op_type == OpType::REMAINDER)
             ) ||
-            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE) &&
-              (op_type == OpType::PLUS        || op_type == OpType::MINUS)) || op_type == OpType::NEGATE)
+            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE || op_type == OpType::REMAINDER) &&
+              (op_type == OpType::PLUS        || op_type == OpType::MINUS))  || op_type == OpType::NEGATE)
            )
             parenthesize_lhs = true;
     }
@@ -2230,10 +2237,11 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
         if (
             (m_op_type == OpType::EXPONENTIATE &&
              (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES   || op_type == OpType::DIVIDE ||
-              op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE)
+              op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE ||
+              op_type == OpType::REMAINDER)
             ) ||
-            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE) &&
-              (op_type == OpType::PLUS        || op_type == OpType::MINUS)) || op_type == OpType::NEGATE)
+            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE || op_type == OpType::REMAINDER) &&
+              (op_type == OpType::PLUS        || op_type == OpType::MINUS))  || op_type == OpType::NEGATE)
            )
             parenthesize_rhs = true;
     }
@@ -2249,6 +2257,7 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
     case OpType::MINUS:        retval += " - "; break;
     case OpType::TIMES:        retval += " * "; break;
     case OpType::DIVIDE:       retval += " / "; break;
+    case OpType::REMAINDER:    retval += " % "; break;
     case OpType::EXPONENTIATE: retval += " ^ "; break;
     default:                   retval += " ? "; break;
     }

@@ -28,6 +28,7 @@ std::ostream& std::operator << (std::ostream& stream, const ValueRef::OpType& ty
         (OpType::MINUS)
         (OpType::TIMES)
         (OpType::DIVIDE)
+        (OpType::REMAINDER)
         (OpType::NEGATE)
         (OpType::EXPONENTIATE)
         (OpType::ABS)

@@ -3049,6 +3049,16 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             break;
         }
 
+        case OpType::REMAINDER: {
+            double divisor = std::abs(RHS()->Eval(context));
+            if (divisor == 0.0)
+                return 0.0;
+            auto dividend = LHS()->Eval(context);
+            auto quotient = std::floor(dividend / divisor);
+            return dividend - quotient * divisor;
+            break;
+        }
+
         case OpType::NEGATE:
             return -(LHS()->Eval(context)); break;
 
@@ -3205,6 +3215,14 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             if (op2 == 0)
                 return 0;
             return LHS()->Eval(context) / op2;
+            break;
+        }
+
+        case OpType::REMAINDER: {
+            int op2 = RHS()->Eval(context);
+            if (op2 == 0)
+                return 0;
+            return LHS()->Eval(context) % op2;
             break;
         }
 

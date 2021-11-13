@@ -135,6 +135,7 @@ namespace parse { namespace detail {
                         (
                             lit('*') [ _c = ValueRef::OpType::TIMES ]
                         |   lit('/') [ _c = ValueRef::OpType::DIVIDE ]
+                        |   lit('%') [ _c = ValueRef::OpType::REMAINDER ]
                         )
                         >>  exponential_expr [
                             _b = construct_movable_(new_<ValueRef::Operation<T>>(
