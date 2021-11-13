@@ -12063,7 +12063,7 @@ PLC_CHARGE_DESC
 • Weapon damage for ship weapons is increased by [[value PLC_CHARGE_DAMAGE_BOOST]] (i.e. for [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], or [[shippart SR_WEAPON_4_1]])
 • Number of fighters launched per [[FT_BAY_1]] is increased by [[value PLC_CHARGE_BAY_LAUNCH_BONUS]]
 • Number of shots for [[shippart SR_ARC_DISRUPTOR]] is increased by [[value PLC_CHARGE_ARC_DISRUPTOR_SHOT_BONUS]]
-• A charging [[shippart SR_FLUX_LANCE]] can attack ships a combat round earlier
+• A charging [[shippart SR_FLUX_LANCE]] can attack ships starting one combat round earlier
 • Number of shots for [[shippart SR_WEAPON_0_1]] is decreased by [[value PLC_CHARGE_FLAK_SHOT_REDUCTION]]
 • [[metertype METER_MAX_SHIELD]] is reduced by [[value PLC_CHARGE_SHIELD_REDUCTION]] '''
 
