@@ -16,7 +16,8 @@ Policy
                 OwnedBy empire = Source.Owner
                 Species
                 (LocalCandidate.TurnsSinceFocusChange == 0)
-                (LocalCandidate.TurnsSinceColonization > 1) // all changes on first turn or two after colonization without penalty
+                (LocalCandidate.TurnsSinceColonization > 1) // all changes on first turn after colonization without penalty
+                Not (LocalCandidate.TurnsSinceLastConquered == 1) // same for newly conquered, note that 0 means never conquered
             ]
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetInfluence value = Value - (NamedReal name = "BUREAUCRACY_FOCUS_CHANGE_PENALTY" value = 3.0)
@@ -46,7 +47,7 @@ Policy
             scope = Source
             activation = Not Number // want warning generated one turn earlier than effect, so it's seen on the same turn as the effect will kick in...
                 low = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy + 1) /
-                      (NamedInteger name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING" value = 10)
+                      (NamedIntegerLookup name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING")
                 condition = And [
                     Or [
                         Building name = "BLD_REGIONAL_ADMIN"
@@ -66,7 +67,7 @@ Policy
                         ]
                         OwnedBy empire = Source.Owner
                     ]
-                    tag = "needbuildings" data = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) /
+                    tag = "needbuildings" data = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy + 1) /
                                                  (NamedIntegerLookup name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING")
                 ]
                 empire = Source.Owner
