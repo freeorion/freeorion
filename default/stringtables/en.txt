@@ -12758,7 +12758,7 @@ SHP_SPACE_FLUX_COMPOSITION
 Spatial Flux Composition
 
 SHP_SPACE_FLUX_COMPOSITION_DESC
-By bending and stretching spatial flux bubbles and combining those with spatial flux drives one can build specialised hulls for specific purposes.
+By bending and stretching spatial flux bubbles and combining them with spatial flux drives, specialised hulls can be built for specific purposes.
 
 SHP_CONTGRAV_MAINT
 Contra Gravitational Maintenance
