@@ -14928,7 +14928,7 @@ Spatial Flux Lance
 SR_FLUX_LANCE_DESC
 '''The Spatial Flux Lance, a internally mounted short-ranged ship weapon. Cheap to produce, but does only small amount of damage.
 
-The Spatial Flux Lance generator creates a short-lived spatial distortion in proximity outside the ship. The distortion is deadly to fighters and a nuisance for armoured ships. Multiple generators interfere with each other so only a single Flux Lance part may effectively mounted on a ship.
+The Spatial Flux Lance generator creates a short-lived spatial distortion in proximity to its ship. The distortion is deadly to fighters and a nuisance for armoured ships. Multiple generators interfere with each other, and thus only a single Flux Lance part may be mounted on each ship.
 
 A Flux Lance can inflict [[encyclopedia DAMAGE_TITLE]] to ships starting from combat round [[value FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE]] as the targets are too far away in earlier rounds. The Flux Lance starts to destroy fighters when they come in range in combat round 2.
 
