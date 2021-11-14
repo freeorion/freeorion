@@ -153,7 +153,7 @@ void MessageWndEdit::FindGameWords() {
             m_game_words.insert(UserString(design->Name()));
     }
      // add specials names
-    for (const std::string& special_name : SpecialNames()) {
+    for (const auto& special_name : SpecialNames()) {
         if (!special_name.empty())
             m_game_words.insert(UserString(special_name));
     }
