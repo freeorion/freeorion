@@ -28,8 +28,16 @@ namespace {
     constexpr float EPSILON = 0.01f;
     const std::string EMPTY_STRING;
 
-    std::vector<std::pair<std::string, std::string>> PolicyCategoriesSlotsMeters() {
-        std::vector<std::pair<std::string, std::string>> retval;
+    std::string operator+(const std::string_view sv, const char* c) {
+        std::string retval;
+        retval.reserve(sv.size() + std::strlen(c));
+        retval.append(sv);
+        retval.append(c);
+        return retval;
+    }
+
+    auto PolicyCategoriesSlotsMeters() {
+        std::vector<std::pair<std::string_view, std::string>> retval;
 
         // derive meters from PolicyManager parsed policies' categories
         for (auto& cat : GetPolicyManager().PolicyCategories())
@@ -76,8 +84,8 @@ void Empire::Init() {
     //m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
     //m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
     //m_meters[UserStringNop("METER_TECH_COST_FACTOR")];
-    for (const auto& entry : PolicyCategoriesSlotsMeters())
-        m_meters[entry.second];
+    for (auto& entry : PolicyCategoriesSlotsMeters())
+        m_meters[std::move(entry.second)];
 }
 
 Empire::~Empire()
@@ -362,9 +370,9 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time) {
     // TODO: Check and handle policy exclusions in this function...
 
     // check that there are enough slots for adopted policies in their current slots
-    std::map<std::string, int> total_category_slot_counts = TotalPolicySlots(); // how many slots in each category
-    std::set<std::string> categories_needing_rearrangement;                     // which categories have a problem
-    std::map<std::string, std::map<int, int>> category_slot_policy_counts;      // how many policies in each slot of each category
+    auto total_category_slot_counts = TotalPolicySlots(); // how many slots in each category
+    std::set<std::string_view> categories_needing_rearrangement;                 // which categories have a problem
+    std::map<std::string_view, std::map<int, int>> category_slot_policy_counts;   // how many policies in each slot of each category
     for (auto& [policy_name, adoption_info] : m_adopted_policies) {
         (void)policy_name; // quiet warning
         const auto& [adoption_turn, slot_in_category, category] = adoption_info;
@@ -398,7 +406,7 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time) {
             if (added >= total_category_slot_counts[cat])
                 break;  // can't add more...
             int new_slot = added++;
-            m_adopted_policies[std::move(policy_name)] = PolicyAdoptionInfo{turn, cat, new_slot};
+            m_adopted_policies[std::move(policy_name)] = PolicyAdoptionInfo{turn, std::string{cat}, new_slot};
             DebugLogger() << "... Policy " << policy_name << " was re-added in slot " << new_slot;
         }
     }
@@ -520,8 +528,8 @@ bool Empire::PolicyPrereqsAndExclusionsOK(const std::string& name) const {
     return true;
 }
 
-std::map<std::string, int> Empire::TotalPolicySlots() const {
-    std::map<std::string, int> retval;
+std::map<std::string_view, int> Empire::TotalPolicySlots() const {
+    std::map<std::string_view, int> retval;
     // collect policy slot category meter values and return
     for (auto& [cat, cat_slots_string] : PolicyCategoriesSlotsMeters()) {
         if (!m_meters.count(cat_slots_string))
@@ -531,14 +539,14 @@ std::map<std::string, int> Empire::TotalPolicySlots() const {
             ErrorLogger() << "Empire doesn't have policy category slot meter with name: " << cat_slots_string;
             continue;
         }
-        retval[std::move(cat)] = static_cast<int>(it->second.Initial());
+        retval[cat] = static_cast<int>(it->second.Initial());
     }
     return retval;
 }
 
-std::map<std::string, int> Empire::EmptyPolicySlots() const {
+std::map<std::string_view, int> Empire::EmptyPolicySlots() const {
     // get total slots empire has available
-    std::map<std::string, int> retval = TotalPolicySlots();
+    auto retval = TotalPolicySlots();
 
     // subtract used policy categories
     for (auto& [ignored, adoption_info] : m_adopted_policies) {

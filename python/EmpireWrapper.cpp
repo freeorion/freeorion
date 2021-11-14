@@ -153,6 +153,23 @@ namespace {
             retval.insert(entry.first);
         return retval;
     }
+
+    auto ViewSetToStringVec(const std::set<std::string_view>& in) -> std::vector<std::string>
+    {
+        std::vector<std::string> out;
+        out.reserve(in.size());
+        std::transform(in.begin(), in.end(), std::back_inserter(out),
+                       [](auto view) { return std::string{view}; });
+        return out;
+    }
+
+    auto ViewMapToStringMap(const std::map<std::string_view, int>& in) -> std::map<std::string, int>
+    {
+        std::map<std::string, int> out;
+        std::transform(in.begin(), in.end(), std::inserter(out, out.end()),
+                       [](auto view_int) { return std::pair{std::string{view_int.first}, view_int.second}; });
+        return out;
+    }
 }
 
 namespace FreeOrionPython {
@@ -266,8 +283,17 @@ namespace FreeOrionPython {
             .add_property("turnsPoliciesAdopted",   make_function(&Empire::TurnsPoliciesAdopted,            py::return_value_policy<py::return_by_value>()))
             .add_property("availablePolicies",      make_function(&Empire::AvailablePolicies,               py::return_value_policy<py::copy_const_reference>()))
             .def("policyAvailable",                 &Empire::PolicyAvailable)
-            .add_property("totalPolicySlots",       make_function(&Empire::TotalPolicySlots,                py::return_value_policy<py::return_by_value>()))
-            .add_property("emptyPolicySlots",       make_function(&Empire::EmptyPolicySlots,                py::return_value_policy<py::return_by_value>()))
+
+            .add_property("totalPolicySlots",       make_function(
+                                                        +[](const Empire& e) -> std::map<std::string, int>
+                                                            { return ViewMapToStringMap(e.TotalPolicySlots()); },
+                                                        py::return_value_policy<py::return_by_value>()
+                                                    ))
+            .add_property("emptyPolicySlots",       make_function(
+                                                        +[](const Empire& e) -> std::map<std::string, int>
+                                                            { return ViewMapToStringMap(e.EmptyPolicySlots()); },
+                                                        py::return_value_policy<py::return_by_value>()
+                                                    ))
 
             .def("canBuild",                        +[](const Empire& empire, BuildType build_type, const std::string& name, int location) -> bool { return empire.ProducibleItem(build_type, name, location); })
             .def("canBuild",                        +[](const Empire& empire, BuildType build_type, int design, int location) -> bool { return empire.ProducibleItem(build_type, design, location); })
@@ -394,16 +420,16 @@ namespace FreeOrionPython {
         def("getTech",                              &GetTech,                               py::return_value_policy<py::reference_existing_object>(), "Returns the tech (Tech) with the indicated name (string).");
         def("getTechCategories",                    &TechManager::CategoryNames,            py::return_value_policy<py::return_by_value>(), "Returns the names of all tech categories (StringVec).");
 
-        py::def("techs",
-                +[]() -> std::vector<std::string> { return GetTechManager().TechNames(); },
-                py::return_value_policy<py::return_by_value>(),
-                "Returns the names of all techs (StringVec).");
+        def("techs",
+            +[]() -> std::vector<std::string> { return GetTechManager().TechNames(); },
+            py::return_value_policy<py::return_by_value>(),
+            "Returns the names of all techs (StringVec).");
 
-        py::def("techsInCategory",
-                +[](const std::string& category) -> std::vector<std::string> { return GetTechManager().TechNames(category); },
-                py::return_value_policy<py::return_by_value>(),
-                "Returns the names of all techs (StringVec) in the indicated"
-                " tech category name (string).");
+        def("techsInCategory",
+            +[](const std::string& category) -> std::vector<std::string> { return GetTechManager().TechNames(category); },
+            py::return_value_policy<py::return_by_value>(),
+            "Returns the names of all techs (StringVec) in the indicated"
+            " tech category name (string).");
 
         py::class_<UnlockableItem>("UnlockableItem", py::init<UnlockableItemType, const std::string&>())
             .add_property("type",               &UnlockableItem::type)
@@ -422,18 +448,22 @@ namespace FreeOrionPython {
         ;
 
         def("getPolicy",                            &GetPolicy,                                 py::return_value_policy<py::reference_existing_object>(), "Returns the policy (Policy) with the indicated name (string).");
-        def("getPolicyCategories",                  &PolicyManager::PolicyCategories,           py::return_value_policy<py::return_by_value>(), "Returns the names of all policy categories (StringVec).");
 
-        py::def("policies",
-                +[]() -> std::vector<std::string> { return GetPolicyManager().PolicyNames(); },
-               py::return_value_policy<py::return_by_value>(),
-               "Returns the names of all policies (StringVec).");
+        def("policyCategories",
+            +[]() -> std::vector<std::string> { return ViewSetToStringVec(GetPolicyManager().PolicyCategories()); },
+            py::return_value_policy<py::return_by_value>(),
+            "Returns the names of all policy categories (StringVec).");
 
-        py::def("policiesInCategory",
-                +[](const std::string& category) -> std::vector<std::string> { return GetPolicyManager().PolicyNames(category); },
-                py::return_value_policy<py::return_by_value>(),
-                "Returns the names of all policies (StringVec) in the"
-                " indicated policy category name (string).");
+        def("policies",
+            +[]() -> std::vector<std::string> { return GetPolicyManager().PolicyNames(); },
+            py::return_value_policy<py::return_by_value>(),
+            "Returns the names of all policies (StringVec).");
+
+        def("policiesInCategory",
+            +[](const std::string& category) -> std::vector<std::string> { return GetPolicyManager().PolicyNames(category); },
+            py::return_value_policy<py::return_by_value>(),
+            "Returns the names of all policies (StringVec) in the"
+            " indicated policy category name (string).");
 
         ///////////////////////
         // DiplomaticMessage //
