@@ -193,7 +193,7 @@ private:
     FleetAggression m_aggression = FleetAggression::FLEET_OBSTRUCTIVE;  ///< should this fleet attack enemies in the same system, block their passage, or ignore them
 
     int             m_ordered_given_to_empire_id = ALL_EMPIRES;
-    int             m_last_turn_move_ordered;
+    int             m_last_turn_move_ordered = BEFORE_FIRST_TURN;
     /** list of systems on travel route of fleet from current position to
       * destination.  If the fleet is currently in a system, that will be the
       * first system on the list.  Otherwise, the first system on the list will
