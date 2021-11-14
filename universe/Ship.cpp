@@ -748,6 +748,7 @@ void Ship::ClampMeters() {
         case MeterType::METER_MAX_CAPACITY:
         case MeterType::METER_MAX_SECONDARY_STAT:
             entry.second.ClampCurrentToRange();
+            [[fallthrough]];
         default:
             break;
         }
