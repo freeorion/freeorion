@@ -1,0 +1,56 @@
+Part
+    name = "SR_FLUX_LANCE"
+    description = "SR_FLUX_LANCE_DESC"
+    exclusions = [
+      "SR_FLUX_LANCE"
+    ]
+    class = ShortRange
+    damage = 2
+    shots = 1
+    // destroyFightersPerBattleMax = default, can shoot fighters starting from bout 2
+    damageStructurePerBattleMax =
+        max(0,ShipPartMeter part = "SR_FLUX_LANCE" meter = Capacity object = Source.ID - Value(Target.Shield))
+        * ShipPartMeter part = "SR_FLUX_LANCE" meter = SecondaryStat object = Source.ID
+        * ( NamedRealLookup name = "NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE" + [[ONE_IF_CHARGING]] )
+
+    combatTargets = And [
+        Not System
+        Not Fleet
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        OrderedAlternativesOf [
+           And [
+               // Both Ships and fighters are in reach starting from bout 3 (or bout 2 if charging)
+               (CombatBout >= ( NamedIntegerLookup name = "FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE" - [[ONE_IF_CHARGING]] ) )
+               [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+               Or [
+                    Fighter
+                    [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+               ]
+           ]
+           And [
+               // Attack fighters starting from bout 2 until FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE
+               (CombatBout >= 2)
+               [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+               Fighter
+           ]
+        ]
+    ]
+    mountableSlotTypes = Internal
+    buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 2
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
+    icon = "icons/ship_parts/flux-lance.png"
+
+ONE_IF_CHARGING
+'''( Statistic If condition = And [ Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_CHARGE" ] )
+'''
+
+
+#include "shortrange.macros"
+
+#include "/scripting/common/upkeep.macros"
+#include "/scripting/ship_parts/targeting.macros"

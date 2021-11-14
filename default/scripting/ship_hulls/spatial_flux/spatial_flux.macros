@@ -1,0 +1,17 @@
+SPATIAL_FLUX_STEALTH_EFFECTS
+'''EffectsGroup
+    scope = Source
+    activation = (Source.ArrivedOnTurn >= CurrentTurn - 1) 
+    accountinglabel = "SPATIAL_FLUX_MALUS"
+    effects = SetStealth value = Value - NamedRealLookup name = "SPATIAL_FLUX_STEALTH_ARRIVAL_MALUS"
+
+EffectsGroup
+    scope = Source
+    activation = Not Aggressive
+    accountinglabel = "SPATIAL_FLUX_BONUS"
+    effects = SetStealth value = Value + NamedRealLookup name = "SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE_BONUS" + ( NamedRealLookup name = "SPATIAL_FLUX_STEALTH_TECH_BONUS" *
+        (Statistic If condition = And [ Source OwnerHasTech name = "SPY_STEALTH_PART_1" ]) +
+        (Statistic If condition = And [ Source OwnerHasTech name = "SPY_STEALTH_PART_2" ]) +
+        (Statistic If condition = And [ Source OwnerHasTech name = "SPY_STEALTH_PART_3" ]) +
+        (Statistic If condition = And [ Source OwnerHasTech name = "SPY_STEALTH_4" ]) )
+'''
