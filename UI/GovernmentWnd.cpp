@@ -856,8 +856,7 @@ void GovernmentWnd::PolicyPalette::Populate()
 class PolicySlotControl : public GG::Control {
 public:
     PolicySlotControl();
-    PolicySlotControl(const std::string& slot_category, int category_index,
-                      unsigned int slot_index);
+    PolicySlotControl(std::string slot_category, int category_index, unsigned int slot_index);
     void CompleteConstruction() override;
 
     const std::string&  SlotCategory() const    { return m_slot_category; }
@@ -905,10 +904,10 @@ PolicySlotControl::PolicySlotControl() :
     GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE)
 {}
 
-PolicySlotControl::PolicySlotControl(const std::string& slot_category, int category_index,
+PolicySlotControl::PolicySlotControl(std::string slot_category, int category_index,
                                      unsigned int slot_index) :
     GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
-    m_slot_category(slot_category),
+    m_slot_category(std::move(slot_category)),
     m_category_index(category_index),
     m_slot_index(slot_index)
 {}
