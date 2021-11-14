@@ -10,13 +10,8 @@ namespace boost::python {
 }
 
 struct condition_wrapper {
-    condition_wrapper(std::shared_ptr<Condition::Condition>&& ref)
-        : condition(std::move(ref))
-    { }
-
-    condition_wrapper(const std::shared_ptr<Condition::Condition>& ref)
-        : condition(ref)
-    { }
+    condition_wrapper(std::shared_ptr<Condition::Condition>&& ref) : condition(std::move(ref)) {}
+    condition_wrapper(const std::shared_ptr<Condition::Condition>& ref) : condition(ref) {}
 
     std::shared_ptr<Condition::Condition> condition;
 };

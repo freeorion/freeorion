@@ -39,11 +39,11 @@ namespace {
 }
 
 struct module_spec {
-    module_spec(const std::string& name, const std::string& parent_, const PythonParser& parser_)
-        : fullname(name)
-        , parent(parent_)
-        , parser(parser_)
-    { }
+    module_spec(const std::string& name, const std::string& parent_, const PythonParser& parser_) :
+        fullname(name),
+        parent(parent_),
+        parser(parser_)
+    {}
 
     py::list path;
     std::string fullname;
@@ -51,9 +51,9 @@ struct module_spec {
     const PythonParser& parser;
 };
 
-PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir)
-    : m_python(_python)
-    , m_scripting_dir(scripting_dir)
+PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir) :
+    m_python(_python),
+    m_scripting_dir(scripting_dir)
 {
     if (!m_python.IsPythonRunning()) {
         ErrorLogger() << "Python parse given non-initialized python!";
@@ -122,6 +122,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
 
         m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"));
         m_meta_path.append(boost::cref(*this));
+
     } catch (const boost::python::error_already_set& err) {
         m_python.HandleErrorAlreadySet();
         if (!m_python.IsPythonRunning()) {
