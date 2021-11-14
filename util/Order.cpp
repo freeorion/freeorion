@@ -1008,19 +1008,16 @@ void ChangeFocusOrder::ExecuteImpl(ScriptingContext& context) const {
 ////////////////////////////////////////////////
 // PolicyOrder
 ////////////////////////////////////////////////
-PolicyOrder::PolicyOrder(int empire, const std::string& name,
-                         const std::string& category, bool adopt,
-                         int slot) :
+PolicyOrder::PolicyOrder(int empire, std::string name, std::string category, bool adopt, int slot) :
     Order(empire),
-    m_policy_name(name),
-    m_category(category),
+    m_policy_name(std::move(name)),
+    m_category(std::move(category)),
     m_slot(slot),
     m_adopt(adopt)
 {}
 
-std::string PolicyOrder::Dump() const {
-    return m_adopt ? UserString("ORDER_POLICY_ADOPT") : UserString("ORDER_POLICY_ABANDON");
-}
+std::string PolicyOrder::Dump() const
+{ return m_adopt ? UserString("ORDER_POLICY_ADOPT") : UserString("ORDER_POLICY_ABANDON"); }
 
 void PolicyOrder::ExecuteImpl(ScriptingContext& context) const {
     auto empire = GetValidatedEmpire(context);

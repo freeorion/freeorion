@@ -472,9 +472,7 @@ private:
 /** the Order subclass that represents the adoptiong imperial polices. */
 class FO_COMMON_API PolicyOrder : public Order {
 public:
-    PolicyOrder(int empire, const std::string& name, // TODO: pass name by value and move?
-                const std::string& category, bool adopt,
-                int slot = -1);
+    PolicyOrder(int empire, std::string name, std::string category, bool adopt, int slot = -1);
 
     [[nodiscard]] std::string Dump() const override;
 
