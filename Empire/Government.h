@@ -79,12 +79,12 @@ public:
 
     //! returns the policy with the name \a name; you should use the free
     //! function GetPolicy() instead
-    [[nodiscard]] const Policy*              GetPolicy(const std::string& name) const;
-    [[nodiscard]] std::vector<std::string>   PolicyNames() const;
+    [[nodiscard]] const Policy*                 GetPolicy(const std::string& name) const;
+    [[nodiscard]] std::vector<std::string_view> PolicyNames() const;
     //! returns list of names of policies in specified category
-    [[nodiscard]] std::vector<std::string>   PolicyNames(const std::string& name) const;
-    [[nodiscard]] std::set<std::string_view> PolicyCategories() const;
-    [[nodiscard]] unsigned int               GetCheckSum() const;
+    [[nodiscard]] std::vector<std::string_view> PolicyNames(const std::string& name) const;
+    [[nodiscard]] std::set<std::string_view>    PolicyCategories() const;
+    [[nodiscard]] unsigned int                  GetCheckSum() const;
 
     [[nodiscard]] iterator begin() const; //! iterator to the first policy
     [[nodiscard]] iterator end() const;   //! iterator to the last + 1th policy

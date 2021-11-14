@@ -163,6 +163,15 @@ namespace {
         return out;
     }
 
+    auto ViewVecToStringVec(const std::vector<std::string_view>& in) -> std::vector<std::string>
+    {
+        std::vector<std::string> out;
+        out.reserve(in.size());
+        std::transform(in.begin(), in.end(), std::back_inserter(out),
+                       [](auto view) { return std::string{view}; });
+        return out;
+    }
+
     auto ViewMapToStringMap(const std::map<std::string_view, int>& in) -> std::map<std::string, int>
     {
         std::map<std::string, int> out;
@@ -455,12 +464,12 @@ namespace FreeOrionPython {
             "Returns the names of all policy categories (StringVec).");
 
         def("policies",
-            +[]() -> std::vector<std::string> { return GetPolicyManager().PolicyNames(); },
+            +[]() -> std::vector<std::string> { return ViewVecToStringVec(GetPolicyManager().PolicyNames()); },
             py::return_value_policy<py::return_by_value>(),
             "Returns the names of all policies (StringVec).");
 
         def("policiesInCategory",
-            +[](const std::string& category) -> std::vector<std::string> { return GetPolicyManager().PolicyNames(category); },
+            +[](const std::string& category) -> std::vector<std::string> { return ViewVecToStringVec(GetPolicyManager().PolicyNames(category)); },
             py::return_value_policy<py::return_by_value>(),
             "Returns the names of all policies (StringVec) in the"
             " indicated policy category name (string).");

@@ -160,17 +160,19 @@ const Policy* PolicyManager::GetPolicy(const std::string& name) const {
     return it == m_policies.end() ? nullptr : it->second.get();
 }
 
-std::vector<std::string> PolicyManager::PolicyNames() const {
+std::vector<std::string_view> PolicyManager::PolicyNames() const {
     CheckPendingPolicies();
-    std::vector<std::string> retval;
+    std::vector<std::string_view> retval;
+    retval.reserve(m_policies.size());
     for (const auto& policy : m_policies)
         retval.emplace_back(policy.first);
     return retval;
 }
 
-std::vector<std::string> PolicyManager::PolicyNames(const std::string& name) const {
+std::vector<std::string_view> PolicyManager::PolicyNames(const std::string& name) const {
     CheckPendingPolicies();
-    std::vector<std::string> retval;
+    std::vector<std::string_view> retval;
+    retval.reserve(m_policies.size());
     for (const auto& policy : m_policies)
         if (policy.second->Category() == name)
             retval.emplace_back(policy.first);
