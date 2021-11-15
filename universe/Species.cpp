@@ -56,7 +56,7 @@ unsigned int FocusType::GetCheckSum() const {
 // Species                                     //
 /////////////////////////////////////////////////
 namespace {
-    std::string PlanetTypeToString(PlanetType type) {
+    std::string_view PlanetTypeToString(PlanetType type) {
         switch (type) {
         case PlanetType::PT_SWAMP:     return "Swamp";
         case PlanetType::PT_TOXIC:     return "Toxic";
@@ -72,7 +72,8 @@ namespace {
         default:                       return "?";
         }
     }
-    std::string PlanetEnvironmentToString(PlanetEnvironment env) {
+
+    std::string_view PlanetEnvironmentToString(PlanetEnvironment env) {
         switch (env) {
         case PlanetEnvironment::PE_UNINHABITABLE: return "Uninhabitable";
         case PlanetEnvironment::PE_HOSTILE:       return "Hostile";
@@ -159,7 +160,9 @@ void Species::Init() {
 }
 
 std::string Species::Dump(unsigned short ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "Species\n";
+    std::string retval;
+    retval.reserve(500); // guesstimate
+    retval += DumpIndent(ntabs) + "Species\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
     retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
     retval += DumpIndent(ntabs+1) + "gameplay_description = \"" + m_gameplay_description + "\"\n";
@@ -193,15 +196,21 @@ std::string Species::Dump(unsigned short ntabs) const {
         retval += DumpIndent(ntabs+1) + "combatTargets = " + m_combat_targets->Dump(ntabs+2);
     if (m_planet_environments.size() == 1) {
         retval += DumpIndent(ntabs+1) + "environments =\n";
-        retval += DumpIndent(ntabs+2) + "type = " + PlanetTypeToString(m_planet_environments.begin()->first)
-            + " environment = " + PlanetEnvironmentToString(m_planet_environments.begin()->second)
-            + "\n";
+        retval.append(DumpIndent(ntabs+2))
+              .append("type = ")
+              .append(PlanetTypeToString(m_planet_environments.begin()->first))
+              .append(" environment = ")
+              .append(PlanetEnvironmentToString(m_planet_environments.begin()->second))
+              .append("\n");
     } else {
         retval += DumpIndent(ntabs+1) + "environments = [\n";
         for (const auto& entry : m_planet_environments) {
-            retval += DumpIndent(ntabs+2) + "type = " + PlanetTypeToString(entry.first)
-                + " environment = " + PlanetEnvironmentToString(entry.second)
-                + "\n";
+            retval.append(DumpIndent(ntabs+2))
+                  .append("type = ")
+                  .append(PlanetTypeToString(entry.first))
+                  .append(" environment = ")
+                  .append(PlanetEnvironmentToString(entry.second))
+                  .append("\n");
         }
         retval += DumpIndent(ntabs+1) + "]\n";
     }
