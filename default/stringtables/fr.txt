@@ -6490,6 +6490,7 @@ Plan d'Évacuation
 
 EVACUATION_TEXT
 '''La construction de la structure [[buildingtype BLD_EVACUATION]] retire toute la [[metertype METER_POPULATION]] d'une planète. À chaque tour, une partie de la Population est évacuée. S'il existe des planètes de l'empire colonisées par la même espèce, ayant de l'espace libre et étant connectées aux lignes d'[[metertype METER_SUPPLY]], l'une d'entre elles sera choisie au hasard et la Population y sera déplacée. Si aucune planète appropriée n'est disponible, la Population évacuée disparaîtra dans l'espace infini.
+
 Durant une évacuation, la production tombe à zéro. Quand une colonie est vidée de toute Population, elle retourne à l'état d'[[encyclopedia OUTPOSTS_TITLE]]. L'empire en est toujours propriétaire, et peut lancer une nouvelle colonisation dès que la structure [[buildingtype BLD_EVACUATION]] est détruite automatiquement.'''
 
 AI_LEVELS_TITLE
@@ -10225,6 +10226,12 @@ Classe Coque: Robotique
 HULL_LINE_ROBOTIC_DESC
 Classe de coques privilégiant grandement l'intelligence artificielle et l'automatisation.
 
+HULL_LINE_SPATIAL_FLUX
+Classe Coque: Flux Spatial
+
+HULL_LINE_SPATIAL_FLUX_DESC
+Classe de coques conçues avant tout pour la propulsion par flux spatial, et moins polyvalentes que la plupart des autres coques.
+
 HULL_MONSTER
 Corps de Monstres
 
@@ -11620,17 +11627,15 @@ PLC_ALLIED_REPAIR_SHORT_DESC
 Permet aux alliés la réparation mutuelle des astronefs
 
 PLC_MODERATION
-Équilibre
+Modération
 
 PLC_MODERATION_DESC
-'''Accorde un bonus d'Influence et de Stabilité à la Capitale impériale selon l'uniformité du nombre de planètes de l'empire utilisant différents réglages de focus. Pour chaque focus utilisé dans l'empire, le nombre de planètes les utilisant est compté. Si la différence est faible entre le nombre de planètes utilisant le focus le plus populaire et le nombre de celles utilisant le focus le moins populaire, les bonus pour la Capitale sont plus importants. Les bonus sont également plus élevés lorsque plusieurs focus différents sont utilisés.
+'''Accorde un bonus d'Influence et de Stabilité à la Capitale impériale d'autant plus important lorsque le réglage de Focus le plus commun dans l'empire est moins utilisé. Le nombre d'utilisations des autres réglages de Focus n'entre pas en compte pour ce bonus; seul le nombre de nombre planètes utilisant le réglage de Focus le plus commun ainsi que le nombre total de planètes appartenant à l'empire entrent en ligne de compte.
 
-Les Avant-Postes sans focus défini comptent également comme un focus, ce dernier pouvant alors représenter le réglage de focus le plus populaire, rendant par conséquent difficile l'obtention de bonus élevés.
-
-Par exemple, 6 avant-postes sans focus, 3 planètes en focus Industrie, et 2 planètes en focus Recherche: 3 différents réglages de focus sont utilisés et une différence de 6 - 2 = 4 entre le nombre de fois que sont utilisés les focus les plus et les moins populaires. Utiliser davantage de focus différents ou réduire la différence entre les réglages de focus les plus et les moins populaires, octroiraient des bonus plus importants.'''
+Les Avant-Postes sans Focus défini comptent également comme un Focus, ce dernier pouvant alors représenter le réglage de Focus le plus commun, rendant par conséquent difficile l'obtention de bonus élevés.'''
 
 PLC_MODERATION_SHORT_DESC
-Augmente l'Influence et la Stabilité lorsque davantage de focus différents sont utilisés
+Augmente l'Influence et la Stabilité de la Capitale impériale
 
 PLC_ENVIRONMENTALISM
 Environnementalisme
@@ -12039,7 +12044,7 @@ Encerclement
 PLC_FLANKING_DESC
 '''Dans les systèmes où l'empire appliquant cette Politique dispose d'astronefs armés stationnaires plus nombreux que les astronefs ennemis présents, l'armement de cet empire infligera des [[encyclopedia DAMAGE_TITLE]] additionnels par tir.
 
-D'autre part, les astronefs effectuant une attaque en tenaille infligeront également des dommages additionnels. Une attaque en tenaille est déclenchée lorsque les astronefs de l'empire appliquant cette politique sont en vol et arrivent au tour suivant dans un système via des Voies spatiales différentes.
+D'autre part, les astronefs effectuant une attaque en tenaille infligeront également des dommages additionnels. Une attaque en tenaille est déclenchée lorsque les astronefs de l'empire appliquant cette Politique sont en vol et arrivent au tour suivant dans un système via des Voies spatiales différentes.
 
 • Les dommages pour les armements d'astronef sont augmentés de [[value PLC_FLANKING_DAMAGE_BOOST]] (c-à-d. pour les équipements [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], ou [[shippart SR_WEAPON_4_1]])
 • Les dommages pour les chasseurs, les bombardiers et les bombardiers lourds sont augmentés de [[value PLC_FLANKING_FIGHTER_DAMAGE_BOOST]] (c-à-d. pour les équipements [[shippart FT_HANGAR_1]], [[shippart FT_HANGAR_2]], ou [[shippart FT_HANGAR_3]])
@@ -12057,6 +12062,7 @@ PLC_CHARGE_DESC
 • Les [[encyclopedia DAMAGE_TITLE]] pour les armements d'astronef sont augmentés de [[value PLC_CHARGE_DAMAGE_BOOST]] (c-à-d. pour les équipements [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], ou [[shippart SR_WEAPON_4_1]])
 • Le nombre de chasseurs lancés par [[FT_BAY_1]] est augmenté de [[value PLC_CHARGE_BAY_LAUNCH_BONUS]]
 • Le nombre de tirs pour l'équipement [[shippart SR_ARC_DISRUPTOR]] est augmenté de [[value PLC_CHARGE_ARC_DISRUPTOR_SHOT_BONUS]]
+• Une [[shippart SR_FLUX_LANCE]] en charge peut attaquer les astronefs une passe de combat plus tôt
 • Le nombre de tirs pour l'équipement [[shippart SR_WEAPON_0_1]] est diminué de [[value PLC_CHARGE_FLAK_SHOT_REDUCTION]]
 • L'indicateur [[metertype METER_MAX_SHIELD]] diminue de [[value PLC_CHARGE_SHIELD_REDUCTION]].'''
 
@@ -12729,17 +12735,29 @@ SHP_MIL_ROBO_CONT_DESC
 
 Le contrôle robotisé s'avère efficace dans les domaines de l'industrie et de l'extraction minière. L'extension naturelle de ce concept est de développer un équipement militaire robotisé capable de gérer de manière autonome un astronef. Cela permettrait une plus grande souplesse en matière de conception et de design, tous les systèmes encombrants de support vital devenant inutiles. Les coques dotées d'une telle technologie pourraient s'auto-réparer, tandis que la gestion de la sécurité et des limitations physiques des ingénieurs appartiendrait dès lors au passé.'''
 
+SHP_SPACE_FLUX_BASICS
+Manipulation Flux Spatial
+
+SHP_SPACE_FLUX_BASICS_DESC
+Cette technologie permet la manipulation de l'espace lui-même, dilatant ou contractant les plus petites unités d'espace-temps. À ce niveau basique de manipulation, un armement simple peut être conçu afin de manipuler l'espace lors de la visée des astronefs ennemis. À l'aide de recherches complémentaires, ces effets peuvent permettre une propulsion plus efficace des astronefs dans l'espace.
+
 SHP_SPACE_FLUX_DRIVE
 Propulsion Flux Spatial
 
 SHP_SPACE_FLUX_DRIVE_DESC
-D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants. Des recherches avancées en matière de technologies de furtivité peuvent minimiser les désagréments causés par ces perturbations dimensionnelles. La coque d'astronef résultant de ces recherches est d'un design légèrement plus sophistiqué que celle issue de la technologie [[tech SHP_SPACE_FLUX_BUBBLE]].
+D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants. Des recherches avancées en matière de technologies de furtivité peuvent minimiser les désagréments causés par ces perturbations dimensionnelles.
 
 SHP_SPACE_FLUX_BUBBLE
 Bulle Flux Spatial
 
 SHP_SPACE_FLUX_BUBBLE_DESC
-D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants. Des recherches avancées en matière de technologies de furtivité peuvent minimiser les désagréments causés par ces perturbations dimensionnelles. La plus simple solution pour concevoir un astronef utilisant la propulsion par flux s'avère être la modulation en bulle, laquelle recouvre une coque de forme également sphérique. Des solutions plus complexes sont néanmoins possibles via une meilleure technologie de [[tech SHP_SPACE_FLUX_DRIVE]].
+D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants. Des recherches avancées en matière de technologies de furtivité peuvent minimiser les désagréments causés par ces perturbations dimensionnelles. La plus simple solution pour concevoir un astronef utilisant la propulsion par flux s'avère être la modulation en bulle, laquelle recouvre une coque de forme également sphérique. Des solutions plus complexes sont néanmoins possibles via des meilleures technologies de [[tech SHP_SPACE_FLUX_DRIVE]] et de [[tech SHP_SPACE_FLUX_COMPOSITION]].
+
+SHP_SPACE_FLUX_COMPOSITION
+Composition Flux Spatial
+
+SHP_SPACE_FLUX_COMPOSITION_DESC
+En déformant les bulles de flux spatial et en les combinant avec la propulsion par flux spatial, des coques spéciales peuvent être conçues pour des besoins spécifiques.
 
 SHP_CONTGRAV_MAINT
 Maintenance Anti-Gravitationnelle
@@ -13942,7 +13960,11 @@ BLD_EVACUATION
 Évacuation Planétaire
 
 BLD_EVACUATION_DESC
-Extrait la [[metertype METER_POPULATION]] de cette planète sur plusieurs tours selon un [[encyclopedia EVACUATION_TITLE]] prédéfini. Si une planète de remplacement avec un [[encyclopedia ENVIRONMENT_TITLE]] approprié est disponible et déjà peuplée par la même espèce, tout en disposant de suffisamment de place libre, la Population y sera transférée.
+'''Extrait la [[metertype METER_POPULATION]] de cette planète sur plusieurs tours.
+
+Si des planètes de remplacement avec un [[encyclopedia ENVIRONMENT_TITLE]] approprié sont disponibles, peuplées par la même espèce et avec suffisamment de place libre, le [[encyclopedia EVACUATION_TITLE]] y transfèrera la Population.
+
+Si aucune planète appropriée n'est disponible, la Population est perdue.'''
 
 BLD_COLONY_INDEPENDENCE_DECREE
 Décret d'Indépendance Planétaire
@@ -14903,6 +14925,18 @@ Canon Anti-Matière
 SR_SPINAL_ANTIMATTER_DESC
 Un gigantesque canon automatique propulsant de lourdes charges explosives faites d'anti-matière. Attaque astronefs et planètes.
 
+SR_FLUX_LANCE
+Lance Flux Spatial
+
+SR_FLUX_LANCE_DESC
+'''La Lance Flux Spatial, un armement de courte portée destiné aux niches internes des astronefs. Peu cher à produire, mais n'inflige que de légers dommages.
+
+Le générateur de Lance Flux Spatial crée une distortion spatiale éphémère à proximité de l'astronef. Cette distortion est fatale pour les chasseurs et une menace pour les astronefs blindés. De multiples générateurs créant des interférences, un seul équipement de Lance Flux Spatial peut être monté dans chaque astronef.
+
+Une Lance Flux Spatial peut infliger des [[encyclopedia DAMAGE_TITLE]] aux astronefs à partir de la passe [[value FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE]] de combat, les cibles étant trop éloignées lors des passes préalables. La Lance Flux Spatial commence à détruire les chasseurs lorsqu'ils sont à portée lors de la 2ème passe de combat.
+
+Les [[encyclopedia DAMAGE_TITLE]] de l'armement sont une combinaison des dommages par tir et de tout modificateurs actifs. L'attribut "Pilotes" ne modifie pas les dommages.'''
+
 SR_GRAV_PULSE
 Pulsar Graviton
 
@@ -15457,9 +15491,9 @@ SH_SPATIAL_FLUX
 Coque Flux Spatial
 
 SH_SPATIAL_FLUX_DESC
-'''Cette minuscule coque est capable d'atteindre une vitesse optimale sur de longues distances en raison de la puissance fournie par la technologie de [[tech SHP_SPACE_FLUX_DRIVE]]. Elle ne dispose cependant que de deux niches externes et sa [[metertype METER_STRUCTURE]] max est faible.
+'''Cette petite coque est capable d'atteindre une vitesse optimale sur de longues distances en raison de l'efficience de la technologie de [[tech SHP_SPACE_FLUX_DRIVE]]. Elle dispose de deux niches externes, mais sa [[metertype METER_STRUCTURE]] max est faible.
  
-Sa [[metertype METER_STEALTH]] débute à 15, augmente de 10 si l'astronef est réglé sur '[[FW_PASSIVE]]', mais diminue de 30 pour tout déplacement durant un tour. Les avancées permises par les technologies telles que l'[[tech SPY_STEALTH_PART_1]] permettent à l'équipage d'accroître de 10 la Furtivité de l'astronef pour chaque recherche effectuée dans cette branche.
+[[FLUX_STEALTH_DESC]]
 
 Son [[metertype METER_DETECTION]] est standard, tandis que sa [[metertype METER_SPEED]] est moyenne.
 
@@ -15469,13 +15503,32 @@ SH_SPACE_FLUX_BUBBLE
 Coque Bulle Flux Spatial
 
 SH_SPACE_FLUX_BUBBLE_DESC
-'''Cette minuscule coque est capable d'atteindre une vitesse optimale sur de longues distances en raison de la puissance fournie par la technologie de [[tech SHP_SPACE_FLUX_BUBBLE]]. Elle ne dispose cependant que d'une niche interne et sa [[metertype METER_STRUCTURE]] max est faible.
+'''Cette coque de taille moyenne est capable d'atteindre une vitesse optimale sur de longues distances en raison de l'efficience de la technologie de [[tech SHP_SPACE_FLUX_BUBBLE]]. Elle ne dispose cependant que d'une niche interne, mais sa [[metertype METER_STRUCTURE]] max est correcte.
 
-Sa [[metertype METER_STEALTH]] débute à 15, augmente de 10 si l'astronef est réglé sur '[[FW_PASSIVE]]', mais diminue de 30 pour tout déplacement durant un tour. Les avancées permises par les technologies telles que l'[[tech SPY_STEALTH_PART_1]] permettent à l'équipage d'accroître de 10 la Furtivité de l'astronef pour chaque recherche effectuée dans cette branche.
+[[FLUX_STEALTH_DESC]]
 
 Son [[metertype METER_DETECTION]] est standard, tandis que sa [[metertype METER_SPEED]] est moyenne.
 
 [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
+SH_SPACE_FLUX_COMPOSITE
+Coque Composite Flux Spatial
+
+SH_SPACE_FLUX_COMPOSITE_DESC
+'''Un grand astronef construit à dessein autour d'un unique équipement utilisant la technologie de [[tech SHP_SPACE_FLUX_COMPOSITION]]. Il est capable d'atteindre une vitesse appréciable sur de longues distances. Il dispose d'une niche centrale, d'une niche interne et d'une niche externe, tandis que sa [[metertype METER_STRUCTURE]] max est elevée.
+
+[[FLUX_STEALTH_DESC]]
+
+Son [[metertype METER_DETECTION]] est standard et sa [[metertype METER_SPEED]] est moyenne.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
+FLUX_STEALTH_DESC
+'''La [[metertype METER_STEALTH]] de base des astronefs équipés de cette coque est de [[value SPATIAL_FLUX_STEALTH_HULL_BASE]] lorsque la flotte est réglée sur '[[FW_AGGRESSIVE]]', et de [[value SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE]] pour tout autre réglage de comportement d'attaque des flottes.
+
+La recherche de chaque technologie parmi [[tech SPY_STEALTH_PART_1]], [[tech SPY_STEALTH_PART_2]], [[tech SPY_STEALTH_PART_3]], et [[tech SPY_STEALTH_4]] augmentera la Furtivité de base de [[value SPATIAL_FLUX_STEALTH_TECH_BONUS]].
+
+Si un astronef s'arrête dans un système, sa Furtivité est réduite de [[value SPATIAL_FLUX_STEALTH_ARRIVAL_MALUS]] pour 2 tours, en raison de la rupture d'équilibre du flux.'''
 
 SH_SELF_GRAVITATING
 Coque Auto-Gravitationnelle
