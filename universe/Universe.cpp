@@ -984,7 +984,7 @@ namespace {
         const Effect::EffectsGroup*                 effects_group,
         const Condition::ObjectSet&                 source_objects,
         EffectsCauseType                            effect_cause_type,
-        const std::string&                          specific_cause_name,
+        std::string_view                            specific_cause_name,
         IntSetT&                                    candidate_object_ids,   // TODO: Can this be removed along with scope is source test?
         Effect::TargetSet&                          candidate_objects_in,   // may be empty: indicates to test for full universe of objects
         Effect::SourcesEffectsTargetsAndCausesVec&  source_effects_targets_causes_out,
@@ -993,7 +993,7 @@ namespace {
         TraceLogger(effects) << [&]() -> std::string {
             return "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
                 + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
-                + "  specific cause: " + specific_cause_name
+                + "  specific cause: " + std::string {specific_cause_name}
                 + "  sources (" + std::to_string(source_objects.size())  + ")"
                 + "  candidate ids (" + std::to_string(candidate_object_ids.size()) + ")"
                 + "  candidate objects (" + std::to_string(candidate_objects_in.size()) + ")";
@@ -1011,19 +1011,20 @@ namespace {
 
         ScopedTimer timer(
             [
-                n, effect_cause_type, specific_cause_name,
+                n, effect_cause_type, name_view{specific_cause_name},
                 sz{source_objects.size()}, scope
             ] () -> std::string
         {
-            return "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
+            return ("StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
                 + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
-                + "  specific cause: " + specific_cause_name
+                + "  specific cause: ").append(name_view)
                 + "  sources: " + std::to_string(sz)
                 + "  scope: " + boost::algorithm::erase_all_copy(scope->Dump(), "\n");
-        }, std::chrono::milliseconds(10));
+        }, std::chrono::milliseconds(5));
 
         source_effects_targets_causes_out.reserve(source_objects.size());
 
+        // could check if the scope is source-invariant, but in my tests this was true less than 1% of the time...
         for (auto& source : source_objects) {
             // assuming input sources objects set was already filtered with activation condition
             context.source = source;
@@ -1037,7 +1038,8 @@ namespace {
                 Effect::SourcedEffectsGroup{source->ID(), effects_group},
                 Effect::TargetsAndCause{
                     Effect::TargetSet{},
-                    Effect::EffectCause{effect_cause_type, specific_cause_name, effects_group->AccountingLabel()}});
+                    Effect::EffectCause{effect_cause_type, std::string{specific_cause_name},
+                                        effects_group->AccountingLabel()}});
 
             // extract output Effect::TargetSet
             Effect::TargetSet& matched_targets{source_effects_targets_causes_out.back().second.target_set};
@@ -1078,7 +1080,7 @@ namespace {
     template <typename ReorderBufferT, typename IntSetT>
     void DispatchEffectsGroupScopeEvaluations(
         EffectsCauseType effect_cause_type,
-        const std::string& specific_cause_name,
+        std::string_view specific_cause_name,
         const Condition::ObjectSet& source_objects,
         const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_groups,
         bool only_meter_effects,
@@ -1225,7 +1227,7 @@ namespace {
                         Effect::SourcedEffectsGroup{source->ID(), effects_group},
                         Effect::TargetsAndCause{
                             {}, // empty Effect::TargetSet
-                            Effect::EffectCause{effect_cause_type, specific_cause_name,
+                            Effect::EffectCause{effect_cause_type, std::string{specific_cause_name},
                                                 effects_group->AccountingLabel()}});
                 }
 
@@ -1382,7 +1384,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // 2) EffectsGroups from Specials
     type_timer.EnterSection("specials");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for SPECIALS";
-    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> specials_objects;
+    std::map<std::string_view, std::vector<std::shared_ptr<const UniverseObject>>> specials_objects;
     // determine objects with specials in a single pass
     for (const auto& obj : context.ContextObjects().all()) {
         if (destroyed_object_ids.count(obj->ID()))
@@ -1398,7 +1400,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         }
     }
     // dispatch condition evaluations
-    for (const std::string& special_name : GetSpecialsManager().SpecialNames()) {
+    for (const auto& special_name : GetSpecialsManager().SpecialNames()) {
         const Special* special = GetSpecial(special_name);
         auto specials_objects_it = specials_objects.find(special_name);
         if (specials_objects_it == specials_objects.end())

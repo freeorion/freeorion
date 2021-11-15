@@ -267,9 +267,8 @@ namespace {
     auto GetAllSpecials() -> py::list
     {
         py::list py_specials;
-        for (const auto& special_name : SpecialNames()) {
-            py_specials.append(py::object(special_name));
-        }
+        for (const auto& special_name : SpecialNames())
+            py_specials.append(py::object(std::string{special_name}));
         return py_specials;
     }
 

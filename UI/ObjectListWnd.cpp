@@ -32,7 +32,7 @@
 #include <iterator>
 #include <sstream>
 
-std::vector<std::string> SpecialNames();
+std::vector<std::string_view> SpecialNames();
 
 namespace {
     using id_range = boost::any_range<int, boost::forward_traversal_tag>;
@@ -892,7 +892,7 @@ private:
 
             for (auto& special_name : SpecialNames()) {
                 m_string_drop->Insert(GG::Wnd::Create<StringRow>(
-                    std::move(special_name), GG::Y(ClientUI::Pts())));
+                    std::string{special_name}, GG::Y(ClientUI::Pts())));
             }
 
         } else if (condition_key == HASTAG_CONDITION) {

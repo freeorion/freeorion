@@ -899,7 +899,7 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = fa
 
         for (const auto& special_name : SpecialNames())
             if (boost::iequals(name, UserString(special_name)))
-                return ZoomToSpecial(special_name);
+                return ZoomToSpecial(std::string{special_name}); // TODO: pass just the string_view
 
         for ([[maybe_unused]] auto& [hull_name, ignored] : GetShipHullManager()) {
             (void)ignored;  // quiet unused variable warning

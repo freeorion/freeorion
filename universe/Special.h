@@ -85,20 +85,21 @@ private:
 /** Returns the Special object used to represent specials of type \a name.
   * If no such Special exists, 0 is returned instead. */
 FO_COMMON_API const Special* GetSpecial(const std::string& name);
+FO_COMMON_API const Special* GetSpecial(std::string_view name);
 
 /** Returns names of all specials. */
-FO_COMMON_API std::vector<std::string> SpecialNames();
+FO_COMMON_API std::vector<std::string_view> SpecialNames();
 
 
 /** Look up table for specials.*/
 class FO_COMMON_API SpecialsManager {
 public:
-    using SpecialsTypeMap = std::map<std::string, std::unique_ptr<Special>>;
+    using SpecialsTypeMap = std::map<std::string, std::unique_ptr<Special>, std::less<>>;
 
-    int                         NumSpecials() const { return m_specials.size(); }
-    std::vector<std::string>    SpecialNames() const;
-    const Special*              GetSpecial(const std::string& name) const;
-    unsigned int                GetCheckSum() const;
+    int                           NumSpecials() const { return m_specials.size(); }
+    std::vector<std::string_view> SpecialNames() const;
+    const Special*                GetSpecial(const std::string& name) const;
+    unsigned int                  GetCheckSum() const;
 
     /** Sets types to the value of \p future. */
     void SetSpecialsTypes(Pending::Pending<SpecialsTypeMap>&& future);

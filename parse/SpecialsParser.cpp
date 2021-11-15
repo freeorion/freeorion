@@ -38,7 +38,7 @@ namespace {
         std::string graphic;
     };
 
-    void insert_special(std::map<std::string, std::unique_ptr<Special>>& specials,
+    void insert_special(std::map<std::string, std::unique_ptr<Special>, std::less<>>& specials,
                         const special_data& special_pod,
                         std::string& name, std::string& description,
                         boost::optional<parse::detail::value_ref_payload<double>>& stealth,

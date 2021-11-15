@@ -698,7 +698,9 @@ namespace FreeOrionPython {
             .def("dump",                        &Special::Dump,                         py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
             .def("initialCapacity",             +[](const Special& special, int obj_id) -> float { return special.InitialCapacity(obj_id); })
         ;
-        py::def("getSpecial",                   &GetSpecial,                            py::return_value_policy<py::reference_existing_object>(), "Returns the special (Special) with the indicated name (string).");
+        py::def("getSpecial",                   +[](const std::string& name) { return ::GetSpecial(name); },
+                                                py::return_value_policy<py::reference_existing_object>(),
+                                                "Returns the special (Special) with the indicated name (string).");
 
         /////////////////
         //   Species   //
