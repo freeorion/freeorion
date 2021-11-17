@@ -35,8 +35,16 @@ namespace {
     std::string ResolveNestedPathTypes(std::string text) {
         if (text.empty())
             return text;
-        for (const auto& path_type : PathTypeStrings()) // TODO: add getter that returns a list of PathType rather than casting back and forth from strings
-            boost::replace_all(text, path_type, PathToString(GetPath(path_type)));
+
+        const auto& path_type_strings = PathTypeStrings();
+        const auto& path_types = PathTypes();
+
+        constexpr auto pts_sz = std::tuple_size_v<std::decay_t<decltype(path_type_strings)>>;
+        constexpr auto pt_sz = std::tuple_size_v<std::decay_t<decltype(path_types)>>;
+        static_assert(pts_sz == pt_sz);
+
+        for (std::size_t idx = 0; idx < pts_sz; ++idx)
+            boost::replace_all(text, path_type_strings[idx], PathToString(GetPath(path_types[idx])));
 
         return text;
     }

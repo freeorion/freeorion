@@ -59,18 +59,6 @@ namespace {
     bool g_initialized = false;
     fs::path bin_dir = fs::initial_path();
 
-    const std::string EMPTY_STRING;
-    const std::string PATH_BINARY_STR = "PATH_BINARY";
-    const std::string PATH_RESOURCE_STR = "PATH_RESOURCE";
-    const std::string PATH_DATA_ROOT_STR = "PATH_DATA_ROOT";
-    const std::string PATH_DATA_USER_STR = "PATH_DATA_USER";
-    const std::string PATH_CONFIG_STR = "PATH_CONFIG";
-    const std::string PATH_CACHE_STR = "PATH_CACHE";
-    const std::string PATH_SAVE_STR = "PATH_SAVE";
-    const std::string PATH_TEMP_STR = "PATH_TEMP";
-    const std::string PATH_PYTHON_STR = "PATH_PYTHON";
-    const std::string PATH_INVALID_STR = "PATH_INVALID";
-
 #if defined(FREEORION_MACOSX)
     fs::path       s_user_dir;
     fs::path       s_root_data_dir;
@@ -225,41 +213,55 @@ void CopyInitialResourceAndroid(const std::string& rel_path)
 #endif
 }
 
-auto PathTypeToString(PathType path_type) -> std::string const&
-{
-    switch (path_type) {
-        case PathType::PATH_BINARY:    return PATH_BINARY_STR;
-        case PathType::PATH_RESOURCE:  return PATH_RESOURCE_STR;
-        case PathType::PATH_PYTHON:    return PATH_PYTHON_STR;
-        case PathType::PATH_DATA_ROOT: return PATH_DATA_ROOT_STR;
-        case PathType::PATH_DATA_USER: return PATH_DATA_USER_STR;
-        case PathType::PATH_CONFIG:    return PATH_CONFIG_STR;
-        case PathType::PATH_CACHE:     return PATH_CACHE_STR;
-        case PathType::PATH_SAVE:      return PATH_SAVE_STR;
-        case PathType::PATH_TEMP:      return PATH_TEMP_STR;
-        case PathType::PATH_INVALID:   return PATH_INVALID_STR;
-        default:                       return EMPTY_STRING;
-    }
-}
 
-auto PathTypeStrings() -> std::vector<std::string> const&
-{
-    static std::vector<std::string> path_type_list;
-    if (path_type_list.empty()) {
-        path_type_list.reserve(10); // should be enough
-        for (auto path_type = PathType(0); path_type < PathType::PATH_INVALID;
-             path_type = PathType(int(path_type) + 1))
-        {
-            // PATH_PYTHON is only valid for FREEORION_WIN32 or FREEORION_MACOSX
-#if defined(FREEORION_LINUX)
-            if (path_type == PathType::PATH_PYTHON)
-                continue;
+namespace {
+    constexpr auto PathTypeToStringImpl(PathType path_type) -> std::string_view
+    {
+        switch (path_type) {
+            case PathType::PATH_BINARY:    return "PATH_BINARY";
+            case PathType::PATH_RESOURCE:  return "PATH_RESOURCE";
+            case PathType::PATH_DATA_ROOT: return "PATH_DATA_ROOT";
+            case PathType::PATH_DATA_USER: return "PATH_DATA_USER";
+            case PathType::PATH_CONFIG:    return "PATH_CONFIG";
+            case PathType::PATH_CACHE:     return "PATH_CACHE";
+            case PathType::PATH_SAVE:      return "PATH_SAVE";
+            case PathType::PATH_TEMP:      return "PATH_TEMP";
+#if !defined(FREEORION_LINUX)
+            case PathType::PATH_PYTHON:    return "PATH_PYTHON";
 #endif
-            path_type_list.emplace_back(PathTypeToString(path_type));
+            case PathType::PATH_INVALID:   return "PATH_INVALID";
+            default:                       return "";
         }
     }
-    return path_type_list;
+
+    constexpr auto PathTypesImpl() {
+        static_assert(std::is_same_v<std::underlying_type_t<PathType>, int>);
+        static_assert(int(PathType::PATH_INVALID) > 0);
+        std::array<PathType, NUM_PATH_TYPES> retval{};
+
+        for (PathType pt = PathType(0); pt < PathType::PATH_INVALID; pt = PathType(int(pt) + 1))
+            retval[std::size_t(pt)] = pt;
+        return retval;
+    }
+
+    constexpr auto PathTypesViewsImpl() {
+        std::array<std::string_view, NUM_PATH_TYPES> retval{};
+        std::size_t idx = 0;
+        for (const auto& pt : PathTypesImpl())
+            retval[idx++]= PathTypeToStringImpl(pt);
+        return retval;
+    };
+    constexpr auto path_type_views = PathTypesViewsImpl();
 }
+
+auto PathTypeToString(PathType path_type) -> std::string_view
+{ return PathTypeToStringImpl(path_type); }
+
+std::array<PathType, NUM_PATH_TYPES> PathTypes()
+{ return PathTypesImpl(); }
+
+auto PathTypeStrings() -> const std::array<std::string_view, NUM_PATH_TYPES>&
+{ return path_type_views; }
 
 void InitBinDir(std::string const& argv0)
 {
@@ -928,8 +930,8 @@ auto GetPath(PathType path_type) -> fs::path
         return GetSaveDir();
     case PathType::PATH_TEMP:
         return fs::temp_directory_path();
-    case PathType::PATH_PYTHON:
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+    case PathType::PATH_PYTHON:
         return GetPythonHome();
 #endif
     case PathType::PATH_INVALID:
@@ -937,33 +939,6 @@ auto GetPath(PathType path_type) -> fs::path
         ErrorLogger() << "Invalid path type " << path_type;
         return fs::temp_directory_path();
     }
-}
-
-auto GetPath(std::string const& path_string) -> fs::path
-{
-    if (path_string.empty()) {
-        ErrorLogger() << "GetPath called with empty argument";
-        return fs::temp_directory_path();
-    }
-
-    PathType path_type;
-    try {
-        path_type = boost::lexical_cast<PathType>(path_string);
-    } catch (const boost::bad_lexical_cast& ec) {
-        // try partial match
-        std::string retval = path_string;
-        for (const auto& path_type_str : PathTypeStrings()) {
-            std::string path_type_string = PathToString(GetPath(path_type_str));
-            boost::replace_all(retval, path_type_str, path_type_string);
-        }
-        if (path_string != retval) {
-            return FilenameToPath(retval);
-        } else {
-            ErrorLogger() << "Invalid cast for PathType from string " << path_string;
-            return fs::temp_directory_path();
-        }
-    }
-    return GetPath(path_type);
 }
 
 auto IsExistingFile(const fs::path& path) -> bool

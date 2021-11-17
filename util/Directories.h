@@ -11,11 +11,26 @@
 #endif
 
 //! Types of root directories
+#if !defined(FREEORION_LINUX)
 FO_ENUM(
     (PathType),
     ((PATH_BINARY))
     ((PATH_RESOURCE))
+    ((PATH_DATA_ROOT))
+    ((PATH_DATA_USER))
+    ((PATH_CONFIG))
+    ((PATH_CACHE))
+    ((PATH_SAVE))
+    ((PATH_TEMP))
     ((PATH_PYTHON))
+    ((PATH_INVALID))
+)
+#else
+// PATH_PYTHON is not valid on Linux
+FO_ENUM(
+    (PathType),
+    ((PATH_BINARY))
+    ((PATH_RESOURCE))
     ((PATH_DATA_ROOT))
     ((PATH_DATA_USER))
     ((PATH_CONFIG))
@@ -24,13 +39,19 @@ FO_ENUM(
     ((PATH_TEMP))
     ((PATH_INVALID))
 )
+#endif
 
 
 //! Returns a string representation of PathType
-FO_COMMON_API auto PathTypeToString(PathType path_type) -> std::string const&;
+FO_COMMON_API auto PathTypeToString(PathType path_type) -> std::string_view;
 
-//! Returns a vector of strings for all PathTypes
-FO_COMMON_API auto PathTypeStrings() -> std::vector<std::string> const&;
+constexpr auto NUM_PATH_TYPES = std::size_t(PathType::PATH_INVALID);
+
+//! Returns an array of valid PathTypes
+FO_COMMON_API auto PathTypes() -> std::array<PathType, NUM_PATH_TYPES>;
+
+//! Returns an array of string_views for all valid PathTypes
+FO_COMMON_API auto PathTypeStrings() -> const std::array<std::string_view, NUM_PATH_TYPES>&;
 
 //! Migrates outstating user configuration and data to a XDG Base Diretory spec
 //! compliant directory.
@@ -188,9 +209,6 @@ FO_COMMON_API auto IsInDir(boost::filesystem::path const& dir, boost::filesystem
 
 //! Returns path currently defined for @p path_type
 FO_COMMON_API auto GetPath(PathType path_type) -> boost::filesystem::path;
-
-//! Returns path for path type cast from @p path_string
-FO_COMMON_API auto GetPath(std::string const& path_string) -> boost::filesystem::path;
 
 //! Returns true iff path exists and is a regular file
 FO_COMMON_API auto IsExistingFile(boost::filesystem::path const& path) -> bool;
