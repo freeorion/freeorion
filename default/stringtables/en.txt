@@ -6716,7 +6716,8 @@ CONFIG_GUIDE_TITLE
 Configuration Guide
 
 CONFIG_GUIDE_TEXT
-'''Most configuration options for the game are stored and read from a single XML formatted file named config.xml.
+'''Most configuration options for the game are stored and read from a single XML formatted file named config.xml which should be located in [[browsepath PATH_CONFIG]].
+
 If this file does not exist (or is for a different build or version), it will be (re)created when the client starts.
 The configuration file is typically updated after a stored option is changed, but may be deferred until a later action (such as clicking Done or Apply).
 Some of these options can be changed from the [[OPTIONS_TITLE]] menu, under the Main Menu.
