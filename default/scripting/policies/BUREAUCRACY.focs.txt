@@ -42,19 +42,16 @@ Policy
                 ]
             effects = SetTargetHappiness value = Value + (NamedReal name = "PLC_BUREAUCRACY_STABILITY_FLAT" value = 5.0)
 
-        // warn about bureaucratic delays due to lack of facilities...
+        // Tell the player how much is needed to keep it going.
+        // Message is created 2 turns before an increase, so it is shown just before the required number increases.
+        // Of course one turn is not enough to build another regional admin, but since the message is shown even
+        // before the number increases to 1, the player can always check for the next increase by scrolling back
+        // to the last message. Also the turn before it halts is the perfect time for disabling it.
         EffectsGroup
             scope = Source
-            activation = Not Number // want warning generated one turn earlier than effect, so it's seen on the same turn as the effect will kick in...
-                low = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy + 1) /
-                      (NamedIntegerLookup name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING")
-                condition = And [
-                    Or [
-                        Building name = "BLD_REGIONAL_ADMIN"
-                        Building name = "BLD_IMPERIAL_PALACE"
-                    ]
-                    OwnedBy empire = Source.Owner
-                ]
+            activation =
+                ((TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy + 2) %
+                 NamedIntegerLookup name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING" == 0)
             effects = GenerateSitRepMessage
                 message = "SITREP_BUREAUCRACY_STOPPED"
                 label = "SITREP_BUREAUCRACY_STOPPED_LABEL"
@@ -67,7 +64,7 @@ Policy
                         ]
                         OwnedBy empire = Source.Owner
                     ]
-                    tag = "needbuildings" data = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy + 1) /
+                    tag = "needbuildings" data = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy + 2) /
                                                  (NamedIntegerLookup name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING")
                 ]
                 empire = Source.Owner
