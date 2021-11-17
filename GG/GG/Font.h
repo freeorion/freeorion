@@ -849,12 +849,11 @@ namespace detail {
 
     struct GG_API FTFaceWrapper
     {
-        FTFaceWrapper();
+        FTFaceWrapper() = default;
         ~FTFaceWrapper();
         FT_Face m_face = nullptr;
     };
 }
-
 }
 
 

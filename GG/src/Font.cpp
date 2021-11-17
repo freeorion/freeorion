@@ -32,15 +32,10 @@
 
 #define DEBUG_DETERMINELINES 0
 
-namespace GG { namespace detail {
-
-FTFaceWrapper::FTFaceWrapper()
-{}
-
-FTFaceWrapper::~FTFaceWrapper()
-{ if (m_face) FT_Done_Face(m_face); }
-
-} }
+namespace GG::detail {
+    FTFaceWrapper::~FTFaceWrapper()
+    { if (m_face) FT_Done_Face(m_face); }
+}
 
 using namespace GG;
 
@@ -79,10 +74,10 @@ struct TempGlyphData
     TempGlyphData() {}
     TempGlyphData(const Pt& ul_, const Pt& lr_, Y y_ofs, X lb, X a) :
         ul(ul_), lr(lr_), y_offset(y_ofs), left_b(lb), adv(a) {}
-    Pt          ul, lr;   ///< area of glyph subtexture within texture
-    Y           y_offset; ///< vertical offset to draw texture (may be negative!)
-    X           left_b;   ///< left bearing (see Glyph)
-    X           adv;      ///< advance of glyph (see Glyph)
+    Pt ul, lr;   ///< area of glyph subtexture within texture
+    Y  y_offset; ///< vertical offset to draw texture (may be negative!)
+    X  left_b;   ///< left bearing (see Glyph)
+    X  adv;      ///< advance of glyph (see Glyph)
 };
 
 /// A two dimensional grid of pixels that expands to
