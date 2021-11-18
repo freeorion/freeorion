@@ -120,12 +120,12 @@ void InfluenceQueue::Update(const ObjectMap& objects) {
     float stockpiled_IP = empire->ResourceStockpile(ResourceType::RE_INFLUENCE);
 
     float spending_on_policy_adoption_ip = 0.0f;
-    for (auto policy_turn : empire->TurnsPoliciesAdopted()) {
-        if (policy_turn.second != CurrentTurn())
+    for (const auto& [policy_name, adoption_turn] : empire->TurnsPoliciesAdopted()) {
+        if (adoption_turn != CurrentTurn())
             continue;
-        auto policy = GetPolicy(policy_turn.first);
+        auto policy = GetPolicy(policy_name);
         if (!policy) {
-            ErrorLogger() << "InfluenceQueue::Update couldn't get policy supposedly adopted this turn: " << policy_turn.first;
+            ErrorLogger() << "InfluenceQueue::Update couldn't get policy supposedly adopted this turn: " << policy_name;
             continue;
         }
         spending_on_policy_adoption_ip += policy->AdoptionCost(m_empire_id, objects);
