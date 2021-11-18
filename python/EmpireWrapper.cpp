@@ -172,7 +172,8 @@ namespace {
         return out;
     }
 
-    auto ViewMapToStringMap(const std::map<std::string_view, int>& in) -> std::map<std::string, int>
+    template <typename C>
+    auto ViewMapToStringMap(const std::map<std::string_view, int, C>& in) -> std::map<std::string, int>
     {
         std::map<std::string, int> out;
         std::transform(in.begin(), in.end(), std::inserter(out, out.end()),
