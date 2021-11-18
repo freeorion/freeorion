@@ -1857,7 +1857,7 @@ namespace {
         auto policies = empire->AdoptedPolicies();
         if (!policies.empty()) {
             // re-sort by adoption turn
-            std::multimap<int, std::string&> turns_policies_adopted;
+            std::multimap<int, std::string_view> turns_policies_adopted;
             for (auto& policy_name : policies) {
                 int turn = empire->TurnPolicyAdopted(policy_name);
                 turns_policies_adopted.emplace(turn, policy_name);
