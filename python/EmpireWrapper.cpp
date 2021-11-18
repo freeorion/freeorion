@@ -456,7 +456,10 @@ namespace FreeOrionPython {
             .def("adoptionCost",                    &Policy::AdoptionCost)
         ;
 
-        def("getPolicy",                            &GetPolicy,                                 py::return_value_policy<py::reference_existing_object>(), "Returns the policy (Policy) with the indicated name (string).");
+        def("getPolicy",
+            +[](const std::string& name) { return GetPolicy(name); },
+            py::return_value_policy<py::reference_existing_object>(),
+            "Returns the policy (Policy) with the indicated name (string).");
 
         def("policyCategories",
             +[]() -> std::vector<std::string> { return ViewSetToStringVec(GetPolicyManager().PolicyCategories()); },
