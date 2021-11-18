@@ -862,7 +862,7 @@ class ShipDesigner:
                 self.design_stats.detection += AIDependencies.BASE_DETECTION
 
         # TODO establish framework for conditional effects and get rid of this
-        if self.hull.name in ["SH_SPATIAL_FLUX", "SH_SPACE_FLUX_BUBBLE"]:
+        if self.hull.name in ["SH_SPATIAL_FLUX", "SH_SPACE_FLUX_BUBBLE", "SH_SPACE_FLUX_COMPOSITE"]:
             self.design_stats.stealth += 10
             relevant_stealth_techs = [
                 "SPY_STEALTH_PART_1",
