@@ -72,29 +72,29 @@ public:
 
     [[nodiscard]] std::string              Dump() const;
 
-    [[nodiscard]] bool                     PolicyAdopted(const std::string& name) const;
-    [[nodiscard]] int                      TurnPolicyAdopted(const std::string& name) const;
-    [[nodiscard]] int                      CurrentTurnsPolicyHasBeenAdopted(const std::string& name) const;
-    [[nodiscard]] int                      CumulativeTurnsPolicyHasBeenAdopted(const std::string& name) const;
+    [[nodiscard]] bool                     PolicyAdopted(std::string_view name) const;
+    [[nodiscard]] int                      TurnPolicyAdopted(std::string_view name) const;
+    [[nodiscard]] int                      CurrentTurnsPolicyHasBeenAdopted(std::string_view name) const;
+    [[nodiscard]] int                      CumulativeTurnsPolicyHasBeenAdopted(std::string_view name) const;
 
-    [[nodiscard]] int                      SlotPolicyAdoptedIn(const std::string& name) const;
-    [[nodiscard]] std::vector<std::string> AdoptedPolicies() const;
+    [[nodiscard]] int                           SlotPolicyAdoptedIn(std::string_view name) const;
+    [[nodiscard]] std::vector<std::string_view> AdoptedPolicies() const;
 
     /** For each category, returns the slots in which policies have been adopted
       * and what policy is in that slot. */
-    [[nodiscard]] std::map<std::string, std::map<int, std::string>> CategoriesSlotsPoliciesAdopted() const;
+    [[nodiscard]] std::map<std::string, std::map<int, std::string>> CategoriesSlotsPoliciesAdopted() const; // TODO: string_view ?
 
     /** Returns the policies the empire has adopted and turns on which they were adopted. */
-    [[nodiscard]] std::map<std::string, int>        TurnsPoliciesAdopted() const;
-    [[nodiscard]] const std::map<std::string, int>& PolicyTotalAdoptedDurations() const;
-    [[nodiscard]] const std::map<std::string, int>& PolicyCurrentAdoptedDurations() const;
+    [[nodiscard]] std::map<std::string_view, int, std::less<>> TurnsPoliciesAdopted() const;
+    [[nodiscard]] const std::map<std::string, int>&            PolicyTotalAdoptedDurations() const;
+    [[nodiscard]] const std::map<std::string, int>&            PolicyCurrentAdoptedDurations() const;
 
     /** Returns the set of policies / slots the empire has avaialble. */
-    [[nodiscard]] const std::set<std::string>&    AvailablePolicies() const;
-    [[nodiscard]] bool                            PolicyAvailable(const std::string& name) const;
-    [[nodiscard]] bool                            PolicyPrereqsAndExclusionsOK(const std::string& name) const;
-    [[nodiscard]] std::map<std::string_view, int> TotalPolicySlots() const; // how many total slots does this empire have in each category
-    [[nodiscard]] std::map<std::string_view, int> EmptyPolicySlots() const; // how many empty slots does this empire have in each category
+    [[nodiscard]] const std::set<std::string, std::less<>>&    AvailablePolicies() const;
+    [[nodiscard]] bool                                         PolicyAvailable(std::string_view name) const;
+    [[nodiscard]] bool                                         PolicyPrereqsAndExclusionsOK(std::string_view name) const;
+    [[nodiscard]] std::map<std::string_view, int, std::less<>> TotalPolicySlots() const; // how many total slots does this empire have in each category
+    [[nodiscard]] std::map<std::string_view, int, std::less<>> EmptyPolicySlots() const; // how many empty slots does this empire have in each category
 
     /** Returns the set of Tech names available to this empire and the turns on
       * which they were researched. */
@@ -514,13 +514,11 @@ private:
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version);
     };
-    std::map<std::string, PolicyAdoptionInfo>
-                                    m_adopted_policies;                 ///< map from policy name to turn, category, and slot in/on which it was adopted
-    std::map<std::string, PolicyAdoptionInfo>
-                                    m_initial_adopted_policies;         ///< adopted policies at start of turn
-    std::map<std::string, int>      m_policy_adoption_total_duration;   ///< how many turns each policy has been adopted over the course of the game by this empire
-    std::map<std::string, int>      m_policy_adoption_current_duration; ///< how many turns each currently-adopted policy has been adopted since it was last adopted. somewhat redundant with adoption_turn in AdoptionInfo, but seems necessary to avoid off-by-one issues between client and server
-    std::set<std::string>           m_available_policies;               ///< names of unlocked policies
+    std::map<std::string, PolicyAdoptionInfo, std::less<>> m_adopted_policies;                 ///< map from policy name to turn, category, and slot in/on which it was adopted
+    std::map<std::string, PolicyAdoptionInfo, std::less<>> m_initial_adopted_policies;         ///< adopted policies at start of turn
+    std::map<std::string, int>                             m_policy_adoption_total_duration;   ///< how many turns each policy has been adopted over the course of the game by this empire
+    std::map<std::string, int>                             m_policy_adoption_current_duration; ///< how many turns each currently-adopted policy has been adopted since it was last adopted. somewhat redundant with adoption_turn in AdoptionInfo, but seems necessary to avoid off-by-one issues between client and server
+    std::set<std::string, std::less<>>                     m_available_policies;               ///< names of unlocked policies
 
     std::set<std::string>           m_victories;                ///< The ways that the empire has won, if any
 

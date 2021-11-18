@@ -202,11 +202,32 @@ void Empire::serialize(Archive& ar, const unsigned int version)
                       << std::string(allied_visible ? "allied visible" : "NOT allied visible");
     }
 
-    ar  & BOOST_SERIALIZATION_NVP(m_techs)
-        & BOOST_SERIALIZATION_NVP(m_adopted_policies)
-        & BOOST_SERIALIZATION_NVP(m_initial_adopted_policies)
-        & BOOST_SERIALIZATION_NVP(m_available_policies)
-        & BOOST_SERIALIZATION_NVP(m_policy_adoption_total_duration);
+    ar  & BOOST_SERIALIZATION_NVP(m_techs);
+
+    if (Archive::is_loading::value && version < 10) {
+        std::map<std::string, PolicyAdoptionInfo> adopted_policies;
+        std::map<std::string, PolicyAdoptionInfo> initial_adopted_policies;
+        std::set<std::string>                     available_policies;
+
+        ar  & boost::serialization::make_nvp("m_adopted_policies", adopted_policies);
+        m_adopted_policies.clear();
+        m_adopted_policies.insert(adopted_policies.begin(), adopted_policies.end());
+
+        ar  & boost::serialization::make_nvp("m_initial_adopted_policies", initial_adopted_policies);
+        m_initial_adopted_policies.clear();
+        m_initial_adopted_policies.insert(initial_adopted_policies.begin(), initial_adopted_policies.end());
+
+        ar  & boost::serialization::make_nvp("m_available_policies", available_policies);
+        m_available_policies.clear();
+        m_available_policies.insert(available_policies.begin(), available_policies.end());
+
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_adopted_policies)
+            & BOOST_SERIALIZATION_NVP(m_initial_adopted_policies)
+            & BOOST_SERIALIZATION_NVP(m_available_policies);
+    }
+
+    ar  & BOOST_SERIALIZATION_NVP(m_policy_adoption_total_duration);
 
     if (Archive::is_loading::value && version < 7) {
         m_policy_adoption_current_duration.clear();
@@ -326,7 +347,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     TraceLogger() << "DONE serializing empire " << m_id << ": " << m_name;
 }
 
-BOOST_CLASS_VERSION(Empire, 9)
+BOOST_CLASS_VERSION(Empire, 10)
 
 template void Empire::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);

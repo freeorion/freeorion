@@ -2554,7 +2554,12 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
         if (!empire)
             return {};
 
-        return empire->AdoptedPolicies();
+        auto pols = empire->AdoptedPolicies();
+        std::vector<std::string> retval;
+        retval.reserve(pols.size());
+        std::transform(pols.begin(), pols.end(), std::back_inserter(retval),
+                       [](const std::string_view sv) { return std::string{sv}; });
+        return retval;
 
     } else if (variable_name == "EmpireAvailablePolices") {
         int empire_id = ALL_EMPIRES;

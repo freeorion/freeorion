@@ -425,39 +425,39 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time) {
     PoliciesChangedSignal();
 }
 
-bool Empire::PolicyAdopted(const std::string& name) const
+bool Empire::PolicyAdopted(std::string_view name) const
 { return m_adopted_policies.count(name); }
 
-int Empire::TurnPolicyAdopted(const std::string& name) const {
+int Empire::TurnPolicyAdopted(std::string_view name) const {
     auto it = m_adopted_policies.find(name);
     if (it == m_adopted_policies.end())
         return INVALID_GAME_TURN;
     return it->second.adoption_turn;
 }
 
-int Empire::CurrentTurnsPolicyHasBeenAdopted(const std::string& name) const {
-    auto it = m_policy_adoption_current_duration.find(name);
+int Empire::CurrentTurnsPolicyHasBeenAdopted(std::string_view name) const {
+    auto it = m_policy_adoption_current_duration.find(std::string{name}); // TODO: remove temporary string construction
     if (it == m_policy_adoption_current_duration.end())
         return 0;
     return it->second;
 }
 
-int Empire::CumulativeTurnsPolicyHasBeenAdopted(const std::string& name) const {
-    auto it = m_policy_adoption_total_duration.find(name);
+int Empire::CumulativeTurnsPolicyHasBeenAdopted(std::string_view name) const {
+    auto it = m_policy_adoption_total_duration.find(std::string{name}); // TODO: remove temporary string construction
     if (it == m_policy_adoption_total_duration.end())
         return 0;
     return it->second;
 }
 
-int Empire::SlotPolicyAdoptedIn(const std::string& name) const {
+int Empire::SlotPolicyAdoptedIn(std::string_view name) const {
     if (!PolicyAdopted(name))
         return INVALID_SLOT_INDEX;
     auto it = m_adopted_policies.find(name);
     return it->second.slot_in_category;
 }
 
-std::vector<std::string> Empire::AdoptedPolicies() const {
-    std::vector<std::string> retval;
+std::vector<std::string_view> Empire::AdoptedPolicies() const {
+    std::vector<std::string_view> retval;
     retval.reserve(m_adopted_policies.size());
     for (const auto& entry : m_adopted_policies)
         retval.emplace_back(entry.first);
@@ -472,8 +472,8 @@ Empire::CategoriesSlotsPoliciesAdopted() const {
     return retval;
 }
 
-std::map<std::string, int> Empire::TurnsPoliciesAdopted() const {
-    std::map<std::string, int> retval;
+std::map<std::string_view, int, std::less<>> Empire::TurnsPoliciesAdopted() const {
+    std::map<std::string_view, int, std::less<>> retval;
     for (auto& [policy_name, adoption_info] : m_adopted_policies)
         retval.emplace_hint(retval.end(), policy_name, adoption_info.adoption_turn);
     return retval;
@@ -485,14 +485,15 @@ const std::map<std::string, int>& Empire::PolicyTotalAdoptedDurations() const
 const std::map<std::string, int>& Empire::PolicyCurrentAdoptedDurations() const
 { return m_policy_adoption_current_duration; }
 
-const std::set<std::string>& Empire::AvailablePolicies() const
+const std::set<std::string, std::less<>>& Empire::AvailablePolicies() const
 { return m_available_policies; }
 
-bool Empire::PolicyAvailable(const std::string& name) const
+bool Empire::PolicyAvailable(std::string_view name) const
 { return m_available_policies.count(name); }
 
-bool Empire::PolicyPrereqsAndExclusionsOK(const std::string& name) const {
-    const Policy* policy_to_adopt = GetPolicy(name);
+bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name) const {
+    const std::string name_str{name}; // TODO: remove this when possible for heterogenous lookup
+    const Policy* policy_to_adopt = GetPolicy(name_str);
     if (!policy_to_adopt)
         return false;
 
@@ -509,7 +510,7 @@ bool Empire::PolicyPrereqsAndExclusionsOK(const std::string& name) const {
             ErrorLogger() << "Couldn't get already adopted policy: " << already_adopted_policy_name;
             continue;
         }
-        if (already_adopted_policy->Exclusions().count(name)) {
+        if (already_adopted_policy->Exclusions().count(name_str)) {
             // already adopted policy has an exclusion with the policy to be adopted
             return false;
         }
@@ -528,8 +529,8 @@ bool Empire::PolicyPrereqsAndExclusionsOK(const std::string& name) const {
     return true;
 }
 
-std::map<std::string_view, int> Empire::TotalPolicySlots() const {
-    std::map<std::string_view, int> retval;
+std::map<std::string_view, int, std::less<>> Empire::TotalPolicySlots() const {
+    std::map<std::string_view, int, std::less<>> retval;
     // collect policy slot category meter values and return
     for (auto& [cat, cat_slots_string] : PolicyCategoriesSlotsMeters()) {
         if (!m_meters.count(cat_slots_string))
@@ -544,7 +545,7 @@ std::map<std::string_view, int> Empire::TotalPolicySlots() const {
     return retval;
 }
 
-std::map<std::string_view, int> Empire::EmptyPolicySlots() const {
+std::map<std::string_view, int, std::less<>> Empire::EmptyPolicySlots() const {
     // get total slots empire has available
     auto retval = TotalPolicySlots();
 
