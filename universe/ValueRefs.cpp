@@ -2567,11 +2567,8 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
         if (!empire)
             return {};
 
-        std::vector<std::string> retval;
         const auto& pols = empire->AvailablePolicies();
-        retval.reserve(pols.size());
-        std::copy(pols.begin(), pols.end(), std::back_inserter(retval));
-        return retval;
+        return std::vector<std::string>{pols.begin(), pols.end()};
     }
 
     return {};
