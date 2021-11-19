@@ -1334,7 +1334,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // 1) EffectsGroups from Species
     type_timer.EnterSection("species");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for SPECIES";
-    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> species_objects;
+    std::map<std::string_view, std::vector<std::shared_ptr<const UniverseObject>>> species_objects;
     // find each species planets in single pass, maintaining object map order per-species
     for (auto& planet : context.ContextObjects().all<Planet>()) {
         if (destroyed_object_ids.count(planet->ID()))
@@ -1481,7 +1481,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     type_timer.EnterSection("buildings");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for BUILDINGS";
     // determine buildings of each type in a single pass
-    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> buildings_by_type;
+    std::map<std::string_view, std::vector<std::shared_ptr<const UniverseObject>>> buildings_by_type;
     for (const auto& building : context.ContextObjects().all<Building>()) {
         if (destroyed_object_ids.count(building->ID()))
             continue;
@@ -1519,8 +1519,8 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // determine ship hulls and parts of each type in a single pass
     // the same ship might be added multiple times if it contains the part multiple times
     // recomputing targets for the same ship and part is kind of silly here, but shouldn't hurt
-    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_ship_hull;
-    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_ship_part;
+    std::map<std::string_view, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_ship_hull;
+    std::map<std::string_view, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_ship_part;
 
     for (const auto& ship : context.ContextObjects().all<Ship>()) {
         if (destroyed_object_ids.count(ship->ID()))
@@ -1587,7 +1587,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     type_timer.EnterSection("fields");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for FIELDS";
     // determine fields of each type in a single pass
-    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> fields_by_type;
+    std::map<std::string_view, std::vector<std::shared_ptr<const UniverseObject>>> fields_by_type;
     for (const auto& field : context.ContextObjects().all<Field>()) {
         if (destroyed_object_ids.count(field->ID()))
             continue;
