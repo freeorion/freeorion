@@ -1683,6 +1683,12 @@ Sets UI default link color.
 OPTIONS_DB_UI_ROLLOVER_LINK_COLOR
 Sets UI rollover link color.
 
+OPTIONS_DB_UI_DEFAULT_TOOLTIP_COLOR
+Sets UI default tooltip color.
+
+OPTIONS_DB_UI_ROLLOVER_TOOLTIP_COLOR
+Sets UI rollover tooltip color.
+
 OPTIONS_DB_UI_CTRL_COLOR
 Sets UI control background color.
 
@@ -11833,6 +11839,7 @@ Indoctrination
 
 PLC_INDOCTRINATION_DESC
 '''• Increases [[metertype METER_TARGET_HAPPINESS]] on planets over time. The bonus grows by [[value PLC_INDOCTRINATION_PER_TURN]] per turn, up to a maximum of [[value PLC_INDOCTRINATION_STRENGTH_MAX]]. Conquered planets start with zero, settled planets get the current maximum.
+• Decreases [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_INDOCTRINATION_INFLUENCE_COST_FLAT]], on planets that receive that boost to [[metertype METER_TARGET_HAPPINESS]].
 • Increases [[metertype METER_TARGET_INFLUENCE]] of the capital or planets with a [[buildingtype BLD_REGIONAL_ADMIN]] that have Influence focus by [[value PLC_INDOCTRINATION_INFLUENCE_FLAT]].'''
 
 PLC_INDOCTRINATION_SHORT_DESC
