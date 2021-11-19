@@ -11,10 +11,34 @@
 #include <iostream>
 
 
+#if BOOST_VERSION >= 106500
+// define needed on Windows due to conflict with windows.h and std::min and std::max
+#  ifndef NOMINMAX
+#    define NOMINMAX
+#  endif
+// define needed in GCC
+#  ifndef _GNU_SOURCE
+#    define _GNU_SOURCE
+#  endif
+
+#  include <boost/stacktrace.hpp>
+#endif
+
+
 namespace {
     constexpr std::string_view DEFAULT_FILENAME = "en.txt";
     constexpr std::string_view ERROR_STRING = "ERROR: ";
     const std::string EMPTY_STRING;
+
+    auto StackTrace() {
+#if BOOST_VERSION >= 106500
+        std::stringstream ss;
+        ss << "stacktrace:\n" << boost::stacktrace::stacktrace();
+        return ss.str();
+#else
+        return "";
+#endif
+    }
 }
 
 
@@ -85,6 +109,10 @@ const std::string& StringTable::operator[] (const std::string& key) const {
         return it->second;
 
     auto error = m_error_strings.insert(ERROR_STRING + key);
+    if (error.second) {
+        ErrorLogger() << "Missing string: " << key;
+        DebugLogger() << StackTrace();
+    }
     return *(error.first);
 }
 
@@ -94,6 +122,10 @@ const std::string& StringTable::operator[] (const std::string_view key) const {
         return it->second;
 
     auto error = m_error_strings.insert(ERROR_STRING + key);
+    if (error.second) {
+        ErrorLogger() << "Missing string: " << key;
+        DebugLogger() << StackTrace();
+    }
     return *(error.first);
 }
 
@@ -103,6 +135,10 @@ const std::string& StringTable::operator[] (const char* key) const {
         return it->second;
 
     auto error = m_error_strings.insert(ERROR_STRING + key);
+    if (error.second) {
+        ErrorLogger() << "Missing string: " << key;
+        DebugLogger() << StackTrace();
+    }
     return *(error.first);
 }
 
