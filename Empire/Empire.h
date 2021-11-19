@@ -82,7 +82,8 @@ public:
 
     /** For each category, returns the slots in which policies have been adopted
       * and what policy is in that slot. */
-    [[nodiscard]] std::map<std::string, std::map<int, std::string>> CategoriesSlotsPoliciesAdopted() const; // TODO: string_view ?
+    [[nodiscard]] std::map<std::string_view, std::map<int, std::string_view>>
+    CategoriesSlotsPoliciesAdopted() const;
 
     /** Returns the policies the empire has adopted and turns on which they were adopted. */
     [[nodiscard]] std::map<std::string_view, int, std::less<>> TurnsPoliciesAdopted() const;

@@ -1212,11 +1212,10 @@ void GovernmentWnd::MainPanel::SetPolicy(const std::string& policy_name, unsigne
 
 namespace {
     // returns vector of category names and indices within category
-    std::vector<std::pair<int, std::string>> ConcatenatedCategorySlots(const Empire* empire) {
-        std::vector<std::pair<int, std::string>> retval;
+    std::vector<std::pair<int, std::string_view>> ConcatenatedCategorySlots(const Empire* empire) {
+        std::vector<std::pair<int, std::string_view>> retval;
         if (!empire)
             return retval;
-        retval.reserve(50); // should be enough in most cases, avoid repeated reallocations
 
         // for every slot in every category, add entry to retval in series. count up separately
         // for each slot in each category, to find index for each slot in that cateogry
@@ -1227,18 +1226,16 @@ namespace {
 
         return retval;
     }
-}
 
-namespace {
-    std::pair<int, std::string> OverallSlotToCategoryAndSlot(const Empire* empire, int overall_slot) {
+    std::pair<int, std::string_view> OverallSlotToCategoryAndSlot(const Empire* empire, int overall_slot) {
         if (!empire || overall_slot < 0)
-            return {0, EMPTY_STRING};
+            return {0, ""};
 
         auto empire_slots = ConcatenatedCategorySlots(empire);
         if (overall_slot >= static_cast<int>(empire_slots.size()))
-            return {0, EMPTY_STRING};
+            return {0, ""};
 
-        return std::move(empire_slots[overall_slot]);
+        return empire_slots[overall_slot];
     }
 }
 
@@ -1260,7 +1257,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     }
 
     // what category and slot is policy being adopted in
-    auto&& [adopt_in_category_slot, adopt_in_category] = OverallSlotToCategoryAndSlot(empire.get(), slot);
+    auto [adopt_in_category_slot, adopt_in_category] = OverallSlotToCategoryAndSlot(empire.get(), slot);
     if (adopt_in_category.empty()) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy specified invalid slot: " << slot;
         return;
@@ -1284,7 +1281,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     // category -> slot in category -> policy in slot
     auto initial_cats_slots_policy_adopted = empire->CategoriesSlotsPoliciesAdopted();
     auto& init_slots_adopted{initial_cats_slots_policy_adopted[adopt_in_category]};
-    const auto& initial_policy_name{init_slots_adopted[adopt_in_category_slot]};
+    auto initial_policy_name{init_slots_adopted[adopt_in_category_slot]};
 
     // check if adopting or revoking a policy. If adopting, then pass along the name of
     // the policy to adopt. If de-adeopting, then pass the name of the policy to de-adopt.
@@ -1296,7 +1293,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
         return;
     }
 
-    const std::string& order_policy_name = (adopt ? policy->Name() : initial_policy_name);
+    std::string order_policy_name{adopt ? policy->Name() : initial_policy_name};
     if (adopt && initial_policy_name == order_policy_name) {
         DebugLogger() << "GovernmentWnd::MainPanel::SetPolicy requested to adopt policy " << order_policy_name
                       << " in slot " << slot << " but that policy is already in that slot";
@@ -1304,7 +1301,8 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     }
 
     // issue order to adopt or revoke
-    auto order = std::make_shared<PolicyOrder>(empire_id, order_policy_name, adopt_in_category,
+    auto order = std::make_shared<PolicyOrder>(empire_id, std::move(order_policy_name),
+                                               std::string{adopt_in_category},
                                                adopt, adopt_in_category_slot);
     GGHumanClientApp::GetApp()->Orders().IssueOrder(std::move(order), context);
 
@@ -1394,7 +1392,7 @@ void GovernmentWnd::MainPanel::Populate() {
     for (unsigned int n = 0; n < all_slot_cats.size(); ++n) {
         // create slot controls for empire's policy slots
         auto& [category_index, category_name] = all_slot_cats[n];
-        auto slot_control = GG::Wnd::Create<PolicySlotControl>(category_name, category_index, n);
+        auto slot_control = GG::Wnd::Create<PolicySlotControl>(std::string{category_name}, category_index, n);
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
 
@@ -1402,7 +1400,7 @@ void GovernmentWnd::MainPanel::Populate() {
         if (categories_slots_policies.count(category_name)) {
             const auto& slots = categories_slots_policies[category_name];
             if (slots.count(category_index))
-                slot_control->SetPolicy(slots.at(category_index));
+                slot_control->SetPolicy(std::string{slots.at(category_index)}); // TODO: avoid string construction if possible...
         }
 
         // signals to respond to UI manipulation

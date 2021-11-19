@@ -464,9 +464,9 @@ std::vector<std::string_view> Empire::AdoptedPolicies() const {
     return retval;
 }
 
-std::map<std::string, std::map<int, std::string>>
+std::map<std::string_view, std::map<int, std::string_view>>
 Empire::CategoriesSlotsPoliciesAdopted() const {
-    std::map<std::string, std::map<int, std::string>> retval;
+    std::map<std::string_view, std::map<int, std::string_view>> retval;
     for (auto& [policy_name, adoption_info] : m_adopted_policies)
         retval[adoption_info.category][adoption_info.slot_in_category] = policy_name;
     return retval;
