@@ -19,8 +19,8 @@ from typing import Iterator
 
 STRING_TABLE_KEY_PATTERN = re.compile(r"^[A-Z0-9_]+$")
 # Provides the named capture groups 'ref_type' and 'key'
-INTERNAL_REFERENCE_PATTERN_TEMPLATE = r"\[\[(?P<ref_type>(?:(?:encyclopedia|(?:building|field|meter)type|predefinedshipdesign|ship(?:hull|part)|special|species|tech|policy|value) )?)(?P<key>{})\]\]"
-OPTIONAL_REF_TYPES = ["value"]
+INTERNAL_REFERENCE_PATTERN_TEMPLATE = r"\[\[(?P<ref_type>(?:(?:encyclopedia|(?:building|field|meter)type|predefinedshipdesign|ship(?:hull|part)|special|species|tech|policy|value|browsepath) )?)(?P<key>{})\]\]"
+OPTIONAL_REF_TYPES = ["value", "browsepath"]
 
 
 def _get_brackets(text) -> Iterator[str]:
