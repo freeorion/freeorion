@@ -161,7 +161,7 @@ const Policy* PolicyManager::GetPolicy(const std::string& name) const {
 }
 
 const Policy* PolicyManager::GetPolicy(std::string_view name) const {
-    GetPolicy(std::string{name}); // TODO: avoid construction by enabling heterogenous lookup
+    return this->GetPolicy(std::string{name}); // TODO: avoid construction by enabling heterogenous lookup
 }
 
 std::vector<std::string_view> PolicyManager::PolicyNames() const {
