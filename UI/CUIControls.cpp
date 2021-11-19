@@ -1897,12 +1897,6 @@ void ResourceInfoPanel::SetStockpileCost(float stockpile, float stockpile_use,
     *m_stockpile_use << DoubleToString(stockpile_use, 3, false);
 
     *m_stockpile_max_use << DoubleToString(stockpile_use_max, 3, false);
-
-    TraceLogger() << "SetStockpileCost:  set name";
-    const Empire* empire = GetEmpire(m_empire_id);
-    const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
-    SetName(boost::io::str(FlexibleFormat(UserString("STOCKPILE_INFO_EMPIRE")) % m_title_str % empire_name));
-    TraceLogger() << "SetStockpileCost:  done.";
 }
 
 void ResourceInfoPanel::SetLocalPointsCost(float local_points, float local_cost, float local_stockpile_use,
