@@ -693,8 +693,8 @@ class ShipDesigner:
         )
 
         # read out part stats
-        cloak_counter = colonization_counter = detection_counter = 0 # to deal with Non-stacking parts
-        engine_counter = lance_counter = shield_counter = 0 # to deal with Non-stacking parts
+        cloak_counter = colonization_counter = detection_counter = 0  # to deal with Non-stacking parts
+        engine_counter = lance_counter = shield_counter = 0  # to deal with Non-stacking parts
 
         hangar_part_names = set()
         bay_parts = list()
@@ -740,9 +740,9 @@ class ShipDesigner:
                 if allowed_targets & AIDependencies.CombatTarget.PLANET:
                     self.design_stats.damage_vs_planets += capacity * shots
                 # XXX reset damage for multiple flux lances - handling part exclusions would be better
-                if (part.name == AIDependencies.SR_FLUX_LANCE):
+                if part.name == AIDependencies.SR_FLUX_LANCE:
                     lance_counter += 1
-                    if (lance_counter != 1):
+                    if lance_counter != 1:
                         self.design_stats.attacks[capacity] = 0
             elif partclass in SHIELDS:
                 shield_counter += 1
