@@ -302,6 +302,7 @@ GRO_GENOME_BANK = "GRO_GENETIC_MED"
 
 CON_CONC_CAMP = "CON_CONC_CAMP"
 
+SR_FLUX_LANCE = "SR_FLUX_LANCE"
 SPY_STEALTH_1 = "SPY_STEALTH_1"
 SPY_STEALTH_2 = "SPY_STEALTH_2"
 
@@ -396,7 +397,7 @@ WEAPON_UPGRADE_DICT = {
         "SR_WEAPON_3_1": {"SHP_WEAPON_3_%d" % i: 3 for i in [2, 3, 4]},
         "SR_WEAPON_4_1": {"SHP_WEAPON_4_%d" % i: 5 for i in [2, 3, 4]},
         "SR_ARC_DISRUPTOR": {"SHP_WEAPON_ARC_DISRUPTOR_%d" % i: i for i in [2, 3]},
-        "SR_FLUX_LANCE": {},
+        SR_FLUX_LANCE: {},
         "SR_SPINAL_ANTIMATTER": {},
     }.items()
 }
@@ -409,7 +410,7 @@ WEAPON_ROF_UPGRADE_DICT = {
     "SR_WEAPON_3_1": (),
     "SR_WEAPON_4_1": (),
     "SR_ARC_DISRUPTOR": (),
-    "SR_FLUX_LANCE": {},
+    SR_FLUX_LANCE: {},
     "SR_SPINAL_ANTIMATTER": (),
 }
 
@@ -839,7 +840,7 @@ class CombatTarget:
         "SR_WEAPON_3_1": SHIP | PLANET,
         "SR_WEAPON_4_1": SHIP | PLANET,
         "SR_ARC_DISRUPTOR": ANY,
-        "SR_FLUX_LANCE": SHIP | PLANET,
+        SR_FLUX_LANCE: SHIP | PLANET,
         "SR_SPINAL_ANTIMATTER": SHIP | PLANET,
         "FT_HANGAR_0": NONE,
         "FT_HANGAR_1": FIGHTER,
