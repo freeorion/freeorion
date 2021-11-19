@@ -694,7 +694,7 @@ class ShipDesigner:
 
         # read out part stats
         cloak_counter = colonization_counter = detection_counter = 0 # to deal with Non-stacking parts
-        engine_counter = lance_counter = shield_counter = 0          # to deal with Non-stacking parts
+        engine_counter = lance_counter = shield_counter = 0 # to deal with Non-stacking parts
 
         hangar_part_names = set()
         bay_parts = list()
