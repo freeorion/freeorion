@@ -26,7 +26,7 @@ Policy
                 min((NamedReal name = "PLC_INDOCTRINATION_STRENGTH_MAX" value = 10.0),
                     (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) *
                     (NamedReal name = "PLC_INDOCTRINATION_PER_TURN" value = 0.25))
-            SetTargetInfluence value = Value - 1.0
+            SetTargetInfluence value = Value - (NamedReal name = "PLC_INDOCTRINATION_INFLUENCE_COST_FLAT" value = 1.0)
         ]
         // Second variant: Current population was conquered.
         // Bonus is additonally limited to turns since conquered.
