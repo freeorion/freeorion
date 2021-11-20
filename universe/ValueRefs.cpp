@@ -81,7 +81,7 @@ namespace {
         }
 
         if (!obj) {
-            std::string type_string;
+            std::string_view type_string;
             switch (ref_type) {
             case ValueRef::ReferenceType::SOURCE_REFERENCE:                    type_string = "Source";         break;
             case ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE:             type_string = "Target";         break;
@@ -106,7 +106,7 @@ namespace {
         }
 
         while (first != last) {
-            std::string property_name = *first;
+            std::string_view property_name = *first;
             if (property_name == "Planet") {
                 if (auto b = std::dynamic_pointer_cast<const Building>(obj)) {
                     obj = context.ContextObjects().get<Planet>(b->PlanetID());
