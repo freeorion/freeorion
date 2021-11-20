@@ -9,6 +9,7 @@
 #include <boost/algorithm/string/replace.hpp>
 
 #include <iostream>
+#include <atomic>
 
 
 #if BOOST_VERSION >= 106500
@@ -30,7 +31,10 @@ namespace {
     constexpr std::string_view ERROR_STRING = "ERROR: ";
     const std::string EMPTY_STRING;
 
-    auto StackTrace() {
+    std::string StackTrace() {
+        static std::atomic<int> string_error_lookup_count = 0;
+        if (string_error_lookup_count++ > 10)
+            return "";
 #if BOOST_VERSION >= 106500
         std::stringstream ss;
         ss << "stacktrace:\n" << boost::stacktrace::stacktrace();
