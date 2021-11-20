@@ -7842,8 +7842,6 @@ namespace {
         bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
             if (!candidate)
                 return false;
-            if (m_empire_id == ALL_EMPIRES)
-                return true;
             if (m_vis == Visibility::VIS_NO_VISIBILITY)
                 return true;
 
