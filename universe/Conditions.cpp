@@ -180,9 +180,9 @@ namespace Condition {
 
     // test candidate against all input conditions, and store descriptions of each
     ScriptingContext context{std::move(source_object)};
-    for (const auto& result : ConditionDescriptionAndTest(conditions, context, std::move(candidate_object))) {
-        if (!result.second)
-             retval += UserString("FAILED") + " <rgba 255 0 0 255>" + result.first +"</rgba>\n";
+    for (const auto& [desc, passed_test] : ConditionDescriptionAndTest(conditions, context, std::move(candidate_object))) {
+        if (!passed_test)
+             retval += UserString("FAILED") + " <rgba 255 0 0 255>" + desc +"</rgba>\n";
     }
 
     // remove empty line from the end of the string
@@ -220,9 +220,9 @@ std::string ConditionDescription(const std::vector<const Condition*>& conditions
     }
     // else just output single condition description and PASS/FAIL text
 
-    for (const auto& result : condition_description_and_test_results) {
-        retval += (result.second ? UserString("PASSED") : UserString("FAILED"));
-        retval += " " + result.first + "\n";
+    for (const auto& [desc, passed_test] : condition_description_and_test_results) {
+        retval += (passed_test ? UserString("PASSED") : UserString("FAILED"));
+        retval += " " + desc + "\n";
     }
     return retval;
 }
