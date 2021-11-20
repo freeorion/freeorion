@@ -255,6 +255,16 @@ bool UserStringExists(const std::string& str) {
     return GetStringTable().StringExists(str) || GetDevDefaultStringTable().StringExists(str);
 }
 
+bool UserStringExists(const std::string_view str) {
+    std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    return GetStringTable().StringExists(str) || GetDevDefaultStringTable().StringExists(str);
+}
+
+bool UserStringExists(const char* str) {
+    std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
+    return GetStringTable().StringExists(str) || GetDevDefaultStringTable().StringExists(str);
+}
+
 boost::format FlexibleFormat(const std::string &string_to_format) {
     try {
         boost::format retval(string_to_format);

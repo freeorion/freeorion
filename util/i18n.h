@@ -28,6 +28,8 @@ FO_COMMON_API std::vector<std::string> UserStringList(const std::string& key);
 
 /** Returns true iff a user-string exists for the key string \a str */
 FO_COMMON_API bool UserStringExists(const std::string& str);
+FO_COMMON_API bool UserStringExists(const std::string_view str);
+FO_COMMON_API bool UserStringExists(const char* str);
 
 /** Clears all loaded strings, so that subsequent UserString lookups will cause
   * the stringtable(s) to be reloaded. */
