@@ -693,9 +693,9 @@ class ShipDesigner:
         )
 
         # read out part stats
-        shield_counter = (
-            cloak_counter
-        ) = detection_counter = colonization_counter = engine_counter = 0  # to deal with Non-stacking parts
+        cloak_counter = colonization_counter = detection_counter = 0  # to deal with Non-stacking parts
+        engine_counter = lance_counter = shield_counter = 0  # to deal with Non-stacking parts
+
         hangar_part_names = set()
         bay_parts = list()
         for part in self.parts:
@@ -739,6 +739,11 @@ class ShipDesigner:
                     self.design_stats.flak_shots += shots
                 if allowed_targets & AIDependencies.CombatTarget.PLANET:
                     self.design_stats.damage_vs_planets += capacity * shots
+                # XXX reset damage for multiple flux lances - handling part exclusions would be better
+                if part.name == AIDependencies.SR_FLUX_LANCE:
+                    lance_counter += 1
+                    if lance_counter != 1:
+                        self.design_stats.attacks[capacity] = 0
             elif partclass in SHIELDS:
                 shield_counter += 1
                 if shield_counter == 1:
@@ -862,7 +867,7 @@ class ShipDesigner:
                 self.design_stats.detection += AIDependencies.BASE_DETECTION
 
         # TODO establish framework for conditional effects and get rid of this
-        if self.hull.name in ["SH_SPATIAL_FLUX", "SH_SPACE_FLUX_BUBBLE"]:
+        if self.hull.name in ["SH_SPATIAL_FLUX", "SH_SPACE_FLUX_BUBBLE", "SH_SPACE_FLUX_COMPOSITE"]:
             self.design_stats.stealth += 10
             relevant_stealth_techs = [
                 "SPY_STEALTH_PART_1",

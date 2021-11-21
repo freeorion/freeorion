@@ -302,6 +302,7 @@ GRO_GENOME_BANK = "GRO_GENETIC_MED"
 
 CON_CONC_CAMP = "CON_CONC_CAMP"
 
+SR_FLUX_LANCE = "SR_FLUX_LANCE"
 SPY_STEALTH_1 = "SPY_STEALTH_1"
 SPY_STEALTH_2 = "SPY_STEALTH_2"
 
@@ -396,6 +397,7 @@ WEAPON_UPGRADE_DICT = {
         "SR_WEAPON_3_1": {"SHP_WEAPON_3_%d" % i: 3 for i in [2, 3, 4]},
         "SR_WEAPON_4_1": {"SHP_WEAPON_4_%d" % i: 5 for i in [2, 3, 4]},
         "SR_ARC_DISRUPTOR": {"SHP_WEAPON_ARC_DISRUPTOR_%d" % i: i for i in [2, 3]},
+        SR_FLUX_LANCE: {},
         "SR_SPINAL_ANTIMATTER": {},
     }.items()
 }
@@ -408,6 +410,7 @@ WEAPON_ROF_UPGRADE_DICT = {
     "SR_WEAPON_3_1": (),
     "SR_WEAPON_4_1": (),
     "SR_ARC_DISRUPTOR": (),
+    SR_FLUX_LANCE: {},
     "SR_SPINAL_ANTIMATTER": (),
 }
 
@@ -572,12 +575,16 @@ STEALTH_TECHS = (
 )
 ROBOTIC_HULL_TECHS = (
     "SHP_MIL_ROBO_CONT",
-    "SHP_SPACE_FLUX_DRIVE",
     "SHP_TRANSSPACE_DRIVE",
     "SHP_CONTGRAV_MAINT",
     "SHP_MASSPROP_SPEC",
     "SHP_NANOROBO_MAINT",
     "SHP_MIDCOMB_LOG",
+)
+SPACE_FLUX_HULL_TECHS = (
+    "SHP_SPACE_FLUX_BUBBLE",
+    "SHP_SPACE_FLUX_DRIVE",
+    "SHP_SPACE_FLUX_COMPOSITION",
 )
 ASTEROID_HULL_TECHS = (
     "SHP_ASTEROID_HULLS",
@@ -606,7 +613,14 @@ ENERGY_HULL_TECHS = (
 MISC_HULL_TECHS = ("SHP_XENTRONIUM_HULL",)
 HULL_TECHS = tuple(
     hull
-    for hulls in (ROBOTIC_HULL_TECHS, ASTEROID_HULL_TECHS, ORGANIC_HULL_TECHS, ENERGY_HULL_TECHS, MISC_HULL_TECHS)
+    for hulls in (
+        ROBOTIC_HULL_TECHS,
+        ASTEROID_HULL_TECHS,
+        ORGANIC_HULL_TECHS,
+        ENERGY_HULL_TECHS,
+        MISC_HULL_TECHS,
+        SPACE_FLUX_HULL_TECHS,
+    )
     for hull in hulls
 )
 
@@ -832,6 +846,8 @@ class CombatTarget:
         "SR_WEAPON_2_1": SHIP | PLANET,
         "SR_WEAPON_3_1": SHIP | PLANET,
         "SR_WEAPON_4_1": SHIP | PLANET,
+        "SR_ARC_DISRUPTOR": ANY,
+        SR_FLUX_LANCE: SHIP | PLANET,
         "SR_SPINAL_ANTIMATTER": SHIP | PLANET,
         "FT_HANGAR_0": NONE,
         "FT_HANGAR_1": FIGHTER,
@@ -839,7 +855,6 @@ class CombatTarget:
         "FT_HANGAR_3": SHIP,
         "FT_HANGAR_4": SHIP | PLANET,
         # monster weapons
-        "SR_ARC_DISRUPTOR": ANY,
         "SR_GRAV_PULSE": ANY,
         "SR_ICE_BEAM": ANY,
         "SR_JAWS": SHIP | PLANET,
@@ -905,15 +920,19 @@ HULL_TAG_EFFECTS = {
 
 HULL_EFFECTS = {
     # "HULLNAME": { Token1: Value1, Token2: Value2, ...}
-    # Robotic line
-    "SH_ROBOTIC": {
-        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
-    },
+    # Spatial Flux line
     "SH_SPACE_FLUX_BUBBLE": {
+        STEALTH_MODIFIER: -30,
+    },
+    "SH_SPACE_FLUX_COMPOSITE": {
         STEALTH_MODIFIER: -30,
     },
     "SH_SPATIAL_FLUX": {
         STEALTH_MODIFIER: -30,
+    },
+    # Robotic line
+    "SH_ROBOTIC": {
+        REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
     },
     "SH_NANOROBOTIC": {
         REPAIR_PER_TURN: (STRUCTURE, 1),
