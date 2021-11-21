@@ -279,10 +279,13 @@ namespace {
 }
 
 namespace ValueRef {
-std::string ValueRefBase::InvariancePattern() const {
-    return std::string(RootCandidateInvariant()?"R":"r") + (LocalCandidateInvariant()?"L":"l")
-        + (SourceInvariant()?"S":"s") + (TargetInvariant()?"T":"t")
-        + (SimpleIncrement()?"I":"i") + (ConstantExpr()?"C":"c");
+    std::string ValueRefBase::InvariancePattern() const {
+        return std::string{RootCandidateInvariant() ? "R" : "r"}
+            .append(LocalCandidateInvariant()       ? "L" : "l")
+            .append(SourceInvariant()               ? "S" : "s")
+            .append(TargetInvariant()               ? "T" : "t")
+            .append(SimpleIncrement()               ? "I" : "i")
+            .append(ConstantExpr()                  ? "C" : "c");
 }
 
 MeterType NameToMeter(const std::string& name) {
