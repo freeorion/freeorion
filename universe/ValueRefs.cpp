@@ -1480,8 +1480,8 @@ Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) co
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
             empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return Visibility::VIS_NO_VISIBILITY;
+            if (empire_id == ALL_EMPIRES && context.combat_bout < 1)
+                return Visibility::VIS_FULL_VISIBILITY; // outside of battle neutral forces have full visibility per default
         }
 
         int object_id = INVALID_OBJECT_ID;
