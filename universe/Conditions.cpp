@@ -7842,6 +7842,8 @@ namespace {
                 return false;
             if (m_vis == Visibility::VIS_NO_VISIBILITY)
                 return true;
+            if (m_empire_id == ALL_EMPIRES && m_context.combat_bout < 1)
+                return true; // outside of battle neutral forces have full visibility per default
 
             if (m_since_turn == INVALID_GAME_TURN) {
                 // no valid game turn was specified, so use current universe state
