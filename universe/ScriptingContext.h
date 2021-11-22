@@ -313,7 +313,7 @@ struct ScriptingContext {
     const CurrentValueVariant&            current_value = EMPTY_CURRENT_VALUE;
 
     // general gamestate info
-    int                                            combat_bout = 0;
+    int                                            combat_bout = 0; // first round of battle is combat_bout == 1
     int                                            current_turn = CurrentTurn();
     int                                            in_design_id = INVALID_DESIGN_ID;
     int                                            production_block_size = 1;
