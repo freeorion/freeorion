@@ -1681,7 +1681,13 @@ OPTIONS_DB_UI_DEFAULT_LINK_COLOR
 Définit la couleur des liens de l'interface utilisateur.
 
 OPTIONS_DB_UI_ROLLOVER_LINK_COLOR
-Définit la couleur des liens de l'interface utilisateur lorsque survolés par le curseur.
+Définit la couleur des liens de l'interface utilisateur lors du survol par le curseur.
+
+OPTIONS_DB_UI_DEFAULT_TOOLTIP_COLOR
+Définit la couleur des infobulles de l'interface utilisateur.
+
+OPTIONS_DB_UI_ROLLOVER_TOOLTIP_COLOR
+Définit la couleur des infobulles de l'interface utilisateur lors du survol par le curseur.
 
 OPTIONS_DB_UI_CTRL_COLOR
 Définit la couleur des contrôles de l'interface utilisateur.
@@ -6716,7 +6722,8 @@ CONFIG_GUIDE_TITLE
 Guide de Configuration
 
 CONFIG_GUIDE_TEXT
-'''La plupart des options de configuration du jeu sont conservées et lues à partir d'un unique fichier XML nommé config.xml.
+'''La plupart des options de configuration du jeu sont conservées et lues à partir d'un unique fichier XML nommé config.xml, dont l'emplacement doit être [[browsepath PATH_CONFIG]].
+
 Si ce fichier n'existe pas (ou provient d'un build ou d'une version différente), il sera (re)créé lors du démarrage du serveur client.
 Le fichier de configuration est mis à jour lors de la modification d'une option, mais cette dernière peut être différée dans l'attente d'une action ultérieure (comme cliquer sur Valider ou Appliquer).
 Certaines de ces options peuvent être modifiées depuis la page '[[OPTIONS_TITLE]]' du Menu Principal.
@@ -11832,6 +11839,7 @@ Endoctrinement
 
 PLC_INDOCTRINATION_DESC
 '''• Augmente progressivement la [[metertype METER_TARGET_HAPPINESS]] des planètes. Le bonus croît de [[value PLC_INDOCTRINATION_PER_TURN]] par tour, jusqu'à un maximum de [[value PLC_INDOCTRINATION_STRENGTH_MAX]]. Les planètes fraîchement conquises démarre à zéro, les planètes déjà colonisées obtiennent le bonus maximum actuel.
+• Diminue la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_INDOCTRINATION_INFLUENCE_COST_FLAT]], sur les planètes recevant ce bonus de [[metertype METER_TARGET_HAPPINESS]].
 • Augmente la [[metertype METER_TARGET_INFLUENCE]] de la Capitale ou des planètes hébergeant une structure d'[[buildingtype BLD_REGIONAL_ADMIN]], et en Focus Influence, de [[value PLC_INDOCTRINATION_INFLUENCE_FLAT]].'''
 
 PLC_INDOCTRINATION_SHORT_DESC
