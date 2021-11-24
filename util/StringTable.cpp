@@ -11,6 +11,9 @@
 #include <iostream>
 #include <atomic>
 
+#if defined(_MSC_VER) && _MSC_VER >= 1930
+struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax error: 'identifier' was unexpected here; expected 'type specifier'"
+#endif
 
 #if BOOST_VERSION >= 106500
 // define needed on Windows due to conflict with windows.h and std::min and std::max
