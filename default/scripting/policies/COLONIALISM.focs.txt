@@ -62,7 +62,7 @@ Policy
                         ResourceSupplyConnected empire = Source.Owner condition = Target
                     ])
     ]
-    graphic = "icons/policies/colonialism.png"
+    graphic = "icons/policies/economic_colonialism.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

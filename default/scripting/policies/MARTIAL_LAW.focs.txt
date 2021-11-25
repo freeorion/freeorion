@@ -21,6 +21,6 @@ Policy
             SetMaxSupply value = Value - (NamedReal name = "PLC_MARTIAL_LAW_SUPPLY_PENALTY" value = 1.0)
         ]
     ]
-    graphic = "icons/policies/martial_law.png"
+    graphic = "icons/policies/military_martial_law.png"
 
 #include "/scripting/policies/policies.macros"

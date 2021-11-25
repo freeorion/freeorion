@@ -29,7 +29,7 @@ Policy
                                  value = -1.0 * [[RESEARCH_PER_POP]])
             ]
     ]
-    graphic = "icons/policies/racial_purity.png"
+    graphic = "icons/policies/social_racial_purity.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/policies/policies.macros"

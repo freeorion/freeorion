@@ -7,7 +7,7 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
     ]
-    graphic = "icons/policies/allied_repair.png"
+    graphic = "icons/policies/military_allied_repair.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

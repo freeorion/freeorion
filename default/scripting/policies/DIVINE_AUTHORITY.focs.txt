@@ -34,6 +34,6 @@ Policy
                 SetTargetInfluence value = Value +
                     (NamedReal name = "PLC_DIVINE_AUTHORITY_TARGET_INFLUENCE_FLAT" value = 1)
     ]
-    graphic = "icons/policies/divine_authority.png"
+    graphic = "icons/policies/social_divine_authority.png"
 
 #include "/scripting/policies/policies.macros"

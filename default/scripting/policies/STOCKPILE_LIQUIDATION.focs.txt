@@ -18,7 +18,7 @@ Policy
             effects =
                 SetMaxStockpile value = max(0.0, Value * 2.0)
     ]                
-    graphic = "icons/focus/stockpile.png"
+    graphic = "icons/policies/economic_stockpile_liquidation.png"
 
 #include "/scripting/common/priorities.macros"
 #include "/scripting/policies/policies.macros"

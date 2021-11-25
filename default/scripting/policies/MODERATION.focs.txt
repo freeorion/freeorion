@@ -36,7 +36,7 @@ Policy
                     - 1.0))
             ]
     ]
-    graphic = "icons/policies/balance.png"
+    graphic = "icons/policies/economic_balance.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"

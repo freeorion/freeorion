@@ -37,7 +37,7 @@ Policy
             ]
 
     ]
-    graphic = "icons/policies/charge.png"
+    graphic = "icons/policies/military_charge.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

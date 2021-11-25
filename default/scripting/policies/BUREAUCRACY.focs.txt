@@ -70,7 +70,7 @@ Policy
                 empire = Source.Owner
             
     ]
-    graphic = "icons/policies/bureaucracy.png"
+    graphic = "icons/policies/economic_bureaucracy.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/policies/policies.macros"

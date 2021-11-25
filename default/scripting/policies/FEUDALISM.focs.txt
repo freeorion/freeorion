@@ -56,7 +56,7 @@ Policy
                     InSystem id = Target.SystemID
                 ]))
     ]
-    graphic = "icons/policies/feudalism.png"
+    graphic = "icons/policies/economic_feudalism.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

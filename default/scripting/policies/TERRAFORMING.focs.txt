@@ -56,7 +56,7 @@ Policy
                     * Target.DistanceFromOriginalType
 
     ]
-    graphic = "icons/policies/terraforming.png"
+    graphic = "icons/policies/economic_terraforming.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

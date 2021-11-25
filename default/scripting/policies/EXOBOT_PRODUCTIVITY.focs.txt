@@ -24,7 +24,7 @@ Policy
                         * (NamedReal name = "PLC_EXOBOT_PRODUCTIVITY_TARGET_INDUSTRY_SCALING"
                                      value = ([[BAD_MULTIPLIER]] / [[VERY_BAD_MULTIPLIER]]))
     ]
-    graphic = "icons/policies/exobot_productivity.png"
+    graphic = "icons/policies/economic_exobot_productivity.png"
 
 #include "/scripting/species/common/*.macros"
 #include "/scripting/policies/policies.macros"

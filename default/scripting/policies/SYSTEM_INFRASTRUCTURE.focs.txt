@@ -30,7 +30,7 @@ Policy
             ]
             effects = SetTargetConstruction value = Value + 5
     ]
-    graphic = "icons/policies/system_infrastructure.png"
+    graphic = "icons/policies/economic_system_infrastructure.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"

@@ -28,7 +28,7 @@ Policy
                 value = Value + min((NamedReal name = "CONTINUOUS_SCANNING_MAX_DETECTION_BOOST" value = 20.0),
                                     TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy)
     ]
-    graphic = "icons/policies/continuous_scanning.png"
+    graphic = "icons/policies/military_continuous_scanning.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

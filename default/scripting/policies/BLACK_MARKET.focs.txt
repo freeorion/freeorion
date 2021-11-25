@@ -9,7 +9,7 @@ Policy
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
     
     ]
-    graphic = "icons/policies/black_market.png"
+    graphic = "icons/policies/economic_black_market.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"

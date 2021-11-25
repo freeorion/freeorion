@@ -8,7 +8,7 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
     ]
-    graphic = "icons/focus/growth.png"
+    graphic = "icons/policies/social_population.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

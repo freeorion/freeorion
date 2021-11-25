@@ -82,7 +82,7 @@ Policy
             ]
 
     ]
-    graphic = "icons/policies/flanking.png"
+    graphic = "icons/policies/military_flanking.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

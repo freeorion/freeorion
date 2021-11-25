@@ -18,7 +18,7 @@ Policy
             effects =
                 SetPopulation value = Target.Population // revert to initial value
     ]
-    graphic = "icons/policies/no_growth.png"
+    graphic = "icons/policies/social_no_growth.png"
 
 #include "/scripting/common/priorities.macros"
 #include "/scripting/policies/policies.macros"

@@ -19,7 +19,7 @@ Policy
                         * (NamedReal name = "LRN_ALGO_RESEARCH_TARGET_RESEARCH_PERCONSTRUCTION"
                                      value = 0.1)
     ]
-    graphic = "icons/tech/algorithmic_elegance.png"
+    graphic = "icons/policies/social_auto_research.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"

@@ -63,7 +63,7 @@ Policy
             effects =
                 SetTargetHappiness value = Value - (NamedReal name = "METROPOLES_STABILITY_PENALTY" value = 5.0)
     ]
-    graphic = "icons/policies/metropoles.png"
+    graphic = "icons/policies/economic_metropoles.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/policies/policies.macros"

@@ -37,13 +37,18 @@ enum class Availability : size_t {
 };
 
 namespace {
-    const std::string   POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
-    const std::string   EMPTY_STRING;
-    constexpr GG::X     POLICY_CONTROL_WIDTH{120};
-    constexpr GG::Y     POLICY_CONTROL_HEIGHT{180};
-    constexpr GG::X     SLOT_CONTROL_WIDTH{120};
-    constexpr GG::Y     SLOT_CONTROL_HEIGHT{180};
-    constexpr int       PAD{3};
+    constexpr std::string_view  POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
+    const std::string           EMPTY_STRING;
+    constexpr GG::X             POLICY_CONTROL_WIDTH{120};
+    constexpr GG::Y             POLICY_CONTROL_HEIGHT{180};
+    constexpr GG::X             SLOT_CONTROL_WIDTH{120};
+    constexpr GG::Y             SLOT_CONTROL_HEIGHT{180};
+    constexpr int               PAD{3};
+    constexpr double            POLICY_PAD{0.125};
+    constexpr double            POLICY_TEXT_POS_X{0.0625};
+    constexpr double            POLICY_TEXT_POS_Y{0.75};
+    constexpr double            POLICY_COST_POS_X{0.75};
+    constexpr double            POLICY_COST_POS_Y{0.0625};
 
     /** Returns texture with which to render a PolicySlotControl, depending on
       * \a category */
@@ -204,6 +209,7 @@ public:
     const std::string&  PolicyName() const  { return m_policy ? m_policy->Name() : EMPTY_STRING; }
     const Policy*       GetPolicy() const   { return m_policy; }
 
+    void Resize(GG::Pt sz);
     void Render() override;
 
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -232,39 +238,58 @@ void PolicyControl::CompleteConstruction() {
     if (!m_policy)
         return;
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    auto name = UserString(m_policy->Name());
-    auto cost = static_cast<int>(m_policy->AdoptionCost(empire_id));
+    const ScriptingContext context;
+    const auto& name = UserString(m_policy->Name());
+    auto cost = static_cast<int>(m_policy->AdoptionCost(empire_id, context));
 
     //std::cout << "PolicyControl: " << m_policy->Name() << std::endl;
 
     m_background = GG::Wnd::Create<GG::StaticGraphic>(PolicyBackgroundTexture(m_policy),
-        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
-    m_background->Show();
-    AttachChild(m_background);
-
-    //DebugLogger() << "PolicyControl::PolicyControl this: " << this << " policy: " << policy << " named: " << (policy ? policy->Name() : "no policy");
+                                                      GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::PolicyIcon(m_policy->Name()),
-                                                GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_icon->Resize(GG::Pt(POLICY_CONTROL_WIDTH, POLICY_CONTROL_HEIGHT * 2/3));
-    m_icon->Show();
-    AttachChild(m_icon);
-
-    m_name_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, Width()*7/8, GG::Y1, name,
-                                                    ClientUI::GetBoldFont(), ClientUI::TextColor(), GG::FORMAT_WORDBREAK);
-    m_name_label->MoveTo(GG::Pt(Width() / 16, Height() * 3/4));
-    AttachChild(m_name_label);
-
+                                                      GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_name_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, name,
+                                                      ClientUI::GetBoldFont(), ClientUI::TextColor(), GG::FORMAT_WORDBREAK);
     m_cost_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, std::to_string(cost),
-                                                    ClientUI::GetBoldFont(), ClientUI::TextColor());
-    m_cost_label->MoveTo(GG::Pt(Width() * 3/4, Height() * 15/16));
+                                                      ClientUI::GetBoldFont(), ClientUI::TextColor());
+
+    m_background->Show();
+    m_icon->Show();
+
+    AttachChild(m_background);
+    AttachChild(m_icon);
+    AttachChild(m_name_label);
     AttachChild(m_cost_label);
 
+    Resize(Size());
+
+    //DebugLogger() << "PolicyControl::PolicyControl this: " << this << " policy: " << policy << " named: " << (policy ? policy->Name() : "no policy");
     SetDragDropDataType(POLICY_CONTROL_DROP_TYPE_STRING);
 
     //DebugLogger() << "PolicyControl::PolicyControl policy name: " << m_policy->Name();
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     SetBrowseInfoWnd(PolicyBrowseWnd(m_policy->Name()));
+}
+
+void PolicyControl::Resize(GG::Pt sz) {
+    GG::Control::Resize(sz);
+
+    m_background->Resize(sz);
+    m_icon->Resize(GG::Pt(sz.x, sz.y * 2/3));
+
+    double zoom_factor = 1;
+    if (sz.x != POLICY_CONTROL_WIDTH)
+        zoom_factor = 0.5;
+
+    const int font_size = static_cast<int>(ClientUI::Pts() * zoom_factor);
+    std::shared_ptr<GG::Font> new_font = ClientUI::GetBoldFont(font_size);
+
+    m_name_label->SetFont(new_font);
+    m_cost_label->SetFont(new_font);
+
+    m_name_label->SizeMove(GG::Pt(sz.x * POLICY_TEXT_POS_X, sz.y * POLICY_TEXT_POS_Y),
+                           GG::Pt(sz.x * (1 - POLICY_TEXT_POS_X), sz.y * POLICY_TEXT_POS_Y));
+    m_cost_label->MoveTo(GG::Pt(sz.x * POLICY_COST_POS_X, sz.y * (1 - POLICY_COST_POS_Y)));
 }
 
 void PolicyControl::Render() {}
@@ -832,6 +857,7 @@ public:
     void DragDropEnter(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                        GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropLeave() override;
+    void Resize(const GG::Pt& sz);
     void Render() override;
 
     void Highlight(bool actually = true);
@@ -1022,6 +1048,16 @@ void PolicySlotControl::DragDropLeave() {
         m_policy_control->Show();
 }
 
+void PolicySlotControl::Resize(const GG::Pt& sz) {
+    GG::Control::Resize(sz);
+
+    if (m_policy_control)
+        m_policy_control->Resize(sz);
+    
+    if (m_background)
+        m_background->Resize(sz);
+}
+
 void PolicySlotControl::Render()
 {}
 
@@ -1164,7 +1200,10 @@ void GovernmentWnd::MainPanel::Sanitize()
 { void ClearPolicies(); }
 
 void GovernmentWnd::MainPanel::Refresh()
-{ Populate(); }
+{
+    Populate();
+    DoLayout();
+}
 
 void GovernmentWnd::MainPanel::SetPolicy(const std::string& policy_name, unsigned int slot)
 { SetPolicy(GetPolicy(policy_name), slot); }
@@ -1268,6 +1307,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     // update UI after policy changes
     empire->UpdateInfluenceSpending(context);
     Populate();
+    DoLayout();
     context.ContextUniverse().UpdateMeterEstimates(context);
     SidePanel::Refresh();
     FleetUIManager::GetFleetUIManager().RefreshAll();
@@ -1388,23 +1428,51 @@ void GovernmentWnd::MainPanel::DoLayout() {
     if (m_slots.empty())
         return;
 
-    // place background image of government
-    const GG::Pt initial_slot_ul = m_slots.front()->Size() * 1/4;
-    ul = initial_slot_ul;
+    // calculate if there is enough wnd space for policies
+    const int slots_per_row = static_cast<int> (Value(lr.x / (SLOT_CONTROL_WIDTH * (1 + POLICY_PAD))));
+    const int rows_available = static_cast<int> (Value(lr.y / (SLOT_CONTROL_HEIGHT * (1 + POLICY_PAD))));
 
-    // arrange policy slots
-    //int count = 0;
-    std::string prev_cat = m_slots.front()->SlotCategory();
+    if (slots_per_row < 1)
+        return;
+
+    const int rows_required = static_cast<int> (m_slots.size() / slots_per_row);
+
+    double zoom_factor = 1;
+
+    if (rows_required > rows_available)
+        zoom_factor = 0.5;
+
+    GG::X slot_width = static_cast<GG::X>(SLOT_CONTROL_WIDTH * zoom_factor);
+    GG::Y slot_height = static_cast<GG::Y>(SLOT_CONTROL_HEIGHT * zoom_factor);
+
+    // place background image of government
+    const GG::X initial_slot_l = GG::X(Value(m_slots.front()->Size().x) * POLICY_PAD);
+    ul.x = initial_slot_l;
+    ul.y = -m_slots.front()->Height();
+
+    // arrange policy slots, start new row when slots overlap with right wnd border
+    int count = 0;
     for (auto& slot : m_slots) {
-        // separate row per category
-        if (slot->SlotCategory() != prev_cat) {
-            ul.x = initial_slot_ul.x;
-            ul += slot->Size()*5/4;
-        } else {
-            ul += {slot->Width()*5/4, GG::Y0};
+
+        slot->Resize(GG::Pt(slot_width, slot_height));
+
+        // start of new row
+        if (count == 0) {
+            ul.x = initial_slot_l;
+            ul.y += slot->Height() * (1 + POLICY_PAD);
+        // no new row, progress in row
         }
-        prev_cat = slot->SlotCategory();
+        else {
+            ul.x += slot->Width() * (1 + POLICY_PAD);
+        }
+
         slot->MoveTo(ul);
+        count++;
+
+        // reset count when hitting right border
+        if ((count + 2) * slot->Size().x > lr.x) {
+            count = 0;
+        }
     }
 }
 

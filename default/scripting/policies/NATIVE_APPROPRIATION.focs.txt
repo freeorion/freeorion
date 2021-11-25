@@ -36,7 +36,7 @@ Policy
                     Homeworld name = LocalCandidate.Species
                 ]
     ]
-    graphic = "icons/policies/native_appropriation.png"
+    graphic = "icons/policies/social_native_appropriation.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"
