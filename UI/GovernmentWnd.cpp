@@ -37,13 +37,13 @@ enum class Availability : size_t {
 };
 
 namespace {
-    constexpr std::string_view  POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
-    const     std::string       EMPTY_STRING;
-    constexpr GG::X             POLICY_CONTROL_WIDTH{54};
-    constexpr GG::Y             POLICY_CONTROL_HEIGHT{54};
-    constexpr GG::X             SLOT_CONTROL_WIDTH{60};
-    constexpr GG::Y             SLOT_CONTROL_HEIGHT{60};
-    constexpr int               PAD{3};
+    const std::string   POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
+    const std::string   EMPTY_STRING;
+    constexpr GG::X     POLICY_CONTROL_WIDTH{120};
+    constexpr GG::Y     POLICY_CONTROL_HEIGHT{180};
+    constexpr GG::X     SLOT_CONTROL_WIDTH{120};
+    constexpr GG::Y     SLOT_CONTROL_HEIGHT{180};
+    constexpr int       PAD{3};
 
     /** Returns texture with which to render a PolicySlotControl, depending on
       * \a category */
@@ -57,7 +57,7 @@ namespace {
       * be put into. */
     std::shared_ptr<GG::Texture> PolicyBackgroundTexture(const Policy* policy) {
         if (policy) {
-            std::string filename = boost::algorithm::to_lower_copy(policy->Category()) + "_slot.png";
+            std::string filename = boost::algorithm::to_lower_copy(policy->Category()) + "_policy.png";
             return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "policies" / filename, true);
         }
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
@@ -215,6 +215,8 @@ public:
     mutable boost::signals2::signal<void (const Policy*)> DoubleClickedSignal;
 
 private:
+    std::shared_ptr<GG::TextControl>    m_name_label;
+    std::shared_ptr<GG::TextControl>    m_cost_label;
     std::shared_ptr<GG::StaticGraphic>  m_icon;
     std::shared_ptr<GG::StaticGraphic>  m_background;
     const Policy*                       m_policy = nullptr;
@@ -229,27 +231,34 @@ void PolicyControl::CompleteConstruction() {
     GG::Control::CompleteConstruction();
     if (!m_policy)
         return;
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    auto name = UserString(m_policy->Name());
+    auto cost = static_cast<int>(m_policy->AdoptionCost(empire_id));
+
     //std::cout << "PolicyControl: " << m_policy->Name() << std::endl;
 
     m_background = GG::Wnd::Create<GG::StaticGraphic>(PolicyBackgroundTexture(m_policy),
-                                                      GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_background->Resize(GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT));
     m_background->Show();
     AttachChild(m_background);
 
-
-    // position of policy image centred within policy control.  control is size of a slot, but the
-    // policy image is smaller
-    GG::X policy_left = (Width() - POLICY_CONTROL_WIDTH) / 2;
-    GG::Y policy_top = (Height() - POLICY_CONTROL_HEIGHT) / 2;
-
     //DebugLogger() << "PolicyControl::PolicyControl this: " << this << " policy: " << policy << " named: " << (policy ? policy->Name() : "no policy");
     m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::PolicyIcon(m_policy->Name()),
                                                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_icon->MoveTo(GG::Pt(policy_left, policy_top));
-    m_icon->Resize(GG::Pt(POLICY_CONTROL_WIDTH, POLICY_CONTROL_HEIGHT));
+    m_icon->Resize(GG::Pt(POLICY_CONTROL_WIDTH, POLICY_CONTROL_HEIGHT * 2/3));
     m_icon->Show();
     AttachChild(m_icon);
+
+    m_name_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, Width()*7/8, GG::Y1, name,
+                                                    ClientUI::GetBoldFont(), ClientUI::TextColor(), GG::FORMAT_WORDBREAK);
+    m_name_label->MoveTo(GG::Pt(Width() / 16, Height() * 3/4));
+    AttachChild(m_name_label);
+
+    m_cost_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, std::to_string(cost),
+                                                    ClientUI::GetBoldFont(), ClientUI::TextColor());
+    m_cost_label->MoveTo(GG::Pt(Width() * 3/4, Height() * 15/16));
+    AttachChild(m_cost_label);
 
     SetDragDropDataType(POLICY_CONTROL_DROP_TYPE_STRING);
 
