@@ -444,7 +444,7 @@ void Wnd::ClampRectWithMinAndMaxSize(Pt& ul, Pt& lr) const
     }
 }
 
-void Wnd::SetDragDropDataType(const std::string& data_type)
+void Wnd::SetDragDropDataType(std::string data_type)
 { m_drag_drop_data_type = data_type; }
 
 void Wnd::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)

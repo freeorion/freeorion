@@ -516,7 +516,9 @@ public:
     /** Sets the string key that defines the type of data that this Wnd
         represents in a drag-and-drop drag.  This should be set to the empty
         string when this Wnd cannot be used in drag-and-drop. */
-    void SetDragDropDataType(const std::string& data_type);
+    void SetDragDropDataType(std::string data_type);
+    void SetDragDropDataType(std::string_view data_type) { SetDragDropDataType(std::string{data_type}); }
+    void SetDragDropDataType(const char* data_type) { SetDragDropDataType(std::string{data_type}); }
 
     /** Indicates to the Wnd that a child Wnd \a wnd is being dragged in a
         drag-and-drop operation, which gives it the opportunity to add other
