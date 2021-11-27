@@ -23,7 +23,7 @@ GG_ENUM(ModeratorActionSetting,
 
 class ModeratorActionsWnd : public CUIWnd {
 public:
-    ModeratorActionsWnd(const std::string& config_name = "");
+    ModeratorActionsWnd(std::string_view config_name = "");
     void CompleteConstruction() override;
 
     ModeratorActionSetting  SelectedAction() const;

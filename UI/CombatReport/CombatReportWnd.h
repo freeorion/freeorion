@@ -9,7 +9,7 @@
 /// Shows a report on a combat
 class CombatReportWnd : public CUIWnd {
 public:
-    CombatReportWnd(const std::string& config_name = "");
+    CombatReportWnd(std::string_view config_name = "");
     void CompleteConstruction() override;
     virtual ~CombatReportWnd(); // Must have explicit destructor since Impl is incomplete here
 

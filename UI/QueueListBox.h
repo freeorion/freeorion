@@ -20,7 +20,8 @@ class QueueListBox :
     public CUIListBox
 {
 public:
-    QueueListBox(const boost::optional<std::string>& drop_type_str, const std::string& prompt_str);
+    QueueListBox(const boost::optional<std::string_view>& drop_type_str,
+                 std::string prompt_str);
 
     void CompleteConstruction() override;
 

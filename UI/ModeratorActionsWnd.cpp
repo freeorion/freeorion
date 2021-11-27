@@ -26,7 +26,7 @@ namespace {
 ////////////////////////////////////////////////
 // ModeratorActionsWnd
 ////////////////////////////////////////////////
-ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
+ModeratorActionsWnd::ModeratorActionsWnd(std::string_view config_name) :
     CUIWnd(UserString("MODERATOR"),
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name, false),

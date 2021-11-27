@@ -792,11 +792,11 @@ private:
 // MapWndPopup
 ////////////////////////////////////////////////////////////
 MapWndPopup::MapWndPopup(std::string t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
-                         GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
+                         GG::Flags<GG::WndFlag> flags, std::string_view config_name) :
     CUIWnd(std::move(t), default_x, default_y, default_w, default_h, flags, config_name)
 {}
 
-MapWndPopup::MapWndPopup(std::string t, GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
+MapWndPopup::MapWndPopup(std::string t, GG::Flags<GG::WndFlag> flags, std::string_view config_name) :
     CUIWnd(std::move(t), flags, config_name)
 {}
 

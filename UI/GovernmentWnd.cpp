@@ -38,8 +38,8 @@ struct Availability {
 };
 
 namespace {
-    const std::string   POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
-    const std::string   EMPTY_STRING;
+    constexpr std::string_view POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
+    const     std::string      EMPTY_STRING;
     constexpr GG::X     POLICY_CONTROL_WIDTH{54};
     constexpr GG::Y     POLICY_CONTROL_HEIGHT{54};
     constexpr GG::X     SLOT_CONTROL_WIDTH{60};
@@ -1471,7 +1471,7 @@ void GovernmentWnd::MainPanel::AcceptDrops(const GG::Pt& pt,
 //////////////////////////////////////////////////
 // GovernmentWnd                                //
 //////////////////////////////////////////////////
-GovernmentWnd::GovernmentWnd(const std::string& config_name) :
+GovernmentWnd::GovernmentWnd(std::string_view config_name) :
     CUIWnd(UserString("MAP_BTN_GOVERNMENT"),
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name, false)

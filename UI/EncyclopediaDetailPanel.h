@@ -29,7 +29,7 @@ class EncyclopediaDetailPanel : public CUIWnd {
 public:
     EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags = GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE |
                                                            GG::RESIZABLE | CLOSABLE | PINABLE,
-                            const std::string& config_name = "");
+                            std::string_view config_name = "");
     void CompleteConstruction() override;
     ~EncyclopediaDetailPanel() = default;
 

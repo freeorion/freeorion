@@ -2970,7 +2970,7 @@ boost::signals2::signal<void (int)>        SidePanel::PlanetDoubleClickedSignal;
 boost::signals2::signal<void (int)>        SidePanel::BuildingRightClickedSignal;
 boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
-SidePanel::SidePanel(const std::string& config_name) :
+SidePanel::SidePanel(std::string_view config_name) :
     CUIWnd("", GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP, config_name)
 {}
 

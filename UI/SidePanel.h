@@ -20,7 +20,7 @@ class SidePanel : public CUIWnd {
 public:
     class PlanetPanel;
 
-    SidePanel(const std::string& config_name);
+    SidePanel(std::string_view config_name);
     void CompleteConstruction() override;
     ~SidePanel();
 

@@ -492,7 +492,7 @@ class ResourceInfoPanel : public CUIWnd {
 public:
     ResourceInfoPanel(std::string title, std::string point_units_str,
                       const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
-                      const std::string& config_name);
+                      std::string_view config_name);
     void    CompleteConstruction() override;
 
     GG::Pt  MinUsableSize() const override;

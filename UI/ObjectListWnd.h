@@ -11,7 +11,7 @@ class ObjectListBox;
 
 class ObjectListWnd : public CUIWnd {
 public:
-    ObjectListWnd(const std::string& config_name = "");
+    ObjectListWnd(std::string_view config_name = "");
     void CompleteConstruction() override;
 
     void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;

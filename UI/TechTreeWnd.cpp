@@ -222,7 +222,7 @@ std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name
   * categories, statuses and types of techs to show. */
 class TechTreeWnd::TechTreeControls : public CUIWnd {
 public:
-    TechTreeControls(const std::string& config_name = "");
+    TechTreeControls(std::string_view config_name = "");
     void CompleteConstruction() override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -266,7 +266,7 @@ private:
     friend class TechTreeWnd;               // so TechTreeWnd can access buttons
 };
 
-TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) :
+TechTreeWnd::TechTreeControls::TechTreeControls(std::string_view config_name) :
     CUIWnd(UserString("TECH_DISPLAY"), GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP, config_name)
 {}
 

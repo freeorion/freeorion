@@ -9,7 +9,7 @@ class PlayerListBox;
 
 class PlayerListWnd : public CUIWnd {
 public:
-    PlayerListWnd(const std::string& config_name);
+    PlayerListWnd(std::string_view config_name);
     void CompleteConstruction() override;
 
     std::set<int>   SelectedPlayerIDs() const;

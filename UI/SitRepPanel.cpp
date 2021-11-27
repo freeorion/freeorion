@@ -378,7 +378,7 @@ namespace {
     };
 }
 
-SitRepPanel::SitRepPanel(const std::string& config_name) :
+SitRepPanel::SitRepPanel(std::string_view config_name) :
     CUIWnd(UserString("SITREP_PANEL_TITLE"),
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name),

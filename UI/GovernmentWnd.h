@@ -6,7 +6,7 @@
 /** Lets the player design ships */
 class GovernmentWnd : public CUIWnd {
 public:
-    explicit GovernmentWnd(const std::string& config_name = "");
+    explicit GovernmentWnd(std::string_view config_name = "");
     void CompleteConstruction() override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;

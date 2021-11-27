@@ -12,7 +12,7 @@ class EncyclopediaDetailPanel;
 
 class BuildDesignatorWnd : public GG::Wnd {
 public:
-    static const std::string PRODUCTION_ITEM_DROP_TYPE;
+    static constexpr std::string_view PRODUCTION_ITEM_DROP_TYPE = "Production Item";
 
     BuildDesignatorWnd(GG::X w, GG::Y h);
     void CompleteConstruction() override;

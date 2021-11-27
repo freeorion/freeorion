@@ -1790,7 +1790,7 @@ void FileDlg::CompleteConstruction() {
 //////////////////////////////////////////////////
 ResourceInfoPanel::ResourceInfoPanel(std::string title, std::string point_units_str,
                                      const GG::X x, const GG::Y y, const GG::X w, const GG::Y h,
-                                     const std::string& config_name) :
+                                     std::string_view config_name) :
     CUIWnd(title, x, y, w, h,
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
            config_name, false),

@@ -89,7 +89,7 @@ public:
              double allowed_bounding_box_leeway = 0,
              int selected_fleet_id = INVALID_OBJECT_ID,
              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE,
-             const std::string& config_name = "");
+             std::string_view config_name = "");
 
     ~FleetWnd();
     void CompleteConstruction() override;

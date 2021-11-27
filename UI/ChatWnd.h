@@ -14,7 +14,7 @@ class MessageWndEdit;
 
 class MessageWnd : public CUIWnd {
 public:
-    MessageWnd(GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
+    MessageWnd(GG::Flags<GG::WndFlag> flags, std::string_view config_name = "");
     void CompleteConstruction() override;
 
     std::string GetText() const;

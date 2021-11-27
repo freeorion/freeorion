@@ -36,8 +36,9 @@ namespace {
     //////////////////////////////////////////////////
     class QueueTechPanel : public GG::Control {
     public:
-        QueueTechPanel(GG::X x, GG::Y y, GG::X w, const std::string& tech_name, double allocated_rp,
-                       int turns_left, double turns_completed, int empire_id, bool paused = false);
+        QueueTechPanel(GG::X x, GG::Y y, GG::X w, const std::string& tech_name,
+                       double allocated_rp, int turns_left, double turns_completed,
+                       int empire_id, bool paused = false);
 
         void CompleteConstruction() override;
         void Render() override;
@@ -49,16 +50,16 @@ namespace {
     private:
         void Draw(GG::Clr clr, bool fill);
 
-        const std::string&      m_tech_name;
+        const std::string&                      m_tech_name; // TODO: make string_view ?
         std::shared_ptr<GG::Label>              m_name_text;
         std::shared_ptr<GG::Label>              m_RPs_and_turns_text;
         std::shared_ptr<GG::Label>              m_turns_remaining_text;
         std::shared_ptr<GG::StaticGraphic>      m_icon;
         std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
-        bool                    m_in_progress;
-        int                     m_total_turns;
-        int                     m_empire_id;
-        bool                    m_paused;
+        bool                                    m_in_progress; // TODO: give default values?
+        int                                     m_total_turns;
+        int                                     m_empire_id;
+        bool                                    m_paused;
     };
 
     //////////////////////////////////////////////////
@@ -290,7 +291,8 @@ namespace {
 //////////////////////////////////////////////////
 class ResearchQueueListBox : public QueueListBox {
 public:
-    ResearchQueueListBox(const boost::optional<std::string>& drop_type_str, const std::string& prompt_str) :
+    ResearchQueueListBox(const boost::optional<std::string_view>& drop_type_str,
+                         const std::string& prompt_str) :
         QueueListBox(drop_type_str, prompt_str)
     {}
 
@@ -357,8 +359,10 @@ public:
                "research.queue")
     {}
 
+    static constexpr std::string_view RESEARCH_QUEUE_ROW = "RESEARCH_QUEUE_ROW";
+
     void CompleteConstruction() override {
-        m_queue_lb = GG::Wnd::Create<ResearchQueueListBox>(std::string("RESEARCH_QUEUE_ROW"), UserString("RESEARCH_QUEUE_PROMPT"));
+        m_queue_lb = GG::Wnd::Create<ResearchQueueListBox>(RESEARCH_QUEUE_ROW, UserString("RESEARCH_QUEUE_PROMPT"));
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ResearchQueue ListBox");
 

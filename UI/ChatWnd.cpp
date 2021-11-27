@@ -292,7 +292,7 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std:
 ////////////////////
 //   MessageWnd   //
 ////////////////////
-MessageWnd::MessageWnd(GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
+MessageWnd::MessageWnd(GG::Flags<GG::WndFlag> flags, std::string_view config_name) :
     CUIWnd(UserString("MESSAGES_PANEL_TITLE"), flags, config_name)
 {}
 

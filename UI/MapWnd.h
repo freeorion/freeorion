@@ -591,9 +591,9 @@ private:
 class MapWndPopup : public CUIWnd {
 public:
     MapWndPopup(std::string t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
-                GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
+                GG::Flags<GG::WndFlag> flags, std::string_view config_name = "");
 
-    MapWndPopup(std::string t, GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
+    MapWndPopup(std::string t, GG::Flags<GG::WndFlag> flags, std::string_view config_name = "");
 
     void CompleteConstruction() override;
 

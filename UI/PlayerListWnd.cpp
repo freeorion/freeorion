@@ -673,7 +673,7 @@ public:
 /////////////////////
 //  PlayerListWnd  //
 /////////////////////
-PlayerListWnd::PlayerListWnd(const std::string& config_name) :
+PlayerListWnd::PlayerListWnd(std::string_view config_name) :
     CUIWnd(UserString("PLAYERS_LIST_PANEL_TITLE"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name)

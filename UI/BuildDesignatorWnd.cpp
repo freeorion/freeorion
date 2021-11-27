@@ -616,7 +616,7 @@ namespace {
 //////////////////////////////////////////////////
 class BuildDesignatorWnd::BuildSelector : public CUIWnd {
 public:
-    BuildSelector(const std::string& config_name = "");
+    explicit BuildSelector(std::string_view config_name = "");
     void CompleteConstruction() override;
 
     /** returns set of BulldType shown in this selector */
@@ -693,7 +693,7 @@ private:
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
 };
 
-BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name) :
+BuildDesignatorWnd::BuildSelector::BuildSelector(std::string_view config_name) :
     CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | PINABLE,
            config_name),
@@ -1151,8 +1151,6 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
 //////////////////////////////////////////////////
 // BuildDesignatorWnd
 //////////////////////////////////////////////////
-const std::string BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE = "Production Item";
-
 BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP)
 {}

@@ -84,14 +84,14 @@ public:
       * name. */
     CUIWnd(std::string wnd_name, GG::X x, GG::Y y, GG::X w, GG::Y h,
            GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
-           const std::string& config_name = "", bool visible = true);
+           std::string_view config_name = "", bool visible = true);
 
     /** Constructs a CUI window without specifying the initial (default)
       * position, either call InitSizeMove() if the window is positioned by
       * something else or override CalculatePosition() then call
       * ResetDefaultPosition() for windows that position themselves. */
     CUIWnd(std::string wnd_name, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
-           const std::string& config_name = "", bool visible = true);
+           std::string_view config_name = "", bool visible = true);
 
     void CompleteConstruction() override;
     /** Virtual destructor. */

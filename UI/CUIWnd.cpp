@@ -137,7 +137,7 @@ CUIWnd::CUIWnd(std::string wnd_name,
                GG::X x, GG::Y y,
                GG::X w, GG::Y h,
                GG::Flags<GG::WndFlag> flags,
-               const std::string& config_name,
+               std::string_view config_name,
                bool visible) :
     GG::Wnd(x, y, w, h, flags & ~GG::RESIZABLE),
     m_resizable(flags & GG::RESIZABLE),
@@ -155,7 +155,7 @@ CUIWnd::CUIWnd(std::string wnd_name,
 }
 
 CUIWnd::CUIWnd(std::string wnd_name, GG::Flags<GG::WndFlag> flags,
-               const std::string& config_name, bool visible) :
+               std::string_view config_name, bool visible) :
     GG::Wnd(INVALID_X, INVALID_Y, GG::X1, GG::Y1, flags & ~GG::RESIZABLE),
     m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),

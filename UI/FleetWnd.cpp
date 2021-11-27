@@ -43,12 +43,12 @@ namespace {
     const GG::Flags<GG::GraphicStyle>   DataPanelIconStyle()
     { return GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE; }
 
-    constexpr GG::X   DATA_PANEL_TEXT_PAD{4}; // padding on the left and right of fleet/ship description
-    constexpr int     DATA_PANEL_BORDER = 1;  // how thick should the border around ship or fleet panel be
-    constexpr int     PAD = 4;
-    const std::string SHIP_DROP_TYPE_STRING = "FleetWnd ShipRow";
-    const std::string FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
-    const std::string FLEET_WND_NAME = "map.fleet";
+    constexpr GG::X            DATA_PANEL_TEXT_PAD{4}; // padding on the left and right of fleet/ship description
+    constexpr int              DATA_PANEL_BORDER = 1;  // how thick should the border around ship or fleet panel be
+    constexpr int              PAD = 4;
+    constexpr std::string_view SHIP_DROP_TYPE_STRING = "FleetWnd ShipRow";
+    constexpr std::string_view FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
+    constexpr std::string_view FLEET_WND_NAME = "map.fleet";
 
     GG::Y LabelHeight()
     { return GG::Y(ClientUI::Pts()*3/2); }
@@ -2801,7 +2801,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
                    double allowed_bounding_box_leeway /*= 0*/,
                    int selected_fleet_id/* = INVALID_OBJECT_ID*/,
                    GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
-                   const std::string& config_name) :
+                   std::string_view config_name) :
     MapWndPopup("", flags | GG::RESIZABLE, config_name),
     m_fleet_ids(fleet_ids.begin(), fleet_ids.end()),
     m_order_issuing_enabled(order_issuing_enabled)

@@ -52,24 +52,24 @@ struct Availability {
 };
 
 namespace {
-    const std::string   PART_CONTROL_DROP_TYPE_STRING = "Part Control";
-    const std::string   HULL_PARTS_ROW_DROP_TYPE_STRING = "Hull and Parts Row";
-    const std::string   COMPLETE_DESIGN_ROW_DROP_STRING = "Complete Design Row";
-    const std::string   SAVED_DESIGN_ROW_DROP_STRING = "Saved Design Row";
-    const std::string   EMPTY_STRING;
-    const std::string   DES_PEDIA_WND_NAME = "design.pedia";
-    const std::string   DES_MAIN_WND_NAME = "design.edit";
-    const std::string   DES_BASE_SELECTOR_WND_NAME = "design.selector";
-    const std::string   DES_PART_PALETTE_WND_NAME = "design.parts";
-    constexpr GG::Y     BASES_LIST_BOX_ROW_HEIGHT{100};
-    constexpr GG::X     PART_CONTROL_WIDTH{54};
-    constexpr GG::Y     PART_CONTROL_HEIGHT{54};
-    constexpr GG::X     SLOT_CONTROL_WIDTH{60};
-    constexpr GG::Y     SLOT_CONTROL_HEIGHT{60};
-    constexpr GG::Pt    PALETTE_MIN_SIZE{GG::X{450}, GG::Y{400}};
-    constexpr GG::Pt    MAIN_PANEL_MIN_SIZE{GG::X{400}, GG::Y{160}};
-    constexpr GG::Pt    BASES_MIN_SIZE{GG::X{160}, GG::Y{160}};
-    constexpr int       PAD{3};
+    constexpr std::string_view PART_CONTROL_DROP_TYPE_STRING = "Part Control";
+    constexpr std::string_view HULL_PARTS_ROW_DROP_TYPE_STRING = "Hull and Parts Row";
+    constexpr std::string_view COMPLETE_DESIGN_ROW_DROP_STRING = "Complete Design Row";
+    constexpr std::string_view SAVED_DESIGN_ROW_DROP_STRING = "Saved Design Row";
+    const     std::string      EMPTY_STRING;
+    constexpr std::string_view DES_PEDIA_WND_NAME = "design.pedia";
+    constexpr std::string_view DES_MAIN_WND_NAME = "design.edit";
+    constexpr std::string_view DES_BASE_SELECTOR_WND_NAME = "design.selector";
+    constexpr std::string_view DES_PART_PALETTE_WND_NAME = "design.parts";
+    constexpr GG::Y            BASES_LIST_BOX_ROW_HEIGHT{100};
+    constexpr GG::X            PART_CONTROL_WIDTH{54};
+    constexpr GG::Y            PART_CONTROL_HEIGHT{54};
+    constexpr GG::X            SLOT_CONTROL_WIDTH{60};
+    constexpr GG::Y            SLOT_CONTROL_HEIGHT{60};
+    constexpr GG::Pt           PALETTE_MIN_SIZE{GG::X{450}, GG::Y{400}};
+    constexpr GG::Pt           MAIN_PANEL_MIN_SIZE{GG::X{400}, GG::Y{160}};
+    constexpr GG::Pt           BASES_MIN_SIZE{GG::X{160}, GG::Y{160}};
+    constexpr int              PAD{3};
 
     /** Returns texture with which to render a SlotControl, depending on \a slot_type. */
     std::shared_ptr<GG::Texture> SlotBackgroundTexture(ShipSlotType slot_type) {
@@ -1759,7 +1759,7 @@ void PartsListBox::HideSuperfluousParts(bool refresh_list) {
   * onto slots to assign parts to those slots */
 class DesignWnd::PartPalette : public CUIWnd {
 public:
-    PartPalette(const std::string& config_name);
+    PartPalette(std::string_view config_name);
     void CompleteConstruction() override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -1804,7 +1804,7 @@ private:
 
 };
 
-DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
+DesignWnd::PartPalette::PartPalette(std::string_view config_name) :
     CUIWnd(UserString("DESIGN_WND_PART_PALETTE_TITLE"),
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
            config_name),
@@ -2150,17 +2150,24 @@ void DesignWnd::PartPalette::Populate()
   * scripts or saved (on disk) designs from previous games. */
 class BasesListBox : public QueueListBox {
 public:
-    static const std::string BASES_LIST_BOX_DROP_TYPE;
+    static constexpr std::string_view BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 
     BasesListBox(const AvailabilityManager& availabilities_state,
-                 const boost::optional<std::string>& drop_type = boost::none,
-                 const boost::optional<std::string>& empty_prompt = boost::none);
+                 const boost::optional<std::string_view>& drop_type = boost::none,
+                 const boost::optional<std::string_view>& empty_prompt = boost::none);
+    BasesListBox(const AvailabilityManager& availabilities_state,
+                 const boost::optional<std::string_view>& drop_type,
+                 const std::string& empty_prompt) :
+        BasesListBox(availabilities_state, drop_type,
+                     boost::optional<std::string_view>{empty_prompt})
+    {}
     void CompleteConstruction() override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-    void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
-    virtual void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it)
-    {}
+    void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
+                             const GG::Wnd* destination) override;
+    virtual void QueueItemMoved(const GG::ListBox::iterator& row_it, 
+                                const GG::ListBox::iterator& original_position_it) {}
     void SetEmpireShown(int empire_id, bool refresh_list = true);
     virtual void Populate();
 
@@ -2383,13 +2390,11 @@ void BasesListBox::CompletedDesignListBoxRow::CompleteConstruction() {
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
 }
 
-const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
-
 BasesListBox::BasesListBox(const AvailabilityManager& availabilities_state,
-                           const boost::optional<std::string>& drop_type,
-                           const boost::optional<std::string>& empty_prompt /*= boost::none*/) :
+                           const boost::optional<std::string_view>& drop_type,
+                           const boost::optional<std::string_view>& empty_prompt) :
     QueueListBox(drop_type,
-                 empty_prompt ? *empty_prompt : UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
+                 empty_prompt ? std::string{*empty_prompt} : UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_state(availabilities_state)
 {}
@@ -2508,7 +2513,7 @@ void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& 
 class EmptyHullsListBox : public BasesListBox {
 public:
     EmptyHullsListBox(const AvailabilityManager& availabilities_state,
-                      const boost::optional<std::string>& drop_type = boost::none) :
+                      const boost::optional<std::string_view>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT"))
     {}
 
@@ -2527,7 +2532,7 @@ protected:
 class CompletedDesignsListBox : public BasesListBox {
 public:
     CompletedDesignsListBox(const AvailabilityManager& availabilities_state,
-                            const boost::optional<std::string>& drop_type = boost::none) :
+                            const boost::optional<std::string_view>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
 
@@ -2544,7 +2549,7 @@ protected:
 class SavedDesignsListBox : public BasesListBox {
 public:
     SavedDesignsListBox(const AvailabilityManager& availabilities_state,
-                        const boost::optional<std::string>& drop_type = boost::none) :
+                        const boost::optional<std::string_view>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT"))
     {};
 
@@ -2575,7 +2580,7 @@ protected:
 class MonstersListBox : public BasesListBox {
 public:
     MonstersListBox(const AvailabilityManager& availabilities_state,
-                    const boost::optional<std::string>& drop_type = boost::none) :
+                    const boost::optional<std::string_view>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {}
 
@@ -2592,7 +2597,7 @@ protected:
 class AllDesignsListBox : public BasesListBox {
 public:
     AllDesignsListBox(const AvailabilityManager& availabilities_state,
-                      const boost::optional<std::string>& drop_type = boost::none) :
+                      const boost::optional<std::string_view>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {}
 
@@ -3329,7 +3334,7 @@ bool SavedDesignsListBox::SavedDesignListBoxRow::LookupInStringtable() const {
 //////////////////////////////////////////////////
 class DesignWnd::BaseSelector : public CUIWnd {
 public:
-    BaseSelector(const std::string& config_name);
+    BaseSelector(std::string_view config_name);
     void CompleteConstruction() override;
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
@@ -3367,7 +3372,7 @@ private:
                std::shared_ptr<CUIStateButton>> m_availabilities_buttons;
 };
 
-DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
+DesignWnd::BaseSelector::BaseSelector(std::string_view config_name) :
     CUIWnd(UserString("DESIGN_WND_STARTS"),
            GG::INTERACTIVE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE | PINABLE,
            config_name)
@@ -3864,7 +3869,7 @@ public:
         const std::string m_text;
     };
 
-    MainPanel(const std::string& config_name);
+    MainPanel(std::string_view config_name);
     void CompleteConstruction() override;
 
     /** If editing a current design return a ShipDesign* otherwise boost::none. */
@@ -4044,7 +4049,7 @@ private:
     boost::signals2::connection                 m_empire_designs_changed_signal;
 };
 
-DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
+DesignWnd::MainPanel::MainPanel(std::string_view config_name) :
     CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
            config_name)
@@ -5012,7 +5017,9 @@ void DesignWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(ChildClippingMode::ClipToClient);
 
-    m_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE, DES_PEDIA_WND_NAME);
+    m_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
+        GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE,
+        DES_PEDIA_WND_NAME);
     m_main_panel = GG::Wnd::Create<MainPanel>(DES_MAIN_WND_NAME);
     m_part_palette = GG::Wnd::Create<PartPalette>(DES_PART_PALETTE_WND_NAME);
     m_base_selector = GG::Wnd::Create<BaseSelector>(DES_BASE_SELECTOR_WND_NAME);
