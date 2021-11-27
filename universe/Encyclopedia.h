@@ -31,7 +31,7 @@ struct FO_COMMON_API EncyclopediaArticle {
 class FO_COMMON_API Encyclopedia {
 public:
     // map from category name to list of articles in that category
-    using ArticleMap = std::map<std::string, std::vector<EncyclopediaArticle>>;
+    using ArticleMap = std::map<std::string, std::vector<EncyclopediaArticle>, std::less<>>;
 
     Encyclopedia() = default;
     [[nodiscard]] unsigned int GetCheckSum() const;
