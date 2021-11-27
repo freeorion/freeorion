@@ -481,7 +481,7 @@ private:
     const ValueRef<std::string>* string_ref2);
 
 [[nodiscard]] FO_COMMON_API std::string StatisticDescription(
-    StatisticType stat_type, const std::string& value_desc, const std::string& condition_desc);
+    StatisticType stat_type, std::string_view value_desc, std::string_view condition_desc);
 
 // Template Implementations
 ///////////////////////////////////////////////////////////

@@ -512,9 +512,8 @@ std::string ComplexVariableDump(const std::vector<std::string>& property_names,
     return retval;
 }
 
-std::string StatisticDescription(StatisticType stat_type,
-                                 const std::string& value_desc,
-                                 const std::string& condition_desc)
+std::string StatisticDescription(StatisticType stat_type, std::string_view value_desc,
+                                 std::string_view condition_desc)
 {
     std::string stat_str{to_string(stat_type)};
     boost::algorithm::to_upper(stat_str);
