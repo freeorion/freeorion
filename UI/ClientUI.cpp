@@ -371,6 +371,12 @@ GG::Clr ClientUI::CategoryColor(const std::string& category_name) {
     return {};
 }
 
+GG::Clr ClientUI::CategoryColor(std::string_view category_name) {
+    if (auto category = GetTechCategory(category_name))
+        return category->colour;
+    return {};
+}
+
 std::string_view ClientUI::PlanetTypeFilePrefix(PlanetType planet_type) {
     static const std::map<PlanetType, std::string_view> prefixes{
         {PlanetType::PT_SWAMP,   "Swamp"},

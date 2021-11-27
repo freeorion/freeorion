@@ -394,27 +394,31 @@ const TechCategory* TechManager::GetTechCategory(const std::string& name) const 
     return it == m_categories.end() ? nullptr : it->second.get();
 }
 
-std::vector<std::string> TechManager::CategoryNames() const {
+const TechCategory* TechManager::GetTechCategory(std::string_view name) const {
+    return GetTechCategory(std::string{name}); // TODO: avoid construction by enabling heterogenous lookup
+}
+
+std::vector<std::string_view> TechManager::CategoryNames() const {
     CheckPendingTechs();
-    std::vector<std::string> retval;
+    std::vector<std::string_view> retval;
     retval.reserve(m_categories.size());
     for (const auto& entry : m_categories)
         retval.emplace_back(entry.first);
     return retval;
 }
 
-std::vector<std::string> TechManager::TechNames() const {
+std::vector<std::string_view> TechManager::TechNames() const {
     CheckPendingTechs();
-    std::vector<std::string> retval;
+    std::vector<std::string_view> retval;
     retval.reserve(m_techs.size());
     for (const auto& tech : m_techs.get<NameIndex>())
         retval.emplace_back(tech->Name());
     return retval;
 }
 
-std::vector<std::string> TechManager::TechNames(const std::string& name) const {
+std::vector<std::string_view> TechManager::TechNames(const std::string& name) const {
     CheckPendingTechs();
-    std::vector<std::string> retval;
+    std::vector<std::string_view> retval;
     retval.reserve(m_techs.size());
     for (TechManager::category_iterator it = category_begin(name); it != category_end(name); ++it)
         retval.emplace_back((*it)->Name());
@@ -777,4 +781,7 @@ const Tech* GetTech(std::string_view name)
 { return GetTechManager().GetTech(name); }
 
 const TechCategory* GetTechCategory(const std::string& name)
+{ return GetTechManager().GetTechCategory(name); }
+
+const TechCategory* GetTechCategory(std::string_view name)
 { return GetTechManager().GetTechCategory(name); }

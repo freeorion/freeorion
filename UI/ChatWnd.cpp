@@ -164,7 +164,7 @@ void MessageWndEdit::FindGameWords() {
         (void)species; // quiet unused variable warning
     }
      // add techs names
-    for (const std::string& tech_name : GetTechManager().TechNames()) {
+    for (const auto& tech_name : GetTechManager().TechNames()) {
         if (!tech_name.empty())
             m_game_words.insert(UserString(tech_name));
     }

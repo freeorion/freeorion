@@ -189,15 +189,16 @@ public:
 
     /** returns the tech category with the name \a name; you should use the free function GetTechCategory() instead */
     [[nodiscard]] const TechCategory*      GetTechCategory(const std::string& name) const;
+    [[nodiscard]] const TechCategory*      GetTechCategory(std::string_view name) const;
 
     /** returns the list of category names */
-    [[nodiscard]] std::vector<std::string> CategoryNames() const;
+    [[nodiscard]] std::vector<std::string_view> CategoryNames() const;
 
     /** returns list of all tech names */
-    [[nodiscard]] std::vector<std::string> TechNames() const;
+    [[nodiscard]] std::vector<std::string_view> TechNames() const;
 
     /** returns list of names of techs in specified category */
-    [[nodiscard]] std::vector<std::string> TechNames(const std::string& name) const;
+    [[nodiscard]] std::vector<std::string_view> TechNames(const std::string& name) const;
 
     /** returns all researchable techs */
     [[nodiscard]] std::vector<const Tech*> AllNextTechs(const std::set<std::string>& known_techs);
@@ -304,6 +305,6 @@ FO_COMMON_API const Tech* GetTech(std::string_view name);
 
 /** returns a pointer to the tech category with the name \a name, or 0 if no such category exists */
 FO_COMMON_API const TechCategory* GetTechCategory(const std::string& name);
-
+FO_COMMON_API const TechCategory* GetTechCategory(std::string_view name);
 
 #endif

@@ -204,6 +204,7 @@ public:
     static GG::Clr  TechWndProgressBarBackgroundColor();
     static GG::Clr  TechWndProgressBarColor();
     static GG::Clr  CategoryColor(const std::string& category_name);
+    static GG::Clr  CategoryColor(std::string_view category_name);
 
     static std::string_view PlanetTypeFilePrefix(PlanetType planet_type);
     static std::string_view StarTypeFilePrefix(StarType star_type);

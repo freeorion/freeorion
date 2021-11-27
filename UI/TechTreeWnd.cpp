@@ -359,7 +359,8 @@ void TechTreeWnd::TechTreeControls::RefreshCategoryButtons(const std::set<std::s
     const int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
     // create a button for each tech category...
-    for (const auto& category : GetTechManager().CategoryNames()) {
+    for (const auto& cat_view : GetTechManager().CategoryNames()) {
+        std::string category{cat_view}; // TODO: avoid temporary construction
         GG::Clr icon_clr = ClientUI::CategoryColor(category);
         auto icon = std::make_shared<GG::SubTexture>(ClientUI::CategoryIcon(category));
         m_cat_buttons[category] = GG::Wnd::Create<GG::StateButton>(
@@ -1127,8 +1128,8 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
 
     // show all categories...
     m_categories_shown.clear();
-    for (const std::string& category_name : GetTechManager().CategoryNames())
-        m_categories_shown.insert(category_name);
+    for (const auto& category_name : GetTechManager().CategoryNames())
+        m_categories_shown.insert(std::string{category_name});
 
     // show statuses
     m_tech_statuses_shown.clear();
@@ -1257,16 +1258,16 @@ void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category) {
 }
 
 void TechTreeWnd::LayoutPanel::ShowAllCategories() {
-    const std::vector<std::string> all_cats = GetTechManager().CategoryNames();
+    const auto all_cats = GetTechManager().CategoryNames();
     if (all_cats.size() == m_categories_shown.size())
         return;
-    for (const std::string& category_name : all_cats)
-        m_categories_shown.insert(category_name);
+    for (const auto& category_name : all_cats)
+        m_categories_shown.insert(std::string{category_name});
     Layout(true);
 }
 
 void TechTreeWnd::LayoutPanel::HideCategory(const std::string& category) {
-    std::set<std::string>::iterator it = m_categories_shown.find(category);
+    auto it = m_categories_shown.find(category);
     if (it != m_categories_shown.end()) {
         m_categories_shown.erase(it);
         Layout(true);
@@ -1758,7 +1759,7 @@ void TechTreeWnd::TechListBox::CompleteConstruction() {
     // show all categories...
     m_categories_shown.clear();
     for (auto& category_name : GetTechManager().CategoryNames())
-        m_categories_shown.insert(std::move(category_name));
+        m_categories_shown.insert(std::string{category_name});
 
     // show all statuses except unreasearchable
     m_tech_statuses_shown.clear();
@@ -1918,11 +1919,11 @@ void TechTreeWnd::TechListBox::ShowCategory(const std::string& category) {
 }
 
 void TechTreeWnd::TechListBox::ShowAllCategories() {
-    std::vector<std::string> all_cats = GetTechManager().CategoryNames();
+    auto all_cats = GetTechManager().CategoryNames();
     if (all_cats.size() == m_categories_shown.size())
         return;
-    for (std::string& category_name : all_cats)
-        m_categories_shown.insert(std::move(category_name));
+    for (auto& category_name : all_cats)
+        m_categories_shown.insert(std::string{category_name});
     Populate();
 }
 
@@ -2195,7 +2196,7 @@ void TechTreeWnd::HideAllCategories() {
 
 void TechTreeWnd::ToggleAllCategories() {
     std::set<std::string> shown_cats = m_layout_panel->GetCategoriesShown();
-    const std::vector<std::string> all_cats = GetTechManager().CategoryNames();
+    auto all_cats = GetTechManager().CategoryNames();
 
     if (shown_cats.size() == all_cats.size())
         HideAllCategories();
