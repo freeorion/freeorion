@@ -194,8 +194,7 @@ NamedValueRefManager& GetNamedValueRefManager()
 
 const ValueRef::ValueRefBase* GetValueRefBase(std::string_view name) {
     TraceLogger() << "NamedValueRefManager::GetValueRefBase look for registered valueref for \"" << name << '"';
-    auto* vref = GetNamedValueRefManager().GetValueRefBase(name);
-    if (vref)
+    if (auto* vref = GetNamedValueRefManager().GetValueRefBase(name))
         return vref;
     InfoLogger() << "NamedValueRefManager::GetValueRefBase could not find registered valueref for \"" << name << '"';
     return nullptr;
