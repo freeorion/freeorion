@@ -435,7 +435,9 @@ public:
 
     /** Allows Rows with data type \a str to be dropped over this ListBox when
         drag-and-drop is enabled. \note Passing "" enables all drop types. */
-    void AllowDropType(const std::string& str);
+    void AllowDropType(std::string str);
+    void AllowDropType(std::string_view str) { AllowDropType(std::string{str}); }
+    void AllowDropType(const char* str) { AllowDropType(std::string{str}); }
 
     /** Set this to determine whether the list should autoscroll when the user
         is attempting to drop an item into a location that is not currently

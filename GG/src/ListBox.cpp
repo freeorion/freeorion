@@ -1408,12 +1408,12 @@ void ListBox::NormalizeRowsOnInsert(bool enable)
 void ListBox::AddPaddingAtEnd(bool enable)
 { m_add_padding_at_end = enable; }
 
-void ListBox::AllowDropType(const std::string& str)
+void ListBox::AllowDropType(std::string str)
 {
     // Create the set if necessary
     if (!m_allowed_drop_types)
         m_allowed_drop_types = std::unordered_set<std::string>();
-    m_allowed_drop_types->emplace(str);
+    m_allowed_drop_types->emplace(std::move(str));
 }
 
 void ListBox::AutoScrollDuringDragDrops(bool auto_scroll)
