@@ -448,3 +448,7 @@ ShipHullManager& GetShipHullManager()
 
 const ShipHull* GetShipHull(const std::string& name)
 { return GetShipHullManager().GetShipHull(name); }
+
+const ShipHull* GetShipHull(std::string_view name)
+{ return GetShipHullManager().GetShipHull(std::string{name}); } // TODO: avoid string construction
+

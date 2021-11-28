@@ -617,7 +617,10 @@ namespace FreeOrionPython {
             .def("hasTag",                      &ShipHull::HasTag)
             .def("productionLocation",          &HullProductionLocation, "Returns the result of Location condition (bool) in passed location_id (int)")
         ;
-        py::def("getShipHull",                  &GetShipHull,                               py::return_value_policy<py::reference_existing_object>(), "Returns the ship hull with the indicated name (string).");
+        py::def("getShipHull",
+                +[](const std::string& name) { return GetShipHull(name); },
+                py::return_value_policy<py::reference_existing_object>(),
+                "Returns the ship hull with the indicated name (string).");
 
         //////////////////
         //   Building   //

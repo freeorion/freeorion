@@ -257,6 +257,6 @@ FO_COMMON_API auto GetShipHullManager() -> ShipHullManager&;
 //! Returns the ship ShipHull specification object with name @p name.  If no
 //! such ShipHull exists, nullptr is returned instead.
 FO_COMMON_API auto GetShipHull(const std::string& name) -> const ShipHull*;
-
+FO_COMMON_API auto GetShipHull(std::string_view name) -> const ShipHull*;
 
 #endif
