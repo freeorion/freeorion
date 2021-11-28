@@ -554,7 +554,7 @@ void SubTexture::Clear()
 TextureManager::TextureManager()
 {}
 
-std::map<std::string, std::shared_ptr<const Texture>> TextureManager::Textures() const
+std::map<std::string_view, std::shared_ptr<const Texture>> TextureManager::Textures() const
 {
     std::scoped_lock lock(m_texture_access_guard);
     return {m_textures.begin(), m_textures.end()};
@@ -566,7 +566,7 @@ std::shared_ptr<Texture> TextureManager::StoreTexture(Texture* texture, std::str
 std::shared_ptr<Texture> TextureManager::StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name)
 {
     std::scoped_lock lock(m_texture_access_guard);
-    m_textures[std::move(texture_name)] = texture;
+    m_textures[std::move(texture_name)] = std::move(texture);
     return texture;
 }
 
