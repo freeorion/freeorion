@@ -63,18 +63,21 @@ WndEvent::EventType ButtonEvent(WndEvent::EventType left_type, unsigned int mous
         (int(WndEvent::EventType::MButtonDown) - int(WndEvent::EventType::LButtonDown)) * mouse_button);
 }
 
-typedef utf8::wchar_iterator<std::string::const_iterator> utf8_wchar_iterator;
-typedef boost::xpressive::basic_regex<utf8_wchar_iterator> word_regex;
-typedef boost::xpressive::regex_iterator<utf8_wchar_iterator> word_regex_iterator;
-const wchar_t WIDE_DASH = '-';
-const word_regex DEFAULT_WORD_REGEX =
-    +boost::xpressive::set[boost::xpressive::_w | WIDE_DASH];
+namespace {
+    using utf8_wchar_iterator = utf8::wchar_iterator<std::string::const_iterator> ;
+    using word_regex = boost::xpressive::basic_regex<utf8_wchar_iterator>;
+    using word_regex_iterator = boost::xpressive::regex_iterator<utf8_wchar_iterator>;
+
+    constexpr wchar_t WIDE_DASH = '-';
+    const word_regex DEFAULT_WORD_REGEX =
+        +boost::xpressive::set[boost::xpressive::_w | WIDE_DASH];
+}
 
 void WriteWndToPNG(const Wnd* wnd, const std::string& filename)
 {
 #if GG_HAVE_LIBPNG
-    Pt ul = wnd->UpperLeft();
-    Pt size = wnd->Size();
+    const Pt ul = wnd->UpperLeft();
+    const Pt size = wnd->Size();
 
     std::vector<GLubyte> bytes(Value(size.x) * Value(size.y) * 4);
 
@@ -135,7 +138,7 @@ struct GG::GUIImpl
 
     void ClearState();
 
-    std::shared_ptr<Wnd> FocusWnd() const;
+    [[nodiscard]] std::shared_ptr<Wnd> FocusWnd() const;
     void SetFocusWnd(const std::shared_ptr<Wnd>& wnd);
 
     void GouvernFPS();
@@ -211,17 +214,16 @@ struct GG::GUIImpl
     double m_FPS = 0.0;         //! true iff FPS calcs are to be done
     bool m_calc_FPS = false;    //! true iff FPS calcs are to be done
     double m_max_FPS = 60.0;    //! The maximum allowed frames per second rendering speed
-    //! The last time an FPS calculation was done.
-    std::chrono::high_resolution_clock::time_point m_last_FPS_time = std::chrono::high_resolution_clock::now();
-    //! The time of the last frame rendered.
-    std::chrono::high_resolution_clock::time_point m_last_frame_time = std::chrono::high_resolution_clock::now();
-    //! The number of frames rendered since \a m_last_frame_time.
-    std::size_t  m_frames = 0;
 
-    Wnd*         m_double_click_wnd = nullptr;  // GUI window most recently clicked
+    std::chrono::high_resolution_clock::time_point m_last_FPS_time;     //! The last time an FPS calculation was done.
+    std::chrono::high_resolution_clock::time_point m_last_frame_time;   //! The time of the last frame rendered.
+
+    std::size_t  m_frames = 0;                  //! The number of frames rendered since \a m_last_frame_time.
+
+    Wnd*         m_double_click_wnd = nullptr;  //! GUI window most recently clicked
     unsigned int m_double_click_button = 0;     // the index of the mouse button used in the last click
-    int          m_double_click_start_time = -1;// the time from which we started measuring double_click_time, in ms
-    int          m_double_click_time = -1;      // time elapsed since last click, in ms
+    int          m_double_click_start_time = -1;//! the time from which we started measuring double_click_time, in ms
+    int          m_double_click_time = -1;      //! time elapsed since last click, in ms
 
     std::shared_ptr<StyleFactory>   m_style_factory;
     bool                            m_render_cursor = false;
@@ -243,7 +245,7 @@ GUIImpl::GUIImpl() :
 
 void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, int curr_ticks)
 {
-    auto curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, m_mod_keys);
+    const auto curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, m_mod_keys);
     m_curr_wnd_under_cursor = curr_wnd_under_cursor;
     m_last_mouse_button_down_repeat_time = 0;
     m_prev_mouse_button_press_time = 0;
@@ -292,7 +294,7 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
 
 void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr_ticks)
 {
-    const auto&& dragged_wnd = LockAndResetIfExpired(m_drag_wnds[mouse_button]);
+    const auto dragged_wnd = LockAndResetIfExpired(m_drag_wnds[mouse_button]);
     if (!dragged_wnd)
         return;
 
@@ -386,8 +388,8 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, const Pt& pos, int curr
         Pt offset_pos = pos + m_wnd_resize_offset;
         if (auto&& parent = dragged_wnd->Parent())
             offset_pos -= parent->ClientUpperLeft();
-        GG::Pt rel_lr = dragged_wnd->RelativeLowerRight();
-        GG::Pt rel_ul = dragged_wnd->RelativeUpperLeft();
+        const GG::Pt rel_lr = dragged_wnd->RelativeLowerRight();
+        const GG::Pt rel_ul = dragged_wnd->RelativeUpperLeft();
 
         switch (m_wnd_region)
         {
@@ -430,7 +432,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
     m_browse_target = nullptr;
     m_prev_wnd_under_cursor_time = curr_ticks;
 
-    const auto&& click_drag_wnd = LockAndResetIfExpired(m_drag_wnds[mouse_button]);
+    const auto click_drag_wnd = LockAndResetIfExpired(m_drag_wnds[mouse_button]);
     std::set<Wnd*> ignores;
     if (m_curr_drag_wnd_dragged && click_drag_wnd)
         ignores.insert(click_drag_wnd.get());
@@ -579,7 +581,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
 
 void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks)
 {
-    const auto&& curr_wnd_under_cursor = LockAndResetIfExpired(m_curr_wnd_under_cursor);
+    const auto curr_wnd_under_cursor = LockAndResetIfExpired(m_curr_wnd_under_cursor);
     if (m_mouse_button_down_repeat_delay != 0 &&
         curr_wnd_under_cursor &&
         curr_wnd_under_cursor == GUI::s_gui->CheckedGetWindowUnder(pos, mod_keys) &&
@@ -600,24 +602,25 @@ void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_tic
         return;
     }
 
-    auto&& focus_wnd = FocusWnd();
+
     if (m_key_press_repeat_delay != 0 &&
-        m_last_pressed_key_code_point.first != Key::GGK_NONE &&
-        focus_wnd &&
-        focus_wnd->RepeatKeyPress())
+        m_last_pressed_key_code_point.first != Key::GGK_NONE)
     {
-        // convert to a key press message after ensuring that timing requirements are met
-        if (curr_ticks - m_prev_key_press_time > m_key_press_repeat_delay) {
-            if (!m_last_key_press_repeat_time ||
-                curr_ticks - m_last_key_press_repeat_time > m_key_press_repeat_interval)
-            {
-                m_last_key_press_repeat_time = curr_ticks;
-                focus_wnd->HandleEvent(
-                    WndEvent(WndEvent::EventType::KeyPress, m_last_pressed_key_code_point.first,
-                             m_last_pressed_key_code_point.second, mod_keys));
+        const auto focus_wnd = FocusWnd();
+        if (focus_wnd && focus_wnd->RepeatKeyPress()) {
+            // convert to a key press message after ensuring that timing requirements are met
+            if (curr_ticks - m_prev_key_press_time > m_key_press_repeat_delay) {
+                if (!m_last_key_press_repeat_time ||
+                    curr_ticks - m_last_key_press_repeat_time > m_key_press_repeat_interval)
+                {
+                    m_last_key_press_repeat_time = curr_ticks;
+                    focus_wnd->HandleEvent(
+                        WndEvent(WndEvent::EventType::KeyPress, m_last_pressed_key_code_point.first,
+                                 m_last_pressed_key_code_point.second, mod_keys));
+                }
             }
+            return;
         }
-        return;
     }
 
     if (curr_wnd_under_cursor)
