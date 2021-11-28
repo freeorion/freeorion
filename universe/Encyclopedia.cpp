@@ -63,7 +63,7 @@ const EncyclopediaArticle& Encyclopedia::GetArticleByKey(const std::string& key)
 }
 
 const EncyclopediaArticle& Encyclopedia::GetArticleByCategoryAndKey(
-    const std::string& category, const std::string& key) const
+    std::string_view category, std::string_view key) const
 {
     const auto& articles = Articles();
     auto it = articles.find(category);

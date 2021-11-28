@@ -42,7 +42,7 @@ public:
     [[nodiscard]] FO_COMMON_API const ArticleMap& Articles() const;
 
     [[nodiscard]] FO_COMMON_API const EncyclopediaArticle& GetArticleByKey(const std::string& key) const;
-    [[nodiscard]] FO_COMMON_API const EncyclopediaArticle& GetArticleByCategoryAndKey(const std::string& category, const std::string& key) const;
+    [[nodiscard]] FO_COMMON_API const EncyclopediaArticle& GetArticleByCategoryAndKey(std::string_view category, std::string_view key) const;
     [[nodiscard]] FO_COMMON_API const EncyclopediaArticle& GetArticleByName(const std::string& name) const;
 
 private:
