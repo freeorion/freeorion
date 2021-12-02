@@ -4,22 +4,22 @@
 
 BOOST_FIXTURE_TEST_SUITE(TestChecksum, ClientAppFixture)
 
-void TestCheckSumFromEnv(const char* env, unsigned int def, unsigned int expected) {
+void TestCheckSumFromEnv(const char* env, unsigned int def, unsigned int calculated) {
     bool force = false;
-    unsigned int value = def;
+    unsigned int expected = def;
 
     if (const char *env_value = std::getenv(env)) {
         force = true;
         try {
-            value = boost::lexical_cast<unsigned int>(env_value);
+            expected = boost::lexical_cast<unsigned int>(env_value);
         } catch (...) {
             // ignore
         }
     }
     if (force) {
-        BOOST_REQUIRE_MESSAGE(expected == value, env << " expected " << expected << " was " << value);
+        BOOST_REQUIRE_MESSAGE(calculated == expected, env << " expected " << expected << " was " << calculated);
     } else {
-        BOOST_WARN_MESSAGE(expected == value, env << " expected " << expected << " was " << value);
+        BOOST_WARN_MESSAGE(calculated == expected, env << " expected " << expected << " was " << calculated);
     }
 }
 
