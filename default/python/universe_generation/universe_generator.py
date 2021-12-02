@@ -131,8 +131,9 @@ def create_universe(psd_map):
     seed_rng(seed_pool.pop())
     if teams:
         psds = list(psd_map.items())
-        for home_system, team in place_teams(home_systems, systems, teams):
-            home_systems.remove(home_system)
+        hs = list(home_systems)
+        for home_system, team in place_teams(hs, systems, teams):
+            hs.remove(home_system)
             psds_new = list()
             placed = False
             for empire, psd in psds:
@@ -146,7 +147,7 @@ def create_universe(psd_map):
                 report_error("Python create_universe: couldn't set up empire for team %d" % team)
             psds = psds_new
         # place leftovers
-        for (empire, psd), home_system in zip(psds, home_systems):
+        for (empire, psd), home_system in zip(psds, hs):
             if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name):
                 report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
     else:
