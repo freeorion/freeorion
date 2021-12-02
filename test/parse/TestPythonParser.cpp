@@ -7,6 +7,7 @@
 #include "universe/Tech.h"
 #include "universe/UnlockableItem.h"
 #include "universe/ValueRefs.h"
+#include "util/CheckSums.h"
 #include "util/Directories.h"
 #include "util/GameRules.h"
 #include "util/Pending.h"
@@ -194,6 +195,11 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
     BOOST_REQUIRE_EQUAL(2, categories_seen.size());
 }
 
+/**
+ * Checks count of techs and tech categories in real scripts
+ * FO_CHECKSUM_TECH_NAME determines tech name to be check for FO_CHECKSUM_TECH_VALUE checksum
+ */
+
 BOOST_AUTO_TEST_CASE(parse_techs_full) {
     auto scripting_dir = boost::filesystem::system_complete(GetBinDir() / "default/scripting");
     BOOST_REQUIRE(scripting_dir.is_absolute());
@@ -212,6 +218,19 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
     BOOST_REQUIRE_EQUAL(208, techs.size());
     BOOST_REQUIRE_EQUAL(9, tech_categories.size());
     BOOST_REQUIRE_EQUAL(9, categories_seen.size());
+
+    if (const char *tech_name = std::getenv("FO_CHECKSUM_TECH_NAME")) {
+        const auto tech_it = techs.get<TechManager::NameIndex>().find(tech_name);
+        BOOST_REQUIRE(techs.get<TechManager::NameIndex>().end() != tech_it);
+        BOOST_REQUIRE_EQUAL(tech_name, (*tech_it)->Name());
+
+        if (const char *tech_checksum_str = std::getenv("FO_CHECKSUM_TECH_VALUE")) {
+            unsigned int tech_checksum = boost::lexical_cast<unsigned int>(tech_checksum_str);
+            unsigned int value{0};
+            CheckSums::CheckSumCombine(value, *tech_it);
+            BOOST_REQUIRE_EQUAL(tech_checksum, value);
+        }
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
