@@ -539,19 +539,27 @@ float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_speci
     return ra_sp_it->second;
 }
 
-std::vector<std::string_view> SpeciesManager::SpeciesThatLike(const std::string& content_name) const {
+std::vector<std::string_view> SpeciesManager::SpeciesThatLike(std::string_view content_name) const {
+    CheckPendingSpeciesTypes();
     std::vector<std::string_view> retval;
-    for (const auto& [species_name, species] : *this)
-        if (species->Likes().count(content_name))
-            retval.push_back(species_name);
+    retval.reserve(s_species.size());
+    std::for_each(s_species.begin(), s_species.end(), [&retval, content_name](const auto& s) {
+        const auto& likes = s.second->Likes();
+        if (std::any_of(likes.begin(), likes.end(), [content_name](const auto& l) { return l == content_name; }))
+            retval.emplace_back(s.first);
+    });
     return retval;
 }
 
-std::vector<std::string_view> SpeciesManager::SpeciesThatDislike(const std::string& content_name) const {
+std::vector<std::string_view> SpeciesManager::SpeciesThatDislike(std::string_view content_name) const {
+    CheckPendingSpeciesTypes();
     std::vector<std::string_view> retval;
-    for (const auto& [species_name, species] : *this)
-        if (species->Dislikes().count(content_name))
-            retval.push_back(species_name);
+    retval.reserve(s_species.size());
+    std::for_each(s_species.begin(), s_species.end(), [&retval, content_name](const auto& s) {
+        const auto& dislikes = s.second->Dislikes();
+        if (std::any_of(dislikes.begin(), dislikes.end(), [content_name](const auto& l) { return l == content_name; }))
+            retval.emplace_back(s.first);
+    });
     return retval;
 }
 

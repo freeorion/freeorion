@@ -265,8 +265,8 @@ public:
     float SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
                                 const std::string& rated_species_name) const;
 
-    std::vector<std::string_view> SpeciesThatLike(const std::string& content_name) const;
-    std::vector<std::string_view> SpeciesThatDislike(const std::string& content_name) const;
+    std::vector<std::string_view> SpeciesThatLike(std::string_view content_name) const;
+    std::vector<std::string_view> SpeciesThatDislike(std::string_view content_name) const;
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
