@@ -104,3 +104,22 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                     )^(-0.5)
                 ) * [[POLICY_LIKE_DISLIKE_SCALING]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
 '''
+
+DO_STARLANE_BORE
+'''AddStarlanes endpoint = MinimumNumberOf
+       number = 1
+       sortkey = DirectDistanceBetween object = Source.ID object = LocalCandidate.ID
+       condition = And [
+           System
+           CanAddStarlanesTo condition = Source
+       ]
+'''
+
+BORE_POSSIBLE
+'''Number
+       low = 1
+       condition = And [
+           System
+           CanAddStarlanesTo condition = Source
+       ]
+'''

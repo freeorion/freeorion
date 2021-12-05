@@ -8368,7 +8368,7 @@ namespace {
             return true;
 
         // if object is further from either of the lane end systems than they
-        // are from eachother, it is fine, regardless of the right-angle
+        // are from each other, it is fine, regardless of the right-angle
         // distance to the line between the systems
         if (dist2_12 < dist2_o1 || dist2_12 < dist2_o2)
             return false;
@@ -8383,21 +8383,20 @@ namespace {
         v_12_x /= mag_12;
         v_12_y /= mag_12;
 
-        // distance to point from line from vector projection / dot products
-        //.......O
+        // distance to point from line from vector projection / cross products
+        //       O
         //      /|
         //     / |
         //    /  |d
         //   /   |
         //  /a___|___
         // 1         2
-        // (1O).(12) = |1O| |12| cos(a)
-        // d = |1O| cos(a) = (1O).(12) / |12|
-        // d = -(O1).(12 / |12|)
-
+        // (1O)x(12) = |1O| |12| sin(a)
+        // d = |1O| sin(a) = (1O)x(12) / |12|
+        // d = (10)x(12 / |12|)
         constexpr float MIN_PERP_DIST = 20; // magic limit, in units of universe units (uu)
 
-        float perp_dist = std::abs(v_o1_x*v_12_x + v_o1_y*v_12_y);
+        float perp_dist = std::abs(v_o1_x*v_12_y - v_o1_y*v_12_x);
 
         return perp_dist < MIN_PERP_DIST;
     }

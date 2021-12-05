@@ -6,17 +6,45 @@ BuildingType
     location = Planet
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+
+        EffectsGroup
+            scope = Object id = Source.SystemID
+            activation = Not [[ BORE_POSSIBLE ]]
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_STARLANE_NEXUS_FAILED"
+                    label = "EFFECT_STARLANE_NEXUS_LABEL"
+                    icon = "icons/tech/n-dimensional_structures.png"
+                    parameters = tag = "system" data = Target.ID
+                    empire = Source.Owner
+            ]
     
         EffectsGroup
             scope = Object id = Source.SystemID
+            activation = [[ BORE_POSSIBLE ]]
+            // Maximum is 11 , since they must be at least 30 degrees apart
+            // (very theoretical 12, if it triggers in the experimentor system while it has no links)
             effects = [
-                RemoveStarlanes endpoint = System
-                AddStarlanes endpoint = And [
-                    System
-                    WithinDistance distance = 250 condition = Source
-                    CanAddStarlanesTo condition = Source
-                ]
+                [[ DO_STARLANE_BORE ]]
+                [[ DO_STARLANE_BORE ]]
+                [[ DO_STARLANE_BORE ]]
+                [[ DO_STARLANE_BORE ]]
+                [[ DO_STARLANE_BORE ]]
+                [[ DO_STARLANE_BORE ]]
+                [[ DO_STARLANE_BORE ]]
+                [[ DO_STARLANE_BORE ]]
+                [[ DO_STARLANE_BORE ]]
+                [[ DO_STARLANE_BORE ]]
+                [[ DO_STARLANE_BORE ]]
+                [[ DO_STARLANE_BORE ]]
+                GenerateSitRepMessage
+                    message = "EFFECT_STARLANE_NEXUS"
+                    label = "EFFECT_STARLANE_NEXUS_LABEL"
+                    icon = "icons/tech/n-dimensional_structures.png"
+                    parameters = tag = "system" data = Target.ID
+                    empire = Source.Owner
             ]
+
         EffectsGroup
             scope = Source
             effects = Destroy

@@ -5,27 +5,38 @@ BuildingType
     buildtime = 1 + Target.System.NumStarlanes
     location = Planet
     effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+
         EffectsGroup
             scope = Object id = Source.SystemID
+            activation = Not [[ BORE_POSSIBLE ]]
             effects = [
-                AddStarlanes endpoint = MinimumNumberOf
-                number = 1
-                sortkey = DirectDistanceBetween object = Source.ID object = LocalCandidate.ID
-                condition = And [
-                    System
-                    CanAddStarlanesTo condition = Source
-                ]
+                GenerateSitRepMessage
+                    message = "EFFECT_STARLANE_NEXUS_FAILED"
+                    label = "EFFECT_STARLANE_NEXUS_LABEL"
+                    icon = "icons/tech/n-dimensional_structures.png"
+                    parameters = tag = "system" data = Target.ID
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Object id = Source.SystemID
+            activation = [[ BORE_POSSIBLE ]]
+            effects = [
+                [[ DO_STARLANE_BORE ]]
                 GenerateSitRepMessage
                     message = "EFFECT_STARLANE_BORE"
                     label = "EFFECT_STARLANE_BORE_LABEL"
                     icon = "icons/tech/n-dimensional_structures.png"
                     parameters = tag = "system" data = Target.ID
                     empire = Source.Owner
-                ]
+            ]
+
         EffectsGroup
             scope = Source
             effects = Destroy
     ]
     icon = "icons/tech/n-dimensional_structures.png"
 
+#include "/scripting/buildings/buildings.macros"
 #include "/scripting/common/base_prod.macros"

@@ -7640,8 +7640,20 @@ Nest Eradication
 EFFECT_STARLANE_BORE
 At %system%: a new starlane has opened linking to a nearby system.
 
+EFFECT_STARLANE_BORE_FAILED
+At %system%: a Starlane Bore failed to open a new starlane.
+
 EFFECT_STARLANE_BORE_LABEL
 Starlane Bore
+
+EFFECT_STARLANE_NEXUS
+At %system%: new starlanes have been opened linking to a nearby systems.
+
+EFFECT_STARLANE_NEXUS_FAILED
+At %system%: a Starlane Nexus failed to open new starlanes.
+
+EFFECT_STARLANE_NEXUS_LABEL
+Starlane Nexus
 
 EFFECT_BLACKHOLE
 %system% has been collapsed to create a black hole.
@@ -14505,13 +14517,14 @@ BLD_STARLANE_BORE
 Starlane Bore
 
 BLD_STARLANE_BORE_DESC
-Generates a single new starlane to the nearest system that can be connected without crossing existing starlanes or passing too close to another system.
+'''Generates a single new starlane to the nearest system that can be connected without crossing existing starlanes or passing too close to another system.
+New lanes may not pass closer than 20 uu to another system and may not meet existing star lanes at less than 30 degrees.'''
 
 BLD_STARLANE_NEXUS
 Starlane Nexus
 
 BLD_STARLANE_NEXUS_DESC
-Generates new starlanes to other star systems that can be connected without crossing existing starlanes or passing too close to another system.
+Generates new starlanes to other star systems. Works like a [[buildingtype BLD_STARLANE_BORE]], except that it keeps creating lanes until no new one can be added anymore.
 
 BLD_XENORESURRECTION_LAB
 Xenoresurrection Lab
