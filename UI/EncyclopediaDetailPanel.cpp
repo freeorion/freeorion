@@ -1502,7 +1502,7 @@ namespace {
 
         if (!unlocked_techs.empty()) {
             for (const auto& tech_name : unlocked_techs) {
-                std::string link_text = LinkTaggedText(VarText::TECH_TAG, tech_name);
+                std::string link_text = LinkTaggedPresetText(VarText::TECH_TAG, tech_name, strings.UserString(tech_name));
                 detailed_description += str(FlexibleFormat(strings.UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
                     % strings.UserString("UIT_TECH")
                     % link_text);
@@ -1523,7 +1523,9 @@ namespace {
                     }
                 }();
 
-                std::string link_text = TAG.empty() ? strings.UserString(item.name) : LinkTaggedText(TAG, item.name);
+                std::string link_text = TAG.empty()
+                    ? strings.UserString(item.name)
+                    : LinkTaggedPresetText(TAG, item.name, strings.UserString(item.name));
 
                 detailed_description += str(FlexibleFormat(strings.UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
                     % strings.UserString(boost::lexical_cast<std::string>(item.type))
@@ -1540,7 +1542,7 @@ namespace {
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + strings.UserString("ENC_UNLOCKED_BY");
             for (const std::string& tech_name : unlocked_by_techs)
-            { detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  "; }
+            { detailed_description += LinkTaggedPresetText(VarText::TECH_TAG, tech_name, strings.UserString(tech_name)) + "  "; }
             detailed_description += "\n\n";
         }
 
@@ -1590,7 +1592,9 @@ namespace {
                 default: break;
                 }
 
-                std::string link_text = TAG.empty() ? strings.UserString(item.name) : LinkTaggedText(TAG, item.name);
+                std::string link_text = TAG.empty()
+                    ? strings.UserString(item.name)
+                    : LinkTaggedPresetText(TAG, item.name, strings.UserString(item.name));
 
                 detailed_description += str(FlexibleFormat(strings.UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
                     % strings.UserString(boost::lexical_cast<std::string>(item.type))
@@ -1602,26 +1606,26 @@ namespace {
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + strings.UserString("ENC_UNLOCKED_BY");
             for (const auto& tech_name : unlocked_by_techs)
-                detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  ";
+                detailed_description += LinkTaggedPresetText(VarText::TECH_TAG, tech_name, strings.UserString(tech_name)) + "  ";
         }
 
         auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_POLICY, item_name));
         if (!unlocked_by_policies.empty()) {
             detailed_description += "\n\n" + strings.UserString("ENC_UNLOCKED_BY");
             for (const auto& policy_name : unlocked_by_policies)
-                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
+                detailed_description += LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, strings.UserString(policy_name)) + "  ";
         }
 
         if (!policy->Prerequisites().empty()) {
             detailed_description += "\n\n" + strings.UserString("ENC_POICY_PREREQUISITES");
             for (const auto& policy_name : policy->Prerequisites())
-                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
+                detailed_description += LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, strings.UserString(policy_name)) + "  ";
         }
 
         if (!policy->Exclusions().empty()) {
             detailed_description += "\n\n" + strings.UserString("ENC_POICY_EXCLUSIONS");
             for (const auto& policy_name : policy->Exclusions())
-                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
+                detailed_description += LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, strings.UserString(policy_name)) + "  ";
         }
 
         // species that like / dislike policy
@@ -1630,12 +1634,12 @@ namespace {
         if (!species_that_like.empty()) {
             detailed_description += "\n\n" + strings.UserString("SPECIES_THAT_LIKE");
             for (auto& name : species_that_like)
-                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name) + " ";
+                detailed_description += LinkTaggedPresetText(VarText::SPECIES_TAG, name, strings.UserString(name)) + " ";
         }
         if (!species_that_dislike.empty()) {
             detailed_description += "\n\n" + strings.UserString("SPECIES_THAT_DISLIKE");
             for (auto& name : species_that_dislike)
-                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name) + " ";
+                detailed_description += LinkTaggedPresetText(VarText::SPECIES_TAG, name, strings.UserString(name)) + " ";
         }
         detailed_description += "\n";
 
@@ -1694,7 +1698,7 @@ namespace {
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + strings.UserString("ENC_UNLOCKED_BY");
             for (const std::string& tech_name : unlocked_by_techs)
-            { detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  "; }
+                detailed_description += LinkTaggedPresetText(VarText::TECH_TAG, tech_name, strings.UserString(tech_name)) + "  ";
             detailed_description += "\n\n";
         }
 
@@ -1702,7 +1706,7 @@ namespace {
         if (!unlocked_by_policies.empty()) {
             detailed_description += "\n\n" + strings.UserString("ENC_UNLOCKED_BY");
             for (const auto& policy_name : unlocked_by_policies)
-                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
+                detailed_description += LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, strings.UserString(policy_name)) + "  ";
         }
 
         // species that like / dislike building type
@@ -1711,12 +1715,12 @@ namespace {
         if (!species_that_like.empty()) {
             detailed_description += "\n\n" + strings.UserString("SPECIES_THAT_LIKE");
             for (auto& name : species_that_like)
-                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name) + " ";
+                detailed_description += LinkTaggedPresetText(VarText::SPECIES_TAG, name, strings.UserString(name)) + " ";
         }
         if (!species_that_dislike.empty()) {
             detailed_description += "\n\n" + strings.UserString("SPECIES_THAT_DISLIKE");
             for (auto& name : species_that_dislike)
-                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name) + " ";
+                detailed_description += LinkTaggedPresetText(VarText::SPECIES_TAG, name, strings.UserString(name)) + " ";
         }
 
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
@@ -1805,12 +1809,12 @@ namespace {
         if (!species_that_like.empty()) {
             detailed_description.append("\n\n").append(strings.UserString("SPECIES_THAT_LIKE"));
             for (auto& name : species_that_like)
-                detailed_description.append(LinkTaggedText(VarText::SPECIES_TAG, name)).append(" ");
+                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, strings.UserString(name))).append(" ");
         }
         if (!species_that_dislike.empty()) {
             detailed_description.append("\n\n").append(strings.UserString("SPECIES_THAT_DISLIKE"));
             for (auto& name : species_that_dislike)
-                detailed_description.append(LinkTaggedText(VarText::SPECIES_TAG, name)).append(" ");
+                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, strings.UserString(name))).append(" ");
         }
 
 
