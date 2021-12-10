@@ -265,6 +265,43 @@ bool UserStringExists(const char* str) {
     return GetStringTable().StringExists(str) || GetDevDefaultStringTable().StringExists(str);
 }
 
+LockedStringTable::LockedStringTable() :
+    m_lock(stringtable_access_mutex),
+    m_table(GetStringTable()),
+    m_default_table(GetDevDefaultStringTable())
+{}
+LockedStringTable::~LockedStringTable() = default;
+
+const std::string& LockedStringTable::UserString(const std::string& str) {
+    const auto& [string_found, string_value] = m_table.CheckGet(str);
+    if (string_found)
+        return string_value;
+    return m_default_table[str];
+}
+
+const std::string& LockedStringTable::UserString(const std::string_view str) {
+    const auto& [string_found, string_value] = m_table.CheckGet(str);
+    if (string_found)
+        return string_value;
+    return m_default_table[str];
+}
+
+const std::string& LockedStringTable::UserString(const char* str) {
+    const auto& [string_found, string_value] = m_table.CheckGet(str);
+    if (string_found)
+        return string_value;
+    return m_default_table[str];
+}
+
+bool LockedStringTable::UserStringExists(const std::string& str)
+{ return m_table.StringExists(str) || m_default_table.StringExists(str); }
+
+bool LockedStringTable::UserStringExists(const std::string_view str)
+{ return m_table.StringExists(str) || m_default_table.StringExists(str); }
+
+bool LockedStringTable::UserStringExists(const char* str)
+{ return m_table.StringExists(str) || m_default_table.StringExists(str); }
+
 boost::format FlexibleFormat(const std::string &string_to_format) {
     try {
         boost::format retval(string_to_format);

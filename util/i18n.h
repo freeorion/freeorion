@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <mutex>
 
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -30,6 +31,26 @@ FO_COMMON_API std::vector<std::string> UserStringList(const std::string& key);
 FO_COMMON_API bool UserStringExists(const std::string& str);
 FO_COMMON_API bool UserStringExists(const std::string_view str);
 FO_COMMON_API bool UserStringExists(const char* str);
+
+/** Retains a stringtable access lock until destructed, making
+  * repeated stringtable lookups faster than re-locking for each. */
+class StringTable;
+class FO_COMMON_API LockedStringTable {
+public:
+    LockedStringTable();
+    ~LockedStringTable();
+    const std::string& UserString(const std::string& str);
+    const std::string& UserString(const std::string_view str);
+    const std::string& UserString(const char* str);
+    bool UserStringExists(const std::string& str);
+    bool UserStringExists(const std::string_view str);
+    bool UserStringExists(const char* str);
+
+private:
+    std::scoped_lock<std::recursive_mutex> m_lock;
+    const StringTable& m_table;
+    const StringTable& m_default_table;
+};
 
 /** Clears all loaded strings, so that subsequent UserString lookups will cause
   * the stringtable(s) to be reloaded. */
