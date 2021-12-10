@@ -119,7 +119,6 @@ namespace {
     // get currently set stringtable filename option value, or the default value
     // if the currenty value is empty
     std::string GetStringTableFileName() {
-        std::scoped_lock<std::recursive_mutex> stringtable_lock(stringtable_access_mutex);
         // initialize option value and default on first call
         if (!stringtable_filename_init)
             InitStringtableFileName();
