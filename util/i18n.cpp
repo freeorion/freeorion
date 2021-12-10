@@ -269,36 +269,37 @@ LockedStringTable::LockedStringTable() :
     m_table(GetStringTable()),
     m_default_table(GetDevDefaultStringTable())
 {}
+
 LockedStringTable::~LockedStringTable() = default;
 
-const std::string& LockedStringTable::UserString(const std::string& str) {
+const std::string& LockedStringTable::UserString(const std::string& str) const {
     const auto& [string_found, string_value] = m_table.CheckGet(str);
     if (string_found)
         return string_value;
     return m_default_table[str];
 }
 
-const std::string& LockedStringTable::UserString(const std::string_view str) {
+const std::string& LockedStringTable::UserString(const std::string_view str) const {
     const auto& [string_found, string_value] = m_table.CheckGet(str);
     if (string_found)
         return string_value;
     return m_default_table[str];
 }
 
-const std::string& LockedStringTable::UserString(const char* str) {
+const std::string& LockedStringTable::UserString(const char* str) const {
     const auto& [string_found, string_value] = m_table.CheckGet(str);
     if (string_found)
         return string_value;
     return m_default_table[str];
 }
 
-bool LockedStringTable::UserStringExists(const std::string& str)
+bool LockedStringTable::UserStringExists(const std::string& str) const
 { return m_table.StringExists(str) || m_default_table.StringExists(str); }
 
-bool LockedStringTable::UserStringExists(const std::string_view str)
+bool LockedStringTable::UserStringExists(const std::string_view str) const
 { return m_table.StringExists(str) || m_default_table.StringExists(str); }
 
-bool LockedStringTable::UserStringExists(const char* str)
+bool LockedStringTable::UserStringExists(const char* str) const
 { return m_table.StringExists(str) || m_default_table.StringExists(str); }
 
 boost::format FlexibleFormat(const std::string &string_to_format) {

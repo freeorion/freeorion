@@ -39,12 +39,12 @@ class FO_COMMON_API LockedStringTable {
 public:
     LockedStringTable();
     ~LockedStringTable();
-    const std::string& UserString(const std::string& str);
-    const std::string& UserString(const std::string_view str);
-    const std::string& UserString(const char* str);
-    bool UserStringExists(const std::string& str);
-    bool UserStringExists(const std::string_view str);
-    bool UserStringExists(const char* str);
+    const std::string& UserString(const std::string& str) const;
+    const std::string& UserString(const std::string_view str) const;
+    const std::string& UserString(const char* str) const;
+    bool UserStringExists(const std::string& str) const;
+    bool UserStringExists(const std::string_view str) const;
+    bool UserStringExists(const char* str) const;
 
 private:
     std::scoped_lock<std::recursive_mutex> m_lock;
