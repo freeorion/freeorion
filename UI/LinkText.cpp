@@ -573,22 +573,11 @@ void TextLinker::MarkLinks() {
     SetLinkedText(std::move(marked_text));
 }
 
-std::string LinkTaggedText(std::string_view tag, std::string_view stringtable_entry) {
-    std::string retval;
-    const auto& us{UserString(stringtable_entry)};
-    retval.reserve(10 + stringtable_entry.length() + 2*tag.length() + us.length());
-    retval.append("<").append(tag).append(" ").append(stringtable_entry)
-          .append(">").append(us).append("</").append(tag).append(">");
-    return retval;
-}
+std::string LinkTaggedText(std::string_view tag, std::string_view stringtable_entry)
+{ return LinkTaggedPresetText(tag, stringtable_entry, UserString(stringtable_entry)); }
 
-std::string LinkTaggedIDText(std::string_view tag, int id, std::string_view text) {
-    std::string retval;
-    retval.reserve(22 + text.length() + 2*tag.length());
-    retval.append("<").append(tag).append(" ").append(std::to_string(id))
-          .append(">").append(text).append("</").append(tag).append(">");
-    return retval;
-}
+std::string LinkTaggedIDText(std::string_view tag, int id, std::string_view display_text)
+{ return LinkTaggedPresetText(tag, std::to_string(id), display_text); }
 
 std::string LinkTaggedPresetText(std::string_view tag, std::string_view stringtable_entry,
                                  std::string_view display_text)
