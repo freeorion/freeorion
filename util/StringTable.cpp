@@ -115,12 +115,12 @@ const std::string& StringTable::operator[] (const std::string& key) const {
     if (it != m_strings.end())
         return it->second;
 
-    auto error = m_error_strings.insert(ERROR_STRING + key);
-    if (error.second) {
+    auto [error_it, is_new] = m_error_strings.insert(ERROR_STRING + key);
+    if (is_new) {
         ErrorLogger() << "Missing string: " << key;
         DebugLogger() << StackTrace();
     }
-    return *(error.first);
+    return *error_it;
 }
 
 const std::string& StringTable::operator[] (const std::string_view key) const {
@@ -128,12 +128,12 @@ const std::string& StringTable::operator[] (const std::string_view key) const {
     if (it != m_strings.end())
         return it->second;
 
-    auto error = m_error_strings.insert(ERROR_STRING + key);
-    if (error.second) {
+    auto [error_it, is_new] = m_error_strings.insert(ERROR_STRING + key);
+    if (is_new) {
         ErrorLogger() << "Missing string: " << key;
         DebugLogger() << StackTrace();
     }
-    return *(error.first);
+    return *error_it;
 }
 
 const std::string& StringTable::operator[] (const char* key) const {
@@ -141,12 +141,12 @@ const std::string& StringTable::operator[] (const char* key) const {
     if (it != m_strings.end())
         return it->second;
 
-    auto error = m_error_strings.insert(ERROR_STRING + key);
-    if (error.second) {
+    auto [error_it, is_new] = m_error_strings.insert(ERROR_STRING + key);
+    if (is_new) {
         ErrorLogger() << "Missing string: " << key;
         DebugLogger() << StackTrace();
     }
-    return *(error.first);
+    return *error_it;
 }
 
 namespace {
