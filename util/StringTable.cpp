@@ -110,7 +110,7 @@ namespace {
     }
 }
 
-const std::string& StringTable::operator[] (const std::string& key) const {
+const std::string& StringTable::operator[] (const std::string& key) {
     auto it = m_strings.find(key);
     if (it != m_strings.end())
         return it->second;
@@ -123,7 +123,7 @@ const std::string& StringTable::operator[] (const std::string& key) const {
     return *error_it;
 }
 
-const std::string& StringTable::operator[] (const std::string_view key) const {
+const std::string& StringTable::operator[] (const std::string_view key) {
     auto it = m_strings.find(key);
     if (it != m_strings.end())
         return it->second;
@@ -136,7 +136,7 @@ const std::string& StringTable::operator[] (const std::string_view key) const {
     return *error_it;
 }
 
-const std::string& StringTable::operator[] (const char* key) const {
+const std::string& StringTable::operator[] (const char* key) {
     auto it = m_strings.find(key);
     if (it != m_strings.end())
         return it->second;

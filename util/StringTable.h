@@ -145,9 +145,9 @@ public:
     //! @return
     //!     The translation for @p key or S_ERROR_STRING if no translation was
     //!     found.
-    [[nodiscard]] const std::string& operator[] (const std::string& key) const;
-    [[nodiscard]] const std::string& operator[] (const std::string_view key) const;
-    [[nodiscard]] const std::string& operator[] (const char* key) const;
+    [[nodiscard]] const std::string& operator[] (const std::string& key);
+    [[nodiscard]] const std::string& operator[] (const std::string_view key);
+    [[nodiscard]] const std::string& operator[] (const char* key);
 
     //! Returns if a translation for @p key exists.
     //!
@@ -202,7 +202,7 @@ private:
 
     //! Cache for missing translation keys to ensure the returned error
     //! reference string is not destroyed due local scope.
-    mutable std::set<std::string> m_error_strings;
+    std::set<std::string> m_error_strings;
 
     //! True if the StringTable was completely loaded and all references
     //! were successfully resolved.

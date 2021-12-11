@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <mutex>
+#include <shared_mutex>
 
 #include <boost/format.hpp>
 
@@ -38,17 +38,17 @@ class FO_COMMON_API LockedStringTable {
 public:
     LockedStringTable();
     ~LockedStringTable();
-    const std::string& UserString(const std::string& str) const;
-    const std::string& UserString(const std::string_view str) const;
-    const std::string& UserString(const char* str) const;
+    const std::string& UserString(const std::string& str);
+    const std::string& UserString(const std::string_view str);
+    const std::string& UserString(const char* str);
     bool UserStringExists(const std::string& str) const;
     bool UserStringExists(const std::string_view str) const;
     bool UserStringExists(const char* str) const;
 
 private:
-    std::scoped_lock<std::recursive_mutex> m_lock;
-    const StringTable& m_table;
-    const StringTable& m_default_table;
+    std::shared_lock<std::shared_mutex> m_read_lock;
+    StringTable& m_table;
+    StringTable& m_default_table;
 };
 
 /** Clears all loaded strings, so that subsequent UserString lookups will cause
@@ -143,12 +143,14 @@ boost::format FlexibleFormatList(
 {
     return FlexibleFormatList(std::vector<std::string>(), words, all_header, all_header, all_header, all_header);
 }
+
 template<typename Container>
 boost::format FlexibleFormatList(
     const Container& words, const std::string& plural_header, const std::string& single_header)
 {
     return FlexibleFormatList(std::vector<std::string>(), words, plural_header, single_header, plural_header, plural_header);
 }
+
 template<typename Container>
 boost::format FlexibleFormatList(
     const Container& words, const std::string& plural_header,
@@ -173,6 +175,7 @@ boost::format FlexibleFormatList(
 {
     return FlexibleFormatList(header_words, words, all_header, all_header, all_header, all_header);
 }
+
 template<typename T1, typename T2>
 boost::format FlexibleFormatList(
     const T2& header_words, const T1& words, const std::string& plural_header, const std::string& single_header)
