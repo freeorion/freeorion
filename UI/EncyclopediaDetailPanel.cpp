@@ -1081,7 +1081,7 @@ namespace {
             return retval;
 
         ScopedTimer subdir_timer("GetSubDirs(" + dir_name + ", " + std::to_string(exclude_custom_categories_from_dir_name) +
-                                 ", " + std::to_string(depth) + ")");
+                                 ", " + std::to_string(depth) + ")", std::chrono::milliseconds(5));
 
         depth++;
         // safety check to pre-empt potential infinite loop
