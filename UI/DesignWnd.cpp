@@ -1847,7 +1847,7 @@ void DesignWnd::PartPalette::CompleteConstruction() {
             continue;
 
         m_class_buttons[part_class] = GG::Wnd::Create<CUIStateButton>(
-            UserString(boost::lexical_cast<std::string>(part_class)), GG::FORMAT_CENTER,
+            UserString(to_string(part_class)), GG::FORMAT_CENTER,
             std::make_shared<CUILabelButtonRepresenter>());
         AttachChild(m_class_buttons[part_class]);
         m_class_buttons[part_class]->CheckedSignal.connect(

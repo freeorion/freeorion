@@ -883,19 +883,19 @@ namespace {
     const std::string& GetPlanetSizeName(const Planet* planet) {
         if (!planet || planet->Size() == PlanetSize::SZ_ASTEROIDS || planet->Size() == PlanetSize::SZ_GASGIANT)
             return EMPTY_STRING;
-        return UserString(boost::lexical_cast<std::string>(planet->Size()));
+        return UserString(to_string(planet->Size()));
     }
 
     const std::string& GetPlanetTypeName(const Planet* planet)
-    { return UserString(boost::lexical_cast<std::string>(planet->Type())); }
+    { return UserString(to_string(planet->Type())); }
 
     const std::string& GetPlanetEnvironmentName(const Planet* planet, const std::string& species_name)
-    { return UserString(boost::lexical_cast<std::string>(planet->EnvironmentForSpecies(species_name))); }
+    { return UserString(to_string(planet->EnvironmentForSpecies(species_name))); }
 
     const std::string& GetStarTypeName(const System* system) {
         if (!system || system->GetStarType() == StarType::INVALID_STAR_TYPE)
             return EMPTY_STRING;
-        return UserString(boost::lexical_cast<std::string>(system->GetStarType()));
+        return UserString(to_string(system->GetStarType()));
     }
 
     const GG::Y PLANET_PANEL_TOP = GG::Y(140);
@@ -2900,7 +2900,7 @@ namespace {
             auto total_meter_value = 0.0f;
 
             auto title_label = GG::Wnd::Create<CUILabel>(
-                UserString(boost::lexical_cast<std::string>(m_meter_type)), GG::FORMAT_RIGHT);
+                UserString(to_string(m_meter_type)), GG::FORMAT_RIGHT);
             title_label->MoveTo(GG::Pt(GG::X0, GG::Y0));
             title_label->Resize(GG::Pt(LabelWidth(), row_height));
             title_label->SetFont(ClientUI::GetBoldFont());

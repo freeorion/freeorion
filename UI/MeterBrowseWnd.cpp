@@ -119,9 +119,8 @@ void MeterBrowseWnd::Render() {
 }
 
 namespace {
-    const std::string& MeterToUserString(MeterType meter_type) {
-        return UserString(boost::lexical_cast<std::string>(meter_type));
-    }
+    const std::string& MeterToUserString(MeterType meter_type)
+    { return UserString(to_string(meter_type)); }
 }
 
 void MeterBrowseWnd::Initialize() {

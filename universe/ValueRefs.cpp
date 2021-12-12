@@ -165,7 +165,7 @@ namespace {
             break;
         }
         if (obj) {
-            retval += UserString(boost::lexical_cast<std::string>(obj->ObjectType())) + " "
+            retval += UserString(to_string(obj->ObjectType())) + " "
                     + std::to_string(obj->ID()) + " ( " + obj->Name() + " ) ";
             initial_obj = obj;
         }
@@ -198,7 +198,7 @@ namespace {
             ++first;
 
             if (obj && initial_obj != obj) {
-                retval += "  Referenced Object: " + UserString(boost::lexical_cast<std::string>(obj->ObjectType())) + " "
+                retval += "  Referenced Object: " + UserString(to_string(obj->ObjectType())) + " "
                         + std::to_string(obj->ID()) + " ( " + obj->Name() + " )";
             }
             retval += " | ";
@@ -451,8 +451,10 @@ std::string StatisticDescription(StatisticType stat_type,
                                  const std::string& value_desc,
                                  const std::string& condition_desc)
 {
-    std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(
-        boost::lexical_cast<std::string>(stat_type)));
+    std::string stat_str{to_string(stat_type)};
+    boost::algorithm::to_upper(stat_str);
+    std::string stringtable_key{"DESC_VAR_"};
+    stringtable_key.append(stat_str);
 
     if (UserStringExists(stringtable_key)) {
         boost::format formatter = FlexibleFormat(UserString(stringtable_key));
@@ -1221,7 +1223,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         return "";
 
     } else if (property_name == "TypeName") {
-        return boost::lexical_cast<std::string>(object->ObjectType());
+        return std::string{to_string(object->ObjectType())};
 
     }
 

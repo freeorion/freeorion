@@ -142,7 +142,7 @@ UniverseObjectType System::ObjectType() const
 std::string System::Dump(unsigned short ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048);
-    retval.append(" star type: ").append(boost::lexical_cast<std::string>(m_star))
+    retval.append(" star type: ").append(to_string(m_star))
           .append("  last combat on turn: ").append(std::to_string(m_last_turn_battle_here))
           .append("  total orbits: ").append(std::to_string(m_orbits.size()));
 

@@ -177,12 +177,11 @@ void Moderator::CreateSystem::Execute() const {
 }
 
 std::string Moderator::CreateSystem::Dump() const {
-    std::string retval = "Moderator::CreateSystem x = "
-                       + std::to_string(m_x)
-                       + " y = "
-                       + std::to_string(m_y)
-                       + " star_type = "
-                       + boost::lexical_cast<std::string>(m_star_type);
+    std::string retval{"Moderator::CreateSystem x = "};
+    retval.reserve(128); // guesstimate
+    retval.append(std::to_string(m_x))
+          .append(" y = ").append(std::to_string(m_y))
+          .append(" star_type = ").append(to_string(m_star_type));
     return retval;
 }
 
@@ -228,9 +227,7 @@ void Moderator::CreatePlanet::Execute() const {
 std::string Moderator::CreatePlanet::Dump() const {
     std::string retval = "Moderator::CreatePlanet system_id = "
                        + std::to_string(m_system_id)
-                       + " planet_type = "
-                       + boost::lexical_cast<std::string>(m_planet_type)
-                       + " planet_size = "
-                       + boost::lexical_cast<std::string>(m_planet_size);
+                       + " planet_type = ";
+    retval.append(to_string(m_planet_type)).append(" planet_size = ").append(to_string(m_planet_size));
     return retval;
 }

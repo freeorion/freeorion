@@ -64,7 +64,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
         GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
         m_icons.back()->SizeMove(icon_ul, icon_lr);
         auto meter = meter_type.first;
-        auto meter_string = boost::lexical_cast<std::string>(meter_type.first);
+        auto meter_string = to_string(meter_type.first);
         m_icons.back()->RightClickedSignal.connect([this, meter, meter_string](const GG::Pt& pt) {
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
@@ -81,7 +81,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
             }
 
 
-            auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);};
+            auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{meter_string});}; // TODO: avoid copy
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                     UserString(meter_string));
             popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,

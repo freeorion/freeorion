@@ -75,7 +75,7 @@ public:
     void SetDesign(const std::string& design_id);
     void SetItem(const ShipDesign* design);
     void SetIncompleteDesign(std::weak_ptr<const ShipDesign> incomplete_design);
-    void SetMeterType(const std::string& meter_string);
+    void SetMeterType(std::string meter_string);
     void SetItem(const MeterType& meter_type);
     void SetGraph(const std::string& graph_id);
     void SetIndex();

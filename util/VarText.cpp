@@ -104,9 +104,11 @@ namespace {
         }
 
         if (meter_type > MeterType::INVALID_METER_TYPE && meter_type < MeterType::NUM_METER_TYPES) {
-            retval = boost::lexical_cast<std::string>(meter_type);
-            if (UserStringExists(*retval))
-                retval = WithTags(UserString(*retval), VarText::METER_TYPE_TAG, *retval);
+            auto mt_string{to_string(meter_type)};
+            if (UserStringExists(mt_string))
+                retval = WithTags(UserString(mt_string), VarText::METER_TYPE_TAG, mt_string);
+            else
+                retval = std::string{mt_string};
         }
 
         return retval;

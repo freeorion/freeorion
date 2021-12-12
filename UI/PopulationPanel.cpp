@@ -74,7 +74,7 @@ void PopulationPanel::CompleteConstruction() {
         MeterType meter_type = meter_stat.first;
 
         meter_stat.second->RightClickedSignal.connect([this, meter_type](const GG::Pt& pt) {
-            std::string meter_string = boost::lexical_cast<std::string>(meter_type);
+            auto meter_string = to_string(meter_type);
 
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             auto pc = Objects().get<PopCenter>(m_popcenter_id);
@@ -89,7 +89,7 @@ void PopulationPanel::CompleteConstruction() {
                 }
             }
 
-            auto pedia_meter_type_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
+            auto pedia_meter_type_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{meter_string}); };
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                     UserString(meter_string));
             popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,

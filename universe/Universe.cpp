@@ -991,12 +991,12 @@ namespace {
         int n)
     {
         TraceLogger(effects) << [&]() -> std::string {
-            return "StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
-                + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
-                + "  specific cause: " + std::string {specific_cause_name}
-                + "  sources (" + std::to_string(source_objects.size())  + ")"
-                + "  candidate ids (" + std::to_string(candidate_object_ids.size()) + ")"
-                + "  candidate objects (" + std::to_string(candidate_objects_in.size()) + ")";
+            return std::string{"StoreTargetsAndCausesOfEffectsGroup < "}.append(std::to_string(n)).append(" >")
+                .append("  cause type: ").append(to_string(effect_cause_type))
+                .append("  specific cause: ").append(specific_cause_name)
+                .append("  sources (").append(std::to_string(source_objects.size())).append(")")
+                .append("  candidate ids (").append(std::to_string(candidate_object_ids.size())).append(")")
+                .append("  candidate objects (").append(std::to_string(candidate_objects_in.size())).append(")");
         }();
 
         auto scope = effects_group ? effects_group->Scope() : nullptr;
@@ -1015,11 +1015,11 @@ namespace {
                 sz{source_objects.size()}, scope
             ] () -> std::string
         {
-            return ("StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n) + " >"
-                + "  cause type: " + boost::lexical_cast<std::string>(effect_cause_type)
-                + "  specific cause: ").append(name_view)
-                + "  sources: " + std::to_string(sz)
-                + "  scope: " + boost::algorithm::erase_all_copy(scope->Dump(), "\n");
+            return ("StoreTargetsAndCausesOfEffectsGroup < " + std::to_string(n)).append(" >")
+                .append("  cause type: ").append(to_string(effect_cause_type))
+                .append("  specific cause: ").append(name_view)
+                .append("  sources: ").append(std::to_string(sz))
+                .append("  scope: ").append(boost::algorithm::erase_all_copy(scope->Dump(), "\n"));
         }, std::chrono::milliseconds(5));
 
         source_effects_targets_causes_out.reserve(source_objects.size());

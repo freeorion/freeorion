@@ -983,9 +983,9 @@ namespace {
             auto icon = GG::Wnd::Create<StatisticIcon>(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
             m_stat_icons.emplace_back(entry.first, icon);
 
-            std::string meter_string = boost::lexical_cast<std::string>(entry.first);
+            auto meter_string = to_string(entry.first);
             icon->RightClickedSignal.connect([meter_string](const GG::Pt& pt) {
-                auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
+                auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{meter_string}); }; // TODO: avoid construction
                 std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                         UserString(meter_string));
 
@@ -1793,14 +1793,14 @@ void FleetDataPanel::Init() {
         for (auto& [meter_type, icon, text] : meters_icons_browsetext) {
             auto stat_icon = GG::Wnd::Create<StatisticIcon>(icon, 0, 0, false,
                                                             StatIconSize().x, StatIconSize().y);
-            std::string meter_string = boost::lexical_cast<std::string>(meter_type);
+            auto meter_string = to_string(meter_type);
 
             m_stat_icons.emplace_back(meter_type, stat_icon);
             stat_icon->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
                 std::move(icon), UserString(meter_string), UserString(text)));
 
             stat_icon->RightClickedSignal.connect([meter_string](const GG::Pt& pt){
-                auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
+                auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{meter_string}); }; // TODO: avoid construction
 
                 auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 

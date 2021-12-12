@@ -289,7 +289,7 @@ namespace {
             for (MeterType meter = MeterType(0); meter <= MeterType::METER_SPEED;  // the meter(s) after MeterType::METER_SPEED are part-specific
                  meter = MeterType(int(meter) + 1))
             {
-                col_types[{boost::lexical_cast<std::string>(meter), UserStringNop("METERS_SUBMENU")}] = StringCastedImmediateValueRef(ValueRef::MeterToName(meter));
+                col_types[{std::string{to_string(meter)},           UserStringNop("METERS_SUBMENU")}] = StringCastedImmediateValueRef(ValueRef::MeterToName(meter));
             }
         }
         return col_types;
@@ -458,7 +458,7 @@ namespace {
         std::vector<std::string> retval;
         retval.reserve(enum_vals.size());
         for (const enumT& enum_val : enum_vals)
-            retval.emplace_back(boost::lexical_cast<std::string>(enum_val));
+            retval.emplace_back(to_string(enum_val));
         return retval;
     }
 }
@@ -1166,7 +1166,7 @@ void FilterDialog::CompleteConstruction() {
 
         m_filters_layout->SetColumnStretch(col, 1.0);
 
-        label = Wnd::Create<CUIButton>(" " + UserString(boost::lexical_cast<std::string>(uot)) + " ");
+        label = Wnd::Create<CUIButton>(" " + UserString(to_string(uot)) + " ");
         label->LeftClickedSignal.connect(
             boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
         m_filters_layout->Add(std::move(label), 0, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);

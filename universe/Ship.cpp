@@ -215,7 +215,7 @@ std::string Ship::Dump(unsigned short ntabs) const {
         for (const auto& [meter_type_part_name, meter] : m_part_meters) {
             const auto& [meter_type, part_name] = meter_type_part_name;
             retval.append(part_name).append(" ")
-                  .append(boost::lexical_cast<std::string>(meter_type))
+                  .append(to_string(meter_type))
                   .append(": ").append(std::to_string(meter.Current())).append("  ");
         }
     }

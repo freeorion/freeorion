@@ -162,7 +162,7 @@ bool ClientAppFixture::ProcessMessages(const boost::posix_time::ptime& start_tim
 
 bool ClientAppFixture::HandleMessage(Message& msg) {
     InfoLogger() << "Handle message " << msg.Type();
-    BOOST_TEST_MESSAGE("Handling message: " << boost::lexical_cast<std::string>(msg.Type()));
+    BOOST_TEST_MESSAGE("Handling message: " << to_string(msg.Type()));
 
     switch (msg.Type()) {
     case Message::MessageType::CHECKSUM: {
@@ -234,7 +234,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         SetEmpireStatus(about_empire_id, status);
         if (status == Message::PlayerStatus::WAITING)
             m_ai_waiting.erase(about_empire_id);
-        BOOST_TEST_MESSAGE("Updated empire " << about_empire_id << " status: " << boost::lexical_cast<std::string>(status));
+        BOOST_TEST_MESSAGE("Updated empire " << about_empire_id << " status: " << to_string(status));
         return true;
     }
     case Message::MessageType::TURN_PARTIAL_UPDATE: {

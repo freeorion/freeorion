@@ -164,7 +164,7 @@ std::string UniverseObject::Dump(unsigned short ntabs) const {
 
     std::string retval;
     retval.reserve(2048); // guesstimate
-    retval.append(boost::lexical_cast<std::string>(this->ObjectType())).append(" ")
+    retval.append(to_string(this->ObjectType())).append(" ")
           .append(std::to_string(this->ID())).append(": ").append(this->Name());
 
     if (system) {

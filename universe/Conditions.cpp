@@ -1410,7 +1410,7 @@ std::string EmpireAffiliation::Description(bool negated/* = false*/) const {
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_EMPIRE_AFFILIATION")
             : UserString("DESC_EMPIRE_AFFILIATION_NOT"))
-                   % UserString(boost::lexical_cast<std::string>(m_affiliation))
+                   % UserString(to_string(m_affiliation))
                    % empire_str);
     }
 }
@@ -2145,7 +2145,7 @@ void Type::Eval(const ScriptingContext& parent_context,
 
 std::string Type::Description(bool negated/* = false*/) const {
     std::string value_str = m_type->ConstantExpr() ?
-                                UserString(boost::lexical_cast<std::string>(m_type->Eval())) :
+                                UserString(to_string(m_type->Eval())) :
                                 m_type->Description();
     return str(FlexibleFormat((!negated)
            ? UserString("DESC_TYPE")
@@ -4060,7 +4060,7 @@ std::string PlanetType::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
         values_str += m_types[i]->ConstantExpr() ?
-                        UserString(boost::lexical_cast<std::string>(m_types[i]->Eval())) :
+                        UserString(to_string(m_types[i]->Eval())) :
                         m_types[i]->Description();
         if (2 <= m_types.size() && i < m_types.size() - 2) {
             values_str += ", ";
@@ -4231,7 +4231,7 @@ std::string PlanetSize::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
         values_str += m_sizes[i]->ConstantExpr() ?
-                        UserString(boost::lexical_cast<std::string>(m_sizes[i]->Eval())) :
+                        UserString(to_string(m_sizes[i]->Eval())) :
                         m_sizes[i]->Description();
         if (2 <= m_sizes.size() && i < m_sizes.size() - 2) {
             values_str += ", ";
@@ -4430,7 +4430,7 @@ std::string PlanetEnvironment::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
         values_str += m_environments[i]->ConstantExpr() ?
-                        UserString(boost::lexical_cast<std::string>(m_environments[i]->Eval())) :
+                        UserString(to_string(m_environments[i]->Eval())) :
                         m_environments[i]->Description();
         if (2 <= m_environments.size() && i < m_environments.size() - 2) {
             values_str += ", ";
@@ -5311,7 +5311,7 @@ std::string StarType::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
         values_str += m_types[i]->ConstantExpr() ?
-                        UserString(boost::lexical_cast<std::string>(m_types[i]->Eval())) :
+                        UserString(to_string(m_types[i]->Eval())) :
                         m_types[i]->Description();
         if (2 <= m_types.size() && i < m_types.size() - 2) {
             values_str += ", ";
@@ -5818,7 +5818,7 @@ std::string DesignHasPartClass::Description(bool negated/* = false*/) const {
         : UserString("DESC_DESIGN_HAS_PART_CLASS_NOT"))
                % low_str
                % high_str
-               % UserString(boost::lexical_cast<std::string>(m_class)));
+               % UserString(to_string(m_class)));
 }
 
 std::string DesignHasPartClass::Dump(unsigned short ntabs) const {
@@ -5827,7 +5827,7 @@ std::string DesignHasPartClass::Dump(unsigned short ntabs) const {
         retval += " low = " + m_low->Dump(ntabs);
     if (m_high)
         retval += " high = " + m_high->Dump(ntabs);
-    retval += " class = " + UserString(boost::lexical_cast<std::string>(m_class));
+    retval += " class = " + UserString(to_string(m_class));
     retval += "\n";
     return retval;
 }
@@ -6464,19 +6464,19 @@ std::string MeterValue::Description(bool negated/* = false*/) const {
         return str(FlexibleFormat((!negated) ?
                                     UserString("DESC_METER_VALUE_CURRENT_MIN") :
                                     UserString("DESC_METER_VALUE_CURRENT_MIN_NOT"))
-            % UserString(boost::lexical_cast<std::string>(m_meter))
+            % UserString(to_string(m_meter))
             % low_str);
     } else if (m_high && !m_low) {
         return str(FlexibleFormat((!negated) ?
                                     UserString("DESC_METER_VALUE_CURRENT_MAX") :
                                     UserString("DESC_METER_VALUE_CURRENT_MAX_NOT"))
-            % UserString(boost::lexical_cast<std::string>(m_meter))
+            % UserString(to_string(m_meter))
             % high_str);
     } else {
         return str(FlexibleFormat((!negated) ?
                                     UserString("DESC_METER_VALUE_CURRENT") :
                                     UserString("DESC_METER_VALUE_CURRENT_NOT"))
-            % UserString(boost::lexical_cast<std::string>(m_meter))
+            % UserString(to_string(m_meter))
             % low_str
             % high_str);
     }
@@ -6639,7 +6639,7 @@ std::string ShipPartMeterValue::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_SHIP_PART_METER_VALUE_CURRENT")
         : UserString("DESC_SHIP_PART_METER_VALUE_CURRENT_NOT"))
-               % UserString(boost::lexical_cast<std::string>(m_meter))
+               % UserString(to_string(m_meter))
                % part_str
                % low_str
                % high_str);
@@ -6977,7 +6977,7 @@ std::string EmpireStockpileValue::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_EMPIRE_STOCKPILE_VALUE")
         : UserString("DESC_EMPIRE_STOCKPILE_VALUE_NOT"))
-               % UserString(boost::lexical_cast<std::string>(m_stockpile))
+               % UserString(to_string(m_stockpile))
                % low_str
                % high_str);
 }
@@ -7919,13 +7919,13 @@ std::string VisibleToEmpire::Description(bool negated/* = false*/) const {
     std::string vis_string;
     if (m_vis) {
         if (m_vis->ConstantExpr()) {
-            vis_string = UserString(boost::lexical_cast<std::string>(m_vis->Eval()));
+            vis_string = UserString(to_string(m_vis->Eval()));
         } else {
             vis_string = m_vis->Description();
         }
     } else {
         // default if vis level not specified is any detected visibility level
-        vis_string = UserString(boost::lexical_cast<std::string>(Visibility::VIS_BASIC_VISIBILITY));
+        vis_string = UserString(to_string(Visibility::VIS_BASIC_VISIBILITY));
     }
 
     std::string turn_string;

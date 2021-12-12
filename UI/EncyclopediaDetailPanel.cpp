@@ -107,7 +107,7 @@ namespace {
     std::pair<std::string, std::string> MeterValueLabelAndString(const MeterType& meter_type) {
         std::pair<std::string, std::string> retval;
 
-        retval.second = boost::lexical_cast<std::string>(meter_type);
+        retval.second = to_string(meter_type);
 
         retval.first = retval.second + "_VALUE_LABEL";
         if (UserStringExists(retval.first)) {
@@ -1300,7 +1300,7 @@ namespace {
             cost = part->ProductionCost(client_empire_id, default_location_id, context);
             cost_units = strings.UserString("ENC_PP");
             general_type = strings.UserString("ENC_SHIP_PART");
-            specific_type = strings.UserString(boost::lexical_cast<std::string>(part->Class()));
+            specific_type = strings.UserString(to_string(part->Class()));
         }
 
         detailed_description += strings.UserString(part->Description()) + "\n\n" + part->CapacityDescription();
@@ -1395,7 +1395,7 @@ namespace {
 
         std::string slots_list;
         for (auto slot_type : {ShipSlotType::SL_EXTERNAL, ShipSlotType::SL_INTERNAL, ShipSlotType::SL_CORE})
-            slots_list += strings.UserString(boost::lexical_cast<std::string>((slot_type))) + ": " + std::to_string(hull->NumSlots(slot_type)) + "\n";
+            slots_list += strings.UserString(to_string((slot_type))) + ": " + std::to_string(hull->NumSlots(slot_type)) + "\n";
         detailed_description += strings.UserString(hull->Description()) + "\n\n" + str(FlexibleFormat(strings.UserString("HULL_DESC"))
             % hull->Speed()
             % hull->Fuel()
@@ -1528,7 +1528,7 @@ namespace {
                     : LinkTaggedPresetText(TAG, item.name, strings.UserString(item.name));
 
                 detailed_description += str(FlexibleFormat(strings.UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
-                    % strings.UserString(boost::lexical_cast<std::string>(item.type))
+                    % strings.UserString(to_string(item.type))
                     % link_text);
             }
         }
@@ -1597,7 +1597,7 @@ namespace {
                     : LinkTaggedPresetText(TAG, item.name, strings.UserString(item.name));
 
                 detailed_description += str(FlexibleFormat(strings.UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
-                    % strings.UserString(boost::lexical_cast<std::string>(item.type))
+                    % strings.UserString(to_string(item.type))
                     % link_text);
             }
         }
@@ -2288,8 +2288,8 @@ namespace {
         if (!pt_env_map.empty()) {
             detailed_description += strings.UserString("ENVIRONMENTAL_PREFERENCES") + "\n";
             for (auto& [ptype, penv] : pt_env_map) {
-                detailed_description += strings.UserString(boost::lexical_cast<std::string>(ptype)) + " : " +
-                                        strings.UserString(boost::lexical_cast<std::string>(penv)) + "\n";
+                detailed_description += strings.UserString(to_string(ptype)) + " : " +
+                                        strings.UserString(to_string(penv)) + "\n";
                 // add blank line between cyclical environments and asteroids and gas giants
                 if (ptype == PlanetType::PT_OCEAN)
                     detailed_description += "\n";
@@ -3095,8 +3095,9 @@ namespace {
     }
 
     const std::vector<std::string>& PlanetEnvFilenames(PlanetType planet_type) {
-        static std::unordered_map<PlanetType, std::vector<std::string>> filenames_by_type{{PlanetType::INVALID_PLANET_TYPE, {}}};
-        std::string planet_type_str = boost::lexical_cast<std::string>(planet_type);
+        static std::unordered_map<PlanetType, std::vector<std::string>>
+            filenames_by_type{{PlanetType::INVALID_PLANET_TYPE, {}}};
+        std::string planet_type_str{to_string(planet_type)};
         boost::algorithm::to_lower(planet_type_str);
 
         if (!filenames_by_type.count(planet_type)) {
@@ -3113,7 +3114,7 @@ namespace {
                 filenames_by_type[planet_type].push_back(PathToString(file_path.filename()));
 
             for (const auto& filename : filenames_by_type[planet_type])
-                DebugLogger() << "PlanetEnvFilename for " << boost::lexical_cast<std::string>(planet_type) <<" : " << filename;
+                DebugLogger() << "PlanetEnvFilename for " << to_string(planet_type) <<" : " << filename;
         }
 
         if (filenames_by_type.count(planet_type))
@@ -3181,7 +3182,7 @@ namespace {
 
                     auto pos_row = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
                         % species_name_column1_it->second
-                        % UserString(boost::lexical_cast<std::string>(env))
+                        % UserString(to_string(env))
                         % (GG::RgbaTag(ClientUI::StatIncrColor()) + DoubleToString(target_pop, 2, true) + "</rgba>"));
                     TraceLogger() << "Suitability report positive row \"" << pos_row << "\"";
                     detailed_description.append(pos_row);
@@ -3200,7 +3201,7 @@ namespace {
 
                     auto neg_row = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
                         % species_name_column1_it->second
-                        % UserString(boost::lexical_cast<std::string>(env))
+                        % UserString(to_string(env))
                         % (GG::RgbaTag(ClientUI::StatDecrColor()) + DoubleToString(target_pop, 2, true) + "</rgba>"));
                     TraceLogger() << "Suitability report negative row \"" << neg_row << "\"";
                     detailed_description.append(neg_row);
@@ -3800,10 +3801,9 @@ void EncyclopediaDetailPanel::SetFieldType(const std::string& field_type_name) {
     AddItem("ENC_FIELD_TYPE", field_type_name);
 }
 
-void EncyclopediaDetailPanel::SetMeterType(const std::string& meter_string) {
-    if (meter_string.empty())
-        return;
-    AddItem("ENC_METER_TYPE", meter_string);
+void EncyclopediaDetailPanel::SetMeterType(std::string meter_string) {
+    if (!meter_string.empty())
+        AddItem("ENC_METER_TYPE", std::move(meter_string));
 }
 
 void EncyclopediaDetailPanel::SetObject(int object_id) {
@@ -3917,7 +3917,7 @@ void EncyclopediaDetailPanel::SetItem(const ShipDesign* design)
 { SetDesign(design ? design->ID() : INVALID_DESIGN_ID); }
 
 void EncyclopediaDetailPanel::SetItem(const MeterType& meter_type)
-{ SetMeterType(boost::lexical_cast<std::string>(meter_type)); }
+{ SetMeterType(std::string{to_string(meter_type)}); }
 
 void EncyclopediaDetailPanel::SetEncyclopediaArticle(const std::string& name)
 { AddItem(TextLinker::ENCYCLOPEDIA_TAG, name); }

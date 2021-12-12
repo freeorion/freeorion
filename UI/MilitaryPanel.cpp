@@ -63,9 +63,9 @@ void MilitaryPanel::CompleteConstruction() {
         m_meter_stats.emplace_back(meter, stat);
         meters.emplace_back(meter, AssociatedMeterType(meter));
         stat->RightClickedSignal.connect([meter](const GG::Pt& pt) {
-            std::string meter_string = boost::lexical_cast<std::string>(meter);
+            auto meter_string = to_string(meter);
 
-            auto zoom_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
+            auto zoom_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{meter_string}); };
 
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %

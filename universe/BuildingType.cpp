@@ -163,8 +163,8 @@ std::string BuildingType::Dump(unsigned short ntabs) const {
     if (m_production_time)
         retval += DumpIndent(ntabs+1) + "buildtime = " + m_production_time->Dump(ntabs+1) + "\n";
     retval += DumpIndent(ntabs+1) + (m_producible ? "Producible" : "Unproducible") + "\n";
-    retval += DumpIndent(ntabs+1) + "captureresult = " +
-        boost::lexical_cast<std::string>(m_capture_result) + "\n";
+    retval += DumpIndent(ntabs+1) + "captureresult = ";
+    retval.append(to_string(m_capture_result)).append("\n");
 
     if (!m_tags.empty()) {
         if (m_tags.size() == 1) {

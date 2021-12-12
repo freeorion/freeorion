@@ -72,8 +72,8 @@ namespace {
         auto part_name_vr =
             std::make_unique<ValueRef::Constant<std::string>>(part_name);
 
-        std::string stacking_group = (allow_stacking ? "" :
-            (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
+        std::string stacking_group = allow_stacking ? "" :
+            (std::string{part_name}.append("_").append(to_string(meter_type)).append("_PartMeter"));
 
         std::vector<std::unique_ptr<Effect::Effect>> effects;
         effects.emplace_back(std::make_unique<Effect::SetShipPartMeter>(
@@ -587,7 +587,7 @@ void ShipPartManager::CheckPendingShipParts() const {
     TraceLogger() << [this]() {
         std::string retval("Part Types:");
         for (const auto& [part_name, part] : m_parts)
-            retval.append("\n\t" + part_name + " class: " + boost::lexical_cast<std::string>(part->Class()));
+            retval.append("\n\t").append(part_name).append(" class: ").append(to_string(part->Class()));
         return retval;
     }();
 }

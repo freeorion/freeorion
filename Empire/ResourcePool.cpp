@@ -122,11 +122,11 @@ float ResourcePool::GroupAvailable(int object_id) const {
 }
 
 std::string ResourcePool::Dump() const {
-    std::string retval = "ResourcePool type = " + boost::lexical_cast<std::string>(m_type) +
-                         " stockpile = " + std::to_string(m_stockpile) +
-                         " object_ids: ";
+    std::string retval{"ResourcePool type = "};
+    retval.append(to_string(m_type)).append(" stockpile = ").append(std::to_string(m_stockpile))
+          .append(" object_ids: ");
     for (int obj_id : m_object_ids)
-        retval += std::to_string(obj_id) + ", ";
+        retval.append(std::to_string(obj_id)).append(", ");
     return retval;
 }
 
@@ -137,7 +137,7 @@ void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int>>& conne
 { m_connected_system_groups = connected_system_groups; }
 
 void ResourcePool::SetStockpile(float d) {
-    DebugLogger() << "ResourcePool " << boost::lexical_cast<std::string>(m_type) << " set to " << d;
+    DebugLogger() << "ResourcePool " << to_string(m_type) << " set to " << d;
     m_stockpile = d;
 }
 
