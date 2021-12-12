@@ -118,8 +118,8 @@ bool OptionsDB::Option::SetFromString(std::string_view str) {
         }
     } else {
         value_ = boost::lexical_cast<bool>(str);    // if a flag, then the str parameter should just indicate true or false with "1" or "0"
-        changed = (boost::lexical_cast<std::string>(boost::any_cast<bool>(value))
-                   != boost::lexical_cast<std::string>(boost::any_cast<bool>(value_)));
+        changed = (std::to_string(boost::any_cast<bool>(value))
+                   != std::to_string(boost::any_cast<bool>(value_)));
     }
 
     if (changed) {
@@ -139,9 +139,9 @@ bool OptionsDB::Option::SetToDefault() {
 }
 
 std::string OptionsDB::Option::ValueToString() const {
-    if (flag)
-        return boost::lexical_cast<std::string>(boost::any_cast<bool>(value));
-    else if (validator)
+    if (flag) {
+        return std::to_string(boost::any_cast<bool>(value));
+    } else if (validator)
         return validator->String(value);
     else
         throw std::runtime_error("Option::ValueToString called with no Validator set");
@@ -149,7 +149,7 @@ std::string OptionsDB::Option::ValueToString() const {
 
 std::string OptionsDB::Option::DefaultValueToString() const {
     if (flag)
-        return boost::lexical_cast<std::string>(boost::any_cast<bool>(default_value));
+        return std::to_string(boost::any_cast<bool>(default_value));
     else if (validator)
         return validator->String(default_value);
     else
@@ -265,7 +265,7 @@ const ValidatorBase* OptionsDB::GetValidator(const std::string& option_name) con
 namespace {
     constexpr std::size_t TERMINAL_LINE_WIDTH = 80;
 
-    const auto lexical_true_str = boost::lexical_cast<std::string>(true);
+    const auto lexical_true_str = std::to_string(true);
 
     /** Breaks and indents text over multiple lines when it exceeds width limits
      * @param text String to format, tokenized by spaces, tabs, and newlines (newlines retained but potentially indented)

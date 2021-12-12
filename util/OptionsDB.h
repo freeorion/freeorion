@@ -245,7 +245,9 @@ public:
                     // Attempt to parse the value found there, overriding the default value passed in
                     value = validator->Validate(it->second.ValueToString());
                 } catch (const boost::bad_lexical_cast&) {
-                    ErrorLogger() << "OptionsDB::Add<>() : Option " << name << " was given the value \"" << it->second.ValueToString() << "\" from the command line or a config file but that value couldn't be converted to the correct type, using default value instead.";
+                    ErrorLogger() << "OptionsDB::Add<>() : Option " << name
+                                  << " was given the value \"" << it->second.ValueToString()
+                                  << "\" from the command line or a config file but that value couldn't be converted to the correct type, using default value instead.";
                 }
             }
         }
@@ -521,8 +523,8 @@ bool OptionsDB::Option::SetFromValue(T value_) {
 
     try {
         if (flag) {
-            changed = (boost::lexical_cast<std::string>(boost::any_cast<bool>(value))
-                    != boost::lexical_cast<std::string>(boost::any_cast<bool>(value_)));
+            changed = (std::to_string(boost::any_cast<bool>(value))
+                    != std::to_string(boost::any_cast<bool>(value_)));
         } else if (validator) {
             changed = validator->String(value) != validator->String(value_);
         } else {
