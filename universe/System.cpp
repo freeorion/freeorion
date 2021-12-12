@@ -140,45 +140,41 @@ UniverseObjectType System::ObjectType() const
 { return UniverseObjectType::OBJ_SYSTEM; }
 
 std::string System::Dump(unsigned short ntabs) const {
-    std::stringstream os;
-    os << UniverseObject::Dump(ntabs);
-    os << " star type: " << m_star
-       << "  last combat on turn: " << m_last_turn_battle_here
-       << "  total orbits: " << m_orbits.size();
+    std::string retval = UniverseObject::Dump(ntabs);
+    retval.reserve(2048);
+    retval.append(" star type: ").append(boost::lexical_cast<std::string>(m_star))
+          .append("  last combat on turn: ").append(std::to_string(m_last_turn_battle_here))
+          .append("  total orbits: ").append(std::to_string(m_orbits.size()));
 
     if (m_orbits.size() > 0) {
-        os << "  objects per orbit: ";
+        retval.append("  objects per orbit: ");
 
         int orbit_index = 0;
-        for (auto it = m_orbits.begin();
-            it != m_orbits.end();)
-        {
-            os << "[" << orbit_index << "]" << *it;
+        for (auto it = m_orbits.begin(); it != m_orbits.end();) {
+            retval.append("[").append(std::to_string(orbit_index)).append("]")
+                  .append(std::to_string(*it));
             ++it;
             if (it != m_orbits.end())
-                os << ", ";
+                retval.append(", ");
             ++orbit_index;
         }
     }
 
-    os << "  starlanes: ";
-    for (auto it = m_starlanes_wormholes.begin();
-         it != m_starlanes_wormholes.end();)
-    {
+    retval.append("  starlanes: ");
+    for (auto it = m_starlanes_wormholes.begin(); it != m_starlanes_wormholes.end();) {
         int lane_end_id = it->first;
         ++it;
-        os << lane_end_id << (it == m_starlanes_wormholes.end() ? "" : ", ");
+        retval.append(std::to_string(lane_end_id)).append(it == m_starlanes_wormholes.end() ? "" : ", ");
     }
 
-    os << "  objects: ";
+    retval.append("  objects: ");
     for (auto it = m_objects.begin(); it != m_objects.end();) {
         int obj_id = *it;
         ++it;
-        if (obj_id == INVALID_OBJECT_ID)
-            continue;
-        os << obj_id << (it == m_objects.end() ? "" : ", ");
+        if (obj_id != INVALID_OBJECT_ID)
+            retval.append(std::to_string(obj_id)).append(it == m_objects.end() ? "" : ", ");
     }
-    return os.str();
+    return retval;
 }
 
 const std::string& System::ApparentName(int empire_id, const Universe& u,
