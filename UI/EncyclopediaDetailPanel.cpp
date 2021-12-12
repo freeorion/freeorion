@@ -552,10 +552,12 @@ namespace {
                         std::pair{VarText::SHIP_HULL_TAG, hull_name});
 
             // techs
-            for (const auto& tech_name : GetTechManager().TechNames())
-                if (DetermineCustomCategory(GetTech(tech_name)->Tags()) == dir_name)
+            for (const auto& tech : GetTechManager()) {
+                const auto& tech_name = tech->Name();
+                if (DetermineCustomCategory(tech->Tags()) == dir_name)
                     dir_entries[UserString(tech_name)] =
                         std::pair{VarText::TECH_TAG, tech_name};
+            }
 
             // building types
             for (auto& [building_name, building_type] : GetBuildingTypeManager())
