@@ -155,11 +155,8 @@ BoutBeginEvent::BoutBeginEvent(int bout_) :
     bout(bout_)
 {}
 
-std::string BoutBeginEvent::DebugString(const ScriptingContext&) const {
-    std::stringstream ss;
-    ss << "Bout " << bout << " begins.";
-    return ss.str();
-}
+std::string BoutBeginEvent::DebugString(const ScriptingContext&) const
+{ return std::string{"Bout "}.append(std::to_string(bout)).append(" begins."); }
 
 std::string BoutBeginEvent::CombatLogDescription(int viewing_empire_id, const ScriptingContext&) const
 { return str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout); }
