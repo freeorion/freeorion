@@ -617,6 +617,7 @@ void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) cons
 }
 
 std::string SetMeter::Dump(unsigned short ntabs) const {
+
     std::string retval = DumpIndent(ntabs) + "Set";
     switch (m_meter) {
     case MeterType::METER_TARGET_POPULATION:   retval += "TargetPopulation"; break;
