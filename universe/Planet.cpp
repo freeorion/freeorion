@@ -162,35 +162,36 @@ UniverseObjectType Planet::ObjectType() const
 { return UniverseObjectType::OBJ_PLANET; }
 
 std::string Planet::Dump(unsigned short ntabs) const {
-    std::stringstream os;
-    os << UniverseObject::Dump(ntabs);
-    os << PopCenter::Dump(ntabs);
-    os << ResourceCenter::Dump(ntabs);
-    os << " type: " << m_type
-       << " original type: " << m_original_type
-       << " size: " << m_size
-       << " rot period: " << m_rotational_period
-       << " axis tilt: " << m_axial_tilt
-       << " buildings: ";
+    std::string retval = UniverseObject::Dump(ntabs);
+    retval.reserve(2048);
+    retval += PopCenter::Dump(ntabs);
+    retval += ResourceCenter::Dump(ntabs);
+    retval.append(" type: ").append(to_string(m_type))
+          .append(" original type: ").append(to_string(m_original_type))
+          .append(" size: ").append(to_string(m_size))
+          .append(" rot period: ").append(std::to_string(m_rotational_period))
+          .append(" axis tilt: ").append(std::to_string(m_axial_tilt))
+          .append(" buildings: ");
     for (auto it = m_buildings.begin(); it != m_buildings.end();) {
         int building_id = *it;
         ++it;
-        os << building_id << (it == m_buildings.end() ? "" : ", ");
+        retval.append(std::to_string(building_id)).append(it == m_buildings.end() ? "" : ", ");
     }
     if (m_is_about_to_be_colonized)
-        os << " (About to be Colonized)";
+        retval.append(" (About to be Colonized)");
     if (m_is_about_to_be_invaded)
-        os << " (About to be Invaded)";
+        retval.append(" (About to be Invaded)");
 
-    os << " colonized on turn: " << m_turn_last_colonized;
-    os << " conquered on turn: " << m_turn_last_conquered;
+    retval.append(" colonized on turn: ").append(std::to_string(m_turn_last_colonized))
+          .append(" conquered on turn: ").append(std::to_string(m_turn_last_conquered));
     if (m_is_about_to_be_bombarded)
-        os << " (About to be Bombarded)";
+        retval.append(" (About to be Bombarded)");
     if (m_ordered_given_to_empire_id != ALL_EMPIRES)
-        os << " (Ordered to be given to empire with id: " << m_ordered_given_to_empire_id << ")";
-    os << " last attacked on turn: " << m_last_turn_attacked_by_ship;
+        retval.append(" (Ordered to be given to empire with id: ")
+              .append(std::to_string(m_ordered_given_to_empire_id)).append(")");
+    retval.append(" last attacked on turn: ").append(std::to_string(m_last_turn_attacked_by_ship));
 
-    return os.str();
+    return retval;
 }
 
 int Planet::HabitableSize() const {
