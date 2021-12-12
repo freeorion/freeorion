@@ -39,7 +39,7 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_TOSTRING(typeName, values) \
-inline \
+constexpr \
 BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
         friend, \
         BOOST_PP_EMPTY()) \
