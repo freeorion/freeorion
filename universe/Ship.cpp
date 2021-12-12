@@ -21,9 +21,6 @@
 #include "../util/Random.h"
 #include "../util/i18n.h"
 
-#include <utility>
-
-
 Ship::Ship(int empire_id, int design_id, std::string species_name,
            const Universe& universe, int produced_by_empire_id) :
     m_species_name(std::move(species_name)),
@@ -205,24 +202,25 @@ bool Ship::ContainedBy(int object_id) const {
 }
 
 std::string Ship::Dump(unsigned short ntabs) const {
-    std::stringstream os;
-    os << UniverseObject::Dump(ntabs);
-    os << " design id: " << m_design_id
-       << " fleet id: " << m_fleet_id
-       << " species name: " << m_species_name
-       << " produced by empire id: " << m_produced_by_empire_id
-       << " arrived on turn: " << m_arrived_on_turn
-       << " last resupplied on turn: " << m_last_resupplied_on_turn;
+    std::string retval = UniverseObject::Dump(ntabs);
+    retval.reserve(2048); // guesstimate
+    retval.append(" design id: ").append(std::to_string(m_design_id))
+          .append(" fleet id: ").append(std::to_string(m_fleet_id))
+          .append(" species name: ").append(m_species_name)
+          .append(" produced by empire id: ").append(std::to_string(m_produced_by_empire_id))
+          .append(" arrived on turn: ").append(std::to_string(m_arrived_on_turn))
+          .append(" last resupplied on turn: ").append(std::to_string(m_last_resupplied_on_turn));
     if (!m_part_meters.empty()) {
-        os << " part meters: ";
-        for (const auto& entry : m_part_meters) {
-            const std::string part_name = entry.first.second;
-            MeterType meter_type = entry.first.first;
-            const Meter& meter = entry.second;
-            os << part_name << " " << meter_type << ": " << meter.Current() << "  ";
+        retval.append(" part meters: ");
+        for (const auto& [meter_type_part_name, meter] : m_part_meters) {
+            const auto& [meter_type, part_name] = meter_type_part_name;
+            retval.append(part_name).append(" ")
+                  .append(boost::lexical_cast<std::string>(meter_type))
+                  .append(": ").append(std::to_string(meter.Current())).append("  ");
         }
     }
-    return os.str();
+
+    return retval;
 }
 
 bool Ship::IsMonster(const Universe& universe) const {
