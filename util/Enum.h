@@ -32,6 +32,36 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
 };
 
 /** @brief Implementation detail for FO_ENUM */
+#define FO_DEF_ENUM_TOSTRING_CASE(r, data, elem) \
+    case data::BOOST_PP_TUPLE_ELEM(0, elem): \
+        return BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)); \
+        break;
+
+/** @brief Implementation detail for FO_ENUM */
+#define FO_DEF_ENUM_TOSTRING(typeName, values) \
+inline \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+        friend, \
+        BOOST_PP_EMPTY()) \
+std::string_view to_string(\
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+    BOOST_PP_TUPLE_ELEM(1, typeName), \
+    BOOST_PP_TUPLE_ELEM(0, typeName)) value) \
+{ \
+    switch(value) \
+    { \
+        BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_TOSTRING_CASE, \
+            BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+                BOOST_PP_TUPLE_ELEM(1, typeName), \
+                BOOST_PP_TUPLE_ELEM(0, typeName)), values) \
+        default: \
+            return ""; \
+            break; \
+    } \
+}
+
+
+/** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_OSTREAM_CASE(r, data, elem) \
     case data::BOOST_PP_TUPLE_ELEM(0, elem): \
         stream << BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)); \
@@ -218,10 +248,10 @@ BOOST_PP_CAT(BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
  */
 #define FO_ENUM(typeName, values) \
     FO_DEF_ENUM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
+    FO_DEF_ENUM_TOSTRING(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
     FO_DEF_ENUM_OSTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
     FO_DEF_ENUM_ISTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
     FO_DEF_ENUM_ITERATE(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values))
-
 
 #endif
 
