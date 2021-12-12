@@ -14,6 +14,10 @@
 #include "../util/Logger.h"
 #include "../util/i18n.h"
 
+namespace ValueRef {
+    const std::string& MeterToName(MeterType meter);
+}
+
 UniverseObject::UniverseObject() :
     StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(
         GetUniverse().UniverseObjectSignalsInhibited())),
@@ -158,47 +162,49 @@ UniverseObjectType UniverseObject::ObjectType() const
 std::string UniverseObject::Dump(unsigned short ntabs) const {
     auto system = Objects().get<System>(this->SystemID());
 
-    std::stringstream os;
+    std::string retval;
+    retval.reserve(2048); // guesstimate
+    retval.append(boost::lexical_cast<std::string>(this->ObjectType())).append(" ")
+          .append(std::to_string(this->ID())).append(": ").append(this->Name());
 
-    os << this->ObjectType() << " "
-       << this->ID() << ": "
-       << this->Name();
     if (system) {
-        const std::string& sys_name = system->Name();
+        auto& sys_name = system->Name();
         if (sys_name.empty())
-            os << "  at: (System " << system->ID() << ")";
+            retval.append("  at: (System ").append(std::to_string(system->ID())).append(")");
         else
-            os << "  at: " << sys_name;
+            retval.append("  at: ").append(sys_name);
     } else {
-        os << "  at: (" << this->X() << ", " << this->Y() << ")";
+        retval.append("  at: (").append(std::to_string(this->X())).append(", ")
+              .append(std::to_string(this->Y())).append(")");
         int near_id = GetUniverse().GetPathfinder()->NearestSystemTo(this->X(), this->Y(), Objects()); // Get Objects() and PathFinder from passed in stuff?
         auto near_system = Objects().get<System>(near_id);
         if (near_system) {
-            const std::string& sys_name = near_system->Name();
+            auto& sys_name = near_system->Name();
             if (sys_name.empty())
-                os << " nearest (System " << near_system->ID() << ")";
+                retval.append(" nearest (System ").append(std::to_string(near_system->ID())).append(")");
             else
-                os << " nearest " << near_system->Name();
+                retval.append(" nearest ").append(near_system->Name());
         }
     }
     if (Unowned()) {
-        os << " owner: (Unowned) ";
+        retval.append(" owner: (Unowned) ");
     } else {
-        const std::string& empire_name = Empires().GetEmpireName(m_owner_empire_id);
+        auto& empire_name = Empires().GetEmpireName(m_owner_empire_id);
         if (!empire_name.empty())
-            os << " owner: " << empire_name;
+            retval.append(" owner: ").append(empire_name);
         else
-            os << " owner: (Unknown Empire)";
+            retval.append(" owner: (Unknown Empire)");
     }
-    os << " created on turn: " << m_created_on_turn
-       << " specials: ";
-    for (const auto& entry : m_specials)
-        os << "(" << entry.first << ", " << entry.second.first << ", " << entry.second.second << ") ";
-    os << "  Meters: ";
-    for (const auto& entry : m_meters)
-        os << entry.first
-           << ": " << entry.second.Dump() << "  ";
-    return os.str();
+    retval.append(" created on turn: ").append(std::to_string(m_created_on_turn))
+          .append(" specials: ");
+    for (auto& [special_name, turn_amount] : m_specials)
+        retval.append("(").append(special_name).append(", ")
+              .append(std::to_string(turn_amount.first)).append(", ")
+              .append(std::to_string(turn_amount.second)).append(") ");
+    retval.append("  Meters: ");
+    for (auto& [meter_type, meter] : m_meters)
+        retval.append(ValueRef::MeterToName(meter_type)).append(": ").append(meter.Dump()).append("  ");
+    return retval;
 }
 
 namespace {
