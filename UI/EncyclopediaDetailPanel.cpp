@@ -3162,11 +3162,15 @@ namespace {
             bool negative_header_placed = false;
 
             for (auto it = target_population_species.rbegin(); it != target_population_species.rend(); ++it) {
-                auto species_name_column1_it = species_suitability_column1.find(it->second.first);
+
+                const auto& [target_pop, species_env] = *it;
+                const auto& [species_name, env] = species_env;
+
+                auto species_name_column1_it = species_suitability_column1.find(species_name);
                 if (species_name_column1_it == species_suitability_column1.end())
                     continue;
 
-                if (it->first > 0) {
+                if (target_pop > 0) {
                     if (!positive_header_placed) {
                         auto pos_header = str(FlexibleFormat(UserString("ENC_SUITABILITY_REPORT_POSITIVE_HEADER"))
                                               % planet->PublicName(planet_id, universe));
@@ -3177,12 +3181,12 @@ namespace {
 
                     auto pos_row = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
                         % species_name_column1_it->second
-                        % UserString(boost::lexical_cast<std::string>(it->second.second))
-                        % (GG::RgbaTag(ClientUI::StatIncrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
+                        % UserString(boost::lexical_cast<std::string>(env))
+                        % (GG::RgbaTag(ClientUI::StatIncrColor()) + DoubleToString(target_pop, 2, true) + "</rgba>"));
                     TraceLogger() << "Suitability report positive row \"" << pos_row << "\"";
                     detailed_description.append(pos_row);
 
-                } else if (it->first <= 0) {
+                } else if (target_pop <= 0) {
                     if (!negative_header_placed) {
                         if (positive_header_placed)
                             detailed_description += "\n\n";
@@ -3196,8 +3200,8 @@ namespace {
 
                     auto neg_row = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY"))
                         % species_name_column1_it->second
-                        % UserString(boost::lexical_cast<std::string>(it->second.second))
-                        % (GG::RgbaTag(ClientUI::StatDecrColor()) + DoubleToString(it->first, 2, true) + "</rgba>"));
+                        % UserString(boost::lexical_cast<std::string>(env))
+                        % (GG::RgbaTag(ClientUI::StatDecrColor()) + DoubleToString(target_pop, 2, true) + "</rgba>"));
                     TraceLogger() << "Suitability report negative row \"" << neg_row << "\"";
                     detailed_description.append(neg_row);
                 }
