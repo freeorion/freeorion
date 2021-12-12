@@ -1,7 +1,11 @@
 #include "Meter.h"
 
 #include <algorithm>
-#include <sstream>
+
+#if __has_include(<charconv>)
+#include <array>
+#include <charconv>
+#endif
 
 
 Meter::Meter(float current_value, float initial_value) :
@@ -16,10 +20,25 @@ float Meter::Initial() const
 { return m_initial_value; }
 
 std::string Meter::Dump(unsigned short ntabs) const {
-    std::ostringstream strstm;
-    strstm.precision(5);
-    strstm << "Cur: " << m_current_value << " Init: " << m_initial_value;
-    return strstm.str();
+#if defined(__cpp_lib_to_chars)
+    std::array<std::string::value_type, 64> buffer{"Cur: "}; // rest should be nulls
+    auto result = std::to_chars(buffer.data() + 5, buffer.data() + buffer.size(), m_current_value,
+                                std::chars_format::fixed, 3);
+    // the biggest result of to_chars should be like "-65535.999" or 10 chars per number
+    *result.ptr = ' ';
+    *++result.ptr = 'I';
+    *++result.ptr = 'n';
+    *++result.ptr = 'i';
+    *++result.ptr = 't';
+    *++result.ptr = ':';
+    *++result.ptr = ' ';
+    result = std::to_chars(result.ptr + 1, buffer.data() + buffer.size(), m_initial_value,
+                           std::chars_format::fixed, 3);
+    return buffer.data();
+#else
+    return std::string{"Cur: "}.append(std::to_string(m_current_value))
+             .append(" Init: ").append(std::to_string(m_initial_value));
+#endif
 }
 
 void Meter::SetCurrent(float current_value)
