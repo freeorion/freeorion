@@ -9,6 +9,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Universe.h"
 
+#include <boost/lexical_cast.hpp>
 
 SitRepEntry::SitRepEntry() :
     VarText(),

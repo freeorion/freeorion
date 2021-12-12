@@ -1,6 +1,7 @@
 #include "Fleet.h"
 
 #include <boost/algorithm/cxx11/all_of.hpp>
+#include <boost/lexical_cast.hpp>
 #include "Pathfinder.h"
 #include "ShipDesign.h"
 #include "Ship.h"
@@ -154,7 +155,7 @@ UniverseObjectType Fleet::ObjectType() const
 std::string Fleet::Dump(unsigned short ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048);
-    retval.append(" aggression: ").append(boost::lexical_cast<std::string>(m_aggression))
+    retval.append(" aggression: ").append(to_string(m_aggression))
           .append(" cur system: ").append(std::to_string(SystemID()))
           .append(" moving to: ").append(std::to_string(FinalDestinationID()))
           .append(" prev system: ").append(std::to_string(m_prev_system))

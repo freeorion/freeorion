@@ -7,7 +7,6 @@
 #include <mutex>
 
 #include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include "Export.h"
 
@@ -101,7 +100,7 @@ boost::format FlexibleFormatList(
         default: return plural_header_template; break;
         }
     }()};
-    boost::format header_fmt = FlexibleFormat(header_template) % boost::lexical_cast<std::string>(words.size());
+    boost::format header_fmt = FlexibleFormat(header_template) % std::to_string(words.size());
     for (const auto& word : header_words)
         header_fmt % word;
 
