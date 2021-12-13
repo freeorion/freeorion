@@ -185,6 +185,7 @@ namespace {
         Hotkey::AddHotkey("ui.map.sitrep",                  UserStringNop("HOTKEY_MAP_SIT_REP"),                                GG::Key::GGK_n,                 GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.research",                    UserStringNop("HOTKEY_MAP_RESEARCH"),                               GG::Key::GGK_r,                 GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.production",                  UserStringNop("HOTKEY_MAP_PRODUCTION"),                             GG::Key::GGK_p,                 GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.government",                  UserStringNop("HOTKEY_MAP_GOVERNMENT"),                             GG::Key::GGK_i,                 GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.design",                      UserStringNop("HOTKEY_MAP_DESIGN"),                                 GG::Key::GGK_d,                 GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.map.objects",                 UserStringNop("HOTKEY_MAP_OBJECTS"),                                GG::Key::GGK_o,                 GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("ui.map.messages",                UserStringNop("HOTKEY_MAP_MESSAGES"),                               GG::Key::GGK_t,                 GG::MOD_KEY_ALT);
@@ -7240,6 +7241,8 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(boost::bind(&MapWnd::ToggleResearch, this), "ui.research",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ToggleProduction, this), "ui.production",
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
+    hkm->Connect(boost::bind(&MapWnd::ToggleGovernment, this), "ui.government",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ToggleDesign, this), "ui.design",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));

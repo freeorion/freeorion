@@ -17618,6 +17618,9 @@ Show graphs list
 HOTKEY_MAP_PRODUCTION
 Toggle production panel
 
+HOTKEY_MAP_GOVERNMENT
+Toggle government window
+
 HOTKEY_MAP_SIT_REP
 Toggle situation report
 
