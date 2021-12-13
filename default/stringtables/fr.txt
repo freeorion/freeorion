@@ -17618,6 +17618,9 @@ Afficher liste des Graphiques
 HOTKEY_MAP_PRODUCTION
 Fenêtre Production [on/off]
 
+HOTKEY_MAP_GOVERNMENT
+Fenêtre Gouvernement [on/off]
+
 HOTKEY_MAP_SIT_REP
 Rapport de Situation [on/off]
 
