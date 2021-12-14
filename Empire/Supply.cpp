@@ -362,6 +362,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
 
 
     for (const auto& [empire_id, empire] : empires) {
+        (void)empire;
         const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(empire_id);
         std::set<int> systems_containing_friendly_fleets;
 

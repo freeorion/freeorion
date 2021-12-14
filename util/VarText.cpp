@@ -268,8 +268,10 @@ void VarText::SetTemplateString(std::string template_string, bool stringtable_lo
 std::vector<std::string_view> VarText::GetVariableTags() const {
     std::vector<std::string_view> retval;
     retval.reserve(m_variables.size());
-    for (const auto& [tag, data] : m_variables)
-        retval.emplace_back(tag);
+    for (const auto& [tag, data] : m_variables) {
+        (void)data;
+        retval.push_back(tag);
+    }
     return retval;
 }
 

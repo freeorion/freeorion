@@ -300,13 +300,6 @@ namespace {
         return retval.str();
     }
 
-    bool OptionNameHasParentSection(const std::string& lhs, const std::string& rhs) {
-        auto it = lhs.find_last_of('.');
-        if (it == std::string::npos)
-            return false;
-        return lhs.substr(0, it) == rhs;
-    }
-
     bool OptionNameHasParentSection(std::string_view lhs, std::string_view rhs) {
         auto it = lhs.find_last_of('.');
         if (it == std::string::npos)
