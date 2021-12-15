@@ -41,11 +41,8 @@ void PopCenter::Init() {
     AddMeter(MeterType::METER_TARGET_HAPPINESS);
 }
 
-std::string PopCenter::Dump(unsigned short ntabs) const {
-    std::stringstream os;
-    os << " species: " << m_species_name << "  ";
-    return os.str();
-}
+std::string PopCenter::Dump(unsigned short ntabs) const
+{ return std::string{" species: "}.append(m_species_name).append("  "); }
 
 bool PopCenter::Populated() const
 { return GetMeter(MeterType::METER_POPULATION)->Current() >= MINIMUM_POP_CENTER_POPULATION; }

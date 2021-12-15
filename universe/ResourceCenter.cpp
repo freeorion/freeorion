@@ -83,9 +83,8 @@ const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) cons
 { return EMPTY_STRING; }
 
 std::string ResourceCenter::Dump(unsigned short ntabs) const {
-    std::stringstream os;
-    os << "ResourceCenter focus: " << m_focus << " last changed on turn: " << m_last_turn_focus_changed;
-    return os.str();
+    return std::string{"ResourceCenter focus: "}.append(m_focus)
+        .append(" last changed on turn: ").append(std::to_string(m_last_turn_focus_changed));
 }
 
 void ResourceCenter::SetFocus(const std::string& focus) {
