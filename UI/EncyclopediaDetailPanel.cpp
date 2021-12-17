@@ -1098,6 +1098,10 @@ namespace {
         auto sorted_entries = GetSortedPediaDirEntires(dir_name, exclude_custom_categories_from_dir_name);
 
 
+        std::vector<std::future<decltype(GetSubDirs(""))>> futures;
+        futures.reserve(sorted_entries.size());
+
+        size_t n = 0;
         for (auto& [readable_article_name, link_category] : sorted_entries) {
             auto& [link_text, category_str_key] = link_category;
 
@@ -1105,17 +1109,16 @@ namespace {
             if (category_str_key == "ENC_TEXTURES" || category_str_key == dir_name)
                 continue;
 
-            // recurse into any sub-sub-directories
-            auto temp = GetSubDirs(category_str_key, exclude_custom_categories_from_dir_name, depth);
-
-            TraceLogger() << "GetSubDirs(" << dir_name << ") storing "
-                          << category_str_key << ": " << readable_article_name;
+            futures.push_back(std::async(std::launch::async,
+                                         GetSubDirs,
+                                         category_str_key, exclude_custom_categories_from_dir_name, depth));
 
             retval.emplace(std::pair{std::move(category_str_key), dir_name},
                            std::pair{readable_article_name, std::move(link_text)});
-
-            retval.merge(temp);
         }
+
+        for (auto& fut : futures)
+            retval.merge(fut.get());
 
         return retval;
     }
