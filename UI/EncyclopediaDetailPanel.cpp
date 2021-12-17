@@ -88,15 +88,15 @@ namespace {
      * @return The first matched pedia category for this set of tags,
      *          or empty string if there are no matches.
      */
-    template <class TagContainer = std::vector<std::string_view>>
-    std::string_view DetermineCustomCategory(const TagContainer& tags) {
+    std::string_view DetermineCustomCategory(const std::set<std::string>& tags) {
         // for each tag, check if it starts with the prefix TAG_PEDIA_PREFIX
         // when a match is found, return the match (without the prefix portion)
-        for (std::string_view tag : tags) {
+        for (auto& tag : tags) {
             if (boost::starts_with(tag, TAG_PEDIA_PREFIX)) {
                 //return boost::replace_first_copy(tag, TAG_PEDIA_PREFIX, "");
-                tag.remove_prefix(TAG_PEDIA_PREFIX.length());
-                return tag;
+                std::string_view retval{tag};
+                retval.remove_prefix(TAG_PEDIA_PREFIX.length());
+                return retval;
             }
         }
 
@@ -154,13 +154,14 @@ namespace {
         pair of (article link tag text, stringtable key for article category or
         subcategorization of it). Category is something like "ENC_TECH" and
         subcategorization is something like a tech category (eg. growth). */
-    void GetSortedPediaDirEntires(
+    auto GetSortedPediaDirEntires(
         const std::string& dir_name,
-        std::multimap<std::string, std::pair<std::string, std::string>, std::less<>>& sorted_entries_list,
         bool exclude_custom_categories_from_dir_name = true)
     {
         ScopedTimer subdir_timer("GetSortedPediaDirEntires(" + dir_name + ")",
                                  true, std::chrono::milliseconds(20));
+
+        std::multimap<std::string, std::pair<std::string, std::string>, std::less<>> retval;
 
         const Encyclopedia& encyclopedia = GetEncyclopedia();
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
@@ -173,13 +174,13 @@ namespace {
             for (const std::string& str : GetSearchTextDirNames()) {
                 if (str == "ENC_INDEX")
                     continue;
-                sorted_entries_list.emplace(
+                retval.emplace(
                     UserString(str),
                     std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str).append("\n"), str});
             }
 
             for (auto str : {"ENC_TEXTURES", "ENC_HOMEWORLDS"}) {
-                sorted_entries_list.emplace(
+                retval.emplace(
                     UserString(str),
                     std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str).append("\n"), str});
             }
@@ -192,7 +193,7 @@ namespace {
                     continue;
                 (void)article_vec; // quiet unused variable warning
 
-                sorted_entries_list.emplace(
+                retval.emplace(
                     UserString(category_name),
                     std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, category_name).append("\n"), category_name});
             }
@@ -201,7 +202,7 @@ namespace {
         else if (dir_name == "ENC_SHIP_PART") {
             for (auto& [part_name, part] : GetShipPartManager()) {
                 if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(part->Tags()).empty()) {
-                    sorted_entries_list.emplace(
+                    retval.emplace(
                         UserString(part_name),
                         std::pair{LinkTaggedText(VarText::SHIP_PART_TAG, part_name).append("\n"), part_name});
                 }
@@ -211,7 +212,7 @@ namespace {
         else if (dir_name == "ENC_SHIP_HULL") {
             for (auto& [hull_name, hull] : GetShipHullManager()) {
                 if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(hull->Tags()).empty()) {
-                    sorted_entries_list.emplace(
+                    retval.emplace(
                         UserString(hull_name),
                         std::pair{LinkTaggedText(VarText::SHIP_HULL_TAG, hull_name).append("\n"), hull_name});
                 }
@@ -236,7 +237,7 @@ namespace {
                 {
                     // already iterating over userstring-looked-up names, so don't need to re-look-up-here
                     std::string tagged_text{LinkTaggedText(VarText::TECH_TAG, tech_name).append("\n")};
-                    sorted_entries_list.emplace(
+                    retval.emplace(
                         std::move(us_name),
                         std::pair(std::move(tagged_text), std::move(tech_name)));
                 }
@@ -247,7 +248,7 @@ namespace {
             for (auto& policy_name : GetPolicyManager().PolicyNames()) {
                 std::string tagged_text{LinkTaggedText(VarText::POLICY_TAG, policy_name).append("\n")};
                 auto& us_name{UserString(policy_name)}; // line before to avoid order of evaluation issues when moving from policy_name
-                sorted_entries_list.emplace(
+                retval.emplace(
                     us_name,
                     std::pair{std::move(tagged_text), std::move(policy_name)});
             }
@@ -256,7 +257,7 @@ namespace {
         else if (dir_name == "ENC_BUILDING_TYPE") {
             for (const auto& [building_name, building_type] : GetBuildingTypeManager()) {
                 if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(building_type->Tags()).empty()) {
-                    sorted_entries_list.emplace(
+                    retval.emplace(
                         UserString(building_name),
                         std::pair{LinkTaggedText(VarText::BUILDING_TYPE_TAG, building_name).append("\n"), building_name});
                 }
@@ -267,7 +268,7 @@ namespace {
             for (auto special_name : SpecialNames()) {
                 std::string tagged_text{LinkTaggedText(VarText::SPECIAL_TAG, special_name).append("\n")};
                 auto& us_name{UserString(special_name)};    // line before to avoid order of operations issues when moving from special_name
-                sorted_entries_list.emplace(
+                retval.emplace(
                     us_name,
                     std::pair{std::move(tagged_text), special_name});
             }
@@ -278,7 +279,7 @@ namespace {
             if (!exclude_custom_categories_from_dir_name) {
                 for (const auto& [species_name, species] : GetSpeciesManager()) {
                     (void)species; // quiet warning
-                    sorted_entries_list.emplace(
+                    retval.emplace(
                         UserString(species_name),
                         std::pair{LinkTaggedText(VarText::SPECIES_TAG, species_name).append("\n"), species_name});
                 }
@@ -334,14 +335,14 @@ namespace {
                         }
                     }
                 }
-                sorted_entries_list.emplace(UserString(entry.first),
+                retval.emplace(UserString(entry.first),
                                             std::pair{species_entry.append("\n"), entry.first});
             }
-            sorted_entries_list.emplace("⃠ ", std::pair{"\n\n", "  "});
+            retval.emplace("⃠ ", std::pair{"\n\n", "  "});
             for (const auto& entry : GetSpeciesManager()) {
                 if (!homeworlds.count(entry.first) || homeworlds.at(entry.first).empty()) {
                     std::string species_entry{LinkTaggedText(VarText::SPECIES_TAG, entry.first) + ":  \n" + UserString("NO_HOMEWORLD")};
-                    sorted_entries_list.emplace("⃠⃠" + std::string( "⃠ ") + UserString(entry.first),
+                    retval.emplace("⃠⃠" + std::string( "⃠ ") + UserString(entry.first),
                                                 std::pair{std::move(species_entry), entry.first});
                 }
             }
@@ -350,7 +351,7 @@ namespace {
         else if (dir_name == "ENC_FIELD_TYPE") {
             for (const auto& entry : GetFieldTypeManager()) {
                 if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(entry.second->Tags()).empty()) {
-                    sorted_entries_list.emplace(
+                    retval.emplace(
                         UserString(entry.first),
                         std::pair{LinkTaggedText(VarText::FIELD_TYPE_TAG, entry.first).append("\n"), entry.first});
                 }
@@ -363,13 +364,13 @@ namespace {
                  meter_type = static_cast<MeterType>(static_cast<int>(meter_type) + 1))
             {
                 if (meter_type > MeterType::INVALID_METER_TYPE && meter_type < MeterType::NUM_METER_TYPES)
-                    MeterTypeDirEntry(meter_type, sorted_entries_list);
+                    MeterTypeDirEntry(meter_type, retval);
             }
 
         }
         else if (dir_name == "ENC_EMPIRE") {
             for (const auto& [id, empire] : Empires()) {
-                sorted_entries_list.emplace(
+                retval.emplace(
                     empire->Name(),
                     std::pair{LinkTaggedIDText(VarText::EMPIRE_ID_TAG, id, empire->Name()).append("\n"),
                               std::to_string(id)});
@@ -381,7 +382,7 @@ namespace {
                 const auto& [design_id, design] = *it;
                 if (design->IsMonster())
                     continue;
-                sorted_entries_list.emplace(
+                retval.emplace(
                     design->Name(),
                     std::pair{LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design->Name()).append("\n"),
                               std::to_string(design_id)});
@@ -391,7 +392,7 @@ namespace {
         else if (dir_name == "ENC_SHIP") {
             for (auto& ship : objects.all<Ship>()) {
                 const std::string& ship_name = ship->PublicName(client_empire_id, universe);
-                sorted_entries_list.emplace(
+                retval.emplace(
                     ship_name,
                     std::pair{LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name).append("  "),
                               std::to_string(ship->ID())});
@@ -403,7 +404,7 @@ namespace {
                 if (!ship->IsMonster(universe))
                     continue;
                 const std::string& ship_name = ship->PublicName(client_empire_id, universe);
-                sorted_entries_list.emplace(
+                retval.emplace(
                     ship_name,
                     std::pair{LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name).append("  "),
                               std::to_string(ship->ID())});
@@ -414,7 +415,7 @@ namespace {
             for (auto it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
                 const auto& [design_id, design] = *it;
                 if (design->IsMonster())
-                    sorted_entries_list.emplace(
+                    retval.emplace(
                         design->Name(),
                         std::pair{LinkTaggedIDText(VarText::DESIGN_ID_TAG, design_id, design->Name()).append("\n"),
                                   std::to_string(design_id)});
@@ -424,7 +425,7 @@ namespace {
         else if (dir_name == "ENC_FLEET") {
             for (auto& fleet : objects.all<Fleet>()) {
                 const std::string& flt_name = fleet->PublicName(client_empire_id, universe);
-                sorted_entries_list.emplace(
+                retval.emplace(
                     flt_name,
                     std::pair{LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name).append("  "),
                               std::to_string(fleet->ID())});
@@ -434,7 +435,7 @@ namespace {
         else if (dir_name == "ENC_PLANET") {
             for (auto& planet : objects.all<Planet>()) {
                 const std::string& plt_name = planet->PublicName(client_empire_id, universe);
-                sorted_entries_list.emplace(
+                retval.emplace(
                     plt_name,
                     std::pair{LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name).append("  "),
                               std::to_string(planet->ID())});
@@ -444,7 +445,7 @@ namespace {
         else if (dir_name == "ENC_BUILDING") {
             for (auto& building : objects.all<Building>()) {
                 const std::string& bld_name = building->PublicName(client_empire_id, universe);
-                sorted_entries_list.emplace(
+                retval.emplace(
                     bld_name,
                     std::pair{LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name).append("  "),
                               std::to_string(building->ID())});
@@ -454,7 +455,7 @@ namespace {
         else if (dir_name == "ENC_SYSTEM") {
             for (auto& system : objects.all<System>()) {
                 const std::string& sys_name = system->ApparentName(client_empire_id, universe);
-                sorted_entries_list.emplace(
+                retval.emplace(
                     sys_name,
                     std::pair{LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name).append("  "),
                               std::to_string(system->ID())});
@@ -464,7 +465,7 @@ namespace {
         else if (dir_name == "ENC_FIELD") {
             for (auto& field : objects.all<Field>()) {
                 const std::string& field_name = field->Name();
-                sorted_entries_list.emplace(
+                retval.emplace(
                     field_name,
                     std::pair{LinkTaggedIDText(VarText::FIELD_ID_TAG, field->ID(), field_name).append("  "),
                               std::to_string(field->ID())});
@@ -473,7 +474,7 @@ namespace {
         }
         else if (dir_name == "ENC_GRAPH") {
             for (const auto& stat_record : universe.GetStatRecords()) {
-                sorted_entries_list.emplace(
+                retval.emplace(
                     UserString(stat_record.first),
                     std::pair{LinkTaggedText(TextLinker::GRAPH_TAG, stat_record.first).append("\n"),
                               stat_record.first});
@@ -488,7 +489,7 @@ namespace {
                      Value(tex->Height()) %
                      tex->BytesPP() %
                      tex_name);
-                 sorted_entries_list.emplace(
+                 retval.emplace(
                      tex_name,
                      std::pair{std::move(texture_info_str), tex_name});
              }
@@ -500,7 +501,7 @@ namespace {
                      Value(tex->Size().y) %
                      tex->NumShapes() %
                      tex_name);
-                 sorted_entries_list.emplace(
+                 retval.emplace(
                      tex_name,
                      std::pair{std::move(texture_info_str), tex_name});
              }
@@ -509,11 +510,11 @@ namespace {
         else if (dir_name == "ENC_STRINGS") {
             // show all stringable keys and values
             for (auto& [str_key, str_val] : AllStringtableEntries())
-                sorted_entries_list.emplace(str_key, std::pair{str_key + ": " + str_val + "\n", str_key});
+                retval.emplace(str_key, std::pair{str_key + ": " + str_val + "\n", str_key});
 
         }
         else if  (dir_name == "ENC_NAMED_VALUE_REF") {
-            sorted_entries_list.emplace("ENC_NAMED_VALUE_REF_DESC",
+            retval.emplace("ENC_NAMED_VALUE_REF_DESC",
                                         std::pair{UserString("ENC_NAMED_VALUE_REF_DESC") + "\n\n", dir_name});
 
             for (auto& [ref_key, val_ref] : GetNamedValueRefManager().GetItems()) {
@@ -522,7 +523,7 @@ namespace {
                 std::string_view key_str = UserStringExists(ref_key) ? UserString(ref_key) : "";
 
                 // (human-readable article name) -> (link tag text, category stringtable key)
-                sorted_entries_list.emplace(
+                retval.emplace(
                     ref_key,
                     std::pair{std::string{ref_key}.append(value_type)
                                 .append(LinkTaggedPresetText(VarText::FOCS_VALUE_TAG, ref_key, key_str))
@@ -588,7 +589,7 @@ namespace {
             // Add sorted entries, keyed by human-readable article name, containing (tag, article stringtable key)
             for (auto& [readable_name, tag_key] : dir_entries) {
                 auto&& linked_text{LinkTaggedText(tag_key.first, tag_key.second) + "\n"};
-                sorted_entries_list.emplace(
+                retval.emplace(
                     readable_name,
                     std::pair{std::move(linked_text), std::move(tag_key.second)});
             }
@@ -602,23 +603,25 @@ namespace {
                 // Prevent duplicate addition of hard-coded directories that also have a content definition
                 if (article.name == dir_name)
                     continue;
-                sorted_entries_list.emplace(
+                retval.emplace(
                     UserString(article.name),
                     std::pair{LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, article.name) + "\n", article.name});
             }
         }
+
+
+        return retval;
     }
 
     std::string PediaDirText(const std::string& dir_name) {
         // get sorted list of entries for requested directory
-        std::multimap<std::string, std::pair<std::string, std::string>, std::less<>> sorted_entries_list;
-        GetSortedPediaDirEntires(dir_name, sorted_entries_list);
+        auto sorted_entries = GetSortedPediaDirEntires(dir_name);
 
         std::string retval;
-        retval.reserve(sorted_entries_list.size() * 128);   // rough guesstimate
+        retval.reserve(sorted_entries.size() * 128);   // rough guesstimate
 
         // add sorted entries linktext representation to page text
-        for (const auto& entry : sorted_entries_list)
+        for (const auto& entry : sorted_entries)
             retval += entry.second.first;
 
         return retval;
@@ -1092,8 +1095,7 @@ namespace {
 
 
         // map from (human readable article name) to (article-link-tag-text, article name stringtable key)
-        std::multimap<std::string, std::pair<std::string, std::string>, std::less<>> sorted_entries;
-        GetSortedPediaDirEntires(dir_name, sorted_entries, exclude_custom_categories_from_dir_name);
+        auto sorted_entries = GetSortedPediaDirEntires(dir_name, exclude_custom_categories_from_dir_name);
 
 
         for (auto& [readable_article_name, link_category] : sorted_entries) {
@@ -1104,7 +1106,7 @@ namespace {
                 continue;
 
             // recurse into any sub-sub-directories
-            auto&& temp = GetSubDirs(category_str_key, exclude_custom_categories_from_dir_name, depth);
+            auto temp = GetSubDirs(category_str_key, exclude_custom_categories_from_dir_name, depth);
 
             TraceLogger() << "GetSubDirs(" << dir_name << ") storing "
                           << category_str_key << ": " << readable_article_name;
