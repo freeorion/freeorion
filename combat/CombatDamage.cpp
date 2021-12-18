@@ -117,9 +117,20 @@ namespace {
         constexpr float shields = 0.0f;
         constexpr float structure = 100.0f;
 
+        if (!template_ship) {
+            ErrorLogger() << "TempShipForDamageCalcs passed null template ship";
+            return nullptr;
+        }
+
         // use the given design and species as default enemy.
-        auto target = std::make_shared<Ship>(ALL_EMPIRES, template_ship->DesignID(),
-                                             template_ship->SpeciesName(), context.ContextUniverse());
+        std::shared_ptr<Ship> target;
+        try {
+            target = std::make_shared<Ship>(ALL_EMPIRES, template_ship->DesignID(),
+                                            template_ship->SpeciesName(), context.ContextUniverse());
+        } catch (...) {
+            ErrorLogger() << "Couldn't create temporary ship from template ship: " << template_ship->Dump();
+            return nullptr;
+        }
         // target needs to have an ID != -1 to be visible, stealth should be low enough
         // structure must be higher than zero to be valid target
         target->SetID(TEMPORARY_OBJECT_ID); // also see InsertTemp function usage
@@ -143,8 +154,13 @@ std::vector<float> Combat::WeaponDamageImpl(
     const ScriptingContext& context, std::shared_ptr<const Ship> source, float shields,
     bool max, bool launch_fighters, bool target_ships)
 {
-    if (!source)
+    if (!source) {
+        ErrorLogger() << "Combat::WeaponDamageImpl passed null source ship";
         return {};
+    } else if (source->DesignID() == INVALID_DESIGN_ID) {
+        ErrorLogger() << "Combat::WeaponDamageImpl passed source ship without a valid design ID: " << source->Dump();
+        return {};
+    }
 
     Universe::EmpireObjectVisibilityMap empire_object_vis{
         {source->Owner(), {{TEMPORARY_OBJECT_ID, Visibility::VIS_FULL_VISIBILITY}}}};
