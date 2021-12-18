@@ -237,13 +237,31 @@ bool Ship::CanDestroyFighters(const ScriptingContext& context) const
 { return TotalWeaponsFighterDamage(context, true) > 0.0f; }
 
 bool Ship::IsArmed(const ScriptingContext& context) const {
-    if (HasFighters(context.ContextUniverse()) &&
-        ((TotalWeaponsShipDamage(context, 0.0f, true) > 0.0f)
-         || (TotalWeaponsFighterDamage(context, true) > 0.0f)))
-        return true;
-    else
-        return ((TotalWeaponsShipDamage(context, 0.0f, false) > 0.0f) ||
-                (TotalWeaponsFighterDamage(context, false) > 0.0f));
+    bool has_fighters = HasFighters(context.ContextUniverse());
+
+    for (auto& [meter_type_part, meter] : m_part_meters) {
+        auto& [meter_type, part_name] = meter_type_part;
+
+        const ShipPart* part = GetShipPart(part_name);
+        if (!part)
+            continue;
+
+        if (meter_type == MeterType::METER_CAPACITY &&
+            part->Class() == ShipPartClass::PC_DIRECT_WEAPON &&
+            meter.Current() > 0.0f)
+        {
+            return true; // ship has a direct weapon that can do damage
+
+        } else if (meter_type == MeterType::METER_SECONDARY_STAT &&
+                   has_fighters &&
+                   part->Class() == ShipPartClass::PC_FIGHTER_HANGAR &&
+                   meter.Current() > 0.0f)
+        {
+            return true; // ship has fighters and those fighters can do damage
+        }
+    }
+
+    return false;
 }
 
 bool Ship::HasFighters(const Universe& universe) const {
@@ -418,13 +436,14 @@ float Ship::SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass 
 
 float Ship::FighterCount() const {
     float retval = 0.0f;
-    for (const auto& entry : m_part_meters) {
-        if (entry.first.first != MeterType::METER_CAPACITY)
+    for (auto& [meter_type_part, meter] : m_part_meters) {
+        auto& [meter_type, part_name] = meter_type_part;
+        if (meter_type != MeterType::METER_CAPACITY)
             continue;
-        const ShipPart* part = GetShipPart(entry.first.second);
+        const ShipPart* part = GetShipPart(part_name);
         if (!part || part->Class() != ShipPartClass::PC_FIGHTER_HANGAR)
             continue;
-        retval += entry.second.Current();
+        retval += meter.Current();
     }
 
     return retval;
@@ -432,19 +451,18 @@ float Ship::FighterCount() const {
 
 float Ship::FighterMax() const {
     float retval = 0.0f;
-    for (const auto& entry : m_part_meters) {
-        //std::map<std::pair<MeterType, std::string>, Meter>
-        if (entry.first.first != MeterType::METER_MAX_CAPACITY)
+    for (auto& [meter_type_part, meter] : m_part_meters) {
+        auto& [meter_type, part_name] = meter_type_part;
+        if (meter_type != MeterType::METER_MAX_CAPACITY)
             continue;
-        const ShipPart* part = GetShipPart(entry.first.second);
+        const ShipPart* part = GetShipPart(part_name);
         if (!part || part->Class() != ShipPartClass::PC_FIGHTER_HANGAR)
             continue;
-        retval += entry.second.Current();
+        retval += meter.Current();
     }
 
     return retval;
 }
-
 
 float Ship::WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext& context) const {
     if (!part || (part->Class() != ShipPartClass::PC_DIRECT_WEAPON))
@@ -455,7 +473,7 @@ float Ship::WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext
         return part->TotalFighterDamage()->Eval(context);
     } else {
         int num_bouts_with_fighter_targets = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS") - 1;
-        return  CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part->Name()) * num_bouts_with_fighter_targets;  // used within loop that updates meters, so need current, not initial values
+        return CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part->Name()) * num_bouts_with_fighter_targets;  // used within loop that updates meters, so need current, not initial values
     }
 }
 
