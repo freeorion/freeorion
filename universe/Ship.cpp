@@ -268,7 +268,20 @@ bool Ship::HasFighters(const Universe& universe) const {
     const ShipDesign* design = universe.GetShipDesign(m_design_id);
     if (!design || !design->HasFighters())  // ensures ship has ability to launch fighters
         return false;
-    return FighterCount() >= 1.0f;          // ensures ship currently has fighters to launch
+
+    // ensure ship currently has fighters to launch
+    for (auto& [meter_type_part, meter] : m_part_meters) {
+        auto& [meter_type, part_name] = meter_type_part;
+        if (meter_type != MeterType::METER_CAPACITY)
+            continue;
+        const ShipPart* part = GetShipPart(part_name);
+        if (!part || part->Class() != ShipPartClass::PC_FIGHTER_HANGAR)
+            continue;
+        if (meter.Current() > 0.0f)
+            return true;
+    }
+
+    return false;
 }
 
 bool Ship::CanColonize(const Universe& universe, const SpeciesManager& sm) const {
