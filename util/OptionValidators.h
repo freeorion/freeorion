@@ -183,11 +183,6 @@ struct DiscreteValidator : public Validator<T>
         m_values(start, finish)
     {}
 
- /*   DiscreteValidator(DiscreteValidator&& rhs) noexcept = default;
-    DiscreteValidator(const DiscreteValidator& rhs) = default;
-
-    ~DiscreteValidator() override = default;*/
-
     boost::any Validate(const std::string& str) const override {
         T val = boost::lexical_cast<T>(str);
 
