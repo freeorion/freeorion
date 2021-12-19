@@ -77,6 +77,7 @@ namespace {
 
         // set option default value based on system locale
         auto default_stringtable_path = GetDefaultStringTableFileName();
+        auto default_stringtable_path_string = PathToString(default_stringtable_path);
         GetOptionsDB().SetDefault("resource.stringtable.path", PathToString(default_stringtable_path));
 
         // get option-configured stringtable path. may be the default empty
@@ -90,8 +91,8 @@ namespace {
         DebugLogger() << "Stringtable option path: " << option_path;
 
         if (option_path.empty()) {
-            DebugLogger() << "Stringtable option path not specified yet, using default: " << PathToString(default_stringtable_path);
-            stringtable_path = PathToString(default_stringtable_path);
+            DebugLogger() << "Stringtable option path not specified yet, using default: " << default_stringtable_path_string;
+            stringtable_path = std::move(default_stringtable_path_string);
             GetOptionsDB().Set("resource.stringtable.path", PathToString(stringtable_path));
             stringtable_filename_init = true;
             return;
@@ -113,7 +114,7 @@ namespace {
             set_option = true;
             // fall back to default option value
             ErrorLogger() << "Stringtable option path file is missing: " << PathToString(stringtable_path);
-            DebugLogger() << "Resetting to default: " << PathToString(default_stringtable_path);
+            DebugLogger() << "Resetting to default: " << default_stringtable_path_string;
             stringtable_path = std::move(default_stringtable_path);
         }
 
@@ -135,69 +136,71 @@ namespace {
             return option_path;
     }
 
-    StringTable& GetStringTable(boost::filesystem::path stringtable_path,
+    template <typename SS>
+    std::shared_ptr<StringTable> GetOrCreateStringTable(
+        SS&& filename, std::shared_lock<std::shared_mutex>& access_lock,
+        std::shared_ptr<const StringTable> fallback = nullptr)
+    {
+        access_lock.unlock();
+        std::unique_lock mutation_lock(stringtable_access_mutex);
+
+        try {
+            if (auto it = stringtables.find(filename); it != stringtables.end()) {
+                auto retval{it->second};
+                mutation_lock.unlock();
+                access_lock.lock();
+                return retval;
+
+            } else {
+                auto retval{std::make_shared<StringTable>(filename, std::move(fallback))};
+                stringtables.emplace(std::forward<SS>(filename), retval);
+                mutation_lock.unlock();
+                access_lock.lock();
+                return retval;
+            }
+        } catch (...) {}
+
+        mutation_lock.unlock();
+        access_lock.lock();
+        return nullptr;
+    }
+
+    StringTable& GetStringTable(const std::string& stringtable_filename,
                                 std::shared_lock<std::shared_mutex>& access_lock)
     {
-        InitStringtableFileName();
-
+        if (auto it = stringtables.find(stringtable_filename); it != stringtables.end())
+            return *it->second;
 
         // ensure the default stringtable is loaded first
+        InitStringtableFileName();
         auto default_stringtable_filename{GetOptionsDB().GetDefault<std::string>("resource.stringtable.path")};
-        auto stringtable_filename = PathToString(stringtable_path);
-
-        auto get_stringtable = [&access_lock](
-            std::string&& filename, std::shared_ptr<const StringTable> fallback = nullptr)
-            -> std::shared_ptr<StringTable>
-        {
-            if (auto it = stringtables.find(filename); it != stringtables.end())
-                return it->second;
-
-            access_lock.unlock();
-            std::unique_lock mutation_lock(stringtable_access_mutex);
-
-            try {
-                if (auto it = stringtables.find(filename); it != stringtables.end()) {
-                    auto retval{it->second};
-                    mutation_lock.unlock();
-                    access_lock.lock();
-                    return retval;
-
-                } else {
-                    auto retval{std::make_shared<StringTable>(filename, std::move(fallback))};
-                    stringtables.emplace(std::move(filename), retval);
-                    mutation_lock.unlock();
-                    access_lock.lock();
-                    return retval;
-                }
-            } catch (...) {}
-
-            mutation_lock.unlock();
-            access_lock.lock();
-            return nullptr;
-        };
-
-        auto default_table{get_stringtable(std::move(default_stringtable_filename))};
 
         if (default_stringtable_filename == stringtable_filename) {
+            auto default_table{GetOrCreateStringTable(default_stringtable_filename, access_lock)};
             if (default_table)
                 return *default_table;
             throw std::runtime_error("couldn't get default stringtable!");
         }
 
-        if (auto retval{get_stringtable(std::move(stringtable_filename), std::move(default_table))})
-            return *retval;
+        auto default_table{GetOrCreateStringTable(std::move(default_stringtable_filename), access_lock)};
 
-        if (default_table)
+        if (auto table{GetOrCreateStringTable(stringtable_filename, access_lock, default_table)})
+            return *table;
+        else if (default_table)
             return *default_table;
-
-        throw std::runtime_error("couldn't get stringtable or default stringtable!");
+        else
+            throw std::runtime_error("couldn't get stringtable or default stringtable!");
     }
+
+    StringTable& GetStringTable(const boost::filesystem::path& stringtable_path,
+                                std::shared_lock<std::shared_mutex>& access_lock)
+    { return GetStringTable(PathToString(stringtable_path), access_lock); }
 
     StringTable& GetStringTable(std::shared_lock<std::shared_mutex>& access_lock)
     { return GetStringTable(GetStringTableFileName(), access_lock); }
 
     StringTable& GetDevDefaultStringTable(std::shared_lock<std::shared_mutex>& access_lock)
-    { return GetStringTable(DevDefaultEnglishStringtablePath(), access_lock); }
+    { return GetStringTable(PathToString(DevDefaultEnglishStringtablePath()), access_lock); }
 }
 
 #if !defined(FREEORION_ANDROID)
