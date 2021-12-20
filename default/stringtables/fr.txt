@@ -12055,8 +12055,8 @@ PLC_FLANKING_DESC
 D'autre part, les astronefs effectuant une attaque en tenaille infligeront également des dommages additionnels. Une attaque en tenaille est déclenchée lorsque les astronefs de l'empire appliquant cette Politique sont en vol et arrivent au tour suivant dans un système via des Voies spatiales différentes.
 
 • Les dommages pour les armements d'astronef sont augmentés de [[value PLC_FLANKING_DAMAGE_BOOST]] (c-à-d. pour les équipements [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], ou [[shippart SR_WEAPON_4_1]])
-• Les dommages pour les chasseurs, les bombardiers et les bombardiers lourds sont augmentés de [[value PLC_FLANKING_FIGHTER_DAMAGE_BOOST]] (c-à-d. pour les équipements [[shippart FT_HANGAR_1]], [[shippart FT_HANGAR_2]], ou [[shippart FT_HANGAR_3]])
-• Le nombre de chasseurs lancés par [[FT_BAY_1]] est augmenté de [[value PLC_FLANKING_BAY_LAUNCH_BONUS]]
+• Les dommages pour les chasseurs, les bombardiers et les bombardiers lourds sont augmentés de [[value PLC_FLANKING_FIGHTER_DAMAGE_BOOST]] (c-à-d. pour les équipements [[shippart FT_HANGAR_2]], [[shippart FT_HANGAR_3]], ou [[shippart FT_HANGAR_4]])
+• Le nombre d'intercepteurs lancés par [[FT_BAY_1]] est augmenté de [[value PLC_FLANKING_BAY_LAUNCH_BONUS]] (voir [[shippart FT_HANGAR_1]])
 • Le nombre de tirs pour l'équipement [[shippart SR_ARC_DISRUPTOR]] est augmenté de [[value PLC_FLANKING_ARC_DISRUPTOR_SHOT_BONUS]].'''
 
 PLC_FLANKING_SHORT_DESC
