@@ -7494,7 +7494,7 @@ Supernova detected
 
 SITREP_BUREAUCRACY_STOPPED
 '''The [[policy PLC_BUREAUCRACY]] is expanging, requiring more administrative facilities.
-Next turn of [[buildingtype BLD_REGIONAL_ADMIN]] and [[buildingtype BLD_IMPERIAL_PALACE]] it will need %rawtext:needbuildings% or it will halt, currently a total of %rawtext:havebuildings% are owned.
+Starting next turn, %rawtext:needbuildings% [[buildingtype BLD_REGIONAL_ADMIN]] and [[buildingtype BLD_IMPERIAL_PALACE]] will be needed to prevent the the bureaucracy from halting. Currently, a total of %rawtext:havebuildings% are owned.
 Bureaucracy requires an additional administrative building every [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] turns.'''
 
 SITREP_BUREAUCRACY_STOPPED_LABEL
