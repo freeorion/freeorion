@@ -1943,7 +1943,7 @@ namespace {
 
             // skip ships not in systems, so that they cannot provide detection
             using RangeElementType = typename R::value_type::element_type;
-            constexpr auto is_ship_range = std::is_same_v<RangeElementType, Ship>;
+            constexpr auto is_ship_range = std::is_same_v<std::decay_t<RangeElementType>, Ship>;
             if constexpr (is_ship_range) {
                 if (obj->SystemID() == INVALID_OBJECT_ID)
                     continue;
