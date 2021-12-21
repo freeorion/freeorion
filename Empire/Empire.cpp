@@ -2622,16 +2622,16 @@ void Empire::InitResourcePools(const ObjectMap& objects) {
     }
     m_resource_pools[ResourceType::RE_RESEARCH]->SetObjects(res_centers);
     m_resource_pools[ResourceType::RE_INDUSTRY]->SetObjects(res_centers);
-    m_resource_pools[ResourceType::RE_INFLUENCE]->SetObjects(res_centers);
+    m_resource_pools[ResourceType::RE_INFLUENCE]->SetObjects(std::move(res_centers));
 
     // get this empire's owned population centers
     std::vector<int> pop_centers;
     pop_centers.reserve(objects.ExistingPopCenters().size());
-    for (const auto& entry : objects.ExistingPopCenters()) {
-        if (entry.second->OwnedBy(m_id))
-            pop_centers.push_back(entry.first);
+    for (const auto& [res_id, res] : objects.ExistingPopCenters()) {
+        if (res->OwnedBy(m_id))
+            pop_centers.push_back(res_id);
     }
-    m_population_pool.SetPopCenters(pop_centers);
+    m_population_pool.SetPopCenters(std::move(pop_centers));
 
 
     // inform the blockadeable resource pools about systems that can share

@@ -130,8 +130,8 @@ std::string ResourcePool::Dump() const {
     return retval;
 }
 
-void ResourcePool::SetObjects(const std::vector<int>& object_ids)
-{ m_object_ids = object_ids; }
+void ResourcePool::SetObjects(std::vector<int> object_ids)
+{ m_object_ids = std::move(object_ids); }
 
 void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int>>& connected_system_groups)
 { m_connected_system_groups = connected_system_groups; }

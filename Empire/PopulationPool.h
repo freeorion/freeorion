@@ -18,7 +18,7 @@ public:
     /** emitted after updating population and growth numbers */
     mutable boost::signals2::signal<void ()> ChangedSignal;
 
-    void SetPopCenters(const std::vector<int>& pop_center_ids);
+    void SetPopCenters(std::vector<int> pop_center_ids);
     void Update(const ObjectMap& objects); ///< recalculates total population and growth
 
 private:

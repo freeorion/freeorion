@@ -7,11 +7,8 @@
 float PopulationPool::Population() const
 { return m_population; }
 
-void PopulationPool::SetPopCenters(const std::vector<int>& pop_center_ids) {
-    if (m_pop_center_ids == pop_center_ids)
-        return;
-    m_pop_center_ids = pop_center_ids;
-}
+void PopulationPool::SetPopCenters(std::vector<int> pop_center_ids)
+{ m_pop_center_ids = std::move(pop_center_ids); }
 
 void PopulationPool::Update(const ObjectMap& objects) {
     m_population = 0.0f;
