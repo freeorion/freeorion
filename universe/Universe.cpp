@@ -746,7 +746,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies(ScriptingContext& context) {
             // was before updating the meters, and actual is what it is now
             // after updating the meters based on the known universe.
             float discrepancy = start_map[type] - meter.Current();
-            if (discrepancy == 0.0f) continue;   // no discrepancy for this meter
+            if (fabs(discrepancy) < 0.01f) continue;   // no (real) discrepancy for this meter
 
             // add to discrepancy map. as above, should have been empty before this loop.
             discrep_map.emplace_hint(discrep_map.end(), type, discrepancy);
