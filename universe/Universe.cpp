@@ -81,6 +81,9 @@ namespace {
         rules.Add<bool>(UserStringNop("RULE_ALL_SYSTEMS_VISIBLE"),
                         UserStringNop("RULE_ALL_SYSTEMS_VISIBLE_DESC"),
                         "TEST", false, true);
+        rules.Add<bool>(UserStringNop("RULE_EXTRASOLAR_SHIP_DETECTION"),
+                        UserStringNop("RULE_EXTRASOLAR_SHIP_DETECTION_DESC"),
+                        "", false, true);
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 
@@ -1943,9 +1946,8 @@ namespace {
 
             // skip ships not in systems, so that they cannot provide detection
             using RangeElementType = typename R::value_type::element_type;
-            constexpr auto is_ship_range = std::is_same_v<std::decay_t<RangeElementType>, Ship>;
-            if constexpr (is_ship_range) {
-                if (obj->SystemID() == INVALID_OBJECT_ID)
+            if constexpr (std::is_same_v<std::decay_t<RangeElementType>, Ship>) {
+                if (obj->SystemID() == INVALID_OBJECT_ID && !GetGameRules().Get<bool>("RULE_EXTRASOLAR_SHIP_DETECTION"))
                     continue;
             }
 

@@ -1244,6 +1244,12 @@ All Systems Visible
 RULE_ALL_SYSTEMS_VISIBLE_DESC
 All system locations are known by all empires.
 
+RULE_EXTRASOLAR_SHIP_DETECTION
+Extrasolar Ship Detection
+
+RULE_EXTRASOLAR_SHIP_DETECTION_DESC
+Ships outside systems provide detection.
+
 RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
 Undetectable Stealthy Planets
 
