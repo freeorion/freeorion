@@ -1972,20 +1972,21 @@ namespace {
                 retval_pos_it->second = std::max(retval_pos_it->second, object_detection_range);
         }
     }
+}
 
-    /** for each empire: for each position where the empire has detector objects,
-      * what is the empire's detection range at that location?  (this is the
-      * largest of the detection ranges of objects the empire has at that spot) */
-    auto GetEmpiresPositionDetectionRanges(const ObjectMap& objects) {
-        std::map<int, std::map<std::pair<double, double>, float>> retval;
+std::map<int, std::map<std::pair<double, double>, float>>
+Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const
+{
+    std::map<int, std::map<std::pair<double, double>, float>> retval;
 
-        CheckObjects(objects.all<Planet>(), retval);
-        CheckObjects(objects.all<Ship>(), retval);
-        //CheckObjects(objects.all<Building>(), retval); // as of this writing, buildings don't have detection meters
+    CheckObjects(objects.all<Planet>(), retval);
+    CheckObjects(objects.all<Ship>(), retval);
+    //CheckObjects(objects.all<Building>(), retval); // as of this writing, buildings don't have detection meters
 
-        return retval;
-    }
+    return retval;
+}
 
+namespace {
     std::map<int, float> GetEmpiresDetectionStrengths(const EmpireManager& empires, int empire_id = ALL_EMPIRES) {
         std::map<int, float> retval;
         if (empire_id == ALL_EMPIRES) {

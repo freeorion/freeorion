@@ -173,6 +173,11 @@ public:
       * that the empire with id \a empire_id can see this turn. */
     std::set<std::string> GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
 
+    /** Returns map from empire ID to mape from location (X, Y) to detection range
+      * that empire has at that location. */
+    std::map<int, std::map<std::pair<double, double>, float>>
+    GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const;
+
     /** Return the Pathfinder */
     std::shared_ptr<const Pathfinder> GetPathfinder() const { return m_pathfinder; }
 
