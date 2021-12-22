@@ -300,9 +300,7 @@ void Condition::Eval(const ScriptingContext& parent_context,
     }
 }
 
-void Condition::Eval(const ScriptingContext& parent_context,
-                     ObjectSet& matches) const
-{
+void Condition::Eval(const ScriptingContext& parent_context, ObjectSet& matches) const {
     matches.clear();
     ObjectSet condition_initial_candidates;
 
