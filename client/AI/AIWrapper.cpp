@@ -358,6 +358,30 @@ namespace {
 
     }
 
+    auto IsProducibleBuilding(const std::string& item_name, int location_id) -> bool
+    {
+        ScriptingContext context;
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        auto empire = context.GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "IsProducibleBuilding : couldn't get empire with id " << empire_id;
+            return false;
+        }
+        return empire->ProducibleItem(BuildType::BT_BUILDING, item_name, location_id, context);
+    }
+
+    auto IsEnqueuableBuilding(const std::string& item_name, int location_id) -> bool
+    {
+        ScriptingContext context;
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        auto empire = context.GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "IsEnqueuableBuilding : couldn't get empire with id " << empire_id;
+            return false;
+        }
+        return empire->EnqueuableItem(BuildType::BT_BUILDING, item_name, location_id, context);
+    }
+
     auto IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id) -> int
     {
         ScriptingContext context;
@@ -387,6 +411,31 @@ namespace {
             context);
 
         return 1;
+    }
+
+    auto IsProducibleShip(int design_id, int location_id) -> bool
+    {
+        ScriptingContext context;
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        auto empire = context.GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "IsProducibleShip : couldn't get empire with id " << empire_id;
+            return false;
+        }
+        return empire->ProducibleItem(BuildType::BT_SHIP, design_id, location_id, context);
+    }
+
+    auto IsEnqueuableShip(int design_id, int location_id) -> bool
+    {
+        ScriptingContext context;
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        auto empire = context.GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "IsEnqueuableShip : couldn't get empire with id " << empire_id;
+            return false;
+        }
+        // as of this writing, ships don't have a distinction between producible and enqueuable
+        return empire->ProducibleItem(BuildType::BT_SHIP, design_id, location_id, context);
     }
 
     auto IssueEnqueueShipProductionOrder(int design_id, int location_id) -> int
@@ -707,6 +756,11 @@ namespace FreeOrionPython {
         py::def("updateResourcePools",                  UpdateResourcePools);
         py::def("updateResearchQueue",                  UpdateResearchQueue);
         py::def("updateProductionQueue",                UpdateProductionQueue);
+
+        py::def("isProducibleBuilding",                 IsProducibleBuilding);
+        py::def("isEnqueuableBuilding",                 IsEnqueuableBuilding);
+        py::def("isProducibleShip",                     IsProducibleShip);
+        py::def("isEnqueuableShip",                     IsEnqueuableShip);
 
         py::def("issueFleetMoveOrder",
                 +[](int fleet_id, int destination_id) -> int { return Issue<FleetMoveOrder>(fleet_id, destination_id, false); },
