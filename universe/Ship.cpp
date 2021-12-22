@@ -32,7 +32,8 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
     const ShipDesign* design = universe.GetShipDesign(design_id);
 
     if (!design)
-        throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
+        DebugLogger() << "Constructing a ship with an invalid design ID: " << design_id
+                      << "  ... could happen if copying from a ship seen only with basic vis...";
 
     if (!m_species_name.empty() && !GetSpecies(m_species_name))
         DebugLogger() << "Ship created with invalid species name: " << m_species_name;
