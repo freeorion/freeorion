@@ -4000,88 +4000,35 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
 
     ClearVisibilityRadiiRenderingBuffers();
 
-    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
     const EmpireManager& empires = Empires();
-    const auto& destroyed_object_ids = universe.DestroyedObjectIds();
-    const auto& stale_object_ids = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
 
-    // for each map position and empire, find max value of detection range at that position
-    std::map<std::pair<int, std::pair<float, float>>, float> empire_position_max_detection_ranges;
+    auto empire_position_max_detection_ranges = universe.GetEmpiresPositionDetectionRanges(objects);
 
-    for (auto& obj : objects.all<UniverseObject>()) {
-        int object_id = obj->ID();
-        // skip destroyed objects
-        if (destroyed_object_ids.count(object_id))
-            continue;
-        // skip stale objects
-        if (stale_object_ids.count(object_id))
-            continue;
-
-        // skip unowned objects
-        if (obj->Unowned())
-            continue;
-
-        // skip objects not at least partially visible this turn
-        if (obj->GetVisibility(client_empire_id, universe) <= Visibility::VIS_BASIC_VISIBILITY)
-            continue;
-
-        // don't show radii for fleets or moving ships
-        if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
-            continue;
-        } else if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-            auto ship = static_cast<const Ship*>(obj.get());
-            if (!ship)
-                continue;
-            auto fleet = objects.get<Fleet>(ship->FleetID());
-            if (!fleet || INVALID_OBJECT_ID == fleet->SystemID())
-                continue;
-        }
-
-        const Meter* detection_meter = obj->GetMeter(MeterType::METER_DETECTION);
-        if (!detection_meter)
-            continue;
-
-        // if this object has the largest yet checked visibility range at this location, update the location's range
-        float X = static_cast<float>(obj->X());
-        float Y = static_cast<float>(obj->Y());
-        float D = detection_meter->Current();
-        // skip objects that don't contribute detection
-        if (D <= 0.0f)
-            continue;
-
-        // find this empires entry for this location, if any
-        std::pair<int, std::pair<float, float>> key{obj->Owner(), {X, Y}};
-        auto range_it = empire_position_max_detection_ranges.find(key);
-        if (range_it != empire_position_max_detection_ranges.end()) {
-            if (range_it->second < D) range_it->second = D; // update existing entry
-        } else {
-            empire_position_max_detection_ranges[key] = D;  // add new entry to map
-        }
-    }
 
     std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt>>> circles;
-    for (const auto& detection_circle : empire_position_max_detection_ranges) {
-        auto empire = empires.GetEmpire(detection_circle.first.first);
+    for (const auto& [empire_id, detection_circles] : empire_position_max_detection_ranges) {
+        auto empire = empires.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "InitVisibilityRadiiRenderingBuffers couldn't find empire with id: " << detection_circle.first.first;
+            ErrorLogger() << "InitVisibilityRadiiRenderingBuffers couldn't find empire with id: " << empire_id;
             continue;
         }
 
-        float radius = detection_circle.second;
-        if (radius < 5.0f || radius > 2048.0f)  // hide uselessly small and ridiculously large circles. the latter so super-testers don't have an empire-coloured haze over the whole map.
-            continue;
+        for (const auto& [centre, radius] : detection_circles) {
+            if (radius < 5.0f || radius > 2048.0f)  // hide uselessly small and ridiculously large circles. the latter so super-testers don't have an empire-coloured haze over the whole map.
+                continue;
+            const auto& [X, Y] = centre;
 
-        GG::Clr circle_colour = empire->Color();
-        circle_colour.a = 8*GetOptionsDB().Get<int>("ui.map.detection.range.opacity");
+            GG::Clr circle_colour = empire->Color();
+            circle_colour.a = 8*GetOptionsDB().Get<int>("ui.map.detection.range.opacity");
 
-        GG::Pt circle_centre = GG::Pt(GG::X(detection_circle.first.second.first), GG::Y(detection_circle.first.second.second));
-        GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
-        GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
+            GG::Pt circle_centre = GG::Pt(GG::X(X), GG::Y(Y));
+            GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
+            GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
 
-        circles[circle_colour].emplace_back(ul, lr);
-
+            circles[circle_colour].emplace_back(ul, lr);
+        }
         //std::cout << "adding radii circle at: " << circle_centre << " for empire: " << it->first.first << std::endl;
     }
 
@@ -4090,9 +4037,8 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
 
     // loop over colours / empires, adding a batch of triangles to buffers for
     // each's visibilty circles and outlines
-    for (const auto& circle_group : circles) {
+    for (const auto& [circle_colour, ul_lrs] : circles) {
         // get empire colour and calculate brighter radii outline colour
-        GG::Clr circle_colour = circle_group.first;
         GG::Clr border_colour = circle_colour;
         border_colour.a = std::min(255, border_colour.a + 80);
         AdjustBrightness(border_colour, 2.0, true);
@@ -4100,9 +4046,8 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         std::size_t radii_start_index = m_visibility_radii_vertices.size();
         std::size_t border_start_index = m_visibility_radii_border_vertices.size();
 
-        for (const auto& circle : circle_group.second) {
-            const GG::Pt& ul = circle.first;
-            const GG::Pt& lr = circle.second;
+        for (const auto& ul_lr : ul_lrs) {
+            const auto& [ul, lr] = ul_lr;
 
             unsigned int initial_size = m_visibility_radii_vertices.size();
             // store triangles for filled / transparent part of radii
@@ -4129,8 +4074,8 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         std::size_t border_end_index = m_visibility_radii_border_vertices.size();
 
         m_radii_radii_vertices_indices_runs.emplace_back(
-            std::make_pair(radii_start_index, radii_end_index - radii_start_index),
-            std::make_pair(border_start_index, border_end_index - border_start_index));
+            std::pair{radii_start_index, radii_end_index - radii_start_index},
+            std::pair{border_start_index, border_end_index - border_start_index});
     }
 
     m_visibility_radii_border_vertices.createServerBuffer();
