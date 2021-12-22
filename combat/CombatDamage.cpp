@@ -120,6 +120,9 @@ namespace {
         if (!template_ship) {
             ErrorLogger() << "TempShipForDamageCalcs passed null template ship";
             return nullptr;
+        } else if (template_ship->DesignID() == INVALID_DESIGN_ID) {
+            DebugLogger() << "TempShipForDamageCalcs passed template ship with no known design ID";
+            return nullptr;
         }
 
         // use the given design and species as default enemy.
