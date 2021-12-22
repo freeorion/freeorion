@@ -1065,6 +1065,11 @@ def generate_production_orders():
                 ):
                     scanner_locs[planet.systemID] = True
         max_scanner_builds = max(1, int(empire.productionPoints / 30))
+        debug(
+            "Considering building %s, found current and queued systems %s",
+            building_name,
+            PlanetUtilsAI.sys_name_ids(scanner_locs),
+        )
         for sys_id in get_owned_planets().keys():
             if len(queued_locs) >= max_scanner_builds:
                 break
@@ -1081,6 +1086,10 @@ def generate_production_orders():
             for pid in get_owned_planets_in_system(sys_id):
                 planet = universe.getPlanet(pid)
                 if not planet:
+                    continue
+                if not fo.isProducibleBuilding(building_name, pid):
+                    continue
+                if not fo.isEnqueuableBuilding(building_name, pid):
                     continue
                 build_locs.append((planet.currentMeterValue(fo.meterType.maxTroops), pid))
             if not build_locs:
@@ -1134,6 +1143,10 @@ def generate_production_orders():
                     continue
                 if pid in local_drydocks or pid in queued_locs:
                     break
+                if not fo.isProducibleBuilding(building_name, pid):
+                    continue
+                if not fo.isEnqueuableBuilding(building_name, pid):
+                    continue
                 planet = universe.getPlanet(pid)
                 res = fo.issueEnqueueBuildingProductionOrder(building_name, pid)
                 debug("Enqueueing %s at planet %d (%s) , with result %d", building_name, pid, planet.name, res)
