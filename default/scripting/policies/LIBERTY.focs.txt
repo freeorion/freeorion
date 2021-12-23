@@ -16,13 +16,19 @@ Policy
             Planet
             OwnedBy empire = Source.Owner
             Species
-            Happiness low = (NamedReal name = "PLC_LIBERTY_MIN_STABILITY" value = 8)
+            Happiness low = (NamedReal name = "PLC_LIBERTY_MIN_STABILITY" value = 8.0)
+                          - (NamedReal name = "PLC_LIBERTY_STABILITY_PENALTY_FLAT" value = 2.0)
         ]
+        priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
         effects = [
-            SetTargetResearch value = Value + (NamedReal name = "PLC_LIBERTY_RESEARCH_BONUS_FLAT" value = 2.0)
-            SetTargetHappiness value = Value - (NamedReal name = "PLC_LIBERTY_STABILITY_PENALTY_FLAT" value = 2.0)
+            If condition = (Value(RootCandidate.TargetHappiness) >= (NamedRealLookup name = "PLC_LIBERTY_MIN_STABILITY"))
+            effects = [
+                SetTargetResearch value = Value + (NamedReal name = "PLC_LIBERTY_RESEARCH_BONUS_FLAT" value = 2.0)
+                SetTargetHappiness value = Value - (NamedRealLookup name = "PLC_LIBERTY_STABILITY_PENALTY_FLAT")
+            ]
         ]
     ]
     graphic = "icons/policies/liberty.png"
 
 #include "/scripting/policies/policies.macros"
+#include "/scripting/common/priorities.macros"

@@ -11918,7 +11918,7 @@ Liberty
 
 PLC_LIBERTY_DESC
 '''• Increases the impact of species likes and dislikes on planet stability due to buildings and policies.
-• Increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_LIBERTY_RESEARCH_BONUS_FLAT]] and decreases [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_LIBERTY_STABILITY_PENALTY_FLAT]] on all planets with a stability of at least [[value PLC_LIBERTY_MIN_STABILITY]].'''
+• Increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_LIBERTY_RESEARCH_BONUS_FLAT]] and decreases [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_LIBERTY_STABILITY_PENALTY_FLAT]] on all planets which would have a maximum stability of at least [[value PLC_LIBERTY_MIN_STABILITY]] without the Liberty policy.'''
 
 PLC_LIBERTY_SHORT_DESC
 Increases species opinion effects
