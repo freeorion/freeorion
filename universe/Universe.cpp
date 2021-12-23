@@ -1979,9 +1979,79 @@ Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const
 {
     std::map<int, std::map<std::pair<double, double>, float>> retval;
 
+    // TODO: option to hide stale / destroyed objects by passing in their IDs?
+
     CheckObjects(objects.all<Planet>(), retval);
     CheckObjects(objects.all<Ship>(), retval);
     //CheckObjects(objects.all<Building>(), retval); // as of this writing, buildings don't have detection meters
+
+    return retval;
+}
+
+std::map<int, std::map<std::pair<double, double>, float>>
+Universe::GetEmpiresPositionNextTurnFleetDetectionRanges(const ScriptingContext& context) const
+{
+    std::map<int, std::map<std::pair<double, double>, float>> retval;
+
+    // TODO: So far, this assumes ships will have the same detection range at their
+    //       next turn position as they have currently, but this may be inaccurate
+    //       for cases where detection range is modified in a position-dependent way
+    //       such as in Nebulas or a proposed out-of-system detection range penalty
+
+    for (const auto& fleet : context.ContextObjects().all<Fleet>()) {
+        // skip unowned objects, which can't provide detection to any empire
+        if (fleet->Unowned())
+            continue;
+        // skip fleets that don't have a next system
+        if (fleet->NextSystemID() == INVALID_OBJECT_ID)
+            continue;
+
+        // get all ships in fleet, find their detection ranges
+        float fleet_detection_range = 0.0f;
+        for (const auto& ship : context.ContextObjects().find<Ship>(fleet->ShipIDs())) {
+            const Meter* detection_meter = ship->GetMeter(MeterType::METER_DETECTION);
+            if (!detection_meter)
+                continue;
+            float ship_detection_range = detection_meter->Current();
+            if (ship_detection_range <= 0.0f)
+                continue;
+            fleet_detection_range = std::max(fleet_detection_range, ship_detection_range);
+        }
+        // skip fleets with no detection range
+        if (fleet_detection_range <= 0.0f)
+            continue;
+
+
+        // get next turn position of fleet
+        auto path = fleet->MovePath(false, context);
+        if (path.empty())
+            continue;
+        auto& next_turn_end_position = [&path]() -> const MovePathNode& {
+            for (const auto& node : path) {
+                if (node.turn_end)
+                    return node;
+            }
+            return path.front();
+        }();
+
+        // if out of system detection not allowed, skip fleets not expected to be in systems
+        if (!GetGameRules().Get<bool>("RULE_EXTRASOLAR_SHIP_DETECTION") &&
+            next_turn_end_position.object_id == INVALID_OBJECT_ID)
+        { continue; }
+
+        // add detection at next position
+        auto object_owner_empire_id = fleet->Owner();
+        auto& retval_empire_pos_range = retval[object_owner_empire_id];
+        std::pair<double, double> object_pos{next_turn_end_position.x, next_turn_end_position.y};
+
+        // store range in output map (if new for location or larger than any
+        // previously-found range at this location)
+        auto retval_pos_it = retval_empire_pos_range.find(object_pos);
+        if (retval_pos_it == retval_empire_pos_range.end())
+            retval_empire_pos_range[object_pos] = fleet_detection_range;
+        else
+            retval_pos_it->second = std::max(retval_pos_it->second, fleet_detection_range);
+    }
 
     return retval;
 }
