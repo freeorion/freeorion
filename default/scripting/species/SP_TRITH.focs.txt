@@ -54,7 +54,7 @@ Species
             effects = UnlockPolicy name = "PLC_RACIAL_PURITY"
     ]
 
-    [[RADIATED_NARROW_EP]]
+    [[RADIATED_STANDARD_EP]]
 
     graphic = "icons/species/trith.png"
 
