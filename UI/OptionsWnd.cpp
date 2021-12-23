@@ -653,6 +653,8 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page,   0, "ui.map.scale.circle.shown",                  UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"));
     BoolOption(current_page,   0, "ui.map.zoom.slider.shown",                   UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
     BoolOption(current_page,   0, "ui.map.detection.range.shown",               UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
+    BoolOption(current_page,   0, "ui.map.detection.range.future.shown",        UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_FUTURE"));
+
     IntOption(current_page,    0, "ui.map.detection.range.opacity",             UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
     BoolOption(current_page,   0, "ui.map.menu.enabled",                        UserString("OPTIONS_GALAXY_MAP_POPUP"));
     BoolOption(current_page,   0, "ui.map.system.unexplored.rollover.enabled",  UserString("OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY"));

@@ -1503,6 +1503,9 @@ Multiplier to priority value of unexplored systems which have been previously se
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
 Toggles whether to show circles around objects to indicate their detection range on the galaxy map.
 
+OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_FUTURE
+Toggles whether, when showing detection range circles of fleets, to also show predicted future turn detection ranges for the selected fleet's expected movement path.
+
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY
 Sets detection circle transparency.
 
@@ -3068,6 +3071,9 @@ Unexplored System distinctive mouseover overlay
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Detection range circles
+
+OPTIONS_GALAXY_MAP_DETECTION_RANGE_FUTURE
+Selected fleet future detection range circles
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY
 Range circle opacity
