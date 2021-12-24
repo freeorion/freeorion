@@ -67,7 +67,7 @@ public:
 
     [[nodiscard]] const std::string&      PublicName(int empire_id, const Universe& universe) const override;
 
-    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+    std::shared_ptr<UniverseObject>       Accept(const UniverseObjectVisitor& visitor) const override;
 
     [[nodiscard]] const std::set<int>&    ShipIDs() const { return m_ships; } ///< returns set of IDs of ships in fleet.
     [[nodiscard]] int                     MaxShipAgeInTurns(const ObjectMap& objects) const; ///< Returns the age of the oldest ship in the fleet
