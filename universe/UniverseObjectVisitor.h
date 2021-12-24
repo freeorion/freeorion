@@ -39,7 +39,7 @@ class Fighter;
 //! besides this one will ensure that only UniverseObjects of a single subclass
 //! are recognized by the visitor.
 struct FO_COMMON_API UniverseObjectVisitor {
-    virtual ~UniverseObjectVisitor();
+    virtual ~UniverseObjectVisitor() = default;
 
     virtual auto Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>;
     virtual auto Visit(const std::shared_ptr<Building>& obj) const -> std::shared_ptr<UniverseObject>;

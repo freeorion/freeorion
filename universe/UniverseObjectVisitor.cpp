@@ -10,8 +10,6 @@
 #include "UniverseObject.h"
 
 
-UniverseObjectVisitor::~UniverseObjectVisitor() = default;
-
 auto UniverseObjectVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
 { return nullptr; }
 

@@ -15,11 +15,12 @@
 //! than Universe ones.
 struct FO_COMMON_API StationaryFleetVisitor : UniverseObjectVisitor
 {
-    StationaryFleetVisitor(int empire = ALL_EMPIRES);
-    virtual ~StationaryFleetVisitor();
+    explicit StationaryFleetVisitor(int empire = ALL_EMPIRES) :
+        empire_id(empire)
+    {}
     auto Visit(const std::shared_ptr<Fleet>& obj) const -> std::shared_ptr<UniverseObject> override;
 
-    int const empire_id;
+    int const empire_id = ALL_EMPIRES;
 };
 
 
@@ -32,11 +33,12 @@ struct FO_COMMON_API StationaryFleetVisitor : UniverseObjectVisitor
 //! than Universe ones.
 struct FO_COMMON_API OrderedMovingFleetVisitor : UniverseObjectVisitor
 {
-    OrderedMovingFleetVisitor(int empire = ALL_EMPIRES);
-    virtual ~OrderedMovingFleetVisitor();
+    explicit OrderedMovingFleetVisitor(int empire = ALL_EMPIRES) :
+        empire_id(empire)
+    {}
     auto Visit(const std::shared_ptr<Fleet>& obj) const -> std::shared_ptr<UniverseObject> override;
 
-    int const empire_id;
+    int const empire_id = ALL_EMPIRES;
 };
 
 
@@ -46,33 +48,37 @@ struct FO_COMMON_API OrderedMovingFleetVisitor : UniverseObjectVisitor
 //! If the given empire is ALL_EMPIRE, all moving fleets will be returned.
 struct FO_COMMON_API MovingFleetVisitor : UniverseObjectVisitor
 {
-    MovingFleetVisitor(int empire = ALL_EMPIRES);
-    virtual ~MovingFleetVisitor();
+    explicit MovingFleetVisitor(int empire = ALL_EMPIRES) :
+        empire_id(empire)
+    {}
     auto Visit(const std::shared_ptr<Fleet>& obj) const -> std::shared_ptr<UniverseObject> override;
 
-    int const empire_id;
+    int const empire_id = ALL_EMPIRES;
 };
 
 
 //! Returns obj iff @a obj is owned by the empire with id @a empire_id.
 struct FO_COMMON_API OwnedVisitor : UniverseObjectVisitor
 {
-    OwnedVisitor(int empire = ALL_EMPIRES);
-    virtual ~OwnedVisitor();
+    explicit OwnedVisitor(int empire = ALL_EMPIRES) :
+        empire_id(empire)
+    {}
     auto Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject> override;
 
-    int const empire_id;
+    int const empire_id = ALL_EMPIRES;
 };
 
 
 struct FO_COMMON_API HostileVisitor : UniverseObjectVisitor
 {
-    HostileVisitor(int viewing_empire, int owning_empire = ALL_EMPIRES);
-    virtual ~HostileVisitor();
+    explicit HostileVisitor(int viewing_empire, int owning_empire = ALL_EMPIRES) :
+        viewing_empire_id(viewing_empire),
+        owning_empire_id(owning_empire)
+    {}
     auto Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject> override;
 
-    int const viewing_empire_id;
-    int const owning_empire_id;
+    int const viewing_empire_id = ALL_EMPIRES;
+    int const owning_empire_id = ALL_EMPIRES;
 };
 
 
