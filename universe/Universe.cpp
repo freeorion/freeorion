@@ -935,12 +935,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
             auto& account_map = accounting_map[obj->ID()]; // reserving space now should be redundant with previous manipulations
 
             // apply all meters' discrepancies
-            for (auto& entry : dis_it->second) {
-                MeterType type = entry.first;
-                double discrepancy = entry.second;
-
-                //if (discrepancy == 0.0) continue;
-
+            for (auto& [type, discrepancy] : dis_it->second) {
                 Meter* meter = obj->GetMeter(type);
                 if (!meter)
                     continue;
@@ -2111,14 +2106,11 @@ namespace {
     {
         std::vector<int> retval;
         // check each detector position and range against each object position
-        for (const auto& object_position_entry : object_positions) {
-            const auto& object_pos = object_position_entry.first;
-            const auto& objects = object_position_entry.second;
+        for (const auto& [object_pos, objects] : object_positions) {
             // search through detector positions until one is found in range
-            for (const auto& detector_position_entry : detector_position_ranges) {
+            for (const auto& [detector_pos, detector_range] : detector_position_ranges) {
                 // check range for this detector location for this detectables location
-                float detector_range2 = detector_position_entry.second * detector_position_entry.second;
-                const auto& detector_pos = detector_position_entry.first;
+                float detector_range2 = detector_range * detector_range;
                 double x_dist = detector_pos.first - object_pos.first;
                 double y_dist = detector_pos.second - object_pos.second;
                 double dist2 = x_dist*x_dist + y_dist*y_dist;
@@ -2169,8 +2161,7 @@ namespace {
     {
         Universe& universe = GetUniverse();
 
-        for (const auto& detecting_empire_entry : empire_location_detection_ranges) {
-            int detecting_empire_id = detecting_empire_entry.first;
+        for (const auto& [detecting_empire_id, detector_position_ranges] : empire_location_detection_ranges) {
             double detection_strength = 0.0;
             const Empire* empire = GetEmpire(detecting_empire_id);
             if (!empire)
@@ -2180,9 +2171,6 @@ namespace {
                 continue;
             detection_strength = meter->Current();
 
-            // get empire's locations of detection ranges
-            const auto& detector_position_ranges = detecting_empire_entry.second;
-
             // for each field, try to find a detector position in range for this empire
             for (auto& field : objects.all<Field>()) {
                 if (field->GetMeter(MeterType::METER_STEALTH)->Current() > detection_strength)
@@ -2191,11 +2179,9 @@ namespace {
                 const std::pair<double, double> object_pos(field->X(), field->Y());
 
                 // search through detector positions until one is found in range
-                for (const auto& detector_position_entry : detector_position_ranges) {
+                for (const auto& [detector_pos, detector_range] : detector_position_ranges) {
                     // check range for this detector location, for field of this
                     // size, against distance between field and detector
-                    float detector_range = detector_position_entry.second;
-                    const auto& detector_pos = detector_position_entry.first;
                     double x_dist = detector_pos.first - object_pos.first;
                     double y_dist = detector_pos.second - object_pos.second;
                     double dist = std::sqrt(x_dist*x_dist + y_dist*y_dist);
@@ -2221,10 +2207,7 @@ namespace {
     {
         Universe& universe = GetUniverse();
 
-        for (const auto& detecting_empire_entry : empire_location_detection_ranges) {
-            int detecting_empire_id = detecting_empire_entry.first;
-            // get empire's locations of detection ability
-            const auto& detector_position_ranges = detecting_empire_entry.second;
+        for (const auto& [detecting_empire_id, detector_position_ranges] : empire_location_detection_ranges) {
             // for this empire, get objects it could potentially detect
             const auto empire_detectable_objects_it =
                 empire_location_potentially_detectable_objects.find(detecting_empire_id);
@@ -2269,13 +2252,13 @@ namespace {
     void SetAllObjectsVisibleToAllEmpires(Universe& universe) {
         // set every object visible to all empires
         for (const auto& obj : universe.Objects().all()) {
-            for (auto& empire_entry : Empires()) {
-                if (empire_entry.second->Eliminated())
+            for (auto& [empire_id, empire] : Empires()) {
+                if (empire->Eliminated())
                     continue;
-                universe.SetEmpireObjectVisibility(empire_entry.first, obj->ID(), Visibility::VIS_FULL_VISIBILITY);
+                universe.SetEmpireObjectVisibility(empire_id, obj->ID(), Visibility::VIS_FULL_VISIBILITY);
                 // specials on objects
                 for (const auto& special_entry : obj->Specials())
-                    universe.SetEmpireSpecialVisibility(empire_entry.first, obj->ID(), special_entry.first);
+                    universe.SetEmpireSpecialVisibility(empire_id, obj->ID(), special_entry.first);
             }
         }
     }
@@ -2283,10 +2266,10 @@ namespace {
     /** sets all systems basically visible to all empires */
     void SetAllSystemsBasicallyVisibleToAllEmpires(Universe& universe) {
         for (const auto& obj : universe.Objects().all<System>()) {
-            for (auto& empire_entry : Empires()) {
-                if (empire_entry.second->Eliminated())
+            for (auto& [empire_id, empire] : Empires()) {
+                if (empire->Eliminated())
                     continue;
-                universe.SetEmpireObjectVisibility(empire_entry.first, obj->ID(), Visibility::VIS_BASIC_VISIBILITY);
+                universe.SetEmpireObjectVisibility(empire_id, obj->ID(), Visibility::VIS_BASIC_VISIBILITY);
             }
         }
     }
@@ -2306,9 +2289,8 @@ namespace {
         }
 
         // set system visibility
-        for (const auto& empire_entry : empires_systems_with_owned_objects) {
-            int empire_id = empire_entry.first;
-            for (int system_id : empire_entry.second)
+        for (const auto& [empire_id, system_ids] : empires_systems_with_owned_objects) {
+            for (int system_id : system_ids)
                 universe.SetEmpireObjectVisibility(empire_id, system_id, Visibility::VIS_PARTIAL_VISIBILITY);
         }
 
@@ -2319,11 +2301,7 @@ namespace {
                 continue;
 
             int planet_id = planet->ID();
-            for (const auto& empire_entry : empires_systems_with_owned_objects) {
-                int empire_id = empire_entry.first;
-
-                // does empire own an object in this system?
-                const auto& empire_systems = empire_entry.second;
+            for (const auto& [empire_id, empire_systems] : empires_systems_with_owned_objects) {
                 if (!empire_systems.count(system_id))
                     continue;   // no objects, don't grant any visibility
 
@@ -2358,10 +2336,9 @@ namespace {
                 //DebugLogger() << " ... contained object (" << contained_obj_id << ")";
 
                 // for each empire with a visibility map
-                for (auto& empire_entry : empire_object_visibility) {
-                    auto& vis_map = empire_entry.second;
-
+                for (auto& [empire_id, vis_map] : empire_object_visibility) {
                     //DebugLogger() << " ... ... empire id " << empire_entry.first;
+                    (void)empire_id;
 
                     // find current empire's visibility entry for current container object
                     auto container_vis_it = vis_map.find(container_obj->ID());
@@ -2430,8 +2407,8 @@ namespace {
             int system_id = system->ID();
 
             // for each empire with a visibility map
-            for (auto& empire_entry : empire_object_visibility) {
-                auto& vis_map = empire_entry.second;
+            for (auto& [empire_id, vis_map] : empire_object_visibility) {
+                (void)empire_id;
 
                 // find current system's visibility
                 auto system_vis_it = vis_map.find(system_id);
@@ -2504,12 +2481,10 @@ namespace {
     {
         // after setting object visibility, similarly set visibility of objects'
         // specials for each empire
-        for (const auto& empire_entry : Empires()) {
-            int empire_id = empire_entry.first;
+        for (const auto& [empire_id, empire] : Empires()) {
             auto& obj_vis_map = empire_object_visibility[empire_id];
             auto& obj_specials_map = empire_object_visible_specials[empire_id];
 
-            auto& empire = empire_entry.second;
             const Meter* detection_meter = empire->GetMeter("METER_DETECTION_STRENGTH");
             if (!detection_meter)
                 continue;
@@ -2558,8 +2533,8 @@ namespace {
         // iterating over the output while modifying it would result in
         // second-order visibility sharing (but only through allies with lower
         // empire id)
-        auto input_eov_copy = empire_object_visibility;
-        auto input_eovs_copy = empire_object_visible_specials;
+        auto input_eov_copy{empire_object_visibility};
+        auto input_eovs_copy{empire_object_visible_specials};
 
         for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
             (void)empire;   // quieting unused variable warning
@@ -2582,9 +2557,7 @@ namespace {
                 // add allied visibilities to outer-loop empire visibilities
                 // whenever the ally has better visibility of an object
                 // (will do the reverse in another loop iteration)
-                for (auto const& allied_obj_id_vis_pair : allied_obj_vis_map) {
-                    int obj_id = allied_obj_id_vis_pair.first;
-                    Visibility allied_vis = allied_obj_id_vis_pair.second;
+                for (auto const& [obj_id, allied_vis] : allied_obj_vis_map) {
                     auto it = obj_vis_map.find(obj_id);
                     if (it == obj_vis_map.end() || it->second < allied_vis) {
                         obj_vis_map[obj_id] = allied_vis;
@@ -2597,11 +2570,8 @@ namespace {
 
                 // add allied visibilities of specials to outer-loop empire
                 // visibilities as well
-                for (const auto& allied_obj_special_vis_pair : allied_obj_specials_map) {
-                    int obj_id = allied_obj_special_vis_pair.first;
-                    const auto& specials = allied_obj_special_vis_pair.second;
+                for (const auto& [obj_id, specials] : allied_obj_specials_map)
                     obj_specials_map[obj_id].insert(specials.begin(), specials.end());
-                }
             }
         }
     }
@@ -2609,9 +2579,7 @@ namespace {
 
 void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
     // ensure Universe knows empires have knowledge of designs the empire is specifically remembering
-    for (const auto& empire_entry : empires) {
-        int empire_id = empire_entry.first;
-        auto& empire = empire_entry.second;
+    for (const auto& [empire_id, empire] : empires) {
         if (empire->Eliminated()) {
             m_empire_known_ship_design_ids.erase(empire_id);
         } else {
@@ -2737,9 +2705,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
 
     const auto empire_location_detection_ranges = GetEmpiresPositionDetectionRanges(*m_objects);
 
-    for (const auto& empire_entry : m_empire_latest_known_objects) {
-        int empire_id = empire_entry.first;
-        const ObjectMap& latest_known_objects = empire_entry.second;
+    for (const auto& [empire_id, latest_known_objects] : m_empire_latest_known_objects) {
         const ObjectVisibilityMap& vis_map = m_empire_object_visibility[empire_id];
         std::set<int>& stale_set = m_empire_stale_knowledge_object_ids[empire_id];
         const std::set<int>& destroyed_set = m_empire_known_destroyed_object_ids[empire_id];
@@ -3187,9 +3153,7 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
 
     if (encoding_empire == ALL_EMPIRES) {
         // copy all ObjectMaps' contents
-        for (const auto& entry : m_empire_latest_known_objects) {
-            int empire_id = entry.first;
-            const ObjectMap& map = entry.second;
+        for (const auto& [empire_id, map] : m_empire_latest_known_objects) {
             //the maps in m_empire_latest_known_objects are already processed for visibility, so can be copied fully
             empire_latest_known_objects[empire_id].CopyForSerialize(map);
         }
