@@ -1965,9 +1965,9 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
     if (variable_name == "PropagatedSystemSupplyRange")
         empire_property_int_key = [](const Empire& empire){ return GetSupplyManager().PropagatedSupplyRanges(empire.EmpireID()); };
-    if (variable_name == "SystemSupplyRange")
+    else if (variable_name == "SystemSupplyRange")
         empire_property_int_key = &Empire::SystemSupplyRanges;
-    if (variable_name == "PropagatedSystemSupplyDistance")
+    else if (variable_name == "PropagatedSystemSupplyDistance")
         empire_property_int_key = [](const Empire& empire){ return GetSupplyManager().PropagatedSupplyDistances(empire.EmpireID()); };
 
     if (empire_property_int_key) {
