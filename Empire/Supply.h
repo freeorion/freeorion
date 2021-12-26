@@ -14,10 +14,6 @@ struct ScriptingContext;
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {
 public:
-    SupplyManager() = default;
-    SupplyManager& operator=(const SupplyManager& rhs);
-    SupplyManager& operator=(SupplyManager&& rhs) noexcept;
-
     /** Returns set of directed starlane traversals along which supply can flow.
       * Results are pairs of system ids of start and end system of traversal. */
     [[nodiscard]] const std::map<int, std::set<std::pair<int, int>>>&     SupplyStarlaneTraversals() const;

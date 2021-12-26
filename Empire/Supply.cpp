@@ -17,29 +17,7 @@
 
 namespace {
     DeclareThreadSafeLogger(supply);
-}
 
-SupplyManager& SupplyManager::operator=(const SupplyManager& rhs) {
-    if (this != &rhs) {
-        m_supply_starlane_traversals =            rhs.m_supply_starlane_traversals;
-        m_supply_starlane_obstructed_traversals = rhs.m_supply_starlane_obstructed_traversals;
-        m_fleet_supplyable_system_ids =           rhs.m_fleet_supplyable_system_ids;
-        m_resource_supply_groups =                rhs.m_resource_supply_groups;
-    }
-    return *this;
-}
-
-SupplyManager& SupplyManager::operator=(SupplyManager&& rhs) noexcept {
-    if (this != &rhs) {
-        m_supply_starlane_traversals =            std::move(rhs.m_supply_starlane_traversals);
-        m_supply_starlane_obstructed_traversals = std::move(rhs.m_supply_starlane_obstructed_traversals);
-        m_fleet_supplyable_system_ids =           std::move(rhs.m_fleet_supplyable_system_ids);
-        m_resource_supply_groups =                std::move(rhs.m_resource_supply_groups);
-    }
-    return *this;
-}
-
-namespace {
     const std::set<int> EMPTY_INT_SET;
     const std::set<std::set<int>> EMPTY_INT_SET_SET;
     const std::set<std::pair<int, int>> EMPTY_INT_PAIR_SET;
