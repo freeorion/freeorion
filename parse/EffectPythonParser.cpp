@@ -160,9 +160,10 @@ void RegisterGlobalsEffects(py::dict& globals) {
 
     globals["GenerateSitRepMessage"] = py::raw_function(insert_generate_sit_rep_message_);
 
-    globals["SetEmpireMeter"] = boost::python::raw_function(set_empire_meter);
+    globals["SetEmpireMeter"] = py::raw_function(set_empire_meter);
 
     globals["SetMaxShield"] = py::raw_function(insert_set_meter_<MeterType::METER_MAX_SHIELD>);
+    globals["SetMaxSupply"] = py::raw_function(insert_set_meter_<MeterType::METER_MAX_SUPPLY>);
     globals["SetShield"] = py::raw_function(insert_set_meter_<MeterType::METER_SHIELD>);
     globals["SetTargetPopulation"] = py::raw_function(insert_set_meter_<MeterType::METER_TARGET_POPULATION>);
     globals["SetDefense"] = py::raw_function(insert_set_meter_<MeterType::METER_DEFENSE>);

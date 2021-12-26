@@ -138,6 +138,19 @@ namespace {
         }
         return condition_wrapper(std::make_shared<Condition::HasTag>(std::move(name)));
     }
+
+    condition_wrapper insert_focus_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> types;
+        py_parse::detail::flatten_list<boost::python::object>(kw["type"], [](const boost::python::object& o, std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>& v) {
+            auto type_arg = boost::python::extract<value_ref_wrapper<std::string>>(o);
+            if (type_arg.check()) {
+                v.push_back(ValueRef::CloneUnique(type_arg().value_ref));
+            } else {
+                v.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(o)()));
+            }
+        }, types);
+        return condition_wrapper(std::make_shared<Condition::FocusType>(std::move(types)));
+    }
 }
 
 void RegisterGlobalsConditions(boost::python::dict& globals) {
@@ -158,5 +171,6 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["OwnedBy"] = boost::python::raw_function(insert_owned_by_);
     globals["ContainedBy"] = insert_contained_by_;
     globals["Contains"] = insert_contains_;
+    globals["Focus"] = boost::python::raw_function(insert_focus_);
 }
 
