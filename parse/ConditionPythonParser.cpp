@@ -24,7 +24,7 @@ condition_wrapper operator|(const condition_wrapper& lhs, const condition_wrappe
 }
 
 condition_wrapper operator~(const condition_wrapper& lhs) {
-return condition_wrapper(std::make_shared<Condition::Not>(
+    return condition_wrapper(std::make_shared<Condition::Not>(
         lhs.condition->Clone()
     ));
 }
