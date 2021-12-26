@@ -2091,7 +2091,7 @@ public:
 
                 ++indent;
                 // add building rows on this planet
-                for (auto& building : planet_buildings[planet->ID()])
+                for (auto& building : planet_buildings[PLANET_ID])
                     AddObjectRow(std::move(building), PLANET_ID, id_range{}, indent);
                 planet_buildings[PLANET_ID].clear();
                 --indent;
