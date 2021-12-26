@@ -2135,15 +2135,17 @@ public:
 
         // add planets not in shown systems (ie. in no system or in systems that aren't shown)
         timer.EnterSection("non-system planet rows");
-        for (const auto& sys_planets : system_planets) {
-            for (const auto& planet : sys_planets.second) {
+        for (const auto& [system_id, planets] : system_planets) {
+            for (const auto& planet : planets) {
+                const int PLANET_ID = planet->ID();
+
                 std::vector<int> planet_contents;
-                planet_contents.reserve(planet_buildings[planet->ID()].size());
-                for (const auto& building : planet_buildings[planet->ID()])
+                planet_contents.reserve(planet_buildings[PLANET_ID].size());
+                for (const auto& building : planet_buildings[PLANET_ID])
                     planet_contents.emplace_back(building->ID());
 
-                AddObjectRow(planet, sys_planets.first, planet_contents, indent);
-                if (ObjectCollapsed(planet->ID())) {
+                AddObjectRow(planet, system_id, planet_contents, indent);
+                if (ObjectCollapsed(PLANET_ID)) {
                     // remove contained buildings, which will not be shown
                     planet_buildings[planet->ID()].clear();
                     continue;
@@ -2151,54 +2153,56 @@ public:
 
                 ++indent;
                 // add building rows on this planet
-                for (const auto& building : planet_buildings[planet->ID()])
-                    AddObjectRow(building, planet->ID(), id_range(), indent);
-                planet_buildings[planet->ID()].clear();
+                for (const auto& building : planet_buildings[PLANET_ID])
+                    AddObjectRow(building, PLANET_ID, id_range(), indent);
+                planet_buildings[PLANET_ID].clear();
                 --indent;
             }
         }
 
         // add buildings not on shown planets
-        for (const auto& plt_buildings : planet_buildings)
-            for (const auto& building : plt_buildings.second)
-                AddObjectRow(building, plt_buildings.first, id_range(), indent);
+        for (const auto& [planet_id, buildings] : planet_buildings)
+            for (const auto& building : buildings)
+                AddObjectRow(building, planet_id, id_range(), indent);
 
         // add fleets not in shown systems
         timer.EnterSection("non-system fleet rows");
         for (const auto& sys_fleets : system_fleets) {
            for (const auto& fleet : sys_fleets.second) {
+               const int FLEET_ID = fleet->ID();
+
                 // add fleet rows in this system
                 std::vector<int> fleet_contents;
-                fleet_contents.reserve(fleet_ships[fleet->ID()].size());
-                for (const auto& ship : fleet_ships[fleet->ID()])
+                fleet_contents.reserve(fleet_ships[FLEET_ID].size());
+                for (const auto& ship : fleet_ships[FLEET_ID])
                     fleet_contents.emplace_back(ship->ID());
 
                 AddObjectRow(fleet, sys_fleets.first, fleet_contents, indent);
-                if (ObjectCollapsed(fleet->ID())) {
+                if (ObjectCollapsed(FLEET_ID)) {
                     // remove contained ships, which will not be shown
-                    fleet_ships[fleet->ID()].clear();
+                    fleet_ships[FLEET_ID].clear();
                     continue;
                 }
 
                 ++indent;
                 // add ship rows in this fleet
-                for (const auto& ship : fleet_ships[fleet->ID()])
-                    AddObjectRow(ship, fleet->ID(), id_range(), indent);
-                fleet_ships[fleet->ID()].clear();
+                for (const auto& ship : fleet_ships[FLEET_ID])
+                    AddObjectRow(ship, FLEET_ID, id_range(), indent);
+                fleet_ships[FLEET_ID].clear();
                 --indent;
             }
-       }
+        }
 
         // add ships not in shown fleets
-        for (const auto& flt_ships : fleet_ships)
-            for (const auto& ship : flt_ships.second)
-                AddObjectRow(ship, flt_ships.first, id_range(), indent);
+        for (const auto& [fleet_id, ships] : fleet_ships)
+            for (const auto& ship : ships)
+                AddObjectRow(ship, fleet_id, id_range(), indent);
 
         // add fields not in shown systems
         timer.EnterSection("non-system field rows");
-        for (const auto& sys_fields : system_fields)
-            for (const auto& field : sys_fields.second)
-                AddObjectRow(field, sys_fields.first, id_range(), indent);
+        for (const auto& [system_id, fields] : system_fields)
+            for (const auto& field : fields)
+                AddObjectRow(field, system_id, id_range(), indent);
 
 
         // sort added rows
