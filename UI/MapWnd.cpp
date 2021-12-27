@@ -7441,7 +7441,7 @@ namespace {
         }
 
         auto ignore_hostile = GetOptionsDB().Get<bool>("ui.fleet.explore.hostile.ignored");
-        auto fleet_pred = std::make_shared<HostileVisitor>(empire_id);
+        auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
         std::pair<std::list<int>, double> route_distance;
 
         if (ignore_hostile)

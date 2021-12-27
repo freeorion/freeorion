@@ -5,6 +5,8 @@
 #include "UniverseObjectVisitor.h"
 #include "ConstantsFwd.h"
 
+class EmpireManager;
+
 //! Returns obj iff @a obj is a Fleet belonging to the given empire that is
 //! parked at a System, not under orders to move.
 //!
@@ -79,14 +81,14 @@ struct FO_COMMON_API UnownedVisitor : UniverseObjectVisitor
 
 struct FO_COMMON_API HostileVisitor : UniverseObjectVisitor
 {
-    explicit HostileVisitor(int viewing_empire, int owning_empire = ALL_EMPIRES) :
-        viewing_empire_id(viewing_empire),
-        owning_empire_id(owning_empire)
+    explicit HostileVisitor(int viewing_empire, const EmpireManager& empires_) :
+        hostile_to_empire_id(viewing_empire),
+        empires(empires_)
     {}
     auto Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject> override;
 
-    int const viewing_empire_id = ALL_EMPIRES;
-    int const owning_empire_id = ALL_EMPIRES;
+    int const hostile_to_empire_id = ALL_EMPIRES;
+    const EmpireManager& empires;
 };
 
 

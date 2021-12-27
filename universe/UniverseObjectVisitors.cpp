@@ -48,8 +48,5 @@ auto UnownedVisitor::Visit(const std::shared_ptr<System>& obj) const -> std::sha
 { return obj; }
 
 auto HostileVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
-{
-    if (obj->HostileToEmpire(viewing_empire_id, Empires())) // TODO: get from parameter or member...
-        return obj;
-    return nullptr;
-}
+{ return obj->HostileToEmpire(hostile_to_empire_id, empires) ? obj : nullptr; }
+

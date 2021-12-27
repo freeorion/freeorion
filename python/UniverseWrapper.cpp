@@ -79,9 +79,10 @@ namespace {
 
     auto ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        auto fleet_pred = std::make_shared<HostileVisitor>(empire_id);
+        const auto& empires{Empires()};
+        auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
         auto path = universe.GetPathfinder()->ShortestPath(
-            start_sys, end_sys, empire_id, fleet_pred, Empires(), universe.EmpireKnownObjects(empire_id));
+            start_sys, end_sys, empire_id, fleet_pred, empires, universe.EmpireKnownObjects(empire_id));
         return std::vector<int>{path.first.begin(), path.first.end()};
     }
 
