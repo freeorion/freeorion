@@ -51,6 +51,8 @@ namespace FleetDefaults {
     constexpr auto FLEET_DEFAULT_UNARMED = FleetAggression::FLEET_DEFENSIVE;
 }
 
+constexpr double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet needs to be to a system to have arrived in the system
+
 /** Encapsulates data for a FreeOrion fleet.  Fleets are basically a group of
   * ships that travel together. */
 class FO_COMMON_API Fleet : public UniverseObject {
