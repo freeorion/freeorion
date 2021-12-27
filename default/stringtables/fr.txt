@@ -1244,6 +1244,12 @@ Tous les Systèmes visibles
 RULE_ALL_SYSTEMS_VISIBLE_DESC
 Tous les emplacements des systèmes sont connus de tous les empires.
 
+RULE_EXTRASOLAR_SHIP_DETECTION
+Détection extrasolaire par les astronefs
+
+RULE_EXTRASOLAR_SHIP_DETECTION_DESC
+Les astronefs à l'extérieur des systèmes participent à la Détection.
+
 RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
 Planètes Furtives Indétectables
 
@@ -1496,6 +1502,9 @@ Multiplicateur de la valeur de priorité des systèmes inexplorés ayant été d
 
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
 Afficher/Cacher, sur la carte galactique, les zones circulaires autour des objets figurant leur Champ de Détection.
+
+OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_FUTURE
+Afficher/Cacher, lorsque les cercles de détection des flottes sont activés, les cercles prévisionnels de détection pour la flotte sélectionnée, le long du chemin que celle-ci doit parcourir durant les prochains tours.
 
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY
 Fixe la transparence des disques figurant le Champ de Détection des objets.
@@ -3062,6 +3071,9 @@ Calque distinctif de survol de souris pour les systèmes inexplorés
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Cercles de détection
+
+OPTIONS_GALAXY_MAP_DETECTION_RANGE_FUTURE
+Cercles de détection prévisionnels pour la flotte sélectionnée
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY
 Opacité des cercles de détection
@@ -7500,7 +7512,9 @@ SITREP_NOVA_DETECTED_LABEL
 Supernova détectée
 
 SITREP_BUREAUCRACY_STOPPED
-Le développement exponentiel de la [[policy PLC_BUREAUCRACY]] a paralysé son fonctionnement en raison d'un manque de structures administratives. Le nombre total de structures d'[[buildingtype BLD_REGIONAL_ADMIN]] et [[buildingtype BLD_IMPERIAL_PALACE]] possédées par l'empire s'élève actuellement à %rawtext:havebuildings%, mais %rawtext:needbuildings% sont nécessaires pour améliorer la Stabilité planétaire de [[value PLC_BUREAUCRACY_STABILITY_FLAT]]. La [[policy PLC_BUREAUCRACY]] requiert une structure administrative supplémentaire tous les [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] tours.
+'''Le développement de la [[policy PLC_BUREAUCRACY]] nécessite des structures administratives supplémentaires.
+À partir du prochain tour, %rawtext:needbuildings% structures d'[[buildingtype BLD_REGIONAL_ADMIN]] et [[buildingtype BLD_IMPERIAL_PALACE]] seront requises afin d'éviter la paralysie de la bureaucratie. Actuellement, un total de %rawtext:havebuildings% de ces structures se trouvent dans l'empire.
+La Bureaucratie requiert une structure administrative supplémentaire tous les [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] tours.'''
 
 SITREP_BUREAUCRACY_STOPPED_LABEL
 Paralysie Bureaucratique
@@ -7640,8 +7654,20 @@ EFFECT_NEST_REMOVAL_LABEL
 EFFECT_STARLANE_BORE
 Dans %system% : une nouvelle Voie spatiale a été ouverte vers un système proche.
 
+EFFECT_STARLANE_BORE_FAILED
+Dans %system% : un Générateur de Voies spatiales n'est pas parvenu à ouvrir une nouvelle Voie spatiale.
+
 EFFECT_STARLANE_BORE_LABEL
 Générateur de Voies Spatiales
+
+EFFECT_STARLANE_NEXUS
+Dans %system% : de nouvelles Voies spatiales ont été ouvertes vers les systèmes proches.
+
+EFFECT_STARLANE_NEXUS_FAILED
+Dans %system% : un Générateur Avancé de Voies spatiales n'est pas parvenu à ouvrir de nouvelles Voies spatiales.
+
+EFFECT_STARLANE_NEXUS_LABEL
+Générateur Avancé de Voies Spatiales
 
 EFFECT_BLACKHOLE
 Effondrement du système %system% afin de créer un Trou Noir.
@@ -14505,13 +14531,14 @@ BLD_STARLANE_BORE
 Générateur de Voies Spatiales
 
 BLD_STARLANE_BORE_DESC
-Génère une nouvelle Voie spatiale vers le système le plus proche en évitant le croisement avec des Voies spatiales déjà existantes ou le passage à trop grande proximité d'un autre système.
+'''Génère une nouvelle Voie spatiale vers le système le plus proche en évitant le croisement avec des Voies spatiales déjà existantes ou le passage à trop grande proximité d'un autre système.
+Les nouvelles Voies ne peuvent pas passer à moins de 20 uu d'un autre système et ne peuvent pas croiser des Voies spatiales déjà existantes à moins de 30 degrés.'''
 
 BLD_STARLANE_NEXUS
 Générateur Avancé de Voies Spatiales
 
 BLD_STARLANE_NEXUS_DESC
-Génère de nouvelles Voies spatiales vers d'autres systèmes stellaires en évitant le croisement avec des Voies spatiales déjà existantes ou le passage à trop grande proximité d'un autre système.
+Génère de nouvelles Voies spatiales vers d'autres systèmes stellaires. Fonctionne comme un [[buildingtype BLD_STARLANE_BORE]], sauf que les Voies spatiales sont continuellement créées jusqu'à qu'il ne soit plus possible d'en ajouter de nouvelles.
 
 BLD_XENORESURRECTION_LAB
 Laboratoire de Xénorésurrection
