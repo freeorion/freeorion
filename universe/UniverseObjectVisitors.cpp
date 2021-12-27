@@ -39,11 +39,13 @@ auto MovingFleetVisitor::Visit(const std::shared_ptr<Fleet>& obj) const -> std::
 }
 
 auto OwnedVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
-{
-    if (obj->OwnedBy(empire_id))
-        return obj;
-    return nullptr;
-}
+{ return obj->OwnedBy(empire_id) ? obj : nullptr; }
+
+auto UnownedVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
+{ return obj->Unowned() ? obj : nullptr; }
+
+auto UnownedVisitor::Visit(const std::shared_ptr<System>& obj) const -> std::shared_ptr<UniverseObject>
+{ return obj; }
 
 auto HostileVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
 {

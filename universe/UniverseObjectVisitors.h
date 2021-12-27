@@ -69,6 +69,14 @@ struct FO_COMMON_API OwnedVisitor : UniverseObjectVisitor
 };
 
 
+//! Returns obj iff @a obj is unowned.
+struct FO_COMMON_API UnownedVisitor : UniverseObjectVisitor
+{
+    auto Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject> override;
+    auto Visit(const std::shared_ptr<System>& obj) const -> std::shared_ptr<UniverseObject> override;
+};
+
+
 struct FO_COMMON_API HostileVisitor : UniverseObjectVisitor
 {
     explicit HostileVisitor(int viewing_empire, int owning_empire = ALL_EMPIRES) :
