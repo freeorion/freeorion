@@ -16750,6 +16750,11 @@ PARTISANS_REBELLION
 
 # %1% name of planet
 # %2% name of species on planet
+INFLUENCE_DEBT_DECAY
+Influence Debt Decay
+
+# %1% name of planet
+# %2% name of species on planet
 DEPENDENCE_ON_IMPERIAL_SUPPORT_DUE_TO_ENVIRONMENT
 Dependence on Empire due to %1% Environment
 

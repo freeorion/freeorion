@@ -35,8 +35,21 @@ UNSTABLE_REBEL_TROOPS
             ]
             accountinglabel = "PARTISANS_REBELLION"
             priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
-            effects = SetTargetHappiness value = Value - 0.1 * abs(EmpireStockpile empire = Source.Owner resource = Influence)^0.5
+            effects = SetTargetHappiness value = Value - 0.5 * abs(EmpireStockpile empire = Source.Owner resource = Influence)^0.5
             
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Not Unowned
+                Not EmpireStockpile empire = Source.Owner resource = Influence low = 0
+                Not Capital
+            ]
+            accountinglabel = "INFLUENCE_DEBT_DECAY"
+            priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
+            effects = SetTargetInfluence value = Value + 0.5 * abs(EmpireStockpile empire = Source.Owner resource = Influence)^0.5 /
+                max(1.0, Statistic Count condition = And [ Planet Species OwnedBy empire = Source.Owner])
+
         EffectsGroup
             scope = Source
             activation = Planet environment = Adequate
