@@ -27,6 +27,7 @@ UNSTABLE_REBEL_TROOPS
         EffectsGroup
             scope = Source
             activation = And [
+                Planet
                 Not Unowned
                 Not EmpireStockpile empire = Source.Owner resource = Influence low = 0
                 Not Capital
