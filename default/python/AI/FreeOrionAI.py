@@ -309,7 +309,7 @@ def generateOrders():  # pylint: disable=invalid-name
 
     debug(f"EmpireColors: {empire.colour}")
     planet_id = PlanetUtilsAI.get_capital()
-    if planet_id:
+    if planet_id is not None and planet_id != INVALID_ID:
         planet = fo.getUniverse().getPlanet(planet_id)
         debug("CapitalID: " + str(planet_id) + " Name: " + planet.name + " Species: " + planet.speciesName)
     else:
