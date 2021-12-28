@@ -1332,7 +1332,7 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
         observed_values[std::move(entry)]++;
 
     auto max = std::max_element(observed_values.begin(), observed_values.end(),
-                                [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
+                                [](const auto& p1, const auto& p2) -> bool { return p1.second < p2.second; });
 
     return max->first;
 }
@@ -1551,7 +1551,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
 
         std::function<bool (const std::map<std::string, int>::value_type&)> key_filter{nullptr};
-        key_filter = [](auto e){ return true; };
+        key_filter = [](auto e) -> bool { return true; };
 
         if (m_string_ref1) {
             std::string key_string = m_string_ref1->Eval(context);
@@ -1562,7 +1562,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 // special case for techs: make unresearched-tech's research-turn a big number
                 return IMPOSSIBLY_LARGE_TURN;
 
-            key_filter = [k{std::move(key_string)}](auto e){ return k == e.first; };
+            key_filter = [k{std::move(key_string)}](auto e) -> bool { return k == e.first; };
         }
         else if (variable_name == "ShipPartsOwned" && m_int_ref2) {
             int key_int = m_int_ref2->Eval(context);
@@ -1627,11 +1627,11 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
 
         std::function<bool (const std::map<int, int>::value_type&)> key_filter{nullptr};
-        key_filter = [](auto e){ return true; };
+        key_filter = [](auto e) -> bool { return true; };
 
         // if a key integer specified, get just that entry (for single empire or sum of all empires)
         if (m_int_ref2)
-            key_filter = [k = m_int_ref2->Eval(context)](auto e){ return k == e.first; };
+            key_filter = [k = m_int_ref2->Eval(context)](auto e) -> bool { return k == e.first; };
 
         // although indexed by integers, some of these may be specified by a
         // string that needs to be looked up. if a key string specified, get
@@ -1647,7 +1647,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 if (design)
                     key_int = design->ID();
             }
-            key_filter = [k = key_int](auto e){ return k == e.first; };
+            key_filter = [k = key_int](auto e) -> bool { return k == e.first; };
         }
 
         if (empire)
@@ -1678,7 +1678,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         empire_property = &Empire::OutpostsOwned;
 
         using namespace boost::adaptors;
-        auto GetRawPtr = [](const auto& smart_ptr){ return smart_ptr.get(); };
+        auto GetRawPtr = [](const auto& smart_ptr) { return smart_ptr.get(); };
 
         if (!empire) {
             return boost::accumulate(context.Empires() | map_values | transformed(GetRawPtr) |
@@ -1964,11 +1964,11 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     std::function<const std::map<int, float>& (const Empire&)> empire_property_int_key{nullptr};
 
     if (variable_name == "PropagatedSystemSupplyRange")
-        empire_property_int_key = [](const Empire& empire){ return GetSupplyManager().PropagatedSupplyRanges(empire.EmpireID()); };
+        empire_property_int_key = [](const Empire& empire) -> const std::map<int, float>& { return GetSupplyManager().PropagatedSupplyRanges(empire.EmpireID()); };
     else if (variable_name == "SystemSupplyRange")
         empire_property_int_key = &Empire::SystemSupplyRanges;
     else if (variable_name == "PropagatedSystemSupplyDistance")
-        empire_property_int_key = [](const Empire& empire){ return GetSupplyManager().PropagatedSupplyDistances(empire.EmpireID()); };
+        empire_property_int_key = [](const Empire& empire) -> const std::map<int, float>& { return GetSupplyManager().PropagatedSupplyDistances(empire.EmpireID()); };
 
     if (empire_property_int_key) {
         using namespace boost::adaptors;
@@ -1983,10 +1983,10 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         }
 
         std::function<bool (const std::map<int, float>::value_type&)> key_filter;
-        key_filter = [](auto k){ return true; };
+        key_filter = [](auto k) -> bool { return true; };
 
         if (m_int_ref2)
-            key_filter = [k = m_int_ref2->Eval(context)](auto e){ return k == e.first; };
+            key_filter = [k = m_int_ref2->Eval(context)](auto e) -> bool { return k == e.first; };
 
         if (empire)
             return boost::accumulate(empire_property_int_key(*empire) | filtered(key_filter) | map_values, 0.0f);
@@ -2563,7 +2563,7 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
         std::vector<std::string> retval;
         retval.reserve(pols.size());
         std::transform(pols.begin(), pols.end(), std::back_inserter(retval),
-                       [](const std::string_view sv) { return std::string{sv}; });
+                       [](const std::string_view sv) -> std::string { return std::string{sv}; });
         return retval;
 
     } else if (variable_name == "EmpireAvailablePolices") {
