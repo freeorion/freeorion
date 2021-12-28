@@ -8,19 +8,27 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
-        // used in setting stability adjustments for species likes / dislikes
+        // EmpireHasAdoptedPolicy PLC_LIBERTY used in setting stability adjustments for species likes / dislikes
 
-        // increases research but penalizes stability
+        // effects: penalizes stability, conditionally increases research
         EffectsGroup
         scope = And [
             Planet
             OwnedBy empire = Source.Owner
             Species
-            Happiness low = (NamedReal name = "PLC_LIBERTY_MIN_STABILITY" value = 8)
+        ]
+        effects = [
+            SetTargetHappiness value = Value - (NamedReal name = "PLC_LIBERTY_STABILITY_PENALTY_FLAT" value = 2.0)
+        ]
+        EffectsGroup
+        scope = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species
+            Happiness low = (NamedReal name = "PLC_LIBERTY_MIN_STABILITY" value = 6)
         ]
         effects = [
             SetTargetResearch value = Value + (NamedReal name = "PLC_LIBERTY_RESEARCH_BONUS_FLAT" value = 2.0)
-            SetTargetHappiness value = Value - (NamedReal name = "PLC_LIBERTY_STABILITY_PENALTY_FLAT" value = 2.0)
         ]
     ]
     graphic = "icons/policies/liberty.png"
