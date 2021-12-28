@@ -15,7 +15,6 @@ MeterType ResourceToMeter(ResourceType type) {
     case ResourceType::RE_INFLUENCE: return MeterType::METER_INFLUENCE;
     case ResourceType::RE_STOCKPILE: return MeterType::METER_STOCKPILE;
     default:
-        assert(0);
         return MeterType::INVALID_METER_TYPE;
         break;
     }
@@ -28,7 +27,6 @@ MeterType ResourceToTargetMeter(ResourceType type) {
     case ResourceType::RE_INFLUENCE: return MeterType::METER_TARGET_INFLUENCE;
     case ResourceType::RE_STOCKPILE: return MeterType::METER_MAX_STOCKPILE;
     default:
-        assert(0);
         return MeterType::INVALID_METER_TYPE;
         break;
     }
@@ -41,7 +39,6 @@ ResourceType MeterToResource(MeterType type) {
     case MeterType::METER_INFLUENCE: return ResourceType::RE_INFLUENCE;
     case MeterType::METER_STOCKPILE: return ResourceType::RE_STOCKPILE;
     default:
-        assert(0);
         return ResourceType::INVALID_RESOURCE_TYPE;
         break;
     }
