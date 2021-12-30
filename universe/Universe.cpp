@@ -2447,12 +2447,9 @@ namespace {
         // ensure systems on either side of a starlane along which a fleet is
         // moving are at least basically visible, so that the starlane itself can /
         // will be visible
-        for (auto& obj : objects.find(MovingFleetVisitor())) {
-            if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID || obj->ObjectType() != UniverseObjectType::OBJ_FLEET)
-                continue;
-            auto fleet = std::dynamic_pointer_cast<const Fleet>(obj);
-            if (!fleet)
-                continue;
+        for (const auto& fleet : objects.find<const Fleet>(MovingFleetVisitor())) {
+            if (fleet->Unowned() || fleet->SystemID() == INVALID_OBJECT_ID)
+            { continue; }
 
             int prev = fleet->PreviousSystemID();
             int next = fleet->NextSystemID();

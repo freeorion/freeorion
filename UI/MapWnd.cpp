@@ -4594,7 +4594,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
 
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
-    const Empire* empire = GetEmpire(fleet->Owner());
+    const auto empire = Empires().GetEmpire(fleet->Owner());
     if (empire)
         line_colour = empire->Color();
     else if (fleet->Unowned() && fleet->HasMonsters(GetUniverse()))

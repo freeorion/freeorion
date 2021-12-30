@@ -69,7 +69,7 @@ void BuildingsPanel::CompleteConstruction() {
     // get owner, connect its production queue changed signal to update this panel
     auto planet = Objects().get(m_planet_id);
     if (planet) {
-        if (const Empire* empire = GetEmpire(planet->Owner())) {
+        if (auto empire = Empires().GetEmpire(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();
             queue.ProductionQueueChangedSignal.connect(
                 boost::bind(&BuildingsPanel::RequirePreRender, this));
@@ -130,7 +130,7 @@ void BuildingsPanel::Update() {
     }
 
     // get in-progress buildings
-    const Empire* empire = GetEmpire(planet->Owner());
+    const auto empire = Empires().GetEmpire(planet->Owner());
     if (!empire)
         return;
 
