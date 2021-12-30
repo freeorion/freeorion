@@ -29,7 +29,7 @@ BuildingType
          // THEN CANT ABANDON IF BATTLE
          EffectsGroup
             scope = Source
-            activation = Turn  low = 3 + Source.CreationTurn  high = Source.System.LastTurnBattleHere
+            activation = Turn low = 3 + Source.CreationTurn  high = Source.System.LastTurnBattleHere
             stackinggroup = "ABANDON_OUTPOST_STACK"
             effects = GenerateSitRepMessage
                 message = "SITREP_OUTPOST_ABANDONED_PREVENTED_BY_BATTLE"
