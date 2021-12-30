@@ -14,12 +14,15 @@ Policy
         // Note that to raise a planet to a metropole, you have to reach the minimum stability
         // while suffering from the non-metropole penalty below.
         EffectsGroup
-            scope = MaximumNumberOf number = min((NamedInteger name = "METROPOLES_PLANET_LIMIT" value = 6),
+            scope = MaximumNumberOf number = min((NamedInteger name = "METROPOLES_PLANET_LIMIT" value = 3),
                                                  floor(Statistic Count condition = And [
-                                                           Planet
-                                                           OwnedBy empire = Source.Owner
-                                                           Species
-                                                       ] / (NamedInteger name = "METROPOLES_MIN_PLANETS" value = 4)))
+                                                    Planet
+                                                    OwnedBy empire = Source.Owner
+                                                    Species
+                                                    Population low = (NamedReal name = "METROPOLES_MIN_SUPPORT_PLANET_POP" value = 5.0)
+                                                    (LocalCandidate.TurnsSinceColonization >= (NamedInteger name = "METROPOLES_MIN_SUPPORT_PLANET_TURNS" value = 10))
+                                                    (LocalCandidate.TurnsSinceLastConquered >= (NamedInteger name = "METROPOLES_MIN_SUPPORT_PLANET_TURNS" value = 10))
+                                                 ] / (NamedInteger name = "METROPOLES_MIN_PLANETS" value = 4)))
                                     sortkey = LocalCandidate.Population condition = And [
                 Planet
                 OwnedBy empire = Source.Owner

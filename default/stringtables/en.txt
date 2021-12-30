@@ -11568,8 +11568,13 @@ PLC_METROPOLES
 Metropoles
 
 PLC_METROPOLES_DESC
-'''Boosts the output of up to [[value METROPOLES_PLANET_LIMIT]] planets, but not more than a fraction of 1 / [[value METROPOLES_MIN_PLANETS]] of all the empire's populated planets. To qualify for being boosted, planets must have [[metertype METER_POPULATION]] of at least [[value METROPOLES_MINIMUM_POPULATION]] and [[metertype METER_HAPPINESS]] of at least [[value METROPOLES_MIN_STABILITY]].
-The highest-populated of the qualified planets will receive, regardless of focus:
+'''Boosts the output of up to [[value METROPOLES_PLANET_LIMIT]] planets, but not more than a fraction of 1 / [[value METROPOLES_MIN_PLANETS]] of the number of suitable "support" planets the empire has.
+
+To qualify to be boosted, planets must have [[metertype METER_POPULATION]] of at least [[value METROPOLES_MINIMUM_POPULATION]] and [[metertype METER_HAPPINESS]] of at least [[value METROPOLES_MIN_STABILITY]].
+
+To qualify as support planets, planets must have a [[METER_POPULATION]] of at least [[value METROPOLES_MIN_SUPPORT_PLANET_POP]] and must not have been most recently colonized or invaded in the last [[value METROPOLES_MIN_SUPPORT_PLANET_TURNS]] turns.
+
+The highest-population qualified planets will be boosted and will receive, regardless of focus:
 • Increases [[metertype METER_TARGET_RESEARCH]] by [[value METROPOLES_TARGET_RESEARCH_PERPOP]] per population.
 • Increases [[metertype METER_TARGET_INDUSTRY]] by [[value METROPOLES_TARGET_INDUSTRY_PERPOP]] per population.
 • Increases [[metertype METER_TARGET_CONSTRUCTION]] by [[value METROPOLES_TARGET_CONSTRUCTION_FLAT]].
@@ -11577,7 +11582,7 @@ The highest-populated of the qualified planets will receive, regardless of focus
 but also has a penalty:
 • Decreases [[metertype METER_MAX_STOCKPILE]] by [[value METROPOLES_MAX_STOCKPILE_FLAT]].
 
-Additionally, other planets (with lower than the highest population planets, including all with less than [[value METROPOLES_MINIMUM_POPULATION]] population or less than [[value METROPOLES_MIN_STABILITY]] stability) have a penalty applied:
+Additionally, other planets (including all planets with less than [[value METROPOLES_MINIMUM_POPULATION]] population or less than [[value METROPOLES_MIN_STABILITY]] stability) have a penalty applied:
 • Decreases [[metertype METER_TARGET_HAPPINESS]] by [[value METROPOLES_STABILITY_PENALTY]].'''
 
 PLC_METROPOLES_SHORT_DESC
