@@ -5,6 +5,8 @@
 #include "UniverseObjectVisitor.h"
 #include "ConstantsFwd.h"
 
+#include <set>
+
 class EmpireManager;
 
 //! Returns obj iff @a obj is a Fleet belonging to the given empire that is
@@ -91,5 +93,23 @@ struct FO_COMMON_API HostileVisitor : UniverseObjectVisitor
     const EmpireManager& empires;
 };
 
+
+//! Returns obj iff the ID of @a obj is NOT in either of the passed-in sets.
+struct FO_COMMON_API NotInSetsVisitor : UniverseObjectVisitor
+{
+    explicit NotInSetsVisitor(const std::set<int>& set1_, const std::set<int>& set2_) :
+        set1(set1_),
+        set2(set2_)
+    {}
+    explicit NotInSetsVisitor(const std::set<int>& set1_) :
+        set1(set1_)
+    {}
+    auto Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject> override;
+
+    static const inline std::set<int> EMPTY_SET = {};
+
+    const std::set<int>& set1;
+    const std::set<int>& set2 = EMPTY_SET;
+};
 
 #endif
