@@ -43,8 +43,8 @@ struct FO_COMMON_API Condition {
               SearchDomain search_domain = SearchDomain::NON_MATCHES) const;
 
     /** Tests all objects in universe as NON_MATCHES. */
-    void Eval(const ScriptingContext& parent_context,
-              ObjectSet& matches) const;
+    virtual void Eval(const ScriptingContext& parent_context,
+                      ObjectSet& matches) const;
 
     /** Tests all objects in universe as NON_MATCHES. */
     void Eval(const ScriptingContext& parent_context,
