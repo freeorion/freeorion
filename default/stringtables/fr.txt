@@ -11747,7 +11747,7 @@ PLC_TERRAFORMING
 Terraformation
 
 PLC_TERRAFORMING_DESC
-'''• Diminue le temps minimum nécessaire pour mener à bien les projets [[buildingtype BLD_TERRAFORM]] et [[buildingtype BLD_TERRAFORM_REVERT]] sur une planète.
+'''• Diminue le temps minimum nécessaire pour mener à bien les projets terraformation sur une planète.
 • Améliore la [[metertype METER_TARGET_HAPPINESS]] sur les planètes terraformées de [[value PLC_TERRAFORMING_TARGET_HAPPINESS_ORIGINAL_FLAT]] par palier les séparant de leur type planétaire d'origine après terraformation.
 • Améliore la [[metertype METER_TARGET_INFLUENCE]] sur les planètes en Focus Influence de [[value PLC_TERRAFORMING__TARGET_INFLUENCE_ORIGINAL_FLAT]] par palier les séparant de leur type planétaire d'origine après terraformation.
 • Améliore la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche de la racine carrée de la [[metertype METER_POPULATION]] x [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] par palier les séparant de leur type planétaire d'origine après terraformation.'''
@@ -14432,18 +14432,6 @@ BLD_CLONING_CENTER_DESC
 '''Accroît la [[metertype METER_TARGET_POPULATION]] de toutes les planètes selon leur taille: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 Le [[tech GRO_INDUSTRY_CLONE]] permet de produire industriellement des populations sur-mesure, améliorant considérablement leur croissance.'''
-
-BLD_TERRAFORM
-Terraformeur
-
-BLD_TERRAFORM_DESC
-Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement favori de l'espèce.
-
-BLD_TERRAFORM_REVERT
-Terraformeur Inversé
-
-BLD_TERRAFORM_REVERT_DESC
-Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement planétaire d'origine.
 
 BLD_REMOTE_TERRAFORM
 Terraformeur à Distance

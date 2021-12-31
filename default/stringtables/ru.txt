@@ -11561,18 +11561,6 @@ BLD_CLONING_CENTER_DESC
 
 Промышленное клонирование позволит производить на заказ население в промышленном масштабе, значительно улучшая популяцию'''
 
-BLD_TERRAFORM
-Терраформинг
-
-BLD_TERRAFORM_DESC
-Терраформирует мир на один шаг ближе к [[encyclopedia ENVIRONMENT_TITLE]] предпочтениям проживающего вида
-
-BLD_TERRAFORM_REVERT
-Обратный терраформинг
-
-BLD_TERRAFORM_REVERT_DESC
-Терраформирует мир на один шаг назад к своему первоначальному виду [[encyclopedia ENVIRONMENT_TITLE]]
-
 BLD_REMOTE_TERRAFORM
 Удаленный терраформинг
 

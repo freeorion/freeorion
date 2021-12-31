@@ -1,32 +1,55 @@
-BuildingType
-    name = "BLD_TERRAFORM"
-    description = "BLD_TERRAFORM_DESC"
+// python would definitely help here
+[[TARGET_TERRAFORMING(Desert,Terran,Ocean,TUNDRA,DESERT,TERRAN,OCEAN,SWAMP)]]
+[[TARGET_TERRAFORMING(Terran,Ocean,Swamp,DESERT,TERRAN,OCEAN,SWAMP,TOXIC)]]
+[[TARGET_TERRAFORMING(Ocean,Swamp,Toxic,TERRAN,OCEAN,SWAMP,TOXIC,INFERNO)]]
+[[TARGET_TERRAFORMING(Swamp,Toxic,Inferno,OCEAN,SWAMP,TOXIC,INFERNO,RADIATED)]]
+[[TARGET_TERRAFORMING(Toxic,Inferno,Radiated,SWAMP,TOXIC,INFERNO,RADIATED,BARREN)]]
+[[TARGET_TERRAFORMING(Inferno,Radiated,Barren,TOXIC,INFERNO,RADIATED,BARREN,TUNDRA)]]
+[[TARGET_TERRAFORMING(Radiated,Barren,Tundra,INFERNO,RADIATED,BARREN,TUNDRA,DESERT)]]
+[[TARGET_TERRAFORMING(Barren,Tundra,Desert,RADIATED,BARREN,TUNDRA,DESERT,TERRAN)]]
+[[TARGET_TERRAFORMING(Tundra,Desert,Terran,BARREN,TUNDRA,DESERT,TERRAN,OCEAN)]]
+
+
+// @1@ cw previous type
+// @2@ target type
+// @3@ ccw previous type
+// @4-8@ cw2 - ccw2 in upper case
+TARGET_TERRAFORMING
+'''BuildingType
+    name = "BLD_TERRAFORM_@6@"
+    description = "BLD_TERRAFORM_@6@_DESC"
     buildcost = 100 * (1 - 0.4 * Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_TERRAFORMING"])
                     * (Target.HabitableSize * (1 + Target.DistanceFromOriginalType) ) * [[BUILDING_COST_MULTIPLIER]]
                     * (1 + 2 * Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_ENVIRONMENTALISM"])
     buildtime = 12 - 6 * Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_TERRAFORMING"]
     location = And [
         Planet
-        Not Contains Building name = "BLD_TERRAFORM"
-        Not Contains Building name = "BLD_TERRAFORM_REVERT"
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
         Not Planet type = [Asteroids GasGiant]
-        Not Planet environment = [Uninhabitable Good]
-        Not And [
-            Species name = "SP_EXOBOT"
-            Planet environment = Adequate
-        ]
         Not HasTag name = "NO_TERRAFORM"
+        Or [
+            Planet type = @1@
+            Planet type = @3@
+            [[LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(BLD_TERRAFORM_@5@)]]
+            [[LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(BLD_TERRAFORM_@7@)]]
+        ]
     ]
     enqueuelocation = And [
-        Planet
-        OwnedBy empire = Source.Owner
-        Not Contains Building name = "BLD_TERRAFORM_REVERT"
-        Not Contains Building name = "BLD_GAIA_TRANS"
-        Not HasSpecial name = "GAIA_SPECIAL"
-        Not Enqueued type = Building name = "BLD_TERRAFORM_REVERT"
-        Not Enqueued type = Building name = "BLD_GAIA_TRANS"
+       [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+       Not Planet type = @2@
+       // Options should go down to one after a player started going into one direction,
+       // E.g. after enqueing Ocean on a Terran planet, Desert should be removed.
+       // We can however not simply exclude Desert when Ocean is enqueued, since someone
+       // may want to convert Swamp to Desert.
+       Not And [
+           Planet type = @1@
+           Enqueued type = Building name = "BLD_TERRAFORM_@4@"
+       ]
+       Not And [
+           Planet type = @3@
+           Enqueued type = Building name = "BLD_TERRAFORM_@8@"
+       ]
     ]
     effectsgroups = [
         EffectsGroup
@@ -35,7 +58,7 @@ BuildingType
                 Planet
             ]
             effects = [
-                SetPlanetType type = Target.NextBetterPlanetType
+                SetPlanetType type = @2@
                 GenerateSitRepMessage
                     message = "EFFECT_TERRAFORM"
                     label = "EFFECT_TERRAFORM_LABEL"
@@ -49,5 +72,7 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/building/terraform.png"
+'''
 
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/enqueue.macros"

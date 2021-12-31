@@ -6360,24 +6360,6 @@ Ein elektrischer Generator in niedriger Umlaufbahn, welcher aus der Sonne, die e
 BLD_CLONING_CENTER
 Kloncenter
 
-BLD_TERRAFORM
-Terraformation
-
-BLD_TERRAFORM_DESC
-Wandelt den Planeten in eine Welt um, die der bevorzugten [[encyclopedia ENVIRONMENT_TITLE]] der Einwohnerspezies einen Schritt näher ist.
-
-BLD_TERRAFORM_REVERT
-Terraform-Umkehr
-
-BLD_TERRAFORM_REVERT_DESC
-Wandelt den Planeten einen Schritt in Richtung seiner ursprünglichen [[encyclopedia ENVIRONMENT_TITLE]]s um.
-
-BLD_REMOTE_TERRAFORM
-Fern-Terraformation
-
-BLD_REMOTE_TERRAFORM_DESC
-Wandelt einen Planeten in eine Welt um, die der bevorzugten [[encyclopedia ENVIRONMENT_TITLE]] der Einwohnerspezies einen Schritt näher ist. Dieser Prozess kann auch von einem [[encyclopedia OUTPOSTS_TITLE]] aus durchgeführt werden.
-
 BLD_NEST_ERADICATOR
 Nestbeseitiger
 
