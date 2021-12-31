@@ -340,7 +340,7 @@ void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
 {
     //std::cout << "CircleArc ul: " << ul << "  lr: " << lr << "  theta1: " << theta1 << "  theta2: " << theta2 << "  filled: " << filled_shape << std::endl;
     GG::GL2DVertexBuffer vert_buf;
-    vert_buf.reserve(50);   // max number that BufferStoreCircleArcVertices might add
+    vert_buf.reserve(51);   // max number that BufferStoreCircleArcVertices might add
 
     BufferStoreCircleArcVertices(vert_buf, ul, lr, theta1, theta2, filled_shape, 0, true);
 
