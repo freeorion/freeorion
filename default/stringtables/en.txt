@@ -11605,9 +11605,8 @@ PLC_EXPLORATION
 Exploration
 
 PLC_EXPLORATION_DESC
-'''Increases speed of ships with no weapons, fighters, shields, armour, troops, colony pods, bombardment, research, industry, influence, production, or general parts.
-
-Detection, fuel, and engine parts are allowed.'''
+'''• Increases speed of ships with no weapons, fighters, shields, armour, troops, colony pods, bombardment, research, industry, influence, production, or general parts. Detection, fuel, and engine parts are allowed.
+• Every turn a system is newly explored, the ships in that system generate a total of [[value EXPLORATION_RESEARCH_BONUS_TOTAL]] RP.'''
 
 PLC_EXPLORATION_SHORT_DESC
 Speeds Up Explorer Ships
@@ -12067,7 +12066,7 @@ PLC_EXPLORATION_RESEARCH
 Exploration Research
 
 PLC_EXPLORATION_RESEARCH_DESC
-Every turn a system is newly explored, the ships in that system generate a total of [[value EXPLORATION_RESEARCH_BONUS_TOTAL]] RP.
+
 
 PLC_EXPLORATION_RESEARCH_SHORT_DESC
 Exploration Gives Research
