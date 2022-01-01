@@ -10,12 +10,6 @@
 #include "UniverseObject.h"
 
 
-StationaryFleetVisitor::StationaryFleetVisitor(int empire) :
-    empire_id(empire)
-{}
-
-StationaryFleetVisitor::~StationaryFleetVisitor() = default;
-
 auto StationaryFleetVisitor::Visit(const std::shared_ptr<Fleet>& obj) const -> std::shared_ptr<UniverseObject>
 {
     if ((obj->FinalDestinationID() == INVALID_OBJECT_ID ||
@@ -24,13 +18,6 @@ auto StationaryFleetVisitor::Visit(const std::shared_ptr<Fleet>& obj) const -> s
     { return obj; }
     return nullptr;
 }
-
-
-OrderedMovingFleetVisitor::OrderedMovingFleetVisitor(int empire) :
-    empire_id(empire)
-{}
-
-OrderedMovingFleetVisitor::~OrderedMovingFleetVisitor() = default;
 
 auto OrderedMovingFleetVisitor::Visit(const std::shared_ptr<Fleet>& obj) const -> std::shared_ptr<UniverseObject>
 {
@@ -42,13 +29,6 @@ auto OrderedMovingFleetVisitor::Visit(const std::shared_ptr<Fleet>& obj) const -
     return nullptr;
 }
 
-
-MovingFleetVisitor::MovingFleetVisitor(int empire) :
-    empire_id(empire)
-{}
-
-MovingFleetVisitor::~MovingFleetVisitor() = default;
-
 auto MovingFleetVisitor::Visit(const std::shared_ptr<Fleet>& obj) const -> std::shared_ptr<UniverseObject>
 {
     if (obj->FinalDestinationID() != INVALID_OBJECT_ID &&
@@ -58,31 +38,22 @@ auto MovingFleetVisitor::Visit(const std::shared_ptr<Fleet>& obj) const -> std::
     return nullptr;
 }
 
-
-OwnedVisitor::OwnedVisitor(int empire) :
-    empire_id(empire)
-{}
-
-OwnedVisitor::~OwnedVisitor() = default;
-
 auto OwnedVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
-{
-    if (obj->OwnedBy(empire_id))
-        return obj;
-    return nullptr;
-}
+{ return obj->OwnedBy(empire_id) ? obj : nullptr; }
 
+auto UnownedVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
+{ return obj->Unowned() ? obj : nullptr; }
 
-HostileVisitor::HostileVisitor(int viewing_empire, int owning_empire) :
-    viewing_empire_id(viewing_empire),
-    owning_empire_id(owning_empire)
-{}
-
-HostileVisitor::~HostileVisitor() = default;
+auto UnownedVisitor::Visit(const std::shared_ptr<System>& obj) const -> std::shared_ptr<UniverseObject>
+{ return obj; }
 
 auto HostileVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
+{ return obj->HostileToEmpire(hostile_to_empire_id, empires) ? obj : nullptr; }
+
+auto NotInSetsVisitor::Visit(const std::shared_ptr<UniverseObject>& obj) const -> std::shared_ptr<UniverseObject>
 {
-    if (obj->HostileToEmpire(viewing_empire_id, Empires())) // TODO: get from parameter or member...
-        return obj;
-    return nullptr;
+    int obj_id = obj->ID();
+    if (set1.find(obj_id) != set1.end())
+        return nullptr;
+    return set2.find(obj_id) != set2.end() ? nullptr : obj;
 }

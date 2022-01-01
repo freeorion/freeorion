@@ -46,12 +46,13 @@ FO_ENUM(
    orbit), and all objects in a paricular orbit.*/
 class FO_COMMON_API System : public UniverseObject {
 public:
-    /** Systems are unowned unless at least one planet is owned by an empire and
-        no other empire owns any planets in the system.*/
-    [[nodiscard]] int Owner() const override;
-
     [[nodiscard]] int SystemID() const override
     { return this->ID(); }
+
+    /** Returns a single empire ID if a single empire controls a planet or
+      * planets in this system, or ALL_EMPIRES if no empire controls a planet
+      * or if multiple empires control planet(s). */
+    [[nodiscard]] int EffectiveOwner(const ObjectMap& objects) const;
 
     [[nodiscard]] UniverseObjectType ObjectType() const override;
 

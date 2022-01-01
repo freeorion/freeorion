@@ -959,20 +959,6 @@ bool Font::RenderState::ColorsEmpty() const
 
 
 ///////////////////////////////////////
-// class GG::Font::RenderCache
-///////////////////////////////////////
-
-Font::RenderCache::RenderCache() :
-    vertices(std::make_unique<GL2DVertexBuffer>()),
-    coordinates(std::make_unique<GLTexCoordBuffer>()),
-    colors(std::make_unique<GLRGBAColorBuffer>()),
-    underline_vertices(std::make_unique<GL2DVertexBuffer>()),
-    underline_colors(std::make_unique<GLRGBAColorBuffer>())
-{}
-
-Font::RenderCache::~RenderCache() = default;
-
-///////////////////////////////////////
 // class GG::Font::LineData::CharData
 ///////////////////////////////////////
 Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
@@ -1073,9 +1059,9 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
         }
     }
 
-    cache.vertices->createServerBuffer();
-    cache.coordinates->createServerBuffer();
-    cache.colors->createServerBuffer();
+    cache.vertices.createServerBuffer();
+    cache.coordinates.createServerBuffer();
+    cache.colors.createServerBuffer();
     RenderCachedText(cache);
 
     return pt.x - orig_x;
@@ -1103,15 +1089,18 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
     RenderCachedText(cache);
 }
 
-void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format, RenderCache& cache,
-                         const std::vector<LineData>& line_data, RenderState* render_state/* = 0*/) const
- {
-    RenderState state;
-    if (!render_state)
-        render_state = &state;
-
-    PreRenderText(ul, lr, text, format, line_data, *render_state,
-                  0, CP0, line_data.size(), line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
+void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
+                         RenderCache& cache,
+                         const std::vector<LineData>& line_data, RenderState* render_state) const
+{
+    if (render_state) {
+        PreRenderText(ul, lr, text, format, line_data, *render_state, 0, CP0, line_data.size(),
+                      line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
+    } else {
+        RenderState render_state_local;
+        PreRenderText(ul, lr, text, format, line_data, render_state_local, 0, CP0, line_data.size(),
+                      line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
+    }
 }
 
 void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
@@ -1150,9 +1139,8 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
         auto string_end_it = text.end();
         for (CPSize j = start; j < end; ++j) {
             const auto& char_data = line.char_data[Value(j)];
-            for (auto tag : char_data.tags) {
+            for (auto tag : char_data.tags)
                 HandleTag(tag, orig_color, render_state);
-            }
             std::uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
             assert((text[Value(char_data.string_index)] == '\n') == (c == WIDE_NEWLINE));
             if (c == WIDE_NEWLINE)
@@ -1166,9 +1154,9 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
         }
     }
 
-    cache.vertices->createServerBuffer();
-    cache.coordinates->createServerBuffer();
-    cache.colors->createServerBuffer();
+    cache.vertices.createServerBuffer();
+    cache.coordinates.createServerBuffer();
+    cache.colors.createServerBuffer();
 }
 
 void Font::RenderCachedText(RenderCache& cache) const
@@ -1180,18 +1168,18 @@ void Font::RenderCachedText(RenderCache& cache) const
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
-    cache.vertices->activate();
-    cache.coordinates->activate();
-    cache.colors->activate();
-    glDrawArrays(GL_QUADS, 0,  cache.vertices->size());
+    cache.vertices.activate();
+    cache.coordinates.activate();
+    cache.colors.activate();
+    glDrawArrays(GL_QUADS, 0, cache.vertices.size());
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    if (!cache.underline_vertices->empty()) {
-        cache.underline_vertices->activate();
-        cache.underline_colors->activate();
-        glDrawArrays(GL_QUADS, 0, cache.underline_vertices->size());
+    if (!cache.underline_vertices.empty()) {
+        cache.underline_vertices.activate();
+        cache.underline_colors.activate();
+        glDrawArrays(GL_QUADS, 0, cache.underline_vertices.size());
     }
 
     glPopClientAttrib();
@@ -1983,24 +1971,24 @@ void Font::ValidateFormat(Flags<TextFormat>& format) const
 void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, const Pt& pt,
                           const Glyph& glyph, int x_top_offset, int y_shift) const
 {
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
-    cache.vertices->store(pt.x + glyph.left_bearing + x_top_offset, pt.y + glyph.y_offset + y_shift);
-    cache.colors->store(color);
+    cache.coordinates.store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
+    cache.vertices.store(pt.x + glyph.left_bearing + x_top_offset, pt.y + glyph.y_offset + y_shift);
+    cache.colors.store(color);
 
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
-    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + x_top_offset,
-                          pt.y + glyph.y_offset + y_shift);
-    cache.colors->store(color);
+    cache.coordinates.store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
+    cache.vertices.store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + x_top_offset,
+                         pt.y + glyph.y_offset + y_shift);
+    cache.colors.store(color);
 
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
-    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - x_top_offset,
-                          pt.y + glyph.sub_texture.Height() + glyph.y_offset + y_shift);
-    cache.colors->store(color);
+    cache.coordinates.store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
+    cache.vertices.store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - x_top_offset,
+                         pt.y + glyph.sub_texture.Height() + glyph.y_offset + y_shift);
+    cache.colors.store(color);
 
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
-    cache.vertices->store(pt.x + glyph.left_bearing - x_top_offset,
-                          pt.y + glyph.sub_texture.Height() + glyph.y_offset + y_shift);
-    cache.colors->store(color);
+    cache.coordinates.store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
+    cache.vertices.store(pt.x + glyph.left_bearing - x_top_offset,
+                         pt.y + glyph.sub_texture.Height() + glyph.y_offset + y_shift);
+    cache.colors.store(color);
 }
 
 void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, const Pt& pt, const Glyph& glyph,
@@ -2011,14 +1999,14 @@ void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, const Pt& pt,
     X x2 = x1 + glyph.advance;
     Y y2(y1 + underline_height);
 
-    cache.underline_vertices->store(x1, y1);
-    cache.underline_colors->store(color);
-    cache.underline_vertices->store(x2, y1);
-    cache.underline_colors->store(color);
-    cache.underline_vertices->store(x2, y2);
-    cache.underline_colors->store(color);
-    cache.underline_vertices->store(x1, y2);
-    cache.underline_colors->store(color);
+    cache.underline_vertices.store(x1, y1);
+    cache.underline_colors.store(color);
+    cache.underline_vertices.store(x2, y1);
+    cache.underline_colors.store(color);
+    cache.underline_vertices.store(x2, y2);
+    cache.underline_colors.store(color);
+    cache.underline_vertices.store(x1, y2);
+    cache.underline_colors.store(color);
 }
 
 X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* render_state,

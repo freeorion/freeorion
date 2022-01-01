@@ -160,7 +160,9 @@ UniverseObjectType UniverseObject::ObjectType() const
 { return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE; }
 
 std::string UniverseObject::Dump(unsigned short ntabs) const {
-    auto system = Objects().get<System>(this->SystemID());
+    const auto& objects{Objects()};
+    auto system = objects.get<System>(this->SystemID());
+
 
     std::string retval;
     retval.reserve(2048); // guesstimate
@@ -176,8 +178,8 @@ std::string UniverseObject::Dump(unsigned short ntabs) const {
     } else {
         retval.append("  at: (").append(std::to_string(this->X())).append(", ")
               .append(std::to_string(this->Y())).append(")");
-        int near_id = GetUniverse().GetPathfinder()->NearestSystemTo(this->X(), this->Y(), Objects()); // Get Objects() and PathFinder from passed in stuff?
-        auto near_system = Objects().get<System>(near_id);
+        int near_id = GetUniverse().GetPathfinder()->NearestSystemTo(this->X(), this->Y(), objects);
+        auto near_system = objects.get<System>(near_id);
         if (near_system) {
             auto& sys_name = near_system->Name();
             if (sys_name.empty())

@@ -4083,7 +4083,9 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
 
-    auto empire_position_max_detection_ranges = universe.GetEmpiresPositionDetectionRanges(objects);
+    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const auto& stale_object_ids = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
+    auto empire_position_max_detection_ranges = universe.GetEmpiresPositionDetectionRanges(objects, stale_object_ids);
     //auto empire_position_max_detection_ranges = universe.GetEmpiresPositionNextTurnFleetDetectionRanges(context);
 
 
@@ -4594,7 +4596,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
 
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
-    const Empire* empire = GetEmpire(fleet->Owner());
+    const auto empire = Empires().GetEmpire(fleet->Owner());
     if (empire)
         line_colour = empire->Color();
     else if (fleet->Unowned() && fleet->HasMonsters(GetUniverse()))
@@ -7431,7 +7433,8 @@ namespace {
 
     /** Get the shortest suitable route from @p start_id to @p destination_id as known to @p empire_id */
     OrderedRouteType GetShortestRoute(int empire_id, int start_id, int destination_id) {
-        const ObjectMap& objects = Objects();
+        const Universe& universe = GetUniverse();
+        const ObjectMap& objects = universe.Objects();
         const EmpireManager& empires = Empires();
         auto start_system = objects.get<System>(start_id);
         auto dest_system = objects.get<System>(destination_id);
@@ -7441,13 +7444,13 @@ namespace {
         }
 
         auto ignore_hostile = GetOptionsDB().Get<bool>("ui.fleet.explore.hostile.ignored");
-        auto fleet_pred = std::make_shared<HostileVisitor>(empire_id);
+        auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
         std::pair<std::list<int>, double> route_distance;
 
         if (ignore_hostile)
-            route_distance = GetUniverse().GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, objects);
+            route_distance = universe.GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, objects);
         else
-            route_distance = GetUniverse().GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, fleet_pred, empires, objects);
+            route_distance = universe.GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, fleet_pred, empires, objects);
 
         if (!route_distance.first.empty() && route_distance.second > 0.0) {
             RouteListType route(route_distance.first.begin(), route_distance.first.end());

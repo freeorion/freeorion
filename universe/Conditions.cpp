@@ -2141,6 +2141,14 @@ void Type::Eval(const ScriptingContext& parent_context,
     }
 }
 
+void Type::Eval(const ScriptingContext& parent_context, ObjectSet& matches) const {
+    matches.clear();
+    ObjectSet condition_initial_candidates;
+
+    // just get initial content matches. these will all match this condition, so don't need to re-test
+    GetDefaultInitialCandidateObjects(parent_context, matches);
+}
+
 std::string Type::Description(bool negated/* = false*/) const {
     std::string value_str = m_type->ConstantExpr() ?
                                 UserString(to_string(m_type->Eval())) :

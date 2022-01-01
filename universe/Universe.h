@@ -178,6 +178,9 @@ public:
     std::map<int, std::map<std::pair<double, double>, float>>
     GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const;
 
+    std::map<int, std::map<std::pair<double, double>, float>>
+    GetEmpiresPositionDetectionRanges(const ObjectMap& objects, const std::set<int>& exclude_ids) const;
+
     /** Returns map from empire ID to map from location (X, Y) to detection range
       * that empire is expected to have at that location after the next turn's
       * fleet movement. */

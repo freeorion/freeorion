@@ -247,14 +247,12 @@ int LinkDecorator::CastStringToInt(const std::string& str) {
 
 std::string ColorByOwner::Decorate(const std::string& object_id_str, const std::string& content) const {
     GG::Clr color = ClientUI::DefaultLinkColor();
-    const Empire* empire = nullptr;
     // get object indicated by object_id, and then get object's owner, if any
     int object_id = CastStringToInt(object_id_str);
     auto object = Objects().get(object_id);
     if (object && !object->Unowned())
-        empire = GetEmpire(object->Owner());
-    if (empire)
-        color = empire->Color();
+        if (auto empire = Empires().GetEmpire(object->Owner()))
+            color = empire->Color();
     return GG::RgbaTag(color).append(content).append("</rgba>");
 }
 

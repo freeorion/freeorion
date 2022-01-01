@@ -156,14 +156,27 @@ void MultiEdit::Render()
         return;
     }
 
+    const auto& font = GetFont();
+    const auto LINESKIP = font->Lineskip();
+    const auto HEIGHT = font->Height();
+    const auto low_cursor_pos  = LowCursorPos();
+    const auto high_cursor_pos = HighCursorPos();
+    const auto& text = Text();
+    const auto focus_wnd{GUI::GetGUI()->FocusWnd().get()};
+    const bool multiselected = MultiSelected();
+    const size_t caret_row = (!multiselected && focus_wnd == this && !(m_style & MULTI_READ_ONLY))
+        ? m_cursor_begin.first : std::numeric_limits<size_t>::max();
+
     // process tags
-    GetFont()->ProcessTagsBefore(lines, state, first_visible_row, CP0);
+    font->ProcessTagsBefore(lines, state, first_visible_row, CP0);
 
     Flags<TextFormat> text_format = (TextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM)) | FORMAT_VCENTER;
     for (std::size_t row = first_visible_row; row <= last_visible_row && row < lines.size(); ++row) {
+        bool is_caret_row = (caret_row == row);
+
         Y row_y_pos = ((m_style & MULTI_TOP) || m_contents_sz.y - ClientSize().y < 0) ?
-            cl_ul.y + static_cast<int>(row) * GetFont()->Lineskip() - m_first_row_shown :
-            cl_lr.y - static_cast<int>(lines.size() - row) * GetFont()->Lineskip() -
+            cl_ul.y + static_cast<int>(row) * LINESKIP - m_first_row_shown :
+            cl_lr.y - static_cast<int>(lines.size() - row) * LINESKIP -
                 m_first_row_shown + (m_vscroll && m_hscroll ? BottomMargin() : Y0);
 
         Pt text_pos(cl_ul.x + RowStartX(row), row_y_pos);
@@ -173,10 +186,8 @@ void MultiEdit::Render()
         if (!line.Empty()) {
             // if one or more chars of this row are selected, highlight, then
             // draw the range in the selected-text color
-            auto low_cursor_pos  = LowCursorPos();
-            auto high_cursor_pos = HighCursorPos();
 
-            if (low_cursor_pos.first <= row && row <= high_cursor_pos.first && MultiSelected()) {
+            if (multiselected && low_cursor_pos.first <= row && row <= high_cursor_pos.first) {
                 // idx0 to idx1 is unhilited, idx1 to idx2 is hilited, and
                 // idx2 to idx3 is unhilited; each range may be empty
                 CPSize idx0(0);
@@ -184,46 +195,48 @@ void MultiEdit::Render()
                 CPSize idx3(line.char_data.size());
                 // TODO: review if the following adjustment to idx3 is truly necessary; tests suggest it is not
                 // if it is determined necessary, please comment why
-                if (LineEndsWithEndlineCharacter(lines, row, Text()))
+                if (LineEndsWithEndlineCharacter(lines, row, text))
                     --idx3;
                 CPSize idx2 = high_cursor_pos.first == row ? std::min(high_cursor_pos.second, idx3) : idx3;
 
                 // draw text
                 glColor(text_color_to_use);
-                Pt text_lr((idx0 != idx1 ? initial_text_x_pos + line.char_data[Value(idx1 - 1)].extent : text_pos.x), text_pos.y + GetFont()->Height());
-                GetFont()->RenderText(text_pos, text_lr, Text(), text_format, lines, state, row, idx0, row + 1, idx1);
+                Pt text_lr((idx0 != idx1 ? initial_text_x_pos + line.char_data[Value(idx1 - 1)].extent : text_pos.x), text_pos.y + HEIGHT);
+                font->RenderText(text_pos, text_lr, text, text_format, lines, state, row, idx0, row + 1, idx1);
                 text_pos.x = text_lr.x;
 
                 // draw hiliting
                 text_lr.x = idx1 != idx2 ? initial_text_x_pos + line.char_data[Value(idx2 - 1)].extent : text_lr.x;
-                FlatRectangle(text_pos, Pt(text_lr.x, text_pos.y + GetFont()->Lineskip()), hilite_color_to_use, CLR_ZERO, 0);
+                FlatRectangle(text_pos, Pt(text_lr.x, text_pos.y + LINESKIP), hilite_color_to_use, CLR_ZERO, 0);
                 // draw hilited text
                 glColor(sel_text_color_to_use);
-                GetFont()->RenderText(text_pos, text_lr, Text(), text_format, lines, state, row, idx1, row + 1, idx2);
+                font->RenderText(text_pos, text_lr, text, text_format, lines, state, row, idx1, row + 1, idx2);
                 text_pos.x = text_lr.x;
 
                 glColor(text_color_to_use);
                 text_lr.x = idx2 != idx3 ? initial_text_x_pos + line.char_data[Value(idx3 - 1)].extent : text_lr.x;
                 // render the following all the way through to the end of the line, even if ends with newline,
                 // so that any tages associated with that finel character will be processed.
-                GetFont()->RenderText(text_pos, text_lr, Text(), text_format, lines, state, row, idx2, row + 1, CPSize(line.char_data.size()));
+                font->RenderText(text_pos, text_lr, text, text_format, lines, state, row, idx2, row + 1, CPSize(line.char_data.size()));
+
             } else { // just draw normal text on this line
-                Pt text_lr = text_pos + Pt(line.char_data.back().extent, GetFont()->Height());
+                Pt text_lr = text_pos + Pt(line.char_data.back().extent, HEIGHT);
                 glColor(text_color_to_use);
-                GetFont()->RenderText(text_pos, text_lr, Text(), text_format, lines, state, row, CP0, row + 1, CPSize(line.char_data.size()));
+                font->RenderText(text_pos, text_lr, text, text_format, lines, state, row, CP0, row + 1, CPSize(line.char_data.size()));
             }
         }
 
         // if there's no selected text, but this row contains the caret (and
         // MULTI_READ_ONLY is not in effect)
-        if (GUI::GetGUI()->FocusWnd().get() == this &&
-            !MultiSelected() &&
-            m_cursor_begin.first == row &&
-            !(m_style & MULTI_READ_ONLY))
-        {
-            X caret_x = CharXOffset(m_cursor_begin.first, m_cursor_begin.second) + initial_text_x_pos;
+        if (is_caret_row) {
+            X caret_x = X0;
+            if (!line.Empty()) {
+                auto caret_char_idx = Value(m_cursor_begin.second - 1);
+                if (caret_char_idx > 0)
+                    caret_x = line.char_data[caret_char_idx].extent + initial_text_x_pos;
+            }
             glColor(text_color_to_use);
-            Line(caret_x, row_y_pos, caret_x, row_y_pos + GetFont()->Lineskip());
+            Line(caret_x, row_y_pos, caret_x, row_y_pos + LINESKIP);
         }
     }
 

@@ -21,7 +21,6 @@ namespace {
 
     const std::set<int> EMPTY_SET;
     constexpr double MAX_SHIP_SPEED = 500.0;        // max allowed speed of ship movement
-    constexpr double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet needs to be to a system to have arrived in the system
 
     bool SystemHasNoVisibleStarlanes(int system_id, const ObjectMap& objects)
     { return !GetPathfinder()->SystemHasVisibleStarlanes(system_id, objects); }
