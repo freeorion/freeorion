@@ -33,10 +33,6 @@ namespace {
         }
     };
 
-    typedef PairToTupleConverter<int, int> IntIntPairConverter;
-
-    typedef PairToTupleConverter<float, int> FloatIntPairConverter;
-
     auto obstructedStarlanes(const Empire& empire) -> std::vector<std::pair<int, int>>
     {
         const std::set<std::pair<int, int>>& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
@@ -52,7 +48,7 @@ namespace {
     auto jumpsToSuppliedSystem(const Empire& empire) -> std::map<int, int>
     {
         std::map<int, int> retval;
-        const std::map<int, std::set<int>>& empire_starlanes = empire.KnownStarlanes(GetUniverse());
+        const auto empire_starlanes = empire.KnownStarlanes(GetUniverse());
         std::deque<int> propagating_list;
 
         for (int system_id : GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID(), true)) {
@@ -201,9 +197,8 @@ namespace FreeOrionPython {
      *                                                  called
      */
     void WrapEmpire() {
-        py::to_python_converter<std::pair<int, int>, IntIntPairConverter>();
-
-        py::to_python_converter<std::pair<float, int>, FloatIntPairConverter>();
+        py::to_python_converter<std::pair<int, int>, PairToTupleConverter<int, int>>();
+        py::to_python_converter<std::pair<float, int>, PairToTupleConverter<float, int>>();
 
         py::class_<std::map<std::pair<int, int>, int>>("PairIntInt_IntMap")
             .def(py::map_indexing_suite<std::map<std::pair<int, int>, int>, true>())
@@ -219,7 +214,10 @@ namespace FreeOrionPython {
 
         py::class_<ResourcePool, std::shared_ptr<ResourcePool>, boost::noncopyable>("resPool", py::no_init);
 
-        FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSetSet");
+        FreeOrionPython::SetWrapper<std::set<std::set<int>>>::Wrap("IntSetSet");
+        FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSet");
+        FreeOrionPython::SetWrapper<std::set<std::string>>::Wrap("StringSet");
+        FreeOrionPython::SetWrapper<std::set<std::string, std::less<>>>::Wrap("StringSet2");
 
         py::class_<std::map<std::set<int>, float>>("resPoolMap")
             .def(py::map_indexing_suite<std::map<std::set<int>, float>, true>())
@@ -235,6 +233,18 @@ namespace FreeOrionPython {
 
         py::class_<std::map<std::string, std::map<int, std::string>>>("String_IntStringMap_Map")
             .def(py::map_indexing_suite<std::map<std::string, std::map<int, std::string>>, true>())
+        ;
+
+        py::class_<std::map<int, float>>("IntFltMap")
+            .def(py::map_indexing_suite<std::map<int, float>, true>())
+        ;
+
+        py::class_<std::map<int, float>>("IntIntMap")
+            .def(py::map_indexing_suite<std::map<int, float>, true>())
+        ;
+
+        py::class_<std::map<std::set<int>, float>>("IntSetFltMap")
+            .def(py::map_indexing_suite<std::map<std::set<int>, float>, true>())
         ;
 
         ///////////////////
@@ -285,23 +295,43 @@ namespace FreeOrionPython {
             .def("researchProgress",                &Empire::ResearchProgress)
             .add_property("researchQueue",          make_function(&Empire::GetResearchQueue,        py::return_internal_reference<>()))
 
-            .def("policyAdopted",                   &Empire::PolicyAdopted)
-            .def("turnPolicyAdopted",               &Empire::TurnPolicyAdopted)
-            .def("slotPolicyAdoptedIn",             &Empire::SlotPolicyAdoptedIn)
-            .add_property("adoptedPolicies",        make_function(&Empire::AdoptedPolicies,                 py::return_value_policy<py::return_by_value>()))
-            .add_property("categoriesSlotPolicies", make_function(&Empire::CategoriesSlotsPoliciesAdopted,  py::return_value_policy<py::return_by_value>()))
-            .add_property("turnsPoliciesAdopted",   make_function(&Empire::TurnsPoliciesAdopted,            py::return_value_policy<py::return_by_value>()))
+            .def("policyAdopted",                   +[](const Empire& e, const std::string& policy) { return e.PolicyAdopted(policy); })
+            .def("turnPolicyAdopted",               +[](const Empire& e, const std::string& policy) { return e.TurnPolicyAdopted(policy); })
+            .def("slotPolicyAdoptedIn",             +[](const Empire& e, const std::string& policy) { return e.SlotPolicyAdoptedIn(policy); })
+
+            .add_property("adoptedPolicies",        make_function(
+                                                        +[](const Empire& e)
+                                                        { return ViewVecToStringVec(e.AdoptedPolicies()); },
+                                                        py::return_value_policy<py::return_by_value>()
+                                                    ))
+            .add_property("categoriesSlotPolicies", make_function(
+                                                        +[](const Empire& e) -> std::map<std::string, std::map<int, std::string>> {
+                                                            std::map<std::string, std::map<int, std::string>> retval;
+                                                            for (auto& [cat, slots_policies] : e.CategoriesSlotsPoliciesAdopted())
+                                                                for (auto& [slot, policy] : slots_policies)
+                                                                    retval[std::string{cat}].emplace(slot, policy);
+                                                            return retval;
+                                                        },
+                                                        py::return_value_policy<py::return_by_value>()
+                                                    ))
+            .add_property("turnsPoliciesAdopted",   make_function(
+                                                        +[](const Empire& e)
+                                                        { return ViewMapToStringMap(e.TurnsPoliciesAdopted()); },
+                                                        py::return_value_policy<py::return_by_value>()
+                                                    ))
+
             .add_property("availablePolicies",      make_function(&Empire::AvailablePolicies,               py::return_value_policy<py::copy_const_reference>()))
-            .def("policyAvailable",                 &Empire::PolicyAvailable)
+
+            .def("policyAvailable",                 +[](const Empire& e, const std::string& policy) { return e.PolicyAvailable(policy); })
 
             .add_property("totalPolicySlots",       make_function(
                                                         +[](const Empire& e) -> std::map<std::string, int>
-                                                            { return ViewMapToStringMap(e.TotalPolicySlots()); },
+                                                        { return ViewMapToStringMap(e.TotalPolicySlots()); },
                                                         py::return_value_policy<py::return_by_value>()
                                                     ))
             .add_property("emptyPolicySlots",       make_function(
                                                         +[](const Empire& e) -> std::map<std::string, int>
-                                                            { return ViewMapToStringMap(e.EmptyPolicySlots()); },
+                                                        { return ViewMapToStringMap(e.EmptyPolicySlots()); },
                                                         py::return_value_policy<py::return_by_value>()
                                                     ))
 
@@ -333,7 +363,8 @@ namespace FreeOrionPython {
             .def("obstructedStarlanes",             obstructedStarlanes,
                                                     py::return_value_policy<py::return_by_value>())
             .def("supplyProjections",               jumpsToSuppliedSystem,
-                                                    py::return_value_policy<py::return_by_value>())
+                                                    py::return_value_policy<py::return_by_value>(),
+                                                    "Returns the (negative) number of jumps (int) away each known system ID (int) is from this empire's supply network. 0 in dicates systems that are fleet supplied. -1 indicates a system that is 1 jump away from a supplied system. -4 indicates a system that is 4 jumps from a supply connection.")
             .def("getMeter",                        +[](const Empire& empire, const std::string& name) -> const Meter* { return empire.GetMeter(name); },
                                                     py::return_internal_reference<>(),
                                                     "Returns the empire meter with the indicated name (string).")

@@ -11,18 +11,20 @@ namespace FreeOrionPython {
     /* SetWrapper class encapsulates functions that expose the STL std::set<>
      * class to Python in a limited, read-only fashion.  The set can be iterated
      * through in Python, and printed. */
-    template <typename ElementType>
+    template <typename SetT>
     class SetWrapper {
     public:
-        typedef typename std::set<ElementType> Set;
-        typedef typename Set::const_iterator SetIterator;
+        using Set = SetT;
+        using Key = typename Set::key_type;
+        using Compare = typename Set::key_compare;
+        using SetIterator = typename Set::const_iterator;
 
         static unsigned int size(const Set& self) {
             return static_cast<unsigned int>(self.size());  // ignore warning http://lists.boost.org/Archives/boost/2007/04/120377.php
         }
         static bool         empty(const Set& self) { return self.empty(); }
-        static bool         contains(const Set& self, const ElementType& item) { return self.count(item); }
-        static unsigned int count(const Set& self, const ElementType& item) { return self.count(item); }
+        static bool         contains(const Set& self, const Key& item) { return self.count(item); }
+        static unsigned int count(const Set& self, const Key& item) { return self.count(item); }
         static SetIterator  begin(const Set& self) { return self.begin(); }
         static SetIterator  end(const Set& self) { return self.end(); }
 

@@ -27,10 +27,19 @@
 namespace fs = boost::filesystem;
 namespace py = boost::python;
 
+namespace {
+    struct string_view_to_python_str {
+        static PyObject* convert(const std::string_view& s)
+        { return boost::python::incref(boost::python::object(s.data()).ptr()); }
+    };
+}
 
 BOOST_PYTHON_MODULE(freeOrionAIInterface)
 {
     py::docstring_options doc_options(true, true, false);
+
+    boost::python::to_python_converter<std::string_view, string_view_to_python_str>();
+
 
     ///////////////////
     //  Game client  //
@@ -72,8 +81,9 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .def(py::map_indexing_suite<std::map<int, bool>>())
     ;
 
-    FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
-    FreeOrionPython::SetWrapper<std::string>::Wrap("StringSet");
+    FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSet");
+    FreeOrionPython::SetWrapper<std::set<std::string>>::Wrap("StringSet");
+    FreeOrionPython::SetWrapper<std::set<std::string, std::less<>>>::Wrap("StringSet2");
 }
 
 //////////////////////
