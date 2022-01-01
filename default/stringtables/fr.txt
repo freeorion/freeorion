@@ -14521,7 +14521,7 @@ BLD_GAS_GIANT_GEN
 Convertisseur de Géante Gazeuse
 
 BLD_GAS_GIANT_GEN_DESC
-'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]]. Elle fournit un bonus de [[value BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT]] à la [[metertype METER_TARGET_INDUSTRY]] sur les planètes du même système réglées sur le Focus Industrie. Si le [[BLD_GAS_GIANT_GEN]] est construit sur une [[PT_GASGIANT]] inhabitée, le bonus de [[metertype METER_TARGET_INDUSTRY]] n'est que de [[value BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT]].
+'''Cette structure ne peut être construite que sur une [[PT_GASGIANT]]. Elle fournit un bonus de [[value BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT]] à la [[metertype METER_TARGET_INDUSTRY]] sur les planètes du même système réglées sur le Focus Industrie. Si le [[BLD_GAS_GIANT_GEN]] est construit sur une [[PT_GASGIANT]] habitée, le bonus de [[metertype METER_TARGET_INDUSTRY]] n'est que de [[value BLD_GAS_GIANT_GEN_COLONY_TARGET_INDUSTRY_FLAT]].
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value BLD_GAS_GIANT_GEN_MIN_STABILITY]].
 Les bonus de plusieurs exemplaires dans le même système ne s'additionnent pas.
 
