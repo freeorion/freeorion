@@ -343,11 +343,26 @@ void GG::TextControl::operator>>(T& t) const
 
 template <typename T>
 T GG::TextControl::GetValue() const
-{ return boost::lexical_cast<T, std::string>(m_text); }
+{
+    try {
+        return boost::lexical_cast<T, std::string>(m_text);
+    } catch (const boost::bad_lexical_cast&) {
+        return T();
+    }
+}
 
 template <typename T>
 void GG::TextControl::operator<<(T t)
-{ SetText(boost::lexical_cast<std::string>(t)); }
+{
+    if constexpr (std::is_same_v<std::decay_t<T>, std::string>) {
+        SetText(std::move(t));
+    } else if constexpr (std::is_same_v<T, const char*>) {
+        SetText(std::string{t});
+    } else {
+        using std::to_string;
+        SetText(to_string(t));
+    }
+}
 
 
 #endif
