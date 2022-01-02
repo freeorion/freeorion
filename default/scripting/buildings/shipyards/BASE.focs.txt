@@ -14,14 +14,18 @@ BuildingType
         [[ENQUEUE_BUILD_ONE_PER_PLANET]]
         CanProduceShips
     ]
-    effectsgroups =
+    effectsgroups = [
+		[[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+    
         EffectsGroup
             scope = And [ 
                 Object id = Source.PlanetID
                 Planet
             ]
             effects = SetTargetConstruction value = Value - 10
+	]
     icon = "icons/building/shipyard.png"
 
 #include "/scripting/common/enqueue.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/buildings/buildings.macros"
