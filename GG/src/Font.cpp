@@ -2053,6 +2053,16 @@ namespace {
             return {retval, false};
 
         for (size_t n = 0; n < 4; ++n) {
+#if defined(__cpp_lib_to_chars)
+            const auto& param{params[n]};
+            if (param.empty())
+                return {retval, false};
+            const auto param_data = &*param.begin();
+            const auto param_size = param.size();
+            auto ec = std::from_chars(param_data, param_data + param_size, retval[n]).ec;
+            if (ec != std::errc())
+                return {retval, false};
+#else
             try {
                 auto temp_colour = boost::lexical_cast<int>(params[n]);
                 if (temp_colour >= 0 && temp_colour <= 255)
@@ -2062,6 +2072,7 @@ namespace {
             } catch (const boost::bad_lexical_cast&) {
                 return {retval, false};
             }
+#endif
         }
 
         return {retval, true};
