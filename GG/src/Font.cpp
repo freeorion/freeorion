@@ -2046,6 +2046,28 @@ X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* re
     return glyph.advance;
 }
 
+namespace {
+    std::pair<std::array<GLubyte, 4>, bool> TagParamsToColor(const std::vector<Font::Substring>& params) {
+        std::array<GLubyte, 4> retval{};
+        if (params.size() != 4)
+            return {retval, false};
+
+        for (size_t n = 0; n < 4; ++n) {
+            try {
+                auto temp_colour = boost::lexical_cast<int>(params[n]);
+                if (temp_colour >= 0 && temp_colour <= 255)
+                    retval[n] = temp_colour;
+                else
+                    return {retval, false};
+            } catch (const boost::bad_lexical_cast&) {
+                return {retval, false};
+            }
+        }
+
+        return {retval, true};
+    }
+}
+
 void Font::HandleTag(const std::shared_ptr<FormattingTag>& tag, RenderState& render_state) const
 {
     if (tag->tag_name == ITALIC_TAG) {
@@ -2088,58 +2110,14 @@ void Font::HandleTag(const std::shared_ptr<FormattingTag>& tag, RenderState& ren
         if (tag->close_tag) {
             // Popping is ok also for an empty color stack.
             render_state.PopColor();
+
         } else {
-            using boost::lexical_cast;
-            bool well_formed_tag = true;
-            if (4 == tag->params.size()) {
-                try {
-                    int temp_color[4];
-                    GLubyte color[4];
-                    temp_color[0] = lexical_cast<int>(tag->params[0]);
-                    temp_color[1] = lexical_cast<int>(tag->params[1]);
-                    temp_color[2] = lexical_cast<int>(tag->params[2]);
-                    temp_color[3] = lexical_cast<int>(tag->params[3]);
-                    if (0 <= temp_color[0] && temp_color[0] <= 255 &&
-                        0 <= temp_color[1] && temp_color[1] <= 255 &&
-                        0 <= temp_color[2] && temp_color[2] <= 255 &&
-                        0 <= temp_color[3] && temp_color[3] <= 255)
-                    {
-                        color[0] = temp_color[0];
-                        color[1] = temp_color[1];
-                        color[2] = temp_color[2];
-                        color[3] = temp_color[3];
-                        glColor4ubv(color);
-                        render_state.PushColor(color[0], color[1], color[2], color[3]);
-                    } else {
-                        well_formed_tag = false;
-                    }
-                } catch (const boost::bad_lexical_cast&) {
-                    try {
-                        double color[4];
-                        color[0] = lexical_cast<double>(tag->params[0]);
-                        color[1] = lexical_cast<double>(tag->params[1]);
-                        color[2] = lexical_cast<double>(tag->params[2]);
-                        color[3] = lexical_cast<double>(tag->params[3]);
-                        if (0.0 <= color[0] && color[0] <= 1.0 &&
-                            0.0 <= color[1] && color[1] <= 1.0 &&
-                            0.0 <= color[2] && color[2] <= 1.0 &&
-                            0.0 <= color[3] && color[3] <= 1.0)
-                        {
-                            glColor4dv(color);
-                            render_state.PushColor(color[0], color[1], color[2], color[3]);
-                        } else {
-                            well_formed_tag = false;
-                        }
-                    } catch (const boost::bad_lexical_cast&) {
-                        well_formed_tag = false;
-                    }
-                }
+            auto [color, well_formed_tag] = TagParamsToColor(tag->params);
+            if (well_formed_tag) {
+                glColor4ubv(color.data());
+                render_state.PushColor(color[0], color[1], color[2], color[3]);
             } else {
-                well_formed_tag = false;
-            }
-            if (!well_formed_tag) {
-                std::cerr << "GG::Font : Encountered malformed <rgba> formatting tag: "
-                          << tag->text;
+                std::cerr << "GG::Font : Encountered malformed <rgba> formatting tag: " << tag->text;
             }
         }
     }
