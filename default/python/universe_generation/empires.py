@@ -601,6 +601,10 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
                     % (ship_design, fleet_plan.name())
                 )
 
+    # starting resource stockpiles
+    print("Player", player_name, ": add starting resource stockpiles")
+    fo.empire_set_stockpile(empire, fo.resourceType.influence, 20.0)
+
     return True
 
 
