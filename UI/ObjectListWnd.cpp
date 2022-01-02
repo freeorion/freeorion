@@ -1382,8 +1382,7 @@ public:
         m_has_contents(has_contents)
     {
         SetChildClippingMode(ChildClippingMode::ClipToClient);
-        auto rcobj = std::dynamic_pointer_cast<const ResourceCenter>(obj);
-        if (rcobj)
+        if (auto rcobj = std::dynamic_pointer_cast<const ResourceCenter>(obj))
             rcobj->ResourceCenterChangedSignal.connect(
                 boost::bind(&ObjectPanel::ResourceCenterChanged, this));
 
@@ -1402,7 +1401,7 @@ public:
             return it->second;
 
         auto ref = GetColumnValueRef(column);
-        auto val = ref ? ref->Eval(ScriptingContext(Objects().get(m_object_id))) : "";
+        std::string val = ref ? ref->Eval(ScriptingContext{Objects().get(m_object_id)}) : "";
         m_column_val_cache[column] = val;
         return val;
     }
