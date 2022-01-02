@@ -5215,7 +5215,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
 
     ScopedTimer timer("MapWnd::SetZoom(steps_in=" + std::to_string(steps_in) +
                       ", update_slide=" + std::to_string(update_slide) +
-                      ", position=" + boost::lexical_cast<std::string>(position), true);
+                      ", position=" + std::string{position}, true);
     // impose range limits on zoom steps
     double new_steps_in = std::max(std::min(steps_in, ZOOM_IN_MAX_STEPS), ZOOM_IN_MIN_STEPS);
 
