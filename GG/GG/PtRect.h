@@ -80,6 +80,8 @@ struct GG_API Pt
     Pt&          operator/=(const double rhs) { x /= rhs;   y /= rhs;   return *this; } ///< Devides components of Pt by \a rhs
     Pt&          operator*=(const double rhs) { x *= rhs;   y *= rhs;   return *this; } ///< Multiplies components of Pt by \a rhs
 
+    operator std::string() const;
+
     X x = X0;
     Y y = Y0;
 };
