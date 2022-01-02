@@ -331,6 +331,23 @@ namespace {
         empire->AddShipDesign(ship_design->ID(), universe);
     }
 
+    void EmpireSetStockpile(int empire_id, ResourceType resource_type, double value) {
+        EmpireManager& empires{Empires()};
+
+        auto empire = empires.GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "EmpireSetStockpile: couldn't get empire with ID " << empire_id;
+            return;
+        }
+
+        try {
+            empire->SetResourceStockpile(resource_type, value);
+        } catch (...) {
+            ErrorLogger() << "EmpireSetStockpile: empire has no resource pool of type " << resource_type;
+            return;
+        }
+    }
+
     // Wrapper for preunlocked items
     auto LoadUnlockableItemList() -> py::list
     {
@@ -1352,6 +1369,7 @@ namespace FreeOrionPython {
         py::def("empire_set_homeworld",             EmpireSetHomeworld);
         py::def("empire_unlock_item",               EmpireUnlockItem);
         py::def("empire_add_ship_design",           EmpireAddShipDesign);
+        py::def("empire_set_stockpile",             EmpireSetStockpile);
 
         py::def("design_create",                    ShipDesignCreate);
         py::def("design_get_premade_list",          ShipDesignGetPremadeList);
