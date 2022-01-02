@@ -2,6 +2,7 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+
 #include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
 #include "../universe/BuildingType.h"
@@ -175,6 +176,13 @@ namespace {
         ScriptingContext location_as_source_context{location, location};
         return part_type.Location()->Eval(location_as_source_context, std::move(location));
     }
+
+    template <typename X>
+    struct PairToTupleConverter {
+        static PyObject* convert(X pair) {
+            return py::incref(py::make_tuple(pair.first, pair.second).ptr());
+        }
+    };
 }
 
 namespace FreeOrionPython {
@@ -222,11 +230,9 @@ namespace FreeOrionPython {
             .def(py::map_indexing_suite<std::map<MeterType, Meter>, true>())
         ;
 
-        // typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeterMap;
-        py::class_<std::pair<MeterType, std::string>>("MeterTypeStringPair")
-            .add_property("meterType",  &std::pair<MeterType, std::string>::first)
-            .add_property("string",     &std::pair<MeterType, std::string>::second)
-        ;
+        py::to_python_converter<std::pair<MeterType, std::string>,
+                                PairToTupleConverter<std::pair<MeterType, std::string>>>();
+
         py::class_<Ship::PartMeterMap>("ShipPartMeterMap")
             .def(py::map_indexing_suite<Ship::PartMeterMap>())
         ;
@@ -252,19 +258,16 @@ namespace FreeOrionPython {
         py::class_<std::vector<Effect::AccountingInfo>>("AccountingInfoVec")
             .def(py::vector_indexing_suite<std::vector<Effect::AccountingInfo>, true>())
         ;
-
         py::class_<Effect::AccountingMap::mapped_type::value_type>("MeterTypeAccountingInfoVecPair")
             .add_property("meterType",          &Effect::AccountingMap::mapped_type::value_type::first)
-            .add_property("accountingInfo",     &Effect::AccountingMap::mapped_type::value_type::second)
         ;
+        py::to_python_converter<Effect::AccountingMap::mapped_type::value_type,
+            PairToTupleConverter<Effect::AccountingMap::mapped_type::value_type>>();
         py::class_<Effect::AccountingMap::mapped_type>("MeterTypeAccountingInfoVecMap")
             .def(py::map_indexing_suite<Effect::AccountingMap::mapped_type, true>())
         ;
-
-        py::class_<Effect::AccountingMap::value_type>("IntMeterTypeAccountingInfoVecMapPair")
-            .add_property("targetID",           &Effect::AccountingMap::value_type::first)
-            .add_property("meterAccounting",    &Effect::AccountingMap::value_type::second)
-        ;
+        py::to_python_converter<Effect::AccountingMap::value_type,
+            PairToTupleConverter<Effect::AccountingMap::value_type>>();
         py::class_<Effect::AccountingMap>("TargetIDAccountingMapMap")
             .def(py::map_indexing_suite<Effect::AccountingMap, true>())
         ;
