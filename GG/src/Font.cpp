@@ -1042,8 +1042,6 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
     Pt pt = pt_;
     X orig_x = pt.x;
 
-    double orig_color[4];
-    glGetDoublev(GL_CURRENT_COLOR, orig_color);
     glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
 
     RenderCache cache;
@@ -1109,8 +1107,6 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
                          std::size_t end_line, CPSize end_char,
                          RenderCache& cache) const
 {
-    double orig_color[4];
-    glGetDoublev(GL_CURRENT_COLOR, orig_color);
     //glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
 
     Y y_origin = ul.y; // default value for FORMAT_TOP
@@ -1140,7 +1136,7 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
         for (CPSize j = start; j < end; ++j) {
             const auto& char_data = line.char_data[Value(j)];
             for (auto tag : char_data.tags)
-                HandleTag(tag, orig_color, render_state);
+                HandleTag(tag, render_state);
             std::uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
             assert((text[Value(char_data.string_index)] == '\n') == (c == WIDE_NEWLINE));
             if (c == WIDE_NEWLINE)
@@ -1188,9 +1184,6 @@ void Font::RenderCachedText(RenderCache& cache) const
 void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState& render_state,
                              std::size_t begin_line, CPSize begin_char) const
 {
-    double orig_color[4];
-    glGetDoublev(GL_CURRENT_COLOR, orig_color);
-
     if (line_data.empty())
         return;
 
@@ -1201,7 +1194,7 @@ void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState
              ++j)
         {
             for (auto& tag : line.char_data[Value(j)].tags) {
-                HandleTag(tag, orig_color, render_state);
+                HandleTag(tag, render_state);
             }
         }
     }
@@ -2053,8 +2046,7 @@ X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* re
     return glyph.advance;
 }
 
-void Font::HandleTag(const std::shared_ptr<FormattingTag>& tag, double* orig_color,
-                     RenderState& render_state) const
+void Font::HandleTag(const std::shared_ptr<FormattingTag>& tag, RenderState& render_state) const
 {
     if (tag->tag_name == ITALIC_TAG) {
         if (tag->close_tag) {

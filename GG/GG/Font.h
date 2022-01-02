@@ -689,8 +689,7 @@ private:
                                          const Glyph& glyph, Y descent, Y height,
                                          Y underline_height, Y underline_offset) const;
 
-    void              HandleTag(const std::shared_ptr<FormattingTag>& tag, double* orig_color,
-                                RenderState& render_state) const;
+    void              HandleTag(const std::shared_ptr<FormattingTag>& tag, RenderState& render_state) const;
     bool              IsDefaultFont();
 
     std::shared_ptr<Font> GetDefaultFont(unsigned int pts);
