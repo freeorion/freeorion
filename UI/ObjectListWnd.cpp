@@ -30,6 +30,10 @@
 #include <boost/uuid/random_generator.hpp>
 
 #include <iterator>
+
+#if __has_include(<charconv>)
+  #include <charconv>
+#endif
 #include <sstream>
 
 std::vector<std::string_view> SpecialNames();
@@ -1832,23 +1836,42 @@ private:
 
 namespace {
     struct CustomRowCmp {
+        static bool StringCompare(const std::string& lhs_key, const std::string& rhs_key) {
+#if defined(FREEORION_MACOSX)
+            // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α I, X β I, X α II
+            return lhs_key < rhs_key;
+#else
+            return GetLocale("en_US.UTF-8").operator()(lhs_key, rhs_key);
+#endif
+        }
+
+        static auto StringToFloat(const std::string& key) {
+#if defined(__cpp_lib_to_chars)
+            float retval = 0.0f;
+            auto ec = std::from_chars(key.data(), key.data() + key.size(), retval).ec;
+            return std::pair{retval, ec};
+#else
+            try {
+                return std::pair{boost::lexical_cast<float>(key), std::errc()};
+            } catch (...) {
+                return std::pair{0.0f, std::errc::invalid_argument};
+            }
+#endif
+        }
+
         bool operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) const {
             auto lhs_key = lhs.SortKey(column);
             auto rhs_key = rhs.SortKey(column);
-            try {
-                // attempt to cast sort keys to floats, so that number-aware
-                // sorting can be done for columns that contain numbers
-                float lhs_val = lhs_key.empty() ? 0.0f : boost::lexical_cast<float>(lhs_key);
-                float rhs_val = rhs_key.empty() ? 0.0f : boost::lexical_cast<float>(rhs_key);
-                return lhs_val < rhs_val;
-            } catch (...) {
-#if defined(FREEORION_MACOSX)
-                // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α I, X β I, X α II
-                return lhs_key < rhs_key;
-#else
-                return GetLocale("en_US.UTF-8").operator()(lhs_key, rhs_key);
-#endif
-            }
+
+            auto [lhs_val, lhs_ec] = StringToFloat(lhs_key);
+            if (lhs_ec != std::errc())
+                return StringCompare(lhs_key, rhs_key);
+
+            auto [rhs_val, rhs_ec] = StringToFloat(rhs_key);
+            if (rhs_ec != std::errc())
+                return StringCompare(lhs_key, rhs_key);
+
+            return lhs_val < rhs_val;
         }
     };
 }
