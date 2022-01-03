@@ -8,6 +8,35 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
         
+        // boost influence focus output
+        EffectsGroup
+            scope = And [
+                ProductionCenter
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INFLUENCE"
+                Happiness low = (NamedReal name = "CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY" value = 20.0)
+            ]
+            priority = [[TARGET_AFTER_2ND_SCALING_PRIORITY]]
+            effects =
+                SetTargetInfluence value = Value + min(Target.Construction, Target.Population) *
+                    (NamedReal name = "CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING" value = 0.1)
+
+        // additionally penalize stability when empire has an influence debt
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            activation = And [
+                Source
+                NoOp
+                Not EmpireStockpile empire = Source.Owner resource = Influence low = 0
+            ]
+            priority = [[TARGET_EARLY_BEFORE_SCALING_PRIORITY]]
+            effects = SetTargetHappiness value = Value - (NamedReal name = "CAPITAL_MARKETS_DEBT_INSTABILITY" value = 0.05)
+                * abs(EmpireStockpile empire = Source.Owner resource = Influence)
+
         // grow influence meters faster
         EffectsGroup
             scope = And [
