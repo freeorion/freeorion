@@ -11597,7 +11597,9 @@ PLC_CONTINUOUS_SCANNING
 Continuous Scanning
 
 PLC_CONTINUOUS_SCANNING_DESC
-Increases ship detection range and imperial detection strength, increasing with duration of adoption, while also reducing ship stealth.
+'''• Increases ship detection range by [[value CONTINUOUS_SCANNING_RANGE_BOOST]].
+• Increases imperial detection strength by 1 per turn that this policy has been been adopted, up to [[value CONTINUOUS_SCANNING_MAX_DETECTION_BOOST]].
+• Decreases ship stealth by [[value CONTINUOUS_SCANNING_STEALTH_PENALTY]].'''
 
 PLC_CONTINUOUS_SCANNING_SHORT_DESC
 Improves Detection and Hinders Stealth
