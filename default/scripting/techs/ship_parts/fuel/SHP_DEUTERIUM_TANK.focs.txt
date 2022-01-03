@@ -10,10 +10,7 @@ Tech
         "SHP_GAL_EXPLO"
         "PRO_FUSION_GEN"
     ]
-    unlock = [
-        Item type = ShipPart name = "FU_RAMSCOOP"
-        Item type = Policy name = "PLC_RESERVE_TANKS"
-    ]
+    unlock = Item type = ShipPart name = "FU_RAMSCOOP"
     effectsgroups = [
         [[PART_UPGRADE_MAXFUEL_EFFECTS(SHP_DEUTERIUM_TANK_EFFECT,0.5)]]
     ]

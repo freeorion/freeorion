@@ -11739,15 +11739,6 @@ La valeur de tous les bonus ou pénalités est de [[value PLC_DIVERSITY_SCALING]
 PLC_DIVERSITY_SHORT_DESC
 Améliore la Recherche, la Stabilité, et l'Influence
 
-PLC_RESERVE_TANKS
-Carburant en réserve
-
-PLC_RESERVE_TANKS_DESC
-Ajoute +1 en capacité de Carburant à tous les astronefs, mais divise par deux leur vitesse lorsque les astronefs disposent de moins de la moitié de leur capacité maximum en Carburant.
-
-PLC_RESERVE_TANKS_SHORT_DESC
-Améliore l'économie en Carburant des astronefs
-
 PLC_ENGINEERING
 Corps d'Ingénieurs
 

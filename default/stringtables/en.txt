@@ -11738,15 +11738,6 @@ All bonuses or penalties are [[value PLC_DIVERSITY_SCALING]] per species above o
 PLC_DIVERSITY_SHORT_DESC
 Improves research, stability, and Influence
 
-PLC_RESERVE_TANKS
-Reserve Tanks
-
-PLC_RESERVE_TANKS_DESC
-Adds +1 fuel capacity to all ships, but halves their speed when they have less than half of their max fuel left.
-
-PLC_RESERVE_TANKS_SHORT_DESC
-Improves ship fuel economy
-
 PLC_ENGINEERING
 Engineering Corps
 
