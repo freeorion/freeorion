@@ -31,7 +31,7 @@ SHIP_PART_COST_MULTIPLIER
 
 COLONIZATION_POLICY_MULTIPLIER
 '''(1
-    - 0.3*(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_COLONIZATION"])
+    - 0.5*(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_COLONIZATION"])
     + 0.5*(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_CENTRALIZATION"])
 )
 '''
