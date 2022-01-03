@@ -3,7 +3,7 @@ Policy
     description = "PLC_NO_SUPPLY_DESC"
     short_description = "PLC_NO_SUPPLY_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
-    adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
+    adoptioncost = 25
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
     
@@ -16,8 +16,16 @@ Policy
             effects = [
                 SetMaxSupply value = -100
                 SetSupply value = -100
+                SetStealth value = Value + (NamedReal name = "NO_SUPPLY_STEALTH_BOOST" value = 15.0)
             ]
-    ]            
+            
+        EffectsGroup
+            scope = And [
+                Building
+                OwnedBy empire = Source.Owner
+            ]
+            effects = SetStealth value = Value + NamedRealLookup name = "NO_SUPPLY_STEALTH_BOOST"
+    ]
     graphic = "icons/policies/no_supply.png"
 
 #include "/scripting/common/priorities.macros"

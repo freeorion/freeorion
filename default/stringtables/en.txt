@@ -11539,10 +11539,11 @@ PLC_NO_SUPPLY
 No Supply
 
 PLC_NO_SUPPLY_DESC
-Prevents planets from generating supply networks.
+'''• Prevents planets from generating supply networks.
+• Increases stealth of planets and buildings by [[value NO_SUPPLY_STEALTH_BOOST]].'''
 
 PLC_NO_SUPPLY_SHORT_DESC
-Stops supply propagation
+Stops supply propagation, boosts stealth
 
 PLC_CENTRALIZATION
 Centralization
