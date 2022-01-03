@@ -37,17 +37,23 @@ Policy
             effects = SetTargetHappiness value = Value - (NamedReal name = "CAPITAL_MARKETS_DEBT_INSTABILITY" value = 0.05)
                 * abs(EmpireStockpile empire = Source.Owner resource = Influence)
 
-        // grow influence meters faster
+        // grow influence and stability meters faster
         EffectsGroup
             scope = And [
                 ProductionCenter
                 OwnedBy empire = Source.Owner
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
-            effects =
+            effects = [
                 If condition = (Value(LocalCandidate.Influence) <= Value(LocalCandidate.TargetInfluence))
                     effects = SetInfluence value = min(Value + NamedReal name = "PLC_CAPITAL_MARKETS_INFLUENCE_RATE" value = 2.0, Value(Target.TargetInfluence))
                     else = SetInfluence value = max(Value - NamedRealLookup name = "PLC_CAPITAL_MARKETS_INFLUENCE_RATE", Value(Target.TargetInfluence))
+
+                If condition = (Value(LocalCandidate.Happiness) <= Value(LocalCandidate.TargetHappiness))
+                    effects = SetHappiness value = min(Value + NamedReal name = "PLC_CAPITAL_MARKETS_INFLUENCE_RATE" value = 2.0, Value(Target.TargetHappiness))
+                    else = SetHappiness value = max(Value - NamedRealLookup name = "PLC_CAPITAL_MARKETS_INFLUENCE_RATE", Value(Target.TargetHappiness))
+
+            ]
     ]
     graphic = "icons/policies/capital_markets.png"
 

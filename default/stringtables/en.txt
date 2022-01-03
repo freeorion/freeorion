@@ -11970,7 +11970,7 @@ Capital Markets
 PLC_CAPITAL_MARKETS_DESC
 '''• Planets with a luxury resource special and that are set to influence focus will export the resource to supply-connected planets. This boosts the stability of planets with species that like the resource by [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]].
 • Increases [[metertype METER_TARGET_INFLUENCE]] on populated planets with at least [[value CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY]] [[metertype METER_HAPPINESS]] by [[value CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING]] per the lesser of [[metertype METER_CONSTRUCTION]] and [[metertype METER_POPULATION]].
-• Increases the rate of growth or decay of [[metertype METER_INFLUENCE]] by [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / turn towards [[metertype METER_TARGET_INFLUENCE]].
+• Increases the rate of growth or decay of [[metertype METER_INFLUENCE]] and [[[[metertype METER_HAPPINESS]]]] by [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / turn towards [[metertype METER_TARGET_INFLUENCE]] or [[metertype METER_TARGET_HAPPINESS]].
 • Reduces [[metertype METER_TARGET_HAPPINESS]] on populated empire planets by [[value CAPITAL_MARKETS_DEBT_INSTABILITY]] times the size of the empire's influence debt.'''
 
 PLC_CAPITAL_MARKETS_SHORT_DESC
