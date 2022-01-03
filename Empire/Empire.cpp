@@ -189,7 +189,6 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
         if (m_adopted_policies.count(name)) {
             m_adopted_policies.erase(name);
             PoliciesChangedSignal();
-
         }
         return;
     }
@@ -228,14 +227,14 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     for (auto& [policy_name, adoption_info] : m_adopted_policies) {
         if (adoption_info.adoption_turn != CurrentTurn())
             continue;
-        auto pre_adptd_policy = GetPolicy(policy_name);
-        if (!pre_adptd_policy) {
+        auto pre_adopted_policy = GetPolicy(policy_name);
+        if (!pre_adopted_policy) {
             ErrorLogger() << "Empire::AdoptPolicy couldn't find policy named " << policy_name << " that was supposedly already adopted this turn (" << CurrentTurn() << ")";
             continue;
         }
         DebugLogger() << "Empire::AdoptPolicy : Already adopted policy this turn: " << policy_name
-                      << " with cost " << pre_adptd_policy->AdoptionCost(m_id, objects);
-        other_this_turn_adopted_policies_cost += pre_adptd_policy->AdoptionCost(m_id, objects);
+                      << " with cost " << pre_adopted_policy->AdoptionCost(m_id, objects);
+        other_this_turn_adopted_policies_cost += pre_adopted_policy->AdoptionCost(m_id, objects);
     }
     DebugLogger() << "Empire::AdoptPolicy : Combined already adopted policies this turn cost " << other_this_turn_adopted_policies_cost;
 
@@ -251,13 +250,16 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
                   << " and total this-turn adoption cost " << total_this_turn_policy_adoption_cost
                   << " and have " << available_ip << " IP available";
 
-    if (available_ip < total_this_turn_policy_adoption_cost) {
+    if (adoption_cost <= 0) {
+        DebugLogger() << "Empire::AdoptPolicy: Zero cost policy ignoring influence available...";
+    } else if (available_ip < total_this_turn_policy_adoption_cost) {
         ErrorLogger() << "Empire::AdoptPolicy insufficient ip: " << available_ip
                       << " / " << total_this_turn_policy_adoption_cost << " to adopt additional policy this turn";
         return;
+    } else {
+        DebugLogger() << "Empire::AdoptPolicy sufficient IP: " << available_ip
+                      << " / " << total_this_turn_policy_adoption_cost << " to adopt additional policy this turn";
     }
-    DebugLogger() << "Empire::AdoptPolicy sufficient IP: " << available_ip
-                  << " / " << total_this_turn_policy_adoption_cost << " to adopt additional policy this turn";
 
     // check that policy is not already adopted
     if (m_adopted_policies.count(name)) {
