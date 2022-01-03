@@ -15,8 +15,11 @@ Policy
                 Focus type = "FOCUS_RESEARCH"
                 Not Happiness low = (NamedReal name = "PLC_NECESSITY_MAX_STABILITY" value = 6)
             ]
-            effects = SetTargetResearch value = Value +
-                (Target.Population * max(0.0, (NamedRealLookup name = "PLC_NECESSITY_MAX_STABILITY") - Target.Happiness))^0.5
+            effects = [
+                SetTargetResearch value = Value +
+                    (Target.Population * max(0.0, (NamedRealLookup name = "PLC_NECESSITY_MAX_STABILITY") - Target.Happiness))^0.5
+                SetResearch value = min(Target.TargetResearch, Value + (NamedReal name = "PLC_NECESSITY_RESEARCH_GROWTH_BOOST" value = 1.0))
+            ]
     ]
     graphic = "icons/policies/necessity.png"
 
