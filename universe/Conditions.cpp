@@ -892,7 +892,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     m_condition->Eval(local_context, subcondition_matching_matches, matches, SearchDomain::NON_MATCHES);
 
     // remaining input matches don't match the subcondition...
-    ObjectSet subcondition_non_matching_matches = matches;
+    ObjectSet subcondition_non_matching_matches = std::move(matches);
     matches.clear();    // to be refilled later
 
     // which input non_matches match the subcondition?
@@ -901,14 +901,14 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     m_condition->Eval(local_context, subcondition_matching_non_matches, non_matches, SearchDomain::NON_MATCHES);
 
     // remaining input non_matches don't match the subcondition...
-    ObjectSet subcondition_non_matching_non_matches = non_matches;
+    ObjectSet subcondition_non_matching_non_matches = std::move(non_matches);
     non_matches.clear();    // to be refilled later
 
-    // assemble single set of subcondition matching objects
+    // assemble (copy) single set of subcondition matching objects
     ObjectSet all_subcondition_matches;
     all_subcondition_matches.reserve(subcondition_matching_matches.size() + subcondition_matching_non_matches.size());
     all_subcondition_matches.insert(all_subcondition_matches.end(),
-                                    subcondition_matching_matches.begin(),
+                                    subcondition_matching_matches.begin(), // not moving, want to copy
                                     subcondition_matching_matches.end());
     all_subcondition_matches.insert(all_subcondition_matches.end(),
                                     subcondition_matching_non_matches.begin(),
@@ -925,7 +925,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     TransferSortedObjects(number, m_sort_key.get(), parent_context, m_sorting_method,
                           all_subcondition_matches, matched_objects);
 
-    // put objects back into matches and non_target sets as output...
+    // put objects back into matches and non_matches as output...
 
     if (search_domain == SearchDomain::NON_MATCHES) {
         // put matched objects that are in subcondition_matching_non_matches into matches
@@ -935,19 +935,25 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
                                      subcondition_matching_non_matches.end(), matched_object);
             if (smnt_it != subcondition_matching_non_matches.end()) {
                 // yes; move object to matches
-                *smnt_it = subcondition_matching_non_matches.back();
-                subcondition_matching_non_matches.pop_back();
-                matches.push_back(matched_object);   // TODO: can I std::move ?
+                *smnt_it = std::move(subcondition_matching_non_matches.back()); // replace pointer to matched_object with whatever is at the end of subcondition_matching_non_matches
+                subcondition_matching_non_matches.pop_back();                   // remove moved-from pointer at end
+                matches.push_back(std::move(matched_object));                   // move into output matches
             }
         }
 
         // put remaining (non-matched) objects in subcondition_matching_non_matches back into non_matches
-        non_matches.insert( non_matches.end(), subcondition_matching_non_matches.begin(),      subcondition_matching_non_matches.end());
+        non_matches.reserve(subcondition_matching_non_matches.size() + subcondition_non_matching_non_matches.size());
+        non_matches.insert( non_matches.end(), std::make_move_iterator(subcondition_matching_non_matches.begin()),
+                                               std::make_move_iterator(subcondition_matching_non_matches.end()));
         // put objects in subcondition_non_matching_non_matches back into non_matches
-        non_matches.insert( non_matches.end(), subcondition_non_matching_non_matches.begin(),  subcondition_non_matching_non_matches.end());
+        non_matches.insert( non_matches.end(), std::make_move_iterator(subcondition_non_matching_non_matches.begin()),
+                                               std::make_move_iterator(subcondition_non_matching_non_matches.end()));
         // put objects in subcondition_matching_matches and subcondition_non_matching_matches back into matches
-        matches.insert(     matches.end(),     subcondition_matching_matches.begin(),          subcondition_matching_matches.end());
-        matches.insert(     matches.end(),     subcondition_non_matching_matches.begin(),      subcondition_non_matching_matches.end());
+        matches.reserve(matches.size() + subcondition_matching_matches.size() + subcondition_non_matching_matches.size());
+        matches.insert(     matches.end(),     std::make_move_iterator(subcondition_matching_matches.begin()),
+                                               std::make_move_iterator(subcondition_matching_matches.end()));
+        matches.insert(     matches.end(),     std::make_move_iterator(subcondition_non_matching_matches.begin()),
+                                               std::make_move_iterator(subcondition_non_matching_matches.end()));
         // this leaves the original contents of matches unchanged, other than
         // possibly having transferred some objects into matches from non_matches
 
@@ -959,19 +965,23 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
                                     subcondition_matching_matches.end(), matched_object);
             if (smt_it != subcondition_matching_matches.end()) {
                 // yes; move back into matches
-                *smt_it = subcondition_matching_matches.back();
-                subcondition_matching_matches.pop_back();
-                matches.push_back(matched_object);   // TODO: can I std::move ?
+                *smt_it = std::move(subcondition_matching_matches.back());  // replace pointer to matched_object with whatever is at the end of subcondition_matching_matches
+                subcondition_matching_matches.pop_back();                   // remove moved-from poitner at end
+                matches.push_back(std::move(matched_object));               // move into output matches
             }
         }
 
-        // put remaining (non-matched) objects in subcondition_matching_matches) into non_matches
-        non_matches.insert( non_matches.end(), subcondition_matching_matches.begin(),          subcondition_matching_matches.end());
+        // put remaining (non-matched) objects in subcondition_matching_matches into non_matches
+        non_matches.insert( non_matches.end(), std::make_move_iterator(subcondition_matching_matches.begin()),
+                                               std::make_move_iterator(subcondition_matching_matches.end()));
         // put objects in subcondition_non_matching_matches into non_matches
-        non_matches.insert( non_matches.end(), subcondition_non_matching_matches.begin(),      subcondition_non_matching_matches.end());
+        non_matches.insert( non_matches.end(), std::make_move_iterator(subcondition_non_matching_matches.begin()),
+                                               std::make_move_iterator(subcondition_non_matching_matches.end()));
         // put objects in subcondition_matching_non_matches and subcondition_non_matching_non_matches back into non_matches
-        non_matches.insert( non_matches.end(), subcondition_matching_non_matches.begin(),      subcondition_matching_non_matches.end());
-        non_matches.insert( non_matches.end(), subcondition_non_matching_non_matches.begin(),  subcondition_non_matching_non_matches.end());
+        non_matches.insert( non_matches.end(), std::make_move_iterator(subcondition_matching_non_matches.begin()),
+                                               std::make_move_iterator(subcondition_matching_non_matches.end()));
+        non_matches.insert( non_matches.end(), std::make_move_iterator(subcondition_non_matching_non_matches.begin()),
+                                               std::make_move_iterator(subcondition_non_matching_non_matches.end()));
         // this leaves the original contents of non_matches unchanged, other than
         // possibly having transferred some objects into non_matches from matches
     }
