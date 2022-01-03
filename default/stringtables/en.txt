@@ -14017,8 +14017,8 @@ BLD_CULTURE_ARCHIVES
 Cultural Archives
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] by [[value BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT]] and [[metertype METER_TARGET_INDUSTRY]] by [[value BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]].
-The effects require a stability of [[value BLD_CULTURE_ARCHIVES_MIN_STABILITY]].
+'''• Increases [[metertype METER_TARGET_RESEARCH]] by [[value BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT]] and [[metertype METER_TARGET_INDUSTRY]] by [[value BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]]. The effects require a stability of [[value BLD_CULTURE_ARCHIVES_MIN_STABILITY]].
+• Grants a social policy slot.
 
 Stores the sum accumulated knowledge from thousands of years of life on this planet, improving many aspects of planetary productivity.'''
 
@@ -14026,8 +14026,7 @@ BLD_CULTURE_LIBRARY
 Cultural Library
 
 BLD_CULTURE_LIBRARY_DESC
-'''Increases [[metertype METER_TARGET_RESEARCH]] by [[value BLD_CULTURE_LIBRARY_TARGET_RESEARCH_FLAT]].
-The effect requires a stability of [[value BLD_CULTURE_LIBRARY_MIN_STABILITY]].
+'''Increases [[metertype METER_TARGET_RESEARCH]] by [[value BLD_CULTURE_LIBRARY_TARGET_RESEARCH_FLAT]]. This effect requires a stability of [[value BLD_CULTURE_LIBRARY_MIN_STABILITY]].
 
 Stores the accumulated knowledge from thousands of years of life on this planet, giving a bonuses to research. This building will be destroyed when the [[metertype METER_POPULATION]] of the high tech natives reaches zero.'''
 

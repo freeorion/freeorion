@@ -7,7 +7,7 @@ BuildingType
     location = Described description = "NOWHERE" condition = Not All
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
-    
+
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -24,6 +24,16 @@ BuildingType
                     * (NamedReal name = "BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP"
                                  value = 2.5 * [[INDUSTRY_PER_POP]])
             ]
+
+        EffectsGroup
+            scope = And [
+                Capital
+                OwnedBy empire = Source.Owner
+            ]
+            activation = Not Unowned
+            stackinggroup = "CULTURAL_ARCHIVES_POLICY_SLOT_STACK"
+            effects = SetEmpireMeter empire = Source.Owner
+                                     meter = "SOCIAL_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1
 
     ]
     icon = "icons/building/archive.png"
