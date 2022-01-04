@@ -2790,7 +2790,7 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
         return Stringify(result);
 
     // special case for a few sub-value-refs to help with UI representation
-    if (end_of_property == "X" || end_of_property == "Y") {
+    if (end_of_property == "X" || end_of_property == "Y" || end_of_property == "DirectDistanceBetween") {
         if (result == UniverseObject::INVALID_POSITION)
             return UserString("INVALID_POSITION");
 
