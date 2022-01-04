@@ -152,6 +152,21 @@ namespace {
         );
     }
 
+    std::unique_ptr<ValueRef::Variable<std::string>> DistanceToSelected(UniverseObjectType uot) {
+        const char* prop = nullptr;
+        if (uot == UniverseObjectType::OBJ_SYSTEM)
+            prop = "SelectedSystemID";
+        else if (uot == UniverseObjectType::OBJ_FLEET)
+            prop = "SelectedFleetID";
+        else
+            throw std::invalid_argument("DistanceToSelected pass unsupported UniverseObjectType");
+
+        return StringCastedComplexValueRef<double>(
+            "DirectDistanceBetween",
+            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "ID"),
+            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, prop));
+    }
+
     std::unique_ptr<ValueRef::Variable<std::string>> SystemSupplyRangeValueRef(bool propagated = false) {
         return StringCastedComplexValueRef<double>(
             propagated ? "PropagatedSystemSupplyRange" :"SystemSupplyRange",
@@ -165,7 +180,6 @@ namespace {
             nullptr,
             std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "SystemID"));
     }
-
 
     std::unique_ptr<ValueRef::Variable<std::string>> DesignCostValueRef() {
         return StringCastedComplexValueRef<double>(
@@ -222,20 +236,22 @@ namespace {
                         std::unique_ptr<ValueRef::ValueRef<std::string>>> col_types;
         if (col_types.empty()) {
             // General
-            col_types[{UserStringNop("NAME"),                   ""}] =  StringValueRef("Name");
-            col_types[{UserStringNop("OBJECT_TYPE"),            ""}] =  UserStringValueRef("TypeName");
-            col_types[{UserStringNop("ID"),                     ""}] =  StringCastedValueRef<int>("ID");
-            col_types[{UserStringNop("CREATION_TURN"),          ""}] =  StringCastedValueRef<int>("CreationTurn");
-            col_types[{UserStringNop("AGE"),                    ""}] =  StringCastedValueRef<int>("Age");
-            col_types[{UserStringNop("SYSTEM"),                 ""}] =  ObjectNameValueRef("SystemID");
-            col_types[{UserStringNop("STAR_TYPE"),              ""}] =  UserStringCastedValueRef<StarType>("StarType");
-            col_types[{UserStringNop("BUILDING_TYPE"),          ""}] =  UserStringValueRef("BuildingType");
-            col_types[{UserStringNop("LAST_TURN_BATTLE_HERE"),  ""}] =  StringCastedValueRef<int>("LastTurnBattleHere");
-            col_types[{UserStringNop("NUM_SPECIALS"),           ""}] =  StringCastedValueRef<int>("NumSpecials");
-            col_types[{UserStringNop("SPECIALS"),               ""}] =  UserStringVecValueRef("Specials");
-            col_types[{UserStringNop("TAGS"),                   ""}] =  UserStringVecValueRef("Tags");
-            col_types[{UserStringNop("X"),                      ""}] =  StringCastedValueRef<double>("X");
-            col_types[{UserStringNop("Y"),                      ""}] =  StringCastedValueRef<double>("Y");
+            col_types[{UserStringNop("NAME"),                        ""}] = StringValueRef("Name");
+            col_types[{UserStringNop("OBJECT_TYPE"),                 ""}] = UserStringValueRef("TypeName");
+            col_types[{UserStringNop("ID"),                          ""}] = StringCastedValueRef<int>("ID");
+            col_types[{UserStringNop("CREATION_TURN"),               ""}] = StringCastedValueRef<int>("CreationTurn");
+            col_types[{UserStringNop("AGE"),                         ""}] = StringCastedValueRef<int>("Age");
+            col_types[{UserStringNop("SYSTEM"),                      ""}] = ObjectNameValueRef("SystemID");
+            col_types[{UserStringNop("STAR_TYPE"),                   ""}] = UserStringCastedValueRef<StarType>("StarType");
+            col_types[{UserStringNop("BUILDING_TYPE"),               ""}] = UserStringValueRef("BuildingType");
+            col_types[{UserStringNop("LAST_TURN_BATTLE_HERE"),       ""}] = StringCastedValueRef<int>("LastTurnBattleHere");
+            col_types[{UserStringNop("NUM_SPECIALS"),                ""}] = StringCastedValueRef<int>("NumSpecials");
+            col_types[{UserStringNop("SPECIALS"),                    ""}] = UserStringVecValueRef("Specials");
+            col_types[{UserStringNop("TAGS"),                        ""}] = UserStringVecValueRef("Tags");
+            col_types[{UserStringNop("X"),                           ""}] = StringCastedValueRef<double>("X");
+            col_types[{UserStringNop("Y"),                           ""}] = StringCastedValueRef<double>("Y");
+            col_types[{UserStringNop("DISTANCE_TO_SELECTED_SYSTEM"), ""}] = DistanceToSelected(UniverseObjectType::OBJ_SYSTEM);
+            col_types[{UserStringNop("DISTANCE_TO_SELECTED_FLEET"),  ""}] = DistanceToSelected(UniverseObjectType::OBJ_FLEET);
 
             // empire
             col_types[{UserStringNop("SUPPLYING_EMPIRE"),       ""}] =  EmpireNameValueRef("SupplyingEmpire");

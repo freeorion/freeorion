@@ -6966,6 +6966,12 @@ Supplying Empire
 SYSTEM_SUPPLY_RANGE
 System Supply Range
 
+DISTANCE_TO_SELECTED_SYSTEM
+Dist. to Sel. System
+
+DISTANCE_TO_SELECTED_FLEET
+Dist. to Sel. Fleet
+
 PROPAGATED_SUPPLY_RANGE
 Propagated Supply Range
 
