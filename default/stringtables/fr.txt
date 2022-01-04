@@ -12054,15 +12054,6 @@ Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes en Focus Recherche
 PLC_NECESSITY_SHORT_DESC
 Améliore la Recherche des planètes à faible Stabilité
 
-PLC_EXPLORATION_RESEARCH
-Recherche d'Exploration
-
-PLC_EXPLORATION_RESEARCH_DESC
-Pour chaque tour durant lequel un système est nouvellement exploré, les astronefs présents dans ce système génèrent un total de [[value EXPLORATION_RESEARCH_BONUS_TOTAL]] PR.
-
-PLC_EXPLORATION_RESEARCH_SHORT_DESC
-L'exploration octroie de la Recherche
-
 PLC_FLANKING
 Encerclement
 
