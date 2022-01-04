@@ -12060,15 +12060,6 @@ PLC_NECESSITY_DESC
 PLC_NECESSITY_SHORT_DESC
 Boosts Unstable Planet Research
 
-PLC_EXPLORATION_RESEARCH
-Exploration Research
-
-PLC_EXPLORATION_RESEARCH_DESC
-(this description is missing)
-
-PLC_EXPLORATION_RESEARCH_SHORT_DESC
-Exploration Gives Research
-
 PLC_FLANKING
 Flanking
 
