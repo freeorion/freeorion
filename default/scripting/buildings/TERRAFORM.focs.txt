@@ -63,7 +63,11 @@ TARGET_TERRAFORMING
                     message = "EFFECT_TERRAFORM"
                     label = "EFFECT_TERRAFORM_LABEL"
                     icon = "icons/building/terraform.png"
-                    parameters = tag = "planet" data = Target.ID
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                        tag = "user_string" data = "PT_@6@"
+                        tag = "environment" data = Target.ID
+                    ]
                     empire = Source.Owner
             ]
 

@@ -5,6 +5,8 @@
 #include "../universe/Universe.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
+#include "../universe/Planet.h"
+#include "../universe/Species.h"
 #include "../Empire/Empire.h"
 #include "i18n.h"
 #include "Logger.h"
@@ -190,6 +192,15 @@ namespace {
                     else
                         return WithTags(data, VarText::FOCS_VALUE_TAG, UserString("UNKNOWN_VALUE_REF_NAME"));
                 }},
+            {VarText::ENVIRONMENT_TAG, [](const std::string& data)
+                {
+                    auto planet = IApp::GetApp()->GetUniverse().Objects().get<Planet>(boost::lexical_cast<int>(data));
+                    if (planet)
+                        return UserString(to_string(planet->EnvironmentForSpecies()));
+                    return UserString("UNKNOWN_PLANET");
+                }},
+            {VarText::USER_STRING_TAG, [](const std::string& data)
+                { return UserString(data); }},
         };
 
         return substitute_map;

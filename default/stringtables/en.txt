@@ -7682,7 +7682,7 @@ EFFECT_GAIA_LABEL
 Gaia Paradise
 
 EFFECT_TERRAFORM
-%planet% has been terraformed.
+%planet% has been terraformed to %user_string% (%environment%).
 
 EFFECT_TERRAFORM_LABEL
 Terraform

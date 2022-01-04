@@ -179,6 +179,10 @@ public:
     static constexpr std::string_view METER_TYPE_TAG = "metertype";
     //! Variable value is the name of a registed ValueRef.
     static constexpr std::string_view FOCS_VALUE_TAG = "value";
+    //! Variable value is Planet::ID(), gives environment of that planet (Good, Poor...)
+    static constexpr std::string_view ENVIRONMENT_TAG = "environment";
+    //! Variable value is a user_string (translation string from <lang>.txt)
+    static constexpr std::string_view USER_STRING_TAG = "user_string";
 
     //! @}
 
