@@ -951,6 +951,14 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             return static_cast<int>(context.galaxy_setup_data.GetAggression());
         if (property_name == "UsedInDesignID")
             return context.in_design_id;
+        if (property_name == "SelectedSystemID")
+            return IApp::GetApp()->SelectedSystemID();
+        if (property_name == "SelectedPlanetID")
+            return IApp::GetApp()->SelectedPlanetID();
+        if (property_name == "SelectedFleetID")
+            return IApp::GetApp()->SelectedFleetID();
+        if (property_name == "SelectedPlanetID")
+            return IApp::GetApp()->SelectedPlanetID();
 
         // add more non-object reference int functions here
 
