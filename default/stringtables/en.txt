@@ -21136,11 +21136,8 @@ Yekub'''
 SHIP_NAME_OTHERS
 '''Easter Egg
 Eternal September
-Red October'''
-
-# The last singular ship name - let's hope this will satisfy the test script
-SHIP_NAME_LAST
-Rocinante
+Red October
+Rocinante'''
 
 # Newline separated list of developer name based ship names
 SHIP_NAME_DEVS
@@ -21179,8 +21176,7 @@ SHIP_NAMES
 [[SHIP_NAME_EMOTIONS]]
 [[SHIP_NAME_ARCHITECTURE]]
 [[SHIP_NAME_MOO2_STARS]]
-[[SHIP_NAME_OTHERS]]
-[[SHIP_NAME_LAST]]'''
+[[SHIP_NAME_OTHER]]'''
 
 MONSTER_NAMES
 '''[[SHIP_NAME_ROMAN_MYTHOLOGY]]
