@@ -98,36 +98,33 @@ protected:
 private:
     class PlanetPanelContainer;
 
-    void                DoLayout();
+    void DoLayout();
 
-    void                UpdateImpl();                   ///< updates contents quickly.  to be used when meters or other objects' data changes
+    void UpdateImpl();                   ///< updates contents quickly.  to be used when meters or other objects' data changes
 
     /** Fully refreshes sidepanel and contents, recreating all contents from
       * stored system id.  All SidePanels are refreshed. */
-    void                RefreshInPreRender();
+    void RefreshInPreRender();
 
-    void                RefreshImpl();                  ///< fully refreshes contents.  to be used when objects are created, destroyed or added to system
+    void RefreshImpl();                  ///< fully refreshes contents.  to be used when objects are created, destroyed or added to system
 
     /**  Insert all known systems into the SystemName drop down list.*/
-    void                RefreshSystemNames();
-    /**  Refresh the system name list when it closes, in case the known systems changed while it
-         was open. */
-    void                SystemNameDropListOpenedSlot(bool is_open);
+    void RefreshSystemNames();
+    /**  Refresh the system name list when it closes, in case the known systems changed while it was open. */
+    void SystemNameDropListOpenedSlot(bool is_open);
     /**  Handle the user selecting a system in the droplist while the list is closed, using keys.
          It may emit SystemSelectedSignal. */
-    void                SystemSelectionChangedSlot(GG::DropDownList::iterator it);
+    void SystemSelectionChangedSlot(GG::DropDownList::iterator it);
 
-    void                PrevButtonClicked();            ///< responds to user clicking next system button
-    void                NextButtonClicked();            ///< responts to user clicking previous system button
+    void PrevButtonClicked();            ///< responds to user clicking next system button
+    void NextButtonClicked();            ///< responts to user clicking previous system button
     /** Respond to the user clicking a planet by selecting it if selection is enabled.*/
-    void                PlanetClickedSlot(int planet_id);
+    void PlanetClickedSlot(int planet_id);
 
-    /** Responds to insertion fleets into system during a turn.  may update
-        colonize buttons. */
+    /** Responds to insertion fleets into system during a turn.  may update colonize buttons. */
     static void FleetsInserted(const std::vector<std::shared_ptr<Fleet>>& fleets);
 
-    /** Responds to removal fleets from system during a turn.  may update
-        colonize buttons. */
+    /** Responds to removal fleets from system during a turn.  may update colonize buttons. */
     static void FleetsRemoved(const std::vector<std::shared_ptr<Fleet>>& fleets);
 
     class SystemNameDropDownList;
@@ -142,15 +139,15 @@ private:
     std::shared_ptr<PlanetPanelContainer>       m_planet_panel_container;
     std::shared_ptr<MultiIconValueIndicator>    m_system_resource_summary;
 
-    bool                        m_selection_enabled = false;
+    bool        m_selection_enabled = false;
 
-    static bool                 s_needs_update;
-    static bool                 s_needs_refresh;
+    static bool s_needs_update;
+    static bool s_needs_refresh;
 
-    static int                  s_system_id;
+    static int  s_system_id;
 
     /** The id of the currently-selected planet, or INVALID_OBJECT_ID if no planet is selected. */
-    static int                  s_planet_id;
+    static int  s_planet_id;
 
     static std::set<std::weak_ptr<SidePanel>, std::owner_less<std::weak_ptr<SidePanel>>> s_side_panels;
 
