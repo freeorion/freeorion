@@ -9196,6 +9196,10 @@ This planet has a natural satellite, the orbital period of which is in 1:1 reson
 COMPUTRONIUM_SPECIAL
 Computronium Moon
 
+# %1% is the origin planet's name
+COMPUTRONIUM_ACCOUNTING_LABEL
+%1% Special <i>Computronium Moon</i>
+
 COMPUTRONIUM_SPECIAL_DESC
 '''When a planet with a Computronium Moon has the [[encyclopedia RESEARCH_FOCUS_TITLE]], all research focused planets in the empire gain [[value COMPUTRONIUM_TARGET_RESEARCH_PERPOP]] [[metertype METER_TARGET_RESEARCH]] per [[metertype METER_POPULATION]].
 The effect requires a stability of [[value COMPUTRONIUM_MIN_STABILITY]].
@@ -11970,7 +11974,7 @@ Capital Markets
 PLC_CAPITAL_MARKETS_DESC
 '''• Planets with a luxury resource special and that are set to influence focus will export the resource to supply-connected planets. This boosts the stability of planets with species that like the resource by [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]].
 • Increases [[metertype METER_TARGET_INFLUENCE]] on populated planets with at least [[value CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY]] [[metertype METER_HAPPINESS]] by [[value CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING]] per the lesser of [[metertype METER_CONSTRUCTION]] and [[metertype METER_POPULATION]].
-• Increases the rate of growth or decay of [[metertype METER_INFLUENCE]] and [[[[metertype METER_HAPPINESS]]]] by [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / turn towards [[metertype METER_TARGET_INFLUENCE]] or [[metertype METER_TARGET_HAPPINESS]].
+• Increases the rate of growth or decay of [[metertype METER_INFLUENCE]] and [[metertype METER_HAPPINESS]] by [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / turn towards [[metertype METER_TARGET_INFLUENCE]] or [[metertype METER_TARGET_HAPPINESS]].
 • Reduces [[metertype METER_TARGET_HAPPINESS]] on populated empire planets by [[value CAPITAL_MARKETS_DEBT_INSTABILITY]] times the size of the empire's influence debt.'''
 
 PLC_CAPITAL_MARKETS_SHORT_DESC
@@ -12059,15 +12063,6 @@ PLC_NECESSITY_DESC
 
 PLC_NECESSITY_SHORT_DESC
 Boosts Unstable Planet Research
-
-PLC_EXPLORATION_RESEARCH
-Exploration Research
-
-PLC_EXPLORATION_RESEARCH_DESC
-
-
-PLC_EXPLORATION_RESEARCH_SHORT_DESC
-Exploration Gives Research
 
 PLC_FLANKING
 Flanking
@@ -14007,7 +14002,7 @@ BLD_ABANDON_OUTPOST
 Abandon Outpost
 
 BLD_ABANDON_OUTPOST_DESC
-Abandon the outpost on this planet. The building needs two turns to prepare dismantling the outpost. If dismantling is prepared, it takes an uninterupted turn without battles happening to completely abandon the outpost. The building gets used up in the process and the planet will be unowned afterwards.
+Abandon the outpost on this planet. The building needs two turns to prepare dismantling the outpost. If dismantling is prepared, it takes an uninterrupted turn without battles happening to completely abandon the outpost. The building gets used up in the process and the planet will be unowned afterwards.
 
 BLD_OBSERVATORY
 Observatory
@@ -16729,14 +16724,24 @@ Subterranean Bonus
 GAIA_LABEL
 Gaia Bonus
 
+# %1% Planet where the special is located
 WORLDTREE_LABEL
-World Tree Bonus
+%1% Special <i>Worldtree</i>
 
 TIDAL_LOCK_LABEL
 Tidally Locked Rotation
 
 HOMEWORLD_LABEL
 Homeworld
+
+GRO_TECH_ACCOUNTING_LABEL
+[[TT_TECH]]
+
+DEF_TECH_ACCOUNTING_LABEL
+[[TT_TECH]]
+
+CON_TECH_ACCOUNTING_LABEL
+[[TT_TECH]]
 
 # %1% name of planet
 # %2% name of species on planet

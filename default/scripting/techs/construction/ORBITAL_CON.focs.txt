@@ -12,6 +12,7 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
             ]
+            accountinglabel = "CON_TECH_ACCOUNTING_LABEL"
             effects = SetMaxSupply value = Value + 1
     graphic = "icons/tech/orbital_construction.png"
 

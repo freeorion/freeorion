@@ -16,20 +16,21 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
             ]
+            accountinglabel = "CON_TECH_ACCOUNTING_LABEL"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [
                 If condition = (Value(LocalCandidate.Industry) <= Value(LocalCandidate.TargetIndustry))
                     effects = SetIndustry value = min(Value + NamedReal name = "FORCE_ENERGY_RATE_INCREASE" value = 3.0, Value(Target.TargetIndustry))
                     else = SetIndustry value = max(Value - NamedRealLookup name = "FORCE_ENERGY_RATE_INCREASE", Value(Target.TargetIndustry))
-                    
+
                 If condition = (Value(LocalCandidate.Research) <= Value(LocalCandidate.TargetResearch))
                     effects = SetResearch value = min(Value + NamedRealLookup name = "FORCE_ENERGY_RATE_INCREASE", Value(Target.TargetResearch))
                     else = SetResearch value = max(Value - NamedRealLookup name = "FORCE_ENERGY_RATE_INCREASE", Value(Target.TargetResearch))
-                    
+
                 If condition = (Value(LocalCandidate.Construction) <= Value(LocalCandidate.TargetConstruction))
                     effects = SetConstruction value = min(Value + NamedRealLookup name = "FORCE_ENERGY_RATE_INCREASE", Value(Target.TargetConstruction))
                     else = SetConstruction value = max(Value - NamedRealLookup name = "FORCE_ENERGY_RATE_INCREASE", Value(Target.TargetConstruction))
-                    
+
                 If condition = (Value(LocalCandidate.Stockpile) <= Value(LocalCandidate.MaxStockpile))
                     effects = SetStockpile value = min(Value + NamedRealLookup name = "FORCE_ENERGY_RATE_INCREASE", Value(Target.MaxStockpile))
                     else = SetStockpile value = max(Value - NamedRealLookup name = "FORCE_ENERGY_RATE_INCREASE", Value(Target.MaxStockpile))

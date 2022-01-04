@@ -20,16 +20,18 @@ Tech
                     Poor
                 ]
             ]
+            accountinglabel = "GRO_TECH_ACCOUNTING_LABEL"
             priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 2 * Target.HabitableSize accountinglabel = "GRO_XENO_GENETICS"
+            effects = SetTargetPopulation value = Value + 2 * Target.HabitableSize
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Planet environment = [ Hostile ]
             ]
+            accountinglabel = "GRO_TECH_ACCOUNTING_LABEL"
             priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize accountinglabel = "GRO_XENO_GENETICS"
+            effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize
     ]
     graphic = "icons/tech/xenological_genetics.png"
 
