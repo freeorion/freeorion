@@ -17750,7 +17750,12 @@ Toggle fullscreen
 ## Name lists
 ##
 
-# Newline separated list of star cluster names
+# adding some parentheses into comment lines {
+#   like this,
+#   helps for code foldability in modern editors
+# } even if there are non-commented lines inbetween
+# because this is a txt-file..
+# Newline separated list of star cluster names {
 STAR_GROUP_WORDS
 '''Alpha
 Beta
@@ -17777,7 +17782,8 @@ Chi
 Psi
 Omega'''
 
-# Newline separated list of star cluster suffixes
+# }
+# Newline separated list of star cluster suffixes {
 STAR_GROUP_CHARS
 '''α
 β
@@ -17804,11 +17810,13 @@ STAR_GROUP_CHARS
 ψ
 ω'''
 
-# Newline separated list of star cluster names
+# }
+# Newline separated list of star cluster names {
 STAR_GROUP_NAMES
 Centauri
 
-# Newline separated list of star names
+# }
+# Newline separated list of star names {
 STAR_NAMES
 '''Aadhavan
 Aaftaab
@@ -17829,6 +17837,7 @@ Adria
 Aegir
 Aegis
 Aftab
+Agaron
 Agemem
 Agena
 Ahl
@@ -17836,6 +17845,7 @@ Ain
 Airy
 Ajai
 Ajax
+Akaali
 Akrab
 Al Borak
 Alathfar
@@ -17887,6 +17897,7 @@ Alshain
 Alshat
 Alsuhail
 Altair
+Altamid
 Alterf
 Aludra
 Alula
@@ -17934,7 +17945,9 @@ Arunan
 Arusha
 Ascella
 Asellus
+Asfaloth
 Asgard
+Ashfalot
 Asimov
 Asmodeus
 Aspidiske
@@ -17974,6 +17987,7 @@ Baer
 Baham
 Bahcall
 Baía
+Bajor
 Balan
 Balder
 Ballybran
@@ -18013,14 +18027,17 @@ Bop
 Borealis
 Borlach
 Boros
+Bortus
 Botein
 Brachium
 Bradbury
 Bragi
 Bravio
+Brekka
 Brethil
 Brey
 Brog
+Brunal
 Bud
 Burbidge
 Burke
@@ -18028,11 +18045,15 @@ Caebeth
 Calafia
 Cannon
 Canopus
+Canonis
 Capella
 Caph
 Caps
+Caramba
+Caramelior
 Carcharoth
 Carina
+Carmina
 Caroli
 Cassandra
 Cassini
@@ -18057,6 +18078,9 @@ Chort
 Chthon
 Ciryon
 Citlālin
+Clamor
+Clara
+Clarissima
 Coatlicue
 Coccolino
 Collassa
@@ -18067,6 +18091,7 @@ Cormack
 Corona
 Correctos
 Coruscant
+Covidia
 Crawford
 Crius
 Crow
@@ -18088,10 +18113,11 @@ Darquan
 Darrian
 Deadwood
 Deemi
+Delos
 Delphi
 Demeter
 Deneb
-Denebola
+Denobula
 Denubius
 Deucalion
 Dhrawn
@@ -18099,6 +18125,7 @@ Diadem
 Dicke
 Diell
 Diggity
+Dinaal
 Diphda
 Divakara
 Dnoces
@@ -18110,6 +18137,8 @@ Draco
 Draconis
 Drakka
 Draper
+Drayan
+Draylax
 Drengist
 Dres
 Dreven
@@ -18137,6 +18166,7 @@ Ehwaz
 Eilinel
 Ekkaia
 Ekul
+El-Adrel
 El Gero
 Elased
 Electra
@@ -18144,6 +18174,7 @@ Elena
 Elnath
 Eltanin
 Elu
+Eminiar
 Encke
 Endoria
 Endymion
@@ -18152,7 +18183,9 @@ Engwar
 Enif
 Eos
 Ephyse
+Epipopepi
 Epsylon
+Eren
 Eridani
 Erigone
 Erna
@@ -18182,6 +18215,8 @@ Faraday
 Farlight
 Fehu
 Felix
+Fenris
+Ferenginar
 Fetter
 Fetū
 Fhloston
@@ -18193,6 +18228,7 @@ Fiumena
 Fixas
 Fluttershy
 Fomalhaut
+Fonki
 Formic
 Fornacis
 Fowler
@@ -18251,6 +18287,7 @@ Gorra
 Gorta
 Gorthol
 Goth
+Gothos
 Graffias
 Grail
 Gram
@@ -18260,6 +18297,7 @@ Grotto
 Grue
 Gruis
 Grumium
+Grundibus
 Gundung
 Guradas
 Guth
@@ -18296,6 +18334,8 @@ Helotrix
 Hematopf
 Henderson
 Henge
+Heptagon
+Hepsjot
 Hera
 Herbert
 Herbig
@@ -18321,6 +18361,7 @@ Hnau
 Hnub Qub
 Hocotate
 Hoedus
+Hodor
 Holly
 Homam
 Honeydew
@@ -18362,6 +18403,7 @@ Iranha
 Ìràwọ̀
 Ireta
 Irk
+Irtok
 Iru
 Isa
 Ishtar
@@ -18401,10 +18443,13 @@ Kakata
 Kala
 Kalas
 Kalidasa
+Kaminar
 Kapteyn
 Karahkwa
 Kartaka
+Kartouche
 Kartow
+Katrud
 Kaus
 Kazzkark
 Keeta
@@ -18418,6 +18463,7 @@ Kepler
 Kerbin
 Kerry
 Kewkba
+Keyali
 Khaga
 Khama
 Kharak
@@ -18434,6 +18480,7 @@ Kirkwood
 Kitalpha
 Kithrup
 Klazart
+Klyden
 Klystron
 Knuth
 Kobol
@@ -18443,6 +18490,7 @@ Kornephori
 Kraj
 Krampus
 Kraz
+Kraxl
 Kregen
 Kril
 Kronos
@@ -18452,6 +18500,8 @@ Kuiper
 Kulthea
 Kulthos
 Kuma
+Kwejian
+Kyrbïs
 La
 Laan
 Laganini
@@ -18460,12 +18510,14 @@ Lagrange
 Laguz
 Lalaith
 Lamarckia
+LaMarr
 Lambda
 Langa
 Laplace
 Lassell
 Lava
 Laythe
+Ledos
 Leera
 Leibowitz
 Lemaitre
@@ -18477,6 +18529,7 @@ Lhûn
 Lilac
 Lintang
 Lir
+Lissepia
 Listavus
 Lister
 Lithia
@@ -18511,6 +18564,7 @@ Maia
 Majipoor
 Makina
 Malacandra
+Malcor
 Malin
 Mallus
 Mambo
@@ -18520,6 +18574,7 @@ Mannaz
 Mannga
 Manzil
 Maretta
+Maravel
 Marfik
 Margrave
 Marich
@@ -18588,6 +18643,7 @@ Mnemon
 Mobas
 Mobius
 Moctezuma
+Moclan
 Moho
 Moletrap
 Molyneux
@@ -18653,6 +18709,7 @@ Nit
 Nitzer
 Nivrim
 Niyat
+Ni'Var
 Njord
 Nocobi
 Nodus
@@ -18663,6 +18720,7 @@ Note
 Nuk
 Nunki
 Nusakan
+Nuxus
 Nyarl
 Nyénye
 Nyota
@@ -18685,14 +18743,21 @@ Ophiuchi
 Optera
 Orchid
 Orionis
+Ormelinn
 Orocarni
+Orrevil
 Orthe
+Orvil
 Osiris
 Othila
 Oyarsa
 Pacifica
 Pagalos
 Paladia
+Palladina
+Pandebilium
+Pandemonium
+Pandemax
 Pandora
 Panon Poe
 Papis
@@ -18700,6 +18765,7 @@ Paquin
 Paranar
 Parth
 Path
+Patrokles
 Pawn
 Pay
 Peacock
@@ -18749,6 +18815,7 @@ Posterior
 Prace
 Praecipua
 Praxis
+Prexnak
 Primodius
 Prior
 Procyon
@@ -18761,8 +18828,11 @@ Ptolemy
 Pulcherri
 Puppis
 Pyrrus
+Qanat
 Qar'To
+Qo'noS
 Quayal
+Quercia
 Quillur
 Ra
 Radar
@@ -18790,11 +18860,13 @@ Reber
 Regina
 Regis
 Regor
+Regoria
 Regulus
 Rehua
 Reilsa
 Remulak
 Requiem
+Retepsia
 Reticuli
 Reul
 Reverie
@@ -18809,6 +18881,7 @@ Riccioli
 Rigel
 Rimmer
 Rin
+Risa
 Robi
 Rochallor
 Rollage
@@ -18876,6 +18949,7 @@ Seren
 Setag
 Seyfert
 Shade
+Shalala
 Sham
 Shams
 Shapiro
@@ -18970,6 +19044,7 @@ Supina
 Suraj
 Surya
 Suryudu
+Symsym
 Synnax
 Syrma
 T'ae-yang
@@ -19098,6 +19173,7 @@ Vindeatrix
 Vinea
 Vista
 Volantis
+Volchok
 Vox
 Vulcan
 Waglen
@@ -19134,12 +19210,14 @@ Wraith
 Wunjo
 Xanadu
 Xanthus
+Xeleya
 Xendalla
 Xengara
 Xenon
 Xenos
 Xephos
 Xiddig
+Xoanon
 Xocotl
 Xudax
 Yaraay
@@ -19176,8 +19254,10 @@ Zillikian
 Zoctan
 Zomg
 Zon
+Zookeenee
 Zora
 Zosma
+Zukk
 Zun di
 Zvaigzne
 Zvezda
@@ -19187,7 +19267,8 @@ Zygot
 Zyrgon
 '''
 
-# Newline separated list of empire names
+# }
+# Newline separated list of empire names {
 EMPIRE_NAMES
 '''Academy
 Accord
@@ -19299,7 +19380,8 @@ Union
 Unity
 Zone'''
 
-# Newline separated list of mammal-based ship names
+# }
+# Newline separated ship name list based on mammals {
 SHIP_NAME_MAMMALS
 '''Aardvark
 Aardwolf
@@ -19416,6 +19498,7 @@ Shrew
 Skunk
 Sloth
 Stag
+Stallion
 Tamandua
 Tamarin
 Tapir
@@ -19424,6 +19507,7 @@ Tarsius
 Tenrec
 Tiger
 Vicugna
+Vixen
 Wallaby
 Walrus
 Warthog
@@ -19435,27 +19519,40 @@ Wolverine
 Wombat
 Zebra'''
 
-# Newline separated list of bird-based ship names
+# }
+# Newline separated ship name list based on birds {
 SHIP_NAME_BIRDS
 '''Albatross
 Canary
 Condor
 Cormorant
+Chicken
 Crow
+Cuckoo
+Dodo
 Dove
+Duck
 Eagle
+Emu
 Falcon
 Finch
 Flamingo
 Goose
+Gull
+Hen
 Heron
 Kestrel
 Kiwi
 Lark
+Nightingale
 Osprey
 Ostrich
+Owl
+Parrot
+Peacock
 Pelican
 Penguin
+Peregrine
 Pheasant
 Pidgeon
 Quail
@@ -19466,38 +19563,55 @@ Stork
 Swallow
 Swan
 Thrush
+Titmouse
 Woodpecker'''
 
-# Newline separated list of ship-based ship names
+# }
+# Newline separated ship name list based on fishes & other sea creatures {
 SHIP_NAME_FISH
 '''Albacore
+Anemone
 Anchovy
 Barracuda
 Bass
 Capelin
 Char
 Coelacanth
+Cod
+Coral
 Eel
 Flounder
+Fry
+Goldfish
 Gourami
 Guppy
+Haddock
 Herring
 Koi
 Lamprey
 Mackerel
 Marlin
 Minnow
+Octopus
 Pike
 Piranha
+Pollack
 Remora
+Salmon
 Sculpin
 Shark
 Sockeye
+Starfish
 Stingray
+Thuna
+Tilapia
 Trout
-Walleye'''
+Urchin
+Walleye
+Xifidi'''
 
-# Newline separated list of plant-based ship names
+# }
+# Newline separated ship name list based on trees or treelike plants {
 SHIP_NAME_FLORA
 '''Almond
 Apple
@@ -19514,6 +19628,7 @@ Cedar
 Cherry
 Chestnut
 Cinnamon
+Coconut
 Cork
 Cypress
 Dogwood
@@ -19522,6 +19637,7 @@ Elm
 Eucalyptus
 Fig
 Fir
+Grapevine
 Hazel
 Hickory
 Holly
@@ -19544,33 +19660,86 @@ Rubber
 Sequoia
 Spruce
 Sumac
-Willow'''
+Willow
+Yew'''
 
-# Newline separated list of mineral-based ship names
+# }
+# Newline separated ship name list based on minerals and stones {
 SHIP_NAME_STONE
-'''Amphibolite
+'''Adularia
+Agate
+Amber
+Amphibolite
 Andesite
+Anhydrite
+Asphalt
 Basalt
+Borax
+Chalcedony
 Chalk
+Chrysoberyl
 Clay
+Concrete
+Corundum
+Diamond
+Diopside
 Dolomite
+Emerald
+Feldspar
+Ferrite
 Flint
 Gabbro
 Gneiss
 Granite
+Haematite
+Hornblende
+Jasper
+Jett
 Komatite
+Lapislazuli
 Limestone
+Malachite
 Marble
+Melilith
 Obsidian
+Onyx
+Opal
+Orthoclase
+Pebble
 Pegmatite
 Pumice
+Pyrite
+Pyroxene
+Quartz
 Quartzite
+Rock
+Ruby
 Sandstone
+Sapphire
 Schist
 Shale
-Slate'''
+Slate
+Topaz
+Tourmaline
+Tuff
+Turquoise
+Zircon'''
 
-# Newline separated list of weather-based ship names
+# }
+# Newline separated ship name list inspired by stones and geology but not minerals {
+SHIP_NAME_OTHER_GEO
+'''Caldera
+Earthquake
+Lavaflow
+Menhir
+Nugget
+Obelisk
+Petroglyph
+Seismic
+Tremor'''
+
+# }
+# Newline separated ship name list based on weather {
 SHIP_NAME_WEATHER
 '''Autumn
 Avalanche
@@ -19584,12 +19753,10 @@ Daybreak
 Drizzle
 Drought
 Dusk
-Earthquake
 Eclipse
 Fog
 Heatwave
 Hurricane
-Lavaflow
 Lightning
 Maelstrom
 Mist
@@ -19617,7 +19784,8 @@ Whirlwind
 Wind
 Winter'''
 
-# Newline separated list of star constellationbased ship names
+# }
+# Newline separated ship name list based on star constellations {
 SHIP_NAME_CONSTELLATIONS
 '''Andromeda
 Antlia
@@ -19627,12 +19795,12 @@ Aquila
 Ara
 Aries
 Auriga
+Berenices
 Bootes
 Caelum
 Camelopardalis
 Cancer
 Canes
-Venatici
 Canis
 Capricornus
 Carina
@@ -19644,7 +19812,6 @@ Chamaeleon
 Circinus
 Columba
 Coma
-Berenices
 Corona
 Corvus
 Crater
@@ -19698,13 +19865,19 @@ Triangulum
 Tucana
 Ursa
 Vela
+Venatici
 Virgo
 Volans
 Vulpecula'''
 
-# Newline separated list of various namebased ship names
+# }
+# Newline separated ship name list based on various starnames {
 SHIP_NAME_STARS
 '''Acamar
+Aardharaa
+Aashada
+Aaslesha
+Abhijit
 Achernar
 Achird
 Acrux
@@ -19757,6 +19930,8 @@ Arkab
 Arrakis
 Ascella
 Asellus
+Ashresha
+Ashwini
 Asmidiske
 Asterope
 Atik
@@ -19773,18 +19948,24 @@ Beid
 Bellatrix
 Benetnasch
 Betelgeuse
+Bharani
+Bhargava
+Bhishaja
+Bhomyavasar
 Botein
+Brihaspativasara
+Budhavar
 Canopus
 Capella
 Caph
 Caput
-Trianguli
 Castor
 Celaeno
 Celbalrai
 Chara
 Cheleb
 Chertan
+Chitra
 Chort
 Cih
 Cor Caroli
@@ -19796,19 +19977,20 @@ Cursa
 Dabih
 Deneb
 Denebola
+Dhanishta
+Dhanu
 Diphda
 Dnoces
 Dschubba
 Dubhe
 Dziban
 Edasich
+Eerisham
 El
-Nath
 Electra
 Eltanin
 Enif
 Er
-Rai
 Eschamali
 Fomalhaut
 Furud
@@ -19820,37 +20002,47 @@ Gienah
 Gomeisa
 Graffias
 Grumium
+Guruvar
 Hadar
 Hamal
+Hastaa
+Hea
 Heka
 Heze
 Homam
+Hyadum
+Induvasar
 Izar
 Jabbah
+Jyeshta
 Kabdhilinan
 Kaffaljidhmah
 Kaitos
 Kalb
+Kanya
 Kaou
-Pih
+Karkataka
 Kaus
 Ke
-Kwan
 Keid
 Kentaurus
 Kin
-Yu
 Kitalpha
 Kochab
 Kokab
 Kornephoros
 Kraz
+Krittika
 Kuma
+Kumbha
 Kurhah
+Kwan
 Lesuth
 Maasim
 Maaz
 Maia
+Makara
+Mangalvar
 Marchab
 Marfak
 Markab
@@ -19868,6 +20060,7 @@ Menkib
 Merak
 Merope
 Mesarthim
+Mesha
 Miaplacidus
 Mimosa
 Minkar
@@ -19876,8 +20069,10 @@ Mira
 Mirach
 Mirak
 Mirzam
+Mithuna
 Mizar
 Mothallah
+Mrigash
 Muhlifain
 Muliphein
 Mulu-lizi
@@ -19885,6 +20080,7 @@ Muphrid
 Nakkar
 Naos
 Nashira
+Nath
 Navi
 Nekkar
 Nihal
@@ -19894,8 +20090,10 @@ Nusakan
 Phact
 Phad
 Phaet
+Phalguni
 Phecda
 Pherkab
+Pih
 Pleione
 Polaris
 Pollux
@@ -19903,21 +20101,29 @@ Porrima
 Praecipula
 Prijipati
 Primus
-Hyadum
 Procyon
 Propus
+Proshtapada
+Pubba
 Pulcherrima
+Punarvasu
+Purvashada
+Pushya
+Rai
 Rana
 Ras Algethi
 Ras Alhague
 Ras Elased
 Rasalas
 Rastaban
+Ravivar
 Regor
 Regulus
+Revathi
 Rigel
 Rigilkent
 Rischa
+Rohini
 Rotanev
 Ruchba
 Rukbah
@@ -19933,24 +20139,33 @@ Saiph
 Samakah
 Sargas
 Sarin
+Savitru
 Scheat
 Schedar
 Schemali
 Scutulum
 Segin
 Seginus
+Shaniva
+Shatha
 Shaula
 Shedir
 Sheliak
 Shelyak
 Sheratan
+Shravana
+Shukravar
+Simha
 Sirius
 Situla
 Skat
+Somavar
 Spica
+Sthiravasara
 Sualocin
 Suhail
 Sulafat
+Swati
 Syrma
 Talitha
 Tania
@@ -19962,83 +20177,39 @@ Tegmine
 Tejat
 Thabit
 Thuban
+Tishya
+Trianguli
+Tseang
 Tseen
 Tsih
 Tso
-Hea
 Tsze
-Tseang
+Tula
 Tyl
 Ukdah
 Unukalhai
+Uttara
+Uttarashada
 Vega
+Vichruta
 Vindemiatrix
+Vishaaka
+Vrishchika
 Wasat
 Wezen
 Wezn
 Yed
 Yildun
+Yu
 Zaniah
 Zaurak
 Zavijava
 Zozma
 Zubanalakrab
-Zubenhakrabi
-Aardharaa
-Aashada
-Aaslesha
-Abhijit
-Ashresha
-Ashwini
-Bharani
-Bhargava
-Bhishaja
-Bhomyavasar
-Brihaspativasara
-Budhavar
-Chitra
-Dhanishta
-Dhanu
-Guruvar
-Hastaa
-Induvasar
-Jyeshta
-Kanya
-Karkataka
-Krittika
-Kumbha
-Makara
-Mangalvar
-Mesha
-Mithuna
-Mrigasheerisham
-Phalguni
-Proshtapada
-Pubba
-Punarvasu
-Purvashada
-Pushya
-Ravivar
-Revathi
-Rohini
-Savitru
-Shaniva
-Shatha
-Shravana
-Shukravar
-Simha
-Somavar
-Sthiravasara
-Swati
-Tishya
-Tula
-Uttara
-Uttarashada
-Vichruta
-Vishaaka
-Vrishchika'''
+Zubenhakrabi'''
 
-# Newline separated list of roman mythology-based ship names
+# }
+# Newline separated ship name list based on roman mythology {
 SHIP_NAME_ROMAN_MYTHOLOGY
 '''Aurora
 Auster
@@ -20057,7 +20228,6 @@ Juno
 Justitia
 Latona
 Matuta
-Minerva
 Morta
 Nona
 Parcae
@@ -20074,7 +20244,8 @@ Vesper
 Vesta
 Vulturnus'''
 
-# Newline separated list of greek mythology-based ship names
+# }
+# Newline separated ship name list based on greek mythology {
 SHIP_NAME_GREEK_MYTHOLOGY
 '''Aesculapius
 Achelois
@@ -20084,6 +20255,7 @@ Adrasteia
 Aegaeon
 Aeolus
 Aether
+Agamemnon
 Agdistis
 Agrius
 Alastor
@@ -20119,6 +20291,11 @@ Caerus
 Calliope
 Calypso
 Ceto
+Cerberus
+Charybdis
+Chimaera
+Chimera
+Chiron
 Chloris
 Chronos
 Circe
@@ -20135,6 +20312,7 @@ Crius
 Cronus
 Cybele
 Cyclopes
+Cyclops
 Daphne
 Demeter
 Dinlas
@@ -20163,6 +20341,7 @@ Euterpe
 Galinthias
 Giants
 Glaucus
+Gorgon
 Gyes
 Hades
 Hamadryads
@@ -20185,9 +20364,11 @@ Irene
 Iris
 Lachesis
 Leto
+Medusa
 Melpomene
 Metis
 Metope
+Minerva
 Mnemosyne
 Moirae
 Momus
@@ -20197,12 +20378,14 @@ Nemesis
 Nereids
 Nereus
 Notus
+Nymph
 Oceanid
 Odysseus
 Ophion
 Oreads
 Otus
 Peitho
+Pegasus
 Peneus
 Persephone
 Pheme
@@ -20215,9 +20398,11 @@ Polyphemus
 Poseidon
 Priapus
 Prometheus
+Satyr
 Selene
 Semele
 Silenus
+Sphinx
 Sterope
 Steropes
 Tartarus
@@ -20236,7 +20421,8 @@ Typhon
 Zephyrus
 Zeus'''
 
-# Newline separated list of norse mythology-based ship names
+# }
+# Newline separated ship name list based on norse mythology {
 SHIP_NAME_NORSE_MYTHOLOGY
 '''Aegir
 Alaisiagae
@@ -20354,7 +20540,8 @@ Vili
 Yggdrasil
 Ymir'''
 
-# Newline separated list of basque mythology-based ship names
+# }
+# Newline separated ship name list based on basque mythology {
 SHIP_NAME_BASQUE_MYTHOLOGY
 '''Aatxe
 Adur
@@ -20438,17 +20625,11 @@ Yaun
 Zezengorri
 Zuberoa'''
 
+# }
 # FIXME: Sort these into their proper locations?
-# Newline separated list of various mythology-based ship names
+# Newline separated ship name list based on various mythologies {
 SHIP_NAME_UNSORTED_MYTHOLOGY
-'''Gorgon
-Sphinx
-Medusa
-Pegasus
-Echidna
-Satyr
-Nymph
-Cyclops
+'''Echidna
 Harpy
 Abarimon
 Abatwa
@@ -20478,12 +20659,7 @@ Bukavac
 Bunyip
 Buraq
 Catoblepas
-Cerberus
-Charybdis
 Cherufe
-Chimaera
-Chimera
-Chiron
 Chrysaor
 Cikavac
 Cluricaun
@@ -20615,10 +20791,11 @@ Wyvern
 Yuki-onna
 Yuurei'''
 
-# Newline separated list of scientist-based ship names
+# }
+# Newline separated ship name list based on scientists {
 SHIP_NAME_SCIENTISTS
 '''Ampere
-Angstrom
+Ångström
 Archimedes
 Aristotle
 Avogadro
@@ -20674,8 +20851,10 @@ Hertz
 Jenner
 Kelvin
 Kepler
+Koch
 Kuiper
 Lagrange
+Lamarck
 Lavoisier
 Leeuwenhoek
 Linnaeus
@@ -20696,24 +20875,26 @@ Planck
 Pliny
 Redi
 Richter
-Rontgen
+Röntgen
 Rutherford
 Sagan
 Salk
 Schwann
-Schrodinger
+Schrödinger
 Schwarzschild
 Spallanzani
 Tesla
 Tycho
 Vesalius
-Van
-Allen
+Van Allen
 Volta
 Voltaire
-Watson'''
+Watson
+Webb
+Zeiss'''
 
-# Newline separated list of author-based ship names
+# }
+# Newline separated ship name list based on authors {
 SHIP_NAME_AUTHORS
 '''Adams
 Aldiss
@@ -20721,6 +20902,7 @@ Alexander
 Anderson
 Anthony
 Asimov
+Atwood
 Banks
 Baum
 Beagle
@@ -20767,6 +20949,7 @@ Heinlein
 Henderson
 Herbert
 Hickman
+Huxley
 Johnson
 Jordan
 Kagan
@@ -20826,12 +21009,14 @@ Swanwick
 Tiptree
 Tolkien
 Turtledove
+Valente
 Vance
 Varley
 Verne
 Vinge
 Vonnegut
 Watt-Evans
+Weir
 Wells
 Wilhelm
 Williamson
@@ -20842,7 +21027,8 @@ Wolverton
 Zahn
 Zelazny'''
 
-# Newline separated list of artist-based ship names
+# }
+# Newline separated ship name list based on artists {
 SHIP_NAME_ARTISTS
 '''Botticelli
 Bruegel
@@ -20884,6 +21070,8 @@ Van Gogh
 Warhol
 Whistler'''
 
+# }
+# Newline separated ship name list based on virtues {
 SHIP_NAME_VIRTUES
 '''Altruism
 Autonomy
@@ -20966,7 +21154,8 @@ Virtue
 Wisdom
 Zeal'''
 
-# Newline separated list of emotion-based ship names
+# }
+# Newline separated ship name list based on emotions {
 SHIP_NAME_EMOTIONS
 '''Acceptance
 Agony
@@ -20999,7 +21188,8 @@ Sorrow
 Surprise
 Suspicion'''
 
-# Newline separated list of architecture-based ship names
+# }
+# Newline separated ship name list based on architecture {
 SHIP_NAME_ARCHITECTURE
 '''Apex
 Arch
@@ -21031,7 +21221,8 @@ Veranda
 Wall
 Window'''
 
-# Newline separated list of "master of orion 2"-based ship names
+# }
+# Newline separated ship name list based on "master of orion 2" {
 SHIP_NAME_MOO2_STARS
 '''Akrab
 Endoria
@@ -21048,10 +21239,29 @@ Xanthus
 Yarak
 Yekub'''
 
-SHIP_NAME_OTHER
+# }
+# Newline separated ship name list based on months or other times {
+SHIP_NAME_MONTH_TIME
+'''Easter Egg
 Eternal September
+Ides of March
+Four Seasons
+Red October
+Spring Break'''
 
-# Newline separated list of developer name based ship names
+# }
+# Newline separated ship name list based on real/fictional ship names {
+SHIP_NAME_OTHER
+'''Botany Bay
+Bounty
+Evergiven
+Heart of Gold
+Mayflower
+Rocinante
+Titanic'''
+
+# }
+# Newline separated ship name list based on developer names {
 SHIP_NAME_DEVS
 '''Adrian Broher
 Aquataine
@@ -21067,16 +21277,19 @@ Morlic
 O01eg
 Ophiuchusagrrr
 PD
+St Pake
 Tyreth
 Tzlaine
 Vezzra'''
 
+# }
 SHIP_NAMES
 '''[[SHIP_NAME_MAMMALS]]
 [[SHIP_NAME_BIRDS]]
 [[SHIP_NAME_FISH]]
 [[SHIP_NAME_FLORA]]
 [[SHIP_NAME_STONE]]
+[[SHIP_NAME_OTHER_GEO]]
 [[SHIP_NAME_WEATHER]]
 [[SHIP_NAME_CONSTELLATIONS]]
 [[SHIP_NAME_STARS]]
@@ -21087,6 +21300,7 @@ SHIP_NAMES
 [[SHIP_NAME_EMOTIONS]]
 [[SHIP_NAME_ARCHITECTURE]]
 [[SHIP_NAME_MOO2_STARS]]
+[[SHIP_NAME_MONTH_TIME]]
 [[SHIP_NAME_OTHER]]'''
 
 MONSTER_NAMES
