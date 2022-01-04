@@ -41,7 +41,6 @@ IApp::~IApp()
 IApp* IApp::GetApp()
 { return s_app; }
 
-
 int IApp::MAX_AI_PLAYERS() {
     // This is not just a constant to avoid the static initialization
     // order fiasco, because it is used in more than one compilation

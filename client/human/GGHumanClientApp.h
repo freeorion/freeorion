@@ -38,6 +38,11 @@ public:
     const GGHumanClientApp& operator=(const GGHumanClientApp&) = delete;
     GGHumanClientApp& operator=(const GGHumanClientApp&&) = delete;
 
+    [[nodiscard]] int SelectedSystemID() const override;
+    [[nodiscard]] int SelectedPlanetID() const override;
+    [[nodiscard]] int SelectedFleetID() const override;
+    [[nodiscard]] int SelectedShipID() const override;
+
     int EffectsProcessingThreads() const override;
     bool SinglePlayerGame() const;  ///< returns true iff this game is a single-player game
     bool CanSaveNow() const;        ///< returns true / false to indicate whether this client can currently safely initiate a game save

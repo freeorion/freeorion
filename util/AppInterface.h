@@ -83,6 +83,13 @@ public:
     //! @return The number representing the current game turn.
     [[nodiscard]] virtual int CurrentTurn() const = 0;
 
+    /** On server or AI clients, returns INVALID_OBJECT_ID
+      * On UI clients, returns the ID of the object currently selected. */
+    [[nodiscard]] virtual int SelectedSystemID() const { return INVALID_OBJECT_ID; }
+    [[nodiscard]] virtual int SelectedPlanetID() const { return INVALID_OBJECT_ID; }
+    [[nodiscard]] virtual int SelectedFleetID() const { return INVALID_OBJECT_ID; }
+    [[nodiscard]] virtual int SelectedShipID() const { return INVALID_OBJECT_ID; }
+
     [[nodiscard]] static int MAX_AI_PLAYERS(); ///<Maximum number of AIs
 
     /** Returns the galaxy setup data used for the current game */

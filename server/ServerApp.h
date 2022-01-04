@@ -56,6 +56,11 @@ public:
     [[nodiscard]] int CurrentTurn() const override
     { return m_current_turn; }
 
+    [[nodiscard]] int SelectedSystemID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+    [[nodiscard]] int SelectedPlanetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+    [[nodiscard]] int SelectedFleetID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+    [[nodiscard]] int SelectedShipID() const override { throw std::runtime_error{"Server cannot access selected object ID"}; }
+
     [[nodiscard]] const GalaxySetupData&  GetGalaxySetupData() const override
     { return m_galaxy_setup_data; }
 

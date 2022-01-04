@@ -1532,6 +1532,38 @@ int GGHumanClientApp::AutoTurnsLeft() const
 bool GGHumanClientApp::HaveWindowFocus() const
 { return m_have_window_focus; }
 
+int GGHumanClientApp::SelectedSystemID() const {
+    if (m_ui) {
+        if (auto mapwnd = m_ui->GetMapWnd())
+            return mapwnd->SelectedSystemID();
+    }
+    return INVALID_OBJECT_ID;
+}
+
+int GGHumanClientApp::SelectedPlanetID() const {
+    if (m_ui) {
+        if (auto mapwnd = m_ui->GetMapWnd())
+            return mapwnd->SelectedPlanetID();
+    }
+    return INVALID_OBJECT_ID;
+}
+
+int GGHumanClientApp::SelectedFleetID() const {
+    if (m_ui) {
+        if (auto mapwnd = m_ui->GetMapWnd())
+            return mapwnd->SelectedFleetID();
+    }
+    return INVALID_OBJECT_ID;
+}
+
+int GGHumanClientApp::SelectedShipID() const {
+    if (m_ui) {
+        if (auto mapwnd = m_ui->GetMapWnd())
+            return mapwnd->SelectedShipID();
+    }
+    return INVALID_OBJECT_ID;
+}
+
 int GGHumanClientApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects.ui.threads"); }
 

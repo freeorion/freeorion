@@ -31,6 +31,10 @@ public:
     void                ExitApp(int code = 0); ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
     void                SetPlayerName(const std::string& player_name) { m_player_name = player_name; }
 
+    [[nodiscard]] int   SelectedSystemID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
+    [[nodiscard]] int   SelectedPlanetID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
+    [[nodiscard]] int   SelectedFleetID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
+    [[nodiscard]] int   SelectedShipID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
     [[nodiscard]] int   EffectsProcessingThreads() const override;
 
     /** @brief Return the player name of this client
