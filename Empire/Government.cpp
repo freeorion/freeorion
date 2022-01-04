@@ -112,7 +112,7 @@ std::string Policy::Dump(unsigned short ntabs) const {
     return retval;
 }
 
-float Policy::AdoptionCost(int empire_id, const ObjectMap& objects) const {
+float Policy::AdoptionCost(int empire_id, const ScriptingContext& context) const {
     constexpr auto arbitrary_large_number = 999999.9f;
 
     if (GetGameRules().Get<bool>("RULE_CHEAP_POLICIES") || !m_adoption_cost) {
@@ -128,11 +128,10 @@ float Policy::AdoptionCost(int empire_id, const ObjectMap& objects) const {
         return arbitrary_large_number;
 
     } else {
-        auto source = Empires().GetSource(empire_id, objects);
+        auto source = Empires().GetSource(empire_id, context.ContextObjects());
         if (!source && !m_adoption_cost->SourceInvariant())
             return arbitrary_large_number;
 
-        const ScriptingContext context{std::move(source)};
         return static_cast<float>(m_adoption_cost->Eval(context));
     }
 }

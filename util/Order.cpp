@@ -1027,7 +1027,7 @@ void PolicyOrder::ExecuteImpl(ScriptingContext& context) const {
     else
         DebugLogger() << "PolicyOrder revoke " << m_policy_name << " from category " << m_category
                       << " in slot " << m_slot;
-    empire->AdoptPolicy(m_policy_name, m_category, context.ContextObjects(), m_adopt, m_slot);
+    empire->AdoptPolicy(m_policy_name, m_category, context, m_adopt, m_slot);
 }
 
 ////////////////////////////////////////////////

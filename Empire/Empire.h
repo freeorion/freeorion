@@ -94,6 +94,7 @@ public:
     [[nodiscard]] const std::set<std::string, std::less<>>&    AvailablePolicies() const;
     [[nodiscard]] bool                                         PolicyAvailable(std::string_view name) const;
     [[nodiscard]] bool                                         PolicyPrereqsAndExclusionsOK(std::string_view name) const;
+    [[nodiscard]] bool                                         PolicyAffordable(std::string_view name, const ScriptingContext& context) const;
     [[nodiscard]] std::map<std::string_view, int, std::less<>> TotalPolicySlots() const; // how many total slots does this empire have in each category
     [[nodiscard]] std::map<std::string_view, int, std::less<>> EmptyPolicySlots() const; // how many empty slots does this empire have in each category
 
@@ -212,7 +213,7 @@ public:
     /** Adopts the specified policy, assuming its conditions are met. Revokes
       * the policy if \a adopt is false; */
     void AdoptPolicy(const std::string& name, const std::string& category,
-                     const ObjectMap& objects, bool adopt = true, int slot = -1);
+                     const ScriptingContext& context, bool adopt = true, int slot = -1);
 
     /** Checks that all policy adoption conditions are met, removing any that
       * are not allowed. Also copies adopted policies to initial adopted
@@ -385,7 +386,7 @@ public:
       * spent on social projects and maintenance of buildings.  Later call to
       * CheckInfluenceProgress() will then have the correct allocations of
       * influence. */
-    void UpdateInfluenceSpending(const ObjectMap& objects);
+    void UpdateInfluenceSpending(const ScriptingContext& context);
     /** Has m_population_pool recalculate all PopCenters' and empire's total
       * expected population growth */
     void UpdatePopulationGrowth(const ObjectMap& objects);

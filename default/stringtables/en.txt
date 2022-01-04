@@ -4424,6 +4424,23 @@ Policy Adopted for %1% turns currently and %2% turns cumulative.
 POLICY_ADOPTION_TIME_TOTAL
 Policy Not Currently Adopted. Has been adopted for %2% turns cumulative.
 
+POLICY_LIST_ADOPTED
+Adopted
+
+POLICY_LIST_ADOPTABLE
+Adoptable
+
+POLICY_LIST_UNAFFORDABLE
+Unaffordable
+
+POLICY_LIST_RESTRICTED
+Restricted
+
+POLICY_LIST_LOCKED
+Locked
+
+ALL_POLICY_AVAILABILITY_FILTERS_BLOCKING_PROMPT
+Toggle the category and availability filters to show policies.
 
 ##
 ## Production info panel

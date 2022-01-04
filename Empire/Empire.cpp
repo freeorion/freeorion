@@ -174,7 +174,7 @@ void Empire::SetCapitalID(int id, const ObjectMap& objects) {
 }
 
 void Empire::AdoptPolicy(const std::string& name, const std::string& category,
-                         const ObjectMap& objects, bool adopt, int slot)
+                         const ScriptingContext& context, bool adopt, int slot)
 {
     if (adopt && name.empty()) {
         ErrorLogger() << "Empire::AdoptPolicy asked to adopt empty policy name in category " << category << " slot " << slot;
@@ -223,42 +223,10 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     // check that empire has sufficient influence to adopt policy, after
     // also adopting any other policies that were first adopted this turn
     // add up all other policy adoption costs for this turn
-    double other_this_turn_adopted_policies_cost = 0.0;
-    for (auto& [policy_name, adoption_info] : m_adopted_policies) {
-        if (adoption_info.adoption_turn != CurrentTurn())
-            continue;
-        auto pre_adopted_policy = GetPolicy(policy_name);
-        if (!pre_adopted_policy) {
-            ErrorLogger() << "Empire::AdoptPolicy couldn't find policy named " << policy_name << " that was supposedly already adopted this turn (" << CurrentTurn() << ")";
-            continue;
-        }
-        DebugLogger() << "Empire::AdoptPolicy : Already adopted policy this turn: " << policy_name
-                      << " with cost " << pre_adopted_policy->AdoptionCost(m_id, objects);
-        other_this_turn_adopted_policies_cost += pre_adopted_policy->AdoptionCost(m_id, objects);
-    }
-    DebugLogger() << "Empire::AdoptPolicy : Combined already adopted policies this turn cost " << other_this_turn_adopted_policies_cost;
-
-    // if policy not already adopted at start of this turn, it costs its adoption cost to adopt on this turn
-    // if it was adopted at the start of this turn, it doens't cost anything to re-adopt this turn.
-    double adoption_cost = 0.0;
-    if (m_initial_adopted_policies.find(name) == m_initial_adopted_policies.end())
-        adoption_cost = policy->AdoptionCost(m_id, objects);
-
-    double total_this_turn_policy_adoption_cost = adoption_cost + other_this_turn_adopted_policies_cost;
-    double available_ip = ResourceStockpile(ResourceType::RE_INFLUENCE);
-    DebugLogger() << "Empire::AdoptPolicy : Want to adopt policy " << name << " with cost to (re)adopt this turn " << adoption_cost
-                  << " and total this-turn adoption cost " << total_this_turn_policy_adoption_cost
-                  << " and have " << available_ip << " IP available";
-
-    if (adoption_cost <= 0) {
-        DebugLogger() << "Empire::AdoptPolicy: Zero cost policy ignoring influence available...";
-    } else if (available_ip < total_this_turn_policy_adoption_cost) {
-        ErrorLogger() << "Empire::AdoptPolicy insufficient ip: " << available_ip
-                      << " / " << total_this_turn_policy_adoption_cost << " to adopt additional policy this turn";
+    if (!PolicyAffordable(name, context)) {
+        ErrorLogger() << "Empire::AdoptPolicy asked to adopt policy " << name
+                      << " which is too expensive to adopt now";
         return;
-    } else {
-        DebugLogger() << "Empire::AdoptPolicy sufficient IP: " << available_ip
-                      << " / " << total_this_turn_policy_adoption_cost << " to adopt additional policy this turn";
     }
 
     // check that policy is not already adopted
@@ -529,6 +497,55 @@ bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name) const {
     }
 
     return true;
+}
+
+bool Empire::PolicyAffordable(std::string_view name, const ScriptingContext& context) const {
+    const Policy* policy_to_adopt = GetPolicy(name);
+    if (!policy_to_adopt) {
+        ErrorLogger() << "Empire::PolicyAffordable couldn't find policy to adopt named " << name;
+        return false;
+    }
+
+    const ObjectMap& objects{context.ContextObjects()};
+
+    double other_this_turn_adopted_policies_cost = 0.0;
+    for (auto& [adopted_policy_name, adoption_info] : m_adopted_policies) {
+        if (adoption_info.adoption_turn != CurrentTurn())
+            continue;
+        auto pre_adopted_policy = GetPolicy(adopted_policy_name);
+        if (!pre_adopted_policy) {
+            ErrorLogger() << "Empire::PolicyAffordable couldn't find policy named " << adopted_policy_name << " that was supposedly already adopted this turn (" << CurrentTurn() << ")";
+            continue;
+        }
+        DebugLogger() << "Empire::PolicyAffordable : Already adopted policy this turn: " << adopted_policy_name
+                      << " with cost " << pre_adopted_policy->AdoptionCost(m_id, context);
+        other_this_turn_adopted_policies_cost += pre_adopted_policy->AdoptionCost(m_id, context);
+    }
+    TraceLogger() << "Empire::PolicyAffordable : Combined already-adopted policies this turn cost " << other_this_turn_adopted_policies_cost;
+
+    // if policy not already adopted at start of this turn, it costs its adoption cost to adopt on this turn
+    // if it was adopted at the start of this turn, it doens't cost anything to re-adopt this turn.
+    double adoption_cost = 0.0;
+    if (m_initial_adopted_policies.find(name) == m_initial_adopted_policies.end())
+        adoption_cost = policy_to_adopt->AdoptionCost(m_id, context);
+
+    if (adoption_cost <= 0) {
+        TraceLogger() << "Empire::AdoptPolicy: Zero cost policy ignoring influence available...";
+        return true;
+    } else {
+        double total_this_turn_policy_adoption_cost = adoption_cost + other_this_turn_adopted_policies_cost;
+        double available_ip = ResourceStockpile(ResourceType::RE_INFLUENCE);
+
+        if (available_ip < total_this_turn_policy_adoption_cost) {
+            TraceLogger() << "Empire::AdoptPolicy insufficient ip: " << available_ip
+                          << " / " << total_this_turn_policy_adoption_cost << " to adopt additional policy this turn";
+            return false;
+        } else {
+            TraceLogger() << "Empire::AdoptPolicy sufficient IP: " << available_ip
+                          << " / " << total_this_turn_policy_adoption_cost << " to adopt additional policy this turn";
+            return true;
+        }
+    }
 }
 
 std::map<std::string_view, int, std::less<>> Empire::TotalPolicySlots() const {
@@ -2655,7 +2672,7 @@ void Empire::UpdateResourcePools(const ScriptingContext& context) {
     // which needs to be done simultaneously to keep things consistent)
     UpdateResearchQueue(context.ContextObjects());
     UpdateProductionQueue(context);
-    UpdateInfluenceSpending(context.ContextObjects());
+    UpdateInfluenceSpending(context);
     UpdatePopulationGrowth(context.ContextObjects());
 }
 
@@ -2673,9 +2690,9 @@ void Empire::UpdateProductionQueue(const ScriptingContext& context) {
     m_resource_pools[ResourceType::RE_INDUSTRY]->ChangedSignal();
 }
 
-void Empire::UpdateInfluenceSpending(const ObjectMap& objects) {
-    m_resource_pools[ResourceType::RE_INFLUENCE]->Update(objects); // recalculate total influence production
-    m_influence_queue.Update();
+void Empire::UpdateInfluenceSpending(const ScriptingContext& context) {
+    m_resource_pools[ResourceType::RE_INFLUENCE]->Update(context.ContextObjects()); // recalculate total influence production
+    m_influence_queue.Update(context);
     m_resource_pools[ResourceType::RE_INFLUENCE]->ChangedSignal();
 }
 

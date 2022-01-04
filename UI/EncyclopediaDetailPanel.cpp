@@ -1588,7 +1588,8 @@ namespace {
         if (!only_description) {
             name = strings.UserString(item_name);
             texture = ClientUI::PolicyIcon(item_name);
-            cost = policy->AdoptionCost(client_empire_id);
+            const ScriptingContext context;
+            cost = policy->AdoptionCost(client_empire_id, context);
             cost_units = strings.UserString("ENC_IP");
             general_type = strings.UserString(policy->ShortDescription());
             specific_type = str(FlexibleFormat(strings.UserString("ENC_POLICY_DETAIL_TYPE_STR")) % strings.UserString(policy->Category()));

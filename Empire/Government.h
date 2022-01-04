@@ -34,7 +34,7 @@ public:
     [[nodiscard]] const std::string&  ShortDescription() const    { return m_short_description; }
     [[nodiscard]] std::string         Dump(unsigned short ntabs = 0) const;
     [[nodiscard]] const std::string&  Category() const            { return m_category; }
-    [[nodiscard]] float               AdoptionCost(int empire_id, const ObjectMap& objects = Objects()) const;
+    [[nodiscard]] float               AdoptionCost(int empire_id, const ScriptingContext& context) const;
 
     [[nodiscard]] const std::set<std::string>&    Prerequisites() const { return m_prerequisites; }
     [[nodiscard]] const std::set<std::string>&    Exclusions() const { return m_exclusions; }
