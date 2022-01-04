@@ -10,10 +10,10 @@
 [[TARGET_TERRAFORMING(Tundra,Desert,Terran,BARREN,TUNDRA,DESERT,TERRAN,OCEAN)]]
 
 
-// @1@ cw previous type
+// @1@ clockwise previous type
 // @2@ target type
-// @3@ ccw previous type
-// @4-8@ cw2 - ccw2 in upper case
+// @3@ clockwise next type
+// @4-8@ cw-2 - cw+2 in upper case
 TARGET_TERRAFORMING
 '''BuildingType
     name = "BLD_TERRAFORM_@6@"
@@ -44,11 +44,17 @@ TARGET_TERRAFORMING
        // may want to convert Swamp to Desert.
        Not And [
            Planet type = @1@
-           Enqueued type = Building name = "BLD_TERRAFORM_@4@"
+           Or [
+               Contains Building name = "BLD_TERRAFORM_@4@"
+               Enqueued type = Building name = "BLD_TERRAFORM_@4@"
+           ]
        ]
        Not And [
            Planet type = @3@
-           Enqueued type = Building name = "BLD_TERRAFORM_@8@"
+           Or [
+               Contains Building name = "BLD_TERRAFORM_@8@"
+               Enqueued type = Building name = "BLD_TERRAFORM_@8@"
+           ]
        ]
     ]
     effectsgroups = [
