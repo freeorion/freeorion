@@ -1,6 +1,9 @@
 #include "ValueRefs.h"
 
 #include <algorithm>
+#if __has_include(<charconv>)
+  #include <charconv>
+#endif
 #include <functional>
 #include <iomanip>
 #include <iterator>
@@ -2745,19 +2748,46 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
         return "";
 
     double result = raw_ref->Eval(context);
+    auto Stringify = [](double num) -> std::string {
+        const auto abs_num = std::abs(num);
+        if (abs_num < 0.1 || abs_num >= 1000)
+            return DoubleToString(num, 4, false);
 
-    auto int_ref = dynamic_cast<Variable<double>*>(raw_ref);
-    if (!int_ref)
-        return std::to_string(result);
+        int precision = 3;
+        if (abs_num >= 1000)
+            precision = 1;
+        else if (abs_num > 100)
+            precision = 2;
+        else if (abs_num >= 10)
+            precision = 3;
+
+        // TODO: check if locale correctly does round trip of something with
+        // a decimal place indicator using to_chars and from_chars.
+        // if not, need to use streaming always?
+#if defined(__cpp_lib_to_chars)
+            std::array<char, 32> buf = {};
+            std::to_chars(buf.data(), buf.data() + buf.size(), num, std::chars_format::fixed, precision);
+            return buf.data();
+#else
+            std::stringstream ss;
+            ss << std::setprecision(precision) << num;
+            return ss.str();
+#endif
+    };
+
+
+    auto ref = dynamic_cast<Variable<double>*>(raw_ref);
+    if (!ref)
+        return Stringify(result);
 
     // special case for a few sub-value-refs to help with UI representation
-    const auto& property = int_ref->PropertyName();
+    const auto& property = ref->PropertyName();
     if (property.empty())
-        return std::to_string(result);
+        return Stringify(result);
 
     const auto& end_of_property = property.back();
     if (end_of_property.empty())
-        return std::to_string(result);
+        return Stringify(result);
 
     // special case for a few sub-value-refs to help with UI representation
     if (end_of_property == "X" || end_of_property == "Y") {
@@ -2769,7 +2799,7 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
         return ss.str();
     }
 
-    return DoubleToString(result, 3, false);
+    return Stringify(result);
 }
 
 template <>
