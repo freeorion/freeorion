@@ -1848,8 +1848,29 @@ namespace {
         static auto StringToFloat(const std::string& key) {
 #if defined(__cpp_lib_to_chars)
             float retval = 0.0f;
-            auto ec = std::from_chars(key.data(), key.data() + key.size(), retval).ec;
-            return std::pair{retval, ec};
+            auto result = std::from_chars(key.data(), key.data() + key.size(), retval);
+
+            // adjust for SI postfix
+            auto next_char_offset = std::distance(key.data(), result.ptr);
+            if (next_char_offset > 0 && static_cast<size_t>(next_char_offset) < key.length()) {
+                //std::cout << "key:\"" << key << "\" next char:" << *result.ptr << std::endl;
+                float power = 0.0f;
+                switch (*result.ptr) {
+                case 'f':   power = -15.0f; break;
+                case 'p':   power = -12.0f; break;
+                case 'n':   power = -9.0f; break;
+                case '\xC2':power = -6.0f; break; // first byte of mu in UTF-8
+                case 'm':   power = -3.0f; break;
+                case 'k':   power = 3.0f; break;
+                case 'M':   power = 6.0f; break;
+                case 'G':   power = 9.0f; break;
+                case 'T':   power = 12.0f; break;
+                default: break;
+                }
+                retval *= std::pow(10.0f, power);
+            }
+
+            return std::pair{retval, result.ec};
 #else
             try {
                 return std::pair{boost::lexical_cast<float>(key), std::errc()};
