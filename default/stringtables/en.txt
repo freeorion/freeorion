@@ -12064,7 +12064,7 @@ PLC_EXPLORATION_RESEARCH
 Exploration Research
 
 PLC_EXPLORATION_RESEARCH_DESC
-
+(this description is missing)
 
 PLC_EXPLORATION_RESEARCH_SHORT_DESC
 Exploration Gives Research
