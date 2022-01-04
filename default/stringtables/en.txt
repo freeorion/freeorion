@@ -18092,7 +18092,6 @@ Delos
 Delphi
 Demeter
 Deneb
-Denebola
 Denobula
 Denubius
 Deucalion
@@ -19608,16 +19607,12 @@ Limestone
 Malachite
 Marble
 Melilith
-Menhir
-Nugget
-Obelisk
 Obsidian
 Onyx
 Opal
 Orthoclase
 Pebble
 Pegmatite
-Petrogenesis
 Pumice
 Pyrite
 Pyroxene
@@ -19626,7 +19621,7 @@ Quartzite
 Rock
 Ruby
 Sandstone
-Saphire
+Sapphire
 Schist
 Shale
 Slate
@@ -19884,6 +19879,7 @@ Dschubba
 Dubhe
 Dziban
 Edasich
+Eerisham
 El
 Electra
 Eltanin
@@ -19970,7 +19966,7 @@ Mirzam
 Mithuna
 Mizar
 Mothallah
-Mrigasheerisham
+Mrigash
 Muhlifain
 Muliphein
 Mulu-lizi
@@ -21128,6 +21124,10 @@ SHIP_NAME_OTHER
 '''Easter Egg
 Eternal September
 Heart of Gold
+Menhir
+Nugget
+Obelisk
+Petroglyph
 Red October
 Rocinante'''
 
