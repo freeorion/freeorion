@@ -67,46 +67,48 @@ public:
 
     /** returns what size type (tiny, small, large) fleet buttons on this map
       * are shown at */
-    FleetButton::SizeType       FleetButtonSizeType() const;
+    FleetButton::SizeType FleetButtonSizeType() const;
 
     /** populates the relevant UI state that should be restored after a
       * save-and-load cycle */
-    void                        GetSaveGameUIData(SaveGameUIData& data) const;
+    void GetSaveGameUIData(SaveGameUIData& data) const;
 
     /** returns true if MapWnd is visible and usable behind a production window.
      * MapWnd interactions are restricted to those appropriate to the production window */
-    bool                        InProductionViewMode() const;
+    bool InProductionViewMode() const;
 
     /** returns true if MapWnd is visible and usable behind a research window.
      * MapWnd interactions are restricted to those appropriate to the research window.
      * Currently, there are no interactions with the MapWnd while the research window
      * is visible because although the MapWnd is visible the research window is opaque
      * and on top.*/
-    bool                        InResearchViewMode() const;
+    bool InResearchViewMode() const;
 
     /** returns true if MapWnd is visible and usable behind a design window.
      * MapWnd interactions are restricted to those appropriate to the design window
      * Currently, there are no interactions with the MapWnd while the design window
      * is visible because although the MapWnd is visible the design window is opaque
      * and on top.*/
-    bool                        InDesignViewMode() const;
+    bool InDesignViewMode() const;
 
     /** returns the currently set moderator action in this MapWnd's
       * ModeratorActionsWnd. */
     ModeratorActionSetting      GetModeratorActionSetting() const;
 
-    bool                        AutoEndTurnEnabled() const;
+    bool AutoEndTurnEnabled() const;
 
     /** returns the position on the screen that corresponds to the specified
       * universe X and Y coordinates. */
-    GG::Pt                      ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const;
+    GG::Pt ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const;
     /** returns the universe position (X and Y in pair) that corresponds to
       * the specified screen coordinates. */
     std::pair<double, double>   UniversePositionFromScreenCoords(GG::Pt screen_coords) const;
 
-    /** Returns the id of the currently-selected planet, or
-      * INVALID_OBJECT_ID if no planet is selected */
-    int                         SelectedPlanetID() const;
+    /** Returns the id of the currently-selected object or INVALID_OBJECT_ID if no planet is selected */
+    int SelectedSystemID() const;
+    int SelectedPlanetID() const;
+    int SelectedFleetID() const;
+    int SelectedShipID() const;
 
     void PreRender() override;
     void Render() override;
@@ -173,8 +175,7 @@ public:
     void SelectFleet(int fleetID);   //!< programatically selects fleets by ID
 
     /** Programatically selects fleets. */
-    void SelectFleet(std::shared_ptr<Fleet> fleet);
-
+    void SelectFleet(const std::shared_ptr<Fleet>& fleet);
     void ReselectLastFleet();                   //!< re-selects the most recent selected fleet, if a valid one exists
 
     void RemoveFleet(int fleet_id);             //!< removes specified fleet.

@@ -1629,8 +1629,23 @@ std::pair<double, double> MapWnd::UniversePositionFromScreenCoords(GG::Pt screen
     return std::pair<double, double>(x, y);
 }
 
+int MapWnd::SelectedSystemID() const
+{ return SidePanel::SystemID(); }
+
 int MapWnd::SelectedPlanetID() const
 { return m_production_wnd->SelectedPlanetID(); }
+
+int MapWnd::SelectedFleetID() const {
+    if (!m_selected_fleet_ids.empty())
+        return *m_selected_fleet_ids.begin();
+    return INVALID_OBJECT_ID;
+}
+
+int MapWnd::SelectedShipID() const {
+    if (!m_selected_ship_ids.empty())
+        return *m_selected_ship_ids.begin();
+    return INVALID_OBJECT_ID;
+}
 
 void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const {
     data.map_left = Value(Left());
@@ -4512,7 +4527,7 @@ void MapWnd::SelectPlanet(int planetID)
 void MapWnd::SelectFleet(int fleet_id)
 { SelectFleet(Objects().get<Fleet>(fleet_id)); }
 
-void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
+void MapWnd::SelectFleet(const std::shared_ptr<Fleet>& fleet) {
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
 
     if (!fleet) {
