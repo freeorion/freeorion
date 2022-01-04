@@ -21133,7 +21133,7 @@ Yarak
 Yekub'''
 
 # Newline separated list of other ship names
-SHIP_NAME_OTHERS
+SHIP_NAME_OTHER
 '''Easter Egg
 Eternal September
 Red October
