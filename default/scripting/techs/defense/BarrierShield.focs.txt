@@ -13,9 +13,10 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[DEFAULT_PRIORITY]]
             effects =
-                SetMaxShield value = Value + ( 30 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_1"
+                SetMaxShield value = Value + ( 30 * [[PLANET_SHIELD_FACTOR]] )
 
         EffectsGroup
             scope = And [
@@ -23,6 +24,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = Value + max(min([[PLANET_SHIELD_FACTOR]], Value), 0.25*Target.Construction*[[PLANET_SHIELD_FACTOR]])
     ]
@@ -44,8 +46,9 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + ( 60 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_2"
+            effects = SetMaxShield value = Value + ( 60 * [[PLANET_SHIELD_FACTOR]] )
 
         EffectsGroup
             scope = And [
@@ -53,6 +56,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = Value + max(min(3.0*[[PLANET_SHIELD_FACTOR]], Value), 0.75*Target.Construction*[[PLANET_SHIELD_FACTOR]])
     ]
@@ -74,8 +78,9 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + ( 90 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_3"
+            effects = SetMaxShield value = Value + ( 90 * [[PLANET_SHIELD_FACTOR]] )
 
         EffectsGroup
             scope = And [
@@ -83,6 +88,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = Value + max(min(5.0*[[PLANET_SHIELD_FACTOR]], Value), 1.0*Target.Construction*[[PLANET_SHIELD_FACTOR]])
     ]
@@ -104,8 +110,9 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + ( 150 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_4"
+            effects = SetMaxShield value = Value + ( 150 * [[PLANET_SHIELD_FACTOR]] )
 
         EffectsGroup
             scope = And [
@@ -113,6 +120,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = Value + max(min(9.0*[[PLANET_SHIELD_FACTOR]], Value), 1.5*Target.Construction*[[PLANET_SHIELD_FACTOR]])
     ]
@@ -134,8 +142,9 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxShield value = Value + ( 150 * [[PLANET_SHIELD_FACTOR]] ) accountinglabel = "DEF_PLAN_BARRIER_SHLD_5"
+            effects = SetMaxShield value = Value + ( 150 * [[PLANET_SHIELD_FACTOR]] )
 
         EffectsGroup
             scope = And [
@@ -143,6 +152,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn - 1)
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetShield value = Value + max(min(14.0*[[PLANET_SHIELD_FACTOR]], Value), 2.5*Target.Construction*[[PLANET_SHIELD_FACTOR]])
     ]

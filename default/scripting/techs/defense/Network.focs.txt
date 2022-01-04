@@ -55,6 +55,7 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             effects = SetDefense value = Value + 0.1*Target.MaxDefense
     graphic = "icons/tech/defense_regeneration.png"
 
@@ -73,6 +74,7 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             effects = SetDefense value = Value + max(0.1*Target.MaxDefense, 0.25*Target.Construction)
     graphic = "icons/tech/defense_regeneration.png"
 
@@ -83,8 +85,9 @@ EG_DEFENSE_NET
         OwnedBy empire = Source.Owner
     ]
     stackinggroup = "DEFENSE_NET_STACK_@2@"
+    accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
     priority = [[DEFAULT_PRIORITY]]
-    effects = SetMaxDefense value = Value + ( @1@ * [[PLANET_DEFENSE_FACTOR]] ) accountinglabel = "DEF_DEFENSE_NET_@2@"
+    effects = SetMaxDefense value = Value + ( @1@ * [[PLANET_DEFENSE_FACTOR]] )
 '''
 
 #include "/scripting/common/base_prod.macros"

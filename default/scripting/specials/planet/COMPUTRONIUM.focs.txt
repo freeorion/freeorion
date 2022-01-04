@@ -33,6 +33,7 @@ Special
             effects = SetTargetResearch value = Value + Target.Population
                         * (NamedReal name = "COMPUTRONIUM_TARGET_RESEARCH_PERPOP"
                                      value = 0.25 * [[RESEARCH_PER_POP]])
+            accountinglabel = "COMPUTRONIUM_ACCOUNTING_LABEL"
 
         [[CHANCE_OF_GUARD_2]]
 

@@ -14,7 +14,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             stackinggroup = "GARRISON_1_TROOPS_STACK"
-            accountinglabel = "DEF_GARRISON_1"
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetMaxTroops value = Value
                         + (NamedReal name = "GARRISON_1_MAX_TROOPS_FLAT" value = 6)
@@ -39,6 +39,7 @@ Tech
                 (LocalCandidate.LastTurnConquered < CurrentTurn)
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn)
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetTroops value = min(Value(Target.MaxTroops),
                                             Value + (NamedReal name = "GARRISON_2_TROOPREGEN_FLAT" value = 1))
@@ -50,7 +51,7 @@ Tech
                 Population low = 0.01
             ]
             stackinggroup = "GARRISON_2_TROOPS_STACK"
-            accountinglabel = "DEF_GARRISON_2"
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             effects = SetMaxTroops value = Value + Target.Population
                         * (NamedReal name = "GARRISON_2_MAXTROOPS_PERPOP" value = 2 * [[TROOPS_PER_POP]])
     ]
@@ -73,6 +74,7 @@ Tech
                 (LocalCandidate.LastTurnConquered < CurrentTurn)
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn)
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetTroops value = min(Value(Target.MaxTroops),
                                             Value + (NamedReal name = "GARRISON_3_TROOPREGEN_FLAT" value = 2))
@@ -83,7 +85,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             stackinggroup = "GARRISON_3_TROOPS_STACK"
-            accountinglabel = "DEF_GARRISON_3"
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetMaxTroops value = Value
                         + (NamedReal name = "GARRISON_3_MAX_TROOPS_FLAT" value = 18)
@@ -108,6 +110,7 @@ Tech
                 (LocalCandidate.LastTurnConquered < CurrentTurn)
                 (LocalCandidate.LastTurnAttackedByShip < CurrentTurn)
             ]
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetTroops value = min(Value(Target.MaxTroops),
                                             Value + (NamedReal name = "GARRISON_4_TROOPREGEN_FLAT" value = 3))
@@ -119,7 +122,7 @@ Tech
                 Population low = 0.01
             ]
             stackinggroup = "GARRISON_4_TROOPS_STACK"
-            accountinglabel = "DEF_GARRISON_4"
+            accountinglabel = "DEF_TECH_ACCOUNTING_LABEL"
             effects = SetMaxTroops value = Value + Target.Population *
                 (NamedReal name = "GARRISON_4_MAX_TROOPS_PERPOP" value = 3 * [[TROOPS_PER_POP]])
     ]
