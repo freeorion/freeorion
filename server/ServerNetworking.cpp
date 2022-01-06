@@ -11,6 +11,7 @@
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 #include <thread>
 
@@ -412,11 +413,11 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
             error == boost::asio::error::connection_reset)
         {
             ErrorLogger(network) << "PlayerConnection::HandleMessageBodyRead(): "
-                                 << "error #" << error.value() << " \"" << error.message() << "\"";
+                                 << "error #" << error.value() << "  category: " << error.category().name() << "  message: " << error.message();
             EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
         } else {
             ErrorLogger(network) << "PlayerConnection::HandleMessageBodyRead(): "
-                                 << "error #" << error.value() << " \"" << error.message() << "\"";
+                                 << "error #" << error.value() << "  category: " << error.category().name() << "  message: " << error.message();
         }
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[Message::Parts::SIZE]);
@@ -442,6 +443,19 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
                                                std::size_t bytes_transferred)
 {
     if (error) {
+        ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead():"
+                             << " player ID: " << m_ID
+                             << "  name: " << m_player_name
+                             << "  client type: " << boost::lexical_cast<std::string>(m_client_type)
+                             << "  client version: " << m_client_version_string
+                             << "  authenticated: " << m_authenticated
+                             << "  cookie: " << boost::uuids::to_string(m_cookie)
+                             << "  valid: " << m_valid
+                             << "  roles: " << m_roles.Text()
+                             << "  error #: " << error.value()
+                             << "  category: " << error.category().name()
+                             << "  message: " << error.message();
+
         // HACK! This entire m_new_connection case should not be needed as far
         // as I can see.  It is here because without it, there are
         // intermittent problems, like the server gets a disconnect event for
@@ -451,38 +465,37 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         // connects and disconnects are not a priority.
         if (m_new_connection && error != boost::asio::error::eof) {
             ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
-                                 << "new connection error #" << error.value() << " \""
-                                 << error.message() << "\"" << " waiting for 0.5s";
+                                 << "new connection ... waiting for 0.5s";
             // wait half a second if the first data read is an error; we
             // probably just need more setup time
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             m_new_connection = false;
             if (m_socket->is_open()) {
-                ErrorLogger(network) << "Spurious network error on startup of client. player id = "
-                                     << m_ID << ".  Retrying read...";
+                ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
+                                     << "Spurious network error on startup of client.  Retrying read...";
                 AsyncReadMessage();
             } else {
-                ErrorLogger(network) << "Network connection for client failed on startup. "
-                                     << "player id = " << m_ID << "";
+                ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
+                                     << "Network connection for client failed on startup.";
             }
         } else {
             if (error == boost::asio::error::eof ||
                 error == boost::asio::error::connection_reset ||
                 error == boost::asio::error::timed_out)
             {
+                ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): disconnect callback...";
                 EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
-            } else {
-                ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
-                                     << "error #" << error.value() << " \"" << error.message() << "\"";
             }
         }
+
     } else {
         m_new_connection = false;
         assert(bytes_transferred <= Message::HeaderBufferSize);
         if (bytes_transferred == Message::HeaderBufferSize) {
             BufferToHeader(m_incoming_header_buffer, m_incoming_message);
             auto msg_size = m_incoming_header_buffer[Message::Parts::SIZE];
-            TraceLogger(network) << "Server Handling Message maybe allocating buffer of size: " << msg_size;
+            TraceLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
+                                 << "Server Handling Message maybe allocating buffer of size: " << msg_size;
             if (GetOptionsDB().Get<int>("network.server.client-message-size.max") > 0 &&
                 msg_size > GetOptionsDB().Get<int>("network.server.client-message-size.max"))
             {
