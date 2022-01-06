@@ -409,7 +409,8 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
 {
     if (error) {
         if (error == boost::asio::error::eof ||
-            error == boost::asio::error::connection_reset) {
+            error == boost::asio::error::connection_reset)
+        {
             ErrorLogger(network) << "PlayerConnection::HandleMessageBodyRead(): "
                                  << "error #" << error.value() << " \"" << error.message() << "\"";
             EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
@@ -708,12 +709,12 @@ void ServerNetworking::Disconnect(int id) {
 
 void ServerNetworking::Disconnect(PlayerConnectionPtr player_connection)
 {
-    TraceLogger(network) << "ServerNetworking::Disconnect";
+    DebugLogger(network) << "ServerNetworking::Disconnect";
     DisconnectImpl(player_connection);
 }
 
 void ServerNetworking::DisconnectAll() {
-    TraceLogger(network) << "ServerNetworking::DisconnectAll";
+    DebugLogger(network) << "ServerNetworking::DisconnectAll";
     for (const_iterator it = m_player_connections.begin();
          it != m_player_connections.end(); ) {
         PlayerConnectionPtr player_connection = *it++;
@@ -857,7 +858,7 @@ void ServerNetworking::AcceptPlayerMessagingConnection(PlayerConnectionPtr playe
                                                        const boost::system::error_code& error)
 {
     if (!error) {
-        TraceLogger(network) << "ServerNetworking::AcceptPlayerMessagingConnection : connected to new player";
+        DebugLogger(network) << "ServerNetworking::AcceptPlayerMessagingConnection : connected to new player";
         m_player_connections.insert(player_connection);
         player_connection->Start();
         AcceptNextMessagingConnection();
@@ -867,7 +868,7 @@ void ServerNetworking::AcceptPlayerMessagingConnection(PlayerConnectionPtr playe
 }
 
 void ServerNetworking::DisconnectImpl(PlayerConnectionPtr player_connection) {
-    TraceLogger(network) << "ServerNetworking::DisconnectImpl : disconnecting player "
+    DebugLogger(network) << "ServerNetworking::DisconnectImpl : disconnecting player "
                          << player_connection->PlayerID();
     m_player_connections.erase(player_connection);
     m_disconnected_callback(player_connection);

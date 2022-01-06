@@ -633,6 +633,7 @@ void ClientNetworking::Impl::SendMessageImpl(Message message) {
 }
 
 void ClientNetworking::Impl::DisconnectFromServerImpl() {
+    DebugLogger(network) << "ClientNetworking::Impl::DisconnectFromServerImpl";
     // Depending behavior of linger on OS's of the sending and receiving machines this call to close could
     // - immediately disconnect both send and receive channels
     // - immediately disconnect send, but continue receiving until all pending sent packets are
@@ -653,9 +654,8 @@ void ClientNetworking::Impl::DisconnectFromServerImpl() {
         m_rx_connected = m_socket.is_open();
     }
 
-    if (!m_outgoing_messages.empty()) {
+    if (!m_outgoing_messages.empty())
         return;
-    }
 
     // Note: m_socket.is_open() may be independently true/false on each of these checks.
     if (m_socket.is_open())
