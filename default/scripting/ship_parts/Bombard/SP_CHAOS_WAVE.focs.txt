@@ -23,7 +23,6 @@ Part
             priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 SetPopulation value = Value - 2
-                RemoveSpecial name = "GAIA_SPECIAL"
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
                     label = "EFFECT_BIOWEAPON_LABEL"
@@ -31,6 +30,55 @@ Part
                     parameters = [
                         tag = "planet" data = Target.ID
                         tag = "rawtext" data = "2"
+                        tag = "shippart" data = "SP_CHAOS_WAVE"
+                    ]
+                    empire = Target.Owner
+            ]
+
+        EffectsGroup    // players can order chaos wave used on enemies
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                OrderedBombardedBy condition = Source
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
+                VisibleToEmpire empire = Source.Owner
+                HasSpecial name = "GAIA_SPECIAL"
+            ]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
+            effects = [
+                RemoveSpecial name = "GAIA_SPECIAL"
+                GenerateSitRepMessage
+                    message = "EFFECT_BIOWEAPON_GAIA"
+                    label = "EFFECT_BIOWEAPON_LABEL"
+                    icon = "icons/sitrep/bio_weapon_2.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                        tag = "shippart" data = "SP_CHAOS_WAVE"
+                    ]
+                    empire = Target.Owner
+            ]
+
+        EffectsGroup    // players can order chaos wave used on enemies outposts
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                OrderedBombardedBy condition = Source
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                Population high = 0
+                VisibleToEmpire empire = Source.Owner
+            ]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
+            effects = [
+                SetOwner empire = [[UNOWNED_EMPIRE_ID]]
+                GenerateSitRepMessage
+                    message = "EFFECT_BIOWEAPON_UNOWN"
+                    label = "EFFECT_BIOWEAPON_LABEL"
+                    icon = "icons/sitrep/bio_weapon_2.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
                         tag = "shippart" data = "SP_CHAOS_WAVE"
                     ]
                     empire = Target.Owner
@@ -50,7 +98,6 @@ Part
             priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 SetPopulation value = Value - 2
-                RemoveSpecial name = "GAIA_SPECIAL"
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
                     label = "EFFECT_BIOWEAPON_LABEL"
@@ -62,8 +109,61 @@ Part
                     ]
                     empire = Target.Owner
             ]
+
+        EffectsGroup    // monsters use chaos wave on player planets
+            scope = NumberOf number = 1 condition = And [
+                Planet
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
+                Stealth high = Source.Detection
+                HasSpecial name = "GAIA_SPECIAL"
+            ]
+            activation = And [
+                Unowned
+                InSystem
+            ]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
+            effects = [
+                RemoveSpecial name = "GAIA_SPECIAL"
+                GenerateSitRepMessage
+                    message = "EFFECT_BIOWEAPON_GAIA"
+                    label = "EFFECT_BIOWEAPON_LABEL"
+                    icon = "icons/sitrep/bio_weapon_2.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                        tag = "shippart" data = "SP_CHAOS_WAVE"
+                    ]
+                    empire = Target.Owner
+            ]
+
+        EffectsGroup    // monsters use chaos wave on player outposts
+            scope = NumberOf number = 1 condition = And [
+                Planet
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
+                Stealth high = Source.Detection
+                Population high = 0
+            ]
+            activation = And [
+                Unowned
+                InSystem
+            ]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
+            effects = [
+                SetOwner empire = [[UNOWNED_EMPIRE_ID]]
+                GenerateSitRepMessage
+                    message = "EFFECT_BIOWEAPON_UNOWN"
+                    label = "EFFECT_BIOWEAPON_LABEL"
+                    icon = "icons/sitrep/bio_weapon_2.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                        tag = "shippart" data = "SP_CHAOS_WAVE"
+                    ]
+                    empire = Target.Owner
+            ]
     ]
     icon = "icons/ship_parts/chaos-wave.png"
 
 #include "/scripting/common/upkeep.macros"
 #include "/scripting/common/priorities.macros"
+#include "/scripting/common/misc.macros"
