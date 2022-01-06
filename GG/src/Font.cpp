@@ -1556,7 +1556,7 @@ std::vector<Font::LineData> Font::DetermineLines(
     ValidateFormat(format);
 
     RenderState render_state;
-    int tab_width = 8; // default tab width
+    constexpr int tab_width = 8; // default tab width
     X tab_pixel_width = tab_width * m_space_width; // get the length of a tab stop
     bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
     Alignment orig_just = ALIGN_NONE;
