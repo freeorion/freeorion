@@ -395,6 +395,7 @@ void IntroScreen::OnCredits() {
 }
 
 void IntroScreen::OnExitGame() {
+    DebugLogger() << "IntroScreen::OnExitGame";
     GG::GUI::GetGUI()->ExitApp(0);
 }
 
