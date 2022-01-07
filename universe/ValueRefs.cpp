@@ -57,7 +57,10 @@ std::string DoubleToString(double val, int digits, bool always_show_sign);
 bool UserStringExists(const std::string& str);
 
 namespace {
-    auto StackTrace() {
+    std::string StackTrace() {
+        static std::atomic<int> string_error_lookup_count = 0;
+        if (string_error_lookup_count++ > 10)
+            return "";
 #if BOOST_VERSION >= 106500
         std::stringstream ss;
         ss << "stacktrace:\n" << boost::stacktrace::stacktrace();
