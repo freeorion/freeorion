@@ -2759,15 +2759,9 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
     auto Stringify = [](double num) -> std::string {
         const auto abs_num = std::abs(num);
         if (abs_num < 0.1 || abs_num >= 1000)
-            return DoubleToString(num, 4, false);
+            return DoubleToString(num, 3, false);
 
-        int precision = 3;
-        if (abs_num >= 1000)
-            precision = 1;
-        else if (abs_num > 100)
-            precision = 2;
-        else if (abs_num >= 10)
-            precision = 3;
+        int precision = abs_num < 10 ? 2 : 1;
 
         // TODO: check if locale correctly does round trip of something with
         // a decimal place indicator using to_chars and from_chars.

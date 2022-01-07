@@ -22,18 +22,22 @@ float Meter::Initial() const
 std::string Meter::Dump(unsigned short ntabs) const {
 #if defined(__cpp_lib_to_chars)
     std::array<std::string::value_type, 64> buffer{"Cur: "}; // rest should be nulls
-    auto result = std::to_chars(buffer.data() + 5, buffer.data() + buffer.size(), m_current_value,
-                                std::chars_format::fixed, 3);
+    auto ToChars = [buf_end{buffer.data() + buffer.size()}](char* buf_start, float num) -> char * {
+        int precision = num < 10 ? 2 : 1;
+        return std::to_chars(buf_start, buf_end, num, std::chars_format::fixed, precision).ptr;
+    };
+
+    auto result_ptr = ToChars(buffer.data() + 5, m_current_value);
     // the biggest result of to_chars should be like "-65535.999" or 10 chars per number
-    *result.ptr = ' ';
-    *++result.ptr = 'I';
-    *++result.ptr = 'n';
-    *++result.ptr = 'i';
-    *++result.ptr = 't';
-    *++result.ptr = ':';
-    *++result.ptr = ' ';
-    result = std::to_chars(result.ptr + 1, buffer.data() + buffer.size(), m_initial_value,
-                           std::chars_format::fixed, 3);
+    *result_ptr = ' ';
+    *++result_ptr = 'I';
+    *++result_ptr = 'n';
+    *++result_ptr = 'i';
+    *++result_ptr = 't';
+    *++result_ptr = ':';
+    *++result_ptr = ' ';
+    ToChars(result_ptr + 1, m_initial_value);
+
     return buffer.data();
 #else
     return std::string{"Cur: "}.append(std::to_string(m_current_value))
