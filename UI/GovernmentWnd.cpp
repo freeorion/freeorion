@@ -152,16 +152,15 @@ namespace {
     //    PolicyBrowseWnd   //
     //////////////////////////
     std::shared_ptr<GG::BrowseInfoWnd> PolicyBrowseWnd(const std::string& policy_name) {
-        const ScriptingContext context;
-
-        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        auto empire = context.GetEmpire(empire_id);
         const Policy* policy = GetPolicy(policy_name);
         if (!policy)
             return nullptr;
 
-        std::string main_text;
+        const ScriptingContext context;
+        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        auto empire = context.GetEmpire(empire_id);
 
+        std::string main_text;
         main_text += UserString(policy->Category()) + " - ";
         main_text += UserString(policy->ShortDescription()) + "\n\n";
 
