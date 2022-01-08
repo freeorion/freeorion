@@ -12,6 +12,7 @@
 #include "../util/GameRules.h"
 #include "../util/CheckSums.h"
 #include "../util/ScopedTimer.h"
+#include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
 #include <boost/filesystem/fstream.hpp>
@@ -128,11 +129,20 @@ float Policy::AdoptionCost(int empire_id, const ScriptingContext& context) const
         return arbitrary_large_number;
 
     } else {
-        auto source = Empires().GetSource(empire_id, context.ContextObjects());
-        if (!source && !m_adoption_cost->SourceInvariant())
+        if (context.source)
+            return static_cast<float>(m_adoption_cost->Eval(context));
+
+        // get a source to reference in evaulation of cost value-ref
+        auto empire = context.GetEmpire(empire_id);
+        if (!empire)
+            return arbitrary_large_number;
+        auto source = empire->Source(context.ContextObjects());
+        if (!source)
             return arbitrary_large_number;
 
-        return static_cast<float>(m_adoption_cost->Eval(context));
+        // construct new context with source specified
+        const ScriptingContext source_context{source, context};
+        return static_cast<float>(m_adoption_cost->Eval(source_context));
     }
 }
 
