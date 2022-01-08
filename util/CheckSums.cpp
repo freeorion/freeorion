@@ -17,7 +17,7 @@ namespace CheckSums {
     }
 
     void CheckSumCombine(unsigned int& sum, double t) {
-        assert(DBL_MAX_10_EXP < 400);
+        static_assert(DBL_MAX_10_EXP < 400);
         if (t == 0.0)
             return;
         // biggest and smallest possible double should be ~10^(+/-308)
@@ -29,12 +29,12 @@ namespace CheckSums {
     }
 
     void CheckSumCombine(unsigned int& sum, float t) {
-        assert(FLT_MAX_10_EXP < 40);
+        static_assert(FLT_MAX_10_EXP < 40);
         if (t == 0.0f)
             return;
         // biggest and smallest possible float should be ~10^(+/-38)
         // taking log gives a number in the range +/- 39
-        // adding 400 gives numbers in the range ~0 to 80
+        // adding 40 gives numbers in the range ~0 to 80
         // multiplying by 100'000 gives numbers in the range ~0 to 8'000'000
         sum += static_cast<unsigned int>((std::log10(std::abs(t)) + 40.0f) * 100000.0f);
         sum %= CHECKSUM_MODULUS;
