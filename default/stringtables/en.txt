@@ -14443,58 +14443,58 @@ BLD_CLONING_CENTER_DESC
 [[tech GRO_INDUSTRY_CLONE]] allows made-to-order populations to be produced industrially, significantly improving population.'''
 
 BLD_TERRAFORM_TERRAN
-Terraforming to [[PT_TERRAN]]
+Terraform to [[PT_TERRAN]]
 
 BLD_TERRAFORM_TERRAN_DESC
-Terraforming a world to a [[PT_TERRAN]] environment.
+Terraforms a world to a [[PT_TERRAN]] environment.
 
 BLD_TERRAFORM_OCEAN
-Terraforming to [[PT_OCEAN]]
+Terraform to [[PT_OCEAN]]
 
 BLD_TERRAFORM_OCEAN_DESC
-Terraforming a world to a [[PT_OCEAN]] environment.
+Terraforms a world to a [[PT_OCEAN]] environment.
 
 BLD_TERRAFORM_SWAMP
-Terraforming to [[PT_SWAMP]]
+Terraform to [[PT_SWAMP]]
 
 BLD_TERRAFORM_SWAMP_DESC
-Terraforming a world to a [[PT_SWAMP]] environment.
+Terraforms a world to a [[PT_SWAMP]] environment.
 
 BLD_TERRAFORM_TOXIC
-Terraforming to [[PT_TOXIC]]
+Terraform to [[PT_TOXIC]]
 
 BLD_TERRAFORM_TOXIC_DESC
-Terraforming a world to a [[PT_TOXIC]] environment.
+Terraforms a world to a [[PT_TOXIC]] environment.
 
 BLD_TERRAFORM_INFERNO
-Terraforming to [[PT_INFERNO]]
+Terraform to [[PT_INFERNO]]
 
 BLD_TERRAFORM_INFERNO_DESC
-Terraforming a world to a [[PT_INFERNO]] environment.
+Terraforms a world to a [[PT_INFERNO]] environment.
 
 BLD_TERRAFORM_RADIATED
-Terraforming to [[PT_RADIATED]]
+Terraform to [[PT_RADIATED]]
 
 BLD_TERRAFORM_RADIATED_DESC
-Terraforming a world to a [[PT_RADIATED]] environment.
+Terraforms a world to a [[PT_RADIATED]] environment.
 
 BLD_TERRAFORM_BARREN
-Terraforming to [[PT_BARREN]]
+Terraform to [[PT_BARREN]]
 
 BLD_TERRAFORM_BARREN_DESC
-Terraforming a world to a [[PT_BARREN]] environment.
+Terraforms a world to a [[PT_BARREN]] environment.
 
 BLD_TERRAFORM_TUNDRA
-Terraforming to [[PT_TUNDRA]]
+Terraform to [[PT_TUNDRA]]
 
 BLD_TERRAFORM_TUNDRA_DESC
-Terraforming a world to a [[PT_TUNDRA]] environment.
+Terraforms a world to a [[PT_TUNDRA]] environment.
 
 BLD_TERRAFORM_DESERT
-Terraforming to [[PT_DESERT]]
+Terraform to [[PT_DESERT]]
 
 BLD_TERRAFORM_DESERT_DESC
-Terraforming a world to a [[PT_DESERT]] environment.
+Terraforms a world to a [[PT_DESERT]] environment.
 
 BLD_REMOTE_TERRAFORM
 Remote Terraforming
