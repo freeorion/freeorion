@@ -25,7 +25,7 @@ Deutsch
 
 ##
 ## Common phrases
-##
+## {
 
 #OK
 #OK
@@ -237,9 +237,9 @@ NOWHERE
 Kann nicht produziert werden
 
 
-##
+## }
 ## Major errors
-##
+## {
 
 ERROR_SOUND_INITIALIZATION_FAILED
 '''Initialisierung des OpenAL Audiosystems fehlgeschlagen.
@@ -283,9 +283,9 @@ FORMAT_LIST_10_ITEMS
 #%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
 
 
-##
+## }
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
-##
+## {
 
 SD_CARRIER
 Geleitträger
@@ -528,9 +528,9 @@ SD_DRAGON_TOOTH_DESC
 Antiker Schiffsentwurf mit fortschrittlicher Bewaffnung und Verteidigungssystemen. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 
-##
+## }
 ## Monsters
-##
+## {
 
 SM_KRILL_1
 Kleiner Krillschwarm
@@ -768,9 +768,9 @@ SM_COSMIC_DRAGON_DESC
 Kosmische Drachen sind biotechnisch hergestellte Weltraummonster. Sie sind außerordentlich zäh, schwer bewaffnet und haben hohe [[metertype METER_STEALTH]]. Eine mächtige Flotte und hohe [[encyclopedia DETECTION_TITLE]] sind nötig, um sie aufzuspüren. Kosmische Drachen jagen nach bevölkerten Planeten und können ganze Sternensysteme vaporisieren.'''
 
 
-##
+## }
 ## Fields
-##
+## {
 
 FLD_ION_STORM
 Ionensturm
@@ -799,9 +799,9 @@ Wolken aus Wasserstoff, die in sich zusammenfallen können um einen neuen Stern 
 FLD_SUBSPACE_RIFT
 Scissor Rift
 
-##
+## }
 ## Predefined starting fleets
-##
+## {
 
 FN_BATTLE_FLEET
 Kriegsflotte
@@ -816,9 +816,9 @@ MONSTERS
 Monster
 
 
-##
+## }
 ## Status update messages
-##
+## {
 
 RETURN_TO_INTRO
 Zum Hauptmenü zurückkehren.
@@ -883,9 +883,9 @@ ERROR_PYTHON_AI_CRASHED
 Python KI für %1% abgestürzt.
 
 
-##
+## }
 ## Command-line and options database entries
-##
+## {
 
 COMMAND_LINE_USAGE
 '''Verwendung: '''
@@ -1281,9 +1281,9 @@ OPTIONS_DB_UI_WINDOWS_HEIGHT_WINDOWED
 Die Höhe des Fenster im Fenstermodus.
 
 
-##
+## }
 ## File dialog
-##
+## {
 
 FILE_DLG_FILES
 Datei(en):
@@ -1307,9 +1307,9 @@ FILE_DLG_DEVICE_IS_NOT_READY
 Gerät ist nicht bereit.
 
 
-##
+## }
 ## Color selection dialog
-##
+## {
 
 COLOR_DLG_NEW
 Neu
@@ -1339,9 +1339,9 @@ Alt
 #A:
 
 
-##
+## }
 ## Intro screen
-##
+## {
 
 INTRO_WINDOW_TITLE
 FreeOrion Hauptmenü
@@ -1377,9 +1377,9 @@ ERR_CONNECT_TIMED_OUT
 Die Verbindungszeit zum Server wurde überschritten
 
 
-##
+## }
 ## Server Setup Screen
-##
+## {
 
 SCONNECT_WINDOW_TITLE
 Verbindung zum Server
@@ -1403,9 +1403,9 @@ REFRESH_LIST_BN
 Liste aktualisieren
 
 
-##
+## }
 ## Multiplayer lobby
-##
+## {
 
 MPLOBBY_WINDOW_TITLE
 Mehrspieler Aufstellung
@@ -1441,9 +1441,9 @@ START_GAME_BN
 Spiel starten
 
 
-##
+## }
 ## Galaxy Setup Screen
-##
+## {
 
 GSETUP_WINDOW_TITLE
 Galaxie erzeugen
@@ -1589,9 +1589,9 @@ GSETUP_MANIACAL
 Wahnsinnig
 
 
-##
+## }
 ## About dialog
-##
+## {
 
 LICENSE
 Lizenz
@@ -1606,9 +1606,9 @@ FREEORION_VISION
 FreeOrion ist ein runden-basierendes (TBS = Turned Based Strategy) Open-Source Spiel, das von Master of Orion inspiriert ist. Es basiert auf dem klassischen "4x - Modell", den Nationenaufbau - Elementen von Spielen wie Europa Universalis 2 und einer vielseitigen taktischen Kampfengine. Der modulare Aufbau des Spiels ermöglicht Veränderungen sowohl an der Game Engine als auch der Story durch die Community; das FreeOrion-Team bemüht sich, ein lebendes, atmendes Universum mit einem Großkampagnen-Modell zu erschaffen.
 
 
-##
+## }
 ## In-game menu
-##
+## {
 
 GAME_MENU_WINDOW_TITLE
 Menü
@@ -1626,9 +1626,9 @@ GAME_MENU_SAVE_FILES
 Speicherstände
 
 
-##
+## }
 ## Save game dialog
-##
+## {
 
 SAVE_TIME_TITLE
 <u>Zeit</u>
@@ -1678,9 +1678,9 @@ SAVE_REALLY_OVERRIDE
 Sind Sie sicher, dass sie %1% überschreiben möchten?
 
 
-##
+## }
 ## Game options
-##
+## {
 
 OPTIONS_TITLE
 Einstellungen
@@ -2043,9 +2043,9 @@ OPTIONS_VERBOSE_SITREP_DESC
 Statusberichte mit Fehlermeldungen
 
 
-##
+## }
 ## Main map window
-##
+## {
 
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
@@ -2110,9 +2110,9 @@ MAP_DETECTION_TEXT
 Ortungsreichweite des Imperiums
 
 
-##
+## }
 ## Side panel/System information
-##
+## {
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -2149,9 +2149,9 @@ RESOURCE_SELF_SUFFICIENT
 Kein Einfuhr oder Ausfuhr
 
 
-##
+## }
 ## Side panel/Planet panel
-##
+## {
 
 PLANET_PANEL
 Planetenfenster
@@ -2228,23 +2228,23 @@ PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
 Neuste bekannte Tarnung ist nicht aktuell.  Tatsächliche Tarnung übersteigt die [[DETECTION_TITLE]].
 
 
-##
+## }
 ## Side panel/Resources panel
-##
+## {
 
 # %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
 Fokus: %1%
 
 
-##
+## }
 ## Side panel/Specials panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Buildings panel
-##
+## {
 
 ORDER_BUIDLING_SCRAP
 Gebäude abreißen
@@ -2253,9 +2253,9 @@ ORDER_CANCEL_BUIDLING_SCRAP
 Gebäudeabriss abbrechen
 
 
-##
+## }
 ## General tooltips
-##
+## {
 
 TT_THIS_TURN
 Diese Runde
@@ -2326,9 +2326,9 @@ SP_PLANET_SUITABILITY
 Planet Eignung
 
 
-##
+## }
 ## Fleet window
-##
+## {
 
 # %1% system name where this fleet is holding.
 FW_FLEET_HOLDING_AT
@@ -2495,9 +2495,9 @@ ORDER_CANCEL_FLEET_EXPLORE
 Erkundung beenden
 
 
-##
+## }
 ## Moderator
-##
+## {
 
 MOD_NONE
 Keine Handlung für Spielleiter
@@ -2521,9 +2521,9 @@ MOD_REMOVE_STARLANE
 Sternstraße entfernen
 
 
-##
+## }
 ## Diplomacy
-##
+## {
 
 DIPLOMACY
 Diplomatie
@@ -2547,9 +2547,9 @@ PEACE_ACCEPT
 Friedensangebot annehmen
 
 
-##
+## }
 ## TechTreeWnd
-##
+## {
 
 TECH_DISPLAY
 Anzeige
@@ -2608,9 +2608,9 @@ TECH_WND_ETA
 %1% Runde übrig
 
 
-##
+## }
 ## Production info panel
-##
+## {
 
 # %1% type of resource (Research, Production, ...).
 # %2% name of the location where the resource is produced.
@@ -2630,9 +2630,9 @@ PRODUCTION_INFO_WASTED_PS_LABEL
 Verschwendete Punkte
 
 
-##
+## }
 ## Research window
-##
+## {
 
 RESEARCH_WND_TITLE
 Forschung
@@ -2645,9 +2645,9 @@ RESEARCH_INFO_RP
 FP
 
 
-##
+## }
 ## Build selector window
-##
+## {
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Herstellbare Objekte
@@ -2687,9 +2687,9 @@ PRODUCTION_QUEUE_PROMPT
 Doppelklick auf ein verfügbares Objekt um es zur Produktionswarteschlange hinzufügen.
 
 
-##
+## }
 ## Production window
-##
+## {
 
 PRODUCTION_WND_TITLE
 Produktion
@@ -2707,9 +2707,9 @@ PRODUCTION_QUEUE_ITEM_LOCATION
 An %1%
 
 
-##
+## }
 ## Design window
-##
+## {
 
 SHIP_DESIGN_FILES
 Entwurfsdateien
@@ -2760,28 +2760,28 @@ DESIGN_INVALID
 Ungültiger Entwurf
 
 
-##
+## }
 ## Statistics
-##
+## {
 
 SHIP_COUNT
 Shiffszahl
 
 
-##
+## }
 ## Encyclopedia
-##
+## {
 
 # %1% name of the species.
 #ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
-#'''%1%:	'''
+#'''%1%:    '''
 
 # %1% content of ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1 expanded to match
 #     column width.
 # %2% the planet environment for a species.
 # %3% the planet population capacity for a species.
 #ENC_SPECIES_PLANET_TYPE_SUITABILITY
-#%1%	%2% (%3%)
+#%1%    %2% (%3%)
 
 # %1% name of the planet.
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
@@ -2950,9 +2950,9 @@ ENC_COMBAT_UNKNOWN_OBJECT
 Unbekannt
 
 
-##
+## }
 ## Combat report
-##
+## {
 
 #NEUTRAL
 #Neutral
@@ -2961,9 +2961,9 @@ COMBAT_SUMMARY
 Zusammenfassung
 
 
-##
+## }
 ## Encyclopedia article categories and short descriptions
-##
+## {
 
 CATEGORY_GUIDES
 **Leitfäden**
@@ -2995,16 +2995,16 @@ Metriken
 POPULATION_TITLE_SHORT_DESC
 Bevölkerung
 
-##
+## }
 ## Encyclopedia articles in Game Concepts category
-##
+## {
 
 METABOLISM_TITLE
 Metabolism
 
-##
+## }
 ## Encyclopedia articles
-##
+## {
 
 METER_INDUSTRY_VALUE_LABEL
 Industrie
@@ -3132,14 +3132,14 @@ MAP_WINDOW_ARTICLE_TITLE
 Kartenfenster
 
 
-##
+## }
 ## Guides
-##
+## {
 
 
-##
+## }
 ## Turn progress
-##
+## {
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Flottenbewegung
@@ -3182,17 +3182,17 @@ ERROR_EARLY_TURN_UPDATE
 Unerwartetes Rundenupdate vom Server.
 
 
-##
+## }
 ## Messages panel
-##
+## {
 
 MESSAGES_PANEL_TITLE
 Meldungen
 
 
-##
+## }
 ## Players list
-##
+## {
 
 PLAYERS_LIST_PANEL_TITLE
 Imperien
@@ -3207,9 +3207,9 @@ WAITING
 Warten
 
 
-##
+## }
 ## Objects window
-##
+## {
 
 SORT
 Sortieren
@@ -3221,17 +3221,17 @@ EXPAND_ALL
 Aufklappen
 
 
-##
+## }
 ## Objects columns
-##
+## {
 
 AGE
 Alter
 
 
-##
+## }
 ## Filters dialog
-##
+## {
 
 VISIBLE
 Sichtbar
@@ -3614,9 +3614,9 @@ Systemminem zerstörten Schiff
 #Custom_4
 
 
-##
+## }
 ## Victory/defeat
-##
+## {
 
 VICTORY_TECH
 Das %empire% Imperium hat den technologischen Sieg errungen.
@@ -3634,17 +3634,17 @@ SITREP_EMPIRE_ELIMINATED_LABEL
 Imperium ausgelöscht
 
 
-##
+## }
 ## Random beginner hints
-##
+## {
 
 BEGINNER_HINTS
 Zufälliger Spieltipp
 
 
-##
+## }
 ## Species
-##
+## {
 
 HOMEWORLD
 Heimatwelt:
@@ -3692,9 +3692,9 @@ Bevorzugt ozeanische Planeten.
 '''
 
 
-##
+## }
 ## Encyclopedia articles in Species category
-##
+## {
 
 SP_SCYLIOR
 Scylior
@@ -3786,9 +3786,9 @@ Misiorla
 SP_EXOBOT
 Exobot
 
-##
+## }
 ## Specials
-##
+## {
 
 MODERATE_TECH_NATIVES_SPECIAL
 Fortschrittliche Eingeborene
@@ -3948,7 +3948,7 @@ PHILOSOPHER_SPECIAL
 Philosophenplanet
 
 PHILOSOPHER_SPECIAL_DESC
-'''Reduziert [[metertype METER_TARGET_CONSTRUCTION]] um 20. Solange dieser Planet unbewohnt ist, erhöht er [[metertype METER_TARGET_RESEARCH]] um 5 auf allen bewohnten Planeten im selben System. 
+'''Reduziert [[metertype METER_TARGET_CONSTRUCTION]] um 20. Solange dieser Planet unbewohnt ist, erhöht er [[metertype METER_TARGET_RESEARCH]] um 5 auf allen bewohnten Planeten im selben System.
 
 Der letzte Verbliebene einer planetengroßen Nomadenspezies hat sich im Orbit dieses Systems zur Ruhe gesetzt. Nach tausenden von Lebensjahren hat er den Willen und die Fähigkeit zum Reisen verloren und verbringt seine Zeit nun damit, über die Mysterien des Universums zu sinnieren. Exzentrisch und leicht dement, wie er nun ist, spricht er nur mit jenen, deren Form und Größe seiner Art entsprechen, weshalb Wissenschaftler nur über die Planeten, auf denen sie leben, mit ihm kommunizieren können. Verständlicherweise würde es den [[PHILOSOPHER_SPECIAL]] sehr verstören, kolonisiert zu werden, und Konstruktionen auf seiner Oberfläche wären so schwierig, wie es bei einem lebenden Wesen zu erwarten wäre.'''
 
@@ -4141,9 +4141,9 @@ ELERIUM_SPECIAL_DESC
 Dieser Planet hat reine Eleriumvorkommen, was Produktion oder Lithisches Wachstum beschleunigt.
 
 
-##
+## }
 ## Enumeration values
-##
+## {
 
 # Universe object types
 INVALID_UNIVERSE_OBJECT_TYPE
@@ -4595,16 +4595,16 @@ Sonstiges
 VIS_NO_VISIBILITY
 Unsichtbar
 
-##
+## }
 ## Ship hull categories
-##
+## {
 
 HULL_LINE_ORGANIC
 Hull Line: Organic
 
-##
+## }
 ## FOCS value references, effects & condition descriptions
-##
+## {
 
 DESC_VAR_PLANET
 Planet
@@ -4828,9 +4828,9 @@ DESC_VALUE_REF_MULTIPART_VARIABLE1
 #%1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
 
 
-##
+## }
 ## FOCS condition descriptions
-##
+## {
 
 DESC_ALL
 ''' im Universum'''
@@ -5146,9 +5146,9 @@ DESC_HAS_TAG_NOT
 ''' das ist nicht %1%'''
 
 
-##
+## }
 ## Technology categories
-##
+## {
 
 LEARNING_CATEGORY
 Entwicklung
@@ -5175,9 +5175,9 @@ SPY_CATEGORY
 Nachrichtendienst
 
 
-##
+## }
 ## Technology theories
-##
+## {
 
 THEORY_SHORT_DESC
 Theoretische Voraussetzung
@@ -5535,9 +5535,9 @@ SPY_ROOT_DECEPTION
 Täuschung
 
 
-##
+## }
 ## Technology application
-##
+## {
 
 VICTORY_SHORT_DESC
 Bringt den Sieg!
@@ -6024,9 +6024,9 @@ SHP_BLACKSHIELD
 Schwarzschild
 
 
-##
+## }
 ## Technology refinement
-##
+## {
 
 BUILDING_REFINE_SHORT_DESC
 Verfeinert Gebäude
@@ -6047,9 +6047,9 @@ PRO_INDUSTRY_CENTER_III_DESC
 Neue Erfahrungen und die Weiterentwicklung der Produktionsanlagen ermöglichen eine zusätzliche Verbesserung der industriellen Produktion. The bonus to [[metertype METER_INDUSTRY]] will be triple that provided by basic Industrial Centers.
 
 
-##
+## }
 ## Buildings
-##
+## {
 
 BLD_EVACUATION
 Evakuierungssystem
@@ -6695,9 +6695,9 @@ BLD_COL_SUPER_TEST_DESC
 
 
 
-##
+## }
 ## Hull and ship part description templates
-##
+## {
 
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
@@ -6725,9 +6725,9 @@ PART_DESC_HANGAR_STATS
 
 
 
-##
+## }
 ## Ship parts
-##
+## {
 
 FT_WEAPON_1
 Jägerbewaffnung
@@ -6739,7 +6739,7 @@ FT_BAY_1
 Startrampe
 
 FT_BAY_1_DESC
-Ein Dock, aus dem Jagdflieger abheben können. 
+Ein Dock, aus dem Jagdflieger abheben können.
 
 FT_HANGAR_0
 Lockvogelhangar
@@ -7022,7 +7022,7 @@ FU_ZERO_FUEL_DESC
 Sammelt Energie aus Nullpunktgeneration und wandelt sie in [[metertype METER_FUEL]] um.
 
 FU_RAMSCOOP
-Bussardkollektor 
+Bussardkollektor
 
 FU_RAMSCOOP_DESC
 Erzeugt langsam [[metertype METER_FUEL]] in Sternensystemen, indem es den Wasserstoff im interplanetaren Raum sammelt.
@@ -7194,7 +7194,7 @@ SP_PLANET_BEACON
 Mobile Planetarbake
 
 SP_PLANET_BEACON_DESC
-Kennzeichnet das Ziel für den [[buildingtype BLD_PLANET_DRIVE]]. Zum Einsatz muss das Schiff einen Zug lang seine Position halten und der Planet muss in einem verbundenen System sein. 
+Kennzeichnet das Ziel für den [[buildingtype BLD_PLANET_DRIVE]]. Zum Einsatz muss das Schiff einen Zug lang seine Position halten und der Planet muss in einem verbundenen System sein.
 
 SP_DISTORTION_MODULATOR
 Verzerrungsmodulator
@@ -7326,9 +7326,9 @@ RS_AUTOTRADER_DESC
 Generiert Handel.
 
 
-##
+## }
 ## Ship hulls
-##
+## {
 
 SH_ROBOTIC
 Robotikrumpf
@@ -7344,7 +7344,7 @@ SH_SPATIAL_FLUX
 Raumflussrumpf
 
 SH_SPATIAL_FLUX_DESC
-'''Dieser kleine Rumpf kann dank des [[tech SHP_SPACE_FLUX_DRIVE]]s mit guter Geschwindigkeit über weite Distanzen reisen. Er hat allerdings nur zwei externe Steckplätze und nur geringe [[metertype METER_STRUCTURE]]. 
+'''Dieser kleine Rumpf kann dank des [[tech SHP_SPACE_FLUX_DRIVE]]s mit guter Geschwindigkeit über weite Distanzen reisen. Er hat allerdings nur zwei externe Steckplätze und nur geringe [[metertype METER_STRUCTURE]].
 
 Beginnt mit einer [[metertype METER_STEALTH]] von 15. Der Wert erhöht sich um 10 im Stillstand, aber um 30 pro Zug wenn in Transit. Technologische Verbesserungen wie z.B. [[tech SPY_STEALTH_PART_1]] erhöhen [[METER_STEALTH]] um je 10 Punkte.
 
@@ -7356,7 +7356,7 @@ SH_SPACE_FLUX_BUBBLE
 Raumflussblasenrumpf
 
 SH_SPACE_FLUX_BUBBLE_DESC
-'''Dieser kleine Rumpf kann dank des [[tech SHP_SPACE_FLUX_DRIVE]]s mit guter Geschwindigkeit über weite Distanzen reisen. Er hat allerdings nur einen internen Steckplatz und nur geringe [[metertype METER_STRUCTURE]]. 
+'''Dieser kleine Rumpf kann dank des [[tech SHP_SPACE_FLUX_DRIVE]]s mit guter Geschwindigkeit über weite Distanzen reisen. Er hat allerdings nur einen internen Steckplatz und nur geringe [[metertype METER_STRUCTURE]].
 
 Beginnt mit einer [[metertype METER_STEALTH]] von 15. Der Wert erhöht sich um 10 im Stillstand, aber um 30 pro Zug wenn in Transit. Technologische Verbesserungen wie z.B. [[tech SPY_STEALTH_PART_1]] erhöhen [[METER_STEALTH]] um je 10 Punkte.
 
@@ -7555,7 +7555,7 @@ Organisches Wachstum: Startet mit 10 [[metertype METER_STRUCTURE]], aber wächst
 
 [[metertype METER_STEALTH]] ist hoch, [[metertype METER_DETECTION]] ist hoch und [[metertype METER_SPEED]] ist hoch.
 
-Mit wenigen externen Steckplätzen ist dieser Rumpf für die Frontlinie ungeeignet, aber die internen Steckplätze, [[METER_DETECTION]] und [[METER_STEALTH]] verleihen ihm Potential als Aufklärer oder Plünderer. 
+Mit wenigen externen Steckplätzen ist dieser Rumpf für die Frontlinie ungeeignet, aber die internen Steckplätze, [[METER_DETECTION]] und [[METER_STEALTH]] verleihen ihm Potential als Aufklärer oder Plünderer.
 
 [[LIVING_HULL_AUTO_REGEN]]
 
@@ -7570,7 +7570,7 @@ Organisches Wachstum: Startet mit 5 [[metertype METER_STRUCTURE]], aber wächst 
 
 [[metertype METER_STEALTH]] ist sehr hoch, [[metertype METER_DETECTION]] ist hoch und [[metertype METER_SPEED]] ist hoch.
 
-Mit wenigen externen Steckplätzen ist dieser Rumpf für die Frontlinie ungeeignet, aber die internen Steckplätze, [[METER_DETECTION]] und [[METER_STEALTH]] verleihen ihm Potential als Aufklärer oder Plünderer. 
+Mit wenigen externen Steckplätzen ist dieser Rumpf für die Frontlinie ungeeignet, aber die internen Steckplätze, [[METER_DETECTION]] und [[METER_STEALTH]] verleihen ihm Potential als Aufklärer oder Plünderer.
 
 [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
 
@@ -7867,9 +7867,9 @@ Wolkenkörper
 SH_DAMPENING_CLOUD_BODY_DESC
 Eine kosmische Wolke aus hochenergetischen Partikeln.
 
-##
+## }
 ## Monsters Macros
-##
+## {
 
 SM_KRILL_MACRO_1
 Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommunizieren Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt
@@ -7890,9 +7890,9 @@ SM_JUGGERNAUT_ENVIRONMENT
 Bevorzugte Umbebung: Asteroiden. Kolossnester finden sich für gewöhnlich in Asteroidengürteln, und in Systemen mit Asteroidengürteln können Kolosse heranreifen.
 
 
-##
+## }
 ## Buildings macros
-##
+## {
 
 BUILDING_AVAILABLE_ON_OUTPOSTS
 Dieses Gebäude kann auch auf [[encyclopedia OUTPOSTS_TITLE]] errichtet werden
@@ -7922,9 +7922,9 @@ des Imperiums; ein größerer Abstand führt zu längerer Bauzeit. Diese Varianz
 # ANY_SYSTEM (building owned in any system by empire or ally)
 # Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
 
-##
+## }
 ## Ship design/hull macros
-##
+## {
 
 # Keys used in Predefined Ship Designs and Ship Hulls sections
 
@@ -7994,9 +7994,9 @@ SHIPDESIGN_PLANET_INVASION
 [[metertype METER_TROOPS]]n und Ausrüstung zum Einmarsch auf feindliche Planeten
 
 
-##
+## }
 ## Ship part/tech application macros
-##
+## {
 
 # Keys used in Ship Parts and Technology Application sections
 
@@ -8050,17 +8050,17 @@ ENEMY_PLANET_ANY_POP
 jeglicher [[metertype METER_POPULATION]] von Feindplaneten
 
 
-##
+## }
 ## Tech macros
-##
+## {
 
 COLONY_BUILDING_TIME_DECREASE
 Unter anderem reduziert diese Technologie den nötigen Zeitaufwand, um neue Kolonien in größerer Entfernung zur relevanten Spezies zu gründen.
 
 
-##
+## }
 ## Growth macros
-##
+## {
 
 GROWTH_SPECIAL_POPULATION_ORGANIC_INCREASE
 [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] organischer [[METER_POPULATION]].
@@ -8101,104 +8101,104 @@ Besonderheiten für [[encyclopedia LITHIC_SPECIES_TITLE]]:
 #Planet <i>%1%</i> [[TT_SPECIAL]]
 
 
-##
+## }
 ## Species picks
-##
+## {
 
 NO_INDUSTRY_DESC
-−−−	Keine [[metertype METER_INDUSTRY]]
+−−−    Keine [[metertype METER_INDUSTRY]]
 
 BAD_INDUSTRY_DESC
-−	Schlechte [[metertype METER_INDUSTRY]]: 75%
+−    Schlechte [[metertype METER_INDUSTRY]]: 75%
 
 AVERAGE_INDUSTRY_DESC
-'''	Mittelmässige [[metertype METER_INDUSTRY]]: 100%'''
+'''    Mittelmässige [[metertype METER_INDUSTRY]]: 100%'''
 
 GOOD_INDUSTRY_DESC
-+	Gute [[metertype METER_INDUSTRY]]: 150%
++    Gute [[metertype METER_INDUSTRY]]: 150%
 
 GREAT_INDUSTRY_DESC
-++	Hervorragende [[metertype METER_INDUSTRY]]: 200%
+++    Hervorragende [[metertype METER_INDUSTRY]]: 200%
 
 ULTIMATE_INDUSTRY_DESC
-+++	Perfekte [[metertype METER_INDUSTRY]]: 300%
++++    Perfekte [[metertype METER_INDUSTRY]]: 300%
 
 NO_RESEARCH_DESC
-−−−	Keine [[metertype METER_RESEARCH]]
+−−−    Keine [[metertype METER_RESEARCH]]
 
 BAD_RESEARCH_DESC
-−	Schlechte [[metertype METER_RESEARCH]]: 75%
+−    Schlechte [[metertype METER_RESEARCH]]: 75%
 
 AVERAGE_RESEARCH_DESC
-'''	Mittelmässige [[metertype METER_RESEARCH]]: 100%'''
+'''    Mittelmässige [[metertype METER_RESEARCH]]: 100%'''
 
 GOOD_RESEARCH_DESC
-+	Gute [[metertype METER_RESEARCH]]: 150%
++    Gute [[metertype METER_RESEARCH]]: 150%
 
 GREAT_RESEARCH_DESC
-++	Hervorragende [[metertype METER_RESEARCH]]: 200%
+++    Hervorragende [[metertype METER_RESEARCH]]: 200%
 
 ULTIMATE_RESEARCH_DESC
-+++	Perfekte [[metertype METER_RESEARCH]]: 300%
++++    Perfekte [[metertype METER_RESEARCH]]: 300%
 
 NO_DEFENSE_TROOPS_DESC
-−−−	Keine Boden[[metertype METER_TROOPS]]
+−−−    Keine Boden[[metertype METER_TROOPS]]
 
 BAD_DEFENSE_TROOPS_DESC
-−	Schlechte Boden[[metertype METER_TROOPS]]: 50%
+−    Schlechte Boden[[metertype METER_TROOPS]]: 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-'''	Mittelmäßige Boden[[metertype METER_TROOPS]]: 100%'''
+'''    Mittelmäßige Boden[[metertype METER_TROOPS]]: 100%'''
 
 GOOD_DEFENSE_TROOPS_DESC
-+	Gute Boden[[metertype METER_TROOPS]]: 150%.
++    Gute Boden[[metertype METER_TROOPS]]: 150%.
 
 GREAT_DEFENSE_TROOPS_DESC
-++	Hervorragende Boden[[metertype METER_TROOPS]]: 200%.
+++    Hervorragende Boden[[metertype METER_TROOPS]]: 200%.
 
 ULTIMATE_DEFENSE_TROOPS_DESC
-+++	Perfekte Boden[[metertype METER_TROOPS]]: 300%.
++++    Perfekte Boden[[metertype METER_TROOPS]]: 300%.
 
 BAD_DETECTION_DESC
-−	Schlechte [[metertype METER_DETECTION]]: −20 Malus.
+−    Schlechte [[metertype METER_DETECTION]]: −20 Malus.
 
 GOOD_DETECTION_DESC
-+	Gute [[metertype METER_DETECTION]]: +25 Bonus.
++    Gute [[metertype METER_DETECTION]]: +25 Bonus.
 
 GREAT_DETECTION_DESC
-++	Hervorragende [[metertype METER_DETECTION]]: +50 Bonus.
+++    Hervorragende [[metertype METER_DETECTION]]: +50 Bonus.
 
 ULTIMATE_DETECTION_DESC
-+++	Perfekte [[metertype METER_DETECTION]]: +100 Bonus.
++++    Perfekte [[metertype METER_DETECTION]]: +100 Bonus.
 
 BAD_STEALTH_DESC
-−	Schlechte [[metertype METER_STEALTH]]: −20 Malus.
+−    Schlechte [[metertype METER_STEALTH]]: −20 Malus.
 
 AVERAGE_STEALTH_DESC
-'''	Mittelmäßige [[metertype METER_STEALTH]].'''
+'''    Mittelmäßige [[metertype METER_STEALTH]].'''
 
 GOOD_STEALTH_DESC
-+	Gute [[metertype METER_STEALTH]]: +20 Bonus.
++    Gute [[metertype METER_STEALTH]]: +20 Bonus.
 
 GREAT_STEALTH_DESC
-++	Hervorragende [[metertype METER_STEALTH]]: +40 Bonus.
+++    Hervorragende [[metertype METER_STEALTH]]: +40 Bonus.
 
 ULTIMATE_STEALTH_DESC
-+++	Perfekte [[metertype METER_STEALTH]]: +60 Bonus.
++++    Perfekte [[metertype METER_STEALTH]]: +60 Bonus.
 
 BAD_POPULATION_DESC
-−	Niedrige Bevölkerung 75%
+−    Niedrige Bevölkerung 75%
 
 AVERAGE_POPULATION_DESC
-'''	Normale Bevölkerung'''
+'''    Normale Bevölkerung'''
 
 GOOD_POPULATION_DESC
-+	Hohe Bevölkerung 125%
++    Hohe Bevölkerung 125%
 
 
-##
+## }
 ## Accounting labels
-##
+## {
 
 # %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
@@ -8342,17 +8342,17 @@ EXCELLENT_VISION_LABEL
 Ausgezeichnete Sicht
 
 
-##
+## }
 ## Tags
-##
+## {
 
 ANTIQUATED
 Veraltet
 
 
-##
+## }
 ## AI strings
-##
+## {
 
 # Newline separated list of capitol names for beginner AIs
 AI_CAPITOL_NAMES_BEGINNER
@@ -8365,9 +8365,9 @@ AI_SHIPDESIGN_NAME_INVALID
 Ungültiger Entwurf
 
 
-##
+## }
 ## AI diplomacy strings and lists
-##
+## {
 
 # Newline separated list of polite peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
@@ -8418,9 +8418,9 @@ Empfang der Nachricht bestätigt.
 #AI_FIRST_TURN_GREETING_MSG608'''
 
 
-##
+## }
 ## Hotkey names and descriptions
-##
+## {
 
 OPTIONS_PAGE_HOTKEYS
 Tastaturkürzel
@@ -8465,9 +8465,9 @@ HOTKEY_FULLSCREEN
 Vollbild wechseln
 
 
-##
+## }
 ## Name lists
-##
+## {
 
 # Newline separated list of star cluster names
 #STAR_GROUP_WORDS
@@ -8523,26 +8523,13 @@ Vollbild wechseln
 #ψ
 #ω'''
 
+# }
 # Newline separated list of star cluster names
 #STAR_GROUP_NAMES
 #Centauri
 
 SHIP_NAME_OTHER
 Ewiger September
-
-# Newline separated list of developer name based ship names
-#SHIP_NAME_DEVS
-#'''Adrian Broher
-#Aquataine
-#Big Joe
-#Cami
-#Dilvish
-#Eleazar
-#Geoff the Medio
-#PD
-#Tyreth
-#Tzlaine
-#Vezzra'''
 
 #SHIP_NAMES
 #'''[[SHIP_NAME_MAMMALS]]

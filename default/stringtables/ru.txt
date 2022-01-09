@@ -22,9 +22,9 @@ Russian
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
-##
+## {
 
 OK
 ОК
@@ -257,9 +257,9 @@ CONTENT
 MULTIPLAYER
 Мультиплеер
 
-##
+## }
 ## Major errors
-##
+## {
 
 ERROR_SOUND_INITIALIZATION_FAILED
 '''Не удалось инициализировать аудиосистему OpenAL.
@@ -311,9 +311,9 @@ FORMAT_LIST_9_ITEMS
 FORMAT_LIST_10_ITEMS
 %1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10% и %11%
 
-##
+## }
 ## Build Projects
-##
+## {
 
 PROJECT_BT_STOCKPILE
 Поставка ресурсов
@@ -332,9 +332,9 @@ PROJECT_BT_STOCKPILE_DESC
 Чтобы иметь возможность передать что-либо нуждающейся группе, нужно внести в очередь на производство 10х [[PROJECT_BT_STOCKPILE]], поместив эти элементы в самый верх. Они должны производиться в основной группе снабжения, где наличествуют очки производства.
 Так как [[PROJECT_BT_STOCKPILE]] расположена выше остальных элементов очереди, её финансирование гарантируется, следовательно резервы империи будут точно пополняться на 10 очков производства за ход. Для стабильной, постоянной передачи ресурсов, число повторений для [[PROJECT_BT_STOCKPILE]] устанавливается 99.'''
 
-##
+## }
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
-##
+## {
 
 SD_CARRIER
 Лёгкий авианосец
@@ -576,9 +576,9 @@ SD_DRAGON_TOOTH
 SD_DRAGON_TOOTH_DESC
 Древний корабль с мощным вооружением и защитной системой. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
-##
+## }
 ## Monsters
-##
+## {
 
 SM_MONSTER
 Монстр
@@ -821,9 +821,9 @@ SM_COSMIC_DRAGON_DESC
 
 Космические драконы - это биоинженерные космические монстры, невероятно мощные, опасно вооружённые, имеющие высокий параметр [[metertype METER_STEALTH]]. Потребуется сильный флот и хорошая [[encyclopedia DETECTION_TITLE]], чтобы уничтожить такого. Драконы блуждают в поисках обитаемых планет и атакуют, и способны даже испарять целые системы, если с ними никак не бороться.'''
 
-##
+## }
 ## Fields
-##
+## {
 
 FLD_ION_STORM
 Ионный шторм
@@ -855,9 +855,9 @@ FLD_ACCRETION_DISC
 FLD_ACCRETION_DISC_DESC
 Аккреционный диск представляет из себя структуру (часто - околозвёздный диск), образованную веществом, рассеянном в направлении орбитального вращения вокруг массивного центрального небесного тела. Все планеты в затронутой им системе получают штраф -1 к [[metertype METER_SUPPLY]].
 
-##
+## }
 ## Predefined starting fleets
-##
+## {
 
 FN_BATTLE_FLEET
 Боевой флот
@@ -871,9 +871,9 @@ FN_COLONY_FLEET
 MONSTERS
 Монстры
 
-##
+## }
 ## Status update messages
-##
+## {
 
 RETURN_TO_INTRO
 Возврат в главное меню.
@@ -1000,9 +1000,9 @@ ERROR_CONCEDE_EXCEED_COLONIES
 ERROR_CONCEDE_LAST_HUMAN_PLAYER
 Нельзя признавать поражение при наличии в игре только одного игрока-человека.
 
-##
+## }
 ## Game Rules
-##
+## {
 
 RULE_CHEAP_AND_FAST_TECH_RESEARCH
 Быстрые и дешёвые науки
@@ -1136,9 +1136,9 @@ RULE_ONLY_ALLIANCE_WIN
 RULE_ONLY_ALLIANCE_WIN_DESC
 Игроки в альянсе могут побеждать вместе, если число человеческих игроков в их альянсе не превышает возможное количество людей-победителей для данной игры. При этом в галактике не должно оставаться других выживших игроков-людей.
 
-##
+## }
 ## Command-line and options database entries
-##
+## {
 
 COMMAND_LINE_NOT_FOUND
 Совпадений не найдено
@@ -1859,9 +1859,9 @@ OPTIONS_DB_NETWORK_MESSAGE_PORT
 Сетевой порт для обмена сообщениями клиент-сервер
 
 
-##
+## }
 ## Option sections
-##
+## {
 
 OPTIONS_DB_SECTION_ALL
 Все опции
@@ -1939,9 +1939,9 @@ OPTIONS_DB_SECTION_VIDEO_WINDOWED
 Оконный режим
 
 
-##
+## }
 ## File dialog
-##
+## {
 
 FILE_DLG_FILES
 Файл(ы):
@@ -1964,9 +1964,9 @@ FILE_DLG_FILE_DOES_NOT_EXIST
 FILE_DLG_DEVICE_IS_NOT_READY
 Устройство не готово.
 
-##
+## }
 ## Color selection dialog
-##
+## {
 
 COLOR_DLG_NEW
 Новый
@@ -1974,9 +1974,9 @@ COLOR_DLG_NEW
 COLOR_DLG_OLD
 Старый
 
-##
+## }
 ## Intro screen
-##
+## {
 
 INTRO_WINDOW_TITLE
 FreeOrion Главное меню
@@ -2017,9 +2017,9 @@ ERR_CONNECT_TIMED_OUT
 INTRO_CREDITS_LICENSE
 Выпущено под
 
-##
+## }
 ## Server Setup Screen
-##
+## {
 
 SCONNECT_WINDOW_TITLE
 Соединение с сервером
@@ -2043,9 +2043,9 @@ REFRESH_LIST_BN
 Обновить
 
 
-##
+## }
 ## Password Dialog
-##
+## {
 
 AUTHENTICATION_WINDOW_TITLE
 Аутентификация
@@ -2057,9 +2057,9 @@ PASSWORD_LABEL
 Пароль
 
 
-##
+## }
 ## Multiplayer lobby
-##
+## {
 
 MPLOBBY_WINDOW_TITLE
 Установки сетевой игры
@@ -2112,9 +2112,9 @@ PLAYER_ENTERED_GAME
 PLAYER_LEFT_GAME
 %1% покинул игру
 
-##
+## }
 ## Galaxy Setup Screen
-##
+## {
 
 GSETUP_WINDOW_TITLE
 Параметры галактики
@@ -2263,9 +2263,9 @@ GSETUP_MANIACAL
 GSETUP_SPECIES_RANDOM_DESC
 Выбирает случайный вид из доступных игровых видов.
 
-##
+## }
 ## About dialog
-##
+## {
 
 LICENSE
 Лицензия
@@ -2279,9 +2279,9 @@ VISION
 FREEORION_VISION
 FreeOrion - игра с открытым исходным кодом, основанная на игре Master of Orion. Пошаговая стратегическая космическая игра с масштабной вселенной, строящаяся на классической модели '4X' с добавлением элементов развития наций, как в Europa Universalis 2, с гибким движком тактических боев. Так как проект модульный, принцип открытого исходного кода позволяет значительно упростить доработку игровых элементов и движка с помощью сообщества, в то время как команда FreeOrion сосредоточена построением живой, дышащей вселенной в "великой кампании".
 
-##
+## }
 ## In-game menu
-##
+## {
 
 GAME_MENU_WINDOW_TITLE
 Меню
@@ -2310,9 +2310,9 @@ SAVE_DISABLED_BROWSE_TEXT
 GAME_MENU_REALLY_CONCEDE
 Вы действительно хотите сдаться?
 
-##
+## }
 ## Save game dialog
-##
+## {
 
 SAVE_TIME_TITLE
 <u>Время</u>
@@ -2398,9 +2398,9 @@ SAVE_REALLY_DELETE
 SAVE_REALLY_OVERRIDE
 Вы действительно хотите перезаписать %1%?
 
-##
+## }
 ## Game options
-##
+## {
 
 OPTIONS_TITLE
 Настройка
@@ -2910,9 +2910,9 @@ OPTIONS_CREATE_PERSISTENT_CONFIG_SUCCESS
 OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
 Невозможно создать файл persistent_config.xml. Подробности ошибки смотрите в файле логов.
 
-##
+## }
 ## Main map window
-##
+## {
 
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
@@ -3038,9 +3038,9 @@ MAP_FLEET_SLOT_COUNT
 Всего кораб. слотов
 
 
-##
+## }
 ## Side panel/System information
-##
+## {
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -3082,9 +3082,9 @@ RESOURCE_EXPORT
 RESOURCE_SELF_SUFFICIENT
 Ни импорта, ни экспорта
 
-##
+## }
 ## Side panel/Planet panel
-##
+## {
 
 PLANET_PANEL
 Панель планеты
@@ -3166,18 +3166,18 @@ MENUITEM_ENQUEUE_BUILDING
 MENUITEM_ENQUEUE_SHIPDESIGN
 Корабли в очереди
 
-##
+## }
 ## Side panel/Resources panel
-##
+## {
 
 # %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
 Цель: %1%
 
 
-##
+## }
 ## Side panel/Specials panel
-##
+## {
 
 # %1% capacity value applied by the special.
 SPECIAL_CAPACITY
@@ -3191,9 +3191,9 @@ ADDED_ON_INITIAL_TURN
 Зародилась изначально
 
 
-##
+## }
 ## Side panel/Buildings panel
-##
+## {
 
 ORDER_BUIDLING_SCRAP
 Уничтожить здание
@@ -3202,9 +3202,9 @@ ORDER_CANCEL_BUIDLING_SCRAP
 Отменить уничтожение
 
 
-##
+## }
 ## General tooltips
-##
+## {
 
 TT_THIS_TURN
 Этот ход
@@ -3293,9 +3293,9 @@ SP_PLANET_SUITABILITY
 Пригодность планеты
 
 
-##
+## }
 ## Fleet window
-##
+## {
 
 # %1% system name where this fleet is holding.
 FW_FLEET_HOLDING_AT
@@ -3551,9 +3551,9 @@ ORDER_CANCEL_GIVE_PLANET
 Отменить передачу планеты
 
 
-##
+## }
 ## Fleet Button
-##
+## {
 
 FB_TOOLTIP_BLOCKADE_WITH_EXIT
 Этот флот находится под блокадой вражеского флота. Вы можете переместить корабли только в следующие системы:
@@ -3565,9 +3565,9 @@ FB_TOOLTIP_BLOCKADE_MONSTER
 Этот флот монстров находится под блокадой флота империи. Когда монстры под блокадой, это не даёт им возможности передвигаться.
 
 
-##
+## }
 ## Moderator
-##
+## {
 
 MOD_NONE
 Нет действий модератора
@@ -3591,9 +3591,9 @@ MOD_REMOVE_STARLANE
 Удалить межзвездный путь
 
 
-##
+## }
 ## Diplomacy
-##
+## {
 
 DIPLOMACY
 Дипломатия
@@ -3635,9 +3635,9 @@ END_ALLIANCE_DECLARATION
 Объявить об окончании альянса
 
 
-##
+## }
 ## TechTreeWnd
-##
+## {
 
 TECH_DISPLAY
 Экран
@@ -3709,9 +3709,9 @@ TECH_WND_LIST_COLUMN_DESCRIPTION
 Описание
 
 
-##
+## }
 ## Production info panel
-##
+## {
 
 # %1% type of resource (Research, Production, ...).
 # %2% name of the location where the resource is produced.
@@ -3749,9 +3749,9 @@ STOCKPILE_USE_LIMIT
 STOCKPILE_CHANGE_LABEL
 Резерв на след. ход
 
-##
+## }
 ## Research window
-##
+## {
 
 RESEARCH_WND_TITLE
 Исследования
@@ -3765,9 +3765,9 @@ RESEARCH_QUEUE_PROMPT
 
 Удерживайте клавишу Control при нажатии на элемент, чтобы добавить его в верх очереди.'''
 
-##
+## }
 ## Build selector window
-##
+## {
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Доступные элементы
@@ -3818,9 +3818,9 @@ PRODUCTION_QUEUE_PROMPT
 Дважды нажмите на любой элемент, чтобы добавить его к очереди производства.
 
 
-##
+## }
 ## Production window
-##
+## {
 
 PRODUCTION_WND_TITLE
 Производство
@@ -3849,7 +3849,7 @@ PRODUCTION_WINDOW_ARTICLE_TEXT
 Панель "Данные производства" отображает доступные очки производства (PP, Production Points).
 Если выбрана система, то отображаются два вида данных. Первое число - это общие очки производства всей вашей империи. Второе - это очки выбранной системы (оно отсутствует, если ни одна система не выбрана).
 Доступные очки - это все очки, которые вы можете потратить на промышленность. Во втором числе указан максимум PP для выбранной вами системы, и он может быть меньше суммарного количества очков, если система не соединена с остальной империей через [[metertype METER_SUPPLY]].
-Резерв также относится к доступным очкам промышленности, если используются имперские резервы. Производимые элементы могут использовать имперские резервы по-умолчанию, поэтому требуется при необходимости отключать их от резервов. 
+Резерв также относится к доступным очкам промышленности, если используются имперские резервы. Производимые элементы могут использовать имперские резервы по-умолчанию, поэтому требуется при необходимости отключать их от резервов.
 Как правило, большая часть избыточных PP будет потрачена впустую и потеряна, но часть их также сохранится и в резервах.
 
 <u>Панель доступных к производству элементов</u>
@@ -4024,9 +4024,9 @@ PRODUCTION_WND_TOOLTIP_PARTS
 PRODUCTION_WND_TOOLTIP_FAILED_COND
 Неудовлетворительные требования производства в %1%
 
-##
+## }
 ## Design window
-##
+## {
 
 SHIP_DESIGN_FILES
 Файлы проектов
@@ -4212,9 +4212,9 @@ ERROR_UNABLE_TO_WRITE_FILE
 Невозможно записать файл:\n"%1%"
 
 
-##
+## }
 ## Statistics
-##
+## {
 
 SHIP_COUNT
 Количество кораблей
@@ -4280,9 +4280,9 @@ STATISTICS_TEST_3
 Анализ статистики 3
 
 
-##
+## }
 ## Encyclopedia
-##
+## {
 
 # %1% name of the species.
 
@@ -4799,9 +4799,9 @@ ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS
 ENC_METER_TYPE
 Тип измерителя
 
-##
+## }
 ## Combat report
-##
+## {
 
 NEUTRAL
 Нейтралы
@@ -4895,9 +4895,9 @@ COMBAT_UNIT_HEALTH_AXIS_LABEL
 COMBAT_DESTROYED_LABEL
 Потери: %1%
 
-##
+## }
 ## Encyclopedia article categories and short descriptions
-##
+## {
 
 CATEGORY_GUIDES
 **Руководства**
@@ -4938,9 +4938,9 @@ POPULATION_TITLE_SHORT_DESC
 MANAGEMENT_TITLE_SHORT_DESC
 Управление
 
-##
+## }
 ## Encyclopedia subcategories
-##
+## {
 
 # In Guides category
 
@@ -4997,9 +4997,9 @@ SYSTEM_BLOCKADE_TEXT
 Союзные флоты не оказывают прямого влияния на блокировку снабжения и звёздных путей, но могут помогать планете устранять силы блокады. Если в систему вторгнутся одновременно два враждебных к ней флота (и при условии, что она не заблокирована), ни один из них не установит блокаду друг против друга, но они установят блокаду против других вражеских империй, что придут позднее.
 Космические монстры тоже могут устанавливать блокады, но блокада всегда будет сниматься по окончанию боя, после чего флот империи сможет покинуть систему любым звёздным выходом из неё, или устанавливать блокаду по очереди с монстром. Кроме того, если заблокированный флот оснащён бронёй и установлен в агрессивный режим, то [[metertype METER_SUPPLY]] будет восстановлено. Если монстр и имперский флот встретятся одновременно, флот получит шанс действовать первым и создать блокаду против самого монстра.'''
 
-##
+## }
 ## Encyclopedia articles
-##
+## {
 
 METER_POPULATION_VALUE_LABEL
 Население
@@ -5022,7 +5022,7 @@ METER_RESEARCH_VALUE_LABEL
 Наука
 
 METER_RESEARCH_VALUE_DESC
-'''Наука или научно-исследовательские очки (RP - Research Points) суммирует исследовательский потенциал всех планет империи, предназначенный открывать новые [[encyclopedia ENC_TECH]]. 
+'''Наука или научно-исследовательские очки (RP - Research Points) суммирует исследовательский потенциал всех планет империи, предназначенный открывать новые [[encyclopedia ENC_TECH]].
 
 Каждая наука имеет фиксированный минимум ходов, за который её можно исследовать. К примеру, если наука "стоит" 15 очков исследования и исследуется минимум 3 хода, то всего 5 очков исследований допустимо потратить на неё за ход.
 
@@ -5215,7 +5215,7 @@ ENVIRONMENT_TEXT
 
 Терраформирование планеты (с помощью [[metertype METER_RESEARCH]] или если на планете имеется специальная особенность [[special GAIA_SPECIAL]]), позволяет лучше адаптировать ее к экологическим предпочтениям вида. Исходная среда планеты изменяется поэтапно, пока она, наконец, не достигнет [[PE_GOOD]] пригодности для вида, который хочет жить на планете. Степень терраформирования можно проверить на круге пригодности отображаемом ниже
 
-По часовой стрелке сверху: [[PT_TERRAN]], [[PT_OCEAN]], [[PT_SWAMP]], [[PT_TOXIC]], [[PT_INFERNO]], [[PT_RADIATED]], [[PT_BARREN]], [[PT_TUNDRA]], [[PT_DESERT]] 
+По часовой стрелке сверху: [[PT_TERRAN]], [[PT_OCEAN]], [[PT_SWAMP]], [[PT_TOXIC]], [[PT_INFERNO]], [[PT_RADIATED]], [[PT_BARREN]], [[PT_TUNDRA]], [[PT_DESERT]]
 
 <img src="encyclopedia/EP_wheel.png"></img>'''
 
@@ -5351,7 +5351,7 @@ DESIGN_WINDOW_ARTICLE_TEXT
 
 [[DESIGN_WND_FINISHED_DESIGNS]] проекты отображаются в том же порядке, что и «Производственном окне». Дизайны можно перемещать в списке, чтобы изменить их порядок. Удалите проекты с помощью «[[DESIGN_WND_DELETE_DESIGN]]» из контекстного меню. Корабли уже поставленные в очередь для производства будут по-прежнему строиться со старым дизайном. Сохраните проекты на диске для будущих игр с помощью «[[DESIGN_SAVE]]» в контекстном меню
 
-Щелкните правой кнопкой мыши [[DESIGN_WND_SAVED_DESIGNS]] по дизайну и скопируйте один или все сохраненные проекты в доступный список проектов империи. Если в настройках игры активировать «[[OPTIONS_ADD_SAVED_DESIGNS]], то все конструкции [[DESIGN_WND_SAVED_DESIGNS]] будут автоматически импортированы при старте новой игры 
+Щелкните правой кнопкой мыши [[DESIGN_WND_SAVED_DESIGNS]] по дизайну и скопируйте один или все сохраненные проекты в доступный список проектов империи. Если в настройках игры активировать «[[OPTIONS_ADD_SAVED_DESIGNS]], то все конструкции [[DESIGN_WND_SAVED_DESIGNS]] будут автоматически импортированы при старте новой игры
 
 
 [[DESIGN_WND_PART_PALETTE_TITLE]] отображает части. Если связанные технологии с данной частью исследованы, то она может использоваться в текущих проектах. Другие части не могут использоваться, потому что либо связанная с ними технология не была исследована, либо часть доступна только монстрам
@@ -5363,7 +5363,7 @@ DESIGN_WINDOW_ARTICLE_TEXT
 
 [[DESIGN_WND_MAIN_PANEL_TITLE]] это панель проектирования для текущего дизайна
 
-Текущая конструкция может иметь внутренние, внешние и центральные [[encyclopedia SLOT_TITLE]]ы. Перетащите или дважды щелкните на части из [[DESIGN_WND_PART_PALETTE_TITLE]], чтобы добавить или удалить 
+Текущая конструкция может иметь внутренние, внешние и центральные [[encyclopedia SLOT_TITLE]]ы. Перетащите или дважды щелкните на части из [[DESIGN_WND_PART_PALETTE_TITLE]], чтобы добавить или удалить
 
 Добавьте имя и необязательное описание дизайна
 
@@ -5406,9 +5406,9 @@ FIELDS_TITLE
 FIELDS_TEXT
 Существует несколько типов областей, каждая из которых имеет своеобразный, несколько диффузный внешний вид. Щелчок правой кнопкой мыши по ним в [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] вызывает небольшое всплывающее меню, идентифицирующее их тип и предоставляющее возможность просмотреть их данные
 
-##
+## }
 ## Guides
-##
+## {
 
 GENERAL_PEDIA_REFERENCE
 Информацию такую как эта, можно получить через «Энциклопедию» [[encyclopedia ENC_INDEX]]
@@ -5510,9 +5510,9 @@ ORBITAL_DRYDOCK_REPAIR_TEXT
 CONFIG_GUIDE_TITLE
 Configuration Guide
 
-##
+## }
 ## Turn progress
-##
+## {
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Продвижения флотов...
@@ -5554,16 +5554,16 @@ ERROR_PROCESSING_SERVER_MESSAGE
 ERROR_EARLY_TURN_UPDATE
 Получено неожиданное обновление с сервера
 
-##
+## }
 ## Messages panel
-##
+## {
 
 MESSAGES_PANEL_TITLE
 Сообщения
 
-##
+## }
 ## Players list
-##
+## {
 
 PLAYERS_LIST_PANEL_TITLE
 Империи
@@ -5577,9 +5577,9 @@ RESOLVING_COMBAT
 WAITING
 Ожидания
 
-##
+## }
 ## Objects window
-##
+## {
 
 SORT
 Сортировка
@@ -5590,9 +5590,9 @@ COLLAPSE_ALL
 EXPAND_ALL
 Развернуть все
 
-##
+## }
 ## Objects columns
-##
+## {
 
 METERS_SUBMENU
 Размер
@@ -5723,9 +5723,9 @@ SPECIALS
 TAGS
 Теги
 
-##
+## }
 ## Filters dialog
-##
+## {
 
 VISIBLE
 Видимый
@@ -6408,9 +6408,9 @@ CUSTOM_4
 Custom_4
 
 
-##
+## }
 ## Victory/defeat
-##
+## {
 
 VICTORY_TECH
 ПОБЕДА! %empire% превзошла сложившуюся реальность и выиграла технологическую победу
@@ -6429,9 +6429,9 @@ SITREP_EMPIRE_ELIMINATED
 SITREP_EMPIRE_ELIMINATED_LABEL
 Империя уничтожена
 
-##
+## }
 ## Random beginner hints
-##
+## {
 
 BEGINNER_HINTS
 Случайные подсказки игры
@@ -6555,9 +6555,9 @@ BEGINNER_HINT_21
 BEGINNER_HINT_22
 22: Выбрав систему и нажав на ALT-C вы увидите диапазон окружности системы, увеличение или уменьшение масштаба позволит оценить расстояние, посмотрев на величину измеряемого расстояния
 
-##
+## }
 ## Species
-##
+## {
 
 HOMEWORLD
 Домашний мир:
@@ -6661,7 +6661,7 @@ SP_SCYLIOR_DESC
 
 Хроматофоры являются основным способом общения для данной расы. Когда два Скилиора собираются коммуницировать, они быстро сменяют цвета и пятна на своей коже.
 
-Скилиоры бесполы и способны размножаться несколько раз за свою жизнь. Её продолжительность составляет около 30 лет, в течении которых Скилиор постоянно растёт, наращивая раковину диаметром всего 5 см и вырастая каждый год на 10%. 
+Скилиоры бесполы и способны размножаться несколько раз за свою жизнь. Её продолжительность составляет около 30 лет, в течении которых Скилиор постоянно растёт, наращивая раковину диаметром всего 5 см и вырастая каждый год на 10%.
 
 Социальный строй:
 Остатки некогда могущественного мозга в форме улья, обладающего телепатией и называемого "Разум", почитаются Скилиорами в качестве доброго божества. Именно оно внушило Скилиорам, что их высшая миссия - это путешествовать между звёздами, в надежде вернуть себе своё былое могущество. Скилиоры очень социальны и обожают изучать новые знания, которыми непременно делятся с Разумом.
@@ -6701,7 +6701,7 @@ SP_CHATO
 
 SP_CHATO_GAMEPLAY_DESC
 '''<img src="species/preview/chato.png"></img>
-Неподвижные кристаллические сущности, ездящие верхом на существах под названием "Гормошк". 
+Неподвижные кристаллические сущности, ездящие верхом на существах под названием "Гормошк".
 Предпочитают [[PT_TOXIC]] планеты.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
@@ -6868,7 +6868,7 @@ SP_LEMBALALAM_GAMEPLAY_DESC
 '''Эгоцентричные, дегенерировавшие древние рептилии, утратившие возможность к размножению.
 Предпочитают [[PT_DESERT]] планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-Обладают технологиями: [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] and [[tech GRO_LIFECYCLE_MAN]] 
+Обладают технологиями: [[tech SPY_STEALTH_1]], [[tech SPY_STEALTH_2]] and [[tech GRO_LIFECYCLE_MAN]]
 '''
 
 SP_LEMBALALAM_DESC
@@ -7507,9 +7507,9 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
-##
+## }
 ## Specials
-##
+## {
 
 MODERATE_TECH_NATIVES_SPECIAL
 Умеренно-развитые аборигены
@@ -7876,9 +7876,9 @@ ELERIUM_SPECIAL
 ELERIUM_SPECIAL_DESC
 Эта планета имеет богатое природное месторождение чистого элерия, значительно увеличивающее производство или рост педобионтов (каменная/почвенная жизнь)
 
-##
+## }
 ## Enumeration values
-##
+## {
 
 # Universe object types
 INVALID_UNIVERSE_OBJECT_TYPE
@@ -8584,9 +8584,9 @@ HULL_MONSTER_TREE
 HULL_MONSTER_TREE_DESC
 Корпуса используемые в дизайнах монстров-деревьев
 
-##
+## }
 ## FOCS value references, effects & condition descriptions
-##
+## {
 
 DESC_VAR_PLANET
 планета
@@ -8821,9 +8821,9 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 DESC_VALUE_REF_MULTIPART_VARIABLEMANY
 %1% %2% %3% %4% %5% %6% %7% ...
 
-##
+## }
 ## FOCS condition descriptions
-##
+## {
 
 DESC_ALL
 ''' во вселенной'''
@@ -9471,9 +9471,9 @@ DESC_HAS_TAG
 DESC_HAS_TAG_NOT
 ''' это не %1%'''
 
-##
+## }
 ## Technology categories
-##
+## {
 
 LEARNING_CATEGORY
 Наука
@@ -9619,9 +9619,9 @@ EXTINCT_SPECIES_TECHS
 EXTINCT_SPECIES_TECHS_DESC
 '''Технология специализируется на вымерших видах '''
 
-##
+## }
 ## Technology theories
-##
+## {
 
 THEORY_SHORT_DESC
 Теоретическая база
@@ -10257,9 +10257,9 @@ SPY_ROOT_DECEPTION
 SPY_ROOT_DECEPTION_DESC
 Искусство обмана не является естественным для каждого вида, но способность скрывать правду может быть весьма полезной
 
-##
+## }
 ## Technology application
-##
+## {
 
 VICTORY_SHORT_DESC
 Победа!
@@ -11231,9 +11231,9 @@ SPY_PLANET_STEALTH_MOD_DESC
 BASIC_PLANET_STEALTH
 Универсальная базовая скрытность
 
-##
+## }
 ## Technology refinement
-##
+## {
 
 BUILDING_REFINE_SHORT_DESC
 Усовершенствовать строение
@@ -11253,9 +11253,9 @@ PRO_INDUSTRY_CENTER_III
 PRO_INDUSTRY_CENTER_III_DESC
 Дополнительный опыт и усовершенствования средств еще больше расширяют размеры промышленного производства. Бонус к [[metertype METER_INDUSTRY]] будет втрое больше чем базовый [[buildingtype BLD_INDUSTRY_CENTER]]
 
-##
+## }
 ## Buildings
-##
+## {
 
 BLD_EVACUATION
 Переселение
@@ -11476,7 +11476,7 @@ BLD_GAIA_TRANS
 Преобразование в Гайю
 
 BLD_GAIA_TRANS_DESC
-'''Добавляет специальную особенность [[special GAIA_SPECIAL]] к планете, которая увеличивает максимальное количество населения для [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]] в соответствии с размером планеты: 
+'''Добавляет специальную особенность [[special GAIA_SPECIAL]] к планете, которая увеличивает максимальное количество населения для [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]] в соответствии с размером планеты:
 • [[SZ_TINY]] (+3)
 • [[SZ_SMALL]] (+6)
 • [[SZ_MEDIUM]] (+9)
@@ -11547,7 +11547,7 @@ BLD_SOL_ORB_GEN
 BLD_SOL_ORB_GEN_DESC
 '''Увеличивает [[metertype METER_INDUSTRY]] на планетах с прямой связью [[metertype METER_SUPPLY]] и влияет на население в зависимости от типа звезды:
 * [[STAR_BLUE]] or [[STAR_WHITE]] (x0.15)
-* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x0.1) 
+* [[STAR_YELLOW]] or [[STAR_ORANGE]] (x0.1)
 * [[STAR_RED]] (x0.05)
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] применяется лучший бонус
 
@@ -11949,9 +11949,9 @@ BLD_COL_SUPER_TEST
 BLD_COL_SUPER_TEST_DESC
 Колония супер-тестеров [[BLD_COL_PART_1]]. [[BLD_COL_PART_2]] Колония супер-тестеров [[BLD_COL_PART_3]]
 
-##
+## }
 ## Hull and ship part description templates
-##
+## {
 
 # %1% hull base starlane speed.
 # %2% hull base fuel capacity.
@@ -11984,9 +11984,9 @@ PART_DESC_HANGAR_STATS
 '''Количество истребителей: %1%
 Урон [[encyclopedia DAMAGE_TITLE]]: %2%'''
 
-##
+## }
 ## Ship parts
-##
+## {
 
 FT_WEAPON_1
 Оружие истребителей
@@ -12252,7 +12252,7 @@ FU_N_DIMENSIONAL_ENGINE_MATRIX
 N-мерная матрица двигателя
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Увеличивает межзвездную [[metertype METER_SPEED]] на 20 
+'''Увеличивает межзвездную [[metertype METER_SPEED]] на 20
 
 Исследование N-мерного подпространства привело к созданию более эффективной двигательной матрице'''
 
@@ -12593,9 +12593,9 @@ RS_AUTOTRADER
 RS_AUTOTRADER_DESC
 Генерирует торговлю владельцу
 
-##
+## }
 ## Ship hulls
-##
+## {
 
 SH_ROBOTIC
 Роботизированный корпус
@@ -12611,7 +12611,7 @@ SH_SPATIAL_FLUX
 Пространственно-потоковый корпус
 
 SH_SPATIAL_FLUX_DESC
-'''Этот крохотный корпус способен развивать приличную скорость на больших расстояниях благодаря [[tech SHP_SPACE_FLUX_DRIVE]]. В нем только 2 внешних слота, а его максимальная [[metertype METER_STRUCTURE]] достаточно низкая 
+'''Этот крохотный корпус способен развивать приличную скорость на больших расстояниях благодаря [[tech SHP_SPACE_FLUX_DRIVE]]. В нем только 2 внешних слота, а его максимальная [[metertype METER_STRUCTURE]] достаточно низкая
 
 [[metertype METER_STEALTH]] начинается с 15, увеличивается на 10 в бездеятельном состоянии, но уменьшается на 30 на любом ходе, если находится в движении. Открытия в области технологий, таких как [[tech SPY_STEALTH_PART_1]] позволяют экипажам увеличить невидимость корабля на 10 за каждый уровень
 
@@ -12633,7 +12633,7 @@ SH_NANOROBOTIC
 Нано-роботизированный корпус
 
 SH_NANOROBOTIC_DESC
-'''Этот большой автоматизированный корпус ремонтирует повреждения самостоятельно, используя миллионы нанороботов. В нем 6 внешних слотов и 1 внутренний. Когда он не участвуют в бою, нанороботы могут производить быстрый ремонт, ускоренно восстанавливая [[metertype METER_STRUCTURE]] (до максимума) на каждом ходе 
+'''Этот большой автоматизированный корпус ремонтирует повреждения самостоятельно, используя миллионы нанороботов. В нем 6 внешних слотов и 1 внутренний. Когда он не участвуют в бою, нанороботы могут производить быстрый ремонт, ускоренно восстанавливая [[metertype METER_STRUCTURE]] (до максимума) на каждом ходе
 
 [[metertype METER_STEALTH]] средняя, [[metertype METER_DETECTION]] среднее и [[metertype METER_SPEED]] средняя
 
@@ -12673,9 +12673,9 @@ SH_ASTEROID
 Корпус астероида
 
 SH_ASTEROID_DESC
-'''Этот корпус изготовлен из астероида среднего размера, его постройка недорога. Он немного просторнее, чем [[shiphull SH_BASIC_LARGE]], в нем 4 внешних слота и 2 внутренних 
+'''Этот корпус изготовлен из астероида среднего размера, его постройка недорога. Он немного просторнее, чем [[shiphull SH_BASIC_LARGE]], в нем 4 внешних слота и 2 внутренних
 
-[[metertype METER_STEALTH]] средняя, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов и в бою, когда он скрывается в поясе астероидов. [[metertype METER_DETECTION]] среднее, [[metertype METER_SPEED]] низкая  
+[[metertype METER_STEALTH]] средняя, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов и в бою, когда он скрывается в поясе астероидов. [[metertype METER_DETECTION]] среднее, [[metertype METER_SPEED]] низкая
 
 [[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
 
@@ -12683,9 +12683,9 @@ SH_SMALL_ASTEROID
 Маленький корпус астероида
 
 SH_SMALL_ASTEROID_DESC
-'''Этот корпус изготовлен из очень маленького астероида. В нем всего лишь 1 внешний слот и 1 внутренний 
+'''Этот корпус изготовлен из очень маленького астероида. В нем всего лишь 1 внешний слот и 1 внутренний
 
-[[metertype METER_STEALTH]] средняя, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов и в бою, когда он скрывается в поясе астероидов. [[metertype METER_DETECTION]] среднее, [[metertype METER_SPEED]] низкая 
+[[metertype METER_STEALTH]] средняя, но корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов и в бою, когда он скрывается в поясе астероидов. [[metertype METER_DETECTION]] среднее, [[metertype METER_SPEED]] низкая
 
 [[BLD_SHIPYARD_BASE_AST_REQUIRED]]'''
 
@@ -12713,7 +12713,7 @@ SH_SMALL_CAMOUFLAGE_ASTEROID
 Маленький камуфляжный корпус астероида
 
 SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
-'''Этот небольшой камуфляжный корпус астероида способен использовать маскировочные астероидные обломки на своей обшивке, при этом он должен быть значительно меньше, чтобы не потерять бонуса [[metertype METER_STEALTH]]. В нем 1 внешний 1 внутренний слот 
+'''Этот небольшой камуфляжный корпус астероида способен использовать маскировочные астероидные обломки на своей обшивке, при этом он должен быть значительно меньше, чтобы не потерять бонуса [[metertype METER_STEALTH]]. В нем 1 внешний 1 внутренний слот
 
 [[metertype METER_STEALTH]] очень высокая и корабль с таким корпусом получает большой бонус на галактической карте, когда он находится в системе с поясом астероидов и в бою, когда он скрывается в поясе астероидов. [[metertype METER_DETECTION]] среднее, [[metertype METER_SPEED]] низкая
 
@@ -12766,7 +12766,7 @@ SH_ORGANIC_DESC
 '''Живой корпус с 3 внешними слотами и 1 внутренним
 Органический рост: создается с [[metertype METER_STRUCTURE]] равной 5, но наращивает дополнительно 5 Прочности через 25 ходов
 
-[[metertype METER_STEALTH]] небольшая, [[metertype METER_DETECTION]] низкое и [[metertype METER_SPEED]] хорошая 
+[[metertype METER_STEALTH]] небольшая, [[metertype METER_DETECTION]] низкое и [[metertype METER_SPEED]] хорошая
 
 Дешевый и универсальный корпус в состоянии выполнять множество функций флота, но вероятно он устареет по мере развития технологий. Из-за низкого обнаружения он плохо подходит для разведки, но его можно превратить в неплохой разведывательный корабль
 
@@ -12808,7 +12808,7 @@ SH_SYMBIOTIC_DESC
 '''Живой корпус с 2 внешними и 2 внутренними слотами. Находится в симбиозе со своим экипажем, увеличивая значения [[metertype METER_STEALTH]] и скорости
 Органический рост: создается с [[metertype METER_STRUCTURE]] равной 10, но наращивает дополнительно 10 Прочности через 50 ходов
 
-[[metertype METER_STEALTH]] высокая, [[metertype METER_DETECTION]] хорошее и [[metertype METER_SPEED]] высокая 
+[[metertype METER_STEALTH]] высокая, [[metertype METER_DETECTION]] хорошее и [[metertype METER_SPEED]] высокая
 
 Малое количество внешних слотов делает этот корпус неподходящим для фронтовых боев, но внутренние слоты, дальность обнаружения и скрытность дают ему потенциал разведчика или рейдера
 
@@ -12899,7 +12899,7 @@ SH_COMPRESSED_ENERGY
 SH_COMPRESSED_ENERGY_DESC
 '''Этот быстрый корпус состоит исключительно из сжатой энергии и имеет один внешний слот
 
-[[metertype METER_STRUCTURE]] низкая, [[metertype METER_STEALTH]] очень хорошая, [[metertype METER_DETECTION]] обычное и [[metertype METER_SPEED]] очень высокая 
+[[metertype METER_STRUCTURE]] низкая, [[metertype METER_STEALTH]] очень хорошая, [[metertype METER_DETECTION]] обычное и [[metertype METER_SPEED]] очень высокая
 
 [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]'''
 
@@ -12927,7 +12927,7 @@ SH_QUANTUM_ENERGY
 Корпус квантовой энергии
 
 SH_QUANTUM_ENERGY_DESC
-'''Этот корпус усиливает квантовые флуктуации энергии, чтобы увеличить свою собственную мощь. Он содержит 7 внешних и 3 внутренних слота 
+'''Этот корпус усиливает квантовые флуктуации энергии, чтобы увеличить свою собственную мощь. Он содержит 7 внешних и 3 внутренних слота
 
 [[metertype METER_STRUCTURE]] невысокая, [[metertype METER_STEALTH]] низкая, [[metertype METER_DETECTION]] обычное и [[metertype METER_SPEED]] очень высокая
 
@@ -12959,7 +12959,7 @@ SH_BASIC_MEDIUM
 SH_BASIC_MEDIUM_DESC
 '''Средний межзвездный корпус с 2 внешними и 1 внутренним слотом
 
-[[metertype METER_STEALTH]] средняя, [[metertype METER_DETECTION]] среднее и [[metertype METER_SPEED]] низкая 
+[[metertype METER_STEALTH]] средняя, [[metertype METER_DETECTION]] среднее и [[metertype METER_SPEED]] низкая
 
 [[BLD_SHIPYARD_BASE_REQUIRED]]'''
 
@@ -13169,9 +13169,9 @@ SH_DAMPENING_CLOUD_BODY
 SH_DAMPENING_CLOUD_BODY_DESC
 Космическое облако высокоэнергетических частиц
 
-##
+## }
 ## Monsters Macros
-##
+## {
 
 SM_KRILL_MACRO_1
 Маленькие, незаметные инсектоидные организмы, питающиеся пылью и камнями, блуждающие вдали от любой гравитации. Индивидуально простые, они взамиодействуют друг с другом через когерентный свет, координируя движения роя и вычисляя траектории
@@ -13191,9 +13191,9 @@ SM_SNOWFLAKE_ENVIRONMENT
 SM_JUGGERNAUT_ENVIRONMENT
 Благоприятная среда: [[PT_ASTEROIDS]]. Гнезда сокрушительных сил (джаггернауты) обычно находятся в поясах Астероидов, а сами джаггернауты могут созреть в более крупные формы в системах с поясами [[PT_ASTEROIDS]]
 
-##
+## }
 ## Buildings macros
-##
+## {
 
 BUILDING_AVAILABLE_ON_OUTPOSTS
 Это здание может быть построено на [[encyclopedia OUTPOSTS_TITLE]]
@@ -13222,9 +13222,9 @@ BLD_COL_PART_3
 # ANY_SYSTEM (building owned in any system by empire or ally)
 # Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
 
-##
+## }
 ## Ship design/hull macros
-##
+## {
 
 # Keys used in Predefined Ship Designs and Ship Hulls sections
 
@@ -13293,9 +13293,9 @@ SHIPDESIGN_NO_TRAVEL
 SHIPDESIGN_PLANET_INVASION
 [[metertype METER_TROOPS]] и оборудование, которое может быть использовано для вторжения в планету
 
-##
+## }
 ## Ship part/tech application macros
-##
+## {
 
 # Keys used in Ship Parts and Technology Application sections
 
@@ -13348,16 +13348,16 @@ ENEMY_PLANET_PHOTOTROPHIC_POP
 ENEMY_PLANET_ANY_POP
 любое население вражеских планет
 
-##
+## }
 ## Tech macros
-##
+## {
 
 COLONY_BUILDING_TIME_DECREASE
 Среди прочего, эта технология уменьшает время на построение колонии, расположенной далеко от соответствующих видов в империи.
 
-##
+## }
 ## Growth macros
-##
+## {
 
 GROWTH_SPECIAL_POPULATION_ORGANIC_INCREASE
 [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]]
@@ -13397,237 +13397,237 @@ GROWTH_SPECIALS_ENTRY_LIST
 GROWTH_SPECIAL_LABEL
 Планета <i>%1%</i> [[TT_SPECIAL]]
 
-##
+## }
 ## Species picks
-##
+## {
 
 NO_INDUSTRY_DESC
----	Нет [[metertype METER_INDUSTRY]]
+---    Нет [[metertype METER_INDUSTRY]]
 
 BAD_INDUSTRY_DESC
--	Плохая [[metertype METER_INDUSTRY]]: 75%
+-    Плохая [[metertype METER_INDUSTRY]]: 75%
 
 AVERAGE_INDUSTRY_DESC
-'''	Средняя [[metertype METER_INDUSTRY]]: 100%'''
+'''    Средняя [[metertype METER_INDUSTRY]]: 100%'''
 
 GOOD_INDUSTRY_DESC
-+	Хорошая [[metertype METER_INDUSTRY]]: 150%
++    Хорошая [[metertype METER_INDUSTRY]]: 150%
 
 GREAT_INDUSTRY_DESC
-++	Превосходная [[metertype METER_INDUSTRY]]: 200%
+++    Превосходная [[metertype METER_INDUSTRY]]: 200%
 
 ULTIMATE_INDUSTRY_DESC
-+++	Беспрецедентная [[metertype METER_INDUSTRY]]: 300%
++++    Беспрецедентная [[metertype METER_INDUSTRY]]: 300%
 
 NO_RESEARCH_DESC
----	Отсутствуют [[metertype METER_RESEARCH]]
+---    Отсутствуют [[metertype METER_RESEARCH]]
 
 BAD_RESEARCH_DESC
--	Плохие [[metertype METER_RESEARCH]]: 75%
+-    Плохие [[metertype METER_RESEARCH]]: 75%
 
 AVERAGE_RESEARCH_DESC
-'''	Средние [[metertype METER_RESEARCH]]: 100%'''
+'''    Средние [[metertype METER_RESEARCH]]: 100%'''
 
 GOOD_RESEARCH_DESC
-+	Хорошие [[metertype METER_RESEARCH]]: 150%
++    Хорошие [[metertype METER_RESEARCH]]: 150%
 
 GREAT_RESEARCH_DESC
-++	Превосходные [[metertype METER_RESEARCH]]: 200%
+++    Превосходные [[metertype METER_RESEARCH]]: 200%
 
 ULTIMATE_RESEARCH_DESC
-+++	Беспрецедентные [[metertype METER_RESEARCH]]: 300%
++++    Беспрецедентные [[metertype METER_RESEARCH]]: 300%
 
 NO_DEFENSE_TROOPS_DESC
----	Отсутствуют[[metertype METER_TROOPS]]
+---    Отсутствуют[[metertype METER_TROOPS]]
 
 BAD_DEFENSE_TROOPS_DESC
--	Плохие защитные [[metertype METER_TROOPS]]: 50%
+-    Плохие защитные [[metertype METER_TROOPS]]: 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-'''	Средние защитные [[metertype METER_TROOPS]]: 100%'''
+'''    Средние защитные [[metertype METER_TROOPS]]: 100%'''
 
 GOOD_DEFENSE_TROOPS_DESC
-+	Хорошие защитные [[metertype METER_TROOPS]]: 150%
++    Хорошие защитные [[metertype METER_TROOPS]]: 150%
 
 GREAT_DEFENSE_TROOPS_DESC
-++	Отличные защитные [[metertype METER_TROOPS]]: 200%
+++    Отличные защитные [[metertype METER_TROOPS]]: 200%
 
 ULTIMATE_DEFENSE_TROOPS_DESC
-+++	Превосходные защитные [[metertype METER_TROOPS]]: 300%
++++    Превосходные защитные [[metertype METER_TROOPS]]: 300%
 
 ANCIENT_DEFENSE_TROOPS_DESC
-+++	Древняя оборонительная платформа [[metertype METER_TROOPS]]: 10 за население
++++    Древняя оборонительная платформа [[metertype METER_TROOPS]]: 10 за население
 
 NO_OFFENSE_TROOPS_DESC
-−−−	Нет наступающих [[metertype METER_TROOPS]]
+−−−    Нет наступающих [[metertype METER_TROOPS]]
 
 BAD_OFFENSE_TROOPS_DESC
-−	Слабые наступательные  [[metertype METER_TROOPS]]: 50%
+−    Слабые наступательные  [[metertype METER_TROOPS]]: 50%
 
 AVERAGE_OFFENSE_TROOPS_DESC
-'''	Средние наступательные [[metertype METER_TROOPS]]: 100%'''
+'''    Средние наступательные [[metertype METER_TROOPS]]: 100%'''
 
 GOOD_OFFENSE_TROOPS_DESC
-+	Хорошие наступательные [[metertype METER_TROOPS]]: 150%
++    Хорошие наступательные [[metertype METER_TROOPS]]: 150%
 
 GREAT_OFFENSE_TROOPS_DESC
-++	Отличные наступательные [[metertype METER_TROOPS]]: 200%
+++    Отличные наступательные [[metertype METER_TROOPS]]: 200%
 
 ULTIMATE_OFFENSE_TROOPS_DESC
-+++	Превосходные наступательные [[metertype METER_TROOPS]]: 300%
++++    Превосходные наступательные [[metertype METER_TROOPS]]: 300%
 
 BAD_DETECTION_DESC
--	Плохая [[metertype METER_DETECTION]]: -20 бонус
+-    Плохая [[metertype METER_DETECTION]]: -20 бонус
 
 GOOD_DETECTION_DESC
-+	Хорошая [[metertype METER_DETECTION]]: +25 бонус
++    Хорошая [[metertype METER_DETECTION]]: +25 бонус
 
 GREAT_DETECTION_DESC
-++	Превосходная [[metertype METER_DETECTION]]: +50 бонус
+++    Превосходная [[metertype METER_DETECTION]]: +50 бонус
 
 ULTIMATE_DETECTION_DESC
-+++	Беспрецедентное обнаружение: +100 бонус
++++    Беспрецедентное обнаружение: +100 бонус
 
 BAD_STEALTH_DESC
--	Плохая [[metertype METER_STEALTH]]: -20 бонус
+-    Плохая [[metertype METER_STEALTH]]: -20 бонус
 
 AVERAGE_STEALTH_DESC
-'''	Средняя [[metertype METER_STEALTH]]'''
+'''    Средняя [[metertype METER_STEALTH]]'''
 
 GOOD_STEALTH_DESC
-+	Хорошая [[metertype METER_STEALTH]]: +20 бонус
++    Хорошая [[metertype METER_STEALTH]]: +20 бонус
 
 GREAT_STEALTH_DESC
-++	Превосходная [[metertype METER_STEALTH]]: +40 бонус
+++    Превосходная [[metertype METER_STEALTH]]: +40 бонус
 
 ULTIMATE_STEALTH_DESC
-+++	Беспрецедентная [[metertype METER_STEALTH]]: +60 бонус
++++    Беспрецедентная [[metertype METER_STEALTH]]: +60 бонус
 
 BAD_WEAPONS_DESC
--	Плохие пилоты: базовый урон на одно орудие судна уменьшен на один уровень.
+-    Плохие пилоты: базовый урон на одно орудие судна уменьшен на один уровень.
 
 GOOD_WEAPONS_DESC
-+	Хорошие пилоты: базовый урон на одно орудие судна увеличен на один уровень
++    Хорошие пилоты: базовый урон на одно орудие судна увеличен на один уровень
 
 GREAT_WEAPONS_DESC
-++	Превосходные пилоты: базовый урон на одно орудие судна увеличен на два уровня.
+++    Превосходные пилоты: базовый урон на одно орудие судна увеличен на два уровня.
 
 ULTIMATE_WEAPONS_DESC
-+++	Беспрецедентные пилоты: базовый урон на одно орудие судна увеличен на три уровня.
++++    Беспрецедентные пилоты: базовый урон на одно орудие судна увеличен на три уровня.
 
 GASEOUS_DESC
-'''+	Живут на газовых гигантах
-+	Дозаправка на газовых гигантах 0.1'''
+'''+    Живут на газовых гигантах
++    Дозаправка на газовых гигантах 0.1'''
 
 BAD_POPULATION_DESC
--	 Малое [[metertype METER_POPULATION]]: 75%
+-     Малое [[metertype METER_POPULATION]]: 75%
 
 AVERAGE_POPULATION_DESC
-'''	Среднее [[metertype METER_POPULATION]]: 100%'''
+'''    Среднее [[metertype METER_POPULATION]]: 100%'''
 
 GOOD_POPULATION_DESC
-+	 Большое [[metertype METER_POPULATION]]: 125%
++     Большое [[metertype METER_POPULATION]]: 125%
 
 FIXED_LOW_POPULATION_DESC
-−−	Максимальное [[metertype METER_POPULATION]] - фиксированно 5
+−−    Максимальное [[metertype METER_POPULATION]] - фиксированно 5
 
 VERY_BAD_SUPPLY_DESC
-−−	Очень плохое [[metertype METER_SUPPLY]]: -1
+−−    Очень плохое [[metertype METER_SUPPLY]]: -1
 
 BAD_SUPPLY_DESC
-−	Плохое [[metertype METER_SUPPLY]]: без бонусов
+−    Плохое [[metertype METER_SUPPLY]]: без бонусов
 
 AVERAGE_SUPPLY_DESC
-'''	Среднее [[metertype METER_SUPPLY]]: +1'''
+'''    Среднее [[metertype METER_SUPPLY]]: +1'''
 
 GREAT_SUPPLY_DESC
-+	Хорошее [[metertype METER_SUPPLY]]: +2
++    Хорошее [[metertype METER_SUPPLY]]: +2
 
 ULTIMATE_SUPPLY_DESC
-++	Отличное [[metertype METER_SUPPLY]]: +3
+++    Отличное [[metertype METER_SUPPLY]]: +3
 
 NO_STOCKPILE_DESC
-−−	Отсутствуют [[metertype METER_STOCKPILE]]
+−−    Отсутствуют [[metertype METER_STOCKPILE]]
 
 BAD_STOCKPILE_DESC
-−	Плохие [[metertype METER_STOCKPILE]]: +0.01 за единицу населения
+−    Плохие [[metertype METER_STOCKPILE]]: +0.01 за единицу населения
 
 AVERAGE_STOCKPILE_DESC
-'''	Средние [[metertype METER_STOCKPILE]]: +0.02 за единицу населения'''
+'''    Средние [[metertype METER_STOCKPILE]]: +0.02 за единицу населения'''
 
 GREAT_STOCKPILE_DESC
-++	Отличные [[metertype METER_STOCKPILE]]: +0.2 за единицу населения
+++    Отличные [[metertype METER_STOCKPILE]]: +0.2 за единицу населения
 
 ULTIMATE_STOCKPILE_DESC
-+++	Беспрецедентные [[metertype METER_STOCKPILE]]: +0.3 за единицу населения
++++    Беспрецедентные [[metertype METER_STOCKPILE]]: +0.3 за единицу населения
 
 GOOD_SHIP_SHIELD_DESC
-+	Хорошие корабельные [[metertype METER_SHIELD]]: +1
++    Хорошие корабельные [[metertype METER_SHIELD]]: +1
 
 GOOD_PLANETARY_SHIELD_DESC
-+	Большой планетарный [[metertype METER_SHIELD]]: +5
++    Большой планетарный [[metertype METER_SHIELD]]: +5
 
 ANCIENT_PLANETARY_SHIELD_DESC
-+++	Древний планетарный [[metertype METER_SHIELD]]: +500
++++    Древний планетарный [[metertype METER_SHIELD]]: +500
 
 GOOD_PLANETARY_DEFENSE_DESC
-+	Крепкая планетарная [[metertype METER_DEFENSE]]: +5
++    Крепкая планетарная [[metertype METER_DEFENSE]]: +5
 
 BROAD_EP_DESC
-++	Хорошая приспособляемость: может обитать на большем количестве типов планет.
+++    Хорошая приспособляемость: может обитать на большем количестве типов планет.
 
 NARROW_EP_DESC
--	Плохая приспособляемость: может обитать на меньшем количестве типов планет.
+-    Плохая приспособляемость: может обитать на меньшем количестве типов планет.
 
 FAST_COLONIZATION_DESC
-+	Быстрая колонизация: -25% к времени основания колонии
++    Быстрая колонизация: -25% к времени основания колонии
 
 SLOW_COLONIZATION_DESC
-−	Медленная колонизация: +20% к времени основания колонии
+−    Медленная колонизация: +20% к времени основания колонии
 
 NO_FUEL_DESC
-−−−	Корабли имеют нулевое [[metertype METER_FUEL]]
+−−−    Корабли имеют нулевое [[metertype METER_FUEL]]
 
 BAD_FUEL_DESC
-−	Плохой максимум [[metertype METER_FUEL]]: - 1
+−    Плохой максимум [[metertype METER_FUEL]]: - 1
 
 AVERAGE_FUEL_DESC
-	Средний максимум [[metertype METER_FUEL]]: +0
-	
+    Средний максимум [[metertype METER_FUEL]]: +0
+    
 GOOD_FUEL_DESC
-+	Хороший максимум [[metertype METER_FUEL]]: +1
++    Хороший максимум [[metertype METER_FUEL]]: +1
 
 GREAT_FUEL_DESC
-++	Отличный максимум [[metertype METER_FUEL]]: +2
+++    Отличный максимум [[metertype METER_FUEL]]: +2
 
 ULTIMATE_FUEL_DESC
-+++	Беспрецедентный максимум [[metertype METER_FUEL]]: +3
++++    Беспрецедентный максимум [[metertype METER_FUEL]]: +3
 
 GREAT_ASTEROID_INDUSTRY_DESC
-+	Хорошие астероидные добытчики: + 0.2 [[metertype METER_INDUSTRY]] за единицу населения, когда планета с фокусом на промышленность расположена рядом с астероидными поясами.
++    Хорошие астероидные добытчики: + 0.2 [[metertype METER_INDUSTRY]] за единицу населения, когда планета с фокусом на промышленность расположена рядом с астероидными поясами.
 
 LIGHT_SENSITIVE_DESC
-−	Светочувствительность: Население уменьшается в системах с [[STAR_BLUE]] и в меньшей степени с [[STAR_WHITE]] звездами.
+−    Светочувствительность: Население уменьшается в системах с [[STAR_BLUE]] и в меньшей степени с [[STAR_WHITE]] звездами.
 
 TELEPATHIC_DETECTION_DESC
-+	Телепатическое обнаружение: может ощущать близлежащие населенные планеты.
++    Телепатическое обнаружение: может ощущать близлежащие населенные планеты.
 
 COMMUNAL_VISION_DESC
-	Общая концепция: разделяет обзор в рамках одинаковых видов.
+    Общая концепция: разделяет обзор в рамках одинаковых видов.
 
-##
+## }
 ## Fuel regeneration
-##
+## {
 
 AVERAGE_BASE_FUEL_REGEN_DESC
-'''	Средняя постоянная [[metertype METER_FUEL]] восполнение: + 0.1'''
+'''    Средняя постоянная [[metertype METER_FUEL]] восполнение: + 0.1'''
 
 LIVING_HULL_BASE_FUEL_REGEN_DESC
-'''	Живой органический корпус [[metertype METER_FUEL]] восполнение: + 0.3'''
+'''    Живой органический корпус [[metertype METER_FUEL]] восполнение: + 0.3'''
 
-##
+## }
 ## Accounting labels
-##
+## {
 
 # %1% FIXME
 STANDARD_CONSTRUCTION_LABEL
@@ -13913,9 +13913,9 @@ SPATIAL_FLUX_MALUS
 SPATIAL_FLUX_BONUS
 Бонус флюкс-двигателя
 
-##
+## }
 ## Tags
-##
+## {
 
 ANTIQUATED
 Архаичные
@@ -13944,9 +13944,9 @@ TELEPATHIC
 ORBITAL
 Орбитальные
 
-##
+## }
 ## AI strings
-##
+## {
 
 # Newline separated list of capitol names for beginner AIs
 AI_CAPITOL_NAMES_BEGINNER
@@ -14038,9 +14038,9 @@ AI_SHIPDESIGN_NAME_SCOUT
 AI_SHIPDESIGN_NAME_KRILLSPAWNER
 Порождение планктона (криля)
 
-##
+## }
 ## AI diplomacy strings and lists
-##
+## {
 
 # Newline separated list of polite peace proposal acknowlegements.
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
@@ -14195,9 +14195,9 @@ AI_FIRST_TURN_GREETING_MSG608
 
 # Don't translate this entry.
 
-##
+## }
 ## Hotkey names and descriptions
-##
+## {
 
 OPTIONS_PAGE_HOTKEYS
 Горячие клавиши
@@ -14331,9 +14331,9 @@ HOTKEY_QUIT
 HOTKEY_FULLSCREEN
 Полноэкранный режим
 
-##
+## }
 ## Name lists
-##
+## {
 
 # Newline separated list of star cluster names
 

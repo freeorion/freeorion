@@ -15,9 +15,9 @@ Nederlands
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
-##
+## {
 
 CANCEL
 Annuleren
@@ -53,34 +53,34 @@ ENTER_NEW_NAME
 Voer een nieuwe naam in
 
 
-##
+## }
 ## Major errors
-##
+## {
 
 
-##
+## }
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
-##
+## {
 
 
-##
+## }
 ## Monsters
-##
+## {
 
 
-##
+## }
 ## Fields
-##
+## {
 
 
-##
+## }
 ## Predefined starting fleets
-##
+## {
 
 
-##
+## }
 ## Status update messages
-##
+## {
 
 SERVER_WONT_START
 De server kon niet gestart worden.
@@ -95,9 +95,9 @@ PLAYER_DISCONNECTED
 Speler %1% heeft geen verbinding met de server meer.
 
 
-##
+## }
 ## Command-line and options database entries
-##
+## {
 
 COMMAND_LINE_USAGE
 '''Gebruik: '''
@@ -301,9 +301,9 @@ OPTIONS_DB_MUSIC_VOLUME
 Het volume (0 tot 255) waarop de muziek afgespeeld moet worden.
 
 
-##
+## }
 ## File dialog
-##
+## {
 
 FILE_DLG_FILES
 Bestand(en):
@@ -312,9 +312,9 @@ FILE_DLG_DEVICE_IS_NOT_READY
 Apparaat is niet gereed.
 
 
-##
+## }
 ## Color selection dialog
-##
+## {
 
 COLOR_DLG_NEW
 Nieuw
@@ -332,9 +332,9 @@ COLOR_DLG_VALUE
 W:
 
 
-##
+## }
 ## Intro screen
-##
+## {
 
 INTRO_WINDOW_TITLE
 FreeOrion Hoofdmenu
@@ -361,9 +361,9 @@ ERR_CONNECT_TIMED_OUT
 Verbinding met server leggen duurde te lang.
 
 
-##
+## }
 ## Server Setup Screen
-##
+## {
 
 SCONNECT_WINDOW_TITLE
 Verbinden met Server
@@ -387,9 +387,9 @@ REFRESH_LIST_BN
 Ververs lijst
 
 
-##
+## }
 ## Multiplayer lobby
-##
+## {
 
 MPLOBBY_WINDOW_TITLE
 Netwerkspel Instellingen
@@ -407,9 +407,9 @@ START_GAME_BN
 Start spel
 
 
-##
+## }
 ## Galaxy Setup Screen
-##
+## {
 
 GSETUP_WINDOW_TITLE
 Melkwegconfiguratie
@@ -483,9 +483,9 @@ GSETUP_ANCIENT
 Oud
 
 
-##
+## }
 ## About dialog
-##
+## {
 
 LICENSE
 Licentie
@@ -500,9 +500,9 @@ FREEORION_VISION
 FreeOrion, een open source spel gebaseerd op Master of Orion, is een beurt-gebaseerd spel van epische ruimte strategie, dat voorbouwt op het klassieke '4X' model door natie-opbouw elementen zoals spellen als Europa Universalis 2 en een uitgebreide tactische gevechts engine erin te bouwen. Door z'n modulaire, open source ontwerp is er veel ruimte voor aanpassing van de spel engine en verhaal elementen door de gemeenschap, het FreeOrion team is toegewijd aan het bouwen van een levend en ademend universum in een 'grand campagne' model.
 
 
-##
+## }
 ## In-game menu
-##
+## {
 
 GAME_MENU_SAVE
 Spel Opslaan
@@ -517,14 +517,14 @@ GAME_MENU_SAVE_FILES
 Spelbestanden Opslaan
 
 
-##
+## }
 ## Save game dialog
-##
+## {
 
 
-##
+## }
 ## Game options
-##
+## {
 
 OPTIONS_TITLE
 Opties
@@ -728,9 +728,9 @@ OPTIONS_SOUND_FILE
 Geluidbestanden
 
 
-##
+## }
 ## Main map window
-##
+## {
 
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
@@ -749,14 +749,14 @@ MAP_BTN_DESIGN
 Ontwerp
 
 
-##
+## }
 ## Side panel/System information
-##
+## {
 
 
-##
+## }
 ## Side panel/Planet panel
-##
+## {
 
 PLANET_PANEL
 Planeet Paneel
@@ -767,24 +767,24 @@ PL_COLONIZE
 Koloniseren
 
 
-##
+## }
 ## Side panel/Resources panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Specials panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Buildings panel
-##
+## {
 
 
-##
+## }
 ## General tooltips
-##
+## {
 
 TT_CHANGE
 Verandering
@@ -814,9 +814,9 @@ SP_ENTER_NEW_PLANET_NAME
 Geef een nieuwe planeetnaam op
 
 
-##
+## }
 ## Fleet window
-##
+## {
 
 # %1% system name where this fleet is moving to.
 FW_FLEET_MOVING_TO
@@ -851,19 +851,19 @@ FW_FOREIGN_SHIP
 Allochtoon schip
 
 
-##
+## }
 ## Moderator
-##
+## {
 
 
-##
+## }
 ## Diplomacy
-##
+## {
 
 
-##
+## }
 ## TechTreeWnd
-##
+## {
 
 TECH_DISPLAY
 Weergave
@@ -887,9 +887,9 @@ TECH_WND_STATUS_RESEARCHABLE
 Onderzoekbaar
 
 
-##
+## }
 ## Production info panel
-##
+## {
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Totaal Beschikbare Punten
@@ -898,9 +898,9 @@ PRODUCTION_INFO_WASTED_PS_LABEL
 Verspilde Punten
 
 
-##
+## }
 ## Research window
-##
+## {
 
 RESEARCH_WND_TITLE
 Onderzoek
@@ -909,9 +909,9 @@ RESEARCH_INFO_RP
 OP
 
 
-##
+## }
 ## Build selector window
-##
+## {
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Bouwbare Objecten
@@ -944,17 +944,17 @@ PRODUCTION_DETAIL_ADD_TO_QUEUE
 Aan Wachtrij Toevoegen
 
 
-##
+## }
 ## Production window
-##
+## {
 
 PRODUCTION_WND_TITLE
 Productie
 
 
-##
+## }
 ## Design window
-##
+## {
 
 DESIGN_NAME_DEFAULT
 Aangepast scheepsontwerp
@@ -990,14 +990,14 @@ DESIGN_WND_CLEAR
 Onderelen wissen
 
 
-##
+## }
 ## Statistics
-##
+## {
 
 
-##
+## }
 ## Encyclopedia
-##
+## {
 
 ENC_SHIP_PART
 Scheepsonderdeel
@@ -1015,29 +1015,29 @@ ENC_BUILDING
 Gebouw
 
 
-##
+## }
 ## Combat report
-##
+## {
 
 
-##
+## }
 ## Encyclopedia article categories and short descriptions
-##
+## {
 
 
-##
+## }
 ## Encyclopedia articles
-##
+## {
 
 
-##
+## }
 ## Guides
-##
+## {
 
 
-##
+## }
 ## Turn progress
-##
+## {
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Vloten verplaatsing
@@ -1058,29 +1058,29 @@ TURN_PROGRESS_PHASE_DOWNLOADING
 Nieuwe spelstatus downloaden
 
 
-##
+## }
 ## Messages panel
-##
+## {
 
 
-##
+## }
 ## Players list
-##
+## {
 
 
-##
+## }
 ## Objects window
-##
+## {
 
 
-##
+## }
 ## Objects columns
-##
+## {
 
 
-##
+## }
 ## Filters dialog
-##
+## {
 
 
 ##
@@ -1110,24 +1110,24 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% arriveerde in het %system% systeem en wacht op verdere opdrachten.
 
 
-##
+## }
 ## Victory/defeat
-##
+## {
 
 
-##
+## }
 ## Random beginner hints
-##
+## {
 
 
-##
+## }
 ## Species
-##
+## {
 
 
-##
+## }
 ## Specials
-##
+## {
 
 ANCIENT_RUINS_SPECIAL
 Oude Ruïnes
@@ -1139,9 +1139,9 @@ MINERALS_SPECIAL
 Minerale Rijkdom
 
 
-##
+## }
 ## Enumeration values
-##
+## {
 
 # Universe object types
 OBJ_BUILDING
@@ -1392,9 +1392,9 @@ PC_COLONY
 Kolonizatie
 
 
-##
+## }
 ## FOCS value references, effects & condition descriptions
-##
+## {
 
 DESC_VAR_PLANET
 planeet
@@ -1430,14 +1430,14 @@ DESC_VAR_CURRENTTURN
 de huidige beurt
 
 
-##
+## }
 ## FOCS condition descriptions
-##
+## {
 
 
-##
+## }
 ## Technology categories
-##
+## {
 
 LEARNING_CATEGORY
 Leren
@@ -1452,9 +1452,9 @@ GROWTH_CATEGORY
 Groei
 
 
-##
+## }
 ## Technology theories
-##
+## {
 
 THEORY_SHORT_DESC
 Theoretisch Voorvereiste
@@ -1553,9 +1553,9 @@ SHP_GAL_EXPLO_DESC
 De Ontdekking van interstellair reizen via sterrenlanen kondigd een nieuw tijdperk voor de gemeenschap aan. Oude politieke onenigheden tussen kleine groepen worden insignificant als de gehele beschaving blootgesteld wordt aan het oneinige potentie van de sterren... voor groei en welvaart, of grote vernietiging.
 
 
-##
+## }
 ## Technology application
-##
+## {
 
 SHIP_PART_UNLOCK_SHORT_DESC
 Ontsluit scheepsonderdeel
@@ -1576,79 +1576,79 @@ GRO_BIOTERROR
 Bioterreur Faciliteiten
 
 
-##
+## }
 ## Technology refinement
-##
+## {
 
 
-##
+## }
 ## Buildings
-##
+## {
 
 
-##
+## }
 ## Hull and ship part description templates
-##
+## {
 
 
-##
+## }
 ## Ship parts
-##
+## {
 
 
-##
+## }
 ## Ship hulls
-##
+## {
 
 
-##
+## }
 ## Buildings macros
-##
+## {
 
 
-##
+## }
 ## Tech macros
-##
+## {
 
 
-##
+## }
 ## Growth macros
-##
+## {
 
 
-##
+## }
 ## Species picks
-##
+## {
 
 
-##
+## }
 ## Accounting labels
-##
+## {
 
 
-##
+## }
 ## Tags
-##
+## {
 
 
-##
+## }
 ## AI strings
-##
+## {
 
 
-##
+## }
 ## AI diplomacy strings and lists
-##
+## {
 
 
-##
+## }
 ## Hotkey names and descriptions
-##
+## {
 
 
-##
+## }
 ## Name lists
-##
+## {
 
 #include "content_specific_parameters.txt"
 #include "common_user_customizations.txt"

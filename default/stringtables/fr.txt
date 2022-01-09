@@ -17,9 +17,9 @@ Français
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
-##
+## {
 
 #OK
 #OK
@@ -271,9 +271,9 @@ MULTIPLAYER
 Multijoueurs
 
 
-##
+## }
 ## Major errors
-##
+## {
 
 ERROR_SOUND_INITIALIZATION_FAILED
 '''L'initialisation du système audio OpenAL a échoué.
@@ -340,9 +340,9 @@ FORMAT_LIST_10_ITEMS
 #%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
 
 
-##
+## }
 ## Build Projects
-##
+## {
 
 PROJECT_BT_STOCKPILE
 Transfert Stock
@@ -362,9 +362,9 @@ Afin de pouvoir utiliser les PP dans le Groupe Ressource secondaire, l'empire aj
 Étant donné que le projet de Transfert Stock est placé au-dessus des autres projets dans la file d'attente du Groupe Ressource principal, le projet est entièrement financé et augmentera donc le Stock de 10 PP au tour suivant. Pour assurer un transfert continu à chaque tour, la valeur de répétition du projet est réglée sur 99 fois.'''
 
 
-##
+## }
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
-##
+## {
 
 SD_CARRIER
 Porteur d'Escorte
@@ -607,9 +607,9 @@ SD_DRAGON_TOOTH_DESC
 Astronef issu d'une civilisation antique, équipé de systèmes avancés d'armement et de défense. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 
-##
+## }
 ## Monsters
-##
+## {
 
 SM_MONSTER
 Monstre
@@ -853,9 +853,9 @@ SM_COSMIC_DRAGON_DESC
 Les Dragons Cosmiques sont des monstres spatiaux issus de la bio-ingénierie, incroyablement résistants, d'une grande [[metertype METER_STEALTH]], et munis d'armes dangereuses. Une flotte très puissante et une [[encyclopedia DETECTION_TITLE]] très performante seront nécessaires pour en découdre avec ces organismes. Ils recherchent et attaquent les planètes habitées, et sont capables de réduire à néant des systèmes stellaires entiers s'ils ne sont pas combattus.'''
 
 
-##
+## }
 ## Fields
-##
+## {
 
 FLD_ION_STORM
 Tempête Ionique
@@ -918,9 +918,9 @@ FLD_VOID_RIFT_DESC
 Une faille singulière de l'espace-temps diminuant de 50% la [[metertype METER_SPEED]] des astronefs.
 
 
-##
+## }
 ## Predefined starting fleets
-##
+## {
 
 FN_BATTLE_FLEET
 Flotte Combat
@@ -935,9 +935,9 @@ MONSTERS
 Monstres
 
 
-##
+## }
 ## Status update messages
-##
+## {
 
 RETURN_TO_INTRO
 Retour au Menu principal
@@ -1077,9 +1077,9 @@ ERROR_CHECKSUM_MISMATCH
 Le contenu de contrôle entre le serveur et le client diffère.
 
 
-##
+## }
 ## Game Rules
-##
+## {
 
 RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR
 Surengagement de PP par Tour
@@ -1345,9 +1345,9 @@ RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
 Toutes interdites
 
 
-##
+## }
 ## Command-line and options database entries
-##
+## {
 
 COMMAND_LINE_HELP_GENERAL_DESCRIPTION
 '''FreeOrion est un jeu de Stratégie Spatiale 4X.
@@ -2251,9 +2251,9 @@ OPTIONS_DB_FREEORIOND_PATH
 Chemin vers l'exécutable du serveur freeoriond.
 
 
-##
+## }
 ## Option sections
-##
+## {
 
 OPTIONS_DB_SECTION_ALL
 Toutes les options
@@ -2334,9 +2334,9 @@ OPTIONS_DB_SECTION_VIDEO_WINDOWED
 Mode fenêtré
 
 
-##
+## }
 ## File dialog
-##
+## {
 
 FILE_DLG_FILES
 Fichier(s):
@@ -2360,9 +2360,9 @@ FILE_DLG_DEVICE_IS_NOT_READY
 Périphérique indisponible.
 
 
-##
+## }
 ## Color selection dialog
-##
+## {
 
 COLOR_DLG_NEW
 Néo
@@ -2392,9 +2392,9 @@ COLOR_DLG_ALPHA
 A
 
 
-##
+## }
 ## Intro screen
-##
+## {
 
 INTRO_WINDOW_TITLE
 Menu principal
@@ -2439,9 +2439,9 @@ INTRO_CREDITS_LICENSE
 Publié sous
 
 
-##
+## }
 ## Server Setup Screen
-##
+## {
 
 SCONNECT_WINDOW_TITLE
 Connexion au Serveur
@@ -2465,9 +2465,9 @@ REFRESH_LIST_BN
 Rafraîchir
 
 
-##
+## }
 ## Password Dialog
-##
+## {
 
 AUTHENTICATION_WINDOW_TITLE
 Authentification
@@ -2479,9 +2479,9 @@ PASSWORD_LABEL
 Mot de Passe
 
 
-##
+## }
 ## Multiplayer lobby
-##
+## {
 
 MPLOBBY_WINDOW_TITLE
 Configuration multijoueurs
@@ -2541,9 +2541,9 @@ PLAYER_LEFT_GAME
 %1% a quitté la partie
 
 
-##
+## }
 ## Galaxy Setup Screen
-##
+## {
 
 GSETUP_WINDOW_TITLE
 Création de la Galaxie
@@ -2693,9 +2693,9 @@ GSETUP_SPECIES_RANDOM_DESC
 Sélectionne au hasard une espèce parmi celles jouables.
 
 
-##
+## }
 ## About dialog
-##
+## {
 
 LICENSE
 Licence
@@ -2710,9 +2710,9 @@ FREEORION_VISION
 FreeOrion, projet open-source s'inspirant de Master of Orion, est un jeu épique de stratégie spatiale au tour par tour, incorporant au modèle classique des "4X", des éléments de développement de nation présents dans des titres tels Europa Universalis 2, ainsi qu'un moteur polyvalent de combat tactique. Bien que sa conception modulaire et ouverte autorise des modifications et personnalisations significatives par la communauté, tant au niveau du moteur de jeu que des éléments de scénario, l'équipe de FreeOrion se consacre à la conception d'un univers vivant et cohérent sur le modèle d'une 'grande campagne'.
 
 
-##
+## }
 ## In-game menu
-##
+## {
 
 GAME_MENU_WINDOW_TITLE  # translated
 Menu
@@ -2751,9 +2751,9 @@ GAME_MENU_CONFIRM_NOT_READY
 Confirmer quitter? Ordres non finalisés.
 
 
-##
+## }
 ## Save game dialog
-##
+## {
 
 SAVE_TIME_TITLE
 <u>Date</u>
@@ -2840,9 +2840,9 @@ SAVE_REALLY_OVERRIDE
 Écraser définitivement %1%?
 
 
-##
+## }
 ## Game options
-##
+## {
 
 OPTIONS_TITLE  # translated
 Options
@@ -3422,9 +3422,9 @@ OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
 Le fichier options.xml existant est remplacé, mais peut être recréé (avec seulement les réglages modifiés) si une nouvelle option est modifiée, y compris le repositionnement de certaines fenêtres de jeu ou via le Menu Options.'''
 
 
-##
+## }
 ## Main map window
-##
+## {
 
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
@@ -3664,9 +3664,9 @@ MAP_FLEET_SLOT_COUNT
 Total Niches d'Équipement
 
 
-##
+## }
 ## Side panel/System information
-##
+## {
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -3715,9 +3715,9 @@ RESOURCE_SELF_SUFFICIENT
 Aucun échange
 
 
-##
+## }
 ## Side panel/Planet panel
-##
+## {
 
 PLANET_PANEL
 Panneau planétaire
@@ -3811,18 +3811,18 @@ MENUITEM_ENQUEUE_BUILDING
 Ajouter Structure en file d'attente
 
 
-##
+## }
 ## Side panel/Resources panel
-##
+## {
 
 # %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
 Focus %1%
 
 
-##
+## }
 ## Side panel/Specials panel
-##
+## {
 
 # %1% capacity value applied by the special.
 SPECIAL_CAPACITY
@@ -3836,9 +3836,9 @@ ADDED_ON_INITIAL_TURN
 Disponible depuis 1er Tour
 
 
-##
+## }
 ## Side panel/Buildings panel
-##
+## {
 
 ORDER_BUIDLING_SCRAP
 Détruire la structure
@@ -3847,9 +3847,9 @@ ORDER_CANCEL_BUIDLING_SCRAP
 Annuler la destruction
 
 
-##
+## }
 ## General tooltips
-##
+## {
 
 TT_THIS_TURN
 Tour Actuel
@@ -3955,9 +3955,9 @@ SP_PLANET_SUITABILITY
 Habitabilité de la planète
 
 
-##
+## }
 ## Fleet window
-##
+## {
 
 # %1% system name where this fleet is holding.
 FW_FLEET_HOLDING_AT
@@ -4236,9 +4236,9 @@ ORDER_CANCEL_GIVE_PLANET
 Annuler l'offre de la planète
 
 
-##
+## }
 ## Fleet Button
-##
+## {
 
 FB_TOOLTIP_BLOCKADE_WITH_EXIT
 Cette flotte est actuellement soumise au blocus d'une flotte hostile, et ne peut donc voyager que vers les systèmes suivants:
@@ -4250,9 +4250,9 @@ FB_TOOLTIP_BLOCKADE_MONSTER
 Cette flotte de monstres est soumise au blocus d'une flotte de l'empire. Les monstres bloqués par des flottes impériales ne peuvent plus se déplacer.
 
 
-##
+## }
 ## Moderator
-##
+## {
 
 MOD_NONE
 Pas d'action de la part du modérateur
@@ -4276,9 +4276,9 @@ MOD_REMOVE_STARLANE
 Supprimer une Voie spatiale
 
 
-##
+## }
 ## Diplomacy
-##
+## {
 
 DIPLOMACY
 Diplomatie
@@ -4329,9 +4329,9 @@ END_ALLIANCE_DECLARATION
 Mettre un terme à l'alliance
 
 
-##
+## }
 ## TechTreeWnd
-##
+## {
 
 TECH_DISPLAY
 Affichage
@@ -4405,9 +4405,9 @@ TECH_WND_LIST_COLUMN_DESCRIPTION  # translated
 Description
 
 
-##
+## }
 ## Government Wnd
-##
+## {
 
 POLICY_LOCKED
 Politique indisponible mais demanderait %1% PI pour être appliquée.
@@ -4425,9 +4425,9 @@ POLICY_ADOPTION_TIME_TOTAL
 Politique non appliquée actuellement. A été appliquée pendant %2% tours au total.
 
 
-##
+## }
 ## Production info panel
-##
+## {
 
 # %1% type of resource (Research, Production, ...).
 # %2% name of the location where the resource is produced.
@@ -4468,9 +4468,9 @@ STOCKPILE_CHANGE_LABEL
 Stock prochain tour
 
 
-##
+## }
 ## Research window
-##
+## {
 
 RESEARCH_WND_TITLE
 Recherche
@@ -4488,9 +4488,9 @@ RESEARCH_QUEUE_PROMPT
 Maintenir CONTROL lors du clic pour les ajouter directement en tête de liste.'''
 
 
-##
+## }
 ## Build selector window
-##
+## {
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Projets disponibles
@@ -4543,9 +4543,9 @@ PRODUCTION_QUEUE_PROMPT
 Double-clic sur les projets disponibles pour les ajouter à la file d'attente de Production.
 
 
-##
+## }
 ## Production window
-##
+## {
 
 PRODUCTION_WND_TITLE  # translated
 Production
@@ -4771,9 +4771,9 @@ PRODUCTION_WND_TOOLTIP_FAILED_COND
 Conditions non remplies pour produire sur %1%
 
 
-##
+## }
 ## Design window
-##
+## {
 
 SHIP_DESIGN_FILES
 Fichiers Modèle
@@ -4889,7 +4889,7 @@ Renommer Modèle Finalisé
 DESIGN_WND_RENAME_FINISHED_DETAIL
 '''Renommer modèle finalisé
 "%1%"
-en 
+en
 "%2%"'''
 
 DESIGN_WND_COMPONENT_CONFLICT
@@ -4967,9 +4967,9 @@ ERROR_UNABLE_TO_WRITE_FILE
 Impossible de créer le fichier:\n"%1%"
 
 
-##
+## }
 ## Government window
-##
+## {
 
 GOVERNMENT_INFO_IP
 PI
@@ -4987,9 +4987,9 @@ MILITARY_CATEGORY
 Militaire
 
 
-##
+## }
 ## Statistics
-##
+## {
 
 SHIP_COUNT
 Nombre d'astronefs
@@ -5061,9 +5061,9 @@ Population
 #Statistics Test 3
 
 
-##
+## }
 ## Encyclopedia
-##
+## {
 
 # %1% name of the species.
 ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
@@ -5581,7 +5581,7 @@ ENC_UNLOCKED_BY
 '''Débloqué par : '''
 
 ENC_UNLOCKS
-'''Débloque : 
+'''Débloque :
 '''
 
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
@@ -5754,9 +5754,9 @@ ENC_METER_TYPE
 Type d'Indicateurs
 
 
-##
+## }
 ## Combat report
-##
+## {
 
 NEUTRAL
 Neutre
@@ -5851,9 +5851,9 @@ COMBAT_DESTROYED_LABEL
 Perdues: %1%
 
 
-##
+## }
 ## Encyclopedia article categories and short descriptions
-##
+## {
 
 CATEGORY_GUIDES  # translated
 **Guides**
@@ -5910,9 +5910,9 @@ MANAGEMENT_TITLE_SHORT_DESC
 Gestion
 
 
-##
+## }
 ## Encyclopedia articles in Guides category
-##
+## {
 
 INTERFACE_TITLE
 *Interface*
@@ -5921,9 +5921,9 @@ INTERFACE_TEXT
 Liste non-exhaustive des fonctionnalités de l'Interface de FreeOrion :
 
 
-##
+## }
 ## Encyclopedia articles in Game Concepts category
-##
+## {
 
 DIPLOMACY_TITLE
 Diplomatie
@@ -5993,9 +5993,9 @@ Si des flottes de deux empires hostiles ou plus arrivent simultanément dans un 
 Les Monstres spatiaux peuvent également établir des blocus. Cependant, si une flotte de l'empire est bloquée par un monstre spatial, le blocus sera interrompu dès qu'un combat aura eu lieu, permettant ainsi à la flotte de l'empire de quitter le système par n'importe quelle Voie spatiale, ou bien d'établir à son tour un blocus à l'encontre du monstre. De plus, si la flotte bloquée est armée et en mode Agression, la propagation de l'Approvisionnement sera rétablie. Si un Monstre spatial et une flotte de l'empire entrent dans le système simultanément, la flotte de l'empire pourra agir en premier et établir un blocus contre le Monstre.'''
 
 
-##
+## }
 ## Encyclopedia articles
-##
+## {
 
 METER_TARGET_POPULATION_VALUE_LABEL
 [[METER_POPULATION_VALUE_LABEL]]
@@ -6629,9 +6629,9 @@ FIELDS_TEXT
 Il existe plus d'un Type de Milieux interstellaires, ayant chacun une apparence diffuse et différente. Un clic-droit sur l'un de ces objets à partir de la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] affiche une petite vignette identifiant son type et un lien vers l'Encyclopédie afin d'en découvrir la nature.
 
 
-##
+## }
 ## Guides
-##
+## {
 
 GENERAL_PEDIA_REFERENCE
 Tous les articles d'aide et d'information sont disponibles via l'[[encyclopedia ENC_INDEX]].
@@ -6776,9 +6776,9 @@ Linux: ${XDG_CONFIG_HOME}/freeorion ou si $XDG_CONFIG_HOME n'est pas défini: ${
 '''
 
 
-##
+## }
 ## Turn progress
-##
+## {
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Mouvement des flottes
@@ -6821,9 +6821,9 @@ ERROR_EARLY_TURN_UPDATE
 Réception d'un état de tour inattendu de la part du serveur.
 
 
-##
+## }
 ## Messages panel
-##
+## {
 
 MESSAGES_PANEL_TITLE  # translated
 Messages
@@ -6853,9 +6853,9 @@ MESSAGES_INVALID
 Joueur invalide ou aucun message saisi.
 
 
-##
+## }
 ## Players list
-##
+## {
 
 PLAYERS_LIST_PANEL_TITLE  # translated
 Empires
@@ -6870,9 +6870,9 @@ WAITING
 Attend
 
 
-##
+## }
 ## Objects window
-##
+## {
 
 SORT
 Trier
@@ -6884,9 +6884,9 @@ EXPAND_ALL
 Déplier
 
 
-##
+## }
 ## Objects columns
-##
+## {
 
 METERS_SUBMENU
 Indicateurs
@@ -7066,9 +7066,9 @@ TAGS  # translated
 Tags
 
 
-##
+## }
 ## Filters dialog
-##
+## {
 
 VISIBLE  # translated
 Visible
@@ -7875,9 +7875,9 @@ CUSTOM_4
 Custom_4
 
 
-##
+## }
 ## Victory/defeat
-##
+## {
 
 VICTORY_TECH
 VICTOIRE! L'empire %empire% a transcendé notre réalité et remporte une victoire technologique.
@@ -7901,9 +7901,9 @@ SITREP_EMPIRE_ELIMINATED_LABEL
 Empire vaincu
 
 
-##
+## }
 ## Random beginner hints
-##
+## {
 
 BEGINNER_HINTS
 Astuces de Jeu
@@ -8028,9 +8028,9 @@ BEGINNER_HINT_22
 22: Lorsqu'un système est sélectionné, le raccourci clavier ALT-C permet d'afficher un cercle d'échelle de distance pour le système en question. Selon le niveau de zoom, le diamètre du cercle correspond à la distance indiquée par la barre d'échelle située en haut à gauche de la carte galactique.
 
 
-##
+## }
 ## Species
-##
+## {
 
 HOMEWORLD
 Planète Natale
@@ -8069,9 +8069,9 @@ OPINIONS_OF_OTHER_SPECIES
 Opinions des autres Espèces :
 
 
-##
+## }
 ## Encyclopedia articles in Species Types category
-##
+## {
 
 ALL_SPECIES
 Toutes les Espèces
@@ -8128,9 +8128,9 @@ GASEOUS_SPECIES_CLASS_DESC
 Liste des espèces à [[encyclopedia GASEOUS_SPECIES_TITLE]]:
 
 
-##
+## }
 ## Encyclopedia articles in Species category
-##
+## {
 
 SP_HUMAN
 Humain
@@ -9023,9 +9023,9 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 #''''''
 
 
-##
+## }
 ## Specials
-##
+## {
 
 INDEPENDENT_COLONY_SHIELD_SPECIAL
 Boucliers Planétaires Indépendants
@@ -9459,9 +9459,9 @@ MIMETIC_ALLOY_SPECIAL_IMPORTS
 Import [[MIMETIC_ALLOY_SPECIAL]]
 
 
-##
+## }
 ## Enumeration values
-##
+## {
 
 # Universe object types
 INVALID_UNIVERSE_OBJECT_TYPE
@@ -10225,9 +10225,9 @@ PATH_TEMP
 ''''''
 
 
-##
+## }
 ## Ship hull categories
-##
+## {
 
 HULL_LINE_GENERIC
 Classe Coque: Générique
@@ -10308,9 +10308,9 @@ HULL_MONSTER_TREE_DESC
 Corps utilisés dans la conception de monstres de type Végétal.
 
 
-##
+## }
 ## FOCS value references, effects & condition descriptions
-##
+## {
 
 DESC_VAR_PLANET
 planète
@@ -10695,9 +10695,9 @@ DESC_VALUE_REF_MULTIPART_VARIABLEMANY
 %1% %2% %3% %4% %5% %6% %7% ...
 
 
-##
+## }
 ## FOCS condition descriptions
-##
+## {
 
 DESC_ALL
 ''' présent dans l'univers'''
@@ -11513,9 +11513,9 @@ DESC_HAS_TAG_NOT
 ''' ce n'est pas %1%'''
 
 
-##
+## }
 ## Imperial Policies
-##
+## {
 
 PLC_NO_GROWTH
 Pas de Croissance
@@ -11761,9 +11761,9 @@ PLC_CONFEDERATION
 Confédération
 
 PLC_CONFEDERATION_DESC
-'''Les planètes de l'empire sont organisées en systèmes indépendants confédérés. 
+'''Les planètes de l'empire sont organisées en systèmes indépendants confédérés.
 
-• Augmente de [[value PLC_CONFEDERATION_SUPPLY_DISCONNECTED_INFLUENCE_FLAT]] la [[metertype METER_TARGET_INFLUENCE]] des colonies non-connectées à la Capitale 
+• Augmente de [[value PLC_CONFEDERATION_SUPPLY_DISCONNECTED_INFLUENCE_FLAT]] la [[metertype METER_TARGET_INFLUENCE]] des colonies non-connectées à la Capitale
 • Augmente de [[value DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY]] la [[metertype METER_TARGET_HAPPINESS]] des colonies non-connectées à la Capitale et aux centres administratifs régionaux
 • Diminue la [[metertype METER_TARGET_HAPPINESS]] ([[value PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT]]) sur toutes les planètes
 • Augmente l'indicateur [[metertype METER_MAX_TROOPS]] de [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]]'''
@@ -11900,7 +11900,7 @@ Conformité
 
 PLC_CONFORMANCE_DESC
 '''• Réduit l'impact des préférences d'une espèce (aime ou n'aime pas telles structures ou Politiques) sur la [[metertype METER_HAPPINESS]] planétaire.
-• Diminue la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT]] sur toutes les planètes. 
+• Diminue la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT]] sur toutes les planètes.
 • Augmente la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_CONFORMANCE_STABILITY_BONUS_FLAT]].
 
 Sur toutes les planètes dont la [[metertype METER_HAPPINESS]] est au moins égale à [[value PLC_CONFORMANCE_MIN_STABILITY]]:
@@ -12086,9 +12086,9 @@ PLC_CHARGE_SHORT_DESC
 Améliore les dommages des astronefs rapides
 
 
-##
+## }
 ## Technology categories
-##
+## {
 
 LEARNING_CATEGORY
 Connaissance
@@ -12235,9 +12235,9 @@ EXTINCT_SPECIES_TECHS_DESC
 Technologies relatives aux espèces éteintes.
 
 
-##
+## }
 ## Technology theories
-##
+## {
 
 THEORY_SHORT_DESC
 Prérequis Théorique
@@ -12919,9 +12919,9 @@ SPY_ROOT_DECEPTION_DESC
 L'art de la tromperie n’est pas naturel à toutes les espèces, mais la possibilité de dissimuler la vérité peut s'avérer bien utile.
 
 
-##
+## }
 ## Technology application
-##
+## {
 
 VICTORY_SHORT_DESC
 Donne la victoire!
@@ -13371,9 +13371,9 @@ SHP_BOMBARD_DESC
 Permet le développement d'armes de bombardement planétaire.
 
 
-##
+## }
 ## Fighter explanation, needs improving and a Pedia article writing
-##
+## {
 
 SHP_FIGHTERS_1
 Chasseurs et Rampes de Lancement
@@ -13945,9 +13945,9 @@ FLEET_UNSTEALTHY_SHIPS_THRESHOLD
 Nombre d'astronefs dans un même système et appartenant au même empire, au-dessus duquel les astronefs subissent une pénalité de [[metertype METER_STEALTH]].
 
 
-##
+## }
 ## Technology refinement
-##
+## {
 
 BUILDING_REFINE_SHORT_DESC
 Améliore une structure
@@ -13968,9 +13968,9 @@ PRO_INDUSTRY_CENTER_III_DESC
 Des expérimentations ingénieuses conjuguées au perfectionnement des infrastructures augmentent le rendement d'une production de qualité. Le bonus pour l'[[metertype METER_INDUSTRY]] sera le triple de celui fourni par un [[buildingtype BLD_INDUSTRY_CENTER]] de base.
 
 
-##
+## }
 ## Buildings
-##
+## {
 
 BLD_EVACUATION
 Évacuation Planétaire
@@ -14757,9 +14757,9 @@ BLD_COL_SUPER_TEST_DESC
 [[BLD_COL_PART_1]] colonie Super-Testeurs. [[BLD_COL_PART_2]] colonie Super-Testeurs [[BLD_COL_PART_3]].
 
 
-##
+## }
 ## Hull and ship part description templates
-##
+## {
 
 # %1% hull base starlane speed.
 # %2% hull base fuel capacity.
@@ -14803,9 +14803,9 @@ PART_DESC_HANGAR_STATS
 [[encyclopedia DAMAGE_TITLE]] par tir : %2%'''
 
 
-##
+## }
 ## Ship parts
-##
+## {
 
 FT_WEAPON_1
 Arme Chasseur
@@ -15490,9 +15490,9 @@ RS_AUTOTRADER_DESC
 Génère des Points d'Influence pour l'empire.
 
 
-##
+## }
 ## Ship hulls
-##
+## {
 
 SH_ROBOTIC
 Coque Robotique
@@ -16100,9 +16100,9 @@ SH_DAMPENING_CLOUD_BODY_DESC
 Un nuage cosmique constitué de particules de haute énergie.
 
 
-##
+## }
 ## Monsters Macros
-##
+## {
 
 SM_KRILL_MACRO_1
 Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le Krill Spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire
@@ -16123,9 +16123,9 @@ SM_JUGGERNAUT_ENVIRONMENT
 Environnement favori: [[PT_ASTEROIDS]]. Les nids de Mastodontes se trouvent habituellement dans les Ceintures d'Astéroïdes. Les Mastodontes peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des Ceintures d'Astéroïdes.
 
 
-##
+## }
 ## Buildings macros
-##
+## {
 
 BUILDING_AVAILABLE_ON_OUTPOSTS
 Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]]
@@ -16203,9 +16203,9 @@ BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED
 Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], d'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]], et d'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
 
 
-##
+## }
 ## Other than Requirements
-##
+## {
 
 SHIPDESIGN_DETECTION_RESEARCH_TIPS
 La [[metertype METER_RESEARCH]] visant à améliorer le [[metertype METER_DETECTION]] permettra la conception de meilleurs modèles.
@@ -16285,17 +16285,17 @@ ENEMY_PLANET_ANY_POP
 toute [[metertype METER_POPULATION]] des planètes ennemies
 
 
-##
+## }
 ## Tech macros
-##
+## {
 
 COLONY_BUILDING_TIME_DECREASE
 Entre autres applications, cette technologie permet de réduire le délai nécessaire à la construction d'une colonie très éloignée de l'espèce correspondante dans l'empire.
 
 
-##
+## }
 ## Growth macros
-##
+## {
 
 GROWTH_SPECIAL_POPULATION_ORGANIC_INCREASE
 Les espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].
@@ -16336,287 +16336,287 @@ GROWTH_SPECIAL_LABEL
 Planète <i>%1%</i> [[TT_SPECIAL]]
 
 
-##
+## }
 ## Species picks
-##
+## {
 
 NO_INDUSTRY_DESC
-−−−	Pas d'[[metertype METER_INDUSTRY]]
+−−−    Pas d'[[metertype METER_INDUSTRY]]
 
 VERY_BAD_INDUSTRY_DESC
-−−	Très Mauvais en [[metertype METER_INDUSTRY]] : 50%
+−−    Très Mauvais en [[metertype METER_INDUSTRY]] : 50%
 
 BAD_INDUSTRY_DESC
-−	Mauvais en [[metertype METER_INDUSTRY]] : 75%
+−    Mauvais en [[metertype METER_INDUSTRY]] : 75%
 
 AVERAGE_INDUSTRY_DESC
-'''	Normal en [[metertype METER_INDUSTRY]] : 100%'''
+'''    Normal en [[metertype METER_INDUSTRY]] : 100%'''
 
 GOOD_INDUSTRY_DESC
-+	Bon en [[metertype METER_INDUSTRY]] : 150%
++    Bon en [[metertype METER_INDUSTRY]] : 150%
 
 GREAT_INDUSTRY_DESC
-++	Excellent en [[metertype METER_INDUSTRY]] : 200%
+++    Excellent en [[metertype METER_INDUSTRY]] : 200%
 
 ULTIMATE_INDUSTRY_DESC
-+++	Parfait en [[metertype METER_INDUSTRY]] : 300%
++++    Parfait en [[metertype METER_INDUSTRY]] : 300%
 
 NO_RESEARCH_DESC
-−−−	Pas de [[metertype METER_RESEARCH]]
+−−−    Pas de [[metertype METER_RESEARCH]]
 
 VERY_BAD_RESEARCH_DESC
-−−	Très Mauvais en [[metertype METER_RESEARCH]] : 50%
+−−    Très Mauvais en [[metertype METER_RESEARCH]] : 50%
 
 BAD_RESEARCH_DESC
-−	Mauvais en [[metertype METER_RESEARCH]] : 75%
+−    Mauvais en [[metertype METER_RESEARCH]] : 75%
 
 AVERAGE_RESEARCH_DESC
-'''	Normal en [[metertype METER_RESEARCH]] : 100%'''
+'''    Normal en [[metertype METER_RESEARCH]] : 100%'''
 
 GOOD_RESEARCH_DESC
-+	Bon en [[metertype METER_RESEARCH]] : 150%
++    Bon en [[metertype METER_RESEARCH]] : 150%
 
 GREAT_RESEARCH_DESC
-++	Excellent en [[metertype METER_RESEARCH]] : 200%
+++    Excellent en [[metertype METER_RESEARCH]] : 200%
 
 ULTIMATE_RESEARCH_DESC
-+++	Parfait en [[metertype METER_RESEARCH]] : 300%
++++    Parfait en [[metertype METER_RESEARCH]] : 300%
 
 NO_INFLUENCE_DESC
-−−−	Pas d'[[metertype METER_INFLUENCE]]
+−−−    Pas d'[[metertype METER_INFLUENCE]]
 
 VERY_BAD_INFLUENCE_DESC
-−−	Très Mauvais en [[metertype METER_INFLUENCE]] : 50%
+−−    Très Mauvais en [[metertype METER_INFLUENCE]] : 50%
 
 BAD_INFLUENCE_DESC
-−	Mauvais en [[metertype METER_INFLUENCE]] : 75%
+−    Mauvais en [[metertype METER_INFLUENCE]] : 75%
 
 AVERAGE_INFLUENCE_DESC
-'''	Normal en [[metertype METER_INFLUENCE]] : 100%'''
+'''    Normal en [[metertype METER_INFLUENCE]] : 100%'''
 
 GOOD_INFLUENCE_DESC
-+	Bon en [[metertype METER_INFLUENCE]] : 150%
++    Bon en [[metertype METER_INFLUENCE]] : 150%
 
 GREAT_INFLUENCE_DESC
-++	Excellent en [[metertype METER_INFLUENCE]] : 200%
+++    Excellent en [[metertype METER_INFLUENCE]] : 200%
 
 ULTIMATE_INFLUENCE_DESC
-+++	Parfait en [[metertype METER_INFLUENCE]] : 300%
++++    Parfait en [[metertype METER_INFLUENCE]] : 300%
 
 BAD_HAPPINESS_DESC
-−	Mauvais en [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
+−    Mauvais en [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
 
 AVERAGE_HAPPINESS_DESC
-'''	Normal en [[metertype METER_HAPPINESS]]: +0'''
+'''    Normal en [[metertype METER_HAPPINESS]]: +0'''
 
 GOOD_HAPPINESS_DESC
-+	Bon en [[metertype METER_HAPPINESS]]: +[[value GOOD_HAPPINESS_VAL]]
++    Bon en [[metertype METER_HAPPINESS]]: +[[value GOOD_HAPPINESS_VAL]]
 
 GREAT_HAPPINESS_DESC
-++	Excellent en [[metertype METER_HAPPINESS]]: +[[value GREAT_HAPPINESS_VAL]]
+++    Excellent en [[metertype METER_HAPPINESS]]: +[[value GREAT_HAPPINESS_VAL]]
 
 ULTIMATE_HAPPINESS_DESC
-+++	Parfait en [[metertype METER_HAPPINESS]]: +[[value ULTIMATE_HAPPINESS_VAL]]
++++    Parfait en [[metertype METER_HAPPINESS]]: +[[value ULTIMATE_HAPPINESS_VAL]]
 
 NO_DEFENSE_TROOPS_DESC
-−−−	Pas d'[[metertype METER_TROOPS]] défensive
+−−−    Pas d'[[metertype METER_TROOPS]] défensive
 
 BAD_DEFENSE_TROOPS_DESC
-−	Mauvais en [[metertype METER_TROOPS]] défensive : 50%
+−    Mauvais en [[metertype METER_TROOPS]] défensive : 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-'''	Normal en [[metertype METER_TROOPS]] défensive : 100%'''
+'''    Normal en [[metertype METER_TROOPS]] défensive : 100%'''
 
 GOOD_DEFENSE_TROOPS_DESC
-+	Bon en [[metertype METER_TROOPS]] défensive : 150%
++    Bon en [[metertype METER_TROOPS]] défensive : 150%
 
 GREAT_DEFENSE_TROOPS_DESC
-++	Excellent en [[metertype METER_TROOPS]] défensive : 200%
+++    Excellent en [[metertype METER_TROOPS]] défensive : 200%
 
 ULTIMATE_DEFENSE_TROOPS_DESC
-+++	Parfait en [[metertype METER_TROOPS]] défensive : 300%
++++    Parfait en [[metertype METER_TROOPS]] défensive : 300%
 
 ANCIENT_DEFENSE_TROOPS_DESC
-+++	[[metertype METER_TROOPS]] ancestrale défensive : 10 par [[metertype METER_POPULATION]]
++++    [[metertype METER_TROOPS]] ancestrale défensive : 10 par [[metertype METER_POPULATION]]
 
 NO_OFFENSE_TROOPS_DESC
-−−−	Pas d'[[metertype METER_TROOPS]] offensive
+−−−    Pas d'[[metertype METER_TROOPS]] offensive
 
 BAD_OFFENSE_TROOPS_DESC
-−	Mauvais en [[metertype METER_TROOPS]] offensive : 50%
+−    Mauvais en [[metertype METER_TROOPS]] offensive : 50%
 
 AVERAGE_OFFENSE_TROOPS_DESC
-'''	Normal en [[metertype METER_TROOPS]] offensive : 100%'''
+'''    Normal en [[metertype METER_TROOPS]] offensive : 100%'''
 
 GOOD_OFFENSE_TROOPS_DESC
-+	Bon en [[metertype METER_TROOPS]] offensive : 150%
++    Bon en [[metertype METER_TROOPS]] offensive : 150%
 
 GREAT_OFFENSE_TROOPS_DESC
-++	Excellent en [[metertype METER_TROOPS]] offensive : 200%
+++    Excellent en [[metertype METER_TROOPS]] offensive : 200%
 
 ULTIMATE_OFFENSE_TROOPS_DESC
-+++	Parfait en [[metertype METER_TROOPS]] offensive : 300%
++++    Parfait en [[metertype METER_TROOPS]] offensive : 300%
 
 BAD_DETECTION_DESC
-−	Faible [[metertype METER_DETECTION]] : −20 malus
+−    Faible [[metertype METER_DETECTION]] : −20 malus
 
 GOOD_DETECTION_DESC
-+	Bon [[metertype METER_DETECTION]] : +25 bonus
++    Bon [[metertype METER_DETECTION]] : +25 bonus
 
 GREAT_DETECTION_DESC
-++	Excellent [[metertype METER_DETECTION]] : +50 bonus
+++    Excellent [[metertype METER_DETECTION]] : +50 bonus
 
 ULTIMATE_DETECTION_DESC
-+++	Parfait [[metertype METER_DETECTION]] : +100 bonus
++++    Parfait [[metertype METER_DETECTION]] : +100 bonus
 
 BAD_STEALTH_DESC
-−	Mauvais en [[metertype METER_STEALTH]] Planétaire : −20 malus
+−    Mauvais en [[metertype METER_STEALTH]] Planétaire : −20 malus
 
 AVERAGE_STEALTH_DESC
-'''	Normal en [[metertype METER_STEALTH]] Planétaire'''
+'''    Normal en [[metertype METER_STEALTH]] Planétaire'''
 
 GOOD_STEALTH_DESC
-+	Bon en [[metertype METER_STEALTH]] Planétaire : +20 bonus
++    Bon en [[metertype METER_STEALTH]] Planétaire : +20 bonus
 
 GREAT_STEALTH_DESC
-++	Excellent en [[metertype METER_STEALTH]] Planétaire : +40 bonus
+++    Excellent en [[metertype METER_STEALTH]] Planétaire : +40 bonus
 
 ULTIMATE_STEALTH_DESC
-+++	Parfait en [[metertype METER_STEALTH]] Planétaire : +60 bonus
++++    Parfait en [[metertype METER_STEALTH]] Planétaire : +60 bonus
 
 BAD_WEAPONS_DESC
-−	Mauvais Pilotes : dommages de base par armement d'astronef réduits d'un niveau.
+−    Mauvais Pilotes : dommages de base par armement d'astronef réduits d'un niveau.
 
 GOOD_WEAPONS_DESC
-+	Bons Pilotes : dommages de base par armement d'astronef augmentés d'un niveau.
++    Bons Pilotes : dommages de base par armement d'astronef augmentés d'un niveau.
 
 GREAT_WEAPONS_DESC
-++	Excellents Pilotes : dommages de base par armement d'astronef augmentés de deux niveaux.
+++    Excellents Pilotes : dommages de base par armement d'astronef augmentés de deux niveaux.
 
 ULTIMATE_WEAPONS_DESC
-+++	Parfaits Pilotes : dommages de base par armement d'astronef augmentés de trois niveaux.
++++    Parfaits Pilotes : dommages de base par armement d'astronef augmentés de trois niveaux.
 
 GASEOUS_DESC
-'''+	Vie sur Géantes Gazeuses
-+	Ravitaillement Carburant sur Géantes Gazeuses 0.1'''
+'''+    Vie sur Géantes Gazeuses
++    Ravitaillement Carburant sur Géantes Gazeuses 0.1'''
 
 BAD_POPULATION_DESC
-−	Mauvais en [[metertype METER_POPULATION]] : 75%
+−    Mauvais en [[metertype METER_POPULATION]] : 75%
 
 AVERAGE_POPULATION_DESC
-'''	Normal en [[metertype METER_POPULATION]] : 100%'''
+'''    Normal en [[metertype METER_POPULATION]] : 100%'''
 
 GOOD_POPULATION_DESC
-+	Bon en [[metertype METER_POPULATION]] : 125%
++    Bon en [[metertype METER_POPULATION]] : 125%
 
 FIXED_LOW_POPULATION_DESC
-−−	Population Maximale limitée à 5
+−−    Population Maximale limitée à 5
 
 VERY_BAD_SUPPLY_DESC
-−−	Très Mauvais en [[metertype METER_SUPPLY]] : -1
+−−    Très Mauvais en [[metertype METER_SUPPLY]] : -1
 
 BAD_SUPPLY_DESC
-−	Mauvais en [[metertype METER_SUPPLY]] : aucun bonus
+−    Mauvais en [[metertype METER_SUPPLY]] : aucun bonus
 
 AVERAGE_SUPPLY_DESC
-'''	Normal en [[metertype METER_SUPPLY]] : +1'''
+'''    Normal en [[metertype METER_SUPPLY]] : +1'''
 
 GREAT_SUPPLY_DESC
-+	Excellent en [[metertype METER_SUPPLY]] : +2
++    Excellent en [[metertype METER_SUPPLY]] : +2
 
 ULTIMATE_SUPPLY_DESC
-++	Parfait en [[metertype METER_SUPPLY]] : +3
+++    Parfait en [[metertype METER_SUPPLY]] : +3
 
 NO_STOCKPILE_DESC
-−−	Aucune [[metertype METER_STOCKPILE]]
+−−    Aucune [[metertype METER_STOCKPILE]]
 
 BAD_STOCKPILE_DESC
-−	Mauvais en [[metertype METER_STOCKPILE]] : +0.01 par [[metertype METER_POPULATION]]
+−    Mauvais en [[metertype METER_STOCKPILE]] : +0.01 par [[metertype METER_POPULATION]]
 
 AVERAGE_STOCKPILE_DESC
-'''	Normal en [[metertype METER_STOCKPILE]] : +0.02 par [[metertype METER_POPULATION]]'''
+'''    Normal en [[metertype METER_STOCKPILE]] : +0.02 par [[metertype METER_POPULATION]]'''
 
 GOOD_STOCKPILE_DESC
-+	Bon en [[metertype METER_STOCKPILE]] : +0.06 par [[metertype METER_POPULATION]]
++    Bon en [[metertype METER_STOCKPILE]] : +0.06 par [[metertype METER_POPULATION]]
 
 GREAT_STOCKPILE_DESC
-++	Excellent en [[metertype METER_STOCKPILE]] : +0.2 par [[metertype METER_POPULATION]]
+++    Excellent en [[metertype METER_STOCKPILE]] : +0.2 par [[metertype METER_POPULATION]]
 
 ULTIMATE_STOCKPILE_DESC
-+++	Parfait en [[metertype METER_STOCKPILE]] : +0.3 par [[metertype METER_POPULATION]]
++++    Parfait en [[metertype METER_STOCKPILE]] : +0.3 par [[metertype METER_POPULATION]]
 
 GOOD_SHIP_SHIELD_DESC
-+	Bons [[metertype METER_SHIELD]] d'astronefs : +1
++    Bons [[metertype METER_SHIELD]] d'astronefs : +1
 
 GOOD_PLANETARY_SHIELD_DESC
-+	Bons [[metertype METER_SHIELD]] planétaires : +5
++    Bons [[metertype METER_SHIELD]] planétaires : +5
 
 ANCIENT_PLANETARY_SHIELD_DESC
-+++	[[metertype METER_SHIELD]] planétaires ancestraux : +500
++++    [[metertype METER_SHIELD]] planétaires ancestraux : +500
 
 GOOD_PLANETARY_DEFENSE_DESC
-+	Bonne [[metertype METER_DEFENSE]] planétaire : +5
++    Bonne [[metertype METER_DEFENSE]] planétaire : +5
 
 BROAD_EP_DESC
-+	Grande adaptabilité : peut s'acclimater à plus de types planétaires.
++    Grande adaptabilité : peut s'acclimater à plus de types planétaires.
 
 NARROW_EP_DESC
-−−	Faible adaptabilité : s'acclimate à moins de types planétaires.
+−−    Faible adaptabilité : s'acclimate à moins de types planétaires.
 
 FAST_COLONIZATION_DESC
-+	Colonisation rapide : -25% de délai pour bâtir une colonie.
++    Colonisation rapide : -25% de délai pour bâtir une colonie.
 
 SLOW_COLONIZATION_DESC
-−	Colonisation lente : +20% de délai pour bâtir une colonie.
+−    Colonisation lente : +20% de délai pour bâtir une colonie.
 
 NO_FUEL_DESC
-−−−	Astronefs sans [[metertype METER_FUEL]]
+−−−    Astronefs sans [[metertype METER_FUEL]]
 
 BAD_FUEL_DESC
-−	Mauvais en [[metertype METER_FUEL]] max : -0.5
+−    Mauvais en [[metertype METER_FUEL]] max : -0.5
 
 AVERAGE_FUEL_DESC
-'''	Normal en [[metertype METER_FUEL]] max : +0'''
+'''    Normal en [[metertype METER_FUEL]] max : +0'''
 
 GOOD_FUEL_DESC
-+	Bon en [[metertype METER_FUEL]] max : +0.5
++    Bon en [[metertype METER_FUEL]] max : +0.5
 
 GREAT_FUEL_DESC
-++	Excellent en [[metertype METER_FUEL]] max : +1
+++    Excellent en [[metertype METER_FUEL]] max : +1
 
 ULTIMATE_FUEL_DESC
-+++	Parfait en [[metertype METER_FUEL]] max : +1.5
++++    Parfait en [[metertype METER_FUEL]] max : +1.5
 
 GREAT_ASTEROID_INDUSTRY_DESC
-+	Bons Mineurs sur Astéroïdes: + 0.2 en [[metertype METER_INDUSTRY]] par [[metertype METER_POPULATION]] lorsque que le Focus Industrie est activé dans les systèmes abritant une Ceinture d'Astéroïdes colonisée par l'empire.
++    Bons Mineurs sur Astéroïdes: + 0.2 en [[metertype METER_INDUSTRY]] par [[metertype METER_POPULATION]] lorsque que le Focus Industrie est activé dans les systèmes abritant une Ceinture d'Astéroïdes colonisée par l'empire.
 
 LIGHT_SENSITIVE_DESC
-−	Sensibilité à la lumière: la [[metertype METER_POPULATION]] est réduite dans les systèmes abritant une Étoile [[STAR_BLUE]], et dans une moindre mesure, une Étoile [[STAR_WHITE]].
+−    Sensibilité à la lumière: la [[metertype METER_POPULATION]] est réduite dans les systèmes abritant une Étoile [[STAR_BLUE]], et dans une moindre mesure, une Étoile [[STAR_WHITE]].
 
 TELEPATHIC_DETECTION_DESC
-+	Détection Télépathique: peut percevoir les planètes habitées proches.
++    Détection Télépathique: peut percevoir les planètes habitées proches.
 
 PRECOGNITIVE_DETECTION_DESC
-+	Détection Précognitive: peut percevoir les planètes reliées par Voies spatiales.
++    Détection Précognitive: peut percevoir les planètes reliées par Voies spatiales.
 
 COMMUNAL_VISION_DESC
-'''	Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers.'''
+'''    Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers.'''
 
 
-##
+## }
 ## Fuel regeneration
-##
+## {
 
 AVERAGE_BASE_FUEL_REGEN_DESC
-'''	Récupération stationnaire normale de [[metertype METER_FUEL]]: + 0.1'''
+'''    Récupération stationnaire normale de [[metertype METER_FUEL]]: + 0.1'''
 
 LIVING_HULL_BASE_FUEL_REGEN_DESC
-'''	Coque Organique Vivante - Récupération stationnaire de [[metertype METER_FUEL]]: + 0.3'''
+'''    Coque Organique Vivante - Récupération stationnaire de [[metertype METER_FUEL]]: + 0.3'''
 
 
-##
+## }
 ## Accounting labels
-##
+## {
 
 COLONY_ADMIN_COSTS_LABEL
 Frais d'Administration Coloniale
@@ -16663,12 +16663,12 @@ N'aime pas le Focus sur %1%
 # %1% name of planet
 # %2% name of special
 LIKES_SPECIAL_LABEL
-Aime %2% sur %1% 
+Aime %2% sur %1%
 
 # %1% name of planet
 # %2% name of special
 DISLIKES_SPECIAL_LABEL
-N'aime pas %2% sur %1% 
+N'aime pas %2% sur %1%
 
 # %1% name of planet
 # %2% name of species on planet
@@ -17196,9 +17196,9 @@ DYING_POPULATION_LABEL
 Population agonisante
 
 
-##
+## }
 ## Tags
-##
+## {
 
 ANTIQUATED
 Désuet
@@ -17234,9 +17234,9 @@ ORBITAL  # translated
 Orbital
 
 
-##
+## }
 ## AI strings
-##
+## {
 
 # Newline separated list of capitol names for beginner AIs
 AI_CAPITOL_NAMES_BEGINNER  # translated
@@ -17348,9 +17348,9 @@ Modèle Invalide
 #Krill Spawner
 
 
-##
+## }
 ## AI diplomacy strings and lists
-##
+## {
 
 # Newline separated list of polite alliance proposal acknowlegements.
 AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
@@ -17572,9 +17572,9 @@ Annihilez votre espèce est pour nous un devoir sacré!
 #AI_FIRST_TURN_GREETING_MSG608'''
 
 
-##
+## }
 ## Hotkey names and descriptions
-##
+## {
 
 OPTIONS_PAGE_HOTKEYS
 Raccourcis clavier
@@ -17730,9 +17730,9 @@ HOTKEY_FULLSCREEN
 Plein écran [on/off]
 
 
-##
+## }
 ## Name lists
-##
+## {
 
 # Newline separated list of star cluster names
 #STAR_GROUP_WORDS

@@ -17,7 +17,7 @@ Danish
 
 ##
 ## Common phrases
-##
+## {
 
 CANCEL
 Fortryd
@@ -29,34 +29,34 @@ SAVE
 Gem
 
 
-##
+## }
 ## Major errors
-##
+## {
 
 
-##
+## }
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
-##
+## {
 
 
-##
+## }
 ## Monsters
-##
+## {
 
 
-##
+## }
 ## Fields
-##
+## {
 
 
-##
+## }
 ## Predefined starting fleets
-##
+## {
 
 
-##
+## }
 ## Status update messages
-##
+## {
 
 SERVER_TIMEOUT
 Serveren svarer ikke
@@ -65,24 +65,24 @@ SERVER_LOST
 Forbindelsen til serveren er mistet.
 
 
-##
+## }
 ## Command-line and options database entries
-##
+## {
 
 
-##
+## }
 ## File dialog
-##
+## {
 
 
-##
+## }
 ## Color selection dialog
-##
+## {
 
 
-##
+## }
 ## Intro screen
-##
+## {
 
 INTRO_WINDOW_TITLE
 FreeOrion Hoved Menu
@@ -100,9 +100,9 @@ ERR_CONNECT_TIMED_OUT
 Fik timeout mens vi prøvede at tilslutte til serveren
 
 
-##
+## }
 ## Server Setup Screen
-##
+## {
 
 SCONNECT_WINDOW_TITLE
 Tilslut til server
@@ -126,9 +126,9 @@ REFRESH_LIST_BN
 Opdater listen
 
 
-##
+## }
 ## Multiplayer lobby
-##
+## {
 
 MPLOBBY_WINDOW_TITLE
 Multiplayer Opsætning
@@ -143,9 +143,9 @@ START_GAME_BN
 Start spil
 
 
-##
+## }
 ## Galaxy Setup Screen
-##
+## {
 
 GSETUP_WINDOW_TITLE
 Galakse Opsætning
@@ -213,9 +213,9 @@ GSETUP_ANCIENT
 Antik
 
 
-##
+## }
 ## About dialog
-##
+## {
 
 LICENSE
 Licens
@@ -224,9 +224,9 @@ ABOUT_WINDOW_TITLE
 Omkring FreeOrion v0.1a
 
 
-##
+## }
 ## In-game menu
-##
+## {
 
 GAME_MENU_SAVE
 Gem Spil
@@ -241,33 +241,33 @@ GAME_MENU_SAVE_FILES
 Gemte Spil filer
 
 
-##
+## }
 ## Save game dialog
-##
+## {
 
 
-##
+## }
 ## Game options
-##
+## {
 
 
-##
+## }
 ## Main map window
-##
+## {
 
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
 Tur %1%
 
 
-##
+## }
 ## Side panel/System information
-##
+## {
 
 
-##
+## }
 ## Side panel/Planet panel
-##
+## {
 
 # %1% size of the population this planet is colonized with.
 # %2% maximum population this planet can support.
@@ -275,104 +275,104 @@ PL_COLONIZE
 Kolonisér
 
 
-##
+## }
 ## Side panel/Resources panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Specials panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Buildings panel
-##
+## {
 
 
-##
+## }
 ## General tooltips
-##
+## {
 
 
-##
+## }
 ## Fleet window
-##
+## {
 
 
-##
+## }
 ## Moderator
-##
+## {
 
 
-##
+## }
 ## Diplomacy
-##
+## {
 
 
-##
+## }
 ## TechTreeWnd
-##
+## {
 
 
-##
+## }
 ## Production info panel
-##
+## {
 
 
-##
+## }
 ## Research window
-##
+## {
 
 
-##
+## }
 ## Build selector window
-##
+## {
 
 
-##
+## }
 ## Production window
-##
+## {
 
 
-##
+## }
 ## Design window
-##
+## {
 
 
-##
+## }
 ## Statistics
-##
+## {
 
 
-##
+## }
 ## Encyclopedia
-##
+## {
 
 
-##
+## }
 ## Combat report
-##
+## {
 
 
-##
+## }
 ## Encyclopedia article categories and short descriptions
-##
+## {
 
 
-##
+## }
 ## Encyclopedia articles
-##
+## {
 
 
-##
+## }
 ## Guides
-##
+## {
 
 
-##
+## }
 ## Turn progress
-##
+## {
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Bevægelse af Flåder
@@ -390,29 +390,29 @@ TURN_PROGRESS_PHASE_ORDERS
 Udfører ordre
 
 
-##
+## }
 ## Messages panel
-##
+## {
 
 
-##
+## }
 ## Players list
-##
+## {
 
 
-##
+## }
 ## Objects window
-##
+## {
 
 
-##
+## }
 ## Objects columns
-##
+## {
 
 
-##
+## }
 ## Filters dialog
-##
+## {
 
 
 ##
@@ -430,127 +430,127 @@ SITREP_TECH_RESEARCHED
 Teknologien %tech% er blevet opfundet.
 
 
-##
+## }
 ## Victory/defeat
-##
+## {
 
 
-##
+## }
 ## Random beginner hints
-##
+## {
 
 
-##
+## }
 ## Species
-##
+## {
 
 
-##
+## }
 ## Specials
-##
+## {
 
 
-##
+## }
 ## Enumeration values
-##
+## {
 
 
-##
+## }
 ## FOCS value references, effects & condition descriptions
-##
+## {
 
 
-##
+## }
 ## FOCS condition descriptions
-##
+## {
 
 
-##
+## }
 ## Technology categories
-##
+## {
 
 
-##
+## }
 ## Technology theories
-##
+## {
 
 
-##
+## }
 ## Technology application
-##
+## {
 
 
-##
+## }
 ## Technology refinement
-##
+## {
 
 
-##
+## }
 ## Buildings
-##
+## {
 
 
-##
+## }
 ## Hull and ship part description templates
-##
+## {
 
 
-##
+## }
 ## Ship parts
-##
+## {
 
 
-##
+## }
 ## Ship hulls
-##
+## {
 
 
-##
+## }
 ## Buildings macros
-##
+## {
 
 
-##
+## }
 ## Tech macros
-##
+## {
 
 
-##
+## }
 ## Growth macros
-##
+## {
 
 
-##
+## }
 ## Species picks
-##
+## {
 
 
-##
+## }
 ## Accounting labels
-##
+## {
 
 
-##
+## }
 ## Tags
-##
+## {
 
 
-##
+## }
 ## AI strings
-##
+## {
 
 
-##
+## }
 ## AI diplomacy strings and lists
-##
+## {
 
 
-##
+## }
 ## Hotkey names and descriptions
-##
+## {
 
 
-##
+## }
 ## Name lists
 ##
 

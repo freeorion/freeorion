@@ -15,9 +15,9 @@ Svenska
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
-##
+## {
 
 CANCEL
 Avbryt
@@ -53,34 +53,34 @@ ENTER_NEW_NAME
 Ange nytt namn
 
 
-##
+## }
 ## Major errors
-##
+## {
 
 
-##
+## }
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
-##
+## {
 
 
-##
+## }
 ## Monsters
-##
+## {
 
 
-##
+## }
 ## Fields
-##
+## {
 
 
-##
+## }
 ## Predefined starting fleets
-##
+## {
 
 
-##
+## }
 ## Status update messages
-##
+## {
 
 SERVER_WONT_START
 Servern kunde inte starta.
@@ -95,9 +95,9 @@ PLAYER_DISCONNECTED
 Spelare %1% har inte längre förbindelse med servern.
 
 
-##
+## }
 ## Command-line and options database entries
-##
+## {
 
 OPTIONS_DB_BG_MUSIC
 Väljer bakgrundsspår att spela.
@@ -166,9 +166,9 @@ OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 Ljudfilen som spelas då systemets sidpanel öppnas.
 
 
-##
+## }
 ## File dialog
-##
+## {
 
 FILE_DLG_FILES
 Fil(er):
@@ -177,14 +177,14 @@ FILE_DLG_FILE_TYPES
 Typ(er):
 
 
-##
+## }
 ## Color selection dialog
-##
+## {
 
 
-##
+## }
 ## Intro screen
-##
+## {
 
 INTRO_WINDOW_TITLE
 FreeOrion Huvudmeny
@@ -214,9 +214,9 @@ ERR_CONNECT_TIMED_OUT
 Kunde inte få något svar från servern
 
 
-##
+## }
 ## Server Setup Screen
-##
+## {
 
 SCONNECT_WINDOW_TITLE
 Anslut till server
@@ -240,9 +240,9 @@ REFRESH_LIST_BN
 Uppdatera lista
 
 
-##
+## }
 ## Multiplayer lobby
-##
+## {
 
 MPLOBBY_WINDOW_TITLE
 Flerspelarinställningar
@@ -260,9 +260,9 @@ START_GAME_BN
 Starta spel
 
 
-##
+## }
 ## Galaxy Setup Screen
-##
+## {
 
 GSETUP_WINDOW_TITLE
 Galaxinställningar
@@ -343,9 +343,9 @@ GSETUP_ANCIENT
 Uråldrig
 
 
-##
+## }
 ## About dialog
-##
+## {
 
 LICENSE
 Licens
@@ -357,9 +357,9 @@ FREEORION_VISION
 FreeOrion, ett öppet källkods-spel baserat på Master of Orion, är ett turordningsbaserat spel om episk rymdstrategi som bygger på den klassiska '4X'-modellen genom att inkludera element som nationsuppbyggnad från spel så som Europa Universalis 2 och en allsidig motor för taktiska strider. Då dess anpassningsbara, öppna, design tillåter en hög grad av personalisering av spelmotorn och spelets handling, vill personerna bakom FreeOrion främja skapandet av ett storskaligt och levande universum.
 
 
-##
+## }
 ## In-game menu
-##
+## {
 
 GAME_MENU_WINDOW_TITLE
 Meny
@@ -377,14 +377,14 @@ GAME_MENU_SAVE_FILES
 Sparfiler
 
 
-##
+## }
 ## Save game dialog
-##
+## {
 
 
-##
+## }
 ## Game options
-##
+## {
 
 OPTIONS_TITLE
 Inställningar
@@ -573,9 +573,9 @@ OPTIONS_SOUND_FILE
 Ljudfiler
 
 
-##
+## }
 ## Main map window
-##
+## {
 
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
@@ -597,14 +597,14 @@ MAP_BTN_DESIGN
 Formgivning
 
 
-##
+## }
 ## Side panel/System information
-##
+## {
 
 
-##
+## }
 ## Side panel/Planet panel
-##
+## {
 
 PLANET_PANEL
 Planetpanel
@@ -615,24 +615,24 @@ PL_COLONIZE
 Kolonisera
 
 
-##
+## }
 ## Side panel/Resources panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Specials panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Buildings panel
-##
+## {
 
 
-##
+## }
 ## General tooltips
-##
+## {
 
 TT_CHANGE
 Förändring
@@ -672,9 +672,9 @@ SP_ENTER_NEW_PLANET_NAME
 Ange nytt namn på planet
 
 
-##
+## }
 ## Fleet window
-##
+## {
 
 # %1% system name where this fleet is moving to.
 FW_FLEET_MOVING_TO
@@ -709,19 +709,19 @@ FW_FOREIGN_SHIP
 Främmande skepp
 
 
-##
+## }
 ## Moderator
-##
+## {
 
 
-##
+## }
 ## Diplomacy
-##
+## {
 
 
-##
+## }
 ## TechTreeWnd
-##
+## {
 
 TECH_DISPLAY
 Visa
@@ -745,9 +745,9 @@ TECH_WND_STATUS_RESEARCHABLE
 Upptäckbara
 
 
-##
+## }
 ## Production info panel
-##
+## {
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Tillgängliga poäng totalt
@@ -756,9 +756,9 @@ PRODUCTION_INFO_WASTED_PS_LABEL
 Förspillda poäng
 
 
-##
+## }
 ## Research window
-##
+## {
 
 RESEARCH_WND_TITLE
 Forskning
@@ -767,9 +767,9 @@ RESEARCH_INFO_RP
 FP
 
 
-##
+## }
 ## Build selector window
-##
+## {
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Tillverkningsbara föremål
@@ -797,17 +797,17 @@ PRODUCTION_DETAIL_ADD_TO_QUEUE
 Lägg till i kö
 
 
-##
+## }
 ## Production window
-##
+## {
 
 PRODUCTION_WND_TITLE
 Produktion
 
 
-##
+## }
 ## Design window
-##
+## {
 
 DESIGN_NAME_DEFAULT
 Användardefinierad skeppsritning
@@ -837,14 +837,14 @@ DESIGN_WND_CLEAR
 Rensa från delar
 
 
-##
+## }
 ## Statistics
-##
+## {
 
 
-##
+## }
 ## Encyclopedia
-##
+## {
 
 ENC_SHIP_PART
 Skeppsdel
@@ -859,29 +859,29 @@ ENC_BUILDING
 Building
 
 
-##
+## }
 ## Combat report
-##
+## {
 
 
-##
+## }
 ## Encyclopedia article categories and short descriptions
-##
+## {
 
 
-##
+## }
 ## Encyclopedia articles
-##
+## {
 
 
-##
+## }
 ## Guides
-##
+## {
 
 
-##
+## }
 ## Turn progress
-##
+## {
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Förflyttning utav flottor ...
@@ -902,29 +902,29 @@ TURN_PROGRESS_PHASE_DOWNLOADING
 Erhåller nya speldata ...
 
 
-##
+## }
 ## Messages panel
-##
+## {
 
 
-##
+## }
 ## Players list
-##
+## {
 
 
-##
+## }
 ## Objects window
-##
+## {
 
 
-##
+## }
 ## Objects columns
-##
+## {
 
 
-##
+## }
 ## Filters dialog
-##
+## {
 
 
 ##
@@ -954,24 +954,24 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% har anlänt vid %system%-systemet och inväntar ytterligare order.
 
 
-##
+## }
 ## Victory/defeat
-##
+## {
 
 
-##
+## }
 ## Random beginner hints
-##
+## {
 
 
-##
+## }
 ## Species
-##
+## {
 
 
-##
+## }
 ## Specials
-##
+## {
 
 ANCIENT_RUINS_SPECIAL
 Uråldriga ruiner
@@ -983,9 +983,9 @@ MINERALS_SPECIAL
 Rik på mineraler
 
 
-##
+## }
 ## Enumeration values
-##
+## {
 
 # Star types
 STAR_BLUE
@@ -1192,9 +1192,9 @@ PC_COLONY
 Kolonisering
 
 
-##
+## }
 ## FOCS value references, effects & condition descriptions
-##
+## {
 
 DESC_VAR_SOURCE
 källa
@@ -1221,9 +1221,9 @@ DESC_VAR_OWNER
 ägare
 
 
-##
+## }
 ## FOCS condition descriptions
-##
+## {
 
 DESC_ALL
 ''' i universumet'''
@@ -1242,9 +1242,9 @@ DESC_EMPIRE_AFFILIATION
 ''' det tillhör en %1% av %2%-imperiet'''
 
 
-##
+## }
 ## Technology categories
-##
+## {
 
 LEARNING_CATEGORY
 Inlärning
@@ -1259,92 +1259,92 @@ GROWTH_CATEGORY
 Tillväxt
 
 
-##
+## }
 ## Technology theories
-##
+## {
 
 
-##
+## }
 ## Technology application
-##
+## {
 
 
-##
+## }
 ## Technology refinement
-##
+## {
 
 
-##
+## }
 ## Buildings
-##
+## {
 
 BLD_IMPERIAL_PALACE
 Imperiepalats
 
 
-##
+## }
 ## Hull and ship part description templates
-##
+## {
 
 
-##
+## }
 ## Ship parts
-##
+## {
 
 
-##
+## }
 ## Ship hulls
-##
+## {
 
 
-##
+## }
 ## Buildings macros
-##
+## {
 
 
-##
+## }
 ## Tech macros
-##
+## {
 
 
-##
+## }
 ## Growth macros
-##
+## {
 
 
-##
+## }
 ## Species picks
-##
+## {
 
 
-##
+## }
 ## Accounting labels
-##
+## {
 
 
-##
+## }
 ## Tags
-##
+## {
 
 
-##
+## }
 ## AI strings
-##
+## {
 
 
-##
+## }
 ## AI diplomacy strings and lists
-##
+## {
 
 
-##
+## }
 ## Hotkey names and descriptions
-##
+## {
 
 
-##
+## }
 ## Name lists
-##
+## {
 
 #include "content_specific_parameters.txt"
 #include "common_user_customizations.txt"

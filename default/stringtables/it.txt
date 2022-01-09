@@ -19,9 +19,9 @@ Italiano
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
-##
+## {
 
 APPLY
 Applica
@@ -139,14 +139,14 @@ ANY_OF
 Qualunque Di:
 
 
-##
+## }
 ## Major errors
-##
+## {
 
 
-##
+## }
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
-##
+## {
 
 SD_SCOUT
 Esploratore
@@ -197,17 +197,17 @@ SD_DRAGON_TOOTH_DESC
 Progetto antico di nave con armi avanzate e sistemi difensivi.
 
 
-##
+## }
 ## Monsters
-##
+## {
 
 SM_MONSTER
 Mostri
 
 
-##
+## }
 ## Fields
-##
+## {
 
 FLD_ION_STORM
 Tempesta di Ioni
@@ -216,9 +216,9 @@ FLD_ION_STORM_DESC
 Vortice magnetico di particelle cariche relativistiche che possono interferire con i sensori e danneggiare navi e pianeti.
 
 
-##
+## }
 ## Predefined starting fleets
-##
+## {
 
 FN_BATTLE_FLEET
 Flotta da battaglia
@@ -233,9 +233,9 @@ MONSTERS
 Mostri
 
 
-##
+## }
 ## Status update messages
-##
+## {
 
 RETURN_TO_INTRO
 Ritorna al Menu Principale
@@ -286,9 +286,9 @@ SERVER_FOUND_NO_ACTIVE_PLAYERS
 Impossibile generare una partita senza giocatori attivi.
 
 
-##
+## }
 ## Command-line and options database entries
-##
+## {
 
 COMMAND_LINE_USAGE
 '''Utilizzo: '''
@@ -600,9 +600,9 @@ OPTIONS_DB_QUICKSTART
 Avvio veloce senza mostrare il menu.
 
 
-##
+## }
 ## File dialog
-##
+## {
 
 FILE_DLG_FILE_TYPES
 Tipo(i):
@@ -623,9 +623,9 @@ FILE_DLG_DEVICE_IS_NOT_READY
 Il dispositivo non è pronto.
 
 
-##
+## }
 ## Color selection dialog
-##
+## {
 
 COLOR_DLG_NEW
 Nuovo
@@ -637,9 +637,9 @@ COLOR_DLG_GREEN
 V:
 
 
-##
+## }
 ## Intro screen
-##
+## {
 
 INTRO_WINDOW_TITLE
 FreeOrion Menu Principale
@@ -672,9 +672,9 @@ ERR_CONNECT_TIMED_OUT
 Tempo scaduto durante il tentativo di connessione al server
 
 
-##
+## }
 ## Server Setup Screen
-##
+## {
 
 SCONNECT_WINDOW_TITLE
 Connessione al server
@@ -698,9 +698,9 @@ REFRESH_LIST_BN
 Aggiorna Lista
 
 
-##
+## }
 ## Multiplayer lobby
-##
+## {
 
 MPLOBBY_WINDOW_TITLE
 Impostazioni Multigiocatore
@@ -736,9 +736,9 @@ START_GAME_BN
 Avvia Partita
 
 
-##
+## }
 ## Galaxy Setup Screen
-##
+## {
 
 GSETUP_WINDOW_TITLE
 '''Impostazioni Galassia '''
@@ -866,9 +866,9 @@ GSETUP_MANIACAL
 Maniacale
 
 
-##
+## }
 ## About dialog
-##
+## {
 
 LICENSE
 Licenza
@@ -883,9 +883,9 @@ FREEORION_VISION
 '''FreeOrion, è un gioco open-source ispirato a Master of Orion, è un gioco epico spaziale di strategia a turni che si basa sul classico modello '4X' che prevede la costruzione degli elementi di gioco come Stellaris e contiene un versatile motore di battaglia. Mentre la sua struttura open-source e modulare permette un notevole grado di personalizzazione del motore di gioco e degli elementi della storia da parte della comunità, la squadra di FreeOrion si è dedicata alla costruzione di un modello di 'grande campagna' in un universo vivibile e di grande respiro. '''
 
 
-##
+## }
 ## In-game menu
-##
+## {
 
 GAME_MENU_SAVE
 Salva Partita
@@ -900,14 +900,14 @@ GAME_MENU_SAVE_FILES
 Salvataggi
 
 
-##
+## }
 ## Save game dialog
-##
+## {
 
 
-##
+## }
 ## Game options
-##
+## {
 
 OPTIONS_TITLE
 Opzioni
@@ -1258,9 +1258,9 @@ OPTIONS_VERBOSE_SITREP_DESC
 Rapporti sulla situazione con errori
 
 
-##
+## }
 ## Main map window
-##
+## {
 
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
@@ -1300,9 +1300,9 @@ MAP_DETECTION_TEXT
 Forza Rilevamento Impero
 
 
-##
+## }
 ## Side panel/System information
-##
+## {
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -1339,9 +1339,9 @@ RESOURCE_SELF_SUFFICIENT
 Nessuna importazione od esportazione
 
 
-##
+## }
 ## Side panel/Planet panel
-##
+## {
 
 PLANET_PANEL
 Pannello Pianeta
@@ -1369,23 +1369,23 @@ PL_CANCEL_INVADE
 Annulla Invasione
 
 
-##
+## }
 ## Side panel/Resources panel
-##
+## {
 
 # %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
 Obbiettivo: %1%
 
 
-##
+## }
 ## Side panel/Specials panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Buildings panel
-##
+## {
 
 ORDER_BUIDLING_SCRAP
 Demolisci Struttura
@@ -1394,9 +1394,9 @@ ORDER_CANCEL_BUIDLING_SCRAP
 Annulla demolizione struttura
 
 
-##
+## }
 ## General tooltips
-##
+## {
 
 TT_THIS_TURN
 Questo Turno
@@ -1458,9 +1458,9 @@ SP_PLANET_SUITABILITY
 Idoneità Pianeta
 
 
-##
+## }
 ## Fleet window
-##
+## {
 
 # %1% system name where this fleet is holding.
 FW_FLEET_HOLDING_AT
@@ -1603,9 +1603,9 @@ ORDER_CANCEL_FLEET_EXPLORE
 Interrompi Esplorazione
 
 
-##
+## }
 ## Moderator
-##
+## {
 
 MOD_DESTROY
 Moderatore: Distruggi
@@ -1614,9 +1614,9 @@ MOD_SET_OWNER
 Moderatore: Imposta Proprietario
 
 
-##
+## }
 ## Diplomacy
-##
+## {
 
 DIPLOMACY
 Diplomazia
@@ -1640,9 +1640,9 @@ PEACE_ACCEPT
 Accetta Proposta di Pace
 
 
-##
+## }
 ## TechTreeWnd
-##
+## {
 
 TECH_DISPLAY
 Schermo
@@ -1693,9 +1693,9 @@ TECH_WND_ETA
 %1% turni restanti
 
 
-##
+## }
 ## Production info panel
-##
+## {
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Totale Punti Disponibili
@@ -1704,9 +1704,9 @@ PRODUCTION_INFO_WASTED_PS_LABEL
 Punti Sprecati
 
 
-##
+## }
 ## Research window
-##
+## {
 
 RESEARCH_WND_TITLE
 Ricerca
@@ -1715,9 +1715,9 @@ RESEARCH_INFO_RP
 PR
 
 
-##
+## }
 ## Build selector window
-##
+## {
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Strutture Edificabili
@@ -1752,9 +1752,9 @@ PRODUCTION_QUEUE_PROMPT
 Doppio click su un elemento disponibile per aggiungerlo alla coda di produzione.
 
 
-##
+## }
 ## Production window
-##
+## {
 
 PRODUCTION_WND_TITLE
 Produzione
@@ -1764,9 +1764,9 @@ PRODUCTION_QUEUE_ITEM_LOCATION
 Su %1%
 
 
-##
+## }
 ## Design window
-##
+## {
 
 DESIGN_NAME_DEFAULT
 Progetto Nave Personalizzato
@@ -1802,14 +1802,14 @@ DESIGN_WND_CLEAR
 Rimuovi Parti
 
 
-##
+## }
 ## Statistics
-##
+## {
 
 
-##
+## }
 ## Encyclopedia
-##
+## {
 
 # %1% name of the planet.
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
@@ -1947,14 +1947,14 @@ ENC_COMBAT_UNKNOWN_OBJECT
 Sconosciuto
 
 
-##
+## }
 ## Combat report
-##
+## {
 
 
-##
+## }
 ## Encyclopedia article categories and short descriptions
-##
+## {
 
 CATEGORY_GAME_CONCEPTS
 Concetti Partita
@@ -1984,9 +1984,9 @@ POPULATION_TITLE_SHORT_DESC
 Popolazione
 
 
-##
+## }
 ## Encyclopedia articles
-##
+## {
 
 DETECTION_TITLE
 Detection Strength
@@ -2086,14 +2086,14 @@ EVACUATION_TITLE
 Evacuazione
 
 
-##
+## }
 ## Guides
-##
+## {
 
 
-##
+## }
 ## Turn progress
-##
+## {
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Movimento Flotta ...
@@ -2130,17 +2130,17 @@ TURN_BEGIN
 Inizio Turno %1%
 
 
-##
+## }
 ## Messages panel
-##
+## {
 
 MESSAGES_PANEL_TITLE
 Messaggi
 
 
-##
+## }
 ## Players list
-##
+## {
 
 PLAYERS_LIST_PANEL_TITLE
 Imperi
@@ -2155,9 +2155,9 @@ WAITING
 Attesa
 
 
-##
+## }
 ## Objects window
-##
+## {
 
 SORT
 Ordina
@@ -2169,14 +2169,14 @@ EXPAND_ALL
 Espandi Tutto
 
 
-##
+## }
 ## Objects columns
-##
+## {
 
 
-##
+## }
 ## Filters dialog
-##
+## {
 
 VISIBLE
 Visibile
@@ -2420,9 +2420,9 @@ EFFECT_MINES_LABEL
 Mine di Sistema
 
 
-##
+## }
 ## Victory/defeat
-##
+## {
 
 VICTORY_TECH
 %empire% ha ottenuto una vittoria tecnologica.
@@ -2440,14 +2440,14 @@ SITREP_EMPIRE_ELIMINATED_LABEL
 Impero Eliminato
 
 
-##
+## }
 ## Random beginner hints
-##
+## {
 
 
-##
+## }
 ## Species
-##
+## {
 
 ENVIRONMENTAL_PREFERENCES
 Preferenze Ambientali:
@@ -2456,9 +2456,9 @@ SP_HUMAN
 Umano
 
 
-##
+## }
 ## Specials
-##
+## {
 
 ANCIENT_RUINS_SPECIAL
 Antiche rovine
@@ -2472,9 +2472,9 @@ ECCENTRIC_ORBIT_SPECIAL
 Orbita eccentrica
 
 
-##
+## }
 ## Enumeration values
-##
+## {
 
 # Universe object types
 INVALID_UNIVERSE_OBJECT_TYPE
@@ -2760,9 +2760,9 @@ PC_COLONY
 Colonizzazione
 
 
-##
+## }
 ## FOCS value references, effects & condition descriptions
-##
+## {
 
 DESC_VAR_PLANET
 pianeta
@@ -2810,9 +2810,9 @@ DESC_VAR_CREATIONTURN
 turno della creazione
 
 
-##
+## }
 ## FOCS condition descriptions
-##
+## {
 
 DESC_ALL
 '''  nell'universo'''
@@ -2910,9 +2910,9 @@ DESC_TURN
 ''' quando il turno in corso è compreso tra %1% e %2%'''
 
 
-##
+## }
 ## Technology categories
-##
+## {
 
 LEARNING_CATEGORY
 Apprendimento
@@ -2933,9 +2933,9 @@ SPY_CATEGORY
 Spionaggio
 
 
-##
+## }
 ## Technology theories
-##
+## {
 
 THEORY_SHORT_DESC
 Prerequisiti Teorici
@@ -3108,9 +3108,9 @@ CON_ASYMP_MATS_DESC
 Una volta che determinate soglie di prestazioni vengono superate, la misurazione delle proprietà fisiche dei materiali, per il confronto relativo, diventa impraticabile in qualsiasi termine diverso da ordini di grandezza o scale logaritmiche. Molto simile alla superconduttività in elettronica, la resistenza alla trazione, tenacità, densità, elasticità, indice refrattario ed altre proprietà meccaniche dei materiali possono essere controllate efficacemente senza limiti. Con tutte le limitazioni significative precedentemente rimosse, le progettazioni sono ulteriormente facilitate, e si possono ampliare o modificare con svariati ordini di grandezza.
 
 
-##
+## }
 ## Technology application
-##
+## {
 
 VICTORY_SHORT_DESC
 Porta alla Vittoria!
@@ -3423,17 +3423,17 @@ SHP_BIOBOMBER
 Biobombardieri
 
 
-##
+## }
 ## Technology refinement
-##
+## {
 
 BUILDING_REFINE_SHORT_DESC
 Raffineria
 
 
-##
+## }
 ## Buildings
-##
+## {
 
 BLD_OBSERVATORY
 Osservatorio
@@ -3506,9 +3506,9 @@ BLD_STARGATE
 Portale Spaziale
 
 
-##
+## }
 ## Hull and ship part description templates
-##
+## {
 
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
@@ -3555,9 +3555,9 @@ DT_DETECTOR_4
 Sensori
 
 
-##
+## }
 ## Ship parts
-##
+## {
 
 ST_CLOAK_1
 Smorzatore Elettromagnetico
@@ -3591,9 +3591,9 @@ Outpost Module
 GT_TROOP_POD
 Ground Troop Pod
 
-##
+## }
 ## Ship hulls
-##
+## {
 
 SH_ROBOTIC
 Scafo Robotico
@@ -3605,38 +3605,38 @@ SH_TITANIC
 Scafo Titanico
 
 
-##
+## }
 ## Buildings macros
-##
+## {
 
 
-##
+## }
 ## Tech macros
-##
+## {
 
 
-##
+## }
 ## Growth macros
-##
+## {
 
 
-##
+## }
 ## Species picks
-##
+## {
 
 
-##
+## }
 ## Accounting labels
-##
+## {
 
 # %1% FIXME
 ENV_ENCAPSUL_LABEL
 %1% Incapsulamento Ambientale
 
 
-##
+## }
 ## Tags
-##
+## {
 
 ANTIQUATED
 Antiquato
@@ -3663,24 +3663,24 @@ ORBITAL
 Orbitale
 
 
-##
+## }
 ## AI strings
-##
+## {
 
 
-##
+## }
 ## AI diplomacy strings and lists
-##
+## {
 
 
-##
+## }
 ## Hotkey names and descriptions
-##
+## {
 
 
-##
+## }
 ## Name lists
-##
+## {
 
 #include "content_specific_parameters.txt"
 #include "common_user_customizations.txt"

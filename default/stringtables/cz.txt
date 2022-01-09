@@ -20,7 +20,7 @@ Czech
 
 ##
 ## Common phrases
-##
+## {
 
 CANCEL
 Zpět
@@ -81,14 +81,14 @@ DEFAULT_PLAYER_NAME
 Lidský_Hráč
 
 
-##
+## }
 ## Major errors
-##
+## {
 
 
-##
+## }
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
-##
+## {
 
 SD_SCOUT
 Průzkumník
@@ -103,27 +103,27 @@ SD_COLONY_SHIP_DESC
 Obrovské neozbrojené plavidlo schopné bezpečně dovážet milionů občanů na nové kolonie.
 
 
-##
+## }
 ## Monsters
-##
+## {
 
 
-##
+## }
 ## Fields
-##
+## {
 
 
-##
+## }
 ## Predefined starting fleets
-##
+## {
 
 FN_BATTLE_FLEET
 Bitevní loďstvo
 
 
-##
+## }
 ## Status update messages
-##
+## {
 
 SERVER_WONT_START
 Server nebyl spuštěn.
@@ -141,9 +141,9 @@ UNABLE_TO_WRITE_CONFIG_XML
 Nemohu zapisovat do souboru config.xml
 
 
-##
+## }
 ## Command-line and options database entries
-##
+## {
 
 COMMAND_LINE_USAGE
 '''Využití: '''
@@ -293,9 +293,9 @@ OPTIONS_DB_UI_SYSTEM_ICON_SIZE
 Nastaví velikost systémových ikon.
 
 
-##
+## }
 ## File dialog
-##
+## {
 
 FILE_DLG_FILES
 Složka(y):
@@ -319,9 +319,9 @@ FILE_DLG_DEVICE_IS_NOT_READY
 Cíl je nedostupný!
 
 
-##
+## }
 ## Color selection dialog
-##
+## {
 
 COLOR_DLG_NEW
 Nový
@@ -339,9 +339,9 @@ COLOR_DLG_BLUE
 M:
 
 
-##
+## }
 ## Intro screen
-##
+## {
 
 INTRO_WINDOW_TITLE
 FreeOrion Hlavní menu
@@ -374,9 +374,9 @@ ERR_CONNECT_TIMED_OUT
 Vypršel čas pro připojení se k serveru!
 
 
-##
+## }
 ## Server Setup Screen
-##
+## {
 
 SCONNECT_WINDOW_TITLE
 Připojuji se k serveru
@@ -400,9 +400,9 @@ REFRESH_LIST_BN
 Obnovit
 
 
-##
+## }
 ## Multiplayer lobby
-##
+## {
 
 MPLOBBY_WINDOW_TITLE
 Nastavení hry více hráčů
@@ -432,9 +432,9 @@ START_GAME_BN
 Začít hru
 
 
-##
+## }
 ## Galaxy Setup Screen
-##
+## {
 
 GSETUP_WINDOW_TITLE
 Nastavení galaxie
@@ -522,9 +522,9 @@ GSETUP_ANCIENT
 Starověký
 
 
-##
+## }
 ## About dialog
-##
+## {
 
 ABOUT_WINDOW_TITLE
 O FreeOrion
@@ -536,9 +536,9 @@ FREEORION_VISION
 FreeOrion, open-source hra založená na hře Master of Orion, je tahová strategie v obrovském vesmírném prostoru, který navazuje na model klasických "4X" her (eXplore-eXpand-eXploit-eXterminate),začleněním stavebních prvků z her jako je Europa Universalis 2 a univerzálním taktickém bojovém systému. Zatímco jeho modulární, open-source design umožňuje významný stupeň přizpůsobení herního enginu a příběh prvky Společenství, je tým FreeOrion věnované na výstavbu bydlení, dýchání vesmír 'Grand kampaň' model.
 
 
-##
+## }
 ## In-game menu
-##
+## {
 
 GAME_MENU_SAVE
 Uložit hru
@@ -550,14 +550,14 @@ GAME_MENU_RESIGN
 Vzdát to!
 
 
-##
+## }
 ## Save game dialog
-##
+## {
 
 
-##
+## }
 ## Game options
-##
+## {
 
 OPTIONS_TITLE
 Nastavení
@@ -689,9 +689,9 @@ OPTIONS_SOUND_FILE
 Zvukové soubory
 
 
-##
+## }
 ## Main map window
-##
+## {
 
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
@@ -707,9 +707,9 @@ MAP_BTN_PRODUCTION
 Produkce
 
 
-##
+## }
 ## Side panel/System information
-##
+## {
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -740,9 +740,9 @@ RESOURCE_SELF_SUFFICIENT
 6ádný dovoz či vývoz
 
 
-##
+## }
 ## Side panel/Planet panel
-##
+## {
 
 PLANET_PANEL
 Panel planety
@@ -753,24 +753,24 @@ PL_COLONIZE
 Kolonizovat (%1%)
 
 
-##
+## }
 ## Side panel/Resources panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Specials panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Buildings panel
-##
+## {
 
 
-##
+## }
 ## General tooltips
-##
+## {
 
 TT_UNKNOWN
 Neznámý
@@ -782,9 +782,9 @@ SP_ENTER_NEW_PLANET_NAME
 Vlož nové jméno
 
 
-##
+## }
 ## Fleet window
-##
+## {
 
 # %1% system name where this fleet is holding.
 FW_FLEET_HOLDING_AT
@@ -804,19 +804,19 @@ FW_UNKNOWN_DESIGN_NAME
 Neznámý Desing
 
 
-##
+## }
 ## Moderator
-##
+## {
 
 
-##
+## }
 ## Diplomacy
-##
+## {
 
 
-##
+## }
 ## TechTreeWnd
-##
+## {
 
 TECH_DISPLAY
 Displej
@@ -838,9 +838,9 @@ TECH_WND_VIEW_TYPE
 Stromu / Seznamu
 
 
-##
+## }
 ## Production info panel
-##
+## {
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Všechny dostupné body
@@ -849,17 +849,17 @@ PRODUCTION_INFO_WASTED_PS_LABEL
 Využité body
 
 
-##
+## }
 ## Research window
-##
+## {
 
 RESEARCH_WND_TITLE
 Výzkum
 
 
-##
+## }
 ## Build selector window
-##
+## {
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Postavitelné položky
@@ -887,52 +887,52 @@ PRODUCTION_DETAIL_ADD_TO_QUEUE
 Přidat do řady
 
 
-##
+## }
 ## Production window
-##
+## {
 
 PRODUCTION_WND_TITLE
 Produkce
 
 
-##
+## }
 ## Design window
-##
+## {
 
 
-##
+## }
 ## Statistics
-##
+## {
 
 
-##
+## }
 ## Encyclopedia
-##
+## {
 
 
-##
+## }
 ## Combat report
-##
+## {
 
 
-##
+## }
 ## Encyclopedia article categories and short descriptions
-##
+## {
 
 
-##
+## }
 ## Encyclopedia articles
-##
+## {
 
 
-##
+## }
 ## Guides
-##
+## {
 
 
-##
+## }
 ## Turn progress
-##
+## {
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Pohyb loďstev
@@ -953,29 +953,29 @@ TURN_PROGRESS_PHASE_DOWNLOADING
 Stahuji nový herní stav
 
 
-##
+## }
 ## Messages panel
-##
+## {
 
 
-##
+## }
 ## Players list
-##
+## {
 
 
-##
+## }
 ## Objects window
-##
+## {
 
 
-##
+## }
 ## Objects columns
-##
+## {
 
 
-##
+## }
 ## Filters dialog
-##
+## {
 
 
 ##
@@ -1011,9 +1011,9 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 Loďstvo "%fleet%" odletělo do systému "%system%".
 
 
-##
+## }
 ## Victory/defeat
-##
+## {
 
 VICTORY_TECH
 Říše %empire% dosáhla technologického vítězství.
@@ -1025,19 +1025,19 @@ SITREP_EMPIRE_ELIMINATED
 Říše "%empire%" byla zničena.
 
 
-##
+## }
 ## Random beginner hints
-##
+## {
 
 
-##
+## }
 ## Species
-##
+## {
 
 
-##
+## }
 ## Specials
-##
+## {
 
 ANCIENT_RUINS_SPECIAL
 Starobylé ruiny
@@ -1049,9 +1049,9 @@ MINERALS_SPECIAL
 Bohatá na minerály
 
 
-##
+## }
 ## Enumeration values
-##
+## {
 
 # Universe object types
 OBJ_BUILDING
@@ -1298,19 +1298,19 @@ SL_INTERNAL
 Vnitřní
 
 
-##
+## }
 ## FOCS value references, effects & condition descriptions
-##
+## {
 
 
-##
+## }
 ## FOCS condition descriptions
-##
+## {
 
 
-##
+## }
 ## Technology categories
-##
+## {
 
 LEARNING_CATEGORY
 Učení
@@ -1325,9 +1325,9 @@ GROWTH_CATEGORY
 Vývoj
 
 
-##
+## }
 ## Technology theories
-##
+## {
 
 THEORY_SHORT_DESC
 Teoretické předpoklady
@@ -1459,9 +1459,9 @@ CON_NDIM_STRC
 N-dimezionální struktury
 
 
-##
+## }
 ## Technology application
-##
+## {
 
 SHIP_PART_UNLOCK_SHORT_DESC
 Odemkne lodní díly
@@ -1485,14 +1485,14 @@ CON_ORBITAL_CON
 Orbitální stavebnictví
 
 
-##
+## }
 ## Technology refinement
-##
+## {
 
 
-##
+## }
 ## Buildings
-##
+## {
 
 BLD_OBSERVATORY
 Observatoř
@@ -1522,9 +1522,9 @@ BLD_COLLECTIVE_NET
 Síť kolektivního myšlení
 
 
-##
+## }
 ## Hull and ship part description templates
-##
+## {
 
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
@@ -1535,62 +1535,62 @@ PART_DESC_STRENGTH
 Pevnost: %1%
 
 
-##
+## }
 ## Ship parts
-##
+## {
 
 
-##
+## }
 ## Ship hulls
-##
+## {
 
 
-##
+## }
 ## Buildings macros
-##
+## {
 
 
-##
+## }
 ## Tech macros
-##
+## {
 
 
-##
+## }
 ## Growth macros
-##
+## {
 
 
-##
+## }
 ## Species picks
-##
+## {
 
 
-##
+## }
 ## Accounting labels
-##
+## {
 
 
-##
+## }
 ## Tags
-##
+## {
 
 
-##
+## }
 ## AI strings
-##
+## {
 
 
-##
+## }
 ## AI diplomacy strings and lists
-##
+## {
 
 
-##
+## }
 ## Hotkey names and descriptions
-##
+## {
 
 
-##
+## }
 ## Name lists
 ##
 

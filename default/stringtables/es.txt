@@ -8,9 +8,9 @@ Espanol
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
-##
+## {
 
 #*OK
 #* <not translated 1970-01-01 01:00:00>
@@ -262,9 +262,9 @@ MULTIPLAYER
 Multijugador
 
 
-##
+## }
 ## Major errors
-##
+## {
 
 ERROR_SOUND_INITIALIZATION_FAILED
 '''Falló la inicialización del sistema de audio OpenAL.
@@ -329,9 +329,9 @@ FORMAT_LIST_MANY_ITEMS
 %1% %2%, %3, %4%, %5%, %6%, %7%, %8, %9%, %10%, %11%...
 
 
-##
+## }
 ## Build Projects
-##
+## {
 
 PROJECT_BT_STOCKPILE
 Transferencia a las reservas
@@ -351,9 +351,9 @@ Para poder usar PP en el grupo de suministros secundario el imperio añade al pr
 Al estar por encima de los demás items del grupo de suministros principal en la cola de producción, el proyecto de transferencia está plenamente provisto de PP e incrementará la reserva imperial en 10 PP en el siguiente turno. Para asegurarse la transferencia en cada turno, la repetición del proyecto se fija en 99 veces.'''
 
 
-##
+## }
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
-##
+## {
 
 SD_CARRIER
 Portaviones de escolta
@@ -596,9 +596,9 @@ SD_DRAGON_TOOTH_DESC
 Nave ancestral con armas y sistemas defensivos avanzados. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 
-##
+## }
 ## Monsters
-##
+## {
 
 SM_MONSTER
 Monstruo
@@ -837,9 +837,9 @@ SM_COSMIC_DRAGON_DESC
 Estos monstruos, fruto de avanzada bioingeniería, son increíblemente resistentes y tienen un armamento formidable y un elevado [[metertype METER_STEALTH]]. Buscan activamente y atacan planetas habitados, y son capaces de volatilizar sistemas solares enteros si se les deja solos. Una flota muy poderosa con elevada [[encyclopedia DETECTION_TITLE]] será necesaria para localizarlos y destruirlos.'''
 
 
-##
+## }
 ## Fields
-##
+## {
 
 FLD_ION_STORM
 Tormenta de iones
@@ -878,9 +878,9 @@ FLD_ACCRETION_DISC_DESC
 Disco circumstelar formado por material difuso en órbital alrededor de una estrella masiva. Los planetas en el sistema reciben una penalización de -1 a su [[metertype METER_SUPPLY]].
 
 
-##
+## }
 ## Predefined starting fleets
-##
+## {
 
 FN_BATTLE_FLEET
 Flota de Batalla
@@ -895,9 +895,9 @@ MONSTERS
 Monstruos
 
 
-##
+## }
 ## Status update messages
-##
+## {
 
 RETURN_TO_INTRO
 Volver al menú principal.
@@ -1037,9 +1037,9 @@ ERROR_CHECKSUM_MISMATCH
 La suma de verificación (checksum) del cliente es diferente de la del servidor.
 
 
-##
+## }
 ## Game Rules
-##
+## {
 
 #*RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR
 #* <not translated 1970-01-01 01:00:00>
@@ -1246,9 +1246,9 @@ Valor empleado para ajustarse a los cambios de [[METER_POPULATION]] en planetas 
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Command-line and options database entries
-##
+## {
 
 #*COMMAND_LINE_NOT_FOUND
 #* <not translated 1970-01-01 01:00:00>
@@ -2100,9 +2100,9 @@ Al salvar partidas usando serialización XML, comprime gran parte del XML antes 
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Option sections
-##
+## {
 
 #*OPTIONS_DB_SECTION_ALL
 #* <not translated 1970-01-01 01:00:00>
@@ -2183,9 +2183,9 @@ Al salvar partidas usando serialización XML, comprime gran parte del XML antes 
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## File dialog
-##
+## {
 
 FILE_DLG_FILES
 Archivo(s):
@@ -2209,9 +2209,9 @@ FILE_DLG_DEVICE_IS_NOT_READY
 El dispositivo no esta preparado.
 
 
-##
+## }
 ## Color selection dialog
-##
+## {
 
 COLOR_DLG_NEW
 Nuevo
@@ -2241,9 +2241,9 @@ Viejo
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Intro screen
-##
+## {
 
 INTRO_WINDOW_TITLE
 Menú Principal FreeOrion
@@ -2288,9 +2288,9 @@ INTRO_CREDITS_LICENSE
 Publicado bajo
 
 
-##
+## }
 ## Server Setup Screen
-##
+## {
 
 SCONNECT_WINDOW_TITLE
 Conectar al servidor
@@ -2314,9 +2314,9 @@ REFRESH_LIST_BN
 Actualizar lista
 
 
-##
+## }
 ## Password Dialog
-##
+## {
 
 #*AUTHENTICATION_WINDOW_TITLE
 #* <not translated 1970-01-01 01:00:00>
@@ -2328,9 +2328,9 @@ Actualizar lista
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Multiplayer lobby
-##
+## {
 
 MPLOBBY_WINDOW_TITLE
 Configurar Multijugador
@@ -2390,9 +2390,9 @@ Iniciar partida
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Galaxy Setup Screen
-##
+## {
 
 GSETUP_WINDOW_TITLE
 Configurar Galaxia
@@ -2542,9 +2542,9 @@ GSETUP_SPECIES_RANDOM_DESC
 Escoge una especie al azar
 
 
-##
+## }
 ## About dialog
-##
+## {
 
 LICENSE
 Licencia
@@ -2559,9 +2559,9 @@ FREEORION_VISION
 FreeOrion, un juego de código abierto inspirado en Master of Orion, es un juego por turnos de estrategia espacial del clásico modelo 4X que incorpora elementos de construcción de naciones de juegos como Europa Universalis 2 y un motor de combate táctico versátil. Su diseño modular de código abierto permite a la comunidad un grado significativo de personalización del motor del juego y de los elementos de la historia. El equipo de FreeOrion esta dedicado a la construcción de un universo vivo en un modelo de 'gran campaña'.
 
 
-##
+## }
 ## In-game menu
-##
+## {
 
 GAME_MENU_WINDOW_TITLE
 Menú
@@ -2600,9 +2600,9 @@ GAME_MENU_CONFIRM_NOT_READY
 ¿Confirma que desea salir? No se han enviado las órdenes de este turno.
 
 
-##
+## }
 ## Save game dialog
-##
+## {
 
 SAVE_TIME_TITLE
 <u>Tiempo</u>
@@ -2688,9 +2688,9 @@ SAVE_REALLY_OVERRIDE
 ¿Confirma la sobreescritura de %1%?
 
 
-##
+## }
 ## Game options
-##
+## {
 
 OPTIONS_TITLE
 Opciones
@@ -3236,9 +3236,9 @@ OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
 El archivo config.xml es sobreescrito, pero podría ser recreado (sin los valores por de defecto) is otra opción es cambiada, incluyendo la recolocación de ventanas o los ajustes en la ventana de opciones.'''
 
 
-##
+## }
 ## Main map window
-##
+## {
 
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
@@ -3473,9 +3473,9 @@ Reserva Imperial
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Side panel/System information
-##
+## {
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -3518,9 +3518,9 @@ RESOURCE_SELF_SUFFICIENT
 Sin Importar o Exportar
 
 
-##
+## }
 ## Side panel/Planet panel
-##
+## {
 
 PLANET_PANEL
 Panel del Planeta
@@ -3614,18 +3614,18 @@ Colonizar (%1% / %2%)
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Side panel/Resources panel
-##
+## {
 
 # %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
 Enfoque: %1%
 
 
-##
+## }
 ## Side panel/Specials panel
-##
+## {
 
 # %1% capacity value applied by the special.
 #*SPECIAL_CAPACITY
@@ -3639,9 +3639,9 @@ Enfoque: %1%
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Side panel/Buildings panel
-##
+## {
 
 ORDER_BUIDLING_SCRAP
 Derruir Edificio
@@ -3650,9 +3650,9 @@ ORDER_CANCEL_BUIDLING_SCRAP
 Cancelar Derruir Edificio
 
 
-##
+## }
 ## General tooltips
-##
+## {
 
 TT_THIS_TURN
 Este Turno
@@ -3747,9 +3747,9 @@ SP_PLANET_SUITABILITY
 Habitabilidad del planeta
 
 
-##
+## }
 ## Fleet window
-##
+## {
 
 # %1% system name where this fleet is holding.
 FW_FLEET_HOLDING_AT
@@ -4007,9 +4007,9 @@ Cancelar Destruir Nave
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Fleet Button
-##
+## {
 
 #*FB_TOOLTIP_BLOCKADE_WITH_EXIT
 #* <not translated 1970-01-01 01:00:00>
@@ -4021,9 +4021,9 @@ Cancelar Destruir Nave
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Moderator
-##
+## {
 
 #*MOD_NONE
 #* <not translated 1970-01-01 01:00:00>
@@ -4047,9 +4047,9 @@ Cancelar Destruir Nave
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Diplomacy
-##
+## {
 
 #*DIPLOMACY
 #* <not translated 1970-01-01 01:00:00>
@@ -4100,9 +4100,9 @@ Cancelar Destruir Nave
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## TechTreeWnd
-##
+## {
 
 TECH_DISPLAY
 Presentación
@@ -4176,9 +4176,9 @@ Vde Árbol / De Lista
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Production info panel
-##
+## {
 
 # %1% type of resource (Research, Production, ...).
 # %2% name of the location where the resource is produced.
@@ -4219,9 +4219,9 @@ Puntos gastados
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Research window
-##
+## {
 
 RESEARCH_WND_TITLE
 Investigación
@@ -4239,9 +4239,9 @@ Investigación
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Build selector window
-##
+## {
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Elementos construibles
@@ -4294,9 +4294,9 @@ Añadir a la cola
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Production window
-##
+## {
 
 PRODUCTION_WND_TITLE
 Producción
@@ -4522,9 +4522,9 @@ En %1%
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Design window
-##
+## {
 
 #*SHIP_DESIGN_FILES
 #* <not translated 1970-01-01 01:00:00>
@@ -4718,9 +4718,9 @@ Limpiar Partes
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Statistics
-##
+## {
 
 #*SHIP_COUNT
 #* <not translated 1970-01-01 01:00:00>
@@ -4786,9 +4786,9 @@ Limpiar Partes
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Encyclopedia
-##
+## {
 
 # %1% name of the species.
 #*ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
@@ -5367,9 +5367,9 @@ No puede estar en diseños con
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Combat report
-##
+## {
 
 #*NEUTRAL
 #* <not translated 1970-01-01 01:00:00>
@@ -5464,9 +5464,9 @@ Salud
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Encyclopedia article categories and short descriptions
-##
+## {
 
 #*CATEGORY_GUIDES
 #* <not translated 1970-01-01 01:00:00>
@@ -5508,9 +5508,9 @@ Salud
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Encyclopedia articles in Guides category
-##
+## {
 
 #*INTERFACE_TITLE
 #* <not translated 1970-01-01 01:00:00>
@@ -5519,9 +5519,9 @@ Salud
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Encyclopedia articles in Game Concepts category
-##
+## {
 
 #*DIPLOMACY_TITLE
 #* <not translated 1970-01-01 01:00:00>
@@ -5574,9 +5574,9 @@ Salud
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Encyclopedia articles
-##
+## {
 
 #*METER_TARGET_POPULATION_VALUE_LABEL
 #* <not translated 1970-01-01 01:00:00>
@@ -6142,9 +6142,9 @@ Medio ambiente
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Guides
-##
+## {
 
 #*GENERAL_PEDIA_REFERENCE
 #* <not translated 1970-01-01 01:00:00>
@@ -6288,9 +6288,9 @@ Guía de Inicio Rápido
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Turn progress
-##
+## {
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Movimiento de flotas
@@ -6333,9 +6333,9 @@ ERROR_EARLY_TURN_UPDATE
 Recibida desde el servidor una actualización de turno inesperada.
 
 
-##
+## }
 ## Messages panel
-##
+## {
 
 MESSAGES_PANEL_TITLE
 Mensajes
@@ -6365,9 +6365,9 @@ Mensajes
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Players list
-##
+## {
 
 #*PLAYERS_LIST_PANEL_TITLE
 #* <not translated 1970-01-01 01:00:00>
@@ -6382,9 +6382,9 @@ Mensajes
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Objects window
-##
+## {
 
 #*SORT
 #* <not translated 1970-01-01 01:00:00>
@@ -6396,9 +6396,9 @@ Mensajes
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Objects columns
-##
+## {
 
 #*METERS_SUBMENU
 #* <not translated 1970-01-01 01:00:00>
@@ -6560,9 +6560,9 @@ Crecimiento de la población en el próximo turno
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Filters dialog
-##
+## {
 
 #*VISIBLE
 #* <not translated 1970-01-01 01:00:00>
@@ -7298,9 +7298,9 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Victory/defeat
-##
+## {
 
 VICTORY_TECH
 El imperio %empire% ha alcanzado una victoria tecnológica.
@@ -7324,9 +7324,9 @@ El imperio %empire% ha sido eliminado.
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Random beginner hints
-##
+## {
 
 #*BEGINNER_HINTS
 #* <not translated 1970-01-01 01:00:00>
@@ -7451,9 +7451,9 @@ El imperio %empire% ha sido eliminado.
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Species
-##
+## {
 
 #*HOMEWORLD
 #* <not translated 1970-01-01 01:00:00>
@@ -7492,9 +7492,9 @@ El imperio %empire% ha sido eliminado.
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Encyclopedia articles in Species Types category
-##
+## {
 
 #*LITHIC_SPECIES_CLASS
 #* <not translated 1970-01-01 01:00:00>
@@ -7533,9 +7533,9 @@ El imperio %empire% ha sido eliminado.
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Encyclopedia articles in Species category
-##
+## {
 
 SP_HUMAN
 Humana
@@ -8425,9 +8425,9 @@ Humana
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Specials
-##
+## {
 
 #*MODERATE_TECH_NATIVES_SPECIAL
 #* <not translated 1970-01-01 01:00:00>
@@ -8796,9 +8796,9 @@ Rico en Minerales
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Enumeration values
-##
+## {
 
 # Universe object types
 INVALID_UNIVERSE_OBJECT_TYPE
@@ -9487,9 +9487,9 @@ Colonización
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Ship hull categories
-##
+## {
 
 #*HULL_LINE_GENERIC
 #* <not translated 1970-01-01 01:00:00>
@@ -9564,9 +9564,9 @@ Colonización
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## FOCS value references, effects & condition descriptions
-##
+## {
 
 DESC_VAR_PLANET
 planeta
@@ -9897,9 +9897,9 @@ turno actual
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## FOCS condition descriptions
-##
+## {
 
 DESC_ALL
 ''' en el universo'''
@@ -10687,9 +10687,9 @@ DESC_HAS_TAG_NOT
 ''' que no es %1%'''
 
 
-##
+## }
 ## Technology categories
-##
+## {
 
 LEARNING_CATEGORY
 Aprendizaje
@@ -10836,9 +10836,9 @@ EXTINCT_SPECIES_TECHS_DESC
 Tecnologías relacionadas con especies extintas.
 
 
-##
+## }
 ## Technology theories
-##
+## {
 
 THEORY_SHORT_DESC
 Prerrequisito teórico
@@ -11477,9 +11477,9 @@ Un casco construido de pura energía, aunque mas versátil que un casco sólido,
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Technology application
-##
+## {
 
 #*VICTORY_SHORT_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -11924,9 +11924,9 @@ Restaura la salud de naves dañadas entre batallas.
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Fighter explanation, needs improving and a Pedia article writing
-##
+## {
 
 #*SHP_FIGHTERS_1
 #* <not translated 1970-01-01 01:00:00>
@@ -12486,9 +12486,9 @@ Incrementa la ocultación natural de los planetas en 15, por lo que los sistemas
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Technology refinement
-##
+## {
 
 BUILDING_REFINE_SHORT_DESC
 Refinería
@@ -12509,9 +12509,9 @@ PRO_INDUSTRY_CENTER_III_DESC
 Experiencia adicional e instalaciones mejoradas para extender el alcance y tamaño de la producción industrial actual.
 
 
-##
+## }
 ## Buildings
-##
+## {
 
 #*BLD_EVACUATION
 #* <not translated 1970-01-01 01:00:00>
@@ -13224,9 +13224,9 @@ Crea una nave Colonia Base que puede ser usada para colonizar otro planeta en el
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Hull and ship part description templates
-##
+## {
 
 # %1% hull base starlane speed.
 # %2% hull base fuel capacity.
@@ -13270,9 +13270,9 @@ Fuerza: %1%
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Ship parts
-##
+## {
 
 #*FT_WEAPON_1
 #* <not translated 1970-01-01 01:00:00>
@@ -13920,9 +13920,9 @@ Distingue irregularidades geométricas naturales de naves enemigas manipulando d
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Ship hulls
-##
+## {
 
 SH_ROBOTIC
 Casco Robótico
@@ -14509,9 +14509,9 @@ Casco de Colonia Base
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Monsters Macros
-##
+## {
 
 #*SM_KRILL_MACRO_1
 #* <not translated 1970-01-01 01:00:00>
@@ -14532,9 +14532,9 @@ SM_JUGGERNAUT_ENVIRONMENT
 Su ambiente predilecto, donde se encuentran sus nidos, son los [[PT_ASTEROIDS]]. Los juggernauts pueden madurar a formas más grandes y poderosas en systemas con [[PT_ASTEROIDS]].
 
 
-##
+## }
 ## Buildings macros
-##
+## {
 
 BUILDING_AVAILABLE_ON_OUTPOSTS
 Este edificio se puede construir en un [[encyclopedia OUTPOSTS_TITLE]]
@@ -14612,9 +14612,9 @@ BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED
 Solo se puede construir en un planeta con un [[buildingtype BLD_SHIPYARD_BASE]], una [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], una [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] y una [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
 
 
-##
+## }
 ## Other than Requirements
-##
+## {
 
 SHIPDESIGN_DETECTION_RESEARCH_TIPS
 Más [[metertype METER_RESEARCH]] dirigida a aumentar la [[metertype METER_DETECTION]] permitiría mejores diseños.
@@ -14694,17 +14694,17 @@ SHIPDESIGN_PLANET_INVASION
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Tech macros
-##
+## {
 
 #*COLONY_BUILDING_TIME_DECREASE
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Growth macros
-##
+## {
 
 #*GROWTH_SPECIAL_POPULATION_ORGANIC_INCREASE
 #* <not translated 1970-01-01 01:00:00>
@@ -14745,9 +14745,9 @@ SHIPDESIGN_PLANET_INVASION
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Species picks
-##
+## {
 
 #*NO_INDUSTRY_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -14967,9 +14967,9 @@ SHIPDESIGN_PLANET_INVASION
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Fuel regeneration
-##
+## {
 
 #*AVERAGE_BASE_FUEL_REGEN_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -14978,9 +14978,9 @@ SHIPDESIGN_PLANET_INVASION
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Accounting labels
-##
+## {
 
 # %1% FIXME
 #*STANDARD_CONSTRUCTION_LABEL
@@ -15407,9 +15407,9 @@ SHIPDESIGN_PLANET_INVASION
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Tags
-##
+## {
 
 #*ANTIQUATED
 #* <not translated 1970-01-01 01:00:00>
@@ -15442,9 +15442,9 @@ SHIPDESIGN_PLANET_INVASION
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## AI strings
-##
+## {
 
 # Newline separated list of capitol names for beginner AIs
 #*AI_CAPITOL_NAMES_BEGINNER
@@ -15556,9 +15556,9 @@ SHIPDESIGN_PLANET_INVASION
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## AI diplomacy strings and lists
-##
+## {
 
 # Newline separated list of polite alliance proposal acknowlegements.
 #*AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
@@ -15780,9 +15780,9 @@ SHIPDESIGN_PLANET_INVASION
 #* <not translated 1970-01-01 01:00:00>
 
 
-##
+## }
 ## Hotkey names and descriptions
-##
+## {
 
 #*OPTIONS_PAGE_HOTKEYS
 #* <not translated 1970-01-01 01:00:00>
@@ -15935,9 +15935,9 @@ HOTKEY_FULLSCREEN
 Activar/Desactivar pantalla completa
 
 
-##
+## }
 ## Name lists
-##
+## {
 
 # Newline separated list of star cluster names
 #*STAR_GROUP_WORDS

@@ -18,9 +18,9 @@ Suomi
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
-##
+## {
 
 CANCEL
 Peruuta
@@ -84,14 +84,14 @@ DEFAULT_PLAYER_NAME
 Ihmis_pelaaja
 
 
-##
+## }
 ## Major errors
-##
+## {
 
 
-##
+## }
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
-##
+## {
 
 SD_SCOUT
 Tiedustelija
@@ -106,27 +106,27 @@ SD_COLONY_SHIP_DESC
 Valtava aseistamaton alus, joka kykenee toimittamaan miljoonia kansalaisia uusille planeetoille.
 
 
-##
+## }
 ## Monsters
-##
+## {
 
 
-##
+## }
 ## Fields
-##
+## {
 
 
-##
+## }
 ## Predefined starting fleets
-##
+## {
 
 FN_BATTLE_FLEET
 Taistelulaivasto
 
 
-##
+## }
 ## Status update messages
-##
+## {
 
 SERVER_WONT_START
 Palvelinta ei voitu käynnistää.
@@ -153,9 +153,9 @@ UNABLE_TO_READ_SAVE_FILE
 Tallennusta ladattaessa tapahtui virhe.
 
 
-##
+## }
 ## Command-line and options database entries
-##
+## {
 
 COMMAND_LINE_USAGE
 '''Käyttö: '''
@@ -371,9 +371,9 @@ OPTIONS_DB_LOAD
 Lataa tietyn yksinpeli tallennuksen.
 
 
-##
+## }
 ## File dialog
-##
+## {
 
 FILE_DLG_FILES
 Tiedosto(t):
@@ -393,9 +393,9 @@ FILE_DLG_DEVICE_IS_NOT_READY
 Laite ei ole valmis.
 
 
-##
+## }
 ## Color selection dialog
-##
+## {
 
 COLOR_DLG_NEW
 Uusi
@@ -416,9 +416,9 @@ COLOR_DLG_VALUE
 AR:
 
 
-##
+## }
 ## Intro screen
-##
+## {
 
 INTRO_WINDOW_TITLE
 FreeOrion Päävalikko
@@ -451,9 +451,9 @@ ERR_CONNECT_TIMED_OUT
 Aikakatkaisu yritettäessä yhdistää palvelimeen.
 
 
-##
+## }
 ## Server Setup Screen
-##
+## {
 
 SCONNECT_WINDOW_TITLE
 Yhdistä palvelimeen
@@ -477,9 +477,9 @@ REFRESH_LIST_BN
 Päivitä lista
 
 
-##
+## }
 ## Multiplayer lobby
-##
+## {
 
 MPLOBBY_WINDOW_TITLE
 Moninpeliasetukset
@@ -512,9 +512,9 @@ START_GAME_BN
 Aloita peli
 
 
-##
+## }
 ## Galaxy Setup Screen
-##
+## {
 
 GSETUP_WINDOW_TITLE
 Galaksin asetukset
@@ -605,9 +605,9 @@ GSETUP_ANCIENT
 Ikivanha
 
 
-##
+## }
 ## About dialog
-##
+## {
 
 LICENSE
 Lisenssi
@@ -622,9 +622,9 @@ FREEORION_VISION
 '''FreeOrion, avoimen lähdekoodin peli, joka perustuu Master Of Orioneihin, on vuoropohjainen, eeppinen avaruusstrategiapeli.  FreeOrion rakentuu klassiselle 4X pohjalle, hyödyntäen kansakunnan rakentamiselementtejä peleistä kuten Europa Universalis 2, ja sisältäen monipuolisen taktisen taistelumoottorin. Samalla kun pelin modulaarinen, avoimeen lähdekoodiin perustuva suunnittelu mahdollistaa pelimoottorin ja tarinan suurimuotoisen muokkaamisen, on FreeOrionin kehittäjäryhmän tavoitteena luoda elävä ja hengittävä universumi, »suuren kampanjan» muodossa. '''
 
 
-##
+## }
 ## In-game menu
-##
+## {
 
 GAME_MENU_WINDOW_TITLE
 Valikko
@@ -642,14 +642,14 @@ GAME_MENU_SAVE_FILES
 Tallennetut pelitiedostot
 
 
-##
+## }
 ## Save game dialog
-##
+## {
 
 
-##
+## }
 ## Game options
-##
+## {
 
 OPTIONS_TITLE
 Asetukset
@@ -904,9 +904,9 @@ OPTIONS_SOUND_FILE
 Äänitiedostot
 
 
-##
+## }
 ## Main map window
-##
+## {
 
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
@@ -928,9 +928,9 @@ MAP_BTN_DESIGN
 Suunnittelu
 
 
-##
+## }
 ## Side panel/System information
-##
+## {
 
 # %1% resource type currently produced by the system.
 # %2% amount of the resource currently produced by the system.
@@ -967,9 +967,9 @@ RESOURCE_SELF_SUFFICIENT
 Ei vientiä eikä tuontia
 
 
-##
+## }
 ## Side panel/Planet panel
-##
+## {
 
 PLANET_PANEL
 Planeettapaneeli
@@ -980,23 +980,23 @@ PL_COLONIZE
 Kolonisoi (%1% / %2%)
 
 
-##
+## }
 ## Side panel/Resources panel
-##
+## {
 
 # %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
 Painotus: %1%
 
 
-##
+## }
 ## Side panel/Specials panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Buildings panel
-##
+## {
 
 ORDER_BUIDLING_SCRAP
 Pura rakennus
@@ -1005,9 +1005,9 @@ ORDER_CANCEL_BUIDLING_SCRAP
 Peruuta rakennuksen purku
 
 
-##
+## }
 ## General tooltips
-##
+## {
 
 TT_THIS_TURN
 Tämän vuoron
@@ -1063,9 +1063,9 @@ SP_ENTER_NEW_PLANET_NAME
 Syötä uusi nimi
 
 
-##
+## }
 ## Fleet window
-##
+## {
 
 # %1% system name where this fleet is holding.
 FW_FLEET_HOLDING_AT
@@ -1141,19 +1141,19 @@ ORDER_CANCEL_SHIP_SCRAP
 Peruuta aluksen purkaminen
 
 
-##
+## }
 ## Moderator
-##
+## {
 
 
-##
+## }
 ## Diplomacy
-##
+## {
 
 
-##
+## }
 ## TechTreeWnd
-##
+## {
 
 TECH_DISPLAY
 Näytä
@@ -1175,9 +1175,9 @@ TECH_WND_VIEW_TYPE
 Puunäkymä / Listanäkymä
 
 
-##
+## }
 ## Production info panel
-##
+## {
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Käytettävissä olevat pisteet
@@ -1186,9 +1186,9 @@ PRODUCTION_INFO_WASTED_PS_LABEL
 Hukatut pisteet
 
 
-##
+## }
 ## Research window
-##
+## {
 
 RESEARCH_WND_TITLE
 Tutkimus
@@ -1197,9 +1197,9 @@ RESEARCH_INFO_RP
 TP
 
 
-##
+## }
 ## Build selector window
-##
+## {
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
 Rakennettavat kohteet
@@ -1232,9 +1232,9 @@ PRODUCTION_DETAIL_ADD_TO_QUEUE
 Lisää jonoon
 
 
-##
+## }
 ## Production window
-##
+## {
 
 PRODUCTION_WND_TITLE
 Tuotanto
@@ -1251,9 +1251,9 @@ PRODUCTION_QUEUE_ITEM_LOCATION
 %1%
 
 
-##
+## }
 ## Design window
-##
+## {
 
 DESIGN_NAME_DEFAULT
 Luotava alussuunnitelma
@@ -1286,14 +1286,14 @@ DESIGN_WND_CLEAR
 Tyhjennä osat
 
 
-##
+## }
 ## Statistics
-##
+## {
 
 
-##
+## }
 ## Encyclopedia
-##
+## {
 
 ENC_SHIP_PART
 Aluksen osa
@@ -1349,29 +1349,29 @@ ENC_COST_AND_TURNS_STR
 %3% Turns @ %1% %2% / Turn
 
 
-##
+## }
 ## Combat report
-##
+## {
 
 
-##
+## }
 ## Encyclopedia article categories and short descriptions
-##
+## {
 
 
-##
+## }
 ## Encyclopedia articles
-##
+## {
 
 
-##
+## }
 ## Guides
-##
+## {
 
 
-##
+## }
 ## Turn progress
-##
+## {
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Laivastojen liikkeet ...
@@ -1392,29 +1392,29 @@ TURN_PROGRESS_PHASE_DOWNLOADING
 Ladataan uutta pelitilaa ...
 
 
-##
+## }
 ## Messages panel
-##
+## {
 
 
-##
+## }
 ## Players list
-##
+## {
 
 
-##
+## }
 ## Objects window
-##
+## {
 
 
-##
+## }
 ## Objects columns
-##
+## {
 
 
-##
+## }
 ## Filters dialog
-##
+## {
 
 
 ##
@@ -1450,9 +1450,9 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% on saapunut %system% tähtijärjestelmään.
 
 
-##
+## }
 ## Victory/defeat
-##
+## {
 
 VICTORY_TECH
 %empire% imperiumi on saavuttanut teknologisen voiton.
@@ -1464,22 +1464,22 @@ SITREP_EMPIRE_ELIMINATED
 %empire% imperiumi on tuhottu.
 
 
-##
+## }
 ## Random beginner hints
-##
+## {
 
 
-##
+## }
 ## Species
-##
+## {
 
 SP_HUMAN
 Ihmiset
 
 
-##
+## }
 ## Specials
-##
+## {
 
 ANCIENT_RUINS_SPECIAL
 Muinaisia raunioita
@@ -1491,9 +1491,9 @@ MINERALS_SPECIAL
 Mineraalirikas
 
 
-##
+## }
 ## Enumeration values
-##
+## {
 
 # Universe object types
 INVALID_UNIVERSE_OBJECT_TYPE
@@ -1808,9 +1808,9 @@ PC_COLONY
 Kolonisaatio
 
 
-##
+## }
 ## FOCS value references, effects & condition descriptions
-##
+## {
 
 DESC_VAR_PLANET
 planeetta
@@ -1858,9 +1858,9 @@ DESC_VAR_CURRENTTURN
 nykyinen vuoro
 
 
-##
+## }
 ## FOCS condition descriptions
-##
+## {
 
 DESC_ALL
 ''' universumissa'''
@@ -2090,9 +2090,9 @@ DESC_OWNER_HAS_TECH_NOT
 ''' joka ei kuuluu imperiumille, jolla on tekniikka %1%'''
 
 
-##
+## }
 ## Technology categories
-##
+## {
 
 LEARNING_CATEGORY
 Oppiminen
@@ -2107,9 +2107,9 @@ GROWTH_CATEGORY
 Kasvu
 
 
-##
+## }
 ## Technology theories
-##
+## {
 
 LRN_PHYS_BRAIN
 Aivojen rakenne
@@ -2118,9 +2118,9 @@ LRN_EVERYTHING
 Kaiken teoria
 
 
-##
+## }
 ## Technology application
-##
+## {
 
 SHIP_PART_UNLOCK_SHORT_DESC
 Avaa alusten osia
@@ -2159,22 +2159,22 @@ SHP_DEUTERIUM_TANK
 Deuteriumtankki
 
 
-##
+## }
 ## Technology refinement
-##
+## {
 
 
-##
+## }
 ## Buildings
-##
+## {
 
 BLD_SHIPYARD_BASE
 Laivatelakka
 
 
-##
+## }
 ## Hull and ship part description templates
-##
+## {
 
 # %1% ship part capacity (fuel, troops, colonists, fighters).
 PART_DESC_CAPACITY
@@ -2185,9 +2185,9 @@ PART_DESC_STRENGTH
 Vahvuus: %1%
 
 
-##
+## }
 ## Ship parts
-##
+## {
 
 SR_ION_CANNON
 Ionikanuuna
@@ -2211,59 +2211,59 @@ SH_DEFENSE_GRID
 Puolustusverkko
 
 
-##
+## }
 ## Ship hulls
-##
+## {
 
 
-##
+## }
 ## Buildings macros
-##
+## {
 
 
-##
+## }
 ## Tech macros
-##
+## {
 
 
-##
+## }
 ## Growth macros
-##
+## {
 
 
-##
+## }
 ## Species picks
-##
+## {
 
 
-##
+## }
 ## Accounting labels
-##
+## {
 
 
-##
+## }
 ## Tags
-##
+## {
 
 
-##
+## }
 ## AI strings
-##
+## {
 
 
-##
+## }
 ## AI diplomacy strings and lists
-##
+## {
 
 
-##
+## }
 ## Hotkey names and descriptions
-##
+## {
 
 
-##
+## }
 ## Name lists
-##
+## {
 
 #include "content_specific_parameters.txt"
 #include "common_user_customizations.txt"

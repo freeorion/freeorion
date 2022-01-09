@@ -19,9 +19,9 @@ Polski
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
-##
+## {
 
 CANCEL
 Anuluj
@@ -79,34 +79,34 @@ INTERCEPTOR
 Myśliwiec przechwytujący
 
 
-##
+## }
 ## Major errors
-##
+## {
 
 
-##
+## }
 ## Predefined Ship Designs (located in default/scripting/ship_designs/)
-##
+## {
 
 
-##
+## }
 ## Monsters
-##
+## {
 
 
-##
+## }
 ## Fields
-##
+## {
 
 
-##
+## }
 ## Predefined starting fleets
-##
+## {
 
 
-##
+## }
 ## Status update messages
-##
+## {
 
 SERVER_WONT_START
 Nie można uruchomić serwera.
@@ -121,9 +121,9 @@ PLAYER_DISCONNECTED
 Gracz %1% utracił połączenie z serwerem.
 
 
-##
+## }
 ## Command-line and options database entries
-##
+## {
 
 COMMAND_LINE_USAGE
 '''Sposób użycia: '''
@@ -399,9 +399,9 @@ OPTIONS_DB_MUSIC_VOLUME
 Głośność odtwarzania muzyki (0 do 255).
 
 
-##
+## }
 ## File dialog
-##
+## {
 
 FILE_DLG_FILES
 Plik(i):
@@ -413,9 +413,9 @@ FILE_DLG_DEVICE_IS_NOT_READY
 Urządzenie nie jest gotowe.
 
 
-##
+## }
 ## Color selection dialog
-##
+## {
 
 COLOR_DLG_NEW
 Nowy
@@ -424,9 +424,9 @@ COLOR_DLG_OLD
 Stary
 
 
-##
+## }
 ## Intro screen
-##
+## {
 
 INTRO_WINDOW_TITLE
 FreeOrion - Menu główne
@@ -459,9 +459,9 @@ ERR_CONNECT_TIMED_OUT
 Przekroczono czas łączenia z serwerem.
 
 
-##
+## }
 ## Server Setup Screen
-##
+## {
 
 SCONNECT_WINDOW_TITLE
 Połączenie z serwerem
@@ -485,9 +485,9 @@ REFRESH_LIST_BN
 Odśwież listę
 
 
-##
+## }
 ## Multiplayer lobby
-##
+## {
 
 MPLOBBY_WINDOW_TITLE
 Ustawienia trybu wielu graczy
@@ -505,9 +505,9 @@ START_GAME_BN
 Uruchom grę
 
 
-##
+## }
 ## Galaxy Setup Screen
-##
+## {
 
 GSETUP_WINDOW_TITLE
 Ustawienia galaktyki
@@ -592,9 +592,9 @@ GSETUP_ANCIENT
 Prastara
 
 
-##
+## }
 ## About dialog
-##
+## {
 
 LICENSE
 Licencja
@@ -609,9 +609,9 @@ FREEORION_VISION
 FreeOrion jest grą o otwartym kodzie źródłowym bazującą na grze Master of Orion. Jest to turowa gra strategiczna zbudowana w oparciu o klasyczny model '4X' zawierająca elementy rozwoju narodów podobne do znanych z gry Europa Universalis 2 oraz złożony mechanizm walki taktycznej. Przy modułowości projektu, model open-source pozwala na duży stopień personalizacji silnika gry i elementów historii przez społeczność. Ekipa FreeOriona ma na celu skonstruowanie żywego, oddychającego wszechświata w myśl modelu wielkiej kampanii.
 
 
-##
+## }
 ## In-game menu
-##
+## {
 
 GAME_MENU_SAVE
 Zapisz grę
@@ -626,21 +626,21 @@ GAME_MENU_SAVE_FILES
 Pliki zapisanych gier
 
 
-##
+## }
 ## Save game dialog
-##
+## {
 
 
-##
+## }
 ## Game options
-##
+## {
 
 OPTIONS_TITLE
 Opcje
 
-##
+## }
 ## Main map window
-##
+## {
 
 # %1% current turn number.
 MAP_BTN_TURN_UPDATE
@@ -659,9 +659,9 @@ MAP_BTN_DESIGN
 Projektowanie
 
 
-##
+## }
 ## Side panel/System information
-##
+## {
 
 INDUSTRY_CONSUMPTION
 Koncumpcja produkcji przemysłowej
@@ -679,9 +679,9 @@ RESOURCE_EXPORT
 Dostępne do eksportowania
 
 
-##
+## }
 ## Side panel/Planet panel
-##
+## {
 
 PLANET_PANEL
 Panel planety
@@ -692,132 +692,132 @@ PL_COLONIZE
 Kolonizuj
 
 
-##
+## }
 ## Side panel/Resources panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Specials panel
-##
+## {
 
 
-##
+## }
 ## Side panel/Buildings panel
-##
+## {
 
 
-##
+## }
 ## General tooltips
-##
+## {
 
 TT_CHANGE
 Zmień
 
 
-##
+## }
 ## Fleet window
-##
+## {
 
 
-##
+## }
 ## Moderator
-##
+## {
 
 
-##
+## }
 ## Diplomacy
-##
+## {
 
 
-##
+## }
 ## TechTreeWnd
-##
+## {
 
 
-##
+## }
 ## Production info panel
-##
+## {
 
 
-##
+## }
 ## Research window
-##
+## {
 
 
-##
+## }
 ## Build selector window
-##
+## {
 
 
-##
+## }
 ## Production window
-##
+## {
 
 
-##
+## }
 ## Design window
-##
+## {
 
 
-##
+## }
 ## Statistics
-##
+## {
 
 
-##
+## }
 ## Encyclopedia
-##
+## {
 
 
-##
+## }
 ## Combat report
-##
+## {
 
 
-##
+## }
 ## Encyclopedia article categories and short descriptions
-##
+## {
 
 
-##
+## }
 ## Encyclopedia articles
-##
+## {
 
 
-##
+## }
 ## Guides
-##
+## {
 
 
-##
+## }
 ## Turn progress
-##
+## {
 
 
-##
+## }
 ## Messages panel
-##
+## {
 
 
-##
+## }
 ## Players list
-##
+## {
 
 
-##
+## }
 ## Objects window
-##
+## {
 
 
-##
+## }
 ## Objects columns
-##
+## {
 
 
-##
+## }
 ## Filters dialog
-##
+## {
 
 
 ##
@@ -826,49 +826,49 @@ Zmień
 ## Format: Ideally always start with Location: with ship/fleet names near the end.
 
 
-##
+## }
 ## Victory/defeat
-##
+## {
 
 
-##
+## }
 ## Random beginner hints
-##
+## {
 
 
-##
+## }
 ## Species
-##
+## {
 
 
-##
+## }
 ## Specials
-##
+## {
 
 
-##
+## }
 ## Enumeration values
-##
+## {
 
 
-##
+## }
 ## FOCS value references, effects & condition descriptions
-##
+## {
 
 
-##
+## }
 ## FOCS condition descriptions
-##
+## {
 
 
-##
+## }
 ## Technology categories
-##
+## {
 
 
-##
+## }
 ## Technology theories
-##
+## {
 
 LRN_PHYS_BRAIN_DESC
 Struktury w mózgu i ich funkcje są ściśle określone. Procesy myślenia i pamięci okazują się być natury zarówno elektrochemicznej jak i kwantowej. Zrozumienie tych zjawisk pozwala na zintensyfikowanie pracy mózgu i osiągnięcie nowych granic wyobraźni i twórczości.
@@ -892,9 +892,9 @@ LRN_TIME_MECH_DESC
 Czym jest "teraz", "przyszłość", "przeszłość"? Paradoks bliźniąt w szczególnej teorii względności, teorii lub tunele czasoprzestrzenne sugerują wczesną formę "podróży w czasie". Bezpośrednie manipulowanie strumienia czasoprzestrzeni może być w pewnych warunkach wykorzystane i zwielokrotnione dając poczucie manipulacji strumieniem czasu. Co prawda nie można zmieniać przeszłości wszechświata który postrzegamy. Można jednak skrócić wieki lub wydłużyć chwilę na dowolną długość, będąc ograniczonym tylko przez dostęp do surowców, lub naszą cierpliwość ...
 
 
-##
+## }
 ## Technology application
-##
+## {
 
 SHP_DEUTERIUM_TANK
 Zbiornik deuterium
@@ -908,27 +908,27 @@ Zbiornik antymaterii
 SHP_ANTIMATTER_TANK_DESC
 Zwiększa zasięg okrętu powiększając jego zasoby paliwa.
 
-##
+## }
 ## Technology refinement
-##
+## {
 
 
-##
+## }
 ## Buildings
-##
+## {
 
 BLD_OBSERVATORY
 Obserwatorium
 
 
-##
+## }
 ## Hull and ship part description templates
-##
+## {
 
 
-##
+## }
 ## Ship parts
-##
+## {
 
 SR_ION_CANNON
 Działo jonowe
@@ -964,59 +964,59 @@ CO_SUSPEND_ANIM_POD
 Krioniczna kapsuła kolonizacyjna.
 
 
-##
+## }
 ## Ship hulls
-##
+## {
 
 
-##
+## }
 ## Buildings macros
-##
+## {
 
 
-##
+## }
 ## Tech macros
-##
+## {
 
 
-##
+## }
 ## Growth macros
-##
+## {
 
 
-##
+## }
 ## Species picks
-##
+## {
 
 
-##
+## }
 ## Accounting labels
-##
+## {
 
 
-##
+## }
 ## Tags
-##
+## {
 
 
-##
+## }
 ## AI strings
-##
+## {
 
 
-##
+## }
 ## AI diplomacy strings and lists
-##
+## {
 
 
-##
+## }
 ## Hotkey names and descriptions
-##
+## {
 
 
-##
+## }
 ## Name lists
-##
+## {
 
 #include "content_specific_parameters.txt"
 #include "common_user_customizations.txt"
