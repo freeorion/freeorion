@@ -9247,6 +9247,21 @@ The research bonus requires a stability of [[value PHILOSOPHER_MIN_STABILITY]].
 
 The lone remnant of a planet-sized space wandering species has found his final rest orbiting in this system like a normal planet. Having lived for thousands of years he lost the will and ability to travel and resorts to pondering about the mysteries of the universe he has seen and learned about. Eccentric and slightly demented he refuses to communicate with anything that isn't the size and shape of his kin, leaving scientists no choice but to ask questions via the planet they are living on. Understandably colonizing the Philosopher Planet will disturb him gravely and he will fall silent. Construction on his surface is difficult as is to be expected from a living being.'''
 
+ASTEROID_COATING_SPECIAL
+Asteroid Coating
+
+ASTEROID_COATING_SPECIAL_DESC
+'''An outpost or colony on these asteroids will grant a structure bonus of +10% to all ships with Asteroid hulls in the empire.
+
+These asteroids are infected by transdimensional worms that eat tunnels through the rock, leaving behind a sticky slime that seems to automatically spread over the whole surface of the affected asteroid and prevents it from breaking apart.
+Applied to ships built with asteroid hulls the slime will naturally increase their durability. While this slime does not last long, these worms will frequently visit the affected ships, replenishing any lost slime before returning to their home. Unable to catch a living specimen, scientists theorize their mode of transport appears linked to our communications in some manner.'''
+
+ASTEROID_COATING_OWNED_SPECIAL
+Asteroid Coating
+
+ASTEROID_COATING_OWNED_SPECIAL_DESC
+[[ASTEROID_COATING_SPECIAL_DESC]]
+
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
 

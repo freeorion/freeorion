@@ -1,0 +1,33 @@
+Special
+    name = "ASTEROID_COATING_SPECIAL"
+    description = "ASTEROID_COATING_SPECIAL_DESC"
+    stealth = 25
+    spawnrate = 9.0
+    spawnlimit = 20
+    location = And [
+        Planet
+        Planet type = Asteroids
+        Not WithinStarlaneJumps jumps = 3 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+
+        // Makes itself visible when owned
+        EffectsGroup     
+            scope = And [
+                Source
+                OwnedBy affiliation = AnyEmpire
+            ]     
+            activation = Source
+            effects = [
+                AddSpecial name = "ASTEROID_COATING_OWNED_SPECIAL"
+                RemoveSpecial name = "ASTEROID_COATING_SPECIAL"
+            ]
+    ]
+    graphic = "icons/specials_huge/asteroid_coating.png"
+#include "/scripting/common/priorities.macros"
