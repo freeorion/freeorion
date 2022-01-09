@@ -11,3 +11,4 @@ Terminal=false
 Type=Application
 Categories=Game;StrategyGame;
 Keywords=space;strategy;empire;galaxy;turn-based;aliens;species;planets;fleet;research;resources;
+SingleMainWindow=true
