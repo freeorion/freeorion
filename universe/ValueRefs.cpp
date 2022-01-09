@@ -2027,11 +2027,9 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
         ResourceType res_type = ResourceType::INVALID_RESOURCE_TYPE;
         if (m_string_ref1) {
-            std::string res_name = m_string_ref1->Eval(context);
-            if (res_name == "Influence")
-                res_type = ResourceType::RE_INFLUENCE;
-            else if (res_name == "Industry")
-                res_type = ResourceType::RE_INDUSTRY;
+            const std::string res_name = m_string_ref1->Eval(context);
+            const auto meter_type = NameToMeter(res_name);
+            res_type = MeterToResource(meter_type);
         }
         if (res_type == ResourceType::INVALID_RESOURCE_TYPE)
             return 0;
