@@ -158,7 +158,7 @@ class StringTable(object):
                 result += "## }\n"
                 for line in entry:
                     if line:
-                        if (line!="}" and line!="{"):
+                        if (line != "}" and line != "{"):
                             result += "## " + line + "\n"
                     else:
                         result += "##\n"
