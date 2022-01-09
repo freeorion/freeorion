@@ -1977,40 +1977,43 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     // empire properties indexed by integers
     std::function<const std::map<int, float>& (const Empire&)> empire_property_int_key{nullptr};
 
-    if (variable_name == "PropagatedSystemSupplyRange")
-        empire_property_int_key = [](const Empire& empire) -> const std::map<int, float>& { return GetSupplyManager().PropagatedSupplyRanges(empire.EmpireID()); };
-    else if (variable_name == "SystemSupplyRange")
-        empire_property_int_key = &Empire::SystemSupplyRanges;
-    else if (variable_name == "PropagatedSystemSupplyDistance")
-        empire_property_int_key = [](const Empire& empire) -> const std::map<int, float>& { return GetSupplyManager().PropagatedSupplyDistances(empire.EmpireID()); };
-
-    if (empire_property_int_key) {
+    if (variable_name == "SystemSupplyRange") {
         using namespace boost::adaptors;
 
-        std::shared_ptr<const Empire> empire;
+        if (!m_int_ref2)
+            return 0.0; // no system specified... doesn't make sense to sum over systems...
+        int system_id = m_int_ref2->Eval(context);
+        if (system_id == INVALID_OBJECT_ID)
+            return 0.0;
 
         if (m_int_ref1) {
+            // single empire ID specified
             int empire_id = m_int_ref1->Eval(context);
             if (empire_id == ALL_EMPIRES)
                 return 0.0;
-            empire = context.GetEmpire(empire_id);
+            auto empire = context.GetEmpire(empire_id);
+            if (!empire)
+                return 0.0;
+            const auto& data = empire->SystemSupplyRanges();
+
+            auto it = data.find(system_id);
+            if (it != data.end())
+                return it->second;
+            else
+                return 0.0;
+
+        } else {
+            float empires_max = 0.0f;
+            // no empire ID specified, use max of all empires' ranges at specified system
+            for ([[maybe_unused]] auto& [unused_id, loop_empire] : context.Empires()) {
+                (void)unused_id; // quiet unused variable warning
+                const auto& empire_data = loop_empire->SystemSupplyRanges();
+                auto it = empire_data.find(system_id);
+                if (it != empire_data.end())
+                    empires_max = std::max(empires_max, it->second);
+            }
+            return empires_max;
         }
-
-        std::function<bool (const std::map<int, float>::value_type&)> key_filter;
-        key_filter = [](auto k) -> bool { return true; };
-
-        if (m_int_ref2)
-            key_filter = [k = m_int_ref2->Eval(context)](auto e) -> bool { return k == e.first; };
-
-        if (empire)
-            return boost::accumulate(empire_property_int_key(*empire) | filtered(key_filter) | map_values, 0.0f);
-
-        float sum = 0.0f;
-        for ([[maybe_unused]] auto& [unused_id, loop_empire] : context.Empires()) {
-            (void)unused_id; // quiet unused variable warning
-            sum += boost::accumulate(empire_property_int_key(*loop_empire) | filtered(key_filter) | map_values, 0.0f);
-        }
-        return sum;
     }
 
 
@@ -2051,6 +2054,29 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
 
     // non-empire properties
+    std::function<const std::map<int, float>& ()> property_int_key{nullptr};
+
+    if (variable_name == "PropagatedSystemSupplyRange") // int_ref2 is system ID
+        property_int_key = []() -> const std::map<int, float>& { return GetSupplyManager().PropagatedSupplyRanges(); };
+    else if (variable_name == "PropagatedSystemSupplyDistance") // int_ref2 is system ID
+        property_int_key = []() -> const std::map<int, float>& { return GetSupplyManager().PropagatedSupplyDistances(); };
+
+    if (property_int_key) {
+        if (!m_int_ref2)
+            return 0.0; // no system specified... doesn't make sense to sum over systems...
+        int system_id = m_int_ref2->Eval(context);
+        if (system_id == INVALID_OBJECT_ID)
+            return 0.0;
+
+        const auto& data = property_int_key();
+        auto it = data.find(system_id);
+        if (it != data.end())
+            return it->second;
+        else
+            return 0.0;
+    }
+
+
     if (variable_name == "GameRule") {
         if (!m_string_ref1)
             return 0.0;
