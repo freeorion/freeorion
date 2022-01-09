@@ -461,6 +461,8 @@ private:
 
 [[nodiscard]] FO_COMMON_API MeterType          NameToMeter(const std::string& name);
 [[nodiscard]] FO_COMMON_API const std::string& MeterToName(MeterType meter);
+[[nodiscard]] FO_COMMON_API std::string_view   PlanetTypeToString(PlanetType type);
+[[nodiscard]] FO_COMMON_API std::string_view   PlanetEnvironmentToString(PlanetEnvironment env);
 [[nodiscard]] FO_COMMON_API std::string        ReconstructName(const std::vector<std::string>& property_name,
                                                                ReferenceType ref_type,
                                                                bool return_immediate_value = false);

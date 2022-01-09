@@ -55,36 +55,6 @@ unsigned int FocusType::GetCheckSum() const {
 /////////////////////////////////////////////////
 // Species                                     //
 /////////////////////////////////////////////////
-namespace {
-    std::string_view PlanetTypeToString(PlanetType type) {
-        switch (type) {
-        case PlanetType::PT_SWAMP:     return "Swamp";
-        case PlanetType::PT_TOXIC:     return "Toxic";
-        case PlanetType::PT_INFERNO:   return "Inferno";
-        case PlanetType::PT_RADIATED:  return "Radiated";
-        case PlanetType::PT_BARREN:    return "Barren";
-        case PlanetType::PT_TUNDRA:    return "Tundra";
-        case PlanetType::PT_DESERT:    return "Desert";
-        case PlanetType::PT_TERRAN:    return "Terran";
-        case PlanetType::PT_OCEAN:     return "Ocean";
-        case PlanetType::PT_ASTEROIDS: return "Asteroids";
-        case PlanetType::PT_GASGIANT:  return "GasGiant";
-        default:                       return "?";
-        }
-    }
-
-    std::string_view PlanetEnvironmentToString(PlanetEnvironment env) {
-        switch (env) {
-        case PlanetEnvironment::PE_UNINHABITABLE: return "Uninhabitable";
-        case PlanetEnvironment::PE_HOSTILE:       return "Hostile";
-        case PlanetEnvironment::PE_POOR:          return "Poor";
-        case PlanetEnvironment::PE_ADEQUATE:      return "Adequate";
-        case PlanetEnvironment::PE_GOOD:          return "Good";
-        default:                                  return "?";
-        }
-    }
-}
-
 Species::Species(std::string&& name, std::string&& desc,
                  std::string&& gameplay_desc, std::vector<FocusType>&& foci,
                  std::string&& default_focus,
@@ -198,18 +168,18 @@ std::string Species::Dump(unsigned short ntabs) const {
         retval += DumpIndent(ntabs+1) + "environments =\n";
         retval.append(DumpIndent(ntabs+2))
               .append("type = ")
-              .append(PlanetTypeToString(m_planet_environments.begin()->first))
+              .append(ValueRef::PlanetTypeToString(m_planet_environments.begin()->first))
               .append(" environment = ")
-              .append(PlanetEnvironmentToString(m_planet_environments.begin()->second))
+              .append(ValueRef::PlanetEnvironmentToString(m_planet_environments.begin()->second))
               .append("\n");
     } else {
         retval += DumpIndent(ntabs+1) + "environments = [\n";
         for (const auto& entry : m_planet_environments) {
             retval.append(DumpIndent(ntabs+2))
                   .append("type = ")
-                  .append(PlanetTypeToString(entry.first))
+                  .append(ValueRef::PlanetTypeToString(entry.first))
                   .append(" environment = ")
-                  .append(PlanetEnvironmentToString(entry.second))
+                  .append(ValueRef::PlanetEnvironmentToString(entry.second))
                   .append("\n");
         }
         retval += DumpIndent(ntabs+1) + "]\n";

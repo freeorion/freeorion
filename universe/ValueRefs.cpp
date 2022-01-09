@@ -310,6 +310,47 @@ const std::string& MeterToName(MeterType meter) {
     return EMPTY_STRING;
 }
 
+constexpr std::string_view PlanetTypeToStringConstexpr(PlanetType type) {
+    switch (type) {
+    case PlanetType::PT_SWAMP:     return "Swamp";
+    case PlanetType::PT_TOXIC:     return "Toxic";
+    case PlanetType::PT_INFERNO:   return "Inferno";
+    case PlanetType::PT_RADIATED:  return "Radiated";
+    case PlanetType::PT_BARREN:    return "Barren";
+    case PlanetType::PT_TUNDRA:    return "Tundra";
+    case PlanetType::PT_DESERT:    return "Desert";
+    case PlanetType::PT_TERRAN:    return "Terran";
+    case PlanetType::PT_OCEAN:     return "Ocean";
+    case PlanetType::PT_ASTEROIDS: return "Asteroids";
+    case PlanetType::PT_GASGIANT:  return "GasGiant";
+    default:                       return "?";
+    }
+}
+
+std::string_view PlanetTypeToString(PlanetType type)
+{ return PlanetTypeToStringConstexpr(type); }
+
+PlanetType StringToPlanetType(std::string_view name) {
+    for (PlanetType pt = PlanetType::INVALID_PLANET_TYPE; pt < PlanetType::NUM_PLANET_TYPES;
+         pt = PlanetType(static_cast<std::underlying_type_t<PlanetType>>(pt) + 1))
+    {
+        if (PlanetTypeToStringConstexpr(pt) == name)
+            return pt;
+    }
+    return PlanetType::INVALID_PLANET_TYPE;
+}
+
+std::string_view PlanetEnvironmentToString(PlanetEnvironment env) {
+    switch (env) {
+    case PlanetEnvironment::PE_UNINHABITABLE: return "Uninhabitable";
+    case PlanetEnvironment::PE_HOSTILE:       return "Hostile";
+    case PlanetEnvironment::PE_POOR:          return "Poor";
+    case PlanetEnvironment::PE_ADEQUATE:      return "Adequate";
+    case PlanetEnvironment::PE_GOOD:          return "Good";
+    default:                                  return "?";
+    }
+}
+
 std::string ReconstructName(const std::vector<std::string>& property_name,
                             ReferenceType ref_type,
                             bool return_immediate_value)
