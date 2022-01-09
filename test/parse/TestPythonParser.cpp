@@ -224,6 +224,9 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
         BOOST_REQUIRE(techs.get<TechManager::NameIndex>().end() != tech_it);
         BOOST_REQUIRE_EQUAL(tech_name, (*tech_it)->Name());
 
+        BOOST_TEST_MESSAGE("Dump " << tech_name << ":");
+        BOOST_TEST_MESSAGE((*tech_it)->Dump(0));
+
         if (const char *tech_checksum_str = std::getenv("FO_CHECKSUM_TECH_VALUE")) {
             unsigned int tech_checksum = boost::lexical_cast<unsigned int>(tech_checksum_str);
             unsigned int value{0};
