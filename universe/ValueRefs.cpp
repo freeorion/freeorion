@@ -277,7 +277,6 @@ namespace {
         };
         return meter_name_map;
     }
-
     // force early init to avoid threading issues later
     std::map<std::string, MeterType> dummy = GetMeterNameMap();
 
@@ -285,13 +284,14 @@ namespace {
 }
 
 namespace ValueRef {
-    std::string ValueRefBase::InvariancePattern() const {
-        return std::string{RootCandidateInvariant() ? "R" : "r"}
-            .append(LocalCandidateInvariant()       ? "L" : "l")
-            .append(SourceInvariant()               ? "S" : "s")
-            .append(TargetInvariant()               ? "T" : "t")
-            .append(SimpleIncrement()               ? "I" : "i")
-            .append(ConstantExpr()                  ? "C" : "c");
+
+std::string ValueRefBase::InvariancePattern() const {
+    return std::string{RootCandidateInvariant() ? "R" : "r"}
+        .append(LocalCandidateInvariant()       ? "L" : "l")
+        .append(SourceInvariant()               ? "S" : "s")
+        .append(TargetInvariant()               ? "T" : "t")
+        .append(SimpleIncrement()               ? "I" : "i")
+        .append(ConstantExpr()                  ? "C" : "c");
 }
 
 MeterType NameToMeter(const std::string& name) {
