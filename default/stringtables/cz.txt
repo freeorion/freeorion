@@ -18,7 +18,7 @@ Czech
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
 ## {
 
@@ -1592,7 +1592,7 @@ Pevnost: %1%
 
 ## }
 ## Name lists
-##
+## {
 
 #include "content_specific_parameters.txt"
 #include "common_user_customizations.txt"

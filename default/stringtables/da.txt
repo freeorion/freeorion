@@ -15,7 +15,7 @@ Danish
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
 ## {
 
@@ -552,7 +552,7 @@ Teknologien %tech% er blevet opfundet.
 
 ## }
 ## Name lists
-##
+## {
 
 #include "content_specific_parameters.txt"
 #include "common_user_customizations.txt"

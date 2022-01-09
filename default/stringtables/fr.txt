@@ -4889,7 +4889,7 @@ Renommer Modèle Finalisé
 DESIGN_WND_RENAME_FINISHED_DETAIL
 '''Renommer modèle finalisé
 "%1%"
-en
+en 
 "%2%"'''
 
 DESIGN_WND_COMPONENT_CONFLICT
@@ -5581,7 +5581,7 @@ ENC_UNLOCKED_BY
 '''Débloqué par : '''
 
 ENC_UNLOCKS
-'''Débloque :
+'''Débloque : 
 '''
 
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
@@ -11761,9 +11761,9 @@ PLC_CONFEDERATION
 Confédération
 
 PLC_CONFEDERATION_DESC
-'''Les planètes de l'empire sont organisées en systèmes indépendants confédérés.
+'''Les planètes de l'empire sont organisées en systèmes indépendants confédérés. 
 
-• Augmente de [[value PLC_CONFEDERATION_SUPPLY_DISCONNECTED_INFLUENCE_FLAT]] la [[metertype METER_TARGET_INFLUENCE]] des colonies non-connectées à la Capitale
+• Augmente de [[value PLC_CONFEDERATION_SUPPLY_DISCONNECTED_INFLUENCE_FLAT]] la [[metertype METER_TARGET_INFLUENCE]] des colonies non-connectées à la Capitale 
 • Augmente de [[value DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY]] la [[metertype METER_TARGET_HAPPINESS]] des colonies non-connectées à la Capitale et aux centres administratifs régionaux
 • Diminue la [[metertype METER_TARGET_HAPPINESS]] ([[value PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT]]) sur toutes les planètes
 • Augmente l'indicateur [[metertype METER_MAX_TROOPS]] de [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]]'''
@@ -11900,7 +11900,7 @@ Conformité
 
 PLC_CONFORMANCE_DESC
 '''• Réduit l'impact des préférences d'une espèce (aime ou n'aime pas telles structures ou Politiques) sur la [[metertype METER_HAPPINESS]] planétaire.
-• Diminue la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT]] sur toutes les planètes.
+• Diminue la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT]] sur toutes les planètes. 
 • Augmente la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_CONFORMANCE_STABILITY_BONUS_FLAT]].
 
 Sur toutes les planètes dont la [[metertype METER_HAPPINESS]] est au moins égale à [[value PLC_CONFORMANCE_MIN_STABILITY]]:
@@ -16341,266 +16341,266 @@ Planète <i>%1%</i> [[TT_SPECIAL]]
 ## {
 
 NO_INDUSTRY_DESC
-−−−    Pas d'[[metertype METER_INDUSTRY]]
+−−−	Pas d'[[metertype METER_INDUSTRY]]
 
 VERY_BAD_INDUSTRY_DESC
-−−    Très Mauvais en [[metertype METER_INDUSTRY]] : 50%
+−−	Très Mauvais en [[metertype METER_INDUSTRY]] : 50%
 
 BAD_INDUSTRY_DESC
-−    Mauvais en [[metertype METER_INDUSTRY]] : 75%
+−	Mauvais en [[metertype METER_INDUSTRY]] : 75%
 
 AVERAGE_INDUSTRY_DESC
-'''    Normal en [[metertype METER_INDUSTRY]] : 100%'''
+'''	Normal en [[metertype METER_INDUSTRY]] : 100%'''
 
 GOOD_INDUSTRY_DESC
-+    Bon en [[metertype METER_INDUSTRY]] : 150%
++	Bon en [[metertype METER_INDUSTRY]] : 150%
 
 GREAT_INDUSTRY_DESC
-++    Excellent en [[metertype METER_INDUSTRY]] : 200%
+++	Excellent en [[metertype METER_INDUSTRY]] : 200%
 
 ULTIMATE_INDUSTRY_DESC
-+++    Parfait en [[metertype METER_INDUSTRY]] : 300%
++++	Parfait en [[metertype METER_INDUSTRY]] : 300%
 
 NO_RESEARCH_DESC
-−−−    Pas de [[metertype METER_RESEARCH]]
+−−−	Pas de [[metertype METER_RESEARCH]]
 
 VERY_BAD_RESEARCH_DESC
-−−    Très Mauvais en [[metertype METER_RESEARCH]] : 50%
+−−	Très Mauvais en [[metertype METER_RESEARCH]] : 50%
 
 BAD_RESEARCH_DESC
-−    Mauvais en [[metertype METER_RESEARCH]] : 75%
+−	Mauvais en [[metertype METER_RESEARCH]] : 75%
 
 AVERAGE_RESEARCH_DESC
-'''    Normal en [[metertype METER_RESEARCH]] : 100%'''
+'''	Normal en [[metertype METER_RESEARCH]] : 100%'''
 
 GOOD_RESEARCH_DESC
-+    Bon en [[metertype METER_RESEARCH]] : 150%
++	Bon en [[metertype METER_RESEARCH]] : 150%
 
 GREAT_RESEARCH_DESC
-++    Excellent en [[metertype METER_RESEARCH]] : 200%
+++	Excellent en [[metertype METER_RESEARCH]] : 200%
 
 ULTIMATE_RESEARCH_DESC
-+++    Parfait en [[metertype METER_RESEARCH]] : 300%
++++	Parfait en [[metertype METER_RESEARCH]] : 300%
 
 NO_INFLUENCE_DESC
-−−−    Pas d'[[metertype METER_INFLUENCE]]
+−−−	Pas d'[[metertype METER_INFLUENCE]]
 
 VERY_BAD_INFLUENCE_DESC
-−−    Très Mauvais en [[metertype METER_INFLUENCE]] : 50%
+−−	Très Mauvais en [[metertype METER_INFLUENCE]] : 50%
 
 BAD_INFLUENCE_DESC
-−    Mauvais en [[metertype METER_INFLUENCE]] : 75%
+−	Mauvais en [[metertype METER_INFLUENCE]] : 75%
 
 AVERAGE_INFLUENCE_DESC
-'''    Normal en [[metertype METER_INFLUENCE]] : 100%'''
+'''	Normal en [[metertype METER_INFLUENCE]] : 100%'''
 
 GOOD_INFLUENCE_DESC
-+    Bon en [[metertype METER_INFLUENCE]] : 150%
++	Bon en [[metertype METER_INFLUENCE]] : 150%
 
 GREAT_INFLUENCE_DESC
-++    Excellent en [[metertype METER_INFLUENCE]] : 200%
+++	Excellent en [[metertype METER_INFLUENCE]] : 200%
 
 ULTIMATE_INFLUENCE_DESC
-+++    Parfait en [[metertype METER_INFLUENCE]] : 300%
++++	Parfait en [[metertype METER_INFLUENCE]] : 300%
 
 BAD_HAPPINESS_DESC
-−    Mauvais en [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
+−	Mauvais en [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
 
 AVERAGE_HAPPINESS_DESC
-'''    Normal en [[metertype METER_HAPPINESS]]: +0'''
+'''	Normal en [[metertype METER_HAPPINESS]]: +0'''
 
 GOOD_HAPPINESS_DESC
-+    Bon en [[metertype METER_HAPPINESS]]: +[[value GOOD_HAPPINESS_VAL]]
++	Bon en [[metertype METER_HAPPINESS]]: +[[value GOOD_HAPPINESS_VAL]]
 
 GREAT_HAPPINESS_DESC
-++    Excellent en [[metertype METER_HAPPINESS]]: +[[value GREAT_HAPPINESS_VAL]]
+++	Excellent en [[metertype METER_HAPPINESS]]: +[[value GREAT_HAPPINESS_VAL]]
 
 ULTIMATE_HAPPINESS_DESC
-+++    Parfait en [[metertype METER_HAPPINESS]]: +[[value ULTIMATE_HAPPINESS_VAL]]
++++	Parfait en [[metertype METER_HAPPINESS]]: +[[value ULTIMATE_HAPPINESS_VAL]]
 
 NO_DEFENSE_TROOPS_DESC
-−−−    Pas d'[[metertype METER_TROOPS]] défensive
+−−−	Pas d'[[metertype METER_TROOPS]] défensive
 
 BAD_DEFENSE_TROOPS_DESC
-−    Mauvais en [[metertype METER_TROOPS]] défensive : 50%
+−	Mauvais en [[metertype METER_TROOPS]] défensive : 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-'''    Normal en [[metertype METER_TROOPS]] défensive : 100%'''
+'''	Normal en [[metertype METER_TROOPS]] défensive : 100%'''
 
 GOOD_DEFENSE_TROOPS_DESC
-+    Bon en [[metertype METER_TROOPS]] défensive : 150%
++	Bon en [[metertype METER_TROOPS]] défensive : 150%
 
 GREAT_DEFENSE_TROOPS_DESC
-++    Excellent en [[metertype METER_TROOPS]] défensive : 200%
+++	Excellent en [[metertype METER_TROOPS]] défensive : 200%
 
 ULTIMATE_DEFENSE_TROOPS_DESC
-+++    Parfait en [[metertype METER_TROOPS]] défensive : 300%
++++	Parfait en [[metertype METER_TROOPS]] défensive : 300%
 
 ANCIENT_DEFENSE_TROOPS_DESC
-+++    [[metertype METER_TROOPS]] ancestrale défensive : 10 par [[metertype METER_POPULATION]]
++++	[[metertype METER_TROOPS]] ancestrale défensive : 10 par [[metertype METER_POPULATION]]
 
 NO_OFFENSE_TROOPS_DESC
-−−−    Pas d'[[metertype METER_TROOPS]] offensive
+−−−	Pas d'[[metertype METER_TROOPS]] offensive
 
 BAD_OFFENSE_TROOPS_DESC
-−    Mauvais en [[metertype METER_TROOPS]] offensive : 50%
+−	Mauvais en [[metertype METER_TROOPS]] offensive : 50%
 
 AVERAGE_OFFENSE_TROOPS_DESC
-'''    Normal en [[metertype METER_TROOPS]] offensive : 100%'''
+'''	Normal en [[metertype METER_TROOPS]] offensive : 100%'''
 
 GOOD_OFFENSE_TROOPS_DESC
-+    Bon en [[metertype METER_TROOPS]] offensive : 150%
++	Bon en [[metertype METER_TROOPS]] offensive : 150%
 
 GREAT_OFFENSE_TROOPS_DESC
-++    Excellent en [[metertype METER_TROOPS]] offensive : 200%
+++	Excellent en [[metertype METER_TROOPS]] offensive : 200%
 
 ULTIMATE_OFFENSE_TROOPS_DESC
-+++    Parfait en [[metertype METER_TROOPS]] offensive : 300%
++++	Parfait en [[metertype METER_TROOPS]] offensive : 300%
 
 BAD_DETECTION_DESC
-−    Faible [[metertype METER_DETECTION]] : −20 malus
+−	Faible [[metertype METER_DETECTION]] : −20 malus
 
 GOOD_DETECTION_DESC
-+    Bon [[metertype METER_DETECTION]] : +25 bonus
++	Bon [[metertype METER_DETECTION]] : +25 bonus
 
 GREAT_DETECTION_DESC
-++    Excellent [[metertype METER_DETECTION]] : +50 bonus
+++	Excellent [[metertype METER_DETECTION]] : +50 bonus
 
 ULTIMATE_DETECTION_DESC
-+++    Parfait [[metertype METER_DETECTION]] : +100 bonus
++++	Parfait [[metertype METER_DETECTION]] : +100 bonus
 
 BAD_STEALTH_DESC
-−    Mauvais en [[metertype METER_STEALTH]] Planétaire : −20 malus
+−	Mauvais en [[metertype METER_STEALTH]] Planétaire : −20 malus
 
 AVERAGE_STEALTH_DESC
-'''    Normal en [[metertype METER_STEALTH]] Planétaire'''
+'''	Normal en [[metertype METER_STEALTH]] Planétaire'''
 
 GOOD_STEALTH_DESC
-+    Bon en [[metertype METER_STEALTH]] Planétaire : +20 bonus
++	Bon en [[metertype METER_STEALTH]] Planétaire : +20 bonus
 
 GREAT_STEALTH_DESC
-++    Excellent en [[metertype METER_STEALTH]] Planétaire : +40 bonus
+++	Excellent en [[metertype METER_STEALTH]] Planétaire : +40 bonus
 
 ULTIMATE_STEALTH_DESC
-+++    Parfait en [[metertype METER_STEALTH]] Planétaire : +60 bonus
++++	Parfait en [[metertype METER_STEALTH]] Planétaire : +60 bonus
 
 BAD_WEAPONS_DESC
-−    Mauvais Pilotes : dommages de base par armement d'astronef réduits d'un niveau.
+−	Mauvais Pilotes : dommages de base par armement d'astronef réduits d'un niveau.
 
 GOOD_WEAPONS_DESC
-+    Bons Pilotes : dommages de base par armement d'astronef augmentés d'un niveau.
++	Bons Pilotes : dommages de base par armement d'astronef augmentés d'un niveau.
 
 GREAT_WEAPONS_DESC
-++    Excellents Pilotes : dommages de base par armement d'astronef augmentés de deux niveaux.
+++	Excellents Pilotes : dommages de base par armement d'astronef augmentés de deux niveaux.
 
 ULTIMATE_WEAPONS_DESC
-+++    Parfaits Pilotes : dommages de base par armement d'astronef augmentés de trois niveaux.
++++	Parfaits Pilotes : dommages de base par armement d'astronef augmentés de trois niveaux.
 
 GASEOUS_DESC
-'''+    Vie sur Géantes Gazeuses
-+    Ravitaillement Carburant sur Géantes Gazeuses 0.1'''
+'''+	Vie sur Géantes Gazeuses
++	Ravitaillement Carburant sur Géantes Gazeuses 0.1'''
 
 BAD_POPULATION_DESC
-−    Mauvais en [[metertype METER_POPULATION]] : 75%
+−	Mauvais en [[metertype METER_POPULATION]] : 75%
 
 AVERAGE_POPULATION_DESC
-'''    Normal en [[metertype METER_POPULATION]] : 100%'''
+'''	Normal en [[metertype METER_POPULATION]] : 100%'''
 
 GOOD_POPULATION_DESC
-+    Bon en [[metertype METER_POPULATION]] : 125%
++	Bon en [[metertype METER_POPULATION]] : 125%
 
 FIXED_LOW_POPULATION_DESC
-−−    Population Maximale limitée à 5
+−−	Population Maximale limitée à 5
 
 VERY_BAD_SUPPLY_DESC
-−−    Très Mauvais en [[metertype METER_SUPPLY]] : -1
+−−	Très Mauvais en [[metertype METER_SUPPLY]] : -1
 
 BAD_SUPPLY_DESC
-−    Mauvais en [[metertype METER_SUPPLY]] : aucun bonus
+−	Mauvais en [[metertype METER_SUPPLY]] : aucun bonus
 
 AVERAGE_SUPPLY_DESC
-'''    Normal en [[metertype METER_SUPPLY]] : +1'''
+'''	Normal en [[metertype METER_SUPPLY]] : +1'''
 
 GREAT_SUPPLY_DESC
-+    Excellent en [[metertype METER_SUPPLY]] : +2
++	Excellent en [[metertype METER_SUPPLY]] : +2
 
 ULTIMATE_SUPPLY_DESC
-++    Parfait en [[metertype METER_SUPPLY]] : +3
+++	Parfait en [[metertype METER_SUPPLY]] : +3
 
 NO_STOCKPILE_DESC
-−−    Aucune [[metertype METER_STOCKPILE]]
+−−	Aucune [[metertype METER_STOCKPILE]]
 
 BAD_STOCKPILE_DESC
-−    Mauvais en [[metertype METER_STOCKPILE]] : +0.01 par [[metertype METER_POPULATION]]
+−	Mauvais en [[metertype METER_STOCKPILE]] : +0.01 par [[metertype METER_POPULATION]]
 
 AVERAGE_STOCKPILE_DESC
-'''    Normal en [[metertype METER_STOCKPILE]] : +0.02 par [[metertype METER_POPULATION]]'''
+'''	Normal en [[metertype METER_STOCKPILE]] : +0.02 par [[metertype METER_POPULATION]]'''
 
 GOOD_STOCKPILE_DESC
-+    Bon en [[metertype METER_STOCKPILE]] : +0.06 par [[metertype METER_POPULATION]]
++	Bon en [[metertype METER_STOCKPILE]] : +0.06 par [[metertype METER_POPULATION]]
 
 GREAT_STOCKPILE_DESC
-++    Excellent en [[metertype METER_STOCKPILE]] : +0.2 par [[metertype METER_POPULATION]]
+++	Excellent en [[metertype METER_STOCKPILE]] : +0.2 par [[metertype METER_POPULATION]]
 
 ULTIMATE_STOCKPILE_DESC
-+++    Parfait en [[metertype METER_STOCKPILE]] : +0.3 par [[metertype METER_POPULATION]]
++++	Parfait en [[metertype METER_STOCKPILE]] : +0.3 par [[metertype METER_POPULATION]]
 
 GOOD_SHIP_SHIELD_DESC
-+    Bons [[metertype METER_SHIELD]] d'astronefs : +1
++	Bons [[metertype METER_SHIELD]] d'astronefs : +1
 
 GOOD_PLANETARY_SHIELD_DESC
-+    Bons [[metertype METER_SHIELD]] planétaires : +5
++	Bons [[metertype METER_SHIELD]] planétaires : +5
 
 ANCIENT_PLANETARY_SHIELD_DESC
-+++    [[metertype METER_SHIELD]] planétaires ancestraux : +500
++++	[[metertype METER_SHIELD]] planétaires ancestraux : +500
 
 GOOD_PLANETARY_DEFENSE_DESC
-+    Bonne [[metertype METER_DEFENSE]] planétaire : +5
++	Bonne [[metertype METER_DEFENSE]] planétaire : +5
 
 BROAD_EP_DESC
-+    Grande adaptabilité : peut s'acclimater à plus de types planétaires.
++	Grande adaptabilité : peut s'acclimater à plus de types planétaires.
 
 NARROW_EP_DESC
-−−    Faible adaptabilité : s'acclimate à moins de types planétaires.
+−−	Faible adaptabilité : s'acclimate à moins de types planétaires.
 
 FAST_COLONIZATION_DESC
-+    Colonisation rapide : -25% de délai pour bâtir une colonie.
++	Colonisation rapide : -25% de délai pour bâtir une colonie.
 
 SLOW_COLONIZATION_DESC
-−    Colonisation lente : +20% de délai pour bâtir une colonie.
+−	Colonisation lente : +20% de délai pour bâtir une colonie.
 
 NO_FUEL_DESC
-−−−    Astronefs sans [[metertype METER_FUEL]]
+−−−	Astronefs sans [[metertype METER_FUEL]]
 
 BAD_FUEL_DESC
-−    Mauvais en [[metertype METER_FUEL]] max : -0.5
+−	Mauvais en [[metertype METER_FUEL]] max : -0.5
 
 AVERAGE_FUEL_DESC
-'''    Normal en [[metertype METER_FUEL]] max : +0'''
+'''	Normal en [[metertype METER_FUEL]] max : +0'''
 
 GOOD_FUEL_DESC
-+    Bon en [[metertype METER_FUEL]] max : +0.5
++	Bon en [[metertype METER_FUEL]] max : +0.5
 
 GREAT_FUEL_DESC
-++    Excellent en [[metertype METER_FUEL]] max : +1
+++	Excellent en [[metertype METER_FUEL]] max : +1
 
 ULTIMATE_FUEL_DESC
-+++    Parfait en [[metertype METER_FUEL]] max : +1.5
++++	Parfait en [[metertype METER_FUEL]] max : +1.5
 
 GREAT_ASTEROID_INDUSTRY_DESC
-+    Bons Mineurs sur Astéroïdes: + 0.2 en [[metertype METER_INDUSTRY]] par [[metertype METER_POPULATION]] lorsque que le Focus Industrie est activé dans les systèmes abritant une Ceinture d'Astéroïdes colonisée par l'empire.
++	Bons Mineurs sur Astéroïdes: + 0.2 en [[metertype METER_INDUSTRY]] par [[metertype METER_POPULATION]] lorsque que le Focus Industrie est activé dans les systèmes abritant une Ceinture d'Astéroïdes colonisée par l'empire.
 
 LIGHT_SENSITIVE_DESC
-−    Sensibilité à la lumière: la [[metertype METER_POPULATION]] est réduite dans les systèmes abritant une Étoile [[STAR_BLUE]], et dans une moindre mesure, une Étoile [[STAR_WHITE]].
+−	Sensibilité à la lumière: la [[metertype METER_POPULATION]] est réduite dans les systèmes abritant une Étoile [[STAR_BLUE]], et dans une moindre mesure, une Étoile [[STAR_WHITE]].
 
 TELEPATHIC_DETECTION_DESC
-+    Détection Télépathique: peut percevoir les planètes habitées proches.
++	Détection Télépathique: peut percevoir les planètes habitées proches.
 
 PRECOGNITIVE_DETECTION_DESC
-+    Détection Précognitive: peut percevoir les planètes reliées par Voies spatiales.
++	Détection Précognitive: peut percevoir les planètes reliées par Voies spatiales.
 
 COMMUNAL_VISION_DESC
-'''    Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers.'''
+'''	Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers.'''
 
 
 ## }
@@ -16608,10 +16608,10 @@ COMMUNAL_VISION_DESC
 ## {
 
 AVERAGE_BASE_FUEL_REGEN_DESC
-'''    Récupération stationnaire normale de [[metertype METER_FUEL]]: + 0.1'''
+'''	Récupération stationnaire normale de [[metertype METER_FUEL]]: + 0.1'''
 
 LIVING_HULL_BASE_FUEL_REGEN_DESC
-'''    Coque Organique Vivante - Récupération stationnaire de [[metertype METER_FUEL]]: + 0.3'''
+'''	Coque Organique Vivante - Récupération stationnaire de [[metertype METER_FUEL]]: + 0.3'''
 
 
 ## }
@@ -16663,12 +16663,12 @@ N'aime pas le Focus sur %1%
 # %1% name of planet
 # %2% name of special
 LIKES_SPECIAL_LABEL
-Aime %2% sur %1%
+Aime %2% sur %1% 
 
 # %1% name of planet
 # %2% name of special
 DISLIKES_SPECIAL_LABEL
-N'aime pas %2% sur %1%
+N'aime pas %2% sur %1% 
 
 # %1% name of planet
 # %2% name of species on planet

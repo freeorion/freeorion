@@ -23,7 +23,7 @@ Deutsch
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
 ## {
 
@@ -2774,14 +2774,14 @@ Shiffszahl
 
 # %1% name of the species.
 #ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
-#'''%1%:    '''
+#'''%1%:	'''
 
 # %1% content of ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1 expanded to match
 #     column width.
 # %2% the planet environment for a species.
 # %3% the planet population capacity for a species.
 #ENC_SPECIES_PLANET_TYPE_SUITABILITY
-#%1%    %2% (%3%)
+#%1%	%2% (%3%)
 
 # %1% name of the planet.
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
@@ -3948,7 +3948,7 @@ PHILOSOPHER_SPECIAL
 Philosophenplanet
 
 PHILOSOPHER_SPECIAL_DESC
-'''Reduziert [[metertype METER_TARGET_CONSTRUCTION]] um 20. Solange dieser Planet unbewohnt ist, erhöht er [[metertype METER_TARGET_RESEARCH]] um 5 auf allen bewohnten Planeten im selben System.
+'''Reduziert [[metertype METER_TARGET_CONSTRUCTION]] um 20. Solange dieser Planet unbewohnt ist, erhöht er [[metertype METER_TARGET_RESEARCH]] um 5 auf allen bewohnten Planeten im selben System. 
 
 Der letzte Verbliebene einer planetengroßen Nomadenspezies hat sich im Orbit dieses Systems zur Ruhe gesetzt. Nach tausenden von Lebensjahren hat er den Willen und die Fähigkeit zum Reisen verloren und verbringt seine Zeit nun damit, über die Mysterien des Universums zu sinnieren. Exzentrisch und leicht dement, wie er nun ist, spricht er nur mit jenen, deren Form und Größe seiner Art entsprechen, weshalb Wissenschaftler nur über die Planeten, auf denen sie leben, mit ihm kommunizieren können. Verständlicherweise würde es den [[PHILOSOPHER_SPECIAL]] sehr verstören, kolonisiert zu werden, und Konstruktionen auf seiner Oberfläche wären so schwierig, wie es bei einem lebenden Wesen zu erwarten wäre.'''
 
@@ -6739,7 +6739,7 @@ FT_BAY_1
 Startrampe
 
 FT_BAY_1_DESC
-Ein Dock, aus dem Jagdflieger abheben können.
+Ein Dock, aus dem Jagdflieger abheben können. 
 
 FT_HANGAR_0
 Lockvogelhangar
@@ -7022,7 +7022,7 @@ FU_ZERO_FUEL_DESC
 Sammelt Energie aus Nullpunktgeneration und wandelt sie in [[metertype METER_FUEL]] um.
 
 FU_RAMSCOOP
-Bussardkollektor
+Bussardkollektor 
 
 FU_RAMSCOOP_DESC
 Erzeugt langsam [[metertype METER_FUEL]] in Sternensystemen, indem es den Wasserstoff im interplanetaren Raum sammelt.
@@ -7194,7 +7194,7 @@ SP_PLANET_BEACON
 Mobile Planetarbake
 
 SP_PLANET_BEACON_DESC
-Kennzeichnet das Ziel für den [[buildingtype BLD_PLANET_DRIVE]]. Zum Einsatz muss das Schiff einen Zug lang seine Position halten und der Planet muss in einem verbundenen System sein.
+Kennzeichnet das Ziel für den [[buildingtype BLD_PLANET_DRIVE]]. Zum Einsatz muss das Schiff einen Zug lang seine Position halten und der Planet muss in einem verbundenen System sein. 
 
 SP_DISTORTION_MODULATOR
 Verzerrungsmodulator
@@ -7344,7 +7344,7 @@ SH_SPATIAL_FLUX
 Raumflussrumpf
 
 SH_SPATIAL_FLUX_DESC
-'''Dieser kleine Rumpf kann dank des [[tech SHP_SPACE_FLUX_DRIVE]]s mit guter Geschwindigkeit über weite Distanzen reisen. Er hat allerdings nur zwei externe Steckplätze und nur geringe [[metertype METER_STRUCTURE]].
+'''Dieser kleine Rumpf kann dank des [[tech SHP_SPACE_FLUX_DRIVE]]s mit guter Geschwindigkeit über weite Distanzen reisen. Er hat allerdings nur zwei externe Steckplätze und nur geringe [[metertype METER_STRUCTURE]]. 
 
 Beginnt mit einer [[metertype METER_STEALTH]] von 15. Der Wert erhöht sich um 10 im Stillstand, aber um 30 pro Zug wenn in Transit. Technologische Verbesserungen wie z.B. [[tech SPY_STEALTH_PART_1]] erhöhen [[METER_STEALTH]] um je 10 Punkte.
 
@@ -7356,7 +7356,7 @@ SH_SPACE_FLUX_BUBBLE
 Raumflussblasenrumpf
 
 SH_SPACE_FLUX_BUBBLE_DESC
-'''Dieser kleine Rumpf kann dank des [[tech SHP_SPACE_FLUX_DRIVE]]s mit guter Geschwindigkeit über weite Distanzen reisen. Er hat allerdings nur einen internen Steckplatz und nur geringe [[metertype METER_STRUCTURE]].
+'''Dieser kleine Rumpf kann dank des [[tech SHP_SPACE_FLUX_DRIVE]]s mit guter Geschwindigkeit über weite Distanzen reisen. Er hat allerdings nur einen internen Steckplatz und nur geringe [[metertype METER_STRUCTURE]]. 
 
 Beginnt mit einer [[metertype METER_STEALTH]] von 15. Der Wert erhöht sich um 10 im Stillstand, aber um 30 pro Zug wenn in Transit. Technologische Verbesserungen wie z.B. [[tech SPY_STEALTH_PART_1]] erhöhen [[METER_STEALTH]] um je 10 Punkte.
 
@@ -7555,7 +7555,7 @@ Organisches Wachstum: Startet mit 10 [[metertype METER_STRUCTURE]], aber wächst
 
 [[metertype METER_STEALTH]] ist hoch, [[metertype METER_DETECTION]] ist hoch und [[metertype METER_SPEED]] ist hoch.
 
-Mit wenigen externen Steckplätzen ist dieser Rumpf für die Frontlinie ungeeignet, aber die internen Steckplätze, [[METER_DETECTION]] und [[METER_STEALTH]] verleihen ihm Potential als Aufklärer oder Plünderer.
+Mit wenigen externen Steckplätzen ist dieser Rumpf für die Frontlinie ungeeignet, aber die internen Steckplätze, [[METER_DETECTION]] und [[METER_STEALTH]] verleihen ihm Potential als Aufklärer oder Plünderer. 
 
 [[LIVING_HULL_AUTO_REGEN]]
 
@@ -7570,7 +7570,7 @@ Organisches Wachstum: Startet mit 5 [[metertype METER_STRUCTURE]], aber wächst 
 
 [[metertype METER_STEALTH]] ist sehr hoch, [[metertype METER_DETECTION]] ist hoch und [[metertype METER_SPEED]] ist hoch.
 
-Mit wenigen externen Steckplätzen ist dieser Rumpf für die Frontlinie ungeeignet, aber die internen Steckplätze, [[METER_DETECTION]] und [[METER_STEALTH]] verleihen ihm Potential als Aufklärer oder Plünderer.
+Mit wenigen externen Steckplätzen ist dieser Rumpf für die Frontlinie ungeeignet, aber die internen Steckplätze, [[METER_DETECTION]] und [[METER_STEALTH]] verleihen ihm Potential als Aufklärer oder Plünderer. 
 
 [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_CELL_GRO_CHAMB_REQUIRED]]'''
 
@@ -8106,94 +8106,94 @@ Besonderheiten für [[encyclopedia LITHIC_SPECIES_TITLE]]:
 ## {
 
 NO_INDUSTRY_DESC
-−−−    Keine [[metertype METER_INDUSTRY]]
+−−−	Keine [[metertype METER_INDUSTRY]]
 
 BAD_INDUSTRY_DESC
-−    Schlechte [[metertype METER_INDUSTRY]]: 75%
+−	Schlechte [[metertype METER_INDUSTRY]]: 75%
 
 AVERAGE_INDUSTRY_DESC
-'''    Mittelmässige [[metertype METER_INDUSTRY]]: 100%'''
+'''	Mittelmässige [[metertype METER_INDUSTRY]]: 100%'''
 
 GOOD_INDUSTRY_DESC
-+    Gute [[metertype METER_INDUSTRY]]: 150%
++	Gute [[metertype METER_INDUSTRY]]: 150%
 
 GREAT_INDUSTRY_DESC
-++    Hervorragende [[metertype METER_INDUSTRY]]: 200%
+++	Hervorragende [[metertype METER_INDUSTRY]]: 200%
 
 ULTIMATE_INDUSTRY_DESC
-+++    Perfekte [[metertype METER_INDUSTRY]]: 300%
++++	Perfekte [[metertype METER_INDUSTRY]]: 300%
 
 NO_RESEARCH_DESC
-−−−    Keine [[metertype METER_RESEARCH]]
+−−−	Keine [[metertype METER_RESEARCH]]
 
 BAD_RESEARCH_DESC
-−    Schlechte [[metertype METER_RESEARCH]]: 75%
+−	Schlechte [[metertype METER_RESEARCH]]: 75%
 
 AVERAGE_RESEARCH_DESC
-'''    Mittelmässige [[metertype METER_RESEARCH]]: 100%'''
+'''	Mittelmässige [[metertype METER_RESEARCH]]: 100%'''
 
 GOOD_RESEARCH_DESC
-+    Gute [[metertype METER_RESEARCH]]: 150%
++	Gute [[metertype METER_RESEARCH]]: 150%
 
 GREAT_RESEARCH_DESC
-++    Hervorragende [[metertype METER_RESEARCH]]: 200%
+++	Hervorragende [[metertype METER_RESEARCH]]: 200%
 
 ULTIMATE_RESEARCH_DESC
-+++    Perfekte [[metertype METER_RESEARCH]]: 300%
++++	Perfekte [[metertype METER_RESEARCH]]: 300%
 
 NO_DEFENSE_TROOPS_DESC
-−−−    Keine Boden[[metertype METER_TROOPS]]
+−−−	Keine Boden[[metertype METER_TROOPS]]
 
 BAD_DEFENSE_TROOPS_DESC
-−    Schlechte Boden[[metertype METER_TROOPS]]: 50%
+−	Schlechte Boden[[metertype METER_TROOPS]]: 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-'''    Mittelmäßige Boden[[metertype METER_TROOPS]]: 100%'''
+'''	Mittelmäßige Boden[[metertype METER_TROOPS]]: 100%'''
 
 GOOD_DEFENSE_TROOPS_DESC
-+    Gute Boden[[metertype METER_TROOPS]]: 150%.
++	Gute Boden[[metertype METER_TROOPS]]: 150%.
 
 GREAT_DEFENSE_TROOPS_DESC
-++    Hervorragende Boden[[metertype METER_TROOPS]]: 200%.
+++	Hervorragende Boden[[metertype METER_TROOPS]]: 200%.
 
 ULTIMATE_DEFENSE_TROOPS_DESC
-+++    Perfekte Boden[[metertype METER_TROOPS]]: 300%.
++++	Perfekte Boden[[metertype METER_TROOPS]]: 300%.
 
 BAD_DETECTION_DESC
-−    Schlechte [[metertype METER_DETECTION]]: −20 Malus.
+−	Schlechte [[metertype METER_DETECTION]]: −20 Malus.
 
 GOOD_DETECTION_DESC
-+    Gute [[metertype METER_DETECTION]]: +25 Bonus.
++	Gute [[metertype METER_DETECTION]]: +25 Bonus.
 
 GREAT_DETECTION_DESC
-++    Hervorragende [[metertype METER_DETECTION]]: +50 Bonus.
+++	Hervorragende [[metertype METER_DETECTION]]: +50 Bonus.
 
 ULTIMATE_DETECTION_DESC
-+++    Perfekte [[metertype METER_DETECTION]]: +100 Bonus.
++++	Perfekte [[metertype METER_DETECTION]]: +100 Bonus.
 
 BAD_STEALTH_DESC
-−    Schlechte [[metertype METER_STEALTH]]: −20 Malus.
+−	Schlechte [[metertype METER_STEALTH]]: −20 Malus.
 
 AVERAGE_STEALTH_DESC
-'''    Mittelmäßige [[metertype METER_STEALTH]].'''
+'''	Mittelmäßige [[metertype METER_STEALTH]].'''
 
 GOOD_STEALTH_DESC
-+    Gute [[metertype METER_STEALTH]]: +20 Bonus.
++	Gute [[metertype METER_STEALTH]]: +20 Bonus.
 
 GREAT_STEALTH_DESC
-++    Hervorragende [[metertype METER_STEALTH]]: +40 Bonus.
+++	Hervorragende [[metertype METER_STEALTH]]: +40 Bonus.
 
 ULTIMATE_STEALTH_DESC
-+++    Perfekte [[metertype METER_STEALTH]]: +60 Bonus.
++++	Perfekte [[metertype METER_STEALTH]]: +60 Bonus.
 
 BAD_POPULATION_DESC
-−    Niedrige Bevölkerung 75%
+−	Niedrige Bevölkerung 75%
 
 AVERAGE_POPULATION_DESC
-'''    Normale Bevölkerung'''
+'''	Normale Bevölkerung'''
 
 GOOD_POPULATION_DESC
-+    Hohe Bevölkerung 125%
++	Hohe Bevölkerung 125%
 
 
 ## }
@@ -8523,13 +8523,26 @@ Vollbild wechseln
 #ψ
 #ω'''
 
-# }
 # Newline separated list of star cluster names
 #STAR_GROUP_NAMES
 #Centauri
 
 SHIP_NAME_OTHER
 Ewiger September
+
+# Newline separated list of developer name based ship names
+#SHIP_NAME_DEVS
+#'''Adrian Broher
+#Aquataine
+#Big Joe
+#Cami
+#Dilvish
+#Eleazar
+#Geoff the Medio
+#PD
+#Tyreth
+#Tzlaine
+#Vezzra'''
 
 #SHIP_NAMES
 #'''[[SHIP_NAME_MAMMALS]]

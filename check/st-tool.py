@@ -155,13 +155,14 @@ class StringTable(object):
             elif isinstance(entry, list):
                 result += "\n"
                 result += "\n"
-                result += "##\n"
+                result += "## }\n"
                 for line in entry:
                     if line:
-                        result += "## " + line + "\n"
+                        if (line!="}" and line!="{"):
+                            result += "## " + line + "\n"
                     else:
                         result += "##\n"
-                result += "##\n"
+                result += "## {\n"
 
         if self.includes:
             result += "\n"
@@ -1053,6 +1054,11 @@ if __name__ == "__main__":
         * Section titles are prefixed with a block comment (prefix '##').
         * Section titles have two leading whitespaces and one trailing
           whitespace.
+        * Additional parentheses are inserted in the block comments like
+          such:  ## }
+                 ## Comment...
+                 ## {
+          in order to facilitate code folding.
         """
         ),
         formatter_class=argparse.RawTextHelpFormatter,

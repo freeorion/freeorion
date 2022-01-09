@@ -17,7 +17,7 @@ English
 # یای مجهو
 
 
-##
+## }
 ## Common phrases
 ## {
 
@@ -4907,7 +4907,7 @@ Rename Finished Design
 DESIGN_WND_RENAME_FINISHED_DETAIL
 '''Rename Finished design from
 "%1%"
-to
+to 
 "%2%"'''
 
 DESIGN_WND_COMPONENT_CONFLICT
@@ -7170,11 +7170,11 @@ CONDITION_ANY
 Any
 
 
-##
+## }
 ## Situation report
 ##
 ## Format: Ideally always start with Location: with ship/fleet names near the end.
-##
+## {
 
 SITREP_PANEL_TITLE
 Situation Report - Initial turn
@@ -11930,7 +11930,7 @@ Conformance
 
 PLC_CONFORMANCE_DESC
 '''• Reduces the impact of species likes and dislikes on planet stability due to buildings and policies.
-• Descreases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT]] on all planets
+• Descreases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT]] on all planets 
 • Increases [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_CONFORMANCE_STABILITY_BONUS_FLAT]]
 
 On planets with a stability of at least [[value PLC_CONFORMANCE_MIN_STABILITY]]:
@@ -16182,7 +16182,7 @@ BLD_COL_PART_3
 owned by the empire, and will increase the farther away it is; the increase will be reduced by researching techs that enable faster colony ships such as engine parts and faster hulls
 
 
-##
+## }
 ## Ship design/hull macros
 ##
 ## Macro keys formatting for ship designs, hulls or parts:
@@ -16191,7 +16191,7 @@ owned by the empire, and will increase the farther away it is; the increase will
 ## ANY_SYSTEM (building owned in any system by empire or ally)
 ## Any other key formatting is self-explanatory (e.g. LIVING_HULL_AUTO_REGEN)
 ## Keys used in Predefined Ship Designs and Ship Hulls sections
-##
+## {
 
 BLD_SHIPYARD_BASE_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]].
@@ -16262,11 +16262,11 @@ SHIPDESIGN_PLANET_INVASION
 [[metertype METER_TROOPS]] and equipment that can be used to invade a planet
 
 
-##
+## }
 ## Ship part/tech application macros
 ##
 ## Keys used in Ship Parts and Technology Application sections
-##
+## {
 
 BLD_SHIPYARD_ORG_XENO_FAC_ORG_CELL_GRO_CHAMB_REQUIRED_ANY_SYSTEM
 This part can only be built if there is a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] somewhere in the empire or an ally's empire.
@@ -16374,266 +16374,266 @@ Planet <i>%1%</i> [[TT_SPECIAL]]
 ## {
 
 NO_INDUSTRY_DESC
-−−−    No [[metertype METER_INDUSTRY]]
+−−−	No [[metertype METER_INDUSTRY]]
 
 VERY_BAD_INDUSTRY_DESC
-−−    Very bad [[metertype METER_INDUSTRY]]: 50%
+−−	Very bad [[metertype METER_INDUSTRY]]: 50%
 
 BAD_INDUSTRY_DESC
-−    Bad [[metertype METER_INDUSTRY]]: 75%
+−	Bad [[metertype METER_INDUSTRY]]: 75%
 
 AVERAGE_INDUSTRY_DESC
-'''    Average [[metertype METER_INDUSTRY]]: 100%'''
+'''	Average [[metertype METER_INDUSTRY]]: 100%'''
 
 GOOD_INDUSTRY_DESC
-+    Good [[metertype METER_INDUSTRY]]: 150%
++	Good [[metertype METER_INDUSTRY]]: 150%
 
 GREAT_INDUSTRY_DESC
-++    Great [[metertype METER_INDUSTRY]]: 200%
+++	Great [[metertype METER_INDUSTRY]]: 200%
 
 ULTIMATE_INDUSTRY_DESC
-+++    Ultimate [[metertype METER_INDUSTRY]]: 300%
++++	Ultimate [[metertype METER_INDUSTRY]]: 300%
 
 NO_RESEARCH_DESC
-−−−    No [[metertype METER_RESEARCH]]
+−−−	No [[metertype METER_RESEARCH]]
 
 VERY_BAD_RESEARCH_DESC
-−−    Very bad [[metertype METER_RESEARCH]]: 50%
+−−	Very bad [[metertype METER_RESEARCH]]: 50%
 
 BAD_RESEARCH_DESC
-−    Bad [[metertype METER_RESEARCH]]: 75%
+−	Bad [[metertype METER_RESEARCH]]: 75%
 
 AVERAGE_RESEARCH_DESC
-'''    Average [[metertype METER_RESEARCH]]: 100%'''
+'''	Average [[metertype METER_RESEARCH]]: 100%'''
 
 GOOD_RESEARCH_DESC
-+    Good [[metertype METER_RESEARCH]]: 150%
++	Good [[metertype METER_RESEARCH]]: 150%
 
 GREAT_RESEARCH_DESC
-++    Great [[metertype METER_RESEARCH]]: 200%
+++	Great [[metertype METER_RESEARCH]]: 200%
 
 ULTIMATE_RESEARCH_DESC
-+++    Ultimate [[metertype METER_RESEARCH]]: 300%
++++	Ultimate [[metertype METER_RESEARCH]]: 300%
 
 NO_INFLUENCE_DESC
-−−−    No [[metertype METER_INFLUENCE]]
+−−−	No [[metertype METER_INFLUENCE]]
 
 VERY_BAD_INFLUENCE_DESC
-−−    Very bad [[metertype METER_INFLUENCE]]: 50%
+−−	Very bad [[metertype METER_INFLUENCE]]: 50%
 
 BAD_INFLUENCE_DESC
-−    Bad [[metertype METER_INFLUENCE]]: 75%
+−	Bad [[metertype METER_INFLUENCE]]: 75%
 
 AVERAGE_INFLUENCE_DESC
-'''    Average [[metertype METER_INFLUENCE]]: 100%'''
+'''	Average [[metertype METER_INFLUENCE]]: 100%'''
 
 GOOD_INFLUENCE_DESC
-+    Good [[metertype METER_INFLUENCE]]: 150%
++	Good [[metertype METER_INFLUENCE]]: 150%
 
 GREAT_INFLUENCE_DESC
-++    Great [[metertype METER_INFLUENCE]]: 200%
+++	Great [[metertype METER_INFLUENCE]]: 200%
 
 ULTIMATE_INFLUENCE_DESC
-+++    Ultimate [[metertype METER_INFLUENCE]]: 300%
++++	Ultimate [[metertype METER_INFLUENCE]]: 300%
 
 BAD_HAPPINESS_DESC
-−    Bad [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
+−	Bad [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
 
 AVERAGE_HAPPINESS_DESC
-'''    Average [[metertype METER_HAPPINESS]]: +0'''
+'''	Average [[metertype METER_HAPPINESS]]: +0'''
 
 GOOD_HAPPINESS_DESC
-+    Good [[metertype METER_HAPPINESS]]: +[[value GOOD_HAPPINESS_VAL]]
++	Good [[metertype METER_HAPPINESS]]: +[[value GOOD_HAPPINESS_VAL]]
 
 GREAT_HAPPINESS_DESC
-++    Great [[metertype METER_HAPPINESS]]: +[[value GREAT_HAPPINESS_VAL]]
+++	Great [[metertype METER_HAPPINESS]]: +[[value GREAT_HAPPINESS_VAL]]
 
 ULTIMATE_HAPPINESS_DESC
-+++    Ultimate [[metertype METER_HAPPINESS]]: +[[value ULTIMATE_HAPPINESS_VAL]]
++++	Ultimate [[metertype METER_HAPPINESS]]: +[[value ULTIMATE_HAPPINESS_VAL]]
 
 NO_DEFENSE_TROOPS_DESC
-−−−    No Defensive Ground [[metertype METER_TROOPS]]
+−−−	No Defensive Ground [[metertype METER_TROOPS]]
 
 BAD_DEFENSE_TROOPS_DESC
-−    Bad Defensive Ground [[metertype METER_TROOPS]]: 50%
+−	Bad Defensive Ground [[metertype METER_TROOPS]]: 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-'''    Average Defensive Ground [[metertype METER_TROOPS]]: 100%'''
+'''	Average Defensive Ground [[metertype METER_TROOPS]]: 100%'''
 
 GOOD_DEFENSE_TROOPS_DESC
-+    Good Defensive Ground [[metertype METER_TROOPS]]: 150%
++	Good Defensive Ground [[metertype METER_TROOPS]]: 150%
 
 GREAT_DEFENSE_TROOPS_DESC
-++    Great Defensive Ground [[metertype METER_TROOPS]]: 200%
+++	Great Defensive Ground [[metertype METER_TROOPS]]: 200%
 
 ULTIMATE_DEFENSE_TROOPS_DESC
-+++    Ultimate Defensive Ground [[metertype METER_TROOPS]]: 300%
++++	Ultimate Defensive Ground [[metertype METER_TROOPS]]: 300%
 
 ANCIENT_DEFENSE_TROOPS_DESC
-+++    Ancient Defensive Ground [[metertype METER_TROOPS]]: 10 per [[metertype METER_POPULATION]]
++++	Ancient Defensive Ground [[metertype METER_TROOPS]]: 10 per [[metertype METER_POPULATION]]
 
 NO_OFFENSE_TROOPS_DESC
-−−−    No Offensive Ground [[metertype METER_TROOPS]]
+−−−	No Offensive Ground [[metertype METER_TROOPS]]
 
 BAD_OFFENSE_TROOPS_DESC
-−    Bad Offensive Ground [[metertype METER_TROOPS]]: 50%
+−	Bad Offensive Ground [[metertype METER_TROOPS]]: 50%
 
 AVERAGE_OFFENSE_TROOPS_DESC
-'''    Average Offensive Ground [[metertype METER_TROOPS]]: 100%'''
+'''	Average Offensive Ground [[metertype METER_TROOPS]]: 100%'''
 
 GOOD_OFFENSE_TROOPS_DESC
-+    Good Offensive Ground [[metertype METER_TROOPS]]: 150%
++	Good Offensive Ground [[metertype METER_TROOPS]]: 150%
 
 GREAT_OFFENSE_TROOPS_DESC
-++    Great Offensive Ground [[metertype METER_TROOPS]]: 200%
+++	Great Offensive Ground [[metertype METER_TROOPS]]: 200%
 
 ULTIMATE_OFFENSE_TROOPS_DESC
-+++    Ultimate Offensive Ground [[metertype METER_TROOPS]]: 300%
++++	Ultimate Offensive Ground [[metertype METER_TROOPS]]: 300%
 
 BAD_DETECTION_DESC
-−    Bad [[metertype METER_DETECTION]]: −20 malus
+−	Bad [[metertype METER_DETECTION]]: −20 malus
 
 GOOD_DETECTION_DESC
-+    Good [[metertype METER_DETECTION]]: +25 bonus
++	Good [[metertype METER_DETECTION]]: +25 bonus
 
 GREAT_DETECTION_DESC
-++    Great [[metertype METER_DETECTION]]: +50 bonus
+++	Great [[metertype METER_DETECTION]]: +50 bonus
 
 ULTIMATE_DETECTION_DESC
-+++    Ultimate [[metertype METER_DETECTION]]: +100 bonus
++++	Ultimate [[metertype METER_DETECTION]]: +100 bonus
 
 BAD_STEALTH_DESC
-−    Bad Planetary [[metertype METER_STEALTH]]: −20 malus
+−	Bad Planetary [[metertype METER_STEALTH]]: −20 malus
 
 AVERAGE_STEALTH_DESC
-'''    Average Planetary [[metertype METER_STEALTH]]'''
+'''	Average Planetary [[metertype METER_STEALTH]]'''
 
 GOOD_STEALTH_DESC
-+    Good Planetary [[metertype METER_STEALTH]]: +20 bonus
++	Good Planetary [[metertype METER_STEALTH]]: +20 bonus
 
 GREAT_STEALTH_DESC
-++    Great Planetary [[metertype METER_STEALTH]]: +40 bonus
+++	Great Planetary [[metertype METER_STEALTH]]: +40 bonus
 
 ULTIMATE_STEALTH_DESC
-+++    Ultimate Planetary [[metertype METER_STEALTH]]: +60 bonus
++++	Ultimate Planetary [[metertype METER_STEALTH]]: +60 bonus
 
 BAD_WEAPONS_DESC
-−    Bad Pilots: Base damage per ship weapon reduced by one level.
+−	Bad Pilots: Base damage per ship weapon reduced by one level.
 
 GOOD_WEAPONS_DESC
-+    Good Pilots: Base damage per ship weapon increased by one level.
++	Good Pilots: Base damage per ship weapon increased by one level.
 
 GREAT_WEAPONS_DESC
-++    Great Pilots: Base damage per ship weapon increased by two levels.
+++	Great Pilots: Base damage per ship weapon increased by two levels.
 
 ULTIMATE_WEAPONS_DESC
-+++    Ultimate Pilots: Base damage per ship weapon increased by three levels.
++++	Ultimate Pilots: Base damage per ship weapon increased by three levels.
 
 GASEOUS_DESC
-'''+    Live on Gas Giants
-+    Refuel on Gas Giants 0.1'''
+'''+	Live on Gas Giants
++	Refuel on Gas Giants 0.1'''
 
 BAD_POPULATION_DESC
-−    Bad [[metertype METER_POPULATION]]: 75%
+−	Bad [[metertype METER_POPULATION]]: 75%
 
 AVERAGE_POPULATION_DESC
-'''    Average [[metertype METER_POPULATION]]: 100%'''
+'''	Average [[metertype METER_POPULATION]]: 100%'''
 
 GOOD_POPULATION_DESC
-+    Good [[metertype METER_POPULATION]]: 125%
++	Good [[metertype METER_POPULATION]]: 125%
 
 FIXED_LOW_POPULATION_DESC
-−−    Maximum Population is fixed at 5
+−−	Maximum Population is fixed at 5
 
 VERY_BAD_SUPPLY_DESC
-−−    Very Bad [[metertype METER_SUPPLY]]: -1
+−−	Very Bad [[metertype METER_SUPPLY]]: -1
 
 BAD_SUPPLY_DESC
-−    Bad [[metertype METER_SUPPLY]]: no bonus
+−	Bad [[metertype METER_SUPPLY]]: no bonus
 
 AVERAGE_SUPPLY_DESC
-'''    Average [[metertype METER_SUPPLY]]: +1'''
+'''	Average [[metertype METER_SUPPLY]]: +1'''
 
 GREAT_SUPPLY_DESC
-+    Great [[metertype METER_SUPPLY]]: +2
++	Great [[metertype METER_SUPPLY]]: +2
 
 ULTIMATE_SUPPLY_DESC
-++    Ultimate [[metertype METER_SUPPLY]]: +3
+++	Ultimate [[metertype METER_SUPPLY]]: +3
 
 NO_STOCKPILE_DESC
-−−    No [[metertype METER_STOCKPILE]]
+−−	No [[metertype METER_STOCKPILE]]
 
 BAD_STOCKPILE_DESC
-−    Bad [[metertype METER_STOCKPILE]]: +0.01 per [[metertype METER_POPULATION]]
+−	Bad [[metertype METER_STOCKPILE]]: +0.01 per [[metertype METER_POPULATION]]
 
 AVERAGE_STOCKPILE_DESC
-'''    Average [[metertype METER_STOCKPILE]]: +0.02 per [[metertype METER_POPULATION]]'''
+'''	Average [[metertype METER_STOCKPILE]]: +0.02 per [[metertype METER_POPULATION]]'''
 
 GOOD_STOCKPILE_DESC
-+    Good [[metertype METER_STOCKPILE]]: +0.06 per [[metertype METER_POPULATION]]
++	Good [[metertype METER_STOCKPILE]]: +0.06 per [[metertype METER_POPULATION]]
 
 GREAT_STOCKPILE_DESC
-++    Great [[metertype METER_STOCKPILE]]: +0.2 per [[metertype METER_POPULATION]]
+++	Great [[metertype METER_STOCKPILE]]: +0.2 per [[metertype METER_POPULATION]]
 
 ULTIMATE_STOCKPILE_DESC
-+++    Ultimate [[metertype METER_STOCKPILE]]: +0.3 per [[metertype METER_POPULATION]]
++++	Ultimate [[metertype METER_STOCKPILE]]: +0.3 per [[metertype METER_POPULATION]]
 
 GOOD_SHIP_SHIELD_DESC
-+    Good ship [[metertype METER_SHIELD]]: +1
++	Good ship [[metertype METER_SHIELD]]: +1
 
 GOOD_PLANETARY_SHIELD_DESC
-+    Good planetary [[metertype METER_SHIELD]]: +5
++	Good planetary [[metertype METER_SHIELD]]: +5
 
 ANCIENT_PLANETARY_SHIELD_DESC
-+++    Ancient planetary [[metertype METER_SHIELD]]: +500
++++	Ancient planetary [[metertype METER_SHIELD]]: +500
 
 GOOD_PLANETARY_DEFENSE_DESC
-+    Good planetary [[metertype METER_DEFENSE]]: +5
++	Good planetary [[metertype METER_DEFENSE]]: +5
 
 BROAD_EP_DESC
-+    Broad Planet Tolerance: can tolerate more types.
++	Broad Planet Tolerance: can tolerate more types.
 
 NARROW_EP_DESC
-−−    Narrow Planet Tolerance: flourishes on fewer types.
+−−	Narrow Planet Tolerance: flourishes on fewer types.
 
 FAST_COLONIZATION_DESC
-+    Fast Colonization: -25% time to build colonies
++	Fast Colonization: -25% time to build colonies
 
 SLOW_COLONIZATION_DESC
-−    Slow Colonization: +20% time to build colonies
+−	Slow Colonization: +20% time to build colonies
 
 NO_FUEL_DESC
-−−−    Ships have zero [[metertype METER_FUEL]]
+−−−	Ships have zero [[metertype METER_FUEL]]
 
 BAD_FUEL_DESC
-−    Bad Maximum [[metertype METER_FUEL]]: -0.5
+−	Bad Maximum [[metertype METER_FUEL]]: -0.5
 
 AVERAGE_FUEL_DESC
-'''    Average Maximum [[metertype METER_FUEL]]: +0'''
+'''	Average Maximum [[metertype METER_FUEL]]: +0'''
 
 GOOD_FUEL_DESC
-+    Good Maximum [[metertype METER_FUEL]]: +0.5
++	Good Maximum [[metertype METER_FUEL]]: +0.5
 
 GREAT_FUEL_DESC
-++    Great Maximum [[metertype METER_FUEL]]: +1
+++	Great Maximum [[metertype METER_FUEL]]: +1
 
 ULTIMATE_FUEL_DESC
-+++    Ultimate Maximum [[metertype METER_FUEL]]: +1.5
++++	Ultimate Maximum [[metertype METER_FUEL]]: +1.5
 
 GREAT_ASTEROID_INDUSTRY_DESC
-+    Good Asteroid Miners: + 0.2 [[metertype METER_INDUSTRY]] per [[metertype METER_POPULATION]] when Industry Focused in systems with owned asteroid belts.
++	Good Asteroid Miners: + 0.2 [[metertype METER_INDUSTRY]] per [[metertype METER_POPULATION]] when Industry Focused in systems with owned asteroid belts.
 
 LIGHT_SENSITIVE_DESC
-−    Light Sensitive: [[metertype METER_POPULATION]] is reduced in systems with [[STAR_BLUE]] and to a lesser extend [[STAR_WHITE]] stars.
+−	Light Sensitive: [[metertype METER_POPULATION]] is reduced in systems with [[STAR_BLUE]] and to a lesser extend [[STAR_WHITE]] stars.
 
 TELEPATHIC_DETECTION_DESC
-+    Telepathic Detection: can sense nearby populated planets.
++	Telepathic Detection: can sense nearby populated planets.
 
 PRECOGNITIVE_DETECTION_DESC
-+    Procognitive Detection: can sense starlane connected planets.
++	Procognitive Detection: can sense starlane connected planets.
 
 COMMUNAL_VISION_DESC
-'''    Communal Vision: shares visibility within the same species.'''
+'''	Communal Vision: shares visibility within the same species.'''
 
 
 ## }
@@ -16641,10 +16641,10 @@ COMMUNAL_VISION_DESC
 ## {
 
 AVERAGE_BASE_FUEL_REGEN_DESC
-'''    Average stationary [[metertype METER_FUEL]] recovery: + 0.1'''
+'''	Average stationary [[metertype METER_FUEL]] recovery: + 0.1'''
 
 LIVING_HULL_BASE_FUEL_REGEN_DESC
-'''    Living Organic Hull stationary [[metertype METER_FUEL]] recovery: + 0.3'''
+'''	Living Organic Hull stationary [[metertype METER_FUEL]] recovery: + 0.3'''
 
 
 ## }
@@ -17780,7 +17780,7 @@ Toggle fullscreen
 
 ## }
 ## Name lists
-##
+## {
 
 # adding some parentheses into comment lines {
 #   like this,
