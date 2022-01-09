@@ -1983,6 +1983,32 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return count;
         }
     }
+    else if (variable_name == "PlanetTypeDifference") {
+        // get planet types to find difference between...
+        PlanetType pt1;
+        if (m_int_ref1) {
+            int pt_int1 = m_int_ref1->Eval(context);
+            pt1 = PlanetType(pt_int1);
+        } else if (m_string_ref1) {
+            const std::string pt_name1 = m_string_ref1->Eval(context);
+            pt1 = StringToPlanetType(pt_name1);
+        } else {
+            return 0;
+        }
+
+        PlanetType pt2;
+        if (m_int_ref2) {
+            int pt_int2 = m_int_ref2->Eval(context);
+            pt2 = PlanetType(pt_int2);
+        } else if (m_string_ref2) {
+            const std::string pt_name2 = m_string_ref2->Eval(context);
+            pt2 = StringToPlanetType(pt_name2);
+        } else {
+            return 0;
+        }
+
+        return Planet::TypeDifference(pt1, pt2);
+    }
 
     return 0;
 }
