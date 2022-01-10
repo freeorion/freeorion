@@ -4424,6 +4424,24 @@ Politique appliquée depuis %1% tours actuellement et %2% tours au total.
 POLICY_ADOPTION_TIME_TOTAL
 Politique non appliquée actuellement. A été appliquée pendant %2% tours au total.
 
+POLICY_LIST_ADOPTED
+Appliquée
+
+POLICY_LIST_ADOPTABLE
+Applicable
+
+POLICY_LIST_UNAFFORDABLE
+Inabordable
+
+POLICY_LIST_RESTRICTED
+Inapplicable
+
+POLICY_LIST_LOCKED
+Vérouillée
+
+ALL_POLICY_AVAILABILITY_FILTERS_BLOCKING_PROMPT
+Activer/Désactiver les filtres de catégories et de disponibilité pour l'affichage des Politiques.
+
 
 ##
 ## Production info panel
@@ -6966,6 +6984,12 @@ Empire Approvisionneur
 SYSTEM_SUPPLY_RANGE
 Portée Approvisionnement Système
 
+DISTANCE_TO_SELECTED_SYSTEM
+Dist. au System Sélec.
+
+DISTANCE_TO_SELECTED_FLEET
+Dist. à la Flotte Sélec.
+
 PROPAGATED_SUPPLY_RANGE
 Portée Approvisionnement Propagé
 
@@ -7513,7 +7537,7 @@ Supernova détectée
 
 SITREP_BUREAUCRACY_STOPPED
 '''Le développement de la [[policy PLC_BUREAUCRACY]] nécessite des structures administratives supplémentaires.
-À partir du prochain tour, %rawtext:needbuildings% structures d'[[buildingtype BLD_REGIONAL_ADMIN]] et [[buildingtype BLD_IMPERIAL_PALACE]] seront requises afin d'éviter la paralysie de la bureaucratie. Actuellement, un total de %rawtext:havebuildings% de ces structures se trouvent dans l'empire.
+À partir du prochain tour, %rawtext:needbuildings% structures ([[buildingtype BLD_REGIONAL_ADMIN]], [[buildingtype BLD_IMPERIAL_PALACE]]) seront requises afin d'éviter la paralysie de la bureaucratie. Actuellement, un total de %rawtext:havebuildings% structures se trouvent dans l'empire.
 La Bureaucratie requiert une structure administrative supplémentaire tous les [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] tours.'''
 
 SITREP_BUREAUCRACY_STOPPED_LABEL
@@ -7760,7 +7784,13 @@ EFFECT_DERELICT_FUEL_LABEL
 Découverte de carburant
 
 EFFECT_BIOWEAPON
-La planète %planet% a perdu une population de %rawtext% suite à une attaque de %shippart%.
+La planète %planet% a perdu une population de %rawtext% suite à une attaque par %shippart%.
+
+EFFECT_BIOWEAPON_GAIA
+La planète %planet% a perdu la particularité [[special GAIA_SPECIAL]] suite à une attaque par %shippart%.
+
+EFFECT_BIOWEAPON_UNOWN
+La planète %planet% n'a plus de propriétaire suite à une attaque par %shippart%.
 
 EFFECT_BIOWEAPON_LABEL
 Attaque par armes biologiques
@@ -9196,6 +9226,10 @@ La planète possède un satellite naturel dont la période de révolution est sy
 COMPUTRONIUM_SPECIAL
 Lune Ordinatrice
 
+# %1% is the origin planet's name
+COMPUTRONIUM_ACCOUNTING_LABEL
+%1% Particularité <i>Lune Ordinatrice</i>
+
 COMPUTRONIUM_SPECIAL_DESC
 '''Lorsqu'une Lune Ordinatrice orbite autour d'une planète en [[encyclopedia RESEARCH_FOCUS_TITLE]], toutes les planètes de l'empire réglées sur le même Focus améliorent leur [[metertype METER_TARGET_RESEARCH]] de [[value COMPUTRONIUM_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]].
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value COMPUTRONIUM_MIN_STABILITY]].
@@ -9218,6 +9252,21 @@ PHILOSOPHER_SPECIAL_DESC
 Le bonus de Recherche requiert une [[metertype METER_HAPPINESS]] de [[value PHILOSOPHER_MIN_STABILITY]].
 
 L'unique et dernier représentant d'une espèce vagabonde de taille planétaire a trouvé sa dernière demeure près de cette étoile, autour de laquelle il orbite comme une planète normale. Âgé de milliers d'années, il a perdu l'envie et la capacité de voyager et se consacre désormais à la méditation sur tous les mystères de l'univers qu'il a rencontré au cours de sa longue existence. Déroutant et légèrement perturbé, il refuse de communiquer avec quiconque n'étant ni de sa taille ni de sa forme, ne laissant pas aux savants d'autres choix que de l'interroger via la voix de la planète sur laquelle ils résident. Sans surprise, coloniser la Planète Métaphysique la perturbe gravement et provoque un mutisme profond. La construction à sa surface s'avère difficile, comme il pouvait l'être présumé sur une entité vivante.'''
+
+ASTEROID_COATING_SPECIAL
+Enduit Astéroïdal
+
+ASTEROID_COATING_SPECIAL_DESC
+'''Un avant-poste ou une colonie sur ces astéroïdes fournira un bonus de [[metertype METER_STRUCTURE]] de +10% à tous les astronefs équipés de <encyclopedia HULL_LINE_ASTEROIDS>Coques Astéroïdales</encyclopedia> dans l'empire.
+
+Ces astéroïdes sont infestés par des vers transdimensionnels creusant des galeries à travers la roche, excrétant sur leur passage une substance visqueuse qui semble se propager automatiquement à toute la surface de l'astéroide infecté, l'empêchant ainsi de se désagréger.
+Appliquée aux astronefs équipés de coques astéroïdales, cette étrange substance augmente naturellement leur résistance. Bien que la durée de protection soit assez courte, ces vers viennent inspecter fréquemment les astronefs infectés, renouvelant ainsi la couche d'enduit protecteur, puis retournent dans leur habitat. Dans l'impossibilité de capturer un spécimen vivant, les scientifiques ont pour théorie que leurs déplacements seraient liés d'une manière ou d'une autre aux communications que nous émettons.'''
+
+ASTEROID_COATING_OWNED_SPECIAL
+Enduit Astéroïdal
+
+ASTEROID_COATING_OWNED_SPECIAL_DESC
+[[ASTEROID_COATING_SPECIAL_DESC]]
 
 ABANDONED_COLONY_SPECIAL
 Colonie Abandonnée
@@ -11539,10 +11588,11 @@ PLC_NO_SUPPLY
 Pas d'Approvisionnement
 
 PLC_NO_SUPPLY_DESC
-Empêche les planètes de générer des réseaux d'Approvisionnement.
+'''• Empêche les planètes de générer des réseaux d'Approvisionnement.
+• Augmente la Furtivité des planètes et structures de [[value NO_SUPPLY_STEALTH_BOOST]].'''
 
 PLC_NO_SUPPLY_SHORT_DESC
-Stoppe la propagation de l'Approvisionnement
+Stoppe la propagation de l'Approvisionnement, améliore la Furtivité
 
 PLC_CENTRALIZATION
 Centralisation
@@ -11596,7 +11646,9 @@ PLC_CONTINUOUS_SCANNING
 Scan Continuel
 
 PLC_CONTINUOUS_SCANNING_DESC
-Améliore le Champ de Détection des astronefs et la Capacité de Détection impériale, ces indicateurs augmentant en corrélation avec la durée d'application, tandis que la Furtivité des astronefs diminue de manière réciproque.
+'''• Améliore le Champ de Détection des astronefs de [[value CONTINUOUS_SCANNING_RANGE_BOOST]].
+• Augmente la Capacité de Détection impériale de 1 par tour à partir de l'adoption de cette Politique, jusqu'à un bonus de [[value CONTINUOUS_SCANNING_MAX_DETECTION_BOOST]].
+• Diminue la Furtivité des astronefs de [[value CONTINUOUS_SCANNING_STEALTH_PENALTY]].'''
 
 PLC_CONTINUOUS_SCANNING_SHORT_DESC
 Améliore la Détection et réduit la Furtivité
@@ -11605,9 +11657,8 @@ PLC_EXPLORATION  # translated
 Exploration
 
 PLC_EXPLORATION_DESC
-'''Améliore la Vitesse pour les astronefs non-armés et sans Chasseur, Bouclier, Blindage, Infanterie, Module de Colonisation, Bombardement, Recherche, Industrie, Influence, Production, ou Équipements Généraux.
-
-Les équipements de Détection, Carburant, et Motorisation sont autorisés.'''
+'''• Améliore la Vitesse pour les astronefs non-armés et sans Chasseur, Bouclier, Blindage, Infanterie, Module de Colonisation, Bombardement, Recherche, Industrie, Influence, Production, ou Équipements Généraux. Les équipements de Détection, Carburant, et Motorisation sont autorisés.
+• Chaque tour durant lequel un système est nouvellement exploré, les astronefs se trouvant dans ce système génèrent un total de [[value EXPLORATION_RESEARCH_BONUS_TOTAL]] PR.'''
 
 PLC_EXPLORATION_SHORT_DESC
 Accélère les Astronefs d'Exploration
@@ -11845,8 +11896,8 @@ PLC_ALGORITHMIC_RESEARCH
 Recherche Algorithmique
 
 PLC_ALGORITHMIC_RESEARCH_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche de [[value LRN_ALGO_RESEARCH_TARGET_RESEARCH_PERCONSTRUCTION]] par la valeur la plus faible entre la [[metertype METER_POPULATION]] ou l'[[metertype METER_CONSTRUCTION]].
-Cet effet requiert une [[metertype METER_HAPPINESS]] of [[value LRN_ALGO_RESEARCH_MIN_STABILITY]].'''
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche de [[value LRN_ALGO_RESEARCH_TARGET_RESEARCH_PERCONSTRUCTION]] par la valeur la plus faible entre la [[metertype METER_POPULATION]] et l'[[metertype METER_CONSTRUCTION]].
+Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value LRN_ALGO_RESEARCH_MIN_STABILITY]].'''
 
 PLC_ALGORITHMIC_RESEARCH_SHORT_DESC
 Améliore la Recherche
@@ -11967,7 +12018,9 @@ Marchés Capitaux
 
 PLC_CAPITAL_MARKETS_DESC
 '''• Les planètes disposant d'une Particularité de ressources de luxe et réglées sur le Focus Influence, exporteront cette ressource vers les planètes reliées par lignes d'[[metertype METER_SUPPLY]]. Cela améliore de [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]] la [[metertype METER_HAPPINESS]] des planètes peuplées d'espèces appréciant cette ressource.
-• Augmente le taux de progression ou de régression de l'[[metertype METER_INFLUENCE]] de [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / tour pour atteindre la valeur de la [[metertype METER_TARGET_INFLUENCE]].'''
+• Augmente la [[metertype METER_TARGET_INFLUENCE]] des planètes habitées ayant une [[metertype METER_HAPPINESS]] au moins égale à [[value CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY]], de [[value CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING]] par la valeur la plus faible entre l'[[metertype METER_CONSTRUCTION]] et la [[metertype METER_POPULATION]].
+• Augmente le taux de progression ou de régression de l'[[metertype METER_INFLUENCE]] et de la [[metertype METER_HAPPINESS]] de [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / tour pour atteindre la valeur de la [[metertype METER_TARGET_INFLUENCE]] ou de la [[metertype METER_TARGET_HAPPINESS]].
+• Réduit la [[metertype METER_TARGET_HAPPINESS]] sur les planètes habitées appartenant à l'empire de [[value CAPITAL_MARKETS_DEBT_INSTABILITY]] fois la valeur de la dette en Influence de l'empire.'''
 
 PLC_CAPITAL_MARKETS_SHORT_DESC
 Améliore la Stabilité via l'export de ressources
@@ -12049,7 +12102,9 @@ PLC_NECESSITY
 Nécessité
 
 PLC_NECESSITY_DESC
-Augmente la [[metertype METER_TARGET_RESEARCH]] des planètes en Focus Recherche dont la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]] multiplié par la racine carrée du produit entre la Population et de combien la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]].
+'''Sur les planètes en Focus Recherche dont la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]]:
+• Augmente la [[metertype METER_TARGET_RESEARCH]] par la racine carrée du produit entre la Population et de combien la [[metertype METER_HAPPINESS]] est inférieure à [[value PLC_NECESSITY_MAX_STABILITY]].
+• Augmente la progression de la [[metertype METER_RESEARCH]] de [[value PLC_NECESSITY_RESEARCH_GROWTH_BOOST]] par tour.'''
 
 PLC_NECESSITY_SHORT_DESC
 Améliore la Recherche des planètes à faible Stabilité
@@ -14006,8 +14061,8 @@ BLD_CULTURE_ARCHIVES
 Archives Culturelles
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT]], ainsi que la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]].
-Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value BLD_CULTURE_ARCHIVES_MIN_STABILITY]].
+'''• Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_CULTURE_ARCHIVES_TARGET_RESEARCH_FLAT]], ainsi que la [[metertype METER_TARGET_INDUSTRY]] de [[value BLD_CULTURE_ARCHIVES_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]]. Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value BLD_CULTURE_ARCHIVES_MIN_STABILITY]].
+• Octroie un choix de Politique sociale.
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, améliorant différents aspects de la productivité planétaire.'''
 
@@ -14015,8 +14070,7 @@ BLD_CULTURE_LIBRARY
 Bibliothèque Culturelle
 
 BLD_CULTURE_LIBRARY_DESC
-'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_CULTURE_LIBRARY_TARGET_RESEARCH_FLAT]].
-Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value BLD_CULTURE_LIBRARY_MIN_STABILITY]].
+'''Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value BLD_CULTURE_LIBRARY_TARGET_RESEARCH_FLAT]]. Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value BLD_CULTURE_LIBRARY_MIN_STABILITY]].
 
 Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus à la Recherche. Cette structure sera détruite si la [[metertype METER_POPULATION]] planétaire est réduite à zéro.'''
 
@@ -16715,14 +16769,24 @@ Bonus Habitat Souterrain
 GAIA_LABEL
 Bonus Gaia
 
+# %1% Planet where the special is located
 WORLDTREE_LABEL
-Bonus Arbre Planétaire
+%1% Particularité <i>Arbre Planétaire</i>
 
 TIDAL_LOCK_LABEL
 Rotation Synchrone
 
 HOMEWORLD_LABEL
 Planète Natale
+
+GRO_TECH_ACCOUNTING_LABEL
+[[TT_TECH]]
+
+DEF_TECH_ACCOUNTING_LABEL
+[[TT_TECH]]
+
+CON_TECH_ACCOUNTING_LABEL
+[[TT_TECH]]
 
 # %1% name of planet
 # %2% name of species on planet
@@ -16733,6 +16797,11 @@ INSTABILITY_REBELLION
 # %2% name of species on planet
 PARTISANS_REBELLION
 Partisans %2% en raison Dette Influence
+
+# %1% name of planet
+# %2% name of species on planet
+INFLUENCE_DEBT_DECAY
+Régression de la Dette Influence
 
 # %1% name of planet
 # %2% name of species on planet
@@ -17734,7 +17803,12 @@ Plein écran [on/off]
 ## Name lists
 ##
 
-# Newline separated list of star cluster names
+# adding some parentheses into comment lines {
+#   like this,
+#   helps for code foldability in modern editors
+# } even if there are non-commented lines inbetween
+# because this is a txt-file.
+# Newline separated list of star cluster names {
 #STAR_GROUP_WORDS
 #'''Alpha
 #Beta
@@ -17761,7 +17835,8 @@ Plein écran [on/off]
 #Psi
 #Omega'''
 
-# Newline separated list of star cluster suffixes
+# }
+# Newline separated list of star cluster suffixes {
 #STAR_GROUP_CHARS
 #'''α
 #β
@@ -17788,11 +17863,12 @@ Plein écran [on/off]
 #ψ
 #ω'''
 
-# Newline separated list of star cluster names
+# }
+# Newline separated list of star cluster names {
 #STAR_GROUP_NAMES
 #Centauri
 
-
+# }
 
 #include "content_specific_parameters.txt"
 #include "common_user_customizations.txt"
