@@ -195,6 +195,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["SetShield"] = py::raw_function(insert_set_meter_<MeterType::METER_SHIELD>);
     globals["SetStockpile"] = py::raw_function(insert_set_meter_<MeterType::METER_STOCKPILE>);
     globals["SetStructure"] = py::raw_function(insert_set_meter_<MeterType::METER_STRUCTURE>);
+    globals["SetTargetConstruction"] = py::raw_function(insert_set_meter_<MeterType::METER_TARGET_CONSTRUCTION>);
     globals["SetTargetPopulation"] = py::raw_function(insert_set_meter_<MeterType::METER_TARGET_POPULATION>);
     globals["SetTroops"] = py::raw_function(insert_set_meter_<MeterType::METER_TROOPS>);
 }
