@@ -57,6 +57,14 @@ value_ref_wrapper<double> operator-(const value_ref_wrapper<double>& lhs, const 
     );
 }
 
+condition_wrapper operator<=(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
+    return condition_wrapper(
+        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
+            Condition::ComparisonType::LESS_THAN_OR_EQUAL,
+            ValueRef::CloneUnique(rhs.value_ref))
+    );
+}
+
 condition_wrapper operator<(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
     return condition_wrapper(
         std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
@@ -79,8 +87,26 @@ namespace {
     value_ref_wrapper<T> insert_named_lookup_(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto name = boost::python::extract<std::string>(kw["name"])();
 
-        return value_ref_wrapper<T>(std::make_shared<ValueRef::NamedRef<T>>(name, true));
+        return value_ref_wrapper<T>(std::make_shared<ValueRef::NamedRef<T>>(name, /*is_lookup_only*/true));
     }
+
+    template<typename T>
+    value_ref_wrapper<T> insert_named_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto name = boost::python::extract<std::string>(kw["name"])();
+        std::unique_ptr<ValueRef::ValueRef<T>> value;
+        
+        auto value_arg = boost::python::extract<value_ref_wrapper<T>>(kw["value"]);
+        if (value_arg.check()) {
+            value = ValueRef::CloneUnique(value_arg().value_ref);
+        } else {
+            value = std::make_unique<ValueRef::Constant<T>>(boost::python::extract<T>(kw["value"])());
+        }
+
+        ::RegisterValueRef<T>(name, std::move(value));
+
+        return value_ref_wrapper<T>(std::make_shared<ValueRef::NamedRef<T>>(name));
+    }
+
 
     template <ValueRef::OpType O>
     boost::python::object insert_minmaxoneof_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw) {
@@ -146,6 +172,7 @@ namespace {
 }
 
 void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& parser) {
+    globals["NamedReal"] = boost::python::raw_function(insert_named_<double>);
     globals["NamedRealLookup"] = boost::python::raw_function(insert_named_lookup_<double>);
     globals["Value"] = value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE));
     globals["CurrentTurn"] = value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, "CurrentTurn"));

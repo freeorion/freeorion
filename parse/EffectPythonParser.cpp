@@ -8,6 +8,7 @@
 #include "../universe/Enums.h"
 
 #include "EnumPythonParser.h"
+#include "PythonParserImpl.h"
 #include "ValueRefPythonParser.h"
 
 namespace py = boost::python;
@@ -75,6 +76,23 @@ namespace {
                               ));
     }
 
+    effect_wrapper insert_if_(const py::tuple& args, const py::dict& kw) {
+        auto condition = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["condition"])().condition);
+
+        std::vector<std::unique_ptr<Effect::Effect>> effects;
+        py_parse::detail::flatten_list<effect_wrapper>(kw["effects"], [](const effect_wrapper& o, std::vector<std::unique_ptr<Effect::Effect>> &v) {
+            v.push_back(ValueRef::CloneUnique(o.effect));
+        }, effects);
+        
+        std::vector<std::unique_ptr<Effect::Effect>> else_;
+        py_parse::detail::flatten_list<effect_wrapper>(kw["else_"], [](const effect_wrapper& o, std::vector<std::unique_ptr<Effect::Effect>> &v) {
+            v.push_back(ValueRef::CloneUnique(o.effect));
+        }, else_);
+
+        return effect_wrapper(std::make_shared<Effect::Conditional>(std::move(condition),
+                                                                    std::move(effects),
+                                                                    std::move(else_)));
+    }
 
     template <MeterType M>
     effect_wrapper insert_set_meter_(const py::tuple& args, const py::dict& kw) {
@@ -115,20 +133,25 @@ namespace {
 
         std::string stackinggroup;
         if (kw.has_key("stackinggroup")) {
-            stackinggroup = py::extract<std::string>(kw["stackinggroup"]);
+            stackinggroup = py::extract<std::string>(kw["stackinggroup"])();
         }
 
         std::unique_ptr<Condition::Condition> activation;
         if (kw.has_key("activation")) {
            activation = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["activation"])().condition);
         }
+
+        std::string accountinglabel;
+        if (kw.has_key("accountinglabel")) {
+            accountinglabel = py::extract<std::string>(kw["accountinglabel"])();
+        }
         // ToDo: implement other arguments later
 
         return effect_group_wrapper(std::make_shared<Effect::EffectsGroup>(ValueRef::CloneUnique(scope.condition),
                                                       std::move(activation),
                                                       std::move(effects),
-                                                      "",
-                                                      stackinggroup,
+                                                      std::move(accountinglabel),
+                                                      std::move(stackinggroup),
                                                       priority,
                                                       "",
                                                       ""));
@@ -159,15 +182,20 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["Destroy"] = effect_wrapper(std::make_shared<Effect::Destroy>());
 
     globals["GenerateSitRepMessage"] = py::raw_function(insert_generate_sit_rep_message_);
+    globals["If"] = py::raw_function(insert_if_);
 
     globals["SetEmpireMeter"] = py::raw_function(set_empire_meter);
 
+    globals["SetConstruction"] = py::raw_function(insert_set_meter_<MeterType::METER_CONSTRUCTION>);
+    globals["SetDefense"] = py::raw_function(insert_set_meter_<MeterType::METER_DEFENSE>);
+    globals["SetIndustry"] = py::raw_function(insert_set_meter_<MeterType::METER_INDUSTRY>);
     globals["SetMaxShield"] = py::raw_function(insert_set_meter_<MeterType::METER_MAX_SHIELD>);
     globals["SetMaxSupply"] = py::raw_function(insert_set_meter_<MeterType::METER_MAX_SUPPLY>);
+    globals["SetResearch"] = py::raw_function(insert_set_meter_<MeterType::METER_RESEARCH>);
     globals["SetShield"] = py::raw_function(insert_set_meter_<MeterType::METER_SHIELD>);
-    globals["SetTargetPopulation"] = py::raw_function(insert_set_meter_<MeterType::METER_TARGET_POPULATION>);
-    globals["SetDefense"] = py::raw_function(insert_set_meter_<MeterType::METER_DEFENSE>);
-    globals["SetTroops"] = py::raw_function(insert_set_meter_<MeterType::METER_TROOPS>);
+    globals["SetStockpile"] = py::raw_function(insert_set_meter_<MeterType::METER_STOCKPILE>);
     globals["SetStructure"] = py::raw_function(insert_set_meter_<MeterType::METER_STRUCTURE>);
+    globals["SetTargetPopulation"] = py::raw_function(insert_set_meter_<MeterType::METER_TARGET_POPULATION>);
+    globals["SetTroops"] = py::raw_function(insert_set_meter_<MeterType::METER_TROOPS>);
 }
 

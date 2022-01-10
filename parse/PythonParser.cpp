@@ -91,7 +91,8 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self + int())
             .def(py::self_ns::self + double())
             .def(py::self_ns::self + py::self_ns::self)
-            .def(py::self_ns::self - py::self_ns::self);
+            .def(py::self_ns::self - py::self_ns::self)
+            .def(py::self_ns::self <= py::self_ns::self);
         py::class_<value_ref_wrapper<std::string>>("ValueRefString", py::no_init);
         py::class_<condition_wrapper>("Condition", py::no_init)
             .def(py::self_ns::self & py::self_ns::self)
@@ -112,11 +113,23 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def_readonly("ID", &target_wrapper::id)
             .def_readonly("Owner", &target_wrapper::owner)
             .def_readonly("SystemID", &target_wrapper::system_id)
-            .def_readonly("DesignID", &target_wrapper::design_id);
+            .def_readonly("DesignID", &target_wrapper::design_id)
+            .def_readonly("TargetIndustry", &target_wrapper::target_industry)
+            .def_readonly("TargetResearch", &target_wrapper::target_research)
+            .def_readonly("TargetConstruction", &target_wrapper::target_construction)
+            .def_readonly("MaxStockpile", &target_wrapper::max_stockpile);
         py::class_<local_candidate_wrapper>("__LocalCandidate", py::no_init)
             .def_readonly("LastTurnAttackedByShip", &local_candidate_wrapper::last_turn_attacked_by_ship)
             .def_readonly("LastTurnConquered", &local_candidate_wrapper::last_turn_conquered)
-            .def_readonly("LastTurnColonized", &local_candidate_wrapper::last_turn_colonized);
+            .def_readonly("LastTurnColonized", &local_candidate_wrapper::last_turn_colonized)
+            .def_readonly("Industry", &local_candidate_wrapper::industry)
+            .def_readonly("TargetIndustry", &local_candidate_wrapper::target_industry)
+            .def_readonly("Research", &local_candidate_wrapper::research)
+            .def_readonly("TargetResearch", &local_candidate_wrapper::target_research)
+            .def_readonly("Construction", &local_candidate_wrapper::construction)
+            .def_readonly("TargetConstruction", &local_candidate_wrapper::target_construction)
+            .def_readonly("Stockpile", &local_candidate_wrapper::stockpile)
+            .def_readonly("MaxStockpile", &local_candidate_wrapper::max_stockpile);
 
         py::implicitly_convertible<source_wrapper, condition_wrapper>();
 
