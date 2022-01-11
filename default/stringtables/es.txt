@@ -1250,8 +1250,8 @@ Valor empleado para ajustarse a los cambios de [[METER_POPULATION]] en planetas 
 ## Command-line and options database entries
 ##
 
-#*COMMAND_LINE_NOT_FOUND
-#* <not translated 1970-01-01 01:00:00>
+COMMAND_LINE_NOT_FOUND
+No se encontraron opciones o secciones acordes
 
 COMMAND_LINE_USAGE
 Uso: -h | --help [nombre de grupo | nombre de opción]
@@ -1259,8 +1259,8 @@ Uso: -h | --help [nombre de grupo | nombre de opción]
 COMMAND_LINE_DEFAULT
 Por defecto
 
-#*COMMAND_LINE_SECTIONS
-#* <not translated 1970-01-01 01:00:00>
+COMMAND_LINE_SECTIONS
+Grupos de Opciones
 
 COMMAND_LINE_OPTIONS
 Opciones
@@ -1278,11 +1278,11 @@ Imprime la versión y termina.
 OPTIONS_DB_SINGLEPLAYER
 Inicia el servidor en modo un jugador. Esto solo permite conectar clientes en localhost.
 
-#*OPTIONS_DB_HOSTLESS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_HOSTLESS
+Inicia el servidor en modo sin host. El servidor acepta jugadores en un lobby multijugador, y vuelve a dicho lobby al terminar la sessión de juego.
 
-#*OPTIONS_DB_SKIP_CHECKSUM
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_SKIP_CHECKSUM
+Evita comparar los checksum de los directorios de recursos. Esto permite un inicio más rápido cuando cliente y servidor están en la misma máquina, utilizando el mismo directorio para los recursos.
 
 #*OPTIONS_DB_TESTING
 #* <not translated 1970-01-01 01:00:00>
@@ -3415,23 +3415,23 @@ Haga click para abrir el menú de investigación'''
 MAP_STOCKPILE_TITLE
 Reserva Imperial
 
-#*RESOURCE_TT_OUTPUT
-#* <not translated 1970-01-01 01:00:00>
+RESOURCE_TT_OUTPUT
+Producción
 
-#*RESOURCE_TT_TARGET_OUTPUT
-#* <not translated 1970-01-01 01:00:00>
+RESOURCE_TT_TARGET_OUTPUT
+Producción Objetivo
 
-#*RESOURCE_TT_USED
-#* <not translated 1970-01-01 01:00:00>
+RESOURCE_TT_USED
+Consumo
 
-#*RESOURCE_TT_EXCESS
-#* <not translated 1970-01-01 01:00:00>
+RESOURCE_TT_EXCESS
+Excedente
 
-#*RESOURCE_TT_TO_STOCKPILE
-#* <not translated 1970-01-01 01:00:00>
+RESOURCE_TT_TO_STOCKPILE
+Para Almacenar
 
-#*RESOURCE_TT_WASTED
-#* <not translated 1970-01-01 01:00:00>
+RESOURCE_TT_WASTED
+Desperdiciado
 
 #*MAP_POPULATION_DISTRIBUTION
 #* <not translated 1970-01-01 01:00:00>
@@ -6369,8 +6369,8 @@ Mensajes
 ## Players list
 ##
 
-#*PLAYERS_LIST_PANEL_TITLE
-#* <not translated 1970-01-01 01:00:00>
+PLAYERS_LIST_PANEL_TITLE
+Imperios
 
 #*PLAYING_TURN
 #* <not translated 1970-01-01 01:00:00>
@@ -6647,20 +6647,20 @@ Crecimiento de la población en el próximo turno
 ##
 
 SITREP_PANEL_TITLE
-Reporte de Situación
+Informe de Situación
 
 # %1% number of the current turn.
-#*SITREP_PANEL_TITLE_TURN
-#* <not translated 1970-01-01 01:00:00>
+SITREP_PANEL_TITLE_TURN
+Informe de Situación - Turno %1%
 
-#*FILTERS
-#* <not translated 1970-01-01 01:00:00>
+FILTERS
+Filtros
 
-#*SITREP_IGNORE_MENU
-#* <not translated 1970-01-01 01:00:00>
+SITREP_IGNORE_MENU
+Ignorar
 
-#*SITREP_BLOCK_MENU
-#* <not translated 1970-01-01 01:00:00>
+SITREP_BLOCK_MENU
+Bloquear
 
 #*SITREP_SNOOZE_5_TURNS
 #* <not translated 1970-01-01 01:00:00>
@@ -8886,47 +8886,47 @@ Tipo de planeta desconocido
 
 # Planet types
 PT_SWAMP
-pantanoso
+Pantanoso
 
 # Planet types
 PT_TOXIC
-tóxico
+Tóxico
 
 # Planet types
 PT_INFERNO
-infernal
+Infernal
 
 # Planet types
 PT_RADIATED
-irradiado
+Irradiado
 
 # Planet types
 PT_BARREN
-estéril
+Estéril
 
 # Planet types
 PT_TUNDRA
-tundra
+Tundra
 
 # Planet types
 PT_DESERT
-desierto
+Desierto
 
 # Planet types
 PT_TERRAN
-terrano
+Terrano
 
 # Planet types
 PT_OCEAN
-océano
+Océano
 
 # Planet types
 PT_ASTEROIDS
-asteroides
+Asteroides
 
 # Planet types
 PT_GASGIANT
-gigante gaseoso
+Gigante Gaseoso
 
 # Planet sizes
 INVALID_PLANET_SIZE
