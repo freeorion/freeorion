@@ -9,11 +9,71 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <atomic>
 
+#if BOOST_VERSION >= 106500
+// define needed on Windows due to conflict with windows.h and std::min and std::max
+#  ifndef NOMINMAX
+#    define NOMINMAX
+#  endif
+// define needed in GCC
+#  ifndef _GNU_SOURCE
+#    define _GNU_SOURCE
+#  endif
+#  if defined(_MSC_VER) && _MSC_VER >= 1930
+struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax error: 'identifier' was unexpected here; expected 'type specifier'"
+#  endif
+
+#  include <boost/stacktrace.hpp>
+#endif
+
 namespace {
     std::map<std::string, std::shared_ptr<StringTable>> stringtables;
     std::shared_mutex                                   stringtable_access_mutex;
     std::atomic<bool>                                   stringtable_filename_init;
     std::mutex                                          stringtable_filename_init_mutex;
+
+    constexpr std::string_view ERROR_STRING = "ERROR: ";
+    StringTable error_stringtable;
+    std::mutex  error_stringtable_access_mutex;
+
+
+    std::string StackTrace() {
+        static std::atomic<int> string_error_lookup_count = 0;
+        if (string_error_lookup_count++ > 10)
+            return "";
+#if BOOST_VERSION >= 106500
+        std::stringstream ss;
+        ss << "stacktrace:\n" << boost::stacktrace::stacktrace();
+        return ss.str();
+#else
+        return "";
+#endif
+    }
+
+
+    std::string operator+(const std::string_view sv, const std::string& s) {
+        std::string retval;
+        retval.reserve(sv.size() + s.size());
+        retval.append(sv);
+        retval.append(s);
+        return retval;
+    }
+
+    std::string operator+(const std::string_view sv1, const std::string_view sv2) {
+        std::string retval;
+        retval.reserve(sv1.size() + sv2.size());
+        retval.append(sv1);
+        retval.append(sv2);
+        return retval;
+    }
+
+    std::string operator+(const std::string_view sv, const char* c) {
+        std::string retval;
+        retval.reserve(sv.size() + std::strlen(c));
+        retval.append(sv);
+        retval.append(c);
+        return retval;
+    }
+
 
     // fallback stringtable to look up key in if entry is not found in currently configured stringtable
     boost::filesystem::path DevDefaultEnglishStringtablePath()
@@ -255,11 +315,22 @@ const std::string& UserString(const std::string& str) {
     const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
     if (string_found)
         return string_value;
-    auto& default_table{GetDevDefaultStringTable(stringtable_lock)};
-    stringtable_lock.unlock();
-    std::unique_lock mutation_lock(stringtable_access_mutex);
-    auto& retval{default_table[str]};
-    return retval;
+
+    const auto& [default_string_found, default_string_value] =
+        GetDevDefaultStringTable(stringtable_lock).CheckGet(str);
+    if (default_string_found)
+        return default_string_value;
+
+    const auto& [error_string_found, error_string_value] = error_stringtable.CheckGet(str);
+    if (error_string_found)
+        return error_string_value;
+
+    ErrorLogger() << "Missing string: " << str;
+    DebugLogger() << StackTrace();
+
+    std::unique_lock mutation_lock(error_stringtable_access_mutex);
+    auto error_string{ERROR_STRING + str};
+    return error_stringtable.Add(str, std::move(error_string));
 }
 
 const std::string& UserString(const std::string_view str) {
@@ -267,11 +338,21 @@ const std::string& UserString(const std::string_view str) {
     const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
     if (string_found)
         return string_value;
-    auto& default_table{GetDevDefaultStringTable(stringtable_lock)};
-    stringtable_lock.unlock();
-    std::unique_lock mutation_lock(stringtable_access_mutex);
-    auto& retval{default_table[str]};
-    return retval;
+
+    const auto& [default_string_found, default_string_value] =
+        GetDevDefaultStringTable(stringtable_lock).CheckGet(str);
+    if (default_string_found)
+        return default_string_value;
+
+    const auto& [error_string_found, error_string_value] = error_stringtable.CheckGet(str);
+    if (error_string_found)
+        return error_string_value;
+
+    ErrorLogger() << "Missing string: " << str;
+    DebugLogger() << StackTrace();
+
+    std::unique_lock mutation_lock(error_stringtable_access_mutex);
+    return error_stringtable.Add(std::string{str}, ERROR_STRING + str);
 }
 
 const std::string& UserString(const char* str) {
@@ -279,11 +360,21 @@ const std::string& UserString(const char* str) {
     const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
     if (string_found)
         return string_value;
-    auto& default_table{GetDevDefaultStringTable(stringtable_lock)};
-    stringtable_lock.unlock();
-    std::unique_lock mutation_lock(stringtable_access_mutex);
-    auto& retval{default_table[str]};
-    return retval;
+
+    const auto& [default_string_found, default_string_value] =
+        GetDevDefaultStringTable(stringtable_lock).CheckGet(str);
+    if (default_string_found)
+        return default_string_value;
+
+    const auto& [error_string_found, error_string_value] = error_stringtable.CheckGet(str);
+    if (error_string_found)
+        return error_string_value;
+
+    ErrorLogger() << "Missing string: " << str;
+    DebugLogger() << StackTrace();
+
+    std::unique_lock mutation_lock(error_stringtable_access_mutex);
+    return error_stringtable.Add(std::string{str}, ERROR_STRING + str);
 }
 
 std::vector<std::string> UserStringList(const std::string& key) {

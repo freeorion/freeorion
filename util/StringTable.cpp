@@ -31,27 +31,8 @@ struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax er
 
 namespace {
     constexpr std::string_view DEFAULT_FILENAME = "en.txt";
-    constexpr std::string_view ERROR_STRING = "ERROR: ";
     const std::string EMPTY_STRING;
-
-    std::string StackTrace() {
-        static std::atomic<int> string_error_lookup_count = 0;
-        if (string_error_lookup_count++ > 10)
-            return "";
-#if BOOST_VERSION >= 106500
-        std::stringstream ss;
-        ss << "stacktrace:\n" << boost::stacktrace::stacktrace();
-        return ss.str();
-#else
-        return "";
-#endif
-    }
 }
-
-
-StringTable::StringTable():
-    m_filename(DEFAULT_FILENAME)
-{ Load(); }
 
 StringTable::StringTable(std::string filename, std::shared_ptr<const StringTable> fallback):
     m_filename(std::move(filename))
@@ -84,70 +65,8 @@ std::pair<bool, const std::string&> StringTable::CheckGet(const char* key) const
     return {found_string, found_string ? it->second : EMPTY_STRING};
 }
 
-namespace {
-    std::string operator+(const std::string_view sv, const std::string& s) {
-        std::string retval;
-        retval.reserve(sv.size() + s.size());
-        retval.append(sv);
-        retval.append(s);
-        return retval;
-    }
-
-    std::string operator+(const std::string_view sv1, const std::string_view sv2) {
-        std::string retval;
-        retval.reserve(sv1.size() + sv2.size());
-        retval.append(sv1);
-        retval.append(sv2);
-        return retval;
-    }
-
-    std::string operator+(const std::string_view sv, const char* c) {
-        std::string retval;
-        retval.reserve(sv.size() + std::strlen(c));
-        retval.append(sv);
-        retval.append(c);
-        return retval;
-    }
-}
-
-const std::string& StringTable::operator[] (const std::string& key) {
-    auto it = m_strings.find(key);
-    if (it != m_strings.end())
-        return it->second;
-
-    auto [error_it, is_new] = m_error_strings.insert(ERROR_STRING + key);
-    if (is_new) {
-        ErrorLogger() << "Missing string: " << key;
-        DebugLogger() << StackTrace();
-    }
-    return *error_it;
-}
-
-const std::string& StringTable::operator[] (const std::string_view key) {
-    auto it = m_strings.find(key);
-    if (it != m_strings.end())
-        return it->second;
-
-    auto [error_it, is_new] = m_error_strings.insert(ERROR_STRING + key);
-    if (is_new) {
-        ErrorLogger() << "Missing string: " << key;
-        DebugLogger() << StackTrace();
-    }
-    return *error_it;
-}
-
-const std::string& StringTable::operator[] (const char* key) {
-    auto it = m_strings.find(key);
-    if (it != m_strings.end())
-        return it->second;
-
-    auto [error_it, is_new] = m_error_strings.insert(ERROR_STRING + key);
-    if (is_new) {
-        ErrorLogger() << "Missing string: " << key;
-        DebugLogger() << StackTrace();
-    }
-    return *error_it;
-}
+const std::string& StringTable::Add(std::string key, std::string value)
+{ return m_strings.emplace(std::move(key), std::move(value)).first->second; }
 
 namespace {
     std::string_view MatchLookupKey(const boost::xpressive::smatch& match, size_t idx) {
