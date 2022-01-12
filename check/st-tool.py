@@ -13,9 +13,9 @@ import time
 import urllib.parse
 import urllib.request
 import webbrowser
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from typing import Iterator
+from typing import Iterator, NamedTuple
 
 STRING_TABLE_KEY_PATTERN = re.compile(r"^[A-Z0-9_]+$")
 # Provides the named capture groups 'ref_type' and 'key'
@@ -75,7 +75,7 @@ def check_balanced_reference(text: str) -> bool:
     return not is_open
 
 
-class StringTableEntry(object):
+class StringTableEntry:
     def __init__(self, key, keyline, value, notes, value_times):
         if not STRING_TABLE_KEY_PATTERN.match(key):
             raise ValueError(f"Key doesn't match expected format [A-Z0-9_]+, was '{key}'")
@@ -106,7 +106,7 @@ class StringTableEntry(object):
         return f"StringTableEntry(key={self.key}, keyline={self.keyline}, value={self.value})"
 
 
-class StringTable(object):
+class StringTable:
     def __init__(self, fpath, language, notes, includes, entries):
         self.fpath = fpath
         self.language = language
@@ -182,7 +182,7 @@ class StringTable(object):
         blame_cmd = ["git", "blame", "--incremental", fpath]
         git_blame = subprocess.check_output(blame_cmd)
         git_blame = git_blame.decode("utf-8", "strict")
-        git_blame = git_blame.splitlines(True)
+        git_blame = git_blame.splitlines(keepends=True)
 
         value_times = {}
         author_time = None
@@ -221,8 +221,11 @@ class StringTable(object):
                 entry.value_times = value_times[entry.key]
 
     @staticmethod
-    def from_file(fhandle, with_blame=True):
-        fpath = fhandle.name
+    def from_file(fhandle, with_blame=True) -> "StringTable":
+        return StringTable.from_text(fhandle.read(), fhandle.name, with_blame=with_blame)
+
+    @staticmethod
+    def from_text(text, fpath, with_blame=True) -> "StringTable":
 
         is_quoted = False
 
@@ -243,7 +246,7 @@ class StringTable(object):
         untranslated_keyline = None
         untranslated_lines = []
 
-        for fline, line in enumerate(fhandle, 1):
+        for fline, line in enumerate(text.splitlines(keepends=True), 1):
             if not is_quoted and not line.strip():
                 # discard empty lines when not in quoted value
                 if section:
@@ -348,7 +351,7 @@ class StringTable(object):
                     entries.append(StringTableEntry(key, keyline, value, notes, [0] * len(value_range)))
                     blames.update(value_range)
                 except ValueError as e:
-                    raise ValueError("{}:{}: {}".format(fpath, keyline, str(e)))
+                    raise ValueError(f"{fpath}:{keyline}: {e}")
 
                 key = None
                 keyline = None
@@ -375,23 +378,19 @@ class StringTable(object):
         return StringTable(fpath, language, fnotes, includes, entries)
 
     @staticmethod
-    def statistic(left, right):
-        STStatistic = namedtuple(
-            "STStatistic",
-            [
-                "left",
-                "left_only",
-                "left_older",
-                "left_pure_reference",
-                "right",
-                "right_only",
-                "right_older",
-                "right_pure_reference",
-                "untranslated",
-                "identical",
-                "layout_mismatch",
-            ],
-        )
+    def statistic(left: "StringTable", right: "StringTable"):
+        class STStatistic(NamedTuple):
+            left: "StringTable"
+            left_only: set
+            left_older: set
+            left_pure_reference: set
+            right: "StringTable"
+            right_only: set
+            right_older: set
+            right_pure_reference: set
+            untranslated: set
+            identical: set
+            layout_mismatch: set
 
         all_keys = set(left).union(right)
 
@@ -847,11 +846,22 @@ class EditServerHandler(BaseHTTPRequestHandler):
 
 
 def format_action(args):
-    source_st = StringTable.from_file(args.source)
+    """
+    Format source file inline and exit.
 
-    print(source_st, end="")
+    If file was formatted exit status will be 1.
+    """
+    path = args.source.name
+    text = args.source.read()
+    source_st = StringTable.from_text(text=text, fpath=path)
+    new_text = str(source_st)
 
-    return 0
+    if text != new_text:
+        with open(path, "w") as f:
+            f.write(new_text)
+        return 1
+    else:
+        return 0
 
 
 def sync_action(args):

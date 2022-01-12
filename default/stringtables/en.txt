@@ -24,6 +24,8 @@ English
 OK
 OK
 
+
+
 APPLY
 Apply
 
@@ -13622,6 +13624,10 @@ Simply dampening electromagnetic emissions can make an object completely invisib
 
 SPY_STEALTH_3
 Planetary Dimensional Cloak
+
+
+
+
 
 SPY_STEALTH_3_DESC
 '''Gives all planets and outposts in the empire the [[special DIM_RIFT_SLAVE_SPECIAL]] special which increases the [[metertype METER_STEALTH]] of all planets and buildings by 60.
