@@ -4,8 +4,8 @@
 
 - `string table` a file with translation
 - `reference table` en.txt string table.
-  English is the main game language, so any changes related to text should be in that file.
-  Also this table us used as fallback for other translation.
+  English is the development language, so any changes related to text should be in that file.
+  Also, this table us used as fallback for other translations, if a needed key is missing.
   This file is mostly maintained by people who change game code,
   so the list of entries in this file should be the most actual.
 - `entry` one piece of translation, it consists of
@@ -13,11 +13,14 @@
     This string must be unique.
   - `value` actual translation that will be shown to the user.
 
-
 ### Key
 Only English chars in uppercase and dash are allowed.
-Rename of a key should be done with caution. Usually key used as is in code,
-but sometimes it could be used as prefix and code logic based on name could be present.
+Renaming a key should be done with caution.
+Many of the keys in the stringtable are used in the game source code explicitly,
+or in content scripts.
+Some keys are also generated programatically, such as by adding a prefix to other text.
+C++ use `UserString` and `UserStringNop` to retrieve keys,
+Python `fo.userString`, and `fo.userStringList`.
 
 ### Value syntax
 #### Simple (single line)
@@ -77,7 +80,7 @@ You define term once and use it everywhere.
 For most common used things like tech, building, etc we have more advanced type of reference: link
 
 
-- `link` special syntax that will be rendered as a link to an object wiki page.
+- `link` special syntax that will be rendered as a link to a wiki page about some scripted content or a ship design in the game universe.
 Supported types
   - encyclopedia
   - buildingtype
@@ -96,4 +99,4 @@ Supported types
 ## Maintain string tables
 Formatting and basic checks are maintained by tool: `st-tool.py`.
 See `.check/st-tool.py format --help` and `.check/st-tool.py check --help`
-This too commands are mandatory and part of our GitHub automatic checks.
+This two commands are part of GitHub automatic checks.
