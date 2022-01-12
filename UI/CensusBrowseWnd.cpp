@@ -23,25 +23,25 @@ namespace {
     constexpr GG::Y ICON_BROWSE_ICON_HEIGHT(64);
 
     const GG::X BrowseTextWidth()
-    { return GG::X(FontBasedUpscale(200)); }
+    { return GG::X(FontBasedUpscale(230)); }
 }
 
 class CensusRowPanel : public GG::Control {
 public:
-    CensusRowPanel(GG::X w, GG::Y h, const std::string& name, double census_val, bool show_icon) :
+    CensusRowPanel(GG::X w, GG::Y h, const std::string& name, double census_val, int worlds, bool show_icon) :
         GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-        m_show_icon(show_icon)
+        m_show_icon(show_icon),
+        m_worlds()
     {
         if (m_show_icon)
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(
                 ClientUI::SpeciesIcon(name), GG::GRAPHIC_FITGRAPHIC);
 
         m_name = GG::Wnd::Create<CUILabel>(UserString(name), GG::FORMAT_RIGHT);
-
-        int num_digits = census_val < 10 ? 1 : 2; // this allows the decimal point to line up when there number above and below 10.
-        num_digits =    census_val < 100 ? num_digits : 3; // this allows the decimal point to line up when there number above and below 100.
-        num_digits =   census_val < 1000 ? num_digits : 4; // this allows the decimal point to line up when there number above and below 1000.
-        m_census_val = GG::Wnd::Create<CUILabel>(DoubleToString(census_val, num_digits, false), GG::FORMAT_RIGHT);
+        std::stringstream ss;
+        ss << std::fixed << std::setprecision(1) << census_val;
+        m_census_val = GG::Wnd::Create<CUILabel>(ss.str(), GG::FORMAT_RIGHT);
+        m_worlds = GG::Wnd::Create<CUILabel>(std::to_string(worlds), GG::FORMAT_RIGHT);
     }
 
     void CompleteConstruction() override {
@@ -54,6 +54,7 @@ public:
 
         AttachChild(m_name);
         AttachChild(m_census_val);
+        AttachChild(m_worlds);
 
         DoLayout();
     }
@@ -83,6 +84,7 @@ private:
     void DoLayout() {
         const GG::X SPECIES_NAME_WIDTH(ClientUI::Pts() * 9);
         const GG::X SPECIES_CENSUS_WIDTH(ClientUI::Pts() * 5);
+        const GG::X SPECIES_WORLDS_WIDTH(ClientUI::Pts() * 3);
 
         GG::X left(GG::X0);
         GG::Y bottom(MeterIconSize().y - GG::Y(EDGE_PAD));
@@ -96,6 +98,9 @@ private:
 
         m_census_val->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_CENSUS_WIDTH, bottom));
         left += SPECIES_CENSUS_WIDTH;
+
+        m_worlds->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_WORLDS_WIDTH, bottom));
+        left += SPECIES_WORLDS_WIDTH;
 
         InitBuffer();
     }
@@ -115,22 +120,33 @@ private:
     std::shared_ptr<GG::StaticGraphic>  m_icon;
     std::shared_ptr<GG::Label>          m_name;
     std::shared_ptr<GG::Label>          m_census_val;
+    std::shared_ptr<GG::Label>          m_worlds;
     bool                                m_show_icon;
 };
 
-CensusBrowseWnd::CensusBrowseWnd(std::string title_text,
+CensusBrowseWnd::CensusBrowseWnd(std::string                  title_text,
+                                 float                        target_population,
                                  std::map<std::string, float> population_counts,
+                                 std::map<std::string, int>   population_worlds,
                                  std::map<std::string, float> tag_counts,
-                                 std::vector<std::string> census_order) :
+                                 std::map<std::string, int>   tag_worlds,
+                                 std::vector<std::string>     census_order
+                                ):
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
     m_title_text(GG::Wnd::Create<CUILabel>(std::move(title_text), GG::FORMAT_LEFT)),
     m_species_text(GG::Wnd::Create<CUILabel>(UserString("CENSUS_SPECIES_HEADER"), GG::FORMAT_BOTTOM)),
     m_list(GG::Wnd::Create<CUIListBox>()),
     m_tags_text(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TAG_HEADER"), GG::FORMAT_BOTTOM)),
     m_tags_list(GG::Wnd::Create<CUIListBox>()),
+    m_target_population(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TARGET_POPULATION"), GG::FORMAT_BOTTOM)),
+    m_total_population(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TOTAL_POPULATION"), GG::FORMAT_BOTTOM)),
+    m_total_worlds(GG::Wnd::Create<CUILabel>(UserString("CENSUS_TOTAL_WORLDS"), GG::FORMAT_BOTTOM)),
     m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2),
+    m_target_population_value(std::move(target_population)),
     m_population_counts(std::move(population_counts)),
+    m_population_worlds(std::move(population_worlds)),
     m_tag_counts(std::move(tag_counts)),
+    m_tag_worlds(std::move(tag_worlds)),
     m_census_order(std::move(census_order))
 {}
 
@@ -166,12 +182,18 @@ void CensusBrowseWnd::CompleteConstruction() {
         counts_species.emplace(count, name);
     m_population_counts.clear();
 
+    float total_population = 0;
+    int total_worlds = 0;
+
     // add species rows
     for (auto it = counts_species.rbegin(); it != counts_species.rend(); ++it) {
+        total_population += it->first;
+        total_worlds += m_population_worlds[it->second];
         auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT);
         row->SetDragDropDataType("Census Species Row");
         row->push_back(GG::Wnd::Create<CensusRowPanel>(m_list->Width(), ROW_HEIGHT,
-                                                       it->second, it->first, true));
+                                                       it->second, it->first,
+                                                       m_population_worlds[it->second], true));
         m_list->Insert(row);
         row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
         top += ROW_HEIGHT;
@@ -206,7 +228,7 @@ void CensusBrowseWnd::CompleteConstruction() {
         if (it2 != m_tag_counts.end()) {
             auto row = GG::Wnd::Create<GG::ListBox::Row>(m_list->Width(), ROW_HEIGHT);
             row->SetDragDropDataType("Census Characteristics Row");
-            row->push_back(GG::Wnd::Create<CensusRowPanel>(m_tags_list->Width(), ROW_HEIGHT, it2->first, it2->second, false));
+            row->push_back(GG::Wnd::Create<CensusRowPanel>(m_tags_list->Width(), ROW_HEIGHT, it2->first, it2->second, m_tag_worlds[it2->first], false));
             m_tags_list->Insert(row);
             row->Resize(GG::Pt(m_list->Width(), ROW_HEIGHT));
             top2 += ROW_HEIGHT;
@@ -215,6 +237,31 @@ void CensusBrowseWnd::CompleteConstruction() {
     m_tag_counts.clear();
 
     m_tags_list->Resize(GG::Pt(BrowseTextWidth(), top2 -top -ROW_HEIGHT - HALF_HEIGHT + (EDGE_PAD*3)));
+
+    top2 += 0.5 * ROW_HEIGHT;
+
+    m_total_worlds->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
+    m_total_worlds->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
+    m_total_worlds->SetText(boost::io::str(FlexibleFormat(UserString("CENSUS_TOTAL_WORLDS")) % total_worlds));
+    top2 += ROW_HEIGHT;
+
+    m_total_population->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
+    m_total_population->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
+    std::stringstream s1;
+    s1 << std::fixed << std::setprecision(1) << total_population;
+    m_total_population->SetText(boost::io::str(FlexibleFormat(UserString("CENSUS_TOTAL_POPULATION")) % s1.str() ));
+    top2 += ROW_HEIGHT;
+
+    m_target_population->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top2 + m_offset.y));
+    m_target_population->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT + HALF_HEIGHT));
+    std::stringstream s2;
+    s2 << std::fixed << std::setprecision(1) << m_target_population_value;
+    m_target_population->SetText(boost::io::str(FlexibleFormat(UserString("CENSUS_TARGET_POPULATION")) % s2.str() ));
+    top2 += ROW_HEIGHT;
+
+    AttachChild(m_total_worlds);
+    AttachChild(m_total_population);
+    AttachChild(m_target_population);
 
     Resize(GG::Pt(BrowseTextWidth(), top2  + (EDGE_PAD*3)));
 
