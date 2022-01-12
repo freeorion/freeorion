@@ -19,8 +19,8 @@ Renaming a key should be done with caution.
 Many of the keys in the stringtable are used in the game source code explicitly,
 or in content scripts.
 Some keys are also generated programatically, such as by adding a prefix to other text.
-C++ use `UserString` and `UserStringNop` to retrieve keys,
-Python `fo.userString`, and `fo.userStringList`.
+In C++ `UserString` and `UserStringNop` are used to get keys values,
+In Python `fo.userString` and `fo.userStringList` are used.
 
 ### Value syntax
 #### Simple (single line)
