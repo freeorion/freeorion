@@ -141,33 +141,32 @@ namespace {
         SS&& filename, std::shared_lock<std::shared_mutex>& access_lock,
         std::shared_ptr<const StringTable> fallback = nullptr)
     {
+
+        if (auto it = stringtables.find(filename); it != stringtables.end())
+            return it->second;
+
+        auto retval{std::make_shared<StringTable>(filename, std::move(fallback))};
+
         access_lock.unlock();
-        std::unique_lock mutation_lock(stringtable_access_mutex);
-
         try {
-            if (auto it = stringtables.find(filename); it != stringtables.end()) {
-                auto retval{it->second};
-                mutation_lock.unlock();
-                access_lock.lock();
-                return retval;
+            std::unique_lock mutation_lock(stringtable_access_mutex);
+            stringtables.emplace(std::forward<SS>(filename), retval);
+        } catch (...) {
+            ErrorLogger() << "Unable to emplace new stringtable";
+            access_lock.lock();
+            return nullptr;
+        }
 
-            } else {
-                auto retval{std::make_shared<StringTable>(filename, std::move(fallback))};
-                stringtables.emplace(std::forward<SS>(filename), retval);
-                mutation_lock.unlock();
-                access_lock.lock();
-                return retval;
-            }
-        } catch (...) {}
-
-        mutation_lock.unlock();
         access_lock.lock();
-        return nullptr;
+        return retval;
     }
 
     StringTable& GetStringTable(const std::string& stringtable_filename,
                                 std::shared_lock<std::shared_mutex>& access_lock)
     {
+        if (!access_lock)
+            ErrorLogger() << "GetStringTable passed unlocked shared_lock";
+
         if (auto it = stringtables.find(stringtable_filename); it != stringtables.end())
             return *it->second;
 
@@ -176,8 +175,7 @@ namespace {
         auto default_stringtable_filename{GetOptionsDB().GetDefault<std::string>("resource.stringtable.path")};
 
         if (default_stringtable_filename == stringtable_filename) {
-            auto default_table{GetOrCreateStringTable(default_stringtable_filename, access_lock)};
-            if (default_table)
+            if (auto default_table{GetOrCreateStringTable(default_stringtable_filename, access_lock)})
                 return *default_table;
             throw std::runtime_error("couldn't get default stringtable!");
         }
@@ -243,10 +241,13 @@ void FlushLoadedStringTables() {
 
 const std::map<std::string, std::string, std::less<>>& AllStringtableEntries(bool default_table) {
     std::shared_lock stringtable_lock(stringtable_access_mutex);
-    if (default_table)
-        return GetDevDefaultStringTable(stringtable_lock).AllStrings();
-    else
-        return GetStringTable(stringtable_lock).AllStrings();
+    if (default_table) {
+        auto& retval = GetDevDefaultStringTable(stringtable_lock).AllStrings();
+        return retval;
+    } else {
+        auto& retval = GetStringTable(stringtable_lock).AllStrings();
+        return retval;
+    }
 }
 
 const std::string& UserString(const std::string& str) {
@@ -254,7 +255,11 @@ const std::string& UserString(const std::string& str) {
     const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
     if (string_found)
         return string_value;
-    return GetDevDefaultStringTable(stringtable_lock)[str];
+    auto& default_table{GetDevDefaultStringTable(stringtable_lock)};
+    stringtable_lock.unlock();
+    std::unique_lock mutation_lock(stringtable_access_mutex);
+    auto& retval{default_table[str]};
+    return retval;
 }
 
 const std::string& UserString(const std::string_view str) {
@@ -262,7 +267,11 @@ const std::string& UserString(const std::string_view str) {
     const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
     if (string_found)
         return string_value;
-    return GetDevDefaultStringTable(stringtable_lock)[str];
+    auto& default_table{GetDevDefaultStringTable(stringtable_lock)};
+    stringtable_lock.unlock();
+    std::unique_lock mutation_lock(stringtable_access_mutex);
+    auto& retval{default_table[str]};
+    return retval;
 }
 
 const std::string& UserString(const char* str) {
@@ -270,7 +279,11 @@ const std::string& UserString(const char* str) {
     const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
     if (string_found)
         return string_value;
-    return GetDevDefaultStringTable(stringtable_lock)[str];
+    auto& default_table{GetDevDefaultStringTable(stringtable_lock)};
+    stringtable_lock.unlock();
+    std::unique_lock mutation_lock(stringtable_access_mutex);
+    auto& retval{default_table[str]};
+    return retval;
 }
 
 std::vector<std::string> UserStringList(const std::string& key) {
@@ -301,59 +314,6 @@ bool UserStringExists(const char* str) {
     return GetStringTable(stringtable_lock).StringExists(str) ||
            GetDevDefaultStringTable(stringtable_lock).StringExists(str);
 }
-
-LockedStringTable::LockedStringTable() :
-    m_read_lock(stringtable_access_mutex),
-    m_table(GetStringTable(m_read_lock)),
-    m_default_table(GetDevDefaultStringTable(m_read_lock))
-{}
-
-LockedStringTable::~LockedStringTable() = default;
-
-const std::string& LockedStringTable::UserString(const std::string& str) {
-    const auto& [string_found, string_value] = m_table.CheckGet(str);
-    if (string_found)
-        return string_value;
-    m_read_lock.unlock();
-    std::unique_lock mutation_lock(stringtable_access_mutex);
-    auto& retval{m_default_table[str]};
-    mutation_lock.unlock();
-    m_read_lock.lock();
-    return retval;
-}
-
-const std::string& LockedStringTable::UserString(const std::string_view str) {
-    const auto& [string_found, string_value] = m_table.CheckGet(str);
-    if (string_found)
-        return string_value;
-    m_read_lock.unlock();
-    std::unique_lock mutation_lock(stringtable_access_mutex);
-    auto& retval{m_default_table[str]};
-    mutation_lock.unlock();
-    m_read_lock.lock();
-    return retval;
-}
-
-const std::string& LockedStringTable::UserString(const char* str) {
-    const auto& [string_found, string_value] = m_table.CheckGet(str);
-    if (string_found)
-        return string_value;
-    m_read_lock.unlock();
-    std::unique_lock mutation_lock(stringtable_access_mutex);
-    auto& retval{m_default_table[str]};
-    mutation_lock.unlock();
-    m_read_lock.lock();
-    return retval;
-}
-
-bool LockedStringTable::UserStringExists(const std::string& str) const
-{ return m_table.StringExists(str) || m_default_table.StringExists(str); }
-
-bool LockedStringTable::UserStringExists(const std::string_view str) const
-{ return m_table.StringExists(str) || m_default_table.StringExists(str); }
-
-bool LockedStringTable::UserStringExists(const char* str) const
-{ return m_table.StringExists(str) || m_default_table.StringExists(str); }
 
 boost::format FlexibleFormat(const std::string &string_to_format) {
     try {

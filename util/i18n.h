@@ -31,26 +31,6 @@ FO_COMMON_API bool UserStringExists(const std::string& str);
 FO_COMMON_API bool UserStringExists(const std::string_view str);
 FO_COMMON_API bool UserStringExists(const char* str);
 
-/** Retains a stringtable access lock until destructed, making
-  * repeated stringtable lookups faster than re-locking for each. */
-class StringTable;
-class FO_COMMON_API LockedStringTable {
-public:
-    LockedStringTable();
-    ~LockedStringTable();
-    const std::string& UserString(const std::string& str);
-    const std::string& UserString(const std::string_view str);
-    const std::string& UserString(const char* str);
-    bool UserStringExists(const std::string& str) const;
-    bool UserStringExists(const std::string_view str) const;
-    bool UserStringExists(const char* str) const;
-
-private:
-    std::shared_lock<std::shared_mutex> m_read_lock;
-    StringTable& m_table;
-    StringTable& m_default_table;
-};
-
 /** Clears all loaded strings, so that subsequent UserString lookups will cause
   * the stringtable(s) to be reloaded. */
 FO_COMMON_API void FlushLoadedStringTables();
