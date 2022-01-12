@@ -8,14 +8,13 @@
 /** A popup tooltop for display when mousing over in-game icons.  A title and some detail text.*/
 class CensusBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    CensusBrowseWnd(std::string                  title_text
-                   ,float                        target_population // take as parameter so as not to have to import empire etc.
-                   ,std::map<std::string, float> population_counts
-                   ,std::map<std::string, int>   population_worlds
-                   ,std::map<std::string, float> tag_counts
-                   ,std::map<std::string, int>   tag_worlds
-                   ,std::vector<std::string>     census_order
-                   );
+    CensusBrowseWnd(std::string                  title_text,
+                   float                        target_population, // take as parameter so as not to have to import empire etc.
+                   std::map<std::string, float> population_counts,
+                   std::map<std::string, int>   population_worlds,
+                   std::map<std::string, float> tag_counts,
+                   std::map<std::string, int>   tag_worlds,
+                   std::vector<std::string>     census_order);
     void CompleteConstruction() override;
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
 

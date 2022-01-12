@@ -30,8 +30,7 @@ class CensusRowPanel : public GG::Control {
 public:
     CensusRowPanel(GG::X w, GG::Y h, const std::string& name, double census_val, int worlds, bool show_icon) :
         GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-        m_show_icon(show_icon),
-        m_worlds()
+        m_show_icon(show_icon)
     {
         if (m_show_icon)
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(

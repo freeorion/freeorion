@@ -6939,12 +6939,14 @@ void MapWnd::RefreshIndustryResourceIndicator() {
 }
 
 void MapWnd::RefreshPopulationIndicator() {
-    float target_population = 0.0;
+    float target_population = 0.0f;
     Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_population->SetValue(0.0);
         return;
-    } else target_population = empire->GetPopulationPool().Population();
+    } else {
+        target_population = empire->GetPopulationPool().Population();
+    }
     m_population->SetValue(target_population);
     m_population->ClearBrowseInfoWnd();
 
