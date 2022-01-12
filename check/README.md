@@ -37,7 +37,7 @@ value
 
 #### Full (single or multiline)
 Start and end with triple single quotes.
-You can put anything except triple singe quotes inside.
+You can put anything except triple single quotes inside.
 
 ```
 KEY_WITH_LEADING_SPACE
@@ -61,8 +61,11 @@ world
 
 #### Tags
 You can customize text with special markup tags. Not full list of tags:
-- `reference` special syntax that allows to put value from another entry.
+
+- `[[]]` inserts text from another entry.
   You add a key in double square braces and user will see the value of that key.
+  Substitution is recursive, if text has another substitution it will be resolved too.
+
 ```
 KEY_WORLD
 world
@@ -77,10 +80,9 @@ Hello world
 
 This feature should be used to keep the translation in a consistent state.
 You define term once and use it everywhere.
-For most common used things like tech, building, etc we have more advanced type of reference: link
+For most common used things like tech, building, etc. we have more advanced type of reference: link
 
-
-- `link` special syntax that will be rendered as a link to a wiki page about some scripted content or a ship design in the game universe.
+- `link` inserts a link to a wiki page about some scripted content or a ship design in the game universe.
 Supported types
   - encyclopedia
   - buildingtype
@@ -93,7 +95,17 @@ Supported types
   - species
   - tech
   - policy
-  - value
+```
+[[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]
+```
+
+- `value` inserts value from the script to the text,
+  eg. `[[value FLD_NANITE_SWARM_STRUCTURE_FLAT]]` will look up the value from
+  the named valueref scripted as
+  `NamedReal name = "FLD_NANITE_SWARM_STRUCTURE_FLAT" value = 5 * [[SHIP_STRUCTURE_FACTOR]])`
+  and be replaced by whatever `5 * [[SHIP_STRUCTURE_FACTOR]]` equals,
+  which might be just a constant in some cases,
+  but in this case will depend on the value of a game rule.
 
 
 ## Maintain string tables
