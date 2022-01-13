@@ -6939,17 +6939,22 @@ void MapWnd::RefreshIndustryResourceIndicator() {
 }
 
 void MapWnd::RefreshPopulationIndicator() {
+    float target_population = 0.0f;
     Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_population->SetValue(0.0);
         return;
+    } else {
+        target_population = empire->GetPopulationPool().Population();
     }
-    m_population->SetValue(empire->GetPopulationPool().Population());
+    m_population->SetValue(target_population);
     m_population->ClearBrowseInfoWnd();
 
     const auto& pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
     std::map<std::string, float> population_counts;
+    std::map<std::string, int>   population_worlds;
     std::map<std::string, float> tag_counts;
+    std::map<std::string, int>   tag_worlds;
     const ObjectMap& objects = Objects();
 
     //tally up all species population counts
@@ -6962,16 +6967,22 @@ void MapWnd::RefreshPopulationIndicator() {
             continue;
         float this_pop = pc->GetMeter(MeterType::METER_POPULATION)->Initial();
         population_counts[species_name] += this_pop;
+        population_worlds[species_name] += 1;
         if (const Species* species = GetSpecies(species_name) ) {
-            for (const std::string& tag : species->Tags())
+            for (const std::string& tag : species->Tags()) {
                 tag_counts[tag] += this_pop;
+                tag_worlds[tag] += 1;
+            }
         }
     }
 
     m_population->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_population->SetBrowseInfoWnd(GG::Wnd::Create<CensusBrowseWnd>(
-        UserString("MAP_POPULATION_DISTRIBUTION"), std::move(population_counts),
-        std::move(tag_counts), GetSpeciesManager().census_order()));
+        UserString("MAP_POPULATION_DISTRIBUTION"),
+        target_population,
+        std::move(population_counts),std::move(population_worlds),
+        std::move(tag_counts), std::move(tag_worlds), GetSpeciesManager().census_order()
+    ));
 }
 
 void MapWnd::UpdateEmpireResourcePools() {
