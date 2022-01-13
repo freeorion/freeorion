@@ -859,8 +859,10 @@ def format_action(args):
     if text != new_text:
         with open(path, "w") as f:
             f.write(new_text)
+        print(f"{path} was reformatted")
         return 1
     else:
+        print(f"{path} is already well formatted")
         return 0
 
 
