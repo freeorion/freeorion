@@ -15,7 +15,7 @@ Tech
             ]
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
             accountinglabel = "BASIC_PLANET_STEALTH"
-            effects = SetStealth value = Value + 5
+            effects = SetStealth value = Value + (NamedReal name = "PLANET_BASIC_STEALTH" value = 5.0)
         
         EffectsGroup
             scope = And [
@@ -23,13 +23,13 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             accountinglabel = "FLEET_UNSTEALTHINESS"
-            effects = SetStealth value = Value - max(
+            effects = SetStealth value = Value - ceil(max(
                 0,
                 Statistic Count condition = And [
                     Ship
-                    InSystem id = Source.SystemID
+                    InSystem id = Target.SystemID
                     OwnedBy empire = Source.Owner
-                ] - (NamedReal name = "FLEET_UNSTEALTHY_SHIPS_THRESHOLD" value = 5)) ^ 0.5
+                ] - (NamedReal name = "FLEET_UNSTEALTHY_SHIPS_THRESHOLD" value = 5)) ^ 0.5)
                 // large fleets only start affecting stealth when there are more than the threshold of ships in a single system
     ]
     graphic = ""

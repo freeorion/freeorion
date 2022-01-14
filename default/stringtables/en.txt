@@ -14008,7 +14008,7 @@ SPY_PLANET_STEALTH_MOD_DESC
 
 • [[BASIC_PLANET_STEALTH]] gives [[value PLANET_BASIC_STEALTH]] [[metertype METER_STEALTH]] to all planets.
 
-• Due to [[FLEET_UNSTEALTHINESS]], when there are more than [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] ships of the same empire in a system, their [[metertype METER_STEALTH]] is reduced by the square root of the number of those ships.'''
+• Due to [[FLEET_UNSTEALTHINESS]], when there are more than [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] ships of the same empire in a system, their [[metertype METER_STEALTH]] is reduced by the square root of [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] less than the number of those ships in the system.'''
 
 BASIC_PLANET_STEALTH
 Universal Basic Stealth
