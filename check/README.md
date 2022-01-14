@@ -7,20 +7,20 @@
   English is the development language, so any changes related to text should be in that file.
   Also, this table us used as fallback for other translations, if a needed key is missing.
   This file is mostly maintained by people who change game code,
-  so the list of entries in this file should be the most actual.
+  so the list of entries in this file should be the most up-to-date.
 - `entry` one piece of translation, it consists of
   - `key` a sting that represents entry in the codebase (C++, Python).
     This string must be unique.
   - `value` actual translation that will be shown to the user.
 
 ### Key
-Only English chars in uppercase and dash are allowed.
+Only uppercase Latin alphabet (A-Z) and underscore (_) are allowed.
 Renaming a key should be done with caution.
 Many of the keys in the stringtable are used in the game source code explicitly,
 or in content scripts.
 Some keys are also generated programatically, such as by adding a prefix to other text.
-In C++ `UserString` and `UserStringNop` are used to get keys values,
-In Python `fo.userString` and `fo.userStringList` are used.
+C++ uses UserString(...) or UserStringNop(...) to look up strings or to mark stringtable keys that are used in code.
+Python uses `fo.userString` and `fo.userStringList` for look up.
 
 ### Value syntax
 #### Simple (single line)
@@ -80,7 +80,7 @@ Hello world
 
 This feature should be used to keep the translation in a consistent state.
 You define term once and use it everywhere.
-For most common used things like tech, building, etc. we have more advanced type of reference: link
+For various kinds of game content, like techs, buildings, or species, etc., there are links
 
 - `link` inserts a link to a wiki page about some scripted content or a ship design in the game universe.
 Supported types
@@ -111,4 +111,4 @@ Supported types
 ## Maintain string tables
 Formatting and basic checks are maintained by tool: `st-tool.py`.
 See `.check/st-tool.py format --help` and `.check/st-tool.py check --help`
-This two commands are part of GitHub automatic checks.
+These two commands are part of GitHub automatic checks.
