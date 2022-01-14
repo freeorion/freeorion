@@ -13662,6 +13662,15 @@ Optical Scanner
 SPY_DETECT_1_DESC
 All colonies start the game with a [[metertype METER_DETECTION]] of 50, and the imperial [[encyclopedia DETECTION_TITLE]] to 10, and the ship part [[shippart DT_DETECTOR_1]] permits ships to reach the same level of detection.
 
+SPY_DETECT_STELLAR_INTERFERENCE
+Stellar Interference
+
+SPY_DETECT_LENSING
+Gravitational Lensing
+
+SPY_DETECT_CLEAN_STELLAR_BACKGROUND
+Low Background Dark Sky
+
 SPY_DETECT_2
 Active Radar
 
@@ -13995,9 +14004,11 @@ SPY_PLANET_STEALTH_MOD
 Stealth Modifiers
 
 SPY_PLANET_STEALTH_MOD_DESC
-'''Increases the natural [[metertype METER_STEALTH]] of all planets by 5.
+'''Modifiers affect stealth:
 
-Reduces the stealth of ships when they are in the same system with more than [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] ships of the same empire.'''
+• [[BASIC_PLANET_STEALTH]] gives [[value PLANET_BASIC_STEALTH]] [[metertype METER_STEALTH]] to all planets.
+
+• Due to [[FLEET_UNSTEALTHINESS]], when there are more than [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] ships of the same empire in a system, their [[metertype METER_STEALTH]] is reduced by the square root of the number of those ships.'''
 
 BASIC_PLANET_STEALTH
 Universal Basic Stealth

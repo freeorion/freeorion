@@ -30,4 +30,64 @@ Tech
                 Not OwnerHasTech name = "SPY_DETECT_5"
             ]
             effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 10
+
+        EffectsGroup
+            scope = And [
+                Or [
+                    Planet
+                    Ship
+                ]
+                OwnedBy empire = Source.Owner
+                Star type = [Blue Neutron]
+            ]
+            accountinglabel = "SPY_DETECT_STELLAR_INTERFERENCE"
+            effects = SetDetection value = Value - 15
+
+        EffectsGroup
+            scope = And [
+                Or [
+                    Planet
+                    Ship
+                ]
+                OwnedBy empire = Source.Owner
+                Star type = White
+            ]
+            accountinglabel = "SPY_DETECT_STELLAR_INTERFERENCE"
+            effects = SetDetection value = Value - 10
+
+        EffectsGroup
+            scope = And [
+                 Or [
+                    Planet
+                    Ship
+                ]
+                OwnedBy empire = Source.Owner
+                Star type = Yellow
+            ]
+            accountinglabel = "SPY_DETECT_STELLAR_INTERFERENCE"
+            effects = SetDetection value = Value - 5
+
+        EffectsGroup
+            scope = And [
+                Or [
+                    Planet
+                    Ship
+                ]
+                OwnedBy empire = Source.Owner
+                Star type = BlackHole
+            ]
+            accountinglabel = "SPY_DETECT_LENSING"
+            effects = SetDetection value = Value + 5
+
+        EffectsGroup
+            scope = And [
+                Or [
+                    Planet
+                    Ship
+                ]
+                OwnedBy empire = Source.Owner
+                Star type = NoStar
+            ]
+            accountinglabel = "SPY_DETECT_CLEAN_STELLAR_BACKGROUND"
+            effects = SetDetection value = Value + 10
     ]
