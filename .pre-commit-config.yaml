@@ -46,7 +46,7 @@ repos:
       - id: string-tables-syntax-check
         name: String tables syntax check
         description: This hook will do lighwight stringtables checks
-        entry: python check/st-tool.py check --reference default\stringtables\en.txt
+        entry: python check/st-tool.py check --reference default/stringtables/en.txt
         language: python
         files: 'default/stringtables/[a-z]{2}\.txt'
         types: [ text ]
