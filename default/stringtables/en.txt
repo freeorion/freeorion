@@ -12982,6 +12982,15 @@ Deception
 SPY_ROOT_DECEPTION_DESC
 The art of deception is not natural to every species, but the ability to hide the truth can be most useful.
 
+SPY_DECPTION_EMPTY_SPACE_PENALTY
+Conspicuous in Empty Space
+
+SPY_DECPTION_DIM_STAR_PENALTY
+Conspicuous Near Dim Star
+
+SPY_DECPTION_SUBSTELLAR_INTERFERENCE
+High Radiation Background
+
 
 ##
 ## Technology application
@@ -14008,7 +14017,15 @@ SPY_PLANET_STEALTH_MOD_DESC
 
 • [[BASIC_PLANET_STEALTH]] gives [[value PLANET_BASIC_STEALTH]] [[metertype METER_STEALTH]] to all planets.
 
-• Due to [[FLEET_UNSTEALTHINESS]], when there are more than [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] ships of the same empire in a system, their [[metertype METER_STEALTH]] is reduced by the square root of [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] less than the number of those ships in the system.'''
+• Due to [[FLEET_UNSTEALTHINESS]], when there are more than [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] ships of the same empire in a system, their [[metertype METER_STEALTH]] is reduced by [[value FLEET_UNSTEALTH_SHIPS_SCALING]] multiplied by the square root of [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] less than the number of ships that empire has in the system.
+
+• Ships in systems with [[STAR_NONE]] receive a [[value SPY_DECPTION_EMPTY_SPACE_PENALTY]] penalty to [[metertype METER_STEALTH]] due to being [[SPY_DECPTION_EMPTY_SPACE_PENALTY]].
+
+• Ships in systems with a [[STAR_RED]] star receive a [[value SPY_DECPTION_DIM_STAR_PENALTY]] penalty to [[metertype METER_STEALTH]] due to being [[SPY_DECPTION_DIM_STAR_PENALTY]].
+
+• Ships in systems with a [[STAR_NEUTRON]] star receive a [[value SPY_DECPTION_NEUTRON_INTERFERENCE]] bonus to [[metertype METER_STEALTH]] due to [[SPY_DECPTION_SUBSTELLAR_INTERFERENCE]].
+
+• Ships in systems with a [[STAR_BLACK]] star receive a [[value SPY_DECPTION_BLACK_INTERFERENCE]] bonus to [[metertype METER_STEALTH]] due to [[SPY_DECPTION_SUBSTELLAR_INTERFERENCE]].'''
 
 BASIC_PLANET_STEALTH
 Universal Basic Stealth
