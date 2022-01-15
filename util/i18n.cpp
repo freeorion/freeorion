@@ -30,10 +30,9 @@ namespace {
     std::shared_mutex                                   stringtable_access_mutex;
     std::atomic<bool>                                   stringtable_filename_init;
     std::mutex                                          stringtable_filename_init_mutex;
-
-    constexpr std::string_view ERROR_STRING = "ERROR: ";
-    StringTable error_stringtable;
-    std::mutex  error_stringtable_access_mutex;
+    StringTable                                         error_stringtable;
+    std::shared_mutex                                   error_stringtable_access_mutex;
+    constexpr std::string_view                          ERROR_STRING = "ERROR: ";
 
 
     std::string StackTrace() {
@@ -311,70 +310,93 @@ const std::map<std::string, std::string, std::less<>>& AllStringtableEntries(boo
 }
 
 const std::string& UserString(const std::string& str) {
-    std::shared_lock stringtable_lock(stringtable_access_mutex);
-    const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
-    if (string_found)
-        return string_value;
+    {
+        std::shared_lock stringtable_lock(stringtable_access_mutex);
+        const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
+        if (string_found)
+            return string_value;
 
-    const auto& [default_string_found, default_string_value] =
-        GetDevDefaultStringTable(stringtable_lock).CheckGet(str);
-    if (default_string_found)
-        return default_string_value;
+        const auto& [default_string_found, default_string_value] =
+            GetDevDefaultStringTable(stringtable_lock).CheckGet(str);
+        if (default_string_found)
+            return default_string_value;
+    }
 
-    const auto& [error_string_found, error_string_value] = error_stringtable.CheckGet(str);
-    if (error_string_found)
-        return error_string_value;
+    {
+        std::shared_lock error_read_lock(error_stringtable_access_mutex);
+        const auto& [error_string_found, error_string_value] = error_stringtable.CheckGet(str);
+        if (error_string_found)
+            return error_string_value;
+    }
 
     ErrorLogger() << "Missing string: " << str;
     DebugLogger() << StackTrace();
 
-    std::unique_lock mutation_lock(error_stringtable_access_mutex);
-    auto error_string{ERROR_STRING + str};
-    return error_stringtable.Add(str, std::move(error_string));
+    {
+        std::unique_lock error_mutation_lock(error_stringtable_access_mutex);
+        auto error_string{ERROR_STRING + str};
+        return error_stringtable.Add(str, std::move(error_string));
+    }
 }
 
 const std::string& UserString(const std::string_view str) {
-    std::shared_lock stringtable_lock(stringtable_access_mutex);
-    const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
-    if (string_found)
-        return string_value;
+    {
+        std::shared_lock stringtable_lock(stringtable_access_mutex);
+        const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
+        if (string_found)
+            return string_value;
 
-    const auto& [default_string_found, default_string_value] =
-        GetDevDefaultStringTable(stringtable_lock).CheckGet(str);
-    if (default_string_found)
-        return default_string_value;
+        const auto& [default_string_found, default_string_value] =
+            GetDevDefaultStringTable(stringtable_lock).CheckGet(str);
+        if (default_string_found)
+            return default_string_value;
+    }
 
-    const auto& [error_string_found, error_string_value] = error_stringtable.CheckGet(str);
-    if (error_string_found)
-        return error_string_value;
+    {
+        std::shared_lock error_read_lock(error_stringtable_access_mutex);
+        const auto& [error_string_found, error_string_value] = error_stringtable.CheckGet(str);
+        if (error_string_found)
+            return error_string_value;
+    }
 
     ErrorLogger() << "Missing string: " << str;
     DebugLogger() << StackTrace();
 
-    std::unique_lock mutation_lock(error_stringtable_access_mutex);
-    return error_stringtable.Add(std::string{str}, ERROR_STRING + str);
+    {
+        std::unique_lock error_mutation_lock(error_stringtable_access_mutex);
+        auto error_string{ERROR_STRING + str};
+        return error_stringtable.Add(std::string{str}, std::move(error_string));
+    }
 }
 
 const std::string& UserString(const char* str) {
-    std::shared_lock stringtable_lock(stringtable_access_mutex);
-    const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
-    if (string_found)
-        return string_value;
+    {
+        std::shared_lock stringtable_lock(stringtable_access_mutex);
+        const auto& [string_found, string_value] = GetStringTable(stringtable_lock).CheckGet(str);
+        if (string_found)
+            return string_value;
 
-    const auto& [default_string_found, default_string_value] =
-        GetDevDefaultStringTable(stringtable_lock).CheckGet(str);
-    if (default_string_found)
-        return default_string_value;
+        const auto& [default_string_found, default_string_value] =
+            GetDevDefaultStringTable(stringtable_lock).CheckGet(str);
+        if (default_string_found)
+            return default_string_value;
+    }
 
-    const auto& [error_string_found, error_string_value] = error_stringtable.CheckGet(str);
-    if (error_string_found)
-        return error_string_value;
+    {
+        std::shared_lock error_read_lock(error_stringtable_access_mutex);
+        const auto& [error_string_found, error_string_value] = error_stringtable.CheckGet(str);
+        if (error_string_found)
+            return error_string_value;
+    }
 
     ErrorLogger() << "Missing string: " << str;
     DebugLogger() << StackTrace();
 
-    std::unique_lock mutation_lock(error_stringtable_access_mutex);
-    return error_stringtable.Add(std::string{str}, ERROR_STRING + str);
+    {
+        std::unique_lock error_mutation_lock(error_stringtable_access_mutex);
+        auto error_string{ERROR_STRING + str};
+        return error_stringtable.Add(std::string{str}, std::move(error_string));
+    }
 }
 
 std::vector<std::string> UserStringList(const std::string& key) {
