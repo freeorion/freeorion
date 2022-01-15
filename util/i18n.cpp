@@ -249,15 +249,32 @@ namespace {
             throw std::runtime_error("couldn't get stringtable or default stringtable!");
     }
 
+    std::shared_mutex path_LUT_mutex;
+    std::map<boost::filesystem::path, std::string> path_to_string_LUT;
+
     StringTable& GetStringTable(const boost::filesystem::path& stringtable_path,
                                 std::shared_lock<std::shared_mutex>& access_lock)
-    { return GetStringTable(PathToString(stringtable_path), access_lock); }
+    {
+        {
+            std::shared_lock path_LUT_read_lock{path_LUT_mutex};
+            auto path_it = path_to_string_LUT.find(stringtable_path);
+            if (path_it != path_to_string_LUT.end())
+                return GetStringTable(path_it->second, access_lock);
+        }
+
+        {
+            std::unique_lock path_LUT_write_lock{path_LUT_mutex};
+            const auto& string_of_path = path_to_string_LUT.emplace(stringtable_path,
+                                                                    PathToString(stringtable_path)).first->second;
+            return GetStringTable(string_of_path, access_lock);
+        }
+    }
 
     StringTable& GetStringTable(std::shared_lock<std::shared_mutex>& access_lock)
     { return GetStringTable(GetStringTableFileName(), access_lock); }
 
     StringTable& GetDevDefaultStringTable(std::shared_lock<std::shared_mutex>& access_lock)
-    { return GetStringTable(PathToString(DevDefaultEnglishStringtablePath()), access_lock); }
+    { return GetStringTable(DevDefaultEnglishStringtablePath(), access_lock); }
 }
 
 #if !defined(FREEORION_ANDROID)
