@@ -7,6 +7,11 @@
 #include "../util/i18n.h"
 #include <type_traits>
 
+constexpr std::string_view to_string(StarType);
+constexpr std::string_view to_string(PlanetEnvironment);
+constexpr std::string_view to_string(PlanetType);
+constexpr std::string_view to_string(PlanetSize);
+
 namespace ValueRef {
 
 //! The common base class for all ValueRef classes. This class provides
@@ -41,30 +46,40 @@ protected:
     bool m_simple_increment = false;
 };
 
-template<typename T, typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+
+template<typename T>
 std::string FlexibleToString(T&& t)
 {
-    if constexpr (std::is_floating_point_v<T>)
+    if constexpr (std::is_floating_point_v<std::decay_t<T>>) {
         return DoubleToString(t, 3, false);
-    else
+
+    } else if constexpr (std::is_enum_v<T>) {
+        auto maybe_retval = to_string(t);
+        if (UserStringExists(maybe_retval))
+            return UserString(maybe_retval);
+        else
+            return std::string{maybe_retval};
+
+    } else if constexpr (std::is_convertible_v<std::decay_t<T>, std::string>) {
+        return t;
+
+    } else if constexpr (std::is_same_v<std::decay_t<T>, std::string_view>) {
+        return std::string{t};
+
+    } else if constexpr (std::is_same_v<T, std::vector<std::string>>) {
+        size_t total_size = 0;
+        for (auto& ts : t)
+            total_size += ts.size();
+        std::string retval;
+        retval.reserve(total_size);
+        for (auto& ts: t)
+            retval.append(ts);
+        return retval;
+
+    } else {
         return std::to_string(t);
+    }
 }
-
-template<typename T, typename std::enable_if_t<std::is_enum_v<T>>* = nullptr>
-std::string FlexibleToString(T&& t)
-{ return std::to_string(static_cast<std::underlying_type_t<T>>(t)); }
-
-[[nodiscard]] inline std::string FlexibleToString(std::string&& t)
-{ return std::move(t); }
-
-template<typename T, typename std::enable_if_t<std::is_same_v<T, std::vector<std::string>>>* = nullptr>
-[[nodiscard]] std::string FlexibleToString(T&& t)
-{
-    std::string s;
-    for (auto&& piece : t) s += piece;
-    return s;
-}
-
 
 //! The base class for all ValueRef classes returning type T. This class
 //! provides the public interface for a ValueRef expression tree.
@@ -91,10 +106,9 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
       * that exist in the tree. */
     [[nodiscard]] virtual T Eval(const ScriptingContext& context) const = 0;
 
-    /** Evaluates the expression tree with an empty context and retuns the
+    /** Evaluates the expression tree with an empty context and returns the
       * a string representation of the result value iff the result type is
-      * supported (currently std::string, int, float, double, enum).
-      * See ValueRefs.cpp for specialisation implementations. */
+      * supported. Otherwise returns and empty string. */
     [[nodiscard]] std::string EvalAsString() const final
     { return FlexibleToString(Eval()); }
 
@@ -147,9 +161,8 @@ template<typename T>
 [[nodiscard]] inline std::vector<std::pair<std::string, std::unique_ptr<T>>> CloneUnique(const std::vector<std::pair<std::string, std::unique_ptr<T>>>& vec) {
     std::vector<std::pair<std::string, std::unique_ptr<T>>> retval;
     retval.reserve(vec.size());
-    for (const auto& val : vec) {
+    for (const auto& val : vec)
         retval.emplace_back(val.first, CloneUnique(val.second));
-    }
     return retval;
 }
 
