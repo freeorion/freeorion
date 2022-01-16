@@ -136,8 +136,9 @@ Anhalten
 PAUSED
 Angehalten
 
+# note that 'continue' was translated as 'fortsetzen' before ..
 RESUME
-Weitermachen
+Fortsetzen
 
 DIFFICULTY
 Schwierigkeit
@@ -8128,10 +8129,11 @@ Besonderheiten für [[encyclopedia LITHIC_SPECIES_TITLE]]:
 ##
 ## Species picks
 ##
-## + für positive effekte
-## - für negative effekte
-## ⋄ für neutrale / sonstige effekte
-## nehmt tabs für abstände
+## internal note to the translators:
+## + für positive Effekte (normales Pluszeichen)
+## - für negative Effekte (ein langer Gedankenstrich statt ein kurzes Minus)
+## ⋄ für neutrale / sonstige Effekte (der springende Punkt. einfach kopieren)
+## nehmt bitte Tabs für Abstände anstatt Leerzeichen
 ##
 
 NO_INDUSTRY_DESC
@@ -8141,7 +8143,7 @@ BAD_INDUSTRY_DESC
 −	Schlechte [[metertype METER_INDUSTRY]]: 75%
 
 AVERAGE_INDUSTRY_DESC
-⋄	Mittelmässige [[metertype METER_INDUSTRY]]: 100%
+⋄	Durchschnittliche [[metertype METER_INDUSTRY]]: 100%
 
 GOOD_INDUSTRY_DESC
 +	Gute [[metertype METER_INDUSTRY]]: 150%
@@ -8159,7 +8161,7 @@ BAD_RESEARCH_DESC
 −	Schlechte [[metertype METER_RESEARCH]]: 75%
 
 AVERAGE_RESEARCH_DESC
-⋄	Mittelmässige [[metertype METER_RESEARCH]]: 100%
+⋄	Durchschnittliche [[metertype METER_RESEARCH]]: 100%
 
 GOOD_RESEARCH_DESC
 +	Gute [[metertype METER_RESEARCH]]: 150%
@@ -8177,7 +8179,7 @@ BAD_DEFENSE_TROOPS_DESC
 −	Schlechte Boden[[metertype METER_TROOPS]]: 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-⋄	Mittelmäßige Boden[[metertype METER_TROOPS]]: 100%
+⋄	Durchschnittliche Boden[[metertype METER_TROOPS]]: 100%
 
 GOOD_DEFENSE_TROOPS_DESC
 +	Gute Boden[[metertype METER_TROOPS]]: 150%
@@ -8204,7 +8206,7 @@ BAD_STEALTH_DESC
 −	Schlechte [[metertype METER_STEALTH]]: −20 Malus
 
 AVERAGE_STEALTH_DESC
-⋄	Mittelmäßige [[metertype METER_STEALTH]]
+⋄	Durchschnittliche [[metertype METER_STEALTH]]
 
 GOOD_STEALTH_DESC
 +	Gute [[metertype METER_STEALTH]]: +20 Bonus
@@ -8228,16 +8230,16 @@ GREAT_ASTEROID_INDUSTRY_DESC
 +	Guter Asteroidenbergbau: + 0.2 [[metertype METER_INDUSTRY]] je [[metertype METER_POPULATION]] bei Industriefokus in Systemen mit besetzten Asteroidengürteln
 
 LIGHT_SENSITIVE_DESC
-−	Lichtempfindlich: [[metertype METER_POPULATION]] stark reduziert in Sternensystemen der Farbe [[STAR_BLUE]], weniger stark bei Sternen der Farbe [[STAR_WHITE]]
+−	Lichtempfindlich: [[metertype METER_POPULATION]] stark reduziert in Systemen mit blauen Sternen, weniger stark in Systemen mit weißen Sternen
 
 TELEPATHIC_DETECTION_DESC
-+	Telepathisches Gespür: kann nahe bevölkerte Welten fühlen
++	Telepathische Wahrnehmung: kann nahe besiedelte Welten wahrnehmen
 
 PRECOGNITIVE_DETECTION_DESC
-+	Vorwissendes Gespür: kann Planeten jenseits der Sternenstraßen erfühlen
++	Vorausahnende Wahrnehmung: kann per Sternenstraßen verbundene Planeten wahrnehmen
 
 COMMUNAL_VISION_DESC
-⋄	Gemeinsame Sicht: geteilte Sichtbarkeit in der Spezies unabh. d. Reichszugehörigkeit
+⋄	Gemeinsame Wahrnehmung: Sichtbarkeit wird innerhalb derselben Spezies geteilt, unabhängig von Reichszugehörigkeit
 
 
 ##
@@ -8330,27 +8332,27 @@ ULTIMATE_RESEARCH_LABEL
 # %1% FIXME
 # %2% FIXME
 BAD_TROOPS_LABEL
-%2% Schlechte Bodentruppe
+%2% Schlechte Bodentruppen
 
 # %1% FIXME
 # %2% FIXME
 AVERAGE_TROOPS_LABEL
-%2% Mittelmäßige Bodentruppe
+%2% Durchschnittliche Bodentruppen
 
 # %1% FIXME
 # %2% FIXME
 GOOD_TROOPS_LABEL
-%2% Gute Bodentruppe
+%2% Gute Bodentruppen
 
 # %1% FIXME
 # %2% FIXME
 GREAT_TROOPS_LABEL
-%2% Beste Bodentruppe
+%2% Beste Bodentruppen
 
 # %1% FIXME
 # %2% FIXME
 ULTIMATE_TROOPS_LABEL
-%2% Top Bodentruppe
+%2% Top Bodentruppen
 
 INDEPENDENT_TROOP_LABEL
 Unabhängige Heimatwelt
@@ -8377,7 +8379,7 @@ WEAK_VISION_LABEL
 Schwache Sicht
 
 MODERATE_VISION_LABEL
-Mittelmäßige Sicht
+Durchschnittliche Sicht
 
 GOOD_VISION_LABEL
 Gute Sicht
