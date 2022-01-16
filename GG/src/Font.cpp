@@ -1101,15 +1101,18 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
     RenderCachedText(cache);
 }
 
-void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format, RenderCache& cache,
-                         const std::vector<LineData>& line_data, RenderState* render_state/* = 0*/) const
- {
-    RenderState state;
-    if (!render_state)
-        render_state = &state;
-
-    PreRenderText(ul, lr, text, format, line_data, *render_state,
-                  0, CP0, line_data.size(), line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
+void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
+                         RenderCache& cache,
+                         const std::vector<LineData>& line_data, RenderState* render_state) const
+{
+    if (render_state) {
+        PreRenderText(ul, lr, text, format, line_data, *render_state, 0, CP0, line_data.size(),
+                      line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
+    } else {
+        RenderState render_state_local;
+        PreRenderText(ul, lr, text, format, line_data, render_state_local, 0, CP0, line_data.size(),
+                      line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
+    }
 }
 
 void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
