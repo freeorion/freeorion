@@ -5516,7 +5516,7 @@ INTERFACE_TITLE
 *Interfaz*
 
 INTERFACE_TEXT
-List no exhaustiva de características de la interfaz de FreeOrion:
+Lista no exhaustiva de características de la interfaz de FreeOrion:
 
 
 ##
@@ -5918,7 +5918,7 @@ Rango de detección
 #* <not translated 1970-01-01 01:00:00>
 
 SLOT_TITLE
-Hueco
+Ranura
 
 #*SLOT_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6214,7 +6214,7 @@ Guía de Inicio Rápido
 #* <not translated 1970-01-01 01:00:00>
 
 RESEARCH_TECH_GUIDE_TITLE
-Desarrollo Tecnológico
+Investigación Tecnológica
 
 #*RESEARCH_TECH_GUIDE_SHORT_DESC
 #* <not translated 1970-01-01 01:00:00>
