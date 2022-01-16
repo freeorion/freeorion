@@ -910,8 +910,12 @@ def edit_action(args):
     server = HTTPServer(("localhost", 8080), EditServerHandler)
     server.reference_st = reference_st
     server.source_st = source_st
+    print("Starting server at http://localhost:8080/")
     webbrowser.open("http://localhost:8080/")
-    server.serve_forever()
+    try:
+        server.serve_forever()
+    except (KeyboardInterrupt, EOFError):
+        print("Stopping server")
 
     return 0
 
