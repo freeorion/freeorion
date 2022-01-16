@@ -1600,14 +1600,12 @@ bool StringCast<FromType>::operator==(const ValueRef<std::string>& rhs) const
 template <typename FromType>
 std::string StringCast<FromType>::Eval(const ScriptingContext& context) const
 {
-    if (!m_value_ref)
-        return "";
-    std::string retval;
     try {
-        retval = boost::lexical_cast<std::string>(m_value_ref->Eval(context));
+        if (m_value_ref)
+            return boost::lexical_cast<std::string>(m_value_ref->Eval(context));
     } catch (...) {
     }
-    return retval;
+    return "";
 }
 
 template <typename FromType>
