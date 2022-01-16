@@ -1792,15 +1792,15 @@ Establece si se muestran renderizados o no los planetas, asteroides en el panel 
 OPTIONS_DB_UI_QUEUE_WIDTH
 Establece el ancho de cola en las ventanas de producción e investigación.
 
-#*OPTIONS_DB_UI_PROD_QUEUE_LOCATION
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_UI_PROD_QUEUE_LOCATION
+Establece si se debe o no mostrar la localización de los elementos en la cola de producción
 
 OPTIONS_DB_GAMESETUP_SEED
 '''Semilla usada para generar la galaxia aleatoreamente.
 Las galaxias generadas con las mismas opciones y la misma semilla serán idénticas.'''
 
-#*OPTIONS_DB_GAMESETUP_UID
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_DB_GAMESETUP_UID
+El UID para nuevas partidas. Opción limitada al servidor que puede ser usada para nombrar partidas de manera predecible en servidores sin host.
 
 OPTIONS_DB_GAMESETUP_STARS
 '''Número aproximado de sistemas en la galaxia generada.
@@ -4878,16 +4878,16 @@ ENC_GAME_RULES
 [Partida - Reglas]
 
 ENC_SHIP_PART
-Pieza de nave
+Pieza de Nave
 
-#*ENC_SHIP_PART_DESC
-#* <not translated 1970-01-01 01:00:00>
+ENC_SHIP_PART_DESC
+Una pieza de nave puede ser ensamblada a un [[encyclopedia ENC_SHIP_HULL]] (en un [[encyclopedia SLOT_TITLE]] disponible) durante el diseño de una nave, para  mejorar sus estadísticas. Algunas piezas de nivel bajo están disponibles desde el principio, siendo posible mejorarlas o adquirir nuevos tipos mediante [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]]. Cada tipo de pieza partenece a una de las siguiente categorías:
 
 ENC_SHIP_HULL
-Casco de nave
+Casco de Nave
 
-#*ENC_SHIP_HULL_DESC
-#* <not translated 1970-01-01 01:00:00>
+ENC_SHIP_HULL_DESC
+El casco de la nave el elemento principal de su arquitectura, ya que define las estadísiticas base del su diseño (antes de añadir los modificadores que incorpora cada [[encyclopedia ENC_SHIP_PART]]). Algunos cascos de nivel bajo están disponibles desde el principio, siendo posible mejorarlas o adquirir nuevos tipos mediante [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]]. Cada tipo de casco partenece a una de las siguiente categorías:
 
 ENC_TECH
 Tecnología
@@ -5468,11 +5468,11 @@ Salud
 ## Encyclopedia article categories and short descriptions
 ##
 
-#*CATEGORY_GUIDES
-#* <not translated 1970-01-01 01:00:00>
+CATEGORY_GUIDES
+**Antes de Empezar**
 
-#*CATEGORY_GAME_CONCEPTS
-#* <not translated 1970-01-01 01:00:00>
+CATEGORY_GAME_CONCEPTS
+**Conceptos de Juego**
 
 #*GROWTH_ARTICLE_SHORT_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -5512,11 +5512,11 @@ Salud
 ## Encyclopedia articles in Guides category
 ##
 
-#*INTERFACE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+INTERFACE_TITLE
+*Interfaz*
 
-#*INTERFACE_TEXT
-#* <not translated 1970-01-01 01:00:00>
+INTERFACE_TEXT
+List no exhaustiva de características de la interfaz de FreeOrion:
 
 
 ##
@@ -5917,8 +5917,8 @@ Rango de detección
 #*ARMOR_TEXT
 #* <not translated 1970-01-01 01:00:00>
 
-#*SLOT_TITLE
-#* <not translated 1970-01-01 01:00:00>
+SLOT_TITLE
+Hueco
 
 #*SLOT_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6213,8 +6213,8 @@ Guía de Inicio Rápido
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*RESEARCH_TECH_GUIDE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+RESEARCH_TECH_GUIDE_TITLE
+Desarrollo Tecnológico
 
 #*RESEARCH_TECH_GUIDE_SHORT_DESC
 #* <not translated 1970-01-01 01:00:00>
