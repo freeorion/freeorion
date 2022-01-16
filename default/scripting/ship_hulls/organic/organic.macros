@@ -4,7 +4,7 @@ LIVING_HULL_EFFECTS_GROUPS
     scope = Source
     effects = [
         SetStructure value = Value + (2 * [[SHIP_STRUCTURE_FACTOR]])
-        SetDetection value = Value + 50
+        SetDetection value = Value + 40
     ]
 
     [[LIVING_HULL_BASE_FUEL_REGEN]]

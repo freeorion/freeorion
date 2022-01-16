@@ -28,7 +28,7 @@ Hull
                 SetMaxCapacity partname = "SR_ICE_BEAM" value = Value + min(Source.Age*0.3, 18)
                 SetCapacity partname = "SR_ICE_BEAM" value = Value + min(Source.Age*0.3, 18)
             ]
-        [[EXCELLENT_VISION]]
+        [[GOOD_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/snowflake-3.png"

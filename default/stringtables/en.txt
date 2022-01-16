@@ -13669,7 +13669,7 @@ SPY_DETECT_1
 Optical Scanner
 
 SPY_DETECT_1_DESC
-All colonies start the game with a [[metertype METER_DETECTION]] of 50, and the imperial [[encyclopedia DETECTION_TITLE]] to 10, and the ship part [[shippart DT_DETECTOR_1]] permits ships to reach the same level of detection.
+All colonies start the game with a [[metertype METER_DETECTION]] of [[value SPY_DETECT_1_RANGE]], and the imperial [[encyclopedia DETECTION_TITLE]] to 10, and the ship part [[shippart DT_DETECTOR_1]] permits ships to reach the same level of detection.
 
 SPY_DETECT_STELLAR_INTERFERENCE
 Stellar Interference
@@ -13684,7 +13684,7 @@ SPY_DETECT_2
 Active Radar
 
 SPY_DETECT_2_DESC
-'''Unlocks the [[shippart DT_DETECTOR_2]] ship part and the [[buildingtype BLD_SCANNING_FACILITY]] building, increases the [[metertype METER_DETECTION]] of all planets to 75, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 30.
+'''Unlocks the [[shippart DT_DETECTOR_2]] ship part and the [[buildingtype BLD_SCANNING_FACILITY]] building, increases the [[metertype METER_DETECTION]] of all planets to [[value SPY_DETECT_2_RANGE]], and increases the imperial [[encyclopedia DETECTION_TITLE]] to 30.
 
 Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
 
@@ -13692,7 +13692,7 @@ SPY_DETECT_3
 Neutron Scanner
 
 SPY_DETECT_3_DESC
-'''Unlocks the [[shippart DT_DETECTOR_3]] ship part, increases the [[metertype METER_DETECTION]] of all planets to 150, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 50.
+'''Unlocks the [[shippart DT_DETECTOR_3]] ship part, increases the [[metertype METER_DETECTION]] of all planets to [[value SPY_DETECT_3_RANGE]], and increases the imperial [[encyclopedia DETECTION_TITLE]] to 50.
 
 Electromagnetic radiation has no rest mass and is easily manipulable. Simply by bending waves of light around an object, it is possible to render radar devices virtually useless. By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
 
@@ -13700,13 +13700,13 @@ SPY_DETECT_4
 Sensors
 
 SPY_DETECT_4_DESC
-Unlocks the [[shippart DT_DETECTOR_4]] ship part, increases the [[metertype METER_DETECTION]] of all planets to 200, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 70.
+Unlocks the [[shippart DT_DETECTOR_4]] ship part, increases the [[metertype METER_DETECTION]] of all planets to [[value SPY_DETECT_4_RANGE]], and increases the imperial [[encyclopedia DETECTION_TITLE]] to 70.
 
 SPY_DETECT_5
 Omni-scanner
 
 SPY_DETECT_5_DESC
-The ultimate in detection. Increases the [[metertype METER_DETECTION]] of all planets to 300, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 200.
+The ultimate in detection. Increases the [[metertype METER_DETECTION]] of all planets to [[value SPY_DETECT_5_RANGE]], and increases the imperial [[encyclopedia DETECTION_TITLE]] to 200.
 
 SPY_STEALTH_1
 Planetary Cloud Cover

@@ -15,7 +15,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             activation = Not OwnerHasTech name = "SPY_DETECT_5"
-            effects = SetDetection value = Value + 200
+            effects = SetDetection value = Value + (NamedReal name = "SPY_DETECT_4_RANGE" value = 125.0)
 
         EffectsGroup
             scope = Source

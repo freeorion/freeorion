@@ -17,7 +17,7 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
-            effects = SetDetection value = Value + 75
+            effects = SetDetection value = Value + 50
     ]
     icon = "icons/building/scanning-facility.png"
 
