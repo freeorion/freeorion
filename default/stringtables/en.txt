@@ -7226,7 +7226,7 @@ Show all blocked SitReps
 
 SITREP_WELCOME
 '''[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_INTRO]]
-If you are a newcomer to this universe, please click on the word "[[GREETINGS_GUIDE_TITLE]]" to help us get you started.
+If you are a newcomer to this universe, please click on the word "[[GREETINGS_GUIDE_TITLE]]" for some basic advice on how to play.
 '''
 
 SITREP_WELCOME_LABEL
