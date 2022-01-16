@@ -130,6 +130,28 @@ Vorheriger
 LAST
 Letzter
 
+PAUSE
+Anhalten
+
+PAUSED
+Angehalten
+
+# note that 'continue' was translated as 'fortsetzen' before ..
+RESUME
+Fortsetzen
+
+DIFFICULTY
+Schwierigkeit
+
+X
+X-Position
+
+Y
+Y-Position
+
+INVALID_POSITION
+Ungültige Position
+
 # Name for a newly created general purpose fleet.
 # %1% represents a unique number.
 NEW_FLEET_NAME
@@ -1345,6 +1367,9 @@ Alt
 
 INTRO_WINDOW_TITLE
 FreeOrion Hauptmenü
+
+INTRO_BTN_CONTINUE
+Fortsetzen
 
 INTRO_BTN_SINGLE_PLAYER
 Einzelspieler
@@ -3178,7 +3203,7 @@ TURN_PROGRESS_PHASE_GENERATING_UNIVERSE
 Erzeuge das Universum
 
 TURN_PROGRESS_STARTING_AIS
-Erstelle KI Clienten
+Erstelle KI Klienten
 
 # %1% number of the current turn.
 TURN_BEGIN
@@ -6511,187 +6536,187 @@ BLD_SCRYING_SPHERE_DESC
 Macht alle Planeten sichtbar, die ebenfalls eine [[BLD_SCRYING_SPHERE]] haben.
 
 BLD_COL_ABADDONI
-Abaddoni-Kolonie
+Kolonie der [[SP_ABADDONI]]
 
 BLD_COL_ABADDONI_DESC
 [[BLD_COL_PART_1]] [[species SP_ABADDONI]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_ABADDONI]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_BANFORO
-Banforo-Kolonie
+Kolonie der [[SP_BANFORO]]
 
 BLD_COL_BANFORO_DESC
 [[BLD_COL_PART_1]] [[species SP_BANFORO]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_BANFORO]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_CHATO
-Chato-Kolonie
+Kolonie der [[SP_CHATO]]
 
 BLD_COL_CHATO_DESC
 [[BLD_COL_PART_1]] [[species SP_CHATO]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_CHATO]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_CRAY
-Cray-Kolonie
+Kolonie der [[SP_CRAY]]
 
 BLD_COL_CRAY_DESC
 [[BLD_COL_PART_1]] [[species SP_CRAY]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_CRAY]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_DERTHREAN
-Derthrean-Kolonie
+Kolonie der [[SP_DERTHREAN]]
 
 BLD_COL_DERTHREAN_DESC
 [[BLD_COL_PART_1]] [[species SP_DERTHREAN]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_DERTHREAN]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_EAXAW
-Eaxaw-Kolonie
+Kolonie der [[SP_EAXAW]]
 
 BLD_COL_EAXAW_DESC
 [[BLD_COL_PART_1]] [[species SP_EAXAW]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_EAXAW]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_EGASSEM
-Egassem-Kolonie
+Kolonie der [[SP_EGASSEM]]
 
 BLD_COL_EGASSEM_DESC
 [[BLD_COL_PART_1]] [[species SP_EGASSEM]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_EGASSEM]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_ETTY
-Etty-Kolonie
+Kolonie der [[SP_ETTY]]
 
 BLD_COL_ETTY_DESC
 [[BLD_COL_PART_1]] [[species SP_ETTY]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_ETTY]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_FURTHEST
-Furthest-Kolonie
+Kolonie der [[SP_FURTHEST]]
 
 BLD_COL_FURTHEST_DESC
 [[BLD_COL_PART_1]] [[species SP_FURTHEST]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_FURTHEST]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_FULVER
-Fulver-Kolonie
+Kolonie der [[SP_FULVER]]
 
 BLD_COL_FULVER_DESC
 [[BLD_COL_PART_1]] [[species SP_FULVER]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_FULVER]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_GEORGE
-George-Kolonie
+Kolonie der [[SP_GEORGE]]
 
 BLD_COL_GEORGE_DESC
 [[BLD_COL_PART_1]] [[species SP_GEORGE]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_GEORGE]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_GYSACHE
-Gysache-Kolonie
+Kolonie der [[SP_GYSACHE]]
 
 BLD_COL_GYSACHE_DESC
 [[BLD_COL_PART_1]] [[species SP_GYSACHE]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_GYSACHE]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_HAPPY
-Happybirthday-Kolonie
+Kolonie der [[SP_HAPPY]]
 
 BLD_COL_HAPPY_DESC
 [[BLD_COL_PART_1]] [[species SP_HAPPY]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_HAPPY]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_HHHOH
-Hhhoh-Kolonie
+Kolonie der [[SP_HHHOH]]
 
 BLD_COL_HHHOH_DESC
 [[BLD_COL_PART_1]] [[species SP_HHHOH]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_HHHOH]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_HUMAN
-Menschenkolonie
+Kolonie der [[SP_HUMAN]]
 
 BLD_COL_HUMAN_DESC
 [[BLD_COL_PART_1]] [[species SP_HUMAN]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_HUMAN]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_KILANDOW
-Kilandow-Kolonie
+Kolonie der [[SP_KILANDOW]]
 
 BLD_COL_KILANDOW_DESC
 [[BLD_COL_PART_1]] [[species SP_KILANDOW]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_KILANDOW]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_KOBUNTURA
-Kobuntura-Kolonie
+Kolonie der [[SP_KOBUNTURA]]
 
 BLD_COL_KOBUNTURA_DESC
 [[BLD_COL_PART_1]] [[species SP_KOBUNTURA]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_KOBUNTURA]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_LAENFA
-Laenfa-Kolonie
+Kolonie der [[SP_LAENFA]]
 
 BLD_COL_LAENFA_DESC
 [[BLD_COL_PART_1]] [[species SP_LAENFA]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_LAENFA]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_MISIORLA
-Misiorla-Kolonie
+Kolonie der [[SP_MISIORLA]]
 
 BLD_COL_MISIORLA_DESC
 [[BLD_COL_PART_1]] [[species SP_MISIORLA]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_MISIORLA]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_MUURSH
-Mu Ursh-Kolonie
+Kolonie der [[SP_MUURSH]]
 
 BLD_COL_MUURSH_DESC
 [[BLD_COL_PART_1]] [[species SP_MUURSH]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_MUURSH]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_PHINNERT
-Phinnert-Kolonie
+Kolonie der [[SP_PHINNERT]]
 
 BLD_COL_PHINNERT_DESC
 [[BLD_COL_PART_1]] [[species SP_PHINNERT]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_PHINNERT]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_REPLICON
-Replicon-Kolonie
+Kolonie der [[SP_REPLICON]]
 
 BLD_COL_REPLICON_DESC
 [[BLD_COL_PART_1]] [[species SP_REPLICON]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_REPLICON]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_SCYLIOR
-Scylior-Kolonie
+Kolonie der [[SP_SCYLIOR]]
 
 BLD_COL_SCYLIOR_DESC
 [[BLD_COL_PART_1]] [[species SP_SCYLIOR]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_SCYLIOR]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_SETINON
-Setinon-Kolonie
+Kolonie der [[SP_SETINON]]
 
 BLD_COL_SETINON_DESC
 [[BLD_COL_PART_1]] [[species SP_SETINON]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_SETINON]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_SILEXIAN
-Silexian-Kolonie
+Kolonie der [[SP_SILEXIAN]]
 
 BLD_COL_SILEXIAN_DESC
 [[BLD_COL_PART_1]] [[species SP_SILEXIAN]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_SILEXIAN]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_SLY
-Sly-Kolonie
+Kolonie der [[SP_SLY]]
 
 BLD_COL_SLY_DESC
 [[BLD_COL_PART_1]] [[species SP_SLY]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_SLY]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_SSLITH
-Sslith-Kolonie
+Kolonie der [[SP_SSLITH]]
 
 BLD_COL_SSLITH_DESC
 [[BLD_COL_PART_1]] [[species SP_SSLITH]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_SSLITH]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_TAEGHIRUS
-Tae Ghirus-Kolonie
+Kolonie der [[SP_TAEGHIRUS]]
 
 BLD_COL_TAEGHIRUS_DESC
 [[BLD_COL_PART_1]] [[species SP_TAEGHIRUS]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_TAEGHIRUS]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_TRITH
-Trith-Kolonie
+Kolonie der [[SP_TRITH]]
 
 BLD_COL_TRITH_DESC
 [[BLD_COL_PART_1]] [[species SP_TRITH]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_TRITH]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_UGMORS
-Ugmors-Kolonie
+Kolonie der [[SP_UGMORS]]
 
 BLD_COL_UGMORS_DESC
 [[BLD_COL_PART_1]] [[species SP_UGMORS]]-Kolonie. [[BLD_COL_PART_2]] [[species SP_UGMORS]]-Kolonie [[BLD_COL_PART_3]].
 
 BLD_COL_EXOBOT
-Exobot-Kolonie
+Kolonie der [[SP_EXOBOT]]
 
 BLD_COL_EXOBOT_DESC
 Dieses Gebäude kann nur auf einem [[encyclopedia OUTPOSTS_TITLE]] errichtet werden und erweitert den [[OUTPOSTS_TITLE]] in eine [[species SP_EXOBOT]]-Kolonie. Die Exobots werden als Teil der Kolonie vor Ort gebaut und müssen daher nicht von einer anderen Exobot-Kolonie bereitgestellt werden. Die Kolonie muss zum Bau aber dennoch durch einen bewohnten Planeten des Imperiums versorgt werden und ist außerdem teurer als andere Kolonien.
@@ -8113,6 +8138,12 @@ Besonderheiten für [[encyclopedia LITHIC_SPECIES_TITLE]]:
 ##
 ## Species picks
 ##
+## internal note to the translators:
+## + für positive Effekte (normales Pluszeichen)
+## - für negative Effekte (ein langer Gedankenstrich statt ein kurzes Minus)
+## ⋄ für neutrale / sonstige Effekte (der springende Punkt. einfach kopieren)
+## nehmt bitte Tabs für Abstände anstatt Leerzeichen
+##
 
 NO_INDUSTRY_DESC
 −−−	Keine [[metertype METER_INDUSTRY]]
@@ -8121,7 +8152,7 @@ BAD_INDUSTRY_DESC
 −	Schlechte [[metertype METER_INDUSTRY]]: 75%
 
 AVERAGE_INDUSTRY_DESC
-'''	Mittelmässige [[metertype METER_INDUSTRY]]: 100%'''
+⋄	Durchschnittliche [[metertype METER_INDUSTRY]]: 100%
 
 GOOD_INDUSTRY_DESC
 +	Gute [[metertype METER_INDUSTRY]]: 150%
@@ -8139,7 +8170,7 @@ BAD_RESEARCH_DESC
 −	Schlechte [[metertype METER_RESEARCH]]: 75%
 
 AVERAGE_RESEARCH_DESC
-'''	Mittelmässige [[metertype METER_RESEARCH]]: 100%'''
+⋄	Durchschnittliche [[metertype METER_RESEARCH]]: 100%
 
 GOOD_RESEARCH_DESC
 +	Gute [[metertype METER_RESEARCH]]: 150%
@@ -8157,52 +8188,67 @@ BAD_DEFENSE_TROOPS_DESC
 −	Schlechte Boden[[metertype METER_TROOPS]]: 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-'''	Mittelmäßige Boden[[metertype METER_TROOPS]]: 100%'''
+⋄	Durchschnittliche Boden[[metertype METER_TROOPS]]: 100%
 
 GOOD_DEFENSE_TROOPS_DESC
-+	Gute Boden[[metertype METER_TROOPS]]: 150%.
++	Gute Boden[[metertype METER_TROOPS]]: 150%
 
 GREAT_DEFENSE_TROOPS_DESC
-++	Hervorragende Boden[[metertype METER_TROOPS]]: 200%.
+++	Hervorragende Boden[[metertype METER_TROOPS]]: 200%
 
 ULTIMATE_DEFENSE_TROOPS_DESC
-+++	Perfekte Boden[[metertype METER_TROOPS]]: 300%.
++++	Perfekte Boden[[metertype METER_TROOPS]]: 300%
 
 BAD_DETECTION_DESC
-−	Schlechte [[metertype METER_DETECTION]]: −20 Malus.
+−	Schlechte [[metertype METER_DETECTION]]: −20 Malus
 
 GOOD_DETECTION_DESC
-+	Gute [[metertype METER_DETECTION]]: +25 Bonus.
++	Gute [[metertype METER_DETECTION]]: +25 Bonus
 
 GREAT_DETECTION_DESC
-++	Hervorragende [[metertype METER_DETECTION]]: +50 Bonus.
+++	Hervorragende [[metertype METER_DETECTION]]: +50 Bonus
 
 ULTIMATE_DETECTION_DESC
-+++	Perfekte [[metertype METER_DETECTION]]: +100 Bonus.
++++	Perfekte [[metertype METER_DETECTION]]: +100 Bonus
 
 BAD_STEALTH_DESC
-−	Schlechte [[metertype METER_STEALTH]]: −20 Malus.
+−	Schlechte [[metertype METER_STEALTH]]: −20 Malus
 
 AVERAGE_STEALTH_DESC
-'''	Mittelmäßige [[metertype METER_STEALTH]].'''
+⋄	Durchschnittliche [[metertype METER_STEALTH]]
 
 GOOD_STEALTH_DESC
-+	Gute [[metertype METER_STEALTH]]: +20 Bonus.
++	Gute [[metertype METER_STEALTH]]: +20 Bonus
 
 GREAT_STEALTH_DESC
-++	Hervorragende [[metertype METER_STEALTH]]: +40 Bonus.
+++	Hervorragende [[metertype METER_STEALTH]]: +40 Bonus
 
 ULTIMATE_STEALTH_DESC
-+++	Perfekte [[metertype METER_STEALTH]]: +60 Bonus.
++++	Perfekte [[metertype METER_STEALTH]]: +60 Bonus
 
 BAD_POPULATION_DESC
 −	Niedrige Bevölkerung 75%
 
 AVERAGE_POPULATION_DESC
-'''	Normale Bevölkerung'''
+⋄	Normale Bevölkerung
 
 GOOD_POPULATION_DESC
 +	Hohe Bevölkerung 125%
+
+GREAT_ASTEROID_INDUSTRY_DESC
++	Guter Asteroidenbergbau: + 0.2 [[metertype METER_INDUSTRY]] je [[metertype METER_POPULATION]] bei Industriefokus in Systemen mit besetzten Asteroidengürteln
+
+LIGHT_SENSITIVE_DESC
+−	Lichtempfindlich: [[metertype METER_POPULATION]] stark reduziert in Systemen mit blauen Sternen, weniger stark in Systemen mit weißen Sternen
+
+TELEPATHIC_DETECTION_DESC
++	Telepathische Wahrnehmung: kann nahe besiedelte Welten wahrnehmen
+
+PRECOGNITIVE_DETECTION_DESC
++	Vorausahnende Wahrnehmung: kann per Sternenstraßen verbundene Planeten wahrnehmen
+
+COMMUNAL_VISION_DESC
+⋄	Gemeinsame Wahrnehmung: Sichtbarkeit wird innerhalb derselben Spezies geteilt, unabhängig von Reichszugehörigkeit
 
 
 ##
@@ -8295,27 +8341,27 @@ ULTIMATE_RESEARCH_LABEL
 # %1% FIXME
 # %2% FIXME
 BAD_TROOPS_LABEL
-%2% Schlechte Bodentruppe
+%2% Schlechte Bodentruppen
 
 # %1% FIXME
 # %2% FIXME
 AVERAGE_TROOPS_LABEL
-%2% Mittelmäßige Bodentruppe
+%2% Durchschnittliche Bodentruppen
 
 # %1% FIXME
 # %2% FIXME
 GOOD_TROOPS_LABEL
-%2% Gute Bodentruppe
+%2% Gute Bodentruppen
 
 # %1% FIXME
 # %2% FIXME
 GREAT_TROOPS_LABEL
-%2% Beste Bodentruppe
+%2% Beste Bodentruppen
 
 # %1% FIXME
 # %2% FIXME
 ULTIMATE_TROOPS_LABEL
-%2% Top Bodentruppe
+%2% Top Bodentruppen
 
 INDEPENDENT_TROOP_LABEL
 Unabhängige Heimatwelt
@@ -8342,7 +8388,7 @@ WEAK_VISION_LABEL
 Schwache Sicht
 
 MODERATE_VISION_LABEL
-Mittelmäßige Sicht
+Durchschnittliche Sicht
 
 GOOD_VISION_LABEL
 Gute Sicht
