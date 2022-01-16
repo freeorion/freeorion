@@ -2855,7 +2855,7 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
         if (abs_num < 0.1 || abs_num >= 1000)
             return DoubleToString(num, 3, false);
 
-        int precision = abs_num < 10 ? 2 : 1;
+        int precision = abs_num < 10 ? 2 : 1; // number of fractional decimal places
 
         // TODO: check if locale correctly does round trip of something with
         // a decimal place indicator using to_chars and from_chars.
@@ -2866,7 +2866,7 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
             return buf.data();
 #else
             std::stringstream ss;
-            ss << std::setprecision(precision) << num;
+            ss << std::fixed << std::setprecision(precision) << num;
             return ss.str();
 #endif
     };
