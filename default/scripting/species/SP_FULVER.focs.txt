@@ -43,7 +43,7 @@ Species
         [[NARROW_EP]]
         [[STANDARD_SHIP_SHIELDS]]
 		
-		EffectsGroup
+        EffectsGroup
             scope = Source
             activation = And [
                 Planet
