@@ -3627,6 +3627,15 @@ Espèce
 CENSUS_TAG_HEADER
 Genre
 
+CENSUS_TARGET_POPULATION
+Population projetée : %1%
+
+CENSUS_TOTAL_POPULATION
+Population actuelle : %1%
+
+CENSUS_TOTAL_WORLDS
+Mondes colonisés : %1%
+
 MAP_DETECTION_TITLE
 Détection
 
@@ -12973,6 +12982,15 @@ Tromperie
 SPY_ROOT_DECEPTION_DESC
 L'art de la tromperie n’est pas naturel à toutes les espèces, mais la possibilité de dissimuler la vérité peut s'avérer bien utile.
 
+SPY_DECPTION_EMPTY_SPACE_PENALTY
+Visibilité dans l'espace interstellaire
+
+SPY_DECPTION_DIM_STAR_PENALTY
+Visibilité à proximité d'une étoile faible
+
+SPY_DECPTION_SUBSTELLAR_INTERFERENCE
+Milieu à fort rayonnement cosmique
+
 
 ##
 ## Technology application
@@ -13651,13 +13669,22 @@ SPY_DETECT_1
 Scanner Optique
 
 SPY_DETECT_1_DESC
-Toutes les colonies débutent la partie avec un [[metertype METER_DETECTION]] de 50 et une [[encyclopedia DETECTION_TITLE]] impériale de 10. Le [[shippart DT_DETECTOR_1]] permet à tous les astronefs d'atteindre un niveau de détection similaire.
+Toutes les colonies débutent la partie avec un [[metertype METER_DETECTION]] de [[value SPY_DETECT_1_RANGE]] et une [[encyclopedia DETECTION_TITLE]] impériale de 10. Le [[shippart DT_DETECTOR_1]] permet à tous les astronefs d'atteindre un niveau de détection similaire.
+
+SPY_DETECT_STELLAR_INTERFERENCE
+Interférence Stellaire
+
+SPY_DETECT_LENSING
+Lentille Gravitationnelle
+
+SPY_DETECT_CLEAN_STELLAR_BACKGROUND
+Fond Cosmique à Faible Rayonnement
 
 SPY_DETECT_2
 Radar Actif
 
 SPY_DETECT_2_DESC
-'''Débloque l'équipement [[shippart DT_DETECTOR_2]] pour les astronefs et la structure [[buildingtype BLD_SCANNING_FACILITY]], porte le [[metertype METER_DETECTION]] de toutes les planètes à 75 et la [[encyclopedia DETECTION_TITLE]] impériale à 30.
+'''Débloque l'équipement [[shippart DT_DETECTOR_2]] pour les astronefs et la structure [[buildingtype BLD_SCANNING_FACILITY]], porte le [[metertype METER_DETECTION]] de toutes les planètes à [[value SPY_DETECT_2_RANGE]] et la [[encyclopedia DETECTION_TITLE]] impériale à 30.
 
 Se baser uniquement sur les rayonnements électromagnétiques pour obtenir des informations sur tout objet à proximité s'avère imprécis et peu pratique, dans la mesure où ces radiations peuvent être masquées ou atténuées. Par contre, en émettant un rayonnement électromagnétique puis en détectant son écho, il devient alors possible de déterminer l'emplacement et la vitesse de maints objets.'''
 
@@ -13665,7 +13692,7 @@ SPY_DETECT_3
 Scanner Neutronique
 
 SPY_DETECT_3_DESC
-'''Débloque l'équipement [[shippart DT_DETECTOR_3]] pour les astronefs, porte le [[metertype METER_DETECTION]] de toutes les planètes à 150 et la [[encyclopedia DETECTION_TITLE]] impériale à 50.
+'''Débloque l'équipement [[shippart DT_DETECTOR_3]] pour les astronefs, porte le [[metertype METER_DETECTION]] de toutes les planètes à [[value SPY_DETECT_3_RANGE]] et la [[encyclopedia DETECTION_TITLE]] impériale à 50.
 
 Le rayonnement électromagnétique ne possède pas de masse et s'avère facilement manipulable. En courbant simplement des ondes lumineuses autour d'un objet, les technologies à base de radars classiques deviennent obsolètes. L'émission d'ondes constituées de neutrons plutôt qu'un rayonnement électromagnétique permet une détection par scanner encore plus efficace.'''
 
@@ -13673,13 +13700,13 @@ SPY_DETECT_4
 Capteurs
 
 SPY_DETECT_4_DESC
-Débloque l'équipement [[shippart DT_DETECTOR_4]] pour les astronefs, porte le [[metertype METER_DETECTION]] de toutes les planètes à 200 et la [[encyclopedia DETECTION_TITLE]] impériale à 70.
+Débloque l'équipement [[shippart DT_DETECTOR_4]] pour les astronefs, porte le [[metertype METER_DETECTION]] de toutes les planètes à [[value SPY_DETECT_4_RANGE]] et la [[encyclopedia DETECTION_TITLE]] impériale à 70.
 
 SPY_DETECT_5
 Omni-Scanner
 
 SPY_DETECT_5_DESC
-Le dispositif ultime en matière de détection. Porte le [[metertype METER_DETECTION]] de toutes les planètes à 300 et la [[encyclopedia DETECTION_TITLE]] impériale à 200.
+Le dispositif ultime en matière de détection. Porte le [[metertype METER_DETECTION]] de toutes les planètes à [[value SPY_DETECT_5_RANGE]] et la [[encyclopedia DETECTION_TITLE]] impériale à 200.
 
 SPY_STEALTH_1
 Couverture Nuageuse Planétaire
@@ -13986,9 +14013,19 @@ SPY_PLANET_STEALTH_MOD
 Modificateurs de Furtivité
 
 SPY_PLANET_STEALTH_MOD_DESC
-'''Augmente la [[metertype METER_STEALTH]] naturelle de toutes les planètes de 5.
+'''Ces effets affectent la Furtivité:
 
-Réduit la Furtivité des astronefs lorsqu'ils se trouvent dans un même système abritant plus de [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] astronefs du même empire.'''
+• La [[BASIC_PLANET_STEALTH]] octroie une [[metertype METER_STEALTH]] de [[value PLANET_BASIC_STEALTH]] à toutes les planètes.
+
+• En raison de la [[FLEET_UNSTEALTHINESS]], lorsque plus de [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] astronefs d'un même empire se trouvent dans un système, leur [[metertype METER_STEALTH]] est réduite de [[value FLEET_UNSTEALTH_SHIPS_SCALING]] multiplié par la racine carrée de [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] moins le nombre d'astronefs appartenant à l'empire dans le système.
+
+• Les astronefs se trouvant dans un système n'abritant [[STAR_NONE]] subissent une pénalité de [[value SPY_DECPTION_EMPTY_SPACE_PENALTY]] en [[metertype METER_STEALTH]] en raison de leur [[SPY_DECPTION_EMPTY_SPACE_PENALTY]].
+
+• Les astronefs se trouvant dans un système abritant une Étoile [[STAR_RED]] subissent une pénalité de [[value SPY_DECPTION_DIM_STAR_PENALTY]] en [[metertype METER_STEALTH]] en raison de leur [[SPY_DECPTION_DIM_STAR_PENALTY]].
+
+• Les astronefs se trouvant dans un système abritant une Étoile [[STAR_NEUTRON]] reçoivent un bonus de [[value SPY_DECPTION_NEUTRON_INTERFERENCE]] en [[metertype METER_STEALTH]] en raison du [[SPY_DECPTION_SUBSTELLAR_INTERFERENCE]].
+
+• Les astronefs se trouvant dans un système abritant un [[STAR_BLACK]] reçoivent un bonus de [[value SPY_DECPTION_BLACK_INTERFERENCE]] en [[metertype METER_STEALTH]] en raison du [[SPY_DECPTION_SUBSTELLAR_INTERFERENCE]].'''
 
 BASIC_PLANET_STEALTH
 Furtivité Universelle Initiale
@@ -13997,7 +14034,7 @@ FLEET_UNSTEALTHINESS
 Non-Furtivité des Flottes
 
 FLEET_UNSTEALTHY_SHIPS_THRESHOLD
-Nombre d'astronefs dans un même système et appartenant au même empire, au-dessus duquel les astronefs subissent une pénalité de [[metertype METER_STEALTH]].
+Nombre d'astronefs dans un même système et appartenant au même empire, au-dessus duquel les astronefs subissent une pénalité de Furtivité.
 
 
 ##
