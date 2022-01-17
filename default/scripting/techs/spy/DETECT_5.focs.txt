@@ -13,7 +13,7 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
             ]
-            effects = SetDetection value = Value + 300
+            effects = SetDetection value = Value + (NamedReal name = "SPY_DETECT_5_RANGE" value = 150.0)
 
         EffectsGroup
             scope = Source

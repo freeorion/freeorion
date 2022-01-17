@@ -22,7 +22,7 @@ Tech
                 Not OwnerHasTech name = "SPY_DETECT_4"
                 Not OwnerHasTech name = "SPY_DETECT_5"
             ]
-            effects = SetDetection value = Value + 75
+            effects = SetDetection value = Value + (NamedReal name = "SPY_DETECT_2_RANGE" value = 75.0)
 
         EffectsGroup
             scope = Source

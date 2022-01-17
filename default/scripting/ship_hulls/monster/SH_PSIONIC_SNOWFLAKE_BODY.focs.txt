@@ -23,7 +23,7 @@ Hull
         [[INFINITE_FUEL]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[MONSTER_SHIELD_REGENERATION]]
-        [[EXCELLENT_VISION]]
+        [[GOOD_VISION]]
 
         EffectsGroup
             scope = NumberOf number = 4 condition = And [
