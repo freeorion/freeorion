@@ -8660,6 +8660,83 @@ Homeworld:
 A swamp world with a dense atmosphere and fairly dense biosphere.
 '''
 
+SP_KHAKTURIAN
+Khakturian
+
+SP_KHAKTURIAN_GAMEPLAY_DESC
+'''
+Spiky and hardy. Biennial invasive weed, herbicide resistant.
+Shoots poisonous abrasive thorns when in early sessile stage, later forms formidable tumbleweed-like offshoots for reproduction.
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+'''
+
+SP_KHAKTURIAN_DESC
+'''
+As invasive weed species go, this is a pretty stubborn one and hard to eradicate. When they plant their seedling-troopers into an enemy-world's ground, noone wants to share that piece of ground with them anymore, so obtrusive and obnoxious are they.
+
+Lifecycle:
+Can be grown from seeds (import restrictions are in place in many systems, the local [[buildingtype BLD_REGIONAL_ADMIN]] should be consulted before starting a plantation). No stratification required. After an initial watering in, they are drought tolerant, herbicide resistant and thrive in the dry desert sands by pulling moisture out of the atmosphere.
+
+'''
+
+SP_SLEEPERS
+Sleepers
+
+SP_SLEEPERS_GAMEPLAY_DESC
+'''
+Boring burrowers with feathered feet. Sleep a lot.
+Sometimes they dream of far away places they can never visit.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+'''
+
+SP_SLEEPERS_DESC
+'''
+
+Feathered flightless birdlike creatues who are forced to hibernate a lot. Before winter is coming, which is five sixths of their year, suitable sleeping sites need to be prepared. Sometimes they dream of far away places they can never visit. But mainly their winters are dominated just by deep and dreemless sleeping. When they are awake during and around periastron, the very brief really livable period in their world's orbit closest to the star, they can be quite industrious. But they mostly prefer to sit around and do nothing. Somnambulism is a trait they greatly admire, but the art of sleepwalking is beyond them and they never achieved it.
+'''
+
+SP_NIGHTSIDERS
+Nightsiders
+
+SP_NIGHTSIDERS_GAMEPLAY_DESC
+'''
+Shady bloodsuckers with a dark sense of humor. Literally.
+Highly adapted to and at home in the eternal infernal night.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+'''
+
+SP_NIGHTSIDERS_DESC
+'''
+
+Hated and feared by most other organic species for obvious reasons. Lurking in the shadows and preying on those, who naïvely wander into the dark. Their thirst for blood is not based on any ideology or emotion but purely on the necessities of biology. In this case haematophagy, living off of others' blood similar to the irritating tick or flee, but bigger and with space ships to boot. Although they'd like to be, they are not really telepathic. Instead, they are haemaesthetic – they can sense the blood of their potential victims over great distances. (Colonies of Nightsiders will detect nearby worlds populated with beings with [[encyclopedia ORGANIC_SPECIES_TITLE]]). They themselves call it their Sanguine Sensorium and describe it as a kind of itching, pointing them to the worlds where they can fall upon their victims at night.
+
+They are so bad, they invite fire and brimstone. (Colonies of Nightsiders will attract a nearby [[fieldtype FLD_METEOR_BLIZZARD]]).
+
+They are so incredibly bad, they even repel good fields. (Colonies of Nightsiders will deflect an oncoming [[fieldtype FLD_NANITE_SWARM]]).
+
+When asked, why they like or dislike certain things, a typical Nightsider might give answers along the following lines.
+
+Questioner: Would you like to join our [[buildingtype BLD_INTERSPECIES_ACADEMY]]?
+Nightsider: Sure, why not, show us all your organic species you got over there. Maybe we even come for a visit some night or other.
+
+Questioner: A new [[buildingtype BLD_SCANNING_FACILITY]] or [[buildingtype BLD_LIGHTHOUSE]] needs to be built close to your colony.
+Nightsider: No thank you. We can see quite well enough ourselves. Keep these ideas in the daylight where they belong.
+
+Questioner: Why won't you be friends with our [[species SP_SETINON]] and [[species SP_SSLITH]]?
+Nightsider: We can feel they are there, but too small to be of any use as food. So.. what was the question again?
+
+Questioner: What with the shields up and all that defensive posture?
+Nightsider: Why not. We're good at it. We like it. Go away. Nothing to see here anyway. We will come to your world when we need your blood.
+
+Questioner: Would you like some [[special SHIMMER_SILK_SPECIAL]]?
+Nightsider: Keep that shiny stuff in the daylight where it belongs.
+
+Questioner: How about some [[special MIMETIC_ALLOY_SPECIAL]]?
+Nightsider: Whats that. Never heard of it. Let me see that. Not seeing anything. Oohh it moves stealthily. And now it trembled ... I did not get it yet. Give me that.
+
+At this point there would be a preview of what Nightsiders look like – but that is pointless since they are really from the dark side and it is unlikely that any organic being will need any visual aid to recognize, when a Nightsider is upon them...
+'''
+
 SP_NYMNMN
 Nymnmn
 
@@ -16755,6 +16832,9 @@ GREAT_ASTEROID_INDUSTRY_DESC
 
 LIGHT_SENSITIVE_DESC
 −	Light Sensitive: [[metertype METER_POPULATION]] is reduced in systems with [[STAR_BLUE]] and to a lesser extent [[STAR_WHITE]] stars.
+
+HAEMAESTHETIC_DETECTION_DESC
++	Sanguine Sensorium: can sense nearby planets populated with organic beings.
 
 TELEPATHIC_DETECTION_DESC
 +	Telepathic Detection: can sense nearby populated planets

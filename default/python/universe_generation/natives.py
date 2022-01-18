@@ -95,6 +95,7 @@ def generate_natives(native_freq, systems, empire_home_systems):
             # if no, and there is at least one available focus, just take the first of the list
             # otherwise don't set any focus
             fo.planet_set_focus(candidate, available_foci[0])
+            print("preferred focus", preferred_focus, "not available, focus on", available_foci[0], "instead")
         print("Added native", natives, "to planet", fo.get_name(candidate))
 
         # increase the statistics counter for this native species, so a species summary can be dumped to the log later

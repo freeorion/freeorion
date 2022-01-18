@@ -105,7 +105,7 @@ public:
 
     std::string                     Dump(unsigned short ntabs = 0) const;                                   ///< returns a data file format representation of this object
     const std::vector<FocusType>&   Foci() const                        { return m_foci; }                  ///< returns the focus types this species can use
-    const std::string&              DefaultFocus() const                { return m_default_focus; }       ///< returns the name of the planetary focus this species prefers. Default for new colonies and may affect happiness if on a different focus?
+    const std::string&              DefaultFocus() const                { return m_default_focus; }       ///< returns the name of the planetary focus this species prefers. Default for new colonies and will affect happiness if on a different focus
     const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
     PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;                     ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
     PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const;             ///< returns the next better PlanetType for this species from the \a initial_planet_type specified

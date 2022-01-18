@@ -70,6 +70,31 @@ GOOD_POPULATION
             effects = SetTargetPopulation value = Value +0.25*abs(Value)
 '''
 
+// reduces max population in systems with bright stars
+LIGHT_SENSITIVE
+'''
+        EffectsGroup
+            description = "LIGHT_SENSITIVE_DESC"
+            scope = Source
+            activation = And [
+                Planet
+                Star type = [Blue]
+            ]
+            accountinglabel = "VERY_BRIGHT_STAR"
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 2 * Source.HabitableSize
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Star type = [White]
+            ]
+            accountinglabel = "BRIGHT_STAR"
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
+            effects = SetTargetPopulation value = Value - Source.HabitableSize
+'''
+
 /*
 * Implements environmental modifiers from Growth techs.
 * Changes to the growth tree should take this into account.

@@ -1317,7 +1317,6 @@ void SetSpecies::Execute(ScriptingContext& context) const {
                 return;
         }
 
-
         const Species* species = GetSpecies(planet->SpeciesName());
         const auto& default_focus = species ? species->DefaultFocus() : "";
 
