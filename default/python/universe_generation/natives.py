@@ -13,18 +13,19 @@ planet_types_for_natives = {}
 def generate_natives(native_freq, systems, empire_home_systems):
     """
     Adds non-empire-affiliated native populations to planets.
+    And to asteroids and to gasgiants as well.
     """
 
-    # first, calculate the chance for natives on a planet based on the native frequency that has been passed
+    # first, calculate the chance for natives based on the native frequency that has been passed
     # get the corresponding value for the specified natives frequency from the universe tables
     native_chance = universe_tables.NATIVE_FREQUENCY[native_freq]
     # a value of 0 means no natives, in this case return immediately
     if native_chance <= 0:
         return
 
-    # compile a list of planets where natives can be placed
-    # select only planets sufficiently far away from player home systems
-    # list of planets safe for natives
+    # compile a list of systems where natives can be placed
+    # select only systems sufficiently far away from player home systems
+    # list of systems safe for natives
     EMPIRE_TO_NATIVE_MIN_DIST = 2
     empire_exclusions = set(
         itertools.chain.from_iterable(
@@ -52,6 +53,7 @@ def generate_natives(native_freq, systems, empire_home_systems):
     natives_for_planet_type.update({planet_type: [] for planet_type in planets.planet_types})
     planet_types_for_natives.clear()
     planet_types_for_natives.update({species: set() for species in native_species})
+    
     # iterate over all native species we got
     for species in native_species:
         # check the planet environment for all planet types for this species
@@ -60,6 +62,19 @@ def generate_natives(native_freq, systems, empire_home_systems):
             if fo.species_get_planet_environment(species, planet_type) == fo.planetEnvironment.good:
                 natives_for_planet_type[planet_type].append(species)
                 planet_types_for_natives[species].add(planet_type)
+        # if the species simply has no good environment to live in, try the same as above for adequate instead
+        # this is needed for a couple of new native species with only adequate and no good environments
+        if len(planet_types_for_natives[species]) < 1:
+            for planet_type in planets.planet_types:
+                if fo.species_get_planet_environment(species, planet_type) == fo.planetEnvironment.adequate:
+                    natives_for_planet_type[planet_type].append(species)
+                    planet_types_for_natives[species].add(planet_type)
+        # if the species still has no fitting environment then try poor next
+        if len(planet_types_for_natives[species]) < 1:
+            for planet_type in planets.planet_types:
+                if fo.species_get_planet_environment(species, planet_type) == fo.planetEnvironment.poor:
+                    natives_for_planet_type[planet_type].append(species)
+                    planet_types_for_natives[species].add(planet_type)
 
     # randomly add species to planets
     # iterate over the list of "native safe" planets we compiled earlier

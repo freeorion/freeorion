@@ -47,7 +47,7 @@ Species
         [[BAD_INFLUENCE]]
         [[AVERAGE_STOCKPILE]]
 
-        [[BAD_POPULATION]]
+        [[EXTREMELY_BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
         [[BAD_OFFENSE_TROOPS]]

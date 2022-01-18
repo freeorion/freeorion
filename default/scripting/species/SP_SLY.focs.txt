@@ -97,19 +97,7 @@ Species
             effects = UnlockPolicy name = "PLC_CONFEDERATION" empire = Source.Owner
     ]
 
-    environments = [
-      type = Swamp        environment = Hostile
-      type = Toxic        environment = Hostile
-      type = Inferno      environment = Hostile
-      type = Radiated     environment = Hostile
-      type = Barren       environment = Hostile
-      type = Tundra       environment = Hostile
-      type = Desert       environment = Hostile
-      type = Terran       environment = Hostile
-      type = Ocean        environment = Hostile
-      type = Asteroids    environment = Uninhabitable
-      type = GasGiant     environment = Good
-    ]
+    [[GASEOUS_STANDARD_EP]]
 
     graphic = "icons/species/amorphous-05.png"
 
