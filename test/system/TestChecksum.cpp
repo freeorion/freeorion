@@ -32,8 +32,8 @@ void TestCheckSumFromEnv(const char* env, unsigned int def, unsigned int calcula
 BOOST_AUTO_TEST_CASE(compare_checksum) {
     auto checksums = CheckSumContent();
 
-    TestCheckSumFromEnv("FO_CHECKSUM_NAMED_VALUEREF", 2351423, checksums["NamedValueRefManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_TECH", 5454078, checksums["TechManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_NAMED_VALUEREF", 2465801, checksums["NamedValueRefManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_TECH", 5355498, checksums["TechManager"]);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
