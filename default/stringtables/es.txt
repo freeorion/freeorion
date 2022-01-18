@@ -1167,11 +1167,45 @@ Escalado de coste de partes
 #*RULE_TEST_STRING_DESC
 #* <not translated 1970-01-01 01:00:00>
 
-#*RULE_STARLANES_EVERYWHERE
-#* <not translated 1970-01-01 01:00:00>
+RULE_STARLANES_EVERYWHERE
+Vías Estelares Completas
 
-#*RULE_STARLANES_EVERYWHERE_DESC
-#* <not translated 1970-01-01 01:00:00>
+RULE_STARLANES_EVERYWHERE_DESC
+Se crean vías estelares entre cada par de sistemas, independientemente de la geometría. Estas vías pueden, aún así, ser eliminada durante la partida. Estas vías no aparecen en el mapa de la galaxia.
+
+RULE_ALL_OBJECTS_VISIBLE
+Todos los objetos visibles
+
+RULE_ALL_OBJECTS_VISIBLE_DESC
+Todo sistema, planeta, edificio, flota, nave o campo puede ser detectado por todos los imperios con al menos visibilidad parcial.
+
+RULE_ALL_SYSTEMS_VISIBLE
+Todos los sismteas visibles
+
+RULE_ALL_SYSTEMS_VISIBLE_DESC
+La localización de todos los sistemas es conocida por todos los imperios.
+
+RULE_EXTRASOLAR_SHIP_DETECTION
+Detección de naves extrasolares
+
+RULE_EXTRASOLAR_SHIP_DETECTION_DESC
+Las naves fuera del sistema pueden otorgan capacidad de detección
+
+RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
+Planetas Sigilosos Indetectables
+
+RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_DESC
+'''<u>Activado</u>: Los planetas con mayor sigilo que la capacidad de detección de un imperio no pueden ser detectadas simplemente con que dicho imperio disponga de un objeto en el mismo sistema,salvo que ese planeta ya haya sido previamente detectado por el imperio.
+
+<u>Desactivado</u>: Los planetas con mayor nivel de sigilo que la capacidad de detección de un imperio pueden ser detectados por dicho imperio si éste posee un objeto en su sistema.'''
+
+RULE_BASIC_VIS_SYSTEM_INFO_SHOWN
+Información Básica del Sistema Visible
+
+RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
+'''<u>Activado</u>: Los sistemas detectados por un imperios con visibilidad baja muestran su nombre y tipo de estrella a dicho imperio.
+
+<u>Desactivado</u>: Los sistemas que no sean detectados a niveles de visibilidad altos nunca muestrna su nombre y el tipo de su estrella.'''
 
 RULE_HABITABLE_SIZE_TINY
 Espacio habitable en planetas enanos
@@ -6427,17 +6461,17 @@ Especies
 BUILDING_TYPE
 Tipo de Edificio
 
-#*FOCUS
-#* <not translated 1970-01-01 01:00:00>
+FOCUS
+Foco
 
 #*AVAILABLE_FOCI
 #* <not translated 1970-01-01 01:00:00>
 
-#*PARTS
-#* <not translated 1970-01-01 01:00:00>
+PARTS
+Piezas
 
-#*HULL
-#* <not translated 1970-01-01 01:00:00>
+HULL
+Casco
 
 ATTACK
 Daño Total
@@ -6451,8 +6485,8 @@ Tipo
 CREATION_TURN
 Turno de Creación
 
-#*AGE
-#* <not translated 1970-01-01 01:00:00>
+AGE
+Edad
 
 #*TURNS_SINCE_FOCUS_CHANGE
 #* <not translated 1970-01-01 01:00:00>
@@ -6472,32 +6506,32 @@ Turno de Creación
 #*PROPAGATED_SUPPLY_DISTANCE
 #* <not translated 1970-01-01 01:00:00>
 
-#*ETA
-#* <not translated 1970-01-01 01:00:00>
+ETA
+Turnos hasta destino
 
-#*PRODUCED_BY
-#* <not translated 1970-01-01 01:00:00>
+PRODUCED_BY
+Producido por
 
-#*SYSTEM
-#* <not translated 1970-01-01 01:00:00>
+SYSTEM
+Sistema actual
 
-#*NEAREST_SYSTEM
-#* <not translated 1970-01-01 01:00:00>
+NEAREST_SYSTEM
+Sistema más cercano
 
 #*DESIGN_ID
 #* <not translated 1970-01-01 01:00:00>
 
-#*FINAL_DEST
-#* <not translated 1970-01-01 01:00:00>
+FINAL_DEST
+Sistema Destino Final
 
-#*NEXT_SYSTEM
-#* <not translated 1970-01-01 01:00:00>
+NEXT_SYSTEM
+Próximo sistema
 
-#*PREV_SYSTEM
-#* <not translated 1970-01-01 01:00:00>
+PREV_SYSTEM
+Sistema anterior
 
-#*ARRIVAL_STARLANE
-#* <not translated 1970-01-01 01:00:00>
+ARRIVAL_STARLANE
+Llegada desde sistema
 
 #*LAST_TURN_BATTLE_HERE
 #* <not translated 1970-01-01 01:00:00>
