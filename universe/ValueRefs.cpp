@@ -114,7 +114,8 @@ namespace {
         while (first != last) {
             std::string_view property_name = *first;
             if (property_name == "Planet") {
-                if (auto b = std::dynamic_pointer_cast<const Building>(obj)) {
+                if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+                    auto b = std::static_pointer_cast<const Building>(obj);
                     obj = context.ContextObjects().get<Planet>(b->PlanetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a building, so can't get its planet.";
@@ -126,7 +127,8 @@ namespace {
                 if (!obj)
                     ErrorLogger() << "FollowReference : Unable to get system for object";
             } else if (property_name == "Fleet") {
-                if (auto s = std::dynamic_pointer_cast<const Ship>(obj)) {
+                if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+                    auto s = std::static_pointer_cast<const Ship>(obj);
                     obj = context.ContextObjects().get<Fleet>(s->FleetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a ship, so can't get its fleet";
@@ -181,21 +183,24 @@ namespace {
         const auto last = property_name.end();
         while (first != last) {
             std::string property_name_part = *first;
-            retval += " " + property_name_part + " ";
+            retval.append(" ").append(property_name_part).append(" ");
             if (property_name_part == "Planet") {
-                if (auto b = std::dynamic_pointer_cast<const Building>(obj)) {
-                    retval += "(" + std::to_string(b->PlanetID()) + "): ";
+                if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+                    auto b = std::static_pointer_cast<const Building>(obj);
+                    retval.append("(").append(std::to_string(b->PlanetID())).append("): ");
                     obj = context.ContextObjects().get<Planet>(b->PlanetID());
-                } else
+                } else {
                     obj = nullptr;
+                }
             } else if (property_name_part == "System") {
                 if (obj) {
-                    retval += "(" + std::to_string(obj->SystemID()) + "): ";
+                    retval.append("(").append(std::to_string(obj->SystemID())).append("): ");
                     obj = context.ContextObjects().get<System>(obj->SystemID());
                 }
             } else if (property_name_part == "Fleet") {
-                if (auto s = std::dynamic_pointer_cast<const Ship>(obj))  {
-                    retval += "(" + std::to_string(s->FleetID()) + "): ";
+                if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+                    auto s = std::static_pointer_cast<const Ship>(obj);
+                    retval.append("(").append(std::to_string(s->FleetID())).append("): ");
                     obj = context.ContextObjects().get<Fleet>(s->FleetID());
                 } else
                     obj = nullptr;
@@ -204,8 +209,8 @@ namespace {
             ++first;
 
             if (obj && initial_obj != obj) {
-                retval += "  Referenced Object: " + UserString(to_string(obj->ObjectType())) + " "
-                        + std::to_string(obj->ID()) + " ( " + obj->Name() + " )";
+                retval.append("  Referenced Object: ").append(UserString(to_string(obj->ObjectType())))
+                      .append(" ").append(std::to_string(obj->ID())).append(" ( ").append(obj->Name()).append(" )");
             }
             retval += " | ";
         }
@@ -706,8 +711,10 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
         planet_property = &Planet::NextSmallerPlanetSize;
 
     if (planet_property) {
-        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto p = std::static_pointer_cast<const Planet>(object);
             return planet_property(*p);
+        }
         return PlanetSize::INVALID_PLANET_SIZE;
     }
 
@@ -746,8 +753,10 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
         planet_property = &Planet::CounterClockwiseNextPlanetType;
 
     if (planet_property) {
-        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto p = std::static_pointer_cast<const Planet>(object);
             return planet_property(*p);
+        }
         return PlanetType::INVALID_PLANET_TYPE;
     }
 
@@ -769,8 +778,10 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
             ErrorLogger() << "Variable<PlanetEnvironment>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
             return PlanetEnvironment::INVALID_PLANET_ENVIRONMENT;
         }
-        if (auto p = std::dynamic_pointer_cast<const Planet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto p = std::static_pointer_cast<const Planet>(object);
             return p->EnvironmentForSpecies();
+        }
 
         return PlanetEnvironment::INVALID_PLANET_ENVIRONMENT;
     }
@@ -793,15 +804,7 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
             ErrorLogger() << "Variable<UniverseObjectType>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
             return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
         }
-        ObjectTypeVisitor v;
-        if (object->Accept(v))
-            return v.m_type;
-        else if (std::dynamic_pointer_cast<const PopCenter>(object))
-            return UniverseObjectType::OBJ_POP_CENTER;
-        else if (std::dynamic_pointer_cast<const ResourceCenter>(object))
-            return UniverseObjectType::OBJ_PROD_CENTER;
-
-        return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
+        return object->ObjectType();
     }
 
     LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(UniverseObjectType)
@@ -833,8 +836,10 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
         system_property = &System::NextYoungerStarType;
 
     if (system_property) {
-        if (auto s = std::dynamic_pointer_cast<const System>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
+            auto s = std::static_pointer_cast<const System>(object);
             return system_property(*s);
+        }
         return StarType::INVALID_STAR_TYPE;
     }
 
@@ -926,7 +931,8 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return context.current_turn;
 
     } else if (property_name == "DestroyFightersPerBattleMax") {
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
+        if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            auto ship = std::static_pointer_cast<const Ship>(object);
             auto retval = ship->TotalWeaponsFighterDamage(context);
             InfoLogger() << "DestroyFightersPerBattleMax" << retval;
             // TODO: prevent recursion; disallowing the ValueRef inside of destroyFightersPerBattleMax via parsers would be best.
@@ -935,7 +941,8 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
 
     } else if (property_name == "DamageStructurePerBattleMax") {
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
+        if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            auto ship = std::static_pointer_cast<const Ship>(object);
             // TODO: prevent recursion; disallowing the ValueRef inside of damageStructurePerBattleMax via parsers would be best.
             auto retval = ship->TotalWeaponsShipDamage(context);
             InfoLogger() << "DamageStructurePerBattleMax" << retval;
@@ -1054,8 +1061,10 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         ship_property = &Ship::LastResuppliedOnTurn;
 
     if (ship_property) {
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            auto ship = std::static_pointer_cast<const Ship>(object);
             return ship_property(*ship);
+        }
         return INVALID_GAME_TURN;
     }
 
@@ -1075,8 +1084,10 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         fleet_property = &Fleet::LastTurnMoveOrdered;
 
     if (fleet_property) {
-        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_FLEET) {
+            auto fleet = std::static_pointer_cast<const Fleet>(object);
             return fleet_property(*fleet);
+        }
         return INVALID_OBJECT_ID;
     }
 
@@ -1090,54 +1101,76 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         planet_property = &Planet::LastTurnConquered;
 
     if (planet_property) {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto planet = std::static_pointer_cast<const Planet>(object);
             return planet_property(*planet);
+        }
         return INVALID_GAME_TURN;
     }
 
     if (property_name == "TurnsSinceFocusChange") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto planet = std::static_pointer_cast<const Planet>(object);
             return planet->TurnsSinceFocusChange();
+        }
         return 0;
 
     }
     else if (property_name == "TurnsSinceColonization") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto planet = std::static_pointer_cast<const Planet>(object);
             return planet->TurnsSinceColonization();
+        }
         return 0;
     }
     else if (property_name == "TurnsSinceLastConquered") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto planet = std::static_pointer_cast<const Planet>(object);
             return planet->TurnsSinceLastConquered();
+        }
         return 0;
     }
     else if (property_name == "ProducedByEmpireID") {
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            auto ship = std::static_pointer_cast<const Ship>(object);
             return ship->ProducedByEmpireID();
-        else if (auto building = std::dynamic_pointer_cast<const Building>(object))
+
+        } else if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+            auto building = std::static_pointer_cast<const Building>(object);
             return building->ProducedByEmpireID();
+        }
         return ALL_EMPIRES;
 
     }
     else if (property_name == "DesignID") {
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            auto ship = std::static_pointer_cast<const Ship>(object);
             return ship->DesignID();
+        }
         return INVALID_DESIGN_ID;
 
     }
     else if (property_name == "FleetID") {
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            auto ship = std::static_pointer_cast<const Ship>(object);
             return ship->FleetID();
-        else if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
+
+        } else if (object->ObjectType() == UniverseObjectType::OBJ_FLEET) {
+            auto fleet = std::static_pointer_cast<const Fleet>(object);
             return fleet->ID();
+        }
         return INVALID_OBJECT_ID;
 
     }
     else if (property_name == "PlanetID") {
-        if (auto building = std::dynamic_pointer_cast<const Building>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+            auto building = std::static_pointer_cast<const Building>(object);
             return building->PlanetID();
-        else if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+
+        } else if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto planet = std::static_pointer_cast<const Planet>(object);
             return planet->ID();
+        }
         return INVALID_OBJECT_ID;
 
     }
@@ -1149,22 +1182,29 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     }
     else if (property_name == "NumShips") {
-        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_FLEET) {
+            auto fleet = std::static_pointer_cast<const Fleet>(object);
             return fleet->NumShips();
+        }
         return 0;
 
     }
     else if (property_name == "NumStarlanes") {
-        if (auto system = std::dynamic_pointer_cast<const System>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
+            auto system = std::static_pointer_cast<const System>(object);
             return system->NumStarlanes();
+            }
         return 0;
 
     }
     else if (property_name == "LastTurnBattleHere") {
-        if (auto const_system = std::dynamic_pointer_cast<const System>(object))
-            return const_system->LastTurnBattleHere();
-        else if (auto system = context.ContextObjects().get<System>(object->SystemID()))
+        if (object->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
+            auto system = std::static_pointer_cast<const System>(object);
             return system->LastTurnBattleHere();
+
+        } else if (auto system = context.ContextObjects().get<System>(object->SystemID())) {
+            return system->LastTurnBattleHere();
+        }
         return INVALID_GAME_TURN;
 
     }
@@ -1175,8 +1215,10 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     }
     else if (property_name == "ETA") {
-        if (auto fleet = std::dynamic_pointer_cast<const Fleet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_FLEET) {
+            auto fleet = std::static_pointer_cast<const Fleet>(object);
             return fleet->ETA(context).first;
+        }
         return 0;
 
     }
@@ -1185,8 +1227,10 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     }
     else if (property_name == "LaunchedFrom") {
-        if (auto fighter = std::dynamic_pointer_cast<const Fighter>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
+            auto fighter = std::static_pointer_cast<const Fighter>(object);
             return fighter->LaunchedFrom();
+        }
         return INVALID_OBJECT_ID;
     }
 
@@ -1227,14 +1271,18 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
         return {obj_special_names_range.begin(), obj_special_names_range.end()};
     }
     else if (property_name == "AvailableFoci") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto planet = std::static_pointer_cast<const Planet>(object);
             return planet->AvailableFoci();
+        }
         return {};
     }
     else if (property_name == "Parts") {
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            auto ship = std::static_pointer_cast<const Ship>(object);
             if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(ship->DesignID()))
                 return design->Parts();
+        }
         return {};
     }
 
@@ -1303,40 +1351,57 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
     }
 
     if (property_name == "Species") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto planet = std::static_pointer_cast<const Planet>(object);
             return planet->SpeciesName();
-        else if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
+
+        } else if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            auto ship = std::static_pointer_cast<const Ship>(object);
             return ship->SpeciesName();
-        else if (auto fighter = std::dynamic_pointer_cast<const Fighter>(object))
+
+        } else if (object->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
+            auto fighter = std::static_pointer_cast<const Fighter>(object);
             return fighter->SpeciesName();
+        }
         return "";
 
     } else if (property_name == "Hull") {
-        if (auto ship = std::dynamic_pointer_cast<const Ship>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            auto ship = std::static_pointer_cast<const Ship>(object);
             if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(ship->DesignID()))
                 return design->Hull();
+        }
         return "";
 
     } else if (property_name == "FieldType") {
-        if (auto field = std::dynamic_pointer_cast<const Field>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_FIELD) {
+            auto field = std::static_pointer_cast<const Field>(object);
             return field->FieldTypeName();
+        }
         return "";
 
     } else if (property_name == "BuildingType") {
-        if (auto building = std::dynamic_pointer_cast<const Building>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+            auto building = std::static_pointer_cast<const Building>(object);
             return building->BuildingTypeName();
+        }
         return "";
 
     } else if (property_name == "Focus") {
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object))
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto planet = std::static_pointer_cast<const Planet>(object);
             return planet->Focus();
+        }
         return "";
 
     } else if (property_name == "DefaultFocus") {
         const Species* species = nullptr;
-        if (auto planet = std::dynamic_pointer_cast<const Planet>(object)) {
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto planet = std::static_pointer_cast<const Planet>(object);
             species = GetSpecies(planet->SpeciesName());
-        } else if (auto ship = std::dynamic_pointer_cast<const Ship>(object)) {
+
+        } else if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+            auto ship = std::static_pointer_cast<const Ship>(object);
             species = GetSpecies(ship->SpeciesName());
         }
         if (species)
@@ -1476,7 +1541,7 @@ int TotalFighterShots::Eval(const ScriptingContext& context) const
         ErrorLogger() << "TotalFighterShots condition without carrier id";
         return 0;
     } else {
-        auto carrier = std::static_pointer_cast<const Ship>(context.ContextObjects().get<Ship>(m_carrier_id->Eval(context)));
+        auto carrier = context.ContextObjects().getRaw<Ship>(m_carrier_id->Eval(context));
         if (!carrier) {
             ErrorLogger() << "TotalFighterShots condition referenced a carrier which is not a ship";
             return 0;
@@ -2336,19 +2401,19 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         auto object = context.ContextObjects().get(object_id);
         if (!object)
             return 0.0;
-        auto ship = std::dynamic_pointer_cast<const Ship>(object);
-        if (!ship)
+        if (object->ObjectType() != UniverseObjectType::OBJ_SHIP)
             return 0.0;
+        auto ship = std::static_pointer_cast<const Ship>(object);
 
-        std::string part_name;
-        if (m_string_ref1)
-            part_name = m_string_ref1->Eval(context);
+        if (!m_string_ref1)
+            return 0.0;
+        std::string part_name = m_string_ref1->Eval(context);
         if (part_name.empty())
             return 0.0;
 
-        std::string meter_name;
-        if (m_string_ref2)
-            meter_name = m_string_ref2->Eval(context);
+        if (!m_string_ref2)
+            return 0.0;
+        std::string meter_name = m_string_ref2->Eval(context);
         if (meter_name.empty())
             return 0.0;
 
