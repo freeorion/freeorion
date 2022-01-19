@@ -8,8 +8,6 @@
     (abs)                                       \
     (accountinglabel)                           \
     (activation)                                \
-    (AddedBefore)                               \
-    (AddedSince)                                \
     (AddSpecial)                                \
     (AddStarlanes)                              \
     (Adequate)                                  \
