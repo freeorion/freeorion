@@ -128,7 +128,7 @@ namespace {
                           int new_previous_system, const ScriptingContext& context)
     {
         if (!fleet) {
-            ErrorLogger() << "UpdateFleetRoute passed a null fleet pointer";
+            ErrorLogger(effects) << "UpdateFleetRoute passed a null fleet pointer";
             return;
         }
 
@@ -136,12 +136,12 @@ namespace {
 
         auto next_system = objects.get<System>(new_next_system);
         if (!next_system) {
-            ErrorLogger() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
+            ErrorLogger(effects) << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
             return;
         }
 
         if (new_previous_system != INVALID_OBJECT_ID && !objects.get<System>(new_previous_system))
-            ErrorLogger() << "UpdateFleetRoute couldn't get new previous system with id: " << new_previous_system;
+            ErrorLogger(effects) << "UpdateFleetRoute couldn't get new previous system with id: " << new_previous_system;
 
         fleet->SetNextAndPreviousSystems(new_next_system, new_previous_system);
 
@@ -166,7 +166,7 @@ namespace {
         try {
             fleet->SetRoute(route_pair.first, objects);
         } catch (const std::exception& e) {
-            ErrorLogger() << "Caught exception updating fleet route in effect code: " << e.what();
+            ErrorLogger(effects) << "Caught exception updating fleet route in effect code: " << e.what();
         }
     }
 
@@ -273,7 +273,7 @@ void EffectsGroup::Execute(ScriptingContext& context,
                            bool only_generate_sitrep_effects) const
 {
     if (!context.source)    // todo: move into loop and check only when an effect is source-variant
-        WarnLogger() << "EffectsGroup being executed without a defined source object";
+        WarnLogger(effects) << "EffectsGroup being executed without a defined source object";
 
     // execute each effect of the group one by one, unless filtered by flags
     for (auto& effect : m_effects) {
@@ -377,7 +377,7 @@ unsigned int EffectsGroup::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_priority);
     CheckSums::CheckSumCombine(retval, m_description);
 
-    TraceLogger() << "GetCheckSum(EffectsGroup): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(EffectsGroup): retval: " << retval;
     return retval;
 }
 
@@ -444,7 +444,7 @@ unsigned int Effect::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Effect");
 
-    TraceLogger() << "GetCheckSum(EffectsGroup): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(EffectsGroup): retval: " << retval;
     return retval;
 }
 
@@ -453,7 +453,7 @@ unsigned int Effect::GetCheckSum() const {
 // NoOp                                                  //
 ///////////////////////////////////////////////////////////
 void NoOp::Execute(ScriptingContext& context) const
-{ DebugLogger() << "Effect::NoOp::Execute: src: " << context.source << "  tgt: " << context.effect_target; }
+{ DebugLogger(effects) << "Effect::NoOp::Execute: src: " << context.source << "  tgt: " << context.effect_target; }
 
 std::string NoOp::Dump(unsigned short ntabs) const
 { return DumpIndent(ntabs) + "NoOp\n"; }
@@ -463,7 +463,7 @@ unsigned int NoOp::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "NoOp");
 
-    TraceLogger() << "GetCheckSum(NoOp): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(NoOp): retval: " << retval;
     return retval;
 }
 
@@ -587,7 +587,7 @@ void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) cons
         // deep inspection single ValueRef evaluation
         auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
         if (!op) {
-            ErrorLogger() << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
+            ErrorLogger(effects) << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
             Effect::Execute(context, targets);
             return;
         }
@@ -601,12 +601,12 @@ void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) cons
         } else if (op->GetOpType() == ValueRef::OpType::MINUS) {
             increment = -op->RHS()->Eval(context);
         } else {
-            ErrorLogger() << "SetMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
+            ErrorLogger(effects) << "SetMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
             Effect::Execute(context, targets);
             return;
         }
 
-        //DebugLogger() << "simple increment: " << increment;
+        //DebugLogger(effects) << "simple increment: " << increment;
         // increment all target meters...
         for (auto& target : targets) {
             if (Meter* m = target->GetMeter(m_meter))
@@ -682,7 +682,7 @@ unsigned int SetMeter::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_value);
     CheckSums::CheckSumCombine(retval, m_accounting_label);
 
-    TraceLogger() << "GetCheckSum(SetMeter): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetMeter): retval: " << retval;
     return retval;
 }
 
@@ -723,18 +723,18 @@ bool SetShipPartMeter::operator==(const Effect& rhs) const {
 
 void SetShipPartMeter::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        DebugLogger() << "SetShipPartMeter::Execute passed null target pointer";
+        DebugLogger(effects) << "SetShipPartMeter::Execute passed null target pointer";
         return;
     }
 
     if (!m_part_name || !m_value) {
-        ErrorLogger() << "SetShipPartMeter::Execute missing part name or value ValueRefs";
+        ErrorLogger(effects) << "SetShipPartMeter::Execute missing part name or value ValueRefs";
         return;
     }
 
     auto ship = std::dynamic_pointer_cast<Ship>(context.effect_target);
     if (!ship) {
-        ErrorLogger() << "SetShipPartMeter::Execute acting on non-ship target:";
+        ErrorLogger(effects) << "SetShipPartMeter::Execute acting on non-ship target:";
         //context.effect_target->Dump();
         return;
     }
@@ -779,14 +779,14 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
     if (targets.empty())
         return;
     if (!m_part_name || !m_value) {
-        ErrorLogger() << "SetShipPartMeter::Execute missing part name or value ValueRefs";
+        ErrorLogger(effects) << "SetShipPartMeter::Execute missing part name or value ValueRefs";
         return;
     }
 
     // TODO: Handle efficiently the case where the part name varies from target
     // to target, but the value is target-invariant
     if (!m_part_name->TargetInvariant()) {
-        DebugLogger() << "SetShipPartMeter::Execute has target-variant part name, which it is not (yet) coded to handle efficiently!";
+        DebugLogger(effects) << "SetShipPartMeter::Execute has target-variant part name, which it is not (yet) coded to handle efficiently!";
         Effect::Execute(context, targets);
         return;
     }
@@ -813,7 +813,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
         // deep inspection single ValueRef evaluation
         auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
         if (!op) {
-            ErrorLogger() << "SetShipPartMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
+            ErrorLogger(effects) << "SetShipPartMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
             Effect::Execute(context, targets);
             return;
         }
@@ -827,12 +827,12 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
         } else if (op->GetOpType() == ValueRef::OpType::MINUS) {
             increment = -op->RHS()->Eval(context);
         } else {
-            ErrorLogger() << "SetShipPartMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
+            ErrorLogger(effects) << "SetShipPartMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
             Effect::Execute(context, targets);
             return;
         }
 
-        //DebugLogger() << "simple increment: " << increment;
+        //DebugLogger(effects) << "simple increment: " << increment;
         // increment all target meters...
         for (auto& target : targets) {
             if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
@@ -846,7 +846,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
         return;
 
     } else {
-        //DebugLogger() << "complicated meter adjustment...";
+        //DebugLogger(effects) << "complicated meter adjustment...";
         // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
         Effect::Execute(context, targets);
     }
@@ -885,7 +885,7 @@ unsigned int SetShipPartMeter::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_meter);
     CheckSums::CheckSumCombine(retval, m_value);
 
-    TraceLogger() << "GetCheckSum(SetShipPartMeter): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetShipPartMeter): retval: " << retval;
     return retval;
 }
 
@@ -932,24 +932,24 @@ bool SetEmpireMeter::operator==(const Effect& rhs) const {
 
 void SetEmpireMeter::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        DebugLogger() << "SetEmpireMeter::Execute passed null target pointer";
+        DebugLogger(effects) << "SetEmpireMeter::Execute passed null target pointer";
         return;
     }
     if (!m_empire_id || !m_value || m_meter.empty()) {
-        ErrorLogger() << "SetEmpireMeter::Execute missing empire id or value ValueRefs, or given empty meter name";
+        ErrorLogger(effects) << "SetEmpireMeter::Execute missing empire id or value ValueRefs, or given empty meter name";
         return;
     }
 
     int empire_id = m_empire_id->Eval(context);
     auto empire = context.GetEmpire(empire_id);
     if (!empire) {
-        DebugLogger() << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
+        DebugLogger(effects) << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
         return;
     }
 
     Meter* meter = empire->GetMeter(m_meter);
     if (!meter) {
-        DebugLogger() << "SetEmpireMeter::Execute empire " << empire->Name() << " doesn't have a meter named " << m_meter;
+        DebugLogger(effects) << "SetEmpireMeter::Execute empire " << empire->Name() << " doesn't have a meter named " << m_meter;
         return;
     }
 
@@ -979,7 +979,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
     if (targets.empty())
         return;
     if (!m_empire_id || m_meter.empty() || !m_value) {
-        ErrorLogger() << "SetEmpireMeter::Execute missing empire id or value ValueRefs or meter name";
+        ErrorLogger(effects) << "SetEmpireMeter::Execute missing empire id or value ValueRefs or meter name";
         return;
     }
 
@@ -990,7 +990,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
     //if (m_empire_id->TargetInvariant() && m_value->TargetInvariant()) {
     //}
 
-    ////DebugLogger() << "complicated meter adjustment...";
+    ////DebugLogger(effects) << "complicated meter adjustment...";
     //// meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
     //Effect::Execute(context, targets);
 }
@@ -1013,7 +1013,7 @@ unsigned int SetEmpireMeter::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_meter);
     CheckSums::CheckSumCombine(retval, m_value);
 
-    TraceLogger() << "GetCheckSum(SetEmpireMeter): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetEmpireMeter): retval: " << retval;
     return retval;
 }
 
@@ -1066,7 +1066,7 @@ void SetEmpireStockpile::Execute(ScriptingContext& context) const {
 
     auto empire = context.GetEmpire(empire_id);
     if (!empire) {
-        DebugLogger() << "SetEmpireStockpile::Execute couldn't find an empire with id " << empire_id;
+        DebugLogger(effects) << "SetEmpireStockpile::Execute couldn't find an empire with id " << empire_id;
         return;
     }
 
@@ -1102,7 +1102,7 @@ unsigned int SetEmpireStockpile::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_stockpile);
     CheckSums::CheckSumCombine(retval, m_value);
 
-    TraceLogger() << "GetCheckSum(SetEmpireStockpile): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetEmpireStockpile): retval: " << retval;
     return retval;
 }
 
@@ -1166,7 +1166,7 @@ unsigned int SetEmpireCapital::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "SetEmpireCapital");
     CheckSums::CheckSumCombine(retval, m_empire_id);
 
-    TraceLogger() << "GetCheckSum(SetEmpireCapital): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetEmpireCapital): retval: " << retval;
     return retval;
 }
 
@@ -1211,7 +1211,7 @@ unsigned int SetPlanetType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "SetPlanetType");
     CheckSums::CheckSumCombine(retval, m_type);
 
-    TraceLogger() << "GetCheckSum(SetPlanetType): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetPlanetType): retval: " << retval;
     return retval;
 }
 
@@ -1254,7 +1254,7 @@ unsigned int SetPlanetSize::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "SetPlanetSize");
     CheckSums::CheckSumCombine(retval, m_size);
 
-    TraceLogger() << "GetCheckSum(SetPlanetSize): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetPlanetSize): retval: " << retval;
     return retval;
 }
 
@@ -1324,7 +1324,7 @@ unsigned int SetSpecies::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "SetSpecies");
     CheckSums::CheckSumCombine(retval, m_species_name);
 
-    TraceLogger() << "GetCheckSum(SetSpecies): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetSpecies): retval: " << retval;
     return retval;
 }
 
@@ -1399,7 +1399,7 @@ unsigned int SetOwner::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "SetOwner");
     CheckSums::CheckSumCombine(retval, m_empire_id);
 
-    TraceLogger() << "GetCheckSum(SetOwner): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetOwner): retval: " << retval;
     return retval;
 }
 
@@ -1461,7 +1461,7 @@ unsigned int SetSpeciesEmpireOpinion::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_opinion);
 
-    TraceLogger() << "GetCheckSum(SetSpeciesEmpireOpinion): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetSpeciesEmpireOpinion): retval: " << retval;
     return retval;
 }
 
@@ -1526,7 +1526,7 @@ unsigned int SetSpeciesSpeciesOpinion::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_rated_species_name);
     CheckSums::CheckSumCombine(retval, m_opinion);
 
-    TraceLogger() << "GetCheckSum(SetSpeciesSpeciesOpinion): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetSpeciesSpeciesOpinion): retval: " << retval;
     return retval;
 }
 
@@ -1552,12 +1552,12 @@ CreatePlanet::CreatePlanet(std::unique_ptr<ValueRef::ValueRef<PlanetType>>&& typ
 
 void CreatePlanet::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "CreatePlanet::Execute passed no target object";
+        ErrorLogger(effects) << "CreatePlanet::Execute passed no target object";
         return;
     }
     auto system = context.ContextObjects().get<System>(context.effect_target->SystemID());
     if (!system) {
-        ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
+        ErrorLogger(effects) << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
     }
 
@@ -1573,20 +1573,20 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
     ScriptingContext type_context{context, target_type};
     PlanetType type = m_type->Eval(type_context);
     if (size == PlanetSize::INVALID_PLANET_SIZE || type == PlanetType::INVALID_PLANET_TYPE) {
-        ErrorLogger() << "CreatePlanet::Execute got invalid size or type of planet to create...";
+        ErrorLogger(effects) << "CreatePlanet::Execute got invalid size or type of planet to create...";
         return;
     }
 
     // determine if and which orbits are available
     std::set<int> free_orbits = system->FreeOrbits();
     if (free_orbits.empty()) {
-        ErrorLogger() << "CreatePlanet::Execute couldn't find any free orbits in system where planet was to be created";
+        ErrorLogger(effects) << "CreatePlanet::Execute couldn't find any free orbits in system where planet was to be created";
         return;
     }
 
     auto planet = context.ContextUniverse().InsertNew<Planet>(type, size);
     if (!planet) {
-        ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
+        ErrorLogger(effects) << "CreatePlanet::Execute unable to create new Planet object";
         return;
     }
 
@@ -1644,7 +1644,7 @@ unsigned int CreatePlanet::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_effects_to_apply_after);
 
-    TraceLogger() << "GetCheckSum(CreatePlanet): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(CreatePlanet): retval: " << retval;
     return retval;
 }
 
@@ -1668,7 +1668,7 @@ CreateBuilding::CreateBuilding(std::unique_ptr<ValueRef::ValueRef<std::string>>&
 
 void CreateBuilding::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "CreateBuilding::Execute passed no target object";
+        ErrorLogger(effects) << "CreateBuilding::Execute passed no target object";
         return;
     }
     auto location = std::dynamic_pointer_cast<Planet>(context.effect_target);
@@ -1676,25 +1676,25 @@ void CreateBuilding::Execute(ScriptingContext& context) const {
         if (auto location_building = std::dynamic_pointer_cast<Building>(context.effect_target))
             location = context.ContextObjects().get<Planet>(location_building->PlanetID());
     if (!location) {
-        ErrorLogger() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
+        ErrorLogger(effects) << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
         return;
     }
 
     if (!m_building_type_name) {
-        ErrorLogger() << "CreateBuilding::Execute has no building type specified!";
+        ErrorLogger(effects) << "CreateBuilding::Execute has no building type specified!";
         return;
     }
 
     std::string building_type_name = m_building_type_name->Eval(context);
     const BuildingType* building_type = GetBuildingType(building_type_name);
     if (!building_type) {
-        ErrorLogger() << "CreateBuilding::Execute couldn't get building type: " << building_type_name;
+        ErrorLogger(effects) << "CreateBuilding::Execute couldn't get building type: " << building_type_name;
         return;
     }
 
     auto building = context.ContextUniverse().InsertNew<Building>(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
     if (!building) {
-        ErrorLogger() << "CreateBuilding::Execute couldn't create building!";
+        ErrorLogger(effects) << "CreateBuilding::Execute couldn't create building!";
         return;
     }
 
@@ -1751,7 +1751,7 @@ unsigned int CreateBuilding::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_effects_to_apply_after);
 
-    TraceLogger() << "GetCheckSum(CreateBuilding): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(CreateBuilding): retval: " << retval;
     return retval;
 }
 
@@ -1791,13 +1791,13 @@ CreateShip::CreateShip(std::unique_ptr<ValueRef::ValueRef<int>>&& ship_design_id
 
 void CreateShip::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "CreateShip::Execute passed null target";
+        ErrorLogger(effects) << "CreateShip::Execute passed null target";
         return;
     }
 
     auto system = context.ContextObjects().get<System>(context.effect_target->SystemID());
     if (!system) {
-        ErrorLogger() << "CreateShip::Execute passed a target not in a system";
+        ErrorLogger(effects) << "CreateShip::Execute passed a target not in a system";
         return;
     }
 
@@ -1806,20 +1806,20 @@ void CreateShip::Execute(ScriptingContext& context) const {
     if (m_design_id) {
         design_id = m_design_id->Eval(context);
         if (!context.ContextUniverse().GetShipDesign(design_id)) {
-            ErrorLogger() << "CreateShip::Execute couldn't get ship design with id: " << design_id;
+            ErrorLogger(effects) << "CreateShip::Execute couldn't get ship design with id: " << design_id;
             return;
         }
     } else if (m_design_name) {
         std::string design_name = m_design_name->Eval(context);
         ship_design = context.ContextUniverse().GetGenericShipDesign(design_name);
         if (!ship_design) {
-            ErrorLogger() << "CreateShip::Execute couldn't get predefined ship design with name " << m_design_name->Dump();
+            ErrorLogger(effects) << "CreateShip::Execute couldn't get predefined ship design with name " << m_design_name->Dump();
             return;
         }
         design_id = ship_design->ID();
     }
     if (design_id == INVALID_DESIGN_ID) {
-        ErrorLogger() << "CreateShip::Execute got invalid ship design id: -1";
+        ErrorLogger(effects) << "CreateShip::Execute got invalid ship design id: -1";
         return;
     }
 
@@ -1830,7 +1830,7 @@ void CreateShip::Execute(ScriptingContext& context) const {
         if (empire_id != ALL_EMPIRES) {
             empire = context.GetEmpire(empire_id);
             if (!empire) {
-                ErrorLogger() << "CreateShip::Execute couldn't get empire with id " << empire_id;
+                ErrorLogger(effects) << "CreateShip::Execute couldn't get empire with id " << empire_id;
                 return;
             }
         }
@@ -1840,7 +1840,7 @@ void CreateShip::Execute(ScriptingContext& context) const {
     if (m_species_name) {
         species_name = m_species_name->Eval(context);
         if (!species_name.empty() && !context.species.GetSpecies(species_name)) {
-            ErrorLogger() << "CreateShip::Execute couldn't get species with which to create a ship";
+            ErrorLogger(effects) << "CreateShip::Execute couldn't get species with which to create a ship";
             return;
         }
     }
@@ -1938,7 +1938,7 @@ unsigned int CreateShip::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_effects_to_apply_after);
 
-    TraceLogger() << "GetCheckSum(CreateShip): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(CreateShip): retval: " << retval;
     return retval;
 }
 
@@ -1982,7 +1982,7 @@ CreateField::CreateField(std::unique_ptr<ValueRef::ValueRef<std::string>>&& fiel
 
 void CreateField::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "CreateField::Execute passed null target";
+        ErrorLogger(effects) << "CreateField::Execute passed null target";
         return;
     }
     auto target = context.effect_target;
@@ -1992,7 +1992,7 @@ void CreateField::Execute(ScriptingContext& context) const {
 
     const FieldType* field_type = GetFieldType(m_field_type_name->Eval(context));
     if (!field_type) {
-        ErrorLogger() << "CreateField::Execute couldn't get field type with name: " << m_field_type_name->Dump();
+        ErrorLogger(effects) << "CreateField::Execute couldn't get field type with name: " << m_field_type_name->Dump();
         return;
     }
 
@@ -2000,11 +2000,11 @@ void CreateField::Execute(ScriptingContext& context) const {
     if (m_size)
         size = m_size->Eval(context);
     if (size < 1.0) {
-        ErrorLogger() << "CreateField::Execute given very small / negative size: " << size << "  ... so resetting to 1.0";
+        ErrorLogger(effects) << "CreateField::Execute given very small / negative size: " << size << "  ... so resetting to 1.0";
         size = 1.0;
     }
     if (size > 10000) {
-        ErrorLogger() << "CreateField::Execute given very large size: " << size << "  ... so resetting to 10000";
+        ErrorLogger(effects) << "CreateField::Execute given very large size: " << size << "  ... so resetting to 10000";
         size = 10000;
     }
 
@@ -2021,7 +2021,7 @@ void CreateField::Execute(ScriptingContext& context) const {
 
     auto field = context.ContextUniverse().InsertNew<Field>(field_type->Name(), x, y, size);
     if (!field) {
-        ErrorLogger() << "CreateField::Execute couldn't create field!";
+        ErrorLogger(effects) << "CreateField::Execute couldn't create field!";
         return;
     }
 
@@ -2094,7 +2094,7 @@ unsigned int CreateField::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_effects_to_apply_after);
 
-    TraceLogger() << "GetCheckSum(CreateField): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(CreateField): retval: " << retval;
     return retval;
 }
 
@@ -2121,7 +2121,7 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRef< ::StarType>>&& ty
     m_name(std::move(name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
 {
-    DebugLogger() << "Effect System created 1";
+    DebugLogger(effects) << "Effect System created 1";
 }
 
 CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRef<double>>&& x,
@@ -2133,7 +2133,7 @@ CreateSystem::CreateSystem(std::unique_ptr<ValueRef::ValueRef<double>>&& x,
     m_name(std::move(name)),
     m_effects_to_apply_after(std::move(effects_to_apply_after))
 {
-    DebugLogger() << "Effect System created 2";
+    DebugLogger(effects) << "Effect System created 2";
 }
 
 void CreateSystem::Execute(ScriptingContext& context) const {
@@ -2166,7 +2166,7 @@ void CreateSystem::Execute(ScriptingContext& context) const {
 
     auto system = context.ContextUniverse().InsertNew<System>(star_type, name_str, x, y);
     if (!system) {
-        ErrorLogger() << "CreateSystem::Execute couldn't create system!";
+        ErrorLogger(effects) << "CreateSystem::Execute couldn't create system!";
         return;
     }
 
@@ -2218,7 +2218,7 @@ unsigned int CreateSystem::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_effects_to_apply_after);
 
-    TraceLogger() << "GetCheckSum(CreateSystem): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(CreateSystem): retval: " << retval;
     return retval;
 }
 
@@ -2236,7 +2236,7 @@ std::unique_ptr<Effect> CreateSystem::Clone() const {
 ///////////////////////////////////////////////////////////
 void Destroy::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "Destroy::Execute passed no target object";
+        ErrorLogger(effects) << "Destroy::Execute passed no target object";
         return;
     }
 
@@ -2255,7 +2255,7 @@ unsigned int Destroy::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Destroy");
 
-    TraceLogger() << "GetCheckSum(Destroy): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(Destroy): retval: " << retval;
     return retval;
 }
 
@@ -2279,7 +2279,7 @@ AddSpecial::AddSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
 
 void AddSpecial::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "AddSpecial::Execute passed no target object";
+        ErrorLogger(effects) << "AddSpecial::Execute passed no target object";
         return;
     }
 
@@ -2314,7 +2314,7 @@ unsigned int AddSpecial::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_capacity);
 
-    TraceLogger() << "GetCheckSum(AddSpecial): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(AddSpecial): retval: " << retval;
     return retval;
 }
 
@@ -2337,7 +2337,7 @@ RemoveSpecial::RemoveSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& 
 
 void RemoveSpecial::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "RemoveSpecial::Execute passed no target object";
+        ErrorLogger(effects) << "RemoveSpecial::Execute passed no target object";
         return;
     }
 
@@ -2360,7 +2360,7 @@ unsigned int RemoveSpecial::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "RemoveSpecial");
     CheckSums::CheckSumCombine(retval, m_name);
 
-    TraceLogger() << "GetCheckSum(RemoveSpecial): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(RemoveSpecial): retval: " << retval;
     return retval;
 }
 
@@ -2378,7 +2378,7 @@ AddStarlanes::AddStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_en
 void AddStarlanes::Execute(ScriptingContext& context) const {
     // get target system
     if (!context.effect_target) {
-        ErrorLogger() << "AddStarlanes::Execute passed no target object";
+        ErrorLogger(effects) << "AddStarlanes::Execute passed no target object";
         return;
     }
     auto target_system = std::dynamic_pointer_cast<System>(context.effect_target);
@@ -2429,7 +2429,7 @@ unsigned int AddStarlanes::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "AddStarlanes");
     CheckSums::CheckSumCombine(retval, m_other_lane_endpoint_condition);
 
-    TraceLogger() << "GetCheckSum(AddStarlanes): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(AddStarlanes): retval: " << retval;
     return retval;
 }
 
@@ -2447,7 +2447,7 @@ RemoveStarlanes::RemoveStarlanes(std::unique_ptr<Condition::Condition>&& other_l
 void RemoveStarlanes::Execute(ScriptingContext& context) const {
     // get target system
     if (!context.effect_target) {
-        ErrorLogger() << "AddStarlanes::Execute passed no target object";
+        ErrorLogger(effects) << "AddStarlanes::Execute passed no target object";
         return;
     }
     auto target_system = dynamic_cast<System*>(context.effect_target.get());
@@ -2500,7 +2500,7 @@ unsigned int RemoveStarlanes::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "RemoveStarlanes");
     CheckSums::CheckSumCombine(retval, m_other_lane_endpoint_condition);
 
-    TraceLogger() << "GetCheckSum(RemoveStarlanes): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(RemoveStarlanes): retval: " << retval;
     return retval;
 }
 
@@ -2517,14 +2517,14 @@ SetStarType::SetStarType(std::unique_ptr<ValueRef::ValueRef<StarType>>&& type) :
 
 void SetStarType::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "SetStarType::Execute given no target object";
+        ErrorLogger(effects) << "SetStarType::Execute given no target object";
         return;
     }
     if (auto s = std::dynamic_pointer_cast<System>(context.effect_target)) {
         ScriptingContext type_context{context, s->GetStarType()};
         s->SetStarType(m_type->Eval(type_context));
     } else {
-        ErrorLogger() << "SetStarType::Execute given a non-system target";
+        ErrorLogger(effects) << "SetStarType::Execute given a non-system target";
     }
 }
 
@@ -2542,7 +2542,7 @@ unsigned int SetStarType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "SetStarType");
     CheckSums::CheckSumCombine(retval, m_type);
 
-    TraceLogger() << "GetCheckSum(SetStarType): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetStarType): retval: " << retval;
     return retval;
 }
 
@@ -2559,7 +2559,7 @@ MoveTo::MoveTo(std::unique_ptr<Condition::Condition>&& location_condition) :
 
 void MoveTo::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "MoveTo::Execute given no target object";
+        ErrorLogger(effects) << "MoveTo::Execute given no target object";
         return;
     }
 
@@ -2643,7 +2643,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
             } else {
                 // TODO: need to do something else to get updated previous/next
                 // systems if the destination is a field.
-                ErrorLogger() << "MoveTo::Execute couldn't find a way to set the previous and next systems for the target fleet!";
+                ErrorLogger(effects) << "MoveTo::Execute couldn't find a way to set the previous and next systems for the target fleet!";
             }
         }
 
@@ -2842,7 +2842,7 @@ unsigned int MoveTo::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "MoveTo");
     CheckSums::CheckSumCombine(retval, m_location_condition);
 
-    TraceLogger() << "GetCheckSum(MoveTo): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(MoveTo): retval: " << retval;
     return retval;
 }
 
@@ -2869,7 +2869,7 @@ MoveInOrbit::MoveInOrbit(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
 
 void MoveInOrbit::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "MoveInOrbit::Execute given no target object";
+        ErrorLogger(effects) << "MoveInOrbit::Execute given no target object";
         return;
     }
     auto& target = context.effect_target;
@@ -2994,7 +2994,7 @@ unsigned int MoveInOrbit::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_focus_x);
     CheckSums::CheckSumCombine(retval, m_focus_y);
 
-    TraceLogger() << "GetCheckSum(MoveInOrbit): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(MoveInOrbit): retval: " << retval;
     return retval;
 }
 
@@ -3026,7 +3026,7 @@ MoveTowards::MoveTowards(std::unique_ptr<ValueRef::ValueRef<double>>&& speed,
 
 void MoveTowards::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "MoveTowards::Execute given no target object";
+        ErrorLogger(effects) << "MoveTowards::Execute given no target object";
         return;
     }
     auto& target = context.effect_target;
@@ -3166,7 +3166,7 @@ unsigned int MoveTowards::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_dest_x);
     CheckSums::CheckSumCombine(retval, m_dest_y);
 
-    TraceLogger() << "GetCheckSum(MoveTowards): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(MoveTowards): retval: " << retval;
     return retval;
 }
 
@@ -3188,13 +3188,13 @@ SetDestination::SetDestination(std::unique_ptr<Condition::Condition>&& location_
 
 void SetDestination::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "SetDestination::Execute given no target object";
+        ErrorLogger(effects) << "SetDestination::Execute given no target object";
         return;
     }
 
     auto target_fleet = std::dynamic_pointer_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
-        ErrorLogger() << "SetDestination::Execute acting on non-fleet target:" << context.effect_target->Dump();
+        ErrorLogger(effects) << "SetDestination::Execute acting on non-fleet target:" << context.effect_target->Dump();
         return;
     }
 
@@ -3240,7 +3240,7 @@ void SetDestination::Execute(ScriptingContext& context) const {
     try {
         target_fleet->SetRoute(route_list, context.ContextObjects());
     } catch (const std::exception& e) {
-        ErrorLogger() << "Caught exception in Effect::SetDestination setting fleet route: " << e.what();
+        ErrorLogger(effects) << "Caught exception in Effect::SetDestination setting fleet route: " << e.what();
     }
 }
 
@@ -3258,7 +3258,7 @@ unsigned int SetDestination::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "SetDestination");
     CheckSums::CheckSumCombine(retval, m_location_condition);
 
-    TraceLogger() << "GetCheckSum(SetDestination): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetDestination): retval: " << retval;
     return retval;
 }
 
@@ -3275,13 +3275,13 @@ SetAggression::SetAggression(FleetAggression aggression) :
 
 void SetAggression::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "SetAggression::Execute given no target object";
+        ErrorLogger(effects) << "SetAggression::Execute given no target object";
         return;
     }
 
     auto target_fleet = std::dynamic_pointer_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
-        ErrorLogger() << "SetAggression::Execute acting on non-fleet target:" << context.effect_target->Dump();
+        ErrorLogger(effects) << "SetAggression::Execute acting on non-fleet target:" << context.effect_target->Dump();
         return;
     }
 
@@ -3306,7 +3306,7 @@ unsigned int SetAggression::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "SetAggression");
     CheckSums::CheckSumCombine(retval, m_aggression);
 
-    TraceLogger() << "GetCheckSum(SetAggression): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetAggression): retval: " << retval;
     return retval;
 }
 
@@ -3323,13 +3323,13 @@ Victory::Victory(std::string& reason_string) :
 
 void Victory::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "Victory::Execute given no target object";
+        ErrorLogger(effects) << "Victory::Execute given no target object";
         return;
     }
     if (auto empire = context.GetEmpire(context.effect_target->Owner()))
         empire->Win(m_reason_string);
     else
-        ErrorLogger() << "Trying to grant victory to a missing empire!";
+        ErrorLogger(effects) << "Trying to grant victory to a missing empire!";
 }
 
 std::string Victory::Dump(unsigned short ntabs) const
@@ -3341,7 +3341,7 @@ unsigned int Victory::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Victory");
     CheckSums::CheckSumCombine(retval, m_reason_string);
 
-    TraceLogger() << "GetCheckSum(Victory): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(Victory): retval: " << retval;
     return retval;
 }
 
@@ -3371,7 +3371,7 @@ void SetEmpireTechProgress::Execute(ScriptingContext& context) const {
     if (!empire) return;
 
     if (!m_tech_name) {
-        ErrorLogger() << "SetEmpireTechProgress::Execute has not tech name to evaluate";
+        ErrorLogger(effects) << "SetEmpireTechProgress::Execute has not tech name to evaluate";
         return;
     }
     std::string tech_name = m_tech_name->Eval(context);
@@ -3380,7 +3380,7 @@ void SetEmpireTechProgress::Execute(ScriptingContext& context) const {
 
     const Tech* tech = GetTech(tech_name);
     if (!tech) {
-        ErrorLogger() << "SetEmpireTechProgress::Execute couldn't get tech with name " << tech_name;
+        ErrorLogger(effects) << "SetEmpireTechProgress::Execute couldn't get tech with name " << tech_name;
         return;
     }
 
@@ -3416,7 +3416,7 @@ unsigned int SetEmpireTechProgress::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_research_progress);
     CheckSums::CheckSumCombine(retval, m_empire_id);
 
-    TraceLogger() << "GetCheckSum(SetEmpireTechProgress): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetEmpireTechProgress): retval: " << retval;
     return retval;
 }
 
@@ -3459,14 +3459,14 @@ void GiveEmpireContent::Execute(ScriptingContext& context) const {
     case UnlockableItemType::UIT_TECH: {
         const Tech* tech = GetTech(content_name);
         if (!tech) {
-            ErrorLogger() << "GiveEmpireContent::Execute couldn't get tech with name: " << content_name;
+            ErrorLogger(effects) << "GiveEmpireContent::Execute couldn't get tech with name: " << content_name;
             return;
         }
         empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(content_name);
         break;
     }
     default: {
-        ErrorLogger() << "GiveEmpireContent::Execute given invalid unlockable item type";
+        ErrorLogger(effects) << "GiveEmpireContent::Execute given invalid unlockable item type";
     }
     }
 }
@@ -3508,7 +3508,7 @@ unsigned int GiveEmpireContent::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_unlock_type);
     CheckSums::CheckSumCombine(retval, m_empire_id);
 
-    TraceLogger() << "GetCheckSum(GiveEmpireContent): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(GiveEmpireContent): retval: " << retval;
     return retval;
 }
 
@@ -3584,7 +3584,7 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
     parameter_tag_values.reserve(m_message_parameters.size());
     for (auto& [param_tag, param_ref] : m_message_parameters) {
         if (!param_ref)
-            ErrorLogger() << "GenerateSitRepMessage::Execute got null parameter reference for tag: " << param_tag;
+            ErrorLogger(effects) << "GenerateSitRepMessage::Execute got null parameter reference for tag: " << param_tag;
 
         std::string param_val{param_ref ? param_ref->Eval(context) : std::string()};
         // special case for ship designs: make sure sitrep recipient knows about the design
@@ -3765,7 +3765,7 @@ unsigned int GenerateSitRepMessage::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_label);
     CheckSums::CheckSumCombine(retval, m_stringtable_lookup);
 
-    TraceLogger() << "GetCheckSum(GenerateSitRepMessage): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(GenerateSitRepMessage): retval: " << retval;
     return retval;
 }
 
@@ -3834,7 +3834,7 @@ unsigned int SetOverlayTexture::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_texture);
     CheckSums::CheckSumCombine(retval, m_size);
 
-    TraceLogger() << "GetCheckSum(SetOverlayTexture): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetOverlayTexture): retval: " << retval;
     return retval;
 }
 
@@ -3868,7 +3868,7 @@ unsigned int SetTexture::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "SetTexture");
     CheckSums::CheckSumCombine(retval, m_texture);
 
-    TraceLogger() << "GetCheckSum(SetTexture): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetTexture): retval: " << retval;
     return retval;
 }
 
@@ -4047,7 +4047,7 @@ unsigned int SetVisibility::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_affiliation);
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(SetVisibility): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(SetVisibility): retval: " << retval;
     return retval;
 }
 
@@ -4070,8 +4070,8 @@ Conditional::Conditional(std::unique_ptr<Condition::Condition>&& target_conditio
     m_false_effects(std::move(false_effects))
 {
     if (m_target_condition && !m_target_condition->TargetInvariant()) {
-        ErrorLogger() << "Conditional effect has a target condition that depends on the target object. The condition is evaluated once to pick the targets, so when evaluating it, there is no defined target object.";
-        DebugLogger() << "Condition effect is: " << Dump();
+        ErrorLogger(effects) << "Conditional effect has a target condition that depends on the target object. The condition is evaluated once to pick the targets, so when evaluating it, there is no defined target object.";
+        DebugLogger(effects) << "Condition effect is: " << Dump();
     }
 }
 
@@ -4247,7 +4247,7 @@ unsigned int Conditional::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_true_effects);
     CheckSums::CheckSumCombine(retval, m_false_effects);
 
-    TraceLogger() << "GetCheckSum(Conditional): retval: " << retval;
+    TraceLogger(effects) << "GetCheckSum(Conditional): retval: " << retval;
     return retval;
 }
 
