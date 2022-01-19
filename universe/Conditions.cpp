@@ -436,7 +436,7 @@ void Number::Eval(const ScriptingContext& parent_context,
          )
        )
     {
-        ErrorLogger() << "Condition::Number::Eval has local candidate-dependent ValueRefs, but no valid local candidate!";
+        ErrorLogger(conditions) << "Condition::Number::Eval has local candidate-dependent ValueRefs, but no valid local candidate!";
     } else if (
                 !parent_context.condition_root_candidate
                 && !(
@@ -445,7 +445,7 @@ void Number::Eval(const ScriptingContext& parent_context,
                     )
               )
     {
-        ErrorLogger() << "Condition::Number::Eval has root candidate-dependent ValueRefs, but expects local candidate to be the root candidate, and has no valid local candidate!";
+        ErrorLogger(conditions) << "Condition::Number::Eval has root candidate-dependent ValueRefs, but expects local candidate to be the root candidate, and has no valid local candidate!";
     }
 
     if (!parent_context.condition_root_candidate && !this->RootCandidateInvariant()) {
@@ -507,7 +507,7 @@ unsigned int Number::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_high);
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(Number): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Number): retval: " << retval;
     return retval;
 }
 
@@ -657,7 +657,7 @@ unsigned int Turn::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_low);
     CheckSums::CheckSumCombine(retval, m_high);
 
-    TraceLogger() << "GetCheckSum(Turn): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Turn): retval: " << retval;
     return retval;
 }
 
@@ -761,7 +761,7 @@ namespace {
 
         // for other SoringMethods, need sort key values
         if (!sort_key) {
-            ErrorLogger() << "TransferSortedObjects given null sort_key";
+            ErrorLogger(conditions) << "TransferSortedObjects given null sort_key";
             return;
         }
 
@@ -856,7 +856,7 @@ namespace {
             }
 
         } else {
-             ErrorLogger() << "TransferSortedObjects given unknown sort method";
+             ErrorLogger(conditions) << "TransferSortedObjects given unknown sort method";
         }
     }
 }
@@ -1084,7 +1084,7 @@ unsigned int SortedNumberOf::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_sorting_method);
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(SortedNumberOf): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(SortedNumberOf): retval: " << retval;
     return retval;
 }
 
@@ -1098,9 +1098,7 @@ std::unique_ptr<Condition> SortedNumberOf::Clone() const {
 ///////////////////////////////////////////////////////////
 // All                                                   //
 ///////////////////////////////////////////////////////////
-All::All() :
-    Condition()
-{
+All::All() {
     m_root_candidate_invariant = true;
     m_target_invariant = true;
     m_source_invariant = true;
@@ -1136,7 +1134,7 @@ unsigned int All::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::All");
 
-    TraceLogger() << "GetCheckSum(All): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(All): retval: " << retval;
     return retval;
 }
 
@@ -1146,9 +1144,7 @@ std::unique_ptr<Condition> All::Clone() const
 ///////////////////////////////////////////////////////////
 // None                                                  //
 ///////////////////////////////////////////////////////////
-None::None() :
-    Condition()
-{
+None::None() {
     m_root_candidate_invariant = true;
     m_target_invariant = true;
     m_source_invariant = true;
@@ -1183,7 +1179,7 @@ unsigned int None::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::None");
 
-    TraceLogger() << "GetCheckSum(None): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(None): retval: " << retval;
     return retval;
 }
 
@@ -1193,9 +1189,7 @@ std::unique_ptr<Condition> None::Clone() const
 ///////////////////////////////////////////////////////////
 // NoOp                                                  //
 ///////////////////////////////////////////////////////////
-NoOp::NoOp() :
-    Condition()
-{
+NoOp::NoOp() {
     m_root_candidate_invariant = true;
     m_target_invariant = true;
     m_source_invariant = true;
@@ -1206,7 +1200,7 @@ void NoOp::Eval(const ScriptingContext& parent_context,
                 SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
 {
     // does not modify input ObjectSets
-    DebugLogger() << "NoOp::Eval(" << matches.size() << " input matches, " << non_matches.size() << " input non-matches)";
+    DebugLogger(conditions) << "NoOp::Eval(" << matches.size() << " input matches, " << non_matches.size() << " input non-matches)";
 }
 
 bool NoOp::operator==(const Condition& rhs) const
@@ -1468,7 +1462,7 @@ std::string EmpireAffiliation::Dump(unsigned short ntabs) const {
 bool EmpireAffiliation::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "EmpireAffiliation::Match passed no candidate object";
+        ErrorLogger(conditions) << "EmpireAffiliation::Match passed no candidate object";
         return false;
     }
     if (EmpireAffiliationSimpleMatch::AffiliationTypeUsesEmpireID(m_affiliation) && m_empire_id) {
@@ -1491,7 +1485,7 @@ unsigned int EmpireAffiliation::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_affiliation);
 
-    TraceLogger() << "GetCheckSum(EmpireAffiliation): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(EmpireAffiliation): retval: " << retval;
     return retval;
 }
 
@@ -1503,9 +1497,7 @@ std::unique_ptr<Condition> EmpireAffiliation::Clone() const {
 ///////////////////////////////////////////////////////////
 // Source                                                //
 ///////////////////////////////////////////////////////////
-Source::Source() :
-    Condition()
-{
+Source::Source() {
     m_root_candidate_invariant = true;
     m_target_invariant = true;
     m_source_invariant = false;
@@ -1541,7 +1533,7 @@ unsigned int Source::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::Source");
 
-    TraceLogger() << "GetCheckSum(Source): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Source): retval: " << retval;
     return retval;
 }
 
@@ -1551,9 +1543,7 @@ std::unique_ptr<Condition> Source::Clone() const
 ///////////////////////////////////////////////////////////
 // RootCandidate                                         //
 ///////////////////////////////////////////////////////////
-RootCandidate::RootCandidate() :
-    Condition()
-{
+RootCandidate::RootCandidate() {
     m_root_candidate_invariant = false;
     m_target_invariant = true;
     m_source_invariant = true;
@@ -1589,7 +1579,7 @@ unsigned int RootCandidate::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::RootCandidate");
 
-    TraceLogger() << "GetCheckSum(RootCandidate): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(RootCandidate): retval: " << retval;
     return retval;
 }
 
@@ -1599,9 +1589,7 @@ std::unique_ptr<Condition> RootCandidate::Clone() const
 ///////////////////////////////////////////////////////////
 // Target                                                //
 ///////////////////////////////////////////////////////////
-Target::Target() :
-    Condition()
-{
+Target::Target() {
     m_root_candidate_invariant = true;
     m_target_invariant = false;
     m_source_invariant = true;
@@ -1637,7 +1625,7 @@ unsigned int Target::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::Target");
 
-    TraceLogger() << "GetCheckSum(Target): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Target): retval: " << retval;
     return retval;
 }
 
@@ -1652,7 +1640,6 @@ Homeworld::Homeworld() :
 {}
 
 Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
-    Condition(),
     m_names(std::move(names))
 {
     m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
@@ -1796,7 +1783,7 @@ std::string Homeworld::Dump(unsigned short ntabs) const {
 bool Homeworld::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Homeworld::Match passed no candidate object";
+        ErrorLogger(conditions) << "Homeworld::Match passed no candidate object";
         return false;
     }
 
@@ -1848,7 +1835,7 @@ unsigned int Homeworld::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::Homeworld");
     CheckSums::CheckSumCombine(retval, m_names);
 
-    TraceLogger() << "GetCheckSum(Homeworld): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Homeworld): retval: " << retval;
     return retval;
 }
 
@@ -1858,9 +1845,7 @@ std::unique_ptr<Condition> Homeworld::Clone() const
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
-Capital::Capital() :
-    Condition()
-{
+Capital::Capital() {
     m_root_candidate_invariant = true;
     m_target_invariant = true;
     m_source_invariant = true;
@@ -1913,7 +1898,7 @@ std::string Capital::Dump(unsigned short ntabs) const
 bool Capital::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Capital::Match passed no candidate object";
+        ErrorLogger(conditions) << "Capital::Match passed no candidate object";
         return false;
     }
     int candidate_id = candidate->ID();
@@ -1957,7 +1942,7 @@ unsigned int Capital::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::Capital");
 
-    TraceLogger() << "GetCheckSum(Capital): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Capital): retval: " << retval;
     return retval;
 }
 
@@ -1967,9 +1952,7 @@ std::unique_ptr<Condition> Capital::Clone() const
 ///////////////////////////////////////////////////////////
 // Monster                                               //
 ///////////////////////////////////////////////////////////
-Monster::Monster() :
-    Condition()
-{
+Monster::Monster() {
     m_root_candidate_invariant = true;
     m_target_invariant = true;
     m_source_invariant = true;
@@ -1990,7 +1973,7 @@ std::string Monster::Dump(unsigned short ntabs) const
 bool Monster::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Monster::Match passed no candidate object";
+        ErrorLogger(conditions) << "Monster::Match passed no candidate object";
         return false;
     }
 
@@ -2012,7 +1995,7 @@ unsigned int Monster::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::Monster");
 
-    TraceLogger() << "GetCheckSum(Monster): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Monster): retval: " << retval;
     return retval;
 }
 
@@ -2022,9 +2005,7 @@ std::unique_ptr<Condition> Monster::Clone() const
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
 ///////////////////////////////////////////////////////////
-Armed::Armed() :
-    Condition()
-{
+Armed::Armed() {
     m_root_candidate_invariant = true;
     m_target_invariant = true;
     m_source_invariant = true;
@@ -2045,7 +2026,7 @@ std::string Armed::Dump(unsigned short ntabs) const
 bool Armed::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Armed::Match passed no candidate object";
+        ErrorLogger(conditions) << "Armed::Match passed no candidate object";
         return false;
     }
 
@@ -2063,7 +2044,7 @@ unsigned int Armed::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::Armed");
 
-    TraceLogger() << "GetCheckSum(Armed): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Armed): retval: " << retval;
     return retval;
 }
 
@@ -2074,7 +2055,6 @@ std::unique_ptr<Condition> Armed::Clone() const
 // Type                                                  //
 ///////////////////////////////////////////////////////////
 Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
-    Condition(),
     m_type(std::move(type))
 {
     m_root_candidate_invariant = !m_type || m_type->RootCandidateInvariant();
@@ -2193,7 +2173,7 @@ std::string Type::Dump(unsigned short ntabs) const {
 bool Type::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Type::Match passed no candidate object";
+        ErrorLogger(conditions) << "Type::Match passed no candidate object";
         return false;
     }
 
@@ -2241,7 +2221,7 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
     }
     if (found_type) {
         //if (int(condition_non_targets.size()) < parent_context.ContextObjects().size()) {
-        //    DebugLogger() << "Type::GetBaseNonMatches will provide " << condition_non_targets.size()
+        //    DebugLogger(conditions) << "Type::GetBaseNonMatches will provide " << condition_non_targets.size()
         //                  << " objects of type " << GetType()->Eval() << " rather than "
         //                  << parent_context.ContextObjects().size() << " total objects";
         //}
@@ -2261,7 +2241,7 @@ unsigned int Type::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::Type");
     CheckSums::CheckSumCombine(retval, m_type);
 
-    TraceLogger() << "GetCheckSum(Type): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Type): retval: " << retval;
     return retval;
 }
 
@@ -2272,7 +2252,6 @@ std::unique_ptr<Condition> Type::Clone() const
 // Building                                              //
 ///////////////////////////////////////////////////////////
 Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
-    Condition(),
     m_names(std::move(names))
 {
     m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
@@ -2393,7 +2372,7 @@ void Building::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 bool Building::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Building::Match passed no candidate object";
+        ErrorLogger(conditions) << "Building::Match passed no candidate object";
         return false;
     }
 
@@ -2429,7 +2408,7 @@ unsigned int Building::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::Building");
     CheckSums::CheckSumCombine(retval, m_names);
 
-    TraceLogger() << "GetCheckSum(Building): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Building): retval: " << retval;
     return retval;
 }
 
@@ -2440,7 +2419,6 @@ std::unique_ptr<Condition> Building::Clone() const
 // Field                                                 //
 ///////////////////////////////////////////////////////////
 Field::Field(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
-    Condition(),
     m_names(std::move(names))
 {
     m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
@@ -2561,7 +2539,7 @@ void Field::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_con
 bool Field::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Field::Match passed no candidate object";
+        ErrorLogger(conditions) << "Field::Match passed no candidate object";
         return false;
     }
 
@@ -2596,7 +2574,7 @@ unsigned int Field::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::Field");
     CheckSums::CheckSumCombine(retval, m_names);
 
-    TraceLogger() << "GetCheckSum(Field): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Field): retval: " << retval;
     return retval;
 }
 
@@ -2627,7 +2605,6 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) 
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                        std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_low,
                        std::unique_ptr<ValueRef::ValueRef<int>>&& since_turn_high) :
-    Condition(),
     m_name(std::move(name)),
     m_since_turn_low(std::move(since_turn_low)),
     m_since_turn_high(std::move(since_turn_high))
@@ -2642,7 +2619,6 @@ HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
 HasSpecial::HasSpecial(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_low,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& capacity_high) :
-    Condition(),
     m_name(std::move(name)),
     m_capacity_low(std::move(capacity_low)),
     m_capacity_high(std::move(capacity_high))
@@ -2813,7 +2789,7 @@ std::string HasSpecial::Dump(unsigned short ntabs) const {
 bool HasSpecial::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "HasSpecial::Match passed no candidate object";
+        ErrorLogger(conditions) << "HasSpecial::Match passed no candidate object";
         return false;
     }
     std::string name = (m_name ? m_name->Eval(local_context) : "");
@@ -2848,7 +2824,7 @@ unsigned int HasSpecial::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_since_turn_low);
     CheckSums::CheckSumCombine(retval, m_since_turn_high);
 
-    TraceLogger() << "GetCheckSum(HasSpecial): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(HasSpecial): retval: " << retval;
     return retval;
 }
 
@@ -2867,7 +2843,6 @@ HasTag::HasTag(std::string name) :
 {}
 
 HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
     m_name(std::move(name))
 {
     m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
@@ -2962,7 +2937,7 @@ std::string HasTag::Dump(unsigned short ntabs) const {
 bool HasTag::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "HasTag::Match passed no candidate object";
+        ErrorLogger(conditions) << "HasTag::Match passed no candidate object";
         return false;
     }
 
@@ -2984,7 +2959,7 @@ unsigned int HasTag::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::HasTag");
     CheckSums::CheckSumCombine(retval, m_name);
 
-    TraceLogger() << "GetCheckSum(HasTag): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(HasTag): retval: " << retval;
     return retval;
 }
 
@@ -2996,7 +2971,6 @@ std::unique_ptr<Condition> HasTag::Clone() const
 ///////////////////////////////////////////////////////////
 CreatedOnTurn::CreatedOnTurn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
                              std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
-    Condition(),
     m_low(std::move(low)),
     m_high(std::move(high))
 {
@@ -3085,7 +3059,7 @@ std::string CreatedOnTurn::Dump(unsigned short ntabs) const {
 bool CreatedOnTurn::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "CreatedOnTurn::Match passed no candidate object";
+        ErrorLogger(conditions) << "CreatedOnTurn::Match passed no candidate object";
         return false;
     }
     int turn = candidate->CreationTurn();
@@ -3110,7 +3084,7 @@ unsigned int CreatedOnTurn::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_low);
     CheckSums::CheckSumCombine(retval, m_high);
 
-    TraceLogger() << "GetCheckSum(CreatedOnTurn): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(CreatedOnTurn): retval: " << retval;
     return retval;
 }
 
@@ -3123,7 +3097,6 @@ std::unique_ptr<Condition> CreatedOnTurn::Clone() const {
 // Contains                                              //
 ///////////////////////////////////////////////////////////
 Contains::Contains(std::unique_ptr<Condition>&& condition) :
-    Condition(),
     m_condition(std::move(condition))
 {
     m_root_candidate_invariant = m_condition->RootCandidateInvariant();
@@ -3289,7 +3262,7 @@ void Contains::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 bool Contains::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Contains::Match passed no candidate object";
+        ErrorLogger(conditions) << "Contains::Match passed no candidate object";
         return false;
     }
 
@@ -3316,7 +3289,7 @@ unsigned int Contains::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::Contains");
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(Contains): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Contains): retval: " << retval;
     return retval;
 }
 
@@ -3327,7 +3300,6 @@ std::unique_ptr<Condition> Contains::Clone() const
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
 ContainedBy::ContainedBy(std::unique_ptr<Condition>&& condition) :
-    Condition(),
     m_condition(std::move(condition))
 {
     m_root_candidate_invariant = m_condition->RootCandidateInvariant();
@@ -3506,7 +3478,7 @@ void ContainedBy::GetDefaultInitialCandidateObjects(const ScriptingContext& pare
 bool ContainedBy::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "ContainedBy::Match passed no candidate object";
+        ErrorLogger(conditions) << "ContainedBy::Match passed no candidate object";
         return false;
     }
 
@@ -3538,7 +3510,7 @@ unsigned int ContainedBy::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::ContainedBy");
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(ContainedBy): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(ContainedBy): retval: " << retval;
     return retval;
 }
 
@@ -3549,7 +3521,6 @@ std::unique_ptr<Condition> ContainedBy::Clone() const
 // InOrIsSystem                                          //
 ///////////////////////////////////////////////////////////
 InOrIsSystem::InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id) :
-    Condition(),
     m_system_id(std::move(system_id))
 {
     m_root_candidate_invariant = !m_system_id || m_system_id->RootCandidateInvariant();
@@ -3677,7 +3648,7 @@ void InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& par
 bool InOrIsSystem::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "InOrIsSystem::Match passed no candidate object";
+        ErrorLogger(conditions) << "InOrIsSystem::Match passed no candidate object";
         return false;
     }
     int system_id = (m_system_id ? m_system_id->Eval(local_context) : INVALID_OBJECT_ID);
@@ -3695,7 +3666,7 @@ unsigned int InOrIsSystem::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::InOrIsSystem");
     CheckSums::CheckSumCombine(retval, m_system_id);
 
-    TraceLogger() << "GetCheckSum(InOrIsSystem): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(InOrIsSystem): retval: " << retval;
     return retval;
 }
 
@@ -3706,7 +3677,6 @@ std::unique_ptr<Condition> InOrIsSystem::Clone() const
 // OnPlanet                                              //
 ///////////////////////////////////////////////////////////
 OnPlanet::OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
-    Condition(),
     m_planet_id(std::move(planet_id))
 {
     m_root_candidate_invariant = !m_planet_id || m_planet_id->RootCandidateInvariant();
@@ -3830,7 +3800,7 @@ void OnPlanet::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 bool OnPlanet::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "OnPlanet::Match passed no candidate object";
+        ErrorLogger(conditions) << "OnPlanet::Match passed no candidate object";
         return false;
     }
     int planet_id = (m_planet_id ? m_planet_id->Eval(local_context) : INVALID_OBJECT_ID);
@@ -3848,7 +3818,7 @@ unsigned int OnPlanet::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::OnPlanet");
     CheckSums::CheckSumCombine(retval, m_planet_id);
 
-    TraceLogger() << "GetCheckSum(OnPlanet): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(OnPlanet): retval: " << retval;
     return retval;
 }
 
@@ -3859,7 +3829,6 @@ std::unique_ptr<Condition> OnPlanet::Clone() const
 // ObjectID                                              //
 ///////////////////////////////////////////////////////////
 ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id) :
-    Condition(),
     m_object_id(std::move(object_id))
 {
     m_root_candidate_invariant = !m_object_id || m_object_id->RootCandidateInvariant();
@@ -3961,7 +3930,7 @@ void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 bool ObjectID::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "ObjectID::Match passed no candidate object";
+        ErrorLogger(conditions) << "ObjectID::Match passed no candidate object";
         return false;
     }
 
@@ -3979,7 +3948,7 @@ unsigned int ObjectID::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::ObjectID");
     CheckSums::CheckSumCombine(retval, m_object_id);
 
-    TraceLogger() << "GetCheckSum(ObjectID): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(ObjectID): retval: " << retval;
     return retval;
 }
 
@@ -3990,7 +3959,6 @@ std::unique_ptr<Condition> ObjectID::Clone() const
 // PlanetType                                            //
 ///////////////////////////////////////////////////////////
 PlanetType::PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>&& types) :
-    Condition(),
     m_types(std::move(types))
 {
     m_root_candidate_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->RootCandidateInvariant(); });
@@ -4116,7 +4084,7 @@ void PlanetType::GetDefaultInitialCandidateObjects(const ScriptingContext& paren
 bool PlanetType::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "PlanetType::Match passed no candidate object";
+        ErrorLogger(conditions) << "PlanetType::Match passed no candidate object";
         return false;
     }
 
@@ -4147,7 +4115,7 @@ unsigned int PlanetType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::PlanetType");
     CheckSums::CheckSumCombine(retval, m_types);
 
-    TraceLogger() << "GetCheckSum(PlanetType): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(PlanetType): retval: " << retval;
     return retval;
 }
 
@@ -4158,7 +4126,6 @@ std::unique_ptr<Condition> PlanetType::Clone() const
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
 PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>&& sizes) :
-    Condition(),
     m_sizes(std::move(sizes))
 {
     m_root_candidate_invariant = boost::algorithm::all_of(m_sizes, [](auto& e){ return e->RootCandidateInvariant(); });
@@ -4287,7 +4254,7 @@ void PlanetSize::GetDefaultInitialCandidateObjects(const ScriptingContext& paren
 bool PlanetSize::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "PlanetSize::Match passed no candidate object";
+        ErrorLogger(conditions) << "PlanetSize::Match passed no candidate object";
         return false;
     }
 
@@ -4318,7 +4285,7 @@ unsigned int PlanetSize::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::PlanetSize");
     CheckSums::CheckSumCombine(retval, m_sizes);
 
-    TraceLogger() << "GetCheckSum(PlanetSize): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(PlanetSize): retval: " << retval;
     return retval;
 }
 
@@ -4330,7 +4297,6 @@ std::unique_ptr<Condition> PlanetSize::Clone() const
 ///////////////////////////////////////////////////////////
 PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>&& environments,
                                      std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name_ref) :
-    Condition(),
     m_environments(std::move(environments)),
     m_species_name(std::move(species_name_ref))
 {
@@ -4498,7 +4464,7 @@ void PlanetEnvironment::GetDefaultInitialCandidateObjects(const ScriptingContext
 bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "PlanetEnvironment::Match passed no candidate object";
+        ErrorLogger(conditions) << "PlanetEnvironment::Match passed no candidate object";
         return false;
     }
 
@@ -4538,7 +4504,7 @@ unsigned int PlanetEnvironment::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_environments);
     CheckSums::CheckSumCombine(retval, m_species_name);
 
-    TraceLogger() << "GetCheckSum(PlanetEnvironment): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(PlanetEnvironment): retval: " << retval;
     return retval;
 }
 
@@ -4551,7 +4517,6 @@ std::unique_ptr<Condition> PlanetEnvironment::Clone() const {
 // Species                                               //
 ///////////////////////////////////////////////////////////
 Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
-    Condition(),
     m_names(std::move(names))
 {
     m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
@@ -4699,7 +4664,7 @@ void Species::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_c
 bool Species::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Species::Match passed no candidate object";
+        ErrorLogger(conditions) << "Species::Match passed no candidate object";
         return false;
     }
 
@@ -4729,7 +4694,7 @@ unsigned int Species::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::Species");
     CheckSums::CheckSumCombine(retval, m_names);
 
-    TraceLogger() << "GetCheckSum(Species): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Species): retval: " << retval;
     return retval;
 }
 
@@ -4743,7 +4708,6 @@ Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
                    std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
                    std::unique_ptr<ValueRef::ValueRef<int>>&& low,
                    std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
-    Condition(),
     m_build_type(BuildType::BT_SHIP),
     m_design_id(std::move(design_id)),
     m_empire_id(std::move(empire_id)),
@@ -4766,7 +4730,6 @@ Enqueued::Enqueued(BuildType build_type,
                    std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
                    std::unique_ptr<ValueRef::ValueRef<int>>&& low,
                    std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
-    Condition(),
     m_build_type(build_type),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id)),
@@ -5015,7 +4978,7 @@ std::string Enqueued::Dump(unsigned short ntabs) const {
 bool Enqueued::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Enqueued::Match passed no candidate object";
+        ErrorLogger(conditions) << "Enqueued::Match passed no candidate object";
         return false;
     }
     std::string name{   (m_name ?       m_name->Eval(local_context) :       "")};
@@ -5055,7 +5018,7 @@ unsigned int Enqueued::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_low);
     CheckSums::CheckSumCombine(retval, m_high);
 
-    TraceLogger() << "GetCheckSum(Enqueued): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Enqueued): retval: " << retval;
     return retval;
 }
 
@@ -5066,7 +5029,6 @@ std::unique_ptr<Condition> Enqueued::Clone() const
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
 FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
-    Condition(),
     m_names(std::move(names))
 {
     m_root_candidate_invariant = boost::algorithm::all_of(m_names, [](auto& e){ return e->RootCandidateInvariant(); });
@@ -5196,7 +5158,7 @@ std::string FocusType::Dump(unsigned short ntabs) const {
 bool FocusType::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "FocusType::Match passed no candidate object";
+        ErrorLogger(conditions) << "FocusType::Match passed no candidate object";
         return false;
     }
 
@@ -5233,7 +5195,7 @@ unsigned int FocusType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::FocusType");
     CheckSums::CheckSumCombine(retval, m_names);
 
-    TraceLogger() << "GetCheckSum(FocusType): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(FocusType): retval: " << retval;
     return retval;
 }
 
@@ -5244,7 +5206,6 @@ std::unique_ptr<Condition> FocusType::Clone() const
 // StarType                                              //
 ///////////////////////////////////////////////////////////
 StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types) :
-    Condition(),
     m_types(std::move(types))
 {
     m_root_candidate_invariant = boost::algorithm::all_of(m_types, [](auto& e){ return e->RootCandidateInvariant(); });
@@ -5360,7 +5321,7 @@ std::string StarType::Dump(unsigned short ntabs) const {
 bool StarType::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "StarType::Match passed no candidate object";
+        ErrorLogger(conditions) << "StarType::Match passed no candidate object";
         return false;
     }
     if (m_types.empty())
@@ -5396,7 +5357,7 @@ unsigned int StarType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::StarType");
     CheckSums::CheckSumCombine(retval, m_types);
 
-    TraceLogger() << "GetCheckSum(StarType): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(StarType): retval: " << retval;
     return retval;
 }
 
@@ -5407,7 +5368,6 @@ std::unique_ptr<Condition> StarType::Clone() const
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
 DesignHasHull::DesignHasHull(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
     m_name(std::move(name))
 {
     m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
@@ -5500,7 +5460,7 @@ std::string DesignHasHull::Dump(unsigned short ntabs) const {
 bool DesignHasHull::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "DesignHasHull::Match passed no candidate object";
+        ErrorLogger(conditions) << "DesignHasHull::Match passed no candidate object";
         return false;
     }
 
@@ -5526,7 +5486,7 @@ unsigned int DesignHasHull::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::DesignHasHull");
     CheckSums::CheckSumCombine(retval, m_name);
 
-    TraceLogger() << "GetCheckSum(DesignHasHull): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(DesignHasHull): retval: " << retval;
     return retval;
 }
 
@@ -5539,7 +5499,6 @@ std::unique_ptr<Condition> DesignHasHull::Clone() const
 DesignHasPart::DesignHasPart(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name,
                              std::unique_ptr<ValueRef::ValueRef<int>>&& low,
                              std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
-    Condition(),
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_name(std::move(name))
@@ -5675,7 +5634,7 @@ std::string DesignHasPart::Dump(unsigned short ntabs) const {
 bool DesignHasPart::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "DesignHasPart::Match passed no candidate object";
+        ErrorLogger(conditions) << "DesignHasPart::Match passed no candidate object";
         return false;
     }
 
@@ -5709,7 +5668,7 @@ unsigned int DesignHasPart::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_high);
     CheckSums::CheckSumCombine(retval, m_name);
 
-    TraceLogger() << "GetCheckSum(DesignHasPart): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(DesignHasPart): retval: " << retval;
     return retval;
 }
 
@@ -5725,7 +5684,6 @@ std::unique_ptr<Condition> DesignHasPart::Clone() const {
 DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class,
                                        std::unique_ptr<ValueRef::ValueRef<int>>&& low,
                                        std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
-    Condition(),
     m_low(std::move(low)),
     m_high(std::move(high)),
     m_class(std::move(part_class))
@@ -5851,7 +5809,7 @@ std::string DesignHasPartClass::Dump(unsigned short ntabs) const {
 bool DesignHasPartClass::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "DesignHasPartClass::Match passed no candidate object";
+        ErrorLogger(conditions) << "DesignHasPartClass::Match passed no candidate object";
         return false;
     }
 
@@ -5880,7 +5838,7 @@ unsigned int DesignHasPartClass::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_high);
     CheckSums::CheckSumCombine(retval, m_class);
 
-    TraceLogger() << "GetCheckSum(DesignHasPartClass): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(DesignHasPartClass): retval: " << retval;
     return retval;
 }
 
@@ -5894,7 +5852,6 @@ std::unique_ptr<Condition> DesignHasPartClass::Clone() const {
 // PredefinedShipDesign                                  //
 ///////////////////////////////////////////////////////////
 PredefinedShipDesign::PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
     m_name(std::move(name))
 {
     m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
@@ -6003,7 +5960,7 @@ std::string PredefinedShipDesign::Dump(unsigned short ntabs) const {
 bool PredefinedShipDesign::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "PredefinedShipDesign::Match passed no candidate object";
+        ErrorLogger(conditions) << "PredefinedShipDesign::Match passed no candidate object";
         return false;
     }
 
@@ -6025,7 +5982,7 @@ unsigned int PredefinedShipDesign::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::PredefinedShipDesign");
     CheckSums::CheckSumCombine(retval, m_name);
 
-    TraceLogger() << "GetCheckSum(PredefinedShipDesign): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(PredefinedShipDesign): retval: " << retval;
     return retval;
 }
 
@@ -6036,7 +5993,6 @@ std::unique_ptr<Condition> PredefinedShipDesign::Clone() const
 // NumberedShipDesign                                    //
 ///////////////////////////////////////////////////////////
 NumberedShipDesign::NumberedShipDesign(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
-    Condition(),
     m_design_id(std::move(design_id))
 {
     m_root_candidate_invariant = !m_design_id || m_design_id->RootCandidateInvariant();
@@ -6114,7 +6070,7 @@ std::string NumberedShipDesign::Dump(unsigned short ntabs) const
 bool NumberedShipDesign::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "NumberedShipDesign::Match passed no candidate object";
+        ErrorLogger(conditions) << "NumberedShipDesign::Match passed no candidate object";
         return false;
     }
     return NumberedShipDesignSimpleMatch(m_design_id->Eval(local_context))(candidate);
@@ -6131,7 +6087,7 @@ unsigned int NumberedShipDesign::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::NumberedShipDesign");
     CheckSums::CheckSumCombine(retval, m_design_id);
 
-    TraceLogger() << "GetCheckSum(NumberedShipDesign): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(NumberedShipDesign): retval: " << retval;
     return retval;
 }
 
@@ -6142,7 +6098,6 @@ std::unique_ptr<Condition> NumberedShipDesign::Clone() const
 // ProducedByEmpire                                      //
 ///////////////////////////////////////////////////////////
 ProducedByEmpire::ProducedByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
-    Condition(),
     m_empire_id(std::move(empire_id))
 {
     m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
@@ -6225,7 +6180,7 @@ std::string ProducedByEmpire::Dump(unsigned short ntabs) const
 bool ProducedByEmpire::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "ProducedByEmpire::Match passed no candidate object";
+        ErrorLogger(conditions) << "ProducedByEmpire::Match passed no candidate object";
         return false;
     }
 
@@ -6243,7 +6198,7 @@ unsigned int ProducedByEmpire::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::ProducedByEmpire");
     CheckSums::CheckSumCombine(retval, m_empire_id);
 
-    TraceLogger() << "GetCheckSum(ProducedByEmpire): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(ProducedByEmpire): retval: " << retval;
     return retval;
 }
 
@@ -6254,7 +6209,6 @@ std::unique_ptr<Condition> ProducedByEmpire::Clone() const
 // Chance                                                //
 ///////////////////////////////////////////////////////////
 Chance::Chance(std::unique_ptr<ValueRef::ValueRef<double>>&& chance) :
-    Condition(),
     m_chance(std::move(chance))
 {
     m_root_candidate_invariant = !m_chance || m_chance->RootCandidateInvariant();
@@ -6339,7 +6293,7 @@ unsigned int Chance::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::Chance");
     CheckSums::CheckSumCombine(retval, m_chance);
 
-    TraceLogger() << "GetCheckSum(Chance): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Chance): retval: " << retval;
     return retval;
 }
 
@@ -6352,7 +6306,6 @@ std::unique_ptr<Condition> Chance::Clone() const
 MeterValue::MeterValue(MeterType meter,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
-    Condition(),
     m_meter(meter),
     m_low(std::move(low)),
     m_high(std::move(high))
@@ -6512,7 +6465,7 @@ std::string MeterValue::Dump(unsigned short ntabs) const {
 bool MeterValue::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "MeterValue::Match passed no candidate object";
+        ErrorLogger(conditions) << "MeterValue::Match passed no candidate object";
         return false;
     }
     float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
@@ -6535,7 +6488,7 @@ unsigned int MeterValue::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_low);
     CheckSums::CheckSumCombine(retval, m_high);
 
-    TraceLogger() << "GetCheckSum(MeterValue): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(MeterValue): retval: " << retval;
     return retval;
 }
 
@@ -6552,7 +6505,6 @@ ShipPartMeterValue::ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRef<std::s
                                        MeterType meter,
                                        std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                                        std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
-    Condition(),
     m_part_name(std::move(ship_part_name)),
     m_meter(meter),
     m_low(std::move(low)),
@@ -6677,7 +6629,7 @@ std::string ShipPartMeterValue::Dump(unsigned short ntabs) const {
 bool ShipPartMeterValue::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "ShipPartMeterValue::Match passed no candidate object";
+        ErrorLogger(conditions) << "ShipPartMeterValue::Match passed no candidate object";
         return false;
     }
     float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
@@ -6704,7 +6656,7 @@ unsigned int ShipPartMeterValue::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_low);
     CheckSums::CheckSumCombine(retval, m_high);
 
-    TraceLogger() << "GetCheckSum(ShipPartMeterValue): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(ShipPartMeterValue): retval: " << retval;
     return retval;
 }
 
@@ -6728,7 +6680,6 @@ EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRef<int>>&& em
                                    std::string meter,
                                    std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                                    std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
-    Condition(),
     m_empire_id(std::move(empire_id)),
     m_meter(std::move(meter)),
     m_low(std::move(low)),
@@ -6840,11 +6791,11 @@ bool EmpireMeterValue::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     // if m_empire_id not set, default to candidate object's owner
     if (!m_empire_id && !candidate) {
-        ErrorLogger() << "EmpireMeterValue::Match passed no candidate object but expects one due to having no empire id valueref specified and thus wanting to use the local candidate's owner as the empire id";
+        ErrorLogger(conditions) << "EmpireMeterValue::Match passed no candidate object but expects one due to having no empire id valueref specified and thus wanting to use the local candidate's owner as the empire id";
         return false;
 
     } else if (m_empire_id && !candidate && !m_empire_id->LocalCandidateInvariant()) {
-        ErrorLogger() << "EmpireMeterValue::Match passed no candidate object but but empire id valueref references the local candidate";
+        ErrorLogger(conditions) << "EmpireMeterValue::Match passed no candidate object but but empire id valueref references the local candidate";
         return false;
 
     } else if (!m_empire_id && candidate) {
@@ -6856,7 +6807,7 @@ bool EmpireMeterValue::Match(const ScriptingContext& local_context) const {
         empire_id = m_empire_id->Eval(local_context);
 
     } else {
-        ErrorLogger() << "EmpireMeterValue::Match reached unexpected default case for candidate and empire id valueref existance";
+        ErrorLogger(conditions) << "EmpireMeterValue::Match reached unexpected default case for candidate and empire id valueref existance";
         return false;
     }
 
@@ -6892,7 +6843,7 @@ unsigned int EmpireMeterValue::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_low);
     CheckSums::CheckSumCombine(retval, m_high);
 
-    TraceLogger() << "GetCheckSum(EmpireMeterValue): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(EmpireMeterValue): retval: " << retval;
     return retval;
 }
 
@@ -6916,7 +6867,6 @@ EmpireStockpileValue::EmpireStockpileValue(std::unique_ptr<ValueRef::ValueRef<in
                                            ResourceType stockpile,
                                            std::unique_ptr<ValueRef::ValueRef<double>>&& low,
                                            std::unique_ptr<ValueRef::ValueRef<double>>&& high) :
-    Condition(),
     m_empire_id(std::move(empire_id)),
     m_stockpile(stockpile),
     m_low(std::move(low)),
@@ -7021,11 +6971,11 @@ bool EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     // if m_empire_id not set, default to candidate object's owner
     if (!m_empire_id && !candidate) {
-        ErrorLogger() << "EmpireStockpileValue::Match passed no candidate object but expects one due to having no empire id valueref specified and thus wanting to use the local candidate's owner as the empire id";
+        ErrorLogger(conditions) << "EmpireStockpileValue::Match passed no candidate object but expects one due to having no empire id valueref specified and thus wanting to use the local candidate's owner as the empire id";
         return false;
 
     } else if (m_empire_id && !candidate && !m_empire_id->LocalCandidateInvariant()) {
-        ErrorLogger() << "EmpireStockpileValue::Match passed no candidate object but but empire id valueref references the local candidate";
+        ErrorLogger(conditions) << "EmpireStockpileValue::Match passed no candidate object but but empire id valueref references the local candidate";
         return false;
 
     } else if (!m_empire_id && candidate) {
@@ -7037,7 +6987,7 @@ bool EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
         empire_id = m_empire_id->Eval(local_context);
 
     } else {
-        ErrorLogger() << "EmpireStockpileValue::Match reached unexpected default case for candidate and empire id valueref existance";
+        ErrorLogger(conditions) << "EmpireStockpileValue::Match reached unexpected default case for candidate and empire id valueref existance";
         return false;
     }
 
@@ -7073,7 +7023,7 @@ unsigned int EmpireStockpileValue::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_low);
     CheckSums::CheckSumCombine(retval, m_high);
 
-    TraceLogger() << "GetCheckSum(EmpireStockpileValue): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(EmpireStockpileValue): retval: " << retval;
     return retval;
 }
 
@@ -7089,7 +7039,6 @@ std::unique_ptr<Condition> EmpireStockpileValue::Clone() const {
 ///////////////////////////////////////////////////////////
 EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
                                                std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
@@ -7179,11 +7128,11 @@ bool EmpireHasAdoptedPolicy::Match(const ScriptingContext& local_context) const 
     auto& candidate = local_context.condition_local_candidate;
     // if m_empire_id not set, default to candidate object's owner
     if (!m_empire_id && !candidate) {
-        ErrorLogger() << "EmpireHasAdoptedPolicy::Match passed no candidate object but expects one due to having no empire id valueref specified and thus wanting to use the local candidate's owner as the empire id";
+        ErrorLogger(conditions) << "EmpireHasAdoptedPolicy::Match passed no candidate object but expects one due to having no empire id valueref specified and thus wanting to use the local candidate's owner as the empire id";
         return false;
 
     } else if (m_empire_id && !candidate && !m_empire_id->LocalCandidateInvariant()) {
-        ErrorLogger() << "EmpireHasAdoptedPolicy::Match passed no candidate object but but empire id valueref references the local candidate";
+        ErrorLogger(conditions) << "EmpireHasAdoptedPolicy::Match passed no candidate object but but empire id valueref references the local candidate";
         return false;
 
     } else if (!m_empire_id && candidate) {
@@ -7195,7 +7144,7 @@ bool EmpireHasAdoptedPolicy::Match(const ScriptingContext& local_context) const 
         empire_id = m_empire_id->Eval(local_context);
 
     } else {
-        ErrorLogger() << "EmpireHasAdoptedPolicy::Match reached unexpected default case for candidate and empire id valueref existance";
+        ErrorLogger(conditions) << "EmpireHasAdoptedPolicy::Match reached unexpected default case for candidate and empire id valueref existance";
         return false;
     }
 
@@ -7222,7 +7171,7 @@ unsigned int EmpireHasAdoptedPolicy::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_name);
 
-    TraceLogger() << "GetCheckSum(EmpireHasAdoptedPolicy): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(EmpireHasAdoptedPolicy): retval: " << retval;
     return retval;
 }
 
@@ -7236,7 +7185,6 @@ std::unique_ptr<Condition> EmpireHasAdoptedPolicy::Clone() const {
 ///////////////////////////////////////////////////////////
 OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
                            std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
@@ -7341,7 +7289,7 @@ std::string OwnerHasTech::Dump(unsigned short ntabs) const {
 bool OwnerHasTech::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
+        ErrorLogger(conditions) << "OwnerHasTech::Match passed no candidate object";
         return false;
     }
 
@@ -7367,7 +7315,7 @@ unsigned int OwnerHasTech::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_name);
 
-    TraceLogger() << "GetCheckSum(OwnerHasTech): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(OwnerHasTech): retval: " << retval;
     return retval;
 }
 
@@ -7382,7 +7330,6 @@ std::unique_ptr<Condition> OwnerHasTech::Clone() const {
 OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(
     std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
     std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
@@ -7487,7 +7434,7 @@ std::string OwnerHasBuildingTypeAvailable::Dump(unsigned short ntabs) const {
 bool OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
+        ErrorLogger(conditions) << "OwnerHasTech::Match passed no candidate object";
         return false;
     }
 
@@ -7513,7 +7460,7 @@ unsigned int OwnerHasBuildingTypeAvailable::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_name);
 
-    TraceLogger() << "GetCheckSum(OwnerHasBuildingTypeAvailable): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(OwnerHasBuildingTypeAvailable): retval: " << retval;
     return retval;
 }
 
@@ -7528,7 +7475,6 @@ std::unique_ptr<Condition> OwnerHasBuildingTypeAvailable::Clone() const {
 OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(
     std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
     std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
-    Condition(),
     m_id(std::move(design_id)),
     m_empire_id(std::move(empire_id))
 {
@@ -7632,7 +7578,7 @@ std::string OwnerHasShipDesignAvailable::Dump(unsigned short ntabs) const {
 bool OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
+        ErrorLogger(conditions) << "OwnerHasTech::Match passed no candidate object";
         return false;
     }
 
@@ -7658,7 +7604,7 @@ unsigned int OwnerHasShipDesignAvailable::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_id);
 
-    TraceLogger() << "GetCheckSum(OwnerHasShipDesignAvailable): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(OwnerHasShipDesignAvailable): retval: " << retval;
     return retval;
 }
 
@@ -7673,7 +7619,6 @@ std::unique_ptr<Condition> OwnerHasShipDesignAvailable::Clone() const {
 OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(
     std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
     std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id))
 {
@@ -7775,7 +7720,7 @@ std::string OwnerHasShipPartAvailable::Dump(unsigned short ntabs) const {
 bool OwnerHasShipPartAvailable::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "OwnerHasShipPart::Match passed no candidate object";
+        ErrorLogger(conditions) << "OwnerHasShipPart::Match passed no candidate object";
         return false;
     }
 
@@ -7801,7 +7746,7 @@ unsigned int OwnerHasShipPartAvailable::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_name);
 
-    TraceLogger() << "GetCheckSum(OwnerHasShipPartAvailable): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(OwnerHasShipPartAvailable): retval: " << retval;
     return retval;
 }
 
@@ -7986,7 +7931,7 @@ std::string VisibleToEmpire::Dump(unsigned short ntabs) const {
 bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "VisibleToEmpire::Match passed no candidate object";
+        ErrorLogger(conditions) << "VisibleToEmpire::Match passed no candidate object";
         return false;
     }
 
@@ -8013,7 +7958,7 @@ unsigned int VisibleToEmpire::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_since_turn);
     CheckSums::CheckSumCombine(retval, m_vis);
 
-    TraceLogger() << "GetCheckSum(VisibleToEmpire): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(VisibleToEmpire): retval: " << retval;
     return retval;
 }
 
@@ -8028,7 +7973,6 @@ std::unique_ptr<Condition> VisibleToEmpire::Clone() const {
 ///////////////////////////////////////////////////////////
 WithinDistance::WithinDistance(std::unique_ptr<ValueRef::ValueRef<double>>&& distance,
                                std::unique_ptr<Condition>&& condition) :
-    Condition(),
     m_distance(std::move(distance)),
     m_condition(std::move(condition))
 {
@@ -8128,7 +8072,7 @@ std::string WithinDistance::Dump(unsigned short ntabs) const {
 bool WithinDistance::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "WithinDistance::Match passed no candidate object";
+        ErrorLogger(conditions) << "WithinDistance::Match passed no candidate object";
         return false;
     }
 
@@ -8155,7 +8099,7 @@ unsigned int WithinDistance::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_distance);
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(WithinDistance): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(WithinDistance): retval: " << retval;
     return retval;
 }
 
@@ -8169,7 +8113,6 @@ std::unique_ptr<Condition> WithinDistance::Clone() const {
 ///////////////////////////////////////////////////////////
 WithinStarlaneJumps::WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRef<int>>&& jumps,
                                          std::unique_ptr<Condition>&& condition) :
-    Condition(),
     m_jumps(std::move(jumps)),
     m_condition(std::move(condition))
 {
@@ -8240,7 +8183,7 @@ std::string WithinStarlaneJumps::Dump(unsigned short ntabs) const {
 bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "WithinStarlaneJumps::Match passed no candidate object";
+        ErrorLogger(conditions) << "WithinStarlaneJumps::Match passed no candidate object";
         return false;
     }
 
@@ -8279,7 +8222,7 @@ unsigned int WithinStarlaneJumps::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_jumps);
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(WithinStarlaneJumps): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(WithinStarlaneJumps): retval: " << retval;
     return retval;
 }
 
@@ -8292,7 +8235,6 @@ std::unique_ptr<Condition> WithinStarlaneJumps::Clone() const {
 // CanAddStarlaneConnection                              //
 ///////////////////////////////////////////////////////////
 CanAddStarlaneConnection::CanAddStarlaneConnection(std::unique_ptr<Condition>&& condition) :
-    Condition(),
     m_condition(std::move(condition))
 {
     m_root_candidate_invariant = !m_condition || m_condition->RootCandidateInvariant();
@@ -8346,7 +8288,7 @@ namespace {
                                                       // arccos(0.87) = 0.515594 rad = 29.5 degrees
 
         float dp = (dx1 * dx2) + (dy1 * dy2);
-        //TraceLogger() << "systems: " << sys1->UniverseObject::Name() << "  " << lane1_sys2->UniverseObject::Name() << "  " << lane2_sys2->UniverseObject::Name() << "  dp: " << dp << "\n";
+        //TraceLogger(conditions) << "systems: " << sys1->UniverseObject::Name() << "  " << lane1_sys2->UniverseObject::Name() << "  " << lane2_sys2->UniverseObject::Name() << "  dp: " << dp << "\n";
 
         return dp >= MAX_LANE_DOT_PRODUCT;   // if dot product too high after normalizing vectors, angles are adequately separated
     }
@@ -8511,7 +8453,7 @@ namespace {
                     continue;
 
                 if (LanesCross(lane_end_sys1, lane_end_sys2, system.get(), lane_end_sys3)) {
-                    //TraceLogger() << "... ... ... lane from: " << lane_end_sys1->UniverseObject::Name() << " to: " << lane_end_sys2->UniverseObject::Name() << " crosses lane from: " << system->UniverseObject::Name() << " to: " << lane_end_sys3->UniverseObject::Name() << "\n";
+                    //TraceLogger(conditions) << "... ... ... lane from: " << lane_end_sys1->UniverseObject::Name() << " to: " << lane_end_sys2->UniverseObject::Name() << " crosses lane from: " << system->UniverseObject::Name() << " to: " << lane_end_sys3->UniverseObject::Name() << "\n";
                     return true;
                 }
             }
@@ -8586,7 +8528,7 @@ namespace {
 
             // check if any of the proposed lanes are too close to any already-
             // present lanes of the candidate system
-            //TraceLogger() << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << "\n";
+            //TraceLogger(conditions) << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << "\n";
             for (const auto& lane : candidate_sys->StarlanesWormholes()) {
                 auto candidate_existing_lane_end_sys = m_objects.getRaw<System>(lane.first);
                 if (!candidate_existing_lane_end_sys)
@@ -8597,7 +8539,7 @@ namespace {
                     if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys,
                                                dest_sys.get()))
                     {
-                        //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane to " << candidate_existing_lane_end_sys->UniverseObject::Name() << "\n";
+                        //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane to " << candidate_existing_lane_end_sys->UniverseObject::Name() << "\n";
                         return false;
                     }
                 }
@@ -8606,7 +8548,7 @@ namespace {
 
             // check if any of the proposed lanes are too close to any already-
             // present lanes of any of the destination systems
-            //TraceLogger() << "... Checking lanes of destination systems:" << "\n";
+            //TraceLogger(conditions) << "... Checking lanes of destination systems:" << "\n";
             for (auto& dest_sys : m_destination_systems) {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
@@ -8616,7 +8558,7 @@ namespace {
                         continue;
 
                     if (LanesAngularlyTooClose(dest_sys.get(), candidate_sys, dest_lane_end_sys)) {
-                        //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane from dest to " << dest_lane_end_sys->UniverseObject::Name() << "\n";
+                        //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane from dest to " << dest_lane_end_sys->UniverseObject::Name() << "\n";
                         return false;
                     }
                 }
@@ -8624,7 +8566,7 @@ namespace {
 
 
             // check if any of the proposed lanes are too close to eachother
-            //TraceLogger() << "... Checking proposed lanes against eachother" << "\n";
+            //TraceLogger(conditions) << "... Checking proposed lanes against eachother" << "\n";
             for (auto it1 = m_destination_systems.begin();
                  it1 != m_destination_systems.end(); ++it1)
             {
@@ -8636,7 +8578,7 @@ namespace {
                 for (; it2 != m_destination_systems.end(); ++it2) {
                     auto dest_sys2 = it2->get();
                     if (LanesAngularlyTooClose(candidate_sys, dest_sys1, dest_sys2)) {
-                        //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys1->UniverseObject::Name() << " and also to " << dest_sys2->UniverseObject::Name() << "\n";
+                        //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys1->UniverseObject::Name() << " and also to " << dest_sys2->UniverseObject::Name() << "\n";
                         return false;
                     }
                 }
@@ -8645,20 +8587,20 @@ namespace {
 
             // check that the proposed lanes are not too close to any existing
             // system they are not connected to
-            //TraceLogger() << "... Checking proposed lanes for proximity to other systems" << "\n";
+            //TraceLogger(conditions) << "... Checking proposed lanes for proximity to other systems" << "\n";
             for (auto& dest_sys : m_destination_systems) {
                 if (LaneTooCloseToOtherSystem(candidate_sys, dest_sys.get(), m_objects)) {
-                    //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to proximity to another system." << "\n";
+                    //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to proximity to another system." << "\n";
                     return false;
                 }
             }
 
 
             // check that there are no lanes already existing that cross the proposed lanes
-            //TraceLogger() << "... Checking for potential lanes crossing existing lanes" << "\n";
+            //TraceLogger(conditions) << "... Checking for potential lanes crossing existing lanes" << "\n";
             for (auto& dest_sys : m_destination_systems) {
                 if (LaneCrossesExistingLane(candidate_sys, dest_sys.get(), m_objects)) {
-                    //TraceLogger() << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to crossing an existing lane." << "\n";
+                    //TraceLogger(conditions) << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to crossing an existing lane." << "\n";
                     return false;
                 }
             }
@@ -8707,7 +8649,7 @@ std::string CanAddStarlaneConnection::Dump(unsigned short ntabs) const {
 bool CanAddStarlaneConnection::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "CanAddStarlaneConnection::Match passed no candidate object";
+        ErrorLogger(conditions) << "CanAddStarlaneConnection::Match passed no candidate object";
         return false;
     }
 
@@ -8730,7 +8672,7 @@ unsigned int CanAddStarlaneConnection::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::CanAddStarlaneConnection");
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(CanAddStarlaneConnection): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(CanAddStarlaneConnection): retval: " << retval;
     return retval;
 }
 
@@ -8742,7 +8684,6 @@ std::unique_ptr<Condition> CanAddStarlaneConnection::Clone() const {
 // ExploredByEmpire                                      //
 ///////////////////////////////////////////////////////////
 ExploredByEmpire::ExploredByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
-    Condition(),
     m_empire_id(std::move(empire_id))
 {
     m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
@@ -8828,7 +8769,7 @@ std::string ExploredByEmpire::Dump(unsigned short ntabs) const
 bool ExploredByEmpire::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "ExploredByEmpire::Match passed no candidate object";
+        ErrorLogger(conditions) << "ExploredByEmpire::Match passed no candidate object";
         return false;
     }
 
@@ -8846,7 +8787,7 @@ unsigned int ExploredByEmpire::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::ExploredByEmpire");
     CheckSums::CheckSumCombine(retval, m_empire_id);
 
-    TraceLogger() << "GetCheckSum(ExploredByEmpire): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(ExploredByEmpire): retval: " << retval;
     return retval;
 }
 
@@ -8856,9 +8797,7 @@ std::unique_ptr<Condition> ExploredByEmpire::Clone() const
 ///////////////////////////////////////////////////////////
 // Stationary                                            //
 ///////////////////////////////////////////////////////////
-Stationary::Stationary() :
-    Condition()
-{
+Stationary::Stationary() {
     m_root_candidate_invariant = true;
     m_target_invariant = true;
     m_source_invariant = true;
@@ -8879,7 +8818,7 @@ std::string Stationary::Dump(unsigned short ntabs) const
 bool Stationary::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Stationary::Match passed no candidate object";
+        ErrorLogger(conditions) << "Stationary::Match passed no candidate object";
         return false;
     }
 
@@ -8910,7 +8849,7 @@ unsigned int Stationary::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::Stationary");
 
-    TraceLogger() << "GetCheckSum(Stationary): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Stationary): retval: " << retval;
     return retval;
 }
 
@@ -8925,7 +8864,6 @@ Aggressive::Aggressive() :
 {}
 
 Aggressive::Aggressive(bool aggressive) :
-    Condition(),
     m_aggressive(aggressive)
 {
     m_root_candidate_invariant = true;
@@ -8953,7 +8891,7 @@ std::string Aggressive::Dump(unsigned short ntabs) const
 bool Aggressive::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Aggressive::Match passed no candidate object";
+        ErrorLogger(conditions) << "Aggressive::Match passed no candidate object";
         return false;
     }
 
@@ -8980,7 +8918,7 @@ unsigned int Aggressive::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::Aggressive");
     CheckSums::CheckSumCombine(retval, m_aggressive);
 
-    TraceLogger() << "GetCheckSum(Aggressive): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Aggressive): retval: " << retval;
     return retval;
 }
 
@@ -8991,7 +8929,6 @@ std::unique_ptr<Condition> Aggressive::Clone() const
 // FleetSupplyableByEmpire                               //
 ///////////////////////////////////////////////////////////
 FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
-    Condition(),
     m_empire_id(std::move(empire_id))
 {
     m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
@@ -9076,7 +9013,7 @@ std::string FleetSupplyableByEmpire::Dump(unsigned short ntabs) const
 bool FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "FleetSupplyableByEmpire::Match passed no candidate object";
+        ErrorLogger(conditions) << "FleetSupplyableByEmpire::Match passed no candidate object";
         return false;
     }
 
@@ -9096,7 +9033,7 @@ unsigned int FleetSupplyableByEmpire::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::FleetSupplyableByEmpire");
     CheckSums::CheckSumCombine(retval, m_empire_id);
 
-    TraceLogger() << "GetCheckSum(FleetSupplyableByEmpire): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(FleetSupplyableByEmpire): retval: " << retval;
     return retval;
 }
 
@@ -9109,7 +9046,6 @@ std::unique_ptr<Condition> FleetSupplyableByEmpire::Clone() const
 ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
     std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
     std::unique_ptr<Condition>&& condition) :
-    Condition(),
     m_empire_id(std::move(empire_id)),
     m_condition(std::move(condition))
 {
@@ -9241,7 +9177,7 @@ void ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_contex
 bool ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "ResourceSupplyConnectedByEmpire::Match passed no candidate object";
+        ErrorLogger(conditions) << "ResourceSupplyConnectedByEmpire::Match passed no candidate object";
         return false;
     }
 
@@ -9294,7 +9230,7 @@ unsigned int ResourceSupplyConnectedByEmpire::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(ResourceSupplyConnectedByEmpire): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(ResourceSupplyConnectedByEmpire): retval: " << retval;
     return retval;
 }
 
@@ -9306,9 +9242,7 @@ std::unique_ptr<Condition> ResourceSupplyConnectedByEmpire::Clone() const {
 ///////////////////////////////////////////////////////////
 // CanColonize                                           //
 ///////////////////////////////////////////////////////////
-CanColonize::CanColonize() :
-    Condition()
-{
+CanColonize::CanColonize() {
     m_root_candidate_invariant = true;
     m_target_invariant = true;
     m_source_invariant = true;
@@ -9329,7 +9263,7 @@ std::string CanColonize::Dump(unsigned short ntabs) const
 bool CanColonize::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "CanColonize::Match passed no candidate object";
+        ErrorLogger(conditions) << "CanColonize::Match passed no candidate object";
         return false;
     }
 
@@ -9338,7 +9272,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
     if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET) {
         auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
         if (!planet) {
-            ErrorLogger() << "CanColonize couldn't cast supposedly planet candidate";
+            ErrorLogger(conditions) << "CanColonize couldn't cast supposedly planet candidate";
             return false;
         }
         species_name = planet->SpeciesName();
@@ -9346,12 +9280,12 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
     } else if (candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
         auto building = std::dynamic_pointer_cast<const ::Building>(candidate);
         if (!building) {
-            ErrorLogger() << "CanColonize couldn't cast supposedly building candidate";
+            ErrorLogger(conditions) << "CanColonize couldn't cast supposedly building candidate";
             return false;
         }
         auto planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
         if (!planet) {
-            ErrorLogger() << "CanColonize couldn't get building's planet";
+            ErrorLogger(conditions) << "CanColonize couldn't get building's planet";
             return false;
         }
         species_name = planet->SpeciesName();
@@ -9359,7 +9293,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
     } else if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
         auto ship = std::dynamic_pointer_cast<const Ship>(candidate);
         if (!ship) {
-            ErrorLogger() << "CanColonize couldn't cast supposedly ship candidate";
+            ErrorLogger(conditions) << "CanColonize couldn't cast supposedly ship candidate";
             return false;
         }
         species_name = ship->SpeciesName();
@@ -9369,7 +9303,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
         return false;
     auto species = GetSpecies(species_name);
     if (!species) {
-        ErrorLogger() << "CanColonize couldn't get species: " << species_name;
+        ErrorLogger(conditions) << "CanColonize couldn't get species: " << species_name;
         return false;
     }
     return species->CanColonize();
@@ -9380,7 +9314,7 @@ unsigned int CanColonize::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::CanColonize");
 
-    TraceLogger() << "GetCheckSum(CanColonize): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(CanColonize): retval: " << retval;
     return retval;
 }
 
@@ -9390,9 +9324,7 @@ std::unique_ptr<Condition> CanColonize::Clone() const
 ///////////////////////////////////////////////////////////
 // CanProduceShips                                       //
 ///////////////////////////////////////////////////////////
-CanProduceShips::CanProduceShips() :
-    Condition()
-{
+CanProduceShips::CanProduceShips() {
     m_root_candidate_invariant = true;
     m_target_invariant = true;
     m_source_invariant = true;
@@ -9413,7 +9345,7 @@ std::string CanProduceShips::Dump(unsigned short ntabs) const
 bool CanProduceShips::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "CanProduceShips::Match passed no candidate object";
+        ErrorLogger(conditions) << "CanProduceShips::Match passed no candidate object";
         return false;
     }
 
@@ -9422,7 +9354,7 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
     if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET) {
         auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
         if (!planet) {
-            ErrorLogger() << "CanProduceShips couldn't cast supposedly planet candidate";
+            ErrorLogger(conditions) << "CanProduceShips couldn't cast supposedly planet candidate";
             return false;
         }
         species_name = planet->SpeciesName();
@@ -9430,12 +9362,12 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
     } else if (candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
         auto building = std::dynamic_pointer_cast<const ::Building>(candidate);
         if (!building) {
-            ErrorLogger() << "CanProduceShips couldn't cast supposedly building candidate";
+            ErrorLogger(conditions) << "CanProduceShips couldn't cast supposedly building candidate";
             return false;
         }
         auto planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
         if (!planet) {
-            ErrorLogger() << "CanProduceShips couldn't get building's planet";
+            ErrorLogger(conditions) << "CanProduceShips couldn't get building's planet";
             return false;
         }
         species_name = planet->SpeciesName();
@@ -9443,7 +9375,7 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
     } else if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
         auto ship = std::dynamic_pointer_cast<const Ship>(candidate);
         if (!ship) {
-            ErrorLogger() << "CanProduceShips couldn't cast supposedly ship candidate";
+            ErrorLogger(conditions) << "CanProduceShips couldn't cast supposedly ship candidate";
             return false;
         }
         species_name = ship->SpeciesName();
@@ -9453,7 +9385,7 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
         return false;
     auto species = GetSpecies(species_name);
     if (!species) {
-        ErrorLogger() << "CanProduceShips couldn't get species: " << species_name;
+        ErrorLogger(conditions) << "CanProduceShips couldn't get species: " << species_name;
         return false;
     }
     return species->CanProduceShips();
@@ -9464,7 +9396,7 @@ unsigned int CanProduceShips::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::CanProduceShips");
 
-    TraceLogger() << "GetCheckSum(CanProduceShips): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(CanProduceShips): retval: " << retval;
     return retval;
 }
 
@@ -9475,7 +9407,6 @@ std::unique_ptr<Condition> CanProduceShips::Clone() const
 // OrderedBombarded                                      //
 ///////////////////////////////////////////////////////////
 OrderedBombarded::OrderedBombarded(std::unique_ptr<Condition>&& by_object_condition) :
-    Condition(),
     m_by_object_condition(std::move(by_object_condition))
 {
     m_root_candidate_invariant = !m_by_object_condition || m_by_object_condition->RootCandidateInvariant();
@@ -9565,7 +9496,7 @@ std::string OrderedBombarded::Dump(unsigned short ntabs) const
 bool OrderedBombarded::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "OrderedBombarded::Match passed no candidate object";
+        ErrorLogger(conditions) << "OrderedBombarded::Match passed no candidate object";
         return false;
     }
 
@@ -9587,7 +9518,7 @@ unsigned int OrderedBombarded::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::OrderedBombarded");
     CheckSums::CheckSumCombine(retval, m_by_object_condition);
 
-    TraceLogger() << "GetCheckSum(OrderedBombarded): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(OrderedBombarded): retval: " << retval;
     return retval;
 }
 
@@ -9640,7 +9571,6 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref1,
                      std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref2,
                      ComparisonType comp2,
                      std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref3) :
-    Condition(),
     m_value_ref1(std::move(value_ref1)),
     m_value_ref2(std::move(value_ref2)),
     m_value_ref3(std::move(value_ref3)),
@@ -9658,7 +9588,6 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_re
                      std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref2,
                      ComparisonType comp2,
                      std::unique_ptr<ValueRef::ValueRef<std::string>>&& value_ref3) :
-    Condition(),
     m_string_value_ref1(std::move(value_ref1)),
     m_string_value_ref2(std::move(value_ref2)),
     m_string_value_ref3(std::move(value_ref3)),
@@ -9676,7 +9605,6 @@ ValueTest::ValueTest(std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref1,
                      std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref2,
                      ComparisonType comp2,
                      std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref3) :
-    Condition(),
     m_int_value_ref1(std::move(value_ref1)),
     m_int_value_ref2(std::move(value_ref2)),
     m_int_value_ref3(std::move(value_ref3)),
@@ -9931,7 +9859,7 @@ unsigned int ValueTest::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_compare_type1);
     CheckSums::CheckSumCombine(retval, m_compare_type2);
 
-    TraceLogger() << "GetCheckSum(ValueTest): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(ValueTest): retval: " << retval;
     return retval;
 }
 
@@ -10008,7 +9936,6 @@ namespace {
 Location::Location(ContentType content_type,
                    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name1,
                    std::unique_ptr<ValueRef::ValueRef<std::string>>&& name2) :
-    Condition(),
     m_name1(std::move(name1)),
     m_name2(std::move(name2)),
     m_content_type(content_type)
@@ -10113,7 +10040,7 @@ std::string Location::Dump(unsigned short ntabs) const {
 bool Location::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "Location::Match passed no candidate object";
+        ErrorLogger(conditions) << "Location::Match passed no candidate object";
         return false;
     }
 
@@ -10144,7 +10071,7 @@ unsigned int Location::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_name2);
     CheckSums::CheckSumCombine(retval, m_content_type);
 
-    TraceLogger() << "GetCheckSum(Location): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Location): retval: " << retval;
     return retval;
 }
 
@@ -10183,7 +10110,6 @@ namespace {
 
 CombatTarget::CombatTarget(ContentType content_type,
                            std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(),
     m_name(std::move(name)),
     m_content_type(content_type)
 {
@@ -10276,7 +10202,7 @@ std::string CombatTarget::Dump(unsigned short ntabs) const {
 bool CombatTarget::Match(const ScriptingContext& local_context) const {
     auto& candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "CombatTarget::Match passed no candidate object";
+        ErrorLogger(conditions) << "CombatTarget::Match passed no candidate object";
         return false;
     }
 
@@ -10303,7 +10229,7 @@ unsigned int CombatTarget::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_content_type);
 
-    TraceLogger() << "GetCheckSum(CombatTarget): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(CombatTarget): retval: " << retval;
     return retval;
 }
 
@@ -10316,7 +10242,6 @@ std::unique_ptr<Condition> CombatTarget::Clone() const {
 // And                                                   //
 ///////////////////////////////////////////////////////////
 And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
-    Condition(),
     m_operands(std::move(operands))
 {
     m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
@@ -10325,8 +10250,7 @@ And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
 }
 
 And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
-         std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4) :
-    Condition()
+         std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4)
 {
     // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
     if (operand1) {
@@ -10369,12 +10293,12 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                ObjectSet& non_matches, SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
 {
     if (m_operands.empty()) {
-        ErrorLogger() << "And::Eval given no operands!";
+        ErrorLogger(conditions) << "And::Eval given no operands!";
         return;
     }
     for (auto& operand : m_operands) {
         if (!operand) {
-            ErrorLogger() << "And::Eval given null operand!";
+            ErrorLogger(conditions) << "And::Eval given null operand!";
             return;
         }
     }
@@ -10506,7 +10430,7 @@ unsigned int And::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::And");
     CheckSums::CheckSumCombine(retval, m_operands);
 
-    TraceLogger() << "GetCheckSum(And): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(And): retval: " << retval;
     return retval;
 }
 
@@ -10525,7 +10449,6 @@ std::unique_ptr<Condition> And::Clone() const
 // Or                                                    //
 ///////////////////////////////////////////////////////////
 Or::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
-    Condition(),
     m_operands(std::move(operands))
 {
     m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
@@ -10533,11 +10456,8 @@ Or::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
     m_source_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-Or::Or(std::unique_ptr<Condition>&& operand1,
-       std::unique_ptr<Condition>&& operand2,
-       std::unique_ptr<Condition>&& operand3,
-       std::unique_ptr<Condition>&& operand4) :
-    Condition()
+Or::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
+       std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4)
 {
     // would prefer to initialize the vector m_operands in the initializer list, but this is difficult with non-copyable unique_ptr parameters
     if (operand1) {
@@ -10580,12 +10500,12 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
 {
     if (m_operands.empty()) {
-        ErrorLogger() << "Or::Eval given no operands!";
+        ErrorLogger(conditions) << "Or::Eval given no operands!";
         return;
     }
     for (auto& operand : m_operands) {
         if (!operand) {
-            ErrorLogger() << "Or::Eval given null operand!";
+            ErrorLogger(conditions) << "Or::Eval given null operand!";
             return;
         }
     }
@@ -10717,7 +10637,7 @@ unsigned int Or::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::Or");
     CheckSums::CheckSumCombine(retval, m_operands);
 
-    TraceLogger() << "GetCheckSum(Or): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Or): retval: " << retval;
     return retval;
 }
 
@@ -10728,7 +10648,6 @@ std::unique_ptr<Condition> Or::Clone() const
 // Not                                                   //
 ///////////////////////////////////////////////////////////
 Not::Not(std::unique_ptr<Condition>&& operand) :
-    Condition(),
     m_operand(std::move(operand))
 {
     m_root_candidate_invariant = !m_operand || m_operand->RootCandidateInvariant();
@@ -10753,7 +10672,7 @@ void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Objec
                SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
 {
     if (!m_operand) {
-        ErrorLogger() << "Not::Eval found no subcondition to evaluate!";
+        ErrorLogger(conditions) << "Not::Eval found no subcondition to evaluate!";
         return;
     }
 
@@ -10788,7 +10707,7 @@ unsigned int Not::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::Not");
     CheckSums::CheckSumCombine(retval, m_operand);
 
-    TraceLogger() << "GetCheckSum(Not): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Not): retval: " << retval;
     return retval;
 }
 
@@ -10809,7 +10728,6 @@ namespace {
 
 OrderedAlternativesOf::OrderedAlternativesOf(
     std::vector<std::unique_ptr<Condition>>&& operands) :
-    Condition(),
     m_operands(std::move(operands))
 {
     m_root_candidate_invariant = boost::algorithm::all_of(m_operands, [](auto& e){ return !e || e->RootCandidateInvariant(); });
@@ -10839,12 +10757,12 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
                                  SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
 {
     if (m_operands.empty()) {
-        ErrorLogger() << "OrderedAlternativesOf::Eval given no operands!";
+        ErrorLogger(conditions) << "OrderedAlternativesOf::Eval given no operands!";
         return;
     }
     for (auto& operand : m_operands) {
         if (!operand) {
-            ErrorLogger() << "OrderedAlternativesOf::Eval given null operand!";
+            ErrorLogger(conditions) << "OrderedAlternativesOf::Eval given null operand!";
             return;
         }
     }
@@ -10984,7 +10902,7 @@ unsigned int OrderedAlternativesOf::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::OrderedAlternativesOf");
     CheckSums::CheckSumCombine(retval, m_operands);
 
-    TraceLogger() << "GetCheckSum(OrderedAlternativesOf): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(OrderedAlternativesOf): retval: " << retval;
     return retval;
 }
 
@@ -11003,7 +10921,6 @@ std::unique_ptr<Condition> OrderedAlternativesOf::Clone() const
 // Described                                             //
 ///////////////////////////////////////////////////////////
 Described::Described(std::unique_ptr<Condition>&& condition, const std::string& desc_stringtable_key) :
-    Condition(),
     m_condition(std::move(condition)),
     m_desc_stringtable_key(desc_stringtable_key)
 {
@@ -11032,7 +10949,7 @@ void Described::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                      SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
 {
     if (!m_condition) {
-        ErrorLogger() << "Described::Eval found no subcondition to evaluate!";
+        ErrorLogger(conditions) << "Described::Eval found no subcondition to evaluate!";
         return;
     }
     return m_condition->Eval(parent_context, matches, non_matches, search_domain);
@@ -11058,7 +10975,7 @@ unsigned int Described::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_condition);
     CheckSums::CheckSumCombine(retval, m_desc_stringtable_key);
 
-    TraceLogger() << "GetCheckSum(Described): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(Described): retval: " << retval;
     return retval;
 }
 
