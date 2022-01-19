@@ -313,8 +313,11 @@ std::string EffectsGroup::Dump(unsigned short ntabs) const {
         retval += DumpIndent(ntabs+1) + "activation =\n";
         retval += m_activation->Dump(ntabs+2);
     }
+    if (!m_accounting_label.empty())
+        retval += DumpIndent(ntabs+1) + "accountinglabel = \"" + m_accounting_label + "\"\n";
     if (!m_stacking_group.empty())
         retval += DumpIndent(ntabs+1) + "stackinggroup = \"" + m_stacking_group + "\"\n";
+    retval += DumpIndent(ntabs+1) + "priority = " + std::to_string(m_priority) + "\n";
     if (m_effects.size() == 1) {
         retval += DumpIndent(ntabs+1) + "effects =\n";
         retval += m_effects[0]->Dump(ntabs+2);
