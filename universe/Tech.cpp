@@ -231,10 +231,21 @@ std::string Tech::Dump(unsigned short ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Tech\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
     retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
-    retval += DumpIndent(ntabs+1) + "shortdescription = \"" + m_short_description + "\"\n";
+    retval += DumpIndent(ntabs+1) + "short_description = \"" + m_short_description + "\"\n";
     retval += DumpIndent(ntabs+1) + "category = \"" + m_category + "\"\n";
     retval += DumpIndent(ntabs+1) + "researchcost = " + m_research_cost->Dump(ntabs+1) + "\n";
     retval += DumpIndent(ntabs+1) + "researchturns = " + m_research_turns->Dump(ntabs+1) + "\n";
+    if (!m_tags.empty()) {
+        retval += DumpIndent(ntabs+1) + "tags = ";
+        if (m_tags.size() == 1) {
+            retval += "[ \"" + *m_tags.begin() + "\" ]\n";
+        } else {
+            retval += "[\n";
+            for (const std::string& tag : m_tags)
+                retval += DumpIndent(ntabs+2) + "\"" + tag + "\"\n";
+            retval += DumpIndent(ntabs+1) + "]\n";
+        }
+    }
     retval += DumpIndent(ntabs+1) + "prerequisites = ";
     if (m_prerequisites.empty()) {
         retval += "[]\n";
