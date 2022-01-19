@@ -1168,7 +1168,7 @@ Escalado de coste de partes
 #* <not translated 1970-01-01 01:00:00>
 
 RULE_STARLANES_EVERYWHERE
-Vías Estelares Completas
+Vías estelares completas
 
 RULE_STARLANES_EVERYWHERE_DESC
 Se crean vías estelares entre cada par de sistemas, independientemente de la geometría. Estas vías pueden, aún así, ser eliminada durante la partida. Estas vías no aparecen en el mapa de la galaxia.
@@ -1180,7 +1180,7 @@ RULE_ALL_OBJECTS_VISIBLE_DESC
 Todo sistema, planeta, edificio, flota, nave o campo puede ser detectado por todos los imperios con al menos visibilidad parcial.
 
 RULE_ALL_SYSTEMS_VISIBLE
-Todos los sismteas visibles
+Todos los sistemas visibles
 
 RULE_ALL_SYSTEMS_VISIBLE_DESC
 La localización de todos los sistemas es conocida por todos los imperios.
@@ -1189,13 +1189,13 @@ RULE_EXTRASOLAR_SHIP_DETECTION
 Detección de naves extrasolares
 
 RULE_EXTRASOLAR_SHIP_DETECTION_DESC
-Las naves fuera del sistema pueden otorgan capacidad de detección
+Las naves fuera de sistemas solares otorgan detección.
 
 RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
-Planetas Sigilosos Indetectables
+Planetas sigilosos invisibles
 
 RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_DESC
-'''<u>Activado</u>: Los planetas con mayor sigilo que la capacidad de detección de un imperio no pueden ser detectadas simplemente con que dicho imperio disponga de un objeto en el mismo sistema,salvo que ese planeta ya haya sido previamente detectado por el imperio.
+'''<u>Activado</u>: Los planetas con mayor sigilo que la capacidad de detección de un imperio no pueden ser detectadas simplemente con que dicho imperio disponga de un objeto en el mismo sistema, salvo que ese planeta ya haya sido previamente detectado por el imperio.
 
 <u>Desactivado</u>: Los planetas con mayor nivel de sigilo que la capacidad de detección de un imperio pueden ser detectados por dicho imperio si éste posee un objeto en su sistema.'''
 
@@ -1363,7 +1363,7 @@ OPTIONS_DB_GALAXY_MAP_GAS
 Renderizar substancias gaseosas alrededor de los sistemas para dar forma a la galaxia. Puede retrasar el renderizado en sistemas antiguos.
 
 OPTIONS_DB_GALAXY_MAP_STARFIELDS
-Renderizar líneas estelares alrededor de los sistemas. Puede retrasar el renderizado en sistemas antiguos.
+Renderizar vías estelares alrededor de los sistemas. Puede retrasar el renderizado en sistemas antiguos.
 
 #*OPTIONS_DB_GALAXY_MAP_STARFIELDS_SCALE
 #* <not translated 1970-01-01 01:00:00>
@@ -2979,7 +2979,7 @@ OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE
 Tasa de punto de líneas de suministro de flota
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
-Color de la línea estelar por defecto
+Color de la vía estelar por defecto
 
 OPTIONS_UI_QUEUE_WIDTH
 Ancho de la cola
@@ -12703,9 +12703,9 @@ BLD_BIOTERROR_PROJECTOR
 Base de Proyección Bioterror
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Esta base de guerra biológica clandestina contamina planetas enemigos en la vecindad. Reduce gradualmente la salud de planetas enemigos a cuatro saltos de línea estelar hasta que la población desaparezca. Estas actividades no se dan a conocer en público y solo puede ser construido en un planeta con una luna resonante. Inefectivo si el imperio enemigo tiene el edificio Banco de Genomas. Este edificio puede ser construido también en un puesto de avanzada, siempre que tenga una luna resonante.
+'''Esta base de guerra biológica clandestina contamina planetas enemigos en la vecindad. Reduce gradualmente la salud de planetas enemigos a cuatro saltos de vía estelar hasta que la población desaparezca. Estas actividades no se dan a conocer en público y solo puede ser construido en un planeta con una luna resonante. Inefectivo si el imperio enemigo tiene el edificio Banco de Genomas. Este edificio puede ser construido también en un puesto de avanzada, siempre que tenga una luna resonante.
 
-Proporciona al planeta en el que se construye el enfoque BioTerror, que decrementa la salud en planetas enemigos a cuatro saltos de línea estelar a dos por turno, siempre que el imperio enemigo no contenga un Banco de Genomas.'''
+Proporciona al planeta en el que se construye el enfoque BioTerror, que decrementa la salud en planetas enemigos a cuatro saltos de vía estelar a dos por turno, siempre que el imperio enemigo no contenga un Banco de Genomas.'''
 
 BLD_LIGHTHOUSE
 Faro Interestelar
@@ -12940,7 +12940,7 @@ Motor Planetario de Línea Estelar
 BLD_PLANET_DRIVE_DESC
 '''Permite a un planeta moverse entre sistemas estelares. Un faro interestelar es necesario entre 200 uus de distancia del sistema objetivo para permitir al planeta proceder de forma segura. De otra forma, el planeta tiene un 50% de posibilidades de ser destruido en transito. Es una jornada hazarosa incluso si el planeta sobrevive y solo la mitad de la población vivirá incluso con el soporte de faros interestelares. Este edificio puede ser construido en un puesto de avanzada, pero no en un cinturón de asteroides.
 
-Debido a la falta de apuntador UI, un segundo edificio es actualmente necesario en el otro lado de la línea estelar. Este edificio se autodestruirá inmediatemente, para que el planeta pueda moverse a una sistema estelar objetivo diferente mas adelante.
+Debido a la falta de apuntador UI, un segundo edificio es actualmente necesario en el otro lado de la vía estelar. Este edificio se autodestruirá inmediatemente, para que el planeta pueda moverse a una sistema estelar objetivo diferente mas adelante.
 
 Para usar este edificio, establece el planeta en enfoque Motor Planetario y construye una Sonda Planetaria en el sistema adyacente. El planeta será movido a ese sistema.'''
 
@@ -12948,7 +12948,7 @@ BLD_PLANET_BEACON
 Sonda Planetaria
 
 BLD_PLANET_BEACON_DESC
-Designa el objetivo para el motor de línea estelar planetario. Este edificio puede ser construido en un puesto de avanzada.
+Designa el objetivo para el motor de vía estelar planetario. Este edificio puede ser construido en un puesto de avanzada.
 
 BLD_ART_PLANET
 Planeta Artificial
@@ -13004,7 +13004,7 @@ BLD_SPATIAL_DISTORT_GEN
 Generador de Distorsión Espacial
 
 BLD_SPATIAL_DISTORT_GEN_DESC
-Manipulando las propiedades dimensionales de una línea estelar, sería posible plegarla selectivamente para que una nave en camino con una velocidad suficientemente baja pueda volver por donde vino, gastando su tiempo y combustible.
+Manipulando las propiedades dimensionales de una vía estelar, sería posible plegarla selectivamente para que una nave en camino con una velocidad suficientemente baja pueda volver por donde vino, gastando su tiempo y combustible.
 
 BLD_STARGATE
 Puerta Estelar
