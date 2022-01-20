@@ -8660,23 +8660,38 @@ Homeworld:
 A swamp world with a dense atmosphere and fairly dense biosphere.
 '''
 
+SP_THENIAN
+Thenian
+
+SP_THENIAN_GAMEPLAY_DESC
+'''Thoughtful gasbags.
+[[encyclopedia GASEOUS_SPECIES_TITLE]]
+'''
+
+SP_THENIAN_DESC
+'''
+At home in the boundary layers between the ultra high pressured inner atmosphere of their [[PT_GASGIANT]] and the outermost metallic helium core. They thrive on the magnetic differential currents and are subject to periodical population dieoffs when .. whatnots from the whatchallwecallthems ..
+
+As integrated as they are into their world's internal structure, it makes no sense for the Thenian to leave. Unless another [[PT_GASGIANT]] were to physically come into contact with theirs, they just can not make the jump into space is all.
+'''
+
 SP_CELESTEPHYTE
 Celestephyte
 
 SP_CELESTEPHYTE_GAMEPLAY_DESC
 '''
 Slow growing telepathic lichen. Quite fragile and mostly harmless.
-[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], lives only on a few asteroids.
 '''
 
 SP_CELESTEPHYTE_DESC
 '''
 
-bla. bla. bla.
-symbiosis with an astral fungus or somesuch, travels the mycelial webworks, but only in its dreams.
+Although parts easily break off and can be transplanted on virgin rocks, it is highly unlikely they will ever take root. Certain rare trace elements (see ->Unobtainium) needed by its symbiotic astral fungus to telepathically travel the interdimensional universal webworks are so rare indeed, that Celestephyte have long since ago colonized every single rock even remotely habitable to them.
 
-Although parts easily break off and can be transplanted on virgin rocks, they do not ... hm.
+While adult Celestephyte have prehensile appendages and can in theory do some useful work, they rarely do so in practice and like to stick to the theory. Much rather prefer they to not disturb the delicate interconnectedness of all their minute little mycelia, their intra- and interasteroidal web of fungus roots so to speak. But most of all they prefer not to be disturbed.
 
+When confronted with an enemy anyway, they try to stun them with their blatant incompetence and by staring them in the eyes if they have eyes and not yet invented the technology of protective sun goggles. Sometimes this even has the intended effect, but indirectly, because the attacker laugh themselves to death in a hysteric frenzy induced by the astral fungus'es spores transmitted telepathically through the accusing gaze of the defending Celestephyte. But that mostly works only on the weak minded, who would not have come to confront the ancient Celestephyte in the first place. That makes them kind of not quite adapted to this galaxy's way of live and some experts in the field of astromycology have speculated, that Celestephyte were originally introduced from Andromeda during the second coming of Chtullluhhulurtl by its fierceful minnions, the Fluffy Teddy Tenderizers, as they were called back in those dark and pre-empiric times.
 '''
 
 SP_KHAKTURIAN
@@ -8727,7 +8742,9 @@ Highly adapted to and at home in the eternal infernal night.
 SP_NIGHTSIDERS_DESC
 '''
 
-Hated and feared by most other organic species for obvious reasons. Lurking in the shadows and preying on those, who naïvely wander into the dark. Their thirst for blood is not based on any ideology or emotion but purely on the necessities of biology. In this case haematophagy, living off of others' blood similar to the irritating tick or flee, but bigger and with space ships to boot. Although they'd like to be, they are not really telepathic. Instead, they are haemaesthetic – they can sense the blood of their potential victims over great distances. (Colonies of Nightsiders will detect nearby worlds populated with beings with [[encyclopedia ORGANIC_SPECIES_TITLE]]). They themselves call it their Sanguine Sensorium and describe it as a kind of itching, pointing them to the worlds where they can fall upon their victims at night.
+Hated and feared by most other organic species for obvious reasons. Lurking in the shadows and preying on those, who naïvely wander into the dark. Their thirst for blood is not based on any ideology or emotion but purely on the necessities of biology. In this case haematophagy, living off of others' blood similar to the irritating tick or flee, but bigger and with space ships to boot.
+
+Although they'd like to be, they are not really telepathic. Instead, they are haemaesthetic – they can sense the blood of their potential victims over great distances. (Colonies of Nightsiders will detect nearby worlds populated with beings with [[encyclopedia ORGANIC_SPECIES_TITLE]] up to 9 starlanes away). They themselves call it their Sanguine Sensorium and describe it as a kind of itching, pointing them to the worlds where they can fall upon their victims at night.
 
 They are so bad, they invite fire and brimstone. (Colonies of Nightsiders will attract a nearby [[fieldtype FLD_METEOR_BLIZZARD]]).
 
@@ -16870,6 +16887,9 @@ PRECOGNITIVE_DETECTION_DESC
 COMMUNAL_VISION_DESC
 ⋄	Communal Vision: shares visibility within the same species regardless of affiliation
 
+ARTISTIC_TRAIT_DESC
++	Artistic, improved stability and happiness
+
 
 ##
 ## Fuel regeneration
@@ -21563,6 +21583,14 @@ Rocinante
 Titanic'''
 
 # }
+# Newline separated ship name list based on various fictional monster names {
+SHIP_NAME_FICTIONAL_MONSTERS
+'''Beowulf
+Gormagander
+Nessi
+'''
+
+# }
 # Newline separated ship name list based on developer names {
 SHIP_NAME_DEVS
 '''Adrian Broher
@@ -21611,6 +21639,7 @@ MONSTER_NAMES
 [[SHIP_NAME_NORSE_MYTHOLOGY]]
 [[SHIP_NAME_BASQUE_MYTHOLOGY]]
 [[SHIP_NAME_UNSORTED_MYTHOLOGY]]
+[[SHIP_NAME_FICTIONAL_MONSTERS]]
 [[SHIP_NAME_DEVS]]'''
 
 #include "content_specific_parameters.txt"

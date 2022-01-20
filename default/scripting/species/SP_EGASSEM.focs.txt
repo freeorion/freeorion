@@ -38,7 +38,7 @@ Species
         [[LARGE_PLANET]]
         [[NARROW_EP]]
         [[STANDARD_SHIP_SHIELDS]]
-    ]
+   ]
 
     [[INFERNO_NARROW_EP]]
 

@@ -55,7 +55,7 @@ Species
 
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
-        [[HAEMAESTHETIC_DETECTION(7)]]
+        [[HAEMAESTHETIC_DETECTION(9)]]
         [[LIGHT_SENSITIVE]]
 
         // not for description

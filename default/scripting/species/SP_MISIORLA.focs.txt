@@ -33,7 +33,6 @@ Species
 
         [[BAD_DETECTION]]
         [[BAD_STEALTH]]
-
         [[BAD_FUEL]]
 
         // not for description

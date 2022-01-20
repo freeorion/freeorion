@@ -1362,14 +1362,28 @@ namespace {
         auto species_that_like = GetSpeciesManager().SpeciesThatLike(item_name);
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
+            bool first = true;
             detailed_description += "\n\n" + UserString("SPECIES_THAT_LIKE");
-            for (auto& name : species_that_like)
-                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name) + " ";
+            for (auto& name : species_that_like) {
+                if (first) {
+                    first = false;
+                } else {
+                    detailed_description += ", ";
+                }
+                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name);
+            }
         }
         if (!species_that_dislike.empty()) {
             detailed_description += "\n\n" + UserString("SPECIES_THAT_DISLIKE");
-            for (auto& name : species_that_dislike)
-                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name) + " ";
+            bool first = true;
+            for (auto& name : species_that_dislike) {
+                if (first) {
+                    first = false;
+                } else {
+                    detailed_description += ", ";
+                }
+                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name);
+            }
         }
 
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
@@ -1815,13 +1829,27 @@ namespace {
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_LIKE"));
-            for (auto& name : species_that_like)
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name))).append(" ");
+            bool first = true;
+            for (auto& name : species_that_like) {
+                if (first) {
+                    first = false;
+                } else {
+                    detailed_description.append(", ");
+                }
+                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
+            }
         }
         if (!species_that_dislike.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_DISLIKE"));
-            for (auto& name : species_that_dislike)
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name))).append(" ");
+            bool first = true;
+            for (auto& name : species_that_dislike) {
+                if (first) {
+                    first = false;
+                } else {
+                    detailed_description.append(", ");
+                }
+                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
+            }
         }
 
 
@@ -2275,7 +2303,11 @@ namespace {
             detailed_description += "\n\n" + UserString("LIKES");
             int count = 0;
             for (const auto& s : species->Likes())
-                detailed_description += (count++ == 0 ? "" : ", ") + UserString(s);
+                detailed_description
+                .append(count++ == 0 ? "" : ",  ")
+                //.append(LinkTaggedPresetText(VarText::ENCYCLOPEDIA_TAG,s,UserString(s)))
+                .append(UserString(s))
+                ;
         }
 
         // dislikes
@@ -2283,7 +2315,11 @@ namespace {
             detailed_description.append("\n\n").append(UserString("DISLIKES"));
             int count = 0;
             for (const auto& s : species->Dislikes())
-                detailed_description += (count++ == 0 ? "" : ", ") + UserString(s);
+                detailed_description
+                .append(count++ == 0 ? "" : ",  ")
+                //.append(LinkTaggedPresetText(VarText::ENCYCLOPEDIA_TAG,s,UserString(s)))
+                .append(UserString(s))
+                ;
         }
 
         // environmental preferences
@@ -2379,14 +2415,27 @@ namespace {
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_LIKE"));
-            for (auto& name : species_that_like)
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)))
-                    .append(" ");
+            bool first = true;
+            for (auto& name : species_that_like) {
+                if (first) {
+                    first = false;
+                } else {
+                    detailed_description.append(", ");
+                }
+                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
+            }
         }
         if (!species_that_dislike.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_DISLIKE"));
-            for (auto& name : species_that_dislike)
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name))).append(" ");
+            bool first = true;
+            for (auto& name : species_that_dislike) {
+                if (first) {
+                    first = false;
+                } else {
+                    detailed_description.append(", ");
+                }
+                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
+            }
         }
 
         // Long description
@@ -2425,15 +2474,27 @@ namespace {
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_LIKE"));
-            for (auto& name : species_that_like)
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)))
-                    .append(" ");
+            bool first = true;
+            for (auto& name : species_that_like) {
+                if (first) {
+                    first = false;
+                } else {
+                    detailed_description.append(", ");
+                }
+                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
+            }
         }
         if (!species_that_dislike.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_DISLIKE"));
-            for (auto& name : species_that_dislike)
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)))
-                    .append(" ");
+            bool first = true;
+            for (auto& name : species_that_dislike) {
+                if (first) {
+                    first = false;
+                } else {
+                    detailed_description.append(", ");
+                }
+                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
+            }
         }
 
 

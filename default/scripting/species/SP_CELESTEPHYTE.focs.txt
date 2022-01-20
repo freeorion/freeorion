@@ -3,7 +3,6 @@ Species
     description = "SP_CELESTEPHYTE_DESC"
     gameplay_description = "SP_CELESTEPHYTE_GAMEPLAY_DESC"
     Native
-    CanColonize
 
 
     // Asteroid Belt: Celestephyte: No Ships, Telepathic, Phototrophic
@@ -25,12 +24,12 @@ Species
         "FOCUS_GROWTH"            // what else would a plant want?
         "PLC_POPULATION"          // grow, grow, grow your load, gently down the ..
     ]
-    dislikes = [ // dislikes all other desert species because they compete for habitat
+    dislikes = [ // dislikes anything disturbing their fragile habitat or irritating their telepathic minds
         "PLC_NO_GROWTH"           // is a plant, they like to grow
         "BLD_SHIPYARD_AST"        // disturbs the rocks
         "BLD_SHIPYARD_AST_REF"    // same
         "JUGGERNAUT_NEST_SPECIAL" // compete for rocks
-        
+        "ECCENTRIC_ORBIT_SPECIAL" // messes up all those orbital resonances, quite unharmoniously
     ]
 
     effectsgroups = [
