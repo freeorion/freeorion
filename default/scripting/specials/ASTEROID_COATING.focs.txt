@@ -24,10 +24,16 @@ Special
                 OwnedBy affiliation = AnyEmpire
             ]     
             activation = Source
-            effects = [
-                AddSpecial name = "ASTEROID_COATING_OWNED_SPECIAL"
-                RemoveSpecial name = "ASTEROID_COATING_SPECIAL"
+            effects = SetStealth value = 5
+
+        // Gives a 10% structure bonus to all ships with asteroid hulls in the empire
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                HasTag name = "ASTEROID_HULL"
             ]
+            effects = SetMaxStructure value = Value + 0.1*Value accountinglabel = "ASTEROID_COATING_SPECIAL"
     ]
     graphic = "icons/specials_huge/asteroid_coating.png"
 #include "/scripting/common/priorities.macros"
