@@ -3995,10 +3995,16 @@ namespace {
                 return false;
 
             // is it a planet or on a planet?
-            auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
-            std::shared_ptr<const ::Building> building;
-            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
-                planet = m_objects.get<Planet>(building->PlanetID());
+
+            auto* object = candidate.get();
+            const Planet* planet = nullptr;
+            if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+                planet = static_cast<const Planet*>(object);
+            } else if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+                auto building = static_cast<const ::Building*>(object);
+                planet = m_objects.getRaw<Planet>(building->PlanetID());
+            }
+
             if (planet) {
                 // is it one of the specified building types?
                 return std::count(m_types.begin(), m_types.end(), planet->Type());
@@ -4088,14 +4094,19 @@ bool PlanetType::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
-    std::shared_ptr<const ::Building> building;
-    if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
-        planet = local_context.ContextObjects().get<Planet>(building->PlanetID());
+    auto* object = candidate.get();
+    const Planet* planet = nullptr;
+    if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+        planet = static_cast<const Planet*>(object);
+    } else if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+        auto building = static_cast<const ::Building*>(object);
+        planet = local_context.ContextObjects().getRaw<Planet>(building->PlanetID());
+    }
 
     if (planet) {
+        auto planet_type = planet->Type();
         for (auto& type : m_types) {
-            if (type->Eval(local_context) == planet->Type())
+            if (type->Eval(local_context) == planet_type)
                 return true;
         }
     }
@@ -4162,14 +4173,20 @@ namespace {
                 return false;
 
             // is it a planet or on a planet? TODO: This concept should be generalized and factored out.
-            auto planet = std::dynamic_pointer_cast<const Planet>(candidate);
-            std::shared_ptr<const ::Building> building;
-            if (!planet && (building = std::dynamic_pointer_cast<const ::Building>(candidate)))
-                planet = m_objects.get<Planet>(building->PlanetID());
+            auto* object = candidate.get();
+            const Planet* planet = nullptr;
+            if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+                planet = static_cast<const Planet*>(object);
+            } else if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+                auto building = static_cast<const ::Building*>(object);
+                planet = m_objects.getRaw<Planet>(building->PlanetID());
+            }
+
             if (planet) {
+                auto planet_size = planet->Size();
                 // is it one of the specified building types?
                 for (auto size : m_sizes) {
-                    if (planet->Size() == size)
+                    if (planet_size == size)
                         return true;
                 }
             }
