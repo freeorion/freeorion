@@ -17,6 +17,7 @@
 #include "../../UI/MultiplayerLobbyWnd.h"
 #include "../../UI/PasswordEnterWnd.h"
 #include "../../UI/MapWnd.h"
+#include "../../UI/Sound.h"
 
 #include <boost/format.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -128,6 +129,7 @@ IntroMenu::IntroMenu(my_context ctx) :
     Base(ctx)
 {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu";
+    Sound::GetSound().PlayTitleMusic();
     Client().GetClientUI().ShowIntroScreen();
     GetGameRules().ResetToDefaults();
 }
@@ -138,23 +140,27 @@ IntroMenu::~IntroMenu()
 boost::statechart::result IntroMenu::react(const HostSPGameRequested& a) {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu.HostSPGameRequested";
     Client().Remove(Client().GetClientUI().GetIntroScreen());
+    Sound::GetSound().PlayBackgroundMusic();
     return transit<WaitingForSPHostAck>();
 }
 
 boost::statechart::result IntroMenu::react(const HostMPGameRequested& a) {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu.HostMPGameRequested";
     Client().Remove(Client().GetClientUI().GetIntroScreen());
+    Sound::GetSound().PlayBackgroundMusic();
     return transit<WaitingForMPHostAck>();
 }
 
 boost::statechart::result IntroMenu::react(const JoinMPGameRequested& a) {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu.JoinMPGameRequested";
     Client().Remove(Client().GetClientUI().GetIntroScreen());
+    Sound::GetSound().PlayBackgroundMusic();
     return transit<WaitingForMPJoinAck>();
 }
 
 boost::statechart::result IntroMenu::react(const StartQuittingGame& e) {
     TraceLogger(FSM) << "(HumanClientFSM) Quit or reset to main menu.";
+    Sound::GetSound().PlayTitleMusic();
     post_event(e);
     return transit<QuittingGame>();
 }

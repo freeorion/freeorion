@@ -1420,6 +1420,9 @@ Enables music in the game.
 OPTIONS_DB_BG_MUSIC
 Sets the background track to play.
 
+OPTIONS_DB_TITLE_MUSIC
+Sets the track to play on the title screen.
+
 OPTIONS_DB_FULLSCREEN
 Start the game in fullscreen. Clicking Apply may cause this to take effect, or may require a restart.
 
@@ -3119,6 +3122,9 @@ Show Queue Production Location
 
 OPTIONS_MUSIC
 Music
+
+OPTIONS_TITLE_MUSIC
+Title Music
 
 OPTIONS_UI_SOUNDS
 UI sounds

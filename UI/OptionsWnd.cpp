@@ -503,6 +503,9 @@ void OptionsWnd::CompleteConstruction() {
     FileOption(current_page, 0, "audio.music.path", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
                {UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX},
                ValidMusicFile);
+    FileOption(current_page, 0, "audio.titlemusic.path", UserString("OPTIONS_TITLE_MUSIC"), ClientUI::SoundDir(),
+               {UserString("OPTIONS_TITLE_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX},
+               ValidMusicFile);
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_SOUNDS"));
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_UI_SOUNDS"));

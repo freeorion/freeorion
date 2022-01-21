@@ -37,6 +37,10 @@ public:
         loops + 1 times otherwise. */
     void PlayMusic(const boost::filesystem::path& path, int loops = 0);
 
+    void PlayBackgroundMusic();
+
+    void PlayTitleMusic();
+
     /** Pauses music play, to be continued from the same position */
     void PauseMusic();
 
@@ -522,6 +526,18 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
     auto openal_error = alGetError();
     if (openal_error != AL_NONE)
         ErrorLogger() << "PlayMusic: OpenAL ERROR: " << alGetString(openal_error);
+}
+
+void Sound::PlayBackgroundMusic() {
+    if ((GetOptionsDB().Get<bool>("audio.music.enabled")))
+        Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.path"), -1);
+    return;
+}
+
+void Sound::PlayTitleMusic() {
+    if ((GetOptionsDB().Get<bool>("audio.music.enabled")))
+        Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.titlemusic.path"), -1);
+    return;
 }
 
 void Sound::Impl::PauseMusic() {

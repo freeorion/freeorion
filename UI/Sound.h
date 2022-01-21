@@ -30,6 +30,12 @@ public:
         loops + 1 times otherwise. */
     void PlayMusic(const boost::filesystem::path& path, int loops = 0);
 
+    /** Switch to background music */
+    void PlayBackgroundMusic();
+
+    /** Switch to Title screen music */
+    void PlayTitleMusic();
+
     /** Pauses music play, to be continued from the same position */
     void PauseMusic();
 
