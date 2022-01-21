@@ -232,15 +232,23 @@ namespace parse {
     };
 
     struct int_arithmetic_rules;
+    namespace detail {
+        struct star_type_parser_rules;
+    }
 
     struct int_complex_parser_grammar : public detail::complex_variable_grammar<int> {
         int_complex_parser_grammar(const lexer& tok,
                                    detail::Labeller& label,
                                    const int_arithmetic_rules& _int_arith_rules,
+                                   const detail::condition_parser_grammar& condition_parser,
                                    const detail::value_ref_grammar<std::string>& string_grammar);
-
+        // imported grammars directly used in int_complex_parser_grammar
         const int_arithmetic_rules&         int_rules;
         ship_part_class_enum_grammar        ship_part_class_enum;
+        //std::unique_ptr<detail::star_type_parser_rules> star_type_rules;
+        detail::star_type_parser_rules*     star_type_rules; // XXX or enum_value_ref_rules<StarType>?
+        //detail::enum_value_ref_rules<StarType>     star_type_rules;
+        // grammars defined by int_complex_parser_grammar
         detail::complex_variable_rule<int>  game_rule;
         detail::complex_variable_rule<int>  empire_name_ref;
         detail::complex_variable_rule<int>  empire_id_ref;
@@ -256,6 +264,7 @@ namespace parse {
         detail::complex_variable_rule<int>  slots_in_hull;
         detail::complex_variable_rule<int>  slots_in_ship_design;
         detail::complex_variable_rule<int>  special_added_on_turn;
+        detail::complex_variable_rule<int>  clockwise_planet_type_distance;
         detail::complex_variable_rule<int>  start;
     };
 

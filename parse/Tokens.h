@@ -57,6 +57,7 @@
     (ceil)                                      \
     (class)                                     \
     (ClockwiseNextPlanetType)                   \
+    (ClockwisePlanetTypeDistance)               \
     (Colony)                                    \
     (colour)                                    \
     (CombatBout)                                \
@@ -158,6 +159,7 @@
     (focus)                                     \
     (Focus)                                     \
     (FocusType)                                 \
+    (from)                                      \
     (fuel)                                      \
     (Fuel)                                      \
     (Full)                                      \
@@ -581,6 +583,7 @@
     (TopPriorityResearchableTech)               \
     (TopPriorityTransferrableTech)              \
     (TotalFighterShots)                         \
+    (to)                                        \
     (Toxic)                                     \
     (Trade)
 

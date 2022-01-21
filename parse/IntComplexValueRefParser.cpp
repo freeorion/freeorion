@@ -1,9 +1,12 @@
 #include "ValueRefParser.h"
+#include "EnumValueRefRules.h"
 
 #include "MovableEnvelope.h"
 #include "../universe/ValueRefs.h"
+
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/include/qi_as.hpp>
+
 
 namespace parse {
     namespace detail {
@@ -18,11 +21,13 @@ namespace parse {
         const parse::lexer& tok,
         detail::Labeller& label,
         const int_arithmetic_rules& _int_arith_rules,
+        const parse::detail::condition_parser_grammar& condition_parser,
         const detail::value_ref_grammar<std::string>& string_grammar
     ) :
         int_complex_parser_grammar::base_type(start, "int_complex_parser_grammar"),
         int_rules(_int_arith_rules),
-        ship_part_class_enum(tok)
+        ship_part_class_enum(tok),
+        star_type_rules(new detail::star_type_parser_rules(tok, label, condition_parser))
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
@@ -205,6 +210,14 @@ namespace parse {
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
             ;
 
+        clockwise_planet_type_distance
+            =   (
+                    tok.ClockwisePlanetTypeDistance_
+                    >-( label(tok.from_)   > string_grammar ) // TODO use cast as string and enum grammar
+                    >-( label(tok.to_) > int_rules.expr ) // TODO like above
+            ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
+            ;
+
         start
             %=  game_rule
             |   empire_name_ref
@@ -220,6 +233,7 @@ namespace parse {
             |   slots_in_hull
             |   slots_in_ship_design
             |   special_added_on_turn
+            |   clockwise_planet_type_distance
             ;
 
         game_rule.name("GameRule");
@@ -237,6 +251,7 @@ namespace parse {
         slots_in_hull.name("SlotsInHull");
         slots_in_ship_design.name("SlotsInShipDesign");
         special_added_on_turn.name("SpecialAddedOnTurn");
+        clockwise_planet_type_distance.name("ClockwisePlanetTypeDistance");
 
 #if DEBUG_INT_COMPLEX_PARSERS
         debug(game_rule);
@@ -254,6 +269,7 @@ namespace parse {
         debug(slots_in_hull);
         debug(slots_in_ship_design);
         debug(special_added_on_turn);
+        debug(clockwise_planet_type_distance);
 #endif
     }
 }
