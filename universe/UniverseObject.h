@@ -165,6 +165,7 @@ public:
     /** moves this object to exact map coordinates of specified \a object. */
     void            MoveTo(const std::shared_ptr<const UniverseObject>& object);
     void            MoveTo(const std::shared_ptr<UniverseObject>& object);
+    void            MoveTo(const UniverseObject* object);
 
     /** moves this object to map coordinates (x, y). */
     void            MoveTo(double x, double y);

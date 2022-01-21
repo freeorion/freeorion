@@ -306,6 +306,14 @@ void UniverseObject::MoveTo(const std::shared_ptr<UniverseObject>& object) {
     MoveTo(object->X(), object->Y());
 }
 
+void UniverseObject::MoveTo(const UniverseObject* object) {
+    if (!object) {
+        ErrorLogger() << "UniverseObject::MoveTo : attempted to move to a null object.";
+        return;
+    }
+    MoveTo(object->X(), object->Y());
+}
+
 void UniverseObject::MoveTo(double x, double y) {
     if (m_x == x && m_y == y)
         return;
