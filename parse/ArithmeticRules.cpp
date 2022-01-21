@@ -5,7 +5,7 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 
-namespace parse { namespace detail {
+namespace parse::detail {
 
     template <typename T>
     arithmetic_rules<T>::arithmetic_rules(
@@ -242,4 +242,4 @@ namespace parse { namespace detail {
         const parse::detail::condition_parser_grammar& condition_parser,
         const detail::value_ref_grammar<std::string>& string_grammar);
 
-    }}
+}

@@ -5,7 +5,7 @@
 
 #include "../universe/Planet.h"
 
-namespace parse { namespace detail {
+namespace parse::detail {
     planet_type_parser_rules::planet_type_parser_rules(
         const parse::lexer& tok,
         Labeller& label,
@@ -38,4 +38,4 @@ namespace parse { namespace detail {
             |   tok.GasGiant_   [ _val = PlanetType::PT_GASGIANT ]
             ;
     }
-} }
+}

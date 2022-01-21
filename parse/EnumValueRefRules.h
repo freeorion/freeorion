@@ -4,8 +4,7 @@
 #include "ValueRefParser.h"
 #include "MovableEnvelope.h"
 
-namespace parse {
-    namespace detail {
+namespace parse::detail {
 
     template <typename T>
     void initialize_nonnumeric_statistic_parser(
@@ -234,7 +233,7 @@ namespace parse {
                                           const condition_parser_grammar& condition_parser);
     };
 
-}}
+}
 
 
 #endif
