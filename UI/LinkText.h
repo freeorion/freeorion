@@ -189,6 +189,15 @@ std::string LinkTaggedPresetText(std::string_view tag, std::string_view stringta
  */
 std::string LinkStringIfPossible(std::string raw, std::string user_string);
 
+/**
+ * Helper method for generating comma seperated lists of pedia links
+ * for the given vector of strings. Every single string will be fed
+ * into the above helper method to make a link if possible.
+ */
+std::string LinkList(std::vector<std::string> strings);
+std::string LinkList(std::vector<std::string_view> strings);
+std::string LinkList(std::set<std::string> strings);
+
 /// Free function to register link tags that TextLinker knows of.  This allows GG::Font to remove
 /// them so that they will not be rendered.  Must be called at least once before text with embedded
 /// XML tags is handled by GG::Font

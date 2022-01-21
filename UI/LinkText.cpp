@@ -3,11 +3,13 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "../Empire/Empire.h"
+#include "../Empire/Government.h"
 #include "../universe/BuildingType.h"
 #include "../universe/NamedValueRefManager.h"
 #include "../universe/ShipHull.h"
 #include "../universe/ShipPart.h"
 #include "../universe/Special.h"
+#include "../universe/Tech.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ValueRefs.h"
 #include "../util/AppInterface.h"
@@ -579,9 +581,39 @@ std::string LinkStringIfPossible(std::string raw, std::string user_string) {
     if      (auto x = GetBuildingType(raw)) return LinkTaggedPresetText(VarText::BUILDING_TYPE_TAG, raw, user_string);
     else if (auto x = GetSpecies(raw))      return LinkTaggedPresetText(VarText::SPECIES_TAG,       raw, user_string);
     else if (auto x = GetSpecial(raw))      return LinkTaggedPresetText(VarText::SPECIAL_TAG,       raw, user_string);
+    else if (auto x = GetPolicy(raw))       return LinkTaggedPresetText(VarText::POLICY_TAG,        raw, user_string);
     else if (auto x = GetShipHull(raw))     return LinkTaggedPresetText(VarText::SHIP_HULL_TAG,     raw, user_string);
     else if (auto x = GetShipPart(raw))     return LinkTaggedPresetText(VarText::SHIP_PART_TAG,     raw, user_string);
+    else if (auto x = GetTech(raw))         return LinkTaggedPresetText(VarText::TECH_TAG,          raw, user_string);
     else return user_string;
+}
+
+std::string LinkList(std::vector<std::string> strings) {
+    std::string s;
+    bool first = true;
+    for (std::string string : strings) {
+        if (first) first = false;
+        else s.append(",  ");
+        s.append(LinkStringIfPossible(string,UserString(string)));
+    }
+    return s;
+}
+
+std::string LinkList(std::vector<std::string_view> strings) {
+    std::string s;
+    bool first = true;
+    for (std::string_view string : strings) {
+        if (first) first = false;
+        else s.append(",  ");
+        std::string str(string);
+        s.append(LinkStringIfPossible(str,UserString(string)));
+    }
+    return s;
+}
+
+std::string LinkList(std::set<std::string> strings) {
+    std::vector<std::string> vector(strings.begin(), strings.end());
+    return LinkList(vector);
 }
 
 std::string LinkTaggedText(std::string_view tag, std::string_view stringtable_entry)

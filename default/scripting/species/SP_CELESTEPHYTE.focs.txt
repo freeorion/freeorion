@@ -30,6 +30,8 @@ Species
         "BLD_SHIPYARD_AST_REF"    // same
         "JUGGERNAUT_NEST_SPECIAL" // compete for rocks
         "ECCENTRIC_ORBIT_SPECIAL" // messes up all those orbital resonances, quite unharmoniously
+        "FLD_METEOR_BLIZZARD"     // same
+        "FLD_VOID_RIFT"           // same
     ]
 
     effectsgroups = [

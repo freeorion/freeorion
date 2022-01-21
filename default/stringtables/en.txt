@@ -915,7 +915,7 @@ FLD_VOID_RIFT
 Void Rift
 
 FLD_VOID_RIFT_DESC
-Anomalous rift in space that reduces ship [[metertype METER_SPEED]] by 50%.
+Anomalous rift in spacetime that reduces ship [[metertype METER_SPEED]] by 50%.
 
 
 ##
@@ -8413,7 +8413,7 @@ The Sly live in gas giants. The gas giants are so foreign to most species in the
 
 Not being able to build advanced devices themselves, the Sly couldn't leave their heavy homeworld for a long time. Recently though, they were able to obtain the necessary equipment and technologies for spacefaring from interstellar traders in exchange for their deep knowledge of history.
 
-On the right diet, a Sly will excrete refined fuel. When in Sly crewed ships are in system with a [[PT_GASGIANT]], a their ships will regenerate a little bit of fuel each turn. When in a system with a planet populated by friendly Sly, Sly-crewed ships will be refueled and repaired, as if they were in a friendly supply network with [[tech SHP_FLEET_REPAIR]].
+On the right diet, a Sly will excrete refined fuel. When Sly crewed ships are in systems with a [[PT_GASGIANT]], a their ships will regenerate a little bit of fuel each turn. When in a system with a planet populated by friendly Sly, Sly-crewed ships will be refueled and repaired, as if they were in a friendly supply network with [[tech SHP_FLEET_REPAIR]].
 
 Social Structure:
 The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. The echoes of their verbal lore resound down to the deepest and densest layers of their world(s), where harmonies and resonances build up over millenia. Despite their fixation with their racial memories, they are very open minded and curious towards the galaxy and the other species they are now finally able to encounter.
@@ -8675,7 +8675,7 @@ SP_THENIAN_DESC
 '''
 At home in the boundary layers between the ultra high pressured inner atmosphere of their [[PT_GASGIANT]] and the outermost metallic helium core. They thrive on the magnetic differential currents and are subject to periodical population dieoffs when .. whatnots from the whatchallwecallthems ..
 
-As integrated as they are into their world's internal structure, it makes no sense for the Thenian to leave. Unless another [[PT_GASGIANT]] were to physically come into contact with theirs, they just can not make the jump into space is all.
+As integrated as they are into their world's internal structure, it makes no sense for the Thenian to leave. Unless another [[PT_GASGIANT]] were to physically come into direct contact with theirs, they just can not make the leap into space is all.
 '''
 
 SP_CELESTEPHYTE
@@ -16591,16 +16591,16 @@ GROWTH_SPECIAL_INDUSTRY_BOOST
 If this planet is set to the Industry Focus, [[metertype METER_TARGET_INDUSTRY]] is increased by 0.2 per [[metertype METER_POPULATION]].
 
 GROWTH_SPECIALS_ENTRY_LIST
-'''Some specials function for organic species only, some for lithic species only, and some for robotic species only; no other [[encyclopedia METABOLISM_TITLE]] currently has applicable Growth Specials.
+'''Some specials function for organic species only, some for lithic species only, and some for robotic species only; no other [[encyclopedia METABOLISM_TITLE]] currently has documented applicable Growth Specials.
 
 [[encyclopedia ORGANIC_SPECIES_TITLE]] specials:
-[[special FRUIT_SPECIAL]] | [[special SPICE_SPECIAL]] | [[special PROBIOTIC_SPECIAL]]
+[[special FRUIT_SPECIAL]],  [[special SPICE_SPECIAL]],  [[special PROBIOTIC_SPECIAL]]
 
 [[encyclopedia ROBOTIC_SPECIES_TITLE]] specials:
-[[special MONOPOLE_SPECIAL]] | [[special SUPERCONDUCTOR_SPECIAL]] | [[special POSITRONIUM_SPECIAL]]
+[[special MONOPOLE_SPECIAL]],  [[special SUPERCONDUCTOR_SPECIAL]],  [[special POSITRONIUM_SPECIAL]]
 
 [[encyclopedia LITHIC_SPECIES_TITLE]] specials:
-[[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]] '''
+[[special MINERALS_SPECIAL]],  [[special ELERIUM_SPECIAL]],  [[special CRYSTALS_SPECIAL]] '''
 
 GROWTH_SPECIAL_LABEL
 Planet <i>%1%</i> [[TT_SPECIAL]]

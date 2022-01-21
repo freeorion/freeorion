@@ -1333,57 +1333,31 @@ namespace {
         const auto& exclusions = part->Exclusions();
         if (!exclusions.empty()) {
             detailed_description += "\n\n" + UserString("ENC_SHIP_EXCLUSIONS");
-            for (const auto& exclusion : exclusions) {
-                if (GetShipPart(exclusion)) {
-                    detailed_description += LinkTaggedText(VarText::SHIP_PART_TAG, exclusion) + "  ";
-                } else if (GetShipHull(exclusion)) {
-                    detailed_description += LinkTaggedText(VarText::SHIP_HULL_TAG, exclusion) + "  ";
-                } else {
-                    // unknown exclusion...?
-                }
-            }
+            detailed_description.append(LinkList(exclusions));
         }
 
         auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_PART, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const auto& tech_name : unlocked_by_techs)
-                detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  ";
+            detailed_description.append(LinkList(unlocked_by_techs));
         }
 
         auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_PART, item_name));
         if (!unlocked_by_policies.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const auto& policy_name : unlocked_by_policies)
-                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
+            detailed_description.append(LinkList(unlocked_by_policies));
         }
 
         // species that like / dislike part
         auto species_that_like = GetSpeciesManager().SpeciesThatLike(item_name);
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
-            bool first = true;
             detailed_description += "\n\n" + UserString("SPECIES_THAT_LIKE");
-            for (auto& name : species_that_like) {
-                if (first) {
-                    first = false;
-                } else {
-                    detailed_description += ", ";
-                }
-                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name);
-            }
+            detailed_description.append(LinkList(species_that_like));
         }
         if (!species_that_dislike.empty()) {
             detailed_description += "\n\n" + UserString("SPECIES_THAT_DISLIKE");
-            bool first = true;
-            for (auto& name : species_that_dislike) {
-                if (first) {
-                    first = false;
-                } else {
-                    detailed_description += ", ";
-                }
-                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name);
-            }
+            detailed_description.append(LinkList(species_that_dislike));
         }
 
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
@@ -1444,30 +1418,20 @@ namespace {
         const auto& exclusions = hull->Exclusions();
         if (!exclusions.empty()) {
             detailed_description += "\n\n" + UserString("ENC_SHIP_EXCLUSIONS");
-            for (const std::string& exclusion : exclusions) {
-                if (GetShipPart(exclusion)) {
-                    detailed_description += LinkTaggedText(VarText::SHIP_PART_TAG, exclusion) + "  ";
-                } else if (GetShipHull(exclusion)) {
-                    detailed_description += LinkTaggedText(VarText::SHIP_HULL_TAG, exclusion) + "  ";
-                } else {
-                    // unknown exclusion...?
-                }
-            }
+            detailed_description.append(LinkList(exclusions));
         }
 
         auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_HULL, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const auto& tech_name : unlocked_by_techs)
-                detailed_description += LinkTaggedText(VarText::TECH_TAG, tech_name) + "  ";
+            detailed_description.append(LinkList(unlocked_by_techs));
             detailed_description += "\n\n";
         }
 
         auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_SHIP_HULL, item_name));
         if (!unlocked_by_policies.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const auto& policy_name : unlocked_by_policies)
-                detailed_description += LinkTaggedText(VarText::POLICY_TAG, policy_name) + "  ";
+            detailed_description.append(LinkList(unlocked_by_policies));
         }
 
         // species that like / dislike hull
@@ -1475,13 +1439,11 @@ namespace {
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description += "\n\n" + UserString("SPECIES_THAT_LIKE");
-            for (auto& name : species_that_like)
-                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name) + " ";
+            detailed_description.append(LinkList(species_that_like));
         }
         if (!species_that_dislike.empty()) {
             detailed_description += "\n\n" + UserString("SPECIES_THAT_DISLIKE");
-            for (auto& name : species_that_dislike)
-                detailed_description += LinkTaggedText(VarText::SPECIES_TAG, name) + " ";
+            detailed_description.append(LinkList(species_that_dislike));
         }
 
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
@@ -1566,8 +1528,7 @@ namespace {
         const auto& unlocked_by_techs = tech->Prerequisites();
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const std::string& tech_name : unlocked_by_techs)
-            { detailed_description += LinkTaggedPresetText(VarText::TECH_TAG, tech_name, UserString(tech_name)) + "  "; }
+            detailed_description.append(LinkList(unlocked_by_techs));
             detailed_description += "\n\n";
         }
 
@@ -1629,27 +1590,23 @@ namespace {
         auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_POLICY, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const auto& tech_name : unlocked_by_techs)
-                detailed_description += LinkTaggedPresetText(VarText::TECH_TAG, tech_name, UserString(tech_name)) + "  ";
+            detailed_description.append(LinkList(unlocked_by_techs));
         }
 
         auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_POLICY, item_name));
         if (!unlocked_by_policies.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const auto& policy_name : unlocked_by_policies)
-                detailed_description += LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, UserString(policy_name)) + "  ";
+            detailed_description.append(LinkList(unlocked_by_policies));
         }
 
         if (!policy->Prerequisites().empty()) {
             detailed_description += "\n\n" + UserString("ENC_POICY_PREREQUISITES");
-            for (const auto& policy_name : policy->Prerequisites())
-                detailed_description += LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, UserString(policy_name)) + "  ";
+            detailed_description.append(LinkList(policy->Prerequisites()));
         }
 
         if (!policy->Exclusions().empty()) {
             detailed_description += "\n\n" + UserString("ENC_POICY_EXCLUSIONS");
-            for (const auto& policy_name : policy->Exclusions())
-                detailed_description += LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, UserString(policy_name)) + "  ";
+            detailed_description.append(LinkList(policy->Exclusions()));
         }
 
         // species that like / dislike policy
@@ -1657,13 +1614,11 @@ namespace {
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description += "\n\n" + UserString("SPECIES_THAT_LIKE");
-            for (auto& name : species_that_like)
-                detailed_description += LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)) + " ";
+            detailed_description.append(LinkList(species_that_like));
         }
         if (!species_that_dislike.empty()) {
             detailed_description += "\n\n" + UserString("SPECIES_THAT_DISLIKE");
-            for (auto& name : species_that_dislike)
-                detailed_description += LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)) + " ";
+            detailed_description.append(LinkList(species_that_dislike));
         }
         detailed_description += "\n";
 
@@ -1719,16 +1674,14 @@ namespace {
         auto unlocked_by_techs = TechsThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_BUILDING, item_name));
         if (!unlocked_by_techs.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const std::string& tech_name : unlocked_by_techs)
-                detailed_description += LinkTaggedPresetText(VarText::TECH_TAG, tech_name, UserString(tech_name)) + "  ";
+            detailed_description.append(LinkList(unlocked_by_techs));
             detailed_description += "\n\n";
         }
 
         auto unlocked_by_policies = PoliciesThatUnlockItem(UnlockableItem(UnlockableItemType::UIT_BUILDING, item_name));
         if (!unlocked_by_policies.empty()) {
             detailed_description += "\n\n" + UserString("ENC_UNLOCKED_BY");
-            for (const auto& policy_name : unlocked_by_policies)
-                detailed_description += LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, UserString(policy_name)) + "  ";
+            detailed_description.append(LinkList(unlocked_by_policies));
         }
 
         // species that like / dislike building type
@@ -1736,13 +1689,11 @@ namespace {
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description += "\n\n" + UserString("SPECIES_THAT_LIKE");
-            for (auto& name : species_that_like)
-                detailed_description += LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)) + " ";
+            detailed_description.append(LinkList(species_that_like));
         }
         if (!species_that_dislike.empty()) {
             detailed_description += "\n\n" + UserString("SPECIES_THAT_DISLIKE");
-            for (auto& name : species_that_dislike)
-                detailed_description += LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)) + " ";
+            detailed_description.append(LinkList(species_that_dislike));
         }
 
         if (GetOptionsDB().Get<bool>("resource.effects.description.shown")) {
@@ -1765,6 +1716,7 @@ namespace {
             if (!building_type->Effects().empty())
                 detailed_description += "\n\nEffects:\n" + Dump(building_type->Effects());
         }
+        detailed_description.append("\n");
     }
 
     void RefreshDetailPanelSpecialTag(      const std::string& item_type, const std::string& item_name,
@@ -1802,7 +1754,10 @@ namespace {
 
         if (!objects_with_special.empty()) {
             detailed_description += "\n\n" + UserString("OBJECTS_WITH_SPECIAL");
+            bool first = true;
             for (auto& obj : objects_with_special) {
+                if (first) first = false;
+                else detailed_description.append(", ");
                 auto TEXT_TAG = [&obj]() -> std::string_view {
                     switch (obj->ObjectType()) {
                     case UniverseObjectType::OBJ_SHIP:      return VarText::SHIP_ID_TAG;    break;
@@ -1815,10 +1770,11 @@ namespace {
                 }();
 
                 if (!TEXT_TAG.empty())
-                    detailed_description += LinkTaggedIDText(
-                        TEXT_TAG, obj->ID(), obj->PublicName(client_empire_id, u)) + "  ";
+                    detailed_description.append(
+                        LinkTaggedIDText(TEXT_TAG, obj->ID(), obj->PublicName(client_empire_id, u))
+                    );
                 else
-                    detailed_description += obj->PublicName(client_empire_id, u) + "  ";
+                    detailed_description.append(obj->PublicName(client_empire_id, u));
             }
             detailed_description += "\n";
         }
@@ -1829,27 +1785,11 @@ namespace {
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_LIKE"));
-            bool first = true;
-            for (auto& name : species_that_like) {
-                if (first) {
-                    first = false;
-                } else {
-                    detailed_description.append(", ");
-                }
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
-            }
+            detailed_description.append(LinkList(species_that_like));
         }
         if (!species_that_dislike.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_DISLIKE"));
-            bool first = true;
-            for (auto& name : species_that_dislike) {
-                if (first) {
-                    first = false;
-                } else {
-                    detailed_description.append(", ");
-                }
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
-            }
+            detailed_description.append(LinkList(species_that_dislike));
         }
 
 
@@ -1939,7 +1879,7 @@ namespace {
             detailed_description.append("\n\n").append(UserString("OWNED_PLANETS"));
             for (auto& obj : empire_planets) {
                 detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, obj->ID(),
-                                                         obj->PublicName(client_empire_id, universe)) + "  ";
+                                                         obj->PublicName(client_empire_id, universe)) + ",  ";
             }
         } else {
             detailed_description.append("\n\n").append(UserString("NO_OWNED_PLANETS_KNOWN"));
@@ -2301,13 +2241,7 @@ namespace {
         // likes
         if (!species->Likes().empty()) {
             detailed_description += "\n\n" + UserString("LIKES");
-            int count = 0;
-            for (const auto& s : species->Likes())
-                detailed_description
-                .append(count++ == 0 ? "" : ",  ")
-                .append(LinkStringIfPossible(s,UserString(s)))
-                //.append(UserString(s))
-                ;
+            detailed_description.append(LinkList(species->Likes()));
         }
 
         // dislikes
@@ -2415,27 +2349,11 @@ namespace {
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_LIKE"));
-            bool first = true;
-            for (auto& name : species_that_like) {
-                if (first) {
-                    first = false;
-                } else {
-                    detailed_description.append(", ");
-                }
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
-            }
+            detailed_description.append(LinkList(species_that_like));
         }
         if (!species_that_dislike.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_DISLIKE"));
-            bool first = true;
-            for (auto& name : species_that_dislike) {
-                if (first) {
-                    first = false;
-                } else {
-                    detailed_description.append(", ");
-                }
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
-            }
+            detailed_description.append(LinkList(species_that_dislike));
         }
 
         // Long description
@@ -2474,27 +2392,11 @@ namespace {
         auto species_that_dislike = GetSpeciesManager().SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_LIKE"));
-            bool first = true;
-            for (auto& name : species_that_like) {
-                if (first) {
-                    first = false;
-                } else {
-                    detailed_description.append(", ");
-                }
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
-            }
+            detailed_description.append(LinkList(species_that_like));
         }
         if (!species_that_dislike.empty()) {
             detailed_description.append("\n\n").append(UserString("SPECIES_THAT_DISLIKE"));
-            bool first = true;
-            for (auto& name : species_that_dislike) {
-                if (first) {
-                    first = false;
-                } else {
-                    detailed_description.append(", ");
-                }
-                detailed_description.append(LinkTaggedPresetText(VarText::SPECIES_TAG, name, UserString(name)));
-            }
+            detailed_description.append(LinkList(species_that_dislike));
         }
 
 
@@ -2748,7 +2650,7 @@ namespace {
             detailed_description += "\n\n" + UserString("SHIPS_OF_DESIGN");
             for (auto& ship : design_ships) {
                 detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(),
-                                                         ship->PublicName(client_empire_id, universe)) + "  ";
+                                                         ship->PublicName(client_empire_id, universe)) + ",  ";
             }
         } else {
             detailed_description += "\n\n" + UserString("NO_SHIPS_OF_DESIGN");
