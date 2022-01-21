@@ -245,8 +245,9 @@ namespace parse {
         // imported grammars directly used in int_complex_parser_grammar
         const int_arithmetic_rules&         int_rules;
         ship_part_class_enum_grammar        ship_part_class_enum;
-        //std::unique_ptr<detail::star_type_parser_rules> star_type_rules;
-        detail::star_type_parser_rules*     star_type_rules; // XXX or enum_value_ref_rules<StarType>?
+        std::shared_ptr<detail::star_type_parser_rules> star_type_rules; // didnt work incomplete type in BuildingsParser
+        //std::unique_ptr<detail::star_type_parser_rules> star_type_rules; // didnt work incomplete type in BuildingsParser
+        //detail::star_type_parser_rules*     star_type_rules; // this worked
         //detail::enum_value_ref_rules<StarType>     star_type_rules;
         // grammars defined by int_complex_parser_grammar
         detail::complex_variable_rule<int>  game_rule;

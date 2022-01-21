@@ -27,7 +27,7 @@ namespace parse {
         int_complex_parser_grammar::base_type(start, "int_complex_parser_grammar"),
         int_rules(_int_arith_rules),
         ship_part_class_enum(tok),
-        star_type_rules(new detail::star_type_parser_rules(tok, label, condition_parser))
+        star_type_rules(std::make_shared<detail::star_type_parser_rules>(tok, label, condition_parser))
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
@@ -215,7 +215,7 @@ namespace parse {
                     tok.ClockwisePlanetTypeDistance_
                     >-( label(tok.from_)   > string_grammar ) // TODO use cast as string and enum grammar
                     >-( label(tok.to_) > int_rules.expr ) // TODO like above
-            ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
+                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr, deconstruct_movable_(_2, _pass))) ]
             ;
 
         start
