@@ -1329,9 +1329,9 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     int n = 0;  // count dispatched condition evaluations
 
 
-    // 1) EffectsGroups from Species
-    type_timer.EnterSection("species");
-    TraceLogger(effects) << "Universe::GetEffectsAndTargets for SPECIES";
+    // 1) EffectsGroups from Planet Species
+    type_timer.EnterSection("planet species");
+    TraceLogger(effects) << "Universe::GetEffectsAndTargets for PLANET SPECIES";
     std::map<std::string_view, std::vector<std::shared_ptr<const UniverseObject>>> species_objects;
     // find each species planets in single pass, maintaining object map order per-species
     for (auto& planet : context.ContextObjects().all<Planet>()) {
@@ -1347,7 +1347,30 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         }
         species_objects[species_name].push_back(planet);
     }
+    // allocate storage for target sets and dispatch condition evaluations
+    for ([[maybe_unused]] auto& [species_name, species] : context.species) {
+        auto species_objects_it = species_objects.find(species_name);
+        if (species_objects_it == species_objects.end())
+            continue;
+        const auto& source_objects = species_objects_it->second;
+        if (source_objects.empty())
+            continue;
+
+        DispatchEffectsGroupScopeEvaluations(EffectsCauseType::ECT_SPECIES, species_name,
+                                             source_objects, species->Effects(),
+                                             only_meter_effects,
+                                             context, potential_targets,
+                                             potential_ids_set,
+                                             source_effects_targets_causes_reorder_buffer,
+                                             thread_pool, n);
+    }
+
+
+    // 1.5) EffectsGroups from Ship Species
     // find each species ships in single pass, maintaining object map order per-species
+    type_timer.EnterSection("ship species");
+    TraceLogger(effects) << "Universe::GetEffectsAndTargets for SHIP SPECIES";
+    species_objects.clear();
     for (auto& ship : context.ContextObjects().all<Ship>()) {
         if (destroyed_object_ids.count(ship->ID()))
             continue;
@@ -1378,6 +1401,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
                                              source_effects_targets_causes_reorder_buffer,
                                              thread_pool, n);
     }
+
 
     // 2) EffectsGroups from Specials
     type_timer.EnterSection("specials");
