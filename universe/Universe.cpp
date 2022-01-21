@@ -1779,7 +1779,8 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id,
     auto source = objects.get(source_object_id);
     if (!source)
         return;
-    if (auto shp = std::dynamic_pointer_cast<const Ship>(obj)) {
+    if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+        auto shp = std::static_pointer_cast<const Ship>(obj);
         auto source_empire = empires.find(source->Owner());
         if (source_empire != empires.end() && source_empire->second)
             source_empire->second->RecordShipShotDown(*shp);
@@ -1875,11 +1876,16 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     int container_id = obj->ContainerObjectID();
     if (container_id != INVALID_OBJECT_ID) {
         if (auto container = objects.get(container_id)) {
-            if (auto system = std::dynamic_pointer_cast<System>(container))
+            if (container->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
+                auto system = std::static_pointer_cast<System>(container);
                 system->Remove(object_id);
-            else if (auto planet = std::dynamic_pointer_cast<Planet>(container))
+
+            } else if (container->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+                auto planet = std::static_pointer_cast<Planet>(container);
                 planet->RemoveBuilding(object_id);
-            else if (auto fleet = std::dynamic_pointer_cast<Fleet>(container)) {
+
+            } else if (container->ObjectType() == UniverseObjectType::OBJ_FLEET) {
+                auto fleet = std::static_pointer_cast<Fleet>(container);
                 fleet->RemoveShips({object_id});
                 if (fleet->Empty())
                     objects.erase(fleet->ID());
