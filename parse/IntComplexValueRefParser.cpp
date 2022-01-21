@@ -1,9 +1,16 @@
 #include "ValueRefParser.h"
+#include "EnumValueRefRules.h"
 
 #include "MovableEnvelope.h"
 #include "../universe/ValueRefs.h"
+
+// for definition of PlanetType
+#include "../universe/Planet.h"
+#include "../universe/System.h"
+
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/spirit/include/qi_as.hpp>
+
 
 namespace parse {
     namespace detail {
@@ -14,15 +21,27 @@ namespace parse {
         };
     }
 
+    std::unique_ptr<ValueRef::ValueRef<std::string>> planet_type_as_unique_string(
+                          const parse::detail::MovableEnvelope<ValueRef::ValueRef<PlanetType>>& ref_envelope,
+                          bool& pass)
+    {
+        std::unique_ptr<ValueRef::ValueRef<::PlanetType>> vref = ref_envelope.OpenEnvelope(pass);
+        std::unique_ptr<ValueRef::StringCast<::PlanetType>> as_uniq_stringcast = std::make_unique<ValueRef::StringCast<::PlanetType>>(std::move(vref));
+        return std::move(as_uniq_stringcast);
+    }
+    BOOST_PHOENIX_ADAPT_FUNCTION(std::unique_ptr<ValueRef::ValueRef<std::string>>, planet_type_as_unique_string_, planet_type_as_unique_string, 2)
+
     int_complex_parser_grammar::int_complex_parser_grammar(
         const parse::lexer& tok,
         detail::Labeller& label,
         const int_arithmetic_rules& _int_arith_rules,
+        const parse::detail::condition_parser_grammar& condition_parser,
         const detail::value_ref_grammar<std::string>& string_grammar
     ) :
         int_complex_parser_grammar::base_type(start, "int_complex_parser_grammar"),
         int_rules(_int_arith_rules),
-        ship_part_class_enum(tok)
+        ship_part_class_enum(tok),
+        planet_type_rules(std::make_shared<detail::planet_type_parser_rules>(tok, label, condition_parser))
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
@@ -205,6 +224,14 @@ namespace parse {
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
             ;
 
+        planet_type_difference
+            =   (
+                    tok.PlanetTypeDifference_
+                    > label(tok.from_) > planet_type_rules->expr
+                    > label(tok.to_)   > planet_type_rules->expr
+                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, nullptr, nullptr, nullptr, planet_type_as_unique_string_(_2, _pass), planet_type_as_unique_string_(_3, _pass))) ]
+            ;
+
         start
             %=  game_rule
             |   empire_name_ref
@@ -220,6 +247,7 @@ namespace parse {
             |   slots_in_hull
             |   slots_in_ship_design
             |   special_added_on_turn
+            |   planet_type_difference
             ;
 
         game_rule.name("GameRule");
@@ -237,6 +265,7 @@ namespace parse {
         slots_in_hull.name("SlotsInHull");
         slots_in_ship_design.name("SlotsInShipDesign");
         special_added_on_turn.name("SpecialAddedOnTurn");
+        planet_type_difference.name("PlanetTypeDifference");
 
 #if DEBUG_INT_COMPLEX_PARSERS
         debug(game_rule);
@@ -254,6 +283,7 @@ namespace parse {
         debug(slots_in_hull);
         debug(slots_in_ship_design);
         debug(special_added_on_turn);
+        debug(planet_type_difference);
 #endif
     }
 }

@@ -156,6 +156,7 @@
     (focus)                                     \
     (Focus)                                     \
     (FocusType)                                 \
+    (from)                                      \
     (fuel)                                      \
     (Fuel)                                      \
     (Full)                                      \
@@ -351,6 +352,7 @@
     (PlanetID)                                  \
     (planetsize)                                \
     (planettype)                                \
+    (PlanetTypeDifference)                      \
     (Playable)                                  \
     (PointDefense)                              \
     (Policy)                                    \
@@ -579,6 +581,7 @@
     (TopPriorityResearchableTech)               \
     (TopPriorityTransferrableTech)              \
     (TotalFighterShots)                         \
+    (to)                                        \
     (Toxic)                                     \
     (Trade)
 

@@ -121,7 +121,7 @@ parse::int_arithmetic_rules::int_arithmetic_rules(
 ) :
     arithmetic_rules("integer", tok, label, condition_parser, string_grammar),
     simple_int_rules(tok),
-    int_complex_grammar(tok, label, *this, string_grammar)
+    int_complex_grammar(tok, label, *this, condition_parser, string_grammar)
 {
     namespace phoenix = boost::phoenix;
     namespace qi = boost::spirit::qi;
