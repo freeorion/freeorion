@@ -1665,6 +1665,19 @@ bool Homeworld::operator==(const Condition& rhs) const {
 }
 
 namespace {
+    // gets a planet ID from \a obj considering obj as a planet or a building on a planet
+    int PlanetIDFromObject(const std::shared_ptr<const UniverseObject>& obj) {
+        if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            return obj->ID();
+
+        } else if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+            auto* building = static_cast<const ::Building*>(obj.get());
+            return building->PlanetID();
+        }
+
+        return INVALID_OBJECT_ID;
+    }
+
     struct HomeworldSimpleMatch {
         HomeworldSimpleMatch(std::vector<std::string> names, const ObjectMap& objects,
                              const SpeciesManager& species) :
@@ -1677,13 +1690,7 @@ namespace {
             if (!candidate)
                 return false;
 
-            int planet_id = INVALID_OBJECT_ID;
-            if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-                planet_id = candidate->ID();
-            } else if (candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-                auto* building = static_cast<const ::Building*>(candidate.get());
-                planet_id = building->PlanetID();
-            }
+            int planet_id = PlanetIDFromObject(candidate);
             if (planet_id == INVALID_OBJECT_ID)
                 return false;
 
@@ -1788,13 +1795,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
     }
 
     // is it a planet or a building on a planet?
-    int planet_id = INVALID_OBJECT_ID;
-    if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-        planet_id = candidate->ID();
-    } else if (candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-        auto* building = static_cast<const ::Building*>(candidate.get());
-        planet_id = building->PlanetID();
-    }
+    int planet_id = PlanetIDFromObject(candidate);
     if (planet_id == INVALID_OBJECT_ID)
         return false;
 
@@ -3984,6 +3985,21 @@ bool PlanetType::operator==(const Condition& rhs) const {
 }
 
 namespace {
+    // gets a planet ID from \a obj considering obj as a planet or a building on a planet
+    ::PlanetType PlanetTypeFromObject(const std::shared_ptr<const UniverseObject>& obj, const ObjectMap& objects) {
+        if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+            auto* planet = static_cast<const ::Planet*>(obj.get());
+            return planet->Type();
+
+        } else if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+            auto* building = static_cast<const ::Building*>(obj.get());
+            if (auto* planet = objects.getRaw<Planet>(building->PlanetID()))
+                return planet->Type();
+        }
+
+        return ::PlanetType::INVALID_PLANET_TYPE;
+    }
+
     struct PlanetTypeSimpleMatch {
         PlanetTypeSimpleMatch(const std::vector< ::PlanetType>& types, const ObjectMap& objects) :
             m_types(types),
@@ -3994,23 +4010,10 @@ namespace {
             if (!candidate)
                 return false;
 
-            // is it a planet or on a planet?
-
-            auto* object = candidate.get();
-            const Planet* planet = nullptr;
-            if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-                planet = static_cast<const Planet*>(object);
-            } else if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-                auto building = static_cast<const ::Building*>(object);
-                planet = m_objects.getRaw<Planet>(building->PlanetID());
-            }
-
-            if (planet) {
-                // is it one of the specified building types?
-                return std::count(m_types.begin(), m_types.end(), planet->Type());
-            }
-
-            return false;
+            auto pt = PlanetTypeFromObject(candidate, m_objects);
+            if (pt == ::PlanetType::INVALID_PLANET_TYPE)
+                return false;
+            return std::count(m_types.begin(), m_types.end(), pt);
         }
 
         const std::vector< ::PlanetType>& m_types;
