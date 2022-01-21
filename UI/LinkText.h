@@ -182,6 +182,13 @@ std::string LinkTaggedIDText(std::string_view tag, int id, std::string_view text
 std::string LinkTaggedPresetText(std::string_view tag, std::string_view stringtable_entry,
                                  std::string_view display_text);
 
+/**
+ * Helper for generating a link string for a raw string with unknown tag
+ * by searching the various content managers. Returns unlinkified raw
+ * string if no match can be found.
+ */
+std::string LinkStringIfPossible(std::string raw, std::string user_string);
+
 /// Free function to register link tags that TextLinker knows of.  This allows GG::Font to remove
 /// them so that they will not be rendered.  Must be called at least once before text with embedded
 /// XML tags is handled by GG::Font

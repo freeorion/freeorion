@@ -7,7 +7,7 @@ Species
 
     // Asteroid Belt: Celestephyte: No Ships, Telepathic, Phototrophic
 
-    tags = [ "GASEOUS" "ARTISTIC" "AVERAGE_POPULATION" "AVERAGE_HAPPINESS" "VERY_BAD_SUPPLY" "NO_INDUSTRY" "PEDIA_GASEOUS_SPECIES_CLASS" ]
+    tags = [ "GASEOUS" "ARTISTIC" "AVERAGE_POPULATION" "AVERAGE_HAPPINESS" "VERY_BAD_SUPPLY" "NO_INDUSTRY" "GOOD_STEALTH" "PEDIA_GASEOUS_SPECIES_CLASS" ]
 
     foci = [
         /*[[HAS_INDUSTRY_FOCUS]]*/
@@ -39,6 +39,7 @@ Species
         [[VERY_BAD_SUPPLY]]
         [[NO_OFFENSE_TROOPS]]
         [[GOOD_DEFENSE_TROOPS]]
+        [[GOOD_STEALTH]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]

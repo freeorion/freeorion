@@ -3,14 +3,18 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "../Empire/Empire.h"
+#include "../universe/BuildingType.h"
 #include "../universe/NamedValueRefManager.h"
+#include "../universe/ShipHull.h"
+#include "../universe/ShipPart.h"
+#include "../universe/Special.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/ValueRefs.h"
 #include "../util/AppInterface.h"
+#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/VarText.h"
 #include "../util/i18n.h"
-#include "../util/Directories.h"
-#include "../universe/ValueRefs.h"
 
 #include <GG/WndEvent.h>
 #include <GG/GUI.h>
@@ -569,6 +573,15 @@ void TextLinker::MarkLinks() {
 
     // set underlying UI control text
     SetLinkedText(std::move(marked_text));
+}
+
+std::string LinkStringIfPossible(std::string raw, std::string user_string) {
+    if      (auto x = GetBuildingType(raw)) return LinkTaggedPresetText(VarText::BUILDING_TYPE_TAG, raw, user_string);
+    else if (auto x = GetSpecies(raw))      return LinkTaggedPresetText(VarText::SPECIES_TAG,       raw, user_string);
+    else if (auto x = GetSpecial(raw))      return LinkTaggedPresetText(VarText::SPECIAL_TAG,       raw, user_string);
+    else if (auto x = GetShipHull(raw))     return LinkTaggedPresetText(VarText::SHIP_HULL_TAG,     raw, user_string);
+    else if (auto x = GetShipPart(raw))     return LinkTaggedPresetText(VarText::SHIP_PART_TAG,     raw, user_string);
+    else return user_string;
 }
 
 std::string LinkTaggedText(std::string_view tag, std::string_view stringtable_entry)
