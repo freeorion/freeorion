@@ -14,7 +14,7 @@ struct ScriptingContext {
         int, double, PlanetType, PlanetSize, ::PlanetEnvironment, StarType,
         UniverseObjectType, Visibility, std::string, std::vector<std::string>
     > CurrentValueVariant;
-    inline static const CurrentValueVariant EMPTY_CURRENT_VALUE{};
+    inline static const CurrentValueVariant DEFAULT_CURRENT_VALUE{0};
 
     ScriptingContext() :
         ScriptingContext(GetUniverse(), ::Empires(), GetGalaxySetupData(),
@@ -310,7 +310,7 @@ struct ScriptingContext {
     std::shared_ptr<UniverseObject>       effect_target;
     std::shared_ptr<const UniverseObject> condition_root_candidate;
     std::shared_ptr<const UniverseObject> condition_local_candidate;
-    const CurrentValueVariant&            current_value = EMPTY_CURRENT_VALUE;
+    const CurrentValueVariant&            current_value = DEFAULT_CURRENT_VALUE;
 
     // general gamestate info
     int                                            combat_bout = 0; // first round of battle is combat_bout == 1
