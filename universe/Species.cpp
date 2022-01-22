@@ -462,7 +462,9 @@ void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_spe
                                               const std::string& rated_species, float opinion)
 { m_species_species_opinions[opinionated_species][rated_species] = opinion; }
 
-std::map<std::string, std::set<int>> SpeciesManager::GetSpeciesHomeworldsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
+const std::map<std::string, std::set<int>>& SpeciesManager::GetSpeciesHomeworldsMap(
+    int encoding_empire/* = ALL_EMPIRES*/) const
+{
     if (encoding_empire == ALL_EMPIRES)
         return m_species_homeworlds;
     // TODO: filter, output only info about species an empire has observed...?

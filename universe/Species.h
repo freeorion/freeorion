@@ -219,7 +219,7 @@ public:
 
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */
-    std::map<std::string, std::set<int>>
+    const std::map<std::string, std::set<int>>&
         GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns a map from species name to a map from empire id to each the

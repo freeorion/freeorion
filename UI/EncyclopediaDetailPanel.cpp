@@ -293,7 +293,7 @@ namespace {
 
         }
         else if (dir_name == "ENC_HOMEWORLDS") {
-            const auto homeworlds{GetSpeciesManager().GetSpeciesHomeworldsMap()};
+            const auto& homeworlds{GetSpeciesManager().GetSpeciesHomeworldsMap()};
 
             for (const auto& entry : GetSpeciesManager()) {
                 std::set<int> known_homeworlds;
@@ -2304,7 +2304,7 @@ namespace {
 
         // homeworld
         detailed_description += "\n";
-        auto homeworlds = GetSpeciesManager().GetSpeciesHomeworldsMap();
+        const auto& homeworlds = GetSpeciesManager().GetSpeciesHomeworldsMap();
         if (!homeworlds.count(species->Name()) || homeworlds.at(species->Name()).empty()) {
             detailed_description.append(UserString("NO_HOMEWORLD")).append("\n");
         } else {

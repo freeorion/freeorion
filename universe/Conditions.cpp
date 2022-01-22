@@ -1713,7 +1713,7 @@ namespace {
 
         const std::vector<std::string> m_names;
         const ObjectMap& m_objects;
-        const std::map<std::string, std::set<int>> m_species_homeworlds;
+        const std::map<std::string, std::set<int>>& m_species_homeworlds;
     };
 }
 
@@ -1807,7 +1807,7 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 
     } else {
         // match any of the species specified
-        const auto homeworlds = local_context.species.GetSpeciesHomeworldsMap();
+        const auto& homeworlds = local_context.species.GetSpeciesHomeworldsMap();
         for (const auto& name_ref : m_names) {
             const auto species_name = name_ref->Eval(local_context);
             if (homeworlds.count(species_name) && homeworlds.at(species_name).count(planet_id))
