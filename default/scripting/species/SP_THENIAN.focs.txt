@@ -7,7 +7,7 @@ Species
 
     // Gas Giant: Thenian: Planetbound, No Ships, Good Research, Gaseous
 
-    tags = [ "GASEOUS" "ARTISTIC" "AVERAGE_POPULATION" "AVERAGE_HAPPINESS" "VERY_BAD_SUPPLY" "NO_INDUSTRY" "GOOD_STEALTH" "PEDIA_GASEOUS_SPECIES_CLASS" ]
+    tags = [ "GASEOUS" "NO_TERRAFORM" "ARTISTIC" "AVERAGE_POPULATION" "AVERAGE_HAPPINESS" "VERY_BAD_SUPPLY" "NO_INDUSTRY" "GOOD_STEALTH" "PEDIA_GASEOUS_SPECIES_CLASS" ]
 
     foci = [
         /*[[HAS_INDUSTRY_FOCUS]]*/
@@ -16,7 +16,7 @@ Species
         [[HAS_GROWTH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
-    defaultfocus = "FOCUS_RESEARCH"
+    defaultfocus = "FOCUS_GROWTH"
 
     // i'll put comments for motivation on likes for later textification into pedia
     likes = [
@@ -25,7 +25,7 @@ Species
     dislikes = [
         "BLD_GAS_GIANT_GEN"     // messes with their habitat
         "BLD_SPACE_ELEVATOR"    // see above
-        "SP_SLY"                // compete for habitat
+        //"SP_SLY"                // compete for habitat // disliking species has no effect except showing up in pedia
     ]
 
     effectsgroups = [
@@ -47,23 +47,21 @@ Species
         [[STANDARD_SHIP_SHIELDS]]
         [[NARROW_EP]]
         
+        
         EffectsGroup
             scope = And [
                 Planet
                 InSystem id = Source.SystemID
-                Population low = Target.Population high = 999999  // when maximum population is reached
+                Population low = Source.TargetPopulation - 0.01    // when maximum population is reached
             ]
-            activation = Turn low = Source.CreationTurn + 1
-            priority = [[POPULATION_OVERRIDE_PRIORITY]]           // Overrides current population effects
             effects = [
-                SetPopulation value = Value * 0.5                 // then dieoff to half
-                GenerateSitRepMessage                             // and tell the owner it happened
+                SetPopulation value = Value * 0.5                  // then dieoff to half
+                GenerateSitRepMessage                              // and tell the owner it happened
                     message = "EFFECT_THENIAN_NATURAL_DIEOFF"
                     label = "EFFECT_THENIAN_NATURAL_DIEOFF_LABEL"
                     icon = "icons/sitrep/colony_starvation.png"
                     parameters = [
                         tag = "planet" data = Target.ID
-                        tag = "rawtext" data = "1"
                     ]
                     empire = Target.Owner
             ]

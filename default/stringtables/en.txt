@@ -7664,7 +7664,7 @@ EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
 On %planet%: the %building% completed repairs on the %ship%.
 
 EFFECT_THENIAN_NATURAL_DIEOFF
-On %planet% a natural dieoff occurred, halving the current population.
+On %planet% a natural [[species SP_THENIAN]] dieoff occurred, halving the current population.
 
 EFFECT_THENIAN_NATURAL_DIEOFF_LABEL
 Natural Dieoff
@@ -7790,10 +7790,10 @@ EFFECT_NEBULA_LABEL
 Nebula
 
 EFFECT_TREE
-At %system%: a new Dyson Forest has started to grow and surround the star.
+At %system%: a new [[predefinedshipdesign SM_TREE]] has started to grow and surround the star.
 
 EFFECT_TREE_LABEL
-Dyson Forest
+[[SM_TREE]]
 
 EFFECT_DERELICT_MAP
 At %system%: information on the area was obtained from an abandoned %special%.
@@ -16897,7 +16897,7 @@ COMMUNAL_VISION_DESC
 ⋄	Communal Vision: shares visibility within the same species regardless of affiliation
 
 ARTISTIC_TRAIT_DESC
-+	Artistic, improved stability and happiness
++	Artistic: Improved stability and happiness
 
 
 ##

@@ -299,7 +299,7 @@ namespace {
                 std::set<int> known_homeworlds;
                 std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, entry.first).append(" ");
 
-
+                // TODO: determine if stealthy worlds should show up as clear text only when the empire has sufficient detection strength
                 // homeworld
                 if (!homeworlds.count(entry.first) || homeworlds.at(entry.first).empty()) {
                     continue;
@@ -307,16 +307,19 @@ namespace {
                     const auto& this_species_homeworlds = homeworlds.at(entry.first);
                     std::string homeworld_info;
                     species_entry.append("(").append(std::to_string(this_species_homeworlds.size())).append("):  ");
+                    bool first = true;
                     for (int homeworld_id : this_species_homeworlds) {
+                        if (first) first = false;
+                        else homeworld_info.append(",  ");
                         if (auto homeworld = objects.get<Planet>(homeworld_id)) {
                             known_homeworlds.emplace(homeworld_id);
                             // if known, add to beginning
-                            homeworld_info = LinkTaggedIDText(VarText::PLANET_ID_TAG, homeworld_id,
+                            homeworld_info.append(LinkTaggedIDText(VarText::PLANET_ID_TAG, homeworld_id,
                                                               homeworld->PublicName(client_empire_id, universe))
-                                .append("   ").append(homeworld_info);
+                            );
                         } else { 
                             // add to end
-                            homeworld_info.append(UserString("UNKNOWN_PLANET")).append("   ");
+                            homeworld_info.append(UserString("UNKNOWN_PLANET"));
                         }
                     }
                     species_entry += homeworld_info;
@@ -349,7 +352,10 @@ namespace {
                 if (!homeworlds.count(entry.first) || homeworlds.at(entry.first).empty()) {
                     std::string species_entry{
                         LinkTaggedPresetText(VarText::SPECIES_TAG, entry.first, UserString(entry.first))
-                        .append(":  \n").append(UserString("NO_HOMEWORLD"))};
+                        .append(":  ")
+                        .append(UserString("NO_HOMEWORLD"))
+                        .append("\n")
+                    };
                     retval.emplace("⃠⃠" + std::string( "⃠ ") + UserString(entry.first),
                                    std::pair{std::move(species_entry), entry.first});
                 }
@@ -2285,6 +2291,7 @@ namespace {
             detailed_description.append(UserString("HOMEWORLD")).append("\n");
             bool first = true;
             // TODO: alphabetical sorting order to make the list better readable
+            // TODO: determine if stealthy worlds should show up as clear text only when the empire has sufficient detection strength
             for (int hw_id : homeworlds.at(species->Name())) {
                 if (first) first = false;
                 else detailed_description.append(",  ");
@@ -2384,6 +2391,8 @@ namespace {
                                             std::string& specific_type, std::string& detailed_description,
                                             GG::Clr& color, bool only_description = false)
     {
+        // TODO: list current known occurances of the fieldtype with id / galactic coordinates to be clickable like instances of ship designs
+        // TODO: second method for detailled view of particular field instances, listing affected systems, fleets, etc.
         const FieldType* field_type = GetFieldType(item_name);
         if (!field_type) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find fiedl type with name " << item_name;
@@ -2496,7 +2505,7 @@ namespace {
         float destruction = ship->TotalWeaponsFighterDamage(context);
         float strength = std::pow(attack * structure, 0.6f);
         float typical_shot = enemy_shots.empty() ? 0.0f : *std::max_element(enemy_shots.begin(), enemy_shots.end()); // TODO: cbegin, cend (also elsewhere)
-        float typical_strength = std::pow(ship->TotalWeaponsShipDamage(context, enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f); // FIXME TotalWeaponsFighterDamage 
+        float typical_strength = std::pow(ship->TotalWeaponsShipDamage(context, enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f); // FIXME: TotalWeaponsFighterDamage 
         return (FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR"))
             % species
             % attack
@@ -2510,7 +2519,7 @@ namespace {
             % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_COLONY, universe)
             % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_TROOPS, universe)
             % ship->FighterMax()
-            % (attack - ship->TotalWeaponsShipDamage(context, 0.0f, false)) // FIXME TotalWeaponsFighterDamage
+            % (attack - ship->TotalWeaponsShipDamage(context, 0.0f, false)) // FIXME: TotalWeaponsFighterDamage
             % ship->SumCurrentPartMeterValuesForPartClass(MeterType::METER_MAX_CAPACITY, ShipPartClass::PC_FIGHTER_BAY, universe)
             % strength
             % (strength / cost)
@@ -2607,7 +2616,7 @@ namespace {
                     enemy_DR = this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
-                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(context); // FIXME FighterDamage
+                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(context); // FIXME: FighterDamage
                     for (float shot : this_damage)
                         DebugLogger() << "Weapons Dmg " << shot;
                     enemy_shots.insert(this_damage.begin(), this_damage.end());

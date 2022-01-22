@@ -16,7 +16,7 @@ Species
         [[HAS_GROWTH_FOCUS]]
         [[HAS_ADVANCED_FOCI]]
     ]
-    defaultfocus = "FOCUS_GROWTH"
+    defaultfocus = "FOCUS_PROTECTION"
 
     // i'll put comments for motivation on likes for later textification into pedia
     likes = [
@@ -29,10 +29,10 @@ Species
         "PLC_POPULATION"          // grow, grow, grow your load, gently down the ..
     ]
     dislikes = [ // dislikes all other desert species because they compete for habitat
-        "SP_ETTY"
-        "SP_LEMBALALAM"
-        "SP_MUURSH"
-        "SP_NYMNMN"
+        //"SP_ETTY"                    // disliking species has no effect except showing up in pedia
+        //"SP_LEMBALALAM"
+        //"SP_MUURSH"
+        //"SP_NYMNMN"
         "WORLDTREE_SPECIAL"            // wrong kind of plant, sorry, thats competition
         "CLOUD_COVER_SLAVE_SPECIAL"    // stop blockin the sun over there
         "CLOUD_COVER_MASTER_SPECIAL"   // same. emphasis.
