@@ -2279,14 +2279,19 @@ namespace {
             detailed_description.append(UserString("NO_HOMEWORLD")).append("\n");
         } else {
             detailed_description.append(UserString("HOMEWORLD")).append("\n");
+            bool first = true;
+            // TODO: alphabetical sorting order to make the list better readable
             for (int hw_id : homeworlds.at(species->Name())) {
+                if (first) first = false;
+                else detailed_description.append(",  ");
                 if (auto homeworld = objects.get<Planet>(hw_id))
-                    detailed_description.append(LinkTaggedIDText(VarText::PLANET_ID_TAG, hw_id,
-                                                                 homeworld->PublicName(client_empire_id, universe)))
-                        .append("\n");
+                    detailed_description
+                    .append(LinkTaggedIDText(VarText::PLANET_ID_TAG, hw_id, homeworld->PublicName(client_empire_id, universe)));
                 else
-                    detailed_description.append(UserString("UNKNOWN_PLANET")).append("\n");
+                    detailed_description
+                    .append(UserString("UNKNOWN_PLANET"));
             }
+            detailed_description.append("\n");
         }
 
         // occupied planets
@@ -2310,12 +2315,15 @@ namespace {
 
         if (!species_occupied_planets.empty()) {
             detailed_description.append("\n").append(UserString("OCCUPIED_PLANETS")).append("\n");
+            bool first = true;
+            // TODO: alphabetical sorting order to make the list better readable
             for (auto& planet : species_occupied_planets) {
-                detailed_description.append(LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(),
-                                                             planet->PublicName(client_empire_id, universe)))
-                    .append("  ");
+                if (first) first = false;
+                else detailed_description.append(",  ");
+                detailed_description
+                .append(LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id, universe)));
             }
-            detailed_description += "\n";
+            detailed_description.append("\n");
         }
 
         // empire opinions

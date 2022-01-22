@@ -5,7 +5,7 @@ Species
     Native
 
 
-    // Asteroid Belt: Celestephyte: No Ships, Telepathic, Phototrophic
+    // Gas Giant: Thenian: Planetbound, No Ships, Good Research, Gaseous
 
     tags = [ "GASEOUS" "ARTISTIC" "AVERAGE_POPULATION" "AVERAGE_HAPPINESS" "VERY_BAD_SUPPLY" "NO_INDUSTRY" "GOOD_STEALTH" "PEDIA_GASEOUS_SPECIES_CLASS" ]
 
@@ -46,12 +46,33 @@ Species
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[STANDARD_SHIP_SHIELDS]]
         [[NARROW_EP]]
+        
+        EffectsGroup
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Population low = Target.Population high = 999999  // when maximum population is reached
+            ]
+            activation = Turn low = Source.CreationTurn + 1
+            priority = [[POPULATION_OVERRIDE_PRIORITY]]           // Overrides current population effects
+            effects = [
+                SetPopulation value = Value * 0.5                 // then dieoff to half
+                GenerateSitRepMessage                             // and tell the owner it happened
+                    message = "EFFECT_THENIAN_NATURAL_DIEOFF"
+                    label = "EFFECT_THENIAN_NATURAL_DIEOFF_LABEL"
+                    icon = "icons/sitrep/colony_starvation.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                        tag = "rawtext" data = "1"
+                    ]
+                    empire = Target.Owner
+            ]
 
     ]
 
     [[GASEOUS_NARROW_EP]]
 
-    graphic = "icons/species/celestephyte.png"
+    graphic = "icons/species/thenian.png"
 
 #include "common/*.macros"
 

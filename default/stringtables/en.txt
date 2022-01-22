@@ -7663,6 +7663,12 @@ On %planet%: the %building% performed partial repairs on the %ship%.
 EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
 On %planet%: the %building% completed repairs on the %ship%.
 
+EFFECT_THENIAN_NATURAL_DIEOFF
+On %planet% a natural dieoff occurred, halving the current population.
+
+EFFECT_THENIAN_NATURAL_DIEOFF_LABEL
+Natural Dieoff
+
 EFFECT_MONSTER_SPAWNING
 In %system%: A %predefinedshipdesign% was spawned.
 
@@ -8673,9 +8679,9 @@ SP_THENIAN_GAMEPLAY_DESC
 
 SP_THENIAN_DESC
 '''
-At home in the boundary layers between the ultra high pressured inner atmosphere of their [[PT_GASGIANT]] and the outermost metallic helium core. They thrive on the magnetic differential currents and are subject to periodical population dieoffs when .. whatnots from the whatchallwecallthems ..
+At home in the boundary layers between the ultra high pressured inner atmosphere of their [[PT_GASGIANT]] and the outermost metallic helium core. They take their sustainance from the magnetic differential currents and are subject to periodical population dieoffs which is completely natural and of no concern to themselves whatsoever. Whenever the maximum population density is reached, another dieoff occurs so they can grow anew with unrelenting vigor. (Current [[metertype METER_POPULATION]] of [[SP_THENIAN]] colonies will be cut in half the turn after the maximum is reached.)
 
-As integrated as they are into their world's internal structure, it makes no sense for the Thenian to leave. Unless another [[PT_GASGIANT]] were to physically come into direct contact with theirs, they just can not make the leap into space is all.
+As integrated as they are into their world's internal structure, it makes no sense for the Thenian to even try to leave. Unless another [[PT_GASGIANT]] were to physically come into direct contact with theirs, they just can not make the leap into space is all. So they dive and thrive
 '''
 
 SP_CELESTEPHYTE

@@ -5,6 +5,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/Government.h"
 #include "../universe/BuildingType.h"
+#include "../universe/FieldType.h"
 #include "../universe/NamedValueRefManager.h"
 #include "../universe/ShipHull.h"
 #include "../universe/ShipPart.h"
@@ -585,6 +586,7 @@ std::string LinkStringIfPossible(std::string raw, std::string user_string) {
     else if (auto x = GetShipHull(raw))     return LinkTaggedPresetText(VarText::SHIP_HULL_TAG,     raw, user_string);
     else if (auto x = GetShipPart(raw))     return LinkTaggedPresetText(VarText::SHIP_PART_TAG,     raw, user_string);
     else if (auto x = GetTech(raw))         return LinkTaggedPresetText(VarText::TECH_TAG,          raw, user_string);
+    else if (auto x = GetFieldType(raw))    return LinkTaggedPresetText(VarText::FIELD_TYPE_TAG,    raw, user_string);
     else return user_string;
 }
 

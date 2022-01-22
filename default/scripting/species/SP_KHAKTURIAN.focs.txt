@@ -39,6 +39,7 @@ Species
         "VOLCANIC_ASH_SLAVE_SPECIAL"   // no sunblock pls
         "VOLCANIC_ASH_MASTER_SPECIAL"  // ...
         "PLC_NO_GROWTH"                // dumb plants, but looove to grow
+        "BLD_SOL_ACCEL"                // no turning the lights off pls
     ]
 
     effectsgroups = [
