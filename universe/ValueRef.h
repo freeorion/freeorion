@@ -61,7 +61,7 @@ std::string FlexibleToString(T&& t)
             return std::string{maybe_retval};
 
     } else if constexpr (std::is_convertible_v<std::decay_t<T>, std::string>) {
-        return t;
+        return std::forward<T>(t);
 
     } else if constexpr (std::is_same_v<std::decay_t<T>, std::string_view>) {
         return std::string{t};
