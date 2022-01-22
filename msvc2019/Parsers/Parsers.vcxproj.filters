@@ -174,14 +174,14 @@
     <ClCompile Include="..\..\parse\PythonParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\parse\ConditionPythonParser.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\parse</Filter>
     </ClCompile>
     <ClCompile Include="..\..\parse\SourcePythonParser.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp">
+      <Filter>Source Files\parse</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -264,23 +264,23 @@
       <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="..\..\parse\PythonParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\parse\ValueRefPythonParser.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\ConditionPythonParser.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\EffectPythonParser.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\EnumPythonParser.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\PythonParser.h">
+      <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\SourcePythonParser.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\parse</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
