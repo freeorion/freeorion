@@ -468,7 +468,7 @@ boost::statechart::result MPLobby::react(const HostID& msg) {
     int host_id = Networking::INVALID_PLAYER_ID;
     try {
         host_id = boost::lexical_cast<int>(text);
-    } catch (const boost::bad_lexical_cast& ex) {
+    } catch (const boost::bad_lexical_cast&) {
         ErrorLogger(FSM) << "MPLobby::react(const HostID& msg) could not convert \"" << text << "\" to host id";
     }
 
@@ -641,7 +641,7 @@ boost::statechart::result PlayingGame::react(const HostID& msg) {
     int host_id = Networking::INVALID_PLAYER_ID;
     try {
         host_id = boost::lexical_cast<int>(text);
-    } catch (const boost::bad_lexical_cast& ex) {
+    } catch (const boost::bad_lexical_cast&) {
         ErrorLogger(FSM) << "PlayingGame::react(const HostID& msg) could not convert \"" << text << "\" to host id";
     }
 
@@ -818,7 +818,7 @@ boost::statechart::result PlayingGame::react(const TurnTimeout& msg) {
     int timeout_remain = 0;
     try {
         timeout_remain = boost::lexical_cast<int>(text);
-    } catch (const boost::bad_lexical_cast& ex) {
+    } catch (const boost::bad_lexical_cast&) {
         ErrorLogger(FSM) << "PlayingGame::react(const TurnTimeout& msg) could not convert \"" << text << "\" to timeout";
     }
     Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(timeout_remain);

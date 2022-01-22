@@ -500,7 +500,7 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
         m_single_player_game = true;
         try {
             StartServer();
-        } catch (const LocalServerAlreadyRunningException& err) {
+        } catch (const LocalServerAlreadyRunningException&) {
             ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
             return;
         } catch (const std::runtime_error& err) {
@@ -641,7 +641,7 @@ void GGHumanClientApp::MultiPlayerGame() {
             try {
                 StartServer();
                 FreeServer();
-            } catch (const LocalServerAlreadyRunningException& err) {
+            } catch (const LocalServerAlreadyRunningException&) {
                 ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
                 return;
             } catch (const std::runtime_error& err) {
@@ -767,7 +767,7 @@ void GGHumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         m_single_player_game = true;
         try {
             StartServer();
-        } catch (const LocalServerAlreadyRunningException& err) {
+        } catch (const LocalServerAlreadyRunningException&) {
             ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
             return;
         } catch (const std::runtime_error& err) {
@@ -813,7 +813,7 @@ void GGHumanClientApp::RequestSavePreviews(const std::string& relative_directory
         m_single_player_game = true;
         try {
             StartServer();
-        } catch (const LocalServerAlreadyRunningException& err) {
+        } catch (const LocalServerAlreadyRunningException&) {
             ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
             return;
         } catch (const std::runtime_error& err) {

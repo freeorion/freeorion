@@ -675,7 +675,7 @@ sc::result Idle::react(const HostSPGame& msg) {
     std::string host_player_name;
     try {
         host_player_name = GetHostNameFromSinglePlayerSetupData(*single_player_setup_data);
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         player_connection->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
         return discard_event();
     }
@@ -1158,7 +1158,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
     boost::uuids::uuid cookie;
     try {
         ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         ErrorLogger(FSM) << "MPLobby::react(const JoinGame& msg): couldn't extract data from join game message";
         player_connection->SendMessage(ErrorMessage(UserString("ERROR_INCOMPATIBLE_VERSION"), true));
         server.Networking().Disconnect(player_connection);
@@ -2040,7 +2040,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         std::vector<PlayerSaveHeaderData> player_save_header_data;
         try {
             LoadPlayerSaveHeaderData(m_single_player_setup_data->filename, player_save_header_data);
-        } catch (const std::exception& e) {
+        } catch (const std::exception&) {
             SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
             post_event(LoadSaveFileFailed());
             return;
@@ -2773,7 +2773,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
     boost::uuids::uuid cookie;
     try {
         ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         ErrorLogger(FSM) << "PlayingGame::react(const JoinGame& msg): couldn't extract data from join game message";
         player_connection->SendMessage(ErrorMessage(UserString("ERROR_INCOMPATIBLE_VERSION"), true));
         server.Networking().Disconnect(player_connection);
@@ -3095,7 +3095,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     bool save_state_string_available = false;
     try {
         ExtractTurnOrdersMessageData(message, *order_set, ui_data_available, *ui_data, save_state_string_available, save_state_string);
-    } catch (const std::exception& err) {
+    } catch (const std::exception&) {
         // incorrect turn orders. disconnect player with wrong client.
         sender->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION")));
         server.Networking().Disconnect(sender);
@@ -3218,7 +3218,7 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
     std::set<int> deleted;
     try {
         ExtractTurnPartialOrdersMessageData(message, *added, deleted);
-    } catch (const std::exception& err) {
+    } catch (const std::exception&) {
         // incorrect turn orders. disconnect player with wrong client.
         sender->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION")));
         server.Networking().Disconnect(sender);

@@ -265,7 +265,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
             host_id = boost::lexical_cast<int>(msg.Text());
             m_networking->SetHostPlayerID(host_id);
             BOOST_TEST_MESSAGE("Set Host Player ID to: " << host_id);
-        } catch (const boost::bad_lexical_cast& ex) {
+        } catch (const boost::bad_lexical_cast&) {
             ErrorLogger() << "HOST_ID: Could not convert \"" << msg.Text() << "\" to host id";
             BOOST_TEST_MESSAGE("Couldn't get host ID: " << msg.Text());
             return false;

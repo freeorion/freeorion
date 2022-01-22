@@ -87,7 +87,7 @@ public:
                     throw VectorTexture::BadFile("VectorTexture \"file\" \"" + filename + "\" gave a null image pointer");
                 }
 
-            } catch (const std::exception& e) {
+            } catch (const std::exception&) {
                 //std::cerr << "SVG Load failed!: " << e.what() << std::endl;
             }
         }

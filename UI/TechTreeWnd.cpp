@@ -1611,7 +1611,7 @@ bool TechTreeWnd::TechListBox::TechRowCmp(const GG::ListBox::Row& lhs, const GG:
     } else {
         try {  // attempt compare by int
             retval = boost::lexical_cast<int>(lhs_key) < boost::lexical_cast<int>(rhs_key);
-        } catch (const boost::bad_lexical_cast& e) {
+        } catch (const boost::bad_lexical_cast&) {
             retval = GetLocale("en_US.UTF-8").operator()(lhs_key, rhs_key);
         }
     }
