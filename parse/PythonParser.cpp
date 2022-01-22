@@ -136,7 +136,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"));
         m_meta_path.append(boost::cref(*this));
 
-    } catch (const boost::python::error_already_set& err) {
+    } catch (const boost::python::error_already_set&) {
         m_python.HandleErrorAlreadySet();
         if (!m_python.IsPythonRunning()) {
             ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
@@ -172,7 +172,7 @@ bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
         m_current_globals = globals;
         py::exec(file_contents.c_str(), globals);
         m_current_globals = boost::none;
-    } catch (const boost::python::error_already_set& err) {
+    } catch (const boost::python::error_already_set&) {
         m_current_globals = boost::none;
         m_python.HandleErrorAlreadySet();
         if (!m_python.IsPythonRunning()) {
@@ -257,7 +257,7 @@ py::object PythonParser::exec_module(py::object& module) {
 
             try {
                 py::exec(file_contents.c_str(), m_dict, m_dict);
-            } catch (const boost::python::error_already_set& err) {
+            } catch (const boost::python::error_already_set&) {
                 m_python.HandleErrorAlreadySet();
                 if (!m_python.IsPythonRunning()) {
                     ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";

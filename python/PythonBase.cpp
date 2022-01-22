@@ -45,7 +45,7 @@ bool PythonBase::Initialize() {
 
         // add the directory containing common Python modules used by all Python scripts to Python sys.path
         AddToSysPath(GetPythonCommonDir());
-    } catch (const py::error_already_set& err) {
+    } catch (const py::error_already_set&) {
         HandleErrorAlreadySet();
         ErrorLogger() << "Unable to initialize FreeOrion Python namespace and set path";
         return false;
@@ -61,7 +61,7 @@ bool PythonBase::Initialize() {
             ErrorLogger() << "Unable to initialize FreeOrion Python modules";
             return false;
         }
-    } catch (const py::error_already_set& err) {
+    } catch (const py::error_already_set&) {
         HandleErrorAlreadySet();
         ErrorLogger() << "Unable to initialize FreeOrion Python modules (exception caught)";
         return false;
@@ -136,7 +136,7 @@ std::vector<std::string> PythonBase::ErrorReport() {
 
         py::list py_err_list;
         try { py_err_list = py::extract<py::list>(f()); }
-        catch (const py::error_already_set& err) {
+        catch (const py::error_already_set&) {
             HandleErrorAlreadySet();
             return err_list;
         }

@@ -129,7 +129,7 @@ void PythonAI::GenerateOrders()
         py::object generateOrdersPythonFunction = m_python_module_ai.attr("generateOrders");
         //DebugLogger() << "PythonAI::GenerateOrders : generating orders";
         generateOrdersPythonFunction();
-    } catch (const py::error_already_set& err) {
+    } catch (const py::error_already_set&) {
         HandleErrorAlreadySet();
         if (!IsPythonRunning() || GetOptionsDB().Get<bool>("testing"))
             throw;

@@ -52,7 +52,7 @@ bool PythonCommon::Initialize() {
 
     try {
         m_system_exit = py::import("builtins").attr("SystemExit");
-    } catch (const py::error_already_set& err) {
+    } catch (const py::error_already_set&) {
         HandleErrorAlreadySet();
         ErrorLogger() << "Unable to initialize FreeOrion Python SystemExit";
         return false;

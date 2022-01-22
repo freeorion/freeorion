@@ -377,7 +377,7 @@ void ServerApp::AsyncIOTimedoutHandler(const boost::system::error_code& error) {
     bool success = false;
     try {
         success = m_python_server.AsyncIOTick();
-    } catch (const boost::python::error_already_set& err) {
+    } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1085,7 +1085,7 @@ void ServerApp::LoadChatHistory() {
         m_python_server.SetCurrentDir(GetPythonChatDir());
         // Call the Python load_history function
         success = m_python_server.LoadChatHistory(m_chat_history);
-    } catch (const boost::python::error_already_set& err) {
+    } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1119,7 +1119,7 @@ void ServerApp::PushChatMessage(const std::string& text,
         m_python_server.SetCurrentDir(GetPythonChatDir());
         // Call the Python load_history function
         success = m_python_server.PutChatHistoryEntity(chat);
-    } catch (const boost::python::error_already_set& err) {
+    } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1578,7 +1578,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
         m_python_server.SetCurrentDir(GetPythonUniverseGeneratorDir());
         // Call the main Python universe generator function
         success = m_python_server.CreateUniverse(player_setup_data);
-    } catch (const boost::python::error_already_set& err) {
+    } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1642,7 +1642,7 @@ void ServerApp::ExecuteScriptedTurnEvents() {
         m_python_server.SetCurrentDir(GetPythonTurnEventsDir());
         // Call the main Python turn events function
         success = m_python_server.ExecuteTurnEvents();
-    } catch (const boost::python::error_already_set& err) {
+    } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1742,7 +1742,7 @@ bool ServerApp::IsAuthRequiredOrFillRoles(const std::string& player_name, Networ
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the main Python turn events function
         success = m_python_server.IsRequireAuthOrReturnRoles(player_name, result, roles);
-    } catch (const boost::python::error_already_set& err) {
+    } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1771,7 +1771,7 @@ bool ServerApp::IsAuthSuccessAndFillRoles(const std::string& player_name, const 
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the main Python turn events function
         success = m_python_server.IsSuccessAuthAndReturnRoles(player_name, auth, result, roles);
-    } catch (const boost::python::error_already_set& err) {
+    } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -1799,7 +1799,7 @@ std::vector<PlayerSetupData> ServerApp::FillListPlayers() {
     try {
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         success = m_python_server.FillListPlayers(result);
-    } catch (const boost::python::error_already_set& err) {
+    } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
@@ -2061,7 +2061,7 @@ std::vector<std::string> ServerApp::GetPlayerDelegation(const std::string& playe
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the auth provider function get_player_delegation
         success = m_python_server.GetPlayerDelegation(player_name, result);
-    } catch (const boost::python::error_already_set& err) {
+    } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
