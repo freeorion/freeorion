@@ -1103,6 +1103,9 @@ namespace {
 
         // evaluate activation conditions of effects_groups on input source objects
         std::vector<Condition::ObjectSet> active_sources{effects_groups.size()};
+        std::vector<std::pair<std::size_t, std::future<Condition::ObjectSet>>> futures;
+        futures.reserve(active_sources.size());
+
 
         for (std::size_t i = 0; i < effects_groups.size(); ++i) {
             const auto* effects_group = effects_groups.at(i).get();
@@ -1121,7 +1124,8 @@ namespace {
             bool cache_hit = false;
             for (const auto& cond_idx : already_evaluated_activation_condition_idx) {
                 if (*cond_idx.first == *(effects_group->Activation())) {
-                    active_sources[i] = active_sources[cond_idx.second];    // copy previous condition evaluation result
+                    // get later after everything has evaluated...
+                    //active_sources[i] = active_sources[cond_idx.second];    // copy previous condition evaluation result
                     cache_hit = true;
                     break;
                 }
@@ -1130,29 +1134,61 @@ namespace {
                 continue;   // don't need to evaluate activation condition on these sources again
 
             // no cache hit; need to evaluate activation condition on input source objects
-            if (effects_group->Activation()->SourceInvariant()) {
-                // can apply condition to all source objects simultaneously
-                Condition::ObjectSet rejected;
-                rejected.reserve(source_objects.size());
-                active_sources[i] = source_objects; // copy input source objects set
-                context.source = nullptr;
-                effects_group->Activation()->Eval(context, active_sources[i],
-                                                  rejected, Condition::SearchDomain::MATCHES);
+            auto eval_active_sources = [
+                &source_objects,
+                &context,
+                activation{effects_group->Activation()}
+            ]() -> Condition::ObjectSet
+            {
+                Condition::ObjectSet retval;
 
-            } else {
-                // need to apply separately to each source object
-                active_sources[i].reserve(source_objects.size());
-                for (auto& obj : source_objects) {
-                    context.source = obj;
-                    if (effects_group->Activation()->Eval(context, obj))
-                        active_sources[i].push_back(obj);
+                if (activation->SourceInvariant()) {
+                    // can apply condition to all source objects simultaneously
+                    Condition::ObjectSet rejected;
+                    rejected.reserve(source_objects.size());
+                    retval = source_objects;
+                    ScriptingContext source_context{nullptr, context};
+                    activation->Eval(source_context, retval, rejected, Condition::SearchDomain::MATCHES);
+
+                } else {
+                    // need to apply separately to each source object
+                    ScriptingContext source_context{context};
+                    retval.reserve(source_objects.size());
+                    for (auto& obj : source_objects) {
+                        source_context.source = obj;
+                        if (activation->Eval(source_context, obj))
+                            retval.push_back(std::move(source_context.source));
+                    }
                 }
-            }
+
+                return retval;
+            };
+
+            futures.emplace_back(i, std::async(std::launch::async, eval_active_sources));
 
             // save evaluation lookup index in cache
             already_evaluated_activation_condition_idx.emplace_back(effects_group->Activation(), i);
         }
 
+        for (auto& [i, fut] : futures)
+            active_sources[i] = fut.get();
+
+
+        // loop over effects groups again, copying the cached results
+        for (std::size_t i = 0; i < effects_groups.size(); ++i) {
+            const auto* effects_group = effects_groups.at(i).get();
+            if (only_meter_effects && !effects_group->HasMeterEffects())
+                continue;
+            if (!effects_group->Scope() || !effects_group->Activation())
+                continue;
+
+            for (const auto& cond_idx : already_evaluated_activation_condition_idx) {
+                if (*cond_idx.first == *(effects_group->Activation())) {
+                    active_sources[i] = active_sources[cond_idx.second];    // copy previous condition evaluation result
+                    break;
+                }
+            }
+        }
 
         TraceLogger(effects) << [&]() {
             std::stringstream ss;
