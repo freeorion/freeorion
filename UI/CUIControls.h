@@ -230,8 +230,7 @@ protected:
 /** a FreeOrion ListBox control */
 class CUIListBox : public GG::ListBox {
 public:
-    CUIListBox(void);
-
+    CUIListBox();
     void Render() override;
 };
 
