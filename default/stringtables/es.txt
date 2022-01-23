@@ -4335,8 +4335,8 @@ Añadir a la cola
 PRODUCTION_WND_TITLE
 Producción
 
-#*PRODUCTION_WINDOW_ARTICLE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+PRODUCTION_WINDOW_ARTICLE_TITLE
+Ventana de producción
 
 #*PRODUCTION_WINDOW_ARTICLE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -5108,8 +5108,8 @@ ENC_HOMEWORLDS
 #*ENC_VECTOR_TEXTURE_INFO
 #* <not translated 1970-01-01 01:00:00>
 
-#*ENC_INDEX
-#* <not translated 1970-01-01 01:00:00>
+ENC_INDEX
+Indice
 
 #*SEARCH_RESULTS
 #* <not translated 1970-01-01 01:00:00>
@@ -6093,8 +6093,8 @@ Medio ambiente
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_WINDOW_ARTICLE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_WINDOW_ARTICLE_TITLE
+Ventana de mapa
 
 #*MAP_WINDOW_ARTICLE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6105,8 +6105,8 @@ Medio ambiente
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*DESIGN_WINDOW_ARTICLE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+DESIGN_WINDOW_ARTICLE_TITLE
+Ventana de diseño
 
 #*DESIGN_WINDOW_ARTICLE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6141,8 +6141,8 @@ Medio ambiente
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*FLEET_MOVEMENT_ARTICLE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+FLEET_MOVEMENT_ARTICLE_TITLE
+Movimiento de flota
 
 #*FLEET_MOVEMENT_ARTICLE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6155,8 +6155,8 @@ Medio ambiente
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*HIDDEN_SETTINGS_ARTICLE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+HIDDEN_SETTINGS_ARTICLE_TITLE
+Opciones ocultas
 
 #*HIDDEN_SETTINGS__ARTICLE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6216,11 +6216,11 @@ Guía de Inicio Rápido
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*SITREP_IGNORE_BLOCK_TITLE
-#* <not translated 1970-01-01 01:00:00>
+SITREP_IGNORE_BLOCK_TITLE
+Ignorar y bloquear informes de situación
 
-#*SITREP_IGNORE_BLOCK_SHORT_DESC
-#* <not translated 1970-01-01 01:00:00>
+SITREP_IGNORE_BLOCK_SHORT_DESC
+Ignorar informes de situación específicos y bloquear tipos de informes.
 
 #*SITREP_IGNORE_BLOCK_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6277,8 +6277,8 @@ Investigación Tecnológica
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*CONFIG_GUIDE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+CONFIG_GUIDE_TITLE
+Guía de configuración
 
 #*CONFIG_GUIDE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -7362,58 +7362,58 @@ El imperio %empire% ha sido eliminado.
 ## Random beginner hints
 ##
 
-#*BEGINNER_HINTS
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINTS
+Pistas de juego aleatorias
 
-#*BEGINNER_HINTS_TEXT
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINTS_TEXT
+'''Colección de informes de situación enfoncados a ayudar a los jugadores principiantes.
+Cada turno se selecciona una de estas pistas de manera aleatoria, siendo almacenadas aquí para referencias futuras.
+
+Las pistas aleatorias son:
+
+[[BEGINNER_HINT_01]]
+
+[[BEGINNER_HINT_02]]
+
+[[BEGINNER_HINT_03]]
+
+[[BEGINNER_HINT_04]]
+
+[[BEGINNER_HINT_05]]
+
+[[BEGINNER_HINT_06]]
+
+[[BEGINNER_HINT_07]]
+
+[[BEGINNER_HINT_08]]
+
+[[BEGINNER_HINT_09]]
+
+[[BEGINNER_HINT_10]]
+
+[[BEGINNER_HINT_11]]
+
+[[BEGINNER_HINT_12]]
+
+[[BEGINNER_HINT_13]]
+
+[[BEGINNER_HINT_14]]
+
+[[BEGINNER_HINT_15]]
+
+[[BEGINNER_HINT_16]]
+
+[[BEGINNER_HINT_17]]
+
+[[BEGINNER_HINT_18]]
+
+[[BEGINNER_HINT_19]]
+
+[[BEGINNER_HINT_20]]
+
+[[BEGINNER_HINT_21]]
+
+[[BEGINNER_HINT_22]]'''
 
 #*RANDOM_BEGINNER_HINT
 #* <not translated 1970-01-01 01:00:00>
@@ -15818,50 +15818,50 @@ SHIPDESIGN_PLANET_INVASION
 ## Hotkey names and descriptions
 ##
 
-#*OPTIONS_PAGE_HOTKEYS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_PAGE_HOTKEYS
+Atajos de teclado
 
-#*HOTKEYS_UI
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_UI
+Interfaz de usuario
 
-#*HOTKEYS_UI_MAP
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_UI_MAP
+Ventana de mapa
 
-#*HOTKEYS_UI_MAP_FLEET
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_UI_MAP_FLEET
+Flotas
 
-#*HOTKEYS_UI_MAP_SYSTEM
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_UI_MAP_SYSTEM
+Systemas
 
-#*HOTKEYS_GENERAL
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_GENERAL
+General
 
-#*HOTKEYS_VIDEO
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_VIDEO
+Vídeo
 
-#*HOTKEY_MAP_OPEN_CHAT
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_OPEN_CHAT
+Abrir ventana de chat
 
-#*HOTKEY_MAP_END_TURN
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_END_TURN
+Finalizar turno
 
-#*HOTKEY_MAP_RESEARCH
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_RESEARCH
+Mostrar panel de investigación
 
-#*HOTKEY_MAP_DESIGN
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_DESIGN
+Mostrar panel de diseño
 
-#*HOTKEY_MAP_OBJECTS
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_OBJECTS
+Abrir lista de objetos
 
-#*HOTKEY_MAP_MESSAGES
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_MESSAGES
+Mostrar pantalla de mensajes
 
-#*HOTKEY_MAP_EMPIRES
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_EMPIRES
+Mostrar lista de imperios
 
-#*HOTKEY_MAP_PEDIA
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_PEDIA
+Mostrar ventana de la pedia
 
 #*HOTKEY_MAP_GRAPHS
 #* <not translated 1970-01-01 01:00:00>
