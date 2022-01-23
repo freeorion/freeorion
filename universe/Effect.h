@@ -131,8 +131,8 @@ namespace Effect {
     struct FO_COMMON_API AccountingInfo : public EffectCause {
         AccountingInfo() = default;
         AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
-                       float running_meter_total_, std::string&& specific_cause_ = "",
-                       std::string&& custom_label_ = "");
+                       float running_meter_total_, std::string specific_cause_ = "",
+                       std::string custom_label_ = "");
 
         bool operator==(const AccountingInfo& rhs) const;
 

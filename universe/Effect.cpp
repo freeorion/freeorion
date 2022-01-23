@@ -15,7 +15,7 @@ Effect::EffectCause::EffectCause(EffectsCauseType cause_type_, std::string speci
 
 Effect::AccountingInfo::AccountingInfo(int source_id_, EffectsCauseType cause_type_,
                                        float meter_change_, float running_meter_total_,
-                                       std::string&& specific_cause_, std::string&& custom_label_) :
+                                       std::string specific_cause_, std::string custom_label_) :
     EffectCause(cause_type_, std::move(specific_cause_), std::move(custom_label_)),
     source_id(source_id_),
     meter_change(meter_change_),
