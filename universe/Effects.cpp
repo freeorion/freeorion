@@ -510,6 +510,16 @@ void SetMeter::Execute(ScriptingContext& context) const {
     m->SetCurrent(m_value->Eval(meter_context));
 }
 
+namespace {
+    std::string TargetsDump(const TargetSet& targets) {
+        std::string retval;
+        retval.reserve(1500*targets.size()); // rough guesstimate
+        for (auto& target : targets)
+            retval.append("\n").append(target->Dump());
+        return retval;
+    }
+}
+
 void SetMeter::Execute(ScriptingContext& context,
                        const TargetSet& targets,
                        AccountingMap* accounting_map,
@@ -523,9 +533,7 @@ void SetMeter::Execute(ScriptingContext& context,
         return;
 
     TraceLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
-    TraceLogger(effects) << "SetMeter execute targets before: ";
-    for (const auto& target : targets)
-        TraceLogger(effects) << " ... " << target->Dump(1);
+    TraceLogger(effects) << "SetMeter execute " << targets.size() << " before:" << TargetsDump(targets);
 
     if (!accounting_map) {
         // without accounting, can do default batch execute
@@ -564,9 +572,7 @@ void SetMeter::Execute(ScriptingContext& context,
         }
     }
 
-    TraceLogger(effects) << "SetMeter execute targets after: ";
-    for (auto& target : targets)
-        TraceLogger(effects) << " ... " << target->Dump();
+    TraceLogger(effects) << "SetMeter execute " << targets.size() << " after:" << TargetsDump(targets);
 }
 
 void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) const {
