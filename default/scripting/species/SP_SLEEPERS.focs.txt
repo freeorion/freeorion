@@ -23,6 +23,7 @@ Species
         "BLD_SOL_ORB_GEN"       // bright and shiny and we likes the industrial benefits
         "PLC_DREAM_RECURSION"   // dreaming sounds nice. good night. sweet dream recursions.
         "PLC_INDUSTRIALISM"     // automation. also nice. just dont expect us to work ourselves..
+        "FOCUS_RESEARCH"        // i.e. dreaming
     ]
     dislikes = [ // not much really, because that would make them interesting
         "SP_NIGHTSIDERS"         // who doesnt?
@@ -65,7 +66,7 @@ Species
 
     [[TUNDRA_NARROW_EP]]
 
-    graphic = "icons/species/sleepers.png"
+    graphic = "icons/species/quadruped-05.png"
 
 #include "common/*.macros"
 
