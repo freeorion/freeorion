@@ -49,6 +49,7 @@ namespace {
     constexpr double            POLICY_TEXT_POS_Y{0.75};
     constexpr double            POLICY_COST_POS_X{0.75};
     constexpr double            POLICY_COST_POS_Y{0.0625};
+    constexpr GG::X             POLICY_SIZE_BUTTON_WIDTH{32};
 
     /** Returns texture with which to render a PolicySlotControl, depending on
       * \a category */
@@ -209,7 +210,7 @@ public:
     const std::string&  PolicyName() const  { return m_policy ? m_policy->Name() : EMPTY_STRING; }
     const Policy*       GetPolicy() const   { return m_policy; }
 
-    void Resize(GG::Pt sz);
+    void Resize(const GG::Pt& sz, const int pts = ClientUI::Pts());
     void Render() override;
 
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
@@ -240,7 +241,7 @@ void PolicyControl::CompleteConstruction() {
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const ScriptingContext context;
     const auto& name = UserString(m_policy->Name());
-    auto cost = static_cast<int>(m_policy->AdoptionCost(empire_id, context));
+    const auto& cost = static_cast<int>(m_policy->AdoptionCost(empire_id, context));
 
     //std::cout << "PolicyControl: " << m_policy->Name() << std::endl;
 
@@ -271,25 +272,20 @@ void PolicyControl::CompleteConstruction() {
     SetBrowseInfoWnd(PolicyBrowseWnd(m_policy->Name()));
 }
 
-void PolicyControl::Resize(GG::Pt sz) {
-    GG::Control::Resize(sz);
-
+void PolicyControl::Resize(const GG::Pt& sz, const int pts) {
     m_background->Resize(sz);
     m_icon->Resize(GG::Pt(sz.x, sz.y * 2/3));
 
-    double zoom_factor = 1;
-    if (sz.x != POLICY_CONTROL_WIDTH)
-        zoom_factor = 0.5;
+    std::shared_ptr<GG::Font> font = ClientUI::GetBoldFont(pts);
 
-    const int font_size = static_cast<int>(ClientUI::Pts() * zoom_factor);
-    std::shared_ptr<GG::Font> new_font = ClientUI::GetBoldFont(font_size);
-
-    m_name_label->SetFont(new_font);
-    m_cost_label->SetFont(new_font);
+    m_name_label->SetFont(font);
+    m_cost_label->SetFont(font);
 
     m_name_label->SizeMove(GG::Pt(sz.x * POLICY_TEXT_POS_X, sz.y * POLICY_TEXT_POS_Y),
                            GG::Pt(sz.x * (1 - POLICY_TEXT_POS_X), sz.y * POLICY_TEXT_POS_Y));
     m_cost_label->MoveTo(GG::Pt(sz.x * POLICY_COST_POS_X, sz.y * (1 - POLICY_COST_POS_Y)));
+
+    GG::Control::Resize(sz);
 }
 
 void PolicyControl::Render() {}
@@ -333,6 +329,7 @@ public:
     void ShowAllCategories(bool refresh_list = true);
     void HideCategory(const std::string& category, bool refresh_list = true);
     void HideAllCategories(bool refresh_list = true);
+    void ResizePolicies(const GG::Pt& sz, const int pts = ClientUI::Pts());
 
     mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)>    PolicyClickedSignal;
     mutable boost::signals2::signal<void (const Policy*)>                           PolicyDoubleClickedSignal;
@@ -416,6 +413,13 @@ const std::set<std::string>& PoliciesListBox::GetCategoriesShown() const
 void PoliciesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
+    auto policy_palette = Parent();
+    auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(policy_palette->Parent());
+
+    GG::Pt slot_size = GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT);
+    if (gov_wnd)
+        slot_size = gov_wnd->GetPolicySlotSize();
+
     // maybe later do something interesting with docking
     CUIListBox::SizeMove(ul, lr);
 
@@ -423,7 +427,7 @@ void PoliciesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         // determine how many columns can fit in the box now...
         const GG::X TOTAL_WIDTH = Size().x - ClientUI::ScrollWidth();
         const int NUM_COLUMNS = std::max(1,
-            Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
+            Value(TOTAL_WIDTH / (slot_size.x + GG::X(PAD))));
 
         if (NUM_COLUMNS != m_previous_num_columns)
             Populate();
@@ -473,9 +477,18 @@ void PoliciesListBox::Populate() {
     //std::cout << "PoliciesListBox::Populate" << std::endl;
     ScopedTimer scoped_timer("PoliciesListBox::Populate");
 
+    GG::Pt slot_size = GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT);
+    int text_pts = ClientUI::Pts();
+
+    auto policy_palette = Parent();
+    auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(policy_palette->Parent());
+    if (gov_wnd) {
+        slot_size = gov_wnd->GetPolicySlotSize();
+        text_pts = gov_wnd->GetPolicyTextSize();
+    }
 
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
-    const int MAX_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
+    const int MAX_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (slot_size.x + GG::X(PAD))));
 
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);  // may be nullptr
@@ -504,7 +517,7 @@ void PoliciesListBox::Populate() {
                     Insert(cur_row);
                 cur_col = 0;
                 cur_row = GG::Wnd::Create<PoliciesListBoxRow>(
-                    TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD), m_availabilities_state);
+                    TOTAL_WIDTH, slot_size.y + GG::Y(PAD), m_availabilities_state);
             }
             ++cur_col;
             ++num_policies;
@@ -558,6 +571,20 @@ void PoliciesListBox::HideAllCategories(bool refresh_list) {
         Populate();
 }
 
+void PoliciesListBox::ResizePolicies(const GG::Pt& sz, const int pts) {
+    auto it = begin();
+    while (it != end()) {
+        auto row = *it;
+        unsigned int itt = 0;
+        while (itt < row->size()) {
+            auto policy_control = dynamic_cast<PolicyControl*>(row->at(itt));
+            if (policy_control)
+                policy_control->Resize(sz, pts);
+            ++itt;
+        }
+        ++it;
+    }
+}
 
 //////////////////////////////////////////////////
 // GovernmentWnd::PolicyPalette                 //
@@ -655,8 +682,6 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
     Populate();
 
     GG::Wnd::CompleteConstruction();
-
-    DoLayout();
 }
 
 void GovernmentWnd::PolicyPalette::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -750,6 +775,18 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
     // place policies list
     m_policies_list->SizeMove(GG::Pt{GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(TOTAL_ROWS + 1)},
                               GG::Pt{ClientWidth(), ClientHeight() - GG::Y{INNER_BORDER_ANGLE_OFFSET}});
+
+    // adjust size of policies
+    GG::Pt slot_size = GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT);
+    int text_pts = ClientUI::Pts();
+
+    auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(Parent());
+    if (gov_wnd) {
+        slot_size = gov_wnd->GetPolicySlotSize();
+        text_pts = gov_wnd->GetPolicyTextSize();
+    }
+
+    m_policies_list->ResizePolicies(slot_size, text_pts);
 }
 
 void GovernmentWnd::PolicyPalette::HandlePolicyClicked(const Policy* policy_type,
@@ -827,8 +864,10 @@ void GovernmentWnd::PolicyPalette::ToggleAvailability(Availability type) {
     Populate();
 }
 
-void GovernmentWnd::PolicyPalette::Populate()
-{ m_policies_list->Populate(); }
+void GovernmentWnd::PolicyPalette::Populate() {
+    m_policies_list->Populate();
+    DoLayout();
+}
 
 
 //////////////////////////////////////////////////
@@ -857,7 +896,7 @@ public:
     void DragDropEnter(const GG::Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                        GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropLeave() override;
-    void Resize(const GG::Pt& sz);
+    void Resize(const GG::Pt& sz, const int pts = ClientUI::Pts());
     void Render() override;
 
     void Highlight(bool actually = true);
@@ -1048,14 +1087,14 @@ void PolicySlotControl::DragDropLeave() {
         m_policy_control->Show();
 }
 
-void PolicySlotControl::Resize(const GG::Pt& sz) {
-    GG::Control::Resize(sz);
-
+void PolicySlotControl::Resize(const GG::Pt& sz, const int pts) {
     if (m_policy_control)
-        m_policy_control->Resize(sz);
-    
+        m_policy_control->Resize(sz, pts);
+
     if (m_background)
         m_background->Resize(sz);
+
+    GG::Control::Resize(sz);
 }
 
 void PolicySlotControl::Render()
@@ -1202,7 +1241,7 @@ void GovernmentWnd::MainPanel::Sanitize()
 void GovernmentWnd::MainPanel::Refresh()
 {
     Populate();
-    DoLayout();
+    DoLayout();  // necessary?
 }
 
 void GovernmentWnd::MainPanel::SetPolicy(const std::string& policy_name, unsigned int slot)
@@ -1308,6 +1347,9 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     empire->UpdateInfluenceSpending(context);
     Populate();
     DoLayout();
+    auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(Parent());
+    if (gov_wnd)
+        gov_wnd->DoLayout();
     context.ContextUniverse().UpdateMeterEstimates(context);
     SidePanel::Refresh();
     FleetUIManager::GetFleetUIManager().RefreshAll();
@@ -1409,8 +1451,6 @@ void GovernmentWnd::MainPanel::Populate() {
                                               this, _1, n));
         slot_control->PolicyClickedSignal.connect(PolicyClickedSignal);
     }
-
-    DoLayout();
 }
 
 void GovernmentWnd::MainPanel::DoLayout() {
@@ -1428,38 +1468,34 @@ void GovernmentWnd::MainPanel::DoLayout() {
     if (m_slots.empty())
         return;
 
-    // calculate if there is enough wnd space for policies
-    const int slots_per_row = static_cast<int> (Value(lr.x / (SLOT_CONTROL_WIDTH * (1 + POLICY_PAD))));
-    const int rows_available = static_cast<int> (Value(lr.y / (SLOT_CONTROL_HEIGHT * (1 + POLICY_PAD))));
-
-    if (slots_per_row < 1)
-        return;
-
-    const int rows_required = static_cast<int> (m_slots.size() / slots_per_row);
-
-    double zoom_factor = 1;
-
-    if (rows_required > rows_available)
-        zoom_factor = 0.5;
-
-    GG::X slot_width = static_cast<GG::X>(SLOT_CONTROL_WIDTH * zoom_factor);
-    GG::Y slot_height = static_cast<GG::Y>(SLOT_CONTROL_HEIGHT * zoom_factor);
+    auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(Parent());
+    GG::Pt slot_size = GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT);
+    int text_pts = ClientUI::Pts();
+    if (gov_wnd) {
+        slot_size = gov_wnd->GetPolicySlotSize();
+        text_pts = gov_wnd->GetPolicyTextSize();
+    }
 
     // place background image of government
-    const GG::X initial_slot_l = GG::X(Value(m_slots.front()->Size().x) * POLICY_PAD);
+    const GG::X initial_slot_l = GG::X(PAD*3);
     ul.x = initial_slot_l;
-    ul.y = -m_slots.front()->Height();
+    ul.y = GG::Y(PAD*4); // -m_slots.front()->Height();
 
     // arrange policy slots, start new row when slots overlap with right wnd border
     int count = 0;
+    bool first_iteration = true;
     for (auto& slot : m_slots) {
 
-        slot->Resize(GG::Pt(slot_width, slot_height));
+        slot->Resize(GG::Pt(slot_size.x, slot_size.y), text_pts);
 
         // start of new row
         if (count == 0) {
             ul.x = initial_slot_l;
-            ul.y += slot->Height() * (1 + POLICY_PAD);
+
+            if (first_iteration)
+                first_iteration = false;
+            else
+                ul.y += slot->Height() * (1 + POLICY_PAD);
         // no new row, progress in row
         }
         else {
@@ -1470,10 +1506,10 @@ void GovernmentWnd::MainPanel::DoLayout() {
         count++;
 
         // reset count when hitting right border
-        if ((count + 2) * slot->Size().x > lr.x) {
+        if ((count + 1) * slot->Size().x * (1 + POLICY_PAD) > lr.x) {
             count = 0;
         }
-    }
+    } 
 }
 
 void GovernmentWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first,
@@ -1519,9 +1555,27 @@ void GovernmentWnd::CompleteConstruction() {
     m_policy_palette->ClearPolicySignal.connect(
         boost::bind(&GovernmentWnd::MainPanel::ClearPolicy, m_main_panel, _1));
 
+    m_policy_size_buttons = GG::Wnd::Create<GG::RadioButtonGroup>(GG::Orientation::HORIZONTAL);
+    m_policy_size_buttons->ExpandButtons(true);
+    m_policy_size_buttons->ExpandButtonsProportionally(true);
+
+    auto large_size_icon = std::make_shared<GG::SubTexture>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "policy_large_size.png"));
+    auto medium_size_icon = std::make_shared<GG::SubTexture>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "policy_medium_size.png"));
+    auto small_size_icon = std::make_shared<GG::SubTexture>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "policy_small_size.png"));
+
+    m_policy_size_buttons->AddButton(
+        GG::Wnd::Create<CUIStateButton>("", GG::FORMAT_LEFT, std::make_shared<CUIIconButtonRepresenter>(large_size_icon, GG::CLR_WHITE)));
+    m_policy_size_buttons->AddButton(
+        GG::Wnd::Create<CUIStateButton>("", GG::FORMAT_LEFT, std::make_shared<CUIIconButtonRepresenter>(medium_size_icon, GG::CLR_WHITE)));
+    m_policy_size_buttons->AddButton(
+        GG::Wnd::Create<CUIStateButton>("", GG::FORMAT_LEFT, std::make_shared<CUIIconButtonRepresenter>(small_size_icon, GG::CLR_WHITE)));
+    AttachChild(m_policy_size_buttons);
+    m_policy_size_buttons->SetCheck(0);
+
     auto zoom_to_policy_action = [](const Policy* policy, GG::Flags<GG::ModKey> modkeys) { ClientUI::GetClientUI()->ZoomToPolicy(policy->Name()); };
     //m_main_panel->PolicyClickedSignal.connect(zoom_to_policy_action);
     m_policy_palette->PolicyClickedSignal.connect(zoom_to_policy_action);
+    m_policy_size_buttons->ButtonChangedSignal.connect(boost::bind(&GovernmentWnd::PolicySizeButtonClicked, this, _1));
 
     CUIWnd::CompleteConstruction();
     DoLayout();
@@ -1545,15 +1599,50 @@ void GovernmentWnd::Refresh() {
     m_main_panel->Refresh();
 }
 
+double GovernmentWnd::GetPolicyZoomFactor() {
+    switch (m_policy_size_buttons->CheckedButton()) {
+    case 0: return 1;
+    case 1: return 0.75;
+    case 2: return 0.5;
+    }
+
+    DebugLogger() << "GovernmentWnd::GetPolicyZoomFactor(): m_policy_buttons no button checked.";
+    return 1;
+}
+
+GG::Pt GovernmentWnd::GetPolicySlotSize() {
+    double zoom_factor = GetPolicyZoomFactor();
+    const GG::X slot_width = static_cast<GG::X>(SLOT_CONTROL_WIDTH * zoom_factor);
+    const GG::Y slot_height = static_cast<GG::Y>(SLOT_CONTROL_HEIGHT * zoom_factor);
+    return GG::Pt(slot_width, slot_height);
+}
+
+int GovernmentWnd::GetPolicyTextSize() {
+    double zoom_factor = GetPolicyZoomFactor();
+    const int text_pts = static_cast<int>(ClientUI::Pts() * zoom_factor);
+    return text_pts;
+}
+
 void GovernmentWnd::DoLayout() {
+    const GG::Y BUTTON_HEIGHT(ClientUI::Pts() * 2);
     constexpr GG::Pt palette_ul(GG::X0, GG::Y0);
     const GG::Pt palette_lr(palette_ul + GG::Pt(ClientWidth(), ClientHeight() / 2));
+    const int num_size_buttons = static_cast<int>(m_policy_size_buttons->NumButtons());
 
-    const GG::Pt main_ul(palette_ul + GG::Pt(GG::X0, ClientHeight() / 2));
+    const GG::Pt main_ul(palette_ul + GG::Pt(GG::X0, ClientHeight() / 2 + PAD));
     const GG::Pt main_lr(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET));
 
     m_main_panel->SizeMove(main_ul, main_lr);
     m_policy_palette->SizeMove(palette_ul, palette_lr);
+
+    const GG::Pt size_buttons_ul = main_ul + GG::Pt(GG::X(PAD), - BUTTON_HEIGHT/2);
+    const GG::Pt size_buttons_lr = main_ul + GG::Pt((GG::X(PAD) + POLICY_SIZE_BUTTON_WIDTH) * num_size_buttons, BUTTON_HEIGHT/2);
+
+    m_policy_size_buttons->SizeMove(size_buttons_ul, size_buttons_lr);
+}
+
+void GovernmentWnd::PolicySizeButtonClicked(std::size_t idx) {
+    Refresh();
 }
 
 void GovernmentWnd::EnableOrderIssuing(bool enable)
