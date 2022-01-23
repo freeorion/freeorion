@@ -63,7 +63,7 @@ packages via the command line.
   * [Fedora package] stable release: `# dnf install freeorion`
   * [Gentoo package] stable release: `# emerge games-strategy/freeorion`
   * [Void package] stable release: `# xbps-install freeorion`
-  * [ArchLinux package] stable release
+  * [ArchLinux package] stable release: `# pacman -S freeorion`
   * [openSUSE package] stable release: `# zypper in freeorion`
 
 To install FreeOrion from Flathub, follow the instructions to [install Flatpak
@@ -147,6 +147,6 @@ accompanying license file.
 [Gentoo package]: https://packages.gentoo.org/packages/games-strategy/freeorion
 [openSUSE Package]: https://build.opensuse.org/package/show/games/freeorion
 [Void package]: https://github.com/voidlinux/void-packages/tree/master/srcpkgs/freeorion
-[ArchLinux Package]: https://aur.archlinux.org/packages/freeorion/
+[ArchLinux Package]: https://archlinux.org/packages/community/x86_64/freeorion/
 [GPL v2]: https://www.gnu.org/licenses/gpl-2.0.txt
 [CC-BY-SA-3.0]: https://creativecommons.org/licenses/by-sa/3.0/legalcode
