@@ -501,15 +501,6 @@ bool SetMeter::operator==(const Effect& rhs) const {
     return true;
 }
 
-void SetMeter::Execute(ScriptingContext& context) const {
-    if (!context.effect_target) return;
-    Meter* m = context.effect_target->GetMeter(m_meter);
-    if (!m) return;
-
-    ScriptingContext meter_context{context, m->Current()};
-    m->SetCurrent(m_value->Eval(meter_context));
-}
-
 namespace {
     std::string TargetsDump(const TargetSet& targets) {
         std::string retval;
@@ -518,6 +509,35 @@ namespace {
             retval.append("\n").append(target->Dump());
         return retval;
     }
+
+    template <typename T, typename V, typename M>
+    double NewMeterValue(const ScriptingContext& context, const M meter, const V& value_ref, T&& target)
+    {
+        if (value_ref->TargetInvariant())
+            return value_ref->Eval(context);
+
+        const Meter* m = nullptr;
+        if constexpr (std::is_same_v<M, MeterType>)
+            m = target->GetMeter(meter);
+        else if constexpr (std::is_same_v<M, Meter*>)
+            m = meter;
+        if (!m)
+            return Meter::INVALID_VALUE;
+
+        if (context.effect_target == target) {
+            ScriptingContext target_meter_context{context, m->Current()};
+            return value_ref->Eval(target_meter_context);
+        } else {
+            ScriptingContext target_meter_context{context, std::forward<T>(target), m->Current()};
+            return value_ref->Eval(target_meter_context);
+        }
+    }
+}
+
+void SetMeter::Execute(ScriptingContext& context) const {
+    if (!context.effect_target) return;
+    if (Meter* m = context.effect_target->GetMeter(m_meter))
+        m->SetCurrent(NewMeterValue(context, m, m_value, context.effect_target));
 }
 
 void SetMeter::Execute(ScriptingContext& context,
@@ -534,6 +554,7 @@ void SetMeter::Execute(ScriptingContext& context,
 
     TraceLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
     TraceLogger(effects) << "SetMeter execute " << targets.size() << " before:" << TargetsDump(targets);
+
 
     if (!accounting_map) {
         // without accounting, can do default batch execute
@@ -560,8 +581,7 @@ void SetMeter::Execute(ScriptingContext& context,
             info.running_meter_total =  meter->Current();
 
             // actually execute effect to modify meter
-            ScriptingContext target_meter_context{context, target, meter->Current()};
-            meter->SetCurrent(m_value->Eval(target_meter_context));
+            meter->SetCurrent(NewMeterValue(context, meter, m_value, target));
 
             // update for meter change and new total
             info.meter_change = meter->Current() - info.running_meter_total;
@@ -576,21 +596,27 @@ void SetMeter::Execute(ScriptingContext& context,
 }
 
 void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) const {
-    if (targets.empty())
+    if (targets.empty()) {
         return;
 
-    if (m_value->TargetInvariant()) {
+    } else if (targets.size() == 1) {
+        auto& target = targets.front();
+        if (Meter* m = target->GetMeter(m_meter))
+            m->SetCurrent(NewMeterValue(context, m, m_value, target));
+
+    } else if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
         float val = m_value->Eval(context);
         for (auto& target : targets) {
             if (Meter* m = target->GetMeter(m_meter))
                 m->SetCurrent(val);
         }
-        return;
 
     } else if (m_value->SimpleIncrement()) {
-        // meter value is a consistent constant increment for each target, so handle with
-        // deep inspection single ValueRef evaluation
+        // LHS() is just the current meter value, and RHS() is target-invariant
+        // or: meter value is a consistent constant increment for each target,
+        // so handle with deep inspection single ValueRef evaluation
+
         auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
         if (!op) {
             ErrorLogger(effects) << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
@@ -618,11 +644,11 @@ void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) cons
             if (Meter* m = target->GetMeter(m_meter))
                 m->AddToCurrent(increment);
         }
-        return;
-    }
 
-    // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
-    Effect::Execute(context, targets);
+    } else {
+        // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
+        Effect::Execute(context, targets);
+    }
 }
 
 std::string SetMeter::Dump(unsigned short ntabs) const {
