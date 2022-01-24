@@ -19,22 +19,7 @@ namespace parse {
             int operator() (T t) const
             { return static_cast<int>(t); }
         };
-        struct cast_T_to_string {
-            //template <typename T>
-            std::string operator() (PlanetType t) const
-                { return std::string(to_string(t)); }
-        };
     }
-
-    detail::MovableEnvelope<ValueRef::ValueRef<std::string>> planet_type_as_movable_string(
-                          const parse::detail::MovableEnvelope<ValueRef::ValueRef<PlanetType>>& ref_envelope,
-                          bool& pass)
-    {
-        std::unique_ptr<ValueRef::ValueRef<::PlanetType>> vref = ref_envelope.OpenEnvelope(pass);
-        std::unique_ptr<ValueRef::StringCast<::PlanetType>> as_uniq_stringcast = std::make_unique<ValueRef::StringCast<::PlanetType>>(std::move(vref));
-        return detail::MovableEnvelope<ValueRef::ValueRef<std::string>>(std::move(as_uniq_stringcast));
-    }
-    BOOST_PHOENIX_ADAPT_FUNCTION(detail::MovableEnvelope<ValueRef::ValueRef<std::string>>, planet_type_as_movable_string_, planet_type_as_movable_string, 2)
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> planet_type_as_unique_string(
                           const parse::detail::MovableEnvelope<ValueRef::ValueRef<PlanetType>>& ref_envelope,
@@ -73,7 +58,6 @@ namespace parse {
         const boost::phoenix::function<detail::construct_movable> construct_movable_;
         const boost::phoenix::function<detail::deconstruct_movable> deconstruct_movable_;
         const boost::phoenix::function<detail::cast_T_to_int> int_cast_;
-        const boost::phoenix::function<detail::cast_T_to_string> string_cast_;
 
         game_rule
             = (   tok.GameRule_
@@ -238,16 +222,6 @@ namespace parse {
                 >-( label(tok.name_)   > string_grammar )
                 >-( label(tok.object_) > int_rules.expr )
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
-            ;
-/*
-        planet_type_as_int
-            = ( label(tok.planettype_) > planet_type_rules->expr )
-              [ _val = construct_movable_(new_<ValueRef::StaticCast<::PlanetType, int>>(deconstruct_movable_(_1, _pass))) ]
-            ;
-*/
-        planet_type_as_string
-            = ( label(tok.planettype_) > planet_type_rules->expr )
-              [ _val = planet_type_as_movable_string_(_1, _pass) ]
             ;
 
         clockwise_planet_type_distance
