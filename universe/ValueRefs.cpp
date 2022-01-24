@@ -1994,7 +1994,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return count;
         }
     }
-    else if (variable_name == "ClockwisePlanetTypeDistance") {
+    else if (variable_name == "PlanetTypeDifference") {
         // get planet types to find difference between...
         PlanetType pt1;
         if (m_int_ref1) {

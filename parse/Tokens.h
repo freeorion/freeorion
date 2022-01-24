@@ -57,7 +57,6 @@
     (ceil)                                      \
     (class)                                     \
     (ClockwiseNextPlanetType)                   \
-    (ClockwisePlanetTypeDistance)               \
     (Colony)                                    \
     (colour)                                    \
     (CombatBout)                                \
@@ -355,6 +354,7 @@
     (PlanetID)                                  \
     (planetsize)                                \
     (planettype)                                \
+    (PlanetTypeDifference)                      \
     (Playable)                                  \
     (PointDefense)                              \
     (Policy)                                    \

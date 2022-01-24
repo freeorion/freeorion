@@ -264,7 +264,7 @@ namespace parse {
         detail::complex_variable_rule<int>  slots_in_hull;
         detail::complex_variable_rule<int>  slots_in_ship_design;
         detail::complex_variable_rule<int>  special_added_on_turn;
-        detail::complex_variable_rule<int>  clockwise_planet_type_distance;
+        detail::complex_variable_rule<int>  planet_type_difference;
         detail::complex_variable_rule<int>  start;
     };
 

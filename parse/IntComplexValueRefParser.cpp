@@ -224,9 +224,9 @@ namespace parse {
             ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
             ;
 
-        clockwise_planet_type_distance
+        planet_type_difference
             =   (
-                    tok.ClockwisePlanetTypeDistance_
+                    tok.PlanetTypeDifference_
                     > label(tok.from_) > planet_type_rules->expr
                     > label(tok.to_)   > planet_type_rules->expr
                 ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, nullptr, nullptr, nullptr, planet_type_as_unique_string_(_2, _pass), planet_type_as_unique_string_(_3, _pass))) ]
@@ -247,7 +247,7 @@ namespace parse {
             |   slots_in_hull
             |   slots_in_ship_design
             |   special_added_on_turn
-            |   clockwise_planet_type_distance
+            |   planet_type_difference
             ;
 
         game_rule.name("GameRule");
@@ -265,7 +265,7 @@ namespace parse {
         slots_in_hull.name("SlotsInHull");
         slots_in_ship_design.name("SlotsInShipDesign");
         special_added_on_turn.name("SpecialAddedOnTurn");
-        clockwise_planet_type_distance.name("ClockwisePlanetTypeDistance");
+        planet_type_difference.name("PlanetTypeDifference");
 
 #if DEBUG_INT_COMPLEX_PARSERS
         debug(game_rule);
@@ -283,7 +283,7 @@ namespace parse {
         debug(slots_in_hull);
         debug(slots_in_ship_design);
         debug(special_added_on_turn);
-        debug(clockwise_planet_type_distance);
+        debug(planet_type_difference);
 #endif
     }
 }
