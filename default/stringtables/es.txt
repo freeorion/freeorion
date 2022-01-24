@@ -518,13 +518,13 @@ Transporte de tropas avanzadas con alguna capacidad de sigilo
 #* <not translated 1970-01-01 01:00:00>
 
 SD_COLONY_SHIP
-Nave colonizadora
+Nave colonia
 
 SD_COLONY_SHIP_DESC
 Nave desarmada [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], con un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_CRYONIC_COLONY_SHIP
-Nave colonizadora criónica
+Nave colonia criónica
 
 SD_CRYONIC_COLONY_SHIP_DESC
 Nave desarmada [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], con un [[buildingtype BLD_SHIPYARD_BASE]].
@@ -4509,8 +4509,8 @@ En %1%
 #* <not translated 1970-01-01 01:00:00>
 
 # %1% name of the system this item production will be relocated to.
-#*RALLY_QUEUE_ITEM
-#* <not translated 1970-01-01 01:00:00>
+RALLY_QUEUE_ITEM
+Ir a %1%
 
 #*DELETE_QUEUE_ITEM
 #* <not translated 1970-01-01 01:00:00>
@@ -5109,7 +5109,7 @@ ENC_HOMEWORLDS
 #* <not translated 1970-01-01 01:00:00>
 
 ENC_INDEX
-Indice
+Índice
 
 #*SEARCH_RESULTS
 #* <not translated 1970-01-01 01:00:00>
@@ -5897,8 +5897,8 @@ Rango de detección
 #*GIFTING_TEXT
 #* <not translated 1970-01-01 01:00:00>
 
-#*OUTPOSTS_TITLE
-#* <not translated 1970-01-01 01:00:00>
+OUTPOSTS_TITLE
+Puesto avanzado
 
 #*OUTPOSTS_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -5909,8 +5909,8 @@ Rango de detección
 #*HOMEWORLDS_TEXT
 #* <not translated 1970-01-01 01:00:00>
 
-#*FOCUS_TITLE
-#* <not translated 1970-01-01 01:00:00>
+FOCUS_TITLE
+Enfoque
 
 #*FOCUS_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -5919,8 +5919,8 @@ Rango de detección
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*GROWTH_FOCUS_TITLE
-#* <not translated 1970-01-01 01:00:00>
+GROWTH_FOCUS_TITLE
+Enfoque de crecimiento
 
 #*GROWTH_FOCUS_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6031,14 +6031,14 @@ Medio ambiente
 #*GASEOUS_SPECIES_TEXT
 #* <not translated 1970-01-01 01:00:00>
 
-#*TELEPATHIC_TITLE
-#* <not translated 1970-01-01 01:00:00>
+TELEPATHIC_TITLE
+Telepatía
 
 #*TELEPATHY_TEXT
 #* <not translated 1970-01-01 01:00:00>
 
-#*XENOPHOBIC_SPECIES_TITLE
-#* <not translated 1970-01-01 01:00:00>
+XENOPHOBIC_SPECIES_TITLE
+Xenófoba
 
 #*XENOPHOBIC_SPECIES_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6462,7 +6462,7 @@ BUILDING_TYPE
 Tipo de Edificio
 
 FOCUS
-Foco
+Enfoque
 
 #*AVAILABLE_FOCI
 #* <not translated 1970-01-01 01:00:00>
@@ -7415,74 +7415,75 @@ Las pistas aleatorias son:
 
 [[BEGINNER_HINT_22]]'''
 
-#*RANDOM_BEGINNER_HINT
-#* <not translated 1970-01-01 01:00:00>
+RANDOM_BEGINNER_HINT
+Pista #%rawtext%
 
-#*BEGINNER_HINT_01
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_01
+1: Al empezar la partida, construir más [[predefinedshipdesign SD_SCOUT]]s puede facilitar explorar la región en cercana al mundo de origen.
 
-#*BEGINNER_HINT_02
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_02
+2: Cada especie tiene su propio [[encyclopedia ENVIRONMENT_TITLE]] planetario predilecto. Si conquistas un planeta habitado por otra especie, puedes colonizar otros planetas con la misma especie,  permitiéndote asegurar el sistema más rápido. Ten en cuenta que no todas las especies pueden colonizar y que algunas no pueden construir naves.
 
-#*BEGINNER_HINT_03
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_03
+3: Es posible reparar las naves en sistemas que tengan un [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] aliado si no se produjo combate en dicho sistema durante el turno anterior y el planeta tiene una [[metertype METER_HAPPINESS]] igual o mayor a 5. Las naves tendrán que esperar un turno en el sistema antes de que pueda empezar la reparación.
 
-#*BEGINNER_HINT_04
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_04
+4: Los planetas conectados por lineas de [[metertype METER_SUPPLY]] están vinculados y comparten puntos de producción (PP) de [[metertype METER_INDUSTRY]].
 
-#*BEGINNER_HINT_05
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_05
+5: Todos los sistemas comparten punto de [[metertype METER_RESEARCH]] (PI) que generan incluso sin tener líneas de [[metertype METER_SUPPLY]] entre ellos. Cuándo no existan dichas líneas, establecer el  [[encyclopedia FOCUS_TITLE]] a investigación puede resultar más eficiente para un planeta que otras opciones.
 
-#*BEGINNER_HINT_06
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_06
+6: Las líneas de [[metertype METER_SUPPLY]] pueden ser usadas para repostar [[metertype METER_FUEL]] de las naves.
 
-#*BEGINNER_HINT_07
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_07
+7: Algunos edificios, como el [[buildingtype BLD_INDUSTRY_CENTER]], afectarán a cada planeta que tenga una conexión de [[metertype METER_SUPPLY]]. Otros, como [[buildingtype BLD_GAS_GIANT_GEN]], sólo afectan al sistema en el que se construyeron. Revise la sección [[encyclopedia ENC_BUILDING_TYPE]] para conocedr las funciones que cumplen los distintos edificios.
 
-#*BEGINNER_HINT_08
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_08
+8: Una [[predefinedshipdesign SD_OUTPOST_SHIP]] puede establecer un [[encyclopedia OUTPOSTS_TITLE]] en cualquier planeta o asteroide a su alcance, salvo que haya naves hostiles en dicho sistema.
 
-#*BEGINNER_HINT_09
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_09
+9: Una [[predefinedshipdesign SD_COLONY_SHIP]] tarda más en construirse que el resto de [[predefinedshipdesign SD_OUTPOST_SHIP]]s, pero pueden colonizar planetas fuera de su rango de [[metertype METER_SUPPLY]].
 
-#*BEGINNER_HINT_10
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_10
+10: Con un sistema seleccionado en la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], clique con el botón derecho en la imagen de un planeta en el panel del sistema para acceder al reporte de idoneidad planetaria. Esto informará de qué especies del imperio podrán establecerse exitosamente en dicho planeta. Un número en verde indica la [[metertype METER_POPULATION]] máxima que el planeta podría alcanzar si lo colonizase una especie, mientras que un número rojo indica que la especie moriría si intentase colonizar dicho planeta.
 
-#*BEGINNER_HINT_11
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_11
+11: La [[metertype METER_POPULATION]] máxima alcanzable por un planeta puede ser aumentada investigando varias tecnologías de creciciemto. Algunos especiales inusuales pueden incrementar la [[metertype METER_TARGET_POPULATION]] para especies con metabolismos específicos, consulte [[encyclopedia GROWTH_FOCUS_TITLE]] para más información sobre estos especiales.
 
-#*BEGINNER_HINT_12
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_12
+12: Presta atención a los planetas con [[encyclopedia ENC_SPECIAL]], habitualmente indican la presencia de algún recurso especial que puede beneficiar a tu imperio si lo utilizas de manera apropiada ¡Pulsa botón derecho sobre el icono del recurso especial para acceder a su página de la Pedi y descubrir más! Right click on a special's icon to access its 'Pedia entry and find out more!
 
-#*BEGINNER_HINT_13
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_13
+13: Únicamente los [[species SP_EXOBOT]] pueden colonizar cinturones de asteroides. Si descubres muchos cinturones de asteroides próximos, ¡Puede que quieras investigar como construirlos más pronto que tarde!
 
-#*BEGINNER_HINT_14
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_14
+14: Investiga mejoras en [[metertype METER_SUPPLY]],  como [[tech CON_ORBITAL_CON]], para incrementar la distancia que alcanzan tus lineas de suministro desde tu sistema.
 
-#*BEGINNER_HINT_15
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_15
+15: La mayoria de las especies comienzan con un [[metertype METER_HAPPINESS]]  de 0 cuando su planeta es capturado, que - usualmente - irá aumentando en 1 por cada turno que pase. ¡Presta atención a las especies [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]s! No les gusta estar cerca de otras especies, lo cual afectará a la estabilidad u otros valores tanto suyos como de especies cercanas.
 
-#*BEGINNER_HINT_16
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_16
+16: Puede que quieras retrasar la investigación de [[tech LRN_PSIONICS]] hasta que tu imperio incluya especies con [[encyclopedia TELEPATHIC_TITLE]].
 
-#*BEGINNER_HINT_17
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_17
+17: [[metertype METER_SHIELD]] provee defensa a una nave contra todo disparo contra la misma, reduciendo el daño recibido en el valor del escudo. Los valores de escudo de una nave pueden verse afectados por varios factores, como tormentas solares, en qué tipo de sistema estelar se encuentra la nave, o si estás cerca una capital imperial capturada.
 
-#*BEGINNER_HINT_18
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_18
+18: [[encyclopedia FOCUS_TITLE]] - presta atención al medidor de enfoque de los nuevos planetas que añadas a tu imperio, tanto colonizados como conquistados. Este medidor controla si el planeta se enfoca en la producción industrial, en investigación o en defensa. Avanzada la partida, más opciones de enfoque pueden ser desbloqueadas a medida que se investigan nuevas [[encyclopedia ENC_TECH]]s. Distintas especies  pueden tener disferentes opciones de enfoque disponibles.
 
-#*BEGINNER_HINT_19
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_19
+19: Se puede construir una colonia en un [[encyclopedia OUTPOSTS_TITLE]] construyendo un edificio colonial o mediante una [[predefinedshipdesign SD_COLONY_SHIP]]. La mayoría de edificios coloniales requieren una conexión de [[metertype METER_SUPPLY]] a un planeta con un medidor de [[metertype METER_HAPPINESS]] de al menos 5, y una [[metertype METER_POPULATION]] de 3. Cuando se desbloquea una especie, como al investigar [[tech PRO_EXOBOTS]], no se aplica este requisito para su edificio colonial.
 
-#*BEGINNER_HINT_20
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_20
+20: Informes de situación concretos (como este) pueden ser temporalmente ignorados haciendo click con el botón derecho del ratón en su icono y seleccionando una de las opciones disponibles. Ciertos tipos de reportes pueden ser filtrados de manera permanente usando el menú de filtros en la parte inferior de esta pantalla . Estas pistas iniciales están agrupadas como [[encyclopedia BEGINNER_HINTS]] en la lista de filtros.
 
-#*BEGINNER_HINT_21
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_21
+21: Puedes fijar un destino para una nave mientras está todavía en la cola de producción. Con la pantalla de producción abierta: haz click en el sistema destino en el mapa galáctico y haz click con el botón derecho del ratón sobre la nave en la cola de producción. Cuando aparezca el menú con las distintas opciones elige 'Ir a' y entonces debería aparecer el nombre del sistema seleccionado al que quieres que viaje la nave tan pronto como esté construida.
 
-#*BEGINNER_HINT_22
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINT_22
+22: Seleccionar un systema y pulsar ALT-C proporciona un círculo de rango para ese sistema, haz zoom para comparar la distancia mirando el tamaño del medidor de distancia.
+
 
 
 ##
@@ -8410,8 +8411,8 @@ Humana
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*SP_EXOBOT
-#* <not translated 1970-01-01 01:00:00>
+SP_EXOBOT
+Exobot
 
 #*SP_EXOBOT_GAMEPLAY_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -11173,8 +11174,8 @@ Producción Robótica
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*PRO_EXOBOTS
-#* <not translated 1970-01-01 01:00:00>
+PRO_EXOBOTS
+Exobots
 
 #*PRO_EXOBOTS_DESC
 #* <not translated 1970-01-01 01:00:00>
