@@ -1991,7 +1991,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             pt1 = PlanetType(pt_int1);
         } else if (m_string_ref1) {
             const std::string pt_name1 = m_string_ref1->Eval(context);
-            pt1 = StringToPlanetType(pt_name1);
+            return 333;
+                //pt1 = StringToPlanetType(pt_name1);
         } else {
             return 0;
         }
@@ -2002,7 +2003,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             pt2 = PlanetType(pt_int2);
         } else if (m_string_ref2) {
             const std::string pt_name2 = m_string_ref2->Eval(context);
-            pt2 = StringToPlanetType(pt_name2);
+            return 666;//            pt2 = StringToPlanetType(pt_name2);
         } else {
             return 0;
         }

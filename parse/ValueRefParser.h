@@ -233,7 +233,7 @@ namespace parse {
 
     struct int_arithmetic_rules;
     namespace detail {
-        struct star_type_parser_rules;
+        struct planet_type_parser_rules;
     }
 
     struct int_complex_parser_grammar : public detail::complex_variable_grammar<int> {
@@ -245,10 +245,9 @@ namespace parse {
         // imported grammars directly used in int_complex_parser_grammar
         const int_arithmetic_rules&         int_rules;
         ship_part_class_enum_grammar        ship_part_class_enum;
-        std::shared_ptr<detail::star_type_parser_rules> star_type_rules; // didnt work incomplete type in BuildingsParser
-        //std::unique_ptr<detail::star_type_parser_rules> star_type_rules; // didnt work incomplete type in BuildingsParser
-        //detail::star_type_parser_rules*     star_type_rules; // this worked
-        //detail::enum_value_ref_rules<StarType>     star_type_rules;
+        // using shared_ptr as unique_ptr tries to use default deletor on incomplete type and fails
+        // if you want to use unique_ptr you probably have to define with custom deletor function
+        std::shared_ptr<detail::planet_type_parser_rules> planet_type_rules; 
         // grammars defined by int_complex_parser_grammar
         detail::complex_variable_rule<int>  game_rule;
         detail::complex_variable_rule<int>  empire_name_ref;
@@ -265,6 +264,8 @@ namespace parse {
         detail::complex_variable_rule<int>  slots_in_hull;
         detail::complex_variable_rule<int>  slots_in_ship_design;
         detail::complex_variable_rule<int>  special_added_on_turn;
+        detail::value_ref_rule<int>  planet_type_as_int;
+        detail::value_ref_rule<std::string>  planet_type_as_string;
         detail::complex_variable_rule<int>  clockwise_planet_type_distance;
         detail::complex_variable_rule<int>  start;
     };
