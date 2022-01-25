@@ -254,6 +254,9 @@ public:
     /** Get cookie associated with this connection. */
     boost::uuids::uuid Cookie() const;
 
+    /** Get string representation of remote ip address. */
+    std::string GetIpAddress() const;
+
     /** Starts the connection reading incoming messages on its socket. */
     void Start();
 

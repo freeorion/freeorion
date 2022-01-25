@@ -175,7 +175,7 @@ public:
                            std::shared_ptr<ServerSaveGameData> server_save_game_data);
 
     /** Checks if \a player_name requires auth to login and fill \a roles if not. */
-    [[nodiscard]] bool IsAuthRequiredOrFillRoles(const std::string& player_name, Networking::AuthRoles& roles);
+    [[nodiscard]] bool IsAuthRequiredOrFillRoles(const std::string& player_name, const std::string& ip_address, Networking::AuthRoles& roles);
 
     /** Checks if \a auth match \a player_name and fill \a roles if successed. */
     [[nodiscard]] bool IsAuthSuccessAndFillRoles(const std::string& player_name, const std::string& auth,

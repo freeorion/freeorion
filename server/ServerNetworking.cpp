@@ -256,6 +256,13 @@ bool PlayerConnection::HasAuthRole(Networking::RoleType role) const {
 boost::uuids::uuid PlayerConnection::Cookie() const
 { return m_cookie; }
 
+std::string PlayerConnection::GetIpAddress() const {
+    if (m_socket) {
+        m_socket->remote_endpoint().address().to_string();
+    }
+    return "";
+}
+
 void PlayerConnection::AwaitPlayer(Networking::ClientType client_type,
                                    const std::string& client_version_string)
 {
