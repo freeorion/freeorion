@@ -28,12 +28,7 @@ Species
         "HEAD_ON_A_SPIKE_SPECIAL" // we likes the spikes
         "PLC_POPULATION"          // grow, grow, grow your load, gently down the ..
     ]
-    dislikes = [ // dislikes all other desert species because they compete for habitat
-        //"SP_ETTY"                    // disliking species has no effect except showing up in pedia
-        //"SP_LEMBALALAM"
-        //"SP_MUURSH"
-        //"SP_NYMNMN"
-        "WORLDTREE_SPECIAL"            // wrong kind of plant, sorry, thats competition
+    dislikes = [ // dislikes are each on their own single line of code to facilitate commenting and merging
         "CLOUD_COVER_SLAVE_SPECIAL"    // stop blockin the sun over there
         "CLOUD_COVER_MASTER_SPECIAL"   // same. emphasis.
         "VOLCANIC_ASH_SLAVE_SPECIAL"   // no sunblock pls

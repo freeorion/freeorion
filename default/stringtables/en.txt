@@ -8720,6 +8720,9 @@ As invasive weed species go, this is a pretty stubborn one and hard to eradicate
 Lifecycle:
 Can be grown from seeds (import restrictions are in place in many systems, the local [[buildingtype BLD_REGIONAL_ADMIN]] should be consulted before starting a plantation). No stratification required. After an initial watering in, they are drought tolerant, herbicide resistant and thrive in the dry desert sands by pulling moisture out of the atmosphere.
 
+Ecology:
+What Khakturian crave, is electrolytes and a lots of sunlights, so they love the eternal daylight that comes with a [[special TIDAL_LOCK_SPECIAL]]. Occasionally being eaten by (strong enough) herbivores does not faze them, they take it stoically and simply grow back. Although they can get a slight inferiority complex when dwarfed by the giant [[special WORLDTREE_SPECIAL]] and totally do not enjoy to stand in its shadow, they can appreciate the benefits it brings to all the other species and so they mostly just ignore it. (Khakturian do not benefit from any [[WORLDTREE_SPECIAL]] bonusses.)
+
 '''
 
 SP_SLEEPERS
