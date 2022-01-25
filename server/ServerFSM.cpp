@@ -1176,7 +1176,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
             player_connection->SetAuthenticated();
     } else {
         const bool relaxed_auth = player_connection->IsLocalConnection() && client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
-        if (!relaxed_auth && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
+        if (!relaxed_auth && server.IsAuthRequiredOrFillRoles(player_name, player_connection->GetIpAddress(), roles)) {
             // send authentication request
             player_connection->AwaitPlayer(client_type, client_version_string);
             player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
@@ -1205,7 +1205,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
         {
             collision = false;
             roles.Clear();
-            if (!server.IsAvailableName(new_player_name) || (!relaxed_auth && server.IsAuthRequiredOrFillRoles(new_player_name, roles))) {
+            if (!server.IsAvailableName(new_player_name) || (!relaxed_auth && server.IsAuthRequiredOrFillRoles(new_player_name, player_connection->GetIpAddress(), roles))) {
                 collision = true;
             } else {
                 for (auto& plr : m_lobby_data->players) {
@@ -2320,7 +2320,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             for (const auto& conn : to_disconnect)
             { server.Networking().Disconnect(conn); }
         } else {
-            if (server.IsAuthRequiredOrFillRoles(player_name, roles)) {
+            if (server.IsAuthRequiredOrFillRoles(player_name, player_connection->GetIpAddress(), roles)) {
                 // send authentication request
                 player_connection->AwaitPlayer(client_type, client_version_string);
                 player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
@@ -2348,7 +2348,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
         {
             collision = false;
             roles.Clear();
-            if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, roles)) {
+            if (!server.IsAvailableName(new_player_name) || server.IsAuthRequiredOrFillRoles(new_player_name, player_connection->GetIpAddress(), roles)) {
                 collision = true;
             } else {
                 for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->players) {
@@ -2791,7 +2791,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
             player_connection->SetAuthenticated();
     } else {
         const bool relaxed_auth = player_connection->IsLocalConnection() && client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
-        if (!relaxed_auth && server.IsAuthRequiredOrFillRoles(player_name, roles)) {
+        if (!relaxed_auth && server.IsAuthRequiredOrFillRoles(player_name, player_connection->GetIpAddress(), roles)) {
             // send authentication request
             player_connection->AwaitPlayer(client_type, client_version_string);
             player_connection->SendMessage(AuthRequestMessage(player_name, "PLAIN-TEXT"));
@@ -2817,7 +2817,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
         {
             collision = false;
             roles.Clear();
-            if (!server.IsAvailableName(new_player_name) || (!relaxed_auth && server.IsAuthRequiredOrFillRoles(new_player_name, roles))) {
+            if (!server.IsAvailableName(new_player_name) || (!relaxed_auth && server.IsAuthRequiredOrFillRoles(new_player_name, player_connection->GetIpAddress(), roles))) {
                 collision = true;
             } else {
                 for (auto& plr : server.Empires() ) {

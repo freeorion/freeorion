@@ -1735,13 +1735,13 @@ bool ServerApp::IsAvailableName(const std::string& player_name) const {
     return m_networking.IsAvailableNameInCookies(player_name);
 }
 
-bool ServerApp::IsAuthRequiredOrFillRoles(const std::string& player_name, Networking::AuthRoles& roles) {
+bool ServerApp::IsAuthRequiredOrFillRoles(const std::string& player_name, const std::string& ip_address, Networking::AuthRoles& roles) {
     bool result = false;
     bool success = false;
     try {
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the main Python turn events function
-        success = m_python_server.IsRequireAuthOrReturnRoles(player_name, result, roles);
+        success = m_python_server.IsRequireAuthOrReturnRoles(player_name, ip_address, result, roles);
     } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
