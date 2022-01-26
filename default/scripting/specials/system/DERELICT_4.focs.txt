@@ -38,6 +38,7 @@ Special
                     parameters = [
                         tag = "system" data = Source.ID
                         tag = "special" data = "DERELICT_SPECIAL4"
+                        tag = "species" data = "SP_KHAKTURIAN"
                     ]
                     empire = Target.Owner
             ]

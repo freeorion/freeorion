@@ -5,7 +5,6 @@ Species
     Native
     CanProduceShips
 
-    // Desert: Khakturian: Planetbound, Great Attack Troops, Great Defense Troops, Phototrophic
 
     tags = [ "PHOTOTROPHIC" "BAD_POPULATION" "BAD_INDUSTRY" "NO_RESEARCH" "BAD_INFLUENCE" "GOOD_STOCKPILE" "GREAT_ATTACKTROOPS" "PEDIA_PHOTOTROPHIC_SPECIES_CLASS" ]
 
@@ -18,7 +17,7 @@ Species
     ]
     defaultfocus = "FOCUS_PROTECTION"
 
-    // i'll put comments for motivation on likes for later textification into pedia
+
     likes = [
         "BLD_LIGHTHOUSE"          // if there were a greenhouse they would like that too
         "FOCUS_GROWTH"            // what else would a plant want?
@@ -28,13 +27,14 @@ Species
         "HEAD_ON_A_SPIKE_SPECIAL" // we likes the spikes
         "PLC_POPULATION"          // grow, grow, grow your load, gently down the ..
     ]
-    dislikes = [ // dislikes are each on their own single line of code to facilitate commenting and merging
+    dislikes = [                       // dislikes are each on their own single line of code to facilitate commenting and merging
         "CLOUD_COVER_SLAVE_SPECIAL"    // stop blockin the sun over there
         "CLOUD_COVER_MASTER_SPECIAL"   // same. emphasis.
         "VOLCANIC_ASH_SLAVE_SPECIAL"   // no sunblock pls
         "VOLCANIC_ASH_MASTER_SPECIAL"  // ...
         "PLC_NO_GROWTH"                // dumb plants, but looove to grow
         "BLD_SOL_ACCEL"                // no turning the lights off pls
+        // see also: WORLDTREE.focs.txt, where only the SP_KHAKTURIAN are explicitely excluded from worldree bonus effects
     ]
 
     effectsgroups = [

@@ -2384,14 +2384,21 @@ namespace {
         detailed_description.append("\n");
     }
 
-    void RefreshDetailPanelFieldTypeTag(    const std::string& item_type, const std::string& item_name,
-                                            std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                            float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, bool only_description = false)
-    {
-        // TODO: list current known occurances of the fieldtype with id / galactic coordinates to be clickable like instances of ship designs
+    void RefreshDetailPanelFieldTypeTag(const std::string&                  item_type,
+                                        const std::string&                  item_name,
+                                              std::string&                  name,
+                                              std::shared_ptr<GG::Texture>& texture,
+                                              std::shared_ptr<GG::Texture>& other_texture,
+                                              int&                          turns,
+                                              float&                        cost,
+                                              std::string&                  cost_units,
+                                              std::string&                  general_type,
+                                              std::string&                  specific_type,
+                                              std::string&                  detailed_description,
+                                              GG::Clr&                      color,
+                                              bool                          only_description = false
+    ) {
+        // DONE: list current known occurances of the fieldtype with id / galactic coordinates to be clickable like instances of ship designs
         // TODO: second method for detailled view of particular field instances, listing affected systems, fleets, etc.
         const FieldType* field_type = GetFieldType(item_name);
         if (!field_type) {
@@ -2426,6 +2433,39 @@ namespace {
             if (!field_type->Effects().empty())
                 detailed_description.append("\n").append(Dump(field_type->Effects()));
         }
+
+        // get current fields from map
+        const ScriptingContext context;
+        const Universe& u = GetUniverse();
+        const ObjectMap& objects = u.Objects();
+        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        std::vector<std::shared_ptr<const UniverseObject>> current_fields;
+        current_fields.reserve(objects.size());
+        for (const auto& obj : objects.all())
+            if (
+                obj->ObjectType() == UniverseObjectType::OBJ_FIELD
+                && obj->PublicName(client_empire_id, u) == name
+            ) {
+                current_fields.push_back(obj);
+            }
+        detailed_description.append("\n\n").append(UserString("KNOWN_FIELDS_OF_THIS_TYPE")).append("\n");
+        if (!current_fields.empty()) {
+            for (auto& obj : current_fields) {
+                auto TEXT_TAG = VarText::FIELD_ID_TAG;
+                detailed_description.append(
+                    LinkTaggedIDText(
+                        TEXT_TAG, obj->ID(),
+                        obj->PublicName(client_empire_id, u)
+                    )
+                );
+                std::stringstream ssx,ssy;
+                ssx << std::fixed << std::setprecision(0) << obj->X();
+                ssy << std::fixed << std::setprecision(0) << obj->Y();
+                detailed_description.append(" @ X=").append(ssx.str());
+                detailed_description.append(", Y=").append(ssy.str());
+                detailed_description.append("\n");
+            }
+        } else detailed_description.append(UserString("NO_KNOWN_FIELDS"));
         detailed_description.append("\n");
     }
 

@@ -3,14 +3,7 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "../Empire/Empire.h"
-#include "../Empire/Government.h"
-#include "../universe/BuildingType.h"
-#include "../universe/FieldType.h"
 #include "../universe/NamedValueRefManager.h"
-#include "../universe/ShipHull.h"
-#include "../universe/ShipPart.h"
-#include "../universe/Special.h"
-#include "../universe/Tech.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ValueRefs.h"
 #include "../util/AppInterface.h"
@@ -23,6 +16,23 @@
 #include <GG/GUI.h>
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string.hpp>
+
+
+class Tech;
+class Policy;
+class BuildingType;
+class Special;
+class FieldType;
+class ShipHull;
+class ShipPart;
+const Tech*         GetTech(const std::string& name);
+const Policy*       GetPolicy(const std::string& name);
+const BuildingType* GetBuildingType(const std::string& name);
+const Special*      GetSpecial(const std::string& name);
+const FieldType*    GetFieldType(const std::string& name);
+const ShipHull*     GetShipHull(const std::string& name);
+const ShipPart*     GetShipPart(const std::string& name);
+
 
 namespace {
     constexpr bool RENDER_DEBUGGING_LINK_RECTS = false;

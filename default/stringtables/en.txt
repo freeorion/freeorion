@@ -5221,6 +5221,12 @@ ENC_POICY_PREREQUISITES
 ENC_SPECIAL
 Special
 
+KNOWN_FIELDS_OF_THIS_TYPE
+Clickable list of currently known fields of this type with galactic coordinates attached:
+
+NO_KNOWN_FIELDS
+none
+
 OBJECTS_WITH_SPECIAL
 '''Objects with Special: '''
 
@@ -7664,10 +7670,10 @@ EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
 On %planet%: the %building% completed repairs on the %ship%.
 
 EFFECT_THENIAN_NATURAL_DIEOFF
-On %planet% a natural [[species SP_THENIAN]] dieoff occurred, halving the current population.
+On %planet% a natural [[species SP_THENIAN]] die-off occurred, halving the current population.
 
 EFFECT_THENIAN_NATURAL_DIEOFF_LABEL
-Natural Dieoff
+Natural Die-off
 
 EFFECT_MONSTER_SPAWNING
 In %system%: A %predefinedshipdesign% was spawned.
@@ -7796,7 +7802,7 @@ EFFECT_TREE_LABEL
 [[SM_TREE]]
 
 EFFECT_DERELICT_TROOPS
-At %system%: a [[species SP_KHAKTURIAN]] [[SD_SMALL_TROOP_SHIP]] was found and salvaged.
+At %system%: a [[predefinedshipdesign SD_SMALL_TROOP_SHIP]] of %species% was found and salvaged.
 
 EFFECT_DERELICT_TROOPS_LABEL
 Derelict Seedlings
@@ -8421,7 +8427,7 @@ Greatly prefer [[PT_GASGIANT]]s.
 SP_SLY_DESC
 '''
 Description:
-The Sly live in gas giants. The gas giants are so foreign to most species in the universe that, for most of their history, they have been overlooked. Although experts in the field of xenobiology have long since speculated, that there might as well be live just about in any environment imaginable, if one just had the necessary technology to detect or make contact with it.
+The Sly live in gas giants. The gas giants are so foreign to most species in the universe that, for most of their history, they have been overlooked. Although experts in the field of xenobiology have long since speculated, that there might as well be live in just about any type of environment imaginable, if one just had the necessary technology to detect or make contact with it.
 
 Not being able to build advanced devices themselves, the Sly couldn't leave their heavy homeworld for a long time. Recently though, they were able to obtain the necessary equipment and technologies for spacefaring from interstellar traders in exchange for their deep knowledge of history.
 
@@ -8685,7 +8691,7 @@ SP_THENIAN_GAMEPLAY_DESC
 
 SP_THENIAN_DESC
 '''
-At home in the boundary layers between the ultra high pressured inner atmosphere of their [[PT_GASGIANT]] and the outermost metallic helium core. They take their sustainance from the magnetic differential currents and are subject to periodical population dieoffs which is completely natural and of no concern to themselves whatsoever. Whenever the maximum population density is reached, another dieoff occurs so they can grow anew with unrelenting vigor. (Current [[metertype METER_POPULATION]] of [[SP_THENIAN]] colonies will be cut in half the turn after the maximum is reached.)
+At home in the boundary layers between the ultra high pressured inner atmosphere of their [[PT_GASGIANT]] and the outermost metallic helium core. They take their sustenance from the magnetic differential currents and are subject to periodical population die-offs which is completely natural and of no concern to themselves whatsoever. Whenever the maximum population density is reached, another die-off occurs so they can grow anew with unrelenting vigor. (Current [[metertype METER_POPULATION]] of [[SP_THENIAN]] colonies will be cut in half the turn after the maximum is reached.)
 
 As integrated as they are into their world's internal structure, it makes no sense for the Thenian to even try to leave. Unless another [[PT_GASGIANT]] were to physically come into direct contact with theirs, they just can not make the leap into space is all. So they dive and thrive
 '''
@@ -8727,7 +8733,7 @@ Lifecycle:
 Can be grown from seeds (import restrictions are in place in many systems, the local [[buildingtype BLD_REGIONAL_ADMIN]] should be consulted before starting a plantation). No stratification required. After an initial watering in, they are drought tolerant, herbicide resistant and thrive in the dry desert sands by pulling moisture out of the atmosphere.
 
 Ecology:
-What Khakturian crave, is electrolytes and a lots of sunlights, so they love the eternal daylight that comes with a [[special TIDAL_LOCK_SPECIAL]]. Occasionally being eaten by (strong enough) herbivores does not faze them, they take it stoically and simply grow back. Although they can get a slight inferiority complex when dwarfed by the giant [[special WORLDTREE_SPECIAL]] and totally do not enjoy to stand in its shadow, they can appreciate the benefits it brings to all the other species and so they mostly just ignore it. (Khakturian do not benefit from any [[WORLDTREE_SPECIAL]] bonusses.)
+What Khakturian crave, is electrolytes and a lots of sunlights, so they love the eternal daylight that comes with a [[special TIDAL_LOCK_SPECIAL]]. Occasionally being eaten by (strong enough) herbivores does not faze them, they take it stoically and simply grow back. Although they can get a slight inferiority complex when dwarfed by the giant [[special WORLDTREE_SPECIAL]] and totally do not enjoy to stand in its shadow, they can appreciate the benefits it brings to all the other species and so they mostly just ignore it. (Khakturian do not benefit from any [[WORLDTREE_SPECIAL]] bonus.)
 
 '''
 
@@ -8744,7 +8750,7 @@ Sometimes they dream of far away places they can never visit.
 SP_SLEEPERS_DESC
 '''
 
-Feathered flightless birdlike creatues who are forced to hibernate a lot. Before winter is coming, which is five sixths of their year, suitable sleeping sites need to be prepared. Sometimes they dream of far away places they can never visit. But mainly their winters are dominated just by deep and dreemless sleeping. When they are awake during and around periastron, the very brief really livable period in their world's orbit closest to the star, they can be quite industrious. But they mostly prefer to sit around and do nothing. Somnambulism is a trait they greatly admire, but the art of sleepwalking is beyond them and they never achieved it.
+Feathered flightless birdlike creatues who are forced to hibernate a lot. Before winter is coming, which is five sixths of their year, suitable sleeping sites need to be prepared. Sometimes they dream of far away places they can never visit. But mainly their winters are dominated just by deep and dreamless sleeping. When they are awake during and around periastron, the very brief really livable period in their world's orbit closest to the star, they can be quite industrious. But they mostly prefer to sit around and do nothing. Somnambulism is a trait they greatly admire, but the art of sleepwalking is beyond them and they never achieved it.
 '''
 
 SP_NIGHTSIDERS
@@ -9424,7 +9430,7 @@ These asteroids are infected by transdimensional worms that eat tunnels through 
 Applied to ships built with asteroid hulls the slime will naturally increase their durability. While this slime does not last long, these worms will frequently visit the affected ships, replenishing any lost slime before returning to their home. Unable to catch a living specimen, scientists theorize their mode of transport appears linked to our communications in some manner.'''
 
 ASTEROID_COATING_OWNED_SPECIAL
-Asteroid Coating
+Asteroid Coating (Owned)
 
 ASTEROID_COATING_OWNED_SPECIAL_DESC
 [[ASTEROID_COATING_SPECIAL_DESC]]
@@ -16609,7 +16615,7 @@ GROWTH_SPECIAL_INDUSTRY_BOOST
 If this planet is set to the Industry Focus, [[metertype METER_TARGET_INDUSTRY]] is increased by 0.2 per [[metertype METER_POPULATION]].
 
 GROWTH_SPECIALS_ENTRY_LIST
-'''Some specials function for organic species only, some for lithic species only, and some for robotic species only; no other [[encyclopedia METABOLISM_TITLE]] currently has documented applicable Growth Specials.
+'''Some specials function for organic species only, some for lithic species only, and some for robotic species only; no other [[encyclopedia METABOLISM_TITLE]] currently has applicable Growth Specials.
 
 [[encyclopedia ORGANIC_SPECIES_TITLE]] specials:
 [[special FRUIT_SPECIAL]],  [[special SPICE_SPECIAL]],  [[special PROBIOTIC_SPECIAL]]

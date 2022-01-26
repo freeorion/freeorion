@@ -5,8 +5,6 @@ Species
     Native
 
 
-    // Gas Giant: Thenian: Planetbound, No Ships, Good Research, Gaseous
-
     tags = [ "GASEOUS" "NO_TERRAFORM" "ARTISTIC" "AVERAGE_POPULATION" "AVERAGE_HAPPINESS" "VERY_BAD_SUPPLY" "NO_INDUSTRY" "GOOD_STEALTH" "PEDIA_GASEOUS_SPECIES_CLASS" ]
 
     foci = [
@@ -18,7 +16,6 @@ Species
     ]
     defaultfocus = "FOCUS_GROWTH"
 
-    // i'll put comments for motivation on likes for later textification into pedia
     likes = [
         "FOCUS_RESEARCH"        // arty farty
     ]
@@ -46,8 +43,8 @@ Species
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[STANDARD_SHIP_SHIELDS]]
         [[NARROW_EP]]
-        
-        
+
+
         EffectsGroup
             scope = And [
                 Planet

@@ -5,8 +5,6 @@ Species
     Native
 
 
-    // Asteroid Belt: Celestephyte: No Ships, Telepathic, Phototrophic
-
     tags = [ "PHOTOTROPHIC" "TELEPATHIC" "VERY_BAD_POPULATION" "BAD_HAPPINESS" "BAD_SUPPLY" "VERY_BAD_INDUSTRY" "NO_ATTACKTROOPS" "PEDIA_PHOTOTROPHIC_SPECIES_CLASS" ]
 
     foci = [
@@ -18,13 +16,12 @@ Species
     ]
     defaultfocus = "FOCUS_GROWTH"
 
-    // i'll put comments for motivation on likes for later textification into pedia
     likes = [
         "BLD_LIGHTHOUSE"          // if there were a greenhouse they would like that too
         "FOCUS_GROWTH"            // what else would a plant want?
         "PLC_POPULATION"          // grow, grow, grow your load, gently down the ..
     ]
-    dislikes = [ // dislikes anything disturbing their fragile habitat or irritating their telepathic minds
+    dislikes = [                  // dislikes anything disturbing their fragile habitat or irritating their telepathic minds
         "PLC_NO_GROWTH"           // is a plant, they like to grow
         "BLD_SHIPYARD_AST"        // disturbs the rocks
         "BLD_SHIPYARD_AST_REF"    // same

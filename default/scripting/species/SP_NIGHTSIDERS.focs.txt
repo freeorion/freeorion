@@ -16,7 +16,7 @@ Species
     ]
     defaultfocus = "FOCUS_PROTECTION"
 
-    // i'll put comments for motivation on likes for later textification into pedia
+
     likes = [
         "MIMETIC_ALLOY_SPECIAL"     // because it works in the dark
         "TIDAL_LOCK_SPECIAL"        // no place like home
@@ -30,15 +30,14 @@ Species
         "SP_PHINNERT"    "SP_RAAAGH"      "SP_SLEEPERS"
     ]
     dislikes = [
-        "PANOPTICON_SPECIAL"     // can see well enough ourselves so no thx
-        "BLD_SCANNING_FACILITY"  // same. emphasis.
-        "SHIMMER_SILK_SPECIAL"   // draws unnecessary attention
-        "BLD_LIGHTHOUSE"         // seriously?
-        "SP_SETINON"             // cause we can feel they are there, but too small to be sucked. suckers!
-        "SP_SSLITH"              // see above
-        "SP_GISGUFGTHRIM"        // shell too hard and that amber sap makes their blood taste bitter
-        // and of course we hate all the other inedible organic species as well.
-        "SP_OURBOOLS" "SP_SCYLIOR"
+        "PANOPTICON_SPECIAL"       // can see well enough ourselves so no thx
+        "BLD_SCANNING_FACILITY"    // same. emphasis.
+        "SHIMMER_SILK_SPECIAL"     // draws unnecessary attention
+        "BLD_LIGHTHOUSE"           // seriously?
+        "SP_SETINON"               // cause we can feel they are there, but too small to be sucked. suckers!
+        "SP_SSLITH"                // see above
+        "SP_GISGUFGTHRIM"          // shell too hard and that amber sap makes their blood taste bitter
+        "SP_OURBOOLS" "SP_SCYLIOR" // and of course we hate all the other inedible organic species as well.
     ]
 
     effectsgroups = [
