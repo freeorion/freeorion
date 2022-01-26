@@ -164,7 +164,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                                           << "' in file: '" << m_filename
                                           << "'.  Ignoring duplicate.";
                         }
-                        prev_key = key;
+                        prev_key = std::move(key);
                         key.clear();
                     }
                 }
