@@ -1735,8 +1735,13 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
     for (auto& [priority, setc] : source_effects_targets_causes) {
         (void)priority; // quiet unused variable warning
 
+        // check each effects group to see if it should execute...
+        std::vector<bool> executed_effects_group_flags(setc.size(), false);
+
+        std::size_t check_group_idx = 0;
         for (auto& [sourced_effects_group, targets_and_cause] : setc) {
             Effect::TargetSet& target_set{targets_and_cause.target_set};
+            auto current_group_idx = check_group_idx++;
 
             const Effect::EffectsGroup* effects_group = sourced_effects_group.effects_group;
 
@@ -1778,10 +1783,28 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
             if (target_set.empty())
                 continue;
 
+            // mark this effectsgroup to be executed below...
+            executed_effects_group_flags[current_group_idx] = true;
+        }
+
+        TraceLogger(effects) << "ExecuteEffects priority " << priority << " executing " << [&executed_effects_group_flags]() {
+            std::size_t count = 0;
+            for (auto b : executed_effects_group_flags)
+                count += b;
+            return count;
+        }() << " of " << setc.size() << " source_effects_targets_causes";
+
+        // actually execute effectsgroups that were determined to fire...
+        check_group_idx = 0;
+        for (auto& [sourced_effects_group, targets_and_cause] : setc) {
+            if (!executed_effects_group_flags[check_group_idx++])
+                continue;
+            const Effect::EffectsGroup* effects_group = sourced_effects_group.effects_group;
+
             TraceLogger(effects) << "\n\n * * * * * * * * * * * (new effects group log entry)("
-                                 << " content: " << effects_group->TopLevelContent()
-                                 << "  acc.label: " << effects_group->AccountingLabel()
-                                 << "  stack grp: " << effects_group->StackingGroup() << " )";
+            << " content: " << effects_group->TopLevelContent()
+            << "  acc.label: " << effects_group->AccountingLabel()
+            << "  stack grp: " << effects_group->StackingGroup() << " )";
 
             // execute Effects in the EffectsGroup
             auto source = context.ContextObjects().get(sourced_effects_group.source_object_id);
