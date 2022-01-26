@@ -7795,6 +7795,12 @@ At %system%: a new [[predefinedshipdesign SM_TREE]] has started to grow and surr
 EFFECT_TREE_LABEL
 [[SM_TREE]]
 
+EFFECT_DERELICT_TROOPS
+At %system%: a [[species SP_KHAKTURIAN]] [[SD_SMALL_TROOP_SHIP]] was found and salvaged.
+
+EFFECT_DERELICT_TROOPS_LABEL
+Derelict Seedlings
+
 EFFECT_DERELICT_MAP
 At %system%: information on the area was obtained from an abandoned %special%.
 
@@ -9533,8 +9539,11 @@ Derelict Scout
 DERELICT_SPECIAL3
 Derelict Tanker
 
+DERELICT_SPECIAL4
+Derelict Trooper
+
 DERELICT_SPECIAL_DESC
-An ancient, derelict ship from an unknown species. Who knows what it could reveal...
+An ancient derelict ship from an unknown species. Who knows what it could reveal...
 
 ACCRETION_DISC_SPECIAL
 Accretion Disc
@@ -19015,7 +19024,9 @@ Nekkar
 Nemari
 Nenning
 Neptunus
+Nerf
 Neruval
+Nervus
 Newton
 Nexus
 Ngôi Sao
