@@ -511,25 +511,29 @@ namespace {
     }
 
     template <typename T, typename V, typename M>
-    double NewMeterValue(const ScriptingContext& context, const M meter, const V& value_ref, T&& target)
+    std::pair<double, Meter*> NewMeterValue(const ScriptingContext& context, const M meter, const V& value_ref, T&& target)
     {
-        if (value_ref->TargetInvariant())
-            return value_ref->Eval(context);
+        static_assert(!std::is_pointer_v<T>); // shared_ptr OK, raw pointer not
 
-        const Meter* m = nullptr;
+        Meter* m = nullptr;
         if constexpr (std::is_same_v<M, MeterType>)
             m = target->GetMeter(meter);
         else if constexpr (std::is_same_v<M, Meter*>)
             m = meter;
-        if (!m)
-            return Meter::INVALID_VALUE;
 
-        if (context.effect_target == target) {
+        if (value_ref->TargetInvariant()) {
+            return {value_ref->Eval(context), nullptr};
+
+        } else if (!m) {
+            return {Meter::INVALID_VALUE, nullptr};
+
+        } else if (context.effect_target == target) {
             ScriptingContext target_meter_context{context, m->Current()};
-            return value_ref->Eval(target_meter_context);
+            return {value_ref->Eval(target_meter_context), m};
+
         } else {
             ScriptingContext target_meter_context{context, std::forward<T>(target), m->Current()};
-            return value_ref->Eval(target_meter_context);
+            return {value_ref->Eval(target_meter_context), m};
         }
     }
 }
@@ -537,7 +541,7 @@ namespace {
 void SetMeter::Execute(ScriptingContext& context) const {
     if (!context.effect_target) return;
     if (Meter* m = context.effect_target->GetMeter(m_meter))
-        m->SetCurrent(NewMeterValue(context, m, m_value, context.effect_target));
+        m->SetCurrent(NewMeterValue(context, m, m_value, context.effect_target).first);
 }
 
 void SetMeter::Execute(ScriptingContext& context,
@@ -555,40 +559,29 @@ void SetMeter::Execute(ScriptingContext& context,
     TraceLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
     TraceLogger(effects) << "SetMeter execute " << targets.size() << " before:" << TargetsDump(targets);
 
+    const int source_id{context.source ? context.source->ID() : INVALID_OBJECT_ID};
+    const auto& accounting_label{m_accounting_label.empty() ? effect_cause.custom_label : m_accounting_label};
 
-    if (!accounting_map) {
-        // without accounting, can do default batch execute
-        Execute(context, targets);
+    // calculate new meter values before modifying anything...
+    std::vector<std::tuple<double, int, Meter*>> target_new_meter_vals;
+    target_new_meter_vals.reserve(targets.size());
+    for (auto& target : targets) {
+        if (Meter* meter = target->GetMeter(m_meter))
+            target_new_meter_vals.emplace_back(NewMeterValue(context, m_meter, m_value, target).first, target->ID(), meter);
+    }
 
-    } else {
-        // accounting info for this effect on this meter, starting with non-target-dependent info
-        AccountingInfo info;
-        info.cause_type =     effect_cause.cause_type;
-        info.specific_cause = effect_cause.specific_cause;
-        info.custom_label =   (m_accounting_label.empty() ? effect_cause.custom_label : m_accounting_label);
-        info.source_id =      context.source ? context.source->ID() : INVALID_OBJECT_ID;
+    // set new meter values and update accounting
+    for (auto& [new_meter_value, target_id, meter] : target_new_meter_vals) {
+        auto old_value = meter->Current();
+        meter->SetCurrent(new_meter_value);
+        auto diff = new_meter_value - old_value;
 
-        // process each target separately in order to do effect accounting for each
-        for (auto& target : targets) {
-            // get Meter for this effect and target
-            Meter* meter = target->GetMeter(m_meter);
-            if (!meter)
-                continue;   // some objects might match target conditions, but not actually have the relevant meter. In that case, don't need to do accounting.
-
-            // record pre-effect meter values...
-
-            // accounting info for this effect on this meter of this target
-            info.running_meter_total =  meter->Current();
-
-            // actually execute effect to modify meter
-            meter->SetCurrent(NewMeterValue(context, meter, m_value, target));
-
-            // update for meter change and new total
-            info.meter_change = meter->Current() - info.running_meter_total;
-            info.running_meter_total = meter->Current();
-
-            // add accounting for this effect to end of vector
-            (*accounting_map)[target->ID()][m_meter].push_back(info); // not moving as local is reused
+        if (accounting_map) {
+            auto& accounting{*accounting_map};
+            accounting[target_id][m_meter].emplace_back(
+                source_id, effect_cause.cause_type,
+                diff, new_meter_value,
+                effect_cause.specific_cause, accounting_label);
         }
     }
 
@@ -602,7 +595,7 @@ void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) cons
     } else if (targets.size() == 1) {
         auto& target = targets.front();
         if (Meter* m = target->GetMeter(m_meter))
-            m->SetCurrent(NewMeterValue(context, m, m_value, target));
+            m->SetCurrent(NewMeterValue(context, m, m_value, target).first);
 
     } else if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
