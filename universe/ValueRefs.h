@@ -68,15 +68,6 @@ private:
     std::string m_top_level_content;    // in the special case that T is std::string and m_value is "CurrentContent", return this instead
 };
 
-enum class ReferenceType : int {
-    INVALID_REFERENCE_TYPE = -1,
-    NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
-    SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
-    EFFECT_TARGET_REFERENCE,            // ValueRef::Variable is evaluated on the target object of an effect while it is being executed
-    EFFECT_TARGET_VALUE_REFERENCE,      // ValueRef::Variable is evaluated on the target object value of an effect while it is being executed
-    CONDITION_LOCAL_CANDIDATE_REFERENCE,// ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will reference the local candidate, and not the candidate of an enclosing condition.
-    CONDITION_ROOT_CANDIDATE_REFERENCE  // ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will still reference the root candidate, and not the candidate of the local condition.
-};
 
 /** The variable value ValueRef class.  The value returned by this node is
   * taken from the gamestate, most often from the Source or Target objects. */
@@ -109,7 +100,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     [[nodiscard]] T Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
-    [[nodiscard]] ReferenceType GetReferenceType() const noexcept { return m_ref_type; }
+    [[nodiscard]] ReferenceType GetReferenceType() const noexcept override { return m_ref_type; }
     [[nodiscard]] const std::vector<std::string>& PropertyName() const noexcept { return m_property_name; }
     [[nodiscard]] bool ReturnImmediateValue() const noexcept { return m_return_immediate_value; }
 
@@ -1815,25 +1806,21 @@ void Operation<T>::InitConstInvariants()
         [](const auto& operand) { return operand && operand->SourceInvariant(); });
 
 
-    // determine if this is a simple incrment operation
-    if (m_op_type != OpType::PLUS && m_op_type != OpType::MINUS) {
-        this->m_simple_increment = false;
+    // determine if this is a simple incrment operation. m_simple_increment = false by default
+
+    if (m_op_type != OpType::PLUS && m_op_type != OpType::MINUS)
         return;
-    }
-    if (m_operands.size() < 2 || !m_operands[0] || !m_operands[1]) {
-        this->m_simple_increment = false;
+    if (m_operands.size() < 2)
         return;
-    }
+    auto& lhs{m_operands[0]};
+    auto& rhs{m_operands[1]};
+    if (!rhs || !lhs)
+        return;
     // RHS must be the same value for all targets
-    if (!m_operands[1]->TargetInvariant()) {
-        this->m_simple_increment = false;
+    if (!rhs->TargetInvariant())
         return;
-    }
     // LHS must be just the immediate value of what's being incremented
-    if (const auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0].get()))
-        this->m_simple_increment = (lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
-    else
-        this->m_simple_increment = false;
+    this->m_simple_increment = (lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
 }
 
 template <typename T>

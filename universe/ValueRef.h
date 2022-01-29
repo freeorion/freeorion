@@ -81,6 +81,16 @@ std::string FlexibleToString(T&& t)
     }
 }
 
+enum class ReferenceType : int {
+    INVALID_REFERENCE_TYPE = -1,
+    NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
+    SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
+    EFFECT_TARGET_REFERENCE,            // ValueRef::Variable is evaluated on the target object of an effect while it is being executed
+    EFFECT_TARGET_VALUE_REFERENCE,      // ValueRef::Variable is evaluated on the target object value of an effect while it is being executed
+    CONDITION_LOCAL_CANDIDATE_REFERENCE,// ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will reference the local candidate, and not the candidate of an enclosing condition.
+    CONDITION_ROOT_CANDIDATE_REFERENCE  // ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will still reference the root candidate, and not the candidate of the local condition.
+};
+
 //! The base class for all ValueRef classes returning type T. This class
 //! provides the public interface for a ValueRef expression tree.
 template <typename T>
@@ -111,6 +121,8 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
       * supported. Otherwise returns and empty string. */
     [[nodiscard]] std::string EvalAsString() const final
     { return FlexibleToString(Eval()); }
+
+    [[nodiscard]] virtual ReferenceType GetReferenceType() const noexcept { return ReferenceType::INVALID_REFERENCE_TYPE; }
 
     /** Makes a clone of this ValueRef in a new owning pointer. Required for Boost.Python, which
       * doesn't supports move semantics for returned values. */
