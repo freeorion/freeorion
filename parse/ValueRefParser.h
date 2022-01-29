@@ -15,7 +15,7 @@ namespace Condition {
     struct Condition;
 }
 
-namespace parse { namespace detail {
+namespace parse::detail {
     // TODO: Investigate refactoring ValueRef to use variant,
     // for increased locality of reference.
     template <typename T>
@@ -206,7 +206,9 @@ namespace parse { namespace detail {
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, open_and_register_as_string_, open_and_register_as_string, 3)
-}}
+}
+
+#include "EnumValueRefRules.h"
 
 namespace parse {
     struct string_parser_grammar : public detail::value_ref_grammar<std::string> {
@@ -232,9 +234,6 @@ namespace parse {
     };
 
     struct int_arithmetic_rules;
-    namespace detail {
-        struct planet_type_parser_rules;
-    }
 
     struct int_complex_parser_grammar : public detail::complex_variable_grammar<int> {
         int_complex_parser_grammar(const lexer& tok,
@@ -242,12 +241,12 @@ namespace parse {
                                    const int_arithmetic_rules& _int_arith_rules,
                                    const detail::condition_parser_grammar& condition_parser,
                                    const detail::value_ref_grammar<std::string>& string_grammar);
+
         // imported grammars directly used in int_complex_parser_grammar
         const int_arithmetic_rules&         int_rules;
         ship_part_class_enum_grammar        ship_part_class_enum;
-        // using shared_ptr as unique_ptr tries to use default deletor on incomplete type and fails
-        // if you want to use unique_ptr you probably have to define with custom deletor function
-        std::shared_ptr<detail::planet_type_parser_rules> planet_type_rules;
+        detail::planet_type_parser_rules    planet_type_rules;
+
         // grammars defined by int_complex_parser_grammar
         detail::complex_variable_rule<int>  game_rule;
         detail::complex_variable_rule<int>  empire_name_ref;

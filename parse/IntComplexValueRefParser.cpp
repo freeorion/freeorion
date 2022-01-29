@@ -41,7 +41,7 @@ namespace parse {
         int_complex_parser_grammar::base_type(start, "int_complex_parser_grammar"),
         int_rules(_int_arith_rules),
         ship_part_class_enum(tok),
-        planet_type_rules(std::make_shared<detail::planet_type_parser_rules>(tok, label, condition_parser))
+        planet_type_rules(tok, label, condition_parser)
     {
         namespace phoenix = boost::phoenix;
         namespace qi = boost::spirit::qi;
@@ -227,8 +227,8 @@ namespace parse {
         planet_type_difference
             =   (
                     tok.PlanetTypeDifference_
-                    > label(tok.from_) > planet_type_rules->expr
-                    > label(tok.to_)   > planet_type_rules->expr
+                    > label(tok.from_) > planet_type_rules.expr
+                    > label(tok.to_)   > planet_type_rules.expr
                 ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, nullptr, nullptr, nullptr, planet_type_as_unique_string_(_2, _pass), planet_type_as_unique_string_(_3, _pass))) ]
             ;
 
