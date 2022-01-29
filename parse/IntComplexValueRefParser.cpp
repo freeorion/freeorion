@@ -22,14 +22,14 @@ namespace parse {
     }
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> planet_type_as_unique_string(
-                          const parse::detail::MovableEnvelope<ValueRef::ValueRef<PlanetType>>& ref_envelope,
-                          bool& pass)
+        const parse::detail::MovableEnvelope<ValueRef::ValueRef<PlanetType>>& ref_envelope,
+        bool& pass)
     {
         std::unique_ptr<ValueRef::ValueRef<::PlanetType>> vref = ref_envelope.OpenEnvelope(pass);
-        std::unique_ptr<ValueRef::StringCast<::PlanetType>> as_uniq_stringcast = std::make_unique<ValueRef::StringCast<::PlanetType>>(std::move(vref));
-        return std::move(as_uniq_stringcast);
+        return std::make_unique<ValueRef::StringCast<::PlanetType>>(std::move(vref));
     }
-    BOOST_PHOENIX_ADAPT_FUNCTION(std::unique_ptr<ValueRef::ValueRef<std::string>>, planet_type_as_unique_string_, planet_type_as_unique_string, 2)
+    BOOST_PHOENIX_ADAPT_FUNCTION(std::unique_ptr<ValueRef::ValueRef<std::string>>,
+                                 planet_type_as_unique_string_, planet_type_as_unique_string, 2)
 
     int_complex_parser_grammar::int_complex_parser_grammar(
         const parse::lexer& tok,
@@ -229,7 +229,10 @@ namespace parse {
                     tok.PlanetTypeDifference_
                     > label(tok.from_) > planet_type_rules.expr
                     > label(tok.to_)   > planet_type_rules.expr
-                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, nullptr, nullptr, nullptr, planet_type_as_unique_string_(_2, _pass), planet_type_as_unique_string_(_3, _pass))) ]
+                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
+                    _1, nullptr, nullptr, nullptr,
+                    planet_type_as_unique_string_(_2, _pass),
+                    planet_type_as_unique_string_(_3, _pass))) ]
             ;
 
         start
