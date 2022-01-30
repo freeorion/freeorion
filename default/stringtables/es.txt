@@ -3654,7 +3654,7 @@ Colonizar (%1% / %2%)
 
 # %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
-Enfoque: %1%
+Foco: %1%
 
 
 ##
@@ -5910,7 +5910,7 @@ Puesto avanzado
 #* <not translated 1970-01-01 01:00:00>
 
 FOCUS_TITLE
-Enfoque
+Foco
 
 #*FOCUS_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -5920,7 +5920,7 @@ Enfoque
 #* <not translated 1970-01-01 01:00:00>
 
 GROWTH_FOCUS_TITLE
-Enfoque de crecimiento
+Foco de crecimiento
 
 #*GROWTH_FOCUS_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6462,7 +6462,7 @@ BUILDING_TYPE
 Tipo de Edificio
 
 FOCUS
-Enfoque
+Foco
 
 #*AVAILABLE_FOCI
 #* <not translated 1970-01-01 01:00:00>
@@ -9025,7 +9025,7 @@ bueno
 
 # Focus types
 INVALID_FOCUS_TYPE
-Tipo de enfoque inválido
+Tipo de foco inválido
 
 # Focus types
 FOCUS_GROWTH
@@ -10163,11 +10163,11 @@ DESC_ENQUEUED_DESIGN_NOT
 
 # %1% textual description of the planetary focus.
 DESC_FOCUS_TYPE
-''' que tiene un enfoque %1%'''
+''' que tiene un foco en %1%'''
 
 # %1% textual description of the planetary focus.
 DESC_FOCUS_TYPE_NOT
-''' que no tiene un enfoque %1%'''
+''' que no tiene un foco en %1%'''
 
 # %1% textual description of the star type.
 DESC_STAR_TYPE
@@ -12706,7 +12706,7 @@ Base de Proyección Bioterror
 BLD_BIOTERROR_PROJECTOR_DESC
 '''Esta base de guerra biológica clandestina contamina planetas enemigos en la vecindad. Reduce gradualmente la salud de planetas enemigos a cuatro saltos de vía estelar hasta que la población desaparezca. Estas actividades no se dan a conocer en público y solo puede ser construido en un planeta con una luna resonante. Inefectivo si el imperio enemigo tiene el edificio Banco de Genomas. Este edificio puede ser construido también en un puesto de avanzada, siempre que tenga una luna resonante.
 
-Proporciona al planeta en el que se construye el enfoque BioTerror, que decrementa la salud en planetas enemigos a cuatro saltos de vía estelar a dos por turno, siempre que el imperio enemigo no contenga un Banco de Genomas.'''
+Proporciona al planeta en el que se construye el foco BioTerror, que decrementa la salud en planetas enemigos a cuatro saltos de vía estelar a dos por turno, siempre que el imperio enemigo no contenga un Banco de Genomas.'''
 
 BLD_LIGHTHOUSE
 Faro Interestelar
@@ -12943,7 +12943,7 @@ BLD_PLANET_DRIVE_DESC
 
 Debido a la falta de apuntador UI, un segundo edificio es actualmente necesario en el otro lado de la vía estelar. Este edificio se autodestruirá inmediatemente, para que el planeta pueda moverse a una sistema estelar objetivo diferente mas adelante.
 
-Para usar este edificio, establece el planeta en enfoque Motor Planetario y construye una Sonda Planetaria en el sistema adyacente. El planeta será movido a ese sistema.'''
+Para usar este edificio, establece el planeta en foco Motor Planetario y construye una Sonda Planetaria en el sistema adyacente. El planeta será movido a ese sistema.'''
 
 BLD_PLANET_BEACON
 Sonda Planetaria
@@ -12989,7 +12989,7 @@ BLD_TRANSFORMER
 Tranformador
 
 BLD_TRANSFORMER_DESC
-'''Un versatil y extremadamente caro edificio capaz de tener los efectos de otros edificios, que esten actualmente activados usando los ajustes de enfoque del planeta en el que se construye, siempre que el dueño tenga desbloqueado el edificio que el Transformador imita.
+'''Un versatil y extremadamente caro edificio capaz de tener los efectos de otros edificios, que esten actualmente activados usando los ajustes de foco del planeta en el que se construye, siempre que el dueño tenga desbloqueado el edificio que el Transformador imita.
 
 Este edificio puede tener los efectos de un Replicador, un Dispositivo de Ocultación Planetario, un Projector Bioterro, una Puerta Estelar, un Motor Planetario de Línea Estelar o un Generador de Distorsión Espacial, siempre que el dueño tenga la tecnología apropiada.'''
 
