@@ -1964,7 +1964,7 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
             default:    break;  // ??? do nothing, default to false
         }
         if (m_operands.size() < 3) {
-            return T{1};
+            return test_result ? T{1} : T{0};
         } else if (m_operands.size() < 4) {
             if (test_result)
                 return m_operands[2]->Eval(context);
