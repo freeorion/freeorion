@@ -7437,7 +7437,7 @@ BEGINNER_HINT_06
 6: Las líneas de [[metertype METER_SUPPLY]] pueden ser usadas para repostar [[metertype METER_FUEL]] de las naves.
 
 BEGINNER_HINT_07
-7: Algunos edificios, como el [[buildingtype BLD_INDUSTRY_CENTER]], afectarán a cada planeta que tenga una conexión de [[metertype METER_SUPPLY]]. Otros, como [[buildingtype BLD_GAS_GIANT_GEN]], sólo afectan al sistema en el que se construyeron. Revise la sección [[encyclopedia ENC_BUILDING_TYPE]] para conocedr las funciones que cumplen los distintos edificios.
+7: Algunos edificios, como el [[buildingtype BLD_INDUSTRY_CENTER]], afectarán a cada planeta que tenga una conexión de [[metertype METER_SUPPLY]]. Otros, como [[buildingtype BLD_GAS_GIANT_GEN]], sólo afectan al sistema en el que se construyeron. Revise la sección [[encyclopedia ENC_BUILDING_TYPE]] para conocer las funciones que cumplen los distintos edificios.
 
 BEGINNER_HINT_08
 8: Una [[predefinedshipdesign SD_OUTPOST_SHIP]] puede establecer un [[encyclopedia OUTPOSTS_TITLE]] en cualquier planeta o asteroide a su alcance, salvo que haya naves hostiles en dicho sistema.
@@ -7449,16 +7449,16 @@ BEGINNER_HINT_10
 10: Con un sistema seleccionado en la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], clique con el botón derecho en la imagen de un planeta en el panel del sistema para acceder al reporte de idoneidad planetaria. Esto informará de qué especies del imperio podrán establecerse exitosamente en dicho planeta. Un número en verde indica la [[metertype METER_POPULATION]] máxima que el planeta podría alcanzar si lo colonizase una especie, mientras que un número rojo indica que la especie moriría si intentase colonizar dicho planeta.
 
 BEGINNER_HINT_11
-11: La [[metertype METER_POPULATION]] máxima alcanzable por un planeta puede ser aumentada investigando varias tecnologías de creciciemto. Algunos especiales inusuales pueden incrementar la [[metertype METER_TARGET_POPULATION]] para especies con metabolismos específicos, consulte [[encyclopedia GROWTH_FOCUS_TITLE]] para más información sobre estos especiales.
+11: La [[metertype METER_POPULATION]] máxima alcanzable por un planeta puede ser aumentada investigando varias tecnologías de crecimiento. Algunos especiales inusuales pueden incrementar la [[metertype METER_TARGET_POPULATION]] para especies con metabolismos específicos, consulte [[encyclopedia GROWTH_FOCUS_TITLE]] para más información sobre estos especiales.
 
 BEGINNER_HINT_12
-12: Presta atención a los planetas con [[encyclopedia ENC_SPECIAL]], habitualmente indican la presencia de algún recurso especial que puede beneficiar a tu imperio si lo utilizas de manera apropiada ¡Pulsa botón derecho sobre el icono del recurso especial para acceder a su página de la Pedi y descubrir más! Right click on a special's icon to access its 'Pedia entry and find out more!
+12: Presta atención a los planetas con [[encyclopedia ENC_SPECIAL]]es, habitualmente indican la presencia de algún recurso especial que puede beneficiar a tu imperio si lo utilizas de manera apropiada. Clica con el botón derecho sobre el icono del recurso especial para acceder a su página de la Pedia y descubrir más.
 
 BEGINNER_HINT_13
-13: Únicamente los [[species SP_EXOBOT]] pueden colonizar cinturones de asteroides. Si descubres muchos cinturones de asteroides próximos, ¡Puede que quieras investigar como construirlos más pronto que tarde!
+13: Únicamente los [[species SP_EXOBOT]]s pueden colonizar cinturones de asteroides. Si descubres muchos cinturones de asteroides próximos, puede que quieras investigar como construirlos más pronto que tarde.
 
 BEGINNER_HINT_14
-14: Investiga mejoras en [[metertype METER_SUPPLY]],  como [[tech CON_ORBITAL_CON]], para incrementar la distancia que alcanzan tus lineas de suministro desde tu sistema.
+14: Investiga mejoras en [[metertype METER_SUPPLY]], como [[tech CON_ORBITAL_CON]], para incrementar la distancia que alcanzan tus lineas de suministro desde tu sistema.
 
 BEGINNER_HINT_15
 15: La mayoria de las especies comienzan con una [[metertype METER_HAPPINESS]] de 0 cuando su planeta es capturado, que (usualmente) irá aumentando en 1 por cada turno que pase. Presta atención a las especies [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]s. No les gusta estar cerca de otras especies, lo cual afectará a la estabilidad u otros valores tanto suyos como de especies cercanas.
