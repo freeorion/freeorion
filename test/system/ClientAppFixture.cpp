@@ -78,12 +78,12 @@ void ClientAppFixture::HostSPGame(unsigned int num_AIs) {
     setup_data.SetSeed("TestSeed1");
     setup_data.size =             100;
     setup_data.shape =            Shape::SPIRAL_4;
-    setup_data.age =              GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.starlane_freq =    GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.planet_density =   GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.specials_freq =    GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.monster_freq =     GalaxySetupOption::GALAXY_SETUP_MEDIUM;
-    setup_data.native_freq =      GalaxySetupOption::GALAXY_SETUP_MEDIUM;
+    setup_data.age =              GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM;
+    setup_data.starlane_freq =    GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM;
+    setup_data.planet_density =   GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM;
+    setup_data.specials_freq =    GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM;
+    setup_data.monster_freq =     GalaxySetupOptionMonsterFreq::MONSTER_SETUP_MEDIUM;
+    setup_data.native_freq =      GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM;
     setup_data.ai_aggr =          Aggression::MANIACAL;
     setup_data.game_rules =       game_rules;
 

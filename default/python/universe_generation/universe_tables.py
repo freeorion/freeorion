@@ -36,11 +36,11 @@ BASE_STAR_TYPE_DIST = {
 UNIVERSE_AGE_MOD_TO_STAR_TYPE_DIST = {
     #                                blue  white  yellow  orange  red  neutron  blackHole  noStar
     #                        Young:
-    fo.galaxySetupOption.low: (10, 20, 0, 0, 0, 0, 0, 60),
+    fo.galaxySetupOptionGeneric.low: (10, 20, 0, 0, 0, 0, 0, 60),
     #                        Mature:
-    fo.galaxySetupOption.medium: (-5, 0, 10, 20, 0, 10, 10, 40),
+    fo.galaxySetupOptionGeneric.medium: (-5, 0, 10, 20, 0, 10, 10, 40),
     #                        Ancient:
-    fo.galaxySetupOption.high: (-20, -10, 0, 10, 20, 20, 20, 20),
+    fo.galaxySetupOptionGeneric.high: (-20, -10, 0, 10, 20, 20, 20, 20),
 }
 
 # These following tables are as above, but for planet sizes rather than star
@@ -52,9 +52,9 @@ UNIVERSE_AGE_MOD_TO_STAR_TYPE_DIST = {
 # This checks what you chose for galaxy planet density:
 DENSITY_MOD_TO_PLANET_SIZE_DIST = {
     #                                none  tiny  small  medium  large  huge  asteroids  gas giant
-    fo.galaxySetupOption.low: (85, 0, 0, 0, -5, -10, 0, 0),
-    fo.galaxySetupOption.medium: (70, 0, 0, 0, -5, -10, 0, 0),
-    fo.galaxySetupOption.high: (50, 0, 0, 0, -5, -10, 0, 0),
+    fo.galaxySetupOptionGeneric.low: (85, 0, 0, 0, -5, -10, 0, 0),
+    fo.galaxySetupOptionGeneric.medium: (70, 0, 0, 0, -5, -10, 0, 0),
+    fo.galaxySetupOptionGeneric.high: (50, 0, 0, 0, -5, -10, 0, 0),
 }
 
 # Given the star type that was already chosen, what will the bonus be for this
@@ -108,28 +108,32 @@ GALAXY_SHAPE_MOD_TO_PLANET_SIZE_DIST = {
 # Whenever any special might be placed, the following probability is the chance
 # that it actually will be (after other factors are considered).
 SPECIALS_FREQUENCY = {
-    fo.galaxySetupOption.none: 0.0,
-    fo.galaxySetupOption.low: 0.08,
-    fo.galaxySetupOption.medium: 0.2,
-    fo.galaxySetupOption.high: 0.5,
+    fo.galaxySetupOptionGeneric.none: 0.0,
+    fo.galaxySetupOptionGeneric.low: 0.08,
+    fo.galaxySetupOptionGeneric.medium: 0.2,
+    fo.galaxySetupOptionGeneric.high: 0.5,
 }
 
 # Whenever a monster might be placed, the following probability is the chance
 # that it actually will be (after other factors are considered).
 MONSTER_FREQUENCY = {
-    fo.galaxySetupOption.none: 0.0,
-    fo.galaxySetupOption.low: 0.08,
-    fo.galaxySetupOption.medium: 0.2,
-    fo.galaxySetupOption.high: 0.5,
+    fo.galaxySetupOptionMonsterFreq.none: 0.0,
+    fo.galaxySetupOptionMonsterFreq.extremelyLow: 0.002,
+    fo.galaxySetupOptionMonsterFreq.veryLow: 0.01,
+    fo.galaxySetupOptionMonsterFreq.low: 0.03,
+    fo.galaxySetupOptionMonsterFreq.medium: 0.08,
+    fo.galaxySetupOptionMonsterFreq.high: 0.2,
+    fo.galaxySetupOptionMonsterFreq.veryHigh: 0.5,
+    fo.galaxySetupOptionMonsterFreq.extremelyHigh: 0.999,
 }
 
 # Whenever natives might be placed on a planet, the following probability is
 # the chance that they actually will be (after other factors are considered).
 NATIVE_FREQUENCY = {
-    fo.galaxySetupOption.none: 0.0,
-    fo.galaxySetupOption.low: 0.05,
-    fo.galaxySetupOption.medium: 0.125,
-    fo.galaxySetupOption.high: 0.3,
+    fo.galaxySetupOptionGeneric.none: 0.0,
+    fo.galaxySetupOptionGeneric.low: 0.05,
+    fo.galaxySetupOptionGeneric.medium: 0.125,
+    fo.galaxySetupOptionGeneric.high: 0.3,
 }
 
 # This is the maximum size of the shortest path via starlane that the generator
@@ -137,9 +141,9 @@ NATIVE_FREQUENCY = {
 # map will end up with more starlanes to create enough connections between adjacent
 # systems.
 MAX_JUMPS_BETWEEN_SYSTEMS = {
-    fo.galaxySetupOption.low: 8,
-    fo.galaxySetupOption.medium: 3,
-    fo.galaxySetupOption.high: 1,
+    fo.galaxySetupOptionGeneric.low: 8,
+    fo.galaxySetupOptionGeneric.medium: 3,
+    fo.galaxySetupOptionGeneric.high: 1,
 }
 
 # The maximum length of any starlane the galaxy generator can create (in uu).

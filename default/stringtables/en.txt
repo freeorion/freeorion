@@ -2640,6 +2640,14 @@ Random
 GSETUP_NONE
 None
 
+# Frequency value of monsters.
+GSETUP_EXTREMELY_LOW
+Extremely Low
+
+# Frequency value of monsters.
+GSETUP_VERY_LOW
+Very Low
+
 # Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_LOW
 Low
@@ -2651,6 +2659,14 @@ Medium
 # Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_HIGH
 High
+
+# Frequency value of monsters.
+GSETUP_VERY_HIGH
+Very High
+
+# Frequency value of monsters.
+GSETUP_EXTREMELY_HIGH
+Extremely High
 
 # A galaxy age to select when generating a universe.
 GSETUP_YOUNG

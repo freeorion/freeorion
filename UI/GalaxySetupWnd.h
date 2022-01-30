@@ -66,12 +66,12 @@ public:
     const std::string&              GetSeed() const;                //!< Returns string version of seed. This value is converted to a number or (if that fails) hashed to get the actual seed value.
     int                             Systems() const;                //!< Returns the number of star systems to use in generating the galaxy
     Shape                           GetShape() const;               //!< Returns the shape of the galaxy
-    GalaxySetupOption               GetAge() const;                 //!< Returns the age of the galaxy
-    GalaxySetupOption               GetStarlaneFrequency() const;   //!< Returns the frequency of starlanes in the galaxy
-    GalaxySetupOption               GetPlanetDensity() const;       //!< Returns the density of planets within systems
-    GalaxySetupOption               GetSpecialsFrequency() const;   //!< Returns the rarity of planetary and system specials
-    GalaxySetupOption               GetMonsterFrequency() const;    //!< Returns the frequency of space monsters
-    GalaxySetupOption               GetNativeFrequency() const;     //!< Returns the frequency of natives
+    GalaxySetupOptionGeneric        GetAge() const;                 //!< Returns the age of the galaxy
+    GalaxySetupOptionGeneric        GetStarlaneFrequency() const;   //!< Returns the frequency of starlanes in the galaxy
+    GalaxySetupOptionGeneric        GetPlanetDensity() const;       //!< Returns the density of planets within systems
+    GalaxySetupOptionGeneric        GetSpecialsFrequency() const;   //!< Returns the rarity of planetary and system specials
+    GalaxySetupOptionMonsterFreq    GetMonsterFrequency() const;    //!< Returns the frequency of space monsters
+    GalaxySetupOptionGeneric        GetNativeFrequency() const;     //!< Returns the frequency of natives
     Aggression                      GetAIAggression() const;        //!< Returns the  maximum AI aggression level
 
     /** Returns the current preview image texture. */
