@@ -241,7 +241,7 @@ void PolicyControl::CompleteConstruction() {
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const ScriptingContext context;
     const auto& name = UserString(m_policy->Name());
-    const auto& cost = static_cast<int>(m_policy->AdoptionCost(empire_id, context));
+    const auto cost = static_cast<int>(m_policy->AdoptionCost(empire_id, context));
 
     //std::cout << "PolicyControl: " << m_policy->Name() << std::endl;
 
@@ -279,7 +279,7 @@ void PolicyControl::Resize(const GG::Pt& sz, const int pts) {
     std::shared_ptr<GG::Font> font = ClientUI::GetBoldFont(pts);
 
     m_name_label->SetFont(font);
-    m_cost_label->SetFont(font);
+    m_cost_label->SetFont(std::move(font));
 
     m_name_label->SizeMove(GG::Pt(sz.x * POLICY_TEXT_POS_X, sz.y * POLICY_TEXT_POS_Y),
                            GG::Pt(sz.x * (1 - POLICY_TEXT_POS_X), sz.y * POLICY_TEXT_POS_Y));
@@ -1462,12 +1462,14 @@ void GovernmentWnd::MainPanel::DoLayout() {
     const GG::X BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
 
     const GG::Pt lr = ClientSize() + GG::Pt(-GG::X(PAD), -GG::Y(PAD));
-    GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_clear_button->SizeMove(ul, lr);
+    const GG::Pt button_ul = GG::Pt(lr.x - BUTTON_WIDTH, GG::Y0);
+    const GG::Pt button_lr = GG::Pt(lr.x, BUTTON_HEIGHT);
+    m_clear_button->SizeMove(button_ul, button_lr);
 
     if (m_slots.empty())
         return;
 
+    // arrange policy slots, start new row when slots overlap with right wnd border
     auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(Parent());
     GG::Pt slot_size = GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT);
     int text_pts = ClientUI::Pts();
@@ -1476,12 +1478,9 @@ void GovernmentWnd::MainPanel::DoLayout() {
         text_pts = gov_wnd->GetPolicyTextSize();
     }
 
-    // place background image of government
-    const GG::X initial_slot_l = GG::X(PAD*3);
-    ul.x = initial_slot_l;
-    ul.y = GG::Y(PAD*4); // -m_slots.front()->Height();
+    const GG::X initial_slot_l = GG::X(PAD*2);
+    GG::Pt ul = GG::Pt(initial_slot_l, button_lr.y + PAD);
 
-    // arrange policy slots, start new row when slots overlap with right wnd border
     int count = 0;
     bool first_iteration = true;
     for (auto& slot : m_slots) {
@@ -1506,7 +1505,7 @@ void GovernmentWnd::MainPanel::DoLayout() {
         count++;
 
         // reset count when hitting right border
-        if ((count + 1) * slot->Size().x * (1 + POLICY_PAD) > lr.x) {
+        if ((count + 1) * slot->Size().x * (1 + POLICY_PAD) > (lr.x - PAD)) {
             count = 0;
         }
     } 
@@ -1612,15 +1611,14 @@ double GovernmentWnd::GetPolicyZoomFactor() {
 
 GG::Pt GovernmentWnd::GetPolicySlotSize() {
     double zoom_factor = GetPolicyZoomFactor();
-    const GG::X slot_width = static_cast<GG::X>(SLOT_CONTROL_WIDTH * zoom_factor);
-    const GG::Y slot_height = static_cast<GG::Y>(SLOT_CONTROL_HEIGHT * zoom_factor);
+    const GG::X slot_width = GG::X(SLOT_CONTROL_WIDTH * zoom_factor);
+    const GG::Y slot_height = GG::Y(SLOT_CONTROL_HEIGHT * zoom_factor);
     return GG::Pt(slot_width, slot_height);
 }
 
 int GovernmentWnd::GetPolicyTextSize() {
     double zoom_factor = GetPolicyZoomFactor();
-    const int text_pts = static_cast<int>(ClientUI::Pts() * zoom_factor);
-    return text_pts;
+    return static_cast<int>(ClientUI::Pts() * zoom_factor);
 }
 
 void GovernmentWnd::DoLayout() {
@@ -1635,8 +1633,8 @@ void GovernmentWnd::DoLayout() {
     m_main_panel->SizeMove(main_ul, main_lr);
     m_policy_palette->SizeMove(palette_ul, palette_lr);
 
-    const GG::Pt size_buttons_ul = main_ul + GG::Pt(GG::X(PAD), - BUTTON_HEIGHT/2);
-    const GG::Pt size_buttons_lr = main_ul + GG::Pt((GG::X(PAD) + POLICY_SIZE_BUTTON_WIDTH) * num_size_buttons, BUTTON_HEIGHT/2);
+    const GG::Pt size_buttons_ul = main_ul + GG::Pt(GG::X(PAD), GG::Y0);
+    const GG::Pt size_buttons_lr = main_ul + GG::Pt((GG::X(PAD) + POLICY_SIZE_BUTTON_WIDTH) * num_size_buttons, BUTTON_HEIGHT);
 
     m_policy_size_buttons->SizeMove(size_buttons_ul, size_buttons_lr);
 }
