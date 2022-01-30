@@ -9,7 +9,8 @@
   This file is mostly maintained by people who change game code,
   so the list of entries in this file should be the most up-to-date.
 - `entry` one piece of translation, it consists of
-  - `key` a sting that represents entry in the codebase (C++, Python).
+  - `key` a sting that represents entry. It could be referenced from code: C++, Python, FOCS.
+     Also, new key could be added just for substitution purposes to the string table.
     This string must be unique.
   - `value` actual translation that will be shown to the user.
 
@@ -58,13 +59,13 @@ world
 
 ```
 
-
 #### Tags
 You can customize text with special markup tags. Not full list of tags:
 
 - `[[]]` inserts text from another entry.
   You add a key in double square braces and user will see the value of that key.
   Substitution is recursive, if text has another substitution it will be resolved too.
+  If key was not found in this table, it will be looked in the reference table. 
 
 ```
 KEY_WORLD
