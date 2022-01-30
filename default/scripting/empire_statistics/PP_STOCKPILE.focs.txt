@@ -1,0 +1,1 @@
+Statistic name = "PP_STOCKPILE" value = EmpireStockpile empire = Source.Owner resource = Industry

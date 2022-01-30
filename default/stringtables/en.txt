@@ -5027,11 +5027,20 @@ Rough Estimate of Total Military Strength
 PP_OUTPUT
 Production Output
 
+PP_STOCKPILE
+Production Stockpile
+
+STOCKPILE_EXTRACTION
+Stockpile Extraction
+
 RP_OUTPUT
 Research Output
 
 IP_OUTPUT
 Net Influence Output
+
+IP_STOCKPILE
+Influence Stockpile
 
 PLANET_COUNT
 Planets
