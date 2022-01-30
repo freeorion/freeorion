@@ -518,13 +518,13 @@ Transporte de tropas avanzadas con alguna capacidad de sigilo
 #* <not translated 1970-01-01 01:00:00>
 
 SD_COLONY_SHIP
-Nave colonizadora
+Nave colonia
 
 SD_COLONY_SHIP_DESC
 Nave desarmada [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], con un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_CRYONIC_COLONY_SHIP
-Nave colonizadora criónica
+Nave colonia criónica
 
 SD_CRYONIC_COLONY_SHIP_DESC
 Nave desarmada [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], con un [[buildingtype BLD_SHIPYARD_BASE]].
@@ -3654,7 +3654,7 @@ Colonizar (%1% / %2%)
 
 # %1% current resource this planet is focused on producing.
 RP_FOCUS_TOOLTIP
-Enfoque: %1%
+Foco: %1%
 
 
 ##
@@ -4335,8 +4335,8 @@ Añadir a la cola
 PRODUCTION_WND_TITLE
 Producción
 
-#*PRODUCTION_WINDOW_ARTICLE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+PRODUCTION_WINDOW_ARTICLE_TITLE
+Ventana de producción
 
 #*PRODUCTION_WINDOW_ARTICLE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -4509,8 +4509,8 @@ En %1%
 #* <not translated 1970-01-01 01:00:00>
 
 # %1% name of the system this item production will be relocated to.
-#*RALLY_QUEUE_ITEM
-#* <not translated 1970-01-01 01:00:00>
+RALLY_QUEUE_ITEM
+Ir a %1%
 
 #*DELETE_QUEUE_ITEM
 #* <not translated 1970-01-01 01:00:00>
@@ -5108,8 +5108,8 @@ ENC_HOMEWORLDS
 #*ENC_VECTOR_TEXTURE_INFO
 #* <not translated 1970-01-01 01:00:00>
 
-#*ENC_INDEX
-#* <not translated 1970-01-01 01:00:00>
+ENC_INDEX
+Índice
 
 #*SEARCH_RESULTS
 #* <not translated 1970-01-01 01:00:00>
@@ -5897,8 +5897,8 @@ Rango de detección
 #*GIFTING_TEXT
 #* <not translated 1970-01-01 01:00:00>
 
-#*OUTPOSTS_TITLE
-#* <not translated 1970-01-01 01:00:00>
+OUTPOSTS_TITLE
+Puesto avanzado
 
 #*OUTPOSTS_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -5909,8 +5909,8 @@ Rango de detección
 #*HOMEWORLDS_TEXT
 #* <not translated 1970-01-01 01:00:00>
 
-#*FOCUS_TITLE
-#* <not translated 1970-01-01 01:00:00>
+FOCUS_TITLE
+Foco
 
 #*FOCUS_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -5919,8 +5919,8 @@ Rango de detección
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*GROWTH_FOCUS_TITLE
-#* <not translated 1970-01-01 01:00:00>
+GROWTH_FOCUS_TITLE
+Foco de crecimiento
 
 #*GROWTH_FOCUS_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6031,14 +6031,14 @@ Medio ambiente
 #*GASEOUS_SPECIES_TEXT
 #* <not translated 1970-01-01 01:00:00>
 
-#*TELEPATHIC_TITLE
-#* <not translated 1970-01-01 01:00:00>
+TELEPATHIC_TITLE
+Telepatía
 
 #*TELEPATHY_TEXT
 #* <not translated 1970-01-01 01:00:00>
 
-#*XENOPHOBIC_SPECIES_TITLE
-#* <not translated 1970-01-01 01:00:00>
+XENOPHOBIC_SPECIES_TITLE
+Xenófoba
 
 #*XENOPHOBIC_SPECIES_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6093,8 +6093,8 @@ Medio ambiente
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*MAP_WINDOW_ARTICLE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+MAP_WINDOW_ARTICLE_TITLE
+Ventana de mapa
 
 #*MAP_WINDOW_ARTICLE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6105,8 +6105,8 @@ Medio ambiente
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*DESIGN_WINDOW_ARTICLE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+DESIGN_WINDOW_ARTICLE_TITLE
+Ventana de diseño
 
 #*DESIGN_WINDOW_ARTICLE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6141,8 +6141,8 @@ Medio ambiente
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*FLEET_MOVEMENT_ARTICLE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+FLEET_MOVEMENT_ARTICLE_TITLE
+Movimiento de flota
 
 #*FLEET_MOVEMENT_ARTICLE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6155,8 +6155,8 @@ Medio ambiente
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*HIDDEN_SETTINGS_ARTICLE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+HIDDEN_SETTINGS_ARTICLE_TITLE
+Opciones ocultas
 
 #*HIDDEN_SETTINGS__ARTICLE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6216,11 +6216,11 @@ Guía de Inicio Rápido
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*SITREP_IGNORE_BLOCK_TITLE
-#* <not translated 1970-01-01 01:00:00>
+SITREP_IGNORE_BLOCK_TITLE
+Ignorar y bloquear informes de situación
 
-#*SITREP_IGNORE_BLOCK_SHORT_DESC
-#* <not translated 1970-01-01 01:00:00>
+SITREP_IGNORE_BLOCK_SHORT_DESC
+Ignorar informes de situación específicos y bloquear tipos de informes.
 
 #*SITREP_IGNORE_BLOCK_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -6277,8 +6277,8 @@ Investigación Tecnológica
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*CONFIG_GUIDE_TITLE
-#* <not translated 1970-01-01 01:00:00>
+CONFIG_GUIDE_TITLE
+Guía de configuración
 
 #*CONFIG_GUIDE_TEXT
 #* <not translated 1970-01-01 01:00:00>
@@ -7362,127 +7362,128 @@ El imperio %empire% ha sido eliminado.
 ## Random beginner hints
 ##
 
-#*BEGINNER_HINTS
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINTS
+Pistas de juego aleatorias
 
-#*BEGINNER_HINTS_TEXT
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
-#* <not translated 1970-01-01 01:00:00>
+BEGINNER_HINTS_TEXT
+'''Colección de informes de situación enfoncados a ayudar a los jugadores principiantes.
+Cada turno se selecciona una de estas pistas de manera aleatoria, siendo almacenadas aquí para referencias futuras.
 
-#*RANDOM_BEGINNER_HINT
-#* <not translated 1970-01-01 01:00:00>
+Las pistas aleatorias son:
 
-#*BEGINNER_HINT_01
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_01]]
 
-#*BEGINNER_HINT_02
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_02]]
 
-#*BEGINNER_HINT_03
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_03]]
 
-#*BEGINNER_HINT_04
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_04]]
 
-#*BEGINNER_HINT_05
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_05]]
 
-#*BEGINNER_HINT_06
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_06]]
 
-#*BEGINNER_HINT_07
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_07]]
 
-#*BEGINNER_HINT_08
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_08]]
 
-#*BEGINNER_HINT_09
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_09]]
 
-#*BEGINNER_HINT_10
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_10]]
 
-#*BEGINNER_HINT_11
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_11]]
 
-#*BEGINNER_HINT_12
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_12]]
 
-#*BEGINNER_HINT_13
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_13]]
 
-#*BEGINNER_HINT_14
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_14]]
 
-#*BEGINNER_HINT_15
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_15]]
 
-#*BEGINNER_HINT_16
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_16]]
 
-#*BEGINNER_HINT_17
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_17]]
 
-#*BEGINNER_HINT_18
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_18]]
 
-#*BEGINNER_HINT_19
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_19]]
 
-#*BEGINNER_HINT_20
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_20]]
 
-#*BEGINNER_HINT_21
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_21]]
 
-#*BEGINNER_HINT_22
-#* <not translated 1970-01-01 01:00:00>
+[[BEGINNER_HINT_22]]'''
+
+RANDOM_BEGINNER_HINT
+Pista #%rawtext%
+
+BEGINNER_HINT_01
+1: Al empezar la partida, construir más [[predefinedshipdesign SD_SCOUT]]s puede facilitar explorar la región cercana al mundo de origen.
+
+BEGINNER_HINT_02
+2: Cada especie tiene su propio [[encyclopedia ENVIRONMENT_TITLE]] planetario predilecto. Si conquistas un planeta habitado por otra especie, puedes colonizar otros planetas con la misma especie,  permitiéndote asegurar el sistema más rápido. Ten en cuenta que no todas las especies pueden colonizar y que algunas no pueden construir naves.
+
+BEGINNER_HINT_03
+3: Es posible reparar las naves en sistemas que tengan un [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] aliado si no se produjo combate en dicho sistema durante el turno anterior y el planeta tiene una [[metertype METER_HAPPINESS]] igual o mayor a 5. Las naves tendrán que esperar un turno en el sistema antes de que pueda empezar la reparación.
+
+BEGINNER_HINT_04
+4: Los planetas conectados por lineas de [[metertype METER_SUPPLY]] están vinculados y comparten puntos de producción (PP) de [[metertype METER_INDUSTRY]].
+
+BEGINNER_HINT_05
+5: Todos los sistemas comparten puntos de [[metertype METER_RESEARCH]] (PI) que generan incluso sin tener líneas de [[metertype METER_SUPPLY]] entre ellos. Cuándo no existan dichas líneas, establecer el [[encyclopedia FOCUS_TITLE]] a investigación puede resultar más eficiente para un planeta que otras opciones.
+
+BEGINNER_HINT_06
+6: Las líneas de [[metertype METER_SUPPLY]] pueden ser usadas para repostar [[metertype METER_FUEL]] de las naves.
+
+BEGINNER_HINT_07
+7: Algunos edificios, como el [[buildingtype BLD_INDUSTRY_CENTER]], afectarán a cada planeta que tenga una conexión de [[metertype METER_SUPPLY]]. Otros, como [[buildingtype BLD_GAS_GIANT_GEN]], sólo afectan al sistema en el que se construyeron. Revise la sección [[encyclopedia ENC_BUILDING_TYPE]] para conocer las funciones que cumplen los distintos edificios.
+
+BEGINNER_HINT_08
+8: Una [[predefinedshipdesign SD_OUTPOST_SHIP]] puede establecer un [[encyclopedia OUTPOSTS_TITLE]] en cualquier planeta o asteroide a su alcance, salvo que haya naves hostiles en dicho sistema.
+
+BEGINNER_HINT_09
+9: Una [[predefinedshipdesign SD_COLONY_SHIP]] tarda más en construirse que el resto de [[predefinedshipdesign SD_OUTPOST_SHIP]]s, pero pueden colonizar planetas fuera de su rango de [[metertype METER_SUPPLY]].
+
+BEGINNER_HINT_10
+10: Con un sistema seleccionado en la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], clique con el botón derecho en la imagen de un planeta en el panel del sistema para acceder al reporte de idoneidad planetaria. Esto informará de qué especies del imperio podrán establecerse exitosamente en dicho planeta. Un número en verde indica la [[metertype METER_POPULATION]] máxima que el planeta podría alcanzar si lo colonizase una especie, mientras que un número rojo indica que la especie moriría si intentase colonizar dicho planeta.
+
+BEGINNER_HINT_11
+11: La [[metertype METER_POPULATION]] máxima alcanzable por un planeta puede ser aumentada investigando varias tecnologías de crecimiento. Algunos especiales inusuales pueden incrementar la [[metertype METER_TARGET_POPULATION]] para especies con metabolismos específicos, consulte [[encyclopedia GROWTH_FOCUS_TITLE]] para más información sobre estos especiales.
+
+BEGINNER_HINT_12
+12: Presta atención a los planetas con [[encyclopedia ENC_SPECIAL]]es, habitualmente indican la presencia de algún recurso especial que puede beneficiar a tu imperio si lo utilizas de manera apropiada. Clica con el botón derecho sobre el icono del recurso especial para acceder a su página de la Pedia y descubrir más.
+
+BEGINNER_HINT_13
+13: Únicamente los [[species SP_EXOBOT]]s pueden colonizar cinturones de asteroides. Si descubres muchos cinturones de asteroides próximos, puede que quieras investigar como construirlos más pronto que tarde.
+
+BEGINNER_HINT_14
+14: Investiga mejoras en [[metertype METER_SUPPLY]], como [[tech CON_ORBITAL_CON]], para incrementar la distancia que alcanzan tus lineas de suministro desde tu sistema.
+
+BEGINNER_HINT_15
+15: La mayoria de las especies comienzan con una [[metertype METER_HAPPINESS]] de 0 cuando su planeta es capturado, que (usualmente) irá aumentando en 1 por cada turno que pase. Presta atención a las especies [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]s. No les gusta estar cerca de otras especies, lo cual afectará a la estabilidad u otros valores tanto suyos como de especies cercanas.
+
+BEGINNER_HINT_16
+16: Puede que quieras retrasar la investigación de [[tech LRN_PSIONICS]] hasta que tu imperio incluya especies con [[encyclopedia TELEPATHIC_TITLE]].
+
+BEGINNER_HINT_17
+17: [[metertype METER_SHIELD]] provee defensa a una nave contra todo disparo contra la misma, reduciendo el daño recibido en el valor del escudo. Los valores de escudo de una nave pueden verse afectados por varios factores, como tormentas solares, en qué tipo de sistema estelar se encuentra la nave, o si estás cerca una capital imperial capturada.
+
+BEGINNER_HINT_18
+18: [[encyclopedia FOCUS_TITLE]]: presta atención foco planetario de los nuevos planetas que añadas a tu imperio, tanto colonizados como conquistados. El foco seleccionado controla en que se concentra la producción: en industria, en investigación, en influencia, en defensa, etc. Avanzada la partida, más opciones de foco pueden ser desbloqueadas a medida que se investigan nuevas [[encyclopedia ENC_TECH]]s. Distintas especies pueden tener diferentes opciones de foco disponibles.
+
+BEGINNER_HINT_19
+19: Se puede construir una colonia en un [[encyclopedia OUTPOSTS_TITLE]] construyendo un edificio colonial o mediante una [[predefinedshipdesign SD_COLONY_SHIP]]. La mayoría de edificios coloniales requieren una conexión de [[metertype METER_SUPPLY]] a un planeta con un medidor de [[metertype METER_HAPPINESS]] de al menos 5, y una [[metertype METER_POPULATION]] de 3. Cuando se desbloquea una especie, como al investigar [[tech PRO_EXOBOTS]], no se aplica este requisito para su edificio colonial.
+
+BEGINNER_HINT_20
+20: Informes de situación concretos (como este) pueden ser temporalmente ignorados haciendo clic con el botón derecho del ratón en su icono y seleccionando una de las opciones disponibles. Ciertos tipos de reportes pueden ser filtrados de manera permanente usando el menú de filtros en la parte inferior de esta pantalla. Estas pistas iniciales están agrupadas como [[encyclopedia BEGINNER_HINTS]] en la lista de filtros.
+
+BEGINNER_HINT_21
+21: Puedes fijar un destino para una nave mientras está todavía en la cola de producción. Con la pantalla de producción abierta: haz clic en el sistema destino en el mapa galáctico y haz click con el botón derecho del ratón sobre la nave en la cola de producción. Cuando aparezca el menú con las distintas opciones, elige 'Ir a' y entonces debería aparecer el nombre del sistema seleccionado al que quieres que viaje la nave tan pronto como esté construida.
+
+BEGINNER_HINT_22
+22: Seleccionar un sistema y pulsar ALT-C proporciona un círculo de rango para ese sistema, haz zoom para comparar la distancia mirando el tamaño de la barra de escala en la esquina superior izquierda del mapa.
+
 
 
 ##
@@ -8410,8 +8411,8 @@ Humana
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*SP_EXOBOT
-#* <not translated 1970-01-01 01:00:00>
+SP_EXOBOT
+Exobot
 
 #*SP_EXOBOT_GAMEPLAY_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -9024,7 +9025,7 @@ bueno
 
 # Focus types
 INVALID_FOCUS_TYPE
-Tipo de enfoque inválido
+Tipo de foco inválido
 
 # Focus types
 FOCUS_GROWTH
@@ -10162,11 +10163,11 @@ DESC_ENQUEUED_DESIGN_NOT
 
 # %1% textual description of the planetary focus.
 DESC_FOCUS_TYPE
-''' que tiene un enfoque %1%'''
+''' que tiene un foco en %1%'''
 
 # %1% textual description of the planetary focus.
 DESC_FOCUS_TYPE_NOT
-''' que no tiene un enfoque %1%'''
+''' que no tiene un foco en %1%'''
 
 # %1% textual description of the star type.
 DESC_STAR_TYPE
@@ -11173,8 +11174,8 @@ Producción Robótica
 #* <not translated 1970-01-01 01:00:00>
 #* <not translated 1970-01-01 01:00:00>
 
-#*PRO_EXOBOTS
-#* <not translated 1970-01-01 01:00:00>
+PRO_EXOBOTS
+Exobots
 
 #*PRO_EXOBOTS_DESC
 #* <not translated 1970-01-01 01:00:00>
@@ -12705,7 +12706,7 @@ Base de Proyección Bioterror
 BLD_BIOTERROR_PROJECTOR_DESC
 '''Esta base de guerra biológica clandestina contamina planetas enemigos en la vecindad. Reduce gradualmente la salud de planetas enemigos a cuatro saltos de vía estelar hasta que la población desaparezca. Estas actividades no se dan a conocer en público y solo puede ser construido en un planeta con una luna resonante. Inefectivo si el imperio enemigo tiene el edificio Banco de Genomas. Este edificio puede ser construido también en un puesto de avanzada, siempre que tenga una luna resonante.
 
-Proporciona al planeta en el que se construye el enfoque BioTerror, que decrementa la salud en planetas enemigos a cuatro saltos de vía estelar a dos por turno, siempre que el imperio enemigo no contenga un Banco de Genomas.'''
+Proporciona al planeta en el que se construye el foco BioTerror, que decrementa la salud en planetas enemigos a cuatro saltos de vía estelar a dos por turno, siempre que el imperio enemigo no contenga un Banco de Genomas.'''
 
 BLD_LIGHTHOUSE
 Faro Interestelar
@@ -12942,7 +12943,7 @@ BLD_PLANET_DRIVE_DESC
 
 Debido a la falta de apuntador UI, un segundo edificio es actualmente necesario en el otro lado de la vía estelar. Este edificio se autodestruirá inmediatemente, para que el planeta pueda moverse a una sistema estelar objetivo diferente mas adelante.
 
-Para usar este edificio, establece el planeta en enfoque Motor Planetario y construye una Sonda Planetaria en el sistema adyacente. El planeta será movido a ese sistema.'''
+Para usar este edificio, establece el planeta en foco Motor Planetario y construye una Sonda Planetaria en el sistema adyacente. El planeta será movido a ese sistema.'''
 
 BLD_PLANET_BEACON
 Sonda Planetaria
@@ -12988,7 +12989,7 @@ BLD_TRANSFORMER
 Tranformador
 
 BLD_TRANSFORMER_DESC
-'''Un versatil y extremadamente caro edificio capaz de tener los efectos de otros edificios, que esten actualmente activados usando los ajustes de enfoque del planeta en el que se construye, siempre que el dueño tenga desbloqueado el edificio que el Transformador imita.
+'''Un versatil y extremadamente caro edificio capaz de tener los efectos de otros edificios, que esten actualmente activados usando los ajustes de foco del planeta en el que se construye, siempre que el dueño tenga desbloqueado el edificio que el Transformador imita.
 
 Este edificio puede tener los efectos de un Replicador, un Dispositivo de Ocultación Planetario, un Projector Bioterro, una Puerta Estelar, un Motor Planetario de Línea Estelar o un Generador de Distorsión Espacial, siempre que el dueño tenga la tecnología apropiada.'''
 
@@ -15818,50 +15819,50 @@ SHIPDESIGN_PLANET_INVASION
 ## Hotkey names and descriptions
 ##
 
-#*OPTIONS_PAGE_HOTKEYS
-#* <not translated 1970-01-01 01:00:00>
+OPTIONS_PAGE_HOTKEYS
+Atajos de teclado
 
-#*HOTKEYS_UI
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_UI
+Interfaz de usuario
 
-#*HOTKEYS_UI_MAP
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_UI_MAP
+Ventana de mapa
 
-#*HOTKEYS_UI_MAP_FLEET
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_UI_MAP_FLEET
+Flotas
 
-#*HOTKEYS_UI_MAP_SYSTEM
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_UI_MAP_SYSTEM
+Systemas
 
-#*HOTKEYS_GENERAL
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_GENERAL
+General
 
-#*HOTKEYS_VIDEO
-#* <not translated 1970-01-01 01:00:00>
+HOTKEYS_VIDEO
+Vídeo
 
-#*HOTKEY_MAP_OPEN_CHAT
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_OPEN_CHAT
+Abrir ventana de chat
 
-#*HOTKEY_MAP_END_TURN
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_END_TURN
+Finalizar turno
 
-#*HOTKEY_MAP_RESEARCH
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_RESEARCH
+Mostrar panel de investigación
 
-#*HOTKEY_MAP_DESIGN
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_DESIGN
+Mostrar panel de diseño
 
-#*HOTKEY_MAP_OBJECTS
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_OBJECTS
+Abrir lista de objetos
 
-#*HOTKEY_MAP_MESSAGES
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_MESSAGES
+Mostrar pantalla de mensajes
 
-#*HOTKEY_MAP_EMPIRES
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_EMPIRES
+Mostrar lista de imperios
 
-#*HOTKEY_MAP_PEDIA
-#* <not translated 1970-01-01 01:00:00>
+HOTKEY_MAP_PEDIA
+Mostrar ventana de la pedia
 
 #*HOTKEY_MAP_GRAPHS
 #* <not translated 1970-01-01 01:00:00>
