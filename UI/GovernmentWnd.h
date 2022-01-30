@@ -11,6 +11,7 @@ public:
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
+    void ClearPolicies();
     void Reset();
     void Sanitize();
     void Refresh();
@@ -34,6 +35,7 @@ private:
     std::shared_ptr<PolicyPalette>           m_policy_palette;
     std::shared_ptr<MainPanel>               m_main_panel;
     std::shared_ptr<GG::RadioButtonGroup>    m_policy_size_buttons;
+    std::shared_ptr<GG::Button>              m_clear_button;
 };
 
 

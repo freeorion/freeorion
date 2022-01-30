@@ -1194,7 +1194,6 @@ private:
     int FindEmptySlotForPolicy(const Policy* policy) const;
 
     std::vector<std::shared_ptr<PolicySlotControl>> m_slots;
-    std::shared_ptr<GG::Button>                     m_clear_button;
 };
 
 GovernmentWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
@@ -1203,12 +1202,6 @@ GovernmentWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
 
 void GovernmentWnd::MainPanel::CompleteConstruction() {
     SetChildClippingMode(ChildClippingMode::ClipToClient);
-
-    m_clear_button = Wnd::Create<CUIButton>(UserString("GOVERNMENT_WND_CLEAR"));
-    AttachChild(m_clear_button);
-
-    m_clear_button->LeftClickedSignal.connect(
-        boost::bind(&GovernmentWnd::MainPanel::ClearPolicies, this));
 
     GG::Wnd::CompleteConstruction();
 
@@ -1241,7 +1234,7 @@ void GovernmentWnd::MainPanel::Sanitize()
 void GovernmentWnd::MainPanel::Refresh()
 {
     Populate();
-    DoLayout();  // necessary?
+    DoLayout();
 }
 
 void GovernmentWnd::MainPanel::SetPolicy(const std::string& policy_name, unsigned int slot)
@@ -1455,16 +1448,9 @@ void GovernmentWnd::MainPanel::Populate() {
 
 void GovernmentWnd::MainPanel::DoLayout() {
     const int PTS = ClientUI::Pts();
-    const GG::X PTS_WIDE(PTS / 2);           // guess at how wide per character the font needs
     const GG::Y BUTTON_HEIGHT(PTS * 2);
     constexpr int PAD = 6;
-    constexpr int GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT = 25;    // rough guesstimate... avoid overly long policy class names
-    const GG::X BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
-
     const GG::Pt lr = ClientSize() + GG::Pt(-GG::X(PAD), -GG::Y(PAD));
-    const GG::Pt button_ul = GG::Pt(lr.x - BUTTON_WIDTH, GG::Y0);
-    const GG::Pt button_lr = GG::Pt(lr.x, BUTTON_HEIGHT);
-    m_clear_button->SizeMove(button_ul, button_lr);
 
     if (m_slots.empty())
         return;
@@ -1472,14 +1458,14 @@ void GovernmentWnd::MainPanel::DoLayout() {
     // arrange policy slots, start new row when slots overlap with right wnd border
     auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(Parent());
     GG::Pt slot_size = GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT);
-    int text_pts = ClientUI::Pts();
+    int text_pts = PTS;
     if (gov_wnd) {
         slot_size = gov_wnd->GetPolicySlotSize();
         text_pts = gov_wnd->GetPolicyTextSize();
     }
 
     const GG::X initial_slot_l = GG::X(PAD*2);
-    GG::Pt ul = GG::Pt(initial_slot_l, button_lr.y + PAD);
+    GG::Pt ul = GG::Pt(initial_slot_l, BUTTON_HEIGHT / 2 + PAD*2);
 
     int count = 0;
     bool first_iteration = true;
@@ -1571,10 +1557,14 @@ void GovernmentWnd::CompleteConstruction() {
     AttachChild(m_policy_size_buttons);
     m_policy_size_buttons->SetCheck(0);
 
+    m_clear_button = GG::Wnd::Create<CUIButton>(UserString("GOVERNMENT_WND_CLEAR"));
+    AttachChild(m_clear_button);
+
     auto zoom_to_policy_action = [](const Policy* policy, GG::Flags<GG::ModKey> modkeys) { ClientUI::GetClientUI()->ZoomToPolicy(policy->Name()); };
     //m_main_panel->PolicyClickedSignal.connect(zoom_to_policy_action);
     m_policy_palette->PolicyClickedSignal.connect(zoom_to_policy_action);
     m_policy_size_buttons->ButtonChangedSignal.connect(boost::bind(&GovernmentWnd::PolicySizeButtonClicked, this, _1));
+    m_clear_button->LeftClickedSignal.connect(boost::bind(&GovernmentWnd::ClearPolicies, this));
 
     CUIWnd::CompleteConstruction();
     DoLayout();
@@ -1586,6 +1576,9 @@ void GovernmentWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (old_size != Size())
         DoLayout();
 }
+
+void GovernmentWnd::ClearPolicies()
+{ m_main_panel->ClearPolicies(); }
 
 void GovernmentWnd::Reset()
 { Refresh(); }
@@ -1622,21 +1615,31 @@ int GovernmentWnd::GetPolicyTextSize() {
 }
 
 void GovernmentWnd::DoLayout() {
-    const GG::Y BUTTON_HEIGHT(ClientUI::Pts() * 2);
+    constexpr int GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT = 10; // guesstimate for clear btn
+    const int PTS = ClientUI::Pts();
+    const GG::X PTS_WIDE(PTS / 2);           // guess at how wide per character the font needs
+    const GG::X BUTTON_WIDTH = PTS_WIDE * GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
+    const GG::Y BUTTON_HEIGHT(PTS * 2);
+
     constexpr GG::Pt palette_ul(GG::X0, GG::Y0);
     const GG::Pt palette_lr(palette_ul + GG::Pt(ClientWidth(), ClientHeight() / 2));
     const int num_size_buttons = static_cast<int>(m_policy_size_buttons->NumButtons());
 
-    const GG::Pt main_ul(palette_ul + GG::Pt(GG::X0, ClientHeight() / 2 + PAD));
+    const GG::Pt main_ul(palette_ul + GG::Pt(GG::X0, ClientHeight() / 2));
     const GG::Pt main_lr(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET));
 
     m_main_panel->SizeMove(main_ul, main_lr);
     m_policy_palette->SizeMove(palette_ul, palette_lr);
 
-    const GG::Pt size_buttons_ul = main_ul + GG::Pt(GG::X(PAD), GG::Y0);
-    const GG::Pt size_buttons_lr = main_ul + GG::Pt((GG::X(PAD) + POLICY_SIZE_BUTTON_WIDTH) * num_size_buttons, BUTTON_HEIGHT);
+    const GG::Pt size_buttons_ul = main_ul + GG::Pt(GG::X(PAD), PAD - BUTTON_HEIGHT / 2);
+    const GG::Pt size_buttons_lr = main_ul + GG::Pt((GG::X(PAD) + POLICY_SIZE_BUTTON_WIDTH) * num_size_buttons, PAD + BUTTON_HEIGHT / 2);
 
     m_policy_size_buttons->SizeMove(size_buttons_ul, size_buttons_lr);
+
+    const GG::Pt clear_button_ul = GG::Pt(main_lr.x - BUTTON_WIDTH - PAD, main_ul.y + PAD - BUTTON_HEIGHT / 2);
+    const GG::Pt clear_button_lr = GG::Pt(main_lr.x - PAD, main_ul.y + PAD + BUTTON_HEIGHT / 2);
+
+    m_clear_button->SizeMove(clear_button_ul, clear_button_lr);
 }
 
 void GovernmentWnd::PolicySizeButtonClicked(std::size_t idx) {
