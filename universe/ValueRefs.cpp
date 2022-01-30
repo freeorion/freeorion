@@ -346,16 +346,6 @@ PlanetType StringToPlanetType(std::string_view name) {
     return PlanetType::INVALID_PLANET_TYPE;
 }
 
-// @return the correct PlanetType enum for a planet type ID string (e.g. "PT_OCEAN"), else it returns PlanetType::INVALID_PLANET_TYPE
-PlanetType StringIdToPlanetType(std::string_view id) {
-    for (const auto& p : IterateEnum(EnumIterator<PlanetType>{})) {
-        if (id == p.second) {
-            return p.first;
-        }
-    }
-    return PlanetType::INVALID_PLANET_TYPE;
-}
-
 std::string_view PlanetEnvironmentToString(PlanetEnvironment env) {
     switch (env) {
     case PlanetEnvironment::PE_UNINHABITABLE: return "Uninhabitable";
@@ -2067,7 +2057,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             pt1 = PlanetType(pt_int1);
         } else if (m_string_ref1) {
             const std::string pt_name1 = m_string_ref1->Eval(context);
-            pt1 = StringIdToPlanetType(pt_name1);
+            pt1 = StringToPlanetType(pt_name1);
         } else {
             return 0;
         }
@@ -2078,7 +2068,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             pt2 = PlanetType(pt_int2);
         } else if (m_string_ref2) {
             const std::string pt_name2 = m_string_ref2->Eval(context);
-            pt2 = StringIdToPlanetType(pt_name2);
+            pt2 = StringToPlanetType(pt_name2);
         } else {
             return 0;
         }
