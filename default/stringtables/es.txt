@@ -7419,7 +7419,7 @@ RANDOM_BEGINNER_HINT
 Pista #%rawtext%
 
 BEGINNER_HINT_01
-1: Al empezar la partida, construir más [[predefinedshipdesign SD_SCOUT]]s puede facilitar explorar la región en cercana al mundo de origen.
+1: Al empezar la partida, construir más [[predefinedshipdesign SD_SCOUT]]s puede facilitar explorar la región cercana al mundo de origen.
 
 BEGINNER_HINT_02
 2: Cada especie tiene su propio [[encyclopedia ENVIRONMENT_TITLE]] planetario predilecto. Si conquistas un planeta habitado por otra especie, puedes colonizar otros planetas con la misma especie,  permitiéndote asegurar el sistema más rápido. Ten en cuenta que no todas las especies pueden colonizar y que algunas no pueden construir naves.
@@ -7431,7 +7431,7 @@ BEGINNER_HINT_04
 4: Los planetas conectados por lineas de [[metertype METER_SUPPLY]] están vinculados y comparten puntos de producción (PP) de [[metertype METER_INDUSTRY]].
 
 BEGINNER_HINT_05
-5: Todos los sistemas comparten punto de [[metertype METER_RESEARCH]] (PI) que generan incluso sin tener líneas de [[metertype METER_SUPPLY]] entre ellos. Cuándo no existan dichas líneas, establecer el  [[encyclopedia FOCUS_TITLE]] a investigación puede resultar más eficiente para un planeta que otras opciones.
+5: Todos los sistemas comparten puntos de [[metertype METER_RESEARCH]] (PI) que generan incluso sin tener líneas de [[metertype METER_SUPPLY]] entre ellos. Cuándo no existan dichas líneas, establecer el [[encyclopedia FOCUS_TITLE]] a investigación puede resultar más eficiente para un planeta que otras opciones.
 
 BEGINNER_HINT_06
 6: Las líneas de [[metertype METER_SUPPLY]] pueden ser usadas para repostar [[metertype METER_FUEL]] de las naves.
@@ -7461,7 +7461,7 @@ BEGINNER_HINT_14
 14: Investiga mejoras en [[metertype METER_SUPPLY]],  como [[tech CON_ORBITAL_CON]], para incrementar la distancia que alcanzan tus lineas de suministro desde tu sistema.
 
 BEGINNER_HINT_15
-15: La mayoria de las especies comienzan con un [[metertype METER_HAPPINESS]]  de 0 cuando su planeta es capturado, que - usualmente - irá aumentando en 1 por cada turno que pase. ¡Presta atención a las especies [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]s! No les gusta estar cerca de otras especies, lo cual afectará a la estabilidad u otros valores tanto suyos como de especies cercanas.
+15: La mayoria de las especies comienzan con una [[metertype METER_HAPPINESS]] de 0 cuando su planeta es capturado, que (usualmente) irá aumentando en 1 por cada turno que pase. Presta atención a las especies [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]s. No les gusta estar cerca de otras especies, lo cual afectará a la estabilidad u otros valores tanto suyos como de especies cercanas.
 
 BEGINNER_HINT_16
 16: Puede que quieras retrasar la investigación de [[tech LRN_PSIONICS]] hasta que tu imperio incluya especies con [[encyclopedia TELEPATHIC_TITLE]].
@@ -7470,19 +7470,19 @@ BEGINNER_HINT_17
 17: [[metertype METER_SHIELD]] provee defensa a una nave contra todo disparo contra la misma, reduciendo el daño recibido en el valor del escudo. Los valores de escudo de una nave pueden verse afectados por varios factores, como tormentas solares, en qué tipo de sistema estelar se encuentra la nave, o si estás cerca una capital imperial capturada.
 
 BEGINNER_HINT_18
-18: [[encyclopedia FOCUS_TITLE]] - presta atención al medidor de enfoque de los nuevos planetas que añadas a tu imperio, tanto colonizados como conquistados. Este medidor controla si el planeta se enfoca en la producción industrial, en investigación o en defensa. Avanzada la partida, más opciones de enfoque pueden ser desbloqueadas a medida que se investigan nuevas [[encyclopedia ENC_TECH]]s. Distintas especies  pueden tener disferentes opciones de enfoque disponibles.
+18: [[encyclopedia FOCUS_TITLE]]: presta atención foco planetario de los nuevos planetas que añadas a tu imperio, tanto colonizados como conquistados. El foco seleccionado controla en que se concentra la producción: en industria, en investigación, en influencia, en defensa, etc. Avanzada la partida, más opciones de foco pueden ser desbloqueadas a medida que se investigan nuevas [[encyclopedia ENC_TECH]]s. Distintas especies pueden tener diferentes opciones de foco disponibles.
 
 BEGINNER_HINT_19
 19: Se puede construir una colonia en un [[encyclopedia OUTPOSTS_TITLE]] construyendo un edificio colonial o mediante una [[predefinedshipdesign SD_COLONY_SHIP]]. La mayoría de edificios coloniales requieren una conexión de [[metertype METER_SUPPLY]] a un planeta con un medidor de [[metertype METER_HAPPINESS]] de al menos 5, y una [[metertype METER_POPULATION]] de 3. Cuando se desbloquea una especie, como al investigar [[tech PRO_EXOBOTS]], no se aplica este requisito para su edificio colonial.
 
 BEGINNER_HINT_20
-20: Informes de situación concretos (como este) pueden ser temporalmente ignorados haciendo click con el botón derecho del ratón en su icono y seleccionando una de las opciones disponibles. Ciertos tipos de reportes pueden ser filtrados de manera permanente usando el menú de filtros en la parte inferior de esta pantalla . Estas pistas iniciales están agrupadas como [[encyclopedia BEGINNER_HINTS]] en la lista de filtros.
+20: Informes de situación concretos (como este) pueden ser temporalmente ignorados haciendo clic con el botón derecho del ratón en su icono y seleccionando una de las opciones disponibles. Ciertos tipos de reportes pueden ser filtrados de manera permanente usando el menú de filtros en la parte inferior de esta pantalla. Estas pistas iniciales están agrupadas como [[encyclopedia BEGINNER_HINTS]] en la lista de filtros.
 
 BEGINNER_HINT_21
-21: Puedes fijar un destino para una nave mientras está todavía en la cola de producción. Con la pantalla de producción abierta: haz click en el sistema destino en el mapa galáctico y haz click con el botón derecho del ratón sobre la nave en la cola de producción. Cuando aparezca el menú con las distintas opciones elige 'Ir a' y entonces debería aparecer el nombre del sistema seleccionado al que quieres que viaje la nave tan pronto como esté construida.
+21: Puedes fijar un destino para una nave mientras está todavía en la cola de producción. Con la pantalla de producción abierta: haz clic en el sistema destino en el mapa galáctico y haz click con el botón derecho del ratón sobre la nave en la cola de producción. Cuando aparezca el menú con las distintas opciones, elige 'Ir a' y entonces debería aparecer el nombre del sistema seleccionado al que quieres que viaje la nave tan pronto como esté construida.
 
 BEGINNER_HINT_22
-22: Seleccionar un systema y pulsar ALT-C proporciona un círculo de rango para ese sistema, haz zoom para comparar la distancia mirando el tamaño del medidor de distancia.
+22: Seleccionar un sistema y pulsar ALT-C proporciona un círculo de rango para ese sistema, haz zoom para comparar la distancia mirando el tamaño de la barra de escala en la esquina superior izquierda del mapa.
 
 
 
