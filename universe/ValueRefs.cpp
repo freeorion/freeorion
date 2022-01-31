@@ -290,6 +290,24 @@ namespace {
 
 namespace ValueRef {
 
+template <typename EnumT>
+std::string EnumToString(EnumT t)
+{
+    static_assert(std::is_enum_v<EnumT>);
+    auto maybe_retval = to_string(t);
+    if (UserStringExists(maybe_retval))
+        return UserString(maybe_retval);
+    else
+        return std::string{maybe_retval};
+}
+
+std::string FlexibleToString(StarType t) { return EnumToString(t); }
+std::string FlexibleToString(PlanetEnvironment t) { return EnumToString(t); }
+std::string FlexibleToString(PlanetType t) { return EnumToString(t); }
+std::string FlexibleToString(PlanetSize t) { return EnumToString(t); }
+std::string FlexibleToString(Visibility t) { return EnumToString(t); }
+std::string FlexibleToString(UniverseObjectType t) { return EnumToString(t); }
+
 std::string ValueRefBase::InvariancePattern() const {
     return std::string{RootCandidateInvariant() ? "R" : "r"}
         .append(LocalCandidateInvariant()       ? "L" : "l")
@@ -3138,9 +3156,380 @@ unsigned int NameLookup::GetCheckSum() const {
 // Operation                                             //
 ///////////////////////////////////////////////////////////
 template <>
+std::string Operation<std::string>::EvalImpl(OpType op_type, std::string lhs, std::string rhs)
+{
+    switch (op_type) {
+    case OpType::PLUS: {
+        return lhs + rhs;
+        break;
+    }
+
+    case OpType::TIMES: {
+        // useful for writing a "Statistic If" expression with strings. Number-
+        // valued types return 0 or 1 for nothing or something matching the sampling
+        // condition. For strings, an empty string indicates no matches, and non-empty
+        // string indicates matches, which is treated like a multiplicative identity
+        // operation, so just returns the RHS of the expression.
+        return lhs.empty() ? lhs : rhs;
+        break;
+    }
+
+    case OpType::MINIMUM: {
+        return std::min(lhs, rhs);
+        break;
+    }
+
+    case OpType::MAXIMUM: {
+        return std::max(lhs, rhs);
+        break;
+    }
+
+    case OpType::RANDOM_PICK: {
+        return (RandInt(0, 1) == 0) ? lhs : rhs;
+        break;
+    }
+
+    case OpType::COMPARE_EQUAL: {
+        return (lhs == rhs) ? "true" : "false";
+        break;
+    }
+    case OpType::COMPARE_GREATER_THAN: {
+        return (lhs > rhs) ? "true" : "false";
+        break;
+    }
+    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: {
+        return (lhs >= rhs) ? "true" : "false";
+        break;
+    }
+    case OpType::COMPARE_LESS_THAN: {
+        return (lhs < rhs) ? "true" : "false";
+        break;
+    }
+    case OpType::COMPARE_LESS_THAN_OR_EQUAL: {
+        return (lhs <= rhs) ? "true" : "false";
+        break;
+    }
+    case OpType::COMPARE_NOT_EQUAL:  {
+        return (lhs != rhs) ? "true" : "false";
+        break;
+    }
+
+    case OpType::SUBSTITUTION: {
+        // insert string into other string in place of %1% or similar placeholder
+        if (lhs.empty())
+            return lhs;
+
+        boost::format formatter = FlexibleFormat(lhs);
+        formatter % rhs;
+        return formatter.str();
+        break;
+    }
+    }
+
+    throw std::runtime_error("ValueRef::Operation<std::string> evaluated with an unknown or invalid OpType.");
+    return "";
+}
+
+template <>
+double Operation<double>::EvalImpl(OpType op_type, double lhs, double rhs)
+{
+    switch (op_type) {
+    case OpType::PLUS: {
+        return lhs + rhs;
+        break;
+    }
+
+    case OpType::MINUS: {
+        return lhs - rhs;
+        break;
+    }
+
+    case OpType::TIMES: {
+        return lhs * rhs;
+        break;
+    }
+
+    case OpType::DIVIDE: {
+        if (rhs == 0.0)
+            return 0.0;
+        return lhs / rhs;
+        break;
+    }
+
+    case OpType::REMAINDER: {
+        double divisor = std::abs(rhs);
+        if (divisor == 0.0)
+            return 0.0;
+        auto dividend = lhs;
+        auto quotient = std::floor(dividend / divisor);
+        return dividend - quotient * divisor;
+        break;
+    }
+
+    case OpType::NEGATE: {
+        return -lhs;
+        break;
+    }
+
+    case OpType::EXPONENTIATE: {
+        if (rhs == 0.0)
+            return 1.0;
+        try {
+            return static_cast<int>(std::pow(static_cast<double>(lhs), static_cast<double>(rhs)));
+        } catch (...) {
+            ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
+            return 0;
+        }
+        break;
+    }
+
+    case OpType::NOOP: {
+        return lhs;
+        break;
+    }
+
+    case OpType::ABS: {
+        return std::abs(lhs);
+        break;
+    }
+
+    case OpType::LOGARITHM: {
+        if (lhs <= 0.0)
+            return 0.0;
+        return std::log(lhs);
+        break;
+    }
+
+    case OpType::SINE: {
+        return std::sin(lhs);
+        break;
+    }
+
+    case OpType::COSINE: {
+        return std::cos(lhs);
+        break;
+    }
+
+    case OpType::MINIMUM: {
+        return std::min(lhs, rhs);
+        break;
+    }
+
+    case OpType::MAXIMUM: {
+        return std::max(lhs, rhs);
+        break;
+    }
+
+    case OpType::RANDOM_UNIFORM: {
+        return RandDouble(std::min(lhs, rhs), std::max(rhs, lhs));
+        break;
+    }
+
+    case OpType::RANDOM_PICK: {
+        return (RandInt(0, 1) == 0) ? lhs : rhs;
+        break;
+    }
+
+    case OpType::COMPARE_EQUAL: {
+        return (lhs == rhs);
+        break;
+    }
+    case OpType::COMPARE_GREATER_THAN: {
+        return (lhs > rhs);
+        break;
+    }
+    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: {
+        return (lhs >= rhs);
+        break;
+    }
+    case OpType::COMPARE_LESS_THAN: {
+        return (lhs < rhs);
+        break;
+    }
+    case OpType::COMPARE_LESS_THAN_OR_EQUAL: {
+        return (lhs <= rhs);
+        break;
+    }
+    case OpType::COMPARE_NOT_EQUAL:  {
+        return (lhs != rhs);
+        break;
+    }
+
+    case OpType::ROUND_NEAREST: {
+        return std::round(lhs);
+        break;
+    }
+    case OpType::ROUND_UP: {
+        return std::ceil(lhs);
+        break;
+    }
+    case OpType::ROUND_DOWN: {
+        return std::floor(lhs);
+        break;
+    }
+
+    case OpType::SIGN: {
+        return lhs < 0 ? -1 : lhs > 0 ? 1 : 0;
+        break;
+    }
+
+    default:    break;
+    }
+
+    throw std::runtime_error("ValueRef::Operation<double> evaluated with an unknown or invalid OpType.");
+    return 0.0;
+}
+
+template <>
+int Operation<int>::EvalImpl(OpType op_type, int lhs, int rhs)
+{
+    switch (op_type) {
+    case OpType::PLUS: {
+        return lhs + rhs;
+        break;
+    }
+
+    case OpType::MINUS: {
+        return lhs - rhs;
+        break;
+    }
+
+    case OpType::TIMES: {
+        return lhs * rhs;
+        break;
+    }
+
+    case OpType::DIVIDE: {
+        if (rhs == 0)
+            return 0;
+        return lhs / rhs;
+        break;
+    }
+
+    case OpType::REMAINDER: {
+        if (rhs == 0)
+            return 0;
+        return lhs % rhs;
+        break;
+    }
+
+    case OpType::NEGATE: {
+        return -lhs;
+        break;
+    }
+
+    case OpType::EXPONENTIATE: {
+        if (rhs == 0)
+            return 1;
+        try {
+            return static_cast<int>(std::pow(static_cast<double>(lhs), static_cast<double>(rhs)));
+        } catch (...) {
+            ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
+            return 0;
+        }
+        break;
+    }
+
+    case OpType::NOOP: {
+        return lhs;
+        break;
+    }
+
+    case OpType::ABS: {
+        return std::abs(lhs);
+        break;
+    }
+
+    case OpType::LOGARITHM: {
+        if (lhs <= 0)
+            return 0;
+        return static_cast<int>(std::log(static_cast<double>(lhs)));
+        break;
+    }
+
+    case OpType::SINE: {
+        return static_cast<int>(std::round(std::sin(static_cast<double>(lhs))));
+        break;
+    }
+
+    case OpType::COSINE: {
+        return static_cast<int>(std::round(std::cos(static_cast<double>(lhs))));
+        break;
+    }
+
+    case OpType::MINIMUM: {
+        return std::min(lhs, rhs);
+        break;
+    }
+
+    case OpType::MAXIMUM: {
+        return std::max(lhs, rhs);
+        break;
+    }
+
+    case OpType::RANDOM_UNIFORM: {
+        return RandInt(std::min(lhs, rhs), std::max(rhs, lhs));
+        break;
+    }
+
+    case OpType::RANDOM_PICK: {
+        return (RandInt(0, 1) == 0) ? lhs : rhs;
+        break;
+    }
+
+    case OpType::COMPARE_EQUAL: {
+        return (lhs == rhs);
+        break;
+    }
+    case OpType::COMPARE_GREATER_THAN: {
+        return (lhs > rhs);
+        break;
+    }
+    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: {
+        return (lhs >= rhs);
+        break;
+    }
+    case OpType::COMPARE_LESS_THAN: {
+        return (lhs < rhs);
+        break;
+    }
+    case OpType::COMPARE_LESS_THAN_OR_EQUAL: {
+        return (lhs <= rhs);
+        break;
+    }
+    case OpType::COMPARE_NOT_EQUAL:  {
+        return (lhs != rhs);
+        break;
+    }
+
+    case OpType::ROUND_NEAREST:
+    case OpType::ROUND_UP:
+    case OpType::ROUND_DOWN: {
+        // integers don't need to be rounded...
+        return lhs;
+        break;
+    }
+
+    case OpType::SIGN: {
+        return lhs < 0 ? -1 : lhs > 0 ? 1 : 0;
+        break;
+    }
+
+    default:    break;
+    }
+
+    throw std::runtime_error("ValueRef::Operation<int> evaluated with an unknown or invalid OpType.");
+    return 0;
+}
+
+template <>
 std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const
 {
+    if (m_simple_increment)
+        return EvalImpl(m_op_type, LHS()->Eval(context), RHS()->Eval(context));
+
     if (m_op_type == OpType::PLUS) {
+
         return LHS()->Eval(context) + RHS()->Eval(context);
 
     } else if (m_op_type == OpType::TIMES) {
@@ -3154,16 +3543,20 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         return RHS()->Eval(context);
 
     } else if (m_op_type == OpType::MINIMUM || m_op_type == OpType::MAXIMUM) {
-        // evaluate all operands, return sorted first/last
-        std::set<std::string> vals;
+        if (m_operands.empty())
+            return "";
+
+        // evaluate all operands, return smallest or biggest
+        std::vector<std::string> vals;
+        vals.reserve(m_operands.size());
         for (auto& vr : m_operands) {
             if (vr)
-                vals.emplace(vr->Eval(context));
+                vals.emplace_back(vr->Eval(context));
         }
         if (m_op_type == OpType::MINIMUM)
-            return vals.empty() ? "" : *vals.begin();
+            return *std::min_element(vals.begin(), vals.end());
         else
-            return vals.empty() ? "" : *vals.rbegin();
+            return *std::max_element(vals.begin(), vals.end());
 
     } else if (m_op_type == OpType::RANDOM_PICK) {
         // select one operand, evaluate it, return result
@@ -3194,6 +3587,9 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         std::string lhs_val = LHS()->Eval(context);
         std::string rhs_val = RHS()->Eval(context);
         bool test_result = false;
+        if (m_operands.size() == 2)
+            return EvalImpl(m_op_type, lhs_val, rhs_val);
+
         switch (m_op_type) {
             case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
             case OpType::COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
@@ -3225,6 +3621,9 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
 template <>
 double Operation<double>::EvalImpl(const ScriptingContext& context) const
 {
+    if (m_simple_increment)
+        return EvalImpl(m_op_type, LHS()->Eval(context), RHS()->Eval(context));
+
     switch (m_op_type) {
         case OpType::PLUS:
             return LHS()->Eval(context) + RHS()->Eval(context); break;
@@ -3344,6 +3743,9 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
         case OpType::COMPARE_NOT_EQUAL: {
             const double&& lhs_val = LHS()->Eval(context);
             const double&& rhs_val = RHS()->Eval(context);
+            if (m_operands.size() == 2)
+                return EvalImpl(m_op_type, lhs_val, rhs_val);
+
             bool test_result = false;
             switch (m_op_type) {
                 case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
@@ -3394,6 +3796,9 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
 template <>
 int Operation<int>::EvalImpl(const ScriptingContext& context) const
 {
+    if (m_simple_increment)
+        return EvalImpl(m_op_type, LHS()->Eval(context), RHS()->Eval(context));
+
     switch (m_op_type) {
         case OpType::PLUS:
             return LHS()->Eval(context) + RHS()->Eval(context);     break;
@@ -3425,11 +3830,13 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             break;
         }
 
-        case OpType::NEGATE:
-            return -LHS()->Eval(context); break;
+        case OpType::NEGATE: {
+            return -LHS()->Eval(context);
+            break;
+        }
 
         case OpType::EXPONENTIATE: {
-            double op2 = RHS()->Eval(context);
+            int op2 = RHS()->Eval(context);
             if (op2 == 0)
                 return 1;
             try {
@@ -3519,6 +3926,9 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
         case OpType::COMPARE_NOT_EQUAL: {
             const int&& lhs_val = LHS()->Eval(context);
             const int&& rhs_val = RHS()->Eval(context);
+            if (m_operands.size() == 2)
+                return EvalImpl(m_op_type, lhs_val, rhs_val);
+
             bool test_result = false;
             switch (m_op_type) {
                 case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;

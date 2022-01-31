@@ -7,11 +7,6 @@
 #include "../util/i18n.h"
 #include <type_traits>
 
-constexpr std::string_view to_string(StarType);
-constexpr std::string_view to_string(PlanetEnvironment);
-constexpr std::string_view to_string(PlanetType);
-constexpr std::string_view to_string(PlanetSize);
-
 namespace ValueRef {
 
 //! The common base class for all ValueRef classes. This class provides
@@ -46,19 +41,13 @@ protected:
     bool m_simple_increment = false;
 };
 
-
 template<typename T>
 std::string FlexibleToString(T&& t)
 {
+    static_assert(!std::is_enum_v<T>);
+
     if constexpr (std::is_floating_point_v<std::decay_t<T>>) {
         return DoubleToString(t, 3, false);
-
-    } else if constexpr (std::is_enum_v<T>) {
-        auto maybe_retval = to_string(t);
-        if (UserStringExists(maybe_retval))
-            return UserString(maybe_retval);
-        else
-            return std::string{maybe_retval};
 
     } else if constexpr (std::is_convertible_v<std::decay_t<T>, std::string>) {
         return std::forward<T>(t);
@@ -80,6 +69,14 @@ std::string FlexibleToString(T&& t)
         return std::to_string(t);
     }
 }
+
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(StarType t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(PlanetEnvironment t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(PlanetType t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(PlanetSize t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(Visibility t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(UniverseObjectType t);
+
 
 enum class ReferenceType : int {
     INVALID_REFERENCE_TYPE = -1,
