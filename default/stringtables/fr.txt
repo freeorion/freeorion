@@ -5027,11 +5027,20 @@ Estimation puissance militaire totale
 PP_OUTPUT
 Rendement Production
 
+PP_STOCKPILE
+Stock Production
+
+STOCKPILE_EXTRACTION
+Extraction Stock
+
 RP_OUTPUT
 Rendement Recherche
 
 IP_OUTPUT
 Rendement Influence Net
+
+IP_STOCKPILE
+Stock Influence
 
 PLANET_COUNT
 Planètes
