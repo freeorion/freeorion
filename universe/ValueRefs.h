@@ -2182,7 +2182,7 @@ std::string Operation<T>::Dump(unsigned short ntabs) const
     }
 
     if (m_op_type == OpType::RANDOM_UNIFORM)
-        return "random(" + LHS()->Dump(ntabs) + ", " + LHS()->Dump(ntabs) + ")";
+        return "RandomNumber(" + LHS()->Dump(ntabs) + ", " + LHS()->Dump(ntabs) + ")";
 
     if (m_op_type == OpType::RANDOM_PICK) {
         std::string retval = "randompick(";
