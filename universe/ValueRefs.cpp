@@ -3191,8 +3191,8 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         return formatter.str();
 
     } else if (m_op_type >= OpType::COMPARE_EQUAL && m_op_type <= OpType::COMPARE_NOT_EQUAL) {
-        const std::string&& lhs_val = LHS()->Eval(context);
-        const std::string&& rhs_val = RHS()->Eval(context);
+        std::string lhs_val = LHS()->Eval(context);
+        std::string rhs_val = RHS()->Eval(context);
         bool test_result = false;
         switch (m_op_type) {
             case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
@@ -3218,7 +3218,7 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         }
     }
 
-    throw std::runtime_error("std::string ValueRef evaluated with an unknown or invalid OpType.");
+    throw std::runtime_error("ValueRef::Operation<std::string> evaluated with an unknown or invalid OpType.");
     return "";
 }
 
@@ -3387,7 +3387,7 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             break;
     }
 
-    throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
+    throw std::runtime_error("ValueRef::Operation<double> evaluated with an unknown or invalid OpType.");
     return 0.0;
 }
 
@@ -3562,7 +3562,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
         default:    break;
     }
 
-    throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
+    throw std::runtime_error("ValueRef::Operation<int> evaluated with an unknown or invalid OpType.");
     return 0;
 }
 } // namespace ValueRef
