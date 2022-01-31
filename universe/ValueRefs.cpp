@@ -3466,13 +3466,13 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
 
         case OpType::SINE: {
             double op1 = LHS()->Eval(context);
-            return static_cast<int>(std::sin(op1));
+            return static_cast<int>(std::round(std::sin(op1)));
             break;
         }
 
         case OpType::COSINE: {
             double op1 = LHS()->Eval(context);
-            return static_cast<int>(std::cos(op1));
+            return static_cast<int>(std::round(std::cos(op1)));
             break;
         }
 
