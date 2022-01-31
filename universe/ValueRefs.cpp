@@ -3491,10 +3491,10 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
         }
 
         case OpType::RANDOM_UNIFORM: {
-            double op1 = LHS()->Eval(context);
-            double op2 = RHS()->Eval(context);
-            int min_val = static_cast<int>(std::min(op1, op2));
-            int max_val = static_cast<int>(std::max(op1, op2));
+            int op1 = LHS()->Eval(context);
+            int op2 = RHS()->Eval(context);
+            int min_val = std::min(op1, op2);
+            int max_val = std::max(op1, op2);
             return RandInt(min_val, max_val);
             break;
         }
