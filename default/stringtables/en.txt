@@ -7682,7 +7682,7 @@ EFFECT_GAIA_LABEL
 Gaia Paradise
 
 EFFECT_TERRAFORM
-%planet% has been terraformed.
+%planet% has been terraformed to %user_string% (%environment%).
 
 EFFECT_TERRAFORM_LABEL
 Terraform
@@ -11756,7 +11756,7 @@ PLC_TERRAFORMING
 Terraforming
 
 PLC_TERRAFORMING_DESC
-'''• Decreases the minimum time to produce [[buildingtype BLD_TERRAFORM]] and [[buildingtype BLD_TERRAFORM_REVERT]] projects on planets.
+'''• Decreases the minimum time and cost to produce Terraforming projects on planets.
 • Boosts [[metertype METER_TARGET_HAPPINESS]] on terraformed planets by [[value PLC_TERRAFORMING_TARGET_HAPPINESS_ORIGINAL_FLAT]] per step they have been terraformed away from their original planet type
 • Boosts [[metertype METER_TARGET_INFLUENCE]] on planets set to influence focus by [[value PLC_TERRAFORMING__TARGET_INFLUENCE_ORIGINAL_FLAT]] per step they have been terraformed away from their original planet type
 • Boosts [[metertype METER_TARGET_RESEARCH]] on planets set to research focus by the square root of [[metertype METER_POPULATION]] times [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] per step they have been terraformed away from their original planet type'''
@@ -14442,17 +14442,59 @@ BLD_CLONING_CENTER_DESC
 
 [[tech GRO_INDUSTRY_CLONE]] allows made-to-order populations to be produced industrially, significantly improving population.'''
 
-BLD_TERRAFORM
-Terraforming
+BLD_TERRAFORM_TERRAN
+Terraform to [[PT_TERRAN]]
 
-BLD_TERRAFORM_DESC
-Terraforms a world one step closer to the [[encyclopedia ENVIRONMENT_TITLE]] preference of the inhabiting species.
+BLD_TERRAFORM_TERRAN_DESC
+Terraforms a world to a [[PT_TERRAN]] environment.
 
-BLD_TERRAFORM_REVERT
-Terraforming Reversion
+BLD_TERRAFORM_OCEAN
+Terraform to [[PT_OCEAN]]
 
-BLD_TERRAFORM_REVERT_DESC
-Terraforms a world one step back towards its original type of [[encyclopedia ENVIRONMENT_TITLE]].
+BLD_TERRAFORM_OCEAN_DESC
+Terraforms a world to a [[PT_OCEAN]] environment.
+
+BLD_TERRAFORM_SWAMP
+Terraform to [[PT_SWAMP]]
+
+BLD_TERRAFORM_SWAMP_DESC
+Terraforms a world to a [[PT_SWAMP]] environment.
+
+BLD_TERRAFORM_TOXIC
+Terraform to [[PT_TOXIC]]
+
+BLD_TERRAFORM_TOXIC_DESC
+Terraforms a world to a [[PT_TOXIC]] environment.
+
+BLD_TERRAFORM_INFERNO
+Terraform to [[PT_INFERNO]]
+
+BLD_TERRAFORM_INFERNO_DESC
+Terraforms a world to a [[PT_INFERNO]] environment.
+
+BLD_TERRAFORM_RADIATED
+Terraform to [[PT_RADIATED]]
+
+BLD_TERRAFORM_RADIATED_DESC
+Terraforms a world to a [[PT_RADIATED]] environment.
+
+BLD_TERRAFORM_BARREN
+Terraform to [[PT_BARREN]]
+
+BLD_TERRAFORM_BARREN_DESC
+Terraforms a world to a [[PT_BARREN]] environment.
+
+BLD_TERRAFORM_TUNDRA
+Terraform to [[PT_TUNDRA]]
+
+BLD_TERRAFORM_TUNDRA_DESC
+Terraforms a world to a [[PT_TUNDRA]] environment.
+
+BLD_TERRAFORM_DESERT
+Terraform to [[PT_DESERT]]
+
+BLD_TERRAFORM_DESERT_DESC
+Terraforms a world to a [[PT_DESERT]] environment.
 
 BLD_REMOTE_TERRAFORM
 Remote Terraforming
