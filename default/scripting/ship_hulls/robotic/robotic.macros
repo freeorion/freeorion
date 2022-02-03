@@ -1,1 +1,16 @@
 //macros needed only for robotic hulls
+ROBOTIC_REPAIR
+'''EffectsGroup
+    scope = And [
+        Source
+        Or [
+            Not InSystem
+            And [
+                InSystem
+                Turn low = LocalCandidate.System.LastTurnBattleHere + 1
+            ]
+        ]
+        Structure high = LocalCandidate.MaxStructure - 0.001
+    ]
+    effects = SetStructure value = Value + (NamedReal name = "SHP_ROBOTIC_REPAIR" value = (2 * [[SHIP_STRUCTURE_FACTOR]]))
+'''
