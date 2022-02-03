@@ -13202,6 +13202,12 @@ SHP_MIL_ROBO_CONT_DESC
 
 Robotic control can be used effectively for tasks such as mining and industry; the natural extension of this concept is to develop military robotic equipment capable of independently operating a starship. This would allow greater versatility in design, as the necessity for bulky life-support systems would be removed. Hulls produced with such technology could also perform dangerous repairs without thought for the safety and biological limitations of living engineers.'''
 
+SHP_SMALL_ROBO
+Small Robotic Hull
+
+SHP_SMALL_ROBO_DESC
+With advances in nanotechnology ship parts can be miniaturized, allowing for a smaller yet spacious robotic hull.
+
 SHP_SPACE_FLUX_BASICS
 Spatial Flux Manipulation
 
@@ -16055,6 +16061,16 @@ Robotic Hull
 
 SH_ROBOTIC_DESC
 '''This hull is completely automated and functions under the principals of [[tech SHP_MIL_ROBO_CONT]]. It has four external slots and one internal slot, and repairs [[value SHP_ROBOTIC_REPAIR]] points of [[metertype METER_STRUCTURE]] each turn as long as the ship has not been in combat.
+
+[[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+
+[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]'''
+
+SH_SMALL_ROBOTIC
+Small Robotic Hull
+
+SH_SMALL_ROBOTIC_DESC
+'''This automated hull while small is surprisingly spacious making it well suited to many auxillary roles. It has three internal slot, and repairs [[value SHP_ROBOTIC_REPAIR]] points of [[metertype METER_STRUCTURE]] each turn as long as the ship has not been in combat.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
