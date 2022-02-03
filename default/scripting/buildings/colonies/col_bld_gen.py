@@ -206,6 +206,7 @@ t_buildtime = string.Template(
         ) / (60
              + 20 * (Statistic If condition = Or [
                  And [ Source OwnerHasTech name = "SHP_MIL_ROBO_CONT" ]
+                 And [ Source OwnerHasTech name = "SHP_SPACE_FLUX_BUBBLE" ]
                  And [ Source OwnerHasTech name = "SHP_ORG_HULL" ]
                  And [ Source OwnerHasTech name = "SHP_QUANT_ENRG_MAG" ]
              ])
