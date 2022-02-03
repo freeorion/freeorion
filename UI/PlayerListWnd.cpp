@@ -419,8 +419,6 @@ namespace {
             double empires_production_points = 0.0;
             double empires_research_points = 0.0;
             double empires_influence_points = 0.0;
-            if (empire) 
-                empires_influence_points = empire->GetResourcePool(ResourceType::RE_INFLUENCE)->Stockpile();
 
             const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
             const std::set<int>& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
@@ -439,6 +437,7 @@ namespace {
                         empires_planet_count      += 1;
                         empires_production_points += planet->GetMeter(MeterType::METER_INDUSTRY)->Initial();
                         empires_research_points   += planet->GetMeter(MeterType::METER_RESEARCH)->Initial();
+                        empires_influence_points  += planet->GetMeter(MeterType::METER_INFLUENCE)->Initial();
                     }
                 }
             }
