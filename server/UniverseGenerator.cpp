@@ -325,7 +325,7 @@ namespace {
 
 
         // loop through visited systems
-        for (auto idx = 0; idx < accessibleSystemsList.size(); ++idx) {
+        for (std::size_t idx = 0; idx < accessibleSystemsList.size(); ++idx) {
             auto cur_sys_id = accessibleSystemsList[idx];
             // check that iteration hasn't reached maxLaneJumps levels deep, which would
             // mean that system2 isn't within maxLaneJumps starlane jumps of system1
@@ -565,32 +565,27 @@ namespace {
         // iteration starting with begin starts with the longest lane first,
         // then moves through the lanes as they get shorter, ensuring that
         // the longest lanes are removed first.
-        auto lanes_to_remove_it = lanes_to_remove.begin();
-        while (lanes_to_remove_it != lanes_to_remove.end()) {
-            auto lane = lanes_to_remove_it->second;
+        for (const auto& [dist, lane] : lanes_to_remove) {
+            if (system_lanes[lane.first].count(lane.second) == 0 ||
+                system_lanes[lane.second].count(lane.first) == 0)
+            { continue; }
 
-            // ensure the lane still exists
-            if (system_lanes[lane.first].count(lane.second) > 0 &&
-                system_lanes[lane.second].count(lane.first) > 0)
-            {
-                // remove lane
-                system_lanes[lane.first].erase(lane.second);
-                system_lanes[lane.second].erase(lane.first);
+            // remove lane
+            system_lanes[lane.first].erase(lane.second);
+            system_lanes[lane.second].erase(lane.first);
 
-                // if removing lane has disconnected systems, reconnect them
-                if (!ConnectedWithin(lane.first, lane.second, systems.size(), system_lanes)) {
-                    system_lanes[lane.first].insert(lane.second);
-                    system_lanes[lane.second].insert(lane.first);
-                    TraceLogger() << "CullTooLongLanes can't remove lane between systems with ids: "
-                                  << lane.first << " and " << lane.second
-                                  << " because they would then be disconnected (more than "
-                                  << systems.size() << " jumps apart)";
-                } else {
-                    TraceLogger() << "CullTooLongLanes removing lane between systems with ids: "
-                                  << lane.first << " and " << lane.second;
-                }
+            // if removing lane has disconnected systems, reconnect them
+            if (!ConnectedWithin(lane.first, lane.second, systems.size(), system_lanes)) {
+                system_lanes[lane.first].insert(lane.second);
+                system_lanes[lane.second].insert(lane.first);
+                TraceLogger() << "CullTooLongLanes can't remove lane between systems with ids: "
+                              << lane.first << " and " << lane.second
+                              << " because they would then be disconnected (more than "
+                              << systems.size() << " jumps apart)";
+            } else {
+                TraceLogger() << "CullTooLongLanes removing lane between systems with ids: "
+                              << lane.first << " and " << lane.second;
             }
-            ++lanes_to_remove_it;
         }
 
         DebugLogger() << "CullTooLongLanes left with " << IntSetMapSizeCount(system_lanes)
