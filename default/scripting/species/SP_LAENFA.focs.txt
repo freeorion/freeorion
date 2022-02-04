@@ -44,6 +44,7 @@ Species
         
         // replenish fuel in suitably coloured star systems
         EffectsGroup
+            description = "PHOTOTROP_DESC"
             scope = Source
             activation = And [
                 Ship
