@@ -80,6 +80,10 @@ namespace {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "research.png");
         return retval;
     }
+    std::shared_ptr<GG::Texture> InfluenceIcon() {
+        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "influence.png");
+        return retval;
+    }
     std::shared_ptr<GG::Texture> DetectionIcon() {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "detection.png");
         return retval;
@@ -242,6 +246,7 @@ namespace {
             m_empire_planet_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
             m_empire_production_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
             m_empire_research_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
+            m_empire_influence_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
             m_empire_detection_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT);
 
             m_war_indicator =      GG::Wnd::Create<DiplomaticStatusIndicator>(GG::X0, Height(), m_empire_id, DiplomaticStatus::DIPLO_WAR);
@@ -254,6 +259,7 @@ namespace {
             AttachChild(m_empire_planet_text);
             AttachChild(m_empire_production_text);
             AttachChild(m_empire_research_text);
+            AttachChild(m_empire_influence_text);
             AttachChild(m_empire_detection_text);
             AttachChild(m_war_indicator);
             AttachChild(m_peace_indicator);
@@ -294,6 +300,7 @@ namespace {
 
             ProductionIcon()->OrthoBlit(UpperLeft() + m_production_icon_ul, UpperLeft() + m_production_icon_ul + ICON_SIZE);
             ResearchIcon()->OrthoBlit(UpperLeft() + m_research_icon_ul, UpperLeft() + m_research_icon_ul + ICON_SIZE);
+            InfluenceIcon()->OrthoBlit(UpperLeft() + m_influence_icon_ul, UpperLeft() + m_influence_icon_ul + ICON_SIZE);
             DetectionIcon()->OrthoBlit(UpperLeft() + m_detection_icon_ul, UpperLeft() + m_detection_icon_ul + ICON_SIZE);
 
             const ClientApp* app = ClientApp::GetApp();
@@ -411,6 +418,7 @@ namespace {
             double empires_planet_count = 0.0;
             double empires_production_points = 0.0;
             double empires_research_points = 0.0;
+            double empires_influence_points = 0.0;
 
             const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
             const std::set<int>& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
@@ -429,6 +437,7 @@ namespace {
                         empires_planet_count      += 1;
                         empires_production_points += planet->GetMeter(MeterType::METER_INDUSTRY)->Initial();
                         empires_research_points   += planet->GetMeter(MeterType::METER_RESEARCH)->Initial();
+                        empires_influence_points  += planet->GetMeter(MeterType::METER_INFLUENCE)->Initial();
                     }
                 }
             }
@@ -453,6 +462,10 @@ namespace {
                 m_empire_research_text->SetText(UserString("NOTHING_VALUE_SYMBOL"));
             else
                 m_empire_research_text->SetText(DoubleToString(empires_research_points, 2, false));
+            if (empires_influence_points == 0.0)
+                m_empire_influence_text->SetText(UserString("NOTHING_VALUE_SYMBOL"));
+            else
+                m_empire_influence_text->SetText(DoubleToString(empires_influence_points, 2, false));
 
             m_empire_detection_text->SetText(DoubleToString(empire ? empire->GetMeter("METER_DETECTION_STRENGTH")->Current() : 0.0, 0, false));
 
@@ -470,6 +483,7 @@ namespace {
             const GG::X EMPIRE_PLANET_WIDTH(ClientUI::Pts()     * 16/5);
             const GG::X EMPIRE_PRODUCTION_WIDTH(ClientUI::Pts() * 16/5);
             const GG::X EMPIRE_RESEARCH_WIDTH(ClientUI::Pts()   * 16/5);
+            const GG::X EMPIRE_INFLUENCE_WIDTH(ClientUI::Pts()  * 16/5);
             const GG::X EMPIRE_DETECTION_WIDTH(ClientUI::Pts()  * 16/5);
 
             GG::X left(DATA_PANEL_BORDER);
@@ -515,6 +529,12 @@ namespace {
             m_empire_research_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_RESEARCH_WIDTH, bottom));
             left += EMPIRE_RESEARCH_WIDTH;
 
+            m_influence_icon_ul = GG::Pt(left, top);
+            left += GG::X(IconSize()) + PAD;
+
+            m_empire_influence_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_INFLUENCE_WIDTH, bottom));
+            left += EMPIRE_INFLUENCE_WIDTH;
+
             m_detection_icon_ul = GG::Pt(left, top);
             left += GG::X(IconSize()) + PAD;
 
@@ -552,6 +572,7 @@ namespace {
         std::shared_ptr<GG::Label>                  m_empire_planet_text;
         std::shared_ptr<GG::Label>                  m_empire_production_text;
         std::shared_ptr<GG::Label>                  m_empire_research_text;
+        std::shared_ptr<GG::Label>                  m_empire_influence_text;
         std::shared_ptr<GG::Label>                  m_empire_detection_text;
 
         std::shared_ptr<DiplomaticStatusIndicator>  m_war_indicator;
@@ -564,6 +585,7 @@ namespace {
         GG::Pt                  m_planet_icon_ul;
         GG::Pt                  m_production_icon_ul;
         GG::Pt                  m_research_icon_ul;
+        GG::Pt                  m_influence_icon_ul;
         GG::Pt                  m_detection_icon_ul;
         GG::Pt                  m_player_status_icon_ul;
         GG::Pt                  m_player_type_icon_ul;
