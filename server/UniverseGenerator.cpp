@@ -492,8 +492,7 @@ namespace {
         }
     }
 
-    /** Removes lanes from passed graph that are angularly too close to
-      * each other. */
+    /** Removes lanes from passed graph that are too long. */
     void CullTooLongLanes(double max_lane_length,
                           std::map<int, std::set<int>>& system_lanes,
                           const std::map<int, std::shared_ptr<const System>>& systems)
@@ -515,9 +514,10 @@ namespace {
             return;
 
         // get squared max lane lenth, so as to eliminate the need to take square roots of lane lenths...
-        double max_lane_length2 = max_lane_length*max_lane_length;
+        const double max_lane_length2 = max_lane_length*max_lane_length;
+        std::size_t total_lanes_count = 0;
 
-        // loop through systems
+        // loop through systems and lanes to find long lanes
         for (const auto& [cur_sys_id, cur_system] : systems) {
             // get position of current system (for use in calculating vector)
             double startX = cur_system->X();
@@ -525,11 +525,9 @@ namespace {
 
             // iterate through all lanes in system, checking lengths and
             // marking to be removed if necessary
-            auto lane_it = system_lanes[cur_sys_id].begin();
-            auto lane_end = system_lanes[cur_sys_id].end();
-            while (lane_it != lane_end) {
-                // get destination for this lane
-                int dest_sys_id = *lane_it;
+            for (const auto dest_sys_id : system_lanes[cur_sys_id]) {
+                total_lanes_count++;
+
                 // convert start and end into ordered pair to represent lane
                 std::pair<int, int> lane;
                 if (cur_sys_id < dest_sys_id)
@@ -552,19 +550,22 @@ namespace {
                                   << cur_sys_id << " and " << dest_sys_id;
                     lanes_to_remove.emplace(lane_length2, lane);
                 }
-
-                ++lane_it;
             }
         }
 
         DebugLogger() << "CullTooLongLanes identified " << lanes_to_remove.size()
-                      << " long lanes to possibly remove";
+                      << " long lanes to possibly remove of " << total_lanes_count << " lanes total";
+
+        std::size_t total_checked_lanes = 0;
+        std::size_t removable_lanes = 0;
+
+        // TODO: Consider re-implementing this as a minimal spanning tree
+        //       and immediately remove any lane not in that tree, and
+        //       thus avoid having to check connectivity for each
+        //       potential lane removal
 
         // Iterate through set of lanes to remove, and remove them in turn.
-        // Since lanes were inserted in the map indexed by their length,
-        // iteration starting with begin starts with the longest lane first,
-        // then moves through the lanes as they get shorter, ensuring that
-        // the longest lanes are removed first.
+        // Lanes are sorted by length, so are processed longest-first
         for (const auto& [dist, lane] : lanes_to_remove) {
             if (system_lanes[lane.first].count(lane.second) == 0 ||
                 system_lanes[lane.second].count(lane.first) == 0)
@@ -573,6 +574,8 @@ namespace {
             // remove lane
             system_lanes[lane.first].erase(lane.second);
             system_lanes[lane.second].erase(lane.first);
+
+            total_checked_lanes++;
 
             // if removing lane has disconnected systems, reconnect them
             if (!ConnectedWithin(lane.first, lane.second, systems.size(), system_lanes)) {
@@ -583,13 +586,16 @@ namespace {
                               << " because they would then be disconnected (more than "
                               << systems.size() << " jumps apart)";
             } else {
+                removable_lanes++;
                 TraceLogger() << "CullTooLongLanes removing lane between systems with ids: "
                               << lane.first << " and " << lane.second;
             }
         }
 
         DebugLogger() << "CullTooLongLanes left with " << IntSetMapSizeCount(system_lanes)
-                      << " lanes";
+                      << " lanes.  " << total_checked_lanes << " were checked and "
+                      << removable_lanes << " were removable and "
+                      << total_checked_lanes - removable_lanes << " were not removable";
     }
 }
 
@@ -696,9 +702,8 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length,
         // the lane connects too far apart
         for (const auto& [sys1_id, sys1_lanes] : potential_system_lanes) {
             for (auto& sys2_id : sys1_lanes) {
-                // TODO: skip cases where sys2 < sys1 since these should already
-                //       have been handled by previous loop iterations, since
-                //       all lanes should exist in both directions
+                if (sys2_id <= sys1_id)
+                    continue; // skip lanes that should already have been checked since lanes exist in both directions
 
                 // try removing lane
                 system_lanes[sys1_id].erase(sys2_id);
