@@ -29,7 +29,7 @@ Policy
                                      * (NamedReal name = "CYBORG_MAX_TROOPS_PERPOP" value = 1.5 * [[TROOPS_PER_POP]])
             ]
     ]
-    graphic = "icons/policies/cyborgs.png"
+    graphic = "icons/policies/social_augmentation.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/base_prod.macros"

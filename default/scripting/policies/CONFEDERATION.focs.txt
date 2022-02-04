@@ -51,7 +51,7 @@ Policy
             ]
             effects = SetTargetHappiness value = Value + (NamedRealLookup name = "DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY")
     ]
-    graphic = "icons/policies/confederation.png"
+    graphic = "icons/policies/social_confederation.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/misc.macros"

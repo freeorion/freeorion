@@ -11,9 +11,13 @@ public:
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
+    void ClearPolicies();
     void Reset();
     void Sanitize();
     void Refresh();
+    double GetPolicyZoomFactor();   // returns zoom factor for policy cards
+    GG::Pt GetPolicySlotSize();     // returns policy slot size with zoom factor applied
+    int    GetPolicyTextSize();     // returns policy text size with zoom factor applied
 
     /** Enables, or disables if \a enable is false, issuing orders via this DesignWnd. */
     void EnableOrderIssuing(bool enable = true);
@@ -26,9 +30,12 @@ private:
 
     void CloseClicked() override;
     void DoLayout();
+    void PolicySizeButtonClicked(std::size_t idx);
 
-    std::shared_ptr<PolicyPalette>  m_policy_palette = nullptr;
-    std::shared_ptr<MainPanel>      m_main_panel = nullptr;
+    std::shared_ptr<PolicyPalette>           m_policy_palette;
+    std::shared_ptr<MainPanel>               m_main_panel;
+    std::shared_ptr<GG::RadioButtonGroup>    m_policy_size_buttons;
+    std::shared_ptr<GG::Button>              m_clear_button;
 };
 
 

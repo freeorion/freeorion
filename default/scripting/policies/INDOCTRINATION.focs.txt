@@ -63,7 +63,7 @@ Policy
                 (NamedReal name = "PLC_INDOCTRINATION_INFLUENCE_FLAT" value = 5.0)
         ]
     ]
-    graphic = "icons/policies/indoctrination.png"
+    graphic = "icons/policies/social_indoctrination.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

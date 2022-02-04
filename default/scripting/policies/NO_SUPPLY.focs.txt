@@ -26,7 +26,7 @@ Policy
             ]
             effects = SetStealth value = Value + NamedRealLookup name = "NO_SUPPLY_STEALTH_BOOST"
     ]
-    graphic = "icons/policies/no_supply.png"
+    graphic = "icons/policies/economic_no_supply.png"
 
 #include "/scripting/common/priorities.macros"
 #include "/scripting/policies/policies.macros"

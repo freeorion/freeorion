@@ -33,7 +33,7 @@ Policy
                     + (NamedReal name = "PLC_THE_HUNT_TROOPS_MAX_FLAT" value = 12.0)
             ]
     ]
-    graphic = "icons/policies/bow_and_arrow.png"
+    graphic = "icons/policies/social_hunt.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/policies/policies.macros"

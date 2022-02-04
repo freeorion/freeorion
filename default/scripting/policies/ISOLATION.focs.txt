@@ -56,6 +56,6 @@ Policy
             ]
             effects = SetStealth value = Value + (NamedReal name = "PLC_ISOLATION_STEALTH" value = 5.0)
     ]
-    graphic = "icons/policies/isolation.png"
+    graphic = "icons/policies/social_isolation.png"
 
 #include "/scripting/policies/policies.macros"

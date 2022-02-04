@@ -19,7 +19,7 @@ Policy
             ]
         effects = SetSpeed value = Value + 20
     ]
-    graphic = "icons/policies/traffic_control.png"
+    graphic = "icons/policies/economic_traffic_control.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"

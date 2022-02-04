@@ -21,7 +21,7 @@ Policy
                 SetResearch value = min(Target.TargetResearch, Value + (NamedReal name = "PLC_NECESSITY_RESEARCH_GROWTH_BOOST" value = 1.0))
             ]
     ]
-    graphic = "icons/policies/necessity.png"
+    graphic = "icons/policies/social_necessity.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"

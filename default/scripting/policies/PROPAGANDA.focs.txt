@@ -32,6 +32,6 @@ Policy
             ]
             effects = SetTargetInfluence value = Value + (NamedReal name = "PROPAGANDA_INFLUENCE_ENEMY_FLAT" value = -1.0)
     ]
-    graphic = "icons/policies/broadcast.png"
+    graphic = "icons/policies/social_propaganda.png"
 
 #include "/scripting/policies/policies.macros"

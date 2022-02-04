@@ -23,7 +23,7 @@ Policy
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetMaxFuel value = Value + 1
     ]
-    graphic = "icons/policies/colonization.png"
+    graphic = "icons/policies/social_colonization.png"
 
 #include "/scripting/common/priorities.macros"
 #include "/scripting/policies/policies.macros"

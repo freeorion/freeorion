@@ -29,7 +29,7 @@ Policy
                 Value(Target.TargetHappiness))
         ]
     ]
-    graphic = "icons/policies/dream_recursion.png"
+    graphic = "icons/policies/social_dream_recursion.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

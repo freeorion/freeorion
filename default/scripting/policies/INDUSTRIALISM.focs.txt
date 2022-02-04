@@ -32,7 +32,7 @@ Policy
                 SetTargetHappiness value = Value
                     + (NamedReal name = "PLC_INDUSTRIALISM_TARGET_HAPPINESS_FLAT" value = 2)
     ]
-    graphic = "icons/policies/industrialism.png"
+    graphic = "icons/policies/economic_industrialism.png"
 
 #include "/scripting/common/priorities.macros"
 #include "/scripting/policies/policies.macros"

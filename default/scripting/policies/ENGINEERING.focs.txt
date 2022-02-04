@@ -15,7 +15,7 @@ Policy
             effects = SetTargetInfluence value = Value
                         + (NamedReal name = "PLC_ENGINEERING_TARGET_INFLUENCE_FLAT" value = -0.1)
     ]
-    graphic = "icons/policies/engineering.png"
+    graphic = "icons/policies/military_engineering.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

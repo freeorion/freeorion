@@ -60,7 +60,7 @@ Policy
                     InSystem id = Target.SystemID
                 ]))
     ]
-    graphic = "icons/policies/vassalization.png"
+    graphic = "icons/policies/economic_vassalization.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

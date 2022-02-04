@@ -60,6 +60,6 @@ Policy
                     ]
             ]
     ]
-    graphic = "icons/policies/diversity.png"
+    graphic = "icons/policies/social_diversity.png"
 
 #include "/scripting/policies/policies.macros"

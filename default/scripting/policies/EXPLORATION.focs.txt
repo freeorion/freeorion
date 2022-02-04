@@ -65,7 +65,7 @@ Policy
                     parameters = tag = "system" data = Target.SystemID
                     empire = Source.Owner
     ]
-    graphic = "icons/policies/exploration.png"
+    graphic = "icons/policies/military_exploration.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

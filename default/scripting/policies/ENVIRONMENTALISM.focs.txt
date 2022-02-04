@@ -67,7 +67,7 @@ Policy
                     + (NamedReal name = "PLC_ENVIRONMENTALISM_STEALTH_ORIGINAL_FLAT" value = 10)
             ]            
     ]
-    graphic = "icons/policies/environmentalism.png"
+    graphic = "icons/policies/economic_environmentalism.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"

@@ -19,7 +19,7 @@ Policy
                                             Value + (NamedReal name = "PLC_MARINE_RECRUITMENT_TROOP_GROWTH_FLAT" value = 2))
 
     ]
-    graphic = "icons/policies/marine_recruitment.png"
+    graphic = "icons/policies/military_marine_recruitment.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

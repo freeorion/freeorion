@@ -27,7 +27,7 @@ Policy
             ]
             effects = SetTargetConstruction value = Value + 5
     ]
-    graphic = "icons/policies/interstellar_infrastructure.png"
+    graphic = "icons/policies/economic_interstellar_infrastructure.png"
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/priorities.macros"

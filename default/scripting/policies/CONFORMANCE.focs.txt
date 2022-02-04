@@ -34,6 +34,6 @@ Policy
             SetTargetResearch value = Value - (NamedReal name = "PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT" value = 2.0)
         ]
     ]
-    graphic = "icons/policies/conformance.png"
+    graphic = "icons/policies/social_conformance.png"
 
 #include "/scripting/policies/policies.macros"

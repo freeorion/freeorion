@@ -31,7 +31,7 @@ Policy
                 value = Value + min((NamedReal name = "PLC_CHECKPOINTS_DETECTION_STRENGTH_MAX" value = 20.0),
                                     TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy)
     ]
-    graphic = "icons/policies/checkpoints.png"
+    graphic = "icons/policies/economic_checkpoints.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"

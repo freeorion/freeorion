@@ -7,7 +7,7 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
     ]
-    graphic = "icons/policies/design_simplicity.png"
+    graphic = "icons/policies/military_design_simplicity.png"
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"
