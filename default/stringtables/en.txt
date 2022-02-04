@@ -8385,7 +8385,6 @@ SP_LAENFA_GAMEPLAY_DESC
 '''<img src="species/preview/laenfa.png"></img>
 Sneaky, telepathic, sentient vines.
 Prefer [[PT_OCEAN]] planets.
-Ships regenerate 1 fuel per turn at white stars, and 2 fuel per turn a blue stars.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
@@ -8671,7 +8670,17 @@ Prefer [[PT_DESERT]] planets.
 '''
 
 SP_NYMNMN_DESC
-''''''
+'''Homeworld:
+Their ancestral desert world's environment possesses an extremely unlikely combination of fractally recurring storm patterns in the upper ionosphere, paired with constant static electrical discharges produced by solar tides from its neighbouring star system, which enabled the early development of self-replicating electromagnetic wavelets. These wavelets are comparable to the ancient precursors of single celled organisms and continued to evolve into more and more complex wafers over the eons. Since they can only exist in a quite narrow spectral band, there was never much room for the analogue of biodiversity – every more advanced developmental stage totally consumed its predecessors in order to be able to exist at all.
+
+Since reproducing their native environment anywhere else is out of the question, they can never leave. Unless their entire world were to be moved, and great care taken not to interrupt the tidal-static-electric effects from its neighbouring star system.
+
+Description:
+A single Nymnmnych is hard to grasp. They blend into a cascading caccophony of self-perpetuating lightning-like electromagnetic discharges, in which an outsider can only discern a smear of blueish grizzle. Moving at the speed of light, yet bound to the ground, each and every indiviual covers the entire planetary surface several times per second. Where they meet, they briefly resonate with each other (somewhere in the low to mid terahertz range). Without corporeal form, they need to imprint their memories into the ferromagnetic portion of their planet's crust. Any mining or mechanical activities would impair or even destroy their racial memories, which is why they refrain from industry.
+
+Daily lives:
+Today's nymnmnian society is mainly preoccupied with reviewing and rating, archiving and cataloguing old tv shows and other entertainment broadcasts from foreign civilizations. They can not do otherwise, because those broadcasts touch the very essence of their beings – all their life is a non-stop binge-watching marathon if they want to or not. In consequence, they are the absolute masters of movie mockery in all the galaxies.
+'''
 
 SP_TRENCHERS
 Trenchers
@@ -8684,7 +8693,10 @@ Prefer [[PT_BARREN]] planets.
 '''
 
 SP_TRENCHERS_DESC
+'''Description:
+Coming soon.
 <img src="species/trenchers.png"></img>
+'''
 
 SP_RAAAGH
 Raaagh
@@ -8696,7 +8708,7 @@ Prefer [[PT_TERRAN]] planets.
 '''
 
 SP_RAAAGH_DESC
-'''The Raaagh are 1.5 meter tall stripe-furred bipeds. The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance. The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage - they must survive on their own competing against their siblings for hiding places and stealing food like vermin. After three years usually only one is left, and the surviving young begin to learn to speak. This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
+'''The Raaagh are 1.5 meter tall stripe-furred bipeds. The body is held leaning forward at 45 degrees, leaving the fanged jaws and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance. The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage – they must survive on their own, competing against their siblings for hiding places and stealing food like vermin. After three years usually only one is left, and the surviving young begin to learn to speak. This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
 
 Personality:
 Extreme territoriality is the Raaagh's most distinctive trait, woven throughout their daily lives and culture. Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
@@ -8705,7 +8717,7 @@ Homeworld:
 The Raaagh homeworld is of the Terran type. Sea and land are more or less evenly spread out, with the largest continent covering only 4% of planet's surface. The many small continents and large islands encourage a territorial attitude.
 
 Reason for Staying:
-There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries. The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land. Abandoning one's territory is inconceivable, and a Raaagh forcibly removed from his territory goes violently insane.
+There's no bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries. The genetic compulsion of a Raaagh is to guard its territory with their life, and when possible to expand into adjacent land. Abandoning one's territory is inconceivable, and a Raaagh forcibly removed from their territory goes violently insane.
 '''
 
 SP_BEIGEGOO
@@ -8718,7 +8730,7 @@ Prefers [[PT_RADIATED]] planets.
 '''
 
 SP_BEIGEGOO_DESC
-'''The entire planet is covered in a beige haze of Nanites. It is unknown whether they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core. These Nanites are very efficient assemblers, and are eager to do so if provided raw materials. However the Nanites, are extremely protective of the secret of their design - they self destruct if any are captured or removed from the planet.
+'''The entire planet is covered in a beige haze of Nanites. It is unknown whether they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core. These Nanites are very efficient assemblers, and are eager to do so if provided raw materials. However, the Nanites are extremely protective of the secret of their design - they self destruct if any are captured or removed from the planet.
 '''
 
 SP_SILEXIAN
@@ -14707,187 +14719,187 @@ BLD_SCRYING_SPHERE_DESC
 Grants visibility to all other planets that have a Scrying Sphere.'''
 
 BLD_COL_ABADDONI
-Abaddoni Colony
+Colony of [[SP_ABADDONI]]
 
 BLD_COL_ABADDONI_DESC
 [[BLD_COL_PART_1]] [[species SP_ABADDONI]] colony. [[BLD_COL_PART_2]] Abaddoni colony [[BLD_COL_PART_3]].
 
 BLD_COL_BANFORO
-Banforo Colony
+Colony of [[SP_BANFORO]]
 
 BLD_COL_BANFORO_DESC
 [[BLD_COL_PART_1]] [[species SP_BANFORO]] colony. [[BLD_COL_PART_2]] Banforo colony [[BLD_COL_PART_3]].
 
 BLD_COL_CHATO
-Chato Colony
+Colony of [[SP_CHATO]]
 
 BLD_COL_CHATO_DESC
 [[BLD_COL_PART_1]] [[species SP_CHATO]] colony. [[BLD_COL_PART_2]] Chato colony [[BLD_COL_PART_3]].
 
 BLD_COL_CRAY
-Cray Colony
+Colony of [[SP_CRAY]]
 
 BLD_COL_CRAY_DESC
 [[BLD_COL_PART_1]] [[species SP_CRAY]] colony. [[BLD_COL_PART_2]] Cray colony [[BLD_COL_PART_3]].
 
 BLD_COL_DERTHREAN
-Derthrean Colony
+Colony of [[SP_DERTHREAN]]
 
 BLD_COL_DERTHREAN_DESC
 [[BLD_COL_PART_1]] [[species SP_DERTHREAN]] colony. [[BLD_COL_PART_2]] Derthrean colony [[BLD_COL_PART_3]].
 
 BLD_COL_EAXAW
-Eaxaw Colony
+Colony of [[SP_EAXAW]]
 
 BLD_COL_EAXAW_DESC
 [[BLD_COL_PART_1]] [[species SP_EAXAW]] colony. [[BLD_COL_PART_2]] Eaxaw colony [[BLD_COL_PART_3]].
 
 BLD_COL_EGASSEM
-Egassem Colony
+Colony of [[SP_EGASSEM]]
 
 BLD_COL_EGASSEM_DESC
 [[BLD_COL_PART_1]] [[species SP_EGASSEM]] colony. [[BLD_COL_PART_2]] Egassem colony [[BLD_COL_PART_3]].
 
 BLD_COL_ETTY
-Etty Colony
+Colony of [[SP_ETTY]]
 
 BLD_COL_ETTY_DESC
 [[BLD_COL_PART_1]] [[species SP_ETTY]] colony. [[BLD_COL_PART_2]] Etty colony [[BLD_COL_PART_3]].
 
 BLD_COL_FURTHEST
-Furthest Colony
+Colony of [[SP_FURTHEST]]
 
 BLD_COL_FURTHEST_DESC
 [[BLD_COL_PART_1]] [[species SP_FURTHEST]] colony. [[BLD_COL_PART_2]] Furthest colony [[BLD_COL_PART_3]].
 
 BLD_COL_FULVER
-Fulver Colony
+Colony of [[SP_FULVER]]
 
 BLD_COL_FULVER_DESC
 [[BLD_COL_PART_1]] [[species SP_FULVER]] colony. [[BLD_COL_PART_2]] Fulver colony [[BLD_COL_PART_3]].
 
 BLD_COL_GEORGE
-George Colony
+Colony of [[SP_GEORGE]]
 
 BLD_COL_GEORGE_DESC
 [[BLD_COL_PART_1]] [[species SP_GEORGE]] colony. [[BLD_COL_PART_2]] George colony [[BLD_COL_PART_3]].
 
 BLD_COL_GYSACHE
-Gysache Colony
+Colony of [[SP_GYSACHE]]
 
 BLD_COL_GYSACHE_DESC
 [[BLD_COL_PART_1]] [[species SP_GYSACHE]] colony. [[BLD_COL_PART_2]] Gysache colony [[BLD_COL_PART_3]].
 
 BLD_COL_HAPPY
-Happybirthday Colony
+Colony of [[SP_HAPPY]]
 
 BLD_COL_HAPPY_DESC
 [[BLD_COL_PART_1]] [[species SP_HAPPY]] colony. [[BLD_COL_PART_2]] Happybirthday colony [[BLD_COL_PART_3]].
 
 BLD_COL_HHHOH
-Hhhoh Colony
+Colony of [[SP_HHHOH]]
 
 BLD_COL_HHHOH_DESC
 [[BLD_COL_PART_1]] [[species SP_HHHOH]] colony. [[BLD_COL_PART_2]] Hhhoh colony [[BLD_COL_PART_3]].
 
 BLD_COL_HUMAN
-Human Colony
+Colony of [[SP_HUMAN]]
 
 BLD_COL_HUMAN_DESC
 [[BLD_COL_PART_1]] [[species SP_HUMAN]] colony. [[BLD_COL_PART_2]] Human colony [[BLD_COL_PART_3]].
 
 BLD_COL_KILANDOW
-Kilandow Colony
+Colony of [[SP_KILANDOW]]
 
 BLD_COL_KILANDOW_DESC
 [[BLD_COL_PART_1]] [[species SP_KILANDOW]] colony. [[BLD_COL_PART_2]] Kilandow colony [[BLD_COL_PART_3]].
 
 BLD_COL_KOBUNTURA
-Kobuntura Colony
+Colony of [[SP_KOBUNTURA]]
 
 BLD_COL_KOBUNTURA_DESC
 [[BLD_COL_PART_1]] [[species SP_KOBUNTURA]] colony. [[BLD_COL_PART_2]] Kobuntura colony [[BLD_COL_PART_3]].
 
 BLD_COL_LAENFA
-Laenfa Colony
+Colony of [[SP_LAENFA]]
 
 BLD_COL_LAENFA_DESC
 [[BLD_COL_PART_1]] [[species SP_LAENFA]] colony. [[BLD_COL_PART_2]] Laenfa colony [[BLD_COL_PART_3]].
 
 BLD_COL_MISIORLA
-Misiorla Colony
+Colony of [[SP_MISIORLA]]
 
 BLD_COL_MISIORLA_DESC
 [[BLD_COL_PART_1]] [[species SP_MISIORLA]] colony. [[BLD_COL_PART_2]] Misiorla colony [[BLD_COL_PART_3]].
 
 BLD_COL_MUURSH
-Mu Ursh Colony
+Colony of [[SP_MUURSH]]
 
 BLD_COL_MUURSH_DESC
 [[BLD_COL_PART_1]] [[species SP_MUURSH]] colony. [[BLD_COL_PART_2]] Mu Ursh colony [[BLD_COL_PART_3]].
 
 BLD_COL_PHINNERT
-Phinnert Colony
+Colony of [[SP_PHINNERT]]
 
 BLD_COL_PHINNERT_DESC
 [[BLD_COL_PART_1]] [[species SP_PHINNERT]] colony. [[BLD_COL_PART_2]] Phinnert colony [[BLD_COL_PART_3]].
 
 BLD_COL_REPLICON
-Replicon Colony
+Colony of [[SP_REPLICON]]
 
 BLD_COL_REPLICON_DESC
 [[BLD_COL_PART_1]] [[species SP_REPLICON]] colony. [[BLD_COL_PART_2]] Replicon colony [[BLD_COL_PART_3]].
 
 BLD_COL_SCYLIOR
-Scylior Colony
+Colony of [[SP_SCYLIOR]]
 
 BLD_COL_SCYLIOR_DESC
 [[BLD_COL_PART_1]] [[species SP_SCYLIOR]] colony. [[BLD_COL_PART_2]] Scylior colony [[BLD_COL_PART_3]].
 
 BLD_COL_SETINON
-Setinon Colony
+Colony of [[SP_SETINON]]
 
 BLD_COL_SETINON_DESC
 [[BLD_COL_PART_1]] [[species SP_SETINON]] colony. [[BLD_COL_PART_2]] Setinon colony [[BLD_COL_PART_3]].
 
 BLD_COL_SILEXIAN
-Silexian Colony
+Colony of [[SP_SILEXIAN]]
 
 BLD_COL_SILEXIAN_DESC
 [[BLD_COL_PART_1]] [[species SP_SILEXIAN]] colony. [[BLD_COL_PART_2]] Silexian colony [[BLD_COL_PART_3]].
 
 BLD_COL_SLY
-Sly Colony
+Colony of [[SP_SLY]]
 
 BLD_COL_SLY_DESC
 [[BLD_COL_PART_1]] [[species SP_SLY]] colony. [[BLD_COL_PART_2]] Sly colony [[BLD_COL_PART_3]].
 
 BLD_COL_SSLITH
-Sslith Colony
+Colony of [[SP_SSLITH]]
 
 BLD_COL_SSLITH_DESC
 [[BLD_COL_PART_1]] [[species SP_SSLITH]] colony. [[BLD_COL_PART_2]] Sslith colony [[BLD_COL_PART_3]].
 
 BLD_COL_TAEGHIRUS
-Tae Ghirus Colony
+Colony of [[SP_TAEGHIRUS]]
 
 BLD_COL_TAEGHIRUS_DESC
 [[BLD_COL_PART_1]] [[species SP_TAEGHIRUS]] colony. [[BLD_COL_PART_2]] Tae Ghirus colony [[BLD_COL_PART_3]].
 
 BLD_COL_TRITH
-Trith Colony
+Colony of [[SP_TRITH]]
 
 BLD_COL_TRITH_DESC
 [[BLD_COL_PART_1]] [[species SP_TRITH]] colony. [[BLD_COL_PART_2]] Trith colony [[BLD_COL_PART_3]].
 
 BLD_COL_UGMORS
-Ugmors Colony
+Colony of [[SP_UGMORS]]
 
 BLD_COL_UGMORS_DESC
 [[BLD_COL_PART_1]] [[species SP_UGMORS]] colony. [[BLD_COL_PART_2]] Ugmors colony [[BLD_COL_PART_3]].
 
 BLD_COL_EXOBOT
-Exobot Colony
+Colony of [[SP_EXOBOT]]
 
 BLD_COL_EXOBOT_DESC
 This building will construct an [[species SP_EXOBOT]] colony at an [[encyclopedia OUTPOSTS_TITLE]]. Contrary to the colony buildings of other species, an Exobot colony does not need an already existing Exobot colony within supply range, as the Exobots are constructed as part of the colony directly planetside. However, because of that they are more expensive to build, and they still need an empire owned planet within supply range.
@@ -16481,6 +16493,11 @@ Planet <i>%1%</i> [[TT_SPECIAL]]
 ##
 ## Species picks
 ##
+## + for positive effects
+## - for negative effects
+## ⋄ for neutral or other effects
+## use tabs for spacing
+##
 
 NO_INDUSTRY_DESC
 −−−	No [[metertype METER_INDUSTRY]]
@@ -16492,7 +16509,7 @@ BAD_INDUSTRY_DESC
 −	Bad [[metertype METER_INDUSTRY]]: 75%
 
 AVERAGE_INDUSTRY_DESC
-'''	Average [[metertype METER_INDUSTRY]]: 100%'''
+⋄	Average [[metertype METER_INDUSTRY]]: 100%
 
 GOOD_INDUSTRY_DESC
 +	Good [[metertype METER_INDUSTRY]]: 150%
@@ -16513,7 +16530,7 @@ BAD_RESEARCH_DESC
 −	Bad [[metertype METER_RESEARCH]]: 75%
 
 AVERAGE_RESEARCH_DESC
-'''	Average [[metertype METER_RESEARCH]]: 100%'''
+⋄	Average [[metertype METER_RESEARCH]]: 100%
 
 GOOD_RESEARCH_DESC
 +	Good [[metertype METER_RESEARCH]]: 150%
@@ -16534,7 +16551,7 @@ BAD_INFLUENCE_DESC
 −	Bad [[metertype METER_INFLUENCE]]: 75%
 
 AVERAGE_INFLUENCE_DESC
-'''	Average [[metertype METER_INFLUENCE]]: 100%'''
+⋄	Average [[metertype METER_INFLUENCE]]: 100%
 
 GOOD_INFLUENCE_DESC
 +	Good [[metertype METER_INFLUENCE]]: 150%
@@ -16549,7 +16566,7 @@ BAD_HAPPINESS_DESC
 −	Bad [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
 
 AVERAGE_HAPPINESS_DESC
-'''	Average [[metertype METER_HAPPINESS]]: +0'''
+⋄	Average [[metertype METER_HAPPINESS]]: +0
 
 GOOD_HAPPINESS_DESC
 +	Good [[metertype METER_HAPPINESS]]: +[[value GOOD_HAPPINESS_VAL]]
@@ -16567,7 +16584,7 @@ BAD_DEFENSE_TROOPS_DESC
 −	Bad Defensive Ground [[metertype METER_TROOPS]]: 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-'''	Average Defensive Ground [[metertype METER_TROOPS]]: 100%'''
+⋄	Average Defensive Ground [[metertype METER_TROOPS]]: 100%
 
 GOOD_DEFENSE_TROOPS_DESC
 +	Good Defensive Ground [[metertype METER_TROOPS]]: 150%
@@ -16579,7 +16596,7 @@ ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Ultimate Defensive Ground [[metertype METER_TROOPS]]: 300%
 
 ANCIENT_DEFENSE_TROOPS_DESC
-+++	Ancient Defensive Ground [[metertype METER_TROOPS]]: 10 per [[metertype METER_POPULATION]]
++++	Ancient Defensive Ground [[metertype METER_TROOPS]]: +10 per [[metertype METER_POPULATION]]
 
 NO_OFFENSE_TROOPS_DESC
 −−−	No Offensive Ground [[metertype METER_TROOPS]]
@@ -16588,7 +16605,7 @@ BAD_OFFENSE_TROOPS_DESC
 −	Bad Offensive Ground [[metertype METER_TROOPS]]: 50%
 
 AVERAGE_OFFENSE_TROOPS_DESC
-'''	Average Offensive Ground [[metertype METER_TROOPS]]: 100%'''
+⋄	Average Offensive Ground [[metertype METER_TROOPS]]: 100%
 
 GOOD_OFFENSE_TROOPS_DESC
 +	Good Offensive Ground [[metertype METER_TROOPS]]: 150%
@@ -16615,7 +16632,7 @@ BAD_STEALTH_DESC
 −	Bad Planetary [[metertype METER_STEALTH]]: −20 malus
 
 AVERAGE_STEALTH_DESC
-'''	Average Planetary [[metertype METER_STEALTH]]'''
+⋄	Average Planetary [[metertype METER_STEALTH]]
 
 GOOD_STEALTH_DESC
 +	Good Planetary [[metertype METER_STEALTH]]: +20 bonus
@@ -16627,26 +16644,30 @@ ULTIMATE_STEALTH_DESC
 +++	Ultimate Planetary [[metertype METER_STEALTH]]: +60 bonus
 
 BAD_WEAPONS_DESC
-−	Bad Pilots: Base damage per ship weapon reduced by one level.
+−	Bad Pilots: weapon damage reduced by one level
 
 GOOD_WEAPONS_DESC
-+	Good Pilots: Base damage per ship weapon increased by one level.
++	Good Pilots: weapon damage increased by one level
 
 GREAT_WEAPONS_DESC
-++	Great Pilots: Base damage per ship weapon increased by two levels.
+++	Great Pilots: weapon damge increased by two levels
 
 ULTIMATE_WEAPONS_DESC
-+++	Ultimate Pilots: Base damage per ship weapon increased by three levels.
++++	Ultimate Pilots: weapon damage increased by three levels
 
+PHOTOTROP_DESC
++	Refuel 1.0 per turn at White and 2.0 at Blue Stars
+
+# 0.1 natural ramscoop-refuelling + 0.1 additional gaseous refueling = 0.2 q.e.d.
 GASEOUS_DESC
 '''+	Live on Gas Giants
-+	Refuel on Gas Giants 0.1'''
++	Refuel on Gas Giants 0.2 per turn'''
 
 BAD_POPULATION_DESC
 −	Bad [[metertype METER_POPULATION]]: 75%
 
 AVERAGE_POPULATION_DESC
-'''	Average [[metertype METER_POPULATION]]: 100%'''
+⋄	Average [[metertype METER_POPULATION]]: 100%
 
 GOOD_POPULATION_DESC
 +	Good [[metertype METER_POPULATION]]: 125%
@@ -16661,7 +16682,7 @@ BAD_SUPPLY_DESC
 −	Bad [[metertype METER_SUPPLY]]: no bonus
 
 AVERAGE_SUPPLY_DESC
-'''	Average [[metertype METER_SUPPLY]]: +1'''
+⋄	Average [[metertype METER_SUPPLY]]: +1
 
 GREAT_SUPPLY_DESC
 +	Great [[metertype METER_SUPPLY]]: +2
@@ -16676,7 +16697,7 @@ BAD_STOCKPILE_DESC
 −	Bad [[metertype METER_STOCKPILE]]: +0.01 per [[metertype METER_POPULATION]]
 
 AVERAGE_STOCKPILE_DESC
-'''	Average [[metertype METER_STOCKPILE]]: +0.02 per [[metertype METER_POPULATION]]'''
+⋄	Average [[metertype METER_STOCKPILE]]: +0.02 per [[metertype METER_POPULATION]]
 
 GOOD_STOCKPILE_DESC
 +	Good [[metertype METER_STOCKPILE]]: +0.06 per [[metertype METER_POPULATION]]
@@ -16700,10 +16721,10 @@ GOOD_PLANETARY_DEFENSE_DESC
 +	Good planetary [[metertype METER_DEFENSE]]: +5
 
 BROAD_EP_DESC
-+	Broad Planet Tolerance: can tolerate more types.
++	Broad Planet Tolerance: can tolerate more types
 
 NARROW_EP_DESC
-−−	Narrow Planet Tolerance: flourishes on fewer types.
+−−	Narrow Planet Tolerance: flourishes on fewer types
 
 FAST_COLONIZATION_DESC
 +	Fast Colonization: -25% time to build colonies
@@ -16718,7 +16739,7 @@ BAD_FUEL_DESC
 −	Bad Maximum [[metertype METER_FUEL]]: -0.5
 
 AVERAGE_FUEL_DESC
-'''	Average Maximum [[metertype METER_FUEL]]: +0'''
+⋄	Average Maximum [[metertype METER_FUEL]]: +0
 
 GOOD_FUEL_DESC
 +	Good Maximum [[metertype METER_FUEL]]: +0.5
@@ -16733,16 +16754,16 @@ GREAT_ASTEROID_INDUSTRY_DESC
 +	Good Asteroid Miners: + 0.2 [[metertype METER_INDUSTRY]] per [[metertype METER_POPULATION]] when Industry Focused in systems with owned asteroid belts.
 
 LIGHT_SENSITIVE_DESC
-−	Light Sensitive: [[metertype METER_POPULATION]] is reduced in systems with [[STAR_BLUE]] and to a lesser extend [[STAR_WHITE]] stars.
+−	Light Sensitive: [[metertype METER_POPULATION]] is reduced in systems with [[STAR_BLUE]] and to a lesser extent [[STAR_WHITE]] stars.
 
 TELEPATHIC_DETECTION_DESC
-+	Telepathic Detection: can sense nearby populated planets.
++	Telepathic Detection: can sense nearby populated planets
 
 PRECOGNITIVE_DETECTION_DESC
-+	Procognitive Detection: can sense starlane connected planets.
++	Precognitive Detection: can sense starlane connected planets
 
 COMMUNAL_VISION_DESC
-'''	Communal Vision: shares visibility within the same species.'''
+⋄	Communal Vision: shares visibility within the same species regardless of affiliation
 
 
 ##
@@ -17433,7 +17454,7 @@ Invincible'''
 AI_SHIPDESIGN_NAME_INVALID
 Invalid Design
 
-# Newline separated list of military ship names owned by AIs.
+# Newline separated list of military ship names owned by AIs. {
 # The usage is determined by a rating defined inside the AI scripts. The names
 # are roughly ordered by order of appearance in the game.
 AI_SHIPDESIGN_NAME_MILITARY
@@ -17456,6 +17477,7 @@ Hades
 Nemesis
 Zeus'''
 
+# }
 # Newline separated list of local troop transporter names owned by AIs.
 # The usage is determined by a rating defined inside the AI scripts. The names
 # are roughly ordered by order of appearance in the game.
@@ -18290,6 +18312,7 @@ Dukalis
 Duna
 Dunatis
 Dungortheb
+Dungsibims
 Durash
 Durgosh
 Dvorak
@@ -18351,6 +18374,7 @@ Ezellohar
 Ezra
 Fafnir
 Fairchild
+Falavf
 Falmari
 Faraday
 Farlight
@@ -18406,6 +18430,7 @@ Giausar
 Giedi
 Gienah
 Giiziss
+Gilat
 Gilly
 Gimboid
 Gimilzôr
@@ -18434,6 +18459,7 @@ Grail
 Gram
 Gray
 Grian
+Gromphlamm
 Grotto
 Grue
 Gruis
@@ -18452,9 +18478,11 @@ Haedi
 Hagalaz
 Hale
 Haleth
+Halima-Ifa
 Halley
 Hamal
 Hananim
+Hardin
 Haretha
 Harlequin
 Hartmann
@@ -18480,6 +18508,7 @@ Hepsjot
 Hera
 Herbert
 Herbig
+Hermelin
 Hercules
 Herculis
 Herschel
@@ -18564,6 +18593,7 @@ Jabbah
 Jansky
 Jelena
 Jera
+Jetson
 Jhonaai
 Jiangyin
 Jijo
@@ -18593,6 +18623,7 @@ Kartow
 Katrud
 Kaus
 Kazzkark
+Keaen
 Keeta
 Keid
 Kelvin
@@ -18628,6 +18659,7 @@ Kobol
 Kochab
 Kochanski
 Kornephori
+Kotonëaster
 Kraj
 Krampus
 Kraz
@@ -18655,6 +18687,7 @@ LaMarr
 Lambda
 Langa
 Laplace
+Larken
 Lassell
 Lava
 Laythe
@@ -18729,6 +18762,7 @@ Matar
 Matenga
 Mbyja
 Mebsuta
+Mechthild
 Medea
 Media
 Megalon
@@ -18869,6 +18903,7 @@ Oa
 Oakka
 Oasis
 Obaca
+Obrekt
 Octo
 Odin
 Odyssey
@@ -18939,6 +18974,7 @@ Pickering
 Pike
 Pinatha
 Pinkie
+Pirene
 Pisces
 Piscium
 Plato
@@ -18950,6 +18986,7 @@ Polaris
 Pollus
 Pollux
 Polyphemus
+Ponderosa
 PooshNa
 Porrima
 Posterior
@@ -19060,6 +19097,7 @@ Sakuru
 Salm
 Salpeter
 Salusa
+Salvor
 Sandage
 Sangre
 Santo
@@ -19213,6 +19251,7 @@ Tauri
 Taygeta
 Taylor
 Techno
+Techtel
 Tegmen
 Tegmine
 Teja
@@ -19224,6 +19263,7 @@ Tenebra
 Teoblan
 Terebellum
 Terminus
+Tesbinh
 Tewari
 Thabit
 Thalassa
@@ -19312,7 +19352,9 @@ Verrier
 Vhilinyar
 Vindeatrix
 Vinea
+Viralia
 Vista
+Vloubiz
 Volantis
 Volchok
 Vox
@@ -19562,6 +19604,7 @@ Dromedary
 Dugong
 Elephant
 Elk
+Ermine
 Fennec
 Ferret
 Fox
@@ -19871,13 +19914,15 @@ Zircon'''
 SHIP_NAME_OTHER_GEO
 '''Caldera
 Earthquake
+Geysir
 Lavaflow
 Menhir
 Nugget
 Obelisk
 Petroglyph
 Seismic
-Tremor'''
+Tremor
+Vatnajökull'''
 
 # }
 # Newline separated ship name list based on weather {
@@ -20959,6 +21004,7 @@ Dalton
 Descartes
 Dirac
 Doppler
+Drosten
 Edison
 Einstein
 Euler
