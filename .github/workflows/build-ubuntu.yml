@@ -105,6 +105,8 @@ jobs:
         run: |
           ccache --show-stats || true
       - name: Run C++ unit tests
+        env:
+          FO_TEST_HOSTLESS_GAMES: 1
         run: |
           cd build
           cmake --build . --config Release --target unittest
