@@ -183,17 +183,17 @@ t_buildtime_stat_cond_extinct = string.Template(
     """condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
-            Or [
-               And [
-                   Species name = "${id}"
-                   Population low = [[MIN_RECOLONIZING_SIZE]]
-                   Happiness low = 5
+                Or [
+                   And [
+                       Species name = "${id}"
+                       Population low = [[MIN_RECOLONIZING_SIZE]]
+                       Happiness low = 5
+                    ]
+                    And [
+                        HasSpecial name = "EXTINCT_${name}_SPECIAL"
+                        Contains Building name = "BLD_XENORESURRECTION_LAB"
+                    ]
                 ]
-                And [
-                    HasSpecial name = "EXTINCT_${name}_SPECIAL"
-                    Contains Building name = "BLD_XENORESURRECTION_LAB"
-                ]
-            ]
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]"""
 )
