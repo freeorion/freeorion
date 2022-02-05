@@ -588,7 +588,7 @@ void TextLinker::MarkLinks() {
     SetLinkedText(std::move(marked_text));
 }
 
-std::string LinkStringIfPossible(std::string raw, std::string user_string) {
+std::string LinkStringIfPossible(const std::string &raw, const std::string &user_string) {
     if      (auto x = GetBuildingType(raw)) return LinkTaggedPresetText(VarText::BUILDING_TYPE_TAG, raw, user_string);
     else if (auto x = GetSpecies(raw))      return LinkTaggedPresetText(VarText::SPECIES_TAG,       raw, user_string);
     else if (auto x = GetSpecial(raw))      return LinkTaggedPresetText(VarText::SPECIAL_TAG,       raw, user_string);
@@ -600,7 +600,7 @@ std::string LinkStringIfPossible(std::string raw, std::string user_string) {
     else return user_string;
 }
 
-std::string LinkList(std::vector<std::string> strings) {
+std::string LinkList(const std::vector<std::string> &strings) {
     std::string s;
     bool first = true;
     for (std::string string : strings) {
@@ -623,7 +623,7 @@ std::string LinkList(std::vector<std::string_view> strings) {
     return s;
 }
 
-std::string LinkList(std::set<std::string> strings) {
+std::string LinkList(const std::set<std::string> &strings) {
     std::vector<std::string> vector(strings.begin(), strings.end());
     return LinkList(vector);
 }

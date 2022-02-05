@@ -299,7 +299,7 @@ namespace {
                 std::set<int> known_homeworlds;
                 std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, entry.first).append(" ");
 
-                // TODO: determine if stealthy worlds should show up as clear text only when the empire has sufficient detection strength
+                // TODO: stealthy worlds should be hidden on the server side and not show up as clear text here, only when the empire has sufficient detection strength
                 // homeworld
                 if (!homeworlds.count(entry.first) || homeworlds.at(entry.first).empty()) {
                     continue;
@@ -2291,7 +2291,7 @@ namespace {
             detailed_description.append(UserString("HOMEWORLD")).append("\n");
             bool first = true;
             // TODO: alphabetical sorting order to make the list better readable
-            // TODO: determine if stealthy worlds should show up as clear text only when the empire has sufficient detection strength
+            // TODO: stealthy worlds should be hidden on the server side and not show up as clear text here, only when the empire has sufficient detection strength
             for (int hw_id : homeworlds.at(species->Name())) {
                 if (first) first = false;
                 else detailed_description.append(",  ");
