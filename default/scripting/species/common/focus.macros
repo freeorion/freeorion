@@ -48,7 +48,8 @@ HAS_ADVANCED_FOCI
 '''        Focus
             name = "FOCUS_PROTECTION"
             description = "FOCUS_PROTECTION_DESC"
-            location = OwnerHasTech name = "DEF_ROOT_DEFENSE"
+            //location = OwnerHasTech name = "DEF_ROOT_DEFENSE"
+            location = Planet                       // empires have self-defense anyway, and this way some natives can now defend themselves better
             graphic = "icons/focus/protection.png"
 
         Focus

@@ -1,0 +1,70 @@
+Species
+    name = "SP_SLEEPERS"
+    description = "SP_SLEEPERS_DESC"
+    gameplay_description = "SP_SLEEPERS_GAMEPLAY_DESC"
+    Native
+
+
+    tags = [ "ORGANIC" "BAD_POPULATION" "VERY_BAD_RESEARCH" "BAD_ATTACKTROOPS" "GOOD_INDUSTRY" "GOOD_STOCKPILE" "PEDIA_ORGANIC_SPECIES_CLASS" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        /*[[HAS_INFLUENCE_FOCUS]]*/
+        /*[[HAS_GROWTH_FOCUS]]*/
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    defaultfocus = "FOCUS_INDUSTRY"
+
+    likes = [                   // not much really, because they are boring
+        "SHIMMER_SILK_SPECIAL"  // nice and comfy for the long sleep and if u have to get out to write the name in the snow u can c where u lay when u get back cuz is shimmering
+        "BLD_SOL_ORB_GEN"       // bright and shiny and we likes the industrial benefits
+        "PLC_DREAM_RECURSION"   // dreaming sounds nice. good night. sweet dream recursions.
+        "PLC_INDUSTRIALISM"     // automation. also nice. just dont expect us to work ourselves..
+        "FOCUS_RESEARCH"        // i.e. dreaming
+    ]
+    dislikes = [                 // not much really, because that would make them interesting
+        "SP_NIGHTSIDERS"         // who doesnt?
+        "FOCUS_INDUSTRY"         // just cuz we're good at it dont meen we like it. go away. let us sleep. we're not worth u'r trouble anyway.
+        "MIMETIC_ALLOY_SPECIAL"  // too obtrusive
+    ]
+
+    // hibernate. dreaming. somnambulism. automation.
+
+    effectsgroups = [
+        [[GOOD_INDUSTRY]]
+        [[VERY_BAD_RESEARCH]]    // because they like to sleep a lot and when not then sit around and do nothing on their eccentric worlds ..
+        [[BAD_INFLUENCE]]
+        [[GOOD_STOCKPILE]]
+
+        [[BAD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[AVERAGE_SUPPLY]]
+        [[BAD_OFFENSE_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[STANDARD_SHIP_SHIELDS]]
+        [[NARROW_EP]]
+
+        // they live on eccentric worlds
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 0
+            //stackinggroup = "GAME_START_MOD_STACK"
+            effects = [
+                AddSpecial name = "ECCENTRIC_ORBIT_SPECIAL"
+            ]
+
+    ]
+
+    [[TUNDRA_NARROW_EP]]
+
+    graphic = "icons/species/quadruped-05.png"
+
+#include "common/*.macros"
+
+#include "/scripting/common/*.macros"

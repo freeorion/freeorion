@@ -915,7 +915,7 @@ FLD_VOID_RIFT
 Void Rift
 
 FLD_VOID_RIFT_DESC
-Anomalous rift in space that reduces ship [[metertype METER_SPEED]] by 50%.
+Anomalous rift in spacetime that reduces ship [[metertype METER_SPEED]] by 50%.
 
 
 ##
@@ -5221,6 +5221,12 @@ ENC_POICY_PREREQUISITES
 ENC_SPECIAL
 Special
 
+KNOWN_FIELDS_OF_THIS_TYPE
+Clickable list of currently known fields of this type with galactic coordinates attached:
+
+NO_KNOWN_FIELDS
+none
+
 OBJECTS_WITH_SPECIAL
 '''Objects with Special: '''
 
@@ -7663,6 +7669,12 @@ On %planet%: the %building% performed partial repairs on the %ship%.
 EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
 On %planet%: the %building% completed repairs on the %ship%.
 
+EFFECT_THENIAN_NATURAL_DIEOFF
+On %planet% a natural [[species SP_THENIAN]] die-off occurred, halving the current population.
+
+EFFECT_THENIAN_NATURAL_DIEOFF_LABEL
+Natural Die-off
+
 EFFECT_MONSTER_SPAWNING
 In %system%: A %predefinedshipdesign% was spawned.
 
@@ -7784,10 +7796,16 @@ EFFECT_NEBULA_LABEL
 Nebula
 
 EFFECT_TREE
-At %system%: a new Dyson Forest has started to grow and surround the star.
+At %system%: a new [[predefinedshipdesign SM_TREE]] has started to grow and surround the star.
 
 EFFECT_TREE_LABEL
-Dyson Forest
+[[SM_TREE]]
+
+EFFECT_DERELICT_TROOPS
+At %system%: a [[predefinedshipdesign SD_SMALL_TROOP_SHIP]] of %species% was found and salvaged.
+
+EFFECT_DERELICT_TROOPS_LABEL
+Derelict Seedlings
 
 EFFECT_DERELICT_MAP
 At %system%: information on the area was obtained from an abandoned %special%.
@@ -8407,13 +8425,16 @@ Greatly prefer [[PT_GASGIANT]]s.
 '''
 
 SP_SLY_DESC
-'''Description:
-The Sly live in gas giants. The gas giants are so foreign to most species in the universe that, for most of their history, they have been overlooked.
-Not being able to build devices, they couldn't leave their homeworld. Recently, they were able to obtain necessary equipment and technology for spacefaring from traders in exchange for their knowledge of history.
-On the right diet, Sly excrete refined fuel. When in system with a gas giant, a Sly-crewed ship will regenerate fuel. When in a system with a planet populated by friendly Sly, Sly-crewed ships will be refueled and repaired, as if they were in a friendly supply network with [[tech SHP_FLEET_REPAIR]].
+'''
+Description:
+The Sly live in gas giants. The gas giants are so foreign to most species in the universe that, for most of their history, they have been overlooked. Although experts in the field of xenobiology have long since speculated, that there might as well be live in just about any type of environment imaginable, if one just had the necessary technology to detect or make contact with it.
+
+Not being able to build advanced devices themselves, the Sly couldn't leave their heavy homeworld for a long time. Recently though, they were able to obtain the necessary equipment and technologies for spacefaring from interstellar traders in exchange for their deep knowledge of history.
+
+On the right diet, a Sly will excrete refined fuel. When Sly crewed ships are in systems with a [[PT_GASGIANT]], a their ships will regenerate a little bit of fuel each turn. When in a system with a planet populated by friendly Sly, Sly-crewed ships will be refueled and repaired, as if they were in a friendly supply network with [[tech SHP_FLEET_REPAIR]].
 
 Social Structure:
-The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. They are very open and curious towards the galaxy and the other species they are now finally able to encounter.
+The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. The echoes of their verbal lore resound down to the deepest and densest layers of their world(s), where harmonies and resonances build up over millenia. Despite their fixation with their racial memories, they are very open minded and curious towards the galaxy and the other species they are now finally able to encounter.
 '''
 
 SP_LEMBALALAM
@@ -8658,6 +8679,122 @@ Setinon society is based on two factors, firstly their strongly individualistic,
 
 Homeworld:
 A swamp world with a dense atmosphere and fairly dense biosphere.
+'''
+
+SP_THENIAN
+Thenian
+
+SP_THENIAN_GAMEPLAY_DESC
+'''Thoughtful gasbags.
+[[encyclopedia GASEOUS_SPECIES_TITLE]]
+'''
+
+SP_THENIAN_DESC
+'''
+At home in the boundary layers between the ultra high pressured inner atmosphere of their [[PT_GASGIANT]] and the outermost metallic helium core. They take their sustenance from the magnetic differential currents and are subject to periodical population die-offs which is completely natural and of no concern to themselves whatsoever. Whenever the maximum population density is reached, another die-off occurs so they can grow anew with unrelenting vigor. (Current [[metertype METER_POPULATION]] of [[SP_THENIAN]] colonies will be cut in half the turn after the maximum is reached.)
+
+As integrated as they are into their world's internal structure, it makes no sense for the Thenian to even try to leave. Unless another [[PT_GASGIANT]] were to physically come into direct contact with theirs, they just can not make the leap into space is all. So they dive and thrive
+'''
+
+SP_CELESTEPHYTE
+Celestephyte
+
+SP_CELESTEPHYTE_GAMEPLAY_DESC
+'''
+Slow growing telepathic lichen. Quite fragile and mostly harmless.
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], lives only on a few asteroids.
+'''
+
+SP_CELESTEPHYTE_DESC
+'''
+
+Although parts easily break off and can be transplanted on virgin rocks, it is highly unlikely they will ever take root. Certain rare trace elements (see ->Unobtainium) needed by its symbiotic astral fungus to telepathically travel the interdimensional universal webworks are so rare indeed, that Celestephyte have long since ago colonized every single rock even remotely habitable to them.
+
+While adult Celestephyte have prehensile appendages and can in theory do some useful work, they rarely do so in practice and like to stick to the theory. Much rather prefer they to not disturb the delicate interconnectedness of all their minute little mycelia, their intra- and interasteroidal web of fungus roots so to speak. But most of all they prefer not to be disturbed.
+
+When confronted with an enemy anyway, they try to stun them with their blatant incompetence and by staring them in the eyes if they have eyes and not yet invented the technology of protective sun goggles. Sometimes this even has the intended effect, but indirectly, because the attacker laugh themselves to death in a hysteric frenzy induced by the astral fungus'es spores transmitted telepathically through the accusing gaze of the defending Celestephyte. But that mostly works only on the weak minded, who would not have come to confront the ancient Celestephyte in the first place. That makes them kind of not quite adapted to this galaxy's way of live and some experts in the field of astromycology have speculated, that Celestephyte were originally introduced from Andromeda during the second coming of Chtullluhhulurtl by its fierceful minnions, the Fluffy Teddy Tenderizers, as they were called back in those dark and pre-empiric times.
+'''
+
+SP_KHAKTURIAN
+Khakturian
+
+SP_KHAKTURIAN_GAMEPLAY_DESC
+'''
+Spiky and hardy. Biennial invasive weed, herbicide resistant.
+Shoots poisonous abrasive thorns when in early sessile stage, later forms formidable tumbleweed-like offshoots for reproduction.
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+'''
+
+SP_KHAKTURIAN_DESC
+'''
+As invasive weed species go, this is a pretty stubborn one and hard to eradicate. When they plant their seedling-troopers into an enemy-world's ground, noone wants to share that piece of ground with them anymore, so obtrusive and obnoxious are they.
+
+Lifecycle:
+Can be grown from seeds (import restrictions are in place in many systems, the local [[buildingtype BLD_REGIONAL_ADMIN]] should be consulted before starting a plantation). No stratification required. After an initial watering in, they are drought tolerant, herbicide resistant and thrive in the dry desert sands by pulling moisture out of the atmosphere.
+
+Ecology:
+What Khakturian crave, is electrolytes and a lots of sunlights, so they love the eternal daylight that comes with a [[special TIDAL_LOCK_SPECIAL]]. Occasionally being eaten by (strong enough) herbivores does not faze them, they take it stoically and simply grow back. Although they can get a slight inferiority complex when dwarfed by the giant [[special WORLDTREE_SPECIAL]] and totally do not enjoy to stand in its shadow, they can appreciate the benefits it brings to all the other species and so they mostly just ignore it. (Khakturian do not benefit from any [[WORLDTREE_SPECIAL]] bonus.)
+
+'''
+
+SP_SLEEPERS
+Sleepers
+
+SP_SLEEPERS_GAMEPLAY_DESC
+'''
+Boring burrowers with feathered feet. Sleep a lot.
+Sometimes they dream of far away places they can never visit.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+'''
+
+SP_SLEEPERS_DESC
+'''
+
+Feathered flightless birdlike creatues who are forced to hibernate a lot. Before winter is coming, which is five sixths of their year, suitable sleeping sites need to be prepared. Sometimes they dream of far away places they can never visit. But mainly their winters are dominated just by deep and dreamless sleeping. When they are awake during and around periastron, the very brief really livable period in their world's orbit closest to the star, they can be quite industrious. But they mostly prefer to sit around and do nothing. Somnambulism is a trait they greatly admire, but the art of sleepwalking is beyond them and they never achieved it.
+'''
+
+SP_NIGHTSIDERS
+Nightsiders
+
+SP_NIGHTSIDERS_GAMEPLAY_DESC
+'''
+Shady bloodsuckers with a dark sense of humor. Literally.
+Highly adapted to and at home in the eternal infernal night.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+'''
+
+SP_NIGHTSIDERS_DESC
+'''
+
+Hated and feared by most other organic species for obvious reasons. Lurking in the shadows and preying on those, who naïvely wander into the dark. Their thirst for blood is not based on any ideology or emotion but purely on the necessities of biology. In this case haematophagy, living off of others' blood similar to the irritating tick or flee, but bigger and with space ships to boot.
+
+Although they'd like to be, they are not really telepathic. Instead, they are haemaesthetic – they can sense the blood of their potential victims over great distances. (Colonies of Nightsiders will detect nearby worlds populated with beings with [[encyclopedia ORGANIC_SPECIES_TITLE]] up to 9 starlanes away). They themselves call it their Sanguine Sensorium and describe it as a kind of itching, pointing them to the worlds where they can fall upon their victims at night.
+
+They are so bad, they invite fire and brimstone. (Colonies of Nightsiders will attract a nearby [[fieldtype FLD_METEOR_BLIZZARD]]).
+
+They are so incredibly bad, they even repel good fields. (Colonies of Nightsiders will deflect an oncoming [[fieldtype FLD_NANITE_SWARM]]).
+
+When asked, why they like or dislike certain things, a typical Nightsider might give answers along the following lines.
+
+Questioner: Would you like to join our [[buildingtype BLD_INTERSPECIES_ACADEMY]]?
+Nightsider: Sure, why not, show us all your organic species you got over there. Maybe we even come for a visit some night or other.
+
+Questioner: A new [[buildingtype BLD_SCANNING_FACILITY]] or [[buildingtype BLD_LIGHTHOUSE]] needs to be built close to your colony.
+Nightsider: No thank you. We can see quite well enough ourselves. Keep these ideas in the daylight where they belong.
+
+Questioner: Why won't you be friends with our [[species SP_SETINON]] and [[species SP_SSLITH]]?
+Nightsider: We can feel they are there, but too small to be of any use as food. So.. what was the question again?
+
+Questioner: What with the shields up and all that defensive posture?
+Nightsider: Why not. We're good at it. We like it. Go away. Nothing to see here anyway. We will come to your world when we need your blood.
+
+Questioner: Would you like some [[special SHIMMER_SILK_SPECIAL]]?
+Nightsider: Keep that shiny stuff in the daylight where it belongs.
+
+Questioner: How about some [[special MIMETIC_ALLOY_SPECIAL]]?
+Nightsider: Whats that. Never heard of it. Let me see that. Not seeing anything. Oohh it moves stealthily. And now it trembled ... I did not get it yet. Give me that.
+
+At this point there would be a preview of what Nightsiders look like – but that is pointless since they are really from the dark side and it is unlikely that any organic being will need any visual aid to recognize, when a Nightsider is upon them...
 '''
 
 SP_NYMNMN
@@ -9293,7 +9430,7 @@ These asteroids are infected by transdimensional worms that eat tunnels through 
 Applied to ships built with asteroid hulls the slime will naturally increase their durability. While this slime does not last long, these worms will frequently visit the affected ships, replenishing any lost slime before returning to their home. Unable to catch a living specimen, scientists theorize their mode of transport appears linked to our communications in some manner.'''
 
 ASTEROID_COATING_OWNED_SPECIAL
-Asteroid Coating
+Asteroid Coating (Owned)
 
 ASTEROID_COATING_OWNED_SPECIAL_DESC
 [[ASTEROID_COATING_SPECIAL_DESC]]
@@ -9408,8 +9545,11 @@ Derelict Scout
 DERELICT_SPECIAL3
 Derelict Tanker
 
+DERELICT_SPECIAL4
+Derelict Trooper
+
 DERELICT_SPECIAL_DESC
-An ancient, derelict ship from an unknown species. Who knows what it could reveal...
+An ancient derelict ship from an unknown species. Who knows what it could reveal...
 
 ACCRETION_DISC_SPECIAL
 Accretion Disc
@@ -16478,13 +16618,13 @@ GROWTH_SPECIALS_ENTRY_LIST
 '''Some specials function for organic species only, some for lithic species only, and some for robotic species only; no other [[encyclopedia METABOLISM_TITLE]] currently has applicable Growth Specials.
 
 [[encyclopedia ORGANIC_SPECIES_TITLE]] specials:
-[[special FRUIT_SPECIAL]] | [[special SPICE_SPECIAL]] | [[special PROBIOTIC_SPECIAL]]
+[[special FRUIT_SPECIAL]],  [[special SPICE_SPECIAL]],  [[special PROBIOTIC_SPECIAL]]
 
 [[encyclopedia ROBOTIC_SPECIES_TITLE]] specials:
-[[special MONOPOLE_SPECIAL]] | [[special SUPERCONDUCTOR_SPECIAL]] | [[special POSITRONIUM_SPECIAL]]
+[[special MONOPOLE_SPECIAL]],  [[special SUPERCONDUCTOR_SPECIAL]],  [[special POSITRONIUM_SPECIAL]]
 
 [[encyclopedia LITHIC_SPECIES_TITLE]] specials:
-[[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]] '''
+[[special MINERALS_SPECIAL]],  [[special ELERIUM_SPECIAL]],  [[special CRYSTALS_SPECIAL]] '''
 
 GROWTH_SPECIAL_LABEL
 Planet <i>%1%</i> [[TT_SPECIAL]]
@@ -16663,6 +16803,12 @@ GASEOUS_DESC
 '''+	Live on Gas Giants
 +	Refuel on Gas Giants 0.2 per turn'''
 
+EXTREMELY_BAD_POPULATION_DESC
+−−−	Extremely Bad [[metertype METER_POPULATION]]: 25%
+
+VERY_BAD_POPULATION_DESC
+−−	Very Bad [[metertype METER_POPULATION]]: 50%
+
 BAD_POPULATION_DESC
 −	Bad [[metertype METER_POPULATION]]: 75%
 
@@ -16756,6 +16902,9 @@ GREAT_ASTEROID_INDUSTRY_DESC
 LIGHT_SENSITIVE_DESC
 −	Light Sensitive: [[metertype METER_POPULATION]] is reduced in systems with [[STAR_BLUE]] and to a lesser extent [[STAR_WHITE]] stars.
 
+HAEMAESTHETIC_DETECTION_DESC
++	Sanguine Sensorium: can sense nearby planets populated with organic beings.
+
 TELEPATHIC_DETECTION_DESC
 +	Telepathic Detection: can sense nearby populated planets
 
@@ -16764,6 +16913,9 @@ PRECOGNITIVE_DETECTION_DESC
 
 COMMUNAL_VISION_DESC
 ⋄	Communal Vision: shares visibility within the same species regardless of affiliation
+
+ARTISTIC_TRAIT_DESC
++	Artistic: Improved stability and happiness
 
 
 ##
@@ -16918,47 +17070,57 @@ DEPENDENCE_ON_IMPERIAL_SUPPORT_DUE_TO_ENVIRONMENT
 Dependence on Empire due to %1% Environment
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
+EXTREMELY_BAD_POPULATION_LABEL
+%2% Extremely Bad Population
+
+# %1% FIXME
+# %2% name of species on planet
+VERY_BAD_POPULATION_LABEL
+%2% Very Bad Population
+
+# %1% FIXME
+# %2% name of species on planet
 BAD_POPULATION_LABEL
 %2% Bad Population
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 GOOD_POPULATION_LABEL
 %2% Good Population
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 FOCUS_INDUSTRY_LABEL
 %2% Industry Focus
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 VERY_BAD_INDUSTRY_LABEL
 %2% Very Bad Industry
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 BAD_INDUSTRY_LABEL
 %2% Bad Industry
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 GOOD_INDUSTRY_LABEL
 %2% Good Industry
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 GREAT_INDUSTRY_LABEL
 %2% Great Industry
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 ULTIMATE_INDUSTRY_LABEL
 %2% Ultimate Industry
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 FOCUS_RESEARCH_LABEL
 %2% Research Focus
 
@@ -18868,7 +19030,9 @@ Nekkar
 Nemari
 Nenning
 Neptunus
+Nerf
 Neruval
+Nervus
 Newton
 Nexus
 Ngôi Sao
@@ -21448,6 +21612,14 @@ Rocinante
 Titanic'''
 
 # }
+# Newline separated ship name list based on various fictional monster names {
+SHIP_NAME_FICTIONAL_MONSTERS
+'''Beowulf
+Gormagander
+Nessi
+'''
+
+# }
 # Newline separated ship name list based on developer names {
 SHIP_NAME_DEVS
 '''Adrian Broher
@@ -21496,6 +21668,7 @@ MONSTER_NAMES
 [[SHIP_NAME_NORSE_MYTHOLOGY]]
 [[SHIP_NAME_BASQUE_MYTHOLOGY]]
 [[SHIP_NAME_UNSORTED_MYTHOLOGY]]
+[[SHIP_NAME_FICTIONAL_MONSTERS]]
 [[SHIP_NAME_DEVS]]'''
 
 #include "content_specific_parameters.txt"

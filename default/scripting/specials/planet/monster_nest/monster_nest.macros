@@ -2,7 +2,7 @@
 //             used ship design.
 // parameter 2 is the lower case monster name to select the sit rep monster
 //             icon.
-// parameter 3 us the monster spawn probability
+// parameter 3 is the monster spawn probability
 MONSTER_NEST
 '''
         EffectsGroup

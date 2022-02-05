@@ -33,26 +33,7 @@ Species
         [[ULTIMATE_DETECTION]]
         [[GOOD_STEALTH]]
 
-        EffectsGroup
-            description = "LIGHT_SENSITIVE_DESC"
-            scope = Source
-            activation = And [
-                Planet
-                Star type = [Blue]
-            ]
-            accountinglabel = "VERY_BRIGHT_STAR"
-            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetPopulation value = Value - 2 * Source.HabitableSize
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet
-                Star type = [White]
-            ]
-            accountinglabel = "BRIGHT_STAR"
-            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetPopulation value = Value - Source.HabitableSize
+        [[LIGHT_SENSITIVE]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]

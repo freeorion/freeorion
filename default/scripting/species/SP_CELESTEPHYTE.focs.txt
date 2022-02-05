@@ -1,0 +1,61 @@
+Species
+    name = "SP_CELESTEPHYTE"
+    description = "SP_CELESTEPHYTE_DESC"
+    gameplay_description = "SP_CELESTEPHYTE_GAMEPLAY_DESC"
+    Native
+
+
+    tags = [ "PHOTOTROPHIC" "TELEPATHIC" "VERY_BAD_POPULATION" "BAD_HAPPINESS" "BAD_SUPPLY" "VERY_BAD_INDUSTRY" "NO_ATTACKTROOPS" "PEDIA_PHOTOTROPHIC_SPECIES_CLASS" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_INFLUENCE_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    defaultfocus = "FOCUS_GROWTH"
+
+    likes = [
+        "BLD_LIGHTHOUSE"          // if there were a greenhouse they would like that too
+        "FOCUS_GROWTH"            // what else would a plant want?
+        "PLC_POPULATION"          // grow, grow, grow your load, gently down the ..
+    ]
+    dislikes = [                  // dislikes anything disturbing their fragile habitat or irritating their telepathic minds
+        "PLC_NO_GROWTH"           // is a plant, they like to grow
+        "BLD_SHIPYARD_AST"        // disturbs the rocks
+        "BLD_SHIPYARD_AST_REF"    // same
+        "JUGGERNAUT_NEST_SPECIAL" // compete for rocks
+        "ECCENTRIC_ORBIT_SPECIAL" // messes up all those orbital resonances, quite unharmoniously
+        "FLD_METEOR_BLIZZARD"     // same
+        "FLD_VOID_RIFT"           // same
+    ]
+
+    effectsgroups = [
+        [[VERY_BAD_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        [[AVERAGE_INFLUENCE]]
+        [[AVERAGE_STOCKPILE]]
+
+        [[VERY_BAD_POPULATION]]
+        [[BAD_HAPPINESS]]
+        [[BAD_SUPPLY]]
+        [[NO_OFFENSE_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[FAST_COLONIZATION]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[STANDARD_SHIP_SHIELDS]]
+        [[NARROW_EP]]
+
+    ]
+
+    [[ASTEROIDAL_NARROW_EP]]
+
+    graphic = "icons/species/celestephyte.png"
+
+#include "common/*.macros"
+
+#include "/scripting/common/*.macros"

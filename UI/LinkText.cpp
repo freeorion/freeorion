@@ -5,17 +5,34 @@
 #include "../Empire/Empire.h"
 #include "../universe/NamedValueRefManager.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/ValueRefs.h"
 #include "../util/AppInterface.h"
+#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/VarText.h"
 #include "../util/i18n.h"
-#include "../util/Directories.h"
-#include "../universe/ValueRefs.h"
 
 #include <GG/WndEvent.h>
 #include <GG/GUI.h>
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string.hpp>
+
+
+class Tech;
+class Policy;
+class BuildingType;
+class Special;
+class FieldType;
+class ShipHull;
+class ShipPart;
+const Tech*         GetTech(const std::string& name);
+const Policy*       GetPolicy(const std::string& name);
+const BuildingType* GetBuildingType(const std::string& name);
+const Special*      GetSpecial(const std::string& name);
+const FieldType*    GetFieldType(const std::string& name);
+const ShipHull*     GetShipHull(const std::string& name);
+const ShipPart*     GetShipPart(const std::string& name);
+
 
 namespace {
     constexpr bool RENDER_DEBUGGING_LINK_RECTS = false;
@@ -569,6 +586,46 @@ void TextLinker::MarkLinks() {
 
     // set underlying UI control text
     SetLinkedText(std::move(marked_text));
+}
+
+std::string LinkStringIfPossible(const std::string &raw, const std::string &user_string) {
+    if      (auto x = GetBuildingType(raw)) return LinkTaggedPresetText(VarText::BUILDING_TYPE_TAG, raw, user_string);
+    else if (auto x = GetSpecies(raw))      return LinkTaggedPresetText(VarText::SPECIES_TAG,       raw, user_string);
+    else if (auto x = GetSpecial(raw))      return LinkTaggedPresetText(VarText::SPECIAL_TAG,       raw, user_string);
+    else if (auto x = GetPolicy(raw))       return LinkTaggedPresetText(VarText::POLICY_TAG,        raw, user_string);
+    else if (auto x = GetShipHull(raw))     return LinkTaggedPresetText(VarText::SHIP_HULL_TAG,     raw, user_string);
+    else if (auto x = GetShipPart(raw))     return LinkTaggedPresetText(VarText::SHIP_PART_TAG,     raw, user_string);
+    else if (auto x = GetTech(raw))         return LinkTaggedPresetText(VarText::TECH_TAG,          raw, user_string);
+    else if (auto x = GetFieldType(raw))    return LinkTaggedPresetText(VarText::FIELD_TYPE_TAG,    raw, user_string);
+    else return user_string;
+}
+
+std::string LinkList(const std::vector<std::string> &strings) {
+    std::string s;
+    bool first = true;
+    for (std::string string : strings) {
+        if (first) first = false;
+        else s.append(",  ");
+        s.append(LinkStringIfPossible(string,UserString(string)));
+    }
+    return s;
+}
+
+std::string LinkList(std::vector<std::string_view> strings) {
+    std::string s;
+    bool first = true;
+    for (std::string_view string : strings) {
+        if (first) first = false;
+        else s.append(",  ");
+        std::string str(string);
+        s.append(LinkStringIfPossible(str,UserString(string)));
+    }
+    return s;
+}
+
+std::string LinkList(const std::set<std::string> &strings) {
+    std::vector<std::string> vector(strings.begin(), strings.end());
+    return LinkList(vector);
 }
 
 std::string LinkTaggedText(std::string_view tag, std::string_view stringtable_entry)

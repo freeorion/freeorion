@@ -46,6 +46,30 @@ AVERAGE_POPULATION
 '''     [[BASIC_POPULATION]]
 '''
 
+EXTREMELY_BAD_POPULATION
+'''     [[BASIC_POPULATION]]
+    
+        EffectsGroup
+            description = "EXTREMELY_BAD_POPULATION_DESC"
+            scope = Source
+            activation = Planet
+            accountinglabel = "EXTREMELY_BAD_POPULATION_LABEL"
+            priority = [[TARGET_POPULATION_SCALING_PRIORITY]]
+            effects = SetTargetPopulation value = Value -0.75*abs(Value)
+'''
+
+VERY_BAD_POPULATION
+'''     [[BASIC_POPULATION]]
+    
+        EffectsGroup
+            description = "VERY_BAD_POPULATION_DESC"
+            scope = Source
+            activation = Planet
+            accountinglabel = "VERY_BAD_POPULATION_LABEL"
+            priority = [[TARGET_POPULATION_SCALING_PRIORITY]]
+            effects = SetTargetPopulation value = Value -0.5*abs(Value)
+'''
+
 BAD_POPULATION
 '''     [[BASIC_POPULATION]]
     
@@ -68,6 +92,31 @@ GOOD_POPULATION
             accountinglabel = "GOOD_POPULATION_LABEL"
             priority = [[TARGET_POPULATION_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value +0.25*abs(Value)
+'''
+
+// reduces max population in systems with bright stars
+LIGHT_SENSITIVE
+'''
+        EffectsGroup
+            description = "LIGHT_SENSITIVE_DESC"
+            scope = Source
+            activation = And [
+                Planet
+                Star type = [Blue]
+            ]
+            accountinglabel = "VERY_BRIGHT_STAR"
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 2 * Source.HabitableSize
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Star type = [White]
+            ]
+            accountinglabel = "BRIGHT_STAR"
+            priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
+            effects = SetTargetPopulation value = Value - Source.HabitableSize
 '''
 
 /*

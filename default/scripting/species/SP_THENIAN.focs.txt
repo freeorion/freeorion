@@ -1,0 +1,74 @@
+Species
+    name = "SP_THENIAN"
+    description = "SP_THENIAN_DESC"
+    gameplay_description = "SP_THENIAN_GAMEPLAY_DESC"
+    Native
+
+
+    tags = [ "GASEOUS" "NO_TERRAFORM" "ARTISTIC" "AVERAGE_POPULATION" "AVERAGE_HAPPINESS" "VERY_BAD_SUPPLY" "NO_INDUSTRY" "GOOD_STEALTH" "PEDIA_GASEOUS_SPECIES_CLASS" ]
+
+    foci = [
+        /*[[HAS_INDUSTRY_FOCUS]]*/
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_INFLUENCE_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+    defaultfocus = "FOCUS_GROWTH"
+
+    likes = [
+        "FOCUS_RESEARCH"        // arty farty
+    ]
+    dislikes = [
+        "BLD_GAS_GIANT_GEN"     // messes with their habitat
+        "BLD_SPACE_ELEVATOR"    // see above
+        //"SP_SLY"                // compete for habitat // disliking species has no effect except showing up in pedia
+    ]
+
+    effectsgroups = [
+        [[NO_INDUSTRY]]
+        [[AVERAGE_RESEARCH]]
+        [[AVERAGE_INFLUENCE]]
+        [[AVERAGE_STOCKPILE]]
+
+        [[AVERAGE_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[VERY_BAD_SUPPLY]]
+        [[NO_OFFENSE_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
+        [[GOOD_STEALTH]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[STANDARD_SHIP_SHIELDS]]
+        [[NARROW_EP]]
+
+
+        EffectsGroup
+            scope = And [
+                Planet
+                InSystem id = Source.SystemID
+                Population low = Source.TargetPopulation - 0.01    // when maximum population is reached
+            ]
+            effects = [
+                SetPopulation value = Value * 0.5                  // then dieoff to half
+                GenerateSitRepMessage                              // and tell the owner it happened
+                    message = "EFFECT_THENIAN_NATURAL_DIEOFF"
+                    label = "EFFECT_THENIAN_NATURAL_DIEOFF_LABEL"
+                    icon = "icons/sitrep/colony_starvation.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Target.Owner
+            ]
+
+    ]
+
+    [[GASEOUS_NARROW_EP]]
+
+    graphic = "icons/species/thenian.png"
+
+#include "common/*.macros"
+
+#include "/scripting/common/*.macros"

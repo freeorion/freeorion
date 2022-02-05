@@ -9,7 +9,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         HasSpecial name = "RESONANT_MOON_SPECIAL"
         Not Contains Or [
-            Building name = "BLD_CLONING_CENTER"
+            //Building name = "BLD_CLONING_CENTER"       // disabled content
             Building name = "BLD_BIOTERROR_PROJECTOR"
         ]
     ]

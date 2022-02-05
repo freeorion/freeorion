@@ -19,6 +19,7 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
+            activation = Not Species name = "SP_KHAKTURIAN"
             accountinglabel = "WORLDTREE_LABEL"
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
@@ -29,7 +30,10 @@ Special
             
         EffectsGroup
             scope = Source
-            activation = TargetPopulation low = 1
+            activation = And [
+                TargetPopulation low = 1
+                Not Species name = "SP_KHAKTURIAN"
+            ]
             accountinglabel = "WORLDTREE_LABEL"
             priority = [[TARGET_POPULATION_AFTER_SCALING_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1
@@ -40,6 +44,7 @@ Special
                 Not Source
                 OwnedBy affiliation = TheEmpire empire = Source.Owner
                 Population low = 0.0001
+                Not Species name = "SP_KHAKTURIAN"
             ]
             accountinglabel = "WORLDTREE_LABEL"
             effects = SetTargetHappiness value = Value + 1

@@ -1,0 +1,79 @@
+Special
+    name = "DERELICT_SPECIAL4"               // troops
+    description = "DERELICT_SPECIAL_DESC"
+    stealth = 45
+    spawnrate = 0.02
+    spawnlimit = 12
+    location = And [
+        System
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
+            ]
+            activation = And [
+                System
+                Contains And [
+                    Ship
+                    OwnedBy affiliation = AnyEmpire
+                ]
+            ]
+            effects = [
+                AddSpecial name = "DERELICT_SPECIAL4"
+                CreateShip designname = "SD_SMALL_TROOP_SHIP" empire = Target.Owner species = "SP_KHAKTURIAN"
+                GenerateSitRepMessage
+                    message = "EFFECT_DERELICT_TROOPS"
+                    label = "EFFECT_DERELICT_TROOPS_LABEL"
+                    icon = "icons/specials_huge/cactus.png"
+                    parameters = [
+                        tag = "system" data = Source.ID
+                        tag = "special" data = "DERELICT_SPECIAL4"
+                        tag = "species" data = "SP_KHAKTURIAN"
+                    ]
+                    empire = Target.Owner
+            ]
+
+        EffectsGroup
+            scope = And [
+                Source
+                System
+            ]
+            activation = And [
+                System
+                Contains And [
+                    Ship
+                    OwnedBy affiliation = AnyEmpire
+                ]
+            ]
+            effects = [
+                RemoveSpecial name = "DERELICT_SPECIAL4"
+            ]
+
+        EffectsGroup
+            scope = And [
+                Source
+                Ship
+            ]
+            activation = And [
+                System
+                Contains And [
+                    Ship
+                    OwnedBy affiliation = AnyEmpire
+                ]
+            ]
+            effects = [
+                RemoveSpecial name = "DERELICT_SPECIAL4"
+            ]
+
+    ]
+    graphic = "icons/specials_huge/cactus.png"
