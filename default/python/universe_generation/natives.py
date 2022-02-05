@@ -86,8 +86,12 @@ def generate_natives(native_freq, systems, empire_home_systems):
             # no, continue with next planet
             continue
         universe_statistics.potential_native_planet_summary[planet_type] += 1
+        # temporarily dampen native frequencies on roids and GGs until better galaxy setup options are in place
+        factor = 1
+        if planet_type in [fo.planetType.asteroids, fo.planetType.gasGiant]:
+            factor = 5
         # make a "roll" against the chance for natives to determine if we shall place natives on this planet
-        if random.random() > native_chance:
+        if random.random() > native_chance / factor:
             # no, continue with next planet
             continue
         universe_statistics.settled_native_planet_summary[planet_type] += 1
