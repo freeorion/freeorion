@@ -7,7 +7,7 @@ Special
     location = And [
         Planet
         Unowned
-        Not Planet type = [Asteroids GasGiant]
+        Not Planet type = [GasGiant]
         Not WithinStarlaneJumps jumps = 3 condition = And [
             Planet
             Not Unowned

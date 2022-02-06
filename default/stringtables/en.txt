@@ -16951,7 +16951,7 @@ GREAT_ASTEROID_INDUSTRY_DESC
 LIGHT_SENSITIVE_DESC
 −	Light Sensitive: [[metertype METER_POPULATION]] is reduced in systems with [[STAR_BLUE]] and to a lesser extent [[STAR_WHITE]] stars.
 
-HAEMAESTHETIC_DETECTION_DESC
+SANGUINE_SENSORIUM_DETECTION_DESC
 +	Sanguine Sensorium: can sense nearby planets populated with organic beings.
 
 TELEPATHIC_DETECTION_DESC

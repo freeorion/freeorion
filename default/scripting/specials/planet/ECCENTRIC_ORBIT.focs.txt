@@ -7,7 +7,6 @@ Special
     location = And [
         Planet
         Not Capital
-        Not Planet type = [Asteroids GasGiant]
     ]
     // TODO: make sure this does not happen at starless worlds
     effectsgroups = [

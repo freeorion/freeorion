@@ -7,7 +7,7 @@ BuildingType
         Planet
         Not Contains Building name = "BLD_PLANET_DRIVE"
         OwnedBy empire = Source.Owner
-        Not Planet type = [Asteroids GasGiant]
+        Not Planet type = [Asteroids]
     ]
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
