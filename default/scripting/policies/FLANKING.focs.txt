@@ -34,7 +34,7 @@ Policy
                                Stationary
                                Armed
                            ]
-                        ) > (
+                        ) > max( 1, // no bonus if there is only a single defender
                            Statistic Count condition = And [
                                Ship
                                InSystem id = RootCandidate.SystemID
