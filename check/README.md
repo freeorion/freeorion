@@ -5,7 +5,7 @@
 - `string table` a file with translation
 - `reference table` en.txt string table.
   English is the development language, so any changes related to text should be in that file.
-  Also, this table us used as fallback for other translations, if a needed key is missing.
+  Also, this table is used as a fallback for other translations, if a key is missing.
   This file is mostly maintained by people who change game code,
   so the list of entries in this file should be the most up-to-date.
 - `entry` one piece of translation, it consists of
@@ -100,7 +100,7 @@ Supported types
 [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]
 ```
 
-- `value` inserts value from the script to the text,
+- `value` inserts value from content scripts into the text,
   eg. `[[value FLD_NANITE_SWARM_STRUCTURE_FLAT]]` will look up the value from
   the named valueref scripted as
   `NamedReal name = "FLD_NANITE_SWARM_STRUCTURE_FLAT" value = 5 * [[SHIP_STRUCTURE_FACTOR]])`
