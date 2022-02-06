@@ -60,10 +60,9 @@ world
 ```
 
 #### Tags
-You can customize text with special markup tags. Not full list of tags:
+You can customize text with special markup tags. Not a full list of tags:
 
-- `[[]]` inserts text from another entry.
-  You add a key in double square braces and user will see the value of that key.
+- `[[KEY]]` will be replaced with the text in the entry with key `KEY`.
   Substitution is recursive, if text has another substitution it will be resolved too.
   If key was not found in this table, it will be looked in the reference table. 
 
@@ -108,6 +107,35 @@ Supported types
   which might be just a constant in some cases,
   but in this case will depend on the value of a game rule.
 
+### Comments
+
+Comments can be added to stringtables by starting a line with `#`.
+Comment lines are ignored when processing the stringtable. 
+Comments are often written immediatley before a key line, 
+and may contain information about parameters that will be substituted by 
+the game engine into that string at runtime.
+
+```text
+# %1% amount of research points required to research the technology.
+# %2% number of turns required to research the technology.
+TECH_TOTAL_COST_ALT_STR
+%1% RP / %2% Turns
+```
+
+Groups of related stringtable entries are often preceeded 
+by a section marker comment, which is formatted with two initial blank lines,
+and then three lines starting with `##`, with the middle ## line having a section title, eg.
+
+```text
+
+
+##
+## TechTreeWnd
+##
+
+TECH_DISPLAY
+Display
+```
 
 ## Maintain string tables
 Formatting and basic checks are maintained by tool: `st-tool.py`.
