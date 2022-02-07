@@ -5221,6 +5221,12 @@ ENC_POICY_PREREQUISITES
 ENC_SPECIAL
 Particularité
 
+KNOWN_FIELDS_OF_THIS_TYPE
+Liste cliquable des milieux interstellaires connus de ce type, accompagnés de leurs coordonnées galactiques :
+
+NO_KNOWN_FIELDS
+aucun
+
 OBJECTS_WITH_SPECIAL
 '''Objets avec Particularité : '''
 
@@ -7663,6 +7669,12 @@ Sur %planet% : la structure %building% a partiellement réparé l'astronef %ship
 EFFECT_DRYDOCK_SHIP_REPAIR_COMPLETE
 Sur %planet% : la structure %building% a entièrement réparé l'astronef %ship%.
 
+EFFECT_THENIAN_NATURAL_DIEOFF
+Sur %planet% : une extinction naturelle de l'espèce [[species SP_THENIAN]] s'est produite, réduisant de moitié leur population actuelle.
+
+EFFECT_THENIAN_NATURAL_DIEOFF_LABEL
+Extinction naturelle
+
 EFFECT_MONSTER_SPAWNING
 Dans %system% : un %predefinedshipdesign% a fait son apparition.
 
@@ -7682,7 +7694,7 @@ EFFECT_GAIA_LABEL
 Paradis Gaia
 
 EFFECT_TERRAFORM
-La planète %planet% a été terraformée.
+La planète %planet% a été terraformée en planète %user_string% (%environment%).
 
 EFFECT_TERRAFORM_LABEL
 Terraformation
@@ -7784,10 +7796,16 @@ EFFECT_NEBULA_LABEL
 Nébuleuse
 
 EFFECT_TREE
-Dans %system% : une nouvelle Forêt Dyson a commencé à croître et à entourer l'étoile.
+Dans %system% : une nouvelle [[predefinedshipdesign SM_TREE]] a commencé à croître et à entourer l'étoile.
 
 EFFECT_TREE_LABEL
-Forêt Dyson
+[[SM_TREE]]
+
+EFFECT_DERELICT_TROOPS
+Dans %system% : un [[predefinedshipdesign SD_SMALL_TROOP_SHIP]] appartenant à l'espèce %species% a été trouvé et récupéré.
+
+EFFECT_DERELICT_TROOPS_LABEL
+Pousses abandonnées
 
 EFFECT_DERELICT_MAP
 Dans %system% : des informations sur la région de %system% ont été découvertes sur une %special% abandonnée.
@@ -8385,7 +8403,6 @@ SP_LAENFA_GAMEPLAY_DESC
 '''<img src="species/preview/laenfa.png"></img>
 Vignes sentientes, télépathes, et insidieuses.
 Préfèrent les Planètes [[PT_OCEAN]]s.
-Leurs astronefs régénèrent 1 unité de [[metertype METER_FUEL]] par tour à proximité d'une Étoile [[STAR_WHITE]], et 2 unités de [[metertype METER_FUEL]] par tour près d'une Étoile [[STAR_BLUE]].
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
@@ -8408,13 +8425,16 @@ Préfèrent grandement les planètes de type [[PT_GASGIANT]].
 '''
 
 SP_SLY_DESC
-'''Description:
-Les Sly vivent sur les géantes gazeuses. Ces dernières étant si étrangères à la plupart des espèces dans l'univers, l'existence et l'histoire des Sly sont par conséquent peu connues.
-Dans l'incapacité de produire tout dispositif technologique, les Sly ne peuvent quitter leur monde natal. Mais récemment, ils ont pu obtenir de marchands galactiques l'équipement et les technologies nécessaires au voyage spatial en échange de données sur leur espèce et son histoire.
-Sous un régime alimentaire adapté, les Sly excrètent du carburant raffiné. Un astronef à équipage Sly régénère donc son carburant lorsqu'il se trouve dans un système abritant une géante gazeuse. Dans un système abritant une planète peuplée par des Sly amicaux, les astronefs à équipage Sly seront ravitaillés en Carburant et réparés, de la même manière que s'ils se trouvaient dans un réseau d'Approvisionnement allié doté de la technologie [[tech SHP_FLEET_REPAIR]].
+'''
+Description:
+Les Sly vivent sur les géantes gazeuses. Ces dernières étant si étrangères à la plupart des espèces dans l'univers, l'existence et l'histoire des Sly sont par conséquent peu connues. Bien que les experts en xénobiologie aient longtemps spéculé sur le fait que la vie soit possible dans n'importe quel type d'environnement imaginable, personne ne dispose de la technologie nécessaire pour détecter ou entrer en contact avec ces espèces.
+
+Dans l'incapacité de produire eux-mêmes tout dispositif technologique avancé, les Sly ne peuvent pas quitter leur monde natal. Mais récemment, ils ont pu obtenir de marchands galactiques l'équipement et les technologies nécessaires au voyage spatial en échange de données approfondies sur leur espèce et son histoire.
+
+Sous un régime alimentaire adapté, les Sly excrètent du carburant raffiné. Lorsqu'un astronef à équipage Sly se trouve dans un système abritant une [[PT_GASGIANT]], il régénère progressivement son carburant à chaque tour. Dans un système abritant une planète peuplée par des Sly amicaux, les astronefs à équipage Sly seront ravitaillés en Carburant et réparés, de la même manière que s'ils se trouvaient dans un réseau d'Approvisionnement allié doté de la technologie [[tech SHP_FLEET_REPAIR]].
 
 Structure sociale:
-Les Sly ont une espérance de vie très importante et transmettent de génération en génération des chants dans lesquels l'ensemble du savoir culturel de l'espèce est encodé. Les Sly sont très ouverts et extrêmement curieux envers la galaxie et les autres espèces, avec lesquelles ils peuvent enfin entrer en contact.
+Les Sly ont une espérance de vie très importante et transmettent de génération en génération des chants dans lesquels l'ensemble du savoir culturel de l'espèce est encodé. Les échos de leur culture verbale résonnent dans les plus denses et profondes couches de leurs mondes, où les harmonies et les résonances s'accumulent pendant des millénaires. Malgré cette mémoire collective ethnocentrée, les Sly sont très ouverts d'esprit et extrêmement curieux envers la galaxie et les autres espèces, avec lesquelles ils peuvent enfin entrer en contact.
 '''
 
 SP_LEMBALALAM  # translated
@@ -8661,6 +8681,122 @@ Planète Natale:
 Un environnement marécageux doté d'une biosphère très dense.
 '''
 
+SP_THENIAN
+Thenian
+
+SP_THENIAN_GAMEPLAY_DESC
+'''Sacs gazeux pensants.
+[[encyclopedia GASEOUS_SPECIES_TITLE]]
+'''
+
+SP_THENIAN_DESC
+'''
+Les Thenian peuplent les couches situées entre l'atmosphère interne à très haute pression de leur [[PT_GASGIANT]] et la surface du noyau d'hydrogène métallique. Ils se nourrissent des courants magnétiques différentiels et sont sujets à des extinctions périodiques de population, lesquelles sont totalement naturelles et ne constituent pas un problème pour l'espèce. Lorsque la population atteint sa densité maximale, une extinction se produit afin que l'espèce puisse croître à nouveau avec une vigueur renforcée. (Une fois la densité maximale atteinte, la [[metertype METER_POPULATION]] actuelle des colonies [[SP_THENIAN]] est diminuée de moitié le tour suivant.)
+
+En raison de leur forte intrication à la structure interne de leur monde, il ne fait pas sens pour les Thenian d'essayer de le quitter. À moins qu'une autre [[PT_GASGIANT]] entre physiquement en contact avec leur planète, il ne peuvent tout simplement pas voyager dans l'espace, et se contentent de prospérer dans les profondeurs de leur monde.
+'''
+
+SP_CELESTEPHYTE
+Celestephyte
+
+SP_CELESTEPHYTE_GAMEPLAY_DESC
+'''
+Lichen télépathique à croissance lente. Plutôt fragiles et inoffensifs.
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], vivent uniquement sur quelques astéroïdes.
+'''
+
+SP_CELESTEPHYTE_DESC
+'''
+
+Bien qu'ils se brisent facilement et puissent être transplantés sur des rochers vierges, il est très improbable que les Celestephyte y prennent racine. Certains éléments rares (voir ->Unobtainium) nécessaires à ces champignons astraux symbiotiques pour voyager télépathiquement à travers des réseaux interdimensionnels universels, sont effectivement si rares, que les Celestephyte ont depuis longtemps colonisé tout rocher un tant soit peu habitable pour eux.
+
+Les Celestephyte adultes sont munis d'appendices préhensiles et peuvent en théorie accomplir des tâches utiles. Mais ils ne s'exécutent que très rarement et préfèrent s'en tenir à la théorie. Ou plutôt préfèrent-ils ne pas perturber la délicate interconnexion de leurs minuscules et fragiles mycéliums, un réseau de racines fongiques dans et entre les astéroïdes, pour ainsi dire. Mais en règle générale, ils n'aiment pas du tout être dérangés.
+
+Mais s'ils sont confrontés à un ennemi, ils essaient alors de les décontenancer à l'aide de leur incompétence flagrante et en les fixant en quelque sorte du regard, si seulement ils avaient des yeux. Parfois cela a l'effet escompté, mais d'une manière indirecte, car l'attaquant est pris d'une sorte de fou rire, en réalité des convulsions hystériques causées par les spores du champignon astral, transmis par télépathie via le regard accusateur du Celestephyte en position défensive. Mais cela ne fonctionne que sur les esprits faibles, qui de toute manière n'avaient aucune intention d'affronter des Celestephyte. Ces derniers sont donc très mal adaptés à l'existence et aux nombreux dangers dans la galaxie. Certains experts en astromycologie ont émis l'hypothèse selon laquelle les Celestephyte auraient été à l'origine introduits depuis Andromède, durant la seconde apparition de Chtullluhhulurtl et de ses terribles sbires, les Mimi-Oursons Moelleux, comme ils furent nommés durant ces âges sombres, bien avant la naissance des empires.
+'''
+
+SP_KHAKTURIAN
+Khakturian
+
+SP_KHAKTURIAN_GAMEPLAY_DESC
+'''
+Piquants et robustes. Herbe invasive bi-annuelle, résistante aux herbicides.
+Tire des épines empoisonnées abrasives à un stade sessile précoce, puis prend la forme de grandes ramifications semblables à des akènes pour la reproduction.
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+'''
+
+SP_KHAKTURIAN_DESC
+'''
+Parmi les espèces d'herbes invasives, celle-ci est l'une des plus tenaces et difficiles à éradiquer. Lorsqu'elles disséminent leurs graines-soldats sur le sol d'un monde ennemi, nul ne veut plus le partager avec elles, tant elles sont envahissantes et désagréables.
+
+Cycle de vie:
+Les Khakturian proviennent de graines (des interdictions strictes d'importation sont en place dans de nombreux systèmes, l'[[buildingtype BLD_REGIONAL_ADMIN]] locale doit être consultée avant d'entreprendre toute plantation). Aucune stratification nécessaire. Après un premier apport en eau, ils sont déjà résistants à la sécheresse et aux herbicides, et prospèrent dans les sables chauds des déserts les plus secs en prélevant l'humidité dans l'atmosphère.
+
+Écologie:
+Ce dont les Khakturian raffolent, ce sont les électrolytes et les rayons du soleil, à un tel point qu'il apprécie grandement le jour éternel dû à une [[special TIDAL_LOCK_SPECIAL]]. Bien que parfois consommés par des herbivores (au système digestif suffisamment résistant), cela ne les dérange pas vraiment, et ils reprennent stoïquement leur croissance. Ils peuvent toutefois ressentir un léger complexe d'infériorité face à un [[special WORLDTREE_SPECIAL]] géant, et n'apprécient vraiment pas de se tenir dans son ombre. Cependant, ils sont, semble-t-il, reconnaissants des bienfaits qu'il apporte à toutes les autres espèces. Les Khakturian préfèrent donc tout simplement l'ignorer. (Les Khakturian ne bénéficient d'aucun bonus fourni par l'[[WORLDTREE_SPECIAL]].)
+
+'''
+
+SP_SLEEPERS
+Sleepers
+
+SP_SLEEPERS_GAMEPLAY_DESC
+'''
+Fouisseurs peu intéressants aux membres plumés. Dorment beaucoup.
+Rêvent parfois de lieux lointains qu'ils ne pourront jamais visiter.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+'''
+
+SP_SLEEPERS_DESC
+'''
+
+Créatures recouvertes de plumes mais incapables de voler, et donc forcées d'hiberner très souvent. Avant que l'hiver ne vienne, lequel dure 5/6ème de leur année, des sites d'hibernation appropriés doivent être préparés. Les Sleepers rêvent parfois de lieux lointains qu'ils ne pourront jamais visiter, mais la plupart du temps, leurs hivers ne sont que de longs et profonds sommeils. Lorsqu'ils sont réveillés autour du périastre, la seule brève période vivable durant laquelle l'orbite de leur planète est au plus près de son étoile, ils peuvent s'avérer très travailleurs. Même s'ils préfèrent la plupart du temps ne rien faire, le somnambulisme étant un comportement qu'ils admirent. Mais leur maîtrise de l'art de marcher en dormant est très limitée, et semble même hors de portée.
+'''
+
+SP_NIGHTSIDERS
+Nightsiders
+
+SP_NIGHTSIDERS_GAMEPLAY_DESC
+'''
+Étranges sangsues, avec un sens de l'humour noir. Littéralement.
+Très adaptés à la nuit éternelle des enfers.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+'''
+
+SP_NIGHTSIDERS_DESC
+'''
+
+Haïs et craints par la plupart des autres espèces organiques pour d'évidentes raisons. Ils rôdent dans la pénombre, fondant sur les proies qui s'aventurent naïvement dans l'obscurité. Leur soif de sang ne repose sur aucune idéologie ou émotion, mais seulement sur un besoin biologique indispensable. L'hématophagie, ou vivre du sang des autres, telles des satanées tiques, mais ici bien plus grosses et sachant piloter des astronefs.
+
+Les nightsiders ne sont pas vraiment télépathiques, bien que cela ne leur aurait pas déplu. En réalité, ils sont hématesthiques – ils peuvent sentir le sang de leurs victimes potentielles sur de grandes distances. (Les colonies de Nightsiders détecteront les mondes proches et peuplés par des espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] jusqu'à 9 Voies spatiales de distance). Ils nomment eux-mêmes cette capacité Sens Sanguin et la décrivent comme une sorte de démangeaison, les poussant à se diriger vers les mondes dans lesquels ils pourront attaquer leurs victimes la nuit venue.
+
+Ils émettent tellement d'ondes négatives, qu'ils semblent attirer le feu et le soufre ardent. (Les colonies de Nightsiders attireront un [[fieldtype FLD_METEOR_BLIZZARD]] proche).
+
+Ces ondes sont si négatives, qu'elles repoussent même les Milieux bénéfiques. (Les colonies de Nightsiders repousseront un [[fieldtype FLD_NANITE_SWARM]] en approche).
+
+Lorsqu'on leur demande ce qu'ils aiment ou n'aiment pas, un Nightsider typique répondra toujours de la même manière.
+
+Question: Aimeriez-vous rejoindre notre [[buildingtype BLD_INTERSPECIES_ACADEMY]]?
+Nightsider: Bien sûr, pourquoi pas, montrez-nous toutes les espèces organiques qui s'y rassemblent. On viendra peut-être même la visiter une de ces nuits.
+
+Question: Un nouveau [[buildingtype BLD_SCANNING_FACILITY]] ou [[buildingtype BLD_LIGHTHOUSE]] doit être construit près de votre colonie.
+Nightsider: Non merci. Nous n'avons aucun mal à observer nous-mêmes. Que ces structures restent du côté diurne auxquelles elles appartiennent.
+
+Question: Pourquoi ne seriez-vous pas amis avec les espèces [[species SP_SETINON]] et [[species SP_SSLITH]]?
+Nightsider: Nous pouvons sentir leur présence, mais elles sont trop petites pour servir de nourriture. Donc... quelle était la question?
+
+Question: Que veulent dire tous ces boucliers et toutes ces postures défensives?
+Nightsider: Pourquoi pas. On est bons là-dedans. On aime ça. Allez-vous en. Rien à voir ici de toute façon. On viendra vous rendre visite quand on aura besoin de votre sang.
+
+Question: Apprécierez-vous un peu de [[special SHIMMER_SILK_SPECIAL]]?
+Nightsider: Gardez ce machin brillant du côté diurne auquel il appartient.
+
+Question: Et un peu de [[special MIMETIC_ALLOY_SPECIAL]]?
+Nightsider: Qu'est-ce donc? Jamais entendu parler. Faites voir. Je ne vois rien. Oohh, il se déplace furtivement. Et maintenant il change ... Je n'ai pas tout compris, mais donnez-moi ça.
+
+Cela devrait suffire pour donner un aperçu de ce que sont les Nightsiders – mais c'est en réalité peu utile : comme ils évoluent du côté obscur, il est peu probable qu'un être organique ait besoin de les reconnaître, lorsque ces derniers s'abattront sur eux...
+'''
+
 SP_NYMNMN  # translated
 Nymnmn
 
@@ -8670,8 +8806,18 @@ Préfèrent les Planètes [[PT_DESERT]]s.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
 '''
 
-#SP_NYMNMN_DESC
-#''''''
+SP_NYMNMN_DESC
+'''Monde Natal:
+L'environnement désertique ancestral de leur monde présente une combinaison très rare de cycles récurrents de tempêtes fractales dans la haute ionosphère, combinés à des décharges électrostatiques continuelles causées par des effets de marée solaires provenant du système stellaire voisin, qui ont permis les tout premiers développements de ces ondes électromagnétiques autoréplicantes. Ces ondes sont comparables aux anciens précurseurs sous forme d'organismes unicellulaires, et ont continué à évoluer en des ondes spectrales de plus en plus complexes à travers les âges. Comme les Nymnmn existent seulement dans une bande spectrale très fine, il n'y jamais vraiment eu de place pour la biodiversité – chaque étape de développement plus avancée a totalement supprimé ses prédécesseurs afin d'être capable d'exister comme un tout homogène.
+
+Leur environnement natal étant quasiment impossible à reproduire ailleurs, les Nymnmn ne peuvent le quitter. À moins que leur monde entier ne soit déplacé, et que toutes les précautions soient prises pour ne pas interrompre les effets de marée électrostatiques provenant du sytème stellaire voisin.
+
+Description:
+Un unique Nymnmnych est difficile à appréhender. Ils se fondent en une cascade cacophonique de décharges lumineuses électromagnétiques perpétuelles, de laquelle un observateur externe ne peut discerner qu'une légère vibration bleuâtre. Se déplaçant à la vitesse de la lumière, mais pourtant rivé au sol, chaque individu parcourt la surface entière de la planète plusieurs fois par seconde. Lorsqu'ils se rencontrent, ils entrent brièvement en résonance (dans la partie basse de la fréquence terahertz). Sans forme corporelle, ils impriment leurs mémoires dans la portion ferromagnétique de la croûte planétaire. Toute excavation ou activités mécaniques altèreraient ou même détruiraient leur mémoire collective, ce qui les empêche de développer une industrie.
+
+Vie quotidienne:
+La société actuelle nymnmnienne est principalement affairée à tester et noter, archiver et classer les vieilles émissions télévisuelles et autres diffusions de divertissement des civilisations étrangères. Ils ne peuvent faire autrement, car les ondes émises interfèrent avec l'essence même de leur être – toute leur vie se résume à un marathon continu de visionnage, qu'ils le veuillent ou non. Par conséquent, ce sont les maîtres absolus de la critique parmi toutes les galaxies connues.
+'''
 
 SP_TRENCHERS  # translated
 Trenchers
@@ -8684,7 +8830,10 @@ Préfèrent les Planètes [[PT_BARREN]]s.
 '''
 
 SP_TRENCHERS_DESC  # translated
+'''Description:
+À venir.
 <img src="species/trenchers.png"></img>
+'''
 
 SP_RAAAGH  # translated
 Raaagh
@@ -9281,7 +9430,7 @@ Ces astéroïdes sont infestés par des vers transdimensionnels creusant des gal
 Appliquée aux astronefs équipés de coques astéroïdales, cette étrange substance augmente naturellement leur résistance. Bien que la durée de protection soit assez courte, ces vers viennent inspecter fréquemment les astronefs infectés, renouvelant ainsi la couche d'enduit protecteur, puis retournent dans leur habitat. Dans l'impossibilité de capturer un spécimen vivant, les scientifiques ont pour théorie que leurs déplacements seraient liés d'une manière ou d'une autre aux communications que nous émettons.'''
 
 ASTEROID_COATING_OWNED_SPECIAL
-Enduit Astéroïdal
+Enduit Astéroïdal (Possédé)
 
 ASTEROID_COATING_OWNED_SPECIAL_DESC
 [[ASTEROID_COATING_SPECIAL_DESC]]
@@ -9395,6 +9544,9 @@ DERELICT_SPECIAL2
 
 DERELICT_SPECIAL3
 Épave de Ravitailleur
+
+DERELICT_SPECIAL4
+Épave de Transport
 
 DERELICT_SPECIAL_DESC
 Une épave ancestrale abandonnée par une espèce inconnue. Qui sait ce qu'elle pourrait révéler...
@@ -11756,7 +11908,7 @@ PLC_TERRAFORMING
 Terraformation
 
 PLC_TERRAFORMING_DESC
-'''• Diminue le temps minimum nécessaire pour mener à bien les projets terraformation sur une planète.
+'''• Diminue le temps et le coût minimum nécessaires pour mener à bien les projets de Terraformation sur une planète.
 • Améliore la [[metertype METER_TARGET_HAPPINESS]] sur les planètes terraformées de [[value PLC_TERRAFORMING_TARGET_HAPPINESS_ORIGINAL_FLAT]] par palier les séparant de leur type planétaire d'origine après terraformation.
 • Améliore la [[metertype METER_TARGET_INFLUENCE]] sur les planètes en Focus Influence de [[value PLC_TERRAFORMING__TARGET_INFLUENCE_ORIGINAL_FLAT]] par palier les séparant de leur type planétaire d'origine après terraformation.
 • Améliore la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche de la racine carrée de la [[metertype METER_POPULATION]] x [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] par palier les séparant de leur type planétaire d'origine après terraformation.'''
@@ -12840,7 +12992,9 @@ SHP_SPACE_FLUX_BUBBLE
 Bulle Flux Spatial
 
 SHP_SPACE_FLUX_BUBBLE_DESC
-D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants. Des recherches avancées en matière de technologies de furtivité peuvent minimiser les désagréments causés par ces perturbations dimensionnelles. La plus simple solution pour concevoir un astronef utilisant la propulsion par flux s'avère être la modulation en bulle, laquelle recouvre une coque de forme également sphérique. Des solutions plus complexes sont néanmoins possibles via des meilleures technologies de [[tech SHP_SPACE_FLUX_DRIVE]] et de [[tech SHP_SPACE_FLUX_COMPOSITION]].
+'''À moins que des coques plus rapides d'astronef aient été déjà recherchées, cette technologie diminue le temps nécessaire pour bâtir une structure Colonie très éloignée de l'espèce correspondante dans l'empire.
+
+D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants. Des recherches avancées en matière de technologies de furtivité peuvent minimiser les désagréments causés par ces perturbations dimensionnelles. La plus simple solution pour concevoir un astronef utilisant la propulsion par flux s'avère être la modulation en bulle, laquelle recouvre une coque de forme également sphérique. Des solutions plus complexes sont néanmoins possibles via des meilleures technologies de [[tech SHP_SPACE_FLUX_DRIVE]] et de [[tech SHP_SPACE_FLUX_COMPOSITION]].'''
 
 SHP_SPACE_FLUX_COMPOSITION
 Composition Flux Spatial
@@ -14442,8 +14596,62 @@ BLD_CLONING_CENTER_DESC
 
 Le [[tech GRO_INDUSTRY_CLONE]] permet de produire industriellement des populations sur-mesure, améliorant considérablement leur croissance.'''
 
+BLD_TERRAFORM_TERRAN
+Terraformation [[PT_TERRAN]]
+
+BLD_TERRAFORM_TERRAN_DESC
+Terraforme un monde en planète [[PT_TERRAN]].
+
+BLD_TERRAFORM_OCEAN
+Terraformation [[PT_OCEAN]]
+
+BLD_TERRAFORM_OCEAN_DESC
+Terraforme un monde en planète [[PT_OCEAN]].
+
+BLD_TERRAFORM_SWAMP
+Terraformation [[PT_SWAMP]]
+
+BLD_TERRAFORM_SWAMP_DESC
+Terraforme un monde en planète [[PT_SWAMP]].
+
+BLD_TERRAFORM_TOXIC
+Terraformation [[PT_TOXIC]]
+
+BLD_TERRAFORM_TOXIC_DESC
+Terraforme un monde en planète [[PT_TOXIC]].
+
+BLD_TERRAFORM_INFERNO
+Terraformation [[PT_INFERNO]]
+
+BLD_TERRAFORM_INFERNO_DESC
+Terraforme un monde en planète [[PT_INFERNO]].
+
+BLD_TERRAFORM_RADIATED
+Terraformation [[PT_RADIATED]]
+
+BLD_TERRAFORM_RADIATED_DESC
+Terraforme un monde en planète [[PT_RADIATED]].
+
+BLD_TERRAFORM_BARREN
+Terraformation [[PT_BARREN]]
+
+BLD_TERRAFORM_BARREN_DESC
+Terraforme un monde en planète [[PT_BARREN]].
+
+BLD_TERRAFORM_TUNDRA
+Terraformation [[PT_TUNDRA]]
+
+BLD_TERRAFORM_TUNDRA_DESC
+Terraforme un monde en planète [[PT_TUNDRA]].
+
+BLD_TERRAFORM_DESERT
+Terraformation [[PT_DESERT]]
+
+BLD_TERRAFORM_DESERT_DESC
+Terraforme un monde en planète [[PT_DESERT]].
+
 BLD_REMOTE_TERRAFORM
-Terraformeur à Distance
+Terraformation à Distance
 
 BLD_REMOTE_TERRAFORM_DESC
 Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement favori de l'espèce. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
@@ -14653,187 +14861,187 @@ BLD_SCRYING_SPHERE_DESC
 Octroie la visibilité pour toutes les autres planètes abritant également une Sphère de Vision.'''
 
 BLD_COL_ABADDONI
-Colonie Abaddoni
+Colonie [[SP_ABADDONI]]
 
 BLD_COL_ABADDONI_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_ABADDONI]]. [[BLD_COL_PART_2]] colonie Abaddoni [[BLD_COL_PART_3]].
 
 BLD_COL_BANFORO
-Colonie Banforo
+Colonie [[SP_BANFORO]]
 
 BLD_COL_BANFORO_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_BANFORO]]. [[BLD_COL_PART_2]] colonie Banforo [[BLD_COL_PART_3]].
 
 BLD_COL_CHATO
-Colonie Chato
+Colonie [[SP_CHATO]]
 
 BLD_COL_CHATO_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_CHATO]]. [[BLD_COL_PART_2]] colonie Chato [[BLD_COL_PART_3]].
 
 BLD_COL_CRAY
-Colonie Cray
+Colonie [[SP_CRAY]]
 
 BLD_COL_CRAY_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_CRAY]]. [[BLD_COL_PART_2]] colonie Cray [[BLD_COL_PART_3]].
 
 BLD_COL_DERTHREAN
-Colonie Derthrean
+Colonie [[SP_DERTHREAN]]
 
 BLD_COL_DERTHREAN_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_DERTHREAN]]. [[BLD_COL_PART_2]] colonie Derthrean [[BLD_COL_PART_3]].
 
 BLD_COL_EAXAW
-Colonie Eaxaw
+Colonie [[SP_EAXAW]]
 
 BLD_COL_EAXAW_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_EAXAW]]. [[BLD_COL_PART_2]] colonie Eaxaw [[BLD_COL_PART_3]].
 
 BLD_COL_EGASSEM
-Colonie Egassem
+Colonie [[SP_EGASSEM]]
 
 BLD_COL_EGASSEM_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_EGASSEM]]. [[BLD_COL_PART_2]] colonie Egassem [[BLD_COL_PART_3]].
 
 BLD_COL_ETTY
-Colonie Etty
+Colonie [[SP_ETTY]]
 
 BLD_COL_ETTY_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_ETTY]]. [[BLD_COL_PART_2]] colonie Etty [[BLD_COL_PART_3]].
 
 BLD_COL_FURTHEST
-Colonie Furthest
+Colonie [[SP_FURTHEST]]
 
 BLD_COL_FURTHEST_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_FURTHEST]]. [[BLD_COL_PART_2]] colonie Furthest [[BLD_COL_PART_3]].
 
 BLD_COL_FULVER
-Colonie Fulver
+Colonie [[SP_FULVER]]
 
 BLD_COL_FULVER_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_FULVER]]. [[BLD_COL_PART_2]] colonie Fulver [[BLD_COL_PART_3]].
 
 BLD_COL_GEORGE
-Colonie George
+Colonie [[SP_GEORGE]]
 
 BLD_COL_GEORGE_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_GEORGE]]. [[BLD_COL_PART_2]] colonie George [[BLD_COL_PART_3]].
 
 BLD_COL_GYSACHE
-Colonie Gysache
+Colonie [[SP_GYSACHE]]
 
 BLD_COL_GYSACHE_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_GYSACHE]]. [[BLD_COL_PART_2]] colonie Gysache [[BLD_COL_PART_3]].
 
 BLD_COL_HAPPY
-Colonie Happybirthday
+Colonie [[SP_HAPPY]]
 
 BLD_COL_HAPPY_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_HAPPY]]. [[BLD_COL_PART_2]] colonie Happybirthday [[BLD_COL_PART_3]].
 
 BLD_COL_HHHOH
-Colonie Hhhoh
+Colonie [[SP_HHHOH]]
 
 BLD_COL_HHHOH_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_HHHOH]]. [[BLD_COL_PART_2]] colonie Hhhoh [[BLD_COL_PART_3]].
 
 BLD_COL_HUMAN
-Colonie Humaine
+Colonie [[SP_HUMAN]]
 
 BLD_COL_HUMAN_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_HUMAN]]e. [[BLD_COL_PART_2]] colonie Humaine [[BLD_COL_PART_3]].
 
 BLD_COL_KILANDOW
-Colonie Kilandow
+Colonie [[SP_KILANDOW]]
 
 BLD_COL_KILANDOW_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_KILANDOW]]. [[BLD_COL_PART_2]] colonie Kilandow [[BLD_COL_PART_3]].
 
 BLD_COL_KOBUNTURA
-Colonie Kobuntura
+Colonie [[SP_KOBUNTURA]]
 
 BLD_COL_KOBUNTURA_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_KOBUNTURA]]. [[BLD_COL_PART_2]] colonie Kobuntura [[BLD_COL_PART_3]].
 
 BLD_COL_LAENFA
-Colonie Laenfa
+Colonie [[SP_LAENFA]]
 
 BLD_COL_LAENFA_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_LAENFA]]. [[BLD_COL_PART_2]] colonie Laenfa [[BLD_COL_PART_3]].
 
 BLD_COL_MISIORLA
-Colonie Misiorla
+Colonie [[SP_MISIORLA]]
 
 BLD_COL_MISIORLA_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_MISIORLA]]. [[BLD_COL_PART_2]] colonie Misiorla [[BLD_COL_PART_3]].
 
 BLD_COL_MUURSH
-Colonie Mu Ursh
+Colonie [[SP_MUURSH]]
 
 BLD_COL_MUURSH_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_MUURSH]]. [[BLD_COL_PART_2]] colonie Mu Ursh [[BLD_COL_PART_3]].
 
 BLD_COL_PHINNERT
-Colonie Phinnert
+Colonie [[SP_PHINNERT]]
 
 BLD_COL_PHINNERT_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_PHINNERT]]. [[BLD_COL_PART_2]] colonie Phinnert [[BLD_COL_PART_3]].
 
 BLD_COL_REPLICON
-Colonie Replicon
+Colonie [[SP_REPLICON]]
 
 BLD_COL_REPLICON_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_REPLICON]]. [[BLD_COL_PART_2]] colonie Replicon [[BLD_COL_PART_3]].
 
 BLD_COL_SCYLIOR
-Colonie Scylior
+Colonie [[SP_SCYLIOR]]
 
 BLD_COL_SCYLIOR_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_SCYLIOR]]. [[BLD_COL_PART_2]] colonie Scylior [[BLD_COL_PART_3]].
 
 BLD_COL_SETINON
-Colonie Setinon
+Colonie [[SP_SETINON]]
 
 BLD_COL_SETINON_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_SETINON]]. [[BLD_COL_PART_2]] colonie Setinon [[BLD_COL_PART_3]].
 
 BLD_COL_SILEXIAN
-Colonie Silexian
+Colonie [[SP_SILEXIAN]]
 
 BLD_COL_SILEXIAN_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_SILEXIAN]]. [[BLD_COL_PART_2]] colonie Silexian [[BLD_COL_PART_3]].
 
 BLD_COL_SLY
-Colonie Sly
+Colonie [[SP_SLY]]
 
 BLD_COL_SLY_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_SLY]]. [[BLD_COL_PART_2]] colonie Sly [[BLD_COL_PART_3]].
 
 BLD_COL_SSLITH
-Colonie Sslith
+Colonie [[SP_SSLITH]]
 
 BLD_COL_SSLITH_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_SSLITH]]. [[BLD_COL_PART_2]] colonie Sslith [[BLD_COL_PART_3]].
 
 BLD_COL_TAEGHIRUS
-Colonie Tae Ghirus
+Colonie [[SP_TAEGHIRUS]]
 
 BLD_COL_TAEGHIRUS_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_TAEGHIRUS]]. [[BLD_COL_PART_2]] colonie Tae Ghirus [[BLD_COL_PART_3]].
 
 BLD_COL_TRITH
-Colonie Trith
+Colonie [[SP_TRITH]]
 
 BLD_COL_TRITH_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_TRITH]]. [[BLD_COL_PART_2]] colonie Trith [[BLD_COL_PART_3]].
 
 BLD_COL_UGMORS
-Colonie Ugmors
+Colonie [[SP_UGMORS]]
 
 BLD_COL_UGMORS_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_UGMORS]]. [[BLD_COL_PART_2]] colonie Ugmors [[BLD_COL_PART_3]].
 
 BLD_COL_EXOBOT
-Colonie Exobot
+Colonie [[SP_EXOBOT]]
 
 BLD_COL_EXOBOT_DESC
 Cette structure créera une colonie [[species SP_EXOBOT]] sur un [[encyclopedia OUTPOSTS_TITLE]]. Contrairement aux structures coloniales des autres espèces, une colonie Exobot ne requiert pas une autre colonie Exobot déjà existante dans la zone d'approvisionnement, étant donné que les Exobots sont directement construits sur la planète colonisée. Cependant, leur prix de fabrication étant élevé, les Exobots ont besoin d'une planète appartenant à l'empire dans la zone d'approvisionnement.
@@ -16412,13 +16620,13 @@ GROWTH_SPECIALS_ENTRY_LIST
 '''Certaines Particularités ne fonctionnent que pour les espèces organiques, d'autres pour les espèces lithiques, et enfin d'autres pour les espèces robotiques. Aucun autre type de [[encyclopedia METABOLISM_TITLE]] ne dispose actuellement de Particularités de Croissance lui étant exclusivement applicables.
 
 Particularités pour [[encyclopedia ORGANIC_SPECIES_TITLE]] :
-[[special FRUIT_SPECIAL]] | [[special SPICE_SPECIAL]] | [[special PROBIOTIC_SPECIAL]]
+[[special FRUIT_SPECIAL]], [[special SPICE_SPECIAL]], [[special PROBIOTIC_SPECIAL]]
 
 Particularités pour [[encyclopedia ROBOTIC_SPECIES_TITLE]] :
-[[special MONOPOLE_SPECIAL]] | [[special SUPERCONDUCTOR_SPECIAL]] | [[special POSITRONIUM_SPECIAL]]
+[[special MONOPOLE_SPECIAL]], [[special SUPERCONDUCTOR_SPECIAL]], [[special POSITRONIUM_SPECIAL]]
 
 Particularités pour [[encyclopedia LITHIC_SPECIES_TITLE]] :
-[[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]] '''
+[[special MINERALS_SPECIAL]], [[special ELERIUM_SPECIAL]], [[special CRYSTALS_SPECIAL]] '''
 
 GROWTH_SPECIAL_LABEL
 Planète <i>%1%</i> [[TT_SPECIAL]]
@@ -16426,6 +16634,11 @@ Planète <i>%1%</i> [[TT_SPECIAL]]
 
 ##
 ## Species picks
+##
+## + for positive effects
+## - for negative effects
+## ⋄ for neutral or other effects
+## use tabs for spacing
 ##
 
 NO_INDUSTRY_DESC
@@ -16438,7 +16651,7 @@ BAD_INDUSTRY_DESC
 −	Mauvais en [[metertype METER_INDUSTRY]] : 75%
 
 AVERAGE_INDUSTRY_DESC
-'''	Normal en [[metertype METER_INDUSTRY]] : 100%'''
+⋄	Normal en [[metertype METER_INDUSTRY]] : 100%
 
 GOOD_INDUSTRY_DESC
 +	Bon en [[metertype METER_INDUSTRY]] : 150%
@@ -16459,7 +16672,7 @@ BAD_RESEARCH_DESC
 −	Mauvais en [[metertype METER_RESEARCH]] : 75%
 
 AVERAGE_RESEARCH_DESC
-'''	Normal en [[metertype METER_RESEARCH]] : 100%'''
+⋄	Normal en [[metertype METER_RESEARCH]] : 100%
 
 GOOD_RESEARCH_DESC
 +	Bon en [[metertype METER_RESEARCH]] : 150%
@@ -16480,7 +16693,7 @@ BAD_INFLUENCE_DESC
 −	Mauvais en [[metertype METER_INFLUENCE]] : 75%
 
 AVERAGE_INFLUENCE_DESC
-'''	Normal en [[metertype METER_INFLUENCE]] : 100%'''
+⋄	Normal en [[metertype METER_INFLUENCE]] : 100%
 
 GOOD_INFLUENCE_DESC
 +	Bon en [[metertype METER_INFLUENCE]] : 150%
@@ -16495,7 +16708,7 @@ BAD_HAPPINESS_DESC
 −	Mauvais en [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
 
 AVERAGE_HAPPINESS_DESC
-'''	Normal en [[metertype METER_HAPPINESS]]: +0'''
+⋄	Normal en [[metertype METER_HAPPINESS]]: +0
 
 GOOD_HAPPINESS_DESC
 +	Bon en [[metertype METER_HAPPINESS]]: +[[value GOOD_HAPPINESS_VAL]]
@@ -16513,7 +16726,7 @@ BAD_DEFENSE_TROOPS_DESC
 −	Mauvais en [[metertype METER_TROOPS]] défensive : 50%
 
 AVERAGE_DEFENSE_TROOPS_DESC
-'''	Normal en [[metertype METER_TROOPS]] défensive : 100%'''
+⋄	Normal en [[metertype METER_TROOPS]] défensive : 100%
 
 GOOD_DEFENSE_TROOPS_DESC
 +	Bon en [[metertype METER_TROOPS]] défensive : 150%
@@ -16525,7 +16738,7 @@ ULTIMATE_DEFENSE_TROOPS_DESC
 +++	Parfait en [[metertype METER_TROOPS]] défensive : 300%
 
 ANCIENT_DEFENSE_TROOPS_DESC
-+++	[[metertype METER_TROOPS]] ancestrale défensive : 10 par [[metertype METER_POPULATION]]
++++	[[metertype METER_TROOPS]] ancestrale défensive : +10 par [[metertype METER_POPULATION]]
 
 NO_OFFENSE_TROOPS_DESC
 −−−	Pas d'[[metertype METER_TROOPS]] offensive
@@ -16534,7 +16747,7 @@ BAD_OFFENSE_TROOPS_DESC
 −	Mauvais en [[metertype METER_TROOPS]] offensive : 50%
 
 AVERAGE_OFFENSE_TROOPS_DESC
-'''	Normal en [[metertype METER_TROOPS]] offensive : 100%'''
+⋄	Normal en [[metertype METER_TROOPS]] offensive : 100%
 
 GOOD_OFFENSE_TROOPS_DESC
 +	Bon en [[metertype METER_TROOPS]] offensive : 150%
@@ -16561,7 +16774,7 @@ BAD_STEALTH_DESC
 −	Mauvais en [[metertype METER_STEALTH]] Planétaire : −20 malus
 
 AVERAGE_STEALTH_DESC
-'''	Normal en [[metertype METER_STEALTH]] Planétaire'''
+⋄	Normal en [[metertype METER_STEALTH]] Planétaire
 
 GOOD_STEALTH_DESC
 +	Bon en [[metertype METER_STEALTH]] Planétaire : +20 bonus
@@ -16573,26 +16786,36 @@ ULTIMATE_STEALTH_DESC
 +++	Parfait en [[metertype METER_STEALTH]] Planétaire : +60 bonus
 
 BAD_WEAPONS_DESC
-−	Mauvais Pilotes : dommages de base par armement d'astronef réduits d'un niveau.
+−	Mauvais Pilotes : dommages d'armement réduits d'un niveau
 
 GOOD_WEAPONS_DESC
-+	Bons Pilotes : dommages de base par armement d'astronef augmentés d'un niveau.
++	Bons Pilotes : dommages d'armement augmentés d'un niveau
 
 GREAT_WEAPONS_DESC
-++	Excellents Pilotes : dommages de base par armement d'astronef augmentés de deux niveaux.
+++	Excellents Pilotes : dommages d'armement augmentés de deux niveaux
 
 ULTIMATE_WEAPONS_DESC
-+++	Parfaits Pilotes : dommages de base par armement d'astronef augmentés de trois niveaux.
++++	Parfaits Pilotes : dommages d'armement augmentés de trois niveaux
 
+PHOTOTROP_DESC
++	Ravitaillement Carburant 1.0 par tour à Étoile Blanche et 2.0 à Étoile Bleue
+
+# 0.1 natural ramscoop-refuelling + 0.1 additional gaseous refueling = 0.2 q.e.d.
 GASEOUS_DESC
 '''+	Vie sur Géantes Gazeuses
-+	Ravitaillement Carburant sur Géantes Gazeuses 0.1'''
++	Ravitaillement Carburant sur Géantes Gazeuses 0.2 par tour'''
+
+EXTREMELY_BAD_POPULATION_DESC
+−−−	Extrêmement Mauvais en [[metertype METER_POPULATION]] : 25%
+
+VERY_BAD_POPULATION_DESC
+−−	Très Mauvais en [[metertype METER_POPULATION]] : 50%
 
 BAD_POPULATION_DESC
 −	Mauvais en [[metertype METER_POPULATION]] : 75%
 
 AVERAGE_POPULATION_DESC
-'''	Normal en [[metertype METER_POPULATION]] : 100%'''
+⋄	Normal en [[metertype METER_POPULATION]] : 100%
 
 GOOD_POPULATION_DESC
 +	Bon en [[metertype METER_POPULATION]] : 125%
@@ -16607,7 +16830,7 @@ BAD_SUPPLY_DESC
 −	Mauvais en [[metertype METER_SUPPLY]] : aucun bonus
 
 AVERAGE_SUPPLY_DESC
-'''	Normal en [[metertype METER_SUPPLY]] : +1'''
+⋄	Normal en [[metertype METER_SUPPLY]] : +1
 
 GREAT_SUPPLY_DESC
 +	Excellent en [[metertype METER_SUPPLY]] : +2
@@ -16622,7 +16845,7 @@ BAD_STOCKPILE_DESC
 −	Mauvais en [[metertype METER_STOCKPILE]] : +0.01 par [[metertype METER_POPULATION]]
 
 AVERAGE_STOCKPILE_DESC
-'''	Normal en [[metertype METER_STOCKPILE]] : +0.02 par [[metertype METER_POPULATION]]'''
+⋄	Normal en [[metertype METER_STOCKPILE]] : +0.02 par [[metertype METER_POPULATION]]
 
 GOOD_STOCKPILE_DESC
 +	Bon en [[metertype METER_STOCKPILE]] : +0.06 par [[metertype METER_POPULATION]]
@@ -16646,10 +16869,10 @@ GOOD_PLANETARY_DEFENSE_DESC
 +	Bonne [[metertype METER_DEFENSE]] planétaire : +5
 
 BROAD_EP_DESC
-+	Grande adaptabilité : peut s'acclimater à plus de types planétaires.
++	Grande adaptabilité : peut s'acclimater à plus de types planétaires
 
 NARROW_EP_DESC
-−−	Faible adaptabilité : s'acclimate à moins de types planétaires.
+−−	Faible adaptabilité : s'acclimate à moins de types planétaires
 
 FAST_COLONIZATION_DESC
 +	Colonisation rapide : -25% de délai pour bâtir une colonie.
@@ -16664,7 +16887,7 @@ BAD_FUEL_DESC
 −	Mauvais en [[metertype METER_FUEL]] max : -0.5
 
 AVERAGE_FUEL_DESC
-'''	Normal en [[metertype METER_FUEL]] max : +0'''
+⋄	Normal en [[metertype METER_FUEL]] max : +0
 
 GOOD_FUEL_DESC
 +	Bon en [[metertype METER_FUEL]] max : +0.5
@@ -16681,14 +16904,20 @@ GREAT_ASTEROID_INDUSTRY_DESC
 LIGHT_SENSITIVE_DESC
 −	Sensibilité à la lumière: la [[metertype METER_POPULATION]] est réduite dans les systèmes abritant une Étoile [[STAR_BLUE]], et dans une moindre mesure, une Étoile [[STAR_WHITE]].
 
+HAEMAESTHETIC_DETECTION_DESC
++	Sens Sanguin: peut sentir les planètes proches peuplées par des êtres organiques
+
 TELEPATHIC_DETECTION_DESC
-+	Détection Télépathique: peut percevoir les planètes habitées proches.
++	Détection Télépathique: peut percevoir les planètes habitées proches
 
 PRECOGNITIVE_DETECTION_DESC
-+	Détection Précognitive: peut percevoir les planètes reliées par Voies spatiales.
++	Détection Précognitive: peut percevoir les planètes reliées par Voies spatiales
 
 COMMUNAL_VISION_DESC
-'''	Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers.'''
+⋄	Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers, quelle que soit l'affiliation
+
+ARTISTIC_TRAIT_DESC
++	Artistique: Stabilité améliorée
 
 
 ##
@@ -16843,47 +17072,57 @@ DEPENDENCE_ON_IMPERIAL_SUPPORT_DUE_TO_ENVIRONMENT
 Dépendance à l'empire en raison Environnement %1%
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
+EXTREMELY_BAD_POPULATION_LABEL
+%2% Extrêmement Mauvais en Population
+
+# %1% FIXME
+# %2% name of species on planet
+VERY_BAD_POPULATION_LABEL
+%2% Très Mauvais en Population
+
+# %1% FIXME
+# %2% name of species on planet
 BAD_POPULATION_LABEL
 %2% Mauvais en Population
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 GOOD_POPULATION_LABEL
 %2% Bon en Population
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 FOCUS_INDUSTRY_LABEL
 %2% Focus Industrie
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 VERY_BAD_INDUSTRY_LABEL
 %2% Très Mauvais en Industrie
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 BAD_INDUSTRY_LABEL
 %2% Mauvais en Industrie
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 GOOD_INDUSTRY_LABEL
 %2% Bon en Industrie
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 GREAT_INDUSTRY_LABEL
 %2% Excellent en Industrie
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 ULTIMATE_INDUSTRY_LABEL
 %2% Parfait en Industrie
 
 # %1% FIXME
-# %2% FIXME
+# %2% name of species on planet
 FOCUS_RESEARCH_LABEL
 %2% Focus Recherche
 
@@ -17379,7 +17618,7 @@ Invincible'''
 AI_SHIPDESIGN_NAME_INVALID
 Modèle Invalide
 
-# Newline separated list of military ship names owned by AIs.
+# Newline separated list of military ship names owned by AIs. {
 # The usage is determined by a rating defined inside the AI scripts. The names
 # are roughly ordered by order of appearance in the game.
 #AI_SHIPDESIGN_NAME_MILITARY
@@ -17402,6 +17641,7 @@ Modèle Invalide
 #Nemesis
 #Zeus'''
 
+# }
 # Newline separated list of local troop transporter names owned by AIs.
 # The usage is determined by a rating defined inside the AI scripts. The names
 # are roughly ordered by order of appearance in the game.
