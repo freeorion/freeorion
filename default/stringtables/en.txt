@@ -13832,7 +13832,7 @@ SPY_DETECT_1
 Optical Scanner
 
 SPY_DETECT_1_DESC
-All colonies start the game with a [[metertype METER_DETECTION]] of [[value SPY_DETECT_1_RANGE]], and the imperial [[encyclopedia DETECTION_TITLE]] to 10, and the ship part [[shippart DT_DETECTOR_1]] permits ships to reach the same level of detection.
+All colonies start the game with a [[metertype METER_DETECTION]] of [[value SPY_DETECT_1_RANGE]], and an imperial [[encyclopedia DETECTION_TITLE]] of 10, and the ship part [[shippart DT_DETECTOR_1]] permits ships to reach the same level of detection.
 
 SPY_DETECT_STELLAR_INTERFERENCE
 Stellar Interference
@@ -14437,7 +14437,7 @@ BLD_SCANNING_FACILITY
 Scanning Facility
 
 BLD_SCANNING_FACILITY_DESC
-'''Increases [[metertype METER_DETECTION]] of the planet by 75.
+'''Increases [[metertype METER_DETECTION]] of the planet by [[value SCANNING_FACILITY_RANGE]].
 
 A combination of long-range scanning devices and great computing power to analyze the data allows a larger area of space to be scanned for any objects.'''
 
