@@ -16719,6 +16719,9 @@ GREAT_HAPPINESS_DESC
 ULTIMATE_HAPPINESS_DESC
 +++	Ultimate [[metertype METER_HAPPINESS]]: +[[value ULTIMATE_HAPPINESS_VAL]]
 
+INDEPENDENT_HAPPINESS_DESC
+⋄	Independent [[metertype METER_HAPPINESS]]: Baseline Stability unaffected by supply connections
+
 NO_DEFENSE_TROOPS_DESC
 −−−	No Defensive Ground [[metertype METER_TROOPS]]
 
