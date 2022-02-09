@@ -169,6 +169,7 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY
                 Planet
                 Not Unowned
                 Not Capital
+                Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_CONFEDERATION"
                 [[SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD]]
                 ([[JUMPS_TO_CAPITAL_OR_REGAD]] > 5)
             ]
@@ -181,6 +182,7 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY
                 Planet
                 Not Unowned
                 Not Capital
+                Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_CONFEDERATION"
                 Not [[SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD]]
             ]
             accountinglabel = "CAPITAL_DISCONNECTION_LABEL"
