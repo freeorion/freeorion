@@ -5,7 +5,7 @@ Policy
     category = "SOCIAL_CATEGORY"
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
     prerequisites = [ "PLC_DIVERSITY" ]
-    exclusions = [ "PLC_RACIAL_PURITY" ]
+    exclusions = [ "PLC_COLONIALISM" "PLC_RACIAL_PURITY" "PLC_THE_HUNT" "PLC_VASSALIZATION" ]
     unlock = Item type = Policy name = "PLC_THE_HUNT"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]

@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_CONFEDERATION_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
-    exclusions = [ "PLC_CENTRALIZATION" ]
+    exclusions = [ "PLC_CENTRALIZATION" "PLC_METROPOLES" "PLC_TERROR_SUPPRESSION" ]
     unlock = [
         Item type = Policy name = "PLC_VASSALIZATION"
         Item type = Policy name = "PLC_FEUDALISM"

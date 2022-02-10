@@ -19,7 +19,7 @@ Policy
                                             ]
                                         ])
     prerequisites = [ "PLC_INTERSTELLAR_INFRA" ]
-    exclusions = [ "PLC_RACIAL_PURITY" "PLC_NATIVE_APPROPRIATION" "PLC_ISOLATION" ]
+    exclusions = [ "PLC_ISOLATION" "PLC_NATIVE_APPROPRIATION" "PLC_RACIAL_PURITY" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 

@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_MARTIAL_LAW_SHORT_DESC"
     category = "MILITARY_CATEGORY"
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
-    exclusions = [ "PLC_LIBERTY" ]
+    exclusions = [ "PLC_BLACK_MARKET" "PLC_LIBERTY" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
