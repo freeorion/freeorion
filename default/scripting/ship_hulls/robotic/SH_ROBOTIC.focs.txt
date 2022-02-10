@@ -41,7 +41,7 @@ Hull
                 ]
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
-            effects = SetStructure value = Value + (2 * [[SHIP_STRUCTURE_FACTOR]])
+            effects = SetStructure value = Value + (NamedReal name = "SHP_ROBOTIC_REPAIR" value = (2 * [[SHIP_STRUCTURE_FACTOR]]))
 
         [[AVERAGE_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]

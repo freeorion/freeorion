@@ -15794,7 +15794,7 @@ SH_ROBOTIC
 Robotic Hull
 
 SH_ROBOTIC_DESC
-'''This hull is completely automated and functions under the principals of [[tech SHP_MIL_ROBO_CONT]]. It has four external slots and one internal slot, and repairs 2 points of [[metertype METER_STRUCTURE]] each turn as long as the ship has not been in combat.
+'''This hull is completely automated and functions under the principals of [[tech SHP_MIL_ROBO_CONT]]. It has four external slots and one internal slot, and repairs [[value SHP_ROBOTIC_REPAIR]] points of [[metertype METER_STRUCTURE]] each turn as long as the ship has not been in combat.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
@@ -16481,7 +16481,7 @@ BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 LIVING_HULL_AUTO_REGEN
-Living hull regenerates [[metertype METER_STRUCTURE]] and [[metertype METER_FUEL]] between combats.
+Living hull regenerates [[value SHP_LIVING_HULL_REPAIR]] [[metertype METER_STRUCTURE]] between combats and [[value SHP_LIVING_HULL_FUEL_REGEN]] [[metertype METER_FUEL]] while stationary.
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED
 Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
