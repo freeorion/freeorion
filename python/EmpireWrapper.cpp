@@ -487,6 +487,8 @@ namespace FreeOrionPython {
             .add_property("shortDescription",       make_function(&Policy::ShortDescription,    py::return_value_policy<py::copy_const_reference>()))
             .add_property("category",               make_function(&Policy::Category,            py::return_value_policy<py::copy_const_reference>()))
             .def("adoptionCost",                    +[](const Policy& p)                       { return p.AdoptionCost(AppEmpireID(), ScriptingContext{}); })
+            .def("adoptionCost",                    +[](const Policy& p, const Empire& empire) { return p.AdoptionCost(empire.EmpireID(), ScriptingContext{}); })
+            .def("adoptionCost",                    +[](const Policy& p, int empire_id)        { return p.AdoptionCost(empire_id, ScriptingContext{}); })
         ;
 
         def("getPolicy",
