@@ -382,9 +382,10 @@ SPECIES_LIKES_OR_DISLIKES_SPECIES_STABILITY_EFFECTS
                 Planet
                 InSystem id = Source.SystemID
                 Species
-                Not Object id = Source.PlanetID         // but not on same planet because there can be only one species per planet
+                Not Source         // but not on same planet because there can be only one species per planet
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecies < 0)
             ]
+            activation = Planet
             accountinglabel = "LIKES_SPECIES_LABEL"
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_SPECIES]] * SpeciesContentOpinion species = Target.Species name = ThisSpecies

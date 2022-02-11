@@ -21650,6 +21650,136 @@ Yarak
 Yekub'''
 
 # }
+# Newline separated ship name list based on musical jargon {
+SHIP_NAME_MUSICAL
+'''A Capella
+Accelerando
+Ad Libitum
+Adagio
+Anacrusis
+Allegretto
+Allegro
+Andante
+Anthem
+Bal Musette
+Ballad
+Baritone
+Berceuse
+Bongo Bongo
+Bolero
+Cadence
+Cadenza
+Caesura
+Cantata
+Chanson
+Chorale
+Chorus
+Clarinet
+Clef
+Coda
+Concerto
+Consonance
+Contralto
+Crescendo
+Cymbal
+Coda
+Da Capo
+Decibel
+Decrescendo
+Diminuendo
+Dolcissimo
+Doloroso
+Doremi-Fasola
+Elegy
+Ensemble
+Fagotto
+Falsetto
+Fermata
+Fortepiano
+Fortissimo
+Forzando
+Fugue
+Giocoso
+Glissando
+Güiro
+Harpsichord
+Hemiola
+Hocket
+Hymn
+Ictus
+Incalzando
+Interlude
+Interval
+Irato
+Jitterbug
+Jive
+Larghetto
+Legato
+Leitmotif
+Libretto
+Madrigal
+Marcato
+Marimba
+Mazurka
+Medley
+Melisma
+Melody
+Messa Di Voce
+Metronome
+Minuet
+Monochord
+Oboe
+Ocarina
+Octave
+Octet
+Opera
+Organum
+Ostinato
+Overture
+Passacaglia
+Pentatonica
+Perdendosi
+Pianissimo
+Pianoforte
+Piccolo
+Polka
+Polyphony
+Polytonality
+Prelude
+Prima Donna
+Quartet
+Rallentando
+Refrain
+Requiem
+Rhapsody
+Riguadon
+Ritardando
+Rococo
+Serenade
+Sforzando
+Shamisen
+Sonata
+Soprano
+Sostenuto
+Spiccato
+Staccato
+Stanza
+Symphony
+Tenor
+Tenuto
+Timbre
+Treble Staff
+Tremolo
+Triad
+Trill
+Unisono
+Vibrato
+Virtuoso
+Vivace
+Waltz
+Xylophone'''
+
+# }
 # Newline separated ship name list based on months or other times {
 SHIP_NAME_MONTH_TIME
 '''Easter Egg
@@ -21673,10 +21803,12 @@ Titanic'''
 # }
 # Newline separated ship name list based on various fictional monster names {
 SHIP_NAME_FICTIONAL_MONSTERS
-'''Beowulf
+'''Artax
+Beowulf
+Fuchur
+Gelfling
 Gormagander
-Nessi
-'''
+Nessi'''
 
 # }
 # Newline separated ship name list based on developer names {
@@ -21718,6 +21850,7 @@ SHIP_NAMES
 [[SHIP_NAME_EMOTIONS]]
 [[SHIP_NAME_ARCHITECTURE]]
 [[SHIP_NAME_MOO2_STARS]]
+[[SHIP_NAME_MUSICAL]]
 [[SHIP_NAME_MONTH_TIME]]
 [[SHIP_NAME_OTHER]]'''
 
