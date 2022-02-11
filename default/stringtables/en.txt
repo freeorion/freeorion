@@ -6705,10 +6705,20 @@ QUICK_START_GUIDE_TITLE
 **Quick Start Guide**
 
 QUICK_START_GUIDE_TEXT
-'''This is a brief introduction to FreeOrion gameplay. A somewhat less brief Quick Play Guide is available at freeorion.org (current URL: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url> ).
+'''This Pedia provides information about many aspects of FreeOrion, including mechanics and content, as well as in-game objects and empires during a game. The pedia can be accessed from the top level index page, which provides categorized lists of articles, by entering text in the box at the top of the pedia page to search articles for the entered text, or via right-click popup menu links from many in-game objects in the interface.
 
-[[DETAILED_PEDIA_REFERENCE]]
-Important sections include [[encyclopedia CATEGORY_GAME_CONCEPTS]], [[encyclopedia CATEGORY_GUIDES]], and the [[encyclopedia ENC_METER_TYPE]] list.
+At the start of a new game, there are three important issues that should be addressed:
+
+1. Fleets are initially idle at homeworld's planetary system. Visible in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] is a star map, with the home system icon selected and highlighted in the center. At the top right of the system icon is a fleet icon. Fleets can be selected by left-clicking on the fleet icon on the map, which will open the fleets window, where all the fleets in a system and their contained ships can be viewed. If a fleet is selected, it can be given movement orders by right-clicking a nearby target star that is connected to the fleet's system by a starlane. Fleets that are not given move orders will stay idle. A good first step is often to send scout fleets to explore nearby systems, which will reveal more about their contents and any further starlane connections beyond them. See also [[encyclopedia FLEET_MOVEMENT_ARTICLE_TITLE]].
+
+2. Industry on the home world is not producing anything until told what to manufacture next. A single click on the red cogwheel in the bar of icons and numbers at the top of the screen, or double-clicking the image of the home planet on the right side of the screen, will open up the [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]]. Production can be ordered is done by double-clicking entries from the list of "Producible Items". If the production queue does not yet use up all the available production points for the current turn, there will a red exclamation mark next to the cogwheel symbol. A good first step is to order the production of more scout ships, or a military command building. After ordering production, the production view can be closed by clicking on the cogwheel again or hitting escape.
+
+3. Research on the homeworld is not being directed effectively until research priorities are specified. A single click on the blue Erlenmeyer flask in the title bar will open the research window with the technology-tree. See also [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]]. Double-clicking technologies will schedule them for research, which consumes the available research points. A good first step is often to research a technology that will give some bonus to the homeworld, such as [[tech GRO_PLANET_ECOL]] or [[tech PRO_ROBOTIC_PROD]].
+
+When there are no more exclamation signs in the title bar and when all fleet movement orders are given, it is time to finalize the turn by clicking the Turn button in the top left corner. This will apply all the decisions made during the previous (or first) turn, i.e. it will move ships as ordered, increase the progress of the industry production runs and of the technology research projects, thus concluding a rotation which can be thought of as a year. The changed map state and a new report by the [[tech SPY_CUSTOM_ADVISORIES]] will be ready for the next rotation.
+
+
+This is a brief introduction to FreeOrion gameplay. A somewhat less brief Quick Play Guide is available at freeorion.org (current URL: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url>).
 '''
 
 SITREP_IGNORE_BLOCK_TITLE
@@ -7239,7 +7249,9 @@ SITREP_SHOWALL_TEMPLATES
 Show all blocked SitReps
 
 SITREP_WELCOME
-[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
+'''[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_INTRO]]
+If you are a newcomer to this universe, please click on the word "[[GREETINGS_GUIDE_TITLE]]" for some basic advice on how to play.
+'''
 
 SITREP_WELCOME_LABEL
 Welcome
