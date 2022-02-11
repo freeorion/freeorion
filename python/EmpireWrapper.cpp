@@ -7,6 +7,7 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/UnlockableItem.h"
 #include "../universe/Planet.h"
+#include "../universe/ScriptingContext.h"
 #include "../universe/Tech.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
@@ -485,7 +486,7 @@ namespace FreeOrionPython {
             .add_property("description",            make_function(&Policy::Description,         py::return_value_policy<py::copy_const_reference>()))
             .add_property("shortDescription",       make_function(&Policy::ShortDescription,    py::return_value_policy<py::copy_const_reference>()))
             .add_property("category",               make_function(&Policy::Category,            py::return_value_policy<py::copy_const_reference>()))
-            .def("adoptionCost",                    &Policy::AdoptionCost)
+            .def("adoptionCost",                    +[](const Policy& p)                       { return p.AdoptionCost(AppEmpireID(), ScriptingContext{}); })
         ;
 
         def("getPolicy",
