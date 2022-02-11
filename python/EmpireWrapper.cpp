@@ -36,14 +36,13 @@ namespace {
 
     auto obstructedStarlanes(const Empire& empire) -> std::vector<std::pair<int, int>>
     {
-        const std::set<std::pair<int, int>>& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
-        std::vector<std::pair<int, int>> retval;
+        const auto& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
+        static_assert(!std::is_same_v<std::decay_t<decltype(laneset)>, std::vector<std::pair<int, int>>>); // if are the same, don't need to explicitly construct the return value...
         try {
-            for (const std::pair<int, int>& lane : laneset)
-            { retval.push_back(lane); }
+            return {laneset.begin(), laneset.end()};
         } catch (...) {
+            return {};
         }
-        return retval;
     }
 
     auto jumpsToSuppliedSystem(const Empire& empire) -> std::map<int, int>
