@@ -17025,6 +17025,16 @@ DISLIKES_FOCUS_LABEL
 Dislikes %1% focus
 
 # %1% name of planet
+# %2% name of species
+LIKES_SPECIES_LABEL
+Likes %2% on %1%
+
+# %1% name of planet
+# %2% name of special
+DISLIKES_SPECIES_LABEL
+Dislikes %2% on %1%
+
+# %1% name of planet
 # %2% name of special
 LIKES_SPECIAL_LABEL
 Likes %1% %2%
