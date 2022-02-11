@@ -675,7 +675,8 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
     target_pp = 0.001
     target_rp = 0.001
     resource_timer.start("Loop")  # loop
-    has_force = tech_is_complete("CON_FRC_ENRG_STRC")
+    # currently unused, but may be needed it again
+    # has_force = tech_is_complete("CON_FRC_ENRG_STRC")
     # cumulative all industry focus
     cumulative_pp, cumulative_rp = 0, 0
 
@@ -701,15 +702,13 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
     maxi_ratio = cumulative_rp / max(0.01, cumulative_pp)
 
     aistate = get_aistate()
-    for adj_round in [1, 2, 3, 4]:
+    for adj_round in [1, 2, 4]:
         for pid, pinfo in list(focus_manager.raw_planet_info.items()):
             ii, tr = pinfo.possible_output[INDUSTRY]
             ri, rr = pinfo.possible_output[RESEARCH]
             ci, cr = pinfo.current_output
-            research_penalty = AIDependencies.FOCUS_CHANGE_PENALTY if (pinfo.current_focus != RESEARCH) else 0
             # calculate factor F at which ii + F * tr == ri + F * rr =====> F = ( ii-ri ) / (rr-tr)
             factor = (ii - ri) / max(0.01, rr - tr)
-            planet = pinfo.planet
             if adj_round == 1:  # take research at planets that can not use industry focus
                 if INDUSTRY not in pinfo.planet.availableFoci:
                     target_pp += ri
@@ -722,59 +721,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
                     target_rp += rr
                     focus_manager.bake_future_focus(pid, RESEARCH, False)
                 continue
-            if adj_round == 3:  # take research at planets where can do reasonable balance
-                # if this planet in range where temporary Research focus ("research dithering") can get some additional
-                # RP at a good PP cost, and still need some RP, then consider doing it.
-                # Won't really work if AI has researched Force Energy Structures (meters fall too fast)
-                # TODO: add similar decision points by which research-rich planets
-                # might possibly choose to dither for industry points
-                if any(
-                    (
-                        has_force,
-                        not aistate.character.may_dither_focus_to_gain_research(),
-                        target_rp >= priority_ratio * cumulative_pp,
-                    )
-                ):
-                    continue
-
-                pop = planet.initialMeterValue(fo.meterType.population)
-                t_pop = planet.initialMeterValue(fo.meterType.targetPopulation)
-                # let pop stabilize before trying to dither; the calculations that determine whether dithering will be
-                # advantageous assume a stable population, so a larger gap means a less reliable decision
-                MAX_DITHER_POP_GAP = 5  # some smallish number
-                if pop < t_pop - MAX_DITHER_POP_GAP:
-                    continue
-
-                # if gap between R-focus and I-focus target research levels is too narrow, don't research dither.
-                # A gap of 1 would provide a single point of RP, at a cost of 3 PP; a gap of 2 the cost is 2.7 PP/RP;
-                # a gap of 3 at 2.1 PP/RP; a gap of 4, 1.8 PP/RP; a gap of 5, 1.7 PP/RP.  The bigger the gap, the
-                # better; a gap of 10 would provide RP at a cost of 1.3 PP/RP (or even less if the target PP gap
-                # were smaller).
-                MIN_DITHER_TARGET_RESEARCH_GAP = 3
-                if (rr - tr) < MIN_DITHER_TARGET_RESEARCH_GAP:
-                    continue
-
-                # could double check that planet even has Industry Focus available, but no harm even if not
-
-                # So at this point we have determined the planet has research targets compatible with employing focus
-                # dither.  The research focus phase will last until current research reaches the Research-Focus
-                # research target, determined by the 'research_capped' indicator, at which point the focus is
-                # changed to Industry (currently left to be handled by standard focus code later).  The research_capped
-                # indicator, though, is a spot indicator whose value under normal dither operation would revert on the
-                # next turn, so we need another indicator to maintain the focus change until the Industry meter has
-                # recovered to its max target level; the indicator to keep the research phase turned off needs to have
-                # some type of hysteresis component or otherwise be sensitive to the direction of meter change; in the
-                # indicator below this is accomplished primarily by comparing a difference of changes on both the
-                # research and industry side, the 'research_penalty' adjustment in the industry_recovery_phase
-                # calculation prevents the indicator from stopping recovery mode one turn too early.
-                research_capped = (rr - cr) <= 0.5
-                industry_recovery_phase = (ii - ci) - (cr - tr) > AIDependencies.FOCUS_CHANGE_PENALTY - research_penalty
-
-                if not (research_capped or industry_recovery_phase):
-                    target_pp += ci - 1 - research_penalty
-                    target_rp += cr + 1
-                    focus_manager.bake_future_focus(pid, RESEARCH, False)
-                continue
+            # removed dithering, meters now fall too quickly for it to ever be worth it
             if adj_round == 4:  # assume default IFocus
                 target_pp += ii  # icurTargets initially calculated by Industry focus, which will be our default focus
                 target_rp += tr
