@@ -1380,8 +1380,8 @@ namespace FreeOrionPython {
         py::def("load_fleet_plan_list",             LoadFleetPlanList);
         py::def("load_monster_fleet_plan_list",     LoadMonsterFleetPlanList);
 
-        py::def("get_name",                         GetName);
-        py::def("set_name",                         SetName);
+        py::def("get_name",                         GetName, "Returns the name (string) of the universe object with the specified object id (int). If there is no such object, returns an empty string and logs an error to the error log.");
+        py::def("set_name",                         SetName, "Sets the name (string) of the universe object with the specified object id (int). If there is no such object, just logs an error to the error log.");
         py::def("get_x",                            GetX);
         py::def("get_y",                            GetY);
         py::def("get_pos",                          GetPos);
