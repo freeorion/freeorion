@@ -511,7 +511,8 @@ namespace {
     }
 
     template <typename T, typename V, typename M>
-    std::pair<double, Meter*> NewMeterValue(const ScriptingContext& context, const M meter, const V& value_ref, T&& target)
+    std::pair<double, Meter*> NewMeterValue(const ScriptingContext& context, const M meter,
+                                            const V& value_ref, T&& target)
     {
         static_assert(!std::is_pointer_v<T>); // shared_ptr OK, raw pointer not
 
@@ -555,34 +556,77 @@ void SetMeter::Execute(ScriptingContext& context,
 {
     if (only_appearance_effects || only_generate_sitrep_effects)
         return;
+    if (targets.empty())
+        return;
 
     TraceLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
     TraceLogger(effects) << "SetMeter execute " << targets.size() << " before:" << TargetsDump(targets);
 
     const int source_id{context.source ? context.source->ID() : INVALID_OBJECT_ID};
     const auto& accounting_label{m_accounting_label.empty() ? effect_cause.custom_label : m_accounting_label};
+    static std::decay_t<decltype(*accounting_map)> EMPTY_ACCOUNTING = {}; // dummy thing to bind lambda capture reference to
+    auto& accounting = accounting_map ? *accounting_map : EMPTY_ACCOUNTING;
 
-    // calculate new meter values before modifying anything...
-    std::vector<std::tuple<double, int, Meter*>> target_new_meter_vals;
-    target_new_meter_vals.reserve(targets.size());
-    for (auto& target : targets) {
-        if (Meter* meter = target->GetMeter(m_meter))
-            target_new_meter_vals.emplace_back(NewMeterValue(context, m_meter, m_value, target).first, target->ID(), meter);
-    }
-
-    // set new meter values and update accounting
-    for (auto& [new_meter_value, target_id, meter] : target_new_meter_vals) {
+    auto update_meter =
+        [source_id, &accounting_label, &effect_cause, meter_type{m_meter},
+         have_accounting{accounting_map != nullptr}, &accounting]
+        (double new_meter_value, int target_id, Meter* meter) -> void
+    {
         auto old_value = meter->Current();
         meter->SetCurrent(new_meter_value);
         auto diff = new_meter_value - old_value;
 
-        if (accounting_map) {
-            auto& accounting{*accounting_map};
-            accounting[target_id][m_meter].emplace_back(
+        if (have_accounting)
+            accounting[target_id][meter_type].emplace_back(
                 source_id, effect_cause.cause_type,
                 diff, new_meter_value,
                 effect_cause.specific_cause, accounting_label);
+    };
+
+
+    if (targets.size() == 1) {
+        auto& target = targets.front();
+        if (Meter* meter = target->GetMeter(m_meter)) {
+            auto new_val = NewMeterValue(context, meter, m_value, target).first;
+            update_meter(new_val, target->ID(), meter);
         }
+
+    } else if (m_value->TargetInvariant()) {
+        // meter value does not depend on target, so handle with single ValueRef evaluation
+        auto new_val = m_value->Eval(context);
+        for (auto& target : targets) {
+            if (Meter* meter = target->GetMeter(m_meter))
+                update_meter(new_val, target->ID(), meter);
+        }
+
+    } else if (m_value->SimpleIncrement()) {
+        auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
+        auto op_type = op_ref->GetOpType();
+        auto rhs = op_ref->RHS()->Eval(context);
+        auto lhs_ref = op_ref->LHS();
+        assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
+
+        for (auto& target : targets) {
+            if (Meter* meter = target->GetMeter(m_meter)) {
+                auto lhs = meter->Current();
+                auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
+                update_meter(new_val, target->ID(), meter);
+            }
+        }
+
+    } else {
+        // calculate new meter values before modifying anything...
+        std::vector<std::tuple<double, int, Meter*>> target_new_meter_vals;
+        target_new_meter_vals.reserve(targets.size());
+        for (auto& target : targets) {
+            if (Meter* meter = target->GetMeter(m_meter))
+                target_new_meter_vals.emplace_back(
+                    NewMeterValue(context, m_meter, m_value, target).first, target->ID(), meter);
+        }
+
+        // set new meter values and update accounting
+        for (auto [new_val, target_id, meter] : target_new_meter_vals)
+            update_meter(new_val, target_id, meter);
     }
 
     TraceLogger(effects) << "SetMeter execute " << targets.size() << " after:" << TargetsDump(targets);
@@ -610,36 +654,29 @@ void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) cons
         // or: meter value is a consistent constant increment for each target,
         // so handle with deep inspection single ValueRef evaluation
 
-        auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
+        // in principle, should be able to static_cast here...
+        auto op = static_cast<ValueRef::Operation<double>*>(m_value.get());
         if (!op) {
             ErrorLogger(effects) << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
             Effect::Execute(context, targets);
             return;
         }
 
-        // LHS should be a reference to the target's meter's immediate value, but
-        // RHS should be target-invariant, so safe to evaluate once and use for
-        // all target objects
-        float increment = 0.0f;
-        if (op->GetOpType() == ValueRef::OpType::PLUS) {
-            increment = op->RHS()->Eval(context);
-        } else if (op->GetOpType() == ValueRef::OpType::MINUS) {
-            increment = -op->RHS()->Eval(context);
-        } else {
-            ErrorLogger(effects) << "SetMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
-            Effect::Execute(context, targets);
-            return;
-        }
+        auto rhs = op->RHS()->Eval(context);
+        auto op_type = op->GetOpType();
 
-        //DebugLogger(effects) << "simple increment: " << increment;
         // increment all target meters...
         for (auto& target : targets) {
-            if (Meter* m = target->GetMeter(m_meter))
-                m->AddToCurrent(increment);
+            if (Meter* m = target->GetMeter(m_meter)) {
+                auto lhs = m->Current();
+                auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
+                m->SetCurrent(new_val);
+            }
         }
 
     } else {
-        // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
+        // meter value depends on target non-trivially, so handle with default case
+        // of per-target ValueRef evaluation
         Effect::Execute(context, targets);
     }
 }
