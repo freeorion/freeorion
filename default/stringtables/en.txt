@@ -16997,57 +16997,65 @@ Likes Influence-Focused Artistic Species In System
 # %1% name of empire
 # %2% name of policy
 LIKES_POLICY_LABEL
-Likes %1% policy %2%
+Likes %1% policy <i>%2%</i>
 
 # %1% name of empire
 # %2% name of policy
 DISLIKES_POLICY_LABEL
-Dislikes %1% policy %2%
+Dislikes %1% policy <i>%2%</i>
 
 # %1% name of planet
 # %2% name of building
 LIKES_BUILDING_LABEL
-Likes %1% building %2%
+Likes <i>%1%</i> building %2%
 
 # %1% name of planet
 # %2% name of building
 DISLIKES_BUILDING_LABEL
-Dislikes %1% building %2%
+Dislikes <i>%1%</i> building %2%
 
 # %1% name of planet
 # %2% name of species on planet (not the focus!)
 LIKES_FOCUS_LABEL
-Likes %1% focus
+Likes <i>%1%</i> focus
 
 # %1% name of planet
 # %2% name of species on planet (not the focus!)
 DISLIKES_FOCUS_LABEL
-Dislikes %1% focus
+Dislikes <i>%1%</i> focus
 
 # %1% name of planet
 # %2% name of species
 LIKES_SPECIES_LABEL
-Likes %2% on %1%
+Likes <i>%2%</i> on <i>%1%</i>
 
 # %1% name of planet
-# %2% name of special
+# %2% name of species
 DISLIKES_SPECIES_LABEL
-Dislikes %2% on %1%
+Dislikes <i>%2%</i> on <i>%1%</i>
+
+# %1% name of field
+LIKES_FIELD_LABEL
+Likes being in <i>%1%</i>
+
+# %1% name of field
+DISLIKES_FIELD_LABEL
+Dislikes being in <i>%2%</i>
 
 # %1% name of planet
 # %2% name of special
 LIKES_SPECIAL_LABEL
-Likes %1% %2%
+Likes special <i>%2%</i> on <i>%1%</i>
 
 # %1% name of planet
 # %2% name of special
 DISLIKES_SPECIAL_LABEL
-Dislikes %1% %2%
+Dislikes special <i>%2%</i> on <i>%1%</i>
 
 # %1% name of planet
 # %2% name of species on planet
 FOCUS_PROTECTION_LABEL
-%2% Protection Focus
+<i>%2%</i> Protection Focus
 
 # %1% FIXME
 STANDARD_CONSTRUCTION_LABEL

@@ -28,7 +28,6 @@ Species
         "PLC_POPULATION"
         "PLC_STOCKPILE_LIQUIDATION"
         "SUCCULENT_BARNACLES_SPECIAL"
-        "SP_EGASSEM"                  // TODO: remove after testing
         "TIDAL_LOCK_SPECIAL"
     ]
     dislikes = [

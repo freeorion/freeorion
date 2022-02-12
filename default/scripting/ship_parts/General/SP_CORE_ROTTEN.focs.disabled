@@ -1,0 +1,20 @@
+Part
+    name = "SP_CORE_ROTTEN"
+    description = "SP_CORE_ROTTEN_DESC"
+    class = General
+    damage = 0
+    destroyFightersPerBattleMax = 0
+    mountableSlotTypes = Core
+    buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 4
+    tags = [ "PEDIA_PC_GENERAL" ]
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
+    icon = "icons/ship_parts/spinal_antimatter.png"
+
+#include "shortrange.macros"
+
+#include "/scripting/common/upkeep.macros"
+#include "/scripting/ship_parts/targeting.macros"

@@ -64,6 +64,9 @@ FieldType
                 CreateField type = "FLD_ACCRETION_DISC" size = 20
                 AddSpecial name = "ACCRETION_DISC_SPECIAL"
             ]
+
+        [[SPECIES_LIKES_OR_DISLIKES_FIELDS_STABILITY_EFFECTS]]
+
     ]
     graphic = "fields/star_forming_nebula_1.png"
 

@@ -340,37 +340,6 @@ LIFECYCLE_MANIP_POPULATION_EFFECTS
             ]
 '''
 
-
-
-//        // species like building in the same system
-//        EffectsGroup
-//            scope = And [
-//                Planet
-//                InSystem id = Source.SystemID
-//                Population low = 0.001
-//                Not Object id = Source.PlanetID // but not on same planet, which is covered by above case
-//                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
-//            ]
-//            accountinglabel = "DISLIKES_BUILDING_LABEL"
-//            effects =
-//                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_SYSTEM]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
-
-//        // species dislike building in the same system
-//        EffectsGroup
-//            scope = And [
-//                Planet
-//                InSystem id = Source.SystemID
-//                Population low = 0.001
-//                Not Object id = Source.PlanetID // but not on same planet, which is covered by above case
-//                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
-//            ]
-//            accountinglabel = "LIKES_BUILDING_LABEL"
-//            effects =
-//                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_SYSTEM]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
-
-SPECIES_LIKE_DISLIKE_SCALING
-'''1.0'''
-
 STABILITY_PER_LIKED_OR_DISLIKED_SPECIES
 '''0.5 * [[SPECIES_LIKE_DISLIKE_SCALING]]'''
 
@@ -383,7 +352,7 @@ SPECIES_LIKES_OR_DISLIKES_SPECIES_STABILITY_EFFECTS
                 InSystem id = Source.SystemID
                 Species
                 Not Source         // but not on same planet because there can be only one species per planet
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecies < 0)
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecies > 0)
             ]
             activation = Planet
             accountinglabel = "LIKES_SPECIES_LABEL"
@@ -398,14 +367,12 @@ SPECIES_LIKES_OR_DISLIKES_SPECIES_STABILITY_EFFECTS
                 InSystem id = Source.SystemID
                 Species
                 Not Object id = Source.PlanetID         // but not on same planet because there can be only one species per planet
-                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecies > 0)
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisSpecies < 0)
             ]
             accountinglabel = "DISLIKES_SPECIES_LABEL"
             effects =
                 SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_SPECIES]] * SpeciesContentOpinion species = Target.Species name = ThisSpecies
-
 '''
-
 
 
 #include "/scripting/species/common/advanced_focus.macros"

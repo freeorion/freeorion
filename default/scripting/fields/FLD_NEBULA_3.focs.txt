@@ -3,6 +3,9 @@ FieldType
     description = "FLD_NEBULA_3_DESC"
     stealth = 0.01
     effectsgroups = [
+    
+        [[SPECIES_LIKES_OR_DISLIKES_FIELDS_STABILITY_EFFECTS]]
+
         EffectsGroup    // shrink slowly when in no-star system
             scope = Source
             activation = And [

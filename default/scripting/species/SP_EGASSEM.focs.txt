@@ -47,7 +47,6 @@ Species
         "PLC_ENGINEERING"
         "PLC_ENVIRONMENTALISM"
         "PLC_NO_GROWTH"
-        "SP_PHINNERT"                  // TODO: remove after testing
         "WORLDTREE_SPECIAL"
     ]
 

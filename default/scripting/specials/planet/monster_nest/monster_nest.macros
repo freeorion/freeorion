@@ -5,6 +5,7 @@
 // parameter 3 is the monster spawn probability
 MONSTER_NEST
 '''
+        // when controlled, generate owned tame monsters
         EffectsGroup
             scope = Source
             activation = And [
@@ -26,12 +27,15 @@ MONSTER_NEST
                     ]
                     empire = Source.Owner
             ]
+
+        // when not controlled, generate wild monsters
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
                 Turn low = 10
                 Unowned
+                (GalaxyMonsterFrequency > 1)  // only generate new wild monsters in non-lowest galaxy monster setup setting
                 Random probability = 0.12 * GalaxyMonsterFrequency / 2.0
             ]
             stackinggroup = "@1@_NEST_STACK"

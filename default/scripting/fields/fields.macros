@@ -112,3 +112,35 @@ EFFECT_CREATE_GASGIANT
     type = GasGiant
     planetsize = GasGiant
 '''
+
+STABILITY_PER_LIKED_OR_DISLIKED_FIELD
+'''0.5 * [[SPECIES_LIKE_DISLIKE_SCALING]]'''
+
+SPECIES_LIKES_OR_DISLIKES_FIELDS_STABILITY_EFFECTS
+'''
+        // species likes a fields and is inside or close to it
+        EffectsGroup
+            scope = And [
+                Planet
+                Species
+                WithinDistance distance = Source.Size * 1.75 condition = Source
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisField > 0)
+            ]
+            accountinglabel = "LIKES_FIELD_LABEL"
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_FIELD]] * SpeciesContentOpinion species = Target.Species name = ThisField
+
+        // species dislikes a fields and is inside or close to it
+        EffectsGroup
+            scope = And [
+                Planet
+                Species
+                WithinDistance distance = Source.Size * 1.75 condition = Source
+                (SpeciesContentOpinion species = LocalCandidate.Species name = ThisField < 0)
+            ]
+            accountinglabel = "DISLIKES_FIELD_LABEL"
+            effects =
+                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_FIELD]] * SpeciesContentOpinion species = Target.Species name = ThisField
+'''
+
+#include "/scripting/species/common/general.macros"
