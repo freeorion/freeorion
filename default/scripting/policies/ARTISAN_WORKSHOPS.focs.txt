@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_ARTISAN_WORKSHOPS_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
-    exclusions = [ "PLC_INDOCTRINATION" "PLC_CONFORMANCE" "PLC_TERROR_SUPPRESSION" ]
+    exclusions = [ "PLC_CONFORMANCE" "PLC_INDOCTRINATION" "PLC_TERROR_SUPPRESSION" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
     ]

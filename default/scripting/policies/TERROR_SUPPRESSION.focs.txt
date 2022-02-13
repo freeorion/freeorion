@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_TERROR_SUPPRESSION_SHORT_DESC"
     category = "MILITARY_CATEGORY"
     adoptioncost = 0.0
-    exclusions = [ "PLC_CONFEDERATION" "PLC_LIBERTY" ]
+    exclusions = [ "PLC_ARTISAN_WORKSHOPS" "PLC_CONFEDERATION" "PLC_LIBERTY" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 

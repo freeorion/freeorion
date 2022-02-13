@@ -18,7 +18,7 @@ Policy
                                             ]
                                         ])
     prerequisites = [ "PLC_SYSTEM_INFRA" ]
-    exclusions = [ "PLC_CENTRALIZATION" "PLC_LIBERTY" "PLC_ISOLATION" ]
+    exclusions = [ "PLC_CENTRALIZATION" "PLC_ISOLATION" "PLC_LIBERTY" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 

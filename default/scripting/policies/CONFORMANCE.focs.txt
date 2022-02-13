@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_CONFORMANCE_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
-    exclusions = [ "PLC_LIBERTY" "PLC_DIVERSITY" ]
+    exclusions = [ "PLC_ARTISAN_WORKSHOPS" "PLC_DIVERSITY" "PLC_LIBERTY" ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 

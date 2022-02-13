@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_DIVERSITY_SHORT_DESC"
     category = "SOCIAL_CATEGORY"
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
-    exclusions = [ "PLC_RACIAL_PURITY" ]
+    exclusions = [ "PLC_CONFORMANCE" "PLC_INDOCTRINATION" "PLC_RACIAL_PURITY" "PLC_THE_HUNT" ]
     unlock = Item type = Policy name = "PLC_ARTISAN_WORKSHOPS"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]

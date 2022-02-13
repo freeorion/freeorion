@@ -4,7 +4,7 @@ Policy
     short_description = "PLC_CENTRALIZATION_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
-    exclusions = [ "PLC_CONFEDERATION" "PLC_COLONIZATION" "PLC_ISOLATION" ]
+    exclusions = [ "PLC_COLONIZATION" "PLC_CONFEDERATION" "PLC_FEUDALISM" "PLC_ISOLATION" ]
     unlock = [
         Item type = Building name = "BLD_REGIONAL_ADMIN"
         Item type = Policy name = "PLC_METROPOLES"
