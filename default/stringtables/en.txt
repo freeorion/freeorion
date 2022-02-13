@@ -14599,7 +14599,13 @@ BLD_FIELD_REPELLOR
 Field Repellor
 
 BLD_FIELD_REPELLOR_DESC
-Pushes mobile fields (those not in systems) away from its location.
+Pushes mobile fields (those not fixed to a particular star systems) away from its location on the map, deflecting them in their path at their current velocity without changing their velocity but directing them away.
+
+BLD_FIELD_ATTRACTOR
+Field Attractor
+
+BLD_FIELD_ATTRACTOR_DESC
+Pulls mobile fields (those not fixed to a particular star systems) toward its location on the map, deflecting them in their path at their current velocity without changing their velocity but attracting them.
 
 BLD_HYPER_DAM
 Hyperspatial Dam
