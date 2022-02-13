@@ -9195,6 +9195,8 @@ SP_EXOBOT_DESC
 '''While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more Exobots.
 
 Exobot planets act like outposts for their impact on an empire's per-planet influence, which is less than other colonies, but do still consume influence themselves.
+
+Exobot planets do not receive a stability penalty when in influence debt while [[policy PLC_CAPITAL_MARKETS]] is adopted.
 '''
 
 SP_ANCIENT_GUARDIANS

@@ -27,6 +27,7 @@ Policy
                 Planet
                 OwnedBy empire = Source.Owner
                 Species
+                Not Species name = "SP_EXOBOT"
             ]
             activation = And [
                 Source
