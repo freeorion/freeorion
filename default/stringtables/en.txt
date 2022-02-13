@@ -12208,10 +12208,10 @@ PLC_ARTISAN_WORKSHOPS
 Artisan Workshops
 
 PLC_ARTISAN_WORKSHOPS_DESC
-Planets with [[ARTISTIC]] species that are set to influence focus will generate influence and will export aesthetically pleasing crafts to planets in their system, boosting the stability of those planets.
+Planets with [[encyclopedia ARTISTIC]] species that are set to influence focus will generate influence and will export aesthetically pleasing crafts to planets in their system, boosting the stability of those planets.
 
 PLC_ARTISAN_WORKSHOPS_SHORT_DESC
-Artistic species produce luxuries
+[[encyclopedia ARTISTIC]] species produce luxuries
 
 PLC_BOOTSTRAPPING
 Colonial Bootstrapping
@@ -16920,7 +16920,7 @@ COMMUNAL_VISION_DESC
 ⋄	Communal Vision: shares visibility within the same species regardless of affiliation
 
 ARTISTIC_TRAIT_DESC
-+	Artistic: Improved stability and happiness
++	[[encyclopedia ARTISTIC]]: Improved stability and happiness
 
 
 ##
