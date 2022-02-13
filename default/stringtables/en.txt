@@ -12232,7 +12232,7 @@ PLC_BOOTSTRAPPING_DESC
 '''• Increases the growth rate of industry, research, and influence meters, and boosts stability on colonies with population less than [[value PLC_BOOTSTRAPPING_MAX_POP]].
 • Increases stability of planets that were colonized in the last [[value PLC_BOOTSTRAPPING_MAX_TURNS]] turns, decreasing over time.
 
-New colonies often benefit from programs that supprt their early development and the dedication of the colonists to establishing their new home.'''
+New colonies often benefit from programs that support their early development and the dedication of the colonists to establishing their new home.'''
 
 PLC_BOOTSTRAPPING_SHORT_DESC
 Boosts small colonies
