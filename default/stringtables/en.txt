@@ -6170,11 +6170,11 @@ METER_INFLUENCE_VALUE_LABEL
 Influence
 
 METER_INFLUENCE_VALUE_DESC
-'''The Influence (or IP "Influence Points") of all planets in the empire represents such things as diplomatic influence, back-room dealing, espionage, public relations, propaganda, and cultural influence. It can be used to adopt [[encyclopedia ENC_POLICY]]s, and is needed to pay for the maintenance of colonies. When total IP cost of colony maintenance is greater than total IP output of the empire, the available Influence will decrease and eventually the empire won't be able to maintain all its colonies, unless more planets are set to [[encyclopedia INFLUENCE_FOCUS_TITLE]].
+'''The Influence (or IP "Influence Points") of all planets in the empire represents such things as diplomatic influence, back-room dealing, espionage, public relations, propaganda, and cultural influence. It can be used to adopt government [[encyclopedia ENC_POLICY]], and is consumed for the maintenance of populated colonies. When total IP cost of colony maintenance is greater than total IP output of the empire, the available influence stockpile will decrease. If influence continues being consumed faster than it is generated, the empire may go into influence debt, which can lead to reduced stability and rebel troops on an empire's colones. Influence generation can be increased by setting planets to [[encyclopedia INFLUENCE_FOCUS_TITLE]].
 
-The Target Influence is the stable Influence output level a planet will approach, given the current factors influencing the Influence resources. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, [[encyclopedia ENC_POLICY]] adopted by the empire, and various other game effects. If these factors change, then the Target Research value is likely to shift.
+The Target Influence is the stable Influence output level a planet will approach, given the current factors influencing the Influence resources. Its value is connected to [[encyclopedia ENC_BUILDING_TYPE]]s built on the planet, [[encyclopedia ENC_TECH]] researched by the empire, [[encyclopedia ENC_SPECIAL]]s linked to the planet, [[encyclopedia ENC_POLICY]] adopted by the empire, and various other game effects. If these factors change, then the Target Influence value is likely to shift.
 
-Influence does not require [[metertype METER_SUPPLY]] line connections to be used, but some colonies can have greater influence upkeeps when not connected to the capital.'''
+Influence does not require [[metertype METER_SUPPLY]] line connections to be used, but  colonies may have consume more influence when when not connected to the capital, or when further from the [[buildingtype BLD_IMPERIAL_PALACE]] or a [[buildingtype BLD_REGIONAL_ADMIN]].'''
 
 METER_CONSTRUCTION_VALUE_LABEL
 Infrastructure
