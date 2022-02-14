@@ -3937,7 +3937,7 @@ TT_FIELD
 # %1% name of the adopting empire.
 # %2% name of policy
 TT_POLICY
-%1% Policy <i>%2%</i>
+%1% policy <i>%2%</i>
 
 TT_FIGHTER_LAUNCH
 Launching
