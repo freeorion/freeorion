@@ -1,0 +1,18 @@
+Tech
+    name = "SHP_CORE_ROTTEN"
+    description = "SHP_CORE_ROTTEN_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    category = "SHIP_WEAPONS_CATEGORY"
+    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 12
+    tags = [ "PEDIA_SHIP_WEAPONS_CATEGORY" ]
+    prerequisites = [
+        "DEF_PLAN_BARRIER_SHLD_1"
+        "SPY_STEALTH_PART_1"
+    ]
+    unlock = [
+        Item type = ShipPart name = "SP_CORE_ROTTEN"
+    ]
+    graphic = "icons/ship_parts/rotten_core.png"
+
+#include "/scripting/common/base_prod.macros"

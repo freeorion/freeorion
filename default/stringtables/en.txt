@@ -14156,6 +14156,12 @@ Biobombers
 SHP_BIOBOMBER_DESC
 Living bombers designed to target ships and planets. Far more effective than regular bombers. [[BLD_BIONEURAL_REQUIRED_ANY_SYSTEM]]
 
+SHP_CORE_ROTTEN
+Rotten Core
+
+SHP_CORE_ROTTEN_DESC
+A generally devious and nefarious weapon to manipulate large scale fields on the galactic map.
+
 SHP_NOVA_BOMB
 Nova Bomb
 
@@ -15281,6 +15287,12 @@ Charged polaron capacitors generate a molecular disruption flux wave that arcs t
 Upgrading the weapon technology will increase the shot damage.
 
 The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage.'''
+
+SP_CORE_ROTTEN
+Rotten Core
+
+SP_CORE_ROTTEN_DESC
+Manipulates etherial cosmic energies in such a way as to attract all mobile fields with negative effects such as [[fieldtype FLD_ION_STORM]] or [[fieldtype FLD_VOID_RIFT]], and to repel all mobile fields with positive effects such as [[fieldtype FLD_METEOR_BLIZZARD]] or [[fieldtype FLD_NANITE_SWARM]].
 
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon
