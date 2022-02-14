@@ -1459,7 +1459,7 @@ OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
 Affiche/Cache le curseur de zoom de la carte galactique.
 
 OPTIONS_DB_UI_GALAXY_MAP_POPUP
-Active/Désactive le clic droit affichant un menu contextuel sur la carte galactique.
+Active/Désactive le clic-droit affichant un menu contextuel sur la carte galactique.
 
 OPTIONS_DB_UI_GALAXY_MAP_LOCK
 Active/Désactive le défilement et le zoom de la carte galactique.
@@ -3393,7 +3393,7 @@ N'enregistre que les réglages dont la valeur par défaut a été modifiée.
 
 Tout fichier de configuration persistante déjà existant est remplacé.
 
-Les réglages peuvent ne plus être valides d'une version à l'autre de Freeorion.
+Les réglages peuvent ne plus être valides d'une version à l'autre de FreeOrion.
 Les réglages définis pour une fenêtre du jeu peuvent ne pas être conservés si cette dernière n'a pas été ouverte lors de la session de jeu en cours.
 
 Se référer à l'article [[CONFIG_GUIDE_TITLE]] pour davantage d'informations.'''
@@ -6685,10 +6685,10 @@ GREETINGS_GUIDE_TITLE
 **Bienvenue!**
 
 GREETINGS_INTRO
-Salutations Noble Voyageur Cosmique, et Bienvenue dans l'Univers Freeorion!
+Salutations Noble Voyageur Cosmique, et Bienvenue dans l'Univers FreeOrion!
 
 GREETINGS_GUIDE_REFERENCE
-Les nouveaux venus dans l'Univers Freeorion peuvent consulter le [[encyclopedia QUICK_START_GUIDE_TITLE]].
+Les nouveaux venus dans l'Univers FreeOrion peuvent consulter le [[encyclopedia QUICK_START_GUIDE_TITLE]].
 
 GREETINGS_GUIDE_TEXT
 '''[[GREETINGS_INTRO]]
@@ -6705,10 +6705,20 @@ QUICK_START_GUIDE_TITLE
 **Guide de Démarrage Rapide**
 
 QUICK_START_GUIDE_TEXT
-'''Voici une brève introduction au gameplay de Freeorion. Un guide plus conséquent est disponible sur le site freeorion.org (URL actuelle: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url>).
+'''L'Encyclopédie fournit des informations sur divers aspects de FreeOrion, à savoir les principes du jeu et son contenu, mais également les objets et empires propres à une partie. Accéder à ces informations peut s'effectuer via la page d'index listant toutes les catégories d'articles, en entrant des mots de recherche dans la zone de saisie (barre supérieure de l'Encyclopédie), ou bien via un clic-droit sur les objet de l'interface pour afficher un lien dirigeant vers leurs articles respectifs dans l'Encyclopédie.
 
-[[DETAILED_PEDIA_REFERENCE]]
-Il est conseillé de consulter en priorité les sections [[encyclopedia CATEGORY_GAME_CONCEPTS]], [[encyclopedia CATEGORY_GUIDES]], et [[encyclopedia ENC_METER_TYPE]].
+Au début d'une nouvelle partie, il est conseillé d'effectuer 3 tâches importantes :
+
+1. Les Flottes sont par défaut immobiles et stationnées dans leur système planétaire natal. Dans la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] se trouve la carte galactique, avec au centre de l'écran, l'icône du système stellaire natal sélectionnée et en surbrillance. En haut à droite de cette icône est affichée l'icône de la flotte. Les Flottes peuvent être sélectionnées via un clic-gauche sur cette icône, ouvrant ainsi la Fenêtre Flottes, où toutes les flottes présentes dans le système, ainsi que les astronefs qu'elles contiennent, peuvent être consultées. Si une flotte est sélectionnée, il est possible de lui assigner un ordre de déplacement via un clic-droit sur un autre système stellaire proche, si celui-ci est accessible à la flotte par une Voie spatiale. Les Flottes n'ayant pas reçu d'ordres resteront immobiles. Un première décision souvent judicieuse est d'envoyer des flottes d'éclaireurs explorer les systèmes proches, afin d'en révéler leur contenu, ainsi que d'autres Voies spatiales. Voir également l'article [[encyclopedia FLEET_MOVEMENT_ARTICLE_TITLE]].
+
+2. L'Industre sur une planète natale ne produit rien tant qu'elle n'a pas reçu d'instructions. Un clic sur la roue dentée rouge dans la barre d'icônes suivies de nombres, en haut de l'écran, ou un double-clic sur l'image de la planète à droite de l'écran, ouvrira la [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]]. Les commandes de production peuvent être transmises en double-cliquant sur les entrées de la liste "Projets". Si la file d'attente de production n'utilise pas encore tous les points de production (PP) disponibles pour le tour en cours, un point d'exclamation rouge sera affiché à côté de l'icône de Production (roue dentée rouge). Un premier choix souvent judicieux est de commander la production de plusieurs astronefs [[predefinedshipdesign SD_SCOUT]], ou d'une structure [[buildingtype BLD_MILITARY_COMMAND]]. Une fois tous les points de production assignés, la Fenêtre Production peut être fermée en cliquant à nouveau sur l'icône de roue dentée ou bien via la touche ESC.
+
+3. La Recherche sur une planète natale n'est pas lancée tant qu'aucune priorité de Recherche n'a été spécifiée. Un clic sur la fiole bleue dans la barre d'icônes ouvrira la Fenêtre Recherche contenant l'arbre des technologies. Voir également l'article [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]]. Double-cliquer sur des technologies accessibles les ajoutera à la file d'attente de Recherche, utilisant ainsi les points de recherche (PR) disponibles. Un premier choix souvent judicieux est de rechercher une technologie fournissant divers bonus à la planète natale, telles [[tech GRO_PLANET_ECOL]] ou [[tech PRO_ROBOTIC_PROD]].
+
+Lorsque plus aucun signe d'exclamation ne se trouve dans la barre d'icônes, et que toutes les flottes ont reçu des ordres, il est alors temps de finaliser le tour en cliquant sur le bouton Tour en haut à gauche. Cela appliquera toutes les décisions prises durant le tour précédent (ou ici le premier), c-à-d que tous les astronefs se déplaceront comme demandé, que l'Industrie démarrera les projets de production commandés, et que la Recherche sera lancée sur les technologies choisies, concluant ainsi un cycle équivalent à une année. L'état de la carte galactique sera modifiée et un nouveau rapport du [[tech SPY_CUSTOM_ADVISORIES]] sera alors prêt pour le prochain cycle.
+
+
+Ceci est une brève introduction au gameplay de FreeOrion. Un guide plus conséquent est disponible sur le site freeorion.org (URL actuelle: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url>).
 '''
 
 SITREP_IGNORE_BLOCK_TITLE
@@ -7239,7 +7249,9 @@ SITREP_SHOWALL_TEMPLATES
 Réafficher tous les SitReps bloqués
 
 SITREP_WELCOME  # translated
-[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_GUIDE_REFERENCE]]
+'''[[encyclopedia GREETINGS_GUIDE_TITLE]] [[GREETINGS_INTRO]]
+Si vous êtes un nouvel arrivant dans cet univers, veuillez cliquer sur "[[GREETINGS_GUIDE_TITLE]]" pour découvrir quelques conseils utiles.
+'''
 
 SITREP_WELCOME_LABEL
 Bienvenue
@@ -16917,7 +16929,7 @@ COMMUNAL_VISION_DESC
 ⋄	Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers, quelle que soit l'affiliation
 
 ARTISTIC_TRAIT_DESC
-+	Artistique: Stabilité améliorée
++	Artistique: Stabilité et Bonheur améliorés
 
 
 ##
