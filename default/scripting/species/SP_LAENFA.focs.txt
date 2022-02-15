@@ -45,7 +45,7 @@ Species
         "BLD_CULTURE_LIBRARY"
         "BLD_GAS_GIANT_GEN"
         "BLD_PLANET_BEACON"
-        "BLD_SOL_ACCEL"
+        //"BLD_SOL_ACCEL"              // disabled content
         "ELERIUM_SPECIAL"
         "PLC_EXOBOT_PRODUCTIVITY"
         "PLC_INDUSTRIALISM"
