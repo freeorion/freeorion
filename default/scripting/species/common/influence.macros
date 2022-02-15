@@ -75,7 +75,6 @@ NO_INFLUENCE
 
 ARTISANS_INFLUENCE_STABILITY
 '''
-        [[DESCRIPTION_EFFECTSGROUP_MACRO(ARTISTIC_TRAIT_DESC)]]
         EffectsGroup     // artistic species generate influence when artisans workshops policy adopted
             scope = Source
             activation = And [

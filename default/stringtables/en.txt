@@ -8204,7 +8204,7 @@ Human
 SP_HUMAN_GAMEPLAY_DESC
 '''Relentless, tribal pursuit predators.
 Prefer [[PT_TERRAN]] planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_HUMAN_DESC
@@ -8222,7 +8222,7 @@ SP_SCYLIOR_GAMEPLAY_DESC
 '''<img src="species/preview/scylior.png"></img>
 Three-tentacled, aquatic nautiloids.
 Prefer [[PT_OCEAN]] planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_SCYLIOR_DESC
@@ -8509,7 +8509,7 @@ Cray
 SP_CRAY_GAMEPLAY_DESC
 '''Cheerful enthusiastic robots.
 Prefer [[PT_BARREN]] planets.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+[[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_CRAY_DESC
@@ -8545,7 +8545,7 @@ Cynos
 
 SP_CYNOS_GAMEPLAY_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
-[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_CYNOS_DESC
@@ -8608,7 +8608,7 @@ Egassem
 SP_EGASSEM_GAMEPLAY_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Prefer [[PT_INFERNO]] planets.
-[[encyclopedia LITHIC_SPECIES_TITLE]]
+[[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_EGASSEM_DESC
@@ -8628,7 +8628,7 @@ Sslith
 SP_SSLITH_GAMEPLAY_DESC
 '''Flat, aquatic, pliable creatures.
 Prefer [[PT_OCEAN]] planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_SSLITH_DESC
@@ -8644,7 +8644,7 @@ Fifty-Seven
 
 SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_FIFTYSEVEN_DESC
@@ -8686,7 +8686,7 @@ Thenian
 
 SP_THENIAN_GAMEPLAY_DESC
 '''Thoughtful gasbags.
-[[encyclopedia GASEOUS_SPECIES_TITLE]]
+[[encyclopedia GASEOUS_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_THENIAN_DESC
@@ -8876,7 +8876,7 @@ Silexian
 SP_SILEXIAN_GAMEPLAY_DESC
 '''Gleaming gardener robots, left on their own.
 Prefer [[PT_TERRAN]] planets.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+[[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_SILEXIAN_DESC
@@ -9018,7 +9018,7 @@ Ourbools
 SP_OURBOOLS_GAMEPLAY_DESC
 '''Giant blind swimmers who "see" gravitation.
 Prefer [[PT_OCEAN]] planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_OURBOOLS_DESC
@@ -9157,7 +9157,7 @@ Misiorla
 SP_MISIORLA_GAMEPLAY_DESC
 '''Chaotic, liberal, born pilots.
 Prefer [[PT_TOXIC]] planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_MISIORLA_DESC
@@ -9213,7 +9213,7 @@ Super Testers
 SP_SUPER_TEST_GAMEPLAY_DESC
 '''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. ([[metertype METER_STEALTH]]-busting power only works when they are in a Capital)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-[[encyclopedia TELEPATHIC_TITLE]]
+[[encyclopedia ARTISTIC]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_SUPER_TEST_DESC
