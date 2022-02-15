@@ -764,6 +764,8 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
         planet_property = &Planet::OriginalType;
     else if (property_name == "NextCloserToOriginalPlanetType")
         planet_property = &Planet::NextCloserToOriginalPlanetType;
+    else if (property_name == "NextBestPlanetType")
+        planet_property = boost::bind(&Planet::NextBestPlanetTypeForSpecies, boost::placeholders::_1, "");
     else if (property_name == "NextBetterPlanetType")
         planet_property = boost::bind(&Planet::NextBetterPlanetTypeForSpecies, boost::placeholders::_1, "");
     else if (property_name == "ClockwiseNextPlanetType")

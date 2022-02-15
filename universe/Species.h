@@ -108,6 +108,7 @@ public:
     const std::string&              DefaultFocus() const                { return m_default_focus; }         ///< returns the name of the planetary focus this species defaults to. Used for new colonies and uninvaded natives.
     const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
     PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;                     ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
+    PlanetType                      NextBestPlanetType(PlanetType initial_planet_type) const;             ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
     PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const;             ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
 
     /** Returns the EffectsGroups that encapsulate the effects that species of
@@ -136,6 +137,9 @@ public:
 
 private:
     void Init();
+
+    template <typename Func>
+    PlanetType TheNextBestPlanetTypeApply(PlanetType initial_planet_type, Func apply_for_best_forward_backward) const;
 
     std::string                             m_name;
     std::string                             m_description;

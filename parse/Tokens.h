@@ -284,6 +284,7 @@
     (Native)                                    \
     (NearestSystemID)                           \
     (Neutron)                                   \
+    (NextBestPlanetType)                        \
     (NextBetterPlanetType)                      \
     (NextCloserToOriginalPlanetType)            \
     (NextLargerPlanetSize)                      \

@@ -237,7 +237,8 @@ namespace {
     }
 }
 
-PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
+template <typename Func>
+PlanetType Species::TheNextBestPlanetTypeApply(PlanetType initial_planet_type, Func apply_for_best_forward_backward) const {
     // some types can't be terraformed
     if (initial_planet_type == PlanetType::PT_GASGIANT)
         return PlanetType::PT_GASGIANT;
@@ -272,23 +273,41 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
     if (initial_environment >= best_environment)
         return initial_planet_type;
 
-    // find which of the best types is closest to the current type
     int forward_steps_to_best = 0;
+    PlanetType next_best_planet_type = initial_planet_type;
     for (PlanetType type = RingNextPlanetType(initial_planet_type); type != initial_planet_type; type = RingNextPlanetType(type)) {
         forward_steps_to_best++;
-        if (GetPlanetEnvironment(type) == best_environment)
+        if (GetPlanetEnvironment(type) == best_environment) {
+            next_best_planet_type = type;
             break;
+        }
     }
     int backward_steps_to_best = 0;
     for (PlanetType type = RingPreviousPlanetType(initial_planet_type); type != initial_planet_type; type = RingPreviousPlanetType(type)) {
         backward_steps_to_best++;
-        if (GetPlanetEnvironment(type) == best_environment)
+        if (GetPlanetEnvironment(type) == best_environment) {
+            if (backward_steps_to_best < forward_steps_to_best)
+                next_best_planet_type = type;
             break;
+        }
     }
-    if (forward_steps_to_best <= backward_steps_to_best)
-        return RingNextPlanetType(initial_planet_type);
-    else
-        return RingPreviousPlanetType(initial_planet_type);
+
+    return apply_for_best_forward_backward(next_best_planet_type, forward_steps_to_best, backward_steps_to_best);
+}
+
+PlanetType Species::NextBestPlanetType(PlanetType initial_planet_type) const {
+    return TheNextBestPlanetTypeApply(initial_planet_type, [](PlanetType best_planet_type, int forward_steps_to_best, int backward_steps_to_best) {
+        return best_planet_type;
+    });
+}
+
+PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
+    return TheNextBestPlanetTypeApply(initial_planet_type, [initial_planet_type](PlanetType best_planet_type, int forward_steps_to_best, int backward_steps_to_best) {
+        if (forward_steps_to_best <= backward_steps_to_best)
+            return RingNextPlanetType(initial_planet_type);
+        else
+            return RingPreviousPlanetType(initial_planet_type);
+    });
 }
 
 unsigned int Species::GetCheckSum() const {

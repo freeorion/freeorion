@@ -79,6 +79,7 @@ public:
     [[nodiscard]] bool                HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
 
     [[nodiscard]] PlanetEnvironment   EnvironmentForSpecies(const std::string& species_name = "") const;
+    [[nodiscard]] PlanetType          NextBestPlanetTypeForSpecies(const std::string& species_name = "") const;
     [[nodiscard]] PlanetType          NextBetterPlanetTypeForSpecies(const std::string& species_name = "") const;
     [[nodiscard]] PlanetType          NextCloserToOriginalPlanetType() const;
     [[nodiscard]] PlanetType          ClockwiseNextPlanetType() const;
