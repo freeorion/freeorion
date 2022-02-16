@@ -11989,7 +11989,9 @@ PLC_EXOBOT_PRODUCTIVITY
 Exobot Productivity
 
 PLC_EXOBOT_PRODUCTIVITY_DESC
-Increases effective exobot production output on industry-focused worlds from very bad to just bad.
+'''Increases effective exobot production output on industry-focused worlds from very bad to just bad.
+
+Decreases the stability and production output of non-exobot populated planets in the empire by [[value PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY]].'''
 
 PLC_EXOBOT_PRODUCTIVITY_SHORT_DESC
 Boosts exobot production

@@ -23,6 +23,21 @@ Policy
             effects = SetTargetIndustry value = Value
                         * (NamedReal name = "PLC_EXOBOT_PRODUCTIVITY_TARGET_INDUSTRY_SCALING"
                                      value = ([[BAD_MULTIPLIER]] / [[VERY_BAD_MULTIPLIER]]))
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+                Not Species name = "SP_EXOBOT"
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            // Other planets don't want to work when exobots could be doing it
+            effects = [
+                SetTargetHappiness value = Value - (NamedReal name = "PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY" value = 1.0)
+                SetTargetIndustry value = Value - (NamedReal name = "PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY" value = 1.0)
+            ]
+
     ]
     graphic = "icons/policies/economic_exobot_productivity.png"
 
