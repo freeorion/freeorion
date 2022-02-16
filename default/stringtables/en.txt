@@ -12247,7 +12247,11 @@ PLC_PROPAGANDA
 Propaganda Broadcasts
 
 PLC_PROPAGANDA_DESC
-Increases imperial capital influence by [[value PROPAGANDA_INFLUENCE_FLAT]].
+'''Increases imperial capital influence of the empire that adopts this policy by [[value PROPAGANDA_INFLUENCE_FLAT]].
+
+Increases imperial capital influence of allied empires by [[value PROPAGANDA_INFLUENCE_ALLIED_FLAT]], if they have not also adopted this policy.
+
+Decreases imperial capital influence of enemy empires by [[value PROPAGANDA_INFLUENCE_ENEMY_FLAT]], if they have not also adopted this policy and they have visibility of at least one object owned by the empire that adopts this policy.'''
 
 PLC_PROPAGANDA_SHORT_DESC
 Increases capital influence
