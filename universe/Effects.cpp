@@ -633,56 +633,11 @@ void SetMeter::Execute(ScriptingContext& context,
 }
 
 void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) const {
-    if (targets.empty()) {
-        return;
-
-    } else if (targets.size() == 1) {
-        auto& target = targets.front();
-        if (Meter* m = target->GetMeter(m_meter))
-            m->SetCurrent(NewMeterValue(context, m, m_value, target).first);
-
-    } else if (m_value->TargetInvariant()) {
-        // meter value does not depend on target, so handle with single ValueRef evaluation
-        float val = m_value->Eval(context);
-        for (auto& target : targets) {
-            if (Meter* m = target->GetMeter(m_meter))
-                m->SetCurrent(val);
-        }
-
-    } else if (m_value->SimpleIncrement()) {
-        // LHS() is just the current meter value, and RHS() is target-invariant
-        // or: meter value is a consistent constant increment for each target,
-        // so handle with deep inspection single ValueRef evaluation
-
-        // in principle, should be able to static_cast here...
-        auto op = static_cast<ValueRef::Operation<double>*>(m_value.get());
-        if (!op) {
-            ErrorLogger(effects) << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
-            Effect::Execute(context, targets);
-            return;
-        }
-
-        auto rhs = op->RHS()->Eval(context);
-        auto op_type = op->GetOpType();
-
-        // increment all target meters...
-        for (auto& target : targets) {
-            if (Meter* m = target->GetMeter(m_meter)) {
-                auto lhs = m->Current();
-                auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
-                m->SetCurrent(new_val);
-            }
-        }
-
-    } else {
-        // meter value depends on target non-trivially, so handle with default case
-        // of per-target ValueRef evaluation
-        Effect::Execute(context, targets);
-    }
+    static const EffectCause default_effect_cause;
+    Execute(context, targets, nullptr, default_effect_cause);
 }
 
 std::string SetMeter::Dump(unsigned short ntabs) const {
-
     std::string retval = DumpIndent(ntabs) + "Set";
     switch (m_meter) {
     case MeterType::METER_TARGET_POPULATION:   retval += "TargetPopulation"; break;
