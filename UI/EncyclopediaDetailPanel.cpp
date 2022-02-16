@@ -83,24 +83,24 @@ namespace {
 namespace {
     /** @brief Checks content tags for a custom defined pedia category.
      * 
-     * @param[in,out] tags content tags to check for a matching pedia prefix tag
+     * @param[in] tags content tags to check for matching pedia prefix tags
      * 
-     * @return The first matched pedia category for this set of tags,
-     *          or empty string if there are no matches.
+     * @return All matched pedia categories for this set of tags
      */
-    std::string_view DetermineCustomCategory(const std::set<std::string>& tags) {
+    std::vector<std::string_view> DetermineCustomCategories(const std::set<std::string>& tags) {
         // for each tag, check if it starts with the prefix TAG_PEDIA_PREFIX
         // when a match is found, return the match (without the prefix portion)
+        std::vector<std::string_view> retval;
         for (auto& tag : tags) {
             if (boost::starts_with(tag, TAG_PEDIA_PREFIX)) {
                 //return boost::replace_first_copy(tag, TAG_PEDIA_PREFIX, "");
-                std::string_view retval{tag};
-                retval.remove_prefix(TAG_PEDIA_PREFIX.length());
-                return retval;
+                std::string_view val{tag};
+                val.remove_prefix(TAG_PEDIA_PREFIX.length());
+                retval.push_back(val);
             }
         }
 
-        return ""; // no matching tag found
+        return retval;
     }
 
     /** Retreive a value label and general string representation for @a meter_type */
