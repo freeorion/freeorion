@@ -81,26 +81,37 @@ namespace {
 }
 
 namespace {
-    /** @brief Checks content tags for a custom defined pedia category.
+    /** @brief Checks content tags for custom defined pedia categories.
      * 
-     * @param[in,out] tags content tags to check for a matching pedia prefix tag
+     * @param[in] tags content tags to check for a matching pedia prefix tag
      * 
-     * @return The first matched pedia category for this set of tags,
-     *          or empty string if there are no matches.
+     * @return All matched pedia categories for this set of tags
      */
-    std::string_view DetermineCustomCategory(const std::set<std::string>& tags) {
+    std::vector<std::string_view> DetermineCustomCategories(const std::set<std::string>& tags) {
+        std::vector<std::string_view> retval;
+        retval.reserve(tags.size());
         // for each tag, check if it starts with the prefix TAG_PEDIA_PREFIX
         // when a match is found, return the match (without the prefix portion)
         for (auto& tag : tags) {
             if (boost::starts_with(tag, TAG_PEDIA_PREFIX)) {
                 //return boost::replace_first_copy(tag, TAG_PEDIA_PREFIX, "");
-                std::string_view retval{tag};
-                retval.remove_prefix(TAG_PEDIA_PREFIX.length());
-                return retval;
+                std::string_view val{tag};
+                val.remove_prefix(TAG_PEDIA_PREFIX.length());
+                retval.push_back(val);
             }
         }
 
-        return ""; // no matching tag found
+        return retval;
+    }
+
+    bool HasCustomCategory(const std::set<std::string>& tags)
+    { return !DetermineCustomCategories(tags).empty(); }
+
+    template <typename S>
+    bool HasCustomCategory(const std::set<std::string>& tags, const S& cat) {
+        auto cats = DetermineCustomCategories(tags);
+        auto it = std::find(cats.begin(), cats.end(), cat);
+        return it != cats.end();
     }
 
     /** Retreive a value label and general string representation for @a meter_type */
@@ -203,7 +214,7 @@ namespace {
         }
         else if (dir_name == "ENC_SHIP_PART") {
             for (auto& [part_name, part] : GetShipPartManager()) {
-                if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(part->Tags()).empty()) {
+                if (!exclude_custom_categories_from_dir_name || !HasCustomCategory(part->Tags())) {
                     auto& us_name{UserString(part_name)};
                     retval.emplace(
                         us_name,
@@ -214,7 +225,7 @@ namespace {
         }
         else if (dir_name == "ENC_SHIP_HULL") {
             for (auto& [hull_name, hull] : GetShipHullManager()) {
-                if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(hull->Tags()).empty()) {
+                if (!exclude_custom_categories_from_dir_name || !HasCustomCategory(hull->Tags())) {
                     auto& us_name{UserString(hull_name)};
                     retval.emplace(
                         us_name,
@@ -236,9 +247,7 @@ namespace {
 
             // second loop over alphabetically sorted names...
             for (auto& [us_name, tech_name] : userstring_tech_names) {
-                if (!exclude_custom_categories_from_dir_name ||
-                    DetermineCustomCategory(GetTech(tech_name)->Tags()).empty())
-                {
+                if (!exclude_custom_categories_from_dir_name || !HasCustomCategory(GetTech(tech_name)->Tags())) {
                     // already iterating over userstring-looked-up names, so don't need to re-look-up-here
                     std::string tagged_text{LinkTaggedPresetText(VarText::TECH_TAG, tech_name, us_name).append("\n")};
                     retval.emplace(
@@ -260,7 +269,7 @@ namespace {
         }
         else if (dir_name == "ENC_BUILDING_TYPE") {
             for (const auto& [building_name, building_type] : GetBuildingTypeManager()) {
-                if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(building_type->Tags()).empty()) {
+                if (!exclude_custom_categories_from_dir_name || !HasCustomCategory(building_type->Tags())) {
                     auto& us_name{UserString(building_name)};
                     retval.emplace(
                         us_name,
@@ -364,7 +373,7 @@ namespace {
         }
         else if (dir_name == "ENC_FIELD_TYPE") {
             for (const auto& entry : GetFieldTypeManager()) {
-                if (!exclude_custom_categories_from_dir_name || DetermineCustomCategory(entry.second->Tags()).empty()) {
+                if (!exclude_custom_categories_from_dir_name || !HasCustomCategory(entry.second->Tags())) {
                     auto& us_name{UserString(entry.first)};
                     retval.emplace(
                         us_name,
@@ -556,14 +565,14 @@ namespace {
 
             // part types
             for (auto& [part_name, part_type] : GetShipPartManager())
-                if (DetermineCustomCategory(part_type->Tags()) == dir_name)
+                if (HasCustomCategory(part_type->Tags(), dir_name))
                     dir_entries.emplace(
                         UserString(part_name),
                         std::pair{VarText::SHIP_PART_TAG, part_name});
 
             // hull types
             for (auto& [hull_name, hull_type] : GetShipHullManager())
-                if (DetermineCustomCategory(hull_type->Tags()) == dir_name)
+                if (HasCustomCategory(hull_type->Tags(), dir_name))
                     dir_entries.emplace(
                         UserString(hull_name),
                         std::pair{VarText::SHIP_HULL_TAG, hull_name});
@@ -571,14 +580,14 @@ namespace {
             // techs
             for (const auto& tech : GetTechManager()) {
                 const auto& tech_name = tech->Name();
-                if (DetermineCustomCategory(tech->Tags()) == dir_name)
+                if (HasCustomCategory(tech->Tags(), dir_name))
                     dir_entries[UserString(tech_name)] =
                         std::pair{VarText::TECH_TAG, tech_name};
             }
 
             // building types
             for (auto& [building_name, building_type] : GetBuildingTypeManager())
-                if (DetermineCustomCategory(building_type->Tags()) == dir_name)
+                if (HasCustomCategory(building_type->Tags(), dir_name))
                     dir_entries.emplace(
                         UserString(building_name),
                         std::pair{VarText::BUILDING_TYPE_TAG, building_name});
@@ -588,7 +597,7 @@ namespace {
                 if (dir_name == "ALL_SPECIES" ||
                    (dir_name == "NATIVE_SPECIES" && species->Native()) ||
                    (dir_name == "PLAYABLE_SPECIES" && species->Playable()) ||
-                    DetermineCustomCategory(species->Tags()) == dir_name)
+                    HasCustomCategory(species->Tags(), dir_name))
                 {
                     dir_entries.emplace(
                         UserString(species_name),
@@ -597,7 +606,7 @@ namespace {
 
             // field types
             for (auto& [field_name, field_type] : GetFieldTypeManager())
-                if (DetermineCustomCategory(field_type->Tags()) == dir_name)
+                if (HasCustomCategory(field_type->Tags(), dir_name))
                     dir_entries.emplace(
                         UserString(field_name),
                         std::pair{VarText::FIELD_TYPE_TAG, field_name});
