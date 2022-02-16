@@ -134,6 +134,7 @@
     (Enqueued)                                  \
     (enqueuelocation)                           \
     (environment)                               \
+    (Environment)                               \
     (environments)                              \
     (ETA)                                       \
     (ExploredByEmpire)                          \
