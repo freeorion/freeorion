@@ -6523,7 +6523,9 @@ TELEPATHIC_TITLE
 Telepathy
 
 TELEPATHY_TEXT
-Telepathic species are immune to mind-control and make it easier to research [[tech LRN_PSIONICS]].
+'''Telepathic species are immune to mind-control and make it easier to research [[tech LRN_PSIONICS]].
+
+List of Telepathic species:'''
 
 XENOPHOBIC_SPECIES_TITLE
 Xenophobic
@@ -6531,13 +6533,17 @@ Xenophobic
 XENOPHOBIC_SPECIES_TEXT
 '''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harassing the alien species, has not been determined) resulting in a reduced [[metertype METER_TARGET_POPULATION]].
 
-Xenophobic species start with [[tech CON_CONC_CAMP]].'''
+Xenophobic species start with [[tech CON_CONC_CAMP]].
+
+List of Xenophobic species:'''
 
 ARTISTIC_SPECIES_TITLE
 Artistic Trait
 
 ARTISTIC_SPECIES_TRAIT_TEXT
-Artistic species produce artistic works when their empire has adopted [[policy PLC_ARTISAN_WORKSHOPS]], which generates influence. Additionally, other planets with different artistic species in the same system are more stable.
+'''Artistic species produce artistic works when their empire has adopted [[policy PLC_ARTISAN_WORKSHOPS]], which generates influence. Additionally, other planets with different artistic species in the same system are more stable.
+
+List of Artistic species:'''
 
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
