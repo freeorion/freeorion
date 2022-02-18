@@ -806,12 +806,14 @@ void GovernmentWnd::PolicyPalette::ShowCategory(const std::string& category,
     }
     m_policies_list->ShowCategory(category, refresh_list);
     m_category_buttons[category]->SetCheck();
+    DoLayout();
 }
 
 void GovernmentWnd::PolicyPalette::ShowAllCategories(bool refresh_list) {
     m_policies_list->ShowAllCategories(refresh_list);
     for (auto& entry : m_category_buttons)
         entry.second->SetCheck();
+    DoLayout();
 }
 
 void GovernmentWnd::PolicyPalette::HideCategory(const std::string& category,
@@ -823,12 +825,14 @@ void GovernmentWnd::PolicyPalette::HideCategory(const std::string& category,
     }
     m_policies_list->HideCategory(category, refresh_list);
     m_category_buttons[category]->SetCheck(false);
+    DoLayout();
 }
 
 void GovernmentWnd::PolicyPalette::HideAllCategories(bool refresh_list) {
     m_policies_list->HideAllCategories(refresh_list);
     for (auto& entry : m_category_buttons)
         entry.second->SetCheck(false);
+    DoLayout();
 }
 
 void GovernmentWnd::PolicyPalette::ToggleCategory(const std::string& category, bool refresh_list) {
