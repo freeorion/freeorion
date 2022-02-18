@@ -330,10 +330,13 @@ namespace parse {
                                      const detail::condition_parser_grammar& condition_parser,
                                      const detail::value_ref_grammar<std::string>& string_grammar);
 
-        int_arithmetic_rules        int_rules;
-        double_parser_rules         double_rules;
-        detail::value_ref_rule<int> castable_expr;
-        detail::value_ref_rule<int> flexible_int;
+        int_arithmetic_rules                int_rules;
+        double_parser_rules                 double_rules;
+        detail::planet_type_parser_rules    planet_type_rules;
+        detail::value_ref_rule<int>         castable_expr;
+        detail::value_ref_rule<int>         enum_expr;
+        detail::value_ref_rule<int>         flexible_int;
+        detail::value_ref_rule<int>         enum_or_int;
     };
 }
 

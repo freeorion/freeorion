@@ -155,9 +155,9 @@ namespace parse::detail {
 
         comparison_binary_int
             = (( '('
-                >> int_rules.expr
+                >> castable_int_rules.enum_or_int
                 >> comparison_operator
-                >> int_rules.expr   // can't expect an (int) here, as it could actually be a (double) comparision with the first (double) cased from an (int)
+                >> castable_int_rules.enum_or_int // can't expect an (int) here, as it could actually be a (double) comparision with the first (double) casted from an (int)
                ) > ')'
               ) [ _val = construct_movable_(
                 new_<Condition::ValueTest>(
@@ -168,11 +168,11 @@ namespace parse::detail {
 
         comparison_trinary_int
             = (( '('
-               >> int_rules.expr
+               >> castable_int_rules.enum_or_int
                >> comparison_operator
-               >> int_rules.expr
+               >> castable_int_rules.enum_or_int
                >> comparison_operator
-               >> int_rules.expr   // only treat as trinary (int) comparison if all parameters are (int). otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
+               >> castable_int_rules.enum_or_int // only treat as trinary (int) comparison if all parameters are (int) or an enum. otherwise fall back to (double) comparison, which allows some of the parameters to be (int) casted to (double)
                ) > ')'
               ) [ _val = construct_movable_(
                 new_<Condition::ValueTest>(
@@ -294,7 +294,7 @@ namespace parse::detail {
         comparison_operator.name("comparison operator");
         string_comparison_operator.name("string comparison operator");
         comparison_operator.name("comparison operator");
-        comparison_binary_double.name("ValueTest Binary dou ble");
+        comparison_binary_double.name("ValueTest Binary double");
         comparison_trinary_double.name("ValueTest Trinary double");
         comparison_binary_string.name("ValueTest Binary string");
         comparison_trinary_string.name("ValueTest Trinary string");
