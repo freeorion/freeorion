@@ -351,7 +351,7 @@
     (PlanetEnvironment)                         \
     (PlanetID)                                  \
     (planetsize)                                \
-    (planettype)                                \
+    (PlanetType)                                \
     (PlanetTypeDifference)                      \
     (Playable)                                  \
     (PointDefense)                              \

@@ -16,7 +16,7 @@ namespace parse::detail {
         boost::spirit::qi::_val_type _val;
 
         variable_name
-            %=   tok.planettype_
+            %=   tok.PlanetType_
             |    tok.OriginalType_
             |    tok.NextCloserToOriginalPlanetType_
             |    tok.NextBetterPlanetType_
