@@ -1,11 +1,11 @@
 Part
-    name = "SP_CORE_ROTTEN"
-    description = "SP_CORE_ROTTEN_DESC"
+    name = "SP_ETHERIAL_ENERGY_ENFORCER"
+    description = "SP_ETHERIAL_ENERGY_ENFORCER_DESC"
     class = General
     damage = 0
     destroyFightersPerBattleMax = 0
     mountableSlotTypes = Core
-    buildcost = 200 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildcost = 250 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 7
     tags = [ "PEDIA_PC_GENERAL" ]
     location = All
@@ -21,6 +21,6 @@ Part
             stackinggroup = "ROTTEN_CORE_STACKING"
             effects = MoveTowards speed = -Target.Speed x = Source.X y = Source.Y
     ]
-    icon = "icons/ship_parts/rotten_core.png"
+    icon = "icons/ship_parts/etherial_energy_enforcer.png"
 
 #include "/scripting/common/upkeep.macros"
