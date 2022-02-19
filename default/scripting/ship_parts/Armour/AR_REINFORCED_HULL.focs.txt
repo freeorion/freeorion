@@ -1,0 +1,27 @@
+Part
+    name = "AR_REINFORCED_HULL"
+    description = "AR_REINFORCED_HULL_DESC"
+    class = Armour
+    capacity = 12
+    mountableSlotTypes = Core
+    buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 4
+    tags = [ "PEDIA_PC_ARMOUR" ]
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups =
+        // restore some hull without any preconditions, so in transit, in battle, always.
+        EffectsGroup
+            scope = And [
+                Ship
+                Source
+                OwnedBy empire = Source.Owner
+                Structure high = LocalCandidate.MaxStructure - 0.001
+            ]
+            effects = SetStructure value = Value + NamedRealLookup name = "AR_REINFORCING_HULL_BONUS"
+    icon = "icons/tech/structural_integrity_fields.png"
+
+#include "/scripting/common/upkeep.macros"
+#include "/scripting/common/misc.macros"

@@ -7,6 +7,10 @@ Tech
     researchturns = 3
     tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
     prerequisites = "CON_ARCH_MONOFILS"
+    unlock = [
+        Item type = ShipPart name = "AR_REINFORCED_HULL"
+    ]
+
     effectsgroups =
         EffectsGroup
             scope = And [

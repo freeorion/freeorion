@@ -15572,6 +15572,12 @@ ST_CLOAK_4_DESC
 
 Improves [[metertype METER_STEALTH]] of ship on which it is mounted by modulating the frequency of any matter waves emitted from the ship to match that of the background radiation. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
 
+AR_REINFORCED_HULL
+Self-Reinforcing Hull
+
+AR_REINFORCED_HULL_DESC
+Increases the max value for ship's hull [[metertype METER_STRUCTURE]] and regenerates it from within by [[value AR_REINFORCING_HULL_BONUS]] in every turn, even during transit or battle, as long as is damaged.
+
 AR_STD_PLATE
 Standard Armor Plating
 
