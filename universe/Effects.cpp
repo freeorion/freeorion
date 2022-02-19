@@ -793,68 +793,147 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
         return;
     }
 
-    // TODO: Handle efficiently the case where the part name varies from target
-    // to target, but the value is target-invariant
+
     if (!m_part_name->TargetInvariant()) {
         DebugLogger(effects) << "SetShipPartMeter::Execute has target-variant part name, which it is not (yet) coded to handle efficiently!";
-        Effect::Execute(context, targets);
+
+        if (targets.size() == 1) {
+            auto& target = targets.front();
+            if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                return;
+            auto ship = static_cast<Ship*>(target.get());
+
+            ScriptingContext target_context{context, target};
+            auto part_name = m_part_name->Eval(target_context);
+
+            if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
+                auto new_val = NewMeterValue(std::move(target_context), meter, m_value, target).first;
+                meter->SetCurrent(new_val);
+            }
+
+        } else if (m_value->TargetInvariant()) {
+            // meter value does not depend on target, so handle with single ValueRef evaluation
+            auto new_val = m_value->Eval(context);
+            for (auto& target : targets) {
+                if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                    continue;
+                auto ship = static_cast<Ship*>(target.get());
+
+                ScriptingContext target_context{context, target};
+                auto part_name = m_part_name->Eval(target_context);
+
+                if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
+                    meter->SetCurrent(new_val);
+            }
+
+        } else if (m_value->SimpleIncrement()) {
+            auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
+            auto op_type = op_ref->GetOpType();
+            auto rhs = op_ref->RHS()->Eval(context);
+            auto lhs_ref = op_ref->LHS();
+            assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
+
+            for (auto& target : targets) {
+                if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                    continue;
+                auto ship = static_cast<Ship*>(target.get());
+
+                ScriptingContext target_context{context, target};
+                auto part_name = m_part_name->Eval(target_context);
+
+                if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
+                    auto lhs = meter->Current();
+                    auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
+                    meter->SetCurrent(new_val);
+                }
+            }
+
+        } else {
+            // calculate new meter values before modifying anything...
+            std::vector<std::tuple<double, int, Meter*>> target_new_meter_vals;
+            target_new_meter_vals.reserve(targets.size());
+            for (auto& target : targets) {
+                if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                    continue;
+                auto ship = static_cast<Ship*>(target.get());
+
+                ScriptingContext target_context{context, target};
+                auto part_name = m_part_name->Eval(target_context);
+
+                if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
+                    target_new_meter_vals.emplace_back(
+                        NewMeterValue(std::move(target_context), m_meter, m_value, target).first, target->ID(), meter);
+            }
+
+            // set new meter values and update accounting
+            for (auto [new_val, target_id, meter] : target_new_meter_vals)
+                meter->SetCurrent(new_val);
+        }
+
         return;
     }
+
+
 
     // part name doesn't depend on target, so handle with single ValueRef evaluation
     std::string part_name = m_part_name->Eval(context);
 
-    if (m_value->TargetInvariant()) {
+    if (targets.size() == 1) {
+        auto& target = targets.front();
+        if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+            return;
+        auto ship = static_cast<Ship*>(target.get());
+
+        if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
+            auto new_val = NewMeterValue(context, meter, m_value, target).first;
+            meter->SetCurrent(new_val);
+        }
+
+    } else if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
-        float val = m_value->Eval(context);
+        auto new_val = m_value->Eval(context);
         for (auto& target : targets) {
             if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
                 continue;
-            auto ship = std::static_pointer_cast<Ship>(target);
-            if (Meter* m = ship->GetPartMeter(m_meter, part_name))
-                m->SetCurrent(val);
+            auto ship = static_cast<Ship*>(target.get());
+            if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
+                meter->SetCurrent(new_val);
         }
-        return;
 
     } else if (m_value->SimpleIncrement()) {
-        // meter value is a consistent constant increment for each target, so handle with
-        // deep inspection single ValueRef evaluation
-        auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
-        if (!op) {
-            ErrorLogger(effects) << "SetShipPartMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
-            Effect::Execute(context, targets);
-            return;
-        }
+        auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
+        auto op_type = op_ref->GetOpType();
+        auto rhs = op_ref->RHS()->Eval(context);
+        auto lhs_ref = op_ref->LHS();
+        assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
 
-        // LHS should be a reference to the target's meter's immediate value, but
-        // RHS should be target-invariant, so safe to evaluate once and use for
-        // all target objects
-        float increment = 0.0f;
-        if (op->GetOpType() == ValueRef::OpType::PLUS) {
-            increment = op->RHS()->Eval(context);
-        } else if (op->GetOpType() == ValueRef::OpType::MINUS) {
-            increment = -op->RHS()->Eval(context);
-        } else {
-            ErrorLogger(effects) << "SetShipPartMeter::Execute got invalid increment optype (not PLUS or MINUS). Reverting to standard execute.";
-            Effect::Execute(context, targets);
-            return;
-        }
-
-        //DebugLogger(effects) << "simple increment: " << increment;
-        // increment all target meters...
         for (auto& target : targets) {
             if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
                 continue;
-            auto ship = std::static_pointer_cast<Ship>(target);
-            if (Meter* m = ship->GetPartMeter(m_meter, part_name))
-                m->AddToCurrent(increment);
+            auto ship = static_cast<Ship*>(target.get());
+            if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
+                auto lhs = meter->Current();
+                auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
+                meter->SetCurrent(new_val);
+            }
         }
-        return;
 
     } else {
-        //DebugLogger(effects) << "complicated meter adjustment...";
-        // meter value depends on target non-trivially, so handle with default case of per-target ValueRef evaluation
-        Effect::Execute(context, targets);
+        // calculate new meter values before modifying anything...
+        std::vector<std::tuple<double, int, Meter*>> target_new_meter_vals;
+        target_new_meter_vals.reserve(targets.size());
+        for (auto& target : targets) {
+            if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                continue;
+            auto ship = static_cast<Ship*>(target.get());
+            if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
+                target_new_meter_vals.emplace_back(
+                    NewMeterValue(context, m_meter, m_value, target).first, target->ID(), meter);
+        }
+
+        // set new meter values and update accounting
+        for (auto [new_val, target_id, meter] : target_new_meter_vals)
+            meter->SetCurrent(new_val);
     }
 }
 
