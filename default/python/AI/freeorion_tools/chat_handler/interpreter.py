@@ -18,6 +18,8 @@ class DebugInterpreter:
 
         sys.stdout = StringIO()
         sys.stderr = StringIO()
+        if msg.endswith(";"):
+            msg = msg.replace(";", "\n")
         handler = logging.StreamHandler(sys.stdout)
         logging.getLogger().addHandler(handler)
         self._interpreter.runsource(msg)

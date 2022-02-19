@@ -36,7 +36,8 @@ https://www.freeorion.org/index.php/Python_Development#Deploying_code
 freeorion --ai-config freeorion\default\python\handlers\inspect_interface_config.ini 
 ```
 `freeorion` is a path to the game binary (freeorion.exe on Windows).
-`freeorion\default\python\handlers\inspect_interface_config.ini` path to file in this repository
+`freeorion\default\python\handlers\inspect_interface_config.ini` path to file in this repository. Note that relative pathes may not work, better specify an absolute path.
+
 
 Starting new game and wait until it exits to main menu with an error.
 
@@ -52,16 +53,27 @@ Each PR will be checked automatically, but you still can run checks manually.
 Fixing all issues are mandatory before merging PR.
 
 We use [flake8](https://pypi.python.org/pypi/flake8) for code style checks.
-Settings for it located in the `tox.ini`.
+Settings for flake8 located in the `tox.ini`.
+
+We use [black](https://pypi.org/project/black/) for code formatting.
+Settings for black are located in `pyproject.toml`.
 
 ## Install dependencies
 
 ```sh
-pip isntall -r default/python/requirements-dev.txt
+pip install flake8==3.7.9
+pip install black
+```
+
+## Format python files
+Black can be run on the top level directory:
+
+```sh
+black .
 ```
 
 ## Run checks
-This script should be run from directory where `tox.ini` located
+Flake should be run from directory where `tox.ini` located
 
 ```sh
 cd default/python
