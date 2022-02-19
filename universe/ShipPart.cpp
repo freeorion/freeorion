@@ -439,25 +439,27 @@ float ShipPart::ProductionCost(int empire_id, int location_id, const ScriptingCo
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_cost)
         return 1.0f;
 
+    constexpr int PRODUCTION_BLOCK_SIZE = 1;
+
     if (m_production_cost->ConstantExpr()) {
         return static_cast<float>(m_production_cost->Eval());
     } else if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant()) {
-        ScriptingContext temp_context; // TODO: replace with passed-in context
-        return static_cast<float>(m_production_cost->Eval(ScriptingContext(temp_context, in_design_id)));
+        const ScriptingContext design_id_context{
+            context, nullptr, nullptr, in_design_id, PRODUCTION_BLOCK_SIZE};
+        return static_cast<float>(m_production_cost->Eval(design_id_context));
     }
+
 
     const ObjectMap& objects{context.ContextObjects()};
     auto location = objects.get(location_id);
     if (!location && !m_production_cost->TargetInvariant())
         return ARBITRARY_LARGE_COST;
 
-    std::shared_ptr<const UniverseObject> source;
-    if (auto empire = context.GetEmpire(empire_id))
-        source = empire->Source(context.ContextObjects());
+    auto empire = context.GetEmpire(empire_id);
+    auto source = empire ? empire->Source(context.ContextObjects()) : nullptr;
     if (!source && !m_production_cost->SourceInvariant())
         return ARBITRARY_LARGE_COST;
 
-    constexpr int PRODUCTION_BLOCK_SIZE = 1;
 
     const ScriptingContext design_id_context{
         context, std::move(source),
@@ -473,10 +475,14 @@ int ShipPart::ProductionTime(int empire_id, int location_id, const ScriptingCont
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
         return 1;
 
+    constexpr int PRODUCTION_BLOCK_SIZE = 1;
+
     if (m_production_time->ConstantExpr()) {
         return m_production_time->Eval();
     } else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant()) {
-        return m_production_time->Eval(ScriptingContext{context, in_design_id});
+        const ScriptingContext design_id_context{
+            context, nullptr, nullptr, in_design_id, PRODUCTION_BLOCK_SIZE};
+        return m_production_time->Eval(design_id_context);
     }
 
     const ObjectMap& objects{context.ContextObjects()};
@@ -489,8 +495,6 @@ int ShipPart::ProductionTime(int empire_id, int location_id, const ScriptingCont
         source = empire->Source(context.ContextObjects());
     if (!source && !m_production_time->SourceInvariant())
         return ARBITRARY_LARGE_TURNS;
-
-    constexpr int PRODUCTION_BLOCK_SIZE = 1;
 
     const ScriptingContext design_id_context{
         context, std::move(source),

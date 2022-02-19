@@ -138,6 +138,54 @@ struct ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
+    ScriptingContext(ScriptingContext&& parent_context,
+                     const CurrentValueVariant& current_value_) :
+        source(                   std::move(parent_context.source)),
+        effect_target(            std::move(parent_context.effect_target)),
+        condition_root_candidate( std::move(parent_context.condition_root_candidate)),
+        condition_local_candidate(std::move(parent_context.condition_local_candidate)),
+        current_value(            current_value_),
+        combat_bout(              parent_context.combat_bout),
+        current_turn(             parent_context.current_turn),
+        in_design_id(             parent_context.in_design_id),
+        production_block_size(    parent_context.production_block_size),
+        galaxy_setup_data(        parent_context.galaxy_setup_data),
+        species(                  parent_context.species),
+        supply(                   parent_context.supply),
+        universe(                 parent_context.universe),
+        const_universe(           parent_context.const_universe),
+        objects(                  parent_context.objects),
+        const_objects(            parent_context.const_objects),
+        empire_object_vis(        parent_context.empire_object_vis),
+        empire_object_vis_turns(  parent_context.empire_object_vis_turns),
+        empires(                  parent_context.empires),
+        const_empires(            parent_context.const_empires),
+        diplo_statuses(           parent_context.diplo_statuses)
+    {}
+
+    // disable implicit conversions to CurrentValueVariant
+    ScriptingContext(ScriptingContext&&, int) = delete;
+    ScriptingContext(const ScriptingContext&, int) = delete;
+    ScriptingContext(ScriptingContext&&, double) = delete;
+    ScriptingContext(const ScriptingContext&, double) = delete;
+    ScriptingContext(ScriptingContext&&, PlanetType) = delete;
+    ScriptingContext(const ScriptingContext&, PlanetType) = delete;
+    ScriptingContext(ScriptingContext&&, PlanetSize) = delete;
+    ScriptingContext(const ScriptingContext&, PlanetSize) = delete;
+    ScriptingContext(ScriptingContext&&, ::PlanetEnvironment) = delete;
+    ScriptingContext(const ScriptingContext&, ::PlanetEnvironment) = delete;
+    ScriptingContext(ScriptingContext&&, StarType) = delete;
+    ScriptingContext(const ScriptingContext&, StarType) = delete;
+    ScriptingContext(ScriptingContext&&, UniverseObjectType) = delete;
+    ScriptingContext(const ScriptingContext&, UniverseObjectType) = delete;
+    ScriptingContext(ScriptingContext&&, Visibility) = delete;
+    ScriptingContext(const ScriptingContext&, Visibility) = delete;
+    ScriptingContext(ScriptingContext&&, std::string) = delete;
+    ScriptingContext(const ScriptingContext&, std::string) = delete;
+    ScriptingContext(ScriptingContext&&, std::vector<std::string>) = delete;
+    ScriptingContext(const ScriptingContext&, std::vector<std::string>) = delete;
+
+
     ScriptingContext(const ScriptingContext& parent_context,
                      std::shared_ptr<const UniverseObject> source_,
                      std::shared_ptr<UniverseObject> target_,
@@ -191,6 +239,55 @@ struct ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
+    ScriptingContext(ScriptingContext&& parent_context,
+                     std::shared_ptr<UniverseObject> target_,
+                     const CurrentValueVariant& current_value_) :
+        source(                   std::move(parent_context.source)),
+        effect_target(            std::move(target_)),
+        condition_root_candidate( std::move(parent_context.condition_root_candidate)),
+        condition_local_candidate(std::move(parent_context.condition_local_candidate)),
+        current_value(            current_value_),
+        combat_bout(              parent_context.combat_bout),
+        current_turn(             parent_context.current_turn),
+        in_design_id(             parent_context.in_design_id),
+        production_block_size(    parent_context.production_block_size),
+        galaxy_setup_data(        parent_context.galaxy_setup_data),
+        species(                  parent_context.species),
+        supply(                   parent_context.supply),
+        universe(                 parent_context.universe),
+        const_universe(           parent_context.const_universe),
+        objects(                  parent_context.objects),
+        const_objects(            parent_context.const_objects),
+        empire_object_vis(        parent_context.empire_object_vis),
+        empire_object_vis_turns(  parent_context.empire_object_vis_turns),
+        empires(                  parent_context.empires),
+        const_empires(            parent_context.const_empires),
+        diplo_statuses(           parent_context.diplo_statuses)
+    {}
+
+
+    // disable implicit conversions to CurrentValueVariant
+    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, int) = delete;
+    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, int) = delete;
+    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, double) = delete;
+    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, double) = delete;
+    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, PlanetType) = delete;
+    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, PlanetType) = delete;
+    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, PlanetSize) = delete;
+    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, PlanetSize) = delete;
+    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, ::PlanetEnvironment) = delete;
+    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, ::PlanetEnvironment) = delete;
+    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, StarType) = delete;
+    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, StarType) = delete;
+    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, UniverseObjectType) = delete;
+    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, UniverseObjectType) = delete;
+    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, Visibility) = delete;
+    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, Visibility) = delete;
+    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, std::string) = delete;
+    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, std::string) = delete;
+    ScriptingContext(ScriptingContext&&, std::shared_ptr<UniverseObject>, std::vector<std::string>) = delete;
+    ScriptingContext(const ScriptingContext&, std::shared_ptr<UniverseObject>, std::vector<std::string>) = delete;
+
     ScriptingContext(std::shared_ptr<const UniverseObject> source_,
                      std::shared_ptr<UniverseObject> target_) :
         source(std::move(source_)),
@@ -225,7 +322,7 @@ struct ScriptingContext {
     ScriptingContext(const Universe& universe, const EmpireManager& empires_,
                      std::shared_ptr<const UniverseObject> source_ = nullptr,
                      std::shared_ptr<UniverseObject> target_ = nullptr,
-                     const CurrentValueVariant& current_value_ = CurrentValueVariant()) :
+                     const CurrentValueVariant& current_value_ = DEFAULT_CURRENT_VALUE) :
         source(        std::move(source_)),
         effect_target( std::move(target_)),
         current_value( current_value_),
