@@ -13552,6 +13552,12 @@ Planetary Barrier Shield 5
 DEF_PLAN_BARRIER_SHLD_5_DESC
 Increases max [[metertype METER_SHIELD]] on planets by an additional 150, cumulative with other shield boosts and regenerates each turn by one plus the greater of (i)  5 times the value of the planets' [[metertype METER_CONSTRUCTION]] or (ii) 32 (so long as the shields are not already knocked below 14).
 
+DEF_MONSTER_BLOCKER
+System Defence Ping
+
+DEF_MONSTER_BLOCKER_DESC
+How to use the electromagnetic spectrum in creative ways as a form of mega-fauna-deterrent. This technology is all about pumping powerful ping signals into space, modulating them in such a way as to frighten roaming space monsters off engough so they will never decide to visit a star system containing a source pinging in this manner.
+
 DEF_SYST_DEF_MINE_1
 System Defense Mines 1
 
@@ -14711,6 +14717,12 @@ Remote Terraforming
 
 BLD_REMOTE_TERRAFORM_DESC
 Terraforms a world one step closer to the [[encyclopedia ENVIRONMENT_TITLE]] preference of the inhabiting species. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
+
+BLD_MONSTER_BLOCKER
+Monster Blocker
+
+BLD_MONSTER_BLOCKER_DESC
+Pumps powerful ping signals into space, modulated in such a way as to frighten roaming space monsters off engough so they will never decide to visit a star system containing one of these buildings. An unintentional side effect of anti-megafauna-pinging is, that stealth of all objects in the same system is reduced by 5.
 
 BLD_NEST_ERADICATOR
 Nest Eradicator
