@@ -112,7 +112,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
 
     // get system name
-    const std::string& system_name = system->ApparentName(
+    std::string system_name = system->ApparentName(
         client_empire_id, universe, blank_unexplored_and_none);
 
     // loop through planets in system, checking if any are a homeworld, capital

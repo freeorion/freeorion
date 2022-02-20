@@ -177,8 +177,8 @@ std::string System::Dump(unsigned short ntabs) const {
     return retval;
 }
 
-const std::string& System::ApparentName(int empire_id, const Universe& u,
-                                        bool blank_unexplored_and_none) const
+std::string System::ApparentName(int empire_id, const Universe& u,
+                                 bool blank_unexplored_and_none) const
 {
     static const std::string EMPTY_STRING;
 
@@ -194,9 +194,9 @@ const std::string& System::ApparentName(int empire_id, const Universe& u,
             return EMPTY_STRING;
 
         if (m_star == StarType::INVALID_STAR_TYPE)
-            return UserString("UNEXPLORED_REGION");
+            return m_name + UserString("UNEXPLORED_REGION");
         else
-            return UserString("UNEXPLORED_SYSTEM");
+            return m_name + UserString("UNEXPLORED_SYSTEM");
     }
 
     if (m_star == StarType::STAR_NONE) {
@@ -209,8 +209,7 @@ const std::string& System::ApparentName(int empire_id, const Universe& u,
             //DebugLogger() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< EMPTY_STRING;
             return EMPTY_STRING;
         }
-        //DebugLogger() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< UserString("EMPTY_SPACE");
-        return UserString("EMPTY_SPACE");
+        return m_name + UserString("EMPTY_SPACE");
     }
 
     return this->PublicName(empire_id, u); // todo get Objects from inputs
