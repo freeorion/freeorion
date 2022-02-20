@@ -478,7 +478,7 @@ namespace {
         }
         else if (dir_name == "ENC_SYSTEM") {
             for (auto& system : objects.all<System>()) {
-                const std::string& sys_name = system->ApparentName(client_empire_id, universe);
+                std::string sys_name = system->ApparentName(client_empire_id, universe);
                 retval.emplace(
                     sys_name,
                     std::pair{LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name).append("  "),
@@ -1924,7 +1924,7 @@ namespace {
                 auto&& fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(),
                                                      obj->PublicName(client_empire_id, universe));
                 if (auto system = objects.getRaw<System>(obj->SystemID())) {
-                    auto& sys_name = system->ApparentName(client_empire_id, universe);
+                    auto sys_name = system->ApparentName(client_empire_id, universe);
                     auto&& system_link = LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name);
                     detailed_description += str(FlexibleFormat(UserString("OWNED_FLEET_AT_SYSTEM"))
                                             % fleet_link % system_link);

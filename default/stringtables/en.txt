@@ -204,13 +204,13 @@ NEW_ASTEROIDS_SUFFIX
 [[PT_ASTEROIDS]]
 
 EMPTY_SPACE
-Deep Space
+''' (empty)'''
 
 UNEXPLORED_REGION
-Unexplored Region
+''' (unexplored)'''
 
 UNEXPLORED_SYSTEM
-Unexplored System
+''' (unexplored)'''
 
 NOT_APPLICABLE
 N/A

@@ -3816,7 +3816,7 @@ std::string FleetWnd::TitleText() const {
     auto empire = empires.GetEmpire(m_empire_id);
 
     if (auto system = objects.get<System>(m_system_id)) {
-        const std::string& sys_name = system->ApparentName(client_empire_id, u);
+        std::string sys_name = system->ApparentName(client_empire_id, u);
         return (empire
                 ? boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
                                  empire->Name() % sys_name)

@@ -25,7 +25,6 @@ namespace {
     bool temp_bool = RegisterGameRules(&AddRules);
 }
 
-
 System::System(StarType star, std::string name, double x, double y,
                int current_turn, const Universe& universe) :
     UniverseObject{std::move(name), x, y, ALL_EMPIRES, current_turn, universe},
@@ -178,8 +177,8 @@ std::string System::Dump(unsigned short ntabs) const {
     return retval;
 }
 
-const std::string& System::ApparentName(int empire_id, const Universe& u,
-                                        bool blank_unexplored_and_none) const
+std::string System::ApparentName(int empire_id, const Universe& u,
+                                 bool blank_unexplored_and_none) const
 {
     static const std::string EMPTY_STRING;
 
@@ -194,10 +193,17 @@ const std::string& System::ApparentName(int empire_id, const Universe& u,
         if (blank_unexplored_and_none)
             return EMPTY_STRING;
 
-        if (m_star == StarType::INVALID_STAR_TYPE)
-            return UserString("UNEXPLORED_REGION");
-        else
-            return UserString("UNEXPLORED_SYSTEM");
+        if (m_star == StarType::INVALID_STAR_TYPE) {
+            std::string s;
+            s.append(m_name).append(UserString("UNEXPLORED_REGION"));
+            //DebugLogger() << "System::ApparentName UNEXPLORED_REGION (" << ID() << "), returning name " << s;
+            return s;
+        } else {
+            std::string s;
+            s.append(m_name).append(UserString("UNEXPLORED_SYSTEM"));
+            //DebugLogger() << "System::ApparentName UNEXPLORED_SYSTEM (" << ID() << "), returning name " << s;
+            return s;
+        }
     }
 
     if (m_star == StarType::STAR_NONE) {
@@ -210,8 +216,11 @@ const std::string& System::ApparentName(int empire_id, const Universe& u,
             //DebugLogger() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< EMPTY_STRING;
             return EMPTY_STRING;
         }
-        //DebugLogger() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< UserString("EMPTY_SPACE");
-        return UserString("EMPTY_SPACE");
+        std::string s;
+        s.reserve(32);
+        s.append(m_name).append(UserString("EMPTY_SPACE"));
+        //DebugLogger() << "System::ApparentName No-Star System (" << ID() << "), returning name " << s;
+        return s;
     }
 
     return this->PublicName(empire_id, u); // todo get Objects from inputs
