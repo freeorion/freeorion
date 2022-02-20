@@ -55,7 +55,7 @@ Policy
             effects = GenerateSitRepMessage
                 message = "SITREP_BUREAUCRACY_STOPPED"
                 label = "SITREP_BUREAUCRACY_STOPPED_LABEL"
-                icon = "icons/policies/bureaucracy.png"
+                icon = "icons/policies/economic_bureaucracy.png"
                 parameters = [
                     tag = "havebuildings" data = Statistic Count condition = And [
                         Or [
