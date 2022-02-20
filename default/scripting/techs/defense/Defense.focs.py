@@ -73,20 +73,20 @@ Tech(
 )
 
 Tech(
-    name="DEF_MONSTER_BLOCKER"
-    ,description="DEF_MONSTER_BLOCKER_DESC"
-    ,short_description="DEFENSE_SHORT_DESC"
-    ,category="DEFENSE_CATEGORY"
-    ,researchcost=100 * TECH_COST_MULTIPLIER
-    ,researchturns=8
-    ,tags=["PEDIA_DEFENSE_CATEGORY"]
-    ,prerequisites=[
-        "DEF_SYST_DEF_MINE_1"
-        ,"PRO_ORBITAL_GEN"
-        ,"SPY_LIGHTHOUSE"
-    ]
-    ,unlock=Item(type=Building, name="BLD_MONSTER_BLOCKER")
-    ,graphic="icons/building/nest_eradicator.png"
+    name="DEF_MONSTER_BLOCKER",
+    description="DEF_MONSTER_BLOCKER_DESC",
+    short_description="DEFENSE_SHORT_DESC",
+    category="DEFENSE_CATEGORY",
+    researchcost=100 * TECH_COST_MULTIPLIER,
+    researchturns=8,
+    tags=["PEDIA_DEFENSE_CATEGORY"],
+    prerequisites=[
+        "DEF_SYST_DEF_MINE_1",
+        "PRO_ORBITAL_GEN",
+        "SPY_LIGHTHOUSE",
+    ],
+    unlock=Item(type=Building, name="BLD_MONSTER_BLOCKER"),
+    graphic="icons/building/nest_eradicator.png",
 )
 
 Tech(
