@@ -1692,7 +1692,7 @@ namespace {
         DebugLogger() << "Recovering fighters at end of combat...";
 
         // count still-existing and not destroyed fighters at end of combat
-        for (const auto& obj : combat_info.objects->all()) { // TODO: call this iterate over <Fighter> and avoid the dynamic_pointer_cast ?
+        for (const auto& obj : combat_info.objects->all()) { // TODO: call this iterate over <Fighter> and avoid the dynamic_pointer_cast ? would require a dedicated Fighter map in ObjectMap
             if (obj->ID() >= 0)
                 continue;
             auto fighter = std::dynamic_pointer_cast<Fighter>(obj);
