@@ -17843,7 +17843,7 @@ De grâce, épargnez vos humbles serviteurs, et notre gratitude sera éternelle!
 AI_FIRST_TURN_GREETING_MSG201
 Laissez-nous en paix!
 
-AI_FIRST_TURN_GREETING_MSG203
+AI_FIRST_TURN_GREETING_MSG202
 Laissez-nous en paix, et nous ferons de même!
 
 AI_FIRST_TURN_GREETING_MSG301
