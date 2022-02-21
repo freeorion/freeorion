@@ -17843,7 +17843,7 @@ Please spare your humble servants, and our gratitude shall be forever yours!
 AI_FIRST_TURN_GREETING_MSG201
 Stay the hell away from us!
 
-AI_FIRST_TURN_GREETING_MSG203
+AI_FIRST_TURN_GREETING_MSG202
 Stay away from us, and we will stay away from you!
 
 AI_FIRST_TURN_GREETING_MSG301
