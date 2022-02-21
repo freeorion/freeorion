@@ -392,7 +392,7 @@ void StateButtonRepresenter::DoLayout(const GG::StateButton& button, Pt& button_
     Y bn_y = button_ul.y;
     Flags<TextFormat> format = button.GetLabel()->GetTextFormat();
     Flags<TextFormat> original_format = format;
-    constexpr double SPACING = 0.5;    // the space to leave between the button and text, as a factor of the button's size (width or height)
+    static constexpr double SPACING = 0.5;    // the space to leave between the button and text, as a factor of the button's size (width or height)
     if (format & FORMAT_VCENTER)       // center button vertically
         bn_y = (h - BN_H) / 2.0 + 0.5;
     if (format & FORMAT_TOP) {         // put button at top, text just below
@@ -464,8 +464,8 @@ void BeveledCheckBoxRepresenter::Render(const GG::StateButton& button) const
     bn_ul += cl_ul;
     bn_lr += cl_ul;
 
-    constexpr int BEVEL = 2;
-    constexpr Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
+    static constexpr int BEVEL = 2;
+    static constexpr Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
 
     BeveledRectangle(bn_ul, bn_lr,
                      button.Disabled() ? DisabledColor(m_int_color) : m_int_color,
@@ -499,8 +499,8 @@ void BeveledRadioRepresenter::Render(const GG::StateButton& button) const
     bn_ul += cl_ul;
     bn_lr += cl_ul;
 
-    constexpr int BEVEL = 2;
-    constexpr Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
+    static constexpr int BEVEL = 2;
+    static constexpr Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
 
     BeveledCircle(bn_ul, bn_lr,
                   button.Disabled() ? DisabledColor(m_int_color) : m_int_color,
@@ -524,7 +524,7 @@ Pt BeveledTabRepresenter::MinUsableSize(const StateButton& button) const
 ////////////////////////////////////////////////
 void BeveledTabRepresenter::Render(const StateButton& button) const
 {
-    constexpr int BEVEL = 2;
+    static constexpr int BEVEL = 2;
 
     // draw button
     Pt cl_ul = button.ClientUpperLeft();

@@ -97,8 +97,8 @@ void ServerConnectWnd::CompleteConstruction() {
     m_ok_bn = Wnd::Create<CUIButton>(UserString("OK"));
     m_cancel_bn = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
-    constexpr GG::X OK_CANCEL_BUTTON_WIDTH(100);
-    constexpr int CONTROL_MARGIN = 5;
+    static constexpr GG::X OK_CANCEL_BUTTON_WIDTH(100);
+    static constexpr int CONTROL_MARGIN = 5;
 
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 8, 4, CONTROL_MARGIN);
     layout->SetMinimumColumnWidth(0, player_name_label->MinUsableSize().x + CONTROL_MARGIN);

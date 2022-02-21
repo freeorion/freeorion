@@ -2270,7 +2270,7 @@ void SidePanel::PlanetPanel::Render() {
     glLineWidth(1.0f);
 
     // disable greyover
-    constexpr GG::Clr HALF_GREY(128, 128, 128, 128);
+    static constexpr GG::Clr HALF_GREY(128, 128, 128, 128);
     if (Disabled()) {
         glColor(HALF_GREY);
         glDrawArrays(GL_TRIANGLE_FAN, 4, verts.size() - 4);
@@ -3373,13 +3373,13 @@ void SidePanel::RefreshImpl() {
     }
 
     // Resource meters; show only for player planets
-    constexpr std::array<std::pair<MeterType, MeterType>, 4> resource_meters =
+    static constexpr std::array<std::pair<MeterType, MeterType>, 4> resource_meters =
         {{{MeterType::METER_INDUSTRY,  MeterType::METER_TARGET_INDUSTRY},
           {MeterType::METER_RESEARCH,  MeterType::METER_TARGET_RESEARCH},
           {MeterType::METER_INFLUENCE, MeterType::METER_TARGET_INFLUENCE},
           {MeterType::METER_STOCKPILE, MeterType::METER_MAX_STOCKPILE}}};
     // general meters; show only if all planets are owned by same empire
-    constexpr std::array<std::pair<MeterType, MeterType>, 4> general_meters =
+    static constexpr std::array<std::pair<MeterType, MeterType>, 4> general_meters =
         {{{MeterType::METER_SHIELD,  MeterType::METER_MAX_SHIELD},
           {MeterType::METER_DEFENSE, MeterType::METER_MAX_DEFENSE},
           {MeterType::METER_TROOPS,  MeterType::METER_MAX_TROOPS},

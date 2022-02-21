@@ -1234,7 +1234,7 @@ void MultiEdit::AdjustScrolls()
 
     Pt orig_cl_sz = ClientSize();
 
-    constexpr int GAP = PIXEL_MARGIN - 2; // the space between the client area and the border
+    static constexpr int GAP = PIXEL_MARGIN - 2; // the space between the client area and the border
 
     const auto& style = GetStyleFactory();
 
@@ -1250,7 +1250,7 @@ void MultiEdit::AdjustScrolls()
     Y vscroll_max = vscroll_min + m_contents_sz.y - 1;
     X hscroll_max = hscroll_min + m_contents_sz.x - 1;
 
-    constexpr int INT_GAP = static_cast<int>(GAP);
+    static constexpr int INT_GAP = static_cast<int>(GAP);
     if (m_vscroll) { // if scroll already exists...
         if (!need_vert) { // remove scroll
             DetachChild(m_vscroll.get());

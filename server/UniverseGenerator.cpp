@@ -316,7 +316,7 @@ namespace {
             (void)lanes;
             accessibleSystemsMap.emplace_hint(accessibleSystemsMap.end(), sys, -1);
         }
-        constexpr int mapped_type_max = std::numeric_limits<decltype(accessibleSystemsMap)::mapped_type>::max();
+        static constexpr int mapped_type_max = std::numeric_limits<decltype(accessibleSystemsMap)::mapped_type>::max();
         maxLaneJumps = std::min(maxLaneJumps, mapped_type_max);
 
         // add starting system to list and set of accessible systems
@@ -836,7 +836,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data) {
         if (color_it != colors.end())
             colors.erase(color_it);
 
-        constexpr EmpireColor CLR_ZERO{{0, 0, 0, 0}};
+        static constexpr EmpireColor CLR_ZERO{{0, 0, 0, 0}};
 
         // if no colour already set, do so automatically
         if (empire_colour == CLR_ZERO) {

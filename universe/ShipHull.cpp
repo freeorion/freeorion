@@ -282,7 +282,7 @@ float ShipHull::ProductionCost(int empire_id, int location_id,
     if (m_production_cost->ConstantExpr())
         return static_cast<float>(m_production_cost->Eval());
 
-    constexpr int PRODUCTION_BLOCK_SIZE = 1;
+    static constexpr int PRODUCTION_BLOCK_SIZE = 1;
 
     if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant()) {
         const ScriptingContext design_id_context{
@@ -315,7 +315,7 @@ int ShipHull::ProductionTime(int empire_id, int location_id,
     if (m_production_time->ConstantExpr())
         return m_production_time->Eval();
 
-    constexpr int PRODUCTION_BLOCK_SIZE = 1;
+    static constexpr int PRODUCTION_BLOCK_SIZE = 1;
 
     if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant()) {
         const ScriptingContext design_id_context{

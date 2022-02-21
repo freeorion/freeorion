@@ -721,7 +721,7 @@ namespace {
         m_selected = b;
 
         const GG::Clr& unselected_text_color = ClientUI::TextColor();
-        constexpr GG::Clr selected_text_color = GG::CLR_BLACK;
+        static constexpr GG::Clr selected_text_color = GG::CLR_BLACK;
 
         GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
 
@@ -1831,7 +1831,7 @@ void FleetDataPanel::Init() {
 
 void FleetDataPanel::ColorTextForSelect() {
     const GG::Clr& unselected_text_color = ClientUI::TextColor();
-    constexpr GG::Clr selected_text_color = GG::CLR_BLACK;
+    static constexpr GG::Clr selected_text_color = GG::CLR_BLACK;
 
     GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
 
@@ -3217,7 +3217,7 @@ void FleetWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
 void FleetWnd::DoLayout() {
     const GG::X TOTAL_WIDTH(ClientWidth());
-    constexpr GG::X LEFT{0};
+    static constexpr GG::X LEFT{0};
     const GG::X RIGHT(TOTAL_WIDTH);
 
     const GG::Y TOTAL_HEIGHT(ClientHeight());

@@ -38,8 +38,8 @@ namespace {
     { db.Add("ui." + PROD_PEDIA_WND_NAME + ".hidden.enabled", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false); }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    constexpr int MAX_PRODUCTION_TURNS = 200;
-    constexpr float EPSILON = 0.001f;
+    static constexpr int MAX_PRODUCTION_TURNS = 200;
+    static constexpr float EPSILON = 0.001f;
 
     int ProductionTurns(float total_cost, int minimum_production_time, float local_pp_output,
                         float stockpile, float stockpile_limit_per_turn)
@@ -1330,7 +1330,7 @@ void BuildDesignatorWnd::InitializeWindows() {
     GG::X queue_width(GetOptionsDB().Get<int>("ui.queue.width"));
 
     const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("ui.map.sidepanel.width"));
-    constexpr GG::Y PANEL_HEIGHT{240};
+    static constexpr GG::Y PANEL_HEIGHT{240};
 
     const GG::Pt pedia_ul(queue_width, GG::Y0);
     const GG::Pt pedia_wh(Width() - SIDEPANEL_WIDTH - queue_width, PANEL_HEIGHT);

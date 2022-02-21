@@ -379,7 +379,7 @@ void RoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_col
 
     int rad = static_cast<int>(corner_radius);
 
-    constexpr float color_scale_factor1 = (SQRT2OVER2 * (0 + 1) + 1) / 2;
+    static constexpr float color_scale_factor1 = (SQRT2OVER2 * (0 + 1) + 1) / 2;
     Clr clr = BlendClr(border_color1, border_color2, color_scale_factor1);
     // top
     vert_buf.store(lr.x - rad,      ul.y);
@@ -395,7 +395,7 @@ void RoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_col
         colour_buf.store(clr);
 
 
-    constexpr float color_scale_factor2 = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
+    static constexpr float color_scale_factor2 = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
     clr = BlendClr(border_color1, border_color2, color_scale_factor2);
     // right
     vert_buf.store(lr.x,            ul.y + rad);
@@ -456,7 +456,7 @@ void BubbleRectangle(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, unsigned 
     int rad = static_cast<int>(corner_radius);
 
     // top
-    constexpr float color_scale_factor1 = (SQRT2OVER2 * (0 + 1) + 1) / 2;
+    static constexpr float color_scale_factor1 = (SQRT2OVER2 * (0 + 1) + 1) / 2;
     Clr scaled_color = BlendClr(color2, color3, color_scale_factor1);
 
     GL2DVertexBuffer verts;
@@ -484,7 +484,7 @@ void BubbleRectangle(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, unsigned 
     verts.store(ul.x + rad, ul.y + rad);
 
     // right
-    constexpr float color_scale_factor2 = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
+    static constexpr float color_scale_factor2 = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
     scaled_color = BlendClr(color2, color3, color_scale_factor2);
     colours.store(color1);
     colours.store(color1);
@@ -545,7 +545,7 @@ void glColor(const Clr& clr)
 Clr GG::DisabledColor(Clr clr)
 {
     Clr retval = clr;
-    constexpr double gray_factor = 0.75; // amount to move clr in the direction of gray
+    static constexpr double gray_factor = 0.75; // amount to move clr in the direction of gray
     retval.r = static_cast<int>(retval.r + (CLR_GRAY.r - retval.r) * gray_factor);
     retval.g = static_cast<int>(retval.g + (CLR_GRAY.g - retval.g) * gray_factor);
     retval.b = static_cast<int>(retval.b + (CLR_GRAY.b - retval.b) * gray_factor);

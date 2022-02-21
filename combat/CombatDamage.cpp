@@ -114,8 +114,8 @@ namespace {
                                                  const ScriptingContext& context)
     {
         // create temporary ship to test targetting condition on...
-        constexpr float shields = 0.0f;
-        constexpr float structure = 100.0f;
+        static constexpr float shields = 0.0f;
+        static constexpr float structure = 100.0f;
 
         if (!template_ship) {
             ErrorLogger() << "TempShipForDamageCalcs passed null template ship";

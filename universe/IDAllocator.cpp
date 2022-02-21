@@ -89,10 +89,10 @@ int IDAllocator::NewID() {
 }
 
 std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id, const int checked_empire_id) {
-    constexpr std::pair<bool, bool> hard_fail = {false, false};
-    constexpr std::pair<bool, bool> complete_success = {true, true};
+    static constexpr std::pair<bool, bool> hard_fail = {false, false};
+    static constexpr std::pair<bool, bool> complete_success = {true, true};
     // allow legacy loading and order processing
-    constexpr std::pair<bool, bool> legacy_success = {true, false};
+    static constexpr std::pair<bool, bool> legacy_success = {true, false};
 
     if (checked_id == m_invalid_id) {
         ErrorLogger() << m_invalid_id << " is an invalid id.";

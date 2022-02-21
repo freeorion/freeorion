@@ -851,7 +851,7 @@ void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void OptionsWnd::DoLayout() {
-    constexpr GG::X BUTTON_WIDTH{75};
+    static constexpr GG::X BUTTON_WIDTH{75};
     const GG::Y BUTTON_HEIGHT(ClientUI::GetFont()->Lineskip() + 6);
 
     GG::Pt done_button_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN));

@@ -853,7 +853,7 @@ private:
             return;
         const std::string& condition_key = condition_row->GetKey();
 
-        constexpr GG::X PAD{3};
+        static constexpr GG::X PAD{3};
         GG::X param_widget_left = DropListWidth() + PAD;
         GG::Y param_widget_top = GG::Y0;
 
@@ -2619,9 +2619,9 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     if (!obj)
         return;
 
-    constexpr int MENUITEM_SET_FOCUS_BASE = 20;
-    constexpr int MENUITEM_SET_SHIP_BASE = 50;
-    constexpr int MENUITEM_SET_BUILDING_BASE = 250;
+    static constexpr int MENUITEM_SET_FOCUS_BASE = 20;
+    static constexpr int MENUITEM_SET_SHIP_BASE = 50;
+    static constexpr int MENUITEM_SET_BUILDING_BASE = 250;
     int menuitem_id = MENUITEM_SET_FOCUS_BASE;
     int ship_menuitem_id = MENUITEM_SET_SHIP_BASE;
     int bld_menuitem_id = MENUITEM_SET_BUILDING_BASE;

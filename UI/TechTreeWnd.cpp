@@ -393,7 +393,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     m_row_offset = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
     m_buttons_per_row = std::max(Value(USABLE_WIDTH / (m_col_offset)), 1);
 
-    constexpr int NUM_NON_CATEGORY_BUTTONS = 6;  //  ALL, Locked, Partial, Unlocked, Complete, ViewType
+    static constexpr int NUM_NON_CATEGORY_BUTTONS = 6;  //  ALL, Locked, Partial, Unlocked, Complete, ViewType
 
     // place category buttons: fill each row completely before starting next row
     int row = 0, col = -1;
@@ -739,7 +739,7 @@ bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const {
 void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
     GG::Wnd::PreRender();
 
-    constexpr int PAD = 8;
+    static constexpr int PAD = 8;
     GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
     GG::Y text_top(0);
     GG::X text_width(TechPanelWidth() - text_left);
@@ -789,7 +789,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::Render() {
-    constexpr int PAD = 8;
+    static constexpr int PAD = 8;
     GG::X text_left(GG::X(Value(TechPanelHeight())) + PAD);
     GG::Y text_top(0);
     GG::X text_width(TechPanelWidth() - text_left);
@@ -976,7 +976,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
         }
 
         if (m_unlock_icons.empty()) {
-            constexpr int PAD = 8;
+            static constexpr int PAD = 8;
             GG::X icon_left(GG::X(Value(TechPanelHeight())) + PAD*3/2);
             GG::Y icon_height = TechPanelHeight()/2;
             GG::X icon_width = GG::X(Value(icon_height));
@@ -1354,7 +1354,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     const double NODE_SEP = Value(TechPanelHeight()) * GetOptionsDB().Get<double>("ui.research.tree.spacing.vertical");
     const double WIDTH = Value(TechPanelWidth());
     const double HEIGHT = Value(TechPanelHeight());
-    constexpr double X_MARGIN{12};
+    static constexpr double X_MARGIN{12};
 
     // view state initial data
     int initial_hscroll_pos = m_hscroll->PosnRange().first;
@@ -2123,8 +2123,8 @@ void TechTreeWnd::Reset() {
 }
 
 void TechTreeWnd::InitializeWindows() {
-    constexpr GG::Pt pedia_ul(GG::X0,  GG::Y0);
-    constexpr GG::Pt pedia_wh(GG::X(480), GG::Y(240));
+    static constexpr GG::Pt pedia_ul(GG::X0,  GG::Y0);
+    static constexpr GG::Pt pedia_wh(GG::X(480), GG::Y(240));
 
     // Don't know this wnd's height in advance so place it off the bottom edge,
     // it subclasses CUIWnd so it will reposition itself to be visible.

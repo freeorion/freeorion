@@ -327,7 +327,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                         false);
 
 
-    constexpr int TOO_LONG =            100; // limit on turns to simulate.  99 turns max keeps ETA to two digits, making UI work better
+    static constexpr int TOO_LONG =     100; // limit on turns to simulate.  99 turns max keeps ETA to two digits, making UI work better
     int           turns_taken =         1;
     double        turn_dist_remaining = this->Speed(context.ContextObjects()); // additional distance that can be travelled in current turn of fleet movement being simulated
     double        cur_x =               this->X();

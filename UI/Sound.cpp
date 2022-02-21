@@ -428,7 +428,7 @@ namespace {
         ogg_int64_t byte_size = ov_pcm_total(&ogg_file, -1) * vorbis_info_ptr->channels * 2;
 
         // check that size of file isn't too huge
-        constexpr ogg_int64_t MAX_BUFFER_SIZE = 1024 * 1024 * 1024;
+        static constexpr ogg_int64_t MAX_BUFFER_SIZE = 1024 * 1024 * 1024;
         if (byte_size > MAX_BUFFER_SIZE) {
             ErrorLogger() << "PlaySound: unable to open file " << filename << " : Too big to buffer. Aborting\n";
             return {0, false};

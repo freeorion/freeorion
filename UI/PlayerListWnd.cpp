@@ -489,7 +489,7 @@ namespace {
             GG::X left(DATA_PANEL_BORDER);
             GG::Y top(DATA_PANEL_BORDER);
             GG::Y bottom(ClientHeight());
-            constexpr GG::X PAD{3};
+            static constexpr GG::X PAD{3};
 
             int diplo_status_width = (Empires().NumEmpires() - Empires().NumEliminatedEmpires() + 1) * (IconSize() + Value(PAD));
 

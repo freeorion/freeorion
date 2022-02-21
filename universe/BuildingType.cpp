@@ -267,7 +267,7 @@ int BuildingType::ProductionTime(int empire_id, int location_id,
     else if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant())
         return m_production_time->Eval();
 
-    constexpr int ARBITRARY_LARGE_TURNS = 9999;
+    static constexpr int ARBITRARY_LARGE_TURNS = 9999;
 
     auto location = context.ContextObjects().get(location_id);
     if (!location && !m_production_time->TargetInvariant())

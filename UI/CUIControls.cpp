@@ -121,8 +121,8 @@ void CUIButton::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
 GG::Pt CUIButton::MinUsableSize() const {
     GG::Pt result = GG::Button::MinUsableSize();
-    constexpr int CUIBUTTON_HPADDING = 10;
-    constexpr int CUIBUTTON_VPADDING = 3;
+    static constexpr int CUIBUTTON_HPADDING = 10;
+    static constexpr int CUIBUTTON_VPADDING = 3;
 
     result.x += CUIBUTTON_HPADDING * 2;
     result.y += CUIBUTTON_VPADDING * 2;
@@ -288,7 +288,7 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
         AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
 
-    constexpr int MARGIN = 3;
+    static constexpr int MARGIN = 3;
     FlatRectangle(bn_ul, bn_lr, GG::CLR_ZERO, border_color_to_use, 1);
     if (button.Checked()) {
         GG::Clr inside_color = color_to_use;
@@ -388,7 +388,7 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
         AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
 
-    constexpr int MARGIN = 2;
+    static constexpr int MARGIN = 2;
     FlatCircle(bn_ul, bn_lr, GG::CLR_ZERO, border_color_to_use, 1);
     if (button.Checked()) {
         GG::Clr inside_color = color_to_use;
@@ -439,7 +439,7 @@ void CUITabRepresenter::Render(const GG::StateButton& button) const {
                              GG::StateButton::ButtonState::BN_ROLLOVER == button.State()))
     { AdjustBrightness(border_color_to_use, 100); }
 
-    constexpr int UNCHECKED_OFFSET = 4;
+    static constexpr int UNCHECKED_OFFSET = 4;
 
     if (!button.Checked()) {
         ul.y += UNCHECKED_OFFSET;
@@ -541,8 +541,8 @@ void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
     GG::Clr bg_clr(ClientUI::CtrlColor());
     GG::Clr border_clr(button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor());
 
-    constexpr int BORDER_THICKNESS = 1;
-    constexpr int ICON_SIZE_REDUCE = BORDER_THICKNESS * 2;
+    static constexpr int BORDER_THICKNESS = 1;
+    static constexpr int ICON_SIZE_REDUCE = BORDER_THICKNESS * 2;
 
     GG::Pt icon_ul = button.UpperLeft();
     GG::Pt icon_lr = button.LowerRight();
@@ -661,7 +661,7 @@ void CUIScroll::ScrollTab::Render() {
         AdjustBrightness(border_color,     100);
     }
 
-    constexpr int CUISCROLL_ANGLE_OFFSET = 3;
+    static constexpr int CUISCROLL_ANGLE_OFFSET = 3;
 
     AngledCornerRectangle(ul, lr, background_color, border_color, CUISCROLL_ANGLE_OFFSET, 1);
 }
@@ -1979,11 +1979,11 @@ void ResourceInfoPanel::Clear() {
 
 void ResourceInfoPanel::DoLayout() {
     const int STAT_TEXT_PTS = ClientUI::Pts();
-    constexpr int CENTERLINE_GAP = 4;
+    static constexpr int CENTERLINE_GAP = 4;
     const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 7 / 16 ;
     const GG::X VALUE_TEXT_WIDTH = ((Width() - 4 - CENTERLINE_GAP) - LABEL_TEXT_WIDTH) / 2;
 
-    constexpr GG::X LEFT_TEXT_X{0};
+    static constexpr GG::X LEFT_TEXT_X{0};
     const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
     const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
     const GG::X DOUBLE_LEFT_TEXT_X = P_LABEL_X + 30 + 4;

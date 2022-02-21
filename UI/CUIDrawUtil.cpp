@@ -62,8 +62,8 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
     double center_x = Value(ul.x + wd / 2.0);
     double center_y = Value(ul.y + ht / 2.0);
     double r = std::min(wd / 2.0, ht / 2.0);
-    constexpr double PI = 3.141594; // intentionally slightly more than pi
-    constexpr double TWO_PI = 2.0 * PI;
+    static constexpr double PI = 3.141594; // intentionally slightly more than pi
+    static constexpr double TWO_PI = 2.0 * PI;
 
     // correct theta* values to range [0, 2pi)
     if (theta1 < 0)
@@ -392,7 +392,7 @@ void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG
                                           const GG::Pt& lr, int radius, bool ur_round,
                                           bool ul_round, bool ll_round, bool lr_round)
 {
-    constexpr double PI = 3.141594; // probably intentionally sightly more than Pi
+    static constexpr double PI = 3.141594; // probably intentionally sightly more than Pi
 
     buffer.store(lr.x, ul.y + radius);
 

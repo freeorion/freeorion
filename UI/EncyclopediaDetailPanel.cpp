@@ -693,8 +693,8 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     const int PTS = ClientUI::Pts();
     const int NAME_PTS = PTS*3/2;
     const int SUMMARY_PTS = PTS*4/3;
-    constexpr GG::X CONTROL_WIDTH{54};
-    constexpr GG::Y CONTROL_HEIGHT{74};
+    static constexpr GG::X CONTROL_WIDTH{54};
+    static constexpr GG::Y CONTROL_HEIGHT{74};
     const GG::Pt PALETTE_MIN_SIZE{GG::X{CONTROL_WIDTH + 70}, GG::Y{CONTROL_HEIGHT + 70}};
 
     m_name_text =    GG::Wnd::Create<CUILabel>("");
@@ -3032,11 +3032,11 @@ namespace {
         auto font = ClientUI::GetFont();
 
 #if defined(__cpp_lib_char8_t)
-        constexpr std::u8string_view hair_space_chars{u8"\u200A"};
+        static constexpr std::u8string_view hair_space_chars{u8"\u200A"};
         static const std::string hair_space_str{hair_space_chars.begin(), hair_space_chars.end()};
         DebugLogger() << "HairSpaceExtext with __cpp_lib_char8_t defined";
 #else
-        constexpr std::string_view hair_space_chars{u8"\u200A"};
+        static constexpr std::string_view hair_space_chars{u8"\u200A"};
         static const std::string hair_space_str{hair_space_chars};
         DebugLogger() << "HairSpaceExtext without __cpp_lib_char8_t defined";
 #endif
@@ -3099,7 +3099,7 @@ namespace {
             std::u8string hair_space_chars{u8"\u200A"};
             std::string hair_space_str{hair_space_chars.begin(), hair_space_chars.end()};
 #else
-            constexpr auto hair_space_str{u8"\u200A"};
+            static constexpr auto hair_space_str{u8"\u200A"};
 #endif
 
             for (auto& it : retval) { // TODO [[]]

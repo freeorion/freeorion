@@ -475,7 +475,7 @@ int ShipPart::ProductionTime(int empire_id, int location_id, const ScriptingCont
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_SHIP_PRODUCTION") || !m_production_time)
         return 1;
 
-    constexpr int PRODUCTION_BLOCK_SIZE = 1;
+    static constexpr int PRODUCTION_BLOCK_SIZE = 1;
 
     if (m_production_time->ConstantExpr()) {
         return m_production_time->Eval();

@@ -382,11 +382,11 @@ const std::shared_ptr<StyleFactory>& Wnd::GetStyleFactory() const
 
 WndRegion Wnd::WindowRegion(const Pt& pt) const
 {
-    constexpr int LEFT = 0;
-    constexpr int MIDDLE = 1;
-    constexpr int RIGHT = 2;
-    constexpr int TOP = 0;
-    constexpr int BOTTOM = 2;
+    static constexpr int LEFT = 0;
+    static constexpr int MIDDLE = 1;
+    static constexpr int RIGHT = 2;
+    static constexpr int TOP = 0;
+    static constexpr int BOTTOM = 2;
 
     // window regions look like this:
     // 0111112

@@ -73,7 +73,7 @@ void GroupBox::Render()
     ul.y += TopOfFrame(m_label != nullptr, m_font);
     Clr light = LightenClr(m_color);
     Clr dark = DarkenClr(m_color);
-    constexpr int GAP_FROM_TEXT = 2;
+    static constexpr int GAP_FROM_TEXT = 2;
     int vertices[24] = {
         Value(ul.x) + FRAME_THICK + PIXEL_MARGIN - GAP_FROM_TEXT, Value(ul.y),
         Value(ul.x), Value(ul.y),

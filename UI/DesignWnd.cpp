@@ -1908,19 +1908,19 @@ void DesignWnd::PartPalette::DoLayout() {
     const int PTS = ClientUI::Pts();
     const GG::X PTS_WIDE(PTS/2);         // guess at how wide per character the font needs
     const GG::Y BUTTON_HEIGHT(PTS*3/2);
-    constexpr int BUTTON_SEPARATION = 3; // vertical or horizontal sepration between adjacent buttons
-    constexpr int BUTTON_EDGE_PAD = 2;   // distance from edges of control to buttons
-    constexpr GG::X RIGHT_EDGE_PAD(8);   // to account for border of CUIWnd
+    static constexpr int BUTTON_SEPARATION = 3; // vertical or horizontal sepration between adjacent buttons
+    static constexpr int BUTTON_EDGE_PAD = 2;   // distance from edges of control to buttons
+    static constexpr GG::X RIGHT_EDGE_PAD(8);   // to account for border of CUIWnd
 
     const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);   // space in which to fit buttons
-    constexpr int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 14;                   // rough guesstimate... avoid overly long part class names
+    static constexpr int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 14;                   // rough guesstimate... avoid overly long part class names
     const GG::X MIN_BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL;
     const int MAX_BUTTONS_PER_ROW = std::max(Value(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION)), 1);
 
     const int NUM_CLASS_BUTTONS = std::max(1, static_cast<int>(m_class_buttons.size()));
-    constexpr int NUM_SUPERFLUOUS_CULL_BUTTONS = 1;
-    constexpr int NUM_AVAILABILITY_BUTTONS = 3;
-    constexpr int NUM_NON_CLASS_BUTTONS = NUM_SUPERFLUOUS_CULL_BUTTONS + NUM_AVAILABILITY_BUTTONS;
+    static constexpr int NUM_SUPERFLUOUS_CULL_BUTTONS = 1;
+    static constexpr int NUM_AVAILABILITY_BUTTONS = 3;
+    static constexpr int NUM_NON_CLASS_BUTTONS = NUM_SUPERFLUOUS_CULL_BUTTONS + NUM_AVAILABILITY_BUTTONS;
 
     // determine whether to put non-class buttons (availability and redundancy)
     // in one column or two.
@@ -1973,7 +1973,7 @@ void DesignWnd::PartPalette::DoLayout() {
     // superfluous button or to complete a 2X2 grid left of the class buttons.
     auto place_avail_button_adjacent =
         [&col, &row, &num_non_class_buttons_per_row, NUM_CLASS_BUTTONS_PER_ROW,
-         BUTTON_EDGE_PAD, COL_OFFSET, ROW_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT]
+         COL_OFFSET, ROW_OFFSET, BUTTON_WIDTH, BUTTON_HEIGHT]
         (GG::Wnd* avail_btn)
         {
             if (num_non_class_buttons_per_row == 1) {
@@ -3521,10 +3521,10 @@ void DesignWnd::BaseSelector::EnableOrderIssuing(bool enable/* = true*/) {
 }
 
 void DesignWnd::BaseSelector::DoLayout() {
-    constexpr GG::X LEFT_PAD{5};
-    constexpr GG::Y TOP_PAD{2};
+    static constexpr GG::X LEFT_PAD{5};
+    static constexpr GG::Y TOP_PAD{2};
     const GG::X AVAILABLE_WIDTH = ClientWidth() - 2*LEFT_PAD;
-    constexpr int BUTTON_SEPARATION = 3;
+    static constexpr int BUTTON_SEPARATION = 3;
     const GG::X BUTTON_WIDTH = (AVAILABLE_WIDTH - 2*BUTTON_SEPARATION) / 3;
     const int PTS = ClientUI::Pts();
     const GG::Y BUTTON_HEIGHT(PTS * 2);
@@ -4541,7 +4541,7 @@ void DesignWnd::MainPanel::DoLayout() {
 
     const int PTS = ClientUI::Pts();
     const GG::X PTS_WIDE(PTS / 2);           // guess at how wide per character the font needs
-    constexpr int PAD = 6;
+    static constexpr int PAD = 6;
 
     GG::Pt ul,lr,ll,mus;
     lr = ClientSize() - GG::Pt(GG::X(PAD), GG::Y(PAD));
@@ -5107,7 +5107,7 @@ void DesignWnd::Render()
 { GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), GG::CLR_ZERO, 0); }
 
 void DesignWnd::InitializeWindows() {
-    constexpr GG::X selector_width = GG::X(300);
+    static constexpr GG::X selector_width = GG::X(300);
     const GG::X main_width = ClientWidth() - selector_width;
 
     const GG::Pt pedia_ul(selector_width, GG::Y0);
@@ -5119,7 +5119,7 @@ void DesignWnd::InitializeWindows() {
     const GG::Pt palette_ul(selector_width + pedia_wh.x, pedia_ul.y);
     const GG::Pt palette_wh(main_width - pedia_wh.x, pedia_wh.y);
 
-    constexpr GG::Pt selector_ul(GG::X0, GG::Y0);
+    static constexpr GG::Pt selector_ul(GG::X0, GG::Y0);
     const GG::Pt selector_wh(selector_width, ClientHeight());
 
     m_detail_panel-> InitSizeMove(pedia_ul,     pedia_ul + pedia_wh);
