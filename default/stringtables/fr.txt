@@ -1103,7 +1103,7 @@ RULE_CHEAP_POLICIES
 Politiques gratuites
 
 RULE_CHEAP_POLICIES_DESC
-Appliquer une politique coûte seulement 1 PI.
+Adopter une politique coûte seulement 1 PI.
 
 RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION
 Structures gratuites et immédiates
@@ -4419,25 +4419,25 @@ Description
 ##
 
 POLICY_LOCKED
-Politique indisponible mais demanderait %1% PI pour être appliquée.
+Politique indisponible mais demanderait %1% PI pour être adoptée.
 
 POLICY_ADOPTABLE_COST
-Politique applicable pour %1% PI
+Politique adoptable pour %1% PI
 
 POLICY_ADOPTED
-Politique appliquée. Aurait requis %1% PI si appliquée présentement.
+Politique adoptée. Aurait requis %1% PI si adoptée présentement.
 
 POLICY_ADOPTION_TIMES_CURRENT_AND_TOTAL
-Politique appliquée depuis %1% tours actuellement et %2% tours au total.
+Politique adoptée depuis %1% tours actuellement et %2% tours au total.
 
 POLICY_ADOPTION_TIME_TOTAL
-Politique non appliquée actuellement. A été appliquée pendant %2% tours au total.
+Politique non adoptée actuellement. A été adoptée pendant %2% tours au total.
 
 POLICY_LIST_ADOPTED
-Appliquée
+Adoptée
 
 POLICY_LIST_ADOPTABLE
-Applicable
+Adoptable
 
 POLICY_LIST_UNAFFORDABLE
 Inabordable
@@ -4446,7 +4446,7 @@ POLICY_LIST_RESTRICTED
 Inapplicable
 
 POLICY_LIST_LOCKED
-Vérouillée
+Verrouillée
 
 ALL_POLICY_AVAILABILITY_FILTERS_BLOCKING_PROMPT
 Activer/Désactiver les filtres de catégories et de disponibilité pour l'affichage des Politiques.
@@ -5049,7 +5049,7 @@ COLONIES_COUNT  # translated
 Colonies
 
 POLICIES_ADOPTED
-Politiques appliquées
+Politiques adoptées
 
 BATTLESHIP_COUNT
 Astronefs armés
@@ -5210,13 +5210,13 @@ ENC_POLICY
 Politiques
 
 ENC_POLICY_DESC
-Effets d'amélioration ou situationnels pouvant être appliqués par les empires.
+Effets d'amélioration ou situationnels pouvant être adoptés par les empires.
 
 ENC_POICY_EXCLUSIONS
-'''Ne peut pas être appliqué avec : '''
+'''Ne peut pas être adopté avec : '''
 
 ENC_POICY_PREREQUISITES
-'''Ne peut pas être appliqué sans : '''
+'''Ne peut pas être adopté sans : '''
 
 ENC_SPECIAL
 Particularité
@@ -5321,7 +5321,7 @@ ORDER_FOCUS_CHANGE
 Changement Focus
 
 ORDER_POLICY_ADOPT
-Appliquer Politique
+Adopter Politique
 
 ORDER_POLICY_ABANDON
 Abandonner Politique
@@ -5357,10 +5357,10 @@ NO_TECHS_RESEARCHED
 Aucune Technologie recherchée
 
 ADOPTED_POLICIES
-'''Politiques appliquées : '''
+'''Politiques adoptées : '''
 
 NO_POLICIES_ADOPTED
-Aucune Politique appliquée
+Aucune Politique adoptée
 
 AVAILABLE_PARTS
 '''Équipements disponibles : '''
@@ -6148,7 +6148,7 @@ METER_INDUSTRY_VALUE_DESC
 
 L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[metertype METER_SUPPLY]] de l'empire. L'Industrie n'étant affectée à aucun projet durant un tour est ajoutée au [[encyclopedia STOCKPILE_TITLE]].
 
-La Projection Industrie est le niveau optimal de capacité en Industrie qu'une planète tend à approcher, compte tenu des différents facteurs influençant les ressources en Industrie. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, aux [[encyclopedia ENC_POLICY]] appliquées par l'empire, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Industrie est susceptible de fluctuer à son tour.
+La Projection Industrie est le niveau optimal de capacité en Industrie qu'une planète tend à approcher, compte tenu des différents facteurs influençant les ressources en Industrie. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, aux [[encyclopedia ENC_POLICY]] adoptées par l'empire, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Industrie est susceptible de fluctuer à son tour.
 
 Pour davantage d'informations sur l'interface de Production, consultez l'article [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
@@ -6159,7 +6159,7 @@ Recherche
 METER_RESEARCH_VALUE_DESC
 '''La Recherche, mesurée en Points de Recherche (PR), est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles [[encyclopedia ENC_TECH]].
 
-La Projection Recherche est le niveau optimal de capacité en Recherche qu'une planète tend à approcher, compte tenu des différents facteurs influençant les ressources en Recherche. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, aux [[encyclopedia ENC_POLICY]] appliquées par l'empire, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Recherche est susceptible de fluctuer à son tour.
+La Projection Recherche est le niveau optimal de capacité en Recherche qu'une planète tend à approcher, compte tenu des différents facteurs influençant les ressources en Recherche. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, aux [[encyclopedia ENC_POLICY]] adoptées par l'empire, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Recherche est susceptible de fluctuer à son tour.
 
 L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie coûte 15 PR et requiert un minimum de 3 tours, seulement 5 PR par tour peuvent lui être alloués.
 Les PR sont affectés aux technologies à assimiler selon leur position dans la file d'attente: la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié: les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file. Si des PR restent non-alloués après que chaque technologie ait reçu son maximum autorisé de PR, ces PR en excédent sont automatiquement attribués à une ou plusieurs technologies déverrouillées et présentant le moins de PR nécessaires ou restants avant assimilation.
@@ -6170,11 +6170,11 @@ METER_INFLUENCE_VALUE_LABEL  # translated
 Influence
 
 METER_INFLUENCE_VALUE_DESC
-'''L'Influence (ou PI "Points d'Influence") de toutes les planètes dans l'empire correspond à divers domaines tels que l'influence diplomatique, les négociations officieuses, l'espionnage, les relations publiques, la propagande, et l'influence culturelle. Elle peut être utilisée pour appliquer des [[encyclopedia ENC_POLICY]], et est nécessaire pour financer la maintenance des colonies. Lorsque le coût total en PI de la maintenance des colonies est supérieur à la capacité totale en PI de l'empire, l'Influence disponible diminuera et l'empire sera à terme dans l'impossibilité de conserver toutes ses colonies, à moins que davantage de planètes ne soient réglées sur le [[encyclopedia INFLUENCE_FOCUS_TITLE]].
+'''L'Influence (ou PI "Points d'Influence") de toutes les planètes dans l'empire correspond à divers domaines tels que l'influence diplomatique, les négociations officieuses, l'espionnage, les relations publiques, la propagande, et l'influence culturelle. Elle peut être utilisée pour adopter des [[encyclopedia ENC_POLICY]] gouvernementales, et est dépensée pour financer la maintenance des colonies habitées. Lorsque le coût total en PI de la maintenance des colonies est supérieur à la capacité totale en PI de l'empire, le stock d'Influence disponible diminuera. Si l'Influence continue à être consommée plus rapidement qu'elle n'est générée, l'empire tombera éventuellement dans une dette d'Influence, laquelle peut causer une diminution de la [[metertype METER_HAPPINESS]] et l'émergence de troupes rebelles au sein des effectifs de l'empire. La génération d'Influence peut être augmentée en réglant les planètes sur le [[encyclopedia INFLUENCE_FOCUS_TITLE]].
 
-La Projection Influence est le niveau optimal de capacité en Influence qu'une planète tend à approcher, compte tenu des différents facteurs influençant les ressources en Influence. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, aux [[encyclopedia ENC_POLICY]] appliquées par l'empire, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Influence est susceptible de fluctuer à son tour.
+La Projection Influence est le niveau optimal de capacité en Influence qu'une planète tend à approcher, compte tenu des différents facteurs influençant les ressources en Influence. Sa valeur est liée aux <encyclopedia ENC_BUILDING_TYPE>Types de Structures</encyclopedia> bâtis sur la planète, aux [[encyclopedia ENC_TECH]] recherchées par l'empire, aux <encyclopedia ENC_SPECIAL>Particularités</encyclopedia> liées à la planète, aux [[encyclopedia ENC_POLICY]] adoptées par l'empire, ainsi que divers effets de jeu. Si ces facteurs changent, alors la valeur de Projection Influence est susceptible de fluctuer à son tour.
 
-L'Influence n'est pas dépendante des lignes d'[[metertype METER_SUPPLY]] de l'empire, mais certaines colonies peuvent voir augmenter leur coût d'Influence si non-connectées à la Capitale.'''
+L'Influence ne requiert pas de connexions aux lignes d'[[metertype METER_SUPPLY]] de l'empire pour être utilisée, mais les colonies peuvent consommer plus d'Influence si non-connectées à la Capitale, ou bien très éloignées du [[buildingtype BLD_IMPERIAL_PALACE]] ou d'une [[buildingtype BLD_REGIONAL_ADMIN]].'''
 
 METER_CONSTRUCTION_VALUE_LABEL
 Infrastructure
@@ -6394,7 +6394,7 @@ INFLUENCE_FOCUS_TITLE
 Focus Influence
 
 INFLUENCE_FOCUS_TEXT
-Les planètes de l'empire en Focus Influence améliorent leur capacité d'[[metertype METER_INFLUENCE]], utilisée pour appliquer des Politiques gouvernementales et financer la maintenance des colonies.
+Les planètes de l'empire en Focus Influence améliorent leur capacité d'[[metertype METER_INFLUENCE]], utilisée pour adopter des Politiques gouvernementales et financer la maintenance des colonies.
 
 LOGISTICS_FOCUS_TITLE
 Focus Logistique
@@ -6523,7 +6523,9 @@ TELEPATHIC_TITLE
 Télépathie
 
 TELEPATHY_TEXT
-Les espèces télépathiques sont immunisées contre le contrôle de l'esprit, ce qui les rend beaucoup plus performantes en Recherche [[tech LRN_PSIONICS]].
+'''Les espèces télépathiques sont immunisées contre le contrôle de l'esprit, ce qui les rend beaucoup plus performantes en Recherche [[tech LRN_PSIONICS]].
+
+Liste des espèces télépathiques:'''
 
 XENOPHOBIC_SPECIES_TITLE
 Xénophobe
@@ -6531,13 +6533,17 @@ Xénophobe
 XENOPHOBIC_SPECIES_TEXT
 '''Les espèces xénophobes utilisent une partie de leur effort industriel pour harceler les autres espèces se trouvant aux alentours. En conséquence, les espèces sujettes à ce harcèlement développeront un malus industriel. Une espèce Xénophobe et de [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] considère la présence d'espèces étrangères aux alentours comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa [[metertype METER_TARGET_POPULATION]] (il n'est toujours pas déterminé si cela est dû à des effets directs ou bien au fait que l'espèce gaspille des ressources dans le harcèlement des espèces étrangères).
 
-La technologie [[tech CON_CONC_CAMP]] est disponible par défaut pour les espèces xénophobes.'''
+La technologie [[tech CON_CONC_CAMP]] est disponible par défaut pour les espèces xénophobes.
+
+Liste des espèces xénophobes:'''
 
 ARTISTIC_SPECIES_TITLE
 Attribut Artistique
 
 ARTISTIC_SPECIES_TRAIT_TEXT
-Les espèces artistiques réalisent des travaux d'ordre artistique lorsque leur empire applique la Politique [[policy PLC_ARTISAN_WORKSHOPS]], laquelle génère de l'[[metertype METER_INFLUENCE]]. De plus, les autres planètes situées dans le même système et peuplées d'espèces artistiques différentes, jouiront d'une meilleure [[metertype METER_HAPPINESS]].
+'''Les espèces artistiques réalisent des travaux d'ordre artistique lorsque leur empire a adopté la Politique [[policy PLC_ARTISAN_WORKSHOPS]], laquelle génère de l'[[metertype METER_INFLUENCE]]. De plus, les autres planètes situées dans le même système et peuplées d'espèces artistiques différentes, jouiront d'une meilleure [[metertype METER_HAPPINESS]].
+
+Liste des espèces artistiques:'''
 
 FLEET_UPKEEP_TITLE
 Entretien des Flottes
@@ -7302,7 +7308,7 @@ SITREP_TECH_UNLOCKED_LABEL
 Technologie débloquée
 
 SITREP_POLICY_UNLOCKED
-La politique %policy% a été débloquée et peut désormais être appliquée.
+La politique %policy% a été débloquée et peut désormais être adoptée.
 
 SITREP_POLICY_UNLOCKED_LABEL
 Politique débloquée
@@ -8216,7 +8222,7 @@ Humain
 SP_HUMAN_GAMEPLAY_DESC
 '''Opiniâtres et prédateurs.
 Préfèrent les Planètes [[PT_TERRAN]]s.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_HUMAN_DESC
@@ -8234,7 +8240,7 @@ SP_SCYLIOR_GAMEPLAY_DESC
 '''<img src="species/preview/scylior.png"></img>
 Nautiloïdes aquatiques dotés de trois tentacules.
 Préfèrent les Planètes [[PT_OCEAN]]s.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_SCYLIOR_DESC
@@ -8521,7 +8527,7 @@ Cray
 SP_CRAY_GAMEPLAY_DESC
 '''Robots dévoués et enthousiastes.
 Préfèrent les Planètes [[PT_BARREN]]s.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+[[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_CRAY_DESC
@@ -8557,7 +8563,7 @@ Cynos
 
 SP_CYNOS_GAMEPLAY_DESC
 '''Végétaux mobiles entretenus par une plante-mère géante non-sentiente.
-[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_CYNOS_DESC
@@ -8620,7 +8626,7 @@ Egassem
 SP_EGASSEM_GAMEPLAY_DESC
 '''Amibes cristallines massives, radioactives et magmatiques.
 Préfèrent les Planètes [[PT_INFERNO]]s.
-[[encyclopedia LITHIC_SPECIES_TITLE]]
+[[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_EGASSEM_DESC
@@ -8640,7 +8646,7 @@ Sslith
 SP_SSLITH_GAMEPLAY_DESC
 '''Créatures aquatiques plates et souples.
 Préfèrent les Planètes [[PT_OCEAN]]s.
-[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_SSLITH_DESC
@@ -8656,7 +8662,7 @@ Fifty-Seven
 
 SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Serpents célestes mathématiciens, sifflant des mélopées fractales au sein d'une chorale planétaire.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_FIFTYSEVEN_DESC
@@ -8698,7 +8704,7 @@ Thenian
 
 SP_THENIAN_GAMEPLAY_DESC
 '''Sacs gazeux pensants.
-[[encyclopedia GASEOUS_SPECIES_TITLE]]
+[[encyclopedia GASEOUS_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_THENIAN_DESC
@@ -8888,7 +8894,7 @@ Silexian
 SP_SILEXIAN_GAMEPLAY_DESC
 '''Robots écologistes brillants, abandonnés à leur sort.
 Préfèrent les Planètes [[PT_TERRAN]]s.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+[[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_SILEXIAN_DESC
@@ -9030,7 +9036,7 @@ Ourbools
 SP_OURBOOLS_GAMEPLAY_DESC
 '''Organismes aquatiques géants et aveugles, s'orientant grâce à la perception de la gravitation.
 Préfèrent les Planètes [[PT_OCEAN]]s.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_OURBOOLS_DESC
@@ -9169,7 +9175,7 @@ Misiorla
 SP_MISIORLA_GAMEPLAY_DESC
 '''Pilotes de grand talent, chaotiques et fougueux.
 Préfèrent les Planètes [[PT_TOXIC]]s.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia ARTISTIC]]
 '''
 
 SP_MISIORLA_DESC
@@ -9193,6 +9199,10 @@ SP_EXOBOT_GAMEPLAY_DESC
 
 SP_EXOBOT_DESC
 '''Bien que moins efficaces que des citoyens classiques, les Exobots peuvent coloniser les planètes inhospitalières, et y construire d'autres Exobots.
+
+Les planètes Exobot agissent comme des avant-postes concernant leur incidence sur l'Influence / planète de l'empire, qui s'avère moins importante que celle des autres colonies, mais consomment quand même de l'Influence.
+
+Les planètes Exobot ne subissent pas de pénalités de Stabilité lorsque l'empire est en dette d'Influence, concurremment à l'adoption de la Politique [[policy PLC_CAPITAL_MARKETS]].
 '''
 
 SP_ANCIENT_GUARDIANS
@@ -9225,7 +9235,7 @@ Super-Testeurs
 SP_SUPER_TEST_GAMEPLAY_DESC
 '''Les Super-Testeurs, performants dans chaque domaine, sont quasiment omniscients. Ils prospèrent sur tous types de planètes. (Leur pouvoir de neutralisation de [[metertype METER_STEALTH]] ne fonctionne que lorsqu'ils se trouvent dans leur Capitale)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-[[encyclopedia TELEPATHIC_TITLE]]
+[[encyclopedia ARTISTIC]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 #SP_SUPER_TEST_DESC
@@ -11887,7 +11897,7 @@ PLC_ALLIED_REPAIR
 Réparation Alliée
 
 PLC_ALLIED_REPAIR_DESC
-Si deux empires sont alliés, et que l'un ou l'autre applique cette Politique, les deux empires bénéficieront de la réparation des astronefs endommagés en [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] quel que soit l'empire propriétaire, et profiteront mutuellement de la technologie [[tech SHP_FLEET_REPAIR]].
+Si deux empires sont alliés, et que l'un ou l'autre a adopté cette Politique, les deux empires bénéficieront de la réparation des astronefs endommagés en [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] quel que soit l'empire propriétaire, et profiteront mutuellement de la technologie [[tech SHP_FLEET_REPAIR]].
 
 PLC_ALLIED_REPAIR_SHORT_DESC
 Permet aux alliés la réparation mutuelle des astronefs
@@ -11985,7 +11995,9 @@ PLC_EXOBOT_PRODUCTIVITY
 Productivité Exobot
 
 PLC_EXOBOT_PRODUCTIVITY_DESC
-Augmente l'efficacité de Production des Exobots sur les planètes en Focus Industrie de "Très Mauvais" à seulement "Mauvais".
+'''Augmente la capacité effective de Production des Exobots sur les planètes en Focus Industrie de "Très Mauvais" à seulement "Mauvais".
+
+Diminue de [[value PLC_EXOBOT_OTHER_PLANET_INDUSTRY_PENALTY]] la Stabilité et la capacité de Production des planètes habitées non-Exobot dans l'empire.'''
 
 PLC_EXOBOT_PRODUCTIVITY_SHORT_DESC
 Améliore la Production des Exobots
@@ -12121,7 +12133,7 @@ PLC_DREAM_RECURSION
 Récursivité Imaginaire
 
 PLC_DREAM_RECURSION_DESC
-'''Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de la valeur nécessaire pour atteindre [[value PLC_INDOCTRINATION_STRENGTH_BASE]]. Cette limite est augmentée de [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] pour chaque structure [[buildingtype BLD_COLLECTIVE_NET]] contrôlée par l'empire appliquant cette Politique.
+'''Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de la valeur nécessaire pour atteindre [[value PLC_INDOCTRINATION_STRENGTH_BASE]]. Cette limite est augmentée de [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] pour chaque structure [[buildingtype BLD_COLLECTIVE_NET]] contrôlée par l'empire ayant adopté cette Politique.
 
 Réduit l'[[metertype METER_INFLUENCE]] de chaque planète de la racine carrée de la valeur augmentant leur [[metertype METER_TARGET_HAPPINESS]].'''
 
@@ -12179,7 +12191,7 @@ Infrastructure Systémique
 PLC_SYSTEM_INFRA_DESC
 '''Octroie 1 choix supplémentaire de Politique économique.
 
-Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées au sein des systèmes abritant au moins 2 planètes appartenant à l'empire qui applique cette Politique.'''
+Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées au sein des systèmes abritant au moins 2 planètes appartenant à l'empire ayant adopté cette Politique.'''
 
 PLC_SYSTEM_INFRA_SHORT_DESC
 Octroie des choix de Politique
@@ -12190,7 +12202,7 @@ Infrastructure Interstellaire
 PLC_INTERSTELLAR_INFRA_DESC
 '''Octroie 2 choix supplémentaires de Politique économique.
 
-Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées étant connectées aux ressources d'approvisionnement de planètes situées dans d'autres systèmes, et appartenant à l'empire appliquant cette Politique.'''
+Augmente de 5 la [[metertype METER_TARGET_CONSTRUCTION]] des planètes habitées étant connectées aux ressources d'approvisionnement de planètes situées dans d'autres systèmes, et appartenant à l'empire ayant adopté cette Politique.'''
 
 PLC_INTERSTELLAR_INFRA_SHORT_DESC
 Octroie des choix de Politique
@@ -12202,7 +12214,7 @@ PLC_CAPITAL_MARKETS_DESC
 '''• Les planètes disposant d'une Particularité de ressources de luxe et réglées sur le Focus Influence, exporteront cette ressource vers les planètes reliées par lignes d'[[metertype METER_SUPPLY]]. Cela améliore de [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]] la [[metertype METER_HAPPINESS]] des planètes peuplées d'espèces appréciant cette ressource.
 • Augmente la [[metertype METER_TARGET_INFLUENCE]] des planètes habitées ayant une [[metertype METER_HAPPINESS]] au moins égale à [[value CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY]], de [[value CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING]] par la valeur la plus faible entre l'[[metertype METER_CONSTRUCTION]] et la [[metertype METER_POPULATION]].
 • Augmente le taux de progression ou de régression de l'[[metertype METER_INFLUENCE]] et de la [[metertype METER_HAPPINESS]] de [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / tour pour atteindre la valeur de la [[metertype METER_TARGET_INFLUENCE]] ou de la [[metertype METER_TARGET_HAPPINESS]].
-• Réduit la [[metertype METER_TARGET_HAPPINESS]] sur les planètes habitées appartenant à l'empire de [[value CAPITAL_MARKETS_DEBT_INSTABILITY]] fois la valeur de la dette en Influence de l'empire.'''
+• Réduit la [[metertype METER_TARGET_HAPPINESS]] sur les planètes habitées appartenant à l'empire de [[value CAPITAL_MARKETS_DEBT_INSTABILITY]] fois la valeur de la dette d'Influence de l'empire.'''
 
 PLC_CAPITAL_MARKETS_SHORT_DESC
 Améliore la Stabilité via l'export de ressources
@@ -12220,10 +12232,10 @@ PLC_ARTISAN_WORKSHOPS
 Ateliers Artisanaux
 
 PLC_ARTISAN_WORKSHOPS_DESC
-Les planètes peuplés d'espèces de type [[ARTISTIC]] et réglées sur le Focus Influence généreront de l'Influence et exporteront de l'artisanat de luxe vers les planètes du même système, améliorant la [[metertype METER_HAPPINESS]] de ces planètes.
+Les planètes peuplés d'espèces de type [[encyclopedia ARTISTIC]] et réglées sur le Focus Influence généreront de l'Influence et exporteront de l'artisanat de luxe vers les planètes du même système, améliorant la [[metertype METER_HAPPINESS]] de ces planètes.
 
 PLC_ARTISAN_WORKSHOPS_SHORT_DESC
-Production d'objets de luxe par les espèces artistiques
+Production d'objets de luxe par les espèces de type [[encyclopedia ARTISTIC]]
 
 PLC_BOOTSTRAPPING
 Planification Coloniale
@@ -12241,7 +12253,11 @@ PLC_PROPAGANDA
 Informations Propagandistes
 
 PLC_PROPAGANDA_DESC
-Augmente l'Influence de la Capitale de [[value PROPAGANDA_INFLUENCE_FLAT]].
+'''Augmente de [[value PROPAGANDA_INFLUENCE_FLAT]] l'Influence de la Capitale de l'empire adoptant cette politique.
+
+Augmente l'Influence de la Capitale impériale des empires alliés de [[value PROPAGANDA_INFLUENCE_ALLIED_FLAT]], si eux-mêmes n'ont pas adopté cette Politique.
+
+Diminue l'Influence de la Capitale impériale des empires ennemis de [[value PROPAGANDA_INFLUENCE_ENEMY_FLAT]], si eux-mêmes n'ont pas adopté cette Politique et qu'ils disposent de la visibilité d'au moins un objet appartenant à l'empire ayant adopté cette Politique.'''
 
 PLC_PROPAGANDA_SHORT_DESC
 Augmente l'Influence de la Capitale
@@ -12274,7 +12290,7 @@ PLC_BUREAUCRACY
 Bureaucratie
 
 PLC_BUREAUCRACY_DESC
-'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] d'une planète habitée et appartenant à l'empire de [[value PLC_BUREAUCRACY_STABILITY_FLAT]], tant que l'empire dispose de suffisamment de structures d'[[buildingtype BLD_REGIONAL_ADMIN]]. Une structure supplémentaire d'[[buildingtype BLD_REGIONAL_ADMIN]] est requise tous les [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] tours à partir de l'application de cette Politique.
+'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] d'une planète habitée et appartenant à l'empire de [[value PLC_BUREAUCRACY_STABILITY_FLAT]], tant que l'empire dispose de suffisamment de structures d'[[buildingtype BLD_REGIONAL_ADMIN]]. Une structure supplémentaire d'[[buildingtype BLD_REGIONAL_ADMIN]] est requise tous les [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] tours à partir de l'adoption de cette Politique.
 • Modifier le Focus planétaire réduit l'[[metertype METER_INFLUENCE]] de cette planète de [[value BUREAUCRACY_FOCUS_CHANGE_PENALTY]].'''
 
 PLC_BUREAUCRACY_SHORT_DESC
@@ -12295,9 +12311,9 @@ PLC_FLANKING
 Encerclement
 
 PLC_FLANKING_DESC
-'''Dans les systèmes où l'empire appliquant cette Politique dispose d'astronefs armés stationnaires plus nombreux que les astronefs ennemis présents, l'armement de cet empire infligera des [[encyclopedia DAMAGE_TITLE]] additionnels par tir.
+'''Dans les systèmes où l'empire ayant adopté cette Politique dispose d'astronefs armés stationnaires plus nombreux que les astronefs ennemis présents, l'armement de cet empire infligera des [[encyclopedia DAMAGE_TITLE]] additionnels par tir.
 
-D'autre part, les astronefs effectuant une attaque en tenaille infligeront également des dommages additionnels. Une attaque en tenaille est déclenchée lorsque les astronefs de l'empire appliquant cette Politique sont en vol et arrivent au tour suivant dans un système via des Voies spatiales différentes.
+D'autre part, les astronefs effectuant une attaque en tenaille infligeront également des dommages additionnels. Une attaque en tenaille est déclenchée lorsque les astronefs de l'empire ayant adopté cette Politique sont en vol et arrivent au tour suivant dans un système via des Voies spatiales différentes.
 
 • Les dommages pour les armements d'astronef sont augmentés de [[value PLC_FLANKING_DAMAGE_BOOST]] (c-à-d. pour les équipements [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], ou [[shippart SR_WEAPON_4_1]])
 • Les dommages pour les chasseurs, les bombardiers et les bombardiers lourds sont augmentés de [[value PLC_FLANKING_FIGHTER_DAMAGE_BOOST]] (c-à-d. pour les équipements [[shippart FT_HANGAR_2]], [[shippart FT_HANGAR_3]], ou [[shippart FT_HANGAR_4]])
@@ -14449,7 +14465,7 @@ BLD_SCANNING_FACILITY
 Complexe de Détection
 
 BLD_SCANNING_FACILITY_DESC
-'''Augmente de 75 le [[metertype METER_DETECTION]] de la planète.
+'''Augmente de [[value SCANNING_FACILITY_RANGE]] le [[metertype METER_DETECTION]] de la planète.
 
 La combinaison d'appareils de détection à longue portée et d'une énorme capacité de calcul permet le balayage d'un plus grande région de l'espace à la recherche de n'importe quel objet.'''
 
@@ -15806,7 +15822,7 @@ SH_ROBOTIC
 Coque Robotique
 
 SH_ROBOTIC_DESC
-'''Cette coque est entièrement automatisée et fonctionne selon les principes du [[tech SHP_MIL_ROBO_CONT]]. Elle dispose de quatre niches externes et d'une niche interne, et s'auto-répare à raison de 2 points de [[metertype METER_STRUCTURE]] par tour, tant que l'astronef n'engage aucun combat.
+'''Cette coque est entièrement automatisée et fonctionne selon les principes du [[tech SHP_MIL_ROBO_CONT]]. Elle dispose de quatre niches externes et d'une niche interne, et s'auto-répare à raison de [[value SHP_ROBOTIC_REPAIR]] points de [[metertype METER_STRUCTURE]] par tour, tant que l'astronef n'engage aucun combat.
 
 Sa [[metertype METER_STEALTH]] est standard de même que son [[metertype METER_DETECTION]], tandis que sa [[metertype METER_SPEED]] est moyenne.
 
@@ -16493,7 +16509,7 @@ BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED
 Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], et d'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
 
 LIVING_HULL_AUTO_REGEN
-Les coques vivantes régénèrent leur [[metertype METER_STRUCTURE]] et leur [[metertype METER_FUEL]] entre chaque combat.
+Les coques vivantes régénèrent leur [[metertype METER_STRUCTURE]] de [[value SHP_LIVING_HULL_REPAIR]] entre les combats et leur [[metertype METER_FUEL]] de [[value SHP_LIVING_HULL_FUEL_REGEN]] en étant stationnaires.
 
 BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED
 Ne peut être construit qu'en un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]] et d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
@@ -16720,16 +16736,19 @@ BAD_HAPPINESS_DESC
 −	Mauvais en [[metertype METER_HAPPINESS]]: [[value BAD_HAPPINESS_VAL]]
 
 AVERAGE_HAPPINESS_DESC
-⋄	Normal en [[metertype METER_HAPPINESS]]: +0
+⋄	Normal en [[metertype METER_HAPPINESS]] : +0
 
 GOOD_HAPPINESS_DESC
-+	Bon en [[metertype METER_HAPPINESS]]: +[[value GOOD_HAPPINESS_VAL]]
++	Bon en [[metertype METER_HAPPINESS]] : +[[value GOOD_HAPPINESS_VAL]]
 
 GREAT_HAPPINESS_DESC
-++	Excellent en [[metertype METER_HAPPINESS]]: +[[value GREAT_HAPPINESS_VAL]]
+++	Excellent en [[metertype METER_HAPPINESS]] : +[[value GREAT_HAPPINESS_VAL]]
 
 ULTIMATE_HAPPINESS_DESC
-+++	Parfait en [[metertype METER_HAPPINESS]]: +[[value ULTIMATE_HAPPINESS_VAL]]
++++	Parfait en [[metertype METER_HAPPINESS]] : +[[value ULTIMATE_HAPPINESS_VAL]]
+
+INDEPENDENT_HAPPINESS_DESC
+⋄	[[metertype METER_HAPPINESS]] indépendante: la Stabilité de base n'est pas tributaire des connexions aux lignes d'approvisionnement
 
 NO_DEFENSE_TROOPS_DESC
 −−−	Pas d'[[metertype METER_TROOPS]] défensive
@@ -16929,7 +16948,7 @@ COMMUNAL_VISION_DESC
 ⋄	Vision Commune: partage ce qui est visible avec tout autre représentant de l'espèce dans l'univers, quelle que soit l'affiliation
 
 ARTISTIC_TRAIT_DESC
-+	Artistique: Stabilité et Bonheur améliorés
++	[[encyclopedia ARTISTIC]]: Stabilité et Bonheur améliorés
 
 
 ##
