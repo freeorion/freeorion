@@ -65,11 +65,28 @@
 
 
 namespace {
-    const double     ZOOM_STEP_SIZE = std::pow(2.0, 1.0/4.0);
+    constexpr double Pow(double base, int exp) {
+        double retval = 1.0;
+        bool invert = exp < 0;
+        size_t abs_exp = exp >= 0 ? exp : -exp;
+        while (abs_exp--)
+            retval *= base;
+        return invert ? (1.0 / retval) : retval;
+    }
+
+    // "Babylonian Method" of finding square roots...
+    double constexpr SqrtIterative2(double a, double c) {
+        double g = 0.5 * (c + a/c);
+        return (g == c) ? g : SqrtIterative2(a, g);
+    }
+    double constexpr Sqrt(double a)
+    { return SqrtIterative2(a, a); }
+
+    constexpr double ZOOM_STEP_SIZE = Sqrt(Sqrt(2.0));
     constexpr double ZOOM_IN_MAX_STEPS = 12.0;
-    constexpr double ZOOM_IN_MIN_STEPS = -10.0;//-7.0;   // negative zoom steps indicates zooming out
-    const double     ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
-    const double     ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
+    constexpr double ZOOM_IN_MIN_STEPS = -10.0; // negative zoom steps indicates zooming out
+    constexpr double ZOOM_MAX = Pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
+    constexpr double ZOOM_MIN = Pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
 
     constexpr GG::X  SITREP_PANEL_WIDTH{400};
     constexpr GG::Y  SITREP_PANEL_HEIGHT{200};
