@@ -1886,7 +1886,7 @@ namespace {
 void Capital::Eval(const ScriptingContext& parent_context,
                    ObjectSet& matches, ObjectSet& non_matches,
                    SearchDomain search_domain) const
-{ EvalImpl(matches, non_matches, search_domain, CapitalSimpleMatch{parent_context.Empires()}); }
+{ EvalImpl(matches, non_matches, search_domain, CapitalSimpleMatch{parent_context.Empires().GetEmpires()}); }
 
 std::string Capital::Description(bool negated/* = false*/) const {
     return (!negated)
@@ -1919,7 +1919,7 @@ void Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_c
                                                 ObjectSet& condition_non_targets) const
 {
     if constexpr(false) {
-        auto capital_ids{[empires{parent_context.Empires()}]() -> std::set<int> {
+        auto capital_ids{[empires{parent_context.Empires().GetEmpires()}]() -> std::set<int> {
             // collect capitals of all empires
             std::set<int> retval;
             for (auto& [empire_id, empire] : empires) {

@@ -40,17 +40,17 @@ namespace {
 CombatInfo::CombatInfo(int system_id_, int turn_,
                        Universe& universe_mutable_in,
                        EmpireManager& empires_,
+                       const EmpireManager::DiploStatusMap& diplo_statuses_,
                        const GalaxySetupData& galaxy_setup_data_,
                        SpeciesManager& species_,
                        const SupplyManager& supply_) :
     universe(universe_mutable_in),
     empires(empires_),
     empire_object_vis_turns(universe_mutable_in.GetEmpireObjectVisibilityTurnMap()),
-    diplo_statuses(empires_.GetDiplomaticStatuses()),
+    diplo_statuses(diplo_statuses_),
     galaxy_setup_data(galaxy_setup_data_),
     species(species_),
     supply(supply_),
-    objects(std::make_unique<ObjectMap>()),
     empire_object_visibility(universe_mutable_in.GetEmpireObjectVisibility()),
     turn(turn_),
     system_id(system_id_)
@@ -65,14 +65,14 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
 
 
     // add system to objects in combat
-    objects->insert(std::move(system));
+    objects.insert(std::move(system));
 
     // find ships and their owners in system
     for (auto& ship : ships) {
         // add owner of ships in system to empires that have assets in this battle
         empire_ids.insert(ship->Owner());
         // add ships to objects in combat
-        objects->insert(std::move(ship));
+        objects.insert(std::move(ship));
     }
 
     // find planets and their owners in system
@@ -81,7 +81,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
         if (!planet->Unowned() || planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f)
             empire_ids.insert(planet->Owner());
         // add planets to objects in combat
-        objects->insert(std::move(planet));
+        objects.insert(std::move(planet));
     }
 
     InitializeObjectVisibility();
@@ -91,17 +91,23 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
 }
 
 std::shared_ptr<const System> CombatInfo::GetSystem() const
-{ return this->objects->get<System>(this->system_id); }
+{ return this->objects.get<System>(this->system_id); }
 
 std::shared_ptr<System> CombatInfo::GetSystem()
-{ return this->objects->get<System>(this->system_id); }
+{ return this->objects.get<System>(this->system_id); }
+
+std::shared_ptr<const Empire> CombatInfo::GetEmpire(int id) const
+{ return empires.GetEmpire(id); }
+
+std::shared_ptr<Empire> CombatInfo::GetEmpire(int id)
+{ return empires.GetEmpire(id); }
 
 float CombatInfo::GetMonsterDetection() const {
     float monster_detection = 0.0;
-    for (const auto& obj : objects->all<Ship>())
+    for (const auto& obj : objects.all<Ship>())
         if (obj->Unowned())
             monster_detection = std::max(monster_detection, obj->GetMeter(MeterType::METER_DETECTION)->Initial());
-    for (const auto& obj : objects->all<Planet>())
+    for (const auto& obj : objects.all<Planet>())
         if (obj->Unowned())
             monster_detection = std::max(monster_detection, obj->GetMeter(MeterType::METER_DETECTION)->Initial());
     return monster_detection;
@@ -117,14 +123,14 @@ void CombatInfo::GetEmpireIdsToSerialize(std::set<int>& filtered_empire_ids, int
 }
 
 void CombatInfo::GetObjectsToSerialize(ObjectMap& filtered_objects, int encoding_empire) const {
-    if (&filtered_objects == this->objects.get())
+    if (&filtered_objects == &this->objects)
         return;
 
     filtered_objects.clear();
-    filtered_objects.Copy(*this->objects, this->universe); // copy everything in combat info
+    filtered_objects.Copy(this->objects, this->universe); // copy everything in combat info
     // TODO: Actually filter based on the encoding empire and what visibility it has of objects
 
-    DebugLogger() << "CombatInfo::GetObjectsToSerialize: input: " << this->objects->size()
+    DebugLogger() << "CombatInfo::GetObjectsToSerialize: input: " << this->objects.size()
                   << "  copied: " << filtered_objects.size();
 }
 
@@ -182,7 +188,7 @@ namespace {
                 retval[ALL_EMPIRES] = combat_info.GetMonsterDetection();
                 continue;
             }
-            const auto empire = combat_info.empires.GetEmpire(empire_id);
+            const auto empire = combat_info.GetEmpire(empire_id);
             if (!empire) {
                 ErrorLogger() << "GetEmpiresDetectionStrengths(CombatInfo) couldn't find empire with id " << empire_id;
                 continue;
@@ -216,7 +222,7 @@ void CombatInfo::InitializeObjectVisibility() {
 
         float empire_detection = det_strengths[empire_id];
 
-        for (auto obj : objects->all()) {
+        for (const auto& obj : objects.all()) {
 
             if (obj->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
                 // systems always visible to empires with objects in them
@@ -261,7 +267,7 @@ void CombatInfo::InitializeObjectVisibility() {
                 }
                 if (vis < Visibility::VIS_PARTIAL_VISIBILITY && GetGameRules().Get<bool>("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE")) {
                     if (auto ship = std::dynamic_pointer_cast<Ship>(obj)) {
-                        if (auto fleet = objects->get<Fleet>(ship->FleetID())) {
+                        if (auto fleet = objects.get<Fleet>(ship->FleetID())) {
                             if (fleet->Aggressive()) {
                                 vis = Visibility::VIS_PARTIAL_VISIBILITY;
                                 DebugLogger() << "Ship " << obj->Name() << " visible from aggressive fleet";
@@ -290,12 +296,11 @@ ScriptingContext::ScriptingContext(CombatInfo& info,
     supply(                 info.supply),
     universe(               nullptr),
     const_universe(         info.universe),
-    objects(                info.objects.get()), // not taken from Universe!
-    const_objects(          *info.objects),
+    objects(                &info.objects), // not taken from Universe!
+    const_objects(          info.objects),
     empire_object_vis(      info.empire_object_visibility), // not taken from Universe!
     empire_object_vis_turns(info.empire_object_vis_turns), // not taken from Universe!
-    empires(                nullptr),
-    const_empires(          const_cast<const EmpireManager&>(info.empires).GetEmpires()),
+    const_empires(          info.empires),
     diplo_statuses(         info.diplo_statuses)
 {}
 
@@ -1027,7 +1032,7 @@ namespace {
 
         bool HasUnlauchedArmedFighters(const CombatInfo& combat_info) const {
             // check each ship to see if it has any unlaunched armed fighters...
-            for (const auto& ship : combat_info.objects->find<Ship>(attacker_ids)) {
+            for (const auto& ship : combat_info.objects.find<Ship>(attacker_ids)) {
                 if (!ship)
                     continue;   // discard invalid ship references
                 if (combat_info.destroyed_object_ids.count(ship->ID()))
@@ -1083,6 +1088,10 @@ namespace {
                 //        int current_turn, const Universe& universe);
                 auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id,
                                                              species, damage, combat_targets);
+                fighter_ptr->SetID(next_fighter_id--);
+                fighter_ptr->Rename(fighter_name);
+                combat_info.objects.insert(fighter_ptr);
+
                 if (!fighter_ptr) {
                     ErrorLogger(combat) << "AddFighters unable to create and insert new Fighter object...";
                     break;
@@ -1090,7 +1099,7 @@ namespace {
 
                 fighter_ptr->SetID(next_fighter_id--);
                 fighter_ptr->Rename(std::move(fighter_name));
-                combat_info.objects->insert(fighter_ptr);
+                combat_info.objects.insert(fighter_ptr);
                 retval.push_back(fighter_ptr->ID());
 
                 // add fighter to attackers (if it can attack)
@@ -1133,9 +1142,9 @@ namespace {
             IncapacitationsEventPtr incaps_event = std::make_shared<IncapacitationsEvent>();
 
             std::vector<int> delete_list;
-            delete_list.reserve(combat_info.objects->size());
+            delete_list.reserve(combat_info.objects.size());
 
-            for (const auto& obj : combat_info.objects->all()) {
+            for (const auto& obj : combat_info.objects.all()) {
                 // Check if object is already noted as destroyed; don't need to re-record this
                 if (destroyed_object_ids.count(obj->ID()))
                     continue;
@@ -1164,7 +1173,7 @@ namespace {
             std::stringstream ss;
             for (auto id : delete_list) {
                 ss << id << " ";
-                combat_info.objects->erase(id);
+                combat_info.objects.erase(id);
             }
             DebugLogger() << "Removed destroyed objects from combat state with ids: " << ss.str();
         }
@@ -1254,7 +1263,7 @@ namespace {
             auto temp{empire_infos};
 
             std::set<int> empire_ids_with_objects;
-            for (const auto& obj : combat_info.objects->all())
+            for (const auto& obj : combat_info.objects.all())
                 empire_ids_with_objects.insert(obj->Owner());
 
             for (auto& [empire_id, ignored] : empire_infos) {
@@ -1288,7 +1297,7 @@ namespace {
             InitialStealthEvent::EmpireToObjectVisibilityMap report;
 
             // loop over all objects, noting which is visible by which empire or neutrals
-            for (const auto& target : combat_info.objects->all()) {
+            for (const auto& target : combat_info.objects.all()) {
                 // for all empires, can they detect this object?
                 for (int viewing_empire_id : combat_info.empire_ids) {
                     // get visibility of target to attacker empire
@@ -1342,8 +1351,8 @@ namespace {
                 }
             };
 
-            check_add(combat_info.objects->all<Planet>());
-            check_add(combat_info.objects->all<Ship>());
+            check_add(combat_info.objects.all<Planet>());
+            check_add(combat_info.objects.all<Ship>());
         }
     };
 
@@ -1467,7 +1476,7 @@ namespace {
 
             return ss.str();
         }()
-                            << "  empires: " << context.Empires().size()
+                            << "  empires: " << context.Empires().NumEmpires()
                             << "  diplostatus: " << [ds{context.diplo_statuses}]()
         {
             std::stringstream ss;
@@ -1495,7 +1504,7 @@ namespace {
 
 
             Condition::ObjectSet targets, rejected_targets;
-            AddAllObjectsSet(*combat_state.combat_info.objects, targets);
+            AddAllObjectsSet(combat_state.combat_info.objects, targets);
 
             // apply species targeting condition and then weapon targeting condition
             TraceLogger(combat) << "Species targeting condition: " << species_targetting_condition->Dump();
@@ -1597,7 +1606,7 @@ namespace {
         }();
 
         int attacker_owner_id = attacker->Owner();
-        const auto empire = combat_state.combat_info.empires.GetEmpire(attacker_owner_id);
+        const auto empire = combat_state.combat_info.GetEmpire(attacker_owner_id);
         const auto& empire_name = (empire ? empire->Name() : UserString("ENC_COMBAT_ROGUE"));
 
 
@@ -1695,7 +1704,7 @@ namespace {
         DebugLogger() << "Recovering fighters at end of combat...";
 
         // count still-existing and not destroyed fighters at end of combat
-        for (const auto& obj : combat_info.objects->all()) { // TODO: call this iterate over <Fighter> and avoid the dynamic_pointer_cast ? would require a dedicated Fighter map in ObjectMap
+        for (const auto& obj : combat_info.objects.all()) { // TODO: call this iterate over <Fighter> and avoid the dynamic_pointer_cast ? would require a dedicated Fighter map in ObjectMap
             if (obj->ID() >= 0)
                 continue;
             auto fighter = std::dynamic_pointer_cast<Fighter>(obj);
@@ -1716,7 +1725,7 @@ namespace {
 
         DebugLogger() << "Returning fighters to ships:";
         for (auto [ship_id, fighter_count] : ships_fighters_to_add_back) {
-            auto ship = combat_info.objects->get<Ship>(ship_id);
+            auto ship = combat_info.objects.get<Ship>(ship_id);
             if (!ship) {
                 ErrorLogger(combat) << "Couldn't get ship with id " << ship_id << " for fighter to return to...";
                 continue;
@@ -1767,7 +1776,7 @@ namespace {
         // Process planets attacks first so that they still have full power,
         // despite their attack power depending on something (their defence meter)
         // that processing shots at them may reduce.
-        for (const auto& planet : combat_info.objects->find<Planet>(shuffled_attackers)) {
+        for (const auto& planet : combat_info.objects.find<Planet>(shuffled_attackers)) {
             if (!planet)
                 continue;
             if (!ObjectCanAttack(planet, context)) {
@@ -1786,7 +1795,7 @@ namespace {
 
 
         // Process ship and fighter attacks
-        for (const auto& attacker : combat_info.objects->find(shuffled_attackers)) {
+        for (const auto& attacker : combat_info.objects.find(shuffled_attackers)) {
             if (!attacker)
                 continue;
             if (attacker->ObjectType() == UniverseObjectType::OBJ_PLANET)
@@ -1817,7 +1826,7 @@ namespace {
         // they won't get any chance to attack during this combat
         if (combat_info.bout < NUM_COMBAT_ROUNDS) {
             auto launches_event = std::make_shared<FighterLaunchesEvent>();
-            for (const auto& attacker : combat_info.objects->find<Ship>(shuffled_attackers)) {
+            for (const auto& attacker : combat_info.objects.find<Ship>(shuffled_attackers)) {
                 if (!attacker)
                     continue;
                 if (!ObjectCanAttack(attacker, context)) {
@@ -1906,29 +1915,29 @@ namespace {
         combat_state.CullTheDead(combat_info.bout, bout_event);
 
         // Backpropagate meters so that next round tests can use the results of the previous round
-        for (auto& obj : combat_info.objects->all())
+        for (auto& obj : combat_info.objects.all())
             obj->BackPropagateMeters();
     }
 }
 
 void AutoResolveCombat(CombatInfo& combat_info) {
-    if (combat_info.objects->empty())
+    if (combat_info.objects.empty())
         return;
 
-    auto system = combat_info.objects->get<System>(combat_info.system_id);
+    auto system = combat_info.objects.get<System>(combat_info.system_id);
     if (!system)
         ErrorLogger() << "AutoResolveCombat couldn't get system with id " << combat_info.system_id;
     else
         DebugLogger() << "AutoResolveCombat at " << system->Name();
 
     DebugLogger(combat) << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%";
-    DebugLogger(combat) << "AutoResolveCombat objects before resolution: " << combat_info.objects->Dump();
+    DebugLogger(combat) << "AutoResolveCombat objects before resolution: " << combat_info.objects.Dump();
 
     // reasonably unpredictable but reproducible random seeding
     int base_seed = 123454321; // arbitrary number
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
         base_seed += std::hash<std::string>{}(combat_info.galaxy_setup_data.GetSeed()); // probably not consistent across different platforms, but that's OK for this use
-        base_seed += (*combat_info.objects->all().begin())->ID() + combat_info.turn;
+        base_seed += (*combat_info.objects.all().begin())->ID() + combat_info.turn;
     }
 
     // compile list of valid objects to attack or be attacked in this combat
@@ -1964,7 +1973,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
     RecoverFighters(combat_info, last_bout, launches_event);
 
-    DebugLogger(combat) << "AutoResolveCombat objects after resolution: " << combat_info.objects->Dump();
+    DebugLogger(combat) << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
 
     DebugLogger(combat) << "combat event log start:";
     ScriptingContext context{combat_info};

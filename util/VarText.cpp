@@ -193,7 +193,7 @@ namespace {
                 { return ShipDesignString(data, context.ContextUniverse()); }},
             {VarText::PREDEFINED_DESIGN_TAG, PredefinedShipDesignString},
             {VarText::EMPIRE_ID_TAG, [](const std::string& data, const ScriptingContext& context)
-                { return EmpireString(data, context.Empires()); }},
+                { return EmpireString(data, context.Empires().GetEmpires()); }},
             {VarText::FOCS_VALUE_TAG, [](const std::string& data, const ScriptingContext& context) -> boost::optional<std::string>
                 {
                     if (const ValueRef::ValueRefBase* vr = GetValueRefBase(data))

@@ -562,7 +562,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(ScriptingContext& context, bool do
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
     ResetAllObjectMeters(true, true);
-    for ([[maybe_unused]] auto& [empire_id, empire] : context.Empires()) {
+    for ([[maybe_unused]] auto& [empire_id, empire] : context.Empires().GetEmpires()) {
         (void)empire_id;    // quieting unused variable warning
         empire->ResetMeters();
     }
@@ -1485,7 +1485,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     type_timer.EnterSection("techs");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for TECHS";
     std::vector<Condition::ObjectSet> tech_sources;   // for each empire, a set with a single source object for all its techs
-    tech_sources.reserve(context.Empires().size());
+    tech_sources.reserve(context.Empires().NumEmpires());
     // select a source object for each empire and dispatch condition evaluations
     for (auto& [empire_id, empire] : context.Empires()) {
         (void)empire_id;    // quiet unused variable warning
@@ -1515,7 +1515,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     type_timer.EnterSection("policies");
     TraceLogger(effects) << "Universe::GetEffectsAndTargets for POLICIES";
     std::vector<Condition::ObjectSet> policy_sources; // for each empire, a set with a single source object for all its policies
-    policy_sources.reserve(context.Empires().size());
+    policy_sources.reserve(context.Empires().NumEmpires());
     for (const auto& [empire_id, empire] : context.Empires()) {
         (void)empire_id;    // quiet unused varianle warning
         auto source = empire->Source(context.ContextObjects());
@@ -1840,14 +1840,16 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
         if (!obj)
             continue;
 
+        auto& empires = context.Empires().GetEmpires();
+
         // recording of what species/empire destroyed what other stuff in
         // empire statistics for this destroyed object and any contained objects
         for (int destructor : destructors)
-            CountDestructionInStats(obj_id, destructor, context.Empires());
+            CountDestructionInStats(obj_id, destructor, empires);
 
         for (int contained_obj_id : obj->ContainedObjectIDs()) {
             for (int destructor : destructors)
-                CountDestructionInStats(contained_obj_id, destructor, context.Empires());
+                CountDestructionInStats(contained_obj_id, destructor, empires);
         }
         // not worried about fleets being deleted because all their ships were
         // destroyed...  as of this writing there are no stats tracking

@@ -2515,19 +2515,17 @@ namespace {
 
     /** Clears and refills \a combats with CombatInfo structs for
       * every system where a combat should occur this turn. */
-    std::vector<CombatInfo> AssembleSystemCombatInfo(
-        Universe& universe, EmpireManager& empires, const GalaxySetupData& setup_data,
-        SpeciesManager& species, const SupplyManager& supply)
-    {
+    std::vector<CombatInfo> AssembleSystemCombatInfo(ScriptingContext& context) {
         std::vector<CombatInfo> combats;
-        combats.reserve(universe.Objects().size());
+        combats.reserve(context.ContextObjects().size());
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in combats
-        const ScriptingContext context{universe, empires, setup_data, species, supply};
-        for (const auto& sys : universe.Objects().all<System>()) {
+        for (const auto& sys : context.ContextObjects().all<System>()) {
             if (CombatConditionsInSystem(sys->ID(), context))
-                combats.emplace_back(sys->ID(), CurrentTurn(), universe,
-                                     empires, setup_data, species, supply);
+                combats.emplace_back(sys->ID(), context.current_turn, context.ContextUniverse(),
+                                     context.Empires(), context.diplo_statuses,
+                                     context.galaxy_setup_data, context.species,
+                                     context.supply);
         }
         return combats;
     }
@@ -2537,7 +2535,7 @@ namespace {
       * updating after combat. */
     void BackProjectSystemCombatInfoObjectMeters(std::vector<CombatInfo>& combats) {
         for (CombatInfo& combat : combats) {
-            for (const auto& object : combat.objects->all())
+            for (const auto& object : combat.objects.all())
                 object->BackPropagateMeters();
         }
     }
@@ -2633,23 +2631,18 @@ namespace {
     }
 
     /** Creates sitreps for all empires involved in a combat. */
-    void CreateCombatSitReps(const std::vector<CombatInfo>& combats) {
+    void CreateCombatSitReps(std::vector<CombatInfo>& combats) {
         CombatLogManager& log_manager = GetCombatLogManager();
 
-        for (const CombatInfo& combat_info : combats) {
-            auto& empires = combat_info.empires;
-            if (!combat_info.objects) {
-                ErrorLogger() << "CreateCombatSitReps CombatInfo has null objects?!";
-                continue;
-            }
-            const ObjectMap& objects{*combat_info.objects};
+        for (CombatInfo& combat_info : combats) {
+            const ObjectMap& objects{combat_info.objects};
 
             // add combat log entry
-            int log_id = log_manager.AddNewLog(CombatLog(combat_info));
+            int log_id = log_manager.AddNewLog(CombatLog{combat_info});
 
             // basic "combat occured" sitreps
             for (int empire_id : combat_info.empire_ids) {
-                if (auto empire{empires.GetEmpire(empire_id)})
+                if (auto empire{combat_info.GetEmpire(empire_id)})
                     empire->AddSitRepEntry(CreateCombatSitRep(
                         combat_info.system_id, log_id, EnemyId(empire_id, combat_info.empire_ids)));
             }
@@ -2658,7 +2651,7 @@ namespace {
             for (auto& [knowing_empire_id, known_destroyed_object_ids] :
                  combat_info.destroyed_object_knowers)
             {
-                if (auto empire{empires.GetEmpire(knowing_empire_id)}) {
+                if (auto empire{combat_info.GetEmpire(knowing_empire_id)}) {
                     for (int dest_obj_id : known_destroyed_object_ids) {
                         empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(
                             dest_obj_id, combat_info.system_id, knowing_empire_id, combat_info.turn));
@@ -2684,7 +2677,7 @@ namespace {
                     if (damaged_obj_it->second < Visibility::VIS_BASIC_VISIBILITY)
                         continue;
 
-                    if (auto empire = empires.GetEmpire(viewing_empire_id))
+                    if (auto empire = combat_info.GetEmpire(viewing_empire_id))
                         empire->AddSitRepEntry(CreateCombatDamagedObjectSitRep(
                             damaged_object_id, combat_info.system_id, viewing_empire_id,
                             objects, combat_info.turn));
@@ -3503,8 +3496,7 @@ void ServerApp::ProcessCombats() {
 
     // collect data about locations where combat is to occur:
     // map from system ID to CombatInfo for that system
-    auto combats = AssembleSystemCombatInfo(m_universe, m_empires, m_galaxy_setup_data,
-                                            m_species_manager, m_supply_manager);
+    auto combats = AssembleSystemCombatInfo(context);
 
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
@@ -3514,7 +3506,7 @@ void ServerApp::ProcessCombats() {
             combat_system->SetLastTurnBattleHere(CurrentTurn());
 
         DebugLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System id: " + std::to_string(combat_info.system_id) + ")");
-        TraceLogger(combat) << combat_info.objects->Dump();
+        TraceLogger(combat) << combat_info.objects.Dump();
 
         AutoResolveCombat(combat_info);
     }

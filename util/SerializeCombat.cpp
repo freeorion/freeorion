@@ -405,8 +405,7 @@ void serialize(Archive & ar, CombatInfo& info, const unsigned int version)
     using namespace boost::serialization;
 
     std::set<int>                       filtered_empire_ids;
-    std::unique_ptr<ObjectMap>          filtered_objects_ptr = std::make_unique<ObjectMap>();
-    ObjectMap&                          filtered_objects = *filtered_objects_ptr;
+    ObjectMap                           filtered_objects;
     std::set<int>                       filtered_damaged_object_ids;
     std::set<int>                       filtered_destroyed_object_ids;
     std::map<int, std::set<int>>        filtered_destroyed_object_knowers;
@@ -425,9 +424,14 @@ void serialize(Archive & ar, CombatInfo& info, const unsigned int version)
 
     ar  & make_nvp("turn", info.turn)
         & make_nvp("system_id", info.system_id)
-        & BOOST_SERIALIZATION_NVP(filtered_empire_ids)
-        & BOOST_SERIALIZATION_NVP(filtered_objects)
-        & BOOST_SERIALIZATION_NVP(filtered_damaged_object_ids)
+        & BOOST_SERIALIZATION_NVP(filtered_empire_ids);
+
+    if constexpr (Archive::is_saving::value)
+        ar  & BOOST_SERIALIZATION_NVP(filtered_objects);
+    else
+        ar  & make_nvp("filtered_objects", info.objects);
+
+    ar  & BOOST_SERIALIZATION_NVP(filtered_damaged_object_ids)
         & BOOST_SERIALIZATION_NVP(filtered_destroyed_object_ids)
         & BOOST_SERIALIZATION_NVP(filtered_destroyed_object_knowers)
         & BOOST_SERIALIZATION_NVP(filtered_empire_object_visibility)
@@ -435,7 +439,6 @@ void serialize(Archive & ar, CombatInfo& info, const unsigned int version)
 
     if constexpr (Archive::is_loading::value) {
         info.empire_ids.swap(              filtered_empire_ids);
-        info.objects.swap(                 filtered_objects_ptr);
         info.damaged_object_ids.swap(      filtered_damaged_object_ids);
         info.destroyed_object_ids.swap(    filtered_destroyed_object_ids);
         info.destroyed_object_knowers.swap(filtered_destroyed_object_knowers);

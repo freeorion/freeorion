@@ -55,8 +55,8 @@ struct ScriptingContext {
         supply(           GetSupplyManager()),
         universe(         &GetUniverse()),
         const_universe(   GetUniverse()),
-        empires(          &(::Empires().GetEmpires())),
-        const_empires(    const_cast<const EmpireManager&>(::Empires()).GetEmpires()),
+        empires(          &(::Empires())),
+        const_empires(    ::Empires()),
         diplo_statuses(   ::Empires().GetDiplomaticStatuses())
     {}
 
@@ -297,8 +297,8 @@ struct ScriptingContext {
         supply(           GetSupplyManager()),
         universe(         &GetUniverse()),
         const_universe(   GetUniverse()),
-        empires(          &(::Empires().GetEmpires())),
-        const_empires(    const_cast<const EmpireManager&>(::Empires()).GetEmpires()),
+        empires(          &(::Empires())),
+        const_empires(    ::Empires()),
         diplo_statuses(   ::Empires().GetDiplomaticStatuses())
     {}
 
@@ -311,8 +311,8 @@ struct ScriptingContext {
         supply(           supply_),
         universe(         &universe),
         const_universe(   universe),
-        empires(          &(empires_.GetEmpires())),
-        const_empires(    const_cast<const EmpireManager&>(empires_).GetEmpires()),
+        empires(          &empires_),
+        const_empires(    empires_),
         diplo_statuses(   empires_.GetDiplomaticStatuses())
     {}
 
@@ -329,7 +329,7 @@ struct ScriptingContext {
         universe(      nullptr),
         const_universe(universe),
         empires(       nullptr),
-        const_empires( empires_.GetEmpires()),
+        const_empires( empires_),
         diplo_statuses(empires_.GetDiplomaticStatuses())
     {}
 
@@ -390,19 +390,16 @@ struct ScriptingContext {
             ErrorLogger() << "ScriptingContext::GetEmpire() asked for unavailable mutable Empire";
             return nullptr;
         }
-        auto it = empires->find(id);
-        return it == empires->end() ? nullptr : it->second;
+        return empires->GetEmpire(id);
     }
 
-    std::shared_ptr<const Empire> GetEmpire(int id) const {
-        auto it = const_empires.find(id);
-        return it == const_empires.end() ? nullptr : it->second;
-    }
+    std::shared_ptr<const Empire> GetEmpire(int id) const
+    { return const_empires.GetEmpire(id); }
 
-    const EmpireManager::const_container_type& Empires() const
+    const EmpireManager& Empires() const
     { return const_empires; } // const container of const empires
 
-    const EmpireManager::container_type& Empires() { // const container of mutable empires
+    EmpireManager& Empires() { // const container of mutable empires
         if (empires)
             return *empires;
         ErrorLogger() << "ScriptingContext::ContextUniverse() asked for undefined mutable empires";
@@ -411,7 +408,7 @@ struct ScriptingContext {
 
     std::vector<int> EmpireIDs() const {
         std::vector<int> retval;
-        retval.reserve(const_empires.size());
+        retval.reserve(const_empires.NumEmpires());
         std::transform(const_empires.begin(), const_empires.end(),
                        std::back_inserter(retval), [](const auto& e) { return e.first; });
         return retval;
@@ -441,8 +438,8 @@ public:
     const Universe::EmpireObjectVisibilityMap&     empire_object_vis{const_universe.GetEmpireObjectVisibility()};
     const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{const_universe.GetEmpireObjectVisibilityTurnMap()};
 private:
-    const EmpireManager::container_type*           empires = nullptr;
-    const EmpireManager::const_container_type&     const_empires{const_cast<const EmpireManager&>(::Empires()).GetEmpires()};
+    EmpireManager*                                 empires = nullptr;
+    const EmpireManager&                           const_empires{empires ? *empires : (::Empires())};
 public:
     const EmpireManager::DiploStatusMap&           diplo_statuses{::Empires().GetDiplomaticStatuses()};
 };
