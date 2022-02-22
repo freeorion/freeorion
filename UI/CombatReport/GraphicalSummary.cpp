@@ -47,10 +47,8 @@ namespace {
 
     // The participant bar height when its parent side bar height is
     // MIN_SIDE_BAR_HEIGHT.
-    int MIN_PARTICIPANT_BAR_HEIGHT = MIN_SIDE_BAR_HEIGHT -
-                                     Value(AXIS_HEIGHT) -
-                                     Value(X_AXIS_LABEL_MARGIN) -
-                                     Value(SIDE_BAR_UP_MARGIN);
+    constexpr int MIN_PARTICIPANT_BAR_HEIGHT =
+        MIN_SIDE_BAR_HEIGHT - Value(AXIS_HEIGHT) - Value(X_AXIS_LABEL_MARGIN) - Value(SIDE_BAR_UP_MARGIN);
 
     constexpr float EPSILON = 0.00001f;
 

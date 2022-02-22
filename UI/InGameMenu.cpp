@@ -78,8 +78,8 @@ void InGameMenu::CompleteConstruction() {
 }
 
 GG::Rect InGameMenu::CalculatePosition() const {
-    constexpr GG::X H_MAINMENU_MARGIN{40};  //horizontal empty space
-    constexpr GG::Y V_MAINMENU_MARGIN{40};  //vertical empty space
+    static constexpr GG::X H_MAINMENU_MARGIN{40};  //horizontal empty space
+    static constexpr GG::Y V_MAINMENU_MARGIN{40};  //vertical empty space
 
     // Calculate window width and height
     GG::Pt new_size(ButtonWidth() + H_MAINMENU_MARGIN,
@@ -93,7 +93,7 @@ GG::Rect InGameMenu::CalculatePosition() const {
 }
 
 GG::X InGameMenu::ButtonWidth() const {
-    constexpr GG::X MIN_BUTTON_WIDTH{160};
+    static constexpr GG::X MIN_BUTTON_WIDTH{160};
 
     GG::X button_width(0);              //width of the buttons
 
@@ -108,7 +108,7 @@ GG::X InGameMenu::ButtonWidth() const {
 }
 
 GG::Y InGameMenu::ButtonCellHeight() const {
-    constexpr GG::Y MIN_BUTTON_HEIGHT(40);
+    static constexpr GG::Y MIN_BUTTON_HEIGHT(40);
     return std::max(MIN_BUTTON_HEIGHT, m_done_btn->MinUsableSize().y);
 }
 

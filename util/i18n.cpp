@@ -465,8 +465,8 @@ const std::string& Language() {
 
 std::string RomanNumber(unsigned int n) {
     //letter pattern (N) and the associated values (V)
-    static const std::string N[] = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-    constexpr unsigned int V[] =   {1000,  900, 500,  400, 100,   90,  50,   40,  10,    9,   5,    4,   1};
+    static const std::string N[] =      { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    static constexpr unsigned int V[] = {1000,  900, 500,  400, 100,   90,  50,   40,  10,    9,   5,    4,   1};
     unsigned int remainder = n; // remainder of the number to be written
     int i = 0;                  // pattern index
     if (n == 0) return "";      // the romans didn't know there is a zero, read a book about history of the zero if you want to know more

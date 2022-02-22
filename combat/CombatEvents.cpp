@@ -71,7 +71,7 @@ namespace {
 
     //Copied pasted from Font.cpp due to Font not being linked into AI and server code
     std::string WrapColorTag(std::string_view text, EmpireColor c) {
-        constexpr auto lim = std::numeric_limits<EmpireColor::value_type>::max();
+        static constexpr auto lim = std::numeric_limits<EmpireColor::value_type>::max();
         static_assert(lim < 1000); // ensure no more than 3 characters will be consumed per number
         assert(c.size() >= 4);
 

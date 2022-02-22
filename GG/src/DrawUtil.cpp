@@ -103,7 +103,7 @@ void Check(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3)
                           { 0.8f, -0.4f}, { 0.6f, -0.4f}, { 0.8f, -0.8f}};
 
     glPushMatrix();
-    constexpr float sf = 1.25f;                                                 // scale factor to make the check look right
+    static constexpr float sf = 1.25f;                                          // scale factor to make the check look right
     glTranslatef(Value(ul.x + wd / 2.0f), Value(ul.y + ht / 2.0f * sf), 0.0f);  // move origin to the center of the rectangle
     glScalef(Value(wd / 2.0f * sf), Value(ht / 2.0f * sf), 1.0f);               // map the range [-1,1] to the rectangle in both directions
 
@@ -150,22 +150,22 @@ void XMark(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3)
     glDisable(GL_TEXTURE_2D);
 
     // all vertices
-    GLfloat verts[][2] = {{-0.4f, -0.6f}, {-0.6f, -0.4f}, {-0.4f, -0.4f}, {-0.2f,  0.0f}, {-0.6f,  0.4f},
-                          {-0.4f,  0.6f}, {-0.4f,  0.4f}, { 0.0f,  0.2f}, { 0.4f,  0.6f}, { 0.6f,  0.4f},
-                          { 0.4f,  0.4f}, { 0.2f,  0.0f}, { 0.6f, -0.4f}, { 0.4f, -0.6f}, { 0.4f, -0.4f},
-                          { 0.0f, -0.2f}, { 0.0f,  0.0f}};
+    static constexpr GLfloat verts[][2] = {{-0.4f, -0.6f}, {-0.6f, -0.4f}, {-0.4f, -0.4f}, {-0.2f,  0.0f}, {-0.6f,  0.4f},
+                                           {-0.4f,  0.6f}, {-0.4f,  0.4f}, { 0.0f,  0.2f}, { 0.4f,  0.6f}, { 0.6f,  0.4f},
+                                           { 0.4f,  0.4f}, { 0.2f,  0.0f}, { 0.6f, -0.4f}, { 0.4f, -0.6f}, { 0.4f, -0.4f},
+                                           { 0.0f, -0.2f}, { 0.0f,  0.0f}};
 
     glPushMatrix();
-    constexpr float sf = 1.75f;                                             // scale factor; the check wasn't the right size as drawn originally
+    static constexpr float sf = 1.75f;                                      // scale factor; the check wasn't the right size as drawn originally
     glTranslatef(Value(ul.x + wd / 2.0f), Value(ul.y + ht / 2.0f), 0.0f);   // move origin to the center of the rectangle
     glScalef(Value(wd / 2.0f * sf), Value(ht / 2.0f * sf), 1.0f);           // map the range [-1,1] to the rectangle in both directions
 
-    static std::size_t indices[44] = {12, 13, 14,
-                                      15,  0,  2, 16,  9, 11, 16, 10,
-                                      0,  1,  2,
-                                      13, 15, 16, 14,  3,  4,  6, 16,
-                                      4,  5,  6,  8,  9, 10,
-                                      14, 16, 11, 12,  2,  1,  3, 16, 16,  6,  5,  7, 16,  7,  8, 10};
+    static constexpr std::size_t indices[44] = {12, 13, 14,
+                                                15,  0,  2, 16,  9, 11, 16, 10,
+                                                0,  1,  2,
+                                                13, 15, 16, 14,  3,  4,  6, 16,
+                                                4,  5,  6,  8,  9, 10,
+                                                14, 16, 11, 12,  2,  1,  3, 16, 16,  6,  5,  7, 16,  7,  8, 10};
 
     GL2DVertexBuffer vert_buf;
     vert_buf.reserve(44);

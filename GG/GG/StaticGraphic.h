@@ -24,16 +24,16 @@ namespace GG {
 
 /** Styles for StaticGraphic controls. */
 GG_FLAG_TYPE(GraphicStyle);
-extern GG_API const GraphicStyle GRAPHIC_NONE;        ///< Default style selected.
-extern GG_API const GraphicStyle GRAPHIC_VCENTER;     ///< Centers graphic vertically.
-extern GG_API const GraphicStyle GRAPHIC_TOP;         ///< Top-justifies graphic.
-extern GG_API const GraphicStyle GRAPHIC_BOTTOM;      ///< Justifies the graphic to the bottom of the rectangle.
-extern GG_API const GraphicStyle GRAPHIC_CENTER;      ///< Centers graphic horizontally in the rectangle.
-extern GG_API const GraphicStyle GRAPHIC_LEFT;        ///< Aligns graphic to the left.
-extern GG_API const GraphicStyle GRAPHIC_RIGHT;       ///< Aligns graphic to the right.
-extern GG_API const GraphicStyle GRAPHIC_FITGRAPHIC;  ///< Scales graphic to fit within the StaticGraphic's window dimensions.
-extern GG_API const GraphicStyle GRAPHIC_SHRINKFIT;   ///< Like GRAPHIC_FITGRAPHIC, but this one only scales the image if it otherwise would not fit in the window.
-extern GG_API const GraphicStyle GRAPHIC_PROPSCALE;   ///< If GRAPHIC_FITGRAPHIC or GRAPHIC_SHRINKFIT is used, this ensures scaling is done proportionally.
+constexpr GraphicStyle GRAPHIC_NONE          (0);       ///< Default style selected.
+constexpr GraphicStyle GRAPHIC_VCENTER       (1 << 0);  ///< Centers graphic vertically.
+constexpr GraphicStyle GRAPHIC_TOP           (1 << 1);  ///< Top-justifies graphic.
+constexpr GraphicStyle GRAPHIC_BOTTOM        (1 << 2);  ///< Justifies the graphic to the bottom of the rectangle.
+constexpr GraphicStyle GRAPHIC_CENTER        (1 << 3);  ///< Centers graphic horizontally in the rectangle.
+constexpr GraphicStyle GRAPHIC_LEFT          (1 << 4);  ///< Aligns graphic to the left.
+constexpr GraphicStyle GRAPHIC_RIGHT         (1 << 5);  ///< Aligns graphic to the right.
+constexpr GraphicStyle GRAPHIC_FITGRAPHIC    (1 << 6);  ///< Scales graphic to fit within the StaticGraphic's window dimensions.
+constexpr GraphicStyle GRAPHIC_SHRINKFIT     (1 << 7);  ///< Like GRAPHIC_FITGRAPHIC, but this one only scales the image if it otherwise would not fit in the window.
+constexpr GraphicStyle GRAPHIC_PROPSCALE     (1 << 8);  ///< If GRAPHIC_FITGRAPHIC or GRAPHIC_SHRINKFIT is used, this ensures scaling is done proportionally.
 
 
 /** \brief A simple, non-interactive window that displays a GG::SubTexture.

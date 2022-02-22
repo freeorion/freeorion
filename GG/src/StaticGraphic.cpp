@@ -17,17 +17,6 @@ using namespace GG;
 ///////////////////////////////////////
 // GraphicStyle
 ///////////////////////////////////////
-const GraphicStyle GG::GRAPHIC_NONE          (0);
-const GraphicStyle GG::GRAPHIC_VCENTER       (1 << 0);
-const GraphicStyle GG::GRAPHIC_TOP           (1 << 1);
-const GraphicStyle GG::GRAPHIC_BOTTOM        (1 << 2);
-const GraphicStyle GG::GRAPHIC_CENTER        (1 << 3);
-const GraphicStyle GG::GRAPHIC_LEFT          (1 << 4);
-const GraphicStyle GG::GRAPHIC_RIGHT         (1 << 5);
-const GraphicStyle GG::GRAPHIC_FITGRAPHIC    (1 << 6);
-const GraphicStyle GG::GRAPHIC_SHRINKFIT     (1 << 7);
-const GraphicStyle GG::GRAPHIC_PROPSCALE     (1 << 8);
-
 GG_FLAGSPEC_IMPL(GraphicStyle);
 
 namespace {
