@@ -276,9 +276,8 @@ public:
     constexpr Flags(FlagType flag) :
         m_flags(flag.m_value)
     {
-#ifdef __cpp_if_consteval
-        if consteval {
-        } else {
+#if defined(__cpp_lib_is_constant_evaluated)
+        if (!std::is_constant_evaluated()) {
             if (!FlagSpec<FlagType>::instance().contains(flag))
                 throw UnknownFlag("Invalid flag with value " + std::to_string(flag.m_value));
         }
