@@ -1919,11 +1919,11 @@ T Operation<T>::EvalImpl(OpType op_type, const T lhs, const T rhs)
     }
 
     case OpType::MAXIMUM: {
-        return std::max(lhs, rhs);
+        return std::max<T>(lhs, rhs);
         break;
     }
     case OpType::MINIMUM: {
-        return std::min(lhs, rhs);
+        return std::min<T>(lhs, rhs);
         break;
     }
 
