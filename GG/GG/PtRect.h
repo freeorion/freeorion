@@ -43,10 +43,7 @@ constexpr Y Y1{1};
 /** \brief A GG screen coordinate class. */
 struct GG_API Pt
 {
-    constexpr Pt() :
-        x{X0},
-        y{Y0}
-    {}
+    constexpr Pt() = default;
 
     constexpr Pt(X x_, Y y_) :
         x(x_),
@@ -94,20 +91,17 @@ GG_API constexpr inline bool operator<(const Pt& lhs, const Pt& rhs)  { return l
 GG_API constexpr inline bool operator>(const Pt& lhs, const Pt& rhs)  { return lhs.x > rhs.x && lhs.y > rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both greater than the corresponding components of \a rhs
 GG_API constexpr inline bool operator<=(const Pt& lhs, const Pt& rhs) { return lhs.x <= rhs.x && lhs.y <= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both less than or equal to the corresponding components of \a rhs
 GG_API constexpr inline bool operator>=(const Pt& lhs, const Pt& rhs) { return lhs.x >= rhs.x && lhs.y >= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both greater than or equal to the corresponding components of \a rhs
-GG_API           inline Pt   operator+(const Pt& lhs, const Pt& rhs)  { return Pt(lhs.x + rhs.x, lhs.y + rhs.y); } ///< returns the vector sum of \a lhs and \a rhs
-GG_API           inline Pt   operator-(const Pt& lhs, const Pt& rhs)  { return Pt(lhs.x - rhs.x, lhs.y - rhs.y); } ///< returns the vector difference of \a lhs and \a rhs
-GG_API           inline Pt   operator*(const Pt& lhs, double rhs)     { return Pt(lhs.x * rhs, lhs.y * rhs); }     ///< returns the vector with components multiplied by \a rhs
-GG_API           inline Pt   operator/(const Pt& lhs, double rhs)     { return Pt(lhs.x / rhs, lhs.y / rhs); }     ///< returns the vector with components divided by \a rhs
+GG_API constexpr inline Pt   operator+(const Pt& lhs, const Pt& rhs)  { return Pt{lhs.x + rhs.x, lhs.y + rhs.y}; } ///< returns the vector sum of \a lhs and \a rhs
+GG_API constexpr inline Pt   operator-(const Pt& lhs, const Pt& rhs)  { return Pt{lhs.x - rhs.x, lhs.y - rhs.y}; } ///< returns the vector difference of \a lhs and \a rhs
+GG_API constexpr inline Pt   operator*(const Pt& lhs, double rhs)     { return Pt{lhs.x * rhs, lhs.y * rhs}; }     ///< returns the vector with components multiplied by \a rhs
+GG_API constexpr inline Pt   operator/(const Pt& lhs, double rhs)     { return Pt{lhs.x / rhs, lhs.y / rhs}; }     ///< returns the vector with components divided by \a rhs
 
 /** \brief A GG rectangle class.
 
     This is essentially just two points that bound the rectangle. */
 struct GG_API Rect
 {
-    constexpr Rect() :
-        ul{},
-        lr{}
-    {}
+    constexpr Rect() = default;
 
     constexpr Rect(const Pt& pt1, const Pt& pt2) :
         ul{std::min(pt1.x, pt2.x), std::min(pt1.y, pt2.y)},
