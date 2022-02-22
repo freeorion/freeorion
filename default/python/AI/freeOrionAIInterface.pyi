@@ -21,973 +21,1518 @@ from common.fo_typing import (
 class AccountingInfo:
     @property
     def causeType(self): ...
+
     @property
     def customLabel(self): ...
+
     @property
     def meterChange(self): ...
+
     @property
     def meterRunningTotal(self): ...
+
     @property
     def sourceID(self): ...
+
     @property
     def specificCause(self): ...
 
+
 class AccountingInfoVec:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
     def append(self, obj: object) -> None: ...
+
     def extend(self, obj: object) -> None: ...
+
 
 class GalaxySetupData:
     @property
     def age(self) -> galaxySetupOption: ...
+
     @property
     def gameUID(self) -> str: ...
+
     @property
     def maxAIAggression(self) -> aggression: ...
+
     @property
     def monsterFrequency(self) -> galaxySetupOption: ...
+
     @property
     def nativeFrequency(self) -> galaxySetupOption: ...
+
     @property
     def planetDensity(self) -> galaxySetupOption: ...
+
     @property
     def seed(self) -> str: ...
+
     @property
     def shape(self) -> galaxyShape: ...
+
     @property
     def size(self) -> int: ...
+
     @property
     def specialsFrequency(self) -> galaxySetupOption: ...
+
     @property
     def starlaneFrequency(self) -> galaxySetupOption: ...
+
 
 class GameRules:
     @property
     def empty(self) -> bool: ...
+
     def getDescription(self, string: str) -> str: ...
+
     def getDouble(self, string: str) -> float: ...
+
     def getInt(self, string: str) -> int: ...
+
     def getRulesAsStrings(self) -> StringsMap: ...
+
     def getString(self, string: str) -> str: ...
+
     def getToggle(self, string: str) -> bool: ...
+
     def ruleExists(self, string: str) -> bool: ...
+
     def ruleExistsWithType(self, string: str, rule_type: ruleType) -> bool: ...
+
 
 class IntBoolMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class IntDblMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class IntFltMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class IntIntDblMapMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class IntIntMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class IntPairVec:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
     def append(self, obj: object) -> None: ...
+
     def extend(self, obj: object) -> None: ...
+
 
 class IntSet:
     def __contains__(self, number: int) -> bool: ...
+
     def __iter__(self) -> Iterator: ...
+
     def __len__(self) -> int: ...
+
     def count(self, number: int) -> int: ...
+
     def empty(self) -> bool: ...
+
     def size(self) -> int: ...
+
 
 class IntSetFltMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class IntSetSet:
     def __contains__(self, int_set: IntSet) -> bool: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def count(self, int_set: IntSet) -> int: ...
+
     def empty(self) -> bool: ...
+
     def size(self) -> int: ...
+
 
 class IntStringMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class IntVec:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> Iterator: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
     def append(self, obj: object) -> None: ...
+
     def extend(self, obj: object) -> None: ...
+
 
 class MeterTypeAccountingInfoVecMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class MeterTypeAccountingInfoVecPair:
     @property
     def meterType(self): ...
 
+
 class MeterTypeMeterMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class PairIntInt_IntMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class ShipPartMeterMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class ShipSlotVec:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
     def append(self, obj: object) -> None: ...
+
     def extend(self, obj: object) -> None: ...
+
 
 class StatRecordsMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class StringIntMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class StringSet:
     def __contains__(self, string: str) -> bool: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def count(self, string: str) -> int: ...
+
     def empty(self) -> bool: ...
+
     def size(self) -> int: ...
+
 
 class StringSet2:
     def __contains__(self, string: str) -> bool: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def count(self, string: str) -> int: ...
+
     def empty(self) -> bool: ...
+
     def size(self) -> int: ...
+
 
 class StringVec:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> Iterator: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
     def append(self, obj: object) -> None: ...
+
     def extend(self, obj: object) -> None: ...
+
 
 class String_IntStringMap_Map:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class StringsMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class TargetIDAccountingMapMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class UnlockableItem:
     @property
     def name(self) -> str: ...
+
     @property
     def type(self) -> unlockableItemType: ...
 
+
 class UnlockableItemVec:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
     def append(self, obj: object) -> None: ...
+
     def extend(self, obj: object) -> None: ...
+
 
 class VisibilityIntMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class buildingType:
     @property
     def costTimeLocationInvariant(self) -> bool: ...
+
     @property
     def description(self) -> str: ...
+
     @property
     def name(self) -> str: ...
+
     def canBeEnqueued(self, number1: int, number2: int) -> bool: ...
+
     def canBeProduced(self, number1: int, number2: int) -> bool: ...
+
     def captureResult(self, number1: int, number2: int, number3: int, boolean: bool) -> captureResult: ...
+
     def dump(self, number: int) -> str:
         """
         Returns string with debug information, use '0' as argument.
         """
+
     def perTurnCost(self, number1: int, number2: int) -> float: ...
+
     def productionCost(self, number1: int, number2: int) -> float: ...
+
     def productionTime(self, number1: int, number2: int) -> int: ...
+
 
 class diplomaticMessage:
     @property
     def recipient(self) -> int: ...
+
     @property
     def sender(self) -> int: ...
+
     @property
     def type(self) -> diplomaticMessageType: ...
+
 
 class diplomaticStatusUpdate:
     @property
     def empire1(self): ...
+
     @property
     def empire2(self): ...
+
     @property
     def status(self): ...
+
 
 class empire:
     @property
     def adoptedPolicies(self) -> StringVec: ...
+
     @property
     def allShipDesigns(self) -> IntSet: ...
+
     @property
     def availableBuildingTypes(self) -> StringSet: ...
+
     @property
     def availablePolicies(self) -> StringSet2: ...
+
     @property
     def availableShipDesigns(self) -> IntSet: ...
+
     @property
     def availableShipHulls(self) -> StringSet: ...
+
     @property
     def availableShipParts(self) -> StringSet: ...
+
     @property
     def availableTechs(self) -> StringSet: ...
+
     @property
     def capitalID(self) -> PlanetId: ...
+
     @property
     def categoriesSlotPolicies(self) -> String_IntStringMap_Map: ...
+
     @property
     def colour(self) -> tuple: ...
+
     @property
     def eliminated(self) -> bool: ...
+
     @property
     def empireID(self) -> EmpireId: ...
+
     @property
     def emptyPolicySlots(self) -> StringIntMap: ...
+
     @property
     def exploredSystemIDs(self) -> IntSet: ...
+
     @property
     def fleetSupplyableSystemIDs(self) -> IntSet: ...
+
     @property
     def name(self) -> str: ...
+
     @property
     def planetsWithAllocatedPP(self) -> IntSetFltMap: ...
+
     @property
     def planetsWithAvailablePP(self) -> IntSetFltMap: ...
+
     @property
     def planetsWithWastedPP(self) -> IntSetSet: ...
+
     @property
     def playerName(self) -> str: ...
+
     @property
     def productionPoints(self) -> float: ...
+
     @property
     def productionQueue(self) -> productionQueue: ...
+
     @property
     def researchQueue(self) -> researchQueue: ...
+
     @property
     def supplyUnobstructedSystems(self) -> IntSet: ...
+
     @property
     def systemSupplyRanges(self) -> IntFltMap: ...
+
     @property
     def totalPolicySlots(self) -> StringIntMap: ...
+
     @property
     def turnsPoliciesAdopted(self) -> StringIntMap: ...
+
     @property
     def won(self) -> bool: ...
+
     def buildingTypeAvailable(self, string: str) -> bool: ...
+
     @overload
     def canBuild(self, build_type: buildType, string: str, number: int) -> bool: ...
     @overload
     def canBuild(self, build_type: buildType, number1: int, number2: int) -> bool: ...
     def canBuild(*args) -> bool: ...
+
     def getMeter(self, string: str) -> meter:
         """
         Returns the empire meter with the indicated name (string).
         """
+
     def getResourcePool(self, resource_type: resourceType) -> resPool: ...
+
     def getTechStatus(self, string: str) -> techStatus: ...
+
     def hasExploredSystem(self, number: int) -> bool: ...
+
     def obstructedStarlanes(self) -> IntPairVec: ...
+
     def policyAdopted(self, string: str) -> bool: ...
+
     def policyAvailable(self, string: str) -> bool: ...
+
     def population(self) -> float: ...
+
     def preservedLaneTravel(self, number1: int, number2: int) -> bool: ...
+
     def productionCostAndTime(self, production_queue_element: productionQueueElement) -> object: ...
+
     def researchProgress(self, string: str) -> float: ...
+
     def resourceAvailable(self, resource_type: resourceType) -> float: ...
+
     def resourceProduction(self, resource_type: resourceType) -> float: ...
+
     def resourceStockpile(self, resource_type: resourceType) -> float: ...
+
     def shipDesignAvailable(self, number: int) -> bool: ...
+
     def slotPolicyAdoptedIn(self, string: str) -> int: ...
+
     def supplyProjections(self) -> Dict[SystemId, int]:
         """
         Returns the (negative) number of jumps (int) away each known system ID (int) is from this empire's supply network. 0 in dicates systems that are fleet supplied. -1 indicates a system that is 1 jump away from a supplied system. -4 indicates a system that is 4 jumps from a supply connection.
         """
+
     def techResearched(self, string: str) -> bool: ...
+
     def turnPolicyAdopted(self, string: str) -> int: ...
+
 
 class fieldType:
     @property
     def description(self) -> str: ...
+
     @property
     def name(self) -> str: ...
+
     def dump(self, number: int) -> str:
         """
         Returns string with debug information, use '0' as argument.
         """
+
 
 class meter:
     @property
     def current(self) -> float: ...
+
     @property
     def initial(self) -> float: ...
+
     def dump(self, number: int) -> str:
         """
         Returns string with debug information, use '0' as argument.
         """
 
+
 class policy:
     @property
     def category(self): ...
+
     @property
     def description(self) -> str: ...
+
     @property
     def name(self) -> str: ...
+
     @property
     def shortDescription(self): ...
+
     def adoptionCost(self, number: int, obj: object) -> float: ...
+
 
 class popCenter:
     @property
     def speciesName(self) -> SpeciesName: ...
 
+
 class productionQueue:
     @property
     def allocatedPP(self) -> IntSetFltMap: ...
+
     @property
     def empireID(self) -> EmpireId: ...
+
     @property
     def empty(self) -> bool: ...
+
     @property
     def size(self) -> int: ...
+
     @property
     def totalSpent(self) -> float: ...
+
     def __getitem__(self, number: int) -> productionQueueElement: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def availablePP(self, res_pool: resPool) -> IntSetFltMap: ...
+
     def objectsWithWastedPP(self, res_pool: resPool) -> IntSetSet: ...
+
 
 class productionQueueElement:
     @property
     def allocation(self) -> float: ...
+
     @property
     def allowedStockpile(self) -> bool: ...
+
     @property
     def blocksize(self) -> int: ...
+
     @property
     def buildType(self) -> buildType: ...
+
     @property
     def designID(self) -> int: ...
+
     @property
     def locationID(self) -> PlanetId: ...
+
     @property
     def name(self) -> str: ...
+
     @property
     def paused(self) -> bool: ...
+
     @property
     def progress(self) -> float: ...
+
     @property
     def remaining(self) -> int: ...
+
     @property
     def turnsLeft(self) -> int: ...
 
-class resPool: ...
+
+class resPool:
+    ...
+
 
 class resPoolMap:
     def __contains__(self, obj: object) -> bool: ...
+
     def __delitem__(self, obj: object) -> None: ...
+
     def __getitem__(self, obj: object) -> object: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
+
 
 class researchQueue:
     @property
     def empireID(self) -> EmpireId: ...
+
     @property
     def empty(self) -> bool: ...
+
     @property
     def size(self) -> int: ...
+
     @property
     def totalSpent(self) -> float: ...
+
     def __contains__(self, research_queue_element: researchQueueElement) -> bool: ...
+
     def __getitem__(self, number: int) -> researchQueueElement: ...
+
     def __iter__(self) -> object: ...
+
     def __len__(self) -> int: ...
+
     def inQueue(self, string: str) -> bool: ...
+
 
 class researchQueueElement:
     @property
     def allocation(self) -> float: ...
+
     @property
     def tech(self) -> str: ...
+
     @property
     def turnsLeft(self) -> int: ...
+
 
 class resourceCenter:
     @property
     def availableFoci(self): ...
+
     @property
     def focus(self): ...
+
     @property
     def turnsSinceFocusChange(self): ...
+
 
 class shipDesign:
     @property
     def attack(self) -> float: ...
+
     @property
     def attackStats(self) -> IntVec: ...
+
     @property
     def canColonize(self) -> bool: ...
+
     @property
     def canInvade(self) -> bool: ...
+
     @property
     def colonyCapacity(self) -> float: ...
+
     @property
     def costTimeLocationInvariant(self) -> bool: ...
+
     @property
     def defense(self) -> float: ...
+
     @property
     def description(self) -> str: ...
+
     @property
     def designedOnTurn(self) -> Turn: ...
+
     @property
     def detection(self) -> float: ...
+
     @property
     def fuel(self) -> float: ...
+
     @property
     def hasDirectWeapons(self) -> bool: ...
+
     @property
     def hasFighters(self) -> bool: ...
+
     @property
     def hull(self) -> str: ...
+
     @property
     def id(self) -> int: ...
+
     @property
     def industryGeneration(self) -> float: ...
+
     @property
     def influenceGeneration(self) -> float: ...
+
     @property
     def isArmed(self) -> bool: ...
+
     @property
     def isMonster(self) -> bool: ...
+
     @property
     def name(self) -> str: ...
+
     @property
     def parts(self) -> StringVec: ...
+
     @property
     def researchGeneration(self) -> float: ...
+
     @property
     def shields(self) -> float: ...
+
     @property
     def ship_hull(self) -> shipHull: ...
+
     @property
     def speed(self) -> float: ...
+
     @property
     def stealth(self) -> float: ...
+
     @property
     def structure(self) -> float: ...
+
     @property
     def troopCapacity(self) -> float: ...
+
     def dump(self, number: int) -> str:
         """
         Returns string with debug information, use '0' as argument.
         """
+
     def perTurnCost(self, number1: int, number2: int) -> float: ...
+
     def productionCost(self, number1: int, number2: int) -> float: ...
+
     def productionLocationForEmpire(self, number1: int, number2: int) -> bool: ...
+
     def productionTime(self, number1: int, number2: int) -> int: ...
+
 
 class shipHull:
     @property
     def costTimeLocationInvariant(self) -> bool: ...
+
     @property
     def fuel(self) -> float: ...
+
     @property
     def name(self) -> str: ...
+
     @property
     def numSlots(self) -> int: ...
+
     @property
     def slots(self) -> ShipSlotVec: ...
+
     @property
     def speed(self) -> float: ...
+
     @property
     def starlaneSpeed(self) -> float: ...
+
     @property
     def stealth(self) -> float: ...
+
     @property
     def structure(self) -> float: ...
+
     def hasTag(self, string: str) -> bool: ...
+
     def numSlotsOfSlotType(self, ship_slot_type: shipSlotType) -> int: ...
+
     def productionCost(self, number1: int, number2: int, number3: int) -> float: ...
+
     def productionLocation(self, number: int) -> bool:
         """
         Returns the result of Location condition (bool) in passed location_id (int)
         """
+
     def productionTime(self, number1: int, number2: int, number3: int) -> int: ...
+
 
 class shipPart:
     @property
     def capacity(self) -> float: ...
+
     @property
     def costTimeLocationInvariant(self) -> bool: ...
+
     @property
     def mountableSlotTypes(self) -> ShipSlotVec: ...
+
     @property
     def name(self) -> str: ...
+
     @property
     def partClass(self) -> shipPartClass: ...
+
     @property
     def secondaryStat(self) -> float: ...
+
     def canMountInSlotType(self, ship_slot_type: shipSlotType) -> bool: ...
+
     def productionCost(self, number1: int, number2: int, number3: int) -> float: ...
+
     def productionLocation(self, number: int) -> bool:
         """
         Returns the result of Location condition (bool) in passed location_id (int)
         """
+
     def productionTime(self, number1: int, number2: int, number3: int) -> int: ...
+
 
 class special:
     @property
     def description(self) -> str: ...
+
     @property
     def name(self) -> str: ...
+
     @property
     def spawnlimit(self) -> int: ...
+
     @property
     def spawnrate(self) -> float: ...
+
     def dump(self, number: int) -> str:
         """
         Returns string with debug information, use '0' as argument.
         """
+
     def initialCapacity(self, number: int) -> float: ...
+
 
 class species:
     @property
     def canColonize(self) -> bool: ...
+
     @property
     def canProduceShips(self) -> bool: ...
+
     @property
     def description(self) -> str: ...
+
     @property
     def foci(self) -> StringVec: ...
+
     @property
     def homeworlds(self) -> IntSet: ...
+
     @property
     def name(self) -> str: ...
+
     @property
     def preferredFocus(self) -> str: ...
+
     @property
     def spawnlimit(self) -> int: ...
+
     @property
     def spawnrate(self) -> float: ...
+
     @property
     def tags(self) -> StringSet: ...
+
     def dump(self, number: int) -> str:
         """
         Returns string with debug information, use '0' as argument.
         """
+
     def getPlanetEnvironment(self, planet_type: planetType) -> planetEnvironment: ...
+
 
 class tech:
     @property
     def category(self) -> str: ...
+
     @property
     def description(self) -> str: ...
+
     @property
     def name(self) -> str: ...
+
     @property
     def prerequisites(self) -> StringSet: ...
+
     @property
     def shortDescription(self) -> str: ...
+
     @property
     def unlockedItems(self) -> UnlockableItemVec: ...
+
     @property
     def unlockedTechs(self) -> StringSet: ...
+
     def perTurnCost(self, number: int) -> float: ...
+
     def recursivePrerequisites(self, number: int) -> StringVec: ...
+
     def researchCost(self, number: int) -> float: ...
+
     def researchTime(self, number: int) -> int: ...
+
 
 class universe:
     @property
     def allObjectIDs(self) -> IntVec: ...
+
     @property
     def buildingIDs(self) -> Sequence[BuildingId]: ...
+
     @property
     def effectAccounting(self) -> TargetIDAccountingMapMap: ...
+
     @property
     def fieldIDs(self) -> IntVec: ...
+
     @property
     def fleetIDs(self) -> Sequence[FleetId]: ...
+
     @property
     def planetIDs(self) -> Sequence[PlanetId]: ...
+
     @property
     def shipIDs(self) -> Sequence[ShipId]: ...
+
     @property
     def systemIDs(self) -> Sequence[SystemId]: ...
+
     def destroyedObjectIDs(self, number: int) -> IntSet: ...
+
     def dump(self) -> None: ...
+
     def getBuilding(self, number: int) -> building: ...
+
     def getField(self, number: int) -> field: ...
+
     def getFleet(self, number: int) -> fleet: ...
+
     def getGenericShipDesign(self, string: str) -> shipDesign:
         """
         Returns the ship design (ShipDesign) with the indicated name (string).
         """
+
     def getImmediateNeighbors(self, number1: int, number2: int) -> IntVec: ...
+
     def getObject(self, number: int) -> universeObject: ...
+
     def getPlanet(self, number: int) -> planet: ...
+
     def getShip(self, number: int) -> ship: ...
+
     def getSystem(self, number: int) -> system: ...
+
     def getSystemNeighborsMap(self, number1: int, number2: int) -> IntDblMap: ...
+
     def getVisibility(self, number1: int, number2: int) -> visibility: ...
+
     def getVisibilityTurnsMap(self, number1: int, number2: int) -> Dict[int, int]: ...
+
     def jumpDistance(self, number1: int, number2: int) -> int:
         """
         If two system ids are passed or both objects are within a system, return the jump distance between the two systems. If one object (e.g. a fleet) is on a starlane, then calculate the jump distance from both ends of the starlane to the target system and return the smaller one.
         """
+
     def leastJumpsPath(self, number1: int, number2: int, number3: int) -> IntVec: ...
+
     def linearDistance(self, number1: int, number2: int) -> float: ...
+
     def shortestNonHostilePath(self, number1: int, number2: int, number3: int) -> IntVec:
         """
         Shortest sequence of System ids and distance from System (number1) to System (number2) with no hostile Fleets as determined by visibility of Empire (number3).  (number3) must be a valid empire.
         """
+
     def shortestPath(self, number1: int, number2: int, number3: int) -> IntVec: ...
+
     def shortestPathDistance(self, number1: int, number2: int) -> float: ...
+
     def statRecords(self) -> StatRecordsMap:
         """
         Empire statistics recorded by the server each turn. Indexed first by staistic name (string), then by empire id (int), then by turn number (int), pointing to the statisic value (double).
         """
+
     def systemHasStarlane(self, number1: int, number2: int) -> bool: ...
+
     def systemsConnected(self, number1: int, number2: int, number3: int) -> bool: ...
+
     def updateMeterEstimates(self, obj: object) -> None: ...
+
 
 class universeObject:
     @property
     def ageInTurns(self): ...
+
     @property
     def containedObjects(self): ...
+
     @property
     def containerObject(self): ...
+
     @property
     def creationTurn(self): ...
+
     @property
     def id(self) -> ObjectId: ...
+
     @property
     def meters(self): ...
+
     @property
     def name(self) -> str: ...
+
     @property
     def owner(self) -> EmpireId: ...
+
     @property
     def specials(self): ...
+
     @property
     def systemID(self) -> SystemId: ...
+
     @property
     def tags(self): ...
+
     @property
     def unowned(self): ...
+
     @property
     def x(self): ...
+
     @property
     def y(self): ...
+
     def containedBy(self, number: int) -> bool: ...
+
     def contains(self, number: int) -> bool: ...
+
     def currentMeterValue(self, meter_type: meterType) -> float: ...
+
     def dump(self) -> str:
         """
         Returns string with debug information.
         """
+
     def getMeter(self, meter_type: meterType) -> meter: ...
+
     def hasSpecial(self, string: str) -> bool: ...
+
     def hasTag(self, string: str, obj: object) -> bool: ...
+
     def initialMeterValue(self, meter_type: meterType) -> float: ...
+
     def ownedBy(self, number: int) -> bool: ...
+
     def specialAddedOnTurn(self, string: str) -> int: ...
+
 
 class building(universeObject):
     @property
     def buildingTypeName(self) -> str: ...
+
     @property
     def orderedScrapped(self) -> bool: ...
+
     @property
     def planetID(self) -> int: ...
+
     @property
     def producedByEmpireID(self) -> int: ...
+
 
 class field(universeObject):
     @property
     def fieldTypeName(self) -> str: ...
+
     @overload
     def inField(self, base_object: universeObject) -> bool: ...
     @overload
     def inField(self, floating_number1: float, floating_number2: float) -> bool: ...
     def inField(*args) -> bool: ...
 
+
 class fleet(universeObject):
     @property
     def aggression(self) -> fleetAggression: ...
+
     @property
     def aggressive(self) -> bool: ...
+
     @property
     def canChangeDirectionEnRoute(self) -> bool: ...
+
     @property
     def empty(self) -> bool: ...
+
     @property
     def finalDestinationID(self) -> int: ...
+
     @property
     def fuel(self) -> float: ...
+
     @property
     def hasArmedShips(self) -> bool: ...
+
     @property
     def hasColonyShips(self) -> bool: ...
+
     @property
     def hasFighterShips(self) -> bool: ...
+
     @property
     def hasMonsters(self) -> bool: ...
+
     @property
     def hasOutpostShips(self) -> bool: ...
+
     @property
     def hasTroopShips(self) -> bool: ...
+
     @property
     def maxFuel(self) -> float: ...
+
     @property
     def nextSystemID(self) -> int: ...
+
     @property
     def numShips(self) -> int: ...
+
     @property
     def obstructive(self) -> bool: ...
+
     @property
     def previousSystemID(self) -> int: ...
+
     @property
     def shipIDs(self) -> Set[ShipId]: ...
+
     @property
     def speed(self) -> float: ...
+
 
 class ship(universeObject):
     @property
     def arrivedOnTurn(self) -> int: ...
+
     @property
     def canBombard(self) -> bool: ...
+
     @property
     def canColonize(self) -> bool: ...
+
     @property
     def canInvade(self) -> bool: ...
+
     @property
     def colonyCapacity(self) -> bool: ...
+
     @property
     def design(self) -> shipDesign: ...
+
     @property
     def designID(self) -> int: ...
+
     @property
     def fleetID(self) -> int: ...
+
     @property
     def hasFighters(self) -> bool: ...
+
     @property
     def isArmed(self) -> bool: ...
+
     @property
     def isMonster(self) -> bool: ...
+
     @property
     def lastResuppliedOnTurn(self) -> int: ...
+
     @property
     def lastTurnActiveInCombat(self) -> int: ...
+
     @property
     def orderedColonizePlanet(self) -> int: ...
+
     @property
     def orderedInvadePlanet(self) -> int: ...
+
     @property
     def orderedScrapped(self) -> bool: ...
+
     @property
     def partMeters(self) -> ShipPartMeterMap: ...
+
     @property
     def producedByEmpireID(self) -> int: ...
+
     @property
     def speciesName(self) -> SpeciesName: ...
+
     @property
     def speed(self) -> float: ...
+
     @property
     def troopCapacity(self) -> bool: ...
+
     def currentPartMeterValue(self, meter_type: meterType, string: str) -> float: ...
+
     def initialPartMeterValue(self, meter_type: meterType, string: str) -> float: ...
+
 
 class system(universeObject):
     @property
     def buildingIDs(self) -> Set[BuildingId]: ...
+
     @property
     def fieldIDs(self) -> IntSet: ...
+
     @property
     def fleetIDs(self) -> Set[FleetId]: ...
+
     @property
     def lastTurnBattleHere(self) -> int: ...
+
     @property
     def numStarlanes(self) -> int: ...
+
     @property
     def numWormholes(self) -> int: ...
+
     @property
     def planetIDs(self) -> Set[PlanetId]: ...
+
     @property
     def shipIDs(self) -> Set[ShipId]: ...
+
     @property
     def starType(self) -> starType: ...
+
     @property
     def starlanesWormholes(self) -> IntBoolMap: ...
+
     def HasStarlaneToSystemID(self, number: int) -> bool: ...
+
     def HasWormholeToSystemID(self, number: int) -> bool:
         """
         Currently unused.
         """
 
+
 class planet(universeObject, popCenter, resourceCenter):
     @property
     def InitialOrbitalPosition(self) -> float: ...
+
     @property
     def LastTurnAttackedByShip(self) -> int: ...
+
     @property
     def LastTurnConquered(self) -> int: ...
+
     @property
     def OrbitalPeriod(self) -> float: ...
+
     @property
     def RotationalPeriod(self) -> float: ...
+
     @property
     def buildingIDs(self) -> Set[BuildingId]: ...
+
     @property
     def clockwiseNextPlanetType(self) -> planetType: ...
+
     @property
     def counterClockwiseNextPlanetType(self) -> planetType: ...
+
     @property
     def distanceFromOriginalType(self) -> int: ...
+
     @property
     def habitableSize(self) -> int: ...
+
     @property
     def nextLargerPlanetSize(self) -> planetSize: ...
+
     @property
     def nextSmallerPlanetSize(self) -> planetSize: ...
+
     @property
     def originalType(self) -> planetType: ...
+
     @property
     def size(self) -> planetSize: ...
+
     @property
     def type(self) -> planetType: ...
+
     def OrbitalPositionOnTurn(self, number: int) -> float: ...
+
     def environmentForSpecies(self, string: str) -> planetEnvironment: ...
+
     def nextBetterPlanetTypeForSpecies(self, string: str) -> planetType: ...
+
 
 class aggression(IntEnum):
     invalid = -1
@@ -998,6 +1543,7 @@ class aggression(IntEnum):
     aggressive = 4
     maniacal = 5
 
+
 class buildType(IntEnum):
     INVALID_BUILD_TYPE = -1
     BT_NOT_BUILDING = 0
@@ -1007,10 +1553,12 @@ class buildType(IntEnum):
     BT_STOCKPILE = 4
     NUM_BUILD_TYPES = 5
 
+
 class captureResult(IntEnum):
     capture = 0
     destroy = 1
     retain = 2
+
 
 class diplomaticMessageType(IntEnum):
     noMessage = -1
@@ -1023,10 +1571,12 @@ class diplomaticMessageType(IntEnum):
     cancelProposal = 6
     rejectProposal = 7
 
+
 class diplomaticStatus(IntEnum):
     war = 0
     peace = 1
     allied = 2
+
 
 class effectsCauseType(IntEnum):
     invalid = -1
@@ -1041,11 +1591,13 @@ class effectsCauseType(IntEnum):
     shipHull = 8
     policy = 9
 
+
 class fleetAggression(IntEnum):
     passive = 0
     defensive = 1
     obstructive = 2
     aggressive = 3
+
 
 class galaxySetupOption(IntEnum):
     invalid = -1
@@ -1054,6 +1606,7 @@ class galaxySetupOption(IntEnum):
     medium = 2
     high = 3
     random = 4
+
 
 class galaxyShape(IntEnum):
     invalid = -1
@@ -1067,6 +1620,7 @@ class galaxyShape(IntEnum):
     irregular = 7
     ring = 8
     random = 9
+
 
 class meterType(IntEnum):
     targetPopulation = 0
@@ -1105,12 +1659,14 @@ class meterType(IntEnum):
     detection = 33
     speed = 34
 
+
 class planetEnvironment(IntEnum):
     uninhabitable = 0
     hostile = 1
     poor = 2
     adequate = 3
     good = 4
+
 
 class planetSize(IntEnum):
     unknown = -1
@@ -1122,6 +1678,7 @@ class planetSize(IntEnum):
     huge = 5
     asteroids = 6
     gasGiant = 7
+
 
 class planetType(IntEnum):
     unknown = -1
@@ -1137,11 +1694,13 @@ class planetType(IntEnum):
     asteroids = 9
     gasGiant = 10
 
+
 class resourceType(IntEnum):
     industry = 0
     influence = 1
     research = 2
     stockpile = 3
+
 
 class roleType(IntEnum):
     host = 0
@@ -1150,12 +1709,14 @@ class roleType(IntEnum):
     clientTypeObserver = 3
     galaxySetup = 4
 
+
 class ruleType(IntEnum):
     invalid = -1
     toggle = 0
     int = 1
     double = 2
     string = 3
+
 
 class shipPartClass(IntEnum):
     shortRange = 0
@@ -1176,10 +1737,12 @@ class shipPartClass(IntEnum):
     influence = 15
     productionLocation = 16
 
+
 class shipSlotType(IntEnum):
     external = 0
     internal = 1
     core = 2
+
 
 class starType(IntEnum):
     unknown = -1
@@ -1192,11 +1755,13 @@ class starType(IntEnum):
     blackHole = 6
     noStar = 7
 
+
 class techStatus(IntEnum):
     unresearchable = 0
     partiallyUnlocked = 1
     researchable = 2
     complete = 3
+
 
 class unlockableItemType(IntEnum):
     invalid = -1
@@ -1207,6 +1772,7 @@ class unlockableItemType(IntEnum):
     tech = 4
     policy = 5
 
+
 class visibility(IntEnum):
     invalid = -1
     none = 0
@@ -1214,334 +1780,433 @@ class visibility(IntEnum):
     partial = 2
     full = 3
 
+
 def allEmpireIDs() -> Sequence[EmpireId]:
     """
     Returns an object (intVec) that contains the empire IDs of all empires in the game.
     """
+
 
 def allPlayerIDs() -> IntVec:
     """
     Returns an object (intVec) that contains the player IDs of all players in the game.
     """
 
+
 def appendFleetMoveOrder(number1: int, number2: int) -> int:
     """
     Orders the fleet with indicated fleetID (int) to append the system with the indicated destinationID (int) to its possibly already enqueued route. Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.
     """
+
 
 def currentTurn() -> Turn:
     """
     Returns the current game turn (int).
     """
 
+
 def empireID() -> EmpireId:
     """
     Returns the empire ID (int) of this AI player's empire.
     """
+
 
 def empirePlayerID(number: int) -> int:
     """
     Returns the player ID (int) of the player who is controlling the empire with the indicated empireID (int).
     """
 
+
 def getAIDir() -> str: ...
+
+
 def getBuildingType(string: str) -> buildingType:
     """
     Returns the building type (BuildingType) with the indicated name (string).
     """
 
+
 @overload
-def getEmpire() -> empire: ...
+def getEmpire()  -> empire: ...
+
+
 @overload
-def getEmpire(number: int) -> empire: ...
+def getEmpire(number: int)  -> empire: ...
+
+
 def getEmpire(*args) -> empire:
     """
     Returns the empire object (Empire) of this AI player
     Returns the empire object (Empire) with the specified empire ID (int)
     """
 
+
 def getFieldType(string: str) -> fieldType: ...
+
+
 def getGalaxySetupData() -> GalaxySetupData: ...
+
+
 def getGameRules() -> GameRules:
     """
     Returns the game rules manager, which can be used to look up the names (string) of rules are defined with what type (boolean / toggle, int, double, string), and what values the rules have in the current game.
     """
+
 
 def getOptionsDBOptionBool(string: str) -> object:
     """
     Returns the bool value of option in OptionsDB or None if the option does not exist.
     """
 
+
 def getOptionsDBOptionDouble(string: str) -> object:
     """
     Returns the double value of option in OptionsDB or None if the option does not exist.
     """
+
 
 def getOptionsDBOptionInt(string: str) -> object:
     """
     Returns the integer value of option in OptionsDB or None if the option does not exist.
     """
 
+
 def getOptionsDBOptionStr(string: str) -> object:
     """
     Returns the string value of option in OptionsDB or None if the option does not exist.
     """
+
 
 def getPolicy(string: str) -> policy:
     """
     Returns the policy (Policy) with the indicated name (string).
     """
 
+
 def getPredefinedShipDesign(string: str) -> shipDesign:
     """
     Returns the ship design (ShipDesign) with the indicated name (string).
     """
+
 
 def getSaveStateString() -> str:
     """
     Returns the previously-saved state string (string). Can be used to retrieve the last-set save state string at any time, although this string is also passed to the resumeLoadedGame(savedStateString) Python function when a game is loaded, so this function isn't necessary to use if resumeLoadedGame stores the passed string.
     """
 
+
 def getShipDesign(number: int) -> shipDesign:
     """
     Returns the ship design (ShipDesign) with the indicated id number (int).
     """
+
 
 def getShipHull(string: str) -> shipHull:
     """
     Returns the ship hull with the indicated name (string).
     """
 
+
 def getShipPart(string: str) -> shipPart:
     """
     Returns the ShipPart with the indicated name (string).
     """
+
 
 def getSpecial(string: str) -> special:
     """
     Returns the special (Special) with the indicated name (string).
     """
 
+
 def getSpecies(string: str) -> species:
     """
     Returns the species (Species) with the indicated name (string).
     """
+
 
 def getTech(string: str) -> tech:
     """
     Returns the tech (Tech) with the indicated name (string).
     """
 
+
 def getTechCategories(obj: object) -> StringVec:
     """
     Returns the names of all tech categories (StringVec).
     """
+
 
 def getUniverse() -> universe:
     """
     Returns the universe object (Universe)
     """
 
+
 def getUserConfigDir() -> str:
     """
     Returns path to directory where FreeOrion stores user specific configuration.
     """
+
 
 def getUserDataDir() -> str:
     """
     Returns path to directory where FreeOrion stores user specific data (saves, etc.).
     """
 
+
 def initMeterEstimatesDiscrepancies() -> None:
     """
     For all objects and max / target meters, determines discrepancies between actual meters and what the known universe should produce. This is used later when updating meter estimates to incorporate those discrepancies.
     """
+
 
 def isEnqueuableBuilding(string: str, number: int) -> bool:
     """
     Returns true if the specified building type (string) can be enqueued by this client's empire at the specified production location (int). Being enqueuable means that the item can be added to the queue, but does not mean that the item will be allocated production points once  it is added
     """
 
+
 def isEnqueuableShip(number1: int, number2: int) -> bool:
     """
     Returns true if the specified ship design (int) can be enqueued by this client's empire at the specified production location (int). Enqueued ships should always also be producible, and thus able to be allocated production points once enqueued, if any are available at the production location.
     """
+
 
 def isProducibleBuilding(string: str, number: int) -> bool:
     """
     Returns true if the specified building type (string) can be produced by this client's empire at the specified production location (int). Being producible means that if the item is on the production queue, it can be allocated production points that are available at its location. Being producible does not mean that the building type can be added to the queue.
     """
 
+
 def issueAdoptPolicyOrder(string1: str, string2: str, number: int) -> int:
     """
     Orders the policy with name policyName (string) to be adopted by the empire in the category categoryName (string) and slot slot (int). Returns 1 (int) on success or 0 (int) on failure if the indicated policy can't be found. Will return 1 (int) but do nothing if the indicated policy can't be enqueued by this player's empire in the requested category and slot.
     """
 
+
 def issueAggressionOrder(number: int, boolean: bool) -> int: ...
+
+
 def issueAllowStockpileProductionOrder(number: int, boolean: bool) -> int:
     """
     Orders the item on the production queue at index queueIndex (int) to be enabled (or disabled) to use the imperial stockpile. Returns 1 (int) on success or 0 (int) on failure if the queue index is less than 0 or greater than the largest indexed item on the queue.
     """
 
+
 def issueBombardOrder(number1: int, number2: int) -> int: ...
+
+
 def issueChangeFocusOrder(number: int, string: str) -> int:
     """
     Orders the planet with ID planetID (int) to use focus setting focus (string). Returns 1 (int) on success or 0 (int) on failure if the planet can't be found or isn't owned by this player, or if the specified focus is not valid on the planet.
     """
 
+
 def issueChangeProductionQuantityOrder(number1: int, number2: int, number3: int) -> int: ...
+
+
 def issueColonizeOrder(number1: int, number2: int) -> int:
     """
     Orders the ship with ID shipID (int) to colonize the planet with ID planetID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated ship or planet, this client's player not owning the indicated ship, the planet already being colonized, or the planet and ship not being in the same system.
     """
 
-def issueCreateShipDesignOrder(
-    string1: str, string2: str, string3: str, item_list: list, string4: str, string5: str, boolean: bool
-) -> int:
+
+def issueCreateShipDesignOrder(string1: str, string2: str, string3: str, item_list: list, string4: str, string5: str, boolean: bool) -> int:
     """
     Orders the creation of a new ship design with the name (string), description (string), hull (string), parts vector partsVec (StringVec), graphic (string) and model (string). model should be left as an empty string as of this writing. There is currently no easy way to find the id of the new design, though the client's empire should have the new design after this order is issued successfully. Returns 1 (int) on success or 0 (int) on failure if any of the name, description, hull or graphic are empty strings, if the design is invalid (due to not following number and type of slot requirements for the hull) or if creating the design fails for some reason.
     """
+
 
 def issueDeadoptPolicyOrder(string: str) -> int:
     """
     Orders the policy with name policyName (string) to be de-adopted by the empire. Returns 1 (int) on success or 0 (int) on failure if the indicated policy was not already adopted.
     """
 
+
 def issueDequeueProductionOrder(number: int) -> int:
     """
     Orders the item on the production queue at index queueIndex (int) to be removed form the production queue. Returns 1 (int) on success or 0 (int) on failure if the queue index is less than 0 or greater than the largest indexed item on the queue.
     """
+
 
 def issueDequeueTechOrder(string: str) -> int:
     """
     Orders the tech with name techName (string) to be removed from the queue. Returns 1 (int) on success or 0 (int) on failure if the indicated tech can't be found. Will return 1 (int) but do nothing if the indicated tech isn't on this player's empire's tech queue.
     """
 
+
 def issueEnqueueBuildingProductionOrder(string: str, number: int) -> int:
     """
     Orders the building with name (string) to be added to the production queue at the location of the planet with id locationID. Returns 1 (int) on success or 0 (int) on failure if there is no such building or it is not available to this player's empire, or if the building can't be produced at the specified location.
     """
+
 
 def issueEnqueueShipProductionOrder(number1: int, number2: int) -> int:
     """
     Orders the ship design with ID designID (int) to be added to the production queue at the location of the planet with id locationID (int). Returns 1 (int) on success or 0 (int) on failure there is no such ship design or it not available to this player's empire, or if the design can't be produced at the specified location.
     """
 
+
 def issueEnqueueTechOrder(string: str, number: int) -> int:
     """
     Orders the tech with name techName (string) to be added to the tech queue at position (int) on the queue. Returns 1 (int) on success or 0 (int) on failure if the indicated tech can't be found. Will return 1 (int) but do nothing if the indicated tech can't be enqueued by this player's empire.
     """
+
 
 def issueFleetMoveOrder(number1: int, number2: int) -> int:
     """
     Orders the fleet with indicated fleetID (int) to move to the system with the indicated destinationID (int). Returns 1 (int) on success or 0 (int) on failure due to not finding the indicated fleet or system.
     """
 
+
 def issueFleetTransferOrder(number1: int, number2: int) -> int:
     """
     Orders the ship with ID shipID (int) to be transferred to the fleet with ID newFleetID. Returns 1 (int) on success, or 0 (int) on failure due to not finding the fleet or ship, or the client's empire not owning either, or the two not being in the same system (or either not being in a system) or the ship already being in the fleet.
     """
 
+
 def issueGiveObjectToEmpireOrder(number1: int, number2: int) -> int: ...
+
+
 def issueInvadeOrder(number1: int, number2: int) -> int: ...
+
+
 def issueNewFleetOrder(string: str, number: int) -> int:
     """
     Orders a new fleet to be created with the indicated name (string) and containing the indicated shipIDs (IntVec). The ships must be located in the same system and must all be owned by this player. Returns the new fleets id (int) on success or 0 (int) on failure due to one of the noted conditions not being met.
     """
+
 
 def issuePauseProductionOrder(number: int, boolean: bool) -> int:
     """
     Orders the item on the production queue at index queueIndex (int) to be paused (or unpaused). Returns 1 (int) on success or 0 (int) on failure if the queue index is less than 0 or greater than the largest indexed item on the queue.
     """
 
+
 def issueRenameOrder(number: int, string: str) -> int:
     """
     Orders the renaming of the object with indicated objectID (int) to the new indicated name (string). Returns 1 (int) on success or 0 (int) on failure due to this AI player not being able to rename the indicated object (which this player must fully own, and which must be a fleet, ship or planet).
     """
+
 
 def issueRequeueProductionOrder(number1: int, number2: int) -> int:
     """
     Orders the item on the production queue at index oldQueueIndex (int) to be moved to index newQueueIndex (int). Returns 1 (int) on success or 0 (int) on failure if the old and new queue indices are equal, if either queue index is less than 0 or greater than the largest indexed item on the queue.
     """
 
+
 def issueScrapOrder(number: int) -> int:
     """
     Orders the ship or building with the indicated objectID (int) to be scrapped. Returns 1 (int) on success or 0 (int) on failure due to not finding a ship or building with the indicated ID, or if the indicated ship or building is not owned by this AI client's empire.
     """
+
 
 def playerEmpireID(number: int) -> int:
     """
     Returns the empire ID (int) of the player with the specified player ID (int).
     """
 
+
 def playerID() -> int:
     """
     Returns the integer id of this AI player.
     """
+
 
 def playerIsAI(number: int) -> bool:
     """
     Returns True (boolean) if the player with the indicated playerID (int) is controlled by an AI and false (boolean) otherwise.
     """
 
+
 def playerIsHost(number: int) -> bool:
     """
     Returns True (boolean) if the player with the indicated playerID (int) is the host player for the game and false (boolean) otherwise.
     """
 
+
 @overload
-def playerName() -> str: ...
+def playerName()  -> str: ...
+
+
 @overload
-def playerName(number: int) -> str: ...
+def playerName(number: int)  -> str: ...
+
+
 def playerName(*args) -> str:
     """
     Returns the name (string) of the player with the indicated playerID (int).
     Returns the name (string) of this AI player.
     """
 
+
 def policies() -> StringVec:
     """
     Returns the names of all policies (StringVec).
     """
+
 
 def policiesInCategory(string: str) -> StringVec:
     """
     Returns the names of all policies (StringVec) in the indicated policy category name (string).
     """
 
+
 def policyCategories() -> StringVec:
     """
     Returns the names of all policy categories (StringVec).
     """
+
 
 def sendChatMessage(number: int, string: str) -> None:
     """
     Sends the indicated message (string) to the player with the indicated recipientID (int) or to all players if recipientID is -1.
     """
 
+
 def sendDiplomaticMessage(diplomatic_message: diplomaticMessage) -> None: ...
+
+
 def setSaveStateString(string: str) -> None:
     """
     Sets the save state string (string). This is a persistant storage space for the AI script to retain state information when the game is saved and reloaded. Any AI state information to be saved should be stored in a single string (likely using Python's pickle module) and stored using this function when the prepareForSave() Python function is called.
     """
+
 
 def techs() -> StringVec:
     """
     Returns the names of all techs (StringVec).
     """
 
+
 def techsInCategory(string: str) -> StringVec:
     """
     Returns the names of all techs (StringVec) in the indicated tech category name (string).
     """
 
+
 def updateMeterEstimates(boolean: bool) -> None: ...
+
+
 def updateProductionQueue() -> None: ...
+
+
 def updateResearchQueue() -> None: ...
+
+
 def updateResourcePools() -> None: ...
+
+
 def userString(string: str) -> str: ...
+
+
 def userStringExists(string: str) -> bool: ...
+
+
 def userStringList(string: str) -> list: ...
+
+
 def validShipDesign(ship_design: shipDesign, string: str, string_list: StringVec) -> bool:
     """
     Returns true (boolean) if the passed hull (string) and parts (StringVec) make up a valid ship design, and false (boolean) otherwise. Valid ship designs don't have any parts in slots that can't accept that type of part, and contain only hulls and parts that exist (and may also need to contain the correct number of parts - this needs to be verified).
