@@ -14111,7 +14111,7 @@ AI_FIRST_TURN_GREETING_MSG103
 AI_FIRST_TURN_GREETING_MSG201
 Держитесь подальше от нас!
 
-AI_FIRST_TURN_GREETING_MSG203
+AI_FIRST_TURN_GREETING_MSG202
 Держитесь от нас подальше, а мы будем держаться подальше от вас!
 
 AI_FIRST_TURN_GREETING_MSG301
