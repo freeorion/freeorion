@@ -356,7 +356,7 @@ void IntroScreen::OnOptions() {
 }
 
 void IntroScreen::OnPedia() {
-    static const std::string INTRO_PEDIA_WND_NAME = "intro.pedia";
+    static constexpr std::string_view INTRO_PEDIA_WND_NAME = "intro.pedia";
     auto enc_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
         GG::MODAL | GG::INTERACTIVE | GG::DRAGABLE |
         GG::RESIZABLE | CLOSABLE | PINABLE, INTRO_PEDIA_WND_NAME);
@@ -384,7 +384,7 @@ void IntroScreen::OnCredits() {
     GG::Y nUpperLine = ( 79 * GG::GUI::GetGUI()->AppHeight()) / 768;
     GG::Y nLowerLine = (692 * GG::GUI::GetGUI()->AppHeight()) / 768;
 
-    int credit_side_pad(30);
+    static constexpr int credit_side_pad(30);
 
     auto credits_wnd = GG::Wnd::Create<CreditsWnd>(
         GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,
