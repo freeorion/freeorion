@@ -63,8 +63,6 @@ namespace {
         default:
             return GG::CLR_WHITE;
         }
-        // For future:
-        //Influence GG::Clr(255, 0, 255, 255);
     }
 
     constexpr int    EDGE_PAD(3);
@@ -84,8 +82,8 @@ MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id, const std::vect
 }
 
 void MultiMeterStatusBar::Render() {
-    constexpr GG::Clr DARY_GREY = GG::Clr(44, 44, 44, 255);
-    constexpr GG::Clr HALF_GREY = GG::Clr(128, 128, 128, 128);
+    static constexpr GG::Clr DARY_GREY = GG::Clr(44, 44, 44, 255);
+    static constexpr GG::Clr HALF_GREY = GG::CLR_GRAY;
 
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();

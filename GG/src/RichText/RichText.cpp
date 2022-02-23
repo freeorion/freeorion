@@ -19,11 +19,8 @@ namespace {
 
 //! Skips over white space characters. On return, \a it will point to \a end
 //! or the next non-white space character.
-void pass_space(std::string::const_iterator& it,
-                const std::string::const_iterator& end)
-{
-    for (; it != end && isspace(*it); ++it) {}
-}
+void pass_space(std::string::const_iterator& it, const std::string::const_iterator& end)
+{ for (; it != end && isspace(*it); ++it) {} }
 
 //! Reads from \a it, expecting to find somthing of the form "key =".
 //! Returns key. Leaves \a it past the '=' or at \a end.
@@ -44,9 +41,8 @@ std::string read_key(std::string::const_iterator& it,
     pass_space(it, end);
 
     // Move past '='.
-    if (*it == '=') {
+    if (*it == '=')
         ++it;
-    }
 
     return key;
 }
@@ -100,7 +96,7 @@ std::string read_quoted(std::string::const_iterator& it,
 
 //! Extracts key="value" pairs from a string to a map.
 void ExtractParameters(const std::string& params_string,
-                        RichText::TAG_PARAMS& tag_params)
+                       RichText::TAG_PARAMS& tag_params)
 {
     // Next key to be stored.
     std::string key;
