@@ -603,13 +603,14 @@ void SetMeter::Execute(ScriptingContext& context,
     {
         auto old_value = meter->Current();
         meter->SetCurrent(new_meter_value);
-        auto diff = new_meter_value - old_value;
 
-        if (have_accounting)
+        if (have_accounting) {
+            auto diff = new_meter_value - old_value;
             accounting[target_id][meter_type].emplace_back(
                 source_id, effect_cause.cause_type,
                 diff, new_meter_value,
                 effect_cause.specific_cause, accounting_label);
+        }
     };
 
 
