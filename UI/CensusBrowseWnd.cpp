@@ -274,7 +274,7 @@ bool CensusBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
 
 void CensusBrowseWnd::InitBuffer() {
     GG::Pt sz = Size();
-    const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
+    const GG::Y_d ROW_HEIGHT(IconTextBrowseWndRowHeight());
 
     m_buffer.clear();
 
