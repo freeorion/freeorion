@@ -19,6 +19,10 @@ RichTextTag::RichTextTag(std::string tag_, std::string params_string_, std::stri
     content(std::move(content_))
 {}
 
+RichTextTag::RichTextTag(std::string_view tag_, std::string params_string_, std::string content_) :
+    RichTextTag(std::string{tag_}, std::move(params_string_), std::move(content_))
+{}
+
 std::string RichTextTag::ToString() const
 { return "<" + tag + (tag_params.length() != 0 ? " " + tag_params : "") + ">" + content + "</" + tag + ">"; }
 

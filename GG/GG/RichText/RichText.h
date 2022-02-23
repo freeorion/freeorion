@@ -37,20 +37,17 @@ public:
         virtual ~IBlockControlFactory() = default;
         //! Creates a control from the tag (with unparsed parameters) and the content between the tags.
         //! You own the returned control.
-        virtual std::shared_ptr<BlockControl> CreateFromTag(const std::string& tag,
-                                                            const TAG_PARAMS& params,
-                                                            const std::string& content,
-                                                            const std::shared_ptr<Font>& font,
-                                                            const Clr& color,
-                                                            Flags<TextFormat> format) = 0;
+        virtual std::shared_ptr<BlockControl> CreateFromTag(const TAG_PARAMS&, const std::string&,
+                                                            const std::shared_ptr<Font>&, const Clr&,
+                                                            Flags<TextFormat>) = 0;
     };
 
     //! The type of the object where we store control factories of tags.
-    typedef std::map<std::string, std::shared_ptr<IBlockControlFactory>> BLOCK_FACTORY_MAP;
+    typedef std::map<std::string, std::shared_ptr<IBlockControlFactory>, std::less<>> BLOCK_FACTORY_MAP;
 
     //! The special tag that is used to represent plaintext.
     // Allows you to register a custom control for displaying plaintext.
-    static const std::string PLAINTEXT_TAG;
+    static constexpr std::string_view PLAINTEXT_TAG = "GG_RICH_PLAIN";
 
     RichText(X x, Y y, X w, Y h, const std::string& str, const std::shared_ptr<Font>& font,
              Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
@@ -76,13 +73,13 @@ public:
     void SizeMove(const Pt& ul, const Pt& lr) override;
 
     //! Use this to customize the handling of tags in the text on a per-object basis.
-    void SetBlockFactoryMap(const std::shared_ptr<BLOCK_FACTORY_MAP>& block_factory_map);
+    void SetBlockFactoryMap(std::shared_ptr<BLOCK_FACTORY_MAP> block_factory_map);
 
     //! Registers a factory in the default block factory map.
-    static int RegisterDefaultBlock(const std::string& tag, std::shared_ptr<IBlockControlFactory>&& factory);
+    static int RegisterDefaultBlock(std::string tag, std::shared_ptr<IBlockControlFactory>&& factory);
 
     //! Access the default block factory map.
-    static std::shared_ptr<RichText::BLOCK_FACTORY_MAP>& DefaultBlockFactoryMap();
+    static std::shared_ptr<RichText::BLOCK_FACTORY_MAP> DefaultBlockFactoryMap();
 
 private:
     friend class RichTextPrivate;

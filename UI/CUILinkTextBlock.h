@@ -27,12 +27,9 @@ public:
     public:
         //! Creates a control from the tag (with unparsed parameters) and the content between the tags.
         //! You own the returned control.
-        std::shared_ptr<GG::BlockControl> CreateFromTag(const std::string& tag,
-                                                        const GG::RichText::TAG_PARAMS& params,
-                                                        const std::string& content,
-                                                        const std::shared_ptr<GG::Font>& font,
-                                                        const GG::Clr& color,
-                                                        GG::Flags<GG::TextFormat> format) override;
+        std::shared_ptr<GG::BlockControl> CreateFromTag(const GG::RichText::TAG_PARAMS&, const std::string&,
+                                                        const std::shared_ptr<GG::Font>&, const GG::Clr&,
+                                                        GG::Flags<GG::TextFormat>) override;
 
         ///< link clicked signals: first string is the link type, second string is the specific item clicked
         mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkClickedSignal;

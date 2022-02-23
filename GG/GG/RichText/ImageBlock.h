@@ -35,7 +35,7 @@ public:
     /**
      * @brief The tag to mark images with.
      */
-    static const std::string IMAGE_TAG;
+    static constexpr std::string_view IMAGE_TAG = "img";
 
     /**
      * @brief Construct image block.

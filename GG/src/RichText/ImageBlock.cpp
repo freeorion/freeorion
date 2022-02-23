@@ -22,8 +22,6 @@ using namespace GG;
 
 namespace fs = boost::filesystem;
 
-const std::string ImageBlock::IMAGE_TAG("img");
-
 ImageBlock::ImageBlock(const fs::path& path, X x, Y y, X w,
                         GG::Flags<GG::WndFlag> flags) :
     BlockControl(x, y, w, flags)
@@ -96,12 +94,9 @@ void ImageBlock::Render()
 class ImageBlockFactory : public RichText::IBlockControlFactory {
 public:
     //! Create a Text block from a plain text tag.
-    std::shared_ptr<BlockControl> CreateFromTag(const std::string& tag,
-                                                const RichText::TAG_PARAMS& params,
-                                                const std::string& content,
-                                                const std::shared_ptr<Font>& font,
-                                                const Clr& color,
-                                                Flags<TextFormat> format) override
+    std::shared_ptr<BlockControl> CreateFromTag(const RichText::TAG_PARAMS& params, const std::string&,
+                                                const std::shared_ptr<Font>&, const Clr&,
+                                                Flags<TextFormat>) override
     {
         // Get the path from the parameters.
         fs::path param_path = ExtractPath(params);
@@ -145,7 +140,8 @@ private:
 };
 
 // Register image block as the image tag handler.
-static int dummy = RichText::RegisterDefaultBlock(ImageBlock::IMAGE_TAG, std::make_shared<ImageBlockFactory>());
+static int dummy = RichText::RegisterDefaultBlock(std::string{ImageBlock::IMAGE_TAG},
+                                                  std::make_shared<ImageBlockFactory>());
 
 //! Set the root path from which to look for images with the factory.
 bool ImageBlock::SetImagePath(RichText::IBlockControlFactory* factory, fs::path path)

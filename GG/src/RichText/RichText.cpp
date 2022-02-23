@@ -131,13 +131,7 @@ void ExtractParameters(const std::string& params_string,
         tag_params["GG_ERROR"] = ex.what();
     }
 }
-
 }
-
-/**
-    * \brief The tag to use for text without explicit tags, or inside unknown (to the rich text system) tags.
-    */
-const std::string RichText::PLAINTEXT_TAG = "GG_RICH_PLAIN";
 
 /**
     * \brief Private implementation class for rich text control.
@@ -241,8 +235,8 @@ void RichTextPrivate::SizeMove(Pt ul, Pt lr)
 
 namespace {
     // Get the set of keys from a map.
-    template <typename T, typename V>
-    std::set<T> MapKeys(const std::map<T, V>& arg_map)
+    template <typename T, typename V, typename C>
+    std::set<T> MapKeys(const std::map<T, V, C>& arg_map)
     {
         std::set<T> keys;
         for ([[maybe_unused]] auto& [key, val] : arg_map) {
@@ -265,6 +259,7 @@ std::vector<RichTextTag> RichTextPrivate::ParseTags(const std::string& content)
 void RichTextPrivate::CreateBlocks(std::vector<RichTextTag> tags)
 {
     m_blocks.clear();
+    m_blocks.reserve(tags.size());
 
     // Create blocks using factories.
     for (RichTextTag& tag : tags) {
@@ -272,10 +267,10 @@ void RichTextPrivate::CreateBlocks(std::vector<RichTextTag> tags)
         // Extract the parameters from params_string to the tag_params map.
         ExtractParameters(tag.tag_params, params);
 
-        auto block(FactoryMap()[tag.tag]->CreateFromTag(std::move(tag.tag), std::move(params),
-                                                        std::move(tag.content), m_font, m_color, m_format));
+        auto block_factory{FactoryMap()[std::move(tag.tag)]};
+        auto block = block_factory->CreateFromTag(params, tag.content, m_font, m_color, m_format);
         if (block)
-            m_blocks.emplace_back(std::move(block));
+            m_blocks.push_back(std::move(block));
     }
 }
 
@@ -332,23 +327,22 @@ void RichText::Render() {}
 
 void RichText::SizeMove(const Pt& ul, const Pt& lr) { m_self->SizeMove(ul, lr); }
 
-void RichText::SetBlockFactoryMap(const std::shared_ptr<BLOCK_FACTORY_MAP>& block_factory_map)
+void RichText::SetBlockFactoryMap(std::shared_ptr<BLOCK_FACTORY_MAP> block_factory_map)
 { m_self->SetBlockFactoryMap(block_factory_map); }
 
 /// Global storage for registered block tags.
 // The factory object live for the lifetime of the process, they are never
 // deleted.
-std::shared_ptr<RichText::BLOCK_FACTORY_MAP>& RichText::DefaultBlockFactoryMap() {
-    static std::shared_ptr<RichText::BLOCK_FACTORY_MAP> tag_map(
-        new RichText::BLOCK_FACTORY_MAP());
+std::shared_ptr<RichText::BLOCK_FACTORY_MAP> RichText::DefaultBlockFactoryMap() {
+    static auto tag_map = std::make_shared<RichText::BLOCK_FACTORY_MAP>();
     return tag_map;
 }
 
-int RichText::RegisterDefaultBlock(const std::string& tag,
+int RichText::RegisterDefaultBlock(std::string tag,
                                    std::shared_ptr<IBlockControlFactory>&& factory)
 {
     Font::RegisterKnownTag(tag);
-    (*DefaultBlockFactoryMap()) [tag] = std::move(factory);
+    DefaultBlockFactoryMap()->operator[](std::move(tag)) = std::move(factory);
 
     // Return a dummy to enable static registration.
     return 0;

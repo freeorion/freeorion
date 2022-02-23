@@ -749,7 +749,7 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
         boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, ph::_1, ph::_2));
     factory->LinkRightClickedSignal.connect(
         boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, ph::_1, ph::_2));
-    (*factory_map)[GG::RichText::PLAINTEXT_TAG] =
+    (*factory_map)[std::string{GG::RichText::PLAINTEXT_TAG}] =
         std::shared_ptr<GG::RichText::IBlockControlFactory>(factory);
     m_description_rich_text->SetBlockFactoryMap(factory_map);
     m_description_rich_text->SetPadding(DESCRIPTION_PADDING);

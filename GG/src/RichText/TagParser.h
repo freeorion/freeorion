@@ -27,6 +27,7 @@ struct RichTextTag {
 
     //!< The parameters as a string of key value pairs key="value".
     RichTextTag(std::string tag_, std::string params_string_, std::string content_);
+    RichTextTag(std::string_view tag_, std::string params_string_, std::string content_);
     RichTextTag(RichTextTag&& rhs) = default;
 
     //! Return the tag as a string that parses back to itself.
