@@ -27,6 +27,10 @@ NATIVE_FORTIFICATION_LOW
 NATIVE_FORTIFICATION_MINIMAL
 '''[[NATIVE_PLANETARY_SHIELDS(1)]]'''
 
+DEFAULT_NATIVE_DEFENSE
+'''[[AVERAGE_PLANETARY_SHIELDS]]
+[[AVERAGE_PLANETARY_DEFENSE]]'''
+
 #include "/scripting/species/common/detection.macros"
 #include "/scripting/species/common/planet_defense.macros"
 #include "/scripting/species/common/planet_shields.macros"
