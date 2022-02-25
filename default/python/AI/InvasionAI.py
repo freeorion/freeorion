@@ -326,15 +326,14 @@ def _get_path_from_capital(planet: "fo.planet") -> Tuple[Sequence[SystemId], int
     If there is no path, return empty sequence and default distance.
     """
     universe = fo.getUniverse()
-    capitol_id = PlanetUtilsAI.get_capital()
-    if capitol_id:
-        homeworld = universe.getPlanet(capitol_id)
+    capital_id = PlanetUtilsAI.get_capital()
+    if capital_id != INVALID_ID:
+        homeworld = universe.getPlanet(capital_id)
         if homeworld and homeworld.systemID != INVALID_ID and planet.systemID != INVALID_ID:
             least_jumps_path = list(universe.leastJumpsPath(homeworld.systemID, planet.systemID, fo.empireID()))
             max_jumps = len(least_jumps_path)
             return least_jumps_path, max_jumps
     else:
-
         return [], 8
 
 

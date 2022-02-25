@@ -135,6 +135,7 @@ def generate_production_orders():
     building_ratio = aistate.character.preferred_building_ratio([0.4, 0.35, 0.30])
     capital_id, homeworld, capital_system_id = _get_capital_info()
     current_turn = fo.currentTurn()
+    production_queue = empire.productionQueue
     if not homeworld:
         debug("if no capital, no place to build, should get around to capturing or colonizing a new one")  # TODO
     else:
@@ -178,7 +179,6 @@ def generate_production_orders():
 
             debug("")
             debug("Buildings already in Production Queue:")
-            production_queue = empire.productionQueue
             capital_queued_buildings = []
             for element in [e for e in production_queue if (e.buildType == EmpireProductionTypes.BT_BUILDING)]:
                 building_expense += element.allocation

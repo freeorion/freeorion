@@ -596,8 +596,9 @@ class AIFleetMission:
                             )
                             allowance = CombatRatingsAI.rating_needed(fleet_remaining_rating, fleet_min_rating)
                             debug("May release ships with total rating of %.1f", allowance)
-                            ship_ids = list(self.fleet.get_object().shipIDs)
-                            for ship_id in ship_ids:
+                            for ship_id in self.fleet.get_object().shipIDs:
+                                if len(self.fleet.get_object().shipIDs) == 1:
+                                    break
                                 ship_rating = CombatRatingsAI.get_ship_rating(ship_id)
                                 debug("Considering to release ship %d with rating %.1f", ship_id, ship_rating)
                                 if ship_rating > allowance:
@@ -605,7 +606,7 @@ class AIFleetMission:
                                     continue
                                 debug("Splitting from fleet.")
                                 new_fleet_id = FleetUtilsAI.split_ship_from_fleet(fleet_id, ship_id)
-                                if assertion_fails(new_fleet_id and new_fleet_id != INVALID_ID):
+                                if assertion_fails(new_fleet_id not in (None, INVALID_ID)):
                                     break
                                 new_fleets.append(new_fleet_id)
                                 fleet_remaining_rating = CombatRatingsAI.rating_difference(
