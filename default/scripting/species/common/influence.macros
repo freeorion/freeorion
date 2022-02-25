@@ -47,6 +47,7 @@ BASE_INFLUENCE_COSTS
             activation = And [
                 Planet
                 Not Unowned
+                Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_CONFEDERATION"
                 Not ResourceSupplyConnected empire = LocalCandidate.Owner condition = And [
                     Planet
                     OwnedBy empire = Source.Owner
