@@ -59,7 +59,7 @@ private:
     std::unique_ptr<PythonAI> m_AI;
 
     std::string         m_player_name;
-    int                 m_max_aggression;
+    int                 m_max_aggression = 0;
 };
 
 

@@ -49,15 +49,14 @@ namespace {
     void AddTraitBypassOption(OptionsDB& db, std::string const & root, std::string ROOT,
                               T def, const ValidatorBase& validator)
     {
-        std::string option_root = "ai.trait." + root + ".";
-        std::string user_string_root = "OPTIONS_DB_AI_CONFIG_TRAIT_"+ROOT;
+        const std::string option_root = "ai.trait." + root + ".";
+        const std::string user_string_root = "OPTIONS_DB_AI_CONFIG_TRAIT_" + ROOT;
         db.Add<bool>(option_root + "force.enabled", UserStringNop(user_string_root + "_FORCE"), false);
         db.Add<T>(option_root + "default", UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator.Clone());
 
         for (int ii = 1; ii <= IApp::MAX_AI_PLAYERS(); ++ii) {
-            std::stringstream ss;
-            ss << option_root << "ai_" << std::to_string(ii);
-            db.Add<T>(ss.str(), UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator.Clone());
+            db.Add<T>(option_root + "ai_" + std::to_string(ii),
+                      UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator.Clone());
         }
     }
 
@@ -76,10 +75,7 @@ namespace {
 }
 
 // static member(s)
-AIClientApp::AIClientApp(const std::vector<std::string>& args) :
-    m_player_name(""),
-    m_max_aggression(0)
-{
+AIClientApp::AIClientApp(const std::vector<std::string>& args) {
     if (args.size() < 2) {
         std::cerr << "The AI client should not be executed directly!  Run freeorion to start the game.";
         ExitApp(1);
