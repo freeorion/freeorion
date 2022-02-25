@@ -48,3 +48,15 @@ NOT_HUGE_PLANET
         ]
         effects = SetPlanetSize planetsize = Large
 '''
+
+NOT_LARGE_PLANET
+'''EffectsGroup
+        scope = Source
+        activation = And [
+            Planet
+            Turn high = 0
+            Not Planet size = Tiny
+            Not Planet size = Medium
+        ]
+        effects = SetPlanetSize planetsize = Small
+'''
