@@ -22,7 +22,7 @@ std::string Meter::Dump(unsigned short ntabs) const {
         return buf_start + std::max(0, count);
     };
 #endif
-    auto result_ptr = ToChars(buffer.data() + 5, m_current_value);
+    auto result_ptr = ToChars(buffer.data() + 5, cur);
     // the biggest result of to_chars should be like "-65535.999" or 10 chars per number
     *result_ptr = ' ';
     *++result_ptr = 'I';
@@ -31,10 +31,10 @@ std::string Meter::Dump(unsigned short ntabs) const {
     *++result_ptr = 't';
     *++result_ptr = ':';
     *++result_ptr = ' ';
-    ToChars(result_ptr + 1, m_initial_value);
+    ToChars(result_ptr + 1, init);
 
     return buffer.data();
 }
 
 void Meter::ClampCurrentToRange(float min, float max)
-{ m_current_value = std::max(std::min(m_current_value, max), min); }
+{ cur = std::max(std::min(cur, max), min); }
