@@ -3224,6 +3224,8 @@ std::string Operation<std::string>::EvalImpl(OpType op_type, std::string lhs, st
         return formatter.str();
         break;
     }
+
+    default: break;
     }
 
     throw std::runtime_error("ValueRef::Operation<std::string> evaluated with an unknown or invalid OpType.");
@@ -3369,7 +3371,11 @@ double Operation<double>::EvalImpl(OpType op_type, double lhs, double rhs)
     }
 
     case OpType::SIGN: {
-        return lhs < 0 ? -1 : lhs > 0 ? 1 : 0;
+        static constexpr double test_case = -42.1;
+        static constexpr double branchless_test = (0.0 < test_case) - (test_case < 0.0);
+        static constexpr double ternary_condition_test = test_case < 0.0 ? -1.0 : test_case > 0.0 ? 1.0 : 0.0;
+        static_assert(branchless_test == ternary_condition_test);
+        return (0.0 < lhs) - (lhs < 0.0);
         break;
     }
 
@@ -3511,7 +3517,11 @@ int Operation<int>::EvalImpl(OpType op_type, int lhs, int rhs)
     }
 
     case OpType::SIGN: {
-        return lhs < 0 ? -1 : lhs > 0 ? 1 : 0;
+        static constexpr int test_case = -42;
+        static constexpr int branchless_test = (0 < test_case) - (test_case < 0);
+        static constexpr int ternary_condition_test = test_case < 0 ? -1 : test_case > 0 ? 1 : 0;
+        static_assert(branchless_test == ternary_condition_test);
+        return (0 < lhs) - (lhs < 0);
         break;
     }
 
@@ -3781,7 +3791,11 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
 
         case OpType::SIGN: {
             auto lhs{LHS()->Eval(context)};
-            return lhs < 0.0 ? -1.0 : lhs > 0.0 ? 1.0 : 0.0;
+            static constexpr double test_case = -42.1;
+            static constexpr double branchless_test = (0.0 < test_case) - (test_case < 0.0);
+            static constexpr double ternary_condition_test = test_case < 0.0 ? -1.0 : test_case > 0.0 ? 1.0 : 0.0;
+            static_assert(branchless_test == ternary_condition_test);
+            return (0.0 < lhs) - (lhs < 0.0);
             break;
         }
 
@@ -3965,7 +3979,11 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
 
         case OpType::SIGN: {
             auto lhs{LHS()->Eval(context)};
-            return lhs < 0 ? -1 : lhs > 0 ? 1 : 0;
+            static constexpr int test_case = -42;
+            static constexpr int branchless_test = (0 < test_case) - (test_case < 0);
+            static constexpr int ternary_condition_test = test_case < 0 ? -1 : test_case > 0 ? 1 : 0;
+            static_assert(branchless_test == ternary_condition_test);
+            return (0 < lhs) - (lhs < 0);
             break;
         }
 
