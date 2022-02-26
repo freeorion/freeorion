@@ -9,7 +9,7 @@
 #include <stdio.h>
 #endif
 
-std::string Meter::Dump(unsigned short ntabs) const {
+std::array<std::string::value_type, 64> Meter::Dump(unsigned short ntabs) const noexcept {
     std::array<std::string::value_type, 64> buffer{"Cur: "}; // rest should be nulls
 #if defined(__cpp_lib_to_chars)
     auto ToChars = [buf_end{buffer.data() + buffer.size()}](char* buf_start, float num) -> char * {
@@ -18,12 +18,12 @@ std::string Meter::Dump(unsigned short ntabs) const {
     };
 #else
     auto ToChars = [buf_end{buffer.data() + buffer.size()}](char* buf_start, float num) -> char * {
-        auto count = sprintf(buf_start, num < 10 ? "%1.2f" : "%5.1f", num);
+        auto count = snprintf(buf_start, 10, num < 10 ? "%1.2f" : "%5.1f", num);
         return buf_start + std::max(0, count);
     };
 #endif
     auto result_ptr = ToChars(buffer.data() + 5, cur);
-    // the biggest result of to_chars should be like "-65535.999" or 10 chars per number
+    // the biggest result of to_chars should be like "-65535.99" or 9 chars per number
     *result_ptr = ' ';
     *++result_ptr = 'I';
     *++result_ptr = 'n';
@@ -33,8 +33,8 @@ std::string Meter::Dump(unsigned short ntabs) const {
     *++result_ptr = ' ';
     ToChars(result_ptr + 1, init);
 
-    return buffer.data();
+    return buffer;
 }
 
-void Meter::ClampCurrentToRange(float min, float max)
+void Meter::ClampCurrentToRange(float min, float max) noexcept
 { cur = std::max(std::min(cur, max), min); }

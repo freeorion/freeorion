@@ -2,6 +2,7 @@
 #define _Meter_h_
 
 
+#include <array>
 #include <string>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -13,36 +14,36 @@
   * about gamestate. A typical example is the population meter of a planet. */
 class FO_COMMON_API Meter {
 public:
-    [[nodiscard]] constexpr float Current() const { return cur; };
-    [[nodiscard]] constexpr float Initial() const { return init; };
+    [[nodiscard]] constexpr float Current() const noexcept { return cur; };
+    [[nodiscard]] constexpr float Initial() const noexcept { return init; };
 
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const;   ///< returns text of meter values
+    [[nodiscard]] std::array<std::string::value_type, 64> Dump(unsigned short ntabs = 0) const noexcept; ///< returns text of meter values
 
-    [[nodiscard]] constexpr bool operator==(const Meter& rhs) const
+    [[nodiscard]] constexpr bool operator==(const Meter& rhs) const noexcept
     { return cur == rhs.cur && init == rhs.init; }
 
-    [[nodiscard]] constexpr bool operator<(const Meter& rhs) const
+    [[nodiscard]] constexpr bool operator<(const Meter& rhs) const noexcept
     { return cur < rhs.cur || (cur == rhs.cur && init < rhs.init); }
 
-    constexpr void SetCurrent(float current_value) { cur = current_value; }
+    constexpr void SetCurrent(float current_value) noexcept { cur = current_value; }
 
-    constexpr void Set(float current_value, float initial_value) {
+    constexpr void Set(float current_value, float initial_value) noexcept {
         cur = current_value;
         init = initial_value;
     }
 
-    constexpr void ResetCurrent() { cur = DEFAULT_VALUE; } // initial unchanged
+    constexpr void ResetCurrent() noexcept { cur = DEFAULT_VALUE; } // initial unchanged
 
-    constexpr void Reset() {
+    constexpr void Reset() noexcept {
         cur = DEFAULT_VALUE;
         init = DEFAULT_VALUE;
     }
 
-    constexpr void AddToCurrent(float adjustment) { cur += adjustment; }
+    constexpr void AddToCurrent(float adjustment) noexcept { cur += adjustment; }
 
-    void ClampCurrentToRange(float min = DEFAULT_VALUE, float max = LARGE_VALUE);   ///< ensures the current value falls in the range [\a min, \a max]
+    void ClampCurrentToRange(float min = DEFAULT_VALUE, float max = LARGE_VALUE) noexcept; ///< ensures the current value falls in the range [\a min, \a max]
 
-    constexpr void BackPropagate() { init = cur; }
+    constexpr void BackPropagate() noexcept { init = cur; }
 
 
     static constexpr float DEFAULT_VALUE = 0.0f;                        ///< value assigned to current or initial when resetting or when no value is specified in a constructor

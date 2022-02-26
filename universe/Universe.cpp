@@ -941,7 +941,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
                     continue;
 
                 TraceLogger(effects) << "object " << obj->ID() << " has meter " << type
-                                     << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
+                                     << ": discrepancy: " << discrepancy << " and : " << meter->Dump().data();
 
                 meter->AddToCurrent(discrepancy);
 
