@@ -633,7 +633,7 @@ void SetMeter::Execute(ScriptingContext& context,
         auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
         auto op_type = op_ref->GetOpType();
         auto rhs = op_ref->RHS()->Eval(context);
-        auto lhs_ref = op_ref->LHS();
+        [[maybe_unused]] auto lhs_ref = op_ref->LHS();
         assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
 
         for (auto& target : targets) {
@@ -855,7 +855,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
             auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
             auto op_type = op_ref->GetOpType();
             auto rhs = op_ref->RHS()->Eval(context);
-            auto lhs_ref = op_ref->LHS();
+            [[maybe_unused]] auto lhs_ref = op_ref->LHS();
             assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
 
             for (auto& target : targets) {
@@ -930,7 +930,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
         auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
         auto op_type = op_ref->GetOpType();
         auto rhs = op_ref->RHS()->Eval(context);
-        auto lhs_ref = op_ref->LHS();
+        [[maybe_unused]] auto lhs_ref = op_ref->LHS();
         assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
 
         for (auto& target : targets) {
@@ -958,8 +958,10 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
         }
 
         // set new meter values and update accounting
-        for (auto [new_val, target_id, meter] : target_new_meter_vals)
+        for (auto [new_val, target_id, meter] : target_new_meter_vals) {
+            (void)target_id;
             meter->SetCurrent(new_val);
+        }
     }
 }
 
@@ -1113,17 +1115,16 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
 
         } else if (m_value->TargetInvariant()) {
             // meter value does not depend on target, so handle with single ValueRef evaluation
+            // value is also target invariant, so just need to set once
             auto new_val = m_value->Eval(context);
-            for (auto& target : targets) {
-                if (auto meter = GetEmpireMeter(context, m_empire_id, m_meter))
-                    meter->SetCurrent(new_val);
-            }
+            if (auto meter = GetEmpireMeter(context, m_empire_id, m_meter))
+                meter->SetCurrent(new_val);
 
         } else if (m_value->SimpleIncrement()) {
             auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
             auto op_type = op_ref->GetOpType();
             auto rhs = op_ref->RHS()->Eval(context);
-            auto lhs_ref = op_ref->LHS();
+            [[maybe_unused]] auto lhs_ref = op_ref->LHS();
             assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
 
             for (auto& target : targets) {
@@ -1165,25 +1166,25 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
 
     } else if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
+        // and just set once
         auto new_val = m_value->Eval(context);
-        for (auto& target : targets) {
-            if (auto meter = GetEmpireMeter(context, empire_id, m_meter))
-                meter->SetCurrent(new_val);
-        }
+        if (auto meter = GetEmpireMeter(context, empire_id, m_meter))
+            meter->SetCurrent(new_val);
 
     } else if (m_value->SimpleIncrement()) {
         auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
         auto op_type = op_ref->GetOpType();
         auto rhs = op_ref->RHS()->Eval(context);
-        auto lhs_ref = op_ref->LHS();
+        [[maybe_unused]] auto lhs_ref = op_ref->LHS();
         assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
 
-        for (auto& target : targets) {
-            if (auto meter = GetEmpireMeter(context, empire_id, m_meter)) {
-                auto lhs = meter->Current();
-                auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
-                meter->SetCurrent(new_val);
+        if (auto meter = GetEmpireMeter(context, empire_id, m_meter)) {
+            auto lhs = meter->Current();
+            for (auto& target : targets) {
+                (void)target; // don't use the target objects, but should re-apply the adjustment once per target
+                lhs = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
             }
+            meter->SetCurrent(lhs);
         }
 
     } else {
