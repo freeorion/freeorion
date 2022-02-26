@@ -60,7 +60,7 @@ public:
     void SetDefaultButton(std::size_t i); ///< sets the number of the button that will be chosen by default if the user hits enter (NO_BUTTON to disable)
     void SetEscapeButton(std::size_t i);  ///< sets the number of the button that will be chosen by default if the user hits ESC (NO_BUTTON to disable)
 
-    static const std::size_t NO_BUTTON;
+    static constexpr std::size_t NO_BUTTON = std::numeric_limits<std::size_t>::max();
 
 private:
     std::size_t NumButtons() const;

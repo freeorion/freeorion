@@ -19,8 +19,6 @@
 
 using namespace GG;
 
-const std::size_t ThreeButtonDlg::NO_BUTTON = std::numeric_limits<std::size_t>::max();
-
 ThreeButtonDlg::ThreeButtonDlg(X w, Y h, std::string msg, const std::shared_ptr<Font>& font,
                                Clr color, Clr border_color, Clr button_color, Clr text_color,
                                std::size_t buttons, std::string zero, std::string one, std::string two) :

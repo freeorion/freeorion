@@ -106,7 +106,7 @@ public:
     void SetHiliteColor(Clr clr);       ///< sets the color used to indicate a hilited menu item
     void SetSelectedTextColor(Clr clr); ///< sets the color used to render a hilited menu item's text
 
-    static const std::size_t INVALID_CARET;
+    static constexpr std::size_t INVALID_CARET = std::numeric_limits<std::size_t>::max();;
 
 protected:
     /** Returns the font used to render text in the control. */

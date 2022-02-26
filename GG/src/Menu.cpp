@@ -30,8 +30,6 @@ namespace {
     constexpr X HORIZONTAL_MARGIN(3);
 }
 
-const std::size_t PopupMenu::INVALID_CARET = std::numeric_limits<std::size_t>::max();
-
 PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color/* = CLR_WHITE*/,
                      Clr border_color/* = CLR_BLACK*/, Clr interior_color/* = CLR_SHADOW*/, Clr hilite_color/* = CLR_GRAY*/) :
     Wnd(X0, Y0, GUI::GetGUI()->AppWidth() - 1, GUI::GetGUI()->AppHeight() - 1, INTERACTIVE | MODAL),
