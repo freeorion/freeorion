@@ -27,7 +27,7 @@ public:
 
     /** Set the number of pixels between the expansion symbol and the
         client area. */
-    void SetBorderMargin(unsigned int margin);
+    void SetBorderMargin(int margin);
 
     typedef boost::signals2::signal<void ()> ExpandCollapseSignalType;
     mutable ExpandCollapseSignalType ExpandCollapseSignal;
@@ -43,7 +43,7 @@ protected:
     bool                        m_collapsed = true;
     bool                        m_is_left = false;  ///< Is expand button on the left?
     GG::Clr                     m_interior_color;
-    unsigned int                m_border_margin = 1;///< The number of pixels between the expansion button and the client area.
+    int                         m_border_margin = 1;///< The number of pixels between the expansion button and the client area.
 };
 
 #endif
