@@ -4,7 +4,7 @@ Part
     class = Colony
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]] * [[COLONIZATION_POLICY_MULTIPLIER]]
     buildtime = 3
     tags = [ "PEDIA_PC_COLONY" ]
     location = And [

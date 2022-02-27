@@ -79,7 +79,7 @@ t_main = string.Template(
 BuildingType
     name = "BLD_COL_${name}"
     description = "BLD_COL_${name}_DESC"
-    buildcost = ${cost} * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[BUILDING_COST_MULTIPLIER]]
+    buildcost = ${cost} * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[BUILDING_COST_MULTIPLIER]] * [[COLONIZATION_POLICY_MULTIPLIER]]
     buildtime = ${time}
     tags = [ ${tags} ]
     location = And [

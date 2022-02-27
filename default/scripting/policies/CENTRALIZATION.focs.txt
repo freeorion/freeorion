@@ -12,6 +12,9 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
+        // Makes colony buildings and colony/outpost ship parts more expensive
+        // See COLONIZATION_POLICY_MULTIPLIER macro in ../common/upkeep.macros
+
         // capital bonuses
         EffectsGroup
             scope = And [
