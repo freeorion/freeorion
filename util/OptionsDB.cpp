@@ -161,16 +161,6 @@ bool OptionsDB::Option::ValueIsDefault() const
 
 
 /////////////////////////////////////////////
-// OptionsDB::OptionSection
-/////////////////////////////////////////////
-OptionsDB::OptionSection::OptionSection(const std::string& name_, const std::string& description_,
-                                        std::function<bool (const std::string&)> option_predicate_) :
-    name(name_),
-    description(description_),
-    option_predicate(option_predicate_)
-{}
-
-/////////////////////////////////////////////
 // OptionsDB
 /////////////////////////////////////////////
 bool OptionsDB::Commit(bool only_if_dirty, bool only_non_default) {
@@ -666,6 +656,13 @@ std::vector<std::string_view> OptionsDB::FindOptions(std::string_view prefix, bo
     return ret;
 }
 
+void OptionsDB::SetToDefault(std::string_view name) {
+    auto it = m_options.find(name);
+    if (!OptionExists(it))
+        throw std::runtime_error("Attempted to reset value of nonexistent option \"" + std::string{name});
+    it->second.value = it->second.default_value;
+}
+
 void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
     //bool option_changed = false;
 
@@ -779,7 +776,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
     }
 }
 
-void OptionsDB::SetFromFile(const boost::filesystem::path& file_path, const std::string& version) {
+void OptionsDB::SetFromFile(const boost::filesystem::path& file_path, std::string_view version) {
     XMLDoc doc;
     try {
         boost::filesystem::ifstream ifs(file_path);
@@ -801,8 +798,8 @@ void OptionsDB::SetFromXML(const XMLDoc& doc) {
     { SetFromXMLRecursive(child, ""); }
 }
 
-void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
-    std::string option_name = section_name + (section_name.empty() ? "" : ".") + elem.Tag();
+void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, std::string_view section_name) {
+    std::string option_name = std::string{section_name}.append(section_name.empty() ? "" : ".").append(elem.Tag());
     if (option_name == "version.string")
         return;
 
@@ -824,7 +821,8 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         } else {
             // Store unrecognized option to be parsed later if this options is added.
             Option option{static_cast<char>(0), option_name, elem.Text(), elem.Text(), "",
-                          std::make_unique<Validator<std::string>>(), true, false, false, section_name};
+                          std::make_unique<Validator<std::string>>(), true, false, false,
+                          std::string{section_name}};
             m_options.emplace(std::move(option_name), std::move(option));
         }
 
@@ -850,25 +848,25 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
     }
 }
 
-void OptionsDB::AddSection(const char* name, const std::string& description,
+void OptionsDB::AddSection(const char* name, std::string description,
                            std::function<bool (const std::string&)> option_predicate)
 {
-    auto insert_result = m_sections.emplace(name, OptionSection(name, description, option_predicate));
+    auto insert_result = m_sections.emplace(name, OptionSection{name, description, option_predicate});
     // if previously existing section, update description/predicate if empty/null
     if (!insert_result.second) {
         if (!description.empty() && insert_result.first->second.description.empty())
-            insert_result.first->second.description = description;
+            insert_result.first->second.description = std::move(description);
         if (option_predicate != nullptr && insert_result.first->second.option_predicate == nullptr)
             insert_result.first->second.option_predicate = std::move(option_predicate);
     }
 }
 
 template <>
-std::vector<std::string> OptionsDB::Get<std::vector<std::string>>(const std::string& name) const
+std::vector<std::string> OptionsDB::Get<std::vector<std::string>>(std::string_view name) const
 {
     auto it = m_options.find(name);
     if (!OptionExists(it))
-        throw std::runtime_error("OptionsDB::Get<std::vector<std::string>>() : Attempted to get nonexistent option \"" + name + "\".");
+        throw std::runtime_error(std::string{"OptionsDB::Get<std::vector<std::string>>() : Attempted to get nonexistent option: "}.append(name));
     try {
         return boost::any_cast<std::vector<std::string>>(it->second.value);
     } catch (const boost::bad_any_cast&) {

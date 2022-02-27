@@ -2198,16 +2198,16 @@ void TechTreeWnd::ToggleAllCategories() {
 void TechTreeWnd::SetTechStatus(const TechStatus status, const bool state) {
     switch (status) {
     case TechStatus::TS_UNRESEARCHABLE:
-        GetOptionsDB().Set<bool>("ui.research.status.unresearchable.shown", state);
+        GetOptionsDB().Set("ui.research.status.unresearchable.shown", state);
         break;
     case TechStatus::TS_HAS_RESEARCHED_PREREQ:
-        GetOptionsDB().Set<bool>("ui.research.status.partial.shown", state);
+        GetOptionsDB().Set("ui.research.status.partial.shown", state);
         break;
     case TechStatus::TS_RESEARCHABLE:
-        GetOptionsDB().Set<bool>("ui.research.status.researchable.shown", state);
+        GetOptionsDB().Set("ui.research.status.researchable.shown", state);
         break;
     case TechStatus::TS_COMPLETE:
-        GetOptionsDB().Set<bool>("ui.research.status.completed.shown", state);
+        GetOptionsDB().Set("ui.research.status.completed.shown", state);
         break;
     default:
         ; // do nothing

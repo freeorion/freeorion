@@ -970,14 +970,14 @@ void MPLobby::ValidateClientLimits() {
     if (max_ai >= 0 && max_ai < min_ai) {
         WarnLogger(FSM) << "Maximum ai clients less than minimum, setting max to min";
         max_ai = min_ai;
-        GetOptionsDB().Set<int>("network.server.ai.max", max_ai);
+        GetOptionsDB().Set("network.server.ai.max", max_ai);
     }
     int min_human = GetOptionsDB().Get<int>("network.server.human.min");
     int max_human = GetOptionsDB().Get<int>("network.server.human.max");
     if (max_human >= 0 && max_human < min_human) {
         WarnLogger(FSM) << "Maximum human clients less than minimum, setting max to min";
         max_human = min_human;
-        GetOptionsDB().Set<int>("network.server.human.max", max_human);
+        GetOptionsDB().Set("network.server.human.max", max_human);
     }
     int min_connected_human_empire_players = GetOptionsDB().Get<int>("network.server.conn-human-empire-players.min");
     int max_unconnected_human_empire_players = GetOptionsDB().Get<int>("network.server.unconn-human-empire-players.max");

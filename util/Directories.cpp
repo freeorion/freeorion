@@ -657,7 +657,7 @@ void CompleteXDGMigration()
         const std::string options_save_dir = GetOptionsDB().Get<std::string>("save.path");
         const fs::path old_path = fs::path(getenv("HOME")) / ".freeorion";
         if (fs::path(options_save_dir) == old_path)
-            GetOptionsDB().Set<std::string>("save.path", GetUserDataDir().string());
+            GetOptionsDB().Set("save.path", GetUserDataDir().string());
     }
 }
 

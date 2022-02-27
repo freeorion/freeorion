@@ -61,28 +61,28 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add<bool>(OPTIONS_ROOT + TOGGLE_BAR_HEIGHT_PROPORTIONAL,
-                     UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL"),
-                     false);
-        db.Add<bool>(OPTIONS_ROOT + TOGGLE_BAR_WIDTH_PROPORTIONAL,
-                     UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_WIDTH_PROPORTIONAL"),
-                     true);
-        db.Add<bool>(OPTIONS_ROOT + TOGGLE_BAR_HEALTH_SMOOTH,
-                     UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEALTH_SMOOTH"),
-                     true);
-        db.Add<bool>(OPTIONS_ROOT + TOGGLE_GRAPH_HEIGHT_PROPORTIONAL,
-                     UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL"),
-                     false);
+        db.Add(OPTIONS_ROOT + TOGGLE_BAR_HEIGHT_PROPORTIONAL,
+               UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL"),
+               false);
+        db.Add(OPTIONS_ROOT + TOGGLE_BAR_WIDTH_PROPORTIONAL,
+               UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_WIDTH_PROPORTIONAL"),
+               true);
+        db.Add(OPTIONS_ROOT + TOGGLE_BAR_HEALTH_SMOOTH,
+               UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEALTH_SMOOTH"),
+               true);
+        db.Add(OPTIONS_ROOT + TOGGLE_GRAPH_HEIGHT_PROPORTIONAL,
+               UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL"),
+               false);
 
-        db.Add<GG::Clr>("ui.combat.summary.dead.color",
-                        UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_DEAD_COLOR"),
-                        GG::Clr(128, 0, 0, 255));
-        db.Add<GG::Clr>("ui.combat.summary.damaged.color",
-                        UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_WOUND_COLOR"),
-                        GG::CLR_RED);
-        db.Add<GG::Clr>("ui.combat.summary.undamaged.color",
-                        UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_HEALTH_COLOR"),
-                        GG::CLR_GREEN);
+        db.Add("ui.combat.summary.dead.color",
+               UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_DEAD_COLOR"),
+               GG::Clr(128, 0, 0, 255));
+        db.Add("ui.combat.summary.damaged.color",
+               UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_WOUND_COLOR"),
+               GG::CLR_RED);
+        db.Add("ui.combat.summary.undamaged.color",
+               UserStringNop("OPTIONS_DB_UI_COMBAT_SUMMARY_HEALTH_COLOR"),
+               GG::CLR_GREEN);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

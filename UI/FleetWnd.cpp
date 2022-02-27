@@ -353,7 +353,7 @@ namespace {
     { return GetOptionsDB().Get<FleetAggression>("ui.fleet.aggression"); }
 
     void SetNewFleetAggressiveOptionSetting(FleetAggression aggression)
-    { GetOptionsDB().Set<FleetAggression>("ui.fleet.aggression", aggression); }
+    { GetOptionsDB().Set("ui.fleet.aggression", aggression); }
 
     std::shared_ptr<GG::Texture> FleetAggressiveIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive.png"); }

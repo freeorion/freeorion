@@ -129,11 +129,11 @@ namespace {
     constexpr int MIN_HEIGHT = 600;
 
     /** Sets the default and current values for the string option @p option_name to @p option_value if initially empty */
-    void SetEmptyStringDefaultOption(const std::string& option_name, const std::string& option_value) {
+    void SetEmptyStringDefaultOption(std::string_view option_name, std::string option_value) {
         OptionsDB& db = GetOptionsDB();
         if (db.Get<std::string>(option_name).empty()) {
-            db.SetDefault<std::string>(option_name, option_value);
-            db.Set(option_name, option_value);
+            db.SetDefault(option_name, option_value);
+            db.Set(option_name, std::move(option_value));
         }
     }
 

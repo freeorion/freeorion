@@ -125,20 +125,20 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().AddFlag('g', "generate-config-xml",          UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),    false);
         GetOptionsDB().AddFlag('f', "video.fullscreen.enabled",     UserStringNop("OPTIONS_DB_FULLSCREEN"),             STORE_FULLSCREEN_FLAG);
         GetOptionsDB().Add("video.fullscreen.reset",                UserStringNop("OPTIONS_DB_RESET_FSSIZE"),           true);
-        GetOptionsDB().Add<bool>("video.fullscreen.fake.enabled",   UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),       FAKE_MODE_CHANGE_FLAG);
-        GetOptionsDB().Add<int>("video.monitor.id",                 UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"),  0,
-                                RangedValidator<int>(0, 5));
+        GetOptionsDB().Add("video.fullscreen.fake.enabled",         UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),       FAKE_MODE_CHANGE_FLAG);
+        GetOptionsDB().Add("video.monitor.id",                      UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"),  0,
+                           RangedValidator<int>(0, 5));
         GetOptionsDB().AddFlag("continue",                          UserStringNop("OPTIONS_DB_CONTINUE"),               false);
         GetOptionsDB().AddFlag("auto-quit",                         UserStringNop("OPTIONS_DB_AUTO_QUIT"),              false);
-        GetOptionsDB().Add<int>("auto-advance-n-turns",             UserStringNop("OPTIONS_DB_AUTO_N_TURNS"),           0,
-                                RangedValidator<int>(0, 400),                                                           false);
+        GetOptionsDB().Add("auto-advance-n-turns",                  UserStringNop("OPTIONS_DB_AUTO_N_TURNS"),           0,
+                           RangedValidator<int>(0, 400),                                                           false);
         GetOptionsDB().Add("audio.music.enabled",                   UserStringNop("OPTIONS_DB_MUSIC_ON"),               true);
         GetOptionsDB().Add("audio.effects.enabled",                 UserStringNop("OPTIONS_DB_SOUND_ON"),               true);
-        GetOptionsDB().Add<std::string>("version.string",           UserStringNop("OPTIONS_DB_VERSION_STRING"),         FreeOrionVersionString(),
-                                        Validator<std::string>(),                                                       true);
+        GetOptionsDB().Add("version.string",                        UserStringNop("OPTIONS_DB_VERSION_STRING"),         FreeOrionVersionString(),
+                           Validator<std::string>(),                                                                    true);
         GetOptionsDB().AddFlag('r', "render-simple",                UserStringNop("OPTIONS_DB_RENDER_SIMPLE"),          false);
 #ifdef FREEORION_WIN32
-        GetOptionsDB().Add<std::string>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),   PathToString(GetBinDir() / "freeoriond.exe"));
+        GetOptionsDB().Add("misc.server-local-binary.path",         UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond.exe"));
 #else
         GetOptionsDB().Add<std::string>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),   PathToString(GetBinDir() / "freeoriond"));
 #endif

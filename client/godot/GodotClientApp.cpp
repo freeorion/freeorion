@@ -29,7 +29,7 @@ namespace {
     void SetEmptyStringDefaultOption(const std::string& option_name, const std::string& option_value) {
         OptionsDB& db = GetOptionsDB();
         if (db.Get<std::string>(option_name).empty()) {
-            db.SetDefault<std::string>(option_name, option_value);
+            db.SetDefault(option_name, option_value);
             db.Set(option_name, option_value);
         }
     }
