@@ -63,7 +63,7 @@ species_colony_gamerules = {"SP_SUPER_TEST": "RULE_ENABLE_SUPER_TESTER"}
 buildcost_default = 50
 
 # Species specific overrides to base buildcost
-species_buildcost = {"SP_EXOBOT": 70}
+species_buildcost = {"SP_EXOBOT": 60}
 
 # default buildtime factor
 buildtime_factor_default = "1.0"
@@ -79,7 +79,7 @@ t_main = string.Template(
 BuildingType
     name = "BLD_COL_${name}"
     description = "BLD_COL_${name}_DESC"
-    buildcost = ${cost} * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[BUILDING_COST_MULTIPLIER]]
+    buildcost = ${cost} * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[BUILDING_COST_MULTIPLIER]] * [[COLONIZATION_POLICY_MULTIPLIER]]
     buildtime = ${time}
     tags = [ ${tags} ]
     location = And [
