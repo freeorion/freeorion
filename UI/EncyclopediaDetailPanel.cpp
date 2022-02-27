@@ -738,20 +738,26 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
 
     namespace ph = boost::placeholders;
 
-    // Copy default block factory.
-    std::shared_ptr<GG::RichText::BLOCK_FACTORY_MAP>
-        factory_map(new GG::RichText::BLOCK_FACTORY_MAP(*GG::RichText::DefaultBlockFactoryMap()));
-    auto factory = new CUILinkTextBlock::Factory();
-    // Wire this factory to produce links that talk to us.
+    // Create a block factory that handles link clicks via this panel
+    auto factory = std::make_shared<CUILinkTextBlock::Factory>();
     factory->LinkClickedSignal.connect(
         boost::bind(&EncyclopediaDetailPanel::HandleLinkClick, this, ph::_1, ph::_2));
     factory->LinkDoubleClickedSignal.connect(
         boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, ph::_1, ph::_2));
     factory->LinkRightClickedSignal.connect(
         boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, ph::_1, ph::_2));
-    (*factory_map)[std::string{GG::RichText::PLAINTEXT_TAG}] =
-        std::shared_ptr<GG::RichText::IBlockControlFactory>(factory);
-    m_description_rich_text->SetBlockFactoryMap(factory_map);
+
+    // make local copy of default block factories map
+    const auto& default_block_factory_map{*GG::RichText::DefaultBlockFactoryMap()};
+    auto factory_map = std::make_shared<GG::RichText::BLOCK_FACTORY_MAP>(default_block_factory_map);
+
+    // set the plaintext block factory to the one handling link clicks via this panel
+    (*factory_map)[std::string{GG::RichText::PLAINTEXT_TAG}] = std::move(factory);
+
+    // use block factory map modified copy for this control
+    m_description_rich_text->SetBlockFactoryMap(std::move(factory_map));
+
+
     m_description_rich_text->SetPadding(DESCRIPTION_PADDING);
 
     m_scroll_panel->SetBackgroundColor(ClientUI::CtrlColor());
@@ -761,8 +767,8 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     m_graph->ShowPoints(false);
 
     auto search_edit = GG::Wnd::Create<SearchEdit>();
-    m_search_edit = search_edit;
     search_edit->TextEnteredSignal.connect(boost::bind(&EncyclopediaDetailPanel::HandleSearchTextEntered, this));
+    m_search_edit = std::move(search_edit);
 
     AttachChild(m_search_edit);
     AttachChild(m_graph);
