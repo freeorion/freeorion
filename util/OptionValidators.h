@@ -42,7 +42,10 @@ struct ValidatorBase {
     [[nodiscard]] virtual std::string String(const boost::any& value) const = 0;
 
     /** returns a dynamically allocated copy of the object. */
-    [[nodiscard]] virtual std::unique_ptr<ValidatorBase> Clone() const = 0;
+    [[nodiscard]] virtual std::unique_ptr<ValidatorBase> Clone() const & = 0;
+
+    /** returns a dynamically allocated copy of the object. */
+    [[nodiscard]] virtual std::unique_ptr<ValidatorBase> Clone() && = 0;
 };
 
 /** determines if a string is a valid value for an OptionsDB option */
@@ -66,11 +69,14 @@ struct Validator : public ValidatorBase
             return boost::lexical_cast<std::string>(boost::any_cast<T>(value));
     }
 
-    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const override
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override
+    { return std::make_unique<Validator>(); }
+
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() && override
     { return std::make_unique<Validator>(); }
 };
 
-FO_COMMON_API std::string ListToString(std::vector<std::string>&& input_list);
+FO_COMMON_API std::string ListToString(std::vector<std::string> input_list);
 FO_COMMON_API std::vector<std::string> StringToList(std::string_view input_string);
 FO_COMMON_API std::vector<std::string> StringToList(const char* input_string);
 FO_COMMON_API std::vector<std::string> StringToList(const std::string& input_string);
@@ -86,7 +92,10 @@ struct Validator<std::vector<std::string>> : public ValidatorBase
     [[nodiscard]] std::string String(const boost::any& value) const override
     { return ListToString(boost::any_cast<std::vector<std::string>>(value)); }
 
-    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const override
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override
+    { return std::make_unique<Validator<std::vector<std::string>>>(); }
+
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() && override
     { return std::make_unique<Validator<std::vector<std::string>>>(); }
 };
 
@@ -104,8 +113,11 @@ struct RangedValidator : public Validator<T>
         return boost::any(val);
     }
 
-    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const override
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override
     { return std::make_unique<RangedValidator>(m_min, m_max); }
+
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() && override
+    { return std::make_unique<RangedValidator>(std::move(*this)); }
 
     T m_min;
     T m_max;
@@ -129,8 +141,11 @@ struct StepValidator : public Validator<T>
         return boost::any(val);
     }
 
-    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const override
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override
     { return std::make_unique<StepValidator>(m_step_size, m_origin); }
+
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() && override
+    { return std::make_unique<StepValidator>(std::move(*this)); }
 
     T m_step_size;
     T m_origin;
@@ -155,8 +170,11 @@ public:
         return boost::any(val);
     }
 
-    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const override
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override
     { return std::make_unique<RangedStepValidator>(m_step_size, m_origin, m_min, m_max); }
+
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() && override
+    { return std::make_unique<RangedStepValidator>(std::move(*this)); }
 
     T m_step_size;
     T m_origin;
@@ -192,8 +210,11 @@ struct DiscreteValidator : public Validator<T>
         return boost::any(val);
     }
 
-    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const override
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override
     { return std::make_unique<DiscreteValidator>(m_values); }
+
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() &&
+    { return std::make_unique<DiscreteValidator>(std::move(m_values)); }
 
     /// Stores the list of vaild values.
     std::set<T> m_values;
@@ -233,7 +254,7 @@ struct OrValidator : public Validator<T>
         return result;
     }
 
-    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const override {
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override {
         if (!m_validator_a || !m_validator_b)
             return nullptr;
 
@@ -246,6 +267,9 @@ struct OrValidator : public Validator<T>
         return std::make_unique<OrValidator<T>>(std::unique_ptr<Validator<T>>{val_a},
                                                 std::unique_ptr<Validator<T>>{val_b});
     }
+
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() && override
+    { return std::make_unique<OrValidator<T>>(std::move(*this)); }
 
     std::unique_ptr<Validator<T>> m_validator_a;
     std::unique_ptr<Validator<T>> m_validator_b;

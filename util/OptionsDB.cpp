@@ -882,7 +882,7 @@ std::vector<std::string> OptionsDB::Get<std::vector<std::string>>(const std::str
     }
 }
 
-std::string ListToString(std::vector<std::string>&& input_list) {
+std::string ListToString(std::vector<std::string> input_list) {
     // list input strings in comma-separated-value format
     std::string retval;
     retval.reserve(20*input_list.size()); // guesstimate
