@@ -12008,8 +12008,8 @@ Confédération
 PLC_CONFEDERATION_DESC
 '''Les planètes de l'empire sont organisées en systèmes indépendants confédérés. 
 
-• Augmente de [[value PLC_CONFEDERATION_SUPPLY_DISCONNECTED_INFLUENCE_FLAT]] la [[metertype METER_TARGET_INFLUENCE]] des colonies non-connectées à la Capitale 
-• Augmente de [[value DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY]] la [[metertype METER_TARGET_HAPPINESS]] des colonies non-connectées à la Capitale et aux centres administratifs régionaux
+• Supprime la pénalité de [[metertype METER_TARGET_INFLUENCE]] (de base pour la plupart des espèces) pour les colonies non-connectées au [[buildingtype BLD_IMPERIAL_PALACE]] 
+• Supprime la pénalité de [[metertype METER_TARGET_HAPPINESS]] (de base pour la plupart des espèces) pour les colonies non-connectées au [[buildingtype BLD_IMPERIAL_PALACE]] et aux structures d'[[buildingtype BLD_REGIONAL_ADMIN]]
 • Diminue la [[metertype METER_TARGET_HAPPINESS]] ([[value PLC_CONFEDERATION_TARGET_HAPPINESS_FLAT]]) sur toutes les planètes
 • Augmente l'indicateur [[metertype METER_MAX_TROOPS]] de [[value PLC_CONFEDERATION_MAX_TROOPS_FLAT]]'''
 
