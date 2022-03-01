@@ -49,6 +49,14 @@ Species
         EffectsGroup
             scope = And [
                 Source
+                HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
+            ]
+            activation = Turn high = 0
+            effects = RemoveSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
+
+        EffectsGroup
+            scope = And [
+                Source
                 Not HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" 
             ]
             activation = Turn high = 0
