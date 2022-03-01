@@ -1,0 +1,27 @@
+Special
+    name = "NATIVE_FORTIFICATION_LOW"
+    description = "NATIVE_FORTIFICATION_LOW_DESC"
+    stealth = 0
+    spawnrate = 0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Unowned
+            effects = [
+                SetMaxDefense value = Value + ( 10 * [[PLANET_DEFENSE_FACTOR]] )
+                SetMaxShield value = Value + ( 10 * [[PLANET_SHIELD_FACTOR]] )
+                SetMaxTroops value = Value + 10
+                SetDetection value = Value + 10
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Or [
+                OwnedBy affiliation = AnyEmpire
+                Not Species
+            ]
+            effects = RemoveSpecial name = "NATIVE_FORTIFICATION_LOW"
+    ]
+    graphic = "icons/focus/protection.png"
+
+#include "/scripting/common/misc.macros"

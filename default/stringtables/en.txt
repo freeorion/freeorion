@@ -9282,6 +9282,30 @@ High Tech Natives
 HIGH_TECH_NATIVES_SPECIAL_DESC
 The natives on this planet have developed very advanced technology, giving their planet much stronger defenses against attack and invasion when independent of an empire.
 
+NATIVE_FORTIFICATION_MINIMAL
+Minimal Native Fortifications
+
+NATIVE_FORTIFICATION_MINIMAL_DESC
+The natives on this planet have built minimal fortications, giving their planet stronger defenses against attack and invasion when independent of an empire.
+
+NATIVE_FORTIFICATION_LOW
+Basic Native Fortifications
+
+NATIVE_FORTIFICATION_LOW_DESC
+The natives on this planet have built basic fortications, giving their planet stronger defenses against attack and invasion when independent of an empire.
+
+NATIVE_FORTIFICATION_MEDIUM
+Moderate Native Fortifications
+
+NATIVE_FORTIFICATION_MEDIUM_DESC
+The natives on this planet have built moderate fortications, giving their planet stronger defenses against attack and invasion when independent of an empire.
+
+NATIVE_FORTIFICATION_HIGH
+Strong Native Fortifications
+
+NATIVE_FORTIFICATION_HIGH_DESC
+The natives on this planet have built strong fortications, giving their planet stronger defenses against attack and invasion when independent of an empire.
+
 GAIA_SPECIAL
 Gaia
 
