@@ -10,6 +10,9 @@ Special
         Species
         /// @content_tag{PRIMITIVE} Prevents this special at a location with tag
         Not HasTag name = "PRIMITIVE"
+        Not HasTag name = "NO_RESEARCH"
+        Not HasTag name = "VERY_BAD_RESEARCH"
+        Not HasTag name = "BAD_RESEARCH"
         Not HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
     ]
     effectsgroups = [
