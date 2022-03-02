@@ -8,12 +8,20 @@ Special
         Planet
         Planet type = [Inferno Toxic Swamp]
         Not Species
+        Not WithinStarlaneJumps jumps = 1 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
     ]
     effectsgroups = [
         [[SPECIAL_INFLUENCE_RESOURCE_EXPORT(SHIMMER_SILK_SPECIAL)]]
-    
+        [[CHANCE_OF_GUARD_1]]
         [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/silk.png"
 
+#include "../monster_guard.macros"
 #include "/scripting/specials/specials.macros.txt"
