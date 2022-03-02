@@ -104,7 +104,24 @@ Black can be run on the top level directory:
 black .
 ```
 
+## Debug via chat
+This is an REPL to AI.
+You could print AI variables, you could change them, 
+you could even reload some python files with `reload()`
 
+Result is printed both to the chat and logs.
+
+- Go to logs and config directory
+- Open AI/config.in
+- Add `allow_debug_chat=1` to main section
+  ```ini
+  [main]
+  allow_debug_chat=1
+  ```
+- Start application
+- Start game
+- Send `help` to chat
+- Follow instructions
 
 ## Generating skeletons
 To aid development we create skeleton files. 
