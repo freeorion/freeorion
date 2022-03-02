@@ -97,3 +97,20 @@ CHANCE_OF_GUARD_3
                 ]
             ]
 '''
+
+CHANCE_OF_HIDE_1
+'''        EffectsGroup
+            scope = Source
+            activation = And [
+                Turn high = 0
+                Random probability = 0.15
+                (GalaxyMaxAIAggression >= 1)
+                Not ContainedBy Contains Or [
+                    Design name = "SM_EXP_OUTPOST"
+                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
+                ]
+            ]
+            effects = [
+                AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+            ]
+'''
