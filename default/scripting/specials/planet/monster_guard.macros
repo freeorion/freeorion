@@ -22,8 +22,14 @@ CHANCE_OF_GUARD_1
                         ]
                     ]
                 else = [
-                    SetSpecies name = "SP_ANCIENT_GUARDIANS"
-                    SetPopulation value = Target.TargetPopulation
+                    If condition = Random probability = 0.8
+                        effects = [
+                            SetSpecies name = "SP_ANCIENT_GUARDIANS"
+                            SetPopulation value = Target.TargetPopulation
+                        ]
+                    else = [
+                        AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+                    ]
                 ]
             ]
 '''
@@ -47,9 +53,15 @@ CHANCE_OF_GUARD_2
                     ]
                     effects = CreateShip designname = "SM_GUARD_2"
                 else = [
-                    SetSpecies name = "SP_ANCIENT_GUARDIANS"
-                    SetPopulation value = Target.TargetPopulation
-                    AddSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
+                    If condition = Random probability = 0.8
+                        effects = [
+                            SetSpecies name = "SP_ANCIENT_GUARDIANS"
+                            SetPopulation value = Target.TargetPopulation
+                            AddSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
+                        ]
+                    else = [
+                        AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
+                    ]
                 ]
             ]
 '''
@@ -73,9 +85,15 @@ CHANCE_OF_GUARD_3
                     ]
                     effects = CreateShip designname = "SM_GUARD_3"
                 else = [
-                    SetSpecies name = "SP_ANCIENT_GUARDIANS"
-                    SetPopulation value = Target.TargetPopulation
-                    AddSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
+                    If condition = Random probability = 0.8
+                        effects = [
+                            SetSpecies name = "SP_ANCIENT_GUARDIANS"
+                            SetPopulation value = Target.TargetPopulation
+                            AddSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
+                        ]
+                    else = [
+                        AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"
+                    ]
                 ]
             ]
 '''
