@@ -23,64 +23,37 @@ editing options.py and universe_tables.py, both of which have more information
 in comments over there. The latter, specifically, controls which star types,
 planet types, planet sizes, and also other content get placed.
 
-# Generating skeletons
-API to fetch data/read content is created in runtime using C++, 
-in order to have autocomplete in IDE skeletons (*.pyi) were generated.
+# Development
 
-Skeletons can be generated in runtime environment only.  
+## Setup environment
+### Run game with AI files from the repository folder
+- Run game
+- Open Options
+- Scroll left to Others
+- Click generate persistent config
+- Check `Congig and log files path` value
+- Open directory with config
+- Edit `persistent_config.xml`
+- ```xml
+  <?xml version="1.0"?>
+  <XMLDoc>
+      <resource>
+      <path>...repo_path\default</path>
+      <stringtable>
+        <path>...repo_path\default\stringtables\en.txt</path>
+      </stringtable>
+    </resource>
+  </XMLDoc>
+  ```
+### Configure IDE
+Add `default\python\` as content root.
 
-It is highly recomended to configure game to use AI script from the repo
-https://www.freeorion.org/index.php/Python_Development#Deploying_code
-
+### Install dependencies for code check tools
 ```sh
-freeorion --ai-config freeorion\default\python\handlers\inspect_interface_config.ini 
-```
-`freeorion` is a path to the game binary (freeorion.exe on Windows).
-`freeorion\default\python\handlers\inspect_interface_config.ini` path to file in this repository. Note that relative pathes may not work, better specify an absolute path.
-
-
-Starting new game and wait until it exits to main menu with an error.
-
-Generated files will be saved to AI folder:
-- freeorion\default\python\freeorion.pyi
-- freeorion\default\python\AI\freeOrionAIInterface.pyi
-You can check full paths in AI_1.log and freeoriond.log after `Skeleton written to`.  
-
-Copy them to repository with replace, commit.
-
-# Code style check
-Each PR will be checked automatically, but you still can run checks manually.
-Fixing all issues are mandatory before merging PR.
-
-We use [flake8](https://pypi.python.org/pypi/flake8) for code style checks.
-Settings for flake8 located in the `tox.ini`.
-
-We use [black](https://pypi.org/project/black/) for code formatting.
-Settings for black are located in `pyproject.toml`.
-
-## Install dependencies
-
-```sh
-pip install flake8==3.7.9
-pip install black
+pip install -r default\python\requirements-dev.txt
 ```
 
-## Format python files
-Black can be run on the top level directory:
-
-```sh
-black .
-```
-
-## Run checks
-Flake should be run from directory where `tox.ini` located
-
-```sh
-cd default/python
-flake8
-```
-
-# Automate check with pre commit hooks
+### Automate check with pre commit hooks
 Git could run a script
 ([hook](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)) 
 when you commit changes.  
@@ -91,11 +64,10 @@ The main difference are that hooks are optional
 and that hooks gives you feedback much faster 
 because they are run on developer machine.
 
-Hooks wok on all operating systems.
+Hooks work on all operating systems.
 You need to install them once.
-Hook will track config file and update himself in case of changes. 
+Hook will track config file and update itself in case of changes. 
 
-## First time setup
 - install git
 - install Python
 - [Install pre-commit](https://pre-commit.com/#install) 
@@ -110,3 +82,55 @@ Hook will track config file and update himself in case of changes.
 Notes:
 - First commit after installation/update of hooks may take some time.
 - You can skip checks by adding `-n, --no-verify` to `git commit`.
+
+## Developers routine
+### Manual code style check
+You don't need to run this script manually, pre-commit hooks and CI will do it fo you.
+
+We use [flake8](https://pypi.python.org/pypi/flake8) for code style checks.
+Settings for flake8 located in the `tox.ini` across the project.
+
+Flake should be run from directory where `tox.ini` located:
+```sh
+cd default/python
+flake8
+```
+
+We use [black](https://pypi.org/project/black/) for code formatting.
+Settings for black are located in `pyproject.toml`.
+
+Black can be run on the top level directory:
+```sh
+black .
+```
+
+
+
+## Generating skeletons
+To aid development we create skeleton files. 
+This files looks like Python files with empty classes/function.
+
+The only goal of these files is to provide autocomplete and basic static checks for code.
+
+You could to regenerate files each time C++ API has changed. 
+But since this is cosmetic only changes, this operation could be postponed.  
+
+Generation is a bit tricky, we run script inside AI that try to extract data from the C++ API.
+This process is not very precise and may produce slightly different result than real API.
+
+To generate skeletons you need to run some hooks on AI, 
+in order to do it  
+- Run game with AI config 
+  ```sh
+  freeorion --ai-config freeorion\default\python\handlers\inspect_interface_config.ini 
+  ```
+  `freeorion` is a path to the game binary (freeorion.exe on Windows).
+  `freeorion\default\python\handlers\inspect_interface_config.ini` path to file in this repository. 
+  Note: that relative paths may not work, better specify an absolute path.
+- Start a new game and wait until it exits to main menu with an error.
+  Generated files will be saved to AI folder:
+  - freeorion\default\python\freeorion.pyi
+  - freeorion\default\python\AI\freeOrionAIInterface.pyi
+  You can check full paths in `AI_1.log` and `freeoriond.log`
+- If you run AI from the repo, generated files will be in place,
+otherwise copy them to repository with replace and commit.
