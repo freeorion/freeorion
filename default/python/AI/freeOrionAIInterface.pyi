@@ -182,14 +182,6 @@ class IntIntMap:
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
 
 
-class IntMeterTypeAccountingInfoVecMapPair:
-    @property
-    def meterAccounting(self): ...
-
-    @property
-    def targetID(self): ...
-
-
 class IntPairVec:
     def __contains__(self, obj: object) -> bool: ...
 
@@ -220,6 +212,20 @@ class IntSet:
     def empty(self) -> bool: ...
 
     def size(self) -> int: ...
+
+
+class IntSetFltMap:
+    def __contains__(self, obj: object) -> bool: ...
+
+    def __delitem__(self, obj: object) -> None: ...
+
+    def __getitem__(self, obj: object) -> object: ...
+
+    def __iter__(self) -> object: ...
+
+    def __len__(self) -> int: ...
+
+    def __setitem__(self, obj1: object, obj2: object) -> None: ...
 
 
 class IntSetSet:
@@ -284,9 +290,6 @@ class MeterTypeAccountingInfoVecMap:
 
 class MeterTypeAccountingInfoVecPair:
     @property
-    def accountingInfo(self): ...
-
-    @property
     def meterType(self): ...
 
 
@@ -302,14 +305,6 @@ class MeterTypeMeterMap:
     def __len__(self) -> int: ...
 
     def __setitem__(self, obj1: object, obj2: object) -> None: ...
-
-
-class MeterTypeStringPair:
-    @property
-    def meterType(self): ...
-
-    @property
-    def string(self): ...
 
 
 class PairIntInt_IntMap:
@@ -387,6 +382,20 @@ class StringIntMap:
 
 
 class StringSet:
+    def __contains__(self, string: str) -> bool: ...
+
+    def __iter__(self) -> object: ...
+
+    def __len__(self) -> int: ...
+
+    def count(self, string: str) -> int: ...
+
+    def empty(self) -> bool: ...
+
+    def size(self) -> int: ...
+
+
+class StringSet2:
     def __contains__(self, string: str) -> bool: ...
 
     def __iter__(self) -> object: ...
@@ -561,7 +570,7 @@ class empire:
     def availableBuildingTypes(self) -> StringSet: ...
 
     @property
-    def availablePolicies(self) -> StringSet: ...
+    def availablePolicies(self) -> StringSet2: ...
 
     @property
     def availableShipDesigns(self) -> IntSet: ...
@@ -603,10 +612,10 @@ class empire:
     def name(self) -> str: ...
 
     @property
-    def planetsWithAllocatedPP(self) -> resPoolMap: ...
+    def planetsWithAllocatedPP(self) -> IntSetFltMap: ...
 
     @property
-    def planetsWithAvailablePP(self) -> resPoolMap: ...
+    def planetsWithAvailablePP(self) -> IntSetFltMap: ...
 
     @property
     def planetsWithWastedPP(self) -> IntSetSet: ...
@@ -681,7 +690,10 @@ class empire:
 
     def slotPolicyAdoptedIn(self, string: str) -> int: ...
 
-    def supplyProjections(self) -> Dict[SystemId, int]: ...
+    def supplyProjections(self) -> Dict[SystemId, int]:
+        """
+        Returns the (negative) number of jumps (int) away each known system ID (int) is from this empire's supply network. 0 in dicates systems that are fleet supplied. -1 indicates a system that is 1 jump away from a supplied system. -4 indicates a system that is 4 jumps from a supply connection.
+        """
 
     def techResearched(self, string: str) -> bool: ...
 
@@ -699,44 +711,6 @@ class fieldType:
         """
         Returns string with debug information, use '0' as argument.
         """
-
-
-class influenceQueue:
-    @property
-    def allocatedStockpileIP(self): ...
-
-    @property
-    def empireID(self) -> EmpireId: ...
-
-    @property
-    def empty(self): ...
-
-    @property
-    def expectedNewStockpile(self): ...
-
-    @property
-    def size(self): ...
-
-    @property
-    def totalSpent(self): ...
-
-    def __contains__(self, influence_queue_element: influenceQueueElement) -> bool: ...
-
-    def __getitem__(self, number: int) -> influenceQueueElement: ...
-
-    def __iter__(self) -> object: ...
-
-    def __len__(self) -> int: ...
-
-    def inQueue(self, string: str) -> bool: ...
-
-
-class influenceQueueElement:
-    @property
-    def allocation(self): ...
-
-    @property
-    def name(self) -> str: ...
 
 
 class meter:
@@ -775,7 +749,7 @@ class popCenter:
 
 class productionQueue:
     @property
-    def allocatedPP(self) -> resPoolMap: ...
+    def allocatedPP(self) -> IntSetFltMap: ...
 
     @property
     def empireID(self) -> EmpireId: ...
@@ -795,7 +769,7 @@ class productionQueue:
 
     def __len__(self) -> int: ...
 
-    def availablePP(self, res_pool: resPool) -> resPoolMap: ...
+    def availablePP(self, res_pool: resPool) -> IntSetFltMap: ...
 
     def objectsWithWastedPP(self, res_pool: resPool) -> IntSetSet: ...
 
@@ -1306,7 +1280,7 @@ class universeObject:
 
     def hasSpecial(self, string: str) -> bool: ...
 
-    def hasTag(self, string: str) -> bool: ...
+    def hasTag(self, string: str, obj: object) -> bool: ...
 
     def initialMeterValue(self, meter_type: meterType) -> float: ...
 
@@ -1413,7 +1387,7 @@ class ship(universeObject):
     def canInvade(self) -> bool: ...
 
     @property
-    def colonyCapacity(self) -> float: ...
+    def colonyCapacity(self) -> bool: ...
 
     @property
     def design(self) -> shipDesign: ...
@@ -1461,7 +1435,7 @@ class ship(universeObject):
     def speed(self) -> float: ...
 
     @property
-    def troopCapacity(self) -> float: ...
+    def troopCapacity(self) -> bool: ...
 
     def currentPartMeterValue(self, meter_type: meterType, string: str) -> float: ...
 
@@ -1909,12 +1883,6 @@ def getPolicy(string: str) -> policy:
     """
 
 
-def getPolicyCategories(obj: object) -> StringSet:
-    """
-    Returns the names of all policy categories (StringVec).
-    """
-
-
 def getPredefinedShipDesign(string: str) -> shipDesign:
     """
     Returns the ship design (ShipDesign) with the indicated name (string).
@@ -1987,7 +1955,28 @@ def getUserDataDir() -> str:
     """
 
 
-def initMeterEstimatesDiscrepancies() -> None: ...
+def initMeterEstimatesDiscrepancies() -> None:
+    """
+    For all objects and max / target meters, determines discrepancies between actual meters and what the known universe should produce. This is used later when updating meter estimates to incorporate those discrepancies.
+    """
+
+
+def isEnqueuableBuilding(string: str, number: int) -> bool:
+    """
+    Returns true if the specified building type (string) can be enqueued by this client's empire at the specified production location (int). Being enqueuable means that the item can be added to the queue, but does not mean that the item will be allocated production points once  it is added
+    """
+
+
+def isEnqueuableShip(number1: int, number2: int) -> bool:
+    """
+    Returns true if the specified ship design (int) can be enqueued by this client's empire at the specified production location (int). Enqueued ships should always also be producible, and thus able to be allocated production points once enqueued, if any are available at the production location.
+    """
+
+
+def isProducibleBuilding(string: str, number: int) -> bool:
+    """
+    Returns true if the specified building type (string) can be produced by this client's empire at the specified production location (int). Being producible means that if the item is on the production queue, it can be allocated production points that are available at its location. Being producible does not mean that the building type can be added to the queue.
+    """
 
 
 def issueAdoptPolicyOrder(string1: str, string2: str, number: int) -> int:
@@ -2161,6 +2150,12 @@ def policies() -> StringVec:
 def policiesInCategory(string: str) -> StringVec:
     """
     Returns the names of all policies (StringVec) in the indicated policy category name (string).
+    """
+
+
+def policyCategories() -> StringVec:
+    """
+    Returns the names of all policy categories (StringVec).
     """
 
 
