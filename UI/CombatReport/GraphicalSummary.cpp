@@ -482,9 +482,6 @@ public:
         DoLayout();
     }
 
-    virtual ~OptionsBar()
-    {}
-
     GG::Pt MinUsableSize() const override {
         GG::Pt min_size(GG::X0, GG::Y0);
 
