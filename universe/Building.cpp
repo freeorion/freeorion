@@ -8,17 +8,14 @@
 #include "../util/i18n.h"
 
 
-Building::Building(int empire_id, const std::string& building_type,
-                   int produced_by_empire_id/* = ALL_EMPIRES*/) :
-    m_building_type(building_type),
+Building::Building(int empire_id, std::string building_type, int produced_by_empire_id,
+                   int creation_turn, const Universe& universe) :
+    UniverseObject{"", empire_id, creation_turn, universe},
+    m_building_type(std::move(building_type)),
     m_produced_by_empire_id(produced_by_empire_id)
 {
-    UniverseObject::SetOwner(empire_id);
     const BuildingType* type = GetBuildingType(m_building_type);
-    if (type)
-        Rename(UserString(type->Name()));
-    else
-        Rename(UserString("ENC_BUILDING"));
+    Rename(type ? UserString(type->Name()) : UserString("ENC_BUILDING"));
 
     UniverseObject::Init();
 }

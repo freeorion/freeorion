@@ -145,10 +145,10 @@ public:
     /** Accepts a visitor object \see UniverseObjectVisitor */
     virtual std::shared_ptr<UniverseObject>   Accept(const UniverseObjectVisitor& visitor) const;
 
-    [[nodiscard]] int                         CreationTurn() const;               ///< returns game turn on which object was created
-    [[nodiscard]] int                         AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
+    [[nodiscard]] int                         CreationTurn() const; ///< returns game turn on which object was created
+    [[nodiscard]] int                         AgeInTurns() const;   ///< returns elapsed number of turns between turn object was created and current game turn
 
-    mutable StateChangedSignalType StateChangedSignal;              ///< emitted when the UniverseObject is altered in any way
+    mutable StateChangedSignalType StateChangedSignal{true}; ///< emitted when the UniverseObject is altered in any way
 
     /** copies data from \a copied_object to this object, limited to only copy
       * data about the copied object that is known to the empire with id
@@ -220,8 +220,10 @@ protected:
     friend class Universe;
     friend class ObjectMap;
 
-    UniverseObject();
-    UniverseObject(std::string name, double x, double y);
+    UniverseObject() = default;
+    UniverseObject(std::string name, double x, double y, int owner_id,
+                   int creation_turn, const Universe& universe);
+    UniverseObject(std::string name, int owner_id, int creation_turn, const Universe& universe);
 
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 

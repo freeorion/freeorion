@@ -73,12 +73,10 @@ namespace {
 }
 
 
-Fleet::Fleet(std::string name, double x, double y, int owner) :
-    UniverseObject(std::move(name), x, y)
-{
-    UniverseObject::Init();
-    SetOwner(owner);
-}
+Fleet::Fleet(std::string name, double x, double y, int owner_id,
+             int creation_turn, const Universe& universe) :
+    UniverseObject{std::move(name), owner_id, creation_turn, universe}
+{ UniverseObject::Init(); }
 
 Fleet* Fleet::Clone(const Universe& universe, int empire_id) const {
     Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);

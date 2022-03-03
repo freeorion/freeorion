@@ -41,7 +41,8 @@ public:
     void ResetTargetMaxUnpairedMeters() override;
     void ClampMeters() override;
 
-    Field(const std::string& field_type, double x, double y, double radius);
+    Field(std::string field_type, double x, double y, double radius,
+          int creation_turn, const Universe& universe);
     Field() = default;
 
 private:

@@ -18,24 +18,29 @@ namespace ValueRef {
     const std::string& MeterToName(MeterType meter);
 }
 
-UniverseObject::UniverseObject() :
-    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(
-        GetUniverse().UniverseObjectSignalsInhibited())),
-    m_created_on_turn(CurrentTurn())
-{}
-
-UniverseObject::UniverseObject(std::string name, double x, double y) :
-    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(
-        GetUniverse().UniverseObjectSignalsInhibited())),
+UniverseObject::UniverseObject(std::string name, double x, double y, int owner_id,
+                               int creation_turn, const Universe& universe) :
+    StateChangedSignal{StateChangedSignalType::combiner_type{
+        universe.UniverseObjectSignalsInhibited()}},
     m_name(std::move(name)),
     m_x(x),
     m_y(y),
-    m_created_on_turn(CurrentTurn())
+    m_owner_empire_id(owner_id),
+    m_created_on_turn(creation_turn)
+{}
+
+UniverseObject::UniverseObject(std::string name, int owner_id, int creation_turn,
+                               const Universe& universe) :
+    StateChangedSignal{StateChangedSignalType::combiner_type{
+        universe.UniverseObjectSignalsInhibited()}},
+    m_name(std::move(name)),
+    m_owner_empire_id(owner_id),
+    m_created_on_turn(creation_turn)
 {}
 
 void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
                           Visibility vis, const std::set<std::string>& visible_specials,
-                          const Universe&)
+                          const Universe& universe)
 {
     if (copied_object.get() == this)
         return;

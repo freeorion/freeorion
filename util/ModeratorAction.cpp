@@ -169,7 +169,8 @@ namespace {
 }
 
 void Moderator::CreateSystem::Execute() const {
-    auto system = GetUniverse().InsertNew<System>(m_star_type, GenerateSystemName(), m_x, m_y);
+    auto system = GetUniverse().InsertNew<System>(m_star_type, GenerateSystemName(), m_x, m_y,
+                                                  CurrentTurn(), GetUniverse());
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
@@ -214,7 +215,9 @@ void Moderator::CreatePlanet::Execute() const {
         return;
     }
 
-    auto planet = GetUniverse().InsertNew<Planet>(m_planet_type, m_planet_size);
+    auto& universe = GetUniverse();
+    auto planet = universe.InsertNew<Planet>(m_planet_type, m_planet_size, CurrentTurn(),
+                                                  universe);
     if (!planet) {
         ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
         return;

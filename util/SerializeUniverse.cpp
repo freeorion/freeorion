@@ -244,7 +244,7 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
 
 template <typename Archive>
 void load_construct_data(Archive& ar, System* obj, unsigned int const version)
-{ ::new(obj)System(StarType::INVALID_STAR_TYPE, "", 0.0, 0.0); }
+{ ::new(obj)System(); }
 
 template <typename Archive>
 void serialize(Archive& ar, System& obj, unsigned int const version)
@@ -274,7 +274,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, Syst
 
 template <typename Archive>
 void load_construct_data(Archive& ar, Field* obj, unsigned int const version)
-{ ::new(obj)Field("", 0.0, 0.0, 0.0); }
+{ ::new(obj)Field(); }
 
 template <typename Archive>
 void serialize(Archive& ar, Field& obj, unsigned int const version)
@@ -288,7 +288,7 @@ void serialize(Archive& ar, Field& obj, unsigned int const version)
 
 template <typename Archive>
 void load_construct_data(Archive& ar, Planet* obj, unsigned int const version)
-{ ::new(obj)Planet(PlanetType::PT_TERRAN, PlanetSize::SZ_MEDIUM); }
+{ ::new(obj)Planet(); }
 
 template <typename Archive>
 void serialize(Archive& ar, Planet& obj, unsigned int const version)
@@ -333,7 +333,7 @@ BOOST_CLASS_VERSION(Planet, 2)
 
 template <typename Archive>
 void load_construct_data(Archive& ar, Building* obj, unsigned int const version)
-{ ::new(obj)Building(ALL_EMPIRES, "", ALL_EMPIRES); }
+{ ::new(obj)Building(); }
 
 template <typename Archive>
 void serialize(Archive& ar, Building& obj, unsigned int const version)
@@ -352,7 +352,7 @@ BOOST_CLASS_EXPORT(Building)
 
 template <typename Archive>
 void load_construct_data(Archive& ar, Fleet* obj, unsigned int const version)
-{ ::new(obj)Fleet("", 0.0, 0.0, ALL_EMPIRES); }
+{ ::new(obj)Fleet(); }
 
 template <typename Archive>
 void serialize(Archive& ar, Fleet& obj, unsigned int const version)

@@ -141,7 +141,8 @@ public:
 
     void SetOverlayTexture(const std::string& texture, double size);
 
-    System(StarType star, const std::string& name, double x, double y);
+    System(StarType star, std::string name, double x, double y,
+           int current_turn, const Universe& universe);
     System() = default;
 
 private:

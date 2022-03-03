@@ -2599,9 +2599,10 @@ namespace {
             return;
         }
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        Universe& universe = GetUniverse();
-        ObjectMap& objects = universe.Objects();
-        const ScriptingContext context{universe, Empires()};
+        ScriptingContext context;
+        Universe& universe = context.ContextUniverse();
+        ObjectMap& objects = context.ContextObjects();
+        const SpeciesManager& species_manager = context.species;
 
         const ShipDesign* design = universe.GetShipDesign(design_id);
         if (!design) {
@@ -2623,7 +2624,7 @@ namespace {
             general_type = design->IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
         }
 
-        float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
+        float tech_level = boost::algorithm::clamp(context.current_turn / 400.0f, 0.0f, 1.0f);
         float typical_shot = 3 + 27 * tech_level;
         float enemy_DR = 20 * tech_level;
         TraceLogger() << "RefreshDetailPanelShipDesignTag default enemy stats:: tech_level: "
@@ -2666,7 +2667,7 @@ namespace {
             chosen_ships.insert(selected_ship);
             if (const auto this_ship = objects.get<Ship>(selected_ship)) {
                 if (!this_ship->SpeciesName().empty())
-                    additional_species.emplace(this_ship->SpeciesName());
+                    additional_species.insert(this_ship->SpeciesName());
                 if (!this_ship->OwnedBy(client_empire_id)) {
                     enemy_DR = this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial();
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
@@ -2695,10 +2696,11 @@ namespace {
 
         if (!only_description) { // don't generate detailed stat description involving adding / removing temporary ship from universe
             // temporary ship to use for estimating design's meter values
-            auto temp = universe.InsertTemp<Ship>(client_empire_id, design_id, "", universe, client_empire_id);
+            auto temp = universe.InsertTemp<Ship>(client_empire_id, design_id, "", universe,
+                                                  species_manager, client_empire_id,
+                                                  context.current_turn);
 
             // apply empty species for 'Generic' entry
-            ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
             universe.UpdateMeterEstimates(temp->ID(), context);
             temp->Resupply();
             detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
@@ -2755,10 +2757,11 @@ namespace {
             return;
         }
 
-        Universe& universe = GetUniverse();
-        ObjectMap& objects = universe.Objects();
+        ScriptingContext context;
+        Universe& universe = context.ContextUniverse();
+        ObjectMap& objects = context.ContextObjects();
         EmpireManager& empires = Empires();
-        ScriptingContext context{universe, empires, GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+        const SpeciesManager& species_manager = context.species;
 
         universe.InhibitUniverseObjectSignals(true);
 
@@ -2781,7 +2784,7 @@ namespace {
         universe.InsertShipDesignID(new ShipDesign(*incomplete_design), client_empire_id, TEMPORARY_OBJECT_ID);
         detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
 
-        float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
+        float tech_level = boost::algorithm::clamp(context.current_turn / 400.0f, 0.0f, 1.0f);
         float typical_shot = 3 + 27 * tech_level;
         float enemy_DR = 20 * tech_level;
         DebugLogger() << "default enemy stats:: tech_level: " << tech_level
@@ -2831,8 +2834,9 @@ namespace {
 
 
         // temporary ship to use for estimating design's meter values
-        auto temp = universe.InsertTemp<Ship>(client_empire_id, TEMPORARY_OBJECT_ID, "",
-                                              universe, client_empire_id);
+        auto temp = universe.InsertTemp<Ship>(client_empire_id, INVALID_DESIGN_ID, "",
+                                              universe, species_manager, client_empire_id,
+                                              context.current_turn);
 
         // apply empty species for 'Generic' entry
         universe.UpdateMeterEstimates(temp->ID(), context);

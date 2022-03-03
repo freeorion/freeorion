@@ -1062,7 +1062,7 @@ namespace {
 
         std::vector<int> AddFighters(int number, float damage, int owner_empire_id,
                                      int from_ship_id, const std::string& species,
-                                     const std::string& fighter_name,
+                                     std::string fighter_name,
                                      const Condition::Condition* combat_targets)
         {
             std::vector<int> retval;
@@ -1077,17 +1077,20 @@ namespace {
 
             for (int n = 0; n < number; ++n) {
                 // create / insert fighter into combat objectmap
+
+                //Fighter(int empire_id, int launched_from_id, const std::string& species_name,
+                //        float damage, const ::Condition::Condition* combat_targets,
+                //        int current_turn, const Universe& universe);
                 auto fighter_ptr = std::make_shared<Fighter>(owner_empire_id, from_ship_id,
                                                              species, damage, combat_targets);
-                fighter_ptr->SetID(next_fighter_id--);
-                fighter_ptr->Rename(fighter_name);
-                combat_info.objects->insert(fighter_ptr);
-
                 if (!fighter_ptr) {
                     ErrorLogger(combat) << "AddFighters unable to create and insert new Fighter object...";
                     break;
                 }
 
+                fighter_ptr->SetID(next_fighter_id--);
+                fighter_ptr->Rename(std::move(fighter_name));
+                combat_info.objects->insert(fighter_ptr);
                 retval.push_back(fighter_ptr->ID());
 
                 // add fighter to attackers (if it can attack)

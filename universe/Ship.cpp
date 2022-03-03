@@ -21,13 +21,15 @@
 #include "../util/Random.h"
 #include "../util/i18n.h"
 
-Ship::Ship(int empire_id, int design_id, std::string species_name,
-           const Universe& universe, int produced_by_empire_id) :
+Ship::Ship(int empire_id, int design_id, std::string species_name, const Universe& universe,
+           const SpeciesManager& species, int produced_by_empire_id, int current_turn) :
+    UniverseObject{"", UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION,
+                   produced_by_empire_id, current_turn, universe},
     m_species_name(std::move(species_name)),
     m_design_id(design_id),
     m_produced_by_empire_id(produced_by_empire_id),
-    m_arrived_on_turn(CurrentTurn()),
-    m_last_resupplied_on_turn(CurrentTurn())
+    m_arrived_on_turn(current_turn),
+    m_last_resupplied_on_turn(current_turn)
 {
     const ShipDesign* design = universe.GetShipDesign(design_id);
 
@@ -35,11 +37,9 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
         DebugLogger() << "Constructing a ship with an invalid design ID: " << design_id
                       << "  ... could happen if copying from a ship seen only with basic vis...";
 
-    if (!m_species_name.empty() && !GetSpecies(m_species_name))
+    if (!m_species_name.empty() && !species.GetSpecies(m_species_name))
         DebugLogger() << "Ship created with invalid species name: " << m_species_name;
 
-
-    SetOwner(empire_id);
 
     UniverseObject::Init();
 
@@ -57,6 +57,9 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
     AddMeter(MeterType::METER_RESEARCH);
     AddMeter(MeterType::METER_TARGET_INFLUENCE);
     AddMeter(MeterType::METER_INFLUENCE);
+
+    if (!design)
+        return;
 
     for (const std::string& part_name : design->Parts()) {
         if (!part_name.empty()) {

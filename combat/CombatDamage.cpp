@@ -129,7 +129,8 @@ namespace {
         std::shared_ptr<Ship> target;
         try {
             target = std::make_shared<Ship>(ALL_EMPIRES, template_ship->DesignID(),
-                                            template_ship->SpeciesName(), context.ContextUniverse());
+                                            template_ship->SpeciesName(), context.ContextUniverse(),
+                                            context.species, ALL_EMPIRES, context.current_turn);
         } catch (...) {
             ErrorLogger() << "Couldn't create temporary ship from template ship: " << template_ship->Dump();
             return nullptr;
@@ -145,9 +146,12 @@ namespace {
         return target;
     }
 
-    std::shared_ptr<Fighter> TempFighterForDamageCalcs(const std::shared_ptr<const Ship>& template_ship) {
+    auto TempFighterForDamageCalcs(const std::shared_ptr<const Ship>& template_ship,
+                                   const ScriptingContext& context)
+    {
+        static constexpr auto combat_targets = nullptr;
         auto target = std::make_shared<Fighter>(ALL_EMPIRES, template_ship->ID(),
-                                                template_ship->SpeciesName(), 1.0f, nullptr /* combat_targets */);
+                                                template_ship->SpeciesName(), 1.0f, combat_targets);
         target->SetID(TEMPORARY_OBJECT_ID);
         return target;
     }
@@ -180,7 +184,7 @@ std::vector<float> Combat::WeaponDamageImpl(
     } else {
         // create temporary fighter to test targetting condition on...
         ScriptingContext temp_fighter_context{context, empire_object_vis, empire_object_visibility_turns,
-                                              source, TempFighterForDamageCalcs(source)};
+                                              source, TempFighterForDamageCalcs(source, context)};
 
         return WeaponDamageCalcImpl(std::move(source), max, launch_fighters,
                                     target_ships, temp_fighter_context);
