@@ -84,7 +84,6 @@ private:
     (a FleetDetailPanel). */
 class FleetWnd : public MapWndPopup {
 public:
-    FleetWnd();
     FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
              double allowed_bounding_box_leeway = 0,
              int selected_fleet_id = INVALID_OBJECT_ID,
