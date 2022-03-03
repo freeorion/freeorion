@@ -72,7 +72,7 @@ namespace parse { namespace detail {
         }
         //@}
 
-        virtual ~MovableEnvelope() {};
+        virtual ~MovableEnvelope() = default;
 
         /** \name Converting constructors and operators.
             MovableEnvelope allows conversion between compatible types with the following
