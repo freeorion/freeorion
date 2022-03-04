@@ -213,7 +213,7 @@ struct DiscreteValidator : public Validator<T>
     [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() const & override
     { return std::make_unique<DiscreteValidator>(m_values); }
 
-    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() &&
+    [[nodiscard]] std::unique_ptr<ValidatorBase> Clone() && override
     { return std::make_unique<DiscreteValidator>(std::move(m_values)); }
 
     /// Stores the list of vaild values.
