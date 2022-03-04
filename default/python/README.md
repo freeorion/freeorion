@@ -105,13 +105,16 @@ black .
 ```
 
 ## Debug via chat
-This is an REPL to AI.
-You could print AI variables, you could change them, 
+To inspect current AI state in the game 
+It's possible to start interactive console with AI.
+It's the same REPL (Read-Print-Evaluate-Loop) as you have when 
+starting Python from the console. With all AI variables in it.
+You could print any AI variables, you could change them,
 you could even reload some python files with `reload()`
 
 Result is printed both to the chat and logs.
 
-- Go to logs and config directory
+- Go to "logs and config" directory
 - Open AI/config.in
 - Add `allow_debug_chat=1` to main section
   ```ini
