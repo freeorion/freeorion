@@ -140,6 +140,10 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     ar  & make_nvp("objects", objects);
     if constexpr (Archive::is_loading::value) {
         u.m_objects.swap(objects_ptr);
+
+        // use the Universe u's flag to enable/disable StateChangedSignal for these UniverseObject
+        for (auto& obj : u.m_objects->all())
+            obj->SetSignalCombiner(u);
     }
     DebugLogger() << "Universe::" << serializing_label << " " << u.m_objects->size() << " objects";
 

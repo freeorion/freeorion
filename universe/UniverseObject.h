@@ -72,18 +72,17 @@ FO_ENUM(
   * UniverseObject-derived class inherits several pure virtual members that
   * perform its actions during various game phases, such as the movement phase.
   * These subclasses must define what actions to perform during those phases.
-  * UniverseObjects advertise changes to themselves via the StateChanged
-  * Signal.  This means that all mutators on UniverseObject and its subclasses
+  * UniverseObjects advertise changes to themselves via StateChangedSignal.
+  * This means that all mutators on UniverseObject and its subclasses
   * need to emit this signal.  This is how the UI becomes aware that an object
   * that is being displayed has changed.*/
 class FO_COMMON_API UniverseObject : virtual public std::enable_shared_from_this<UniverseObject> {
 public:
     //typedef flat_map<MeterType, Meter, std::less<MeterType>, std::vector<std::pair<MeterType, Meter>>> MeterMap;
-    typedef flat_map<MeterType, Meter, std::less<MeterType>> MeterMap;
+    using MeterMap = flat_map<MeterType, Meter, std::less<MeterType>>;
 
-    typedef boost::signals2::signal<void (), blocking_combiner<boost::signals2::optional_last_value<void>>> StateChangedSignalType;
-
-    typedef StateChangedSignalType::slot_type StateChangedSlotType;
+    using CombinerType = assignable_blocking_combiner;
+    using StateChangedSignalType = boost::signals2::signal<void (), CombinerType> ;
 
     [[nodiscard]] int                           ID() const;     ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
     [[nodiscard]] const std::string&            Name() const;   ///< returns the name of this object; some valid objects will have no name
@@ -148,7 +147,7 @@ public:
     [[nodiscard]] int                         CreationTurn() const; ///< returns game turn on which object was created
     [[nodiscard]] int                         AgeInTurns() const;   ///< returns elapsed number of turns between turn object was created and current game turn
 
-    mutable StateChangedSignalType StateChangedSignal{true}; ///< emitted when the UniverseObject is altered in any way
+    mutable StateChangedSignalType StateChangedSignal; ///< emitted when the UniverseObject is altered in any way
 
     /** copies data from \a copied_object to this object, limited to only copy
       * data about the copied object that is known to the empire with id
@@ -219,11 +218,15 @@ public:
 protected:
     friend class Universe;
     friend class ObjectMap;
+    template <typename Archive>
+    friend void serialize(Archive& ar, Universe& u, unsigned int const version);
 
     UniverseObject() = default;
     UniverseObject(std::string name, double x, double y, int owner_id,
                    int creation_turn, const Universe& universe);
     UniverseObject(std::string name, int owner_id, int creation_turn, const Universe& universe);
+
+    void SetSignalCombiner(const Universe& universe);
 
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 

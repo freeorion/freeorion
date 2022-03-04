@@ -150,8 +150,8 @@ Universe& Universe::operator=(Universe&& other) noexcept {
         m_effect_accounting_map = std::move(other.m_effect_accounting_map);
         m_effect_discrepancy_map = std::move(other.m_effect_discrepancy_map);
         m_marked_destroyed = std::move(other.m_marked_destroyed);
-        m_universe_width = std::move(other.m_universe_width);
-        m_inhibit_universe_object_signals = std::move(other.m_inhibit_universe_object_signals);
+        m_universe_width = other.m_universe_width;
+        m_inhibit_universe_object_signals = other.m_inhibit_universe_object_signals;
         m_stat_records = std::move(other.m_stat_records);
         m_unlocked_items = std::move(other.m_unlocked_items);
         m_unlocked_buildings = std::move(other.m_unlocked_buildings);
@@ -476,8 +476,10 @@ void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
         obj->SetID(INVALID_OBJECT_ID);
         return;
     }
-
     obj->SetID(id);
+
+    obj->StateChangedSignal.set_combiner(UniverseObject::CombinerType{*this});
+
     m_objects->insert(std::move(obj));
 }
 
@@ -3101,7 +3103,7 @@ void Universe::UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(const
 double Universe::UniverseWidth() const
 { return m_universe_width; }
 
-const bool& Universe::UniverseObjectSignalsInhibited()
+const bool& Universe::UniverseObjectSignalsInhibited() const
 { return m_inhibit_universe_object_signals; }
 
 void Universe::InhibitUniverseObjectSignals(bool inhibit)

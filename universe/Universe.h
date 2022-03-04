@@ -368,7 +368,7 @@ public:
     void UpdateStatRecords(EmpireManager& empires);
 
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
-    const bool& UniverseObjectSignalsInhibited();
+    const bool& UniverseObjectSignalsInhibited() const;
 
     double UniverseWidth() const;
     void SetUniverseWidth(double width) { m_universe_width = width; }
