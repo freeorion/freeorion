@@ -26,9 +26,8 @@ namespace {
 }
 
 
-System::System(StarType star, std::string name, double x, double y,
-               int current_turn, const Universe& universe) :
-    UniverseObject{std::move(name), x, y, ALL_EMPIRES, current_turn, universe},
+System::System(StarType star, std::string name, double x, double y, int current_turn) :
+    UniverseObject{std::move(name), x, y, ALL_EMPIRES, current_turn},
     m_star(star)
 {
     if (m_star < StarType::INVALID_STAR_TYPE || StarType::NUM_STAR_TYPES < m_star)

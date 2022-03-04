@@ -19,8 +19,7 @@ namespace ValueRef {
 }
 
 UniverseObject::UniverseObject(std::string name, double x, double y, int owner_id,
-                               int creation_turn, const Universe& universe) :
-    StateChangedSignal{CombinerType{universe}},
+                               int creation_turn) :
     m_name(std::move(name)),
     m_x(x),
     m_y(y),
@@ -28,9 +27,7 @@ UniverseObject::UniverseObject(std::string name, double x, double y, int owner_i
     m_created_on_turn(creation_turn)
 {}
 
-UniverseObject::UniverseObject(std::string name, int owner_id, int creation_turn,
-                               const Universe& universe) :
-    StateChangedSignal{CombinerType{universe}},
+UniverseObject::UniverseObject(std::string name, int owner_id, int creation_turn) :
     m_name(std::move(name)),
     m_owner_empire_id(owner_id),
     m_created_on_turn(creation_turn)
@@ -45,7 +42,7 @@ void UniverseObject::SetSignalCombiner(const Universe& universe)
 
 void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
                           Visibility vis, const std::set<std::string>& visible_specials,
-                          const Universe& universe)
+                          const Universe&)
 {
     if (copied_object.get() == this)
         return;

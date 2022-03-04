@@ -12,9 +12,8 @@
 /////////////////////////////////////////////////
 // Field                                       //
 /////////////////////////////////////////////////
-Field::Field(std::string field_type, double x, double y, double radius,
-             int creation_turn, const Universe& universe) :
-    UniverseObject{"", x, y, ALL_EMPIRES, creation_turn, universe},
+Field::Field(std::string field_type, double x, double y, double radius, int creation_turn) :
+    UniverseObject{"", x, y, ALL_EMPIRES, creation_turn},
     m_type_name(std::move(field_type))
 {
     if (const FieldType* type = GetFieldType(m_type_name))

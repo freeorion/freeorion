@@ -176,8 +176,7 @@ public:
     static constexpr int ETA_UNKNOWN = (1 << 30) - 1;       ///< returned when ETA can't be determined
     static constexpr int ETA_OUT_OF_RANGE = (1 << 30) - 2;  ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
-    Fleet(std::string name, double x, double y, int owner_id,
-          int creation_turn, const Universe& universe);
+    Fleet(std::string name, double x, double y, int owner_id, int creation_turn);
     Fleet() = default;
 
 private:

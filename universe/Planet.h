@@ -158,7 +158,7 @@ public:
     static void ResolveGroundCombat(std::map<int, double>& empires_troops, const EmpireManager::DiploStatusMap& diplo_statuses);
 
     /** Create planet from @p type and @p size. */
-    Planet(PlanetType type, PlanetSize size, int creation_turn, const Universe& universe);
+    Planet(PlanetType type, PlanetSize size, int creation_turn);
     Planet() = default;
 
     /** returns new copy of this Planet. */

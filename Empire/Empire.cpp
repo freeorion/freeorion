@@ -2377,8 +2377,8 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
             auto planet = context.ContextObjects().get<Planet>(elem.location);
 
             // create new building
-            auto building = universe.InsertNew<Building>(m_id, elem.item.name, m_id,
-                                                         context.current_turn, universe);
+            auto building = universe.InsertNew<Building>(m_id, elem.item.name,
+                                                         m_id, context.current_turn);
             planet->AddBuilding(building->ID());
             building->SetPlanetID(planet->ID());
             system->Insert(building);
@@ -2545,7 +2545,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
                 if (!individual_fleets) {
                     fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(), m_id,
-                                                      context.current_turn, universe);
+                                                      context.current_turn);
 
                     system->Insert(fleet);
                     // set prev system to prevent conflicts with CalculateRouteTo used for
@@ -2561,8 +2561,8 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
                 for (auto& ship : ships) {
                     if (individual_fleets) {
-                        fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(), m_id,
-                                                          context.current_turn, universe);
+                        fleet = universe.InsertNew<Fleet>("", system->X(), system->Y(),
+                                                          m_id, context.current_turn);
 
                         system->Insert(fleet);
                         // set prev system to prevent conflicts with CalculateRouteTo used for

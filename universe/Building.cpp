@@ -9,8 +9,8 @@
 
 
 Building::Building(int empire_id, std::string building_type, int produced_by_empire_id,
-                   int creation_turn, const Universe& universe) :
-    UniverseObject{"", empire_id, creation_turn, universe},
+                   int creation_turn) :
+    UniverseObject{"", empire_id, creation_turn},
     m_building_type(std::move(building_type)),
     m_produced_by_empire_id(produced_by_empire_id)
 {

@@ -671,7 +671,7 @@ namespace {
 
         // Create system and insert it into the object map
         auto& universe = GetUniverse();
-        auto system = universe.InsertNew<System>(star_type, star_name, x, y, CurrentTurn(), universe);
+        auto system = universe.InsertNew<System>(star_type, star_name, x, y, CurrentTurn());
         if (!system) {
             ErrorLogger() << "CreateSystem : Attempt to insert system into the object map failed";
             return INVALID_OBJECT_ID;
@@ -724,7 +724,7 @@ namespace {
 
         // Create planet and insert it into the object map
         auto& universe = GetUniverse();
-        auto planet = universe.InsertNew<Planet>(planet_type, size, CurrentTurn(), universe);
+        auto planet = universe.InsertNew<Planet>(planet_type, size, CurrentTurn());
         if (!planet) {
             ErrorLogger() << "CreateSystem : Attempt to insert planet into the object map failed";
             return INVALID_OBJECT_ID;
@@ -761,8 +761,8 @@ namespace {
         }
 
         auto& universe = GetUniverse();
-        auto building = universe.InsertNew<Building>(empire_id, building_type, empire_id,
-                                                     CurrentTurn(), universe);
+        auto building = universe.InsertNew<Building>(empire_id, building_type,
+                                                     empire_id, CurrentTurn());
         if (!building) {
             ErrorLogger() << "CreateBuilding: couldn't create building";
             return INVALID_OBJECT_ID;
@@ -785,8 +785,8 @@ namespace {
 
         // Create new fleet at the position of the specified system
         auto& universe = GetUniverse();
-        auto fleet = universe.InsertNew<Fleet>(name, system->X(), system->Y(), empire_id,
-                                               CurrentTurn(), universe);
+        auto fleet = universe.InsertNew<Fleet>(name, system->X(), system->Y(),
+                                               empire_id, CurrentTurn());
         if (!fleet) {
             ErrorLogger() << "CreateFleet: couldn't create new fleet";
             return INVALID_OBJECT_ID;
@@ -914,8 +914,7 @@ namespace {
 
         // create the new field
         auto& universe = GetUniverse();
-        auto field = universe.InsertNew<Field>(field_type_name, x, y, size,
-                                               CurrentTurn(), universe);
+        auto field = universe.InsertNew<Field>(field_type_name, x, y, size, CurrentTurn());
         if (!field) {
             ErrorLogger() << "CreateFieldImpl: couldn't create field";
             return nullptr;

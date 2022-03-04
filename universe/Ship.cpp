@@ -23,8 +23,7 @@
 
 Ship::Ship(int empire_id, int design_id, std::string species_name, const Universe& universe,
            const SpeciesManager& species, int produced_by_empire_id, int current_turn) :
-    UniverseObject{"", UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION,
-                   produced_by_empire_id, current_turn, universe},
+    UniverseObject{"", produced_by_empire_id, current_turn},
     m_species_name(std::move(species_name)),
     m_design_id(design_id),
     m_produced_by_empire_id(produced_by_empire_id),

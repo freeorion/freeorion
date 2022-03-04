@@ -134,33 +134,39 @@ Universe::Universe() :
 {}
 
 Universe& Universe::operator=(Universe&& other) noexcept {
-    if (this != &other) {
-        m_pathfinder = std::move(other.m_pathfinder);
-        m_objects = std::move(other.m_objects);
-        m_empire_latest_known_objects = std::move(other.m_empire_latest_known_objects);
-        m_destroyed_object_ids = std::move(other.m_destroyed_object_ids);
-        m_empire_object_visibility = std::move(other.m_empire_object_visibility);
-        m_empire_object_visibility_turns = std::move(other.m_empire_object_visibility_turns);
-        m_effect_specified_empire_object_visibilities = std::move(other.m_effect_specified_empire_object_visibilities);
-        m_empire_object_visible_specials = std::move(other.m_empire_object_visible_specials);
-        m_empire_known_destroyed_object_ids = std::move(other.m_empire_known_destroyed_object_ids);
-        m_empire_stale_knowledge_object_ids = std::move(other.m_empire_stale_knowledge_object_ids);
-        m_ship_designs = std::move(other.m_ship_designs);
-        m_empire_known_ship_design_ids = std::move(other.m_empire_known_ship_design_ids);
-        m_effect_accounting_map = std::move(other.m_effect_accounting_map);
-        m_effect_discrepancy_map = std::move(other.m_effect_discrepancy_map);
-        m_marked_destroyed = std::move(other.m_marked_destroyed);
-        m_universe_width = other.m_universe_width;
-        m_inhibit_universe_object_signals = other.m_inhibit_universe_object_signals;
-        m_stat_records = std::move(other.m_stat_records);
-        m_unlocked_items = std::move(other.m_unlocked_items);
-        m_unlocked_buildings = std::move(other.m_unlocked_buildings);
-        m_unlocked_fleet_plans = std::move(other.m_unlocked_fleet_plans);
-        m_monster_fleet_plans = std::move(other.m_monster_fleet_plans);
-        m_empire_stats = std::move(other.m_empire_stats);
-        m_object_id_allocator = std::move(other.m_object_id_allocator);
-        m_design_id_allocator = std::move(other.m_design_id_allocator);
-    }
+    if (this == &other)
+        return *this;
+
+    m_pathfinder = std::move(other.m_pathfinder);
+    m_objects = std::move(other.m_objects);
+    m_empire_latest_known_objects = std::move(other.m_empire_latest_known_objects);
+    m_destroyed_object_ids = std::move(other.m_destroyed_object_ids);
+    m_empire_object_visibility = std::move(other.m_empire_object_visibility);
+    m_empire_object_visibility_turns = std::move(other.m_empire_object_visibility_turns);
+    m_effect_specified_empire_object_visibilities = std::move(other.m_effect_specified_empire_object_visibilities);
+    m_empire_object_visible_specials = std::move(other.m_empire_object_visible_specials);
+    m_empire_known_destroyed_object_ids = std::move(other.m_empire_known_destroyed_object_ids);
+    m_empire_stale_knowledge_object_ids = std::move(other.m_empire_stale_knowledge_object_ids);
+    m_ship_designs = std::move(other.m_ship_designs);
+    m_empire_known_ship_design_ids = std::move(other.m_empire_known_ship_design_ids);
+    m_effect_accounting_map = std::move(other.m_effect_accounting_map);
+    m_effect_discrepancy_map = std::move(other.m_effect_discrepancy_map);
+    m_marked_destroyed = std::move(other.m_marked_destroyed);
+    m_universe_width = other.m_universe_width;
+    m_inhibit_universe_object_signals = other.m_inhibit_universe_object_signals;
+    m_stat_records = std::move(other.m_stat_records);
+    m_unlocked_items = std::move(other.m_unlocked_items);
+    m_unlocked_buildings = std::move(other.m_unlocked_buildings);
+    m_unlocked_fleet_plans = std::move(other.m_unlocked_fleet_plans);
+    m_monster_fleet_plans = std::move(other.m_monster_fleet_plans);
+    m_empire_stats = std::move(other.m_empire_stats);
+    m_object_id_allocator = std::move(other.m_object_id_allocator);
+    m_design_id_allocator = std::move(other.m_design_id_allocator);
+
+    // use the Universe u's flag to enable/disable StateChangedSignal for these UniverseObject
+    for (auto& obj : m_objects->all())
+        obj->SetSignalCombiner(*this);
+
     return *this;
 }
 

@@ -56,8 +56,7 @@ namespace {
             return nullptr;
 
         Universe& universe = context.ContextUniverse();
-        auto fleet = universe.InsertNew<Fleet>("", x, y, ship->Owner(), context.current_turn,
-                                               context.ContextUniverse());
+        auto fleet = universe.InsertNew<Fleet>("", x, y, ship->Owner(), context.current_turn);
 
         fleet->Rename(fleet->GenerateFleetName(context));
         fleet->GetMeter(MeterType::METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
@@ -1808,7 +1807,7 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
     }
 
     auto& universe = context.ContextUniverse();
-    auto planet = universe.InsertNew<Planet>(type, size, context.current_turn, universe);
+    auto planet = universe.InsertNew<Planet>(type, size, context.current_turn);
     if (!planet) {
         ErrorLogger(effects) << "CreatePlanet::Execute unable to create new Planet object";
         return;
@@ -1923,7 +1922,7 @@ void CreateBuilding::Execute(ScriptingContext& context) const {
 
     auto& universe = context.ContextUniverse();
     auto building = universe.InsertNew<Building>(ALL_EMPIRES, std::move(building_type_name),
-                                                 ALL_EMPIRES, context.current_turn, universe);
+                                                 ALL_EMPIRES, context.current_turn);
     if (!building) {
         ErrorLogger(effects) << "CreateBuilding::Execute couldn't create building!";
         return;
@@ -2252,8 +2251,7 @@ void CreateField::Execute(ScriptingContext& context) const {
         y = target->Y();
 
     auto& universe = context.ContextUniverse();
-    auto field = universe.InsertNew<Field>(field_type->Name(), x, y, size,
-                                           context.current_turn, universe);
+    auto field = universe.InsertNew<Field>(field_type->Name(), x, y, size, context.current_turn);
     if (!field) {
         ErrorLogger(effects) << "CreateField::Execute couldn't create field!";
         return;
@@ -2401,8 +2399,7 @@ void CreateSystem::Execute(ScriptingContext& context) const {
     }
 
     auto& universe = context.ContextUniverse();
-    auto system = universe.InsertNew<System>(star_type, name_str, x, y,
-                                             context.current_turn, universe);
+    auto system = universe.InsertNew<System>(star_type, name_str, x, y, context.current_turn);
     if (!system) {
         ErrorLogger(effects) << "CreateSystem::Execute couldn't create system!";
         return;

@@ -46,8 +46,8 @@ namespace {
 ////////////////////////////////////////////////////////////
 // Planet
 ////////////////////////////////////////////////////////////
-Planet::Planet(PlanetType type, PlanetSize size, int creation_turn, const Universe& universe) :
-    UniverseObject{"", ALL_EMPIRES, creation_turn, universe},
+Planet::Planet(PlanetType type, PlanetSize size, int creation_turn) :
+    UniverseObject{"", ALL_EMPIRES, creation_turn},
     m_type(type),
     m_original_type(type),
     m_size(size),

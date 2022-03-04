@@ -222,9 +222,8 @@ protected:
     friend void serialize(Archive& ar, Universe& u, unsigned int const version);
 
     UniverseObject() = default;
-    UniverseObject(std::string name, double x, double y, int owner_id,
-                   int creation_turn, const Universe& universe);
-    UniverseObject(std::string name, int owner_id, int creation_turn, const Universe& universe);
+    UniverseObject(std::string name, double x, double y, int owner_id, int creation_turn);
+    UniverseObject(std::string name, int owner_id, int creation_turn);
 
     void SetSignalCombiner(const Universe& universe);
 

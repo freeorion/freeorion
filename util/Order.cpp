@@ -238,13 +238,13 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
     std::shared_ptr<Fleet> fleet;
     if (m_fleet_id == INVALID_OBJECT_ID) {
         // create fleet
-        fleet = u.InsertNew<Fleet>(m_fleet_name, system->X(), system->Y(), EmpireID(),
-                                   context.current_turn, u);
+        fleet = u.InsertNew<Fleet>(m_fleet_name, system->X(), system->Y(),
+                                   EmpireID(), context.current_turn);
         m_fleet_id = fleet->ID();
     } else {
         fleet = u.InsertByEmpireWithID<Fleet>(EmpireID(), m_fleet_id, m_fleet_name,
                                               system->X(), system->Y(), EmpireID(),
-                                              context.current_turn, u);
+                                              context.current_turn);
     }
 
     if (!fleet) {
