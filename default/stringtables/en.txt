@@ -204,7 +204,7 @@ NEW_ASTEROIDS_SUFFIX
 [[PT_ASTEROIDS]]
 
 EMPTY_SPACE
-''' (empty)'''
+''' (no star)'''
 
 UNEXPLORED_REGION
 ''' (unexplored)'''

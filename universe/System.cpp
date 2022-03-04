@@ -193,17 +193,10 @@ std::string System::ApparentName(int empire_id, const Universe& u,
         if (blank_unexplored_and_none)
             return EMPTY_STRING;
 
-        if (m_star == StarType::INVALID_STAR_TYPE) {
-            std::string s;
-            s.append(m_name).append(UserString("UNEXPLORED_REGION"));
-            //DebugLogger() << "System::ApparentName UNEXPLORED_REGION (" << ID() << "), returning name " << s;
-            return s;
-        } else {
-            std::string s;
-            s.append(m_name).append(UserString("UNEXPLORED_SYSTEM"));
-            //DebugLogger() << "System::ApparentName UNEXPLORED_SYSTEM (" << ID() << "), returning name " << s;
-            return s;
-        }
+        if (m_star == StarType::INVALID_STAR_TYPE)
+            return m_name + UserString("UNEXPLORED_REGION");
+        else
+            return m_name + UserString("UNEXPLORED_SYSTEM");
     }
 
     if (m_star == StarType::STAR_NONE) {
@@ -216,11 +209,7 @@ std::string System::ApparentName(int empire_id, const Universe& u,
             //DebugLogger() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< EMPTY_STRING;
             return EMPTY_STRING;
         }
-        std::string s;
-        s.reserve(32);
-        s.append(m_name).append(UserString("EMPTY_SPACE"));
-        //DebugLogger() << "System::ApparentName No-Star System (" << ID() << "), returning name " << s;
-        return s;
+        return m_name + UserString("EMPTY_SPACE");
     }
 
     return this->PublicName(empire_id, u); // todo get Objects from inputs
