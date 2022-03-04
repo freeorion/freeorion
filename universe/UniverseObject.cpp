@@ -21,10 +21,10 @@ namespace ValueRef {
 UniverseObject::UniverseObject(std::string name, double x, double y, int owner_id,
                                int creation_turn) :
     m_name(std::move(name)),
-    m_x(x),
-    m_y(y),
     m_owner_empire_id(owner_id),
-    m_created_on_turn(creation_turn)
+    m_created_on_turn(creation_turn),
+    m_x(x),
+    m_y(y)
 {}
 
 UniverseObject::UniverseObject(std::string name, int owner_id, int creation_turn) :

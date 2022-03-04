@@ -243,13 +243,13 @@ private:
     [[nodiscard]] MeterMap CensoredMeters(Visibility vis) const; ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
 
     int                                          m_id = INVALID_OBJECT_ID;
-    double                                       m_x = INVALID_POSITION;
-    double                                       m_y = INVALID_POSITION;
     int                                          m_owner_empire_id = ALL_EMPIRES;
     int                                          m_system_id = INVALID_OBJECT_ID;
+    int                                          m_created_on_turn = INVALID_GAME_TURN;
+    double                                       m_x = INVALID_POSITION;
+    double                                       m_y = INVALID_POSITION;
     std::map<std::string, std::pair<int, float>> m_specials; // map from special name to pair of (turn added, capacity)
     MeterMap                                     m_meters;
-    int                                          m_created_on_turn = INVALID_GAME_TURN;
 
     template <typename Archive>
     friend void serialize(Archive&, UniverseObject&, unsigned int const);
