@@ -14,11 +14,11 @@
 #include "../universe/Meter.h"
 #include "../util/AppInterface.h"
 #include "../util/Export.h"
+#include "../util/SitRepEntry.h"
 
 
 struct UnlockableItem;
 class ShipDesign;
-class SitRepEntry;
 class ResourcePool;
 
 typedef std::array<unsigned char, 4> EmpireColor;
@@ -57,8 +57,7 @@ public:
     //@}
 
     Empire(std::string name, std::string player_name, int ID,
-           const EmpireColor& color, bool authenticated);
-    ~Empire();
+           EmpireColor color, bool authenticated);
 
     [[nodiscard]] const std::string&  Name() const;            ///< Returns the Empire's name
     [[nodiscard]] const std::string&  PlayerName() const;      ///< Returns the Empire's player's name

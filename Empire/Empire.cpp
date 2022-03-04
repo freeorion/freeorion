@@ -58,7 +58,7 @@ Empire::Empire() :
 { Init(); }
 
 Empire::Empire(std::string name, std::string player_name,
-               int empire_id, const EmpireColor& color, bool authenticated) :
+               int empire_id, EmpireColor color, bool authenticated) :
     m_id(empire_id),
     m_name(std::move(name)),
     m_player_name(std::move(player_name)),
@@ -87,9 +87,6 @@ void Empire::Init() {
     for (auto& entry : PolicyCategoriesSlotsMeters())
         m_meters[std::move(entry.second)];
 }
-
-Empire::~Empire()
-{ ClearSitRep(); }
 
 const std::string& Empire::Name() const
 { return m_name; }
