@@ -303,7 +303,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     // adopt policy in requested category on this turn, unless it was already
     // adopted at the start of this turn, in which case restore / keep its
     // previous adtoption turn
-    int adoption_turn = CurrentTurn();
+    int adoption_turn = context.current_turn;
     auto it = m_initial_adopted_policies.find(name);
     if (it != m_initial_adopted_policies.end())
         adoption_turn = it->second.adoption_turn;
@@ -505,11 +505,11 @@ bool Empire::PolicyAffordable(std::string_view name, const ScriptingContext& con
 
     double other_this_turn_adopted_policies_cost = 0.0;
     for (auto& [adopted_policy_name, adoption_info] : m_adopted_policies) {
-        if (adoption_info.adoption_turn != CurrentTurn())
+        if (adoption_info.adoption_turn != context.current_turn)
             continue;
         auto pre_adopted_policy = GetPolicy(adopted_policy_name);
         if (!pre_adopted_policy) {
-            ErrorLogger() << "Empire::PolicyAffordable couldn't find policy named " << adopted_policy_name << " that was supposedly already adopted this turn (" << CurrentTurn() << ")";
+            ErrorLogger() << "Empire::PolicyAffordable couldn't find policy named " << adopted_policy_name << " that was supposedly already adopted this turn (" << context.current_turn << ")";
             continue;
         }
         DebugLogger() << "Empire::PolicyAffordable : Already adopted policy this turn: " << adopted_policy_name
@@ -1805,7 +1805,7 @@ void Empire::ApplyNewTechs(Universe& universe, int current_turn) {
             UnlockItem(item, universe, current_turn);  // potential infinite if a tech (in)directly unlocks itself?
 
         if (!m_techs.count(new_tech)) {
-            m_techs[new_tech] = CurrentTurn();
+            m_techs[new_tech] = current_turn;
             AddSitRepEntry(CreateTechResearchedSitRep(new_tech, current_turn));
         }
     }
@@ -2383,7 +2383,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
 
             AddSitRepEntry(CreateBuildingBuiltSitRep(building->ID(), planet->ID(),
                                                      context.current_turn));
-            DebugLogger() << "New Building created on turn: " << CurrentTurn();
+            DebugLogger() << "New Building created on turn: " << context.current_turn;
             break;
         }
 
