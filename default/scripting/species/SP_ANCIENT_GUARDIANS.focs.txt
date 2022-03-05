@@ -3,17 +3,15 @@ Species
     description = "SP_ANCIENT_GUARDIANS_DESC"
     gameplay_description = "SP_ANCIENT_GUARDIANS_GAMEPLAY_DESC"
 
-    tags = [ "ROBOTIC" "NO_INDUSTRY" "NO_RESEARCH" "AVERAGE_SUPPLY" "DESTROYED_ON_CONQUEST" "CTRL_STAT_SKIP_DEPOP" "PEDIA_ROBOTIC_SPECIES_CLASS" ]
+    tags = [ "ROBOTIC" "NO_RESEARCH" "NO_INFLUENCE" "AVERAGE_SUPPLY" "DESTROYED_ON_CONQUEST" "CTRL_STAT_SKIP_DEPOP" "PEDIA_ROBOTIC_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
-        [[HAS_RESEARCH_FOCUS]]
-        [[HAS_GROWTH_FOCUS]]
-        [[HAS_ADVANCED_FOCI]]
     ]
 
     effectsgroups = [
-        [[NO_INDUSTRY]]
+        # just to make the tags consistent...
+        [[AVERAGE_INDUSTRY]]
         [[NO_RESEARCH]]
         [[NO_INFLUENCE]]
         [[NO_STOCKPILE]]

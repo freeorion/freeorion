@@ -5,7 +5,7 @@ Species
     Native
 
 
-    tags = [ "ORGANIC" "BAD_POPULATION" "VERY_BAD_RESEARCH" "BAD_ATTACKTROOPS" "GOOD_INDUSTRY" "GOOD_STOCKPILE" "PEDIA_ORGANIC_SPECIES_CLASS" ]
+    tags = [ "ORGANIC" "BAD_POPULATION" "VERY_BAD_RESEARCH" "NO_INFLUENCE" "BAD_OFFENSE_TROOPS" "GOOD_INDUSTRY" "GOOD_STOCKPILE" "PEDIA_ORGANIC_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -34,7 +34,7 @@ Species
     effectsgroups = [
         [[GOOD_INDUSTRY]]
         [[VERY_BAD_RESEARCH]]    // because they like to sleep a lot and when not then sit around and do nothing on their eccentric worlds ..
-        [[BAD_INFLUENCE]]
+        [[NO_INFLUENCE]]
         [[GOOD_STOCKPILE]]
 
         [[BAD_POPULATION]]
