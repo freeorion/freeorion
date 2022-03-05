@@ -42,8 +42,8 @@ def get_ai_tag_grade(tag_list, tag_type):
     """
     for tag in [tag_ for tag_ in tag_list if tag_.count("_") > 0]:
         parts = tag.split("_", 1)
-        if parts[1] == "BAD_":
-            parts = [parts[0] + "_BAD", parts[4:]]
+        if parts[1].startswith("BAD_"):
+            parts = [parts[0] + "_BAD", parts[1][4:]]
         if parts[1] == tag_type.upper():
             return parts[0]
     return ""

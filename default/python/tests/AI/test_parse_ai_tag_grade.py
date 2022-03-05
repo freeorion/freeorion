@@ -23,6 +23,10 @@ def test_tags_search_by_not_matching_tag_type_returns_empty_string():
     assert "" == get_ai_tag_grade(["GOOD_HULL"], "WEAPONS")
 
 
+def test_very_bad_tag_parsing_find_correct_modifier():
+    assert "VERY_BAD" == get_ai_tag_grade(["VERY_BAD_WEAPONS"], "WEAPONS")
+
+
 @mark.parametrize(
     "tags,tags_type",
     (
