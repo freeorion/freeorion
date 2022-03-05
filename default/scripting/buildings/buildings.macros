@@ -93,7 +93,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
             ]
             accountinglabel = "DISLIKES_BUILDING_LABEL"
             effects =
-                SetTargetHappiness value = Value + ((NamedReal name = "BUILDING_LIKE_EMPIRE_SQRT_SCALING" value = 1.0) * 
+                SetTargetHappiness value = Value + ((NamedRealLookup name = "BUILDING_LIKE_EMPIRE_SQRT_SCALING") * 
                     max(1.0,
                         Statistic Count condition = And [
                             Building
