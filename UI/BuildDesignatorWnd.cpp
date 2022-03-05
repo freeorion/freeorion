@@ -144,8 +144,7 @@ namespace {
             m_initialized = true;
 
             ScriptingContext context;
-            const EmpireManager& empires{Empires()}; // TODO: pass in?
-            auto empire = empires.GetEmpire(m_empire_id);
+            auto empire = context.GetEmpire(m_empire_id);
 
             std::shared_ptr<GG::Texture>                texture;
             std::string                                 name_text;
@@ -163,8 +162,7 @@ namespace {
             case BuildType::BT_SHIP: {
                 texture = ClientUI::ShipDesignIcon(m_item.design_id);
                 desc_text = UserString("BT_SHIP");
-                const ShipDesign* design = GetUniverse().GetShipDesign(m_item.design_id);
-                if (design)
+                if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(m_item.design_id))
                     name_text = design->Name(true);
                 break;
             }

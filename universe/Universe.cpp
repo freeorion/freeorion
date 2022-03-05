@@ -2264,9 +2264,9 @@ namespace {
     void SetEmpireFieldVisibilitiesFromRanges(
         const std::map<int, std::map<std::pair<double, double>, float>>&
             empire_location_detection_ranges,
-        const ObjectMap& objects)
+        Universe& universe)
     {
-        Universe& universe = GetUniverse();
+        const ObjectMap& objects{universe.Objects()};
 
         for (const auto& [detecting_empire_id, detector_position_ranges] : empire_location_detection_ranges) {
             double detection_strength = 0.0;
@@ -2310,10 +2310,9 @@ namespace {
         const std::map<int, std::map<std::pair<double, double>, float>>&
             empire_location_detection_ranges,
         const std::map<int, std::map<std::pair<double, double>, std::vector<int>>>&
-            empire_location_potentially_detectable_objects)
+            empire_location_potentially_detectable_objects,
+        Universe& universe)
     {
-        Universe& universe = GetUniverse();
-
         for (const auto& [detecting_empire_id, detector_position_ranges] : empire_location_detection_ranges) {
             // for this empire, get objects it could potentially detect
             const auto empire_detectable_objects_it =
@@ -2384,8 +2383,8 @@ namespace {
     /** sets planets that an empire has at some time had visibility of, which
       * are also in system where an empire owns an object, to be basically
       * visible, and those systems to be partially visible */
-    void SetSameSystemPlanetsVisible(const ObjectMap& objects) {
-        Universe& universe = GetUniverse();
+    void SetSameSystemPlanetsVisible(Universe& universe) {
+        const ObjectMap& objects = universe.Objects();
         // map from empire ID to ID of systems where those empires own at least one object
         std::map<int, std::set<int>> empires_systems_with_owned_objects;
         // get systems where empires have owned objects
@@ -2710,10 +2709,11 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
         GetEmpiresPositionsPotentiallyDetectableObjects(*m_objects, empires);
 
     SetEmpireObjectVisibilitiesFromRanges(empire_position_detection_ranges,
-                                          empire_position_potentially_detectable_objects);
-    SetEmpireFieldVisibilitiesFromRanges(empire_position_detection_ranges, *m_objects);
+                                          empire_position_potentially_detectable_objects,
+                                          *this);
+    SetEmpireFieldVisibilitiesFromRanges(empire_position_detection_ranges, *this);
 
-    SetSameSystemPlanetsVisible(*m_objects);
+    SetSameSystemPlanetsVisible(*this);
 
     ApplyEffectDerivedVisibilities(empires);
 

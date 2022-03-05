@@ -130,10 +130,8 @@ namespace {
     }
 
     void InitMeterEstimatesAndDiscrepancies() {
-        Universe& universe = GetUniverse();
-        EmpireManager& empires = Empires();
-        ScriptingContext context{universe, empires, GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
-        universe.InitMeterEstimatesAndDiscrepancies(context);
+        ScriptingContext context;
+        context.ContextUniverse().InitMeterEstimatesAndDiscrepancies(context);
     }
 
     /** @brief Set ::Universe ::Meter instances to their estimated values as
@@ -147,7 +145,10 @@ namespace {
     void UpdateMeterEstimates(bool pretend_to_own_unowned_planets) {
         std::vector<Planet*> unowned_planets;
         int player_id = -1;
-        Universe& universe = AIClientApp::GetApp()->GetUniverse();
+
+        ScriptingContext context;
+        Universe& universe = context.ContextUniverse();
+
         if (pretend_to_own_unowned_planets) {
             // Add this player ownership to all planets that the player can see
             // but which aren't currently colonized.  This way, any effects the
@@ -175,7 +176,6 @@ namespace {
         }
 
         // update meter estimates with temporary ownership
-        ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
         universe.UpdateMeterEstimates(context);
 
         if (pretend_to_own_unowned_planets) {
@@ -187,13 +187,13 @@ namespace {
     }
 
     void UpdateResourcePools() {
+        ScriptingContext context;
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = ::GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "UpdateResourcePools : couldn't get empire with id " << empire_id;
             return;
         }
-        ScriptingContext context;
         empire->UpdateResourcePools(context);
     }
 
