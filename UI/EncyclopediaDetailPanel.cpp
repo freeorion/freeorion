@@ -1133,7 +1133,6 @@ namespace {
         std::vector<std::future<decltype(GetSubDirs(""))>> futures;
         futures.reserve(sorted_entries.size());
 
-        size_t n = 0;
         for (auto& [readable_article_name, link_category] : sorted_entries) {
             auto& [link_text, category_str_key] = link_category;
 
@@ -2760,7 +2759,6 @@ namespace {
         ScriptingContext context;
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
-        EmpireManager& empires = Empires();
         const SpeciesManager& species_manager = context.species;
 
         universe.InhibitUniverseObjectSignals(true);

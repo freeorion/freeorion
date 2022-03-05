@@ -503,8 +503,6 @@ bool Empire::PolicyAffordable(std::string_view name, const ScriptingContext& con
         return false;
     }
 
-    const ObjectMap& objects{context.ContextObjects()};
-
     double other_this_turn_adopted_policies_cost = 0.0;
     for (auto& [adopted_policy_name, adoption_info] : m_adopted_policies) {
         if (adoption_info.adoption_turn != CurrentTurn())
