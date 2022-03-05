@@ -545,9 +545,9 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id, const Unive
     std::vector<const Fleet*> moving_empire_fleets;
     moving_empire_fleets.reserve(objects.size<Fleet>());
     static const MovingFleetVisitor moving_fleet_visitor;
-    for (auto& object : objects.find(moving_fleet_visitor)) {
+    for (auto& object : objects.find<Fleet>(moving_fleet_visitor)) {
         if (object && object->ObjectType() == UniverseObjectType::OBJ_FLEET && object->OwnedBy(empire_id))
-            moving_empire_fleets.emplace_back(static_cast<const Fleet*>(object.get()));
+            moving_empire_fleets.push_back(static_cast<const Fleet*>(object.get()));
     }
 
     // add any lanes an owned fleet is moving along that connect to this system
