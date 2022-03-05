@@ -188,7 +188,7 @@ namespace {
 
                 // from stockpile
                 stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
-                stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity();
+                stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
 
                 auto [total_cost, minimum_production_time] = m_item.ProductionCostAndTime(m_empire_id, m_location_id, context);
 
@@ -295,17 +295,19 @@ namespace {
     {
         ScopedTimer timer("ProductionItemRowBrowseWnd: " + item.name);
 
+        ScriptingContext context;
+
         // get available PP for empire at candidate location
         float local_pp_output = 0.0f;
         float stockpile = 0.0f;
         float stockpile_limit_per_turn = 0.0f;
-        if (const auto* empire = GetEmpire(empire_id)) {
+        if (auto empire = context.GetEmpire(empire_id)) {
             // from industry output
             local_pp_output = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->GroupAvailable(candidate_object_id);
 
             // from stockpile
             stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
-            stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity();
+            stockpile_limit_per_turn = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
         }
 
         auto obj = Objects().get(candidate_object_id);
@@ -319,9 +321,8 @@ namespace {
             if (!building_type)
                 return nullptr;
 
-            const std::string& title = UserString(item.name);
+            auto& title = UserString(item.name);
             std::string main_text;
-
 
 
             if (obj || building_type->ProductionCostTimeLocationInvariant()) {

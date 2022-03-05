@@ -1127,7 +1127,9 @@ void ProductionWnd::UpdateQueue() {
 }
 
 void ProductionWnd::UpdateInfoPanel() {
-    const Empire* empire = GetEmpire(m_empire_shown_id);
+    ScriptingContext context;
+
+    auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire) {
         m_production_info_panel->SetName(UserString("PRODUCTION_WND_TITLE"));
         m_production_info_panel->ClearLocalInfo();
@@ -1136,18 +1138,20 @@ void ProductionWnd::UpdateInfoPanel() {
         m_production_info_panel->SetEmpireID(m_empire_shown_id);
     }
 
+    const ObjectMap& objects = context.ContextObjects();
+
     const ProductionQueue& queue = empire->GetProductionQueue();
     float PPs = empire->ResourceOutput(ResourceType::RE_INDUSTRY);
     float total_queue_cost = queue.TotalPPsSpent();
     float stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
     float stockpile_use = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
-    float stockpile_use_max = queue.StockpileCapacity();
+    float stockpile_use_max = queue.StockpileCapacity(objects);
     m_production_info_panel->SetTotalPointsCost(PPs, total_queue_cost);
     m_production_info_panel->SetStockpileCost(stockpile, stockpile_use, stockpile_use_max);
 
     // find if there is a local location
     int prod_loc_id = this->SelectedPlanetID();
-    auto loc_obj = Objects().get(prod_loc_id);
+    auto loc_obj = objects.get(prod_loc_id);
     if (!loc_obj) {
         // clear local info...
         m_production_info_panel->ClearLocalInfo();

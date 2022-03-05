@@ -140,7 +140,7 @@ struct FO_COMMON_API ProductionQueue {
     [[nodiscard]] const std::map<std::set<int>, float>& AllocatedStockpilePP() const;
 
     /** Returns sum of stockpile meters of empire-owned objects. */
-    [[nodiscard]] float StockpileCapacity() const;
+    [[nodiscard]] float StockpileCapacity(const ObjectMap& objects) const;
 
     /** Returns the value expected for the Imperial Stockpile for the next turn, based on the current
     * ProductionQueue allocations. */

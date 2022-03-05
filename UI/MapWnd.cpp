@@ -6872,7 +6872,8 @@ void MapWnd::RefreshDetectionIndicator() {
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
-    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    ScriptingContext context;
+    auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_industry->SetValue(0.0);
         m_industry_wasted->Hide();
@@ -6888,7 +6889,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double total_PP_target_output = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->TargetOutput();
     float  stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
     float  stockpile_used = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
-    float  stockpile_use_capacity = empire->GetProductionQueue().StockpileCapacity();
+    float  stockpile_use_capacity = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
     float  expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
 
     float  stockpile_plusminus_next_turn = expected_stockpile - stockpile;

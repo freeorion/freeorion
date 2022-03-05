@@ -108,18 +108,20 @@ namespace {
         return retval;
     }
 
-    float CalculateNewStockpile(int empire_id, float starting_stockpile, float project_transfer_to_stockpile,
+    float CalculateNewStockpile(int empire_id, float starting_stockpile,
+                                float project_transfer_to_stockpile,
                                 const std::map<std::set<int>, float>& available_pp,
                                 const std::map<std::set<int>, float>& allocated_pp,
-                                const std::map<std::set<int>, float>& allocated_stockpile_pp)
+                                const std::map<std::set<int>, float>& allocated_stockpile_pp,
+                                const ScriptingContext& context)
     {
         TraceLogger() << "CalculateNewStockpile for empire " << empire_id;
-        const Empire* empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "CalculateStockpileContribution() passed null empire.  doing nothing.";
             return 0.0f;
         }
-        float stockpile_limit = empire->GetProductionQueue().StockpileCapacity();
+        float stockpile_limit = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
         float stockpile_used = boost::accumulate(allocated_stockpile_pp | boost::adaptors::map_values, 0.0f);
         TraceLogger() << " ... stockpile limit: " << stockpile_limit << "  used: " << stockpile_used << "   starting: " << starting_stockpile;
         float new_contributions = 0.0f;
@@ -603,14 +605,14 @@ const std::map<std::set<int>, float>& ProductionQueue::AllocatedPP() const
 const std::map<std::set<int>, float>& ProductionQueue::AllocatedStockpilePP() const
 { return m_object_group_allocated_stockpile_pp; }
 
-float ProductionQueue::StockpileCapacity() const {
+float ProductionQueue::StockpileCapacity(const ObjectMap& objects) const {
     if (m_empire_id == ALL_EMPIRES)
         return 0.0f;
 
     float retval = 0.0f;
 
     // TODO: if something other than planets has METER_STOCKPILE added, adjust here
-    for (const auto& obj : Objects().find<Planet>(OwnedVisitor(m_empire_id))) {
+    for (const auto& obj : objects.find<Planet>(OwnedVisitor(m_empire_id))) {
         const auto* meter = obj->GetMeter(MeterType::METER_STOCKPILE);
         if (!meter)
             continue;
@@ -697,7 +699,7 @@ void ProductionQueue::Update(const ScriptingContext& context) {
     auto& available_pp = industry_resource_pool->Output();
     float pp_in_stockpile = industry_resource_pool->Stockpile();
     TraceLogger() << "========= pp_in_stockpile:     " << pp_in_stockpile << " ========";
-    float stockpile_limit = StockpileCapacity();
+    float stockpile_limit = StockpileCapacity(context.ContextObjects());
     float available_stockpile = std::min(pp_in_stockpile, stockpile_limit);
     TraceLogger() << "========= available_stockpile: " << available_stockpile << " ========";
 
@@ -764,8 +766,10 @@ void ProductionQueue::Update(const ScriptingContext& context) {
 
     //update expected new stockpile amount
     m_expected_new_stockpile_amount = CalculateNewStockpile(
-        m_empire_id, pp_in_stockpile, project_transfer_to_stockpile, available_pp, m_object_group_allocated_pp,
-        m_object_group_allocated_stockpile_pp);
+        m_empire_id, pp_in_stockpile, project_transfer_to_stockpile,
+        available_pp, m_object_group_allocated_pp,
+        m_object_group_allocated_stockpile_pp,
+        context);
     m_expected_project_transfer_to_stockpile = project_transfer_to_stockpile;
 
     // if at least one resource-sharing system group have available PP, simulate
@@ -861,7 +865,8 @@ void ProductionQueue::Update(const ScriptingContext& context) {
         }
         sim_pp_in_stockpile = CalculateNewStockpile(
             m_empire_id, sim_pp_in_stockpile, sim_project_transfer_to_stockpile,
-            available_pp, allocated_pp, allocated_stockpile_pp);
+            available_pp, allocated_pp, allocated_stockpile_pp,
+            context);
         sim_available_stockpile = std::min(sim_pp_in_stockpile, stockpile_limit);
     }
     update_timer.EnterSection("Logging");
