@@ -48,12 +48,12 @@ namespace {
         db.Add("setup.seed",                UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),               std::string("0"),                       Validator<std::string>());
         db.Add("setup.star.count",          UserStringNop("OPTIONS_DB_GAMESETUP_STARS"),              150,                                    RangedValidator<int>(10, 5000));
         db.Add("setup.galaxy.shape",        UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),       Shape::DISC,                            RangedValidator<Shape>(Shape::SPIRAL_2, Shape::RANDOM));
-        db.Add("setup.galaxy.age",          UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),         GalaxySetupOption::GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GalaxySetupOption::GALAXY_SETUP_LOW, GalaxySetupOption::GALAXY_SETUP_RANDOM));
-        db.Add("setup.planet.density",      UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"),     GalaxySetupOption::GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GalaxySetupOption::GALAXY_SETUP_LOW, GalaxySetupOption::GALAXY_SETUP_RANDOM));
-        db.Add("setup.starlane.frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"), GalaxySetupOption::GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GalaxySetupOption::GALAXY_SETUP_LOW, GalaxySetupOption::GALAXY_SETUP_RANDOM));
-        db.Add("setup.specials.frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"), GalaxySetupOption::GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GalaxySetupOption::GALAXY_SETUP_NONE, GalaxySetupOption::GALAXY_SETUP_RANDOM));
-        db.Add("setup.monster.frequency",   UserStringNop("OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY"),  GalaxySetupOption::GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GalaxySetupOption::GALAXY_SETUP_NONE, GalaxySetupOption::GALAXY_SETUP_RANDOM));
-        db.Add("setup.native.frequency",    UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"),   GalaxySetupOption::GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOption>(GalaxySetupOption::GALAXY_SETUP_NONE, GalaxySetupOption::GALAXY_SETUP_RANDOM));
+        db.Add("setup.galaxy.age",          UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),         GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOptionGeneric>(GalaxySetupOptionGeneric::GALAXY_SETUP_LOW, GalaxySetupOptionGeneric::GALAXY_SETUP_RANDOM));
+        db.Add("setup.planet.density",      UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"),     GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOptionGeneric>(GalaxySetupOptionGeneric::GALAXY_SETUP_LOW, GalaxySetupOptionGeneric::GALAXY_SETUP_RANDOM));
+        db.Add("setup.starlane.frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"), GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOptionGeneric>(GalaxySetupOptionGeneric::GALAXY_SETUP_LOW, GalaxySetupOptionGeneric::GALAXY_SETUP_RANDOM));
+        db.Add("setup.specials.frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"), GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOptionGeneric>(GalaxySetupOptionGeneric::GALAXY_SETUP_NONE, GalaxySetupOptionGeneric::GALAXY_SETUP_RANDOM));
+        db.Add("setup.monster.frequency",   UserStringNop("OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY"),  GalaxySetupOptionMonsterFreq::MONSTER_SETUP_MEDIUM, RangedValidator<GalaxySetupOptionMonsterFreq>(GalaxySetupOptionMonsterFreq::MONSTER_SETUP_NONE, GalaxySetupOptionMonsterFreq::MONSTER_SETUP_RANDOM));
+        db.Add("setup.native.frequency",    UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"),   GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM, RangedValidator<GalaxySetupOptionGeneric>(GalaxySetupOptionGeneric::GALAXY_SETUP_NONE, GalaxySetupOptionGeneric::GALAXY_SETUP_RANDOM));
         db.Add("setup.ai.player.count",     UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),     6,                                      RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
         db.Add("setup.ai.aggression",       UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),  Aggression::MANIACAL,                   RangedValidator<Aggression>(Aggression::BEGINNER, Aggression::MANIACAL));
 
@@ -113,13 +113,28 @@ namespace {
     static char alphanum[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 }
 
-const std::string& TextForGalaxySetupSetting(GalaxySetupOption gso) {
+const std::string& TextForGalaxySetupSetting(GalaxySetupOptionGeneric gso) {
     switch (gso) {
-        case GalaxySetupOption::GALAXY_SETUP_NONE:   return UserString("GSETUP_NONE");
-        case GalaxySetupOption::GALAXY_SETUP_LOW:    return UserString("GSETUP_LOW");
-        case GalaxySetupOption::GALAXY_SETUP_MEDIUM: return UserString("GSETUP_MEDIUM");
-        case GalaxySetupOption::GALAXY_SETUP_HIGH:   return UserString("GSETUP_HIGH");
-        case GalaxySetupOption::GALAXY_SETUP_RANDOM: return UserString("GSETUP_RANDOM");
+        case GalaxySetupOptionGeneric::GALAXY_SETUP_NONE:   return UserString("GSETUP_NONE");
+        case GalaxySetupOptionGeneric::GALAXY_SETUP_LOW:    return UserString("GSETUP_LOW");
+        case GalaxySetupOptionGeneric::GALAXY_SETUP_MEDIUM: return UserString("GSETUP_MEDIUM");
+        case GalaxySetupOptionGeneric::GALAXY_SETUP_HIGH:   return UserString("GSETUP_HIGH");
+        case GalaxySetupOptionGeneric::GALAXY_SETUP_RANDOM: return UserString("GSETUP_RANDOM");
+        default:                                     return EMPTY_STRING;
+    }
+}
+
+const std::string& TextForGalaxySetupSetting(GalaxySetupOptionMonsterFreq gso) {
+    switch (gso) {
+        case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_NONE:           return UserString("GSETUP_NONE");
+        case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_EXTREMELY_LOW:  return UserString("GSETUP_EXTREMELY_LOW");
+        case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_VERY_LOW:       return UserString("GSETUP_VERY_LOW");
+        case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_LOW:            return UserString("GSETUP_LOW");
+        case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_MEDIUM:         return UserString("GSETUP_MEDIUM");
+        case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_HIGH:           return UserString("GSETUP_HIGH");
+        case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_VERY_HIGH:      return UserString("GSETUP_VERY_HIGH");
+        case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_EXTREMELY_HIGH: return UserString("GSETUP_EXTREMELY_HIGH");
+        case GalaxySetupOptionMonsterFreq::MONSTER_SETUP_RANDOM:         return UserString("GSETUP_RANDOM");
         default:                                     return EMPTY_STRING;
     }
 }
@@ -181,40 +196,40 @@ Shape GalaxySetupData::GetShape() const {
     return static_cast<Shape>(GetIdx(num_shapes, seed + "shape"));
 }
 
-GalaxySetupOption GalaxySetupData::GetAge() const {
-    if (age != GalaxySetupOption::GALAXY_SETUP_RANDOM)
+GalaxySetupOptionGeneric GalaxySetupData::GetAge() const {
+    if (age != GalaxySetupOptionGeneric::GALAXY_SETUP_RANDOM)
         return age;
-    return static_cast<GalaxySetupOption>(GetIdx(3, seed + "age") + 1);       // need range 1-3 for age
+    return static_cast<GalaxySetupOptionGeneric>(GetIdx(3, seed + "age") + 1);       // need range 1-3 for age
 }
 
-GalaxySetupOption GalaxySetupData::GetStarlaneFreq() const {
-    if (starlane_freq != GalaxySetupOption::GALAXY_SETUP_RANDOM)
+GalaxySetupOptionGeneric GalaxySetupData::GetStarlaneFreq() const {
+    if (starlane_freq != GalaxySetupOptionGeneric::GALAXY_SETUP_RANDOM)
         return starlane_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(3, seed + "lanes") + 1);     // need range 1-3 for starlane freq
+    return static_cast<GalaxySetupOptionGeneric>(GetIdx(3, seed + "lanes") + 1);     // need range 1-3 for starlane freq
 }
 
-GalaxySetupOption GalaxySetupData::GetPlanetDensity() const {
-    if (planet_density != GalaxySetupOption::GALAXY_SETUP_RANDOM)
+GalaxySetupOptionGeneric GalaxySetupData::GetPlanetDensity() const {
+    if (planet_density != GalaxySetupOptionGeneric::GALAXY_SETUP_RANDOM)
         return planet_density;
-    return static_cast<GalaxySetupOption>(GetIdx(3, seed + "planets") + 1);   // need range 1-3 for planet density
+    return static_cast<GalaxySetupOptionGeneric>(GetIdx(3, seed + "planets") + 1);   // need range 1-3 for planet density
 }
 
-GalaxySetupOption GalaxySetupData::GetSpecialsFreq() const {
-    if (specials_freq != GalaxySetupOption::GALAXY_SETUP_RANDOM)
+GalaxySetupOptionGeneric GalaxySetupData::GetSpecialsFreq() const {
+    if (specials_freq != GalaxySetupOptionGeneric::GALAXY_SETUP_RANDOM)
         return specials_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, seed + "specials"));      // need range 0-3 for planet density
+    return static_cast<GalaxySetupOptionGeneric>(GetIdx(4, seed + "specials"));      // need range 0-3 for planet density
 }
 
-GalaxySetupOption GalaxySetupData::GetMonsterFreq() const {
-    if (monster_freq != GalaxySetupOption::GALAXY_SETUP_RANDOM)
+GalaxySetupOptionMonsterFreq GalaxySetupData::GetMonsterFreq() const {
+    if (monster_freq != GalaxySetupOptionMonsterFreq::MONSTER_SETUP_RANDOM)
         return monster_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, seed + "monsters"));      // need range 0-3 for monster frequency
+    return static_cast<GalaxySetupOptionMonsterFreq>(GetIdx(8, seed + "monsters"));  // need range 0-7 for monster frequency
 }
 
-GalaxySetupOption GalaxySetupData::GetNativeFreq() const {
-    if (native_freq != GalaxySetupOption::GALAXY_SETUP_RANDOM)
+GalaxySetupOptionGeneric GalaxySetupData::GetNativeFreq() const {
+    if (native_freq != GalaxySetupOptionGeneric::GALAXY_SETUP_RANDOM)
         return native_freq;
-    return static_cast<GalaxySetupOption>(GetIdx(4, seed + "natives"));       // need range 0-3 for native frequency
+    return static_cast<GalaxySetupOptionGeneric>(GetIdx(4, seed + "natives"));       // need range 0-3 for native frequency
 }
 
 Aggression GalaxySetupData::GetAggression() const

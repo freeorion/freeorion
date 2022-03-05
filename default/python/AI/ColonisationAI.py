@@ -98,7 +98,7 @@ def outpod_pod_cost():
 def galaxy_is_sparse():
     setup_data = fo.getGalaxySetupData()
     avg_empire_systems = setup_data.size // len(fo.allEmpireIDs())
-    return (setup_data.monsterFrequency <= fo.galaxySetupOption.low) and (
+    return (setup_data.monsterFrequency <= fo.galaxySetupOptionMonsterFreq.veryLow) and (
         (avg_empire_systems >= 40) or ((avg_empire_systems >= 35) and (setup_data.shape != fo.galaxyShape.elliptical))
     )
 

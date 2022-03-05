@@ -251,7 +251,7 @@ def system_could_have_unknown_stationary_guard(system_id: SystemId) -> bool:
         return False
 
     # Universe setup settings may forbid guards
-    if fo.getGalaxySetupData().monsterFrequency == fo.galaxySetupOption.none:
+    if fo.getGalaxySetupData().monsterFrequency == fo.galaxySetupOptionMonsterFreq.none:
         return False
 
     # Stationary guards require some distance to the home system to be spawned

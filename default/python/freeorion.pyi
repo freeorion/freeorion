@@ -64,7 +64,7 @@ class FleetPlan:
 
 class GalaxySetupData:
     @property
-    def age(self) -> galaxySetupOption: ...
+    def age(self) -> galaxySetupOptionGeneric: ...
 
     @property
     def gameUID(self) -> str: ...
@@ -73,13 +73,13 @@ class GalaxySetupData:
     def maxAIAggression(self) -> aggression: ...
 
     @property
-    def monsterFrequency(self) -> galaxySetupOption: ...
+    def monsterFrequency(self) -> galaxySetupOptionMonsterFreq: ...
 
     @property
-    def nativeFrequency(self) -> galaxySetupOption: ...
+    def nativeFrequency(self) -> galaxySetupOptionGeneric: ...
 
     @property
-    def planetDensity(self) -> galaxySetupOption: ...
+    def planetDensity(self) -> galaxySetupOptionGeneric: ...
 
     @property
     def seed(self) -> str: ...
@@ -91,10 +91,10 @@ class GalaxySetupData:
     def size(self) -> int: ...
 
     @property
-    def specialsFrequency(self) -> galaxySetupOption: ...
+    def specialsFrequency(self) -> galaxySetupOptionGeneric: ...
 
     @property
-    def starlaneFrequency(self) -> galaxySetupOption: ...
+    def starlaneFrequency(self) -> galaxySetupOptionGeneric: ...
 
 
 class GameRules:
@@ -1634,13 +1634,26 @@ class fleetAggression(IntEnum):
     aggressive = 3
 
 
-class galaxySetupOption(IntEnum):
+class galaxySetupOptionGeneric(IntEnum):
     invalid = -1
     none = 0
     low = 1
     medium = 2
     high = 3
     random = 4
+
+
+class galaxySetupOptionMonsterFreq(IntEnum):
+    invalid = -1
+    none = 0
+    extremelyLow = 1
+    veryLow = 2
+    low = 3
+    medium = 4
+    high = 5
+    veryHigh = 6
+    extremelyHigh = 7
+    random = 8
 
 
 class galaxyShape(IntEnum):

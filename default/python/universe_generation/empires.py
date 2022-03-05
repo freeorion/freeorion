@@ -320,7 +320,7 @@ def add_planets_to_vicinity(vicinity, num_planets, gsd):
         # pick a planet size, continue until we get a size that matches the HS_ACCEPTABLE_PLANET_SIZES option
         planet_size = fo.planetSize.unknown
         while planet_size not in HS_ACCEPTABLE_PLANET_SIZES:
-            planet_size = calc_planet_size(star_type, orbit, fo.galaxySetupOption.high, gsd.shape)
+            planet_size = calc_planet_size(star_type, orbit, fo.galaxySetupOptionGeneric.high, gsd.shape)
 
         # pick an according planet type
         planet_type = calc_planet_type(star_type, orbit, planet_size)
