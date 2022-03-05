@@ -3579,11 +3579,13 @@ void InOrIsSystem::Eval(const ScriptingContext& parent_context,
 }
 
 std::string InOrIsSystem::Description(bool negated/* = false*/) const {
+    const auto& objects = Objects();
+
     std::string system_str;
     int system_id = INVALID_OBJECT_ID;
     if (m_system_id && m_system_id->ConstantExpr())
         system_id = m_system_id->Eval();
-    if (auto system = Objects().get<System>(system_id))
+    if (auto system = objects.get<System>(system_id))
         system_str = system->Name();
     else if (m_system_id)
         system_str = m_system_id->Description();
@@ -3739,11 +3741,13 @@ void OnPlanet::Eval(const ScriptingContext& parent_context,
 }
 
 std::string OnPlanet::Description(bool negated/* = false*/) const {
+    const auto& objects = Objects();
+
     std::string planet_str;
     int planet_id = INVALID_OBJECT_ID;
     if (m_planet_id && m_planet_id->ConstantExpr())
         planet_id = m_planet_id->Eval();
-    if (auto planet = Objects().get<Planet>(planet_id))
+    if (auto planet = objects.get<Planet>(planet_id))
         planet_str = planet->Name();
     else if (m_planet_id)
         planet_str = m_planet_id->Description();
@@ -3884,11 +3888,13 @@ void ObjectID::Eval(const ScriptingContext& parent_context,
 }
 
 std::string ObjectID::Description(bool negated/* = false*/) const {
+    const auto& objects = Objects();
+
     std::string object_str;
     int object_id = INVALID_OBJECT_ID;
     if (m_object_id && m_object_id->ConstantExpr())
         object_id = m_object_id->Eval();
-    if (auto system = Objects().get<System>(object_id))
+    if (auto system = objects.get<System>(object_id))
         object_str = system->Name();
     else if (m_object_id)
         object_str = m_object_id->Description();
@@ -5557,10 +5563,12 @@ namespace {
             if (!candidate)
                 return false;
 
+            const auto& objects = m_universe.Objects();
+
             const Ship* ship = nullptr;
             if (candidate->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
                 auto* fighter = static_cast<const ::Fighter*>(candidate.get());
-                ship = m_universe.Objects().getRaw<Ship>(fighter->LaunchedFrom());
+                ship = objects.getRaw<Ship>(fighter->LaunchedFrom());
             } else if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP) {
                 ship = static_cast<const ::Ship*>(candidate.get());
             }
