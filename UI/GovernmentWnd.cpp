@@ -478,13 +478,11 @@ void PoliciesListBox::Populate() {
     ScopedTimer scoped_timer("PoliciesListBox::Populate");
 
     GG::Pt slot_size = GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT);
-    int text_pts = ClientUI::Pts();
 
     auto policy_palette = Parent();
     auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(policy_palette->Parent());
     if (gov_wnd) {
         slot_size = gov_wnd->GetPolicySlotSize();
-        text_pts = gov_wnd->GetPolicyTextSize();
     }
 
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
@@ -667,7 +665,6 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
             UserStringNop("POLICY_LIST_UNAFFORDABLE"), UserStringNop("POLICY_LIST_RESTRICTED"),
             UserStringNop("POLICY_LIST_LOCKED")}};
     for (size_t n = 0; n < 5; ++n) {
-        Availability avail = static_cast<Availability>(n);
         auto& button = m_availabilities_buttons[n];
         button = GG::Wnd::Create<CUIStateButton>(UserString(BUTTON_LABELS[n]),
                                                  GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());

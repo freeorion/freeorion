@@ -4140,7 +4140,6 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             circle_colour.a = 8*GetOptionsDB().Get<int>("ui.map.detection.range.opacity");
 
             GG::Pt circle_centre = GG::Pt{GG::X(X), GG::Y(Y)};
-            int radius_i = static_cast<int>(radius);
             GG::Pt rad_pt{GG::X(radius), GG::Y(radius)};
             GG::Pt ul = circle_centre - rad_pt;
             GG::Pt lr = circle_centre + rad_pt;
