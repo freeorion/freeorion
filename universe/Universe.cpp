@@ -449,15 +449,11 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
     }
 }
 
-int Universe::GenerateObjectID() {
-    auto new_id = m_object_id_allocator->NewID();
-    return new_id;
-}
+int Universe::GenerateObjectID()
+{ return m_object_id_allocator->NewID(*this); }
 
-int Universe::GenerateDesignID() {
-    auto new_id = m_design_id_allocator->NewID();
-    return new_id;
-}
+int Universe::GenerateDesignID()
+{ return m_design_id_allocator->NewID(*this); }
 
 void Universe::ObfuscateIDGenerator() {
     m_object_id_allocator->ObfuscateBeforeSerialization();

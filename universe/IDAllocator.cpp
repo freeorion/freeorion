@@ -50,13 +50,13 @@ IDAllocator::IDAllocator(const int server_id,
     }
 }
 
-int IDAllocator::NewID() {
+int IDAllocator::NewID(const Universe& universe) {
     // increment next id for this client until next id is not an already-used id
-    IncrementNextAssignedId(m_empire_id, Objects().HighestObjectID());
-    IncrementNextAssignedId(m_empire_id, GetUniverse().HighestDestroyedObjectID());
+    IncrementNextAssignedId(m_empire_id, universe.Objects().HighestObjectID());
+    IncrementNextAssignedId(m_empire_id, universe.HighestDestroyedObjectID());
 
     // Find the next id for this client in the table.
-    auto&& it = m_empire_id_to_next_assigned_object_id.find(m_empire_id);
+    auto it = m_empire_id_to_next_assigned_object_id.find(m_empire_id);
     if (it == m_empire_id_to_next_assigned_object_id.end()) {
         ErrorLogger() << "m_empire_id " << m_empire_id << " not in id manager table.";
         return m_invalid_id;
@@ -88,7 +88,9 @@ int IDAllocator::NewID() {
     return retval;
 }
 
-std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id, const int checked_empire_id) {
+std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id,
+                                                      const int checked_empire_id)
+{
     static constexpr std::pair<bool, bool> hard_fail = {false, false};
     static constexpr std::pair<bool, bool> complete_success = {true, true};
     // allow legacy loading and order processing

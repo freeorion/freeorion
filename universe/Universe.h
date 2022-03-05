@@ -311,6 +311,7 @@ public:
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems based on the objects in \a objects */
     void InitializeSystemGraph(const EmpireManager& empires, const ObjectMap& objects);
+    void InitializeSystemGraph(const EmpireManager& empires) { InitializeSystemGraph(empires, *m_objects); }
 
     /** Regenerates per-empire system view graphs by filtering the complete
       * system graph based on empire visibility.  Does not regenerate the base

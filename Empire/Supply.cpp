@@ -247,12 +247,12 @@ namespace {
         return {accumulator_current, accumulator_max};
     }
 
-    float EmpireTotalSupplyRange(int empire_id) {
+    float EmpireTotalSupplyRange(int empire_id, const ObjectMap& objects) {
         if (empire_id == ALL_EMPIRES)
             return 0.0f;
 
         float accumulator_current = 0.0f;
-        for (auto& obj : Objects().find<Planet>(OwnedVisitor(empire_id))) { // TODO: handle ships if they can have supply meters
+        for (auto& obj : objects.find<Planet>(OwnedVisitor(empire_id))) { // TODO: handle ships if they can have supply meters
             if (!obj)
                 continue;
             if (auto* m = obj->GetMeter(MeterType::METER_SUPPLY))
@@ -262,11 +262,11 @@ namespace {
         return accumulator_current;
     }
 
-    float DistanceBetweenObjects(int obj1_id, int obj2_id) {
-        auto obj1 = Objects().get<System>(obj1_id);
+    float DistanceBetweenObjects(int obj1_id, int obj2_id, const ObjectMap& objects) {
+        auto obj1 = objects.get<System>(obj1_id);
         if (!obj1)
             return 0.0f;
-        auto obj2 = Objects().get<System>(obj2_id);
+        auto obj2 = objects.get<System>(obj2_id);
         if (!obj2)
             return 0.0f;
         double dx = obj2->X() - obj1->X();
@@ -335,7 +335,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
             empire_system_supply_range_sums[empire_id][system_id] =
                 EmpireTotalSupplyRangeSumInSystem(empire_id, system_id, objects);
         }
-        empire_total_supply_range_sums[empire_id] = EmpireTotalSupplyRange(empire_id);
+        empire_total_supply_range_sums[empire_id] = EmpireTotalSupplyRange(empire_id, objects);
     }
 
 
@@ -654,7 +654,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
                     }
 
                     // otherwise, propagate into system...
-                    float lane_length = DistanceBetweenObjects(system_id, lane_end_sys_id);
+                    float lane_length = DistanceBetweenObjects(system_id, lane_end_sys_id, objects);
                     float distance_to_supply_source_after_next_lane = lane_length + distance_to_supply_source;
 
                     TraceLogger(supply) << "Attempting to propagate into system: " << lane_end_sys_id << " the new range: "

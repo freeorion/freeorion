@@ -600,7 +600,7 @@ namespace {
 }
 
 void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length,
-                       Universe& universe)
+                       Universe& universe, const EmpireManager& empires)
 {
     DebugLogger() << "GenerateStarlanes  max jumps b/w sys: " << max_jumps_between_systems
                   << "  max lane length: " << max_starlane_length;
@@ -719,14 +719,14 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length,
     }
 
     // add the starlane to the stars
-    for (auto& sys : Objects().all<System>()) {
+    for (auto& sys : universe.Objects().all<System>()) {
         const auto& sys_lanes = system_lanes[sys->ID()];
         for (auto& lane_end_id : sys_lanes)
             sys->AddStarlane(lane_end_id);
     }
 
     DebugLogger() << "Initializing System Graph";
-    GetUniverse().InitializeSystemGraph(Empires(), Objects());
+    universe.InitializeSystemGraph(empires);
 }
 
 void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {

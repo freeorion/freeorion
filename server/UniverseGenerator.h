@@ -10,7 +10,7 @@ class ObjectMap;
 struct PlayerSetupData;
 struct ScriptingContext;
 class Universe;
-
+class EmpireManager;
 
 //! Set active meter current values equal to target/max meter current values.
 //! Useful when creating new object after applying effects.
@@ -22,7 +22,7 @@ void SetNativePopulationValues(ObjectMap& object_map);
 
 //! Creates starlanes and adds them systems already generated.
 void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length,
-                       Universe& universe);
+                       Universe& universe, const EmpireManager& empires);
 
 //! Sets empire homeworld
 //! This includes setting ownership, capital, species, preferred environment

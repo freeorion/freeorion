@@ -7,6 +7,7 @@
 #include <vector>
 #include "../util/Logger.h"
 
+class Universe;
 
 /** The IDAllocator coordinates the allocation of new IDs between the server
     and a number of empires, id consumers.
@@ -42,7 +43,7 @@ public:
     IDAllocator& operator=(IDAllocator&& other) noexcept = default;
 
     /// Return a valid new id.  This is used by both clients and servers.
-    ID_t NewID();
+    ID_t NewID(const Universe& universe);
 
     /** Return {hard_success, soft_success} where \p hard_success determines if
         \p id is unused and valid and \p soft_success determines if \p id is in
