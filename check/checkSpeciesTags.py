@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import re
-from sys import argv
-from pathlib import Path
 from copy import copy
+from pathlib import Path
+from sys import argv
 
 re_tags = re.compile(r"^ *tags *= *\[")
 re_start_effects = re.compile(r"^ *effectsgroups *= *\[")
@@ -93,13 +93,14 @@ def check_species(file):
             print("%s: %s in tags, missing in effectgroups" % (file.name, tag))
 
 
-if len(argv) != 2:
-    print("Usage: %s <species file|directory contains species files>" % argv[0])
-    exit(1)
-path = Path(argv[1])
-if path.is_dir():
-    for f in path.iterdir():
-        if f.name.startswith("SP_") and f.name.endswith(".txt"):
-            check_species(f)
-else:
-    check_species(path)
+if __name__ == "__main__":
+    if len(argv) != 2:
+        print("Usage: %s <species file|directory contains species files>" % argv[0])
+        exit(1)
+    path = Path(argv[1])
+    if path.is_dir():
+        for f in path.iterdir():
+            if f.name.startswith("SP_") and f.name.endswith(".txt"):
+                check_species(f)
+    else:
+        check_species(path)
