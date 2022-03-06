@@ -9,6 +9,7 @@ re_start_effects = re.compile(r"^ *effectsgroups *= *\[")
 re_start_foci = re.compile(r"^ *foci *= *\[")
 re_end_list = re.compile(r"^ *\]")
 re_macro = re.compile(r"^ *\[\[([A-Z_]+)\]\]")
+issues_found = False
 # Commented out are not used by the AI, most likely they never will.
 # For tags that are implemented as species effects, only the AI
 # is using the tags.
@@ -35,12 +36,7 @@ foci_to_check = [
 
 
 def check_skill(name):
-    if (
-        name.startswith("AVERAGE")
-        or name.startswith("PEDIA")
-        or name.startswith("HAEMAESTHETIC")
-        or name.startswith("INFINITE")
-    ):
+    if name.startswith(("AVERAGE", "PEDIA", "HAEMAESTHETIC", "INFINITE")):
         return ""
     for skill in skills_to_check:
         if name.endswith(skill):
@@ -49,6 +45,11 @@ def check_skill(name):
 
 
 def check_species(file):
+    def issue(text):
+        global issues_found
+        issues_found = True
+        print("%s: %s" % (file.name, text))
+
     effects = False
     foci = False
     tags = set()
@@ -75,22 +76,22 @@ def check_species(file):
                             if value in tags:
                                 tags.remove(value)
                             else:
-                                print("%s: %s in effectgroups, missing in tags" % (file.name, value))
+                                issue("%s in effectgroups, missing in tags" % value)
                     else:
                         focus = value.split("_")[1]
                         if focus in foci_list:
                             foci_list.remove(focus)
                             if ("NO_" + focus) in alltags:
-                                print("%s: %s, but not tag NO_%s" % (file.name, value, focus))
+                                issue("%s, but not tag NO_%s" % (value, focus))
                 elif re_end_list.match(line):
                     effects = False
                     foci = False
     for focus in foci_list:
         if ("NO_" + focus) not in alltags:
-            print("%s: Not HAS_%s_FOCUS, NO_%s missing in tags" % (file.name, focus, focus))
+            issue("Not HAS_%s_FOCUS, NO_%s missing in tags" % (focus, focus))
     if tags:
         for tag in tags:
-            print("%s: %s in tags, missing in effectgroups" % (file.name, tag))
+            issue("%s in tags, missing in effectgroups" % tag)
 
 
 if __name__ == "__main__":
@@ -104,3 +105,4 @@ if __name__ == "__main__":
                 check_species(f)
     else:
         check_species(path)
+    exit(int(issues_found))

@@ -10,7 +10,7 @@ Species
     ]
 
     effectsgroups = [
-        # just to make the tags consistent...
+        // just to make the tags consistent...
         [[AVERAGE_INDUSTRY]]
         [[NO_RESEARCH]]
         [[NO_INFLUENCE]]
