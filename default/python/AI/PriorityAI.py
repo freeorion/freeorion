@@ -48,7 +48,9 @@ def calculate_priorities():
     debug("\n=== Preparing to Calculate Priorities ===")
     prioritiees_timer.start("setting Production Priority")
     aistate = get_aistate()
-    aistate.set_priority(PriorityType.RESOURCE_PRODUCTION, 50)  # let this one stay fixed & just adjust Research
+    # let this one stay fixed & just adjust Research and Influence
+    aistate.set_priority(PriorityType.RESOURCE_PRODUCTION, 50)
+    # RESOURCE_INFLUENCE priority is calculated in PolicyAI
 
     debug("\n*** Calculating Research Priority ***\n")
     prioritiees_timer.start("setting Research Priority")

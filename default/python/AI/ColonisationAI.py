@@ -494,11 +494,21 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
 
 def _print_empire_species_roster():
     """Print empire species roster in table format to log."""
-    grade_map = {"ULTIMATE": "+++", "GREAT": "++", "GOOD": "+", "AVERAGE": "o", "BAD": "-", "NO": "---"}
+    grade_map = {
+        "ULTIMATE": "+++",
+        "GREAT": "++",
+        "GOOD": "+",
+        "AVERAGE": "o",
+        "BAD": "-",
+        "VERY_BAD": "--",
+        "EXTREMELY_BAD": "---",
+        "NO": "x",
+    }
 
     grade_tags = [
         Tags.INDUSTRY,
         Tags.RESEARCH,
+        Tags.INFLUENCE,
         Tags.POPULATION,
         Tags.SUPPLY,
         Tags.WEAPONS,
@@ -508,6 +518,7 @@ def _print_empire_species_roster():
     grade_tags_names = {
         Tags.INDUSTRY: "Ind.",
         Tags.RESEARCH: "Res.",
+        Tags.INFLUENCE: "Infl.",
         Tags.POPULATION: "Pop.",
         Tags.SUPPLY: "Supply",
         Tags.WEAPONS: "Pilot",

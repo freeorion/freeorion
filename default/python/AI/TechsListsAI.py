@@ -114,8 +114,8 @@ class TechGroup1(TechGroup):
             [
                 "LRN_PHYS_BRAIN",
                 "GRO_PLANET_ECOL",
-                "LRN_ALGO_ELEGANCE",
                 "GRO_SUBTER_HAB",
+                "LRN_ALGO_ELEGANCE",
                 Dep.LRN_ARTIF_MINDS_1,
                 "PRO_ROBOTIC_PROD",
             ]
@@ -205,6 +205,8 @@ class TechGroup1SparseB(TechGroup1):
             self.weapon,
             "PRO_NANOTECH_PROD",
             Dep.PRO_AUTO_1,
+            "CON_ASYMP_MATS",
+            "CON_ARCH_PSYCH",
             "PRO_EXOBOTS",
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "GRO_GENETIC_MED",
@@ -236,6 +238,8 @@ class TechGroup1SparseC(TechGroup1):
             "PRO_NANOTECH_PROD",
             Dep.PRO_AUTO_1,
             self.weapon,
+            "CON_ASYMP_MATS",
+            "CON_ARCH_PSYCH",
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "GRO_GENETIC_MED",
             "GRO_SYMBIOTIC_BIO",

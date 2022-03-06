@@ -37,11 +37,13 @@ def get_ai_tag_grade(tag_list, tag_type):
     Checks for the first tag in the list (if any), for tag_type "TYPE",
     having the structure X_TYPE
     and then returns 'X'
-    X is most commonly (but not necessarily) one of [NO, BAD, AVERAGE, GOOD, GREAT, ULTIMATE]
+    X is most commonly (but not necessarily) one of [NO, VERY_BAD, BAD, AVERAGE, GOOD, GREAT, ULTIMATE]
     If no matching tags, returns empty string (which for most types should be considered equivalent to AVERAGE)
     """
     for tag in [tag_ for tag_ in tag_list if tag_.count("_") > 0]:
         parts = tag.split("_", 1)
+        if parts[1].startswith("BAD_"):
+            parts = [parts[0] + "_BAD", parts[1][4:]]
         if parts[1] == tag_type.upper():
             return parts[0]
     return ""
@@ -52,6 +54,13 @@ def tech_is_complete(tech):
     Return if tech is complete.
     """
     return fo.getEmpire().techResearched(tech)
+
+
+def policy_is_adopted(policy):
+    """
+    Return if policy is currently adopted.
+    """
+    return fo.getEmpire().policyAdopted(policy)
 
 
 def ppstring(foo):

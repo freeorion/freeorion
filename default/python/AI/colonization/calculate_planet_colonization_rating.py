@@ -19,6 +19,7 @@ from colonization.claimed_stars import (
     is_system_star_claimed,
 )
 from colonization.colony_score import MINIMUM_COLONY_SCORE
+from colonization.rate_influence import rate_influence
 from colonization.rate_pilots import rate_piloting_tag
 from common.fo_typing import PlanetId, SpeciesName
 from common.print_utils import Sequence
@@ -259,6 +260,7 @@ def _calculate_planet_colonization_rating(
                     colony_star_bonus += 0.5 * init_val * backup_factor
                     detail.append("SHP_ENRG_BOUND_MAN Backup %.1f" % (0.5 * init_val * backup_factor))
     retval += star_bonus
+    detail.append("star_bonus=%.1f" % star_bonus)
 
     planet_specials = list(planet.specials)
     if "ECCENTRIC_ORBIT_SPECIAL" in planet.specials:
@@ -269,7 +271,7 @@ def _calculate_planet_colonization_rating(
 
         if "ANCIENT_RUINS_SPECIAL" in planet.specials:  # TODO: add value for depleted ancient ruins
             retval += discount_multiplier * 30
-            detail.append("Undepleted Ruins %.1f" % discount_multiplier * 30)
+            detail.append("Undepleted Ruins %.1f" % (discount_multiplier * 30))
 
         for special in planet_specials:
             if "_NEST_" in special:
@@ -380,8 +382,8 @@ def _calculate_planet_colonization_rating(
             else:
                 detail.append("Won't GGG")
         if existing_presence:
-            detail.append("preexisting system colony")
             retval = (retval + existing_presence * _get_defense_value(species_name)) * 1.5
+            detail.append("preexisting system colony => %.1f" % retval)
 
         # Fixme - sys_supply is always <= 0 leading to incorrect supply bonus score
         supply_val = 0
@@ -406,7 +408,7 @@ def _calculate_planet_colonization_rating(
         supply_val = 0
         if "ANCIENT_RUINS_SPECIAL" in planet.specials:
             retval += discount_multiplier * 50
-            detail.append("Undepleted Ruins %.1f" % discount_multiplier * 50)
+            detail.append("Undepleted Ruins %.1f" % (discount_multiplier * 50))
         if "HONEYCOMB_SPECIAL" in planet.specials:
             honey_val = (
                 AIDependencies.HONEYCOMB_IND_MULTIPLIER
@@ -430,6 +432,8 @@ def _calculate_planet_colonization_rating(
                     supply_val = 0
         elif planet_supply > sys_supply == 1:  # TODO: check min neighbor supply
             supply_val = 20 * (planet_supply - sys_supply)
+        # temp hack, AI builds too many colonies on tiny planets, reduce supply val
+        supply_val *= 0.5
         detail.append("sys_supply: %d, planet_supply: %d, supply_val: %.0f" % (sys_supply, planet_supply, supply_val))
 
         # if AITags != "":
@@ -576,15 +580,32 @@ def _calculate_planet_colonization_rating(
                 research_bonus += comp_bonus
                 detail.append(AIDependencies.COMPUTRONIUM_SPECIAL)
 
+        infl_val = rate_influence(planet, species, max_pop_size)
+        detail.append("infl_val %.1f" % infl_val)
+
         retval += (
-            max(ind_val + asteroid_bonus + gas_giant_bonus, research_bonus, growth_val)
+            max(ind_val + asteroid_bonus + gas_giant_bonus, research_bonus, growth_val, infl_val)
             + fixed_ind
             + fixed_res
             + supply_val
         )
+        detail.append(
+            " max(%.1f+%.1f+%.1f, %.1f, %.1f, %.1f) + %.1f + %.1f + %.1f"
+            % (
+                ind_val,
+                asteroid_bonus,
+                gas_giant_bonus,
+                research_bonus,
+                growth_val,
+                infl_val,
+                fixed_ind,
+                fixed_res,
+                supply_val,
+            )
+        )
         if existing_presence:
-            detail.append("preexisting system colony")
             retval = (retval + existing_presence * _get_defense_value(species_name)) * 2
+            detail.append("preexisting system colony => %.1f" % retval)
         if threat_factor < 1.0:
             threat_factor = _revise_threat_factor(threat_factor, retval, this_sysid, MINIMUM_COLONY_SCORE)
             retval *= threat_factor

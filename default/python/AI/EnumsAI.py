@@ -29,6 +29,7 @@ class PriorityType(IntEnum):
     PRODUCTION_ORBITAL_INVASION = 20
     PRODUCTION_ORBITAL_OUTPOST = 21
     PRODUCTION_ORBITAL_COLONISATION = 22
+    RESOURCE_INFLUENCE = 23
 
 
 def get_priority_resource_types():
@@ -38,6 +39,7 @@ def get_priority_resource_types():
         PriorityType.RESOURCE_RESEARCH,
         PriorityType.RESOURCE_TRADE,
         PriorityType.RESOURCE_CONSTRUCTION,
+        PriorityType.RESOURCE_INFLUENCE,
     ]
 
 
@@ -99,6 +101,7 @@ class FocusType:
     FOCUS_RESEARCH = "FOCUS_RESEARCH"
     FOCUS_TRADE = "FOCUS_TRADE"
     FOCUS_CONSTRUCTION = "FOCUS_CONSTRUCTION"
+    FOCUS_INFLUENCE = "FOCUS_INFLUENCE"
 
 
 class EmpireMeters:
