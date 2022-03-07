@@ -1965,12 +1965,12 @@ OPTIONS_DB_GAMESETUP_PLANET_DENSITY
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
 '''Le nombre de Voies spatiales dans la galaxie.
 
-Si réglé sur Bas, la plupart des systèmes disposeront d'une à deux voies spatiales. Si réglé sur Haut, la plupart des systèmes seront reliés entre eux dans un périmètre de 120 uu.'''
+Si réglé sur Bas, la plupart des systèmes disposeront d'une à deux voies spatiales. Si réglé sur Élevé, la plupart des systèmes seront reliés entre eux dans un périmètre de 120 uu.'''
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 '''La proportion des planètes et systèmes présentant une Particularité.
 
-Certaines Particularités sont défendues par les Gardiens créés puis abandonnés par l'espèce des Précurseurs. Définir le réglage Fréquence Monstres sur Aucun empêchera l'apparition des Gardiens si la partie contient des Particularités.
+Certaines Particularités sont défendues par les Gardiens créés puis abandonnés par l'espèce des Précurseurs. Définir le réglage Monstres sur Aucun empêchera l'apparition des Gardiens si la partie contient des Particularités.
 '''
 
 OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
@@ -2588,7 +2588,7 @@ GSETUP_SPECIALS_FREQ
 Particularités
 
 GSETUP_MONSTER_FREQ
-Fréquence Monstres
+Monstres
 
 GSETUP_NATIVE_FREQ
 Populations indigènes
@@ -2640,6 +2640,14 @@ Aléatoire
 GSETUP_NONE
 Aucun
 
+# Frequency value of monsters.
+GSETUP_EXTREMELY_LOW
+Extrêmement bas
+
+# Frequency value of monsters.
+GSETUP_VERY_LOW
+Très bas
+
 # Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_LOW
 Bas
@@ -2650,7 +2658,15 @@ Moyen
 
 # Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_HIGH
-Haut
+Élevé
+
+# Frequency value of monsters.
+GSETUP_VERY_HIGH
+Très élevé
+
+# Frequency value of monsters.
+GSETUP_EXTREMELY_HIGH
+Extrêmement élevé
 
 # A galaxy age to select when generating a universe.
 GSETUP_YOUNG
