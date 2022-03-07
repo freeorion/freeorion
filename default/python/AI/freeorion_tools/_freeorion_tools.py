@@ -8,6 +8,7 @@ from collections.abc import Mapping
 from functools import wraps
 from logging import ERROR, Handler, debug, error, getLogger, warning
 
+from AIDependencies import Tags
 from common.configure_logging import FOLogFormatter
 from freeorion_tools.caching import cache_for_current_turn, cache_for_session
 
@@ -294,14 +295,14 @@ def assertion_fails(cond: bool, msg: str = "") -> bool:
 
 
 @cache_for_session
-def get_species_tag_grade(species_name, tag_type):
+def get_species_tag_grade(species_name, tag_type: Tags):
     if not species_name:
         return ""
     species = fo.getSpecies(species_name)
     if assertion_fails(species is not None):
         return ""
 
-    return get_ai_tag_grade(species.tags, tag_type)
+    return get_ai_tag_grade(species.tags, tag_type.value)
 
 
 @cache_for_session

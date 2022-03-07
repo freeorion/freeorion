@@ -1,3 +1,7 @@
+from enum import Enum
+
+import pytest
+from AIDependencies import _TagEnumMeta
 from freeorion_tools import get_ai_tag_grade
 from pytest import mark
 
@@ -48,3 +52,10 @@ def test_tags_search_by_substring_tag_type_returns_empty_string(tags, tags_type)
 )
 def test_lowercase_tags_search_by_tag_type_returns_empty_string(tags, tags_type):
     assert "" == get_ai_tag_grade(tags, tags_type)
+
+
+def test_tag_enum_meta_prevent_enum_from_creation():
+    with pytest.raises(ValueError, match="VAL = Val_with_underscore11"):
+
+        class InvalidTags(Enum, metaclass=_TagEnumMeta):
+            VAL = "Val_with_underscore"
