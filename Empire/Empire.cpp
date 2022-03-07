@@ -1038,7 +1038,7 @@ void Empire::Eliminate(EmpireManager& empires) {
 bool Empire::Won() const
 { return !m_victories.empty(); }
 
-void Empire::Win(const std::string& reason, EmpireManager& empires) {
+void Empire::Win(const std::string& reason, const EmpireManager::container_type& empires) {
     if (m_victories.insert(reason).second) {
         for (auto& entry : empires)
             entry.second->AddSitRepEntry(CreateVictorySitRep(reason, EmpireID()));

@@ -2393,10 +2393,11 @@ namespace {
     }
 
     /** sets all objects visible to all empires */
-    void SetAllObjectsVisibleToAllEmpires(Universe& universe) {
+    void SetAllObjectsVisibleToAllEmpires(Universe& universe,
+                                          const EmpireManager::const_container_type& empires) {
         // set every object visible to all empires
         for (const auto& obj : universe.Objects().all()) {
-            for (auto& [empire_id, empire] : Empires()) {
+            for (auto& [empire_id, empire] : empires) {
                 if (empire->Eliminated())
                     continue;
                 universe.SetEmpireObjectVisibility(empire_id, obj->ID(), Visibility::VIS_FULL_VISIBILITY);
@@ -2733,7 +2734,7 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
     m_empire_object_visible_specials.clear();
 
     if (GetGameRules().Get<bool>("RULE_ALL_OBJECTS_VISIBLE")) {
-        SetAllObjectsVisibleToAllEmpires(*this);
+        SetAllObjectsVisibleToAllEmpires(*this, std::as_const(empires).GetEmpires());
         return;
     } else if (GetGameRules().Get<bool>("RULE_ALL_SYSTEMS_VISIBLE")) {
         SetAllSystemsBasicallyVisibleToAllEmpires(*this);

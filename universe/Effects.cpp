@@ -3591,7 +3591,7 @@ void Victory::Execute(ScriptingContext& context) const {
         return;
     }
     if (auto empire = context.GetEmpire(context.effect_target->Owner()))
-        empire->Win(m_reason_string);
+        empire->Win(m_reason_string, context.Empires());
     else
         ErrorLogger(effects) << "Trying to grant victory to a missing empire!";
 }

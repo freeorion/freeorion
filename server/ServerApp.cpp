@@ -141,9 +141,9 @@ ServerApp::ServerApp() :
 
     namespace ph = boost::placeholders;
 
-    Empires().DiplomaticStatusChangedSignal.connect(
+    m_empires.DiplomaticStatusChangedSignal.connect(
         boost::bind(&ServerApp::HandleDiplomaticStatusChange, this, ph::_1, ph::_2));
-    Empires().DiplomaticMessageChangedSignal.connect(
+    m_empires.DiplomaticMessageChangedSignal.connect(
         boost::bind(&ServerApp::HandleDiplomaticMessageChange,this, ph::_1, ph::_2));
 
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, ph::_1, ph::_2));
@@ -1856,7 +1856,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 
     // test if there other human or disconnected players in the game
     bool other_human_player = false;
-    for (auto& empires : Empires()) {
+    for (auto& empires : m_empires) {
         if (!empires.second->Eliminated() &&
             empire_id != empires.second->EmpireID())
         {
@@ -1930,7 +1930,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     int empire_id = ALL_EMPIRES;
     auto delegation = GetPlayerDelegation(player_connection->PlayerName());
     if (GetOptionsDB().Get<bool>("network.server.take-over-ai")) {
-        for (auto& e : Empires()) {
+        for (auto& e : m_empires) {
             if (!e.second->Eliminated() &&
                 GetEmpireClientType(e.first) == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
             {
@@ -1940,7 +1940,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     }
     if (target_empire_id == ALL_EMPIRES) {
         // search empire by player name
-        for (auto& [loop_empire_id, loop_empire] : Empires()) {
+        for (auto& [loop_empire_id, loop_empire] : m_empires) {
             if (loop_empire->PlayerName() == player_connection->PlayerName()) {
                 empire_id = loop_empire_id;
                 empire = loop_empire;
@@ -1949,7 +1949,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
         }
         // Assign player to empire if he doesn't have own empire and delegates signle
         if (delegation.size() == 1 && empire == nullptr) {
-            for (auto& [loop_empire_id, loop_empire] : Empires()) {
+            for (auto& [loop_empire_id, loop_empire] : m_empires) {
                 if (loop_empire->PlayerName() == delegation.front()) {
                     empire_id = loop_empire_id;
                     empire = loop_empire;
@@ -1964,7 +1964,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     } else {
         // use provided empire and test if it's player himself or one of delegated
         empire_id = target_empire_id;
-        empire = Empires().GetEmpire(target_empire_id);
+        empire = m_empires.GetEmpire(target_empire_id);
         if (!empire)
             return ALL_EMPIRES;
 
@@ -2132,9 +2132,8 @@ void ServerApp::ClearEmpireTurnOrders() {
             order.second->orders.reset();
         }
     }
-    for (auto& empire : Empires()) {
+    for (auto& empire : m_empires)
         empire.second->AutoTurnSetReady();
-    }
 }
 
 void ServerApp::SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data)
@@ -3391,7 +3390,7 @@ void ServerApp::PreCombatProcessTurns() {
     CleanEmptyFleets();
 
     // update production queues after order execution
-    for (auto& entry : Empires()) {
+    for (auto& entry : m_empires) {
         if (entry.second->Eliminated())
             continue;   // skip eliminated empires
         entry.second->UpdateProductionQueue(context);
@@ -3576,7 +3575,7 @@ void ServerApp::PostCombatProcessTurns() {
     ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager,m_supply_manager};
 
     // post-combat visibility update
-    m_universe.UpdateEmpireObjectVisibilities(Empires());
+    m_universe.UpdateEmpireObjectVisibilities(m_empires);
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 
@@ -3844,7 +3843,7 @@ void ServerApp::CheckForEmpireElimination() {
 
     if (surviving_empires.size() == 1) { // last man standing
         auto& only_empire = *surviving_empires.begin();
-        only_empire->Win(UserStringNop("VICTORY_ALL_ENEMIES_ELIMINATED"));
+        only_empire->Win(UserStringNop("VICTORY_ALL_ENEMIES_ELIMINATED"), m_empires.GetEmpires());
     } else if (!m_single_player_game &&
                static_cast<int>(non_eliminated_non_ai_controlled_empires.size()) <= GetGameRules().Get<int>("RULE_THRESHOLD_HUMAN_PLAYER_WIN"))
     {
@@ -3856,19 +3855,19 @@ void ServerApp::CheckForEmpireElimination() {
                 auto emp2_it = emp1_it;
                 ++emp2_it;
                 for (; emp2_it != non_eliminated_non_ai_controlled_empires.end(); ++emp2_it) {
-                    if (Empires().GetDiplomaticStatus((*emp1_it)->EmpireID(), (*emp2_it)->EmpireID()) != DiplomaticStatus::DIPLO_ALLIED)
+                    if (m_empires.GetDiplomaticStatus((*emp1_it)->EmpireID(), (*emp2_it)->EmpireID()) != DiplomaticStatus::DIPLO_ALLIED)
                         return;
                 }
             }
         }
 
         for (auto& empire : non_eliminated_non_ai_controlled_empires)
-            empire->Win(UserStringNop("VICTORY_FEW_HUMANS_ALIVE"));
+            empire->Win(UserStringNop("VICTORY_FEW_HUMANS_ALIVE"), m_empires.GetEmpires());
     }
 }
 
 void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
-    DiplomaticStatus status = Empires().GetDiplomaticStatus(empire1_id, empire2_id);
+    DiplomaticStatus status = m_empires.GetDiplomaticStatus(empire1_id, empire2_id);
     DiplomaticStatusUpdateInfo update(empire1_id, empire2_id, status);
 
     for (auto player_it = m_networking.established_begin();
@@ -3880,7 +3879,7 @@ void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
 }
 
 void ServerApp::HandleDiplomaticMessageChange(int empire1_id, int empire2_id) {
-    const DiplomaticMessage& message = Empires().GetDiplomaticMessage(empire1_id, empire2_id);
+    const DiplomaticMessage& message = m_empires.GetDiplomaticMessage(empire1_id, empire2_id);
     // get players corresponding to empires in message
     int player1_id = EmpirePlayerID(empire1_id);
     int player2_id = EmpirePlayerID(empire2_id);

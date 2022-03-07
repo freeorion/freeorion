@@ -289,7 +289,7 @@ public:
     [[nodiscard]] std::string NewShipName();         ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
     void Eliminate(EmpireManager& empires);          ///< Marks empire as eliminated and cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
     /** Marks this empire as having won for this reason, and sends the appropriate sitreps */
-    void Win(const std::string& reason, EmpireManager& empires = Empires());
+    void Win(const std::string& reason, const EmpireManager::container_type& empires);
     void SetReady(bool ready);                       ///< Marks this empire with readiness status
     void AutoTurnSetReady();                         ///< Decreases auto-turn counter and set empire ready if not expired or set unready
     void SetAutoTurn(int turns_count);               ///< Set auto-turn counter
