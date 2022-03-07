@@ -27,6 +27,14 @@ EmpireManager& EmpireManager::operator=(EmpireManager&& other) noexcept {
     return *this;
 }
 
+std::vector<int> EmpireManager::EmpireIDs() const {
+    std::vector<int> retval;
+    retval.reserve(m_const_empire_map.size());
+    std::transform(m_const_empire_map.begin(), m_const_empire_map.end(),
+                   std::back_inserter(retval), [](const auto& e) { return e.first; });
+    return retval;
+}
+
 const EmpireManager::const_container_type& EmpireManager::GetEmpires() const
 { return m_const_empire_map; }
 

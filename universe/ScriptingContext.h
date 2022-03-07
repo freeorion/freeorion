@@ -402,6 +402,14 @@ struct ScriptingContext {
         throw std::runtime_error("ScriptingContext::ContextUniverse() asked for undefined mutable empires");
     }
 
+    std::vector<int> EmpireIDs() const {
+        std::vector<int> retval;
+        retval.reserve(const_empires.size());
+        std::transform(const_empires.begin(), const_empires.end(),
+                       std::back_inserter(retval), [](const auto& e) { return e.first; });
+        return retval;
+    }
+
     // script evaluation local state, some of which may vary during evaluation of an expression
     std::shared_ptr<const UniverseObject> source;
     std::shared_ptr<UniverseObject>       effect_target;
