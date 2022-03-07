@@ -722,9 +722,9 @@ class meter:
     @property
     def initial(self) -> float: ...
 
-    def dump(self, number: int) -> str:
+    def dump(self) -> str:
         """
-        Returns string with debug information, use '0' as argument.
+        Returns string with debug information.
         """
 
 
