@@ -1888,7 +1888,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     }
 
     // empire elimination
-    empire->Eliminate();
+    empire->Eliminate(m_empires);
 
     // destroy owned ships
     for (auto& obj : m_universe.Objects().find<Ship>(OwnedVisitor(empire_id))) {
@@ -3814,10 +3814,10 @@ void ServerApp::CheckForEmpireElimination() {
     std::set<std::shared_ptr<Empire>> surviving_empires;
     std::set<std::shared_ptr<Empire>> non_eliminated_non_ai_controlled_empires;
     for (auto& [empire_id, empire] : m_empires) {
-        if (empire->Eliminated())
+        if (empire->Eliminated()) {
             continue;   // don't double-eliminate an empire
-        else if (EmpireEliminated(empire_id, m_universe.Objects())) {
-            empire->Eliminate();
+        } else if (EmpireEliminated(empire_id, m_universe.Objects())) {
+            empire->Eliminate(m_empires);
             RemoveEmpireTurn(empire_id);
             const int player_id = EmpirePlayerID(empire_id);
             DebugLogger() << "ServerApp::CheckForEmpireElimination empire #" << empire_id << " " << empire->Name()
