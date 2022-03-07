@@ -1825,6 +1825,9 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
         }
     }
 
+    auto empire_ids = context.EmpireIDs();
+
+
     // actually do destroy effect action.  Executing the effect just marks
     // objects to be destroyed, but doesn't actually do so in order to ensure
     // no interaction in order of effects and source or target objects being
@@ -1851,7 +1854,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
         // destruction of fleets.
 
         // do actual recursive destruction.
-        RecursiveDestroy(obj_id);
+        RecursiveDestroy(obj_id, empire_ids);
     }
 }
 
@@ -2367,9 +2370,11 @@ namespace {
     }
 
     /** sets all systems basically visible to all empires */
-    void SetAllSystemsBasicallyVisibleToAllEmpires(Universe& universe) {
+    void SetAllSystemsBasicallyVisibleToAllEmpires(Universe& universe,
+                                                   const EmpireManager& empires)
+    {
         for (const auto& obj : universe.Objects().all<System>()) {
-            for (auto& [empire_id, empire] : Empires()) {
+            for (auto& [empire_id, empire] : empires) {
                 if (empire->Eliminated())
                     continue;
                 universe.SetEmpireObjectVisibility(empire_id, obj->ID(), Visibility::VIS_BASIC_VISIBILITY);
@@ -2695,7 +2700,7 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
         SetAllObjectsVisibleToAllEmpires(*this, std::as_const(empires).GetEmpires());
         return;
     } else if (GetGameRules().Get<bool>("RULE_ALL_SYSTEMS_VISIBLE")) {
-        SetAllSystemsBasicallyVisibleToAllEmpires(*this);
+        SetAllSystemsBasicallyVisibleToAllEmpires(*this, empires);
     }
 
     SetEmpireOwnedObjectVisibilities(*this);
@@ -2920,10 +2925,8 @@ void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id)
         ErrorLogger() << "SetEmpireKnowledgeOfDestroyedObject called with INVALID_OBJECT_ID";
         return;
     }
-    if (!GetEmpire(empire_id)) {
-        ErrorLogger() << "SetEmpireKnowledgeOfDestroyedObject called for invalid empire id: " << empire_id;
+    if (empire_id == ALL_EMPIRES)
         return;
-    }
     m_empire_known_destroyed_object_ids[empire_id].insert(object_id);
 }
 
@@ -2940,7 +2943,9 @@ void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id)
     m_empire_known_ship_design_ids[empire_id].insert(ship_design_id);
 }
 
-void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = true*/) {
+void Universe::Destroy(int object_id, const std::vector<int>& empires_ids,
+                       bool update_destroyed_object_knowers)
+{
     // remove object from any containing UniverseObject
     auto obj = m_objects->get(object_id);
     if (!obj) {
@@ -2952,8 +2957,7 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
 
     if (update_destroyed_object_knowers) {
         // record empires that know this object has been destroyed
-        for (auto& empire_entry : Empires()) {
-            int empire_id = empire_entry.first;
+        for (auto empire_id : empires_ids) {
             if (obj->GetVisibility(empire_id, *this) >= Visibility::VIS_BASIC_VISIBILITY) {
                 SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
                 // TODO: Update m_empire_latest_known_objects somehow?
@@ -2966,7 +2970,7 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
     m_objects->erase(object_id);
 }
 
-std::set<int> Universe::RecursiveDestroy(int object_id) {
+std::set<int> Universe::RecursiveDestroy(int object_id, const std::vector<int>& empire_ids) {
     std::set<int> retval;
 
     auto obj = m_objects->get(object_id);
@@ -2977,7 +2981,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
 
     auto system = m_objects->get<System>(obj->SystemID());
 
-    if (auto ship = std::dynamic_pointer_cast<Ship>(obj)) {
+    if (auto ship = std::dynamic_pointer_cast<Ship>(obj)) { // TODO: static cast after checking ObjectType
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
         auto fleet = m_objects->get<Fleet>(ship->FleetID());
         if (fleet) {
@@ -2985,43 +2989,43 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
             if (fleet->Empty()) {
                 if (system)
                     system->Remove(fleet->ID());
-                Destroy(fleet->ID());
+                Destroy(fleet->ID(), empire_ids);
                 retval.insert(fleet->ID());
             }
         }
         if (system)
             system->Remove(object_id);
-        Destroy(object_id);
+        Destroy(object_id, empire_ids);
         retval.insert(object_id);
 
     } else if (auto obj_fleet = std::dynamic_pointer_cast<Fleet>(obj)) {
         for (int ship_id : obj_fleet->ShipIDs()) {
             if (system)
                 system->Remove(ship_id);
-            Destroy(ship_id);
+            Destroy(ship_id, empire_ids);
             retval.insert(ship_id);
         }
         if (system)
             system->Remove(object_id);
-        Destroy(object_id);
+        Destroy(object_id, empire_ids);
         retval.insert(object_id);
 
     } else if (auto obj_planet = std::dynamic_pointer_cast<Planet>(obj)) {
         for (int building_id : obj_planet->BuildingIDs()) {
             if (system)
                 system->Remove(building_id);
-            Destroy(building_id);
+            Destroy(building_id, empire_ids);
             retval.insert(building_id);
         }
         if (system)
             system->Remove(object_id);
-        Destroy(object_id);
+        Destroy(object_id, empire_ids);
         retval.insert(object_id);
 
     } else if (auto obj_system = std::dynamic_pointer_cast<System>(obj)) {
         // destroy all objects in system
         for (int system_id : obj_system->ObjectIDs()) {
-            Destroy(system_id);
+            Destroy(system_id, empire_ids);
             retval.insert(system_id);
         }
 
@@ -3039,10 +3043,10 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
             { fleets_to_destroy.push_back(fleet); }
         }
         for (auto& fleet : fleets_to_destroy)
-            RecursiveDestroy(fleet->ID());
+            RecursiveDestroy(fleet->ID(), empire_ids);
 
         // then destroy system itself
-        Destroy(object_id);
+        Destroy(object_id, empire_ids);
         retval.insert(object_id);
         // don't need to bother with removing things from system, fleets, or
         // ships, since everything in system is being destroyed
@@ -3053,13 +3057,13 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
             planet->RemoveBuilding(object_id);
         if (system)
             system->Remove(object_id);
-        Destroy(object_id);
+        Destroy(object_id, empire_ids);
         retval.insert(object_id);
 
     } else if (obj->ObjectType() == UniverseObjectType::OBJ_FIELD) {
         if (system)
             system->Remove(object_id);
-        Destroy(object_id);
+        Destroy(object_id, empire_ids);
         retval.insert(object_id);
     }
     // else ??? object is of some type unknown as of this writing.

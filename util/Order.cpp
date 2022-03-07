@@ -226,6 +226,7 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
 
     Universe& u = context.ContextUniverse();
     ObjectMap& o = context.ContextObjects();
+    auto empire_ids = context.EmpireIDs();
 
     u.InhibitUniverseObjectSignals(true);
 
@@ -297,7 +298,7 @@ void NewFleetOrder::ExecuteImpl(ScriptingContext& context) const {
             if (auto modified_fleet_system = o.get<System>(modified_fleet->SystemID()))
                 modified_fleet_system->Remove(modified_fleet->ID());
 
-            u.Destroy(modified_fleet->ID());
+            u.Destroy(modified_fleet->ID(), empire_ids);
         }
     }
 }
@@ -510,11 +511,11 @@ bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vect
 void FleetTransferOrder::ExecuteImpl(ScriptingContext& context) const {
     GetValidatedEmpire(context);
 
-    if (!Check(EmpireID(), DestinationFleet(), m_add_ships, context))
+    if (!Check(EmpireID(), m_dest_fleet, m_add_ships, context))
         return;
 
     // look up the destination fleet
-    auto target_fleet = context.ContextObjects().get<Fleet>(DestinationFleet());
+    auto target_fleet = context.ContextObjects().get<Fleet>(m_dest_fleet);
 
     // check that all ships are in the same system
     auto ships = context.ContextObjects().find<Ship>(m_add_ships);
@@ -543,6 +544,7 @@ void FleetTransferOrder::ExecuteImpl(ScriptingContext& context) const {
 
     // signal change to fleet states
     modified_fleets.insert(target_fleet.get());
+    auto empire_ids = context.EmpireIDs();
 
     for (auto* modified_fleet : modified_fleets) {
         if (!modified_fleet) {
@@ -553,7 +555,7 @@ void FleetTransferOrder::ExecuteImpl(ScriptingContext& context) const {
             if (auto system = context.ContextObjects().getRaw<System>(modified_fleet->SystemID()))
                 system->Remove(modified_fleet->ID());
 
-            context.ContextUniverse().Destroy(modified_fleet->ID());
+            context.ContextUniverse().Destroy(modified_fleet->ID(), empire_ids);
         }
     }
 }

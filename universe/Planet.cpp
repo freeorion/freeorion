@@ -663,7 +663,8 @@ void Planet::Conquer(int conquerer, EmpireManager& empires, Universe& universe) 
     Empire::ConquerProductionQueueItemsAtLocation(ID(), conquerer, empires);
 
     ObjectMap& objects{universe.Objects()};
-    
+    auto empire_ids = empires.EmpireIDs();
+
     // deal with UniverseObjects (eg. buildings) located on this planet
     for (auto& building : objects.find<Building>(m_buildings)) {
         const BuildingType* type = GetBuildingType(building->BuildingTypeName());
@@ -681,7 +682,7 @@ void Planet::Conquer(int conquerer, EmpireManager& empires, Universe& universe) 
             this->RemoveBuilding(building->ID());
             if (auto system = objects.get<System>(this->SystemID()))
                 system->Remove(building->ID());
-            universe.Destroy(building->ID());
+            universe.Destroy(building->ID(), empire_ids);
         } else if (cap_result == CaptureResult::CR_RETAIN) {
             // do nothing
         }

@@ -23,14 +23,13 @@ Moderator::DestroyUniverseObject::DestroyUniverseObject(int object_id) :
     m_object_id(object_id)
 {}
 
-void Moderator::DestroyUniverseObject::Execute() const
-{ GetUniverse().RecursiveDestroy(m_object_id); }
-
-std::string Moderator::DestroyUniverseObject::Dump() const {
-    std::string retval = "Moderator::DestroyUniverseObject object_id = "
-                       + std::to_string(m_object_id);
-    return retval;
+void Moderator::DestroyUniverseObject::Execute() const {
+    auto empire_ids = Empires().EmpireIDs();
+    GetUniverse().RecursiveDestroy(m_object_id, empire_ids);
 }
+
+std::string Moderator::DestroyUniverseObject::Dump() const
+{ return "Moderator::DestroyUniverseObject object_id = " + std::to_string(m_object_id); }
 
 /////////////////////////////////////////////////////
 // Moderator::SetOwner

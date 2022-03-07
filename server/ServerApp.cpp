@@ -1889,16 +1889,17 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 
     // empire elimination
     empire->Eliminate(m_empires);
+    auto empire_ids = m_empires.EmpireIDs();
 
     // destroy owned ships
     for (auto& obj : m_universe.Objects().find<Ship>(OwnedVisitor(empire_id))) {
         obj->SetOwner(ALL_EMPIRES);
-        m_universe.RecursiveDestroy(obj->ID());
+        m_universe.RecursiveDestroy(obj->ID(), empire_ids);
     }
     // destroy owned buildings
     for (auto& obj : m_universe.Objects().find<Building>(OwnedVisitor(empire_id))) {
         obj->SetOwner(ALL_EMPIRES);
-        m_universe.RecursiveDestroy(obj->ID());
+        m_universe.RecursiveDestroy(obj->ID(), empire_ids);
     }
     // unclaim owned planets
     for (const auto& planet : planets)
@@ -2543,7 +2544,9 @@ namespace {
 
     /** Takes contents of CombatInfo struct and puts it into the universe.
       * Used to store results of combat in main universe. */
-    void DisseminateSystemCombatInfo(const std::vector<CombatInfo>& combats, Universe& universe) {
+    void DisseminateSystemCombatInfo(const std::vector<CombatInfo>& combats, Universe& universe,
+                                     const EmpireManager& empires)
+    {
         // As of this writing, pointers to objects are inserted into the combat
         // ObjectMap, and these pointers still refer to the main gamestate
         // objects. Thus, copying the objects in the main gamestate are already
@@ -2553,6 +2556,8 @@ namespace {
         // gamestate. Standard visibility updating will then transfer the
         // modified objects / combat results to empires' known gamestate
         // ObjectMaps.
+        const auto empire_ids = empires.EmpireIDs();
+
         for (const CombatInfo& combat_info : combats) {
             // update visibilities from combat, in case anything was revealed
             // by shooting during combat
@@ -2595,7 +2600,7 @@ namespace {
             // destroyed
             std::set<int> all_destroyed_object_ids;
             for (int destroyed_object_id : combat_info.destroyed_object_ids) {
-                auto dest_obj_ids = universe.RecursiveDestroy(destroyed_object_id);
+                auto dest_obj_ids = universe.RecursiveDestroy(destroyed_object_id, empire_ids);
                 all_destroyed_object_ids.insert(dest_obj_ids.begin(), dest_obj_ids.end());
             }
 
@@ -2788,7 +2793,9 @@ namespace {
     }
 
     /** Does colonization, with safety checks */
-    bool ColonizePlanet(int ship_id, int planet_id, Universe& universe) {
+    bool ColonizePlanet(int ship_id, int planet_id, Universe& universe,
+                        const std::vector<int>& empire_ids)
+    {
         auto& objects = universe.Objects();
 
         auto ship = objects.get<Ship>(ship_id);
@@ -2835,19 +2842,18 @@ namespace {
         auto system = objects.get<System>(ship->SystemID());
 
         // destroy colonizing ship, and its fleet if now empty
-        auto fleet = objects.get<Fleet>(ship->FleetID());
-        if (fleet) {
+        if (auto fleet = objects.get<Fleet>(ship->FleetID())) {
             fleet->RemoveShips({ship->ID()});
             if (fleet->Empty()) {
                 if (system)
                     system->Remove(fleet->ID());
-                universe.Destroy(fleet->ID());
+                universe.Destroy(fleet->ID(), empire_ids);
             }
         }
 
         if (system)
             system->Remove(ship->ID());
-        universe.RecursiveDestroy(ship->ID()); // does not count as a loss of a ship for the species / empire
+        universe.RecursiveDestroy(ship->ID(), empire_ids); // does not count as a loss of a ship for the species / empire
 
         return true;
     }
@@ -2857,6 +2863,7 @@ namespace {
     void HandleColonization(ScriptingContext& context) {
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
+        auto empire_ids = context.EmpireIDs();
 
         // collect, for each planet, what ships have been ordered to colonize it
         std::map<int, std::map<int, std::set<int>>> planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
@@ -2951,7 +2958,7 @@ namespace {
 
 
             // do colonization
-            if (!ColonizePlanet(colonizing_ship_id, planet_id, universe))
+            if (!ColonizePlanet(colonizing_ship_id, planet_id, universe, empire_ids))
                 continue;   // skip sitrep if colonization failed
 
             // record successful colonization
@@ -2976,6 +2983,7 @@ namespace {
         std::map<int, std::map<int, double>> planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
         std::vector<std::shared_ptr<Ship>> invade_ships;
         ObjectMap& objects = universe.Objects();
+        auto empire_ids = empires.EmpireIDs();
 
         // collect ships that are invading and the troops they carry
         for (auto& ship : objects.all<Ship>()) {
@@ -3016,13 +3024,13 @@ namespace {
                 if (fleet->Empty()) {
                     if (system)
                         system->Remove(fleet->ID());
-                    universe.Destroy(fleet->ID());
+                    universe.Destroy(fleet->ID(), empire_ids);
                 }
             }
             if (system)
                 system->Remove(ship->ID());
 
-            universe.RecursiveDestroy(ship->ID()); // does not count as ship loss for empire/species
+            universe.RecursiveDestroy(ship->ID(), empire_ids); // does not count as ship loss for empire/species
         }
 
         // store invasion info in empires
@@ -3240,6 +3248,7 @@ namespace {
     void HandleScrapping(Universe& universe, EmpireManager& empires) {
         std::vector<std::shared_ptr<Ship>> scrapped_ships;
         ObjectMap& objects{universe.Objects()};
+        auto empire_ids = empires.EmpireIDs();
 
         for (auto& ship : objects.all<Ship>()) {
             if (ship->OrderedScrapped())
@@ -3259,7 +3268,7 @@ namespace {
                 if (fleet->Empty()) {
                     //scrapped_object_ids.push_back(fleet->ID());
                     system->Remove(fleet->ID());
-                    universe.Destroy(fleet->ID());
+                    universe.Destroy(fleet->ID(), empire_ids);
                 }
             }
 
@@ -3269,11 +3278,10 @@ namespace {
                 scrapping_empire->RecordShipScrapped(*ship);
 
             //scrapped_object_ids.push_back(ship->ID());
-            universe.Destroy(ship->ID());
+            universe.Destroy(ship->ID(), empire_ids);
         }
 
         std::vector<std::shared_ptr<Building>> scrapped_buildings;
-
         for (auto& building : objects.all<Building>()) {
             if (building->OrderedScrapped())
                 scrapped_buildings.push_back(building);
@@ -3292,7 +3300,7 @@ namespace {
                 scrapping_empire->RecordBuildingScrapped(*building);
 
             //scrapped_object_ids.push_back(building->ID());
-            universe.Destroy(building->ID());
+            universe.Destroy(building->ID(), empire_ids);
         }
     }
 
@@ -3329,6 +3337,7 @@ namespace {
         std::vector<std::shared_ptr<Fleet>> empty_fleets;
         Universe& universe{GetUniverse()};
         ObjectMap& objects{universe.Objects()};
+        auto empire_ids = Empires().EmpireIDs();
 
         for (auto& fleet : objects.all<Fleet>()) {
             if (fleet->Empty())
@@ -3339,7 +3348,7 @@ namespace {
             if (auto sys = objects.get<System>(fleet->SystemID()))
                 sys->Remove(fleet->ID());
 
-            universe.RecursiveDestroy(fleet->ID());
+            universe.RecursiveDestroy(fleet->ID(), empire_ids);
         }
     }
 }
@@ -3511,7 +3520,7 @@ void ServerApp::ProcessCombats() {
 
     UpdateEmpireCombatDestructionInfo(combats, context);
 
-    DisseminateSystemCombatInfo(combats, m_universe);
+    DisseminateSystemCombatInfo(combats, m_universe, m_empires);
     // update visibilities with any new info gleaned during combat
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
     // update stale object info based on any mid- combat glimpses
