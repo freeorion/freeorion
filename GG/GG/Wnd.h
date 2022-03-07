@@ -791,7 +791,7 @@ protected:
         DRAGGED_OVER_ACCEPTING_DROP_TARGET
     };
 
-    Wnd();
+    Wnd() = default;
 
     /** Ctor that allows a size and position to be specified, as well as
         creation flags. */
@@ -1003,12 +1003,12 @@ private:
     bool                            m_visible = true;
     bool                            m_needs_prerender = false;  ///< Indicates if Wnd needs a PreRender();
     std::string                     m_drag_drop_data_type;      ///< The type of drag-and-drop data this Wnd represents, if any. If empty/blank, indicates that this Wnd cannot be drag-dropped.
-    ChildClippingMode               m_child_clipping_mode;
+    ChildClippingMode               m_child_clipping_mode = ChildClippingMode::DontClip;
     bool                            m_non_client_child = false;
-    Pt                              m_upperleft;                ///< Upper left point of window
-    Pt                              m_lowerright;               ///< Lower right point of window
-    Pt                              m_min_size;                 ///< Minimum window size Pt(0, 0) (= none) by default
-    Pt                              m_max_size;                 ///< Maximum window size Pt(1 << 30, 1 << 30) (= none) by default
+    Pt                              m_upperleft{X0, Y0};            ///< Upper left point of window
+    Pt                              m_lowerright{X1, Y1};           ///< Lower right point of window
+    Pt                              m_min_size{X0, Y0};             ///< Minimum window size
+    Pt                              m_max_size{X{1<<15},Y{1<<15}};  ///< Maximum window size
 
     /** The Wnds that are filtering this Wnd's events. These are in reverse
         order: top of the stack is back(). */
@@ -1018,7 +1018,7 @@ private:
                                     m_filtering;                ///< The Wnds in whose filter chains this Wnd lies
     mutable std::weak_ptr<Layout>   m_layout;                   ///< The layout for this Wnd, if any
     mutable std::weak_ptr<Layout>   m_containing_layout;        ///< The layout that contains this Wnd, if any
-    std::vector<BrowseInfoMode>     m_browse_modes;             ///< The browse info modes for this window
+    std::vector<BrowseInfoMode>     m_browse_modes{{s_default_browse_time, s_default_browse_info_wnd, ""}};             ///< The browse info modes for this window
 
     /** The style factory to use when creating dialogs or child controls. */
     std::shared_ptr<StyleFactory>   m_style_factory;

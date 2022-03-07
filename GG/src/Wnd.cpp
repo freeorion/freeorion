@@ -134,31 +134,14 @@ bool dummy = RegisterWndFlags();
 ///////////////////////////////////////
 // class GG::Wnd
 ///////////////////////////////////////
-// static(s)
 unsigned int Wnd::s_default_browse_time = 1500;
 std::shared_ptr<BrowseInfoWnd> Wnd::s_default_browse_info_wnd;
 
-Wnd::Wnd() :
-    std::enable_shared_from_this<Wnd>(),
-    m_child_clipping_mode(ChildClippingMode::DontClip),
-    m_upperleft(X0, Y0),
-    m_lowerright(X1, Y1),
-    m_max_size(X(1 << 30), Y(1 << 30))
-{
-    m_browse_modes.resize(1);
-    m_browse_modes[0].time = s_default_browse_time;
-    m_browse_modes[0].wnd = s_default_browse_info_wnd;
-}
-
-Wnd::Wnd(X x, Y y, X w, Y h, Flags<WndFlag> flags/* = INTERACTIVE | DRAGABLE*/) :
-    Wnd()
-{
-    m_upperleft = Pt(x, y);
-    m_lowerright = Pt(x + w, y + h);
-
-    m_flags = flags;
-    ValidateFlags();
-}
+Wnd::Wnd(X x, Y y, X w, Y h, Flags<WndFlag> flags) :
+    m_upperleft{x, y},
+    m_lowerright{x + w, y + h},
+    m_flags{flags}
+{ ValidateFlags(); }
 
 Wnd::~Wnd()
 {
