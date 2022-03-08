@@ -396,11 +396,11 @@ bool GGHumanClientApp::CanSaveNow() const {
         return false;
 
     // can't save while AIs are playing their turns...
-    for (const auto& entry : Empires()) {
-        if (GetEmpireClientType(entry.first) != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
+    for (const auto& [id, empire] : m_empires) {
+        if (GetEmpireClientType(id) != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
             continue;   // only care about AIs
 
-        if (!entry.second->Ready()) {
+        if (!empire->Ready()) {
             return false;
         }
     }

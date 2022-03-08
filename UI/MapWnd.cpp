@@ -499,12 +499,13 @@ namespace {
             if (m_empire_id == ALL_EMPIRES)
                 return;
 
-            const Universe& universe = GetUniverse();
-            const ScriptingContext context{universe, Empires()};
-            const SpeciesManager& sm = GetSpeciesManager();
+            const ScriptingContext context;
+            const Universe& universe = context.ContextUniverse();
+            const ObjectMap& objects = context.ContextObjects();
+            const SpeciesManager& sm = context.species;
 
             const auto& destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(m_empire_id);
-            for (auto& ship : Objects().all<Ship>()) {
+            for (auto& ship : objects.all<Ship>()) {
                 if (!ship->OwnedBy(m_empire_id) || destroyed_objects.count(ship->ID()))
                     continue;
                 m_values[FLEET_DETAIL_SHIP_COUNT]++;
@@ -528,9 +529,9 @@ namespace {
                     continue;
                 m_ship_design_counts[design->ID()]++;
                 for (const std::string& part : design->Parts()) {
-                    m_values[FLEET_DETAIL_SLOT_COUNT] ++;
+                    m_values[FLEET_DETAIL_SLOT_COUNT]++;
                     if (!part.empty())
-                        m_values[FLEET_DETAIL_PART_COUNT] ++;
+                        m_values[FLEET_DETAIL_PART_COUNT]++;
                 }
             }
 
@@ -1428,7 +1429,7 @@ void MapWnd::CompleteConstruction() {
     // and resource pools due to this will be in the same system
     SidePanel::ResourceCenterChangedSignal.connect([this](){
         if (GetOptionsDB().Get<bool>("ui.map.object-changed.meter-refresh")) {
-            ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
+            ScriptingContext context;
             context.ContextUniverse().UpdateMeterEstimates(context);
             UpdateEmpireResourcePools();
         }
@@ -3876,24 +3877,25 @@ namespace {
 
 
                 // add obstructed lane traversals as half lanes
-                for (const auto& entry : Empires()) {
-                    const auto& empire = entry.second;
+                for (const auto& [loop_empire_id, loop_empire] : Empires()) {
                     const auto& resource_obstructed_supply_lanes =
-                        GetSupplyManager().SupplyObstructedStarlaneTraversals(entry.first);
+                        GetSupplyManager().SupplyObstructedStarlaneTraversals(loop_empire_id);
 
                     // see if this lane exists in this empire's obstructed supply propagation lanes set.  either direction accepted.
-                    if (!resource_obstructed_supply_lanes.count({start_system->ID(), dest_system->ID()}))
+                    if (!resource_obstructed_supply_lanes.count(
+                        {start_system->ID(), dest_system->ID()}))
                         continue;
 
                     // found an empire that has a half lane here, so add it.
                     rendered_half_starlanes.emplace(start_system->ID(), dest_system->ID());  // inserted as ordered pair, so both directions can have different half-lanes
 
-                    LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
+                    LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(
+                        start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
                     starlane_vertices.store(lane_endpoints.X1, lane_endpoints.Y1);
                     starlane_vertices.store((lane_endpoints.X1 + lane_endpoints.X2) * 0.5f,   // half way along starlane
                                             (lane_endpoints.Y1 + lane_endpoints.Y2) * 0.5f);
 
-                    GG::Clr lane_colour = empire->Color();
+                    GG::Clr lane_colour = loop_empire->Color();
                     starlane_colors.store(lane_colour);
                     starlane_colors.store(lane_colour);
 
@@ -4456,8 +4458,8 @@ void MapWnd::SelectSystem(int system_id) {
 
     if (system && GetOptionsDB().Get<bool>("ui.map.sidepanel.meter-refresh")) {
         // ensure meter estimates are up to date, particularly for which ship is selected
-        ScriptingContext context{GetUniverse(), Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
-        GetUniverse().UpdateMeterEstimates(context, true);
+        ScriptingContext context;
+        context.ContextUniverse().UpdateMeterEstimates(context, true);
     }
 
 
@@ -4625,15 +4627,15 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     }
     //std::cout << "creating fleet movement line for fleet at (" << fleet->X() << ", " << fleet->Y() << ")" << std::endl;
 
+    const ScriptingContext context;
+
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
-    const auto empire = Empires().GetEmpire(fleet->Owner());
+    const auto empire = context.GetEmpire(fleet->Owner());
     if (empire)
         line_colour = empire->Color();
     else if (fleet->Unowned() && fleet->HasMonsters(GetUniverse()))
         line_colour = GG::CLR_RED;
-
-    const ScriptingContext context;
 
     // create and store line
     auto route(fleet->TravelRoute());
