@@ -7544,7 +7544,10 @@ namespace {
     }
 
     /** Shortest route not exceeding @p max_jumps from @p dest_id to a system with supply as known to @p empire */
-    OrderedRouteType GetNearestSupplyRoute(const Empire* empire, int dest_id, int max_jumps = -1) {
+    OrderedRouteType GetNearestSupplyRoute(const std::shared_ptr<const Empire>& empire,
+                                           int dest_id, int max_jumps,
+                                           const ScriptingContext& context)
+    {
         OrderedRouteType retval;
 
         if (!empire) {
@@ -7552,7 +7555,8 @@ namespace {
             return retval;
         }
 
-        auto supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire->EmpireID(), true);
+        auto supplyable_systems = context.supply.FleetSupplyableSystemIDs(
+            empire->EmpireID(), true, context);
         if (!supplyable_systems.empty()) {
             TraceLogger() << [&supplyable_systems]() {
                     std::string msg = "Supplyable systems:";
@@ -7618,7 +7622,8 @@ namespace {
             return false;
         }
 
-        auto dest_nearest_supply = GetNearestSupplyRoute(empire.get(), *route.rbegin(), max_jumps);
+        auto dest_nearest_supply = GetNearestSupplyRoute(
+            empire, *route.rbegin(), max_jumps, context);
         auto dest_nearest_supply_jumps = JumpsForRoute(dest_nearest_supply.second);
         auto dest_jumps = JumpsForRoute(route);
         int total_jumps = dest_jumps + dest_nearest_supply_jumps;
@@ -7643,8 +7648,9 @@ namespace {
             return {};
         }
 
-        auto nearest_supply = GetNearestSupplyRoute(empire.get(), fleet->SystemID(),
-                                                    std::trunc(fleet->Fuel(context.ContextObjects())));
+        auto nearest_supply = GetNearestSupplyRoute(empire, fleet->SystemID(),
+                                                    std::trunc(fleet->Fuel(context.ContextObjects())),
+                                                    context);
         if (nearest_supply.first > 0.0 && FleetRouteInRange(fleet, nearest_supply.second, context))
             return nearest_supply;
 

@@ -47,14 +47,17 @@ const std::set<std::pair<int, int>>& SupplyManager::SupplyObstructedStarlaneTrav
 const std::map<int, std::set<int>>& SupplyManager::FleetSupplyableSystemIDs() const
 { return m_fleet_supplyable_system_ids; }
 
-const std::set<int>& SupplyManager::FleetSupplyableSystemIDs(int empire_id) const {
+const std::set<int>& SupplyManager::FleetSupplyableSystemIDs(int empire_id) const
+{
     auto it = m_fleet_supplyable_system_ids.find(empire_id);
     if (it != m_fleet_supplyable_system_ids.end())
         return it->second;
     return EMPTY_INT_SET;
 }
 
-std::set<int> SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool include_allies) const {
+std::set<int> SupplyManager::FleetSupplyableSystemIDs(
+    int empire_id, bool include_allies, const ScriptingContext& context) const
+{
     std::set<int> retval = FleetSupplyableSystemIDs(empire_id);
     if (!include_allies)
         return retval;
@@ -63,7 +66,7 @@ std::set<int> SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool includ
     for (auto& [other_empire_id, systems] : m_fleet_supplyable_system_ids) {
         if (other_empire_id == empire_id)
             continue;
-        if (systems.empty() || Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DiplomaticStatus::DIPLO_ALLIED)
+        if (systems.empty() || context.ContextDiploStatus(empire_id, other_empire_id) != DiplomaticStatus::DIPLO_ALLIED)
             continue;
         retval.insert(systems.begin(), systems.end());
     }

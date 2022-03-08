@@ -30,7 +30,7 @@ public:
       * and blockade). */
     [[nodiscard]] const std::map<int, std::set<int>>&                     FleetSupplyableSystemIDs() const;
     [[nodiscard]] const std::set<int>&                                    FleetSupplyableSystemIDs(int empire_id) const;
-    [[nodiscard]] std::set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies) const;
+    [[nodiscard]] std::set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies, const ScriptingContext& context) const;
     [[nodiscard]] int                                                     EmpireThatCanSupplyAt(int system_id) const;
 
     /** Returns set of sets of systems that can share industry (systems in
