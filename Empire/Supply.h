@@ -6,6 +6,7 @@
 #include <string>
 #include <boost/serialization/access.hpp>
 #include "../universe/ConstantsFwd.h"
+#include "../universe/EnumsFwd.h"
 #include "../util/Export.h"
 
 class Universe;
@@ -56,7 +57,8 @@ public:
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups for empire with id \a empire_id */
     [[nodiscard]] bool        SystemHasFleetSupply(int system_id, int empire_id) const;
-    [[nodiscard]] bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const;
+    [[nodiscard]] bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies,
+                                                   const std::map<std::pair<int, int>, DiplomaticStatus>& diplo_statuses) const;
 
     [[nodiscard]] std::string Dump(const Universe& u, int empire_id = ALL_EMPIRES) const;
 

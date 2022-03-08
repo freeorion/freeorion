@@ -16,5 +16,6 @@ enum class Visibility : char;
 enum class CaptureResult : char;
 enum class ModeratorActionSetting : char;
 enum class FleetAggression : char;
+enum class DiplomaticStatus : char;
 
 #endif

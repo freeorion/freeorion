@@ -854,7 +854,9 @@ void Fleet::MovementPhase(ScriptingContext& context) {
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
-    if (supply.SystemHasFleetSupply(SystemID(), Owner(), ALLOW_ALLIED_SUPPLY)) {
+    if (supply.SystemHasFleetSupply(SystemID(), Owner(), ALLOW_ALLIED_SUPPLY,
+                                    context.diplo_statuses))
+    {
         for (auto& ship : ships)
             ship->Resupply();
     }
@@ -996,7 +998,8 @@ void Fleet::MovementPhase(ScriptingContext& context) {
             if (m_travel_route.front() == system->ID())
                 m_travel_route.erase(m_travel_route.begin());
 
-            bool resupply_here = supply.SystemHasFleetSupply(system->ID(), this->Owner(), ALLOW_ALLIED_SUPPLY);
+            bool resupply_here = supply.SystemHasFleetSupply(
+                system->ID(), this->Owner(), ALLOW_ALLIED_SUPPLY, context.diplo_statuses);
 
             // if this system can provide supplies, reset consumed fuel and refuel ships
             if (resupply_here) {

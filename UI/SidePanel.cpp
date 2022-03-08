@@ -1527,11 +1527,10 @@ void SidePanel::PlanetPanel::Refresh() {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     m_planet_connection.disconnect();
 
-    Universe& u = GetUniverse();
-    ObjectMap& objects = u.Objects(); // must be mutable to allow setting species and updating to estimate colonize button numbers
-    EmpireManager& e = Empires();
-    ScriptingContext context{u, e};
-    SpeciesManager& sm = context.species;
+    ScriptingContext context;
+    Universe& u = context.ContextUniverse();
+    ObjectMap& objects = context.ContextObjects(); // must be mutable to allow setting species and updating to estimate colonize button numbers
+    const SpeciesManager& sm = context.species;
     const SupplyManager& supply = context.supply;
 
     auto planet = objects.get<Planet>(m_planet_id);
@@ -1605,7 +1604,7 @@ void SidePanel::PlanetPanel::Refresh() {
     // colour planet name with owner's empire colour
     m_empire_colour = GG::CLR_ZERO;
     if (!planet->Unowned() && m_planet_name) {
-        if (auto planet_empire = e.GetEmpire(planet->Owner())) {
+        if (auto planet_empire = context.GetEmpire(planet->Owner())) {
             m_empire_colour = planet_empire->Color();
             m_planet_name->SetTextColor(planet_empire->Color());
         } else {
@@ -1655,7 +1654,7 @@ void SidePanel::PlanetPanel::Refresh() {
     bool can_colonize =     selected_colony_ship && (   (colonizable  && (colony_ship_capacity > 0.0f))
                                                      || (outpostable && (colony_ship_capacity == 0.0f)));
 
-    bool at_war_with_me =   !mine && (populated || (has_owner && e.GetDiplomaticStatus(client_empire_id, planet->Owner()) == DiplomaticStatus::DIPLO_WAR));
+    bool at_war_with_me =   !mine && (populated || (has_owner && context.ContextDiploStatus(client_empire_id, planet->Owner()) == DiplomaticStatus::DIPLO_WAR));
 
     bool being_invaded =    planet->IsAboutToBeInvaded();
     bool invadable =        at_war_with_me && !shielded && visible && !being_invaded && !invasion_ships.empty();
@@ -1887,7 +1886,9 @@ void SidePanel::PlanetPanel::Refresh() {
         std::shared_ptr<GG::Texture> planet_status_texture;
 
         // status: no supply
-        if (!supply.SystemHasFleetSupply(planet->SystemID(), planet->Owner(), true)) {
+        if (!supply.SystemHasFleetSupply(planet->SystemID(), planet->Owner(), true,
+                                         context.diplo_statuses))
+        {
             planet_status_messages.emplace_back(boost::io::str(FlexibleFormat(
                                                 UserString("OPTIONS_DB_UI_PLANET_STATUS_NO_SUPPLY")) % planet->Name()));
             planet_status_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet_status_supply.png", true);
@@ -1941,7 +1942,7 @@ void SidePanel::PlanetPanel::Refresh() {
     ClearBrowseInfoWnd();
 
     if (client_empire_id != ALL_EMPIRES) {
-        auto client_empire = e.GetEmpire(client_empire_id);
+        auto client_empire = context.GetEmpire(client_empire_id);
         Visibility visibility = u.GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
         const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(m_planet_id, client_empire_id);
         float client_empire_detection_strength = client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current();

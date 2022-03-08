@@ -367,6 +367,13 @@ struct ScriptingContext {
         return it == diplo_statuses.end() ? DiplomaticStatus::INVALID_DIPLOMATIC_STATUS : it->second;
     }
 
+    std::set<int> GetEmpireIDsWithDiplomaticStatusWithEmpire(
+        int empire_id, DiplomaticStatus diplo_status) const
+    {
+        return EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
+            empire_id, diplo_status, diplo_statuses);
+    }
+
     Visibility ContextVis(int object_id, int empire_id) const {
         auto empire_it = empire_object_vis.find(empire_id);
         if (empire_it == empire_object_vis.end())
