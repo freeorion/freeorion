@@ -711,7 +711,7 @@ boost::statechart::result PlayingGame::react(const Diplomacy& d) {
 
     DiplomaticMessage diplo_message;
     ExtractDiplomacyMessageData(d.m_message, diplo_message);
-    Empires().SetDiplomaticMessage(diplo_message);
+    Client().Empires().SetDiplomaticMessage(diplo_message);
 
     return discard_event();
 }
@@ -721,7 +721,7 @@ boost::statechart::result PlayingGame::react(const DiplomaticStatusUpdate& u) {
 
     DiplomaticStatusUpdateInfo diplo_update;
     ExtractDiplomaticStatusMessageData(u.m_message, diplo_update);
-    Empires().SetDiplomaticStatus(diplo_update.empire1_id, diplo_update.empire2_id, diplo_update.diplo_status);
+    Client().Empires().SetDiplomaticStatus(diplo_update.empire1_id, diplo_update.empire2_id, diplo_update.diplo_status);
 
     return discard_event();
 }
@@ -930,11 +930,11 @@ boost::statechart::result WaitingForGameStart::react(const GameStartDataUnpacked
         Client().GetGalaxySetupData() = std::move(unpacked.galaxy_setup_data);
         GetGameRules().SetFromStrings(Client().GetGalaxySetupData().GetGameRules());
 
-        Empires() = std::move(unpacked.empires);
-        GetUniverse() = std::move(unpacked.universe);
-        GetSpeciesManager() = std::move(unpacked.species);
-        GetCombatLogManager() = std::move(unpacked.combat_logs);
-        GetSupplyManager() = std::move(unpacked.supply);
+        Client().Empires() = std::move(unpacked.empires);
+        Client().GetUniverse() = std::move(unpacked.universe);
+        Client().GetSpeciesManager() = std::move(unpacked.species);
+        GetCombatLogManager() = std::move(unpacked.combat_logs); // TODO: move into IApp ?
+        Client().GetSupplyManager() = std::move(unpacked.supply);
         Client().Players() = std::move(unpacked.player_info);
         Client().Orders() = std::move(unpacked.orders);
 
