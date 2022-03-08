@@ -180,7 +180,7 @@ public:
     {
         /** The types of token-like entities that can be represented by a
             TextElement. */
-        enum class TextElementType : int {
+        enum class TextElementType : char {
             OPEN_TAG,   ///< An opening text formatting tag (e.g. "<rgba 0 0 0 255>").
             CLOSE_TAG,  ///< A closing text formatting tag (e.g. "</rgba>").
             TEXT,       ///< Some non-whitespace text (e.g. "The").

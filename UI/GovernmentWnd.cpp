@@ -28,7 +28,7 @@
 using boost::placeholders::_1;
 using boost::placeholders::_2;
 
-enum class Availability : size_t {
+enum class Availability : char {
     Adopted = 0,      // Policy is currently adopted
     Adoptable = 1,    // Policy can be adopted, but hasn't been adopted
     Unaffordable = 2, // Policy is unlocked and has no restrictions, but is too expensive to adopt
@@ -572,7 +572,7 @@ void PoliciesListBox::HideAllCategories(bool refresh_list) {
 void PoliciesListBox::ResizePolicies(const GG::Pt& sz, const int pts) {
     auto it = begin();
     while (it != end()) {
-        auto row = *it;
+        const auto& row = *it;
         unsigned int itt = 0;
         while (itt < row->size()) {
             auto policy_control = dynamic_cast<PolicyControl*>(row->at(itt));
@@ -1312,7 +1312,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     // category -> slot in category -> policy in slot
     auto initial_cats_slots_policy_adopted = empire->CategoriesSlotsPoliciesAdopted();
     auto& init_slots_adopted{initial_cats_slots_policy_adopted[adopt_in_category]};
-    auto initial_policy_name{init_slots_adopted[adopt_in_category_slot]};
+    std::string_view initial_policy_name{init_slots_adopted[adopt_in_category_slot]};
 
     // check if adopting or revoking a policy. If adopting, then pass along the name of
     // the policy to adopt. If de-adeopting, then pass the name of the policy to de-adopt.

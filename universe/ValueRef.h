@@ -78,7 +78,7 @@ std::string FlexibleToString(T&& t)
 [[nodiscard]] FO_COMMON_API std::string FlexibleToString(UniverseObjectType t);
 
 
-enum class ReferenceType : int {
+enum class ReferenceType : char {
     INVALID_REFERENCE_TYPE = -1,
     NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
     SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object

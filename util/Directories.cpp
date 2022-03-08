@@ -235,11 +235,11 @@ namespace {
     }
 
     constexpr auto PathTypesImpl() {
-        static_assert(std::is_same_v<std::underlying_type_t<PathType>, int>);
-        static_assert(int(PathType::PATH_INVALID) > 0);
+        static_assert(std::is_same_v<std::underlying_type_t<PathType>, char>);
+        static_assert(char(PathType::PATH_INVALID) > 0);
         std::array<PathType, NUM_PATH_TYPES> retval{};
 
-        for (PathType pt = PathType(0); pt < PathType::PATH_INVALID; pt = PathType(int(pt) + 1))
+        for (PathType pt = PathType(0); pt < PathType::PATH_INVALID; pt = PathType(char(pt) + 1))
             retval[std::size_t(pt)] = pt;
         return retval;
     }

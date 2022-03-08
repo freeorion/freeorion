@@ -595,7 +595,7 @@ namespace {
         DiplomaticStatus        m_diplo_status;
         Networking::ClientType  m_player_type;
         bool                    m_host = false;
-        enum : int {
+        enum : char {
             WON,
             LOST,
             NEITHER

@@ -27,7 +27,7 @@ enum class \
 BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
     BOOST_PP_TUPLE_ELEM(1, typeName), \
     BOOST_PP_TUPLE_ELEM(0, typeName)) \
-: int { \
+: char { \
     BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_VALUE, _, values) \
 };
 
