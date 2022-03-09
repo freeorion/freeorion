@@ -65,15 +65,17 @@ void Hotkey::AddHotkey(const std::string& name, const std::string& description, 
 }
 
 std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
-    std::ostringstream s;
+    std::string retval;
+    const size_t sz = ((mod != GG::MOD_KEY_NONE) + (key > GG::Key::GGK_NONE)) * 24; // guesstimate
+    retval.reserve(sz);
     if (mod != GG::MOD_KEY_NONE) {
-        s << mod;
-        s << "+";
+        std::stringstream ss;
+        ss << mod;
+        retval.append(ss.str()).append("+");
     }
-    if (key > GG::Key::GGK_NONE) {
-        s << key;
-    }
-    return s.str();
+    if (key > GG::Key::GGK_NONE)
+        retval += to_string(key);
+    return retval;
 }
 
 std::vector<std::string> Hotkey::DefinedHotkeys() {
