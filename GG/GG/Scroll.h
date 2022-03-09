@@ -44,7 +44,7 @@ class GG_API Scroll : public Control
 {
 public:
     /// the clickable regions of a Scroll
-    GG_CLASS_ENUM(ScrollRegion,
+    GG_CLASS_ENUM(ScrollRegion, unsigned char,
         SBR_NONE,
         SBR_PAGE_DN,
         SBR_PAGE_UP

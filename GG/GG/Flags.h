@@ -65,7 +65,7 @@ inline constexpr bool is_flag_type_v = is_flag_type<T>::value;
     {                                                                   \
     public:                                                             \
         constexpr name() noexcept = default;                            \
-        constexpr explicit name(unsigned int value) :                   \
+        constexpr explicit name(unsigned short int value) :             \
             m_value(value)                                              \
         {                                                               \
             if (1u < detail::OneBits(value))                            \
@@ -79,7 +79,7 @@ inline constexpr bool is_flag_type_v = is_flag_type<T>::value;
         constexpr bool operator<(name rhs) const                        \
         { return m_value < rhs.m_value; }                               \
     private:                                                            \
-        unsigned int m_value = 0;                                       \
+        unsigned short int m_value = 0;                                 \
         friend class Flags<name>;                                       \
     };                                                                  \
                                                                         \
@@ -370,10 +370,7 @@ constexpr Flags<FlagType> operator|(FlagType lhs, Flags<FlagType> rhs)
     rhs. */
 template <typename FlagType>
 constexpr
-typename std::enable_if_t<
-    is_flag_type_v<FlagType>,
-    Flags<FlagType>
->
+typename std::enable_if_t<is_flag_type_v<FlagType>, Flags<FlagType>>
 operator|(FlagType lhs, FlagType rhs)
 { return Flags<FlagType>(lhs) | Flags<FlagType>(rhs); }
 
@@ -403,10 +400,7 @@ constexpr Flags<FlagType> operator&(FlagType lhs, Flags<FlagType> rhs)
     rhs. */
 template <typename FlagType>
 constexpr
-typename std::enable_if_t<
-    is_flag_type_v<FlagType>,
-    Flags<FlagType>
->
+typename std::enable_if_t<is_flag_type_v<FlagType>, Flags<FlagType>>
 operator&(FlagType lhs, FlagType rhs)
 { return Flags<FlagType>(lhs) & Flags<FlagType>(rhs); }
 
@@ -435,11 +429,7 @@ constexpr Flags<FlagType> operator^(FlagType lhs, Flags<FlagType> rhs)
 /** Returns a Flags object that consists of the bitwise-xor of \a lhs and \a
     rhs. */
 template <typename FlagType>
-constexpr
-typename std::enable_if_t<
-    is_flag_type_v<FlagType>,
-    Flags<FlagType>
->
+constexpr typename std::enable_if_t<is_flag_type_v<FlagType>, Flags<FlagType>>
 operator^(FlagType lhs, FlagType rhs)
 { return Flags<FlagType>(lhs) ^ Flags<FlagType>(rhs); }
 
@@ -459,11 +449,7 @@ constexpr Flags<FlagType> operator~(Flags<FlagType> flags)
 /** Returns a Flags object that consists of all the flags known to
     FlagSpec<FlagType>::instance() except \a flag. */
 template <typename FlagType>
-constexpr
-typename std::enable_if_t<
-    is_flag_type_v<FlagType>,
-    Flags<FlagType>
->
+constexpr typename std::enable_if_t<is_flag_type_v<FlagType>, Flags<FlagType>>
 operator~(FlagType flag)
 { return ~Flags<FlagType>(flag); }
 

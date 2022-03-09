@@ -390,6 +390,7 @@ WndRegion Wnd::WindowRegion(const Pt& pt) const
     else if (pt.y > ClientLowerRight().y)
         y_pos = BOTTOM;
 
+    static_assert(std::is_signed_v<std::underlying_type_t<WndRegion>>);
     return (Resizable() ? WndRegion(x_pos + 3 * y_pos) : WndRegion::WR_NONE);
 }
 
