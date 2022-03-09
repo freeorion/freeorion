@@ -1020,7 +1020,7 @@ void CensoredCUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 void CensoredCUIEdit::SetText(std::string str) {
     m_raw_text = std::move(str);
 
-    auto font = GetFont();
+    const auto& font = GetFont();
     if (!font) {
         ErrorLogger() << "CensoredCUIEdit::SetText couldn't get font!";
         return;
@@ -1056,7 +1056,7 @@ void CensoredCUIEdit::AcceptPastedText(const std::string& text) {
         std::size_t line;
         std::tie(line, pos) = LinePositionOf(m_cursor_pos.first, GetLineData());
 
-        auto new_raw_text = m_raw_text;
+        std::string new_raw_text = m_raw_text;
         new_raw_text.insert(Value(StringIndexOf(line, pos, GetLineData())), text);
 
         SetText(std::move(new_raw_text));

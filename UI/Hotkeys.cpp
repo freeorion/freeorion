@@ -309,7 +309,7 @@ OrCondition::OrCondition(std::initializer_list<std::function<bool()>> conditions
 {}
 
 bool OrCondition::operator()() const {
-    for (auto cond : m_conditions) {
+    for (auto& cond : m_conditions) {
         if (cond())
             return true;
     }
@@ -325,7 +325,7 @@ AndCondition::AndCondition(std::initializer_list<std::function<bool()>> conditio
 {}
 
 bool AndCondition::operator()() const {
-    for (auto cond : m_conditions) {
+    for (auto& cond : m_conditions) {
         if (!cond())
             return false;
     }
