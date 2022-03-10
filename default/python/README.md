@@ -116,18 +116,19 @@ We use [pytest](https://docs.pytest.org) as testing framework.
 There is a various options to run tests.
 I'd recommend running tests from your IDE, all modern has support of pytest.
 
-To find and run all tests recursively
+Some useful command for console:
+Run all tests recursively.
 ```shell
 pytest
 ```
 
-Specify folder or path to run subset of the tests.
+Run test from file/folder.
 You could use relative or absolute paths.
 ```shell
 pytest tests\AI\test_assertion_fails.py
 ```
 
-To run specific test use test name
+Run specific test using test name.
 ```shell
 tests/AI/test_assertion_fails.py::test_does_fail
 ```
