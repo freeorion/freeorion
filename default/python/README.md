@@ -111,6 +111,27 @@ Black can be run on the top level directory:
 black .
 ```
 
+## Running test
+We use [pytest](https://docs.pytest.org) as testing framework.
+There is a various options to run tests.
+I'd recommend running tests from your IDE, all modern has support of pytest.
+
+To find and run all tests recursively
+```shell
+pytest
+```
+
+Specify folder or path to run subset of the tests.
+You could use relative or absolute paths.
+```shell
+pytest tests\AI\test_assertion_fails.py
+```
+
+To run specific test use test name
+```shell
+tests/AI/test_assertion_fails.py::test_does_fail
+```
+
 ## Debug via chat
 To inspect current AI state in the game 
 It's possible to start interactive console with AI.
