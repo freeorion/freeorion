@@ -590,18 +590,9 @@ def _calculate_planet_colonization_rating(
             + supply_val
         )
         detail.append(
-            " max(%.1f+%.1f+%.1f, %.1f, %.1f, %.1f) + %.1f + %.1f + %.1f"
-            % (
-                ind_val,
-                asteroid_bonus,
-                gas_giant_bonus,
-                research_bonus,
-                growth_val,
-                infl_val,
-                fixed_ind,
-                fixed_res,
-                supply_val,
-            )
+            f" max({ind_val:.1f}+{asteroid_bonus:.1f}+{gas_giant_bonus:.1f},"
+            f" {research_bonus:.1f}, {growth_val:.1f}, {infl_val:.1f})"
+            f" + {fixed_ind:.1f} + {fixed_res:.1f} + {supply_val:.1f}"
         )
         if existing_presence:
             retval = (retval + existing_presence * _get_defense_value(species_name)) * 2

@@ -104,12 +104,9 @@ class PlanetFocusManager:
             influence_gain = pinfo.possible_output[INFLUENCE][2] - pinfo.possible_output[focus][2]
             if influence_gain * self.priority[2] > focus_gain * self.priority[idx]:
                 debug(
-                    "Chosing influence over %s. %.2f * %.1f > %.2f * %.1f",
-                    _focus_names.get(focus, "unknown"),
-                    influence_gain,
-                    self.priority[2],
-                    focus_gain,
-                    self.priority[idx],
+                    f"Chosing influence over {_focus_names.get(focus, 'unknown')}."
+                    f" {influence_gain:.2f} * {self.priority[2]:.1f}"
+                    f" > {focus_gain:.2f} * {self.priority[idx]:.1f}"
                 )
                 focus = INFLUENCE
         last_turn = fo.currentTurn()
@@ -162,11 +159,12 @@ class PlanetFocusManager:
             if INDUSTRY in planet.availableFoci and planet.focus != INDUSTRY:
                 fo.issueChangeFocusOrder(pid, INDUSTRY)  # may not be able to take, but try
 
-        def merge(po1, po2):  # merge too partially determined possible_outputs
+        def merge(po1, po2):
+            """merge two partially determined possible_outputs"""
             return (
-                po1[0] if po1[0] else po2[0],
-                po1[1] if po1[1] else po2[1],
-                po1[2] if po1[2] else po2[2],
+                po1[0] or po2[0],
+                po1[1] or po2[1],
+                po1[2] or po2[2],
             )
 
         universe.updateMeterEstimates(unbaked_pids)
