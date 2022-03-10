@@ -27,17 +27,19 @@ planet types, planet sizes, and also other content get placed.
 
 ## Setup environment
 ### Run game with AI files from the repository folder
+This part is required if you use download builds. 
+If you compile the code, it works with the repo folder.
 - Run game
 - Open Options
 - Scroll left to Others
 - Click generate persistent config
-- Check `Congig and log files path` value
+- Check `Config and log files path` value
 - Open directory with config
 - Edit `persistent_config.xml`
 - ```xml
   <?xml version="1.0"?>
   <XMLDoc>
-      <resource>
+    <resource>
       <path>...repo_path\default</path>
       <stringtable>
         <path>...repo_path\default\stringtables\en.txt</path>
@@ -94,6 +96,11 @@ Flake should be run from directory where `tox.ini` located:
 ```sh
 cd default/python
 flake8
+```
+We use [isort](https://github.com/PyCQA/isort) to keep imports in the order.
+We use the default setting.
+```shell
+isort .
 ```
 
 We use [black](https://pypi.org/project/black/) for code formatting.
