@@ -57,6 +57,22 @@ public:
         return *value_it;
     }
 
+    [[nodiscard]] size_t size() const { return m_size; }
+    [[nodiscard]] bool empty() const { return m_size == 0; }
+
+    /** Do not call this function directly.
+    * Instead, rely on the functions generated
+    * by the GG_ENUM or GG_CLASS_ENUM macro invocations. */
+    void Build(const char* comma_separated_names)
+    {
+        std::stringstream name_stream(comma_separated_names);
+
+        std::string name;
+        while (std::getline(name_stream, name, ','))
+            Insert(name);
+    }
+
+private:
     void Insert(std::string_view entry)
     {
         // entires passed as series of "SYMBOL = 0x1b" formatted key-value pairs
@@ -72,10 +88,6 @@ public:
         m_values[place_idx] = value;
     }
 
-    [[nodiscard]] size_t size() const { return m_size; }
-    [[nodiscard]] bool empty() const { return m_size == 0; }
-
-private:
     static constexpr size_t CAPACITY = std::numeric_limits<unsigned char>::max();
 
     [[nodiscard]] static constexpr std::pair<std::string_view, std::string_view>
@@ -117,18 +129,6 @@ EnumMap<EnumType>& GetEnumMap()
     return map;
 }
 
-/** Do not call this function directly.
-  * Instead, rely on the functions generated
-  * by the GG_ENUM or GG_CLASS_ENUM macro invocations. */
-template <typename EnumType>
-void BuildEnumMap(EnumMap<EnumType>& map, const char* comma_separated_names)
-{
-    std::stringstream name_stream(comma_separated_names);
-
-    std::string name;
-    while (std::getline(name_stream, name, ','))
-        map.Insert(name);
-}
 
 /** An enum macro for use inside classes.
   * Enables << and >> for your enum,
@@ -140,9 +140,9 @@ void BuildEnumMap(EnumMap<EnumType>& map, const char* comma_separated_names)
     };                                                                                  \
                                                                                         \
     friend inline std::istream& operator>>(std::istream& is, EnumName& value) {         \
-        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
+        auto& map = ::GG::GetEnumMap<EnumName>();                                       \
         if (map.empty())                                                                \
-            ::GG::BuildEnumMap(map, #__VA_ARGS__);                                      \
+            map.Build(#__VA_ARGS__);                                                    \
                                                                                         \
         std::string name;                                                               \
         is >> name;                                                                     \
@@ -151,9 +151,9 @@ void BuildEnumMap(EnumMap<EnumType>& map, const char* comma_separated_names)
     }                                                                                   \
                                                                                         \
     friend inline std::ostream& operator<<(std::ostream& os, EnumName value) {          \
-        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
+        auto& map = ::GG::GetEnumMap<EnumName>();                                       \
         if (map.empty())                                                                \
-            ::GG::BuildEnumMap(map, #__VA_ARGS__);                                      \
+            map.Build(#__VA_ARGS__);                                                    \
                                                                                         \
         return os << map[value];                                                        \
     }
@@ -168,9 +168,9 @@ void BuildEnumMap(EnumMap<EnumType>& map, const char* comma_separated_names)
     };                                                                                  \
                                                                                         \
     inline std::istream& operator>>(std::istream& is, EnumName& value) {                \
-        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
+        auto& map = ::GG::GetEnumMap<EnumName>();                                       \
         if (map.size() == 0)                                                            \
-            ::GG::BuildEnumMap(map, #__VA_ARGS__);                                      \
+            map.Build(#__VA_ARGS__);                                                    \
                                                                                         \
         std::string name;                                                               \
         is >> name;                                                                     \
@@ -179,17 +179,17 @@ void BuildEnumMap(EnumMap<EnumType>& map, const char* comma_separated_names)
     }                                                                                   \
                                                                                         \
     inline std::ostream& operator<<(std::ostream& os, EnumName value) {                 \
-        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
+        auto& map = ::GG::GetEnumMap<EnumName>();                                       \
         if (map.empty())                                                                \
-            ::GG::BuildEnumMap(map, #__VA_ARGS__);                                      \
+            map.Build(#__VA_ARGS__);                                                    \
                                                                                         \
         return os << map[value];                                                        \
     }                                                                                   \
                                                                                         \
     [[nodiscard]] inline std::string_view to_string(EnumName value) {                   \
-        ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \
+        auto& map = ::GG::GetEnumMap<EnumName>();                                       \
         if (map.empty())                                                                \
-            ::GG::BuildEnumMap(map, #__VA_ARGS__);                                      \
+            map.Build(#__VA_ARGS__);                                                    \
                                                                                         \
         return map[value];                                                              \
     }
