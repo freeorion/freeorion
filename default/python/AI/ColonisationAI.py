@@ -711,7 +711,7 @@ class OrbitalColonizationPlan:
         """
         Check the colonization plan for validity, i.e. if it could be executed in the future.
 
-        The plan is valid if it is possible to outpust the target planet
+        The plan is valid if it is possible to outpost the target planet
         and if the planet envisioned to build the outpost bases can still do so.
         """
         universe = fo.getUniverse()
