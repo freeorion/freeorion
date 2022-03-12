@@ -35,6 +35,9 @@ namespace GG {
 template <typename EnumType>
 class EnumMap {
 public:
+    constexpr explicit EnumMap(const char* comma_separated_names)
+    { Build(comma_separated_names); }
+
     [[nodiscard]] constexpr std::string_view operator[](EnumType value) const
     {
         auto value_it = std::find(m_values.cbegin(), m_values.cend(), value);
@@ -61,9 +64,7 @@ public:
 
     [[nodiscard]] constexpr bool empty() const { return m_size == 0; }
 
-    /** Do not call this function directly.
-      * Instead, rely on the functions generated
-      * by the GG_ENUM or GG_CLASS_ENUM macro invocations. */
+private:
     constexpr void Build(const char* comma_separated_names)
     {
         if (Count(comma_separated_names, ',') > CAPACITY)
@@ -73,7 +74,6 @@ public:
             Insert(count_names.second[i]);
     }
 
-private:
     // Formats entries passed as series of "SYMBOL = 0x1b" into key-value pairs
     // and inserts into this map
     constexpr void Insert(std::string_view entry)
@@ -251,20 +251,10 @@ private:
     { return EnumType(ToInt(str)); }
 
 
-    size_t                            m_size = 0;
-    std::array<std::string, CAPACITY> m_names{};
-    std::array<EnumType, CAPACITY>    m_values{};
+    size_t                                 m_size = 0;
+    std::array<std::string_view, CAPACITY> m_names{};
+    std::array<EnumType, CAPACITY>         m_values{};
 };
-
-/** Do not call this function directly.
-  * Instead, rely on the functions generated
-  * by the GG_ENUM or GG_CLASS_ENUM macro invocations. */
-template <typename EnumType>
-EnumMap<EnumType>& GetEnumMap()
-{
-    static EnumMap<EnumType> map;
-    return map;
-}
 
 
 /** An enum macro for use inside classes.
@@ -276,24 +266,37 @@ EnumMap<EnumType>& GetEnumMap()
         __VA_ARGS__                                                                     \
     };                                                                                  \
                                                                                         \
-    friend inline std::istream& operator>>(std::istream& is, EnumName& value) {         \
-        auto& map = ::GG::GetEnumMap<EnumName>();                                       \
-        if (map.empty())                                                                \
-            map.Build(#__VA_ARGS__);                                                    \
+    static inline const EnumMap<EnumName>& GetEnumMap()                                 \
+    {                                                                                   \
+        constexpr EnumMap<EnumName> cmap(#__VA_ARGS__);                                 \
+        static const auto& map{cmap};                                                   \
+        return map;                                                                     \
+    }                                                                                   \
                                                                                         \
+    friend inline std::istream& operator>>(std::istream& is, EnumName& value) {         \
         std::string name;                                                               \
         is >> name;                                                                     \
-        value = map[name];                                                              \
+        value = GetEnumMap()[name];                                                     \
         return is;                                                                      \
     }                                                                                   \
                                                                                         \
-    friend inline std::ostream& operator<<(std::ostream& os, EnumName value) {          \
-        auto& map = ::GG::GetEnumMap<EnumName>();                                       \
-        if (map.empty())                                                                \
-            map.Build(#__VA_ARGS__);                                                    \
-                                                                                        \
-        return os << map[value];                                                        \
-    }
+    friend inline std::ostream& operator<<(std::ostream& os, EnumName value)            \
+    { return os << GetEnumMap()[value]; }
+
+
+template <typename EnumType>
+constexpr EnumMap<EnumType> CGetEnumMap()
+{
+    constexpr EnumMap<EnumType> cmap("");
+    return cmap;
+}
+
+template <typename EnumType>
+inline const EnumMap<EnumType>& GetEnumMap()
+{
+    static const auto& map{CGetEnumMap<EnumType>()};
+    return map;
+}
 
 /** An enum macro for use outside of classes.
   * Enables << and >> for your enum,
@@ -304,37 +307,32 @@ EnumMap<EnumType>& GetEnumMap()
         __VA_ARGS__                                                                     \
     };                                                                                  \
                                                                                         \
-    inline std::istream& operator>>(std::istream& is, EnumName& value) {                \
-        auto& map = ::GG::GetEnumMap<EnumName>();                                       \
-        if (map.size() == 0)                                                            \
-            map.Build(#__VA_ARGS__);                                                    \
+    template <>                                                                         \
+    constexpr EnumMap<EnumName> CGetEnumMap()                                           \
+    {                                                                                   \
+        constexpr EnumMap<EnumName> cmap(#__VA_ARGS__);                                 \
+        return cmap;                                                                    \
+    }                                                                                   \
                                                                                         \
+    template <>                                                                         \
+    inline const EnumMap<EnumName>& GetEnumMap()                                        \
+    {                                                                                   \
+        static const auto& map{CGetEnumMap<EnumName>()};                                \
+        return map;                                                                     \
+    }                                                                                   \
+                                                                                        \
+    inline std::istream& operator>>(std::istream& is, EnumName& value) {                \
         std::string name;                                                               \
         is >> name;                                                                     \
-        value = map[name];                                                              \
+        value = GetEnumMap<EnumName>()[name];                                           \
         return is;                                                                      \
     }                                                                                   \
                                                                                         \
-    inline std::ostream& operator<<(std::ostream& os, EnumName value) {                 \
-        auto& map = ::GG::GetEnumMap<EnumName>();                                       \
-        if (map.empty())                                                                \
-            map.Build(#__VA_ARGS__);                                                    \
+    inline std::ostream& operator<<(std::ostream& os, EnumName value)                   \
+    { return os << GetEnumMap<EnumName>()[value]; }                                     \
                                                                                         \
-        return os << map[value];                                                        \
-    }                                                                                   \
-                                                                                        \
-    [[nodiscard]] inline std::string_view to_string(EnumName value) {                   \
-        auto& map = ::GG::GetEnumMap<EnumName>();                                       \
-        if (map.empty())                                                                \
-            map.Build(#__VA_ARGS__);                                                    \
-                                                                                        \
-        return map[value];                                                              \
-    }
-
-/////////////
-// EnumMap //
-/////////////
-
+    [[nodiscard]] constexpr inline std::string_view to_string(EnumName value)           \
+    { return CGetEnumMap<EnumName>()[value]; }
 
 }
 
