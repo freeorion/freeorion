@@ -203,9 +203,11 @@ NEW_PLANET_NAME
 NEW_ASTEROIDS_SUFFIX
 [[PT_ASTEROIDS]]
 
+# appended to names of systems if they are empty
 EMPTY_SPACE
-''' (no star)'''
+''''''
 
+# appended to names of systems
 UNEXPLORED_REGION
 ''' (unexplored)'''
 
