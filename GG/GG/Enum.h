@@ -35,7 +35,7 @@ namespace GG {
 template <typename EnumType>
 class EnumMap {
 public:
-    [[nodiscard]] std::string_view operator[](EnumType value) const
+    [[nodiscard]] constexpr std::string_view operator[](EnumType value) const
     {
         auto value_it = std::find(m_values.cbegin(), m_values.cend(), value);
         if (value_it == m_values.cend())
@@ -46,7 +46,7 @@ public:
         return *name_it;
     }
 
-    [[nodiscard]] EnumType operator[](std::string_view name) const
+    [[nodiscard]] constexpr EnumType operator[](std::string_view name) const
     {
         auto name_it = std::find(m_names.cbegin(), m_names.cend(), name);
         if (name_it == m_names.cend())
@@ -57,28 +57,40 @@ public:
         return *value_it;
     }
 
-    [[nodiscard]] size_t size() const { return m_size; }
-    [[nodiscard]] bool empty() const { return m_size == 0; }
+    [[nodiscard]] constexpr size_t size() const { return m_size; }
+    [[nodiscard]] constexpr bool empty() const { return m_size == 0; }
 
     /** Do not call this function directly.
-    * Instead, rely on the functions generated
-    * by the GG_ENUM or GG_CLASS_ENUM macro invocations. */
+      * Instead, rely on the functions generated
+      * by the GG_ENUM or GG_CLASS_ENUM macro invocations. */
     void Build(const char* comma_separated_names)
     {
-        std::stringstream name_stream(comma_separated_names);
-
-        std::string name;
-        while (std::getline(name_stream, name, ','))
-            Insert(name);
+        if (Count(comma_separated_names) > CAPACITY)
+            throw std::invalid_argument("too many comma separated enum vals to build map");
+        auto count_names = SplitApply(comma_separated_names, Trim);
+        for (size_t i = 0; i < count_names.first; ++i)
+            Insert(count_names.second[i]);
     }
 
 private:
+    // Formats entries passed as series of "SYMBOL = 0x1b" into key-value pairs
+    // and inserts into this map
     void Insert(std::string_view entry)
     {
-        // entires passed as series of "SYMBOL = 0x1b" formatted key-value pairs
-        // parse into key name and value
-        auto [name, value_str] = Split(entry);
+        auto count_trimmed_name_value_str = SplitApply<2>(entry, Trim, '=');
+        static_assert(std::is_same_v<decltype(count_trimmed_name_value_str.first), size_t>);
+        static_assert(std::is_same_v<decltype(count_trimmed_name_value_str.second),
+                                     std::array<std::string_view, 2>>);
+
+        auto count = count_trimmed_name_value_str.first;
+        if (count < 2)
+            return;
+        auto [name, value_str] = count_trimmed_name_value_str.second;
+
         EnumType value = EnumType(strtol(value_str.data(), nullptr, 0));
+        //std::cout << "inserting entry: " << entry << "  as name: " << name
+        //          << "  value string: " << value_str
+        //          << "  value: " << static_cast<std::underlying_type_t<EnumType>>(value) << std::endl;
 
         const auto place_idx = m_size++;
         if (m_size >= CAPACITY)
@@ -90,28 +102,72 @@ private:
 
     static constexpr size_t CAPACITY = std::numeric_limits<unsigned char>::max();
 
-    [[nodiscard]] static constexpr std::pair<std::string_view, std::string_view>
-        Split(std::string_view entry, char separator = '=')
+
+    [[nodiscard]] static constexpr std::pair<std::string_view, std::string_view> Split(
+        std::string_view delim_separated_vals, const char delim = ',')
     {
-        constexpr char* whitespace = " \b\f\n\r\t\v";
-        auto name_start = entry.find_first_not_of(whitespace);
-        auto eq_pos = entry.find_first_of(separator, name_start);
-        auto name_to_eq = entry.substr(name_start, eq_pos - name_start + 1);
-        auto name_to_before_eq = name_to_eq.substr(0, name_to_eq.length() - 1);
-        auto name_end = name_to_before_eq.find_last_not_of(whitespace);
-        auto name = name_to_before_eq.substr(0, name_end + 1);
-        auto after_eq = entry.substr(eq_pos + 1);
-        auto value_start = after_eq.find_first_not_of(whitespace);
-        auto value_to_end = after_eq.substr(value_start);
-        auto value_end = value_to_end.find_first_of(whitespace);
-        auto value = after_eq.substr(value_start, value_end);
+        auto comma_idx = delim_separated_vals.find_first_of(delim);
+        if (comma_idx == std::string_view::npos)
+            return {delim_separated_vals, ""};
+        return {delim_separated_vals.substr(0, comma_idx),
+            delim_separated_vals.substr(comma_idx + 1)};
+    }
 
-        return {name, value};
-    };
+    static constexpr std::string_view test_cs_names = "123 = 7  , next_thing =   124, last thing  =-1";
+    static constexpr auto first_and_rest = Split(test_cs_names);
+    static constexpr auto second_and_rest = Split(first_and_rest.second);
+    static constexpr auto third_and_rest = Split(second_and_rest.second);
+    static constexpr auto fourth_and_rest = Split(third_and_rest.second);
+    static_assert(fourth_and_rest.first.empty());
+    static constexpr std::string_view third_result_expected = " last thing  =-1";
+    static_assert(third_and_rest.first == third_result_expected);
 
-    static constexpr std::string_view test_text = "   something = \t 0x42\b\t  ";
-    static constexpr auto test_name_value = Split(test_text);
-    static_assert(test_name_value.first == "something" && test_name_value.second == "0x42");
+
+    // how many times does \a delim appear in text?
+    [[nodiscard]] static constexpr size_t Count(std::string_view text, const char delim = ',')
+    {
+        size_t retval = 1;
+        for (size_t i = 0; i < text.length(); ++i)
+            retval += text[i] == delim;
+        return retval;
+    }
+    static constexpr auto comma_count = Count(test_cs_names);
+    static_assert(comma_count == 3);
+
+
+    template <size_t RETVAL_CAP = CAPACITY, typename F>
+    [[nodiscard]] static constexpr std::pair<size_t, std::array<std::string_view, RETVAL_CAP>>
+        SplitApply(std::string_view comma_separated_names, F&& fn, char delim = ',')
+    {
+        size_t count = 0;
+        std::array<std::string_view, RETVAL_CAP> retval;
+        while (count < RETVAL_CAP) {
+            auto next_and_rest = Split(comma_separated_names, delim);
+            if (next_and_rest.first.empty())
+                break;
+            retval[count++] = fn(next_and_rest.first);
+            comma_separated_names = next_and_rest.second;
+        }
+        return {count, retval};
+    }
+
+    [[nodiscard]] static constexpr std::string_view Trim(std::string_view padded)
+    {
+        constexpr std::string_view whitespace = " \b\f\n\r\t\v";
+        auto start_idx = padded.find_first_not_of(whitespace);
+        auto end_idx = padded.find_last_not_of(whitespace);
+        return padded.substr(start_idx, end_idx - start_idx + 1);
+    }
+    static constexpr std::string_view test_text = " \n\f  something = \t 0x42\b\t  ";
+    static constexpr std::string_view trimmed_text_expected = "something = \t 0x42";
+    static_assert(Trim(test_text) == trimmed_text_expected);
+
+
+    static constexpr auto split_count_vals = SplitApply(test_cs_names, Trim);
+    static_assert(split_count_vals.first == 3);
+    static_assert(!split_count_vals.second[0].empty());
+    static constexpr std::string_view expected_first_trimmed_name = "123 = 7";
+    static_assert(split_count_vals.second[0] == expected_first_trimmed_name);
 
 
     size_t                            m_size = 0;
