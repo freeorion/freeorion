@@ -761,7 +761,9 @@ void SetNativePopulationValues(ObjectMap& object_map) {
     }
 }
 
-bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name, ScriptingContext& context) {
+bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name,
+                        ScriptingContext& context)
+{
     // get home planet and system, check if they exist
     auto home_planet = context.ContextObjects().get<Planet>(planet_id);
     if (!home_planet)

@@ -210,9 +210,9 @@ struct PlayerSetupData {
     //! When loading a game, the ID of the empire that this player will control
     int                     save_game_empire_id = ALL_EMPIRES;
     Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
+    int                     starting_team = Networking::NO_TEAM_ID;
     bool                    player_ready = false;
     bool                    authenticated = false;
-    int                     starting_team = Networking::NO_TEAM_ID;
 };
 
 bool FO_COMMON_API operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
