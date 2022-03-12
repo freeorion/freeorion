@@ -59,9 +59,19 @@ Species
         [[GREAT_DEFENSE_TROOPS]]
 
         // not for description
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[DEFAULT_NATIVE_DEFENSE]]
         [[STANDARD_SHIP_SHIELDS]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Turn high = 0
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
+            ]
+            effects = CreateShip designname = "SM_TREE"
+
     ]
 
     [[RADIATED_STANDARD_EP]]

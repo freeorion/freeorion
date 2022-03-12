@@ -56,8 +56,7 @@ Species
             effects = MoveTowards speed = 5 target = Source
 
         // not for description
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[DEFAULT_NATIVE_DEFENSE]]
         [[STANDARD_SHIP_SHIELDS]]
     ]
 

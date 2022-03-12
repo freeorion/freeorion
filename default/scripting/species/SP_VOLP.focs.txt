@@ -30,8 +30,7 @@ Species
         [[AVERAGE_DEFENSE_TROOPS]]
 
         // not for description
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[DEFAULT_NATIVE_DEFENSE]]
         [[HUGE_PLANET]]
         [[STANDARD_SHIP_SHIELDS]]
     ]

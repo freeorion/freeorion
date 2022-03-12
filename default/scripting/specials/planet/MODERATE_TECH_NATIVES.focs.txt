@@ -10,6 +10,8 @@ Special
         Species
         /// @content_tag{PRIMITIVE} Prevents this special from being added to a location with this tag during universe generation
         Not HasTag name = "PRIMITIVE"
+        Not HasTag name = "NO_RESEARCH"
+        Not HasTag name = "VERY_BAD_RESEARCH"
         Not HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
     ]
     effectsgroups = [

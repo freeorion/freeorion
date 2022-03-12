@@ -1,0 +1,27 @@
+Special
+    name = "NATIVE_FORTIFICATION_MEDIUM"
+    description = "NATIVE_FORTIFICATION_MEDIUM_DESC"
+    stealth = 0
+    spawnrate = 0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Unowned
+            effects = [
+                SetMaxDefense value = Value + ( 20 * [[PLANET_DEFENSE_FACTOR]] )
+                SetMaxShield value = Value + ( 20 * [[PLANET_SHIELD_FACTOR]] )
+                SetMaxTroops value = Value + 20
+                SetDetection value = Value + 20
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Or [
+                OwnedBy affiliation = AnyEmpire
+                Not Species
+            ]
+            effects = RemoveSpecial name = "NATIVE_FORTIFICATION_MEDIUM"
+    ]
+    graphic = "icons/focus/protection.png"
+
+#include "/scripting/common/misc.macros"

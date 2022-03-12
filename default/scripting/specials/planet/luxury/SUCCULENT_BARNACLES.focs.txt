@@ -8,12 +8,20 @@ Special
         Planet
         Planet type = [Terran Ocean Swamp]
         Not Species
+        Not WithinStarlaneJumps jumps = 1 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
     ]
     effectsgroups = [
         [[SPECIAL_INFLUENCE_RESOURCE_EXPORT(SUCCULENT_BARNACLES_SPECIAL)]]
-    
+        [[CHANCE_OF_GUARD_1]]
         [[SPECIAL_LIKES_OR_DISLIKES_SPECIAL_STABILITY_EFFECTS]]
     ]
     graphic = "icons/specials_huge/barnacles.png"
 
+#include "../monster_guard.macros"
 #include "/scripting/specials/specials.macros.txt"

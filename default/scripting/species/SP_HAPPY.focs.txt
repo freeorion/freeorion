@@ -37,8 +37,7 @@ Species
         [[SLOW_COLONIZATION]]
 
         // not for description
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[DEFAULT_NATIVE_DEFENSE]]
         [[NARROW_EP]]
         [[STANDARD_SHIP_SHIELDS]]
     ]

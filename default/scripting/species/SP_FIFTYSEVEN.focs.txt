@@ -29,10 +29,24 @@ Species
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
 
+        [[GOOD_STEALTH]]
+
         // not for description
-        [[AVERAGE_PLANETARY_SHIELDS]]
-        [[AVERAGE_PLANETARY_DEFENSE]]
+        [[DEFAULT_NATIVE_DEFENSE]]
+        [[NOT_LARGE_PLANET]]
+
         [[STANDARD_SHIP_SHIELDS]]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                Turn high = 0
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
+            ]
+            effects = CreateShip designname = "SM_DRAGON"
+
     ]
 
     [[SWAMP_STANDARD_EP]]
