@@ -20,7 +20,7 @@ Example usage:
     my_industry = AIDependencies.INDUSTRY_PER_POP * my_population
 """
 import freeOrionAIInterface as fo
-from enum import Enum, EnumMeta
+from enum import Enum
 from typing import Dict
 
 # Note re common dictionary lookup structure, "PlanetSize-Dependent-Lookup":
@@ -81,18 +81,7 @@ ALL_EMPIRES = -1
 MINIMUM_GUARD_DISTANCE_TO_HOME_SYSTEM = 2
 
 
-class _TagEnumMeta(EnumMeta):
-    def __new__(metacls, cls, bases, classdict, **kwds):
-        for attribute_name, value in classdict.items():
-            if not attribute_name.startswith("_"):
-                if "_" in value:
-                    raise ValueError(
-                        f"Value cannot contain underscore, it will break tag parsing: '{attribute_name} = {value}'"
-                    )
-        return super().__new__(metacls, cls, bases, classdict, **kwds)
-
-
-class Tags(Enum, metaclass=_TagEnumMeta):
+class Tags(Enum):
     POPULATION = "POPULATION"
     INDUSTRY = "INDUSTRY"
     INFLUENCE = "INFLUENCE"
