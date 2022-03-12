@@ -66,7 +66,7 @@ public:
       * by the GG_ENUM or GG_CLASS_ENUM macro invocations. */
     constexpr void Build(const char* comma_separated_names)
     {
-        if (Count(comma_separated_names) > CAPACITY)
+        if (Count(comma_separated_names, ',') > CAPACITY)
             throw std::invalid_argument("too many comma separated enum vals to build map");
         auto count_names = SplitApply(comma_separated_names, Trim, ',');
         for (size_t i = 0; i < count_names.first; ++i)
@@ -125,14 +125,14 @@ private:
 
 
     // how many times does \a delim appear in text?
-    [[nodiscard]] static constexpr size_t Count(std::string_view text, const char delim = ',')
+    [[nodiscard]] static constexpr size_t Count(std::string_view text, const char delim)
     {
         size_t retval = 1;
         for (size_t i = 0; i < text.length(); ++i)
             retval += text[i] == delim;
         return retval;
     }
-    static constexpr auto comma_count = Count(test_cs_names);
+    static constexpr auto comma_count = Count(test_cs_names, ',');
     static_assert(comma_count == 3);
 
 
@@ -215,8 +215,6 @@ private:
 
 
     [[nodiscard]] static constexpr int ToInt(std::string_view txt) {
-        using C = std::string_view::value_type;
-        static_assert(std::is_same_v<C, char>);
         constexpr std::string_view dec_chars = "0123456789";
         //static_assert(dec_chars.find('5') == 5);
         //static_assert(dec_chars.find('0') == 0);
@@ -224,24 +222,30 @@ private:
         constexpr std::string_view hex_chars = "0123456789abcdef";
         //static_assert(hex_chars.find('b') == 11);
 
-        unsigned char base = Base(txt);
+        auto base = Base(txt);
         if (base == 0)
             return 0;
 
         std::string_view valid_chars = base == 10 ? dec_chars :
             base == 16 ? hex_chars : "";
+        bool is_negative = txt[0] == '-';
+        bool is_hex = base == 16;
 
-        bool negative = txt[0] == '-';
-        size_t idx = negative;
-        int retval = valid_chars.find(txt[idx++]);
-
-        for (; idx < txt.length(); ++idx) {
+        int retval = 0;
+        for (auto c : txt.substr(is_negative + 2*is_hex)) {
             retval *= base;
-            retval += valid_chars.find(txt[idx]);
+            size_t digit = valid_chars.find(c);
+            retval += static_cast<int>(digit);
         }
 
-        return retval * (1 - 2*negative);
+        return retval * (is_negative ? -1 : 1);
     }
+    static_assert(ToInt("-104") == -104);
+    static_assert(ToInt("853104") == 853104);
+    static_assert(ToInt("0") == 0);
+    static_assert(ToInt("0xa0") == 160);
+    static_assert(ToInt("0x5d") == 93);
+
 
     [[nodiscard]] static constexpr EnumType ToEnumType(std::string_view str)
     { return EnumType(ToInt(str)); }
