@@ -723,7 +723,12 @@ class OrbitalColonizationPlan:
 
         # make sure source is valid
         source = universe.getPlanet(self.source)
-        if not (source and source.ownedBy(fo.empireID())):
+        if not (
+            source
+            and source.ownedBy(fo.empireID())
+            and source.speciesName
+            and fo.getSpecies(source.speciesName).canColonize
+        ):
             return False
 
         # appears to be valid
