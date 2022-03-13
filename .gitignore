@@ -60,6 +60,7 @@ DerivedData
 
 # FreeOrion specific
 *.zip
+libpython.py
 /util/Version.cpp
 /packaging/windows_installer.nsi
 /packaging/Info.plist
