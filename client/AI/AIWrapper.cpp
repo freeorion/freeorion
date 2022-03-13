@@ -251,7 +251,7 @@ namespace {
 
         if (!NewFleetOrder::Check(app->EmpireID(), fleet_name, ship_ids,
                                   FleetAggression::FLEET_OBSTRUCTIVE, context))
-        { return 0; } // TODO: why not return INVALID_OBJECT_ID ?
+        { return INVALID_OBJECT_ID; }
 
         auto order = std::make_shared<NewFleetOrder>(app->EmpireID(), fleet_name, ship_ids,
                                                      FleetAggression::FLEET_OBSTRUCTIVE, context);
