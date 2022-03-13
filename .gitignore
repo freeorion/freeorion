@@ -60,6 +60,7 @@ DerivedData
 
 # FreeOrion specific
 *.zip
+libpython.py
 /util/Version.cpp
 /packaging/windows_installer.nsi
 /packaging/Info.plist
@@ -79,6 +80,8 @@ DerivedData
 *.exp
 *.opensdf
 *.res
+/msvc*/*/release/
+/msvc*/*/debug/
 
 # Incremental build files
 *.ipdb
