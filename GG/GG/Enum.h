@@ -40,23 +40,23 @@ public:
 
     [[nodiscard]] constexpr std::string_view operator[](EnumType value) const
     {
-        auto value_it = std::find(m_values.cbegin(), m_values.cend(), value);
-        if (value_it == m_values.cend())
+        auto last_it = m_values.cbegin() + m_size;
+        auto value_it = std::find(m_values.cbegin(), last_it, value);
+        if (value_it == last_it)
             return "None";
         auto dist = std::distance(m_values.cbegin(), value_it);
-        auto name_it = m_names.cbegin();
-        std::advance(name_it, dist);
+        auto name_it = m_names.cbegin() + dist;
         return *name_it;
     }
 
     [[nodiscard]] constexpr EnumType operator[](std::string_view name) const
     {
-        auto name_it = std::find(m_names.cbegin(), m_names.cend(), name);
-        if (name_it == m_names.cend())
+        auto last_it = m_names.cbegin() + m_size;
+        auto name_it = std::find(m_names.cbegin(), last_it, name);
+        if (name_it == last_it)
             return std::numeric_limits<EnumType>::max();
         auto dist = std::distance(m_names.cbegin(), name_it);
-        auto value_it = m_values.cbegin();
-        std::advance(value_it, dist);
+        auto value_it = m_values.cbegin() + dist;
         return *value_it;
     }
 
