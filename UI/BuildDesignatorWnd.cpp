@@ -1158,6 +1158,8 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
 void BuildDesignatorWnd::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
 
+    const ScriptingContext context;
+
     m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
         GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
     // Wnd is manually closed by user
@@ -1212,7 +1214,7 @@ void BuildDesignatorWnd::CompleteConstruction() {
     MoveChildUp(m_enc_detail_panel.get());
     MoveChildUp(m_build_selector.get());
 
-    Clear();
+    Clear(context.ContextObjects());
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::GetBuildTypesShown() const
@@ -1243,7 +1245,7 @@ void BuildDesignatorWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
     SetBuild(queue_idx);
 
-    ScriptingContext context;
+    const ScriptingContext context;
     const ObjectMap& objects = context.ContextObjects();
 
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
@@ -1263,7 +1265,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
             map->CenterOnObject(system_id);
             if (open) {
                 GGHumanClientApp::GetApp()->GetClientUI().GetMapWnd()->SelectSystem(system_id);
-                SelectPlanet(location_id);
+                SelectPlanet(location_id, objects);
             }
         }
     }
@@ -1301,7 +1303,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
     m_enc_detail_panel->Refresh();
 }
 
-void BuildDesignatorWnd::SelectSystem(int system_id) {
+void BuildDesignatorWnd::SelectSystem(int system_id, const ObjectMap& objects) {
     if (system_id == SidePanel::SystemID()) {
         // don't need to do anything.  already showing the requested system.
         return;
@@ -1310,12 +1312,12 @@ void BuildDesignatorWnd::SelectSystem(int system_id) {
     if (system_id != INVALID_OBJECT_ID) {
         // set sidepanel's system and autoselect a suitable planet
         SidePanel::SetSystem(system_id);
-        SelectDefaultPlanet();
+        SelectDefaultPlanet(objects);
     }
 }
 
-void BuildDesignatorWnd::SelectPlanet(int planet_id) {
-    SidePanel::SelectPlanet(planet_id);
+void BuildDesignatorWnd::SelectPlanet(int planet_id, const ObjectMap& objects) {
+    SidePanel::SelectPlanet(planet_id, objects);
     if (planet_id != INVALID_OBJECT_ID)
         m_system_default_planets[SidePanel::SystemID()] = planet_id;
     m_build_selector->SetBuildLocation(this->BuildLocation());
@@ -1352,8 +1354,8 @@ void BuildDesignatorWnd::InitializeWindows() {
     m_build_selector->  InitSizeMove(selector_ul,   selector_ul + selector_wh);
 }
 
-void BuildDesignatorWnd::Reset() {
-    SelectSystem(INVALID_OBJECT_ID);
+void BuildDesignatorWnd::Reset(const ObjectMap& objects) {
+    SelectSystem(INVALID_OBJECT_ID, objects);
     ShowAllTypes(false);            // show all types without populating the list
     HideAvailability(false, false); // hide unavailable items without populating the list
     ShowAvailability(true, false);  // show available items without populating the list
@@ -1361,9 +1363,9 @@ void BuildDesignatorWnd::Reset() {
     m_enc_detail_panel->OnIndex();
 }
 
-void BuildDesignatorWnd::Clear() {
+void BuildDesignatorWnd::Clear(const ObjectMap& objects) {
     SidePanel::SetSystem(INVALID_OBJECT_ID);
-    Reset();
+    Reset(objects);
     m_system_default_planets.clear();
 }
 
@@ -1524,10 +1526,10 @@ void BuildDesignatorWnd::BuildItemRequested(const ProductionQueue::ProductionIte
 void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)
 { BuildQuantityChangedSignal(queue_idx, quantity); }
 
-void BuildDesignatorWnd::SelectDefaultPlanet() {
+void BuildDesignatorWnd::SelectDefaultPlanet(const ObjectMap& objects) {
     int system_id = SidePanel::SystemID();
     if (system_id == INVALID_OBJECT_ID) {
-        this->SelectPlanet(INVALID_OBJECT_ID);
+        this->SelectPlanet(INVALID_OBJECT_ID, objects);
         return;
     }
 
@@ -1537,8 +1539,8 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
     auto it = m_system_default_planets.find(system_id);
     if (it != m_system_default_planets.end()) {
         int planet_id = it->second;
-        if (m_side_panel->PlanetSelectable(planet_id)) {
-            this->SelectPlanet(it->second);
+        if (m_side_panel->PlanetSelectable(planet_id, objects)) {
+            this->SelectPlanet(it->second, objects);
             return;
         }
     }
@@ -1549,16 +1551,16 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
     // only checking visible objects for this clients empire (and not the
     // latest known objects) as an empire shouldn't be able to use a planet or
     // system it can't currently see as a production location.
-    auto sys = Objects().get<System>(system_id);
+    auto sys = objects.get<System>(system_id);
     if (!sys) {
         ErrorLogger() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;
     }
 
-    auto planets = Objects().find<const Planet>(sys->PlanetIDs());
+    auto planets = objects.find<const Planet>(sys->PlanetIDs());
 
     if (planets.empty()) {
-        this->SelectPlanet(INVALID_OBJECT_ID);
+        this->SelectPlanet(INVALID_OBJECT_ID, objects);
         return;
     }
 
@@ -1569,7 +1571,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
 
     for (auto& planet : planets) {
         int planet_id = planet->ID();
-        if (!m_side_panel->PlanetSelectable(planet_id))
+        if (!m_side_panel->PlanetSelectable(planet_id, objects))
             continue;
 
         double planet_pop = planet->GetMeter(MeterType::METER_POPULATION)->Initial();
@@ -1582,5 +1584,5 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
     }
 
     // select top pop planet or invalid planet if no suitable planet found
-    this->SelectPlanet(best_planet_id);
+    this->SelectPlanet(best_planet_id, objects);
 }

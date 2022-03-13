@@ -9,6 +9,7 @@
 
 class SidePanel;
 class EncyclopediaDetailPanel;
+struct ScriptingContext;
 
 class BuildDesignatorWnd : public GG::Wnd {
 public:
@@ -38,15 +39,15 @@ public:
 
     /** Programatically sets this Wnd's selected system.
       * Does not emit a SystemSelectedSignal. */
-    void SelectSystem(int system_id);
+    void SelectSystem(int system_id, const ObjectMap& objects);
 
     /** Programatically sets this Wnd's selected planet.
       * Does not emit a PlanetSelectedSignal. */
-    void SelectPlanet(int planet_id);
+    void SelectPlanet(int planet_id, const ObjectMap& objects);
 
     /** Attempts to find a planet to select, and if successful, selects that
       * planet */
-    void SelectDefaultPlanet();
+    void SelectDefaultPlanet(const ObjectMap& objects);
 
     /** Sets BuildSelector's empire ID to empire of this client, and then calls
       * Update. */
@@ -58,10 +59,10 @@ public:
     /** Sets sidepanel to no system, build location to no planet, refreshes
       * build selector and sets encyclopedia to show nothing, and resets shown
       * types and availabilities to default. */
-    void Reset();
+    void Reset(const ObjectMap& objects);
 
     /** Resets, and also clears default planet selections for each system. */
-    void Clear();
+    void Clear(const ObjectMap& objects);
 
     /** Show or hide indicated types of buildable items */
     void ShowType(BuildType type, bool refresh_list = true);

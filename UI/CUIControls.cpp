@@ -1937,7 +1937,8 @@ void ResourceInfoPanel::SetEmpireID(int empire_id) {
     int old_empire_id = m_empire_id;
     m_empire_id = empire_id;
     if (old_empire_id != m_empire_id) {
-        const Empire* empire = GetEmpire(m_empire_id);
+        const ScriptingContext context;
+        auto empire = context.GetEmpire(m_empire_id);
         const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
         // let a subsequent SetLocalPointsCost call re-set the title to include location info if necessary
         SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
@@ -1952,7 +1953,8 @@ void ResourceInfoPanel::ClearLocalInfo() {
     DetachChild(m_local_stockpile_use);
     DetachChild(m_local_stockpile_use_P_label);
 
-    const Empire* empire = GetEmpire(m_empire_id);
+    const ScriptingContext context;
+    auto empire = context.GetEmpire(m_empire_id);
     const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
 

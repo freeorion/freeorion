@@ -30,15 +30,15 @@ public:
 
     /** Returns the id of the system shown in the SidePanels, or
       * INVALID_OBJECT_ID if no system is shown */
-    static int          SystemID();
+    static int SystemID();
 
     /** Returns the id of the currently-selected planet, or
       * INVALID_OBJECT_ID if no planet is selected */
-    int                 SelectedPlanetID() const;
+    int SelectedPlanetID() const;
 
     /** Returns whether this SidePanel contains an object with the indicated
       * \a object_id that can be selected within the SidePanel. */
-    bool                PlanetSelectable(int planet_id) const;
+    bool PlanetSelectable(int planet_id, const ObjectMap& objects) const;
 
     void PreRender() override;
 
@@ -56,7 +56,7 @@ public:
     /** Selects the planet with id \a planet_id within the current system, if
       * such a planet exists.  All SidePanels' selected planets are set, if
       * those panels have planet selection enabled. */
-    static void         SelectPlanet(int planet_id);
+    static void         SelectPlanet(int planet_id, const ObjectMap& objects);
 
     /** Sets the system currently being viewed in all side panels */
     static void         SetSystem(int system_id);
@@ -100,13 +100,13 @@ private:
 
     void DoLayout();
 
-    void UpdateImpl();                   ///< updates contents quickly.  to be used when meters or other objects' data changes
+    void UpdateImpl(ScriptingContext& context); ///< updates contents quickly.  to be used when meters or other objects' data changes
 
     /** Fully refreshes sidepanel and contents, recreating all contents from
       * stored system id.  All SidePanels are refreshed. */
-    void RefreshInPreRender();
+    void RefreshInPreRender(ScriptingContext& context);
 
-    void RefreshImpl();                  ///< fully refreshes contents.  to be used when objects are created, destroyed or added to system
+    void RefreshImpl(ScriptingContext& context); ///< fully refreshes contents.  to be used when objects are created, destroyed or added to system
 
     /**  Insert all known systems into the SystemName drop down list.*/
     void RefreshSystemNames();
@@ -119,7 +119,7 @@ private:
     void PrevButtonClicked();            ///< responds to user clicking next system button
     void NextButtonClicked();            ///< responts to user clicking previous system button
     /** Respond to the user clicking a planet by selecting it if selection is enabled.*/
-    void PlanetClickedSlot(int planet_id);
+    void PlanetClickedSlot(int planet_id, const ObjectMap& objects);
 
     /** Responds to insertion fleets into system during a turn.  may update colonize buttons. */
     static void FleetsInserted(const std::vector<std::shared_ptr<Fleet>>& fleets);

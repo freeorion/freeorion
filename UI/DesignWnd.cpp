@@ -188,9 +188,6 @@ namespace {
       * ShipDesigns in the DesignWnd and the ProductionWnd. */
     class DisplayedShipDesignManager : public ShipDesignManager::Designs {
     public:
-        DisplayedShipDesignManager()
-        {}
-
         /** Return non-obsolete available ordered ids. */
         std::vector<int> OrderedIDs() const override;
 
@@ -213,7 +210,7 @@ namespace {
 
         /** Return true if design \p id is obsolete or boost::none if \p id is not in
             the manager. */
-        boost::optional<bool> IsObsolete(const int id) const;
+        boost::optional<bool> IsObsolete(const int id, const ScriptingContext& context) const;
         /** Return UI event number that obsoletes \p hull if it is obsolete. */
         boost::optional<int> IsHullObsolete(const std::string& hull) const;
         /** Return UI event number that obsoletes \p part if it is obsolete. */
@@ -430,9 +427,9 @@ namespace {
         ScriptingContext context;
 
         const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const auto maybe_obsolete = manager.IsObsolete(design_id);  // purpose of this obsolescence check is unclear... author didn't comment
+        const auto maybe_obsolete = manager.IsObsolete(design_id, context); // purpose of this obsolescence check is unclear... author didn't comment
         if (maybe_obsolete && !*maybe_obsolete)
-            GGHumanClientApp::GetApp()->Orders().IssueOrder(          // erase design id order : empire should forget this design
+            GGHumanClientApp::GetApp()->Orders().IssueOrder(  // erase design id order : empire should forget this design
                 std::make_shared<ShipDesignOrder>(empire_id, design_id, true),
                 context);
         manager.Remove(design_id);
@@ -667,12 +664,13 @@ namespace {
         // Only OrderedIDs is part of the Designs base class and
         // accessible outside this file.
         GetSavedDesignsManager().CheckPendingDesigns();
+        const ScriptingContext context;
 
         // Remove all obsolete ids from the list
         std::vector<int> retval;
         std::copy_if(m_ordered_design_ids.begin(), m_ordered_design_ids.end(), std::back_inserter(retval),
-                     [this](const int id) {
-                         const auto maybe_obsolete = IsObsolete(id);
+                     [this, &context](const int id) {
+                         const auto maybe_obsolete = IsObsolete(id, context);
                          const auto known_and_not_obsolete = maybe_obsolete ? !*maybe_obsolete : false;
                          return known_and_not_obsolete;
                      });
@@ -785,7 +783,9 @@ namespace {
     { return m_id_to_obsolete_and_loc.count(id); }
 
 
-    boost::optional<bool> DisplayedShipDesignManager::IsObsolete(const int id) const {
+    boost::optional<bool> DisplayedShipDesignManager::IsObsolete(
+        const int id, const ScriptingContext& context) const
+    {
         // A non boost::none value for a specific design overrides the hull and part values
         auto it_id = m_id_to_obsolete_and_loc.find(id);
 
@@ -793,7 +793,7 @@ namespace {
         if (it_id == m_id_to_obsolete_and_loc.end())
             return boost::none;
 
-        const auto design = GetUniverse().GetShipDesign(id);
+        const auto design = context.ContextUniverse().GetShipDesign(id);
         if (!design) {
             ErrorLogger() << "DisplayedShipDesignManager::IsObsolete design id "
                           << id << " is unknown to the server";
@@ -806,7 +806,7 @@ namespace {
         int latest_obsolete_event = -1;
         int latest_unobsolete_event = 0;
 
-        if (const auto maybe_obsolete_design = it_id->second.first) {
+        if (const auto& maybe_obsolete_design = it_id->second.first) {
             if (maybe_obsolete_design->first)
                 latest_obsolete_event = maybe_obsolete_design->second;
             else
@@ -1048,11 +1048,12 @@ namespace {
     boost::optional<AvailabilityManager::DisplayedAvailabilies>
     AvailabilityManager::DisplayedDesignAvailability(const ShipDesign& design) const {
         int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+        const ScriptingContext context;
+        auto empire = context.GetEmpire(empire_id);
         bool available = empire ? empire->ShipDesignAvailable(design) : true;
 
         const auto& manager = GetDisplayedDesignsManager();
-        const auto maybe_obsolete = manager.IsObsolete(design.ID());
+        const auto maybe_obsolete = manager.IsObsolete(design.ID(), context);
         bool is_obsolete = maybe_obsolete && *maybe_obsolete;
 
         return DisplayedXAvailability(available, is_obsolete);
@@ -2490,7 +2491,6 @@ void BasesListBox::Populate() {
         BringRowIntoView(--end());
     if (init_first_row_offset < NumRows())
         BringRowIntoView(std::next(begin(), init_first_row_offset));
-
 }
 
 GG::Pt BasesListBox::ListRowSize()
@@ -2943,14 +2943,16 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG
     if (!design_row)
         return;
     int id = design_row->DesignID();
-    const ShipDesign* design = GetUniverse().GetShipDesign(id);
+
+    const ScriptingContext context;
+    const ShipDesign* design = context.ContextUniverse().GetShipDesign(id);
     if (!design)
         return;
 
     const auto& manager = GetDisplayedDesignsManager();
 
     if (modkeys & GG::MOD_KEY_CTRL && manager.IsKnown(id)) {
-        const auto maybe_obsolete = manager.IsObsolete(id);
+        const auto maybe_obsolete = manager.IsObsolete(id, context);
         bool is_obsolete = maybe_obsolete && *maybe_obsolete;
         SetObsoleteInDisplayedDesigns(id, !is_obsolete);
         Populate();
@@ -3058,7 +3060,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
 
     // Context menu actions
     const auto& manager = GetDisplayedDesignsManager();
-    const auto maybe_obsolete = manager.IsObsolete(design_id);
+    const auto maybe_obsolete = manager.IsObsolete(design_id, context);
     bool is_obsolete = maybe_obsolete && *maybe_obsolete;
     auto toggle_obsolete_design_action = [design_id, is_obsolete, this]() {
         SetObsoleteInDisplayedDesigns(design_id, !is_obsolete);
@@ -4976,10 +4978,10 @@ void DesignWnd::MainPanel::ReplaceDesign() {
             if (new_design_id == INVALID_DESIGN_ID) return;
 
             // Remove the old id from the Empire.
-            const auto maybe_obsolete = manager.IsObsolete(replaced_id);
+            ScriptingContext context;
+            const auto maybe_obsolete = manager.IsObsolete(replaced_id, context);
             bool is_obsolete = maybe_obsolete && *maybe_obsolete;
             if (!is_obsolete) {
-                ScriptingContext context;
                 GGHumanClientApp::GetApp()->Orders().IssueOrder(
                     std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true),
                     context);

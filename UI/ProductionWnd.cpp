@@ -820,13 +820,16 @@ public:
             DoLayout();
     }
 
-    ProdQueueListBox*   GetQueueListBox() { return m_queue_lb.get(); }
+    ProdQueueListBox* GetQueueListBox() { return m_queue_lb.get(); }
 
-    void                SetEmpire(int id) {
-        if (const Empire* empire = GetEmpire(id))
-            SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_EMPIRE")) % empire->Name()));
-        else
+    void SetEmpire(int id) {
+        const ScriptingContext context;
+        if (auto empire = context.GetEmpire(id)) {
+            SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_EMPIRE")) %
+                                   empire->Name()));
+        } else {
             SetName("");
+        }
     }
 
 private:
@@ -907,9 +910,6 @@ ProductionWnd::~ProductionWnd()
 int ProductionWnd::SelectedPlanetID() const
 { return m_build_designator_wnd->SelectedPlanetID(); }
 
-int ProductionWnd::ShownEmpireID() const
-{ return m_empire_shown_id; }
-
 bool ProductionWnd::InWindow(const GG::Pt& pt) const
 { return m_production_info_panel->InWindow(pt) || m_queue_wnd->InWindow(pt) || m_build_designator_wnd->InWindow(pt); }
 
@@ -939,40 +939,40 @@ void ProductionWnd::DoLayout() {
 void ProductionWnd::Render()
 {}
 
-void ProductionWnd::SetEmpireShown(int empire_id) {
+void ProductionWnd::SetEmpireShown(int empire_id, const ScriptingContext& context) {
     if (empire_id != m_empire_shown_id) {
         m_empire_shown_id = empire_id;
-        Refresh();
+        Refresh(context);
     }
 }
 
-void ProductionWnd::Refresh() {
+void ProductionWnd::Refresh(const ScriptingContext& context) {
     // useful at start of turn or when loading empire from save, or when
     // the selected empire shown has changed.
     // because empire object is recreated based on turn update from server,
     // connections of signals emitted from the empire must be remade after
     // getting a turn update
     m_empire_connection.disconnect();
-    if (Empire* empire = GetEmpire(m_empire_shown_id))
+    if (auto empire = context.GetEmpire(m_empire_shown_id))
         m_empire_connection = empire->GetProductionQueue().ProductionQueueChangedSignal.connect(
             boost::bind(&ProductionWnd::ProductionQueueChangedSlot, this));
 
-    UpdateInfoPanel();
-    UpdateQueue();
+    UpdateInfoPanel(context);
+    UpdateQueue(context);
 
     m_build_designator_wnd->Refresh();
 }
 
-void ProductionWnd::Reset() {
+void ProductionWnd::Reset(const ScriptingContext& context) {
     m_empire_shown_id = ALL_EMPIRES;
-    Refresh();
+    Refresh(context);
     m_queue_wnd->GetQueueListBox()->BringRowIntoView(m_queue_wnd->GetQueueListBox()->begin());
 }
 
-void ProductionWnd::Update() {
+void ProductionWnd::Update(const ScriptingContext& context) {
     // useful when empire hasn't changed, but production status of it might have
-    UpdateInfoPanel();
-    UpdateQueue();
+    UpdateInfoPanel(context);
+    UpdateQueue(context);
 
     m_build_designator_wnd->Update();
 }
@@ -1022,19 +1022,20 @@ bool ProductionWnd::PediaVisible()
 void ProductionWnd::CenterOnBuild(int queue_idx, bool open)
 { m_build_designator_wnd->CenterOnBuild(queue_idx, open); }
 
-void ProductionWnd::SelectPlanet(int planet_id) {
-    m_build_designator_wnd->SelectPlanet(planet_id);
-    UpdateInfoPanel();
+void ProductionWnd::SelectPlanet(int planet_id, const ScriptingContext& context) {
+    m_build_designator_wnd->SelectPlanet(planet_id, context.ContextObjects());
+    UpdateInfoPanel(context);
 }
 
-void ProductionWnd::SelectDefaultPlanet()
-{ m_build_designator_wnd->SelectDefaultPlanet(); }
+void ProductionWnd::SelectDefaultPlanet(const ObjectMap& objects)
+{ m_build_designator_wnd->SelectDefaultPlanet(objects); }
 
-void ProductionWnd::SelectSystem(int system_id) { 
+void ProductionWnd::SelectSystem(int system_id) {
     if (system_id != SidePanel::SystemID()) {
-        m_build_designator_wnd->SelectSystem(system_id); 
+        const ScriptingContext context;
+        m_build_designator_wnd->SelectSystem(system_id, context.ContextObjects());
         // refresh so as to correctly highlight builds for selected system
-        Update();
+        Update(context);
     }
 }
 
@@ -1066,16 +1067,17 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
     empire->UpdateProductionQueue(context);
 }
 
-void ProductionWnd::Sanitize()
-{ m_build_designator_wnd->Clear(); }
+void ProductionWnd::Sanitize(const ObjectMap& objects)
+{ m_build_designator_wnd->Clear(objects); }
 
 void ProductionWnd::ProductionQueueChangedSlot() {
-    UpdateInfoPanel();
-    UpdateQueue();
+    const ScriptingContext context;
+    UpdateInfoPanel(context);
+    UpdateQueue(context);
     m_build_designator_wnd->Update();
 }
 
-void ProductionWnd::UpdateQueue() {
+void ProductionWnd::UpdateQueue(const ScriptingContext& context) {
     DebugLogger() << "ProductionWnd::UpdateQueue()";
     ScopedTimer timer("ProductionWnd::UpdateQueue", true);
 
@@ -1094,7 +1096,7 @@ void ProductionWnd::UpdateQueue() {
 
     queue_lb->Clear();
 
-    const Empire* empire = GetEmpire(m_empire_shown_id);
+    auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
 
@@ -1126,9 +1128,7 @@ void ProductionWnd::UpdateQueue() {
         queue_lb->SetFirstRowShown(queue_lb->begin());
 }
 
-void ProductionWnd::UpdateInfoPanel() {
-    ScriptingContext context;
-
+void ProductionWnd::UpdateInfoPanel(const ScriptingContext& context) {
     auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire) {
         m_production_info_panel->SetName(UserString("PRODUCTION_WND_TITLE"));

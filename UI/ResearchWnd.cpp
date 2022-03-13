@@ -369,7 +369,7 @@ public:
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ResearchQueue ListBox");
 
-        SetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+        SetEmpire(GGHumanClientApp::GetApp()->EmpireID(), ScriptingContext{});
 
         AttachChild(m_queue_lb);
 
@@ -389,8 +389,8 @@ public:
 
     ResearchQueueListBox* GetQueueListBox() { return m_queue_lb.get(); }
 
-    void SetEmpire(int id) {
-        if (const Empire* empire = GetEmpire(id))
+    void SetEmpire(int id, const ScriptingContext& context) {
+        if (auto empire = context.GetEmpire(id))
             SetName(boost::io::str(FlexibleFormat(UserString("RESEARCH_QUEUE_EMPIRE")) % empire->Name()));
         else
             SetName("");
@@ -398,8 +398,9 @@ public:
 
 private:
     void DoLayout() {
-        m_queue_lb->SizeMove(GG::Pt(GG::X0, GG::Y0),
-                                GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
+        m_queue_lb->SizeMove(
+            GG::Pt(GG::X0, GG::Y0),
+            GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
     }
 
     std::shared_ptr<ResearchQueueListBox>   m_queue_lb;
@@ -490,30 +491,30 @@ void ResearchWnd::DoLayout(bool init) {
     m_tech_tree_wnd->SizeMove(tech_tree_wnd_ul, tech_tree_wnd_ul + tech_tree_wnd_size);
 }
 
-void ResearchWnd::Refresh() {
+void ResearchWnd::Refresh(const ScriptingContext& context) {
     // useful at start of turn or when loading empire from save.
     // since empire object is recreated based on turn update from server, 
     // connections of signals emitted from the empire must be remade
     m_empire_connection.disconnect();
 
-    if (Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID())) {
+    if (auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID())) {
         m_empire_connection = empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
             boost::bind(&ResearchWnd::ResearchQueueChangedSlot, this));
     }
-    Update();
+    Update(context);
 }
 
-void ResearchWnd::Reset() {
+void ResearchWnd::Reset(const ScriptingContext& context) {
     m_tech_tree_wnd->Reset();
-    UpdateQueue();
-    UpdateInfoPanel();
+    UpdateQueue(context);
+    UpdateInfoPanel(context);
     m_queue_wnd->GetQueueListBox()->BringRowIntoView(m_queue_wnd->GetQueueListBox()->begin());
 }
 
-void ResearchWnd::Update() {
+void ResearchWnd::Update(const ScriptingContext& context) {
     m_tech_tree_wnd->Update();
-    UpdateQueue();
-    UpdateInfoPanel();
+    UpdateQueue(context);
+    UpdateInfoPanel(context);
 }
 
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
@@ -576,24 +577,25 @@ void ResearchWnd::Sanitize()
 void ResearchWnd::Render()
 {}
 
-void ResearchWnd::SetEmpireShown(int empire_id) {
+void ResearchWnd::SetEmpireShown(int empire_id, const ScriptingContext& context) {
     if (empire_id != m_empire_shown_id) {
         m_empire_shown_id = empire_id;
-        Refresh();
+        Refresh(context);
     }
 }
 
 void ResearchWnd::ResearchQueueChangedSlot() {
-    UpdateQueue();
-    UpdateInfoPanel();
+    const ScriptingContext context;
+    UpdateQueue(context);
+    UpdateInfoPanel(context);
     m_tech_tree_wnd->Update();
 }
 
-void ResearchWnd::UpdateQueue() {
+void ResearchWnd::UpdateQueue(const ScriptingContext& context) {
     DebugLogger() << "ResearchWnd::UpdateQueue()";
     ScopedTimer timer("ResearchWnd::UpdateQueue", true);
 
-    m_queue_wnd->SetEmpire(m_empire_shown_id);
+    m_queue_wnd->SetEmpire(m_empire_shown_id, context);
 
     QueueListBox* queue_lb = m_queue_wnd->GetQueueListBox();
     auto first_visible_queue_row = m_queue_wnd->GetQueueListBox()->IteraterIndex(queue_lb->FirstRowShown());
@@ -601,7 +603,7 @@ void ResearchWnd::UpdateQueue() {
         first_visible_queue_row = 0;
     queue_lb->Clear();
 
-    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
 
@@ -616,8 +618,7 @@ void ResearchWnd::UpdateQueue() {
         queue_lb->BringRowIntoView(std::next(queue_lb->begin(), first_visible_queue_row));
 }
 
-void ResearchWnd::UpdateInfoPanel() {
-    const ScriptingContext context;
+void ResearchWnd::UpdateInfoPanel(const ScriptingContext& context) {
     auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire) {
         m_research_info_panel->SetName(UserString("RESEARCH_WND_TITLE"));

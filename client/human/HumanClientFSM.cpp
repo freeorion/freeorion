@@ -1104,12 +1104,14 @@ PlayingTurn::PlayingTurn(my_context ctx) :
 
     Client().GetClientUI().GetPlayerListWnd()->Refresh();
 
+    ScriptingContext context;
+
     Client().Register(Client().GetClientUI().GetMapWnd());
-    Client().GetClientUI().GetMapWnd()->InitTurn();
+    Client().GetClientUI().GetMapWnd()->InitTurn(context);
     Client().GetClientUI().GetMapWnd()->RegisterWindows(); // only useful at game start but InitTurn() takes a long time, don't want to display windows before content is ready.  could go in WaitingForGameStart dtor but what if it is given e.g. an error reaction?
     // TODO: reselect last fleet if stored in save game ui data?
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
-        boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");
+        boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % context.current_turn) + "\n");
 
     if (Client().GetApp()->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
         Client().GetClientUI().GetMapWnd()->EnableOrderIssuing(true);

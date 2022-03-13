@@ -129,7 +129,7 @@ public:
 
     void EnableOrderIssuing(bool enable = true);                 //!< enables or disables order issuing and pressing the turn button.
 
-    void InitTurn();                                             //!< called at the start of each turn
+    void InitTurn(ScriptingContext& context);                    //!< called at the start of each turn
     void MidTurnUpdate();                                        //!< called after receiving updated Universe during turn processing, but not when the full turn update is received
 
     void RestoreFromSaveData(const SaveGameUIData& data);        //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
@@ -171,6 +171,7 @@ public:
 
     void SelectSystem(int systemID); //!< programatically selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
     void ReselectLastSystem();       //!< re-selects the most recently selected system, if a valid one exists
+    void SelectPlanet(int planetID, const ScriptingContext& context); //!< programatically selects planets on sidepanels.  catches signals from production wnd or sidepanel for when the user changes the selected planet
     void SelectPlanet(int planetID); //!< programatically selects planets on sidepanels.  catches signals from production wnd or sidepanel for when the user changes the selected planet
     void SelectFleet(int fleetID);   //!< programatically selects fleets by ID
 
@@ -397,8 +398,8 @@ private:
     void HideSidePanelAndRememberIfItWasVisible();
     void RestoreSidePanel();
 
-    bool ToggleResearch();
-    void ShowResearch();
+    bool ToggleResearch(const ScriptingContext& context);
+    void ShowResearch(const ScriptingContext& context);
     void HideResearch();
 
     bool ToggleProduction();
