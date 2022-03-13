@@ -295,7 +295,7 @@ namespace FreeOrionPython {
                                                         py::return_value_policy<py::return_by_value>()
                                                     ))
             .def("getTechStatus",                   &Empire::GetTechStatus)
-            .def("researchProgress",                &Empire::ResearchProgress)
+            .def("researchProgress",                +[](const Empire& e, const std::string& tech) { return e.ResearchProgress(tech, ScriptingContext{}); })
             .add_property("researchQueue",          make_function(&Empire::GetResearchQueue,        py::return_internal_reference<>()))
 
             .def("policyAdopted",                   +[](const Empire& e, const std::string& policy) { return e.PolicyAdopted(policy); })
@@ -453,13 +453,13 @@ namespace FreeOrionPython {
             .add_property("description",            make_function(&Tech::Description,       py::return_value_policy<py::copy_const_reference>()))
             .add_property("shortDescription",       make_function(&Tech::ShortDescription,  py::return_value_policy<py::copy_const_reference>()))
             .add_property("category",               make_function(&Tech::Category,          py::return_value_policy<py::copy_const_reference>()))
-            .def("researchCost",                    &Tech::ResearchCost)
-            .def("perTurnCost",                     &Tech::PerTurnCost)
-            .def("researchTime",                    &Tech::ResearchTime)
+            .def("researchCost",                    +[](const Tech& t, int empire_id) { return t.ResearchCost(empire_id, ScriptingContext{}); })
+            .def("perTurnCost",                     +[](const Tech& t, int empire_id) { return t.PerTurnCost(empire_id, ScriptingContext{}); })
+            .def("researchTime",                    +[](const Tech& t, int empire_id) { return t.ResearchTime(empire_id, ScriptingContext{}); })
             .add_property("prerequisites",          make_function(&Tech::Prerequisites,     py::return_internal_reference<>()))
             .add_property("unlockedTechs",          make_function(&Tech::UnlockedTechs,     py::return_internal_reference<>()))
             .add_property("unlockedItems",          make_function(&Tech::UnlockedItems,     py::return_internal_reference<>()))
-            .def("recursivePrerequisites",          +[](const Tech& tech, int empire_id) -> std::vector<std::string> { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id); },
+            .def("recursivePrerequisites",          +[](const Tech& tech, int empire_id) -> std::vector<std::string> { return GetTechManager().RecursivePrereqs(tech.Name(), empire_id, true, ScriptingContext{}); },
                                                     py::return_value_policy<py::return_by_value>())
         ;
 

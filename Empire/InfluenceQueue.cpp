@@ -107,7 +107,7 @@ const InfluenceQueue::Element& InfluenceQueue::operator[](int i) const
 { return operator[](static_cast<std::size_t>(i)); }
 
 void InfluenceQueue::Update(const ScriptingContext& context) {
-    const Empire* empire = GetEmpire(m_empire_id);
+    auto empire = context.GetEmpire(m_empire_id);
     if (!empire) {
         ErrorLogger() << "InfluenceQueue::Update passed null empire.  doing nothing.";
         m_projects_in_progress = 0;

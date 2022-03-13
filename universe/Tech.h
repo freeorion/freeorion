@@ -25,6 +25,7 @@ namespace ValueRef {
 }
 class TechManager;
 struct UnlockableItem;
+struct ScriptingContext;
 
 /** encasulates the data for a single FreeOrion technology */
 class FO_COMMON_API Tech {
@@ -75,12 +76,12 @@ public:
     const std::string&  Name() const                { return m_name; }              //!< returns name of this tech
     const std::string&  Description() const         { return m_description; }       //!< Returns the text description of this tech
     const std::string&  ShortDescription() const    { return m_short_description; } //!< Returns the single-line short text description of this tech
-    std::string         Dump(unsigned short ntabs = 0) const;                                               //!< Returns a text representation of this object
-    const std::string&  Category() const            { return m_category; }          //!< retursn the name of the category to which this tech belongs
-    float               ResearchCost(int empire_id) const;                          //!< returns the total research cost in RPs required to research this tech
-    float               PerTurnCost(int empire_id) const;                           //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech
-    int                 ResearchTime(int empire_id) const;                          //!< returns the number of turns required to research this tech, if ResearchCost() RPs are spent per turn
-    bool                Researchable() const        { return m_researchable; }      //!< returns whether this tech is researchable by players and appears on the tech tree
+    std::string         Dump(unsigned short ntabs = 0) const;                               //!< Returns a text representation of this object
+    const std::string&  Category() const            { return m_category; }                  //!< retursn the name of the category to which this tech belongs
+    float               ResearchCost(int empire_id, const ScriptingContext& context) const; //!< returns the total research cost in RPs required to research this tech
+    float               PerTurnCost(int empire_id, const ScriptingContext& context) const;  //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech
+    int                 ResearchTime(int empire_id, const ScriptingContext& context) const; //!< returns the number of turns required to research this tech, if ResearchCost() RPs are spent per turn
+    bool                Researchable() const        { return m_researchable; }              //!< returns whether this tech is researchable by players and appears on the tech tree
 
     const std::set<std::string>&    Tags() const    { return m_tags; }
 
@@ -208,17 +209,19 @@ public:
     [[nodiscard]] std::vector<const Tech*> AllNextTechs(const std::set<std::string>& known_techs);
 
     /** returns the cheapest researchable tech */
-    [[nodiscard]] const Tech*              CheapestNextTech(const std::set<std::string>& known_techs, int empire_id);
+    [[nodiscard]] const Tech* CheapestNextTech(
+        const std::set<std::string>& known_techs, int empire_id,
+        const ScriptingContext& context);
 
     /** returns all researchable techs that progress from the given known techs to the given desired tech */
-    [[nodiscard]] std::vector<const Tech*> NextTechsTowards(const std::set<std::string>& known_techs,
-                                                            const std::string& desired_tech,
-                                                            int empire_id);
+    [[nodiscard]] std::vector<const Tech*> NextTechsTowards(
+        const std::set<std::string>& known_techs,
+        const std::string& desired_tech, int empire_id);
 
     /** returns the cheapest researchable tech that progresses from the given known techs to the given desired tech */
-    [[nodiscard]] const Tech*              CheapestNextTechTowards(const std::set<std::string>& known_techs,
-                                                                   const std::string& desired_tech,
-                                                                   int empire_id);
+    [[nodiscard]] const Tech* CheapestNextTechTowards(
+        const std::set<std::string>& known_techs, const std::string& desired_tech,
+        int empire_id, const ScriptingContext& context);
 
     [[nodiscard]] size_t                   size() const;
 
@@ -237,8 +240,9 @@ public:
     /** Returns names of indicated tech's prerequisites, and all prereqs of
       * those techs, etc. recursively. If \a min_required is false then prereqs
       * will be included and recursed into even if already known to the empire. */
-    [[nodiscard]] std::vector<std::string> RecursivePrereqs(const std::string& tech_name, int empire_id,
-                                                            bool min_required = true) const;
+    [[nodiscard]] std::vector<std::string> RecursivePrereqs(
+        const std::string& tech_name, int empire_id, bool min_required,
+        const ScriptingContext& context) const;
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for

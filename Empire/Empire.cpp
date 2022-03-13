@@ -623,14 +623,14 @@ bool Empire::HasResearchedPrereqAndUnresearchedPrereq(const std::string& name) c
 const ResearchQueue& Empire::GetResearchQueue() const
 { return m_research_queue; }
 
-float Empire::ResearchProgress(const std::string& name) const {
+float Empire::ResearchProgress(const std::string& name, const ScriptingContext& context) const {
     auto it = m_research_progress.find(name);
     if (it == m_research_progress.end())
         return 0.0f;
     const Tech* tech = GetTech(it->first);
     if (!tech)
         return 0.0f;
-    float tech_cost = tech->ResearchCost(m_id);
+    float tech_cost = tech->ResearchCost(m_id, context);
     return it->second * tech_cost;
 }
 
@@ -655,7 +655,7 @@ const std::string& Empire::TopPriorityEnqueuedTech() const {
     return tech;
 }
 
-const std::string& Empire::MostExpensiveEnqueuedTech() const {
+const std::string& Empire::MostExpensiveEnqueuedTech(const ScriptingContext& context) const {
     if (m_research_queue.empty())
         return EMPTY_STRING;
     float biggest_cost = -99999.9f; // arbitrary small number
@@ -666,7 +666,7 @@ const std::string& Empire::MostExpensiveEnqueuedTech() const {
         const Tech* tech = GetTech(elem.name);
         if (!tech)
             continue;
-        float tech_cost = tech->ResearchCost(m_id);
+        float tech_cost = tech->ResearchCost(m_id, context);
         if (tech_cost > biggest_cost) {
             biggest_cost = tech_cost;
             best_elem = &elem;
@@ -678,7 +678,7 @@ const std::string& Empire::MostExpensiveEnqueuedTech() const {
     return EMPTY_STRING;
 }
 
-const std::string& Empire::LeastExpensiveEnqueuedTech() const {
+const std::string& Empire::LeastExpensiveEnqueuedTech(const ScriptingContext& context) const {
     if (m_research_queue.empty())
         return EMPTY_STRING;
     float smallest_cost = 999999.9f; // arbitrary large number
@@ -689,7 +689,7 @@ const std::string& Empire::LeastExpensiveEnqueuedTech() const {
         const Tech* tech = GetTech(elem.name);
         if (!tech)
             continue;
-        float tech_cost = tech->ResearchCost(m_id);
+        float tech_cost = tech->ResearchCost(m_id, context);
         if (tech_cost < smallest_cost) {
             smallest_cost = tech_cost;
             best_elem = &elem;
@@ -720,7 +720,7 @@ const std::string& Empire::MostRPSpentEnqueuedTech() const {
     return EMPTY_STRING;
 }
 
-const std::string& Empire::MostRPCostLeftEnqueuedTech() const {
+const std::string& Empire::MostRPCostLeftEnqueuedTech(const ScriptingContext& context) const {
     float most_left = -999999.9f;  // arbitrary small number
     const std::map<std::string, float>::value_type* best_progress = nullptr;
 
@@ -733,7 +733,7 @@ const std::string& Empire::MostRPCostLeftEnqueuedTech() const {
         if (!m_research_queue.InQueue(tech_name))
             continue;
 
-        float rp_total_cost = tech->ResearchCost(m_id);
+        float rp_total_cost = tech->ResearchCost(m_id, context);
         float rp_left = std::max(0.0f, rp_total_cost - rp_spent);
 
         if (rp_left > most_left) {
@@ -761,7 +761,7 @@ const std::string& Empire::MostExpensiveResearchableTech() const {
     return EMPTY_STRING;    // TODO: IMPLEMENT THIS
 }
 
-const std::string& Empire::LeastExpensiveResearchableTech() const {
+const std::string& Empire::LeastExpensiveResearchableTech(const ScriptingContext& context) const {
     return EMPTY_STRING;    // TODO: IMPLEMENT THIS
 }
 
@@ -769,7 +769,7 @@ const std::string& Empire::MostRPSpentResearchableTech() const {
     return EMPTY_STRING;    // TODO: IMPLEMENT THIS
 }
 
-const std::string& Empire::MostRPCostLeftResearchableTech() const {
+const std::string& Empire::MostRPCostLeftResearchableTech(const ScriptingContext& context) const {
     return EMPTY_STRING;    // TODO: IMPLEMENT THIS
 }
 
@@ -1512,7 +1512,9 @@ void Empire::ResumeResearch(const std::string& name){
         it->paused = false;
 }
 
-void Empire::SetTechResearchProgress(const std::string& name, float progress) {
+void Empire::SetTechResearchProgress(const std::string& name, float progress,
+                                     const ScriptingContext& context)
+{
     const Tech* tech = GetTech(name);
     if (!tech) {
         ErrorLogger() << "Empire::SetTechResearchProgress no such tech as: " << name;
@@ -1526,9 +1528,9 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress) {
     m_research_progress[name] = clamped_progress;
 
     // if tech is complete, ensure it is on the queue, so it will be researched next turn
-    if (clamped_progress >= tech->ResearchCost(m_id) &&
-            !m_research_queue.InQueue(name))
-        m_research_queue.push_back(name);
+    if (clamped_progress >= tech->ResearchCost(m_id, context) &&
+        !m_research_queue.InQueue(name))
+    { m_research_queue.push_back(name); }
 
     // don't just give tech to empire, as another effect might reduce its progress before end of turn
 }
@@ -2069,7 +2071,7 @@ namespace {
     }
 }
 
-std::vector<std::string> Empire::CheckResearchProgress() {
+std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& context) {
     SanitizeResearchQueue(m_research_queue);
 
     float spent_rp{0.0f};
@@ -2084,12 +2086,12 @@ std::vector<std::string> Empire::CheckResearchProgress() {
             continue;
         }
         float& progress = m_research_progress[elem.name];
-        float tech_cost = tech->ResearchCost(m_id);
+        float tech_cost = tech->ResearchCost(m_id, context);
         progress += elem.allocated_rp / std::max(EPSILON, tech_cost);
         spent_rp += elem.allocated_rp;
-        if (tech->ResearchCost(m_id) - EPSILON <= progress * tech_cost) {
+        if (tech_cost - EPSILON <= progress * tech_cost) {
             m_research_progress.erase(elem.name);
-            to_erase_from_queue_and_grant_next_turn.emplace_back(elem.name);
+            to_erase_from_queue_and_grant_next_turn.push_back(elem.name);
         }
     }
 
@@ -2105,7 +2107,8 @@ std::vector<std::string> Empire::CheckResearchProgress() {
         techs_not_suitable_for_auto_allocation.insert(elem.name);
 
     // for all available and suitable techs, store ordered by cost to complete
-    std::multimap<double, std::string> costs_to_complete_available_unpaused_techs;
+    std::vector<std::pair<double, std::string>> costs_to_complete_available_unpaused_techs;
+    costs_to_complete_available_unpaused_techs.reserve(GetTechManager().size());
     for (const auto& tech : GetTechManager()) {
         const std::string& tech_name = tech->Name();
         if (techs_not_suitable_for_auto_allocation.count(tech_name) > 0)
@@ -2114,32 +2117,33 @@ std::vector<std::string> Empire::CheckResearchProgress() {
             continue;
         if (!tech->Researchable())
             continue;
-        double progress = this->ResearchProgress(tech_name);
-        double total_cost = tech->ResearchCost(m_id);
+        double progress = this->ResearchProgress(tech_name, context);
+        double total_cost = tech->ResearchCost(m_id, context);
         if (progress >= total_cost)
             continue;
-        costs_to_complete_available_unpaused_techs.emplace(total_cost - progress, tech_name);
+        costs_to_complete_available_unpaused_techs.emplace_back(total_cost - progress, tech_name);
     }
+    std::sort(costs_to_complete_available_unpaused_techs.begin(),
+              costs_to_complete_available_unpaused_techs.end());
 
     // in order of minimum additional cost to complete, allocate RP to
     // techs up to available RP and per-turn limits
-    for (auto const& cost_tech : costs_to_complete_available_unpaused_techs) {
+    for (auto const& [tech_cost, tech_name] : costs_to_complete_available_unpaused_techs) {
         if (rp_left_to_spend <= EPSILON)
             break;
 
-        const Tech* tech = GetTech(cost_tech.second);
+        const Tech* tech = GetTech(tech_name);
         if (!tech)
             continue;
 
         //DebugLogger() << "extra tech: " << cost_tech.second << " needs: " << cost_tech.first << " more RP to finish";
 
-        float RPs_per_turn_limit = tech->PerTurnCost(m_id);
-        float tech_total_cost = tech->ResearchCost(m_id);
-        float progress_fraction = m_research_progress[cost_tech.second];
+        float RPs_per_turn_limit = tech->PerTurnCost(m_id, context);
+        float progress_fraction = m_research_progress[tech_name];
 
         float progress_fraction_left = 1.0f - progress_fraction;
-        float max_progress_per_turn = RPs_per_turn_limit / tech_total_cost;
-        float progress_possible_with_available_rp = rp_left_to_spend / tech_total_cost;
+        float max_progress_per_turn = RPs_per_turn_limit / tech_cost;
+        float progress_possible_with_available_rp = rp_left_to_spend / tech_cost;
 
         //DebugLogger() << "... progress left: " << progress_fraction_left
         //              << " max per turn: " << max_progress_per_turn
@@ -2149,13 +2153,13 @@ std::vector<std::string> Empire::CheckResearchProgress() {
             progress_fraction_left,
             std::min(max_progress_per_turn, progress_possible_with_available_rp));
 
-        float consumed_rp = progress_increase * tech_total_cost;
+        float consumed_rp = progress_increase * tech_cost;
 
-        m_research_progress[cost_tech.second] += progress_increase;
+        m_research_progress[tech_name] += progress_increase;
         rp_left_to_spend -= consumed_rp;
 
-        if (tech->ResearchCost(m_id) - EPSILON <= m_research_progress[cost_tech.second] * tech_total_cost)
-            to_erase_from_queue_and_grant_next_turn.emplace_back(cost_tech.second);
+        if (tech_cost - EPSILON <= m_research_progress[tech_name] * tech_cost)
+            to_erase_from_queue_and_grant_next_turn.push_back(tech_name);
 
         //DebugLogger() << "... allocated: " << consumed_rp << " to increase progress by: " << progress_increase;
     }
@@ -2675,15 +2679,16 @@ void Empire::UpdateResourcePools(const ScriptingContext& context) {
     // updating queues, allocated_rp, distribution and growth each update their
     // respective pools, (as well as the ways in which the resources are used,
     // which needs to be done simultaneously to keep things consistent)
-    UpdateResearchQueue(context.ContextObjects());
+    UpdateResearchQueue(context);
     UpdateProductionQueue(context);
     UpdateInfluenceSpending(context);
     UpdatePopulationGrowth(context.ContextObjects());
 }
 
-void Empire::UpdateResearchQueue(const ObjectMap& objects) {
-    m_resource_pools[ResourceType::RE_RESEARCH]->Update(objects);
-    m_research_queue.Update(m_resource_pools[ResourceType::RE_RESEARCH]->TotalAvailable(), m_research_progress);
+void Empire::UpdateResearchQueue(const ScriptingContext& context) {
+    m_resource_pools[ResourceType::RE_RESEARCH]->Update(context.ContextObjects());
+    m_research_queue.Update(m_resource_pools[ResourceType::RE_RESEARCH]->TotalAvailable(),
+                            m_research_progress, context);
     m_resource_pools[ResourceType::RE_RESEARCH]->ChangedSignal();
 }
 

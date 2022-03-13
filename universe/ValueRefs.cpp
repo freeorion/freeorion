@@ -1352,11 +1352,11 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
     std::function<std::string (const Empire&)> empire_property{nullptr};
 
     if (property_name == "OwnerLeastExpensiveEnqueuedTech")
-        empire_property = &Empire::LeastExpensiveEnqueuedTech;
+        empire_property = [&context](const auto& empire) { return empire.LeastExpensiveEnqueuedTech(context); };
     else if (property_name == "OwnerMostExpensiveEnqueuedTech")
-        empire_property = &Empire::MostExpensiveEnqueuedTech;
+        empire_property = [&context](const auto& empire) { return empire.MostExpensiveEnqueuedTech(context); };
     else if (property_name == "OwnerMostRPCostLeftEnqueuedTech")
-        empire_property = &Empire::MostRPCostLeftEnqueuedTech;
+        empire_property = [&context](const auto& empire) { return empire.MostRPCostLeftEnqueuedTech(context); };
     else if (property_name == "OwnerMostRPSpentEnqueuedTech")
         empire_property = &Empire::MostRPSpentEnqueuedTech;
     else if (property_name == "OwnerTopPriorityEnqueuedTech")
@@ -2503,15 +2503,15 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
 
     // unindexed empire properties
     if (variable_name == "LowestCostEnqueuedTech")
-        empire_property = &Empire::LeastExpensiveEnqueuedTech;
+        empire_property = [&context](const Empire& e) { return e.LeastExpensiveEnqueuedTech(context); };
     else if (variable_name == "HighestCostEnqueuedTech")
-        empire_property = &Empire::MostExpensiveEnqueuedTech;
+        empire_property = [&context](const Empire& e) { return e.MostExpensiveEnqueuedTech(context); };
     else if (variable_name == "TopPriorityEnqueuedTech")
         empire_property = &Empire::TopPriorityEnqueuedTech;
     else if (variable_name == "MostSpentEnqueuedTech")
         empire_property = &Empire::MostRPSpentEnqueuedTech;
     else if (variable_name == "LowestCostResearchableTech")
-        empire_property = &Empire::LeastExpensiveResearchableTech;
+        empire_property = [&context](const auto& empire) { return empire.LeastExpensiveResearchableTech(context); };
     else if (variable_name == "HighestCostResearchableTech")
         empire_property = &Empire::MostExpensiveResearchableTech;
     else if (variable_name == "TopPriorityResearchableTech")
@@ -2643,7 +2643,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
             const Tech* tech = GetTech(tech_name);
             if (!tech)
                 continue;
-            float rc = tech->ResearchCost(empire2_id);
+            float rc = tech->ResearchCost(empire2_id, context);
             if (rc > highest_cost) {
                 highest_cost = rc;
                 retval = tech_name;

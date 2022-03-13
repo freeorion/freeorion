@@ -307,7 +307,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
 
         if (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
             // AI could safely disconnect only if empire was eliminated
-            const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
+            auto empire = m_server.Empires().GetEmpire(m_server.PlayerEmpireID(id));
             if (empire) {
                 if (!empire->Eliminated()) {
                     must_quit = true;

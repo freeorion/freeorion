@@ -3648,9 +3648,10 @@ void SetEmpireTechProgress::Execute(ScriptingContext& context) const {
         return;
     }
 
-    ScriptingContext::CurrentValueVariant cvv{empire->ResearchProgress(tech_name)};
+    ScriptingContext::CurrentValueVariant cvv{empire->ResearchProgress(tech_name, context)};
     ScriptingContext progress_context{context, cvv};
-    empire->SetTechResearchProgress(tech_name, m_research_progress->Eval(progress_context));
+    empire->SetTechResearchProgress(tech_name, m_research_progress->Eval(progress_context),
+                                    context);
 }
 
 std::string SetEmpireTechProgress::Dump(unsigned short ntabs) const {

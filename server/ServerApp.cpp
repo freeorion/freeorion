@@ -1874,7 +1874,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
         return false;
     }
 
-    Empire* empire = GetEmpire(empire_id);
+    auto empire = m_empires.GetEmpire(empire_id);
     if (!empire) {
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_NONPLAYER_CANNOT_CONCEDE"), false));
         return false;
@@ -2155,7 +2155,7 @@ void ServerApp::UpdatePartialOrders(int empire_id, const OrderSet& added, const 
 }
 
 void ServerApp::RevokeEmpireTurnReadyness(int empire_id) {
-    if (auto* empire = GetEmpire(empire_id))
+    if (auto empire = m_empires.GetEmpire(empire_id))
         empire->SetReady(false);
 }
 
@@ -2166,7 +2166,7 @@ bool ServerApp::AllOrdersReceived() {
     bool all_orders_received = true;
     for (const auto& empire_orders : m_turn_sequence) {
         bool empire_orders_received = true;
-        const auto empire = GetEmpire(empire_orders.first);
+        const auto empire = m_empires.GetEmpire(empire_orders.first);
         if (!empire) {
             ErrorLogger() << " ... invalid empire id in turn sequence: "<< empire_orders.first;
             continue;
@@ -3581,7 +3581,8 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
 void ServerApp::PostCombatProcessTurns() {
     ScopedTimer timer("ServerApp::PostCombatProcessTurns");
 
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager,m_supply_manager};
+    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
+                             m_species_manager, m_supply_manager};
 
     // post-combat visibility update
     m_universe.UpdateEmpireObjectVisibilities(m_empires);
@@ -3656,7 +3657,7 @@ void ServerApp::PostCombatProcessTurns() {
         if (empire->Eliminated())
             continue;   // skip eliminated empires
 
-        for (const auto& tech : empire->CheckResearchProgress())
+        for (const auto& tech : empire->CheckResearchProgress(context))
             empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(tech);
         empire->CheckProductionProgress(context);
         empire->CheckInfluenceProgress();

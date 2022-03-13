@@ -15,7 +15,7 @@ namespace {
         float RPs, const std::map<std::string, float>& research_progress,
         const std::map<std::string, TechStatus>& research_status,
         ResearchQueue::QueueType& queue, float& total_RPs_spent,
-        int& projects_in_progress, int empire_id)
+        int& projects_in_progress, int empire_id, const ScriptingContext& context)
     {
         total_RPs_spent = 0.0f;
         projects_in_progress = 0;
@@ -42,10 +42,10 @@ namespace {
 
             if (researchable && !elem.paused) {
                 auto progress_it = research_progress.find(elem.name);
-                float tech_cost = tech->ResearchCost(empire_id);
+                float tech_cost = tech->ResearchCost(empire_id, context);
                 float progress = progress_it == research_progress.end() ? 0.0f : progress_it->second;
                 float RPs_needed = tech_cost - progress*tech_cost;
-                int tech_min_turns = std::max(1, tech ? tech->ResearchTime(empire_id) : 1);
+                int tech_min_turns = std::max(1, tech ? tech->ResearchTime(empire_id, context) : 1);
 
                 float RPs_per_turn_limit = tech ? (tech_cost / tech_min_turns) : 1.0f;
                 float RPs_to_spend = std::min(RPs_needed, RPs_per_turn_limit);
@@ -151,9 +151,11 @@ const ResearchQueue::Element& ResearchQueue::operator[](int i) const {
     return m_queue[i];
 }
 
-void ResearchQueue::Update(float RPs, const std::map<std::string, float>& research_progress) {
+void ResearchQueue::Update(float RPs, const std::map<std::string, float>& research_progress,
+                           const ScriptingContext& context)
+{
     // status of all techs for this empire
-    const Empire* empire = GetEmpire(m_empire_id);
+    auto empire = context.GetEmpire(m_empire_id);
     if (!empire) {
         ErrorLogger() << "ResearchQueue::Update passed null empire.  doing nothing.";
         m_projects_in_progress = 0;
@@ -168,7 +170,8 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     }
 
     SetTechQueueElementSpending(RPs, research_progress, sim_tech_status_map, m_queue,
-                                m_total_RPs_spent, m_projects_in_progress, m_empire_id);
+                                m_total_RPs_spent, m_projects_in_progress, m_empire_id,
+                                context);
 
     if (m_queue.empty()) {
         ResearchQueueChangedSignal();
@@ -264,8 +267,8 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
             const std::string& tech_name = m_queue[cur_tech].name;
             const Tech* tech = GetTech(tech_name);
             float progress = dpsim_research_progress[cur_tech];
-            float tech_cost = tech ? tech->ResearchCost(m_empire_id) : 0.0f;
-            int tech_min_turns = std::max(1, tech ? tech->ResearchTime(m_empire_id) : 1);
+            float tech_cost = tech ? tech->ResearchCost(m_empire_id, context) : 0.0f;
+            int tech_min_turns = std::max(1, tech ? tech->ResearchTime(m_empire_id, context) : 1);
 
             float RPs_needed = tech ? tech_cost * (1.0f - std::min(progress, 1.0f)) : 0.0f;
             float RPs_per_turn_limit = tech ? (tech_cost / tech_min_turns) : 1.0f;
@@ -326,10 +329,10 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 }
 
 void ResearchQueue::push_back(const std::string& tech_name, bool paused)
-{ m_queue.push_back(Element(tech_name, m_empire_id, 0.0f, -1, paused)); }
+{ m_queue.push_back(Element{tech_name, m_empire_id, 0.0f, -1, paused}); }
 
 void ResearchQueue::insert(iterator it, const std::string& tech_name, bool paused)
-{ m_queue.insert(it, Element(tech_name, m_empire_id, 0.0f, -1, paused)); }
+{ m_queue.insert(it, Element{tech_name, m_empire_id, 0.0f, -1, paused}); }
 
 void ResearchQueue::erase(iterator it) {
     if (it == end())

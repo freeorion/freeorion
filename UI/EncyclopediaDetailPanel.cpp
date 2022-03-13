@@ -1495,10 +1495,11 @@ namespace {
         if (!only_description) {
             name = UserString(item_name);
             texture = ClientUI::TechIcon(item_name);
-            other_texture = ClientUI::CategoryIcon(tech->Category()); 
+            other_texture = ClientUI::CategoryIcon(tech->Category());
             color = ClientUI::CategoryColor(tech->Category());
-            turns = tech->ResearchTime(client_empire_id);
-            cost = tech->ResearchCost(client_empire_id);
+            ScriptingContext context;
+            turns = tech->ResearchTime(client_empire_id, context);
+            cost = tech->ResearchCost(client_empire_id, context);
             cost_units = UserString("ENC_RP");
             general_type = UserString(tech->ShortDescription());
             specific_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR")) % UserString(tech->Category()));

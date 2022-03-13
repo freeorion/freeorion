@@ -198,23 +198,24 @@ namespace {
     }
 
     void UpdateResearchQueue() {
+        ScriptingContext context;
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = ::GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "UpdateResearchQueue : couldn't get empire with id " << empire_id;
             return;
         }
-        empire->UpdateResearchQueue(Objects());
+        empire->UpdateResearchQueue(context);
     }
 
     void UpdateProductionQueue() {
+        ScriptingContext context;
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = ::GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "UpdateProductionQueue : couldn't get empire with id " << empire_id;
             return;
         }
-        ScriptingContext context;
         empire->UpdateProductionQueue(context);
     }
 

@@ -11,18 +11,11 @@
 #include <boost/serialization/access.hpp>
 #include <boost/signals2/signal.hpp>
 
+struct ScriptingContext;
+
 struct FO_COMMON_API ResearchQueue {
     /** The type of a single element in the research queue. */
     struct Element {
-        Element() = default;
-        Element(const std::string& name_, int empire_id_, float spending_,
-                int turns_left_, bool paused_ = false) :
-            name(name_),
-            empire_id(empire_id_),
-            allocated_rp(spending_),
-            turns_left(turns_left_),
-            paused(paused_)
-        {}
         [[nodiscard]] std::string Dump() const;
 
         std::string name;
@@ -30,6 +23,7 @@ struct FO_COMMON_API ResearchQueue {
         float       allocated_rp = 0.0f;
         int         turns_left = 0;
         bool        paused = false;
+
     private:
         friend class boost::serialization::access;
         template <typename Archive>
@@ -70,7 +64,8 @@ struct FO_COMMON_API ResearchQueue {
       * precondition of this function that \a RPs must be greater than some
       * epsilon > 0; see the implementation for the actual value used for
       * epsilon. */
-    void Update(float RPs, const std::map<std::string, float>& research_progress);
+    void Update(float RPs, const std::map<std::string, float>& research_progress,
+                const ScriptingContext& context);
 
     // STL container-like interface
     void                   push_back(const std::string& tech_name, bool paused = false);

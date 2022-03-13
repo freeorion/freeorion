@@ -76,15 +76,16 @@ namespace {
         }
 
         void Init() {
-            const Empire* empire = GetEmpire(elem.empire_id);
+            ScriptingContext context;
+            auto empire = context.GetEmpire(elem.empire_id);
 
             const Tech* tech = GetTech(elem.name);
-            double per_turn_cost = tech ? tech->PerTurnCost(elem.empire_id) : 1;
+            double per_turn_cost = tech ? tech->PerTurnCost(elem.empire_id, context) : 1;
             double progress = 0.0;
             if (empire && empire->TechResearched(elem.name))
-                progress = tech ? tech->ResearchCost(elem.empire_id) : 0.0;
+                progress = tech ? tech->ResearchCost(elem.empire_id, context) : 0.0;
             else if (empire)
-                progress = empire->ResearchProgress(elem.name);
+                progress = empire->ResearchProgress(elem.name, context);
 
             panel = GG::Wnd::Create<QueueTechPanel>(GG::X(GetLayout()->BorderMargin()),
                                                     GG::Y(GetLayout()->BorderMargin()),
@@ -148,9 +149,10 @@ namespace {
         const GG::X METER_WIDTH = std::max(Width() - GRAPHIC_SIZE - 4*MARGIN - 3, GG::X(1));
         const GG::X TURNS_AND_COST_WIDTH = std::max(NAME_WIDTH/2 - MARGIN, GG::X(1));
 
+        ScriptingContext context;
         const Tech* tech = GetTech(m_tech_name);
         if (tech)
-            m_total_turns = tech->ResearchTime(m_empire_id);
+            m_total_turns = tech->ResearchTime(m_empire_id, context);
 
         GG::Clr clr = m_in_progress
                         ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
@@ -176,11 +178,12 @@ namespace {
         int total_time = 0;
         float perc_complete = 0.0f;
         float next_progress = 0.0f;
+        float research_cost = 0.0f;
         if (tech) {
-            total_time = tech->ResearchTime(m_empire_id);
+            total_time = m_total_turns;
             perc_complete = total_time > 0 ? turns_completed / total_time : 0.0f;
-            float total_cost = tech->ResearchCost(m_empire_id);
-            next_progress = turn_spending / std::max(1.0f, total_cost);
+            research_cost = tech->ResearchCost(m_empire_id, context);
+            next_progress = turn_spending / std::max(1.0f, research_cost);
         }
         GG::Clr outline_color = ClientUI::ResearchableTechFillColor();
         if (m_in_progress)
@@ -199,7 +202,7 @@ namespace {
 
         using boost::io::str;
 
-        double max_spending_per_turn = tech ? tech->ResearchCost(m_empire_id) / m_total_turns : 0.0;
+        double max_spending_per_turn = research_cost;
         std::string turns_cost_text = str(FlexibleFormat(UserString("TECH_TURN_COST_STR"))
             % DoubleToString(turn_spending, 3, false)
             % DoubleToString(max_spending_per_turn, 3, false));
@@ -564,7 +567,7 @@ void ResearchWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
         context);
 
     if (auto empire = context.GetEmpire(empire_id))
-        empire->UpdateResearchQueue(context.ContextObjects());
+        empire->UpdateResearchQueue(context);
 }
 
 void ResearchWnd::Sanitize()
@@ -676,7 +679,7 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
                 pos += 1;
         }
     }
-    empire->UpdateResearchQueue(context.ContextObjects());
+    empire->UpdateResearchQueue(context);
 }
 
 void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
@@ -690,7 +693,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (auto queue_row = boost::polymorphic_downcast<QueueRow*>(it->get()))
         orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name), context);
     if (auto empire = context.GetEmpire(empire_id))
-        empire->UpdateResearchQueue(context.ContextObjects());
+        empire->UpdateResearchQueue(context);
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
@@ -731,7 +734,7 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
             std::make_shared<ResearchQueueOrder>(client_empire_id, queue_row->elem.name, pause, -1.0f),
             context);
 
-    empire->UpdateResearchQueue(context.ContextObjects());
+    empire->UpdateResearchQueue(context);
 }
 
 

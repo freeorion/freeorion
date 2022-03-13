@@ -112,16 +112,16 @@ public:
     [[nodiscard]] const std::set<std::string>& AvailableShipHulls() const;         ///< Returns the set of ship hull names that that the empire can currently build
 
     [[nodiscard]] const std::string&           TopPriorityEnqueuedTech() const;
-    [[nodiscard]] const std::string&           MostExpensiveEnqueuedTech() const;
-    [[nodiscard]] const std::string&           LeastExpensiveEnqueuedTech() const;
+    [[nodiscard]] const std::string&           MostExpensiveEnqueuedTech(const ScriptingContext& context) const;
+    [[nodiscard]] const std::string&           LeastExpensiveEnqueuedTech(const ScriptingContext& context) const;
     [[nodiscard]] const std::string&           MostRPSpentEnqueuedTech() const;
-    [[nodiscard]] const std::string&           MostRPCostLeftEnqueuedTech() const;
+    [[nodiscard]] const std::string&           MostRPCostLeftEnqueuedTech(const ScriptingContext& context) const;
 
     [[nodiscard]] const std::string&           TopPriorityResearchableTech() const;
     [[nodiscard]] const std::string&           MostExpensiveResearchableTech() const;
-    [[nodiscard]] const std::string&           LeastExpensiveResearchableTech() const;
+    [[nodiscard]] const std::string&           LeastExpensiveResearchableTech(const ScriptingContext& context) const;
     [[nodiscard]] const std::string&           MostRPSpentResearchableTech() const;
-    [[nodiscard]] const std::string&           MostRPCostLeftResearchableTech() const;
+    [[nodiscard]] const std::string&           MostRPCostLeftResearchableTech(const ScriptingContext& context) const;
 
     [[nodiscard]] const Meter*                                 GetMeter(const std::string& name) const;
     [[nodiscard]] std::map<std::string, Meter>::const_iterator meter_begin() const { return m_meters.begin(); }
@@ -132,7 +132,7 @@ public:
     [[nodiscard]] const InfluenceQueue&   GetInfluenceQueue() const;                  ///< Returns the queue of items being funded with influence.
 
     [[nodiscard]] bool        ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
-    [[nodiscard]] float       ResearchProgress(const std::string& name) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
+    [[nodiscard]] float       ResearchProgress(const std::string& name, const ScriptingContext& context) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
     [[nodiscard]] bool        TechResearched(const std::string& name) const;          ///< Returns true iff this tech has been completely researched.
     [[nodiscard]] bool        HasResearchedPrereqAndUnresearchedPrereq(const std::string& name) const;    ///< Returns true iff this tech has some but not all prerequisites researched
     [[nodiscard]] TechStatus  GetTechStatus(const std::string& name) const;           ///< Returns the status (researchable, researched, unresearchable) for this tech for this
@@ -237,7 +237,8 @@ public:
     void ResumeResearch(const std::string& name);
 
     /** Sets research progress of tech with \a name to \a progress. */
-    void SetTechResearchProgress(const std::string& name, float progress);
+    void SetTechResearchProgress(const std::string& name, float progress,
+                                 const ScriptingContext& context);
 
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
@@ -350,7 +351,7 @@ public:
 
     /** Checks for tech projects that have been completed, and returns a vector
       * of the techs that should be added to the known techs list. */
-    std::vector<std::string> CheckResearchProgress();
+    std::vector<std::string> CheckResearchProgress(const ScriptingContext& context);
 
     /** Eventually : Will check for social projects that have been completed and
       * / or process ongoing social projects, and update the empire's influence
@@ -378,7 +379,7 @@ public:
     void UpdateResourcePools(const ScriptingContext& context);
     /** Calls Update() on empire's research queue, which recalculates the RPs
       * spent on and number of turns left for each tech in the queue. */
-    void UpdateResearchQueue(const ObjectMap& objects);
+    void UpdateResearchQueue(const ScriptingContext& context);
     /** Calls Update() on empire's production queue, which recalculates the PPs
       * spent on and number of turns left for each project in the queue. */
     void UpdateProductionQueue(const ScriptingContext& context);
