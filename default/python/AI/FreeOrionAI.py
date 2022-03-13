@@ -28,6 +28,7 @@ import FleetUtilsAI
 import InvasionAI
 import MilitaryAI
 import PlanetUtilsAI
+import PolicyAI
 import PriorityAI
 import ProductionAI
 import ResearchAI
@@ -354,6 +355,7 @@ def generateOrders():  # pylint: disable=invalid-name
         ResearchAI.generate_research_orders,
         ProductionAI.generate_production_orders,
         ResourcesAI.generate_resources_orders,
+        PolicyAI.generate_policy_orders,
     ]
 
     for action in action_list:

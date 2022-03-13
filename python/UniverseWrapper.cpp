@@ -650,6 +650,7 @@ namespace FreeOrionPython {
             .def("OrbitalPositionOnTurn",                   &Planet::OrbitalPositionOnTurn)
             .add_property("RotationalPeriod",               &Planet::RotationalPeriod)
             .add_property("LastTurnAttackedByShip",         &Planet::LastTurnAttackedByShip)
+            .add_property("LastTurnColonized",              &Planet::LastTurnColonized)
             .add_property("LastTurnConquered",              &Planet::LastTurnConquered)
             .add_property("buildingIDs",                    make_function(&Planet::BuildingIDs,     py::return_internal_reference<>()))
             .add_property("habitableSize",                  &Planet::HabitableSize)

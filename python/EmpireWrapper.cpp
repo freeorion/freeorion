@@ -324,6 +324,8 @@ namespace FreeOrionPython {
 
             .def("policyAvailable",                 +[](const Empire& e, const std::string& policy) { return e.PolicyAvailable(policy); })
 
+            .def("policyPrereqsAndExclusionsOK",    +[](const Empire& e, const std::string& policy) { return e.PolicyPrereqsAndExclusionsOK(policy); })
+
             .add_property("totalPolicySlots",       make_function(
                                                         +[](const Empire& e) -> std::map<std::string, int>
                                                         { return ViewMapToStringMap(e.TotalPolicySlots()); },

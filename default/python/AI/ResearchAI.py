@@ -767,7 +767,7 @@ def generate_classic_research_orders():
         if fo.currentTurn() == 1:
             # do only this one on first turn, to facilitate use of a turn-1 savegame for testing of alternate
             # research strategies
-            new_tech = ["LRN_PHYS_BRAIN", "LRN_ALGO_ELEGANCE"]
+            new_tech = ["LRN_PHYS_BRAIN", "GRO_PLANET_ECOL"]
         else:
             new_tech = (
                 TechsListsAI.sparse_galaxy_techs(research_index)

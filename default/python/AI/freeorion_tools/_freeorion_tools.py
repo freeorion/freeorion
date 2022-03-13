@@ -56,6 +56,13 @@ def tech_is_complete(tech):
     return fo.getEmpire().techResearched(tech)
 
 
+def policy_is_adopted(policy):
+    """
+    Return if policy is currently adopted.
+    """
+    return fo.getEmpire().policyAdopted(policy)
+
+
 def ppstring(foo):
     """
     Returns a string version of lists, dicts, sets, such that entries with special characters will be
