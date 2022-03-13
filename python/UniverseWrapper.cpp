@@ -463,7 +463,7 @@ namespace FreeOrionPython {
             .add_property("canBombard",             +[](const Ship& ship) -> bool { return ship.CanBombard(GetUniverse()); })
             .add_property("speciesName",            make_function(&Ship::SpeciesName,       py::return_value_policy<py::copy_const_reference>()))
             .add_property("speed",                  &Ship::Speed)
-            .add_property("colonyCapacity",         +[](const Ship& ship) -> bool { return ship.ColonyCapacity(GetUniverse()); })
+            .add_property("colonyCapacity",         +[](const Ship& ship) -> float { return ship.ColonyCapacity(GetUniverse()); })
             .add_property("troopCapacity",          +[](const Ship& ship) -> float { return ship.TroopCapacity(GetUniverse()); })
             .add_property("orderedScrapped",        &Ship::OrderedScrapped)
             .add_property("orderedColonizePlanet",  &Ship::OrderedColonizePlanet)
