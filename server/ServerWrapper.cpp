@@ -71,7 +71,8 @@ namespace {
     void GenerateSitRep(int empire_id, const std::string& template_string,
                         const py::dict& py_params, const std::string& icon)
     {
-        int sitrep_turn = CurrentTurn() + 1;
+        ScriptingContext context;
+        int sitrep_turn = context.current_turn + 1;
 
         std::vector<std::pair<std::string, std::string>> params;
 
@@ -85,12 +86,12 @@ namespace {
         }
 
         if (empire_id == ALL_EMPIRES) {
-            for (const auto& entry : Empires()) {
+            for (const auto& entry : context.Empires()) {
                 entry.second->AddSitRepEntry(CreateSitRep(
                     template_string, sitrep_turn, icon, params));  // copy params for each...
             }
         } else {
-            Empire* empire = GetEmpire(empire_id);
+            auto empire = context.GetEmpire(empire_id);
             if (!empire) {
                 ErrorLogger() << "GenerateSitRep: couldn't get empire with ID " << empire_id;
                 return;
@@ -275,7 +276,8 @@ namespace {
     // Wrappers for Empire class member functions
     void EmpireSetName(int empire_id, const std::string& name)
     {
-        Empire* empire = GetEmpire(empire_id);
+        ScriptingContext context;
+        auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "EmpireSetName: couldn't get empire with ID " << empire_id;
             return;
@@ -742,27 +744,28 @@ namespace {
 
     auto CreateBuilding(const std::string& building_type, int planet_id, int empire_id) -> int
     {
-        auto planet = Objects().get<Planet>(planet_id);
+        ScriptingContext context;
+        ObjectMap& objects = context.ContextObjects();
+        auto planet = objects.get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "CreateBuilding: couldn't get planet with ID " << planet_id;
             return INVALID_OBJECT_ID;
         }
 
-        auto system = Objects().get<System>(planet->SystemID());
+        auto system = objects.get<System>(planet->SystemID());
         if (!system) {
             ErrorLogger() << "CreateBuilding: couldn't get system for planet";
             return INVALID_OBJECT_ID;
         }
 
-        const Empire* empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "CreateBuilding: couldn't get empire with ID " << empire_id;
             return INVALID_OBJECT_ID;
         }
 
-        auto& universe = GetUniverse();
-        auto building = universe.InsertNew<Building>(empire_id, building_type,
-                                                     empire_id, CurrentTurn());
+        auto building = context.ContextUniverse().InsertNew<Building>(
+            empire_id, building_type, empire_id, context.current_turn);
         if (!building) {
             ErrorLogger() << "CreateBuilding: couldn't create building";
             return INVALID_OBJECT_ID;
@@ -810,8 +813,9 @@ namespace {
     auto CreateShip(const std::string& name, const std::string& design_name,
                     const std::string& species, int fleet_id) -> int
     {
-        Universe& universe = GetUniverse();
-        ObjectMap& objects = universe.Objects();
+        ScriptingContext context;
+        Universe& universe = context.ContextUniverse();
+        ObjectMap& objects = context.ContextObjects();
 
         // check if we got a species name, if yes, check if species exists
         if (!species.empty() && !GetSpecies(species)) {
@@ -842,9 +846,9 @@ namespace {
         // get owner empire of specified fleet
         int empire_id = fleet->Owner();
         // if we got the id of an actual empire, get the empire object and check if it exists
-        Empire* empire = nullptr;
+        std::shared_ptr<Empire> empire;
         if (empire_id != ALL_EMPIRES) {
-            empire = GetEmpire(empire_id);
+            empire = context.GetEmpire(empire_id);
             if (!empire) {
                 ErrorLogger() << "CreateShip: couldn't get empire with ID " << empire_id;
                 return INVALID_OBJECT_ID;

@@ -328,7 +328,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                 }
             }
         } else if (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
-            const Empire* empire = GetEmpire(m_server.PlayerEmpireID(id));
+            auto empire = m_server.Empires().GetEmpire(m_server.PlayerEmpireID(id));
             // eliminated and non-empire players can leave safely
             if (empire && !empire->Eliminated()) {
                 // player abnormally disconnected during a regular game
@@ -455,7 +455,7 @@ void ServerFSM::UpdateIngameLobby() {
         player_setup_data.player_id =   player_id;
         player_setup_data.player_name = (*player_it)->PlayerName();
         player_setup_data.client_type = (*player_it)->GetClientType();
-        if (const Empire* empire = GetEmpire(m_server.PlayerEmpireID(player_id))) {
+        if (auto empire = m_server.Empires().GetEmpire(m_server.PlayerEmpireID(player_id))) {
             player_setup_data.save_game_empire_id = empire->EmpireID();
             player_setup_data.empire_name = empire->Name();
             player_setup_data.empire_color = empire->Color();
@@ -2583,7 +2583,7 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
     if (recipients.empty() && sender->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
     {
         EmpireColor text_color = CLR_SERVER;
-        if (auto empire = GetEmpire(server.PlayerEmpireID(sender->PlayerID())))
+        if (auto empire = server.Empires().GetEmpire(server.PlayerEmpireID(sender->PlayerID())))
             text_color = empire->Color();
 
         server.PushChatMessage(data, sender->PlayerName(), text_color, timestamp);
@@ -2930,7 +2930,7 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
         return discard_event();
     }
 
-    Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
+    auto empire = server.Empires().GetEmpire(server.PlayerEmpireID(player_id));
     if (!empire) {
         ErrorLogger(FSM) << "PlayingGame::react(AutoTurn&) couldn't get empire for player with id:" << player_id;
         player_connection->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
@@ -3138,7 +3138,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
                client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
     {
         // store empire orders and resume waiting for more
-        Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
+        auto empire = server.Empires().GetEmpire(server.PlayerEmpireID(player_id));
         if (!empire) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
             sender->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
@@ -3250,7 +3250,7 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
                client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
     {
         // store empire orders and resume waiting for more
-        const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
+        auto empire = server.Empires().GetEmpire(server.PlayerEmpireID(player_id));
         if (!empire) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) couldn't get empire for player with id:" << player_id;
             sender->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
@@ -3301,7 +3301,7 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
         client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
     {
         // store empire orders and resume waiting for more
-        Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
+        auto empire = server.Empires().GetEmpire(server.PlayerEmpireID(player_id));
         if (!empire) {
             ErrorLogger(FSM) << "WaitingForTurnEnd::react(RevokeReadiness&) couldn't get empire for player with id:" << player_id;
             sender->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));

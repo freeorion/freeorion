@@ -289,7 +289,10 @@ void AIClientApp::HandleMessage(const Message& msg) {
             //Max 5         :  0   0   0   8  17  75
 
             const std::string g_seed = GetGalaxySetupData().seed;
-            const std::string emp_name = GetEmpire(m_empire_id)->Name();
+            auto empire = m_empires.GetEmpire(m_empire_id);
+            if (!empire)
+                ErrorLogger() << "HandleMessage GAME_START couldn't get empire with id: " << m_empire_id;
+            const auto& emp_name = empire ? empire->Name() : "";
             unsigned int my_seed = 0;
 
             try {

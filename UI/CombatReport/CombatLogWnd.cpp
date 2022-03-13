@@ -137,9 +137,10 @@ namespace {
 
     std::string EmpireIdToText(int empire_id) {
         std::string retval;
-        static constexpr size_t retval_sz = 24 + 1 + VarText::EMPIRE_ID_TAG.length()*2 + 1 + 8 + 1 + 30 + 3 + 1 + 10; // semi-guesstimate
+        static constexpr size_t retval_sz = 24 + 1 + VarText::EMPIRE_ID_TAG.length()*2 + 1 + 8 + 1 + 30 + 3 + 1 + 10 + 20; // semi-guesstimate
         retval.reserve(retval_sz);
-        if (const auto empire = GetEmpire(empire_id))
+        const ScriptingContext context;
+        if (const auto empire = context.GetEmpire(empire_id))
             return retval.append(GG::RgbaTag(empire->Color())).append("<").append(VarText::EMPIRE_ID_TAG).append(" ")
                          .append(std::to_string(empire->EmpireID())).append(">").append(empire->Name()).append("</")
                          .append(VarText::EMPIRE_ID_TAG).append(">").append("</rgba>");
@@ -148,11 +149,8 @@ namespace {
     }
 
     /// converts to "Empire_name: n" text
-    std::string CountToText(int empire_id, int forces_count) {
-        std::stringstream ss;
-        ss << EmpireIdToText(empire_id) << ": " << forces_count;
-        return ss.str();
-    }
+    std::string CountToText(int empire_id, int forces_count)
+    { return EmpireIdToText(empire_id).append(": ").append(std::to_string(forces_count)); }
 
     class OrderByNameAndId {
     public:
@@ -358,7 +356,8 @@ namespace {
     }
 
     size_t EmpireForcesAccordionPanel::CountForces(
-        std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces) {
+        std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces)
+    {
         size_t n = 0;
         for (const auto& owner_forces : forces)
             n += owner_forces.size();

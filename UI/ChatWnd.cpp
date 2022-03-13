@@ -468,12 +468,14 @@ void MessageWnd::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
         return;
     }
 
+    const ScriptingContext context;
+
     int client_empire_id = app->EmpireID();
-    DiplomaticStatus status = Empires().GetDiplomaticStatus(empire1_id, empire2_id);
+    DiplomaticStatus status = context.ContextDiploStatus(empire1_id, empire2_id);
     std::string text;
 
-    const Empire* empire1 = GetEmpire(empire1_id);
-    const Empire* empire2 = GetEmpire(empire2_id);
+    auto empire1 = context.GetEmpire(empire1_id);
+    auto empire2 = context.GetEmpire(empire2_id);
 
     std::string empire1_str = GG::RgbaTag(empire1->Color()) + empire1->Name() + "</rgba>";
     std::string empire2_str = GG::RgbaTag(empire2->Color()) + empire2->Name() + "</rgba>";

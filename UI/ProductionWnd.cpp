@@ -410,12 +410,14 @@ namespace {
     {}
 
     void QueueProductionItemPanel::CompleteConstruction() {
-    GG::Control::CompleteConstruction();
+        GG::Control::CompleteConstruction();
         SetChildClippingMode(ChildClippingMode::ClipToClient);
 
         GG::Clr clr = m_in_progress
             ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor())
             : ClientUI::ResearchableTechTextAndBorderColor();
+
+        const ScriptingContext context;
 
         // get graphic and player-visible name text for item
         std::shared_ptr<GG::Texture> graphic;
@@ -425,7 +427,7 @@ namespace {
             name_text = UserString(elem.item.name);
         } else if (elem.item.build_type == BuildType::BT_SHIP) {
             graphic = ClientUI::ShipDesignIcon(elem.item.design_id);
-            const ShipDesign* design = GetUniverse().GetShipDesign(elem.item.design_id);
+            const ShipDesign* design = context.ContextUniverse().GetShipDesign(elem.item.design_id);
             if (design)
                 name_text = design->Name();
             else
@@ -442,7 +444,7 @@ namespace {
         std::string location_text;
         bool system_selected = false;
         bool rally_dest_selected = (elem.rally_point_id != INVALID_OBJECT_ID && elem.rally_point_id == SidePanel::SystemID());
-        if (const auto location = Objects().get(elem.location)) {
+        if (const auto location = context.ContextObjects().get(elem.location)) {
             system_selected = (location->SystemID() != INVALID_OBJECT_ID && location ->SystemID() == SidePanel::SystemID());
             if (GetOptionsDB().Get<bool>("ui.queue.production_location.shown")) {
                 if (rally_dest_selected && !system_selected) {
@@ -480,7 +482,7 @@ namespace {
 
         GG::Clr location_clr = clr;
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const Empire* this_client_empire = GetEmpire(client_empire_id);
+        auto this_client_empire = context.GetEmpire(client_empire_id);
         if (this_client_empire && (system_selected || rally_dest_selected)) {
             auto empire_color = this_client_empire->Color();
             auto rally_color = GG::DarkenClr(GG::InvertClr(empire_color));
@@ -505,12 +507,10 @@ namespace {
         if (m_in_progress)
             outline_color = GG::LightenClr(outline_color);
 
-        m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(m_total_turns,
-                                                               perc_complete,
-                                                               next_progress,
-                                                               GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
-                                                               ClientUI::TechWndProgressBarColor(),
-                                                               outline_color);
+        m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(
+            m_total_turns, perc_complete, next_progress,
+            GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
+            ClientUI::TechWndProgressBarColor(), outline_color);
 
         double max_spending_per_turn = m_total_cost / m_total_turns;
         std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR"))
@@ -1146,7 +1146,7 @@ void ProductionWnd::UpdateInfoPanel() {
     float stockpile = empire->GetResourcePool(ResourceType::RE_INDUSTRY)->Stockpile();
     float stockpile_use = boost::accumulate(empire->GetProductionQueue().AllocatedStockpilePP() | boost::adaptors::map_values, 0.0f);
     float stockpile_use_max = queue.StockpileCapacity(objects);
-    m_production_info_panel->SetTotalPointsCost(PPs, total_queue_cost);
+    m_production_info_panel->SetTotalPointsCost(PPs, total_queue_cost, context);
     m_production_info_panel->SetStockpileCost(stockpile, stockpile_use, stockpile_use_max);
 
     // find if there is a local location
@@ -1197,7 +1197,7 @@ void ProductionWnd::UpdateInfoPanel() {
 
     m_production_info_panel->SetLocalPointsCost(available_pp_at_loc, allocated_pp_at_loc,
                                                 stockpile_local_use, stockpile_use_max,
-                                                loc_obj->Name());
+                                                loc_obj->Name(), context);
 }
 
 void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& item,

@@ -27,6 +27,8 @@
  * GG controls.
  */
 
+struct ScriptingContext;
+
 /** a FreeOrion Label control */
 class CUILabel : public GG::TextControl {
 public:
@@ -498,10 +500,11 @@ public:
 
     void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    void    SetTotalPointsCost(float total_points, float total_cost);
+    void    SetTotalPointsCost(float total_points, float total_cost, const ScriptingContext& context);
     void    SetStockpileCost(float stockpile, float stockpile_use, float stockpile_use_max);
     void    SetLocalPointsCost(float local_points, float local_cost, float local_stockpile_use,
-                               float local_stockpile_use_max, const std::string& location_name);
+                               float local_stockpile_use_max, const std::string& location_name,
+                               const ScriptingContext& context);
     void    SetEmpireID(int empire_id);
     void    ClearLocalInfo();
     void    Clear();

@@ -917,7 +917,7 @@ float GGHumanClientApp::GLVersion() const
 void GGHumanClientApp::StartTurn(const SaveGameUIData& ui_data) {
     DebugLogger() << "GGHumanClientApp::StartTurn";
 
-    if (const Empire* empire = GetEmpire(EmpireID())) {
+    if (auto empire = m_empires.GetEmpire(EmpireID())) {
         double RP = empire->ResourceOutput(ResourceType::RE_RESEARCH);
         double PP = empire->ResourceOutput(ResourceType::RE_INDUSTRY);
         int turn_number = CurrentTurn();
@@ -1278,16 +1278,14 @@ namespace {
         }
     }
 
-    boost::filesystem::path CreateNewAutosaveFilePath(int client_empire_id, bool is_single_player) {
+    boost::filesystem::path CreateNewAutosaveFilePath(int client_empire_id, bool is_single_player,
+                                                      const EmpireManager& empires)
+    {
         static constexpr const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-";
 
         // get empire name, filtered for filename acceptability
-        const Empire* empire = GetEmpire(client_empire_id);
-        std::string empire_name;
-        if (empire)
-            empire_name = empire->Name();
-        else
-            empire_name = UserString("OBSERVER");
+        auto empire =  empires.GetEmpire(client_empire_id);
+        std::string empire_name{empire ? empire->Name() : UserString("OBSERVER")};
         std::string::size_type first_good_empire_char = empire_name.find_first_of(legal_chars);
         if (first_good_empire_char == std::string::npos) {
             empire_name.clear();
@@ -1362,7 +1360,7 @@ void GGHumanClientApp::Autosave() {
     if (!(is_initial_save || is_valid_autosave || is_final_save))
         return;
 
-    auto autosave_file_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game);
+    auto autosave_file_path = CreateNewAutosaveFilePath(EmpireID(), m_single_player_game, m_empires);
 
     // check for and remove excess oldest autosaves.
     boost::filesystem::path autosave_dir_path((m_single_player_game ? GetSaveDir() : GetServerSaveDir()) / "auto");

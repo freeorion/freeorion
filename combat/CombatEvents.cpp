@@ -101,10 +101,12 @@ namespace {
         return retval;
     }
 
-    std::string EmpireColorWrappedText(int empire_id, std::string_view text) {
+    std::string EmpireColorWrappedText(int empire_id, std::string_view text,
+                                       const ScriptingContext& context)
+    {
         // TODO: refactor this to somewhere that links with the UI code.
         // Hardcoded default color becauses not linked with UI code.
-        auto empire = GetEmpire(empire_id);
+        auto empire = context.GetEmpire(empire_id);
         return WrapColorTag(text, empire ? empire->Color() : EmpireColor{{80, 255, 128, 255}});
     }
 
@@ -123,19 +125,21 @@ namespace {
 
     /// Creates a link tag of the appropriate type for either a fighter or another object.
     std::string FighterOrPublicNameLink(int viewing_empire_id, int object_id,
-                                        int object_empire_id, const Universe& u)
+                                        int object_empire_id, const ScriptingContext& context)
     {
         if (object_id >= 0)   // ship
-            return PublicNameLink(viewing_empire_id, object_id, u);
+            return PublicNameLink(viewing_empire_id, object_id, context.ContextUniverse());
         else                  // fighter
-            return EmpireColorWrappedText(object_empire_id, UserString("OBJ_FIGHTER"));
+            return EmpireColorWrappedText(object_empire_id, UserString("OBJ_FIGHTER"), context);
     }
 
     std::string EmpireLink(int empire_id, const ScriptingContext& context) {
         if (empire_id == ALL_EMPIRES) {
             return UserString("NEUTRAL");
         } else if (auto empire = context.GetEmpire(empire_id)) {
-            return EmpireColorWrappedText(empire_id, WrapWithTagAndId(empire->Name(), VarText::EMPIRE_ID_TAG, empire_id));
+            return EmpireColorWrappedText(
+                empire_id, WrapWithTagAndId(empire->Name(), VarText::EMPIRE_ID_TAG, empire_id),
+                context);
         } else {
             return UserString("ENC_COMBAT_UNKNOWN_OBJECT");
         }
@@ -255,7 +259,7 @@ std::string InitialStealthEvent::DebugString(const ScriptingContext& context) co
             int owner_id = obj ? obj->Owner() : ALL_EMPIRES;
             if (owner_id == ALL_EMPIRES)
                 continue;
-            ss << FighterOrPublicNameLink(ALL_EMPIRES, object_id, owner_id, context.ContextUniverse());
+            ss << FighterOrPublicNameLink(ALL_EMPIRES, object_id, owner_id, context);
         }
         ss << "\n";
     }
@@ -286,7 +290,7 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id, con
 
             // all empires specifies empire to use for link color if this is a fighter
             cloaked_attackers.push_back(FighterOrPublicNameLink(
-                viewing_empire_id, object_id, ALL_EMPIRES, context.ContextUniverse()));
+                viewing_empire_id, object_id, ALL_EMPIRES, context));
         }
 
         if (!cloaked_attackers.empty()) {
@@ -328,7 +332,7 @@ StealthChangeEvent::StealthChangeEventDetail::StealthChangeEventDetail(
 std::string StealthChangeEvent::StealthChangeEventDetail::DebugString(const ScriptingContext& context) const {
     std::stringstream ss;
     ss << "StealthChangeDetailEvent"
-       <<  FighterOrPublicNameLink(ALL_EMPIRES, attacker_id, attacker_empire_id, context.ContextUniverse())
+       <<  FighterOrPublicNameLink(ALL_EMPIRES, attacker_id, attacker_empire_id, context)
        << "->" << visibility << " ";
     return ss.str();
 }
@@ -336,8 +340,8 @@ std::string StealthChangeEvent::StealthChangeEventDetail::DebugString(const Scri
 std::string StealthChangeEvent::StealthChangeEventDetail::CombatLogDescription(
     int viewing_empire_id, const ScriptingContext& context) const
 {
-    std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_empire_id, context.ContextUniverse());
-    std::string target_link = FighterOrPublicNameLink(viewing_empire_id, target_id, target_empire_id, context.ContextUniverse());
+    std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_empire_id, context);
+    std::string target_link = FighterOrPublicNameLink(viewing_empire_id, target_id, target_empire_id, context);
     std::string empire_link = EmpireLink(target_empire_id, context);
     const std::string& template_str = UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK");
 
@@ -387,7 +391,7 @@ std::string StealthChangeEvent::CombatLogDescription(int viewing_empire_id, cons
         uncloaked_attackers.reserve(stealth_change_events.size());
         for (const auto& event : stealth_change_events)
             uncloaked_attackers.push_back(FighterOrPublicNameLink(
-                viewing_empire_id, event->attacker_id, event->attacker_empire_id, context.ContextUniverse()));
+                viewing_empire_id, event->attacker_id, event->attacker_empire_id, context));
 
         if (!uncloaked_attackers.empty()) {
             if (!desc.empty())
@@ -441,8 +445,8 @@ std::string WeaponFireEvent::DebugString(const ScriptingContext&) const {
 }
 
 std::string WeaponFireEvent::CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const {
-    std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_owner_id, context.ContextUniverse());
-    std::string target_link = FighterOrPublicNameLink(viewing_empire_id, target_id, target_owner_id, context.ContextUniverse());
+    std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_owner_id, context);
+    std::string target_link = FighterOrPublicNameLink(viewing_empire_id, target_id, target_owner_id, context);
 
     const std::string& template_str = UserString("ENC_COMBAT_ATTACK_STR");
 
@@ -524,7 +528,7 @@ std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id, con
     if (auto owner = context.GetEmpire(owner_id))
         owner_string += owner->Name() + " ";
 
-    std::string object_link = FighterOrPublicNameLink(viewing_empire_id, object_id, object_owner_id, context.ContextUniverse());
+    std::string object_link = FighterOrPublicNameLink(viewing_empire_id, object_id, object_owner_id, context);
 
     return str(FlexibleFormat(template_str) % owner_string % object_link);
 }
@@ -583,9 +587,9 @@ std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire
 
                 auto count = std::to_string(index_and_event.second);
                 const auto&& attacker_link = FighterOrPublicNameLink(
-                    viewing_empire_id, INVALID_OBJECT_ID, attacker_empire, context.ContextUniverse());
+                    viewing_empire_id, INVALID_OBJECT_ID, attacker_empire, context);
                 const auto&& target_link = FighterOrPublicNameLink(
-                    viewing_empire_id, INVALID_OBJECT_ID, target_empire, context.ContextUniverse());
+                    viewing_empire_id, INVALID_OBJECT_ID, target_empire, context);
                 const std::string& template_str = UserString("ENC_COMBAT_ATTACK_REPEATED_STR");
 
                 ss << str(FlexibleFormat(template_str) % count % attacker_link % target_link);
@@ -622,9 +626,13 @@ std::string FighterLaunchEvent::DebugString(const ScriptingContext&) const {
     return ss.str();
 }
 
-std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const {
-    std::string launched_from_link = PublicNameLink(viewing_empire_id, launched_from_id, context.ContextUniverse());
-    std::string empire_coloured_fighter = EmpireColorWrappedText(fighter_owner_empire_id, UserString("OBJ_FIGHTER"));
+std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id,
+                                                     const ScriptingContext& context) const
+{
+    std::string launched_from_link = PublicNameLink(viewing_empire_id, launched_from_id,
+                                                    context.ContextUniverse());
+    std::string empire_coloured_fighter = EmpireColorWrappedText(
+        fighter_owner_empire_id, UserString("OBJ_FIGHTER"), context);
 
     // launching negative fighters indicates recovery of them by the ship
     const std::string& template_str = (number_launched >= 0 ?
@@ -687,7 +695,7 @@ std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id, 
                 auto count_str{std::to_string(count)};
                 auto target_empire_link{EmpireLink(target_empire_id, context)};
                 const auto target_link{FighterOrPublicNameLink(
-                    viewing_empire_id, INVALID_OBJECT_ID, target_empire_id, context.ContextUniverse())};
+                    viewing_empire_id, INVALID_OBJECT_ID, target_empire_id, context)};
 
                 if (count == 1) {
                     const std::string& template_str = UserString("ENC_COMBAT_FIGHTER_INCAPACITATED_STR");
@@ -755,7 +763,7 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id, co
 
         const auto& fire_event(*target.second.begin());
         std::string target_public_name{
-            FighterOrPublicNameLink(viewing_empire_id, target.first, fire_event->target_owner_id, context.ContextUniverse())};
+            FighterOrPublicNameLink(viewing_empire_id, target.first, fire_event->target_owner_id, context)};
 
         double damage = 0.0f;
         for (auto attack_it : target.second)
@@ -772,8 +780,8 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id, co
 
     std::string desc;
 
-    std::vector<std::string> attacker_link{FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_owner_id,
-                                                                   context.ContextUniverse())};
+    std::vector<std::string> attacker_link{FighterOrPublicNameLink(
+        viewing_empire_id, attacker_id, attacker_owner_id, context)};
 
     if (!damaged_target_links.empty() ) {
         desc += FlexibleFormatList(attacker_link, damaged_target_links,

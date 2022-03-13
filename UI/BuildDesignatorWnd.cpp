@@ -534,7 +534,8 @@ namespace {
 
             m_panel = GG::Wnd::Create<ProductionItemPanel>(w, h, m_item, empire_id, location_id);
 
-            if (const Empire* empire = GetEmpire(empire_id)) {
+            const ScriptingContext context;
+            if (auto empire = context.GetEmpire(empire_id)) {
                 if (!empire->ProducibleItem(m_item, location_id)) {
                     this->Disable(true);
                     m_panel->Disable(true);
@@ -801,7 +802,8 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id, bool refresh_
         // ensure signal connection set up properly, without actually
         // repopulating the list, as would be dine in Refresh()
         m_empire_ship_designs_changed_signal.disconnect();
-        if (const Empire* empire = GetEmpire(m_empire_id))
+        ScriptingContext context;
+        if (auto empire = context.GetEmpire(m_empire_id))
             m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
                 boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
                 boost::signals2::at_front);
@@ -816,7 +818,8 @@ void BuildDesignatorWnd::BuildSelector::Refresh() {
         this->SetName(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"));
 
     m_empire_ship_designs_changed_signal.disconnect();
-    if (const Empire* empire = GetEmpire(m_empire_id))
+    const ScriptingContext context;
+    if (auto empire = context.GetEmpire(m_empire_id))
         m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
             boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
             boost::signals2::at_front);
@@ -890,11 +893,10 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (build_type != BuildType::BT_STOCKPILE)
         throw std::invalid_argument("BuildableItemVisible was passed an invalid build type without id");
 
-    const Empire* empire = GetEmpire(m_empire_id);
-    if (!empire)
-        return true;
-
-    return empire->ProducibleItem(build_type, m_production_location);
+    const ScriptingContext context;
+    if (auto empire = context.GetEmpire(m_empire_id))
+        return empire->ProducibleItem(build_type, m_production_location);
+    return true;
 }
 
 bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_type,
@@ -910,7 +912,8 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!building_type || !building_type->Producible())
         return false;
 
-    const Empire* empire = GetEmpire(m_empire_id);
+    const ScriptingContext context;
+    auto empire = context.GetEmpire(m_empire_id);
     if (!empire)
         return true;
 
@@ -936,7 +939,8 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!design || !design->Producible())
         return false;
 
-    const Empire* empire = GetEmpire(m_empire_id);
+    const ScriptingContext context;
+    auto empire = context.GetEmpire(m_empire_id);
     if (!empire)
         return true;
 
@@ -1511,7 +1515,8 @@ int BuildDesignatorWnd::BuildLocation() const
 void BuildDesignatorWnd::BuildItemRequested(const ProductionQueue::ProductionItem& item,
                                             int num_to_build, int pos)
 {
-    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    const ScriptingContext context;
+    auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (empire && empire->EnqueuableItem(item, BuildLocation()))
         AddBuildToQueueSignal(item, num_to_build, BuildLocation(), pos);
 }

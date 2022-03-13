@@ -617,7 +617,8 @@ void ResearchWnd::UpdateQueue() {
 }
 
 void ResearchWnd::UpdateInfoPanel() {
-    const Empire* empire = GetEmpire(m_empire_shown_id);
+    const ScriptingContext context;
+    auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire) {
         m_research_info_panel->SetName(UserString("RESEARCH_WND_TITLE"));
         m_research_info_panel->ClearLocalInfo();
@@ -629,7 +630,7 @@ void ResearchWnd::UpdateInfoPanel() {
     const ResearchQueue& queue = empire->GetResearchQueue();
     float RPs = empire->ResourceOutput(ResourceType::RE_RESEARCH);
     float total_queue_cost = queue.TotalRPsSpent();
-    m_research_info_panel->SetTotalPointsCost(RPs, total_queue_cost);
+    m_research_info_panel->SetTotalPointsCost(RPs, total_queue_cost, context);
 
     /* Altering research queue may have freed up or required more RP.  Signalling that the
        ResearchResPool has changed causes the MapWnd to be signalled that that pool has changed,

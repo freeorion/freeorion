@@ -1854,7 +1854,9 @@ void ResourceInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
 }
 
-void ResourceInfoPanel::SetTotalPointsCost(float total_points, float total_cost) {
+void ResourceInfoPanel::SetTotalPointsCost(float total_points, float total_cost,
+                                           const ScriptingContext& context)
+{
     AttachChild(m_total_points_label);
     AttachChild(m_total_points);
     AttachChild(m_total_points_P_label);
@@ -1871,7 +1873,7 @@ void ResourceInfoPanel::SetTotalPointsCost(float total_points, float total_cost)
     else
         m_wasted_points->SetTextColor(ClientUI::TextColor());
 
-    const Empire* empire = GetEmpire(m_empire_id);
+    auto empire = context.GetEmpire(m_empire_id);
     const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
     SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
 }
@@ -1899,8 +1901,10 @@ void ResourceInfoPanel::SetStockpileCost(float stockpile, float stockpile_use,
     *m_stockpile_max_use << DoubleToString(stockpile_use_max, 3, false);
 }
 
-void ResourceInfoPanel::SetLocalPointsCost(float local_points, float local_cost, float local_stockpile_use,
-                                           float local_stockpile_use_max, const std::string& location_name)
+void ResourceInfoPanel::SetLocalPointsCost(
+    float local_points, float local_cost, float local_stockpile_use,
+    float local_stockpile_use_max, const std::string& location_name,
+    const ScriptingContext& context)
 {
     AttachChild(m_local_points);
     AttachChild(m_local_points_P_label);
@@ -1920,7 +1924,7 @@ void ResourceInfoPanel::SetLocalPointsCost(float local_points, float local_cost,
     else
         m_local_wasted_points->SetTextColor(ClientUI::TextColor());
 
-    const Empire* empire = GetEmpire(m_empire_id);
+    auto empire = context.GetEmpire(m_empire_id);
     const auto& empire_name{empire ? empire->Name() : EMPTY_STRING};
     SetName(boost::io::str(FlexibleFormat(
         UserString("PRODUCTION_INFO_AT_LOCATION_TITLE")) % m_title_str % location_name % empire_name));
