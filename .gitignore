@@ -79,6 +79,8 @@ DerivedData
 *.exp
 *.opensdf
 *.res
+/msvc*/*/release/
+/msvc*/*/debug/
 
 # Incremental build files
 *.ipdb
