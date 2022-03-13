@@ -232,20 +232,24 @@ def split_fleet(fleet_id: int) -> List[int]:
     return new_fleets
 
 
-def split_ship_from_fleet(fleet_id, ship_id):
+def split_ship_from_fleet(fleet_id, ship_id) -> int:
+    """Try to split a ship from the fleet, creating a new fleet.
+
+    :return: ID of the newly created fleet or INVALID_ID if failed
+    """
     universe = fo.getUniverse()
     fleet = universe.getFleet(fleet_id)
     if assertion_fails(fleet is not None):
-        return
+        return INVALID_ID
 
     if assertion_fails(ship_id in fleet.shipIDs):
-        return
+        return INVALID_ID
 
     if assertion_fails(fleet.numShips > 1, "Can't split last ship from fleet"):
-        return
+        return INVALID_ID
 
     new_fleet_id = fo.issueNewFleetOrder("Fleet %4d" % ship_id, ship_id)
-    if new_fleet_id:
+    if new_fleet_id != INVALID_ID:
         aistate = get_aistate()
         new_fleet = universe.getFleet(new_fleet_id)
         if not new_fleet:
