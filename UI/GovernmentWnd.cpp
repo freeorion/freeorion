@@ -104,14 +104,14 @@ namespace {
 
     bool AvailabilityManager::GetAvailability(Availability availability) const {
         auto idx = static_cast<std::underlying_type_t<Availability>>(availability);
-        if (idx > m_availabilities.size())
+        if (idx >= m_availabilities.size())
             return false;
         return m_availabilities[idx];
     }
 
     void AvailabilityManager::SetAvailability(const Availability availability, bool state) {
         auto idx = static_cast<std::underlying_type_t<Availability>>(availability);
-        if (idx > m_availabilities.size())
+        if (idx >= m_availabilities.size())
             ErrorLogger() << "AvailabilityManager::SetAvailability passed invalid availability: " << idx;
         else
             m_availabilities[idx] = state;
