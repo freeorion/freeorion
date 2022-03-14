@@ -203,14 +203,16 @@ Flotte Combat %1%
 NEW_ASTEROIDS_SUFFIX  # translated
 [[PT_ASTEROIDS]]
 
+# appended to names of systems if they are empty
 EMPTY_SPACE
-Espace Interstellaire
+''''''
 
+# appended to names of systems
 UNEXPLORED_REGION
-Zone Inexplorée
+''' (inexploré)'''
 
 UNEXPLORED_SYSTEM
-Système Inexploré
+''' (inexploré)'''
 
 #NOT_APPLICABLE
 #N/A
@@ -9297,6 +9299,30 @@ Indigènes Techno-Experts
 
 HIGH_TECH_NATIVES_SPECIAL_DESC
 Les indigènes de cette planète ont développé une maîtrise technologique très avancée. Si leur planète n'appartient pas à un empire, cette dernière profite de défenses bien plus puissantes et résiste très bien aux attaques et aux invasions.
+
+NATIVE_FORTIFICATION_MINIMAL
+Fortifications indigènes minimes
+
+NATIVE_FORTIFICATION_MINIMAL_DESC
+Les indigènes peuplant cette planète ont bâti des fortifications minimes, fournissant à leur planète une meilleure défense contre les attaques et invasions, si celle-ci est indépendante de tout empire.
+
+NATIVE_FORTIFICATION_LOW
+Fortifications indigènes basiques
+
+NATIVE_FORTIFICATION_LOW_DESC
+Les indigènes peuplant cette planète ont bâti des fortifications basiques, fournissant à leur planète une meilleure défense contre les attaques et invasions, si celle-ci est indépendante de tout empire.
+
+NATIVE_FORTIFICATION_MEDIUM
+Fortifications indigènes renforcées
+
+NATIVE_FORTIFICATION_MEDIUM_DESC
+Les indigènes peuplant cette planète ont bâti des fortifications renforcées, fournissant à leur planète une meilleure défense contre les attaques et invasions, si celle-ci est indépendante de tout empire.
+
+NATIVE_FORTIFICATION_HIGH
+Fortifications indigènes avancées
+
+NATIVE_FORTIFICATION_HIGH_DESC
+Les indigènes peuplant cette planète ont bâti des fortifications avancées, fournissant à leur planète une meilleure défense contre les attaques et invasions, si celle-ci est indépendante de tout empire.
 
 GAIA_SPECIAL  # translated
 Gaia
