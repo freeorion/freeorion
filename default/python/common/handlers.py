@@ -11,7 +11,6 @@ def init_handlers(config_str, search_dir):
     try:
         handlers = split(get_option_dict()[HANDLERS])
     except KeyError:
-        error("Missing key in option dict: %s", HANDLERS)
         handlers = []
 
     for handler in handlers:
@@ -33,6 +32,6 @@ def init_handlers(config_str, search_dir):
         except Exception as e:
             for p in sys.path:
                 error(p)
-            error("Fail to import handler %s with error %s" % (handler, e))
+            error("Fail to import handler %s with error %s", handler, e)
             print_exc()
             exit(1)
