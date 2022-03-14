@@ -18,11 +18,11 @@ from colonization.calculate_planet_colonization_rating import (
 from colonization.calculate_population import active_growth_specials, calc_max_pop
 from colonization.colony_score import MINIMUM_COLONY_SCORE
 from colonization.planet_supply import get_planet_supply
+from common.listeners import listener
 from common.print_utils import Bool, Number, Sequence, Table, Text
 from empire.buildings_locations import set_building_locations
 from empire.colony_builders import (
     can_build_colony_for_species,
-    colony_builder_lock,
     get_colony_builders,
     set_colony_builders,
 )
@@ -109,6 +109,7 @@ def get_supply_tech_range():
     return sum(_range for _tech, _range in AIDependencies.supply_range_techs.items() if tech_is_complete(_tech))
 
 
+@listener
 def survey_universe():
     colonization_timer.start("Categorizing Visible Planets")
     universe = fo.getUniverse()
@@ -193,7 +194,6 @@ def survey_universe():
             if sys_status.get("neighborThreat", 0) > 0:
                 set_colonies_is_under_treat()
 
-    colony_builder_lock.unlock()
     _print_empire_species_roster()
 
     rating_list = sorted(get_pilot_ratings().values(), reverse=True)
