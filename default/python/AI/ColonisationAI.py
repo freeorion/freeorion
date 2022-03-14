@@ -22,6 +22,7 @@ from common.print_utils import Bool, Number, Sequence, Table, Text
 from empire.buildings_locations import set_building_locations
 from empire.colony_builders import (
     can_build_colony_for_species,
+    colony_builder_lock,
     get_colony_builders,
     set_colony_builders,
 )
@@ -192,6 +193,7 @@ def survey_universe():
             if sys_status.get("neighborThreat", 0) > 0:
                 set_colonies_is_under_treat()
 
+    colony_builder_lock.unlock()
     _print_empire_species_roster()
 
     rating_list = sorted(get_pilot_ratings().values(), reverse=True)
