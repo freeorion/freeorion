@@ -46,10 +46,9 @@ def get_starting_species_pool():
     """
     Empire species pool generator, return random empire species and ensure somewhat even distribution
     """
-    # fill the initial pool with two sets of all playable species
-    # this way we have somewhat, but not absolutely strict even distribution of starting species at least when there
-    # is only a few number of players (some species can occur twice at max while others not at all)
-    pool = fo.get_playable_species() * 2
+    # fill the initial pool with one set of all playable species
+    # species won't repeat unless there are more players than playable species
+    pool = fo.get_playable_species()
 
     # randomize order in initial pool so we don't get the same species all the time
     random.shuffle(pool)
