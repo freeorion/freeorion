@@ -930,7 +930,6 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
     // Need to determine which data in player_save_game_data should be assigned to which established player
     std::vector<std::pair<int, int>> player_id_to_save_game_data_index;
 
-    auto established_player_it = m_networking.established_begin();
 
     // assign all saved game data to a player ID
     for (int i = 0; i < static_cast<int>(player_save_game_data.size()); ++i) {
@@ -946,15 +945,16 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
             // assigned to player IDs of established AI players
 
             // cycle to find next established AI player
-            while (established_player_it != m_networking.established_end()) {
-                const PlayerConnectionPtr player_connection = *established_player_it;
-                ++established_player_it;
-                // if player is an AI, assign it to this
-                if (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
-                    int player_id = player_connection->PlayerID();
-                    player_id_to_save_game_data_index.emplace_back(player_id, i);
-                    break;
-                }
+            for (auto established_it = m_networking.established_begin(); established_it != m_networking.established_end(); ++established_it)
+            {
+                const PlayerConnectionPtr player_connection = *established_it;
+                if (player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER
+                    || player_connection->PlayerName() != psgd.name)
+                    continue;
+
+                int player_id = player_connection->PlayerID();
+                player_id_to_save_game_data_index.emplace_back(player_id, i);
+                break;
             }
         } else {
             // do nothing for any other player type, until another player type is implemented
