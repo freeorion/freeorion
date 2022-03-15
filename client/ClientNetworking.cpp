@@ -376,7 +376,7 @@ bool ClientNetworking::Impl::ConnectToServer(
     const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/,
     bool expect_timeout /*=false*/)
 {
-    TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer(" << self << ", " << ip_address << ", " << timeout << ", " << expect_timeout << ")";
+    TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer(" << self << ", " << ip_address << ", " << timeout.count() << ", " << expect_timeout << ")";
     using Clock = std::chrono::high_resolution_clock;
     Clock::time_point start_time = Clock::now();
 
@@ -430,7 +430,7 @@ bool ClientNetworking::Impl::ConnectToLocalHostServer(
     const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/,
     bool expect_timeout /*=false*/)
 {
-    TraceLogger(network) << "ClientNetworking::Impl::ConnectToLocalHostServer(" << self << ", " << timeout << ", " << expect_timeout << ")";
+    TraceLogger(network) << "ClientNetworking::Impl::ConnectToLocalHostServer(" << self << ", " << timeout.count() << ", " << expect_timeout << ")";
     bool retval = false;
 #if FREEORION_WIN32
     try {
