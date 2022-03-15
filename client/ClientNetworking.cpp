@@ -357,6 +357,7 @@ void ClientNetworking::Impl::LaunchNetworkThread(const ClientNetworking* const s
     // - finish sending pending sent packets and wait up to SOCKET_LINGER_TIME for ACKs
     // and for the other side of the connection to close,
     // linger may/may not cause close() to block until the linger time has elapsed.
+    TraceLogger(network) << "ClientNetworking::Impl::LaunchNetworkThread(" << self << ")";
     m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
 
     // keep alive is an OS dependent option that will keep the TCP connection alive and
@@ -375,6 +376,7 @@ bool ClientNetworking::Impl::ConnectToServer(
     const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/,
     bool expect_timeout /*=false*/)
 {
+    TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer(" << self << ", " << ip_address << ", " << timeout << ", " << expect_timeout << ")";
     using Clock = std::chrono::high_resolution_clock;
     Clock::time_point start_time = Clock::now();
 
@@ -389,14 +391,15 @@ bool ClientNetworking::Impl::ConnectToServer(
         HandleResolve(err, results); 
     });
 
+    TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Resolving...";
     m_io_context.run_one();
-
+    TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Resolved.";
     // configure the deadline timer to close socket and cancel connection attempts at timeout
     m_deadline_timer.expires_from_now(timeout);
     m_deadline_timer.async_wait([this](const auto& err) { HandleDeadlineTimeout(err); });
     
     try {
-        
+        TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Starting asio event loop";
         m_io_context.run(); // blocks until connection or timeout
         m_io_context.reset();
 
@@ -407,6 +410,7 @@ bool ClientNetworking::Impl::ConnectToServer(
             LaunchNetworkThread(self);
         }
         else {
+            TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Could not connect";
             if(!expect_timeout)
                 InfoLogger(network) << "ConnectToServer() : failed to connect to server.";
         };
@@ -417,6 +421,7 @@ bool ClientNetworking::Impl::ConnectToServer(
     }
     if (IsConnected())
         m_destination = ip_address;
+    TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Returning.";
     return IsConnected();
 }
 
@@ -425,6 +430,7 @@ bool ClientNetworking::Impl::ConnectToLocalHostServer(
     const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/,
     bool expect_timeout /*=false*/)
 {
+    TraceLogger(network) << "ClientNetworking::Impl::ConnectToLocalHostServer(" << self << ", " << timeout << ", " << expect_timeout << ")";
     bool retval = false;
 #if FREEORION_WIN32
     try {
@@ -436,6 +442,7 @@ bool ClientNetworking::Impl::ConnectToLocalHostServer(
             throw;
     }
 #endif
+    TraceLogger(network) << "Return from ClientNetworking::Impl::ConnectToLocalHostServer()";
     return retval;
 }
 
@@ -526,6 +533,7 @@ void ClientNetworking::Impl::HandleConnection(const boost::system::error_code& e
 void ClientNetworking::Impl::HandleResolve(const boost::system::error_code& error, 
                                            tcp::resolver::iterator results)
 {
+    TraceLogger(network) << "ClientNetworking::Impl::HandleResolve(" << error << ")";
     if (error) {
         ErrorLogger(network) << "Failed to resolve query.";
         m_deadline_timer.cancel();
@@ -546,10 +554,12 @@ void ClientNetworking::Impl::HandleResolve(const boost::system::error_code& erro
     m_socket.async_connect(*results, [this, results](const auto& error) {
         HandleConnection(error, results); 
     });
+    TraceLogger(network) << "Return from ClientNetworking::Impl::HandleResolve()";
 }
 
 void ClientNetworking::Impl::HandleDeadlineTimeout(const boost::system::error_code& error)
 {
+    TraceLogger(network) << "ClientNetworking::Impl::HandleDeadlineTimeout(" << error << ")";
     if (error == boost::asio::error::operation_aborted)
     {
         // Canceled e.g. due to successfull connection
@@ -563,6 +573,7 @@ void ClientNetworking::Impl::HandleDeadlineTimeout(const boost::system::error_co
     {
         DebugLogger(network) << "ConnectToServer() : Timeout.";
     }
+    TraceLogger(network) << "Return from ClientNetworking::Impl::HandleDeadlineTimeout()";
 }
 
 void ClientNetworking::Impl::HandleException(const boost::system::system_error& error) {
