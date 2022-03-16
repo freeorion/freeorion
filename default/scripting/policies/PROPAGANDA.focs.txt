@@ -31,7 +31,7 @@ Policy
                 Not EmpireHasAdoptedPolicy empire = LocalCandidate.Owner name = ThisPolicy
                 Number low = 1 condition = And [
                     OwnedBy empire = Source.Owner
-                    VisibleToEmpire empire = Target.Owner
+                    VisibleToEmpire empire = LocalCandidate.Owner
                 ]
             ]
             effects = SetTargetInfluence value = Value + (NamedReal name = "PROPAGANDA_INFLUENCE_ENEMY_FLAT" value = -1.0)
