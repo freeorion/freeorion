@@ -250,11 +250,12 @@ private:
     int                             m_host_player_id = Networking::INVALID_PLAYER_ID;
     Networking::AuthRoles           m_roles;
 
-    boost::asio::io_context         m_io_context;
-    boost::asio::ip::tcp::socket    m_socket;
+    boost::asio::io_context            m_io_context;
+    boost::asio::ip::tcp::socket       m_socket;
     boost::asio::high_resolution_timer m_deadline_timer;
     boost::asio::high_resolution_timer m_reconnect_timer;
-    tcp::resolver::iterator m_resolver_results;
+    tcp::resolver::iterator            m_resolver_results;
+    bool                               m_deadline_has_expired{ false };
 
     // m_mutex guards m_incoming_message, m_rx_connected and m_tx_connected which are written by
     // the networking thread and read by the main thread to check incoming messages and connection
@@ -395,6 +396,7 @@ bool ClientNetworking::Impl::ConnectToServer(
     m_io_context.run_one();
     TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Resolved.";
     // configure the deadline timer to close socket and cancel connection attempts at timeout
+    m_deadline_has_expired = false;
     m_deadline_timer.expires_from_now(timeout);
     m_deadline_timer.async_wait([this](const auto& err) { HandleDeadlineTimeout(err); });
     
@@ -509,8 +511,19 @@ void ClientNetworking::Impl::HandleConnection(const boost::system::error_code& e
             endpoint_it = m_resolver_results;
             m_reconnect_timer.expires_from_now(std::chrono::milliseconds(100));
             m_reconnect_timer.async_wait([this, endpoint_it](const auto& err) {
-                if (err == boost::asio::error::operation_aborted)
+                // If the m_deadline_timer has expired, it will try to cancel
+                // this timer and set the m_deadline_has_expired flag.
+                // If expiry of both timers is sufficiently close together
+                // this callback may have already been scheduled and this timer
+                // can no longer be canceled - so need to check the flag here.
+                if (err == boost::asio::error::operation_aborted
+                    || m_deadline_has_expired)
+                {
+                    TraceLogger(network) << "ClientNetworking::Impl::m_reconnect_timer::async_wait - Canceling reconnect attempts due to deadline timeout";
                     return;
+
+                }
+                TraceLogger(network) << "ClientNetworking::Impl::m_reconnect_timer::async_wait - Scheduling another connection attempt";
                 m_socket.async_connect(*endpoint_it, [this, endpoint_it](const auto& error) {
                     HandleConnection(error, endpoint_it);
                 });
@@ -567,6 +580,7 @@ void ClientNetworking::Impl::HandleDeadlineTimeout(const boost::system::error_co
         return;
     }
 
+    m_deadline_has_expired = true;
     m_reconnect_timer.cancel();
     bool did_close_socket = CloseSocketIfNotConnected();
     if (did_close_socket)
