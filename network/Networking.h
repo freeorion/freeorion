@@ -16,7 +16,7 @@ namespace Networking {
     FO_COMMON_API int DiscoveryPort();
     FO_COMMON_API int MessagePort();
 
-    enum class ClientType : char {
+    enum class ClientType : signed char {
         INVALID_CLIENT_TYPE = -1,
         CLIENT_TYPE_AI_PLAYER,
         CLIENT_TYPE_HUMAN_PLAYER,
@@ -26,7 +26,7 @@ namespace Networking {
     };
     FO_COMMON_API std::ostream& operator<<(std::ostream& os, ClientType client_type);
 
-    enum class RoleType : char {
+    enum class RoleType : unsigned char {
         ROLE_HOST = 0,              ///< allows save and load games, edit other player settings, stop server
         ROLE_CLIENT_TYPE_MODERATOR, ///< allows have a client type Moderator
         ROLE_CLIENT_TYPE_PLAYER,    ///< allows have a client type Player

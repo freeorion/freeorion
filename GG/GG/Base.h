@@ -126,7 +126,7 @@ void ProcessThenRemoveExpiredPtrs(
 
 /** "Regions" of a window; used e.g. to determine direction(s) of drag when a
     window that has a drag-frame is clicked. */
-GG_ENUM(WndRegion, char,
+GG_ENUM(WndRegion, signed char,
     WR_NONE = -1,
     WR_TOPLEFT = 0,
     WR_TOP,

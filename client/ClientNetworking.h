@@ -15,7 +15,7 @@ class Message;
 namespace Networking {
     class AuthRoles;
 
-    enum class RoleType : char;
+    enum class RoleType : unsigned char;
 }
 
 /** Encapsulates the networking facilities of the client.  The client must
