@@ -3,12 +3,12 @@ default_stages:
   - manual
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.4.0
+    rev: v4.1.0
     hooks:
       - id: check-merge-conflict
       - id: check-yaml
   - repo: https://gitlab.com/pycqa/flake8/
-    rev: 3.9.2
+    rev: 4.0.1
     # We have multiple places where Python code is located
     # The main 3 points are:
     # - AI (default/python)
@@ -34,11 +34,11 @@ repos:
           - --extend-exclude=default/python/*,default/scripting/*,cmake/*,doc/*,check/*
           - --config=test-scripting/tox.ini
   - repo: https://github.com/timothycrosley/isort
-    rev: 5.8.0
+    rev: 5.10.1
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
-    rev: 21.7b0
+    rev: 22.1.0
     hooks:
       - id: black
   - repo: local

@@ -344,7 +344,7 @@ class Aggression(Trait):
     def target_number_of_orbitals(self):
         aggression_index = max(1, self.aggression)
         return min(
-            int(((fo.currentTurn() + 4) / (8.0 * aggression_index ** 1.5)) ** 0.8),
+            int(((fo.currentTurn() + 4) / (8.0 * aggression_index**1.5)) ** 0.8),
             fo.aggression.maniacal - aggression_index,
         )
 

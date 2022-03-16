@@ -1,5 +1,5 @@
-flake8==3.7.9
-pytest==5.4.3
-pytest-github-actions-annotate-failures==0.0.5
-isort==5.8.0
-black==21.7b0
+flake8==4.0.1
+pytest==7.1.0
+pytest-github-actions-annotate-failures==0.1.6
+isort==5.10.1
+black==22.1.0
