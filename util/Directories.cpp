@@ -235,7 +235,7 @@ namespace {
     }
 
     constexpr auto PathTypesImpl() {
-        static_assert(std::is_same_v<std::underlying_type_t<PathType>, char>);
+        static_assert(std::is_same_v<std::underlying_type_t<PathType>, signed char>);
         static_assert(char(PathType::PATH_INVALID) > 0);
         std::array<PathType, NUM_PATH_TYPES> retval{};
 

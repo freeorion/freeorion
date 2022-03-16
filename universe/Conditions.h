@@ -24,14 +24,14 @@ namespace ValueRef {
   * Effect system. */
 namespace Condition {
 
-enum class SortingMethod : char {
+enum class SortingMethod : unsigned char {
     SORT_MAX,       ///< Objects with the largest sort key will be selected
     SORT_MIN,       ///< Objects with the smallest sort key will be selected
     SORT_MODE,      ///< Objects with the most common sort key will be selected
     SORT_RANDOM     ///< Objects will be selected randomly, without consideration of property values
 };
 
-enum class ComparisonType : char {
+enum class ComparisonType : signed char {
     INVALID_COMPARISON = -1,
     EQUAL,
     GREATER_THAN,
@@ -41,7 +41,7 @@ enum class ComparisonType : char {
     NOT_EQUAL
 };
 
-enum class ContentType : char {
+enum class ContentType : unsigned char {
     CONTENT_BUILDING,
     CONTENT_SPECIES,
     CONTENT_SHIP_HULL,
