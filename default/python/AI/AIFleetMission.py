@@ -606,7 +606,7 @@ class AIFleetMission:
                                     continue
                                 debug("Splitting from fleet.")
                                 new_fleet_id = FleetUtilsAI.split_ship_from_fleet(fleet_id, ship_id)
-                                if assertion_fails(new_fleet_id not in (None, INVALID_ID)):
+                                if assertion_fails(new_fleet_id != INVALID_ID):
                                     break
                                 new_fleets.append(new_fleet_id)
                                 fleet_remaining_rating = CombatRatingsAI.rating_difference(
