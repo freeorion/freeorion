@@ -307,7 +307,7 @@ float Tech::ResearchCost(int empire_id, const ScriptingContext& context) const {
         auto source = empire->Source(context.ContextObjects());
         if (!source)
             return ARBITRARY_LARGE_COST;
-        ScriptingContext source_context{context, std::move(source)};
+        ScriptingContext source_context{std::move(source), context};
         return m_research_cost->Eval(source_context);
     }
 }
