@@ -629,15 +629,6 @@ def trooper_move_reqs_met(invasion_target: Target, order: OrderMove, verbose: bo
     if order.target.id not in supplied_systems or fo.getUniverse().jumpDistance(order.fleet.id, invasion_system.id) < 5:
         if invasion_planet.currentMeterValue(fo.meterType.maxShield):
             military_support_fleets = MilitaryAI.get_military_fleets_with_target_system(invasion_system.id)
-            if not military_support_fleets:
-                if verbose:
-                    debug(
-                        "trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
-                        "because target (%s) has nonzero max shields and there is not yet a military fleet "
-                        "assigned to secure the target system." % (order.fleet.id, invasion_planet)
-                    )
-                return False
-
             # if there is a threat in the enemy system, do give military ships at least 1 turn to clear it
             delay_to_move_troops = 1 if MilitaryAI.get_system_local_threat(order.target.id) else 0
 

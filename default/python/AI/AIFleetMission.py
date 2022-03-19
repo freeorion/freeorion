@@ -268,7 +268,19 @@ class AIFleetMission:
             elif isinstance(fleet_order, OrderOutpost):
                 if planet.unowned:
                     return False
-            elif isinstance(fleet_order, OrderInvade):  # TODO add substantive abort check
+            elif isinstance(fleet_order, OrderInvade):
+                if planet.owner == fo.getEmpire().empireID:
+                    debug(f"Abandoning invasion for {planet}, it already belongs to us")
+                    return True
+                if planet.currentMeterValue(fo.meterType.maxShield):
+                    military_support_fleets = MilitaryAI.get_military_fleets_with_target_system(planet.systemID)
+                    if not military_support_fleets:
+                        # Maybe try again later...
+                        debug(
+                            f"Abandoning Invasion mission for {planet} because target has nonzero max shields "
+                            f"and there is no military fleet assigned to secure the target system."
+                        )
+                        return True
                 return False
             else:
                 return False
@@ -333,8 +345,8 @@ class AIFleetMission:
         self.clear_target()  # TODO: clear from foAIstate
         self.clear_fleet_orders()
         troops_needed = max(0, target_troops - FleetUtilsAI.count_troops_in_fleet(fleet_id))
-        min_stats = {"rating": 0, "troopCapacity": troops_needed}
-        target_stats = {"rating": 10, "troopCapacity": troops_needed}
+        min_stats = {"troopCapacity": troops_needed}
+        target_stats = {"troopCapacity": troops_needed}
         found_fleets = []
         # TODO check if next statement does not mutate any global states and can be removed
 
@@ -398,11 +410,11 @@ class AIFleetMission:
             self._check_retarget_invasion()
         just_issued_move_order = False
         last_move_target_id = INVALID_ID
-        # Note: the following abort check somewhat assumes only one major mission type
         for fleet_order in self.orders:
             if isinstance(fleet_order, (OrderColonize, OrderOutpost, OrderInvade)) and self._check_abort_mission(
                 fleet_order
             ):
+                self.clear_target()
                 return
         aistate = get_aistate()
         for fleet_order in self.orders:
@@ -500,15 +512,15 @@ class AIFleetMission:
                         return  # colonize order must not have completed yet
                 clear_all = True
                 last_sys_target = INVALID_ID
+                secure_targets = set(
+                    AIstate.colonyTargetedSystemIDs
+                    + AIstate.outpostTargetedSystemIDs
+                    + AIstate.invasionTargetedSystemIDs
+                )
                 if last_order and isinstance(last_order, OrderMilitary):
                     last_sys_target = last_order.target.id
                     # not doing this until decide a way to release from a SECURE mission
                     # if (MissionType.SECURE == self.type) or
-                    secure_targets = set(
-                        AIstate.colonyTargetedSystemIDs
-                        + AIstate.outpostTargetedSystemIDs
-                        + AIstate.invasionTargetedSystemIDs
-                    )
                     if last_sys_target in secure_targets:  # consider a secure mission
                         if last_sys_target in AIstate.colonyTargetedSystemIDs:
                             secure_type = "Colony"
@@ -532,6 +544,11 @@ class AIFleetMission:
                     clear_all = False
                     last_sys_target = self.target.id
                     debug("Check if PROTECT_REGION mission with target %d is finished.", last_sys_target)
+
+                # for SECURE missions, only release fleet if no settle or invade mission is ongoing
+                if self.type == MissionType.SECURE and self.target.id in secure_targets:
+                    debug(f"Secure mission for {self.target} not yet finished")
+                    return
 
                 fleet_id = self.fleet.id
                 if clear_all:

@@ -468,23 +468,7 @@ def evaluate_invasion_planet(planet_id):
     max_troops = planet.currentMeterValue(fo.meterType.maxTroops)
     # TODO: refactor troop determination into function for use in mid-mission updates and also consider defender techs
     max_troops += AIDependencies.TROOPS_PER_POP * (target_pop - pop)
-
-    this_system = universe.getSystem(system_id)
-    secure_targets = [system_id] + list(this_system.planetIDs)
-    system_secured = False
-
-    secure_fleets = get_aistate().get_fleet_missions_with_any_mission_types([MissionType.SECURE, MissionType.MILITARY])
-    for mission in secure_fleets:
-        secure_fleet_id = mission.fleet.id
-        s_fleet = universe.getFleet(secure_fleet_id)
-        if not s_fleet or s_fleet.systemID != system_id:
-            continue
-        if mission.type in [MissionType.SECURE, MissionType.MILITARY]:
-            target_obj = mission.target.get_object()
-            if target_obj is not None and target_obj.id in secure_targets:
-                system_secured = True
-                break
-    system_secured = system_secured and system_status.get("myFleetRating", 0)
+    system_secured = secure_system(system_id, False)
     debug(
         "Invasion eval of %s\n" " - maxShields: %.1f\n" " - sysFleetThreat: %.1f\n" " - sysMonsterThreat: %.1f",
         planet,
@@ -543,25 +527,43 @@ def evaluate_invasion_planet(planet_id):
     if clear_path:
         planet_score *= 1.5
     debug(
-        " - planet score: %.2f\n"
-        " - planned troops: %.2f\n"
-        " - projected troop cost: %.1f\n"
-        " - threat factor: %s\n"
-        " - planet detail: %s\n"
-        " - popval: %.1f\n"
-        " - bldval: %s\n"
-        " - enemyval: %s",
-        planet_score,
-        planned_troops,
-        troop_cost,
-        threat_factor,
-        detail,
-        colony_base_value,
-        bld_tally,
-        enemy_val,
+        f" - planet score: {planet_score:.2f}\n"
+        f" - planned troops: {planned_troops:.2f}\n"
+        f" - projected troop cost: {troop_cost:.1f}\n"
+        f" - threat factor: {threat_factor}\n"
+        f" - planet detail: {detail}\n"
+        f" - popval: {colony_base_value:.1f}\n"
+        f" - bldval: {bld_tally}\n"
+        f" - enemyval: {enemy_val}\n"
+        f" - system secured: {system_secured}"
     )
-    debug(" - system secured: %s" % system_secured)
     return [planet_score, planned_troops]
+
+
+def secure_system(system_id: SystemId, secure_now: bool):
+    """Check whether we have any military fleets in the system.
+    If secure_now is True, set one of the fleets to MissionType.SECURE
+    If secure_now is False, return true if there is any fleet that secure it.
+    """
+    universe = fo.getUniverse()
+    ai_state = get_aistate()
+    system = universe.getSystem(system_id)
+    secure_targets = [system_id] + list(system.planetIDs)
+    system_status = ai_state.systemStatus.get(system_id, {})
+    mission_types = [MissionType.SECURE, MissionType.MILITARY, MissionType.PROTECT_REGION, MissionType.ORBITAL_DEFENSE]
+    missions = ai_state.get_fleet_missions_with_any_mission_types(mission_types)
+    secured = False
+    for mission in missions:
+        fleet = universe.getFleet(mission.fleet.id)
+        if not fleet or fleet.systemID != system_id:
+            continue
+        target_obj = mission.target.get_object()
+        if target_obj is not None and target_obj.id in secure_targets:
+            if secure_now and mission.type != MissionType.SECURE:
+                mission.set_target(MissionType.SECURE, mission.target)
+            secured = system_status.get("myFleetRating", 0) > 0
+            break
+    return secured
 
 
 def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
@@ -581,9 +583,8 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
         sys_id = planet.systemID
         found_fleets = []
         found_stats = {}
-        min_stats = {"rating": 0, "troopCapacity": ptroops}
+        min_stats = {"troopCapacity": ptroops}
         target_stats = {
-            "rating": 10,
             "troopCapacity": ptroops + _TROOPS_SAFETY_MARGIN,
             "target_system": TargetSystem(sys_id),
         }
@@ -607,12 +608,17 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
                 these_fleets = found_fleets
         target = TargetPlanet(planet_id)
         debug("assigning invasion fleets %s to target %s" % (these_fleets, target))
+        if target.get_object().currentMeterValue(fo.meterType.maxShield) > 0.0 and not secure_system(sys_id, True):
+            continue
         aistate = get_aistate()
         for fleetID in these_fleets:
             fleet_mission = aistate.get_fleet_mission(fleetID)
             fleet_mission.clear_fleet_orders()
             fleet_mission.clear_target()
             fleet_mission.set_target(mission_type, target)
+        # cannot wait for next turn, else the secure mission may be abandoned
+        if these_fleets and sys_id not in AIstate.invasionTargetedSystemIDs:
+            AIstate.invasionTargetedSystemIDs.append(sys_id)
 
 
 def assign_invasion_bases():
@@ -661,8 +667,8 @@ def assign_invasion_bases():
         found_fleets = []
         troops_needed = max(0, target_troops - FleetUtilsAI.count_troops_in_fleet(fid))
         found_stats = {}
-        min_stats = {"rating": 0, "troopCapacity": troops_needed}
-        target_stats = {"rating": 10, "troopCapacity": troops_needed + _TROOPS_SAFETY_MARGIN}
+        min_stats = {"troopCapacity": troops_needed}
+        target_stats = {"troopCapacity": troops_needed + _TROOPS_SAFETY_MARGIN}
 
         FleetUtilsAI.get_fleets_for_mission(
             target_stats,
