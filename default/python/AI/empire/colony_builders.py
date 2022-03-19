@@ -2,7 +2,7 @@ from typing import Dict, List, Mapping, Sequence, Union
 
 import AIDependencies
 from common.fo_typing import PlanetId, SpeciesName
-from common.listeners import register_post_handler, register_pre_handler
+from common.listeners import listener, register_post_handler, register_pre_handler
 from freeorion_tools import tech_is_complete
 from freeorion_tools.caching import cache_for_current_turn
 from freeorion_tools.lazy_initializer import InitializerLock
@@ -10,9 +10,10 @@ from freeorion_tools.lazy_initializer import InitializerLock
 _colony_builder_lock = InitializerLock("colony_builder")
 
 register_pre_handler("generateOrders", _colony_builder_lock.lock)
-register_post_handler("survey_universe", lambda *args: _colony_builder_lock.unlock())
+register_post_handler("set_colony_builders", lambda *args: _colony_builder_lock.unlock())
 
 
+@listener
 def set_colony_builders(species_name: SpeciesName, yards: Sequence[PlanetId]):
     """
     Add planet where you can build colonies for species.
