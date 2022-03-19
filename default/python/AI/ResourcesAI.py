@@ -96,6 +96,8 @@ class PlanetFocusManager:
         Return success or failure
         """
         pinfo = self.raw_planet_info.get(pid)
+        if not pinfo:
+            return False
         if (focus == INDUSTRY or focus == RESEARCH) and not force:
             idx = 0 if focus == INDUSTRY else 1
             # check for influence instead
@@ -127,11 +129,8 @@ class PlanetFocusManager:
             return False
 
         success = bool(
-            pinfo is not None
-            and (
-                pinfo.current_focus == focus
-                or (focus in pinfo.planet.availableFoci and fo.issueChangeFocusOrder(pid, focus))
-            )
+            pinfo.current_focus == focus
+            or (focus in pinfo.planet.availableFoci and fo.issueChangeFocusOrder(pid, focus))
         )
         if success:
             if update and pinfo.current_focus != focus:
