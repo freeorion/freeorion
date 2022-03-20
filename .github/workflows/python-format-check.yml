@@ -22,7 +22,7 @@ jobs:
         run: pip install -r default/python/requirements-dev.txt
       - name: Lint with black
         run: |
-          black . --check --no-color -t py36 --diff
+          black . --check --no-color -t py36 --diff -q
       - name: Lint with isort
         run: |
           isort . --check-only --diff --quiet
