@@ -260,6 +260,7 @@ class AIFleetMission:
                     debug("EspionageAI predicts we can no longer detect %s, will abort mission" % fleet_order.target)
                     planet_stealthed = True
         if target_is_planet and not planet_stealthed:
+            # TBD use fleet_order.is_valid or add fleet_order.should_abort
             if isinstance(fleet_order, OrderColonize):
                 if planet.initialMeterValue(fo.meterType.population) == 0 and (
                     planet.ownedBy(fo.empireID()) or planet.unowned
@@ -288,8 +289,6 @@ class AIFleetMission:
         # canceling fleet orders
         debug("   %s" % fleet_order)
         debug("Fleet %d had a target planet that is no longer valid for this mission; aborting." % self.fleet.id)
-        self.clear_fleet_orders()
-        self.clear_target()
         FleetUtilsAI.split_fleet(self.fleet.id)
         return True
 
@@ -414,6 +413,7 @@ class AIFleetMission:
             if isinstance(fleet_order, (OrderColonize, OrderOutpost, OrderInvade)) and self._check_abort_mission(
                 fleet_order
             ):
+                self.clear_fleet_orders()
                 self.clear_target()
                 return
         aistate = get_aistate()

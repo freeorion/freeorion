@@ -540,10 +540,10 @@ def evaluate_invasion_planet(planet_id):
     return [planet_score, planned_troops]
 
 
-def secure_system(system_id: SystemId, secure_now: bool):
+def secure_system(system_id: SystemId, secure_now: bool) -> bool:
     """Check whether we have any military fleets in the system.
     If secure_now is True, set one of the fleets to MissionType.SECURE
-    If secure_now is False, return true if there is any fleet that secure it.
+    If secure_now is False, return True if there is any fleet that could secure it.
     """
     universe = fo.getUniverse()
     ai_state = get_aistate()
@@ -561,6 +561,8 @@ def secure_system(system_id: SystemId, secure_now: bool):
         if target_obj is not None and target_obj.id in secure_targets:
             if secure_now and mission.type != MissionType.SECURE:
                 mission.set_target(MissionType.SECURE, mission.target)
+            # TBD whether fleet itself has a sufficient rating against a planet.
+            # E.g. a fleet with Flux Lance cannot keep planetary shields down.
             secured = system_status.get("myFleetRating", 0) > 0
             break
     return secured
