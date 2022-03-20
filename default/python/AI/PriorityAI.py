@@ -460,7 +460,7 @@ def _calculate_invasion_priority():
 
 
 def allotted_invasion_targets():
-    return 1 + int(fo.currentTurn() // 25)
+    return min(1 + int(fo.currentTurn() // 50), 3)
 
 
 def _calculate_military_priority():
