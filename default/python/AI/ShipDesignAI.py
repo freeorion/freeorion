@@ -2062,9 +2062,9 @@ class ScoutShipDesigner(ShipDesigner):
     def _rating_function(self):
         if not self.design_stats.detection:
             return INVALID_DESIGN_RATING
-        detection_factor = self.design_stats.detection ** 2
+        detection_factor = self.design_stats.detection**2
         fuel_factor = self._effective_fuel()
-        speed_factor = self.design_stats.speed ** 0.5
+        speed_factor = self.design_stats.speed**0.5
         return detection_factor * fuel_factor * speed_factor / self.production_cost
 
 
@@ -2095,7 +2095,7 @@ class KrillSpawnerShipDesigner(ShipDesigner):
         stealth_factor = 1 + (
             self.design_stats.stealth + self.design_stats.asteroid_stealth // 2
         )  # TODO: Adjust for enemy detection strength
-        detection_factor = self.design_stats.detection ** 1.5
+        detection_factor = self.design_stats.detection**1.5
         return structure_factor * fuel_factor * speed_factor * stealth_factor * detection_factor / self.production_cost
 
     def _minimum_structure(self):

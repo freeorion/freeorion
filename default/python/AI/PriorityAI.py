@@ -251,7 +251,7 @@ def _calculate_exploration_priority():
     # These caps could perhaps instead be tied more directly to military priority and
     # total empire production.
     desired_number_of_scouts = int(
-        min(4 + mil_ships / 5, 4 + fo.currentTurn() / 50.0, 2 + num_unexplored_systems ** 0.5)
+        min(4 + mil_ships / 5, 4 + fo.currentTurn() / 50.0, 2 + num_unexplored_systems**0.5)
     )
     scouts_needed = max(0, desired_number_of_scouts - (num_scouts + queued_scout_ships))
     exploration_priority = int(40 * scouts_needed)
@@ -519,15 +519,15 @@ def _calculate_military_priority():
                 status.get("fleetThreat", 0) ** 0.5
                 + 0.8 * status.get("max_neighbor_threat", 0) ** 0.5
                 + 0.2 * status.get("neighborThreat", 0) ** 0.5
-                + monster_threat ** 0.5
+                + monster_threat**0.5
                 + status.get("planetThreat", 0) ** 0.5
             )
         else:
             threat_root = (
-                status.get("fleetThreat", 0) ** 0.5 + monster_threat ** 0.5 + status.get("planetThreat", 0) ** 0.5
+                status.get("fleetThreat", 0) ** 0.5 + monster_threat**0.5 + status.get("planetThreat", 0) ** 0.5
             )
         ships_needed_here = math.ceil(
-            (max(0, (threat_root - (my_rating ** 0.5 + my_defenses ** 0.5))) ** 2) / cur_ship_rating
+            (max(0, (threat_root - (my_rating**0.5 + my_defenses**0.5))) ** 2) / cur_ship_rating
         )
         ships_needed += ships_needed_here
         ships_needed_allocation.append((universe.getSystem(sys_id), ships_needed_here))

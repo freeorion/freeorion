@@ -529,7 +529,7 @@ def evaluate_invasion_planet(planet_id):
     # apply some bias to expensive operations
     normalized_cost = float(troop_cost) / max(fo.getEmpire().productionPoints, 1)
     normalized_cost = max(1.0, normalized_cost)
-    cost_score = (normalized_cost ** 2 / 50.0) * troop_cost
+    cost_score = (normalized_cost**2 / 50.0) * troop_cost
 
     base_score = colony_base_value + bld_tally + tech_tally + enemy_val - cost_score
     # If the AI does have enough total military to attack this target, and the target is more than minimally valuable,
