@@ -18,7 +18,6 @@ from colonization.calculate_planet_colonization_rating import (
 from colonization.calculate_population import active_growth_specials, calc_max_pop
 from colonization.colony_score import MINIMUM_COLONY_SCORE
 from colonization.planet_supply import get_planet_supply
-from common.listeners import listener
 from common.print_utils import Bool, Number, Sequence, Table, Text
 from empire.buildings_locations import set_building_locations
 from empire.colony_builders import (
@@ -109,7 +108,6 @@ def get_supply_tech_range():
     return sum(_range for _tech, _range in AIDependencies.supply_range_techs.items() if tech_is_complete(_tech))
 
 
-@listener
 def survey_universe():
     colonization_timer.start("Categorizing Visible Planets")
     universe = fo.getUniverse()
