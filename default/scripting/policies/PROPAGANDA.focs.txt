@@ -13,8 +13,7 @@ Policy
                 Capital
                 OwnedBy empire = Source.Owner
             ]
-            effects = SetTargetInfluence value = Value +
-                        (NamedReal name = "PROPAGANDA_INFLUENCE_FLAT" value = 4.0)
+            effects = SetTargetInfluence value = Value + (NamedReal name = "PROPAGANDA_INFLUENCE_FLAT" value = 4.0)
 
         EffectsGroup
             scope = And [
@@ -31,7 +30,7 @@ Policy
                 Not EmpireHasAdoptedPolicy empire = LocalCandidate.Owner name = ThisPolicy
                 Number low = 1 condition = And [
                     OwnedBy empire = Source.Owner
-                    VisibleToEmpire empire = LocalCandidate.Owner
+                    VisibleToEmpire empire = RootCandidate.Owner
                 ]
             ]
             effects = SetTargetInfluence value = Value + (NamedReal name = "PROPAGANDA_INFLUENCE_ENEMY_FLAT" value = -1.0)
