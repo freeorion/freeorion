@@ -178,3 +178,11 @@ GameRule(
     min=1,
     max=20,
 )
+
+GameRule(
+    name="RULE_ALLOW_REPEATED_SPECIES",
+    description="RULE_ALLOW_REPEATED_SPECIES_DESC",
+    category="CONTENT",
+    type=bool,
+    default=False,
+)
