@@ -415,7 +415,7 @@ Meter* Planet::GetMeter(MeterType type)
 const Meter* Planet::GetMeter(MeterType type) const
 { return UniverseObject::GetMeter(type); }
 
-std::string Planet::CardinalSuffix() const {
+std::string Planet::CardinalSuffix(const ObjectMap& objects) const {
     std::string retval;
     // Early return for invalid ID
     if (ID() == INVALID_OBJECT_ID) {
@@ -423,7 +423,7 @@ std::string Planet::CardinalSuffix() const {
         return retval;
     }
 
-    auto cur_system = Objects().get<System>(SystemID());
+    auto cur_system = objects.get<System>(SystemID());
     // Early return for no system
     if (!cur_system) {
         ErrorLogger() << "Planet " << Name() << "(" << ID()
@@ -455,7 +455,7 @@ std::string Planet::CardinalSuffix() const {
             continue;
         }
 
-        PlanetType other_planet_type = Objects().get<Planet>(sys_orbit)->Type();
+        PlanetType other_planet_type = objects.get<Planet>(sys_orbit)->Type();
         if (other_planet_type == PlanetType::INVALID_PLANET_TYPE)
             continue;
 

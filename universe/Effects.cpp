@@ -1821,7 +1821,9 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
         if (m_name->ConstantExpr() && UserStringExists(name_str))
             name_str = UserString(name_str);
     } else {
-        name_str = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % system->Name() % planet->CardinalSuffix());
+        name_str = str(FlexibleFormat(UserString("NEW_PLANET_NAME"))
+                       % system->Name()
+                       % planet->CardinalSuffix(context.ContextObjects()));
     }
     planet->Rename(std::move(name_str));
 

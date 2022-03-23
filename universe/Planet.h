@@ -112,7 +112,7 @@ public:
     [[nodiscard]] int TurnsSinceLastConquered() const;
 
     [[nodiscard]] const std::string&  SurfaceTexture() const  { return m_surface_texture; }
-    [[nodiscard]] std::string         CardinalSuffix() const; ///< returns a roman number representing this planets orbit in relation to other planets
+    [[nodiscard]] std::string         CardinalSuffix(const ObjectMap& objects) const; ///< returns a roman number representing this planets orbit in relation to other planets
 
     [[nodiscard]] std::map<int, double> EmpireGroundCombatForces() const;
 
