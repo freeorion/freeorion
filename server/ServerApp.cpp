@@ -3319,8 +3319,8 @@ namespace {
     }
 
     /** Causes ResourceCenters (Planets) to update their focus records */
-    void UpdateResourceCenterFocusHistoryInfo() {
-        for (auto& planet : GetUniverse().Objects().all<Planet>())
+    void UpdateResourceCenterFocusHistoryInfo(ObjectMap& objects) {
+        for (auto& planet : objects.all<Planet>())
             planet->UpdateFocusHistory();
     }
 
@@ -3389,7 +3389,7 @@ void ServerApp::PreCombatProcessTurns() {
     ClearEmpireTurnOrders();
 
     // update ResourceCenter focus history info
-    UpdateResourceCenterFocusHistoryInfo();
+    UpdateResourceCenterFocusHistoryInfo(context.ContextObjects());
 
     // validate adopted policies, and update Empire Policy history
     // actual policy adoption and influence consumption occurrs during order
