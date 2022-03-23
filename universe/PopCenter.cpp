@@ -69,7 +69,7 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
 void PopCenter::PopCenterClampMeters()
 { GetMeter(MeterType::METER_POPULATION)->ClampCurrentToRange(); }
 
-void PopCenter::Reset() {
+void PopCenter::Reset(ObjectMap&) {
     GetMeter(MeterType::METER_POPULATION)->Reset();
     GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
     GetMeter(MeterType::METER_HAPPINESS)->Reset();

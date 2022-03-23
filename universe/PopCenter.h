@@ -10,6 +10,7 @@
 
 class Meter;
 class UniverseObject;
+class ObjectMap;
 
 /** The PopCenter class is an abstract base class for anything in the FreeOrion
   * gamestate that has population on or in it.  Most likely, such an object
@@ -32,7 +33,7 @@ public:
     void                Copy(std::shared_ptr<const PopCenter> copied_object, Visibility vis);
     void                Copy(std::shared_ptr<const PopCenter> copied_object);
     virtual void        SetSpecies(std::string species_name);               ///< sets the species of the population to \a species_name
-    virtual void        Reset();                                            ///< sets all meters to 0, clears race name
+    virtual void        Reset(ObjectMap&);                                  ///< sets all meters to 0, clears race name
     virtual void        Depopulate();                                       ///< removes population
 
 protected:

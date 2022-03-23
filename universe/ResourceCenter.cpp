@@ -143,7 +143,7 @@ void ResourceCenter::ResourceCenterClampMeters() {
     GetMeter(MeterType::METER_CONSTRUCTION)->ClampCurrentToRange();
 }
 
-void ResourceCenter::Reset() {
+void ResourceCenter::Reset(ObjectMap&) {
     m_focus.clear();
     m_last_turn_focus_changed = INVALID_GAME_TURN;
 

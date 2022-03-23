@@ -614,9 +614,9 @@ bool Planet::RemoveBuilding(int building_id) {
     return false;
 }
 
-void Planet::Reset() {
-    PopCenter::Reset();
-    ResourceCenter::Reset();
+void Planet::Reset(ObjectMap& objects) {
+    PopCenter::Reset(objects);
+    ResourceCenter::Reset(objects);
 
     GetMeter(MeterType::METER_SUPPLY)->Reset();
     GetMeter(MeterType::METER_MAX_SUPPLY)->Reset();
@@ -630,7 +630,7 @@ void Planet::Reset() {
     GetMeter(MeterType::METER_REBEL_TROOPS)->Reset();
 
     if (m_is_about_to_be_colonized && !OwnedBy(ALL_EMPIRES)) {
-        for (const auto& building : Objects().find<Building>(m_buildings)) {
+        for (const auto& building : objects.find<Building>(m_buildings)) {
             if (!building)
                 continue;
             building->Reset();
@@ -726,8 +726,11 @@ void Planet::SetSpecies(std::string species_name) {
     PopCenter::SetSpecies(std::move(species_name));
 }
 
-bool Planet::Colonize(int empire_id, std::string species_name, double population) {
+bool Planet::Colonize(int empire_id, std::string species_name, double population,
+                      ScriptingContext& context)
+{
     const Species* species = nullptr;
+    auto& objects = context.ContextObjects();
 
     // if desired pop > 0, we want a colony, not an outpost, so we need to do some checks
     if (population > 0.0) {
@@ -747,10 +750,10 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
 
     // reset the planet to unowned/unpopulated
     if (!OwnedBy(empire_id)) {
-        Reset();
+        Reset(objects);
     } else {
-        PopCenter::Reset();
-        for (const auto& building : Objects().find<Building>(m_buildings)) {
+        PopCenter::Reset(objects);
+        for (const auto& building : objects.find<Building>(m_buildings)) {
             if (!building)
                 continue;
             building->Reset();
@@ -764,7 +767,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
     // if desired pop > 0, we want a colony, not an outpost, so we have to set the colony species
     if (population > 0.0)
         SetSpecies(std::move(species_name));
-    m_turn_last_colonized = CurrentTurn();  // may be redundant with same in SetSpecies, but here occurrs always, whereas in SetSpecies is only done if species is initially empty
+    m_turn_last_colonized = context.current_turn; // may be redundant with same in SetSpecies, but here occurrs always, whereas in SetSpecies is only done if species is initially empty
 
     // find a default focus. use first defined available focus.
     // AvailableFoci function should return a vector of all names of
@@ -797,7 +800,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
     SetOwner(empire_id);
 
     // if there are buildings on the planet, set the specified empire as their owner too
-    for (auto& building : Objects().find<Building>(BuildingIDs()))
+    for (auto& building : objects.find<Building>(BuildingIDs()))
         building->SetOwner(empire_id);
 
     return true;
@@ -865,7 +868,7 @@ void Planet::PopGrowthProductionResearchPhase(ScriptingContext& context) {
                 empire->RecordPlanetDepopulated(*this);
         }
         // remove species
-        PopCenter::Reset();
+        PopCenter::Reset(context.ContextObjects());
     }
 
     StateChangedSignal();

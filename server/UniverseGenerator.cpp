@@ -806,7 +806,7 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name,
             home_planet->SetSize(PlanetSize::SZ_MEDIUM);
     }
 
-    home_planet->Colonize(empire->EmpireID(), species_name, Meter::LARGE_VALUE);
+    home_planet->Colonize(empire->EmpireID(), species_name, Meter::LARGE_VALUE, context);
     context.species.AddSpeciesHomeworld(std::move(species_name), home_planet->ID());
 
     empire->SetCapitalID(home_planet->ID(), context.ContextObjects());

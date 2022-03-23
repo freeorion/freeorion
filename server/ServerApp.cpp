@@ -1903,7 +1903,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     }
     // unclaim owned planets
     for (const auto& planet : planets)
-        planet->Reset();
+        planet->Reset(m_universe.Objects());
 
     // Don't wait for turn
     RemoveEmpireTurn(empire_id);
@@ -2793,10 +2793,11 @@ namespace {
     }
 
     /** Does colonization, with safety checks */
-    bool ColonizePlanet(int ship_id, int planet_id, Universe& universe,
+    bool ColonizePlanet(int ship_id, int planet_id, ScriptingContext& context,
                         const std::vector<int>& empire_ids)
     {
-        auto& objects = universe.Objects();
+        auto& objects = context.ContextObjects();
+        auto& universe = context.ContextUniverse();
 
         auto ship = objects.get<Ship>(ship_id);
         if (!ship) {
@@ -2834,7 +2835,7 @@ namespace {
 
         // colonize planet by calling Planet class Colonize member function
         // do this BEFORE destroying the ship, since species_name is a const reference to Ship::m_species_name
-        if (!planet->Colonize(empire_id, species_name, colonist_capacity)) {
+        if (!planet->Colonize(empire_id, species_name, colonist_capacity, context)) {
             ErrorLogger() << "ColonizePlanet: couldn't colonize planet";
             return false;
         }
@@ -2958,7 +2959,7 @@ namespace {
 
 
             // do colonization
-            if (!ColonizePlanet(colonizing_ship_id, planet_id, universe, empire_ids))
+            if (!ColonizePlanet(colonizing_ship_id, planet_id, context, empire_ids))
                 continue;   // skip sitrep if colonization failed
 
             // record successful colonization

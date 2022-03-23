@@ -1257,34 +1257,38 @@ namespace {
 
     auto PlanetMakeOutpost(int planet_id, int empire_id) -> bool
     {
-        auto planet = Objects().get<Planet>(planet_id);
+        ScriptingContext context;
+
+        auto planet = context.ContextObjects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetMakeOutpost: couldn't get planet with ID:" << planet_id;
             return false;
         }
 
-        if (!GetEmpire(empire_id)) {
+        if (!context.GetEmpire(empire_id)) {
             ErrorLogger() << "PlanetMakeOutpost: couldn't get empire with ID " << empire_id;
             return false;
         }
 
-        return planet->Colonize(empire_id, "", 0.0);
+        return planet->Colonize(empire_id, "", 0.0, context);
     }
 
     auto PlanetMakeColony(int planet_id, int empire_id, const std::string& species, double population) -> bool
     {
-        auto planet = Objects().get<Planet>(planet_id);
+        ScriptingContext context;
+
+        auto planet = context.ContextObjects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetMakeColony: couldn't get planet with ID:" << planet_id;
             return false;
         }
 
-        if (!GetEmpire(empire_id)) {
+        if (!context.GetEmpire(empire_id)) {
             ErrorLogger() << "PlanetMakeColony: couldn't get empire with ID " << empire_id;
             return false;
         }
 
-        if (!GetSpecies(species)) {
+        if (!context.species.GetSpecies(species)) {
             ErrorLogger() << "PlanetMakeColony: couldn't get species with name: " << species;
             return false;
         }
@@ -1292,18 +1296,20 @@ namespace {
         if (population < 0.0)
             population = 0.0;
 
-        return planet->Colonize(empire_id, species, population);
+        return planet->Colonize(empire_id, species, population, context);
     }
 
     auto PlanetCardinalSuffix(int planet_id) -> py::object
     {
-        auto planet = Objects().get<Planet>(planet_id);
+        const ScriptingContext context;
+
+        auto planet = context.ContextObjects().get<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetCardinalSuffix: couldn't get planet with ID:" << planet_id;
             return py::object(UserString("ERROR"));
         }
 
-        return py::object(planet->CardinalSuffix());
+        return py::object(planet->CardinalSuffix(context.ContextObjects()));
     }
 
     auto PlayerEmpireColor(const PlayerSetupData* psd) -> py::tuple

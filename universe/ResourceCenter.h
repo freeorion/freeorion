@@ -10,6 +10,7 @@
 class Empire;
 class Meter;
 class UniverseObject;
+class ObjectMap;
 
 /** The ResourceCenter class is an abstract base class for anything in the
   * FreeOrion gamestate that generates resources (minerals, etc.).  Most
@@ -47,7 +48,7 @@ public:
 
     /** Resets the meters, etc. This should be called when a ResourceCenter is
         wiped out due to starvation, etc. */
-    virtual void Reset();
+    virtual void Reset(ObjectMap&);
 
 protected:
     void Init();    ///< initialization that needs to be called by derived class after derived class is constructed

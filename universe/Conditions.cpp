@@ -3579,8 +3579,9 @@ void InOrIsSystem::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string InOrIsSystem::Description(bool negated/* = false*/) const {
-    const auto& objects = Objects();
+std::string InOrIsSystem::Description(bool negated) const {
+    const ScriptingContext context;
+    const auto& objects = context.ContextObjects();
 
     std::string system_str;
     int system_id = INVALID_OBJECT_ID;
@@ -3741,8 +3742,9 @@ void OnPlanet::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string OnPlanet::Description(bool negated/* = false*/) const {
-    const auto& objects = Objects();
+std::string OnPlanet::Description(bool negated) const {
+    const ScriptingContext context;
+    const auto& objects = context.ContextObjects();
 
     std::string planet_str;
     int planet_id = INVALID_OBJECT_ID;
@@ -3888,8 +3890,9 @@ void ObjectID::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string ObjectID::Description(bool negated/* = false*/) const {
-    const auto& objects = Objects();
+std::string ObjectID::Description(bool negated) const {
+    const ScriptingContext context;
+    const auto& objects = context.ContextObjects();
 
     std::string object_str;
     int object_id = INVALID_OBJECT_ID;
