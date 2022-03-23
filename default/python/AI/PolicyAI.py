@@ -1,5 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import debug, error
+from typing import Optional
 
 import PlanetUtilsAI
 from aistate_interface import get_aistate
@@ -44,7 +45,7 @@ class PolicyManager:
         self._centralization_cost = fo.getPolicy(centralization).adoptionCost()
         self._bureaucracy_cost = fo.getPolicy(bureaucracy).adoptionCost()
 
-    def generate_orders(self):
+    def generate_orders(self) -> None:
         """The main task of the class, called once every turn by FreeOrionAI."""
         debug(
             "Start turn %d IP: %.2f + %.2f, adoptable: %s, adopted: %s",
@@ -63,12 +64,12 @@ class PolicyManager:
         debug("End of turn IP: %.2f + %.2f", self._ip, new_production)
         self._determine_influence_priority(new_production)
 
-    def _process_basics(self):
+    def _process_basics(self) -> None:
         for policy in basics:
             if policy in self._adoptable:
                 self._adopt(policy)
 
-    def _process_bureaucracy(self):
+    def _process_bureaucracy(self) -> None:
         if bureaucracy in self._adopted:
             max_turn = 19  # AI doesn't build Regional Admins yet (TBD count, palace may be gone, too)
             if fo.currentTurn() >= self._empire.turnsPoliciesAdopted[bureaucracy] + max_turn:
@@ -80,7 +81,7 @@ class PolicyManager:
         # make the best plans fails. Keeping it will usually cost too much influence.
         self._check_deadopt_centralization()
 
-    def _try_adopt_centralization(self):
+    def _try_adopt_centralization(self) -> None:
         """Try to adopt centralization as a prerequisite for bureaucracy.
         So far we only want actually adopt it if we can adopt bureaucracy next turn."""
         if centralization not in self._adoptable:
@@ -88,13 +89,16 @@ class PolicyManager:
         if self._centralization_cost + self._bureaucracy_cost > self._ip + self._get_infl_prod():
             return
         self._adopt(centralization)
-        # adopting centralization usually lowers IP production, so use
-        # updated production to calculate if it will be enough for b. next turn.
-        if self._bureaucracy_cost + self._num_populated > self._ip + self._get_infl_prod(True):
+        # Adopting centralization usually lowers IP production, so use updated production to calculate
+        # if it will be enough for bureaucracy next turn.
+        # Add a safety margin for enemy action, loss of supply chain connection could further reduce ip production.
+        safety_margin = self._num_populated / 4
+        if self._bureaucracy_cost + safety_margin > self._ip + self._get_infl_prod(True):
+            debug(f"{self._bureaucracy_cost} + {safety_margin} <= {self._ip} + {self._get_infl_prod(True)}")
             self._deadopt(centralization)
             self._ip += self._centralization_cost
 
-    def _try_adopt_bureaucracy(self):
+    def _try_adopt_bureaucracy(self) -> None:
         """Try to adopt bureaucracy, starting with centralization if necessary."""
         if bureaucracy in self._adoptable:
             self._adopt(bureaucracy)
@@ -110,7 +114,7 @@ class PolicyManager:
                 self._deadopt(centralization)
                 self._adopt(infra1)
 
-    def _check_deadopt_centralization(self):
+    def _check_deadopt_centralization(self) -> None:
         """Deadopt centralization after one turn to get rid of the IP cost and get
         the slot for technocracy or industrialism. So far, we never keep it for more than one turn."""
         turns_adopted = self._empire.turnsPoliciesAdopted
@@ -118,7 +122,7 @@ class PolicyManager:
             # simplified: always deadopt to free the slot for technocracy
             self._deadopt(centralization)
 
-    def _techno_or_industry(self):
+    def _techno_or_industry(self) -> None:
         """Adopt technocracy or industrialism, depending on AI priorities."""
         research_prio = self._aistate.get_priority(PriorityType.RESOURCE_RESEARCH)
         production_prio = self._aistate.get_priority(PriorityType.RESOURCE_PRODUCTION)
@@ -143,7 +147,7 @@ class PolicyManager:
             may_switch_to_industry,
         )
 
-    def _determine_influence_priority(self, new_production):
+    def _determine_influence_priority(self, new_production: float) -> None:
         # How much IP would we have if we keep the current production for 3 turns?
         forecast = self._ip + 3 * new_production
         # If we are unable to keep bureaucracy, lower the forecast by roughly the amount
@@ -164,14 +168,14 @@ class PolicyManager:
         debug("Setting influence priority to %.1f", priority)
         self._aistate.set_priority(PriorityType.RESOURCE_INFLUENCE, priority)
 
-    def _get_infl_prod(self, update=False):
+    def _get_infl_prod(self, update=False) -> float:
         """Get / Update IP production."""
         if update:
             self._universe.updateMeterEstimates(self._populated_planet_ids)
             fo.updateResourcePools()
         return self._empire.resourceProduction(fo.resourceType.influence)
 
-    def _can_adopt(self, name, replace_other=None):
+    def _can_adopt(self, name: str, replace_other: Optional[str] = None) -> bool:
         """Note that when replace_other is set, this function currently assumes that with
         replace_other removed, there are no other exclusions for policy(name).
         If this won't do, the function needs to temporarily deadopt replace_other or
@@ -189,44 +193,48 @@ class PolicyManager:
             ret and self._empire.emptyPolicySlots[policy.category] and self._empire.policyPrereqsAndExclusionsOK(name)
         )
 
-    def _get_adoptable(self):
+    def _get_adoptable(self) -> set[str]:
         """List of adoptable policies with the still available IP."""
         return {p for p in self._empire.availablePolicies if self._can_adopt(p)}
 
-    def _adopt(self, name):
+    def _adopt(self, name: str) -> None:
         """Find an emtpy slot and adopt named policy, if possible."""
         policy = fo.getPolicy(name)
         category = policy.category
         slot = self._find_empty_slot(category)
         if fo.issueAdoptPolicyOrder(name, category, slot):
-            debug("Issued adoption order for %s in slot %d turn %d", name, slot, fo.currentTurn())
             if name not in self._originally_adopted:
                 self._ip -= policy.adoptionCost()
+            debug(f"Issued adoption order for {name} in slot {slot} turn {fo.currentTurn()}, remaining IP: {self._ip}")
             self._adoptable = self._get_adoptable()
+            self._adopted.add(name)
         else:
             error("Failed to adopt %s in slot %d", name, slot)
 
-    def _find_empty_slot(self, cat):
+    def _find_empty_slot(self, category: str) -> int:
         """This assumes there is an empty slot, otherwise adopt will fail."""
         slot = 0
         # there should be a better way...
         cat_slots = self._empire.categoriesSlotPolicies
-        if cat in cat_slots:
-            slots = cat_slots[cat]
+        if category in cat_slots:
+            slots = cat_slots[category]
             for slot in range(0, 99):
                 if slot not in slots:
                     break
         return slot
 
-    def _deadopt(self, name):
+    def _deadopt(self, name: str) -> None:
         """Deadopt name, if it is adopted."""
         if name in self._adopted:
-            debug("Issued deadoption order for %s turn %d", name, fo.currentTurn())
             fo.issueDeadoptPolicyOrder(name)
             self._adopted.remove(name)
             self._adoptable = self._get_adoptable()
+            if name not in self._originally_adopted:
+                # this is canceling an adoption order of the current turn
+                self._ip += fo.getPolicy(name).adoptionCost()
+            debug(f"Issued deadoption order for {name} turn {fo.currentTurn()}, remaining IP: {self._ip}")
 
-    def print_status(self):
+    def print_status(self) -> None:
         # only for interactive debugging
         print("\nAdoptable Policies:")
         for p in self._get_adoptable():
@@ -244,9 +252,9 @@ class PolicyManager:
         print("Num Planet (pop./outp.): %d/%d" % (self._num_populated, self._num_outposts))
 
 
-def generate_policy_orders():
+def generate_policy_orders() -> None:
     PolicyManager().generate_orders()
 
 
-def print_status():
+def print_status() -> None:
     PolicyManager().print_status()
