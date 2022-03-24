@@ -44,6 +44,7 @@ from character.character_strings_module import (
 )
 from common.handlers import init_handlers
 from common.listeners import listener
+from empire.survey_universe import survey_universe
 from freeorion_tools.timers import AITimer
 
 turn_timer = AITimer("full turn")
@@ -270,6 +271,9 @@ def generateOrders():  # pylint: disable=invalid-name
         info("This empire has been eliminated. Aborting order generation.")
         return
 
+    # results of this function are needed in many places...
+    survey_universe()
+
     generate_order_timer.start("Update states on server")
     # This code block is required for correct AI work.
     info("Meter / Resource Pool updating...")
@@ -343,7 +347,6 @@ def generateOrders():  # pylint: disable=invalid-name
     debug("Calling AI Modules")
     # call AI modules
     action_list = [
-        ColonisationAI.survey_universe,
         ShipDesignAI.Cache.update_for_new_turn,
         PriorityAI.calculate_priorities,
         ExplorationAI.assign_scouts_to_explore_systems,
