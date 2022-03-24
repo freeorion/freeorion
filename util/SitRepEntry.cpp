@@ -422,9 +422,12 @@ SitRepEntry CreateFleetGiftedSitRep(int fleet_id, int empire_id) {
     return sitrep;
 }
 
-SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id) {
-    const Universe& u = GetUniverse();
-    const ObjectMap& o = u.Objects();
+SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id,
+                                                  int recipient_empire_id,
+                                                  const ScriptingContext& context)
+{
+    const ObjectMap& o = context.ContextObjects();
+    const Universe& u = context.ContextUniverse();
 
     auto fleet = o.get<Fleet>(fleet_id);
 
@@ -447,7 +450,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
     if (!fleet) {
         SitRepEntry sitrep(
             UserStringNop("SITREP_FLEET_ARRIVED_AT_SYSTEM"),
-            CurrentTurn() + 1,
+            context.current_turn + 1,
             "icons/sitrep/fleet_arrived.png",
             UserStringNop("SITREP_FLEET_ARRIVED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
@@ -457,7 +460,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
         if (fleet->NumShips() == 1) {
             SitRepEntry sitrep(
                 UserStringNop("SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION"),
-                CurrentTurn() + 1,
+                context.current_turn + 1,
                 "icons/sitrep/fleet_arrived.png",
                 UserStringNop("SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     std::to_string(system_id));
@@ -470,7 +473,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
         } else {
             SitRepEntry sitrep(
                 UserStringNop("SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION"),
-                CurrentTurn() + 1,
+                context.current_turn + 1,
                 "icons/sitrep/fleet_arrived.png",
                 UserStringNop("SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
@@ -481,7 +484,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
     } else if (fleet->Unowned()) {
         SitRepEntry sitrep(
             UserStringNop("SITREP_FLEET_ARRIVED_AT_DESTINATION"),
-            CurrentTurn() + 1,
+            context.current_turn + 1,
             "icons/sitrep/fleet_arrived.png",
             UserStringNop("SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
         sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
@@ -492,7 +495,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
         if (fleet->NumShips() == 1) {
             SitRepEntry sitrep(
                 UserStringNop("SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION"),
-                CurrentTurn() + 1,
+                context.current_turn + 1,
                 "icons/sitrep/fleet_arrived.png",
                 UserStringNop("SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     std::to_string(system_id));
@@ -506,7 +509,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
         } else {
             SitRepEntry sitrep(
                 UserStringNop("SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION"),
-                CurrentTurn() + 1,
+                context.current_turn + 1,
                 "icons/sitrep/fleet_arrived.png",
                 UserStringNop("SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
@@ -519,7 +522,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
         if (fleet->NumShips() == 1) {
             SitRepEntry sitrep(
                 UserStringNop("SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION"),
-                CurrentTurn() + 1,
+                context.current_turn + 1,
                 "icons/sitrep/fleet_arrived.png",
                 UserStringNop("SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,     std::to_string(system_id));
@@ -533,7 +536,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
         } else {
             SitRepEntry sitrep(
                 UserStringNop("SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION"),
-                CurrentTurn() + 1,
+                context.current_turn + 1,
                 "icons/sitrep/fleet_arrived.png",
                 UserStringNop("SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL"), true);
             sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));

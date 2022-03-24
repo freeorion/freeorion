@@ -12,6 +12,7 @@
 #include "Export.h"
 
 class ObjectMap;
+struct ScriptingContext;
 
 //! Represents a situation report entry for a significant game event.
 class FO_COMMON_API SitRepEntry : public VarText {
@@ -73,7 +74,8 @@ private:
 [[nodiscard]] FO_COMMON_API SitRepEntry CreatePlanetGiftedSitRep(int planet_id, int empire_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreateFleetGiftedSitRep(int fleet_id, int empire_id);
 
-[[nodiscard]] FO_COMMON_API SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id);
+[[nodiscard]] FO_COMMON_API SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id,
+                                                                              const ScriptingContext& context);
 [[nodiscard]] SitRepEntry               CreateEmpireEliminatedSitRep(int empire_id);
 [[nodiscard]] SitRepEntry               CreateVictorySitRep(const std::string& reason_string, int empire_id);
 [[nodiscard]] FO_COMMON_API SitRepEntry CreateSitRep(const std::string& template_string, int turn,
