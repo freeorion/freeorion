@@ -3326,10 +3326,12 @@ namespace {
 
     /** Check validity of adopted policies, overwrite initial adopted
       * policies with those currently adopted, update adopted turns counters. */
-    void UpdateEmpirePolicies(EmpireManager& empires, bool update_cumulative_adoption_time = false) {
+    void UpdateEmpirePolicies(EmpireManager& empires, int current_turn,
+                              bool update_cumulative_adoption_time = false)
+    {
         for ([[maybe_unused]] auto& [empire_id, empire] : empires) {
             (void)empire_id;    // quieting unused variable warning
-            empire->UpdatePolicies(update_cumulative_adoption_time);
+            empire->UpdatePolicies(update_cumulative_adoption_time, current_turn);
         }
     }
 
@@ -3394,7 +3396,7 @@ void ServerApp::PreCombatProcessTurns() {
     // validate adopted policies, and update Empire Policy history
     // actual policy adoption and influence consumption occurrs during order
     // execution above
-    UpdateEmpirePolicies(m_empires, false);
+    UpdateEmpirePolicies(m_empires, context.current_turn, false);
 
     // clean up empty fleets that empires didn't order deleted
     CleanEmptyFleets();
@@ -3747,7 +3749,7 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // do another policy update before final meter update to be consistent with what clients calculate...
-    UpdateEmpirePolicies(m_empires, true);
+    UpdateEmpirePolicies(m_empires, context.current_turn, true);
 
 
     TraceLogger(effects) << "ServerApp::PostCombatProcessTurns Before Final Meter Estimate Update: ";

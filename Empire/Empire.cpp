@@ -317,7 +317,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     PoliciesChangedSignal();
 }
 
-void Empire::UpdatePolicies(bool update_cumulative_adoption_time) {
+void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_turn) {
     // remove any unrecognized policies and uncategorized policies
     auto policies_temp = m_adopted_policies;
     for (auto& [policy_name, adoption_info] : policies_temp) {
@@ -381,7 +381,7 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time) {
     // update counters of how many turns each policy has been adopted
     m_policy_adoption_current_duration.clear();
     for (auto& [policy_name, adoption_info] : m_adopted_policies) {
-        m_policy_adoption_current_duration[policy_name] = CurrentTurn() - adoption_info.adoption_turn;
+        m_policy_adoption_current_duration[policy_name] = current_turn - adoption_info.adoption_turn;
 
         if (update_cumulative_adoption_time)
             m_policy_adoption_total_duration[policy_name]++;  // assumes default initialization to 0

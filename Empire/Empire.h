@@ -217,7 +217,7 @@ public:
     /** Checks that all policy adoption conditions are met, removing any that
       * are not allowed. Also copies adopted policies to initial adopted
       * policies. Updates how many turns each policy has (ever) been adopted. */
-    void UpdatePolicies(bool update_cumulative_adoption_time);
+    void UpdatePolicies(bool update_cumulative_adoption_time, int current_turn);
 
     /** Returns the meter with the indicated \a name if it exists, or nullptr. */
     [[nodiscard]] Meter* GetMeter(const std::string& name);
