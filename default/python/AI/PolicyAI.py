@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import debug, error
-from typing import Optional
+from typing import Optional, Set
 
 import PlanetUtilsAI
 from aistate_interface import get_aistate
@@ -193,7 +193,7 @@ class PolicyManager:
             ret and self._empire.emptyPolicySlots[policy.category] and self._empire.policyPrereqsAndExclusionsOK(name)
         )
 
-    def _get_adoptable(self) -> set[str]:
+    def _get_adoptable(self) -> Set[str]:
         """List of adoptable policies with the still available IP."""
         return {p for p in self._empire.availablePolicies if self._can_adopt(p)}
 
