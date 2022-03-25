@@ -17,13 +17,9 @@ from empire.colony_status import (
     set_colonies_is_under_treat,
 )
 from empire.growth_specials import set_growth_special
-from empire.pilot_rating import (
-    get_pilot_ratings,
-    set_pilot_rating_for_planet,
-    summarize_pilot_ratings,
-)
+from empire.pilot_rating import set_pilot_rating_for_planet
 from empire.ship_builders import get_ship_builder_locations, set_ship_builders
-from empire.survey_lock import survey_universe_lock, survey_universe_lock2
+from empire.survey_lock import survey_universe_lock
 from EnumsAI import FocusType
 from freeorion_tools import get_partial_visibility_turn, get_species_tag_grade
 from freeorion_tools.timers import AITimer
@@ -36,7 +32,6 @@ from turn_state import (
 )
 
 register_pre_handler("generateOrders", survey_universe_lock.lock)
-register_pre_handler("generateOrders", survey_universe_lock2.lock)
 
 survey_timer = AITimer("empire.surver_universe()")
 
@@ -126,12 +121,9 @@ def survey_universe():
                 set_colonies_is_under_treat()
 
     survey_universe_lock.unlock()
-    # main lock must be unlocked before get_pilot_ratings is called
-    rating_list = sorted(get_pilot_ratings().values(), reverse=True)
-    summarize_pilot_ratings(rating_list)
-    survey_universe_lock2.unlock()
     survey_timer.stop()
 
+    # lock must be released before this, since it uses the locked functions
     _print_empire_species_roster()
 
 
