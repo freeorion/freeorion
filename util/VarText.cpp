@@ -59,14 +59,16 @@ namespace {
     }
 
     //! Get string substitute for a tag that is a universe object
-    boost::optional<std::string> UniverseObjectString(const std::string& data, std::string_view tag) {
+    boost::optional<std::string> UniverseObjectString(
+        const std::string& data, std::string_view tag, const ObjectMap& objects)
+    {
         int object_id = INVALID_OBJECT_ID;
         try {
             object_id = boost::lexical_cast<int>(data);
         } catch (...) {
             return boost::none;
         }
-        auto obj = Objects().get(object_id);
+        auto obj = objects.get(object_id);
         if (!obj)
             return boost::none;
 
@@ -74,29 +76,31 @@ namespace {
     }
 
     //! Returns substitution string for an in-Universe ship design tag
-    boost::optional<std::string> ShipDesignString(const std::string& data) {
+    boost::optional<std::string> ShipDesignString(const std::string& data,
+                                                  const Universe& universe)
+    {
         int id = INVALID_DESIGN_ID;
         try {
             id = boost::lexical_cast<int>(data);
         } catch (...) {
             return boost::none;
         }
-        if (const auto design = GetUniverse().GetShipDesign(id))
+        if (const auto design = universe.GetShipDesign(id))
             return WithTags(design->Name(), VarText::DESIGN_ID_TAG, data);
 
         return UserString("FW_UNKNOWN_DESIGN_NAME");
     }
 
     //! Returns substitution string for a predefined ship design tag
-    boost::optional<std::string> PredefinedShipDesignString(const std::string& data) {
-        const ShipDesign* design = GetUniverse().GetGenericShipDesign(data);
+    boost::optional<std::string> PredefinedShipDesignString(const std::string& data, const ScriptingContext& context) {
+        const ShipDesign* design = context.ContextUniverse().GetGenericShipDesign(data);
         if (!design)
             return boost::none;
 
         return WithTags(design->Name(), VarText::PREDEFINED_DESIGN_TAG, data);
     }
 
-    boost::optional<std::string> MeterTypeString(const std::string& data) {
+    boost::optional<std::string> MeterTypeString(const std::string& data, const ScriptingContext&) {
         boost::optional<std::string> retval = boost::none;
         // validate data
         MeterType meter_type = MeterType::INVALID_METER_TYPE;
@@ -117,7 +121,9 @@ namespace {
     }
 
     //! Returns substitution string for an empire
-    boost::optional<std::string> EmpireString(const std::string& data) {
+    boost::optional<std::string> EmpireString(
+        const std::string& data, const EmpireManager::const_container_type& empires)
+    {
         int id = ALL_EMPIRES;
         try {
             id = boost::lexical_cast<int>(data);
@@ -142,64 +148,66 @@ namespace {
     }
 
     //! Function signature of tag substitution functions.
-    using TagStringFunc = std::function<boost::optional<std::string> (const std::string& data)>;
+    using TagStringFunc = std::function<boost::optional<std::string> (const std::string&, const ScriptingContext&)>;
 
     //! tag data to user-readable text Substitution map
     const std::map<std::string_view, TagStringFunc>& SubstitutionMap() {
         static std::map<std::string_view, TagStringFunc> substitute_map{
-            {VarText::TEXT_TAG, [](const std::string& data)
+            {VarText::TEXT_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return UserString(data); }},
-            {VarText::RAW_TEXT_TAG, [](const std::string& data)
+            {VarText::RAW_TEXT_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return data; }},
-            {VarText::PLANET_ID_TAG, [](const std::string& data)
-                { return UniverseObjectString(data, VarText::PLANET_ID_TAG); }},
-            {VarText::SYSTEM_ID_TAG, [](const std::string& data)
-                { return UniverseObjectString(data, VarText::SYSTEM_ID_TAG); }},
-            {VarText::SHIP_ID_TAG, [](const std::string& data)
-                { return UniverseObjectString(data, VarText::SHIP_ID_TAG); }},
-            {VarText::FLEET_ID_TAG, [](const std::string& data)
-                { return UniverseObjectString(data, VarText::FLEET_ID_TAG); }},
-            {VarText::BUILDING_ID_TAG, [](const std::string& data)
-                { return UniverseObjectString(data, VarText::BUILDING_ID_TAG); }},
-            {VarText::FIELD_ID_TAG, [](const std::string& data)
-                { return UniverseObjectString(data, VarText::FIELD_ID_TAG); }},
-            {VarText::COMBAT_ID_TAG, [](const std::string& data)
+            {VarText::PLANET_ID_TAG, [](const std::string& data, const ScriptingContext& context)
+                { return UniverseObjectString(data, VarText::PLANET_ID_TAG, context.ContextObjects()); }},
+            {VarText::SYSTEM_ID_TAG, [](const std::string& data, const ScriptingContext& context)
+                { return UniverseObjectString(data, VarText::SYSTEM_ID_TAG, context.ContextObjects()); }},
+            {VarText::SHIP_ID_TAG, [](const std::string& data, const ScriptingContext& context)
+                { return UniverseObjectString(data, VarText::SHIP_ID_TAG, context.ContextObjects()); }},
+            {VarText::FLEET_ID_TAG, [](const std::string& data, const ScriptingContext& context)
+                { return UniverseObjectString(data, VarText::FLEET_ID_TAG, context.ContextObjects()); }},
+            {VarText::BUILDING_ID_TAG, [](const std::string& data, const ScriptingContext& context)
+                { return UniverseObjectString(data, VarText::BUILDING_ID_TAG, context.ContextObjects()); }},
+            {VarText::FIELD_ID_TAG, [](const std::string& data, const ScriptingContext& context)
+                { return UniverseObjectString(data, VarText::FIELD_ID_TAG, context.ContextObjects()); }},
+            {VarText::COMBAT_ID_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return WithTags(UserString("COMBAT"), VarText::COMBAT_ID_TAG, data); }},
-            {VarText::TECH_TAG, [](const std::string& data)
+            {VarText::TECH_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return NameString<Tech, GetTech>(data, VarText::TECH_TAG); }},
-            {VarText::POLICY_TAG, [](const std::string& data)
+            {VarText::POLICY_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return NameString<Policy, GetPolicy>(data, VarText::POLICY_TAG); }},
-            {VarText::BUILDING_TYPE_TAG, [](const std::string& data)
+            {VarText::BUILDING_TYPE_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return NameString<BuildingType, GetBuildingType>(data, VarText::BUILDING_TYPE_TAG); }},
-            {VarText::SHIP_HULL_TAG, [](const std::string& data)
+            {VarText::SHIP_HULL_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return NameString<ShipHull, GetShipHull>(data, VarText::SHIP_HULL_TAG); }},
-            {VarText::SHIP_PART_TAG, [](const std::string& data)
+            {VarText::SHIP_PART_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return NameString<ShipPart, GetShipPart>(data, VarText::SHIP_PART_TAG); }},
-            {VarText::SPECIAL_TAG, [](const std::string& data)
+            {VarText::SPECIAL_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return NameString<Special, GetSpecial>(data, VarText::SPECIAL_TAG); }},
-            {VarText::SPECIES_TAG, [](const std::string& data)
+            {VarText::SPECIES_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return NameString<Species, GetSpeciesConst>(data, VarText::SPECIES_TAG); }},
-            {VarText::FIELD_TYPE_TAG, [](const std::string& data)
+            {VarText::FIELD_TYPE_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return NameString<FieldType, GetFieldType>(data, VarText::FIELD_TYPE_TAG); }},
             {VarText::METER_TYPE_TAG, MeterTypeString},
-            {VarText::DESIGN_ID_TAG, ShipDesignString},
+            {VarText::DESIGN_ID_TAG, [](const std::string& data, const ScriptingContext& context)
+                { return ShipDesignString(data, context.ContextUniverse()); }},
             {VarText::PREDEFINED_DESIGN_TAG, PredefinedShipDesignString},
-            {VarText::EMPIRE_ID_TAG, EmpireString},
-            {VarText::FOCS_VALUE_TAG, [](const std::string& data) -> boost::optional<std::string>
+            {VarText::EMPIRE_ID_TAG, [](const std::string& data, const ScriptingContext& context)
+                { return EmpireString(data, context.Empires()); }},
+            {VarText::FOCS_VALUE_TAG, [](const std::string& data, const ScriptingContext& context) -> boost::optional<std::string>
                 {
                     if (const ValueRef::ValueRefBase* vr = GetValueRefBase(data))
                         return WithTags(UserString(data), VarText::FOCS_VALUE_TAG, vr->EvalAsString());
                     else
                         return WithTags(data, VarText::FOCS_VALUE_TAG, UserString("UNKNOWN_VALUE_REF_NAME"));
                 }},
-            {VarText::ENVIRONMENT_TAG, [](const std::string& data)
+            {VarText::ENVIRONMENT_TAG, [](const std::string& data, const ScriptingContext& context)
                 {
                     auto planet = IApp::GetApp()->GetUniverse().Objects().get<Planet>(boost::lexical_cast<int>(data));
                     if (planet)
                         return UserString(to_string(planet->EnvironmentForSpecies()));
                     return UserString("UNKNOWN_PLANET");
                 }},
-            {VarText::USER_STRING_TAG, [](const std::string& data)
+            {VarText::USER_STRING_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return UserString(data); }},
         };
 
@@ -220,6 +228,8 @@ namespace {
             // Labelled variables have the form %tag:label%,  unlabelled are just %tag%
             // Use the label value. When missing, use the tag submatch as label instead.
 
+            const ScriptingContext context;
+
             const int idx = match[2].matched ? 2 : 1;
             const auto& m{match[idx]};
             std::string_view label{&*m.first, static_cast<size_t>(std::max(0, static_cast<int>(m.length())))};
@@ -238,7 +248,7 @@ namespace {
             if (auto substituter = SubstitutionMap().find(tag); substituter != SubstitutionMap().end()) {
                 const auto& substitution_func = substituter->second;
                 const auto& variable_value = elem->second;
-                if (auto substitution = substitution_func(variable_value))
+                if (auto substitution = substitution_func(variable_value, context))
                     return *substitution; // optional<std::string> contains a temporary string, which can't be returned by reference
             }
 
