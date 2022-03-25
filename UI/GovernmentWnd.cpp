@@ -133,7 +133,7 @@ namespace {
 
         bool policy_adopted = empire->PolicyAdopted(policy->Name());
         bool policy_affordable = empire->PolicyAffordable(policy->Name(), context);
-        bool policy_restricted = !empire->PolicyPrereqsAndExclusionsOK(policy->Name());
+        bool policy_restricted = !empire->PolicyPrereqsAndExclusionsOK(policy->Name(), context.current_turn);
         bool policy_locked = !empire->PolicyAvailable(policy->Name());
 
         if (policy_adopted && show_adopted)
@@ -982,8 +982,10 @@ void PolicySlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptab
     if (std::distance(first, last) != 1)
         return;
 
+    const ScriptingContext context;
+
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+    auto empire = context.GetEmpire(empire_id);
     if (!empire)
         return;
 
@@ -996,7 +998,7 @@ void PolicySlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptab
             policy->Category() == m_slot_category &&
             policy_control != m_policy_control.get() &&
             empire->PolicyAvailable(policy->Name()) &&
-            empire->PolicyPrereqsAndExclusionsOK(policy->Name()))
+            empire->PolicyPrereqsAndExclusionsOK(policy->Name(), context.current_turn))
         {
             it->second = true;
             return;

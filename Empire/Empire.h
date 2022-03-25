@@ -92,7 +92,7 @@ public:
     /** Returns the set of policies / slots the empire has avaialble. */
     [[nodiscard]] const std::set<std::string, std::less<>>&    AvailablePolicies() const;
     [[nodiscard]] bool                                         PolicyAvailable(std::string_view name) const;
-    [[nodiscard]] bool                                         PolicyPrereqsAndExclusionsOK(std::string_view name) const;
+    [[nodiscard]] bool                                         PolicyPrereqsAndExclusionsOK(std::string_view name, int current_turn) const;
     [[nodiscard]] bool                                         PolicyAffordable(std::string_view name, const ScriptingContext& context) const;
     [[nodiscard]] std::map<std::string_view, int, std::less<>> TotalPolicySlots() const; // how many total slots does this empire have in each category
     [[nodiscard]] std::map<std::string_view, int, std::less<>> EmptyPolicySlots() const; // how many empty slots does this empire have in each category

@@ -211,7 +211,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     }
 
     // are there conflicts with other policies or missing prerequisite policies?
-    if (!PolicyPrereqsAndExclusionsOK(name)) {
+    if (!PolicyPrereqsAndExclusionsOK(name, context.current_turn)) {
         ErrorLogger() << "Empire::AdoptPolicy asked to adopt policy " << name
                       << " whose prerequisites are not met or which has a conflicting exclusion with already-adopted policies";
         return;
@@ -458,7 +458,7 @@ const std::set<std::string, std::less<>>& Empire::AvailablePolicies() const
 bool Empire::PolicyAvailable(std::string_view name) const
 { return m_available_policies.count(name); }
 
-bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name) const {
+bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name, int current_turn) const {
     const std::string name_str{name}; // TODO: remove this when possible for heterogenous lookup
     const Policy* policy_to_adopt = GetPolicy(name_str);
     if (!policy_to_adopt)
@@ -489,7 +489,7 @@ bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name) const {
             return false;
         // must have adopted policy at least one turn before, to prevent
         // same-turn policy swapping to bypass prereqs at no cost
-        if (it->second.adoption_turn >= CurrentTurn())
+        if (it->second.adoption_turn >= current_turn)
             return false;
     }
 
