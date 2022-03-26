@@ -103,7 +103,7 @@ def _print_empire_name():
     )
     empire_name = "_".join(str(part) for part in name_parts)
     debug(f"EmpireID: {empire.empireID} Name: {empire_name} Turn: {turn}")
-    debug(f"EmpireColors: {empire.colour}")
+    debug(f"EmpireColors: {' '.join(str(x) for x in empire.colour)}")
 
 
 def greet_on_first_turn(diplomatic_corp):
