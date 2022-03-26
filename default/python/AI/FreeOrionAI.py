@@ -260,28 +260,28 @@ def generateOrders():  # pylint: disable=invalid-name
     and its orders will be sent to the server.
     """
     turn_timer.start("AI planning")
-    generate_order_timer.start("Check AI state")
     print_existing_rules()
 
     if not empire_is_ok():
         return
 
-    # results of this function are needed in many places...
-    survey_universe()
+    set_game_turn_seed()
 
     generate_order_timer.start("Update states on server")
     # This code block is required for correct AI work.
     update_resource_pool()
 
     generate_order_timer.start("Prepare each turn data")
+    # results of this function are needed in many places...
 
-    set_game_turn_seed()
-    print_starting_intro()
+    greet_on_first_turn(diplomatic_corp)
 
     if replay_turn_after_load():
         return
 
-    greet_on_first_turn(diplomatic_corp)
+    survey_universe()
+
+    print_starting_intro()
 
     aistate = get_aistate()
     aistate.prepare_for_new_turn()
