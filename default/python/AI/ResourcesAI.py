@@ -15,9 +15,9 @@ from logging import debug, info, warning
 from operator import itemgetter
 
 import AIDependencies
-import ColonisationAI
 import PlanetUtilsAI
 from aistate_interface import get_aistate
+from colonization.calculate_planet_colonization_rating import empire_metabolisms
 from common.print_utils import Table, Text
 from empire.growth_specials import get_growth_specials
 from EnumsAI import FocusType, PriorityType, get_priority_resource_types
@@ -578,7 +578,7 @@ def set_planet_growth_specials(focus_manager):
             continue
 
         # Find the total population bonus we could get by using growth focus
-        potential_pop_increase = ColonisationAI.empire_metabolisms.get(metabolism, 0)
+        potential_pop_increase = empire_metabolisms.get(metabolism, 0)
         if not potential_pop_increase:
             continue
 

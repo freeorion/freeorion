@@ -4,15 +4,18 @@ from typing import DefaultDict, Dict, FrozenSet, Set, Union
 import AIDependencies
 from common.fo_typing import BuildingId, PlanetId, SystemId
 from empire.pilot_rating import best_pilot_rating
+from empire.survey_lock import survey_universe_lock
 from freeorion_tools.caching import cache_for_current_turn
 
 
+@survey_universe_lock
 def get_best_pilot_facilities(building: Union[BuildingId, str]) -> FrozenSet[PlanetId]:
     best_pilot_facilities = _get_facilities().get("WEAPONS_%.1f" % best_pilot_rating(), {})
 
     return best_pilot_facilities.get(building, set())
 
 
+@survey_universe_lock
 def get_systems_with_building(bld_name: BuildingId):
     return _get_system_facilities()[bld_name]
 

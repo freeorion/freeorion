@@ -1,4 +1,3 @@
-import freeOrionAIInterface as fo
 from functools import wraps
 from typing import Callable
 
@@ -21,7 +20,6 @@ class InitializerLock:
     def __call__(self, function: Callable):
         @wraps(function)
         def wrapper(*args, **kwargs):
-            print("use zzzxxcc3", fo.currentTurn())
             if self.__initialized:
                 return function(*args, **kwargs)
             else:
