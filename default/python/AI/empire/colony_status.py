@@ -1,3 +1,4 @@
+from empire.survey_lock import survey_universe_lock
 from freeorion_tools.caching import cache_for_current_turn
 
 
@@ -7,10 +8,12 @@ class _ColonyStatus:
         self.colonies_under_threat = False
 
 
+@survey_universe_lock
 def colonies_is_under_attack() -> bool:
     return bool(_get_colony_status().colonies_under_attack)
 
 
+@survey_universe_lock
 def colonies_is_under_treat() -> bool:
     return bool(_get_colony_status().colonies_under_threat)
 
