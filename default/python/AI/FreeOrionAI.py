@@ -6,13 +6,23 @@ from logging import debug, error, fatal, info
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.
+from generate_orders import (
+    empire_is_ok,
+    greet_on_first_turn,
+    print_existing_rules,
+    print_starting_intro,
+    replay_turn_after_load,
+    set_game_turn_seed,
+    update_resource_pool,
+)
+
 redirect_logging_to_freeorion_logger()
 
 import freeOrionAIInterface as fo
 import random
 import sys
 
-from common.option_tools import check_bool, get_option_dict, parse_config
+from common.option_tools import parse_config
 
 parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
 
@@ -250,99 +260,30 @@ def generateOrders():  # pylint: disable=invalid-name
     and its orders will be sent to the server.
     """
     turn_timer.start("AI planning")
-    generate_order_timer.start("Check AI state")
-    try:
-        rules = fo.getGameRules()
-        debug("Defined game rules:")
-        for rule_name, rule_value in rules.getRulesAsStrings().items():
-            debug("%s: %s", rule_name, rule_value)
-        debug("Rule RULE_NUM_COMBAT_ROUNDS value: " + str(rules.getInt("RULE_NUM_COMBAT_ROUNDS")))
-    except Exception as e:
-        error("Exception %s when trying to get game rules" % e, exc_info=True)
+    print_existing_rules()
 
-    # If nothing can be ordered anyway, exit early.
-    # Note that there is no need to update meters etc. in this case.
-    empire = fo.getEmpire()
-    if empire is None:
-        fatal("This client has no empire. Aborting order generation.")
+    if not empire_is_ok():
         return
 
-    if empire.eliminated:
-        info("This empire has been eliminated. Aborting order generation.")
-        return
-
-    # results of this function are needed in many places...
-    survey_universe()
+    set_game_turn_seed()
 
     generate_order_timer.start("Update states on server")
     # This code block is required for correct AI work.
-    info("Meter / Resource Pool updating...")
-    fo.initMeterEstimatesDiscrepancies()
-    fo.updateMeterEstimates(False)
-    fo.updateResourcePools()
+    update_resource_pool()
 
     generate_order_timer.start("Prepare each turn data")
-    turn = fo.currentTurn()
+    # results of this function are needed in many places...
+
+    greet_on_first_turn(diplomatic_corp)
+
+    if replay_turn_after_load():
+        return
+
+    survey_universe()
+
+    print_starting_intro()
+
     aistate = get_aistate()
-    debug("\n\n\n" + "=" * 20)
-    debug(f"Starting turn {turn}")
-    debug("=" * 20 + "\n")
-
-    # set the random seed (based on galaxy seed, empire name and current turn)
-    # for game-reload consistency.
-    random_seed = str(fo.getGalaxySetupData().seed) + "%05d%s" % (turn, fo.getEmpire().name)
-    random.seed(random_seed)
-    empire = fo.getEmpire()
-    aggression_name = get_trait_name_aggression(aistate.character)
-    debug("***************************************************************************")
-    debug("*******  Log info for AI progress chart script. Do not modify.   **********")
-    debug("Generating Orders")
-
-    name_parts = (
-        empire.name,
-        empire.empireID,
-        "pid",
-        fo.playerID(),
-        fo.playerName(),
-        "RIdx",
-        ResearchAI.get_research_index(),
-        aggression_name.capitalize(),
-    )
-    empire_name = "_".join(str(part) for part in name_parts)
-
-    debug(f"EmpireID: {empire.empireID} Name: {empire_name} Turn: {turn}")
-
-    debug(f"EmpireColors: {empire.colour}")
-    planet_id = PlanetUtilsAI.get_capital()
-    if planet_id is not None and planet_id != INVALID_ID:
-        planet = fo.getUniverse().getPlanet(planet_id)
-        debug("CapitalID: " + str(planet_id) + " Name: " + planet.name + " Species: " + planet.speciesName)
-    else:
-        debug("CapitalID: None Currently Name: None Species: None ")
-    debug("***************************************************************************")
-    debug("***************************************************************************")
-
-    # When loading a savegame, the AI will already have issued orders for this turn.
-    # To avoid duplicate orders, generally try not to replay turns. However, for debugging
-    # purposes it is often useful to replay the turn and observe varying results after
-    # code changes. Set the replay_after_load flag in the AI config to let the AI issue
-    # new orders after a game load. Note that the orders from the original savegame are
-    # still being issued and the AIstate was saved after those orders were issued.
-    # TODO: Consider adding an option to clear AI orders after load (must save AIstate at turn start then)
-    if fo.currentTurn() == aistate.last_turn_played:
-        info("The AIstate indicates that this turn was already played.")
-        if not check_bool(get_option_dict().get("replay_turn_after_load", "False")):
-            info("Aborting new order generation. Orders from savegame will still be issued.")
-            return
-        info("Issuing new orders anyway.")
-
-    if turn == 1:
-        human_player = fo.empirePlayerID(1)
-        greet = diplomatic_corp.get_first_turn_greet_message()
-        fo.sendChatMessage(
-            human_player, "%s (%s): [[%s]]" % (empire.name, get_trait_name_aggression(aistate.character), greet)
-        )
-
     aistate.prepare_for_new_turn()
     debug("Calling AI Modules")
     # call AI modules
