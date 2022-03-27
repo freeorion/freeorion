@@ -664,9 +664,13 @@ void CombatLogWnd::PreRender() {
     TODO: Fix intial size of CombatReport from (30,15) to its actual first displayed size.*/
     GG::Pt size = Size();
     Resize(size + GG::Pt(2 * m_impl->m_font->SpaceWidth(), GG::Y0));
-    GG::GUI::PreRenderWindow(this);
+    try {
+        GG::GUI::PreRenderWindow(this);
+    } catch (...) {}
     Resize(size);
-    GG::GUI::PreRenderWindow(this);
+    try {
+        GG::GUI::PreRenderWindow(this);
+    } catch (...) {}
     /* End workaround. */
 
     WndChangedSignal();
