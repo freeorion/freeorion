@@ -8,6 +8,7 @@ excluded_paths = tuple(
         ("python", "universe_generation"),
         ("python", "turn_events"),
         ("python", "common", "configure_logging.py"),
+        ("python", "common", "charting"),
         ("python", "tests", "fixtures"),
         ("python", "tests", "htmlcov"),
         ("python", "auth"),
