@@ -16,7 +16,7 @@ def print_in_columns(items: Collection[Any], columns=2, printer=print):
     """
     Split flat list to columns and print them.
 
-    >>> print_in_columns(['a', 'b', 'c', 'd', 2])
+    >>> print_in_columns(['a', 'b', 'c', 'd'], 2)
     a   c
     b   d
     """
