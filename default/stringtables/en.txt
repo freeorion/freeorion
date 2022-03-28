@@ -14801,6 +14801,12 @@ Planetary Beacon
 BLD_PLANET_BEACON_DESC
 Designates the target for the [[buildingtype BLD_PLANET_DRIVE]]. This building can only be constructed in systems with fewer than 7 planets (including Gas Giants and Asteroids). [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
 
+BLD_PLANET_DRIVE_EFFECT
+Pseudo building
+
+BLD_PLANET_DRIVE_EFFECT_DESC
+This pseudo building shows that a [[buildingtype BLD_PLANET_DRIVE]] has just been activated an killed have the planet's population.
+
 BLD_ART_PLANET
 Artificial Planet
 

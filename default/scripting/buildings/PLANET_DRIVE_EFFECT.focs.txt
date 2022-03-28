@@ -1,0 +1,19 @@
+BuildingType
+    name = "BLD_PLANET_DRIVE_EFFECT"
+    description = "BLD_PLANET_DRIVE_EFFECT_DESC"
+    buildcost = 9999
+    buildtime = 9999
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            effects = [
+                SetPopulation value = Value / 2
+            ]
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    ]
+    icon = "icons/building/planetary_stardrive.png"
