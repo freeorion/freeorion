@@ -1,0 +1,17 @@
+Special
+    name = "STARLANE_DRIVE_ACTIVATED_SPECIAL"
+    description = "STARLANE_DRIVE_ACTIVATED_SPECIAL_DESC"
+    stealth = 9999
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            priority = [[POPULATION_OVERRIDE_PRIORITY]]
+            effects = SetPopulation value = Value / 2
+        EffectsGroup
+            scope = Source
+            priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
+            effects = RemoveSpecial name = "STARLANE_DRIVE_ACTIVATED_SPECIAL"
+    ]
+    graphic = "icons/building/planetary_stardrive.png"
+
+#include "/scripting/common/priorities.macros"

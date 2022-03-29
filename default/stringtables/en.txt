@@ -9741,6 +9741,12 @@ This planet has pools of mimetic alloy on its surface, which morphs to resemble 
 MIMETIC_ALLOY_SPECIAL_IMPORTS
 Imported [[MIMETIC_ALLOY_SPECIAL]]
 
+STARLANE_DRIVE_ACTIVATED_SPECIAL
+Scripting auxiliary
+
+STARLANE_DRIVE_ACTIVATED_SPECIAL_DESC
+A special you will never see, it is used internally by the content scripting.
+
 
 ##
 ## Enumeration values
