@@ -104,6 +104,7 @@ ADVANCED_FOCUS_EFFECTS
                                 tag = "system" data = Source.SystemID
                         ]
                         empire = Source.Owner
+                SetPopulation value = Value / 2
                 AddSpecial name = "STARLANE_DRIVE_ACTIVATED_SPECIAL"
             ]
 

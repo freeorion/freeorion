@@ -5,10 +5,35 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
+            activation = Not And [
+                Planet
+                Focus type = "FOCUS_PLANET_DRIVE"
+                // FOCUS_PLANET_DRIVE halfs the population, but it only works if the
+                // condition is still met after the move. So this effect corrects it,
+                // if and only if the same condition is not met after the move.
+                WithinStarlaneJumps jumps = 1 condition = And [
+                    System
+                    Contains And [
+                        Or [
+                            Building name = "BLD_PLANET_BEACON"
+                            And [
+                                Ship
+                                DesignHasPart low = 1 high = 999 name = "SP_PLANET_BEACON"
+                                Turn low = LocalCandidate.ArrivedOnTurn + 1
+                            ]
+                        ]
+                        OwnedBy empire = Source.Owner
+                    ]
+                    Not Contains Source
+                ]
+            ]
+            // this special is added with POPULATION_DEFAULT_PRIORITY,
+            // activate it in the next level
             priority = [[POPULATION_OVERRIDE_PRIORITY]]
             effects = SetPopulation value = Value / 2
         EffectsGroup
             scope = Source
+            // remove it early, FOCUS_PLANET_DRIVE may have to add it again
             priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
             effects = RemoveSpecial name = "STARLANE_DRIVE_ACTIVATED_SPECIAL"
     ]
