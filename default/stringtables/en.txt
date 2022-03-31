@@ -1210,6 +1210,12 @@ Enable Super-Tester Takeover
 RULE_ENABLE_SUPER_TESTER_DESC
 Enables [[BLD_SUPER_TEST]] building
 
+RULE_ALLOW_REPEATED_SPECIES
+Allows repeated species
+
+RULE_ALLOW_REPEATED_SPECIES_DESC
+Allows repeated species when there are less players than playable species. When there are more players than playable species there are always repeated species.
+
 RULE_STOCKPILE_IMPORT_LIMITED
 Stockpile Import Limited
 
