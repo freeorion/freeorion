@@ -41,6 +41,7 @@ VERY_BAD_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "VERY_BAD_INDUSTRY_LABEL"
+            priority = [[TARGET_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value
                         * (NamedReal name = "VERY_BAD_INDUSTRY_TARGET_INDUSTRY_SCALING"
                                      value = [[VERY_BAD_MULTIPLIER]])
@@ -59,6 +60,7 @@ BAD_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "BAD_INDUSTRY_LABEL"
+            priority = [[TARGET_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value
                         * (NamedReal name = "BAD_INDUSTRY_TARGET_INDUSTRY_SCALING"
                                      value = [[BAD_MULTIPLIER]])
@@ -81,6 +83,7 @@ GOOD_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "GOOD_INDUSTRY_LABEL"
+            priority = [[TARGET_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value
                         * (NamedReal name = "GOOD_INDUSTRY_TARGET_INDUSTRY_SCALING"
                                      value = [[GOOD_MULTIPLIER]])
@@ -99,6 +102,7 @@ GREAT_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "GREAT_INDUSTRY_LABEL"
+            priority = [[TARGET_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value
                         * (NamedReal name = "GREAT_INDUSTRY_TARGET_INDUSTRY_SCALING"
                                      value = [[GREAT_MULTIPLIER]])
@@ -117,6 +121,7 @@ ULTIMATE_INDUSTRY
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "ULTIMATE_INDUSTRY_LABEL"
+            priority = [[TARGET_SCALING_PRIORITY]]
             effects = SetTargetIndustry value = Value
                         * (NamedReal name = "ULTIMATE_INDUSTRY_TARGET_INDUSTRY_SCALING"
                                      value = [[ULTIMATE_MULTIPLIER]])
