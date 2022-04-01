@@ -503,7 +503,7 @@ void InitDirs(std::string const& argv0)
 
     s_python_home = s_cache_dir / "python";
     fs::create_directories(s_python_home / "lib");
-    CopyInitialResourceAndroid("lib/python36.zip");
+    CopyInitialResourceAndroid("lib/python39.zip");
 #endif
 
     g_initialized = true;

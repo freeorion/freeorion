@@ -207,7 +207,7 @@ Build [Python-For-Android]. Pack standard library with
 
 ```bash
 zip -r -9 -q --exclude=*.pyc --exclude=*.a --exclude=*.so \
-<Project>/godot/default/python/lib/python36.zip .
+<Project>/godot/default/python/lib/python39.zip .
 ```
 
 Build [Boost-For-Android] with iconv support for boost_locale library and python support.
