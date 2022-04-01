@@ -397,6 +397,10 @@ public:
 
     void UpdateOwnedObjectCounters(const Universe& universe);
 
+    /** called after loading a saved game, remove obsolete stuff such as no longer
+      * existing policies... */
+    void CheckObsoleteGameContent();
+
     void SetAuthenticated(bool authenticated = true);
 
     void RecordShipShotDown(const Ship& ship);

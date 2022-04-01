@@ -318,22 +318,6 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
 }
 
 void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_turn) {
-    // remove any unrecognized policies and uncategorized policies
-    auto policies_temp = m_adopted_policies;
-    for (auto& [policy_name, adoption_info] : policies_temp) {
-        const auto* policy = GetPolicy(policy_name);
-        if (!policy) {
-            ErrorLogger() << "UpdatePolicies couldn't find policy with name: " << policy_name;
-            m_adopted_policies.erase(policy_name);
-            continue;
-        }
-
-        if (adoption_info.category.empty()) {
-            ErrorLogger() << "UpdatePolicies found policy " << policy_name << " in empty category?";
-            m_adopted_policies.erase(policy_name);
-        }
-    }
-
     // TODO: Check and handle policy exclusions in this function...
 
     // check that there are enough slots for adopted policies in their current slots
@@ -354,7 +338,7 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
     for (const auto& cat : categories_needing_rearrangement) {
         DebugLogger() << "Rearranging poilicies in category " << cat << ":";
 
-        policies_temp = m_adopted_policies;
+        auto policies_temp = m_adopted_policies;
 
         // all adopted policies in this category, sorted by slot and adoption turn (lower first)
         std::multimap<std::pair<int, int>, std::string> slots_turns_policies;
@@ -2782,6 +2766,34 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
         m_building_types_owned[building->BuildingTypeName()]++;
     }
 }
+
+
+void Empire::CheckObsoleteGameContent() {
+    // remove any unrecognized policies and uncategorized policies
+    auto policies_temp = m_adopted_policies;
+    for (auto& [policy_name, adoption_info] : policies_temp) {
+        const auto* policy = GetPolicy(policy_name);
+        if (!policy) {
+            ErrorLogger() << "UpdatePolicies couldn't find policy with name: " << policy_name;
+            m_adopted_policies.erase(policy_name);
+            continue;
+        }
+
+        if (adoption_info.category.empty()) {
+            ErrorLogger() << "UpdatePolicies found policy " << policy_name << " in empty category?";
+            m_adopted_policies.erase(policy_name);
+        }
+    }
+    auto policies_temp2 = m_available_policies;
+    for (auto& policy_name : policies_temp2) {
+        const auto* policy = GetPolicy(policy_name);
+        if (!policy) {
+            ErrorLogger() << "UpdatePolicies couldn't find policy with name: " << policy_name;
+            m_available_policies.erase(policy_name);
+        }
+    }
+}
+
 
 void Empire::SetAuthenticated(bool authenticated /*= true*/)
 { m_authenticated = authenticated; }
