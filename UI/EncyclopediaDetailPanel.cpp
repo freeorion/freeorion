@@ -2982,9 +2982,10 @@ namespace {
         ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
         universe.InhibitUniverseObjectSignals(true);
 
-        // planet->SetSpecies modifies a string that may be part of the vector
+        // planet->SetSpecies modifies a string that may be part of the input
+        // string_view vector, so make copies now to use while iterating
         std::vector<std::string> names_copy(species_names.begin(), species_names.end());
-        for (const auto& species_name : names_copy) { // TODO: parallelize somehow? tricky since an existing planet is being modified, rather than adding a test planet...
+        for (auto& species_name : names_copy) { // TODO: parallelize somehow? tricky since an existing planet is being modified, rather than adding a test planet...
             // Setting the planet's species allows all of it meters to reflect
             // species (and empire) properties, such as environment type
             // preferences and tech.
@@ -3009,7 +3010,8 @@ namespace {
                 float planet_capacity = ((planet_environment == PlanetEnvironment::PE_UNINHABITABLE) ?
                                          0.0f : planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
 
-                retval.emplace(planet_capacity, std::pair{species_name, planet_environment});
+                retval.emplace(std::piecewise_construct, std::forward_as_tuple(planet_capacity),
+                               std::forward_as_tuple(std::move(species_name), planet_environment));
             } catch (const std::exception& e) {
                 ErrorLogger() << "Caught exception emplacing into species env by target pop : " << e.what();
             }
