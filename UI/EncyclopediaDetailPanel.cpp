@@ -593,36 +593,40 @@ namespace {
         else {
             // Any content definitions (FOCS files) that define a pedia category
             // should have their pedia article added to this category.
-            std::map<std::string, std::pair<std::string, std::string>> dir_entries;
+            std::vector<std::pair<std::string_view, std::pair<std::string_view, std::string_view>>> dir_entries;
+            dir_entries.reserve(GetShipPartManager().size() + GetShipHullManager().size() +
+                                GetTechManager().size() + GetBuildingTypeManager().NumBuildingTypes() +
+                                GetSpeciesManager().NumSpecies() + GetFieldTypeManager().size());
 
             // part types
             for (auto& [part_name, part_type] : GetShipPartManager())
                 if (HasCustomCategory(part_type->Tags(), dir_name))
-                    dir_entries.emplace(
-                        UserString(part_name),
-                        std::pair{VarText::SHIP_PART_TAG, part_name});
+                    dir_entries.emplace_back(std::piecewise_construct,
+                                             std::forward_as_tuple(UserString(part_name)),
+                                             std::forward_as_tuple(VarText::SHIP_PART_TAG, part_name));
 
             // hull types
             for (auto& [hull_name, hull_type] : GetShipHullManager())
                 if (HasCustomCategory(hull_type->Tags(), dir_name))
-                    dir_entries.emplace(
-                        UserString(hull_name),
-                        std::pair{VarText::SHIP_HULL_TAG, hull_name});
+                    dir_entries.emplace_back(std::piecewise_construct,
+                                             std::forward_as_tuple(UserString(hull_name)),
+                                             std::forward_as_tuple(VarText::SHIP_HULL_TAG, hull_name));
 
             // techs
             for (const auto& tech : GetTechManager()) {
                 const auto& tech_name = tech->Name();
                 if (HasCustomCategory(tech->Tags(), dir_name))
-                    dir_entries[UserString(tech_name)] =
-                        std::pair{VarText::TECH_TAG, tech_name};
+                    dir_entries.emplace_back(std::piecewise_construct,
+                                             std::forward_as_tuple(UserString(tech_name)),
+                                             std::forward_as_tuple(VarText::TECH_TAG, tech_name));
             }
 
             // building types
             for (auto& [building_name, building_type] : GetBuildingTypeManager())
                 if (HasCustomCategory(building_type->Tags(), dir_name))
-                    dir_entries.emplace(
-                        UserString(building_name),
-                        std::pair{VarText::BUILDING_TYPE_TAG, building_name});
+                    dir_entries.emplace_back(std::piecewise_construct,
+                                             std::forward_as_tuple(UserString(building_name)),
+                                             std::forward_as_tuple(VarText::BUILDING_TYPE_TAG, building_name));
 
             // species
             for (auto& [species_name, species] : GetSpeciesManager())
@@ -631,24 +635,26 @@ namespace {
                    (dir_name == "PLAYABLE_SPECIES" && species->Playable()) ||
                     HasCustomCategory(species->Tags(), dir_name))
                 {
-                    dir_entries.emplace(
-                        UserString(species_name),
-                        std::pair{VarText::SPECIES_TAG, species_name});
+                    dir_entries.emplace_back(std::piecewise_construct,
+                                             std::forward_as_tuple(UserString(species_name)),
+                                             std::forward_as_tuple(VarText::SPECIES_TAG, species_name));
                 }
 
             // field types
             for (auto& [field_name, field_type] : GetFieldTypeManager())
                 if (HasCustomCategory(field_type->Tags(), dir_name))
-                    dir_entries.emplace(
-                        UserString(field_name),
-                        std::pair{VarText::FIELD_TYPE_TAG, field_name});
+                    dir_entries.emplace_back(std::piecewise_construct,
+                                             std::forward_as_tuple(UserString(field_name)),
+                                             std::forward_as_tuple(VarText::FIELD_TYPE_TAG, field_name));
 
-            // Add sorted entries, keyed by human-readable article name, containing (tag, article stringtable key)
+            // Sort entries, keyed by human-readable article name,
+            // containing (tag, article stringtable key)
+            std::sort(dir_entries.begin(), dir_entries.end());
             for (auto& [readable_name, tag_key] : dir_entries) {
-                auto linked_text{LinkTaggedText(tag_key.first, tag_key.second) + "\n"};
+                auto linked_text{LinkTaggedText(tag_key.first, tag_key.second).append("\n")};
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(readable_name),
-                                    std::forward_as_tuple(std::move(linked_text), std::move(tag_key.second)));
+                                    std::forward_as_tuple(std::move(linked_text), tag_key.second));
             }
         }
 
