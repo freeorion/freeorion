@@ -1146,8 +1146,9 @@ namespace {
     /** Recursively searches pedia directory \a dir_name for articles and
       * sub-directories. Returns a map from
       * (category_str_key, dir_name) to (readable_article_name, link_text) */
-    [[nodiscard]] std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>>
-        GetSubDirs(std::string_view dir_name, bool exclude_custom_categories_from_dir_name = true, int depth = 0)
+    [[nodiscard]] auto GetSubDirs(std::string_view dir_name,
+                                  bool exclude_custom_categories_from_dir_name = true,
+                                  int depth = 0)
     {
         std::map<std::pair<std::string, std::string>, std::pair<std::string, std::string>> retval;
 
