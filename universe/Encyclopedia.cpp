@@ -42,10 +42,9 @@ const Encyclopedia::ArticleMap& Encyclopedia::Articles() const {
         std::swap(m_articles, *parsed);
 
         TraceLogger() << "(Category) Encyclopedia Articles:";
-        for (const auto& entry : m_articles) {
-            const std::string& category = entry.first;
-            for (const EncyclopediaArticle& article : entry.second)
-            { TraceLogger() << "(" << category << ") : " << article.name; }
+        for (const auto& [category, articles] : m_articles) {
+            for (const EncyclopediaArticle& article : articles)
+                TraceLogger() << "(" << category << ") : " << article.name;
         }
     }
 
