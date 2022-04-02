@@ -1,3 +1,25 @@
+PLANETARY_DRIVE_ACTIVATION
+'''
+    And [
+        Planet
+        Focus type = "FOCUS_PLANET_DRIVE"
+        WithinStarlaneJumps jumps = 1 condition = And [
+            System
+            Contains And [
+                Or [
+                    Building name = "BLD_PLANET_BEACON"
+                    And [
+                        Ship
+                        DesignHasPart low = 1 high = 999 name = "SP_PLANET_BEACON"
+                        Turn low = LocalCandidate.ArrivedOnTurn + 1
+                    ]
+                ]
+                OwnedBy empire = Source.Owner
+            ]
+            Not Contains Source
+        ]
+    ]
+'''
 
 ADVANCED_FOCUS_EFFECTS
 '''     EffectsGroup
@@ -58,25 +80,15 @@ ADVANCED_FOCUS_EFFECTS
 
         EffectsGroup
             scope = Source
-            activation = And [
-                Planet
-                Focus type = "FOCUS_PLANET_DRIVE"
-                WithinStarlaneJumps jumps = 1 condition = And [
-                    System
-                    Contains And [
-                        Or [
-                            Building name = "BLD_PLANET_BEACON"
-                            And [
-                                Ship
-                                DesignHasPart low = 1 high = 999 name = "SP_PLANET_BEACON"
-                                Turn low = LocalCandidate.ArrivedOnTurn + 1
-                            ]
-                        ]
-                        OwnedBy empire = Source.Owner
-                    ]
-                    Not Contains Source
-                ]
-            ]
+            activation = [[PLANETARY_DRIVE_ACTIVATION]]
+            // add the special with higher priority, so it can trigger with the same
+            // priotity as the effect below
+            priority = [[POPULATION_FIRST_PRIORITY]]
+            effects = AddSpecial name = "STARLANE_DRIVE_ACTIVATED_SPECIAL"
+
+        EffectsGroup
+            scope = Source
+            activation = [[PLANETARY_DRIVE_ACTIVATION]]
             priority = [[POPULATION_DEFAULT_PRIORITY]]
             effects = [
                 MoveTo destination = And [

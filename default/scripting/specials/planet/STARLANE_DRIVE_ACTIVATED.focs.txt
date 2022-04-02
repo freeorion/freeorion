@@ -1,0 +1,23 @@
+Special
+    name = "STARLANE_DRIVE_ACTIVATED_SPECIAL"
+    description = "STARLANE_DRIVE_ACTIVATED_SPECIAL_DESC"
+    stealth = 9999
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            // FOCUS_PLANET_DRIVE halfs the population, but it only works if the
+            // condition is still met after the move. So this effect corrects it,
+            // if and only if the same condition is not met after the move.
+            activation = Not [[PLANETARY_DRIVE_ACTIVATION]]
+            priority = [[POPULATION_DEFAULT_PRIORITY]]
+            effects = SetPopulation value = Value / 2
+        EffectsGroup
+            scope = Source
+            // remove it early, FOCUS_PLANET_DRIVE may have to add it again
+            priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
+            effects = RemoveSpecial name = "STARLANE_DRIVE_ACTIVATED_SPECIAL"
+    ]
+    graphic = "icons/building/planetary_stardrive.png"
+
+#include "/scripting/common/priorities.macros"
+#include "/scripting/species/common/advanced_focus.macros"
