@@ -2963,11 +2963,11 @@ namespace {
         return retval;
     }
 
-    std::multimap<float, std::pair<std::string, PlanetEnvironment>>
+    std::multimap<float, std::pair<std::string_view, PlanetEnvironment>>
         SpeciesEnvByTargetPop(const std::shared_ptr<Planet>& planet,
                               const std::vector<std::string_view>& species_names)
     {
-        std::multimap<float, std::pair<std::string, PlanetEnvironment>> retval;
+        std::multimap<float, std::pair<std::string_view, PlanetEnvironment>> retval;
 
         if (species_names.empty() || !planet)
             return retval;
@@ -2984,10 +2984,7 @@ namespace {
         ScriptingContext context{universe, Empires(), GetGalaxySetupData(), GetSpeciesManager(), GetSupplyManager()};
         universe.InhibitUniverseObjectSignals(true);
 
-        // planet->SetSpecies modifies a string that may be part of the input
-        // string_view vector, so make copies now to use while iterating
-        std::vector<std::string> names_copy(species_names.begin(), species_names.end());
-        for (auto& species_name : names_copy) { // TODO: parallelize somehow? tricky since an existing planet is being modified, rather than adding a test planet...
+        for (const auto& species_name : species_names) { // TODO: parallelize somehow? tricky since an existing planet is being modified, rather than adding a test planet...
             // Setting the planet's species allows all of it meters to reflect
             // species (and empire) properties, such as environment type
             // preferences and tech.
@@ -2995,7 +2992,7 @@ namespace {
             // NOTE: Overridding current or initial value of MeterType::METER_TARGET_POPULATION prior to update
             //       results in incorrect estimates for at least effects with a min target population of 0
             try {
-                planet->SetSpecies(species_name);
+                planet->SetSpecies(std::string{species_name});
                 planet->SetOwner(empire_id);
                 universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
             } catch (const std::exception& e) {
