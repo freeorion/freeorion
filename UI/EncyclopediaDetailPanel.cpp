@@ -2955,7 +2955,9 @@ namespace {
             // their own planet allows comparison vs other races, which might
             // be better suited to this planet. 
             if (species->CanColonize() || species_name == planet_current_species)
-                retval.push_back(species_name);
+                // The planet's species may change, so better create a string_view
+                // from the species->Name(), not species_name
+                retval.push_back(species->Name());
         }
 
         return retval;
