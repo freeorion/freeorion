@@ -3010,7 +3010,7 @@ namespace {
                                          0.0f : planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Current()); // want value after temporary meter update, so get current, not initial value of meter
 
                 retval.emplace(std::piecewise_construct, std::forward_as_tuple(planet_capacity),
-                               std::forward_as_tuple(std::move(species_name), planet_environment));
+                               std::forward_as_tuple(species_name, planet_environment));
             } catch (const std::exception& e) {
                 ErrorLogger() << "Caught exception emplacing into species env by target pop : " << e.what();
             }
