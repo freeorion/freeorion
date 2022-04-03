@@ -3899,7 +3899,7 @@ void EncyclopediaDetailPanel::SetEmpire(const std::string& empire_id) {
 
 void EncyclopediaDetailPanel::SetDesign(int design_id) {
     int current_item_id = INVALID_DESIGN_ID;
-    if (m_items_it != m_items.end()) {
+    if (m_items_it != m_items.end() && m_items_it->first == "ENC_SHIP_DESIGN") {
         try {
             current_item_id = boost::lexical_cast<int>(m_items_it->second);
         } catch (...) {
