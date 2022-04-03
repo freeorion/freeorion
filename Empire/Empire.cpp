@@ -2537,7 +2537,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                     // set invalid arrival starlane so that fleet won't necessarily be free from blockades
                     fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
 
-                    fleets.push_back(std::move(fleet));
+                    fleets.push_back(fleet); // can't move
                 }
 
                 for (auto& ship : ships) {
@@ -2554,7 +2554,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                         // set invalid arrival starlane so that fleet won't necessarily be free from blockades
                         fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
 
-                        fleets.push_back(fleet);
+                        fleets.push_back(fleet); // can't move
                     }
                     ship_ids.push_back(ship->ID());
                     fleet->AddShips({ship->ID()});
