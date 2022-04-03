@@ -847,9 +847,8 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
                 fs::path file = dir / filename;
                 DebugLogger() << "ListDir: found file " << file.string();
                 env->ReleaseStringUTFChars(jstr, filename);
-                if (predicate(file)) {
-                    retval.emplace_back(file);
-                }
+                if (predicate(file))
+                    retval.push_back(file);
 
                 directories.push_front(std::move(file));
             }
@@ -870,7 +869,7 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
              dir_it != fs::recursive_directory_iterator(); ++dir_it)
         {
             if (predicate(dir_it->path()))
-                retval.emplace_back(dir_it->path());
+                retval.push_back(dir_it->path());
             else
                 TraceLogger() << "ListDir: Discarding non-matching path: " << PathToString(dir_it->path());
         }
