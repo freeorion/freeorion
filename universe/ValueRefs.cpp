@@ -3712,15 +3712,16 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
 
         case OpType::MINIMUM:
         case OpType::MAXIMUM: {
-            std::set<double> vals;
+            std::vector<double> vals;
+            vals.reserve(m_operands.size());
             for (auto& vr : m_operands) {
                 if (vr)
-                    vals.emplace(vr->Eval(context));
+                    vals.push_back(vr->Eval(context));
             }
-            if (m_op_type == OpType::MINIMUM)
-                return vals.empty() ? 0.0 : *vals.begin();
-            else
-                return vals.empty() ? 0.0 : *vals.rbegin();
+            if (vals.empty())
+                return 0.0;
+            auto [min_el, max_el] = std::minmax_element(vals.begin(), vals.end());
+            return m_op_type == OpType::MINIMUM ? *min_el : *max_el;
             break;
         }
 
@@ -3899,15 +3900,16 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
 
         case OpType::MINIMUM:
         case OpType::MAXIMUM: {
-            std::set<int> vals;
+            std::vector<int> vals;
+            vals.reserve(m_operands.size());
             for (auto& vr : m_operands) {
                 if (vr)
-                    vals.emplace(vr->Eval(context));
+                    vals.push_back(vr->Eval(context));
             }
-            if (m_op_type == OpType::MINIMUM)
-                return vals.empty() ? 0 : *vals.begin();
-            else
-                return vals.empty() ? 0 : *vals.rbegin();
+            if (vals.empty())
+                return 0.0;
+            auto [min_el, max_el] = std::minmax_element(vals.begin(), vals.end());
+            return m_op_type == OpType::MINIMUM ? *min_el : *max_el;
             break;
         }
 
