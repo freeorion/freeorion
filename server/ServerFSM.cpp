@@ -446,7 +446,7 @@ void ServerFSM::UpdateIngameLobby() {
     dummy_lobby_data.in_game = true;
     dummy_lobby_data.start_locked = true;
     dummy_lobby_data.save_game_current_turn = m_server.CurrentTurn();
-    dummy_lobby_data.save_game_empire_data = CompileSaveGameEmpireData();
+    dummy_lobby_data.save_game_empire_data = CompileSaveGameEmpireData(m_server.Empires());
     for (auto player_it = m_server.m_networking.established_begin();
         player_it != m_server.m_networking.established_end(); ++player_it)
     {

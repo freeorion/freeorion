@@ -16,7 +16,7 @@ struct SaveGameEmpireData;
 struct ServerSaveGameData;
 
 /** Prepared empire data for save game or lobby. */
-std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData();
+std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empires);
 
 /** Saves the provided data to savefile \a filename. */
 int SaveGame(const std::string& filename,

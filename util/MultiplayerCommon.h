@@ -157,6 +157,18 @@ struct FO_COMMON_API SaveGameUIData {
 
 /** The data for one empire necessary for game-setup during multiplayer loading. */
 struct FO_COMMON_API SaveGameEmpireData {
+    SaveGameEmpireData() = default;
+    SaveGameEmpireData(int id, std::string ename, std::string pname,
+                       std::array<unsigned char, 4> c, bool a, bool e, bool w) :
+        empire_id(id),
+        empire_name(std::move(ename)),
+        player_name(std::move(pname)),
+        color(c),
+        authenticated(a),
+        eliminated(e),
+        won(w)
+    {}
+
     int         empire_id = ALL_EMPIRES;
     std::string empire_name;
     std::string player_name;

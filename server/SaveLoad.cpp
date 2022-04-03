@@ -91,10 +91,15 @@ namespace {
     const std::string BINARY_MARKER("binary");
 }
 
-std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData() {
+std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empires) {
     std::map<int, SaveGameEmpireData> retval;
-    for (const auto& entry : Empires())
-        retval[entry.first] = SaveGameEmpireData{entry.first, entry.second->Name(), entry.second->PlayerName(), entry.second->Color(), entry.second->IsAuthenticated(), entry.second->Eliminated(), entry.second->Won()};
+    for (const auto& [empire_id, empire] : empires) {
+        retval.emplace(std::piecewise_construct,
+                       std::forward_as_tuple(empire_id),
+                       std::forward_as_tuple(empire_id, empire->Name(), empire->PlayerName(),
+                                             empire->Color(), empire->IsAuthenticated(),
+                                             empire->Eliminated(), empire->Won()));
+    }
     return retval;
 }
 
@@ -127,7 +132,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
     DebugLogger() << "Compiling save empire and preview data";
     timer.EnterSection("compiling data");
-    std::map<int, SaveGameEmpireData> empire_save_game_data = CompileSaveGameEmpireData();
+    auto empire_save_game_data = CompileSaveGameEmpireData(empire_manager);
     SaveGamePreviewData save_preview_data;
     CompileSaveGamePreviewData(server_save_game_data, player_save_game_data,
                                empire_save_game_data, save_preview_data);
