@@ -557,7 +557,8 @@ std::string FightersAttackFightersEvent::DebugString(const ScriptingContext&) co
     return ss.str();
 }
 
-std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const {
+std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire_id,
+                                                              const ScriptingContext& context) const {
     if (events.empty())
         return "";
 
@@ -610,7 +611,9 @@ std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire
 //////////////////////////////////////////
 /////////// FighterLaunchEvent ///////////
 //////////////////////////////////////////
-FighterLaunchEvent::FighterLaunchEvent(int bout_, int launched_from_id_, int fighter_owner_empire_id_, int number_launched_) :
+FighterLaunchEvent::FighterLaunchEvent(int bout_, int launched_from_id_,
+                                       int fighter_owner_empire_id_,
+                                       int number_launched_) :
     bout(bout_),
     fighter_owner_empire_id(fighter_owner_empire_id_),
     launched_from_id(launched_from_id_),
@@ -668,7 +671,9 @@ std::string FightersDestroyedEvent::DebugString(const ScriptingContext&) const {
     return ss.str();
 }
 
-std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const {
+std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id,
+                                                         const ScriptingContext& context) const
+{
     if (events.empty())
         return "";
 

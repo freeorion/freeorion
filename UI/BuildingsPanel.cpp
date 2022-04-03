@@ -412,14 +412,16 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         return;
     }
 
-    auto scrap_building_action = [this, empire_id, &context]() {
+    auto scrap_building_action = [this, empire_id]() {
+        ScriptingContext context;
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ScrapOrder>(empire_id, m_building_id, context),
             context);
     };
 
-    auto un_scrap_building_action = [building, &context]() {
+    auto un_scrap_building_action = [building]() {
         // find order to scrap this building, and recind it
+        ScriptingContext context;
         auto pending_scrap_orders = PendingScrapOrders();
         auto it = pending_scrap_orders.find(building->ID());
         if (it != pending_scrap_orders.end())
