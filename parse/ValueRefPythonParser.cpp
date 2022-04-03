@@ -21,6 +21,24 @@ value_ref_wrapper<double> operator*(int lhs, const value_ref_wrapper<double>& rh
     );
 }
 
+value_ref_wrapper<double> operator*(const value_ref_wrapper<double>& lhs, double rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<double>>(rhs)
+        )
+    );
+}
+
+value_ref_wrapper<double> operator*(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
+            ValueRef::CloneUnique(lhs.value_ref),
+            ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
 value_ref_wrapper<double> operator+(const value_ref_wrapper<double>& lhs, int rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::PLUS,
@@ -57,10 +75,27 @@ value_ref_wrapper<double> operator-(const value_ref_wrapper<double>& lhs, const 
     );
 }
 
+value_ref_wrapper<double> operator-(int lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::MINUS,
+            std::make_unique<ValueRef::Constant<double>>(lhs),
+            ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
 condition_wrapper operator<=(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
     return condition_wrapper(
         std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
             Condition::ComparisonType::LESS_THAN_OR_EQUAL,
+            ValueRef::CloneUnique(rhs.value_ref))
+    );
+}
+
+condition_wrapper operator>(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
+    return condition_wrapper(
+        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
+            Condition::ComparisonType::GREATER_THAN,
             ValueRef::CloneUnique(rhs.value_ref))
     );
 }
@@ -78,6 +113,14 @@ condition_wrapper operator==(const value_ref_wrapper<int>& lhs, const value_ref_
         std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
             Condition::ComparisonType::EQUAL,
             ValueRef::CloneUnique(rhs.value_ref))
+    );
+}
+
+condition_wrapper operator==(const value_ref_wrapper<int>& lhs, int rhs) {
+    return condition_wrapper(
+        std::make_shared<Condition::ValueTest>(ValueRef::CloneUnique(lhs.value_ref),
+            Condition::ComparisonType::EQUAL,
+            std::make_unique<ValueRef::Constant<int>>(rhs))
     );
 }
 
@@ -141,6 +184,47 @@ namespace {
         return boost::python::object();
     }
 
+    boost::python::object insert_1arg_(const PythonParser& parser, const ValueRef::OpType op, const boost::python::tuple& args, const boost::python::dict& kw) {
+        if (args[0] == parser.type_int) {
+            std::unique_ptr<ValueRef::ValueRef<int>> operand;
+            auto arg = boost::python::extract<value_ref_wrapper<int>>(args[1]);
+            if (arg.check())
+                operand = ValueRef::CloneUnique(arg().value_ref);
+            else
+                operand = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(args[1])());
+            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Operation<int>>(op, std::move(operand))));
+        } else if (args[0] == parser.type_float) {
+            std::unique_ptr<ValueRef::ValueRef<double>> operand;
+            auto arg = boost::python::extract<value_ref_wrapper<double>>(args[1]);
+            if (arg.check())
+                operand = ValueRef::CloneUnique(arg().value_ref);
+            else
+                operand = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(args[1])());
+            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(op, std::move(operand))));
+        } else {
+            ErrorLogger() << "Unsupported type for 1arg : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
+
+            throw std::runtime_error(std::string("Not implemented ") + __func__);
+        }
+
+        return boost::python::object();
+    }
+
+    boost::python::object insert_statistic_(const PythonParser& parser, const ValueRef::StatisticType type, const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto condition = boost::python::extract<condition_wrapper>(kw["condition"])();
+        if (args[0] == parser.type_int) {
+            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Statistic<int>>(nullptr, type, std::move(ValueRef::CloneUnique(condition.condition)))));
+        } else if (args[0] == parser.type_float) {
+            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Statistic<double>>(nullptr, type, std::move(ValueRef::CloneUnique(condition.condition)))));
+        } else {
+            ErrorLogger() << "Unsupported type for statistic : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
+
+            throw std::runtime_error(std::string("Not implemented ") + __func__);
+        }
+
+        return boost::python::object();
+    }
+
     boost::python::object insert_game_rule_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw) {
         auto name = boost::python::extract<std::string>(kw["name"])();
         auto type_ = kw["type"];
@@ -169,6 +253,36 @@ namespace {
 
         return boost::python::object();
     }
+
+    boost::python::object insert_num_policies_adopted_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        if (kw.has_key("empire")) {
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check()) {
+                empire = ValueRef::CloneUnique(empire_args().value_ref);
+            } else {
+                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        if (kw.has_key("name")) {
+            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+            if (name_args.check()) {
+                name = ValueRef::CloneUnique(name_args().value_ref);
+            } else {
+                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+            }
+        }
+
+        return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
+            "NumPoliciesAdopted",
+            std::move(empire),
+            nullptr,
+            nullptr,
+            std::move(name),
+            nullptr)));
+    }
 }
 
 void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& parser) {
@@ -176,6 +290,7 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["NamedRealLookup"] = boost::python::raw_function(insert_named_lookup_<double>);
     globals["Value"] = value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE));
     globals["CurrentTurn"] = value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, "CurrentTurn"));
+    globals["NumPoliciesAdopted"] = boost::python::raw_function(insert_num_policies_adopted_);
 
     std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_game_rule = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(parser, args, kw); };
     globals["GameRule"] = boost::python::raw_function(f_insert_game_rule);
@@ -183,5 +298,9 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["Min"] = boost::python::raw_function(f_insert_min, 3);
     std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_max = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_minmaxoneof_<ValueRef::OpType::MAXIMUM>(parser, args, kw); };
     globals["Max"] = boost::python::raw_function(f_insert_max, 3);
+    std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_abs = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_1arg_(parser, ValueRef::OpType::ABS, args, kw); };
+    globals["Abs"] = boost::python::raw_function(f_insert_abs, 2);
+    std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_statistic_if = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_statistic_(parser, ValueRef::StatisticType::IF, args, kw); };
+    globals["StatisticIf"] = boost::python::raw_function(f_insert_statistic_if, 1);
 }
 

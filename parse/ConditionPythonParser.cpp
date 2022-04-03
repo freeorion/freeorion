@@ -151,6 +151,44 @@ namespace {
         }, types);
         return condition_wrapper(std::make_shared<Condition::FocusType>(std::move(types)));
     }
+
+    condition_wrapper insert_empire_stockpile_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+        if (empire_args.check()) {
+            empire = ValueRef::CloneUnique(empire_args().value_ref);
+        } else {
+            empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+        }
+
+        auto resource = boost::python::extract<enum_wrapper<ResourceType>>(kw["resource"])();
+
+        std::unique_ptr<ValueRef::ValueRef<double>> low = nullptr;
+        if (kw.has_key("low")) {
+            auto low_args = boost::python::extract<value_ref_wrapper<double>>(kw["low"]);
+            if (low_args.check()) {
+                low = ValueRef::CloneUnique(low_args().value_ref);
+            } else {
+                low = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["low"])());
+            }
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<double>> high = nullptr;
+        if (kw.has_key("high")) {
+            auto high_args = boost::python::extract<value_ref_wrapper<double>>(kw["high"]);
+            if (high_args.check()) {
+                high = ValueRef::CloneUnique(high_args().value_ref);
+            } else {
+                high = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["high"])());
+            }
+        }
+
+        return condition_wrapper(std::make_shared<Condition::EmpireStockpileValue>(
+            std::move(empire),
+            resource.value,
+            std::move(low),
+            std::move(high)));
+    }
 }
 
 void RegisterGlobalsConditions(boost::python::dict& globals) {
@@ -163,6 +201,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["Human"] = condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_HUMAN));
 
     globals["Structure"] = boost::python::raw_function([] (auto args, auto kw) -> auto { return insert_meter_value_(args, kw, MeterType::METER_STRUCTURE);});
+    globals["Population"] = boost::python::raw_function([] (auto args, auto kw) -> auto { return insert_meter_value_(args, kw, MeterType::METER_POPULATION);});
 
     globals["Species"] = condition_wrapper(std::make_shared<Condition::Species>());
 
@@ -173,5 +212,6 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["ContainedBy"] = insert_contained_by_;
     globals["Contains"] = insert_contains_;
     globals["Focus"] = boost::python::raw_function(insert_focus_);
+    globals["EmpireStockpile"] = boost::python::raw_function(insert_empire_stockpile_);
 }
 

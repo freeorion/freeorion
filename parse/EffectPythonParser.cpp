@@ -170,6 +170,34 @@ namespace {
                                                                            std::move(value)));
         }
     }
+
+
+    effect_wrapper insert_set_empire_stockpile(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        if (kw.has_key("empire")) {
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check()) {
+                empire = ValueRef::CloneUnique(empire_args().value_ref);
+            } else {
+                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            }
+        }
+
+        auto resource = boost::python::extract<enum_wrapper<ResourceType>>(kw["resource"])();
+
+        std::unique_ptr<ValueRef::ValueRef<double>> value;
+        auto value_args = boost::python::extract<value_ref_wrapper<double>>(kw["value"]);
+        if (value_args.check()) {
+            value = ValueRef::CloneUnique(value_args().value_ref);
+        } else {
+            value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
+        }
+
+        if (empire)
+            return effect_wrapper(std::make_shared<Effect::SetEmpireStockpile>(std::move(empire), resource.value, std::move(value)));
+        else 
+            return effect_wrapper(std::make_shared<Effect::SetEmpireStockpile>(resource.value, std::move(value)));
+    }
 }
 
 void RegisterGlobalsEffects(py::dict& globals) {
@@ -188,9 +216,11 @@ void RegisterGlobalsEffects(py::dict& globals) {
 
     globals["SetConstruction"] = py::raw_function(insert_set_meter_<MeterType::METER_CONSTRUCTION>);
     globals["SetDefense"] = py::raw_function(insert_set_meter_<MeterType::METER_DEFENSE>);
+    globals["SetHappiness"] = py::raw_function(insert_set_meter_<MeterType::METER_HAPPINESS>);   
     globals["SetIndustry"] = py::raw_function(insert_set_meter_<MeterType::METER_INDUSTRY>);
     globals["SetMaxShield"] = py::raw_function(insert_set_meter_<MeterType::METER_MAX_SHIELD>);
     globals["SetMaxSupply"] = py::raw_function(insert_set_meter_<MeterType::METER_MAX_SUPPLY>);
+    globals["SetMaxTroops"] = py::raw_function(insert_set_meter_<MeterType::METER_MAX_TROOPS>);
     globals["SetResearch"] = py::raw_function(insert_set_meter_<MeterType::METER_RESEARCH>);
     globals["SetShield"] = py::raw_function(insert_set_meter_<MeterType::METER_SHIELD>);
     globals["SetStockpile"] = py::raw_function(insert_set_meter_<MeterType::METER_STOCKPILE>);
@@ -198,5 +228,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["SetTargetConstruction"] = py::raw_function(insert_set_meter_<MeterType::METER_TARGET_CONSTRUCTION>);
     globals["SetTargetPopulation"] = py::raw_function(insert_set_meter_<MeterType::METER_TARGET_POPULATION>);
     globals["SetTroops"] = py::raw_function(insert_set_meter_<MeterType::METER_TROOPS>);
+
+    globals["SetEmpireStockpile"] = py::raw_function(insert_set_empire_stockpile);
 }
 
