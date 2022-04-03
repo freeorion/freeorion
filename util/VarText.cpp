@@ -130,8 +130,9 @@ namespace {
         } catch (...) {
             return boost::none;
         }
-        if (const auto empire = GetEmpire(id))
-            return WithTags(empire->Name(), VarText::EMPIRE_ID_TAG, data);
+        auto it = empires.find(id);
+        if (it != empires.end())
+            return WithTags(it->second->Name(), VarText::EMPIRE_ID_TAG, data);
 
         return boost::none;
     }
