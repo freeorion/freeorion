@@ -206,6 +206,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
 
     globals["Policy"] = enum_wrapper<UnlockableItemType>(UnlockableItemType::UIT_POLICY);
     globals["Building"] = enum_wrapper<UnlockableItemType>(UnlockableItemType::UIT_BUILDING);
+    globals["ShipPart"] = enum_wrapper<UnlockableItemType>(UnlockableItemType::UIT_SHIP_PART);
 
     globals["Destroy"] = effect_wrapper(std::make_shared<Effect::Destroy>());
 
