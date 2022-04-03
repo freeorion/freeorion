@@ -310,7 +310,7 @@ std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::Opti
 
         for (auto& section : m_sections)
             if (section.second.option_predicate && section.second.option_predicate(option_name))
-                sections_by_option[option_name].emplace(section.first);
+                sections_by_option[option_name].insert(section.first);
     }
 
     // tally the total number of options under each section

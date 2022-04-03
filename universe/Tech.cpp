@@ -137,7 +137,7 @@ Tech::Tech(std::string&& name, std::string&& description,
     m_graphic(std::move(graphic))
 {
     for (const std::string& tag : tags)
-        m_tags.emplace(boost::to_upper_copy<std::string>(tag));
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
     Init();
 }
 
@@ -158,9 +158,9 @@ Tech::Tech(TechInfo&& tech_info,
     m_graphic(std::move(graphic))
 {
     for (auto&& effect : effects)
-        m_effects.emplace_back(std::move(effect));
+        m_effects.push_back(std::move(effect));
     for (const std::string& tag : tech_info.tags)
-        m_tags.emplace(boost::to_upper_copy<std::string>(tag));
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
     Init();
 }
 
@@ -507,7 +507,7 @@ void TechManager::CheckPendingTechs() const {
     for (const auto& map : m_categories) {
         auto set_it = categories_seen_in_techs.find(map.first);
         if (set_it == categories_seen_in_techs.end()) {
-            empty_defined_categories.emplace(map.first);
+            empty_defined_categories.insert(map.first);
         } else {
             categories_seen_in_techs.erase(set_it);
         }
@@ -551,7 +551,7 @@ void TechManager::CheckPendingTechs() const {
     for (const auto& tech : m_techs) {
         for (const std::string& prereq : tech->Prerequisites()) {
             if (Tech* prereq_tech = const_cast<Tech*>(GetTech(prereq)))
-                prereq_tech->m_unlocked_techs.emplace(tech->Name());
+                prereq_tech->m_unlocked_techs.insert(tech->Name());
         }
     }
 
@@ -641,7 +641,7 @@ std::string TechManager::FindFirstDependencyCycle() const {
 
             if (starting_stack_size == stack.size()) {
                 stack.pop_back();
-                checked_techs.emplace(current_tech);
+                checked_techs.insert(current_tech);
             }
         }
     }

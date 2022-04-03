@@ -173,7 +173,7 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
     Init(std::move(common_params.effects));
 
     for (const std::string& tag : common_params.tags)
-        m_tags.emplace(boost::to_upper_copy<std::string>(tag));
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
 
     TraceLogger() << "ShipPart::ShipPart: name: " << m_name
                   << " description: " << m_description
