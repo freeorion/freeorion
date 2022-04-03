@@ -490,6 +490,9 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             }
         }
 
+        for (auto& entry : empire_manager)
+            entry.second->CheckObsoleteGameContent();
+
     } catch (const std::exception& err) {
         ErrorLogger() << "LoadGame(...) failed!  Error: " << err.what();
         return;
