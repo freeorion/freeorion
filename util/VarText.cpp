@@ -202,7 +202,7 @@ namespace {
                 }},
             {VarText::ENVIRONMENT_TAG, [](const std::string& data, const ScriptingContext& context)
                 {
-                    auto planet = IApp::GetApp()->GetUniverse().Objects().get<Planet>(boost::lexical_cast<int>(data));
+                    auto planet = context.ContextObjects().get<Planet>(boost::lexical_cast<int>(data));
                     if (planet)
                         return UserString(to_string(planet->EnvironmentForSpecies()));
                     return UserString("UNKNOWN_PLANET");
