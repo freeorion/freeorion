@@ -106,7 +106,7 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object,
     UniverseObject::Copy(std::move(copied_object), vis, visible_specials, universe);
 
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-        m_ships =               copied_fleet->VisibleContainedObjectIDs(empire_id);
+        m_ships =               copied_fleet->VisibleContainedObjectIDs(empire_id, universe.GetEmpireObjectVisibility());
 
         m_next_system =         ((EmpireKnownObjects(empire_id).get<System>(copied_fleet->m_next_system))
                                     ? copied_fleet->m_next_system : INVALID_OBJECT_ID);

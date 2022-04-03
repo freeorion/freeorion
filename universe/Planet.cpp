@@ -100,7 +100,7 @@ void Planet::Copy(std::shared_ptr<const UniverseObject> copied_object,
     if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
         this->m_name =                      copied_planet->m_name;
 
-        this->m_buildings =                 copied_planet->VisibleContainedObjectIDs(empire_id);
+        this->m_buildings =                 copied_planet->VisibleContainedObjectIDs(empire_id, universe.GetEmpireObjectVisibility());
         this->m_type =                      copied_planet->m_type;
         this->m_original_type =             copied_planet->m_original_type;
         this->m_size =                      copied_planet->m_size;

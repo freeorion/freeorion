@@ -10,6 +10,7 @@
 #include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "../Empire/EmpireManager.h"
+#include "../Empire/Empire.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 #include "../util/i18n.h"
@@ -167,9 +168,10 @@ UniverseObjectType UniverseObject::ObjectType() const
 { return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE; }
 
 std::string UniverseObject::Dump(unsigned short ntabs) const {
-    const auto& objects{Objects()};
+    const ScriptingContext context;
+    const auto& universe = context.ContextUniverse();
+    const auto& objects = context.ContextObjects();
     auto system = objects.get<System>(this->SystemID());
-
 
     std::string retval;
     retval.reserve(2048); // guesstimate
@@ -185,7 +187,7 @@ std::string UniverseObject::Dump(unsigned short ntabs) const {
     } else {
         retval.append("  at: (").append(std::to_string(this->X())).append(", ")
               .append(std::to_string(this->Y())).append(")");
-        int near_id = GetUniverse().GetPathfinder()->NearestSystemTo(this->X(), this->Y(), objects);
+        int near_id = universe.GetPathfinder()->NearestSystemTo(this->X(), this->Y(), objects);
         auto near_system = objects.get<System>(near_id);
         if (near_system) {
             auto& sys_name = near_system->Name();
@@ -198,11 +200,8 @@ std::string UniverseObject::Dump(unsigned short ntabs) const {
     if (Unowned()) {
         retval.append(" owner: (Unowned) ");
     } else {
-        auto& empire_name = Empires().GetEmpireName(m_owner_empire_id);
-        if (!empire_name.empty())
-            retval.append(" owner: ").append(empire_name);
-        else
-            retval.append(" owner: (Unknown Empire)");
+        auto empire = context.GetEmpire(m_owner_empire_id);
+        retval.append(" owner: ").append(empire ? empire->Name() : "(Unknown Empire)");
     }
     retval.append(" created on turn: ").append(std::to_string(m_created_on_turn))
           .append(" specials: ");
@@ -223,11 +222,21 @@ namespace {
 const std::set<int>& UniverseObject::ContainedObjectIDs() const
 { return EMPTY_SET; }
 
-std::set<int> UniverseObject::VisibleContainedObjectIDs(int empire_id) const {
+std::set<int> UniverseObject::VisibleContainedObjectIDs(
+    int empire_id, const EmpireObjectVisMap& vis) const
+{
+    auto object_id_visible = [empire_id, &vis](int object_id) -> bool {
+        auto empire_it = vis.find(empire_id);
+        if (empire_it == vis.end())
+            return false;
+        auto obj_it = empire_it->second.find(object_id);
+        return obj_it != empire_it->second.end()
+            && obj_it->second >= Visibility::VIS_BASIC_VISIBILITY;
+    };
+
     std::set<int> retval;
-    const Universe& universe = GetUniverse(); // TODO: pass in
     for (int object_id : ContainedObjectIDs()) {
-        if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY)
+        if (object_id_visible(object_id))
             retval.insert(object_id);
     }
     return retval;

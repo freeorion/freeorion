@@ -129,7 +129,8 @@ public:
        this UniverseObject. */
     [[nodiscard]] virtual bool                ContainedBy(int object_id) const;
 
-    [[nodiscard]] std::set<int>               VisibleContainedObjectIDs(int empire_id) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
+    using EmpireObjectVisMap = std::map<int, std::map<int, Visibility>>;
+    [[nodiscard]] std::set<int>               VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisMap& vis) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
 
     [[nodiscard]] const MeterMap&             Meters() const { return m_meters; }             ///< returns this UniverseObject's meters
     [[nodiscard]] const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
