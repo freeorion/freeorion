@@ -817,7 +817,7 @@ std::string NewMonsterName() {
     static std::map<std::string, int> monster_names_used;
 
     if (monster_names.empty())
-        monster_names.emplace_back(UserString("MONSTER"));
+        monster_names.push_back(UserString("MONSTER"));
 
     // select name randomly from list
     int monster_name_index = RandInt(0, static_cast<int>(monster_names.size()) - 1);

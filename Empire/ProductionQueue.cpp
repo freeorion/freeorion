@@ -723,8 +723,8 @@ void ProductionQueue::Update(const ScriptingContext& context) {
             auto set_it = group.find(location_id);
             if (set_it != group.end()) {
                 // system is in this group.
-                queue_element_groups.emplace_back(group);   // record this discovery
-                break;                                      // stop searching for a group containing a system, since one has been found
+                queue_element_groups.push_back(group); // record this discovery
+                break;                                 // stop searching for a group containing a system, since one has been found
             }
         }
     }

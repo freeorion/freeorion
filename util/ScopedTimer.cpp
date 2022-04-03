@@ -177,7 +177,7 @@ class SectionedScopedTimer::Impl : public ScopedTimer::Impl {
 
             // Insert succeed, so grab the new section name.
             if (maybe_new.second)
-                m_section_names.emplace_back(section_name);
+                m_section_names.push_back(section_name);
         }
 
         //Table of section durations

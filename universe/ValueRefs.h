@@ -1999,7 +1999,7 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
         vals.reserve(m_operands.size());
         for (auto& vr : m_operands) {
             if (vr)
-                vals.emplace_back(vr->Eval(context));
+                vals.push_back(vr->Eval(context));
         }
         if (m_op_type == OpType::MINIMUM)
             return *std::min_element(vals.begin(), vals.end());

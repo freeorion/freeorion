@@ -244,7 +244,7 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
                 FullPreview data;
                 if (LoadSaveGamePreviewData(*it, data)) {
                     // Add preview entry to list
-                    previews.emplace_back(std::move(data));
+                    previews.push_back(std::move(data));
                 }
             }
         } catch (const std::exception& e) {

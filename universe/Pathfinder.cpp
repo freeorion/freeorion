@@ -328,7 +328,7 @@ namespace SystemPathing {
 
         // early exit if systems are the same
         if (system1_id == system2_id) {
-            retval.first.emplace_back(system2_id);
+            retval.first.push_back(system2_id);
             retval.second = 0.0;    // no jumps needed -> 0 distance
             return retval;
         }
@@ -405,7 +405,7 @@ namespace SystemPathing {
 
         // early exit if systems are the same
         if (system1_id == system2_id) {
-            retval.first.emplace_back(system2_id);
+            retval.first.push_back(system2_id);
             retval.second = 0;  // no jumps needed
             return retval;
         }
@@ -1338,8 +1338,7 @@ Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
 
     std::pair<std::vector<std::shared_ptr<const UniverseObject>>,
               std::vector<std::shared_ptr<const UniverseObject>>> retval;
-    auto& near = retval.first;
-    auto& far = retval.second;
+    auto& [near, far] = retval;
     near.reserve(candidates.size());
     far.reserve(candidates.size());
 
@@ -1348,9 +1347,9 @@ Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
         bool is_near = boost::apply_visitor(visitor, candidate_systems);
 
         if (is_near)
-            near.emplace_back(candidate);
+            near.push_back(candidate);
         else
-            far.emplace_back(candidate);
+            far.push_back(candidate);
     }
 
     return retval; // was: {near, far}; //, wherever you are...

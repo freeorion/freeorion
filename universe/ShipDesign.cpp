@@ -319,7 +319,7 @@ std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
     retval.reserve(m_parts.size());
     for (unsigned int i = 0; i < m_parts.size(); ++i)
         if (slots[i].type == slot_type)
-            retval.emplace_back(m_parts[i]);
+            retval.push_back(m_parts[i]);
 
     return retval;
 }
@@ -333,7 +333,7 @@ std::vector<std::string> ShipDesign::Weapons() const {
             continue;
         ShipPartClass part_class = part->Class();
         if (part_class == ShipPartClass::PC_DIRECT_WEAPON || part_class == ShipPartClass::PC_FIGHTER_BAY)
-            retval.emplace_back(part_name);
+            retval.push_back(part_name);
     }
     return retval;
 }
@@ -810,7 +810,7 @@ std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedShipDesign
     std::vector<const ShipDesign*> retval;
     retval.reserve(m_ship_ordering.size());
     for (const auto& uuid : m_ship_ordering)
-        retval.emplace_back(m_designs.at(uuid).get());
+        retval.push_back(m_designs.at(uuid).get());
     return retval;
 }
 
@@ -819,7 +819,7 @@ std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedMonsterDes
     std::vector<const ShipDesign*> retval;
     retval.reserve(m_monster_ordering.size());
     for (const auto& uuid : m_monster_ordering)
-        retval.emplace_back(m_designs.at(uuid).get());
+        retval.push_back(m_designs.at(uuid).get());
     return retval;
 }
 
@@ -1009,7 +1009,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
             ship_manifest_inconsistent = true;
             continue;
         }
-        ordering.emplace_back(uuid);
+        ordering.push_back(uuid);
     }
 
     // Verify that every design in saved_designs is in ordering.
@@ -1031,7 +1031,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
             WarnLogger() << "Missing ship design " << name_and_uuid.second
                          << " called " << name_and_uuid.first
                          << " added to the manifest.";
-            ordering.emplace_back(name_and_uuid.second);
+            ordering.push_back(name_and_uuid.second);
         }
     }
 

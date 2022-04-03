@@ -53,7 +53,7 @@ namespace {
                 std::move(increase_vr)
             );
         std::vector<std::unique_ptr<Effect::Effect>> effects;
-        effects.emplace_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
+        effects.push_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
 
         return std::make_shared<Effect::EffectsGroup>(std::move(scope), std::move(activation),
                                                       std::move(effects));
@@ -226,13 +226,13 @@ void ShipHull::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
                     bool default_structure_effects)
 {
     if (default_fuel_effects && m_fuel != 0)
-        m_effects.emplace_back(IncreaseMeter(MeterType::METER_MAX_FUEL,      m_fuel));
+        m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_FUEL,      m_fuel));
     if (default_stealth_effects && m_stealth != 0)
-        m_effects.emplace_back(IncreaseMeter(MeterType::METER_STEALTH,       m_stealth));
+        m_effects.push_back(IncreaseMeter(MeterType::METER_STEALTH,       m_stealth));
     if (default_structure_effects && m_structure != 0)
-        m_effects.emplace_back(IncreaseMeter(MeterType::METER_MAX_STRUCTURE, m_structure, "RULE_SHIP_STRUCTURE_FACTOR"));
+        m_effects.push_back(IncreaseMeter(MeterType::METER_MAX_STRUCTURE, m_structure, "RULE_SHIP_STRUCTURE_FACTOR"));
     if (default_speed_effects && m_speed != 0)
-        m_effects.emplace_back(IncreaseMeter(MeterType::METER_SPEED,         m_speed,     "RULE_SHIP_SPEED_FACTOR"));
+        m_effects.push_back(IncreaseMeter(MeterType::METER_SPEED,         m_speed,     "RULE_SHIP_SPEED_FACTOR"));
 
     if (m_production_cost)
         m_production_cost->SetTopLevelContent(m_name);
@@ -242,7 +242,7 @@ void ShipHull::Init(std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects
         m_location->SetTopLevelContent(m_name);
     for (auto&& effect : effects) {
         effect->SetTopLevelContent(m_name);
-        m_effects.emplace_back(std::move(effect));
+        m_effects.push_back(std::move(effect));
     }
 }
 

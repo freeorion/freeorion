@@ -21,7 +21,7 @@ namespace {
                 std::make_unique<ValueRef::Constant<double>>(increase)
             );
         std::vector<std::unique_ptr<Effect::Effect>> effects;
-        effects.emplace_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
+        effects.push_back(std::make_unique<Effect::SetMeter>(meter_type, std::move(vr)));
 
         return std::make_shared<Effect::EffectsGroup>(std::move(scope), nullptr, std::move(effects));
     }
@@ -38,13 +38,13 @@ FieldType::FieldType(std::string&& name, std::string&& description,
     m_graphic(std::move(graphic))
 {
     for (const std::string& tag : tags)
-        m_tags.emplace(boost::to_upper_copy<std::string>(tag));
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
 
     for (auto&& effect : effects)
-        m_effects.emplace_back(std::move(effect));
+        m_effects.push_back(std::move(effect));
 
     if (m_stealth != 0.0f)
-        m_effects.emplace_back(IncreaseMeter(MeterType::METER_STEALTH, m_stealth));
+        m_effects.push_back(IncreaseMeter(MeterType::METER_STEALTH, m_stealth));
 
     for (auto& effect : m_effects)
         effect->SetTopLevelContent(m_name);
