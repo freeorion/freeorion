@@ -411,7 +411,7 @@ std::vector<std::string_view> Empire::AdoptedPolicies() const {
     std::vector<std::string_view> retval;
     retval.reserve(m_adopted_policies.size());
     for (const auto& entry : m_adopted_policies)
-        retval.emplace_back(entry.first);
+        retval.push_back(entry.first);
     return retval;
 }
 
@@ -1899,7 +1899,7 @@ void Empire::AddExploredSystem(int ID, int turn, const ObjectMap& objects) {
 std::string Empire::NewShipName() {
     static std::vector<std::string> ship_names = UserStringList("SHIP_NAMES");
     if (ship_names.empty())
-        ship_names.emplace_back(UserString("OBJ_SHIP"));
+        ship_names.push_back(UserString("OBJ_SHIP"));
 
     // select name randomly from list
     int ship_name_idx = RandInt(0, static_cast<int>(ship_names.size()) - 1);
@@ -2476,14 +2476,12 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
     }
 
     // create fleets for new ships and put ships into fleets
-    for (auto& entry : system_new_ships) {
-        auto system = context.ContextObjects().get<System>(entry.first);
+    for (auto& [system_id, new_ships] : system_new_ships) {
+        auto system = context.ContextObjects().get<System>(system_id);
         if (!system) {
-            ErrorLogger() << "Couldn't get system with id " << entry.first << " for creating new fleets for newly produced ships";
+            ErrorLogger() << "Couldn't get system with id " << system_id << " for creating new fleets for newly produced ships";
             continue;
         }
-
-        auto& new_ships = entry.second;
         if (new_ships.empty())
             continue;
 
@@ -2492,12 +2490,12 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
             new_ships_by_rally_point_id_and_design_id;
         for (auto& ship : new_ships) {
             int rally_point_id = INVALID_OBJECT_ID;
-
             auto rally_it = new_ship_rally_point_ids.find(ship->ID());
             if (rally_it != new_ship_rally_point_ids.end())
                 rally_point_id = rally_it->second;
 
-            new_ships_by_rally_point_id_and_design_id[rally_point_id][ship->DesignID()].emplace_back(ship);
+            auto design_id = ship->DesignID();
+            new_ships_by_rally_point_id_and_design_id[rally_point_id][design_id].push_back(std::move(ship));
         }
 
 
@@ -2539,7 +2537,7 @@ void Empire::CheckProductionProgress(ScriptingContext& context) {
                     // set invalid arrival starlane so that fleet won't necessarily be free from blockades
                     fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
 
-                    fleets.emplace_back(fleet);
+                    fleets.push_back(std::move(fleet));
                 }
 
                 for (auto& ship : ships) {
