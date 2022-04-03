@@ -2263,13 +2263,13 @@ namespace {
     void SetEmpireFieldVisibilitiesFromRanges(
         const std::map<int, std::map<std::pair<double, double>, float>>&
             empire_location_detection_ranges,
-        Universe& universe)
+        Universe& universe, EmpireManager& empires)
     {
         const ObjectMap& objects{universe.Objects()};
 
         for (const auto& [detecting_empire_id, detector_position_ranges] : empire_location_detection_ranges) {
             double detection_strength = 0.0;
-            const Empire* empire = GetEmpire(detecting_empire_id);
+            const auto empire = empires.GetEmpire(detecting_empire_id);
             if (!empire)
                 continue;
             const Meter* meter = empire->GetMeter("METER_DETECTION_STRENGTH");
@@ -2586,7 +2586,7 @@ namespace {
     {
         // after setting object visibility, similarly set visibility of objects'
         // specials for each empire
-        for (const auto& [empire_id, empire] : Empires()) {
+        for (const auto& [empire_id, empire] : input_context.Empires()) {
             auto& obj_vis_map = empire_object_visibility[empire_id];
             auto& obj_specials_map = empire_object_visible_specials[empire_id];
 
@@ -2713,7 +2713,7 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
     SetEmpireObjectVisibilitiesFromRanges(empire_position_detection_ranges,
                                           empire_position_potentially_detectable_objects,
                                           *this);
-    SetEmpireFieldVisibilitiesFromRanges(empire_position_detection_ranges, *this);
+    SetEmpireFieldVisibilitiesFromRanges(empire_position_detection_ranges, *this, empires);
 
     SetSameSystemPlanetsVisible(*this);
 
