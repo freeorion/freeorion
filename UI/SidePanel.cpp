@@ -2642,7 +2642,8 @@ void SidePanel::PlanetPanelContainer::SetPlanets(
         m_planet_panels.back()->ResizedSignal.connect(
             boost::bind(&SidePanel::PlanetPanelContainer::RequirePreRender, this));
         m_planet_panels.back()->OrderButtonChangedSignal.connect(
-            [this, &context](int excluded_planet_id) {
+            [this](int excluded_planet_id) {
+                ScriptingContext context;
                 RefreshAllPlanetPanels(context, excluded_planet_id, true);
             });
     }
