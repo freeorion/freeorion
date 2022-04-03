@@ -60,6 +60,8 @@ void IApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>
         return;
     }
 
+    DebugLogger() << "Start background parsing...";
+
     // named value ref parsing can be done in parallel as the referencing happens after parsing
     if (IsExistingDir(rdir / "scripting/common"))
         GetNamedValueRefManager().SetNamedValueRefParse(Pending::ParseSynchronously(parse::named_value_refs, rdir / "scripting/common"));

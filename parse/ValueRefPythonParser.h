@@ -38,14 +38,19 @@ struct value_ref_wrapper {
 };
 
 value_ref_wrapper<double> operator*(int, const value_ref_wrapper<double>&);
+value_ref_wrapper<double> operator*(const value_ref_wrapper<double>&, double);
+value_ref_wrapper<double> operator*(const value_ref_wrapper<double>&, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator+(const value_ref_wrapper<double>&, int);
 value_ref_wrapper<double> operator+(const value_ref_wrapper<double>&, double);
 value_ref_wrapper<double> operator+(const value_ref_wrapper<double>&, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator-(const value_ref_wrapper<double>&, const value_ref_wrapper<double>&);
+value_ref_wrapper<double> operator-(int, const value_ref_wrapper<double>&);
 condition_wrapper operator<=(const value_ref_wrapper<double>&, const value_ref_wrapper<double>&);
+condition_wrapper operator>(const value_ref_wrapper<double>&, const value_ref_wrapper<double>&);
 
 condition_wrapper operator<(const value_ref_wrapper<int>&, const value_ref_wrapper<int>&);
 condition_wrapper operator==(const value_ref_wrapper<int>&, const value_ref_wrapper<int>&);
+condition_wrapper operator==(const value_ref_wrapper<int>&, int);
 
 void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& parser);
 

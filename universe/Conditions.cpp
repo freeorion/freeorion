@@ -1631,7 +1631,7 @@ unsigned int Target::GetCheckSum() const {
 }
 
 std::unique_ptr<Condition> Target::Clone() const
-{ return std::unique_ptr<Target>(); }
+{ return std::make_unique<Target>(); }
 
 ///////////////////////////////////////////////////////////
 // Homeworld                                             //

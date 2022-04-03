@@ -84,15 +84,20 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         // Use wrappers to not collide with types in server and AI
         py::class_<value_ref_wrapper<int>>("ValueRefInt", py::no_init)
             .def(py::self_ns::self < py::self_ns::self)
-            .def(py::self_ns::self == py::self_ns::self);
+            .def(py::self_ns::self == py::self_ns::self)
+            .def(py::self_ns::self == int());
         py::class_<value_ref_wrapper<double>>("ValueRefDouble", py::no_init)
             .def("__call__", &value_ref_wrapper<double>::call)
             .def(int() * py::self_ns::self)
+            .def(py::self_ns::self * double())
+            .def(py::self_ns::self * py::self_ns::self)
             .def(py::self_ns::self + int())
             .def(py::self_ns::self + double())
             .def(py::self_ns::self + py::self_ns::self)
             .def(py::self_ns::self - py::self_ns::self)
-            .def(py::self_ns::self <= py::self_ns::self);
+            .def(int() - py::self_ns::self)
+            .def(py::self_ns::self <= py::self_ns::self)
+            .def(py::self_ns::self > py::self_ns::self);
         py::class_<value_ref_wrapper<std::string>>("ValueRefString", py::no_init);
         py::class_<condition_wrapper>("Condition", py::no_init)
             .def(py::self_ns::self & py::self_ns::self)
@@ -102,6 +107,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<effect_group_wrapper>("EffectsGroup", py::no_init);
         py::class_<enum_wrapper<UnlockableItemType>>("UnlockableItemType", py::no_init);
         py::class_<enum_wrapper<EmpireAffiliationType>>("EmpireAffiliationType", py::no_init);
+        py::class_<enum_wrapper<ResourceType>>("ResourceType", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
         py::class_<source_wrapper>("__Source", py::no_init)
             .def_readonly("Owner", &source_wrapper::owner);
@@ -114,10 +120,12 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def_readonly("Owner", &target_wrapper::owner)
             .def_readonly("SystemID", &target_wrapper::system_id)
             .def_readonly("DesignID", &target_wrapper::design_id)
+            .def_readonly("TargetHappiness", &target_wrapper::target_happiness)
             .def_readonly("TargetIndustry", &target_wrapper::target_industry)
             .def_readonly("TargetResearch", &target_wrapper::target_research)
             .def_readonly("TargetConstruction", &target_wrapper::target_construction)
-            .def_readonly("MaxStockpile", &target_wrapper::max_stockpile);
+            .def_readonly("MaxStockpile", &target_wrapper::max_stockpile)
+            .def(py::self_ns::self & py::other<condition_wrapper>());
         py::class_<local_candidate_wrapper>("__LocalCandidate", py::no_init)
             .def_readonly("LastTurnAttackedByShip", &local_candidate_wrapper::last_turn_attacked_by_ship)
             .def_readonly("LastTurnConquered", &local_candidate_wrapper::last_turn_conquered)
@@ -132,6 +140,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def_readonly("MaxStockpile", &local_candidate_wrapper::max_stockpile);
 
         py::implicitly_convertible<source_wrapper, condition_wrapper>();
+        py::implicitly_convertible<target_wrapper, condition_wrapper>();
 
         m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"));
         m_meta_path.append(boost::cref(*this));
@@ -151,9 +160,14 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
 }
 
 PythonParser::~PythonParser() {
-    m_meta_path.pop(py::len(m_meta_path) - 1);
-    // ToDo: ensure type of removed parser
-    // ToDo: clean up sys.modules
+    try {
+        m_meta_path.pop(py::len(m_meta_path) - 1);
+        // ToDo: ensure type of removed parser
+        // ToDo: clean up sys.modules
+    } catch (const py::error_already_set&) {
+        ErrorLogger() << "Python parser destructor throw exception";
+        m_python.HandleErrorAlreadySet();
+    }
 }
 
 bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
