@@ -24,19 +24,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04]
-        client-gg: ['ON', 'OFF']
-        client-godot: ['OFF']
+        os: [ubuntu-20.04]
+        client-gg: ['ON']
+        client-godot: ['ON']
         compiler: [gcc]
         include:
           - os: ubuntu-20.04
             client-gg: 'ON'
             client-godot: 'OFF'
             compiler: clang
-          - os: ubuntu-20.04
-            client-gg: 'ON'
-            client-godot: 'ON'
-            compiler: gcc
     env:
       CACHE_NAME: linux
     steps:
