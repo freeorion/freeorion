@@ -83,6 +83,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
 
         // Use wrappers to not collide with types in server and AI
         py::class_<value_ref_wrapper<int>>("ValueRefInt", py::no_init)
+            .def(py::self_ns::self - int())
             .def(py::self_ns::self < py::self_ns::self)
             .def(py::self_ns::self == py::self_ns::self)
             .def(py::self_ns::self == int());
@@ -91,6 +92,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(int() * py::self_ns::self)
             .def(py::self_ns::self * double())
             .def(py::self_ns::self * py::self_ns::self)
+            .def(double() * py::self_ns::self)
             .def(py::self_ns::self + int())
             .def(py::self_ns::self + double())
             .def(py::self_ns::self + py::self_ns::self)
@@ -112,6 +114,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<source_wrapper>("__Source", py::no_init)
             .def_readonly("Owner", &source_wrapper::owner);
         py::class_<target_wrapper>("__Target", py::no_init)
+            .def_readonly("Construction", &target_wrapper::construction)
             .def_readonly("HabitableSize", &target_wrapper::habitable_size)
             .def_readonly("MaxShield", &target_wrapper::max_shield)
             .def_readonly("MaxDefense", &target_wrapper::max_defense)

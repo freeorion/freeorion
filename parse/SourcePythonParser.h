@@ -9,6 +9,7 @@ struct source_wrapper {
 };
 
 struct target_wrapper {
+    value_ref_wrapper<double> construction() const;
     value_ref_wrapper<double> habitable_size() const;
     value_ref_wrapper<double> max_shield() const;
     value_ref_wrapper<double> max_defense() const;
