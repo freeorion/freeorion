@@ -376,7 +376,7 @@ void IntroScreen::OnAbout() {
 }
 
 void IntroScreen::OnWebsite()
-{ GGHumanClientApp::GetApp()->OpenURL("http://freeorion.org"); }
+{ GGHumanClientApp::GetApp()->OpenURL("https://freeorion.org"); }
 
 void IntroScreen::OnCredits() {
     // only the area between the upper and lower line of the splash screen should be darkend
