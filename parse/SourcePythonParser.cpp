@@ -14,6 +14,10 @@ source_wrapper::operator condition_wrapper() const {
     return condition_wrapper(std::make_shared<Condition::Source>());
 }
 
+value_ref_wrapper<double> target_wrapper::construction() const {
+    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "Construction"));
+}
+
 value_ref_wrapper<double> target_wrapper::habitable_size() const {
     return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "HabitableSize"));
 }
