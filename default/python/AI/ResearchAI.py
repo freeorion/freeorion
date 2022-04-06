@@ -25,8 +25,6 @@ from turn_state import (
     population_with_research_focus,
 )
 
-inProgressTechs = {}
-
 
 class Choices:
     # Cannot construct on import, because fo.getEmpire() is None at this time
@@ -721,14 +719,11 @@ def generate_classic_research_orders():
     research_queue = empire.researchQueue
     research_queue_list = get_research_queue_techs()
     total_rp = empire.resourceProduction(fo.resourceType.research)
-    inProgressTechs.clear()
     tech_turns_left = {}
     if research_queue_list:
         debug("Techs currently at head of Research Queue:")
         for element in list(research_queue)[:10]:
             tech_turns_left[element.tech] = element.turnsLeft
-            if element.allocation > 0.0:
-                inProgressTechs[element.tech] = True
             this_tech = fo.getTech(element.tech)
             if not this_tech:
                 warning("Can't retrieve tech ", element.tech)
