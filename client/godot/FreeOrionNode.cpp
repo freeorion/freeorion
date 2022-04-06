@@ -378,7 +378,9 @@ bool FreeOrionNode::connect_to_server(godot::String dest) {
 
 void FreeOrionNode::join_game(godot::String player_name, int client_type) {
     std::string player_name8 = player_name.utf8().get_data();
-    m_app->Networking().SendMessage(JoinGameMessage(player_name8, static_cast<Networking::ClientType>(client_type), boost::uuids::nil_uuid()));
+    m_app->Networking().SendMessage(JoinGameMessage(
+        player_name8, static_cast<Networking::ClientType>(client_type),
+        DependencyVersions(), boost::uuids::nil_uuid()));
 }
 
 void FreeOrionNode::auth_response(godot::String player_name, godot::String password) {

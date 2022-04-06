@@ -136,6 +136,7 @@ void AIClientApp::Run() {
         // join game
         Networking().SendMessage(JoinGameMessage(PlayerName(),
                                                  Networking::ClientType::CLIENT_TYPE_AI_PLAYER,
+                                                 DependencyVersions(),
                                                  boost::uuids::nil_uuid()));
 
         // Start parsing content

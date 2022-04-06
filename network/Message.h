@@ -195,6 +195,7 @@ FO_COMMON_API Message HostMPGameMessage(const std::string& host_player_name);
   * cookie are sent in the message.*/
 FO_COMMON_API Message JoinGameMessage(const std::string& player_name,
                                       Networking::ClientType client_type,
+                                      const std::map<std::string, std::string>& dependencies,
                                       boost::uuids::uuid cookie);
 
 /** creates a HOST_ID message.  The player ID of the host is sent in the message. */
@@ -410,6 +411,7 @@ FO_COMMON_API void ExtractGameStartMessageData(std::string text, bool& single_pl
 FO_COMMON_API void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
                                               Networking::ClientType& client_type,
                                               std::string& version_string,
+                                              std::map<std::string, std::string>& dependencies,
                                               boost::uuids::uuid& cookie);
 
 FO_COMMON_API void ExtractJoinAckMessageData(const Message& msg, int& player_id,

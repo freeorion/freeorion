@@ -1146,6 +1146,15 @@ void MPLobby::EstablishPlayer(const PlayerConnectionPtr& player_connection,
     }
 }
 
+namespace {
+    std::string StringifyDependencies(const std::map<std::string, std::string>& deps) {
+        std::string retval;
+        for (auto [dep, version] : deps)
+            retval.append(dep).append(": ").append(version).append("   ");
+        return retval;
+    }
+}
+
 sc::result MPLobby::react(const JoinGame& msg) {
     TraceLogger(FSM) << "(ServerFSM) MPLobby.JoinGame";
     ServerApp& server = Server();
@@ -1153,11 +1162,13 @@ sc::result MPLobby::react(const JoinGame& msg) {
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name;
-    Networking::ClientType client_type;
+    Networking::ClientType client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     std::string client_version_string;
-    boost::uuids::uuid cookie;
+    std::map<std::string, std::string> dependencies;
+    boost::uuids::uuid cookie = boost::uuids::nil_generator{}();
     try {
-        ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
+        ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
+                                   dependencies, cookie);
     } catch (const std::exception&) {
         ErrorLogger(FSM) << "MPLobby::react(const JoinGame& msg): couldn't extract data from join game message";
         player_connection->SendMessage(ErrorMessage(UserString("ERROR_INCOMPATIBLE_VERSION"), true));
@@ -1165,8 +1176,10 @@ sc::result MPLobby::react(const JoinGame& msg) {
         return discard_event();
     }
 
+    InfoLogger() << "Player " << player_name << " has dependencies: " << StringifyDependencies(dependencies);
+
     Networking::AuthRoles roles;
-    bool authenticated;
+    bool authenticated = false;
 
     DebugLogger() << "MPLobby.JoinGame Try to login player " << player_name << " with cookie: " << cookie;
     if (server.Networking().CheckCookie(cookie, player_name, roles, authenticated)) {
@@ -2106,10 +2119,14 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name("Default_Player_Name_in_WaitingForSPGameJoiners::react(const JoinGame& msg)");
-    Networking::ClientType client_type(Networking::ClientType::INVALID_CLIENT_TYPE);
+    Networking::ClientType client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     std::string client_version_string;
-    boost::uuids::uuid cookie;
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
+    std::map<std::string, std::string> dependencies;
+    boost::uuids::uuid cookie = boost::uuids::nil_generator{}();
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
+                               dependencies, cookie);
+
+    DebugLogger() << "Player " << player_name << " has dependencies: " << StringifyDependencies(dependencies);
 
     // is this an AI?
     if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
@@ -2268,10 +2285,14 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name("Default_Player_Name_in_WaitingForMPGameJoiners::react(const JoinGame& msg)");
-    Networking::ClientType client_type(Networking::ClientType::INVALID_CLIENT_TYPE);
+    Networking::ClientType client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     std::string client_version_string;
-    boost::uuids::uuid cookie;
-    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
+    std::map<std::string, std::string> dependencies;
+    boost::uuids::uuid cookie = boost::uuids::nil_generator{}();
+    ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
+                               dependencies, cookie);
+
+    DebugLogger() << "Player " << player_name << " has dependencies: " << StringifyDependencies(dependencies);
 
     // is this an AI?
     if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
@@ -2768,11 +2789,13 @@ sc::result PlayingGame::react(const JoinGame& msg) {
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name;
-    Networking::ClientType client_type;
+    Networking::ClientType client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     std::string client_version_string;
-    boost::uuids::uuid cookie;
+    std::map<std::string, std::string> dependencies;
+    boost::uuids::uuid cookie = boost::uuids::nil_generator{}();
     try {
-        ExtractJoinGameMessageData(message, player_name, client_type, client_version_string, cookie);
+        ExtractJoinGameMessageData(message, player_name, client_type, client_version_string,
+                                   dependencies, cookie);
     } catch (const std::exception&) {
         ErrorLogger(FSM) << "PlayingGame::react(const JoinGame& msg): couldn't extract data from join game message";
         player_connection->SendMessage(ErrorMessage(UserString("ERROR_INCOMPATIBLE_VERSION"), true));
@@ -2780,8 +2803,10 @@ sc::result PlayingGame::react(const JoinGame& msg) {
         return discard_event();
     }
 
+    DebugLogger() << "Player " << player_name << " has dependencies: " << StringifyDependencies(dependencies);
+
     Networking::AuthRoles roles;
-    bool authenticated;
+    bool authenticated = false;
 
     DebugLogger() << "PlayingGame.JoinGame Try to login player " << player_name << " with cookie: " << cookie;
     if (server.Networking().CheckCookie(cookie, player_name, roles, authenticated)) {

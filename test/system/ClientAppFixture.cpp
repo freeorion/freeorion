@@ -126,6 +126,7 @@ void ClientAppFixture::JoinGame() {
     m_lobby_updated = false;
     m_networking->SendMessage(JoinGameMessage("TestPlayer",
                                               Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER,
+                                              {},
                                               m_cookie));
 }
 

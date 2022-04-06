@@ -155,6 +155,7 @@ Message HostMPGameMessage(const std::string& host_player_name)
 
 Message JoinGameMessage(const std::string& player_name,
                         Networking::ClientType client_type,
+                        const std::map<std::string, std::string>& dependencies,
                         boost::uuids::uuid cookie) {
     std::ostringstream os;
     {
@@ -164,6 +165,7 @@ Message JoinGameMessage(const std::string& player_name,
            << BOOST_SERIALIZATION_NVP(client_type)
            << BOOST_SERIALIZATION_NVP(client_version_string)
            << BOOST_SERIALIZATION_NVP(cookie);
+        oa << BOOST_SERIALIZATION_NVP(dependencies);
     }
     return Message{Message::MessageType::JOIN_GAME, std::move(os).str()};
 }
@@ -951,6 +953,7 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, int
 void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
                                 Networking::ClientType& client_type,
                                 std::string& version_string,
+                                std::map<std::string, std::string>& dependencies,
                                 boost::uuids::uuid& cookie)
 {
     DebugLogger() << "ExtractJoinGameMessageData() from " << player_name
@@ -963,6 +966,13 @@ void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
            >> BOOST_SERIALIZATION_NVP(version_string)
            >> BOOST_SERIALIZATION_NVP(cookie);
 
+        dependencies.clear();
+        try {
+            ia >> BOOST_SERIALIZATION_NVP(dependencies);
+        } catch (...) {
+            DebugLogger() << "ExtractJoinAckMessageData(const Message& msg, int& player_id, "
+                          << "boost::uuids::uuid& cookie) didn't get a list of dependencies.";
+        }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractJoinGameMessageData(const Message& msg, std::string& player_name, "
                       << "Networking::ClientType client_type, std::string& version_string) failed!  Message:\n"
@@ -980,6 +990,7 @@ void ExtractJoinAckMessageData(const Message& msg, int& player_id,
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(player_id)
            >> BOOST_SERIALIZATION_NVP(cookie);
+
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractJoinAckMessageData(const Message& msg, int& player_id, "
                       << "boost::uuids::uuid& cookie) failed!  Message:\n"
@@ -987,6 +998,7 @@ void ExtractJoinAckMessageData(const Message& msg, int& player_id,
                       << "Error: " << err.what();
         throw err;
     }
+
 }
 
 void ExtractTurnOrdersMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,

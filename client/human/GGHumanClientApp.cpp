@@ -685,6 +685,7 @@ void GGHumanClientApp::MultiPlayerGame() {
 
         m_networking->SendMessage(JoinGameMessage(server_connect_wnd->GetResult().player_name,
                                                   server_connect_wnd->GetResult().type,
+                                                  DependencyVersions(),
                                                   cookie));
         m_fsm->process_event(JoinMPGameRequested());
     }
