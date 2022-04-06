@@ -14,7 +14,7 @@ from AIDependencies import Tags
 from aistate_interface import get_aistate
 from common.print_utils import print_in_columns
 from empire.colony_builders import get_colony_builders
-from freeorion_tools import chat_human, get_species_tag_grade, tech_is_complete
+from freeorion_tools import get_species_tag_grade, tech_is_complete
 from turn_state import (
     get_empire_planets_by_species,
     have_asteroids,
@@ -704,7 +704,6 @@ def exclude_tech(tech_name):
 
 def generate_classic_research_orders():
     """generate research orders"""
-    report_adjustments = False
     empire = fo.getEmpire()
     empire_id = empire.empireID
     aistate = get_aistate()
@@ -849,10 +848,7 @@ def generate_classic_research_orders():
                 ):
                     res = fo.issueEnqueueTechOrder(cc_tech, insert_idx)
                     msg = "Empire is very aggressive, so attempted to fast-track %s, got result %d" % (cc_tech, res)
-                    if report_adjustments:
-                        chat_human(msg)
-                    else:
-                        debug(msg)
+                    debug(msg)
 
     elif fo.currentTurn() > 100:
         generate_default_research_order()
@@ -884,10 +880,7 @@ def generate_classic_research_orders():
         res = fo.issueEnqueueTechOrder(nest_tech, insert_idx)
         num_techs_accelerated += 1
         msg = "Have a monster nest, so attempted to fast-track %s, got result %d" % (nest_tech, res)
-        if report_adjustments:
-            chat_human(msg)
-        else:
-            debug(msg)
+        debug(msg)
         research_queue_list = get_research_queue_techs()
 
     #
@@ -915,10 +908,7 @@ def generate_classic_research_orders():
                         "CON_ORBITAL_CON",
                         res,
                     )
-                    if report_adjustments:
-                        chat_human(msg)
-                    else:
-                        debug(msg)
+                    debug(msg)
             elif not tech_is_complete("CON_CONTGRAV_ARCH"):
                 num_techs_accelerated += 1
                 if ("CON_CONTGRAV_ARCH" not in research_queue_list[: 1 + num_techs_accelerated]) and (
@@ -934,10 +924,7 @@ def generate_classic_research_orders():
                             "Empire has poor colony/outpost prospects, so attempted to fast-track %s, got result %d"
                             % (supply_tech, res)
                         )
-                        if report_adjustments:
-                            chat_human(msg)
-                        else:
-                            debug(msg)
+                        debug(msg)
             else:
                 pass
             research_queue_list = get_research_queue_techs()
@@ -957,10 +944,7 @@ def generate_classic_research_orders():
                         "CON_ORBITAL_CON",
                         res,
                     )
-                    if report_adjustments:
-                        chat_human(msg)
-                    else:
-                        debug(msg)
+                    debug(msg)
                 research_queue_list = get_research_queue_techs()
 
     #
@@ -986,10 +970,7 @@ def generate_classic_research_orders():
                             "ANCIENT_RUINS: have an ancient ruins, so attempted to fast-track %s to enable LRN_XENOARCH, got result %d"
                             % (xenoTech, res)
                         )
-                        if report_adjustments:
-                            chat_human(msg)
-                        else:
-                            debug(msg)
+                        debug(msg)
                 research_queue_list = get_research_queue_techs()
 
     if False and not enemies_sighted:  # curently disabled
@@ -1034,10 +1015,7 @@ def generate_classic_research_orders():
                 if move_tech not in research_queue_list[: 1 + target_index]:
                     fo.issueEnqueueTechOrder(move_tech, target_index)
                     msg = "Research: To prioritize %s, have advanced %s to slot %d" % (tech, move_tech, target_index)
-                    if report_adjustments:
-                        chat_human(msg)
-                    else:
-                        debug(msg)
+                    debug(msg)
                     target_index += 1
     #
     # check to accelerate asteroid or GG tech
@@ -1056,10 +1034,7 @@ def generate_classic_research_orders():
                     ast_tech,
                     res,
                 )
-                if report_adjustments:
-                    chat_human(msg)
-                else:
-                    debug(msg)
+                debug(msg)
                 research_queue_list = get_research_queue_techs()
             elif tech_is_complete("SHP_ZORTRIUM_PLATE"):
                 insert_idx = (
@@ -1077,8 +1052,6 @@ def generate_classic_research_orders():
                             % (ast_tech, res)
                         )
                         debug(msg)
-                        if report_adjustments:
-                            chat_human(msg)
                 research_queue_list = get_research_queue_techs()
         if have_gas_giant() and not tech_is_complete("PRO_ORBITAL_GEN"):
             fusion_idx = (
@@ -1098,8 +1071,6 @@ def generate_classic_research_orders():
                     res,
                 )
                 debug(msg)
-                if report_adjustments:
-                    chat_human(msg)
                 research_queue_list = get_research_queue_techs()
     #
     # assess if our empire has any non-lousy colonizers, & boost gro_xeno_gen if we don't
@@ -1141,8 +1112,6 @@ def generate_classic_research_orders():
                             res,
                         )
                         debug(msg)
-                        if report_adjustments:
-                            chat_human(msg)
                 research_queue_list = get_research_queue_techs()
     #
     # check to accelerate distrib thought
@@ -1170,8 +1139,6 @@ def generate_classic_research_orders():
                         fmt_str += " with current target_RP %.1f and current pop %.1f, on turn %d"
                         msg = fmt_str % (dt_ech, res, resource_production, empire.population(), fo.currentTurn())
                         debug(msg)
-                        if report_adjustments:
-                            chat_human(msg)
                 research_queue_list = get_research_queue_techs()
     #
     # check to accelerate quant net
@@ -1189,8 +1156,6 @@ def generate_classic_research_orders():
                             % (qnTech, res, fo.currentTurn())
                         )
                         debug(msg)
-                        if report_adjustments:
-                            chat_human(msg)
                 research_queue_list = get_research_queue_techs()
 
     #
@@ -1218,8 +1183,6 @@ def generate_classic_research_orders():
                         res,
                     )
                     debug(msg)
-                    if report_adjustments:
-                        chat_human(msg)
             research_queue_list = get_research_queue_techs()
 
     #
