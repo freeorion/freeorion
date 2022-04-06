@@ -723,5 +723,8 @@ def _get_queued_base_troopers(sys_id: SystemId, element: fo.productionQueueEleme
         planet = fo.getUniverse().getPlanet(element.locationID)
         if planet.systemID == sys_id and aistate.get_ship_role(element.designID) == ShipRoleType.BASE_INVASION:
             design = fo.getShipDesign(element.designID)
-            skill = get_species_tag_grade(planet.species, Tags.ATTACKTROOPS)
-            return element.remaining * element.blocksize * design.troopCapacity * skill
+            troops_per_ship = CombatRatingsAI.weight_attack_troops(
+                design.troopCapacity, get_species_tag_grade(planet.speciesName, Tags.ATTACKTROOPS)
+            )
+            return element.remaining * element.blocksize * troops_per_ship
+    return 0.0
