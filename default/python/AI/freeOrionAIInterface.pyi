@@ -1085,13 +1085,22 @@ class species:
     def description(self) -> str: ...
 
     @property
+    def dislikes(self) -> StringSet: ...
+
+    @property
     def foci(self) -> StringVec: ...
 
     @property
     def homeworlds(self) -> IntSet: ...
 
     @property
+    def likes(self) -> StringSet: ...
+
+    @property
     def name(self) -> str: ...
+
+    @property
+    def native(self) -> bool: ...
 
     @property
     def preferredFocus(self) -> str: ...
@@ -1395,7 +1404,7 @@ class ship(universeObject):
     def canInvade(self) -> bool: ...
 
     @property
-    def colonyCapacity(self) -> bool: ...
+    def colonyCapacity(self) -> float: ...
 
     @property
     def design(self) -> shipDesign: ...
@@ -1877,6 +1886,12 @@ def getGameRules() -> GameRules:
     """
 
 
+def getNamedValue(string: str) -> object:
+    """
+    Returns the named value of the scripted constant with name (string). If no such named constant exists, returns none.
+    """
+
+
 def getOptionsDBOptionBool(string: str) -> object:
     """
     Returns the bool value of option in OptionsDB or None if the option does not exist.
@@ -2123,6 +2138,18 @@ def issueRequeueProductionOrder(number1: int, number2: int) -> int:
 def issueScrapOrder(number: int) -> int:
     """
     Orders the ship or building with the indicated objectID (int) to be scrapped. Returns 1 (int) on success or 0 (int) on failure due to not finding a ship or building with the indicated ID, or if the indicated ship or building is not owned by this AI client's empire.
+    """
+
+
+def namedIntDefined(string: str) -> bool:
+    """
+    Returns true/false (boolean) whether there is a defined int-valued scripted constant with name (string).
+    """
+
+
+def namedRealDefined(string: str) -> bool:
+    """
+    Returns true/false (boolean) whether there is a defined double-valued scripted constant with name (string).
     """
 
 
