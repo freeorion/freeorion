@@ -709,15 +709,11 @@ def generate_classic_research_orders():
     aistate = get_aistate()
     enemies_sighted = aistate.misc.get("enemies_sighted", {})
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
-    debug("Research Queue Management:")
+
+    empire = fo.getEmpire()
     resource_production = empire.resourceProduction(fo.resourceType.research)
-    debug("\nTotal Current Research Points: %.2f\n", resource_production)
-    debug("Techs researched and available for use:")
     completed_techs = sorted(list(get_completed_techs()))
-    tlist = completed_techs + [" "] * 3
-    for tline in zip(tlist[0::3], tlist[1::3], tlist[2::3]):
-        debug("%25s %25s %25s", *tline)
-    debug("")
+    _print_reserch_order_header(resource_production, completed_techs)
 
     #
     # report techs currently at head of research queue
@@ -1243,6 +1239,17 @@ def generate_classic_research_orders():
             debug("new design specs: %s - %s", new_design.hull, list(new_design.parts))
         else:
             debug("Tech %s gives access to new parts or hulls but there seems to be no military advantage.", tech)
+
+
+def _print_reserch_order_header(resource_production, completed_techs):
+    debug("Research Queue Management:")
+    debug("\nTotal Current Research Points: %.2f\n", resource_production)
+    debug("Techs researched and available for use:")
+
+    tlist = completed_techs + [" "] * 3
+    for tline in zip(tlist[0::3], tlist[1::3], tlist[2::3]):
+        debug("%25s %25s %25s", *tline)
+    debug("")
 
 
 def use_classic_research_approach():
