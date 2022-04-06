@@ -711,11 +711,17 @@ def _get_base_troopers(sys_id: SystemId) -> float:
     tally = 0
     for _fid in this_sys_status.get("myfleets", []):
         tally += FleetUtilsAI.count_troops_in_fleet(_fid)
-    production_queue = fo.getEmpire().productionQueue
-    for element in production_queue:
-        if element.buildType == EmpireProductionTypes.BT_SHIP:
-            planet = fo.getUniverse().getPlanet(element.locationID)
-            if planet.systemID == sys_id and aistate.get_ship_role(element.designID) in [ShipRoleType.BASE_INVASION]:
-                design = fo.getShipDesign(element.designID)
-                tally += element.remaining * element.blocksize * design.troopCapacity
+    for element in fo.getEmpire().productionQueue:
+        tally += _get_queued_base_troopers(sys_id, element)
     return tally
+
+
+def _get_queued_base_troopers(sys_id: SystemId, element: fo.productionQueueElement) -> float:
+    """Get base troopers for given system from a build queue element"""
+    aistate = get_aistate()
+    if element.buildType == EmpireProductionTypes.BT_SHIP:
+        planet = fo.getUniverse().getPlanet(element.locationID)
+        if planet.systemID == sys_id and aistate.get_ship_role(element.designID) == ShipRoleType.BASE_INVASION:
+            design = fo.getShipDesign(element.designID)
+            skill = get_species_tag_grade(planet.species, Tags.ATTACKTROOPS)
+            return element.remaining * element.blocksize * design.troopCapacity * skill
