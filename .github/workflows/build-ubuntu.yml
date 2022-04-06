@@ -27,7 +27,7 @@ jobs:
         os: [ubuntu-20.04]
         client-gg: ['ON']
         client-godot: ['ON']
-        compiler: [gcc]
+        compiler: [gcc, clang]
         include:
           - os: ubuntu-20.04
             client-gg: 'ON'
@@ -107,7 +107,7 @@ jobs:
           cd build
           cmake --build . --config Release --target unittest
       - name: Run Godot unit tests
-        if: matrix.client-godot == 'ON' && matrix.os == 'ubuntu-20.04'
+        if: matrix.client-godot == 'ON'
         run: |
           cp `which godot3-server` build/
           ./build/godot3-server --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
