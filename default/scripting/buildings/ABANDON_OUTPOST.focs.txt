@@ -62,6 +62,15 @@ BuildingType
                     empire = Source.Owner
                 SetVisibility empire = Source.Owner visibility = Max(Value, Partial)
             ]
+         EffectsGroup
+            scope = And [
+                (LocalCandidate.PlanetID == Source.PlanetID)
+                Building
+                Not Building name = ThisBuilding
+            ]
+            activation = Turn low = max(1 + Source.System.LastTurnBattleHere, 3 + Source.CreationTurn)
+            priority = [[POPULATION_OVERRIDE_PRIORITY]]
+            effects = SetOwner empire = [[UNOWNED_EMPIRE_ID]]
 
         EffectsGroup
             scope = Source
