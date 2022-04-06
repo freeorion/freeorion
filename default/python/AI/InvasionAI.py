@@ -17,7 +17,7 @@ from colonization import calculate_planet_colonization_rating
 from common.fo_typing import SystemId
 from common.print_utils import Number, Table, Text
 from empire.ship_builders import can_build_ship_for_species
-from EnumsAI import MissionType, PriorityType
+from EnumsAI import EmpireProductionTypes, MissionType, PriorityType, ShipRoleType
 from freeorion_tools import (
     get_partial_visibility_turn,
     get_species_tag_grade,
@@ -158,12 +158,11 @@ def get_invasion_fleets():
             _, planet_troops = evaluate_invasion_planet(pid)
             sys_id = planet.systemID
             this_sys_status = aistate.systemStatus.get(sys_id, {})
-            troop_tally = 0
-            for _fid in this_sys_status.get("myfleets", []):
-                troop_tally += FleetUtilsAI.count_troops_in_fleet(_fid)
+            troop_tally = _get_base_troopers(sys_id)
             if troop_tally > planet_troops:  # base troopers appear unneeded
                 del aistate.qualifyingTroopBaseTargets[pid]
                 continue
+            planet_troops -= troop_tally
             if planet.currentMeterValue(fo.meterType.shield) > 0 and (
                 this_sys_status.get("myFleetRating", 0) < 0.8 * this_sys_status.get("totalThreat", 0)
                 or this_sys_status.get("myFleetRatingVsPlanets", 0) < this_sys_status.get("planetThreat", 0)
@@ -703,3 +702,26 @@ def assign_invasion_fleets_to_invade():
     for fid in FleetUtilsAI.extract_fleet_ids_without_mission_types(all_invasion_fleet_ids):
         this_mission = aistate.get_fleet_mission(fid)
         this_mission.check_mergers(context="Post-send consolidation of unassigned troops")
+
+
+def _get_base_troopers(sys_id: SystemId) -> float:
+    """Get troopers already in system, including the bases in the build queue."""
+    aistate = get_aistate()
+    this_sys_status = aistate.systemStatus.get(sys_id, {})
+    tally = 0
+    for _fid in this_sys_status.get("myfleets", []):
+        tally += FleetUtilsAI.count_troops_in_fleet(_fid)
+    for element in fo.getEmpire().productionQueue:
+        tally += _get_queued_base_troopers(sys_id, element)
+    return tally
+
+
+def _get_queued_base_troopers(sys_id: SystemId, element: fo.productionQueueElement) -> float:
+    """Get base troopers for given system from a build queue element"""
+    aistate = get_aistate()
+    if element.buildType == EmpireProductionTypes.BT_SHIP:
+        planet = fo.getUniverse().getPlanet(element.locationID)
+        if planet.systemID == sys_id and aistate.get_ship_role(element.designID) == ShipRoleType.BASE_INVASION:
+            design = fo.getShipDesign(element.designID)
+            skill = get_species_tag_grade(planet.species, Tags.ATTACKTROOPS)
+            return element.remaining * element.blocksize * design.troopCapacity * skill
