@@ -1120,13 +1120,22 @@ class species:
     def description(self) -> str: ...
 
     @property
+    def dislikes(self) -> StringSet: ...
+
+    @property
     def foci(self) -> StringVec: ...
 
     @property
     def homeworlds(self) -> IntSet: ...
 
     @property
+    def likes(self) -> StringSet: ...
+
+    @property
     def name(self) -> str: ...
+
+    @property
+    def native(self) -> bool: ...
 
     @property
     def preferredFocus(self) -> str: ...
@@ -1430,7 +1439,7 @@ class ship(universeObject):
     def canInvade(self) -> bool: ...
 
     @property
-    def colonyCapacity(self) -> bool: ...
+    def colonyCapacity(self) -> float: ...
 
     @property
     def design(self) -> shipDesign: ...
@@ -1929,6 +1938,12 @@ def getGameRules() -> GameRules:
     """
 
 
+def getNamedValue(string: str) -> object:
+    """
+    Returns the named value of the scripted constant with name (string). If no such named constant exists, returns none.
+    """
+
+
 def getPolicy(string: str) -> policy:
     """
     Returns the policy (Policy) with the indicated name (string).
@@ -2098,6 +2113,18 @@ def load_starting_buildings() -> list: ...
 
 
 def load_unlockable_item_list() -> list: ...
+
+
+def namedIntDefined(string: str) -> bool:
+    """
+    Returns true/false (boolean) whether there is a defined int-valued scripted constant with name (string).
+    """
+
+
+def namedRealDefined(string: str) -> bool:
+    """
+    Returns true/false (boolean) whether there is a defined double-valued scripted constant with name (string).
+    """
 
 
 def objs_get_systems(item_list: list) -> list: ...

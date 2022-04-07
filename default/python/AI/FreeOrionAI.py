@@ -6,16 +6,6 @@ from logging import debug, error, fatal, info
 from common.configure_logging import redirect_logging_to_freeorion_logger
 
 # Logging is redirected before other imports so that import errors appear in log files.
-from generate_orders import (
-    empire_is_ok,
-    greet_on_first_turn,
-    print_existing_rules,
-    print_starting_intro,
-    replay_turn_after_load,
-    set_game_turn_seed,
-    update_resource_pool,
-)
-
 redirect_logging_to_freeorion_logger()
 
 import freeOrionAIInterface as fo
@@ -56,6 +46,15 @@ from common.handlers import init_handlers
 from common.listeners import listener
 from empire.survey_universe import survey_universe
 from freeorion_tools.timers import AITimer
+from generate_orders import (
+    empire_is_ok,
+    greet_on_first_turn,
+    print_existing_rules,
+    print_starting_intro,
+    replay_turn_after_load,
+    set_game_turn_seed,
+    update_resource_pool,
+)
 
 turn_timer = AITimer("full turn")
 
