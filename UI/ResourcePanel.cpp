@@ -136,12 +136,17 @@ void ResourcePanel::Update() {
     m_multi_icon_value_indicator->Update();
 
     // tooltips
-    for (auto& meter_stat : m_meter_stats) {
-        meter_stat.second->SetValue(obj->GetMeter(meter_stat.first)->Initial());
+    for (auto& [meter_type, stat_icon] : m_meter_stats) {
+        if (!stat_icon)
+            continue;
+        auto meter = obj->GetMeter(meter_type);
+        auto init = meter ? meter->Initial() : 0.0f;
+        stat_icon->SetValue(init);
 
-        auto browse_wnd = GG::Wnd::Create<MeterBrowseWnd>(m_rescenter_id, meter_stat.first, AssociatedMeterType(meter_stat.first));
-        meter_stat.second->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(meter_stat.first, browse_wnd);
+        auto assoc_meter_type = AssociatedMeterType(meter_type);
+        auto browse_wnd = GG::Wnd::Create<MeterBrowseWnd>(m_rescenter_id, meter_type, assoc_meter_type);
+        stat_icon->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(meter_type, browse_wnd);
     }
 
     std::sort(m_meter_stats.begin(), m_meter_stats.end(), SortByMeterValue);
