@@ -360,7 +360,7 @@ private:
     void ShipRightClicked(int fleet_id);
     void ShipsRightClicked(const std::vector<int>& fleet_ids);
 
-    void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
+    void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj);
 
     void PushWndStack(std::shared_ptr<GG::Wnd> wnd);
     void RemoveFromWndStack(std::shared_ptr<GG::Wnd> wnd);

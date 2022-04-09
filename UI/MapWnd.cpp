@@ -5937,12 +5937,12 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
     }
 }
 
-void MapWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) {
+void MapWnd::UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj) {
     if (obj)
         DebugLogger() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
     else
         DebugLogger() << "MapWnd::UniverseObjectDeleted: NO OBJECT";
-    if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET)
+    if (obj && obj->ObjectType() == UniverseObjectType::OBJ_FLEET)
         RemoveFleet(obj->ID());
 }
 
