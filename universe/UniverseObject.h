@@ -82,7 +82,7 @@ public:
     using MeterMap = flat_map<MeterType, Meter, std::less<MeterType>>;
 
     using CombinerType = assignable_blocking_combiner;
-    using StateChangedSignalType = boost::signals2::signal<void (), CombinerType> ;
+    using StateChangedSignalType = boost::signals2::signal<void (), CombinerType>;
 
     [[nodiscard]] int                           ID() const;     ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
     [[nodiscard]] const std::string&            Name() const;   ///< returns the name of this object; some valid objects will have no name
