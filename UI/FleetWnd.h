@@ -147,7 +147,7 @@ private:
     void        CreateNewFleetFromDrops(const std::vector<int>& ship_ids);
 
     void ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
+    void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj);
 
     void SetStatIconValues();          ///< sets values for multi-fleet aggregate stat icons at top of FleetWnd
 
