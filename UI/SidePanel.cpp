@@ -3226,20 +3226,20 @@ void SidePanel::RefreshInPreRender(ScriptingContext& context) {
 
 
     // connect state changed and insertion signals for planets and fleets in system
-    auto system = Objects().get<System>(s_system_id);
+    auto system = context.ContextObjects().get<System>(s_system_id);
     if (!system) {
         ErrorLogger() << "SidePanel::Refresh couldn't get system with id " << s_system_id;
         return;
     }
 
-    for (auto& planet : Objects().find<Planet>(system->PlanetIDs())) {
+    for (auto& planet : context.ContextObjects().find<Planet>(system->PlanetIDs())) {
         s_system_connections.insert(planet->ResourceCenterChangedSignal.connect(
-                                        SidePanel::ResourceCenterChangedSignal));
+            SidePanel::ResourceCenterChangedSignal));
     }
 
-    for (auto& fleet : Objects().find<Fleet>(system->FleetIDs())) {
+    for (auto& fleet : context.ContextObjects().find<Fleet>(system->FleetIDs())) {
         s_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-                                                        &SidePanel::Update);
+            &SidePanel::Update);
     }
 
     //s_system_connections.insert(s_system->StateChangedSignal.connect(&SidePanel::Update));
