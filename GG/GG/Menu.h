@@ -48,7 +48,7 @@ struct GG_API MenuItem
         label(std::forward<S>(str)),
         disabled(disable),
         checked(check),
-        m_selected_on_close_callback{selected_on_close_callback}
+        m_selected_on_close_callback{std::move(selected_on_close_callback)}
     {}
 
     std::string           label;            ///< text shown for this menu item
