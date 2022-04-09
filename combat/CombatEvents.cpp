@@ -197,7 +197,7 @@ void SimultaneousEvents::AddEvent(CombatEventPtr event)
 
 // The following two function definitions were moved to the header because the linker refuses to find them otherwise...
 
-//std::string SimultaneousEvents::DebugString(const ScriptingContext& context) const {
+//std::string SimultaneousEvents::DebugString(const ScriptingContext&) const {
 //    std::stringstream ss;
 //    ss << "SimultaneousEvents has " << events.size() << " events";
 //    return ss.str();
