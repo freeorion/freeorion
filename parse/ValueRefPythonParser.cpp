@@ -231,9 +231,9 @@ namespace {
     boost::python::object insert_statistic_(const PythonParser& parser, const ValueRef::StatisticType type, const boost::python::tuple& args, const boost::python::dict& kw) {
         auto condition = boost::python::extract<condition_wrapper>(kw["condition"])();
         if (args[0] == parser.type_int) {
-            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Statistic<int>>(nullptr, type, std::move(ValueRef::CloneUnique(condition.condition)))));
+            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Statistic<int>>(nullptr, type, ValueRef::CloneUnique(condition.condition))));
         } else if (args[0] == parser.type_float) {
-            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Statistic<double>>(nullptr, type, std::move(ValueRef::CloneUnique(condition.condition)))));
+            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Statistic<double>>(nullptr, type, ValueRef::CloneUnique(condition.condition))));
         } else {
             ErrorLogger() << "Unsupported type for statistic : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
 
