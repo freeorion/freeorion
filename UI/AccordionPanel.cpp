@@ -115,9 +115,8 @@ void AccordionPanel::SetCollapsed(bool collapsed) {
     ExpandCollapseSignal();
 }
 
-bool AccordionPanel::IsCollapsed() const {
-    return m_collapsed;
-}
+bool AccordionPanel::IsCollapsed() const
+{ return m_collapsed; }
 
 void AccordionPanel::DoLayout() {
     GG::Pt expand_button_ul(m_is_left ? GG::X(-(EXPAND_BUTTON_SIZE + m_border_margin))
