@@ -57,15 +57,15 @@ public:
     mutable FiredSignalType FiredSignal; ///< The fired signal object for this Timer
 
 private:
-    typedef std::map<Wnd*, boost::signals2::connection> ConnectionMap;
+    typedef std::map<Wnd*, boost::signals2::scoped_connection> ConnectionMap;
 
     Timer();
     Timer(const Timer&) = delete;
 
     ConnectionMap  m_wnd_connections;
-    unsigned int   m_interval;
-    bool           m_running;
-    unsigned int   m_last_fire;
+    unsigned int   m_interval = 0;
+    bool           m_running = true;
+    unsigned int   m_last_fire = 0;
 };
 
 }

@@ -224,7 +224,7 @@ private:
     /// A set of connected shortcuts.
     Connections                                             m_connections;
     std::map<std::string, GG::GUI::AcceleratorSignalType*>  m_signals;
-    std::set<boost::signals2::connection>                   m_internal_connections;
+    std::set<boost::signals2::scoped_connection>            m_internal_connections;
     static HotkeyManager*                                   s_singleton;
 };
 

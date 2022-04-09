@@ -904,9 +904,6 @@ void ProductionWnd::CompleteConstruction() {
     AttachChild(m_build_designator_wnd);
 }
 
-ProductionWnd::~ProductionWnd()
-{ m_empire_connection.disconnect(); }
-
 int ProductionWnd::SelectedPlanetID() const
 { return m_build_designator_wnd->SelectedPlanetID(); }
 

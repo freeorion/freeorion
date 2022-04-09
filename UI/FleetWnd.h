@@ -76,7 +76,7 @@ private:
     /** Active fleet window.  mutable so expired ptr can be reset(). */
     mutable std::weak_ptr<FleetWnd>                               m_active_fleet_wnd;
 
-    std::vector<boost::signals2::connection> m_active_fleet_wnd_signals;
+    std::vector<boost::signals2::scoped_connection> m_active_fleet_wnd_signals;
 };
 
 /** This is the top level Fleet UI element.  It shows a list of fleets, a
@@ -153,8 +153,8 @@ private:
 
     mutable boost::signals2::signal<void (FleetWnd*)> ClosingSignal;
 
-    boost::signals2::connection              m_system_connection;
-    std::vector<boost::signals2::connection> m_fleet_connections;
+    boost::signals2::scoped_connection              m_system_connection;
+    std::vector<boost::signals2::scoped_connection> m_fleet_connections;
 
     std::set<int>   m_fleet_ids;                    ///< IDs of fleets shown in this wnd (always.  set when creating wnd, either by being passed in directly, or found by checking indicated system for indicated empire's fleets.  If set directly, never updates.  If set by checking system, updates when the system has a fleet added or removed.
     int             m_empire_id = ALL_EMPIRES;      ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.

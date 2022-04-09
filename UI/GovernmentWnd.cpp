@@ -345,10 +345,10 @@ private:
     std::map<std::string, std::vector<const Policy*>>
     GroupAvailableDisplayablePolicies(const Empire* empire) const;
 
-    mutable boost::signals2::connection m_empire_policies_changed_signal_connection;
-    std::set<std::string>               m_policy_categories_shown;
-    int                                 m_previous_num_columns = -1;
-    const AvailabilityManager&          m_availabilities_state;
+    mutable boost::signals2::scoped_connection m_empire_policies_changed_signal_connection;
+    std::set<std::string>                      m_policy_categories_shown;
+    int                                        m_previous_num_columns = -1;
+    const AvailabilityManager&                 m_availabilities_state;
 };
 
 PoliciesListBox::PoliciesListBoxRow::PoliciesListBoxRow(
@@ -481,9 +481,8 @@ void PoliciesListBox::Populate() {
 
     auto policy_palette = Parent();
     auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(policy_palette->Parent());
-    if (gov_wnd) {
+    if (gov_wnd)
         slot_size = gov_wnd->GetPolicySlotSize();
-    }
 
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
     const int MAX_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (slot_size.x + GG::X(PAD))));

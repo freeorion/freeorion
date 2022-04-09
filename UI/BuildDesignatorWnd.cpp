@@ -679,7 +679,7 @@ private:
     GG::Pt                                                  m_original_ul;
     int                                                     m_production_location;
     int                                                     m_empire_id;
-    mutable boost::signals2::connection                     m_empire_ship_designs_changed_signal;
+    mutable boost::signals2::scoped_connection              m_empire_ship_designs_changed_signal;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
 };

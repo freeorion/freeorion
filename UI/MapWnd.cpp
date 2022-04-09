@@ -2807,9 +2807,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
             }));
     }
 
-    for (auto& con : m_fleet_state_change_signals)
-        con.second.disconnect();
-    m_fleet_state_change_signals.clear();
+    m_fleet_state_change_signals.clear(); // should disconnect scoped signals
 
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
@@ -6031,16 +6029,8 @@ void MapWnd::Sanitize() {
 
     DeleteFleetButtons();
 
-    for (auto& signal : m_fleet_state_change_signals)
-        signal.second.disconnect();
-    m_fleet_state_change_signals.clear();
-
-    for (auto& entry : m_system_fleet_insert_remove_signals) {
-        for (auto& connection : entry.second)
-            connection.disconnect();
-        entry.second.clear();
-    }
-    m_system_fleet_insert_remove_signals.clear();
+    m_fleet_state_change_signals.clear(); // should disconnect scoped signals
+    m_system_fleet_insert_remove_signals.clear(); // should disconnect scoped signals
     m_fleet_lines.clear();
     m_projected_fleet_lines.clear();
     m_system_icons.clear();

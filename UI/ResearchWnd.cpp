@@ -456,9 +456,6 @@ void ResearchWnd::CompleteConstruction() {
     DoLayout(true);
 }
 
-ResearchWnd::~ResearchWnd()
-{ m_empire_connection.disconnect(); }
-
 void ResearchWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
     GG::Wnd::SizeMove(ul, lr);

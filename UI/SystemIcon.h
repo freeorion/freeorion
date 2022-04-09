@@ -110,7 +110,7 @@ private:
     std::shared_ptr<GG::StaticGraphic>  m_tiny_mouseover_indicator;         //!< non-scaled indicator shown when showing tiny graphic;
     bool                                m_selected = false;                 //!< is this icon presently selected / should it show m_selected_indicator
     bool                                m_showing_name = false;             //!< is the icon supposed to show its name?
-    boost::signals2::connection         m_system_connection;
+    boost::signals2::scoped_connection  m_system_connection;
 
     std::map<int, std::shared_ptr<OwnerColoredSystemName>>  m_colored_names;//!< the controls that hold the name of the system at various font point sizes
 };

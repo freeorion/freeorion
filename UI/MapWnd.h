@@ -496,9 +496,9 @@ private:
     std::unordered_map<int, std::shared_ptr<FleetButton>>
         m_fleet_buttons;                        //!< fleet icons, index by fleet
 
-    std::unordered_map<int, boost::signals2::connection>
+    std::unordered_map<int, boost::signals2::scoped_connection>
         m_fleet_state_change_signals;
-    std::unordered_map<int, std::vector<boost::signals2::connection>>
+    std::unordered_map<int, std::vector<boost::signals2::scoped_connection>>
         m_system_fleet_insert_remove_signals;
 
     std::map<int, MovementLineData> m_fleet_lines;                  //!< lines used for moving fleets in the main map

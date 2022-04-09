@@ -453,14 +453,11 @@ namespace {
             // Check if any part of text is in the scrollers visible area
             const auto* scroll_panel = FindParentOfType<GG::ScrollPanel>(Parent().get());
             if (scroll_panel && (scroll_panel->InClient(UpperLeft())
-                             || scroll_panel->InClient(LowerRight())
-                             || scroll_panel->InClient(GG::Pt(Right(), Top()))
-                             || scroll_panel->InClient(GG::Pt(Left(), Bottom()))))
+                              || scroll_panel->InClient(LowerRight())
+                              || scroll_panel->InClient(GG::Pt(Right(), Top()))
+                              || scroll_panel->InClient(GG::Pt(Left(), Bottom()))))
             {
-                for (boost::signals2::connection& signal : m_signals)
-                    signal.disconnect();
-
-                m_signals.clear();
+                m_signals.clear(); // should disconnect scoped signals
 
                 SetText(*m_text);
                 m_text.reset();
@@ -479,7 +476,7 @@ namespace {
         }
 
         std::unique_ptr<std::string> m_text;
-        std::vector<boost::signals2::connection> m_signals;
+        std::vector<boost::signals2::scoped_connection> m_signals;
     };
 
 }

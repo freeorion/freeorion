@@ -15,7 +15,6 @@ struct ScriptingContext;
 class ResearchWnd : public GG::Wnd {
 public:
     ResearchWnd(GG::X w, GG::Y h, bool initially_hidden = true);
-    ~ResearchWnd();
     void CompleteConstruction() override;
 
     int  ShownEmpireID() const { return m_empire_shown_id; };
@@ -60,7 +59,7 @@ private:
     std::shared_ptr<ResourceInfoPanel>  m_research_info_panel;
     std::shared_ptr<ResearchQueueWnd>   m_queue_wnd;
     std::shared_ptr<TechTreeWnd>        m_tech_tree_wnd;
-    boost::signals2::connection         m_empire_connection;
+    boost::signals2::scoped_connection  m_empire_connection;
     int                                 m_empire_shown_id = ALL_EMPIRES;
     bool                                m_enabled = false;
 };

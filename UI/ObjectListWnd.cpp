@@ -1958,7 +1958,7 @@ public:
     }
 
     virtual ~ObjectListBox()
-    {}
+    { ClearContents(); }
 
     void PreRender() override {
         CUIListBox::PreRender();
@@ -2441,7 +2441,7 @@ private:
     std::unique_ptr<Condition::Condition>               m_filter_condition;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> m_visibilities;
     std::shared_ptr<ObjectHeaderRow>                    m_header_row;
-    boost::signals2::connection                         m_obj_deleted_connection;
+    boost::signals2::scoped_connection                  m_obj_deleted_connection;
 };
 
 ////////////////////////////////////////////////

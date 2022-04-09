@@ -347,9 +347,7 @@ HotkeyManager* HotkeyManager::GetManager() {
 }
 
 void HotkeyManager::RebuildShortcuts() {
-    for (const auto& con : m_internal_connections)
-    { con.disconnect(); }
-    m_internal_connections.clear();
+    m_internal_connections.clear(); // should disconnect scoped connections
 
     /// @todo Disable the shortcuts that we've enabled so far ? Is it
     /// really necessary ? An unconnected signal should simply be

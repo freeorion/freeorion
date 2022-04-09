@@ -16,19 +16,14 @@
 using namespace GG;
 
 namespace {
-
-void FiredSignalEcho(unsigned int ticks, Timer* timer)
-{
-    std::cerr << "GG SIGNAL : Timer::FiredSignal(ticks=" << ticks
-                << ", timer=" << timer << ")\n";
+    void FiredSignalEcho(unsigned int ticks, Timer* timer)
+    {
+        std::cerr << "GG SIGNAL : Timer::FiredSignal(ticks=" << ticks
+                    << ", timer=" << timer << ")\n";
+    }
 }
 
-}
-
-Timer::Timer() :
-    m_interval(0),
-    m_running(true),
-    m_last_fire(0)
+Timer::Timer()
 {
     GUI::GetGUI()->RegisterTimer(*this);
     if (INSTRUMENT_ALL_SIGNALS)

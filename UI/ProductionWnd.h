@@ -16,8 +16,6 @@ struct ScriptingContext;
 class ProductionWnd : public GG::Wnd {
 public:
     ProductionWnd(GG::X w, GG::Y h);
-
-    virtual ~ProductionWnd();
     void CompleteConstruction() override;
 
     int SelectedPlanetID() const;
@@ -130,7 +128,7 @@ private:
     std::shared_ptr<ResourceInfoPanel>  m_production_info_panel;
     std::shared_ptr<ProductionQueueWnd> m_queue_wnd;
     std::shared_ptr<BuildDesignatorWnd> m_build_designator_wnd;
-    boost::signals2::connection         m_empire_connection;
+    boost::signals2::scoped_connection  m_empire_connection;
     int                                 m_empire_shown_id = ALL_EMPIRES;
     bool                                m_order_issuing_enabled = false;
 };

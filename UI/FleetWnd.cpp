@@ -487,11 +487,7 @@ void FleetUIManager::SetActiveFleetWnd(std::shared_ptr<FleetWnd> fleet_wnd) {
         return;
 
     // disconnect old active FleetWnd signals
-    if (active_wnd) {
-        for (boost::signals2::connection& con : m_active_fleet_wnd_signals)
-            con.disconnect();
-        m_active_fleet_wnd_signals.clear();
-    }
+    m_active_fleet_wnd_signals.clear();
 
     // set new active FleetWnd
     m_active_fleet_wnd = fleet_wnd;
@@ -618,7 +614,6 @@ namespace {
     class ShipDataPanel : public GG::Control {
     public:
         ShipDataPanel(GG::X w, GG::Y h, int ship_id);
-        ~ShipDataPanel();
 
         /** Excludes border from the client area. */
         GG::Pt ClientUpperLeft() const override;
@@ -657,8 +652,8 @@ namespace {
         std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>>
                                             m_stat_icons;           /// statistic icons and associated meter types
         bool                                m_selected = false;
-        boost::signals2::connection         m_ship_connection;
-        boost::signals2::connection         m_fleet_connection;
+        boost::signals2::scoped_connection  m_ship_connection;
+        boost::signals2::scoped_connection  m_fleet_connection;
     };
 
     ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
@@ -667,11 +662,6 @@ namespace {
     {
         SetChildClippingMode(ChildClippingMode::ClipToClient);
         RequireRefresh();
-    }
-
-    ShipDataPanel::~ShipDataPanel() {
-        m_ship_connection.disconnect();
-        m_fleet_connection.disconnect();
     }
 
     GG::Pt ShipDataPanel::ClientUpperLeft() const
@@ -1105,8 +1095,8 @@ private:
     FleetAggression     m_new_fleet_aggression = FleetAggression::FLEET_DEFENSIVE;
     bool                m_needs_refresh = true;
 
-    boost::signals2::connection                     m_fleet_connection;
-    std::vector<boost::signals2::connection>        m_ship_connections;
+    boost::signals2::scoped_connection              m_fleet_connection;
+    std::vector<boost::signals2::scoped_connection> m_ship_connections;
 
     std::shared_ptr<GG::Control>                    m_fleet_icon;
     std::shared_ptr<GG::Label>                      m_fleet_name_text;
@@ -1518,8 +1508,7 @@ void FleetDataPanel::Refresh() {
 
 void FleetDataPanel::RefreshStateChangedSignals() {
     m_fleet_connection.disconnect();
-    for (auto& connection : m_ship_connections)
-        connection.disconnect();
+    m_ship_connections.clear();
 
     auto fleet = Objects().get<Fleet>(m_fleet_id);
     if (!fleet)
@@ -2451,10 +2440,10 @@ private:
     void ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     int  ShipInRow(GG::ListBox::iterator it) const;
 
-    int                             m_fleet_id = INVALID_OBJECT_ID;
-    bool                            m_order_issuing_enabled = false;
-    boost::signals2::connection     m_fleet_connection;
-    std::shared_ptr<ShipsListBox>   m_ships_lb;
+    int                                m_fleet_id = INVALID_OBJECT_ID;
+    bool                               m_order_issuing_enabled = false;
+    boost::signals2::scoped_connection m_fleet_connection;
+    std::shared_ptr<ShipsListBox>      m_ships_lb;
 };
 
 FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled,
@@ -2988,7 +2977,7 @@ void FleetWnd::SetStatIconValues() {
         }
     }
 
-    for (auto& entry : m_stat_icons) {
+    for (auto& entry : m_stat_icons) { // TODO: structured binding
         MeterType stat_name = entry.first;
         if (stat_name == MeterType::METER_SHIELD)
             entry.second->SetValue(shield_tally/ship_count);
@@ -3015,9 +3004,7 @@ void FleetWnd::RefreshStateChangedSignals() {
         m_system_connection = system->StateChangedSignal.connect(
             boost::bind(&FleetWnd::RequireRefresh, this), boost::signals2::at_front);
 
-    for (auto& fleet_connection : m_fleet_connections)
-        fleet_connection.disconnect();
-    m_fleet_connections.clear();
+    m_fleet_connections.clear(); // should disconnect scoped connections
 
     for (const auto& fleet : Objects().find<Fleet>(m_fleet_ids)) {
         if (fleet)
