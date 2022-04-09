@@ -397,7 +397,7 @@ protected:
 
         std::shared_ptr<StateButton> button;
 
-        boost::signals2::connection connection;
+        boost::signals2::scoped_connection connection;
     };
 
     const std::vector<ButtonSlot>& ButtonSlots() const; ///< returns the state buttons in the group
