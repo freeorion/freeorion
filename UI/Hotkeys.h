@@ -214,7 +214,7 @@ private:
 
     /// Add the given conditional connection.
     void AddConditionalConnection(const std::string& name,
-                                  const boost::signals2::connection& conn,
+                                  boost::signals2::connection conn,
                                   std::function<bool()> cond);
 
     struct ConditionalConnection;

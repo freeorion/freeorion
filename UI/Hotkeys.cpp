@@ -35,18 +35,16 @@ struct HotkeyManager::ConditionalConnection {
         }
     };
 
-    ConditionalConnection(const boost::signals2::connection& conn, std::function<bool()> cond) :
-        condition(cond),
-        connection(conn),
+    ConditionalConnection(boost::signals2::connection conn, std::function<bool()> cond) :
+        condition(std::move(cond)),
+        connection(std::move(conn)),
         blocker(connection)
-    {
-        blocker.unblock();
-    }
+    { blocker.unblock(); }
 
     /// The condition. If null, always on.
     std::function<bool()> condition;
 
-    boost::signals2::connection connection;
+    boost::signals2::scoped_connection connection;
     boost::signals2::shared_connection_block blocker;
 };
 
@@ -366,12 +364,9 @@ void HotkeyManager::RebuildShortcuts() {
 }
 
 void HotkeyManager::AddConditionalConnection(const std::string& name,
-                                             const boost::signals2::connection& conn,
+                                             boost::signals2::connection conn,
                                              std::function<bool()> cond)
-{
-    ConditionalConnectionList& list = m_connections[name];
-    list.emplace_back(conn, cond);
-}
+{ m_connections[name].emplace_back(std::move(conn), std::move(cond)); }
 
 GG::GUI::AcceleratorSignalType& HotkeyManager::NamedSignal(const std::string& name) {
     /// Unsure why GG::AcceleratorSignal implementation uses shared

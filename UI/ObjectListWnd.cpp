@@ -2028,9 +2028,7 @@ public:
 
     void ClearContents() {
         Clear();
-        for (auto& entry : m_object_change_connections)
-            entry.second.disconnect();
-        m_object_change_connections.clear();
+        m_object_change_connections.clear(); // should disconnect scoped connections
     }
 
     bool ObjectShown(const std::shared_ptr<const UniverseObject>& obj,
@@ -2433,10 +2431,10 @@ private:
             Refresh();
     }
 
-    void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj)
+    void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj)
     { if (obj) RemoveObjectRow(obj->ID()); }
 
-    std::map<int, boost::signals2::connection>          m_object_change_connections;
+    std::map<int, boost::signals2::scoped_connection>   m_object_change_connections;
     std::set<int>                                       m_collapsed_objects;
     std::unique_ptr<Condition::Condition>               m_filter_condition;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY>> m_visibilities;

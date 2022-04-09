@@ -2267,9 +2267,9 @@ protected:
 private:
     void InitRowSizes();
 
-    int                         m_empire_id_shown = ALL_EMPIRES;
-    const AvailabilityManager&  m_availabilities_state;
-    boost::signals2::connection m_empire_designs_changed_signal;
+    int                                m_empire_id_shown = ALL_EMPIRES;
+    const AvailabilityManager&         m_availabilities_state;
+    boost::signals2::scoped_connection m_empire_designs_changed_signal;
 };
 
 BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::string& hull,
