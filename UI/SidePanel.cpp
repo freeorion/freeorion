@@ -591,7 +591,7 @@ private:
     std::shared_ptr<BuildingsPanel>         m_buildings_panel;              ///< contains icons representing buildings
     std::shared_ptr<SpecialsPanel>          m_specials_panel;               ///< contains icons representing specials
     StarType                                m_star_type = StarType::INVALID_STAR_TYPE;
-    boost::signals2::connection             m_planet_connection;
+    boost::signals2::scoped_connection      m_planet_connection;
     bool                                    m_selected = false;             ///< is this planet panel selected
     bool                                    m_order_issuing_enabled = false;///< can orders be issues via this planet panel?
 };
@@ -1590,7 +1590,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context) {
         wrapped_planet_name = "<u>" + wrapped_planet_name + "</u>";
     if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
         wrapped_planet_name = wrapped_planet_name + " (" + std::to_string(m_planet_id) + ")";
- 
+
 
     // set name
     m_planet_name->SetText("<s>" + wrapped_planet_name + "</s>");
