@@ -2712,10 +2712,12 @@ namespace {
     }
 
     /** Records info in Empires about what they destroyed or had destroyed during combat. */
-    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats, ScriptingContext& context) {
-        const ObjectMap& objects = context.ContextObjects();
-
+    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats,
+                                           ScriptingContext& context)
+    {
         for (const CombatInfo& combat_info : combats) {
+            const auto& combat_objects = combat_info.objects;
+
             std::vector<WeaponFireEvent::ConstWeaponFireEventPtr> events_that_killed;
             for (auto& event : FlattenEvents(combat_info.combat_events)) { // TODO: could do the filtering in the call function and avoid some moves later...
                 auto fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(std::move(event));
@@ -2736,21 +2738,26 @@ namespace {
             std::unordered_map<int, int> empire_destroyed_ship_ids;
 
             for (const auto& attack_event : events_that_killed) {
-                auto attacker = objects.get(attack_event->attacker_id);
+                auto attacker = combat_objects.get(attack_event->attacker_id);
                 if (!attacker)
                     continue;
                 int attacker_empire_id = attacker->Owner();
                 auto attacker_empire = context.GetEmpire(attacker_empire_id);
 
-                auto target_ship = objects.get<Ship>(attack_event->target_id);
+                auto target_ship = combat_objects.get<Ship>(attack_event->target_id);
                 if (!target_ship)
                     continue;
-                auto target_empire = context.GetEmpire(target_ship->Owner());
+                int target_empire_id = target_ship->Owner();
+                auto target_empire = context.GetEmpire(target_empire_id);
 
-                DebugLogger() << "Attacker " << attacker->Name() << " (id: " << attacker->ID()
-                              << "  empire: " << attacker_empire_id << ")  attacks "
-                              << target_ship->Name() << " (id: " << target_ship->ID() << "  empire: "
-                              << (target_empire ? std::to_string(target_empire->EmpireID()) : "(unowned)")
+                auto attacker_object_type = attacker->ObjectType();
+
+                DebugLogger() << "Attacker " << to_string(attacker_object_type)
+                              << " " << attacker->Name() << " (id: " << attacker->ID()
+                              << "  empire: " << std::to_string(attacker_empire_id)
+                              << ")  attacks " << target_ship->Name()
+                              << " (id: " << target_ship->ID()
+                              << "  empire: " << std::to_string(target_empire_id)
                               << "  species: " << target_ship->SpeciesName() << ")";
 
                 if (attacker_empire)
