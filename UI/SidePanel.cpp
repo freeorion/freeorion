@@ -3023,27 +3023,28 @@ void SidePanel::CompleteConstruction() {
 
     using boost::placeholders::_1;
 
-    m_system_name->DropDownOpenedSignal.connect(
-        boost::bind(&SidePanel::SystemNameDropListOpenedSlot, this, _1));
-    m_system_name->SelChangedSignal.connect(
-        boost::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
-    m_system_name->SelChangedWhileDroppedSignal.connect(
-        boost::bind(&SidePanel::SystemSelectionChangedSlot, this, _1));
-    m_button_prev->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::PrevButtonClicked, this));
-    m_button_next->LeftClickedSignal.connect(
-        boost::bind(&SidePanel::NextButtonClicked, this));
-    m_planet_panel_container->PlanetClickedSignal.connect(
+    m_connections.reserve(9);
+    m_connections.emplace_back(m_system_name->DropDownOpenedSignal.connect(
+        [this](auto b) { SystemNameDropListOpenedSlot(b); }));
+    m_connections.emplace_back(m_system_name->SelChangedSignal.connect(
+        [this](auto it) { SystemSelectionChangedSlot(it); }));
+    m_connections.emplace_back(m_system_name->SelChangedWhileDroppedSignal.connect(
+        [this](auto it) { SystemSelectionChangedSlot(it); }));
+    m_connections.emplace_back(m_button_prev->LeftClickedSignal.connect(
+        [this]() { PrevButtonClicked(); }));
+    m_connections.emplace_back(m_button_next->LeftClickedSignal.connect(
+        [this]() { NextButtonClicked(); }));
+    m_connections.emplace_back(m_planet_panel_container->PlanetClickedSignal.connect(
         [this](auto id) {
             const ScriptingContext context;
             PlanetClickedSlot(id, context.ContextObjects());
-        });
-    m_planet_panel_container->PlanetLeftDoubleClickedSignal.connect(
-        PlanetDoubleClickedSignal);
-    m_planet_panel_container->PlanetRightClickedSignal.connect(
-        PlanetRightClickedSignal);
-    m_planet_panel_container->BuildingRightClickedSignal.connect(
-        BuildingRightClickedSignal);
+        }));
+    m_connections.emplace_back(m_planet_panel_container->PlanetLeftDoubleClickedSignal.connect(
+        PlanetDoubleClickedSignal));
+    m_connections.emplace_back(m_planet_panel_container->PlanetRightClickedSignal.connect(
+        PlanetRightClickedSignal));
+    m_connections.emplace_back(m_planet_panel_container->BuildingRightClickedSignal.connect(
+        BuildingRightClickedSignal));
 
     SetMinSize(GG::Pt(GG::X(MaxPlanetDiameter() + BORDER_LEFT + BORDER_RIGHT + 120),
                       PLANET_PANEL_TOP + GG::Y(MaxPlanetDiameter())));

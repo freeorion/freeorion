@@ -139,6 +139,8 @@ private:
     std::shared_ptr<PlanetPanelContainer>       m_planet_panel_container;
     std::shared_ptr<MultiIconValueIndicator>    m_system_resource_summary;
 
+    std::vector<boost::signals2::scoped_connection> m_connections;
+
     bool        m_selection_enabled = false;
 
     static bool s_needs_update;
