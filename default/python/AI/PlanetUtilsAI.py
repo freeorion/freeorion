@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import debug, error
-from typing import Iterable, List, Sequence, Union
+from typing import Iterable, List, Sequence, Set, Union
 
 from AIDependencies import INVALID_ID
 from common.fo_typing import PlanetId, SystemId
@@ -26,7 +26,7 @@ def sys_name_ids(sys_ids: Iterable[int]) -> str:
     return ppstring([str(universe.getSystem(sys_id)) for sys_id in sys_ids])
 
 
-def planet_string(planet_ids: Union[PlanetId, List[PlanetId]]) -> str:
+def planet_string(planet_ids: Union[PlanetId, Iterable[PlanetId]]) -> str:
     """
     Get a string representation of the passed planets.
     """
@@ -82,7 +82,7 @@ def get_capital() -> PlanetId:
     return INVALID_ID  # shouldn't ever reach here
 
 
-def get_capital_sys_id():
+def get_capital_sys_id() -> SystemId:
     """
     Return system id with empire capital.
     :return: system id
@@ -94,11 +94,9 @@ def get_capital_sys_id():
         return fo.getUniverse().getPlanet(cap_id).systemID
 
 
-def get_planets_in__systems_ids(system_ids):
+def get_planets_in__systems_ids(system_ids: Iterable[SystemId]) -> List[PlanetId]:
     """
     Return list of planet ids for system ids list.
-    :param system_ids: list of system ids
-    :return: list of planets ids
     """
     universe = fo.getUniverse()
     planet_ids = set()
@@ -165,3 +163,40 @@ def get_systems(planet_ids: Sequence[PlanetId]) -> Sequence[SystemId]:
     # TODO discuss change return type to set
     universe = fo.getUniverse()
     return [universe.getPlanet(pid).systemID for pid in planet_ids]
+
+
+def get_planet_opinion(feature: str) -> (Set[PlanetId], Set[PlanetId], Set[PlanetId]):
+    """
+    Returns sets of empire planets that like, are neutral and dislike the given feature
+    """
+    # default: feature not in any like or dislike set, all neutral
+    default = (set(), set(get_owned_planets_by_empire()), set())
+    return _calculate_get_planet_opinions().get(feature, default)
+
+
+@cache_for_current_turn
+def _calculate_get_planet_opinions():  # -> Dict[str, (Set[PlanetId], Set[PlanetId], Set[PlanetId])]:
+    universe = fo.getUniverse()
+    all_species = {universe.getPlanet(pid).speciesName for pid in get_owned_planets_by_empire()}
+    all_features = set()
+    for species_name in all_species:
+        if species_name:
+            species = fo.getSpecies(species_name)
+            all_features.update(species.likes)
+            all_features.update(species.dislikes)
+
+    result = {feature: (set(), set(), set()) for feature in all_features}
+    for feature, sets in result.items():
+        for pid in get_owned_planets_by_empire():
+            species_name = universe.getPlanet(pid).speciesName
+            if species_name:
+                species = fo.getSpecies(species_name)
+                if feature in species.likes:
+                    sets[0].add(pid)
+                elif feature in species.dislikes:
+                    sets[2].add(pid)
+                else:
+                    sets[1].add(pid)
+            # else: outposts are always neutral
+            sets[1].add(pid)
+    return result
