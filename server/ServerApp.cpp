@@ -3336,11 +3336,11 @@ namespace {
     }
 
     /** Deletes empty fleets. */
-    void CleanEmptyFleets() {
+    void CleanEmptyFleets(ScriptingContext& context) {
         std::vector<std::shared_ptr<Fleet>> empty_fleets;
-        Universe& universe{GetUniverse()};
-        ObjectMap& objects{universe.Objects()};
-        auto empire_ids = Empires().EmpireIDs();
+        Universe& universe{context.ContextUniverse()};
+        ObjectMap& objects{context.ContextObjects()};
+        auto empire_ids = context.EmpireIDs();
 
         for (auto& fleet : objects.all<Fleet>()) {
             if (fleet->Empty())
@@ -3399,7 +3399,7 @@ void ServerApp::PreCombatProcessTurns() {
     UpdateEmpirePolicies(m_empires, context.current_turn, false);
 
     // clean up empty fleets that empires didn't order deleted
-    CleanEmptyFleets();
+    CleanEmptyFleets(context);
 
     // update production queues after order execution
     for (auto& entry : m_empires) {
