@@ -99,7 +99,7 @@ def _calculate_industry_priority():  # currently only used to print status
     empire = fo.getEmpire()
     # get current industry production & Target
     industry_production = empire.resourceProduction(fo.resourceType.industry)
-    owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
+    owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire()
     planets = (universe.getPlanet(x) for x in owned_planet_ids)
     target_pp = sum(x.currentMeterValue(fo.meterType.targetIndustry) for x in planets)
 
@@ -157,7 +157,7 @@ def _calculate_research_priority():
         and (get_number_of_colonies() < 12)
     )
     # get current industry production & Target
-    owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
+    owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire()
     planets = (universe.getPlanet(x) for x in owned_planet_ids)
     target_rp = sum(map(lambda _x: _x.currentMeterValue(fo.meterType.targetResearch), planets))
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()

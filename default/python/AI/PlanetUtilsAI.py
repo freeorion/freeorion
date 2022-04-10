@@ -61,7 +61,7 @@ def get_capital() -> PlanetId:
                 "Nominal Capitol %s does not appear to be owned by empire %d %s"
                 % (homeworld.name, empire_id, empire.name)
             )
-    empire_owned_planet_ids = get_owned_planets_by_empire(universe.planetIDs)
+    empire_owned_planet_ids = get_owned_planets_by_empire()
     peopled_planets = get_populated_planet_ids(empire_owned_planet_ids)
     if not peopled_planets:
         if empire_owned_planet_ids:
@@ -109,16 +109,15 @@ def get_planets_in__systems_ids(system_ids):
     return list(planet_ids)
 
 
-def get_owned_planets_by_empire(planet_ids):
+@cache_for_current_turn
+def get_owned_planets_by_empire() -> List[PlanetId]:
     """
-    Return list of planets owned by empire.
-    :param planet_ids: list of planet ids
-    :return: list of planet ids
+    Return list of all planets owned by empire.
     """
     universe = fo.getUniverse()
     empire_id = fo.getEmpire().empireID
     result = []
-    for pid in planet_ids:
+    for pid in universe.planetIDs:
         planet = universe.getPlanet(pid)
         # even if our universe says we own it, if we can't see it we must have lost it
         if (

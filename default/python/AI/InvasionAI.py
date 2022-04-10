@@ -58,7 +58,7 @@ def get_invasion_fleets():
     acessible_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(accessible_system_ids)
     all_owned_planet_ids = PlanetUtilsAI.get_all_owned_planet_ids(acessible_planet_ids)  # includes unpopulated outposts
     all_populated_planets = PlanetUtilsAI.get_populated_planet_ids(acessible_planet_ids)  # includes unowned natives
-    empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
+    empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire()
     invadable_planet_ids = set(all_owned_planet_ids).union(all_populated_planets) - set(empire_owned_planet_ids)
 
     invasion_targeted_planet_ids = get_invasion_targeted_planet_ids(universe.planetIDs, MissionType.INVASION)
