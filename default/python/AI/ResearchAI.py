@@ -909,11 +909,9 @@ def generate_classic_research_orders():
                     ]:
                         res = fo.issueEnqueueTechOrder(supply_tech, num_techs_accelerated)
                         debug(
-                            (
-                                "Empire has poor colony/outpost prospects, so attempted to fast-track %s, got result %d",
-                                supply_tech,
-                                res,
-                            )
+                            "Empire has poor colony/outpost prospects, so attempted to fast-track %s, got result %d",
+                            supply_tech,
+                            res,
                         )
             else:
                 pass
@@ -957,11 +955,9 @@ def generate_classic_research_orders():
                         res = fo.issueEnqueueTechOrder(xenoTech, insert_idx)
                         num_techs_accelerated += 1
                         debug(
-                            (
-                                "ANCIENT_RUINS: have an ancient ruins, so attempted to fast-track %s to enable LRN_XENOARCH, got result %d",
-                                xenoTech,
-                                res,
-                            )
+                            "ANCIENT_RUINS: have an ancient ruins, so attempted to fast-track %s to enable LRN_XENOARCH, got result %d",
+                            xenoTech,
+                            res,
                         )
                 research_queue_list = get_research_queue_techs()
 
@@ -1142,12 +1138,10 @@ def generate_classic_research_orders():
                         num_techs_accelerated += 1
                         insert_idx += 1
                         debug(
-                            (
-                                "Empire has many researchers, so attempted to fast-track %s (got result %d) on turn %d",
-                                qnTech,
-                                res,
-                                fo.currentTurn(),
-                            )
+                            "Empire has many researchers, so attempted to fast-track %s (got result %d) on turn %d",
+                            qnTech,
+                            res,
+                            fo.currentTurn(),
                         )
                 research_queue_list = get_research_queue_techs()
 
