@@ -1,5 +1,5 @@
 flake8==4.0.1
-pytest==7.0.1
+pytest==7.1.1
 pytest-github-actions-annotate-failures==0.1.6
 isort==5.10.1
 black==22.1.0
