@@ -2401,7 +2401,6 @@ private:
         }
 
         // erase this row and remove any signals related to it
-        m_object_change_connections[object_row->ObjectID()].disconnect();
         m_object_change_connections.erase(object_row->ObjectID());
         this->Erase(it);
     }
