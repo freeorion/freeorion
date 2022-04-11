@@ -1,14 +1,21 @@
-// sets stability (happiness) on planets in empire that has adopted the policy this macro effect is added to, if those planets' species like or dislike the policy
+// sets stability (happiness) on planets in empire that have the building this macro effect is added to, if those planets' species like or dislike the building
 
-POLICY_LIKE_DISLIKE_SCALING
-'''(1.0 + (Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_LIBERTY"])
-    - 0.5*(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_CONFORMANCE"]))'''
+// Policy Liberty doubles de effect, policy Conformance halves it, values are declared in common/named_values.focs.txt
+POLICY_DISLIKE_SCALING
+'''(1.0 * (NamedRealLookup name = "PLC_LIBERTY_DISLIKE_FACTOR")^(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_LIBERTY"])
+        * (NamedRealLookup name = "PLC_CONFORMANCE_DISLIKE_FACTOR")^(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_CONFORMANCE"]))'''
 
-STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_ON_PLANET
-'''4.0 * [[POLICY_LIKE_DISLIKE_SCALING]]'''
+STABILITY_PER_LIKED_BUILDING_ON_PLANET
+'''4.0'''
 
-STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_SYSTEM
-'''1.0 * [[POLICY_LIKE_DISLIKE_SCALING]]'''
+STABILITY_PER_DISLIKED_BUILDING_ON_PLANET
+'''4.0 * [[POLICY_DISLIKE_SCALING]]'''
+
+STABILITY_PER_LIKED_BUILDING_IN_SYSTEM
+'''1.0'''
+
+STABILITY_PER_DISLIKED_BUILDING_IN_SYSTEM
+'''1.0 * [[POLICY_DISLIKE_SCALING]]'''
 
 SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
 '''
@@ -20,8 +27,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
             ]
             accountinglabel = "LIKES_BUILDING_LABEL"
-            effects =
-                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_ON_PLANET]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+            effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_BUILDING_ON_PLANET]]
 
         // species dislike building on the same planet
         EffectsGroup
@@ -31,8 +37,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
             ]
             accountinglabel = "DISLIKES_BUILDING_LABEL"
-            effects =
-                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_ON_PLANET]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+            effects = SetTargetHappiness value = Value - [[STABILITY_PER_DISLIKED_BUILDING_ON_PLANET]]
                 
         // species like building in the same system
         EffectsGroup
@@ -44,8 +49,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding < 0)
             ]
             accountinglabel = "DISLIKES_BUILDING_LABEL"
-            effects =
-                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_SYSTEM]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+            effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_BUILDING_IN_SYSTEM]]
 
         // species dislike building in the same system
         EffectsGroup
@@ -57,8 +61,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = ThisBuilding > 0)
             ]
             accountinglabel = "LIKES_BUILDING_LABEL"
-            effects =
-                SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_BUILDING_IN_SYSTEM]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+            effects = SetTargetHappiness value = Value - [[STABILITY_PER_DISLIKED_BUILDING_IN_SYSTEM]]
 
         // species like building in empire
         EffectsGroup
@@ -71,7 +74,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
             ]
             accountinglabel = "LIKES_BUILDING_LABEL"
             effects =
-                SetTargetHappiness value = Value + ((NamedReal name = "BUILDING_LIKE_EMPIRE_SQRT_SCALING" value = 1.0) * 
+                SetTargetHappiness value = Value + ((NamedReal name = "BUILDING_LIKE_EMPIRE_SQRT_SCALING" value = 0.5) * 
                     max(1.0,
                         Statistic Count condition = And [
                             Building
@@ -80,7 +83,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                             Not InSystem id = Target.SystemID
                         ]
                     )^(-0.5)
-                ) * [[POLICY_LIKE_DISLIKE_SCALING]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+                )
  
         // species dislike building in empire
         EffectsGroup
@@ -93,7 +96,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
             ]
             accountinglabel = "DISLIKES_BUILDING_LABEL"
             effects =
-                SetTargetHappiness value = Value + ((NamedRealLookup name = "BUILDING_LIKE_EMPIRE_SQRT_SCALING") * 
+                SetTargetHappiness value = Value - ((NamedRealLookup name = "BUILDING_LIKE_EMPIRE_SQRT_SCALING") * 
                     max(1.0,
                         Statistic Count condition = And [
                             Building
@@ -102,7 +105,7 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
                             Not InSystem id = Target.SystemID
                         ]
                     )^(-0.5)
-                ) * [[POLICY_LIKE_DISLIKE_SCALING]] * SpeciesContentOpinion species = Target.Species name = ThisBuilding
+                ) * [[POLICY_DISLIKE_SCALING]]
 '''
 
 DO_STARLANE_BORE

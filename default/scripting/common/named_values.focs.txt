@@ -40,6 +40,9 @@ SPATIAL_FLUX_STEALTH_HULL_BASE
 SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE_BONUS
 '''10'''
 
+NamedReal name = "PLC_LIBERTY_DISLIKE_FACTOR" value = 2.0
+
+NamedReal name = "PLC_CONFORMANCE_DISLIKE_FACTOR" value = 0.5
 
 #include "/scripting/common/misc.macros"
 #include "/scripting/common/base_prod.macros"

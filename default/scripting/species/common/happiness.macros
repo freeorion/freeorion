@@ -1,6 +1,13 @@
-STABILITY_PER_LIKED_OR_DISLIKED_FOCUS
-'''2.0 * (1.0 + (Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_LIBERTY"])
-          - 0.5*(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_CONFORMANCE"]))'''
+// For focus like/dislike, Policy Liberty doubles de effect, policy Conformance halves it, values are declared in common/named_values.focs.txt
+POLICY_DISLIKE_SCALING
+'''(1.0 * (NamedRealLookup name = "PLC_LIBERTY_DISLIKE_FACTOR")^(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_LIBERTY"])
+        * (NamedRealLookup name = "PLC_CONFORMANCE_DISLIKE_FACTOR")^(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_CONFORMANCE"]))'''
+
+STABILITY_PER_LIKED_FOCUS
+'''2.0'''
+
+STABILITY_PER_DISLIKED_FOCUS
+'''2.0 * [[POLICY_DISLIKE_SCALING]]'''
 
 BAD_HAPPINESS
 '''
@@ -91,7 +98,7 @@ COMMON_HAPPINESS_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = LocalCandidate.Focus > 0)
             ]
             accountinglabel = "LIKES_FOCUS_LABEL"
-            effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_FOCUS]] * SpeciesContentOpinion species = Target.Species name = Target.Focus
+            effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_FOCUS]]
 
         EffectsGroup    // less stable when disliked focuses are adopted
             scope = Source
@@ -101,7 +108,7 @@ COMMON_HAPPINESS_EFFECTS
                 (SpeciesContentOpinion species = LocalCandidate.Species name = LocalCandidate.Focus < 0)
             ]
             accountinglabel = "DISLIKES_FOCUS_LABEL"
-            effects = SetTargetHappiness value = Value + [[STABILITY_PER_LIKED_OR_DISLIKED_FOCUS]] * SpeciesContentOpinion species = Target.Species name = Target.Focus
+            effects = SetTargetHappiness value = Value - [[STABILITY_PER_DISLIKED_FOCUS]]
 
         EffectsGroup    // species on their own homeworld are more stable
             scope = Source
