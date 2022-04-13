@@ -772,7 +772,7 @@ public:
                                   std::next(m_text.begin(), tag_begin),
                                   std::next(m_text.begin(), tag_end));
 
-        m_text_elements.emplace_back(std::move(element));
+        m_text_elements.push_back(std::move(element));
     }
 
     /** Add a close tag iff it exists as a recognized tag.*/
@@ -796,7 +796,7 @@ public:
         element->tag_name = Substring(m_text,
                                       std::next(m_text.begin(), tag_name_begin),
                                       std::next(m_text.begin(), tag_name_end));
-        m_text_elements.emplace_back(std::move(element));
+        m_text_elements.push_back(std::move(element));
     }
 
     /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
@@ -810,7 +810,7 @@ public:
         element->text = Substring(m_text,
                                   std::next(m_text.begin(), begin),
                                   std::next(m_text.begin(), end));
-        m_text_elements.emplace_back(std::move(element));
+        m_text_elements.push_back(std::move(element));
     }
 
     /** Add a white space element.*/
@@ -934,11 +934,10 @@ Font::RenderState::RenderState(Clr color)
 
 void Font::RenderState::PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
 {
-    Clr color(r, g, b, a);
-    // The same color may end up being stored multiple times, but the cost of deduplication
-    // is greater than the cost of just letting it be so.
+    // The same color may end up being stored multiple times, but the cost of
+    // deduplication is greater than the cost of just letting it be so.
     color_index_stack.push(used_colors.size());
-    used_colors.emplace_back(color);
+    used_colors.emplace_back(r, g, b, a);
 }
 
 void Font::RenderState::PopColor()
@@ -984,7 +983,7 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
 {
     tags.reserve(tags_.size());
     for (auto& tag : tags_)
-        tags.emplace_back(std::dynamic_pointer_cast<FormattingTag>(tag));
+        tags.push_back(std::dynamic_pointer_cast<FormattingTag>(tag));
 }
 
 
@@ -1426,33 +1425,34 @@ std::vector<std::shared_ptr<Font::TextElement>>
                     }
                 }
                 element->tag_name = Substring(text, (*it)[tag_name_tag]);
-                text_elements.emplace_back(std::move(element));
+                text_elements.push_back(std::move(element));
 
             // Close XML tag
             } else if ((*it)[close_bracket_tag].matched) {
                 auto element = std::make_shared<Font::FormattingTag>(true);
                 element->text = Substring(text, (*it)[0]);
                 element->tag_name = Substring(text, (*it)[tag_name_tag]);
-                text_elements.emplace_back(std::move(element));
+                text_elements.push_back(std::move(element));
 
             // Whitespace element
             } else if ((*it)[whitespace_tag].matched) {
                 auto element = std::make_shared<Font::TextElement>(true, false);
                 element->text = Substring(text, (*it)[whitespace_tag]);
-                text_elements.emplace_back(element);
+                char last_char = *std::prev(element->text.end());
+
+                text_elements.push_back(std::move(element));
 
                 // If the last character of a whitespace element is a line ending then create a
                 // newline TextElement.
-                char last_char = *std::prev(element->text.end());
                 if (last_char == '\n' || last_char == '\f' || last_char == '\r')
-                    text_elements.emplace_back(std::make_shared<Font::TextElement>(false, true));
+                    text_elements.push_back(std::make_shared<Font::TextElement>(false, true));
             }
 
         // Basic text element.
         } else {
             auto element = std::make_shared<Font::TextElement>(false, false);
-            element->text = combined_text;
-            text_elements.emplace_back(std::move(element));
+            element->text = std::move(combined_text);
+            text_elements.push_back(std::move(element));
         }
 
         if (need_increment)
@@ -1484,7 +1484,7 @@ void Font::FillTemplatedText(
         auto end_it = elem->text.end();
         while (text_it != end_it) {
             // Find and set the width of the character glyph.
-            elem->widths.emplace_back(X0);
+            elem->widths.push_back(X0);
             std::uint32_t c = utf8::next(text_it, end_it);
             if (c != WIDE_NEWLINE) {
                 auto it = m_glyphs.find(c);
