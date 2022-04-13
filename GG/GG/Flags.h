@@ -204,12 +204,12 @@ public:
 #ifndef NDEBUG
         std::pair<typename std::set<FlagType>::iterator, bool> result =
 #endif
-        m_flags.emplace(flag);
+        m_flags.insert(flag);
 #ifndef NDEBUG
         assert(result.second);
 #endif
         if (permanent)
-            m_permanent.emplace(flag);
+            m_permanent.insert(flag);
         m_strings.emplace(flag, std::forward<S>(name));
     }
     /** Removes \a flag from the FlagSpec, returning whether the flag was

@@ -201,7 +201,7 @@ void DynamicGraphic::Render()
     }
 }
 
-void DynamicGraphic::AddFrames(const Texture* texture, std::size_t frames/* = ALL_FRAMES*/)
+void DynamicGraphic::AddFrames(const Texture* texture, std::size_t frames)
 {
     std::size_t frames_in_texture = FramesInTexture(texture);
     if (!frames_in_texture)
@@ -211,7 +211,7 @@ void DynamicGraphic::AddFrames(const Texture* texture, std::size_t frames/* = AL
     fs.texture.reset(texture);
     fs.frames = std::min(frames_in_texture, std::max(frames, static_cast<std::size_t>(1)));
     m_frames += fs.frames;
-    m_textures.emplace_back(std::move(fs));
+    m_textures.push_back(std::move(fs));
 }
 
 void DynamicGraphic::AddFrames(std::shared_ptr<Texture> texture, std::size_t frames/* = ALL_FRAMES*/)
@@ -224,7 +224,7 @@ void DynamicGraphic::AddFrames(std::shared_ptr<Texture> texture, std::size_t fra
     fs.texture = std::move(texture);
     fs.frames = std::min(frames_in_texture, std::max(frames, static_cast<std::size_t>(1)));
     m_frames += fs.frames;
-    m_textures.emplace_back(std::move(fs));
+    m_textures.push_back(std::move(fs));
 }
 
 void DynamicGraphic::AddFrames(std::vector<std::shared_ptr<Texture>> textures, std::size_t frames/* = ALL_FRAMES*/)
