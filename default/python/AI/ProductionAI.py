@@ -19,7 +19,7 @@ from colonization.rate_pilots import GREAT_PILOT_RATING
 from common.fo_typing import PlanetId
 from empire.buildings_locations import (
     get_best_pilot_facilities,
-    get_systems_with_building,
+    get_systems_with_facilities,
 )
 from empire.colony_builders import (
     can_build_colony_for_species,
@@ -1690,12 +1690,14 @@ def build_ship_facilities(bld_name, top_locs=None):
         return
     queued_bld_locs = [element.locationID for element in empire.productionQueue if element.name == bld_name]
     if bld_name in AIDependencies.SYSTEM_SHIP_FACILITIES:
-        current_locs = get_systems_with_building(bld_name)
+        current_locs = get_systems_with_facilities(bld_name)
         current_coverage = current_locs.union(universe.getPlanet(planet_id).systemID for planet_id in queued_bld_locs)
         open_systems = set(
             universe.getPlanet(pid).systemID for pid in get_best_pilot_facilities("BLD_SHIPYARD_BASE")
         ).difference(current_coverage)
-        try_systems = open_systems.intersection(get_systems_with_building(prereq_bldg)) if prereq_bldg else open_systems
+        try_systems = (
+            open_systems.intersection(get_systems_with_facilities(prereq_bldg)) if prereq_bldg else open_systems
+        )
         try_locs = set(pid for sys_id in try_systems for pid in get_owned_planets_in_system(sys_id))
     else:
         current_locs = get_best_pilot_facilities(bld_name)

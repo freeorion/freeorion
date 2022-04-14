@@ -74,7 +74,6 @@ def survey_universe():
             owner_id = planet.owner
             planet_population = planet.currentMeterValue(fo.meterType.population)
             buildings_here = [universe.getBuilding(bldg).buildingTypeName for bldg in planet.buildingIDs]
-            ship_facilities = set(AIDependencies.SHIP_FACILITIES).intersection(buildings_here)
             weapons_grade = "WEAPONS_0.0"
             if owner_id == empire_id:
                 if planet_population > 0.0 and this_spec:
@@ -93,7 +92,7 @@ def survey_universe():
                             yard_here = [pid]
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             set_colony_builders(spec_name, yard_here)
-                set_building_locations(weapons_grade, ship_facilities, pid, sys_id)
+                set_building_locations(weapons_grade, buildings_here, pid, sys_id)
 
                 for special in planet.specials:
                     if special_is_nest(special):

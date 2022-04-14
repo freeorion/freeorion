@@ -68,7 +68,7 @@ class PlanetFocusManager:
         universe = fo.getUniverse()
 
         resource_timer.start("getPlanets")
-        planet_ids = list(PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs))
+        planet_ids = list(PlanetUtilsAI.get_owned_planets_by_empire())
 
         resource_timer.start("Targets")
         self.all_planet_info = {pid: PlanetFocusInfo(universe.getPlanet(pid)) for pid in planet_ids}
@@ -376,7 +376,7 @@ class Reporter:
         """Calculate top resource priority."""
         universe = fo.getUniverse()
         empire = fo.getEmpire()
-        empire_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
+        empire_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire()
         debug("Resource Priorities:")
         resource_priorities = {}
         aistate = get_aistate()

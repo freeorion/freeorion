@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import debug, error
-from typing import Iterable, List, Sequence, Union
+from typing import Dict, Iterable, List, NamedTuple, Sequence, Set, Union
 
 from AIDependencies import INVALID_ID
 from common.fo_typing import PlanetId, SystemId
@@ -26,7 +26,7 @@ def sys_name_ids(sys_ids: Iterable[int]) -> str:
     return ppstring([str(universe.getSystem(sys_id)) for sys_id in sys_ids])
 
 
-def planet_string(planet_ids: Union[PlanetId, List[PlanetId]]) -> str:
+def planet_string(planet_ids: Union[PlanetId, Iterable[PlanetId]]) -> str:
     """
     Get a string representation of the passed planets.
     """
@@ -61,7 +61,7 @@ def get_capital() -> PlanetId:
                 "Nominal Capitol %s does not appear to be owned by empire %d %s"
                 % (homeworld.name, empire_id, empire.name)
             )
-    empire_owned_planet_ids = get_owned_planets_by_empire(universe.planetIDs)
+    empire_owned_planet_ids = get_owned_planets_by_empire()
     peopled_planets = get_populated_planet_ids(empire_owned_planet_ids)
     if not peopled_planets:
         if empire_owned_planet_ids:
@@ -82,7 +82,7 @@ def get_capital() -> PlanetId:
     return INVALID_ID  # shouldn't ever reach here
 
 
-def get_capital_sys_id():
+def get_capital_sys_id() -> SystemId:
     """
     Return system id with empire capital.
     :return: system id
@@ -94,11 +94,9 @@ def get_capital_sys_id():
         return fo.getUniverse().getPlanet(cap_id).systemID
 
 
-def get_planets_in__systems_ids(system_ids):
+def get_planets_in__systems_ids(system_ids: Iterable[SystemId]) -> List[PlanetId]:
     """
     Return list of planet ids for system ids list.
-    :param system_ids: list of system ids
-    :return: list of planets ids
     """
     universe = fo.getUniverse()
     planet_ids = set()
@@ -109,16 +107,15 @@ def get_planets_in__systems_ids(system_ids):
     return list(planet_ids)
 
 
-def get_owned_planets_by_empire(planet_ids):
+@cache_for_current_turn
+def get_owned_planets_by_empire() -> List[PlanetId]:
     """
-    Return list of planets owned by empire.
-    :param planet_ids: list of planet ids
-    :return: list of planet ids
+    Return list of all planets owned by empire.
     """
     universe = fo.getUniverse()
     empire_id = fo.getEmpire().empireID
     result = []
-    for pid in planet_ids:
+    for pid in universe.planetIDs:
         planet = universe.getPlanet(pid)
         # even if our universe says we own it, if we can't see it we must have lost it
         if (
@@ -166,3 +163,46 @@ def get_systems(planet_ids: Sequence[PlanetId]) -> Sequence[SystemId]:
     # TODO discuss change return type to set
     universe = fo.getUniverse()
     return [universe.getPlanet(pid).systemID for pid in planet_ids]
+
+
+class Opinion(NamedTuple):
+    likes: Set[PlanetId]
+    neutral: Set[PlanetId]
+    dislikes: Set[PlanetId]
+
+
+def get_planet_opinion(feature: str) -> Opinion:
+    """
+    Returns sets of empire planets that like, are neutral and dislike the given feature
+    """
+    # default: feature not in any like or dislike set, all neutral
+    default = Opinion(set(), set(get_owned_planets_by_empire()), set())
+    return _calculate_get_planet_opinions().get(feature, default)
+
+
+@cache_for_current_turn
+def _calculate_get_planet_opinions() -> Dict[str, Opinion]:
+    universe = fo.getUniverse()
+    all_species = {universe.getPlanet(pid).speciesName for pid in get_owned_planets_by_empire()}
+    all_features = set()
+    for species_name in all_species:
+        if species_name:
+            species = fo.getSpecies(species_name)
+            all_features.update(species.likes)
+            all_features.update(species.dislikes)
+
+    result = {feature: Opinion(set(), set(), set()) for feature in all_features}
+    for feature, opinion in result.items():
+        for pid in get_owned_planets_by_empire():
+            species_name = universe.getPlanet(pid).speciesName
+            if species_name:
+                species = fo.getSpecies(species_name)
+                if feature in species.likes:
+                    opinion.likes.add(pid)
+                elif feature in species.dislikes:
+                    opinion.dislikes.add(pid)
+                else:
+                    opinion.neutral.add(pid)
+            # else: outposts are always neutral
+            opinion.neutral.add(pid)
+    return result

@@ -38,7 +38,7 @@ class PolicyManager:
         self._adopted = set(self._empire.adoptedPolicies)
         self._originally_adopted = self._adopted
         self._adoptable = self._get_adoptable()
-        empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(self._universe.planetIDs)
+        empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire()
         self._populated_planet_ids = PlanetUtilsAI.get_populated_planet_ids(empire_owned_planet_ids)
         self._num_populated = len(self._populated_planet_ids)
         self._num_outposts = len(empire_owned_planet_ids) - self._num_populated
