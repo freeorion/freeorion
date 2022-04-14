@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import debug, error
-from typing import Iterable, List, Sequence, Set, Union
+from typing import Dict, Iterable, List, NamedTuple, Sequence, Set, Union
 
 from AIDependencies import INVALID_ID
 from common.fo_typing import PlanetId, SystemId
@@ -165,17 +165,23 @@ def get_systems(planet_ids: Sequence[PlanetId]) -> Sequence[SystemId]:
     return [universe.getPlanet(pid).systemID for pid in planet_ids]
 
 
-def get_planet_opinion(feature: str) -> (Set[PlanetId], Set[PlanetId], Set[PlanetId]):
+class Opinion(NamedTuple):
+    likes: Set[PlanetId]
+    neutral: Set[PlanetId]
+    dislikes: Set[PlanetId]
+
+
+def get_planet_opinion(feature: str) -> Opinion:
     """
     Returns sets of empire planets that like, are neutral and dislike the given feature
     """
     # default: feature not in any like or dislike set, all neutral
-    default = (set(), set(get_owned_planets_by_empire()), set())
+    default = Opinion(set(), set(get_owned_planets_by_empire()), set())
     return _calculate_get_planet_opinions().get(feature, default)
 
 
 @cache_for_current_turn
-def _calculate_get_planet_opinions():  # -> Dict[str, (Set[PlanetId], Set[PlanetId], Set[PlanetId])]:
+def _calculate_get_planet_opinions() -> Dict[str, Opinion]:
     universe = fo.getUniverse()
     all_species = {universe.getPlanet(pid).speciesName for pid in get_owned_planets_by_empire()}
     all_features = set()
@@ -185,18 +191,18 @@ def _calculate_get_planet_opinions():  # -> Dict[str, (Set[PlanetId], Set[Planet
             all_features.update(species.likes)
             all_features.update(species.dislikes)
 
-    result = {feature: (set(), set(), set()) for feature in all_features}
-    for feature, sets in result.items():
+    result = {feature: Opinion(set(), set(), set()) for feature in all_features}
+    for feature, opinion in result.items():
         for pid in get_owned_planets_by_empire():
             species_name = universe.getPlanet(pid).speciesName
             if species_name:
                 species = fo.getSpecies(species_name)
                 if feature in species.likes:
-                    sets[0].add(pid)
+                    opinion.likes.add(pid)
                 elif feature in species.dislikes:
-                    sets[2].add(pid)
+                    opinion.dislikes.add(pid)
                 else:
-                    sets[1].add(pid)
+                    opinion.neutral.add(pid)
             # else: outposts are always neutral
-            sets[1].add(pid)
+            opinion.neutral.add(pid)
     return result
