@@ -10,7 +10,7 @@ import TechsListsAI
 from aistate_interface import get_aistate
 from common.print_utils import print_in_columns
 from empire.colony_builders import get_colony_builders
-from freeorion_tools import get_species_tag_grade, tech_is_complete
+from freeorion_tools import tech_is_complete
 from turn_state import (
     get_empire_planets_by_species,
     have_asteroids,
