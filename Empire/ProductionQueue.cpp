@@ -451,7 +451,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
                 // determine how much to take from each matched object
                 for (auto& object : matches) {
                     location_target_context.effect_target = std::const_pointer_cast<UniverseObject>(object); // call to ValueRef cannot modify the pointed-to object
-                    retval[special_name][object->ID()] += amount->Eval(location_target_context);
+                    retval[special_name][object->ID()] += static_cast<float>(amount->Eval(location_target_context));
                 }
             }
         }
@@ -460,14 +460,14 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
     case BuildType::BT_SHIP: {
         if (const ShipDesign* sd = context.ContextUniverse().GetShipDesign(design_id)) {
             auto location_obj = context.ContextObjects().get(location_id);
-            const ScriptingContext location_target_context{location_obj, context};
+            const ScriptingContext location_target_context{std::move(location_obj), context};
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& [special_name, consumption] : ship_hull->ProductionSpecialConsumption()) {
                     const auto& [amount, cond] = consumption;
                     (void)cond;
                     if (amount)
-                        retval[special_name][location_id] += amount->Eval(location_target_context);
+                        retval[special_name][location_id] += static_cast<float>(amount->Eval(location_target_context));
                 }
             }
 
@@ -479,7 +479,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
                     const auto& [amount, cond] = consumption;
                     (void)cond;
                     if (amount)
-                        retval[special_name][location_id] += amount->Eval(location_target_context);
+                        retval[special_name][location_id] += static_cast<float>(amount->Eval(location_target_context));
                 }
             }
         }
@@ -509,7 +509,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(
                 const auto& [amount, cond] = consumption;
                 (void)cond;
                 if (amount)
-                    retval[mt][location_id] = amount->Eval(location_context);
+                    retval[mt][location_id] = static_cast<float>(amount->Eval(location_context));
             }
         }
         break;
@@ -521,7 +521,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(
                     const auto& [amount, cond] = consumption;
                     (void)cond;
                     if (amount)
-                        retval[mt][location_id] += amount->Eval(location_context);
+                        retval[mt][location_id] += static_cast<float>(amount->Eval(location_context));
                 }
             }
 
@@ -533,7 +533,7 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(
                     const auto& [amount, cond] = consumption;
                     (void)cond;
                     if (amount)
-                        retval[mt][location_id] += amount->Eval(location_context);
+                        retval[mt][location_id] += static_cast<float>(amount->Eval(location_context));
                 }
             }
         }
