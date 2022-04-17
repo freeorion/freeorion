@@ -2126,8 +2126,8 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
         float progress_fraction = m_research_progress[tech_name];
 
         float progress_fraction_left = 1.0f - progress_fraction;
-        float max_progress_per_turn = RPs_per_turn_limit / tech_cost;
-        float progress_possible_with_available_rp = rp_left_to_spend / tech_cost;
+        float max_progress_per_turn = RPs_per_turn_limit / static_cast<float>(tech_cost);
+        float progress_possible_with_available_rp = rp_left_to_spend / static_cast<float>(tech_cost);
 
         //DebugLogger() << "... progress left: " << progress_fraction_left
         //              << " max per turn: " << max_progress_per_turn
@@ -2137,7 +2137,7 @@ std::vector<std::string> Empire::CheckResearchProgress(const ScriptingContext& c
             progress_fraction_left,
             std::min(max_progress_per_turn, progress_possible_with_available_rp));
 
-        float consumed_rp = progress_increase * tech_cost;
+        float consumed_rp = progress_increase * static_cast<float>(tech_cost);
 
         m_research_progress[tech_name] += progress_increase;
         rp_left_to_spend -= consumed_rp;
