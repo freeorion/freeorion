@@ -1428,25 +1428,22 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
-void PartsListBox::AcceptDrops(const GG::Pt& pt,
+void PartsListBox::AcceptDrops(const GG::Pt&,
                                std::vector<std::shared_ptr<GG::Wnd>> wnds,
                                GG::Flags<GG::ModKey> mod_keys)
 {
     // Accept parts being discarded from the ship under design
 
     // If ctrl is pressed then signal all parts of the same type to be cleared.
-    if (!(GG::GUI::GetGUI()->ModKeys() & GG::MOD_KEY_CTRL))
+    if (!(mod_keys & GG::MOD_KEY_CTRL))
         return;
 
     if (wnds.empty())
         return;
 
-    auto* control = boost::polymorphic_downcast<const PartControl*>(wnds.begin()->get());
-    auto* part = control ? control->Part() : nullptr;
-    if (!part)
-        return;
-
-    ClearPartSignal(part->Name());
+    if (auto* control = boost::polymorphic_downcast<const PartControl*>(wnds.begin()->get()))
+        if (auto* part = control->Part())
+            ClearPartSignal(part->Name());
 }
 
 PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) const {
