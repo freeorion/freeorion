@@ -27,11 +27,9 @@
 
 namespace GG {
 
-#define GG_ENUM_NAME_BUFFER_SIZE 80
-
 /** This class is not meant for public consumption.
-    * Access this class through the functions generated
-    * in the GG_ENUM or GG_CLASS_ENUM macro invocation. */
+  * Access this class through the functions generated
+  * in the GG_ENUM or GG_CLASS_ENUM macro invocation. */
 template <typename EnumType>
 class EnumMap {
 public:
