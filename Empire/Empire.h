@@ -78,6 +78,7 @@ public:
 
     [[nodiscard]] int                           SlotPolicyAdoptedIn(std::string_view name) const;
     [[nodiscard]] std::vector<std::string_view> AdoptedPolicies() const;
+    [[nodiscard]] bool                          PoliciesModified() const { return m_adopted_policies != m_initial_adopted_policies; }
 
     /** For each category, returns the slots in which policies have been adopted
       * and what policy is in that slot. */
@@ -213,6 +214,11 @@ public:
       * the policy if \a adopt is false; */
     void AdoptPolicy(const std::string& name, const std::string& category,
                      const ScriptingContext& context, bool adopt = true, int slot = -1);
+
+    /** Reverts adopted policies to the initial state for the current turn.
+      * Does not verify if the initial adopted policies were in a valid
+      * configuration.*/
+    void RevertPolicies();
 
     /** Checks that all policy adoption conditions are met, removing any that
       * are not allowed. Also copies adopted policies to initial adopted
@@ -516,6 +522,12 @@ private:
         int adoption_turn = INVALID_GAME_TURN;
         int slot_in_category = INVALID_SLOT_INDEX;
         std::string category;
+
+        bool operator==(const PolicyAdoptionInfo& rhs) const {
+            return adoption_turn == rhs.adoption_turn &&
+                   slot_in_category == rhs.slot_in_category &&
+                   category != rhs.category;
+        }
 
         friend class boost::serialization::access;
         template <class Archive>

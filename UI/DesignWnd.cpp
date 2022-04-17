@@ -3728,11 +3728,9 @@ void SlotControl::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_ptr<GG::
         ErrorLogger() << "SlotControl::AcceptDrops given multiple wnds unexpectedly...";
 
     const auto wnd = *(wnds.begin());
-    const PartControl* control = boost::polymorphic_downcast<const PartControl*>(wnd.get());
-    const ShipPart* part = control ? control->Part() : nullptr;
-
-    if (part)
-        SlotContentsAlteredSignal(part, (mod_keys & GG::MOD_KEY_CTRL));
+    if (const PartControl* control = boost::polymorphic_downcast<const PartControl*>(wnd.get()))
+        if (const ShipPart* part = control->Part())
+            SlotContentsAlteredSignal(part, mod_keys & GG::MOD_KEY_CTRL);
 }
 
 void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,

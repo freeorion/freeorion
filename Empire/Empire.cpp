@@ -317,6 +317,13 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     PoliciesChangedSignal();
 }
 
+void Empire::RevertPolicies() {
+    if (m_adopted_policies != m_initial_adopted_policies) {
+        m_adopted_policies = m_initial_adopted_policies;
+        PoliciesChangedSignal();
+    }
+}
+
 void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_turn) {
     // TODO: Check and handle policy exclusions in this function...
 

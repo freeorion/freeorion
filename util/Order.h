@@ -473,6 +473,7 @@ private:
 class FO_COMMON_API PolicyOrder : public Order {
 public:
     PolicyOrder(int empire, std::string name, std::string category, bool adopt, int slot = -1);
+    PolicyOrder(int empire) : Order(empire), m_revert{true} {};
 
     [[nodiscard]] std::string Dump() const override;
 
@@ -491,6 +492,7 @@ private:
     std::string m_category;
     int         m_slot = -1;
     bool        m_adopt = false;
+    bool        m_revert = false;
 
     friend class boost::serialization::access;
     template <typename Archive>
@@ -621,7 +623,7 @@ public:
     { return m_design_id; }
 
 private:
-    ShipDesignOrder();
+    ShipDesignOrder() = default;
 
     /**
      * Preconditions of execute:
@@ -646,7 +648,7 @@ private:
     /// m_design_id is mutable to save the id for the server when the client calls ExecuteImpl.
     mutable int              m_design_id = INVALID_DESIGN_ID;
 
-    boost::uuids::uuid       m_uuid;
+    boost::uuids::uuid       m_uuid = boost::uuids::nil_generator()();
     bool                     m_update_name_or_description = false;
     bool                     m_delete_design_from_empire = false;
     bool                     m_create_new_design = false;

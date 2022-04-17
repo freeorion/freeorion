@@ -24,6 +24,7 @@ BOOST_CLASS_EXPORT(InvadeOrder)
 BOOST_CLASS_EXPORT(BombardOrder)
 BOOST_CLASS_EXPORT(ChangeFocusOrder)
 BOOST_CLASS_EXPORT(PolicyOrder)
+BOOST_CLASS_VERSION(PolicyOrder, 2)
 BOOST_CLASS_EXPORT(ResearchQueueOrder)
 BOOST_CLASS_EXPORT(ProductionQueueOrder)
 BOOST_CLASS_VERSION(ProductionQueueOrder, 2)
@@ -136,6 +137,8 @@ void PolicyOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_category)
         & BOOST_SERIALIZATION_NVP(m_adopt)
         & BOOST_SERIALIZATION_NVP(m_slot);
+    if (version >= 2) // otherwise, default false is fine
+        ar  & BOOST_SERIALIZATION_NVP(m_revert);
 }
 
 template <class Archive>

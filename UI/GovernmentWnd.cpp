@@ -1049,7 +1049,7 @@ void PolicySlotControl::AcceptDrops(const GG::Pt& pt, std::vector<std::shared_pt
     const Policy* policy_type = control ? control->GetPolicy() : nullptr;
 
     if (policy_type)
-        SlotContentsAlteredSignal(policy_type, (mod_keys & GG::MOD_KEY_CTRL));
+        SlotContentsAlteredSignal(policy_type, mod_keys & GG::MOD_KEY_CTRL);
 }
 
 void PolicySlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
@@ -1172,16 +1172,19 @@ public:
     void Sanitize();
     void Refresh();
 
-    void SetPolicy(const std::string& policy_name, unsigned int slot);  //!< puts specified policy in specified slot.  does nothing if slot is out of range of available slots for category
-    void SetPolicy(const Policy* policy, unsigned int slot);            //!< Sets the policy in \p slot to \p policy
-    void SetPolicies(const std::vector<std::string>& policies);         //!< puts specified policies in slots.  attempts to put each policy into the slot corresponding to its place in the passed vector.  if a policy cannot be placed, it is ignored.  more policies than there are slots available are ignored, and slots for which there are insufficient policies in the passed vector are unmodified
+    void SetPolicy(const std::string& policy_name, unsigned int slot,
+                   bool update_empire_and_refresh = true);      //!< puts specified policy in specified slot.  does nothing if slot is out of range of available slots for category
+    void SetPolicy(const Policy* policy, unsigned int slot,
+                   bool update_empire_and_refresh = true);      //!< Sets the policy in \p slot to \p policy
+    void SetPolicies(const std::vector<std::string>& policies); //!< puts specified policies in slots.  attempts to put each policy into the slot corresponding to its place in the passed vector.  if a policy cannot be placed, it is ignored.  more policies than there are slots available are ignored, and slots for which there are insufficient policies in the passed vector are unmodified
 
-    /** If a suitable slot is available, adds the specified policy to the
-      * government. */
+    /** If a suitable slot is available, adds the specified policy to the government. */
     void AddPolicy(const Policy* policy);
     bool CanPolicyBeAdded(const Policy* policy) const;
+    void RevertPolicies();
     void ClearPolicies();   //!< removes all policies from government
     void ClearPolicy(const std::string& policy_name);
+
 
     mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)> PolicyClickedSignal;
 
@@ -1190,6 +1193,8 @@ protected:
                          const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
+    void PostChangeBigUpdate();
+
     void Populate();        //!< creates and places SlotControls for empire
     void DoLayout();        //!< positions SlotControls
     bool AddPolicyEmptySlot(const Policy* policy, int slot_number);
@@ -1239,8 +1244,9 @@ void GovernmentWnd::MainPanel::Refresh()
     DoLayout();
 }
 
-void GovernmentWnd::MainPanel::SetPolicy(const std::string& policy_name, unsigned int slot)
-{ SetPolicy(GetPolicy(policy_name), slot); }
+void GovernmentWnd::MainPanel::SetPolicy(const std::string& policy_name, unsigned int slot,
+                                         bool update_empire_and_refresh)
+{ SetPolicy(GetPolicy(policy_name), slot, update_empire_and_refresh); }
 
 namespace {
     // returns vector of category names and indices within category
@@ -1271,7 +1277,9 @@ namespace {
     }
 }
 
-void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot) {
+void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot,
+                                         bool update_empire_and_refresh)
+{
     DebugLogger() << "GovernmentWnd::MainPanel::SetPolicy(" << (policy ? policy->Name() : "no policy") << ", slot " << slot << ")";
 
     if (slot >= m_slots.size()) {
@@ -1338,12 +1346,24 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
                                                adopt, adopt_in_category_slot);
     GGHumanClientApp::GetApp()->Orders().IssueOrder(std::move(order), context);
 
-    // update UI after policy changes
+    if (update_empire_and_refresh)
+        PostChangeBigUpdate();
+}
+
+void GovernmentWnd::MainPanel::PostChangeBigUpdate() {
+    ScriptingContext context;
+
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    auto empire = context.GetEmpire(empire_id);  // may be nullptr
+    if (!empire) {
+        ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy has no empire to set policies for";
+        return;
+    }
+
     empire->UpdateInfluenceSpending(context);
     Populate();
     DoLayout();
-    auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(Parent());
-    if (gov_wnd)
+    if (auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(Parent()))
         gov_wnd->DoLayout();
     context.ContextUniverse().UpdateMeterEstimates(context);
     SidePanel::Refresh();
@@ -1355,7 +1375,9 @@ void GovernmentWnd::MainPanel::SetPolicies(const std::vector<std::string>& polic
 
     unsigned int num_policies = std::min(policies.size(), m_slots.size());
     for (unsigned int slot = 0; slot < num_policies; ++slot)
-        this->SetPolicy(policies[slot], slot);
+        this->SetPolicy(policies[slot], slot, false);
+
+    PostChangeBigUpdate();
 }
 
 void GovernmentWnd::MainPanel::AddPolicy(const Policy* policy)
@@ -1367,15 +1389,17 @@ bool GovernmentWnd::MainPanel::CanPolicyBeAdded(const Policy* policy) const
 bool GovernmentWnd::MainPanel::AddPolicyEmptySlot(const Policy* policy, int slot_number) {
     if (!policy || slot_number < 0)
         return false;
-    SetPolicy(policy, slot_number);
+    SetPolicy(policy, slot_number, true);
     return true;
 }
 
 int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const {
     if (!policy)
         return -1;
+
+    const ScriptingContext context;
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id);
+    auto empire = context.GetEmpire(empire_id);
 
     // reject unavailable and already-adopted policies
     if (!empire || !empire->PolicyAvailable(policy->Name())
@@ -1386,7 +1410,7 @@ int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const
     for (unsigned int i = 0; i < m_slots.size(); ++i) {
         if (m_slots[i]->GetPolicy())
             continue;   // slot already occupied
-        const std::string& slot_category = m_slots[i]->SlotCategory();
+        auto& slot_category = m_slots[i]->SlotCategory();
         if (policy->Category() != slot_category)
             continue;
         return i;
@@ -1395,9 +1419,31 @@ int GovernmentWnd::MainPanel::FindEmptySlotForPolicy(const Policy* policy) const
     return -1;
 }
 
+void GovernmentWnd::MainPanel::RevertPolicies() {
+    ScriptingContext context;
+
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    auto empire = context.GetEmpire(empire_id);  // may be nullptr
+    if (!empire) {
+        ErrorLogger() << "GovernmentWnd::MainPanel::RevertPolicies has no empire to revert policies for";
+        return;
+    }
+
+    if (!empire->PoliciesModified())
+        return;
+
+    // issue order to adopt or revoke
+    auto order = std::make_shared<PolicyOrder>(empire_id);
+    GGHumanClientApp::GetApp()->Orders().IssueOrder(std::move(order), context);
+
+    PostChangeBigUpdate();
+}
+
 void GovernmentWnd::MainPanel::ClearPolicies() {
     for (unsigned int slot = 0; slot < m_slots.size(); ++slot)
-        this->SetPolicy(nullptr, slot);
+        this->SetPolicy(nullptr, slot, false);
+
+    PostChangeBigUpdate();
 }
 
 void GovernmentWnd::MainPanel::ClearPolicy(const std::string& policy_name) {
@@ -1416,13 +1462,15 @@ void GovernmentWnd::MainPanel::Populate() {
         DetachChild(slot);
     m_slots.clear();
 
+    ScriptingContext context;
+
     // loop over policy slots the empire's government has, add slot controls
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+    auto empire = context.GetEmpire(empire_id);
     if (!empire)
         return;
 
-    auto all_slot_cats = ConcatenatedCategorySlots(empire);
+    auto all_slot_cats = ConcatenatedCategorySlots(empire.get());
     auto categories_slots_policies = empire->CategoriesSlotsPoliciesAdopted();
 
     for (unsigned int n = 0; n < all_slot_cats.size(); ++n) {
@@ -1441,9 +1489,7 @@ void GovernmentWnd::MainPanel::Populate() {
 
         // signals to respond to UI manipulation
         slot_control->SlotContentsAlteredSignal.connect(
-            boost::bind(static_cast<void (GovernmentWnd::MainPanel::*)(
-                const Policy*, unsigned int)>(&GovernmentWnd::MainPanel::SetPolicy),
-                                              this, _1, n));
+            [this, n](const Policy* p, bool) { SetPolicy(p, n, true); });
         slot_control->PolicyClickedSignal.connect(PolicyClickedSignal);
     }
 }
@@ -1559,14 +1605,14 @@ void GovernmentWnd::CompleteConstruction() {
     AttachChild(m_policy_size_buttons);
     m_policy_size_buttons->SetCheck(0);
 
-    m_clear_button = GG::Wnd::Create<CUIButton>(UserString("GOVERNMENT_WND_CLEAR"));
-    AttachChild(m_clear_button);
+    m_revert_button = GG::Wnd::Create<CUIButton>(UserString("GOVERNMENT_WND_REVERT"));
+    AttachChild(m_revert_button);
 
     auto zoom_to_policy_action = [](const Policy* policy, GG::Flags<GG::ModKey> modkeys) { ClientUI::GetClientUI()->ZoomToPolicy(policy->Name()); };
     //m_main_panel->PolicyClickedSignal.connect(zoom_to_policy_action);
     m_policy_palette->PolicyClickedSignal.connect(zoom_to_policy_action);
     m_policy_size_buttons->ButtonChangedSignal.connect(boost::bind(&GovernmentWnd::PolicySizeButtonClicked, this, _1));
-    m_clear_button->LeftClickedSignal.connect(boost::bind(&GovernmentWnd::ClearPolicies, this));
+    m_revert_button->LeftClickedSignal.connect(boost::bind(&GovernmentWnd::RevertPolicies, this));
 
     CUIWnd::CompleteConstruction();
     DoLayout();
@@ -1581,6 +1627,9 @@ void GovernmentWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void GovernmentWnd::ClearPolicies()
 { m_main_panel->ClearPolicies(); }
+
+void GovernmentWnd::RevertPolicies()
+{ m_main_panel->RevertPolicies(); }
 
 void GovernmentWnd::Reset()
 { Refresh(); }
@@ -1638,10 +1687,10 @@ void GovernmentWnd::DoLayout() {
 
     m_policy_size_buttons->SizeMove(size_buttons_ul, size_buttons_lr);
 
-    const GG::Pt clear_button_ul = GG::Pt(main_lr.x - BUTTON_WIDTH - PAD, main_ul.y + PAD - BUTTON_HEIGHT / 2);
-    const GG::Pt clear_button_lr = GG::Pt(main_lr.x - PAD, main_ul.y + PAD + BUTTON_HEIGHT / 2);
+    const GG::Pt revert_button_ul = GG::Pt(main_lr.x - BUTTON_WIDTH - PAD, main_ul.y + PAD - BUTTON_HEIGHT / 2);
+    const GG::Pt revert_button_lr = GG::Pt(main_lr.x - PAD, main_ul.y + PAD + BUTTON_HEIGHT / 2);
 
-    m_clear_button->SizeMove(clear_button_ul, clear_button_lr);
+    m_revert_button->SizeMove(revert_button_ul, revert_button_lr);
 }
 
 void GovernmentWnd::PolicySizeButtonClicked(std::size_t idx) {
