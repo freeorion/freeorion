@@ -8,31 +8,17 @@ Policy
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
-        // used in setting stability adjustments for species likes / dislikes
+        // EmpireHasAdoptedPolicy PLC_CONFORMANCE is used in setting stability adjustments for species dislikes in
+        // species/common/happiness.macros (foci), buildings/buildings.macros and policies/policies.macros (policies)
 
-        // reduces research but boosts infrastructure and stockpiling and stability
-        EffectsGroup
-        scope = And [
-            Planet
-            OwnedBy empire = Source.Owner
-            Species
-            Happiness low = (NamedReal name = "PLC_CONFORMANCE_MIN_STABILITY" value = 4)
-        ]
-        effects = [
-            SetTargetConstruction value = Value + (NamedReal name = "PLC_CONFORMANCE_INFRASTRUCTURE_BONUS_FLAT" value = 5.0)
-            SetMaxStockpile value = Value + (NamedReal name = "PLC_CONFORMANCE_STOCKPILING_BONUS_FLAT" value = 1.0)
-        ]
-
+        // Small unconditional boost to stability
         EffectsGroup
         scope = And [
             Planet
             OwnedBy empire = Source.Owner
             Species
         ]
-        effects = [
-            SetTargetHappiness value = Value + (NamedReal name = "PLC_CONFORMANCE_STABILITY_BONUS_FLAT" value = 2.0)
-            SetTargetResearch value = Value - (NamedReal name = "PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT" value = 2.0)
-        ]
+        effects = SetTargetHappiness value = Value + (NamedReal name = "PLC_CONFORMANCE_STABILITY_BONUS_FLAT" value = 2.0)
     ]
     graphic = "icons/policies/social_conformance.png"
 
