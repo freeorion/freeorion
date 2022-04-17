@@ -28,7 +28,7 @@
 using boost::placeholders::_1;
 using boost::placeholders::_2;
 
-enum class Availability : char {
+enum class Availability : unsigned char {
     Adopted = 0,      // Policy is currently adopted
     Adoptable = 1,    // Policy can be adopted, but hasn't been adopted
     Unaffordable = 2, // Policy is unlocked and has no restrictions, but is too expensive to adopt
