@@ -1680,8 +1680,9 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     if (Disabled())
         return true;
 
-    Pt pt = event.Point();
-    Flags<ModKey> mod_keys = event.ModKeys();
+    const Pt& pt = event.Point();
+    auto mod_keys = event.ModKeys();
+
 
     switch (event.Type()) {
     case WndEvent::EventType::LButtonDown: {
