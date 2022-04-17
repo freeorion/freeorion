@@ -1957,9 +1957,6 @@ public:
             boost::bind(&ObjectListBox::UniverseObjectDeleted, this, boost::placeholders::_1));
     }
 
-    virtual ~ObjectListBox()
-    { ClearContents(); }
-
     void PreRender() override {
         CUIListBox::PreRender();
         const GG::Pt row_size = ListRowSize();
