@@ -434,12 +434,12 @@ void PoliciesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
-void PoliciesListBox::AcceptDrops(const GG::Pt& pt,
+void PoliciesListBox::AcceptDrops(const GG::Pt&,
                                   std::vector<std::shared_ptr<GG::Wnd>> wnds,
                                   GG::Flags<GG::ModKey> mod_keys)
 {
     // If ctrl is pressed then signal all policies of the same type to be cleared.
-    if (!(GG::GUI::GetGUI()->ModKeys() & GG::MOD_KEY_CTRL))
+    if (!(mod_keys & GG::MOD_KEY_CTRL))
         return;
 
     if (wnds.empty())
