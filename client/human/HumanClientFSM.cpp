@@ -948,10 +948,6 @@ boost::statechart::result WaitingForGameStart::react(const GameStartDataUnpacked
 
         TraceLogger(FSM) << "UI data from save data restored";
 
-        // if I am the host on the first turn, do an autosave.
-        if (is_new_game && Client().Networking().PlayerIsHost(Client().PlayerID()))
-            Client().Autosave();
-
         Client().GetClientUI().GetPlayerListWnd()->Refresh();
         Client().GetClientUI().GetMapWnd()->ResetTimeoutClock(0);
 
