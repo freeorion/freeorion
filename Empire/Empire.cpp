@@ -455,7 +455,7 @@ bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name, int current_tur
     if (!policy_to_adopt)
         return false;
 
-    // is there an exclusion or prerequisite conflict?
+    // is there an exclusion conflict?
     for (auto& [already_adopted_policy_name, ignored] : m_adopted_policies) {
         (void)ignored; // quiet warning
         if (policy_to_adopt->Exclusions().count(already_adopted_policy_name)) {
@@ -474,13 +474,10 @@ bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name, int current_tur
         }
     }
 
+    // are there any unmet prerequisites (with the initial adopted policies this turn)
     for (const auto& prereq : policy_to_adopt->Prerequisites()) {
-        auto it = m_adopted_policies.find(prereq);
-        if (it == m_adopted_policies.end())
-            return false;
-        // must have adopted policy at least one turn before, to prevent
-        // same-turn policy swapping to bypass prereqs at no cost
-        if (it->second.adoption_turn >= current_turn)
+        auto it = m_initial_adopted_policies.find(prereq);
+        if (it == m_initial_adopted_policies.end() || it->second.adoption_turn >= current_turn)
             return false;
     }
 
