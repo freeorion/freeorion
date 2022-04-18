@@ -422,6 +422,14 @@ std::vector<std::string_view> Empire::AdoptedPolicies() const {
     return retval;
 }
 
+std::vector<std::string_view> Empire::InitialAdoptedPolicies() const {
+    std::vector<std::string_view> retval;
+    retval.reserve(m_initial_adopted_policies.size());
+    for (const auto& entry : m_initial_adopted_policies)
+        retval.push_back(entry.first);
+    return retval;
+}
+
 std::map<std::string_view, std::map<int, std::string_view>>
 Empire::CategoriesSlotsPoliciesAdopted() const {
     std::map<std::string_view, std::map<int, std::string_view>> retval;

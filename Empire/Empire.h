@@ -78,6 +78,7 @@ public:
 
     [[nodiscard]] int                           SlotPolicyAdoptedIn(std::string_view name) const;
     [[nodiscard]] std::vector<std::string_view> AdoptedPolicies() const;
+    [[nodiscard]] std::vector<std::string_view> InitialAdoptedPolicies() const;
     [[nodiscard]] bool                          PoliciesModified() const { return m_adopted_policies != m_initial_adopted_policies; }
 
     /** For each category, returns the slots in which policies have been adopted
