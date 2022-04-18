@@ -10,8 +10,8 @@ Part
     location = And [
         Planet
         OwnedBy empire = Source.Owner
-        /// @content_tag{NO_ATTACKTROOPS} Prevents production of ships with this part in their design at locations with this tag
-        Not HasTag name = "NO_ATTACKTROOPS"
+        /// @content_tag{NO_OFFENSE_TROOPS} Prevents production of ships with this part in their design at locations with this tag
+        Not HasTag name = "NO_OFFENSE_TROOPS"
         Troops low = 4
     ]
 //  consumption = Troops consumption = 2 condition = Source
