@@ -2092,12 +2092,13 @@ const boost::circular_buffer<ChatHistoryEntity>& ServerApp::GetChatHistory() con
 
 std::vector<PlayerSaveGameData> ServerApp::GetPlayerSaveGameData() const {
     std::vector<PlayerSaveGameData> player_save_game_data;
-    for (const auto& m_save_data : m_turn_sequence) {
-        DebugLogger() << "ServerApp::GetPlayerSaveGameData() Empire " << m_save_data.first
-                      << " save_game_data " << m_save_data.second.get();
-        if (m_save_data.second) {
-            player_save_game_data.push_back(*m_save_data.second);
-        }
+    for (const auto& [empire_id, save_data] : m_turn_sequence) {
+        DebugLogger() << "ServerApp::GetPlayerSaveGameData() Empire " << empire_id
+                      << " type: " << boost::lexical_cast<std::string>(save_data->client_type)
+                      << " save_game_data state string size: " << save_data->save_state_string.size()
+                      << " UI data?: " << save_data->ui_data;
+        if (save_data)
+            player_save_game_data.push_back(*save_data);
     }
     return player_save_game_data;
 }
@@ -2126,28 +2127,33 @@ void ServerApp::RemoveEmpireTurn(int empire_id)
 { m_turn_sequence.erase(empire_id); }
 
 void ServerApp::ClearEmpireTurnOrders() {
-    for (auto& order : m_turn_sequence) {
-        if (order.second) {
+    for (auto& [empire_id, save_data] : m_turn_sequence) {
+        (void)empire_id;
+        if (save_data) {
             // reset only orders
             // left UI data and AI state intact
-            order.second->orders.reset();
+            save_data->orders.reset();
         }
     }
-    for (auto& empire : m_empires)
-        empire.second->AutoTurnSetReady();
+    for (auto& [empire_id, empire] : m_empires) {
+        (void)empire_id;
+        empire->AutoTurnSetReady();
+    }
 }
 
 void ServerApp::SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data)
 { m_turn_sequence[empire_id] = std::move(save_game_data); }
 
-void ServerApp::UpdatePartialOrders(int empire_id, const OrderSet& added, const std::set<int>& deleted) {
+void ServerApp::UpdatePartialOrders(int empire_id, const OrderSet& added,
+                                    const std::set<int>& deleted)
+{
     const auto& psgd = m_turn_sequence[empire_id];
     if (psgd) {
         if (psgd->orders) {
-            for (int id : deleted)
-                 psgd->orders->erase(id);
-            for (auto it : added)
-                 psgd->orders->insert(it);
+            for (int del_id : deleted)
+                 psgd->orders->erase(del_id);
+            for (auto& add_set : added)
+                 psgd->orders->insert(add_set);
         } else {
             psgd->orders = std::make_shared<OrderSet>(added);
         }
@@ -2164,32 +2170,32 @@ bool ServerApp::AllOrdersReceived() {
     DebugLogger() << "ServerApp::AllOrdersReceived for turn: " << m_current_turn
                   << (m_turn_expired ? " (expired)" : "");
     bool all_orders_received = true;
-    for (const auto& empire_orders : m_turn_sequence) {
+    for (const auto& [empire_id, save_data] : m_turn_sequence) {
         bool empire_orders_received = true;
-        const auto empire = m_empires.GetEmpire(empire_orders.first);
+        const auto empire = m_empires.GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << " ... invalid empire id in turn sequence: "<< empire_orders.first;
+            ErrorLogger() << " ... invalid empire id in turn sequence: "<< empire_id;
             continue;
         } else if (empire->Eliminated()) {
-            ErrorLogger() << " ... eliminated empire in turn sequence: " << empire_orders.first;
+            ErrorLogger() << " ... eliminated empire in turn sequence: " << empire_id;
             continue;
         } else if (!empire->Ready()) {
-            DebugLogger() << " ... not ready empire id: " << empire_orders.first;
+            DebugLogger() << " ... not ready empire id: " << empire_id;
             empire_orders_received = false;
-        } else if (!empire_orders.second) {
-            DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
+        } else if (!save_data) {
+            DebugLogger() << " ... no orders from empire id: " << empire_id;
             empire_orders_received = false;
-        } else if (!empire_orders.second->orders) {
-            DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
+        } else if (!save_data->orders) {
+            DebugLogger() << " ... no orders from empire id: " << empire_id;
             empire_orders_received = false;
         } else {
-            DebugLogger() << " ... have orders from empire id: " << empire_orders.first;
+            DebugLogger() << " ... have orders from empire id: " << empire_id;
         }
         if (!empire_orders_received) {
-            if (GetEmpireClientType(empire_orders.first) != Networking::ClientType::CLIENT_TYPE_AI_PLAYER
+            if (GetEmpireClientType(empire_id) != Networking::ClientType::CLIENT_TYPE_AI_PLAYER
                 && m_turn_expired)
             {
-                DebugLogger() << " ...... turn expired for empire id: " << empire_orders.first;
+                DebugLogger() << " ...... turn expired for empire id: " << empire_id;
             } else {
                 all_orders_received = false;
             }
