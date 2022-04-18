@@ -953,7 +953,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = std::static_pointer_cast<const Ship>(object);
             auto retval = ship->TotalWeaponsFighterDamage(context);
-            InfoLogger() << "DestroyFightersPerBattleMax" << retval;
+            TraceLogger() << "DestroyFightersPerBattleMax" << retval;
             // TODO: prevent recursion; disallowing the ValueRef inside of destroyFightersPerBattleMax via parsers would be best.
             return retval;
         }
@@ -964,7 +964,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
             auto ship = std::static_pointer_cast<const Ship>(object);
             // TODO: prevent recursion; disallowing the ValueRef inside of damageStructurePerBattleMax via parsers would be best.
             auto retval = ship->TotalWeaponsShipDamage(context);
-            InfoLogger() << "DamageStructurePerBattleMax" << retval;
+            TraceLogger() << "DamageStructurePerBattleMax" << retval;
             return retval;
         }
         return 0.0;
