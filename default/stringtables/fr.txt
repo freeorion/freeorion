@@ -4443,7 +4443,19 @@ Description
 ##
 
 POLICY_LOCKED
-Politique indisponible mais demanderait %1% PI pour être adoptée.
+Politique indisponible mais demanderait %1% PI pour être adoptée
+
+POLICY_RESTRICTED
+Politique inapplicable mais demanderait %1% PI pour être adoptée
+
+POLICY_EXCLUDED
+Politique inapplicable car incompatible avec %1%
+
+POLICY_PREREQ_MISSING
+Politique inapplicable car prérequis %1% non-adopté
+
+POLICY_PREREQ_MET
+Politique applicable car prérequis %1% adopté
 
 POLICY_ADOPTABLE_COST
 Politique adoptable pour %1% PI
@@ -5025,8 +5037,8 @@ Impossible de créer le fichier:\n"%1%"
 GOVERNMENT_INFO_IP
 PI
 
-GOVERNMENT_WND_CLEAR
-Vider
+GOVERNMENT_WND_REVERT
+Réinitialiser
 
 ECONOMIC_CATEGORY
 Économique
@@ -12198,26 +12210,21 @@ PLC_CONFORMANCE
 Conformité
 
 PLC_CONFORMANCE_DESC
-'''• Réduit l'impact des préférences d'une espèce (aime ou n'aime pas telles structures ou Politiques) sur la [[metertype METER_HAPPINESS]] planétaire.
-• Diminue la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_CONFORMANCE_RESEARCH_PENALTY_FLAT]] sur toutes les planètes. 
-• Augmente la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_CONFORMANCE_STABILITY_BONUS_FLAT]].
-
-Sur toutes les planètes dont la [[metertype METER_HAPPINESS]] est au moins égale à [[value PLC_CONFORMANCE_MIN_STABILITY]]:
-• Augmente la [[metertype METER_TARGET_CONSTRUCTION]] de [[value PLC_CONFORMANCE_INFRASTRUCTURE_BONUS_FLAT]].
-• Augmente la [[metertype METER_STOCKPILE]] de [[value PLC_CONFORMANCE_STOCKPILING_BONUS_FLAT]].'''
+'''• Réduit l'impact de ce que n'aime pas une espèce (structures, Politiques, ou Focus) sur la [[metertype METER_HAPPINESS]] planétaire (x[[value PLC_CONFORMANCE_DISLIKE_FACTOR]]).
+• Augmente la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_CONFORMANCE_STABILITY_BONUS_FLAT]].'''
 
 PLC_CONFORMANCE_SHORT_DESC
-Réduit les effets des opinions d'une espèce
+Réduit les effets de ce que n'aime pas une espèce et augmente la Stabilité
 
 PLC_LIBERTY
 Liberté
 
 PLC_LIBERTY_DESC
-'''• Augmente l'impact des préférences d'une espèce (aime ou n'aime pas telles structures ou Politiques) sur la [[metertype METER_HAPPINESS]] planétaire.
-• Sur toutes les planètes dont la [[metertype METER_HAPPINESS]] est au moins égale à [[value PLC_LIBERTY_MIN_STABILITY]], augmente la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_LIBERTY_RESEARCH_BONUS_FLAT]] et diminue la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_LIBERTY_STABILITY_PENALTY_FLAT]].'''
+'''• Augmente l'impact de ce que n'aime pas une espèce (structures, Politiques, ou Focus) sur la [[metertype METER_HAPPINESS]] planétaire (x[[value PLC_LIBERTY_DISLIKE_FACTOR]]).
+• Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_LIBERTY_RESEARCH_BONUS_PER_STABILITY]] PR pour chaque point de [[metertype METER_HAPPINESS]] au-dessus de [[value PLC_LIBERTY_MIN_STABILITY]], sur toutes les planètes, quel que soit le Focus.'''
 
 PLC_LIBERTY_SHORT_DESC
-Augmente les effets des opinions d'une espèce
+Augmente les effets de ce que n'aime pas une espèce ainsi que la Recherche
 
 PLC_TRAFFIC_CONTROL
 Gestion du Trafic
@@ -12304,7 +12311,7 @@ PLC_BOOTSTRAPPING_SHORT_DESC
 Améliore les colonies de petite taille
 
 PLC_PROPAGANDA
-Informations Propagandistes
+Diffusions Propagandistes
 
 PLC_PROPAGANDA_DESC
 '''Augmente de [[value PROPAGANDA_INFLUENCE_FLAT]] l'Influence de la Capitale de l'empire adoptant cette politique.
