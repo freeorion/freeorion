@@ -1355,8 +1355,12 @@ void GGHumanClientApp::Autosave() {
          && (is_single_player_enabled || is_multi_player_enabled));
 
     // is_initial_save is gated in HumanClientFSM for new game vs loaded game
-    bool is_initial_save = (GetOptionsDB().Get<bool>("save.auto.initial.enabled") && CurrentTurn() == 1);
-    bool is_final_save = (GetOptionsDB().Get<bool>("save.auto.exit.enabled") && !m_game_started);
+    bool is_initial_save =
+        (GetOptionsDB().Get<bool>("save.auto.initial.enabled")
+         && this->m_current_turn == 1);
+    bool is_final_save =
+        (GetOptionsDB().Get<bool>("save.auto.exit.enabled")
+         && !m_game_started);
 
     if (!(is_initial_save || is_valid_autosave || is_final_save))
         return;
