@@ -25,15 +25,11 @@ struct ServerFSM;
 class ServerApp : public IApp {
 public:
     ServerApp();
-
     ServerApp(const ServerApp&) = delete;
-
     ServerApp(ServerApp&&) = delete;
-
     ~ServerApp() override;
 
     const ServerApp& operator=(const ServerApp&) = delete;
-
     ServerApp& operator=(IApp&&) = delete;
 
     /** Returns a ClientApp pointer to the singleton instance of the app. */
@@ -107,72 +103,72 @@ public:
     [[nodiscard]] GalaxySetupData&    GetGalaxySetupData() { return m_galaxy_setup_data; }
 
     /** creates an AI client child process for each element of \a AIs*/
-    void    CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression = 4);
+    void CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression = 4);
 
     /** Adds save game data includes turn orders for the given empire for the current turn.
       * \a save_game_data will be freed when all processing is done for the turn */
-    void    SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data);
+    void SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data);
 
     /** Updated empire orders without changes in readiness status. Removes all \a deleted orders
       * and insert \a added orders. */
-    void    UpdatePartialOrders(int empire_id, const OrderSet& added, const std::set<int>& deleted);
+    void UpdatePartialOrders(int empire_id, const OrderSet& added, const std::set<int>& deleted);
 
     /** Revokes turn order's ready state for the given empire. */
-    void    RevokeEmpireTurnReadyness(int empire_id);
+    void RevokeEmpireTurnReadyness(int empire_id);
 
     /** Sets all empire turn orders to an empty set. */
-    void    ClearEmpireTurnOrders();
+    void ClearEmpireTurnOrders();
 
     /** Determines if all empired have submitted their orders for this turn It
       * will loop the turn squence vector and check for a set order_set. A
       * order_set of 0 indicates that the empire has not yet submitted their
       * orders for the given turn */
-    bool    AllOrdersReceived();
+    bool AllOrdersReceived();
 
     /** Executes player orders, does colonization, does ordered scrapping, does
       * fleet movements, and updates visibility before combats are handled. */
-    void    PreCombatProcessTurns();
+    void PreCombatProcessTurns();
 
     /** Determines which combats will occur, handles running the combats and
       * updating the universe after the results are available. */
-    void    ProcessCombats();
+    void ProcessCombats();
 
     /** Used post combat, to selectively clear the m_arrival_starlane flag of monsters
      *  so that they can impose blockades */
-    void    UpdateMonsterTravelRestrictions();
+    void UpdateMonsterTravelRestrictions();
 
     /** Determines resource and supply distribution pathes and connections,
       * updates research, production, influence spending,
       * does population growth, updates current turn number, checks for
       * eliminated or victorious empires / players, sends new turn updates. */
-    void    PostCombatProcessTurns();
+    void PostCombatProcessTurns();
 
     /** Determines if any empires are eliminated (for the first time this turn,
       * skipping any which were also eliminated previously) and if any empires
       * are thereby victorious. */
-    void    CheckForEmpireElimination();
+    void CheckForEmpireElimination();
 
     /** Intializes single player game universe.*/
-    void    NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data);
+    void NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data);
 
     /** Return true if single player game AIs are compatible with created
       * universe and are ready to start a new game. */
-    bool    VerifySPGameAIs(const SinglePlayerSetupData& single_player_setup_data);
+    bool VerifySPGameAIs(const SinglePlayerSetupData& single_player_setup_data);
 
     /** Intializes multi player game universe, sends out initial game state to
       * clients, and signals clients to start first turn */
-    void    NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data);
+    void NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data);
 
     /** Restores saved single player gamestate and human and AI client state
       * information. */
-    void    LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
-                           std::shared_ptr<ServerSaveGameData> server_save_game_data);
+    void LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
+                        std::shared_ptr<ServerSaveGameData> server_save_game_data);
 
     /** Restores saved multiplayer gamestate and human and AI client state
       * information. */
-    void    LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
-                           const std::vector<PlayerSaveGameData>& player_save_game_data,
-                           std::shared_ptr<ServerSaveGameData> server_save_game_data);
+    void LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
+                        const std::vector<PlayerSaveGameData>& player_save_game_data,
+                        std::shared_ptr<ServerSaveGameData> server_save_game_data);
 
     /** Checks if \a player_name requires auth to login and fill \a roles if not. */
     [[nodiscard]] bool IsAuthRequiredOrFillRoles(const std::string& player_name, const std::string& ip_address, Networking::AuthRoles& roles);
@@ -340,7 +336,7 @@ private:
       * The map contains pointer to orders from empire with ready state which should be true
       * to advance turn.
       * */
-    std::map<int, std::unique_ptr<PlayerSaveGameData>>  m_turn_sequence;
+    std::map<int, std::unique_ptr<PlayerSaveGameData>> m_turn_sequence;
 
     // Give FSM and its states direct access.  We are using the FSM code as a
     // control-flow mechanism; it is all notionally part of this class.
