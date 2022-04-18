@@ -9,43 +9,29 @@ Policy
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
         EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Not Planet type = GasGiant
-                Not Planet type = Asteroids
-                Not Planet type = LocalCandidate.OriginalType
-            ]
+            scope = [[PLC_TERRAFORMING_SCOPE]]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects =
                 SetTargetHappiness value = Value
                     + (NamedReal name = "PLC_TERRAFORMING_TARGET_HAPPINESS_ORIGINAL_FLAT"
                                  value = 1)
-                        * Target.DistanceFromOriginalType
+                        * [[PLC_TERRAFORMING_DISTANCE]]
 
         EffectsGroup
             scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Not Planet type = GasGiant
-                Not Planet type = Asteroids
-                Not Planet type = LocalCandidate.OriginalType
+                [[PLC_TERRAFORMING_SCOPE]]
                 Focus type = "FOCUS_INFLUENCE"
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = 
                 SetTargetInfluence value = Value
-                    + (NamedReal name = "PLC_TERRAFORMING__TARGET_INFLUENCE_ORIGINAL_FLAT"
+                    + (NamedReal name = "PLC_TERRAFORMING_TARGET_INFLUENCE_ORIGINAL_FLAT"
                                  value = 1)
-                        * Target.DistanceFromOriginalType
+                        * [[PLC_TERRAFORMING_DISTANCE]]
 
         EffectsGroup
             scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Not Planet type = GasGiant
-                Not Planet type = Asteroids
-                Not Planet type = LocalCandidate.OriginalType
+                [[PLC_TERRAFORMING_SCOPE]]
                 Focus type = "FOCUS_RESEARCH"
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
@@ -53,10 +39,37 @@ Policy
                 SetTargetResearch value = Value
                     + (NamedReal name = "PLC_TERRAFORMING_TARGET_RESEARCH_SCALING"
                                  value = 1)
-                    * Target.DistanceFromOriginalType
+                    * [[PLC_TERRAFORMING_DISTANCE]]
 
     ]
     graphic = "icons/policies/economic_terraforming.png"
+
+
+PLC_TERRAFORMING_SCOPE
+'''
+    And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Not Planet type = GasGiant
+        Not Planet type = Asteroids
+        Not Planet type = LocalCandidate.OriginalType
+    ]
+'''
+
+PLC_TERRAFORMING_DISTANCE
+'''
+    // Note the POLICY_TERRAFORMING_SCOPE exclude Asteroids and Gas Giants, as well as
+    // planets still having the original type. So Distance can only be 0 if original type
+    // was Asteroids or Gas Giants, but it has been changed, i.e. it's an artficial planet.
+    (
+        Target.DistanceFromOriginalType +
+        (NamedInteger name = "PLC_TERRAFORMING_ARTIFICIAL_PLANET_DISTANCE" value = 4) *
+        (Statistic If condition = And [
+            Target
+            (Target.DistanceFromOriginalType = 0)
+        ])
+    )
+'''
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/common/priorities.macros"
