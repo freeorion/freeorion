@@ -189,15 +189,15 @@ struct FO_COMMON_API PlayerSaveHeaderData {
 struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
     PlayerSaveGameData() = default;
 
-    PlayerSaveGameData(const std::string& name, int empire_id,
-                       const std::shared_ptr<OrderSet>& orders_,
-                       const std::shared_ptr<SaveGameUIData>& ui_data_,
-                       const std::string& save_state_string_,
+    PlayerSaveGameData(std::string name, int empire_id,
+                       std::shared_ptr<OrderSet> orders_,
+                       std::shared_ptr<SaveGameUIData> ui_data_,
+                       std::string save_state_string_,
                        Networking::ClientType client_type) :
-        PlayerSaveHeaderData{name, empire_id, client_type},
-        orders(orders_),
-        ui_data(ui_data_),
-        save_state_string(save_state_string_)
+        PlayerSaveHeaderData{std::move(name), empire_id, client_type},
+        orders(std::move(orders_)),
+        ui_data(std::move(ui_data_)),
+        save_state_string(std::move(save_state_string_))
     {}
 
     std::shared_ptr<OrderSet>       orders;

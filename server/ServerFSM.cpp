@@ -3197,9 +3197,11 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         DebugLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id
                          << " for empire " << empire_id << " count of " << order_set->size();
 
-        server.SetEmpireSaveGameData(empire_id, std::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id,
-                                     order_set, ui_data, save_state_string,
-                                     client_type));
+        server.SetEmpireSaveGameData(
+            empire_id,
+            std::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id, std::move(order_set),
+                                                 std::move(ui_data), std::move(save_state_string),
+                                                 client_type));
         empire->SetAutoTurn(0);
         empire->SetReady(true);
 
@@ -3405,28 +3407,40 @@ sc::result WaitingForTurnEnd::react(const SaveGameRequest& msg) {
         return discard_event();
     }
 
-    std::string save_filename = message.Text(); // store requested save file name in Base state context so that sibling state can retreive it
 
-    ServerSaveGameData server_data{server.m_current_turn};
+    // check if AIs have valid state info
+    auto server_player_save_data = server.GetPlayerSaveGameData();
+    bool ais_all_have_state = true;
+    for (const auto& spsd : server_player_save_data) {
+        if (spsd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER &&
+            spsd.save_state_string.empty())
+        {
+            ais_all_have_state = false;
+            break;
+        }
+    }
+    if (!ais_all_have_state) {
+        // lacking state info from AIs...
+        ErrorLogger() << "WaitingForTurnEnd::react(const SaveGameRequest& msg): don't have save state string for AI(s). Loaded save will lack AI state info, such as aggression setting.";
+    }
 
-    // retreive requested save name from Base state, which should have been
-    // set in WaitingForTurnEnd::react(const SaveGameRequest& msg)
-    int bytes_written = 0;
 
     // save game...
     try {
-        bytes_written = SaveGame(save_filename,     server_data,    server.GetPlayerSaveGameData(),
-                                 GetUniverse(),     Empires(),      GetSpeciesManager(),
-                                 GetCombatLogManager(),             server.m_galaxy_setup_data,
-                                 !server.m_single_player_game);
+        ServerSaveGameData server_data{server.m_current_turn};
+        const auto& save_filename = message.Text();
+        int bytes_written = SaveGame(save_filename,         server_data,        server_player_save_data,
+                                     server.GetUniverse(),  server.Empires(),   server.GetSpeciesManager(),
+                                     GetCombatLogManager(), server.m_galaxy_setup_data,
+                                     !server.m_single_player_game);
+        // inform players that save is complete
+        SendMessageToAllPlayers(ServerSaveGameCompleteMessage(save_filename, bytes_written));
 
     } catch (const std::exception& error) {
         ErrorLogger(FSM) << "While saving, catch std::exception: " << error.what();
         SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
     }
 
-    // inform players that save is complete
-    SendMessageToAllPlayers(ServerSaveGameCompleteMessage(save_filename, bytes_written));
 
     return discard_event();
 }
@@ -3437,9 +3451,9 @@ void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& err
         return;
     }
 
-    if (Server().CurrentTurn() <= 0) {
+    if (Server().CurrentTurn() <= 0)
         return;
-    }
+
 
     DebugLogger() << "Save timed out.";
     PlayerConnectionPtr dummy_connection = nullptr;
