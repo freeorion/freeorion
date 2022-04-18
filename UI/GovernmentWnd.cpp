@@ -171,15 +171,42 @@ namespace {
         main_text += UserString(policy->ShortDescription()) + "\n\n";
 
         if (empire) {
-            bool available = empire->PolicyAvailable(policy_name);
             bool adopted = empire->PolicyAdopted(policy_name);
-            //bool affordable = empire->PolicyAffordable(policy_name, context);
-            auto cost = policy->AdoptionCost(empire_id, context);
+            bool available = empire->PolicyAvailable(policy_name);
+            bool restricted = !empire->PolicyPrereqsAndExclusionsOK(policy_name, context.current_turn);
 
-            const auto& adoption_cost_template{adopted ?
-                UserString("POLICY_ADOPTED") : available ?
-                UserString("POLICY_ADOPTABLE_COST") : UserString("POLICY_LOCKED")};
+            const auto& adoption_cost_template{
+                adopted ? UserString("POLICY_ADOPTED") :
+                available && !restricted ? UserString("POLICY_ADOPTABLE_COST") :
+                restricted ? UserString("POLICY_RESTRICTED") :
+                    UserString("POLICY_LOCKED")};
+            auto cost = policy->AdoptionCost(empire_id, context);
             main_text += boost::io::str(FlexibleFormat(adoption_cost_template) % cost) + "\n\n";
+
+            bool exclusion_prereq_line_added = false;
+
+            const auto empire_policies = empire->AdoptedPolicies();
+            for (auto& ex : policy->Exclusions()) {
+                auto ad_it = std::find(empire_policies.begin(), empire_policies.end(), ex);
+                if (ad_it == empire_policies.end())
+                    continue;
+                main_text += boost::io::str(FlexibleFormat(UserString("POLICY_EXCLUDED"))
+                                            % UserString(ex)) + "\n";
+                exclusion_prereq_line_added = true;
+            }
+
+            const auto empire_initial_policies = empire->InitialAdoptedPolicies();
+            for (auto& prereq : policy->Prerequisites()) {
+                auto init_it = std::find(
+                    empire_initial_policies.begin(), empire_initial_policies.end(), prereq);
+                const auto& template_str = init_it == empire_initial_policies.end() ?
+                    UserString("POLICY_PREREQ_MISSING") : UserString("POLICY_PREREQ_MET");
+                main_text += boost::io::str(FlexibleFormat(template_str)
+                                            % UserString(prereq)) + "\n";
+                exclusion_prereq_line_added = true;
+            }
+            if (exclusion_prereq_line_added)
+                main_text += "\n";
 
             auto current_adoption_duration = empire->CurrentTurnsPolicyHasBeenAdopted(policy_name);
             auto total_adoption_duration = empire->CumulativeTurnsPolicyHasBeenAdopted(policy_name);

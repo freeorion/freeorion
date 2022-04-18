@@ -4445,6 +4445,18 @@ Description
 POLICY_LOCKED
 Policy Unavailable but would require %1% IP to adopt
 
+POLICY_RESTRICTED
+Policy Restricted but would require %1% IP to adopt
+
+POLICY_EXCLUDED
+Policy Adoption Restricted by Exclusion with %1%
+
+POLICY_PREREQ_MISSING
+Policy Adoption Restricted by Prerequisite %1%
+
+POLICY_PREREQ_MET
+Policy Adtoption Allowed by Prerequisite %1%
+
 POLICY_ADOPTABLE_COST
 Policy Adoptable for %1% IP
 
