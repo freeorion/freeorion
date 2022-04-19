@@ -24,6 +24,7 @@ class Building(Enum):
       this will require to use `value` a lot. When all ids are converted we could get rid of `value` usage.
     - Maybe we should create multiple enums, one for ship yard, etc.
      So Buildong.SHIPYARD_ENRG_COMP will be Shipyard.ENRG_COMP
+    - fo_typing.BuildingId represent the same piece of data, need to join them somehow
     """
 
     SHIPYARD_ENRG_COMP = "BLD_SHIPYARD_ENRG_COMP"
