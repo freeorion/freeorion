@@ -41,7 +41,7 @@ Hull
             ]
             stackinggroup = "TREE_GROWTH"
             effects = [
-                CreateShip designname = "SM_TREE"
+                CreateShip designname = "SM_TREE" name = Source.Name
                 GenerateSitRepMessage
                     message = "EFFECT_TREE"
                     label = "EFFECT_TREE_LABEL"

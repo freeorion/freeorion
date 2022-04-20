@@ -24,7 +24,7 @@ Part
             scope = Source
             activation = Number low = 1 condition = And [Capital OwnerHasTech name = "SPY_STEALTH_3"]
             effects = [
-                CreateShip designname = "SM_DIM" empire = Source.Owner
+                CreateShip designname = "SM_DIM" empire = Source.Owner name = Source.Name
                 Destroy
             ]
 
@@ -32,7 +32,7 @@ Part
             scope = Source
             activation = Number low = 1 condition = And [Capital OwnerHasTech name = "SPY_STEALTH_4"]
             effects = [
-                CreateShip designname = "SM_VOID" empire = Source.Owner
+                CreateShip designname = "SM_VOID" empire = Source.Owner name = Source.Name
                 Destroy
             ]
 
