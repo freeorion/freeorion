@@ -81,6 +81,23 @@ def error_handler(func):
     return _error_handler
 
 
+def _save_ai_state():
+    """Serialize (convert to string) global state dictionary and send to AI client to be stored in save file."""
+    import savegame_codec
+
+    info("Preparing for game save by serializing state")
+    try:
+        dump_string = savegame_codec.build_savegame_string()
+        fo.setSaveStateString(dump_string)
+    except Exception as e:
+        error(
+            "Failed to encode the AIstate as save-state string. "
+            "The resulting save file should be playable but the AI "
+            "may have a different aggression. The error raised was: %s" % e,
+            exc_info=True,
+        )
+
+
 def _pre_game_start(empire_id, aistate):
     """
     Configuration that should be done before AI start operating.
@@ -129,6 +146,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
         res = fo.issueRenameOrder(planet_id, new_name)
         debug("    Result: %d; Planet is now named %s" % (res, planet.name))
     _pre_game_start(empire.empireID, aistate)
+    _save_ai_state()
 
 
 @error_handler
@@ -180,22 +198,7 @@ def prepareForSave():  # pylint: disable=invalid-name
     if empire.eliminated:
         info("This empire has been eliminated. Save info request")
         return
-
-    info("Preparing for game save by serializing state")
-
-    # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
-    import savegame_codec
-
-    try:
-        dump_string = savegame_codec.build_savegame_string()
-        fo.setSaveStateString(dump_string)
-    except Exception as e:
-        error(
-            "Failed to encode the AIstate as save-state string. "
-            "The resulting save file should be playable but the AI "
-            "may have a different aggression. The error raised was: %s" % e,
-            exc_info=True,
-        )
+    _save_ai_state()
 
 
 @error_handler
