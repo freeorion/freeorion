@@ -46,8 +46,7 @@ Species
 
         EffectsGroup
             scope = And [
-                Planet
-                InSystem id = Source.SystemID
+                Source
                 Population low = Source.TargetPopulation - 0.01    // when maximum population is reached
             ]
             effects = [
