@@ -21,6 +21,18 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
+#if __has_include(<charconv>)
+#include <charconv>
+#else
+#include <stdio.h>
+#endif
+
+namespace {
+    template <typename T, size_t N>
+    constexpr size_t ArrSize(std::array<T, N>)
+    { return N; }
+}
+
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Universe)
 BOOST_CLASS_VERSION(Universe, 1)
@@ -81,7 +93,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
     ar.template register_type<System>();
 
-    std::string serializing_label = (Archive::is_loading::value ? "deserializing" : "serializing");
+    static const std::string serializing_label = (Archive::is_loading::value ? "deserializing" : "serializing");
 
     SectionedScopedTimer timer("Universe " + serializing_label);
 
@@ -214,8 +226,176 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     DebugLogger() << "Universe " << serializing_label << " done";
 }
 
+
+
+namespace {
+    size_t ToChars(size_t num, char* buffer, char* buffer_end) {
+#if defined(__cpp_lib_to_chars)
+        auto result_ptr = std::to_chars(buffer, buffer_end, num).ptr;
+        return std::distance(buffer, result_ptr);
+#else
+        size_t buffer_sz = std::distance(buffer, buffer_end);
+        auto temp = std::to_string(num);
+        auto out_sz = std::min(buffer_sz, temp.size());
+        std::copy_n(temp.begin(), out_sz, buffer);
+        return out_sz;
+#endif
+    }
+
+    constexpr size_t num_meters_possible{static_cast<size_t>(MeterType::NUM_METER_TYPES)};
+    constexpr size_t single_meter_text_size{ArrSize(Meter::ToCharsArrayT())};
+
+    constexpr std::array<std::string_view, num_meters_possible + 2> tags{
+        "inv",
+        "POP", "IND", "RES", "INF", "CON", "STB",
+        "CAP", "SEC",
+        "FUL", "SHD", "STR", "DEF", "SUP", "STO", "TRP",
+        "pop", "ind", "res", "inf", "con", "stb",
+        "cap", "sec",
+        "ful", "shd", "str", "def", "sup", "sto", "trp",
+        "reb", "siz", "slt", "det", "spd",
+        "num"};
+    static_assert([]() -> bool {
+        for (const auto& tag : tags)
+            if (tag.size() != 3)
+                return false;
+        return true;
+    }());
+
+    constexpr std::string_view MeterTypeTag(MeterType mt) {
+        using mt_under = std::underlying_type_t<MeterType>;
+        static_assert(std::is_same_v<mt_under, signed char>);
+        static_assert(static_cast<mt_under>(MeterType::INVALID_METER_TYPE) == -1);
+        auto mt_offset = static_cast<size_t>(MeterType(static_cast<mt_under>(mt) + 1));
+        return tags.at(mt_offset);
+    }
+    static_assert(MeterTypeTag(MeterType::INVALID_METER_TYPE) == "inv");
+    static_assert(MeterTypeTag(MeterType::METER_DEFENSE) == "def");
+    static_assert(MeterTypeTag(MeterType::NUM_METER_TYPES) == "num");
+
+    constexpr MeterType MeterTypeFromTag(std::string_view sv) {
+        using mt_under = std::underlying_type_t<MeterType>;
+
+        for (size_t idx = 0; idx < tags.size(); ++idx) {
+            if (tags[idx] == sv)
+                return MeterType(static_cast<mt_under>(idx) - 1);
+        }
+        return MeterType::INVALID_METER_TYPE;
+    }
+    static_assert(MeterTypeFromTag("inv") == MeterType::INVALID_METER_TYPE);
+    static_assert(MeterTypeFromTag("RES") == MeterType::METER_TARGET_RESEARCH);
+    static_assert(MeterTypeFromTag("num") == MeterType::NUM_METER_TYPES);
+
+
+    /** Write text representation of meter type, current, and initial value.
+      * Return number of consumed chars. */
+    size_t ToChars(const UniverseObject::MeterMap::value_type& val, char* const buffer, char* const buffer_end) {
+        const auto& [type, m] = val;
+
+        if (std::distance(buffer, buffer_end) < 10)
+            return 0;
+        std::copy_n(MeterTypeTag(type).data(), 3, buffer); // tags should all be 3 chars
+        auto result_ptr = buffer + 3;
+
+        *result_ptr++ = ' ';
+        result_ptr += m.ToChars(result_ptr, buffer_end);
+        return std::distance(buffer, result_ptr);
+    }
+
+
+    template <typename Archive>
+    void Serialize(Archive& ar, UniverseObject::MeterMap& meters, unsigned int const version)
+    { ar & boost::serialization::make_nvp("m_meters", meters); }
+
+    template <>
+    void Serialize(boost::archive::xml_oarchive& ar, UniverseObject::MeterMap& meters,
+                   unsigned int const)
+    {
+        using namespace boost::serialization;
+
+        static constexpr size_t buffer_size = num_meters_possible * single_meter_text_size;
+        static_assert(buffer_size > 100);
+
+        std::array<std::string::value_type, buffer_size> buffer{};
+        char* buffer_next = buffer.data();
+        char* buffer_end = buffer.data() + buffer.size();
+
+        // store number of meters
+        buffer_next += ToChars(meters.size(), buffer_next, buffer_end);
+
+        // store each meter as a triple of (metertype, current, initial)
+        for (const auto& mt_meter : meters) {
+            *buffer_next++ = ' ';
+            buffer_next += ToChars(mt_meter, buffer_next, buffer_end);
+        }
+
+        std::string s{buffer.data()};
+        ar << make_nvp("meters", s);
+    }
+
+    template <>
+    void Serialize(boost::archive::xml_iarchive& ar, UniverseObject::MeterMap& meters,
+                   unsigned int const version)
+    {
+        using namespace boost::serialization;
+
+        static constexpr size_t buffer_size = num_meters_possible * single_meter_text_size;
+
+        if (version < 4) {
+            ar >> make_nvp("m_meters", meters);
+            return;
+        }
+
+        std::string buffer;
+        buffer.reserve(buffer_size);
+        ar >> make_nvp("meters", buffer);
+
+        size_t count = 0;
+        const char* const buffer_end = buffer.c_str() + buffer.size();
+
+#if defined(__cpp_lib_to_chars)
+        auto result = std::from_chars(buffer.c_str(), buffer_end, count);
+        count = std::min(count, num_meters_possible);
+        if (result.ec != std::errc())
+            return;
+        auto next{result.ptr};
+#else
+        int chars_consumed = 0;
+        const char* next = buffer.data();
+        auto matched = sscanf(next, "%u%n", &count, &chars_consumed);
+        if (matched < 1)
+            return;
+
+        count = std::min(count, num_meters_possible);
+        next += chars_consumed;
+#endif
+        while (std::distance(next, buffer_end) > 0 && *next == ' ')
+            ++next;
+
+        for (size_t idx = 0; idx < count; ++idx) {
+            if (std::distance(next, buffer_end) < 7) // 7 is enough for "POP 0 0" or similar
+                return;
+            auto mt = MeterTypeFromTag(std::string_view(next, 3));
+            next += 3;
+            while (std::distance(next, buffer_end) > 0 && *next == ' ')
+                ++next;
+
+            Meter meter;
+            auto consumed = meter.SetFromChars(std::string_view(next, std::distance(next, buffer_end)));
+            if (consumed < 1)
+                return;
+
+            meters.emplace(mt, std::move(meter));
+
+            next += consumed;
+            while (std::distance(next, buffer_end) > 0 && *next == ' ')
+                ++next;
+        }
+    }
+}
+
 BOOST_CLASS_EXPORT(UniverseObject)
-BOOST_CLASS_VERSION(UniverseObject, 3)
+BOOST_CLASS_VERSION(UniverseObject, 4)
 
 template <typename Archive>
 void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
@@ -242,12 +422,7 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
         o.m_meters.reserve(meter_map.size());
         o.m_meters.insert(meter_map.begin(), meter_map.end());
     } else {
-        ar  & make_nvp("m_meters", o.m_meters);
-
-        // loading the internal vector, like so, was no faster than loading the map
-        //auto meters{m_meters.extract_sequence()};
-        //ar  & make_nvp("meters", o.meters);
-        //m_meters.adopt_sequence(std::move(meters));
+        Serialize(ar, o.m_meters, version);
     }
     ar  & make_nvp("m_created_on_turn", o.m_created_on_turn);
 }
