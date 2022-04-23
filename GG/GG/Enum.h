@@ -38,24 +38,30 @@ public:
 
     [[nodiscard]] constexpr std::string_view operator[](EnumType value) const
     {
-        auto last_it = m_values.cbegin() + m_size;
-        auto value_it = std::find(m_values.cbegin(), last_it, value);
-        if (value_it == last_it)
-            return "None";
-        auto dist = std::distance(m_values.cbegin(), value_it);
-        auto name_it = m_names.cbegin() + dist;
-        return *name_it;
+        size_t idx = 0;
+        for (; idx < m_size; ++idx)
+        {
+            if (m_values[idx] == value)
+            {
+                auto name_it = m_names.cbegin() + idx;
+                return *name_it;
+            }
+        }
+        return "None";
     }
 
     [[nodiscard]] constexpr EnumType operator[](std::string_view name) const
     {
-        auto last_it = m_names.cbegin() + m_size;
-        auto name_it = std::find(m_names.cbegin(), last_it, name);
-        if (name_it == last_it)
-            return std::numeric_limits<EnumType>::max();
-        auto dist = std::distance(m_names.cbegin(), name_it);
-        auto value_it = m_values.cbegin() + dist;
-        return *value_it;
+        size_t idx = 0;
+        for (; idx < m_size; ++idx)
+        {
+            if (m_names[idx] == name)
+            {
+                auto value_it = m_values.cbegin() + idx;
+                return *value_it;
+            }
+        }
+        return std::numeric_limits<EnumType>::max();
     }
 
     [[nodiscard]] constexpr size_t size() const { return m_size; }
