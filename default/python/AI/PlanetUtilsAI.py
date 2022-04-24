@@ -181,13 +181,13 @@ class Opinion(NamedTuple):
     neutral: Set[PlanetId]
     dislikes: Set[PlanetId]
 
-    def value(self, pid: PlanetId, likeValue: float, dislikeValue: float) -> float:
-        """Returns likeValue if pid is in likes, dislikeValue if pid is in dislikes, else 1.0"""
+    def value(self, pid: PlanetId, like_value: float, neutral_value: float, dislike_value: float) -> float:
+        """Returns like_value if pid is in likes, dislike_value if pid is in dislikes, else neutral_value"""
         if pid in self.likes:
-            return likeValue
+            return like_value
         elif pid in self.dislikes:
-            return dislikeValue
-        return 1.0
+            return dislike_value
+        return neutral_value
 
 
 def get_planet_opinion(feature: str) -> Opinion:

@@ -1882,7 +1882,7 @@ def build_gas_giant_generator() -> float:
         best_gg = -2
         debug(f"Gas Giant Generator rating for {universe.getSystem(sys).name} ...")
         for pid, planet in planets:
-            likes = opinion.value(pid, 1, -1)
+            likes = opinion.value(pid, 1, 0, -1)
             debug(f"  {planet.name} likes {likes}")
             # TBD -4 if build here...
             stability = planet.currentMeterValue(fo.meterType.targetHappiness) + likes
@@ -1946,7 +1946,7 @@ def build_translator():
         if planet.focus == FocusType.FOCUS_INFLUENCE and pid not in locations.planets:
             # TBD: compare with other foci, or get the information from ResourceAI
             # long term: ResourceAI planet information should be moved to _planet_state or similar
-            rating = planet.currentMeterValue(fo.meterType.targetInfluence) * opinion.value(pid, 1.5, 0.5)
+            rating = planet.currentMeterValue(fo.meterType.targetInfluence) * opinion.value(pid, 1.5, 1.0, 0.5)
             candidates.append((rating, pid))
     candidates.sort(reverse=True)
     debug(f"build_translator importance = {importance}, candidates = {candidates}")
