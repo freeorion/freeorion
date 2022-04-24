@@ -297,3 +297,32 @@ std::string MultiplayerLobbyData::Dump() const {
     return stream.str();
 }
 
+////////////////////////////////////////////////////
+// PlayerSaveGameData
+/////////////////////////////////////////////////////
+PlayerSaveGameData::PlayerSaveGameData(std::string name, int empire_id, 
+                                       std::shared_ptr<OrderSet> orders_,
+                                       std::shared_ptr<SaveGameUIData> ui_data_,
+                                       std::string save_state_string_, 
+                                       Networking::ClientType client_type):
+    PlayerSaveHeaderData{ std::move(name), empire_id, client_type },
+    orders(std::move(orders_)),
+    ui_data(std::move(ui_data_)),
+    save_state_string(std::move(save_state_string_)) 
+{
+    if (client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER
+        && save_state_string.empty())
+    {
+        save_state_string = "NOT_SET_BY_CLIENT_TYPE";
+    }
+
+    // The generation of the savegame data may be before any orders have been sent by clients. 
+    // This is expected behaviour and to be handled differently by the AI than a possibly 
+    // default-generated empty save_state_string.
+    if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER
+        && !orders
+        && save_state_string.empty())
+    {
+        save_state_string = "NO_STATE_YET";
+    }
+}

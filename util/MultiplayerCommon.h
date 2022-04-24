@@ -193,12 +193,7 @@ struct FO_COMMON_API PlayerSaveGameData : public PlayerSaveHeaderData {
                        std::shared_ptr<OrderSet> orders_,
                        std::shared_ptr<SaveGameUIData> ui_data_,
                        std::string save_state_string_,
-                       Networking::ClientType client_type) :
-        PlayerSaveHeaderData{std::move(name), empire_id, client_type},
-        orders(std::move(orders_)),
-        ui_data(std::move(ui_data_)),
-        save_state_string(std::move(save_state_string_))
-    {}
+                       Networking::ClientType client_type);
 
     std::shared_ptr<OrderSet>       orders;
     std::shared_ptr<SaveGameUIData> ui_data;
