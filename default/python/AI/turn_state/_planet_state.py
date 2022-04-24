@@ -38,7 +38,7 @@ def _get_planets_info() -> Mapping[PlanetId, PlanetInfo]:
 
 def _get_system_planets_map(planet_filter: Callable[[PlanetInfo], bool]) -> Mapping[SystemId, Tuple[PlanetId]]:
     result = {}
-    for planet_info in (planet_info for planet_info in _get_planets_info().values() if planet_filter):
+    for planet_info in (planet_info for planet_info in _get_planets_info().values() if planet_filter(planet_info)):
         result.setdefault(planet_info.system_id, []).append(planet_info.pid)
     return ReadOnlyDict({k: tuple(v) for k, v in result.items()})
 
@@ -63,14 +63,14 @@ def get_owned_planets_in_system(sys_id: SystemId) -> Tuple[PlanetId]:
     """
     Return list of planet ids with colony or outpost in the system.
     """
-    return get_owned_planets().get(sys_id)
+    return get_owned_planets().get(sys_id, ())
 
 
 def get_colonized_planets_in_system(sys_id: SystemId) -> Tuple[PlanetId]:
     """
     Return list of planets with colony in the system.
     """
-    return get_colonized_planets().get(sys_id)
+    return get_colonized_planets().get(sys_id, ())
 
 
 @cache_for_current_turn
