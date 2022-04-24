@@ -22,12 +22,10 @@ class BuildingType(Enum):
 
     SHIPYARD_ENRG_COMP = "BLD_SHIPYARD_ENRG_COMP"
     SHIPYARD_AST = "BLD_SHIPYARD_AST"
-    ...
 
     def enqueue(self, pid: PlanetId) -> bool:
         """
-        Add building to production queue and return result.
-
+        Add building to production queue and return True if succeeded.
         """
         return bool(fo.issueEnqueueBuildingProductionOrder(self.name, pid))
 
