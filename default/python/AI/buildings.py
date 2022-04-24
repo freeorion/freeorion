@@ -2,47 +2,67 @@ import freeOrionAIInterface as fo
 from enum import Enum
 from typing import List
 
-from common.fo_typing import PlanetId
-from freeorion_tools.caching import cache_for_current_turn, cache_for_session
+from common.fo_typing import EmpireId, PlanetId
+
+# Default value when AI empire should be used.
+THIS_EMPIRE = None
 
 
-class Building(Enum):
+class BuildingType(Enum):
     """
     Enum to represent fo building template.
 
-    Pros:
-    - Shorten code a bit
-    - Allow to have shorter names for ids,
-      we could get read of BLD prefix, since it always use with Building. prefix.
-    - Possible to add automated check that buildings exists and all building are matched.
+    This class encapsulate FOCS names and fo API usage exposing convenient API for AI.
+    It should not contain any decision logic, only provide information that is easy to handle.
 
-    Cons:
-    - fo code for getting id returns strings, probably will need to make an adapters.
+    It should not accept or expose any fo.* object.
 
-    Thoughts:
-    - We could replace it in iterative way one constant at the time,
-      this will require to use `value` a lot. When all ids are converted we could get rid of `value` usage.
-    - Maybe we should create multiple enums, one for ship yard, etc.
-     So Buildong.SHIPYARD_ENRG_COMP will be Shipyard.ENRG_COMP
-    - fo_typing.BuildingId represent the same piece of data, need to join them somehow
+    Note: It does not required to have exactly the same name and value.
     """
 
     SHIPYARD_ENRG_COMP = "BLD_SHIPYARD_ENRG_COMP"
     SHIPYARD_AST = "BLD_SHIPYARD_AST"
     ...
 
-    def enqueue(self, pid: PlanetId):
-        return fo.issueEnqueueBuildingProductionOrder(self.name, pid)
+    def enqueue(self, pid: PlanetId) -> bool:
+        """
+        Add building to production queue and return result.
 
-    @cache_for_session
-    def get_type(self) -> "fo.buildingType":
-        return fo.getBuildingType(self.value)
+        """
+        return bool(fo.issueEnqueueBuildingProductionOrder(self.name, pid))
 
-    @cache_for_current_turn
-    def available(self, empire: "fo.empire" = None) -> bool:
-        if empire is None:
-            empire = fo.getEmpire()
-        return empire.buildingTypeAvailable(self.value)
+    def available(self, eid: EmpireId = THIS_EMPIRE) -> bool:
+        """
+        Return true if this building is available for empire.
+        """
+        if eid is THIS_EMPIRE:
+            empire_object = fo.getEmpire()
+        else:
+            empire_object = fo.getEmpire(eid)
+        return empire_object.buildingTypeAvailable(self.value)
 
     def queued_in(self) -> List[PlanetId]:
+        """
+        Return list of planet ids where this building is queued.
+        """
         return [element.locationID for element in fo.getEmpire().productionQueue if (element.name == self.value)]
+
+    def can_be_enqueued(self, planet: PlanetId, empire: EmpireId = THIS_EMPIRE) -> bool:
+        if empire is THIS_EMPIRE:
+            empire = fo.empireID()
+        return fo.getBuildingType(self.value).canBeEnqueued(empire, planet)
+
+    def can_be_produced(self, planet: PlanetId, empire: EmpireId = THIS_EMPIRE) -> bool:
+        if empire is THIS_EMPIRE:
+            empire = fo.empireID()
+        return fo.getBuildingType(self.value).canBeProduced(empire, planet)
+
+    def production_cost(self, planet: PlanetId, empire: EmpireId = THIS_EMPIRE) -> float:
+        if empire is THIS_EMPIRE:
+            empire = fo.empireID()
+        return fo.getBuildingType(self.value).productionCost(empire, planet)
+
+    def production_time(self, planet: PlanetId, empire: EmpireId = THIS_EMPIRE) -> int:
+        if empire is THIS_EMPIRE:
+            empire = fo.empireID()
+        return fo.getBuildingType(self.value).productionTime(empire, planet)

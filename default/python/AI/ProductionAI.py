@@ -13,7 +13,7 @@ import PlanetUtilsAI
 import PriorityAI
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
-from buildings import Building
+from buildings import BuildingType
 from character.character_module import Aggression
 from colonization import rate_planetary_piloting
 from colonization.rate_pilots import GREAT_PILOT_RATING
@@ -70,7 +70,7 @@ def get_priority_locations() -> FrozenSet[PlanetId]:
         "BLD_SHIPYARD_ENRG_SOLAR",
         "BLD_SHIPYARD_CON_GEOINT",
         "BLD_SHIPYARD_AST_REF",
-        Building.SHIPYARD_ENRG_COMP.value,
+        BuildingType.SHIPYARD_ENRG_COMP.value,
     ]
     # TODO: also cover good troopship locations
     return frozenset(loc for building in priority_facilities for loc in get_best_pilot_facilities(building))
@@ -421,12 +421,12 @@ def generate_production_orders():
     )
     bh_pilots = [pid for _, pid in bh_popctrs if _ == best_pilot_rating()]
     enrgy_shipyard_locs = {}
-    for building in [Building.SHIPYARD_ENRG_COMP]:
+    for building in [BuildingType.SHIPYARD_ENRG_COMP]:
         if building.available():
             queued_building_locs = [
                 element.locationID for element in production_queue if (element.name == building.value)
             ]
-            building_type = building.get_type()
+            building_type = fo.getBuildingType(building.value)
             for pid in bh_pilots + blue_pilots:
                 if len(queued_building_locs) > 1:  # build a max of 2 at once
                     break
@@ -504,11 +504,11 @@ def generate_production_orders():
             build_ship_facilities(bld_name)
 
     shipyard_type = fo.getBuildingType("BLD_SHIPYARD_BASE")
-    building_name = Building.SHIPYARD_AST.value
-    if Building.SHIPYARD_AST.available() and aistate.character.may_build_building(Building.SHIPYARD_AST.value):
-        queued_building_locs = Building.SHIPYARD_AST.queued_in()
+    building_name = BuildingType.SHIPYARD_AST.value
+    if BuildingType.SHIPYARD_AST.available() and aistate.character.may_build_building(BuildingType.SHIPYARD_AST.value):
+        queued_building_locs = BuildingType.SHIPYARD_AST.queued_in()
         if not queued_building_locs:
-            building_type = Building.SHIPYARD_AST.get_type()
+            building_type = fo.getBuildingType(BuildingType.SHIPYARD_AST.value)
             asteroid_systems = {}
             asteroid_yards = {}
             shipyard_systems = {}
