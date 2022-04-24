@@ -50,6 +50,19 @@ def get_colony_builders() -> Mapping[SpeciesName, List[PlanetId]]:
 
 
 @cache_for_current_turn
+def get_extra_colony_builders() -> List[str]:
+    """
+    Returns species the empire can build without having a colony, i.e. Exobots plus
+    extinct species that has been enabled.
+    """
+    ret = ["SP_EXOBOT"]
+    for spec_name in AIDependencies.EXTINCT_SPECIES:
+        if tech_is_complete("TECH_COL_" + spec_name):
+            ret.append()["SP_" + spec_name]
+    return ret
+
+
+@cache_for_current_turn
 def _get_colony_builders() -> Dict[SpeciesName, List[PlanetId]]:
     """
     Return mutable state.
@@ -57,11 +70,6 @@ def _get_colony_builders() -> Dict[SpeciesName, List[PlanetId]]:
     colony_build_locations = {}
 
     # get it into colonizer list even if no colony yet
-    if tech_is_complete(AIDependencies.EXOBOT_TECH_NAME):
-        colony_build_locations["SP_EXOBOT"] = []
-
-    # get it into colonizer list even if no colony yet
-    for spec_name in AIDependencies.EXTINCT_SPECIES:
-        if tech_is_complete("TECH_COL_" + spec_name):
-            colony_build_locations["SP_" + spec_name] = []
+    for species in get_extra_colony_builders():
+        colony_build_locations[species] = []
     return colony_build_locations
