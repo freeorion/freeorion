@@ -45,6 +45,7 @@ from character.character_strings_module import (
 from common.handlers import init_handlers
 from common.listeners import listener
 from empire.survey_universe import survey_universe
+from freeorion_tools import chat_human
 from freeorion_tools.timers import AITimer
 from generate_orders import (
     empire_is_ok,
@@ -81,10 +82,11 @@ def error_handler(func):
     return _error_handler
 
 
-def _pre_game_start(empire_id, aistate):
+def _pre_game_start(empire_id):
     """
     Configuration that should be done before AI start operating.
     """
+    aistate = get_aistate()
     aggression_trait = aistate.character.get_trait(Aggression)
     diplomatic_corp_configs = {
         fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
@@ -96,8 +98,25 @@ def _pre_game_start(empire_id, aistate):
     configure_debug_chat(empire_id)
 
 
+def _choose_aggression():
+    galaxy_setup_data = fo.getGalaxySetupData()
+    aggression = int(galaxy_setup_data.maxAIAggression)
+
+    if aggression > 0:
+        rng = random.Random()
+        galaxy_seed = hash(galaxy_setup_data.seed)
+        empire_seed = 3 * hash(fo.getEmpire().name)
+        rng.seed(galaxy_seed * empire_seed)
+
+        random_number = rng.randint(0, 99)
+        if random_number > 74:
+            aggression -= 1
+
+    return fo.aggression(aggression)
+
+
 @error_handler
-def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=invalid-name
+def startNewGame():  # pylint: disable=invalid-name
     """Called by client when a new game is started (but not when a game is loaded).
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
     empire = fo.getEmpire()
@@ -110,8 +129,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
         return
     # initialize AIstate
     debug("Initializing AI state...")
-    create_new_aistate(aggression_input)
-    aistate = get_aistate()
+    aistate = create_new_aistate(_choose_aggression())
     aggression_trait = aistate.character.get_trait(Aggression)
     debug(
         "New game started, AI Aggression level %d (%s)"
@@ -122,18 +140,26 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     debug("Trying to rename our homeworld...")
     planet_id = PlanetUtilsAI.get_capital()
     universe = fo.getUniverse()
-    if planet_id is not None and planet_id != INVALID_ID:
+    if planet_id != INVALID_ID:
         planet = universe.getPlanet(planet_id)
         new_name = " ".join([random.choice(possible_capitals(aistate.character)).strip(), planet.name])
         debug("    Renaming to %s..." % new_name)
         res = fo.issueRenameOrder(planet_id, new_name)
         debug("    Result: %d; Planet is now named %s" % (res, planet.name))
-    _pre_game_start(empire.empireID, aistate)
+    _pre_game_start(empire.empireID)
 
 
 @error_handler
 def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     """Called by client to when resume a loaded game."""
+    debug("Resuming loaded game")
+
+    if saved_state_string == "NO_STATE_YET" and fo.currentTurn() == 1:
+        info("AI given uninitialized state-string to resume from on turn 1.")
+        info("Assuming post-universe-generation autosave before any orders were sent"
+             "and behave as if a new game was started.")
+        return startNewGame()
+
     if fo.getEmpire() is None:
         fatal("This client has no empire. Doing nothing to resume loaded game.")
         return
@@ -141,30 +167,29 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     if fo.getEmpire().eliminated:
         info("This empire has been eliminated. Ignoring resume loaded game.")
         return
-    debug("Resuming loaded game")
-    if not saved_state_string:
-        error(
-            "AI given empty state-string to resume from; this is expected if the AI is assigned to an empire "
-            "previously run by a human, but is otherwise an error. AI will be set to Aggressive."
-        )
-        aistate = create_new_aistate(fo.aggression.aggressive)
-        aistate.session_start_cleanup()
+
+    aistate = None
+    if saved_state_string == "NOT_SET_BY_CLIENT_TYPE":
+        info("AI assigned to empire previously run by human.")
+        chat_human("We have been assigned an empire previously run by a human player. We can manage this.")
+    elif saved_state_string == "":
+        error("AI given empty state-string to resume from. "
+              "AI can continue but behaviour may be different from the previous session.")
     else:
         try:
             # loading saved state
             aistate = load_aistate(saved_state_string)
         except Exception as e:
-            # assigning new state
-            aistate = create_new_aistate(fo.aggression.aggressive)
-            aistate.session_start_cleanup()
             error(
-                "Failed to load the AIstate from the savegame. The AI will"
-                " play with a fresh AIstate instance with aggression level set"
-                " to 'aggressive'. The behaviour of the AI may be different"
-                " than in the original session. The error raised was: %s" % e,
-                exc_info=True,
+                "Failed to load the AIstate from the savegame: %s"
+                " AI can continue but behaviour may be different from the previous session.", e,
+                exc_info=True
             )
-    _pre_game_start(fo.getEmpire().empireID, aistate)
+    if aistate is None:
+        info("Creating new ai state due to failed load.")
+        aistate = create_new_aistate(_choose_aggression())
+    aistate.session_start_cleanup()
+    _pre_game_start(fo.getEmpire().empireID)
 
 
 @error_handler
