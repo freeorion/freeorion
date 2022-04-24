@@ -156,8 +156,10 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
 
     if saved_state_string == "NO_STATE_YET" and fo.currentTurn() == 1:
         info("AI given uninitialized state-string to resume from on turn 1.")
-        info("Assuming post-universe-generation autosave before any orders were sent"
-             "and behave as if a new game was started.")
+        info(
+            "Assuming post-universe-generation autosave before any orders were sent "
+            "and behaving as if a new game was started."
+        )
         return startNewGame()
 
     if fo.getEmpire() is None:
@@ -173,8 +175,10 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         info("AI assigned to empire previously run by human.")
         chat_human("We have been assigned an empire previously run by a human player. We can manage this.")
     elif saved_state_string == "":
-        error("AI given empty state-string to resume from. "
-              "AI can continue but behaviour may be different from the previous session.")
+        error(
+            "AI given empty state-string to resume from. "
+            "AI can continue but behaviour may be different from the previous session."
+        )
     else:
         try:
             # loading saved state
@@ -182,8 +186,9 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         except Exception as e:
             error(
                 "Failed to load the AIstate from the savegame: %s"
-                " AI can continue but behaviour may be different from the previous session.", e,
-                exc_info=True
+                " AI can continue but behaviour may be different from the previous session.",
+                e,
+                exc_info=True,
             )
     if aistate is None:
         info("Creating new ai state due to failed load.")
