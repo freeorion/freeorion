@@ -8,6 +8,7 @@ import ColonisationAI
 import ShipDesignAI
 import TechsListsAI
 from aistate_interface import get_aistate
+from buildings import BuildingType
 from common.print_utils import print_in_columns
 from empire.colony_builders import get_colony_builders
 from EnumsAI import PriorityType
@@ -553,7 +554,7 @@ def generate_classic_research_orders():
         # planet is needed to determine the cost. Without a capital we have bigger problems anyway...
         pid = get_capital()
         if not tech_is_complete("LRN_TRANSLING_THT") and pid != Dep.INVALID_ID:
-            translator_cost = fo.getBuildingType("BLD_TRANSLATOR").productionCost(empire.empireID, pid)
+            translator_cost = BuildingType.TRANSLATOR.production_cost(pid)
             influence_priority = aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
             if influence_priority / translator_cost > 0.2:
                 debug(f"influence_priority = {influence_priority}, translator_cost = {translator_cost}")
