@@ -8,12 +8,10 @@ import ColonisationAI
 import ShipDesignAI
 import TechsListsAI
 from aistate_interface import get_aistate
-from buildings import BuildingType
 from common.print_utils import print_in_columns
 from empire.colony_builders import get_colony_builders
-from EnumsAI import PriorityType
 from freeorion_tools import tech_is_complete
-from PlanetUtilsAI import get_capital
+from ProductionAI import translators_wanted
 from turn_state import (
     get_empire_planets_by_species,
     have_asteroids,
@@ -552,26 +550,21 @@ def generate_classic_research_orders():
     # check to accelerate translinguistics
     if True:  # just to help with cold-folding / organization
         # planet is needed to determine the cost. Without a capital we have bigger problems anyway...
-        pid = get_capital()
-        if not tech_is_complete("LRN_TRANSLING_THT") and pid != Dep.INVALID_ID:
-            translator_cost = BuildingType.TRANSLATOR.production_cost(pid)
-            influence_priority = aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
-            if influence_priority / translator_cost > 0.2:
-                debug(f"influence_priority = {influence_priority}, translator_cost = {translator_cost}")
-                insert_idx = num_techs_accelerated
-                for dt_ech in ["LRN_TRANSLING_THT", "LRN_PSIONICS", "LRN_DISTRIB_THOUGHT"]:
-                    if (
-                        dt_ech not in research_queue_list[: insert_idx + 2]
-                        and not tech_is_complete(dt_ech)
-                        and aistate.character.may_research_tech_classic(dt_ech)
-                    ):
-                        res = fo.issueEnqueueTechOrder(dt_ech, insert_idx)
-                        num_techs_accelerated += 1
-                        insert_idx += 1
-                        fmt_str = "Empire wants to build translators, so attempted to fast-track %s (got result %d)"
-                        fmt_str += " with current target_RP %.1f and current pop %.1f, on turn %d"
-                        debug(fmt_str, dt_ech, res, resource_production, empire.population(), fo.currentTurn())
-                research_queue_list = get_research_queue_techs()
+        if not tech_is_complete("LRN_TRANSLING_THT") and translators_wanted():
+            insert_idx = num_techs_accelerated
+            for dt_ech in ["LRN_TRANSLING_THT", "LRN_PHYS_BRAIN", "LRN_ALGO_ELEGANCE"]:
+                if (
+                    dt_ech not in research_queue_list[: insert_idx + 2]
+                    and not tech_is_complete(dt_ech)
+                    and aistate.character.may_research_tech_classic(dt_ech)
+                ):
+                    res = fo.issueEnqueueTechOrder(dt_ech, insert_idx)
+                    num_techs_accelerated += 1
+                    insert_idx += 1
+                    fmt_str = "Empire wants to build translators, so attempted to fast-track %s (got result %d)"
+                    fmt_str += " with current target_RP %.1f and current pop %.1f, on turn %d"
+                    debug(fmt_str, dt_ech, res, resource_production, empire.population(), fo.currentTurn())
+            research_queue_list = get_research_queue_techs()
     #
     # check to accelerate distrib thought
     if True:  # just to help with cold-folding / organization

@@ -76,6 +76,34 @@ def get_priority_locations() -> FrozenSet[PlanetId]:
     return frozenset(loc for building in priority_facilities for loc in get_best_pilot_facilities(building))
 
 
+def translators_wanted() -> int:
+    """
+    How many near universal translators we'd like to build.
+    Function is also used by ResearchAI to determine when to research the prerequisites.
+    """
+    pid = PlanetUtilsAI.get_capital()
+    # planet is needed to determine the cost. Without a capital we have bigger problems anyway...
+    # At the beginning of the game influence_priority fluctuates strongly and that early in the game there are
+    # surely more important things to build.
+    if pid == INVALID_ID or fo.currentTurn() < 30:
+        return 0.0
+    building_type = BuildingType.TRANSLATOR
+    translator_cost = building_type.production_cost(pid)
+    influence_priority = get_aistate().get_priority(PriorityType.RESOURCE_INFLUENCE)
+    num_species = len(get_empire_planets_by_species())
+    num_enqueued = len(building_type.queued_in())
+    num_built = len(building_type.built_at())
+    # first one gives a policy slot
+    first_bonus = 35 if num_enqueued + num_built == 0 else 0
+    importance = 5 * (influence_priority + first_bonus) / translator_cost * num_species**0.5 - num_enqueued
+    debug(
+        f"translators_wanted: influence_priority: {influence_priority}, translator_cost: {translator_cost}, "
+        f"built: {num_built}, enqueued: {num_enqueued}, num_species: {num_species}, turn: {fo.currentTurn()}, "
+        f"importance: {importance}"
+    )
+    return int(importance)
+
+
 def _get_capital_info():
     capital_id = PlanetUtilsAI.get_capital()
     if capital_id is None or capital_id == INVALID_ID:
@@ -1889,28 +1917,16 @@ def _build_gas_giant_generator() -> float:
 def _build_translator():
     """Consider building Near Universal Translators"""
     building_type = BuildingType.TRANSLATOR
-    # planet is needed to determine the cost. Without a capital we have bigger problems anyway...
-    pid = PlanetUtilsAI.get_capital()
-    if not building_type.available() or pid == INVALID_ID:
+    if not building_type.available():
+        return 0.0
+    num_wanted = translators_wanted()
+    if num_wanted == 0:
         return 0.0
 
-    aistate = get_aistate()
     universe = fo.getUniverse()
-    translator_cost = building_type.production_cost(pid)
-    influence_priority = aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
-    num_enqueued = len(building_type.queued_in())
     opinion = building_type.get_opinions()
-    importance = 10 * influence_priority / translator_cost - num_enqueued
-    debug(
-        f"influence_priority = {influence_priority}, translator_cost = {translator_cost}, "
-        f"enqueued = {num_enqueued}, importance = {importance}"
-    )
-    # first one gives a policy slot
     built_or_queued = building_type.built_at(True)
     have_one = bool(built_or_queued)
-    if importance < (2 if have_one else 1):
-        return 0.0
-
     candidates = []
     turn_cost = 0.0
     for pid in get_inhabited_planets():
@@ -1921,14 +1937,14 @@ def _build_translator():
             rating = planet.currentMeterValue(fo.meterType.targetInfluence) * opinion.value(pid, 1.5, 1.0, 0.5)
             candidates.append((rating, pid))
     candidates.sort(reverse=True)
-    debug(f"build_translator importance = {importance}, candidates = {candidates}")
+    debug(f"build_translator num_wanted = {num_wanted}, candidates = {candidates}")
     for _, pid in candidates:
         cost = _try_enqueue(building_type, [pid], at_front=not have_one)
         if cost:
             have_one = True
-            importance -= 1
+            num_wanted -= 1
             turn_cost += cost
-        if importance < 2:
+        if num_wanted == 0:
             break
     return turn_cost
     # may_enqueue_for_stability? Building is rather expensive...

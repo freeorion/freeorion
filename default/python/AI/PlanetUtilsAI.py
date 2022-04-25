@@ -1,8 +1,8 @@
 import freeOrionAIInterface as fo
+from enum import Enum
 from logging import debug, error
 from typing import (
     Dict,
-    Enum,
     Iterable,
     List,
     Mapping,
