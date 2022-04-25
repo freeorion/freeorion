@@ -1726,6 +1726,13 @@ def get_number_of_existing_outpost_and_colony_ships() -> int:
     return num_outpost_fleets + num_colony_fleets
 
 
+def _location_rating(planet: fo.planet) -> float:
+    """Get a rating how good this planet would be for a building"""
+    # Simple value so far, should be enhanced, e.g. a scanner should go to the planet with species that
+    # has the best basic visions
+    return planet.currentMeterValue(fo.meterType.maxTroops)
+
+
 def _try_enqueue(
     building_type: BuildingType, candidates: Iterable[PlanetId], *, at_front: bool = False, ignore_dislike: bool = False
 ) -> float:
@@ -1749,9 +1756,9 @@ def _try_enqueue(
         if not building_type.can_be_produced(pid) or not building_type.can_be_enqueued(pid):
             continue
         if pid in opinion.likes:
-            preferred_locations.append((planet.currentMeterValue(fo.meterType.maxTroops), pid))
+            preferred_locations.append((_location_rating(planet), pid))
         else:
-            locations.append((planet.currentMeterValue(fo.meterType.maxTroops), pid))
+            locations.append((_location_rating(planet), pid))
     for _, pid in sorted(preferred_locations) + sorted(locations):
         planet = universe.getPlanet(pid)
         res = building_type.enqueue(pid)

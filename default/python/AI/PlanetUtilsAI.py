@@ -2,6 +2,7 @@ import freeOrionAIInterface as fo
 from logging import debug, error
 from typing import (
     Dict,
+    Enum,
     Iterable,
     List,
     Mapping,
@@ -14,7 +15,7 @@ from typing import (
 
 from AIDependencies import INVALID_ID
 from aistate_interface import get_aistate
-from common.fo_typing import PlanetId, SystemId
+from common.fo_typing import PlanetId, SpeciesName, SystemId
 from empire.colony_builders import get_colony_builders, get_extra_colony_builders
 from empire.ship_builders import get_ship_builders
 from freeorion_tools import ppstring
@@ -190,37 +191,52 @@ class Opinion(NamedTuple):
         return neutral_value
 
 
-def get_planet_opinion(feature: str) -> Opinion:
+def get_planet_opinion(feature: Union[str, Enum]) -> Opinion:
     """
     Returns sets of empire planets that like, are neutral and dislike the given feature
     """
     # default: feature not in any like or dislike set, all neutral
+    if isinstance(feature, Enum):
+        feature = feature.value()
     default = Opinion(set(), set(get_owned_planets_by_empire()), set())
     return _calculate_get_planet_opinions().get(feature, default)
 
 
+def _get_species_from_colony_building(name: str) -> Optional[SpeciesName]:
+    """Extract a species if name is the name of a colony building"""
+    building_prefix = "BLD_COL_"
+    species_prefix = "SP_"
+    if name.startswith(building_prefix):
+        return species_prefix + name[len(building_prefix) :]
+
+
 @cache_for_current_turn
-def _planned_species() -> Mapping[PlanetId, str]:
+def _planned_species() -> Mapping[PlanetId, SpeciesName]:
     universe = fo.getUniverse()
     production_queue = fo.getEmpire().productionQueue
     planned_species = {}
-    building_prefix = "BLD_COL_"
-    species_prefix = "SP_"
     colonisation_plans = get_aistate().colonisablePlanetIDs
     for element in production_queue:
-        if element.name.startswith(building_prefix):
-            planned_species[element.locationID] = species_prefix + element.name[len(building_prefix) :]
+        species_name = _get_species_from_colony_building(element.name)
+        if species_name:
+            planned_species[element.locationID] = species_name
     for pid in get_owned_planets_by_empire():
         planet = universe.getPlanet(pid)
+        if planet.speciesName:
+            # skip already populated planets
+            continue
+        # Finished colony buildings are normal buildings for one turn before turning the outpost into a colony
         for building in map(universe.getBuilding, planet.buildingIDs):
-            if building.name.startswith(building_prefix):
-                planned_species[pid] = species_prefix + building.name[len(building_prefix) :]
-                continue
-        # Without checking the colonisation plans, the AI may start building a colony and buildings
-        # the future species wouldn't like in the same turn.
-        plan = colonisation_plans.get(pid)
-        if plan:
-            planned_species[pid] = plan[1]
+            species_name = _get_species_from_colony_building(building.name)
+            if species_name:
+                planned_species[pid] = species_name
+                break
+        if pid not in planned_species:
+            # Without checking the colonisation plans, the AI may start building a colony and buildings
+            # the future species wouldn't like in the same turn.
+            plan = colonisation_plans.get(pid)
+            if plan:
+                planned_species[pid] = plan[1]
     debug(f"Planned species: {planned_species}")
     return planned_species
 
