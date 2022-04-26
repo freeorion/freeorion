@@ -113,8 +113,8 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const Wnd* const drag_wnd, Flag
 
 WndEvent::WndEvent(EventType type, Key key, std::uint32_t code_point, Flags<ModKey> mod_keys) :
     m_type(type),
-    m_key(key),
     m_key_code_point(code_point),
+    m_key(key),
     m_mod_keys(mod_keys)
 {}
 
