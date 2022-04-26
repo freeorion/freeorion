@@ -43,12 +43,10 @@ struct FO_COMMON_API Condition {
               SearchDomain search_domain = SearchDomain::NON_MATCHES) const;
 
     /** Tests all objects in universe as NON_MATCHES. */
-    virtual void Eval(const ScriptingContext& parent_context,
-                      ObjectSet& matches) const;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches) const;
 
     /** Tests all objects in universe as NON_MATCHES. */
-    void Eval(const ScriptingContext& parent_context,
-              Effect::TargetSet& matches) const;
+    void Eval(const ScriptingContext& parent_context, Effect::TargetSet& matches) const;
 
     /** Tests single candidate object, returning true iff it matches condition. */
     bool Eval(const ScriptingContext& parent_context,
@@ -56,6 +54,11 @@ struct FO_COMMON_API Condition {
 
     virtual void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                    ObjectSet& condition_non_targets) const;
+
+    /** Derived Condition classes can override this to true if all objects returned
+      * by GetDefaultInitialCandidateObject() are guaranteed to also match this
+      * condition. */
+    virtual bool InitialCandidatesAllMatch() const { return false; }
 
     //! Returns true iff this condition's evaluation does not reference
     //! the RootCandidate objects.  This requirement ensures that if this

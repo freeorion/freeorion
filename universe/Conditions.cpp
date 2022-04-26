@@ -304,11 +304,16 @@ void Condition::Eval(const ScriptingContext& parent_context, ObjectSet& matches)
     matches.clear();
     ObjectSet condition_initial_candidates;
 
-    // evaluate condition only on objects that could potentially be matched by the condition
-    GetDefaultInitialCandidateObjects(parent_context, condition_initial_candidates);
+    if (InitialCandidatesAllMatch()) {
+        // don't need to evaluate condition, since all initial candidates are known to match it
+        GetDefaultInitialCandidateObjects(parent_context, matches);
 
-    matches.reserve(condition_initial_candidates.size());
-    Eval(parent_context, matches, condition_initial_candidates);
+    } else {
+        // evaluate condition only on objects that could potentially be matched by the condition
+        GetDefaultInitialCandidateObjects(parent_context, condition_initial_candidates);
+        matches.reserve(condition_initial_candidates.size());
+        Eval(parent_context, matches, condition_initial_candidates);
+    }
 }
 
 void Condition::Eval(const ScriptingContext& parent_context,
@@ -2119,7 +2124,7 @@ namespace {
 
 void Type::Eval(const ScriptingContext& parent_context,
                 ObjectSet& matches, ObjectSet& non_matches,
-                SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_type->ConstantExpr() ||
                             (m_type->LocalCandidateInvariant() &&
@@ -2131,14 +2136,6 @@ void Type::Eval(const ScriptingContext& parent_context,
         // re-evaluate allowed turn range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
-}
-
-void Type::Eval(const ScriptingContext& parent_context, ObjectSet& matches) const {
-    matches.clear();
-    ObjectSet condition_initial_candidates;
-
-    // just get initial content matches. these will all match this condition, so don't need to re-test
-    GetDefaultInitialCandidateObjects(parent_context, matches);
 }
 
 std::string Type::Description(bool negated/* = false*/) const {
@@ -2182,15 +2179,21 @@ bool Type::Match(const ScriptingContext& local_context) const {
     return TypeSimpleMatch(m_type->Eval(local_context))(candidate);
 }
 
+bool Type::InitialCandidatesAllMatch() const {
+    return m_type && (
+        m_type->ConstantExpr() || (
+            m_type->LocalCandidateInvariant() &&
+            RootCandidateInvariant()));
+}
+
 void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                              ObjectSet& condition_non_targets) const
 {
     // Ships, Fleets and default checks for current objects only
     bool found_type = false;
-    if (m_type) {
+    if (InitialCandidatesAllMatch()) {
         found_type = true;
-        //std::vector<std::shared_ptr<const T>> this_base;
-        switch (m_type->Eval()) {
+        switch (m_type->Eval(parent_context)) {
             case UniverseObjectType::OBJ_BUILDING:
                 AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
                 break;
@@ -2220,15 +2223,6 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
                 found_type = false;
                 break;
         }
-    }
-    if (found_type) {
-        //if (int(condition_non_targets.size()) < parent_context.ContextObjects().size()) {
-        //    DebugLogger(conditions) << "Type::GetBaseNonMatches will provide " << condition_non_targets.size()
-        //                  << " objects of type " << GetType()->Eval() << " rather than "
-        //                  << parent_context.ContextObjects().size() << " total objects";
-        //}
-    } else {
-        Condition::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
     }
 }
 
@@ -2307,7 +2301,7 @@ namespace {
 
 void Building::Eval(const ScriptingContext& parent_context,
                     ObjectSet& matches, ObjectSet& non_matches,
-                    SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                    SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -2474,7 +2468,7 @@ namespace {
 
 void Field::Eval(const ScriptingContext& parent_context,
                  ObjectSet& matches, ObjectSet& non_matches,
-                 SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+                 SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
@@ -3613,6 +3607,13 @@ std::string InOrIsSystem::Dump(unsigned short ntabs) const {
     return retval;
 }
 
+bool InOrIsSystem::InitialCandidatesAllMatch() const {
+    return m_system_id && (
+        m_system_id->ConstantExpr() || (
+            m_system_id->LocalCandidateInvariant() &&
+            RootCandidateInvariant()));
+}
+
 void InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                      ObjectSet& condition_non_targets) const
 {
@@ -3776,6 +3777,13 @@ std::string OnPlanet::Dump(unsigned short ntabs) const {
     return retval;
 }
 
+bool OnPlanet::InitialCandidatesAllMatch() const {
+    return m_planet_id && (
+        m_planet_id->ConstantExpr() || (
+            m_planet_id->LocalCandidateInvariant() &&
+            RootCandidateInvariant()));
+}
+
 void OnPlanet::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                  ObjectSet& condition_non_targets) const
 {
@@ -3913,6 +3921,12 @@ std::string ObjectID::Description(bool negated) const {
 
 std::string ObjectID::Dump(unsigned short ntabs) const
 { return DumpIndent(ntabs) + "Object id = " + m_object_id->Dump(ntabs) + "\n"; }
+
+bool ObjectID::InitialCandidatesAllMatch() const {
+    return m_object_id->ConstantExpr() || (
+        m_object_id->LocalCandidateInvariant() &&
+        RootCandidateInvariant());
+}
 
 void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                  ObjectSet& condition_non_targets) const
@@ -10330,7 +10344,7 @@ bool And::operator==(const Condition& rhs) const {
 }
 
 void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-               ObjectSet& non_matches, SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+               ObjectSet& non_matches, SearchDomain search_domain) const
 {
     if (m_operands.empty()) {
         ErrorLogger(conditions) << "And::Eval given no operands!";
@@ -10450,12 +10464,15 @@ std::string And::Dump(unsigned short ntabs) const {
     return retval;
 }
 
-void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, ObjectSet& condition_non_targets) const {
-    if (!m_operands.empty()) {
+bool And::InitialCandidatesAllMatch() const {
+    if (m_operands.size() < 2)
+        return true;
+}
+
+void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                            ObjectSet& condition_non_targets) const {
+    if (!m_operands.empty())
         m_operands[0]->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets); // gets condition_non_targets from first operand condition
-    } else {
-        Condition::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
-    }
 }
 
 void And::SetTopLevelContent(const std::string& content_name) {
@@ -10537,7 +10554,7 @@ bool Or::operator==(const Condition& rhs) const {
 }
 
 void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-              ObjectSet& non_matches, SearchDomain search_domain/* = SearchDomain::NON_MATCHES*/) const
+              ObjectSet& non_matches, SearchDomain search_domain) const
 {
     if (m_operands.empty()) {
         ErrorLogger(conditions) << "Or::Eval given no operands!";
@@ -10616,6 +10633,11 @@ std::string Or::Description(bool negated/* = false*/) const {
             : UserString("DESC_NOT_OR_AFTER_OPERANDS");
     }
     return values_str;
+}
+
+bool Or::InitialCandidatesAllMatch() const {
+    if (m_operands.size() < 2)
+        return true;
 }
 
 void Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
