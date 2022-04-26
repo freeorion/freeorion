@@ -377,8 +377,8 @@ public:
     /** If \p wnd is visible recursively call PreRenderWindow() on all \p wnd's children and then
         call \p wnd->PreRender().  The order guarantees that when wnd->PreRender() is called all
         of \p wnd's children have already been prerendered.*/
-    static void  PreRenderWindow(const std::shared_ptr<Wnd>& wnd);
-    static void  PreRenderWindow(Wnd* wnd);
+    static void  PreRenderWindow(const std::shared_ptr<Wnd>& wnd, bool even_if_not_visible = false);
+    static void  PreRenderWindow(Wnd* wnd, bool even_if_not_visible = false);
     static void  RenderWindow(const std::shared_ptr<Wnd>& wnd);    ///< renders a window (if it is visible) and all its visible descendents recursively
     static void  RenderWindow(Wnd* wnd);    ///< renders a window (if it is visible) and all its visible descendents recursively
     virtual void RenderDragDropWnds();      ///< renders Wnds currently being drag-dropped

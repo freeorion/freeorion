@@ -1581,17 +1581,16 @@ bool GUI::FocusWndDeselect()
 GUI* GUI::GetGUI()
 { return s_gui; }
 
-void GUI::PreRenderWindow(const std::shared_ptr<Wnd>& wnd)
-{ PreRenderWindow(wnd.get()); }
+void GUI::PreRenderWindow(const std::shared_ptr<Wnd>& wnd, bool even_if_not_visible)
+{ PreRenderWindow(wnd.get(), even_if_not_visible); }
 
-void GUI::PreRenderWindow(Wnd* wnd)
+void GUI::PreRenderWindow(Wnd* wnd, bool even_if_not_visible)
 {
-    if (!wnd || !wnd->Visible())
+    if (!wnd || (!even_if_not_visible && !wnd->Visible()))
         return;
 
-    for (auto& child_wnd : wnd->m_children) {
-        PreRenderWindow(child_wnd.get());
-    }
+    for (auto& child_wnd : wnd->m_children)
+        PreRenderWindow(child_wnd.get(), even_if_not_visible);
 
     if (wnd->PreRenderRequired())
         wnd->PreRender();

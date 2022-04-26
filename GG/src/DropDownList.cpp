@@ -716,18 +716,13 @@ void DropDownList::RenderDisplayedRow()
         return;
 
     /** The following code possibly renders the selected row twice.  Once in the selected area and
-        also in the drop down list if it is visible.*/
+      * also in the drop down list if it is visible.*/
     auto current_item = *CurrentItem();
     bool sel_visible = current_item->Visible();
     bool lb_visible = LB()->Visible();
 
-    // The following is necessary because neither LB() nor the selected row may be visible and
-    // prerendered.
-    if (!lb_visible)
-        LB()->Show();
-    GUI::GetGUI()->PreRenderWindow(LB());
-    if (!lb_visible)
-        LB()->Hide();
+    // neither LB() nor the selected row may be visible and prerendered.
+    GUI::GetGUI()->PreRenderWindow(LB(), true);
 
     if (!sel_visible)
         current_item->Show();
