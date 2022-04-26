@@ -2581,7 +2581,7 @@ namespace {
             % parts_list);
     }
 
-    std::string GetDetailedDescriptionStats(const std::shared_ptr<Ship> ship,
+    std::string GetDetailedDescriptionStats(const std::shared_ptr<Ship>& ship,
                                             const ShipDesign* design,
                                             float enemy_DR,
                                             std::set<float> enemy_shots, float cost)
