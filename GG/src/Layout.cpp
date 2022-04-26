@@ -384,11 +384,11 @@ void Layout::DoLayout(Pt ul, Pt lr)
         current_origin += m_column_params[i].current_width;
     }
 
-    if (m_row_params.back().current_origin + m_row_params.back().current_width != Value(Height()) - m_border_margin)
-        throw FailedCalculationCheck("Layout::DoLayout() : calculated row positions do not sum to the height of the layout");
+    //if (m_row_params.back().current_origin + m_row_params.back().current_width != Value(Height()) - m_border_margin)
+    //    throw FailedCalculationCheck("Layout::DoLayout() : calculated row positions do not sum to the height of the layout");
 
-    if (m_column_params.back().current_origin + m_column_params.back().current_width != Value(Width()) - m_border_margin)
-        throw FailedCalculationCheck("Layout::DoLayout() : calculated column positions do not sum to the width of the layout");
+    //if (m_column_params.back().current_origin + m_column_params.back().current_width != Value(Width()) - m_border_margin)
+    //    throw FailedCalculationCheck("Layout::DoLayout() : calculated column positions do not sum to the width of the layout");
 
     // resize cells and their contents
     m_ignore_child_resize = true;
