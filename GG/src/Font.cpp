@@ -1094,7 +1094,7 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
                       const std::vector<LineData>& line_data, RenderState& render_state,
                       std::size_t begin_line, CPSize begin_char,
                       std::size_t end_line, CPSize end_char) const
- {
+{
     RenderCache cache;
     PreRenderText(ul, lr, text, format, line_data, render_state, begin_line, begin_char, end_line, end_char, cache);
     RenderCachedText(cache);
