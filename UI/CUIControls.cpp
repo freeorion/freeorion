@@ -60,17 +60,14 @@ namespace {
 // class CUILabel
 ///////////////////////////////////////
 CUILabel::CUILabel(std::string str,
-                   GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
-                   GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/,
-                   GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/, GG::X w /*= GG::X1*/, GG::Y h/*= GG::Y1*/) :
+                   GG::Flags<GG::TextFormat> format, GG::Flags<GG::WndFlag> flags,
+                   GG::X x, GG::Y y, GG::X w, GG::Y h) :
     TextControl(x, y, w, h, std::move(str), ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 {}
 
-CUILabel::CUILabel(std::string str,
-                   std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements,
-                   GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
-                   GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/,
-                   GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/, GG::X w /*= GG::X1*/, GG::Y h/*= GG::Y1*/) :
+CUILabel::CUILabel(std::string str, std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements,
+                   GG::Flags<GG::TextFormat> format, GG::Flags<GG::WndFlag> flags,
+                   GG::X x, GG::Y y, GG::X w, GG::Y h) :
     TextControl(x, y, w, h, std::move(str), std::move(text_elements),
                 ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 {}
