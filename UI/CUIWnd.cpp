@@ -182,6 +182,9 @@ void CUIWnd::Init() {
             boost::bind(&CUIWnd::LoadOptions, this));
     }
 
+    m_title = GG::Wnd::Create<CUILabel>(Name(), GG::FORMAT_LEFT, GG::NO_WND_FLAGS,
+                                        BORDER_LEFT, GG::Y{TITLE_OFFSET}, Width(), TopBorder());
+
     // User-dragable windows recalculate their position only when told to (e.g.
     // auto-reposition is set or user clicks a 'reset windows' button).
     // Non-user-dragable windows are given the chance to position themselves on
@@ -326,13 +329,15 @@ void CUIWnd::Render() {
 
     glPopClientAttrib();
 
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
+
+    glPushMatrix();
+    auto ul = UpperLeft();
+    auto lr = LowerRight();
+    glTranslated(Value(ul.x), Value(ul.y), 0);
     GG::BeginScissorClipping(ul, lr);
-    glColor(ClientUI::TextColor());
-    std::shared_ptr<GG::Font> font = ClientUI::GetTitleFont();
-    font->RenderText(GG::Pt(ul.x + BORDER_LEFT, ul.y + TITLE_OFFSET), Name());
+    m_title->Render();
     GG::EndScissorClipping();
+    glPopMatrix();
 }
 
 void CUIWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -446,8 +451,7 @@ void CUIWnd::InitButtons() {
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_clicked.png")),
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_mouseover.png")));
         m_close_button->SetColor(ClientUI::WndInnerBorderColor());
-        m_close_button->LeftClickedSignal.connect(-1,
-            &PlayCloseSound);
+        m_close_button->LeftClickedSignal.connect(-1, &PlayCloseSound);
         m_close_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
         m_close_button->LeftClickedSignal.connect(boost::bind(&CUIWnd::CloseClicked, this));
         AttachChild(m_close_button);

@@ -9,7 +9,7 @@
 #include <unordered_set>
 
 
-/** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore*/
+/** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore */
 class CUI_MinRestoreButton : public GG::Button {
 public:
    /** the two modes of operation of this class of button: as a minimize button or as a restore button */
@@ -20,10 +20,8 @@ public:
 
    CUI_MinRestoreButton();
 
-   Mode GetMode() const {return m_mode;} ///< returns the current mode of this button (is it a minimize button or a restore button?)
-
+   Mode GetMode() const { return m_mode; } ///< returns the current mode of this button (is it a minimize button or a restore button?)
    void Render() override;
-
    void Toggle(); ///< toggles modes between MIN_BUTTON and RESTORE_BUTTON
 
 private:
@@ -42,6 +40,8 @@ public:
 extern GG::WndFlag MINIMIZABLE;    ///< allows the window to be minimized
 extern GG::WndFlag CLOSABLE;       ///< allows the window to be closed
 extern GG::WndFlag PINABLE;        ///< allows the window to be pinned
+
+class CUILabel;
 
 
 //! This class is a superclass of all interface windows in GG.  It takes care of
@@ -187,6 +187,7 @@ protected:
     std::shared_ptr<GG::Button>             m_close_button;     //!< the close button
     std::shared_ptr<CUI_MinRestoreButton>   m_minimize_button;  //!< the minimize/restore button
     std::shared_ptr<CUI_PinButton>          m_pin_button;       //!< the pin button
+    std::shared_ptr<CUILabel>               m_title;
 
     std::unordered_set<std::string> m_defaulted_options;
 
