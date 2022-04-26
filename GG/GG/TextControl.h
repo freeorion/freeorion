@@ -305,7 +305,6 @@ private:
     void AdjustMinimumSize();
     void RecomputeTextBounds(); ///< recalculates m_text_ul and m_text_lr
     void RefreshCache();
-    void PurgeCache();
 
     /** Recompute line data, code points, text extent and minusable size cache when
         m_text_elements changes.*/

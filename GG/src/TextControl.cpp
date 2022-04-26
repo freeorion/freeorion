@@ -166,33 +166,32 @@ Pt TextControl::TextLowerRight() const
 
 void TextControl::Render()
 {
+    if (!m_font)
+        return;
+
     Clr clr_to_use = Disabled() ? DisabledColor(TextColor()) : TextColor();
     glColor(clr_to_use);
-    if (m_font) {
-        if (!m_render_cache) {
-            RefreshCache();
-        }
-        if (m_clip_text)
-            BeginClipping();
-        glPushMatrix();
-        Pt ul = ClientUpperLeft();
-        glTranslated(Value(ul.x), Value(ul.y), 0);
-        m_font->RenderCachedText(*m_render_cache);
-        glPopMatrix();
-        if (m_clip_text)
-            EndClipping();
-    }
+
+    if (!m_render_cache)
+        RefreshCache();
+    if (m_clip_text)
+        BeginClipping();
+
+    glPushMatrix();
+    Pt ul = ClientUpperLeft();
+    glTranslated(Value(ul.x), Value(ul.y), 0);
+    m_font->RenderCachedText(*m_render_cache);
+    glPopMatrix();
+
+    if (m_clip_text)
+        EndClipping();
 }
 
 void TextControl::RefreshCache() {
-    PurgeCache();
     m_render_cache.reset(new Font::RenderCache());
     if (m_font)
         m_font->PreRenderText(Pt(X0, Y0), Size(), m_text, m_format, *m_render_cache, m_line_data);
 }
-
-void TextControl::PurgeCache()
-{ m_render_cache.reset(); }
 
 void TextControl::SetText(std::string str)
 {
@@ -244,7 +243,7 @@ void TextControl::RecomputeLineData() {
     Pt text_sz = m_font->TextExtent(m_line_data);
     m_text_ul = Pt();
     m_text_lr = text_sz;
-    PurgeCache();
+    m_render_cache.reset();
     if (m_format & FORMAT_NOWRAP) {
         Resize(text_sz);
     } else {
@@ -293,7 +292,7 @@ void TextControl::SizeMove(const Pt& ul, const Pt& lr)
         Pt text_sz = m_font->TextExtent(m_line_data);
         m_text_ul = Pt();
         m_text_lr = text_sz;
-        PurgeCache();
+        m_render_cache.reset();
     }
     RecomputeTextBounds();
 }
@@ -309,14 +308,14 @@ void TextControl::SetTextFormat(Flags<TextFormat> format)
 void TextControl::SetTextColor(Clr color)
 {
     m_text_color = color;
-    PurgeCache();
+    m_render_cache.reset();
 }
 
 void TextControl::SetColor(Clr c)
 {
     Control::SetColor(c);
     m_text_color = c;
-    PurgeCache();
+    m_render_cache.reset();
 }
 
 void TextControl::ClipText(bool b)
