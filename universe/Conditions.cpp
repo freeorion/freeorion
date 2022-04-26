@@ -2190,39 +2190,37 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
                                              ObjectSet& condition_non_targets) const
 {
     // Ships, Fleets and default checks for current objects only
-    bool found_type = false;
-    if (InitialCandidatesAllMatch()) {
-        found_type = true;
-        switch (m_type->Eval(parent_context)) {
-            case UniverseObjectType::OBJ_BUILDING:
-                AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
-                break;
-            case UniverseObjectType::OBJ_FIELD:
-                AddFieldSet(parent_context.ContextObjects(), condition_non_targets);
-                break;
-            case UniverseObjectType::OBJ_FLEET:
-                AddFleetSet(parent_context.ContextObjects(), condition_non_targets);
-                break;
-            case UniverseObjectType::OBJ_PLANET:
-                AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
-                break;
-            case UniverseObjectType::OBJ_POP_CENTER:
-                AddPopCenterSet(parent_context.ContextObjects(), condition_non_targets);
-                break;
-            case UniverseObjectType::OBJ_PROD_CENTER:
-                AddResCenterSet(parent_context.ContextObjects(), condition_non_targets);
-                break;
-            case UniverseObjectType::OBJ_SHIP:
-                AddShipSet(parent_context.ContextObjects(), condition_non_targets);
-                break;
-            case UniverseObjectType::OBJ_SYSTEM:
-                AddSystemSet(parent_context.ContextObjects(), condition_non_targets);
-                break;
-            case UniverseObjectType::OBJ_FIGHTER:   // shouldn't exist outside of combat as a separate object
-            default:
-                found_type = false;
-                break;
-        }
+    if (!InitialCandidatesAllMatch())
+        return;
+
+    switch (m_type->Eval(parent_context)) {
+        case UniverseObjectType::OBJ_BUILDING:
+            AddBuildingSet(parent_context.ContextObjects(), condition_non_targets);
+            break;
+        case UniverseObjectType::OBJ_FIELD:
+            AddFieldSet(parent_context.ContextObjects(), condition_non_targets);
+            break;
+        case UniverseObjectType::OBJ_FLEET:
+            AddFleetSet(parent_context.ContextObjects(), condition_non_targets);
+            break;
+        case UniverseObjectType::OBJ_PLANET:
+            AddPlanetSet(parent_context.ContextObjects(), condition_non_targets);
+            break;
+        case UniverseObjectType::OBJ_POP_CENTER:
+            AddPopCenterSet(parent_context.ContextObjects(), condition_non_targets);
+            break;
+        case UniverseObjectType::OBJ_PROD_CENTER:
+            AddResCenterSet(parent_context.ContextObjects(), condition_non_targets);
+            break;
+        case UniverseObjectType::OBJ_SHIP:
+            AddShipSet(parent_context.ContextObjects(), condition_non_targets);
+            break;
+        case UniverseObjectType::OBJ_SYSTEM:
+            AddSystemSet(parent_context.ContextObjects(), condition_non_targets);
+            break;
+        case UniverseObjectType::OBJ_FIGHTER:   // shouldn't exist outside of combat as a separate object
+        default:
+            break;
     }
 }
 
@@ -10464,10 +10462,8 @@ std::string And::Dump(unsigned short ntabs) const {
     return retval;
 }
 
-bool And::InitialCandidatesAllMatch() const {
-    if (m_operands.size() < 2)
-        return true;
-}
+bool And::InitialCandidatesAllMatch() const
+{ return m_operands.size() < 2; }
 
 void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                             ObjectSet& condition_non_targets) const {
@@ -10635,10 +10631,8 @@ std::string Or::Description(bool negated/* = false*/) const {
     return values_str;
 }
 
-bool Or::InitialCandidatesAllMatch() const {
-    if (m_operands.size() < 2)
-        return true;
-}
+bool Or::InitialCandidatesAllMatch() const
+{ return m_operands.size() < 2; }
 
 void Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const
