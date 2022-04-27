@@ -267,12 +267,8 @@ StateButton::StateButton(std::string str, const std::shared_ptr<Font>& font,
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_representer(std::move(representer)),
     m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, std::move(str), font,
-                                     text_color, format, NO_WND_FLAGS)),
-    m_state(ButtonState::BN_UNPRESSED),
-    m_checked(false)
-{
-    m_color = color;
-}
+                                     text_color, format, NO_WND_FLAGS))
+{ m_color = color; }
 
 void StateButton::CompleteConstruction()
 {
