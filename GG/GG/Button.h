@@ -104,7 +104,8 @@ protected:
     /** Draws the button rolled-over.  If an rollover graphic has been supplied, it is used. */
     virtual void RenderRollover();
 
-    std::shared_ptr<TextControl> m_label;   ///< Label used to display text
+    std::shared_ptr<TextControl> m_label;        ///< Label used to display text
+    std::shared_ptr<TextControl> m_label_shadow; ///< Label used to display text
 
 private:
     void RenderDefault();     ///< This just draws the default unadorned square-and-rectangle button

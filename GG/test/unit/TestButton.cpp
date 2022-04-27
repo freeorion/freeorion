@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE( constructor )
     BOOST_CHECK(button.ScreenToClient(GG::Pt(GG::X(0), GG::Y(0))) == GG::Pt(GG::X(0), GG::Y(0)));
     BOOST_CHECK(button.InWindow(GG::Pt(GG::X(0), GG::Y(0))));
     BOOST_CHECK(button.InClient(GG::Pt(GG::X(0), GG::Y(0))));
-    BOOST_CHECK(button.Children().size() == 1);
+    BOOST_CHECK(button.Children().size() == 2);
     BOOST_CHECK(!button.Parent());
     BOOST_CHECK(!button.RootParent());
     BOOST_CHECK(!button.GetLayout());
