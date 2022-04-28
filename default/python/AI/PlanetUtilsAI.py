@@ -249,6 +249,7 @@ def _planet_species(pid: PlanetId) -> Optional[fo.species]:
         species_name = _planned_species().get(pid)
     if species_name:
         return fo.getSpecies(species_name)
+    return None
 
 
 @cache_for_current_turn

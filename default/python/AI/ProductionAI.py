@@ -1841,7 +1841,7 @@ def _build_scanning_facility() -> float:
         PlanetUtilsAI.sys_name_ids(opinion.likes),
         len(opinion.dislikes),
     )
-    for sys_id in get_owned_planets().keys():
+    for sys_id in get_owned_planets():
         if max_scanner_builds <= 0:
             break
         if sys_id in scanner_systems:

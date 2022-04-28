@@ -93,8 +93,8 @@ def _get_building_locations() -> DefaultDict[BuildingName, _BuildingLocations]:
     ret = defaultdict(lambda: _BuildingLocations(set(), set()))
     for pid in get_all_empire_planets():
         planet = universe.getPlanet(pid)
-        for name in map(universe.getBuilding, planet.buildingIDs):
-            val = ret.get(name, _BuildingLocations(set(), set()))
+        for building in map(universe.getBuilding, planet.buildingIDs):
+            val = ret[building.buildingTypeName]
             val.planets.add(pid)
             val.systems.add(planet.systemID)
     return ret
