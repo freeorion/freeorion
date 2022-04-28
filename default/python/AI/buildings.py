@@ -1,5 +1,6 @@
 import freeOrionAIInterface as fo
 from collections import defaultdict
+from copy import copy
 from enum import Enum
 from typing import DefaultDict, List, NamedTuple, Set
 
@@ -49,16 +50,19 @@ class BuildingType(Enum):
         return [element.locationID for element in fo.getEmpire().productionQueue if (element.name == self.value)]
 
     def built_at(self, include_queued_buildings: bool = False) -> Set[PlanetId]:
-        ret = _get_building_locations()[self.value].planets
-        if include_queued_buildings:
-            ret.update(set(self.queued_in()))
+        built_at_planets = _get_building_locations()[self.value].planets
+        if not include_queued_buildings:
+            return built_at_planets
+        ret = copy(built_at_planets)
+        ret.update(set(self.queued_in()))
         return ret
 
     def built_at_sys(self, include_queued_buildings: bool = False) -> Set[SystemId]:
-        ret = _get_building_locations()[self.value].systems
-        if include_queued_buildings:
-            universe = fo.getUniverse()
-            ret.update(set(universe.getPlanet(pid).systemID for pid in self.queued_in()))
+        built_at_systems = _get_building_locations()[self.value].systems
+        if not include_queued_buildings:
+            return built_at_systems
+        ret = copy(built_at_systems)
+        ret.update({fo.getUniverse().getPlanet(pid).systemID for pid in self.queued_in()})
         return ret
 
     def can_be_enqueued(self, planet: PlanetId) -> bool:
