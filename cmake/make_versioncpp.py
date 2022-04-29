@@ -13,7 +13,7 @@ from subprocess import CalledProcessError, check_output
 INVALID_BUILD_NO = "???"
 
 
-class Generator(object):
+class Generator:
     def __init__(self, infile, outfile):
         self.infile = infile
         self.outfile = outfile
