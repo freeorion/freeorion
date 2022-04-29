@@ -1,6 +1,7 @@
 #include "MapWnd.h"
 
 #include <deque>
+#include <numeric>
 #include <unordered_map>
 #include <unordered_set>
 #include <valarray>
@@ -1916,9 +1917,6 @@ void MapWnd::RenderSystemOverlays() {
 }
 
 void MapWnd::RenderSystems() {
-    const float HALO_SCALE_FACTOR = static_cast<float>(SystemHaloScaleFactor());
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
@@ -1926,6 +1924,7 @@ void MapWnd::RenderSystems() {
 
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
+    const float HALO_SCALE_FACTOR = static_cast<float>(SystemHaloScaleFactor());
     if (0.5f < HALO_SCALE_FACTOR && m_star_texture_coords.size()) {
         glMatrixMode(GL_TEXTURE);
         glTranslatef(0.5f, 0.5f, 0.0f);
@@ -1959,155 +1958,159 @@ void MapWnd::RenderSystems() {
     // circles around system icons and fog over unexplored systems
     bool circles = GetOptionsDB().Get<bool>("ui.map.system.circle.shown");
     bool fog_scanlines = false;
-    Universe& universe = GetUniverse();
 
+    const ScriptingContext context;
+    const Universe& universe = context.ContextUniverse();
+    const ObjectMap& objects = context.ContextObjects();
+    const EmpireManager& empires = context.Empires();
+    const SupplyManager& supply = context.supply;
+
+    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         fog_scanlines = true;
 
     RenderScaleCircle();
 
-    if (fog_scanlines || circles) {
-        glPushMatrix();
-        glLoadIdentity();
-        glDisable(GL_TEXTURE_2D);
-        glEnable(GL_LINE_SMOOTH);
+    if (!fog_scanlines && !circles) {
+        glPopClientAttrib();
+        return;
+    }
 
-        // distance between inner and outer system circle
-        const double circle_distance = GetOptionsDB().Get<double>("ui.map.system.circle.distance");
-        // width of outer...
-        const double outer_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.outer.width");
-        // ... and inner circle line at close zoom
-        const double inner_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.inner.width");
-        // width of inner circle line when map is zoomed out
-        const double max_inner_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.inner.max.width");
+    auto& known_destroyed_object_ids = universe.EmpireKnownDestroyedObjectIDs(empire_id);
 
-        for (const auto& system_icon : m_system_icons) {
-            const auto& icon = system_icon.second;
 
-            GG::Pt icon_size = icon->LowerRight() - icon->UpperLeft();
-            GG::Pt icon_middle = icon->UpperLeft() + (icon_size / 2);
+    glPushMatrix();
+    glLoadIdentity();
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LINE_SMOOTH);
 
-            GG::Pt circle_size = GG::Pt(static_cast<GG::X>(icon->EnclosingCircleDiameter()),
-                                        static_cast<GG::Y>(icon->EnclosingCircleDiameter()));
+    // distance between inner and outer system circle
+    const double circle_distance = GetOptionsDB().Get<double>("ui.map.system.circle.distance");
+    // width of outer...
+    const double outer_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.outer.width");
+    // ... and inner circle line at close zoom
+    const double inner_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.inner.width");
+    // width of inner circle line when map is zoomed out
+    const double max_inner_circle_width = GetOptionsDB().Get<double>("ui.map.system.circle.inner.max.width");
 
-            GG::Pt circle_ul = icon_middle - (circle_size / 2);
-            GG::Pt circle_lr = circle_ul + circle_size;
 
-            GG::Pt circle_distance_pt = GG::Pt(GG::X1, GG::Y1) * circle_distance;
+    for (const auto& [system_id, icon] : m_system_icons) {
+        // Render scanlines...
+        GG::Pt icon_size = icon->LowerRight() - icon->UpperLeft();
+        GG::Pt icon_middle = icon->UpperLeft() + (icon_size / 2);
+        GG::Pt circle_size = GG::Pt(static_cast<GG::X>(icon->EnclosingCircleDiameter()),
+                                    static_cast<GG::Y>(icon->EnclosingCircleDiameter()));
+        GG::Pt circle_ul = icon_middle - (circle_size / 2);
+        GG::Pt circle_lr = circle_ul + circle_size;
+        if (fog_scanlines
+            && (universe.GetObjectVisibilityByEmpire(system_id, empire_id) <= Visibility::VIS_BASIC_VISIBILITY))
+        {
+            m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("ui.map.system.scanlines.color"));
+            m_scanline_shader.RenderCircle(circle_ul, circle_lr);
+        }
 
-            GG::Pt inner_circle_ul = circle_ul + (circle_distance_pt * ZoomFactor());
-            GG::Pt inner_circle_lr = circle_lr - (circle_distance_pt * ZoomFactor());
 
-            if (fog_scanlines
-                && (universe.GetObjectVisibilityByEmpire(system_icon.first, empire_id) <= Visibility::VIS_BASIC_VISIBILITY))
-            {
-                m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("ui.map.system.scanlines.color"));
-                m_scanline_shader.RenderCircle(circle_ul, circle_lr);
+        // Render circles around systems that have at least one starlane, if they are enabled
+        if (!circles) continue;
+
+        auto system = objects.get<System>(system_id);
+        if (!system || system->NumStarlanes() < 1)
+            continue;
+
+        GG::Pt circle_distance_pt = GG::Pt(GG::X1, GG::Y1) * circle_distance;
+        GG::Pt inner_circle_ul = circle_ul + (circle_distance_pt * ZoomFactor());
+        GG::Pt inner_circle_lr = circle_lr - (circle_distance_pt * ZoomFactor());
+
+        bool has_empire_planet = false;
+        bool has_neutrals = false;
+        std::vector<std::pair<int, int>> colony_count_by_empire_id;
+        colony_count_by_empire_id.reserve(empires.NumEmpires() + 1);
+        auto increment_empire_colony_count = [&colony_count_by_empire_id](int col_empire_id) {
+            auto it = std::find_if(colony_count_by_empire_id.begin(), colony_count_by_empire_id.end(),
+                                   [col_empire_id](const auto& e) { return e.first == col_empire_id; });
+            if (it != colony_count_by_empire_id.end())
+                it->second++;
+            else
+                colony_count_by_empire_id.emplace_back(col_empire_id, 1);
+        };
+
+        for (const auto& planet : objects.find<const Planet>(system->PlanetIDs())) {
+            if (known_destroyed_object_ids.count(planet->ID()) > 0)
+                continue;
+
+            // remember if this system has a player-owned planet, count # of colonies for each empire
+            if (!planet->Unowned()) {
+                has_empire_planet = true;
+                increment_empire_colony_count(planet->Owner());
             }
 
-            // render circles around systems that have at least one starlane, if they are enabled
-            if (!circles) continue;
-
-            if (auto system = Objects().get<System>(system_icon.first)) {
-                if (system->NumStarlanes() > 0) {
-                    bool has_empire_planet = false;
-                    bool has_neutrals = false;
-                    std::map<int, int> colony_count_by_empire_id;
-                    const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
-
-                    for (const auto& planet : Objects().find<const Planet>(system->PlanetIDs())) {
-                        if (known_destroyed_object_ids.count(planet->ID()) > 0)
-                            continue;
-
-                        // remember if this system has a player-owned planet, count # of colonies for each empire
-                        if (!planet->Unowned()) {
-                            has_empire_planet = true;
-
-                            auto it = colony_count_by_empire_id.find(planet->Owner()) ;
-                            if (it != colony_count_by_empire_id.end())
-                                it->second++;
-                            else
-                                colony_count_by_empire_id.emplace(planet->Owner(), 1);
-                        }
-
-                        // remember if this system has neutrals
-                        if (planet->Unowned() && !planet->SpeciesName().empty() &&
-                            planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f)
-                        {
-                            has_neutrals = true;
-
-                            std::map<int, int>::iterator it = colony_count_by_empire_id.find(ALL_EMPIRES);
-                            if (it != colony_count_by_empire_id.end())
-                                it->second++;
-                            else
-                                colony_count_by_empire_id.emplace(ALL_EMPIRES, 1);
-                        }
-                    }
-
-                    // draw outer circle in color of supplying empire
-                    int supply_empire_id = GetSupplyManager().EmpireThatCanSupplyAt(system_icon.first);
-                    if (supply_empire_id != ALL_EMPIRES) {
-                        if (const Empire* empire = GetEmpire(supply_empire_id))
-                            glColor(empire->Color());
-                        else
-                            ErrorLogger() << "MapWnd::RenderSystems(): could not load empire with id " << supply_empire_id;
-                    } else {
-                        glColor(GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color"));
-                    }
-
-                    glLineWidth(outer_circle_width);
-                    CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
-
-                    // systems with neutrals and no empire have a segmented inner circle
-                    if (has_neutrals && !(has_empire_planet)) {
-                        float line_width = std::max(std::min(2 / ZoomFactor(), max_inner_circle_width), inner_circle_width);
-                        glLineWidth(line_width);
-                        glColor(ClientUI::TextColor());
-
-                        float segment = static_cast<float>(TWO_PI) / 24.0f;
-                        for (int n = 0; n < 24; n = n + 2)
-                            CircleArc(inner_circle_ul, inner_circle_lr, n * segment, (n+1) * segment, false);
-                    }
-
-                    // systems with empire planets have an unbroken inner circle; color segments for each empire present
-                    if (!has_empire_planet) continue;
-
-                    float line_width = std::max(std::min(2 / ZoomFactor(), max_inner_circle_width), inner_circle_width);
-                    glLineWidth(line_width);
-
-                    int colonised_planets = 0;
-                    int position = 0;
-
-                    for (auto& [empire_id, colony_count] : colony_count_by_empire_id) {
-                        (void)empire_id; // quiet unused variable warning
-                        colonised_planets += colony_count;
-                    }
-
-                    const double segment = TWO_PI / std::max(colonised_planets, 1);
-
-                    for (auto& [empire_id, colony_count] : colony_count_by_empire_id) {
-                        if (const Empire* empire = GetEmpire(empire_id))
-                            glColor(empire->Color());
-                        else
-                            glColor(ClientUI::TextColor());
-
-                        CircleArc(inner_circle_ul,
-                                  inner_circle_lr,
-                                  position * segment,
-                                  (colony_count + position) * segment, false);
-                        position += colony_count;
-                    }
-                }
+            // remember if this system has neutrals
+            if (planet->Unowned() && !planet->SpeciesName().empty() &&
+                planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f)
+            {
+                has_neutrals = true;
+                increment_empire_colony_count(ALL_EMPIRES);
             }
         }
 
-        glDisable(GL_LINE_SMOOTH);
-        glEnable(GL_TEXTURE_2D);
-        glPopMatrix();
-        glLineWidth(1.0f);
+        // draw outer circle in color of supplying empire
+        int supply_empire_id = supply.EmpireThatCanSupplyAt(system_id);
+        if (supply_empire_id != ALL_EMPIRES) {
+            if (auto empire = context.GetEmpire(supply_empire_id))
+                glColor(empire->Color());
+            else
+                ErrorLogger() << "MapWnd::RenderSystems(): could not load empire with id " << supply_empire_id;
+        } else {
+            glColor(GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color"));
+        }
+
+        glLineWidth(outer_circle_width);
+        CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
+
+        // systems with neutrals and no empire have a segmented inner circle
+        if (has_neutrals && !(has_empire_planet)) {
+            float line_width = std::max(std::min(2 / ZoomFactor(), max_inner_circle_width), inner_circle_width);
+            glLineWidth(line_width);
+            glColor(ClientUI::TextColor());
+
+            float segment = static_cast<float>(TWO_PI) / 24.0f;
+            for (int n = 0; n < 24; n = n + 2)
+                CircleArc(inner_circle_ul, inner_circle_lr, n * segment, (n+1) * segment, false);
+        }
+
+        // systems with empire planets have an unbroken inner circle; color segments for each empire present
+        if (!has_empire_planet) continue;
+
+        float line_width = std::max(std::min(2 / ZoomFactor(), max_inner_circle_width), inner_circle_width);
+        glLineWidth(line_width);
+
+#if (defined(__clang_major__)) || (defined(__GNUC__) && (__GNUC__ < 11))
+        int colonized_planets = 0;
+        for (const auto& e : colony_count_by_empire_id)
+            colonized_planets += e.second;
+#else
+        int colonized_planets = std::transform_reduce(colony_count_by_empire_id.begin(), colony_count_by_empire_id.end(),
+                                                      0, std::plus<>(), [](const auto& e) { return e.second; });
+#endif
+        const double segment = TWO_PI / std::max(colonized_planets, 1);
+
+        int position = 0;
+        for (auto& [empire_id, colony_count] : colony_count_by_empire_id) {
+            if (auto empire = context.GetEmpire(empire_id))
+                glColor(empire->Color());
+            else
+                glColor(ClientUI::TextColor());
+
+            CircleArc(inner_circle_ul, inner_circle_lr, position * segment,
+                      (colony_count + position) * segment, false);
+            position += colony_count;
+        }
     }
 
-    glPopClientAttrib();
+    glDisable(GL_LINE_SMOOTH);
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glLineWidth(1.0f);
 }
 
 void MapWnd::RenderStarlanes() {
