@@ -2423,28 +2423,20 @@ void RotatingGraphic::Render() {
 
     // set up vertices for translated scaled quad corners
     GG::GL2DVertexBuffer verts;
+    verts.reserve(4);
     verts.store(rendered_area.UpperLeft());                     // upper left
     verts.store(rendered_area.Right(), rendered_area.Top());    // upper right
     verts.store(rendered_area.Left(),  rendered_area.Bottom()); // lower left
     verts.store(rendered_area.LowerRight());                    // lower right
 
     // set up texture coordinates for vertices
-    GLfloat texture_coordinate_data[8];
-    const GLfloat* tex_coords = texture->DefaultTexCoords();
-    texture_coordinate_data[2*0] =      tex_coords[0];
-    texture_coordinate_data[2*0 + 1] =  tex_coords[1];
-    texture_coordinate_data[2*1] =      tex_coords[2];
-    texture_coordinate_data[2*1 + 1] =  tex_coords[1];
-    texture_coordinate_data[2*2] =      tex_coords[0];
-    texture_coordinate_data[2*2 + 1] =  tex_coords[3];
-    texture_coordinate_data[2*3] =      tex_coords[2];
-    texture_coordinate_data[2*3 + 1] =  tex_coords[3];
+    const GLfloat* tc = texture->DefaultTexCoords();
+    GLfloat texture_coordinate_data[8] = {tc[0], tc[1], tc[2], tc[1], tc[0], tc[3], tc[2], tc[3]};
+
 
     //// debug
     //std::cout << "rendered area: " << rendered_area << "  ul: " << UpperLeft() << "  sz: " << Size() << std::endl;
-    //std::cout << "tex coords: " << tex_coords[0] << ", " << tex_coords[1] << ";  "
-    //                            << tex_coords[2] << ", " << tex_coords[3]
-    //                            << std::endl;
+    //std::cout << "tex coords: " << tc[0] << ", " << tc[1] << ";  " << tc[2] << ", " << tc[3] << std::endl;
     //// end debug
 
     // render textured quad
