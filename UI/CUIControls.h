@@ -642,6 +642,8 @@ public:
 private:
     float m_rpm = 20.0f;
     float m_phase_offset = 0.0f;
+    GG::GL2DVertexBuffer verts;
+    GG::Rect last_rendered_area = {};
 };
 
 /** Renders scanlines over its area. */

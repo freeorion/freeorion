@@ -2421,13 +2421,15 @@ void RotatingGraphic::Render() {
     glRotatef(angle, 0.0f, 0.0f, 1.0f);                                             // rotate about centre
     glTranslatef(-Value(rendered_area.MidX()), -Value(rendered_area.MidY()), 0.0f); // tx to be centred on 0, 0
 
-    // set up vertices for translated scaled quad corners
-    GG::GL2DVertexBuffer verts;
-    verts.reserve(4);
-    verts.store(rendered_area.UpperLeft());                     // upper left
-    verts.store(rendered_area.Right(), rendered_area.Top());    // upper right
-    verts.store(rendered_area.Left(),  rendered_area.Bottom()); // lower left
-    verts.store(rendered_area.LowerRight());                    // lower right
+    if (rendered_area != last_rendered_area) {
+        last_rendered_area = rendered_area;
+        // set up vertices for translated scaled quad corners
+        verts.clear();
+        verts.store(rendered_area.UpperLeft());                     // upper left
+        verts.store(rendered_area.Right(), rendered_area.Top());    // upper right
+        verts.store(rendered_area.Left(),  rendered_area.Bottom()); // lower left
+        verts.store(rendered_area.LowerRight());                    // lower right
+    }
 
     // set up texture coordinates for vertices
     const GLfloat* tc = texture->DefaultTexCoords();
