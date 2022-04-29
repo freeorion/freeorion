@@ -52,8 +52,8 @@ private:
                                    // of elements per item
 public:
     GLClientAndServerBufferBase(std::size_t elementsPerItem);
-    std::size_t size() const;
-    bool        empty() const;
+    [[nodiscard]] std::size_t size() const;
+    [[nodiscard]] bool        empty() const;
 
     // pre-allocate space for item data
     void reserve(std::size_t num_items);
