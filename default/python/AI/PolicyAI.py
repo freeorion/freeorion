@@ -1,4 +1,5 @@
 import freeOrionAIInterface as fo
+from copy import copy
 from logging import debug, error
 from typing import Optional, Set
 
@@ -36,7 +37,7 @@ class PolicyManager:
         self._aistate = get_aistate()
         self._ip = self._empire.resourceAvailable(fo.resourceType.influence) - self._get_infl_prod()
         self._adopted = set(self._empire.adoptedPolicies)
-        self._originally_adopted = self._adopted
+        self._originally_adopted = copy(self._adopted)
         self._adoptable = self._get_adoptable()
         empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire()
         self._populated_planet_ids = PlanetUtilsAI.get_populated_planet_ids(empire_owned_planet_ids)
@@ -44,6 +45,7 @@ class PolicyManager:
         self._num_outposts = len(empire_owned_planet_ids) - self._num_populated
         self._centralization_cost = fo.getPolicy(centralization).adoptionCost()
         self._bureaucracy_cost = fo.getPolicy(bureaucracy).adoptionCost()
+        self._max_turn_bureaucracy = 19  # AI doesn't build Regional Admins yet (TBD count, palace may be gone, too)
 
     def generate_orders(self) -> None:
         """The main task of the class, called once every turn by FreeOrionAI."""
@@ -71,8 +73,7 @@ class PolicyManager:
 
     def _process_bureaucracy(self) -> None:
         if bureaucracy in self._adopted:
-            max_turn = 19  # AI doesn't build Regional Admins yet (TBD count, palace may be gone, too)
-            if fo.currentTurn() >= self._empire.turnsPoliciesAdopted[bureaucracy] + max_turn:
+            if fo.currentTurn() >= self._empire.turnsPoliciesAdopted[bureaucracy] + self._max_turn_bureaucracy:
                 self._deadopt(bureaucracy)
                 self._try_adopt_centralization()
         else:
@@ -148,25 +149,50 @@ class PolicyManager:
         )
 
     def _determine_influence_priority(self, new_production: float) -> None:
+        # avoid wildly varying priorities while we adopt the basics: simply use 10 for the first 12 turns
+        if fo.currentTurn() <= 12:
+            if fo.currentTurn() == 1:
+                self._set_priority(10.0, True)
+            return
         # How much IP would we have if we keep the current production for 3 turns?
         forecast = self._ip + 3 * new_production
-        # If we are unable to keep bureaucracy, lower the forecast by roughly the amount
-        # we will have to spend to activate it again.
-        if infra1 in self._adopted and bureaucracy not in self._adopted and centralization not in self._adopted:
-            forecast -= self._num_populated + self._centralization_cost + self._bureaucracy_cost
-        if forecast < 40:
+        # adopting _centralization_cost costs a lot and also drops the incoming, so add 1 per populated planet
+        repeated_expenses = self._centralization_cost + self._bureaucracy_cost + self._num_populated
+        if bureaucracy not in self._adopted and centralization not in self._adopted:
+            # If we are unable to keep bureaucracy, lower the forecast by roughly the amount
+            # we will have to spend to activate it again.
+            forecast -= repeated_expenses
+        elif bureaucracy in self._adopted:
+            # To avoid a saw tooth effect when adopting centralisation, account part of the future cost while
+            # bureaucracy is adopted. Ideally IP will produce a saw tooth graph that way, while priority
+            # remains relatively stable.
+            turns_adopted = fo.currentTurn() - self._empire.turnsPoliciesAdopted[bureaucracy]
+            forecast -= repeated_expenses * turns_adopted / self._max_turn_bureaucracy
+        else:
+            # Adopting centralization is only half of the cost, but it always temporarily drops our production
+            # which further lower the forecast, Only reducing it by 1/4 seems to roughly fit.
+            forecast -= repeated_expenses / 4
+
+        threshold = 20 + repeated_expenses
+        if forecast < threshold:
             # Basic value: the lower the forecast, the more urgent we need influence
-            priority = 60 - forecast
+            priority = 20 + threshold - forecast
         else:
             # For higher values, slowly decrease priority
-            priority = 800 / forecast
-        # The more planets we have, the more influence we need in general.
-        # This formula likely will need more fine tuning. Note that we should not start too low, since
-        # small planets can often be set to influence focus early on without losing a lot of production.
-        # If we start too high, Abadoni will switch their capital to influence production, though.
+            priority = 20 * (threshold / forecast) ** 0.6
+        # The more planets we have, the more influence we need in general, outpost have only a minor effect
         priority *= (3 + self._num_populated + self._num_outposts / 10) / 10
-        debug("Setting influence priority to %.1f", priority)
-        self._aistate.set_priority(PriorityType.RESOURCE_INFLUENCE, priority)
+        self._set_priority(priority, False)
+
+    def _set_priority(self, calculated_priority: float, ignore_old: bool) -> None:
+        if ignore_old:
+            new_priority = calculated_priority
+        else:
+            old_priority = self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
+            # to further smoothen the values, only use 1/3 of the calculated value
+            new_priority = (2 * old_priority + calculated_priority) / 3
+        debug("Setting influence priority to %.1f, turn %d", new_priority, fo.currentTurn())
+        self._aistate.set_priority(PriorityType.RESOURCE_INFLUENCE, new_priority)
 
     def _get_infl_prod(self, update=False) -> float:
         """Get / Update IP production."""
