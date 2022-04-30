@@ -343,7 +343,7 @@ void InitBinDir(std::string const& argv0)
             bin_dir = p;
         }
     }
-#elif defined(FREEORION_MACOSX) || defined(FREEORION_ADROID)
+#elif defined(FREEORION_MACOSX) || defined(FREEORION_ANDROID)
     // no binary directory setup required.
 #endif
 }

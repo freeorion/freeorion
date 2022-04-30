@@ -846,8 +846,8 @@ private:
 //////////////////////////////////////////////////
 ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
-    m_order_issuing_enabled(false),
-    m_empire_shown_id(ALL_EMPIRES)
+    m_empire_shown_id(ALL_EMPIRES),
+    m_order_issuing_enabled(false)
 {}
 
 void ProductionWnd::CompleteConstruction() {

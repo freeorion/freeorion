@@ -60,7 +60,6 @@ namespace {
         "monster_freq", "native_freq", "planet_freq", "specials_freq", "starlane_freq", "ai_aggression",
         "number_of_empires", "number_of_humans"
     };
-    constexpr unsigned int VALID_PREVIEW_COLUMN_COUNT = VALID_PREVIEW_COLUMNS.size();
     constexpr int WHEEL_INCREMENT = 80;
 
     std::string operator+(std::string_view lhs, std::string_view rhs) {

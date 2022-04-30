@@ -916,10 +916,10 @@ namespace {
 SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) :
     GG::Control(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_planet_id(planet_id),
-    m_selected(false),
-    m_order_issuing_enabled(true),
     m_empire_colour(GG::CLR_ZERO),
-    m_star_type(star_type)
+    m_star_type(star_type),
+    m_selected(false),
+    m_order_issuing_enabled(true)
 {}
 
 void SidePanel::PlanetPanel::CompleteConstruction() {
