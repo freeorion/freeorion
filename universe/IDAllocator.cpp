@@ -29,7 +29,8 @@ IDAllocator::IDAllocator(const int server_id,
     m_exhausted_threshold(std::numeric_limits<int>::max() - 10 * m_stride),
     m_random_generator()
 {
-    TraceLogger(IDallocator) << "IDAllocator() server id = " << server_id << " invalid id = " << invalid_id
+    ErrorLogger(IDallocator) << "IDAllocator() server id = " << server_id << " invalid id = " << invalid_id
+                             << " temp_id = " << m_temp_id
                              << " zero = " << m_zero
                              << " warn threshold =  " << m_warn_threshold << " num clients = " << client_ids.size();
 
@@ -101,8 +102,9 @@ std::pair<bool, bool> IDAllocator::IsIDValidAndUnused(const ID_t checked_id,
         return hard_fail;
     }
 
-    if (checked_id == m_temp_id)
+    if (checked_id == m_temp_id) {
         return complete_success;
+    } else ErrorLogger() << "id = " << checked_id << " != " << m_temp_id;
 
     if (checked_id >= m_exhausted_threshold) {
         ErrorLogger() << " invalid id = " << checked_id << " is greater then the maximum id " << m_exhausted_threshold;

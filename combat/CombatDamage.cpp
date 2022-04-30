@@ -165,8 +165,19 @@ std::vector<float> Combat::WeaponDamageImpl(
         ErrorLogger() << "Combat::WeaponDamageImpl passed null source ship";
         return {};
     } else if (source->DesignID() == INVALID_DESIGN_ID) {
-        ErrorLogger() << "Combat::WeaponDamageImpl passed source ship without a valid design ID: " << source->Dump();
+        if (source->ID() == TEMPORARY_OBJECT_ID) {
+            ErrorLogger() << "Combat::WeaponDamageImpl passed TEMPORARY source ship without a valid design ID: " << source->Dump();
+        } else {
+            ErrorLogger() << "Combat::WeaponDamageImpl passed source ship without a valid design ID: " << source->Dump();
+        }
         return {};
+    }
+    if (source->DesignID() == INCOMPLETE_DESIGN_ID) {
+        ErrorLogger() << "Combat::Weapon ... got INCOMPLETE design id, carry on";
+    }
+
+    if (source->ID() == TEMPORARY_OBJECT_ID) {
+        ErrorLogger() << "Combat::WeaponDamageImpl passed TEMPORARY source ship " << source->Dump();
     }
 
     Universe::EmpireObjectVisibilityMap empire_object_vis{

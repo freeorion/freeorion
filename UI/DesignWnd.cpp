@@ -4839,6 +4839,7 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
             CurrentTurn(), ClientApp::GetApp()->EmpireID(),
             hull, Parts(), icon, "", name.IsInStringtable(),
             false, std::move(uuid));
+        m_incomplete_design->SetID(INCOMPLETE_DESIGN_ID);
     } catch (const std::invalid_argument& e) {
         ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign " << e.what();
     }
