@@ -1,11 +1,13 @@
 import freeOrionAIInterface as fo
+from collections import defaultdict
+from copy import copy
 from enum import Enum
-from typing import List
+from typing import DefaultDict, List, NamedTuple, Set
 
-from common.fo_typing import EmpireId, PlanetId
-
-# Default value when AI empire should be used.
-THIS_EMPIRE = None
+from common.fo_typing import BuildingName, PlanetId, SystemId
+from freeorion_tools.caching import cache_for_current_turn
+from PlanetUtilsAI import Opinion, get_planet_opinion
+from turn_state import get_all_empire_planets
 
 
 class BuildingType(Enum):
@@ -20,24 +22,26 @@ class BuildingType(Enum):
     Note: It does not required to have exactly the same name and value.
     """
 
+    GAS_GIANT_GEN = "BLD_GAS_GIANT_GEN"
+    SCANNING_FACILITY = "BLD_SCANNING_FACILITY"
     SHIPYARD_ENRG_COMP = "BLD_SHIPYARD_ENRG_COMP"
     SHIPYARD_AST = "BLD_SHIPYARD_AST"
+    TRANSLATOR = "BLD_TRANSLATOR"
 
     def enqueue(self, pid: PlanetId) -> bool:
         """
         Add building to production queue and return True if succeeded.
         """
-        return bool(fo.issueEnqueueBuildingProductionOrder(self.name, pid))
+        return bool(fo.issueEnqueueBuildingProductionOrder(self.value, pid))
 
-    def available(self, eid: EmpireId = THIS_EMPIRE) -> bool:
+    def available(self) -> bool:
         """
         Return true if this building is available for empire.
         """
-        if eid is THIS_EMPIRE:
-            empire_object = fo.getEmpire()
-        else:
-            empire_object = fo.getEmpire(eid)
-        return empire_object.buildingTypeAvailable(self.value)
+        return fo.getEmpire().buildingTypeAvailable(self.value)
+
+    def get_opinions(self) -> Opinion:
+        return get_planet_opinion(self.value)
 
     def queued_in(self) -> List[PlanetId]:
         """
@@ -45,22 +49,56 @@ class BuildingType(Enum):
         """
         return [element.locationID for element in fo.getEmpire().productionQueue if (element.name == self.value)]
 
-    def can_be_enqueued(self, planet: PlanetId, empire: EmpireId = THIS_EMPIRE) -> bool:
-        if empire is THIS_EMPIRE:
-            empire = fo.empireID()
-        return fo.getBuildingType(self.value).canBeEnqueued(empire, planet)
+    def built_at(self, include_queued_buildings: bool = False) -> Set[PlanetId]:
+        built_at_planets = _get_building_locations()[self.value].planets
+        if not include_queued_buildings:
+            return built_at_planets
+        ret = copy(built_at_planets)
+        ret.update(set(self.queued_in()))
+        return ret
 
-    def can_be_produced(self, planet: PlanetId, empire: EmpireId = THIS_EMPIRE) -> bool:
-        if empire is THIS_EMPIRE:
-            empire = fo.empireID()
-        return fo.getBuildingType(self.value).canBeProduced(empire, planet)
+    def built_at_sys(self, include_queued_buildings: bool = False) -> Set[SystemId]:
+        built_at_systems = _get_building_locations()[self.value].systems
+        if not include_queued_buildings:
+            return built_at_systems
+        ret = copy(built_at_systems)
+        ret.update({fo.getUniverse().getPlanet(pid).systemID for pid in self.queued_in()})
+        return ret
 
-    def production_cost(self, planet: PlanetId, empire: EmpireId = THIS_EMPIRE) -> float:
-        if empire is THIS_EMPIRE:
-            empire = fo.empireID()
-        return fo.getBuildingType(self.value).productionCost(empire, planet)
+    def can_be_enqueued(self, planet: PlanetId) -> bool:
+        return fo.getBuildingType(self.value).canBeEnqueued(fo.empireID(), planet)
 
-    def production_time(self, planet: PlanetId, empire: EmpireId = THIS_EMPIRE) -> int:
-        if empire is THIS_EMPIRE:
-            empire = fo.empireID()
-        return fo.getBuildingType(self.value).productionTime(empire, planet)
+    def can_be_produced(self, planet: PlanetId) -> bool:
+        return fo.getBuildingType(self.value).canBeProduced(fo.empireID(), planet)
+
+    def production_cost(self, planet: PlanetId) -> float:
+        return fo.getBuildingType(self.value).productionCost(fo.empireID(), planet)
+
+    def production_time(self, planet: PlanetId) -> int:
+        return fo.getBuildingType(self.value).productionTime(fo.empireID(), planet)
+
+    def turn_cost(self, planet: PlanetId) -> float:
+        return self.production_cost(planet) / self.production_time(planet)
+
+
+class _BuildingLocations(NamedTuple):
+    """
+    A set of planets and systems that already contain a building.
+    """
+
+    planets: Set[PlanetId]
+    systems: Set[SystemId]
+
+
+# Cannot use BuildingType as key since not all buildings may have an enum value
+@cache_for_current_turn
+def _get_building_locations() -> DefaultDict[BuildingName, _BuildingLocations]:
+    universe = fo.getUniverse()
+    ret = defaultdict(lambda: _BuildingLocations(set(), set()))
+    for pid in get_all_empire_planets():
+        planet = universe.getPlanet(pid)
+        for building in map(universe.getBuilding, planet.buildingIDs):
+            val = ret[building.buildingTypeName]
+            val.planets.add(pid)
+            val.systems.add(planet.systemID)
+    return ret

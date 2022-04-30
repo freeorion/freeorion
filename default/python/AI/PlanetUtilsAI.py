@@ -1,10 +1,22 @@
 import freeOrionAIInterface as fo
+from enum import Enum
 from logging import debug, error
-from typing import Dict, Iterable, List, NamedTuple, Sequence, Set, Union
+from typing import (
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    NamedTuple,
+    Optional,
+    Sequence,
+    Set,
+    Union,
+)
 
 from AIDependencies import INVALID_ID
-from common.fo_typing import PlanetId, SystemId
-from empire.colony_builders import get_colony_builders
+from aistate_interface import get_aistate
+from common.fo_typing import PlanetId, SpeciesName, SystemId
+from empire.colony_builders import get_colony_builders, get_extra_colony_builders
 from empire.ship_builders import get_ship_builders
 from freeorion_tools import ppstring
 from freeorion_tools.caching import cache_for_current_turn
@@ -170,20 +182,81 @@ class Opinion(NamedTuple):
     neutral: Set[PlanetId]
     dislikes: Set[PlanetId]
 
+    def value(self, pid: PlanetId, like_value: float, neutral_value: float, dislike_value: float) -> float:
+        """Returns like_value if pid is in likes, dislike_value if pid is in dislikes, else neutral_value"""
+        if pid in self.likes:
+            return like_value
+        elif pid in self.dislikes:
+            return dislike_value
+        return neutral_value
 
-def get_planet_opinion(feature: str) -> Opinion:
+
+def get_planet_opinion(feature: Union[str, Enum]) -> Opinion:
     """
     Returns sets of empire planets that like, are neutral and dislike the given feature
     """
     # default: feature not in any like or dislike set, all neutral
+    if isinstance(feature, Enum):
+        feature = feature.value()
     default = Opinion(set(), set(get_owned_planets_by_empire()), set())
     return _calculate_get_planet_opinions().get(feature, default)
+
+
+def _get_species_from_colony_building(name: str) -> Optional[SpeciesName]:
+    """Extract a species if name is the name of a colony building"""
+    building_prefix = "BLD_COL_"
+    species_prefix = "SP_"
+    if name.startswith(building_prefix):
+        return species_prefix + name[len(building_prefix) :]
+
+
+@cache_for_current_turn
+def _planned_species() -> Mapping[PlanetId, SpeciesName]:
+    universe = fo.getUniverse()
+    production_queue = fo.getEmpire().productionQueue
+    planned_species = {}
+    colonisation_plans = get_aistate().colonisablePlanetIDs
+    for element in production_queue:
+        species_name = _get_species_from_colony_building(element.name)
+        if species_name:
+            planned_species[element.locationID] = species_name
+    for pid in get_owned_planets_by_empire():
+        planet = universe.getPlanet(pid)
+        if planet.speciesName:
+            # skip already populated planets
+            continue
+        # Finished colony buildings are normal buildings for one turn before turning the outpost into a colony
+        for building in map(universe.getBuilding, planet.buildingIDs):
+            species_name = _get_species_from_colony_building(building.name)
+            if species_name:
+                planned_species[pid] = species_name
+                break
+        if pid not in planned_species:
+            # Without checking the colonisation plans, the AI may start building a colony and buildings
+            # the future species wouldn't like in the same turn.
+            plan = colonisation_plans.get(pid)
+            if plan:
+                planned_species[pid] = plan[1]
+    debug(f"Planned species: {planned_species}")
+    return planned_species
+
+
+def _planet_species(pid: PlanetId) -> Optional[fo.species]:
+    universe = fo.getUniverse()
+    planet = universe.getPlanet(pid)
+    species_name = planet.speciesName
+    if not species_name:
+        species_name = _planned_species().get(pid)
+    if species_name:
+        return fo.getSpecies(species_name)
+    return None
 
 
 @cache_for_current_turn
 def _calculate_get_planet_opinions() -> Dict[str, Opinion]:
     universe = fo.getUniverse()
-    all_species = {universe.getPlanet(pid).speciesName for pid in get_owned_planets_by_empire()}
+    all_species = [universe.getPlanet(pid).speciesName for pid in get_owned_planets_by_empire()]
+    all_species += get_extra_colony_builders()
     all_features = set()
     for species_name in all_species:
         if species_name:
@@ -192,17 +265,16 @@ def _calculate_get_planet_opinions() -> Dict[str, Opinion]:
             all_features.update(species.dislikes)
 
     result = {feature: Opinion(set(), set(), set()) for feature in all_features}
-    for feature, opinion in result.items():
-        for pid in get_owned_planets_by_empire():
-            species_name = universe.getPlanet(pid).speciesName
-            if species_name:
-                species = fo.getSpecies(species_name)
+    for pid in get_owned_planets_by_empire():
+        species = _planet_species(pid)
+        for feature, opinion in result.items():
+            if species:
                 if feature in species.likes:
                     opinion.likes.add(pid)
                 elif feature in species.dislikes:
                     opinion.dislikes.add(pid)
                 else:
                     opinion.neutral.add(pid)
-            # else: outposts are always neutral
+            # else: no species -> neutral
             opinion.neutral.add(pid)
     return result
