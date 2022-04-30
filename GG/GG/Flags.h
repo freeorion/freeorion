@@ -201,13 +201,8 @@ public:
     template<typename S>
     void insert(FlagType flag, S&& name, bool permanent = false)
     {
-#ifndef NDEBUG
-        std::pair<typename std::set<FlagType>::iterator, bool> result =
-#endif
-        m_flags.insert(flag);
-#ifndef NDEBUG
+        auto result = m_flags.insert(flag);
         assert(result.second);
-#endif
         if (permanent)
             m_permanent.insert(flag);
         m_strings.emplace(flag, std::forward<S>(name));
