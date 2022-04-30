@@ -99,7 +99,7 @@ void Check(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3)
 
     // all vertices
     GLfloat verts[][2] = {{-0.2f,  0.2f}, {-0.6f, -0.2f}, {-0.6f,  0.0f},
-                          {-0.2f,  0.4f}, {-0.8f,  0.0f}, { -0.2f,  0.6f},
+                          {-0.2f,  0.4f}, {-0.8f,  0.0f}, {-0.2f,  0.6f},
                           { 0.8f, -0.4f}, { 0.6f, -0.4f}, { 0.8f, -0.8f}};
 
     glPushMatrix();
