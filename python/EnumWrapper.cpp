@@ -78,9 +78,9 @@ namespace FreeOrionPython {
         ;
         TraceLogger() << "WrapGameStateEnums: Wrap BuildType enum";
         auto buildType = py::enum_<BuildType>("buildType");
-        for (const auto& p : IterateEnum(EnumIterator<BuildType>{})) {
-            TraceLogger() << "WrapGameStateEnums: Wrap BuildType enum " << &p;
-            buildType.value(p.second, p.first);
+        for (const auto& [bt, sv] : IterateEnum(EnumIterator<BuildType>{})) {
+            TraceLogger() << "WrapGameStateEnums: Wrap BuildType enum " << sv;
+            buildType.value(sv.data(), bt);
         }
         TraceLogger() << "WrapGameStateEnums: BuildType enum wrapped";
         py::enum_<ResourceType>("resourceType")

@@ -130,7 +130,7 @@ namespace {
         // TODO: additional static_assert that verifies that the numerical representation of
         //       all values of MeterType are -1 or higher. would work better with an
         //       IterateEnum implementation that works constexpr. as of this writing, it
-        //       uses an std::map, which is not constexpr OK in C++17
+        //       uses an std::vector, which is not constexpr OK in C++17
 
         static const auto label_value_strings = []() {
             std::array<std::string, NUM_IDX> retval{};

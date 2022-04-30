@@ -2,7 +2,7 @@
 #define _Enum_h_
 
 #include <iostream>
-#include <map>
+#include <vector>
 #include <string>
 
 #include <boost/preprocessor/comparison/equal.hpp>
@@ -129,11 +129,11 @@ inline \
 BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
         static, \
         BOOST_PP_EMPTY()) \
-std::map< \
-FO_ENUM_NAME_FROM_TYPENAME(typeName), const char*> \
+std::vector<std::pair< \
+FO_ENUM_NAME_FROM_TYPENAME(typeName), std::string_view>> \
 BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)() {\
-static const std::map< \
-FO_ENUM_NAME_FROM_TYPENAME(typeName), const char*> ret{ \
+static const std::vector<std::pair< \
+FO_ENUM_NAME_FROM_TYPENAME(typeName), std::string_view>> ret{ \
     BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_ITERATE_VALUE, \
         FO_ENUM_NAME_FROM_TYPENAME(typeName), values) \
     }; \
@@ -143,8 +143,8 @@ inline \
 BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
         static, \
         BOOST_PP_EMPTY()) \
-std::map< \
-FO_ENUM_NAME_FROM_TYPENAME(typeName), const char*> \
+std::vector<std::pair< \
+FO_ENUM_NAME_FROM_TYPENAME(typeName), std::string_view>> \
 IterateEnum(EnumIterator< \
 FO_ENUM_NAME_FROM_TYPENAME(typeName) >){ return \
 BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
