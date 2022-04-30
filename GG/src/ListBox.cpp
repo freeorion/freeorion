@@ -127,21 +127,6 @@ Alignment AlignmentFromStyle(Flags<ListBoxStyle> style)
 ///////////////////////////////////////
 // ListBoxStyle
 ///////////////////////////////////////
-const ListBoxStyle GG::LIST_NONE            (0);
-const ListBoxStyle GG::LIST_VCENTER         (1 << 0);
-const ListBoxStyle GG::LIST_TOP             (1 << 1);
-const ListBoxStyle GG::LIST_BOTTOM          (1 << 2);
-const ListBoxStyle GG::LIST_CENTER          (1 << 3);
-const ListBoxStyle GG::LIST_LEFT            (1 << 4);
-const ListBoxStyle GG::LIST_RIGHT           (1 << 5);
-const ListBoxStyle GG::LIST_NOSORT          (1 << 6);
-const ListBoxStyle GG::LIST_SORTDESCENDING  (1 << 7);
-const ListBoxStyle GG::LIST_NOSEL           (1 << 8);
-const ListBoxStyle GG::LIST_SINGLESEL       (1 << 9);
-const ListBoxStyle GG::LIST_QUICKSEL        (1 << 10);
-const ListBoxStyle GG::LIST_USERDELETE      (1 << 11);
-const ListBoxStyle GG::LIST_BROWSEUPDATES   (1 << 12);
-
 GG_FLAGSPEC_IMPL(ListBoxStyle);
 
 namespace {

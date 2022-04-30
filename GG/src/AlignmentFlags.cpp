@@ -15,15 +15,6 @@ using namespace GG;
 ///////////////////////////////////////
 // Alignment
 ///////////////////////////////////////
-
-const Alignment GG::ALIGN_NONE         (0);
-const Alignment GG::ALIGN_VCENTER      (1 << 0);
-const Alignment GG::ALIGN_TOP          (1 << 1);
-const Alignment GG::ALIGN_BOTTOM       (1 << 2);
-const Alignment GG::ALIGN_CENTER       (1 << 3);
-const Alignment GG::ALIGN_LEFT         (1 << 4);
-const Alignment GG::ALIGN_RIGHT        (1 << 5);
-
 GG_FLAGSPEC_IMPL(Alignment);
 
 namespace {

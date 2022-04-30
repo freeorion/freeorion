@@ -100,15 +100,6 @@ struct ForwardToParentException {};
 ///////////////////////////////////////
 // WndFlags
 ///////////////////////////////////////
-const WndFlag GG::NO_WND_FLAGS       (0);
-const WndFlag GG::INTERACTIVE        (1 << 0);
-const WndFlag GG::REPEAT_BUTTON_DOWN (1 << 1);
-const WndFlag GG::DRAGABLE           (1 << 2);
-const WndFlag GG::RESIZABLE          (1 << 3);
-const WndFlag GG::ONTOP              (1 << 4);
-const WndFlag GG::MODAL              (1 << 5);
-const WndFlag GG::REPEAT_KEY_PRESS   (1 << 6);
-
 GG_FLAGSPEC_IMPL(WndFlag);
 
 namespace {

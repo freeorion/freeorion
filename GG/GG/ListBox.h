@@ -35,21 +35,21 @@ class WndEvent;
 
 /** Styles for ListBox controls. */
 GG_FLAG_TYPE(ListBoxStyle);
-extern GG_API const ListBoxStyle LIST_NONE;           ///< Default style selected.
-extern GG_API const ListBoxStyle LIST_VCENTER;        ///< Cells are aligned with the top of the list box control.
-extern GG_API const ListBoxStyle LIST_TOP;            ///< Cells are aligned with the top of the list box control. This is the default.
-extern GG_API const ListBoxStyle LIST_BOTTOM;         ///< Cells are aligned with the bottom of the list box control.
-extern GG_API const ListBoxStyle LIST_CENTER;         ///< Cells are center-aligned.
-extern GG_API const ListBoxStyle LIST_LEFT;           ///< Cells are left-aligned. This is the default.
-extern GG_API const ListBoxStyle LIST_RIGHT;          ///< Cells are right-aligned.
-extern GG_API const ListBoxStyle LIST_NOSORT;         ///< List items are not sorted. Items are sorted by default.  When used with drag-and-drop, this style allows arbitrary rearrangement of list elements by dragging.
-extern GG_API const ListBoxStyle LIST_SORTDESCENDING; ///< Items are sorted based on item text in descending order. Ascending order is the default.
-extern GG_API const ListBoxStyle LIST_NOSEL;          ///< No selection, dragging, or dropping allowed.  This makes the list box effectively read-only.
-extern GG_API const ListBoxStyle LIST_SINGLESEL;      ///< Only one item at a time can be selected. By default, multiple items may be selected.
-extern GG_API const ListBoxStyle LIST_QUICKSEL;       ///< Each click toggles an item without affecting any others; ignored when used with LIST_SINGLESEL.
-extern GG_API const ListBoxStyle LIST_USERDELETE;     ///< Allows user to remove selected items by pressing the delete key.
-extern GG_API const ListBoxStyle LIST_BROWSEUPDATES;  ///< Causes a signal to be emitted whenever the mouse moves over ("browses") a row.
 
+constexpr ListBoxStyle LIST_NONE            (0);        ///< Default style selected.
+constexpr ListBoxStyle LIST_VCENTER         (1 << 0);   ///< Cells are aligned with the top of the list box control.
+constexpr ListBoxStyle LIST_TOP             (1 << 1);   ///< Cells are aligned with the top of the list box control. This is the default.
+constexpr ListBoxStyle LIST_BOTTOM          (1 << 2);   ///< Cells are aligned with the bottom of the list box control.
+constexpr ListBoxStyle LIST_CENTER          (1 << 3);   ///< Cells are center-aligned.
+constexpr ListBoxStyle LIST_LEFT            (1 << 4);   ///< Cells are left-aligned. This is the default.
+constexpr ListBoxStyle LIST_RIGHT           (1 << 5);   ///< Cells are right-aligned.
+constexpr ListBoxStyle LIST_NOSORT          (1 << 6);   ///< List items are not sorted. Items are sorted by default.  When used with drag-and-drop, this style allows arbitrary rearrangement of list elements by dragging.
+constexpr ListBoxStyle LIST_SORTDESCENDING  (1 << 7);   ///< Items are sorted based on item text in descending order. Ascending order is the default.
+constexpr ListBoxStyle LIST_NOSEL           (1 << 8);   ///< No selection, dragging, or dropping allowed.  This makes the list box effectively read-only.
+constexpr ListBoxStyle LIST_SINGLESEL       (1 << 9);   ///< Only one item at a time can be selected. By default, multiple items may be selected.
+constexpr ListBoxStyle LIST_QUICKSEL        (1 << 10);  ///< Each click toggles an item without affecting any others; ignored when used with LIST_SINGLESEL.
+constexpr ListBoxStyle LIST_USERDELETE      (1 << 11);  ///< Allows user to remove selected items by pressing the delete key.
+constexpr ListBoxStyle LIST_BROWSEUPDATES   (1 << 12);  ///< Causes a signal to be emitted whenever the mouse moves over ("browses") a row.
 
 /** \brief A flexible control that can contain rows and columns of other
     controls, even other ListBoxes.

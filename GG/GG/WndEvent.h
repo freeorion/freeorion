@@ -30,22 +30,25 @@ class Wnd;
 
 // Adpated from SDLKey enum in SDL_keysym.h of the SDL library.
 GG_FLAG_TYPE(ModKey);
-extern GG_API const ModKey MOD_KEY_NONE;         ///< No modifier key.
-extern GG_API const ModKey MOD_KEY_LSHIFT;       ///< The left Shift key.
-extern GG_API const ModKey MOD_KEY_RSHIFT;       ///< The right Shift key.
-extern GG_API const ModKey MOD_KEY_LCTRL;        ///< The left Control key.
-extern GG_API const ModKey MOD_KEY_RCTRL;        ///< The right Control key.
-extern GG_API const ModKey MOD_KEY_LALT;         ///< The left Alt key.
-extern GG_API const ModKey MOD_KEY_RALT;         ///< The right Alt key.
-extern GG_API const ModKey MOD_KEY_LMETA;        ///< The left Meta key.
-extern GG_API const ModKey MOD_KEY_RMETA;        ///< The right Meta key.
-extern GG_API const ModKey MOD_KEY_NUM;          ///< The Num Lock key.
-extern GG_API const ModKey MOD_KEY_CAPS;         ///< The Caps Lock key.
-extern GG_API const ModKey MOD_KEY_MODE;         ///< The Mode key.
-extern GG_API const Flags<ModKey> MOD_KEY_CTRL;  ///< Either Control key.
-extern GG_API const Flags<ModKey> MOD_KEY_SHIFT; ///< Either Shift key.
-extern GG_API const Flags<ModKey> MOD_KEY_ALT;   ///< Either Alt key.
-extern GG_API const Flags<ModKey> MOD_KEY_META;  ///< Either Meta key.
+
+constexpr ModKey MOD_KEY_NONE     (0x0000); ///< No modifier key.
+constexpr ModKey MOD_KEY_LSHIFT   (0x0001); ///< The left Shift key.
+constexpr ModKey MOD_KEY_RSHIFT   (0x0002); ///< The right Shift key.
+constexpr ModKey MOD_KEY_LCTRL    (0x0040); ///< The left Control key.
+constexpr ModKey MOD_KEY_RCTRL    (0x0080); ///< The right Control key.
+constexpr ModKey MOD_KEY_LALT     (0x0100); ///< The left Alt key.
+constexpr ModKey MOD_KEY_RALT     (0x0200); ///< The right Alt key.
+constexpr ModKey MOD_KEY_LMETA    (0x0400); ///< The left Meta key.
+constexpr ModKey MOD_KEY_RMETA    (0x0800); ///< The right Meta key.
+constexpr ModKey MOD_KEY_NUM      (0x1000); ///< The Num Lock key.
+constexpr ModKey MOD_KEY_CAPS     (0x2000); ///< The Caps Lock key.
+constexpr ModKey MOD_KEY_MODE     (0x4000); ///< The Mode key.
+
+constexpr Flags<ModKey> MOD_KEY_CTRL  ((MOD_KEY_LCTRL | MOD_KEY_RCTRL));    ///< Either Control key.
+constexpr Flags<ModKey> MOD_KEY_SHIFT ((MOD_KEY_LSHIFT | MOD_KEY_RSHIFT));  ///< Either Shift key.
+constexpr Flags<ModKey> MOD_KEY_ALT   ((MOD_KEY_LALT | MOD_KEY_RALT));      ///< Either Alt key.
+constexpr Flags<ModKey> MOD_KEY_META  ((MOD_KEY_LMETA | MOD_KEY_RMETA));    ///< Either Meta key.
+
 
 /** \brief Encapsulates a Wnd event that is passed from the singleton GUI to a
     Wnd.

@@ -36,21 +36,6 @@ bool LineEndsWithEndlineCharacter(const std::vector<Font::LineData>& lines,
 ///////////////////////////////////////
 // MultiEditStyle
 ///////////////////////////////////////
-const MultiEditStyle GG::MULTI_NONE             (0);
-const MultiEditStyle GG::MULTI_WORDBREAK        (1 << 0);
-const MultiEditStyle GG::MULTI_LINEWRAP         (1 << 1);
-const MultiEditStyle GG::MULTI_VCENTER          (1 << 2);
-const MultiEditStyle GG::MULTI_TOP              (1 << 3);
-const MultiEditStyle GG::MULTI_BOTTOM           (1 << 4);
-const MultiEditStyle GG::MULTI_CENTER           (1 << 5);
-const MultiEditStyle GG::MULTI_LEFT             (1 << 6);
-const MultiEditStyle GG::MULTI_RIGHT            (1 << 7);
-const MultiEditStyle GG::MULTI_READ_ONLY        (1 << 8);
-const MultiEditStyle GG::MULTI_TERMINAL_STYLE   (1 << 9);
-const MultiEditStyle GG::MULTI_INTEGRAL_HEIGHT  (1 << 10);
-const MultiEditStyle GG::MULTI_NO_VSCROLL       (1 << 11);
-const MultiEditStyle GG::MULTI_NO_HSCROLL       (1 << 12);
-
 GG_FLAGSPEC_IMPL(MultiEditStyle);
 
 namespace {
@@ -81,15 +66,12 @@ constexpr std::size_t ALL_LINES = std::numeric_limits<std::size_t>::max();
 constexpr unsigned int BORDER_THICK = 2;
 }
 
-const Flags<MultiEditStyle> GG::MULTI_NO_SCROLL{MULTI_NO_VSCROLL | MULTI_NO_HSCROLL};
-
 
 ////////////////////////////////////////////////
 // GG::MultiEdit
 ////////////////////////////////////////////////
 MultiEdit::MultiEdit(std::string str, const std::shared_ptr<Font>& font, Clr color,
-                     Flags<MultiEditStyle> style/* = MULTI_LINEWRAP*/,
-                     Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
+                     Flags<MultiEditStyle> style, Clr text_color, Clr interior) :
     Edit(std::move(str), font, color, text_color, interior),
     m_style(style),
     m_cursor_begin(0, CP0),
