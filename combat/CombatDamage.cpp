@@ -172,13 +172,6 @@ std::vector<float> Combat::WeaponDamageImpl(
         }
         return {};
     }
-    if (source->DesignID() == INCOMPLETE_DESIGN_ID) {
-        ErrorLogger() << "Combat::Weapon ... got INCOMPLETE design id, carry on";
-    }
-
-    if (source->ID() == TEMPORARY_OBJECT_ID) {
-        ErrorLogger() << "Combat::WeaponDamageImpl passed TEMPORARY source ship " << source->Dump();
-    }
 
     Universe::EmpireObjectVisibilityMap empire_object_vis{
         {source->Owner(), {{TEMPORARY_OBJECT_ID, Visibility::VIS_FULL_VISIBILITY}}}};

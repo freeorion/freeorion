@@ -2826,8 +2826,6 @@ namespace {
 
         universe.InsertShipDesignID(new ShipDesign(*incomplete_design), client_empire_id, incomplete_design->ID());
         detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
-        DebugLogger() << "just InsertShipDesignID("  << incomplete_design->ID() << " " << client_empire_id << "  " << TEMPORARY_OBJECT_ID << ")  to a pocket universe";
-        DebugLogger() << "just InsertShipDesignID(..) " << incomplete_design->Name() << "  turns " << turns << "  cost " << cost << "  ";
         float tech_level = boost::algorithm::clamp(context.current_turn / 400.0f, 0.0f, 1.0f);
         float typical_shot = 3 + 27 * tech_level;
         float enemy_DR = 20 * tech_level;
@@ -3962,20 +3960,12 @@ void EncyclopediaDetailPanel::SetDesign(const std::string& design_id) {
 }
 
 void EncyclopediaDetailPanel::SetIncompleteDesign(std::weak_ptr<const ShipDesign> incomplete_design) {
-    auto p = incomplete_design.lock();
-    if (p) {
-        ErrorLogger() << "EncyclopediaDetailPanel::SetIncompleteDesign(..)" << p->Name(false) << "  ID " << p->ID();
-    } else {
-        ErrorLogger() << "EncyclopediaDetailPanel::SetIncompleteDesign(..)";
-    }
     m_incomplete_design = incomplete_design;
 
     if (m_items_it == m_items.end() ||
         m_items_it->first != INCOMPLETE_DESIGN) {
-        ErrorLogger() << "EncyclopediaDetailPanel::SetIncompleteDesign AddItem  INCOMPLETE_DESIGN " << INCOMPLETE_DESIGN ;
         AddItem(INCOMPLETE_DESIGN, EMPTY_STRING);
     } else {
-        ErrorLogger() << "EncyclopediaDetailPanel::SetIncompleteDesign AddItem  Refresh";
         Refresh();
     }
 }
