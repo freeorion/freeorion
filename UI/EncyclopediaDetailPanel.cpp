@@ -117,8 +117,7 @@ namespace {
     /** Retreive a value label and general string representation for @a meter_type
       * eg. {"METER_STEALTH_VALUE_LABEL", UserString("METER_STEALTH")} */
     auto MeterValueLabelAndString(MeterType meter_type) {
-        auto meter_type_sv{to_string(meter_type)};
-        std::pair<std::string_view, std::string_view> retval{"", meter_type_sv};
+        std::pair<std::string_view, std::string_view> retval{"", to_string(meter_type)};
 
         if (meter_type == MeterType::INVALID_METER_TYPE)
             return retval;
@@ -170,7 +169,7 @@ namespace {
     }
 
     const std::vector<std::string>& GetSearchTextDirNames() {
-        static std::vector<std::string> dir_names{
+        static const std::vector<std::string> dir_names{
             "ENC_INDEX",        "ENC_SHIP_PART",    "ENC_SHIP_HULL",    "ENC_TECH",
             "ENC_POLICY",
             "ENC_BUILDING_TYPE","ENC_SPECIAL",      "ENC_SPECIES",      "ENC_FIELD_TYPE",
