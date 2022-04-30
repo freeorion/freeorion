@@ -116,14 +116,14 @@ namespace {
 bool RegisterWndFlags()
 {
     FlagSpec<WndFlag>& spec = FlagSpec<WndFlag>::instance();
-    spec.insert(NO_WND_FLAGS,       "NO_WND_FLAGS",         true);
-    spec.insert(INTERACTIVE,        "INTERACTIVE",          true);
-    spec.insert(REPEAT_BUTTON_DOWN, "REPEAT_BUTTON_DOWN",   true);
-    spec.insert(DRAGABLE,           "DRAGABLE",             true);
-    spec.insert(RESIZABLE,          "RESIZABLE",            true);
-    spec.insert(ONTOP,              "ONTOP",                true);
-    spec.insert(MODAL,              "MODAL",                true);
-    spec.insert(REPEAT_KEY_PRESS,   "REPEAT_KEY_PRESS",     true);
+    spec.insert(NO_WND_FLAGS,       "NO_WND_FLAGS");
+    spec.insert(INTERACTIVE,        "INTERACTIVE");
+    spec.insert(REPEAT_BUTTON_DOWN, "REPEAT_BUTTON_DOWN");
+    spec.insert(DRAGABLE,           "DRAGABLE");
+    spec.insert(RESIZABLE,          "RESIZABLE");
+    spec.insert(ONTOP,              "ONTOP");
+    spec.insert(MODAL,              "MODAL");
+    spec.insert(REPEAT_KEY_PRESS,   "REPEAT_KEY_PRESS");
     return true;
 }
 bool dummy = RegisterWndFlags();

@@ -31,13 +31,13 @@ namespace {
 bool RegisterAlignments()
 {
     FlagSpec<Alignment>& spec = FlagSpec<Alignment>::instance();
-    spec.insert(ALIGN_NONE,     "ALIGN_NONE",   true);
-    spec.insert(ALIGN_VCENTER,  "ALIGN_VCENTER",true);
-    spec.insert(ALIGN_TOP,      "ALIGN_TOP",    true);
-    spec.insert(ALIGN_BOTTOM,   "ALIGN_BOTTOM", true);
-    spec.insert(ALIGN_CENTER,   "ALIGN_CENTER", true);
-    spec.insert(ALIGN_LEFT,     "ALIGN_LEFT",   true);
-    spec.insert(ALIGN_RIGHT,    "ALIGN_RIGHT",  true);
+    spec.insert(ALIGN_NONE,     "ALIGN_NONE");
+    spec.insert(ALIGN_VCENTER,  "ALIGN_VCENTER");
+    spec.insert(ALIGN_TOP,      "ALIGN_TOP");
+    spec.insert(ALIGN_BOTTOM,   "ALIGN_BOTTOM");
+    spec.insert(ALIGN_CENTER,   "ALIGN_CENTER");
+    spec.insert(ALIGN_LEFT,     "ALIGN_LEFT");
+    spec.insert(ALIGN_RIGHT,    "ALIGN_RIGHT");
     return true;
 }
 bool dummy = RegisterAlignments();

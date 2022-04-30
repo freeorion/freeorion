@@ -18,8 +18,8 @@
 
 #include <cassert>
 #include <iosfwd>
-#include <map>
-#include <set>
+#include <array>
+#include <limits>
 #include <type_traits>
 #include <GG/Exception.h>
 
@@ -27,10 +27,11 @@
 namespace GG {
 
 namespace detail {
-    constexpr inline std::size_t OneBits(unsigned int num)
+    template <typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+    constexpr inline std::size_t OneBits(T num)
     {
         std::size_t retval = 0;
-        constexpr std::size_t NUM_BITS = sizeof(num) * 8;
+        constexpr std::size_t NUM_BITS = std::numeric_limits<T>::digits;
         for (std::size_t i = 0; i < NUM_BITS; ++i) {
             if (num & 1)
                 ++retval;
@@ -64,8 +65,9 @@ inline constexpr bool is_flag_type_v = is_flag_type<T>::value;
     class GG_API name                                                   \
     {                                                                   \
     public:                                                             \
+        using InternalType = unsigned short int;                        \
         constexpr name() noexcept = default;                            \
-        constexpr explicit name(unsigned short int value) :             \
+        constexpr explicit name(InternalType value) :                   \
             m_value(value)                                              \
         {                                                               \
             if (1u < detail::OneBits(value))                            \
@@ -79,7 +81,7 @@ inline constexpr bool is_flag_type_v = is_flag_type<T>::value;
         constexpr bool operator<(name rhs) const                        \
         { return m_value < rhs.m_value; }                               \
     private:                                                            \
-        unsigned short int m_value = 0;                                 \
+        InternalType m_value = 0;                                       \
         friend class Flags<name>;                                       \
     };                                                                  \
                                                                         \
@@ -132,6 +134,9 @@ inline constexpr bool is_flag_type_v = is_flag_type<T>::value;
 template <typename FlagType>
 class GG_API FlagSpec
 {
+    static constexpr size_t digits = std::numeric_limits<typename FlagType::InternalType>::digits;
+    using FlagContainerT = std::array<FlagType, digits>;
+
 public:
     // If you have received an error message directing you to the line below,
     // it means you probably have tried to use this class with a FlagsType
@@ -139,10 +144,8 @@ public:
     // flag types.
     static_assert(is_flag_type_v<FlagType>, "Using FlagsType without GG_FLAG_TYPE macro");
 
-    /** Iterator over all known flags. */
-    typedef typename std::set<FlagType>::iterator iterator;
     /** Const iterator over all known flags. */
-    typedef typename std::set<FlagType>::const_iterator const_iterator;
+    using const_iterator = typename FlagContainerT::const_iterator;
 
     /** The base class for FlagSpec exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
@@ -154,43 +157,49 @@ public:
     GG_CONCRETE_EXCEPTION(UnknownString, GG::FlagSpec, Exception);
 
     /** Returns the singelton instance of this class. */
-    static FlagSpec& instance();
+    [[nodiscard]] static FlagSpec& instance();
 
     /** Returns true iff FlagSpec contains \a flag. */
-    bool contains(FlagType flag) const
-    { return m_flags.count(flag) != 0; }
-    /** Returns true iff \a flag is a "permanent" flag -- a flag used
-        internally by the GG library, as opposed to a user-added flag. */
-    bool permanent(FlagType flag) const
-    { return m_permanent.count(flag) != 0; }
+    [[nodiscard]] constexpr bool contains(FlagType flag) const
+    {
+        for (size_t idx = 0; idx < m_count; ++idx)
+            if (m_flags.at(idx) == flag)
+                return true;
+        return false;
+    }
+
     /** Returns an iterator to \a flag, if flag is in the FlagSpec, or end()
         otherwise. */
-    const_iterator find(FlagType flag) const
-    { return m_flags.find(flag); }
+    [[nodiscard]] constexpr const_iterator find(FlagType flag) const
+    {
+        for (const_iterator it = begin(); it != end(); ++it)
+            if (*it == flag)
+                return it;
+        return end();
+    }
     /** Returns an iterator to the first flag in the FlagSpec. */
-    const_iterator begin() const
+    [[nodiscard]] constexpr const_iterator begin() const
     { return m_flags.begin(); }
     /** Returns an iterator to one past the last flag in the FlagSpec. */
-    const_iterator end() const
-    { return m_flags.end(); }
+    [[nodiscard]] constexpr const_iterator end() const
+    { return m_flags.begin() + m_count; }
     /** Returns the stringification of \a flag provided when \a flag was added
         to the FlagSpec.  \throw Throws GG::FlagSpec::UnknownFlag if an
         unknown flag's stringification is requested. */
-    const std::string& ToString(FlagType flag) const
+    [[nodiscard]] constexpr std::string_view ToString(FlagType flag) const
     {
-        auto it = m_strings.find(flag);
-        if (it == m_strings.end())
-            throw UnknownFlag("Could not find string corresponding to unknown flag");
-        return it->second;
+        for (size_t idx = 0; idx < m_count; ++idx)
+            if (m_flags.at(idx) == flag)
+                return m_strings.at(idx);
+        throw UnknownFlag("Could not find string corresponding to unknown flag");
     }
     /** Returns the flag whose stringification is \a str.  \throw Throws
         GG::FlagSpec::UnknownString if an unknown string is provided. */
-    FlagType FromString(const std::string& str) const
+    [[nodiscard]] constexpr FlagType FromString(std::string_view str) const
     {
-        for (const auto& string : m_strings) {
-            if (string.second == str)
-                return string.first;
-        }
+        for (size_t idx = 0; idx < m_count; ++idx)
+            if (m_strings.at(idx) == str)
+                return m_flags.at(idx);
         throw UnknownString("Could not find flag corresponding to unknown string");
     }
 
@@ -199,38 +208,24 @@ public:
         added by GG are added as permanent flags.  User-added flags should not
         be added as permanent. */
     template<typename S>
-    void insert(FlagType flag, S&& name, bool permanent = false)
+    constexpr void insert(FlagType flag, S&& name)
     {
-        auto result = m_flags.insert(flag);
-        assert(result.second);
-        if (permanent)
-            m_permanent.insert(flag);
-        m_strings.emplace(flag, std::forward<S>(name));
-    }
-    /** Removes \a flag from the FlagSpec, returning whether the flag was
-        actually removed or not.  Permanent flags are not removed.  The
-        removal of flags will probably only be necessary in cases where flags
-        were added for classes in a runtime-loaded DLL/shared library at
-        DLL/shared library unload-time. */
-    bool erase(FlagType flag)
-    {
-        bool retval = true;
-        if (permanent(flag)) {
-            retval = false;
-        } else {
-            m_flags.erase(flag);
-            m_permanent.erase(flag);
-            m_strings.erase(flag);
-        }
-        return retval;
+        if (m_count >= digits)
+            throw std::runtime_error("FlagSpec had too many flags inserted");
+        for (size_t idx = 0; idx < m_count; ++idx)
+            if (m_flags.at(idx) == flag)
+                throw std::invalid_argument("FlagSpec duplicate flag inserted");
+        m_flags[m_count] = flag;
+        m_strings[m_count] = std::forward<S>(name);
+        m_count++;
     }
 
 private:
-    FlagSpec() = default;
+    constexpr FlagSpec() = default;
 
-    std::set<FlagType>              m_flags;
-    std::set<FlagType>              m_permanent;
-    std::map<FlagType, std::string> m_strings;
+    size_t                               m_count = 0;
+    FlagContainerT                       m_flags{};
+    std::array<std::string_view, digits> m_strings{};
 };
 
 
@@ -316,7 +311,8 @@ public:
     }
 
 private:
-    unsigned int m_flags = 0;
+    using InternalType = typename FlagType::InternalType;
+    InternalType m_flags = 0;
 
     friend std::ostream& operator<<<>(std::ostream& os, Flags<FlagType> flags);
 };
