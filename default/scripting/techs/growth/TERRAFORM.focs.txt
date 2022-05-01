@@ -8,6 +8,7 @@ Tech
     tags = [ "PEDIA_GROWTH_CATEGORY" ]
     prerequisites = "GRO_ADV_ECOMAN"
     unlock = [
+        Item type = Building name = "BLD_TERRAFORM_BEST"
         Item type = Building name = "BLD_TERRAFORM_TERRAN"
         Item type = Building name = "BLD_TERRAFORM_OCEAN"
         Item type = Building name = "BLD_TERRAFORM_SWAMP"

@@ -27,7 +27,7 @@ TARGET_TERRAFORMING
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
         Not Planet type = [Asteroids GasGiant]
-        Not HasTag name = "NO_TERRAFORM"
+        Not Enqueued type = Building name = "BLD_TERRAFORM_BEST"
         Or [
             Planet type = @1@
             Planet type = @3@
@@ -71,7 +71,7 @@ TARGET_TERRAFORMING
                     icon = "icons/building/terraform.png"
                     parameters = [
                         tag = "planet" data = Target.ID
-                        tag = "user_string" data = "PT_@6@"
+                        tag = "planettype" data = "PT_@6@"
                         tag = "environment" data = Target.ID
                     ]
                     empire = Source.Owner
@@ -83,6 +83,93 @@ TARGET_TERRAFORMING
     ]
     icon = "icons/building/terraform.png"
 '''
+
+BuildingType
+    name = "BLD_TERRAFORM_BEST"
+    description = "BLD_TERRAFORM_BEST_DESC"
+    buildcost = 100 * (1 - 0.4 * Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_TERRAFORMING"])
+                    * Target.HabitableSize
+                      // calculating multiple steps: stepwise-cost(A,B) = 1+2+..+N == (1+N)*N/2  iff difference between A and B is N
+                      // if one uses cost(OrigType, BestType) it completely ignores if you changed the type inbetween
+                      // if one uses cost(CurrentType, BestType) the cost growth is too little (at least) if CurrentType is between Orig and Best on the wheel
+                      // if one uses cost(OrigType, BestType) - cost(OrigType, CurrentType) you get a lot of corner cases (depending where the three types are in relation to another on the wheel)
+                      //    a) CurrentType is somewhere on the way from Orig to Best: cost(OrigType, BestType) - cost(OrigType, CurrentType) should be right
+                      //    b) CurrentType is not on the way from Orig to Best: ??? actually dont know - one could go back to Orig, so: cost(OrigType, BestType) + cost(OrigType, CurrentType)
+                      //                                                        or one could go around the other direction: other_cost(OrigType, BestType) - other_cost(OrigType, CurrentType)
+                      //                                                        also there could be a different best planet closest as well
+                      // aggregating a sum stepwise with the right step formula would be straightforward and correct, but needs better backend support
+                      // so we only support the standard case (i.e. CurrentType == OrigType) 100% and make sure the cost is not too low in other cases by taking a maximum
+                    * max(1, [[AGGREGATED_STEPS_FROM_TO(Target.OriginalType,Target.NextBestPlanetType)]], [[AGGREGATED_STEPS_FROM_TO(Target.PlanetType,Target.NextBestPlanetType)]])
+                      // Giving a discount to amend opportunity cost by not multi-stepping
+                      // per extra step 10%, fast linear formula
+                    * (1 - 0.1 * ((PlanetTypeDifference from = Target.PlanetType to = Target.NextBestPlanetType) - 1))
+                    * [[BUILDING_COST_MULTIPLIER]]
+                    * (1 + (2 * Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_ENVIRONMENTALISM"]))
+    buildtime =  (PlanetTypeDifference from = Target.PlanetType to = Target.NextBestPlanetType)
+                    * (12 - (6 * Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_TERRAFORMING"]))
+                    // Keep the division operation last in order to keep rounding to integer errors at minimum
+                    * (100 - 10 * ((PlanetTypeDifference from = Target.PlanetType to = Target.NextBestPlanetType) - 1)) / 100
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_TERRAFORM"
+        OwnedBy empire = Source.Owner
+        TargetPopulation low = 1
+        Not Planet type = [Asteroids GasGiant]
+        Not Planet environment = [Uninhabitable Good]
+        Not Contains Building name = "BLD_GAIA_TRANS"
+        Not HasSpecial name = "GAIA_SPECIAL"
+[[FOR_ALL_TERRAFORM_PLANET_TYPES(        Not Contains Building name = "BLD_TERRAFORM_,")]]
+[[FOR_ALL_TERRAFORM_PLANET_TYPES(        Not Enqueued type = Building name = "BLD_TERRAFORM_,")]]
+        // Hide building if the species can not improve (Check species' highest available target environment tag)
+        Not HasTag name = "NO_TERRAFORM"
+        (LocalCandidate.PlanetType != LocalCandidate.NextBestPlanetType)
+    ]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            effects = [
+                SetPlanetType type = Target.NextBestPlanetType
+                GenerateSitRepMessage
+                    message = "EFFECT_TERRAFORM"
+                    label = "EFFECT_TERRAFORM_LABEL"
+                    icon = "icons/building/terraform.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                        tag = "planettype" data = Target.ID
+                        tag = "environment" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    ]
+    icon = "icons/building/terraform.png"
+
+
+// @1@ from planet type
+// @2@ to planet type
+AGGREGATED_STEPS_FROM_TO
+'''((1 + PlanetTypeDifference from = @1@ to = @2@) * (PlanetTypeDifference from = @1@ to = @2@) / 2 )'''
+
+// @1@ code before each planet type
+// @2@ code after each planet type
+FOR_ALL_TERRAFORM_PLANET_TYPES
+'''@1@BARREN@2@
+@1@TUNDRA@2@
+@1@DESERT@2@
+@1@TERRAN@2@
+@1@OCEAN@2@
+@1@SWAMP@2@
+@1@TOXIC@2@
+@1@INFERNO@2@
+@1@RADIATED@2@
+@1@BARREN@2@'''
 
 #include "/scripting/common/base_prod.macros"
 #include "/scripting/common/enqueue.macros"

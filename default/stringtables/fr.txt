@@ -7748,7 +7748,7 @@ EFFECT_GAIA_LABEL
 Paradis Gaia
 
 EFFECT_TERRAFORM
-La planète %planet% a été terraformée en planète %user_string% (%environment%).
+La planète %planet% a été terraformée en planète %planettype% (%environment%).
 
 EFFECT_TERRAFORM_LABEL
 Terraformation
