@@ -3734,7 +3734,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // update current turn number so that following visibility updates and info
     // sent to players will have updated turn associated with them
-    ++m_current_turn;
+    context.current_turn = ++m_current_turn;
     DebugLogger() << "ServerApp::PostCombatProcessTurns Turn number incremented to " << m_current_turn;
 
 
