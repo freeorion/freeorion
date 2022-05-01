@@ -7616,7 +7616,7 @@ Supernova detected
 SITREP_BUREAUCRACY_STOPPED
 '''The [[policy PLC_BUREAUCRACY]] is expanding, requiring more administrative facilities.
 Starting next turn, %rawtext:needbuildings% facilities ([[buildingtype BLD_IMPERIAL_PALACE]], [[buildingtype BLD_REGIONAL_ADMIN]]) will be needed to prevent the bureaucracy from halting. Currently, a total of %rawtext:havebuildings% are owned.
-Bureaucracy requires an additional administrative building every [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] turns.'''
+Bureaucracy requires an additional administrative building every [[value BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING]] turns.'''
 
 SITREP_BUREAUCRACY_STOPPED_LABEL
 Bureaucratic Gridlock
@@ -12352,7 +12352,7 @@ PLC_BUREAUCRACY
 Bureaucracy
 
 PLC_BUREAUCRACY_DESC
-'''• Increases an empire's populated planet stability by [[value PLC_BUREAUCRACY_STABILITY_FLAT]], as long as the empire has enough [[buildingtype BLD_REGIONAL_ADMIN]]. An additional [[buildingtype BLD_REGIONAL_ADMIN]] is required per [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] turns this policy has been adopted.
+'''• Increases an empire's populated planet stability by [[value PLC_BUREAUCRACY_STABILITY_FLAT]], as long as the empire has enough [[buildingtype BLD_REGIONAL_ADMIN]]. An additional [[buildingtype BLD_REGIONAL_ADMIN]] is required per [[value BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING]] turns this policy has been adopted.
 • Changing planet focus reduces that planet's [[metertype METER_INFLUENCE]] by [[value BUREAUCRACY_FOCUS_CHANGE_PENALTY]].'''
 
 PLC_BUREAUCRACY_SHORT_DESC

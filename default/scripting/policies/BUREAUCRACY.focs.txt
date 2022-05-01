@@ -32,7 +32,7 @@ Policy
             ]
             activation = Number
                 low = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) /
-                      (NamedInteger name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING" value = 10)
+                      (NamedInteger name = "BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING" value = 10)
                 condition = And [
                     Or [
                         Building name = "BLD_REGIONAL_ADMIN"
@@ -51,7 +51,7 @@ Policy
             scope = Source
             activation =
                 ((TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy + 2) %
-                 NamedIntegerLookup name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING" == 0)
+                 NamedIntegerLookup name = "BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING" == 0)
             effects = GenerateSitRepMessage
                 message = "SITREP_BUREAUCRACY_STOPPED"
                 label = "SITREP_BUREAUCRACY_STOPPED_LABEL"
@@ -65,7 +65,7 @@ Policy
                         OwnedBy empire = Source.Owner
                     ]
                     tag = "needbuildings" data = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy + 2) /
-                                                 (NamedIntegerLookup name = "BUREACRACY_ADMINS_NEEDED_TURN_SCALING")
+                                                 (NamedIntegerLookup name = "BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING")
                 ]
                 empire = Source.Owner
             

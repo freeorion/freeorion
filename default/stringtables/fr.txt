@@ -7616,7 +7616,7 @@ Supernova détectée
 SITREP_BUREAUCRACY_STOPPED
 '''Le développement de la [[policy PLC_BUREAUCRACY]] nécessite des structures administratives supplémentaires.
 À partir du prochain tour, %rawtext:needbuildings% structures ([[buildingtype BLD_REGIONAL_ADMIN]], [[buildingtype BLD_IMPERIAL_PALACE]]) seront requises afin d'éviter la paralysie de la bureaucratie. Actuellement, un total de %rawtext:havebuildings% structures se trouvent dans l'empire.
-La Bureaucratie requiert une structure administrative supplémentaire tous les [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] tours.'''
+La Bureaucratie requiert une structure administrative supplémentaire tous les [[value BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING]] tours.'''
 
 SITREP_BUREAUCRACY_STOPPED_LABEL
 Paralysie Bureaucratique
@@ -12352,7 +12352,7 @@ PLC_BUREAUCRACY
 Bureaucratie
 
 PLC_BUREAUCRACY_DESC
-'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] d'une planète habitée et appartenant à l'empire de [[value PLC_BUREAUCRACY_STABILITY_FLAT]], tant que l'empire dispose de suffisamment de structures d'[[buildingtype BLD_REGIONAL_ADMIN]]. Une structure supplémentaire d'[[buildingtype BLD_REGIONAL_ADMIN]] est requise tous les [[value BUREACRACY_ADMINS_NEEDED_TURN_SCALING]] tours à partir de l'adoption de cette Politique.
+'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] d'une planète habitée et appartenant à l'empire de [[value PLC_BUREAUCRACY_STABILITY_FLAT]], tant que l'empire dispose de suffisamment de structures d'[[buildingtype BLD_REGIONAL_ADMIN]]. Une structure supplémentaire d'[[buildingtype BLD_REGIONAL_ADMIN]] est requise tous les [[value BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING]] tours à partir de l'adoption de cette Politique.
 • Modifier le Focus planétaire réduit l'[[metertype METER_INFLUENCE]] de cette planète de [[value BUREAUCRACY_FOCUS_CHANGE_PENALTY]].'''
 
 PLC_BUREAUCRACY_SHORT_DESC
