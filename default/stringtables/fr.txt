@@ -5038,7 +5038,7 @@ GOVERNMENT_INFO_IP
 PI
 
 GOVERNMENT_WND_REVERT
-Réinitialiser
+Rétablir
 
 ECONOMIC_CATEGORY
 Économique
@@ -11999,7 +11999,8 @@ PLC_TERRAFORMING_DESC
 '''• Diminue le temps et le coût minimum nécessaires pour mener à bien les projets de Terraformation sur une planète.
 • Améliore la [[metertype METER_TARGET_HAPPINESS]] sur les planètes terraformées de [[value PLC_TERRAFORMING_TARGET_HAPPINESS_ORIGINAL_FLAT]] par palier les séparant de leur type planétaire d'origine après terraformation.
 • Améliore la [[metertype METER_TARGET_INFLUENCE]] sur les planètes en Focus Influence de [[value PLC_TERRAFORMING_TARGET_INFLUENCE_ORIGINAL_FLAT]] par palier les séparant de leur type planétaire d'origine après terraformation.
-• Améliore la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche de la racine carrée de la [[metertype METER_POPULATION]] x [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] par palier les séparant de leur type planétaire d'origine après terraformation.'''
+• Améliore la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche de la racine carrée de la [[metertype METER_POPULATION]] x [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] par palier les séparant de leur type planétaire d'origine après terraformation.
+Les planètes artificielles comptent comme ayant été terraformées sur [[value PLC_TERRAFORMING_ARTIFICIAL_PLANET_DISTANCE]] paliers, quel que soit leur [[encyclopedia ENVIRONMENT_TITLE]] actuel.'''
 
 PLC_TERRAFORMING_SHORT_DESC
 Accélère la terraformation
