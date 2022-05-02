@@ -130,7 +130,7 @@ Universe::Universe() :
     m_object_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID,
                                           TEMPORARY_OBJECT_ID, INVALID_OBJECT_ID)),
     m_design_id_allocator(new IDAllocator(ALL_EMPIRES, std::vector<int>(), INVALID_DESIGN_ID,
-                                          TEMPORARY_OBJECT_ID, INVALID_DESIGN_ID))
+                                          INCOMPLETE_DESIGN_ID, INVALID_DESIGN_ID))
 {}
 
 Universe& Universe::operator=(Universe&& other) noexcept {
@@ -224,7 +224,7 @@ void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
         highest_allocated_design_id = std::max(highest_allocated_design_id, id_and_obj.first);
 
     m_design_id_allocator = std::make_unique<IDAllocator>(ALL_EMPIRES, empire_ids, INVALID_DESIGN_ID,
-                                                          TEMPORARY_OBJECT_ID, highest_allocated_design_id);
+                                                          INCOMPLETE_DESIGN_ID, highest_allocated_design_id);
 
     DebugLogger() << "Reset id allocators with highest object id = " << highest_allocated_id
                   << " and highest design id = " << highest_allocated_design_id;
@@ -502,7 +502,9 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, boost::optional<int> 
         return false;
     }
 
-    if (m_ship_designs.count(id)) {
+    if (id == INCOMPLETE_DESIGN_ID) {
+        TraceLogger() << "Update the incomplete Ship design id " << id;
+    } else if (m_ship_designs.count(id)) {
         ErrorLogger() << "Ship design id " << id << " already exists.";
         return false;
     }

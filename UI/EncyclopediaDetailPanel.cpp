@@ -2823,9 +2823,8 @@ namespace {
         cost_units = UserString("ENC_PP");
 
 
-        universe.InsertShipDesignID(new ShipDesign(*incomplete_design), client_empire_id, TEMPORARY_OBJECT_ID);
+        universe.InsertShipDesignID(new ShipDesign(*incomplete_design), client_empire_id, incomplete_design->ID());
         detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
-
         float tech_level = boost::algorithm::clamp(context.current_turn / 400.0f, 0.0f, 1.0f);
         float typical_shot = 3 + 27 * tech_level;
         float enemy_DR = 20 * tech_level;
@@ -2876,7 +2875,7 @@ namespace {
 
 
         // temporary ship to use for estimating design's meter values
-        auto temp = universe.InsertTemp<Ship>(client_empire_id, INVALID_DESIGN_ID, "",
+        auto temp = universe.InsertTemp<Ship>(client_empire_id, incomplete_design->ID(), "",
                                               universe, species_manager, client_empire_id,
                                               context.current_turn);
 

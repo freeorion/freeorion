@@ -2,6 +2,7 @@
 #define _ConstantsFwd_h_
 
 constexpr int INVALID_DESIGN_ID = -1;
+constexpr int INCOMPLETE_DESIGN_ID = -4;
 constexpr int INVALID_OBJECT_ID = -1; // The ID number assigned to a UniverseObject upon construction; It is assigned an ID later when it is placed in the universe
 constexpr int ALL_EMPIRES = -1;
 

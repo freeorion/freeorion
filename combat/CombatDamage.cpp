@@ -165,7 +165,11 @@ std::vector<float> Combat::WeaponDamageImpl(
         ErrorLogger() << "Combat::WeaponDamageImpl passed null source ship";
         return {};
     } else if (source->DesignID() == INVALID_DESIGN_ID) {
-        ErrorLogger() << "Combat::WeaponDamageImpl passed source ship without a valid design ID: " << source->Dump();
+        if (source->ID() == TEMPORARY_OBJECT_ID) {
+            ErrorLogger() << "Combat::WeaponDamageImpl passed TEMPORARY source ship without a valid design ID: " << source->Dump();
+        } else {
+            ErrorLogger() << "Combat::WeaponDamageImpl passed source ship without a valid design ID: " << source->Dump();
+        }
         return {};
     }
 
