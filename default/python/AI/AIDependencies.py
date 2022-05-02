@@ -91,6 +91,7 @@ class Tags:
     STEALTH = "STEALTH"
     SHIELDS = "SHIELDS"
     FUEL = "FUEL"
+    INDEPENDENT = "INDEPENDENT_HAPPINESS"
 
 
 # </editor-fold>

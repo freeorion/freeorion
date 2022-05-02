@@ -23,6 +23,8 @@ class BuildingType(Enum):
     """
 
     GAS_GIANT_GEN = "BLD_GAS_GIANT_GEN"
+    PALACE = "BLD_IMPERIAL_PALACE"
+    REGIONAL_ADMIN = "BLD_REGIONAL_ADMIN"
     SCANNING_FACILITY = "BLD_SCANNING_FACILITY"
     SHIPYARD_ENRG_COMP = "BLD_SHIPYARD_ENRG_COMP"
     SHIPYARD_AST = "BLD_SHIPYARD_AST"
@@ -78,7 +80,7 @@ class BuildingType(Enum):
         return fo.getBuildingType(self.value).productionTime(fo.empireID(), planet)
 
     def turn_cost(self, planet: PlanetId) -> float:
-        return self.production_cost(planet) / self.production_time(planet)
+        return fo.getBuildingType(self.value).perTurnCost(fo.empireID(), planet)
 
 
 class _BuildingLocations(NamedTuple):

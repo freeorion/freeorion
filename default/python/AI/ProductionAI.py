@@ -3,7 +3,7 @@ import math
 import random
 from logging import debug, error, warning
 from operator import itemgetter
-from typing import FrozenSet, Iterable, List
+from typing import FrozenSet, Iterable, List, Tuple
 
 import AIDependencies
 import AIstate
@@ -11,13 +11,13 @@ import FleetUtilsAI
 import MilitaryAI
 import PlanetUtilsAI
 import PriorityAI
-from AIDependencies import INVALID_ID
+from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
 from buildings import BuildingType
 from character.character_module import Aggression
 from colonization import rate_planetary_piloting
 from colonization.rate_pilots import GREAT_PILOT_RATING
-from common.fo_typing import PlanetId
+from common.fo_typing import PlanetId, SystemId
 from empire.buildings_locations import (
     get_best_pilot_facilities,
     get_systems_with_facilities,
@@ -52,6 +52,7 @@ from production import print_building_list, print_capital_info, print_production
 from turn_state import (
     get_all_empire_planets,
     get_colonized_planets,
+    get_colonized_planets_in_system,
     get_empire_drydocks,
     get_empire_outposts,
     get_empire_planets_by_species,
@@ -273,14 +274,9 @@ def generate_production_orders():
                     except:  # noqa: E722
                         error("Exception triggered and caught: ", exc_info=True)
 
-            if ("BLD_IMPERIAL_PALACE" in possible_building_types) and (
-                "BLD_IMPERIAL_PALACE" not in (capital_buildings + queued_building_names)
-            ):
-                res = fo.issueEnqueueBuildingProductionOrder("BLD_IMPERIAL_PALACE", homeworld.id)
-                debug("Enqueueing BLD_IMPERIAL_PALACE at %s, with result %d" % (homeworld.name, res))
-                if res:
-                    res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
-                    debug("Requeueing BLD_IMPERIAL_PALACE to front of build queue, with result %d" % res)
+            building_type = BuildingType.PALACE
+            if building_type.available() and not building_type.built_at(True):
+                building_expense += _try_enqueue(building_type, [capital_id], at_front=True, ignore_dislike=True)
 
             # ok, BLD_NEUTRONIUM_SYNTH is not currently unlockable, but just in case... ;-p
             if ("BLD_NEUTRONIUM_SYNTH" in possible_building_types) and (
@@ -638,6 +634,7 @@ def generate_production_orders():
 
     building_expense += _build_gas_giant_generator()
     building_expense += _build_translator()
+    building_expense += _build_regional_administration()
 
     building_name = "BLD_SOL_ORB_GEN"
     if empire.buildingTypeAvailable(building_name) and aistate.character.may_build_building(building_name):
@@ -1822,7 +1819,7 @@ def _may_enqueue_for_stability(building_type: BuildingType, new_turn_cost: float
 
 
 def _build_scanning_facility() -> float:
-    """Consider building Scanning Facilities"""
+    """Consider building Scanning Facilities, returns added turn costs"""
     building_type = BuildingType.SCANNING_FACILITY
     empire = fo.getEmpire()
     if not building_type.available():
@@ -1862,7 +1859,7 @@ def _build_scanning_facility() -> float:
 
 
 def _build_gas_giant_generator() -> float:
-    # TBD put somewhere global, note that doing the call during module initialisation may fail
+    """Consider building Gas Giant Generators, returns added turn costs"""
     building_type = BuildingType.GAS_GIANT_GEN
     aistate = get_aistate()
     if not building_type.available() or not aistate.character.may_build_building(building_type.value):
@@ -1915,7 +1912,7 @@ def _build_gas_giant_generator() -> float:
 
 
 def _build_translator():
-    """Consider building Near Universal Translators"""
+    """Consider building Near Universal Translators, returns added turn costs"""
     building_type = BuildingType.TRANSLATOR
     if not building_type.available():
         return 0.0
@@ -1948,3 +1945,69 @@ def _build_translator():
             break
     return turn_cost
     # may_enqueue_for_stability? Building is rather expensive...
+
+
+def _build_regional_administration() -> float:
+    """Consider building Imperial Regional Administrations, returns added turn costs"""
+    building_type = BuildingType.REGIONAL_ADMIN
+    current_admin_sys = building_type.built_at_sys(True) | BuildingType.PALACE.built_at_sys(True)
+    # No admins at all means no palace. If we cannot even find a place for the palace,
+    # there is no point in building regional admins
+    if not building_type.available() or not current_admin_sys:
+        return 0.0
+    universe = fo.getUniverse()
+    jumps_to_admin = [
+        (min(universe.jumpDistance(sys_id, admin) for admin in current_admin_sys), sys_id)
+        for sys_id in get_owned_planets()
+    ]
+    jumps_to_admin.sort(reverse=True)
+    # Currently 6 is required, this is supposed to change. Note that the game allows to enqueue several ones
+    # close to each other, but only one will get finished.
+    if jumps_to_admin[0][0] < 6:
+        return 0.0
+    debug(f"current_admin_sys: {current_admin_sys}, jumps_to_admin = {jumps_to_admin}")
+    may_profit = [value for value in jumps_to_admin if value[0] > 3]
+    best_sys_id = None
+    # without a threshold the AI would build at the first planet 6 steps away from others,
+    # although it may not give much and is possible quite exposed.
+    best_rating = 10.0
+    for distance, sys_id in jumps_to_admin:
+        if distance < 6:
+            break
+        rating = _rate_system_for_admin(sys_id, may_profit)
+        if rating > best_rating:
+            best_sys_id = sys_id
+            best_rating = rating
+    # To add more than one, we'd have to recalculate everything, but one per turn is good enough.
+    # In practice more than one would hardly ever be possible anyway.
+    debug(f"best_sys_id={best_sys_id}, best_rating={best_rating}, planets: {get_owned_planets_in_system(best_sys_id)}")
+    if not best_sys_id:
+        return 0.0
+    return _try_enqueue(building_type, get_owned_planets_in_system(best_sys_id))
+
+
+def _rate_system_for_admin(sys_id: SystemId, may_profit: List[Tuple[int, SystemId]]) -> float:
+    opinion = BuildingType.REGIONAL_ADMIN.get_opinions()
+    planets = set(get_owned_planets_in_system(sys_id))
+    dislikes = planets & opinion.dislikes
+    likes = planets & opinion.likes
+    if dislikes == planets:
+        return 0.0
+    # First like gets a big bonus, but we can build it only on one.
+    # Number of planets to prefer better defended systems.
+    rating = 1.5 * (len(likes) - len(dislikes)) + 3 * (likes != set()) + len(planets)
+
+    universe = fo.getUniverse()
+    for current_distance, other_sys_id in may_profit:
+        difference = current_distance - universe.jumpDistance(sys_id, other_sys_id)
+        if difference > 0:
+            for pid in get_colonized_planets_in_system(other_sys_id):
+                planet = universe.getPlanet(pid)
+                if Tags.INDEPENDENT not in fo.getSpecies(planet.speciesName).tags:
+                    stability = planet.currentMeterValue(fo.meterType.targetHappiness)
+                    rating += difference
+                    # reaching 10 gives a lot of bonuses
+                    if stability < 0 or stability < 10 <= stability + difference:
+                        rating += 2
+    debug(f"admin rating {sys_id}({universe.getSystem(sys_id).name})={rating}")
+    return rating
