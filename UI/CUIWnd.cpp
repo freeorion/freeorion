@@ -239,6 +239,12 @@ CUIWnd::~CUIWnd() {
 void CUIWnd::ValidatePosition()
 { SizeMove(RelativeUpperLeft(), RelativeLowerRight()); }
 
+void CUIWnd::SetName(std::string name) {
+    Wnd::SetName(name);
+    if (m_title)
+        m_title->SetText(std::move(name));
+}
+
 void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_sz = Size();
     if (m_config_save) {    // can write position/size to OptionsDB

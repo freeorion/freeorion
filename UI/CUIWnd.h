@@ -106,6 +106,7 @@ public:
     GG::X   RightBorder() const;                //!< the distance on the right side between the outer edge of the window and the inner border
     GG::Y   BottomBorder() const;               //!< the distance at the bottom between the outer edge of the window and the inner border
 
+    void SetName(std::string name) override;
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     void Render() override;
     void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
