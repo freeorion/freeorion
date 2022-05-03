@@ -554,7 +554,7 @@ int SitRepPanel::GetNextNonEmptySitrepsTurn(std::map<int, std::list<SitRepEntry>
         return INVALID_GAME_TURN;
 
     // After last turn with visible sitreps
-    if (turn > (--turns.end())->first && forward)
+    if (turn > turns.crbegin()->first && forward)
         return INVALID_GAME_TURN;
 
     // Find a starting point
