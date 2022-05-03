@@ -745,7 +745,10 @@ Statistic<T, V>::Statistic(std::unique_ptr<ValueRef<V>>&& value_ref, StatisticTy
     // don't need to check if sampling condition is LocalCandidateInvariant, as
     // all conditions aren't, but that refers to their own local candidate.  no
     // condition is explicitly dependent on the parent context's local candidate.
-    this->m_local_candidate_invariant = (!m_value_ref || m_value_ref->LocalCandidateInvariant());
+    // also don't need to check if sub-value-ref is local candidate invariant,
+    // as it is applied to the subcondition matches, not the local candidate of
+    // any containing condition
+    this->m_local_candidate_invariant = true;
 
     this->m_target_invariant = (!m_sampling_condition || m_sampling_condition->TargetInvariant()) &&
                                (!m_value_ref || m_value_ref->TargetInvariant());
