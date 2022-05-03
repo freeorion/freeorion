@@ -2271,7 +2271,33 @@ bool Building::operator==(const Condition& rhs) const {
 }
 
 namespace {
-    struct BuildingSimpleMatch {
+    template <typename N> struct BuildingSimpleMatch {};
+
+    template<>
+    struct BuildingSimpleMatch<std::string>
+    {
+        BuildingSimpleMatch(const std::string& name) :
+            m_name(name)
+        {}
+
+        bool operator()(const std::shared_ptr<const UniverseObject>& candidate) const {
+            if (!candidate)
+                return false;
+
+            // is it a building?
+            if (candidate->ObjectType() != UniverseObjectType::OBJ_BUILDING)
+                return false;
+            auto* building = static_cast<const ::Building*>(candidate.get());
+
+            return building->BuildingTypeName() == m_name;
+        }
+
+        const std::string& m_name;
+    };
+
+    template<>
+    struct BuildingSimpleMatch<std::vector<std::string>>
+    {
         BuildingSimpleMatch(const std::vector<std::string>& names) :
             m_names(names)
         {}
@@ -2290,7 +2316,8 @@ namespace {
                 return true;
 
             // is it one of the specified building types?
-            return std::count(m_names.begin(), m_names.end(), building->BuildingTypeName());
+            return std::find(m_names.begin(), m_names.end(), building->BuildingTypeName()) != m_names.end();
+            //return std::count(m_names.begin(), m_names.end(), building->BuildingTypeName());
         }
 
         const std::vector<std::string>& m_names;
@@ -2312,13 +2339,18 @@ void Building::Eval(const ScriptingContext& parent_context,
         }
     }
     if (simple_eval_safe) {
-        // evaluate names once, and use to check all candidate objects
-        std::vector<std::string> names;
-        names.reserve(m_names.size());
-        // get all names from valuerefs
-        for (auto& name : m_names)
-            names.push_back(name->Eval(parent_context));
-        EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch(names));
+        if (m_names.size() == 1) {
+            auto match_name = m_names.front()->Eval(parent_context);
+            EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch<std::string>(match_name));
+        } else {
+            // evaluate names once, and use to check all candidate objects
+            std::vector<std::string> names;
+            names.reserve(m_names.size());
+            // get all names from valuerefs
+            for (auto& name : m_names)
+                names.push_back(name->Eval(parent_context));
+            EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch<std::vector<std::string>>(names));
+        }
     } else {
         // re-evaluate allowed building types range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
