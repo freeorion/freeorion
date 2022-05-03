@@ -240,7 +240,7 @@ EXPERIMENTOR_SPAWN_BASE_TURN
 '''250'''
 
 EXPERIMENTOR_SPAWN_AI_AGGRESSION_CHECK
-'''(Statistic If condition = And [Source (GalaxyMaxAIAggression <= 2)])'''
+'''(GalaxyMaxAIAggression <= 2)'''
 
 // the following intermediate value is turn 200 for Manaical Max AI Aggression, and 50 turns later for each aggression tier less,
 // for AI aggressions above Typical, otherwise adding 1000 turns

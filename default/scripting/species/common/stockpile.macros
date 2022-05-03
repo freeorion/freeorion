@@ -54,7 +54,7 @@ STANDARD_STOCKPILE
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = SetStockpile value = Value +
                 min(abs(Value(Target.MaxStockpile) - Value), 1) *
-                    (1 - 2*(Statistic If condition = And [Target (Value > Value(Target.MaxStockpile))]))
+                    (1 - 2*(Value > Value(Target.MaxStockpile)))
 
         // increase stockpile for species if Homeworld is set to stockpile focus
         EffectsGroup

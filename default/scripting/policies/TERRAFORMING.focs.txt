@@ -64,10 +64,7 @@ PLC_TERRAFORMING_DISTANCE
     (
         Target.DistanceFromOriginalType +
         (NamedInteger name = "PLC_TERRAFORMING_ARTIFICIAL_PLANET_DISTANCE" value = 4) *
-        (Statistic If condition = And [
-            Target
-            (Target.DistanceFromOriginalType = 0)
-        ])
+        (Target.DistanceFromOriginalType == 0)
     )
 '''
 
