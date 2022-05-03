@@ -1742,6 +1742,9 @@ bool ServerApp::IsAuthRequiredOrFillRoles(const std::string& player_name, const 
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the main Python turn events function
         success = m_python_server.IsRequireAuthOrReturnRoles(player_name, ip_address, result, roles);
+        if (GetOptionsDB().Get<bool>("network.server.allow-observers")) {
+            roles.SetRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER, true);
+        }
     } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
@@ -1771,6 +1774,9 @@ bool ServerApp::IsAuthSuccessAndFillRoles(const std::string& player_name, const 
         m_python_server.SetCurrentDir(GetPythonAuthDir());
         // Call the main Python turn events function
         success = m_python_server.IsSuccessAuthAndReturnRoles(player_name, auth, result, roles);
+        if (GetOptionsDB().Get<bool>("network.server.allow-observers")) {
+            roles.SetRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER, true);
+        }
     } catch (const boost::python::error_already_set&) {
         success = false;
         m_python_server.HandleErrorAlreadySet();
