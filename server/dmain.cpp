@@ -71,6 +71,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         GetOptionsDB().Add<int>("network.server.client-message-size.max",               UserStringNop("OPTIONS_DB_CLIENT_MESSAGE_SIZE_MAX"),    0);
         GetOptionsDB().Add<bool>("network.server.drop-empire-ready",                    UserStringNop("OPTIONS_DB_DROP_EMPIRE_READY"),          true);
         GetOptionsDB().Add<bool>("network.server.take-over-ai",                         UserStringNop("OPTIONS_DB_TAKE_OVER_AI"),               false);
+        GetOptionsDB().Add<bool>("network.server.allow-observers",                      UserStringNop("OPTIONS_DB_ALLOW_OBSERVERS"),            false);
         GetOptionsDB().Add<int>("network.server.python.asyncio-interval",               UserStringNop("OPTIONS_DB_PYTHON_ASYNCIO_INTERVAL"),    -1);
 
         // if config.xml and persistent_config.xml are present, read and set options entries
