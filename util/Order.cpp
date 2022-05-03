@@ -185,7 +185,10 @@ bool NewFleetOrder::Check(int empire, const std::string& fleet_name, const std::
         auto ship_fleet = context.ContextObjects().get<Fleet>(ship->FleetID());
         if (!ship_fleet)
             continue;   // OK
-        arrival_starlane_ids.insert(ship_fleet->ArrivalStarlane());
+        auto arr_lane = ship_fleet->ArrivalStarlane();
+        if (arr_lane == INVALID_OBJECT_ID) // newly produced fleets have invalid object ID as arrival lane for one turn. this lets them be merged with fleets that have had their arrival lane set to their system
+            arr_lane = ship_fleet->SystemID();
+        arrival_starlane_ids.insert(arr_lane);
     }
     if (arrival_starlane_ids.size() > 1) {
         ErrorLogger() << "Empire " << empire << " attempted to create a new fleet with ships from multiple arrival starlanes";
@@ -525,12 +528,17 @@ bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vect
         }
 
         if (auto original_fleet = context.ContextObjects().get<Fleet>(ship->FleetID())) {
-            if (original_fleet->ArrivalStarlane() != fleet->ArrivalStarlane()) {
+            auto ship_old_fleet_arr_lane = original_fleet->ArrivalStarlane();
+            if (ship_old_fleet_arr_lane == INVALID_OBJECT_ID) // deal with quirky case where new fleets have no arrival lane for one turn
+                ship_old_fleet_arr_lane = original_fleet->SystemID();
+            auto new_fleet_arr_lane = fleet->ArrivalStarlane();
+
+            if (ship_old_fleet_arr_lane != new_fleet_arr_lane) {
                 ErrorLogger() << "IssueFleetTransferOrder : passed ship " << ship->ID()
                               << " that is in a fleet " << original_fleet->ID()
-                              << " that has a different arrival starlane " << original_fleet->ArrivalStarlane()
+                              << " that has a different arrival starlane " << ship_old_fleet_arr_lane
                               << " than the destination fleet " << fleet->ID()
-                              << " with arrival starlane " << fleet->ArrivalStarlane();
+                              << " with arrival starlane " << new_fleet_arr_lane;
                 invalid_ships = true;
                 break;
             }
