@@ -48,7 +48,8 @@ class PolicyManager:
         self._bureaucracy_cost = fo.getPolicy(bureaucracy).adoptionCost()
         admin_buildings = len(BuildingType.PALACE.built_at()) + len(BuildingType.REGIONAL_ADMIN.built_at())
         turns_per_building = fo.getNamedValue("BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING")
-        self._max_turn_bureaucracy = admin_buildings * turns_per_building + 9
+        # bureaucracy needs (turns / turns_per_building) buildings rounded down
+        self._max_turn_bureaucracy = (admin_buildings + 1) * turns_per_building - 1
 
     def generate_orders(self) -> None:
         """The main task of the class, called once every turn by FreeOrionAI."""

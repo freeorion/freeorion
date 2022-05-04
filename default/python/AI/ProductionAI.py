@@ -275,7 +275,7 @@ def generate_production_orders():
                         error("Exception triggered and caught: ", exc_info=True)
 
             building_type = BuildingType.PALACE
-            if building_type.available() and not building_type.built_at(True):
+            if building_type.available() and not building_type.built_at(include_queued_buildings=True):
                 building_expense += _try_enqueue(building_type, [capital_id], at_front=True, ignore_dislike=True)
 
             # ok, BLD_NEUTRONIUM_SYNTH is not currently unlockable, but just in case... ;-p
@@ -1819,7 +1819,7 @@ def _may_enqueue_for_stability(building_type: BuildingType, new_turn_cost: float
 
 
 def _build_scanning_facility() -> float:
-    """Consider building Scanning Facilities, returns added turn costs"""
+    """Consider building Scanning Facilities, return added turn costs."""
     building_type = BuildingType.SCANNING_FACILITY
     empire = fo.getEmpire()
     if not building_type.available():
@@ -1859,7 +1859,7 @@ def _build_scanning_facility() -> float:
 
 
 def _build_gas_giant_generator() -> float:
-    """Consider building Gas Giant Generators, returns added turn costs"""
+    """Consider building Gas Giant Generators, return added turn costs."""
     building_type = BuildingType.GAS_GIANT_GEN
     aistate = get_aistate()
     if not building_type.available() or not aistate.character.may_build_building(building_type.value):
@@ -1912,7 +1912,7 @@ def _build_gas_giant_generator() -> float:
 
 
 def _build_translator():
-    """Consider building Near Universal Translators, returns added turn costs"""
+    """Consider building Near Universal Translators, return added turn costs."""
     building_type = BuildingType.TRANSLATOR
     if not building_type.available():
         return 0.0
@@ -1948,35 +1948,36 @@ def _build_translator():
 
 
 def _build_regional_administration() -> float:
-    """Consider building Imperial Regional Administrations, returns added turn costs"""
+    """Consider building Imperial Regional Administrations, return added turn costs."""
     building_type = BuildingType.REGIONAL_ADMIN
-    current_admin_sys = building_type.built_at_sys(True) | BuildingType.PALACE.built_at_sys(True)
-    # No admins at all means no palace. If we cannot even find a place for the palace,
-    # there is no point in building regional admins
-    if not building_type.available() or not current_admin_sys:
+    current_admin_systems = building_type.built_at_sys(True) | BuildingType.PALACE.built_at_sys(True)
+    # No administrations at all means no palace. If we cannot even find a place for the palace,
+    # there is no point in building regional administrations.
+    if not building_type.available() or not current_admin_systems:
         return 0.0
     universe = fo.getUniverse()
     jumps_to_admin = [
-        (min(universe.jumpDistance(sys_id, admin) for admin in current_admin_sys), sys_id)
+        (min(universe.jumpDistance(sys_id, admin) for admin in current_admin_systems), sys_id)
         for sys_id in get_owned_planets()
     ]
     jumps_to_admin.sort(reverse=True)
-    # Currently 6 is required, this is supposed to change. Note that the game allows to enqueue several ones
+    # Currently, 6 is required, this is supposed to change. Note that the game allows to enqueue several ones
     # close to each other, but only one will get finished.
     if jumps_to_admin[0][0] < 6:
         return 0.0
-    debug(f"current_admin_sys: {current_admin_sys}, jumps_to_admin = {jumps_to_admin}")
-    may_profit = [value for value in jumps_to_admin if value[0] > 3]
+    debug(f"current_admin_systems: {current_admin_systems}, jumps_to_admin = {jumps_to_admin}")
+    # with minimum distance 6, systems 3 jumps away from current admins cannot get closer
+    systems_that_may_profit = [value for value in jumps_to_admin if value[0] > 3]
     best_sys_id = None
     # without a threshold the AI would build at the first planet 6 steps away from others,
     # although it may not give much and is possible quite exposed.
     best_rating = 10.0
-    for distance, sys_id in jumps_to_admin:
+    for distance, candidate in jumps_to_admin:
         if distance < 6:
             break
-        rating = _rate_system_for_admin(sys_id, may_profit)
+        rating = _rate_system_for_admin(candidate, systems_that_may_profit)
         if rating > best_rating:
-            best_sys_id = sys_id
+            best_sys_id = candidate
             best_rating = rating
     # To add more than one, we'd have to recalculate everything, but one per turn is good enough.
     # In practice more than one would hardly ever be possible anyway.
@@ -1986,7 +1987,7 @@ def _build_regional_administration() -> float:
     return _try_enqueue(building_type, get_owned_planets_in_system(best_sys_id))
 
 
-def _rate_system_for_admin(sys_id: SystemId, may_profit: List[Tuple[int, SystemId]]) -> float:
+def _rate_system_for_admin(sys_id: SystemId, systems_that_may_profit: List[Tuple[int, SystemId]]) -> float:
     opinion = BuildingType.REGIONAL_ADMIN.get_opinions()
     planets = set(get_owned_planets_in_system(sys_id))
     dislikes = planets & opinion.dislikes
@@ -1998,7 +1999,7 @@ def _rate_system_for_admin(sys_id: SystemId, may_profit: List[Tuple[int, SystemI
     rating = 1.5 * (len(likes) - len(dislikes)) + 3 * (likes != set()) + len(planets)
 
     universe = fo.getUniverse()
-    for current_distance, other_sys_id in may_profit:
+    for current_distance, other_sys_id in systems_that_may_profit:
         difference = current_distance - universe.jumpDistance(sys_id, other_sys_id)
         if difference > 0:
             for pid in get_colonized_planets_in_system(other_sys_id):
@@ -2009,5 +2010,5 @@ def _rate_system_for_admin(sys_id: SystemId, may_profit: List[Tuple[int, SystemI
                     # reaching 10 gives a lot of bonuses
                     if stability < 0 or stability < 10 <= stability + difference:
                         rating += 2
-    debug(f"admin rating {sys_id}({universe.getSystem(sys_id).name})={rating}")
+    debug(f"admin rating {universe.getSystem(sys_id)}={rating}")
     return rating
