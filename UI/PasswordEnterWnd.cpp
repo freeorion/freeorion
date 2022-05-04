@@ -18,6 +18,8 @@ PasswordEnterWnd::PasswordEnterWnd() :
 {}
 
 void PasswordEnterWnd::CompleteConstruction() {
+    CUIWnd::CompleteConstruction();
+
     auto auth_desc_label = GG::Wnd::Create<CUILabel>(UserString("AUTHENTICATION_DESC"), GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK);
     auto player_name_label = GG::Wnd::Create<CUILabel>(UserString("PLAYER_NAME_LABEL"), GG::FORMAT_LEFT);
     m_player_name_edit = GG::Wnd::Create<CUIEdit>("");
