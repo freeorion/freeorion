@@ -275,7 +275,7 @@ def generate_production_orders():
                         error("Exception triggered and caught: ", exc_info=True)
 
             building_type = BuildingType.PALACE
-            if building_type.available() and not building_type.built_at(include_queued_buildings=True):
+            if building_type.available() and not building_type.built_or_queued_at():
                 building_expense += _try_enqueue(building_type, [capital_id], at_front=True, ignore_dislike=True)
 
             # ok, BLD_NEUTRONIUM_SYNTH is not currently unlockable, but just in case... ;-p
@@ -1811,7 +1811,7 @@ def _may_enqueue_for_stability(building_type: BuildingType, new_turn_cost: float
     opinion = building_type.get_opinions()
     universe = fo.getUniverse()
     if len(opinion.likes) >= len(opinion.dislikes):
-        like_candidates = opinion.likes - building_type.built_at(True)
+        like_candidates = opinion.likes - building_type.built_or_queued_at()
         # plans may change, so consider only actual colonies that like it
         candidates = [pid for pid in like_candidates if universe.getPlanet(pid).speciesName]
         return _try_enqueue(building_type, candidates)
@@ -1830,7 +1830,7 @@ def _build_scanning_facility() -> float:
     opinion = building_type.get_opinions()
     # TBD use actual cost?
     max_scanner_builds = max(1, int(empire.productionPoints / 30)) - len(building_type.queued_in())
-    scanner_systems = building_type.built_at_sys(True)
+    scanner_systems = building_type.built_or_queued_at_sys()
     debug(
         "Considering building %s, found current and queued systems %s, planets that like it %s, #dislikes: %d",
         building_type,
@@ -1872,7 +1872,7 @@ def _build_gas_giant_generator() -> float:
     systems = []
     for sys in colonized_planets.keys():
         planets = [(pid, universe.getPlanet(pid)) for pid in get_owned_planets_in_system(sys)]
-        if sys in building_type.built_at_sys(True) or fo.planetSize.gasGiant not in [x[1].size for x in planets]:
+        if sys in building_type.built_or_queued_at_sys() or fo.planetSize.gasGiant not in [x[1].size for x in planets]:
             continue
         rating = 0
         gas_giant = None
@@ -1922,7 +1922,7 @@ def _build_translator():
 
     universe = fo.getUniverse()
     opinion = building_type.get_opinions()
-    built_or_queued = building_type.built_at(True)
+    built_or_queued = building_type.built_or_queued_at()
     have_one = bool(built_or_queued)
     candidates = []
     turn_cost = 0.0
@@ -1950,7 +1950,7 @@ def _build_translator():
 def _build_regional_administration() -> float:
     """Consider building Imperial Regional Administrations, return added turn costs."""
     building_type = BuildingType.REGIONAL_ADMIN
-    current_admin_systems = building_type.built_at_sys(True) | BuildingType.PALACE.built_at_sys(True)
+    current_admin_systems = building_type.built_or_queued_at_sys() | BuildingType.PALACE.built_or_queued_at_sys()
     # No administrations at all means no palace. If we cannot even find a place for the palace,
     # there is no point in building regional administrations.
     if not building_type.available() or not current_admin_systems:

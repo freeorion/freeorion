@@ -43,6 +43,9 @@ class BuildingType(Enum):
         return fo.getEmpire().buildingTypeAvailable(self.value)
 
     def get_opinions(self) -> Opinion:
+        """
+        Returns opinions about the building at the empire's planets.
+        """
         return get_planet_opinion(self.value)
 
     def queued_in(self) -> List[PlanetId]:
@@ -51,35 +54,64 @@ class BuildingType(Enum):
         """
         return [element.locationID for element in fo.getEmpire().productionQueue if (element.name == self.value)]
 
-    def built_at(self, include_queued_buildings: bool = False) -> Set[PlanetId]:
+    def built_at(self) -> Set[PlanetId]:
+        """
+        Return List of planet ids where the building exists.
+        """
+        return _get_building_locations()[self.value].planets
+
+    def built_at_sys(self) -> Set[SystemId]:
+        """
+        Return List of system ids where the building exists.
+        """
+        return _get_building_locations()[self.value].systems
+
+    def built_or_queued_at(self) -> Set[PlanetId]:
+        """
+        Return List of planet ids where the building either exists or is queued.
+        """
         built_at_planets = _get_building_locations()[self.value].planets
-        if not include_queued_buildings:
-            return built_at_planets
         ret = copy(built_at_planets)
         ret.update(set(self.queued_in()))
         return ret
 
-    def built_at_sys(self, include_queued_buildings: bool = False) -> Set[SystemId]:
+    def built_or_queued_at_sys(self) -> Set[SystemId]:
+        """
+        Return List of system ids where the building either exists or is queued.
+        """
         built_at_systems = _get_building_locations()[self.value].systems
-        if not include_queued_buildings:
-            return built_at_systems
         ret = copy(built_at_systems)
         ret.update({fo.getUniverse().getPlanet(pid).systemID for pid in self.queued_in()})
         return ret
 
     def can_be_enqueued(self, planet: PlanetId) -> bool:
+        """
+        Return whether the building can be enqueued at the given planet.
+        """
         return fo.getBuildingType(self.value).canBeEnqueued(fo.empireID(), planet)
 
     def can_be_produced(self, planet: PlanetId) -> bool:
+        """
+        Return whether the building can be produced at the given planet.
+        """
         return fo.getBuildingType(self.value).canBeProduced(fo.empireID(), planet)
 
     def production_cost(self, planet: PlanetId) -> float:
+        """
+        Returns overall production cost of the building at the given planet.
+        """
         return fo.getBuildingType(self.value).productionCost(fo.empireID(), planet)
 
     def production_time(self, planet: PlanetId) -> int:
+        """
+        Returns minimum number of turns the building takes to finish at the given planet.
+        """
         return fo.getBuildingType(self.value).productionTime(fo.empireID(), planet)
 
     def turn_cost(self, planet: PlanetId) -> float:
+        """
+        Returns production points then can be spent per turn for the building at the given planet.
+        """
         return fo.getBuildingType(self.value).perTurnCost(fo.empireID(), planet)
 
 
