@@ -58,7 +58,7 @@ def get_extra_colony_builders() -> List[str]:
     ret = ["SP_EXOBOT"]
     for spec_name in AIDependencies.EXTINCT_SPECIES:
         if tech_is_complete("TECH_COL_" + spec_name):
-            ret.append()["SP_" + spec_name]
+            ret.append("SP_" + spec_name)
     return ret
 
 
