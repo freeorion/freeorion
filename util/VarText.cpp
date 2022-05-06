@@ -207,10 +207,9 @@ namespace {
                     if (UserStringExists(data))
                         return UserString(data);
                     try {
-                        auto planet = context.ContextObjects().get<Planet>(boost::lexical_cast<int>(data));
-                        if (planet)
+                        if (auto planet = context.ContextObjects().get<Planet>(boost::lexical_cast<int>(data)))
                             return UserString(to_string(planet->EnvironmentForSpecies()));
-                    } catch (boost::bad_lexical_cast &e) {}
+                    } catch (...) {}
                     return UserString("UNKNOWN_PLANET");
                 }},
             {VarText::USER_STRING_TAG, [](const std::string& data, const ScriptingContext& context)
@@ -221,10 +220,9 @@ namespace {
                     if (UserStringExists(data))
                         return UserString(data);
                     try {
-                        auto planet = context.ContextObjects().get<Planet>(boost::lexical_cast<int>(data));
-                        if (planet)
+                        if (auto planet = context.ContextObjects().get<Planet>(boost::lexical_cast<int>(data)))
                             return UserString(to_string(planet->Type()));
-                    } catch (boost::bad_lexical_cast &e) {}
+                    } catch (...) {}
                     return UserString("UNKNOWN_PLANET");
                 }},
         };
