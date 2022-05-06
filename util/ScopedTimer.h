@@ -39,6 +39,7 @@ public:
 
     [[nodiscard]] double duration() const;
     [[nodiscard]] std::string DurationString() const;
+    [[nodiscard]] std::chrono::nanoseconds Elapsed() const;
 
     class Impl;
 
@@ -131,7 +132,6 @@ public:
 
 private:
     class Impl;
-
     std::unique_ptr<Impl> const m_impl;
 };
 

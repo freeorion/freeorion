@@ -65,6 +65,9 @@ public:
         return ss.str();
     }
 
+    std::chrono::nanoseconds Elapsed() const
+    { return std::chrono::high_resolution_clock::now() - m_start; }
+
     template <typename UNITS = std::chrono::milliseconds>
     static void FormatDurationFixedUnits(std::stringstream& ss, const std::chrono::nanoseconds& duration) {
         ss << std::setw(8) << std::right << std::chrono::duration_cast<UNITS>(duration).count();
@@ -145,6 +148,8 @@ double ScopedTimer::duration() const
 std::string ScopedTimer::DurationString() const
 { return m_impl->DurationString(); }
 
+std::chrono::nanoseconds ScopedTimer::Elapsed() const
+{ return m_impl->Elapsed(); }
 
 
 class SectionedScopedTimer::Impl : public ScopedTimer::Impl {
