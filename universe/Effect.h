@@ -51,17 +51,31 @@ namespace Effect {
       * specific cause.  eg. Building and a particular BuildingType. */
     struct FO_COMMON_API EffectCause {
         EffectCause() = default;
-        EffectCause(EffectsCauseType cause_type_, std::string specific_cause_,
-                    std::string custom_label_ = "");
-        EffectsCauseType    cause_type = EffectsCauseType::INVALID_EFFECTS_GROUP_CAUSE_TYPE;  ///< general type of effect cause, eg. tech, building, special...
-        std::string         specific_cause; ///< name of specific cause, eg. "Wonder Farm", "Antenna Mk. VI"
-        std::string         custom_label;   ///< script-specified accounting label for this effect cause
+
+        EffectCause(EffectsCauseType cause_type_) :
+            cause_type(cause_type_)
+        {}
+
+        template <typename S1, typename S2>
+        EffectCause(EffectsCauseType cause_type_, S1&& specific_cause_, S2&& custom_label_ = "") :
+            cause_type(cause_type_),
+            specific_cause(std::forward<S1>(specific_cause_)),
+            custom_label(std::forward<S2>(custom_label_))
+        {}
+
+        EffectsCauseType cause_type = EffectsCauseType::INVALID_EFFECTS_GROUP_CAUSE_TYPE;  ///< general type of effect cause, eg. tech, building, special...
+        std::string      specific_cause; ///< name of specific cause, eg. "Wonder Farm", "Antenna Mk. VI"
+        std::string      custom_label;   ///< script-specified accounting label for this effect cause
     };
 
     /** Combination of targets and cause for an effects group. */
     struct TargetsAndCause {
         TargetsAndCause() = default;
-        TargetsAndCause(TargetSet target_set_, EffectCause effect_cause_);
+        template <typename S1, typename S2>
+        TargetsAndCause(EffectsCauseType ect, S1&& specific_cause, S2&& custom_label) :
+            effect_cause(ect, std::forward<S1>(specific_cause), std::forward<S2>(custom_label))
+        {}
+
         TargetSet target_set;
         EffectCause effect_cause;
     };
@@ -130,9 +144,30 @@ namespace Effect {
       * by effects groups acting on meters of objects. */
     struct FO_COMMON_API AccountingInfo : public EffectCause {
         AccountingInfo() = default;
+
+        AccountingInfo(float meter_change_, float running_meter_total_) :
+            EffectCause(EffectsCauseType::ECT_UNKNOWN_CAUSE),
+            source_id(INVALID_OBJECT_ID),
+            meter_change(meter_change_),
+            running_meter_total(running_meter_total_)
+        {}
+
         AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
-                       float running_meter_total_, std::string specific_cause_ = "",
-                       std::string custom_label_ = "");
+                       float running_meter_total_) :
+            EffectCause(cause_type_),
+            source_id(source_id_),
+            meter_change(meter_change_),
+            running_meter_total(running_meter_total_)
+        {}
+
+        template <typename S1, typename S2 = const char*>
+        AccountingInfo(int source_id_, EffectsCauseType cause_type_, float meter_change_,
+                       float running_meter_total_, S1&& specific_cause_, S2&& custom_label_ = "") :
+            EffectCause(cause_type_, std::forward<S1>(specific_cause_), std::forward<S2>(custom_label_)),
+            source_id(source_id_),
+            meter_change(meter_change_),
+            running_meter_total(running_meter_total_)
+        {}
 
         bool operator==(const AccountingInfo& rhs) const;
 
