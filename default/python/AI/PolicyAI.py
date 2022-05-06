@@ -5,6 +5,7 @@ from typing import Optional, Set
 
 import PlanetUtilsAI
 from aistate_interface import get_aistate
+from buildings import BuildingType
 from EnumsAI import PriorityType
 
 propaganda = "PLC_PROPAGANDA"
@@ -45,7 +46,10 @@ class PolicyManager:
         self._num_outposts = len(empire_owned_planet_ids) - self._num_populated
         self._centralization_cost = fo.getPolicy(centralization).adoptionCost()
         self._bureaucracy_cost = fo.getPolicy(bureaucracy).adoptionCost()
-        self._max_turn_bureaucracy = 19  # AI doesn't build Regional Admins yet (TBD count, palace may be gone, too)
+        admin_buildings = len(BuildingType.PALACE.built_at()) + len(BuildingType.REGIONAL_ADMIN.built_at())
+        turns_per_building = fo.getNamedValue("BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING")
+        # bureaucracy needs (turns / turns_per_building) buildings rounded down
+        self._max_turn_bureaucracy = (admin_buildings + 1) * turns_per_building - 1
 
     def generate_orders(self) -> None:
         """The main task of the class, called once every turn by FreeOrionAI."""
