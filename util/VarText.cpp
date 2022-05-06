@@ -203,13 +203,30 @@ namespace {
                 }},
             {VarText::ENVIRONMENT_TAG, [](const std::string& data, const ScriptingContext& context)
                 {
-                    auto planet = context.ContextObjects().get<Planet>(boost::lexical_cast<int>(data));
-                    if (planet)
-                        return UserString(to_string(planet->EnvironmentForSpecies()));
+                    // Assume that we have no userstring which is also a number
+                    if (UserStringExists(data))
+                        return UserString(data);
+                    try {
+                        auto planet = context.ContextObjects().get<Planet>(boost::lexical_cast<int>(data));
+                        if (planet)
+                            return UserString(to_string(planet->EnvironmentForSpecies()));
+                    } catch (boost::bad_lexical_cast &e) {}
                     return UserString("UNKNOWN_PLANET");
                 }},
             {VarText::USER_STRING_TAG, [](const std::string& data, const ScriptingContext& context)
                 { return UserString(data); }},
+            {VarText::PLANET_TYPE_TAG, [](const std::string& data, const ScriptingContext& context)
+                {
+                    // Assume that we have no userstring which is also a number
+                    if (UserStringExists(data))
+                        return UserString(data);
+                    try {
+                        auto planet = context.ContextObjects().get<Planet>(boost::lexical_cast<int>(data));
+                        if (planet)
+                            return UserString(to_string(planet->Type()));
+                    } catch (boost::bad_lexical_cast &e) {}
+                    return UserString("UNKNOWN_PLANET");
+                }},
         };
 
         return substitute_map;

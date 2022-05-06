@@ -3560,7 +3560,10 @@ EFFECT_GAIAN_TERRAFORM_LABEL
 Gaia terraformiert
 
 EFFECT_TERRAFORM
-%planet% wurde terraformiert.
+%planet% wurde terraformiert (%planettype%, %environment%).
+
+EFFECT_TERRAFORM_LABEL
+Terraformation
 
 EFFECT_TAME_MONSTER_HATCHED
 Ein gezähmtes %predefinedshipdesign% ist auf %planet% bereit zum Dienst.
@@ -4272,8 +4275,8 @@ PT_BARREN
 Unfruchtbar
 
 # Planet types
-#PT_TUNDRA
-#Tundra
+PT_TUNDRA
+Tundra
 
 # Planet types
 PT_DESERT
@@ -6359,6 +6362,67 @@ Ein elektrischer Generator in niedriger Umlaufbahn, welcher aus der Sonne, die e
 
 BLD_CLONING_CENTER
 Kloncenter
+
+BLD_TERRAFORM_BEST
+Populäre Terraformation
+
+BLD_TERRAFORM_BEST_DESC
+Wandelt den Planeten in eine Welt um, die die bevorzugte [[encyclopedia ENVIRONMENT_TITLE]] der Einwohnerspezies hat.
+
+BLD_TERRAFORM_TERRAN
+Terraformation zu [[PT_TERRAN]]
+
+BLD_TERRAFORM_TERRAN_DESC
+Terraformation in eine Welt, die [[PT_TERRAN]] ist.
+
+BLD_TERRAFORM_OCEAN
+Terraformation zu [[PT_OCEAN]]
+
+BLD_TERRAFORM_OCEAN_DESC
+Terraformation in eine Welt, die [[PT_OCEAN]] ist.
+
+BLD_TERRAFORM_SWAMP
+Terraformation zu [[PT_SWAMP]]
+
+BLD_TERRAFORM_SWAMP_DESC
+Terraformation in eine Welt, die [[PT_SWAMP]] ist.
+
+BLD_TERRAFORM_TOXIC
+Terraformation zu [[PT_TOXIC]]
+
+BLD_TERRAFORM_TOXIC_DESC
+Terraformation in eine Welt, die [[PT_TOXIC]] ist.
+
+BLD_TERRAFORM_INFERNO
+Terraformation zu [[PT_INFERNO]]
+
+BLD_TERRAFORM_INFERNO_DESC
+Terraformation in eine Welt, die [[PT_INFERNO]] ist.
+
+BLD_TERRAFORM_RADIATED
+Terraformation zu [[PT_RADIATED]]
+
+BLD_TERRAFORM_RADIATED_DESC
+Terraformation in eine Welt, die [[PT_RADIATED]] ist.
+
+BLD_TERRAFORM_BARREN
+Terraformation zu [[PT_BARREN]]
+
+BLD_TERRAFORM_BARREN_DESC
+Terraformation in eine Welt, die [[PT_BARREN]] ist.
+
+BLD_TERRAFORM_TUNDRA
+Terraformation zu [[PT_TUNDRA]]
+
+BLD_TERRAFORM_TUNDRA_DESC
+Terraformation in eine Welt, die [[PT_TUNDRA]] ist.
+
+BLD_TERRAFORM_DESERT
+Terraformation zu [[PT_DESERT]]
+
+BLD_TERRAFORM_DESERT_DESC
+Terraformation in eine Welt, die [[PT_DESERT]] ist.
+
 
 BLD_NEST_ERADICATOR
 Nestbeseitiger

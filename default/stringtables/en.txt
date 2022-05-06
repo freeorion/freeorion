@@ -6504,7 +6504,7 @@ Each [[encyclopedia ENC_SPECIES]] has its own environmental preferences, which d
 
 The planet suitability report can be displayed by right-clicking on a planet in the system sidepanel. A green number following the suitability data indicates the maximum [[metertype METER_POPULATION]] the planet could achieve if colonized by this species, whereas a red number indicates that the colony will be unviable, and Population will decrease over several turns until the Colonists have all died off and the colony is lost.
 
-When terraforming a planet (by [[metertype METER_RESEARCH]] or if the planet has the [[special GAIA_SPECIAL]] special) in order to better suit the species environmental preferences, the planet's original environment is modified by stages, until it finally reaches the [[PE_GOOD]] suitability for the species who wants to live on the planet. The terraforming stages can be checked on the suitability wheel displayed below.
+When terraforming a planet (by [[metertype METER_RESEARCH]] or if the planet has the [[special GAIA_SPECIAL]] special) in order to better suit the species environmental preferences, the planet's original environment is modified by stages, until it finally reaches the [[PE_GOOD]] suitability for the species who wants to live on the planet. Terraforming projects are unlocked by [[tech GRO_TERRAFORM]]. The terraforming stages can be checked on the suitability wheel displayed below.
 
 Clockwise from top: [[PT_TERRAN]], [[PT_OCEAN]], [[PT_SWAMP]], [[PT_TOXIC]], [[PT_INFERNO]], [[PT_RADIATED]], [[PT_BARREN]], [[PT_TUNDRA]], [[PT_DESERT]]
 
@@ -7750,8 +7750,14 @@ On %planet%: The citizens rejoice as their world is now a [[special GAIA_SPECIAL
 EFFECT_GAIA_LABEL
 Gaia Paradise
 
+EFFECT_TERRAFORM_BEST
+%planet% has been terraformed to %planettype% (%environment%).
+
+EFFECT_TERRAFORM_BEST_LABEL
+Terraform
+
 EFFECT_TERRAFORM
-%planet% has been terraformed to %user_string% (%environment%).
+%planet% has been terraformed to %planettype% (%environment%).
 
 EFFECT_TERRAFORM_LABEL
 Terraform
@@ -11999,7 +12005,7 @@ PLC_TERRAFORMING
 Terraforming
 
 PLC_TERRAFORMING_DESC
-'''• Decreases the minimum time and cost to produce Terraforming projects on planets.
+'''• Decreases the minimum time to produce Terraforming projects on planets. Projects are unlocked by [[tech GRO_TERRAFORM]].
 • Boosts [[metertype METER_TARGET_HAPPINESS]] on terraformed planets by [[value PLC_TERRAFORMING_TARGET_HAPPINESS_ORIGINAL_FLAT]] per step they have been terraformed away from their original planet type
 • Boosts [[metertype METER_TARGET_INFLUENCE]] on planets set to influence focus by [[value PLC_TERRAFORMING_TARGET_INFLUENCE_ORIGINAL_FLAT]] per step they have been terraformed away from their original planet type
 • Boosts [[metertype METER_TARGET_RESEARCH]] on planets set to research focus by the square root of [[metertype METER_POPULATION]] times [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] per step they have been terraformed away from their original planet type
@@ -13400,7 +13406,9 @@ GRO_TERRAFORM
 Terraforming
 
 GRO_TERRAFORM_DESC
-Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical. The precise method depends greatly on the type of planet to be changed and the desired result. However, in all cases much of the surface of the entire planet and its atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust. As such, this process requires most of the planet to be accessible to the terraformers, and cannot be performed on a world with [[metertype METER_TARGET_POPULATION]] less than one.
+'''Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical. The precise method depends greatly on the type of planet to be changed and the desired result. However, in all cases much of the surface of the entire planet and its atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust. As such, this process requires most of the planet to be accessible to the terraformers, and cannot be performed on a world with [[metertype METER_TARGET_POPULATION]] less than one.
+
+[[ALL_BLD_TERRAFORM_DESC]]'''
 
 GRO_TERRAFORM_SHORT_DESC
 Allows terraforming
@@ -13409,7 +13417,12 @@ GRO_REMOTE_TERRAFORM
 Remote Terraforming
 
 GRO_REMOTE_TERRAFORM_DESC
-Traditional terraforming methods treat the planet as a structure and attempt to alter its environment through physical and chemical means. This necessitates that the majority of the planet be accessible to the terraforming species, which generally limits its usefulness. By treating the planet as an organism and altering its physiology indirectly, it is possible to make use of less labour intensive, though more time consuming terraforming methods, allowing outposts on poor and hostile worlds to make use of terraforming.
+'''Traditional terraforming methods treat the planet as a structure and attempt to alter its environment through physical and chemical means. This necessitates that the majority of the planet be accessible to the terraforming species, which generally limits its usefulness. By treating the planet as an organism and altering its physiology indirectly, it is possible to make use of less labour intensive, though more time consuming terraforming methods, allowing outposts on poor and hostile worlds to make use of terraforming.
+
+[[ALL_BLD_TERRAFORM_DESC]]'''
+
+ALL_BLD_TERRAFORM_DESC
+There are two types of terraform projects. The [[buildingtype BLD_TERRAFORM_BEST]] is build by a population inhabiting a planet in order to directly transform it into the best possible [[encyclopedia ENVIRONMENT_TITLE]]. A series of projects targeting a specific close related [[encyclopedia ENVIRONMENT_TITLE]] each allows for more choice and can also be build on an [[encyclopedia OUTPOSTS_TITLE]]. In total a direct transformation is cheaper and faster to build than a series of terraforming steps.
 
 GRO_BIOTERROR
 Bioterror Facilities
@@ -14688,6 +14701,12 @@ BLD_CLONING_CENTER_DESC
 '''Increases the [[metertype METER_TARGET_POPULATION]] on all planets by planet size: ([[SZ_TINY]] +1) ([[SZ_SMALL]] +2) ([[SZ_MEDIUM]] +3) ([[SZ_LARGE]] +4) ([[SZ_HUGE]] +5).
 
 [[tech GRO_INDUSTRY_CLONE]] allows made-to-order populations to be produced industrially, significantly improving population.'''
+
+BLD_TERRAFORM_BEST
+Popular Terraforming
+
+BLD_TERRAFORM_BEST_DESC
+Terraforms a world to the [[encyclopedia ENVIRONMENT_TITLE]] preference of the inhabiting species.
 
 BLD_TERRAFORM_TERRAN
 Terraform to [[PT_TERRAN]]

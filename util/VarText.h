@@ -182,7 +182,9 @@ public:
     //! Variable value is Planet::ID(), gives environment of that planet (Good, Poor...)
     static constexpr std::string_view ENVIRONMENT_TAG = "environment";
     //! Variable value is a user_string (translation string from <lang>.txt)
-    static constexpr std::string_view USER_STRING_TAG = "user_string";
+    static constexpr std::string_view USER_STRING_TAG = "userstring";
+    //! Variable value is Planet::ID(), gives type of that planet (Terran, Swamp...)
+    static constexpr std::string_view PLANET_TYPE_TAG = "planettype";
 
     //! @}
 

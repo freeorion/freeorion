@@ -134,6 +134,7 @@
     (Enqueued)                                  \
     (enqueuelocation)                           \
     (environment)                               \
+    (Environment)                               \
     (environments)                              \
     (ETA)                                       \
     (ExploredByEmpire)                          \
@@ -284,6 +285,7 @@
     (Native)                                    \
     (NearestSystemID)                           \
     (Neutron)                                   \
+    (NextBestPlanetType)                        \
     (NextBetterPlanetType)                      \
     (NextCloserToOriginalPlanetType)            \
     (NextLargerPlanetSize)                      \

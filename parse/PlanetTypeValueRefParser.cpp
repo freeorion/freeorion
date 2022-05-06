@@ -19,6 +19,7 @@ namespace parse::detail {
             %=   tok.PlanetType_
             |    tok.OriginalType_
             |    tok.NextCloserToOriginalPlanetType_
+            |    tok.NextBestPlanetType_
             |    tok.NextBetterPlanetType_
             |    tok.ClockwiseNextPlanetType_
             |    tok.CounterClockwiseNextPlanetType_

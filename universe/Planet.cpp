@@ -241,6 +241,23 @@ PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name)
     return species->GetPlanetEnvironment(m_type);
 }
 
+PlanetType Planet::NextBestPlanetTypeForSpecies(const std::string& species_name) const {
+    const Species* species = nullptr;
+    if (species_name.empty()) {
+        const std::string& this_planet_species_name = this->SpeciesName();
+        if (this_planet_species_name.empty())
+            return m_type;
+        species = GetSpecies(this_planet_species_name);
+    } else {
+        species = GetSpecies(species_name);
+    }
+    if (!species) {
+        ErrorLogger() << "Planet::NextBestPlanetTypeForSpecies couldn't get species with name \"" << species_name << "\"";
+        return m_type;
+    }
+    return species->NextBestPlanetType(m_type);
+}
+
 PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_name) const {
     const Species* species = nullptr;
     if (species_name.empty()) {

@@ -108,7 +108,8 @@ public:
     const std::string&              DefaultFocus() const                { return m_default_focus; }         ///< returns the name of the planetary focus this species defaults to. Used for new colonies and uninvaded natives.
     const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
     PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;                     ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
-    PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const;             ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
+    PlanetType                      NextBestPlanetType(PlanetType initial_planet_type) const;             ///< returns a best PlanetType for this species from the \a initial_planet_type specified which needs the few steps to reach
+    PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const;             ///< returns a PlanetType for this species which is a step closer to the best PlanetType than the specified \a initial_planet_type (if such exists)
 
     /** Returns the EffectsGroups that encapsulate the effects that species of
         this type have. */
@@ -136,6 +137,24 @@ public:
 
 private:
     void Init();
+
+    /** This does the heavy lifting for finding the next better or next best planet type.
+      * the callback apply_for_best_forward_backward takes three arguments:
+      * 1) the best PlanetType easiest to terraform to for this species for the initial_planet_type
+      * 2) the number of terraforming steps necessary to reach a best environment clockwise
+      * 3) the number of terraforming steps necessary to reach a best environment counter clockwise
+      * note: this supports multiple best PlanetTypes - the function ensures there is no
+      *       PlanetType with a better environment available which is reachable in less steps
+      *       than the returned PlanetType
+      *
+      * Based on the parameters, the callback needs to return a fitting PlanetType
+      * (i.e. either the best PlanetType or the next step into the direction of it).
+      *
+      * If terraforming is not possible or is not able to give a better result in the end, the
+      * current planet type needs to be returned.
+      */
+    template <typename Func>
+    PlanetType TheNextBestPlanetTypeApply(PlanetType initial_planet_type, Func apply_for_best_forward_backward) const;
 
     std::string                             m_name;
     std::string                             m_description;
