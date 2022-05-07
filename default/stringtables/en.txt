@@ -6451,7 +6451,7 @@ PROTECTION_FOCUS_TITLE
 Protection Focus
 
 PROTECTION_FOCUS_TEXT
-The Protection focus represents a planet wholly focused on defending itself. [[metertype METER_TROOPS]], Planetary [[metertype METER_DEFENSE]], and Planetary [[metertype METER_SHIELD]] are doubled.
+The Protection focus represents a planet wholly focused on defending itself. [[metertype METER_TROOPS]], Planetary [[metertype METER_DEFENSE]], and Planetary [[metertype METER_SHIELD]] are doubled. [[metertype METER_TARGET_HAPPINESS]] is increased by [[value PROTECION_FOCUS_STABILITY_BONUS]].
 
 PSYCHIC_FOCUS_TITLE
 Psychic Domination Focus
@@ -10051,7 +10051,7 @@ FOCUS_PROTECTION
 Protection
 
 FOCUS_PROTECTION_DESC
-Increases shields, defenses and troops.
+Increases shields, defenses, troops and stability.
 
 # Focus types
 FOCUS_DOMINATION
