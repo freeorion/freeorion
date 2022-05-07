@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import freeOrionAIInterface as fo
 from copy import copy
 from logging import debug, error
@@ -21,6 +23,55 @@ bureaucracy = "PLC_BUREAUCRACY"
 infra1 = "PLC_PLANETARY_INFRA"
 infra2 = "PLC_SYSTEM_INFRA"
 infra3 = "PLC_INTERSTELLAR_INFRA"
+
+
+class _EmpireOutput:
+    def __init__(self):
+        self.industry = 0.0
+        self.research = 0.0
+        self.influence = 0.0
+        self.population_stability = 0.0
+
+    def __str__(self):
+        return "pp=%.1f, rp=%.1f, ip=%.1f, population_stabililty=%d" % (
+            self.industry,
+            self.research,
+            self.influence,
+            self.population_stability,
+        )
+
+    def is_better_than(self, other: _EmpireOutput, cost_for_other: float) -> bool:
+        """Return true if this is better than changing to other at given IP cost."""
+        aistate = get_aistate()
+        delta_pp = (self.industry - other.industry) * aistate.get_priority(PriorityType.RESOURCE_PRODUCTION)
+        delta_rp = (self.research - other.research) * aistate.get_priority(PriorityType.RESOURCE_RESEARCH)
+        delta_ip = (self.influence - other.influence) * aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
+        delta_stability = self.population_stability - other.population_stability
+        # delta is per round, adoption cost is a one-time cost
+        cost = cost_for_other * aistate.get_priority(PriorityType.RESOURCE_INFLUENCE) / 10
+        result = delta_pp + delta_rp + delta_ip + delta_stability > cost
+        debug(f"is_better_than: {delta_pp} + {delta_rp} + {delta_ip} + {delta_stability} > {cost} = {result}")
+        return result
+
+    def add_planet(self, planet: fo.planet) -> None:
+        """Add output of the given planet to this object."""
+        self.industry += planet.currentMeterValue(fo.meterType.targetIndustry)
+        self.research += planet.currentMeterValue(fo.meterType.targetResearch)
+        self.influence += planet.currentMeterValue(fo.meterType.targetInfluence)
+        current_population = planet.currentMeterValue(fo.meterType.population)
+        target_population = planet.currentMeterValue(fo.meterType.targetPopulation)
+        # current is what counts now, but look a little ahead
+        population = (3 * current_population + target_population) / 4
+        # no bonuses above 20
+        stability = min(planet.currentMeterValue(fo.meterType.targetHappiness), 20)
+        if stability < -1:
+            # increase both for the risk of losing the colony
+            population += 1
+            stability -= 1
+        elif stability >= 10:
+            # 10 give a lot of bonuses, increases above 10 are less important
+            stability = 11 + (stability - 10) / 2
+        self.population_stability += population * stability
 
 
 class PolicyManager:
@@ -76,7 +127,7 @@ class PolicyManager:
 
     def _process_social(self) -> None:
         """Process social policies."""
-        self._check_liberty()
+        self._process_liberty()
         # The last two we simply adopt when we have a slot and enough IP.
         # Note that this will adopt propaganda in turn 1
         # TBD check for dislike? algo_research is currently disliked by Chato
@@ -85,33 +136,32 @@ class PolicyManager:
         if self._can_adopt(algo_research):
             self._adopt(algo_research)
 
-    def _check_liberty(self) -> None:
+    def _process_liberty(self) -> None:
         """Adopt or deadopt liberty, may replace propaganda."""
-        # Liberty is available very early, but to help setting up basic policies we keep propaganda at least
-        # until we have infra1. Getting a second slot before that should be nearly impossible.
-        # Centralization is always kept only for one turn and if population has a strong opinion on it,
-        # stability calculation may be extremely different for normal turns, leading to a change that would
-        # possibly be reverted next turn.
         if (
+            # Liberty is available very early, but to help setting up basic policies we keep propaganda at least
+            # until we have infra1. Getting a second slot before that should be nearly impossible.
             infra1 in self._adopted
+            # Centralization is always kept only for one turn and if population has a strong opinion on it,
+            # stability calculation may be extremely different for normal turns, leading to a change that would
+            # possibly be reverted next turn.
             and centralization not in self._adopted
             and (liberty in self._adopted or self._can_adopt(liberty, propaganda))
         ):
             adoption_cost = fo.getPolicy(liberty).adoptionCost()
             # liberty will generally make species less happy, but generates research
             debug("Checking liberty, first without change:")
-            # update first to make sure we see only the changes done by liberty
             current_output = self._calculate_empire_output()
             if liberty in self._adopted:
                 self._deadopt(liberty)
                 without_liberty = self._calculate_empire_output()
-                if self._compare_empire_output(current_output, without_liberty, 0):
+                if current_output.is_better_than(without_liberty, 0):
                     self._universe.updateMeterEstimates(self._populated_planet_ids)
                     self._adopt(liberty)
             elif self._can_adopt(liberty):
                 self._adopt(liberty)
                 with_liberty = self._calculate_empire_output()
-                if self._compare_empire_output(current_output, with_liberty, adoption_cost):
+                if current_output.is_better_than(with_liberty, adoption_cost):
                     self._universe.updateMeterEstimates(self._populated_planet_ids)
                     self._deadopt(liberty)
             else:
@@ -119,64 +169,19 @@ class PolicyManager:
                 self._deadopt(propaganda)
                 self._adopt(liberty)
                 with_liberty = self._calculate_empire_output()
-                if self._compare_empire_output(current_output, with_liberty, adoption_cost):
+                if current_output.is_better_than(with_liberty, adoption_cost):
                     self._universe.updateMeterEstimates(self._populated_planet_ids)
                     self._deadopt(liberty)
                     self._adopt(propaganda)
-
-    # Perhaps this should be public or even move out of PolicyAI
-    class _EmpireOutput:
-        def __init__(self):
-            self.industry = 0.0
-            self.research = 0.0
-            self.influence = 0.0
-            self.population_stability = 0.0
-
-        def __str__(self):
-            return "pp=%.1f, rp=%.1f, ip=%.1f, population_stabililty=%d" % (
-                self.industry,
-                self.research,
-                self.influence,
-                self.population_stability,
-            )
 
     def _calculate_empire_output(self) -> _EmpireOutput:
         # TBD: here we could use the stability-adapted update, that would be much better than trying
         # to rate the stability effects again production effects.
         self._universe.updateMeterEstimates(self._populated_planet_ids)
-        result = self._EmpireOutput()
+        result = _EmpireOutput()
         for pid in self._populated_planet_ids:
-            planet = self._universe.getPlanet(pid)
-            result.industry += planet.currentMeterValue(fo.meterType.targetIndustry)
-            result.research += planet.currentMeterValue(fo.meterType.targetResearch)
-            result.influence += planet.currentMeterValue(fo.meterType.targetInfluence)
-            current_population = planet.currentMeterValue(fo.meterType.population)
-            target_population = planet.currentMeterValue(fo.meterType.targetPopulation)
-            # current is what counts now, but look a little ahead
-            population = (3 * current_population + target_population) / 4
-            # no bonuses above 20
-            stability = min(planet.currentMeterValue(fo.meterType.targetHappiness), 20)
-            if stability < -1:
-                # increase both for the risk of losing the colony
-                population += 1
-                stability -= 1
-            elif stability >= 10:
-                # 10 give a lot of bonuses, increases above 10 are less important
-                stability = 11 + (stability - 10) / 2
-            result.population_stability += population * stability
+            result.add_planet(self._universe.getPlanet(pid))
         debug(f"Empire output: {result}")
-        return result
-
-    def _compare_empire_output(self, current: _EmpireOutput, new: _EmpireOutput, adoption_cost: float) -> bool:
-        """Return true if we better stick to current, rather than changing to new at given cost."""
-        delta_pp = (current.industry - new.industry) * self._aistate.get_priority(PriorityType.RESOURCE_PRODUCTION)
-        delta_rp = (current.research - new.research) * self._aistate.get_priority(PriorityType.RESOURCE_RESEARCH)
-        delta_ip = (current.influence - new.influence) * self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
-        delta_stability = current.population_stability - new.population_stability
-        # delta is per round, adoption cost is a one-time cost
-        cost = adoption_cost * self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE) / 10
-        result = delta_pp + delta_rp + delta_ip + delta_stability > cost / 10
-        debug(f"compare: {delta_pp} + {delta_rp} + {delta_ip} + {delta_stability} > {cost} = {result}")
         return result
 
     def _process_infrastructure(self) -> None:
@@ -195,7 +200,7 @@ class PolicyManager:
             self._try_adopt_bureaucracy()
         # We try not to adopt it when we cannot replace it, but enemy action may
         # make the best plans fails. Keeping it will usually cost too much influence.
-        self._check_deadopt_centralization()
+        self._maybe_deadopt_centralization()
 
     def _try_adopt_centralization(self) -> None:
         """Try to adopt centralization as a prerequisite for bureaucracy.
@@ -230,7 +235,7 @@ class PolicyManager:
                 self._deadopt(centralization)
                 self._adopt(infra1)
 
-    def _check_deadopt_centralization(self) -> None:
+    def _maybe_deadopt_centralization(self) -> None:
         """Deadopt centralization after one turn to get rid of the IP cost and get
         the slot for technocracy or industrialism. So far, we never keep it for more than one turn."""
         turns_adopted = self._empire.turnsPoliciesAdopted
