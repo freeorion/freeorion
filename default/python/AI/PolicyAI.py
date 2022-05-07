@@ -10,6 +10,9 @@ from EnumsAI import PriorityType
 
 propaganda = "PLC_PROPAGANDA"
 algo_research = "PLC_ALGORITHMIC_RESEARCH"
+liberty = "PLC_LIBERTY"
+diversity = "PLC_DIVERSITY"
+artisans = "PLC_ARTISAN_WORKSHOPS"
 moderation = "PLC_MODERATION"
 industrialism = "PLC_INDUSTRIALISM"
 technocracy = "PLC_TECHNOCRACY"
@@ -18,26 +21,25 @@ bureaucracy = "PLC_BUREAUCRACY"
 infra1 = "PLC_PLANETARY_INFRA"
 infra2 = "PLC_SYSTEM_INFRA"
 infra3 = "PLC_INTERSTELLAR_INFRA"
-basics = [
-    propaganda,
-    algo_research,
-    infra1,
-    # no use for the extra slot yet, and they are expensive
-    # infra2,
-    # infra3,
-]
 
 
 class PolicyManager:
     """Policy Manager for one round"""
 
     def __init__(self):
-        # resourceAvailable includes this turns production, but that is wrong for influence
         self._empire = fo.getEmpire()
         self._universe = fo.getUniverse()
         self._aistate = get_aistate()
+        # resourceAvailable includes this turns production, but that is wrong for influence
         self._ip = self._empire.resourceAvailable(fo.resourceType.influence) - self._get_infl_prod()
         self._adopted = set(self._empire.adoptedPolicies)
+        # When we continue a game in which we just adopted a policy, game state shows the policy as adopted,
+        # but IP still unspent. Correct it here, calculate anew whether we want to adopt it.
+        for entry in self._empire.turnsPoliciesAdopted:
+            if entry.data() == fo.currentTurn():
+                debug(f"reverting saved adopt {entry.key()}")
+                fo.issueDeadoptPolicyOrder(entry.key())
+                self._adopted.remove(entry.key())
         self._originally_adopted = copy(self._adopted)
         self._adoptable = self._get_adoptable()
         empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire()
@@ -61,7 +63,9 @@ class PolicyManager:
             self._adoptable,
             self._adopted,
         )
-        self._process_basics()
+        self._process_social()
+        self._process_infrastructure()
+        # TBD: military policies
         # we need the extra slots first
         if infra1 in self._adopted:
             self._process_bureaucracy()
@@ -70,12 +74,119 @@ class PolicyManager:
         debug("End of turn IP: %.2f + %.2f", self._ip, new_production)
         self._determine_influence_priority(new_production)
 
-    def _process_basics(self) -> None:
-        for policy in basics:
-            if policy in self._adoptable:
-                self._adopt(policy)
+    def _process_social(self) -> None:
+        """Process social policies."""
+        self._check_liberty()
+        # The last two we simply adopt when we have a slot and enough IP.
+        # Note that this will adopt propaganda in turn 1
+        # TBD check for dislike? algo_research is currently disliked by Chato
+        if self._can_adopt(propaganda):
+            self._adopt(propaganda)
+        if self._can_adopt(algo_research):
+            self._adopt(algo_research)
+
+    def _check_liberty(self) -> None:
+        """Adopt or deadopt liberty, may replace propaganda."""
+        # Liberty is available very early, but to help setting up basic policies we keep propaganda at least
+        # until we have infra1. Getting a second slot before that should be nearly impossible.
+        # Centralization is always kept only for one turn and if population has a strong opinion on it,
+        # stability calculation may be extremely different for normal turns, leading to a change that would
+        # possibly be reverted next turn.
+        if (
+            infra1 in self._adopted
+            and centralization not in self._adopted
+            and (liberty in self._adopted or self._can_adopt(liberty, propaganda))
+        ):
+            adoption_cost = fo.getPolicy(liberty).adoptionCost()
+            # liberty will generally make species less happy, but generates research
+            debug("Checking liberty, first without change:")
+            # update first to make sure we see only the changes done by liberty
+            current_output = self._calculate_empire_output()
+            if liberty in self._adopted:
+                self._deadopt(liberty)
+                without_liberty = self._calculate_empire_output()
+                if self._compare_empire_output(current_output, without_liberty, 0):
+                    self._universe.updateMeterEstimates(self._populated_planet_ids)
+                    self._adopt(liberty)
+            elif self._can_adopt(liberty):
+                self._adopt(liberty)
+                with_liberty = self._calculate_empire_output()
+                if self._compare_empire_output(current_output, with_liberty, adoption_cost):
+                    self._universe.updateMeterEstimates(self._populated_planet_ids)
+                    self._deadopt(liberty)
+            else:
+                # Can only adopt it by replacing propaganda
+                self._deadopt(propaganda)
+                self._adopt(liberty)
+                with_liberty = self._calculate_empire_output()
+                if self._compare_empire_output(current_output, with_liberty, adoption_cost):
+                    self._universe.updateMeterEstimates(self._populated_planet_ids)
+                    self._deadopt(liberty)
+                    self._adopt(propaganda)
+
+    # Perhaps this should be public or even move out of PolicyAI
+    class _EmpireOutput:
+        def __init__(self):
+            self.industry = 0.0
+            self.research = 0.0
+            self.influence = 0.0
+            self.population_stability = 0.0
+
+        def __str__(self):
+            return "pp=%.1f, rp=%.1f, ip=%.1f, population_stabililty=%d" % (
+                self.industry,
+                self.research,
+                self.influence,
+                self.population_stability,
+            )
+
+    def _calculate_empire_output(self) -> _EmpireOutput:
+        # TBD: here we could use the stability-adapted update, that would be much better than trying
+        # to rate the stability effects again production effects.
+        self._universe.updateMeterEstimates(self._populated_planet_ids)
+        result = self._EmpireOutput()
+        for pid in self._populated_planet_ids:
+            planet = self._universe.getPlanet(pid)
+            result.industry += planet.currentMeterValue(fo.meterType.targetIndustry)
+            result.research += planet.currentMeterValue(fo.meterType.targetResearch)
+            result.influence += planet.currentMeterValue(fo.meterType.targetInfluence)
+            current_population = planet.currentMeterValue(fo.meterType.population)
+            target_population = planet.currentMeterValue(fo.meterType.targetPopulation)
+            # current is what counts now, but look a little ahead
+            population = (3 * current_population + target_population) / 4
+            # no bonuses above 20
+            stability = min(planet.currentMeterValue(fo.meterType.targetHappiness), 20)
+            if stability < -1:
+                # increase both for the risk of losing the colony
+                population += 1
+                stability -= 1
+            elif stability >= 10:
+                # 10 give a lot of bonuses, increases above 10 are less important
+                stability = 11 + (stability - 10) / 2
+            result.population_stability += population * stability
+        debug(f"Empire output: {result}")
+        return result
+
+    def _compare_empire_output(self, current: _EmpireOutput, new: _EmpireOutput, adoption_cost: float) -> bool:
+        """Return true if we better stick to current, rather than changing to new at given cost."""
+        delta_pp = (current.industry - new.industry) * self._aistate.get_priority(PriorityType.RESOURCE_PRODUCTION)
+        delta_rp = (current.research - new.research) * self._aistate.get_priority(PriorityType.RESOURCE_RESEARCH)
+        delta_ip = (current.influence - new.influence) * self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
+        delta_stability = current.population_stability - new.population_stability
+        # delta is per round, adoption cost is a one-time cost
+        cost = adoption_cost * self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE) / 10
+        result = delta_pp + delta_rp + delta_ip + delta_stability > cost / 10
+        debug(f"compare: {delta_pp} + {delta_rp} + {delta_ip} + {delta_stability} > {cost} = {result}")
+        return result
+
+    def _process_infrastructure(self) -> None:
+        """Handle infrastructure policies."""
+        if infra1 in self._adoptable:
+            self._adopt(infra1)
+        # TBD infra2 / 3, then use the additional slot
 
     def _process_bureaucracy(self) -> None:
+        """Handle adoption and regular re-adoption of bureaucracy and its prerequisite centralization."""
         if bureaucracy in self._adopted:
             if fo.currentTurn() >= self._empire.turnsPoliciesAdopted[bureaucracy] + self._max_turn_bureaucracy:
                 self._deadopt(bureaucracy)
@@ -153,10 +264,13 @@ class PolicyManager:
         )
 
     def _determine_influence_priority(self, new_production: float) -> None:
-        # avoid wildly varying priorities while we adopt the basics: simply use 10 for the first 12 turns
-        if fo.currentTurn() <= 12:
+        """Determine and set influence priority."""
+        # avoid wildly varying priorities while we adopt the basics: simply a fixed value for some turns
+        if fo.currentTurn() <= 15:
             if fo.currentTurn() == 1:
-                self._set_priority(10.0, True)
+                # I'd prefer 20, but that makes Abadoni switch to Influence in turn 3.
+                # TBD work on ResourceAI again...
+                self._set_priority(18.0, True)
             return
         # How much IP would we have if we keep the current production for 3 turns?
         forecast = self._ip + 3 * new_production
@@ -189,6 +303,7 @@ class PolicyManager:
         self._set_priority(priority, False)
 
     def _set_priority(self, calculated_priority: float, ignore_old: bool) -> None:
+        """Set and log influence priority."""
         if ignore_old:
             new_priority = calculated_priority
         else:
