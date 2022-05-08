@@ -12054,9 +12054,9 @@ Diversity
 
 PLC_DIVERSITY_DESC
 '''Gives bonuses or penalties to research, stability, and capital influence, dependent on the number of species in the empire.
-The research bonus requires a stability of [[value PLC_DIVERSITY_MIN_STABILITY]].
+The research bonus requires research focus and a stability of [[value PLC_DIVERSITY_MIN_STABILITY]].
 
-All bonuses or penalties are [[value PLC_DIVERSITY_SCALING]] per species above or below 4 species that are present.'''
+All bonuses or penalties are [[value PLC_DIVERSITY_SCALING]] per species above or below [[value PLC_DIVERSITY_THRESHOLD]] species that are present.'''
 
 PLC_DIVERSITY_SHORT_DESC
 Improves research, stability, and Influence
