@@ -143,7 +143,7 @@ class PolicyManager:
             # until we have infra1. Getting a second slot before that should be nearly impossible.
             infra1 in self._adopted
             # Centralization is always kept only for one turn and if population has a strong opinion on it,
-            # stability calculation may be extremely different for normal turns, leading to a change that would
+            # stability calculation may be extremely different from normal turns, leading to a change that would
             # possibly be reverted next turn.
             and centralization not in self._adopted
             and (liberty in self._adopted or self._can_adopt(liberty, propaganda))
