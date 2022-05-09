@@ -49,8 +49,8 @@ class _EmpireOutput:
         delta_stability = self.population_stability - other.population_stability
         # delta is per round, adoption cost is a one-time cost
         cost = cost_for_other * aistate.get_priority(PriorityType.RESOURCE_INFLUENCE) / 10
-        result = delta_pp + delta_rp + delta_ip + delta_stability > cost
-        debug(f"is_better_than: {delta_pp} + {delta_rp} + {delta_ip} + {delta_stability} > {cost} = {result}")
+        result = delta_pp + delta_rp + delta_ip + delta_stability + cost > 0
+        debug(f"is_better_than: {delta_pp} + {delta_rp} + {delta_ip} + {delta_stability} + {cost} > 0 => {result}")
         return result
 
     def add_planet(self, planet: fo.planet) -> None:
@@ -77,7 +77,7 @@ class _EmpireOutput:
 class PolicyManager:
     """Policy Manager for one round"""
 
-    def __init__(self):
+    def __init__(self, status_only: bool = False):
         self._empire = fo.getEmpire()
         self._universe = fo.getUniverse()
         self._aistate = get_aistate()
@@ -85,12 +85,13 @@ class PolicyManager:
         self._ip = self._empire.resourceAvailable(fo.resourceType.influence) - self._get_infl_prod()
         self._adopted = set(self._empire.adoptedPolicies)
         # When we continue a game in which we just adopted a policy, game state shows the policy as adopted,
-        # but IP still unspent. Correct it here, calculate anew whether we want to adopt it.
-        for entry in self._empire.turnsPoliciesAdopted:
-            if entry.data() == fo.currentTurn():
-                debug(f"reverting saved adopt {entry.key()}")
-                fo.issueDeadoptPolicyOrder(entry.key())
-                self._adopted.remove(entry.key())
+        # but IP still unspent. Correct it here, then calculate anew whether we want to adopt it.
+        if not status_only:
+            for entry in self._empire.turnsPoliciesAdopted:
+                if entry.data() == fo.currentTurn():
+                    debug(f"reverting saved adopt {entry.key()}")
+                    fo.issueDeadoptPolicyOrder(entry.key())
+                    self._adopted.remove(entry.key())
         self._originally_adopted = copy(self._adopted)
         self._adoptable = self._get_adoptable()
         empire_owned_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire()
@@ -407,4 +408,4 @@ def generate_policy_orders() -> None:
 
 
 def print_status() -> None:
-    PolicyManager().print_status()
+    PolicyManager(True).print_status()
