@@ -1574,6 +1574,12 @@ Annuler la lecture du statut de l'empire en rejoignant une partie en cours.
 OPTIONS_DB_TAKE_OVER_AI
 Option de serveur permettant aux joueurs humains de prendre le contrôle des empires dirigés par l'IA.
 
+OPTIONS_DB_ALLOW_OBSERVERS
+Option de serveur permettant à tout joueur de se connecter aux parties en tant qu'Observateur.
+
+OPTIONS_DB_LISTEN_FD
+Option de serveur permettant de définir un fichier de description pré-chargé pour accepter les connexions. Fonctionne sous Linux avec xinetd ou systemd socket activation. Option désactivée par défaut.
+
 OPTIONS_DB_PYTHON_ASYNCIO_INTERVAL
 Intervalle en secondes d'appel de la boucle d'évènements python asyncio ou -1 pour le désactiver. Les appels d'asyncio sont désactivés par défaut.
 
@@ -6501,7 +6507,7 @@ Chaque [[encyclopedia ENC_SPECIES]] a ses propres préférences environnementale
 
 Le rapport d'Habitabilité d'une planète peut être affiché par un clic-droit sur une planète dans le panneau latéral. À la suite de la donnée d'Habitabilité, un nombre de couleur verte indique la [[metertype METER_POPULATION]] maximale que la planète peut atteindre si colonisée par cette espèce, tandis qu'un nombre de couleur rouge indique que la colonie ne sera pas viable. La Population diminuera sur plusieurs tours, jusqu'à ce que la totalité des Colons ait péri et que la colonie soit perdue.
 
-Lors de la terraformation d'une planète dans le but de mieux l'adapter aux préférences environnementales de l'espèce (via la [[metertype METER_RESEARCH]] ou si la planète dispose de la Particularité [[special GAIA_SPECIAL]]), l'Environnement d'origine de la planète est modifié par paliers, jusqu'à que ce dernier atteigne l'Habitabilité [[PE_GOOD]] pour l'espèce désirant vivre sur la planète. Les étapes de terraformation d'une planète peuvent être consultées ci-dessous sous la forme d'une représentation circulaire des différents types d'Environnement.
+Lors de la terraformation d'une planète dans le but de mieux l'adapter aux préférences environnementales de l'espèce (via la [[metertype METER_RESEARCH]] ou si la planète dispose de la Particularité [[special GAIA_SPECIAL]]), l'Environnement d'origine de la planète est modifié par paliers, jusqu'à que ce dernier atteigne l'Habitabilité [[PE_GOOD]] pour l'espèce désirant vivre sur la planète. Les projets de terraformation sont débloqués par la technologie [[tech GRO_TERRAFORM]]. Les étapes de terraformation d'une planète peuvent être consultées ci-dessous sous la forme d'une représentation circulaire des différents types d'Environnement.
 
 Depuis midi dans le sens horaire: [[PT_TERRAN]], [[PT_OCEAN]], [[PT_SWAMP]], [[PT_TOXIC]], [[PT_INFERNO]], [[PT_RADIATED]], [[PT_BARREN]], [[PT_TUNDRA]], [[PT_DESERT]]
 
@@ -7747,8 +7753,14 @@ Sur %planet% : les habitants jouissent désormais d'un monde devenu un paradis [
 EFFECT_GAIA_LABEL
 Paradis Gaia
 
+EFFECT_TERRAFORM_BEST
+%planet% a été terraformée en planète %planettype% (%environment%).
+
+EFFECT_TERRAFORM_BEST_LABEL
+Terraformation
+
 EFFECT_TERRAFORM
-La planète %planet% a été terraformée en planète %planettype% (%environment%).
+%planet% a été terraformée en planète %planettype% (%environment%).
 
 EFFECT_TERRAFORM_LABEL
 Terraformation
@@ -11996,7 +12008,7 @@ PLC_TERRAFORMING
 Terraformation
 
 PLC_TERRAFORMING_DESC
-'''• Diminue le temps et le coût minimum nécessaires pour mener à bien les projets de Terraformation sur une planète.
+'''• Diminue le temps minimum pour mener à bien les projets de Terraformation sur une planète. Ces projets sont débloqués par la technologie [[tech GRO_TERRAFORM]].
 • Améliore la [[metertype METER_TARGET_HAPPINESS]] sur les planètes terraformées de [[value PLC_TERRAFORMING_TARGET_HAPPINESS_ORIGINAL_FLAT]] par palier les séparant de leur type planétaire d'origine après terraformation.
 • Améliore la [[metertype METER_TARGET_INFLUENCE]] sur les planètes en Focus Influence de [[value PLC_TERRAFORMING_TARGET_INFLUENCE_ORIGINAL_FLAT]] par palier les séparant de leur type planétaire d'origine après terraformation.
 • Améliore la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche de la racine carrée de la [[metertype METER_POPULATION]] x [[value PLC_TERRAFORMING_TARGET_RESEARCH_SCALING]] par palier les séparant de leur type planétaire d'origine après terraformation.
@@ -13397,7 +13409,9 @@ GRO_TERRAFORM
 Terraformation
 
 GRO_TERRAFORM_DESC
-Modifier le type d'environnement d'une planète est une entreprise titanesque, le challenge de ce processus résidant principalement dans l'immense logistique nécessaire. La méthode en question dépend quant à elle de l'environnement d'origine de la planète et du résultat désiré. Cependant, dans tous les cas, la quasi-totalité de la surface planétaire et de l'atmosphère nécessite d'être convertie en d'autres types de molécules, diffusées dans l'espace à modifier ou injectées sous la croûte terrestre. Par conséquent, le processus requiert que la majeure partie de la planète soit accessible aux terraformeurs, et ne peut être enclencher si la [[metertype METER_TARGET_POPULATION]] est inférieure à un.
+'''Modifier le type d'environnement d'une planète est une entreprise titanesque, le challenge de ce processus résidant principalement dans l'immense logistique nécessaire. La méthode en question dépend quant à elle de l'environnement d'origine de la planète et du résultat désiré. Cependant, dans tous les cas, la quasi-totalité de la surface planétaire et de l'atmosphère nécessite d'être convertie en d'autres types de molécules, diffusées dans l'espace à modifier ou injectées sous la croûte terrestre. Par conséquent, le processus requiert que la majeure partie de la planète soit accessible aux terraformeurs, et ne peut être enclencher si la [[metertype METER_TARGET_POPULATION]] est inférieure à un.
+
+[[ALL_BLD_TERRAFORM_DESC]]'''
 
 GRO_TERRAFORM_SHORT_DESC
 Permet la terraformation
@@ -13406,7 +13420,12 @@ GRO_REMOTE_TERRAFORM
 Terraformation à Distance
 
 GRO_REMOTE_TERRAFORM_DESC
-Les méthodes traditionnelles de terraformation considèrent la planète comme une structure et modifient son environnement à l'aide de processus physiques et chimiques. Cela nécessite que la majorité de la planète soit accessible à l'espèce opérant la terraformation, ce qui généralement limite l'efficacité de l'entreprise. En envisageant la planète comme un organisme et en modifiant en quelque sorte sa physiologie, il est alors possible d'avoir recours à moins de main-d'œuvre, bien que la terraformation prenne alors plus de temps, mais permettant ainsi aux avant-postes se trouvant sur des planètes à environnement pauvre ou hostile, d'enclencher un processus de terraformation.
+'''Les méthodes traditionnelles de terraformation considèrent la planète comme une structure et modifient son environnement à l'aide de processus physiques et chimiques. Cela nécessite que la majorité de la planète soit accessible à l'espèce opérant la terraformation, ce qui généralement limite l'efficacité de l'entreprise. En envisageant la planète comme un organisme et en modifiant en quelque sorte sa physiologie, il est alors possible d'avoir recours à moins de main-d'œuvre, bien que la terraformation prenne alors plus de temps, mais permettant ainsi aux avant-postes se trouvant sur des planètes à environnement pauvre ou hostile, d'enclencher un processus de terraformation.
+
+[[ALL_BLD_TERRAFORM_DESC]]'''
+
+ALL_BLD_TERRAFORM_DESC
+Il existe deux types de projets de terraformation. La structure [[buildingtype BLD_TERRAFORM_BEST]] est construite par la population d'une planète afin de convertir directement cette dernière au meilleur type d'[[encyclopedia ENVIRONMENT_TITLE]] possible. Une série de projets dont chacun vise à établir un [[encyclopedia ENVIRONMENT_TITLE]] optimal spécifique pour plusieurs espèces à la fois, permet un meilleur contrôle, et peut être également construit sur un [[encyclopedia OUTPOSTS_TITLE]]. Globalement, une conversion directe est moins coûteuse et plus rapide que d'entreprendre une série de paliers de terraformation.
 
 GRO_BIOTERROR
 Complexe Bioterroriste
@@ -14686,6 +14705,12 @@ BLD_CLONING_CENTER_DESC
 
 Le [[tech GRO_INDUSTRY_CLONE]] permet de produire industriellement des populations sur-mesure, améliorant considérablement leur croissance.'''
 
+BLD_TERRAFORM_BEST
+Terraformation Idéale
+
+BLD_TERRAFORM_BEST_DESC
+Terraforme un monde au type d'[[encyclopedia ENVIRONMENT_TITLE]] favori de l'espèce résidente.
+
 BLD_TERRAFORM_TERRAN
 Terraformation [[PT_TERRAN]]
 
@@ -14744,7 +14769,7 @@ BLD_REMOTE_TERRAFORM
 Terraformation à Distance
 
 BLD_REMOTE_TERRAFORM_DESC
-Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement favori de l'espèce. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
+Terraforme une planète en un type d'[[encyclopedia ENVIRONMENT_TITLE]] un palier plus proche de l'Environnement favori de l'espèce résidente. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_NEST_ERADICATOR
 Éradicateur de Nid
