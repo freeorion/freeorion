@@ -33,13 +33,17 @@ RESEARCH = FocusType.FOCUS_RESEARCH
 GROWTH = FocusType.FOCUS_GROWTH
 PROTECTION = FocusType.FOCUS_PROTECTION
 INFLUENCE = FocusType.FOCUS_INFLUENCE
-_focus_names = {
-    INDUSTRY: "Industry",
-    RESEARCH: "Research",
-    GROWTH: "Growth",
-    PROTECTION: "Defense",
-    INFLUENCE: "Influence",
-}
+
+
+def _focus_name(focus: str) -> str:
+    _known_names = {
+        INDUSTRY: "Industry",
+        RESEARCH: "Research",
+        GROWTH: "Growth",
+        PROTECTION: "Defense",
+        INFLUENCE: "Influence",
+    }
+    return _known_names.get(focus, focus)
 
 
 class PlanetFocusInfo:
@@ -101,12 +105,15 @@ class PlanetFocusManager:
         if (focus == INDUSTRY or focus == RESEARCH) and not force:
             idx = 0 if focus == INDUSTRY else 1
             # check for influence instead
-            debug("possible_output of %s: %s", pinfo.planet.name, str(pinfo.possible_output))
             focus_gain = pinfo.possible_output[focus][idx] - pinfo.possible_output[INFLUENCE][idx]
             influence_gain = pinfo.possible_output[INFLUENCE][2] - pinfo.possible_output[focus][2]
+            debug(
+                f"{pinfo.planet.name} current: {_focus_name(pinfo.current_focus)}, requested: {_focus_name(focus)}, "
+                f"requested_gain: {focus_gain}, influence_gain: {influence_gain}"
+            )
             if influence_gain * self.priority[2] > focus_gain * self.priority[idx]:
                 debug(
-                    f"Chosing influence over {_focus_names.get(focus, 'unknown')}."
+                    f"Choosing influence over {_focus_name(focus)}."
                     f" {influence_gain:.2f} * {self.priority[2]:.1f}"
                     f" > {focus_gain:.2f} * {self.priority[idx]:.1f}"
                 )
@@ -114,6 +121,7 @@ class PlanetFocusManager:
         last_turn = fo.currentTurn()
         if (  # define idx constants for accessing these tuples
             focus != PROTECTION
+            and focus != pinfo.current_focus
             and policy_is_adopted(bureaucracy)
             and pinfo.current_output[2] + 0.2 < pinfo.possible_output[pinfo.current_focus][2]
             and pinfo.planet.LastTurnColonized != last_turn
@@ -356,8 +364,8 @@ class Reporter:
                     "pID (%3d) %22s" % (pid, pinfo.planet.name[-22:]),
                     "c: %5.1f / %5.1f" % (curren_rp, current_pp),
                     "cT: %5.1f / %5.1f" % (ot_rp, ot_pp),
-                    "cF: %8s" % _focus_names.get(old_focus, "unknown"),
-                    "nF: %8s" % _focus_names.get(new_focus, "unset"),
+                    "cF: %8s" % _focus_name(old_focus),
+                    "nF: %8s" % _focus_name(new_focus),
                     "cT: %5.1f / %5.1f" % (nt_rp, nt_pp),
                 )
         self.print_table_footer(priority_ratio)
@@ -438,6 +446,15 @@ def weighted_sum_output(op):
 def assess_protection_focus(pinfo, priority):
     """Return True if planet should use Protection Focus."""
     this_planet = pinfo.planet
+    # this is unrelated to military threats
+    stability_bonus = (pinfo.current_focus == PROTECTION) * fo.getNamedValue("PROTECION_FOCUS_STABILITY_BONUS")
+    # industry and research produce nothing below 0
+    threshold = -1 * (pinfo.current_focus not in (INDUSTRY, RESEARCH))
+    # Negative IP lowers stability. Trying to counter this by setting planets to Protection just makes it worse!
+    ip = fo.getEmpire().resourceAvailable(fo.resourceType.influence)
+    if ip >= 0 and this_planet.currentMeterValue(fo.meterType.targetHappiness) < threshold + stability_bonus:
+        debug("Advising Protection Focus at %s to avoid rebellion", this_planet)
+        return True
     aistate = get_aistate()
     sys_status = aistate.systemStatus.get(this_planet.systemID, {})
     threat_from_supply = (
@@ -875,8 +892,8 @@ def set_planet_industry_research_influence_foci(focus_manager, priority_ratio):
                 c_pp,
                 ot_rp,
                 ot_pp,
-                _focus_names.get(old_focus, "unknown"),
-                _focus_names[RESEARCH],
+                _focus_name(old_focus),
+                _focus_name(RESEARCH),
                 nt_rp,
                 nt_pp,
                 ratio,
