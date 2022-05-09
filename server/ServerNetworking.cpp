@@ -816,6 +816,20 @@ void ServerNetworking::CleanupCookies() {
 }
 
 void ServerNetworking::Init() {
+#if defined(FREEORION_LINUX)
+    if (GetOptionsDB().Get<int>("network.server.listen.fd") >= 0) {
+        try {
+            m_player_connection_acceptor.assign(tcp::v6(), GetOptionsDB().Get<int>("network.server.listen.fd"));
+        } catch (const std::exception &e) {
+            ErrorLogger(network) << "Server cannot assign to IPv6 socket: " << e.what()
+                                 << ". Fallback to IPv4";
+            m_player_connection_acceptor.assign(tcp::v4(), GetOptionsDB().Get<int>("network.server.listen.fd"));
+        }
+        AcceptNextMessagingConnection();
+        return;
+    }
+#endif
+
     // use a dual stack (ipv6 + ipv4) socket
     tcp::endpoint message_endpoint{tcp::v6(), static_cast<unsigned short>(Networking::MessagePort())};
 
