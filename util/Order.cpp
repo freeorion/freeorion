@@ -532,6 +532,8 @@ bool FleetTransferOrder::Check(int empire_id, int dest_fleet_id, const std::vect
             if (ship_old_fleet_arr_lane == INVALID_OBJECT_ID) // deal with quirky case where new fleets have no arrival lane for one turn
                 ship_old_fleet_arr_lane = original_fleet->SystemID();
             auto new_fleet_arr_lane = fleet->ArrivalStarlane();
+            if (new_fleet_arr_lane == INVALID_OBJECT_ID)      // same quirky case can affect both source and destination fleets
+                new_fleet_arr_lane = fleet->SystemID();
 
             if (ship_old_fleet_arr_lane != new_fleet_arr_lane) {
                 ErrorLogger() << "IssueFleetTransferOrder : passed ship " << ship->ID()
