@@ -450,7 +450,9 @@ def assess_protection_focus(pinfo, priority):
     stability_bonus = (pinfo.current_focus == PROTECTION) * fo.getNamedValue("PROTECION_FOCUS_STABILITY_BONUS")
     # industry and research produce nothing below 0
     threshold = -1 * (pinfo.current_focus not in (INDUSTRY, RESEARCH))
-    if this_planet.currentMeterValue(fo.meterType.targetHappiness) < threshold + stability_bonus:
+    # Negative IP lowers stability. Trying to counter this by setting planets to Protection just makes it worse!
+    ip = fo.getEmpire().resourceAvailable(fo.resourceType.influence)
+    if ip >= 0 and this_planet.currentMeterValue(fo.meterType.targetHappiness) < threshold + stability_bonus:
         debug("Advising Protection Focus at %s to avoid rebellion", this_planet)
         return True
     aistate = get_aistate()
