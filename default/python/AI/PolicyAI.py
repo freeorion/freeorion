@@ -1,4 +1,4 @@
-from __future__ import annotations
+# from __future__ import annotations
 
 import freeOrionAIInterface as fo
 from copy import copy
@@ -40,7 +40,7 @@ class _EmpireOutput:
             self.population_stability,
         )
 
-    def is_better_than(self, other: _EmpireOutput, cost_for_other: float) -> bool:
+    def is_better_than(self, other, cost_for_other: float) -> bool:  # other: _EmpireOutput,
         """Return true if this is better than changing to other at given IP cost."""
         aistate = get_aistate()
         delta_pp = (self.industry - other.industry) * aistate.get_priority(PriorityType.RESOURCE_PRODUCTION)
