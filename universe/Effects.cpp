@@ -651,7 +651,7 @@ void SetMeter::Execute(ScriptingContext& context,
         for (auto& target : targets) {
             if (Meter* meter = target->GetMeter(m_meter))
                 target_new_meter_vals.emplace_back(
-                    NewMeterValue(context, m_meter, m_value, target).first, target->ID(), meter);
+                    NewMeterValue(context, meter, m_value, target).first, target->ID(), meter);
         }
 
         // set new meter values and update accounting
