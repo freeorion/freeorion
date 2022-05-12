@@ -887,7 +887,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
 
                 if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
                     target_new_meter_vals.emplace_back(
-                        NewMeterValue(std::move(target_context), m_meter, m_value).first,
+                        NewMeterValue(std::move(target_context), meter, m_value).first,
                         target->ID(), meter);
             }
 
@@ -954,7 +954,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
             auto ship = static_cast<Ship*>(target.get());
             if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
                 target_new_meter_vals.emplace_back(
-                    NewMeterValue(context, m_meter, m_value, target).first, target->ID(), meter);
+                    NewMeterValue(context, meter, m_value, target).first, target->ID(), meter);
         }
 
         // set new meter values and update accounting
