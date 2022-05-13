@@ -34,9 +34,14 @@ public:
     ExceptionBase() noexcept = default;
 
     /** Create an exception with the given @p msg. */
-    template <class S>
-    ExceptionBase(S&& msg) noexcept :
-        m_msg(std::forward<S>(msg))
+    ExceptionBase(std::string&& msg) noexcept :
+        m_msg(std::move(msg))
+    {}
+    ExceptionBase(const std::string& msg) :
+        m_msg(msg)
+    {}
+    ExceptionBase(const char* msg) :
+        m_msg(msg)
     {}
 
     /** Returns a string representation of the type this exception. */
