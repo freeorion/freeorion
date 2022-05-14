@@ -25,6 +25,14 @@ infra2 = "PLC_SYSTEM_INFRA"
 infra3 = "PLC_INTERSTELLAR_INFRA"
 
 
+def dislike_multiplier() -> float:
+    """Returns multiplier for dislike effects."""
+    # See happiness.macros
+    has_liberty = fo.getEmpire().policyAdopted(liberty)
+    # conformance not used yet
+    return 1.0 * fo.getNamedValue("PLC_LIBERTY_DISLIKE_FACTOR") ** has_liberty
+
+
 class _EmpireOutput:
     def __init__(self):
         self.industry = 0.0

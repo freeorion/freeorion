@@ -27,7 +27,7 @@ from empire.pilot_rating import best_pilot_rating
 from EnumsAI import FocusType, MissionType
 from freeorion_tools import (
     get_partial_visibility_turn,
-    get_species_tag_grade,
+    get_species_tag_value,
     tech_is_complete,
 )
 from freeorion_tools.caching import cache_by_turn_persistent, cache_for_session
@@ -148,10 +148,10 @@ def _calculate_planet_colonization_rating(
         for psize in [-1, planet.size]
     )
 
-    ind_tag_mod = AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(get_species_tag_grade(species_name, Tags.INDUSTRY), 1.0)
-    res_tag_mod = AIDependencies.SPECIES_RESEARCH_MODIFIER.get(get_species_tag_grade(species_name, Tags.RESEARCH), 1.0)
+    ind_tag_mod = get_species_tag_value(species_name, Tags.INDUSTRY)
+    res_tag_mod = get_species_tag_value(species_name, Tags.RESEARCH)
     if species:
-        supply_tag_mod = AIDependencies.SPECIES_SUPPLY_MODIFIER.get(get_species_tag_grade(species_name, Tags.SUPPLY), 1)
+        supply_tag_mod = get_species_tag_value(species_name, Tags.SUPPLY)
     else:
         supply_tag_mod = 0
 

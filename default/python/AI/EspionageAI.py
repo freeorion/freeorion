@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 import AIDependencies
 from AIDependencies import ALL_EMPIRES, Tags
 from EnumsAI import EmpireMeters
-from freeorion_tools import get_species_tag_grade
+from freeorion_tools import get_species_tag_value
 from freeorion_tools.caching import cache_for_current_turn
 
 
@@ -102,9 +102,7 @@ def colony_detectable_by_empire(
     # if the planet already has an existing stealth special, then the most common situation is that it would be
     # overlapping with or superseded by the future_stealth_bonus, not additive with it.
     planet_stealth = max(planet_stealth, AIDependencies.BASE_PLANET_STEALTH + future_stealth_bonus)
-    species_stealth_mod = AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(
-        get_species_tag_grade(species_name, Tags.STEALTH), 0
-    )
+    species_stealth_mod = get_species_tag_value(species_name, Tags.STEALTH)
     total_stealth = planet_stealth + species_stealth_mod
     if isinstance(empire, int):
         empire_detection = get_empire_detection(empire)

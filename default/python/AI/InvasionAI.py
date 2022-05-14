@@ -6,7 +6,6 @@ from typing import Sequence, Tuple
 import AIDependencies
 import AIstate
 import ColonisationAI
-import CombatRatingsAI
 import EspionageAI
 import FleetUtilsAI
 import MilitaryAI
@@ -20,7 +19,7 @@ from empire.ship_builders import can_build_ship_for_species
 from EnumsAI import EmpireProductionTypes, MissionType, PriorityType, ShipRoleType
 from freeorion_tools import (
     get_partial_visibility_turn,
-    get_species_tag_grade,
+    get_species_tag_value,
     tech_is_complete,
 )
 from freeorion_tools.caching import cache_for_current_turn
@@ -131,8 +130,7 @@ def get_invasion_fleets():
                 troops_per_ship = best_base_trooper_here.troopCapacity
                 if not troops_per_ship:
                     continue
-                species_troop_grade = get_species_tag_grade(planet2.speciesName, Tags.ATTACKTROOPS)
-                troops_per_ship = CombatRatingsAI.weight_attack_troops(troops_per_ship, species_troop_grade)
+                troops_per_ship = troops_per_ship * get_species_tag_value(planet2.speciesName, Tags.ATTACKTROOPS)
                 if troops_per_ship > best_trooper_count:
                     best_base_planet = pid2
                     best_trooper_count = troops_per_ship
@@ -178,8 +176,7 @@ def get_invasion_fleets():
                 continue
             # TODO: have TroopShipDesigner give the expected number of troops including species effects directly
             troops_per_ship = best_base_trooper_here.troopCapacity
-            species_troop_grade = get_species_tag_grade(loc_planet.speciesName, Tags.ATTACKTROOPS)
-            troops_per_ship = CombatRatingsAI.weight_attack_troops(troops_per_ship, species_troop_grade)
+            troops_per_ship = troops_per_ship * get_species_tag_value(loc_planet.speciesName, Tags.ATTACKTROOPS)
             if not troops_per_ship:
                 warning("The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet)
                 continue
@@ -501,9 +498,7 @@ def evaluate_invasion_planet(planet_id):
         design = fo.getShipDesign(design_id)
         cost_per_ship = design.productionCost(empire_id, loc)
         build_time = design.productionTime(empire_id, loc)
-        troops_per_ship = CombatRatingsAI.weight_attack_troops(
-            design.troopCapacity, get_species_tag_grade(species_here, Tags.ATTACKTROOPS)
-        )
+        troops_per_ship = design.troopCapacity * get_species_tag_value(species_here, Tags.ATTACKTROOPS)
         planned_troops = troops if system_secured else min(troops + troop_regen * (max_jumps + build_time), max_troops)
         planned_troops += 0.01  # we must attack with more troops than there are defenders
         ships_needed = math.ceil((planned_troops + _TROOPS_SAFETY_MARGIN) / float(troops_per_ship))
@@ -723,8 +718,6 @@ def _get_queued_base_troopers(sys_id: SystemId, element: fo.productionQueueEleme
         planet = fo.getUniverse().getPlanet(element.locationID)
         if planet.systemID == sys_id and aistate.get_ship_role(element.designID) == ShipRoleType.BASE_INVASION:
             design = fo.getShipDesign(element.designID)
-            troops_per_ship = CombatRatingsAI.weight_attack_troops(
-                design.troopCapacity, get_species_tag_grade(planet.speciesName, Tags.ATTACKTROOPS)
-            )
+            troops_per_ship = design.troopCapacity * get_species_tag_value(planet.speciesName, Tags.ATTACKTROOPS)
             return element.remaining * element.blocksize * troops_per_ship
     return 0.0

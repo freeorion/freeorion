@@ -7,7 +7,6 @@ from CombatRatingsAI._ratings import (
     get_ship_rating,
     rating_difference,
     rating_needed,
-    weight_attack_troops,
     weight_shields,
 )
 from CombatRatingsAI._ship_combat_stats import ShipCombatStats, get_ship_combat_stats
