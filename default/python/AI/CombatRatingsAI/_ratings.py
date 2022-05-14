@@ -1,5 +1,6 @@
 from collections import Counter
 
+import AIDependencies
 from CombatRatingsAI._fleet_combat_stats import get_fleet_combat_stats
 from CombatRatingsAI._ship_combat_stats import ShipCombatStats, get_ship_combat_stats
 from common.fo_typing import FleetId, ShipId
@@ -48,19 +49,10 @@ def default_ship_stats() -> ShipCombatStats:
     )
 
 
-def weight_attack_troops(troops: float, grade: str) -> float:
-    """Re-weights troops on a ship based on species piloting grade.
-
-    :return: piloting grade weighted troops
-    """
-    weight = {"NO": 0.0, "BAD": 0.5, "": 1.0, "GOOD": 1.5, "GREAT": 2.0, "ULTIMATE": 3.0}.get(grade, 1.0)
-    return troops * weight
-
-
 def weight_shields(shields: float, grade: str) -> float:
     """Re-weights shields based on species defense bonus."""
     offset = {"NO": 0, "BAD": 0, "": 0, "GOOD": 1.0, "GREAT": 0, "ULTIMATE": 0}.get(grade, 0)
-    return shields + offset
+    return shields + offset * AIDependencies.SHIP_SHIELD_FACTOR
 
 
 def rating_needed(target: float, current: float = 0) -> float:

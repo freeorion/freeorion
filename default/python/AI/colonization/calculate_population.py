@@ -7,7 +7,7 @@ from AIDependencies import (
     POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES,
     Tags,
 )
-from freeorion_tools import get_species_tag_grade, tech_is_complete
+from freeorion_tools import get_species_tag_value, tech_is_complete
 
 active_growth_specials = {}
 
@@ -28,9 +28,7 @@ def calc_max_pop(planet, species, detail):
             return 0
 
     tag_list = list(species.tags) if species else []
-    pop_tag_mod = AIDependencies.SPECIES_POPULATION_MODIFIER.get(
-        get_species_tag_grade(species.name, Tags.POPULATION), 1.0
-    )
+    pop_tag_mod = get_species_tag_value(species.name, Tags.POPULATION)
     if planet.type == fo.planetType.gasGiant and "GASEOUS" in tag_list:
         gaseous_adjustment = AIDependencies.GASEOUS_POP_FACTOR
         detail.append("GASEOUS adjustment: %.2f" % gaseous_adjustment)

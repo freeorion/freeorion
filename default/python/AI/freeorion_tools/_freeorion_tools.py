@@ -8,6 +8,7 @@ from collections.abc import Mapping
 from functools import wraps
 from logging import ERROR, Handler, debug, error, getLogger, warning
 
+import AIDependencies
 from common.configure_logging import FOLogFormatter
 from freeorion_tools.caching import cache_for_current_turn, cache_for_session
 
@@ -301,7 +302,8 @@ def assertion_fails(cond: bool, msg: str = "") -> bool:
 
 
 @cache_for_session
-def get_species_tag_grade(species_name, tag_type):
+def get_species_tag_grade(species_name: str, tag_type: AIDependencies.Tags) -> str:
+    """Determine grade string ("NO", "BAD", "GOOD", etc.), if any, for given tag and species."""
     if not species_name:
         return ""
     species = fo.getSpecies(species_name)
@@ -309,6 +311,28 @@ def get_species_tag_grade(species_name, tag_type):
         return ""
 
     return get_ai_tag_grade(species.tags, tag_type)
+
+
+@cache_for_session
+def get_species_tag_value(species_name: str, tag_type: AIDependencies.Tags) -> float:
+    """Get a numeric value for a skill-like (GOOD, BAD...) Tag."""
+    grade = get_species_tag_grade(species_name, tag_type)
+    if tag_type == AIDependencies.Tags.INDUSTRY:
+        return AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(grade, 1.0)
+    if tag_type == AIDependencies.Tags.RESEARCH:
+        return AIDependencies.SPECIES_RESEARCH_MODIFIER.get(grade, 1.0)
+    if tag_type == AIDependencies.Tags.INFLUENCE:
+        return AIDependencies.SPECIES_INFLUENCE_MODIFIER.get(grade, 1.0)
+    if tag_type == AIDependencies.Tags.POPULATION:
+        return AIDependencies.SPECIES_POPULATION_MODIFIER.get(grade, 1.0)
+    if tag_type == AIDependencies.Tags.SUPPLY:
+        return AIDependencies.SPECIES_SUPPLY_MODIFIER.get(grade, 1.0)
+    if tag_type == AIDependencies.Tags.FUEL:
+        return AIDependencies.SPECIES_FUEL_MODIFIER.get(grade, 0.0)
+    if tag_type == AIDependencies.Tags.ATTACKTROOPS:
+        return AIDependencies.SPECIES_TROOP_MODIFIER.get(grade, 1.0)
+    if tag_type == AIDependencies.Tags.STEALTH:
+        return AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(grade, 0.0)
 
 
 @cache_for_session

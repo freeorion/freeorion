@@ -11,6 +11,7 @@ from ._freeorion_tools import (
     get_partial_visibility_turn,
     get_ship_part,
     get_species_tag_grade,
+    get_species_tag_value,
     policy_is_adopted,
     ppstring,
     tech_is_complete,
