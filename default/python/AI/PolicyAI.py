@@ -492,7 +492,7 @@ class PolicyManager:
             fo.updateResourcePools()
         return self._empire.resourceProduction(fo.resourceType.influence)
 
-    def _can_adopt(self, name: str, replace: Union[str, set[str], None] = None) -> bool:
+    def _can_adopt(self, name: str, replace: Union[str, Set[str], None] = None) -> bool:
         """
         Can we adopt named policy, possibly by replacing (one of) replace?
         Note that when replace_other is set, this function currently assumes that with
