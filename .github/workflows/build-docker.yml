@@ -1,4 +1,4 @@
-name: "Ubuntu 21.04 Hirsute Docker"
+name: "Dockerized Linux"
 
 on:
   push:
@@ -19,13 +19,17 @@ on:
       - '*.md'
 
 jobs:
-  build-ubuntu-docker:
-    runs-on: ubuntu-20.04
+  build-docker:
+    name: Docker ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [ubuntu-21.04, fedora-32]
     env:
       CACHE_NAME: linux
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Prepare
         id: prep
         run: |
@@ -38,9 +42,9 @@ jobs:
         continue-on-error: true
       - name: Build production image
         run: |
-          docker build .github/ubuntu-21.04/ --file .github/ubuntu-21.04/Dockerfile --tag ${{ steps.prep.outputs.tagged_image }}
+          docker build .github/${{ matrix.image }}/ --file .github/${{ matrix.image }}/Dockerfile --tag ${{ steps.prep.outputs.tagged_image }}
       - name: Prepare ccache timestamp
-        id: build-ubuntu-ccache-timestamp
+        id: build-docker-ccache-timestamp
         shell: cmake -P {0}
         run: |
           string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
@@ -49,12 +53,22 @@ jobs:
         uses: actions/cache@v1.1.0
         with:
           path: ${{ runner.temp }}/ccache
-          key: build-ubuntu-docker-ccache-${{ steps.build-ubuntu-ccache-timestamp.outputs.timestamp }}
+          key: build-${{ matrix.image }}-docker-ccache-${{ steps.build-docker-ccache-timestamp.outputs.timestamp }}
           restore-keys: |
-            build-ubuntu-docker-ccache-
-      - name: Build freeorion
+            build-${{ matrix.image }}-docker-ccache-
+      - name: Configure freeorion
+        if: ${{ matrix.image == 'ubuntu-21.04' }}
         run: |
           mkdir build
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -DBUILD_TESTING=ON -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 ..
+      - name: Configure freeorion
+        if: ${{ matrix.image == 'fedora-32' }}
+        run: |
+          mkdir build
+          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -DBUILD_TESTING=ON ..
+      - name: Build freeorion
+        run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . -- -j 2
+      - name: Test freeorion
+        run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -e FO_TEST_HOSTLESS_GAMES=1 -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . --target unittest
