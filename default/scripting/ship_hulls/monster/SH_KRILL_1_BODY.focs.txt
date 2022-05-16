@@ -67,7 +67,7 @@ Hull
             ]
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = [
-                CreateShip designname = "SM_KRILL_2"
+                CreateShip designname = "SM_KRILL_2" name = Source.Name
                 Destroy
 /*
                 GenerateSitRepMessage

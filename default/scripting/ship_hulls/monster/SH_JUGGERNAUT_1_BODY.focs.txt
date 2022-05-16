@@ -57,7 +57,7 @@ Hull
                 Random probability = Source.Age*0.01 - 0.1
             ]
             effects = [
-                CreateShip designname = "SM_JUGGERNAUT_2" empire = Source.Owner
+                CreateShip designname = "SM_JUGGERNAUT_2" empire = Source.Owner name = Source.Name
                 Destroy
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_MATURED"
