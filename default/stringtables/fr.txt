@@ -6454,7 +6454,7 @@ PROTECTION_FOCUS_TITLE
 Focus Protection
 
 PROTECTION_FOCUS_TEXT
-Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[metertype METER_TROOPS]], sa capacité de [[metertype METER_DEFENSE]], et la solidité de ses [[metertype METER_SHIELD]] sont par conséquent doublés.
+Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[metertype METER_TROOPS]], sa capacité de [[metertype METER_DEFENSE]], et la solidité de ses [[metertype METER_SHIELD]] sont par conséquent doublés. La [[metertype METER_TARGET_HAPPINESS]] augmente de [[value PROTECION_FOCUS_STABILITY_BONUS]].
 
 PSYCHIC_FOCUS_TITLE
 Focus Domination Psychique
@@ -10054,7 +10054,7 @@ FOCUS_PROTECTION  # translated
 Protection
 
 FOCUS_PROTECTION_DESC
-Augmente boucliers, défense et infanterie.
+Augmente boucliers, défense, infanterie et stabilité.
 
 # Focus types
 FOCUS_DOMINATION
