@@ -20,6 +20,7 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
+                InSystem
                 OwnedBy empire = Source.Owner
             ]
             accountinglabel = "FLEET_UNSTEALTHINESS"
