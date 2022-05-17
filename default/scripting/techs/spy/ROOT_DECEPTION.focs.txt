@@ -13,8 +13,8 @@ Tech
                 OwnedBy empire = Source.Owner
                 Star type = NoStar
             ]
-            accountinglabel = "SPY_DECPTION_EMPTY_SPACE_PENALTY"
-            effects = SetStealth value = Value + (NamedReal name = "SPY_DECPTION_EMPTY_SPACE_PENALTY" value = -10.0)
+            accountinglabel = "SPY_DECEPTION_EMPTY_SPACE_PENALTY"
+            effects = SetStealth value = Value + (NamedReal name = "SPY_DECEPTION_EMPTY_SPACE_PENALTY" value = -10.0)
 
         EffectsGroup
             scope = And [
@@ -22,8 +22,8 @@ Tech
                 OwnedBy empire = Source.Owner
                 Star type = Red
             ]
-            accountinglabel = "SPY_DECPTION_DIM_STAR_PENALTY"
-            effects = SetStealth value = Value + (NamedReal name = "SPY_DECPTION_DIM_STAR_PENALTY" value = -5.0)
+            accountinglabel = "SPY_DECEPTION_DIM_STAR_PENALTY"
+            effects = SetStealth value = Value + (NamedReal name = "SPY_DECEPTION_DIM_STAR_PENALTY" value = -5.0)
 
         EffectsGroup
             scope = And [
@@ -31,8 +31,8 @@ Tech
                 OwnedBy empire = Source.Owner
                 Star type = Neutron
             ]
-            accountinglabel = "SPY_DECPTION_SUBSTELLAR_INTERFERENCE"
-            effects = SetStealth value = Value + (NamedReal name = "SPY_DECPTION_NEUTRON_INTERFERENCE" value = 5.0)
+            accountinglabel = "SPY_DECEPTION_SUBSTELLAR_INTERFERENCE"
+            effects = SetStealth value = Value + (NamedReal name = "SPY_DECEPTION_NEUTRON_INTERFERENCE" value = 5.0)
 
         EffectsGroup
             scope = And [
@@ -40,6 +40,6 @@ Tech
                 OwnedBy empire = Source.Owner
                 Star type = BlackHole
             ]
-            accountinglabel = "SPY_DECPTION_SUBSTELLAR_INTERFERENCE"
-            effects = SetStealth value = Value + (NamedReal name = "SPY_DECPTION_BLACK_INTERFERENCE" value = 10.0)
+            accountinglabel = "SPY_DECEPTION_SUBSTELLAR_INTERFERENCE"
+            effects = SetStealth value = Value + (NamedReal name = "SPY_DECEPTION_BLACK_INTERFERENCE" value = 10.0)
     ]
