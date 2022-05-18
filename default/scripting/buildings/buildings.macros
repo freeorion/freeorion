@@ -1,13 +1,9 @@
 // sets stability (happiness) on planets in empire that have the building this macro effect is added to, if those planets' species like or dislike the building
 
-// Policy Liberty doubles de effect, policy Conformance halves it, values are declared in common/named_values.focs.txt
-POLICY_DISLIKE_SCALING
-'''(1.0 * (NamedRealLookup name = "PLC_LIBERTY_DISLIKE_FACTOR")^(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_LIBERTY"])
-        * (NamedRealLookup name = "PLC_CONFORMANCE_DISLIKE_FACTOR")^(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_CONFORMANCE"]))'''
-
 STABILITY_PER_LIKED_BUILDING_ON_PLANET
 '''4.0'''
 
+// Policy Liberty doubles de building dislike effect, policy Conformance halves it, macro is in common/opinion.macros
 STABILITY_PER_DISLIKED_BUILDING_ON_PLANET
 '''4.0 * [[POLICY_DISLIKE_SCALING]]'''
 
@@ -126,3 +122,5 @@ BORE_POSSIBLE
            CanAddStarlanesTo condition = Source
        ]
 '''
+
+#include "/scripting/common/opinion.macros"
