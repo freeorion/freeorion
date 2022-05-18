@@ -12234,7 +12234,7 @@ Liberty
 
 PLC_LIBERTY_DESC
 '''• Increases the impact of species dislikes on planet stability due to buildings, policies or planetary focus (x[[value PLC_LIBERTY_DISLIKE_FACTOR]]).
-• Increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_LIBERTY_RESEARCH_BONUS_PER_STABILITY]] RP per each point of [[metertype METER_HAPPINESS]] above [[value PLC_LIBERTY_MIN_STABILITY]], on all planets regardless of focus.'''
+• Increases [[metertype METER_TARGET_RESEARCH]] on research-focused planets with a stability of more than [[value PLC_LIBERTY_MIN_STABILITY]]. Increase is [[value PLC_LIBERTY_RESEARCH_BONUS_SCALING]] per population, multiplied by how much stability is above [[value PLC_LIBERTY_MIN_STABILITY]], up to a maximum of [[value PLC_LIBERTY_MAX_STABILITY]].'''
 
 PLC_LIBERTY_SHORT_DESC
 Increases species dislikes effects and research
@@ -17063,7 +17063,7 @@ CAPITAL_DISCONNECTION_LABEL
 Not Connected to Empire Capital
 
 ARTISAN_APPRECIATION
-Likes Influence-Focused Artistic Species In System
+Likes other Artistic Species in System
 
 # %1% name of empire
 # %2% name of policy

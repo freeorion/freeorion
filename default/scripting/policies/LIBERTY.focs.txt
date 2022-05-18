@@ -17,11 +17,13 @@ Policy
             Planet
             OwnedBy empire = Source.Owner
             Species
+            Focus type = "FOCUS_RESEARCH"
             Happiness low = (NamedReal name = "PLC_LIBERTY_MIN_STABILITY" value = 5)
         ]
         priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-        effects = SetTargetResearch value = Value + (Target.Happiness - NamedRealLookup name = "PLC_LIBERTY_MIN_STABILITY")*
-                                                    (NamedReal name = "PLC_LIBERTY_RESEARCH_BONUS_PER_STABILITY" value = 0.2)
+        effects = SetTargetResearch value = Value +
+            (min(Target.Happiness, (NamedReal name = "PLC_LIBERTY_MAX_STABILITY" value = 20)) - NamedRealLookup name = "PLC_LIBERTY_MIN_STABILITY")
+            * Target.Population * (NamedReal name = "PLC_LIBERTY_RESEARCH_BONUS_SCALING" value = 0.01)
     ]
     graphic = "icons/policies/social_liberty.png"
 
