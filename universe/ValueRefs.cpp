@@ -515,10 +515,8 @@ std::string ComplexVariableDump(const std::vector<std::string>& property_names,
 std::string StatisticDescription(StatisticType stat_type, std::string_view value_desc,
                                  std::string_view condition_desc)
 {
-    std::string stat_str{to_string(stat_type)};
-    boost::algorithm::to_upper(stat_str);
     std::string stringtable_key{"DESC_VAR_"};
-    stringtable_key.append(stat_str);
+    stringtable_key.append(to_string(stat_type)); // assumes that all StatisticType names are ALL_CAPS
 
     if (UserStringExists(stringtable_key)) {
         boost::format formatter = FlexibleFormat(UserString(stringtable_key));
