@@ -46,7 +46,7 @@ namespace {
 
         auto formatter = FlexibleFormat(key);
 
-        size_t arg = 1;
+        std::size_t arg = 1;
         for (auto submatch : match.nested_results())
             formatter.bind_arg(arg++, submatch.str());
 

@@ -146,7 +146,7 @@ void MultiEdit::Render()
     const auto& text = Text();
     const auto focus_wnd{GUI::GetGUI()->FocusWnd().get()};
     const bool multiselected = MultiSelected();
-    const size_t caret_row = (!multiselected && focus_wnd == this && !(m_style & MULTI_READ_ONLY))
+    const std::size_t caret_row = (!multiselected && focus_wnd == this && !(m_style & MULTI_READ_ONLY))
         ? m_cursor_begin.first : std::numeric_limits<size_t>::max();
 
     // process tags
@@ -442,7 +442,7 @@ std::pair<std::size_t, CPSize> MultiEdit::CharAt(const Pt& pt) const
 
     std::pair<std::size_t, CPSize> retval;
 
-    size_t row = RowAt(pt.y);
+    std::size_t row = RowAt(pt.y);
     retval.first = std::min(row, GetLineData().size() - 1);
 
     if (row > retval.first)
@@ -995,7 +995,7 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
             emit_signal = true;
         } else if (m_cursor_begin.first < GetLineData().size() - 1) {
             // cursor is not on the last line, but is at the end of its line
-            size_t next_line = m_cursor_begin.first + 1;
+            std::size_t next_line = m_cursor_begin.first + 1;
             CPSize start_of_line = CP0;
             Erase(m_cursor_begin.first, m_cursor_begin.second, next_line, start_of_line);
             emit_signal = true;

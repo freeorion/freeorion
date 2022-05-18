@@ -38,7 +38,7 @@ public:
 
     [[nodiscard]] constexpr std::string_view operator[](EnumType value) const
     {
-        size_t idx = 0;
+        std::size_t idx = 0;
         for (; idx < m_size; ++idx)
         {
             if (m_values[idx] == value)
@@ -52,7 +52,7 @@ public:
 
     [[nodiscard]] constexpr EnumType operator[](std::string_view name) const
     {
-        size_t idx = 0;
+        std::size_t idx = 0;
         for (; idx < m_size; ++idx)
         {
             if (m_names[idx] == name)
@@ -64,7 +64,7 @@ public:
         return std::numeric_limits<EnumType>::max();
     }
 
-    [[nodiscard]] constexpr size_t size() const { return m_size; }
+    [[nodiscard]] constexpr std::size_t size() const { return m_size; }
 
     [[nodiscard]] constexpr bool empty() const { return m_size == 0; }
 
@@ -83,7 +83,7 @@ private:
     constexpr void Insert(std::string_view entry)
     {
         auto count_trimmed_name_value_str = SplitApply<2>(entry, Trim, '=');
-        static_assert(std::is_same_v<decltype(count_trimmed_name_value_str.first), size_t>);
+        static_assert(std::is_same_v<decltype(count_trimmed_name_value_str.first), std::size_t>);
         static_assert(std::is_same_v<decltype(count_trimmed_name_value_str.second),
                                      std::array<std::string_view, 2>>);
 
@@ -105,7 +105,7 @@ private:
         m_values[place_idx] = value;
     }
 
-    static constexpr size_t CAPACITY = std::numeric_limits<unsigned char>::max();
+    static constexpr std::size_t CAPACITY = std::numeric_limits<unsigned char>::max();
 
 
     [[nodiscard]] static constexpr std::pair<std::string_view, std::string_view> Split(
@@ -129,9 +129,9 @@ private:
 
 
     // how many times does \a delim appear in text?
-    [[nodiscard]] static constexpr size_t Count(std::string_view text, const char delim)
+    [[nodiscard]] static constexpr std::size_t Count(std::string_view text, const char delim)
     {
-        size_t retval = 1;
+        std::size_t retval = 1;
         for (size_t i = 0; i < text.length(); ++i)
             retval += text[i] == delim;
         return retval;
@@ -144,7 +144,7 @@ private:
     [[nodiscard]] static constexpr std::pair<size_t, std::array<std::string_view, RETVAL_CAP>>
         SplitApply(std::string_view comma_separated_names, F&& fn, char delim)
     {
-        size_t count = 0;
+        std::size_t count = 0;
         std::array<std::string_view, RETVAL_CAP> retval;
         while (count < RETVAL_CAP) {
             auto next_and_rest = Split(comma_separated_names, delim);
@@ -238,7 +238,7 @@ private:
         int retval = 0;
         for (auto c : txt.substr(is_negative + 2*is_hex)) {
             retval *= base;
-            size_t digit = valid_chars.find(c);
+            std::size_t digit = valid_chars.find(c);
             retval += static_cast<int>(digit);
         }
 
@@ -255,7 +255,7 @@ private:
     { return EnumType(ToInt(str)); }
 
 
-    size_t                                 m_size = 0;
+    std::size_t                            m_size = 0;
     std::array<std::string_view, CAPACITY> m_names{};
     std::array<EnumType, CAPACITY>         m_values{};
 };

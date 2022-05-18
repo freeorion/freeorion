@@ -648,7 +648,7 @@ private:
     std::shared_ptr<PoliciesListBox>                        m_policies_list;
     std::map<std::string, std::shared_ptr<CUIStateButton>>  m_category_buttons;
     AvailabilityManager                                     m_availabilities_state{true, true, false, false, false};
-    static constexpr size_t NUM_AVAILABILITY_BUTTONS = 5;
+    static constexpr std::size_t NUM_AVAILABILITY_BUTTONS = 5;
     std::array<std::shared_ptr<CUIStateButton>, NUM_AVAILABILITY_BUTTONS> m_availabilities_buttons{};
 };
 
@@ -723,10 +723,10 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
     const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);// space in which to fit buttons
     static constexpr int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 14; // rough guesstimate... avoid overly long policy class names
     const GG::X MIN_BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL;
-    const size_t MAX_BUTTONS_PER_ROW = std::max(Value(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION)), 1);
+    const std::size_t MAX_BUTTONS_PER_ROW = std::max(Value(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION)), 1);
 
-    const size_t NUM_CATEGORY_BUTTONS = std::max(1, static_cast<int>(m_category_buttons.size()));
-    const size_t TOTAL_BUTTONS = NUM_CATEGORY_BUTTONS + NUM_AVAILABILITY_BUTTONS;
+    const std::size_t NUM_CATEGORY_BUTTONS = std::max(1, static_cast<int>(m_category_buttons.size()));
+    const std::size_t TOTAL_BUTTONS = NUM_CATEGORY_BUTTONS + NUM_AVAILABILITY_BUTTONS;
 
     // determine how to arrange category and availability buttons into rows and columns
     // eg:
@@ -740,19 +740,19 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
     // [CAT3] [AVB5]
 
     float NUM_ROWS = 1.0f;
-    size_t AVAILABILITY_BUTTONS_PER_ROW = static_cast<size_t>(std::ceil(NUM_AVAILABILITY_BUTTONS / NUM_ROWS));
-    size_t CATEGORY_BUTTONS_PER_ROW = static_cast<size_t>(std::ceil(NUM_CATEGORY_BUTTONS / NUM_ROWS));
+    auto AVAILABILITY_BUTTONS_PER_ROW = static_cast<std::size_t>(std::ceil(NUM_AVAILABILITY_BUTTONS / NUM_ROWS));
+    auto CATEGORY_BUTTONS_PER_ROW = static_cast<std::size_t>(std::ceil(NUM_CATEGORY_BUTTONS / NUM_ROWS));
     int TOTAL_BUTTONS_PER_ROW = AVAILABILITY_BUTTONS_PER_ROW + CATEGORY_BUTTONS_PER_ROW;
     while (TOTAL_BUTTONS_PER_ROW > static_cast<int>(MAX_BUTTONS_PER_ROW) && NUM_ROWS < TOTAL_BUTTONS) {
         NUM_ROWS += 1.0f;
-        AVAILABILITY_BUTTONS_PER_ROW = static_cast<size_t>(std::ceil(NUM_AVAILABILITY_BUTTONS / NUM_ROWS));
-        CATEGORY_BUTTONS_PER_ROW = static_cast<size_t>(std::ceil(NUM_CATEGORY_BUTTONS / NUM_ROWS));
+        AVAILABILITY_BUTTONS_PER_ROW = static_cast<std::size_t>(std::ceil(NUM_AVAILABILITY_BUTTONS / NUM_ROWS));
+        CATEGORY_BUTTONS_PER_ROW = static_cast<std::size_t>(std::ceil(NUM_CATEGORY_BUTTONS / NUM_ROWS));
         TOTAL_BUTTONS_PER_ROW = AVAILABILITY_BUTTONS_PER_ROW + CATEGORY_BUTTONS_PER_ROW;
     }
 
-    //const size_t NUM_CATEGORY_BUTTON_ROWS = static_cast<size_t>(std::ceil(
+    //const std::size_t NUM_CATEGORY_BUTTON_ROWS = static_cast<size_t>(std::ceil(
     //    NUM_CATEGORY_BUTTONS * 1.0f / CATEGORY_BUTTONS_PER_ROW));
-    //const size_t NUM_AVAILABILITY_BUTTON_ROWS = static_cast<size_t>(std::ceil(
+    //const std::size_t NUM_AVAILABILITY_BUTTON_ROWS = static_cast<size_t>(std::ceil(
     //    NUM_AVAILABILITY_BUTTONS * 1.0f / AVAILABILITY_BUTTONS_PER_ROW));
 
     const GG::X BUTTON_WIDTH = (USABLE_WIDTH - (TOTAL_BUTTONS_PER_ROW - 1)*BUTTON_SEPARATION) / TOTAL_BUTTONS_PER_ROW;

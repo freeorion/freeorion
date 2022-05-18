@@ -344,13 +344,13 @@ StarType ModeratorActionsWnd::StarTypeFromIndex(std::size_t i) const {
 }
 
 PlanetType ModeratorActionsWnd::PlanetTypeFromIndex(std::size_t i) const {
-    if (i == size_t(-1) || i >= size_t(PlanetType::NUM_PLANET_TYPES))
+    if (i == std::size_t(-1) || i >= std::size_t(PlanetType::NUM_PLANET_TYPES))
         return PlanetType::PT_SWAMP;
     return PlanetType(i);   // assumes first enum and first index are value 0, and that items in list are in same order as enum values
 }
 
 PlanetSize ModeratorActionsWnd::PlanetSizeFromIndex(std::size_t i) const {
-    if (i == size_t(-1) || i + 1 >= size_t(PlanetSize::NUM_PLANET_SIZES))
+    if (i == std::size_t(-1) || i + 1 >= std::size_t(PlanetSize::NUM_PLANET_SIZES))
         return PlanetSize::SZ_MEDIUM;
     return PlanetSize(i + 1);// enum index 0 is NO_WORLD, but don't put that into the list, so have to add 1 to all the list indices
 }

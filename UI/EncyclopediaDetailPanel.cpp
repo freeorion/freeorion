@@ -139,7 +139,7 @@ namespace {
             return retval;
         }();
 
-        size_t idx = static_cast<size_t>(static_cast<signed_idx_type>(meter_type));
+        auto idx = static_cast<std::size_t>(static_cast<signed_idx_type>(meter_type));
         retval.first = label_value_strings[idx];
 
         if (UserStringExists(retval.first)) {

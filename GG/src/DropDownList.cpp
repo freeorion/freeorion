@@ -27,7 +27,7 @@ public:
     typedef ListBox::iterator iterator;
     typedef boost::signals2::signal<void (iterator)>   SelChangedSignalType;
 
-    ModalListPicker(Clr color, const DropDownList* relative_to_wnd, size_t m_num_shown_rows);
+    ModalListPicker(Clr color, const DropDownList* relative_to_wnd, std::size_t m_num_shown_rows);
     void CompleteConstruction() override;
     ~ModalListPicker();
 
@@ -103,7 +103,7 @@ private:
     Pt DetermineListHeight(const Pt& drop_down_size);
 
     std::shared_ptr<ListBox> m_lb_wnd;
-    const size_t             m_num_shown_rows = 0;
+    const std::size_t        m_num_shown_rows = 0;
     const DropDownList*      m_relative_to_wnd = nullptr;
     bool                     m_dropped = false; ///< Is the drop down list open.
 
@@ -147,7 +147,7 @@ struct ModalListPickerSelChangedEcho
 ////////////////////////////////////////////////
 // ModalListPicker
 ////////////////////////////////////////////////
-ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd, size_t num_rows) :
+ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd, std::size_t num_rows) :
     Control(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
     m_num_shown_rows(std::max<std::size_t>(1, num_rows)),

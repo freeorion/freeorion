@@ -51,11 +51,11 @@ namespace Moderator {
   * misbehave as well.) */
 class FO_COMMON_API Message {
 public:
-    enum Parts : size_t {TYPE = 0, SIZE, Parts_Count};
+    enum Parts : std::size_t {TYPE = 0, SIZE, Parts_Count};
 
     typedef std::array<int, Parts::Parts_Count> HeaderBuffer;
 
-    constexpr static size_t HeaderBufferSize =
+    constexpr static std::size_t HeaderBufferSize =
         std::tuple_size<HeaderBuffer>::value* sizeof(HeaderBuffer::value_type);
 
     /** Represents the type of the message */

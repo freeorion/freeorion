@@ -1355,7 +1355,7 @@ double StatisticIcon::GetValue(size_t index) const {
     return std::get<0>(m_values[index]);
 }
 
-void StatisticIcon::SetValue(double value, size_t index) {
+void StatisticIcon::SetValue(double value, std::size_t index) {
     if (index < 0u || index > 1u) {
         ErrorLogger() << "StatisticIcon::SetValue passed index out of range index:" << index;
         return;

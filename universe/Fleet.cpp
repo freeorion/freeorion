@@ -820,14 +820,14 @@ void Fleet::SetAggression(FleetAggression aggression) {
 }
 
 void Fleet::AddShips(const std::vector<int>& ship_ids) {
-    size_t old_ships_size = m_ships.size();
+    auto old_ships_size = m_ships.size();
     std::copy(ship_ids.begin(), ship_ids.end(), std::inserter(m_ships, m_ships.end()));
     if (old_ships_size != m_ships.size())
         StateChangedSignal();
 }
 
 void Fleet::RemoveShips(const std::vector<int>& ship_ids) {
-    size_t old_ships_size = m_ships.size();
+    auto old_ships_size = m_ships.size();
     for (int ship_id : ship_ids)
         m_ships.erase(ship_id);
     if (old_ships_size != m_ships.size())

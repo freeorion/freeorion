@@ -137,7 +137,7 @@ namespace {
 
     std::string EmpireIdToText(int empire_id) {
         std::string retval;
-        static constexpr size_t retval_sz = 24 + 1 + VarText::EMPIRE_ID_TAG.length()*2 + 1 + 8 + 1 + 30 + 3 + 1 + 10 + 20; // semi-guesstimate
+        static constexpr std::size_t retval_sz = 24 + 1 + VarText::EMPIRE_ID_TAG.length()*2 + 1 + 8 + 1 + 30 + 3 + 1 + 10 + 20; // semi-guesstimate
         retval.reserve(retval_sz);
         const ScriptingContext context;
         if (const auto empire = context.GetEmpire(empire_id))
@@ -300,7 +300,7 @@ namespace {
 
     private:
         void ToggleExpansion();
-        static size_t CountForces(std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces);
+        static std::size_t CountForces(std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces);
 
         CombatLogWnd::Impl& log;
         const int viewing_empire_id = ALL_EMPIRES;
@@ -355,10 +355,10 @@ namespace {
         SetCollapsed(new_collapsed);
     }
 
-    size_t EmpireForcesAccordionPanel::CountForces(
+    std::size_t EmpireForcesAccordionPanel::CountForces(
         std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces)
     {
-        size_t n = 0;
+        std::size_t n = 0;
         for (const auto& owner_forces : forces)
             n += owner_forces.size();
         return n;

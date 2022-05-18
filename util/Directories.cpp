@@ -287,7 +287,7 @@ void InitBinDir(std::string const& argv0)
         mib[1] = KERN_PROC;
         mib[2] = KERN_PROC_PATHNAME;
         mib[3] = -1;
-        size_t buf_size = sizeof(buf);
+        std::size_t buf_size = sizeof(buf);
         sysctl(mib, 4, buf, &buf_size, 0, 0);
 #endif
 #if defined(FREEORION_NETBSD)
@@ -296,7 +296,7 @@ void InitBinDir(std::string const& argv0)
         mib[1] = KERN_PROC_ARGS;
         mib[2] = -1;
         mib[3] = KERN_PROC_PATHNAME;
-        size_t buf_size = sizeof(buf);
+        std::size_t buf_size = sizeof(buf);
         sysctl(mib, 4, buf, &buf_size, 0, 0);
 #endif
 #if defined(FREEORION_OPENBSD)

@@ -134,7 +134,7 @@ inline constexpr bool is_flag_type_v = is_flag_type<T>::value;
 template <typename FlagType>
 class GG_API FlagSpec
 {
-    static constexpr size_t digits = std::numeric_limits<typename FlagType::InternalType>::digits;
+    static constexpr std::size_t digits = std::numeric_limits<typename FlagType::InternalType>::digits;
     using FlagContainerT = std::array<FlagType, digits>;
 
 public:
@@ -223,7 +223,7 @@ public:
 private:
     constexpr FlagSpec() = default;
 
-    size_t                               m_count = 0;
+    std::size_t                          m_count = 0;
     FlagContainerT                       m_flags{};
     std::array<std::string_view, digits> m_strings{};
 };

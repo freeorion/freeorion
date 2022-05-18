@@ -410,7 +410,7 @@ public:
                     GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropLeave() override;
 
-    void SetValue(double value, size_t index = 0);  ///< sets displayed \a value with \a index
+    void SetValue(double value, std::size_t index = 0);  ///< sets displayed \a value with \a index
 
     mutable boost::signals2::signal<void (const GG::Pt&)> LeftClickedSignal;
     mutable boost::signals2::signal<void (const GG::Pt&)> RightClickedSignal;

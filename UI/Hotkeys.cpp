@@ -64,7 +64,7 @@ void Hotkey::AddHotkey(const std::string& name, const std::string& description, 
 
 std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
     std::string retval;
-    const size_t sz = ((mod != GG::MOD_KEY_NONE) + (key > GG::Key::GGK_NONE)) * 24; // guesstimate
+    const std::size_t sz = ((mod != GG::MOD_KEY_NONE) + (key > GG::Key::GGK_NONE)) * 24; // guesstimate
     retval.reserve(sz);
     if (mod != GG::MOD_KEY_NONE) {
         std::stringstream ss;
@@ -95,7 +95,7 @@ std::pair<GG::Key, GG::Flags<GG::ModKey>> Hotkey::HotkeyFromString(const std::st
     std::string copy = str;
     copy = std::string(copy.begin(), std::remove_if(copy.begin(), copy.end(), isspace));
 
-    size_t plus = copy.find('+');
+    auto plus = copy.find('+');
     bool has_modifier = plus != std::string::npos;
 
     GG::Flags<GG::ModKey> mod = GG::MOD_KEY_NONE;
@@ -104,13 +104,13 @@ std::pair<GG::Key, GG::Flags<GG::ModKey>> Hotkey::HotkeyFromString(const std::st
         // to handle the |-separated flags:
         std::string m = copy.substr(0, plus);
 
-        size_t found = 0;
-        size_t prev = 0;
+        std::size_t found = 0;
+        std::size_t prev = 0;
 
         try {
             while (true) {
                 found = m.find('|', prev);
-                std::string sub = m.substr(prev, found-prev);
+                std::string sub = m.substr(prev, found - prev);
                 GG::ModKey cm = GG::FlagSpec<GG::ModKey>::instance().FromString(sub);
                 mod |= cm;
                 if (found == std::string::npos)
@@ -147,13 +147,13 @@ void Hotkey::AddOptions(OptionsDB& db) {
 static void ReplaceInString(std::string& str, const std::string& what,
                             const std::string& replacement)
 {
-    size_t lst = 0;
-    size_t l1 = what.size();
-    size_t l2 = replacement.size();
+    std::size_t lst = 0;
+    auto l1 = what.size();
+    auto l2 = replacement.size();
     if (l1 == 0 && l2 == 0)
         return;                 // Nothing to do
     do {
-        size_t t = str.find(what, lst);
+        auto t = str.find(what, lst);
         if(t == std::string::npos)
             return;
         str.replace(t, l1, replacement);

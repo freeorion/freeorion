@@ -319,7 +319,7 @@ CPSize Edit::LastVisibleChar() const
             if (client_size_x <= X0 - first_char_offset)
                 break;
         } else {
-            size_t retval_minus_1 = Value(retval - 1);
+            std::size_t retval_minus_1 = Value(retval - 1);
             auto retval_minus_1_char_data = char_data.at(retval_minus_1);
             if (client_size_x <= retval_minus_1_char_data.extent - first_char_offset)
                 break;

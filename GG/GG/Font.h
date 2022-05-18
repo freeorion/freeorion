@@ -576,7 +576,7 @@ public:
     void ChangeTemplatedText(std::string& text,
                              std::vector<std::shared_ptr<TextElement>>& text_elements,
                              const std::string& new_text,
-                             size_t targ_offset) const;
+                             std::size_t targ_offset) const;
 
     /** DetermineLines() returns the \p line_data resulting from adding the necessary line
         breaks, to  the \p text formatted with \p format and parsed into \p text_elements, to fit

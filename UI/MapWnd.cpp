@@ -69,7 +69,7 @@ namespace {
     constexpr double Pow(double base, int exp) {
         double retval = 1.0;
         bool invert = exp < 0;
-        size_t abs_exp = exp >= 0 ? exp : -exp;
+        std::size_t abs_exp = exp >= 0 ? exp : -exp;
         while (abs_exp--)
             retval *= base;
         return invert ? (1.0 / retval) : retval;
@@ -2166,7 +2166,7 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
 namespace {
     GG::GL2DVertexBuffer dot_vertices_buffer;
     GG::GLTexCoordBuffer dot_star_texture_coords;
-    constexpr size_t BUFFER_CAPACITY(512); // should be long enough for most plausible fleet move lines
+    constexpr std::size_t BUFFER_CAPACITY(512); // should be long enough for most plausible fleet move lines
 
     std::shared_ptr<GG::Texture> MoveLineDotTexture() {
         auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
