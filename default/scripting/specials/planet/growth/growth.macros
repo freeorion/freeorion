@@ -9,26 +9,6 @@ STANDARD_INDUSTRY_BOOST
                                      value = 1.0 * [[INDUSTRY_PER_POP]])
 '''
 
-// NOTE: Unused
-ANCIENT_RUINS_DEPLETED_CONTENT
-'''    stealth = 0
-    spawnrate = 0.0
-    effectsgroups = [
-        EffectsGroup
-            scope = Source
-            effects = SetTexture name = "planets/overlays/ruins.png"
-
-        EffectsGroup
-            scope = And [
-                Source
-                Focus type = "FOCUS_RESEARCH"
-                Happiness low = 16
-            ]
-            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
-        ]
-    graphic = "icons/specials_huge/ancient_ruins_excavated.png"
-'''
-
 // argument 1 is the name of the used stacking group
 POPULATION_BOOST_ORGANIC
 '''
