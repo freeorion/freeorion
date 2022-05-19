@@ -279,13 +279,7 @@ BAD_OFFENSE_TROOPS
             ]
 '''
 
-AVERAGE_OFFENSE_TROOPS
-'''       EffectsGroup
-            description = "AVERAGE_OFFENSE_TROOPS_DESC"
-            scope = Source
-            activation = None
-            effects = SetTargetResearch value = Value
-'''
+//AVERAGE_OFFENSE_TROOPS has no effects
 
 GOOD_OFFENSE_TROOPS
 '''EffectsGroup
