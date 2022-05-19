@@ -11,7 +11,8 @@ Policy
         // EmpireHasAdoptedPolicy PLC_LIBERTY is used in setting stability adjustments for species dislikes in
         // species/common/happiness.macros (foci), buildings/buildings.macros and policies/policies.macros (policies)
 
-        // increases research by +(stability-5)/5 RP for planets with stability>5
+        // Increases research on research-focused planets with stability>5.
+        // Bonus grows with stability, up to a maximum of 0.15 / pop at 20.
         EffectsGroup
         scope = And [
             Planet
