@@ -65,7 +65,6 @@ Species
         [[BAD_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
-        [[AVERAGE_OFFENSE_TROOPS]]
         [[GOOD_WEAPONS]]
         [[GREAT_FUEL]]
 
