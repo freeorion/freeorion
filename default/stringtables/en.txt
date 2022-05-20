@@ -7625,14 +7625,6 @@ Astronomers have observed a new supernova, destroying everything in the star sys
 SITREP_NOVA_DETECTED_LABEL
 Supernova detected
 
-SITREP_BUREAUCRACY_STOPPED
-'''The [[policy PLC_BUREAUCRACY]] is expanding, requiring more administrative facilities.
-Starting next turn, %rawtext:needbuildings% facilities ([[buildingtype BLD_IMPERIAL_PALACE]], [[buildingtype BLD_REGIONAL_ADMIN]]) will be needed to prevent the bureaucracy from halting. Currently, a total of %rawtext:havebuildings% are owned.
-Bureaucracy requires an additional administrative building every [[value BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING]] turns.'''
-
-SITREP_BUREAUCRACY_STOPPED_LABEL
-Bureaucratic Gridlock
-
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 WARNING: Sightings of %rawtext% %predefinedshipdesign% are reported around the %species% Outpost at %system%!
 
@@ -12292,7 +12284,7 @@ Capital Markets
 
 PLC_CAPITAL_MARKETS_DESC
 '''• Planets with a luxury resource special and that are set to influence focus will export the resource to supply-connected planets. This boosts the stability of planets with species that like the resource by [[value SPECIAL_CAPITAL_MARKETS_STABILITY_FOCUS_BONUS]].
-• Increases [[metertype METER_TARGET_INFLUENCE]] on populated planets with at least [[value CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY]] [[metertype METER_HAPPINESS]] by [[value CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING]] per the lesser of [[metertype METER_CONSTRUCTION]] and [[metertype METER_POPULATION]].
+• Increases [[metertype METER_TARGET_INFLUENCE]] on influence-focused planets with at least [[value CAPITAL_MARKETS_INFLUENCE_MIN_STABILITY]] [[metertype METER_HAPPINESS]] by [[value CAPITAL_MARKETS_INFLUENCE_BONUS_SCALING]] per the lesser of [[metertype METER_CONSTRUCTION]] and [[metertype METER_POPULATION]].
 • Increases the rate of growth or decay of [[metertype METER_INFLUENCE]] and [[metertype METER_HAPPINESS]] by [[value PLC_CAPITAL_MARKETS_INFLUENCE_RATE]] / turn towards [[metertype METER_TARGET_INFLUENCE]] or [[metertype METER_TARGET_HAPPINESS]].
 • Reduces [[metertype METER_TARGET_HAPPINESS]] on populated empire planets by [[value CAPITAL_MARKETS_DEBT_INSTABILITY]] times the size of the empire's influence debt.'''
 
@@ -12372,8 +12364,10 @@ PLC_BUREAUCRACY
 Bureaucracy
 
 PLC_BUREAUCRACY_DESC
-'''• Increases an empire's populated planet stability by [[value PLC_BUREAUCRACY_STABILITY_FLAT]], as long as the empire has enough [[buildingtype BLD_REGIONAL_ADMIN]]. An additional [[buildingtype BLD_REGIONAL_ADMIN]] is required per [[value BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING]] turns this policy has been adopted.
-• Changing planet focus reduces that planet's [[metertype METER_INFLUENCE]] by [[value BUREAUCRACY_FOCUS_CHANGE_PENALTY]].'''
+'''• Increases an empire's populated planet stability by [[value PLC_BUREAUCRACY_STABILITY_FLAT]].
+• Changing planet focus reduces that planet's [[metertype METER_INFLUENCE]] by [[value BUREAUCRACY_FOCUS_CHANGE_PENALTY]].
+• Costs some influence based on the overall population. Costs are reduced by having more adminstrative buildings ([[buildingtype BLD_IMPERIAL_PALACE]], [[buildingtype BLD_REGIONAL_ADMIN]]) and by having [[PLC_CENTRALIZATION]] adopted.
+'''
 
 PLC_BUREAUCRACY_SHORT_DESC
 Boosts stability

@@ -116,7 +116,7 @@ class PolicyManager:
         self._populated_planet_ids = PlanetUtilsAI.get_populated_planet_ids(empire_owned_planet_ids)
         self._num_populated = len(self._populated_planet_ids)
         self._num_outposts = len(empire_owned_planet_ids) - self._num_populated
-        self._max_turn_bureaucracy = self._calculate_max_turn_bureaucracy()
+        self._max_turn_bureaucracy = 9999
         self._centralization_cost = fo.getPolicy(centralization).adoptionCost()
         self._bureaucracy_cost = fo.getPolicy(bureaucracy).adoptionCost()
         self._wanted_ip = self._wanted_for_bureaucracy()

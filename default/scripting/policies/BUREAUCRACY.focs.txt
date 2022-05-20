@@ -4,7 +4,6 @@ Policy
     short_description = "PLC_BUREAUCRACY_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
-    prerequisites = [ "PLC_CENTRALIZATION" ]
     unlock = Item type = Policy name = "PLC_TECHNOCRACY"
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
@@ -22,53 +21,39 @@ Policy
             priority = [[FOCUS_CHANGE_PENALTY_PRIORITY]]
             effects = SetInfluence value = Value - (NamedReal name = "BUREAUCRACY_FOCUS_CHANGE_PENALTY" value = 3.0)
 
-        // increases stability on all planets, as long as there are enough regional admin buildings...
-        // ... if count of region admins is less than (turns_adopted / 10), no stability bonus
+        // Increases stability on all planets, but also cost some IP. Cost is reduced when there are
+        // more administrative buildings, and also when Centralization is adopted as well.
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Species
             ]
-            activation = Number
-                low = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy) /
-                      (NamedInteger name = "BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING" value = 10)
-                condition = And [
-                    Or [
-                        Building name = "BLD_REGIONAL_ADMIN"
-                        Building name = "BLD_IMPERIAL_PALACE"
-                    ]
-                    OwnedBy empire = Source.Owner
-                ]
-            effects = SetTargetHappiness value = Value + (NamedReal name = "PLC_BUREAUCRACY_STABILITY_FLAT" value = 5.0)
-
-        // Tell the player how much is needed to keep it going.
-        // Message is created 2 turns before an increase, so it is shown just before the required number increases.
-        // Of course one turn is not enough to build another regional admin, but since the message is shown even
-        // before the number increases to 1, the player can always check for the next increase by scrolling back
-        // to the last message. Also the turn before it halts is the perfect time for disabling it.
-        EffectsGroup
-            scope = Source
-            activation =
-                ((TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy + 2) %
-                 NamedIntegerLookup name = "BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING" == 0)
-            effects = GenerateSitRepMessage
-                message = "SITREP_BUREAUCRACY_STOPPED"
-                label = "SITREP_BUREAUCRACY_STOPPED_LABEL"
-                icon = "icons/policies/economic_bureaucracy.png"
-                parameters = [
-                    tag = "havebuildings" data = Statistic Count condition = And [
-                        Or [
-                            Building name = "BLD_REGIONAL_ADMIN"
-                            Building name = "BLD_IMPERIAL_PALACE"
-                        ]
-                        OwnedBy empire = Source.Owner
-                    ]
-                    tag = "needbuildings" data = (TurnsSincePolicyAdopted empire = Source.Owner name = ThisPolicy + 2) /
-                                                 (NamedIntegerLookup name = "BUREAUCRACY_ADMINS_NEEDED_TURN_SCALING")
-                ]
-                empire = Source.Owner
-            
+            // IP costs should not be affected by any multipliers
+            priority = [[TARGET_OVERRIDE_PRIORITY]]
+            effects = [
+                SetTargetHappiness value = Value + (NamedReal name = "PLC_BUREAUCRACY_STABILITY_FLAT" value = 5.0)
+                // Base cost 1/4 of the adoption cost...
+                SetTargetInfluence value = Value - 0.5 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5
+                    // ...reduced to 1/10 with Centralization
+                    / 2.5 ^ (Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Target.Owner name = "PLC_CENTRALIZATION"])
+                    // divided by number of administrative buildings + 1
+                    / ((Statistic Count
+                        condition = And [
+                            Or [
+                                Building name = "BLD_REGIONAL_ADMIN"
+                                Building name = "BLD_IMPERIAL_PALACE"
+                            ]
+                            OwnedBy empire = Source.Owner
+                        ]) + 1)^0.5
+                    // distributed equally to all populated planets
+                    / (Statistic Count
+                        condition = And [
+                            Planet
+                            OwnedBy empire = Source.Owner
+                            Species
+                        ])
+            ]
     ]
     graphic = "icons/policies/economic_bureaucracy.png"
 
