@@ -279,8 +279,8 @@ public:
     void LosingFocus() override;
     void Render() override;
     virtual bool AutoComplete() { return false; };
-    void DisallowChars(const std::string& chars)
-    { m_disallowed_chars = chars; }
+    void DisallowChars(std::string chars)
+    { m_disallowed_chars = std::move(chars); }
 
     mutable boost::signals2::signal<void ()> GainingFocusSignal;
     mutable boost::signals2::signal<void ()> LosingFocusSignal;
