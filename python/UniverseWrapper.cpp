@@ -592,7 +592,7 @@ namespace FreeOrionPython {
                                                 &ShipPart::ProductionCostTimeLocationInvariant)
             .def("productionLocation",          &ShipPartProductionLocation, "Returns the result of Location condition (bool) in passed location_id (int)")
         ;
-        py::def("getShipPart",                  &GetShipPart,                               py::return_value_policy<py::reference_existing_object>(), "Returns the ShipPart with the indicated name (string).");
+        py::def("getShipPart",                  +[](const std::string& name) -> const ShipPart* { return GetShipPart(name); }, py::return_value_policy<py::reference_existing_object>(), "Returns the ShipPart with the indicated name (string).");
 
         py::class_<ShipHull, boost::noncopyable>("shipHull", py::no_init)
             .add_property("name",               make_function(&ShipHull::Name,              py::return_value_policy<py::copy_const_reference>()))

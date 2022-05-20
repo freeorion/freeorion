@@ -233,6 +233,7 @@ FO_COMMON_API ShipPartManager& GetShipPartManager();
 //! Returns the ShipPart specification object with name @p name.  If no
 //! such ShipPart exists, nullptr is returned instead.
 FO_COMMON_API const ShipPart* GetShipPart(const std::string& name);
+FO_COMMON_API const ShipPart* GetShipPart(std::string_view name);
 
 
 #endif

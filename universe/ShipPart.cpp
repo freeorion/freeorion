@@ -601,3 +601,6 @@ ShipPartManager& GetShipPartManager()
 
 const ShipPart* GetShipPart(const std::string& name)
 { return GetShipPartManager().GetShipPart(name); }
+
+const ShipPart* GetShipPart(std::string_view name)
+{ return GetShipPartManager().GetShipPart(std::string{name}); }
