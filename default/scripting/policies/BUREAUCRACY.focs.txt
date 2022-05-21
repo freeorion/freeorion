@@ -30,7 +30,7 @@ Policy
                 Species
             ]
             // IP costs should not be affected by any multipliers
-            priority = [[TARGET_OVERRIDE_PRIORITY]]
+            priority = [[TARGET_LATE_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetHappiness value = Value + (NamedReal name = "PLC_BUREAUCRACY_STABILITY_FLAT" value = 5.0)
                 // Base cost 1/4 of the adoption cost...
