@@ -46,12 +46,9 @@ std::shared_ptr<GG::BlockControl> CUILinkTextBlock::Factory::CreateFromTag(
     auto block = GG::Wnd::Create<CUILinkTextBlock>(content, font, format, color, GG::NO_WND_FLAGS);
 
     // Wire the block's signals to come through us.
-    block->m_link_text->LinkClickedSignal.connect(
-        this->LinkClickedSignal);
-    block->m_link_text->LinkDoubleClickedSignal.connect(
-        this->LinkDoubleClickedSignal);
-    block->m_link_text->LinkRightClickedSignal.connect(
-        this->LinkRightClickedSignal);
+    block->m_link_text->LinkClickedSignal.connect(this->LinkClickedSignal);
+    block->m_link_text->LinkDoubleClickedSignal.connect(this->LinkDoubleClickedSignal);
+    block->m_link_text->LinkRightClickedSignal.connect(this->LinkRightClickedSignal);
 
     // Color ships and planets by their owner empires.
     block->m_link_text->SetDecorator(VarText::SHIP_ID_TAG, new ColorByOwner());
