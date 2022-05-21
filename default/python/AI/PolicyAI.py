@@ -9,6 +9,7 @@ import PlanetUtilsAI
 from AIDependencies import Tags
 from aistate_interface import get_aistate
 from buildings import BuildingType
+from common.fo_typing import PlanetId, SpeciesName
 from EnumsAI import FocusType, PriorityType
 from freeorion_tools import assertion_fails, get_species_tag_value
 from freeorion_tools.caching import cache_for_current_turn
@@ -309,31 +310,36 @@ class PolicyManager:
         # species may not be switched to influence.
         rating = 0.0
         artists = []
-        focus_bonus = fo.getNamedValue("ARTISANS_INFLUENCE_FLAT_FOCUS")
-        focus_minimum = fo.getNamedValue("ARTISANS_MIN_STABILITY_FOCUS")
-        non_focus_bonus = fo.getNamedValue("ARTISANS_INFLUENCE_FLAT_NO_FOCUS")
-        non_focus_minimum = fo.getNamedValue("ARTISANS_MIN_STABILITY_NO_FOCUS")
         for species_name, planets in get_empire_planets_by_species().items():
             species = fo.getSpecies(species_name)
             if Tags.ARTISTIC in species.tags:
-                # species is artistic, so determine how good it is with influence and rate the planets
                 artists.append(species_name)
-                species_focus_bonus = focus_bonus * get_species_tag_value(species_name, Tags.INFLUENCE)
                 for pid in planets:
-                    planet = self._universe.getPlanet(pid)
-                    stability = planet.currentMeterValue(fo.meterType.targetHappiness)
-                    # First check whether the planet would currently get the focus bonus.
-                    if planet.focus == FocusType.FOCUS_INFLUENCE:
-                        rating += 3 * species_focus_bonus if stability >= focus_minimum else 0.0
-                    else:  # Planet does not have influence focus
-                        # Check for the non-focus bonus. Since we would get this "for free", rate it higher
-                        if stability >= non_focus_minimum:
-                            rating += 4 * non_focus_bonus
-                        # Check whether this planet would get the focus, if we'd switch it to influence.
-                        if PlanetUtilsAI.stability_with_focus(planet, FocusType.FOCUS_INFLUENCE) >= focus_minimum:
-                            rating += species_focus_bonus
+                    rating += self._rate_artisan_planet(pid, species_name)
         rating += self._rate_opinion(artisans)
         debug(f"_rate_artisans: {rating}, artists: {artists}")
+        return rating
+
+    def _rate_artisan_planet(self, pid: PlanetId, species_name: SpeciesName) -> float:
+        focus_bonus = fo.getNamedValue("ARTISANS_INFLUENCE_FLAT_FOCUS")
+        focus_minimum = fo.getNamedValue("ARTISANS_MIN_STABILITY_FOCUS")
+        species_focus_bonus = focus_bonus * get_species_tag_value(species_name, Tags.INFLUENCE)
+        planet = self._universe.getPlanet(pid)
+        stability = planet.currentMeterValue(fo.meterType.targetHappiness)
+        # First check whether the planet would currently get the focus bonus.
+        if planet.focus == FocusType.FOCUS_INFLUENCE:
+            return 3 * species_focus_bonus if stability >= focus_minimum else 0.0
+
+        # Planet does not have influence focus...
+        # Check for the non-focus bonus. Since we would get this "for free", rate it higher
+        non_focus_bonus = fo.getNamedValue("ARTISANS_INFLUENCE_FLAT_NO_FOCUS")
+        non_focus_minimum = fo.getNamedValue("ARTISANS_MIN_STABILITY_NO_FOCUS")
+        rating = 0.0
+        if stability >= non_focus_minimum:
+            rating += 4 * non_focus_bonus
+        # Check whether this planet would get the focus bonus, if we'd switch it to influence.
+        if PlanetUtilsAI.stability_with_focus(planet, FocusType.FOCUS_INFLUENCE) >= focus_minimum:
+            rating += species_focus_bonus
         return rating
 
     def _process_infrastructure(self) -> None:
