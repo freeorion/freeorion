@@ -163,14 +163,10 @@ unsigned int Policy::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // PolicyManager                                         //
 ///////////////////////////////////////////////////////////
-const Policy* PolicyManager::GetPolicy(const std::string& name) const {
+const Policy* PolicyManager::GetPolicy(std::string_view name) const {
     CheckPendingPolicies();
     auto it = m_policies.find(name);
     return it == m_policies.end() ? nullptr : it->second.get();
-}
-
-const Policy* PolicyManager::GetPolicy(std::string_view name) const {
-    return this->GetPolicy(std::string{name}); // TODO: avoid construction by enabling heterogenous lookup
 }
 
 std::vector<std::string_view> PolicyManager::PolicyNames() const {
@@ -182,12 +178,12 @@ std::vector<std::string_view> PolicyManager::PolicyNames() const {
     return retval;
 }
 
-std::vector<std::string_view> PolicyManager::PolicyNames(const std::string& name) const {
+std::vector<std::string_view> PolicyManager::PolicyNames(const std::string& category_name) const {
     CheckPendingPolicies();
     std::vector<std::string_view> retval;
     retval.reserve(m_policies.size());
     for (const auto& policy : m_policies)
-        if (policy.second->Category() == name)
+        if (policy.second->Category() == category_name)
             retval.emplace_back(policy.first);
     return retval;
 }
@@ -238,9 +234,6 @@ void PolicyManager::SetPolicies(Pending::Pending<PoliciesTypeMap>&& future)
     static PolicyManager manager;
     return manager;
 }
-
-[[nodiscard]] const Policy* GetPolicy(const std::string& name)
-{ return GetPolicyManager().GetPolicy(name); }
 
 [[nodiscard]] const Policy* GetPolicy(std::string_view name)
 { return GetPolicyManager().GetPolicy(name); }

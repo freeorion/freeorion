@@ -65,7 +65,7 @@ public:
 
     [[nodiscard]] virtual SpeciesManager& GetSpeciesManager() = 0;
 
-    [[nodiscard]] virtual const Species* GetSpecies(const std::string& name) = 0;
+    [[nodiscard]] virtual const Species* GetSpecies(std::string_view name) = 0;
 
     [[nodiscard]] virtual SupplyManager& GetSupplyManager() = 0;
 
@@ -124,7 +124,7 @@ protected:
 { return IApp::GetApp()->GetSpeciesManager(); }
 
 /** Accessor for Species */
-[[nodiscard]] inline const Species* GetSpecies(const std::string& name)
+[[nodiscard]] inline const Species* GetSpecies(std::string_view name)
 { return IApp::GetApp()->GetSpecies(name); }
 
 /** Accessor for the App's empire supply manager */

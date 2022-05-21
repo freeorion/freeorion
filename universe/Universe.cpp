@@ -369,13 +369,12 @@ void Universe::RenameShipDesign(int design_id, const std::string& name/* = ""*/,
     design->SetDescription(description);
 }
 
-const ShipDesign* Universe::GetGenericShipDesign(const std::string& name) const {
+const ShipDesign* Universe::GetGenericShipDesign(std::string_view name) const {
     if (name.empty())
         return nullptr;
     for (const auto& entry : m_ship_designs) {
         const ShipDesign* design = entry.second;
-        const std::string& design_name = design->Name(false);
-        if (name == design_name)
+        if (name == design->Name(false))
             return design;
     }
     return nullptr;

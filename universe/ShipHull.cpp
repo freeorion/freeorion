@@ -375,7 +375,7 @@ ShipHullManager::ShipHullManager() {
     s_instance = this;
 }
 
-const ShipHull* ShipHullManager::GetShipHull(const std::string& name) const {
+const ShipHull* ShipHullManager::GetShipHull(std::string_view name) const {
     CheckPendingShipHulls();
     auto it = m_hulls.find(name);
     return it != m_hulls.end() ? it->second.get() : nullptr;
@@ -446,9 +446,6 @@ namespace CheckSums {
 ShipHullManager& GetShipHullManager()
 { return ShipHullManager::GetShipHullManager(); }
 
-const ShipHull* GetShipHull(const std::string& name)
-{ return GetShipHullManager().GetShipHull(name); }
-
 const ShipHull* GetShipHull(std::string_view name)
-{ return GetShipHullManager().GetShipHull(std::string{name}); } // TODO: avoid string construction
+{ return GetShipHullManager().GetShipHull(std::string{name}); }
 

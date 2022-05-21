@@ -25,13 +25,13 @@ class Special;
 class FieldType;
 class ShipHull;
 class ShipPart;
-const Tech*         GetTech(const std::string& name);
-const Policy*       GetPolicy(const std::string& name);
-const BuildingType* GetBuildingType(const std::string& name);
-const Special*      GetSpecial(const std::string& name);
-const FieldType*    GetFieldType(const std::string& name);
-const ShipHull*     GetShipHull(const std::string& name);
-const ShipPart*     GetShipPart(const std::string& name);
+const Tech*         GetTech(std::string_view name);
+const Policy*       GetPolicy(std::string_view name);
+const BuildingType* GetBuildingType(std::string_view name);
+const Special*      GetSpecial(std::string_view name);
+const FieldType*    GetFieldType(std::string_view name);
+const ShipHull*     GetShipHull(std::string_view name);
+const ShipPart*     GetShipPart(std::string_view name);
 
 
 namespace {

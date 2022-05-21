@@ -370,32 +370,16 @@ unsigned int Tech::GetCheckSum() const {
 // static(s)
 TechManager* TechManager::s_instance = nullptr;
 
-const Tech* TechManager::GetTech(const std::string& name) const {
-    CheckPendingTechs();
-    iterator it = m_techs.get<NameIndex>().find(name);
-    return it == m_techs.get<NameIndex>().end() ? nullptr : it->get();
-}
-
-const Tech* TechManager::GetTech(const char* name) const {
-    CheckPendingTechs();
-    iterator it = m_techs.get<NameIndex>().find(name, std::less<>());
-    return it == m_techs.get<NameIndex>().end() ? nullptr : it->get();
-}
-
 const Tech* TechManager::GetTech(std::string_view name) const {
     CheckPendingTechs();
     iterator it = m_techs.get<NameIndex>().find(name, std::less<>());
     return it == m_techs.get<NameIndex>().end() ? nullptr : it->get();
 }
 
-const TechCategory* TechManager::GetTechCategory(const std::string& name) const {
+const TechCategory* TechManager::GetTechCategory(std::string_view name) const {
     CheckPendingTechs();
     auto it = m_categories.find(name);
     return it == m_categories.end() ? nullptr : it->second.get();
-}
-
-const TechCategory* TechManager::GetTechCategory(std::string_view name) const {
-    return GetTechCategory(std::string{name}); // TODO: avoid construction by enabling heterogenous lookup
 }
 
 std::vector<std::string_view> TechManager::CategoryNames() const {
@@ -774,14 +758,8 @@ unsigned int TechManager::GetCheckSum() const {
 TechManager& GetTechManager()
 { return TechManager::GetTechManager(); }
 
-const Tech* GetTech(const std::string& name)
-{ return GetTechManager().GetTech(name); }
-
 const Tech* GetTech(std::string_view name)
 { return GetTechManager().GetTech(name); }
-
-const TechCategory* GetTechCategory(const std::string& name)
-{ return GetTechManager().GetTechCategory(name); }
 
 const TechCategory* GetTechCategory(std::string_view name)
 { return GetTechManager().GetTechCategory(name); }

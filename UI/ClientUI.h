@@ -182,10 +182,10 @@ public:
     static std::shared_ptr<GG::Texture> PlanetIcon(PlanetType planet_type);
     static std::shared_ptr<GG::Texture> PlanetSizeIcon(PlanetSize planet_size);
     static std::shared_ptr<GG::Texture> MeterIcon(MeterType meter_type);
-    static std::shared_ptr<GG::Texture> BuildingIcon(const std::string& building_type_name);
-    static std::shared_ptr<GG::Texture> CategoryIcon(const std::string& category_name);
-    static std::shared_ptr<GG::Texture> TechIcon(const std::string& tech_name);
-    static std::shared_ptr<GG::Texture> PolicyIcon(const std::string& policy_name);
+    static std::shared_ptr<GG::Texture> BuildingIcon(std::string_view building_type_name);
+    static std::shared_ptr<GG::Texture> CategoryIcon(std::string_view category_name);
+    static std::shared_ptr<GG::Texture> TechIcon(std::string_view tech_name);
+    static std::shared_ptr<GG::Texture> PolicyIcon(std::string_view policy_name);
     static std::shared_ptr<GG::Texture> SpecialIcon(const std::string& special_name);
     static std::shared_ptr<GG::Texture> SpeciesIcon(const std::string& species_name);
     static std::shared_ptr<GG::Texture> FieldTexture(const std::string& field_type_name);
@@ -203,7 +203,6 @@ public:
     static GG::Clr  UnresearchableTechTextAndBorderColor();
     static GG::Clr  TechWndProgressBarBackgroundColor();
     static GG::Clr  TechWndProgressBarColor();
-    static GG::Clr  CategoryColor(const std::string& category_name);
     static GG::Clr  CategoryColor(std::string_view category_name);
 
     static std::string_view PlanetTypeFilePrefix(PlanetType planet_type);

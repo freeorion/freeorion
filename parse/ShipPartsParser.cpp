@@ -44,7 +44,7 @@ namespace parse {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    void insert_shippart(std::map<std::string, std::unique_ptr<ShipPart>>& ship_parts,
+    void insert_shippart(std::map<std::string, std::unique_ptr<ShipPart>, std::less<>>& ship_parts,
                          ShipPartClass part_class,
                          const parse::detail::OptCap_OptStat2_OptMovTargets_OptMovFighterDam_OptMovShipDam& capacity__stat2__targets__fighterdam__shipdam,
                          parse::detail::MovableEnvelope<CommonParams>& common_params,
@@ -82,7 +82,7 @@ namespace {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_shippart_, insert_shippart, 9)
 
-    using start_rule_payload = std::map<std::string, std::unique_ptr<ShipPart>>;
+    using start_rule_payload = std::map<std::string, std::unique_ptr<ShipPart>, std::less<>>;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {

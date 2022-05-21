@@ -204,12 +204,12 @@ namespace CheckSums {
 //! Holds FreeOrion hull types
 class FO_COMMON_API ShipHullManager {
 public:
-    using container_type = std::map<std::string, std::unique_ptr<ShipHull>>;
+    using container_type = std::map<std::string, std::unique_ptr<ShipHull>, std::less<>>;
     using iterator = container_type::const_iterator;
 
     //! Returns the hull type with the name @a name; you should use the free
     //! function GetShipHull() instead
-    auto GetShipHull(const std::string& name) const -> const ShipHull*;
+    auto GetShipHull(std::string_view name) const -> const ShipHull*;
 
     //! iterator to the first hull type
     auto begin() const -> iterator;
@@ -256,7 +256,6 @@ FO_COMMON_API auto GetShipHullManager() -> ShipHullManager&;
 
 //! Returns the ship ShipHull specification object with name @p name.  If no
 //! such ShipHull exists, nullptr is returned instead.
-FO_COMMON_API auto GetShipHull(const std::string& name) -> const ShipHull*;
 FO_COMMON_API auto GetShipHull(std::string_view name) -> const ShipHull*;
 
 #endif

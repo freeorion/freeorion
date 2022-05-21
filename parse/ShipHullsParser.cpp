@@ -23,7 +23,7 @@
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<ShipHull::Slot>&) { return os; }
     inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<ShipHull>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<ShipHull>, std::less<>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<ShipHull>>&) { return os; }
     inline ostream& operator<<(ostream& os, const ShipHull::Slot&) { return os; }
 }
@@ -63,7 +63,7 @@ struct ShipHullStats {
 
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    void insert_shiphull(std::map<std::string, std::unique_ptr<ShipHull>>& shiphulls,
+    void insert_shiphull(std::map<std::string, std::unique_ptr<ShipHull>, std::less<>>& shiphulls,
                          ShipHullStats& stats,
                          parse::detail::MovableEnvelope<CommonParams>& common_params,
                          parse::detail::MoreCommonParams& more_common_params,
@@ -94,7 +94,7 @@ struct ShipHullStats {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_shiphull_, insert_shiphull, 8)
 
-    using start_rule_payload = std::map<std::string, std::unique_ptr<ShipHull>>;
+    using start_rule_payload = std::map<std::string, std::unique_ptr<ShipHull>, std::less<>>;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
@@ -186,7 +186,7 @@ struct ShipHullStats {
         using slot_rule =  parse::detail::rule<ShipHull::Slot ()>;
 
         using hull_rule = parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<ShipHull>>&)
+            void (std::map<std::string, std::unique_ptr<ShipHull>, std::less<>>&)
         >;
 
         using start_rule = parse::detail::rule<start_rule_signature>;

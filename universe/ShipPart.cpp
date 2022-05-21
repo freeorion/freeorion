@@ -541,7 +541,7 @@ ShipPartManager::ShipPartManager() {
     s_instance = this;
 }
 
-const ShipPart* ShipPartManager::GetShipPart(const std::string& name) const {
+const ShipPart* ShipPartManager::GetShipPart(std::string_view name) const {
     CheckPendingShipParts();
     auto it = m_parts.find(name);
     return it != m_parts.end() ? it->second.get() : nullptr;
@@ -599,8 +599,5 @@ void ShipPartManager::CheckPendingShipParts() const {
 ShipPartManager& GetShipPartManager()
 { return ShipPartManager::GetShipPartManager(); }
 
-const ShipPart* GetShipPart(const std::string& name)
-{ return GetShipPartManager().GetShipPart(name); }
-
 const ShipPart* GetShipPart(std::string_view name)
-{ return GetShipPartManager().GetShipPart(std::string{name}); }
+{ return GetShipPartManager().GetShipPart(name); }

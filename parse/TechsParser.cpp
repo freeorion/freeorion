@@ -36,7 +36,7 @@ namespace std {
 
 namespace {
     std::set<std::string>* g_categories_seen = nullptr;
-    std::map<std::string, std::unique_ptr<TechCategory>>* g_categories = nullptr;
+    std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>* g_categories = nullptr;
 
     /// Check if the tech will be unique.
     bool check_tech(TechManager::TechContainer& techs, const std::unique_ptr<Tech>& tech) {
@@ -75,7 +75,7 @@ namespace {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_tech_, insert_tech, 7)
 
-    void insert_category(std::map<std::string, std::unique_ptr<TechCategory>>& categories,
+    void insert_category(std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>& categories,
                          std::string& name, std::string& graphic, const std::array<unsigned char, 4>& color)
     {
         auto category_ptr = std::make_unique<TechCategory>(name, std::move(graphic), color);
@@ -332,7 +332,7 @@ namespace parse {
     template <typename T>
     T techs(const PythonParser& parser, const boost::filesystem::path& path) {
         TechManager::TechContainer techs_;
-        std::map<std::string, std::unique_ptr<TechCategory>> categories;
+        std::map<std::string, std::unique_ptr<TechCategory>, std::less<>> categories;
         std::set<std::string> categories_seen;
 
         g_categories_seen = &categories_seen;

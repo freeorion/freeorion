@@ -201,7 +201,6 @@ public:
 
     /** returns the building type with the name \a name; you should use the
       * free function GetSpecies() instead, mainly to save some typing. */
-    const Species*      GetSpecies(const std::string& name) const;
     const Species*      GetSpecies(std::string_view name) const;
 
     /** iterators for all species */

@@ -142,7 +142,7 @@ public:
     ship_design_iterator    endShipDesigns() const      { return m_ship_designs.end(); }
     size_t                  NumShipDesigns() const      { return m_ship_designs.size(); }
 
-    const ShipDesign*       GetGenericShipDesign(const std::string& name) const;
+    const ShipDesign*       GetGenericShipDesign(std::string_view name) const;
 
     /** Returns IDs of ship designs that the Empire with id \a empire_id has
       * seen during the game.  If \a empire_id = ALL_EMPIRES an empty set of

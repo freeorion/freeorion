@@ -353,7 +353,7 @@ BuildingTypeManager::BuildingTypeManager() {
     s_instance = this;
 }
 
-const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const {
+const BuildingType* BuildingTypeManager::GetBuildingType(std::string_view name) const {
     CheckPendingBuildingTypes();
     const auto& it = m_building_types.find(name);
     return it != m_building_types.end() ? it->second.get() : nullptr;
@@ -396,5 +396,5 @@ void BuildingTypeManager::CheckPendingBuildingTypes() const
 BuildingTypeManager& GetBuildingTypeManager()
 { return BuildingTypeManager::GetBuildingTypeManager(); }
 
-const BuildingType* GetBuildingType(const std::string& name)
+const BuildingType* GetBuildingType(std::string_view name)
 { return GetBuildingTypeManager().GetBuildingType(name); }

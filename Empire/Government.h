@@ -74,16 +74,15 @@ private:
 //! Keeps track of policies that can be chosen by empires.
 class FO_COMMON_API PolicyManager {
 public:
-    using PoliciesTypeMap = std::map<std::string, std::unique_ptr<Policy>>;
+    using PoliciesTypeMap = std::map<std::string, std::unique_ptr<Policy>, std::less<>>;
     using iterator = PoliciesTypeMap::const_iterator;
 
     //! returns the policy with the name \a name; you should use the free
     //! function GetPolicy() instead
-    [[nodiscard]] const Policy*                 GetPolicy(const std::string& name) const;
     [[nodiscard]] const Policy*                 GetPolicy(std::string_view name) const;
     [[nodiscard]] std::vector<std::string_view> PolicyNames() const;
     //! returns list of names of policies in specified category
-    [[nodiscard]] std::vector<std::string_view> PolicyNames(const std::string& name) const;
+    [[nodiscard]] std::vector<std::string_view> PolicyNames(const std::string& category_name) const;
     [[nodiscard]] std::set<std::string_view>    PolicyCategories() const;
     [[nodiscard]] unsigned int                  GetCheckSum() const;
 
@@ -104,7 +103,6 @@ private:
 };
 
 [[nodiscard]] FO_COMMON_API PolicyManager& GetPolicyManager();
-[[nodiscard]] FO_COMMON_API const Policy* GetPolicy(const std::string& name);
 [[nodiscard]] FO_COMMON_API const Policy* GetPolicy(std::string_view name);
 
 

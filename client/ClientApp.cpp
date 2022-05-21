@@ -54,7 +54,7 @@ SpeciesManager& ClientApp::GetSpeciesManager()
 const SpeciesManager& ClientApp::GetSpeciesManager() const
 { return m_species_manager; }
 
-const Species* ClientApp::GetSpecies(const std::string& name)
+const Species* ClientApp::GetSpecies(std::string_view name)
 { return m_species_manager.GetSpecies(name); }
 
 SupplyManager& ClientApp::GetSupplyManager()

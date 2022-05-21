@@ -23,7 +23,7 @@ namespace std {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    void insert_fieldtype(std::map<std::string, std::unique_ptr<FieldType>>& fieldtypes,
+    void insert_fieldtype(std::map<std::string, std::unique_ptr<FieldType>, std::less<>>& fieldtypes,
                           std::string& name, std::string& description,
                           float stealth, std::set<std::string>& tags,
                           boost::optional<parse::effects_group_payload>& effects,
@@ -40,7 +40,7 @@ namespace {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_fieldtype_, insert_fieldtype, 8)
 
-    using start_rule_payload = std::map<std::string, std::unique_ptr<FieldType>>;
+    using start_rule_payload = std::map<std::string, std::unique_ptr<FieldType>, std::less<>>;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
@@ -94,7 +94,7 @@ namespace {
         }
 
         using field_rule = parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<FieldType>>&)
+            void (std::map<std::string, std::unique_ptr<FieldType>, std::less<>>&)
             >;
 
         using start_rule = parse::detail::rule<start_rule_signature>;

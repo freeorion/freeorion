@@ -16,7 +16,7 @@ class NamedValueRefManager;
 FO_COMMON_API auto GetNamedValueRefManager() -> NamedValueRefManager&;
 
 template <typename T>
-FO_COMMON_API const ValueRef::ValueRef<T>* GetValueRef(const std::string& name,
+FO_COMMON_API const ValueRef::ValueRef<T>* GetValueRef(std::string_view name,
                                                        bool wait_for_named_value_focs_txt_parse = false);
 
 namespace ValueRef {
@@ -190,13 +190,13 @@ public:
     using value_type = std::unique_ptr<ValueRef::ValueRefBase>;
     using int_value_type = std::unique_ptr<ValueRef::ValueRef<int>>;
     using double_value_type = std::unique_ptr<ValueRef::ValueRef<double>>;
-    using container_type = std::map<key_type, value_type>;
-    using int_container_type = std::map<key_type, int_value_type>;
-    using double_container_type = std::map<key_type, double_value_type>;
+    using container_type = std::map<key_type, value_type, std::less<>>;
+    using int_container_type = std::map<key_type, int_value_type, std::less<>>;
+    using double_container_type = std::map<key_type, double_value_type, std::less<>>;
     using entry_type = std::pair<key_type, value_type>;
     using int_entry_type = std::pair<key_type, int_value_type>;
     using double_entry_type = std::pair<key_type, double_value_type>;
-    using any_container_type = std::map<key_type, std::reference_wrapper<ValueRef::ValueRefBase>>;
+    using any_container_type = std::map<key_type, std::reference_wrapper<ValueRef::ValueRefBase>, std::less<>>;
     using any_entry_type = std::pair<key_type, std::reference_wrapper<ValueRef::ValueRefBase>>;
 
     using iterator = container_type::const_iterator;
@@ -205,7 +205,7 @@ public:
     //! ValueRef with such a name or of the wrong type use the free function
     //! GetValueRef(...) instead, mainly to save some typing.
     template <typename T>
-    const ValueRef::ValueRef<T>* GetValueRef(const std::string& name,
+    const ValueRef::ValueRef<T>* GetValueRef(std::string_view name,
                                              bool wait_for_named_value_focs_txt_parse = false) const
     {
         if (wait_for_named_value_focs_txt_parse)
@@ -215,7 +215,7 @@ public:
 
     //! Returns the ValueRef with the name @p name; you should use the
     //! free function GetValueRef(...) instead, mainly to save some typing.
-    auto GetValueRefBase(const std::string& name) const -> const ValueRef::ValueRefBase*;
+    auto GetValueRefBase(std::string_view name) const -> const ValueRef::ValueRefBase*;
 
     /** returns a map with all named value refs */
     auto GetItems() const -> any_container_type;
@@ -237,7 +237,7 @@ public:
     //! clients and server.
     auto GetCheckSum() const -> unsigned int;
 
-    using NamedValueRefParseMap = std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>>;
+    using NamedValueRefParseMap = std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>, std::less<>>;
     //! This sets the asynchronous parse, so we can block on that
     //! when a function needs to access a registry
     FO_COMMON_API void SetNamedValueRefParse(Pending::Pending<NamedValueRefParseMap>&& future)
@@ -260,7 +260,7 @@ private:
 
     // getter of mutable ValueRef<T>* that can be modified within SetTopLevelContext functions
     template <typename T>
-    ValueRef::ValueRef<T>* GetMutableValueRef(const std::string& name,
+    ValueRef::ValueRef<T>* GetMutableValueRef(std::string_view name,
                                               bool wait_for_named_value_focs_txt_parse = false)
     {
         if (wait_for_named_value_focs_txt_parse)
@@ -269,8 +269,8 @@ private:
     }
 
     template <typename V>
-    V* GetValueRefImpl(const std::map<NamedValueRefManager::key_type, std::unique_ptr<V>>& registry,
-                       const std::string& label, const std::string& name) const
+    V* GetValueRefImpl(const std::map<NamedValueRefManager::key_type, std::unique_ptr<V>, std::less<>>& registry,
+                       std::string_view label, std::string_view name) const
     {
         TraceLogger() << "NamedValueRefManager::GetValueRef look for registered " << label << " valueref for \"" << name << '"';
         TraceLogger() << "Number of registered " << label << " ValueRefs: " << registry.size();
@@ -319,16 +319,16 @@ FO_COMMON_API void NamedValueRefManager::RegisterValueRef(std::string&& name,
                                                           std::unique_ptr<ValueRef::ValueRef<PlanetEnvironment>>&& vref);
 
 template<>
-FO_COMMON_API const ValueRef::ValueRef<int>* NamedValueRefManager::GetValueRef(const std::string&, bool) const;
+FO_COMMON_API const ValueRef::ValueRef<int>* NamedValueRefManager::GetValueRef(std::string_view, bool) const;
 
 template<>
-FO_COMMON_API const ValueRef::ValueRef<double>* NamedValueRefManager::GetValueRef(const std::string&, bool) const;
+FO_COMMON_API const ValueRef::ValueRef<double>* NamedValueRefManager::GetValueRef(std::string_view, bool) const;
 
 template<>
-ValueRef::ValueRef<int>* NamedValueRefManager::GetMutableValueRef(const std::string&, bool);
+ValueRef::ValueRef<int>* NamedValueRefManager::GetMutableValueRef(std::string_view, bool);
 
 template<>
-ValueRef::ValueRef<double>* NamedValueRefManager::GetMutableValueRef(const std::string&, bool);
+ValueRef::ValueRef<double>* NamedValueRefManager::GetMutableValueRef(std::string_view, bool);
 
 
 ///////////////////////////////////////////////////////////
@@ -357,12 +357,12 @@ void ::ValueRef::NamedRef<T>::SetTopLevelContent(const std::string& content_name
 
 //! Returns the ValueRef object registered with the given
 //! @p name.  If no such ValueRef exists, nullptr is returned instead.
-FO_COMMON_API const ValueRef::ValueRefBase* GetValueRefBase(const std::string& name);
+FO_COMMON_API const ValueRef::ValueRefBase* GetValueRefBase(std::string_view name);
 
 //! Returns the ValueRef object registered with the given
 //! @p name in the registry matching the given type T.  If no such ValueRef exists, nullptr is returned instead.
 template <typename T>
-FO_COMMON_API const ValueRef::ValueRef<T>* GetValueRef(const std::string& name,
+FO_COMMON_API const ValueRef::ValueRef<T>* GetValueRef(std::string_view name,
                                                        bool wait_for_named_value_focs_txt_parse)
 { return GetNamedValueRefManager().GetValueRef<T>(name, wait_for_named_value_focs_txt_parse); }
 

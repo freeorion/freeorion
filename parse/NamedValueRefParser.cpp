@@ -28,7 +28,7 @@ namespace std {
 namespace parse {
 
     template <typename T>
-    void insert_named_ref(std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>>& named_refs,
+    void insert_named_ref(std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>, std::less<>>& named_refs,
                           const std::string& name,
                           const parse::detail::MovableEnvelope<ValueRef::ValueRef<T>>& ref_envelope,
                           bool& pass)
@@ -105,7 +105,7 @@ namespace parse {
         }
 
         using named_value_ref_rule = parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>>&)>;
+            void (std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>, std::less<>>&)>;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 

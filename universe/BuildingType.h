@@ -173,12 +173,12 @@ private:
 //! Holds all FreeOrion BuildingType%s.  Types may be looked up by name.
 class BuildingTypeManager {
 public:
-    using container_type = std::map<std::string, std::unique_ptr<BuildingType>>;
+    using container_type = std::map<std::string, std::unique_ptr<BuildingType>, std::less<>>;
     using iterator = container_type::const_iterator;
 
     //! Returns the building type with the name @p name; you should use the
     //! free function GetBuildingType(...) instead, mainly to save some typing.
-    auto GetBuildingType(const std::string& name) const -> const BuildingType*;
+    auto GetBuildingType(std::string_view name) const -> const BuildingType*;
 
     auto NumBuildingTypes() const -> std::size_t { return m_building_types.size(); }
 
@@ -225,7 +225,7 @@ FO_COMMON_API auto GetBuildingTypeManager() -> BuildingTypeManager&;
 
 //! Returns the BuildingType specification object for a building of type
 //! @p name.  If no such BuildingType exists, nullptr is returned instead.
-FO_COMMON_API auto GetBuildingType(const std::string& name) -> const BuildingType*;
+FO_COMMON_API auto GetBuildingType(std::string_view name) -> const BuildingType*;
 
 
 #endif

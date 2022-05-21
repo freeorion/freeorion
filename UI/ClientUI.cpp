@@ -241,7 +241,7 @@ std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / icon_filename, true);
 }
 
-std::shared_ptr<GG::Texture> ClientUI::BuildingIcon(const std::string& building_type_name) {
+std::shared_ptr<GG::Texture> ClientUI::BuildingIcon(std::string_view building_type_name) {
     const BuildingType* building_type = GetBuildingType(building_type_name);
     std::string graphic_name;
     if (building_type)
@@ -251,7 +251,7 @@ std::shared_ptr<GG::Texture> ClientUI::BuildingIcon(const std::string& building_
     return ClientUI::GetTexture(ArtDir() / graphic_name, true);
 }
 
-std::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_name) {
+std::shared_ptr<GG::Texture> ClientUI::CategoryIcon(std::string_view category_name) {
     std::string icon_filename;
     if (const TechCategory* category = GetTechCategory(category_name))
         return ClientUI::GetTexture(ArtDir() / "icons" / "tech" / "categories" / category->graphic, true);
@@ -259,7 +259,7 @@ std::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_
         return ClientUI::GetTexture(ClientUI::ArtDir() / "", true);
 }
 
-std::shared_ptr<GG::Texture> ClientUI::TechIcon(const std::string& tech_name) {
+std::shared_ptr<GG::Texture> ClientUI::TechIcon(std::string_view tech_name) {
     const Tech* tech = GetTechManager().GetTech(tech_name);
     std::string texture_name;
     if (tech) {
@@ -270,7 +270,7 @@ std::shared_ptr<GG::Texture> ClientUI::TechIcon(const std::string& tech_name) {
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-std::shared_ptr<GG::Texture> ClientUI::PolicyIcon(const std::string& policy_name) {
+std::shared_ptr<GG::Texture> ClientUI::PolicyIcon(std::string_view policy_name) {
     const Policy* policy = GetPolicyManager().GetPolicy(policy_name);
     std::string texture_name;
     if (policy)
@@ -364,12 +364,6 @@ GG::Clr ClientUI::UnresearchableTechFillColor()          { return GetOptionsDB()
 GG::Clr ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<GG::Clr>("ui.research.status.unresearchable.border.color"); }
 GG::Clr ClientUI::TechWndProgressBarBackgroundColor()    { return GetOptionsDB().Get<GG::Clr>("ui.research.status.progress.background.color"); }
 GG::Clr ClientUI::TechWndProgressBarColor()              { return GetOptionsDB().Get<GG::Clr>("ui.research.status.progress.color"); }
-
-GG::Clr ClientUI::CategoryColor(const std::string& category_name) {
-    if (auto category = GetTechCategory(category_name))
-        return category->colour;
-    return {};
-}
 
 GG::Clr ClientUI::CategoryColor(std::string_view category_name) {
     if (auto category = GetTechCategory(category_name))

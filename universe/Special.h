@@ -84,7 +84,6 @@ private:
 
 /** Returns the Special object used to represent specials of type \a name.
   * If no such Special exists, 0 is returned instead. */
-FO_COMMON_API const Special* GetSpecial(const std::string& name);
 FO_COMMON_API const Special* GetSpecial(std::string_view name);
 
 /** Returns names of all specials. */
@@ -98,7 +97,7 @@ public:
 
     int                           NumSpecials() const { return m_specials.size(); }
     std::vector<std::string_view> SpecialNames() const;
-    const Special*                GetSpecial(const std::string& name) const;
+    const Special*                GetSpecial(std::string_view name) const;
     unsigned int                  GetCheckSum() const;
 
     /** Sets types to the value of \p future. */

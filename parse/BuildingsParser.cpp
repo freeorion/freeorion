@@ -25,7 +25,7 @@ namespace std {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    void insert_building(std::map<std::string, std::unique_ptr<BuildingType>>& building_types,
+    void insert_building(std::map<std::string, std::unique_ptr<BuildingType>, std::less<>>& building_types,
                          std::string& name, std::string& description,
                          parse::detail::MovableEnvelope<CommonParams>& common_params,
                          CaptureResult& capture_result, std::string& icon,
@@ -41,7 +41,7 @@ namespace {
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 7)
 
-    using start_rule_payload = std::map<std::string, std::unique_ptr<BuildingType>>;
+    using start_rule_payload = std::map<std::string, std::unique_ptr<BuildingType>, std::less<>>;
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
@@ -100,7 +100,7 @@ namespace {
         }
 
         using building_type_rule = parse::detail::rule<
-            void (std::map<std::string, std::unique_ptr<BuildingType>>&)>;
+            void (std::map<std::string, std::unique_ptr<BuildingType>, std::less<>>&)>;
 
         using start_rule = parse::detail::rule<start_rule_signature>;
 

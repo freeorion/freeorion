@@ -74,12 +74,12 @@ private:
 
 class FieldTypeManager {
 public:
-    using container_type = std::map<std::string, std::unique_ptr<FieldType>>;
+    using container_type = std::map<std::string, std::unique_ptr<FieldType>, std::less<>>;
     using iterator = container_type::const_iterator;
 
     //! Returns the field type with the name \a name; you should use the free
     //! free function GetFieldType(...) instead, mainly to save some typing.
-    auto GetFieldType(const std::string& name) const -> const FieldType*;
+    auto GetFieldType(std::string_view name) const -> const FieldType*;
 
     //! iterator to the first field type
     FO_COMMON_API auto begin() const -> iterator;
@@ -126,7 +126,7 @@ FO_COMMON_API auto GetFieldTypeManager() -> FieldTypeManager&;
 
 //! Returns the BuildingType specification object for a field of
 //! type @p name.  If no such FieldType exists, nullptr is returned instead.
-FO_COMMON_API auto GetFieldType(const std::string& name) -> const FieldType*;
+FO_COMMON_API auto GetFieldType(std::string_view name) -> const FieldType*;
 
 
 #endif

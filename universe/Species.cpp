@@ -354,12 +354,6 @@ bool SpeciesManager::NativeSpecies::operator()(
     const std::map<std::string, std::unique_ptr<Species>>::value_type& species_entry) const
 { return species_entry.second->Native(); }
 
-const Species* SpeciesManager::GetSpecies(const std::string& name) const {
-    CheckPendingSpeciesTypes();
-    auto it = s_species.find(name);
-    return it != s_species.end() ? it->second.get() : nullptr;
-}
-
 const Species* SpeciesManager::GetSpecies(std::string_view name) const {
     CheckPendingSpeciesTypes();
     auto it = s_species.find(name);

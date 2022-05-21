@@ -31,7 +31,7 @@ std::vector<std::string_view> SpecialsManager::SpecialNames() const {
     return retval;
 }
 
-const Special* SpecialsManager::GetSpecial(const std::string& name) const {
+const Special* SpecialsManager::GetSpecial(std::string_view name) const {
     CheckPendingSpecialsTypes();
     auto it = m_specials.find(name);
     return it != m_specials.end() ? it->second.get() : nullptr;
@@ -211,9 +211,6 @@ unsigned int Special::GetCheckSum() const {
 
     return retval;
 }
-
-const Special* GetSpecial(const std::string& name)
-{ return GetSpecialsManager().GetSpecial(name); }
 
 const Special* GetSpecial(std::string_view name)
 { return GetSpecialsManager().GetSpecial(std::string{name}); }

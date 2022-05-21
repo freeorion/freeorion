@@ -332,7 +332,7 @@ namespace FreeOrionPython {
                                                 py::return_value_policy<py::reference_existing_object>())
             .def("getBuilding",                 +[](const Universe& u, int id) -> const Building* { return u.Objects().get<Building>(id).operator->(); },
                                                 py::return_value_policy<py::reference_existing_object>())
-            .def("getGenericShipDesign",        &Universe::GetGenericShipDesign,
+            .def("getGenericShipDesign",        +[](const Universe& u, const std::string& name) -> const ShipDesign* { return u.GetGenericShipDesign(name); },
                                                 py::return_value_policy<py::reference_existing_object>(),
                                                 "Returns the ship design (ShipDesign) with the indicated name (string).")
 
@@ -617,10 +617,9 @@ namespace FreeOrionPython {
             .def("hasTag",                      &ShipHull::HasTag)
             .def("productionLocation",          &HullProductionLocation, "Returns the result of Location condition (bool) in passed location_id (int)")
         ;
-        py::def("getShipHull",
-                +[](const std::string& name) { return GetShipHull(name); },
-                py::return_value_policy<py::reference_existing_object>(),
-                "Returns the ship hull with the indicated name (string).");
+        py::def("getShipHull",                  +[](const std::string& name) { return GetShipHull(name); },
+                                                py::return_value_policy<py::reference_existing_object>(),
+                                                "Returns the ship hull with the indicated name (string).");
 
         //////////////////
         //   Building   //
@@ -648,7 +647,9 @@ namespace FreeOrionPython {
                                                 &BuildingType::ProductionCostTimeLocationInvariant)
             .def("dump",                        &BuildingType::Dump,                        py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
-        py::def("getBuildingType",                  &GetBuildingType,                           py::return_value_policy<py::reference_existing_object>(), "Returns the building type (BuildingType) with the indicated name (string).");
+        py::def("getBuildingType",              +[](const std::string& name) { return GetBuildingType(name); },
+                                                py::return_value_policy<py::reference_existing_object>(),
+                                                "Returns the building type (BuildingType) with the indicated name (string).");
         ////////////////////
         // ResourceCenter //
         ////////////////////
@@ -725,7 +726,8 @@ namespace FreeOrionPython {
             .add_property("description",        make_function(&FieldType::Description,      py::return_value_policy<py::copy_const_reference>()))
             .def("dump",                        &FieldType::Dump,                           py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
-        py::def("getFieldType",                 &GetFieldType,                              py::return_value_policy<py::reference_existing_object>());
+        py::def("getFieldType",                 +[](const std::string& name) { return GetFieldType(name); },
+                                                py::return_value_policy<py::reference_existing_object>());
 
 
         /////////////////
@@ -763,7 +765,9 @@ namespace FreeOrionPython {
             .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
             .def("dump",                        &Species::Dump,                         py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
-        py::def("getSpecies",                   &GetSpecies,                            py::return_value_policy<py::reference_existing_object>(), "Returns the species (Species) with the indicated name (string).");
+        py::def("getSpecies",                   +[](const std::string& name) { return GetSpecies(name); },
+                                                py::return_value_policy<py::reference_existing_object>(),
+                                                "Returns the species (Species) with the indicated name (string).");
     }
 
     void WrapGalaxySetupData() {

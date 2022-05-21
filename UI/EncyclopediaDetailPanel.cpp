@@ -3959,7 +3959,7 @@ void EncyclopediaDetailPanel::SetDesign(const std::string& design_id) {
 }
 
 void EncyclopediaDetailPanel::SetIncompleteDesign(std::weak_ptr<const ShipDesign> incomplete_design) {
-    m_incomplete_design = incomplete_design;
+    m_incomplete_design = std::move(incomplete_design);
 
     if (m_items_it == m_items.end() ||
         m_items_it->first != INCOMPLETE_DESIGN) {

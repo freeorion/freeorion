@@ -55,7 +55,7 @@ Empire* ParserAppFixture::GetEmpire(int empire_id)
 SpeciesManager& ParserAppFixture::GetSpeciesManager()
 { return m_species_manager; }
 
-const Species* ParserAppFixture::GetSpecies(const std::string& name)
+const Species* ParserAppFixture::GetSpecies(std::string_view name)
 { return m_species_manager.GetSpecies(name); }
 
 SupplyManager& ParserAppFixture::GetSupplyManager()

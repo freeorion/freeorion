@@ -179,12 +179,12 @@ private:
 //! Holds FreeOrion available ShipParts
 class FO_COMMON_API ShipPartManager {
 public:
-    using ShipPartMap = std::map<std::string, std::unique_ptr<ShipPart>>;
+    using ShipPartMap = std::map<std::string, std::unique_ptr<ShipPart>, std::less<>>;
     using iterator = ShipPartMap::const_iterator;
 
     //! Returns the ShipPart with the name @p name; you should use the free
     //! function GetShipPart() instead
-    auto GetShipPart(const std::string& name) const -> const ShipPart*;
+    auto GetShipPart(std::string_view name) const -> const ShipPart*;
 
     //! Iterator to the first ShipPart
     auto begin() const -> iterator;
@@ -232,7 +232,6 @@ FO_COMMON_API ShipPartManager& GetShipPartManager();
 
 //! Returns the ShipPart specification object with name @p name.  If no
 //! such ShipPart exists, nullptr is returned instead.
-FO_COMMON_API const ShipPart* GetShipPart(const std::string& name);
 FO_COMMON_API const ShipPart* GetShipPart(std::string_view name);
 
 

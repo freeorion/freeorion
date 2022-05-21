@@ -126,7 +126,7 @@ FieldTypeManager::FieldTypeManager() {
     s_instance = this;
 }
 
-const FieldType* FieldTypeManager::GetFieldType(const std::string& name) const {
+const FieldType* FieldTypeManager::GetFieldType(std::string_view name) const {
     CheckPendingFieldTypes();
     auto it = m_field_types.find(name);
     return it != m_field_types.end() ? it->second.get() : nullptr;
@@ -173,5 +173,5 @@ void FieldTypeManager::CheckPendingFieldTypes() const
 FieldTypeManager& GetFieldTypeManager()
 { return FieldTypeManager::GetFieldTypeManager(); }
 
-const FieldType* GetFieldType(const std::string& name)
+const FieldType* GetFieldType(std::string_view name)
 { return FieldTypeManager::GetFieldTypeManager().GetFieldType(name); }
