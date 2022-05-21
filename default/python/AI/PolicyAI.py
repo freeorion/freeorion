@@ -28,20 +28,13 @@ infra2 = "PLC_SYSTEM_INFRA"
 infra3 = "PLC_INTERSTELLAR_INFRA"
 
 
-def dislike_multiplier() -> float:
-    """Returns multiplier for dislike effects."""
-    # See happiness.macros
-    has_liberty = fo.getEmpire().policyAdopted(liberty)
-    # conformance not used yet
-    return 1.0 * fo.getNamedValue("PLC_LIBERTY_DISLIKE_FACTOR") ** has_liberty
-
-
 class _EmpireOutput:
     def __init__(self):
         self.industry = 0.0
         self.research = 0.0
         self.influence = 0.0
         self.population_stability = 0.0
+        self.stability_scaling = 0.75
 
     def __str__(self):
         return "pp=%.1f, rp=%.1f, ip=%.1f, population_stabililty=%d" % (
@@ -82,7 +75,7 @@ class _EmpireOutput:
         elif stability >= 10:
             # 10 give a lot of bonuses, increases above 10 are less important
             stability = 11 + (stability - 10) / 2
-        self.population_stability += population * stability * 0.75
+        self.population_stability += population * stability * self.stability_scaling
 
 
 class PolicyManager:
@@ -219,7 +212,7 @@ class PolicyManager:
     def _rate_opinion(name: str) -> float:
         """Return a rating value for the empire's planet opinion on a policy"""
         opinion = PlanetUtilsAI.get_planet_opinion(name)
-        return 1.5 * (len(opinion.likes) - len(opinion.dislikes) * dislike_multiplier())
+        return 1.5 * (len(opinion.likes) - len(opinion.dislikes) * PlanetUtilsAI.dislike_factor())
 
     def _rate_algo_research(self) -> float:
         """Rate algorithmic research"""
@@ -290,14 +283,16 @@ class PolicyManager:
         """Rate diversity."""
         if diversity not in self._empire.availablePolicies:
             return 0.0
-        diversity_value = len(get_empire_planets_by_species()) - fo.getNamedValue("PLC_DIVERSITY_THRESHOLD")
         # diversity affects stability, but also gives a bonus to research-focused planets and a little influence,
+        diversity_value = len(get_empire_planets_by_species()) - fo.getNamedValue("PLC_DIVERSITY_THRESHOLD")
         diversity_scaling = fo.getNamedValue("PLC_DIVERSITY_SCALING")
+        # Research bonus goes to research-focused planets only. With priority there are usually none.
         research_priority = self._aistate.get_priority(PriorityType.RESOURCE_RESEARCH)
-        rating = (
-            self._rate_opinion(diversity)
-            # 4 for global influence
-            + diversity_scaling * diversity_value * (self._num_populated + 4 + max(0, research_priority - 20))
+        research_bonus = max(0, research_priority - 20)
+        # + 4 for global influence
+        global_influence_bonus = 4
+        rating = self._rate_opinion(diversity) + diversity_scaling * diversity_value * (
+            self._num_populated + global_influence_bonus + research_bonus
         )
         debug(
             f"_rate_diversity: rating={rating}. diversity_value={diversity_value}, "
@@ -321,19 +316,21 @@ class PolicyManager:
         for species_name, planets in get_empire_planets_by_species().items():
             species = fo.getSpecies(species_name)
             if Tags.ARTISTIC in species.tags:
+                # species is artistic, so determine how good it is with influence and rate the planets
                 artists.append(species_name)
                 species_focus_bonus = focus_bonus * get_species_tag_value(species_name, Tags.INFLUENCE)
                 for pid in planets:
                     planet = self._universe.getPlanet(pid)
                     stability = planet.currentMeterValue(fo.meterType.targetHappiness)
-                    if planet.focus == FocusType.FOCUS_INFLUENCE and stability >= focus_minimum:
-                        rating += 3 * species_focus_bonus
-                    else:
+                    # First check whether the planet would currently get the focus bonus.
+                    if planet.focus == FocusType.FOCUS_INFLUENCE:
+                        rating += 3 * species_focus_bonus if stability >= focus_minimum else 0.0
+                    else:  # Planet does not have influence focus
+                        # Check for the non-focus bonus. Since we would get this "for free", rate it higher
                         if stability >= non_focus_minimum:
-                            # that one we get "for free", so rate it higher
                             rating += 4 * non_focus_bonus
-                        if stability >= non_focus_minimum:
-                            # we could switch that one
+                        # Check whether this planet would get the focus, if we'd switch it to influence.
+                        if PlanetUtilsAI.stability_with_focus(planet, FocusType.FOCUS_INFLUENCE) >= focus_minimum:
                             rating += species_focus_bonus
         rating += self._rate_opinion(artisans)
         debug(f"_rate_artisans: {rating}, artists: {artists}")
@@ -503,13 +500,13 @@ class PolicyManager:
         if name in self._adopted:
             return False
         policy = fo.getPolicy(name)
-        wanted = self._wanted_ip * (name not in self._prioritised_policies)
+        wanted = 0.0 if name in self._prioritised_policies else self._wanted_ip
         ret = name in self._empire.availablePolicies and (
             policy.adoptionCost() <= (self._ip - wanted) or name in self._originally_adopted
         )
-        if type(replace) == str and replace in self._adopted:
+        if isinstance(replace, str) and replace in self._adopted:
             return ret
-        if type(replace) == set and replace & self._adopted:
+        if isinstance(replace, set) and replace & self._adopted:
             return ret
         return (
             ret and self._empire.emptyPolicySlots[policy.category] and self._empire.policyPrereqsAndExclusionsOK(name)
@@ -562,13 +559,13 @@ class PolicyManager:
         This can be used after a decision is made, or to temporarily deadopt one for
         decision-making. In the later case, use _readopt_selected_one() to revert it.
         """
-        selection = [(self._rate_policy(name), name) for name in names]
-        selection.sort()
+        selection = sorted((self._rate_policy(name), name) for name in names)
         debug(f"selection = {selection}")
         for _, name in selection:
             if name in self._adopted:
                 self._selected_deadopt = name
                 self._deadopt(name)
+                break
 
     def _readopt_selected_one(self) -> None:
         """Re-adopt the policy deadopted by the last call to _deadopt_one_of()."""

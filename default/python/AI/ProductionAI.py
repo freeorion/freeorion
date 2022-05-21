@@ -48,7 +48,6 @@ from EnumsAI import (
     get_priority_production_types,
 )
 from freeorion_tools import ppstring, tech_is_complete
-from PolicyAI import dislike_multiplier
 from production import print_building_list, print_capital_info, print_production_queue
 from turn_state import (
     get_all_empire_planets,
@@ -1811,7 +1810,7 @@ def _may_enqueue_for_stability(building_type: BuildingType, new_turn_cost: float
     # Note that the strongest effect is always on the building's planet itself.
     opinion = building_type.get_opinions()
     universe = fo.getUniverse()
-    if len(opinion.likes) >= len(opinion.dislikes) * dislike_multiplier():
+    if len(opinion.likes) >= len(opinion.dislikes) * PlanetUtilsAI.dislike_factor():
         like_candidates = opinion.likes - building_type.built_or_queued_at()
         # plans may change, so consider only actual colonies that like it
         candidates = [pid for pid in like_candidates if universe.getPlanet(pid).speciesName]
@@ -1880,7 +1879,7 @@ def _build_gas_giant_generator() -> float:
         best_gg = -2
         debug(f"Gas Giant Generator rating for {universe.getSystem(sys).name} ...")
         for pid, planet in planets:
-            likes = opinion.value(pid, 1, 0, -1 * dislike_multiplier())
+            likes = opinion.value(pid, 1, 0, -1 * PlanetUtilsAI.dislike_factor())
             debug(f"  {planet.name} likes {likes}")
             # TBD -4 if build here...
             stability = planet.currentMeterValue(fo.meterType.targetHappiness) + likes
@@ -1933,7 +1932,7 @@ def _build_translator():
             # TBD: compare with other foci, or get the information from ResourceAI
             # long term: ResourceAI planet information should be moved to _planet_state or similar
             rating = planet.currentMeterValue(fo.meterType.targetInfluence) * opinion.value(
-                pid, 1.5, 1.0, 0.5 / dislike_multiplier()
+                pid, 1.5, 1.0, 0.5 / PlanetUtilsAI.dislike_factor()
             )
             candidates.append((rating, pid))
     candidates.sort(reverse=True)
@@ -1999,7 +1998,7 @@ def _rate_system_for_admin(sys_id: SystemId, systems_that_may_profit: List[Tuple
         return 0.0
     # First like gets a big bonus, but we can build it only on one.
     # Number of planets to prefer better defended systems.
-    rating = 1.5 * (len(likes) - len(dislikes) * dislike_multiplier()) + 3 * (likes != set()) + len(planets)
+    rating = 1.5 * (len(likes) - len(dislikes) * PlanetUtilsAI.dislike_factor()) + 3 * (likes != set()) + len(planets)
 
     universe = fo.getUniverse()
     for current_distance, other_sys_id in systems_that_may_profit:
