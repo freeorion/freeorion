@@ -10,6 +10,15 @@
 #include <string>
 #include <vector>
 
+#if BOOST_VERSION == 107900 && defined(_MSC_VER)
+namespace boost::core {
+    // workaround for error in boost/lexical_cast/detail/inf_nan.hpp : error C2039: '_copysign': is not a member of 'boost::core'
+    inline float _copysign(float x, float y)
+    { return std::copysignf(x, y); }
+}
+#endif
+
+
 
 // these are needed by the StepValidator
 namespace details {
