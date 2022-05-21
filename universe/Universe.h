@@ -104,101 +104,102 @@ public:
 
 
     /** Returns objects in this Universe. */
-    const ObjectMap&        Objects() const { return *m_objects; }
-    ObjectMap&              Objects()       { return *m_objects; }
+    [[nodiscard]] const ObjectMap& Objects() const { return *m_objects; }
+    [[nodiscard]] ObjectMap&       Objects()       { return *m_objects; }
 
     /** Returns latest known state of objects for the Empire with
       * id \a empire_id or the true / complete state of all objects in this
       * Universe (the same as calling Objects()) if \a empire_id is
       * ALL_EMPIRES*/
-    const ObjectMap&        EmpireKnownObjects(int empire_id = ALL_EMPIRES) const;
-    ObjectMap&              EmpireKnownObjects(int empire_id = ALL_EMPIRES);
+    [[nodiscard]] const ObjectMap& EmpireKnownObjects(int empire_id = ALL_EMPIRES) const;
+    [[nodiscard]] ObjectMap&       EmpireKnownObjects(int empire_id = ALL_EMPIRES);
 
     /** Returns IDs of objects that the Empire with id \a empire_id has vision
       * of on the current turn, or objects that at least one empire has vision
       * of on the current turn if \a empire_id = ALL_EMPIRES */
-    std::set<int>           EmpireVisibleObjectIDs(int empire_id, const EmpireManager& empires) const;
+    [[nodiscard]] std::set<int> EmpireVisibleObjectIDs(int empire_id, const EmpireManager& empires) const;
 
     /** Returns IDs of objects that have been destroyed. */
-    const std::set<int>&    DestroyedObjectIds() const;
-    int                     HighestDestroyedObjectID() const;
+    [[nodiscard]] const std::set<int>& DestroyedObjectIds() const;
+    [[nodiscard]] int                  HighestDestroyedObjectID() const;
 
     /** Returns IDs of objects that the Empire with id \a empire_id knows have
       * been destroyed.  Each empire's latest known objects data contains the
       * last known information about each object, whether it has been destroyed
       * or not.  If \a empire_id = ALL_EMPIRES an empty set of IDs is
       * returned. */
-    const std::set<int>&    EmpireKnownDestroyedObjectIDs(int empire_id) const;
+    [[nodiscard]] const std::set<int>& EmpireKnownDestroyedObjectIDs(int empire_id) const;
 
     /** Returns IDs of objects that the Empire with id \a empire_id has stale
       * knowledge of in its latest known objects.  The latest known data about
       * these objects suggests that they should be visible, but they are not. */
-    const std::set<int>&    EmpireStaleKnowledgeObjectIDs(int empire_id) const;
+    [[nodiscard]] const std::set<int>&    EmpireStaleKnowledgeObjectIDs(int empire_id) const;
 
-    const ShipDesign*       GetShipDesign(int ship_design_id) const;    ///< returns the ship design with id \a ship_design id, or 0 if non exists
-    void                    RenameShipDesign(int design_id, const std::string& name = "",
-                                             const std::string& description = "");
-    ship_design_iterator    beginShipDesigns() const    { return m_ship_designs.begin(); }
-    ship_design_iterator    endShipDesigns() const      { return m_ship_designs.end(); }
-    size_t                  NumShipDesigns() const      { return m_ship_designs.size(); }
+    [[nodiscard]] const ShipDesign* GetShipDesign(int ship_design_id) const;    ///< returns the ship design with id \a ship_design id, or 0 if non exists
 
-    const ShipDesign*       GetGenericShipDesign(std::string_view name) const;
+    void RenameShipDesign(int design_id, const std::string& name = "", const std::string& description = "");
+
+    [[nodiscard]] ship_design_iterator beginShipDesigns() const { return m_ship_designs.begin(); }
+    [[nodiscard]] ship_design_iterator endShipDesigns() const   { return m_ship_designs.end(); }
+    [[nodiscard]] size_t               NumShipDesigns() const   { return m_ship_designs.size(); }
+
+    [[nodiscard]] const ShipDesign* GetGenericShipDesign(std::string_view name) const;
 
     /** Returns IDs of ship designs that the Empire with id \a empire_id has
       * seen during the game.  If \a empire_id = ALL_EMPIRES an empty set of
       * ids is returned */
-    const std::set<int>&    EmpireKnownShipDesignIDs(int empire_id) const;
+    [[nodiscard]] const std::set<int>& EmpireKnownShipDesignIDs(int empire_id) const;
 
     /** Returns the Visibility level of empire with id \a empire_id of
       * UniverseObject with id \a object_id as determined by calling
       * UpdateEmpireObjectVisibilities. */
-    Visibility GetObjectVisibilityByEmpire(int object_id, int empire_id) const;
+    [[nodiscard]] Visibility GetObjectVisibilityByEmpire(int object_id, int empire_id) const;
 
     /* Return the map from empire id to (map from id to that empire's current
      * visibility of that object) */
-    const EmpireObjectVisibilityMap& GetEmpireObjectVisibility() const;
+    [[nodiscard]] const EmpireObjectVisibilityMap& GetEmpireObjectVisibility() const;
 
     /* Returns the map from empire id to (map from object id to (map from
      * visibility level to turn number on which the empire last detected that
      * object at that visibility level)). */
-    const EmpireObjectVisibilityTurnMap& GetEmpireObjectVisibilityTurnMap() const;
+    [[nodiscard]] const EmpireObjectVisibilityTurnMap& GetEmpireObjectVisibilityTurnMap() const;
 
     /** Returns the map from Visibility level to turn number on which the empire
       * with id \a empire_id last had the various Visibility levels of the
       * UniverseObject with id \a object_id .  The returned map may be empty or
       * not have entries for all visibility levels, if the empire has not seen
       * the object at that visibility level yet. */
-    const VisibilityTurnMap& GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const;
+    [[nodiscard]] const VisibilityTurnMap& GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const;
 
     /** Returns the set of specials attached to the object with id \a object_id
       * that the empire with id \a empire_id can see this turn. */
-    std::set<std::string> GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
+    [[nodiscard]] std::set<std::string> GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
 
     /** Returns map from empire ID to map from location (X, Y) to detection range
       * that empire has at that location. */
-    std::map<int, std::map<std::pair<double, double>, float>>
-    GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const;
+    [[nodiscard]] std::map<int, std::map<std::pair<double, double>, float>>
+        GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const;
 
-    std::map<int, std::map<std::pair<double, double>, float>>
-    GetEmpiresPositionDetectionRanges(const ObjectMap& objects, const std::set<int>& exclude_ids) const;
+    [[nodiscard]] std::map<int, std::map<std::pair<double, double>, float>>
+        GetEmpiresPositionDetectionRanges(const ObjectMap& objects, const std::set<int>& exclude_ids) const;
 
     /** Returns map from empire ID to map from location (X, Y) to detection range
       * that empire is expected to have at that location after the next turn's
       * fleet movement. */
-    std::map<int, std::map<std::pair<double, double>, float>>
-    GetEmpiresPositionNextTurnFleetDetectionRanges(const ScriptingContext& context) const;
+    [[nodiscard]] std::map<int, std::map<std::pair<double, double>, float>>
+        GetEmpiresPositionNextTurnFleetDetectionRanges(const ScriptingContext& context) const;
 
     /** Return the Pathfinder */
-    std::shared_ptr<const Pathfinder> GetPathfinder() const { return m_pathfinder; }
+    [[nodiscard]] std::shared_ptr<const Pathfinder> GetPathfinder() const { return m_pathfinder; }
 
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
       * were applied to the meter. */
-    const Effect::AccountingMap& GetEffectAccountingMap() const { return m_effect_accounting_map; }
-    Effect::AccountingMap& GetEffectAccountingMap() { return m_effect_accounting_map; }
+    [[nodiscard]] const Effect::AccountingMap& GetEffectAccountingMap() const { return m_effect_accounting_map; }
+    [[nodiscard]] Effect::AccountingMap& GetEffectAccountingMap() { return m_effect_accounting_map; }
 
-    const std::map<std::string, std::map<int, std::map<int, double>>>&
-    GetStatRecords() const { return m_stat_records; }
+    [[nodiscard]] const std::map<std::string, std::map<int, std::map<int, double>>>&
+        GetStatRecords() const { return m_stat_records; }
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
 
@@ -373,7 +374,7 @@ public:
     /** Returns true if UniverseOjbectSignals are inhibited, false otherwise. */
     const bool& UniverseObjectSignalsInhibited() const;
 
-    double UniverseWidth() const;
+    [[nodiscard]] double UniverseWidth() const;
     void SetUniverseWidth(double width) { m_universe_width = width; }
 
     /** InsertNew constructs and inserts a UniverseObject into the object map with a new
