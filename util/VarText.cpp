@@ -14,6 +14,9 @@
 
 #include <boost/xpressive/xpressive.hpp>
 
+#if __has_include(<charconv>)
+#include <charconv>
+#endif
 #include <functional>
 #include <map>
 
@@ -63,11 +66,17 @@ namespace {
         std::string_view data, std::string_view tag, const ObjectMap& objects)
     {
         int object_id = INVALID_OBJECT_ID;
+#if defined(__cpp_lib_to_chars)
+        auto result = std::from_chars(data.data(), data.data() + data.size(), object_id);
+        if (result.ec != std::errc())
+            return boost::none;
+#else
         try {
-            object_id = boost::lexical_cast<int>(data); // TODO: from_chars
+            object_id = boost::lexical_cast<int>(data);
         } catch (...) {
             return boost::none;
         }
+#endif
         auto obj = objects.get(object_id);
         if (!obj)
             return boost::none;
@@ -79,13 +88,19 @@ namespace {
     boost::optional<std::string> ShipDesignString(std::string_view data,
                                                   const Universe& universe)
     {
-        int id = INVALID_DESIGN_ID;
+        int design_id = INVALID_DESIGN_ID;
+#if defined(__cpp_lib_to_chars)
+        auto result = std::from_chars(data.data(), data.data() + data.size(), design_id);
+        if (result.ec != std::errc())
+            return boost::none;
+#else
         try {
-            id = boost::lexical_cast<int>(data);
+            design_id = boost::lexical_cast<int>(data);
         } catch (...) {
             return boost::none;
         }
-        if (const auto design = universe.GetShipDesign(id))
+#endif
+        if (const auto design = universe.GetShipDesign(design_id))
             return WithTags(design->Name(), VarText::DESIGN_ID_TAG, data);
 
         return UserString("FW_UNKNOWN_DESIGN_NAME");
