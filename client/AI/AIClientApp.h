@@ -13,23 +13,18 @@ class PythonAI;
 class AIClientApp : public ClientApp {
 public:
     AIClientApp() = delete;
-
     explicit AIClientApp(const std::vector<std::string>& args);
-
     AIClientApp(const AIClientApp&) = delete;
-
     AIClientApp(AIClientApp&&) = delete;
-
     ~AIClientApp() override;
 
     const AIClientApp& operator=(const AIClientApp&) = delete;
-
     AIClientApp& operator=(const AIClientApp&&) = delete;
 
     //! Executes main event handler
-    void                Run();
-    void                ExitApp(int code = 0); ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
-    void                SetPlayerName(const std::string& player_name) { m_player_name = player_name; }
+    void Run();
+    void ExitApp(int code = 0); ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
+    void SetPlayerName(std::string player_name) { m_player_name = std::move(player_name); }
 
     [[nodiscard]] int   SelectedSystemID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
     [[nodiscard]] int   SelectedPlanetID() const override { throw std::runtime_error{"AI client cannot access selected object ID"}; }
@@ -49,17 +44,17 @@ public:
     const PythonAI*     GetAI();        ///< returns pointer to AIBase implementation of AI for this client
 
 private:
-    void                ConnectToServer();
-    void                StartPythonAI();
-    void                HandlePythonAICrash();
-    void                HandleMessage(const Message& msg);
+    void ConnectToServer();
+    void StartPythonAI();
+    void HandlePythonAICrash();
+    void HandleMessage(const Message& msg);
 
 
     /** Implementation of AI logic. */
     std::unique_ptr<PythonAI> m_AI;
 
-    std::string         m_player_name;
-    int                 m_max_aggression = 0;
+    std::string m_player_name;
+    int         m_max_aggression = 0;
 };
 
 
