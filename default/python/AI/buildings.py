@@ -29,6 +29,7 @@ class BuildingType(Enum):
     SHIPYARD_ENRG_COMP = "BLD_SHIPYARD_ENRG_COMP"
     SHIPYARD_AST = "BLD_SHIPYARD_AST"
     TRANSLATOR = "BLD_TRANSLATOR"
+    MILITARY_COMMAND = "BLD_MILITARY_COMMAND"
 
     def enqueue(self, pid: PlanetId) -> bool:
         """
