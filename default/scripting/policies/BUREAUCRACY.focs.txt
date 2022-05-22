@@ -4,7 +4,10 @@ Policy
     short_description = "PLC_BUREAUCRACY_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
     adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
-    unlock = Item type = Policy name = "PLC_TECHNOCRACY"
+    unlock = [
+        Item type = Building name = "BLD_REGIONAL_ADMIN"
+        Item type = Policy name = "PLC_TECHNOCRACY"
+    ]
     effectsgroups = [
         [[SPECIES_LIKES_OR_DISLIKES_POLICY_STABILITY_EFFECTS]]
 
