@@ -78,8 +78,8 @@ FO_ENUM(
   * that is being displayed has changed.*/
 class FO_COMMON_API UniverseObject : virtual public std::enable_shared_from_this<UniverseObject> {
 public:
-    //typedef flat_map<MeterType, Meter, std::less<MeterType>, std::vector<std::pair<MeterType, Meter>>> MeterMap;
-    using MeterMap = flat_map<MeterType, Meter, std::less<MeterType>>;
+    using MeterMap = flat_map<MeterType, Meter>;
+    static_assert(std::is_same_v<flat_map<MeterType, Meter, std::less<MeterType>>, MeterMap>);
 
     using CombinerType = assignable_blocking_combiner;
     using StateChangedSignalType = boost::signals2::signal<void (), CombinerType>;
