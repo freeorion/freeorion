@@ -593,27 +593,24 @@ void Empire::BackPropagateMeters() {
         meter.second.BackPropagate();
 }
 
-bool Empire::ResearchableTech(const std::string& name) const {
+bool Empire::ResearchableTech(std::string_view name) const {
     const Tech* tech = GetTech(name);
     if (!tech)
         return false;
     const auto& prereqs = tech->Prerequisites();
     return std::all_of(prereqs.begin(), prereqs.end(),
-                       [&](const auto& p) -> bool { return m_techs.count(p); })
+                       [&](const auto& p) -> bool { return m_techs.count(p) != 0; });
 }
 
-bool Empire::HasResearchedPrereqAndUnresearchedPrereq(const std::string& name) const {
+bool Empire::HasResearchedPrereqAndUnresearchedPrereq(std::string_view name) const {
     const Tech* tech = GetTech(name);
     if (!tech)
         return false;
-    bool one_unresearched = false;
-    bool one_researched = false;
-    for (const auto& prereq : tech->Prerequisites()) {
-        if (m_techs.count(prereq))
-            one_researched = true;
-        else
-            one_unresearched = true;
-    }
+    const auto& prereqs = tech->Prerequisites();
+    bool one_unresearched = std::any_of(prereqs.begin(), prereqs.end(),
+                                        [&](const auto& p) -> bool { return m_techs.count(p) == 0; });
+    bool one_researched = std::any_of(prereqs.begin(), prereqs.end(),
+                                      [&](const auto& p) -> bool { return m_techs.count(p) != 0; });
     return one_unresearched && one_researched;
 }
 

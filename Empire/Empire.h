@@ -133,10 +133,10 @@ public:
     [[nodiscard]] const ProductionQueue&       GetProductionQueue() const;            ///< Returns the queue of items being or queued to be produced.
     [[nodiscard]] const InfluenceQueue&        GetInfluenceQueue() const;             ///< Returns the queue of items being funded with influence.
 
-    [[nodiscard]] bool        ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
+    [[nodiscard]] bool        ResearchableTech(std::string_view name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     [[nodiscard]] float       ResearchProgress(const std::string& name, const ScriptingContext& context) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
     [[nodiscard]] bool        TechResearched(const std::string& name) const;          ///< Returns true iff this tech has been completely researched.
-    [[nodiscard]] bool        HasResearchedPrereqAndUnresearchedPrereq(const std::string& name) const;    ///< Returns true iff this tech has some but not all prerequisites researched
+    [[nodiscard]] bool        HasResearchedPrereqAndUnresearchedPrereq(std::string_view name) const;    ///< Returns true iff this tech has some but not all prerequisites researched
     [[nodiscard]] TechStatus  GetTechStatus(const std::string& name) const;           ///< Returns the status (researchable, researched, unresearchable) for this tech for this
 
     [[nodiscard]] bool        BuildingTypeAvailable(const std::string& name) const;   ///< Returns true if the given building type is known to this empire, false if it is not
