@@ -265,6 +265,7 @@ namespace FreeOrionPython {
             .def("buildingTypeAvailable",           &Empire::BuildingTypeAvailable)
             .add_property("availableBuildingTypes", make_function(&Empire::AvailableBuildingTypes,  py::return_internal_reference<>()))
 
+            .add_property("totalShipsOwned",        make_function(&Empire::TotalShipsOwned,         py::return_value_policy<py::return_by_value>()))
             .def("shipDesignAvailable",             +[](const Empire& empire, int id) -> bool { return empire.ShipDesignAvailable(id, GetUniverse()); })
             .add_property("allShipDesigns",         make_function(&Empire::ShipDesigns,             py::return_value_policy<py::return_by_value>()))
             .add_property("availableShipDesigns",   +[](const Empire& empire) -> std::set<int> { return empire.AvailableShipDesigns(GetUniverse()); })

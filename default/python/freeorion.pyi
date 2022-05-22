@@ -677,6 +677,9 @@ class empire:
     def totalPolicySlots(self) -> StringIntMap: ...
 
     @property
+    def totalShipsOwned(self) -> int: ...
+
+    @property
     def turnsPoliciesAdopted(self) -> StringIntMap: ...
 
     @property
