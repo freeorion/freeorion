@@ -278,7 +278,7 @@ std::shared_ptr<GG::Texture> ClientUI::PolicyIcon(std::string_view policy_name) 
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-std::shared_ptr<GG::Texture> ClientUI::SpecialIcon(const std::string& special_name) {
+std::shared_ptr<GG::Texture> ClientUI::SpecialIcon(std::string_view special_name) {
     const Special* special = GetSpecial(special_name);
     std::string texture_name;
     if (special)
@@ -288,7 +288,7 @@ std::shared_ptr<GG::Texture> ClientUI::SpecialIcon(const std::string& special_na
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-std::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(const std::string& species_name) {
+std::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(std::string_view species_name) {
     const Species* species = GetSpecies(species_name);
     std::string texture_name;
     if (species)
@@ -298,7 +298,7 @@ std::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(const std::string& species_na
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-std::shared_ptr<GG::Texture> ClientUI::FieldTexture(const std::string& field_type_name) {
+std::shared_ptr<GG::Texture> ClientUI::FieldTexture(std::string_view field_type_name) {
     const FieldType* type = GetFieldType(field_type_name);
     std::string texture_name;
     if (type)
@@ -308,7 +308,7 @@ std::shared_ptr<GG::Texture> ClientUI::FieldTexture(const std::string& field_typ
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-std::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) {
+std::shared_ptr<GG::Texture> ClientUI::PartIcon(std::string_view part_name) {
     const ShipPart* part = GetShipPart(part_name);
     std::string texture_name;
     if (part)
@@ -318,7 +318,7 @@ std::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) {
     return ClientUI::GetTexture(ArtDir() / texture_name, false);
 }
 
-std::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name) {
+std::shared_ptr<GG::Texture> ClientUI::HullTexture(std::string_view hull_name) {
     const ShipHull* hull = GetShipHull(hull_name);
     std::string texture_name;
     if (hull) {
@@ -331,7 +331,7 @@ std::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name)
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-std::shared_ptr<GG::Texture> ClientUI::HullIcon(const std::string& hull_name) {
+std::shared_ptr<GG::Texture> ClientUI::HullIcon(std::string_view hull_name) {
     const ShipHull* hull = GetShipHull(hull_name);
     std::string texture_name;
     if (hull) {

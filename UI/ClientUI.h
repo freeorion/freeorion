@@ -186,12 +186,12 @@ public:
     static std::shared_ptr<GG::Texture> CategoryIcon(std::string_view category_name);
     static std::shared_ptr<GG::Texture> TechIcon(std::string_view tech_name);
     static std::shared_ptr<GG::Texture> PolicyIcon(std::string_view policy_name);
-    static std::shared_ptr<GG::Texture> SpecialIcon(const std::string& special_name);
-    static std::shared_ptr<GG::Texture> SpeciesIcon(const std::string& species_name);
-    static std::shared_ptr<GG::Texture> FieldTexture(const std::string& field_type_name);
-    static std::shared_ptr<GG::Texture> PartIcon(const std::string& part_name);
-    static std::shared_ptr<GG::Texture> HullTexture(const std::string& hull_name);
-    static std::shared_ptr<GG::Texture> HullIcon(const std::string& hull_name);
+    static std::shared_ptr<GG::Texture> SpecialIcon(std::string_view special_name);
+    static std::shared_ptr<GG::Texture> SpeciesIcon(std::string_view species_name);
+    static std::shared_ptr<GG::Texture> FieldTexture(std::string_view field_type_name);
+    static std::shared_ptr<GG::Texture> PartIcon(std::string_view part_name);
+    static std::shared_ptr<GG::Texture> HullTexture(std::string_view hull_name);
+    static std::shared_ptr<GG::Texture> HullIcon(std::string_view hull_name);
     static std::shared_ptr<GG::Texture> ShipDesignIcon(int design_id);
 
     // research screen
