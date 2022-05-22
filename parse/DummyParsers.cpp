@@ -17,19 +17,19 @@
 #include "PythonParser.h"
 
 namespace parse {
-    std::map<std::string, std::unique_ptr<BuildingType>> buildings(const boost::filesystem::path& path)
+    std::map<std::string, std::unique_ptr<BuildingType>, std::less<>> buildings(const boost::filesystem::path& path)
     { return {}; }
 
-    std::map<std::string, std::unique_ptr<FieldType>> fields(const boost::filesystem::path& path)
+    std::map<std::string, std::unique_ptr<FieldType>, std::less<>> fields(const boost::filesystem::path& path)
     { return {}; }
 
-    std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>> named_value_refs(const boost::filesystem::path& path)
+    std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>, std::less<>> named_value_refs(const boost::filesystem::path& path)
     { return {}; }
 
     std::map<std::string, std::unique_ptr<Special>, std::less<>> specials(const boost::filesystem::path& path)
     { return {}; }
 
-    std::map<std::string, std::unique_ptr<Policy>> policies(const boost::filesystem::path& path)
+    std::map<std::string, std::unique_ptr<Policy>, std::less<>> policies(const boost::filesystem::path& path)
     { return {}; }
 
     species_type species(const boost::filesystem::path& path)
@@ -45,10 +45,10 @@ namespace parse {
     std::vector<UnlockableItem> starting_buildings(const boost::filesystem::path& path)
     { return {}; }
 
-    std::map<std::string, std::unique_ptr<ShipPart>> ship_parts(const boost::filesystem::path& path)
+    std::map<std::string, std::unique_ptr<ShipPart>, std::less<>> ship_parts(const boost::filesystem::path& path)
     { return {}; }
 
-    std::map<std::string, std::unique_ptr<ShipHull>> ship_hulls(const boost::filesystem::path& path)
+    std::map<std::string, std::unique_ptr<ShipHull>, std::less<>> ship_hulls(const boost::filesystem::path& path)
     { return {}; }
 
     ship_designs_type ship_designs(const boost::filesystem::path& path)
