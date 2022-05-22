@@ -80,12 +80,16 @@ void Empire::Init() {
 
     m_eliminated = false;
 
-    m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
+    m_meters.emplace_back(std::piecewise_construct,
+                          std::forward_as_tuple(UserStringNop("METER_DETECTION_STRENGTH")),
+                          std::forward_as_tuple());
     //m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
     //m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
     //m_meters[UserStringNop("METER_TECH_COST_FACTOR")];
     for (auto& entry : PolicyCategoriesSlotsMeters())
-        m_meters[std::move(entry.second)];
+        m_meters.emplace_back(std::piecewise_construct,
+                              std::forward_as_tuple(std::move(entry.second)),
+                              std::forward_as_tuple());
 }
 
 const std::string& Empire::Name() const
@@ -542,15 +546,14 @@ bool Empire::PolicyAffordable(std::string_view name, const ScriptingContext& con
 std::map<std::string_view, int, std::less<>> Empire::TotalPolicySlots() const {
     std::map<std::string_view, int, std::less<>> retval;
     // collect policy slot category meter values and return
-    for (auto& [cat, cat_slots_string] : PolicyCategoriesSlotsMeters()) {
-        if (!m_meters.count(cat_slots_string))
-            continue;
-        auto it = m_meters.find(cat_slots_string);
+    for (auto& cat_and_slot_strings : PolicyCategoriesSlotsMeters()) {
+        auto it = std::find_if(m_meters.begin(), m_meters.end(),
+                               [&](const auto& e) { return e.first == cat_and_slot_strings.second; });
         if (it == m_meters.end()) {
-            ErrorLogger() << "Empire doesn't have policy category slot meter with name: " << cat_slots_string;
+            ErrorLogger() << "Empire doesn't have policy category slot meter with name: " << cat_and_slot_strings.second;
             continue;
         }
-        retval[cat] = static_cast<int>(it->second.Initial());
+        retval[cat_and_slot_strings.first] = static_cast<int>(it->second.Initial());
     }
     return retval;
 }
@@ -569,16 +572,16 @@ std::map<std::string_view, int, std::less<>> Empire::EmptyPolicySlots() const {
     return retval;
 }
 
-Meter* Empire::GetMeter(const std::string& name) {
-    auto it = m_meters.find(name);
+Meter* Empire::GetMeter(std::string_view name) {
+    auto it = std::find_if(m_meters.begin(), m_meters.end(), [name](const auto& e) { return e.first == name; });
     if (it != m_meters.end())
         return &(it->second);
     else
         return nullptr;
 }
 
-const Meter* Empire::GetMeter(const std::string& name) const {
-    auto it = m_meters.find(name);
+const Meter* Empire::GetMeter(std::string_view name) const {
+    auto it = std::find_if(m_meters.begin(), m_meters.end(), [name](const auto& e) { return e.first == name; });
     if (it != m_meters.end())
         return &(it->second);
     else
@@ -594,11 +597,9 @@ bool Empire::ResearchableTech(const std::string& name) const {
     const Tech* tech = GetTech(name);
     if (!tech)
         return false;
-    for (const auto& prereq : tech->Prerequisites()) {
-        if (!m_techs.count(prereq))
-            return false;
-    }
-    return true;
+    const auto& prereqs = tech->Prerequisites();
+    return std::all_of(prereqs.begin(), prereqs.end(),
+                       [&](const auto& p) -> bool { return m_techs.count(p); })
 }
 
 bool Empire::HasResearchedPrereqAndUnresearchedPrereq(const std::string& name) const {
@@ -629,9 +630,6 @@ float Empire::ResearchProgress(const std::string& name, const ScriptingContext& 
     float tech_cost = tech->ResearchCost(m_id, context);
     return it->second * tech_cost;
 }
-
-const std::map<std::string, int>& Empire::ResearchedTechs() const
-{ return m_techs; }
 
 bool Empire::TechResearched(const std::string& name) const
 { return m_techs.count(name); }

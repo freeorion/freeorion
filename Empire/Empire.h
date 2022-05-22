@@ -21,7 +21,7 @@ struct UnlockableItem;
 class ShipDesign;
 class ResourcePool;
 
-typedef std::array<unsigned char, 4> EmpireColor;
+using EmpireColor = std::array<unsigned char, 4>;
 
 
 //! Research status of techs, relating to whether they have been or can be
@@ -101,7 +101,7 @@ public:
 
     /** Returns the set of Tech names available to this empire and the turns on
       * which they were researched. */
-    [[nodiscard]] const std::map<std::string, int>& ResearchedTechs() const;
+    [[nodiscard]] const auto&                  ResearchedTechs() const { return m_techs; }
 
     /** Returns the set of BuildingType names availble to this empire. */
     [[nodiscard]] const std::set<std::string>& AvailableBuildingTypes() const;
@@ -125,13 +125,13 @@ public:
     [[nodiscard]] const std::string&           MostRPSpentResearchableTech() const;
     [[nodiscard]] const std::string&           MostRPCostLeftResearchableTech(const ScriptingContext& context) const;
 
-    [[nodiscard]] const Meter*                                 GetMeter(const std::string& name) const;
-    [[nodiscard]] std::map<std::string, Meter>::const_iterator meter_begin() const { return m_meters.begin(); }
-    [[nodiscard]] std::map<std::string, Meter>::const_iterator meter_end() const   { return m_meters.end(); }
+    [[nodiscard]] const Meter*                 GetMeter(std::string_view name) const;
+    [[nodiscard]] auto                         meter_begin() const { return m_meters.cbegin(); }
+    [[nodiscard]] auto                         meter_end() const   { return m_meters.cend(); }
 
-    [[nodiscard]] const ResearchQueue&    GetResearchQueue() const;                   ///< Returns the queue of techs being or queued to be researched.
-    [[nodiscard]] const ProductionQueue&  GetProductionQueue() const;                 ///< Returns the queue of items being or queued to be produced.
-    [[nodiscard]] const InfluenceQueue&   GetInfluenceQueue() const;                  ///< Returns the queue of items being funded with influence.
+    [[nodiscard]] const ResearchQueue&         GetResearchQueue() const;              ///< Returns the queue of techs being or queued to be researched.
+    [[nodiscard]] const ProductionQueue&       GetProductionQueue() const;            ///< Returns the queue of items being or queued to be produced.
+    [[nodiscard]] const InfluenceQueue&        GetInfluenceQueue() const;             ///< Returns the queue of items being funded with influence.
 
     [[nodiscard]] bool        ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     [[nodiscard]] float       ResearchProgress(const std::string& name, const ScriptingContext& context) const;        ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
@@ -227,7 +227,7 @@ public:
     void UpdatePolicies(bool update_cumulative_adoption_time, int current_turn);
 
     /** Returns the meter with the indicated \a name if it exists, or nullptr. */
-    [[nodiscard]] Meter* GetMeter(const std::string& name);
+    [[nodiscard]] Meter* GetMeter(std::string_view name);
     void BackPropagateMeters();
 
     /** Adds \a tech to the research queue, placing it before position \a pos.
@@ -540,11 +540,12 @@ private:
     std::map<std::string, int>                             m_policy_adoption_current_duration; ///< how many turns each currently-adopted policy has been adopted since it was last adopted. somewhat redundant with adoption_turn in AdoptionInfo, but seems necessary to avoid off-by-one issues between client and server
     std::set<std::string, std::less<>>                     m_available_policies;               ///< names of unlocked policies
 
-    std::set<std::string>           m_victories;                ///< The ways that the empire has won, if any
+    std::set<std::string>                   m_victories;              ///< The ways that the empire has won, if any
 
-    std::set<std::string>           m_newly_researched_techs;   ///< names of researched but not yet effective technologies, and turns on which they were acquired.
-    std::map<std::string, int>      m_techs;                    ///< names of researched technologies, and turns on which they were acquired.
-    std::map<std::string, Meter>    m_meters;                   ///< empire meters, including ratings scales used by species to judge empires
+    std::set<std::string>                   m_newly_researched_techs; ///< names of researched but not yet effective technologies, and turns on which they were acquired.
+    std::map<std::string, int, std::less<>> m_techs;                  ///< names of researched technologies, and turns on which they were acquired.
+    using MeterMap = std::vector<std::pair<std::string, Meter>>;
+    MeterMap                                m_meters;                 ///< empire meters
 
     ResearchQueue                   m_research_queue;           ///< the queue of techs being or waiting to be researched
     std::map<std::string, float>    m_research_progress;        ///< progress of partially-researched techs; fully researched techs are removed
