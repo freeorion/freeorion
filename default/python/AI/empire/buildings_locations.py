@@ -1,15 +1,15 @@
 from collections import defaultdict
-from typing import DefaultDict, Dict, FrozenSet, Set, Union
+from typing import DefaultDict, Dict, FrozenSet, Set
 
 import AIDependencies
-from common.fo_typing import BuildingId, PlanetId, SystemId
+from common.fo_typing import BuildingName, PlanetId, SystemId
 from empire.pilot_rating import best_pilot_rating
 from empire.survey_lock import survey_universe_lock
 from freeorion_tools.caching import cache_for_current_turn
 
 
 @survey_universe_lock
-def get_best_pilot_facilities(facility: Union[BuildingId, str]) -> FrozenSet[PlanetId]:
+def get_best_pilot_facilities(facility: BuildingName) -> FrozenSet[PlanetId]:
     """Gives list of planets with the best available pilots have the given ship building facility"""
     # TBD: this is only for battle ships and ignores things like fuel and vision range.
     # For scouts, vision and fuel would be more important
@@ -19,35 +19,35 @@ def get_best_pilot_facilities(facility: Union[BuildingId, str]) -> FrozenSet[Pla
 
 
 @survey_universe_lock
-def get_systems_with_facilities(bld_name: BuildingId) -> FrozenSet[SystemId]:
+def get_systems_with_facilities(bld_name: BuildingName) -> FrozenSet[SystemId]:
     """Give list of systems with system-wide ship facilities (asteroid processors)"""
     return _get_system_facilities()[bld_name]
 
 
 @survey_universe_lock
-def get_planets_with_building(bld_name: BuildingId) -> FrozenSet[PlanetId]:
+def get_planets_with_building(bld_name: BuildingName) -> FrozenSet[PlanetId]:
     """Give list of planets containing the given building"""
     return _get_building_locations()[bld_name]
 
 
 @cache_for_current_turn
-def _get_facilities() -> Dict[str, Dict[BuildingId, Set[PlanetId]]]:
+def _get_facilities() -> Dict[str, Dict[BuildingName, Set[PlanetId]]]:
     return {}
 
 
 @cache_for_current_turn
-def _get_system_facilities() -> DefaultDict[BuildingId, Set]:
+def _get_system_facilities() -> DefaultDict[BuildingName, Set]:
     return defaultdict(set)
 
 
 @cache_for_current_turn
-def _get_building_locations() -> DefaultDict[BuildingId, Set]:
+def _get_building_locations() -> DefaultDict[BuildingName, Set]:
     return defaultdict(set)
 
 
 def set_building_locations(
     weapons_grade: str,
-    buildings_here: Set[BuildingId],
+    buildings_here: Set[BuildingName],
     pid: PlanetId,
     sid: SystemId,
 ):
