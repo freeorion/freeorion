@@ -117,8 +117,10 @@ public:
 
     /** indicates whether an option with name \a name has been added to this
         OptionsDB. */
-    bool OptionExists(const std::string& name) const
-    { return m_options.count(name) && m_options.at(name).recognized; }
+    bool OptionExists(std::string_view name) const {
+        auto it = m_options.find(name);
+        return it != m_options.end() && it->second.recognized;
+    }
 
     /** write the optionDB's non-default state to the XML config file. */
     bool Commit(bool only_if_dirty = true, bool only_non_default = true);
@@ -132,7 +134,7 @@ public:
     /** validates a value for an option. throws std::runtime_error if no option
       * \a name exists.  throws bad_lexical_cast if \a value cannot be
       * converted to the type of the option \a name. */
-    void Validate(const std::string& name, const std::string& value) const;
+    void Validate(std::string_view name, std::string_view value) const;
 
 
 
@@ -162,11 +164,11 @@ public:
       * of item stored in the option \a name must be known in advance.  This
       * means that GetDefault() must be called as Get<int>("foo"), etc. */
     template <typename T>
-    T GetDefault(const std::string& name) const
+    T GetDefault(std::string_view name) const
     {
         auto it = m_options.find(name);
         if (!OptionExists(it))
-            throw std::runtime_error("OptionsDB::GetDefault<>() : Attempted to get nonexistent option: " + name);
+            throw std::runtime_error(std::string{"OptionsDB::GetDefault<>() : Attempted to get nonexistent option: "}.append(name));
         try {
             return boost::any_cast<T>(it->second.default_value);
         } catch (const boost::bad_any_cast&) {
@@ -175,30 +177,30 @@ public:
         }
     }
 
-    bool IsDefaultValue(const std::string& name) const {
+    bool IsDefaultValue(std::string_view name) const {
         auto it = m_options.find(name);
         if (!OptionExists(it))
-            throw std::runtime_error("OptionsDB::IsDefaultValue<>() : Attempted to get nonexistent option: " + name);
+            throw std::runtime_error(std::string{"OptionsDB::IsDefaultValue<>() : Attempted to get nonexistent option: "}.append(name));
         return IsDefaultValue(it);
     }
 
     /** returns the string representation of the value of the option \a name.*/
-    std::string GetValueString(const std::string& option_name) const;
+    std::string GetValueString(std::string_view option_name) const;
 
     /** returns the string representation of the default value of the
       * option \a name.*/
-    std::string GetDefaultValueString(const std::string& option_name) const;
+    std::string GetDefaultValueString(std::string_view option_name) const;
 
     /** returns the description string for option \a option_name, or throws
       * std::runtime_error if no such Option exists. */
-    const std::string& GetDescription(const std::string& option_name) const;
+    const std::string& GetDescription(std::string_view option_name) const;
 
     /** returns the validator for option \a option_name, or throws
       * std::runtime_error if no such Option exists. */
-    const ValidatorBase* GetValidator(const std::string& option_name) const;
+    const ValidatorBase* GetValidator(std::string_view option_name) const;
 
     /** writes a usage message to \a os */
-    void GetUsage(std::ostream& os, const std::string& command_line = "", bool allow_unrecognized = false) const;
+    void GetUsage(std::ostream& os, std::string_view command_line = "", bool allow_unrecognized = false) const;
 
     /** @brief  Saves the contents of the options DB to the @p doc XMLDoc.
      *

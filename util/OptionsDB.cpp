@@ -211,10 +211,10 @@ bool OptionsDB::CommitPersistent() {
     return retval;
 }
 
-void OptionsDB::Validate(const std::string& name, const std::string& value) const {
+void OptionsDB::Validate(std::string_view name, std::string_view value) const {
     auto it = m_options.find(name);
     if (!OptionExists(it))
-        throw std::runtime_error("Attempted to validate unknown option \"" + name + "\".");
+        throw std::runtime_error(std::string{"Attempted to validate unknown option \""}.append(name).append("\"."));
 
     if (it->second.flag)
         boost::lexical_cast<bool>(value);
@@ -224,38 +224,38 @@ void OptionsDB::Validate(const std::string& name, const std::string& value) cons
         throw std::runtime_error("Attempted to validate option with no validator set");
 }
 
-std::string OptionsDB::GetValueString(const std::string& option_name) const {
+std::string OptionsDB::GetValueString(std::string_view option_name) const {
     auto it = m_options.find(option_name);
     if (!OptionExists(it))
-        throw std::runtime_error(("OptionsDB::GetValueString(): No option called \"" + option_name + "\" could be found.").c_str());
+        throw std::runtime_error(std::string{"OptionsDB::GetValueString(): No option called \""}.append(option_name).append("\" could be found."));
     return it->second.ValueToString();
 }
 
-std::string OptionsDB::GetDefaultValueString(const std::string& option_name) const {
+std::string OptionsDB::GetDefaultValueString(std::string_view option_name) const {
     auto it = m_options.find(option_name);
     if (!OptionExists(it))
-        throw std::runtime_error(("OptionsDB::GetDefaultValueString(): No option called \"" + option_name + "\" could be found.").c_str());
+        throw std::runtime_error(std::string{"OptionsDB::GetDefaultValueString(): No option called \""}.append(option_name).append("\" could be found."));
     return it->second.DefaultValueToString();
 }
 
-const std::string& OptionsDB::GetDescription(const std::string& option_name) const {
+const std::string& OptionsDB::GetDescription(std::string_view option_name) const {
     auto it = m_options.find(option_name);
     if (!OptionExists(it))
-        throw std::runtime_error(("OptionsDB::GetDescription(): No option called \"" + option_name + "\" could be found.").c_str());
+        throw std::runtime_error(std::string{"OptionsDB::GetDescription(): No option called \""}.append(option_name).append("\" could be found."));
     return it->second.description;
 }
 
-const ValidatorBase* OptionsDB::GetValidator(const std::string& option_name) const {
+const ValidatorBase* OptionsDB::GetValidator(std::string_view option_name) const {
     auto it = m_options.find(option_name);
     if (!OptionExists(it))
-        throw std::runtime_error(("OptionsDB::GetValidator(): No option called \"" + option_name + "\" could be found.").c_str());
+        throw std::runtime_error(std::string{"OptionsDB::GetValidator(): No option called \""}.append(option_name).append("\" could be found."));
     return it->second.validator.get();
 }
 
 namespace {
     constexpr std::size_t TERMINAL_LINE_WIDTH = 80;
 
-    const auto lexical_true_str = std::to_string(true);
+    constexpr std::string_view lexical_true_str = "1"; // = std::to_string(true);
 
     /** Breaks and indents text over multiple lines when it exceeds width limits
      * @param text String to format, tokenized by spaces, tabs, and newlines (newlines retained but potentially indented)
@@ -386,7 +386,7 @@ std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::Opti
     return options_by_section;
 }
 
-void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line, bool allow_unrecognized) const {
+void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool allow_unrecognized) const {
     // Prevent logger output from garbling console display for low severity messages
     OverrideAllLoggersThresholds(LogLevel::warn);
 
