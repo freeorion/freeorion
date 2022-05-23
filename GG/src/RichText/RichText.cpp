@@ -155,12 +155,12 @@ public:
     void SizeMove(Pt ul, Pt lr);
 
     // Set the mapping from tags to factories that should be used to generate blocks from them.
-    void SetBlockFactoryMap(std::shared_ptr<RichText::BLOCK_FACTORY_MAP> block_factory_map)
+    void SetBlockFactoryMap(std::shared_ptr<RichText::BlockFactoryMap> block_factory_map)
     { m_block_factory_map = std::move(block_factory_map); }
 
 private:
     // Easier access to m_block_factory_map
-    RichText::BLOCK_FACTORY_MAP& FactoryMap()
+    RichText::BlockFactoryMap& FactoryMap()
     { return *m_block_factory_map; }
 
     // Parses content into tags.
@@ -178,7 +178,7 @@ private:
     std::shared_ptr<Font>       m_font;                 //!< The font to use for text.
     Clr                         m_color;                //! < The color to use for text.
     Flags<TextFormat>           m_format;               //!< Text format.
-    std::shared_ptr<RichText::BLOCK_FACTORY_MAP>
+    std::shared_ptr<RichText::BlockFactoryMap>
                                 m_block_factory_map;    //!< A map that tells us how to generate block controls from tags.
     std::vector<std::shared_ptr<BlockControl>>
                                 m_blocks;               //!< The blocks generated from our content.
@@ -323,14 +323,14 @@ void RichText::Render() {}
 
 void RichText::SizeMove(const Pt& ul, const Pt& lr) { m_self->SizeMove(ul, lr); }
 
-void RichText::SetBlockFactoryMap(std::shared_ptr<BLOCK_FACTORY_MAP> block_factory_map)
+void RichText::SetBlockFactoryMap(std::shared_ptr<BlockFactoryMap> block_factory_map)
 { m_self->SetBlockFactoryMap(block_factory_map); }
 
 /// Global storage for registered block tags.
 // The factory object live for the lifetime of the process, they are never
 // deleted.
-std::shared_ptr<RichText::BLOCK_FACTORY_MAP> RichText::DefaultBlockFactoryMap() {
-    static auto tag_map = std::make_shared<RichText::BLOCK_FACTORY_MAP>();
+std::shared_ptr<RichText::BlockFactoryMap> RichText::DefaultBlockFactoryMap() {
+    static auto tag_map = std::make_shared<RichText::BlockFactoryMap>();
     return tag_map;
 }
 

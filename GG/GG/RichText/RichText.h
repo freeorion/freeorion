@@ -43,7 +43,7 @@ public:
     };
 
     //! The type of the object where we store control factories of tags.
-    typedef std::map<std::string, std::shared_ptr<IBlockControlFactory>, std::less<>> BLOCK_FACTORY_MAP;
+    using BlockFactoryMap = std::map<std::string, std::shared_ptr<IBlockControlFactory>, std::less<>>;
 
     //! The special tag that is used to represent plaintext.
     // Allows you to register a custom control for displaying plaintext.
@@ -73,13 +73,13 @@ public:
     void SizeMove(const Pt& ul, const Pt& lr) override;
 
     //! Use this to customize the handling of tags in the text on a per-object basis.
-    void SetBlockFactoryMap(std::shared_ptr<BLOCK_FACTORY_MAP> block_factory_map);
+    void SetBlockFactoryMap(std::shared_ptr<BlockFactoryMap> block_factory_map);
 
     //! Registers a factory in the default block factory map.
     static int RegisterDefaultBlock(std::string tag, std::shared_ptr<IBlockControlFactory>&& factory);
 
     //! Access the default block factory map.
-    static std::shared_ptr<RichText::BLOCK_FACTORY_MAP> DefaultBlockFactoryMap();
+    static std::shared_ptr<RichText::BlockFactoryMap> DefaultBlockFactoryMap();
 
 private:
     friend class RichTextPrivate;

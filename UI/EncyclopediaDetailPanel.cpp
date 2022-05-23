@@ -644,8 +644,7 @@ namespace {
 
         // Add any defined entries for this directory
         const auto& articles = encyclopedia.Articles();
-        auto category_it = articles.find(std::string{dir_name}); // TODO: make Articles support heterogenous comparison
-        if (category_it != articles.end()) {
+        if (auto category_it = articles.find(dir_name); category_it != articles.end()) {
             for (const EncyclopediaArticle& article : category_it->second) {
                 // Prevent duplicate addition of hard-coded directories that also have a content definition
                 if (article.name == dir_name)
@@ -653,7 +652,8 @@ namespace {
                 auto& us_name{UserString(article.name)};
                 retval.emplace_back(std::piecewise_construct,
                                     std::forward_as_tuple(us_name),
-                                    std::forward_as_tuple(LinkTaggedPresetText(TextLinker::ENCYCLOPEDIA_TAG, article.name, us_name) + "\n", article.name));
+                                    std::forward_as_tuple(LinkTaggedPresetText(TextLinker::ENCYCLOPEDIA_TAG, article.name, us_name) + "\n",
+                                                          article.name));
             }
         }
 
@@ -772,7 +772,7 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
 
     // make local copy of default block factories map
     const auto& default_block_factory_map{*GG::RichText::DefaultBlockFactoryMap()};
-    auto factory_map = std::make_shared<GG::RichText::BLOCK_FACTORY_MAP>(default_block_factory_map);
+    auto factory_map = std::make_shared<GG::RichText::BlockFactoryMap>(default_block_factory_map);
 
     // set the plaintext block factory to the one handling link clicks via this panel
     (*factory_map)[std::string{GG::RichText::PLAINTEXT_TAG}] = std::move(factory);
