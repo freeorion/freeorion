@@ -5050,7 +5050,7 @@ ECONOMIC_CATEGORY
 Économique
 
 SOCIAL_CATEGORY
-Social
+Sociale
 
 MILITARY_CATEGORY
 Militaire
@@ -5682,11 +5682,11 @@ ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 
 # %1% category of the technology.
 ENC_TECH_DETAIL_TYPE_STR
-Technologie %1% -
+- Technologie %1%
 
 # %1% category of the policy.
 ENC_POLICY_DETAIL_TYPE_STR
-Politique Domaine %1% -
+- Politique %1%
 
 # %1% object, technology or other content that should be looked up in the
 #     encyclopedia.
@@ -11917,7 +11917,7 @@ Scan Continuel
 
 PLC_CONTINUOUS_SCANNING_DESC
 '''• Améliore le Champ de Détection des astronefs de [[value CONTINUOUS_SCANNING_RANGE_BOOST]].
-• Augmente la Capacité de Détection impériale de 1 par tour à partir de l'adoption de cette Politique, jusqu'à un bonus de [[value CONTINUOUS_SCANNING_MAX_DETECTION_BOOST]].
+• Augmente la Capacité de Détection impériale de 1 par tour à partir de l'adoption de cette Politique, jusqu'à un maximum de [[value CONTINUOUS_SCANNING_MAX_DETECTION_BOOST]].
 • Diminue la Furtivité des astronefs de [[value CONTINUOUS_SCANNING_STEALTH_PENALTY]].'''
 
 PLC_CONTINUOUS_SCANNING_SHORT_DESC
@@ -12234,7 +12234,7 @@ Liberté
 
 PLC_LIBERTY_DESC
 '''• Augmente l'impact de ce que n'aime pas une espèce (structures, Politiques, ou Focus) sur la [[metertype METER_HAPPINESS]] planétaire (x[[value PLC_LIBERTY_DISLIKE_FACTOR]]).
-• Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_LIBERTY_RESEARCH_BONUS_PER_STABILITY]] PR pour chaque point de [[metertype METER_HAPPINESS]] au-dessus de [[value PLC_LIBERTY_MIN_STABILITY]], sur toutes les planètes, quel que soit le Focus.'''
+• Augmente la [[metertype METER_TARGET_RESEARCH]] sur les planètes en Focus Recherche ayant une [[metertype METER_HAPPINESS]] supérieure à [[value PLC_LIBERTY_MIN_STABILITY]]. L'augmentation est de [[value PLC_LIBERTY_RESEARCH_BONUS_SCALING]] par Population, multipliée par combien la Stabilité est supérieure à [[value PLC_LIBERTY_MIN_STABILITY]], jusqu'à un maximum de [[value PLC_LIBERTY_MAX_STABILITY]].'''
 
 PLC_LIBERTY_SHORT_DESC
 Augmente les effets de ce que n'aime pas une espèce ainsi que la Recherche
@@ -17063,7 +17063,7 @@ CAPITAL_DISCONNECTION_LABEL
 Non connecté à la Capitale d'Empire
 
 ARTISAN_APPRECIATION
-Aime les espèces artistiques en Focus Influence dans le système
+Aime les autres espèces artistiques dans le système
 
 # %1% name of empire
 # %2% name of policy
