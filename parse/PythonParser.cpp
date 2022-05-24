@@ -121,6 +121,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def_readonly("MaxTroops", &target_wrapper::max_troops)
             .def_readonly("ID", &target_wrapper::id)
             .def_readonly("Owner", &target_wrapper::owner)
+            .def_readonly("Population", &target_wrapper::population)
             .def_readonly("SystemID", &target_wrapper::system_id)
             .def_readonly("DesignID", &target_wrapper::design_id)
             .def_readonly("TargetHappiness", &target_wrapper::target_happiness)

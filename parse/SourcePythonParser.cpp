@@ -54,6 +54,10 @@ value_ref_wrapper<double> target_wrapper::max_stockpile() const {
     return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "MaxStockpile"));
 }
 
+value_ref_wrapper<double> target_wrapper::population() const {
+    return value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "Population"));
+}
+
 value_ref_wrapper<int> target_wrapper::id() const {
     return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "ID"));
 }
