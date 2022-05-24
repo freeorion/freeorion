@@ -19,6 +19,7 @@ struct target_wrapper {
     value_ref_wrapper<double> target_research() const;
     value_ref_wrapper<double> target_construction() const;
     value_ref_wrapper<double> max_stockpile() const;
+    value_ref_wrapper<double> population() const;
 
     value_ref_wrapper<int> id() const;
     value_ref_wrapper<int> owner() const;
