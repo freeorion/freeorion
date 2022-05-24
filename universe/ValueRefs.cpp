@@ -2953,7 +2953,7 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
         // a decimal place indicator using to_chars and from_chars.
         // if not, need to use streaming always?
 #if defined(__cpp_lib_to_chars)
-            std::array<char, 32> buf = {};
+            std::array<std::string::value_type, 32> buf = {};
             std::to_chars(buf.data(), buf.data() + buf.size(), num, std::chars_format::fixed, precision);
             return buf.data();
 #else
