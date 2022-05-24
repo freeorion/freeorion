@@ -1,6 +1,7 @@
 #ifndef _Enum_h_
 #define _Enum_h_
 
+#include <algorithm>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -156,6 +157,20 @@ BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)();};
 #define FO_DEF_ENUM_ADD_STRING_REPR(s, data, elem) \
     BOOST_PP_TUPLE_PUSH_BACK(elem, BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)))
 
+/** @brief Implementation detail for FO_ENUM */
+#define FO_DEF_ENUM_FROM_STRING(typeName) \
+inline FO_ENUM_NAME_FROM_TYPENAME(typeName) \
+BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), FromString)( \
+    std::string_view sv, \
+    FO_ENUM_NAME_FROM_TYPENAME(typeName) not_found_result = FO_ENUM_NAME_FROM_TYPENAME(typeName)(0) \
+) { \
+    const auto vals = BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)(); \
+    auto val_it = std::find_if(vals.begin(), vals.end(), [sv](const auto& e) { return sv == e.second; }); \
+    if (val_it != vals.end()) \
+        return val_it->first; \
+    return not_found_result; \
+}
+
 /** @brief Define an enumeration
  *
  * Defines an enumeration named @p typeName with the enumeration @p values in
@@ -227,7 +242,7 @@ BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)();};
     FO_DEF_ENUM_TOSTRING(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
     FO_DEF_ENUM_OSTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
     FO_DEF_ENUM_ISTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
-    FO_DEF_ENUM_ITERATE(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values))
-
+    FO_DEF_ENUM_ITERATE(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
+    FO_DEF_ENUM_FROM_STRING(typeName)
 #endif
 
