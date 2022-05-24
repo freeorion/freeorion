@@ -109,21 +109,6 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object,
 void UniverseObject::Init()
 { AddMeter(MeterType::METER_STEALTH); }
 
-int UniverseObject::ID() const
-{ return m_id; }
-
-const std::string& UniverseObject::Name() const
-{ return m_name; }
-
-double UniverseObject::X() const
-{ return m_x; }
-
-double UniverseObject::Y() const
-{ return m_y; }
-
-int UniverseObject::CreationTurn() const
-{ return m_created_on_turn; }
-
 int UniverseObject::AgeInTurns() const {
     if (m_created_on_turn == BEFORE_FIRST_TURN)
         return SINCE_BEFORE_TIME_AGE;
@@ -132,34 +117,26 @@ int UniverseObject::AgeInTurns() const {
     return CurrentTurn() - m_created_on_turn;
 }
 
-int UniverseObject::Owner() const
-{ return m_owner_empire_id; }
+bool UniverseObject::HasSpecial(std::string_view name) const {
+    return std::any_of(m_specials.begin(), m_specials.end(),
+                       [name](const auto& s) { return name == s.first; });
+}
 
-int UniverseObject::SystemID() const
-{ return m_system_id; }
-
-const std::map<std::string, std::pair<int, float>>& UniverseObject::Specials() const
-{ return m_specials; }
-
-bool UniverseObject::HasSpecial(const std::string& name) const
-{ return m_specials.count(name); }
-
-int UniverseObject::SpecialAddedOnTurn(const std::string& name) const {
-    auto it = m_specials.find(name);
+int UniverseObject::SpecialAddedOnTurn(std::string_view name) const {
+    auto it = std::find_if(m_specials.begin(), m_specials.end(),
+                           [name](const auto& s) { return name == s.first; });
     if (it == m_specials.end())
         return INVALID_GAME_TURN;
     return it->second.first;
 }
 
-float UniverseObject::SpecialCapacity(const std::string& name) const {
-    auto it = m_specials.find(name);
+float UniverseObject::SpecialCapacity(std::string_view name) const {
+    auto it = std::find_if(m_specials.begin(), m_specials.end(),
+                           [name](const auto& s) { return name == s.first; });
     if (it == m_specials.end())
         return 0.0f;
     return it->second.second;
 }
-
-UniverseObjectType UniverseObject::ObjectType() const
-{ return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE; }
 
 std::string UniverseObject::Dump(unsigned short ntabs) const {
     const ScriptingContext context;
@@ -236,15 +213,6 @@ std::set<int> UniverseObject::VisibleContainedObjectIDs(
     return retval;
 }
 
-int UniverseObject::ContainerObjectID() const
-{ return INVALID_OBJECT_ID; }
-
-bool UniverseObject::Contains(int object_id) const
-{ return false; }
-
-bool UniverseObject::ContainedBy(int object_id) const
-{ return false; }
-
 const Meter* UniverseObject::GetMeter(MeterType type) const {
     auto it = m_meters.find(type);
     if (it != m_meters.end())
@@ -260,10 +228,10 @@ void UniverseObject::AddMeter(MeterType meter_type) {
 }
 
 bool UniverseObject::Unowned() const
-{ return Owner() == ALL_EMPIRES; }
+{ return m_owner_empire_id == ALL_EMPIRES; }
 
 bool UniverseObject::OwnedBy(int empire) const
-{ return empire != ALL_EMPIRES && empire == Owner(); }
+{ return empire != ALL_EMPIRES && empire == m_owner_empire_id; }
 
 bool UniverseObject::HostileToEmpire(int, const EmpireManager&) const
 { return false; }
