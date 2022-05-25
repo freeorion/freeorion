@@ -104,14 +104,18 @@ namespace {
         return retval;
     }
 
-    bool HasCustomCategory(const std::set<std::string>& tags)
-    { return !DetermineCustomCategories(tags).empty(); }
-
     template <typename S>
     bool HasCustomCategory(const std::set<std::string>& tags, const S& cat) {
-        auto cats = DetermineCustomCategories(tags);
-        auto it = std::find(cats.begin(), cats.end(), cat);
-        return it != cats.end();
+        return std::any_of(tags.begin(), tags.end(), [&cat, len{TAG_PEDIA_PREFIX.length()}](std::string_view sv) {
+            return sv.substr(0, len) == TAG_PEDIA_PREFIX &&
+                sv.substr(len) == cat;
+        });
+    }
+
+    bool HasCustomCategory(const std::set<std::string>& tags) {
+        return std::any_of(tags.begin(), tags.end(), [len{TAG_PEDIA_PREFIX.length()}](std::string_view sv) {
+            return sv.substr(0, len) == TAG_PEDIA_PREFIX;
+        });
     }
 
     /** Retreive a value label and general string representation for @a meter_type
