@@ -90,7 +90,8 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) {
 
     // Force the log file if requested.
     if (GetOptionsDB().Get<std::string>("log-file").empty()) {
-        const std::string AICLIENT_LOG_FILENAME((GetUserDataDir() / (m_player_name + ".log")).string());
+        std::string ai_log_dir = GetOptionsDB().Get<std::string>("ai-log-dir");
+        const std::string AICLIENT_LOG_FILENAME(((ai_log_dir.empty() ? GetUserDataDir() : FilenameToPath(ai_log_dir)) / (m_player_name + ".log")).string());
         GetOptionsDB().Set("log-file", AICLIENT_LOG_FILENAME);
     }
     // Force the log threshold if requested.
