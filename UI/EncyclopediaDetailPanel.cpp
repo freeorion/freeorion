@@ -81,29 +81,7 @@ namespace {
 }
 
 namespace {
-    /** @brief Checks content tags for custom defined pedia categories.
-     * 
-     * @param[in] tags content tags to check for a matching pedia prefix tag
-     * 
-     * @return All matched pedia categories for this set of tags
-     */
-    std::vector<std::string_view> DetermineCustomCategories(const std::set<std::string>& tags) {
-        std::vector<std::string_view> retval;
-        retval.reserve(tags.size());
-        // for each tag, check if it starts with the prefix TAG_PEDIA_PREFIX
-        // when a match is found, return the match (without the prefix portion)
-        for (auto& tag : tags) {
-            if (boost::starts_with(tag, TAG_PEDIA_PREFIX)) {
-                //return boost::replace_first_copy(tag, TAG_PEDIA_PREFIX, "");
-                std::string_view val{tag};
-                val.remove_prefix(TAG_PEDIA_PREFIX.length());
-                retval.push_back(val);
-            }
-        }
-
-        return retval;
-    }
-
+    // Checks content \a tags for custom defined pedia category \a cat
     template <typename S>
     bool HasCustomCategory(const std::set<std::string>& tags, const S& cat) {
         return std::any_of(tags.begin(), tags.end(), [&cat, len{TAG_PEDIA_PREFIX.length()}](std::string_view sv) {
@@ -112,6 +90,7 @@ namespace {
         });
     }
 
+    // Checks content \a tags for any custom pedia categories
     bool HasCustomCategory(const std::set<std::string>& tags) {
         return std::any_of(tags.begin(), tags.end(), [len{TAG_PEDIA_PREFIX.length()}](std::string_view sv) {
             return sv.substr(0, len) == TAG_PEDIA_PREFIX;
