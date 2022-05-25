@@ -502,11 +502,7 @@ namespace {
                     ErrorLogger() << "EdgeVisibilityFilter passed null graph pointer";
 
                 // collect all edges
-#if BOOST_VERSION >= 106500
                 decltype(edges)::sequence_type edges_vec;
-#else
-                std::vector<decltype(edges)::value_type> edges_vec;
-#endif
                 edges_vec.reserve(objects.size<System>() * 10); // guesstimate
                 for (const auto& sys : objects.allRaw<System>()) {
                     auto sys_id{sys->ID()};
@@ -518,12 +514,7 @@ namespace {
                 // sort and ensure uniqueness of entries before moving into flat_set
                 std::sort(edges_vec.begin(), edges_vec.end());
                 edges_vec.erase(std::unique(edges_vec.begin(), edges_vec.end()), edges_vec.end());
-#if BOOST_VERSION >= 106500
                 edges.adopt_sequence(boost::container::ordered_unique_range_t{}, std::move(edges_vec));
-#else
-                edges.insert(boost::container::ordered_unique_range_t{}, std::make_move_iterator(edges_vec.begin()),
-                             std::make_move_iterator(edges_vec.end()));
-#endif
             }
 
             template <typename EdgeDescriptor>
@@ -540,11 +531,7 @@ namespace {
                 int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
                 // look up lane between systems
-#if BOOST_VERSION >= 106900
                 return edges.contains(std::pair{std::min(sys_id_1, sys_id_2), std::max(sys_id_1, sys_id_2)});
-#else
-                return edges.find(std::pair{std::min(sys_id_1, sys_id_2), std::max(sys_id_1, sys_id_2)}) != edges.end();
-#endif
             }
 
         private:
@@ -1423,11 +1410,7 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
     for (auto& sys : objects.ExistingSystems())
         system_ids.push_back(sys.first);
 
-#if BOOST_VERSION >= 106500
     decltype(m_system_id_to_graph_index)::sequence_type system_id_to_graph_idx_vec;
-#else
-    std::vector<decltype(m_system_id_to_graph_index)::value_type> system_id_to_graph_idx_vec;
-#endif
     system_id_to_graph_idx_vec.reserve(system_ids.size());
 
     for (size_t system_index = 0; system_index < system_ids.size(); ++system_index) {
@@ -1439,13 +1422,10 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
         system_id_to_graph_idx_vec.emplace_back(system_id, system_index);
     }
     std::sort(system_id_to_graph_idx_vec.begin(), system_id_to_graph_idx_vec.end());
-#if BOOST_VERSION >= 106500
     m_system_id_to_graph_index.adopt_sequence(boost::container::ordered_unique_range_t{}, std::move(system_id_to_graph_idx_vec));
-#else
     m_system_id_to_graph_index.insert(boost::container::ordered_unique_range_t{},
                                       std::make_move_iterator(system_id_to_graph_idx_vec.begin()),
                                       std::make_move_iterator(system_id_to_graph_idx_vec.end()));
-#endif
 
     // add edges for all starlanes
     for (size_t system1_index = 0; system1_index < system_ids.size(); ++system1_index) {

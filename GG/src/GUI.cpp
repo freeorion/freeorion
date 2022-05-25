@@ -18,19 +18,7 @@
 #include <boost/format.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #if GG_HAVE_LIBPNG
-# if GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO
-#  if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wunused-local-typedefs"
-#  endif
-#  include "gilext/io/png_io.hpp"
-#  include "gilext/io/png_io_v2_compat.hpp"
-#  if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
-#   pragma GCC diagnostic pop
-#  endif
-# else
-#  include <boost/gil/extension/io/png.hpp>
-# endif
+# include <boost/gil/extension/io/png.hpp>
 #endif
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Cursor.h>

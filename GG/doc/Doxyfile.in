@@ -539,8 +539,7 @@ RECURSIVE              = YES
 EXCLUDE                = @CMAKE_CURRENT_SOURCE_DIR@/config.h \
                          @CMAKE_CURRENT_SOURCE_DIR@/tutorial \
                          @CMAKE_CURRENT_SOURCE_DIR@/build_config.py \
-                         @CMAKE_CURRENT_SOURCE_DIR@/build_support.py \
-                         @CMAKE_CURRENT_SOURCE_DIR@/src/gilext
+                         @CMAKE_CURRENT_SOURCE_DIR@/build_support.py
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 

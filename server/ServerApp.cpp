@@ -120,11 +120,7 @@ ServerApp::ServerApp() :
         throw std::runtime_error("Python not initialized");
 
     if (GetOptionsDB().Get<int>("network.server.python.asyncio-interval") > 0) {
-#if BOOST_VERSION >= 106600
         m_timer.expires_after(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.python.asyncio-interval")));
-#else
-        m_timer.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.python.asyncio-interval")));
-#endif
         m_timer.async_wait(boost::bind(&ServerApp::AsyncIOTimedoutHandler,
                                        this,
                                        boost::asio::placeholders::error));
@@ -401,11 +397,7 @@ void ServerApp::AsyncIOTimedoutHandler(const boost::system::error_code& error) {
 
     if (success) {
         if (GetOptionsDB().Get<int>("network.server.python.asyncio-interval") > 0) {
-#if BOOST_VERSION >= 106600
             m_timer.expires_after(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.python.asyncio-interval")));
-#else
-            m_timer.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("network.server.python.asyncio-interval")));
-#endif
             m_timer.async_wait(boost::bind(&ServerApp::AsyncIOTimedoutHandler,
                                              this,
                                              boost::asio::placeholders::error));

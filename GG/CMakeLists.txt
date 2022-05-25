@@ -116,11 +116,7 @@ target_compile_definitions(GiGi
         GiGiHeader
     PRIVATE
         -DFONS_USE_FREETYPE
-        # Starting with boost 1.68 boost::gil integrates support for
-        # grayscale-alpha png images, so prefer their implementation
-        # instead of our hacky gilext code.
-        $<$<VERSION_LESS:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.68>:GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO>
-        $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.67>:BOOST_GIL_IO_ENABLE_GRAY_ALPHA>
+        -DBOOST_GIL_IO_ENABLE_GRAY_ALPHA
         $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.71>:BOOST_GIL_USES_MP11>
 )
 

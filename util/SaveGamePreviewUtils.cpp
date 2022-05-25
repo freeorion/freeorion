@@ -81,7 +81,7 @@ namespace {
                 freeorion_xml_iarchive ia(ifs);
                 ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
 
-                if (BOOST_VERSION >= 106600 && save_preview_data.save_format_marker == XML_COMPRESSED_MARKER)
+                if (save_preview_data.save_format_marker == XML_COMPRESSED_MARKER)
                     throw std::invalid_argument("Save Format Not Compatible with Boost Version " BOOST_LIB_VERSION);
 
                 ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
@@ -158,7 +158,7 @@ bool SaveFileWithValidHeader(const boost::filesystem::path& path) {
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
 
-            if (BOOST_VERSION >= 106600 && ignored_save_preview_data.save_format_marker == XML_COMPRESSED_MARKER)
+            if (ignored_save_preview_data.save_format_marker == XML_COMPRESSED_MARKER)
                 throw std::invalid_argument("Save Format Not Compatible with Boost Version " BOOST_LIB_VERSION);
 
             ia >> BOOST_SERIALIZATION_NVP(ignored_galaxy_setup_data);

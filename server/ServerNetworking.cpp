@@ -870,11 +870,7 @@ void ServerNetworking::AcceptNextMessagingConnection() {
     using boost::placeholders::_1;
 
     auto next_connection = PlayerConnection::NewConnection(
-#if BOOST_VERSION >= 106600
         m_player_connection_acceptor.get_executor().context(),
-#else
-        m_player_connection_acceptor.get_io_service(),
-#endif
         m_nonplayer_message_callback,
         m_player_message_callback,
         boost::bind(&ServerNetworking::DisconnectImpl, this, _1));

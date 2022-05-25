@@ -428,7 +428,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
             } else {
                 // assume compressed XML
-                if (BOOST_VERSION >= 106600 && ignored_save_preview_data.save_format_marker == XML_COMPRESSED_MARKER)
+                if (ignored_save_preview_data.save_format_marker == XML_COMPRESSED_MARKER)
                     throw std::invalid_argument("Save Format Not Compatible with Boost Version " BOOST_LIB_VERSION);
 
                 timer.EnterSection("decompression");

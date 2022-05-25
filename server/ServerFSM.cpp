@@ -3087,11 +3087,7 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
 {
     TraceLogger(FSM) << "(ServerFSM) WaitingForTurnEnd";
     if (GetOptionsDB().Get<int>("save.auto.interval") > 0) {
-#if BOOST_VERSION >= 106600
         m_timeout.expires_after(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.interval")));
-#else
-        m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.interval")));
-#endif
         m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
                                          this,
                                          boost::asio::placeholders::error));
@@ -3483,11 +3479,7 @@ void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& err
     PlayerConnectionPtr dummy_connection = nullptr;
     Server().m_fsm->process_event(SaveGameRequest(HostSaveGameInitiateMessage(GetAutoSaveFileName(Server().CurrentTurn())), dummy_connection));
     if (GetOptionsDB().Get<int>("save.auto.interval") > 0) {
-#if BOOST_VERSION >= 106600
         m_timeout.expires_after(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.interval")));
-#else
-        m_timeout.expires_from_now(std::chrono::seconds(GetOptionsDB().Get<int>("save.auto.interval")));
-#endif
         m_timeout.async_wait(boost::bind(&WaitingForTurnEnd::SaveTimedoutHandler,
                                          this,
                                          boost::asio::placeholders::error));
