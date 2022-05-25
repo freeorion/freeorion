@@ -17,12 +17,7 @@
 # include <boost/gil/extension/io/tiff_dynamic_io.hpp>
 #endif
 #if GG_HAVE_LIBPNG
-# if GIGI_CONFIG_USE_OLD_IMPLEMENTATION_OF_GIL_PNG_IO
-#  include "gilext/io/png_dynamic_io.hpp"
-#  include "gilext/io/png_io_v2_compat.hpp"
-# else
-#  include <boost/gil/extension/io/png.hpp>
-# endif
+# include <boost/gil/extension/io/png.hpp>
 #endif
 #if BOOST_VERSION >= 107400
 #include <boost/variant2/variant.hpp>

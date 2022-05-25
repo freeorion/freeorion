@@ -748,11 +748,7 @@ auto FilenameToPath(std::string const& path_str) -> fs::path
 #if defined(FREEORION_WIN32)
     // convert UTF-8 directory string to UTF-16
     fs::path::string_type directory_native = std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t>{}.from_bytes(path_str);
-#if (BOOST_VERSION >= 106300)
     return fs::path(directory_native).generic_path();
-#else
-    return fs::path(directory_native);
-#endif
 #else // defined(FREEORION_WIN32)
     return fs::path(path_str);
 #endif // defined(FREEORION_WIN32)
