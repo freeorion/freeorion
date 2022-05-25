@@ -272,7 +272,7 @@ namespace {
         return boost::python::object();
     }
 
-    boost::python::object insert_num_policies_adopted_(const boost::python::tuple& args, const boost::python::dict& kw) {
+    boost::python::object insert_int_complex_variable_(const char* variable, const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         if (kw.has_key("empire")) {
             auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
@@ -294,7 +294,7 @@ namespace {
         }
 
         return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
-            "NumPoliciesAdopted",
+            variable,
             std::move(empire),
             nullptr,
             nullptr,
@@ -308,7 +308,29 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["NamedRealLookup"] = boost::python::raw_function(insert_named_lookup_<double>);
     globals["Value"] = value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE));
     globals["CurrentTurn"] = value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, "CurrentTurn"));
-    globals["NumPoliciesAdopted"] = boost::python::raw_function(insert_num_policies_adopted_);
+
+    // Integer complex variables
+    for (const char* variable : {"BuildingTypesOwned",
+                                 "BuildingTypesProduced",
+                                 "BuildingTypesScrapped",
+                                 "SpeciesColoniesOwned",
+                                 "SpeciesPlanetsBombed",
+                                 "SpeciesPlanetsDepoped",
+                                 "SpeciesPlanetsInvaded",
+                                 "SpeciesShipsDestroyed",
+                                 "SpeciesShipsLost",
+                                 "SpeciesShipsOwned",
+                                 "SpeciesShipsProduced",
+                                 "SpeciesShipsScrapped",
+                                 "TurnTechResearched",
+                                 "TurnPolicyAdopted",
+                                 "TurnsSincePolicyAdopted",
+                                 "CumulativeTurnsPolicyAdopted",
+                                 "NumPoliciesAdopted"})
+    {
+        std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_int_complex_variable = [variable](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_int_complex_variable_(variable, args, kw); };
+        globals[variable] = boost::python::raw_function(f_insert_int_complex_variable);
+    }
 
     std::function<boost::python::object(const boost::python::tuple&, const boost::python::dict&)> f_insert_game_rule = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(parser, args, kw); };
     globals["GameRule"] = boost::python::raw_function(f_insert_game_rule);
