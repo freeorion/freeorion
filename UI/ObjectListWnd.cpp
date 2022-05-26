@@ -373,36 +373,36 @@ namespace {
 
     enum class VIS_DISPLAY : char { SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED };
 
-    const std::string EMPTY_STRING;
-    const std::string ALL_CONDITION(UserStringNop("CONDITION_ALL"));
-    const std::string EMPIREAFFILIATION_CONDITION(UserStringNop("CONDITION_EMPIREAFFILIATION"));
-    const std::string HOMEWORLD_CONDITION(UserStringNop("CONDITION_HOMEWORLD"));
-    const std::string CAPITAL_CONDITION(UserStringNop("CONDITION_CAPITAL"));
-    const std::string MONSTER_CONDITION(UserStringNop("CONDITION_MONSTER"));
-    const std::string ARMED_CONDITION(UserStringNop("CONDITION_ARMED"));
-    const std::string STATIONARY_CONDITION(UserStringNop("CONDITION_STATIONARY"));
-    const std::string CANPRODUCESHIPS_CONDITION(UserStringNop("CONDITION_CANPRODUCESHIPS"));
-    const std::string CANCOLONIZE_CONDITION(UserStringNop("CONDITION_CANCOLONIZE"));
-    const std::string BUILDING_CONDITION(UserStringNop("CONDITION_BUILDING"));
-    const std::string HASSPECIAL_CONDITION(UserStringNop("CONDITION_HASSPECIAL"));
-    const std::string HASTAG_CONDITION(UserStringNop("CONDITION_HASTAG"));
-    const std::string SPECIES_CONDITION(UserStringNop("CONDITION_SPECIES"));
-    const std::string PRODUCEDBYEMPIRE_CONDITION(UserStringNop("CONDITION_PRODUCEDBYEMPIRE"));
-    const std::string EXPLOREDBYEMPIRE_CONDITION(UserStringNop("CONDITION_EXPLOREDBYEMPIRE"));
-    const std::string CONTAINEDBY_CONDITION(UserStringNop("CONDITION_CONTAINEDBY"));
-    const std::string INSYSTEM_CONDITION(UserStringNop("CONDITION_INSYSTEM"));
-    const std::string OBJECTID_CONDITION(UserStringNop("CONDITION_OBJECTID"));
-    const std::string CREATEDONTURN_CONDITION(UserStringNop("CONDITION_CREATEDONTURN"));
-    const std::string PLANETSIZE_CONDITION(UserStringNop("CONDITION_PLANETSIZE"));
-    const std::string PLANETTYPE_CONDITION(UserStringNop("CONDITION_PLANETTYPE"));
-    const std::string FOCUSTYPE_CONDITION(UserStringNop("CONDITION_FOCUSTYPE"));
-    const std::string STARTYPE_CONDITION(UserStringNop("CONDITION_STARTYPE"));
-    const std::string METERVALUE_CONDITION(UserStringNop("CONDITION_METERVALUE"));
-    const std::string HASGROWTHSPECIAL_CONDITION(UserStringNop("CONDITION_HAS_GROWTH_SPECIAL"));
-    const std::string GGWITHPTYPE_CONDITION(UserStringNop("CONDITION_PTYPE_W_GG"));     // with gas giant
-    const std::string ASTWITHPTYPE_CONDITION(UserStringNop("CONDITION_PTYPE_W_AST"));   // with asteroids
+    constexpr std::string_view EMPTY_STRING;
+    constexpr std::string_view ALL_CONDITION(UserStringNop("CONDITION_ALL"));
+    constexpr std::string_view EMPIREAFFILIATION_CONDITION(UserStringNop("CONDITION_EMPIREAFFILIATION"));
+    constexpr std::string_view HOMEWORLD_CONDITION(UserStringNop("CONDITION_HOMEWORLD"));
+    constexpr std::string_view CAPITAL_CONDITION(UserStringNop("CONDITION_CAPITAL"));
+    constexpr std::string_view MONSTER_CONDITION(UserStringNop("CONDITION_MONSTER"));
+    constexpr std::string_view ARMED_CONDITION(UserStringNop("CONDITION_ARMED"));
+    constexpr std::string_view STATIONARY_CONDITION(UserStringNop("CONDITION_STATIONARY"));
+    constexpr std::string_view CANPRODUCESHIPS_CONDITION(UserStringNop("CONDITION_CANPRODUCESHIPS"));
+    constexpr std::string_view CANCOLONIZE_CONDITION(UserStringNop("CONDITION_CANCOLONIZE"));
+    constexpr std::string_view BUILDING_CONDITION(UserStringNop("CONDITION_BUILDING"));
+    constexpr std::string_view HASSPECIAL_CONDITION(UserStringNop("CONDITION_HASSPECIAL"));
+    constexpr std::string_view HASTAG_CONDITION(UserStringNop("CONDITION_HASTAG"));
+    constexpr std::string_view SPECIES_CONDITION(UserStringNop("CONDITION_SPECIES"));
+    constexpr std::string_view PRODUCEDBYEMPIRE_CONDITION(UserStringNop("CONDITION_PRODUCEDBYEMPIRE"));
+    constexpr std::string_view EXPLOREDBYEMPIRE_CONDITION(UserStringNop("CONDITION_EXPLOREDBYEMPIRE"));
+    constexpr std::string_view CONTAINEDBY_CONDITION(UserStringNop("CONDITION_CONTAINEDBY"));
+    constexpr std::string_view INSYSTEM_CONDITION(UserStringNop("CONDITION_INSYSTEM"));
+    constexpr std::string_view OBJECTID_CONDITION(UserStringNop("CONDITION_OBJECTID"));
+    constexpr std::string_view CREATEDONTURN_CONDITION(UserStringNop("CONDITION_CREATEDONTURN"));
+    constexpr std::string_view PLANETSIZE_CONDITION(UserStringNop("CONDITION_PLANETSIZE"));
+    constexpr std::string_view PLANETTYPE_CONDITION(UserStringNop("CONDITION_PLANETTYPE"));
+    constexpr std::string_view FOCUSTYPE_CONDITION(UserStringNop("CONDITION_FOCUSTYPE"));
+    constexpr std::string_view STARTYPE_CONDITION(UserStringNop("CONDITION_STARTYPE"));
+    constexpr std::string_view METERVALUE_CONDITION(UserStringNop("CONDITION_METERVALUE"));
+    constexpr std::string_view HASGROWTHSPECIAL_CONDITION(UserStringNop("CONDITION_HAS_GROWTH_SPECIAL"));
+    constexpr std::string_view GGWITHPTYPE_CONDITION(UserStringNop("CONDITION_PTYPE_W_GG"));     // with gas giant
+    constexpr std::string_view ASTWITHPTYPE_CONDITION(UserStringNop("CONDITION_PTYPE_W_AST"));   // with asteroids
 
-    const std::string FILTER_OPTIONS_WND_NAME = "object-list-filter";
+    constexpr std::string_view FILTER_OPTIONS_WND_NAME = "object-list-filter";
 
     template <typename enumT>
     std::unique_ptr<ValueRef::ValueRef<enumT>> CopyEnumValueRef(const ValueRef::ValueRef<enumT>* const value_ref) {
@@ -413,7 +413,7 @@ namespace {
 
     std::map<std::string, std::string> object_list_cond_description_map;
 
-    const std::string& ConditionClassName(const Condition::Condition* const condition) {
+    std::string_view ConditionClassName(const Condition::Condition* const condition) {
         if (!condition)
             return EMPTY_STRING;
 
@@ -528,7 +528,7 @@ public:
         } else if (condition_key == EMPIREAFFILIATION_CONDITION) {
             EmpireAffiliationType affil = EmpireAffiliationType::AFFIL_SELF;
 
-            const std::string& empire_name = GetString();
+            auto empire_name = GetString();
             if (empire_name.empty())
                 return std::make_unique<Condition::EmpireAffiliation>(affil);
 
@@ -544,11 +544,11 @@ public:
                 std::make_unique<ValueRef::Constant<int>>(empire_id), affil);
 
         } else if (condition_key == HOMEWORLD_CONDITION) {
-            const std::string& species_name = GetString();
+            auto species_name = GetString();
             if (species_name.empty())
                 return std::make_unique<Condition::Homeworld>();
             std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> names;
-            names.emplace_back(std::make_unique<ValueRef::Constant<std::string>>(species_name));
+            names.emplace_back(std::make_unique<ValueRef::Constant<std::string>>(std::string{species_name}));
             return std::make_unique<Condition::Homeworld>(std::move(names));
 
         } else if (condition_key == CANCOLONIZE_CONDITION) {
@@ -558,7 +558,7 @@ public:
             return std::make_unique<Condition::CanProduceShips>();
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
-            return std::make_unique<Condition::HasSpecial>(GetString());
+            return std::make_unique<Condition::HasSpecial>(std::string{GetString()});
 
         } else if (condition_key == HASGROWTHSPECIAL_CONDITION) {
             std::vector<std::unique_ptr<Condition::Condition>> operands;
@@ -575,8 +575,7 @@ public:
         } else if (condition_key == ASTWITHPTYPE_CONDITION) { // And [Planet PlanetType PlanetType::PT_ASTEROIDS ContainedBy And [System Contains PlanetType X]]
             std::vector<std::unique_ptr<Condition::Condition>> operands1;
             operands1.emplace_back(std::make_unique<Condition::Type>(std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_PLANET)));
-            const std::string& text = GetString();
-            if (text == UserString("CONDITION_ANY")) {
+            if (GetString() == UserString("CONDITION_ANY")) {
                 std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> copytype;
                 copytype.emplace_back(std::make_unique<ValueRef::Constant<PlanetType>>(PlanetType::PT_ASTEROIDS));
                 operands1.emplace_back(std::make_unique<Condition::Not>(std::make_unique<Condition::PlanetType>(std::move(copytype))));
@@ -595,13 +594,13 @@ public:
 
         } else if (condition_key == GGWITHPTYPE_CONDITION) { // And [Planet PlanetType PlanetType::PT_GASGIANT ContainedBy And [System Contains PlanetType X]]
             std::vector<std::unique_ptr<Condition::Condition>> operands1;
-            const std::string& text = GetString();
-            if (text == UserString("CONDITION_ANY")) {
+            if (GetString() == UserString("CONDITION_ANY")) {
                 std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> copytype;
                     copytype.emplace_back(std::make_unique<ValueRef::Constant<PlanetType>>(PlanetType::PT_GASGIANT));
                     operands1.emplace_back(std::make_unique<Condition::Not>(std::make_unique<Condition::PlanetType>(std::move(copytype))));
-            } else
+            } else {
                 operands1.emplace_back(std::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
+            }
             std::vector<std::unique_ptr<Condition::Condition>> operands2;
             operands2.emplace_back(std::make_unique<Condition::Type>(std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_SYSTEM)));
             std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> maintype;
@@ -613,7 +612,7 @@ public:
             return this_cond;
 
         } else if (condition_key == HASTAG_CONDITION) {
-            return std::make_unique<Condition::HasTag>(GetString());
+            return std::make_unique<Condition::HasTag>(std::string{GetString()});
 
         } else if (condition_key == MONSTER_CONDITION) {
             return std::make_unique<Condition::Monster>();
@@ -680,9 +679,10 @@ private:
             GG::ListBox::Row(GG::X1, row_height),
             m_string(std::move(text))
         {
-            const std::string& label = (m_string.empty() ? EMPTY_STRING :
-                (stringtable_lookup ? UserString(m_string) : m_string));
-            m_label = GG::Wnd::Create<CUILabel>(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
+            auto label = std::string{m_string.empty() ? EMPTY_STRING :
+                                     stringtable_lookup ? UserString(m_string) :
+                                     m_string};
+            m_label = GG::Wnd::Create<CUILabel>(std::move(label), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
         }
 
         void CompleteConstruction() override {
@@ -698,7 +698,7 @@ private:
         std::shared_ptr<CUILabel> m_label;
     };
 
-    const std::string& GetString() {
+    std::string_view GetString() {
         if (!m_string_drop)
             return EMPTY_STRING;
         auto row_it = m_string_drop->CurrentItem();
@@ -711,7 +711,7 @@ private:
     }
 
     std::unique_ptr<ValueRef::ValueRef<std::string>> GetStringValueRef()
-    { return std::make_unique<ValueRef::Constant<std::string>>(GetString()); }
+    { return std::make_unique<ValueRef::Constant<std::string>>(std::string{GetString()}); }
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> GetStringValueRefVec() {
         std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> retval;
@@ -761,7 +761,7 @@ private:
 
     template <typename T>
     T GetEnum() {
-        const std::string& text = GetString();
+        auto text = GetString();
         T enum_val = T(-1);
         try {
             enum_val = boost::lexical_cast<T>(text);
@@ -803,22 +803,22 @@ private:
         m_class_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
         m_class_drop->SetStyle(GG::LIST_NOSORT);
 
-        static const std::vector<std::string> row_keys =
-        {ALL_CONDITION,              PLANETTYPE_CONDITION,       PLANETSIZE_CONDITION,
-         HASGROWTHSPECIAL_CONDITION, GGWITHPTYPE_CONDITION,      ASTWITHPTYPE_CONDITION,
-         FOCUSTYPE_CONDITION,        STARTYPE_CONDITION,         HASTAG_CONDITION,
-         HASSPECIAL_CONDITION,       EMPIREAFFILIATION_CONDITION,MONSTER_CONDITION,
-         ARMED_CONDITION,            STATIONARY_CONDITION,       CANPRODUCESHIPS_CONDITION,
-         CANCOLONIZE_CONDITION,      HOMEWORLD_CONDITION,        METERVALUE_CONDITION,
-         CAPITAL_CONDITION };
+        static constexpr std::array<std::string_view, 19> row_keys = {{
+            ALL_CONDITION,              PLANETTYPE_CONDITION,       PLANETSIZE_CONDITION,
+            HASGROWTHSPECIAL_CONDITION, GGWITHPTYPE_CONDITION,      ASTWITHPTYPE_CONDITION,
+            FOCUSTYPE_CONDITION,        STARTYPE_CONDITION,         HASTAG_CONDITION,
+            HASSPECIAL_CONDITION,       EMPIREAFFILIATION_CONDITION,MONSTER_CONDITION,
+            ARMED_CONDITION,            STATIONARY_CONDITION,       CANPRODUCESHIPS_CONDITION,
+            CANCOLONIZE_CONDITION,      HOMEWORLD_CONDITION,        METERVALUE_CONDITION,
+            CAPITAL_CONDITION }};
 
         GG::ListBox::iterator select_row_it = m_class_drop->end();
-        const std::string& init_condition_key = ConditionClassName(init_condition);
+        auto init_condition_key = ConditionClassName(init_condition);
 
         // fill droplist with rows for the available condition classes to be selected
-        for (auto& key : row_keys) {
+        for (auto key : row_keys) {
             auto row_it = m_class_drop->Insert(GG::Wnd::Create<ConditionRow>(
-                key,  GG::Y(ClientUI::Pts())));
+                std::string{key},  GG::Y(ClientUI::Pts())));
             if (init_condition_key == key)
                 select_row_it = row_it;
         }
