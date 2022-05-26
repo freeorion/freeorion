@@ -84,7 +84,7 @@ ARTISANS_INFLUENCE_STABILITY
             scope = Source
             activation = And [
                 HasTag name = "ARTISTIC"
-                Happiness low = 1
+                Happiness low = (NamedReal name = "ARTISANS_MIN_STABILITY_FOCUS" value = 1)
                 EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_ARTISAN_WORKSHOPS"
                 Focus type = "FOCUS_INFLUENCE"
             ]
@@ -96,7 +96,7 @@ ARTISANS_INFLUENCE_STABILITY
             scope = Source
             activation = And [
                 HasTag name = "ARTISTIC"
-                Happiness low = 10
+                Happiness low = (NamedReal name = "ARTISANS_MIN_STABILITY_NO_FOCUS" value = 10)
                 EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_ARTISAN_WORKSHOPS"
                 Not Focus type = "FOCUS_INFLUENCE"
             ]

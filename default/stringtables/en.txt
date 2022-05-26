@@ -12054,9 +12054,9 @@ Diversity
 
 PLC_DIVERSITY_DESC
 '''Gives bonuses or penalties to research, stability, and capital influence, dependent on the number of species in the empire.
-The research bonus requires a stability of [[value PLC_DIVERSITY_MIN_STABILITY]].
+The research bonus requires research focus and a stability of [[value PLC_DIVERSITY_MIN_STABILITY]].
 
-All bonuses or penalties are [[value PLC_DIVERSITY_SCALING]] per species above or below 4 species that are present.'''
+All bonuses or penalties are [[value PLC_DIVERSITY_SCALING]] per species above or below [[value PLC_DIVERSITY_THRESHOLD]] species that are present.'''
 
 PLC_DIVERSITY_SHORT_DESC
 Improves research, stability, and Influence
@@ -12306,7 +12306,9 @@ PLC_ARTISAN_WORKSHOPS
 Artisan Workshops
 
 PLC_ARTISAN_WORKSHOPS_DESC
-Planets with [[encyclopedia ARTISTIC]] species that are set to influence focus will generate influence and will export aesthetically pleasing crafts to planets in their system, boosting the stability of those planets.
+'''Planets with [[encyclopedia ARTISTIC]] species will generate influence by exporting aesthetically pleasing crafts.
+• Increases [[metertype METER_TARGET_INFLUENCE]] on planet set to influence focus with a minimum stability of [[value ARTISANS_MIN_STABILITY_FOCUS]] by [[value ARTISANS_INFLUENCE_FLAT_FOCUS]].
+• Increases [[metertype METER_TARGET_INFLUENCE]] on planet not set to influence focus and a minimum stability of [[value ARTISANS_MIN_STABILITY_NO_FOCUS]] by [[value ARTISANS_INFLUENCE_FLAT_NO_FOCUS]].'''
 
 PLC_ARTISAN_WORKSHOPS_SHORT_DESC
 [[encyclopedia ARTISTIC]] species produce luxuries

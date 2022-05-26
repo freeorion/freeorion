@@ -13,7 +13,7 @@ from typing import (
     Union,
 )
 
-from AIDependencies import INVALID_ID
+from AIDependencies import INVALID_ID, STABILITY_PER_LIKED_FOCUS
 from aistate_interface import get_aistate
 from common.fo_typing import PlanetId, SpeciesName, SystemId
 from empire.colony_builders import get_colony_builders, get_extra_colony_builders
@@ -278,3 +278,34 @@ def _calculate_get_planet_opinions() -> Dict[str, Opinion]:
             # else: no species -> neutral
             opinion.neutral.add(pid)
     return result
+
+
+def dislike_factor() -> float:
+    """Returns multiplier for dislike effects."""
+    # See happiness.macros
+    has_liberty = fo.getEmpire().policyAdopted("PLC_LIBERTY")
+    # conformance not used yet
+    return fo.getNamedValue("PLC_LIBERTY_DISLIKE_FACTOR") if has_liberty else 1.0
+
+
+def focus_stability_effect(species: fo.species, focus: str) -> float:
+    """How does the focus affect the stability of a planet with the species."""
+    if focus in species.likes:
+        return STABILITY_PER_LIKED_FOCUS
+    if focus in species.dislikes:
+        return STABILITY_PER_LIKED_FOCUS * dislike_factor()
+    return 0.0
+
+
+def stability_with_focus(planet: fo.planet, focus: str) -> float:
+    """
+    What would the planets target stability be when switched to the given focus.
+    Returns -99 if species cannot use the specified focus.
+    """
+    stability = planet.currentMeterValue(fo.meterType.targetHappiness)
+    species = fo.getSpecies(planet.speciesName)
+    if focus not in species.foci:
+        # The actual value here is not important. If some part of the AI asks for a stability,
+        # returning a big negative value here should stop it from considering that focus for anything.
+        return -99.0
+    return stability - focus_stability_effect(species, planet.focus) + focus_stability_effect(species, focus)
