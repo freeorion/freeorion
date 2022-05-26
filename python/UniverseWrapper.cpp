@@ -431,11 +431,16 @@ namespace FreeOrionPython {
             .def("initialMeterValue",           ObjectInitialMeterValue,
                                                 py::return_value_policy<py::return_by_value>())
             .add_property("tags",               make_function(
-                                                    +[](const UniverseObject& o) -> std::set<std::string> { return o.Tags(ScriptingContext{}); },
-                                                    py::return_value_policy<py::return_by_value>()
-                                                ))
-            //.add_property("tags",               make_function(&UniverseObject::Tags,        py::return_value_policy<py::return_by_value>()))
-            .def("hasTag",                      &UniverseObject::HasTag)
+                                                    +[](const UniverseObject& o) -> std::set<std::string>
+                                                    {
+                                                        const ScriptingContext context;
+                                                        const auto& tags = o.Tags(context);
+                                                        std::set<std::string> retval(tags.first.begin(), tags.first.end());
+                                                        std::copy(tags.second.begin(), tags.second.end(), std::inserter(retval, retval.end()));
+                                                        return retval;
+                                                    },
+                                                    py::return_value_policy<py::return_by_value>()))
+            .def("hasTag",                      +[](const UniverseObject& obj, const std::string& tag) -> bool { const ScriptingContext context; return obj.HasTag(tag, context); })
             .add_property("meters",             make_function(
                                                     +[](const UniverseObject& o) -> std::map<MeterType, Meter> { return {o.Meters().begin(), o.Meters().end()}; },
                                                     py::return_value_policy<py::return_by_value>()
@@ -590,6 +595,7 @@ namespace FreeOrionPython {
             .def("canMountInSlotType",          &ShipPart::CanMountInSlotType)
             .add_property("costTimeLocationInvariant",
                                                 &ShipPart::ProductionCostTimeLocationInvariant)
+            .def("hasTag",                      +[](const ShipPart& part, const std::string& tag) -> bool { return part.HasTag(tag); })
             .def("productionLocation",          &ShipPartProductionLocation, "Returns the result of Location condition (bool) in passed location_id (int)")
         ;
         py::def("getShipPart",                  +[](const std::string& name) -> const ShipPart* { return GetShipPart(name); }, py::return_value_policy<py::reference_existing_object>(), "Returns the ShipPart with the indicated name (string).");
@@ -614,7 +620,7 @@ namespace FreeOrionPython {
             .def("productionTime",              +[](const ShipHull& ship_hull, int empire_id, int location_id, int design_id) -> int { ScriptingContext context; return ship_hull.ProductionTime(empire_id, location_id, context, design_id); })
             .add_property("costTimeLocationInvariant",
                                                 &ShipHull::ProductionCostTimeLocationInvariant)
-            .def("hasTag",                      &ShipHull::HasTag)
+            .def("hasTag",                      +[](const ShipHull& hull, const std::string& tag) -> bool { return hull.HasTag(tag); })
             .def("productionLocation",          &HullProductionLocation, "Returns the result of Location condition (bool) in passed location_id (int)")
         ;
         py::def("getShipHull",                  +[](const std::string& name) { return GetShipHull(name); },

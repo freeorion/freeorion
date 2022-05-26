@@ -102,13 +102,25 @@ public:
     [[nodiscard]] int                           SpecialAddedOnTurn(const std::string& name) const;      ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
     [[nodiscard]] float                         SpecialCapacity(const std::string& name) const;         ///> returns the capacity of the special with name \a name or 0 if that special is not present
 
-    /** Returns all tags this object has. */
-    [[nodiscard]] virtual std::set<std::string> Tags(const ScriptingContext&) const;
+    struct TagVecs {
+        TagVecs() = default;
+        TagVecs(const std::vector<std::string>& vec) :
+            first(vec)
+        {}
+        TagVecs(const std::vector<std::string>& vec1, const std::vector<std::string>& vec2) :
+            first(vec1),
+            second(vec2)
+        {}
+        bool empty() const { return first.empty() && second.empty(); }
+        auto size() const { return first.size() + second.size(); }
+        const std::vector<std::string>& first = EMPTY_STRING_VEC;
+        const std::vector<std::string>& second = EMPTY_STRING_VEC;
+        static const inline std::vector<std::string> EMPTY_STRING_VEC{};
+    };
+    [[nodiscard]] virtual TagVecs               Tags(const ScriptingContext&) const { return {}; }; ///< Returns all tags this object has
+    [[nodiscard]] virtual bool                  HasTag(std::string_view name, const ScriptingContext&) const { return false; } ///< Returns true iff this object has the tag with the indicated \a name
 
-    /** Returns true iff this object has the tag with the indicated \a name. */
-    [[nodiscard]] virtual bool                  HasTag(const std::string& name, const ScriptingContext&) const;
-
-    [[nodiscard]] virtual UniverseObjectType    ObjectType() const;
+    [[nodiscard]] virtual UniverseObjectType  ObjectType() const;
 
     /** Return human readable string description of object offset \p ntabs from
         margin. */

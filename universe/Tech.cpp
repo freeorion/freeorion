@@ -131,13 +131,16 @@ Tech::Tech(std::string&& name, std::string&& description,
     m_research_cost(std::move(research_cost)),
     m_research_turns(std::move(research_turns)),
     m_researchable(researchable),
+    m_tags([&tags]() {
+        std::vector<std::string> retval(tags.begin(), tags.end());
+        std::for_each(retval.begin(), retval.end(), [](auto& t) { boost::to_upper<std::string>(t); });
+        return retval;
+    }()),
     m_effects(std::move(effects)),
     m_prerequisites(std::move(prerequisites)),
     m_unlocked_items(std::move(unlocked_items)),
     m_graphic(std::move(graphic))
 {
-    for (const std::string& tag : tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
     Init();
 }
 
@@ -153,14 +156,17 @@ Tech::Tech(TechInfo&& tech_info,
     m_research_cost(std::move(tech_info.research_cost)),
     m_research_turns(std::move(tech_info.research_turns)),
     m_researchable(tech_info.researchable),
+    m_tags([&tech_info]() {
+        std::vector<std::string> retval(tech_info.tags.begin(), tech_info.tags.end());
+        std::for_each(retval.begin(), retval.end(), [](auto& t) { boost::to_upper<std::string>(t); });
+        return retval;
+    }()),
     m_prerequisites(std::move(prerequisites)),
     m_unlocked_items(std::move(unlocked_items)),
     m_graphic(std::move(graphic))
 {
     for (auto&& effect : effects)
         m_effects.push_back(std::move(effect));
-    for (const std::string& tag : tech_info.tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
     Init();
 }
 

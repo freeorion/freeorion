@@ -110,6 +110,11 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
     m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
     m_slots(std::move(slots)),
+    m_tags([&common_params]() {
+        std::for_each(common_params.tags.begin(), common_params.tags.end(),
+                      [](auto& t) { boost::to_upper<std::string>(t); });
+        return std::move(common_params.tags);
+    }()),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
@@ -123,9 +128,6 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
          default_speed_effects,
          default_stealth_effects,
          default_structure_effects);
-
-    for (const std::string& tag : common_params.tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
 }
 
 ShipHull::~ShipHull() = default;

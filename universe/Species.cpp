@@ -79,6 +79,11 @@ Species::Species(std::string&& name, std::string&& desc,
     m_can_produce_ships(can_produce_ships),
     m_spawn_rate(spawn_rate),
     m_spawn_limit(spawn_limit),
+    m_tags([&tags]() {
+        std::vector<std::string> retval(tags.begin(), tags.end());
+        std::for_each(retval.begin(), retval.end(), [](auto& t) { boost::to_upper<std::string>(t); });
+        return retval;
+    }()),
     m_likes(std::move(likes)),
     m_dislikes(std::move(dislikes)),
     m_graphic(std::move(graphic))
@@ -87,9 +92,6 @@ Species::Species(std::string&& name, std::string&& desc,
         m_effects.push_back(std::move(effect));
 
     Init();
-
-    for (const std::string& tag : tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
 }
 
 Species::~Species() = default;

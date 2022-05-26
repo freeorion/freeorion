@@ -159,6 +159,11 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
     m_production_cost(std::move(common_params.production_cost)),
     m_production_time(std::move(common_params.production_time)),
     m_mountable_slot_types(std::move(mountable_slot_types)),
+    m_tags([&common_params]() {
+        std::for_each(common_params.tags.begin(), common_params.tags.end(),
+                      [](auto& t) { boost::to_upper<std::string>(t); });
+        return std::move(common_params.tags);
+    }()),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
@@ -171,9 +176,6 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
     m_producible(common_params.producible)
 {
     Init(std::move(common_params.effects));
-
-    for (const std::string& tag : common_params.tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
 
     TraceLogger() << "ShipPart::ShipPart: name: " << m_name
                   << " description: " << m_description

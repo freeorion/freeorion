@@ -17,17 +17,18 @@ public:
     typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeterMap;
 
     [[nodiscard]] bool HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
-    [[nodiscard]] std::set<std::string> Tags(const ScriptingContext& context) const override;
-    [[nodiscard]] bool HasTag(const std::string& name, const ScriptingContext& context) const override;
+
+    [[nodiscard]] TagVecs            Tags(const ScriptingContext& context) const override;
+    [[nodiscard]] bool               HasTag(std::string_view name, const ScriptingContext& context) const override;
     [[nodiscard]] UniverseObjectType ObjectType() const override;
-    [[nodiscard]] std::string Dump(unsigned short ntabs = 0) const override;
+    [[nodiscard]] std::string        Dump(unsigned short ntabs = 0) const override;
 
-    [[nodiscard]] int ContainerObjectID() const override
-    { return m_fleet_id; }
+    [[nodiscard]] int ContainerObjectID() const override { return m_fleet_id; }
+    [[nodiscard]] bool ContainedBy(int object_id) const override;
 
-    bool ContainedBy(int object_id) const override;
     [[nodiscard]] const std::string& PublicName(int empire_id, const Universe& universe) const override;
     [[nodiscard]] const std::string& PublicName(int empire_id) const;
+
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** Back propagates part meters (which UniverseObject equivalent doesn't). */
@@ -40,73 +41,74 @@ public:
     /** Returns new copy of this Ship. */
     [[nodiscard]] Ship* Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
 
-    void Copy(std::shared_ptr<const UniverseObject> copied_object, 
+    void Copy(std::shared_ptr<const UniverseObject> copied_object,
               const Universe& universe, int empire_id = ALL_EMPIRES) override;
 
-    [[nodiscard]] int                         DesignID() const            { return m_design_id; }             ///< returns the design id of the ship
-    [[nodiscard]] int                         FleetID() const             { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in
-    [[nodiscard]] int                         ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
-    [[nodiscard]] int                         ArrivedOnTurn() const       { return m_arrived_on_turn; }       ///< returns the turn on which this ship arrived in its current system
-    [[nodiscard]] int                         LastResuppliedOnTurn() const{ return m_last_resupplied_on_turn;}///< returns the turn on which this ship was last resupplied / upgraded
-    [[nodiscard]] bool                        IsMonster(const Universe& universe) const;
-    [[nodiscard]] bool                        CanDamageShips(const ScriptingContext& context, float target_shields = 0.0f) const;
-    [[nodiscard]] bool                        CanDestroyFighters(const ScriptingContext& context) const;
-    [[nodiscard]] bool                        IsArmed(const ScriptingContext& context) const;
-    [[nodiscard]] bool                        HasFighters(const Universe& universe) const;
-    [[nodiscard]] bool                        CanColonize(const Universe& universe, const SpeciesManager& sm) const;
-    [[nodiscard]] bool                        HasTroops(const Universe& universe) const;
-    [[nodiscard]] bool                        CanHaveTroops(const Universe& universe) const;
-    [[nodiscard]] bool                        CanBombard(const Universe& universe) const;
-    [[nodiscard]] const std::string&          SpeciesName() const             { return m_species_name; }
-    [[nodiscard]] float                       Speed() const;
-    [[nodiscard]] float                       ColonyCapacity(const Universe& universe) const;
-    [[nodiscard]] float                       TroopCapacity(const Universe& universe) const;
+    [[nodiscard]] int   DesignID() const            { return m_design_id; }             ///< returns the design id of the ship
+    [[nodiscard]] int   FleetID() const             { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in
+    [[nodiscard]] int   ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
+    [[nodiscard]] int   ArrivedOnTurn() const       { return m_arrived_on_turn; }       ///< returns the turn on which this ship arrived in its current system
+    [[nodiscard]] int   LastResuppliedOnTurn() const{ return m_last_resupplied_on_turn;}///< returns the turn on which this ship was last resupplied / upgraded
+    [[nodiscard]] bool  IsMonster(const Universe& universe) const;
+    [[nodiscard]] bool  CanDamageShips(const ScriptingContext& context, float target_shields = 0.0f) const;
+    [[nodiscard]] bool  CanDestroyFighters(const ScriptingContext& context) const;
+    [[nodiscard]] bool  IsArmed(const ScriptingContext& context) const;
+    [[nodiscard]] bool  HasFighters(const Universe& universe) const;
+    [[nodiscard]] bool  CanColonize(const Universe& universe, const SpeciesManager& sm) const;
+    [[nodiscard]] bool  HasTroops(const Universe& universe) const;
+    [[nodiscard]] bool  CanHaveTroops(const Universe& universe) const;
+    [[nodiscard]] bool  CanBombard(const Universe& universe) const;
+    [[nodiscard]] auto& SpeciesName() const             { return m_species_name; }
+    [[nodiscard]] float Speed() const;
+    [[nodiscard]] float ColonyCapacity(const Universe& universe) const;
+    [[nodiscard]] float TroopCapacity(const Universe& universe) const;
 
-    [[nodiscard]] bool                        OrderedScrapped() const         { return m_ordered_scrapped; }          ///< returns true iff this ship has been ordered scrapped, or false otherwise
-    [[nodiscard]] int                         OrderedColonizePlanet() const   { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
-    [[nodiscard]] int                         OrderedInvadePlanet() const     { return m_ordered_invade_planet_id; }  ///< returns the ID of the planet this ship has been ordered to invade with ground troops, or INVALID_OBJECT_ID if this ship hasn't been ordered to invade a planet
-    [[nodiscard]] int                         OrderedBombardPlanet() const    { return m_ordered_bombard_planet_id; } ///< returns the ID of the planet this ship has been ordered to bombard, or INVALID_OBJECT_ID if this ship hasn't been ordered to bombard a planet
-    [[nodiscard]] int                         LastTurnActiveInCombat() const  { return m_last_turn_active_in_combat; }///< returns the last turn this ship has been actively involved in combat
+    [[nodiscard]] bool  OrderedScrapped() const         { return m_ordered_scrapped; }          ///< returns true iff this ship has been ordered scrapped, or false otherwise
+    [[nodiscard]] int   OrderedColonizePlanet() const   { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
+    [[nodiscard]] int   OrderedInvadePlanet() const     { return m_ordered_invade_planet_id; }  ///< returns the ID of the planet this ship has been ordered to invade with ground troops, or INVALID_OBJECT_ID if this ship hasn't been ordered to invade a planet
+    [[nodiscard]] int   OrderedBombardPlanet() const    { return m_ordered_bombard_planet_id; } ///< returns the ID of the planet this ship has been ordered to bombard, or INVALID_OBJECT_ID if this ship hasn't been ordered to bombard a planet
+    [[nodiscard]] int   LastTurnActiveInCombat() const  { return m_last_turn_active_in_combat; }///< returns the last turn this ship has been actively involved in combat
 
-    [[nodiscard]] const PartMeterMap&         PartMeters() const { return m_part_meters; }                                ///< returns this Ship's part meters
-    [[nodiscard]] const Meter*                GetPartMeter(MeterType type, const std::string& part_name) const;           ///< returns the requested part Meter, or 0 if no such part Meter of that type is found in this ship for that part name
-    [[nodiscard]] float                       CurrentPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns current value of the specified part meter \a type for the specified part name
-    [[nodiscard]] float                       InitialPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns this turn's initial value for the specified part meter \a type for the specified part name
+    [[nodiscard]] const PartMeterMap& PartMeters() const { return m_part_meters; }                                ///< returns this Ship's part meters
+    [[nodiscard]] const Meter*        GetPartMeter(MeterType type, const std::string& part_name) const;           ///< returns the requested part Meter, or 0 if no such part Meter of that type is found in this ship for that part name
+    [[nodiscard]] float               CurrentPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns current value of the specified part meter \a type for the specified part name
+    [[nodiscard]] float               InitialPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns this turn's initial value for the specified part meter \a type for the specified part name
 
     /** Returns sum of current value for part meter @p type of all parts with ShipPartClass @p part_class */
-    [[nodiscard]] float                       SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class, const Universe& universe) const;
+    [[nodiscard]] float SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class, const Universe& universe) const;
 
-    [[nodiscard]] float                       WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext& context) const; ///< versus fighter enemies
-    [[nodiscard]] float                       WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& context) const; ///< versus an enemy context.effect_target ship with a given shields meter
-    [[nodiscard]] float                       TotalWeaponsFighterDamage(const ScriptingContext& context, bool include_fighters = true) const; ///< versus an fighter enemy
-    [[nodiscard]] float                       TotalWeaponsShipDamage(const ScriptingContext& context, float shield_DR = 0.0f, bool include_fighters = true) const; ///< versus an enemy ship with a given shields DR
-    [[nodiscard]] float                       FighterCount() const;
-    [[nodiscard]] float                       FighterMax() const;
-    [[nodiscard]] std::vector<float>          AllWeaponsFighterDamage(const ScriptingContext& context, bool include_fighters = true) const;   ///< any shots against enemy fighters
+    [[nodiscard]] float WeaponPartFighterDamage(const ShipPart* part, const ScriptingContext& context) const; ///< versus fighter enemies
+    [[nodiscard]] float WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& context) const; ///< versus an enemy context.effect_target ship with a given shields meter
+    [[nodiscard]] float TotalWeaponsFighterDamage(const ScriptingContext& context, bool include_fighters = true) const; ///< versus an fighter enemy
+    [[nodiscard]] float TotalWeaponsShipDamage(const ScriptingContext& context, float shield_DR = 0.0f, bool include_fighters = true) const; ///< versus an enemy ship with a given shields DR
+    [[nodiscard]] float FighterCount() const;
+    [[nodiscard]] float FighterMax() const;
+
+    [[nodiscard]] std::vector<float> AllWeaponsFighterDamage(const ScriptingContext& context, bool include_fighters = true) const;   ///< any shots against enemy fighters
     /** returns any nonzero weapons strengths after adjustment versus an enemy with a given @p shield_DR shield rating,
       * uses the normal meters so it might be lower than AllWeaponsMaxShipDamage
       * if e.g. the ship has less than a full complement of fighters */
-    [[nodiscard]] std::vector<float>          AllWeaponsShipDamage(const ScriptingContext& context, float shield_DR = 0.0f, bool include_fighters = true) const;
+    [[nodiscard]] std::vector<float> AllWeaponsShipDamage(const ScriptingContext& context, float shield_DR = 0.0f, bool include_fighters = true) const;
     /** returns any nonzero weapons strengths after adjustment versus an enemy with a given @p shield_DR shield rating,
       * assuming the ship has been resupplied recently (i.e. this uses Max*Meters) */
-    [[nodiscard]] std::vector<float>          AllWeaponsMaxShipDamage(const ScriptingContext& context, float shield_DR = 0.0f, bool include_fighters = true) const;
+    [[nodiscard]] std::vector<float> AllWeaponsMaxShipDamage(const ScriptingContext& context, float shield_DR = 0.0f, bool include_fighters = true) const;
 
-    void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
-    void            SetArrivedOnTurn(int turn);
-    void            Resupply();
-    void            SetSpecies(std::string species_name);
-    void            SetOrderedScrapped(bool b = true);                          ///< flags ship for scrapping
-    void            SetColonizePlanet(int planet_id);                           ///< marks ship to colonize the indicated planet
-    void            ClearColonizePlanet();                                      ///< marks ship to colonize no planets
-    void            SetInvadePlanet(int planet_id);                             ///< marks ship to invade the indicated planet
-    void            ClearInvadePlanet();                                        ///< marks ship to invade no planets
-    void            SetBombardPlanet(int planet_id);                            ///< marks ship to bombard the indicated planet
-    void            ClearBombardPlanet();                                       ///< marks ship to bombard no planets
-    void            SetLastTurnActiveInCombat(int turn) { m_last_turn_active_in_combat = turn; } ///< sets the last turn this ship was actively involved in combat
+    void SetFleetID(int fleet_id); ///< sets the ID of the fleet the ship resides in
+    void SetArrivedOnTurn(int turn);
+    void Resupply();
+    void SetSpecies(std::string species_name);
+    void SetOrderedScrapped(bool b = true); ///< flags ship for scrapping
+    void SetColonizePlanet(int planet_id);  ///< marks ship to colonize the indicated planet
+    void ClearColonizePlanet();             ///< marks ship to colonize no planets
+    void SetInvadePlanet(int planet_id);    ///< marks ship to invade the indicated planet
+    void ClearInvadePlanet();               ///< marks ship to invade no planets
+    void SetBombardPlanet(int planet_id);   ///< marks ship to bombard the indicated planet
+    void ClearBombardPlanet();              ///< marks ship to bombard no planets
+    void SetLastTurnActiveInCombat(int turn) { m_last_turn_active_in_combat = turn; } ///< sets the last turn this ship was actively involved in combat
 
     [[nodiscard]] Meter* GetPartMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
-    virtual void    SetShipMetersToMax();
+    virtual void SetShipMetersToMax();
 
     /** Create a ship from an @p empire_id, @p design_id, @p species_name and
         @p production_by_empire_id. */

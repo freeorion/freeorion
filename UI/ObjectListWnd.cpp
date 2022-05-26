@@ -928,7 +928,8 @@ private:
             std::set<std::string> all_tags;
             for (auto& obj : objects.all()) {
                 auto tags = obj->Tags(context);
-                all_tags.insert(tags.begin(), tags.end());
+                all_tags.insert(tags.first.begin(), tags.first.end());
+                all_tags.insert(tags.second.begin(), tags.second.end());
             }
 
             for (const std::string& tag : all_tags)

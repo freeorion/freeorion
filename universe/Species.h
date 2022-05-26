@@ -122,7 +122,11 @@ public:
     bool                            Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
     bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
     bool                            CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
-    const std::set<std::string>&    Tags() const            { return m_tags; }
+
+    const std::vector<std::string>& Tags() const            { return m_tags; }
+    bool                            HasTag(std::string_view tag) const
+    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
+
     const std::set<std::string>&    Likes() const           { return m_likes; }
     const std::set<std::string>&    Dislikes() const        { return m_dislikes; }
     const std::string&              Graphic() const         { return m_graphic; }           ///< returns the name of the grapic file for this species
@@ -175,7 +179,7 @@ private:
     float                                   m_spawn_rate = 1.0;
     int                                     m_spawn_limit = 99999;
 
-    std::set<std::string>                   m_tags;
+    const std::vector<std::string>          m_tags;
     std::set<std::string>                   m_likes;
     std::set<std::string>                   m_dislikes;
     std::string                             m_graphic;

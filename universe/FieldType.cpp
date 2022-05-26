@@ -35,11 +35,13 @@ FieldType::FieldType(std::string&& name, std::string&& description,
     m_name(std::move(name)),
     m_description(std::move(description)),
     m_stealth(stealth),
+    m_tags([&tags]() {
+        std::vector<std::string> retval(tags.begin(), tags.end());
+        std::for_each(retval.begin(), retval.end(), [](auto& t) { boost::to_upper<std::string>(t); });
+        return retval;
+    }()),
     m_graphic(std::move(graphic))
 {
-    for (const std::string& tag : tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
-
     for (auto&& effect : effects)
         m_effects.push_back(std::move(effect));
 

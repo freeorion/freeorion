@@ -83,7 +83,9 @@ public:
     [[nodiscard]] int                 ResearchTime(int empire_id, const ScriptingContext& context) const; //!< returns the number of turns required to research this tech, if ResearchCost() RPs are spent per turn
     [[nodiscard]] bool                Researchable() const        { return m_researchable; }              //!< returns whether this tech is researchable by players and appears on the tech tree
 
-    [[nodiscard]] const std::set<std::string>& Tags() const { return m_tags; }
+    [[nodiscard]] const std::vector<std::string>& Tags() const { return m_tags; }
+    [[nodiscard]] bool                            HasTag(std::string_view tag) const
+    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
 
     /** returns the effects that are applied to the discovering empire's capital
       * when this tech is researched; not all techs have effects, in which case
@@ -117,7 +119,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>> m_research_cost;
     std::unique_ptr<ValueRef::ValueRef<int>>    m_research_turns;
     bool                            m_researchable = false;
-    std::set<std::string>           m_tags;
+    const std::vector<std::string>  m_tags;
     std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
     std::set<std::string>           m_prerequisites;
     std::vector<UnlockableItem>     m_unlocked_items;

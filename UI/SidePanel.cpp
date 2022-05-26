@@ -53,9 +53,9 @@ namespace {
     std::map<std::pair<std::string, int>, float> species_colony_projections;
 
     /** @content_tag{CTRL_ALWAYS_BOMBARD} Select this ship during automatic ship selection for bombard, regardless of any tags **/
-    const std::string TAG_BOMBARD_ALWAYS = "CTRL_ALWAYS_BOMBARD";
+    constexpr std::string_view TAG_BOMBARD_ALWAYS = "CTRL_ALWAYS_BOMBARD";
     /** @content_tag{CTRL_BOMBARD_} Prefix tag allowing automatic ship selection for bombard, must post-fix a valid planet tag **/
-    const std::string TAG_BOMBARD_PREFIX = "CTRL_BOMBARD_";
+    constexpr std::string_view TAG_BOMBARD_PREFIX = "CTRL_BOMBARD_";
 
     void PlaySidePanelOpenSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.map.sidepanel.open.sound.path"), true); }
@@ -1207,21 +1207,23 @@ namespace {
      *  the corresponding "CTRL_BOMBARD_ROBOTIC" tag, the ship would be auto-selected to bombard that planet.
      *  If the Ship contains the content tag defined in TAG_BOMBARD_ALWAYS, only that tag will be returned.
      */
-    std::vector<std::string> BombardTagsForShip(const Ship* ship, const ScriptingContext& context) {
-        std::vector<std::string> retval;
+    std::vector<std::string_view> BombardTagsForShip(const Ship* ship, const ScriptingContext& context) {
+        std::vector<std::string_view> retval;
         if (!ship)
             return retval;
-        auto&& tags{ship->Tags(context)};
-        retval.reserve(tags.size());
-        for (auto& tag : tags) {
-            if (tag == TAG_BOMBARD_ALWAYS) {
-                retval.clear();
-                retval.emplace_back(tag);
-                break;
-            } else if ((tag.length() > TAG_BOMBARD_PREFIX.length()) &&
-                       (tag.substr(0, TAG_BOMBARD_PREFIX.length()) == TAG_BOMBARD_PREFIX))
-            { retval.emplace_back(tag.substr(TAG_BOMBARD_PREFIX.length())); }
+        auto tags{ship->Tags(context)};
+        if (ship->HasTag(TAG_BOMBARD_ALWAYS, context)) {
+            retval.push_back(TAG_BOMBARD_ALWAYS);
+            return retval;
         }
+
+        retval.reserve(tags.size());
+        std::copy_if(tags.first.begin(), tags.first.end(), std::back_inserter(retval),
+                     [len{TAG_BOMBARD_PREFIX.length()}](std::string_view t) { return t.substr(0, len) == TAG_BOMBARD_PREFIX; });
+        std::copy_if(tags.second.begin(), tags.second.end(), std::back_inserter(retval),
+                     [len{TAG_BOMBARD_PREFIX.length()}](std::string_view t) { return t.substr(0, len) == TAG_BOMBARD_PREFIX; });
+        std::for_each(retval.begin(), retval.end(),
+                      [len{TAG_BOMBARD_PREFIX.length()}](auto& tag) { tag = tag.substr(len); });
         return retval;
     }
 
@@ -1510,7 +1512,7 @@ std::set<const Ship*> AutomaticallyChosenBombardShips(int target_planet_id) { //
 
         // Select ship if the planet contains a content tag specified by the ship,
         // or ship is tagged to always be selected
-        for (const std::string& tag : BombardTagsForShip(ship.get(), context)) {
+        for (std::string_view tag : BombardTagsForShip(ship.get(), context)) {
             if ((tag == TAG_BOMBARD_ALWAYS) || (target_planet->HasTag(tag, context))) {
                 retval.insert(ship.get());
                 break;

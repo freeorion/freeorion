@@ -158,12 +158,6 @@ float UniverseObject::SpecialCapacity(const std::string& name) const {
     return it->second.second;
 }
 
-std::set<std::string> UniverseObject::Tags(const ScriptingContext&) const
-{ return {}; }
-
-bool UniverseObject::HasTag(const std::string& name, const ScriptingContext&) const
-{ return false; }
-
 UniverseObjectType UniverseObject::ObjectType() const
 { return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE; }
 

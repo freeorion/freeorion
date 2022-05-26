@@ -146,17 +146,15 @@ bool Planet::HostileToEmpire(int empire_id, const EmpireManager& empires) const 
     return empires.GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
-std::set<std::string> Planet::Tags(const ScriptingContext& context) const {
-    const Species* species = context.species.GetSpecies(SpeciesName());
-    if (!species)
-        return {};
-    return species->Tags();
+UniverseObject::TagVecs Planet::Tags(const ScriptingContext& context) const {
+    if (const Species* species = context.species.GetSpecies(SpeciesName()))
+        return species->Tags();
+    return {};
 }
 
-bool Planet::HasTag(const std::string& name, const ScriptingContext& context) const {
+bool Planet::HasTag(std::string_view name, const ScriptingContext& context) const {
     const Species* species = context.species.GetSpecies(SpeciesName());
-
-    return species && species->Tags().count(name);
+    return species && species->HasTag(name);
 }
 
 UniverseObjectType Planet::ObjectType() const

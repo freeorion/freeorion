@@ -53,7 +53,7 @@ namespace {
 CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& production_cost_,
                            std::unique_ptr<ValueRef::ValueRef<int>>&& production_time_,
                            bool producible_,
-                           const std::set<std::string>& tags_,
+                           std::set<std::string>& tags_,
                            std::unique_ptr<Condition::Condition>&& location_,
                            std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects_,
                            ConsumptionMap<MeterType>&& production_meter_consumption_,
@@ -62,14 +62,14 @@ CommonParams::CommonParams(std::unique_ptr<ValueRef::ValueRef<double>>&& product
     production_cost(std::move(production_cost_)),
     production_time(std::move(production_time_)),
     producible(producible_),
+    tags(tags_.begin(), tags_.end()),
     production_meter_consumption(std::move(production_meter_consumption_)),
     production_special_consumption(std::move(production_special_consumption_)),
     location(std::move(location_)),
     enqueue_location(std::move(enqueue_location_)),
     effects(std::move(effects_))
 {
-    for (const std::string& tag : tags_)
-        tags.insert(boost::to_upper_copy<std::string>(tag));
+    std::transform(tags.begin(), tags.end(), tags.begin(), [](const auto& t) { return boost::to_upper_copy(t); } );
 }
 
 CommonParams::~CommonParams() = default;
@@ -96,11 +96,11 @@ ParsedShipDesign::ParsedShipDesign(
     m_name_desc_in_stringtable(name_desc_in_stringtable)
 {}
 
+
 ////////////////////////////////////////////////
 // ShipDesign
 ////////////////////////////////////////////////
-ShipDesign::ShipDesign()
-{}
+ShipDesign::ShipDesign() = default;
 
 ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_throw,
                        std::string name, std::string description,
@@ -149,7 +149,7 @@ void ShipDesign::SetName(const std::string& name) {
 void ShipDesign::SetUUID(const boost::uuids::uuid& uuid)
 { m_uuid = uuid; }
 
-const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */) const {
+const std::string& ShipDesign::Description(bool stringtable_lookup) const {
     if (m_name_desc_in_stringtable && stringtable_lookup)
         return UserString(m_description);
     else
@@ -574,6 +574,8 @@ void ShipDesign::BuildStatCaches() {
         return;
     }
 
+    std::vector<std::string_view> tags(hull->Tags().begin(), hull->Tags().end());
+
     m_producible =      hull->Producible();
     m_detection =       hull->Detection();
     m_colony_capacity = hull->ColonyCapacity();
@@ -598,6 +600,8 @@ void ShipDesign::BuildStatCaches() {
             ErrorLogger() << "ShipDesign::BuildStatCaches couldn't get part with name " << part_name;
             continue;
         }
+
+        std::copy(part->Tags().begin(), part->Tags().end(), std::back_inserter(tags));
 
         if (!part->Producible())
             m_producible = false;
@@ -670,6 +674,14 @@ void ShipDesign::BuildStatCaches() {
             part_class < ShipPartClass::NUM_SHIP_PART_CLASSES)
         { m_num_part_classes[part_class]++; }
     }
+
+    // ensure tags are unique and copy into this->m_tags
+    std::sort(tags.begin(), tags.end());
+    auto last = std::unique(tags.begin(), tags.end());
+    m_tags.clear();
+    m_tags.reserve(tags.size());
+    std::transform(tags.begin(), last, std::back_inserter(m_tags),
+                   [](std::string_view sv) { return std::string{sv}; });
 }
 
 std::string ShipDesign::Dump(unsigned short ntabs) const {
@@ -734,10 +746,10 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
     return first_parts == second_parts;
 }
 
+
 /////////////////////////////////////
 // PredefinedShipDesignManager     //
 /////////////////////////////////////
-// static(s)
 PredefinedShipDesignManager* PredefinedShipDesignManager::s_instance = nullptr;
 
 PredefinedShipDesignManager::PredefinedShipDesignManager() {
@@ -803,7 +815,6 @@ PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesig
     static PredefinedShipDesignManager manager;
     return manager;
 }
-
 
 std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedShipDesigns() const {
     CheckPendingDesignsTypes();

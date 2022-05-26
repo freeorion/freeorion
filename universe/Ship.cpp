@@ -21,8 +21,10 @@
 #include "../util/Random.h"
 #include "../util/i18n.h"
 
-Ship::Ship(int empire_id, int design_id, std::string species_name, const Universe& universe,
-           const SpeciesManager& species, int produced_by_empire_id, int current_turn) :
+
+Ship::Ship(int empire_id, int design_id, std::string species_name,
+           const Universe& universe, const SpeciesManager& species,
+           int produced_by_empire_id, int current_turn) :
     UniverseObject{"", empire_id, current_turn},
     m_species_name(std::move(species_name)),
     m_design_id(design_id),
@@ -36,7 +38,8 @@ Ship::Ship(int empire_id, int design_id, std::string species_name, const Univers
         DebugLogger() << "Constructing a ship with an invalid design ID: " << design_id
                       << "  ... could happen if copying from a ship seen only with basic vis...";
 
-    if (!m_species_name.empty() && !species.GetSpecies(m_species_name))
+    const auto ship_species = species.GetSpecies(m_species_name);
+    if (!m_species_name.empty() && !ship_species)
         DebugLogger() << "Ship created with invalid species name: " << m_species_name;
 
 
@@ -153,46 +156,25 @@ bool Ship::HostileToEmpire(int empire_id, const EmpireManager& empires) const {
         empires.GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
-std::set<std::string> Ship::Tags(const ScriptingContext& context) const {
+bool Ship::HasTag(std::string_view name, const ScriptingContext& context) const {
     const ShipDesign* design = context.ContextUniverse().GetShipDesign(m_design_id);
-    if (!design)
-        return {};
-
-    const ShipHull* hull = ::GetShipHull(design->Hull());
-    if (!hull)
-        return {};
-
-    std::set<std::string> retval{hull->Tags()};
-
-    for (const std::string& part_name : design->Parts()) {
-        if (const ShipPart* part = GetShipPart(part_name))
-            retval.insert(part->Tags().begin(), part->Tags().end());
-    }
-
-    return retval;
+    if (design && design->HasTag(name))
+        return true;
+    const Species* species = context.species.GetSpecies(m_species_name);
+    return species && species->HasTag(name);
 }
 
-bool Ship::HasTag(const std::string& name, const ScriptingContext& context) const {
+UniverseObject::TagVecs Ship::Tags(const ScriptingContext& context) const {
     const ShipDesign* design = context.ContextUniverse().GetShipDesign(m_design_id);
-    if (design) {
-        // check hull for tag
-        const ShipHull* hull = ::GetShipHull(design->Hull());
-        if (hull && hull->Tags().count(name))
-            return true;
+    const Species* species = context.species.GetSpecies(m_species_name);
 
-        // check parts for tag
-        for (const std::string& part_name : design->Parts()) {
-            const ShipPart* part = GetShipPart(part_name);
-            if (part && part->Tags().count(name))
-                return true;
-        }
-    }
-    // check species for tag
-    const Species* species = context.species.GetSpecies(SpeciesName());
-    if (species && species->Tags().count(name))
-        return true;
-
-    return false;
+    if (design && species)
+        return {design->Tags(), species->Tags()};
+    else if (design)
+        return design->Tags();
+    else if (species)
+        return species->Tags();
+    else return {};
 }
 
 UniverseObjectType Ship::ObjectType() const
@@ -631,6 +613,7 @@ void Ship::SetSpecies(std::string species_name) {
     if (!GetSpecies(species_name))
         ErrorLogger() << "Ship::SetSpecies couldn't get species with name " << species_name;
     m_species_name = std::move(species_name);
+    
 }
 
 void Ship::SetOrderedScrapped(bool b) {

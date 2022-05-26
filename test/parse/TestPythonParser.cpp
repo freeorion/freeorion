@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
 
         const auto& tech_tags = (*tech_it)->Tags();
         BOOST_REQUIRE_EQUAL(1, tech_tags.size());
-        BOOST_REQUIRE_EQUAL(1, tech_tags.count("PEDIA_LEARNING_CATEGORY"));
+        BOOST_REQUIRE((*tech_it)->HasTag("PEDIA_LEARNING_CATEGORY"));
 
         const auto& tech_items = (*tech_it)->UnlockedItems();
         BOOST_REQUIRE_EQUAL(1, tech_items.size());

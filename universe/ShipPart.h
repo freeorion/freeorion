@@ -37,7 +37,7 @@ FO_ENUM(
 //! Describes an equipable part for a ship.
 class FO_COMMON_API ShipPart {
 public:
-    ShipPart() = default;
+    ShipPart() = delete;
 
     ShipPart(ShipPartClass part_class, double capacity, double stat2,
              CommonParams&& common_params, std::string&& name,
@@ -118,8 +118,10 @@ public:
     auto ProductionSpecialConsumption() const -> const ConsumptionMap<std::string>&
     { return m_production_special_consumption; }
 
-    auto Tags() const -> const std::set<std::string>&
-    { return m_tags; }
+    const auto& Tags() const { return m_tags; }
+
+    bool HasTag(std::string_view tag) const
+    { return std::any_of(m_tags.begin(), m_tags.end(), [&tag](const auto& t) { return t == tag; }); }
 
     //! Returns the condition that determines the locations where ShipDesign
     //! containing part can be produced
@@ -161,7 +163,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<double>>         m_production_cost;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
     std::vector<ShipSlotType>                           m_mountable_slot_types;
-    std::set<std::string>                               m_tags;
+    const std::vector<std::string>                      m_tags;
     ConsumptionMap<MeterType>                           m_production_meter_consumption;
     ConsumptionMap<std::string>                         m_production_special_consumption;
     std::unique_ptr<Condition::Condition>               m_location;

@@ -1284,8 +1284,12 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
     }
 
     if (property_name == "Tags") {
+        std::vector<std::string> retval;
         auto tags = object->Tags(context);
-        return {tags.begin(), tags.end()};
+        retval.reserve(tags.size());
+        std::copy(tags.first.begin(), tags.first.end(), std::back_inserter(retval));
+        std::copy(tags.second.begin(), tags.second.end(), std::back_inserter(retval));
+        return retval;
     }
     else if (property_name == "Specials") {
         auto obj_special_names_range = object->Specials() | boost::adaptors::map_keys;

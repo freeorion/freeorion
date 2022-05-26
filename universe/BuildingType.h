@@ -101,8 +101,10 @@ public:
     auto ProductionSpecialConsumption() const -> const ConsumptionMap<std::string>&
     { return m_production_special_consumption; }
 
-    auto Tags() const -> const std::set<std::string>&
-    { return m_tags; }
+    const auto& Tags() const { return m_tags; }
+
+    auto HasTag(std::string_view tag) const -> bool
+    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
 
     //! Returns the condition that determines the locations where this building
     //! can be produced
@@ -161,7 +163,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
     bool                                                m_producible = true;
     CaptureResult                                       m_capture_result;
-    std::set<std::string>                               m_tags;
+    const std::vector<std::string>                      m_tags;
     ConsumptionMap<MeterType>                           m_production_meter_consumption;
     ConsumptionMap<std::string>                         m_production_special_consumption;
     std::unique_ptr<Condition::Condition>               m_location;

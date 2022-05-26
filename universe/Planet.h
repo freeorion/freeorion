@@ -52,8 +52,9 @@ class FO_COMMON_API Planet :
     public ResourceCenter
 {
 public:
-    [[nodiscard]] std::set<std::string>   Tags(const ScriptingContext& context) const override;
-    [[nodiscard]] bool                    HasTag(const std::string& name, const ScriptingContext& context) const override;
+    [[nodiscard]] TagVecs                 Tags(const ScriptingContext& context) const override;
+    [[nodiscard]] bool                    HasTag(std::string_view name, const ScriptingContext& context) const override;
+
     [[nodiscard]] UniverseObjectType      ObjectType() const override;
 
     [[nodiscard]] std::string             Dump(unsigned short ntabs = 0) const override;

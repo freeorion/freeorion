@@ -1,6 +1,7 @@
 #ifndef _FieldType_h_
 #define _FieldType_h_
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <set>
@@ -42,8 +43,10 @@ public:
     auto Stealth() const -> float
     { return m_stealth; }
 
-    auto Tags() const -> const std::set<std::string>&
-    { return m_tags; }
+    const auto& Tags() const { return m_tags; }
+
+    auto HasTag(std::string_view tag) const -> bool
+    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
 
     //! Returns the EffectsGroups that encapsulate the effects of this
     //! FieldType.
@@ -66,7 +69,7 @@ private:
     std::string                                         m_name;
     std::string                                         m_description;
     float                                               m_stealth;
-    std::set<std::string>                               m_tags;
+    const std::vector<std::string>                      m_tags;
     std::vector<std::shared_ptr<Effect::EffectsGroup>>  m_effects;
     std::string                                         m_graphic;
 };

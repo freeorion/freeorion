@@ -82,8 +82,8 @@ namespace {
 
 namespace {
     // Checks content \a tags for custom defined pedia category \a cat
-    template <typename S>
-    bool HasCustomCategory(const std::set<std::string>& tags, const S& cat) {
+    template <typename StringContainer, typename S>
+    bool HasCustomCategory(const StringContainer& tags, const S& cat) {
         return std::any_of(tags.begin(), tags.end(), [&cat, len{TAG_PEDIA_PREFIX.length()}](std::string_view sv) {
             return sv.substr(0, len) == TAG_PEDIA_PREFIX &&
                 sv.substr(len) == cat;
@@ -91,7 +91,8 @@ namespace {
     }
 
     // Checks content \a tags for any custom pedia categories
-    bool HasCustomCategory(const std::set<std::string>& tags) {
+    template <typename StringContainer>
+    bool HasCustomCategory(const StringContainer& tags) {
         return std::any_of(tags.begin(), tags.end(), [len{TAG_PEDIA_PREFIX.length()}](std::string_view sv) {
             return sv.substr(0, len) == TAG_PEDIA_PREFIX;
         });
@@ -2937,14 +2938,11 @@ namespace {
         for (auto& [species_str, species] : species_manager) {
             if (!species)
                 continue;
-            const auto& species_tags = species->Tags();
-            if (species_tags.count(TAG_ALWAYS_REPORT)) {
+            if (species->HasTag(TAG_ALWAYS_REPORT)) {
                 retval.push_back(species_str);
                 continue;
             }
-            // Add extinct species if their tech is known
-            // Extinct species and enabling tech should have an EXTINCT tag
-            if (species_tags.count(TAG_EXTINCT)) {
+            if (species->HasTag(TAG_EXTINCT)) {
                 for (auto& [tech_name, turn_researched] : empire->ResearchedTechs()) {
                     // Check for presence of tags in tech
                     auto tech = GetTech(tech_name);
@@ -2953,9 +2951,7 @@ namespace {
                                       << " (researched on turn " << turn_researched << ")";
                         continue;
                     }
-                    const auto& tech_tags = tech->Tags();
-                    if (tech_tags.count(species_str) && tech_tags.count(TAG_EXTINCT)) {
-                        // Add the species and exit loop
+                    if (tech->HasTag(TAG_EXTINCT) && tech->HasTag(species_str)) {
                         retval.push_back(species_str);
                         break;
                     }
@@ -2968,8 +2964,10 @@ namespace {
                 continue;
 
             const std::string& species_name = pop_center->SpeciesName();
-            if (species_name.empty() || std::find(retval.begin(), retval.end(), species_name) != retval.end())
-                continue;
+            if (species_name.empty() ||
+                std::any_of(retval.begin(), retval.end(),
+                            [&species_name](std::string_view s) { return s == species_name; }))
+            { continue; }
 
             const Species* species = species_manager.GetSpecies(species_name);
             if (!species)

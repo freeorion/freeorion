@@ -42,6 +42,11 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
     m_production_time(std::move(common_params.production_time)),
     m_producible(common_params.producible),
     m_capture_result(capture_result),
+    m_tags([&common_params]() {
+        std::for_each(common_params.tags.begin(), common_params.tags.end(),
+                      [](auto& t) { boost::to_upper<std::string>(t); });
+        return std::move(common_params.tags);
+    }()),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location(std::move(common_params.location)),
@@ -50,8 +55,6 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
 {
     for (auto&& effect : common_params.effects)
         m_effects.push_back(std::move(effect));
-    for (const std::string& tag : common_params.tags)
-        m_tags.insert(boost::to_upper_copy<std::string>(tag));
     Init();
 }
 
@@ -171,7 +174,7 @@ std::string BuildingType::Dump(unsigned short ntabs) const {
             retval += DumpIndent(ntabs+1) + "tags = \"" + *m_tags.begin() + "\"\n";
         } else {
             retval += DumpIndent(ntabs+1) + "tags = [ ";
-            for (const std::string& tag : m_tags)
+            for (const auto& tag : m_tags)
                retval += "\"" + tag + "\" ";
             retval += " ]\n";
         }
@@ -391,7 +394,6 @@ void BuildingTypeManager::SetBuildingTypes(Pending::Pending<container_type>&& pe
 
 void BuildingTypeManager::CheckPendingBuildingTypes() const
 { Pending::SwapPending(m_pending_building_types, m_building_types); }
-
 
 BuildingTypeManager& GetBuildingTypeManager()
 { return BuildingTypeManager::GetBuildingTypeManager(); }

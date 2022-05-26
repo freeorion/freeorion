@@ -14,8 +14,8 @@ namespace Effect {
 /** a class representing a region of space */
 class FO_COMMON_API Field : public UniverseObject {
 public:
-    [[nodiscard]] std::set<std::string> Tags(const ScriptingContext&) const override;
-    [[nodiscard]] bool                  HasTag(const std::string& name, const ScriptingContext&) const override;
+    [[nodiscard]] TagVecs               Tags(const ScriptingContext&) const override;
+    [[nodiscard]] bool                  HasTag(std::string_view name, const ScriptingContext&) const override;
 
     [[nodiscard]] UniverseObjectType    ObjectType() const override;
 

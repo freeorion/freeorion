@@ -75,13 +75,13 @@ public:
     /** Convert a parsed ship design and do any required verification. */
     ShipDesign(const ParsedShipDesign& design);
 
-    int                             ID() const  { return m_id; }    ///< returns id number of design
+    int ID() const  { return m_id; }    ///< returns id number of design
     /** returns name of design.  if \a stringtable_lookup is true and the
       * design was constructed specifying name_desc_in_stringtable true,
       * the name string is looked up in the stringtable before being returned.
       * otherwise, the raw name string is returned. */
-    const std::string&              Name(bool stringtable_lookup = true) const;
-    void                            SetName(const std::string& name);
+    const std::string& Name(bool stringtable_lookup = true) const;
+    void               SetName(const std::string& name);
 
     /** Return the UUID. */
     boost::uuids::uuid              UUID() const { return m_uuid; }
@@ -90,63 +90,66 @@ public:
       * the design was constructed specifying name_desc_in_stringtable true,
       * the description string is looked up in the stringtable before being
       * returned.  otherwise, the raw name string is returned. */
-    const std::string&              Description(bool stringtable_lookup = true) const;
-    void                            SetDescription(const std::string& description);
+    const std::string& Description(bool stringtable_lookup = true) const;
+    void               SetDescription(const std::string& description);
 
-    int                             DesignedOnTurn() const  { return m_designed_on_turn; };     ///< returns turn on which design was created
-    int                             DesignedByEmpire() const { return m_designed_by_empire; };  ///< returns id of empire that created this design
+    int   DesignedOnTurn() const   { return m_designed_on_turn; };    ///< returns turn on which design was created
+    int   DesignedByEmpire() const { return m_designed_by_empire; };  ///< returns id of empire that created this design
 
-    bool                            ProductionCostTimeLocationInvariant() const;                ///< returns true if the production cost and time are invariant (does not depend on) the location
-    float                           ProductionCost(int empire_id, int location_id) const;       ///< returns the total cost to build a ship of this design
-    float                           PerTurnCost(int empire_id, int location_id) const;          ///< returns the maximum per-turn number of production points that can be spent on building a ship of this design
-    int                             ProductionTime(int empire_id, int location_id) const;       ///< returns the time in turns it takes to build a ship of this design
-    bool                            Producible() const      { return m_producible; }            ///< returns whether this design is producible by players and appears on the production screen list
+    bool  ProductionCostTimeLocationInvariant() const;                ///< returns true if the production cost and time are invariant (does not depend on) the location
+    float ProductionCost(int empire_id, int location_id) const;       ///< returns the total cost to build a ship of this design
+    float PerTurnCost(int empire_id, int location_id) const;          ///< returns the maximum per-turn number of production points that can be spent on building a ship of this design
+    int   ProductionTime(int empire_id, int location_id) const;       ///< returns the time in turns it takes to build a ship of this design
+    bool  Producible() const      { return m_producible; }            ///< returns whether this design is producible by players and appears on the production screen list
 
-    float                           Speed() const           { return m_speed; }                 ///< returns design speed along starlanes
+    float Speed() const           { return m_speed; }                 ///< returns design speed along starlanes
 
-    float                           Structure() const       { return m_structure; }             ///< returns the max structure of this design
-    float                           Shields() const         { return m_shields; }               ///< returns the max shields of this design
-    float                           Fuel() const            { return m_fuel; }                  ///< returns the max fuel capacity of this design
-    float                           Detection() const       { return m_detection; }             ///< returns the detection ability of this design
-    float                           ColonyCapacity() const  { return m_colony_capacity; }       ///< returns the colonization capacity of this design
-    float                           TroopCapacity() const   { return m_troop_capacity; }        ///< returns the troop capacity of this design
-    float                           Stealth() const         { return m_stealth; }               ///< returns the stealth of this design
+    float Structure() const       { return m_structure; }             ///< returns the max structure of this design
+    float Shields() const         { return m_shields; }               ///< returns the max shields of this design
+    float Fuel() const            { return m_fuel; }                  ///< returns the max fuel capacity of this design
+    float Detection() const       { return m_detection; }             ///< returns the detection ability of this design
+    float ColonyCapacity() const  { return m_colony_capacity; }       ///< returns the colonization capacity of this design
+    float TroopCapacity() const   { return m_troop_capacity; }        ///< returns the troop capacity of this design
+    float Stealth() const         { return m_stealth; }               ///< returns the stealth of this design
 
-    float                           IndustryGeneration() const  { return m_industry_generation; }   ///< returns the industry output from this ship design
-    float                           ResearchGeneration() const  { return m_research_generation; }   ///< returns the research output from this ship design
-    float                           InfluenceGeneration() const { return m_influence_generation; }  ///< returns the influence output from this ship design
-    bool                            IsProductionLocation() const{ return m_is_production_location;} ///< returns true if this ship design can be a production location
+    float IndustryGeneration() const  { return m_industry_generation; }   ///< returns the industry output from this ship design
+    float ResearchGeneration() const  { return m_research_generation; }   ///< returns the research output from this ship design
+    float InfluenceGeneration() const { return m_influence_generation; }  ///< returns the influence output from this ship design
+    bool  IsProductionLocation() const{ return m_is_production_location;} ///< returns true if this ship design can be a production location
 
-    bool                            CanColonize() const;
-    bool                            HasTroops() const       { return (m_troop_capacity > 0.0f); }
-    bool                            CanBombard() const      { return m_can_bombard; }
-    bool                            IsArmed() const         { return m_is_armed; }
-    bool                            HasDirectWeapons() const{ return m_has_direct_weapons; }
-    bool                            HasFighters() const     { return m_has_fighters; }
-    bool                            IsMonster() const       { return m_is_monster; }
+    bool  CanColonize() const;
+    bool  HasTroops() const       { return (m_troop_capacity > 0.0f); }
+    bool  CanBombard() const      { return m_can_bombard; }
+    bool  IsArmed() const         { return m_is_armed; }
+    bool  HasDirectWeapons() const{ return m_has_direct_weapons; }
+    bool  HasFighters() const     { return m_has_fighters; }
+    bool  IsMonster() const       { return m_is_monster; }
 
-    float                           Attack() const;
-    float                           AdjustedAttack(float shield) const;
-    float                           Defense() const;
+    float Attack() const;
+    float AdjustedAttack(float shield) const;
+    float Defense() const;
 
     const std::string&              Hull() const            { return m_hull; }      ///< returns name of hull on which design is based
-
     const std::vector<std::string>& Parts() const           { return m_parts; }     ///< returns vector of names of all parts in this design, with position in vector corresponding to slot positions
     std::vector<std::string>        Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type in this design, unrelated to slot positions
     std::vector<std::string>        Weapons() const;                                ///< returns vector of names of weapon parts in, unrelated to slot positions
 
-    const std::string&              Icon() const            { return m_icon; }      ///< returns filename for small-size icon graphic for design
-    const std::string&              Model() const           { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design
-    bool                            LookupInStringtable() const { return m_name_desc_in_stringtable; }
+    const std::vector<std::string>& Tags() const            { return m_tags; };
+    bool                            HasTag(std::string_view tag) const
+    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
+
+    const std::string& Icon() const                { return m_icon; }      ///< returns filename for small-size icon graphic for design
+    const std::string& Model() const               { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design
+    bool               LookupInStringtable() const { return m_name_desc_in_stringtable; }
 
     //! Returns number of parts in this ship design, indexed by ShipPart name
     const std::map<std::string, int>&   ShipPartCount() const { return m_num_ship_parts; }
     int                                 PartCount() const;
 
     /** returns number of parts in this ship design, indexed by ShipPartClass */
-    const std::map<ShipPartClass, int>&   PartClassCount() const { return m_num_part_classes; }
+    const std::map<ShipPartClass, int>& PartClassCount() const { return m_num_part_classes; }
 
-    std::string                     Dump(unsigned short ntabs = 0) const;           ///< returns a data file format representation of this object
+    std::string Dump(unsigned short ntabs = 0) const;           ///< returns a data file format representation of this object
 
     /** Returns a number, calculated from the contained data, which should be
       * different for different contained data, and must be the same for
@@ -154,20 +157,20 @@ public:
       * and executions of the program and the function. Useful to verify that
       * the parsed content is consistent without sending it all between
       * clients and server. */
-    unsigned int                    GetCheckSum() const;
+    unsigned int GetCheckSum() const;
 
     friend FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second);
 
-    bool                            ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
+    bool ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
 
-    void                            SetID(int id);                                              ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
-    /** Set the UUID. */
-    void                            SetUUID(const boost::uuids::uuid& uuid);
-    void                            Rename(std::string name) { m_name = std::move(name); }      ///< renames this design to \a name
-    void                            SetMonster(const bool is_monster) { m_is_monster = is_monster; }
+    void SetID(int id);                                              ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
+    void SetUUID(const boost::uuids::uuid& uuid);
+    void Rename(std::string name) { m_name = std::move(name); }      ///< renames this design to \a name
+    void SetMonster(const bool is_monster) { m_is_monster = is_monster; }
 
     /** Return true if \p hull and \p parts would make a valid design. */
     static bool ValidDesign(const std::string& hull, const std::vector<std::string>& parts);
+
 private:
     /** Return a valid hull and parts pair iff the \p hull and \p parts vectors
         would not make a valid ShipDesign.
@@ -205,6 +208,8 @@ private:
 
     // Note that these are fine to compute on demand and cache here -- it is
     // not necessary to serialize them.
+    std::vector<std::string> m_tags;
+
     float   m_detection = 0.0f;
     float   m_colony_capacity = 0.0f;
     float   m_troop_capacity = 0.0f;

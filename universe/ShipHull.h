@@ -41,7 +41,7 @@ public:
         double x = 0.5, y = 0.5;
     };
 
-    ShipHull() = default;
+    ShipHull() = delete;
 
     ShipHull(float fuel, float speed, float stealth, float structure,
              bool default_fuel_effects, bool default_speed_effects,
@@ -130,11 +130,10 @@ public:
     auto Slots() const -> const std::vector<Slot>&
     { return m_slots; }
 
-    auto Tags() const -> const std::set<std::string>&
-    { return m_tags; }
+    const auto& Tags() const { return m_tags; }
 
-    auto HasTag(const std::string& tag) const -> bool
-    { return m_tags.count(tag) != 0; }
+    bool HasTag(std::string_view tag) const
+    { return std::any_of(m_tags.begin(), m_tags.end(), [&tag](const auto& t) { return t == tag; }); }
 
     //! Returns the condition that determines the locations where ShipDesign
     //! containing hull can be produced
@@ -185,7 +184,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>            m_production_time;
     bool                                                m_producible = false;
     std::vector<Slot>                                   m_slots;
-    std::set<std::string>                               m_tags;
+    const std::vector<std::string>                      m_tags;
     ConsumptionMap<MeterType>                           m_production_meter_consumption;
     ConsumptionMap<std::string>                         m_production_special_consumption;
     std::unique_ptr<Condition::Condition>               m_location;
