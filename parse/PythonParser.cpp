@@ -111,40 +111,31 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<enum_wrapper<EmpireAffiliationType>>("EmpireAffiliationType", py::no_init);
         py::class_<enum_wrapper<ResourceType>>("ResourceType", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
-        py::class_<source_wrapper>("__Source", py::no_init)
-            .def_readonly("Owner", &source_wrapper::owner);
-        py::class_<target_wrapper>("__Target", py::no_init)
-            .def_readonly("Construction", &target_wrapper::construction)
-            .def_readonly("HabitableSize", &target_wrapper::habitable_size)
-            .def_readonly("MaxShield", &target_wrapper::max_shield)
-            .def_readonly("MaxDefense", &target_wrapper::max_defense)
-            .def_readonly("MaxTroops", &target_wrapper::max_troops)
-            .def_readonly("ID", &target_wrapper::id)
-            .def_readonly("Owner", &target_wrapper::owner)
-            .def_readonly("Population", &target_wrapper::population)
-            .def_readonly("SystemID", &target_wrapper::system_id)
-            .def_readonly("DesignID", &target_wrapper::design_id)
-            .def_readonly("TargetHappiness", &target_wrapper::target_happiness)
-            .def_readonly("TargetIndustry", &target_wrapper::target_industry)
-            .def_readonly("TargetResearch", &target_wrapper::target_research)
-            .def_readonly("TargetConstruction", &target_wrapper::target_construction)
-            .def_readonly("MaxStockpile", &target_wrapper::max_stockpile)
+        py::class_<variable_wrapper>("__Variable", py::no_init)
+            .def_readonly("Owner", &variable_wrapper::owner)
+            .def_readonly("ID", &variable_wrapper::id)
+            .def_readonly("SystemID", &variable_wrapper::system_id)
+            .def_readonly("DesignID", &variable_wrapper::design_id)
+            .def_readonly("LastTurnAttackedByShip", &variable_wrapper::last_turn_attacked_by_ship)
+            .def_readonly("LastTurnConquered", &variable_wrapper::last_turn_conquered)
+            .def_readonly("LastTurnColonized", &variable_wrapper::last_turn_colonized)
+            .def_readonly("Construction", &variable_wrapper::construction)
+            .def_readonly("HabitableSize", &variable_wrapper::habitable_size)
+            .def_readonly("MaxShield", &variable_wrapper::max_shield)
+            .def_readonly("MaxDefense", &variable_wrapper::max_defense)
+            .def_readonly("MaxTroops", &variable_wrapper::max_troops)
+            .def_readonly("TargetHappiness", &variable_wrapper::target_happiness)
+            .def_readonly("TargetIndustry", &variable_wrapper::target_industry)
+            .def_readonly("TargetResearch", &variable_wrapper::target_research)
+            .def_readonly("TargetConstruction", &variable_wrapper::target_construction)
+            .def_readonly("MaxStockpile", &variable_wrapper::max_stockpile)
+            .def_readonly("Population", &variable_wrapper::population)
+            .def_readonly("Industry", &variable_wrapper::industry)
+            .def_readonly("Research", &variable_wrapper::research)
+            .def_readonly("Stockpile", &variable_wrapper::stockpile)
             .def(py::self_ns::self & py::other<condition_wrapper>());
-        py::class_<local_candidate_wrapper>("__LocalCandidate", py::no_init)
-            .def_readonly("LastTurnAttackedByShip", &local_candidate_wrapper::last_turn_attacked_by_ship)
-            .def_readonly("LastTurnConquered", &local_candidate_wrapper::last_turn_conquered)
-            .def_readonly("LastTurnColonized", &local_candidate_wrapper::last_turn_colonized)
-            .def_readonly("Industry", &local_candidate_wrapper::industry)
-            .def_readonly("TargetIndustry", &local_candidate_wrapper::target_industry)
-            .def_readonly("Research", &local_candidate_wrapper::research)
-            .def_readonly("TargetResearch", &local_candidate_wrapper::target_research)
-            .def_readonly("Construction", &local_candidate_wrapper::construction)
-            .def_readonly("TargetConstruction", &local_candidate_wrapper::target_construction)
-            .def_readonly("Stockpile", &local_candidate_wrapper::stockpile)
-            .def_readonly("MaxStockpile", &local_candidate_wrapper::max_stockpile);
 
-        py::implicitly_convertible<source_wrapper, condition_wrapper>();
-        py::implicitly_convertible<target_wrapper, condition_wrapper>();
+        py::implicitly_convertible<variable_wrapper, condition_wrapper>();
 
         m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"));
         m_meta_path.append(boost::cref(*this));
