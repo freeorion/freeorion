@@ -111,14 +111,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<enum_wrapper<EmpireAffiliationType>>("EmpireAffiliationType", py::no_init);
         py::class_<enum_wrapper<ResourceType>>("ResourceType", py::no_init);
         py::class_<unlockable_item_wrapper>("UnlockableItem", py::no_init);
-        py::class_<variable_wrapper>("__Variable", py::no_init)
-            .def_readonly("Owner", &variable_wrapper::owner)
-            .def_readonly("ID", &variable_wrapper::id)
-            .def_readonly("SystemID", &variable_wrapper::system_id)
-            .def_readonly("DesignID", &variable_wrapper::design_id)
-            .def_readonly("LastTurnAttackedByShip", &variable_wrapper::last_turn_attacked_by_ship)
-            .def_readonly("LastTurnConquered", &variable_wrapper::last_turn_conquered)
-            .def_readonly("LastTurnColonized", &variable_wrapper::last_turn_colonized)
+        auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init)
             .def_readonly("Construction", &variable_wrapper::construction)
             .def_readonly("HabitableSize", &variable_wrapper::habitable_size)
             .def_readonly("MaxShield", &variable_wrapper::max_shield)
@@ -134,6 +127,45 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def_readonly("Research", &variable_wrapper::research)
             .def_readonly("Stockpile", &variable_wrapper::stockpile)
             .def(py::self_ns::self & py::other<condition_wrapper>());
+
+        for (const char* property : {"Owner",
+                                     "SupplyingEmpire",
+                                     "ID",
+                                     "CreationTurn",
+                                     "Age",
+                                     "ProducedByEmpireID",
+                                     "ArrivedOnTurn",
+                                     "DesignID",
+                                     "FleetID",
+                                     "PlanetID",
+                                     "SystemID",
+                                     "ContainerID",
+                                     "FinalDestinationID",
+                                     "NextSystemID",
+                                     "NearestSystemID",
+                                     "PreviousSystemID",
+                                     "PreviousToFinalDestinationID",
+                                     "NumShips",
+                                     "NumStarlanes",
+                                     "LastTurnActiveInBattle",
+                                     "LastTurnAttackedByShip",
+                                     "LastTurnBattleHere",
+                                     "LastTurnColonized",
+                                     "LastTurnConquered",
+                                     "LastTurnMoveOrdered",
+                                     "LastTurnResupplied",
+                                     "Orbit",
+                                     "TurnsSinceColonization",
+                                     "TurnsSinceFocusChange",
+                                     "TurnsSinceLastConquered",
+                                     "ETA",
+                                     "LaunchedFrom"})
+        {
+            py_variable_wrapper.add_property(property, py::make_function(
+                [property] (const variable_wrapper& w) { return w.get_int_property(property); },
+                py::default_call_policies(),
+                boost::mpl::vector<value_ref_wrapper<int>, const variable_wrapper&>()));
+        }
 
         py::implicitly_convertible<variable_wrapper, condition_wrapper>();
 
