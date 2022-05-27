@@ -54,6 +54,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         GetOptionsDB().AddFlag("hostless",                                              UserStringNop("OPTIONS_DB_HOSTLESS"),                   false);
         GetOptionsDB().AddFlag("skip-checksum",                                         UserStringNop("OPTIONS_DB_SKIP_CHECKSUM"),              false);
         GetOptionsDB().AddFlag("testing",                                               UserStringNop("OPTIONS_DB_TESTING"),                    false);
+        GetOptionsDB().AddFlag("load-or-quickstart",                                    UserStringNop("OPTIONS_DB_LOAD_OR_QUICKSTART"),         false);
         GetOptionsDB().Add<int>("network.server.ai.min",                                UserStringNop("OPTIONS_DB_MP_AI_MIN"),                  0);
         GetOptionsDB().Add<int>("network.server.ai.max",                                UserStringNop("OPTIONS_DB_MP_AI_MAX"),                  -1);
         GetOptionsDB().Add<int>("network.server.human.min",                             UserStringNop("OPTIONS_DB_MP_HUMAN_MIN"),               0);
