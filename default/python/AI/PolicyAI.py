@@ -251,19 +251,20 @@ class PolicyManager:
     @cache_for_current_turn
     def _rate_policy(self, name: str) -> float:
         """Gives a rough value of a policy."""
-        f = self._rating_functions.get(name)
-        if assertion_fails(f, f"_rate_policy({name}) not yet supported"):
+        rating_function = self._rating_functions.get(name)
+        if assertion_fails(rating_function, f"_rate_policy({name}) not yet supported"):
             return 0.0
-        return f(self)
+        return rating_function(self)
 
     def _rate_costs(self, costs: float) -> float:
         """
         How do we rate the costs in comparison to a policies rating?
-        Generally costs / 3, but less if we have plenty if IP.
+        Generally costs / 3, but less if we have plenty of IP.
         """
         unreserved_ip = self._ip - self._wanted_ip
-        cost_or_prio = (costs + self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)) / 2
-        return costs / max(3, unreserved_ip / cost_or_prio)
+        priority = self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
+        # For big numbers this makes 1.5 * priority an upper limit for the rating
+        return costs / max(3, unreserved_ip / (1.5 * priority))
 
     @staticmethod
     def _rate_opinion(name: str) -> float:
