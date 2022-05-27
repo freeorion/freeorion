@@ -190,6 +190,9 @@ namespace {
         return save_path.string();
     }
 
+    bool IsMultiplayerSaveFile(const boost::filesystem::path& path)
+    { return IsExistingFile(path) && MP_SAVE_FILE_EXTENSION == path.extension(); }
+
     EmpireColor GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd,
                                   const std::map<int, SaveGameEmpireData> &sged = std::map<int, SaveGameEmpireData>())
     {
@@ -610,9 +613,11 @@ Idle::Idle(my_context c) :
     if (Server().IsHostless())
         post_event(Hostless());
     else if (!GetOptionsDB().Get<std::string>("load").empty())
-        throw std::invalid_argument("Autostart load file was choosed but the server wasn't started in a hostless mode");
+        throw std::invalid_argument("Autostart load file was chosen but the server wasn't started in a hostless mode");
     else if (GetOptionsDB().Get<bool>("quickstart"))
-        throw std::invalid_argument("Quickstart was choosed but the server wasn't started in a hostless mode");
+        throw std::invalid_argument("Quickstart was chosen but the server wasn't started in a hostless mode");
+    else if (GetOptionsDB().Get<bool>("load-or-quickstart"))
+        throw std::invalid_argument("Load or quickstart was chosen but the server wasn't started in a hostless mode");
 }
 
 Idle::~Idle()
@@ -722,7 +727,8 @@ sc::result Idle::react(const Hostless&) {
     TraceLogger(FSM) << "(ServerFSM) Idle.Hostless";
     std::string autostart_load_filename = GetOptionsDB().Get<std::string>("load");
     bool quickstart = GetOptionsDB().Get<bool>("quickstart");
-    if (!quickstart && autostart_load_filename.empty())
+    bool load_or_quickstart = GetOptionsDB().Get<bool>("load-or-quickstart");
+    if (!quickstart && !load_or_quickstart && autostart_load_filename.empty())
         return transit<MPLobby>();
 
     if (GetOptionsDB().Get<int>("network.server.conn-human-empire-players.min") > 0) {
@@ -735,6 +741,24 @@ sc::result Idle::react(const Hostless&) {
     std::vector<PlayerSaveGameData> player_save_game_data;
     server.InitializePython();
     server.LoadChatHistory();
+
+    if (load_or_quickstart) {
+        // Search save games in a subfolder with game UID or "auto" formed in
+        // `GetAutoSaveFileName`.
+        std::string subdir = server.m_galaxy_setup_data.GetGameUID();
+        boost::filesystem::path autosave_dir_path = GetServerSaveDir() / (subdir.empty() ? "auto" : subdir);
+        if (IsExistingDir(autosave_dir_path)) {
+            auto saves = ListDir(autosave_dir_path, IsMultiplayerSaveFile);
+            for (const auto& save : saves) {
+                // Filenames of saves lexicographically sorted with turns and timestamps so latest
+                // file will have greater string representation.
+                if (PathToString(save) > autostart_load_filename) {
+                    autostart_load_filename = PathToString(save);
+                }
+            }
+        }
+    }
+
     if (autostart_load_filename.empty()) {
         DebugLogger(FSM) << "Start new game";
 

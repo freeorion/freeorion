@@ -1410,6 +1410,9 @@ Skip comparing the resource directory checksums.  This allows faster startup whe
 OPTIONS_DB_TESTING
 Linux only. AI will output log to console instead file for testing purpose.
 
+OPTIONS_DB_LOAD_OR_QUICKSTART
+Searches latest multi-player save game in autosave directory. Loads and starts it if found or quick-starts new game with predefined options and game rules. Requires hostless mode and no restriction on the minimum number of connected players, because the server will start with no connected players.
+
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses default settings, settings from any existing config.xml file, and settings given on the command line to generate a config.xml file. This will overwrite the current config.xml file, if it exists.
 
