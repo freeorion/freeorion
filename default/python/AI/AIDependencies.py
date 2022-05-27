@@ -111,7 +111,6 @@ POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES = {
     "GRO_SYMBIOTIC_BIO": [0, 0, 1, 1, 1],
     "GRO_XENO_GENETICS": [0, 1, 2, 2, 0],
     "GRO_XENO_HYBRIDS": [0, 2, 1, 0, 0],
-    "GRO_CYBORG": [0, 2, 0, 0, 0],
 }
 
 # Population modifiers scaling with planet size
@@ -546,7 +545,6 @@ POPULATION_BOOST_TECHS = (
     "GRO_PLANET_ECOL",
     "GRO_SYMBIOTIC_BIO",
     "GRO_XENO_HYBRIDS",
-    "GRO_CYBORG",
     "GRO_SUBTER_HAB",
     "CON_ORBITAL_HAB",
     "CON_NDIM_STRC",
