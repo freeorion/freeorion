@@ -5,33 +5,8 @@
 #include "../universe/Conditions.h"
 #include "../universe/ValueRefs.h"
 
-value_ref_wrapper<int> variable_wrapper::owner() const {
-    auto variable = std::make_shared<ValueRef::Variable<int>>(m_reference_type, "Owner");
-    return value_ref_wrapper<int>(variable);
-}
-
-value_ref_wrapper<int> variable_wrapper::id() const {
-    return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(m_reference_type, "ID"));
-}
-
-value_ref_wrapper<int> variable_wrapper::system_id() const {
-    return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(m_reference_type, "SystemID"));
-}
-
-value_ref_wrapper<int> variable_wrapper::design_id() const {
-    return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(m_reference_type, "DesignID"));
-}
-
-value_ref_wrapper<int> variable_wrapper::last_turn_attacked_by_ship() const {
-    return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(m_reference_type, "LastTurnAttackedByShip"));
-}
-
-value_ref_wrapper<int> variable_wrapper::last_turn_conquered() const {
-    return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(m_reference_type, "LastTurnConquered"));
-}
-
-value_ref_wrapper<int> variable_wrapper::last_turn_colonized() const {
-    return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(m_reference_type, "LastTurnColonized"));
+value_ref_wrapper<int> variable_wrapper::get_int_property(const char *property) const {
+    return value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(m_reference_type, property));
 }
 
 value_ref_wrapper<double> variable_wrapper::construction() const {
