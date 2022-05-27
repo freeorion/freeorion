@@ -262,7 +262,7 @@ class PolicyManager:
         Generally costs / 3, but less if we have plenty of IP.
         """
         unreserved_ip = self._ip - self._wanted_ip
-        priority = self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE)
+        priority = max(self._aistate.get_priority(PriorityType.RESOURCE_INFLUENCE), 1)  # in turn 1 its 0
         # For big numbers this makes 1.5 * priority an upper limit for the rating
         return costs / max(3, unreserved_ip / (1.5 * priority))
 
