@@ -16,7 +16,6 @@
     (Age)                                       \
     (Aggressive)                                \
     (All)                                       \
-    (allowed)                                   \
     (AllyOf)                                    \
     (And)                                       \
     (AnyEmpire)                                 \
@@ -24,14 +23,12 @@
     (Armour)                                    \
     (ArrivedOnTurn)                             \
     (Article)                                   \
-    (Application)                               \
     (Asteroids)                                 \
     (Barren)                                    \
     (Basic)                                     \
     (BlackHole)                                 \
     (Blue)                                      \
     (Bombard)                                   \
-    (Bomber)                                    \
     (buildcost)
 
 #define TOKEN_SEQ_2                             \
@@ -68,7 +65,6 @@
     (Core)                                      \
     (cos)                                       \
     (Count)                                     \
-    (countIf)                                   \
     (CountUnique)                               \
     (CounterClockwiseNextPlanetType)            \
     (CreateBuilding)                            \
@@ -109,7 +105,6 @@
     (DestroyFightersPerBattleMax)               \
     (Detection)                                 \
     (DirectDistanceBetween)                     \
-    (Disabled)                                  \
     (dislikes)                                  \
     (distance)                                  \
     (DistanceFromOriginalType)                  \
@@ -122,13 +117,11 @@
     (EmpireHasBuildingAvailable)                \
     (EmpireHasShipDesignAvailable)              \
     (EmpireHasShipPartAvailable)                \
-    (EmpireHasTechResearched)                   \
     (EmpireMeter)                               \
     (EmpireMeterValue)                          \
     (EmpireObjectVisibility)                    \
     (EmpireShipsDestroyed)                      \
     (EmpireStockpile)                           \
-    (Enabled)                                   \
     (endpoint)                                  \
     (EnemyOf)                                   \
     (Enqueued)                                  \
@@ -151,12 +144,10 @@
     (FinalDestinationID)                        \
     (Fleet)                                     \
     (FleetID)                                   \
-    (FleetSupplyableByEmpire)                   \
     (floor)                                     \
     (foci)                                      \
     (focus)                                     \
     (Focus)                                     \
-    (FocusType)                                 \
     (from)                                      \
     (fuel)                                      \
     (Fuel)                                      \
@@ -212,7 +203,6 @@
     (Inferno)                                   \
     (Influence)                                 \
     (InSystem)                                  \
-    (Interceptor)                               \
     (Integer)                                   \
     (Internal)                                  \
     (Invisible)                                 \
@@ -261,8 +251,7 @@
     (meter)                                     \
     (min)                                       \
     (Min)                                       \
-    (MinimumNumberOf)                           \
-    (Missiles)
+    (MinimumNumberOf)
 
 #define TOKEN_SEQ_7                             \
     (Mode)                                      \
@@ -292,7 +281,6 @@
     (NextSmallerPlanetSize)                     \
     (NextOlderStarType)                         \
     (NextSystemID)                              \
-    (NextTurnPopGrowth)                         \
     (NextYoungerStarType)                       \
     (NoDefaultCapacityEffect)                   \
     (NoDefaultFuelEffect)                       \
@@ -316,7 +304,6 @@
     (Object)                                    \
     (ObjectType)                                \
     (Ocean)                                     \
-    (Off)                                       \
     (On)                                        \
     (OneOf)                                     \
     (OnPlanet)                                  \
@@ -337,7 +324,6 @@
     (Part)                                      \
     (PartCapacity)                              \
     (PartClass)                                 \
-    (PartDamage)                                \
     (Partial)                                   \
     (partname)                                  \
     (PartSecondaryStat)
@@ -349,14 +335,12 @@
     (Passive)                                   \
     (PeaceWith)                                 \
     (Planet)                                    \
-    (Planetbound)                               \
     (PlanetEnvironment)                         \
     (PlanetID)                                  \
     (planetsize)                                \
     (PlanetType)                                \
     (PlanetTypeDifference)                      \
     (Playable)                                  \
-    (PointDefense)                              \
     (Policy)                                    \
     (Poor)                                      \
     (Population)                                \
@@ -379,7 +363,6 @@
 
 #define TOKEN_SEQ_10                            \
     (Radiated)                                  \
-    (Radius)                                    \
     (Random)                                    \
     (RandomColonizableSpecies)                  \
     (RandomCompleteTech)                        \
@@ -393,7 +376,6 @@
     (reason)                                    \
     (RebelTroops)                               \
     (Red)                                       \
-    (Refinement)                                \
     (RemoveSpecial)                             \
     (RemoveStarlanes)                           \
     (Research)                                  \
@@ -446,7 +428,6 @@
     (SetPopulation)
 
 #define TOKEN_SEQ_12                            \
-    (SetRange)                                  \
     (SetRebelTroops)                            \
     (SetResearch)                               \
     (SetSecondaryStat)                          \
@@ -503,11 +484,9 @@
     (slots)                                     \
     (SlotsInHull)                               \
     (SlotsInShipDesign)                         \
-    (SlotType)                                  \
     (Small)                                     \
     (sortkey)                                   \
     (Source)                                    \
-    (Spacebound)                                \
     (spawnlimit)                                \
     (spawnrate)                                 \
     (Special)                                   \
@@ -543,7 +522,6 @@
     (Stealth)                                   \
     (Stockpile)                                 \
     (String)                                    \
-    (StringList)                                \
     (structure)                                 \
     (Structure)                                 \
     (Sum)                                       \
@@ -566,9 +544,7 @@
     (TargetResearch)                            \
     (Tech)                                      \
     (Terran)                                    \
-    (TestValue)                                 \
     (TheEmpire)                                 \
-    (Theory)                                    \
     (ThisBuilding)                              \
     (ThisField)                                 \
     (ThisHull)                                  \
@@ -578,14 +554,12 @@
     (ThisSpecies)                               \
     (ThisSpecial)                               \
     (Tiny)                                      \
-    (Toggle)                                    \
     (TopPriorityEnqueuedTech)                   \
     (TopPriorityResearchableTech)               \
     (TopPriorityTransferrableTech)              \
     (TotalFighterShots)                         \
     (to)                                        \
-    (Toxic)                                     \
-    (Trade)
+    (Toxic)
 
 #define TOKEN_SEQ_17                            \
     (Troops)                                    \
@@ -612,7 +586,6 @@
     (Unowned)                                   \
     (Unproducible)                              \
     (Unresearchable)                            \
-    (UpgradeVisibility)                         \
     (UsedInDesignID)                            \
     (UserString)                                \
     (uuid)                                      \
