@@ -1,12 +1,16 @@
-"""
-# My first app
-Here's our first attempt at using data to create a table:
-"""
+import os
+import sys
 
 import altair as alt
 import pandas as pd
 import streamlit as st
-from collect_data import get_ais
+
+current_dir = os.path.dirname(__file__)
+common = os.path.join(current_dir, "..", "common")
+sys.path.append(common)
+
+
+from collect_data import get_ais  # noqa: E402
 
 
 def plot_param(ais, attribute):
@@ -26,12 +30,17 @@ def plot_param(ais, attribute):
 
     chart_data = pd.DataFrame(plot_data)
 
-    alt.Chart(chart_data).mark_line().encode(x="x", y="f(x)")
+    st.altair_chart(
+        alt.Chart(chart_data)
+        .mark_line()
+        .encode(x=alt.X("turn", timeUnit="int", title="turn"), y=alt.Y(attribute, timeUnit="int", title=attribute))
+    )
 
 
-def draw_plots():
-    for param in ["PP", "RP", "SHIP_CONT"]:
-        plot_param(get_ais(), attribute=param)
+def draw_plots(data):
+    for param in ["PP"]:  # , "RP", "SHIP_CONT"]:
+        plot_param(data, attribute=param)
 
 
-st.button("Draw", "l", "Show diagrams", draw_plots)
+data = get_ais()
+draw_plots(data)
