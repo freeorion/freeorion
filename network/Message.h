@@ -153,8 +153,8 @@ public:
     void               Swap(Message& rhs) noexcept;///< Swaps the contents of \a *this with \a rhs.  Does not throw.
     void               Reset() noexcept;           ///< Reverts message to same state as after default constructor
 
-    void               Compress() noexcept;
-    void               Decompress() noexcept;
+    void               Compress() noexcept;   ///< Compresses data, updates size and compression flag, if data is uncompressed.
+    void               Decompress() noexcept; ///< Decompresses data, updates size and compression flag, if data is compressed.
 
 private:
     MessageType                 m_type = MessageType::UNDEFINED;
