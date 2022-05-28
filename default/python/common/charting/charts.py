@@ -39,7 +39,7 @@ def parse_file(file_name, ai=True):
     got_colors = False
     got_species = False
     got_name = False
-    data = {"PP": [], "RP": [], "RP_Ratio": [], "ShipCount": [], "turnsP": [], "turnPP": [], "PP + 2RP": []}
+    data = {"PP": [], "RP": [], "RP_Ratio": [], "ShipCount": [], "turnsP": [], "PP + 2RP": []}
     details = {"color": {1, 1, 1, 1}, "name": "", "species": ""}
     with open(file_name, "r") as lf:
         while True:
@@ -64,7 +64,6 @@ def parse_file(file_name, ai=True):
                 info = line.split("Current Output (turn")[1]
                 parts = info.split(")")
                 data["turnsP"].append((int(parts[0])))
-                data["turnPP"].append((int(parts[0]), float(parts[1].split("/")[-1])))
                 rppp = parts[1].split("(")[-1].split("/")
                 data["PP"].append(float(rppp[1]))
                 data["RP"].append(float(rppp[0]))

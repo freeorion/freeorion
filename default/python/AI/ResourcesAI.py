@@ -22,6 +22,7 @@ from common.print_utils import Table, Text
 from empire.growth_specials import get_growth_specials
 from EnumsAI import FocusType, PriorityType, get_priority_resource_types
 from freeorion_tools import combine_ratings, policy_is_adopted, tech_is_complete
+from freeorion_tools.log_dumper import dump
 from freeorion_tools.timers import AITimer
 from PolicyAI import algo_research, bureaucracy
 
@@ -371,13 +372,10 @@ class Reporter:
         self.print_table_footer(priority_ratio)
 
     @staticmethod
-    def print_resource_ai_footer():
+    def dump_output():
         empire = fo.getEmpire()
         pp, rp = empire.productionPoints, empire.resourceProduction(fo.resourceType.research)
-        # Next string used in charts. Don't modify it!
-        debug("Current Output (turn %4d) RP/PP : %.2f ( %.1f / %.1f )", fo.currentTurn(), rp / (pp + 0.0001), rp, pp)
-        debug("------------------------")
-        debug("ResourcesAI Time Requirements:")
+        dump.output(fo.currentTurn(), rp, pp)
 
     @staticmethod
     def print_resources_priority():
@@ -941,7 +939,7 @@ def set_planet_resource_foci():
 
     resource_timer.stop_print_and_clear()
 
-    Reporter.print_resource_ai_footer()
+    Reporter.dump_output()
 
 
 def generate_resources_orders():
