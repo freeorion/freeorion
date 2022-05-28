@@ -1,89 +1,76 @@
-target_sources(freeorioncommon
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/AppInterface.h
-        ${CMAKE_CURRENT_LIST_DIR}/base64_filter.h
-        ${CMAKE_CURRENT_LIST_DIR}/blocking_combiner.h
-        ${CMAKE_CURRENT_LIST_DIR}/CheckSums.h
-        ${CMAKE_CURRENT_LIST_DIR}/Directories.h
-        ${CMAKE_CURRENT_LIST_DIR}/Enum.h
-        ${CMAKE_CURRENT_LIST_DIR}/i18n.h
-        ${CMAKE_CURRENT_LIST_DIR}/Logger.h
-        ${CMAKE_CURRENT_LIST_DIR}/LoggerWithOptionsDB.h
-        ${CMAKE_CURRENT_LIST_DIR}/ModeratorAction.h
-        ${CMAKE_CURRENT_LIST_DIR}/MultiplayerCommon.h
-        ${CMAKE_CURRENT_LIST_DIR}/OptionsDB.h
-        ${CMAKE_CURRENT_LIST_DIR}/OptionValidators.h
-        ${CMAKE_CURRENT_LIST_DIR}/Order.h
-        ${CMAKE_CURRENT_LIST_DIR}/OrderSet.h
-        ${CMAKE_CURRENT_LIST_DIR}/Pending.h
-        ${CMAKE_CURRENT_LIST_DIR}/Process.h
-        ${CMAKE_CURRENT_LIST_DIR}/PythonCommon.h
-        ${CMAKE_CURRENT_LIST_DIR}/Random.h
-        ${CMAKE_CURRENT_LIST_DIR}/SaveGamePreviewUtils.h
-        ${CMAKE_CURRENT_LIST_DIR}/ScopedTimer.h
-        ${CMAKE_CURRENT_LIST_DIR}/Serialize.h
-        ${CMAKE_CURRENT_LIST_DIR}/Serialize.ipp
-        ${CMAKE_CURRENT_LIST_DIR}/SitRepEntry.h
-        ${CMAKE_CURRENT_LIST_DIR}/StringTable.h
-        ${CMAKE_CURRENT_LIST_DIR}/VarText.h
-        ${CMAKE_CURRENT_LIST_DIR}/Version.h
-        ${CMAKE_CURRENT_LIST_DIR}/XMLDoc.h
-    PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/AppInterface.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/CheckSums.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Directories.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/GameRules.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/i18n.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Logger.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/LoggerWithOptionsDB.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/ModeratorAction.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/MultiplayerCommon.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/OptionsDB.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Order.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/OrderSet.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Process.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/PythonCommon.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Random.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/SaveGamePreviewUtils.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/ScopedTimer.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/SerializeCombat.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/SerializeEmpire.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/SerializeModeratorAction.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/SerializeMultiplayerCommon.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/SerializeOrderSet.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/SerializeUniverse.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/SitRepEntry.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/StringTable.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/VarText.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/Version.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/XMLDoc.cpp
-        $<$<NOT:$<PLATFORM_ID:Windows>>:${CMAKE_CURRENT_LIST_DIR}/binreloc.c>
+target_sources(
+  freeorioncommon
+  PUBLIC ${CMAKE_CURRENT_LIST_DIR}/AppInterface.h
+         ${CMAKE_CURRENT_LIST_DIR}/base64_filter.h
+         ${CMAKE_CURRENT_LIST_DIR}/blocking_combiner.h
+         ${CMAKE_CURRENT_LIST_DIR}/CheckSums.h
+         ${CMAKE_CURRENT_LIST_DIR}/Directories.h
+         ${CMAKE_CURRENT_LIST_DIR}/Enum.h
+         ${CMAKE_CURRENT_LIST_DIR}/i18n.h
+         ${CMAKE_CURRENT_LIST_DIR}/Logger.h
+         ${CMAKE_CURRENT_LIST_DIR}/LoggerWithOptionsDB.h
+         ${CMAKE_CURRENT_LIST_DIR}/ModeratorAction.h
+         ${CMAKE_CURRENT_LIST_DIR}/MultiplayerCommon.h
+         ${CMAKE_CURRENT_LIST_DIR}/OptionsDB.h
+         ${CMAKE_CURRENT_LIST_DIR}/OptionValidators.h
+         ${CMAKE_CURRENT_LIST_DIR}/Order.h
+         ${CMAKE_CURRENT_LIST_DIR}/OrderSet.h
+         ${CMAKE_CURRENT_LIST_DIR}/Pending.h
+         ${CMAKE_CURRENT_LIST_DIR}/Process.h
+         ${CMAKE_CURRENT_LIST_DIR}/PythonCommon.h
+         ${CMAKE_CURRENT_LIST_DIR}/Random.h
+         ${CMAKE_CURRENT_LIST_DIR}/SaveGamePreviewUtils.h
+         ${CMAKE_CURRENT_LIST_DIR}/ScopedTimer.h
+         ${CMAKE_CURRENT_LIST_DIR}/Serialize.h
+         ${CMAKE_CURRENT_LIST_DIR}/Serialize.ipp
+         ${CMAKE_CURRENT_LIST_DIR}/SitRepEntry.h
+         ${CMAKE_CURRENT_LIST_DIR}/StringTable.h
+         ${CMAKE_CURRENT_LIST_DIR}/VarText.h
+         ${CMAKE_CURRENT_LIST_DIR}/Version.h
+         ${CMAKE_CURRENT_LIST_DIR}/XMLDoc.h
+  PRIVATE ${CMAKE_CURRENT_LIST_DIR}/AppInterface.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/CheckSums.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/Directories.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/GameRules.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/i18n.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/Logger.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/LoggerWithOptionsDB.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/ModeratorAction.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/MultiplayerCommon.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/OptionsDB.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/Order.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/OrderSet.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/Process.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/PythonCommon.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/Random.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/SaveGamePreviewUtils.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/ScopedTimer.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/SerializeCombat.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/SerializeEmpire.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/SerializeModeratorAction.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/SerializeMultiplayerCommon.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/SerializeOrderSet.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/SerializeUniverse.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/SitRepEntry.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/StringTable.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/VarText.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/Version.cpp
+          ${CMAKE_CURRENT_LIST_DIR}/XMLDoc.cpp
+          $<$<NOT:$<PLATFORM_ID:Windows>>:${CMAKE_CURRENT_LIST_DIR}/binreloc.c>
 )
 
 if(BUILD_SERVER)
-    target_sources(freeoriond
-        PRIVATE
-            ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
-    )
+  target_sources(freeoriond PRIVATE ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp)
 endif()
 
 if(BUILD_AI)
-    target_sources(freeorionca
-        PRIVATE
-            ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
-    )
+  target_sources(freeorionca PRIVATE ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp)
 endif()
 
 if(BUILD_CLIENT_GG)
-    target_sources(freeorion
-        PRIVATE
-            ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
-    )
+  target_sources(freeorion PRIVATE ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp)
 endif()
 
 if(BUILD_CLIENT_GODOT)
-    target_sources(freeoriongodot
-        PRIVATE
-            ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
-    )
+  target_sources(freeoriongodot PRIVATE ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp)
 endif()
