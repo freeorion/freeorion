@@ -1,0 +1,29 @@
+name: CMake formatting check and linters
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+jobs:
+  cmake-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.6']
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install development dependencies
+        run: pip install cmakelang
+      - name: Check format
+        run: find -iname cmakelists.txt -or -iname "*.cmake" | xargs cmake-format -c .cmake-format.json --check
+#      - name: Check lints
+#        run: find -iname cmakelists.txt -or -iname "*.cmake" | xargs cmake-lint
+
